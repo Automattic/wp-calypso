@@ -1,12 +1,12 @@
-import { fetchLaunchpad } from '@automattic/data-stores';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import { flowRight, isEqual, keys, omit, pick } from 'lodash';
+import { flowRight, get, isEqual, keys, omit, pick } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import QueryJetpackSettings from 'calypso/components/data/query-jetpack-settings';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import { withCompleteLaunchpadTasksWithNotice } from 'calypso/launchpad/hooks/with-complete-launchpad-tasks-with-notice';
 import { protectForm } from 'calypso/lib/protect-form';
 import trackForm from 'calypso/lib/track-form';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -33,26 +33,22 @@ import {
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
+// Maps a field in the settings form to a checklist task slug(s)
+const FIELDS_TO_LAUNCHPAD_TASKS = {
+	blogname: [ 'site_title', 'setup_general' ],
+	'subscription_options.welcome': 'customize_welcome_message',
+};
+
 const debug = debugFactory( 'calypso:site-settings' );
 
 const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 	class WrappedSettingsForm extends Component {
 		state = {
 			uniqueEvents: {},
-			isSiteTitleTaskCompleted: false,
-			blogNameChanged: false,
 		};
 
 		componentDidMount() {
 			this.props.replaceFields( getFormSettings( this.props.settings, this.props ) );
-
-			// Check if site_title task is completed
-			fetchLaunchpad( this.props.siteSlug, 'intent-build' ).then( ( { checklist_statuses } ) => {
-				this.setState( {
-					...this.state,
-					isSiteTitleTaskCompleted: !! checklist_statuses?.site_title,
-				} );
-			} );
 		}
 
 		componentDidUpdate( prevProps ) {
@@ -76,17 +72,7 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 					this.props.isSaveRequestSuccessful &&
 					( this.props.isJetpackSaveRequestSuccessful || ! this.props.siteIsJetpack )
 				) {
-					if ( ! this.state.isSiteTitleTaskCompleted && this.state.blogNameChanged ) {
-						noticeSettings.button = this.props.translate( 'Next steps' );
-						noticeSettings.onClick = () => {
-							window.location.assign( `/home/${ this.props.siteSlug }` );
-						};
-					}
-
-					this.props.successNotice(
-						this.props.translate( 'Settings saved successfully!' ),
-						noticeSettings
-					);
+					this.displaySuccessNotice( noticeSettings );
 					// Upon failure to save Jetpack Settings, don't show an error message,
 					// since the JP settings data layer already does that for us.
 				} else if ( ! this.props.isSaveRequestSuccessful ) {
@@ -120,6 +106,23 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 					noticeSettings
 				);
 			}
+		}
+
+		displaySuccessNotice( noticeSettings ) {
+			const launchpadTasksToComplete = [];
+
+			Object.entries( FIELDS_TO_LAUNCHPAD_TASKS ).forEach( ( [ field, taskSlugs ] ) => {
+				if ( get( this.state.modifiedFields, field ) ) {
+					const slugs = Array.isArray( taskSlugs ) ? taskSlugs : [ taskSlugs ];
+					launchpadTasksToComplete.push( ...slugs );
+				}
+			} );
+
+			this.props.completeLaunchpadTasks(
+				launchpadTasksToComplete,
+				this.props.translate( 'Settings saved successfully!' ),
+				noticeSettings
+			);
 		}
 
 		updateDirtyFields() {
@@ -281,12 +284,9 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 
 			this.props.saveSiteSettings( siteId, modifiedFields );
 
-			if ( 'blogname' in modifiedFields ) {
-				this.setState( {
-					...this.state,
-					blogNameChanged: true,
-				} );
-			}
+			this.setState( {
+				modifiedFields,
+			} );
 		};
 
 		handleRadio = ( event ) => {
@@ -473,7 +473,13 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 		}
 	);
 
-	return flowRight( trackForm, protectForm, connectComponent, localize )( WrappedSettingsForm );
+	return flowRight(
+		withCompleteLaunchpadTasksWithNotice,
+		trackForm,
+		protectForm,
+		connectComponent,
+		localize
+	)( WrappedSettingsForm );
 };
 
 export default wrapSettingsForm;

@@ -1,13 +1,14 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { isOnboardingFlow } from '@automattic/onboarding';
 import { isEmpty } from 'lodash';
 import { createElement } from 'react';
 import store from 'store';
 import { notFound } from 'calypso/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
+import { addQueryArgs } from 'calypso/lib/url';
 import flows from 'calypso/signup/config/flows';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { updateDependencies } from 'calypso/state/signup/actions';
@@ -21,7 +22,6 @@ import { getSiteId } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getStepComponent } from './config/step-components';
-import { isReskinnedFlow } from './is-flow';
 import SignupComponent from './main';
 import {
 	retrieveSignupDestination,
@@ -51,21 +51,21 @@ const basePageTitle = 'Signup'; // used for analytics, doesn't require translati
 let initialContext;
 let previousFlowName;
 
-const removeWhiteBackground = function () {
-	if ( ! document ) {
-		return;
-	}
+function setReferrerPolicy() {
+	try {
+		// Remove existing <meta> tags with name="referrer"
+		const existingMetaTags = document.querySelectorAll( 'meta[name="referrer"]' );
+		existingMetaTags.forEach( ( tag ) => tag.remove() );
 
-	document.body.classList.remove( 'is-white-signup' );
-};
+		// Create a new <meta> element
+		const metaReferrer = document.createElement( 'meta' );
+		metaReferrer.name = 'referrer';
+		metaReferrer.content = 'strict-origin-when-cross-origin';
 
-export const addVideoPressSignupClassName = () => {
-	if ( ! document ) {
-		return;
-	}
-
-	document.body.classList.add( 'is-videopress-signup' );
-};
+		// Append the new <meta> element to the <head> section
+		document.head.appendChild( metaReferrer );
+	} catch ( e ) {}
+}
 
 export const addP2SignupClassName = () => {
 	if ( ! document ) {
@@ -84,36 +84,6 @@ export const removeP2SignupClassName = function () {
 };
 
 export default {
-	redirectTests( context, next ) {
-		const isLoggedIn = isUserLoggedIn( context.store.getState() );
-		const currentFlowName = getFlowName( context.params, isLoggedIn );
-		if ( isReskinnedFlow( currentFlowName ) ) {
-			next();
-		} else if (
-			context.pathname.indexOf( 'domain' ) >= 0 ||
-			context.pathname.indexOf( 'plan' ) >= 0 ||
-			context.pathname.indexOf( 'onboarding-registrationless' ) >= 0 ||
-			context.pathname.indexOf( 'wpcc' ) >= 0 ||
-			context.pathname.indexOf( 'launch-only' ) >= 0 ||
-			context.params.flowName === 'account' ||
-			context.params.flowName === 'crowdsignal' ||
-			context.params.flowName === 'clone-site'
-		) {
-			removeWhiteBackground();
-			next();
-		} else if ( context.pathname.includes( 'p2' ) ) {
-			addP2SignupClassName();
-			removeWhiteBackground();
-			next();
-		} else if ( context.pathname.includes( 'videopress' ) ) {
-			addVideoPressSignupClassName();
-			removeWhiteBackground();
-			next();
-		} else {
-			next();
-			return;
-		}
-	},
 	redirectWithoutLocaleIfLoggedIn( context, next ) {
 		const userLoggedIn = isUserLoggedIn( context.store.getState() );
 		if ( userLoggedIn && context.params.lang ) {
@@ -142,8 +112,15 @@ export default {
 	},
 
 	saveInitialContext( context, next ) {
+		const userLoggedIn = isUserLoggedIn( context.store.getState() );
 		if ( ! initialContext ) {
 			initialContext = Object.assign( {}, context );
+		} else if (
+			getFlowName( initialContext.params, userLoggedIn ) !==
+			getFlowName( context.params, userLoggedIn )
+		) {
+			// Update the `initialContext` when the flow changes.
+			initialContext = Object.assign( {}, initialContext, context );
 		}
 
 		next();
@@ -215,25 +192,29 @@ export default {
 
 		store.set( 'signup-locale', localeFromParams );
 
-		const isOnboardingFlow = flowName === 'onboarding';
-		if ( isOnboardingFlow ) {
-			const stepperOnboardingExperimentAssignment = await loadExperimentAssignment(
-				'calypso_signup_onboarding_stepper_flow_2'
-			);
-			if ( stepperOnboardingExperimentAssignment.variationName === 'stepper' ) {
-				window.location =
-					getStepUrl(
-						flowName,
-						getStepName( context.params ),
-						getStepSectionName( context.params ),
-						localeFromParams ?? localeFromStore,
-						null,
-						'/setup'
-					) +
-					( context.querystring ? '?' + context.querystring : '' ) +
-					( context.hashstring ? '#' + context.hashstring : '' );
-				return;
+		if ( isOnboardingFlow( flowName ) ) {
+			setReferrerPolicy();
+			let url =
+				getStepUrl(
+					flowName,
+					getStepName( context.params ),
+					getStepSectionName( context.params ),
+					localeFromParams ?? localeFromStore,
+					null,
+					'/setup'
+				) +
+				( context.querystring ? '?' + context.querystring : '' ) +
+				( context.hashstring ? '#' + context.hashstring : '' );
+
+			if ( document.referrer ) {
+				url = addQueryArgs( { start_ref: document.referrer }, url );
 			}
+
+			window.location.replace( url );
+			// skip the rest to avoid the `page.redirect` call below.
+			// Don't call next() here, we don't need the subsequent middlewares to run.
+			// next();
+			return;
 		}
 
 		// const isOnboardingFlow = flowName === 'onboarding';

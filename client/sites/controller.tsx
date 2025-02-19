@@ -125,13 +125,14 @@ export function sitesDashboard( context: Context, next: () => void ) {
 	next();
 }
 
-export function siteDashboard( feature: string ) {
+export function siteDashboard( feature: string | undefined ) {
 	return ( context: Context, next: () => void ) => {
 		context.primary = (
 			<SitesDashboard
 				initialSiteFeature={ feature }
 				selectedSiteFeaturePreview={ context.primary }
 				queryParams={ getQueryParams( context ) }
+				isOnlyLayoutView={ context.inSiteContext }
 			/>
 		);
 		next();

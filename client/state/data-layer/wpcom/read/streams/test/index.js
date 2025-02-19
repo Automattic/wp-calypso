@@ -17,6 +17,7 @@ jest.mock( '@wordpress/warning', () => () => {} );
 
 describe( 'streams', () => {
 	const action = deepfreeze( requestPageAction( { streamKey: 'following', page: 2 } ) );
+	const ISO_DATE_MATCHER = expect.stringMatching( /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/ );
 
 	describe( 'requestPage', () => {
 		const query = {
@@ -33,7 +34,10 @@ describe( 'streams', () => {
 					method: 'GET',
 					path: '/read/following',
 					apiVersion: '1.2',
-					query,
+					query: {
+						...query,
+						after: ISO_DATE_MATCHER,
+					},
 					onSuccess: action,
 					onFailure: action,
 				} )
@@ -42,7 +46,7 @@ describe( 'streams', () => {
 
 		it( 'should set proper params for subsequent fetches', () => {
 			const pageHandle = { after: 'the robots attack' };
-			const secondPage = { ...action, payload: { ...action.payload, pageHandle } };
+			const secondPage = { ...action, payload: { ...action.payload, pageHandle, feedId: 1234 } };
 			const httpAction = requestPage( secondPage );
 
 			expect( httpAction ).toEqual(
@@ -50,7 +54,7 @@ describe( 'streams', () => {
 					method: 'GET',
 					path: '/read/following',
 					apiVersion: '1.2',
-					query: { ...query, number: PER_FETCH, after: 'the robots attack' },
+					query: { ...query, feed_id: 1234, number: PER_FETCH, after: 'the robots attack' },
 					onSuccess: secondPage,
 					onFailure: secondPage,
 				} )
@@ -68,7 +72,10 @@ describe( 'streams', () => {
 						method: 'GET',
 						path: '/read/following',
 						apiVersion: '1.2',
-						query,
+						query: {
+							...query,
+							after: ISO_DATE_MATCHER,
+						},
 					},
 				},
 				{

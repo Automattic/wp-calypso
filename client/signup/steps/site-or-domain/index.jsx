@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { SelectItems } from '@automattic/onboarding';
 import { globe, addCard, layout } from '@wordpress/icons';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -15,10 +15,6 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-import SiteOrDomainChoice from './choice';
-import DomainImage from './domain-image';
-import ExistingSiteImage from './existing-site-image';
-import NewSiteImage from './new-site-image';
 
 import './style.scss';
 
@@ -58,16 +54,12 @@ class SiteOrDomain extends Component {
 	}
 
 	getChoices() {
-		const { translate, isReskinned, isLoggedIn, siteCount } = this.props;
+		const { translate, isLoggedIn, siteCount } = this.props;
 
 		const domainName = this.getDomainName();
-		let buyADomainTitle =
-			i18n.getLocaleSlug() === 'en' || i18n.hasTranslation( 'Just buy domains' )
-				? translate( 'Just buy a domain', 'Just buy domains', {
-						count: this.getDomainCart().length,
-				  } )
-				: translate( 'Just buy a domain' );
-
+		let buyADomainTitle = translate( 'Just buy a domain', 'Just buy domains', {
+			count: this.getDomainCart().length,
+		} );
 		if ( this.isLeanDomainSearch() && domainName ) {
 			// translators: %s is a domain name
 			buyADomainTitle = translate( 'Just buy %s', { args: [ domainName ] } );
@@ -75,112 +67,53 @@ class SiteOrDomain extends Component {
 
 		const choices = [];
 
-		const buyADomainDescription =
-			i18n.getLocaleSlug() === 'en' || i18n.hasTranslation( 'Add a site later.' )
-				? translate( 'Add a site later.' )
-				: translate( 'Show a "coming soon" notice on your domain. Add a site later.' );
-
-		if ( isReskinned ) {
+		const buyADomainDescription = translate( 'Add a site later.' );
+		choices.push( {
+			key: 'domain',
+			title: buyADomainTitle,
+			description: buyADomainDescription,
+			icon: null,
+			titleIcon: globe,
+			value: 'domain',
+			actionText: <Gridicon icon="chevron-right" size={ 18 } />,
+			allItemClickable: true,
+		} );
+		choices.push( {
+			key: 'page',
+			title: translate( 'New site' ),
+			description: translate(
+				'Customize and launch your site.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}',
+				{
+					components: {
+						strong: <strong />,
+						br: <br />,
+					},
+				}
+			),
+			icon: null,
+			titleIcon: addCard,
+			value: 'page',
+			actionText: <Gridicon icon="chevron-right" size={ 18 } />,
+			allItemClickable: true,
+		} );
+		if ( isLoggedIn && siteCount > 0 ) {
 			choices.push( {
-				key: 'domain',
-				title: buyADomainTitle,
-				description: buyADomainDescription,
-				icon: null,
-				titleIcon: globe,
-				value: 'domain',
-				actionText: <Gridicon icon="chevron-right" size={ 18 } />,
-				allItemClickable: true,
-			} );
-			choices.push( {
-				key: 'page',
-				title: translate( 'New site' ),
-				description:
-					i18n.getLocaleSlug() === 'en' ||
-					i18n.hasTranslation(
-						'Customize and launch your site.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}'
-					)
-						? translate(
-								'Customize and launch your site.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}',
-								{
-									components: {
-										strong: <strong />,
-										br: <br />,
-									},
-								}
-						  )
-						: translate(
-								'Customize and launch your site.{{br/}}{{strong}}Free domain for the first year*{{/strong}}',
-								{
-									components: {
-										strong: <strong />,
-										br: <br />,
-									},
-								}
-						  ),
-				icon: null,
-				titleIcon: addCard,
-				value: 'page',
-				actionText: <Gridicon icon="chevron-right" size={ 18 } />,
-				allItemClickable: true,
-			} );
-			if ( isLoggedIn && siteCount > 0 ) {
-				choices.push( {
-					key: 'existing-site',
-					title: translate( 'Existing WordPress.com site' ),
-					description:
-						i18n.getLocaleSlug() === 'en' ||
-						i18n.hasTranslation(
-							'Use the domain with a site you already started.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}'
-						)
-							? translate(
-									'Use the domain with a site you already started.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}',
-									{
-										components: {
-											strong: <strong />,
-											br: <br />,
-										},
-									}
-							  )
-							: translate(
-									'Use with a site you already started.{{br/}}{{strong}}Free domain for the first year*{{/strong}}',
-									{
-										components: {
-											strong: <strong />,
-											br: <br />,
-										},
-									}
-							  ),
-					icon: null,
-					titleIcon: layout,
-					value: 'existing-site',
-					actionText: <Gridicon icon="chevron-right" size={ 18 } />,
-					allItemClickable: true,
-				} );
-			}
-		} else {
-			choices.push( {
-				type: 'page',
-				label: translate( 'New site' ),
-				image: <NewSiteImage />,
+				key: 'existing-site',
+				title: translate( 'Existing WordPress.com site' ),
 				description: translate(
-					'Choose a theme, customize, and launch your site. A free domain for one year is included with all annual plans.'
+					'Use the domain with a site you already started.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}',
+					{
+						components: {
+							strong: <strong />,
+							br: <br />,
+						},
+					}
 				),
-			} );
-			if ( isLoggedIn && siteCount > 0 ) {
-				choices.push( {
-					type: 'existing-site',
-					label: translate( 'Existing WordPress.com site' ),
-					image: <ExistingSiteImage />,
-					description: translate(
-						'Use with a site you already started. A free domain for one year is included with all annual plans.'
-					),
-				} );
-			}
-			choices.push( {
-				type: 'domain',
-				label: buyADomainTitle,
-				image: <DomainImage />,
-				description: buyADomainDescription,
+				icon: null,
+				titleIcon: layout,
+				value: 'existing-site',
+				actionText: <Gridicon icon="chevron-right" size={ 18 } />,
+				allItemClickable: true,
 			} );
 		}
 
@@ -188,30 +121,13 @@ class SiteOrDomain extends Component {
 	}
 
 	renderChoices() {
-		const { isReskinned } = this.props;
-
 		return (
 			<div className="site-or-domain__choices">
-				{ isReskinned ? (
-					<>
-						<SelectItems
-							items={ this.getChoices() }
-							onSelect={ this.handleClickChoice }
-							preventWidows={ preventWidows }
-						/>
-					</>
-				) : (
-					<>
-						{ this.getChoices().map( ( choice, index ) => (
-							<SiteOrDomainChoice
-								choice={ choice }
-								handleClickChoice={ this.handleClickChoice }
-								isPlaceholder={ ! this.props.productsLoaded }
-								key={ `site-or-domain-choice-${ index }` }
-							/>
-						) ) }
-					</>
-				) }
+				<SelectItems
+					items={ this.getChoices() }
+					onSelect={ this.handleClickChoice }
+					preventWidows={ preventWidows }
+				/>
 			</div>
 		);
 	}
@@ -285,7 +201,7 @@ class SiteOrDomain extends Component {
 	};
 
 	render() {
-		const { translate, productsLoaded, isReskinned } = this.props;
+		const { translate, productsLoaded } = this.props;
 		const domainName = this.getDomainName();
 
 		if ( productsLoaded && ! domainName ) {
@@ -313,10 +229,8 @@ class SiteOrDomain extends Component {
 		const additionalProps = {};
 		let headerText = this.props.getHeaderText( this.getDomainCart() );
 
-		if ( isReskinned ) {
-			additionalProps.isHorizontalLayout = false;
-			additionalProps.align = 'center';
-		}
+		additionalProps.isHorizontalLayout = false;
+		additionalProps.align = 'center';
 
 		if ( this.isLeanDomainSearch() ) {
 			additionalProps.className = 'lean-domain-search';

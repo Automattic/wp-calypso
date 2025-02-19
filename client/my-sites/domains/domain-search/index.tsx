@@ -1,7 +1,7 @@
 import { isFreePlanProduct } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
-import { BackButton, ECOMMERCE_FLOW } from '@automattic/onboarding';
+import { BackButton } from '@automattic/onboarding';
 import { UseShoppingCart, withShoppingCart } from '@automattic/shopping-cart';
 import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
@@ -85,7 +85,8 @@ type DomainSearchProps = {
 		domainName: string,
 		section: string,
 		position: number,
-		isPremium?: boolean
+		isPremium?: boolean,
+		flowName?: string
 	) => void;
 	recordRemoveDomainButtonClick: ( domainName: string ) => void;
 	isSiteOnFreePlan?: boolean;
@@ -200,7 +201,7 @@ class DomainSearch extends Component< DomainSearchProps > {
 			is_premium: isPremium,
 		} = suggestion;
 
-		this.props.recordAddDomainButtonClick( domain, 'domains', position, isPremium );
+		this.props.recordAddDomainButtonClick( domain, 'domains', position, isPremium, 'domains/add' );
 
 		let registration = domainRegistration( {
 			domain,
@@ -301,7 +302,6 @@ class DomainSearch extends Component< DomainSearchProps > {
 			cart,
 			isDomainAndPlanPackageFlow,
 			isDomainUpsell,
-			isEcommerceSite,
 		} = this.props;
 
 		if ( ! selectedSite || ! selectedSiteId ) {
@@ -438,7 +438,7 @@ class DomainSearch extends Component< DomainSearchProps > {
 								basePath={ this.props.basePath }
 								products={ this.props.productsList }
 								vendor={ getSuggestionsVendor( {
-									flowName: isEcommerceSite ? ECOMMERCE_FLOW : '',
+									flowName: '',
 								} ) }
 							/>
 						</EmailVerificationGate>

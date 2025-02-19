@@ -2,6 +2,7 @@ export interface Color {
 	color: string;
 	name: string;
 	slug: string;
+	default?: string;
 }
 
 export interface FontFamily {
@@ -38,11 +39,13 @@ export interface GlobalStylesObject {
 	settings: {
 		color?: {
 			palette: {
+				default: Color[];
 				theme: Color[];
 			};
 		};
 	};
 	styles: {
+		color?: Color;
 		elements?: {
 			heading: {
 				typography: Typography;

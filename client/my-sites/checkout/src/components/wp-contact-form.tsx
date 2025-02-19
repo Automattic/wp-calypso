@@ -24,7 +24,7 @@ const BillingFormFields = styled.div`
 	}
 
 	& .form-input-validation {
-		padding: 6px 6px 11px;
+		padding: 6px 6px 11px 0;
 	}
 
 	& .form-input-validation .gridicon,

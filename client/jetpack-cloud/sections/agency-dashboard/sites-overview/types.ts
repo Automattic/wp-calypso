@@ -249,7 +249,6 @@ export interface DashboardOverviewContextInterface {
 		showOnlyDevelopmentSites: boolean;
 	};
 	sort?: DashboardSortInterface;
-	showSitesDashboardV2: boolean;
 }
 
 export interface SitesOverviewContextInterface extends DashboardOverviewContextInterface {

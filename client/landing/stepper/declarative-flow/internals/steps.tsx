@@ -50,6 +50,21 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/migration-error' ),
 	},
 
+	NEWSLETTER_SETUP: {
+		slug: 'newsletterSetup',
+		asyncComponent: () => import( './steps-repository/newsletter-setup' ),
+	},
+
+	NEWSLETTER_GOALS: {
+		slug: 'newsletterGoals',
+		asyncComponent: () => import( './steps-repository/newsletter-goals' ),
+	},
+
+	SUBSCRIBERS: {
+		slug: 'subscribers',
+		asyncComponent: () => import( './steps-repository/subscribers' ),
+	},
+
 	FREE_POST_SETUP: {
 		slug: 'freePostSetup',
 		asyncComponent: () => import( './steps-repository/free-post-setup' ),
@@ -124,6 +139,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/intent-step' ),
 	},
 
+	INTRO: {
+		slug: 'intro',
+		asyncComponent: () => import( './steps-repository/intro' ),
+	},
+
 	NEW_OR_EXISTING_SITE: {
 		slug: 'new-or-existing-site',
 		asyncComponent: () => import( './steps-repository/new-or-existing-site' ),
@@ -143,11 +163,6 @@ export const STEPS = {
 	OPTIONS: {
 		slug: 'options',
 		asyncComponent: () => import( './steps-repository/site-options' ),
-	},
-
-	PATTERN_ASSEMBLER: {
-		slug: 'pattern-assembler',
-		asyncComponent: () => import( './steps-repository/pattern-assembler' ),
 	},
 
 	PLANS: { slug: 'plans', asyncComponent: () => import( './steps-repository/plans' ) },
@@ -170,11 +185,6 @@ export const STEPS = {
 	SITE_PICKER: {
 		slug: 'site-picker',
 		asyncComponent: () => import( './steps-repository/site-picker-list' ),
-	},
-
-	SITE_PROMPT: {
-		slug: 'site-prompt',
-		asyncComponent: () => import( './steps-repository/ai-site-prompt' ),
 	},
 
 	STORE_ADDRESS: {
@@ -217,11 +227,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/wait-for-plugin-install' ),
 	},
 
-	ASSIGN_TRIAL_PLAN: {
-		slug: 'assignTrialPlan',
-		asyncComponent: () => import( './steps-repository/assign-trial-plan' ),
-	},
-
 	SITE_MIGRATION_ASSIGN_TRIAL_PLAN: {
 		slug: 'site-migration-assign-trial-plan',
 		asyncComponent: () => import( './steps-repository/site-migration-assign-trial-plan' ),
@@ -252,10 +257,10 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-fallback-credentials' ),
 	},
 
-	SITE_MIGRATION_APPLICATION_PASSWORDS_APPROVAL: {
-		slug: 'application-passwords-approval',
+	SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION: {
+		slug: 'site-migration-application-password-authorization',
 		asyncComponent: () =>
-			import( './steps-repository/site-migration-application-passwords-approval' ),
+			import( './steps-repository/site-migration-application-password-authorization' ),
 	},
 
 	SITE_MIGRATION_IDENTIFY: {
@@ -279,18 +284,9 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-how-to-migrate' ),
 	},
 
-	MIGRATION_HOW_TO_MIGRATE: {
-		slug: 'migration-how-to-migrate',
-		asyncComponent: () => import( './steps-repository/migration-how-to-migrate' ),
-	},
-
 	SITE_MIGRATION_SOURCE_URL: {
 		slug: 'site-migration-source-url',
 		asyncComponent: () => import( './steps-repository/site-migration-source-url' ),
-	},
-	MIGRATION_SOURCE_URL: {
-		slug: 'migration-source-url',
-		asyncComponent: () => import( './steps-repository/migration-source-url' ),
 	},
 
 	SITE_MIGRATION_UPGRADE_PLAN: {
@@ -325,8 +321,15 @@ export const STEPS = {
 		slug: 'platform-identification',
 		asyncComponent: () => import( './steps-repository/platform-identification' ),
 	},
-	MIGRATION_UPGRADE_PLAN: {
-		slug: 'migration-upgrade-plan',
-		asyncComponent: () => import( './steps-repository/migration-upgrade-plan' ),
+} satisfies Record< string, StepperStep >;
+
+/**
+ * Define steps that are only used by the Stepper framework. Any flow should avoid include these steps as much as possible.
+ */
+export const PRIVATE_STEPS = {
+	USER: {
+		slug: 'user',
+		asyncComponent: () =>
+			import( /* webpackChunkName: "stepper-user-step" */ './steps-repository/__user' ),
 	},
 } satisfies Record< string, StepperStep >;

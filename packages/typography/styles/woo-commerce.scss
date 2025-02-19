@@ -1,5 +1,22 @@
 @import "./variables";
 
+
+/* Proxima Vara Font */
+@font-face {
+	font-display: swap;
+	font-family: proxima-vara;
+	font-style: normal;
+	font-weight: 400 700;
+	src: url(https://woocommerce.com/wp-content/themes/woo/fonts/proxima-vara/ProximaVara.woff2) format('woff2 supports variations'), url(https://woocommerce.com/wp-content/themes/woo/fonts/proxima-vara/ProximaVara.woff2) format('woff2-variations');
+}
+
+@font-face {
+	ascent-override: 95%;
+	font-family: 'Proxima Fallback';
+	size-adjust: 99.9%;
+	src: local('Arial');
+}
+
 $woo-title-font: "Proxima Nova", $sans;
 
 $woo-font-headline-large: rem(54px);

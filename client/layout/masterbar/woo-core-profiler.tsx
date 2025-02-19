@@ -1,11 +1,10 @@
-import config from '@automattic/calypso-config';
 import { ProgressBar } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { getQueryArg } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
 import { Fragment } from 'react';
 import { isWebUri } from 'valid-url';
-import WooLogo from 'calypso/assets/images/icons/woocommerce-logo.svg';
+import WooLogo from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import SVGIcon from 'calypso/components/svg-icon';
 import './typekit';
 import './woo.scss';
@@ -35,8 +34,7 @@ const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) 
 
 	if (
 		currentRoute === '/log-in/jetpack/lostpassword' ||
-		( config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) &&
-			currentRoute === '/log-in/jetpack/link' ) ||
+		currentRoute === '/log-in/jetpack/link' ||
 		currentQueryArguments?.lostpassword_flow
 	) {
 		shouldShowProgressBar = false;
@@ -55,9 +53,9 @@ const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) 
 									name="woocommerce-logo"
 									icon={ WooLogo }
 									classes="masterbar__woo-client-logo"
-									width="38"
-									height="23"
-									viewBox="0 0 38 23"
+									width="60"
+									height="24"
+									viewBox="0 0 60 24"
 								/>
 							</a>
 						</li>

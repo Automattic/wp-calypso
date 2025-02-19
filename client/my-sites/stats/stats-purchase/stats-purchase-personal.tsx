@@ -5,6 +5,7 @@ import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import { useJetpackConnectionStatus } from 'calypso/my-sites/stats/hooks/use-jetpack-connection-status';
 import useStatsPurchases from 'calypso/my-sites/stats/hooks/use-stats-purchases';
 import { useSelector } from 'calypso/state';
@@ -191,7 +192,9 @@ const PersonalPurchase = ( {
 							} )
 						}
 					>
-						{ translate( 'Continue with Jetpack Stats for free' ) }
+						{ translate( 'Continue with %(product)s for free', {
+							args: { product: STATS_PRODUCT_NAME },
+						} ) }
 					</ButtonComponent>
 				</div>
 			) : (

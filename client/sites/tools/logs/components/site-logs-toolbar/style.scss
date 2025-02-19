@@ -1,111 +1,137 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+
 .site-logs-toolbar {
-	margin-bottom: 1.5em;
-	@include break-wide {
-		display: flex;
-		gap: 16px;
-		flex-direction: row;
-		align-items: top;
-		justify-content: space-between;
-		flex-wrap: wrap;
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	justify-content: space-between;
+	margin-bottom: 20px;
+	padding-top: 8px;
+
+	@include break-small {
+		padding-top: 0;
 	}
 
-	.components-toggle-control {
-		display: inline-block;
-		margin-top: 12px;
+	input:invalid {
+		background-color: var(--color-accent-5);
+		color: var(--color-accent-70);
+		border-color: var(--color-accent-60);
+	}
 
-		.components-toggle-control__label {
-			text-wrap: nowrap;
+	input:valid {
+		background-color: var(--color-surface);
+		color: var(--color-neutral-70);
+		border-color: var(--color-neutral-10);
+	}
+
+	.site-logs__auto-refresh {
+		margin-right: 0 !important;
+		white-space: nowrap;
+	}
+
+	.site-logs__auto-refresh_desktop {
+		display: none;
+		font-size: inherit;
+		margin-top: 20px;
+
+		@include break-small {
+			display: inline-block;
+		}
+	}
+
+	.site-logs__auto-refresh_mobile {
+		@include break-small {
+			display: none;
 		}
 	}
 
 	.site-logs-toolbar__top-row {
+		clear: both;
 		display: flex;
-		align-items: center;
+		flex-direction: column;
 		flex-wrap: wrap;
-		justify-content: flex-start;
 		gap: 16px;
 		padding-bottom: 16px;
-		clear: both;
+		width: 100%;
 
-		.site-logs-toolbar-filter-element {
-			display: flex;
-			align-items: center;
-			gap: 16px;
+		&.is-hidden {
+			display: none;
 		}
 
-		input[type="datetime-local"] {
-			display: flex;
-			justify-content: center;
-			cursor: text;
-			&::-webkit-calendar-picker-indicator {
-				cursor: pointer;
+		@include break-small {
+			align-items: center;
+			flex-direction: row;
+
+			&.is-hidden {
+				display: flex;
 			}
+		}
+
+		> :nth-last-child(2) {
+			margin-right: auto;
+		}
+	}
+
+	.site-logs-toolbar__label {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	.site-logs-toolbar__label_toggle .components-base-control {
+		margin-right: 0 !important;
+		white-space: nowrap;
+	}
+
+	.site-logs-toolbar__toggle {
+		border-color: var(--color-neutral-10);
+	}
+
+	.site-logs-toolbar__toggle-option {
+		height: 36px;
+
+		&[aria-checked="false"] {
+			color: inherit;
+		}
+	}
+
+	.site-logs-toolbar__datepicker {
+		display: flex;
+		justify-content: center;
+		cursor: text;
+
+		&::-webkit-calendar-picker-indicator {
+			cursor: pointer;
 		}
 	}
 
 	.site-logs-toolbar__filter {
-		display: none;
+		color: inherit;
+		display: flex;
 		float: right;
+		gap: 6px;
+		text-decoration: none;
+
+		@include break-small {
+			display: none;
+		}
 	}
-	@media screen and (max-width: 600px) {
-		.site-logs-toolbar__top-row {
-			flex-direction: column;
-			align-items: stretch;
 
-			.site-logs-toolbar-filter-element {
-				flex-direction: column;
-				align-items: stretch;
-			}
+	.site-logs-toolbar__badge {
+		height: 8px;
+		width: 8px;
+		padding: 0;
+		margin-right: 4px;
+	}
 
-			&.is-hidden {
-				display: none;
-			}
-		}
-		.site-logs-toolbar__filter {
-			display: flex;
-		}
-
-		.select-dropdown .select-dropdown__container {
-			width: 100%;
-		}
-
-		.select-dropdown {
+	@media (max-width: #{$break-small - 1px}) {
+		.site-logs-toolbar__toggle,
+		.site-logs-toolbar__datepicker,
+		.site-logs-toolbar__dropdown,
+		.select-dropdown__container {
 			width: 100%;
 		}
 	}
-
-	button {
-		height: 42px;
-		justify-content: center;
-	}
-}
-
-.is-mobile-app-view .site-logs-toolbar__download {
-	display: none;
-}
-.site-logs-container .site-logs-toolbar .site-logs-toolbar__badge {
-	height: 8px;
-	width: 8px;
-	padding: 0;
-	margin-right: 4px;
-}
-.site-logs-toolbar__download-progress {
-	display: flex;
-	align-items: center;
-	color: var(--color-neutral-50);
-	font-size: 0.875rem;
-}
-
-input:invalid {
-	background-color: var(--color-accent-5);
-	color: var(--color-accent-70);
-	border-color: var(--color-accent-60);
-}
-
-input:valid {
-	background-color: var(--color-surface);
-	color: var(--color-neutral-70);
-	border-color: var(--color-neutral-10);
 }

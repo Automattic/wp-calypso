@@ -1,3 +1,5 @@
+$blueberry-blue: #3858e9;
+
 .chatbox {
 	width: 100%;
 	height: calc(100% - 138px);
@@ -36,6 +38,10 @@
 	overscroll-behavior: contain;
 	padding-top: 16px;
 
+	&:has(.odie-notice) {
+		margin-bottom: 135px;
+	}
+
 	.odie-chatbox-bottom-edge {
 		min-height: 8px;
 		width: 100%;
@@ -56,6 +62,10 @@
 		width: 100%;
 		justify-content: center;
 		padding: 16px 0;
+
+		.components-spinner {
+			color: $blueberry-blue;
+		}
 	}
 
 	.odie-chat__date {

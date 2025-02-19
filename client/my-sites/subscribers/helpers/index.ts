@@ -1,3 +1,4 @@
+import { SubscribersFilterBy } from '../constants';
 import { SubscriberListArgs } from '../types';
 
 const getSubscribersCacheKey = (
@@ -7,8 +8,10 @@ const getSubscribersCacheKey = (
 	search?: string,
 	sortTerm?: string,
 	filterOption?: string,
+	filters?: SubscribersFilterBy[],
 	hasManySubscribers?: boolean,
-	timestamp?: number
+	timestamp?: number,
+	sortOrder?: 'asc' | 'desc'
 ) => {
 	const cacheKey = [ 'subscribers', siteId ];
 	if ( currentPage ) {
@@ -26,8 +29,14 @@ const getSubscribersCacheKey = (
 	if ( filterOption ) {
 		cacheKey.push( 'filter-option', filterOption );
 	}
+	if ( filters?.length ) {
+		cacheKey.push( 'filters', filters.join( ',' ) );
+	}
 	if ( timestamp ) {
 		cacheKey.push( timestamp );
+	}
+	if ( sortOrder ) {
+		cacheKey.push( 'sort-order', sortOrder );
 	}
 	if ( hasManySubscribers ) {
 		cacheKey.push( 'many-subscribers' );

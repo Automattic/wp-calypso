@@ -1,5 +1,5 @@
+import { ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import ExternalLink from 'calypso/components/external-link';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useSelector } from 'calypso/state';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';

@@ -97,3 +97,13 @@
 		transform: rotate(360deg);
 	}
 }
+
+// Downtime monitoring indent child toggles
+.jetpack-monitor-settings__child-settings {
+	margin: 16px 48px 0;
+}
+
+// Downtime monitoring duplicates style from site-settings/style.scss
+.support-info + .jetpack-module-toggle {
+	display: flex;
+}

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { FormInputValidation, FormLabel } from '@automattic/components';
 import { Spinner } from '@wordpress/components';
@@ -14,7 +13,7 @@ const LostPasswordForm = ( {
 	oauth2ClientId,
 	locale,
 	from,
-	isWooPasswordlessJPC,
+	isWooJPC,
 } ) => {
 	const translate = useTranslate();
 	const [ email, setEmail ] = useState( '' );
@@ -63,10 +62,7 @@ const LostPasswordForm = ( {
 	const onSubmit = async ( event ) => {
 		event.preventDefault();
 
-		if (
-			config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) &&
-			isWooPasswordlessJPC
-		) {
+		if ( isWooJPC ) {
 			const accountType = await getAuthAccountTypeRequest( email );
 			if ( accountType?.passwordless === true ) {
 				await dispatch(
@@ -108,7 +104,7 @@ const LostPasswordForm = ( {
 					redirectTo: redirectToAfterLoginUrl,
 					emailAddress: email,
 					lostpasswordFlow: true,
-					action: isWooPasswordlessJPC ? 'jetpack' : null,
+					action: isWooJPC ? 'jetpack' : null,
 					from,
 				} )
 			);
@@ -129,7 +125,7 @@ const LostPasswordForm = ( {
 			onSubmit={ onSubmit }
 		>
 			<div className="login__form-userdata">
-				<FormLabel htmlFor="email">{ translate( 'Your email address' ) }</FormLabel>
+				<FormLabel htmlFor="email">{ translate( 'Your email' ) }</FormLabel>
 				<FormTextInput
 					autoCapitalize="off"
 					autoCorrect="off"

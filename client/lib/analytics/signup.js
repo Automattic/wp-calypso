@@ -46,7 +46,6 @@ export function recordSignupComplete(
 		hasCartItems,
 		planProductSlug,
 		domainProductSlug,
-		isNew7DUserSite,
 		theme,
 		intent,
 		startingPoint,
@@ -55,7 +54,7 @@ export function recordSignupComplete(
 		signupDomainOrigin,
 		elapsedTimeSinceStart = null,
 		framework,
-		isNewishUser,
+		goals,
 	},
 	now
 ) {
@@ -75,7 +74,6 @@ export function recordSignupComplete(
 				hasCartItems,
 				planProductSlug,
 				domainProductSlug,
-				isNew7DUserSite,
 				theme,
 				intent,
 				startingPoint,
@@ -83,7 +81,7 @@ export function recordSignupComplete(
 				isMapping,
 				signupDomainOrigin,
 				framework,
-				isNewishUser,
+				goals,
 			},
 			true
 		);
@@ -110,6 +108,7 @@ export function recordSignupComplete(
 		is_mapping: isMapping,
 		signup_domain_origin: signupDomainOrigin,
 		framework,
+		goals,
 	} );
 
 	// Google Analytics
@@ -123,7 +122,7 @@ export function recordSignupComplete(
 	gaRecordEvent( 'Signup', 'calypso_signup_complete:' + flags.join( ',' ) );
 
 	// Tracks, Google Analytics
-	if ( isNew7DUserSite ) {
+	if ( isNewSite && isNewUser ) {
 		const device = resolveDeviceTypeByViewPort();
 
 		// Tracks
@@ -131,8 +130,6 @@ export function recordSignupComplete(
 			flow,
 			device,
 			framework,
-			is_new_user: isNewUser,
-			is_newish_user: isNewishUser,
 		} );
 		// Google Analytics
 		gaRecordEvent( 'Signup', 'calypso_new_user_site_creation' );

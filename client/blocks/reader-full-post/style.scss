@@ -42,8 +42,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	max-width: 1200px;
 	margin: 0 auto;
 
-	.comment-button__icon path,
-	.conversation-follow-button path {
+	.comment-button__icon path {
 		fill: var( --color-neutral-0 );
 	}
 }
@@ -127,6 +126,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 }
 
 .reader-full-post__story {
+	flex: 1;
 	max-width: var( --reader-full-post-story-max-width );
 	padding: 32px var( --reader-full-post-story-padding );
 	margin: 0 auto;
@@ -167,27 +167,6 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 
 .reader-full-post__story-content figure img {
 	margin-bottom: 0;
-}
-
-.reader-full-post .back-button {
-	border: none;
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: unset;
-	background-color: transparent;
-
-	button.is-compact.is-borderless {
-		margin: 2px;
-		@media ( max-width: 781px ) {
-			padding-top: 12px;
-			padding-bottom: 12px;
-		}
-	}
-
-	@include breakpoint-deprecated( '<660px' ) {
-		left: 14px;
-	}
 }
 
 .reader-full-post .author-compact-profile {
@@ -530,7 +509,9 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 }
 
 .reader-full-post .reader-post-card__tag {
-	background-color: var( --color-surface );
+	background: var(--color-surface);
+	border: 1px solid var(--color-neutral-5);
+	padding: 0 12px 3px;
 }
 
 .reader-full-post .reader-post-card__tag-link {

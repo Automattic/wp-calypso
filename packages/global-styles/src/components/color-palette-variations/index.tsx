@@ -82,14 +82,14 @@ const ColorPaletteVariation = ( {
 };
 
 const ColorPaletteVariations = ( {
-	siteId,
+	//siteId,
 	stylesheet,
 	selectedColorPaletteVariation,
 	onSelect,
 	limitGlobalStyles,
 }: ColorPaletteVariationsProps ) => {
 	const { base } = useContext( GlobalStylesContext );
-	const colorPaletteVariations = useColorPaletteVariations( siteId, stylesheet ) ?? [];
+	const colorPaletteVariations = useColorPaletteVariations( stylesheet ) ?? [];
 	const composite = useCompositeState();
 
 	return (

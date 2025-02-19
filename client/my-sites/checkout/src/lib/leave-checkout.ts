@@ -1,8 +1,4 @@
-import {
-	isTailoredSignupFlow,
-	MIGRATION_FLOW,
-	HOSTED_SITE_MIGRATION_FLOW,
-} from '@automattic/onboarding';
+import { isTailoredSignupFlow, HOSTED_SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import debugFactory from 'debug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -16,18 +12,47 @@ import { sendMessageToOpener } from './popup';
 
 const debug = debugFactory( 'calypso:leave-checkout' );
 
+const getCloseURL = ( {
+	userHasClearedCart,
+	previousPath,
+	siteSlug,
+}: {
+	userHasClearedCart: boolean;
+	previousPath?: string;
+	siteSlug?: string;
+} ): string => {
+	if (
+		previousPath &&
+		previousPath !== '' &&
+		previousPath !== window.location.href &&
+		! previousPath.includes( '/checkout/' )
+	) {
+		/* Regex to match /domains/add/abc123/email/def456? */
+		const emailUpsellRegex = /\/domains\/add\/[^/]+\/email\/[^/]+(\?|\/|$)/;
+
+		if ( userHasClearedCart && emailUpsellRegex.test( previousPath ) ) {
+			return '/domains/add/' + siteSlug;
+		}
+		return previousPath;
+	}
+
+	return siteSlug ? '/plans/' + siteSlug : '/start';
+};
+
 export const leaveCheckout = ( {
 	siteSlug,
 	forceCheckoutBackUrl,
 	previousPath,
 	tracksEvent,
 	createUserAndSiteBeforeTransaction,
+	userHasClearedCart = false,
 }: {
 	siteSlug?: string;
 	forceCheckoutBackUrl?: string;
 	previousPath?: string;
 	tracksEvent: string;
 	createUserAndSiteBeforeTransaction?: boolean;
+	userHasClearedCart?: boolean;
 } ): void => {
 	recordTracksEvent( tracksEvent );
 	debug( 'leaving checkout with args', {
@@ -45,7 +70,7 @@ export const leaveCheckout = ( {
 	if (
 		siteSlug &&
 		sendMessageToOpener( siteSlug, 'checkoutCancelled' ) &&
-		! [ HOSTED_SITE_MIGRATION_FLOW, MIGRATION_FLOW ].includes( signupFlowName )
+		! [ HOSTED_SITE_MIGRATION_FLOW ].includes( signupFlowName )
 	) {
 		return;
 	}
@@ -68,16 +93,7 @@ export const leaveCheckout = ( {
 		return;
 	}
 
-	let closeUrl = siteSlug ? '/plans/' + siteSlug : '/start';
-
-	if (
-		previousPath &&
-		'' !== previousPath &&
-		previousPath !== window.location.href &&
-		! previousPath.includes( '/checkout/' )
-	) {
-		closeUrl = previousPath;
-	}
+	const closeUrl = getCloseURL( { userHasClearedCart, previousPath, siteSlug } );
 
 	try {
 		const searchParams = new URLSearchParams( window.location.search );

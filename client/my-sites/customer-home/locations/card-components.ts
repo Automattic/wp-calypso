@@ -26,7 +26,7 @@ import {
 	SECTION_BLOGANUARY_BLOGGING_PROMPT,
 	SECTION_LEARN_GROW,
 	TASK_AFFILIATES,
-	TASK_BLACK_FRIDAY_2024,
+	TASK_JANUARY_BUMP,
 	TASK_CONNECT_ACCOUNTS,
 	TASK_DOMAIN_UPSELL,
 	TASK_EARN_FEATURES,
@@ -48,6 +48,7 @@ import {
 	TASK_VERIFY_EMAIL,
 	TASK_WEBINARS,
 	TASK_WP_COURSES,
+	LAUNCHPAD_INTENT_NEWSLETTER_GOAL,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import DomainUpsellFeature from 'calypso/my-sites/customer-home/cards/features/domain-upsell';
 import HelpSearch from 'calypso/my-sites/customer-home/cards/features/help-search';
@@ -57,6 +58,7 @@ import LaunchpadEntrepreneurSiteSetup from 'calypso/my-sites/customer-home/cards
 import LaunchpadIntentBuild from 'calypso/my-sites/customer-home/cards/launchpad/intent-build';
 import LaunchpadIntentHosting from 'calypso/my-sites/customer-home/cards/launchpad/intent-hosting';
 import {
+	LaunchpadIntentNewsletterGoal,
 	LaunchpadIntentFreeNewsletter,
 	LaunchpadIntentPaidNewsletter,
 } from 'calypso/my-sites/customer-home/cards/launchpad/intent-newsletter';
@@ -73,13 +75,13 @@ import ReaderFirstPosts from 'calypso/my-sites/customer-home/cards/notices/reade
 import SiteLaunchSellerUpsell from 'calypso/my-sites/customer-home/cards/notices/site-launch-seller-upsell';
 import StagingSiteNotice from 'calypso/my-sites/customer-home/cards/notices/staging-site';
 import Affiliates from 'calypso/my-sites/customer-home/cards/tasks/affiliates';
-import BlackFriday2024 from 'calypso/my-sites/customer-home/cards/tasks/black-friday-2024';
 import ConnectAccounts from 'calypso/my-sites/customer-home/cards/tasks/connect-accounts';
 import DomainUpsell from 'calypso/my-sites/customer-home/cards/tasks/domain-upsell';
 import EarnFeatures from 'calypso/my-sites/customer-home/cards/tasks/earn-features';
 import Fiverr from 'calypso/my-sites/customer-home/cards/tasks/fiverr';
 import GoMobile from 'calypso/my-sites/customer-home/cards/tasks/go-mobile';
 import GoogleDomainOwners from 'calypso/my-sites/customer-home/cards/tasks/google-domain-owners';
+import JanuaryBump from 'calypso/my-sites/customer-home/cards/tasks/january-bump';
 import Marketplace from 'calypso/my-sites/customer-home/cards/tasks/marketplace';
 import NoticeHomeLimitedTimeOfferCoupon from 'calypso/my-sites/customer-home/cards/tasks/notice-home-limited-time-offer-coupon';
 import PromotePost from 'calypso/my-sites/customer-home/cards/tasks/promote-post';
@@ -112,7 +114,7 @@ const PRIMARY_CARD_COMPONENTS: CardComponentMap = {
 	[ NOTICE_SITE_LAUNCH_SELLER_UPSELL ]: SiteLaunchSellerUpsell,
 	[ NOTICE_STAGING_SITE ]: StagingSiteNotice,
 	[ TASK_AFFILIATES ]: Affiliates,
-	[ TASK_BLACK_FRIDAY_2024 ]: BlackFriday2024,
+	[ TASK_JANUARY_BUMP ]: JanuaryBump,
 	[ TASK_CONNECT_ACCOUNTS ]: ConnectAccounts,
 	[ TASK_DOMAIN_UPSELL ]: DomainUpsell,
 	[ TASK_EARN_FEATURES ]: EarnFeatures,
@@ -150,6 +152,7 @@ const CARD_COMPONENTS: CardComponentMap = {
 	[ LAUNCHPAD_INTENT_WRITE ]: LaunchpadIntentWrite,
 	[ LAUNCHPAD_PRE_LAUNCH ]: LaunchpadPreLaunch,
 	[ LAUNCHPAD_LEGACY_SITE_SETUP ]: LaunchpadSiteSetup,
+	[ LAUNCHPAD_INTENT_NEWSLETTER_GOAL ]: LaunchpadIntentNewsletterGoal,
 	[ LAUNCHPAD_POST_MIGRATION ]: LaunchpadPostMigration,
 	[ NOTICE_READER_FIRST_POSTS ]: ReaderFirstPosts,
 	[ SECTION_BLOGGING_PROMPT ]: BloggingPrompt,

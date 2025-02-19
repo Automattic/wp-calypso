@@ -26,6 +26,7 @@ export DEBUG='*'
 
 For a quicker and more efficient development experience, the application can be run in "development mode", which executes the application code directly (i.e. without building the app). This development mode can be ran against production WordPress.com webapp, or a local instance of Calypso.
 
+- First, create your config file with `yarn run build:config`
 - Use `yarn run dev` to run development mode and load production WordPress.com, _OR_
 - Boot Calpyso from the root of the Calypso repository with `yarn start`. Once Calypso is ready, the desktop app can be booted with `yarn run dev:localhost` to load the local instance of Calypso.
 

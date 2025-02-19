@@ -29,7 +29,7 @@ const WarningsOrHoldsSection = styled.div`
 `;
 
 export default function Confirm( props: WooCommerceInstallProps ) {
-	const { goToNextStep, isReskinned } = props;
+	const { goToNextStep } = props;
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 
@@ -151,14 +151,14 @@ export default function Confirm( props: WooCommerceInstallProps ) {
 			headerText={ __( 'One final step' ) }
 			fallbackHeaderText={ __( 'One final step' ) }
 			subHeaderText={ __(
-				'We’ve highlighted a few important details you should review before we create your store. '
+				'We’ve highlighted a few important details you should review before we create your store.'
 			) }
 			fallbackSubHeaderText={ __(
-				'We’ve highlighted a few important details you should review before we create your store. '
+				'We’ve highlighted a few important details you should review before we create your store.'
 			) }
-			align={ isReskinned ? 'left' : 'center' }
+			align="left"
 			stepContent={ getContent() }
-			isWideLayout={ isReskinned }
+			isWideLayout
 			{ ...props }
 		/>
 	);

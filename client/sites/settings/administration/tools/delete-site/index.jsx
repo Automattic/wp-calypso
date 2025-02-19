@@ -1,7 +1,7 @@
 import { isFreePlanProduct } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
-import i18n, { getLocaleSlug, localize, translate } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -16,6 +16,8 @@ import { Panel, PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import withP2HubP2Count from 'calypso/data/p2/with-p2-hub-p2-count';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSettingsSource } from 'calypso/my-sites/site-settings/site-tools/utils';
+import { getRemoveDuplicateViewsExperimentAssignment } from 'calypso/state/explat-experiments/actions';
+import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/state/explat-experiments/selectors';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
 import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -25,7 +27,6 @@ import { getSite, getSiteDomain } from 'calypso/state/sites/selectors';
 import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isHostingMenuUntangled } from '../../../utils';
 import DeleteSiteWarnings from './delete-site-warnings';
 
 import './style.scss';
@@ -57,24 +58,7 @@ class DeleteSite extends Component {
 		}
 
 		const warningText = () => {
-			if (
-				getLocaleSlug() === 'en' ||
-				getLocaleSlug() === 'en-gb' ||
-				i18n.hasTranslation(
-					'Before deleting your site, consider exporting its content as a backup'
-				)
-			) {
-				return translate( 'Before deleting your site, consider exporting its content as a backup' );
-			}
-
-			return translate( '{{strong}}%(siteDomain)s{{/strong}} will be unavailable in the future.', {
-				components: {
-					strong: <strong />,
-				},
-				args: {
-					siteDomain,
-				},
-			} );
+			return translate( 'Before deleting your site, consider exporting its content as a backup' );
 		};
 
 		return (
@@ -93,40 +77,21 @@ class DeleteSite extends Component {
 			this.state.confirmDomain.replace( /\s/g, '' ) !== siteDomain;
 		const isAtomicRemovalInProgress = isFreePlan && isAtomic;
 
-		let deletionText = translate(
-			'Please type in {{warn}}%(siteAddress)s{{/warn}} in the field below to confirm. ' +
-				'Your site will then be gone forever.',
-			{
-				components: {
-					warn: <span className="delete-site__target-domain" />,
-				},
-				args: {
-					siteAddress: this.props.siteId && this.props.siteDomain,
-				},
-			}
-		);
-
-		if (
-			getLocaleSlug() === 'en' ||
-			getLocaleSlug() === 'en-gb' ||
-			i18n.hasTranslation( 'Before deleting your site, consider exporting its content as a backup' )
-		) {
-			deletionText = translate(
-				'Type {{strong}}%(siteDomain)s{{/strong}} below to confirm you want to delete the site:',
-				{
-					components: {
-						strong: <strong />,
-					},
-					args: {
-						siteDomain: this.props.siteDomain,
-					},
-				}
-			);
-		}
-
 		return (
 			<>
-				<p>{ deletionText }</p>
+				<p>
+					{ translate(
+						'Type {{strong}}%(siteDomain)s{{/strong}} below to confirm you want to delete the site:',
+						{
+							components: {
+								strong: <strong />,
+							},
+							args: {
+								siteDomain: this.props.siteDomain,
+							},
+						}
+					) }
+				</p>
 				<>
 					<FormTextInput
 						autoCapitalize="off"
@@ -205,10 +170,8 @@ class DeleteSite extends Component {
 	};
 
 	_goBack = () => {
-		const { siteSlug } = this.props;
-		const source = isHostingMenuUntangled()
-			? '/sites/settings/administration'
-			: getSettingsSource();
+		const { isUntangled, siteSlug } = this.props;
+		const source = isUntangled ? '/sites/settings/site' : getSettingsSource();
 
 		page( `${ source }/${ siteSlug }` );
 	};
@@ -226,6 +189,10 @@ class DeleteSite extends Component {
 		}
 	}
 
+	componentDidMount() {
+		this.props.getRemoveDuplicateViewsExperimentAssignment();
+	}
+
 	_checkSiteLoaded = ( event ) => {
 		const { siteId } = this.props;
 		if ( ! siteId ) {
@@ -240,6 +207,7 @@ class DeleteSite extends Component {
 	};
 
 	render() {
+		const { isUntangled } = this.state;
 		const { isAtomic, isFreePlan, siteId, hasCancelablePurchases, p2HubP2Count } = this.props;
 		const isAtomicRemovalInProgress = isFreePlan && isAtomic;
 		const canDeleteSite =
@@ -250,7 +218,6 @@ class DeleteSite extends Component {
 			exportContent: translate( 'Export content' ),
 			exportContentFirst: translate( 'Export content first' ),
 		};
-		const isUntangled = isHostingMenuUntangled();
 
 		return (
 			<Panel className="settings-administration__delete-site">
@@ -301,10 +268,12 @@ export default connect(
 		const siteDomain = getSiteDomain( state, siteId );
 		const siteSlug = getSelectedSiteSlug( state );
 		const site = getSite( state, siteId );
+		const isUntangled = getIsRemoveDuplicateViewsExperimentEnabled( state );
 		return {
 			hasLoadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer( state ),
 			isAtomic: isSiteAutomatedTransfer( state, siteId ),
 			isFreePlan: isFreePlanProduct( site?.plan ),
+			isUntangled,
 			siteDomain,
 			siteId,
 			siteSlug,
@@ -317,5 +286,6 @@ export default connect(
 	{
 		deleteSite,
 		setSelectedSiteId,
+		getRemoveDuplicateViewsExperimentAssignment,
 	}
 )( localize( withP2HubP2Count( DeleteSite ) ) );

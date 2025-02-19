@@ -51,12 +51,15 @@ const siteAddressInput = () =>
 const usernameInput = () => getByLabelText( 'WordPress admin username' );
 const passwordInput = () => getByLabelText( 'Password' );
 const backupOption = () => getByRole( 'radio', { name: 'Backup file' } );
-const credentialsOption = () => getByRole( 'radio', { name: 'WordPress credentials' } );
+const credentialsOption = () =>
+	isEnabled( 'automated-migration/application-password' )
+		? getByRole( 'radio', { name: 'WordPress site credentials' } )
+		: getByRole( 'radio', { name: 'WordPress credentials' } );
 const backupFileInput = () => getByLabelText( 'Backup file location' );
 //TODO: it requires a testid because there is no accessible name, it is an issue with the component
 const specialInstructionsInput = () => getByTestId( 'special-instructions-textarea' );
 const specialInstructionsButton = () => getByRole( 'button', { name: 'Special instructions' } );
-const skipButton = () => getByRole( 'button', { name: /I need help, please contact me/ } );
+const skipButton = () => getByRole( 'button', { name: /Let us guide you/ } );
 
 const fillAllFields = async () => {
 	await userEvent.click( credentialsOption() );
@@ -432,7 +435,7 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 	} );
 
-	it( 'shows "Verifying credentials" on the Continue button during submission with application password', async () => {
+	it( 'shows "Scanning site" on the Continue button during submission with application password', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 		const pendingPromise = new Promise( () => {} );
@@ -443,7 +446,7 @@ describe( 'SiteMigrationCredentials', () => {
 		userEvent.click( continueButton() );
 
 		await waitFor( () => {
-			expect( continueButton( /Verifying credentials/ ) ).toBeVisible();
+			expect( continueButton( /Scanning site/ ) ).toBeVisible();
 		} );
 	} );
 
@@ -509,46 +512,6 @@ describe( 'SiteMigrationCredentials', () => {
 		}
 	);
 
-	it( 'shows Continue anyways button and an already on WPCOM', async () => {
-		config.disable( 'automated-migration/application-password' );
-		const submit = jest.fn();
-		render( { navigation: { submit } } );
-		await fillAllFields();
-		await fillNoteField();
-
-		( wp.req.get as jest.Mock ).mockResolvedValue( siteInfoUsingWPCOM );
-
-		( wpcomRequest as jest.Mock ).mockResolvedValue( {
-			status: 200,
-			body: {},
-		} );
-
-		await userEvent.click( continueButton() );
-
-		await waitFor( () => {
-			expect( continueButton( /Continue anyways/ ) ).toBeVisible();
-			expect( getByText( 'Your site is already on WordPress.com.' ) ).toBeVisible();
-		} );
-
-		await userEvent.click( continueButton( /Continue anyways/ ) );
-
-		expect( wpcomRequest ).toHaveBeenCalledWith( {
-			...requestPayload,
-			body: {
-				...requestPayload.body,
-				bypass_verification: true,
-			},
-		} );
-
-		await waitFor( () => {
-			expect( submit ).toHaveBeenCalledWith( {
-				action: 'already-wpcom',
-				from: 'https://site-url.wpcomstating.com',
-				platform: 'wordpress',
-			} );
-		} );
-	} );
-
 	it( 'creates a credentials ticket even when the siteinfo request faces an error', async () => {
 		config.disable( 'automated-migration/application-password' );
 		const submit = jest.fn();
@@ -602,7 +565,7 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 	} );
 
-	it( 'shows "Verifying credentials" on the Continue button during submission when fetching site info with application password', async () => {
+	it( 'shows "Scanning site" on the Continue button during submission when fetching site info with application password', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 		const pendingPromise = new Promise( () => {} );
@@ -618,7 +581,7 @@ describe( 'SiteMigrationCredentials', () => {
 		await userEvent.click( continueButton() );
 
 		await waitFor( () => {
-			expect( continueButton( /Verifying credentials/ ) ).toBeVisible();
+			expect( continueButton( /Scanning site/ ) ).toBeVisible();
 		} );
 	} );
 
@@ -644,7 +607,9 @@ describe( 'SiteMigrationCredentials', () => {
 		render( { navigation: { submit } } );
 		await fillAddressField();
 		( wp.req.get as jest.Mock ).mockResolvedValueOnce( baseSiteInfo );
-		( wp.req.get as jest.Mock ).mockResolvedValueOnce( { application_passwords_enabled: false } );
+		( wp.req.post as jest.Mock ).mockRejectedValueOnce( {
+			code: 'failed_to_get_authorization_path',
+		} );
 		await userEvent.click( continueButton() );
 
 		expect( submit ).toHaveBeenCalledWith( {
@@ -659,7 +624,7 @@ describe( 'SiteMigrationCredentials', () => {
 		render( { navigation: { submit } } );
 		await fillAddressField();
 		( wp.req.get as jest.Mock ).mockResolvedValueOnce( baseSiteInfo );
-		( wp.req.get as jest.Mock ).mockResolvedValueOnce( {
+		( wp.req.post as jest.Mock ).mockResolvedValueOnce( {
 			application_passwords_enabled: true,
 			authorization_url: 'https://site-url.wordpress.com/wp-admin/authorize-application.php',
 		} );
@@ -678,8 +643,23 @@ describe( 'SiteMigrationCredentials', () => {
 		render( { navigation: { submit } } );
 		await fillAddressField();
 		( wp.req.get as jest.Mock ).mockResolvedValue( siteInfoUsingWPCOM );
+		( wpcomRequest as jest.Mock ).mockResolvedValue( {
+			status: 200,
+			body: {},
+		} );
 		await userEvent.click( continueButton() );
 
+		expect( wpcomRequest ).toHaveBeenCalledWith( {
+			path: 'help/migration-ticket/new',
+			apiNamespace: 'wpcom/v2/',
+			apiVersion: '2',
+			method: 'POST',
+			body: {
+				locale: 'en',
+				blog_url: 'site-url.wordpress.com',
+				from_url: 'site-url.com',
+			},
+		} );
 		expect( submit ).toHaveBeenCalledWith( {
 			action: 'already-wpcom',
 			from: 'https://site-url.wpcomstating.com',

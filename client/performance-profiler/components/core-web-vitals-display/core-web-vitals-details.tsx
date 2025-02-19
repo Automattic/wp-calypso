@@ -7,10 +7,10 @@ import {
 } from 'calypso/data/site-profiler/types';
 import { CircularPerformanceScore } from 'calypso/hosting/performance/components/circular-performance-score/circular-performance-score';
 import {
-	metricsNames,
+	getMetricsNames,
 	metricsThresholds,
 	mapThresholdsToStatus,
-	metricValuations,
+	getMetricValuations,
 	displayValue,
 	filterRecommendations,
 } from 'calypso/performance-profiler/utils/metrics';
@@ -41,6 +41,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 		return null;
 	}
 
+	const metricsNames = getMetricsNames( translate );
 	const { name: displayName } = metricsNames[ activeTab ];
 	const value = metrics[ activeTab ];
 
@@ -138,7 +139,7 @@ export const CoreWebVitalsDetails: React.FC< CoreWebVitalsDetailsProps > = ( {
 					/>
 				</div>
 				<p>
-					{ metricValuations[ activeTab ].explanation }
+					{ getMetricValuations( translate )[ activeTab ].explanation }
 					&nbsp;
 					{ isPerformanceScoreSelected ? (
 						<a

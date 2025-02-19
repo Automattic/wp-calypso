@@ -3,10 +3,9 @@ import {
 	getPlanPersonalTitle,
 	getPlanPremiumTitle,
 } from '@automattic/calypso-products';
-import { useSelect } from '@wordpress/data';
-import { useEffect, useState, useMemo } from 'react';
+import { subscribe, useSelect } from '@wordpress/data';
+import { useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
-import useLocation from '../../../hooks/use-location';
 import {
 	currentlyPreviewingTheme,
 	PERSONAL_THEME,
@@ -36,8 +35,21 @@ const getThemeType = ( theme?: Theme ) => {
 const getThemeFeature = ( theme?: Theme ) => theme?.theme_tier?.feature ?? undefined;
 
 export const usePreviewingThemeSlug = () => {
-	const location = useLocation();
-	const previewingThemeSlug = useMemo( () => currentlyPreviewingTheme(), [ location?.search ] );
+	const [ previewingThemeSlug, setPreviewingThemeSlug ] = useState< string | undefined >();
+	const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ), [] );
+
+	useEffect( () => {
+		if ( ! isSiteEditor ) {
+			return;
+		}
+
+		const unsubscribe = subscribe( () => {
+			setPreviewingThemeSlug( currentlyPreviewingTheme() );
+		} );
+
+		return () => unsubscribe();
+	}, [ isSiteEditor ] );
+
 	return previewingThemeSlug;
 };
 

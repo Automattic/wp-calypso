@@ -1,12 +1,12 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import titlecase from 'to-title-case';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { navigate } from 'calypso/lib/navigate';
+import { isRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { sectionify } from 'calypso/lib/route';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { getSiteOption, getSiteUrl, isAdminInterfaceWPAdmin } from 'calypso/state/sites/selectors';
+import { getSiteOption, getSiteUrl } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -30,26 +30,92 @@ export function redirectToJetpackNewsletterSettingsIfNeeded( context, next ) {
 	next();
 }
 
-export function siteSettings( context, next ) {
+/**
+ * Redirects to the general settings page when Remove Duplicate Views experiment is enabled.
+ * Example: /settings/start-site-transfer/:site -> /sites/settings/site/${ context.params.site }/transfer-site
+ * @param {*} context
+ * @param {*} next
+ * @returns
+ */
+export const redirectToolsIfRemoveDuplicateViewsExperimentEnabled = async ( context, next ) => {
+	const { getState, dispatch } = context.store;
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
+
+	if ( isUntangled ) {
+		const slug = context.path.split( '/' )[ 2 ];
+		if ( ! slug ) {
+			return next();
+		}
+		const URL_MAP = {
+			'delete-site': 'delete-site',
+			'start-over': 'reset-site',
+			'start-site-transfer': 'transfer-site',
+		};
+		if ( ! URL_MAP[ slug ] ) {
+			return next();
+		}
+
+		const queryParams = context.querystring ? `?${ context.querystring }` : '';
+		return page.redirect(
+			`/sites/settings/site/${ context.params.site_id }/${ URL_MAP[ slug ] }${ queryParams }`
+		);
+	}
+
+	next();
+};
+
+/**
+ * Redirect /settings to /sites/settings/site when the Remove Duplicate Views experiment is enabled.
+ *
+ * Previously /settings redirected to /settings/general which now redirects to /wp-admin/options-general.php
+ *
+ * This is to maintain previous behavior by providing HE's with a consistent location, `/settings`, to link
+ * to for visibility and site launching options.
+ *
+ * When the experiment is over:
+ * - /settings can always redirect to /sites/settings/site
+ * - /settings/general can always redirect to /wp-admin/options-general.php
+ */
+export const redirectSettingsIfDuplciatedViewsEnabled = async ( context ) => {
+	const { getState, dispatch } = context.store;
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
+
+	if ( isUntangled ) {
+		return page.redirect( `/sites/settings/site` );
+	}
+
+	return page.redirect( '/settings/general' );
+};
+
+/**
+ * Redirect to /settings/general if the Remove Duplicate Views experiment is DISABLED
+ * since /sites/settings/site/:site looks broken for those users.
+ */
+export async function redirectSiteSettingsIfDuplicatedViewsDisabled( context, next ) {
+	const { getState, dispatch } = context.store;
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
+	const siteSlug = getSelectedSiteSlug( getState() );
+
+	if ( ! isUntangled ) {
+		return page.redirect( `/settings/general/${ siteSlug }` );
+	}
+
+	next();
+}
+
+export async function siteSettings( context, next ) {
 	let analyticsPageTitle = 'Site Settings';
 	const basePath = sectionify( context.path );
 	const section = sectionify( context.path ).split( '/' )[ 2 ];
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSelectedSiteSlug( state );
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 
 	// if site loaded, but user cannot manage site, redirect
 	if ( site && ! canManageOptions ) {
 		page.redirect( '/stats' );
 		return;
-	}
-
-	if ( isEnabled( 'untangling/hosting-menu' ) ) {
-		if ( isAdminInterfaceWPAdmin( state, siteId ) ) {
-			return page.redirect( `/sites/settings/site/${ siteSlug }` );
-		}
 	}
 
 	// analytics tracking

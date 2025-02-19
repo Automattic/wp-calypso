@@ -1,0 +1,10 @@
+@import "@automattic/typography/styles/variables";
+
+.help-center-closure-notice {
+	margin-bottom: 1em;
+
+	.components-panel__row {
+		font-size: $font-body-extra-small;
+		line-height: 1.5;
+	}
+}

@@ -87,7 +87,7 @@ const SitePreview = ( {
 	const selectedSiteName = selectedSite ? selectedSite.name : '&nbsp;';
 
 	return (
-		<div className="home-site-preview">
+		<div className="home-site-preview customer-home__card is-full-width">
 			<ThumbnailWrapper showEditSite={ shouldShowEditSite } editSiteURL={ editSiteURL }>
 				{ shouldShowEditSite && (
 					<Button primary className="home-site-preview__thumbnail-label">

@@ -2,6 +2,7 @@ import { type PlanSlug, type WPComPlanStorageFeatureSlug } from '@automattic/cal
 import { AddOns } from '@automattic/data-stores';
 import { usePlansGridContext } from '../../../../grid-context';
 import { ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE } from '../constants';
+import usePurchasedStorageAddOn from './use-purchased-storage-add-on';
 
 type Props = {
 	planSlug: PlanSlug;
@@ -16,14 +17,18 @@ type Props = {
 export default function useDefaultStorageOption( {
 	planSlug,
 }: Props ): AddOns.StorageAddOnSlug | WPComPlanStorageFeatureSlug | undefined {
-	const { siteId, gridPlansIndex } = usePlansGridContext();
+	const { gridPlansIndex } = usePlansGridContext();
 	const {
 		features: { storageFeature },
 	} = gridPlansIndex[ planSlug ];
-	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
-	const purchasedAddOn = storageAddOns?.find( ( storageAddOn ) => storageAddOn?.purchased );
+	const purchasedStorageAddOn = usePurchasedStorageAddOn();
+	const planStorageFeatureSlug = storageFeature?.getSlug() as WPComPlanStorageFeatureSlug;
 
-	return purchasedAddOn && ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug )
-		? ( purchasedAddOn?.addOnSlug as AddOns.StorageAddOnSlug )
-		: ( storageFeature?.getSlug() as WPComPlanStorageFeatureSlug );
+	if ( ! purchasedStorageAddOn ) {
+		return planStorageFeatureSlug;
+	}
+
+	return ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug )
+		? ( purchasedStorageAddOn.addOnSlug as AddOns.StorageAddOnSlug )
+		: planStorageFeatureSlug;
 }

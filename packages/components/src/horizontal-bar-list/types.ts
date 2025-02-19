@@ -32,6 +32,10 @@ export type HorizontalBarListItemProps = {
 	 * @property {boolean} hasNoBackground - don't render the background bar and adjust indentation
 	 */
 	hasNoBackground?: boolean;
+	/**
+	 * @property {Function} formatValue - function to format the value display. Can optionally receive the full item data.
+	 */
+	formatValue?: ( value: number, item?: StatDataObject ) => React.ReactNode;
 };
 
 type StatDataObject = {
@@ -72,9 +76,14 @@ export type StatsCardProps = {
 	 * @property {React.ReactNode} titleNodes - additional nodes to be displayed next to the title - use TitleExtras component for unified resutl.
 	 */
 	titleNodes?: React.ReactNode;
+	/**
+	 * @property {React.ReactNode} downloadCsv - a node to be displayed next to the title - use DownloadCsv component for unified result.
+	 */
+	downloadCsv?: React.ReactNode;
 	footerAction?: {
 		label?: string;
 		url?: string;
+		onClick?: ( event?: React.MouseEvent | React.KeyboardEvent ) => void;
 	};
 	/**
 	 * @property {boolean} isEmpty - renders an empty card with a message (`emptyMessage`) when true. It doesn't render column labels.
@@ -93,6 +102,10 @@ export type StatsCardProps = {
 	 * @property {React.ReactNode} heroElement - a node placed before the list
 	 */
 	heroElement?: React.ReactNode;
+	/**
+	 * @property {boolean} multiHeader - adds a sub-header row, including metric label, after the header containing the name of the card and download csv button
+	 */
+	multiHeader?: boolean;
 	/**
 	 * @property {boolean} splitHeader - instead of using a simple header containing the name of the card use additional columns and header items
 	 */

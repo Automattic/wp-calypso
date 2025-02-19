@@ -43,11 +43,14 @@ const render = ( { flow, queryParams = {} } ) => {
 				flow,
 			} ),
 		{
-			wrapper: ( { children } ) => (
-				<MemoryRouter initialEntries={ [ addQueryArgs( `/setup/${ flow.name }`, queryParams ) ] }>
-					{ children }
-				</MemoryRouter>
-			),
+			wrapper: ( { children } ) => {
+				// The hook depends on window.location.search to determine the query params.
+				Reflect.deleteProperty( global.window, 'location' );
+				window.location = new URL(
+					'https://example.com/' + addQueryArgs( `/setup/${ flow.name }`, queryParams )
+				) as unknown as Location;
+				return <MemoryRouter initialEntries={ [ '/setup' ] }>{ children }</MemoryRouter>;
+			},
 		}
 	);
 };
@@ -88,7 +91,9 @@ describe( 'useSignUpTracking', () => {
 				flow: {
 					...signUpFlow,
 					useTracksEventProps: () => ( {
-						[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: { extra: 'props' },
+						eventsProperties: {
+							[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: { extra: 'props' },
+						},
 					} ),
 				} satisfies Flow,
 				queryParams: { ref: 'another-flow-or-cta' },
@@ -136,7 +141,9 @@ describe( 'useSignUpTracking', () => {
 				flow: {
 					...signUpFlow,
 					useTracksEventProps: () => ( {
-						[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: { extra: 'props' },
+						eventsProperties: {
+							[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: { extra: 'props' },
+						},
 					} ),
 				} satisfies Flow,
 			} );

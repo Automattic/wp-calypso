@@ -15,9 +15,7 @@
 			color: var(--color-text-inverted);
 		}
 
-		svg path[fill],
-		svg path[fill-rule],
-		svg path[fill-opacity] {
+		svg path {
 			fill: var(--color-text-inverted);
 		}
 
@@ -29,12 +27,11 @@
 	}
 }
 
-.site-subscriptions-manager {
+body.is-section-reader .layout.is-section-reader .site-subscriptions-manager {
 	&.main {
 		max-width: 1168px;
 		min-height: 100vh;
 		margin: 0 auto;
-		padding: 0 32px;
 
 		@media (max-width: $break-small) {
 			padding: 0 16px;
@@ -142,6 +139,10 @@ hr.subscriptions__separator {
 			&.email-me-new-comments-toggle {
 				margin-bottom: 16px;
 			}
+		}
+
+		.delivery-frequency-input__control {
+			max-width: 100%;
 		}
 	}
 

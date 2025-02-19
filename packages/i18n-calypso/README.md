@@ -205,9 +205,15 @@ const content3 = i18n.translate( 'post', {
 
 See the [test cases](test/test.jsx) for more example usage.
 
-## numberFormat Method
+## numberFormat Method (and variants)
 
 The numberFormat method is also available to format numbers using the loaded locale settings (i.e., locale-specific thousands and decimal separators). You pass in the number (integer or float) and (optionally) the number of decimal places you want (or an options object), and a string is returned with the proper formatting for the currently-loaded locale. You can also override the locale settings for a particular number if necessary by expanding the second argument into an object with the attributes you want to override.
+
+### Variants
+
+The following variants exist:
+
+- `numberFormatCompact` will format and localise a number using compact notation with 1 decimal point e.g. 1K, 1.5M, etc. It works identical to `numberFormat` (same number and order of arguments).
 
 ### Examples
 
@@ -216,12 +222,32 @@ The numberFormat method is also available to format numbers using the loaded loc
 // locale-formatted numbers
 i18n.numberFormat( 2500.25 ); // '2.500'
 i18n.numberFormat( 2500.1, 2 ); // '2.500,10'
-i18n.numberFormat( 2500.33, { decimals: 3, thousandsSep: '*', decPoint: '@' } ); // '2*500@330'
+i18n.numberFormat( 2500.33, { decimals: 3 } ); // '2.500,330'
+```
+
+## fixMe Method
+
+Using the method `fixMe` you can apply a translation (`newCopy` parameter) only when a certain text has been translated or the locale is English (`en`, `en-gb`), otherwise apply the fallback translation (`oldCopy` parameter). This is a common pattern in the codebase for new translations that we need to ship straight away, and the function is meant to save a few inline conditions.
+
+Important: Due to the way our string extraction mechanism works, always pass `i18n.translate( '...' )` for `newCopy` parameter as otherwise the new string will not be picked up for translation.
+
+### Usage
+
+```js
+const i18n = require( 'i18n-calypso' );
+
+i18n.fixMe( {
+	text: 'new copy',
+	newCopy: i18n.translate( 'new copy' ),
+	oldCopy: i18n.translate( 'old copy' ),
+} );
 ```
 
 ## hasTranslation Method
 
 Using the method `hasTranslation` you can check whether a translation for a given string exists. As the `translate()` function will always return screen text that can be displayed (will supply the source text if no translation exists), it is unsuitable to determine whether text is translated. Other factors are optional [key hashing](#key-hashing) as well as purposeful translation to the source text.
+
+Important: For most current usages in Calypso, where we conditionally render a new copy when a translation exists (otherwise a fallback), it's best to use `fixMe` method instead (above). It encapsulates a few of the conditions that would otherwise be necessary.
 
 ### Usage
 

@@ -1,8 +1,8 @@
 import { Button } from '@wordpress/components';
 import { Operator } from '@wordpress/dataviews';
-import { Icon, plugins } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { PLUGINS_STATUS } from 'calypso/state/plugins/installed/status/constants';
@@ -12,7 +12,8 @@ import PluginActionStatus from '../plugin-management-v2/plugin-action-status';
 
 export function useFields(
 	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void,
-	toggleDialogForPlugin: ( plugin: Plugin | null ) => void
+	openPluginSitesPane: ( plugin: Plugin ) => void,
+	isListView: boolean
 ) {
 	const dispatch = useDispatch();
 
@@ -47,51 +48,34 @@ export function useFields(
 				enableSorting: false,
 			},
 			{
+				id: 'icon',
+				label: translate( 'Icon' ),
+				render: ( { item }: { item: Plugin } ) => (
+					<PluginIcon className="plugin-icon" image={ item.icon } size={ isListView ? 52 : 35 } />
+				),
+				enableHiding: false,
+				enableSorting: false,
+			},
+			{
 				id: 'plugins',
 				label: translate( 'Installed Plugins' ),
 				getValue: ( { item }: { item: Plugin } ) => item.name,
 				enableGlobalSearch: true,
 				render: ( { item }: { item: Plugin } ) => {
-					const trackPluginNameClick = () => {
-						dispatch(
-							recordTracksEvent( 'calypso_plugins_manage_list_plugin_name_click', {
-								plugin_slug: item.slug,
-							} )
-						);
-					};
-
 					let pluginActionStatus = null;
 
 					if ( item.allStatuses?.length ) {
 						pluginActionStatus = (
-							<Button
-								className="sites-manage-plugin-status-button"
-								onClick={ () => {
-									trackPluginNameClick();
-									toggleDialogForPlugin( item );
-								} }
-							>
-								<PluginActionStatus
-									currentSiteStatuses={ item.allStatuses }
-									selectedSite={ undefined }
-								/>
-							</Button>
+							<PluginActionStatus
+								currentSiteStatuses={ item.allStatuses }
+								selectedSite={ undefined }
+							/>
 						);
 					}
 
 					return (
 						<>
-							<Button
-								onClick={ () => {
-									trackPluginNameClick();
-									toggleDialogForPlugin( item );
-								} }
-								className="plugin-name-button"
-							>
-								{ item.icon && <img className="plugin-icon" alt={ item.name } src={ item.icon } /> }
-								{ ! item.icon && <Icon size={ 32 } icon={ plugins } className="plugin-icon" /> }
-								{ item.name }
-							</Button>
+							{ item.name }
 							{ pluginActionStatus }
 						</>
 					);
@@ -119,10 +103,11 @@ export function useFields(
 									} )
 								);
 
-								toggleDialogForPlugin( item );
+								openPluginSitesPane( item );
 							} }
 						>
 							{ numberOfSites }
+							{ isListView && ( numberOfSites > 1 ? translate( ' sites' ) : translate( ' site' ) ) }
 						</Button>
 					);
 				},
@@ -163,7 +148,8 @@ export function useFields(
 				},
 			},
 		],
-		[ bulkActionDialog, toggleDialogForPlugin ]
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[ bulkActionDialog, openPluginSitesPane, isListView ]
 	);
 
 	return fields;

@@ -1,9 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useEffect, createInterpolateElement } from '@wordpress/element';
+import { useEffect, createInterpolateElement, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useSearchParams } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { usePostByUrl } from '../hooks';
+import { useHelpCenterArticleScroll } from '../hooks/use-help-center-article-scroll';
 import { useHelpCenterArticleTabComponent } from '../hooks/use-help-center-article-tab-component';
 import { BackToTopButton } from './back-to-top-button';
 import ArticleContent from './help-center-article-content';
@@ -16,9 +17,18 @@ export const HelpCenterArticle = () => {
 	const postUrl = searchParams.get( 'link' ) || '';
 	const query = searchParams.get( 'query' );
 
+	const elementRef = useRef< HTMLDivElement | null >( null );
+	const scrollParentRef = useRef< HTMLElement | null >( null );
+
+	useEffect( () => {
+		if ( elementRef.current ) {
+			scrollParentRef.current = elementRef.current?.closest( '.help-center__container-content' );
+		}
+	}, [ elementRef ] );
+
 	const { data: post, isLoading, error } = usePostByUrl( postUrl );
 	useHelpCenterArticleTabComponent( post?.content );
-
+	useHelpCenterArticleScroll( post?.ID, scrollParentRef );
 	useEffect( () => {
 		//If a url includes an anchor, let's scroll this into view!
 		if ( postUrl?.includes( '#' ) && post?.content ) {
@@ -55,7 +65,7 @@ export const HelpCenterArticle = () => {
 	}, [ post, query, sectionName ] );
 
 	return (
-		<div className="help-center-article">
+		<div className="help-center-article" ref={ elementRef }>
 			{ ! error && <ArticleContent post={ post } isLoading={ isLoading } /> }
 			{ ! isLoading && error && (
 				<p className="help-center-article__error">

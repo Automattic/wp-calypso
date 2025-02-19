@@ -16,6 +16,7 @@ import EnvironmentBadge, {
 } from 'calypso/components/environment-badge';
 import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import Loading from 'calypso/components/loading';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import WordPressLogo from 'calypso/components/wordpress-logo';
@@ -60,7 +61,6 @@ class Document extends Component {
 			query,
 			reactQueryDevtoolsHelper,
 			renderedLayout,
-			requestFrom,
 			sectionGroup,
 			sectionName,
 			storeSandboxHelper,
@@ -95,9 +95,6 @@ class Document extends Component {
 			( params && params.hasOwnProperty( 'lang' )
 				? `var localeFromRoute = ${ jsonStringifyForHtml( params.lang ?? '' ) };\n`
 				: '' );
-
-		const isJetpackWooCommerceFlow =
-			'jetpack-connect' === sectionName && 'woocommerce-onboarding' === requestFrom;
 
 		const isJetpackWooDnaFlow = 'jetpack-connect' === sectionName && isWooDna;
 
@@ -146,6 +143,9 @@ class Document extends Component {
 					) ) }
 					{ chunkCssLinks( entrypoint, isRTL ) }
 					{ chunkCssLinks( chunkFiles, isRTL ) }
+					{ chunkFiles.js.map( ( chunk ) => (
+						<link key={ chunk } rel="preload" as="script" href={ chunk } />
+					) ) }
 				</Head>
 				<body
 					className={ clsx( {
@@ -174,12 +174,15 @@ class Document extends Component {
 								className={ clsx( 'layout', {
 									[ 'is-group-' + sectionGroup ]: sectionGroup,
 									[ 'is-section-' + sectionName ]: sectionName,
-									'is-jetpack-woocommerce-flow': isJetpackWooCommerceFlow,
 									'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
 								} ) }
 							>
 								<div className="layout__content">
-									<LoadingLogo size={ 72 } className="wpcom-site__logo" />
+									{ sectionName === 'checkout' || sectionName === 'stepper' ? (
+										<Loading className="wpcom-loading__boot" />
+									) : (
+										<LoadingLogo size={ 72 } className="wpcom-site__logo" />
+									) }
 								</div>
 							</div>
 						</div>
@@ -243,13 +246,6 @@ class Document extends Component {
 					{ entrypoint.js.map( ( asset ) => (
 						<script key={ asset } src={ asset } />
 					) ) }
-
-					{ chunkFiles.js.map( ( chunk ) => (
-						<script key={ chunk } src={ chunk } />
-					) ) }
-					<script nonce={ inlineScriptNonce } type="text/javascript">
-						window.AppBoot();
-					</script>
 					<script
 						nonce={ inlineScriptNonce }
 						dangerouslySetInnerHTML={ {

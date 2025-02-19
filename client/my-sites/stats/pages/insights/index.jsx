@@ -2,19 +2,20 @@ import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { STATS_FEATURE_PAGE_INSIGHTS } from 'calypso/my-sites/stats/constants';
+import { STATS_FEATURE_PAGE_INSIGHTS, STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import StatsModuleComments from 'calypso/my-sites/stats/features/modules/stats-comments';
 import StatShares from 'calypso/my-sites/stats/features/modules/stats-shares';
 import StatsModuleTags from 'calypso/my-sites/stats/features/modules/stats-tags';
 import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
+import { useSelector } from 'calypso/state';
 import { STATS_PLAN_USAGE_RECEIVE } from 'calypso/state/action-types';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -25,10 +26,13 @@ import PostingActivity from '../../sections/posting-activity-section';
 import StatsModule from '../../stats-module';
 import PageViewTracker from '../../stats-page-view-tracker';
 import statsStrings from '../../stats-strings';
-import StatsUpsell from '../../stats-upsell';
+import StatsUpsell from '../../stats-upsell/insights-upsell';
+import StatsModuleListing from '../shared/stats-module-listing';
 
-const StatsInsights = ( props ) => {
-	const { siteId, siteSlug, isOdysseyStats, isJetpack } = props;
+function StatsInsights() {
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state, siteId ) );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const translate = useTranslate();
 	const moduleStrings = statsStrings();
 	const isEmptyStateV2 = config.isEnabled( 'stats/empty-module-v2' );
@@ -49,17 +53,6 @@ const StatsInsights = ( props ) => {
 	const shouldGateInsights = useShouldGateStats( STATS_FEATURE_PAGE_INSIGHTS );
 	const shouldRendeUpsell = config.isEnabled( 'stats/paid-wpcom-v3' ) && shouldGateInsights;
 
-	const statsModuleListClass = clsx(
-		'stats__module-list--insights',
-		'stats__module--unified',
-		'stats__module-list',
-		'stats__flexible-grid-container',
-		{
-			'is-odyssey-stats': isOdysseyStats,
-			'is-jetpack': isJetpack,
-		}
-	);
-
 	// Track the last viewed tab.
 	// Necessary to properly configure the fixed navigation headers.
 	sessionStorage.setItem( 'jp-stats-last-tab', 'insights' );
@@ -68,20 +61,20 @@ const StatsInsights = ( props ) => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Main fullWidthLayout>
-			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
+			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<PageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
 			<div className="stats">
 				<NavigationHeader
 					className="stats__section-header modernized-header"
-					title={ translate( 'Jetpack Stats' ) }
+					title={ STATS_PRODUCT_NAME }
 					subtitle={ translate( "View your site's performance and learn from trends." ) }
 					screenReader={ navItems.insights?.label }
 					navigationItems={ [] }
 				></NavigationHeader>
 				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
 				{ shouldRendeUpsell ? (
-					<div id="my-stats-content" class="stats-content">
-						<StatsUpsell />
+					<div id="my-stats-content" className="stats-content">
+						<StatsUpsell siteId={ siteId } />
 					</div>
 				) : (
 					<>
@@ -89,7 +82,7 @@ const StatsInsights = ( props ) => {
 						<AllTimeHighlightsSection siteId={ siteId } siteSlug={ siteSlug } />
 						<PostingActivity siteId={ siteId } />
 						<AllTimeViewsSection siteId={ siteId } slug={ siteSlug } />
-						<div className={ statsModuleListClass }>
+						<StatsModuleListing className="stats__module-list--insights" siteId={ siteId }>
 							{ isEmptyStateV2 && (
 								<StatsModuleTags
 									moduleStrings={ moduleStrings.tags }
@@ -140,7 +133,7 @@ const StatsInsights = ( props ) => {
 									) }
 								/>
 							) }
-						</div>
+						</StatsModuleListing>
 						<JetpackColophon />
 					</>
 				) }
@@ -148,17 +141,6 @@ const StatsInsights = ( props ) => {
 		</Main>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
-};
+}
 
-const connectComponent = connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	return {
-		siteId,
-		siteSlug: getSelectedSiteSlug( state, siteId ),
-		isOdysseyStats,
-		isJetpack: isJetpackSite( state, siteId ),
-	};
-} );
-
-export default connectComponent( StatsInsights );
+export default StatsInsights;

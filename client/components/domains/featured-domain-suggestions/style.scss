@@ -79,6 +79,7 @@
 		flex-grow: 1;
 		margin-top: 0;
 		flex-wrap: wrap;
+		min-height: 95px;
 		.domain-registration-suggestion__title-info {
 			width: 100%;
 		}
@@ -224,7 +225,6 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 	}
 
 	.button.domain-suggestion__action {
-		font-weight: 500;
 		padding: 0.57em 1.17em;
 		border-radius: 4px;
 		font-size: 0.875rem;

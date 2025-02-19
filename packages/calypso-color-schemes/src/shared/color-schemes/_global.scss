@@ -13,7 +13,7 @@ WPCom Global theme, Modern theme adjusted for use in calypso non site contexts
 	--theme-icon-color: #ece6f6; /* Direct from wp-admin */
 	--theme-highlight-color: #3858e9; /* Direct from wp-admin */
 	--theme-highlight-color-rgb: 56, 88, 233; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
-	--theme-notification-color: #3858e9; /* Direct from wp-admin */
+	--theme-notification-color: var(--studio-wordpress-blue-20);
 
 	/* Theme highlight monochromatic palette */
 	--theme-highlight-color-0: #d5dffa;

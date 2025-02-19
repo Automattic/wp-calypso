@@ -1,0 +1,21 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+.product-card__revenue-share-notice {
+	@include body-medium;
+
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	gap: 4px;
+	margin-block-start: 16px;
+
+	svg {
+		flex-shrink: 0;
+	}
+
+	a {
+		text-decoration: underline;
+		color: var(--color-text);
+	}
+}

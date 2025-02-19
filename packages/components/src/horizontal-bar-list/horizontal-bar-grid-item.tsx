@@ -1,9 +1,8 @@
 import { decodeEntities } from '@wordpress/html-entities';
 import { Icon, chevronDown, chevronUp, tag, file } from '@wordpress/icons';
 import clsx from 'clsx';
-import { numberFormat } from 'i18n-calypso';
+import { numberFormat, numberFormatCompact } from 'i18n-calypso';
 import React, { Fragment, useState } from 'react';
-import ShortenedNumber from '../number-formatters';
 import type { HorizontalBarListItemProps } from './types';
 
 import './style.scss';
@@ -28,6 +27,7 @@ const HorizontalBarListItem = ( {
 	usePlainCard,
 	isLinkUnderlined,
 	hasNoBackground,
+	formatValue,
 }: HorizontalBarListItemProps ) => {
 	const { label, value, shortLabel, children: itemChildren } = data;
 	const fillPercentage = maxValue > 0 ? ( value / maxValue ) * 100 : 0;
@@ -103,6 +103,18 @@ const HorizontalBarListItem = ( {
 		</span>
 	);
 
+	const renderValue = () => {
+		if ( useShortNumber ) {
+			return <span>{ numberFormatCompact( value ) }</span>;
+		}
+
+		if ( formatValue ) {
+			return formatValue( value, data );
+		}
+
+		return usePlainCard ? value : numberFormat( value, { decimals: 0 } );
+	};
+
 	return (
 		<>
 			<li
@@ -157,11 +169,7 @@ const HorizontalBarListItem = ( {
 						<div className={ `${ BASE_CLASS_NAME }-item--additional` }>{ additionalColumns }</div>
 					) }
 				</div>
-				<div className="value">
-					{ usePlainCard ? value : null }
-					{ ! usePlainCard &&
-						( ! useShortNumber ? numberFormat( value, 0 ) : <ShortenedNumber value={ value } /> ) }
-				</div>
+				<div className="value">{ renderValue() }</div>
 			</li>
 			{ itemChildren && open && (
 				<li>
@@ -186,6 +194,7 @@ const HorizontalBarListItem = ( {
 									isStatic={ isStatic }
 									usePlainCard={ usePlainCard }
 									isLinkUnderlined={ isLinkUnderlined }
+									formatValue={ formatValue }
 								/>
 							);
 						} ) }

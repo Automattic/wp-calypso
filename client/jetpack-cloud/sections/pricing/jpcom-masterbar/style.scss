@@ -5,6 +5,11 @@
  * Some overwrites are necessary to make both this and Jetpack.com headers look
  * similar.
  */
+
+$duration: 0.1s;
+$delay-ratio: 1.5;
+$delay: 0.055s;
+
 .is-group-jetpack-cloud.is-section-jetpack-cloud-pricing .jpcom-masterbar,
 .is-group-jetpack-cloud.is-section-jetpack-cloud-features-comparison .jpcom-masterbar {
 	// ============================================================================
@@ -735,6 +740,24 @@
 		animation-name: submenu-item;
 		animation-duration: 0.25s;
 		animation-timing-function: ease-in-out;
+
+		@for $column from 1 through 5 {
+			&:nth-of-type(#{$column}) {
+				animation-delay: calc(
+					calc(#{$delay} * #{$column}) + calc(#{$duration} / #{$delay-ratio})
+				);
+
+				@for $i from 1 through 6 {
+					.header__submenu-links-list > li:nth-of-type(#{$i}) > a,
+					.header__submenu-links-list > li:nth-of-type(#{$i}) > p {
+						animation-delay: calc(
+							calc(#{$delay} * #{$i + 1 + $column}) +
+								calc(#{$duration} / #{$delay-ratio})
+						);
+					}
+				}
+			}
+		}
 	}
 	@media (prefers-reduced-motion) {
 		.header__submenu-categories-list > li {
@@ -771,86 +794,6 @@
 		.header__submenu-links-list > li .header__submenu-link {
 			animation: none;
 		}
-	}
-
-	// FIRST MEGAMENU CATEGORY
-	.header__submenu-categories-list > li:nth-of-type(1) {
-		animation-delay: calc(calc(0.055s * 1) + calc(0.1s / 1.5));
-	}
-	.header__submenu-categories-list > li:nth-of-type(1)
-	.header__submenu-links-list > li:nth-of-type(1) > a {
-		animation-delay: calc(calc(0.055s * 3) + calc(0.1s / 1.5));
-	}
-	.header__submenu-categories-list > li:nth-of-type(1)
-	.header__submenu-links-list > li:nth-of-type(2) > a {
-		animation-delay: calc(calc(0.055s * 4) + calc(0.1s / 1.5));
-	}
-	.header__submenu-categories-list > li:nth-of-type(1)
-	.header__submenu-links-list > li:nth-of-type(3) > a {
-		animation-delay: calc(calc(0.055s * 5) + calc(0.1s / 1.5));
-	}
-
-	// SECOND MEGAMENU CATEGORY
-	.header__submenu-categories-list > li:nth-of-type(2) {
-		animation-delay: calc(calc(0.055s * 2) + calc(0.1s / 1.5));
-	}
-	.header__submenu-categories-list > li:nth-of-type(2)
-	.header__submenu-links-list > li:nth-of-type(1) > a {
-		animation-delay: calc(calc(0.055s * 4) + calc(0.1s / 1.5));
-	}
-	.header__submenu-categories-list > li:nth-of-type(2)
-	.header__submenu-links-list > li:nth-of-type(2) > a {
-		animation-delay: calc(calc(0.055s * 5) + calc(0.1s / 1.5));
-	}
-	.header__submenu-categories-list > li:nth-of-type(2)
-	.header__submenu-links-list > li:nth-of-type(3) > a {
-		animation-delay: calc(calc(0.055s * 6) + calc(0.1s / 1.5));
-	}
-
-	// THIRD MEGAMENU CATEGORY
-	.header__submenu-categories-list > li:nth-of-type(3) {
-		animation-delay: calc(calc(0.055s * 3) + calc(0.1s / 1.5));
-	}
-	.header__submenu-categories-list > li:nth-of-type(3)
-	.header__submenu-links-list > li:nth-of-type(1) > a {
-		animation-delay: calc(calc(0.055s * 5) + calc(0.1s / 1.5));
-	}
-	.header__submenu-categories-list > li:nth-of-type(3)
-	.header__submenu-links-list > li:nth-of-type(2) > a {
-		animation-delay: calc(calc(0.055s * 6) + calc(0.1s / 1.5));
-	}
-	.header__submenu-categories-list > li:nth-of-type(3)
-	.header__submenu-links-list > li:nth-of-type(3) > a {
-		animation-delay: calc(calc(0.055s * 7) + calc(0.1s / 1.5));
-	}
-	.header__submenu-categories-list > li:nth-of-type(3)
-	.header__submenu-links-list > li:nth-of-type(4) > a {
-		animation-delay: calc(calc(0.055s * 8) + calc(0.1s / 1.5));
-	}
-	.header__submenu-categories-list > li:nth-of-type(3)
-	.header__submenu-links-list > li:nth-of-type(5) > a {
-		animation-delay: calc(calc(0.055s * 9) + calc(0.1s / 1.5));
-	}
-	.header__submenu-categories-list > li:nth-of-type(3)
-	.header__submenu-links-list > li:nth-of-type(6) > a {
-		animation-delay: calc(calc(0.055s * 10) + calc(0.1s / 1.5));
-	}
-
-	// FOURTH MEGAMENU CATEGORY
-	.header__submenu-categories-list > li:nth-of-type(4) {
-		animation-delay: calc(calc(0.055s * 3) + calc(0.1s / 1.5));
-	}
-	.header__submenu-categories-list > li:nth-of-type(4)
-	.header__submenu-links-list > li:nth-of-type(1) > p {
-		animation-delay: calc(calc(0.055s * 6) + calc(0.1s / 1.5));
-	}
-	.header__submenu-categories-list > li:nth-of-type(4)
-	.header__submenu-links-list > li:nth-of-type(2) > a {
-		animation-delay: calc(calc(0.055s * 7) + calc(0.1s / 1.5));
-	}
-	.header__submenu-categories-list > li:nth-of-type(4)
-	.header__submenu-links-list > li:nth-of-type(3) > a {
-		animation-delay: calc(calc(0.055s * 8) + calc(0.1s / 1.5));
 	}
 
 	.header__submenu-bundles {
@@ -899,18 +842,19 @@
 		}
 
 		> li {
+			@for $row from 1 through 3 {
+				&:nth-of-type(#{$row}) {
+					animation-delay: calc(
+						calc(#{$delay} * #{$row}) + calc(#{$duration} / #{$delay-ratio})
+					);
+				}
+			}
 			margin: 0;
 
 			animation-fill-mode: backwards;
 			animation-name: submenu-item;
 			animation-duration: 0.25s;
 			animation-timing-function: ease-in-out;
-			&:nth-of-type(1) {
-				animation-delay: calc(calc(0.055s * 4) + calc(0.1s / 1.5));
-			}
-			&:nth-of-type(2) {
-				animation-delay: calc(calc(0.055s * 5) + calc(0.1s / 1.5));
-			}
 
 			@media (prefers-reduced-motion) {
 				animation-duration: 0;

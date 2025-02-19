@@ -1,0 +1,84 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+.product-listing-section__content,
+.product-listing-section__header {
+	max-width: 1500px;
+	margin-inline: auto;
+	padding-inline: 16px;
+
+	@include break-medium {
+		padding-inline: 64px;
+	}
+}
+
+.product-listing-section__header-wrapper {
+	background-color: var( --color-surface );
+	padding-block: 32px;
+}
+
+.product-listing-section__header {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 10px;
+
+	@include break-medium {
+		flex-wrap: wrap;
+	}
+}
+
+.product-listing-section__header-title {
+	@include heading-x-large;
+}
+
+.product-listing-section__header-subtitle {
+	@include body-medium;
+
+	color: var(--color-neutral-60);
+	display: none;
+
+	@include break-medium {
+		display: block;
+	}
+}
+
+.product-listing-section__content {
+	display: grid;
+	gap: 16px;
+	grid-template-columns: 1fr;
+	margin-block-end: 32px;
+
+	@include break-large {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	@include break-huge {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+.product-listing-empty {
+	margin-inline: auto;
+	text-align: center;
+	padding: 32px;
+}
+
+.product-listing-empty__message {
+	text-align: center;
+	padding: 16px;
+	border-radius: 4px;
+	max-width: 800px;
+	margin: 64px auto 0;
+}
+
+.product-listing-empty__message-heading {
+	@include heading-large;
+}
+
+.product-listing-empty__message-description {
+	@include body-medium;
+
+	color: var(--color-neutral-50);
+}

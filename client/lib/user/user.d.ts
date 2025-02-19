@@ -14,6 +14,7 @@ export type UserData = { ID: number } & Partial< OptionalUserData >;
 export type OptionalUserData = {
 	abtests: Record< string, string >;
 	avatar_URL: string;
+	bio: string;
 	date: string;
 	description: string;
 	display_name: string;
@@ -38,9 +39,11 @@ export type OptionalUserData = {
 	has_jetpack_partner_access?: boolean;
 	jetpack_partner_types?: string[];
 	social_login_connections: unknown;
+	user_login: string;
 	user_ip_country_code: string;
 	user_URL: string;
 	username: string;
+	profile_URL: string;
 	visible_site_count: number;
 	jetpack_visible_site_count?: number;
 	atomic_visible_site_count?: number;

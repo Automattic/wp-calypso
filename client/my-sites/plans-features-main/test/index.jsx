@@ -50,6 +50,8 @@ jest.mock( '../hooks/experiments/use-longer-plan-term-default-experiment', () =>
 	isLoadingExperiment: false,
 } ) );
 
+jest.mock( '../hooks/use-eligibility-for-term-savings-price-display', () => () => false );
+
 import {
 	PLAN_FREE,
 	PLAN_BUSINESS_MONTHLY,

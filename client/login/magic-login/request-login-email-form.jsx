@@ -1,6 +1,4 @@
 import { FormLabel } from '@automattic/components';
-import { englishLocales } from '@automattic/i18n-utils';
-import { hasTranslation } from '@wordpress/i18n';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -132,21 +130,14 @@ class RequestLoginEmailForm extends Component {
 	}
 
 	getSubHeaderText() {
-		const { translate, locale, subHeaderText } = this.props;
+		const { translate, subHeaderText } = this.props;
 		const siteName = this.state.site?.name;
 
 		if ( subHeaderText ) {
 			return subHeaderText;
 		}
 
-		// If we have a siteName and new translation is available
-		if (
-			siteName &&
-			( englishLocales.includes( locale ) ||
-				hasTranslation(
-					'We’ll send you an email with a login link that will log you in right away to {site name}.'
-				) )
-		) {
+		if ( siteName ) {
 			return translate(
 				'We’ll send you an email with a login link that will log you in right away to %(siteName)s.',
 				{
@@ -157,19 +148,8 @@ class RequestLoginEmailForm extends Component {
 			);
 		}
 
-		// If no siteName but new translation is available
-		if (
-			englishLocales.includes( locale ) ||
-			hasTranslation( 'We’ll send you an email with a login link that will log you in right away.' )
-		) {
-			return translate(
-				'We’ll send you an email with a login link that will log you in right away.'
-			);
-		}
-
-		// Fallback is old text
 		return translate(
-			'Get a link sent to the email address associated with your account to log in instantly without your password.'
+			'We’ll send you an email with a login link that will log you in right away.'
 		);
 	}
 
@@ -187,7 +167,6 @@ class RequestLoginEmailForm extends Component {
 			hideSubHeaderText,
 			inputPlaceholder,
 			submitButtonLabel,
-			locale,
 			customFormLabel,
 			onSubmitEmail,
 			errorMessage,
@@ -223,16 +202,11 @@ class RequestLoginEmailForm extends Component {
 				? requestError
 				: translate( 'Unable to complete request' );
 
-		const buttonLabel =
-			englishLocales.includes( locale ) || hasTranslation( 'Send Link' )
-				? translate( 'Send link' )
-				: translate( 'Get Link' );
+		const buttonLabel = translate( 'Send link' );
 
-		const formLabel =
-			customFormLabel ||
-			( hasTranslation( 'Email address or username' )
-				? this.props.translate( 'Email address or username' )
-				: this.props.translate( 'Email Address or Username' ) );
+		const formLabel = customFormLabel
+			? this.props.translate( 'Email address or username' )
+			: this.props.translate( 'Email Address or Username' );
 
 		const onSubmit = onSubmitEmail
 			? ( e ) => onSubmitEmail( this.getUsernameOrEmailFromState(), e )

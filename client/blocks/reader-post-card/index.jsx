@@ -7,8 +7,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
-import DailyPostButton from 'calypso/blocks/daily-post-button';
-import { isDailyPostChallengeOrPrompt } from 'calypso/blocks/daily-post-button/helper';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import CompactPostCard from 'calypso/blocks/reader-post-card/compact';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
@@ -161,9 +159,9 @@ class ReaderPostCard extends Component {
 		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY ) && ! compact;
 		const isVideo = !! ( post.display_type & DisplayTypes.FEATURED_VIDEO ) && ! compact;
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
-		const isConversations = currentRoute.startsWith( '/read/conversations' );
+		const isConversations = currentRoute.startsWith( '/reader/conversations' );
 
-		const isReaderSearchPage = new RegExp( `^(/${ localeRegexString })?/read/search` ).test(
+		const isReaderSearchPage = new RegExp( `^(/${ localeRegexString })?/reader/search` ).test(
 			currentRoute
 		);
 
@@ -266,9 +264,6 @@ class ReaderPostCard extends Component {
 					site={ site }
 					postKey={ postKey }
 				>
-					{ isDailyPostChallengeOrPrompt( post ) && site && (
-						<DailyPostButton post={ post } site={ site } />
-					) }
 					{ readerPostActions }
 				</StandardPost>
 			);

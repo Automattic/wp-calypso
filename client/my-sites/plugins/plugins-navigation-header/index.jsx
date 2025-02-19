@@ -13,6 +13,7 @@ import { useLocalizedPlugins, useServerEffect } from 'calypso/my-sites/plugins/u
 import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { appendBreadcrumb, resetBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -83,6 +84,7 @@ const ManageButton = ( {
 const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category, search } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const selectedSite = useSelector( getSelectedSite );
 
@@ -170,9 +172,10 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 			className="plugins-navigation-header"
 			compactBreadcrumb={ isMobile }
 			ref={ navigationHeaderRef }
-			title={ translate( 'Plugins {{wbr}}{{/wbr}}marketplace', {
+			title={ translate( 'Plugins {{wbr}}{{/wbr}}Marketplace', {
 				components: { wbr: <wbr /> },
 			} ) }
+			loggedIn={ isLoggedIn }
 		>
 			<ManageButton
 				shouldShowManageButton={ shouldShowManageButton }

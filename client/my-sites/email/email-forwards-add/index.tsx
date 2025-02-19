@@ -31,12 +31,16 @@ import './style.scss';
 type EmailForwardsAddProps = {
 	selectedDomainName: string;
 	source?: string;
+	showFormHeader?: boolean;
+	showPageHeader?: boolean;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = (): void => {};
-
-const EmailForwardsAdd = ( { selectedDomainName, source }: EmailForwardsAddProps ) => {
+const EmailForwardsAdd = ( {
+	selectedDomainName,
+	source,
+	showFormHeader = false,
+	showPageHeader = true,
+}: EmailForwardsAddProps ) => {
 	const currentRoute = useSelector( getCurrentRoute );
 	const selectedSite = useSelector( getSelectedSite );
 
@@ -53,7 +57,8 @@ const EmailForwardsAdd = ( { selectedDomainName, source }: EmailForwardsAddProps
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
 	const selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
 	const cannotAddEmailWarningReason = getCurrentUserCannotAddEmailReason( selectedDomain );
-	const isGravatarDomain = cannotAddEmailWarningReason?.code === EMAIL_WARNING_CODE_GRAVATAR_DOMAIN;
+	const isGravatarRestrictedDomain =
+		cannotAddEmailWarningReason?.code === EMAIL_WARNING_CODE_GRAVATAR_DOMAIN;
 
 	const goToEmail = useCallback( (): void => {
 		if ( ! selectedSite ) {
@@ -76,7 +81,7 @@ const EmailForwardsAdd = ( { selectedDomainName, source }: EmailForwardsAddProps
 		page( getEmailManagementPath( selectedSite.slug, selectedDomainName, currentRoute ) );
 	}, [ currentRoute, selectedDomainName, selectedSite ] );
 
-	const content = isGravatarDomain ? (
+	const content = isGravatarRestrictedDomain ? (
 		<Notice showDismiss={ false } className="email-forwards-add__notice">
 			{ translate(
 				'This domain is associated with a Gravatar profile and cannot be used for email services at this time.'
@@ -95,33 +100,37 @@ const EmailForwardsAdd = ( { selectedDomainName, source }: EmailForwardsAddProps
 			{ ! areDomainsLoading && (
 				<EmailForwardingAddNewCompactList
 					onAddedEmailForwards={ onAddedEmailForwards }
-					onBeforeAddEmailForwards={ noop }
 					selectedDomainName={ selectedDomainName }
+					showFormHeader={ showFormHeader }
 				/>
 			) }
 		</Card>
 	);
 
 	return (
-		<div className="email-forwards-add">
+		<>
 			<QueryProductsList />
 
 			{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
-			<Main wideLayout>
+			<Main wideLayout className="email-forwards-add">
 				<DocumentHead title={ translate( 'Add New Email Forwards' ) } />
 
-				<EmailHeader />
+				{ showPageHeader && (
+					<>
+						<EmailHeader />
 
-				<HeaderCake onClick={ goToEmail }>
-					{ translate( 'Email Forwarding' ) + ': ' + selectedDomainName }
-				</HeaderCake>
+						<HeaderCake onClick={ goToEmail }>
+							{ translate( 'Email Forwarding' ) + ': ' + selectedDomainName }
+						</HeaderCake>
 
-				<SectionHeader label={ translate( 'Add New Email Forwards' ) } />
+						<SectionHeader label={ translate( 'Add New Email Forwards' ) } />
+					</>
+				) }
 
 				{ content }
 			</Main>
-		</div>
+		</>
 	);
 };
 

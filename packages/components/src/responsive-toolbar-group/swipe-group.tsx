@@ -1,6 +1,6 @@
 import { ToolbarGroup, ToolbarButton as BaseToolbarButton } from '@wordpress/components';
 import clsx from 'clsx';
-import { ReactNode, useState, useRef, useEffect } from 'react';
+import { ReactNode, useState, useRef, useEffect, useMemo } from 'react';
 import type { Button } from '@wordpress/components';
 
 import './style.scss';
@@ -15,22 +15,36 @@ export default function SwipeGroup( {
 	className = '',
 	onClick = () => null,
 	initialActiveIndex = -1,
+	initialActiveIndexes,
+	isMultiSelection,
 	hrefList = [],
 }: {
 	children: ReactNode[];
 	className?: string;
 	onClick?: ( index: number ) => void;
 	initialActiveIndex?: number;
+	initialActiveIndexes?: number[];
+	isMultiSelection?: boolean;
 	hrefList?: string[];
 } ) {
 	const classes = clsx( 'responsive-toolbar-group__swipe', className );
 
-	const [ activeIndex, setActiveIndex ] = useState< number >( initialActiveIndex );
+	const defaultActiveIndexes = useMemo( () => {
+		if ( isMultiSelection ) {
+			return initialActiveIndexes || [];
+		}
+
+		return initialActiveIndex !== -1 ? [ initialActiveIndex ] : [];
+	}, [ isMultiSelection, initialActiveIndex, initialActiveIndexes ] );
+
+	const [ activeIndexes, setActiveIndexes ] = useState< Set< number > >(
+		new Set( defaultActiveIndexes )
+	);
 
 	// Set active on prop change from above
 	useEffect( () => {
-		setActiveIndex( initialActiveIndex );
-	}, [ initialActiveIndex ] );
+		setActiveIndexes( new Set( defaultActiveIndexes ) );
+	}, [ defaultActiveIndexes ] );
 	const ref = useRef< HTMLAnchorElement >( null );
 
 	// Scroll to category on load
@@ -40,12 +54,12 @@ export default function SwipeGroup( {
 		}
 	}, [] );
 
-	// Scroll to the beginning when activeIndex changes to 0. This indicates a state reset.
+	// Scroll to the beginning when activeIndexes changes to 0. This indicates a state reset.
 	useEffect( () => {
-		if ( ref.current && activeIndex === 0 ) {
+		if ( ref.current ) {
 			ref.current.scrollIntoView( { block: 'end', inline: 'center' } );
 		}
-	}, [ activeIndex ] );
+	}, [ activeIndexes ] );
 
 	return (
 		<div className={ classes }>
@@ -54,11 +68,23 @@ export default function SwipeGroup( {
 					<ToolbarButton
 						key={ `button-item-${ index }` }
 						id={ `button-item-${ index }` }
-						isActive={ activeIndex === index }
+						isActive={ activeIndexes.has( index ) }
 						href={ hrefList[ index ] }
-						ref={ activeIndex === index ? ref : null }
+						ref={ activeIndexes.has( index ) ? ref : null }
 						onClick={ ( event: React.MouseEvent ) => {
-							setActiveIndex( index );
+							setActiveIndexes( ( currentActiveIndexes: Set< number > ) => {
+								if ( ! isMultiSelection ) {
+									return new Set( [ index ] );
+								}
+
+								if ( ! currentActiveIndexes.has( index ) ) {
+									currentActiveIndexes.add( index );
+								} else if ( currentActiveIndexes.size > 1 ) {
+									currentActiveIndexes.delete( index );
+								}
+
+								return currentActiveIndexes;
+							} );
 							onClick( index );
 
 							if ( typeof hrefList[ index ] === 'string' ) {

@@ -24,6 +24,7 @@ export interface HelpCenterSite {
 	ID: number | string;
 	name: string;
 	URL: string;
+	domain: string;
 	plan: Plan;
 	is_wpcom_atomic: boolean;
 	jetpack: boolean;
@@ -45,3 +46,7 @@ export interface APIFetchOptions {
 }
 
 export type HelpCenterSelect = SelectFromMap< typeof selectors >;
+
+export interface HelpCenterOptions {
+	hideBackButton?: boolean;
+}

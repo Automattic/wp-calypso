@@ -53,7 +53,6 @@ export function toggleReaderSidebarFollowing() {
  * @returns The action object to dispatch.
  */
 export function selectSidebarRecentSite( { feedId } ) {
-	// @holdercp TODO: Determine if tracking is needed here
 	return {
 		type: READER_SIDEBAR_SELECT_RECENT_SITE,
 		feedId,

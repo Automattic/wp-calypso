@@ -45,12 +45,8 @@ function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null )
 			'0.16.0-alpha',
 			isOdysseyStats
 		),
-		supportsUTMStats:
-			// UTM stats are only available for Jetpack sites for now.
-			isSiteJetpackNotAtomic && ( ! isOdysseyStats || !! statsAdminVersion ),
-		supportsDevicesStats:
-			// UTM stats are only available for Jetpack sites for now.
-			isSiteJetpackNotAtomic && ( ! isOdysseyStats || !! statsAdminVersion ),
+		supportsUTMStats: ! isOdysseyStats || !! statsAdminVersion,
+		supportsDevicesStats: ! isOdysseyStats || !! statsAdminVersion,
 		supportsOnDemandCommercialClassification: version_greater_than_or_equal(
 			statsAdminVersion,
 			'0.18.0-alpha',
@@ -59,6 +55,11 @@ function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null )
 		supportUserFeedback: version_greater_than_or_equal(
 			statsAdminVersion,
 			'0.22.0',
+			isOdysseyStats
+		),
+		supportsLocationsStats: version_greater_than_or_equal(
+			statsAdminVersion,
+			'0.24.0',
 			isOdysseyStats
 		),
 		shouldUseStatsBuiltInPurchasesApi: version_greater_than_or_equal(

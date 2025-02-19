@@ -1,4 +1,4 @@
-import { AI_ASSEMBLER_FLOW, START_WRITING_FLOW } from '@automattic/onboarding';
+import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { getDomainUpSellTask } from '../';
 import { buildSiteDetails, buildTask } from '../../../test/lib/fixtures';
 import { type TaskContext } from '../../../types';
@@ -29,17 +29,6 @@ describe( 'getDesignEditedTask', () => {
 			useCalypsoPath: true,
 			calypso_path:
 				'/setup/start-writing/domains?siteId=211078228&flowToReturnTo=start-writing&new=site.wordpress.com&domainAndPlanPackage=true',
-		} );
-	} );
-
-	it( 'use the setup domain page when the flow is site assembler onboarding', () => {
-		const site = buildSiteDetails( { name: 'site.wordpress.com' } );
-		const context = buildContext( { site } );
-
-		expect( getDomainUpSellTask( task, AI_ASSEMBLER_FLOW, context ) ).toMatchObject( {
-			useCalypsoPath: true,
-			calypso_path:
-				'/setup/ai-assembler/domains?siteId=211078228&flowToReturnTo=ai-assembler&new=site.wordpress.com&domainAndPlanPackage=true',
 		} );
 	} );
 

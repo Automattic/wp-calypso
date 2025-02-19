@@ -8,6 +8,7 @@ export type Locale = string;
 export const i18nDefaultLocaleSlug: Locale = 'en';
 export const localesWithBlog: Locale[] = [ 'en', 'ja', 'es', 'pt', 'fr', 'pt-br' ];
 export const localesWithGoBlog: Locale[] = [ 'en', 'pt-br', 'de', 'es', 'fr', 'it' ];
+export const localesWithWpcomDeveloperSite: Locale[] = [ 'en', 'es' ];
 export const localesWithPrivacyPolicy: Locale[] = [ 'en', 'fr', 'de', 'es' ];
 export const localesWithCookiePolicy: Locale[] = [ 'en', 'fr', 'de', 'es' ];
 export const localesWithLearn: Locale[] = [ 'en', 'es' ];

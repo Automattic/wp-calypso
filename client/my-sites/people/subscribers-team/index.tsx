@@ -62,7 +62,7 @@ function SubscribersTeam( props: Props ) {
 				navigationItems={ [] }
 				title={ translate( 'Users' ) }
 				subtitle={ translate(
-					'Invite team members to your site and manage their access settings. {{learnMore}}Learn more{{/learnMore}}.',
+					'Invite team members to your site and manage their access settings. {{learnMore}}Learn more{{/learnMore}}',
 					{
 						components: {
 							learnMore: (

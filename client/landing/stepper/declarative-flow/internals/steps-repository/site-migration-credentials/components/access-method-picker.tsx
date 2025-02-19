@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
@@ -7,6 +8,10 @@ import { CredentialsFormFieldProps } from '../types';
 
 export const AccessMethodPicker: FC< CredentialsFormFieldProps > = ( { control } ) => {
 	const translate = useTranslate();
+	const applicationPasswordEnabled = isEnabled( 'automated-migration/application-password' );
+	const credentialsLabel = applicationPasswordEnabled
+		? translate( 'WordPress site credentials' )
+		: translate( 'WordPress credentials' );
 
 	return (
 		<div>
@@ -20,7 +25,7 @@ export const AccessMethodPicker: FC< CredentialsFormFieldProps > = ( { control }
 						<FormRadio
 							id="site-migration-credentials__radio-credentials"
 							htmlFor="site-migration-credentials__radio-credentials"
-							label={ translate( 'WordPress credentials' ) }
+							label={ credentialsLabel }
 							checked={ value === 'credentials' }
 							{ ...props }
 							value="credentials"

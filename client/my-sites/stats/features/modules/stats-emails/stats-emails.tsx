@@ -3,7 +3,7 @@ import { StatsCard } from '@automattic/components';
 import { mail } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { numberFormat, useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
@@ -19,6 +19,13 @@ import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import { StatsEmptyActionEmail } from '../shared';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
+import {
+	TooltipWrapper,
+	OpensTooltipContent,
+	ClicksTooltipContent,
+	hasUniqueMetrics,
+	EmailStatsItem,
+} from './tooltips';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
 const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
@@ -74,15 +81,57 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 					}
 					additionalColumns={ {
 						header: <span>{ translate( 'Opens' ) }</span>,
-						body: ( item: { opens: number } ) => <span>{ item.opens }</span>,
+						body: ( item: EmailStatsItem ) => {
+							const opensUnique = parseInt( String( item.unique_opens ), 10 );
+							const opens = parseInt( String( item.opens ), 10 );
+							const hasUniques = hasUniqueMetrics( opensUnique, opens );
+							return (
+								<TooltipWrapper
+									value={
+										hasUniques
+											? `${ numberFormat( item.opens_rate, {
+													numberFormatOptions: {
+														maximumFractionDigits: 2,
+													},
+											  } ) }%`
+											: '—'
+									}
+									item={ item }
+									TooltipContent={ OpensTooltipContent }
+								/>
+							);
+						},
 					} }
 					moduleStrings={ moduleStrings }
 					period={ period }
 					query={ query }
 					statType={ statType }
-					mainItemLabel={ translate( 'Latest Emails' ) }
+					mainItemLabel={ translate( 'Latest emails' ) }
 					metricLabel={ translate( 'Clicks' ) }
-					showSummaryLink
+					valueField="clicks_rate"
+					formatValue={ ( value: number, item: EmailStatsItem ) => {
+						if ( ! item?.opens ) {
+							return value;
+						}
+						const clicksUnique = parseInt( String( item.unique_clicks ), 10 );
+						const clicks = parseInt( String( item.clicks ), 10 );
+						const hasUniques = hasUniqueMetrics( clicksUnique, clicks );
+						return (
+							<TooltipWrapper
+								value={
+									hasUniques
+										? `${ numberFormat( item.clicks_rate, {
+												numberFormatOptions: {
+													maximumFractionDigits: 2,
+												},
+										  } ) }%`
+										: '—'
+								}
+								item={ item }
+								TooltipContent={ ClicksTooltipContent }
+							/>
+						);
+					} }
 					className={ className }
 					hasNoBackground
 					skipQuery

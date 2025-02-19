@@ -5,6 +5,7 @@ import { PartialDomainData } from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import clsx from 'clsx';
 import { PrimaryDomainLabel } from '../primary-domain-label';
 import { useDomainRow } from '../use-domain-row';
 import { canBulkUpdate } from '../utils/can-bulk-update';
@@ -49,7 +50,17 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		sslStatus,
 		hasWpcomManagedSslCert,
 	} = useDomainRow( domain );
-	const { canSelectAnyDomains, domainsTableColumns, isCompact } = useDomainsTable();
+	const {
+		context,
+		canSelectAnyDomains,
+		domainsTableColumns,
+		isCompact,
+		currentlySelectedDomainName,
+		selectedFeature,
+		isHostingOverview,
+		hasConnectableSites,
+		sidebarMode,
+	} = useDomainsTable();
 
 	const renderSiteCell = () => {
 		if ( site && currentDomainData ) {
@@ -57,7 +68,9 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 				<DomainsTableSiteCell
 					site={ site }
 					siteSlug={ siteSlug }
+					domainName={ domain.domain }
 					userCanAddSiteToDomain={ userCanAddSiteToDomain }
+					hasConnectableSites={ hasConnectableSites }
 				/>
 			);
 		}
@@ -72,8 +85,16 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 	const domainTypeText =
 		currentDomainData && getDomainTypeText( currentDomainData, __, domainInfoContext.DOMAIN_ROW );
 
+	const isAllDomainManagementEnabled = config.isEnabled( 'calypso/all-domain-management' );
+
 	const domainManagementLink = isManageableDomain
-		? getDomainManagementLink( domain, siteSlug, isAllSitesView )
+		? getDomainManagementLink(
+				domain,
+				siteSlug,
+				isAllSitesView,
+				selectedFeature,
+				isHostingOverview
+		  )
 		: '';
 
 	const renderOwnerCell = () => {
@@ -90,21 +111,30 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		return currentDomainData.owner.replace( / \((?!.*\().+\)$/, '' );
 	};
 
-	const handleSelect = () => {
-		const isAllDomainManagementEnabled = config.isEnabled( 'calypso/all-domain-management' );
+	const handleSelect = (): void => {
+		if ( isAllDomainManagementEnabled && ( isHostingOverview || isAllSitesView ) ) {
+			if ( canSelectAnyDomains && canBulkUpdate( domain ) ) {
+				return handleSelectDomain( domain );
+			}
+			if ( sidebarMode ) {
+				return page.show( domainManagementLink );
+			}
 
-		if ( isAllDomainManagementEnabled && isAllSitesView ) {
-			page.show( domainManagementLink );
 			return;
 		}
 
 		window.location.href = domainManagementLink;
 	};
 
+	const handleDomainLinkClick = ( e: MouseEvent ) =>
+		isAllDomainManagementEnabled ? undefined : e.stopPropagation();
+
 	return (
 		<tr
 			key={ domain.domain }
-			className="domains-table__row"
+			className={ clsx( 'domains-table__row', {
+				'is-selected': currentlySelectedDomainName === domain.domain,
+			} ) }
 			onClick={ domainManagementLink ? handleSelect : undefined }
 		>
 			{ canSelectAnyDomains && (
@@ -140,7 +170,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 								<a
 									className="domains-table__domain-name"
 									href={ domainManagementLink }
-									onClick={ ( e: MouseEvent ) => e.stopPropagation() }
+									onClick={ handleDomainLinkClick }
 								>
 									{ domain.domain }
 								</a>
@@ -204,7 +234,11 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 				if ( column.name === 'email' ) {
 					return (
 						<td key={ domain.domain + column.name }>
-							<DomainsTableEmailIndicator domain={ domain } siteSlug={ siteSlug } />
+							<DomainsTableEmailIndicator
+								domain={ domain }
+								siteSlug={ siteSlug }
+								context={ context }
+							/>
 						</td>
 					);
 				}
@@ -239,6 +273,8 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 									}
 									isSiteOnFreePlan={ site?.plan?.is_free ?? true }
 									isSimpleSite={ ! site?.is_wpcom_atomic }
+									isHostingOverview={ isHostingOverview }
+									context={ context }
 								/>
 							) }
 						</td>

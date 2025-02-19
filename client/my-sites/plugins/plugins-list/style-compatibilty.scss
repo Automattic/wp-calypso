@@ -56,24 +56,3 @@
 	flex-flow: row wrap;
 	padding: 0;
 }
-
-.is-section-jetpack-cloud-plugin-management {
-	overflow: hidden;
-
-	.plugin-management-wrapper {
-		height: auto;
-	}
-
-	.layout__primary {
-		height: auto;
-	}
-	
-    .layout__content {
-		height: 100%;
-		overflow: auto;
-    }
-
-	.plugins__top-container-jc {
-        padding-left: 50px;
-    }
-}

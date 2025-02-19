@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { renderHookWithProvider } from '../../../../test-helpers/testing-library';
 import { STEPS } from '../internals/steps';
 import siteSetupFlow from '../site-setup-flow';
 import { getFlowLocation, renderFlow } from './helpers';
@@ -10,7 +11,7 @@ const originalLocation = window.location;
 describe( 'Site Setup Flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
-			value: { assign: jest.fn() },
+			value: { assign: jest.fn(), pathname: '' },
 		} );
 	} );
 
@@ -27,9 +28,9 @@ describe( 'Site Setup Flow', () => {
 	 * It's totally fine to change this test if the flow changes. But please make sure to update and test the site-setup-wg accordingly.
 	 */
 	describe( 'First steps should be goals and intent capture', () => {
-		const steps = siteSetupFlow.useSteps();
-		const firstStep = steps[ 0 ];
-		const secondStep = steps[ 1 ];
+		const { result } = renderHookWithProvider( () => siteSetupFlow.useSteps() );
+		const firstStep = result.current[ 0 ];
+		const secondStep = result.current[ 1 ];
 
 		it( 'should be goals', () => {
 			expect( firstStep.slug ).toBe( STEPS.GOALS.slug );

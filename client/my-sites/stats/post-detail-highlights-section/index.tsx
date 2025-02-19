@@ -1,13 +1,17 @@
-import { Card, Count, PostStatsCard } from '@automattic/components';
+import { Card, Count } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
+import PostStatsCard from 'calypso/components/post-stats-card';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { isSimpleSite } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getPostStat } from 'calypso/state/stats/posts/selectors';
 import StatsDetailsNavigation from '../stats-details-navigation';
 import PostLikes from '../stats-post-likes';
+import { truncateWithLimit, getProcessedText } from '../text-utils';
 
 import './style.scss';
 
@@ -18,25 +22,16 @@ type PostThumbnail = {
 
 type Post = {
 	date: string | null;
+	dont_email_post_to_subs: boolean | null;
 	title: string;
 	type: string | null;
 	like_count: number | null;
 	post_thumbnail: PostThumbnail | null;
 	comment_count: number | null;
+	url: string | null;
 };
 
 const POST_STATS_CARD_TITLE_LIMIT = 48;
-
-// Use ellipsis when characters count over the limit
-const textTruncator = ( text: string, limit = 48 ) => {
-	if ( ! text ) {
-		return '';
-	}
-
-	const truncatedText = text.substring( 0, limit );
-
-	return `${ truncatedText }${ text.length > limit ? '...' : '' } `;
-};
 
 export default function PostDetailHighlightsSection( {
 	siteId,
@@ -55,22 +50,33 @@ export default function PostDetailHighlightsSection( {
 	const postData = {
 		date: post?.date,
 		post_thumbnail: post?.post_thumbnail?.URL || null,
-		title: decodeEntities( stripHTML( textTruncator( post?.title, POST_STATS_CARD_TITLE_LIMIT ) ) ),
+		title: truncateWithLimit( getProcessedText( post?.title ), POST_STATS_CARD_TITLE_LIMIT ),
 	};
+
 	const { supportsEmailStats } = useSelector( ( state ) =>
 		getEnvStatsFeatureSupportChecks( state, siteId )
 	);
 
+	const isSimple = useSelector( isSimpleSite );
+
+	const isSubscriptionsModuleActive =
+		useSelector( ( state ) => isJetpackModuleActive( state, siteId, 'subscriptions' ) ) ?? false;
+
+	const subscriptionsEnabled = isSimple || isSubscriptionsModuleActive;
+
 	// postId > 0: Show the tabs for posts except for the Home Page (postId = 0).
-	// TODO: remove the (post?.date && new Date(post?.date) >= new Date("2023-05-30")) check when the Newsletter Stats data is backfilled.
 	const isEmailTabsAvailable =
+		subscriptionsEnabled &&
 		postId > 0 &&
+		! post?.dont_email_post_to_subs &&
 		post?.date &&
+		// The Newsletter Stats data was never backfilled (internal ref pdDOJh-1Uy-p2).
 		new Date( post?.date ) >= new Date( '2023-05-30' ) &&
 		supportsEmailStats;
 
 	return (
 		<>
+			{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 			{ isEmailTabsAvailable && (
 				<div className="stats-navigation stats-navigation--modernized">
 					<StatsDetailsNavigation postId={ postId } givenSiteId={ siteId } />
@@ -95,6 +101,7 @@ export default function PostDetailHighlightsSection( {
 							viewCount={ viewCount }
 							commentCount={ post?.comment_count || 0 }
 							locale={ userLocale }
+							titleLink={ post?.url || undefined }
 						/>
 
 						<Card className="highlight-card">

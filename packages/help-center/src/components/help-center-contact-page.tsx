@@ -4,14 +4,14 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getPlan } from '@automattic/calypso-products';
-import { Spinner, GMClosureNotice } from '@automattic/components';
+import { Spinner } from '@automattic/components';
 import { HelpCenterSite } from '@automattic/data-stores';
 import { getLanguage, useIsEnglishLocale, useLocale } from '@automattic/i18n-utils';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data';
 import { useLoadZendeskMessaging } from '@automattic/zendesk-client';
 import { Button } from '@wordpress/components';
 import { useEffect, useMemo, useState } from '@wordpress/element';
-import { hasTranslation, sprintf } from '@wordpress/i18n';
+import { sprintf } from '@wordpress/i18n';
 import { backup, comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
@@ -24,6 +24,7 @@ import { EMAIL_SUPPORT_LOCALES } from '../constants';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useChatStatus, useShouldRenderEmailOption, useStillNeedHelpURL } from '../hooks';
 import { Mail } from '../icons';
+import { HelpCenterClosureNotice } from './help-center-closure-notice';
 import HelpCenterContactSupportOption from './help-center-contact-support-option';
 import { HelpCenterActiveTicketNotice } from './help-center-notice';
 import { generateContactOnClickEvent } from './utils';
@@ -61,7 +62,6 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 		supportActivity,
 	} = useChatStatus();
 	useLoadZendeskMessaging(
-		'zendesk_support_chat_key',
 		isEligibleForChat || hasActiveChats,
 		isEligibleForChat || hasActiveChats
 	);
@@ -94,7 +94,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 
 		if ( isLanguageSupported ) {
 			const language = getLanguage( locale )?.name;
-			return language && hasTranslation( 'Email (%s)' )
+			return language
 				? sprintf(
 						// translators: %s is the language name
 						__( 'Email (%s)', __i18n_text_domain__ ),
@@ -103,11 +103,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 				: __( 'Email', __i18n_text_domain__ );
 		}
 
-		if ( hasTranslation( 'Email (English)' ) ) {
-			return __( 'Email (English)', __i18n_text_domain__ );
-		}
-
-		return __( 'Email', __i18n_text_domain__ );
+		return __( 'Email (English)', __i18n_text_domain__ );
 	}, [ __, locale, isEnglishLocale ] );
 
 	if ( isLoading ) {
@@ -159,7 +155,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 					<h3>{ __( 'Contact our WordPress.com experts', __i18n_text_domain__ ) }</h3>
 				) }
 				{ supportActivity && <HelpCenterActiveTicketNotice tickets={ supportActivity } /> }
-				<GMClosureNotice
+				<HelpCenterClosureNotice
 					displayAt="2023-12-26 00:00Z"
 					closesAt="2023-12-31 00:00Z"
 					reopensAt="2024-01-02 07:00Z"
@@ -248,33 +244,21 @@ const HelpCenterFooterButton = ( {
 };
 
 export const HelpCenterContactButton: FC = () => {
-	const { shouldUseHelpCenterExperience } = useHelpCenterContext();
 	const { canConnectToZendesk } = useHelpCenterContext();
 	const { __ } = useI18n();
 	const { data: supportInteractionsResolved } = useGetSupportInteractions(
 		'zendesk',
 		100,
-		'resolved',
-		undefined,
-		shouldUseHelpCenterExperience
+		'resolved'
 	);
-	const { data: supportInteractionsOpen } = useGetSupportInteractions(
-		'zendesk',
-		10,
-		'open',
-		undefined,
-		shouldUseHelpCenterExperience
-	);
+	const { data: supportInteractionsOpen } = useGetSupportInteractions( 'zendesk', 10, 'open' );
 
 	const supportInteractions = [
 		...( supportInteractionsResolved || [] ),
 		...( supportInteractionsOpen || [] ),
 	];
 
-	return shouldUseHelpCenterExperience &&
-		canConnectToZendesk &&
-		supportInteractions &&
-		supportInteractions?.length > 0 ? (
+	return canConnectToZendesk && supportInteractions && supportInteractions?.length > 0 ? (
 		<>
 			<HelpCenterFooterButton
 				icon={ comment }

@@ -250,10 +250,8 @@ body.is-section-stepper .domains__step-content,
 .onboarding {
 	&.domains {
 		&.step-route {
-			padding: 48px 0 0;
-			@include break-mobile {
-				padding: 48px 12px 0 12px;
-			}
+			padding: 60px 12px 0 12px;
+
 			.step-container {
 				.step-container__header {
 					margin: 36px 0 24px 0;
@@ -456,10 +454,6 @@ body.is-section-signup.is-white-signup {
 			transform: scaleX(-1);
 		}
 
-		.search-component__icon-navigation.components-button:focus:not(:disabled) {
-			box-shadow: 0 0 0 1px var(--color-primary);
-		}
-
 		.search-component__icon-search {
 			fill: #a7aaad;
 			margin: 8px 6px 8px 8px;
@@ -486,8 +480,7 @@ body.is-section-signup.is-white-signup {
 		}
 
 		.button {
-			&:hover,
-			&:focus {
+			&:hover {
 				box-shadow: none;
 			}
 

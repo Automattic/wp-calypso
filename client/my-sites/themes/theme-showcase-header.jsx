@@ -7,7 +7,6 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import InstallThemeButton from './install-theme-button';
-import PatternAssemblerButton from './pattern-assembler-button';
 import useThemeShowcaseDescription from './use-theme-showcase-description';
 import useThemeShowcaseLoggedOutSeoContent from './use-theme-showcase-logged-out-seo-content';
 import useThemeShowcaseTitle from './use-theme-showcase-title';
@@ -19,8 +18,6 @@ export default function ThemeShowcaseHeader( {
 	vertical,
 	isCollectionView = false,
 	noIndex = false,
-	onPatternAssemblerButtonClick,
-	isSiteWooExpressOrEcomFreeTrial = false,
 	isSiteECommerceFreeTrial = false,
 } ) {
 	// eslint-disable-next-line no-shadow
@@ -98,9 +95,6 @@ export default function ThemeShowcaseHeader( {
 						) }
 					>
 						{ showInstallThemeButton && <InstallThemeButton /> }
-						{ isLoggedIn && ! isSiteWooExpressOrEcomFreeTrial && (
-							<PatternAssemblerButton isPrimary onClick={ onPatternAssemblerButtonClick } />
-						) }
 					</NavigationHeader>
 				</div>
 			) : (

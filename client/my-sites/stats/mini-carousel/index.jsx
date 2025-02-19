@@ -1,18 +1,15 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { PLAN_PREMIUM, getPlan, isFreePlan, isPersonalPlan } from '@automattic/calypso-products';
 import { DotPager } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import rocketImage from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import YoastLogo from 'calypso/assets/images/icons/yoast-logo.svg';
-import GoogleAnalyticsLogo from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
 import writePost from 'calypso/assets/images/onboarding/site-options.svg';
 import BlazeLogo from 'calypso/components/blaze-logo';
 import { useHasNeverPublishedPost } from 'calypso/data/stats/use-has-never-published-post';
 import { PromoteWidgetStatus, usePromoteWidget } from 'calypso/lib/promote-post';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSiteOption, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import MiniCarouselBlock from './mini-carousel-block';
@@ -31,9 +28,6 @@ const EVENT_PRIVATE_SITE_BANNER_DISMISS = 'calypso_stats_private_site_banner_dis
 const EVENT_NO_CONTENT_BANNER_VIEW = 'calypso_stats_no_content_banner_view';
 const EVENT_NO_CONTENT_BANNER_CLICK = 'calypso_stats_no_content_banner_click';
 const EVENT_NO_CONTENT_BANNER_DISMISS = 'calypso_stats_no_content_banner_dismiss';
-const EVENT_GOOGLE_ANALYTICS_BANNER_VIEW = 'calypso_stats_google_analytics_banner_view';
-const EVENT_GOOGLE_ANALYTICS_BANNER_CLICK = 'calypso_stats_google_analytics_banner_click';
-const EVENT_GOOGLE_ANALYTICS_BANNER_DISMISS = 'calypso_stats_google_analytics_banner_dismiss';
 
 const MiniCarousel = ( { slug, isSitePrivate } ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
@@ -49,10 +43,6 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 	const isSimpleClassic = useSelector( ( state ) =>
 		getSiteOption( state, selectedSiteId, 'is_wpcom_simple' )
 	);
-
-	const currentPlanSlug = useSelector( ( state ) =>
-		getCurrentPlan( state, selectedSiteId )
-	)?.productSlug;
 
 	// Keep a replica of the pager index state.
 	// TODO: Figure out an approach that doesn't require replicating state value from DotPager.
@@ -82,26 +72,14 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 		! jetpackNonAtomic &&
 		! isSimpleClassic;
 
-	const showGoogleAnalyticsPromo =
-		! useSelector( isBlockDismissed( EVENT_GOOGLE_ANALYTICS_BANNER_DISMISS ) ) &&
-		! jetpackNonAtomic &&
-		( isFreePlan( currentPlanSlug ) || isPersonalPlan( currentPlanSlug ) );
-
 	const viewEvents = useMemo( () => {
 		const events = [];
 		isSitePrivate && events.push( EVENT_PRIVATE_SITE_BANNER_VIEW );
 		showWriteAPostBanner && events.push( EVENT_NO_CONTENT_BANNER_VIEW );
 		showBlazePromo && events.push( EVENT_TRAFFIC_BLAZE_PROMO_VIEW );
 		showYoastPromo && events.push( EVENT_YOAST_PROMO_VIEW );
-		showGoogleAnalyticsPromo && events.push( EVENT_GOOGLE_ANALYTICS_BANNER_VIEW );
 		return events;
-	}, [
-		isSitePrivate,
-		showWriteAPostBanner,
-		showBlazePromo,
-		showYoastPromo,
-		showGoogleAnalyticsPromo,
-	] );
+	}, [ isSitePrivate, showWriteAPostBanner, showBlazePromo, showYoastPromo ] );
 
 	// In case of Odyssey Stats, ensure that we return the absolute URL for redirect.
 	const getCalypsoUrl = ( href ) => {
@@ -189,30 +167,6 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 				ctaText={ translate( 'Get Yoast' ) }
 				href={ getCalypsoUrl( `/plugins/wordpress-seo-premium/${ slug || '' }` ) }
 				key="yoast"
-			/>
-		);
-	}
-
-	if ( showGoogleAnalyticsPromo ) {
-		const premiumPlanName = getPlan( PLAN_PREMIUM )?.getTitle() ?? '';
-		blocks.push(
-			<MiniCarouselBlock
-				clickEvent={ EVENT_GOOGLE_ANALYTICS_BANNER_CLICK }
-				dismissEvent={ EVENT_GOOGLE_ANALYTICS_BANNER_DISMISS }
-				image={ <img src={ GoogleAnalyticsLogo } alt="" width={ 45 } height={ 45 } /> }
-				headerText={ translate( 'Connect your site to Google Analytics' ) }
-				contentText={ translate(
-					'Linking Google Analytics to your account is effortless with our %(premiumPlanName)s plan – no coding required. Gain valuable insights in seconds.',
-					{
-						args: { premiumPlanName },
-					}
-				) }
-				ctaText={
-					// Translators: %(plan) is the name of a plan, e.g. "Explorer" or "Premium"
-					translate( 'Get %(plan)s', { args: { plan: premiumPlanName } } )
-				}
-				href={ getCalypsoUrl( `/checkout/premium/${ slug || '' }` ) }
-				key="google-analytics"
 			/>
 		);
 	}

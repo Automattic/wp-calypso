@@ -17,13 +17,11 @@
 		}
 	}
 
-	.components-button {
-		&:focus:not(:disabled):not(.is-primary) {
-			box-shadow: 0 0 0 2px var(--color-link, #3858e9);
-		}
+	.components-button.is-link {
+		padding: 0 4px;
+		text-decoration: none;
 
-		&.is-link {
-			text-decoration: none;
+		&:not(:disabled) {
 			color: var(--color-link, #3858e9);
 		}
 	}

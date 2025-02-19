@@ -142,6 +142,11 @@
 .has-blank-canvas {
 	overscroll-behavior: none;
 	touch-action: none;
+
+	.global-notices {
+		// we need to show the global notices above the blank canvas
+		z-index: z-index( "root", ".masterbar" ) + 1;
+	}
 }
 .has-blank-canvas .layout {
 	max-height: 100vh;

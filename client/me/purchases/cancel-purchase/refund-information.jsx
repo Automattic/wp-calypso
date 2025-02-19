@@ -13,7 +13,11 @@ import {
 } from 'calypso/lib/purchases';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 
-const CancelPurchaseRefundInformation = ( { purchase, isGravatarDomain, isJetpackPurchase } ) => {
+const CancelPurchaseRefundInformation = ( {
+	purchase,
+	isGravatarRestrictedDomain,
+	isJetpackPurchase,
+} ) => {
 	const { refundPeriodInDays } = purchase;
 	let text;
 
@@ -93,7 +97,7 @@ const CancelPurchaseRefundInformation = ( { purchase, isGravatarDomain, isJetpac
 			),
 		];
 
-		if ( isGravatarDomain ) {
+		if ( isGravatarRestrictedDomain ) {
 			text.push(
 				i18n.translate(
 					'This domain is provided at no cost for the first year for use with your Gravatar profile. This offer is limited to one free domain per user. If you cancel this domain, you will have to pay the standard price to register another domain for your Gravatar profile.'
@@ -145,6 +149,6 @@ export default connect( ( state, props ) => {
 	const selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
 
 	return {
-		isGravatarDomain: selectedDomain?.isGravatarDomain,
+		isGravatarRestrictedDomain: selectedDomain?.isGravatarRestrictedDomain,
 	};
 } )( CancelPurchaseRefundInformation );

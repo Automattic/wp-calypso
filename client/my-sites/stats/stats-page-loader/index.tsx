@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
+import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
 import { STATS_PLAN_USAGE_RECEIVE } from 'calypso/state/action-types';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
@@ -39,11 +40,12 @@ const EnableStatsModuleNotice = ( { siteId, path }: { siteId: number; path: stri
 			line={
 				<p>
 					{ translate(
-						'Enable Jetpack Stats to see detailed information about your traffic, likes, comments, and subscribers.'
+						'Enable %(product)s to see detailed information about your traffic, likes, comments, and subscribers.',
+						{ args: { product: STATS_PRODUCT_NAME } }
 					) }
 				</p>
 			}
-			action={ translate( 'Enable Jetpack Stats' ) }
+			action={ translate( 'Enable %(product)s', { args: { product: STATS_PRODUCT_NAME } } ) }
 			actionCallback={ () => enableJetpackStatsModule( siteId, path ) }
 		/>
 	);

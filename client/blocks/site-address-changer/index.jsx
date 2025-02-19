@@ -462,9 +462,11 @@ export class SiteAddressChanger extends Component {
 					) }
 					{ ! hasNonWpcomDomains && (
 						<div className="site-address-changer__info-custom-domain">
-							<a href={ addDomainPath } onClick={ this.handleAddDomainClick }>
-								{ translate( 'Did you want to add a custom domain instead?' ) }
-							</a>
+							{ translate( 'Did you want to {{a}}add a custom domain{{/a}} instead?', {
+								components: {
+									a: <a href={ addDomainPath } onClick={ this.handleAddDomainClick } />,
+								},
+							} ) }
 						</div>
 					) }
 				</div>

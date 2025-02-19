@@ -68,6 +68,11 @@ class StatsPostDetail extends Component {
 		if ( domain?.length > 0 ) {
 			backLink += domain;
 		}
+
+		if ( ! title ) {
+			title = <em>{ this.props.translate( 'Untitled' ) }</em>;
+		}
+
 		// Wrap it up!
 		return [ { label: backLabel, href: backLink }, { label: title } ];
 	};
@@ -106,6 +111,10 @@ class StatsPostDetail extends Component {
 		return null;
 	}
 
+	hasDontSendEmailPostToSubs( metadata ) {
+		return metadata?.some( ( { key } ) => key === '_jetpack_dont_email_post_to_subs' );
+	}
+
 	getPost() {
 		const { isPostHomepage, post, postFallback, countLikes } = this.props;
 
@@ -120,6 +129,7 @@ class StatsPostDetail extends Component {
 			return {
 				...postBase,
 				date: post?.date,
+				dont_email_post_to_subs: this.hasDontSendEmailPostToSubs( post?.metadata ),
 				post_thumbnail: post?.post_thumbnail,
 				comment_count: post?.discussion?.comment_count,
 				type: post?.type,
@@ -131,6 +141,7 @@ class StatsPostDetail extends Component {
 			return {
 				...postBase,
 				date: postFallback?.post_date_gmt,
+				dont_email_post_to_subs: this.hasDontSendEmailPostToSubs( post?.metadata ),
 				post_thumbnail: null,
 				comment_count: parseInt( postFallback?.comment_count, 10 ),
 				type: postFallback?.post_type,
@@ -158,6 +169,7 @@ class StatsPostDetail extends Component {
 
 		// Prepare post details to PostStatsCard from post or postFallback.
 		const passedPost = this.getPost();
+		passedPost.url = previewUrl;
 
 		const postType = passedPost && passedPost.type !== null ? passedPost.type : 'post';
 		let actionLabel;

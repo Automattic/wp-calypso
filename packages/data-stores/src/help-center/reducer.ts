@@ -1,6 +1,7 @@
 import { combineReducers } from '@wordpress/data';
 import { SiteDetails } from '../site';
 import type { HelpCenterAction } from './actions';
+import type { HelpCenterOptions } from './types';
 import type { SupportInteraction } from '@automattic/odie-client/src/types';
 import type { Reducer } from 'redux';
 
@@ -64,6 +65,17 @@ const isChatLoaded: Reducer< boolean, HelpCenterAction > = ( state = false, acti
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_IS_CHAT_LOADED':
 			return action.isChatLoaded;
+	}
+	return state;
+};
+
+const areSoundNotificationsEnabled: Reducer< boolean, HelpCenterAction > = (
+	state = true,
+	action
+) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_ARE_SOUND_NOTIFICATIONS_ENABLED':
+			return action.areSoundNotificationsEnabled;
 	}
 	return state;
 };
@@ -148,6 +160,24 @@ const odieBotNameSlug: Reducer< string | undefined, HelpCenterAction > = ( state
 	return state;
 };
 
+const allowPremiumSupport: Reducer< boolean, HelpCenterAction > = ( state = false, action ) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_ALLOW_PREMIUM_SUPPORT':
+			return action.allow;
+	}
+	return state;
+};
+
+const helpCenterOptions: Reducer< HelpCenterOptions, HelpCenterAction > = (
+	state = {},
+	action
+) => {
+	if ( action.type === 'HELP_CENTER_SET_OPTIONS' ) {
+		return { ...state, ...action.options };
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	currentSupportInteraction,
 	showHelpCenter,
@@ -160,11 +190,14 @@ const reducer = combineReducers( {
 	hasSeenWhatsNewModal,
 	isMinimized,
 	isChatLoaded,
+	areSoundNotificationsEnabled,
 	zendeskClientId,
 	unreadCount,
 	navigateToRoute,
 	odieInitialPromptText,
 	odieBotNameSlug,
+	allowPremiumSupport,
+	helpCenterOptions,
 } );
 
 export type State = ReturnType< typeof reducer >;

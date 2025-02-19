@@ -1,10 +1,10 @@
-import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
-import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
+import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
+import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 
 const toSLinks = {
 	components: {
@@ -30,47 +30,48 @@ function getToSComponent( content ) {
 }
 
 function SocialAuthToS( props ) {
-	if ( props.isWooPasswordless ) {
-		if ( config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) ) {
-			const termsOfServiceLink = (
-				<a
-					href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-					target="_blank"
-					rel="noopener noreferrer"
-					className="jetpack-connect__sso-actions-modal-link"
-					onClick={ () => {
-						this.props.recordTracksEvent( 'calypso_jpc_disclaimer_tos_link_click', {
-							...this.props,
-						} );
-					} }
-				/>
-			);
-			const syncDataLink = (
-				<a
-					href={ localizeUrl( 'https://jetpack.com/support/what-data-does-jetpack-sync/' ) }
-					target="_blank"
-					rel="noopener noreferrer"
-					className="jetpack-connect__sso-actions-modal-link"
-					onClick={ () => {
-						this.props.recordTracksEvent( 'calypso_jpc_disclaimer_sync_data_link_click', {
-							...this.props,
-						} );
-					} }
-				/>
-			);
+	if ( props.isWooJPC ) {
+		const termsOfServiceLink = (
+			<a
+				href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+				target="_blank"
+				rel="noopener noreferrer"
+				className="jetpack-connect__sso-actions-modal-link"
+				onClick={ () => {
+					this.props.recordTracksEvent( 'calypso_jpc_disclaimer_tos_link_click', {
+						...this.props,
+					} );
+				} }
+			/>
+		);
+		const syncDataLink = (
+			<a
+				href={ localizeUrl( 'https://jetpack.com/support/what-data-does-jetpack-sync/' ) }
+				target="_blank"
+				rel="noopener noreferrer"
+				className="jetpack-connect__sso-actions-modal-link"
+				onClick={ () => {
+					this.props.recordTracksEvent( 'calypso_jpc_disclaimer_sync_data_link_click', {
+						...this.props,
+					} );
+				} }
+			/>
+		);
 
-			return getToSComponent(
-				props.translate(
-					'By clicking any of the options above, you agree to our {{termsOfServiceLink}}Terms of Service{{/termsOfServiceLink}} and to {{syncDataLink}}sync your site’s data{{/syncDataLink}} with us.',
-					{
-						components: {
-							termsOfServiceLink,
-							syncDataLink,
-						},
-					}
-				)
-			);
-		}
+		return getToSComponent(
+			props.translate(
+				'By clicking any of the options above, you agree to our {{termsOfServiceLink}}Terms of Service{{/termsOfServiceLink}} and to {{syncDataLink}}sync your site’s data{{/syncDataLink}} with us.',
+				{
+					components: {
+						termsOfServiceLink,
+						syncDataLink,
+					},
+				}
+			)
+		);
+	}
+
+	if ( props.isWCCOM ) {
 		return getToSComponent(
 			props.translate(
 				'By continuing with any of the options above, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
@@ -104,6 +105,7 @@ function SocialAuthToS( props ) {
 
 export default connect( ( state ) => ( {
 	oauth2Client: getCurrentOAuth2Client( state ),
-	isWooPasswordless: getIsWooPasswordless( state ),
+	isWCCOM: getIsWCCOM( state ),
+	isWooJPC: isWooJPCFlow( state ),
 	isBlazePro: getIsBlazePro( state ),
 } ) )( localize( SocialAuthToS ) );

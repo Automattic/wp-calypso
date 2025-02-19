@@ -4,16 +4,27 @@ import { useDebounce } from 'use-debounce';
 import { useIsDomainCodeValid } from 'calypso/landing/stepper/hooks/use-is-domain-code-valid';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 
-export function useValidationMessage( domain: string, auth: string, hasDuplicates: boolean ) {
+export type DomainValidationOptions = {
+	vendor?: string;
+};
+
+export function useValidationMessage(
+	domain: string,
+	auth: string,
+	hasDuplicates: boolean,
+	options: DomainValidationOptions = {}
+) {
 	const { __ } = useI18n();
 
 	const [ domainDebounced ] = useDebounce( domain, 500 );
 	const [ authDebounced ] = useDebounce( auth, 500 );
 
 	const hasGoodDomain = doesStringResembleDomain( domainDebounced );
+	const hasAnyAuthCode = auth.trim().length > 0;
 	const hasGoodAuthCode = hasGoodDomain && auth.trim().length > 5;
 
-	const passedLocalValidation = hasGoodDomain && hasGoodAuthCode && ! hasDuplicates;
+	const passedLocalValidation =
+		hasGoodDomain && ( ! hasAnyAuthCode || hasGoodAuthCode ) && ! hasDuplicates;
 
 	const isDebouncing = domainDebounced !== domain || authDebounced !== auth;
 
@@ -25,6 +36,7 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 		{
 			domain: domainDebounced,
 			auth: authDebounced,
+			options,
 		},
 		{
 			enabled: Boolean( passedLocalValidation ),
@@ -48,11 +60,14 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 		};
 	}
 
-	if ( ! hasGoodAuthCode ) {
+	if ( hasAnyAuthCode && ! hasGoodAuthCode ) {
 		return {
 			valid: false,
 			loading: false,
 			message: __( 'Please enter a valid authentication code.' ),
+			rawPrice: validationResult?.raw_price,
+			saleCost: validationResult?.sale_cost,
+			currencyCode: validationResult?.currency_code,
 		};
 	}
 
@@ -61,7 +76,7 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 		return {
 			valid: false,
 			loading: true,
-			message: __( 'Checking domain lock status.' ),
+			message: __( 'Checking domain status.' ),
 		};
 	}
 
@@ -89,7 +104,7 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 			loading: false,
 			message: __( "Sorry, we don't support some higher tier premium domain transfers." ),
 		};
-	} else if ( validationResult?.auth_code_valid === false ) {
+	} else if ( hasAnyAuthCode && validationResult?.auth_code_valid === false ) {
 		// the auth check API has a bug and returns error 400 for incorrect auth codes,
 		// in which case, the `useIsDomainCodeValid` hook returns `false`.
 		return {
@@ -110,6 +125,16 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 			currencyCode: validationResult?.currency_code,
 			refetch,
 			errorStatus: validationResult?.status,
+		};
+	} else if ( ! hasAnyAuthCode && validationResult?.auth_code_valid === false ) {
+		// We don't want to return a message here - an attempt was performed
+		// with an empty auth code, which is not an error.
+		return {
+			valid: false,
+			loading: false,
+			rawPrice: validationResult.raw_price,
+			saleCost: validationResult.sale_cost,
+			currencyCode: validationResult.currency_code,
 		};
 	}
 

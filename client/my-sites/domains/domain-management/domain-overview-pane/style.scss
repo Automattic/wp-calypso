@@ -1,0 +1,294 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.wpcom-site .hosting-dashboard-layout.domains-overview 	.site-preview-pane.domains-overview__details {
+	.hosting-dashboard-item-view .hosting-dashboard-item-view__content {
+		font-size: 1rem;
+	}
+}
+
+.hosting-dashboard-layout.domains-overview .hosting-dashboard-item-view {
+	.hosting-dashboard-item-view__header .hosting-dashboard-item-view__header-content .hosting-dashboard-item-view__header-title-summary {
+		 .hosting-dashboard-item-view__header-summary-link {
+			color: var(--studio-gray-50, #646970);
+
+			&:hover {
+				text-decoration: none;
+			}
+		}
+
+		.hosting-dashboard-item-view__header-title {
+			font-family: Recoleta, sans-serif;
+			font-weight: 400;
+			line-height: 1;
+			letter-spacing: normal;
+		}
+	}
+
+	.hosting-dashboard-item-view__content {
+		padding: 0;
+		color: var(--studio-gray-100);
+
+		@include break-medium {
+			padding: 24px;
+		}
+
+		@include break-large {
+			padding: 32px 48px 48px;
+		}
+
+		> * {
+			margin-bottom: auto;
+			min-width: 0;
+		}
+	}
+
+	.hosting-dashboard-item-view__navigation .section-nav-tabs__list {
+		box-sizing: border-box;
+		padding: 0 8px;
+
+		@include break-large {
+			padding: 0 32px;
+		}
+	}
+
+	div.hosting-dashboard-item-view__content header.domains-overview__navigation-header.navigation-header {
+		padding: 24px;
+		border: 0;
+
+		@include break-medium {
+			padding: 0 0 24px 0;
+		}
+
+		@include break-large {
+			padding-bottom: 32px;
+		}
+
+		.navigation-header__main {
+			padding-inline: 0;
+		}
+	}
+
+	.accordion .card.foldable-card {
+		.foldable-card__header {
+			padding: 24px;
+		}
+
+		.foldable-card__content {
+			padding: 0 24px 24px;
+		}
+	}
+
+	.domain-forwarding-card__fields {
+		.accordion .foldable-card {
+			.foldable-card__header,
+			.foldable-card__content {
+				padding: 0;
+			}
+
+			.foldable-card__main > div {
+				flex-grow: 0;
+			}
+
+			&.is-expanded .foldable-card__content {
+				padding: 0 24px 24px 0;
+			}
+		}
+	}
+
+	.domain-forwarding-card__fields,
+	.domain-glue-records-card__accordion {
+		@media (min-width: $break-small) {
+			.form-text-input-with-affixes {
+				> :first-child,
+				.form-text-input-with-affixes__prefix select {
+					border-radius: 2px 0 0 2px;
+				}
+
+				> :last-child {
+					border-radius: 0 2px 2px 0;
+				}
+
+				> :first-child:last-child {
+					border-radius: 2px;
+				}
+
+				> :not(:first-child):not(:last-child) {
+					border-radius: 0;
+				}
+			}
+		}
+	}
+
+	.domain-info-card.action-card {
+		padding: 24px;
+
+		@include break-medium {
+			padding: 24px 0
+		}
+	}
+}
+
+.a4a-layout.domains-overview .domains-overview__details .section-nav-tabs__list {
+    box-sizing: border-box;
+    overflow-x: auto;
+}
+
+.a4a-layout.domains-overview .hosting-dashboard-item-view__header {
+	.hosting-dashboard-item-view__header-info .hosting-dashboard-item-view__header-title-summary .hosting-dashboard-item-view__header-title {
+		font-family: Recoleta, sans-serif;
+		font-weight: 400;
+		line-height: 1;
+		letter-spacing: normal;
+	}
+
+	.hosting-dashboard-item-view__header-content {
+		.hosting-dashboard-item-view__header-info {
+			flex-wrap: wrap;
+		}
+
+		@media (max-width: $break-large) {
+			padding: 0;
+		}
+	}
+
+	.hosting-dashboard-item-view__header-content .hosting-dashboard-item-view__header-title-summary .hosting-dashboard-item-view__header-summary {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		.hosting-dashboard-item-view__header-summary-link {
+			color: var(--studio-gray-70, #3c434a);
+			text-decoration: none;
+			&:hover {
+				color: var(--color-accent, #3858e9);
+			}
+		}
+	}
+
+	.hosting-dashboard-item-view__header-actions .button {
+		border-radius: 4px;
+		height: auto;
+	}
+
+	.hosting-dashboard-item-view__header-content .hosting-dashboard-item-view__close {
+		height: 1rem;
+		padding-left: 0;
+		padding-right: 0;
+		color: var(--color-link);
+
+		@include break-medium {
+			height: 2rem;
+		}
+	}
+}
+
+.domain-overview__breadcrumb {
+	padding: 22px 48px;
+
+	.navigation-header {
+		padding: 0;
+	}
+}
+
+.domains-overview {
+	.hosting-dashboard-layout-with-columns__container {
+		background: var(--color-sidebar-background);
+	}
+
+	.hosting-dashboard-item-view {
+		background: var(--color-light-backdrop);
+		border-radius: 8px; /* stylelint-disable-line scales/radii */
+		flex-grow: 1;
+		max-height: calc(100vh - 32px - var(--masterbar-height));
+		transition: flex-grow 0.2s;
+		width: auto;
+
+		.hosting-dashboard-item-view__navigation {
+			box-shadow: none;
+			border-bottom: 1px solid var(--color-border-subtle);
+			padding-top: 1px;
+		}
+	}
+
+	.hosting-dashboard-item-view__header-info {
+		flex-wrap: wrap;
+	}
+
+	.domains-overview__details {
+		.main.is-wide-layout:not( .email-providers-in-depth-comparison-page ):not( .email-stacked-comparison-page ) {	
+			margin-left: 0;
+			max-width: 1040px;
+		}
+
+		.hosting-dashboard-layout-column__container .navigation-header div.navigation-header__main {
+			margin-left: 0;
+		}
+	}
+
+	.hosting-dashboard-item-view__content > div {
+		flex-grow: 1;
+
+		.domain-forwarding-card__fields:last-child {
+			margin-bottom: 0;
+		}
+
+		.domain-forwarding-card__accordion .foldable-card__content {
+		   > :not(:last-child):not(.domain-forwarding-card-notice) {
+			  margin-bottom: 1.5rem;
+		   }
+		}
+
+		.domain-forwarding-card__accordion .link-button {
+			color: var(--color-link);
+		}
+	}
+
+	.domain-settings-page {
+		margin: 0 auto;
+		max-width: 1400px;
+
+		.two-columns-layout .two-columns-layout__content {
+			> div:first-child .card {
+				border-radius: 4px 4px 0 0;
+			}
+
+			> div:last-child .card {
+				border-radius: 0 0 4px 4px;
+			}
+		}
+	}
+
+	.domains-overview__details.main {
+		&,
+		.hosting-dashboard-layout-column__container {
+			height: 100%;
+		}
+
+		thead.email-forward-list__row th,
+		.dns-records-list-item__wrapper.is-header .dns-records-list-item__data {
+			font-weight: 500;
+			text-transform: uppercase;
+			/* stylelint-disable-next-line scales/font-sizes */
+			font-size: .6875rem;
+			font-style: normal;
+		}
+	}
+
+	.domain__main-placeholder {
+		max-width: 1400px;
+
+		.vertical-nav {
+			> .domain__main-placeholder-card:first-child {
+				border-radius: 4px 4px 0 0;
+			}
+
+			> .domain__main-placeholder-card:last-child {
+				border-radius: 0 0 4px 4px;
+			}
+		}
+	}
+}
+
+.sites-dashboard.domains-overview .hosting-dashboard-item-view__content {
+	height: 0; /* Quick fix for scrolling issue in domain overview in site-context, will be replaced with a better solution in the future */
+}

@@ -3,9 +3,9 @@ import { useMergeRefs } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useRef } from 'react';
-import { GuidedTourStep } from 'calypso/a8c-for-agencies/components/guided-tour-step';
+import { GuidedTourStep } from 'calypso/components/guided-tour/step';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
-import type { ItemData } from 'calypso/a8c-for-agencies/components/items-dashboard/item-preview-pane/types';
+import type { ItemData } from 'calypso/layout/hosting-dashboard/item-view/types';
 
 type Props = {
 	focusRef: React.RefObject< HTMLButtonElement >;
@@ -20,7 +20,7 @@ const PreviewPaneHeaderButtons = ( { focusRef, closeSitePreviewPane, itemData }:
 
 	return (
 		<>
-			<Button onClick={ closeSitePreviewPane } className="item-preview__close-preview-button">
+			<Button onClick={ closeSitePreviewPane } className="item-view__close-button">
 				{ __( 'Close' ) }
 			</Button>
 			<Button

@@ -4,6 +4,7 @@
 
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import {
+	domainsManagementPrefix,
 	emailManagementAllSitesPrefix,
 	getAddEmailForwardsPath,
 	getAddGSuiteUsersPath,
@@ -19,10 +20,13 @@ import {
 	getProfessionalEmailCheckoutUpsellPath,
 	getMailboxesPath,
 	isUnderEmailManagementAll,
+	getEmailCheckoutPath,
 } from '../paths';
 
 const siteName = 'hello.wordpress.com';
 const domainName = 'hello.com';
+
+jest.mock( '@automattic/calypso-config', () => ( { isEnabled: () => true } ) );
 
 describe( 'path helper functions', () => {
 	it( 'getAddEmailForwardsPath', () => {
@@ -37,6 +41,14 @@ describe( 'path helper functions', () => {
 		);
 		expect( getAddEmailForwardsPath( siteName, null ) ).toEqual( `/email/${ siteName }` );
 		expect( getAddEmailForwardsPath( null, null ) ).toEqual( '/email' );
+		expect( getAddEmailForwardsPath( ':site', ':domain', domainsManagementPrefix ) ).toEqual(
+			'/domains/manage/all/email/:domain/forwarding/add/:site'
+		);
+
+		const relativeTo = '/overview/site-domain/email';
+		expect( getAddEmailForwardsPath( siteName, domainName, relativeTo ) ).toEqual(
+			`/overview/site-domain/email/${ domainName }/forwarding/add/${ siteName }`
+		);
 	} );
 
 	it( 'getAddGSuiteUsersPath', () => {
@@ -129,6 +141,16 @@ describe( 'path helper functions', () => {
 		expect( getEmailManagementPath( ':site' ) ).toEqual( '/email/:site' );
 		expect( getEmailManagementPath( siteName, null ) ).toEqual( `/email/${ siteName }` );
 		expect( getEmailManagementPath( null, null ) ).toEqual( '/email' );
+
+		const relativeTo = '/domains/manage/all/email';
+		expect( getEmailManagementPath( siteName, domainName, relativeTo ) ).toEqual(
+			`/domains/manage/all/email/${ domainName }/${ siteName }`
+		);
+
+		const inSiteContext = true;
+		expect( getEmailManagementPath( siteName, domainName, relativeTo, {}, inSiteContext ) ).toEqual(
+			`/overview/site-domain/email/${ domainName }/${ siteName }`
+		);
 	} );
 
 	it( 'getForwardingPath', () => {
@@ -166,6 +188,19 @@ describe( 'path helper functions', () => {
 		);
 		expect( getEmailInDepthComparisonPath( siteName, null ) ).toEqual( `/email/${ siteName }` );
 		expect( getEmailInDepthComparisonPath( null, null ) ).toEqual( '/email' );
+
+		const relativeTo = '/domains/manage/all/email';
+		expect( getEmailInDepthComparisonPath( siteName, domainName, relativeTo ) ).toEqual(
+			`/domains/manage/all/email/${ domainName }/compare/${ siteName }?referrer=${ encodeURIComponent(
+				relativeTo
+			) }`
+		);
+		const relativeToSiteDomain = '/overview/site-domain/email';
+		expect( getEmailInDepthComparisonPath( siteName, domainName, relativeToSiteDomain ) ).toEqual(
+			`/overview/site-domain/email/${ domainName }/compare/${ siteName }?referrer=${ encodeURIComponent(
+				relativeToSiteDomain
+			) }`
+		);
 	} );
 
 	it( 'getMailboxesPath', () => {
@@ -180,6 +215,31 @@ describe( 'path helper functions', () => {
 		);
 		expect( getProfessionalEmailCheckoutUpsellPath( ':site', ':domain', ':receiptId' ) ).toEqual(
 			'/checkout/offer-professional-email/:domain/:receiptId/:site'
+		);
+	} );
+
+	it( 'getEmailCheckoutPath', () => {
+		const email = 'hi@example.com';
+		const relativeToDomainManagement = '/domains/manage/all/email';
+		const relativeToSiteDomain = '/overview/site-domain/email';
+
+		expect( getEmailCheckoutPath( siteName, domainName ) ).toEqual( `/checkout/${ siteName }` );
+		expect( getEmailCheckoutPath( siteName, domainName, relativeToDomainManagement ) ).toEqual(
+			`/checkout/${ siteName }?redirect_to=${ encodeURIComponent(
+				`${ relativeToDomainManagement }/${ domainName }/${ siteName }`
+			) }`
+		);
+		expect(
+			getEmailCheckoutPath( siteName, domainName, relativeToDomainManagement, email )
+		).toEqual(
+			`/checkout/${ siteName }?redirect_to=${ encodeURIComponent(
+				`${ relativeToDomainManagement }/${ domainName }/${ siteName }?new-email=${ email }`
+			) }`
+		);
+		expect( getEmailCheckoutPath( siteName, domainName, relativeToSiteDomain, email ) ).toEqual(
+			`/checkout/${ siteName }?redirect_to=${ encodeURIComponent(
+				`${ relativeToSiteDomain }/${ domainName }/${ siteName }?new-email=${ email }`
+			) }`
 		);
 	} );
 

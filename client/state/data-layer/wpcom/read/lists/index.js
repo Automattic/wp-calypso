@@ -12,14 +12,18 @@ import {
 	READER_LIST_UNFOLLOW,
 	READER_LIST_UPDATE,
 	READER_LISTS_REQUEST,
+	READER_USER_LISTS_REQUEST,
+	READER_USER_LISTS_RECEIVE,
 } from 'calypso/state/reader/action-types';
 import {
-	handleReaderListRequestFailure,
+	handleCreateReaderListFailure,
+	handleRequestListFailure,
 	handleUpdateListDetailsError,
 	receiveFollowList,
 	receiveLists,
-	receiveUnfollowList,
 	receiveReaderList,
+	receiveUnfollowList,
+	receiveCreateReaderList,
 	receiveUpdatedListDetails,
 } from 'calypso/state/reader/lists/actions';
 
@@ -45,7 +49,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 			onSuccess: ( action, { list } ) => {
 				if ( list?.owner && list?.slug ) {
 					return [
-						receiveReaderList( { list } ),
+						receiveCreateReaderList( { list } ),
 						() => page( `/read/list/${ list.owner }/${ list.slug }/edit` ),
 						successNotice( translate( 'List created successfully.' ), {
 							duration: DEFAULT_NOTICE_DURATION,
@@ -56,7 +60,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 			},
 			onError: ( action, error ) => [
 				errorNotice( translate( 'Unable to create new list.' ) ),
-				handleReaderListRequestFailure( error ),
+				handleCreateReaderListFailure( error ),
 			],
 		} ),
 	],
@@ -90,7 +94,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 					action
 				),
 			onSuccess: ( action, { list } ) => receiveReaderList( { list } ),
-			onError: ( action, error ) => [ handleReaderListRequestFailure( error ) ],
+			onError: ( action, error ) => [ handleRequestListFailure( error ) ],
 		} ),
 	],
 	[ READER_LIST_UNFOLLOW ]: [
@@ -136,18 +140,39 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 			],
 		} ),
 	],
+	// Request public and private lists for the current user
 	[ READER_LISTS_REQUEST ]: [
 		dispatchRequest( {
 			fetch: ( action ) =>
 				http(
 					{
 						method: 'GET',
-						path: `/read/lists`,
+						path: '/read/lists',
 						apiVersion: '1.2',
 					},
 					action
 				),
 			onSuccess: ( action, apiResponse ) => receiveLists( apiResponse?.lists ),
+			onError: () => noop,
+		} ),
+	],
+	// Request only public lists for a specific user
+	[ READER_USER_LISTS_REQUEST ]: [
+		dispatchRequest( {
+			fetch: ( action ) =>
+				http(
+					{
+						method: 'GET',
+						path: `/read/lists/${ action.userLogin }`,
+						apiVersion: '1',
+					},
+					action
+				),
+			onSuccess: ( action, apiResponse ) => ( {
+				type: READER_USER_LISTS_RECEIVE,
+				userLogin: action.userLogin,
+				lists: apiResponse?.lists,
+			} ),
 			onError: () => noop,
 		} ),
 	],

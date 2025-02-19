@@ -2,7 +2,6 @@
 @import "@wordpress/base-styles/mixins";
 
 .quick-links.foldable-card.card {
-	box-shadow: none;
 	@include breakpoint-deprecated( ">660px" ) {
 		border-radius: 3px;
 	}
@@ -70,6 +69,11 @@
 
 		&.dashicons {
 			color: var(--color-neutral-80);
+
+			&.dashicons-admin-appearance {
+				color: var(--color-neutral-60);
+				line-height: 24px;
+			}
 		}
 	}
 

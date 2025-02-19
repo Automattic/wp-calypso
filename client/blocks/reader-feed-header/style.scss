@@ -87,6 +87,21 @@
 	margin-bottom: 16px;
 }
 
+// Override follow button styles of subscribed state i.e. show icon with gray color instead of green.
+.reader-feed-header__follow-button {
+	.follow-button.is-following {
+		svg.reader-following-feed path {
+			fill: initial;
+		}
+
+		&:hover {
+			svg.reader-following-feed path {
+				fill: initial;
+			}
+		}
+	}
+}
+
 .reader-feed-header {
 	z-index: z-index("root", ".reader-feed-header");
 

@@ -111,7 +111,6 @@
 
 .checklist-item__checkmark-container {
 	margin-right: 7px;
-	width: 20px;
 	display: flex;
 	margin-left: 1px;
 	margin-bottom: -2px;
@@ -191,7 +190,7 @@
 
 	.checklist-item__chevron,
 	.checklist-item__checkmark {
-		fill: var(--color-neutral-40);
+		fill: var(--color-success);
 	}
 	.checklist-item__counter {
 		color: var(--color-neutral-40);
@@ -208,12 +207,12 @@
 .checklist-item__task.completed.enabled > a:focus,
 .checklist-item__task.pending > a:focus {
 	.checklist-item__text {
-		color: var(--studio-blue-50);
+		color: var(--color-accent);
 	}
 
 	.checklist-item__chevron,
 	.checklist-item__checkmark {
-		fill: var(--studio-blue-50);
+		fill: var(--color-accent);
 	}
 
 	// change badge color on hover (Choose a Plan step)
@@ -251,28 +250,6 @@
 
 .checklist-item__checklist-primary-button.components-button {
 	width: 100%;
-	background-color: var(--color-primary);
-	border-color: var(--color-primary);
-	color: var(--color-text-inverted);
-
-	&:hover:not([disabled]) {
-		background-color: var(--color-primary-60);
-		border-color: var(--color-primary-60);
-		color: var(--color-text-inverted);
-	}
-
-	&[disabled] {
-		background-color: var(--color-primary-10);
-		border-color: var(--color-primary-10);
-		color: var(--color-text-inverted);
-	}
-
-	&:disabled {
-		opacity: 1;
-		&:hover {
-			color: var(--color-text-inverted);
-		}
-	}
 }
 
 .checklist-item__checklist-expanded-cta,

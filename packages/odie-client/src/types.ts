@@ -4,21 +4,23 @@ import type { ReactNode, PropsWithChildren, SetStateAction } from 'react';
 export type OdieAssistantContextInterface = {
 	isChatLoaded: boolean;
 	canConnectToZendesk: boolean;
-	shouldUseHelpCenterExperience: boolean;
 	addMessage: ( message: Message | Message[] ) => void;
 	botName?: string;
 	botNameSlug: OdieAllowedBots;
 	chat: Chat;
 	clearChat: () => void;
 	currentUser: CurrentUser;
+	experimentVariationName: string | undefined | null;
+	hasUserEverEscalatedToHumanSupport: boolean;
 	isMinimized?: boolean;
 	isUserEligibleForPaidSupport: boolean;
 	extraContactOptions?: ReactNode;
 	odieBroadcastClientId: string;
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
-	selectedConversationId?: string | null;
+	userFieldMessage?: string | null;
 	waitAnswerToFirstMessageFromHumanSupport: boolean;
+	setExperimentVariationName: ( variationName: string | null | undefined ) => void;
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
 	setChat: ( chat: Chat | SetStateAction< Chat > ) => void;
 	setChatStatus: ( status: ChatStatus ) => void;
@@ -30,7 +32,6 @@ export type OdieAssistantContextInterface = {
 };
 
 export type OdieAssistantProviderProps = {
-	shouldUseHelpCenterExperience?: boolean;
 	canConnectToZendesk?: boolean;
 	botName?: string;
 	botNameSlug?: OdieAllowedBots;
@@ -40,7 +41,7 @@ export type OdieAssistantProviderProps = {
 	extraContactOptions?: ReactNode;
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
-	selectedConversationId?: string | null;
+	userFieldMessage?: string | null;
 	version?: string | null;
 	children?: ReactNode;
 	setChatStatus?: ( status: ChatStatus ) => void;
@@ -158,12 +159,17 @@ export type Message = {
 
 export type ChatStatus = 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer' | 'closed';
 
-export type ReturnedChat = { chat_id: number; messages: Message[]; wpcom_user_id: number };
+export type ReturnedChat = {
+	chat_id: number;
+	messages: Message[];
+	wpcom_user_id: number;
+	experiment_name: string | undefined | null;
+};
 
 export type OdieChat = {
 	messages: Message[];
-	odieId: number | null;
-	wpcomUserId: number | null;
+	odieId?: number | null | undefined;
+	wpcomUserId?: number | null | undefined;
 };
 
 export type Chat = OdieChat & {
@@ -199,7 +205,7 @@ export type ZendeskMessage = {
 	received: number;
 	role: string;
 	actions?: MessageAction[];
-	source: {
+	source?: {
 		type: 'web' | 'slack' | 'zd:surveys';
 		id: string;
 		integrationId: string;
@@ -217,13 +223,14 @@ export type ZendeskContentType =
 	| 'form'
 	| 'formResponse'
 	| 'image'
+	| 'image-placeholder'
 	| 'list'
 	| 'location'
 	| 'template';
 
 type Metadata = {
 	odieChatId: number;
-	createdAt: string;
+	createdAt: number;
 	supportInteractionId: string;
 };
 

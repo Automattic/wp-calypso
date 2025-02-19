@@ -26,12 +26,12 @@ const TRANSFER_COMPLETED = ( siteId: number ) => ( {
 	status: 'completed',
 } );
 
+jest.mock( 'calypso/lib/analytics/tracks' );
+jest.mock( 'calypso/lib/logstash' );
+
 const errorCaptureMigrationKey = replyWithError( {
 	error: 'anyError',
 } );
-
-jest.mock( 'calypso/lib/analytics/tracks' );
-jest.mock( 'calypso/lib/logstash' );
 
 describe( 'usePrepareSiteForMigrationWithMigrateGuru', () => {
 	beforeAll( () => nock.disableNetConnect() );
@@ -92,29 +92,6 @@ describe( 'usePrepareSiteForMigrationWithMigrateGuru', () => {
 		} );
 	} );
 
-	it( 'starts the plugin installation after the siteTransfer is completed', async () => {
-		const siteId = 123;
-		nock( 'https://public-api.wordpress.com:443' )
-			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
-			.once()
-			.reply( 200, TRANSFER_COMPLETED( siteId ) );
-
-		const { result } = render( { siteId: 123 } );
-
-		await waitFor( () => {
-			expect( result.current ).toEqual( {
-				completed: false,
-				error: null,
-				detailedStatus: {
-					migrationKey: 'idle',
-					pluginInstallation: 'pending',
-					siteTransfer: 'success',
-				},
-				migrationKey: null,
-			} );
-		} );
-	} );
-
 	it( 'gets the migration key after the plugin installation', async () => {
 		const siteId = 123;
 
@@ -123,11 +100,11 @@ describe( 'usePrepareSiteForMigrationWithMigrateGuru', () => {
 			.reply( 200, TRANSFER_COMPLETED( siteId ) )
 			.get( `/rest/v1.2/sites/${ siteId }/plugins?http_envelope=1` )
 			.reply( 200, { plugins: [] } )
-			.post( `/rest/v1.2/sites/${ siteId }/plugins/migrate-guru/install?http_envelope=1` )
+			.post( `/rest/v1.2/sites/${ siteId }/plugins/wpcom-migration/install?http_envelope=1` )
 			.reply( replyWithSuccess() )
-			.post( `/rest/v1.2/sites/${ siteId }/plugins/migrate-guru%2Fmigrateguru` )
+			.post( `/rest/v1.2/sites/${ siteId }/plugins/wpcom-migration%2Fwpcom_migration` )
 			.reply( replyWithSuccess() )
-			.get( `/wpcom/v2/sites/${ siteId }/atomic-migration-status/migrate-guru-key` )
+			.get( `/wpcom/v2/sites/${ siteId }/atomic-migration-status/wpcom-migration-key` )
 			.query( { http_envelope: 1 } )
 			.reply( replyWithSuccess( { migration_key: 'some-migration-key' } ) );
 
@@ -158,11 +135,11 @@ describe( 'usePrepareSiteForMigrationWithMigrateGuru', () => {
 			.reply( 200, TRANSFER_COMPLETED( siteId ) )
 			.get( `/rest/v1.2/sites/${ siteId }/plugins?http_envelope=1` )
 			.reply( 200, { plugins: [] } )
-			.post( `/rest/v1.2/sites/${ siteId }/plugins/migrate-guru/install?http_envelope=1` )
+			.post( `/rest/v1.2/sites/${ siteId }/plugins/wpcom-migration/install?http_envelope=1` )
 			.reply( replyWithSuccess() )
-			.post( `/rest/v1.2/sites/${ siteId }/plugins/migrate-guru%2Fmigrateguru` )
+			.post( `/rest/v1.2/sites/${ siteId }/plugins/wpcom-migration%2Fwpcom_migration` )
 			.reply( 200 )
-			.get( `/wpcom/v2/sites/${ siteId }/atomic-migration-status/migrate-guru-key` )
+			.get( `/wpcom/v2/sites/${ siteId }/atomic-migration-status/wpcom-migration-key` )
 			.reply( errorCaptureMigrationKey );
 
 		const { result } = render( { siteId: 123 } );
@@ -182,5 +159,28 @@ describe( 'usePrepareSiteForMigrationWithMigrateGuru', () => {
 			},
 			{ timeout: 3000 }
 		);
+	} );
+
+	it( 'starts the plugin installation after the siteTransfer is completed', async () => {
+		const siteId = 123;
+		nock( 'https://public-api.wordpress.com:443' )
+			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
+			.once()
+			.reply( 200, TRANSFER_COMPLETED( siteId ) );
+
+		const { result } = render( { siteId: 123 } );
+
+		await waitFor( () => {
+			expect( result.current ).toEqual( {
+				completed: false,
+				error: null,
+				detailedStatus: {
+					migrationKey: 'idle',
+					pluginInstallation: 'pending',
+					siteTransfer: 'success',
+				},
+				migrationKey: null,
+			} );
+		} );
 	} );
 } );

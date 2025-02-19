@@ -13,18 +13,12 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import Main from 'calypso/components/main';
-import Notice from 'calypso/components/notice';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import {
-	getSelectedDomain,
-	canCurrentUserAddEmail,
-	getCurrentUserCannotAddEmailReason,
-} from 'calypso/lib/domains';
+import { getSelectedDomain, canCurrentUserAddEmail } from 'calypso/lib/domains';
 import {
 	hasEmailForwards,
 	getDomainsWithEmailForwards,
 } from 'calypso/lib/domains/email-forwarding';
-import { EMAIL_WARNING_CODE_GRAVATAR_DOMAIN } from 'calypso/lib/emails/email-provider-constants';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import { domainAddNew } from 'calypso/my-sites/domains/paths';
@@ -37,10 +31,7 @@ import { IntervalLength } from 'calypso/my-sites/email/email-providers-compariso
 import EmailUpsellNavigation from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/email-upsell-navigation';
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/professional-email-card';
-import {
-	getEmailManagementPath,
-	getEmailInDepthComparisonPath,
-} from 'calypso/my-sites/email/paths';
+import { getEmailInDepthComparisonPath } from 'calypso/my-sites/email/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
@@ -52,6 +43,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 export type EmailProvidersStackedComparisonProps = {
+	className?: string;
 	cartDomainName?: string;
 	comparisonContext: string;
 	hideNavigation?: boolean;
@@ -63,6 +55,7 @@ export type EmailProvidersStackedComparisonProps = {
 };
 
 const EmailProvidersStackedComparison = ( {
+	className = '',
 	comparisonContext,
 	hideNavigation = false,
 	isDomainInCart = false,
@@ -99,8 +92,6 @@ const EmailProvidersStackedComparison = ( {
 
 	const currentUserCanAddEmail = canCurrentUserAddEmail( domain );
 	const showNonOwnerMessage = ! currentUserCanAddEmail && ! isDomainInCart;
-	const cannotAddEmailWarningReason = getCurrentUserCannotAddEmailReason( domain );
-	const isGravatarDomain = cannotAddEmailWarningReason?.code === EMAIL_WARNING_CODE_GRAVATAR_DOMAIN;
 
 	const isGSuiteSupported =
 		domain && canPurchaseGSuite && ( isDomainInCart || hasGSuiteSupportedDomain( [ domain ] ) );
@@ -240,7 +231,7 @@ const EmailProvidersStackedComparison = ( {
 
 	return (
 		<Main
-			className={ clsx( {
+			className={ clsx( className, {
 				'email-providers-stacked-comparison__main--domain-upsell': isDomainInCart,
 			} ) }
 			wideLayout
@@ -249,14 +240,10 @@ const EmailProvidersStackedComparison = ( {
 
 			{ ! isDomainInCart && selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
-			{ ! hideNavigation && (
+			{ ! hideNavigation && isDomainInCart && (
 				<EmailUpsellNavigation
-					backUrl={
-						isDomainInCart
-							? domainAddNew( selectedSite?.slug )
-							: getEmailManagementPath( selectedSite?.slug, null )
-					}
-					skipUrl={ isDomainInCart ? `/checkout/${ selectedSite?.slug }` : '' }
+					backUrl={ domainAddNew( selectedSite?.slug ) }
+					skipUrl={ `/checkout/${ selectedSite?.slug }` }
 				/>
 			) }
 
@@ -300,19 +287,12 @@ const EmailProvidersStackedComparison = ( {
 			{ ! isDomainInCart && domain && <EmailExistingPaidServiceNotice domain={ domain } /> }
 
 			<>
-				{ showNonOwnerMessage && ! isGravatarDomain && (
+				{ showNonOwnerMessage && (
 					<EmailNonDomainOwnerMessage
 						domain={ domain }
 						selectedSite={ selectedSite }
 						source="email-comparison"
 					/>
-				) }
-				{ isGravatarDomain && (
-					<Notice showDismiss={ false } className="email-providers-stacked-comparison__notice">
-						{ translate(
-							'This domain is associated with a Gravatar profile and cannot be used for email services at this time.'
-						) }
-					</Notice>
 				) }
 				{ shouldPromoteGoogleWorkspace ? [ ...emailProviderCards ].reverse() : emailProviderCards }
 			</>

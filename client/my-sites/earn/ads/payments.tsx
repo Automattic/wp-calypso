@@ -75,7 +75,9 @@ const WordAdsPayments = () => {
 							payment.paymentDate
 						) }
 					</td>
-					<td className="ads__payments-history-value">${ numberFormat( payment.amount, 2 ) }</td>
+					<td className="ads__payments-history-value">
+						${ numberFormat( payment.amount, { decimals: 2 } ) }
+					</td>
 					<td className="ads__payments-history-value">
 						<Badge
 							className="ads__payments-history-badge"
@@ -134,7 +136,7 @@ const WordAdsPayments = () => {
 
 		return hasMismatch ? (
 			<Notice
-				classname="ads__activate-notice"
+				className="ads__activate-notice"
 				status="is-warning"
 				showDismiss={ false }
 				text={ translate(

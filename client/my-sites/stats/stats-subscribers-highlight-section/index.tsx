@@ -84,6 +84,8 @@ function SubscriberHighlightsStandard( {
 	highlights,
 	isLoading,
 }: SubscriberHighlightsRenderProps ) {
+	const translate = useTranslate();
+
 	return (
 		<div className="highlight-cards-list">
 			{ highlights.map( ( highlight ) => (
@@ -91,6 +93,7 @@ function SubscriberHighlightsStandard( {
 					heading={ isLoading ? '-' : highlight.heading }
 					key={ highlight.heading }
 					showValueTooltip
+					label={ translate( 'subscribers' ) }
 					note={ highlight.note }
 					value={ isLoading ? null : highlight.count }
 				/>

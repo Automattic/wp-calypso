@@ -44,6 +44,7 @@ export function createReceiptObject(
 		purchases: purchases.map( ( purchase ) => {
 			return {
 				delayedProvisioning: Boolean( purchase.delayed_provisioning ),
+				isHundredYearDomain: Boolean( purchase.is_hundred_year_domain ),
 				freeTrial: false,
 				isDomainRegistration: Boolean( purchase.is_domain_registration ),
 				meta: purchase.meta || '',

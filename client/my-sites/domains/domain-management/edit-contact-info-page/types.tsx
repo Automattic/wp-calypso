@@ -6,4 +6,14 @@ export type EditContactInfoPageProps = {
 	isRequestingWhois: boolean;
 	selectedDomainName: string;
 	selectedSite: SiteDetails | null;
+	context?: {
+		showPageHeader?: boolean;
+	};
+};
+
+export type EditContactInfoPageContentProps = {
+	currentRoute: string;
+	domains: ResponseDomain[];
+	selectedDomainName: string;
+	selectedSite: SiteDetails | null;
 };

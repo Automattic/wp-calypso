@@ -14,12 +14,16 @@
 		padding: 16px;
 
 		&.has-unread {
-			background: #3858E9;
+			background: $help-center-blue;
 			color: var(--studio-white);
 			border-radius: 0;
 
 			button {
 				color: var(--studio-white);
+			}
+
+			.help-center-header__text > svg {
+				fill: var(--studio-white);
 			}
 		}
 
@@ -34,7 +38,7 @@
 		.help-center-header__minimize,
 		.help-center-header__close {
 			&:focus {
-				outline: var(--color-primary-light) solid 2px;
+				outline: $help-center-blue solid 2px;
 			}
 		}
 
@@ -76,7 +80,7 @@
 				background: var(--studio-white);
 				border-radius: 45%;
 				font-size: $font-body-extra-small;
-				color: #3858E9;
+				color: $help-center-blue;
 			}
 		}
 
@@ -90,38 +94,61 @@
 	}
 }
 
-.clear-conversation__wrapper {
+.conversation-menu__wrapper {
 	padding: 4px 0;
     text-align: center;
 
 	svg {
 		fill: var(--studio-gray-70);
+		padding: 0 4px;
 	}
 
-	:hover, :focus {
-		background-color: $help-center-blue;
-		color: var(--studio-white);
-
+	button:disabled {
 		svg {
-			fill: var(--studio-white);
+			fill: var(--wp-components-color-gray-600, #949494);
 		}
 	}
-	
+
 	button {
 		display: flex;
 		align-items: center;
-		justify-content: center;
 		width: 100%;
-		padding: 8px;
 		cursor: pointer;
-		gap: 4px;
+		gap: 8px;
 		color: var(--studio-gray-70);
 		border: none;
 		background: unset;
+		padding: 8px 8px 8px 14px;
 
 		div {
 			margin-bottom: 2px;
 			font-size: 0.875rem;
+		}
+
+		&:not( :disabled ) {
+			&:hover,
+			&:focus {
+				background-color: $help-center-blue;
+				color: var( --studio-white );
+
+				svg {
+					fill: var( --studio-white );
+				}
+			}
+		}
+	}
+
+	.conversation-menu__notification-toggle {
+
+		.components-form-toggle.is-checked {
+			.components-form-toggle__track {
+				background-color: $help-center-blue;
+				border-color: $help-center-blue;
+			}
+		}
+
+		&:hover label {
+			cursor: initial;
 		}
 	}
 }

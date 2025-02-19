@@ -84,12 +84,12 @@
 		height: 100%;
 
 		.spinner__outer {
-			border-top-color: var(--wp-admin-theme-color);
+			border-top-color: $help-center-blue;
 		}
 
 		.spinner__inner {
-			border-top-color: var(--wp-admin-theme-color);
-			border-right-color: var(--wp-admin-theme-color);
+			border-top-color: $help-center-blue;
+			border-right-color: $help-center-blue;
 		}
 	}
 
@@ -177,6 +177,12 @@
 			opacity: 1;
 			transform: scale(1);
 		}
+	}
+
+	// Text highlight color
+	::selection {
+		background: rgba($help-center-blue, 0.7);
+		color: var(--color-text);
 	}
 }
 

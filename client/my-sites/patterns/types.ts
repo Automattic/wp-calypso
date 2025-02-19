@@ -1,7 +1,6 @@
 import { GlobalStylesObject } from '@automattic/global-styles';
 import type { Context } from '@automattic/calypso-router';
 import type { QueryClient } from '@tanstack/react-query';
-import type { Pattern as AssemblerPattern } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/types';
 import type { PartialContext as PerformanceMarkContext } from 'calypso/server/lib/performance-mark';
 
 export type RouterNext = ( error?: Error ) => void;
@@ -12,7 +11,31 @@ export type RouterContext = Context &
 		queryClient: QueryClient;
 	};
 
-export type Pattern = AssemblerPattern & {
+export type PatternCategory = {
+	name?: string;
+	title?: string;
+	slug?: string;
+	label?: string;
+	description?: string;
+};
+
+export type PatternTag = {
+	slug: string;
+	title: string;
+	description: string;
+};
+
+export type Pattern = {
+	ID: number;
+	name: string;
+	title: string;
+	description?: string;
+	category?: PatternCategory;
+	categories: Record< string, PatternCategory | undefined >;
+	key?: string;
+	pattern_meta?: Record< string, boolean | undefined >;
+	html?: string;
+	tags: Record< string, PatternTag | undefined >;
 	can_be_copied_without_account?: boolean;
 };
 

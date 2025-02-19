@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_PREMIUM, getPlan, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
@@ -7,16 +6,23 @@ import { ENTER } from '@wordpress/keycodes';
 import clsx from 'clsx';
 import { translate, TranslateResult } from 'i18n-calypso';
 import { useMemo, useContext } from 'react';
-import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '../../constants';
 import {
 	GlobalStylesContext,
 	mergeBaseAndUserConfigs,
 	withExperimentalBlockEditorProvider,
+	isDefaultVariation,
 } from '../../gutenberg-bridge';
 import { useRegisterCoreBlocks } from '../../hooks';
+import { getGroupedVariations } from '../../utils';
 import GlobalStylesVariationPreview from './preview';
 import type { GlobalStylesObject } from '../../types';
 import './style.scss';
+
+declare global {
+	interface Window {
+		isGlobalStylesOnPersonal?: boolean;
+	}
+}
 
 interface GlobalStylesVariationProps {
 	globalStylesVariation: GlobalStylesObject;
@@ -32,11 +38,9 @@ interface GlobalStylesVariationsProps {
 	showOnlyHoverViewDefaultVariation?: boolean;
 	splitDefaultVariation?: boolean;
 	needsUpgrade?: boolean;
+	isGlobalStylesOnPersonal?: boolean;
 	onSelect: ( globalStylesVariation: GlobalStylesObject ) => void;
 }
-
-const isDefaultGlobalStyleVariationSlug = ( globalStylesVariation: GlobalStylesObject ) =>
-	globalStylesVariation.slug === DEFAULT_GLOBAL_STYLES_VARIATION_SLUG;
 
 const GlobalStylesVariation = ( {
 	globalStylesVariation,
@@ -102,34 +106,38 @@ const GlobalStylesVariations = ( {
 	showOnlyHoverViewDefaultVariation,
 	splitDefaultVariation = true,
 	needsUpgrade = true,
+	isGlobalStylesOnPersonal = window.isGlobalStylesOnPersonal ?? false,
 	onSelect,
 }: GlobalStylesVariationsProps ) => {
 	const hasEnTranslation = useHasEnTranslation();
 	const isRegisteredCoreBlocks = useRegisterCoreBlocks();
-	const upgradeToPlan = isEnabled( 'global-styles/on-personal-plan' )
-		? PLAN_PERSONAL
-		: PLAN_PREMIUM;
-	const premiumStylesDescription = translate(
-		'Unlock style variations and tons of other features with the %(planName)s plan, or try them out now for free.',
-		{ args: { planName: getPlan( upgradeToPlan )?.getTitle() ?? '' } }
-	);
+	const upgradeToPlan = isGlobalStylesOnPersonal ? PLAN_PERSONAL : PLAN_PREMIUM;
+
+	const variationDescription = needsUpgrade
+		? translate(
+				'Unlock style variations and tons of other features with the %(planName)s plan, or try them out now for free.',
+				{ args: { planName: getPlan( upgradeToPlan )?.getTitle() ?? '' } }
+		  )
+		: translate( 'You can change your style at any time.' );
 
 	const baseGlobalStyles = useMemo(
 		() =>
 			globalStylesVariations.find( ( globalStylesVariation ) =>
-				isDefaultGlobalStyleVariationSlug( globalStylesVariation )
+				isDefaultVariation( globalStylesVariation )
 			) ?? ( {} as GlobalStylesObject ),
 		[ globalStylesVariations ]
 	);
-	const globalStylesVariationsWithoutDefault = useMemo(
-		() =>
-			globalStylesVariations.filter(
-				( globalStylesVariation ) => ! isDefaultGlobalStyleVariationSlug( globalStylesVariation )
-			),
+
+	const { styleVariations, colorVariations } = useMemo(
+		() => getGroupedVariations( globalStylesVariations ),
 		[ globalStylesVariations ]
 	);
 
-	const nonDefaultStylesDescription = description ?? premiumStylesDescription;
+	// Use the color variations if the style variations are empty because we don't display color variations as palette section.
+	const globalStylesVariationsWithoutDefault =
+		styleVariations.length > 0 ? styleVariations : colorVariations;
+
+	const nonDefaultStylesDescription = description ?? variationDescription;
 	const nonDefaultStyles = globalStylesVariationsWithoutDefault.map(
 		( globalStylesVariation, index ) => (
 			<GlobalStylesVariation
@@ -144,6 +152,10 @@ const GlobalStylesVariations = ( {
 	const headerText = splitDefaultVariation ? translate( 'Default Style' ) : translate( 'Styles' );
 
 	if ( ! isRegisteredCoreBlocks ) {
+		return null;
+	}
+
+	if ( globalStylesVariationsWithoutDefault.length === 0 ) {
 		return null;
 	}
 
@@ -178,7 +190,7 @@ const GlobalStylesVariations = ( {
 							globalStylesVariation={ baseGlobalStyles }
 							isActive={
 								! selectedGlobalStylesVariation ||
-								isDefaultGlobalStyleVariationSlug( selectedGlobalStylesVariation )
+								isDefaultVariation( selectedGlobalStylesVariation )
 							}
 							showOnlyHoverView={ showOnlyHoverViewDefaultVariation }
 							onSelect={ () => onSelect( baseGlobalStyles ) }
@@ -199,11 +211,13 @@ const GlobalStylesVariations = ( {
 												count: nonDefaultStyles.length,
 										  } ) }
 								</span>
-								<PremiumBadge
-									shouldHideTooltip
-									shouldCompactWithAnimation
-									labelText={ translate( 'Upgrade' ) }
-								/>
+								{ needsUpgrade && (
+									<PremiumBadge
+										shouldHideTooltip
+										shouldCompactWithAnimation
+										labelText={ translate( 'Upgrade' ) }
+									/>
+								) }
 							</h2>
 							<p>{ nonDefaultStylesDescription }</p>
 						</div>

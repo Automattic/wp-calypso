@@ -1,4 +1,5 @@
 @import "@automattic/typography/styles/variables";
+@import "variables";
 
 @mixin help-center-link {
 	> ul {
@@ -29,7 +30,7 @@
 
 				> svg:first-child {
 					margin-right: 15px;
-					fill: var(--studio-blue-50);
+					fill: $help-center-blue;
 					padding: 8px;
 					display: block;
 					background: var(--studio-gray-0);
@@ -52,7 +53,7 @@
 
 				&:focus {
 					color: var(--studio-gray-100);
-					outline: var(--color-primary-light) solid 2px;
+					outline: $help-center-blue solid 2px;
 					outline-offset: 2px;
 				}
 			}

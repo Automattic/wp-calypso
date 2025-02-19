@@ -5,6 +5,8 @@
 	.is-logged-in {
 		.lpc-header-nav-wrapper {
 			padding-top: 32px;
+			z-index: 0;
+			position: relative;
 
 			@media (max-width: $break-medium) {
 				padding-top: 46px;

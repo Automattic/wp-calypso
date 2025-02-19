@@ -198,41 +198,28 @@ const buildApp = ( environment ) => {
 					'/* webpack manifest for evergreen */',
 					'/* webpack runtime for evergreen */',
 				],
-				entrypoints: {
-					'entry-main': {
-						assets: [ ...assetsList ],
-					},
-					'entry-domains-landing': {
-						assets: [
-							...assetsList.map( ( asset ) =>
-								asset.replace( 'entry-main', 'entry-domains-landing' )
-							),
-						],
-					},
-					'entry-gutenboarding': {
-						assets: [
-							...assetsList.map( ( asset ) =>
-								asset.replace( 'entry-main', 'entry-gutenboarding' )
-							),
-						],
-					},
-					'entry-browsehappy': {
-						assets: [
-							...assetsList.map( ( asset ) => asset.replace( 'entry-main', 'entry-browsehappy' ) ),
-						],
-					},
+				assets: {
+					'entry-main': assetsList,
+					'entry-domains-landing': assetsList.map( ( asset ) =>
+						asset.replace( 'entry-main', 'entry-domains-landing' )
+					),
+					'entry-gutenboarding': assetsList.map( ( asset ) =>
+						asset.replace( 'entry-main', 'entry-gutenboarding' )
+					),
+					'entry-browsehappy': assetsList.map( ( asset ) =>
+						asset.replace( 'entry-main', 'entry-browsehappy' )
+					),
+					...Object.fromEntries(
+						sections.map( ( section ) => [
+							section.name,
+							[
+								`/calypso/evergreen/${ section.name }.js`,
+								`/calypso/evergreen/${ section.name }.css`,
+								`/calypso/evergreen/${ section.name }.rtl.css`,
+							],
+						] )
+					),
 				},
-				chunks: [
-					...sections.map( ( section ) => ( {
-						names: [ section.name ],
-						files: [
-							`/calypso/evergreen/${ section.name }.js`,
-							`/calypso/evergreen/${ section.name }.css`,
-							`/calypso/evergreen/${ section.name }.rtl.css`,
-						],
-						siblings: [],
-					} ) ),
-				],
 			};
 			mockFs( {
 				'./build/assets.json': JSON.stringify( assets ),
@@ -417,11 +404,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 	it( 'sets the sanitize method', async () => {
 		const { request } = await app.run();
 		expect( request.context.sanitize ).toEqual( app.getMocks().sanitize );
-	} );
-
-	it( 'sets requestFrom', async () => {
-		const { request } = await app.run( { request: { query: { from: 'from' } } } );
-		expect( request.context.requestFrom ).toEqual( 'from' );
 	} );
 
 	it( 'sets lang to the default', async () => {
@@ -1016,12 +998,16 @@ describe( 'main app', () => {
 				'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans'
 			);
 		} );
-		it( 'redirects to public pricing page', async () => {
+		it( 'redirects to public pricing page with coupon and ref params', async () => {
 			app.withConfigEnabled( {
 				'jetpack-cloud/connect': false,
 			} );
-			const { response } = await app.run( { request: { url: '/plans' } } );
-			expect( response.redirect ).toHaveBeenCalledWith( 'https://wordpress.com/pricing/' );
+			const { response } = await app.run( {
+				request: { url: '/plans', query: { ref: 'test', coupon: 'test' } },
+			} );
+			expect( response.redirect ).toHaveBeenCalledWith(
+				'https://wordpress.com/pricing/?ref=test&coupon=test'
+			);
 		} );
 	} );
 
@@ -1183,7 +1169,7 @@ describe( 'main app', () => {
 				} );
 
 				expect( response.redirect ).toHaveBeenCalledWith(
-					'https://wordpress.com/read/search?q=my%20search'
+					'https://wordpress.com/reader/search?q=my%20search'
 				);
 			} );
 
@@ -1198,7 +1184,7 @@ describe( 'main app', () => {
 				} );
 
 				expect( response.redirect ).toHaveBeenCalledWith(
-					'https://wordpress.com/read/search?q=my%20search'
+					'https://wordpress.com/reader/search?q=my%20search'
 				);
 			} );
 

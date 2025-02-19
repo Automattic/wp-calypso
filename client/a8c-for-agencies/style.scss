@@ -166,7 +166,7 @@
 
 	.components-button.is-primary,
 	.button.is-primary {
-		&,
+		&:not( :disabled ),
 		&:focus:not(:disabled) {
 			background-color: var(--color-primary-50);
 			border-color: var(--color-primary-50);
@@ -612,7 +612,7 @@ html {
 }
 
 .full-width-layout-with-table {
-	.a4a-layout__body-wrapper {
+	.hosting-dashboard-layout__body-wrapper {
 		max-width: 100%;
 		padding-inline: 0;
 	}

@@ -31,6 +31,7 @@ const getAgencyTierInfo = (
 		description: '',
 		logo: NoTierLogo,
 		includedTiers: [],
+		learnMoreLink: 'https://agencieshelp.automattic.com/knowledge-base/agency-tiering-benefits',
 	};
 	switch ( agencyTier ) {
 		case 'emerging-partner':
@@ -64,6 +65,8 @@ const getAgencyTierInfo = (
 					image: EmergingPartnerBackground,
 					cta: translate( 'Learn about Tiers' ),
 				},
+				learnMoreLink:
+					'https://agencieshelp.automattic.com/knowledge-base/agency-tiering-benefits/#account-activated',
 			};
 			break;
 		case 'agency-partner':
@@ -91,7 +94,7 @@ const getAgencyTierInfo = (
 				logo: AgencyPartnerLogo,
 				includedTiers: [ 'emerging-partner', 'agency-partner' ],
 				celebrationModal: {
-					title: translate( "Congrats! You've reached the Agency Partner Tier." ),
+					title: translate( "Congrats! You've reached the Agency Partner tier!" ),
 					description: translate(
 						"You've reached at least $1,200 in influenced revenue and have unlocked these additional benefits:"
 					),
@@ -104,6 +107,8 @@ const getAgencyTierInfo = (
 					image: AgencyPartnerBackground,
 					cta: translate( 'Explore your benefits' ),
 				},
+				learnMoreLink:
+					'https://agencieshelp.automattic.com/knowledge-base/agency-tiering-benefits/#agency-partner',
 			};
 			break;
 		case 'pro-agency-partner':
@@ -125,7 +130,7 @@ const getAgencyTierInfo = (
 				logo: ProAgencyPartnerLogo,
 				includedTiers: [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ],
 				celebrationModal: {
-					title: translate( "Congratulations, you've reached the Pro Partner Tier!" ),
+					title: translate( "Congratulations, you've reached the Pro Agency Partner tier!" ),
 					description: translate(
 						"You've reached top-tier status and unlocked these additional benefits:"
 					),
@@ -143,6 +148,8 @@ const getAgencyTierInfo = (
 					image: ProAgencyPartnerBackground,
 					cta: translate( 'Explore your benefits' ),
 				},
+				learnMoreLink:
+					'https://agencieshelp.automattic.com/knowledge-base/agency-tiering-benefits/#pro-partner',
 			};
 	}
 	return { id: agencyTier, ...tierInfo };

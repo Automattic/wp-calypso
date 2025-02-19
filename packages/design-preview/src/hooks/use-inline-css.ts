@@ -20,7 +20,7 @@ const useInlineCss = ( variations?: StyleVariation[], selectedVariation?: StyleV
 		if ( variations && selectedVariation ) {
 			inlineCss +=
 				selectedVariation.inline_css ??
-				( getVariationBySlug( variations, selectedVariation.slug )?.inline_css || '' );
+				( getVariationBySlug( variations, selectedVariation.slug ?? '' )?.inline_css || '' );
 		}
 
 		return inlineCss;

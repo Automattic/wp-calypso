@@ -11,3 +11,4 @@ export { default as isHttps } from './is-https';
 export { addSchemeIfMissing, setUrlScheme } from './scheme-utils';
 export { decodeURIIfValid, decodeURIComponentIfValid } from './decode-utils';
 export { default as resolveRelativePath } from './resolve-relative-path';
+export { pathToUrl } from './path-to-url';

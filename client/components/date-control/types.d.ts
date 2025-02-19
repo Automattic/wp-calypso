@@ -1,19 +1,18 @@
 import { DateRangePickerShortcut } from 'calypso/components/date-range/shortcuts';
 
 interface DateControlProps {
-	onApplyButtonClick: ( startDate: Moment, endDate: Moment ) => void;
+	onApplyButtonClick: ( startDate: Moment, endDate: Moment, selectedShortcutId?: string ) => void;
 	onDateControlClick?: () => void;
 	dateRange: {
 		chartStart: string;
 		chartEnd: string;
 		daysInRange: number;
+		shortcutId?: string;
 	};
 	shortcutList: DateRangePickerShortcut[];
-	onShortcutClick: ( shortcut: DateRangePickerShortcut ) => void;
+	onShortcutClick: ( shortcut: DateRangePickerShortcut, closePopoverAndCommit: () => void ) => void;
 	tooltip?: string;
 	overlay?: JSX.Element;
-	// Temporary prop to enable new date filtering UI.
-	isNewDateFilteringEnabled?: boolean;
 }
 
 interface DateControlPickerProps {
@@ -31,12 +30,6 @@ interface DateControlPickerProps {
 	) => void;
 }
 
-interface DateControlPickerShortcutsProps {
-	shortcutList: DateRangePickerShortcut[];
-	currentShortcut: string | undefined;
-	onClick: ( shortcut: DateRangePickerShortcut ) => void;
-}
-
 interface DateControlPickerDateProps {
 	startDate?: string;
 	endDate?: string;
@@ -47,9 +40,4 @@ interface DateControlPickerDateProps {
 	overlay?: JSX.Element;
 }
 
-export {
-	DateControlProps,
-	DateControlPickerProps,
-	DateControlPickerShortcutsProps,
-	DateControlPickerDateProps,
-};
+export { DateControlProps, DateControlPickerProps, DateControlPickerDateProps };

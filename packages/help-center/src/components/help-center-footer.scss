@@ -1,3 +1,5 @@
+@import "variables";
+
 .help-center__container-footer {
 	height: auto;
 	padding: 16px;
@@ -30,7 +32,7 @@
 		&:focus {
 			border-color: transparent;
 			box-shadow: none;
-			outline: var(--color-primary-light) solid 2px;
+			outline: $help-center-blue solid 2px;
 		}
 
 		svg {

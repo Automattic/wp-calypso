@@ -16,6 +16,10 @@
 		margin-bottom: 32px;
 		flex-wrap: wrap;
 		gap: 16px;
+
+		.performance-profiler-llm-message {
+			flex-grow: 1;
+		}
 	}
 
 	.title {

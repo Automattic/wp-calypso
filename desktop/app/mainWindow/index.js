@@ -1,5 +1,4 @@
 const { app, BrowserWindow, BrowserView, ipcMain: ipc } = require( 'electron' );
-const appInstance = require( '../lib/app-instance' );
 const { getPath } = require( '../lib/assets' );
 const Config = require( '../lib/config' );
 const log = require( '../lib/logger' )( 'desktop:runapp' );
@@ -157,6 +156,8 @@ function showAppWindow() {
 	} );
 
 	const appWindow = { view: mainView, window: mainWindow };
+	require( '../window-handlers/login' )( appWindow );
+	require( '../window-handlers/incoming-urls' )( appWindow );
 	require( '../window-handlers/failed-to-load' )( appWindow );
 	require( '../window-handlers/login-status' )( appWindow );
 	require( '../window-handlers/notifications' )( appWindow );
@@ -166,6 +167,7 @@ function showAppWindow() {
 	require( '../window-handlers/spellcheck' )( appWindow );
 	require( '../window-handlers/navigation' )( appWindow );
 	require( '../window-handlers/clipboard' )( appWindow );
+	require( '../window-handlers/unsaved-changes' )( appWindow );
 
 	platform.setMainWindow( appWindow );
 
@@ -173,7 +175,5 @@ function showAppWindow() {
 }
 
 module.exports = function () {
-	if ( appInstance.isSingleInstance() ) {
-		app.on( 'ready', showAppWindow );
-	}
+	app.on( 'ready', showAppWindow );
 };

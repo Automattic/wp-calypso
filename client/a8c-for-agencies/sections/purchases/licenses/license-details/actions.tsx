@@ -2,7 +2,16 @@ import { Button } from '@automattic/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useEffect } from 'react';
-import { isPressableHostingProduct } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
+import {
+	A4A_MARKETPLACE_ASSIGN_LICENSE_LINK,
+	A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
+	A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
+	A4A_SITES_LINK_NEEDS_SETUP,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	isPressableHostingProduct,
+	isWPCOMHostingProduct,
+} from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import {
 	LicenseRole,
 	LicenseState,
@@ -25,6 +34,7 @@ interface Props {
 	licenseType: LicenseType;
 	hasDownloads: boolean;
 	isChildLicense?: boolean;
+	isClientLicense?: boolean;
 }
 
 export default function LicenseDetailsActions( {
@@ -35,6 +45,7 @@ export default function LicenseDetailsActions( {
 	licenseType,
 	hasDownloads,
 	isChildLicense,
+	isClientLicense,
 }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -45,10 +56,15 @@ export default function LicenseDetailsActions( {
 
 	const [ revokeDialog, setRevokeDialog ] = useState( false );
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
+	const isWPCOMHostingLicense = isWPCOMHostingProduct( licenseKey );
 	const pressableManageUrl = 'https://my.pressable.com/agency/auth';
 
 	const debugUrl = siteUrl ? `https://jptools.wordpress.com/debug/?url=${ siteUrl }` : null;
 	const downloadUrl = useLicenseDownloadUrlMutation( licenseKey );
+
+	const redirectUrl = isWPCOMHostingLicense
+		? A4A_SITES_LINK_NEEDS_SETUP
+		: addQueryArgs( { key: licenseKey }, A4A_MARKETPLACE_ASSIGN_LICENSE_LINK );
 
 	const openRevokeDialog = useCallback( () => {
 		setRevokeDialog( true );
@@ -113,6 +129,21 @@ export default function LicenseDetailsActions( {
 				</Button>
 			) }
 
+			{ ( isPressableLicense || isWPCOMHostingLicense ) &&
+				licenseState !== LicenseState.Revoked &&
+				! isClientLicense && (
+					<Button
+						compact
+						href={
+							isPressableLicense
+								? A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK
+								: A4A_MARKETPLACE_HOSTING_WPCOM_LINK
+						}
+					>
+						{ translate( 'Upgrade' ) }
+					</Button>
+				) }
+
 			{ canRevoke &&
 				( isChildLicense
 					? licenseState === LicenseState.Attached
@@ -124,13 +155,8 @@ export default function LicenseDetailsActions( {
 				) }
 
 			{ licenseState === LicenseState.Detached && licenseType === LicenseType.Partner && (
-				<Button
-					compact
-					primary
-					className="license-details__assign-button"
-					href={ addQueryArgs( { key: licenseKey }, '/marketplace/assign-license' ) }
-				>
-					{ translate( 'Assign License' ) }
+				<Button compact primary className="license-details__assign-button" href={ redirectUrl }>
+					{ isWPCOMHostingLicense ? translate( 'Create site' ) : translate( 'Assign license' ) }
 				</Button>
 			) }
 

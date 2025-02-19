@@ -4,11 +4,9 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta< typeof SearchableDropdown > = {
 	title: 'packages/components/SearchableDropdown',
-	component: ( props ) => {
-		// eslint-disable-next-line react-hooks/rules-of-hooks
-		const [ value, onChange ] = useState( 'home' );
-
-		return <SearchableDropdown value={ value } onChange={ ( e ) => onChange( e! ) } { ...props } />;
+	component: SearchableDropdown,
+	parameters: {
+		controls: { expanded: true },
 	},
 };
 
@@ -16,6 +14,12 @@ export default meta;
 type Story = StoryObj< typeof SearchableDropdown >;
 
 export const Default: Story = {
+	render: function Template( props ) {
+		const [ value, onChange ] =
+			useState< React.ComponentProps< typeof SearchableDropdown >[ 'value' ] >( 'home' );
+
+		return <SearchableDropdown value={ value } onChange={ onChange } { ...props } />;
+	},
 	args: {
 		options: [
 			{

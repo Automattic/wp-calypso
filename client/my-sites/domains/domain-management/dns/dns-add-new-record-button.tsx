@@ -17,8 +17,9 @@ function DnsAddNewRecordButton( { site, domain, isMobile }: DndAddNewRecordButto
 			borderless={ isMobile }
 			href={ domainManagementDnsAddRecord( site, domain, currentRoute ) }
 			className={ className }
+			primary
 		>
-			<Icon icon={ plus } viewBox="4 4 16 16" size={ 16 } />
+			<Icon className="add-record__icon" icon={ plus } viewBox="4 4 16 16" size={ 16 } />
 			{ ! isMobile && __( 'Add a record' ) }
 		</Button>
 	);

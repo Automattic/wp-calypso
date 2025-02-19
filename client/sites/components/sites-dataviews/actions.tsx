@@ -199,9 +199,10 @@ export const isActionEligible = (
 			};
 		case 'restore':
 			return ( site: SiteExcerptData ) => {
-				const canManageOptions = capabilities[ site.ID ]?.manage_options;
+				// For deleted sites, the `manage_options` capability is not returned so we  don't check for it here
+				// But this setting is guarded in the backend:
+				// https://github.a8c.com/Automattic/wpcom/blob/4508b82936f1502b580d49574b63aad3b6dc1c5a/wp-content/rest-api-plugins/endpoints/site-restore.php#L47
 				if (
-					! canManageOptions ||
 					isP2Site( site ) ||
 					isNotAtomicJetpack( site ) ||
 					isDisconnectedJetpackAndNotAtomic( site )
@@ -235,6 +236,16 @@ export const isActionEligible = (
 				}
 
 				return isNotAtomicJetpack( site ) || !! isDisconnectedJetpackAndNotAtomic( site );
+			};
+		case 'delete-site':
+			return ( site: SiteExcerptData ) => {
+				const canManageOptions = capabilities[ site.ID ]?.manage_options;
+				return (
+					! site.is_deleted &&
+					canManageOptions &&
+					( ! site.jetpack || !! site.is_wpcom_atomic ) &&
+					! site.is_vip
+				);
 			};
 		default:
 			return () => true;
@@ -436,7 +447,8 @@ export function useActions( {
 					const wpAdminUrl = getSiteAdminUrl( site );
 					const adminInterface = getAdminInterface( site );
 					const isWpAdminInterface = adminInterface === 'wp-admin';
-					if ( isWpAdminInterface ) {
+					const isSelfHostedJetpack = isNotAtomicJetpack( site );
+					if ( isWpAdminInterface || isSelfHostedJetpack ) {
 						window.location.href = `${ wpAdminUrl }plugins.php`;
 					} else {
 						page( getPluginsUrl( site.slug ) );
@@ -556,6 +568,17 @@ export function useActions( {
 					recordTracksEvent( 'calypso_sites_dashboard_site_action_migrate_to_wpcom_click' );
 				},
 				isEligible: isActionEligible( 'migrate-to-wpcom', capabilities ),
+			},
+
+			{
+				id: 'delete-site',
+				label: __( 'Delete site' ),
+				callback: ( sites ) => {
+					const site = sites[ 0 ];
+					page( `/settings/delete-site/${ site.slug }` );
+					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_delete_click' ) );
+				},
+				isEligible: isActionEligible( 'delete-site', capabilities ),
 			},
 		],
 		[ __, capabilities, dispatch, openSitePreviewPane, restoreSite, viewType, localizeUrl ]

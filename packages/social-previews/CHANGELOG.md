@@ -4,6 +4,8 @@
 
 - Added Threads and Bluesky preview
 - Fixed media image URL for Tumblr and Instagram previews
+- Removed the learn more link for link previews
+- Fixed distorted image for Tumblr preview
 
 ## v2.0.1 (2024-06-10)
 

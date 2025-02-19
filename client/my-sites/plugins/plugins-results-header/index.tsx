@@ -1,9 +1,9 @@
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { TranslateResult } from 'calypso/../packages/i18n-calypso/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
 
@@ -14,6 +14,7 @@ export default function PluginsResultsHeader( {
 	browseAllLink,
 	resultCount,
 	listName,
+	isRootPage = true,
 }: {
 	title: TranslateResult;
 	subtitle: TranslateResult;
@@ -21,15 +22,17 @@ export default function PluginsResultsHeader( {
 	resultCount?: string;
 	className?: string;
 	listName?: string;
+	isRootPage?: boolean;
 } ) {
 	const { __ } = useI18n();
 	const selectedSite = useSelector( getSelectedSite );
+	const TitleTag = isRootPage ? 'h2' : 'h1';
 
 	return (
 		<div className={ clsx( 'plugins-results-header', className ) }>
 			{ ( title || subtitle ) && (
 				<div className="plugins-results-header__titles">
-					{ title && <div className="plugins-results-header__title">{ title }</div> }
+					{ title && <TitleTag className="plugins-results-header__title">{ title }</TitleTag> }
 					{ subtitle && <div className="plugins-results-header__subtitle">{ subtitle }</div> }
 				</div>
 			) }

@@ -7,6 +7,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { UPDATE_PLUGIN, ACTIVATE_PLUGIN } from 'calypso/lib/plugins/constants';
+import { getSite } from 'calypso/state/sites/selectors';
 import UpdatePlugin from '../update-plugin';
 import { site, plugin } from './utils/constants';
 
@@ -36,7 +37,7 @@ const initialState = {
 
 const props = {
 	plugin,
-	selectedSite: site,
+	selectedSite: getSite( initialState, site.ID ),
 	className: 'update-plugin',
 	updatePlugin: jest.fn(),
 };
@@ -70,7 +71,8 @@ describe( '<UpdatePlugin>', () => {
 		const [ updateButton ] = container.getElementsByClassName( 'update-plugin__new-version' );
 		await userEvent.click( updateButton );
 
-		const [ confirmButton ] = document.querySelectorAll( '.confirm-modal__buttons .is-primary' );
+		// debug elements
+		const [ confirmButton ] = document.querySelectorAll( '.accept__dialog-buttons .is-primary' );
 		await userEvent.click( confirmButton );
 
 		expect( props.updatePlugin ).toHaveBeenCalledTimes( 1 );

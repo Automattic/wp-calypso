@@ -4,6 +4,7 @@ export interface EditorProps {
 	initialContent: string;
 	onChange: ( content: string ) => void;
 	isRTL: boolean;
+	isDarkMode: boolean;
 }
 
 export interface StateWithUndoManager {

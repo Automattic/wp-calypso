@@ -28,7 +28,8 @@ export default function useUpdateMonitorSettings(
 	const queryClient = useQueryClient();
 	const { filter, search, currentPage, sort } = useContext( SitesOverviewContext );
 
-	const { dataViewsState, showOnlyFavorites } = useContext( SitesDashboardContext );
+	const { dataViewsState, showOnlyFavorites, showOnlyDevelopmentSites } =
+		useContext( SitesDashboardContext );
 
 	const agencyId = useSelector( getActiveAgencyId );
 
@@ -40,6 +41,7 @@ export default function useUpdateMonitorSettings(
 				{
 					issueTypes: getSelectedFilters( dataViewsState.filters ),
 					showOnlyFavorites: showOnlyFavorites || false,
+					showOnlyDevelopmentSites: showOnlyDevelopmentSites || false,
 				},
 				dataViewsState.sort,
 				dataViewsState.perPage,

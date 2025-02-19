@@ -5,7 +5,6 @@ const selectors = {
 	// Reader main stream
 	readerCard: '.reader-post-card',
 	streamPlaceholder: 'span.reader__placeholder-text',
-	visitSiteLink: '.reader-visit-link',
 	actionButton: ( action: 'Share' | 'Comment' ) =>
 		`.reader-post-actions__item:has-text("${ action }")`,
 
@@ -34,21 +33,11 @@ export class ReaderPage {
 	/**
 	 * Opens the Reader page.
 	 *
-	 * Example {@link https://wordpress.com/read}
+	 * Example {@link https://wordpress.com/reader}
 	 */
 	async visit(): Promise< void > {
-		await this.page.goto( getCalypsoURL( 'read' ) );
-		await this.page.waitForURL( /read/ );
-	}
-
-	/**
-	 * Get the URL of the latest post in Reader
-	 *
-	 * @returns {Promise<string>} String of URL for latest post.
-	 */
-	async siteOfLatestPost(): Promise< string > {
-		const href = await this.page.getAttribute( selectors.visitSiteLink, 'href' );
-		return new URL( href ? href : '' ).host;
+		await this.page.goto( getCalypsoURL( 'reader' ) );
+		await this.page.waitForURL( /reader/ );
 	}
 
 	/**
@@ -81,7 +70,7 @@ export class ReaderPage {
 		}
 
 		await Promise.all( [
-			this.page.waitForURL( /read\/feeds\/[\d]+\/posts.*/ ),
+			this.page.waitForURL( /reader\/feeds\/[\d]+\/posts.*/ ),
 			this.page.click( selector ),
 		] );
 	}

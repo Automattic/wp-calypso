@@ -1,6 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { FormInputValidation } from '@automattic/components';
-import { Subscriber } from '@automattic/data-stores';
+import { Subscriber, useNewsletterCategories } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import { TextControl, FormFileUpload, Button } from '@wordpress/components';
@@ -23,12 +23,14 @@ import { useActiveJobRecognition } from '../../hooks/use-active-job-recognition'
 import { useInProgressState } from '../../hooks/use-in-progress-state';
 import { RecordTrackEvents, useRecordAddFormEvents } from '../../hooks/use-record-add-form-events';
 import AddSubscribersDisclaimer from '../add-subscribers-disclaimer';
+import { CategoriesSection } from './categories-section';
 import { tip } from './icon';
 
 import './style.scss';
 
 interface Props {
 	siteId: number;
+	siteUrl?: string;
 	hasSubscriberLimit?: boolean;
 	flowName?: string;
 	showTitle?: boolean;
@@ -60,6 +62,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	};
 	const {
 		siteId,
+		siteUrl,
 		hasSubscriberLimit,
 		flowName,
 		showTitle = true,
@@ -82,6 +85,12 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		isWPCOMSite = false,
 		disabled,
 	} = props;
+
+	const { data: newsletterCategoriesData } = useNewsletterCategories( {
+		siteId,
+	} );
+
+	const [ selectedCategories, setSelectedCategories ] = useState< number[] >( [] );
 
 	const {
 		addSubscribers,
@@ -184,7 +193,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		} else {
 			// import subscribers proving CSV and manual list of emails
 			( selectedFile || validEmails.length ) &&
-				importCsvSubscribers( siteId, selectedFile, validEmails );
+				importCsvSubscribers( siteId, selectedFile, validEmails, selectedCategories );
 		}
 
 		! validEmails.length && ! selectedFile && allowEmptyFormSubmit && onImportFinished?.();
@@ -491,6 +500,18 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 					{ showCsvUpload && ! includesHandledError() && renderImportCsvLabel() }
 
 					{ renderEmptyFormValidationMsg() }
+
+					{ newsletterCategoriesData?.enabled &&
+						newsletterCategoriesData?.newsletterCategories.length > 0 && (
+							<CategoriesSection
+								siteId={ siteId }
+								siteUrl={ siteUrl }
+								newsletterCategories={ newsletterCategoriesData?.newsletterCategories }
+								selectedCategories={ selectedCategories }
+								setSelectedCategories={ setSelectedCategories }
+								isWPCOMSite={ isWPCOMSite }
+							/>
+						) }
 
 					<AddSubscribersDisclaimer buttonLabel={ submitBtnName } />
 

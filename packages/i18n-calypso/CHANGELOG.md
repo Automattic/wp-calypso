@@ -1,3 +1,20 @@
+## 7.2.2
+
+- TS configuration & jest depdencies
+
+## 7.2.1
+
+- `compact` option for `numberFormat`
+
+## 7.2.0
+
+- Replace `number_format` with `Intl.NumberFormat`
+- Add and export `getBrowserSafeLocal` method
+
+## 7.1.0
+
+- Add new `fixMe` method for conditionally loading a copy given a respective translation exists
+
 ## 7.0.0
 
 - Update React peer dependency to v18.

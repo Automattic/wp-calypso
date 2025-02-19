@@ -16,7 +16,7 @@ const ReaderFirstPosts = () => {
 	};
 
 	return (
-		<Card className="reader-first-posts__nudge">
+		<Card className="reader-first-posts__nudge customer-home__card is-small-hero">
 			<TrackComponentView
 				eventName="calypso_my_home_reader_first_posts_nudge_view"
 				eventProperties={ {

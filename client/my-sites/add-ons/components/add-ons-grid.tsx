@@ -18,13 +18,7 @@ const Container = styled.div`
 	}
 `;
 
-const AddOnsGrid = ( {
-	addOns,
-	actionPrimary,
-	actionSecondary,
-	useAddOnAvailabilityStatus,
-	highlightFeatured,
-}: Props ) => {
+const AddOnsGrid = ( { addOns, actionPrimary, actionSecondary, highlightFeatured }: Props ) => {
 	return (
 		<Container>
 			{ addOns.map( ( addOn ) =>
@@ -35,7 +29,6 @@ const AddOnsGrid = ( {
 						}
 						actionPrimary={ actionPrimary }
 						actionSecondary={ actionSecondary }
-						useAddOnAvailabilityStatus={ useAddOnAvailabilityStatus }
 						addOnMeta={ addOn }
 						highlightFeatured={ highlightFeatured }
 					/>

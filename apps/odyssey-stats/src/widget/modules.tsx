@@ -1,7 +1,7 @@
-import { ShortenedNumber, Button } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { protect, akismet } from '@automattic/components/src/icons';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, numberFormatCompact } from 'i18n-calypso';
 import { useState, FunctionComponent } from 'react';
 import wpcom from 'calypso/lib/wp';
 import useModuleDataQuery from '../hooks/use-module-data-query';
@@ -64,7 +64,7 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 				<>
 					{ ( ! isError || ! canManageModule ) && (
 						<div className="stats-widget-module__value">
-							<ShortenedNumber value={ value } />
+							<span>{ numberFormatCompact( value ) }</span>
 						</div>
 					) }
 					{ isError && canManageModule && (

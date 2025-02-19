@@ -9,6 +9,7 @@ import useFetchAgencyFromBlog from 'calypso/a8c-for-agencies/data/agencies/use-f
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import SitePreviewLinks from 'calypso/components/site-preview-links';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { useSelector, useDispatch } from 'calypso/state';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
@@ -28,10 +29,55 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { isHostingMenuUntangled } from '../../utils';
 import { LaunchConfirmationModal } from './launch-confirmation-modal';
 import { LaunchSiteTrialUpsellNotice } from './launch-site-trial-notice';
+
 import './styles.scss';
+
+const createAgencyBillingMessage = ( agency, agencyLoading = false, agencyError = false ) => {
+	if ( ! agency ) {
+		return undefined;
+	}
+
+	const agencyPriceInfoIsDefined =
+		Number.isFinite( agency.prices?.actual_price ) && typeof agency.prices?.currency === 'string';
+
+	if ( agencyLoading || agencyError || ! agencyPriceInfoIsDefined ) {
+		return translate( "After launch, we'll bill your agency in the next billing cycle." );
+	}
+
+	const agencyName = agency.name;
+	const existingWPCOMLicenseCount = agency.existing_wpcom_license_count || 0;
+	const price = formatCurrency( agency.prices.actual_price, agency.prices.currency );
+
+	return translate(
+		"After launch, we'll bill {{strong}}%(agencyName)s{{/strong}} in the next billing cycle. With %(licenseCount)s production hosting license, you will be charged %(price)s / license / month. {{a}}Learn more.{{/a}}",
+		"After launch, we'll bill {{strong}}%(agencyName)s{{/strong}} in the next billing cycle. With %(licenseCount)s production hosting licenses, you will be charged %(price)s / license / month. {{a}}Learn more.{{/a}}",
+		{
+			count: existingWPCOMLicenseCount + 1,
+			args: {
+				agencyName,
+				licenseCount: existingWPCOMLicenseCount + 1,
+				price,
+			},
+			components: {
+				strong: <strong />,
+				a: (
+					<a
+						className="site-settings__general-settings-launch-site-agency-learn-more"
+						href={ localizeUrl(
+							'https://agencieshelp.automattic.com/knowledge-base/free-development-licenses-for-wordpress-com-hosting/'
+						) }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				),
+			},
+			comment:
+				'agencyName: name of the agency that will be billed for the site; licenseCount: number of licenses the agency will be billed for; price: price per license',
+		}
+	);
+};
 
 const LaunchSite = () => {
 	const [ isLaunchConfirmationModalOpen, setLaunchConfirmationModalOpen ] = useState( false );
@@ -73,9 +119,7 @@ const LaunchSite = () => {
 		error: agencyError,
 		isLoading: agencyLoading,
 	} = useFetchAgencyFromBlog( site?.ID, { enabled: !! site?.ID && isDevelopmentSite } );
-	const agencyName = agency?.name;
-	const existingWPCOMLicenseCount = agency?.existing_wpcom_license_count || 0;
-	const price = formatCurrency( agency?.prices?.actual_price, agency?.prices?.currency );
+
 	const siteReferralActive = agency?.referral_status === 'active';
 	const shouldShowReferToClientButton =
 		isDevelopmentSite && ! siteReferralActive && ! agencyLoading;
@@ -130,36 +174,7 @@ const LaunchSite = () => {
 		window.location.href = `https://agencies.automattic.com/marketplace/checkout?referral_blog_id=${ siteId }`;
 	};
 
-	const agencyBillingMessage =
-		agencyLoading || agencyError
-			? translate( "After launch, we'll bill your agency in the next billing cycle." )
-			: translate(
-					"After launch, we'll bill {{strong}}%(agencyName)s{{/strong}} in the next billing cycle. With %(licenseCount)s production hosting license, you will be charged %(price)s / license / month. {{a}}Learn more.{{/a}}",
-					"After launch, we'll bill {{strong}}%(agencyName)s{{/strong}} in the next billing cycle. With %(licenseCount)s production hosting licenses, you will be charged %(price)s / license / month. {{a}}Learn more.{{/a}}",
-					{
-						count: existingWPCOMLicenseCount + 1,
-						args: {
-							agencyName: agencyName,
-							licenseCount: existingWPCOMLicenseCount + 1,
-							price,
-						},
-						components: {
-							strong: <strong />,
-							a: (
-								<a
-									className="site-settings__general-settings-launch-site-agency-learn-more"
-									href={ localizeUrl(
-										'https://agencieshelp.automattic.com/knowledge-base/free-development-licenses-for-wordpress-com-hosting/'
-									) }
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-						},
-						comment:
-							'agencyName: name of the agency that will be billed for the site; licenseCount: number of licenses the agency will be billed for; price: price per license',
-					}
-			  );
+	const agencyBillingMessage = createAgencyBillingMessage( agency, agencyLoading, agencyError );
 
 	const renderConfirmationModal = () => {
 		return (
@@ -210,7 +225,8 @@ const LaunchSite = () => {
 		return <SitePreviewLinks siteUrl={ site.URL } siteId={ siteId } source="launch-settings" />;
 	};
 
-	const isUntangled = isHostingMenuUntangled();
+	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
+
 	return (
 		<>
 			{ renderConfirmationModal() }

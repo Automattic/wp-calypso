@@ -17,6 +17,9 @@ import {
 	magicLoginUse,
 	redirectJetpack,
 	redirectDefaultLocale,
+	redirectLostPassword,
+	desktopLogin,
+	desktopLoginFinalize,
 } from './controller';
 import redirectLoggedIn from './redirect-logged-in';
 import { setShouldServerSideRenderLogin, ssrSetupLocaleLogin, setMetaTags } from './ssr';
@@ -64,6 +67,26 @@ const makeLoggedOutLayout = makeLayoutMiddleware( ReduxWrappedLayout );
 
 export default ( router ) => {
 	const lang = getLanguageRouteParam();
+
+	// The /log-in/desktop routes are only used by the WordPress.com Desktop app.
+	router(
+		[ `/log-in/desktop/${ lang }` ],
+		redirectLoggedIn,
+		setLocaleMiddleware(),
+		setMetaTags,
+		setSectionMiddleware( { ...LOGIN_SECTION_DEFINITION, isomorphic: false } ),
+		desktopLogin,
+		makeLoggedOutLayout
+	);
+	router(
+		[ `/log-in/desktop/finalize` ],
+		redirectLoggedIn,
+		setLocaleMiddleware(),
+		setMetaTags,
+		setSectionMiddleware( { ...LOGIN_SECTION_DEFINITION, isomorphic: false } ),
+		desktopLoginFinalize,
+		makeLoggedOutLayout
+	);
 
 	if ( config.isEnabled( 'login/magic-login' ) ) {
 		router(
@@ -118,6 +141,7 @@ export default ( router ) => {
 		login,
 		setShouldServerSideRenderLogin,
 		ssrSetupLocaleLogin,
-		makeLoggedOutLayout
+		makeLoggedOutLayout,
+		redirectLostPassword
 	);
 };

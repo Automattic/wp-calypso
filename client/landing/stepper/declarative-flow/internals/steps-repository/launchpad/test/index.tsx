@@ -188,7 +188,9 @@ describe( 'Launchpad', () => {
 					`/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }`
 				);
 				expect( replaceMock ).toHaveBeenCalledTimes( 1 );
-				expect( replaceMock ).toHaveBeenCalledWith( `/home/${ siteSlug }` );
+				expect( replaceMock ).toHaveBeenCalledWith(
+					expect.stringMatching( `/home/${ siteSlug }` )
+				);
 			} );
 		} );
 
@@ -205,7 +207,9 @@ describe( 'Launchpad', () => {
 					{},
 					`/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }`
 				);
-				expect( replaceMock ).toHaveBeenCalledWith( `/home/${ siteSlug }` );
+				expect( replaceMock ).toHaveBeenCalledWith(
+					expect.stringMatching( `/home/${ siteSlug }` )
+				);
 			} );
 		} );
 

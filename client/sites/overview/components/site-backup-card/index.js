@@ -16,7 +16,6 @@ import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import getLastGoodRewindBackup from 'calypso/state/selectors/get-last-good-rewind-backup';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -28,9 +27,6 @@ const SiteBackupCard = ( { lastGoodBackup, requestBackups, siteId, siteSlug } ) 
 
 	const hasRetrievedLastBackup = lastGoodBackup !== null;
 	const [ isLoading, setIsLoading ] = useState( false );
-	const wpcomAdminInterface = useSelector( ( state ) =>
-		getSiteOption( state, siteId, 'wpcom_admin_interface' )
-	);
 
 	const hasBackup = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS )
@@ -115,11 +111,7 @@ const SiteBackupCard = ( { lastGoodBackup, requestBackups, siteId, siteSlug } ) 
 			<HostingCardHeading title={ translate( 'Site backup' ) }>
 				{ hasBackup && (
 					<HostingCardLinkButton
-						to={
-							wpcomAdminInterface === 'wp-admin'
-								? `https://cloud.jetpack.com/backup/${ siteSlug }`
-								: `/backup/${ siteSlug }`
-						}
+						to={ `/backup/${ siteSlug }` }
 						onClick={ () =>
 							dispatch( recordTracksEvent( 'calypso_overview_backups_see_all_click' ) )
 						}

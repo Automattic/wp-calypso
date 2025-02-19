@@ -41,6 +41,12 @@
 				padding-inline-end: 20px;
 			}
 		}
+
+		@include break-xlarge {
+			.step-container__header .formatted-header {
+				margin-top: 0;
+			}
+		}
 	}
 
 	.step-container__buttons {
@@ -72,23 +78,24 @@
 	 */
 	.step-container__header {
 		margin-top: 32px;
-		margin-bottom: 32px;
+		margin-bottom: 48px;
 		display: block;
 		justify-content: space-between;
 		align-items: center;
 
 		.formatted-header {
 			margin: 0;
-			flex-grow: 1;
+
+			@include break-xlarge {
+				margin-top: 88px; // 56px + 32px
+			}
 
 			.formatted-header__title {
-				@include onboarding-font-recoleta;
-				color: var(--studio-gray-100);
-				letter-spacing: 0.2px;
-				font-size: 2.15rem; /* stylelint-disable-line scales/font-sizes */
-				font-weight: 400;
-				padding: 0;
 				margin: 0;
+
+				@include onboarding-font-recoleta;
+				color: var(--color-neutral-100);
+				font-size: 2rem;
 
 				@include break-xlarge {
 					font-size: 2.75rem;
@@ -96,19 +103,8 @@
 			}
 
 			.formatted-header__subtitle {
-				padding: 0;
-				text-align: start;
-				color: var(--studio-gray-60);
-				font-size: 1rem;
-				margin-top: 16px;
-				line-height: 24px;
-
-				&.is-center-align {
-					text-align: center;
-				}
-
-				@include break-small {
-					margin-top: 8px;
+				@include break-xlarge {
+					font-size: 1rem;
 				}
 			}
 		}
@@ -133,11 +129,6 @@
 				}
 			}
 		}
-
-		@include break-small {
-			flex-wrap: wrap;
-			margin-top: 24px;
-		}
 	}
 
 	/**
@@ -150,21 +141,29 @@
 		}
 	}
 	.step-container__navigation.action-buttons {
-		background-color: $white;
 		height: 60px;
 		align-items: center;
 		justify-content: space-between;
 		display: flex;
 		font-size: 0.875rem;
-		position: fixed;
 		z-index: 30;
-		inset-inline-start: 0;
-		inset-inline-end: 0;
 		bottom: 0;
-		padding: 0 20px;
 		margin: 0;
 		border-top: none;
-		box-shadow: inset 0 1px 0 #e2e4e7;
+
+		position: absolute;
+		top: 8px;
+		inset-inline-start: 72px;
+		inset-inline-end: 24px;
+		// Align with wordpress logo in signup-header
+		padding: 1px 0 0;
+		background-color: transparent;
+		border: none;
+		box-shadow: none;
+
+		&.has-sticky-nav-buttons-padding {
+			padding-bottom: 48px;
+		}
 
 		&:empty {
 			display: none;
@@ -215,31 +214,6 @@
 				display: block;
 			}
 		}
-
-		@include break-small {
-			position: absolute;
-			top: 8px;
-			inset-inline-start: 72px;
-			inset-inline-end: 24px;
-			// Align with wordpress logo in signup-header
-			padding: 1px 0 0;
-			background-color: transparent;
-			border: none;
-			box-shadow: none;
-
-			&.should-sticky-nav-buttons {
-				position: fixed;
-				inset-inline-start: 0;
-				inset-inline-end: 0;
-				padding-inline-start: 24px;
-				padding-inline-end: 24px;
-				background-color: $white;
-			}
-
-			&.has-sticky-nav-buttons-padding {
-				padding-bottom: 48px;
-			}
-		}
 	}
 
 	/**
@@ -248,21 +222,15 @@
 	.step-container__content {
 		margin-top: 0;
 		display: block;
-		min-height: 65vh;
-
-		@supports ( min-height: 65svh ) {
-			min-height: calc(65svh - 50px);
-		}
 	}
 
 	/**
-	 * Jetpack and Sensei Powered
+	 * Jetpack and WooCommerce Powered
 	 */
 	.step-container__jetpack-powered,
 	.step-container__header-jetpack-powered,
 	.step-container__woocommerce-powered,
-	.step-container__header-woocommerce-powered,
-	.step-container__sensei-powered {
+	.step-container__header-woocommerce-powered {
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -290,14 +258,6 @@
 
 		@include break-small {
 			visibility: visible;
-		}
-	}
-
-	.step-container__sensei-powered {
-		padding-bottom: 24px;
-
-		svg {
-			margin-inline-end: 8px;
 		}
 	}
 }

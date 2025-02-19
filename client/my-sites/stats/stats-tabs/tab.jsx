@@ -1,11 +1,8 @@
-import {
-	TooltipContent,
-	TrendComparison,
-} from '@automattic/components/src/highlight-cards/count-comparison-card';
-import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
+import { TooltipContent } from '@automattic/components/src/highlight-cards/count-card';
+import { TrendComparison } from '@automattic/components/src/highlight-cards/count-comparison-card';
 import Popover from '@automattic/components/src/popover';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
+import { localize, numberFormatCompact } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 
@@ -40,7 +37,7 @@ class StatsTabsTab extends Component {
 	};
 
 	ensureValue = ( value ) => {
-		const { loading, numberFormat, format } = this.props;
+		const { loading, format, numberFormat } = this.props;
 
 		if ( ! loading && ( value || value === 0 ) ) {
 			return format ? format( value ) : numberFormat( value );
@@ -102,7 +99,7 @@ class StatsTabsTab extends Component {
 					{ hasPreviousData && (
 						<div className="stats-tabs__highlight">
 							<span className="stats-tabs__highlight-value" ref={ this.tooltipRef }>
-								{ formatNumber( value ) }
+								{ numberFormatCompact( value ) }
 							</span>
 							<TrendComparison count={ value } previousCount={ previousValue } />
 							<Popover
@@ -111,7 +108,11 @@ class StatsTabsTab extends Component {
 								position="bottom right"
 								context={ this.tooltipRef.current }
 							>
-								<TooltipContent count={ value } previousCount={ previousValue } />
+								<TooltipContent
+									value={ value }
+									label={ label.toLocaleLowerCase() }
+									previousValue={ previousValue }
+								/>
 							</Popover>
 						</div>
 					) }

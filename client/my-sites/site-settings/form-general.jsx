@@ -1,7 +1,7 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Card, Button, FormLabel, Gridicon } from '@automattic/components';
 import { guessTimezone, localizeUrl } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
+import { ToggleControl } from '@wordpress/components';
 import clsx from 'clsx';
 import { flowRight, get } from 'lodash';
 import { Component, Fragment } from 'react';
@@ -11,6 +11,7 @@ import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import SiteLanguagePicker from 'calypso/components/language-picker/site-language-picker';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -19,6 +20,8 @@ import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import SiteSettingsForm from 'calypso/sites/settings/site/form';
+import { getRemoveDuplicateViewsExperimentAssignment } from 'calypso/state/explat-experiments/actions';
+import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/state/explat-experiments/selectors';
 import getTimezonesLabels from 'calypso/state/selectors/get-timezones-labels';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
@@ -28,6 +31,7 @@ import {
 	getSiteOption,
 	isAdminInterfaceWPAdmin,
 	isJetpackSite,
+	isWpcomSite,
 } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
@@ -41,6 +45,7 @@ import wrapSettingsForm from './wrap-settings-form';
 export class SiteSettingsFormGeneral extends Component {
 	componentDidMount() {
 		setTimeout( () => scrollToAnchor( { offset: 15 } ) );
+		this.props.getRemoveDuplicateViewsExperimentAssignment();
 	}
 
 	getIncompleteLocaleNoticeMessage = ( language ) => {
@@ -358,6 +363,36 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
+	hideActionbar() {
+		const { translate, fields, updateFields } = this.props;
+		return (
+			<FormFieldset>
+				<FormLabel htmlFor="site-settings__wpcom_hide_action_bar">
+					{ translate( 'Action Bar visibility' ) }
+				</FormLabel>
+				<ToggleControl
+					id="site-settings__wpcom_hide_action_bar"
+					__nextHasNoMarginBottom
+					label={ translate( 'Hide the Action Bar.' ) }
+					checked={ !! fields?.wpcom_hide_action_bar }
+					onChange={ ( newValue ) => {
+						updateFields( { wpcom_hide_action_bar: newValue } );
+					} }
+				/>
+				<FormSettingExplanation>
+					{ translate(
+						'The Action Bar can be found in the lower right corner of any WordPress.com website you’re viewing. {{a}}Learn more{{/a}}.',
+						{
+							components: {
+								a: <InlineSupportLink showIcon={ false } supportContext="action-bar" />,
+							},
+						}
+					) }
+				</FormSettingExplanation>
+			</FormFieldset>
+		);
+	}
+
 	recordTracksEventForTrialNoticeClick = () => {
 		const { recordTracksEvent, isSiteOnECommerceTrial } = this.props;
 		const eventName = isSiteOnECommerceTrial
@@ -374,6 +409,7 @@ export class SiteSettingsFormGeneral extends Component {
 	render() {
 		const {
 			handleSubmitForm,
+			isRemoveDuplicateViewsExperimentEnabled,
 			isRequestingSettings,
 			isSavingSettings,
 			site,
@@ -412,34 +448,44 @@ export class SiteSettingsFormGeneral extends Component {
 								{ this.blogAddress() }
 								{ this.languageOptions() }
 								{ this.Timezone() }
+								{ ! siteIsJetpack && this.hideActionbar() }
 								{ siteIsJetpack && this.WordPressVersion() }
 							</form>
 						</Card>
 					</>
 				) }
-				{ ! isEnabled( 'untangling/hosting-menu' ) && <SiteSettingsForm { ...this.props } /> }
+				{ ! isRemoveDuplicateViewsExperimentEnabled && <SiteSettingsForm { ...this.props } /> }
 				{ ! isDevelopmentSite && this.renderAdminInterface() }
 			</div>
 		);
 	}
 }
 
-const connectComponent = connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	return {
-		isAtomicAndEditingToolkitDeactivated:
-			isAtomicSite( state, siteId ) &&
-			getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
-		adminInterfaceIsWPAdmin: isAdminInterfaceWPAdmin( state, siteId ),
-		isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
-		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
-		isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
-		selectedSite: getSelectedSite( state ),
-		siteIsJetpack: isJetpackSite( state, siteId ),
-		siteSlug: getSelectedSiteSlug( state ),
-		timezonesLabels: getTimezonesLabels( state ),
-	};
-} );
+const connectComponent = connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const isRemoveDuplicateViewsExperimentEnabled =
+			getIsRemoveDuplicateViewsExperimentEnabled( state );
+		return {
+			isAtomicAndEditingToolkitDeactivated:
+				isAtomicSite( state, siteId ) &&
+				getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
+			adminInterfaceIsWPAdmin: isAdminInterfaceWPAdmin( state, siteId ),
+			isRemoveDuplicateViewsExperimentEnabled,
+			isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
+			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
+			isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
+			selectedSite: getSelectedSite( state ),
+			siteIsJetpack: isJetpackSite( state, siteId ),
+			siteIsWpcom: isWpcomSite( state, siteId ),
+			siteSlug: getSelectedSiteSlug( state ),
+			timezonesLabels: getTimezonesLabels( state ),
+		};
+	},
+	{
+		getRemoveDuplicateViewsExperimentAssignment,
+	}
+);
 
 const getFormSettings = ( settings ) => {
 	const defaultSettings = {
@@ -448,6 +494,7 @@ const getFormSettings = ( settings ) => {
 		lang_id: '',
 		timezone_string: '',
 		blog_public: '',
+		jetpack_holiday_snow_enabled: false,
 		wpcom_coming_soon: '',
 		wpcom_data_sharing_opt_out: false,
 		wpcom_legacy_contact: '',
@@ -456,6 +503,7 @@ const getFormSettings = ( settings ) => {
 		wpcom_gifting_subscription: false,
 		admin_url: '',
 		is_fully_managed_agency_site: true,
+		wpcom_hide_action_bar: false,
 	};
 
 	if ( ! settings ) {
@@ -472,12 +520,15 @@ const getFormSettings = ( settings ) => {
 
 		is_fully_managed_agency_site: settings.is_fully_managed_agency_site,
 
+		jetpack_holiday_snow_enabled: !! settings.jetpack_holiday_snow_enabled,
+
 		wpcom_coming_soon: settings.wpcom_coming_soon,
 		wpcom_data_sharing_opt_out: !! settings.wpcom_data_sharing_opt_out,
 		wpcom_legacy_contact: settings.wpcom_legacy_contact,
 		wpcom_locked_mode: settings.wpcom_locked_mode,
 		wpcom_public_coming_soon: settings.wpcom_public_coming_soon,
 		wpcom_gifting_subscription: !! settings.wpcom_gifting_subscription,
+		wpcom_hide_action_bar: settings.wpcom_hide_action_bar,
 	};
 
 	// handling `gmt_offset` and `timezone_string` values

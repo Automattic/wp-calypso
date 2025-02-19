@@ -1,13 +1,14 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { FoldableCard } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
 	FullPageScreenshot,
 	PerformanceMetricsItemQueryResponse,
 } from 'calypso/data/site-profiler/types';
+import { useUrlPerformanceInsightsQuery } from 'calypso/data/site-profiler/use-url-performance-insights';
+import { useDeviceTab } from 'calypso/hosting/performance/contexts/device-tab-context';
 import { Tip } from 'calypso/performance-profiler/components/tip';
 import { useSupportChatLLMQuery } from 'calypso/performance-profiler/hooks/use-support-chat-llm-query';
 import { loggedInTips, tips } from 'calypso/performance-profiler/utils/tips';
@@ -96,17 +97,36 @@ const Content = styled.div`
 `;
 
 export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
+	const { insight, fullPageScreenshot, onClick, index, isWpcom, hash, url } = props;
 	const translate = useTranslate();
-
-	const { insight, fullPageScreenshot, onClick, index, isWpcom, hash } = props;
+	const { activeTab } = useDeviceTab();
 
 	const [ retrieveInsight, setRetrieveInsight ] = useState( false );
-	const { data: llmAnswer, isLoading: isLoadingLlmAnswer } = useSupportChatLLMQuery(
+	const [ cardOpen, setCardOpen ] = useState( false );
+	const {
+		data: llmAnswer,
+		isLoading,
+		isFetched,
+	} = useSupportChatLLMQuery(
 		insight,
 		hash,
 		isWpcom,
-		isEnabled( 'performance-profiler/llm' ) && retrieveInsight
+		retrieveInsight,
+		translate.localeSlug,
+		activeTab
 	);
+
+	const isLoadingLlmAnswer = isLoading || ! isFetched;
+
+	const { data } = useUrlPerformanceInsightsQuery( url, hash );
+	const isWpscanLoading = data?.wpscan?.status !== 'completed';
+
+	useEffect( () => {
+		if ( ! isWpscanLoading && cardOpen ) {
+			setRetrieveInsight( true );
+		}
+	}, [ isWpscanLoading, cardOpen ] );
+
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const site = useSelector( getSelectedSite );
 
@@ -133,7 +153,7 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 			clickableHeader
 			smooth
 			iconSize={ 18 }
-			onClick={ () => setRetrieveInsight( true ) }
+			onClick={ () => setCardOpen( true ) }
 			expanded={ retrieveInsight }
 		>
 			<Content>
@@ -141,13 +161,12 @@ export const MetricsInsight: React.FC< MetricsInsightProps > = ( props ) => {
 					fullPageScreenshot={ fullPageScreenshot }
 					data={ {
 						...insight,
-						...( isEnabled( 'performance-profiler/llm' )
-							? { description: llmAnswer?.messages }
-							: {} ),
+						description: llmAnswer?.messages,
 					} }
 					secondaryArea={ tip && <Tip { ...tip } /> }
-					isLoading={ isEnabled( 'performance-profiler/llm' ) && isLoadingLlmAnswer }
-					AIGenerated={ isEnabled( 'performance-profiler/llm' ) }
+					isLoading={ isLoadingLlmAnswer }
+					isWpscanLoading={ isWpscanLoading }
+					AIGenerated
 					hash={ hash }
 					url={ props.url }
 					chatId={ llmAnswer?.chatId }

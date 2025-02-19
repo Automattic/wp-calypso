@@ -1,10 +1,11 @@
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import Chart from 'calypso/components/chart';
 import { DEFAULT_HEARTBEAT } from 'calypso/components/data/query-site-stats/constants';
 import memoizeLast from 'calypso/lib/memoize-last';
@@ -19,7 +20,7 @@ import StatsEmptyState from '../stats-empty-state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatTabs from '../stats-tabs';
 import ChartHeader from './chart-header';
-import { buildChartData, getQueryDate } from './utility';
+import { buildChartData, getQueryDate, formatDate } from './utility';
 
 import './style.scss';
 
@@ -52,9 +53,10 @@ class StatModuleChartTabs extends Component {
 		),
 		isActiveTabLoading: PropTypes.bool,
 		onChangeLegend: PropTypes.func.isRequired,
-		showChartHeader: PropTypes.bool,
-		// Temporary prop to enable new date filtering UI.
-		isNewDateFilteringEnabled: PropTypes.bool,
+	};
+
+	state = {
+		chartType: 'bar',
 	};
 
 	intervalId = null;
@@ -103,26 +105,38 @@ class StatModuleChartTabs extends Component {
 		this.props.queryDayComp && this.props.requestChartCounts( this.props.queryDayComp );
 	};
 
-	render() {
-		const {
-			siteId,
-			slug,
-			queryParams,
-			selectedPeriod,
-			isActiveTabLoading,
-			className,
-			countsComp,
-			showChartHeader = false,
-			isNewDateFilteringEnabled = false,
-		} = this.props;
+	handleChartTypeChange = ( newType ) => {
+		this.setState( { chartType: newType } );
+	};
 
-		let chartData = this.props.chartData;
-		if ( isNewDateFilteringEnabled ) {
-			chartData = chartData?.map( ( record ) => {
-				record.className = record.className?.replaceAll( 'is-selected', '' );
-				return record;
-			} );
-		}
+	//TODO: remove this once we connect up the real data
+	generateDummyLineChartData = () => {
+		return [
+			{
+				label: 'Views',
+				options: {},
+				data: [
+					{ date: new Date( '2024-01-01' ), value: 45 },
+					{ date: new Date( '2024-01-02' ), value: 32 },
+					{ date: new Date( '2024-01-03' ), value: 67 },
+					{ date: new Date( '2024-01-04' ), value: 89 },
+					{ date: new Date( '2024-01-05' ), value: 54 },
+					{ date: new Date( '2024-01-06' ), value: 78 },
+					{ date: new Date( '2024-01-07' ), value: 93 },
+				],
+			},
+		];
+	};
+
+	render() {
+		const { siteId, slug, queryParams, selectedPeriod, isActiveTabLoading, className, countsComp } =
+			this.props;
+		const { chartType } = this.state;
+
+		const chartData = this.props.chartData.map( ( record ) => {
+			record.className = record.className?.replaceAll( 'is-selected', '' );
+			return record;
+		} );
 
 		const classes = [
 			'is-chart-tabs',
@@ -135,27 +149,53 @@ class StatModuleChartTabs extends Component {
 		/* pass bars count as `key` to disable transitions between tabs with different column count */
 		return (
 			<div className={ clsx( ...classes ) }>
-				{ showChartHeader && (
-					<ChartHeader
-						activeLegend={ this.props.activeLegend }
-						activeTab={ this.props.activeTab }
-						availableLegend={ this.props.availableLegend }
-						onLegendClick={ this.onLegendClick }
-						charts={ this.props.charts }
-						siteId={ siteId }
-						slug={ slug }
-						period={ selectedPeriod }
-						queryParams={ queryParams }
-					></ChartHeader>
-				) }
+				<ChartHeader
+					activeLegend={ this.props.activeLegend }
+					activeTab={ this.props.activeTab }
+					availableLegend={ this.props.availableLegend }
+					onLegendClick={ this.onLegendClick }
+					charts={ this.props.charts }
+					siteId={ siteId }
+					slug={ slug }
+					period={ selectedPeriod }
+					queryParams={ queryParams }
+					chartType={ chartType }
+					onChartTypeChange={ this.handleChartTypeChange }
+				/>
 
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
-				<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 35 }>
-					<StatsEmptyState />
-				</Chart>
+
+				{ chartType === 'bar' ? (
+					<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 35 }>
+						<StatsEmptyState
+							headingText={
+								selectedPeriod === 'hour' ? translate( 'No hourly data available' ) : null
+							}
+							infoText={
+								selectedPeriod === 'hour'
+									? translate( 'Try selecting a different time frame.' )
+									: null
+							}
+						/>
+					</Chart>
+				) : (
+					<AsyncLoad
+						require="calypso/my-sites/stats/components/line-chart"
+						className="stats-chart-tabs__line-chart"
+						chartData={ this.generateDummyLineChartData() }
+						height={ 200 }
+						moment={ this.props.moment }
+						formatTimeTick={ ( timestamp ) => {
+							const date = new Date( timestamp );
+							return formatDate( date, this.props.selectedPeriod );
+						} }
+						maxViews={ 100 }
+					/>
+				) }
+
 				<StatTabs
 					data={ this.props.counts }
-					previousData={ isNewDateFilteringEnabled ? countsComp : null }
+					previousData={ countsComp }
 					tabCountsAlt={ this.props.tabCountsAlt }
 					tabCountsAltComp={ this.props.tabCountsAltComp }
 					tabs={ this.props.charts }
@@ -163,7 +203,7 @@ class StatModuleChartTabs extends Component {
 					selectedTab={ this.props.chartTab }
 					activeIndex={ this.props.queryDate }
 					activeKey="period"
-					aggregate={ isNewDateFilteringEnabled }
+					aggregate
 				/>
 			</div>
 		);
@@ -191,15 +231,7 @@ const memoizedQuery = memoizeLast(
 const connectComponent = connect(
 	(
 		state,
-		{
-			isNewDateFilteringEnabled = false,
-			activeLegend,
-			period: { period },
-			chartTab,
-			queryDate,
-			customQuantity,
-			customRange,
-		}
+		{ activeLegend, period: { period }, chartTab, queryDate, customQuantity, customRange }
 	) => {
 		const siteId = getSelectedSiteId( state );
 		if ( ! siteId ) {
@@ -215,7 +247,7 @@ const connectComponent = connect(
 		const date = customRange
 			? customRange.chartEnd
 			: getQueryDate( queryDate, timezoneOffset, period, quantity );
-		const chartStart = isNewDateFilteringEnabled ? customRange?.chartStart || '' : '';
+		const chartStart = customRange?.chartStart || '';
 
 		const queryKey = `${ date }-${ period }-${ quantity }-${ siteId }`;
 		const query = memoizedQuery( chartTab, date, period, quantity, siteId, chartStart );
@@ -280,7 +312,14 @@ const connectComponent = connect(
 		}
 
 		const counts = getCountRecords( state, siteId, query.date, query.period, query.quantity );
-		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
+		const chartData = buildChartData(
+			activeLegend,
+			chartTab,
+			counts,
+			period,
+			queryDate,
+			customRange
+		);
 		const loadingTabs = getLoadingTabs( state, siteId, query.date, query.period, query.quantity );
 		const isActiveTabLoading = loadingTabs.includes( chartTab ) || chartData.length < quantity;
 
@@ -298,7 +337,6 @@ const connectComponent = connect(
 			tabCountsAlt: tabCountsAlt?.[ 0 ],
 			queryDayComp,
 			tabCountsAltComp: tabCountsAltComp?.[ 0 ],
-			isNewDateFilteringEnabled,
 		};
 	},
 	{ recordGoogleEvent, requestChartCounts }

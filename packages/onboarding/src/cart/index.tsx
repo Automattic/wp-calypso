@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { DomainSuggestion, NewSiteSuccessResponse, Site } from '@automattic/data-stores';
+import { SiteGoal } from '@automattic/data-stores/src/onboard';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
@@ -156,7 +157,9 @@ export const createSiteWithCart = async (
 	storedSiteUrl?: string,
 	domainItem?: DomainSuggestion,
 	sourceSlug?: string,
-	siteIntent?: string
+	siteIntent?: string,
+	siteGoals?: SiteGoal[],
+	enableFeaturesForGoals?: SiteGoal[]
 ) => {
 	const siteUrl = storedSiteUrl || domainItem?.domain_name;
 	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' );
@@ -203,6 +206,10 @@ export const createSiteWithCart = async (
 				...( hasSegmentationSurvey && segmentationSurveyAnswersAnonId
 					? { segmentation_survey_answers_anon_id: segmentationSurveyAnswersAnonId }
 					: {} ),
+				...( siteGoals && { site_goals: siteGoals } ),
+				...( enableFeaturesForGoals && {
+					enable_features_for_goals: enableFeaturesForGoals,
+				} ),
 			},
 		},
 	} );
@@ -371,7 +378,7 @@ export async function setThemeOnSite(
 	}
 }
 
-async function processItemCart(
+export async function processItemCart(
 	siteSlug: string,
 	isFreeThemePreselected: boolean,
 	themeSlugWithRepo: string,

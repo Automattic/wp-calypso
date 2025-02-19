@@ -1,29 +1,21 @@
 import page from '@automattic/calypso-router';
+import { Card, ExternalLink } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
-import ExternalLink from 'calypso/components/external-link';
 import Main from 'calypso/components/main';
 import useDomainTransferRequestQuery from 'calypso/data/domains/transfers/use-domain-transfer-request-query';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain } from 'calypso/lib/domains';
-import InfoNotice from 'calypso/my-sites/domains/domain-management/components/domain/info-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
-import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
-import {
-	domainManagementEdit,
-	domainManagementList,
-	isUnderDomainManagementAll,
-} from 'calypso/my-sites/domains/paths';
+import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isRequestingWhois from 'calypso/state/selectors/is-requesting-whois';
 import { IAppState } from 'calypso/state/types';
-import EditContactInfoFormCard from '../edit-contact-info/form-card';
-import PendingWhoisUpdateCard from '../edit-contact-info/pending-whois-update-card';
-import EditContactInfoPrivacyEnabledCard from '../edit-contact-info/privacy-enabled-card';
+import EditContactInfoPageContent from '../edit-contact-info-page/edit-contact-info-page-content';
 import { EditContactInfoPageProps } from './types';
 
 import './style.scss';
@@ -34,6 +26,7 @@ const EditContactInfoPage = ( {
 	isRequestingWhois,
 	selectedDomainName,
 	selectedSite,
+	context = { showPageHeader: true },
 }: EditContactInfoPageProps ) => {
 	const translate = useTranslate();
 
@@ -63,9 +56,7 @@ const EditContactInfoPage = ( {
 
 		const items = [
 			{
-				label: isUnderDomainManagementAll( currentRoute )
-					? translate( 'All Domains' )
-					: translate( 'Domains' ),
+				label: translate( 'Domains' ),
 				href: domainManagementList(
 					selectedSite?.slug,
 					currentRoute,
@@ -92,44 +83,16 @@ const EditContactInfoPage = ( {
 	};
 
 	const renderContent = () => {
-		const domain = getSelectedDomain( { domains, selectedDomainName } );
-
-		if ( ! domain?.currentUserCanManage ) {
-			return <NonOwnerCard domains={ domains } selectedDomainName={ selectedDomainName } />;
-		}
-
-		if ( ! domain.canUpdateContactInfo ) {
-			return <InfoNotice redesigned={ false } text={ domain.cannotUpdateContactInfoReason } />;
-		}
-
-		if ( domain.isPendingWhoisUpdate ) {
-			return <PendingWhoisUpdateCard />;
-		}
-
-		if ( domain.mustRemovePrivacyBeforeContactUpdate && domain.privateDomain && selectedSite ) {
-			return (
-				<EditContactInfoPrivacyEnabledCard
-					selectedDomainName={ selectedDomainName }
-					selectedSiteSlug={ selectedSite?.slug }
-				/>
-			);
-		}
-
-		const backUrl = domainManagementEdit(
-			selectedSite?.slug ?? '',
-			selectedDomainName,
-			currentRoute
-		);
-
-		return (
-			<EditContactInfoFormCard
-				domainRegistrationAgreementUrl={ domain.domainRegistrationAgreementUrl }
-				selectedDomain={ domain }
+		const pageContent = (
+			<EditContactInfoPageContent
+				currentRoute={ currentRoute }
+				domains={ domains }
+				selectedDomainName={ selectedDomainName }
 				selectedSite={ selectedSite }
-				showContactInfoNote={ false }
-				backUrl={ backUrl }
 			/>
 		);
+
+		return <Card>{ pageContent }</Card>;
 	};
 
 	const renderSidebar = () => {
@@ -139,14 +102,12 @@ const EditContactInfoPage = ( {
 					'https://wordpress.com/support/domains/domain-registrations-and-privacy/#privacy-protection'
 				) }
 				target="_blank"
-				icon={ false }
 			/>
 		);
 		const icannLink = (
 			<ExternalLink
 				href="https://www.icann.org/resources/pages/contact-verification-2013-05-03-en"
 				target="_blank"
-				icon={ false }
 			/>
 		);
 
@@ -190,7 +151,7 @@ const EditContactInfoPage = ( {
 	return (
 		<Main className="edit-contact-info-page" wideLayout>
 			<BodySectionCssClass bodyClass={ [ 'edit__body-white' ] } />
-			{ renderHeader() }
+			{ context?.showPageHeader && renderHeader() }
 			<TwoColumnsLayout content={ renderContent() } sidebar={ renderSidebar() } />
 		</Main>
 	);

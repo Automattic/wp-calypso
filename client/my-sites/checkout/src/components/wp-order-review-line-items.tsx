@@ -3,6 +3,7 @@ import {
 	isAkismetProduct,
 	isJetpackPurchasableItem,
 	AKISMET_PRO_500_PRODUCTS,
+	isWpComPlan,
 } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { isCopySiteFlow } from '@automattic/onboarding';
@@ -18,16 +19,15 @@ import {
 	getPartnerCoupon,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
-import { useExperiment } from 'calypso/lib/explat';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/product-variants';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
-import { getAffiliateCouponLabel, getCouponLabel, isCouponBoxHidden } from '../../utils';
+import { getAffiliateCouponLabel } from '../../utils';
 import { AkismetProQuantityDropDown } from './akismet-pro-quantity-dropdown';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeAkProQuantity } from './akismet-pro-quantity-dropdown';
@@ -39,7 +39,7 @@ import type {
 	ResponseCartProduct,
 	RemoveCouponFromCart,
 } from '@automattic/shopping-cart';
-import type { PropsWithChildren } from 'react';
+import type { PropsWithChildren, RefObject } from 'react';
 
 const WPOrderReviewList = styled.ul`
 	box-sizing: border-box;
@@ -94,18 +94,11 @@ export function WPOrderReviewLineItems( {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
-	const productSlugs = responseCart.products?.map( ( product ) => product.product_slug );
-	const [ , experimentAssignment ] = useExperiment( 'calypso_checkout_hide_coupon_box_v2', {
-		isEligible: ! productSlugs.some( ( slug ) => 'wp_difm_lite' === slug ),
-	} );
 
 	if ( couponLineItem ) {
 		couponLineItem.label = isOnboardingAffiliateFlow
 			? getAffiliateCouponLabel()
-			: getCouponLabel( couponLineItem.label, experimentAssignment?.variationName );
-		if ( isCouponBoxHidden( productSlugs, experimentAssignment?.variationName ) ) {
-			couponLineItem.hasDeleteButton = false;
-		}
+			: couponLineItem.label;
 	}
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
@@ -130,6 +123,10 @@ export function WPOrderReviewLineItems( {
 		);
 	}, [ responseCart.products ] );
 
+	const hasWPCOMPlanInCart = responseCart.products.some( ( product ) =>
+		isWpComPlan( product.product_slug )
+	);
+
 	const [ variantOpenId, setVariantOpenId ] = useState< string | null >( null );
 	const [ akQuantityOpenId, setAkQuantityOpenId ] = useState< string | null >( null );
 
@@ -141,9 +138,21 @@ export function WPOrderReviewLineItems( {
 					setAkQuantityOpenId( null );
 				}
 			}
+
+			reduxDispatch(
+				recordTracksEvent( 'calypso_checkout_variant_dropdown_open', {
+					has_wpcom_plan_in_cart: hasWPCOMPlanInCart,
+				} )
+			);
 			setVariantOpenId( variantOpenId !== id ? id : null );
 		},
-		[ akQuantityOpenId, isAkismetProMultipleLicensesCart, variantOpenId ]
+		[
+			akQuantityOpenId,
+			hasWPCOMPlanInCart,
+			isAkismetProMultipleLicensesCart,
+			reduxDispatch,
+			variantOpenId,
+		]
 	);
 
 	const handleAkQuantityToggle = useCallback(
@@ -291,6 +300,53 @@ function LineItemWrapper( {
 		isDeletable = false;
 	}
 
+	const isVariantDropdownOpen = product.uuid === variantOpenId;
+	const isAkQuantityDropdownOpen = product.uuid === akQuantityOpenId;
+	const variantDropdownRef = useRef< HTMLDivElement >( null );
+	const akQuantityDropdownRef = useRef< HTMLDivElement >( null );
+
+	useEffect( () => {
+		const handleClickOutside =
+			( ref: RefObject< HTMLDivElement >, toggle: ( key: string | null ) => void ) =>
+			( event: MouseEvent ): void => {
+				if ( ref.current && ! ref.current.contains( event.target as Node ) ) {
+					toggle( null );
+				}
+			};
+
+		const handleClickOutsideVariantDropdown = handleClickOutside(
+			variantDropdownRef,
+			toggleVariantSelector
+		);
+
+		const handleClickOutsideAkQuantityDropdown = handleClickOutside(
+			akQuantityDropdownRef,
+			toggleAkQuantityDropdown
+		);
+
+		if ( isVariantDropdownOpen ) {
+			document.addEventListener( 'mousedown', handleClickOutsideVariantDropdown as EventListener );
+		} else {
+			document.removeEventListener( 'mousedown', handleClickOutsideVariantDropdown );
+		}
+
+		if ( isAkQuantityDropdownOpen ) {
+			document.addEventListener( 'mousedown', handleClickOutsideAkQuantityDropdown );
+		} else {
+			document.removeEventListener( 'mousedown', handleClickOutsideAkQuantityDropdown );
+		}
+
+		return () => {
+			document.removeEventListener( 'mousedown', handleClickOutsideVariantDropdown );
+			document.removeEventListener( 'mousedown', handleClickOutsideAkQuantityDropdown );
+		};
+	}, [
+		isVariantDropdownOpen,
+		toggleVariantSelector,
+		isAkQuantityDropdownOpen,
+		toggleAkQuantityDropdown,
+	] );
+
 	const shouldShowVariantSelector = ( () => {
 		if ( ! onChangeSelection ) {
 			return false;
@@ -362,25 +418,29 @@ function LineItemWrapper( {
 			>
 				<DropdownWrapper>
 					{ finalShouldShowVariantSelector && (
-						<ItemVariationPicker
-							id={ product.uuid }
-							selectedItem={ product }
-							onChangeItemVariant={ onChangeSelection }
-							isDisabled={ isDisabled }
-							variants={ variants }
-							toggle={ toggleVariantSelector }
-							isOpen={ variantOpenId === product.uuid }
-						/>
+						<div ref={ variantDropdownRef }>
+							<ItemVariationPicker
+								id={ product.uuid }
+								selectedItem={ product }
+								onChangeItemVariant={ onChangeSelection }
+								isDisabled={ isDisabled }
+								variants={ variants }
+								toggle={ toggleVariantSelector }
+								isOpen={ isVariantDropdownOpen }
+							/>
+						</div>
 					) }
 					{ ! isRenewal && isAkPro500Cart && (
-						<AkismetProQuantityDropDown
-							id={ product.uuid }
-							responseCart={ responseCart }
-							setForceShowAkQuantityDropdown={ setForceShowAkQuantityDropdown }
-							onChangeAkProQuantity={ onChangeAkProQuantity }
-							toggle={ toggleAkQuantityDropdown }
-							isOpen={ akQuantityOpenId === product.uuid }
-						/>
+						<div ref={ akQuantityDropdownRef }>
+							<AkismetProQuantityDropDown
+								id={ product.uuid }
+								responseCart={ responseCart }
+								setForceShowAkQuantityDropdown={ setForceShowAkQuantityDropdown }
+								onChangeAkProQuantity={ onChangeAkProQuantity }
+								toggle={ toggleAkQuantityDropdown }
+								isOpen={ isAkQuantityDropdownOpen }
+							/>
+						</div>
 					) }
 				</DropdownWrapper>
 			</LineItem>

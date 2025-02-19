@@ -1,10 +1,8 @@
+import { translate } from 'i18n-calypso';
 import type { ActionTexts, ActionHeadings, ActionMessages } from '../types';
 
 const headings: ActionHeadings = {
-	onePlugin: ( plugin ) => ( translate ) =>
-		translate( 'Deactivate and remove %(plugin)s', {
-			args: { plugin: plugin.name ?? plugin.slug },
-		} ),
+	onePlugin: ( translate ) => translate( 'Deactivate and remove plugin' ),
 	manyPlugins: ( plugins ) => ( translate ) =>
 		translate(
 			'Deactivate and remove %(pluginCount)d plugin',
@@ -81,9 +79,15 @@ const messages: ActionMessages = {
 	},
 };
 
+const cta = {
+	confirm: translate( 'Deactivate and remove' ),
+	cancel: translate( 'Cancel' ),
+};
+
 const actionTexts: ActionTexts = {
 	headings,
 	messages,
+	cta,
 };
 
 export default actionTexts;

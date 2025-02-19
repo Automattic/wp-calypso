@@ -20,6 +20,7 @@ import {
 	domainManagementTransfer,
 	domainMappingSetup,
 	domainUseMyDomain,
+	domainManagementDNS,
 } from './paths';
 import { ResponseDomain } from './types';
 import type { I18N, TranslateResult } from 'i18n-calypso';
@@ -101,6 +102,22 @@ export function resolveDomainStatus(
 	const paymentSetupCallToAction = {
 		href: '/me/purchases/payment-methods',
 		label: translate( 'Fix' ),
+		onClick: ( e: React.MouseEvent< HTMLAnchorElement | HTMLButtonElement, MouseEvent > ) =>
+			e.stopPropagation(),
+	};
+
+	const editNameserversCallToAction = {
+		href: domainManagementEdit( siteSlug as string, domain.domain, currentRoute, {
+			nameservers: true,
+		} ),
+		label: translate( 'Point to WordPress.com' ),
+		onClick: ( e: React.MouseEvent< HTMLAnchorElement | HTMLButtonElement, MouseEvent > ) =>
+			e.stopPropagation(),
+	};
+
+	const editDNSRecordsCallToAction = {
+		href: domainManagementDNS( siteSlug as string, domain.domain ),
+		label: translate( 'Point to WordPress.com' ),
 		onClick: ( e: React.MouseEvent< HTMLAnchorElement | HTMLButtonElement, MouseEvent > ) =>
 			e.stopPropagation(),
 	};
@@ -486,28 +503,35 @@ export function resolveDomainStatus(
 			}
 
 			if ( domain.transferStatus === transferStatus.COMPLETED && ! domain.pointsToWpcom ) {
-				const ctaLink = domainManagementEdit( siteSlug as string, domain.domain, currentRoute, {
-					nameservers: true,
-				} );
-
 				return {
 					statusText: translate( 'Action required' ),
 					statusClass: 'status-success',
 					status: translate( 'Active' ),
 					icon: 'info',
 					noticeText: translate(
-						'{{strong}}Transfer successful!{{/strong}} To make this domain work with your WordPress.com site you need to {{a}}point it to WordPress.com name servers.{{/a}}',
+						'{{strong}}Transfer successful!{{/strong}} To make this domain work with your WordPress.com site you need to {{cta}}point it to WordPress.com servers.{{/cta}}',
 						{
 							components: {
 								strong: <strong />,
-								a: <a href={ ctaLink } />,
+								cta: domain.hasWpcomNameservers ? (
+									<a
+										href={ domainManagementDNS( siteSlug as string, domain.domain ) }
+										onClick={ ( e: React.MouseEvent< HTMLAnchorElement > ) => e.stopPropagation() }
+									/>
+								) : (
+									<a
+										href={ domainManagementEdit( siteSlug as string, domain.domain, currentRoute, {
+											nameservers: true,
+										} ) }
+										onClick={ ( e: React.MouseEvent< HTMLAnchorElement > ) => e.stopPropagation() }
+									/>
+								),
 							},
 						}
 					),
-					callToAction: {
-						href: ctaLink,
-						label: translate( 'Point to WordPress.com' ),
-					},
+					callToAction: domain.hasWpcomNameservers
+						? editDNSRecordsCallToAction
+						: editNameserversCallToAction,
 					listStatusWeight: 600,
 				};
 			}

@@ -23,14 +23,5 @@ export default function () {
 		);
 	}
 
-	page(
-		'/help/courses',
-		helpController.loggedOut,
-		sidebar,
-		helpController.courses,
-		makeLayout,
-		clientRender
-	);
-
 	page( '/me/chat', sidebar, helpController.contactRedirect, makeLayout, clientRender );
 }

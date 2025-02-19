@@ -10,10 +10,8 @@ import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import WebPreview from 'calypso/components/web-preview';
-import { useRequestSiteChecklistTaskUpdate } from 'calypso/data/site-checklist';
 import { addQueryArgs } from 'calypso/lib/route';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { getSiteOption, isSitePreviewable } from 'calypso/state/sites/selectors';
@@ -226,8 +224,6 @@ const ConnectedPreviewMain = ( props ) => {
 		},
 		dispatch
 	);
-
-	useRequestSiteChecklistTaskUpdate( selectedSiteId, CHECKLIST_KNOWN_TASKS.BLOG_PREVIEWED );
 
 	return <PreviewMain { ...props } { ...stateToProps } { ...dispatchToProps } />;
 };

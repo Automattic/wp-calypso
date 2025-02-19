@@ -13,7 +13,7 @@ import {
 	isFetchingUserPurchases,
 	getUserPurchases,
 } from 'calypso/state/purchases/selectors';
-import getSiteFeatures from 'calypso/state/selectors/get-site-features';
+import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import type { SiteSelect } from '@automattic/data-stores';
@@ -65,10 +65,9 @@ export const useSiteCopy = (
 		WPCOM_FEATURES_COPY_SITE,
 		options.enabled
 	);
-	const { isRequesting: isRequestingSiteFeatures } = useSelector( ( state ) => {
-		const siteFeatures = getSiteFeatures( state, site?.ID );
-		return siteFeatures ? siteFeatures : { isRequesting: true };
-	} );
+	const requestingSiteFeatures = useSelector( ( state ) =>
+		isRequestingSiteFeatures( state, site?.ID )
+	);
 	const isAtomic = useSelect(
 		( select ) =>
 			site && options.enabled && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site?.ID ),
@@ -128,11 +127,11 @@ export const useSiteCopy = (
 			shouldShowSiteCopyItem,
 			startSiteCopy,
 			resumeSiteCopy,
-			isFetching: isLoadingPurchases || isRequestingSiteFeatures,
+			isFetching: isLoadingPurchases || requestingSiteFeatures,
 		} ),
 		[
 			isLoadingPurchases,
-			isRequestingSiteFeatures,
+			requestingSiteFeatures,
 			resumeSiteCopy,
 			shouldShowSiteCopyItem,
 			startSiteCopy,

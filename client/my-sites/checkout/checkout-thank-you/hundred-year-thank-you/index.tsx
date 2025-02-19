@@ -1,6 +1,7 @@
 import { PLAN_100_YEARS, getPlan, domainProductSlugs } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -9,15 +10,15 @@ import { useEffect } from 'react';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import HundredYearLoaderView from 'calypso/components/hundred-year-loader-view';
 import WordPressLogo from 'calypso/components/wordpress-logo';
-import { getRegisteredDomains } from 'calypso/lib/domains';
+import { getRegisteredDomains, getTransferredInDomains } from 'calypso/lib/domains';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
-import { getSiteId, getSiteOptions } from 'calypso/state/sites/selectors';
+import { getSiteId, getSiteOptions, isRequestingSite } from 'calypso/state/sites/selectors';
 import { hideMasterbar } from 'calypso/state/ui/actions';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 
-const HOUR_IN_MS = 1000 * 60;
 const VideoContainer = styled.div< { isMobile: boolean } >`
 	overflow: hidden;
 	position: relative;
@@ -38,6 +39,7 @@ const VideoContainer = styled.div< { isMobile: boolean } >`
 const hundredYearProducts = [
 	PLAN_100_YEARS,
 	domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION,
+	domainProductSlugs.TRANSFER_IN,
 ] as const;
 
 interface Props {
@@ -68,6 +70,13 @@ const Content = styled.div< { isMobile: boolean } >`
 	text-align: center;
 	.hundred-year-plan-thank-you__thank-you-text-container {
 		margin: 24px ${ ( { isMobile } ) => ( isMobile ? '0' : '80px' ) };
+	}
+	.hundred-year-plan-thank-you__thank-you-link {
+		color: var( --studio-gray-5 );
+		text-decoration: underline;
+		&:hover {
+			text-decoration: none;
+		}
 	}
 `;
 
@@ -131,10 +140,6 @@ const CustomizedWordPressLogo = styled( WordPressLogo )`
 	fill: var( --studio-white );
 `;
 
-function isSiteCreatedWithinLastHour( createdTime: string ): boolean {
-	return Date.now() - new Date( createdTime ).getTime() < HOUR_IN_MS;
-}
-
 export default function HundredYearThankYou( {
 	siteSlug,
 	receiptId,
@@ -155,10 +160,21 @@ export default function HundredYearThankYou( {
 		siteId ? getDomainsBySiteId( state, siteId ) : []
 	);
 	const isLoadingDomains = useSelector( ( state ) =>
-		siteId ? isRequestingSiteDomains( state, siteId ) : false
+		siteId && productSlug !== PLAN_100_YEARS
+			? isRequestingSite( state, siteId ) || isRequestingSiteDomains( state, siteId )
+			: false
 	);
-	const registeredDomains = getRegisteredDomains( siteDomains );
-	const registeredDomain = registeredDomains.length ? registeredDomains[ 0 ] : null;
+	let targetDomain: ResponseDomain | null = null;
+	switch ( productSlug ) {
+		case domainProductSlugs.TRANSFER_IN:
+			targetDomain = getTransferredInDomains( siteDomains )[ 0 ] ?? null;
+			break;
+		case domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION:
+			targetDomain = getRegisteredDomains( siteDomains )[ 0 ] ?? null;
+			break;
+		default:
+			targetDomain = null;
+	}
 
 	useEffect( () => {
 		dispatch( hideMasterbar() );
@@ -169,57 +185,83 @@ export default function HundredYearThankYou( {
 
 	if (
 		! isReceiptLoading &&
-		( ! receipt.data?.purchases?.length || receipt.data?.purchases[ 0 ].blogId !== siteId )
+		( ! receipt.data?.purchases?.length || receipt.data?.purchases[ 0 ].blogId !== siteId ) &&
+		// For transfers, the current siteId might be different - purchase performed with no site (siteId = null)
+		// and blog created after the purchase (siteId != null).
+		productSlug !== domainProductSlugs.TRANSFER_IN
 	) {
 		page( '/' );
 	}
 
 	const isMobile = useMobileBreakpoint();
-	const isPageLoading = isReceiptLoading || isLoadingDomains;
-	const hundredYearPlanCta =
-		siteCreatedTimeStamp && isSiteCreatedWithinLastHour( siteCreatedTimeStamp ) ? (
-			<StyledLightButton onClick={ () => page( `/setup/site-setup/goals?siteSlug=${ siteSlug }` ) }>
-				{ translate( 'Start building' ) }
-			</StyledLightButton>
-		) : (
-			<StyledLightButton onClick={ () => page( ` /home/${ siteSlug }` ) }>
-				{ translate( 'Manage your site' ) }
-			</StyledLightButton>
-		);
+	const isDomainDataLoaded = ! isLoadingDomains && targetDomain !== null;
+	const isPageLoading =
+		isReceiptLoading ||
+		isLoadingDomains ||
+		( productSlug !== PLAN_100_YEARS && ! isDomainDataLoaded );
+	const hundredYearPlanCta = (
+		<StyledLightButton onClick={ () => page( ` /home/${ siteSlug }` ) }>
+			{ translate( 'Manage your site' ) }
+		</StyledLightButton>
+	);
 	const hundredYearDomainCta = (
 		<StyledLightButton
 			onClick={ () =>
-				page( ` /domains/manage/all/${ registeredDomain.name }/edit/${ registeredDomain.name }` )
+				page( ` /domains/manage/all/overview/${ targetDomain?.name }/${ targetDomain?.name }` )
 			}
 		>
 			{ translate( 'Manage your domain' ) }
 		</StyledLightButton>
 	);
 	const cta = productSlug === PLAN_100_YEARS ? hundredYearPlanCta : hundredYearDomainCta;
+	const domainSpecificDescription =
+		productSlug === domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION
+			? translate( 'Your 100-Year Domain %(domain)s has been registered.', {
+					args: {
+						domain: targetDomain?.domain || siteSlug, // though targetDomain?.domain should be defined here, right?
+					},
+			  } )
+			: translate( 'Your 100-Year Domain %(domain)s is being transferred.', {
+					args: {
+						domain: targetDomain?.domain || siteSlug,
+					},
+			  } );
+	const hundredYearPlanDescription = translate( 'Your %(planTitle)s is now active.', {
+		args: {
+			planTitle: getPlan( PLAN_100_YEARS )?.getTitle() || '',
+		},
+	} );
+	const helpAndSupportDescription = translate(
+		'Our Premier Support team will be in touch by email shortly to schedule a welcome session and walk you through your exclusive benefits. We’re looking forward to supporting you every step of the way.'
+	);
+	const domainHelpAndSupportDescription = translate(
+		'If you have any questions please take a look at {{faqLink}}our guide{{/faqLink}}, or feel free to reach out to our Premier Support team. We’re looking forward to working with you every step of the way.',
+		{
+			components: {
+				faqLink: (
+					<a
+						href={ localizeUrl( 'https://wordpress.com/support/plan-features/100-year-plan/' ) }
+						target="_blank"
+						className="hundred-year-plan-thank-you__thank-you-link"
+						rel="noopener noreferrer"
+					/>
+				),
+			},
+		}
+	);
 
 	const description =
-		productSlug === PLAN_100_YEARS
-			? translate(
-					'The %(planTitle)s for %(domain)s is active. Our Premier Support team will be in touch by email shortly to schedule a welcome session and walk you through your exclusive benefits. We’re looking forward to supporting you every step of the way.',
-					{
-						args: {
-							domain: registeredDomain?.domain || siteSlug,
-							planTitle: getPlan( PLAN_100_YEARS )?.getTitle() || '',
-						},
-					}
-			  )
-			: translate(
-					'Your 100-Year Domain %(domain)s has been registered. Our Premier Support team will be in touch by email shortly to schedule a welcome session and walk you through your exclusive benefits. We’re looking forward to supporting you every step of the way.',
-					{
-						args: {
-							domain: registeredDomain?.domain || siteSlug,
-						},
-					}
-			  );
+		productSlug === PLAN_100_YEARS ? (
+			`${ hundredYearPlanDescription } ${ helpAndSupportDescription }`
+		) : (
+			<>
+				{ domainSpecificDescription } { domainHelpAndSupportDescription }
+			</>
+		);
 
 	return (
 		<>
-			{ siteId && <QuerySiteDomains siteId={ siteId } /> }
+			{ siteId && ! siteDomains.length && <QuerySiteDomains siteId={ siteId } /> }
 			<Global
 				styles={ css`
 					body.is-section-checkout,

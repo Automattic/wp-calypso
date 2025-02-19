@@ -3,27 +3,27 @@ import accessibleFocus from '@automattic/accessible-focus';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/current-user';
 import config from '@automattic/calypso-config';
-import { User as UserStore } from '@automattic/data-stores';
+import { UserActions, User as UserStore } from '@automattic/data-stores';
 import { geolocateCurrencySymbol } from '@automattic/format-currency';
 import {
 	HOSTED_SITE_MIGRATION_FLOW,
-	MIGRATION_FLOW,
 	MIGRATION_SIGNUP_FLOW,
 	SITE_MIGRATION_FLOW,
 } from '@automattic/onboarding';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { useDispatch } from '@wordpress/data';
+import { dispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
-import { BrowserRouter, matchPath } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { requestAllBlogsAccess } from 'wpcom-proxy-request';
-import { setupErrorLogger } from 'calypso/boot/common';
 import { setupLocale } from 'calypso/boot/locale';
 import AsyncLoad from 'calypso/components/async-load';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import getSuperProps from 'calypso/lib/analytics/super-props';
+import { setupErrorLogger } from 'calypso/lib/error-logger/setup-error-logger';
+import { addQueryArgs } from 'calypso/lib/url';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { onDisablePersistence } from 'calypso/lib/user/store';
 import { createReduxStore } from 'calypso/state';
@@ -38,14 +38,17 @@ import { FlowRenderer } from './declarative-flow/internals';
 import { AsyncHelpCenter } from './declarative-flow/internals/components';
 import 'calypso/components/environment-badge/style.scss';
 import 'calypso/assets/stylesheets/style.scss';
+import { createSessionId } from './declarative-flow/internals/state-manager/create-session-id';
 import availableFlows from './declarative-flow/registered-flows';
 import { USER_STORE } from './stores';
 import { setupWpDataDebug } from './utils/devtools';
-import { enhanceFlowWithAuth } from './utils/enhanceFlowWithAuth';
+import { enhanceFlowWithUtilityFunctions } from './utils/enhance-flow-with-utils';
+import { enhanceFlowWithAuth, injectUserStepInSteps } from './utils/enhanceFlowWithAuth';
 import redirectPathIfNecessary from './utils/flow-redirect-handler';
+import { getFlowFromURL } from './utils/get-flow-from-url';
 import { startStepperPerformanceTracking } from './utils/performance-tracking';
+import { getSessionId } from './utils/use-session-id';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
-import type { Flow } from './declarative-flow/internals/types';
 import type { AnyAction } from 'redux';
 
 declare const window: AppWindow;
@@ -60,31 +63,11 @@ function determineFlow() {
 
 	return availableFlows[ flowNameFromPathName ] || availableFlows[ 'site-setup' ];
 }
-
-/**
- * TODO: this is no longer a switch and should be removed
- */
-const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined; flow: Flow } > = ( {
-	user,
-	flow,
-} ) => {
-	const { receiveCurrentUser } = useDispatch( USER_STORE );
-	user && receiveCurrentUser( user as UserStore.CurrentUser );
-
-	return <FlowRenderer flow={ flow } />;
-};
 interface AppWindow extends Window {
 	BUILD_TARGET: string;
 }
 
 const DEFAULT_FLOW = 'site-setup';
-
-const getFlowFromURL = () => {
-	const fromPath = matchPath( { path: '/setup/:flow/*' }, window.location.pathname )?.params?.flow;
-	// backward support the old Stepper URL structure (?flow=something)
-	const fromQuery = new URLSearchParams( window.location.search ).get( 'flow' );
-	return fromPath || fromQuery;
-};
 
 const getSiteIdFromURL = () => {
 	const siteId = new URLSearchParams( window.location.search ).get( 'siteId' );
@@ -92,7 +75,6 @@ const getSiteIdFromURL = () => {
 };
 
 const HOTJAR_ENABLED_FLOWS = [
-	MIGRATION_FLOW,
 	SITE_MIGRATION_FLOW,
 	HOSTED_SITE_MIGRATION_FLOW,
 	MIGRATION_SIGNUP_FLOW,
@@ -104,7 +86,7 @@ const initializeHotJar = ( flowName: string ) => {
 	}
 };
 
-window.AppBoot = async () => {
+async function main() {
 	const { pathname, search } = window.location;
 
 	// Before proceeding we redirect the user if necessary.
@@ -119,6 +101,10 @@ window.AppBoot = async () => {
 		// Stop the boot process if we can't determine the flow, reducing the number of edge cases
 		return ( window.location.href = `/setup/${ DEFAULT_FLOW }${ window.location.search }` );
 	}
+
+	const flowLoader = determineFlow();
+	// Load the flow asynchronously while things happen in parallel.
+	const flowPromise = flowLoader();
 
 	// Start tracking performance, bearing in mind this is a full page load.
 	startStepperPerformanceTracking( { fullPageLoad: true } );
@@ -135,30 +121,62 @@ window.AppBoot = async () => {
 
 	const user = ( await initializeCurrentUser() ) as unknown;
 	const userId = ( user as CurrentUser ).ID;
+	let queryClient;
 
-	const { queryClient } = await createQueryClient( userId );
+	let { default: flow } = await flowPromise;
+	let flowSteps = 'initialize' in flow ? await flow.initialize() : null;
+
+	if ( '__experimentalUseSessions' in flow ) {
+		const sessionId = getSessionId() || createSessionId();
+		history.replaceState( null, '', addQueryArgs( { sessionId }, window.location.href ) );
+		queryClient = ( await createQueryClient( 'stepper-persistence-session-' + sessionId ) )
+			.queryClient;
+	} else {
+		queryClient = ( await createQueryClient( userId ) ).queryClient;
+	}
+
+	/**
+	 * When `initialize` returns false, it means the app should be killed (the user probably issued a redirect).
+	 */
+	if ( flowSteps === false ) {
+		return;
+	}
 
 	const initialState = getInitialState( initialReducer, userId );
 	const reduxStore = createReduxStore( initialState, initialReducer );
 	setStore( reduxStore, getStateFromCache( userId ) );
 	onDisablePersistence( persistOnChange( reduxStore, userId ) );
 	setupLocale( user, reduxStore );
+	const { receiveCurrentUser } = dispatch( USER_STORE ) as UserActions;
 
-	user && initializeCalypsoUserStore( reduxStore, user as CurrentUser );
+	if ( user ) {
+		initializeCalypsoUserStore( reduxStore, user as CurrentUser );
+		receiveCurrentUser( user as UserStore.CurrentUser );
+	}
 
 	initializeAnalytics( user, getSuperProps( reduxStore ) );
 
 	setupErrorLogger( reduxStore );
 
-	const flowLoader = determineFlow();
-	const { default: rawFlow } = await flowLoader();
-	const flow = rawFlow.__experimentalUseBuiltinAuth ? enhanceFlowWithAuth( rawFlow ) : rawFlow;
+	// Checking for initialize implies this is a V2 flow.
+	// CLEAN UP: once the `onboarding` flow is migrated to V2, this can be cleaned up to only support V2
+	// The `onboarding` flow is the only flow that uses in-stepper auth so far, so all the auth logic catering V1 can be deleted.
+	if ( 'initialize' in flow && flowSteps ) {
+		// Cache the flow steps for later internal usage. We need to cache them because we promise to call `initialize` only once.
+		flowSteps = injectUserStepInSteps( flowSteps );
+		flow.__flowSteps = flowSteps;
+		enhanceFlowWithUtilityFunctions( flow );
+	} else if ( 'useSteps' in flow ) {
+		// V1 flows have to be enhanced by changing their `useSteps` hook.
+		flow = enhanceFlowWithAuth( flow );
+	}
 
 	// When re-using steps from /start, we need to set the current flow name in the redux store, since some depend on it.
 	reduxStore.dispatch( setCurrentFlowName( flow.name ) );
 	reduxStore.dispatch( setSelectedSiteId( siteId ) as unknown as AnyAction );
 
-	await geolocateCurrencySymbol();
+	// No need to await this, it's not critical to the boot process and will slow booting down.
+	geolocateCurrencySymbol();
 
 	const root = createRoot( document.getElementById( 'wpcom' ) as HTMLElement );
 
@@ -168,7 +186,7 @@ window.AppBoot = async () => {
 				<QueryClientProvider client={ queryClient }>
 					<WindowLocaleEffectManager />
 					<BrowserRouter basename="setup">
-						<FlowSwitch user={ user as UserStore.CurrentUser } flow={ flow } />
+						<FlowRenderer flow={ flow } steps={ flowSteps } />
 						{ config.isEnabled( 'cookie-banner' ) && (
 							<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
 						) }
@@ -178,8 +196,7 @@ window.AppBoot = async () => {
 							id="notices"
 						/>
 					</BrowserRouter>
-					<AsyncHelpCenter />
-
+					<AsyncHelpCenter user={ user as UserStore.CurrentUser } />
 					{ 'development' === process.env.NODE_ENV && (
 						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
 					) }
@@ -187,4 +204,6 @@ window.AppBoot = async () => {
 			</Provider>
 		</CalypsoI18nProvider>
 	);
-};
+}
+
+main();

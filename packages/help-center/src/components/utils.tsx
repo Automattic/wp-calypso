@@ -24,7 +24,7 @@ export const getLastMessage = ( { conversation }: { conversation: ZendeskConvers
 };
 
 export const getZendeskConversations = () => {
-	const conversations = Smooch.getConversations();
+	const conversations = Smooch?.getConversations?.() ?? [];
 	return conversations as unknown as ZendeskConversation[];
 };
 
@@ -90,26 +90,10 @@ export const getSortedRecentAndArchivedConversations = ( {
 	};
 };
 
-export const calculateUnread = ( conversations: ZendeskConversation[] ) => {
-	let unreadConversations = 0;
-	let unreadMessages = 0;
-
-	conversations.forEach( ( conversation ) => {
-		const unreadCount = conversation.participants[ 0 ]?.unreadCount ?? 0;
-
-		if ( unreadCount > 0 ) {
-			unreadConversations++;
-			unreadMessages += unreadCount;
-		}
-	} );
-
-	return { unreadConversations, unreadMessages };
-};
-
 export const getClientId = ( conversations: ZendeskConversation[] ): string =>
 	conversations
 		.flatMap( ( conversation ) => conversation.messages )
-		.find( ( message ) => message.source.type === 'web' && message.source.id )?.source.id || '';
+		.find( ( message ) => message.source?.type === 'web' && message.source?.id )?.source?.id || '';
 
 export const getConversationsFromSupportInteractions = (
 	conversations: ZendeskConversation[],

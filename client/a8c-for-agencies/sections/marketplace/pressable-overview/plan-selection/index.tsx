@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState, useContext } from 'react';
@@ -7,7 +6,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { MarketplaceTypeContext } from '../../context';
 import useProductAndPlans from '../../hooks/use-product-and-plans';
-import usePressableOwnershipType from '../../hosting-overview/hooks/use-pressable-ownership-type';
+import usePressableOwnershipType from '../../hosting-overview-v3/hooks/use-pressable-ownership-type';
 import useExistingPressablePlan from '../hooks/use-existing-pressable-plan';
 import PlanSelectionDetails from './details';
 import PlanSelectionFilter from './filter';
@@ -23,8 +22,6 @@ export default function PressableOverviewPlanSelection( { onAddToCart }: Props )
 	const translate = useTranslate();
 
 	const [ selectedPlan, setSelectedPlan ] = useState< APIProductFamilyProduct | null >( null );
-
-	const isNewHostingPage = isEnabled( 'a4a-hosting-page-redesign' );
 
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
 
@@ -77,8 +74,7 @@ export default function PressableOverviewPlanSelection( { onAddToCart }: Props )
 
 	return (
 		<div
-			className={ clsx( 'pressable-overview-plan-selection', {
-				'is-new-hosting-page': isNewHostingPage,
+			className={ clsx( 'pressable-overview-plan-selection is-new-hosting-page', {
 				'is-slider-hidden': pressableOwnership === 'regular' || isReferMode,
 			} ) }
 		>

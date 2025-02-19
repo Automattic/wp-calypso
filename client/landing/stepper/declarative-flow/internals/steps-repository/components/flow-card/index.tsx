@@ -2,6 +2,7 @@ import { Badge } from '@automattic/components';
 import { Flex, FlexBlock, FlexItem, Card, CardBody, Icon } from '@wordpress/components';
 import { chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
+import { type ReactNode } from 'react';
 import type { BadgeType } from '@automattic/components';
 import './style.scss';
 
@@ -13,7 +14,7 @@ interface FlowCardProps {
 	disabled?: boolean;
 	badge?: {
 		type: BadgeType;
-		text: string;
+		text: ReactNode;
 	};
 	className?: string;
 }

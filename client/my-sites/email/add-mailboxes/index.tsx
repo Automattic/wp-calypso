@@ -41,6 +41,7 @@ import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { usePasswordResetEmailField } from 'calypso/my-sites/email/hooks/use-password-reset-email-field';
 import { MAILBOXES_SOURCE } from 'calypso/my-sites/email/mailboxes/constants';
 import {
+	getEmailCheckoutPath,
 	getEmailManagementPath,
 	getMailboxesPath,
 	getTitanSetUpMailboxPath,
@@ -62,6 +63,9 @@ interface AddMailboxesProps {
 	provider?: EmailProvider;
 	selectedDomainName: string;
 	source?: string;
+	showPageHeader?: boolean;
+	showFormHeader?: boolean;
+	customFormHeader?: boolean;
 }
 
 interface AddMailboxesAdditionalProps {
@@ -75,6 +79,9 @@ interface AddMailboxesAdditionalProps {
 	selectedSiteId: number | undefined | null;
 	source: string;
 	translate: typeof translate;
+	showPageHeader?: boolean;
+	showFormHeader?: boolean;
+	customFormHeader?: boolean;
 }
 
 const isTitan = ( provider: EmailProvider ): boolean => provider === EmailProvider.Titan;
@@ -83,6 +90,9 @@ const useAdditionalProps = ( {
 	provider = EmailProvider.Titan,
 	selectedDomainName,
 	source = '',
+	showPageHeader = true,
+	showFormHeader = true,
+	customFormHeader,
 }: AddMailboxesProps ): AddMailboxesAdditionalProps => {
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteId = selectedSite?.ID;
@@ -117,6 +127,9 @@ const useAdditionalProps = ( {
 		selectedSiteId,
 		source,
 		translate,
+		showPageHeader,
+		showFormHeader,
+		customFormHeader,
 	};
 };
 
@@ -231,6 +244,9 @@ const MailboxesForm = ( {
 	selectedSite,
 	source,
 	translate,
+	showFormHeader,
+	customFormHeader,
+	currentRoute,
 }: AddMailboxesAdditionalProps & {
 	emailProduct: ProductListItem | null;
 	goToEmail: () => void;
@@ -304,10 +320,17 @@ const MailboxesForm = ( {
 		recordContinueEvent( { canContinue: true } );
 		setIsAddingToCart( true );
 
+		const checkoutPath = getEmailCheckoutPath(
+			selectedSite?.slug ?? '',
+			selectedDomainName,
+			currentRoute,
+			mailboxOperations.mailboxes[ 0 ].getAsCartItem().email
+		);
+
 		cartManager
 			.addProductsToCart( [ getCartItems( mailboxOperations.mailboxes, mailProperties ) ] )
 			.then( () => {
-				page( '/checkout/' + selectedSite?.slug ?? '' );
+				page( checkoutPath );
 			} )
 			.finally( () => setIsAddingToCart( false ) )
 			.catch( () => {
@@ -317,9 +340,14 @@ const MailboxesForm = ( {
 
 	return (
 		<>
-			<SectionHeader label={ translate( 'Add New Mailboxes' ) } />
+			{ showFormHeader && <SectionHeader label={ translate( 'Add New Mailboxes' ) } /> }
 
-			<Card>
+			<Card className="new-mailbox">
+				{ !! customFormHeader && (
+					<div className="section-header__label">
+						<span className="section-header__label-text">{ customFormHeader }</span>
+					</div>
+				) }
 				<NewMailBoxList
 					areButtonsBusy={ isAddingToCart || isValidating }
 					hiddenFieldNames={ hiddenFieldNames }
@@ -354,6 +382,7 @@ const AddMailboxes = ( props: AddMailboxesProps ): JSX.Element | null => {
 		selectedSite,
 		source,
 		translate,
+		showPageHeader,
 	} = additionalProps;
 
 	const emailProduct = useSelector( ( state ) =>
@@ -396,9 +425,14 @@ const AddMailboxes = ( props: AddMailboxesProps ): JSX.Element | null => {
 			<Main wideLayout>
 				<DocumentHead title={ translate( 'Add New Mailboxes' ) } />
 
-				<EmailHeader />
-
-				<HeaderCake onClick={ goToEmail }>{ productName + ': ' + selectedDomainName }</HeaderCake>
+				{ showPageHeader && (
+					<>
+						<EmailHeader />
+						<HeaderCake onClick={ goToEmail }>
+							{ productName + ': ' + selectedDomainName }
+						</HeaderCake>
+					</>
+				) }
 
 				<WithVerificationGate productFamily={ productName } provider={ provider }>
 					<MailboxNotices { ...additionalProps } emailProduct={ emailProduct } />

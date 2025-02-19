@@ -9,6 +9,12 @@ $vertical-margin: 32px;
 	color: var(--studio-gray-100);
 	font-size: $font-body-small;
 	margin-bottom: $vertical-margin;
+	.is-sending-email .highlight-card-count-value {
+		font-size: $font-body-small;
+		font-style: italic;
+		font-family: $sans;
+		padding-top: 10px;
+	}
 }
 
 .stats__email-detail {

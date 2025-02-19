@@ -2,21 +2,13 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-body.is-section-stepper .step-route {
-	--color-accent: #117ac9;
-	--color-accent-60: #0e64a5;
-}
-
 .step-route.user {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	min-height: calc(100vh - 96px);
-	margin: 140px 0 0;
-	@include break-small {
-		margin: 108px 0 0;
-	}
+	margin: 20px 0;
 
 	.locale-suggestions {
 		margin: 0 auto;
@@ -24,7 +16,6 @@ body.is-section-stepper .step-route {
 			width: 100%;
 		}
 	}
-
 
 	a.step-wrapper__navigation-link {
 		color: #1d2327;
@@ -45,25 +36,9 @@ body.is-section-stepper .step-route {
 		transform-origin: 0 0;
 	}
 
-	.step-container__content {
-		.formatted-header {
-			margin: 24px 20px;
-			.formatted-header__title {
-				/* this is to match with start */
-				/* stylelint-disable-next-line scales/font-sizes */
-				font-size: 1.875rem;
-				line-height: 40px;
-				@include break-small {
-					font-size: 2rem;
-					line-height: 3.25;
-				}
-			}
-		}
-	}
-
 	.signup-form-social-first {
 		width: 327px;
-		margin: 0 auto;
+		margin: 3rem auto 0 auto;
 
 		.signup-form__notice {
 			width: 327px;
@@ -87,8 +62,8 @@ body.is-section-stepper .step-route {
 			font-style: normal;
 			font-weight: 400;
 			line-height: 18px;
-			margin-top: 24px;
-			margin-bottom: 12px;
+			margin-top: 3rem;
+			margin-bottom: 0;
 
 			a {
 				color: var(--studio-gray-50, #646970);
@@ -97,13 +72,13 @@ body.is-section-stepper .step-route {
 		}
 
 		.signup-form-social-first__tos-link {
-			margin-top: 32px;
 			text-align: center;
 		}
 	}
 
 	.signup-form-social-first-email {
 		.card {
+			background: transparent;
 			box-shadow: none;
 			padding-left: 0;
 			padding-right: 0;
@@ -161,11 +136,11 @@ body.is-section-stepper .step-route {
 			text-underline-offset: 5px;
 
 			&:hover {
-				color: var(--studio-blue-50, #0675c4);
+				color: var(--color-accent, #3858e9);
 			}
 
 			&:focus {
-				outline: 1px dashed var(--studio-blue-50, #0675c4);
+				outline: 1px dashed var(--color-accent, #3858e9);
 				outline-offset: 3px;
 				box-shadow: none;
 				border-radius: 0;

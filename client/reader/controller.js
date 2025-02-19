@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { getAnyLanguageRouteParam, getLanguageRouteParam } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
 import { createElement } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
@@ -15,6 +16,7 @@ import { isFollowingOpen } from 'calypso/state/reader-ui/sidebar/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { getSection } from 'calypso/state/ui/selectors';
+import { setupRedirectRoutes } from 'calypso/utils';
 import {
 	trackPageLoad,
 	trackUpdatesLoaded,
@@ -35,48 +37,11 @@ function renderFeedError( context, next ) {
 	next();
 }
 
-export function legacyRedirects( context, next ) {
-	const legacyPathRegexes = {
-		feedStream: /^\/read\/blog\/feed\/([0-9]+)$/i,
-		feedFullPost: /^\/read\/post\/feed\/([0-9]+)\/([0-9]+)$/i,
-		blogStream: /^\/read\/blog\/id\/([0-9]+)$/i,
-		blogFullPost: /^\/read\/post\/id\/([0-9]+)\/([0-9]+)$/i,
-	};
-
-	if ( context.path.match( legacyPathRegexes.feedStream ) ) {
-		page.redirect( `/read/feeds/${ context.params.feed_id }` );
-	} else if ( context.path.match( legacyPathRegexes.feedFullPost ) ) {
-		page.redirect( `/read/feeds/${ context.params.feed_id }/posts/${ context.params.post_id }` );
-	} else if ( context.path.match( legacyPathRegexes.blogStream ) ) {
-		page.redirect( `/read/blogs/${ context.params.blog_id }` );
-	} else if ( context.path.match( legacyPathRegexes.blogFullPost ) ) {
-		page.redirect( `/read/blogs/${ context.params.blog_id }/posts/${ context.params.post_id }` );
-	}
-
-	next();
-}
-
 export function updateLastRoute( context, next ) {
 	if ( lastRoute ) {
 		context.lastRoute = lastRoute;
 	}
 	lastRoute = context.path;
-	next();
-}
-
-export function incompleteUrlRedirects( context, next ) {
-	let redirect;
-	// Have we arrived at a URL ending in /posts? Redirect to feed stream/blog stream
-	if ( context.path.match( /^\/read\/feeds\/([0-9]+)\/posts$/i ) ) {
-		redirect = `/read/feeds/${ context.params.feed_id }`;
-	} else if ( context.path.match( /^\/read\/blogs\/([0-9]+)\/posts$/i ) ) {
-		redirect = `/read/blogs/${ context.params.blog_id }`;
-	}
-
-	if ( redirect ) {
-		return page.redirect( redirect );
-	}
-
 	next();
 }
 
@@ -108,7 +73,7 @@ export function following( context, next ) {
 		const currentSection = getSection( state );
 		const lastPath = getLastPath( state );
 
-		if ( lastPath && lastPath !== '/read' && currentSection.name !== 'reader' ) {
+		if ( lastPath && lastPath !== '/reader' && currentSection.name !== 'reader' ) {
 			return page.redirect( lastPath );
 		}
 
@@ -135,6 +100,7 @@ export function following( context, next ) {
 		streamKey: 'following',
 		startDate,
 		recsStreamKey: 'custom_recs_posts_with_images',
+		showBack: userHasHistory( context ),
 		trackScrollPage: trackScrollPage.bind(
 			null,
 			basePath,
@@ -158,7 +124,7 @@ export function feedDiscovery( context, next ) {
 				meta: { persist: false },
 			} )
 			.then( ( feedId ) => {
-				page.redirect( `/read/feeds/${ feedId }` );
+				page.redirect( `/reader/feeds/${ feedId }` );
 			} )
 			.catch( () => {
 				renderFeedError( context, next );
@@ -175,7 +141,7 @@ export function feedListing( context, next ) {
 		return;
 	}
 
-	const basePath = '/read/feeds/:feed_id';
+	const basePath = '/reader/feeds/:feed_id';
 	const fullAnalyticsPageTitle = analyticsPageTitle + ' > Feed > ' + feedId;
 	const mcKey = 'blog';
 
@@ -205,7 +171,7 @@ export function feedListing( context, next ) {
 }
 
 export function blogListing( context, next ) {
-	const basePath = '/read/blogs/:blog_id';
+	const basePath = '/reader/blogs/:blog_id';
 	const blogId = context.params.blog_id;
 	const fullAnalyticsPageTitle = analyticsPageTitle + ' > Site > ' + blogId;
 	const streamKey = 'site:' + blogId;
@@ -345,10 +311,10 @@ export async function siteSubscriptionsManager( context, next ) {
 
 export async function siteSubscription( context, next ) {
 	// It can be the 2 following:
-	// - /read/subscriptions/<subscription_id>
-	// - /read/site/subscription
+	// - /reader/subscriptions/<subscription_id>
+	// - /reader/site/subscription
 	const basePath = context.params.subscription_id
-		? '/read/subscriptions/<subscription_id>'
+		? '/reader/subscriptions/<subscription_id>'
 		: sectionify( context.path );
 
 	const fullAnalyticsPageTitle =
@@ -397,7 +363,7 @@ export async function pendingSubscriptionsManager( context, next ) {
 
 /**
  * Middleware to redirect logged out users to /discover.
- * Intended for reader pages that do not support logged out users such as /read.
+ * Intended for reader pages that do not support logged out users such as /reader.
  * @param   {Object}   context Context object
  * @param   {Function} next    Calls next middleware
  * @returns {void}
@@ -409,4 +375,205 @@ export function redirectLoggedOutToDiscover( context, next ) {
 		return;
 	}
 	return page.redirect( '/discover' );
+}
+
+/**
+ * For backward compatibility redirect all `/read` URLs to `/reader`.
+ */
+export function setupReadRoutes() {
+	const langParam = getLanguageRouteParam();
+	const anyLangParam = getAnyLanguageRouteParam();
+
+	const readRedirectsList = [
+		{
+			path: '/read',
+			getRedirect: () => '/reader',
+		},
+		{
+			path: `/${ langParam }/read`,
+			getRedirect: () => '/reader',
+		},
+		{
+			path: `/${ anyLangParam }/read`,
+			getRedirect: () => '/reader',
+		},
+		{
+			path: '/read/a8c',
+			getRedirect: () => '/reader/a8c',
+		},
+		{
+			path: '/read/blog',
+			getRedirect: () => '/reader',
+		},
+		// Feed Stream.
+		{
+			path: '/read/blog/feed/:feed_id',
+			regex: /^\/read\/blog\/feed\/([0-9]+)$/i,
+			getRedirect: ( params ) => `/reader/feeds/${ params.feed_id }`,
+		},
+		// Old Blog View.
+		{
+			path: '/read/blog/id/:blog_id',
+			regex: /^\/read\/blog\/id\/([0-9]+)$/i,
+			getRedirect: ( params ) => `/reader/blogs/${ params.blog_id }`,
+		},
+		{
+			path: '/read/blogs',
+			getRedirect: () => '/reader',
+		},
+		{
+			path: '/read/blogs/:blog_id',
+			regex: /^\/read\/blogs\/([0-9]+)$/i,
+			getRedirect: ( params ) => `/reader/blogs/${ params.blog_id }`,
+		},
+		{
+			path: '/read/blogs/:blog_id/posts',
+			regex: /^\/read\/blogs\/([0-9]+)\/posts$/i,
+			getRedirect: ( params ) => `/reader/blogs/${ params.blog_id }`,
+		},
+		{
+			path: '/read/blogs/:blog_id/posts/:post_id',
+			regex: /^\/read\/blogs\/([0-9]+)\/posts\/([0-9]+)$/i,
+			getRedirect: ( params ) => `/reader/blogs/${ params.blog_id }/posts/${ params.post_id }`,
+		},
+		{
+			path: '/read/conversations',
+			getRedirect: () => '/reader/conversations',
+		},
+		{
+			path: '/read/conversations/a8c',
+			getRedirect: () => '/reader/conversations/a8c',
+		},
+		{
+			path: '/read/feed',
+			getRedirect: () => '/reader',
+		},
+		{
+			path: '/read/feeds',
+			getRedirect: () => '/reader',
+		},
+		{
+			path: '/read/feeds/:feed_id',
+			regex: /^\/read\/feeds\/([0-9]+)$/i,
+			getRedirect: ( params ) => `/reader/feeds/${ params.feed_id }`,
+		},
+		{
+			path: '/read/feeds/:feed_id/posts',
+			regex: /^\/read\/feeds\/([0-9]+)\/posts$/i,
+			getRedirect: ( params ) => `/reader/feeds/${ params.feed_id }`,
+		},
+		{
+			path: '/read/feeds/:feed_id/posts/:feed_item_id',
+			regex: /^\/read\/feeds\/([0-9]+)\/posts\/([0-9]+)$/i,
+			getRedirect: ( params ) => `/reader/feeds/${ params.feed_id }/posts/${ params.feed_item_id }`,
+		},
+		{
+			path: '/read/following',
+			getRedirect: () => '/reader',
+		},
+		{
+			path: '/read/list/new',
+			getRedirect: () => '/reader/list/new',
+		},
+		{
+			path: '/read/list/:owner/:slug',
+			regex: /^\/read\/list\/([^/]+)\/([^/]+)$/i,
+			getRedirect: ( params ) => `/reader/list/${ params.owner }/${ params.slug }`,
+		},
+		{
+			path: '/read/list/:owner/:slug/edit',
+			regex: /^\/read\/list\/([^/]+)\/([^/]+)\/edit$/i,
+			getRedirect: ( params ) => `/reader/list/${ params.owner }/${ params.slug }/edit`,
+		},
+		{
+			path: '/read/list/:owner/:slug/edit/items',
+			regex: /^\/read\/list\/([^/]+)\/([^/]+)\/edit\/items$/i,
+			getRedirect: ( params ) => `/reader/list/${ params.owner }/${ params.slug }/edit/items`,
+		},
+		{
+			path: '/read/list/:owner/:slug/export',
+			regex: /^\/read\/list\/([^/]+)\/([^/]+)\/export$/i,
+			getRedirect: ( params ) => `/reader/list/${ params.owner }/${ params.slug }/export`,
+		},
+		{
+			path: '/read/list/:owner/:slug/delete',
+			regex: /^\/read\/list\/([^/]+)\/([^/]+)\/delete$/i,
+			getRedirect: ( params ) => `/reader/list/${ params.owner }/${ params.slug }/delete`,
+		},
+		{
+			path: '/read/notifications',
+			getRedirect: () => '/reader/notifications',
+		},
+		{
+			path: '/read/p2',
+			getRedirect: () => '/reader/p2',
+		},
+		{
+			path: '/read/post',
+			getRedirect: () => '/reader',
+		},
+		// Old Full Post View.
+		{
+			path: '/read/post/feed/:feed_id/:post_id',
+			regex: /^\/read\/post\/feed\/([0-9]+)\/([0-9]+)$/i,
+			getRedirect: ( params ) => `/reader/feeds/${ params.feed_id }/posts/${ params.post_id }`,
+		},
+		// Old Full Post View.
+		{
+			path: '/read/post/id/:blog_id/:post_id',
+			regex: /^\/read\/post\/id\/([0-9]+)\/([0-9]+)$/i,
+			getRedirect: ( params ) => `/reader/blogs/${ params.blog_id }/posts/${ params.post_id }`,
+		},
+		{
+			path: '/read/search',
+			getRedirect: () => '/reader/search',
+		},
+		{
+			path: `/${ langParam }/read/search`,
+			getRedirect: () => `/reader/search`,
+		},
+		{
+			path: `/${ anyLangParam }/read/search`,
+			getRedirect: () => `/reader/search`,
+		},
+		{
+			path: '/read/site/subscription/:blog_id',
+			regex: /^\/read\/site\/subscription\/([0-9]+)$/i,
+			getRedirect: ( params ) => `/reader/site/subscription/${ params.blog_id }`,
+		},
+		{
+			path: '/read/subscriptions',
+			getRedirect: () => '/reader/subscriptions',
+		},
+		{
+			path: '/read/subscriptions/:subscription_id',
+			regex: /^\/read\/subscriptions\/([0-9]+)$/i,
+			getRedirect: ( params ) => `/reader/subscriptions/${ params.subscription_id }`,
+		},
+		{
+			path: '/read/subscriptions/comments',
+			getRedirect: () => '/reader/subscriptions/comments',
+		},
+		{
+			path: '/read/subscriptions/pending',
+			getRedirect: () => '/reader/subscriptions/pending',
+		},
+		{
+			path: '/read/tag/:tag_name',
+			regex: /^\/read\/tag\/([^/]+)$/i,
+			getRedirect: ( params ) => `/tag/${ params.tag_name }`,
+		},
+		{
+			path: '/read/users/:user_login',
+			regex: /^\/read\/users\/([^/]+)$/i,
+			getRedirect: ( params ) => `/reader/users/${ params.user_login }`,
+		},
+		{
+			path: '/read/users/:user_login/lists',
+			regex: /^\/read\/users\/([^/]+)\/lists$/i,
+			getRedirect: ( params ) => `/reader/users/${ params.user_login }/lists`,
+		},
+	];
+
+	setupRedirectRoutes( readRedirectsList );
 }

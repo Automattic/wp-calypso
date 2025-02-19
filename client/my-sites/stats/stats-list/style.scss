@@ -871,7 +871,8 @@ ul.module-content-list-legend {
 }
 
 .list-countryviews,
-.list-countries {
+.list-countries,
+.list-locations {
 	.stats-list__flag-icon {
 		position: relative;
 		display: inline-block;
@@ -915,6 +916,7 @@ ul.module-content-list-legend {
 		.stats-list-actions {
 			display: flex;
 			align-items: center;
+			gap: 6px;
 		}
 	}
 }

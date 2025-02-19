@@ -1,7 +1,9 @@
+@import "@automattic/typography/styles/variables";
+
 .modal-survey-notice {
 	position: fixed;
-	left: 0;
-	top: 0;
+	inset-block-start: 0;
+	inset-inline-start: 0;
 	height: 100%;
 	width: 100%;
 	z-index: 1000;
@@ -10,23 +12,26 @@
 		background: var(--studio-black);
 		opacity: 0.2;
 		position: absolute;
-		left: 0;
-		top: 0;
+		inset-block-start: 0;
+		inset-inline-start: 0;
 		width: 100%;
 		height: 100%;
 		cursor: default;
 	}
 
-
 	.modal-survey-notice__popup {
 		position: absolute;
-		right: 25px;
-		bottom: 25px;
-		width: 416px;
+		inset-block-end: 32px;
+		inset-inline-end: 32px;
+		width: 430px;
 		max-width: calc(100% - 50px);
 		z-index: 2;
-		border-radius: 4px 4px 0 0;
-		box-shadow: 0 3px 1px 0 rgba(0, 0, 0, 0.04), 0 3px 8px 0 rgba(0, 0, 0, 0.12);
+		border-radius: 8px; /* stylelint-disable-line scales/radii */
+		box-shadow:
+			0 5px 15px 0 rgba(0, 0, 0, 0.08),
+			0 15px 27px 0 rgba(0, 0, 0, 0.07),
+			0 30px 36px 0 rgba(0, 0, 0, 0.04),
+			0 50px 43px 0 rgba(0, 0, 0, 0.02);
 		overflow: hidden;
 
 		.modal-survey-notice__popup-head {
@@ -40,12 +45,10 @@
 
 			.modal-survey-notice__popup-head-title {
 				color: var(--studio-white);
-				font-size: rem(14px);
+				font-size: rem(13px);
 				font-weight: 500;
 				line-height: 20px;
-				letter-spacing: -0.15px;
 			}
-
 		}
 
 		.modal-survey-notice__popup-head-close svg {
@@ -53,63 +56,51 @@
 		}
 
 		> .modal-survey-notice__popup-head-close {
+			padding: 8px;
 			position: absolute;
-			right: 8px;
-			top: 8px;
+			inset-block-start: 4px;
+			inset-inline-end: 0;
+			z-index: 1;
 		}
 
 		.modal-survey-notice__popup-img {
-			background: #0675c4;
-			display: flex;
-			align-items: center;
-			justify-content: center;
+			background: var(--color-accent);
+			height: 270px;
+			overflow: hidden;
+			position: relative;
 
 			img {
-				width: 100%;
 				display: block;
+				inset-block-start: 42px;
+				inset-inline-start: 32px;
+				position: absolute;
+				width: 100%;
 			}
 		}
 
 		.modal-survey-notice__popup-content {
-			padding: 1rem;
+			padding: 24px 32px;
 			background: var(--studio-white);
 
 			.modal-survey-notice__popup-content-title {
-				font-size: rem(16px);
+				font-size: $font-title-small;
 				font-weight: 500;
 				line-height: 24px;
-				letter-spacing: -0.32px;
-				padding-bottom: 8px;
+				margin-bottom: 16px;
+				text-wrap: balance;
 			}
 
 			.modal-survey-notice__popup-content-description {
-				font-size: rem(14px);
+				font-size: rem(13px);
 				line-height: 20px;
-				letter-spacing: -0.15px;
-				padding-bottom: 18px;
+				margin-bottom: 16px;
+				text-wrap: pretty;
 			}
 
 			.modal-survey-notice__popup-content-buttons {
 				display: flex;
+				gap: 8px;
 				justify-content: flex-end;
-
-				.modal-survey-notice__popup-content-buttons-ok {
-					padding: 8px 14px;
-					background: var(--studio-blue-50);
-					color: var(--studio-white);
-					font-size: rem(14px);
-					line-height: 20px;
-					letter-spacing: -0.15px;
-				}
-
-				.modal-survey-notice__popup-content-buttons-cancel {
-					padding: 8px 14px;
-					color: var(--studio-blue-50);
-					text-align: center;
-					font-size: rem(14px);
-					line-height: 20px;
-					letter-spacing: -0.15px;
-				}
 			}
 		}
 	}

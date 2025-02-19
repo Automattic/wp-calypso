@@ -1,4 +1,4 @@
-import { useHasEnTranslation, useLocalizeUrl, useLocale } from '@automattic/i18n-utils';
+import { useLocalizeUrl, useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import imagePreviewPublish from 'calypso/my-sites/patterns/components/get-started/images/preview-publish.png';
@@ -16,7 +16,6 @@ export function PatternsGetStarted( { theme }: { theme?: 'dark' | 'blue' } ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const localizeUrl = useLocalizeUrl();
 	const locale = useLocale();
-	const hasTranslation = useHasEnTranslation();
 
 	return (
 		<PatternsSection
@@ -114,16 +113,10 @@ export function PatternsGetStarted( { theme }: { theme?: 'dark' | 'blue' } ) {
 					/>
 					<div className="patterns-get-started__item-name">{ translate( 'Free course' ) }</div>
 					<div className="patterns-get-started__item-description">
-						{ hasTranslation( 'Launch your site faster' ) &&
-							translate( 'Launch Your Site Faster', {
-								comment:
-									'This string is taken from the first line of the page content from https://wordpress.com/learn/courses/quick-launch/',
-							} ) }
-						{ ! hasTranslation( 'Launch your site faster' ) &&
-							translate( 'Design Your Homepage', {
-								comment:
-									'This string is a copy of the page title from wordpress.com/learn/webinars/compelling-homepages/',
-							} ) }
+						{ translate( 'Launch Your Site Faster', {
+							comment:
+								'This string is taken from the first line of the page content from https://wordpress.com/learn/courses/quick-launch/',
+						} ) }
 					</div>
 				</a>
 			</div>

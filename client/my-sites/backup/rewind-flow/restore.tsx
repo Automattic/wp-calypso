@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Button, Card, Gridicon } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
+import { usePrevious } from '@wordpress/compose';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useState } from 'react';
@@ -88,11 +89,18 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	const [ restoreInitiated, setRestoreInitiated ] = useState( false );
 	const [ restoreFailed, setRestoreFailed ] = useState( false );
 	const [ showConfirm, setShowConfirm ] = useState( false );
+	const [ showFinishedScreen, setShowFinishedScreen ] = useState( false );
 
 	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) ) as RewindState;
 	const inProgressRewindStatus = useSelector( ( state ) =>
 		getInProgressRewindStatus( state, siteId, rewindId )
 	);
+
+	// Keep track of the previous restore status so we can detect when it transitions
+	// from 'queued'/'running' to 'finished' during this session (rather than being
+	// 'finished' from a past session).
+	const previousRestoreStatus = usePrevious( inProgressRewindStatus );
+
 	const { message, percent, currentEntry, status } = useSelector(
 		( state ) => getRestoreProgress( state, siteId ) || ( {} as RestoreProgress )
 	);
@@ -117,7 +125,6 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 
 	useEffect( () => {
 		const preflightPassed = isPreflightEnabled && preflightStatus === PreflightTestStatus.SUCCESS;
-
 		if ( userHasRequestedRestore && ! isRestoreInProgress && ! restoreInitiated ) {
 			if ( credentialsAreValid || preflightPassed ) {
 				setRestoreInitiated( true );
@@ -240,78 +247,90 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		);
 	}, [ dispatch, hasCredentials ] );
 
-	const renderConfirm = () => (
-		<>
-			{ ! isAtomic && <QueryJetpackCredentialsStatus siteId={ siteId } role="main" /> }
-			<div className="rewind-flow__header">
-				<Gridicon icon="history" size={ 48 } />
-				<div className="rewind-flow__learn-about">
-					<ExternalLink
-						href="https://jetpack.com/support/backup/restoring-with-jetpack-backup/"
-						onClick={ onLearnAboutClick }
-					>
-						{ translate( 'Learn about restores' ) }
-					</ExternalLink>
-				</div>
-			</div>
-			<h3 className="rewind-flow__title">{ translate( 'Restore your site' ) }</h3>
-			<p className="rewind-flow__info">
-				{ translate( 'Selected restore point: {{strong}}%(backupDisplayDate)s{{/strong}}', {
-					args: {
-						backupDisplayDate,
-					},
-					components: {
-						strong: <strong />,
-					},
-				} ) }
-			</p>
-			{ showRealTimeMessage && (
-				<BackupRealtimeMessage
-					baseBackupDate={ baseBackupDate }
-					eventsCount={ backup.rewindStepCount }
-					selectedBackupDate={ selectedDate }
-				/>
-			) }
-			<h4 className="rewind-flow__cta">{ translate( 'Choose the items you wish to restore:' ) }</h4>
-			<RewindConfigEditor currentConfig={ rewindConfig } onConfigChange={ setRewindConfig } />
-			<RewindFlowNotice
-				gridicon="notice"
-				title={ translate(
-					'Important: this action will replace all settings, posts, pages and other site content with the information from the selected restore point.'
-				) }
-				type={ RewindFlowNoticeLevel.WARNING }
-			/>
+	const renderConfirm = () => {
+		let restoreWarning = translate(
+			'Important: This action will replace the selected content with the content from the selected restore point.'
+		);
+
+		if ( rewindConfig.sqls ) {
+			restoreWarning = translate(
+				'Important: This action will replace all settings, posts, pages and other site content with the information from the selected restore point.'
+			);
+		}
+
+		return (
 			<>
-				{ backupCurrentlyInProgress && (
-					<RewindFlowNotice
-						gridicon="notice"
-						title={ translate(
-							'A backup is currently in progress; restoring now will stop the backup.'
-						) }
-						type={ RewindFlowNoticeLevel.WARNING }
+				{ ! isAtomic && <QueryJetpackCredentialsStatus siteId={ siteId } role="main" /> }
+				<div className="rewind-flow__header">
+					<Gridicon icon="history" size={ 48 } />
+					<div className="rewind-flow__learn-about">
+						<ExternalLink
+							href="https://jetpack.com/support/backup/restoring-with-jetpack-backup/"
+							onClick={ onLearnAboutClick }
+						>
+							{ translate( 'Learn about restores' ) }
+						</ExternalLink>
+					</div>
+				</div>
+				<h3 className="rewind-flow__title">{ translate( 'Restore your site' ) }</h3>
+				<p className="rewind-flow__info">
+					{ translate( 'Selected restore point: {{strong}}%(backupDisplayDate)s{{/strong}}', {
+						args: {
+							backupDisplayDate,
+						},
+						components: {
+							strong: <strong />,
+						},
+					} ) }
+				</p>
+				{ showRealTimeMessage && (
+					<BackupRealtimeMessage
+						baseBackupDate={ baseBackupDate }
+						eventsCount={ backup.rewindStepCount }
+						selectedBackupDate={ selectedDate }
 					/>
 				) }
+				<h4 className="rewind-flow__cta">
+					{ translate( 'Choose the items you wish to restore:' ) }
+				</h4>
+				<RewindConfigEditor currentConfig={ rewindConfig } onConfigChange={ setRewindConfig } />
+				<RewindFlowNotice
+					gridicon="notice"
+					title={ restoreWarning }
+					type={ RewindFlowNoticeLevel.WARNING }
+				/>
+				<>
+					{ backupCurrentlyInProgress && (
+						<RewindFlowNotice
+							gridicon="notice"
+							title={ translate(
+								'A backup is currently in progress; restoring now will stop the backup.'
+							) }
+							type={ RewindFlowNoticeLevel.WARNING }
+						/>
+					) }
+				</>
+				<div className="rewind-flow__btn-group">
+					<Button
+						className="rewind-flow__back-button"
+						href={ backupMainPath( siteSlug ) }
+						onClick={ onGoBack }
+					>
+						{ translate( 'Go back' ) }
+					</Button>
+					<Button
+						className="rewind-flow__primary-button"
+						primary
+						onClick={ onConfirm }
+						disabled={ disableRestore }
+					>
+						{ translate( 'Restore now' ) }
+					</Button>
+				</div>
+				<Interval onTick={ refreshBackups } period={ EVERY_FIVE_SECONDS } />
 			</>
-			<div className="rewind-flow__btn-group">
-				<Button
-					className="rewind-flow__back-button"
-					href={ backupMainPath( siteSlug ) }
-					onClick={ onGoBack }
-				>
-					{ translate( 'Go back' ) }
-				</Button>
-				<Button
-					className="rewind-flow__primary-button"
-					primary
-					onClick={ onConfirm }
-					disabled={ disableRestore }
-				>
-					{ translate( 'Restore now' ) }
-				</Button>
-			</div>
-			<Interval onTick={ refreshBackups } period={ EVERY_FIVE_SECONDS } />
-		</>
-	);
+		);
+	};
 
 	const renderInProgress = () => (
 		<>
@@ -455,10 +474,31 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		( ! inProgressRewindStatus && userHasRequestedRestore ) ||
 		( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) ) ||
 		( userHasRequestedRestore && inProgressRewindStatus === 'failed' && ! restoreFailed );
-	const isFinished = inProgressRewindStatus !== null && inProgressRewindStatus === 'finished';
+	const isRestoreDone = inProgressRewindStatus === 'finished';
+	const isFinished = isRestoreDone && showFinishedScreen;
 
 	useEffect( () => {
-		if ( isFinished ) {
+		// If the server says the restore is 'queued' or 'running', it means a
+		// restore is in progress. Even if the user just refreshed the page, we
+		// want to mark userHasRequestedRestore = true so that when it finishes,
+		// we'll know it actually completed during this session (and can show
+		// the Finished screen).
+		if (
+			inProgressRewindStatus &&
+			[ 'queued', 'running' ].includes( inProgressRewindStatus ) &&
+			! userHasRequestedRestore
+		) {
+			setUserHasRequestedRestore( true );
+		}
+	}, [ inProgressRewindStatus, userHasRequestedRestore ] );
+
+	useEffect( () => {
+		if (
+			isRestoreDone &&
+			userHasRequestedRestore &&
+			[ 'queued', 'running' ].includes( previousRestoreStatus as string ) &&
+			! showFinishedScreen
+		) {
 			dispatch(
 				recordTracksEvent( 'calypso_jetpack_backup_restore_completed', {
 					has_credentials: hasCredentials,
@@ -467,6 +507,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			setRestoreInitiated( false );
 			setUserHasRequestedRestore( false );
 			setRestoreFailed( false );
+			setShowFinishedScreen( true );
 		}
 
 		if ( ! isRestoreInProgress && restoreInitiated && inProgressRewindStatus === 'failed' ) {
@@ -478,9 +519,11 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		dispatch,
 		hasCredentials,
 		inProgressRewindStatus,
-		isFinished,
+		isRestoreDone,
 		isRestoreInProgress,
+		previousRestoreStatus,
 		restoreInitiated,
+		showFinishedScreen,
 		userHasRequestedRestore,
 	] );
 
@@ -500,6 +543,11 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			);
 		} else if ( isInProgress ) {
 			return renderInProgress();
+		} else if ( isRestoreDone && ! showFinishedScreen ) {
+			// The API may still say "finished" from a *previous* restore with the same rewindId.
+			// If our local showFinishedScreen flag is false, we treat this as a "new" visit
+			// and show the confirm screen instead of the finished screen.
+			return renderConfirm();
 		} else if ( isFinished ) {
 			return renderFinished();
 		}

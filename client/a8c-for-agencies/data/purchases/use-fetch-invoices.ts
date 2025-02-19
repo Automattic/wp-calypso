@@ -1,5 +1,5 @@
 import { useQuery, UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
-import { addQueryArgs } from 'calypso/lib/url';
+import { isClientView } from 'calypso/a8c-for-agencies/sections/purchases/payment-methods/lib/is-client-view';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -42,7 +42,9 @@ export const getFetchInvoicesQueryKey = ( {
 	agencyId?: number;
 	status?: InvoiceStatus;
 } ) => {
-	return [ 'a4a', 'invoices', starting_after, ending_before, agencyId, status ];
+	return isClientView()
+		? [ 'a4a-client-invoices', starting_after, ending_before, status ]
+		: [ 'a4a', 'invoices', starting_after, ending_before, agencyId, status ];
 };
 
 export default function useFetchInvoices(
@@ -51,20 +53,31 @@ export default function useFetchInvoices(
 	status?: InvoiceStatus
 ): UseQueryResult< Invoices, QueryError > {
 	const { starting_after, ending_before } = pagination;
+
 	const agencyId = useSelector( getActiveAgencyId );
+	const isClientUI = isClientView();
 
 	return useQuery< APIInvoices, QueryError, Invoices >( {
+		// isClientUI is used to send or not send the agency_id parameter to the API.
+		// eslint-disable-next-line @tanstack/query/exhaustive-deps
 		queryKey: getFetchInvoicesQueryKey( { starting_after, ending_before, agencyId, status } ),
 		queryFn: () =>
-			wpcom.req.get( {
-				apiNamespace: 'wpcom/v2',
-				path: addQueryArgs(
-					{ starting_after, ending_before, agency_id: agencyId, status },
-					'/jetpack-licensing/partner/invoices'
-				),
-			} ),
+			wpcom.req.get(
+				{
+					apiNamespace: 'wpcom/v2',
+					path: isClientUI
+						? '/agency-client/stripe/invoices'
+						: '/jetpack-licensing/partner/invoices',
+				},
+				{
+					...( ! isClientUI && agencyId && { agency_id: agencyId } ),
+					starting_after,
+					ending_before,
+					status,
+				}
+			),
 		refetchOnWindowFocus: false,
-		enabled: !! agencyId,
+		enabled: isClientUI || !! agencyId,
 		select: selectInvoices,
 		...options,
 	} );

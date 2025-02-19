@@ -22,6 +22,7 @@ import {
 	WPCOM_FEATURES_ATOMIC,
 	isWooExpressPlan,
 	isSenseiProduct,
+	PLAN_100_YEARS,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
@@ -146,14 +147,10 @@ export function CheckoutSummaryFeaturedList( {
 						? translate( 'WordPress.com Gift Subscription' )
 						: translate( 'Included with your purchase' ) }
 				</CheckoutSummaryFeaturesTitle>
-				{ isCartUpdating ? (
-					<LoadingCheckoutSummaryFeaturesList />
-				) : (
-					<CheckoutSummaryFeaturesWrapper
-						siteId={ siteId }
-						nextDomainIsFree={ responseCart.next_domain_is_free }
-					/>
-				) }
+				<CheckoutSummaryFeaturesWrapper
+					siteId={ siteId }
+					nextDomainIsFree={ responseCart.next_domain_is_free }
+				/>
 			</CheckoutSummaryFeatures>
 			{ ! isCartUpdating && ! hasRenewalInCart && ! isWcMobile && plan && hasMonthlyPlanInCart && (
 				<CheckoutSummaryAnnualUpsell plan={ plan } onChangeSelection={ onChangeSelection } />
@@ -407,15 +404,11 @@ export function CheckoutSummaryRefundWindows( {
 	} else {
 		const shortestRefundWindow = Math.min( ...refundWindows );
 
-		text = translate(
-			'%(days)d-day full money back guarantee',
-			'%(days)d-day full money back guarantee',
-			{
-				count: shortestRefundWindow,
-				args: { days: shortestRefundWindow },
-				comment: 'The number of days until the shortest refund window in the cart expires.',
-			}
-		);
+		text = translate( '%(days)d-day money back guarantee', '%(days)d-day money back guarantee', {
+			count: shortestRefundWindow,
+			args: { days: shortestRefundWindow },
+			comment: 'The number of days until the shortest refund window in the cart expires.',
+		} );
 	}
 
 	return (
@@ -719,12 +712,14 @@ function CheckoutSummaryPlanFeatures( props: {
 
 	const showPricingGridFeatures = ! hasRenewalInCart;
 
+	const isHundredYearPlan = PLAN_100_YEARS === planInCart?.product_slug;
+
 	const planFeatures = getPlanFeatures(
 		planInCart,
 		translate,
 		hasDomainsInCart,
 		hasRenewalInCart,
-		nextDomainIsFree,
+		nextDomainIsFree && ! isHundredYearPlan,
 		showPricingGridFeatures
 	);
 

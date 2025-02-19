@@ -1,3 +1,4 @@
+import { Icon, check } from '@wordpress/icons';
 import { useRef, useEffect } from 'react';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -55,7 +56,12 @@ const JetpackProductInfoRegularList = ( { items }: Props ) => {
 		>
 			{ items.map( ( item, index ) => (
 				<li className="jetpack-product-info__regular-list-item" key={ index }>
-					{ item }
+					<Icon
+						className="jetpack-product-info__regular-list-item-icon"
+						icon={ check }
+						size={ 20 }
+					/>
+					<span>{ item }</span>
 				</li>
 			) ) }
 		</ul>

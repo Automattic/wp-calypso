@@ -107,7 +107,6 @@ const linkInBio: Flow = {
 			switch ( _currentStepSlug ) {
 				case 'launchpad':
 					skipLaunchpad( {
-						checklistSlug: 'link-in-bio-tld',
 						siteId,
 						siteSlug,
 					} );

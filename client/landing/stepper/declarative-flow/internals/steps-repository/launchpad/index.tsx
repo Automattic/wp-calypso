@@ -16,6 +16,7 @@ import { urlToSlug } from 'calypso/lib/url';
 import { useSelector, useDispatch } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
+import { useShouldShowLaunchpadFirst } from 'calypso/state/selectors/should-show-launchpad-first';
 import { useQuery } from '../../../../hooks/use-query';
 import StepContent from './step-content';
 import { areLaunchpadTasksCompleted } from './task-helper';
@@ -76,7 +77,8 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 
 	function redirectToSiteHome( siteSlug: string | null, flow: string | null ) {
 		recordTracksEvent( 'calypso_launchpad_redirect_to_home', { flow: flow } );
-		window.location.replace( `/home/${ siteSlug }` );
+		// Query param is a guard to prevent infinite loops (#98122)
+		window.location.replace( `/home/${ siteSlug }?from=full-launchpad` );
 	}
 
 	useEffect( () => {
@@ -90,9 +92,22 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 		}
 	}, [ verifiedParam, translate, dispatch ] );
 
+	const [ loadingShouldShowLaunchpadFirst, shouldShowLaunchpadFirst ] =
+		useShouldShowLaunchpadFirst( site );
+
+	// Avoid screen flickering when redirecting to other paths
+	if ( ! site?.options || loadingShouldShowLaunchpadFirst ) {
+		return null;
+	}
+
 	if ( launchpadScreenOption === 'skipped' ) {
 		window.location.assign( `/home/${ siteSlug }` );
-		return;
+		return null;
+	}
+
+	if ( shouldShowLaunchpadFirst ) {
+		window.location.replace( `/home/${ siteSlug }` );
+		return null;
 	}
 
 	return (

@@ -64,6 +64,7 @@ const paidPlugin = {
 	id: paidPluginId,
 	slug: paidPluginId,
 	isMarketplaceProduct: true,
+	product_type: 'marketplace',
 };
 
 export { site, plugin, paidPlugin };

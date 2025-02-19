@@ -1,14 +1,15 @@
 import { Button, Gridicon } from '@automattic/components';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import React, { ReactNode } from 'react';
 
 interface Props {
 	className?: string;
 	copyText: string | ReactNode;
 	onClick: ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => void;
-	buttonLabel?: string;
+	buttonLabel?: string | TranslateResult;
 	buttonComponent?: React.ReactNode;
+	icon?: string;
 }
 
 const StatsCardUpsell: React.FC< Props > = ( {
@@ -17,6 +18,7 @@ const StatsCardUpsell: React.FC< Props > = ( {
 	copyText,
 	buttonLabel,
 	buttonComponent,
+	icon = 'lock',
 } ) => {
 	const translate = useTranslate();
 
@@ -24,7 +26,7 @@ const StatsCardUpsell: React.FC< Props > = ( {
 		<div className={ clsx( 'stats-card-upsell', className ) }>
 			<div className="stats-card-upsell__content">
 				<div className="stats-card-upsell__lock">
-					<Gridicon icon="lock" />
+					<Gridicon icon={ icon } />
 				</div>
 				<p className="stats-card-upsell__text">{ copyText }</p>
 				{ buttonComponent ? (

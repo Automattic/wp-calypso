@@ -86,16 +86,16 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 			<div>
 				{ wordAdsError && (
 					<Notice
-						classname="ads__activate-notice"
+						className="ads__activate-notice"
 						status="is-error"
 						onDismissClick={ handleDismissWordAdsError }
 					>
-						{ wordAdsError }
+						{ wordAdsError as ReactNode }
 					</Notice>
 				) }
 				{ isUnsafe === 'mature' && (
 					<Notice
-						classname="ads__activate-notice"
+						className="ads__activate-notice"
 						status="is-warning"
 						showDismiss={ false }
 						text={ translate(
@@ -113,7 +113,7 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 				) }
 				{ isUnsafe === 'spam' && (
 					<Notice
-						classname="ads__activate-notice"
+						className="ads__activate-notice"
 						status="is-warning"
 						showDismiss={ false }
 						text={ translate(
@@ -124,7 +124,7 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 				) }
 				{ isUnsafe === 'private' && (
 					<Notice
-						classname="ads__activate-notice"
+						className="ads__activate-notice"
 						status="is-warning"
 						showDismiss={ false }
 						text={ translate(
@@ -138,7 +138,7 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 				) }
 				{ isUnsafe === 'other' && (
 					<Notice
-						classname="ads__activate-notice"
+						className="ads__activate-notice"
 						status="is-warning"
 						showDismiss={ false }
 						text={ translate( 'Your site cannot participate in the WordAds program.' ) }

@@ -6,6 +6,10 @@ body.is-section-reader {
 		.main {
 			padding: 24px;
 			border-block-end: 1px solid var(--studio-gray-0);
+			
+			&.search-stream {
+				padding-top: 0;
+			}
 		}
 		.layout__primary > div:not(:has(.recent-feed)) {
 			background: var(--color-surface);
@@ -22,10 +26,14 @@ body.is-section-reader {
 	}
 
 	@media only screen and (max-width: 781px) {
-		div.layout.is-global-sidebar-visible {
-			.layout__primary {
-				overflow-x: auto;
-			}
+		div.layout.is-global-sidebar-visible .layout__primary {
+			overflow-x: auto;
+		}
+	}
+
+	@media only screen and (max-width: 600px) {
+		div.layout.is-global-sidebar-visible .main {
+			padding: 24px 0;
 		}
 	}
 }
@@ -261,14 +269,14 @@ body.is-section-reader {
 }
 
 .is-group-reader {
-	@media screen and (min-width: 782px) {
+	@media screen and (min-width: $break-medium) {
 		.navigation-header::after {
 			content: "";
 			display: block;
 			position: relative;
 			left: calc(-1 * (100vw - 100%)/2 - 132px);
 			margin: 24px 0;
-			width: 100vw;
+			width: 110vw;
 			height: 1px;
 			background: var(--color-border-secondary);
 		}
@@ -398,7 +406,7 @@ body.is-section-reader {
 	}
 
 	&.stream__empty {
-		margin-top: 25px;
+		margin-top: 40px;
 	}
 }
 

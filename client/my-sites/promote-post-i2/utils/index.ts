@@ -132,7 +132,8 @@ export const getCampaignDurationFormatted = (
 	start_date?: string,
 	end_date?: string,
 	is_evergreen = false,
-	status: string = ''
+	status: string = '',
+	format: string = ''
 ) => {
 	if ( ! start_date || ! end_date ) {
 		return '-';
@@ -144,15 +145,16 @@ export const getCampaignDurationFormatted = (
 		return '-';
 	}
 
-	// translators: Moment.js date format, `MMM` refers to short month name (e.g. `Sep`), `D`` refers to day of month (e.g. `5`). Wrap text [] to be displayed as is, for example `D [de] MMM` will be formatted as `5 de sep.`.
-	const format = _x( 'MMM D', 'shorter date format' );
+	if ( ! format ) {
+		// translators: Moment.js date format, `MMM` refers to short month name (e.g. `Sep`), `D`` refers to day of month (e.g. `5`). Wrap text [] to be displayed as is, for example `D [de] MMM` will be formatted as `5 de sep.`.
+		format = _x( 'MMM D', 'shorter date format' );
+	}
 	const dateStartFormatted = moment.utc( start_date ).format( format );
 
-	// A campaign without an "end date", show start -> today (if not ended)
+	// A campaign without an "end date", show start -> until stopped (if not ended)
 	if ( is_evergreen ) {
-		const todayFormatted = moment.utc().format( format );
 		if ( status === 'active' ) {
-			return `${ dateStartFormatted } - ${ todayFormatted }`;
+			return `${ dateStartFormatted } - ${ __( 'Until stopped' ) }`;
 		}
 
 		if ( status === 'scheduled' || status === 'created' ) {
@@ -312,7 +314,7 @@ export const getPagedBlazeSearchData = (
 			  };
 
 	if ( lastPage ) {
-		const { has_more_pages, total_items, warnings } = lastPage;
+		const { has_more_pages, total_items, warnings, tsp_eligible = false } = lastPage;
 
 		let foundContent: BlazePagedItem[] = pagedData?.pages
 			?.map( ( item: BlazeDataPaged ) => item[ mode ] )
@@ -334,12 +336,14 @@ export const getPagedBlazeSearchData = (
 			total_items,
 			items: foundContent,
 			warnings,
+			tsp_eligible,
 		};
 	}
 	return {
 		has_more_pages: false,
 		total_items: 0,
 		items: [],
+		tsp_eligible: false,
 	};
 };
 

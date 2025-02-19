@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-imports */
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
-import { Card, CardHeader, CardBody } from '@wordpress/components';
+import { Card, CardHeader, CardBody, Spinner } from '@wordpress/components';
 import { useSelect, useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
 import { comment, Icon } from '@wordpress/icons';
@@ -18,7 +18,7 @@ import {
 	getLastMessage,
 	getZendeskConversations,
 } from './utils';
-import type { ZendeskConversation } from '@automattic/odie-client';
+import type { SupportInteraction, ZendeskConversation } from '@automattic/odie-client';
 
 import './help-center-chat-history.scss';
 
@@ -31,8 +31,24 @@ const TAB_STATES = {
 	archived: 'archived',
 };
 
-const Conversations = ( { conversations }: { conversations: ZendeskConversation[] } ) => {
+const Conversations = ( {
+	conversations,
+	supportInteractions,
+	isLoadingInteractions,
+}: {
+	conversations: ZendeskConversation[];
+	supportInteractions: SupportInteraction[];
+	isLoadingInteractions?: boolean;
+} ) => {
 	const { __ } = useI18n();
+
+	if ( isLoadingInteractions ) {
+		return (
+			<div className="help-center-chat-history__no-results">
+				<Spinner />
+			</div>
+		);
+	}
 
 	if ( ! conversations || ! conversations.length ) {
 		return (
@@ -46,13 +62,16 @@ const Conversations = ( { conversations }: { conversations: ZendeskConversation[
 		<>
 			{ conversations.map( ( conversation ) => {
 				const lastMessage = getLastMessage( { conversation } );
+				const lastSupportInteraction = supportInteractions.find(
+					( interaction ) => interaction.uuid === conversation.metadata.supportInteractionId
+				);
 
 				if ( lastMessage ) {
 					return (
 						<HelpCenterSupportChatMessage
 							sectionName="chat_history"
 							navigateTo="/odie"
-							supportInteractionId={ conversation.metadata?.supportInteractionId }
+							supportInteraction={ lastSupportInteraction }
 							key={ conversation.id }
 							message={ lastMessage }
 							isUnread={ conversation.participants[ 0 ]?.unreadCount > 0 }
@@ -67,6 +86,7 @@ const Conversations = ( { conversations }: { conversations: ZendeskConversation[
 export const HelpCenterChatHistory = () => {
 	const { __ } = useI18n();
 	const [ conversations, setConversations ] = useState< ZendeskConversation[] >( [] );
+	const [ supportInteractions, setSupportInteractions ] = useState< SupportInteraction[] >( [] );
 	const [ selectedTab, setSelectedTab ] = useState( TAB_STATES.recent );
 	const { data: supportInteractionsResolved, isLoading: isLoadingResolvedInteractions } =
 		useGetSupportInteractions( 'zendesk', 100, 'resolved' );
@@ -88,10 +108,10 @@ export const HelpCenterChatHistory = () => {
 	} );
 	const { setUnreadCount } = useDataStoreDispatch( HELP_CENTER_STORE );
 
-	useEffect( () => {
-		const isLoadingInteractions =
-			isLoadingResolvedInteractions || isLoadingClosedInteractions || isLoadingOpenInteractions;
+	const isLoadingInteractions =
+		isLoadingResolvedInteractions || isLoadingClosedInteractions || isLoadingOpenInteractions;
 
+	useEffect( () => {
 		if ( isChatLoaded && getZendeskConversations && ! isLoadingInteractions ) {
 			const allConversations = getZendeskConversations();
 			const supportInteractions = [
@@ -105,15 +125,14 @@ export const HelpCenterChatHistory = () => {
 				supportInteractions
 			);
 			setConversations( filteredConversations );
+			setSupportInteractions( supportInteractions );
 		}
 	}, [
+		isLoadingInteractions,
 		supportInteractionsResolved,
 		supportInteractionsOpen,
 		isChatLoaded,
 		setUnreadCount,
-		isLoadingResolvedInteractions,
-		isLoadingClosedInteractions,
-		isLoadingOpenInteractions,
 		supportInteractionsClosed,
 	] );
 
@@ -143,7 +162,13 @@ export const HelpCenterChatHistory = () => {
 
 	// Temporarily simplified version
 	if ( simplifiedHistoryChat ) {
-		return <Conversations conversations={ recentConversations } />;
+		return (
+			<Conversations
+				conversations={ recentConversations }
+				supportInteractions={ supportInteractions }
+				isLoadingInteractions={ isLoadingInteractions }
+			/>
+		);
 	}
 
 	return (
@@ -167,12 +192,18 @@ export const HelpCenterChatHistory = () => {
 			</SectionNav>
 
 			{ selectedTab === TAB_STATES.recent && (
-				<Conversations conversations={ recentConversations } />
+				<Conversations
+					conversations={ recentConversations }
+					supportInteractions={ supportInteractions }
+				/>
 			) }
 
 			{ selectedTab === TAB_STATES.archived &&
 				( archivedConversations?.length > 0 ? (
-					<Conversations conversations={ archivedConversations } />
+					<Conversations
+						conversations={ archivedConversations }
+						supportInteractions={ supportInteractions }
+					/>
 				) : (
 					<EmptyArchivedConversations />
 				) ) }

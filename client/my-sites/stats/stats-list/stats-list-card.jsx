@@ -22,6 +22,7 @@ const StatsListCard = ( {
 	showMore,
 	title,
 	titleNodes,
+	downloadCsv,
 	emptyMessage,
 	loader,
 	useShortLabel,
@@ -30,6 +31,7 @@ const StatsListCard = ( {
 	heroElement, // a node placed before the list
 	metricLabel, // a label to use for the values on the right side of the bars - `Views` by default
 	splitHeader, // instead of using a simple header containing the name of the card use additional columns and header items
+	multiHeader,
 	mainItemLabel,
 	additionalColumns, // additional columns to be displayed next to the default `views` column
 	toggleControl, // component to be placed in a split header
@@ -40,6 +42,8 @@ const StatsListCard = ( {
 	listItemClassName,
 	overlay, // an overlay used to hide the module behind a blur overlay
 	hasNoBackground,
+	formatValue,
+	onShowMoreClick,
 } ) => {
 	const moduleNameTitle = titlecase( moduleType );
 	const debug = debugFactory( `calypso:stats:list:${ moduleType }` );
@@ -131,17 +135,20 @@ const StatsListCard = ( {
 					? {
 							url: showMore?.url,
 							label: showMore?.label,
+							onClick: onShowMoreClick || undefined,
 					  }
 					: undefined
 			}
 			emptyMessage={ emptyMessage }
 			isEmpty={ ! loader && ( ! data || ! data?.length ) }
 			titleNodes={ titleNodes }
+			downloadCsv={ downloadCsv }
 			className={ clsx( `list-${ moduleType }`, className ) }
 			headerClassName={ listItemClassName }
 			metricLabel={ metricLabel }
 			heroElement={ heroElement }
 			splitHeader={ splitHeader }
+			multiHeader={ multiHeader }
 			mainItemLabel={ mainItemLabel }
 			additionalHeaderColumns={ additionalColumns?.header }
 			toggleControl={ toggleControl }
@@ -176,6 +183,7 @@ const StatsListCard = ( {
 								isLinkUnderlined={ isLinkUnderlined }
 								leftGroupToggle={ item?.children && moduleType === 'tags-categories' } // tags and categories show toggle on the oposite side
 								hasNoBackground={ hasNoBackground }
+								formatValue={ formatValue }
 							/>
 						);
 					} ) }

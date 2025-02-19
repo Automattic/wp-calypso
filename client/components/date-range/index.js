@@ -31,6 +31,7 @@ export class DateRange extends Component {
 			PropTypes.instanceOf( Date ),
 			PropTypes.instanceOf( moment ),
 		] ),
+		selectedShortcutId: PropTypes.string,
 		onDateSelect: PropTypes.func,
 		onDateCommit: PropTypes.func,
 		firstSelectableDate: PropTypes.oneOfType( [
@@ -54,8 +55,6 @@ export class DateRange extends Component {
 		overlay: PropTypes.node,
 		customTitle: PropTypes.string,
 		onShortcutClick: PropTypes.func,
-		// Temporary prop to enable new date filtering UI.
-		isNewDateFilteringEnabled: PropTypes.bool,
 		trackExternalDateChanges: PropTypes.bool,
 		shortcutList: PropTypes.array,
 	};
@@ -75,7 +74,6 @@ export class DateRange extends Component {
 		useArrowNavigation: false,
 		overlay: null,
 		customTitle: '',
-		isNewDateFilteringEnabled: false,
 		trackExternalDateChanges: false,
 	};
 
@@ -105,6 +103,8 @@ export class DateRange extends Component {
 						dateTo: lastSelectableDate,
 				  } );
 
+		const selectedShortcutId = this.props.selectedShortcutId || null;
+
 		// Ensure start is before end otherwise flip the values
 		if ( startDate && endDate && endDate.isBefore( startDate ) ) {
 			// flip values via array destructuring (think about it...)
@@ -118,6 +118,7 @@ export class DateRange extends Component {
 			staleEndDate: null,
 			startDate: startDate,
 			endDate: endDate,
+			selectedShortcutId,
 			staleDatesSaved: false,
 			// this needs to be independent from startDate because we must independently validate them
 			// before updating the central source of truth (ie: startDate)
@@ -157,6 +158,7 @@ export class DateRange extends Component {
 		if ( this.props.trackExternalDateChanges ) {
 			newState.startDate = this.props.selectedStartDate;
 			newState.endDate = this.props.selectedEndDate;
+			newState.selectedShortcutId = this.props.selectedShortcutId;
 			newState.textInputStartDate = this.toDateString( this.props.selectedStartDate );
 			newState.textInputEndDate = this.toDateString( this.props.selectedEndDate );
 			newState.staleStartDate = this.props.selectedStartDate;
@@ -292,7 +294,11 @@ export class DateRange extends Component {
 				staleDatesSaved: false,
 			} ),
 			() => {
-				this.props.onDateCommit( this.state.startDate, this.state.endDate );
+				this.props.onDateCommit(
+					this.state.startDate,
+					this.state.endDate,
+					this.state.selectedShortcutId
+				);
 				this.closePopover();
 			}
 		);
@@ -305,13 +311,16 @@ export class DateRange extends Component {
 	 */
 	revertDates = () => {
 		this.setState(
-			( previousState ) => {
+			( previousState, props ) => {
 				const startDate = previousState.staleStartDate;
 				const endDate = previousState.staleEndDate;
+				const previousAppliedShortcutId = props.selectedShortcutId;
+
 				const newState = {
 					staleDatesSaved: false,
 					startDate: startDate,
 					endDate: endDate,
+					selectedShortcutId: previousAppliedShortcutId,
 					textInputStartDate: this.toDateString( startDate ),
 					textInputEndDate: this.toDateString( endDate ),
 				};
@@ -319,7 +328,11 @@ export class DateRange extends Component {
 				return newState;
 			},
 			() => {
-				this.props.onDateCommit( this.state.startDate, this.state.endDate );
+				this.props.onDateCommit(
+					this.state.startDate,
+					this.state.endDate,
+					this.state.selectedShortcutId
+				);
 			}
 		);
 	};
@@ -333,14 +346,16 @@ export class DateRange extends Component {
 	 * without selecting any dates
 	 */
 	resetDates = () => {
-		this.setState( ( previousState ) => {
+		this.setState( ( previousState, props ) => {
 			const startDate = previousState.initialStartDate;
 			const endDate = previousState.initialEndDate;
+			const previousAppliedShortcutId = props.selectedShortcutId;
 
 			const newState = {
 				staleDatesSaved: false,
 				startDate: startDate,
 				endDate: endDate,
+				selectedShortcutId: previousAppliedShortcutId,
 				textInputStartDate: this.toDateString( startDate ),
 				textInputEndDate: this.toDateString( endDate ),
 			};
@@ -358,6 +373,7 @@ export class DateRange extends Component {
 			{
 				startDate: null,
 				endDate: null,
+				selectedShortcutId: null,
 				staleStartDate: null,
 				staleEndDate: null,
 				textInputStartDate: '',
@@ -365,7 +381,11 @@ export class DateRange extends Component {
 			},
 			() => {
 				// Fired to ensure date change is propagated upwards
-				this.props.onDateCommit( this.state.startDate, this.state.endDate );
+				this.props.onDateCommit(
+					this.state.startDate,
+					this.state.endDate,
+					this.state.selectedShortcutId
+				);
 			}
 		);
 	};
@@ -434,10 +454,24 @@ export class DateRange extends Component {
 		this.setState( {
 			startDate,
 			endDate,
+			selectedShortcutId: null,
 			textInputStartDate: this.toDateString( startDate ),
 			textInputEndDate: this.toDateString( endDate ),
 		} );
 		this.props.onDateSelect && this.props.onDateSelect( startDate, endDate );
+	};
+
+	handleDateRangeChangeByShortcutClick = ( startDate, endDate, shortcut ) => {
+		this.handleDateRangeChange( startDate, endDate );
+
+		this.setState( {
+			selectedShortcutId: shortcut.id,
+		} );
+	};
+
+	// Expose closePopoverAndCommit to the parent component for shortcut clicks.
+	handleShortcutClick = ( shortcut ) => {
+		this.props.onShortcutClick( shortcut, this.closePopoverAndCommit );
 	};
 
 	/**
@@ -491,13 +525,13 @@ export class DateRange extends Component {
 					{ this.props.displayShortcuts && (
 						<div className="date-range-picker-shortcuts">
 							<Shortcuts
+								selectedShortcutId={ this.state.selectedShortcutId }
 								shortcutList={ this.props.shortcutList }
-								onClick={ this.handleDateRangeChange }
+								onClick={ this.handleDateRangeChangeByShortcutClick }
 								locked={ !! this.props.overlay }
 								startDate={ this.state.startDate }
 								endDate={ this.state.endDate }
-								onShortcutClick={ this.props.onShortcutClick } // for tracking shortcut clicks
-								isNewDateFilteringEnabled={ this.props.isNewDateFilteringEnabled }
+								onShortcutClick={ this.handleShortcutClick } // for tracking shortcut clicks
 							/>
 						</div>
 					) }

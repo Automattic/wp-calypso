@@ -93,11 +93,19 @@ function getEmailForwardLimit( data ) {
 
 function getMailboxes( data ) {
 	const account = getAccount( data );
-
 	return account?.emails ?? [];
 }
 
-function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
+function EmailPlan( {
+	domain,
+	selectedSite,
+	source,
+	context,
+	hideHeader = false,
+	hideHeaderCake = false,
+	hidePlanActions = false,
+	hideMailPoetUpsell = false,
+} ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -338,44 +346,59 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 		<>
 			{ selectedSite && hasSubscription && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 			<DocumentHead title={ titleCase( getHeaderText() ) } />
-			<MailPoetUpsell />
+			{ ! hideMailPoetUpsell && <MailPoetUpsell /> }
 			{ ! hideHeaderCake && <HeaderCake onClick={ handleBack }>{ getHeaderText() }</HeaderCake> }
-			<EmailPlanHeader
-				domain={ domain }
-				hasEmailSubscription={ hasSubscription }
-				isLoadingEmails={ isLoading }
-				isLoadingPurchase={ isLoadingPurchase }
-				purchase={ purchase }
-				selectedSite={ selectedSite }
-				emailAccount={ getAccount( emailAccounts ) }
-			/>
+			{ ! hideHeader && (
+				<EmailPlanHeader
+					domain={ domain }
+					hasEmailSubscription={ hasSubscription }
+					isLoadingEmails={ isLoading }
+					isLoadingPurchase={ isLoadingPurchase }
+					purchase={ purchase }
+					selectedSite={ selectedSite }
+					emailAccount={ getAccount( emailAccounts ) }
+				/>
+			) }
 			<EmailPlanMailboxesList
+				context={ context }
 				account={ getAccount( emailAccounts ) }
 				domain={ domain }
 				mailboxes={ getMailboxes( emailAccounts ) }
 				isLoadingEmails={ isLoading }
+				actionPathProps={ hidePlanActions && getAddMailboxProps() }
+				purchaseNewEmailAccountPath={ getPurchaseNewEmailAccountPath(
+					selectedSite.slug,
+					domain.name,
+					currentRoute
+				) }
 			/>
-			<div className="email-plan__actions">
-				<VerticalNav>
-					{ renderAddNewMailboxesOrRenewNavItem( getMailboxes( emailAccounts ) ) }
-					<UpgradeNavItem
-						currentRoute={ currentRoute }
-						domain={ domain }
-						selectedSiteSlug={ selectedSite.slug }
-					/>
-					{ renderManageAllMailboxesNavItem() }
-					{ renderViewBillingAndPaymentSettingsNavItem() }
-				</VerticalNav>
-			</div>
+			{ ! hidePlanActions && (
+				<div className="email-plan__actions">
+					<VerticalNav>
+						{ renderAddNewMailboxesOrRenewNavItem( getMailboxes( emailAccounts ) ) }
+						<UpgradeNavItem
+							currentRoute={ currentRoute }
+							domain={ domain }
+							selectedSiteSlug={ selectedSite.slug }
+						/>
+						{ renderManageAllMailboxesNavItem() }
+						{ renderViewBillingAndPaymentSettingsNavItem() }
+					</VerticalNav>
+				</div>
+			) }
 		</>
 	);
 }
 
 EmailPlan.propTypes = {
 	domain: PropTypes.object.isRequired,
-	hideHeaderCake: PropTypes.bool,
 	selectedSite: PropTypes.object.isRequired,
 	source: PropTypes.string,
+	context: PropTypes.string,
+	hideHeader: PropTypes.bool,
+	hideHeaderCake: PropTypes.bool,
+	hidePlanActions: PropTypes.bool,
+	hideMailPoetUpsell: PropTypes.bool,
 };
 
 export default EmailPlan;

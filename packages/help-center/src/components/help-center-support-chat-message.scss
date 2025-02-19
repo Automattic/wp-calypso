@@ -1,3 +1,5 @@
+@import "variables";
+
 .help-center-support-chat__conversation-container {
 	display: flex;
 	flex-direction: row;
@@ -17,14 +19,14 @@
 		border-color: rgba(0, 0, 0, 0.2) !important;
 
 		.help-center-support-chat__open-conversation {
-			fill: var(--color-primary);
+			fill: $help-center-blue;
 		}
 	}
 
 	&.is-unread-message {
 		background-color: #EBF2FC;
 		.help-center-support-chat__open-conversation {
-			fill: var(--color-primary);
+			fill: $help-center-blue;
 		}
 	}
 
@@ -59,7 +61,7 @@
 			min-width: 26px;
 			height: 20px;
 			font-size: 12px; /* stylelint-disable-line declaration-property-unit-allowed-list */
-			background-color: #3858E9;
+			background-color: $help-center-blue;
 			color: #FFF;
 		}
 	}

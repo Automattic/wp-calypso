@@ -11,14 +11,6 @@ const getP2Flows = () => {
 	return isEnabled( 'p2-enabled' )
 		? [
 				{
-					name: 'p2v1',
-					steps: [ 'p2-site', 'p2-details', 'user' ],
-					destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
-					description: 'P2 signup flow',
-					lastModified: '2020-09-01',
-					showRecaptcha: true,
-				},
-				{
 					// When adding steps, make sure that signup campaign ref's continue to work.
 					name: 'p2',
 					steps: [
@@ -43,7 +35,6 @@ export function generateFlows( {
 	getLaunchDestination = noop,
 	getDomainSignupFlowDestination = noop,
 	getEmailSignupFlowDestination = noop,
-	getChecklistThemeDestination = noop,
 	getWithThemeDestination = noop,
 	getWithPluginDestination = noop,
 	getDestinationFromIntent = noop,
@@ -143,15 +134,6 @@ export function generateFlows( {
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'theme', 'intervalType' ],
 			optionalDependenciesInQuery: [ 'theme_type', 'style_variation', 'intervalType' ],
-			hideProgressIndicator: true,
-		},
-		{
-			name: 'with-theme-assembler',
-			steps: [ userSocialStep, 'domains-theme-preselected', 'plans' ],
-			destination: getChecklistThemeDestination,
-			description: 'Preselect a theme to activate/buy from an external source with the assembler.',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
 			hideProgressIndicator: true,
 		},
 		{
@@ -316,17 +298,6 @@ export function generateFlows( {
 			disallowResume: true, // don't allow resume so we don't clear query params when we go back in the history
 			showRecaptcha: true,
 		},
-		{
-			name: 'videopress-account',
-			steps: [ 'user' ],
-			destination: getRedirectDestination,
-			description: 'VideoPress onboarding signup flow',
-			lastModified: '2022-10-19',
-			get pageTitle() {
-				return translate( 'Create an account' );
-			},
-			showRecaptcha: true,
-		},
 		...p2Flows,
 		{
 			name: 'domain',
@@ -375,10 +346,11 @@ export function generateFlows( {
 		},
 		{
 			name: 'reader',
-			steps: [ 'reader-landing', userSocialStep ],
-			destination: '/',
-			description: 'Signup for an account and migrate email subs to the Reader.',
-			lastModified: '2023-10-11',
+			steps: [ userSocialStep ],
+			destination: '/reader',
+			description:
+				'Signup for an account from a Reader interaction (like, comment) or page (/discover) and land on Reader.',
+			lastModified: '2025-01-28',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
 		},
@@ -473,8 +445,8 @@ export function generateFlows( {
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
 			enablePresales: false,
-			providesDependenciesInQuery: [ 'coupon' ],
-			optionalDependenciesInQuery: [ 'coupon' ],
+			providesDependenciesInQuery: [ 'coupon', 'back_to', 'newOrExistingSiteChoice' ],
+			optionalDependenciesInQuery: [ 'coupon', 'back_to', 'newOrExistingSiteChoice' ],
 		},
 		{
 			name: 'do-it-for-me-store',
@@ -503,7 +475,8 @@ export function generateFlows( {
 			destination: getDIFMSignupDestination,
 			description: 'A flow for DIFM onboarding',
 			excludeFromManageSiteFlows: true,
-			providesDependenciesInQuery: [ 'siteSlug' ],
+			providesDependenciesInQuery: [ 'siteSlug', 'back_to' ],
+			optionalDependenciesInQuery: [ 'back_to' ],
 			lastModified: '2024-06-14',
 			enablePresales: false,
 		},

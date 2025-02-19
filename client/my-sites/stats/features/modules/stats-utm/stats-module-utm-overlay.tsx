@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import React from 'react';
+import StatsCardUpsell from 'calypso/my-sites/stats/stats-card-upsell';
 import { STATS_FEATURE_UTM_STATS } from '../../../constants';
-import StatsCardUpsellJetpack from '../../../stats-card-upsell/stats-card-upsell-jetpack';
 import StatsListCard from '../../../stats-list/stats-list-card';
 
 import './stats-module-utm-overlay.scss';
@@ -62,7 +62,7 @@ const StatsModuleUTMOverlay: React.FC< StatsModuleUTMOverlayProps > = ( {
 			} }
 			overlay={
 				overlay ?? (
-					<StatsCardUpsellJetpack
+					<StatsCardUpsell
 						className="stats-module__upsell"
 						siteId={ siteId }
 						statType={ STATS_FEATURE_UTM_STATS }

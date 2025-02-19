@@ -48,6 +48,7 @@ function AnnualHighlightsStandard( { counts }: AnnualHighlightsProps ) {
 				<CountCard
 					key={ index }
 					heading={ heading }
+					label={ heading.toLocaleLowerCase() }
 					value={ count }
 					icon={ <Icon icon={ icon } /> }
 					showValueTooltip

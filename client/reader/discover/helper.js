@@ -1,7 +1,11 @@
+import config from '@automattic/calypso-config';
+
 const DEFAULT_DISCOVER_TAGS = [ 'dailyprompt', 'wordpress' ];
 export const DEFAULT_TAB = 'recommended';
 export const LATEST_TAB = 'latest';
 export const FIRST_POSTS_TAB = 'firstposts';
+export const ADD_NEW_TAB = 'add-new';
+export const REDDIT_TAB = 'reddit';
 
 /**
  * Filters tags data and returns the tags intended to be loaded by the discover pages recommended
@@ -70,4 +74,8 @@ export function getTagsFromStreamKey( streamKey = '' ) {
 		return tags;
 	}
 	return [];
+}
+
+export function isDiscoveryV2Enabled() {
+	return config.isEnabled( 'reader/discovery-v2' );
 }

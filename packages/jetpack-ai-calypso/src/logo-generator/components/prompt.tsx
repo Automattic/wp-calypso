@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button, Tooltip } from '@wordpress/components';
+import { Button, Tooltip, SelectControl } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import debugFactory from 'debug';
@@ -20,7 +20,9 @@ import AiIcon from '../assets/icons/ai';
 import { useCheckout } from '../hooks/use-checkout';
 import useLogoGenerator from '../hooks/use-logo-generator';
 import useRequestErrors from '../hooks/use-request-errors';
+import { IMAGE_STYLE_NONE } from '../store/constants';
 import { UpgradeNudge } from './upgrade-nudge';
+import type { ImageStyle, ImageStyleObject, LogoGeneratorFeatureControl } from '../store/types';
 import './prompt.scss';
 
 const debug = debugFactory( 'jetpack-ai-calypso:prompt-box' );
@@ -31,6 +33,9 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 	const { enhancePromptFetchError, logoFetchError } = useRequestErrors();
 	const { nextTierCheckoutURL: checkoutUrl, hasNextTier } = useCheckout();
 	const hasPrompt = prompt?.length >= MINIMUM_PROMPT_LENGTH;
+	const [ style, setStyle ] = useState< ImageStyle >( IMAGE_STYLE_NONE );
+	const [ styles, setStyles ] = useState< Array< ImageStyleObject > >( [] );
+	const [ showStyleSelector, setShowStyleSelector ] = useState( false );
 
 	const {
 		generateLogo,
@@ -70,6 +75,9 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 	const currentLimit = featureData?.currentTier?.value || 0;
 	const currentUsage = featureData?.usagePeriod?.requestsCount || 0;
 	const isUnlimited = currentLimit === 1;
+	const featureControl = featureData?.featuresControl?.[
+		'logo-generator'
+	] as LogoGeneratorFeatureControl;
 
 	useEffect( () => {
 		if ( currentLimit - currentUsage <= 0 ) {
@@ -87,9 +95,9 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 	}, [ prompt ] );
 
 	const onGenerate = useCallback( async () => {
-		recordTracksEvent( EVENT_GENERATE, { context, tool: 'image' } );
-		generateLogo( { prompt } );
-	}, [ context, generateLogo, prompt ] );
+		recordTracksEvent( EVENT_GENERATE, { context, tool: 'image', style } );
+		generateLogo( { prompt, style } );
+	}, [ context, generateLogo, prompt, style ] );
 
 	const onPromptInput = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		setPrompt( event.target.textContent || '' );
@@ -117,6 +125,35 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 		recordTracksEvent( EVENT_UPGRADE, { context, placement: EVENT_PLACEMENT_INPUT_FOOTER } );
 	};
 
+	// initialize styles dropdown
+	useEffect( () => {
+		const isEnabled = featureControl?.enabled || false;
+		const imageStyles = featureControl?.styles || [];
+		if ( isEnabled && imageStyles && imageStyles.length > 0 ) {
+			// Sort styles to have "None" first
+			setStyles(
+				[
+					imageStyles.find( ( { value } ) => value === IMAGE_STYLE_NONE ),
+					...imageStyles.filter( ( { value } ) => ! [ IMAGE_STYLE_NONE ].includes( value ) ),
+				].filter( ( v ): v is ImageStyleObject => !! v ) // Type guard to filter out undefined values
+			);
+			setShowStyleSelector( true );
+			setStyle( IMAGE_STYLE_NONE );
+		}
+	}, [ featureControl ] );
+
+	const updateStyle = useCallback(
+		( imageStyle: ImageStyle ) => {
+			debug( 'change style', imageStyle );
+			setStyle( imageStyle );
+			recordTracksEvent( 'jetpack_ai_image_generator_switch_style', {
+				context,
+				style: imageStyle,
+			} );
+		},
+		[ setStyle, context ]
+	);
+
 	return (
 		<div className="jetpack-ai-logo-generator__prompt">
 			<div className="jetpack-ai-logo-generator__prompt-header">
@@ -132,6 +169,16 @@ export const Prompt: React.FC< { initialPrompt?: string } > = ( { initialPrompt 
 						<AiIcon />
 						<span>{ enhanceButtonLabel }</span>
 					</Button>
+					{ showStyleSelector && (
+						<div>
+							<SelectControl
+								__nextHasNoMarginBottom
+								value={ style }
+								options={ styles }
+								onChange={ updateStyle }
+							/>
+						</div>
+					) }
 				</div>
 			</div>
 			<div className="jetpack-ai-logo-generator__prompt-query">

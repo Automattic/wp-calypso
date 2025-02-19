@@ -39,20 +39,32 @@ module.exports = function storybookDefaultConfig( {
 		staticDirs,
 		stories: stories && stories.length ? stories : [ '../src/**/*.stories.{js,jsx,ts,tsx}' ],
 		addons: [
-			'@storybook/addon-actions',
 			'@storybook/addon-controls',
+			'@storybook/addon-actions',
+			'@storybook/addon-docs',
+			'@storybook/addon-toolbars',
 			'@storybook/addon-viewport',
-			'@storybook/preset-scss',
 		],
 		typescript: {
 			check: false,
-			reactDocgen: false,
+			reactDocgen: 'react-docgen-typescript',
 		},
 		webpackFinal: async ( config ) => {
 			config.resolve.alias = {
 				...config.resolve.alias,
 				...webpackAliases,
 			};
+			config.module.rules = [
+				...config.module.rules,
+				{
+					test: /\.scss$/,
+					use: [
+						'style-loader', // Injects styles into the DOM
+						'css-loader', // Translates CSS into CommonJS
+						'sass-loader', // Compiles Sass to CSS
+					],
+				},
+			];
 			config.resolve.mainFields = [ 'browser', 'calypso:src', 'module', 'main' ];
 			config.plugins.push( ...plugins );
 			return config;

@@ -78,14 +78,17 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 					themeButtonUrl.protocol = calypsoUrl.protocol;
 
 					await route.abort();
-					await page.goto( themeButtonUrl.href );
+					await page.unrouteAll( { behavior: 'ignoreErrors' } );
+					await page.goto( themeButtonUrl.href, { waitUntil: 'load' } );
 				} );
 			}
 			// Get theme slug
 			const pageMatch = new URL( themeButtonUrl.href ).search.match( 'theme=([a-z]*)?&' );
 			themeSlug = pageMatch?.[ 1 ] || null;
 
-			await themeCard.getByText( 'Start with this theme' ).click();
+			// Hover, otherwise the element isn't considered stable, and is out of the viewport.
+			await themeCard.hover( { force: true } );
+			await themeCard.getByText( 'Start with this theme' ).click( { force: true } );
 		} );
 
 		it( 'Sign up as new user', async function () {
@@ -122,14 +125,6 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 
 		it( 'Make purchase', async function () {
 			await cartCheckoutPage.purchase( { timeout: 90 * 1000 } );
-		} );
-
-		it( 'Skip business plan upsell', async function () {
-			const selector = 'button[data-e2e-button="decline"]';
-
-			const locator = page.locator( selector );
-
-			await locator.click( { timeout: 30 * 1000 } );
 		} );
 
 		it( 'Checks the active theme', async function () {

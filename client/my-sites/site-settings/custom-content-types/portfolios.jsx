@@ -17,25 +17,26 @@ function Portfolios( {
 } ) {
 	const name = 'jetpack_portfolio';
 	const numberFieldIdentifier = name + '_posts_per_page';
-	const portfolioDescription = isAtomic
-		? translate(
-				'Add, organize, and display {{link}}portfolio projects{{/link}}. If your theme doesn’t support portfolio projects yet, ' +
-					'you can display them using the shortcode [portfolio]. If your theme does support portfolio projects, these will remain active regardless of toggle state.',
-				{
-					components: {
-						link: <InlineSupportLink supportContext="portfolios" />,
-					},
-				}
-		  )
-		: translate(
-				'Add, organize, and display {{link}}portfolio projects{{/link}}. If your theme doesn’t support portfolio projects yet, ' +
-					'you can display them using the shortcode [portfolio].',
-				{
-					components: {
-						link: <InlineSupportLink supportContext="portfolios" />,
-					},
-				}
-		  );
+	const portfolioDescription =
+		! siteIsJetpack || isAtomic
+			? translate(
+					'Add, organize, and display {{link}}portfolio projects{{/link}}. If your theme doesn’t support portfolio projects yet, ' +
+						'you can display them using the shortcode [portfolio]. If your theme does support portfolio projects, these will remain active regardless of toggle state.',
+					{
+						components: {
+							link: <InlineSupportLink supportContext="portfolios" />,
+						},
+					}
+			  )
+			: translate(
+					'Add, organize, and display {{link}}portfolio projects{{/link}}. If your theme doesn’t support portfolio projects yet, ' +
+						'you can display them using the shortcode [portfolio].',
+					{
+						components: {
+							link: <InlineSupportLink supportContext="portfolios" />,
+						},
+					}
+			  );
 	return (
 		<FormFieldset>
 			<SupportInfo

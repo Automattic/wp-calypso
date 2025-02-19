@@ -93,7 +93,9 @@ function getFeatureStrings(
 				translate( 'VideoPress' ),
 				translate( 'Boost' ),
 				translate( 'CRM Entrepreneur' ),
+				translate( 'AI Assistant' ),
 				translate( 'Stats (Up to 100K site views, upgradeable)' ),
+				translate( 'Newsletter and monetization tools' ),
 			];
 		case 'growth':
 			return [
@@ -129,7 +131,9 @@ function getFeatureStrings(
 				translate( 'Automatically share your posts' ),
 				translate( 'Posting to multiple channels at once' ),
 				translate( 'Scheduled posts' ),
-				translate( 'Sharing to Facebook, LinkedIn, and Tumblr' ),
+				translate(
+					'Sharing to Facebook, Instagram, Threads, Bluesky, LinkedIn, Mastodon, Tumblr, Nextdoor'
+				),
 				translate( 'Content recycling' ),
 			];
 		case 'social-v1':
@@ -138,7 +142,9 @@ function getFeatureStrings(
 				translate( 'Automatically share your posts' ),
 				translate( 'Posting to multiple channels at once' ),
 				translate( 'Scheduled posts' ),
-				translate( 'Sharing to Facebook, LinkedIn, and Tumblr' ),
+				translate(
+					'Sharing to Facebook, Instagram, Threads, Bluesky, LinkedIn, Mastodon, Tumblr, Nextdoor'
+				),
 				translate( 'Content recycling' ),
 			];
 		case 'stats-free':

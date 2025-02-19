@@ -7,7 +7,7 @@
  */
 
 import { isEnabled } from '@automattic/calypso-config';
-import { Gridicon, JetpackLogo } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import { Button, Card, Modal } from '@wordpress/components';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -43,7 +43,7 @@ import {
 	errorNotice as errorNoticeAction,
 	warningNotice as warningNoticeAction,
 } from 'calypso/state/notices/actions';
-import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
+import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import AuthFormHeader from './auth-form-header';
 import HelpButton from './help-button';
 import MainWrapper from './main-wrapper';
@@ -66,7 +66,7 @@ export class JetpackSignup extends Component {
 		createAccount: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
-		isWooPasswordlessJPC: PropTypes.bool,
+		isWooJPC: PropTypes.bool,
 	};
 
 	state = {
@@ -124,14 +124,9 @@ export class JetpackSignup extends Component {
 		this.props.resetAuthAccountType();
 	};
 
-	isWooOnboarding() {
-		const { authQuery } = this.props;
-		return 'woocommerce-onboarding' === authQuery.from;
-	}
-
-	isWooPasswordlessJPC( props = this.props ) {
+	isWooJPC( props = this.props ) {
 		const { from } = props.authQuery;
-		return 'woocommerce-core-profiler' === from || this.props.isWooPasswordlessJPC;
+		return 'woocommerce-core-profiler' === from || this.props.isWooJPC;
 	}
 
 	getWooDnaConfig() {
@@ -171,9 +166,7 @@ export class JetpackSignup extends Component {
 					extra: {
 						...userData.extra,
 						jpc: true,
-						source: this.props.isWooPasswordlessJPC
-							? 'woo-passwordless-jpc' + '-' + this.props.authQuery.from
-							: '',
+						source: this.isWooJPC() ? 'woo-passwordless-jpc' + '-' + this.props.authQuery.from : '',
 					},
 				} )
 				.then( this.handleUserCreationSuccess, this.handleUserCreationError )
@@ -205,7 +198,7 @@ export class JetpackSignup extends Component {
 	 * @param {string} _.bearerToken Bearer token
 	 */
 	handleUserCreationSuccess = ( { username, bearerToken } ) => {
-		if ( this.isWooPasswordlessJPC() ) {
+		if ( this.isWooJPC() ) {
 			this.props.recordTracksEvent( 'calypso_jpc_wc_coreprofiler_create_account_success' );
 		}
 		this.setState( {
@@ -279,7 +272,7 @@ export class JetpackSignup extends Component {
 	renderFooterLink() {
 		const { authQuery } = this.props;
 
-		if ( this.isWooPasswordlessJPC() ) {
+		if ( this.isWooJPC() ) {
 			return null;
 		}
 
@@ -481,10 +474,10 @@ export class JetpackSignup extends Component {
 			return this.renderWooDna();
 		}
 		const { isCreatingAccount, newUsername, bearerToken } = this.state;
-		const isWooPasswordlessJPC = this.isWooPasswordlessJPC();
+		const isWooJPC = this.isWooJPC();
 
 		const isLogging = newUsername && bearerToken;
-		if ( isWooPasswordlessJPC && ( isCreatingAccount || isLogging ) ) {
+		if ( isWooJPC && ( isCreatingAccount || isLogging ) ) {
 			return (
 				// Wrap the loader in a modal to show it in full screen
 				<Modal
@@ -504,34 +497,22 @@ export class JetpackSignup extends Component {
 
 		return (
 			<MainWrapper
-				isWooOnboarding={ this.isWooOnboarding() }
-				isWooPasswordlessJPC={ this.isWooPasswordlessJPC() }
+				isWooJPC={ isWooJPC }
 				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 			>
 				<div className="jetpack-connect__authorize-form">
 					{ this.renderLocaleSuggestions() }
 					<AuthFormHeader
 						authQuery={ this.props.authQuery }
-						isWooOnboarding={ this.isWooOnboarding() }
-						isWooPasswordlessJPC={ this.isWooPasswordlessJPC() }
+						isWooJPC={ isWooJPC }
 						isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
-						disableSiteCard={
-							isWooPasswordlessJPC && isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
-						}
+						disableSiteCard={ isWooJPC }
 					/>
 					<SignupForm
 						disabled={ isCreatingAccount }
-						isPasswordless={
-							isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && isWooPasswordlessJPC
-						}
-						disableTosText={
-							isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && isWooPasswordlessJPC
-						}
-						labelText={
-							isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && isWooPasswordlessJPC
-								? this.props.translate( 'Your Email' )
-								: null
-						}
+						isPasswordless={ isWooJPC }
+						disableTosText={ isWooJPC }
+						labelText={ isWooJPC ? this.props.translate( 'Your Email' ) : null }
 						email={ this.props.authQuery.userEmail }
 						footerLink={ this.renderFooterLink() }
 						handleSocialResponse={ this.handleSocialResponse }
@@ -542,7 +523,7 @@ export class JetpackSignup extends Component {
 							window.location.href
 						) }
 						submitButtonText={
-							isWooPasswordlessJPC
+							isWooJPC
 								? this.props.translate( 'Create an account' )
 								: this.props.translate( 'Create your account' )
 						}
@@ -553,15 +534,7 @@ export class JetpackSignup extends Component {
 
 					{ this.renderLoginUser() }
 				</div>
-				{ isWooPasswordlessJPC && this.props.authQuery.installedExtSuccess && (
-					<WooInstallExtSuccessNotice />
-				) }
-				{ ! isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && isWooPasswordlessJPC && (
-					<div className="jetpack-connect__jetpack-logo-wrapper">
-						<JetpackLogo monochrome size={ 18 } />{ ' ' }
-						<span>{ this.props.translate( 'Jetpack powered' ) }</span>
-					</div>
-				) }
+				{ isWooJPC && this.props.authQuery.installedExtSuccess && <WooInstallExtSuccessNotice /> }
 			</MainWrapper>
 		);
 	}
@@ -573,7 +546,7 @@ const connectComponent = connect(
 		usernameOrEmail: getLastCheckedUsernameOrEmail( state ),
 		isFullLoginFormVisible: !! getAuthAccountType( state ),
 		redirectTo: getRedirectToOriginal( state ),
-		isWooPasswordlessJPC: isWooPasswordlessJPCFlow( state ),
+		isWooJPC: isWooJPCFlow( state ),
 	} ),
 	{
 		createAccount: createAccountAction,

@@ -40,6 +40,7 @@ export const SITE_REQUEST_OPTIONS = [
 	'allowed_file_types',
 	'anchor_podcast',
 	'created_at',
+	'default_category',
 	'default_comment_status',
 	'default_ping_status',
 	'default_post_format',
@@ -85,6 +86,7 @@ export const SITE_REQUEST_OPTIONS = [
 	'theme_slug',
 	'launchpad_screen',
 	'launchpad_checklist_tasks_statuses',
+	'migration_source_site_domain',
 	'wpcom_production_blog_id',
 	'wpcom_staging_blog_ids',
 	'can_blaze',
@@ -92,4 +94,5 @@ export const SITE_REQUEST_OPTIONS = [
 	'is_commercial_reasons',
 	'wpcom_admin_interface',
 	'wpcom_classic_early_release',
+	'wpcom_hide_action_bar',
 ].join();

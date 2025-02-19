@@ -12,8 +12,7 @@ import { retrieveMobileRedirect } from './persistence-utils';
 export class JetpackConnectMainWrapper extends PureComponent {
 	static propTypes = {
 		isWide: PropTypes.bool,
-		isWooOnboarding: PropTypes.bool,
-		isWooPasswordlessJPC: PropTypes.bool,
+		isWooJPC: PropTypes.bool,
 		isWpcomMigration: PropTypes.bool,
 		wooDnaConfig: PropTypes.object,
 		partnerSlug: PropTypes.string,
@@ -23,16 +22,14 @@ export class JetpackConnectMainWrapper extends PureComponent {
 
 	static defaultProps = {
 		isWide: false,
-		isWooOnboarding: false,
-		isWooPasswordlessJPC: false,
+		isWooJPC: false,
 		wooDnaConfig: null,
 	};
 
 	render() {
 		const {
 			isWide,
-			isWooOnboarding,
-			isWooPasswordlessJPC,
+			isWooJPC,
 			isWpcomMigration,
 			isFromAutomatticForAgenciesPlugin,
 			className,
@@ -47,14 +44,15 @@ export class JetpackConnectMainWrapper extends PureComponent {
 
 		const wrapperClassName = clsx( 'jetpack-connect__main', {
 			'is-wide': isWide,
-			'is-woocommerce': isWooOnboarding || isWooDna || isWooPasswordlessJPC,
-			'is-woocommerce-core-profiler-flow': isWooPasswordlessJPC,
+			'is-woocommerce': isWooDna || isWooJPC,
+			'is-woocommerce-core-profiler-flow': isWooJPC,
 			'is-mobile-app-flow': !! retrieveMobileRedirect(),
 			'is-wpcom-migration': isWpcomMigration,
 			'is-automattic-for-agencies-flow': isFromAutomatticForAgenciesPlugin,
 		} );
 
-		const width = isWooOnboarding || isWooDna ? 200 : undefined;
+		// Note: legacy flow here was "merged" with DNA
+		const width = isWooDna ? 200 : undefined;
 		const darkColorScheme = false;
 
 		return (
@@ -68,8 +66,7 @@ export class JetpackConnectMainWrapper extends PureComponent {
 						<JetpackHeader
 							partnerSlug={ partnerSlug }
 							isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
-							isWooOnboarding={ isWooOnboarding }
-							isWooPasswordlessJPC={ isWooPasswordlessJPC }
+							isWooJPC={ isWooJPC }
 							isWooDna={ isWooDna }
 							width={ width }
 							darkColorScheme={ darkColorScheme }
