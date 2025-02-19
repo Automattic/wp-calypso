@@ -11,14 +11,7 @@ formatCurrency( /* ... */ );
 // Or
 import formatCurrency from '@automattic/format-currency';`
 formatCurrency( /* ... */ );
-
-// Or
-import { createFormatter } from '@automattic/format-currency';`
-const formatter = createFormatter();
-formatter.formatCurrency( /* ... */ );
 ```
-
-The formatting functions exposed by this package are actually methods on a `CurrencyFormatter` object. A default global formatter is created by the package but you can create your own formatter by using the `createFormatter` function if you want more control.
 
 ## Why does this package exist?
 
@@ -33,17 +26,6 @@ Technically this package just provides a wrapper for `Intl.NumberFormat`, but it
 - We always show `US$` for USD when the user’s geolocation is not inside the US. This is important because other currencies use `$` for their currency and are surprised sometimes if they are actually charged in USD (which is the default for many users). We can’t safely display `US$` for everyone because we've found that US users are confused by that style and it decreases confidence in the product.
 - An option to format currency from the currency’s smallest unit (eg: cents in USD, yen in JPY). This is important because doing price math with floating point numbers in code produces unexpected rounding errors, so most currency amounts should be provided and manipulated as integers.
 - An optional API to return the formatted pieces of a price separately, so the consumer can decide how best to render them (eg: this is used to wrap different HTML tags around prices and currency symbols). JS already includes this feature as `Intl.NumberFormat.formatToParts()` but our API must also include the other features listed here and extra information like the position of the currency symbol (before or after the number).
-
-## createFormatter()
-
-`createFormatter(): CurrencyFormatter`
-
-Returns a formatter object that exposes the following methods:
-
-- `formatCurrency` (see below)
-- `getCurrencyObject` (see below)
-- `setDefaultLocale` (see below)
-- `geolocateCurrencySymbol` (see below)
 
 ## geolocateCurrencySymbol()
 

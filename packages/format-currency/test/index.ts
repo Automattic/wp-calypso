@@ -1,5 +1,8 @@
-import formatCurrency, { getCurrencyObject, createFormatter } from '../src';
-import type { CurrencyFormatter } from '../src/types';
+import formatCurrency, {
+	getCurrencyObject,
+	geolocateCurrencySymbol,
+	setDefaultLocale,
+} from '../src';
 
 describe( 'formatCurrency default export', () => {
 	test( 'formats a number to localized currency', () => {
@@ -23,94 +26,108 @@ describe( 'getCurrencyObject default export', () => {
 } );
 
 describe( 'formatCurrency', () => {
-	let formatter: CurrencyFormatter;
 	const originalFetch = globalThis.fetch;
 
-	beforeEach( () => {
+	beforeEach( async () => {
+		jest.clearAllMocks();
+		// Need to clear the previously set geoLocation that's not reset when fetched in individual tests
+		globalThis.fetch = jest.fn(
+			( url: string ) =>
+				Promise.resolve( {
+					json: () =>
+						url.includes( '/geo' )
+							? Promise.resolve( { country_short: '' } )
+							: Promise.resolve( 'invalid' ),
+				} ) as any
+		);
+		await geolocateCurrencySymbol();
+		setDefaultLocale( undefined );
+	} );
+
+	afterEach( async () => {
 		globalThis.fetch = originalFetch;
-		formatter = createFormatter();
 	} );
 
 	test( 'formats a number to localized currency', () => {
-		const money = formatter.formatCurrency( 99.32, 'USD' );
+		const money = formatCurrency( 99.32, 'USD' );
 		expect( money ).toBe( '$99.32' );
 	} );
 
 	test( 'adds a localized thousands separator', () => {
-		const money = formatter.formatCurrency( 9800900.32, 'USD' );
+		const money = formatCurrency( 9800900.32, 'USD' );
 		expect( money ).toBe( '$9,800,900.32' );
 	} );
 
 	test( 'handles zero', () => {
-		const money = formatter.formatCurrency( 0, 'USD' );
+		const money = formatCurrency( 0, 'USD' );
 		expect( money ).toBe( '$0.00' );
 
-		const money2 = formatter.formatCurrency( 0, 'USD', { stripZeros: true } );
+		const money2 = formatCurrency( 0, 'USD', { stripZeros: true } );
 		expect( money2 ).toBe( '$0' );
 
-		const money3 = formatter.formatCurrency( 0, 'EUR', { locale: 'en-US' } );
+		const money3 = formatCurrency( 0, 'EUR', { locale: 'en-US' } );
 		expect( money3 ).toBe( '€0.00' );
 
-		const money4 = formatter.formatCurrency( 0, 'EUR', { stripZeros: true } );
+		const money4 = formatCurrency( 0, 'EUR', { stripZeros: true } );
 		expect( money4 ).toBe( '€0' );
 	} );
 
 	test( 'handles negative values', () => {
-		const money = formatter.formatCurrency( -1234.56789, 'USD' );
+		const money = formatCurrency( -1234.56789, 'USD' );
 		expect( money ).toBe( '-$1,234.57' );
 	} );
 
 	test( 'unknown currency codes return default', () => {
-		const money = formatter.formatCurrency( 9800900.32, '' );
+		const money = formatCurrency( 9800900.32, '' );
 		expect( money ).toBe( '$9,800,900.32' );
 	} );
 
 	test( 'unknown locale codes return default', () => {
-		const money = formatter.formatCurrency( 9800900.32, 'USD', { locale: 'foo-bar' } );
+		const money = formatCurrency( 9800900.32, 'USD', { locale: 'foo-bar' } );
 		expect( money ).toBe( '$9,800,900.32' );
 	} );
 
 	test( 'formats a number to localized currency for smallest unit', () => {
-		const money = formatter.formatCurrency( 9932, 'USD', { isSmallestUnit: true } );
+		const money = formatCurrency( 9932, 'USD', { isSmallestUnit: true } );
 		expect( money ).toBe( '$99.32' );
 	} );
 
 	test( 'formats a number to localized currency for smallest unit for non-decimal currency', () => {
-		const money = formatter.formatCurrency( 9932, 'JPY', { isSmallestUnit: true } );
+		const money = formatCurrency( 9932, 'JPY', { isSmallestUnit: true } );
 		expect( money ).toBe( '¥9,932' );
 	} );
 
 	test( 'formats a rounded number if the number is a float and smallest unit is true', () => {
-		const money = formatter.formatCurrency( 9932.1, 'USD', { isSmallestUnit: true } );
+		const money = formatCurrency( 9932.1, 'USD', { isSmallestUnit: true } );
 		expect( money ).toBe( '$99.32' );
 	} );
 
 	test( 'returns no trailing zero cents when stripZeros set to true (USD)', () => {
-		const money = formatter.formatCurrency( 9800900, 'USD', {} );
+		const money = formatCurrency( 9800900, 'USD', {} );
 		expect( money ).toBe( '$9,800,900.00' );
 
 		// Trailing zero cents should be removed.
-		const money2 = formatter.formatCurrency( 9800900, 'USD', { stripZeros: true } );
+		const money2 = formatCurrency( 9800900, 'USD', { stripZeros: true } );
 		expect( money2 ).toBe( '$9,800,900' );
 
 		// It should not strip non-zero cents.
-		const money3 = formatter.formatCurrency( 9800900.32, 'USD', { stripZeros: true } );
+		const money3 = formatCurrency( 9800900.32, 'USD', { stripZeros: true } );
 		expect( money3 ).toBe( '$9,800,900.32' );
 	} );
 
 	test( 'returns no trailing zero cents when stripZeros set to true (EUR)', () => {
-		const money = formatter.formatCurrency( 9800900, 'EUR', { locale: 'de-DE' } );
+		const money = formatCurrency( 9800900, 'EUR', { locale: 'de-DE' } );
 		expect( money ).toBe( '9.800.900,00 €' );
 
 		// Trailing zero cents should be removed.
-		const money2 = formatter.formatCurrency( 9800900, 'EUR', {
+		const money2 = formatCurrency( 9800900, 'EUR', {
 			locale: 'de-DE',
 			stripZeros: true,
 		} );
 		expect( money2 ).toBe( '9.800.900 €' );
 
 		// It should not strip non-zero cents.
-		const money3 = formatter.formatCurrency( 9800900.32, 'EUR', {
+		const money3 = formatCurrency( 9800900.32, 'EUR', {
 			locale: 'de-DE',
 			stripZeros: true,
 		} );
@@ -118,30 +135,30 @@ describe( 'formatCurrency', () => {
 	} );
 
 	test( 'returns a plus sign for positive numbers if signForPositive is true (USD)', () => {
-		const money = formatter.formatCurrency( 9800900, 'USD', {} );
+		const money = formatCurrency( 9800900, 'USD', {} );
 		expect( money ).toBe( '$9,800,900.00' );
 
-		const money2 = formatter.formatCurrency( 9800900, 'USD', {
+		const money2 = formatCurrency( 9800900, 'USD', {
 			signForPositive: true,
 		} );
 		expect( money2 ).toBe( '+$9,800,900.00' );
 	} );
 
 	test( 'returns a negative sign for negative numbers if signForPositive is true (USD)', () => {
-		const money = formatter.formatCurrency( -9800900, 'USD', {} );
+		const money = formatCurrency( -9800900, 'USD', {} );
 		expect( money ).toBe( '-$9,800,900.00' );
 
-		const money2 = formatter.formatCurrency( -9800900, 'USD', {
+		const money2 = formatCurrency( -9800900, 'USD', {
 			signForPositive: true,
 		} );
 		expect( money2 ).toBe( '-$9,800,900.00' );
 	} );
 
 	test( 'returns a plus sign for positive numbers if signForPositive is true (EUR)', () => {
-		const money = formatter.formatCurrency( 9800900, 'EUR', { locale: 'de-DE' } );
+		const money = formatCurrency( 9800900, 'EUR', { locale: 'de-DE' } );
 		expect( money ).toBe( '9.800.900,00 €' );
 
-		const money2 = formatter.formatCurrency( 9800900, 'EUR', {
+		const money2 = formatCurrency( 9800900, 'EUR', {
 			locale: 'de-DE',
 			signForPositive: true,
 		} );
@@ -149,7 +166,7 @@ describe( 'formatCurrency', () => {
 	} );
 
 	test( 'returns a number in latin numbers even for locales which default to other character sets', () => {
-		const money = formatter.formatCurrency( 9800900, 'INR', { locale: 'mr-IN' } );
+		const money = formatCurrency( 9800900, 'INR', { locale: 'mr-IN' } );
 		expect( money ).toBe( '₹9,800,900.00' );
 	} );
 
@@ -163,9 +180,9 @@ describe( 'formatCurrency', () => {
 							: Promise.resolve( 'invalid' ),
 				} ) as any
 		);
-		formatter = createFormatter();
-		await formatter.geolocateCurrencySymbol();
-		const money = formatter.formatCurrency( 9800900.32, 'USD', { locale: 'en-US' } );
+		// setDefaultLocale( undefined );
+		await geolocateCurrencySymbol();
+		const money = formatCurrency( 9800900.32, 'USD', { locale: 'en-US' } );
 		expect( money ).toBe( '$9,800,900.32' );
 	} );
 
@@ -179,9 +196,9 @@ describe( 'formatCurrency', () => {
 							: Promise.resolve( 'invalid' ),
 				} ) as any
 		);
-		formatter = createFormatter();
-		await formatter.geolocateCurrencySymbol();
-		const money = formatter.formatCurrency( 9800900.32, 'USD', { locale: 'fr' } );
+		// setDefaultLocale( undefined );
+		await geolocateCurrencySymbol();
+		const money = formatCurrency( 9800900.32, 'USD', { locale: 'fr' } );
 		expect( money ).toBe( '9 800 900,32 $US' );
 	} );
 
@@ -195,9 +212,9 @@ describe( 'formatCurrency', () => {
 							: Promise.resolve( 'invalid' ),
 				} ) as any
 		);
-		formatter = createFormatter();
-		await formatter.geolocateCurrencySymbol();
-		const money = formatter.formatCurrency( 9800900.32, 'USD', { locale: 'en-CA' } );
+		// setDefaultLocale( undefined );
+		await geolocateCurrencySymbol();
+		const money = formatCurrency( 9800900.32, 'USD', { locale: 'en-CA' } );
 		expect( money ).toBe( 'US$9,800,900.32' );
 	} );
 
@@ -211,9 +228,9 @@ describe( 'formatCurrency', () => {
 							: Promise.resolve( 'invalid' ),
 				} ) as any
 		);
-		formatter = createFormatter();
-		await formatter.geolocateCurrencySymbol();
-		const money = formatter.formatCurrency( 9800900.32, 'USD', { locale: 'en' } );
+		// setDefaultLocale( undefined );
+		await geolocateCurrencySymbol();
+		const money = formatCurrency( 9800900.32, 'USD', { locale: 'en' } );
 		expect( money ).toBe( '$9,800,900.32' );
 	} );
 
@@ -227,72 +244,72 @@ describe( 'formatCurrency', () => {
 							: Promise.resolve( 'invalid' ),
 				} ) as any
 		);
-		formatter = createFormatter();
-		await formatter.geolocateCurrencySymbol();
-		const money = formatter.formatCurrency( 9800900.32, 'USD', { locale: 'en' } );
+		// setDefaultLocale( undefined );
+		await geolocateCurrencySymbol();
+		const money = formatCurrency( 9800900.32, 'USD', { locale: 'en' } );
 		expect( money ).toBe( 'US$9,800,900.32' );
 	} );
 
 	describe( 'specific currencies', () => {
 		test( 'USD', () => {
-			const money = formatter.formatCurrency( 9800900.32, 'USD' );
+			const money = formatCurrency( 9800900.32, 'USD' );
 			expect( money ).toBe( '$9,800,900.32' );
 		} );
 		test( 'USD in Canadian English', () => {
-			const money = formatter.formatCurrency( 9800900.32, 'USD', { locale: 'en-CA' } );
+			const money = formatCurrency( 9800900.32, 'USD', { locale: 'en-CA' } );
 			expect( money ).toBe( 'US$9,800,900.32' );
 		} );
 		test( 'AUD', () => {
-			const money = formatter.formatCurrency( 9800900.32, 'AUD' );
+			const money = formatCurrency( 9800900.32, 'AUD' );
 			expect( money ).toBe( 'A$9,800,900.32' );
 		} );
 		test( 'CAD in Canadian English', () => {
-			const money = formatter.formatCurrency( 9800900.32, 'CAD', { locale: 'en-CA' } );
+			const money = formatCurrency( 9800900.32, 'CAD', { locale: 'en-CA' } );
 			expect( money ).toBe( 'C$9,800,900.32' );
 		} );
 		test( 'CAD in US English', () => {
-			const money = formatter.formatCurrency( 9800900.32, 'CAD', { locale: 'en-US' } );
+			const money = formatCurrency( 9800900.32, 'CAD', { locale: 'en-US' } );
 			expect( money ).toBe( 'C$9,800,900.32' );
 		} );
 		test( 'CAD in Canadian French', () => {
-			const money = formatter.formatCurrency( 9800900.32, 'CAD', { locale: 'fr-CA' } );
+			const money = formatCurrency( 9800900.32, 'CAD', { locale: 'fr-CA' } );
 			expect( money ).toBe( '9 800 900,32 C$' );
 		} );
 		test( 'EUR in EN locale', () => {
-			const money = formatter.formatCurrency( 9800900.32, 'EUR', { locale: 'en-US' } );
+			const money = formatCurrency( 9800900.32, 'EUR', { locale: 'en-US' } );
 			expect( money ).toBe( '€9,800,900.32' );
 		} );
 		test( 'EUR in DE locale set by setDefaultLocale', () => {
-			formatter.setDefaultLocale( 'de-DE' );
-			const money = formatter.formatCurrency( 9800900.32, 'EUR' );
+			setDefaultLocale( 'de-DE' );
+			const money = formatCurrency( 9800900.32, 'EUR' );
 			expect( money ).toBe( '9.800.900,32 €' );
 		} );
 		test( 'EUR in DE locale', () => {
-			const money = formatter.formatCurrency( 9800900.32, 'EUR', { locale: 'de-DE' } );
+			const money = formatCurrency( 9800900.32, 'EUR', { locale: 'de-DE' } );
 			expect( money ).toBe( '9.800.900,32 €' );
 		} );
 		test( 'EUR in FR locale', () => {
-			const money = formatter.formatCurrency( 9800900.32, 'EUR', { locale: 'fr-FR' } );
+			const money = formatCurrency( 9800900.32, 'EUR', { locale: 'fr-FR' } );
 			expect( money ).toBe( '9 800 900,32 €' );
 		} );
 		test( 'GBP', () => {
-			const money = formatter.formatCurrency( 9800900.32, 'GBP' );
+			const money = formatCurrency( 9800900.32, 'GBP' );
 			expect( money ).toBe( '£9,800,900.32' );
 		} );
 		test( 'JPY', () => {
-			const money = formatter.formatCurrency( 9800900.32, 'JPY' );
+			const money = formatCurrency( 9800900.32, 'JPY' );
 			expect( money ).toBe( '¥9,800,900' );
 		} );
 		test( 'BRL in EN locale', () => {
-			const money = formatter.formatCurrency( 9800900.32, 'BRL', { locale: 'en-US' } );
+			const money = formatCurrency( 9800900.32, 'BRL', { locale: 'en-US' } );
 			expect( money ).toBe( 'R$9,800,900.32' );
 		} );
 		test( 'BRL in PT locale', () => {
-			const money = formatter.formatCurrency( 9800900.32, 'BRL', { locale: 'pt-BR' } );
+			const money = formatCurrency( 9800900.32, 'BRL', { locale: 'pt-BR' } );
 			expect( money ).toBe( 'R$ 9.800.900,32' );
 		} );
 		test( 'IDR', () => {
-			const money = formatter.formatCurrency( 107280000, 'IDR', {
+			const money = formatCurrency( 107280000, 'IDR', {
 				locale: 'in-ID',
 				isSmallestUnit: true,
 			} );
@@ -302,13 +319,13 @@ describe( 'formatCurrency', () => {
 } );
 
 describe( 'getCurrencyObject()', () => {
-	let formatter: CurrencyFormatter;
 	beforeEach( () => {
-		formatter = createFormatter();
+		setDefaultLocale( undefined );
+		jest.clearAllMocks();
 	} );
 
 	test( 'handles zero', () => {
-		const money = formatter.getCurrencyObject( 0, 'USD' );
+		const money = getCurrencyObject( 0, 'USD' );
 		expect( money ).toEqual( {
 			symbol: '$',
 			symbolPosition: 'before',
@@ -320,7 +337,7 @@ describe( 'getCurrencyObject()', () => {
 	} );
 
 	test( 'handles negative values', () => {
-		const money = formatter.getCurrencyObject( -1234.56789, 'USD' );
+		const money = getCurrencyObject( -1234.56789, 'USD' );
 		expect( money ).toEqual( {
 			symbol: '$',
 			symbolPosition: 'before',
@@ -332,7 +349,7 @@ describe( 'getCurrencyObject()', () => {
 	} );
 
 	test( 'handles values that round up', () => {
-		const money = formatter.getCurrencyObject( 9.99876, 'USD' );
+		const money = getCurrencyObject( 9.99876, 'USD' );
 		expect( money ).toEqual( {
 			symbol: '$',
 			symbolPosition: 'before',
@@ -344,7 +361,7 @@ describe( 'getCurrencyObject()', () => {
 	} );
 
 	test( 'handles values that round down', () => {
-		const money = formatter.getCurrencyObject( 9.99432, 'USD' );
+		const money = getCurrencyObject( 9.99432, 'USD' );
 		expect( money ).toEqual( {
 			symbol: '$',
 			symbolPosition: 'before',
@@ -356,7 +373,7 @@ describe( 'getCurrencyObject()', () => {
 	} );
 
 	test( 'handles a number in the smallest unit', () => {
-		const money = formatter.getCurrencyObject( 9932, 'USD', { isSmallestUnit: true } );
+		const money = getCurrencyObject( 9932, 'USD', { isSmallestUnit: true } );
 		expect( money ).toEqual( {
 			symbol: '$',
 			symbolPosition: 'before',
@@ -368,7 +385,7 @@ describe( 'getCurrencyObject()', () => {
 	} );
 
 	test( 'handles a number in the smallest unit for non-decimal currency', () => {
-		const money = formatter.getCurrencyObject( 9932, 'JPY', { isSmallestUnit: true } );
+		const money = getCurrencyObject( 9932, 'JPY', { isSmallestUnit: true } );
 		expect( money ).toEqual( {
 			symbol: '¥',
 			symbolPosition: 'before',
@@ -380,7 +397,7 @@ describe( 'getCurrencyObject()', () => {
 	} );
 
 	test( 'handles the number as rounded if the number is a float and smallest unit is set', () => {
-		const money = formatter.getCurrencyObject( 9932.1, 'USD', { isSmallestUnit: true } );
+		const money = getCurrencyObject( 9932.1, 'USD', { isSmallestUnit: true } );
 		expect( money ).toEqual( {
 			symbol: '$',
 			symbolPosition: 'before',
@@ -393,7 +410,7 @@ describe( 'getCurrencyObject()', () => {
 
 	describe( 'specific currencies', () => {
 		test( 'USD', () => {
-			const money = formatter.getCurrencyObject( 9800900.32, 'USD' );
+			const money = getCurrencyObject( 9800900.32, 'USD' );
 			expect( money ).toEqual( {
 				symbol: '$',
 				symbolPosition: 'before',
@@ -405,7 +422,7 @@ describe( 'getCurrencyObject()', () => {
 		} );
 
 		test( 'USD with signForPositive set', () => {
-			const money = formatter.getCurrencyObject( 9800900.32, 'USD', { signForPositive: true } );
+			const money = getCurrencyObject( 9800900.32, 'USD', { signForPositive: true } );
 			expect( money ).toEqual( {
 				symbol: '$',
 				symbolPosition: 'before',
@@ -417,7 +434,7 @@ describe( 'getCurrencyObject()', () => {
 		} );
 
 		test( 'USD with signForPositive set and negative number', () => {
-			const money = formatter.getCurrencyObject( -9800900.32, 'USD', { signForPositive: true } );
+			const money = getCurrencyObject( -9800900.32, 'USD', { signForPositive: true } );
 			expect( money ).toEqual( {
 				symbol: '$',
 				symbolPosition: 'before',
@@ -429,7 +446,7 @@ describe( 'getCurrencyObject()', () => {
 		} );
 
 		test( 'USD in Canadian English', () => {
-			const money = formatter.getCurrencyObject( 9800900.32, 'USD', { locale: 'en-CA' } );
+			const money = getCurrencyObject( 9800900.32, 'USD', { locale: 'en-CA' } );
 			expect( money ).toEqual( {
 				symbol: 'US$',
 				symbolPosition: 'before',
@@ -441,7 +458,7 @@ describe( 'getCurrencyObject()', () => {
 		} );
 
 		test( 'AUD', () => {
-			const money = formatter.getCurrencyObject( 9800900.32, 'AUD' );
+			const money = getCurrencyObject( 9800900.32, 'AUD' );
 			expect( money ).toEqual( {
 				symbol: 'A$',
 				symbolPosition: 'before',
@@ -453,7 +470,7 @@ describe( 'getCurrencyObject()', () => {
 		} );
 
 		test( 'CAD', () => {
-			const money = formatter.getCurrencyObject( 9800900.32, 'CAD', { locale: 'en-US' } );
+			const money = getCurrencyObject( 9800900.32, 'CAD', { locale: 'en-US' } );
 			expect( money ).toEqual( {
 				symbol: 'C$',
 				symbolPosition: 'before',
@@ -465,7 +482,7 @@ describe( 'getCurrencyObject()', () => {
 		} );
 
 		test( 'EUR', () => {
-			const money = formatter.getCurrencyObject( 9800900.32, 'EUR', { locale: 'de-DE' } );
+			const money = getCurrencyObject( 9800900.32, 'EUR', { locale: 'de-DE' } );
 			expect( money ).toEqual( {
 				symbol: '€',
 				symbolPosition: 'after',
@@ -477,7 +494,7 @@ describe( 'getCurrencyObject()', () => {
 		} );
 
 		test( 'GBP', () => {
-			const money = formatter.getCurrencyObject( 9800900.32, 'GBP' );
+			const money = getCurrencyObject( 9800900.32, 'GBP' );
 			expect( money ).toEqual( {
 				symbol: '£',
 				symbolPosition: 'before',
@@ -489,7 +506,7 @@ describe( 'getCurrencyObject()', () => {
 		} );
 
 		test( 'JPY', () => {
-			const money = formatter.getCurrencyObject( 9800900.32, 'JPY' );
+			const money = getCurrencyObject( 9800900.32, 'JPY' );
 			expect( money ).toEqual( {
 				symbol: '¥',
 				symbolPosition: 'before',
@@ -501,7 +518,7 @@ describe( 'getCurrencyObject()', () => {
 		} );
 
 		test( 'BRL', () => {
-			const money = formatter.getCurrencyObject( 9800900.32, 'BRL', { locale: 'pt-BR' } );
+			const money = getCurrencyObject( 9800900.32, 'BRL', { locale: 'pt-BR' } );
 			expect( money ).toEqual( {
 				symbol: 'R$',
 				symbolPosition: 'before',
