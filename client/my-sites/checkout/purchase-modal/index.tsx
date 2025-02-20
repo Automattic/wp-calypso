@@ -7,6 +7,7 @@ import {
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { getContactDetailsType } from '@automattic/wpcom-checkout';
+import { useSelect } from '@wordpress/data';
 import clsx from 'clsx';
 import { useState, useMemo, useEffect, type PropsWithChildren } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -22,6 +23,7 @@ import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useCountryList from '../src/hooks/use-country-list';
 import { useStoredPaymentMethods } from '../src/hooks/use-stored-payment-methods';
 import { updateCartContactDetailsForCheckout } from '../src/lib/update-cart-contact-details-for-checkout';
+import { CHECKOUT_STORE } from '../src/lib/wpcom-store';
 import { BEFORE_SUBMIT } from './constants';
 import Content from './content';
 import Placeholder from './placeholder';
@@ -30,7 +32,6 @@ import type { MinimalRequestCartProduct, ResponseCart } from '@automattic/shoppi
 import type { ManagedContactDetails, ManagedValue, VatDetails } from '@automattic/wpcom-checkout';
 import type { PaymentProcessorOptions } from 'calypso/my-sites/checkout/src/types/payment-processors';
 import type { SiteSlug } from 'calypso/types';
-
 import './style.scss';
 
 type PurchaseModalProps = {
@@ -156,6 +157,11 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	const includeDomainDetails = contactDetailsType === 'domain';
 	const includeGSuiteDetails = contactDetailsType === 'gsuite';
 	const storedCard = cards.length > 0 ? cards[ 0 ] : undefined;
+	const businessUseDetails = useSelect(
+		( select ) => select( CHECKOUT_STORE ).getBusinessUseDetails(),
+		[]
+	);
+
 	const dataForProcessor: PaymentProcessorOptions = useMemo(
 		() => ( {
 			createUserAndSiteBeforeTransaction: false,
@@ -214,7 +220,8 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 				responseCart,
 				updateLocation,
 				contactInfo,
-				vatDetails
+				vatDetails,
+				businessUseDetails
 			);
 			replaceProductsInCart( [ productToAdd ] );
 			if ( coupon ) {

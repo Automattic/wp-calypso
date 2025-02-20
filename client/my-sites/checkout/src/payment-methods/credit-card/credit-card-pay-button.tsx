@@ -10,6 +10,7 @@ import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { logStashEvent } from '../../lib/analytics';
+import { CHECKOUT_STORE } from '../../lib/wpcom-store';
 import { actions, selectors } from './store';
 import type { WpcomCreditCardSelectors } from './store';
 import type { CardFieldState, CardStoreType } from './types';
@@ -40,6 +41,10 @@ export default function CreditCardPayButton( {
 	const useForAllSubscriptions = useSelect(
 		( select ) =>
 			( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).useForAllSubscriptions(),
+		[]
+	);
+	const businessUseDetails = useSelect(
+		( select ) => select( CHECKOUT_STORE ).getBusinessUseDetails(),
 		[]
 	);
 	const cardholderName = fields.cardholderName;
@@ -107,6 +112,7 @@ export default function CreditCardPayButton( {
 							organization: fields?.organization?.value,
 							address: fields?.address1?.value,
 							useForAllSubscriptions,
+							useForBusiness: businessUseDetails?.is_for_business,
 							eventSource: 'checkout',
 						} );
 						return;

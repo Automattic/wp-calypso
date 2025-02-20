@@ -131,6 +131,7 @@ export async function assignNewCardProcessor(
 			organization,
 			address,
 			useForAllSubscriptions,
+			useForBusiness,
 		} = submitData;
 
 		const contactInfo: ManagedContactDetails = {
@@ -229,6 +230,7 @@ export async function assignNewCardProcessor(
 			token: String( token ),
 			stripeConfiguration,
 			useForAllSubscriptions: Boolean( useForAllSubscriptions ),
+			useForBusiness,
 			eventSource,
 			postalCode,
 			countryCode,
@@ -288,6 +290,7 @@ interface NewCardSubmitData {
 	organization?: string;
 	address?: string;
 	useForAllSubscriptions: boolean;
+	useForBusiness?: boolean;
 }
 
 export async function assignExistingCardProcessor(
