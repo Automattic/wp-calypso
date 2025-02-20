@@ -56,13 +56,13 @@ export function usePreloadSteps(
 					tryPreload( userStep );
 				}
 
-				const nextStepIndex = flowSteps.findIndex( ( step ) => step.slug === currentStepRoute ) + 1;
-				const nextNextStepIndex =
-					flowSteps.findIndex( ( step ) => step.slug === currentStepRoute ) + 2;
-				const nextStep = flowSteps[ nextStepIndex ];
-				const nextNextStep = flowSteps[ nextNextStepIndex ];
+				const currentStepIndex = flowSteps.findIndex( ( step ) => step.slug === currentStepRoute );
+				if ( currentStepIndex !== -1 ) {
+					const nextStep = flowSteps[ currentStepIndex + 1 ];
+					const nextNextStep = flowSteps[ currentStepIndex + 2 ];
 
-				tryPreload( nextStep, nextNextStep );
+					tryPreload( nextStep, nextNextStep );
+				}
 			}
 		}
 		// Most flows sadly instantiate a new steps array on every call to `flow.useSteps()`,
