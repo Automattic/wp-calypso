@@ -114,6 +114,9 @@ export default function PersonalizationForm( { onContinue, goBack, initialFormDa
 				title={ translate( 'Personalize your experience' ) }
 				description={ translate( "We'll tailor the product and onboarding for you." ) }
 			>
+				<div className="field-mandatory-message">
+					{ translate( 'Fields marked with * are required' ) }
+				</div>
 				<FormFieldset>
 					<FormField
 						error={ validationError.country }

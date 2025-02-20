@@ -55,3 +55,7 @@
 	}
 }
 
+.field-mandatory-message {
+	@include a4a-font-body-sm;
+	padding-block-end: 8px;
+}
