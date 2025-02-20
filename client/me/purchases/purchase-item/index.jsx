@@ -445,7 +445,7 @@ class PurchaseItem extends Component {
 								} }
 								title={ translate( 'View subscriptions for %(siteDomain)s', {
 									args: {
-										siteName: site.name,
+										siteDomain: site.domain,
 									},
 								} ) }
 							/>
@@ -458,7 +458,7 @@ class PurchaseItem extends Component {
 			return translate( 'for {{button}}%(siteName)s{{/button}} ({{link}}%(siteDomain)s{{/link}})', {
 				args: {
 					siteName: site.name,
-					site: site.domain,
+					siteDomain: site.domain,
 				},
 				components: {
 					button: (
