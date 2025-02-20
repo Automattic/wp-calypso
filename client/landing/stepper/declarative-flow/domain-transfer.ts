@@ -22,18 +22,7 @@ const domainTransfer: Flow = {
 	},
 	isSignupFlow: false,
 	initialize() {
-		// TODO: move to client/landing/stepper/declarative-flow/internals/steps.tsx ?
-		return [
-			{
-				slug: 'intro',
-				asyncComponent: () => import( './internals/steps-repository/domain-transfer-intro' ),
-			},
-			{
-				slug: 'domains',
-				asyncComponent: () => import( './internals/steps-repository/domain-transfer-domains' ),
-			},
-			STEPS.PROCESSING,
-		];
+		return [ STEPS.DOMAIN_TRANSFER_INTRO, STEPS.DOMAIN_TRANSFER_DOMAINS, STEPS.PROCESSING ];
 	},
 
 	useSideEffect( _currentStepSlug, navigate ) {

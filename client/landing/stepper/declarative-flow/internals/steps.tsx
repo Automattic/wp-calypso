@@ -348,6 +348,14 @@ export const STEPS = {
 				/* webpackChunkName: 'async-step-use-my-domain' */ './steps-repository/use-my-domain'
 			),
 	},
+	DOMAIN_TRANSFER_INTRO: {
+		slug: 'intro',
+		asyncComponent: () => import( './steps-repository/domain-transfer-intro' ),
+	},
+	DOMAIN_TRANSFER_DOMAINS: {
+		slug: 'domains',
+		asyncComponent: () => import( './steps-repository/domain-transfer-domains' ),
+	},
 } satisfies Record< string, StepperStep >;
 
 /**
