@@ -103,26 +103,11 @@ const onboarding: Flow = {
 		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 
 		const steps = stepsWithRequiredLogin( [
-			{
-				slug: 'domains',
-				asyncComponent: () => import( './internals/steps-repository/unified-domains' ),
-			},
-			{
-				slug: 'use-my-domain',
-				asyncComponent: () => import( './internals/steps-repository/use-my-domain' ),
-			},
-			{
-				slug: 'plans',
-				asyncComponent: () => import( './internals/steps-repository/unified-plans' ),
-			},
-			{
-				slug: 'create-site',
-				asyncComponent: () => import( './internals/steps-repository/create-site' ),
-			},
-			{
-				slug: 'processing',
-				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
-			},
+			STEPS.UNIFIED_DOMAINS,
+			STEPS.USE_MY_DOMAIN,
+			STEPS.UNIFIED_PLANS,
+			STEPS.SITE_CREATION_STEP,
+			STEPS.PROCESSING,
 			STEPS.POST_CHECKOUT_ONBOARDING,
 		] );
 
