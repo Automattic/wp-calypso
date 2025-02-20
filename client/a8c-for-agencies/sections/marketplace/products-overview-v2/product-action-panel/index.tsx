@@ -20,7 +20,6 @@ type Props = {
 	selectedBundleSize: number;
 	availableBundleSizes: number[];
 	setSelectedBundleSize: ( value: number ) => void;
-	stickyTopOffset: number;
 };
 
 export default function ProductActionPanel( {
@@ -33,7 +32,6 @@ export default function ProductActionPanel( {
 	selectedBundleSize,
 	availableBundleSizes,
 	setSelectedBundleSize,
-	stickyTopOffset,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -88,30 +86,28 @@ export default function ProductActionPanel( {
 	);
 
 	return (
-		<div className="product-action-panel" style={ { top: stickyTopOffset } }>
-			<LayoutSection>
-				<div className="product-action-panel__filter">
-					<SearchControl
-						label={ translate( 'Search' ) }
-						value={ searchQuery }
-						onChange={ handleSearchQueryChange }
-					/>
+		<LayoutSection className="product-action-panel">
+			<div className="product-action-panel__filter">
+				<SearchControl
+					label={ translate( 'Search' ) }
+					value={ searchQuery }
+					onChange={ handleSearchQueryChange }
+				/>
 
-					<ProductTypeFilter
-						selectedFilters={ selectedFilters }
-						setSelectedFilters={ handleSelectedFiltersChange }
-						resetFilters={ handleResetSelectedFilters }
-					/>
-				</div>
+				<ProductTypeFilter
+					selectedFilters={ selectedFilters }
+					setSelectedFilters={ handleSelectedFiltersChange }
+					resetFilters={ handleResetSelectedFilters }
+				/>
+			</div>
 
-				{ ! isReferralMode && (
-					<BundlePriceSelector
-						options={ availableBundleSizes }
-						value={ selectedBundleSize }
-						onChange={ handleSelectedBundleSizeChange }
-					/>
-				) }
-			</LayoutSection>
-		</div>
+			{ ! isReferralMode && (
+				<BundlePriceSelector
+					options={ availableBundleSizes }
+					value={ selectedBundleSize }
+					onChange={ handleSelectedBundleSizeChange }
+				/>
+			) }
+		</LayoutSection>
 	);
 }

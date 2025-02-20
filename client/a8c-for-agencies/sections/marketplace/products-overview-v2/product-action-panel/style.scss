@@ -2,29 +2,22 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.product-action-panel {
+.product-action-panel.hosting-dashboard-layout__body {
 	background: var( --color-surface );
+	padding-block: 16px;
+	margin-block-start: 16px;
 
-	.hosting-dashboard-layout__body {
-		padding-block: 16px;
-		margin-block-start: 16px;
+	.hosting-dashboard-layout__body-wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		justify-content: center;
 
-		.hosting-dashboard-layout__body-wrapper {
-			display: flex;
-			flex-direction: column;
-			gap: 16px;
-			justify-content: center;
-
-			@include break-large {
-				flex-direction: row;
-				justify-content: space-between;
-			}
+		@include break-large {
+			flex-direction: row;
+			justify-content: space-between;
 		}
 	}
-}
-
-.products-overview-v2.main.hosting-dashboard-layout.is-compact .product-action-panel {
-	box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .10);
 }
 
 .product-action-panel__filter {

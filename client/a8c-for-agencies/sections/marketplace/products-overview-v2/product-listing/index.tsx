@@ -33,6 +33,7 @@ interface ProductListingProps {
 	isReferralMode: boolean;
 	selectedBundleSize: number;
 	selectedFilters: SelectedFilters;
+	stickyHeadingTopOffset?: number;
 }
 
 export default function ProductListing( {
@@ -42,6 +43,7 @@ export default function ProductListing( {
 	isReferralMode,
 	selectedBundleSize,
 	selectedFilters,
+	stickyHeadingTopOffset,
 }: ProductListingProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -258,7 +260,10 @@ export default function ProductListing( {
 			{ isEmptyList && <ProductListingEmpty /> }
 
 			{ featuredProducts.length > 0 && (
-				<ProductListingSection title={ translate( 'Featured products' ) }>
+				<ProductListingSection
+					title={ translate( 'Featured products' ) }
+					stickyHeadingTopOffset={ stickyHeadingTopOffset }
+				>
 					{ getProductCards( featuredProducts, true ) }
 				</ProductListingSection>
 			) }
@@ -270,6 +275,7 @@ export default function ProductListing( {
 					description={ translate(
 						"Explore the tools and integrations you need to grow your client's Woo store."
 					) }
+					stickyHeadingTopOffset={ stickyHeadingTopOffset }
 				>
 					{ getProductCards( wooExtensions ) }
 				</ProductListingSection>
@@ -282,6 +288,7 @@ export default function ProductListing( {
 					description={ translate(
 						'Save big with comprehensive bundles of Jetpack security, performance, and growth tools.'
 					) } // FIXME: Add proper description for A4A
+					stickyHeadingTopOffset={ stickyHeadingTopOffset }
 				>
 					{ getProductCards( jetpackPlans ) }
 				</ProductListingSection>
@@ -294,6 +301,7 @@ export default function ProductListing( {
 					description={ translate(
 						'Mix and match powerful security, performance, and growth tools for your sites.'
 					) }
+					stickyHeadingTopOffset={ stickyHeadingTopOffset }
 				>
 					{ getProductCards( jetpackProducts ) }
 				</ProductListingSection>
@@ -306,6 +314,7 @@ export default function ProductListing( {
 					description={ translate(
 						'Add additional storage to your current VaultPress Backup plans.'
 					) }
+					stickyHeadingTopOffset={ stickyHeadingTopOffset }
 				>
 					{ getProductCards( jetpackBackupAddons ) }
 				</ProductListingSection>

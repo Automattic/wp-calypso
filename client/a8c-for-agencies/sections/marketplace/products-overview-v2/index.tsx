@@ -125,6 +125,11 @@ export function ProductsOverviewV2( {
 	);
 
 	const topRef = useRef< HTMLDivElement >( null );
+	const actionPanelRef = useRef< HTMLDivElement >( null );
+
+	const actionPanelStickyTopOffset = topRef.current?.offsetHeight ?? 0;
+	const productListingStickyTopOffset =
+		actionPanelStickyTopOffset + ( actionPanelRef.current?.offsetHeight ?? 0 );
 
 	return (
 		<Layout
@@ -188,23 +193,29 @@ export function ProductsOverviewV2( {
 				</LayoutTop>
 			</div>
 
-			<ProductActionPanel
-				stickyTopOffset={ topRef.current?.offsetHeight ?? 0 }
-				searchQuery={ productSearchQuery }
-				onSearchQueryChange={ setProductSearchQuery }
-				selectedFilters={ selectedFilters }
-				setSelectedFilters={ setSelectedFilters }
-				resetSelectedFilters={ resetFilters }
-				isReferralMode={ isReferralMode }
-				selectedBundleSize={ selectedBundleSize }
-				availableBundleSizes={ availableBundleSizes }
-				setSelectedBundleSize={ setSelectedBundleSize }
-			/>
+			<div
+				className="products-overview-v2__action-panel-wrapper"
+				ref={ actionPanelRef }
+				style={ { top: actionPanelStickyTopOffset } }
+			>
+				<ProductActionPanel
+					searchQuery={ productSearchQuery }
+					onSearchQueryChange={ setProductSearchQuery }
+					selectedFilters={ selectedFilters }
+					setSelectedFilters={ setSelectedFilters }
+					resetSelectedFilters={ resetFilters }
+					isReferralMode={ isReferralMode }
+					selectedBundleSize={ selectedBundleSize }
+					availableBundleSizes={ availableBundleSizes }
+					setSelectedBundleSize={ setSelectedBundleSize }
+				/>
+			</div>
 
 			<ShoppingCartContext.Provider value={ { setSelectedCartItems, selectedCartItems } }>
 				{
 					// we will remove this once we have the new product listing component
 					<ProductListing
+						stickyHeadingTopOffset={ productListingStickyTopOffset }
 						selectedSite={ selectedSite }
 						suggestedProduct={ suggestedProduct }
 						productBrand={ productBrand }
