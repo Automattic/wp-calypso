@@ -19,6 +19,12 @@ import { SubscribersHeaderPopover } from '../subscribers-header-popover';
 
 import './style.scss';
 
+enum SubscriberModalType {
+	NONE = 'none',
+	ADD = 'add',
+	MIGRATE = 'migrate',
+}
+
 type SubscribersHeaderProps = {
 	selectedSiteId: number | undefined;
 	disableCta: boolean;
@@ -36,11 +42,6 @@ export const SubscribersHeader = ( {
 	const { setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const siteId = useSelector( getSelectedSiteId ) ?? null;
 	const isWPCOMSite = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
-	const addSubscribersCallback = useAddSubscribersCallback( siteId );
-	const migrateSubscribersCallback = useMigrateSubscribersCallback( siteId );
-	const [ showSubscriberModal, setShowSubscriberModal ] = useState< 'none' | 'add' | 'migrate' >(
-		'none'
-	);
 
 	const openHelpCenter = () => {
 		setShowSupportDoc( localizeUrl( 'https://wordpress.com/support/paid-newsletters/' ) );
@@ -68,8 +69,18 @@ export const SubscribersHeader = ( {
 		},
 	};
 
+	/**
+	 * The modals are handled from the header component to avoid
+	 * complicated state management. The modal state exists in the
+	 * same component where they are added and removed.
+	 */
+	const addSubscribersCallback = useAddSubscribersCallback( siteId );
+	const migrateSubscribersCallback = useMigrateSubscribersCallback( siteId );
+	const [ showSubscriberModal, setShowSubscriberModal ] = useState< SubscriberModalType >(
+		SubscriberModalType.NONE
+	);
 	const closeSubscriberModal = () => {
-		setShowSubscriberModal( 'none' );
+		setShowSubscriberModal( SubscriberModalType.NONE );
 	};
 
 	return (
@@ -92,19 +103,21 @@ export const SubscribersHeader = ( {
 					variant="primary"
 					className="button add-subscribers-button"
 					disabled={ disableCta }
-					onClick={ () => setShowSubscriberModal( 'add' ) }
+					onClick={ () => setShowSubscriberModal( SubscriberModalType.ADD ) }
 				>
 					<Gridicon icon="plus" size={ 24 } />
 					<span className="add-subscribers-button-text">{ translate( 'Add subscribers' ) }</span>
 				</Button>
 				<SubscribersHeaderPopover
 					siteId={ selectedSiteId }
-					openMigrateSubscribersModal={ () => setShowSubscriberModal( 'migrate' ) }
+					openMigrateSubscribersModal={ () =>
+						setShowSubscriberModal( SubscriberModalType.MIGRATE )
+					}
 				/>
 			</NavigationHeader>
 			{ siteId && (
 				<AddSubscribersModal
-					isVisible={ showSubscriberModal === 'add' }
+					isVisible={ showSubscriberModal === SubscriberModalType.ADD }
 					onClose={ closeSubscriberModal }
 					addSubscribersCallback={ () => {
 						closeSubscriberModal();
@@ -114,7 +127,7 @@ export const SubscribersHeader = ( {
 			) }
 			{ siteId && (
 				<MigrateSubscribersModal
-					isVisible={ showSubscriberModal === 'migrate' }
+					isVisible={ showSubscriberModal === SubscriberModalType.MIGRATE }
 					onClose={ closeSubscriberModal }
 					migrateSubscribersCallback={ ( selectedSourceSiteId ) => {
 						closeSubscriberModal();

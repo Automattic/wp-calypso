@@ -8,6 +8,11 @@ import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
+/**
+ * This callback is used to fire off a notice when the subscribers are added.
+ * @param siteId - The site ID of the current site.
+ * @returns A callback function that adds subscribers to a site.
+ */
 export const useAddSubscribersCallback = ( siteId: number | null ) => {
 	const { completedJob } = useActiveJobRecognition( siteId ?? 0 );
 	const importError = useImportError();

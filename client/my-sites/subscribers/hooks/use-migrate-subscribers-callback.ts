@@ -13,6 +13,11 @@ type ResponseWithBody = {
 	body: Response;
 };
 
+/**
+ * This callback is used to initiate the migrate subscribers process.
+ * @param siteId - The site ID of the current site.
+ * @returns A callback function that migrates subscribers from one site to another.
+ */
 export const useMigrateSubscribersCallback = ( siteId: number | null ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
