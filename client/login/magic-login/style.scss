@@ -140,10 +140,13 @@
 
 .magic-login__form-action {
 	margin-top: 20px;
-	overflow: auto;
 
 	button {
 		width: 100%;
+		height: 44px;
+		justify-content: center;
+		border-radius: 4px;
+		font-size: rem(14px);
 	}
 
 	.form-button:last-child {
@@ -153,23 +156,10 @@
 
 .magic-login__footer {
 	margin: 4px 0 48px 0;
+	text-align: center;
 
 	a {
-		border-bottom: 1px solid #c8d7e1;
-		color: var(--studio-gray-90);
-		display: block;
 		font-size: $font-body-small;
-		font-weight: 600;
-		padding: 0 24px;
-		text-align: center;
-		text-decoration: underline;
-
-		&:hover {
-			color: var(--color-primary);
-		}
-		&:last-of-type {
-			border-bottom: none;
-		}
 
 		body.is-section-signup & {
 			color: var(--color-text-inverted);

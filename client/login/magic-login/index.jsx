@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon, FormLabel } from '@automattic/components';
 import { addLocaleToPath, localizeUrl, getLanguage } from '@automattic/i18n-utils';
+import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
@@ -284,9 +285,13 @@ class MagicLogin extends Component {
 		return (
 			<>
 				<div className="magic-login__footer">
-					<a href={ login( loginParameters ) } onClick={ this.onClickEnterPasswordInstead }>
+					<Button
+						variant="link"
+						href={ login( loginParameters ) }
+						onClick={ this.onClickEnterPasswordInstead }
+					>
 						{ linkBack }
-					</a>
+					</Button>
 				</div>
 				{ ! isA4A && (
 					<AppPromo
