@@ -1,5 +1,5 @@
 import { WPCOM_FEATURES_SUBSCRIPTION_GIFTING } from '@automattic/calypso-products/src';
-import { Button, CompactCard } from '@automattic/components';
+import { CompactCard } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -13,8 +13,7 @@ import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
 
 export default function SubscriptionGiftingForm( {
 	fields,
-	handleToggle,
-	onSave,
+	handleAutosavingToggle,
 	isSaving,
 	disabled,
 } ) {
@@ -38,7 +37,7 @@ export default function SubscriptionGiftingForm( {
 					className="site-settings__gifting-toggle"
 					label={ translate( 'Allow site visitors to gift your plan and domain renewal costs' ) }
 					checked={ fields.wpcom_gifting_subscription }
-					onChange={ handleToggle( 'wpcom_gifting_subscription' ) }
+					onChange={ handleAutosavingToggle( 'wpcom_gifting_subscription' ) }
 					__next40pxDefaultSize
 				/>
 				{ ! isUntangled && (
@@ -65,8 +64,6 @@ export default function SubscriptionGiftingForm( {
 					id="site-settings__gifting-header"
 					disabled={ disabled }
 					isSaving={ isSaving }
-					onButtonClick={ onSave }
-					showButton
 				/>
 				<CompactCard className="site-settings__gifting-content">{ renderForm() }</CompactCard>
 			</div>
@@ -87,9 +84,6 @@ export default function SubscriptionGiftingForm( {
 				) }
 			</PanelCardDescription>
 			{ renderForm() }
-			<Button busy={ isSaving } disabled={ disabled } onClick={ onSave }>
-				{ translate( 'Save' ) }
-			</Button>
 		</PanelCard>
 	);
 }
