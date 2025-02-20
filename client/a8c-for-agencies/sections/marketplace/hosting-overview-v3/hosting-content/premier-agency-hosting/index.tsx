@@ -16,9 +16,8 @@ import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
 import { MarketplaceTypeContext } from '../../../context';
-import useProductAndPlans from '../../../hooks/use-product-and-plans';
-import useExistingPressablePlan from '../../../pressable-overview/hooks/use-existing-pressable-plan';
 import useGetPressablePlanByProductId from '../../../pressable-overview/hooks/use-get-pressable-plan-by-product-id';
+import getPressablePlan from '../../../pressable-overview/lib/get-pressable-plan';
 import usePressableOwnershipType from '../../hooks/use-pressable-ownership-type';
 import ClientRelationships from '../common/client-relationships';
 import HostingFeatures from '../common/hosting-features';
@@ -42,22 +41,9 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 	const { marketplaceType } = useContext( MarketplaceTypeContext );
 	const pressableOwnership = usePressableOwnershipType();
 
-	const { pressablePlans } = useProductAndPlans( {
-		selectedSite: null,
-		productSearchQuery: '',
-	} );
-
-	const {
-		existingPlan,
-		pressablePlan: existingPlanInfo,
-		isReady: isExistingPlanFetched,
-	} = useExistingPressablePlan( {
-		plans: pressablePlans,
-	} );
-
 	const isReferralMode = marketplaceType === 'referral';
 
-	const { data } = useFetchLicenses(
+	const { data, isFetched: isExistingPlanFetched } = useFetchLicenses(
 		LicenseFilter.NotRevoked,
 		'pressable',
 		LicenseSortField.IssuedAt,
@@ -77,6 +63,8 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 		product_id: agencyPressableLicense ? agencyPressableLicense.productId : 0,
 	} );
 
+	const existingPlanInfo = getPressablePlan( agencyPressablePlan?.slug ?? '' );
+
 	return (
 		<div className="premier-agency-hosting">
 			{ agencyPressablePlan && ! isReferralMode && (
@@ -87,7 +75,7 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 				onSelect={ onAddToCart }
 				isReferralMode={ isReferralMode }
 				pressableOwnership={ isReferralMode || agencyPressablePlan ? 'agency' : pressableOwnership }
-				existingPlan={ existingPlan }
+				existingPlan={ agencyPressablePlan }
 				existingPlanInfo={ existingPlanInfo }
 				isFetching={ isExistingPlanFetched }
 			/>

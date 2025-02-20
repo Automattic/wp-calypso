@@ -80,6 +80,7 @@ export default function ReaderFeedHeaderFollow( props ) {
 							hasButtonStyle
 							iconSize={ 24 }
 							onFollowToggle={ openSuggestedFollowsModal }
+							followingLabel={ translate( 'Unsubscribe' ) }
 						/>
 					</div>
 				) }

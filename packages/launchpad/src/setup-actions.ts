@@ -112,7 +112,6 @@ export const setUpActionsForTasks = ( {
 
 				case 'site_launched':
 				case 'blog_launched':
-				case 'link_in_bio_launched':
 					action = async () => {
 						await wpcomRequest( {
 							path: `/sites/${ siteSlug }/launch`,

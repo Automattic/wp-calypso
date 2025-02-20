@@ -35,6 +35,7 @@ const Reddit = () => {
 					<AddSitesForm
 						placeholder={ translate( 'Search by Reddit URL' ) }
 						buttonText={ translate( 'Add Feed' ) }
+						source="discover-reddit"
 					/>
 				</div>
 				<div className="discover-reddit__instructions">

@@ -9,7 +9,6 @@
 		}
 	}
 	.newsletter,
-	.link-in-bio-tld,
 	.free,
 	.update-design {
 		.signup-header {
@@ -66,30 +65,6 @@
 			background-color: var(--studio-gray-5);
 			&::before {
 				background: var(--studio-black);
-			}
-		}
-	}
-
-	.link-in-bio-tld {
-		.processing-step__container {
-			background-color: #d0cce3;
-			background-image:
-				url(calypso/assets/images/onboarding/link-in-bio-processing-left.webp),
-				url(calypso/assets/images/onboarding/link-in-bio-processing-right.webp);
-			background-position-y: 92%, 15%;
-			/*!rtl:ignore*/
-			background-position-x: 0, 100%;
-			background-repeat: no-repeat, no-repeat;
-			background-attachment: fixed;
-			background-size: auto 25%, auto 25%;
-
-			@include break-huge {
-				background-size: auto 55%, auto 55%;
-				background-position-y: 90%, 10%;
-
-				background-image:
-					url(calypso/assets/images/onboarding/link-in-bio-processing-left-desktop.webp),
-					url(calypso/assets/images/onboarding/link-in-bio-processing-right-desktop.webp);
 			}
 		}
 	}

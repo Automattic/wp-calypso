@@ -87,7 +87,7 @@ const props = {
 	submit: () => {},
 	goNext: () => {},
 	goToStep: () => {},
-	flow: 'link-in-bio-tld',
+	flow: 'newsletter',
 	/* eslint-enable @typescript-eslint/no-empty-function */
 };
 
@@ -350,7 +350,7 @@ describe( 'Sidebar', () => {
 				} );
 				renderSidebar( props, siteDetails );
 
-				const title = screen.getByRole( 'heading', { name: /link and launch/i } );
+				const title = screen.getByRole( 'heading', { name: /Your newsletter's ready!/i } );
 				expect( title ).toBeVisible();
 			} );
 		} );
@@ -359,7 +359,7 @@ describe( 'Sidebar', () => {
 			it( 'shows a normal title', () => {
 				renderSidebar( props );
 
-				const title = screen.getByRole( 'heading', { name: /link and launch/i } );
+				const title = screen.getByRole( 'heading', { name: /Your newsletter's ready!/i } );
 				expect( title ).toBeVisible();
 			} );
 		} );

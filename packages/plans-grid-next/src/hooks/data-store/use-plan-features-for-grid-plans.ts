@@ -63,11 +63,6 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						allFeaturesList,
 						planConstantObj?.getNewsletterSignupFeatures?.() ?? []
 					);
-				} else if ( 'plans-link-in-bio' === intent ) {
-					wpcomFeatures = getPlanFeaturesObject(
-						allFeaturesList,
-						planConstantObj?.getLinkInBioSignupFeatures?.() ?? []
-					);
 				} else if ( 'plans-p2' === intent ) {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,

@@ -154,7 +154,6 @@
 		"@automattic/command-palette": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
-		"@automattic/design-carousel": "workspace:^",
 		"@automattic/help-center": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/languages": "workspace:^",
