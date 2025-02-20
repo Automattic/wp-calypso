@@ -18,7 +18,7 @@ const DiscoverAddNew = () => {
 	const needsEmailVerification = isLoggedIn && ! isEmailVerified;
 
 	return (
-		<div className="discover-add-new">
+		<div className="discover-add-new add-sites-tab">
 			<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
 				{ needsEmailVerification && (
 					<Notice

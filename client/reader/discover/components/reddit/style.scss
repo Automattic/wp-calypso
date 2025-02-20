@@ -8,7 +8,7 @@
 		border: 1px solid #e2e2e2;
 		border-radius: 4px;
 		padding: 30px 15px;
-		margin: 50px auto 0;
+		margin: 0 auto;
 
 		@include break-mobile {
 			padding: 30px 45px;
@@ -35,31 +35,5 @@
 		strong {
 			font-weight: 700;
 		}
-
-
-	}
-
-	.subscriptions-add-sites__form--container {
-		display: flex;
-		align-items: flex-start;
-		gap: 8px;
-	}
-
-	.subscriptions-add-sites__form-field {
-		flex: 1;
-
-		.components-base-control__field {
-			margin-bottom: 0;
-		}
-	}
-
-	.components-text-control__input {
-		height: 40px;
-	}
-
-	.is-disabled {
-		opacity: 0.5;
-		cursor: not-allowed;
-		pointer-events: none;
 	}
 }
