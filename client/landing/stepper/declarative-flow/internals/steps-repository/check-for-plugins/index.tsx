@@ -15,7 +15,7 @@ const CheckForPlugins: Step = function CheckForPlugins( { navigation } ) {
 
 	useEffect( () => {
 		if ( ! site || ! checkForActivePlugins ) {
-			return;
+			submit?.( { hasPlugins: false } );
 		}
 
 		const checkForPlugins = async () => {

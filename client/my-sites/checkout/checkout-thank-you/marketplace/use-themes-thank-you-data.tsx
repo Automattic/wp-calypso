@@ -171,9 +171,7 @@ export function useThemesThankYouData(
 	// Redirect to the plugin bundle flow after the activation.
 	useEffect( () => {
 		if ( isActive && continueWithPluginBundle ) {
-			page(
-				`/setup/plugin-bundle/getCurrentThemeSoftwareSets?siteId=${ siteId }&siteSlug=${ siteSlug }`
-			);
+			page( `/setup/plugin-bundle/?siteId=${ siteId }&siteSlug=${ siteSlug }` );
 		}
 	}, [ isActive, continueWithPluginBundle, siteId, siteSlug ] );
 

@@ -295,6 +295,11 @@ const siteSetupFlow: FlowV1 = {
 						return exitFlow( `/setup/plugin-bundle/?siteSlug=${ siteSlug }` );
 					}
 
+					console.log( 'Site setup flow', { intent } );
+					if ( intent === SiteIntent.CreateCourseGoal ) {
+						return exitFlow( `/setup/plugin-bundle/?siteSlug=${ siteSlug }` );
+					}
+
 					if ( isLaunchpadIntent( intent ) ) {
 						initializeLaunchpadState( { siteId, siteSlug } );
 						const url = getPostFlowUrl( { flow: intent, siteId, siteSlug } );

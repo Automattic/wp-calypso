@@ -1,4 +1,4 @@
-import { Onboard, getThemeIdFromStylesheet } from '@automattic/data-stores';
+import { Onboard, getThemeIdFromStylesheet, useSiteIntent } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch } from 'calypso/state';
 import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
@@ -9,6 +9,7 @@ import { useSitePluginSlug } from '../hooks/use-site-plugin-slug';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
+import BundleInstallByGoal from './internals/steps-repository/bundle-install-by-goal';
 import { redirect } from './internals/steps-repository/import/util';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import {
@@ -42,19 +43,20 @@ const pluginBundleFlow: FlowV1 = {
 
 	useSteps() {
 		const pluginSlug = useSitePluginSlug();
+		console.log( 'PLUGIN SLUG', pluginSlug );
 
 		let bundlePluginSteps: StepperStep[] = [];
 
-		if ( pluginSlug && bundleStepsSettings.hasOwnProperty( pluginSlug ) ) {
-			bundlePluginSteps = [
-				...beforeCustomBundleSteps,
-				...bundleStepsSettings[ pluginSlug ].customSteps,
-				...afterCustomBundleSteps,
-			];
-		}
+		bundlePluginSteps = [
+			...beforeCustomBundleSteps,
+			...( bundleStepsSettings[ pluginSlug ]?.customSteps || [] ),
+			{ slug: 'bundle-install-by-goal', component: BundleInstallByGoal },
+			...afterCustomBundleSteps,
+		];
 		return [ ...initialBundleSteps, ...bundlePluginSteps ];
 	},
 	useStepNavigation( currentStep, navigate ) {
+		console.log( 'USE STEP NAVIGATION', currentStep );
 		const steps = this.useSteps();
 		const intent = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
@@ -134,7 +136,9 @@ const pluginBundleFlow: FlowV1 = {
 						);
 					}
 
-					Promise.all( pendingActions ).then( () => window.location.assign( to ) );
+					Promise.all( pendingActions ).then( () => {
+						return window.location.assign( to );
+					} );
 				} );
 			} );
 
@@ -145,6 +149,7 @@ const pluginBundleFlow: FlowV1 = {
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
+			console.log( 'SUBMIT', currentStep );
 			let defaultExitDest = `/home/${ siteSlug }`;
 
 			if ( siteDetails?.options?.theme_slug ) {
@@ -170,6 +175,15 @@ const pluginBundleFlow: FlowV1 = {
 			}
 
 			switch ( currentStep ) {
+
+				case 'checkForPlugins': {
+					console.log( 'CHECK FOR PLUGINS', providedDependencies );
+					if ( providedDependencies?.hasPlugins ) {
+						return exitFlow( defaultExitDest );
+					}
+
+					return navigate( 'bundleTransfer' );
+				}
 				case 'bundleConfirm': {
 					const [ checkoutUrl ] = params;
 
@@ -179,6 +193,20 @@ const pluginBundleFlow: FlowV1 = {
 
 					return navigate( 'bundleTransfer' );
 				}
+				case 'getCurrentThemeSoftwareSets': {
+					const { hasNoBundledSoftware } = providedDependencies as {
+						hasNoBundledSoftware: boolean;
+					};
+
+					console.log( { hasNoBundledSoftware, intent } );
+					if ( ! hasNoBundledSoftware || intent === SiteIntent.CreateCourseGoal ) {
+						return navigate( 'bundleConfirm' );
+					}
+
+					return navigate( nextStep! );
+				}
+
+
 				case 'processing': {
 					const processingResult = params[ 0 ] as ProcessingResult;
 
@@ -193,6 +221,12 @@ const pluginBundleFlow: FlowV1 = {
 						}
 
 						return exitFlow( `/post/${ siteSlug }` );
+					}
+
+					console.log( 'INTENT', intent );
+					if ( intent === SiteIntent.CreateCourseGoal ) {
+						console.log( 'Navigating to bundle-install-by-goal' );
+						return navigate( 'bundle-install-by-goal' );
 					}
 
 					// Custom end of flow.
@@ -236,6 +270,7 @@ const pluginBundleFlow: FlowV1 = {
 		};
 
 		const goNext = () => {
+			console.log( 'GO NEXT 2', currentStep );
 			switch ( currentStep ) {
 				// TODO - Do we need anything here?
 				default:
@@ -287,20 +322,21 @@ const pluginBundleFlow: FlowV1 = {
 			};
 		}
 
-		const { canManageOptions, isLoading } = useCanUserManageOptions();
-		if ( isLoading ) {
-			result = {
-				state: AssertConditionState.CHECKING,
-			};
-		} else if ( canManageOptions === false ) {
-			redirect( '/start' );
-			result = {
-				state: AssertConditionState.FAILURE,
-				message:
-					'site-setup the user needs to have the manage_options capability to go through the flow.',
-			};
-		}
+		// const { canManageOptions, isLoading } = useCanUserManageOptions();
+		// if ( isLoading ) {
+		// 	result = {
+		// 		state: AssertConditionState.CHECKING,
+		// 	};
+		// } else if ( canManageOptions === false ) {
+		// 	redirect( '/start' );
+		// 	result = {
+		// 		state: AssertConditionState.FAILURE,
+		// 		message:
+		// 			'site-setup the user needs to have the manage_options capability to go through the flow.',
+		// 	};
+		// }
 
+		// console.log( 'ASSERT CONDITIONS', result, canManageOptions, isLoading );
 		return result;
 	},
 };

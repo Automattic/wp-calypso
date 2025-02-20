@@ -36,6 +36,7 @@ export const transferStates = {
 const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
 const BundleTransfer: Step = function BundleTransfer( { navigation, flow } ) {
+	console.log( 'BundleTransfer' );
 	const { submit } = navigation;
 	const { setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
 	const { requestAtomicSoftwareStatus, requestLatestAtomicTransfer, initiateAtomicTransfer } =

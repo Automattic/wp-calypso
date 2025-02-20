@@ -34,7 +34,7 @@ const GetCurrentThemeSoftwareSets: Step = function GetCurrentBundledPluginsStep(
 	const [ hasRequested, setHasRequested ] = useState( false );
 
 	const reduxDispatch = useReduxDispatch();
-	const { goNext } = navigation;
+	const { goNext, submit } = navigation;
 	useEffect( () => {
 		if ( site?.ID && ! hasRequested ) {
 			debug( 'Dispatching requests for active theme and features' );
@@ -65,7 +65,7 @@ const GetCurrentThemeSoftwareSets: Step = function GetCurrentBundledPluginsStep(
 	useQueryTheme( 'wpcom', currentThemeId );
 
 	useEffect( () => {
-		debug(
+		console.log(
 			'Deciding to redirect, proceed, or wait',
 			JSON.stringify( { hasRequested, isRequestingActiveTheme, currentThemeId: currentTheme?.id } )
 		);
@@ -81,6 +81,7 @@ const GetCurrentThemeSoftwareSets: Step = function GetCurrentBundledPluginsStep(
 						siteSlug,
 					} )
 				);
+				console.log( 'GO NEXT' );
 				goNext?.();
 			} else {
 				debug(
@@ -92,8 +93,7 @@ const GetCurrentThemeSoftwareSets: Step = function GetCurrentBundledPluginsStep(
 					} )
 				);
 
-				// Current theme has no bundled plugins; they shouldn't be in this flow
-				window.location.replace( `/home/${ siteSlug }` );
+				submit?.( { hasNoBundledSoftware: true } );
 			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -115,7 +115,7 @@ const GetCurrentThemeSoftwareSets: Step = function GetCurrentBundledPluginsStep(
 					hasLoadedSiteFeatures,
 				} )
 			);
-			window.location.replace( `/home/${ siteSlug }` );
+			// window.location.replace( `/home/${ siteSlug }` );
 		}
 	}, [
 		isPluginBundleEligible,
