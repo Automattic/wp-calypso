@@ -25,11 +25,13 @@ $blueberry-color: #3858e9;
 		border: 1px solid var(--Gray-Gray-10, #C3C4C7);
 		background: var(--black-white-white, #FFF);
 		width: 40px;
-		height: 38px;
+		height: 40px;
 		display: flex;
 		flex-direction: row;
 		justify-content: center;
 		align-items: center;
+		box-sizing: border-box;
+
 		button {
 			padding: 0;
 		}
