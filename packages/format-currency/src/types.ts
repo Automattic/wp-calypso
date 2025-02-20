@@ -4,13 +4,6 @@ export interface CurrencyOverride {
 
 export interface CurrencyObjectOptions {
 	/**
-	 * The symbol separating the thousands part of an amount from its hundreds.
-	 *
-	 * Will be set automatically by the currency code.
-	 */
-	precision?: number;
-
-	/**
 	 * Forces any decimal zeros to be hidden if set.
 	 *
 	 * For example, the function will normally format `10.00` in `USD` as
