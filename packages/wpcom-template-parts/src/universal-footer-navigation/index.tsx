@@ -115,14 +115,6 @@ export const PureUniversalNavbarFooter = ( {
 								</li>
 								<li>
 									<a
-										href={ localizeUrl( 'https://wordpress.com/p2/?ref=wpcom-product-menu' ) }
-										target="_self"
-									>
-										{ __( 'P2: WordPress for Teams', __i18n_text_domain__ ) }
-									</a>
-								</li>
-								<li>
-									<a
 										href={ localizeUrl(
 											'https://wordpress.com/website-design-service/?ref=footer_pricing'
 										) }
