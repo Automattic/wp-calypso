@@ -6,7 +6,8 @@ import { getUserProfileBasePath } from 'calypso/reader/user-profile/user-profile
 
 interface UserPostsContext extends Context {
 	params: {
-		user_login: string;
+		user_login?: string;
+		user_id?: string;
 	};
 	primary: ReactElement;
 }
@@ -16,6 +17,7 @@ const analyticsPageTitle = 'Reader';
 export function userPosts( ctx: Context, next: () => void ): void {
 	const context = ctx as UserPostsContext;
 	const userLogin = context.params.user_login;
+	const userId = context.params.user_id;
 	const basePath = getUserProfileBasePath();
 	const fullAnalyticsPageTitle = analyticsPageTitle + ' > User > ' + userLogin + ' > Posts';
 	const mcKey = 'user_posts';
@@ -31,6 +33,7 @@ export function userPosts( ctx: Context, next: () => void ): void {
 			require="calypso/reader/user-profile"
 			key={ 'user-posts-' + userLogin }
 			userLogin={ userLogin }
+			userId={ userId }
 			trackScrollPage={ trackScrollPage.bind(
 				null,
 				basePath,
@@ -40,6 +43,7 @@ export function userPosts( ctx: Context, next: () => void ): void {
 			) }
 			showBack={ !! ctx.lastRoute }
 			handleBack={ goBack }
+			path={ context.path }
 		/>
 	);
 	next();
