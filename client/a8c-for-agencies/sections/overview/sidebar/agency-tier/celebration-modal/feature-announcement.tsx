@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import EmergingPartnerBackground from 'calypso/assets/images/a8c-for-agencies/agency-tier/announcement-background.svg';
+import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -38,14 +39,16 @@ const AgencyTierFeatureAnnouncement = () => {
 	return (
 		<AgencyTierCelebrationModalContent
 			celebrationModal={ {
-				title: translate( "We've just launched Agency Tiers in beta!" ),
-				description: translate(
-					"We're granting you early access to our new Agency Tier experience! While the official launch of our tiers is set for January 2025, you can explore and progress on your tier today."
+				title: translate( 'Take a look at Agency Tiers!' ),
+				description: preventWidows(
+					translate(
+						'Agency Tiers reward your engagement with Automattic—offering directory listings, co-marketing opportunities, growth resources, client leads, and other exciting tools to help you grow your agency depending on Agency Partner level.'
+					)
 				),
 				video:
 					'https://automattic.com/wp-content/uploads/2024/11/agency_tiers_feature_announcement.mp4',
 				image: EmergingPartnerBackground,
-				cta: translate( 'Learn more' ),
+				cta: translate( 'Take a deeper look' ),
 			} }
 			handleOnClose={ handleOnClose }
 			handleClickExploreBenefits={ handleClickExploreBenefits }

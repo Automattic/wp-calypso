@@ -15,7 +15,6 @@ import {
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { isPathAllowed } from 'calypso/a8c-for-agencies/lib/permission';
-import Badge from 'calypso/components/badge';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -190,7 +189,6 @@ const useMainMenuItems = ( path: string ) => {
 							path: '/',
 							link: A4A_AGENCY_TIER_LINK,
 							title: translate( 'Agency Tier' ),
-							extraContent: <Badge type="info-blue">{ translate( 'beta' ) }</Badge>,
 							trackEventProps: {
 								menu_item: 'Automattic for Agencies / Agency Tier',
 							},
