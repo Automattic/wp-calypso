@@ -12,26 +12,36 @@ interface SiteLogsAPIResponse {
 }
 
 export interface ServerLog {
+	date: string;
+	request_type: 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE';
+	status: '200' | '301' | '302' | '400' | '401' | '403' | '404' | '429' | '500';
+	request_url: string;
 	body_bytes_sent: number;
 	cached: string;
-	date: string;
 	http_host: string;
 	http_referer: string;
-	request_type: 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE';
-	request_url: string;
-	status: '200' | '301' | '302' | '400' | '401' | '403' | '404' | '429' | '500';
+	http2: string;
+	http_user_agent: string;
+	http_version: string;
+	http_x_forwarded_for: string;
+	renderer: string;
+	request_completion: string;
+	request_time: string;
+	scheme: string;
 	timestamp: number;
+	type: string;
+	user_ip: string;
 }
 
 export interface PHPLog {
-	atomic_site_id: number;
-	file: string;
-	kind: string;
-	line: number;
-	message: string;
-	name: string;
-	severity: 'User' | 'Warning' | 'Deprecated' | 'Fatal error';
 	timestamp: string;
+	severity: 'User' | 'Warning' | 'Deprecated' | 'Fatal error';
+	message: string;
+	kind: string;
+	name: string;
+	file: string;
+	line: number;
+	atomic_site_id: number;
 }
 
 export type SiteLogsData = {

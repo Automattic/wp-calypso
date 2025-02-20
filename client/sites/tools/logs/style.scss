@@ -47,7 +47,8 @@
 }
 
 // Badges
-.site-logs {
+.site-logs,
+.site-logs-details-modal {
 	.badge {
 		text-transform: uppercase;
 		border-radius: 4px;
@@ -86,5 +87,21 @@
 	.badge.badge--User {
 		background-color: rgba( 220, 220, 222, 1 );
 		color: rgba( 44, 51, 56, 1 );
+	}
+}
+
+.site-logs-details-modal {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: 10px;
+	margin-bottom: 20px;
+
+	.site-logs-details-modal__field-title {
+		font-weight: bold;
+		white-space: nowrap;
+	}
+	:not( .site-logs-details-modal__field-title ) {
+		word-wrap: break-word;
+		min-width: 0;
 	}
 }
