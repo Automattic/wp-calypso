@@ -17,13 +17,14 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { launchSiteApi } from 'calypso/lib/signup/step-actions';
 import { useDispatch } from 'calypso/state';
+import { requestSiteChecklist } from 'calypso/state/checklist/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
 import { useLaunchpad } from '../cards/launchpad/use-launchpad';
-import './full-screen-launchpad.scss';
 import { useLaunchpadContext } from '../cards/launchpad/utils';
+import './full-screen-launchpad.scss';
 
 export const FullScreenLaunchpad = ( {
 	onClose,
@@ -69,6 +70,7 @@ export const FullScreenLaunchpad = ( {
 					} );
 
 					await refetch?.();
+					await dispatch( requestSiteChecklist( siteId.toString() ) );
 					await layout?.refetch();
 					await dispatch( requestSite( siteId ) );
 					recordTracksEvent( 'calypso_full_screen_launchpad_launch_site', {
