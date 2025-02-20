@@ -163,7 +163,7 @@ export declare const translate: typeof i18n.translate;
 export declare const numberFormat: typeof i18n.numberFormat;
 export declare const numberFormatCompact: typeof i18n.numberFormatCompact;
 export declare const formatCurrency: typeof i18n.formatCurrency;
-export declare const geoLocateCurrencySymbol: typeof i18n.geolocateCurrencySymbol;
+export declare const geolocateCurrencySymbol: typeof i18n.geolocateCurrencySymbol;
 export declare const setLocale: typeof i18n.setLocale;
 export declare const addTranslations: typeof i18n.addTranslations;
 export declare const configure: typeof i18n.configure;
