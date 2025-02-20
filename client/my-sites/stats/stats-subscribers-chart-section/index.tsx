@@ -78,7 +78,7 @@ export default function SubscribersChartSection( {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const isChartLibraryEnabled = config.isEnabled( 'stats/chart-library' );
 	const quantityDefault: QuantityDefaultType = {
-		day: 14,
+		day: 30,
 		week: 12,
 		month: 6,
 		year: 3,
