@@ -12,14 +12,18 @@ const SetReaderLanding = ( { submitSignupStep, goToNextStep }: Props ): null => 
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		dispatch(
-			savePreference( READER_AS_LANDING_PAGE_PREFERENCE, {
-				useReaderAsLandingPage: true,
-				updatedAt: Date.now(),
-			} )
-		);
-		submitSignupStep( { stepName: 'set-reader-landing' } );
-		goToNextStep();
+		const saveAndProceed = async () => {
+			await dispatch(
+				savePreference( READER_AS_LANDING_PAGE_PREFERENCE, {
+					useReaderAsLandingPage: true,
+					updatedAt: Date.now(),
+				} )
+			);
+			submitSignupStep( { stepName: 'set-reader-landing' } );
+			goToNextStep();
+		};
+
+		saveAndProceed();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
