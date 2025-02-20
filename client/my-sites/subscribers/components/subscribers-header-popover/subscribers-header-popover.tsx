@@ -72,16 +72,16 @@ const SubscribersHeaderPopover = ( {
 				className="subscriber-popover"
 				focusOnShow={ false }
 			>
-				{ hasSubscribers && (
+				{ hasSubscribers ? (
 					<PopoverMenuItem href={ downloadCsvLink } onClick={ onDownloadCsvClick }>
 						{ translate( 'Download subscribers as CSV' ) }
 					</PopoverMenuItem>
-				) }
-				{ hasMultipleSites && (
+				) : null }
+				{ hasMultipleSites ? (
 					<PopoverMenuItem onClick={ openMigrateSubscribersModal }>
 						{ translate( 'Migrate subscribers from another WordPress.com site' ) }
 					</PopoverMenuItem>
-				) }
+				) : null }
 			</PopoverMenu>
 		</div>
 	);
