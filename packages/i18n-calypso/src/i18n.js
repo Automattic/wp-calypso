@@ -8,7 +8,10 @@ import Tannin from 'tannin';
 import {
 	__DO_NOT_IMPORT__numberFormat,
 	__DO_NOT_IMPORT__numberFormatCompact,
+	__DO_NOT_IMPORT__numberFormatCurrency,
 } from './number-formatters';
+
+const GEO_LOCATION_ENDPOINT_URL = 'https://public-api.wordpress.com/geo/';
 
 /**
  * Module variables
@@ -135,6 +138,7 @@ function I18N() {
 		return new I18N();
 	}
 	this.defaultLocaleSlug = 'en';
+	this.geoLocation = '';
 	// Tannin always needs a plural form definition, or it fails when dealing with plurals.
 	this.defaultPluralForms = ( n ) => ( n === 1 ? 0 : 1 );
 	this.state = {
@@ -157,6 +161,26 @@ function I18N() {
 }
 
 I18N.throwErrors = false;
+
+/**
+ * Fetches geolocation data from the specified endpoint URL.
+ * If the fetch operation fails, it logs a warning message to the console.
+ * Used for currencies: when the user is inside the US using USD,
+ * they should only see `$` and not `US$`.
+ * @constant {Object} geoData - The geolocation data retrieved from the endpoint.
+ * @async
+ * @returns {Promise<Object>} The geolocation data in JSON format.
+ */
+I18N.prototype.geolocateCurrencySymbol = async function () {
+	const geoData = await globalThis
+		.fetch?.( GEO_LOCATION_ENDPOINT_URL )
+		.then( ( response ) => response.json() )
+		.catch( ( error ) => {
+			warn( 'Fetching geolocation for format-currency failed.', error );
+		} );
+
+	this.geoLocation = 'string' === typeof geoData?.country_short ? geoData.country_short : '';
+};
 
 I18N.prototype.on = function ( ...args ) {
 	this.stateObserver.on( ...args );
@@ -226,6 +250,35 @@ I18N.prototype.numberFormatCompact = function (
 	} );
 };
 
+I18N.prototype.formatCurrency = function (
+	number,
+	currency,
+	{ stripZeros = false, isSmallestUnit = false, signForPositive = false, forceLatin = true } = {}
+) {
+	const browserSafeLocale = this.getBrowserSafeLocale();
+	const geoLocation = this.geoLocation;
+
+	/**
+	 * TS will flag this as an error, but best to check for undefined here for older usages
+	 * `Intl.NumberFormat` will return NaN for undefined values, which is not helpful. Null becomes 0, also potentially risky.
+	 */
+	if ( typeof number === 'undefined' || number === null ) {
+		warn( 'numberFormatCurrency() requires a defined and non-null value as the first argument' );
+		return number;
+	}
+
+	return __DO_NOT_IMPORT__numberFormatCurrency( {
+		number,
+		currency,
+		browserSafeLocale,
+		stripZeros,
+		isSmallestUnit,
+		signForPositive,
+		geoLocation,
+		forceLatin,
+	} );
+};
+
 /**
  * Returns a browser-safe locale string that can be used with `Intl.NumberFormat`.
  * @returns {string} The locale string
@@ -239,8 +292,9 @@ I18N.prototype.getBrowserSafeLocale = function () {
 	return this.getLocaleVariant()?.split( '_' )[ 0 ] ?? this.getLocaleSlug();
 };
 
-I18N.prototype.configure = function ( options ) {
+I18N.prototype.configure = async function ( options ) {
 	Object.assign( this, options || {} );
+	await this.geolocateCurrencySymbol();
 	this.setLocale();
 };
 

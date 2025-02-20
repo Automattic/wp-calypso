@@ -2,7 +2,7 @@
 // Project: i18n-calypso
 
 import * as React from 'react';
-import type { NumberFormatParams } from '../number-formatters';
+import type { NumberFormatParams, NumberFormatCurrencyParams } from '../number-formatters';
 
 type LocaleData = Record< string, unknown >;
 type NormalizedTranslateArgs =
@@ -72,7 +72,20 @@ export type ComponentUpdateHook = ( ...args: any ) => any;
 
 export type EventListener = ( ...payload: any ) => any;
 
+/**
+ * Omit `number` as it's an argument to the function.
+ * Omit `browserSafeLocale` as it's pulled from the i18n instance state.
+ */
 export type NumberFormatOptions = Omit< NumberFormatParams, 'number' | 'browserSafeLocale' >;
+
+/**
+ * Omit `number` and `currency` as they're arguments to the function.
+ * Omit `browserSafeLocale` and `geoLocation` as they're pulled from the i18n instance state.
+ */
+export type FormatCurrencyOptions = Omit<
+	NumberFormatCurrencyParams,
+	'number' | 'currency' | 'browserSafeLocale' | 'geoLocation'
+>;
 
 export interface I18N {
 	/**
@@ -93,6 +106,7 @@ export interface I18N {
 
 	numberFormat( number: number, options?: NumberFormatOptions ): string;
 	numberFormatCompact( number: number, options?: NumberFormatOptions ): string;
+	formatCurrency( number: number, currency: string, options?: FormatCurrencyOptions ): string;
 
 	setLocale( localeData: LocaleData ): void;
 	addTranslations( localeData: LocaleData ): void;
@@ -122,6 +136,7 @@ export default i18n;
 export declare const translate: typeof i18n.translate;
 export declare const numberFormat: typeof i18n.numberFormat;
 export declare const numberFormatCompact: typeof i18n.numberFormatCompact;
+export declare const formatCurrency: typeof i18n.formatCurrency;
 export declare const setLocale: typeof i18n.setLocale;
 export declare const addTranslations: typeof i18n.addTranslations;
 export declare const configure: typeof i18n.configure;
