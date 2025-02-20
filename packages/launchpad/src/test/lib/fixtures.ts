@@ -3,10 +3,10 @@ import { Task } from '../../types';
 
 export const defaultSiteDetails: SiteDetails = {
 	ID: 211078228,
-	title: 'Test Link In Bio',
-	name: 'testLinkInBio',
-	description: 'test link in bio',
-	URL: 'https://testlinkinbio.wordpress.com',
+	title: 'Test Newsletter',
+	name: 'testNewsletter',
+	description: 'test newsletter',
+	URL: 'https://testnewsletter.wordpress.com',
 	domain: '',
 	locale: '',
 	slug: '',

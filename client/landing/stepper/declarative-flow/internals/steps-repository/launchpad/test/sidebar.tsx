@@ -68,7 +68,7 @@ jest.mock( '@automattic/data-stores', () => ( {
 	},
 } ) );
 
-const siteName = 'testlinkinbio';
+const siteName = 'testnewsletter';
 const secondAndTopLevelDomain = 'wordpress.com';
 const siteSlug = `${ siteName }.${ secondAndTopLevelDomain }`;
 
@@ -199,7 +199,7 @@ describe( 'Sidebar', () => {
 
 	it( 'does not display customize badge for non wpcom domains (paid)', () => {
 		props.sidebarDomain = buildDomainResponse( {
-			domain: 'paidtestlinkinbio.blog',
+			domain: 'paidtestnewsletter.blog',
 			isWPCOMDomain: false,
 		} );
 
@@ -214,7 +214,7 @@ describe( 'Sidebar', () => {
 
 	it( 'does not display customize badge for a flow with a redundant domain upsell task', () => {
 		props.sidebarDomain = buildDomainResponse( {
-			domain: 'paidtestlinkinbio.blog',
+			domain: 'paidtestnewsletter.blog',
 			flow: 'free',
 			isWPCOMDomain: true,
 		} );
