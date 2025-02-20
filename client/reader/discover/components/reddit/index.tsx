@@ -18,7 +18,7 @@ const Reddit = () => {
 	const needsEmailVerification = isLoggedIn && ! isEmailVerified;
 
 	return (
-		<div className="discover-reddit add-sites-tab">
+		<div className="discover-reddit">
 			<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
 				{ needsEmailVerification && (
 					<Notice
