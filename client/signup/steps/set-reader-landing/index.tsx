@@ -1,21 +1,28 @@
-import { Component } from 'react';
+import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { READER_AS_LANDING_PAGE_PREFERENCE } from 'calypso/state/sites/selectors/has-reader-as-landing-page';
 
-class SetReaderLanding extends Component {
-	componentDidMount() {
-		const { submitSignupStep, saveReaderPreference } = this.props;
+interface Props {
+	submitSignupStep: ( args: { stepName: string } ) => void;
+	saveReaderPreference: () => void;
+	goToNextStep: () => void;
+}
 
+const SetReaderLanding = ( {
+	submitSignupStep,
+	saveReaderPreference,
+	goToNextStep,
+}: Props ): null => {
+	useEffect( () => {
 		saveReaderPreference();
 		submitSignupStep( { stepName: 'set-reader-landing' } );
-		this.props.goToNextStep();
-	}
+		goToNextStep();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
-	render() {
-		return null; // Non-interactive step
-	}
-}
+	return null; // Non-interactive step.
+};
 
 export default connect( null, {
 	saveReaderPreference: () =>
