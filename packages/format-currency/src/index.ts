@@ -299,6 +299,11 @@ function getCurrencyObject(
 	};
 }
 
+/**
+ * Scales a number to a specified precision and rounds it to that precision.
+ * It ensures that all currency values are consistently rounded to the desired precision,
+ * avoiding issues with floating-point arithmetic.
+ */
 function scaleNumberForPrecision( number: number, currencyPrecision: number ): number {
 	const scale = Math.pow( 10, currencyPrecision );
 	return Math.round( number * scale ) / scale;
