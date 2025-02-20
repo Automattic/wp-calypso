@@ -27,6 +27,7 @@ export function HelpCenterChat( {
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
 	const userFieldMessage = params.get( 'userFieldMessage' );
+	const userFieldProduct = params.get( 'userFieldProduct' );
 	const siteUrl = params.get( 'siteUrl' );
 	const siteId = params.get( 'siteId' );
 
@@ -47,6 +48,7 @@ export function HelpCenterChat( {
 			selectedSiteId={ Number( siteId ) || ( site?.ID as number ) }
 			selectedSiteURL={ siteUrl || ( site?.URL as string ) }
 			userFieldMessage={ userFieldMessage }
+			userFieldProduct={ userFieldProduct }
 			isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
 			extraContactOptions={
 				<ExtraContactOptions isUserEligible={ isUserEligibleForPaidSupport } />

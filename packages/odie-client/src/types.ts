@@ -42,6 +42,7 @@ export type OdieAssistantProviderProps = {
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
 	userFieldMessage?: string | null;
+	userFieldProduct?: string | null;
 	version?: string | null;
 	children?: ReactNode;
 	setChatStatus?: ( status: ChatStatus ) => void;

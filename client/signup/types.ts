@@ -22,6 +22,7 @@ export interface Flow {
 	enableBranchSteps?: boolean;
 	hideProgressIndicator?: boolean;
 	enableHelpCenter?: boolean;
+	enablePremiumSupport?: boolean;
 	helpCenterButtonText?: string;
 	enableHotjar?: boolean;
 	onEnterFlow?: ( flowName: string ) => void;

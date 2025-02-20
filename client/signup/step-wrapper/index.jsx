@@ -1,8 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
+import { useGetZendeskFieldsByFlow } from '@automattic/help-center/src/hooks';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { ActionButtons } from '@automattic/onboarding';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect as useDataStoreSelect } from '@wordpress/data';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -15,21 +16,27 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import './style.scss';
 
-function HelpCenterButton( { helpCenterButtonText } ) {
+function HelpCenterButton( { helpCenterButtonText, hasPremiumSupport, flowName } ) {
 	const { setShowHelpCenter, setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
+	const isShowingHelpCenter = useDataStoreSelect(
+		( select ) => select( HELP_CENTER_STORE ).isHelpCenterShown(),
+		[]
+	);
+
+	const { initialMessage, product } = useGetZendeskFieldsByFlow( flowName );
 
 	if ( ! helpCenterButtonText ) {
 		return;
 	}
-
 	function openHelpCenter() {
-		const chatUrl = `/contact-form?${ new URLSearchParams( {
-			mode: 'CHAT',
-			'disable-gpt': 'true',
-			'skip-resources': 'true',
-		} ).toString() }`;
-		setNavigateToRoute( chatUrl );
-		setShowHelpCenter( true );
+		setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport );
+		if ( hasPremiumSupport ) {
+			setNavigateToRoute(
+				`/odie?provider=zendesk&userFieldMessage=${ initialMessage }&userFieldProduct=${ product }`
+			);
+		} else {
+			setNavigateToRoute( `/odie` );
+		}
 	}
 
 	return (
@@ -233,7 +240,6 @@ class StepWrapper extends Component {
 
 		const flow = flows.getFlow( flowName, this.props.userLoggedIn );
 		const enableHelpCenter = flow?.enableHelpCenter && isEnabled( 'signup/help-center-link' );
-		const helpCenterButtonText = flow?.helpCenterButtonText;
 
 		let sticky = null;
 		if ( isSticky !== undefined ) {
@@ -249,7 +255,11 @@ class StepWrapper extends Component {
 						{ nextButton }
 						{ customizedActionButtons }
 						{ enableHelpCenter && (
-							<HelpCenterButton helpCenterButtonText={ helpCenterButtonText } />
+							<HelpCenterButton
+								helpCenterButtonText={ flow?.helpCenterButtonText }
+								hasPremiumSupport={ flow?.enablePremiumSupport }
+								flowName={ flowName }
+							/>
 						) }
 					</ActionButtons>
 					{ ! hideFormattedHeader && (

@@ -1,5 +1,12 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { HOSTING_LP_FLOW, ONBOARDING_FLOW, ONBOARDING_GUIDED_FLOW } from '@automattic/onboarding';
+import {
+	HOSTING_LP_FLOW,
+	ONBOARDING_FLOW,
+	ONBOARDING_GUIDED_FLOW,
+	DIFM_FLOW,
+	DIFM_FLOW_STORE,
+	WEBSITE_DESIGN_SERVICES,
+} from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 
 const noop = () => {};
@@ -428,7 +435,7 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
-			name: 'do-it-for-me',
+			name: DIFM_FLOW,
 			steps: [
 				userSocialStep,
 				'new-or-existing-site',
@@ -445,6 +452,7 @@ export function generateFlows( {
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
 			enableHelpCenter: true,
+			enablePremiumSupport: true,
 			get helpCenterButtonText() {
 				return translate( 'Questions? Contact our site building team' );
 			},
@@ -452,7 +460,7 @@ export function generateFlows( {
 			optionalDependenciesInQuery: [ 'coupon', 'back_to', 'newOrExistingSiteChoice' ],
 		},
 		{
-			name: 'do-it-for-me-store',
+			name: DIFM_FLOW_STORE,
 			steps: [
 				userSocialStep,
 				'new-or-existing-site',
@@ -469,6 +477,7 @@ export function generateFlows( {
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
 			enableHelpCenter: true,
+			enablePremiumSupport: true,
 			get helpCenterButtonText() {
 				return translate( 'Questions? Contact our site building team' );
 			},
@@ -476,7 +485,7 @@ export function generateFlows( {
 			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
-			name: 'website-design-services',
+			name: WEBSITE_DESIGN_SERVICES,
 			steps: [ 'difm-options', 'social-profiles', 'difm-design-setup-site', 'difm-page-picker' ],
 			destination: getDIFMSignupDestination,
 			description: 'A flow for DIFM onboarding',
@@ -485,6 +494,7 @@ export function generateFlows( {
 			optionalDependenciesInQuery: [ 'back_to' ],
 			lastModified: '2024-06-14',
 			enableHelpCenter: true,
+			enablePremiumSupport: true,
 			get helpCenterButtonText() {
 				return translate( 'Questions? Contact our site building team' );
 			},
