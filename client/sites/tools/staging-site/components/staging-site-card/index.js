@@ -426,13 +426,13 @@ export const StagingSiteCard = ( {
 	} );
 
 	const { pullFromStaging } = usePullFromStagingMutation( siteId, stagingSite?.id, {
-		onSuccess: ( data, variables ) => {
+		onSuccess: ( data, syncOptions ) => {
 			dispatch(
 				recordTracksEvent(
 					'calypso_hosting_configuration_staging_site_pull_success',
 					zipObject(
-						variables ? variables : [],
-						Array( variables ? variables.length : 0 ).fill( true )
+						syncOptions ? syncOptions : [],
+						Array( syncOptions ? syncOptions.length : 0 ).fill( true )
 					)
 				)
 			);
