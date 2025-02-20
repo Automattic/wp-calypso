@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from 'react';
 import { DEVICE_TYPES } from './constants';
 import FixedViewport from './fixed-viewport';
 import DeviceSwitcherToolbar from './toolbar';
-import useZoomOut from './use-zoom-out';
 import type { Device } from './types';
 import './device-switcher.scss';
 
@@ -17,11 +16,9 @@ interface Props {
 	isShowFrameShadow?: boolean;
 	isFixedViewport?: boolean;
 	isFullscreen?: boolean;
-	isZoomable?: boolean;
 	frameRef?: React.MutableRefObject< HTMLDivElement | null >;
 	onDeviceChange?: ( device: Device ) => void;
 	onViewportChange?: ( height?: number ) => void;
-	onZoomOutScaleChange?: ( value: number ) => void;
 }
 
 // Transition animation delay
@@ -37,27 +34,18 @@ const DeviceSwitcher = ( {
 	isShowFrameShadow = true,
 	isFixedViewport,
 	isFullscreen,
-	isZoomable,
 	frameRef,
 	onDeviceChange,
 	onViewportChange,
-	onZoomOutScaleChange,
 }: Props ) => {
 	const [ device, setDevice ] = useState< Device >( defaultDevice );
-	const [ isZoomActive, setIsZoomActive ] = useState( false );
 	const [ containerResizeListener, { width, height } ] = useResizeObserver();
-	const { zoomOutStyles, handleZoomOutScaleChange } = useZoomOut( onZoomOutScaleChange );
 
 	const timerRef = useRef< null | ReturnType< typeof setTimeout > >( null );
 
 	const handleDeviceClick = ( nextDevice: Device ) => {
 		setDevice( nextDevice );
 		onDeviceChange?.( nextDevice );
-	};
-
-	const handleZoomClick = () => {
-		setIsZoomActive( ! isZoomActive );
-		handleZoomOutScaleChange( ! isZoomActive ? 0.5 : 1 );
 	};
 
 	// Animate on viewport size update
@@ -86,10 +74,6 @@ const DeviceSwitcher = ( {
 		</div>
 	);
 
-	if ( isZoomable ) {
-		frame = <div style={ zoomOutStyles }>{ frame }</div>;
-	}
-
 	if ( isFixedViewport ) {
 		frame = (
 			<FixedViewport device={ device } viewportWidth={ width ?? 0 }>
@@ -112,13 +96,7 @@ const DeviceSwitcher = ( {
 		>
 			<div className="device-switcher__header">
 				{ isShowDeviceSwitcherToolbar && (
-					<DeviceSwitcherToolbar
-						device={ device }
-						isZoomable={ !! isZoomable }
-						isZoomActive={ isZoomActive }
-						onDeviceClick={ handleDeviceClick }
-						onZoomClick={ handleZoomClick }
-					/>
+					<DeviceSwitcherToolbar device={ device } onDeviceClick={ handleDeviceClick } />
 				) }
 			</div>
 			{ frame }
