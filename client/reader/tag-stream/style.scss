@@ -13,11 +13,8 @@
 	}
 
 	.navigation-header {
-		margin: 0 auto;
-		padding: 0 0 16px 0;
-
-		@include breakpoint-deprecated( "<660px" ) {
-			padding: 0 16px 16px;
+		&::after {
+			top: 6px;
 		}
 	}
 }
@@ -39,11 +36,11 @@
 }
 
 .reader__content .tag-stream__header {
-	margin-bottom: 24px;
-}
+	margin-bottom: 20px;
 
-.reader__content .tag-stream__header.has-description {
-	padding-bottom: 16px;
+	&.has-description {
+		padding-bottom: 16px;
+	}
 }
 
 .tag-stream__header-title-group {
@@ -64,6 +61,7 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: flex-start;
+	padding-top: 3px;
 
 	@include breakpoint-deprecated( "<660px" ) {
 		margin: 0 16px;

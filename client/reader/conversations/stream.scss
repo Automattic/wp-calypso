@@ -1,11 +1,3 @@
-.is-section-reader .conversations__header.navigation-header {
-	margin: 0 auto;
-
-	@media only screen and (max-width: 660px) {
-		padding: 0 24px;
-	}
-}
-
 .conversations__stream .reader-post-card.card.is-compact .reader-post-options-menu {
 	position: absolute;
 	right: -2px;

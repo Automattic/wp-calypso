@@ -2,20 +2,6 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
-.is-section-reader .search-stream__fixed-area {
-	.navigation-header {
-		@include break-medium {
-			padding: 0;
-		}
-	}
-	.navigation-header__main {
-		padding-top: 24px;
-		@media ( max-width: 1300px ) {
-			padding-top: 12px;
-		}
-	}
-}
-
 // .has-header-section only applies for logged out views
 .layout.has-header-section.is-section-reader .search-stream__fixed-area .navigation-header h1 {
 	@extend .wp-brand-font;

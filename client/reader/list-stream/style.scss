@@ -1,89 +1,6 @@
-.is-group-reader .card.list-stream__header {
-	box-shadow: none;
-	border-bottom: 1px solid var(--color-neutral-10);
-	background: var(--studio-white);
-	display: flex;
-	flex-direction: row;
-	padding: 0;
-
-	@include breakpoint-deprecated( ">660px" ) {
-		padding-left: 0;
-		padding-right: 0;
-		margin-top: 0;
-	}
-
-	&:hover {
-		cursor: default;
-	}
-
-	// Main layout already has mx
-	.navigation-header {
-		margin: 0 auto;
-		padding: 0 0 16px 0;
-
-		@include breakpoint-deprecated( "<660px" ) {
-			padding: 0 16px 16px;
-		}
-	}
-}
-
-.list-stream__header-icon {
-	height: 48px;
-	width: 48px;
-	background: var(--color-neutral-10);
-	text-align: center;
-
-	.gridicon {
-		fill: var(--color-text-inverted);
-		height: 24px;
-		position: relative;
-		top: 12px;
-		width: 24px;
-	}
-}
-
-.list-stream__header-details {
-	align-self: center;
-	display: flex;
-	flex-direction: column;
-	margin: 0 10px;
-	width: calc(100% - 15px);
-
-	@include breakpoint-deprecated( ">660px" ) {
-		width: calc(100% - 165px);
-	}
-}
-
-.list-stream__header-title {
-	color: var(--color-neutral-70);
-	display: flex;
-	font-size: $font-body;
-
-	.gridicon {
-		color: var(--color-text-subtle);
-		height: 14px;
-	}
-}
-
 .list-stream__header-title-privacy {
 	margin-left: 2px;
 	margin-top: 1px;
-}
-
-.list-stream__header-description {
-	margin: 0;
-	color: var(--color-text-subtle);
-}
-
-.list-stream__header-title,
-.list-stream__header-description {
-	height: 22px;
-	overflow: hidden;
-	position: relative;
-
-	&::after {
-		@include long-content-fade( $size: 15% );
-	}
 }
 
 .list-stream__header-follow {
@@ -120,16 +37,11 @@
 	pointer-events: none;
 	user-select: none;
 
-	.list-stream__header-title,
 	.follow-button,
 	.follow-button__label {
 		color: transparent;
 		background-color: var(--color-neutral-0);
 		animation: loading-fade 1.6s ease-in-out infinite;
-	}
-
-	.list-stream__header-title {
-		margin-right: 25%;
 	}
 
 	.gridicon {

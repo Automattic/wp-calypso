@@ -4,7 +4,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Stream from 'calypso/reader/stream';
 import EmptyContent from './empty';
-import './style.scss';
 
 const title = translate( 'My Likes' );
 const documentTitle = translate( '%s ‹ Reader', {

@@ -6,11 +6,72 @@ body.is-section-reader {
 		.main {
 			padding: 24px;
 			border-block-end: 1px solid var(--studio-gray-0);
-			
-			&.search-stream {
-				padding-top: 0;
+
+			@media (max-width: $break-small) {
+				padding: 24px 0;
 			}
 		}
+
+		.back-button {
+			@media (max-width: 1300px) {
+				position: unset;
+				display: flex;
+			}
+
+			button.is-compact.is-borderless {
+				@media (max-width: 1300px) {
+					margin: 0;
+					padding: 5px 0 0 0;
+				}
+
+				@media (max-width: $break-small) {
+					padding: 0 0 0 14px;
+				}
+			}
+
+			+ .has-back-button .navigation-header,
+			+ .navigation-header {
+				@media (max-width: 1300px) {
+					padding-top: 12px;
+				}
+
+				@media (max-width: $break-small) {
+					padding: 12px 16px 0;
+				}
+			}
+		}
+
+		.navigation-header {
+			margin: 0 auto;
+			padding: 0;
+
+			@media (max-width: $break-small) {
+				padding: 0 16px;
+			}
+	
+			&::after {
+				content: "";
+				display: block;
+				position: relative;
+				left: calc(-1 * (100vw - 100%)/2 - 132px);
+				margin: 18px 0;
+				width: 110vw;
+				height: 1px;
+				background: var(--color-border-secondary);
+
+				@media screen and (min-width: $break-medium) {
+					margin: 24px 0;
+				}
+			}
+		}
+
+		// For reader/a8c
+		.section-header {
+			@media (max-width: 1300px) {
+				padding-top: 12px;
+			}
+		}
+
 		.layout__primary > div:not(:has(.recent-feed)) {
 			background: var(--color-surface);
 			border-radius: 8px; /* stylelint-disable-line scales/radii */
@@ -30,12 +91,6 @@ body.is-section-reader {
 			overflow-x: auto;
 		}
 	}
-
-	@media only screen and (max-width: 600px) {
-		div.layout.is-global-sidebar-visible .main {
-			padding: 24px 0;
-		}
-	}
 }
 
 .is-group-reader .async-load {
@@ -46,16 +101,6 @@ body.is-section-reader {
 .is-reader-page .reader__content,
 .is-reader-page .reader-start {
 	margin-top: 0;
-}
-
-.is-reader-page .recommended-for-you.main,
-.is-reader-page .following.main,
-.is-reader-page .tag-stream__main.main,
-.is-reader-page .search-stream__with-sites.main {
-	margin: 0 auto;
-	@include breakpoint-deprecated( "<660px" ) {
-		margin: 16px auto;
-	}
 }
 
 .is-reader-page .reader-full-post__story-content {
@@ -268,20 +313,6 @@ body.is-section-reader {
 	}
 }
 
-.is-group-reader {
-	@media screen and (min-width: $break-medium) {
-		.navigation-header::after {
-			content: "";
-			display: block;
-			position: relative;
-			left: calc(-1 * (100vw - 100%)/2 - 132px);
-			margin: 24px 0;
-			width: 110vw;
-			height: 1px;
-			background: var(--color-border-secondary);
-		}
-	}
-}
 .is-group-reader .reader-notifications__panel {
 	@media only screen and (min-width: 1114px) {
 		.wpnc__main {
