@@ -3,7 +3,7 @@ import { SiteDetails } from '@automattic/data-stores';
 import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useContext, useEffect, useLayoutEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
@@ -124,6 +124,8 @@ export function ProductsOverviewV2( {
 		[ dispatch, setSelectedFilters ]
 	);
 
+	const topRef = useRef< HTMLDivElement >( null );
+
 	return (
 		<Layout
 			className={ clsx( 'products-overview-v2', { 'is-compact': isCompact } ) }
@@ -133,58 +135,61 @@ export function ProductsOverviewV2( {
 		>
 			<GuidedTour defaultTourId="marketplaceWalkthrough" />
 
-			<LayoutTop>
-				<A4AAgencyApprovalNotice />
-				<LayoutHeader>
-					<Breadcrumb
-						items={ [
-							{
-								label: translate( 'Marketplace' ),
-								href: A4A_MARKETPLACE_LINK,
-							},
-							{
-								label: translate( 'Products' ),
-							},
-						] }
-						hideOnMobile
-					/>
-
-					<Actions className="a4a-marketplace__header-actions">
-						<MobileSidebarNavigation />
-						<div ref={ ( ref ) => setReferralToggleRef( ref as HTMLElement | null ) }>
-							<ReferralToggle />
-						</div>
-						<ShoppingCart
-							showCart={ showCart }
-							setShowCart={ setShowCart }
-							toggleCart={ toggleCart }
-							items={ selectedCartItems }
-							onRemoveItem={ onRemoveCartItem }
-							onCheckout={ () => {
-								page( A4A_MARKETPLACE_CHECKOUT_LINK );
-							} }
+			<div className="products-overview-v2__top" ref={ topRef }>
+				<LayoutTop>
+					<A4AAgencyApprovalNotice />
+					<LayoutHeader>
+						<Breadcrumb
+							items={ [
+								{
+									label: translate( 'Marketplace' ),
+									href: A4A_MARKETPLACE_LINK,
+								},
+								{
+									label: translate( 'Products' ),
+								},
+							] }
+							hideOnMobile
 						/>
 
-						<GuidedTourStep
-							className="a4a-marketplace__guided-tour"
-							id="marketplace-walkthrough-navigation"
-							tourId="marketplaceWalkthrough"
-							context={ sidebarRef }
-						/>
+						<Actions className="a4a-marketplace__header-actions">
+							<MobileSidebarNavigation />
+							<div ref={ ( ref ) => setReferralToggleRef( ref as HTMLElement | null ) }>
+								<ReferralToggle />
+							</div>
+							<ShoppingCart
+								showCart={ showCart }
+								setShowCart={ setShowCart }
+								toggleCart={ toggleCart }
+								items={ selectedCartItems }
+								onRemoveItem={ onRemoveCartItem }
+								onCheckout={ () => {
+									page( A4A_MARKETPLACE_CHECKOUT_LINK );
+								} }
+							/>
 
-						<GuidedTourStep
-							className="a4a-marketplace__guided-tour"
-							id="marketplace-walkthrough-referral-toggle"
-							tourId="marketplaceWalkthrough"
-							context={ referralToggleRef }
-						/>
-					</Actions>
-				</LayoutHeader>
+							<GuidedTourStep
+								className="a4a-marketplace__guided-tour"
+								id="marketplace-walkthrough-navigation"
+								tourId="marketplaceWalkthrough"
+								context={ sidebarRef }
+							/>
 
-				<ProductCategoryMenu onSelect={ onCategorySelected } />
-			</LayoutTop>
+							<GuidedTourStep
+								className="a4a-marketplace__guided-tour"
+								id="marketplace-walkthrough-referral-toggle"
+								tourId="marketplaceWalkthrough"
+								context={ referralToggleRef }
+							/>
+						</Actions>
+					</LayoutHeader>
+
+					<ProductCategoryMenu onSelect={ onCategorySelected } />
+				</LayoutTop>
+			</div>
 
 			<ProductActionPanel
+				stickyTopOffset={ topRef.current?.offsetHeight ?? 0 }
 				searchQuery={ productSearchQuery }
 				onSearchQueryChange={ setProductSearchQuery }
 				selectedFilters={ selectedFilters }
