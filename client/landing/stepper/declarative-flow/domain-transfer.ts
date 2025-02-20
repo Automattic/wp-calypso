@@ -11,6 +11,7 @@ import {
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { USER_STORE } from '../stores';
 import { useLoginUrl } from '../utils/path';
+import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { STEPS } from './internals/steps';
 import { Flow } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
@@ -22,19 +23,10 @@ const domainTransfer: Flow = {
 	},
 	isSignupFlow: false,
 	initialize() {
-		return [ STEPS.DOMAIN_TRANSFER_INTRO, STEPS.DOMAIN_TRANSFER_DOMAINS, STEPS.PROCESSING ];
-	},
-
-	useSideEffect( _currentStepSlug, navigate ) {
-		const isLoggedIn = useSelector( isUserLoggedIn );
-
-		// TODO: use `stepsWithRequiredLogin` instead of `useSideEffect` ?
-		useEffect( () => {
-			if ( ! isLoggedIn && navigate ) {
-				navigate( 'intro' );
-			}
-			// eslint-disable-next-line react-hooks/exhaustive-deps
-		}, [ isLoggedIn ] );
+		return [
+			STEPS.DOMAIN_TRANSFER_INTRO,
+			...stepsWithRequiredLogin( [ STEPS.DOMAIN_TRANSFER_DOMAINS, STEPS.PROCESSING ] ),
+		];
 	},
 
 	useStepNavigation( currentStepSlug, navigate ) {
