@@ -9,13 +9,11 @@ const debug = debugFactory( 'calypso:stepper:preloading' );
 
 async function tryPreload( step?: StepperStep, followingStep?: StepperStep ) {
 	if ( step && 'asyncComponent' in step ) {
-		debug( 'Preloading next step:', step.slug );
-
+		debug( 'Preloading step:', step.slug );
 		await step.asyncComponent();
-
-		// Flows are indeterminate, they often pick one of the two next steps based on user input, so load two steps ahead.
-		tryPreload( followingStep );
 	}
+	// Flows are indeterminate, they often pick one of the two next steps based on user input, so load two steps ahead.
+	tryPreload( followingStep );
 }
 
 /**
