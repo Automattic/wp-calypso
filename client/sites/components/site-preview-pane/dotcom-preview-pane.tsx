@@ -265,7 +265,7 @@ const DotcomPreviewPane = ( {
 			dispatch(
 				appendBreadcrumb( {
 					id: 'site',
-					label: site.name,
+					label: site.title,
 					href: `/overview/${ site.slug }`,
 					icon: <SiteIcon site={ site } viewType="breadcrumb" disableClick />,
 				} )
