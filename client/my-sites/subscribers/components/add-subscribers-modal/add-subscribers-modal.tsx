@@ -3,37 +3,39 @@ import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_UNLIMITED_SUBSCRIBERS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Gridicon, FlowQuestion } from '@automattic/components';
-import { SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { AddSubscriberForm, UploadSubscribersForm } from '@automattic/subscriber';
 import { useHasStaleImportJobs } from '@automattic/subscriber/src/hooks/use-has-stale-import-jobs';
-import { useImportError } from '@automattic/subscriber/src/hooks/use-import-error';
 import { useInProgressState } from '@automattic/subscriber/src/hooks/use-in-progress-state';
 import { ExternalLink, Modal, __experimentalVStack as VStack } from '@wordpress/components';
+import { useState } from '@wordpress/element';
 import { copy, upload, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import Notice from 'calypso/components/notice';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import { isBusinessTrialSite } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
+
 import './style.scss';
 
-type AddSubscribersModalProps = {
-	site: SiteDetails;
-};
-
-const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
+const AddSubscribersModal = ( {
+	isVisible,
+	onClose,
+	addSubscribersCallback,
+}: {
+	isVisible: boolean;
+	onClose: () => void;
+	addSubscribersCallback: () => void;
+} ) => {
+	const site = useSelector( getSelectedSite );
 	const translate = useTranslate();
 	const [ addingMethod, setAddingMethod ] = useState( '' );
-	const { showAddSubscribersModal, setShowAddSubscribersModal, addSubscribersCallback } =
-		useSubscribersPage();
 	const hasUnlimitedSubscribers = useSelector( ( state: AppState ) =>
 		siteHasFeature( state, site?.ID, FEATURE_UNLIMITED_SUBSCRIBERS )
 	);
@@ -42,44 +44,24 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 	// This flag refers to Substack free/paid subscriber + content importer.
 	const isSubstackSubscriberImporterEnabled = isEnabled( 'importers/newsletter' );
 
-	useEffect( () => {
-		const handleHashChange = () => {
-			// Open "add subscribers" via URL hash
-			if ( window.location.hash === '#add-subscribers' ) {
-				setShowAddSubscribersModal( true );
-			}
-		};
-
-		// Listen to the hashchange event
-		window.addEventListener( 'hashchange', handleHashChange );
-
-		// Make it work on load as well
-		handleHashChange();
-
-		return () => {
-			window.removeEventListener( 'hashchange', handleHashChange );
-		};
-	}, [] );
-
 	const modalTitle = translate( 'Add subscribers to %s', {
-		args: [ site.title ],
+		args: [ site?.title || '' ],
 		comment: "%s is the site's title",
 	} );
 
 	const [ isUploading, setIsUploading ] = useState( false );
 	const onImportStarted = ( hasFile: boolean ) => setIsUploading( hasFile );
 
-	const importError = useImportError();
 	const isImportInProgress = useInProgressState();
 	const hasStaleImportJobs = useHasStaleImportJobs();
 
 	const onImportFinished = () => {
 		setIsUploading( false );
 		setAddingMethod( '' );
-		addSubscribersCallback( importError );
+		addSubscribersCallback();
 	};
 
-	if ( ! showAddSubscribersModal ) {
+	if ( ! isVisible ) {
 		return null;
 	}
 
@@ -137,16 +119,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 		<Modal
 			title={ modalTitle as string }
 			onRequestClose={ () => {
-				if ( window.location.hash === '#add-subscribers' ) {
-					// Doing this instead of window.location.hash = '' because window.location.hash keeps the # symbol
-					// Also this makes the back button show the modal again, which is neat
-					history.pushState(
-						'',
-						document.title,
-						window.location.pathname + window.location.search
-					);
-				}
-				setShowAddSubscribersModal( false );
+				onClose();
 				setAddingMethod( '' );
 			} }
 			overlayClassName="add-subscribers-modal"
@@ -236,8 +209,8 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 					) }
 					<label className="add-subscribers-modal__label">{ translate( 'Email' ) }</label>
 					<AddSubscriberForm
-						siteId={ site.ID }
-						siteUrl={ site.URL }
+						siteId={ site?.ID || 0 }
+						siteUrl={ site?.URL }
 						hasSubscriberLimit={ hasSubscriberLimit }
 						submitBtnAlwaysEnable
 						onImportStarted={ onImportStarted }
@@ -297,8 +270,8 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 						</Notice>
 					) }
 					<UploadSubscribersForm
-						siteId={ site.ID }
-						siteUrl={ site.URL }
+						siteId={ site?.ID || 0 }
+						siteUrl={ site?.URL }
 						hasSubscriberLimit={ hasSubscriberLimit }
 						onImportStarted={ onImportStarted }
 						onImportFinished={ onImportFinished }

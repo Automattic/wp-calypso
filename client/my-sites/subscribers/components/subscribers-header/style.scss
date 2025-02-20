@@ -1,0 +1,29 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+
+
+.subscribers__header {
+	.add-subscribers-button {
+		align-items: flex-start;
+	
+		.gridicon {
+			margin-right: 0;
+		}
+	
+		.add-subscribers-button-text {
+			margin-left: 4px;
+			display: none;
+		}
+	
+		@media (max-width: $break-medium) {
+			display: inline-block;
+		}
+	
+		@media (min-width: $break-small) {
+			.add-subscribers-button-text {
+				display: inline;
+			}
+		}
+	}
+}

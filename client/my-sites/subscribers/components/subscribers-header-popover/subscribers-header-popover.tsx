@@ -6,18 +6,22 @@ import { useDispatch } from 'react-redux';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { addQueryArgs } from 'calypso/lib/url';
-import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import { useSelector } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import useSubscriberCountQuery from '../../queries/use-subscriber-count-query';
 import { useRecordExport } from '../../tracks';
 import '../shared/popover-style.scss';
 
 type SubscribersHeaderPopoverProps = {
 	siteId: number | undefined;
+	openMigrateSubscribersModal: () => void;
 };
 
-const SubscribersHeaderPopover = ( { siteId }: SubscribersHeaderPopoverProps ) => {
+const SubscribersHeaderPopover = ( {
+	siteId,
+	openMigrateSubscribersModal,
+}: SubscribersHeaderPopoverProps ) => {
 	const [ isVisible, setIsVisible ] = useState( false );
 	const dispatch = useDispatch();
 	const onToggle = useCallback( () => setIsVisible( ( visible ) => ! visible ), [] );
@@ -26,10 +30,10 @@ const SubscribersHeaderPopover = ( { siteId }: SubscribersHeaderPopoverProps ) =
 		{ page: 'subscribers', blog: siteId, blog_subscribers: 'csv', type: 'all' },
 		'https://dashboard.wordpress.com/wp-admin/index.php'
 	);
-	const { grandTotal } = useSubscribersPage();
+	const { data: subscribersTotals } = useSubscriberCountQuery( siteId ?? null );
+	const hasSubscribers = subscribersTotals?.email_subscribers ?? 0 > 0;
 	const recordExport = useRecordExport();
 	const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
-	const migrationUrl = '#migrate-subscribers';
 
 	const onDownloadCsvClick = () => {
 		dispatch(
@@ -41,7 +45,6 @@ const SubscribersHeaderPopover = ( { siteId }: SubscribersHeaderPopoverProps ) =
 		recordExport();
 	};
 
-	const hasSubscribers = grandTotal > 0;
 	const hasMultipleSites = currentUserSiteCount && currentUserSiteCount > 1;
 
 	// No point showing the dropdown if they don't have subscribers or sites
@@ -75,7 +78,7 @@ const SubscribersHeaderPopover = ( { siteId }: SubscribersHeaderPopoverProps ) =
 					</PopoverMenuItem>
 				) }
 				{ hasMultipleSites && (
-					<PopoverMenuItem href={ migrationUrl }>
+					<PopoverMenuItem onClick={ openMigrateSubscribersModal }>
 						{ translate( 'Migrate subscribers from another WordPress.com site' ) }
 					</PopoverMenuItem>
 				) }

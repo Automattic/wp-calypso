@@ -6,18 +6,18 @@ import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { UnsubscribeActionType } from '../components/unsubscribe-modal';
 import { useSubscriberRemoveMutation } from '../mutations';
 import { useRecordRemoveModal } from '../tracks';
-import { Subscriber, SubscriberListArgs } from '../types';
+import { Subscriber, SubscriberQueryParams } from '../types';
 
 const useUnsubscribeModal = (
 	siteId: number | null,
-	args: SubscriberListArgs,
+	subscriberQueryParams: SubscriberQueryParams,
 	detailsView = false,
 	onSuccess?: () => void
 ) => {
 	const [ currentSubscriber, setCurrentSubscriber ] = useState< Subscriber >();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const recordRemoveModal = useRecordRemoveModal();
-	const { mutate } = useSubscriberRemoveMutation( siteId, args, detailsView );
+	const { mutate } = useSubscriberRemoveMutation( siteId, subscriberQueryParams, detailsView );
 
 	const onClickUnsubscribe = ( subscriber: Subscriber ) => {
 		setCurrentSubscriber( subscriber );

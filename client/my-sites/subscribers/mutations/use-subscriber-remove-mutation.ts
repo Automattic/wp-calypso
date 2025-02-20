@@ -6,9 +6,8 @@ import {
 	getSubscriberDetailsType,
 	getSubscribersCacheKey,
 } from '../helpers';
-import useManySubsSite from '../hooks/use-many-subs-site';
 import { useRecordSubscriberRemoved } from '../tracks';
-import type { SubscriberEndpointResponse, Subscriber, SubscriberListArgs } from '../types';
+import type { SubscriberEndpointResponse, Subscriber, SubscriberQueryParams } from '../types';
 
 type ApiResponseError = {
 	error: string;
@@ -17,32 +16,24 @@ type ApiResponseError = {
 
 const useSubscriberRemoveMutation = (
 	siteId: number | null,
-	args: SubscriberListArgs,
+	SubscriberQueryParams: SubscriberQueryParams,
 	invalidateDetailsCache = false
 ) => {
 	const {
-		currentPage,
+		page,
 		perPage = DEFAULT_PER_PAGE,
-		filterOption,
 		filters = [],
-		searchTerm,
+		search,
 		sortTerm,
-	} = args;
+	} = SubscriberQueryParams;
 	const queryClient = useQueryClient();
 	const recordSubscriberRemoved = useRecordSubscriberRemoved();
-	const { hasManySubscribers } = useManySubsSite( siteId );
 
 	// Get the cache key for the current page
-	const currentPageCacheKey = getSubscribersCacheKey(
+	const currentPageCacheKey = getSubscribersCacheKey( {
 		siteId,
-		currentPage,
-		perPage,
-		searchTerm,
-		sortTerm,
-		filterOption,
-		filters,
-		hasManySubscribers
-	);
+		...SubscriberQueryParams,
+	} );
 
 	return useMutation( {
 		mutationFn: async ( subscriber: Subscriber ) => {
@@ -123,17 +114,15 @@ const useSubscriberRemoveMutation = (
 
 				// If this was the last item on the page and we're not on the first page,
 				// we'll need to fetch the previous page's data
-				if ( currentPage > 1 && updatedData.subscribers.length === 0 ) {
-					const previousPageCacheKey = getSubscribersCacheKey(
+				if ( page > 1 && updatedData.subscribers.length === 0 ) {
+					const previousPageCacheKey = getSubscribersCacheKey( {
 						siteId,
-						currentPage - 1,
+						page: page - 1,
 						perPage,
-						searchTerm,
+						search,
 						sortTerm,
-						filterOption,
 						filters,
-						hasManySubscribers
-					);
+					} );
 					await queryClient.invalidateQueries( { queryKey: previousPageCacheKey } );
 				}
 			}
