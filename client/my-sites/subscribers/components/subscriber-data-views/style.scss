@@ -1,6 +1,6 @@
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/breakpoints';
-@import "~@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/mixins";
 @import '@wordpress/dataviews/build-style/style.css';
 
 $padding-standard: 16px;
@@ -8,7 +8,6 @@ $padding-standard: 16px;
 body.is-section-subscribers,
 .theme-jetpack-cloud.is-group-jetpack-cloud.is-section-jetpack-subscribers
  {
-    
     .layout:not(.has-no-sidebar),
     .has-no-masterbar {
         .layout__content {
@@ -44,11 +43,11 @@ body.is-section-subscribers,
             height: calc(
                 100vh - var(--masterbar-height) - #{$padding-standard * 2}
             );
-        
+
             @media ( max-width: $break-small ) {
                 padding: 0;
             }
-        
+
             button {
                 cursor: pointer;
                 max-width: 100%;
@@ -58,7 +57,7 @@ body.is-section-subscribers,
                     background: none;
                 }
             }
-        
+
             .subscriber-data-views__square-avatar {
                 border-radius: 0;
                 cursor: pointer;
@@ -68,7 +67,7 @@ body.is-section-subscribers,
                 border-bottom: 1px dotted var(--studio-gray-60);
                 cursor: pointer;
             }
-        
+
             &__list {
                 flex: 1 1 auto;
                 transition: width 0.15s ease-in-out;
@@ -79,10 +78,10 @@ body.is-section-subscribers,
                 overflow: hidden;
                 display: flex;
                 flex-direction: column;
-        
+
                 .navigation-header {
                     padding: $padding-standard 48px;
-        
+
                     // 430px is the DataViews padding breakpoint.
                     @media ( max-width: 430px ) {
                         padding: $padding-standard 24px;
@@ -133,19 +132,19 @@ body.is-section-subscribers,
                     }
                 }
             }
-        
+
             &.has-selected-subscriber {
                 .subscriber-data-views__list {
                     flex: 0 0 25%;
                     width: 25%;
                     min-width: 300px;
-        
+
                     .navigation-header {
                         padding: $padding-standard 24px;
 
                         .add-subscribers-button {
                             min-height: 37px;
-                            
+
                             .add-subscribers-button-text {
                                 display: none;
                             }
@@ -165,7 +164,7 @@ body.is-section-subscribers,
                         display: none;
                     }
                 }
-        
+
                 .subscriber-data-views__details {
                     display: block;
                     flex: 1 1 auto;
@@ -182,7 +181,7 @@ body.is-section-subscribers,
                             margin-bottom: 24px;
                             margin-top: 0;
                         }
-    
+
                         &__close-button {
                             margin-left: auto;
                             border-radius: 4px;
@@ -206,17 +205,17 @@ body.is-section-subscribers,
                     }
                 }
             }
-        
+
             &__details {
                 background: var( --color-surface );
                 display: none;
             }
-        
+
             .subscriber-profile.subscriber-profile--compact {
                 @media ( max-width: $break-wide ) {
                     max-width: 195px;
                 }
-        
+
                 .subscriber-profile__user-details {
                     .subscriber-profile__name,
                     .subscriber-profile__email {
