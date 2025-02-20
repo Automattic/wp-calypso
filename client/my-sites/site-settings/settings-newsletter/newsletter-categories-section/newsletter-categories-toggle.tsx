@@ -38,9 +38,14 @@ const NewsletterCategoriesToggle = ( {
 							},
 						}
 					),
-					oldCopy: translate(
-						'Newsletter categories allow visitors to subscribe only to specific topics. When enabled, only posts published under the categories selected below will be emailed to your subscribers.'
-					),
+					oldCopy:
+						translate(
+							'Newsletter categories allow visitors to subscribe only to specific topics.'
+						) +
+						' ' +
+						translate(
+							'When enabled, only posts published under the categories selected below will be emailed to your subscribers.'
+						),
 				} ) }
 			</FormSettingExplanation>
 		</div>
