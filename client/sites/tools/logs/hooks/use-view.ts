@@ -75,9 +75,21 @@ const useView = ( { logType }: { logType: LogType } ) => {
 					severity: {
 						maxWidth: '150px',
 					},
+					message: {
+						minWidth: '300px',
+					},
+					file: {
+						minWidth: '300px',
+					},
 					// Server errors
 					date: {
 						maxWidth: '150px',
+					},
+					request_url: {
+						minWidth: '300px',
+					},
+					http_referer: {
+						minWidth: '300px',
 					},
 				},
 			},
