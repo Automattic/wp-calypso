@@ -24,6 +24,7 @@ import {
 	isNotAtomicJetpack,
 	isP2Site,
 	isSimpleSite,
+	isStagingSite,
 } from 'calypso/sites-dashboard/utils';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -575,7 +576,11 @@ export function useActions( {
 				label: __( 'Delete site' ),
 				callback: ( sites ) => {
 					const site = sites[ 0 ];
-					page( `/settings/delete-site/${ site.slug }` );
+					page(
+						isStagingSite( site )
+							? `/staging-site/${ site.slug }`
+							: `/settings/delete-site/${ site.slug }`
+					);
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_delete_click' ) );
 				},
 				isEligible: isActionEligible( 'delete-site', capabilities ),
