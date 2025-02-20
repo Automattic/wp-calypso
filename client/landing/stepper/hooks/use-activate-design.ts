@@ -18,6 +18,13 @@ export const useActivateDesign = () => {
 		[ site?.ID ]
 	);
 
+	const isAtomic = useSelect(
+		( select ) => site?.ID && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site.ID ),
+		[ site?.ID ]
+	);
+
+	const isJetpackOrAtomic = isJetpack || isAtomic;
+
 	const { installTheme, setDesignOnSite, assembleSite } = useDispatch( SITE_STORE );
 
 	const activateDesign = useCallback(
@@ -39,7 +46,7 @@ export const useActivateDesign = () => {
 			}
 
 			// Try to install the theme on Jetpack sites.
-			if ( isJetpack ) {
+			if ( isJetpackOrAtomic ) {
 				try {
 					await installTheme( site?.ID, themeId );
 				} catch ( error: any ) {
@@ -50,7 +57,7 @@ export const useActivateDesign = () => {
 			}
 
 			const activeTheme = await setDesignOnSite( site?.ID, design, {
-				enableThemeSetup: ! isJetpack,
+				enableThemeSetup: ! isJetpackOrAtomic,
 				...designOptions,
 			} );
 
@@ -65,6 +72,7 @@ export const useActivateDesign = () => {
 			installTheme,
 			setDesignOnSite,
 			setActiveTheme,
+			isJetpackOrAtomic,
 		]
 	);
 

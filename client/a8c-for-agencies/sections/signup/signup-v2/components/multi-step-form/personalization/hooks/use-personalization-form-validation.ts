@@ -4,6 +4,8 @@ import { AgencyDetailsSignupPayload } from 'calypso/a8c-for-agencies/sections/si
 
 type ValidationState = {
 	country?: string;
+	servicesOffered?: string;
+	productsOffered?: string;
 };
 
 const usePersonalizationFormValidation = () => {
@@ -20,6 +22,14 @@ const usePersonalizationFormValidation = () => {
 
 			if ( payload.country === '' ) {
 				newValidationError.country = translate( `Please select your country` );
+			}
+
+			if ( ! payload.servicesOffered || payload.servicesOffered?.length < 1 ) {
+				newValidationError.servicesOffered = translate( `Please select services you offer` );
+			}
+
+			if ( ! payload.productsOffered || payload.productsOffered.length < 1 ) {
+				newValidationError.productsOffered = translate( `Please select products you offer` );
 			}
 
 			if ( Object.keys( newValidationError ).length > 0 ) {

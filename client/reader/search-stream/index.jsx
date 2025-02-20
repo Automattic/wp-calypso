@@ -6,6 +6,7 @@ import { trim, flatMap } from 'lodash';
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
+import BackButton from 'calypso/components/back-button';
 import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SearchInput from 'calypso/components/search';
@@ -107,12 +108,18 @@ class SearchStream extends React.Component {
 		this.props.recordReaderTracksEvent( 'calypso_reader_search_tags_page_link_clicked' );
 	};
 
+	handleBack = () => {
+		if ( typeof window !== 'undefined' ) {
+			window.history.back();
+		}
+	};
+
 	handleFixedAreaMounted = ( ref ) => ( this.fixedAreaRef = ref );
 
 	handleSearchTypeSelection = ( searchType ) => updateQueryArg( { show: searchType } );
 
 	render() {
-		const { query, translate, searchType, suggestions, isLoggedIn } = this.props;
+		const { query, translate, searchType, suggestions, isLoggedIn, showBack } = this.props;
 		const sortOrder = this.props.sort;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		const segmentedControlClass = wideDisplay
@@ -165,6 +172,7 @@ class SearchStream extends React.Component {
 			<div>
 				<DocumentHead title={ documentTitle } />
 				<div className="search-stream__fixed-area" ref={ this.handleFixedAreaMounted }>
+					{ showBack && <BackButton onClick={ this.handleBack } /> }
 					<NavigationHeader
 						title={ translate( 'Search' ) }
 						subtitle={ translate( 'Search for specific topics, authors, or blogs.' ) }

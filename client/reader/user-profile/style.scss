@@ -2,18 +2,18 @@
 
 .is-section-reader {
 
-	.user-profile__404.empty-content {
-		max-width: initial;
-		margin: initial;
-		padding-top: 150px;
-	}
-
 	.user-profile {
 		position: relative;
 
-		&__content-wrapper {
+		&__404.empty-content {
+			max-width: initial;
+			margin: initial;
+			padding-top: 150px;
+		}
 
-			div.user-profile__content {
+		div.user-profile__wrapper {
+
+			&-content {
 				padding-top: 36px;
 
 				@include breakpoint-deprecated( '<660px' ) {
@@ -25,50 +25,24 @@
 					border-block-end: none;
 				}
 			}
-
-			.back-button {
-				position: relative;
-				background: transparent;
-				top: 0;
-				height: auto;
-				border: none;
-
-				.button.is-compact.is-borderless {
-					padding: 20px 0 20px 20px;
-
-					@include breakpoint-deprecated( '<660px' ) {
-						padding: 20px 0 0 20px;
-					}
-				}
-			}
-
-			&.has-back-button {
-				div.user-profile__content {
-					padding-top: 0;
-				}
-
-				main.main.is-user-profile {
-					margin-top: 0;
-				}
-			}
 		}
-	}
 
-	.user-profile__lists-body {
-		max-width: 768px;
-		margin: 0 auto;
+		&__lists-body {
+			max-width: 768px;
+			margin: 0 auto;
 
-		&-link {
-			color: var(--color-neutral-100);
-			cursor: pointer;
-			display: block;
-			line-height: 29px;
-			text-wrap: pretty;
+			&-link {
+				color: var(--color-neutral-100);
+				cursor: pointer;
+				display: block;
+				line-height: 29px;
+				text-wrap: pretty;
 
-			.reader-post-card__title {
-				margin-top: 0;
-				font-size: 1.25rem;
-				font-weight: 600;
+				.reader-post-card__title {
+					margin-top: 0;
+					font-size: 1.25rem;
+					font-weight: 600;
+				}
 			}
 		}
 	}

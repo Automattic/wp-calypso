@@ -313,6 +313,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-picker' ),
 	},
 
+	POST_CHECKOUT_ONBOARDING: {
+		slug: 'post-checkout-onboarding',
+		asyncComponent: () => import( './steps-repository/post-checkout/post-checkout-onboarding' ),
+	},
+
 	SEGMENTATION_SURVEY: {
 		slug: 'segmentation-survey',
 		asyncComponent: () => import( './steps-repository/segmentation-survey' ),
@@ -320,6 +325,28 @@ export const STEPS = {
 	PLATFORM_IDENTIFICATION: {
 		slug: 'platform-identification',
 		asyncComponent: () => import( './steps-repository/platform-identification' ),
+	},
+	UNIFIED_DOMAINS: {
+		slug: 'domains',
+		asyncComponent: () =>
+			import(
+				/* webpackChunkName: 'async-step-unified-domains' */ './steps-repository/unified-domains'
+			),
+	},
+	UNIFIED_PLANS: {
+		slug: 'plans',
+		asyncComponent: () =>
+			import(
+				/* webpackChunkName: 'async-step-unified-plans' */ './steps-repository/unified-plans'
+			),
+	},
+
+	USE_MY_DOMAIN: {
+		slug: 'use-my-domain',
+		asyncComponent: () =>
+			import(
+				/* webpackChunkName: 'async-step-use-my-domain' */ './steps-repository/use-my-domain'
+			),
 	},
 } satisfies Record< string, StepperStep >;
 

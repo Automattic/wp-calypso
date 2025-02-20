@@ -1092,6 +1092,7 @@ export class RenderDomainsStep extends Component {
 				forceExactSuggestion={ this.props?.queryObject?.source === 'general-settings' }
 				replaceDomainFailedMessage={ this.state.replaceDomainFailedMessage }
 				dismissReplaceDomainFailed={ this.dismissReplaceDomainFailed }
+				handleClickUseYourDomain={ this.handleUseYourDomainClick }
 			/>
 		);
 	};

@@ -24,9 +24,11 @@ const StatsCard = ( props: StatsCardProps ) => {
 		titleURL,
 		titleAriaLevel = 4,
 		titleNodes,
+		downloadCsv,
 		footerAction,
 		isEmpty,
 		emptyMessage,
+		multiHeader,
 		metricLabel,
 		mainItemLabel,
 		additionalHeaderColumns,
@@ -55,6 +57,22 @@ const StatsCard = ( props: StatsCardProps ) => {
 			{ titleNode }
 			{ ! isEmpty && <div>{ metricLabel ?? translate( 'Views' ) }</div> }
 		</div>
+	);
+
+	// Show card title and download csv button on one line, description and metric label on another:
+	const multiHeaderNode = (
+		<>
+			<div className={ clsx( `${ BASE_CLASS_NAME }-header`, headerClassName ) }>
+				{ titleNode }
+				{ ! isEmpty && downloadCsv }
+			</div>
+			{ ! isEmpty && (
+				<div className={ clsx( `${ BASE_CLASS_NAME }-sub-header`, headerClassName ) }>
+					<div> All { title.toLowerCase() } </div>
+					<div>{ metricLabel ?? translate( 'Views' ) }</div>
+				</div>
+			) }
+		</>
 	);
 
 	// Show Card title on one line and all other column header(s) below:
@@ -87,6 +105,16 @@ const StatsCard = ( props: StatsCardProps ) => {
 		</div>
 	);
 
+	const getHeaderNode = () => {
+		if ( multiHeader ) {
+			return multiHeaderNode;
+		}
+		if ( splitHeader ) {
+			return splitHeaderNode;
+		}
+		return simpleHeaderNode;
+	};
+
 	return (
 		<div
 			className={ clsx( className, BASE_CLASS_NAME, {
@@ -101,7 +129,7 @@ const StatsCard = ( props: StatsCardProps ) => {
 					</div>
 				) }
 				<div className={ `${ BASE_CLASS_NAME }--header-and-body` }>
-					{ splitHeader ? splitHeaderNode : simpleHeaderNode }
+					{ getHeaderNode() }
 					<div
 						className={ clsx( `${ BASE_CLASS_NAME }--body`, {
 							[ `${ BASE_CLASS_NAME }--body-empty` ]: isEmpty,

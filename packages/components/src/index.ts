@@ -1,6 +1,6 @@
 export { default as Badge } from './badge';
 export type { BadgeType } from './badge';
-export { default as Button } from './button';
+export { Button } from './button';
 export type { ButtonProps } from './button';
 export { default as Card } from './card';
 export { default as CompactCard } from './card/compact';
@@ -54,7 +54,6 @@ export { default as SegmentedControl } from './segmented-control';
 export { default as SimplifiedSegmentedControl } from './segmented-control/simplified';
 export { default as PlanPrice } from './plan-price';
 export { default as ExternalLink } from './external-link';
-export { default as ExternalLinkWithTracking } from './external-link/with-tracking';
 export * from './theme-type-badge';
 export { default as FlowQuestion } from './flow-question';
 

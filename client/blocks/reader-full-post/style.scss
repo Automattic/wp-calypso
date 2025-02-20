@@ -169,27 +169,6 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	margin-bottom: 0;
 }
 
-.reader-full-post .back-button {
-	border: none;
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: unset;
-	background-color: transparent;
-
-	button.is-compact.is-borderless {
-		margin: 2px;
-		@media ( max-width: 781px ) {
-			padding-top: 12px;
-			padding-bottom: 12px;
-		}
-	}
-
-	@include breakpoint-deprecated( '<660px' ) {
-		left: 14px;
-	}
-}
-
 .reader-full-post .author-compact-profile {
 	display: inline-flex;
 	flex-direction: column;

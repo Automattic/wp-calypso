@@ -6,9 +6,10 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, DropdownMenu, Spinner } from '@wordpress/components';
 import { __, _n, _x, sprintf } from '@wordpress/i18n';
 import { chevronDown, chevronLeft, Icon } from '@wordpress/icons';
+import cookie from 'cookie';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment/moment';
-import { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
@@ -24,6 +25,7 @@ import {
 	Order,
 } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useJetpackBlazeVersionCheck } from 'calypso/lib/promote-post';
 import AdPreview from 'calypso/my-sites/promote-post-i2/components/ad-preview';
 import AdPreviewModal from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/AdPreviewModal';
@@ -31,6 +33,7 @@ import CampaignDownloadStats from 'calypso/my-sites/promote-post-i2/components/c
 import CampaignStatsLineChart from 'calypso/my-sites/promote-post-i2/components/campaign-stats-line-chart/index.tsx/campaign-stats-line-chart';
 import LocationChart from 'calypso/my-sites/promote-post-i2/components/location-charts';
 import PaymentLinks from 'calypso/my-sites/promote-post-i2/components/payment-links';
+import TspMetricsBanner from 'calypso/my-sites/promote-post-i2/components/tsp-metrics-banner';
 import useOpenPromoteWidget from 'calypso/my-sites/promote-post-i2/hooks/use-open-promote-widget';
 import {
 	campaignStatus,
@@ -112,6 +115,15 @@ const ChartSourceDateRangeLabels = {
 	[ ChartSourceDateRanges.WHOLE_CAMPAIGN ]: __( 'Whole Campaign' ),
 };
 
+const HIDE_TSP_METRICS_BANNER_COOKIE = 'blaze-hide-tsp-metrics-banner';
+
+const setHideTspMetricsBannerCookie = ( value: boolean ) => {
+	document.cookie = cookie.serialize( HIDE_TSP_METRICS_BANNER_COOKIE, ( +value ).toString(), {
+		path: '/',
+		maxAge: 365 * 24 * 60 * 60, // 1 year
+	} );
+};
+
 export default function CampaignItemDetails( props: Props ) {
 	const isRunningInWpAdmin = useIsRunningInWpAdmin();
 	const translate = useTranslate();
@@ -129,6 +141,7 @@ export default function CampaignItemDetails( props: Props ) {
 	const paymentBlocked = data?.paymentsBlocked ?? false;
 
 	const [ showReportErrorDialog, setShowReportErrorDialog ] = useState( false );
+	const [ showAllReplies, setShowAllReplies ] = useState( false );
 
 	const getEffectiveEndDate = () => {
 		const endDate = campaign?.end_date ? new Date( campaign.end_date ) : null;
@@ -173,7 +186,20 @@ export default function CampaignItemDetails( props: Props ) {
 		conversion_value,
 		conversion_rate,
 		conversion_last_currency_found,
+		tsp,
 	} = campaign_stats || {};
+
+	const {
+		impressions_total: tsp_impressions_total,
+		// todo uncomment this line when we check that clicks are tracked through smart
+		// clicks_total: tsp_clicks_total,
+		replies,
+		likes_total,
+		replies_total,
+		permalink,
+	} = tsp || {};
+
+	const displayedReplies = showAllReplies ? replies : replies?.slice( 0, 3 );
 
 	// check if delivery outperformed
 	const calculateOutperformPercentage = ( estimates: string, total: number ): number => {
@@ -235,6 +261,15 @@ export default function CampaignItemDetails( props: Props ) {
 			: '-';
 	const ctrFormatted = clickthrough_rate ? `${ clickthrough_rate.toFixed( 2 ) }%` : '-';
 	const clicksFormatted = clicks_total && clicks_total > 0 ? formatNumber( clicks_total ) : '-';
+	const likesFormatted = likes_total && likes_total > 0 ? formatNumber( likes_total ) : '-';
+	const repliesFormatted = replies_total && replies_total > 0 ? formatNumber( replies_total ) : '-';
+	const tspImpressionsFormatted =
+		tsp_impressions_total && tsp_impressions_total > 0
+			? formatNumber( tsp_impressions_total )
+			: '-';
+	// todo uncomment this line when we check that clicks are tracked through smart
+	// const tspClicksFormatted =
+	// 	tsp_clicks_total && tsp_clicks_total > 0 ? formatNumber( tsp_clicks_total ) : '-';
 	const weeklyBudget = budget_cents ? ( budget_cents / 100 ) * 7 : 0;
 	const weeklySpend =
 		total_budget_used && billing_data ? Math.max( 0, total_budget_used - billing_data?.total ) : 0;
@@ -352,12 +387,13 @@ export default function CampaignItemDetails( props: Props ) {
 	};
 
 	const areStatsEnabled = useJetpackBlazeVersionCheck( siteId, '14.1', '0.5.3' );
+	const hasStats = !! impressions_total && areStatsEnabled;
 
 	const campaignStatsQuery = useCampaignChartStatsQuery(
 		siteId,
 		campaignId,
 		chartParams,
-		!! impressions_total && areStatsEnabled
+		hasStats
 	);
 	const { isLoading: campaignsStatsIsLoading } = campaignStatsQuery;
 	const { data: campaignStats } = campaignStatsQuery;
@@ -585,6 +621,133 @@ export default function CampaignItemDetails( props: Props ) {
 		},
 	];
 
+	const tspTargetRef = useRef< HTMLDivElement | null >( null );
+
+	useEffect( () => {
+		const handleScroll = () => {
+			if ( tspTargetRef.current ) {
+				const rect = tspTargetRef.current.getBoundingClientRect();
+				const inView = rect.top >= 0 && rect.bottom <= window.innerHeight;
+				if ( inView ) {
+					window.removeEventListener( 'scroll', handleScroll );
+					recordTracksEvent( 'calypso_dsp_tsp_section_scroll_into_view', {} );
+				}
+			}
+		};
+
+		// check that the page has loaded, before adding the listener
+		// check if the campaign has stats, in this case wait for the campaigns stats loading to complete
+		if ( ! isLoading && ( ! hasStats || ! campaignsStatsIsLoading ) ) {
+			window.addEventListener( 'scroll', handleScroll );
+			handleScroll();
+		}
+
+		return () => {
+			window.removeEventListener( 'scroll', handleScroll );
+		};
+	}, [ isLoading, hasStats, campaignsStatsIsLoading ] );
+
+	const cookies = cookie.parse( document.cookie );
+
+	const initialHideTspMetricsBanner = ( cookies[ HIDE_TSP_METRICS_BANNER_COOKIE ] ?? '0' ) === '1';
+	const [ showTspMetricsBanner, setShowTspMetricsBanner ] = useState(
+		! initialHideTspMetricsBanner
+	);
+
+	const closeTspMetricsBanner = () => {
+		setShowTspMetricsBanner( false );
+		setHideTspMetricsBannerCookie( true );
+	};
+
+	const getCampaignTSPStats = ( showBanner: boolean ) => (
+		<>
+			<div className="campaign-item-details__main-stats-row" ref={ tspTargetRef }>
+				<TspMetricsBanner
+					onClose={ closeTspMetricsBanner }
+					display={ showBanner && showTspMetricsBanner }
+				/>
+				<div className="campaign-item-details__main-stats-title">
+					<span className="campaign-item-details__title">{ translate( 'Social Engagement' ) }</span>
+					<a
+						href={ permalink }
+						target="_blank"
+						rel="noreferrer"
+						className="campaign-item-details__tsp-permalink"
+						onClick={ () => {
+							recordTracksEvent( 'calypso_dsp_tsp_open_post_click', {} );
+						} }
+					>
+						<span>{ translate( 'Open Tumblr Post' ) }</span>
+						<Gridicon icon="external" size={ 16 } />
+					</a>
+				</div>
+				<div>
+					<span className="campaign-item-details__label">{ translate( 'Tumblr Post views' ) }</span>
+					<span className="campaign-item-details__text">
+						<span className="wp-brand-font">
+							{ ! isLoading ? tspImpressionsFormatted : <FlexibleSkeleton /> }
+						</span>
+					</span>
+				</div>
+				{ /* todo commenting this until we figure out if this is working properly*/ }
+				{ /*<div>*/ }
+				{ /*	<span className="campaign-item-details__label">*/ }
+				{ /*		{ translate( 'Site visits from Tumblr Post' ) }*/ }
+				{ /*	</span>*/ }
+				{ /*	<span className="campaign-item-details__text">*/ }
+				{ /*		<span className="wp-brand-font">*/ }
+				{ /*			{ ! isLoading ? tspClicksFormatted : <FlexibleSkeleton /> }*/ }
+				{ /*		</span>*/ }
+				{ /*	</span>*/ }
+				{ /*</div>*/ }
+			</div>
+			<div className="campaign-item-details__main-stats-row ">
+				<div>
+					<span className="campaign-item-details__label">{ translate( 'Replies' ) }</span>
+					<span className="campaign-item-details__text">
+						<span className="wp-brand-font">
+							{ ! isLoading ? repliesFormatted : <FlexibleSkeleton /> }
+						</span>
+					</span>
+				</div>
+				<div>
+					<span className="campaign-item-details__label">{ translate( 'Likes' ) }</span>
+					<span className="campaign-item-details__text">
+						<span className="wp-brand-font">
+							{ ! isLoading ? likesFormatted : <FlexibleSkeleton /> }
+						</span>
+					</span>
+				</div>
+				{ displayedReplies && replies && replies?.length > 0 && (
+					<div className="campaign-items-details__tsp-replies">
+						{ displayedReplies.map( ( reply, index ) => (
+							<div key={ index } className="campaign-items-details__tsp-reply">
+								<a href={ reply.blog_url } target="_blank" rel="noopener noreferrer">
+									@{ reply.blog_name }
+								</a>
+								<br />
+								{ reply?.reply_text || '-' }
+							</div>
+						) ) }
+						{ replies && replies?.length > 3 && (
+							<button
+								className="campaign-items-details__replies-show-more-button"
+								onClick={ () => {
+									if ( ! showAllReplies ) {
+										recordTracksEvent( 'calypso_dsp_tsp_section_replies_show_more_click', {} );
+									}
+									setShowAllReplies( ! showAllReplies );
+								} }
+							>
+								{ showAllReplies ? __( 'Show Less' ) : __( 'Show More' ) }
+							</button>
+						) }
+					</div>
+				) }
+			</div>
+		</>
+	);
+
 	return (
 		<div className="campaign-item__container">
 			<Dialog
@@ -790,6 +953,11 @@ export default function CampaignItemDetails( props: Props ) {
 										</div>
 									) }
 									<div className="campaign-item-details__main-stats-row ">
+										<div className="campaign-item-details__main-stats-title">
+											<span className="campaign-item-details__title">
+												{ translate( 'Ad Performance' ) }
+											</span>
+										</div>
 										<div>
 											<span className="campaign-item-details__label">
 												{ translate( 'Clicks' ) }
@@ -969,6 +1137,7 @@ export default function CampaignItemDetails( props: Props ) {
 											) }
 										</>
 									) }
+									{ tsp && getCampaignTSPStats( true ) }
 								</div>
 							</div>
 						) }
@@ -1074,6 +1243,12 @@ export default function CampaignItemDetails( props: Props ) {
 								) }
 							</div>
 						</div>
+
+						{ ! shouldShowStats && tsp && (
+							<div className="campaign-item-details__main-stats-container">
+								{ getCampaignTSPStats( false ) }
+							</div>
+						) }
 
 						<div className="campaign-item-details__main-stats-container">
 							<div className="campaign-item-details__secondary-stats">

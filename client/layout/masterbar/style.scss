@@ -653,8 +653,20 @@ body.is-mobile-app-view {
 }
 
 .masterbar__item-launch-site {
+	gap: 6px;
 	cursor: pointer;
 	background-color: var(--wp-admin-theme-color);
+	@media only screen and (max-width: 480px) {
+		display: none;
+	}
+	svg {
+		width: 15px;
+		height: 15px;
+		@media only screen and (max-width: 781px) {
+			width: 28px;
+			height: 28px;
+		}
+	}
 }
 
 .masterbar__item-logo {

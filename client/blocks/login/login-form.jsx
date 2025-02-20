@@ -627,9 +627,12 @@ export class LoginForm extends Component {
 	getSignupUrl() {
 		const { oauth2Client, currentQuery, currentRoute, pathname, locale } = this.props;
 
-		return this.props.signupUrl
-			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
-			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
+		if ( this.props.signupUrl ) {
+			const sanitizedPath = this.props.signupUrl.replace( /\s/g, '' );
+			return window.location.origin + pathWithLeadingSlash( sanitizedPath );
+		}
+
+		return getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
 	}
 
 	handleMagicLoginClick = ( origin ) => {

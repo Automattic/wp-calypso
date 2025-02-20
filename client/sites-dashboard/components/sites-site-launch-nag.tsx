@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useInView } from 'react-intersection-observer';
-import { getDashboardUrl, getLaunchpadUrl } from '../utils';
+import { getDashboardUrl } from '../utils';
 import type { SiteExcerptData } from '@automattic/sites';
 
 interface SiteLaunchNagProps {
@@ -95,18 +95,8 @@ export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 		return null;
 	}
 
-	const validSiteIntent =
-		site.options?.launchpad_screen === 'full' &&
-		site.options?.site_intent &&
-		[ 'link-in-bio' ].includes( site.options.site_intent )
-			? site.options.site_intent
-			: false;
-
-	const link = validSiteIntent
-		? getLaunchpadUrl( site.slug, validSiteIntent )
-		: getDashboardUrl( site.slug );
-
-	const text = validSiteIntent ? __( 'Launch guide' ) : __( 'Checklist' );
+	const link = getDashboardUrl( site.slug );
+	const text = __( 'Checklist' );
 
 	return (
 		<SiteLaunchNagLink

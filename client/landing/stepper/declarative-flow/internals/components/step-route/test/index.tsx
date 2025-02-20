@@ -85,12 +85,7 @@ const render = ( { step, renderStep = fakeRenderStep }: RenderProps ) => {
 			initialEntries={ [ '/setup/some-flow/some-step-slug?param=example.com' ] }
 		>
 			<Suspense fallback={ null }>
-				<StepRoute
-					step={ step }
-					flow={ fakeFlow }
-					showWooLogo={ false }
-					renderStep={ renderStep }
-				/>
+				<StepRoute step={ step } flow={ fakeFlow } renderStep={ renderStep } />
 			</Suspense>
 		</MemoryRouter>
 	);

@@ -83,7 +83,6 @@ class ListStream extends Component {
 				/>
 				<QueryReaderList owner={ this.props.owner } slug={ this.props.slug } />
 				<ListStreamHeader
-					isPlaceholder={ ! list }
 					isPublic={ list?.is_public }
 					icon={
 						<svg

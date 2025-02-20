@@ -5,8 +5,11 @@ import { useTranslate } from 'i18n-calypso';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { addQueryArgs } from 'calypso/lib/url';
 import withDimensions from 'calypso/lib/with-dimensions';
+import ReaderMain from 'calypso/reader/components/reader-main';
+import DiscoverAddNew from 'calypso/reader/discover/components/add-new';
 import DiscoverNavigation from 'calypso/reader/discover/components/navigation/v1';
 import DiscoverNavigationV2 from 'calypso/reader/discover/components/navigation/v2';
+import Reddit from 'calypso/reader/discover/components/reddit';
 import DiscoverTagsNavigation from 'calypso/reader/discover/components/tags-navigation';
 import Stream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 import { useSelector } from 'calypso/state';
@@ -19,6 +22,8 @@ import {
 	buildDiscoverStreamKey,
 	FIRST_POSTS_TAB,
 	isDiscoveryV2Enabled,
+	ADD_NEW_TAB,
+	REDDIT_TAB,
 } from './helper';
 import './style.scss';
 
@@ -29,14 +34,25 @@ export const DiscoverHeader = ( props ) => {
 
 	const { selectedTab } = props;
 	const tabTitle = getSelectedTabTitle( selectedTab );
-	let subHeaderText = translate( 'Explore %s blogs that inspire, educate, and entertain.', {
-		args: [ tabTitle ],
-		comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
-	} );
-	if ( selectedTab === FIRST_POSTS_TAB ) {
-		subHeaderText = translate(
-			'Fresh voices, fresh views. Explore first-time posts from new bloggers.'
-		);
+
+	let subHeaderText;
+	switch ( selectedTab ) {
+		case FIRST_POSTS_TAB:
+			subHeaderText = translate(
+				'Fresh voices, fresh views. Explore first-time posts from new bloggers.'
+			);
+			break;
+		case ADD_NEW_TAB:
+			subHeaderText = translate( 'Subscribe to new blogs, newsletters, and RSS feeds.' );
+			break;
+		case REDDIT_TAB:
+			subHeaderText = translate( 'Follow your favorite subreddits inside the Reader.' );
+			break;
+		default:
+			subHeaderText = translate( 'Explore %s blogs that inspire, educate, and entertain.', {
+				args: [ tabTitle ],
+				comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
+			} );
 	}
 
 	return (
@@ -89,25 +105,50 @@ const DiscoverStream = ( props ) => {
 		useCompactCards: true,
 		sidebarTabTitle: isDefaultTab ? translate( 'Sites' ) : translate( 'Related' ),
 		selectedStreamName: selectedTab,
+		showBack: true,
 	};
+
+	const HeaderAndNavigation = () => {
+		return (
+			<>
+				<DiscoverHeader selectedTab={ effectiveTabSelection } width={ props.width } />
+				{ isDiscoveryV2Enabled() ? (
+					<DiscoverNavigationV2 selectedTab={ selectedTab } />
+				) : (
+					<DiscoverNavigation width={ props.width } selectedTab={ selectedTab } />
+				) }
+
+				{ selectedTab === 'tags' && (
+					<DiscoverTagsNavigation
+						width={ props.width }
+						selectedTag={ selectedTag }
+						onTagSelect={ handleTagSelect }
+					/>
+				) }
+			</>
+		);
+	};
+
+	const TAB_COMPONENTS = {
+		[ ADD_NEW_TAB ]: DiscoverAddNew,
+		[ REDDIT_TAB ]: Reddit,
+	};
+
+	const ContentComponent = TAB_COMPONENTS[ selectedTab ];
+	if ( ContentComponent ) {
+		return (
+			<ReaderMain className={ clsx( 'following main', props.className ) }>
+				<HeaderAndNavigation />
+				<div className="reader__content">
+					<ContentComponent />
+				</div>
+			</ReaderMain>
+		);
+	}
 
 	return (
 		<Stream { ...streamProps }>
-			<DiscoverHeader selectedTab={ effectiveTabSelection } width={ props.width } />
-			{ isDiscoveryV2Enabled() ? (
-				<>
-					<DiscoverNavigationV2 selectedTab={ selectedTab } />
-					{ selectedTab === 'tags' && (
-						<DiscoverTagsNavigation
-							width={ props.width }
-							selectedTag={ selectedTag }
-							onTagSelect={ handleTagSelect }
-						/>
-					) }
-				</>
-			) : (
-				<DiscoverNavigation width={ props.width } selectedTab={ selectedTab } />
-			) }
+			<HeaderAndNavigation />
 		</Stream>
 	);
 };

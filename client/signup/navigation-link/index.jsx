@@ -23,7 +23,6 @@ export class NavigationLink extends Component {
 		labelText: PropTypes.string,
 		cssClass: PropTypes.string,
 		positionInFlow: PropTypes.number,
-		previousPath: PropTypes.string,
 		signupProgress: PropTypes.object,
 		stepName: PropTypes.string.isRequired,
 		// Allows to force a back button in the first step for example.

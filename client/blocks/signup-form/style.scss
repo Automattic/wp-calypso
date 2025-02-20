@@ -189,6 +189,7 @@ body.is-section-accept-invite {
 				box-shadow: none;
 				padding-left: 0;
 				padding-right: 0;
+				background-color: unset;
 
 				button:not(.is-borderless, .signup-form__domain-suggestion-confirmation) {
 					display: block;
@@ -487,29 +488,6 @@ body.is-section-accept-invite {
 				letter-spacing: 0.32px;
 				margin-left: -20px;
 				margin-right: auto;
-			}
-		}
-	}
-
-	/**
-	* Videopress Signup
-	*/
-	@at-root .is-videopress-account & {
-		.auth-form__social-buttons-container {
-			gap: 0;
-		}
-
-		.auth-form__social-buttons .auth-form__social-buttons-container .social-buttons__button {
-			margin: 0 auto 15px;
-			padding-bottom: 0;
-			padding-left: 0;
-			text-align: start;
-
-			span {
-				color: var(--videopress-color-text);
-				margin-left: 8px;
-				letter-spacing: normal;
-				line-height: 22px;
 			}
 		}
 	}
