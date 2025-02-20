@@ -28,7 +28,8 @@ $button-border: 4px;
 
 		.theme__sheet-web-preview .theme-preview__frame-wrapper {
 			@include breakpoint-deprecated( ">960px" ) {
-				max-height: calc(100vh - 32px - var(--masterbar-height));
+				// Inner padding: 96px.
+				max-height: calc(100vh - var(--content-padding-top) - var(--content-padding-bottom) - var(--masterbar-height) - 96px );
 			}
 		}
 	}
