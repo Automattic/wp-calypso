@@ -84,6 +84,9 @@ const SignupContactForm = ( { onContinue, initialFormData }: Props ) => {
 				)
 			) }
 		>
+			<div className="field-mandatory-message">
+				{ translate( 'Fields marked with * are required' ) }
+			</div>
 			<div className="signup-multi-step-form__name-fields">
 				<FormField
 					error={ validationError.firstName }

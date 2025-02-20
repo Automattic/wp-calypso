@@ -99,6 +99,9 @@ const BlueprintForm: React.FC< Props > = ( { onContinue, initialFormData, goBack
 				"We'll send you a custom blueprint to grow your business based on your answers below."
 			) }
 		>
+			<div className="field-mandatory-message">
+				{ translate( 'Fields marked with * are required' ) }
+			</div>
 			<FormField
 				label={ translate( 'What is your top goal when partnering with a technology provider?' ) }
 				error={ validationError.topPartneringGoal }

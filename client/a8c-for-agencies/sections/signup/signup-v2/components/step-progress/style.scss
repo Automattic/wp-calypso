@@ -55,3 +55,11 @@
 	}
 }
 
+.field-mandatory-message {
+	@include a4a-font-body-sm;
+	padding-block-end: 8px;
+
+	@media (prefers-color-scheme: dark) {
+		color: var(--color-text-inverted);
+	}
+}

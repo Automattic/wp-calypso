@@ -26,7 +26,7 @@ const StepProgress = ( { steps }: Props ) => {
 							} ) }
 						>
 							<span className="step-progress__step-label">{ step.label }</span>
-							<ProgressBar value={ step.value ?? 0 } total={ 100 } />
+							<ProgressBar value={ step.value ?? 0 } total={ 100 } canGoBackwards />
 						</div>
 					) ) }
 				</div>
