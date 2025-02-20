@@ -97,9 +97,13 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 
 export default connect(
 	( state: UserProfileState, ownProps: UserProfileProps ) => ( {
-		user: ownProps.userLogin
-			? getReaderUser( state, ownProps.userLogin )
-			: getReaderUser( state, ownProps.userId, true ),
+		// The following logic works because userLogin and userId are mutually exclusive via the
+		// routes.
+		user1: getReaderUser(
+			state,
+			ownProps.userLogin || ownProps.userId,
+			ownProps.userLogin ? false : true
+		),
 		isLoading: state.reader.users.requesting[ ownProps.userLogin || ownProps.userId ] ?? false,
 	} ),
 	{ requestUser }
