@@ -71,10 +71,10 @@ export function generateFlows( {
 		},
 		{
 			name: 'account',
-			steps: [ userSocialStep ],
+			steps: [ userSocialStep, 'set-reader-landing' ],
 			destination: getRedirectDestination,
 			description: 'Create an account without a blog.',
-			lastModified: '2023-10-11',
+			lastModified: '2025-02-18',
 			get pageTitle() {
 				return translate( 'Create an account' );
 			},
@@ -346,11 +346,10 @@ export function generateFlows( {
 		},
 		{
 			name: 'reader',
-			steps: [ userSocialStep ],
+			steps: [ userSocialStep, 'set-reader-landing' ],
 			destination: '/reader',
-			description:
-				'Signup for an account from a Reader interaction (like, comment) or page (/discover) and land on Reader.',
-			lastModified: '2025-01-28',
+			description: 'Signup for an account and land on Reader.',
+			lastModified: '2025-02-18',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
 		},
