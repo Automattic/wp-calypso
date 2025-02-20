@@ -2,6 +2,7 @@ import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Button, FormLabel } from '@automattic/components';
 import { suggestEmailCorrection } from '@automattic/onboarding';
+import { Button as WordPressButton } from '@wordpress/components';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import { debounce } from 'lodash';
@@ -305,14 +306,14 @@ class PasswordlessSignupForm extends Component {
 
 		return (
 			<LoggedOutFormFooter>
-				<Button
+				<WordPressButton
 					type="submit"
-					primary
-					busy={ isSubmitting }
+					variant="primary"
+					isBusy={ isSubmitting }
 					disabled={ isSubmitting || !! this.props.disabled || !! this.props.disableSubmitButton }
 				>
 					{ submitButtonText }
-				</Button>
+				</WordPressButton>
 			</LoggedOutFormFooter>
 		);
 	}
