@@ -1,6 +1,5 @@
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { ExperimentAssignment } from '@automattic/explat-client';
-import { addQueryArgs, getQueryArg } from '@wordpress/url';
 
 export const LAUNCHPAD_EXPERIMENT_NAME = 'calypso_onboarding_launchpad_removal_test_2024_08';
 
@@ -37,18 +36,15 @@ export const useLaunchpadDecider = ( { exitFlow, navigate }: Props ) => {
 
 	return {
 		getPostFlowUrl: ( { flow, siteId, siteSlug }: PostFlowUrlProps ) => {
-			const sessionId = getQueryArg( window.location.href, 'sessionId' );
-			let redirectURL = addQueryArgs( `/setup/${ flow }/launchpad`, { siteSlug } );
-
 			if ( showCustomerHome ) {
-				redirectURL = `/home/${ siteSlug || siteId }`;
+				return '/home/' + siteSlug;
 			}
 
 			if ( siteId ) {
-				redirectURL = addQueryArgs( `/setup/${ flow }/launchpad`, { siteSlug, siteId } );
+				return `/setup/${ flow }/launchpad?siteSlug=${ siteSlug }&siteId=${ siteId }`;
 			}
 
-			return addQueryArgs( redirectURL, { sessionId } );
+			return `/setup/${ flow }/launchpad?siteSlug=${ siteSlug }`;
 		},
 		postFlowNavigator: ( { siteId, siteSlug }: SiteProps ) => {
 			if ( showCustomerHome ) {
