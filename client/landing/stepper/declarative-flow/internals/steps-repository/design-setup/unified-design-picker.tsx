@@ -215,6 +215,19 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					design.style_variations = [];
 					return design;
 				} );
+		} else if ( isGoalsAtFrontExperiment ) {
+			// We don't need to clear style variations in the Goals First experiment
+			// because they don't block site creation and have in-product notifications
+			// that a plan is required. However we do need to hide themes that require
+			// Atomic, as the Goals First flow doesn't support transferring immediately
+			// post-checkout.
+			allDesigns.designs = allDesigns.designs.filter(
+				( design ) =>
+					! (
+						design?.design_tier === THEME_TIER_PARTNER ||
+						( design.software_sets && design.software_sets.length > 0 )
+					)
+			);
 		}
 
 		return allDesigns;
