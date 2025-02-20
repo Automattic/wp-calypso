@@ -6,7 +6,7 @@ import './style.scss';
 
 type TspBannerProps = {
 	onToggle: () => void;
-	isExpanded: boolean;
+	isCollapsed: boolean;
 };
 
 function TspBanner( props: TspBannerProps ) {
@@ -16,15 +16,15 @@ function TspBanner( props: TspBannerProps ) {
 		props.onToggle();
 	};
 
-	const isExpanded = props.isExpanded;
+	const isCollapsed = props.isCollapsed;
 
 	return (
 		<div className="tsp-banner__container">
 			<div className="tsp-banner__content">
 				<button className="tsp-banner__close" onClick={ onBannerToggle }>
-					<Gridicon icon={ isExpanded ? 'chevron-up' : 'chevron-down' } size={ 16 } />
+					<Gridicon icon={ isCollapsed ? 'chevron-down' : 'chevron-up' } size={ 16 } />
 				</button>
-				{ isExpanded && (
+				{ ! isCollapsed && (
 					<>
 						<section className="tsp-banner__text">
 							<div className="tsp-banner__header wp-brand-font">
@@ -59,7 +59,7 @@ function TspBanner( props: TspBannerProps ) {
 						</section>
 					</>
 				) }
-				{ ! isExpanded && (
+				{ isCollapsed && (
 					<>
 						<section className="tsp-banner__text-collapsed">
 							<div className="tsp-banner__description">
