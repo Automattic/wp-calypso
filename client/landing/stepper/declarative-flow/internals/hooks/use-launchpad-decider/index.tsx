@@ -37,14 +37,14 @@ export const useLaunchpadDecider = ( { exitFlow, navigate }: Props ) => {
 	return {
 		getPostFlowUrl: ( { flow, siteId, siteSlug }: PostFlowUrlProps ) => {
 			if ( showCustomerHome ) {
-				return '/home/' + siteSlug;
+				redirectURL = `/home/${ siteSlug || siteId }`;
 			}
 
 			if ( siteId ) {
-				return `/setup/${ flow }/launchpad?siteSlug=${ siteSlug }&siteId=${ siteId }`;
+				redirectURL = addQueryArgs( `/setup/${ flow }/launchpad`, { siteSlug, siteId } );
 			}
 
-			return `/setup/${ flow }/launchpad?siteSlug=${ siteSlug }`;
+			return addQueryArgs( redirectURL, { sessionId } );
 		},
 		postFlowNavigator: ( { siteId, siteSlug }: SiteProps ) => {
 			if ( showCustomerHome ) {
