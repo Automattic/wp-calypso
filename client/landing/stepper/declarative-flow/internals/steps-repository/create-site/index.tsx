@@ -10,7 +10,6 @@ import {
 	isCopySiteFlow,
 	isDesignFirstFlow,
 	isFreeFlow,
-	isLinkInBioFlow,
 	isImportFocusedFlow,
 	isMigrationSignupFlow,
 	isStartWritingFlow,
@@ -51,7 +50,6 @@ import type { OnboardSelect } from '@automattic/data-stores';
 import './styles.scss';
 
 const DEFAULT_SITE_MIGRATION_THEME = 'pub/zoologist';
-const DEFAULT_LINK_IN_BIO_THEME = 'pub/lynx';
 const DEFAULT_ENTREPRENEUR_FLOW = 'pub/twentytwentytwo';
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 // Changing this? Consider also updating WRITE_INTENT_DEFAULT_DESIGN so the write *intent* matches the write flow
@@ -123,8 +121,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		theme = DEFAULT_ENTREPRENEUR_FLOW;
 	} else if ( isStartWritingFlow( flow ) ) {
 		theme = DEFAULT_START_WRITING_THEME;
-	} else if ( isLinkInBioFlow( flow ) ) {
-		theme = DEFAULT_LINK_IN_BIO_THEME;
 	} else if ( isNewsletterFlow( flow ) ) {
 		theme = DEFAULT_NEWSLETTER_THEME;
 	}
@@ -160,7 +156,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		isOnboardingFlow( flow ) ||
 		isCopySiteFlow( flow ) ||
 		isFreeFlow( flow ) ||
-		isLinkInBioFlow( flow ) ||
 		isImportFocusedFlow( flow ) ||
 		isBlogOnboardingFlow( flow ) ||
 		isNewHostedSiteCreationFlow( flow ) ||

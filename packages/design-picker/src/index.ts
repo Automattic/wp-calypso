@@ -7,6 +7,7 @@ export {
 	getMShotOptions,
 	isLockedStyleVariation,
 	getCategoryType,
+	getThemeIdFromDesign,
 } from './utils';
 export {
 	DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,

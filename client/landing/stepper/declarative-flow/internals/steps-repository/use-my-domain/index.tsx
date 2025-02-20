@@ -86,7 +86,6 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 			<CalypsoShoppingCartProvider>
 				<UseMyDomainComponent
 					analyticsSection="signup"
-					basePath=""
 					initialQuery={ getInitialQuery() }
 					initialMode={ getInitialMode() }
 					isSignupStep
@@ -98,6 +97,7 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 					onNextStep={ handleOnNext }
 					isStepper
 					stepLocation={ location }
+					registerNowAction={ handleGoBack }
 				/>
 			</CalypsoShoppingCartProvider>
 		);

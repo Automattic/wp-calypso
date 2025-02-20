@@ -85,6 +85,7 @@
 		"migration-flow/experiment": false,
 		"migration-flow/introductory-offer": true,
 		"network-connection": true,
+		"onboarding/create-course": true,
 		"p2/p2-plus": true,
 		"p2-enabled": false,
 		"plans/hosting-trial": true,

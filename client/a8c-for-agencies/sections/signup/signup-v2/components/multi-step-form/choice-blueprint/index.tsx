@@ -67,7 +67,7 @@ const ChoiceBlueprint: React.FC< Props > = ( { onContinue, onSkip, goBack } ) =>
 						onClick={ onSkip }
 						__next40pxDefaultSize
 					>
-						{ translate( 'Not right now' ) }
+						{ translate( 'Skip and finish' ) }
 					</Button>
 					<Button
 						className="choice-blueprint__button"

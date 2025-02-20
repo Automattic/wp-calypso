@@ -147,7 +147,6 @@ export const usePlanTypesWithIntent = ( {
 			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
 			break;
 		case 'plans-newsletter':
-		case 'plans-link-in-bio':
 			planTypes = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
 			break;
 		case 'plans-new-hosted-site':
@@ -312,8 +311,6 @@ const useGridPlans: UseGridPlansType = ( {
 		let tagline: TranslateResult = '';
 		if ( 'plans-newsletter' === intent ) {
 			tagline = planConstantObj.getNewsletterTagLine?.() ?? '';
-		} else if ( 'plans-link-in-bio' === intent ) {
-			tagline = planConstantObj.getLinkInBioTagLine?.() ?? '';
 		} else if ( 'plans-blog-onboarding' === intent ) {
 			tagline = planConstantObj.getBlogOnboardingTagLine?.() ?? '';
 		} else {

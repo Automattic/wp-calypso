@@ -84,6 +84,9 @@ const BlueprintForm2: React.FC< Props > = ( { onContinue, initialFormData, goBac
 			className="blueprint-form"
 			title={ preventWidows( translate( "Let's build your blueprint" ) ) }
 		>
+			<div className="field-mandatory-message">
+				{ translate( 'Fields marked with * are required' ) }
+			</div>
 			<FormField
 				label={ translate(
 					"How does your agency typically work with clients regarding Automattic's solutions?"
@@ -141,7 +144,7 @@ const BlueprintForm2: React.FC< Props > = ( { onContinue, initialFormData, goBac
 				</Button>
 
 				<Button variant="primary" onClick={ handleSubmit } __next40pxDefaultSize>
-					{ translate( 'Continue' ) }
+					{ translate( 'Finish' ) }
 				</Button>
 			</FormFooter>
 		</Form>

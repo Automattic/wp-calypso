@@ -66,3 +66,14 @@ export const getDesignPreviewUrl = (
 export const getAssemblerDesign = () => {
 	return ASSEMBLER_V2_DESIGN;
 };
+
+export const getThemeIdFromDesign = ( design: Design ) => {
+	const stylesheet = design?.recipe?.stylesheet;
+	if ( stylesheet ) {
+		// Transform stylesheet "premium/skivers" into themeId "skivers"
+		const slashIndex = stylesheet.lastIndexOf( '/' );
+		const themeId = stylesheet.substring( slashIndex + 1 );
+		return themeId;
+	}
+	return null;
+};

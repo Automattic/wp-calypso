@@ -120,7 +120,6 @@ export interface WPComPlan extends Plan {
 	getStoreAudience?: () => TranslateResult;
 	getPlanTagline?: () => TranslateResult;
 	getNewsletterTagLine?: () => TranslateResult;
-	getLinkInBioTagLine?: () => TranslateResult;
 	getBlogOnboardingTagLine?: () => TranslateResult;
 	getSubTitle?: () => TranslateResult;
 	getPlanCompareFeatures?: (
@@ -132,8 +131,6 @@ export interface WPComPlan extends Plan {
 	getPortfolioSignupFeatures?: () => Feature[];
 	getNewsletterSignupFeatures?: () => Feature[];
 	getNewsletterHighlightedFeatures?: () => Feature[];
-	getLinkInBioSignupFeatures?: () => Feature[];
-	getLinkInBioHighlightedFeatures?: () => Feature[];
 	getBlogOnboardingSignupFeatures?: () => Feature[];
 	getBlogOnboardingHighlightedFeatures?: () => Feature[];
 	getBlogOnboardingSignupJetpackFeatures?: () => Feature[];
@@ -374,7 +371,6 @@ export type Plan = BillingTerm & {
 	 */
 	getInferiorFeatures?: () => Feature[];
 	getNewsletterSignupFeatures?: () => Feature[];
-	getLinkInBioSignupFeatures?: () => Feature[];
 	getBlogOnboardingSignupFeatures?: () => Feature[];
 	getBlogOnboardingHighlightedFeatures?: () => Feature[];
 	getBlogOnboardingSignupJetpackFeatures?: () => Feature[];

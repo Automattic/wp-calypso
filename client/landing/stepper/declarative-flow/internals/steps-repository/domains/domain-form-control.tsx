@@ -3,7 +3,6 @@ import {
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
 	isDomainUpsellFlow,
-	LINK_IN_BIO_TLD_FLOW,
 	isSiteAssemblerFlow,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -70,7 +69,7 @@ export function DomainFormControl( {
 
 	const [ searchOnInitialRender, setSearchOnInitialRender ] = useState( true );
 
-	const path = '/start/link-in-bio/domains?new=test';
+	const path = '/setup/onboarding/domains';
 	let showExampleSuggestions: boolean | undefined = undefined;
 	let includeWordPressDotCom: boolean | undefined = undefined;
 	let showSkipButton: boolean | undefined = undefined;
@@ -91,10 +90,6 @@ export function DomainFormControl( {
 		showExampleSuggestions = false;
 		includeWordPressDotCom = false;
 		showSkipButton = true;
-	}
-
-	if ( flow === LINK_IN_BIO_TLD_FLOW ) {
-		includeWordPressDotCom = false;
 	}
 
 	if ( flow === DOMAIN_UPSELL_FLOW ) {
@@ -150,24 +145,6 @@ export function DomainFormControl( {
 		);
 	};
 
-	const getOtherManagedSubdomains = () => {
-		if ( flow === LINK_IN_BIO_TLD_FLOW ) {
-			return [ 'link' ];
-		}
-	};
-
-	const getOtherManagedSubdomainsCountOverride = () => {
-		if ( flow === LINK_IN_BIO_TLD_FLOW ) {
-			return 1;
-		}
-	};
-
-	const getPromoTlds = () => {
-		if ( flow === LINK_IN_BIO_TLD_FLOW ) {
-			return [ 'link' ];
-		}
-	};
-
 	const shouldIncludeDotBlogSubdomain = () => {
 		// 'subdomain' flow coming from .blog landing pages
 		if ( flow === 'subdomain' ) {
@@ -188,7 +165,6 @@ export function DomainFormControl( {
 				<CalypsoShoppingCartProvider>
 					<UseMyDomain
 						analyticsSection={ analyticsSection }
-						basePath={ path }
 						initialQuery={ domainForm?.lastQuery }
 						initialMode={ inputMode.domainInput }
 						onNextStep={ null }
@@ -248,15 +224,11 @@ export function DomainFormControl( {
 					isSignupStep
 					key="domainForm"
 					offerUnavailableOption
-					otherManagedSubdomains={ getOtherManagedSubdomains() }
-					otherManagedSubdomainsCountOverride={ getOtherManagedSubdomainsCountOverride() }
 					onAddDomain={ onAddDomain }
 					onAddMapping={ onAddMapping }
 					onSave={ setDomainForm }
 					onSkip={ onSkip }
-					path={ path }
 					products={ productsList }
-					promoTlds={ getPromoTlds() }
 					selectedSite={ selectedSite }
 					showExampleSuggestions={ showExampleSuggestions }
 					showSkipButton={ showSkipButton }

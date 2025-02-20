@@ -31,6 +31,17 @@ const ChartTabShape = PropTypes.shape( {
 	legendOptions: PropTypes.arrayOf( PropTypes.string ),
 } );
 
+const transformChartDataToLineFormat = ( chartData, activeLegend ) => {
+	return activeLegend.map( ( legend ) => ( {
+		label: legend,
+		options: {},
+		data: chartData.map( ( record ) => ( {
+			date: new Date( record.data.period ),
+			value: record.data[ legend ] || 0,
+		} ) ),
+	} ) );
+};
+
 class StatModuleChartTabs extends Component {
 	static propTypes = {
 		slug: PropTypes.string,
@@ -109,25 +120,6 @@ class StatModuleChartTabs extends Component {
 		this.setState( { chartType: newType } );
 	};
 
-	//TODO: remove this once we connect up the real data
-	generateDummyLineChartData = () => {
-		return [
-			{
-				label: 'Views',
-				options: {},
-				data: [
-					{ date: new Date( '2024-01-01' ), value: 45 },
-					{ date: new Date( '2024-01-02' ), value: 32 },
-					{ date: new Date( '2024-01-03' ), value: 67 },
-					{ date: new Date( '2024-01-04' ), value: 89 },
-					{ date: new Date( '2024-01-05' ), value: 54 },
-					{ date: new Date( '2024-01-06' ), value: 78 },
-					{ date: new Date( '2024-01-07' ), value: 93 },
-				],
-			},
-		];
-	};
-
 	render() {
 		const { siteId, slug, queryParams, selectedPeriod, isActiveTabLoading, className, countsComp } =
 			this.props;
@@ -182,14 +174,11 @@ class StatModuleChartTabs extends Component {
 					<AsyncLoad
 						require="calypso/my-sites/stats/components/line-chart"
 						className="stats-chart-tabs__line-chart"
-						chartData={ this.generateDummyLineChartData() }
+						chartData={ transformChartDataToLineFormat( chartData, this.props.activeLegend ) }
 						height={ 200 }
-						moment={ this.props.moment }
-						formatTimeTick={ ( timestamp ) => {
-							const date = new Date( timestamp );
-							return formatDate( date, this.props.selectedPeriod );
-						} }
-						maxViews={ 100 }
+						moment={ moment }
+						formatTimeTick={ ( timestamp ) => formatDate( new Date( timestamp ), selectedPeriod ) }
+						maxViews={ Math.max( ...chartData.map( ( d ) => d.value ) ) }
 					/>
 				) }
 
