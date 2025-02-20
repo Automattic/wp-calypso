@@ -126,9 +126,7 @@ function renderSidebar( props, siteDetails = defaultSiteDetails, emailVerified =
 
 		return (
 			<redux.Provider store={ reduxStore }>
-				<MemoryRouter
-					initialEntries={ [ `/setup/link-in-bio-tld/launchpad?siteSlug=${ siteSlug }` ] }
-				>
+				<MemoryRouter initialEntries={ [ `/setup/newsletter/launchpad?siteSlug=${ siteSlug }` ] }>
 					<Sidebar { ...props } />
 				</MemoryRouter>
 			</redux.Provider>
