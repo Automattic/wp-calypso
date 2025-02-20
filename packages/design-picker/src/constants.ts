@@ -16,6 +16,12 @@ export const MOBILE_VIEWPORT_WIDTH = 599;
 export const STICKY_OFFSET_TOP = 109;
 
 /**
+ * Unified design picker
+ */
+export const COLLAPSED_DESIGNS_VISIBLE_COUNT = 6;
+export const FREE_DESIGNS_BOOSTED_COUNT = 3;
+
+/**
  * Hard-coded design
  */
 export const ASSEMBLER_V2_DESIGN = {

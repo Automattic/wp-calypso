@@ -4,7 +4,12 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { InView } from 'react-intersection-observer';
-import { SHOW_ALL_SLUG } from '../constants';
+import {
+	COLLAPSED_DESIGNS_VISIBLE_COUNT,
+	FREE_THEME,
+	FREE_DESIGNS_BOOSTED_COUNT,
+	SHOW_ALL_SLUG,
+} from '../constants';
 import { useDesignTiers, useDesignPickerFilters } from '../hooks/use-design-picker-filters';
 import { useFilteredDesignsByGroup } from '../hooks/use-filtered-designs';
 import {
@@ -211,8 +216,21 @@ const DesignCardGroup = ( {
 }: DesignCardGroup ) => {
 	const translate = useTranslate();
 	const [ isCollapsed, setIsCollapsed ] = useState( !! categoryName || false );
-	const collapsedDesignCount = 6;
-	const visibleDesigns = isCollapsed ? designs.slice( 0, collapsedDesignCount ) : designs;
+
+	const visibleDesigns = useMemo( () => {
+		const free = designs.filter( ( design ) => design.design_tier === FREE_THEME );
+		const boosted = free.slice( 0, FREE_DESIGNS_BOOSTED_COUNT );
+		const remaining = designs.filter( ( design ) => ! boosted.includes( design ) );
+
+		if ( ! isCollapsed ) {
+			return [ ...boosted, ...remaining ];
+		}
+
+		return [
+			...boosted,
+			...remaining.slice( 0, COLLAPSED_DESIGNS_VISIBLE_COUNT - boosted.length ),
+		];
+	}, [ isCollapsed, designs ] );
 
 	const content = (
 		<div className="design-picker__grid">
@@ -254,7 +272,7 @@ const DesignCardGroup = ( {
 				</div>
 			) }
 			{ content }
-			{ isCollapsed && designs.length > collapsedDesignCount && (
+			{ isCollapsed && designs.length > COLLAPSED_DESIGNS_VISIBLE_COUNT && (
 				<div className="design-picker__design-card-group-footer">
 					<Button onClick={ () => setIsCollapsed( false ) }>
 						{ translate( 'Show all %s themes', {
