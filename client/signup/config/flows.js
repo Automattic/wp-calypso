@@ -1,14 +1,12 @@
-import { getPlan, TYPE_ECOMMERCE, TYPE_BUSINESS } from '@automattic/calypso-products/';
 import {
 	PREMIUM_THEME,
 	DOT_ORG_THEME,
 	BUNDLED_THEME,
 	MARKETPLACE_THEME,
 } from '@automattic/design-picker';
-import { isOnboardingGuidedFlow, isSiteAssemblerFlow } from '@automattic/onboarding';
+import { isSiteAssemblerFlow } from '@automattic/onboarding';
 import { isURL } from '@wordpress/url';
 import { get, includes, reject } from 'lodash';
-import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs, pathToUrl } from 'calypso/lib/url';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
@@ -70,7 +68,7 @@ function getRedirectDestination( dependencies ) {
 	return '/';
 }
 
-function getSignupDestination( { domainItem, siteId, siteSlug, refParameter, flowName, ...rest } ) {
+function getSignupDestination( { domainItem, siteId, siteSlug, refParameter } ) {
 	if ( 'no-site' === siteSlug ) {
 		return '/home';
 	}
@@ -82,16 +80,6 @@ function getSignupDestination( { domainItem, siteId, siteSlug, refParameter, flo
 		// case we use the ID because we know it won't change depending on whether the user
 		// successfully completes the checkout process or not.
 		queryParam = { siteId };
-	}
-
-	// For guided flow, in the variant where the goals are answered in the first step, redirect to the site-setup-wg (without goals).
-	// NOTE: we may need a better way to detect the variant where goals are answered in the first step.
-	// The `segmentationSurveyAnswers` are persisted and can affect the following visits of the flow.
-	if (
-		isOnboardingGuidedFlow( flowName ) &&
-		rest.segmentationSurveyAnswers?.[ 'what-are-your-goals' ]
-	) {
-		return addQueryArgs( queryParam, '/setup/site-setup-wg' );
 	}
 
 	// Add referral param to query args
@@ -215,63 +203,6 @@ function getEntrepreneurFlowDestination( { redirect_to } ) {
 	return redirect_to || '/setup/entrepreneur/trialAcknowledge';
 }
 
-function getGuidedOnboardingFlowDestination( dependencies ) {
-	const { onboardingSegment, siteSlug, siteId, domainItem, cartItems, refParameter } = dependencies;
-
-	if ( ! onboardingSegment ) {
-		return getSignupDestination( dependencies );
-	}
-
-	if ( 'no-site' === siteSlug ) {
-		return '/home';
-	}
-
-	let queryParams = { siteSlug, siteId };
-
-	if ( domainItem ) {
-		queryParams = { siteId };
-	}
-
-	if ( refParameter ) {
-		queryParams.ref = refParameter;
-	}
-
-	const planSlug = getPlanCartItem( cartItems )?.product_slug;
-	const planType = getPlan( planSlug )?.type;
-
-	// Blog and Merchant setup without Entrepreneur/Ecommerce Plan
-	if (
-		( onboardingSegment === 'blogger' || onboardingSegment === 'merchant' ) &&
-		planType !== TYPE_ECOMMERCE
-	) {
-		return addQueryArgs( queryParams, `/setup/site-setup-wg/options` );
-	}
-
-	// Not Blog, Merchant, nor Developer/Agency without Entrepreneur/Ecommerce Plan
-	if (
-		onboardingSegment !== 'blogger' &&
-		onboardingSegment !== 'merchant' &&
-		onboardingSegment !== 'developer-or-agency' &&
-		planType !== TYPE_ECOMMERCE
-	) {
-		return addQueryArgs( queryParams, `/setup/site-setup-wg/design-choices` );
-	}
-
-	// Entrepreneur/Ecommerce Plan
-	if ( planType === TYPE_ECOMMERCE ) {
-		return `/checkout/thank-you/${ siteSlug }`;
-	}
-
-	// Developer or Agency with Creator/Business Plan
-	if ( onboardingSegment === 'developer-or-agency' && planType === TYPE_BUSINESS ) {
-		queryParams.initiate_transfer_context = 'guided';
-		queryParams.redirect_to = `/home/${ siteSlug }`;
-		return addQueryArgs( queryParams, '/setup/transferring-hosted-site' );
-	}
-
-	return addQueryArgs( queryParams, `/setup/site-setup-wg/design-choices` );
-}
-
 const flows = generateFlows( {
 	getRedirectDestination,
 	getSignupDestination,
@@ -286,7 +217,6 @@ const flows = generateFlows( {
 	getDIFMSiteContentCollectionDestination,
 	getHostingFlowDestination,
 	getEntrepreneurFlowDestination,
-	getGuidedOnboardingFlowDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {
