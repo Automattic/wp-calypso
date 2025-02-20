@@ -628,7 +628,7 @@ export class LoginForm extends Component {
 		const { oauth2Client, currentQuery, currentRoute, pathname, locale } = this.props;
 
 		if ( this.props.signupUrl ) {
-			const sanitizedPath = this.props.signupUrl.replace( /[\r\n\s]/g, '' );
+			const sanitizedPath = this.props.signupUrl.replace( /\s/g, '' );
 			return window.location.origin + pathWithLeadingSlash( sanitizedPath );
 		}
 
