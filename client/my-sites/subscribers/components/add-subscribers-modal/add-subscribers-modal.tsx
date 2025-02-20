@@ -6,7 +6,6 @@ import { Gridicon, FlowQuestion } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { AddSubscriberForm, UploadSubscribersForm } from '@automattic/subscriber';
 import { useHasStaleImportJobs } from '@automattic/subscriber/src/hooks/use-has-stale-import-jobs';
-import { useImportError } from '@automattic/subscriber/src/hooks/use-import-error';
 import { useInProgressState } from '@automattic/subscriber/src/hooks/use-in-progress-state';
 import { ExternalLink, Modal, __experimentalVStack as VStack } from '@wordpress/components';
 import { useState } from '@wordpress/element';
@@ -22,7 +21,6 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
-import type { ImportSubscribersError } from '@automattic/data-stores/src/subscriber/types';
 
 import './style.scss';
 
@@ -33,7 +31,7 @@ const AddSubscribersModal = ( {
 }: {
 	isVisible: boolean;
 	onClose: () => void;
-	addSubscribersCallback: ( importError: ImportSubscribersError | undefined ) => void;
+	addSubscribersCallback: () => void;
 } ) => {
 	const site = useSelector( getSelectedSite );
 	const translate = useTranslate();
@@ -54,14 +52,13 @@ const AddSubscribersModal = ( {
 	const [ isUploading, setIsUploading ] = useState( false );
 	const onImportStarted = ( hasFile: boolean ) => setIsUploading( hasFile );
 
-	const importError = useImportError();
 	const isImportInProgress = useInProgressState();
 	const hasStaleImportJobs = useHasStaleImportJobs();
 
 	const onImportFinished = () => {
 		setIsUploading( false );
 		setAddingMethod( '' );
-		addSubscribersCallback( importError );
+		addSubscribersCallback();
 	};
 
 	if ( ! isVisible ) {

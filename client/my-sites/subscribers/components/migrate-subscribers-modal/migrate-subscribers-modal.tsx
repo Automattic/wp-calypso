@@ -38,7 +38,7 @@ const MigrateSubscribersModal = ( {
 }: {
 	isVisible: boolean;
 	onClose: () => void;
-	migrateSubscribersCallback: ( selectedSourceSiteId: number, targetSiteId: number ) => void;
+	migrateSubscribersCallback: ( selectedSourceSiteId: number ) => void;
 } ) => {
 	const translate = useTranslate();
 	const targetSite = useSelector( getSelectedSite );
@@ -160,7 +160,7 @@ const MigrateSubscribersModal = ( {
 							} );
 							selectedSourceSiteId &&
 								targetSiteId &&
-								migrateSubscribersCallback( selectedSourceSiteId, targetSiteId );
+								migrateSubscribersCallback( selectedSourceSiteId );
 						} }
 					>
 						{ translate( 'Confirm subscriber move' ) }

@@ -1,7 +1,8 @@
-import { ImportSubscribersError } from '@automattic/data-stores/src/subscriber/types';
 import { useActiveJobRecognition } from '@automattic/subscriber';
-import { useDispatch } from '@wordpress/data';
+import { useImportError } from '@automattic/subscriber/src/hooks/use-import-error';
+import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
+import { useDispatch } from 'react-redux';
 import { useSelector } from 'calypso/state';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -9,6 +10,7 @@ import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 export const useAddSubscribersCallback = ( siteId: number | null ) => {
 	const { completedJob } = useActiveJobRecognition( siteId ?? 0 );
+	const importError = useImportError();
 	const { isJetpackNonAtomic, selectedSiteSlug } = useSelector( ( state ) => {
 		return {
 			isJetpackNonAtomic: isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } ),
@@ -17,10 +19,9 @@ export const useAddSubscribersCallback = ( siteId: number | null ) => {
 	} );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const queryClient = useQueryClient();
 
-	const addSubscribersCallback: (
-		importError?: ImportSubscribersError
-	) => Promise< void > = async ( importError ) => {
+	const addSubscribersCallback = () => {
 		if ( ! importError ) {
 			if ( completedJob ) {
 				const { email_count, subscribed_count, already_subscribed_count, failed_subscribed_count } =
@@ -43,6 +44,9 @@ export const useAddSubscribersCallback = ( siteId: number | null ) => {
 						)
 					)
 				);
+
+				// Invalidate the subscribers query to ensure the new subscribers are fetched
+				queryClient.invalidateQueries( { queryKey: [ 'subscribers', siteId ] } );
 			} else {
 				dispatch(
 					successNotice(

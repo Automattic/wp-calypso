@@ -1,7 +1,8 @@
-import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
+import { useDispatch } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { useCompleteImportSubscribersTask } from './use-complete-import-subscribers-task';
 
 type Response = {
 	success: boolean;
@@ -12,18 +13,24 @@ type ResponseWithBody = {
 	body: Response;
 };
 
-export const useMigrateSubscribersCallback = () => {
+export const useMigrateSubscribersCallback = ( siteId: number | null ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const completeImportSubscribersTask = useCompleteImportSubscribersTask();
 
-	const migrateSubscribersCallback: (
-		sourceSiteId: number,
-		targetSiteId: number
-	) => Promise< void > = async ( sourceSiteId, targetSiteId ) => {
+	const migrateSubscribersCallback: ( sourceSiteId: number ) => Promise< void > = async (
+		sourceSiteId
+	) => {
+		completeImportSubscribersTask();
+
+		if ( ! siteId ) {
+			return;
+		}
+
 		try {
 			const response = await wpcom.req
 				.post(
-					`/jetpack-blogs/${ encodeURIComponent( targetSiteId ) }/source/${ encodeURIComponent(
+					`/jetpack-blogs/${ encodeURIComponent( siteId ) }/source/${ encodeURIComponent(
 						sourceSiteId
 					) }/migrate?http_envelope=1`
 				)
@@ -31,6 +38,7 @@ export const useMigrateSubscribersCallback = () => {
 					// In Calypso green the response has body
 					return data.body ?? data;
 				} );
+
 			if ( response.success ) {
 				dispatch(
 					successNotice(
