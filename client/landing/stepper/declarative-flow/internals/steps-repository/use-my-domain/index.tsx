@@ -5,17 +5,14 @@ import {
 	ONBOARDING_FLOW,
 	StepContainer,
 	isStartWritingFlow,
-	isOnboardingFlow,
 } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
-import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg } from '@wordpress/url';
 import { useLocation } from 'react-router';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import UseMyDomainComponent from 'calypso/components/domains/use-my-domain';
-import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainMapping, domainTransfer } from 'calypso/lib/cart-values/cart-items';
@@ -25,7 +22,6 @@ import type { Step } from '../../types';
 import './style.scss';
 
 const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
-	const { __ } = useI18n();
 	const { setHideFreePlan, setDomainCartItem } = useDispatch( ONBOARD_STORE );
 	const { goNext, goBack, submit } = navigation;
 	const getDefaultStepContent = () => <h1>Choose a domain step</h1>;
@@ -114,19 +110,6 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 		}
 	};
 
-	const getFormattedHeader = () => {
-		if ( isOnboardingFlow( flow ) ) {
-			return (
-				<FormattedHeader
-					id="choose-a-domain-onboarding-header"
-					headerText=""
-					subHeaderText={ __( 'Find and claim one or more domain names' ) }
-					align="center"
-				/>
-			);
-		}
-	};
-
 	return (
 		<>
 			<QueryProductsList />
@@ -140,7 +123,6 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 				isLargeSkipLayout={ false }
 				stepContent={ getStepContent() }
 				recordTracksEvent={ recordTracksEvent }
-				formattedHeader={ getFormattedHeader() }
 			/>
 		</>
 	);
