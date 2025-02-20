@@ -19,17 +19,10 @@ $button-border: 4px;
 		overflow: clip;
 		padding-top: 47px;
 
-		.theme__sheet-screenshot,
-		.theme__sheet-web-preview {
-			@include breakpoint-deprecated( ">960px" ) {
-				top: calc(var(--masterbar-height) + 16px);
-			}
-		}
-
 		.theme__sheet-web-preview .theme-preview__frame-wrapper {
 			@include breakpoint-deprecated( ">960px" ) {
-				// Inner padding: 96px.
-				max-height: calc(100vh - var(--content-padding-top) - var(--content-padding-bottom) - var(--masterbar-height) - 96px );
+				// Inner padding: 32px.
+				max-height: calc(100vh - var(--content-padding-top) - var(--content-padding-bottom) - var(--masterbar-height) - 32px );
 			}
 		}
 	}
