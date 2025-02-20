@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { Context, Message, MessageRole, MessageType, ZendeskMessage } from '../types';
+import type { Context, Message, MessageRole, MessageType, ZendeskMessage } from '../types';
 
 // Format markdown to support images attachments that open in a new tab.
 function prepareMarkdownImage( imgUrl: string, isPlaceholder: boolean ): string {
@@ -77,7 +77,11 @@ export const zendeskMessageConverter: ( message: ZendeskMessage ) => Message = (
 		role = 'bot';
 		context = {
 			...context,
-			flags: { hide_disclaimer_content: true, show_contact_support_msg: true },
+			flags: {
+				hide_disclaimer_content: true,
+				show_contact_support_msg: true,
+				show_ai_avatar: false,
+			},
 		};
 	}
 
