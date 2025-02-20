@@ -180,7 +180,6 @@ describe( 'formatCurrency', () => {
 							: Promise.resolve( 'invalid' ),
 				} ) as any
 		);
-		// setDefaultLocale( undefined );
 		await geolocateCurrencySymbol();
 		const money = formatCurrency( 9800900.32, 'USD', { locale: 'en-US' } );
 		expect( money ).toBe( '$9,800,900.32' );
@@ -196,7 +195,6 @@ describe( 'formatCurrency', () => {
 							: Promise.resolve( 'invalid' ),
 				} ) as any
 		);
-		// setDefaultLocale( undefined );
 		await geolocateCurrencySymbol();
 		const money = formatCurrency( 9800900.32, 'USD', { locale: 'fr' } );
 		expect( money ).toBe( '9 800 900,32 $US' );
@@ -212,7 +210,6 @@ describe( 'formatCurrency', () => {
 							: Promise.resolve( 'invalid' ),
 				} ) as any
 		);
-		// setDefaultLocale( undefined );
 		await geolocateCurrencySymbol();
 		const money = formatCurrency( 9800900.32, 'USD', { locale: 'en-CA' } );
 		expect( money ).toBe( 'US$9,800,900.32' );
@@ -228,7 +225,6 @@ describe( 'formatCurrency', () => {
 							: Promise.resolve( 'invalid' ),
 				} ) as any
 		);
-		// setDefaultLocale( undefined );
 		await geolocateCurrencySymbol();
 		const money = formatCurrency( 9800900.32, 'USD', { locale: 'en' } );
 		expect( money ).toBe( '$9,800,900.32' );
@@ -244,7 +240,6 @@ describe( 'formatCurrency', () => {
 							: Promise.resolve( 'invalid' ),
 				} ) as any
 		);
-		// setDefaultLocale( undefined );
 		await geolocateCurrencySymbol();
 		const money = formatCurrency( 9800900.32, 'USD', { locale: 'en' } );
 		expect( money ).toBe( 'US$9,800,900.32' );
