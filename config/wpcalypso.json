@@ -139,7 +139,6 @@
 		"purchases/new-payment-methods": true,
 		"reader": true,
 		"reader/full-errors": true,
-		"reader/discovery-v2": true,
 		"readymade-templates/showcase": true,
 		"redirect-fallback-browsers": true,
 		"rum-tracking/logstash": true,
