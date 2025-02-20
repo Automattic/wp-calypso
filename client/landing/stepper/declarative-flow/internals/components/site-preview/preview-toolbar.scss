@@ -34,19 +34,20 @@
 
 // Need the extra specificity here to override core
 .button.preview-toolbar__button {
-	color: var(--studio-gray-10);
 	height: auto;
 	margin: 0 9px;
 	transition: color 0.1s ease-in-out;
 
+	svg {
+		fill: var(--studio-gray-10);
+	}
+
 	&.is-selected,
 	&:hover,
 	&:focus {
-		color: var(--studio-black);
-	}
-
-	svg {
-		fill: none;
+		svg {
+			fill: var(--studio-black);
+		}
 	}
 }
 
