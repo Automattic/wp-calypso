@@ -15,10 +15,8 @@ const TITLE_BAR_HEIGHT = 38;
 
 let mainWindow = null;
 
-function showAppWindow() {
-	const preloadFile = getPath( 'preload.js' );
+function getInitialUrl() {
 	let appUrl = Config.loginURL();
-
 	if ( ! process.env.CI && ! process.env.WP_DESKTOP_DEBUG ) {
 		log.info( 'Overriding window with last location...' );
 		const lastLocation = Settings.getSetting( settingConstants.LAST_LOCATION );
@@ -26,6 +24,12 @@ function showAppWindow() {
 			appUrl = lastLocation;
 		}
 	}
+	return appUrl;
+}
+
+function showAppWindow() {
+	const preloadFile = getPath( 'preload.js' );
+	const appUrl = getInitialUrl();
 	log.info( 'Loading app (' + appUrl + ') in mainWindow' );
 
 	const windowConfig = Settings.getSettingGroup( Config.mainWindow, null );
@@ -142,7 +146,8 @@ function showAppWindow() {
 		return Settings.toRenderer();
 	} );
 
-	mainView.webContents.loadURL( appUrl );
+	log.info( `Loading URL: '${ appUrl }'` );
+	void mainView.webContents.loadURL( appUrl );
 
 	mainWindow.on( 'close', function () {
 		const currentURL = mainView.webContents.getURL();
