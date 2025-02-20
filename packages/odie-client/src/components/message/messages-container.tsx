@@ -89,7 +89,11 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 
 			resetSupportInteraction().then( ( interaction ) => {
 				if ( isChatLoaded ) {
-					createZendeskConversation( true, interaction?.uuid ).then( () => {
+					createZendeskConversation( {
+						avoidTransfer: true,
+						interactionId: interaction?.uuid,
+						createdFrom: 'direct_url',
+					} ).then( () => {
 						setChatMessagesLoaded( true );
 					} );
 				}
