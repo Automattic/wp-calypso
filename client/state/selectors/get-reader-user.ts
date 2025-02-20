@@ -14,9 +14,11 @@ export default function getReaderUser(
 	findById?: boolean | undefined
 ): UserData | undefined {
 	if ( findById ) {
-		return ( Object.values( state.reader.users.items ) as UserData[] ).find( ( user ) => {
-			return Number( user.ID ) === Number( userIdOrLogin );
-		} );
+		return (
+			( Object.values( state.reader.users.items ) as ( UserData | null )[] ).find( ( user ) => {
+				return Number( user?.ID ) === Number( userIdOrLogin );
+			} ) ?? undefined
+		);
 	}
 	return state.reader.users.items[ userIdOrLogin ];
 }
