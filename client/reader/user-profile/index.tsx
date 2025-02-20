@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import BackButton from 'calypso/components/back-button';
 import EmptyContent from 'calypso/components/empty-content';
 import { UserData } from 'calypso/lib/user/user';
-import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
+import { getUserProfileUrlWithUsername } from 'calypso/reader/user-profile/user-profile.utils';
 import UserLists from 'calypso/reader/user-profile/views/lists';
 import UserPosts from 'calypso/reader/user-profile/views/posts';
 import { requestUser } from 'calypso/state/reader/users/actions';
@@ -70,7 +70,7 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 		);
 	}
 
-	const userProfileUrl = getUserProfileUrl( userLogin );
+	const userProfileUrl = getUserProfileUrlWithUsername( userLogin );
 
 	const renderContent = (): React.ReactNode => {
 		const basePath = path?.split( '?' )[ 0 ];

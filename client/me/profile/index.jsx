@@ -20,7 +20,7 @@ import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import DomainUpsell from 'calypso/me/domain-upsell';
 import withFormBase from 'calypso/me/form-base/with-form-base';
 import ReauthRequired from 'calypso/me/reauth-required';
-import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
+import { getUserProfileUrlWithUsername } from 'calypso/reader/user-profile/user-profile.utils';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import WPAndGravatarLogo from './wp-and-gravatar-logo';
@@ -43,7 +43,7 @@ class Profile extends Component {
 	render() {
 		// We want to use a relative URL so we can test effectively in each
 		// environment, but show the absolute URL in the UI for end users.
-		const relativeProfileUrl = getUserProfileUrl( this.props.user.username );
+		const relativeProfileUrl = getUserProfileUrlWithUsername( this.props.user.username );
 		const absoluteProfileUrl = `https://wordpress.com${ relativeProfileUrl }`;
 
 		return (
