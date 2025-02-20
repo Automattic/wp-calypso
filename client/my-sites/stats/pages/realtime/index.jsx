@@ -9,6 +9,7 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
+import StatsModuleReferrers from 'calypso/my-sites/stats/features/modules/stats-referrers';
 import StatsModuleTopPosts from 'calypso/my-sites/stats/features/modules/stats-top-posts';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import { requestSiteStats } from 'calypso/state/stats/lists/actions';
@@ -98,6 +99,14 @@ function StatsRealtime() {
 				<StatsModuleListing className="stats__module-list--insights" siteId={ siteId }>
 					<StatsModuleTopPosts
 						moduleStrings={ moduleStrings.posts }
+						period={ period }
+						query={ query }
+						summaryUrl={ url }
+						className={ halfWidthModuleClasses }
+						isRealTime
+					/>
+					<StatsModuleReferrers
+						moduleStrings={ moduleStrings.referrers }
 						period={ period }
 						query={ query }
 						summaryUrl={ url }
