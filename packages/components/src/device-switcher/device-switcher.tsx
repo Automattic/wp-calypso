@@ -2,7 +2,6 @@ import { useResizeObserver } from '@wordpress/compose';
 import clsx from 'clsx';
 import { useState, useEffect, useRef } from 'react';
 import { DEVICE_TYPES } from './constants';
-import FixedViewport from './fixed-viewport';
 import DeviceSwitcherToolbar from './toolbar';
 import type { Device } from './types';
 import './device-switcher.scss';
@@ -14,7 +13,6 @@ interface Props {
 	isShowDeviceSwitcherToolbar?: boolean;
 	isShowFrameBorder?: boolean;
 	isShowFrameShadow?: boolean;
-	isFixedViewport?: boolean;
 	isFullscreen?: boolean;
 	frameRef?: React.MutableRefObject< HTMLDivElement | null >;
 	onDeviceChange?: ( device: Device ) => void;
@@ -32,7 +30,6 @@ const DeviceSwitcher = ( {
 	isShowDeviceSwitcherToolbar,
 	isShowFrameBorder,
 	isShowFrameShadow = true,
-	isFixedViewport,
 	isFullscreen,
 	frameRef,
 	onDeviceChange,
@@ -66,26 +63,11 @@ const DeviceSwitcher = ( {
 		}, ANIMATION_DURATION );
 
 		return clearAnimationEndTimer;
-	}, [ width, height, isFixedViewport ] );
-
-	let frame = (
-		<div className="device-switcher__frame" ref={ frameRef }>
-			{ children }
-		</div>
-	);
-
-	if ( isFixedViewport ) {
-		frame = (
-			<FixedViewport device={ device } viewportWidth={ width ?? 0 }>
-				{ frame }
-			</FixedViewport>
-		);
-	}
+	}, [ width, height ] );
 
 	return (
 		<div
 			className={ clsx( className, 'device-switcher__container', {
-				'device-switcher__container--frame-fixed-viewport': isFixedViewport,
 				'device-switcher__container--frame-shadow': isShowFrameShadow,
 				'device-switcher__container--frame-bordered': isShowFrameBorder,
 				'device-switcher__container--is-computer': device === COMPUTER,
@@ -99,7 +81,9 @@ const DeviceSwitcher = ( {
 					<DeviceSwitcherToolbar device={ device } onDeviceClick={ handleDeviceClick } />
 				) }
 			</div>
-			{ frame }
+			<div className="device-switcher__frame" ref={ frameRef }>
+				{ children }
+			</div>
 			{ containerResizeListener }
 		</div>
 	);
