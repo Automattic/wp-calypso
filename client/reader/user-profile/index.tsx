@@ -99,7 +99,7 @@ export default connect(
 	( state: UserProfileState, ownProps: UserProfileProps ) => ( {
 		// The following logic works because userLogin and userId are mutually exclusive via the
 		// routes.
-		user1: getReaderUser(
+		user: getReaderUser(
 			state,
 			ownProps.userLogin || ownProps.userId,
 			ownProps.userLogin ? false : true
