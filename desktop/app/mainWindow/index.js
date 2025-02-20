@@ -2,6 +2,7 @@ const { app, BrowserWindow, BrowserView, ipcMain: ipc } = require( 'electron' );
 const { getPath } = require( '../lib/assets' );
 const Config = require( '../lib/config' );
 const log = require( '../lib/logger' )( 'desktop:runapp' );
+const { isNonDesktopLoginUrl } = require( '../lib/login' );
 const platform = require( '../lib/platform' );
 const SessionManager = require( '../lib/session' );
 const Settings = require( '../lib/settings' );
@@ -26,8 +27,15 @@ function getInitialUrl() {
 		return appUrl;
 	}
 
-	log.info( `Will use last location as initial URL ${ lastLocation }` );
+	log.info( `Will use last location as initial URL: ${ lastLocation }` );
 	appUrl = lastLocation;
+
+	if ( Config.oauthLoginEnabled && isNonDesktopLoginUrl( appUrl ) ) {
+		appUrl = Config.loginURL();
+		log.info(
+			`Last location pointed to the regular login URL, will use the desktop login URL instead: ${ appUrl }`
+		);
+	}
 	return appUrl;
 }
 
