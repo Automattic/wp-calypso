@@ -1,8 +1,9 @@
 .site-logs-header {
 	align-items: center;
 	display: flex;
-	gap: 16px;
+	flex-direction: row;
 	justify-content: space-between;
+	gap: 16px;
 
 	.date-control {
 		flex-shrink: 0;
@@ -13,6 +14,20 @@
 	}
 	.site-logs-toolbar__toggle-option {
 		white-space: nowrap;
+	}
+}
+
+@media ( max-width: 600px ) {
+	.site-logs-header {
+		flex-direction: column;
+	}
+	.site-logs-header > .components-base-control {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		.site-logs-toolbar__toggle {
+			width: 100%;
+		}
 	}
 }
 
