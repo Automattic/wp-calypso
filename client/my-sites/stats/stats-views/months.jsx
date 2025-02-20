@@ -190,7 +190,7 @@ const StatsViewsMonths = ( props ) => {
 						{ translate( 'Apr' ) }
 					</Month>
 					<Month value={ numberFormat( getMonthTotal( totals, 4 ) ) } isHeader>
-						{ translate( 'May' ) }
+						{ translate( 'May', { context: 'May abbreviation' } ) }
 					</Month>
 					<Month value={ numberFormat( getMonthTotal( totals, 5 ) ) } isHeader>
 						{ translate( 'Jun' ) }
