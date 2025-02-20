@@ -1,5 +1,5 @@
+import { getAllSubscriptions } from 'calypso/state/memberships/subscriptions/selectors';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
-
 import 'calypso/state/purchases/init';
 
 /**
@@ -11,12 +11,20 @@ import 'calypso/state/purchases/init';
  */
 export const hasCancelableUserPurchases = ( state ) => {
 	const purchases = getUserPurchases( state );
-	return (
+	const subscriptions = getAllSubscriptions( state );
+
+	const hasRefundablePurchases =
 		purchases &&
 		purchases.some(
 			( purchase ) => purchase.isRefundable || purchase.productSlug !== 'premium_theme'
-		)
-	);
+		);
+	const hasRenewableSubscriptions =
+		subscriptions &&
+		subscriptions.some(
+			( subscription ) => subscription.status === 'active' && subscription.is_renewable
+		);
+
+	return hasRefundablePurchases || hasRenewableSubscriptions;
 };
 
 export default hasCancelableUserPurchases;
