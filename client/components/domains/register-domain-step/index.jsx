@@ -781,14 +781,20 @@ class RegisterDomainStep extends Component {
 
 	removeUnavailablePremiumDomain = ( domainName ) => {
 		this.setState( ( state ) => {
-			const newPremiumDomains = { ...state.premiumDomains };
-			delete newPremiumDomains[ domainName ];
-			const searchResults = state.searchResults || [];
+			const newPremiumDomains = Object.fromEntries(
+				Object.entries( state.premiumDomains ).filter( ( [ key ] ) => key !== domainName )
+			);
+			if ( Array.isArray( state.searchResults ) ) {
+				const newSearchResults = state.searchResults.filter(
+					( suggestion ) => suggestion.domain_name !== domainName
+				);
+				return {
+					premiumDomains: newPremiumDomains,
+					searchResults: newSearchResults,
+				};
+			}
 			return {
 				premiumDomains: newPremiumDomains,
-				searchResults: searchResults.filter(
-					( suggestion ) => suggestion.domain_name !== domainName
-				),
 			};
 		} );
 	};
