@@ -1,10 +1,10 @@
 import { Button } from '@wordpress/components';
-import { Icon } from '@wordpress/icons';
+import { Icon, desktop, mobile, tablet } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useRef } from 'react';
 import { DEVICES_SUPPORTED, DEVICE_TYPES } from './constants';
-import { computer, tablet, phone, zoomIn, zoomOut } from './icons';
+import { zoomIn, zoomOut } from './icons';
 import type { Device } from './types';
 import './toolbar.scss';
 
@@ -24,9 +24,9 @@ const DeviceSwitcherToolbar = ( {
 	onZoomClick,
 }: ToolbarProps ) => {
 	const devices = useRef( {
-		[ DEVICE_TYPES.COMPUTER ]: { title: translate( 'Desktop' ), icon: computer, iconSize: 36 },
-		[ DEVICE_TYPES.TABLET ]: { title: translate( 'Tablet' ), icon: tablet, iconSize: 24 },
-		[ DEVICE_TYPES.PHONE ]: { title: translate( 'Phone' ), icon: phone, iconSize: 24 },
+		[ DEVICE_TYPES.COMPUTER ]: { title: translate( 'Desktop' ), icon: desktop, iconSize: 36 },
+		[ DEVICE_TYPES.TABLET ]: { title: translate( 'Tablet' ), icon: tablet, iconSize: 36 },
+		[ DEVICE_TYPES.PHONE ]: { title: translate( 'Phone' ), icon: mobile, iconSize: 36 },
 	} );
 
 	return (
