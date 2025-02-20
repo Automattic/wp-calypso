@@ -3,7 +3,7 @@ import { CATEGORIES } from '@automattic/design-picker';
 import type { Category } from '@automattic/design-picker';
 
 const GOALS_TO_CATEGORIES: { [ key in Onboard.SiteGoal ]: string[] } = {
-	[ Onboard.SiteGoal.Write ]: [ CATEGORIES.BLOG, CATEGORIES.NEWSLETTER ],
+	[ Onboard.SiteGoal.Write ]: [ CATEGORIES.BLOG ],
 	[ Onboard.SiteGoal.Courses ]: [ CATEGORIES.EDUCATION ],
 	[ Onboard.SiteGoal.AnnounceEvents ]: [ CATEGORIES.EVENTS ],
 	[ Onboard.SiteGoal.Porfolio ]: [ CATEGORIES.PORTFOLIO ],
