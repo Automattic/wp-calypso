@@ -14,6 +14,30 @@ $brand-display: "SF Pro Display", sans-serif;
 	}	
 }
 
+.scheduled-updates-list.main.is-full-width-layout {
+	.plugins-update-manager-multisite {
+		&__header-main {
+			.components-button {
+				align-self: center;
+			}
+		}
+
+		&__header-main-title {
+			h1 {
+				font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+				font-weight: 500;
+				font-size: 1.5rem;
+				line-height: 1.25;
+			}
+
+			p {
+				font-size: 1rem !important;
+				margin-top: 0.5rem;
+			}
+		}
+	}
+}
+
 .plugins-update-manager-multisite {
 	&__header {
 		padding-top: 24px;
