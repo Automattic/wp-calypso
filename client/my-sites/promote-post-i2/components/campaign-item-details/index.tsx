@@ -659,6 +659,95 @@ export default function CampaignItemDetails( props: Props ) {
 		setHideTspMetricsBannerCookie( true );
 	};
 
+	const getCampaignTSPStats = ( showBanner: boolean ) => (
+		<>
+			<div className="campaign-item-details__main-stats-row" ref={ tspTargetRef }>
+				<TspMetricsBanner
+					onClose={ closeTspMetricsBanner }
+					display={ showBanner && showTspMetricsBanner }
+				/>
+				<div className="campaign-item-details__main-stats-title">
+					<span className="campaign-item-details__title">{ translate( 'Social Engagement' ) }</span>
+					<a
+						href={ permalink }
+						target="_blank"
+						rel="noreferrer"
+						className="campaign-item-details__tsp-permalink"
+						onClick={ () => {
+							recordTracksEvent( 'calypso_dsp_tsp_open_post_click', {} );
+						} }
+					>
+						<span>{ translate( 'Open Tumblr Post' ) }</span>
+						<Gridicon icon="external" size={ 16 } />
+					</a>
+				</div>
+				<div>
+					<span className="campaign-item-details__label">{ translate( 'Tumblr Post views' ) }</span>
+					<span className="campaign-item-details__text">
+						<span className="wp-brand-font">
+							{ ! isLoading ? tspImpressionsFormatted : <FlexibleSkeleton /> }
+						</span>
+					</span>
+				</div>
+				{ /* todo commenting this until we figure out if this is working properly*/ }
+				{ /*<div>*/ }
+				{ /*	<span className="campaign-item-details__label">*/ }
+				{ /*		{ translate( 'Site visits from Tumblr Post' ) }*/ }
+				{ /*	</span>*/ }
+				{ /*	<span className="campaign-item-details__text">*/ }
+				{ /*		<span className="wp-brand-font">*/ }
+				{ /*			{ ! isLoading ? tspClicksFormatted : <FlexibleSkeleton /> }*/ }
+				{ /*		</span>*/ }
+				{ /*	</span>*/ }
+				{ /*</div>*/ }
+			</div>
+			<div className="campaign-item-details__main-stats-row ">
+				<div>
+					<span className="campaign-item-details__label">{ translate( 'Replies' ) }</span>
+					<span className="campaign-item-details__text">
+						<span className="wp-brand-font">
+							{ ! isLoading ? repliesFormatted : <FlexibleSkeleton /> }
+						</span>
+					</span>
+				</div>
+				<div>
+					<span className="campaign-item-details__label">{ translate( 'Likes' ) }</span>
+					<span className="campaign-item-details__text">
+						<span className="wp-brand-font">
+							{ ! isLoading ? likesFormatted : <FlexibleSkeleton /> }
+						</span>
+					</span>
+				</div>
+				{ displayedReplies && replies && replies?.length > 0 && (
+					<div className="campaign-items-details__tsp-replies">
+						{ displayedReplies.map( ( reply, index ) => (
+							<div key={ index } className="campaign-items-details__tsp-reply">
+								<a href={ reply.blog_url } target="_blank" rel="noopener noreferrer">
+									@{ reply.blog_name }
+								</a>
+								<br />
+								{ reply?.reply_text || '-' }
+							</div>
+						) ) }
+						{ replies && replies?.length > 3 && (
+							<button
+								className="campaign-items-details__replies-show-more-button"
+								onClick={ () => {
+									if ( ! showAllReplies ) {
+										recordTracksEvent( 'calypso_dsp_tsp_section_replies_show_more_click', {} );
+									}
+									setShowAllReplies( ! showAllReplies );
+								} }
+							>
+								{ showAllReplies ? __( 'Show Less' ) : __( 'Show More' ) }
+							</button>
+						) }
+					</div>
+				) }
+			</div>
+		</>
+	);
+
 	return (
 		<div className="campaign-item__container">
 			<Dialog
@@ -1048,109 +1137,7 @@ export default function CampaignItemDetails( props: Props ) {
 											) }
 										</>
 									) }
-									{ tsp && (
-										<>
-											<div className="campaign-item-details__main-stats-row" ref={ tspTargetRef }>
-												<TspMetricsBanner
-													onClose={ closeTspMetricsBanner }
-													display={ showTspMetricsBanner }
-												/>
-												<div className="campaign-item-details__main-stats-title">
-													<span className="campaign-item-details__title">
-														{ translate( 'Social Engagement' ) }
-													</span>
-													<a
-														href={ permalink }
-														target="_blank"
-														rel="noreferrer"
-														className="campaign-item-details__tsp-permalink"
-														onClick={ () => {
-															recordTracksEvent( 'calypso_dsp_tsp_open_post_click', {} );
-														} }
-													>
-														<span>{ translate( 'Open Tumblr Post' ) }</span>
-														<Gridicon icon="external" size={ 16 } />
-													</a>
-												</div>
-												<div>
-													<span className="campaign-item-details__label">
-														{ translate( 'Tumblr Post views' ) }
-													</span>
-													<span className="campaign-item-details__text">
-														<span className="wp-brand-font">
-															{ ! isLoading ? tspImpressionsFormatted : <FlexibleSkeleton /> }
-														</span>
-													</span>
-												</div>
-												{ /* todo commenting this until we figure out if this is working properly*/ }
-												{ /*<div>*/ }
-												{ /*	<span className="campaign-item-details__label">*/ }
-												{ /*		{ translate( 'Site visits from Tumblr Post' ) }*/ }
-												{ /*	</span>*/ }
-												{ /*	<span className="campaign-item-details__text">*/ }
-												{ /*		<span className="wp-brand-font">*/ }
-												{ /*			{ ! isLoading ? tspClicksFormatted : <FlexibleSkeleton /> }*/ }
-												{ /*		</span>*/ }
-												{ /*	</span>*/ }
-												{ /*</div>*/ }
-											</div>
-											<div className="campaign-item-details__main-stats-row ">
-												<div>
-													<span className="campaign-item-details__label">
-														{ translate( 'Replies' ) }
-													</span>
-													<span className="campaign-item-details__text">
-														<span className="wp-brand-font">
-															{ ! isLoading ? repliesFormatted : <FlexibleSkeleton /> }
-														</span>
-													</span>
-												</div>
-												<div>
-													<span className="campaign-item-details__label">
-														{ translate( 'Likes' ) }
-													</span>
-													<span className="campaign-item-details__text">
-														<span className="wp-brand-font">
-															{ ! isLoading ? likesFormatted : <FlexibleSkeleton /> }
-														</span>
-													</span>
-												</div>
-												{ displayedReplies && replies && replies?.length > 0 && (
-													<div className="campaign-items-details__tsp-replies">
-														{ displayedReplies.map( ( reply, index ) => (
-															<div key={ index } className="campaign-items-details__tsp-reply">
-																<a
-																	href={ reply.blog_url }
-																	target="_blank"
-																	rel="noopener noreferrer"
-																>
-																	@{ reply.blog_name }
-																</a>
-																<br />
-																{ reply?.reply_text || '-' }
-															</div>
-														) ) }
-														{ replies && replies?.length > 3 && (
-															<button
-																className="campaign-items-details__replies-show-more-button"
-																onClick={ () => {
-																	if ( ! showAllReplies ) {
-																		recordTracksEvent(
-																			'calypso_dsp_tsp_section_replies_show_more_click',
-																			{}
-																		);
-																	}
-																	setShowAllReplies( ! showAllReplies );
-																} }
-															>
-																{ showAllReplies ? __( 'Show Less' ) : __( 'Show More' ) }
-															</button>
-														) }
-													</div>
-												) }
-											</div>
-										</>
-									) }
+									{ tsp && getCampaignTSPStats( true ) }
 								</div>
 							</div>
 						) }
@@ -1256,6 +1243,12 @@ export default function CampaignItemDetails( props: Props ) {
 								) }
 							</div>
 						</div>
+
+						{ ! shouldShowStats && tsp && (
+							<div className="campaign-item-details__main-stats-container">
+								{ getCampaignTSPStats( false ) }
+							</div>
+						) }
 
 						<div className="campaign-item-details__main-stats-container">
 							<div className="campaign-item-details__secondary-stats">
