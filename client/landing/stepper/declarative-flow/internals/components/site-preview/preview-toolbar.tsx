@@ -42,9 +42,9 @@ const PreviewToolbar = ( {
 	devicesToShow,
 }: PreviewToolbarProps ) => {
 	const devices = React.useRef( {
-		computer: { title: translate( 'Desktop' ), icon: desktop, iconSize: 36 },
-		tablet: { title: translate( 'Tablet' ), icon: tablet, iconSize: 36 },
-		phone: { title: translate( 'Phone' ), icon: mobile, iconSize: 36 },
+		computer: { title: translate( 'Desktop' ), icon: desktop, iconSize: 24 },
+		tablet: { title: translate( 'Tablet' ), icon: tablet, iconSize: 24 },
+		phone: { title: translate( 'Phone' ), icon: mobile, iconSize: 24 },
 	} );
 
 	const [ stickyStyle, setStickyStyle ] = useState( {} );

@@ -14,9 +14,9 @@ interface ToolbarProps {
 
 const DeviceSwitcherToolbar = ( { device: currentDevice, onDeviceClick }: ToolbarProps ) => {
 	const devices = useRef( {
-		[ DEVICE_TYPES.COMPUTER ]: { title: translate( 'Desktop' ), icon: desktop, iconSize: 36 },
-		[ DEVICE_TYPES.TABLET ]: { title: translate( 'Tablet' ), icon: tablet, iconSize: 36 },
-		[ DEVICE_TYPES.PHONE ]: { title: translate( 'Phone' ), icon: mobile, iconSize: 36 },
+		[ DEVICE_TYPES.COMPUTER ]: { title: translate( 'Desktop' ), icon: desktop, iconSize: 24 },
+		[ DEVICE_TYPES.TABLET ]: { title: translate( 'Tablet' ), icon: tablet, iconSize: 24 },
+		[ DEVICE_TYPES.PHONE ]: { title: translate( 'Phone' ), icon: mobile, iconSize: 24 },
 	} );
 
 	return (
