@@ -14,6 +14,7 @@ function StatsLineChart( {
 	moment,
 	EmptyState = StatsEmptyState,
 	zeroBaseline = true,
+	xAxisNumTicks,
 }: {
 	chartData: Array< {
 		label: string;
@@ -27,6 +28,7 @@ function StatsLineChart( {
 	moment: Moment;
 	EmptyState: typeof StatsEmptyState;
 	zeroBaseline?: boolean;
+	xAxisNumTicks?: number;
 } ) {
 	const translate = useTranslate();
 
@@ -72,7 +74,7 @@ function StatsLineChart( {
 						axis: {
 							x: {
 								tickFormat: formatTime,
-								numTicks: className === 'stats-realtime-chart' ? undefined : dataSeries.length,
+								numTicks: xAxisNumTicks ?? dataSeries.length,
 							},
 							y: {
 								orientation: 'right',
