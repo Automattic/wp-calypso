@@ -8,6 +8,7 @@ export {
 	default as useStorageAddOnAvailability,
 	StorageAddOnAvailability,
 } from './hooks/use-storage-add-on-availability';
+export { default as useGetPurchasedStorageAddOn } from './hooks/use-get-purchased-storage-add-on';
 export * from './constants';
 
 /** Types */

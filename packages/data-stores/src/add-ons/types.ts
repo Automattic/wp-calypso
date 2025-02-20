@@ -18,6 +18,7 @@ export interface AddOnMeta {
 		yearlyPrice: number;
 		formattedMonthlyPrice: string;
 		formattedYearlyPrice: string;
+		currencyCode: string;
 	} | null;
 	quantity?: number; // used for determining checkout costs for quantity based products
 	checkoutLink?: string;
