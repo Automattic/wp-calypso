@@ -1,6 +1,6 @@
 import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
@@ -612,7 +612,7 @@ const siteSetupFlow: FlowV1 = {
 	},
 
 	useAssertConditions(): AssertConditionResult {
-		const { siteSlug, siteId } = useSiteData();
+		const { site, siteSlug, siteId } = useSiteData();
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
@@ -647,8 +647,9 @@ const siteSetupFlow: FlowV1 = {
 			};
 		}
 
+		const isLoadingSite = ( siteSlug || siteId ) && ! site;
 		const { canManageOptions, isLoading } = useCanUserManageOptions();
-		if ( isLoading ) {
+		if ( isLoadingSite || isLoading ) {
 			result = {
 				state: AssertConditionState.CHECKING,
 			};
@@ -688,11 +689,19 @@ const siteSetupFlow: FlowV1 = {
 
 		const activateDesign = useActivateDesign();
 
+		const isPendingActionSet = useRef( false );
+
 		useEffect( () => {
 			if ( ! isGoalsAtFrontExperiment || ! siteSlugOrId || ! siteId ) {
 				return;
 			}
 
+			// Avoid the pending action to be triggered multiple times.
+			if ( isPendingActionSet.current ) {
+				return;
+			}
+
+			isPendingActionSet.current = true;
 			setPendingAction( async () => {
 				if ( ! selectedDesign ) {
 					return;

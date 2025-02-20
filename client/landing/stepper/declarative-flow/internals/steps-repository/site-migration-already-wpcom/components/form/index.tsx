@@ -5,14 +5,15 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useEffect } from 'react';
 import { Control, Controller, FieldError, useForm } from 'react-hook-form';
+import { useSearchParams } from 'react-router-dom';
 import FormTextArea from 'calypso/components/forms/form-textarea';
 import Notice from 'calypso/components/notice';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
+import { logToLogstash } from 'calypso/lib/logstash';
 import {
 	type TicketMigrationData,
 	useMigrationTicketMutation,
 } from '../../hooks/use-migration-ticket-mutation';
-
 interface CheckboxProps {
 	label: string;
 	control: Control< TicketMigrationData >;
@@ -91,6 +92,8 @@ interface FormProps {
 const Form: FC< FormProps > = ( { onComplete } ) => {
 	const translate = useTranslate();
 	const siteSlug = useSiteSlugParam() ?? '';
+	const [ queryParams ] = useSearchParams();
+	const from = queryParams.get( 'from' );
 
 	const {
 		mutate: createTicket,
@@ -121,6 +124,16 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 			setError( 'root', {
 				type: 'manual',
 				message: translate( 'Something went wrong. Please try again.' ),
+			} );
+			logToLogstash( {
+				message: 'Error submitting migration ticket',
+				feature: 'calypso_client',
+				extra: {
+					siteSlug,
+					step: 'site-migration-already-wpcom',
+					from,
+					error: error.message,
+				},
 			} );
 		}
 	}, [ error, setError, translate ] );

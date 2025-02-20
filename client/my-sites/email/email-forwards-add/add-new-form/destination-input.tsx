@@ -44,6 +44,7 @@ export function DestinationsInput( props: DestinationsInputProps ) {
 				value={ values.slice( 0, limit ) }
 				maxLength={ limit }
 				onInputChange={ () => setError( null ) }
+				tokenizeOnBlur
 				__experimentalValidateInput={ ( value ) => {
 					const error = isValidDestination(
 						value,

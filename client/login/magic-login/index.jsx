@@ -763,6 +763,10 @@ class MagicLogin extends Component {
 			errorText = translate(
 				'Your two-factor code via SMS can only be requested once per minute. Please wait, then request a new code via email to proceed.'
 			);
+		} else if ( codeValidationError?.type === 'user_email' ) {
+			errorText = translate(
+				"We're sorry, you can't create a new account at this time. Please try a different email address or disable any VPN before trying again."
+			);
 		} else if ( codeValidationError?.code === 403 ) {
 			errorText = translate(
 				'Invalid code. If the error persists, please request a new code and try again.'
