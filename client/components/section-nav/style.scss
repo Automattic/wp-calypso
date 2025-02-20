@@ -16,10 +16,6 @@
 		visibility: hidden;
 	}
 
-	&.is-hidden {
-		border: none !important;
-	}
-
 	@include breakpoint-deprecated( "<480px" ) {
 		&.is-open {
 			box-shadow: 0 0 0 1px var(--color-neutral-light), 0 2px 4px var(--color-neutral-10);
