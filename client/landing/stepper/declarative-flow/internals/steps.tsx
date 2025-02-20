@@ -326,6 +326,28 @@ export const STEPS = {
 		slug: 'platform-identification',
 		asyncComponent: () => import( './steps-repository/platform-identification' ),
 	},
+	UNIFIED_DOMAINS: {
+		slug: 'domains',
+		asyncComponent: () =>
+			import(
+				/* webpackChunkName: 'async-step-unified-domains' */ './steps-repository/unified-domains'
+			),
+	},
+	UNIFIED_PLANS: {
+		slug: 'plans',
+		asyncComponent: () =>
+			import(
+				/* webpackChunkName: 'async-step-unified-plans' */ './steps-repository/unified-plans'
+			),
+	},
+
+	USE_MY_DOMAIN: {
+		slug: 'use-my-domain',
+		asyncComponent: () =>
+			import(
+				/* webpackChunkName: 'async-step-use-my-domain' */ './steps-repository/use-my-domain'
+			),
+	},
 } satisfies Record< string, StepperStep >;
 
 /**
