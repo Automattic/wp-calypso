@@ -100,7 +100,7 @@ export default connect(
 		user: ownProps.userLogin
 			? getReaderUser( state, ownProps.userLogin )
 			: getReaderUser( state, ownProps.userId, true ),
-		isLoading: state.reader.users.requesting[ ownProps.userLogin ] ?? false,
+		isLoading: state.reader.users.requesting[ ownProps.userLogin || ownProps.userId ] ?? false,
 	} ),
 	{ requestUser }
 )( UserProfile );

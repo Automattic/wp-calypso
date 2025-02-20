@@ -14,7 +14,7 @@ export function requestUser( userLoginOrId, findById = false ) {
 			return;
 		}
 
-		dispatch( { type: READER_USER_REQUEST, userLoginOrId } );
+		dispatch( { type: READER_USER_REQUEST, userLogin: userLoginOrId } );
 		requestsInFlight.add( userLoginOrId );
 
 		try {
