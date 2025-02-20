@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 main.get-apps {
 	.get-apps__wrapper {
@@ -42,6 +43,7 @@ main.get-apps {
 		font-size: $font-body;
 		font-weight: 500;
 		color: var(--studio-gray-50);
+		margin-bottom: $grid-unit-20;
 	}
 
 	.get-apps__card-title {
@@ -54,6 +56,7 @@ main.get-apps {
 		font-size: $font-body-small;
 		color: var(--studio-gray-50);
 		font-weight: 400;
+		margin-bottom: 0;
 	}
 
 	.components-card-body  {
@@ -98,6 +101,10 @@ main.get-apps {
 		flex-direction: column;
 		gap: 16px;
 		font-size: $font-body-extra-small;
+
+		@include break-medium {
+			flex-direction: row;
+		}
 	}
 
 	.get-apps__also-available-list {
