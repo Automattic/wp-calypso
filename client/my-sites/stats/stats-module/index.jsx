@@ -224,6 +224,9 @@ class StatsModule extends Component {
 		const { valueField, isRealTime } = this.props;
 		const data = isRealTime ? this.state.diffData : this.props.data;
 
+		// TODO: Handle items with children.
+		// For now, we remove any children to avoid view counts out of context.
+
 		if ( isRealTime ) {
 			return data
 				.filter( ( item ) => item.diffValue !== 0 )
@@ -238,6 +241,7 @@ class StatsModule extends Component {
 				.map( ( item ) => ( {
 					...item,
 					value: item.diffValue || 0,
+					children: null,
 				} ) );
 		}
 
