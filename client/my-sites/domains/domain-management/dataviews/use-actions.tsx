@@ -20,7 +20,7 @@ import {
 } from '@automattic/domains-table/src/utils/paths';
 import { shouldUpgradeToMakeDomainPrimary } from '@automattic/domains-table/src/utils/should-upgrade-to-make-domain-primary';
 import { Action } from '@wordpress/dataviews';
-import { Icon, drawerLeft, info, update } from '@wordpress/icons';
+import { Icon, commentAuthorAvatar, drawerLeft, update } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { navigate } from 'calypso/lib/navigate';
 import { AutoRenewDiolog } from './components/auto-renew-dialog';
@@ -102,7 +102,7 @@ export function useActions( viewType: 'table' | 'list' | 'grid', onClose?: () =>
 		},
 		{
 			id: 'manage-contact-info',
-			icon: <Icon icon={ info } />,
+			icon: commentAuthorAvatar,
 			callback: ( domains: Array< PartialDomainData > ) => {
 				if ( domains.length === 0 ) {
 					return;
