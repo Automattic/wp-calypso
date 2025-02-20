@@ -8,7 +8,7 @@ export function getAvailabilityErrorMessage( {
 	availabilityData,
 	domainName,
 	selectedSite,
-	errorAction = undefined,
+	registerNowAction = undefined,
 } ) {
 	const { status, mappable, maintenance_end_time, other_site_domain, other_site_domain_only } =
 		availabilityData;
@@ -24,13 +24,13 @@ export function getAvailabilityErrorMessage( {
 			);
 		}
 
-		if ( errorAction ) {
+		if ( registerNowAction ) {
 			return createInterpolateElement( __( "This domain isn't registered. <a>Register now.</a>" ), {
 				a: createElement( 'a', {
 					href: '#',
 					onClick: ( event ) => {
 						event.preventDefault();
-						errorAction();
+						registerNowAction();
 					},
 				} ),
 			} );
