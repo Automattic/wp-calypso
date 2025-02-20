@@ -6,6 +6,12 @@
 }
 
 /* @wordpress/components Button overrides */
+.components-button {
+	/* Matches the height of text inputs */
+	height: 40px;
+	border-radius: 4px;
+}
+
 .components-button.is-primary {
 	background-color: var(--color-accent);
 	border-color: var(--color-accent);

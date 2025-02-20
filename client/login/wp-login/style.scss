@@ -349,7 +349,7 @@ $image-height: 47px;
 		// input instances would come from `@wordpress/components` and the
 		// following overrides could be safely deleted.
 		input:not(.components-text-control__input),
-		button {
+		button.is-primary {
 			/* Note: Same as `button.signup-form__submit, .signup-form__input.form-text-input` */
 			height: 44px;
 			border-radius: 4px;
@@ -373,18 +373,10 @@ $image-height: 47px;
 			margin: 0 0 10px;
 		}
 
-		.login__form-userdata,
-		.auth-form__social-buttons {
-
-			button {
-				border: 0;
-				height: unset;
-				text-align: start;
-			}
-		}
-
 		.login__form-userdata {
 			button {
+				border: 0;
+				text-align: start;
 				min-width: 194px;
 				height: unset;
 			}
@@ -525,14 +517,6 @@ $image-height: 47px;
 	.form-password-input .form-password-input__toggle-visibility {
 		top: calc((44px - 24px) / 2);
 		/* height of input - height of toggle */
-	}
-
-	.social-buttons__button {
-		text-align: left;
-		border: 0;
-		padding-bottom: 0;
-		padding-left: 0;
-		padding-right: 0;
 	}
 
 	.two-factor-authentication__verification-code-form > p,
