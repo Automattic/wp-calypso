@@ -98,6 +98,7 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 					onNextStep={ handleOnNext }
 					isStepper
 					stepLocation={ location }
+					registerNowAction={ handleGoBack }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
