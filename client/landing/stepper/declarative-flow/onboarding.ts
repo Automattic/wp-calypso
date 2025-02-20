@@ -108,6 +108,7 @@ const onboarding: Flow = {
 			STEPS.UNIFIED_PLANS,
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PROCESSING,
+			STEPS.POST_CHECKOUT_ONBOARDING,
 		] );
 
 		if ( isGoalsAtFrontExperiment ) {
