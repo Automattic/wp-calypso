@@ -10,10 +10,10 @@ import { USER_STORE } from '../stores';
 import { useLoginUrl } from '../utils/path';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { STEPS } from './internals/steps';
-import { Flow } from './internals/types';
+import { FlowV2 } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 
-const domainTransfer: Flow = {
+const domainTransfer: FlowV2 = {
 	name: DOMAIN_TRANSFER,
 	get title() {
 		return translate( 'Bulk domain transfer' );
@@ -39,7 +39,7 @@ const domainTransfer: Flow = {
 			pageTitle: 'Bulk Transfer',
 		} );
 
-		const submit: ReturnType< Flow[ 'useStepNavigation' ] >[ 'submit' ] = (
+		const submit: ReturnType< FlowV2[ 'useStepNavigation' ] >[ 'submit' ] = (
 			providedDependencies = {}
 		) => {
 			switch ( currentStepSlug ) {

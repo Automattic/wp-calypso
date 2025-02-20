@@ -232,11 +232,7 @@ export type FlowV2 = {
 	 *
 	 * Returning false will kill the app.
 	 */
-	initialize():
-		| false
-		| Promise< false >
-		| Promise< readonly StepperStep[] >
-		| readonly StepperStep[];
+	initialize(): false | readonly StepperStep[] | Promise< false | readonly StepperStep[] >;
 	useStepNavigation: UseStepNavigationHook< StepperStep[] >;
 	/**
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..

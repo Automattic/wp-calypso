@@ -3,12 +3,8 @@ import { translate } from 'i18n-calypso';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { setSignupCompleteFlowName, setSignupCompleteSlug } from 'calypso/signup/storageUtils';
 import domainTransfer from './domain-transfer';
-import {
-	AssertConditionResult,
-	AssertConditionState,
-	Flow,
-	ProvidedDependencies,
-} from './internals/types';
+import { STEPS } from './internals/steps';
+import { Flow, ProvidedDependencies } from './internals/types';
 
 const hundredYearDomainTransfer: Flow = {
 	...domainTransfer,
@@ -20,18 +16,24 @@ const hundredYearDomainTransfer: Flow = {
 	// Always start on the "domains" step, as we don't need what comes before it for the 100-year domain transfer flow.
 	// It doesn't make sense to show it as it contains additional cluttering information that doesn't matter
 	// specifically under the 100-year domain context - they'll also come from a different entry point.
-	useSteps() {
-		const transferSteps = domainTransfer.useSteps();
-		const domainsStepIndex = transferSteps.findIndex( ( step ) => step.slug === 'domains' );
-		return [
-			transferSteps[ domainsStepIndex ],
-			...stepsWithRequiredLogin( transferSteps.slice( domainsStepIndex ) ),
-		];
-	},
+	async initialize() {
+		const transferSteps = await domainTransfer.initialize();
 
-	// Always allow the user to proceed with the transfer, as we assert that the user is logged in later.
-	useAssertConditions(): AssertConditionResult {
-		return { state: AssertConditionState.SUCCESS };
+		if ( transferSteps === false ) {
+			// Forwarding returning the `false` value, as it's a signal to kill the app.
+			return false;
+		}
+
+		const domainsStepIndex = transferSteps.findIndex(
+			( step ) => step.slug === STEPS.DOMAIN_TRANSFER_DOMAINS.slug
+		);
+
+		if ( domainsStepIndex > -1 ) {
+			// If the needed step was not found, abort the flow.
+			return false;
+		}
+
+		return [ ...stepsWithRequiredLogin( transferSteps.slice( domainsStepIndex ) ) ];
 	},
 
 	useStepNavigation( _currentStepSlug, navigate ) {
