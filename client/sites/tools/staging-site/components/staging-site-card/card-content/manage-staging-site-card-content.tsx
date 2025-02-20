@@ -132,27 +132,6 @@ export const ManageStagingSiteCardContent = ( {
 				<Button
 					primary
 					onClick={ () => {
-						showSitesPage( `/overview/${ urlToSlug( stagingSite.url ) }` );
-						dispatch( recordTracksEvent( 'calypso_hosting_staging_site_manage' ) );
-						navigate(
-							`/overview/${ urlToSlug( stagingSite.url ) }?search=${ urlToSlug(
-								productionSiteUrl as string
-							) }`,
-							false,
-							true
-						);
-					} }
-					disabled={ isButtonDisabled }
-				>
-					<span>{ translate( 'Manage staging site' ) }</span>
-				</Button>
-			);
-		};
-		const ManageStagingSiteButton = () => {
-			return (
-				<Button
-					primary
-					onClick={ () => {
 						dispatch( recordTracksEvent( 'calypso_hosting_staging_site_manage' ) );
 						showSitesPage( `/overview/${ urlToSlug( stagingSite.url ) }` );
 					} }
