@@ -17,13 +17,17 @@ let mainWindow = null;
 
 function getInitialUrl() {
 	let appUrl = Config.loginURL();
-	if ( ! process.env.CI && ! process.env.WP_DESKTOP_DEBUG ) {
-		log.info( 'Overriding window with last location...' );
-		const lastLocation = Settings.getSetting( settingConstants.LAST_LOCATION );
-		if ( lastLocation && lastLocation.startsWith( 'http' ) ) {
-			appUrl = lastLocation;
-		}
+	if ( process.env.CI || process.env.WP_DESKTOP_DEBUG ) {
+		return appUrl;
 	}
+
+	const lastLocation = Settings.getSetting( settingConstants.LAST_LOCATION );
+	if ( ! lastLocation || ! lastLocation.startsWith( 'http' ) ) {
+		return appUrl;
+	}
+
+	log.info( `Will use last location as initial URL ${ lastLocation }` );
+	appUrl = lastLocation;
 	return appUrl;
 }
 
