@@ -1,14 +1,11 @@
 import { DOMAIN_TRANSFER } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
-import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { USER_STORE } from '../stores';
 import { useLoginUrl } from '../utils/path';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
