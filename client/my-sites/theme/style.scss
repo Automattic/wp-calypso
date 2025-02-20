@@ -355,7 +355,7 @@ $button-border: 4px;
 
 			.theme-preview__frame {
 				height: 200%;
-				max-height: 200vh;
+				max-height: 200%;
 				max-width: 200%;
 				min-height: $iframe-viewport-height-scaled;
 				transform: scale(0.5) !important;
