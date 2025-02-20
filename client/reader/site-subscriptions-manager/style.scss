@@ -34,14 +34,16 @@ body.is-section-reader .layout.is-section-reader .site-subscriptions-manager {
 		margin: 0 auto;
 
 		@media (max-width: $break-small) {
-			padding: 0 16px;
-
-			.navigation-header {
-				padding: 16px 0;
-			}
+			padding: 16px;
 		}
 
 		@extend %search-component-subscriptions-style;
+	}
+
+	.navigation-header {
+		@media (max-width: $break-small) {
+			padding: 0;
+		}
 	}
 
 	&__header-h-stack {

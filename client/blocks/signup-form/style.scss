@@ -189,6 +189,7 @@ body.is-section-accept-invite {
 				box-shadow: none;
 				padding-left: 0;
 				padding-right: 0;
+				background-color: unset;
 
 				button:not(.is-borderless, .signup-form__domain-suggestion-confirmation) {
 					display: block;

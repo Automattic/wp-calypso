@@ -100,6 +100,7 @@ export function following( context, next ) {
 		streamKey: 'following',
 		startDate,
 		recsStreamKey: 'custom_recs_posts_with_images',
+		showBack: userHasHistory( context ),
 		trackScrollPage: trackScrollPage.bind(
 			null,
 			basePath,

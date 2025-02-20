@@ -1453,6 +1453,15 @@ class RegisterDomainStep extends Component {
 				lastQuery: domain,
 				lastFilters: this.state.filters,
 				hideInitialQuery: false,
+				showAvailabilityNotice: false,
+				showSuggestionNotice: false,
+				availabilityError: null,
+				availabilityErrorData: null,
+				availabilityErrorDomain: null,
+				suggestionError: null,
+				suggestionErrorData: null,
+				suggestionErrorDomain: null,
+				lastDomainStatus: null,
 			},
 			this.save
 		);
@@ -1528,8 +1537,7 @@ class RegisterDomainStep extends Component {
 	}
 
 	renderExampleSuggestions() {
-		const { isOnboarding, domainsWithPlansOnly, offerUnavailableOption, products, path } =
-			this.props;
+		const { isOnboarding, domainsWithPlansOnly, offerUnavailableOption, products } = this.props;
 
 		if ( isOnboarding ) {
 			return this.renderBestNamesPrompt();
@@ -1540,7 +1548,6 @@ class RegisterDomainStep extends Component {
 				domainsWithPlansOnly={ domainsWithPlansOnly }
 				offerUnavailableOption={ offerUnavailableOption }
 				onClickExampleSuggestion={ this.handleClickExampleSuggestion }
-				path={ path }
 				products={ products }
 				url={ this.getUseYourDomainUrl() }
 			/>
@@ -1675,7 +1682,6 @@ class RegisterDomainStep extends Component {
 				onClickResult={ this.onAddDomain }
 				onClickMapping={ this.goToMapDomainStep }
 				onAddTransfer={ this.props.onAddTransfer }
-				onClickTransfer={ this.goToTransferDomainStep }
 				onClickUseYourDomain={ this.props.handleClickUseYourDomain ?? this.useYourDomainFunction() }
 				tracksButtonClickSource="exact-match-top"
 				suggestions={ suggestions }
@@ -1747,22 +1753,6 @@ class RegisterDomainStep extends Component {
 		return mapDomainUrl;
 	}
 
-	getTransferDomainUrl() {
-		let transferDomainUrl;
-
-		if ( this.props.transferDomainUrl ) {
-			transferDomainUrl = this.props.transferDomainUrl;
-		} else {
-			const query = stringify( { initialQuery: this.state.lastQuery.trim() } );
-			transferDomainUrl = `${ this.props.basePath }/transfer`;
-			if ( this.props.selectedSite ) {
-				transferDomainUrl += `/${ this.props.selectedSite.slug }?${ query }`;
-			}
-		}
-
-		return transferDomainUrl;
-	}
-
 	getUseYourDomainUrl() {
 		let useYourDomainUrl;
 
@@ -1786,20 +1776,6 @@ class RegisterDomainStep extends Component {
 		this.props.recordMapDomainButtonClick( this.props.analyticsSection, this.props.flowName );
 
 		page( this.getMapDomainUrl() );
-	};
-
-	goToTransferDomainStep = ( event ) => {
-		event.preventDefault();
-
-		const source = event.currentTarget.dataset.tracksButtonClickSource;
-
-		this.props.recordTransferDomainButtonClick(
-			this.props.analyticsSection,
-			source,
-			this.props.flowName
-		);
-
-		page( this.getTransferDomainUrl() );
 	};
 
 	goToUseYourDomainStep = ( event ) => {

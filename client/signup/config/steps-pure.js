@@ -45,6 +45,12 @@ export function generateSteps( {
 	excludeSegmentSurveyStepIfInactive = noop,
 } = {} ) {
 	return {
+		'set-reader-landing': {
+			stepName: 'set-reader-landing',
+			props: {
+				nonInteractive: true,
+			},
+		},
 		'domains-launch': {
 			stepName: 'domains-launch',
 			apiRequestFunction: addDomainToCart,
@@ -650,10 +656,6 @@ export function generateSteps( {
 			props: {
 				nonInteractive: true,
 			},
-		},
-
-		'p2-details': {
-			stepName: 'p2-details',
 		},
 
 		'p2-site': {

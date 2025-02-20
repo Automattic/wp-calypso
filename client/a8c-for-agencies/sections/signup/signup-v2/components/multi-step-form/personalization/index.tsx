@@ -1,5 +1,6 @@
 import { SearchableDropdown } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { arrowLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, ChangeEvent, useMemo } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
@@ -18,19 +19,21 @@ import './style.scss';
 
 interface Props {
 	onContinue: ( data: Partial< AgencyDetailsSignupPayload > ) => void;
+	goBack: () => void;
+	initialFormData: Partial< AgencyDetailsSignupPayload >;
 }
 
-export default function PersonalizationForm( { onContinue }: Props ) {
+export default function PersonalizationForm( { onContinue, goBack, initialFormData }: Props ) {
 	const translate = useTranslate();
 	const { countryOptions } = useCountriesAndStates();
 	const { validate, validationError, updateValidationError } = usePersonalizationFormValidation();
 
 	const [ formData, setFormData ] = useState< Partial< AgencyDetailsSignupPayload > >( {
-		country: '',
-		userType: 'agency_owner',
-		managedSites: '1-5',
-		servicesOffered: [],
-		productsOffered: [],
+		country: initialFormData.country || '',
+		userType: initialFormData.userType || 'agency_owner',
+		managedSites: initialFormData.managedSites || '1-5',
+		servicesOffered: initialFormData.servicesOffered || [],
+		productsOffered: initialFormData.productsOffered || [],
 	} );
 
 	const handleInputChange =
@@ -46,6 +49,7 @@ export default function PersonalizationForm( { onContinue }: Props ) {
 			...prev,
 			servicesOffered: services.value,
 		} ) );
+		updateValidationError( { servicesOffered: undefined } );
 	};
 
 	const handleSetProductsOffered = ( products: { value: string[] } ) => {
@@ -53,6 +57,7 @@ export default function PersonalizationForm( { onContinue }: Props ) {
 			...prev,
 			productsOffered: products.value,
 		} ) );
+		updateValidationError( { productsOffered: undefined } );
 	};
 
 	const servicesOfferedOptions = useMemo(
@@ -62,6 +67,7 @@ export default function PersonalizationForm( { onContinue }: Props ) {
 			{ value: 'performance_optimization', label: translate( 'Performance optimization' ) },
 			{ value: 'digital_strategy_marketing', label: translate( 'Digital strategy & marketing' ) },
 			{ value: 'maintenance_support_plans', label: translate( 'Maintenance & support plans' ) },
+			{ value: 'other', label: translate( 'Other' ) },
 		],
 		[ translate ]
 	);
@@ -73,6 +79,7 @@ export default function PersonalizationForm( { onContinue }: Props ) {
 			{ value: 'Jetpack', label: translate( 'Jetpack' ) },
 			{ value: 'Pressable', label: translate( 'Pressable' ) },
 			{ value: 'WordPress VIP', label: translate( 'WordPress VIP' ) },
+			{ value: 'None', label: translate( 'None' ) },
 		],
 		[ translate ]
 	);
@@ -107,6 +114,9 @@ export default function PersonalizationForm( { onContinue }: Props ) {
 				title={ translate( 'Personalize your experience' ) }
 				description={ translate( "We'll tailor the product and onboarding for you." ) }
 			>
+				<div className="field-mandatory-message">
+					{ translate( 'Fields marked with * are required' ) }
+				</div>
 				<FormFieldset>
 					<FormField
 						error={ validationError.country }
@@ -152,7 +162,7 @@ export default function PersonalizationForm( { onContinue }: Props ) {
 									<option value="1-5">{ translate( '1-5' ) }</option>
 									<option value="6-20">{ translate( '6-20' ) }</option>
 									<option value="21-50">{ translate( '21-50' ) }</option>
-									<option value="50-100">{ translate( '50-100' ) }</option>
+									<option value="51-100">{ translate( '51-100' ) }</option>
 									<option value="101-500">{ translate( '101-500' ) }</option>
 									<option value="500+">{ translate( '500+' ) }</option>
 								</FormSelect>
@@ -160,7 +170,11 @@ export default function PersonalizationForm( { onContinue }: Props ) {
 						</FormFieldset>
 
 						<FormFieldset className="signup-personalization-form__checkbox">
-							<FormField label={ translate( 'What services do you offer?' ) } isRequired>
+							<FormField
+								error={ validationError.servicesOffered }
+								label={ translate( 'What services do you offer?' ) }
+								isRequired
+							>
 								<MultiCheckbox
 									id="services_offered"
 									name="services_offered"
@@ -173,6 +187,7 @@ export default function PersonalizationForm( { onContinue }: Props ) {
 
 						<FormFieldset className="signup-personalization-form__checkbox">
 							<FormField
+								error={ validationError.productsOffered }
 								label={ translate(
 									'What Automattic products do you currently offer your clients?'
 								) }
@@ -189,6 +204,16 @@ export default function PersonalizationForm( { onContinue }: Props ) {
 						</FormFieldset>
 
 						<FormFooter>
+							<Button
+								className="signup-multi-step-form__back-button"
+								variant="tertiary"
+								onClick={ goBack }
+								icon={ arrowLeft }
+								iconSize={ 18 }
+							>
+								{ translate( 'Back' ) }
+							</Button>
+
 							<Button __next40pxDefaultSize variant="primary" onClick={ handleSubmit }>
 								{ translate( 'Continue' ) }
 							</Button>

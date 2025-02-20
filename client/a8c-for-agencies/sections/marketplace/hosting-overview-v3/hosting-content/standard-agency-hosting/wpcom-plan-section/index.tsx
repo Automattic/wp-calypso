@@ -9,12 +9,12 @@ import useSiteCreatedCallback from 'calypso/a8c-for-agencies/hooks/use-site-crea
 import useWPCOMOwnedSites from 'calypso/a8c-for-agencies/hooks/use-wpcom-owned-sites';
 import { MarketplaceTypeContext } from 'calypso/a8c-for-agencies/sections/marketplace/context';
 import useProductAndPlans from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-product-and-plans';
-import WPCOMPlanSlider from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hosting-v2/standard-agency-hosting/wpcom-plan-selector/slider';
 import { getWPCOMCreatorPlan } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingPlanSection from '../../common/hosting-plan-section';
+import WPCOMPlanSlider from '../wpcom-plan-selector/slider';
 import WPCOMPlanSelector from './wpcom-plan-selector';
 
 import './style.scss';

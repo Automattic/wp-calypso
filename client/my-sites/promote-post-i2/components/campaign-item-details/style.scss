@@ -296,7 +296,7 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 				grid-template-columns: repeat(2, 1fr);
 			}
 
-			> div:not(.campaign-item-details__main-stats-title) {
+			> div:not(.campaign-item-details__main-stats-title):not(.tsp-metrics-info-banner__container) {
 				flex-direction: column;
 				padding: 16px;
 			}

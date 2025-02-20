@@ -22,6 +22,7 @@ const renderWithContextProvider = ( component: React.ReactNode ) => {
 describe( 'AddSitesForm', () => {
 	const mockProps = {
 		onAddFinished: jest.fn(),
+		source: 'test-source',
 	};
 
 	test( 'displays an error message with invalid URL', () => {

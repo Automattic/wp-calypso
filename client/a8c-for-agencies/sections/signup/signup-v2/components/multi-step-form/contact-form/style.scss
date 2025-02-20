@@ -21,8 +21,10 @@
 .signup-contact-form__tos  p {
 	@include a4a-font-body-sm;
 
-	a {
+	.signup-contact-form__tos-link {
+		cursor: pointer;
 		text-decoration: underline;
+		color: var(--color-primary);
 	}
 
 
@@ -55,4 +57,8 @@
 	.signup-multi-step-form__terms a:hover {
 		text-decoration: underline;
 	}
+}
+
+.signup-contact-form__a4a-span {
+	text-wrap: nowrap;
 }

@@ -357,8 +357,7 @@ const PlansFeaturesMain = ( {
 	 * It exists temporarily till the flows with the following intents are removed.
 	 */
 	const showSimplifiedFeatures = ! (
-		intent &&
-		[ 'plans-newsletter', 'plans-link-in-bio', 'plans-blog-onboarding' ].includes( intent )
+		intent && [ 'plans-newsletter', 'plans-blog-onboarding' ].includes( intent )
 	);
 
 	const [ isLoadingHideLowerTierPlansExperiment, hideLowerTierPlansExperimentAssignment ] =

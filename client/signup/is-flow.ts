@@ -5,7 +5,7 @@ export const isReskinnedFlow = ( flowName: string ) => {
 };
 
 export const isP2Flow = ( flowName: string ) => {
-	return flowName === 'p2' || flowName === 'p2v1';
+	return flowName === 'p2';
 };
 
 export const isWpccFlow = ( flowName: string ) => {

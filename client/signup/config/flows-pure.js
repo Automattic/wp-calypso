@@ -11,14 +11,6 @@ const getP2Flows = () => {
 	return isEnabled( 'p2-enabled' )
 		? [
 				{
-					name: 'p2v1',
-					steps: [ 'p2-site', 'p2-details', 'user' ],
-					destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
-					description: 'P2 signup flow',
-					lastModified: '2020-09-01',
-					showRecaptcha: true,
-				},
-				{
 					// When adding steps, make sure that signup campaign ref's continue to work.
 					name: 'p2',
 					steps: [
@@ -79,10 +71,10 @@ export function generateFlows( {
 		},
 		{
 			name: 'account',
-			steps: [ userSocialStep ],
+			steps: [ userSocialStep, 'set-reader-landing' ],
 			destination: getRedirectDestination,
 			description: 'Create an account without a blog.',
-			lastModified: '2023-10-11',
+			lastModified: '2025-02-18',
 			get pageTitle() {
 				return translate( 'Create an account' );
 			},
@@ -354,11 +346,10 @@ export function generateFlows( {
 		},
 		{
 			name: 'reader',
-			steps: [ userSocialStep ],
+			steps: [ userSocialStep, 'set-reader-landing' ],
 			destination: '/reader',
-			description:
-				'Signup for an account from a Reader interaction (like, comment) or page (/discover) and land on Reader.',
-			lastModified: '2025-01-28',
+			description: 'Signup for an account and land on Reader.',
+			lastModified: '2025-02-18',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
 		},

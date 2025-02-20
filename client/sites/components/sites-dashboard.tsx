@@ -47,7 +47,6 @@ import { DOTCOM_OVERVIEW, FEATURE_TO_ROUTE_MAP, OVERVIEW } from './site-preview-
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardBannersManager from './sites-dashboard-banners-manager';
 import SitesDashboardHeader from './sites-dashboard-header';
-import SitesDashboardSurvey from './sites-dashboard-survey';
 import DotcomSitesDataViews, { useSiteStatusGroups } from './sites-dataviews';
 import { getSitesPagination } from './sites-dataviews/utils';
 import type { View } from '@wordpress/dataviews';
@@ -292,9 +291,17 @@ const SitesDashboard = ( {
 		sortOrder: dataViewsState.sort?.direction || undefined,
 	} );
 
+	const hasA8CSitesFilter =
+		dataViewsState.filters?.some(
+			( { field, operator, value } ) => field === 'a8c_owned' && operator === 'is' && value === true
+		) ?? false;
+
+	const includeA8CSites = siteType === 'p2' || hasA8CSitesFilter;
+
 	// Filter sites list by search query.
 	const filteredSites = useSitesListFiltering( sortedSites, {
 		search: dataViewsState.search,
+		includeA8CSites,
 	} );
 
 	const paginatedSites =
@@ -408,6 +415,7 @@ const SitesDashboard = ( {
 
 					<DotcomSitesDataViews
 						sites={ paginatedSites }
+						siteType={ siteType }
 						isLoading={ isLoading || ! initialSortApplied }
 						paginationInfo={ getSitesPagination( filteredSites, perPage ) }
 						dataViewsState={ dataViewsState }
@@ -446,8 +454,6 @@ const SitesDashboard = ( {
 					<GuidedTour defaultTourId="siteManagementTour" />
 				</GuidedTourContextProvider>
 			) }
-
-			<SitesDashboardSurvey />
 		</Layout>
 	);
 };
