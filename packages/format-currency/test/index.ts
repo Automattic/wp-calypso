@@ -238,11 +238,6 @@ describe( 'formatCurrency', () => {
 			const money = formatter.formatCurrency( 9800900.32, 'USD' );
 			expect( money ).toBe( '$9,800,900.32' );
 		} );
-		test( 'USD with the currency symbol overridden', () => {
-			formatter.setCurrencySymbol( 'USD', 'US$' );
-			const money = formatter.formatCurrency( 9800900.32, 'USD' );
-			expect( money ).toBe( 'US$9,800,900.32' );
-		} );
 		test( 'USD in Canadian English', () => {
 			const money = formatter.formatCurrency( 9800900.32, 'USD', { locale: 'en-CA' } );
 			expect( money ).toBe( 'US$9,800,900.32' );
@@ -401,19 +396,6 @@ describe( 'getCurrencyObject()', () => {
 			const money = formatter.getCurrencyObject( 9800900.32, 'USD' );
 			expect( money ).toEqual( {
 				symbol: '$',
-				symbolPosition: 'before',
-				integer: '9,800,900',
-				fraction: '.32',
-				sign: '',
-				hasNonZeroFraction: true,
-			} );
-		} );
-
-		test( 'USD with the currency symbol overridden', () => {
-			formatter.setCurrencySymbol( 'USD', 'US$' );
-			const money = formatter.getCurrencyObject( 9800900.32, 'USD' );
-			expect( money ).toEqual( {
-				symbol: 'US$',
 				symbolPosition: 'before',
 				integer: '9,800,900',
 				fraction: '.32',

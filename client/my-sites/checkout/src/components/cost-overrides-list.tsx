@@ -234,7 +234,7 @@ function LineItemCostOverride( {
 				{ costOverride.discountAmount &&
 					formatCurrency( -costOverride.discountAmount, product.currency, {
 						isSmallestUnit: true,
-						signForPositive: true,
+						signForPositive: true, // TODO clk numberFormatCurrency signForPositive only usage
 					} ) }
 			</span>
 			<LineItemIntroOfferCostOverrideDetail product={ product } costOverride={ costOverride } />

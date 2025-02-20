@@ -13,8 +13,8 @@ const fallbackLocale = 'en';
 const fallbackCurrency = 'USD';
 const geolocationEndpointUrl = 'https://public-api.wordpress.com/geo/';
 
+// TODO clk numberFormatCurrency exported only for tests
 export function createFormatter(): CurrencyFormatter {
-	const currencyOverrides: Record< string, { symbol?: string | undefined } > = {};
 	let defaultLocale: string | undefined = undefined;
 	let geoLocation = '';
 
@@ -233,31 +233,11 @@ export function createFormatter(): CurrencyFormatter {
 		return code;
 	}
 
-	/**
-	 * Change the currency symbol override used by formatting.
-	 *
-	 * By default, `formatCurrency` and `getCurrencyObject` use a currency symbol
-	 * from a list of hard-coded overrides in this package keyed by the currency
-	 * code. For example, `CAD` is always rendered as `C$` even if the locale is
-	 * `en-CA` which would normally render the symbol `$`.
-	 *
-	 * With this function, you can change the override used by any given currency.
-	 *
-	 * Note that this is global and will take effect no matter the locale! Use it
-	 * with care.
-	 */
-	function setCurrencySymbol( currencyCode: string, currencySymbol: string | undefined ): void {
-		if ( ! currencyOverrides[ currencyCode ] ) {
-			currencyOverrides[ currencyCode ] = {};
-		}
-		currencyOverrides[ currencyCode ].symbol = currencySymbol;
-	}
-
 	function getCurrencyOverride( code: string ): CurrencyOverride | undefined {
 		if ( code === 'USD' && geoLocation !== '' && geoLocation !== 'US' ) {
 			return { symbol: 'US$' };
 		}
-		return currencyOverrides[ code ] ?? defaultCurrencyOverrides[ code ];
+		return defaultCurrencyOverrides[ code ];
 	}
 
 	function doesCurrencyExist( code: string ): boolean {
@@ -277,7 +257,6 @@ export function createFormatter(): CurrencyFormatter {
 	return {
 		formatCurrency,
 		getCurrencyObject,
-		setCurrencySymbol,
 		setDefaultLocale,
 		geolocateCurrencySymbol,
 	};
@@ -308,6 +287,7 @@ function getFormatterCacheKey( {
 }
 
 function isNoDecimals( number: number, options: CurrencyObjectOptions ) {
+	// TODO clk numberFormatCurrency only isInteger part stays - the rest is same with "decimals" argument
 	if ( options.stripZeros && Number.isInteger( number ) ) {
 		return true;
 	}
@@ -378,6 +358,7 @@ function getCachedFormatter( {
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/numberingSystem#adding_a_numbering_system_via_the_locale_string
  */
 function addNumberingSystemToLocale( locale: string ): string {
+	// TODO clk numberFormatCurrency this can all go. it's just a static string added to locale
 	const numberingSystem = 'latn';
 	const numberingSystemUnicodeLocaleExtension = `-u-nu-${ numberingSystem }`;
 	const localeWithNumberingSystem = `${ locale }${ numberingSystemUnicodeLocaleExtension }`;
@@ -528,25 +509,6 @@ export function setDefaultLocale(
 	...args: Parameters< typeof defaultFormatter.setDefaultLocale >
 ) {
 	return defaultFormatter.setDefaultLocale( ...args );
-}
-
-/**
- * Change the currency symbol override used by formatting.
- *
- * By default, `formatCurrency` and `getCurrencyObject` use a currency symbol
- * from a list of hard-coded overrides in this package keyed by the currency
- * code. For example, `CAD` is always rendered as `C$` even if the locale is
- * `en-CA` which would normally render the symbol `$`.
- *
- * With this function, you can change the override used by any given currency.
- *
- * Note that this is global and will take effect no matter the locale! Use it
- * with care.
- */
-export function setCurrencySymbol(
-	...args: Parameters< typeof defaultFormatter.setCurrencySymbol >
-) {
-	return defaultFormatter.setCurrencySymbol( ...args );
 }
 
 export default defaultFormatter.formatCurrency;

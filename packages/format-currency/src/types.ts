@@ -10,21 +10,6 @@ export interface CurrencyFormatter {
 	setDefaultLocale: ( locale: string | undefined ) => void;
 
 	/**
-	 * Change the currency symbol override used by formatting.
-	 *
-	 * By default, `formatCurrency` and `getCurrencyObject` use a currency symbol
-	 * from a list of hard-coded overrides in this package keyed by the currency
-	 * code. For example, `CAD` is always rendered as `C$` even if the locale is
-	 * `en-CA` which would normally render the symbol `$`.
-	 *
-	 * With this function, you can change the override used by any given currency.
-	 *
-	 * Note that this is global and will take effect no matter the locale! Use it
-	 * with care.
-	 */
-	setCurrencySymbol: ( currencyCode: string, currencySymbol: string | undefined ) => void;
-
-	/**
 	 * Formats money with a given currency code.
 	 *
 	 * The currency will define the properties to use for this formatting, but
