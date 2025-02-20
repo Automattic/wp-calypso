@@ -142,7 +142,8 @@ const useMshotsImg = (
 // Temporary for A/B test.
 const useMshotsImgTreatment = (
 	src: string,
-	options: MShotsOptions
+	options: MShotsOptions,
+	shouldShowImage: boolean
 ): HTMLImageElement | undefined => {
 	const [ loadedImg, setLoadedImg ] = useState< HTMLImageElement >();
 	const [ count, setCount ] = useState( 0 );
@@ -161,6 +162,10 @@ const useMshotsImgTreatment = (
 	// to browser caching. Getting this wrong looks like the url resolving
 	// before the image is ready.
 	useEffect( () => {
+		if ( ! shouldShowImage ) {
+			return;
+		}
+
 		// If there's been a "props" change we need to reset everything:
 		if (
 			options !== previousOptions.current ||
@@ -222,7 +227,7 @@ const useMshotsImgTreatment = (
 			}
 			clearTimeout( timeoutIdRef.current );
 		};
-	}, [ src, count, options ] );
+	}, [ src, count, options, shouldShowImage ] );
 
 	return loadedImg;
 };
@@ -268,9 +273,8 @@ const MShotsImageControl = ( {
 		) : (
 			<img
 				ref={ imgRef }
-				{ ...{ className, style, src, alt } }
+				{ ...{ className, style, src, alt, loading } }
 				aria-labelledby={ labelledby }
-				alt={ alt }
 			/>
 		);
 	} // else, prettier doesn't like having an else after a return
@@ -290,7 +294,6 @@ const MShotsImageControl = ( {
 			ref={ imgRef }
 			{ ...{ className, style, src, alt } }
 			aria-labelledby={ labelledby }
-			alt={ alt }
 		/>
 	);
 };
@@ -302,11 +305,36 @@ const MShotsImageTreatment = ( {
 	alt,
 	options,
 	scrollable = false,
+	loading = 'lazy',
 }: MShotsImageProps ) => {
-	const maybeImage = useMshotsImgTreatment( url, options );
+	const [ shouldShowImage, setShouldShowImage ] = useState( loading === 'eager' );
+	const divRef = useRef< HTMLDivElement | null >( null );
+	const imgRef = useRef< HTMLImageElement | null >( null );
+
+	const maybeImage = useMshotsImgTreatment( url, options, shouldShowImage );
 	const src: string = maybeImage?.src || '';
 	const visible = !! src;
 	const backgroundImage = maybeImage?.src && `url( ${ maybeImage?.src } )`;
+
+	useEffect( () => {
+		if ( loading === 'lazy' && ! shouldShowImage ) {
+			const observer = new IntersectionObserver( ( entries ) => {
+				if ( entries[ 0 ]?.isIntersecting ) {
+					setShouldShowImage( true );
+					observer.disconnect();
+				}
+			} );
+
+			const elementToObserve = scrollable || ! visible ? divRef.current : imgRef.current;
+			if ( elementToObserve ) {
+				observer.observe( elementToObserve );
+			}
+
+			return () => {
+				observer.disconnect();
+			};
+		}
+	}, [ loading, shouldShowImage, scrollable, visible ] );
 
 	const animationScrollSpeedInPixelsPerSecond = 400;
 	const animationDuration =
@@ -331,9 +359,13 @@ const MShotsImageTreatment = ( {
 	// rule effecting the placeholder while loading static images:
 	// '.design-picker .design-picker__image-frame img { ..., height: auto }'
 	return scrollable || ! visible ? (
-		<div className={ className } style={ style } aria-labelledby={ labelledby } />
+		<div ref={ divRef } className={ className } style={ style } aria-labelledby={ labelledby } />
 	) : (
-		<img { ...{ className, style, src, alt } } aria-labelledby={ labelledby } alt={ alt } />
+		<img
+			ref={ imgRef }
+			{ ...{ className, style, src, alt, loading } }
+			aria-labelledby={ labelledby }
+		/>
 	);
 };
 

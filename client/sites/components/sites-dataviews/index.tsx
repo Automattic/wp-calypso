@@ -21,6 +21,7 @@ import './dataview-style.scss';
 
 type Props = {
 	sites: SiteExcerptData[];
+	siteType: 'p2' | 'non-p2';
 	isLoading: boolean;
 	paginationInfo: { totalItems: number; totalPages: number };
 	dataViewsState: View;
@@ -50,6 +51,7 @@ export function useSiteStatusGroups() {
 
 const DotcomSitesDataViews = ( {
 	sites,
+	siteType,
 	isLoading,
 	paginationInfo,
 	dataViewsState,
@@ -171,7 +173,7 @@ const DotcomSitesDataViews = ( {
 			},
 		];
 
-		if ( isAutomattician ) {
+		if ( isAutomattician && siteType === 'non-p2' ) {
 			dataViewFields.push( {
 				id: 'a8c_owned',
 				label: __( 'Include A8C sites' ),
@@ -193,7 +195,15 @@ const DotcomSitesDataViews = ( {
 		}
 
 		return dataViewFields;
-	}, [ __, siteStatusGroups, openSitePreviewPane, dataViewsState.type, userId, isAutomattician ] );
+	}, [
+		__,
+		siteStatusGroups,
+		openSitePreviewPane,
+		dataViewsState.type,
+		userId,
+		isAutomattician,
+		siteType,
+	] );
 
 	const actions = useActions( {
 		openSitePreviewPane,

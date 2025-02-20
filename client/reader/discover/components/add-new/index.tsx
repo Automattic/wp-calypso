@@ -37,7 +37,7 @@ const DiscoverAddNew = () => {
 					<h2 className="discover-add-new__form-title">
 						{ translate( 'Add new sites, newsletters, and RSS feeds to your reading list.' ) }
 					</h2>
-					<AddSitesForm />
+					<AddSitesForm source="discover-add-new" />
 				</div>
 				{ isLoggedIn && (
 					<div

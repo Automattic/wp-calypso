@@ -1,4 +1,5 @@
 import { Button } from '@wordpress/components';
+import { arrowLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
@@ -9,9 +10,12 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { preventWidows } from 'calypso/lib/formatting';
 import { AgencyDetailsSignupPayload } from '../../../../types';
+import useBlueprintForm2Validation from './hooks/use-blueprint-form-2-validation';
 
 type Props = {
 	onContinue: ( data: Partial< AgencyDetailsSignupPayload > ) => void;
+	initialFormData: Partial< AgencyDetailsSignupPayload >;
+	goBack: () => void;
 };
 
 const BlueprintFormRadio = ( {
@@ -40,16 +44,23 @@ const BlueprintFormRadio = ( {
 	);
 };
 
-const BlueprintForm2: React.FC< Props > = ( { onContinue } ) => {
+const BlueprintForm2: React.FC< Props > = ( { onContinue, initialFormData, goBack } ) => {
 	const translate = useTranslate();
 	const [ formData, setFormData ] = useState< Partial< AgencyDetailsSignupPayload > >( {
-		workWithClients: '',
-		workWithClientsOther: '',
-		approachAndChallenges: '',
+		workWithClients: initialFormData.workWithClients || '',
+		workWithClientsOther: initialFormData.workWithClientsOther || '',
+		approachAndChallenges: initialFormData.approachAndChallenges || '',
 	} );
 
-	const handleSubmit = ( e: React.FormEvent ) => {
+	const { validate, validationError, updateValidationError } = useBlueprintForm2Validation();
+
+	const handleSubmit = async ( e: React.FormEvent ) => {
 		e.preventDefault();
+		const error = await validate( formData );
+		if ( error ) {
+			return;
+		}
+
 		onContinue( formData );
 	};
 
@@ -77,6 +88,7 @@ const BlueprintForm2: React.FC< Props > = ( { onContinue } ) => {
 				label={ translate(
 					"How does your agency typically work with clients regarding Automattic's solutions?"
 				) }
+				error={ validationError.workWithClients }
 				isRequired
 			>
 				<div className="blueprint-form__radio-group">
@@ -85,7 +97,10 @@ const BlueprintForm2: React.FC< Props > = ( { onContinue } ) => {
 							key={ `work-model-option-${ option.value }` }
 							label={ option.label }
 							checked={ formData.workWithClients === option.value }
-							onChange={ () => setFormData( { ...formData, workWithClients: option.value } ) }
+							onChange={ () => {
+								setFormData( { ...formData, workWithClients: option.value } );
+								updateValidationError( { workWithClients: undefined } );
+							} }
 						/>
 					) ) }
 					{ formData.workWithClients === 'other' && (
@@ -115,8 +130,18 @@ const BlueprintForm2: React.FC< Props > = ( { onContinue } ) => {
 			</FormField>
 
 			<FormFooter>
+				<Button
+					className="signup-multi-step-form__back-button"
+					variant="tertiary"
+					onClick={ goBack }
+					icon={ arrowLeft }
+					iconSize={ 18 }
+				>
+					{ translate( 'Back' ) }
+				</Button>
+
 				<Button variant="primary" onClick={ handleSubmit } __next40pxDefaultSize>
-					{ translate( 'Continue' ) }
+					{ translate( 'Finish' ) }
 				</Button>
 			</FormFooter>
 		</Form>
