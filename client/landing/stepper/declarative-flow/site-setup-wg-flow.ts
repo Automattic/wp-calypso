@@ -31,7 +31,7 @@ const siteSetupWithoutGoalsFlow: FlowV1 = {
 		const { site } = useSiteData();
 
 		useEffect( () => {
-			setIntent( goalsToIntent( site?.options?.site_goals ?? [], false ) );
+			setIntent( goalsToIntent( site?.options?.site_goals ?? [] ) );
 			setGoals( site?.options?.site_goals ?? [] );
 		}, [ site, setIntent, setGoals ] );
 

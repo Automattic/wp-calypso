@@ -103,6 +103,7 @@
 		"me/vat-details": true,
 		"migration-flow/experiment": false,
 		"migration-flow/introductory-offer": true,
+		"onboarding/create-course": false,
 		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,
 		"onboarding/import-from-medium": true,

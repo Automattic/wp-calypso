@@ -1,9 +1,13 @@
 import { SiteGoal, SiteIntent } from './constants';
 
-export const goalsToIntent = (
-	goals: SiteGoal[],
-	isIntentNewsletterGoalEnabled: boolean
-): SiteIntent => {
+interface Flags {
+	isIntentNewsletterGoalEnabled?: boolean;
+	isIntentCreateCourseGoalEnabled?: boolean;
+}
+
+export const goalsToIntent = ( goals: SiteGoal[], flags?: Flags ): SiteIntent => {
+	const { isIntentNewsletterGoalEnabled, isIntentCreateCourseGoalEnabled } = flags ?? {};
+
 	// When DIFM and Import goals are selected together, DIFM Intent will have the priority and will be set.
 	if ( goals.includes( SiteGoal.DIFM ) ) {
 		return SiteIntent.DIFM;
@@ -11,6 +15,10 @@ export const goalsToIntent = (
 
 	if ( goals.includes( SiteGoal.Import ) ) {
 		return SiteIntent.Import;
+	}
+
+	if ( goals.includes( SiteGoal.Courses ) && isIntentCreateCourseGoalEnabled ) {
+		return SiteIntent.CreateCourseGoal;
 	}
 
 	// Newsletter flow

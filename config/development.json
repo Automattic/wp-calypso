@@ -70,6 +70,7 @@
 		"help": true,
 		"help/gpt-response": true,
 		"home/layout-dev": true,
+
 		"hosting-server-settings-enhancements": true,
 		"hosting/datacenter-picker": true,
 		"i18n/community-translator": false,
@@ -130,6 +131,7 @@
 		"migration-flow/introductory-offer": true,
 		"network-connection": true,
 		"oauth": false,
+		"onboarding/create-course": true,
 		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,
 		"onboarding/import-from-medium": true,
@@ -144,6 +146,7 @@
 		"onboarding/trail-map-feature-grid": false,
 		"onboarding/user-on-stepper-hosting": true,
 		"onboarding/force-goals-first": false,
+
 		"p2/p2-plus": true,
 		"p2-enabled": false,
 		"page/export": true,
