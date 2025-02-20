@@ -65,7 +65,7 @@ function SiteResetCard( {
 		return () => {
 			dispatch( resetBreadcrumbs() );
 		};
-	}, [ siteId ] ); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [ siteId, title ] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const checkStatus = async () => {
 		if ( status?.status !== 'completed' && isAtomic ) {

@@ -36,7 +36,7 @@ export function SiteTransferCard( {
 		return () => {
 			dispatch( resetBreadcrumbs() );
 		};
-	}, [ siteId ] ); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [ siteId, title ] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
 		<Panel className="settings-administration__transfer-site">
