@@ -709,7 +709,6 @@ export type FilteredPlan = Plan &
 		| 'getAnnualPlansOnlyFeatures'
 		| 'getPlanTagline'
 		| 'getNewsletterTagLine'
-		| 'getLinkInBioTagLine'
 		| 'getBlogOnboardingTagLine'
 	>;
 
@@ -835,13 +834,6 @@ export const getPopularPlanSpec = ( {
 	if ( flowName === 'hosting' ) {
 		return {
 			type: TYPE_BUSINESS,
-			group,
-		};
-	}
-
-	if ( flowName === 'link-in-bio' || flowName === 'link-in-bio-tld' ) {
-		return {
-			type: TYPE_PERSONAL,
 			group,
 		};
 	}

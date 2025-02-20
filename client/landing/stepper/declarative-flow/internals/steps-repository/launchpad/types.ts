@@ -40,8 +40,6 @@ export type TaskId =
 	| 'plan_selected'
 	| 'plan_completed'
 	| 'newsletter_plan_created'
-	| 'setup_link_in_bio'
-	| 'link_in_bio_launched'
 	| 'migrate_content'
 	| 'links_added'
 	| 'set_up_payments';

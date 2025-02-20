@@ -3,7 +3,6 @@ import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import {
 	START_WRITING_FLOW,
-	isLinkInBioFlow,
 	isNewsletterFlow,
 	NEWSLETTER_FLOW,
 	NEW_HOSTED_SITE_FLOW,
@@ -206,11 +205,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			return __( 'Choose your flavor of WordPress' );
 		}
 
-		if (
-			isNewsletterFlow( flowName ) ||
-			isBlogOnboardingFlow( flowName ) ||
-			isLinkInBioFlow( flowName )
-		) {
+		if ( isNewsletterFlow( flowName ) || isBlogOnboardingFlow( flowName ) ) {
 			return __( `There's a plan for you.` );
 		}
 
@@ -229,7 +224,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		if (
 			isBlogOnboardingFlow( flowName ) ||
 			isNewsletterFlow( flowName ) ||
-			isLinkInBioFlow( flowName ) ||
 			isDomainUpsellFlow( flowName )
 		) {
 			return;

@@ -86,7 +86,6 @@ button {
 .plans,
 .domains,
 .patterns,
-.link-in-bio-post-setup,
 .anchor-fm,
 .subscribers,
 .copy-site,
@@ -103,7 +102,6 @@ button {
 .update-options,
 .hundred-year-plan,
 .hundred-year-domain,
-.link-in-bio-tld,
 .entrepreneur,
 .generate-content,
 .processing {
@@ -254,8 +252,7 @@ button {
 /**
  * Tailored flow stylings
  */
-.newsletter:not(.domains),
-.link-in-bio-tld:not(.domains) {
+.newsletter:not(.domains) {
 	&:not(.launchpad):not(.subscribers) {
 		@include onboarding-break-mobile-landscape {
 			padding: 40px 0 0;
@@ -301,7 +298,6 @@ button {
 
 .store-profiler__form,
 .newsletter,
-.link-in-bio-tld,
 .setup-form__form {
 	button {
 		&.site-icon-with-picker__upload-button {

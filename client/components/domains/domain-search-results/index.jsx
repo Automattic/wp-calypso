@@ -47,7 +47,6 @@ class DomainSearchResults extends Component {
 		onAddMapping: PropTypes.func,
 		onAddTransfer: PropTypes.func,
 		onClickMapping: PropTypes.func,
-		onClickTransfer: PropTypes.func,
 		onClickUseYourDomain: PropTypes.func,
 		showSkipButton: PropTypes.bool,
 		onSkip: PropTypes.func,

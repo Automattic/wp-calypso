@@ -1,6 +1,5 @@
 import {
 	NEWSLETTER_FLOW,
-	LINK_IN_BIO_TLD_FLOW,
 	DOMAIN_FOR_GRAVATAR_FLOW,
 	isDomainForGravatarFlow,
 	isHundredYearPlanFlow,
@@ -19,14 +18,12 @@ interface DomainSuggestionsVendorOptions {
 	isSignup?: boolean;
 	isDomainOnly?: boolean;
 	isPremium?: boolean;
-	flowName?: typeof NEWSLETTER_FLOW | typeof LINK_IN_BIO_TLD_FLOW | typeof DOMAIN_FOR_GRAVATAR_FLOW;
+	flowName?: typeof NEWSLETTER_FLOW | typeof DOMAIN_FOR_GRAVATAR_FLOW;
 }
 type DomainSuggestionsVendor =
 	| 'variation2_front'
 	| 'variation4_front'
 	| 'variation8_front'
-	| 'link-in-bio'
-	| 'link-in-bio-tld'
 	| 'newsletter'
 	| 'ecommerce'
 	| 'gravatar'
@@ -40,9 +37,6 @@ export function getDomainSuggestionsVendor(
 	}
 	if ( isHundredYearPlanFlow( options.flowName ) || isHundredYearDomainFlow( options.flowName ) ) {
 		return '100-year-domains';
-	}
-	if ( options.flowName === LINK_IN_BIO_TLD_FLOW ) {
-		return 'link-in-bio-tld';
 	}
 	if ( options.flowName === NEWSLETTER_FLOW ) {
 		return 'newsletter';

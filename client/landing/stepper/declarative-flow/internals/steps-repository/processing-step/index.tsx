@@ -1,6 +1,5 @@
 import {
 	StepContainer,
-	isNewsletterOrLinkInBioFlow,
 	isFreeFlow,
 	isNewSiteMigrationFlow,
 	isUpdateDesignFlow,
@@ -8,6 +7,7 @@ import {
 	HUNDRED_YEAR_PLAN_FLOW,
 	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	isAnyHostingFlow,
+	isNewsletterFlow,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -178,14 +178,10 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 	};
 
 	const flowName = props.flow || '';
-	const isJetpackPowered = isNewsletterOrLinkInBioFlow( flowName );
+	const isJetpackPowered = isNewsletterFlow( flowName );
 
 	// Return tailored processing screens for flows that need them
-	if (
-		isNewsletterOrLinkInBioFlow( flowName ) ||
-		isFreeFlow( flowName ) ||
-		isUpdateDesignFlow( flowName )
-	) {
+	if ( isNewsletterFlow( flowName ) || isFreeFlow( flowName ) || isUpdateDesignFlow( flowName ) ) {
 		return <TailoredFlowPreCheckoutScreen flowName={ flowName } />;
 	}
 

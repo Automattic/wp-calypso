@@ -28,7 +28,7 @@ import { Gridicon } from '@automattic/components';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/format-currency';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
-import { isNewsletterOrLinkInBioFlow, isAnyHostingFlow } from '@automattic/onboarding';
+import { isNewsletterFlow, isAnyHostingFlow } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	isBillingInfoEmpty,
@@ -280,7 +280,7 @@ function CheckoutSummaryFeaturesWrapper( props: {
 		isSenseiProduct( product )
 	);
 	const shouldUseFlowFeatureList =
-		isNewsletterOrLinkInBioFlow( signupFlowName ) ||
+		isNewsletterFlow( signupFlowName ) ||
 		hasSenseiProductInCart ||
 		( isAnyHostingFlow( signupFlowName ) && planHasHostingFeature );
 	const giftSiteSlug = responseCart.gift_details?.receiver_blog_slug;

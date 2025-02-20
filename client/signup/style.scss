@@ -389,8 +389,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			letter-spacing: 0.32px;
 			line-height: 17px;
 
-			&.newsletter-signup-form,
-			&.link-in-bio-signup-form {
+			&.newsletter-signup-form {
 				background-color: var(--color-primary);
 			}
 		}
