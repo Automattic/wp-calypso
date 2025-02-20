@@ -19,8 +19,10 @@
 
 @media ( max-width: 600px ) {
 	.site-logs-header {
+		align-items: flex-start;
 		flex-direction: column;
 	}
+
 	.site-logs-header > .components-base-control {
 		display: flex;
 		flex-direction: column;
