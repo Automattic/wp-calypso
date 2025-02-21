@@ -7,7 +7,6 @@ import {
 } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { getContactDetailsType } from '@automattic/wpcom-checkout';
-import { useSelect } from '@wordpress/data';
 import clsx from 'clsx';
 import { useState, useMemo, useEffect, type PropsWithChildren } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -23,7 +22,6 @@ import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useCountryList from '../src/hooks/use-country-list';
 import { useStoredPaymentMethods } from '../src/hooks/use-stored-payment-methods';
 import { updateCartContactDetailsForCheckout } from '../src/lib/update-cart-contact-details-for-checkout';
-import { WpcomCreditCardSelectors } from '../src/payment-methods/credit-card/store';
 import { BEFORE_SUBMIT } from './constants';
 import Content from './content';
 import Placeholder from './placeholder';
@@ -157,11 +155,7 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	const includeDomainDetails = contactDetailsType === 'domain';
 	const includeGSuiteDetails = contactDetailsType === 'gsuite';
 	const storedCard = cards.length > 0 ? cards[ 0 ] : undefined;
-	const forBusinessUse = useSelect(
-		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).useForBusiness(),
-		[]
-	);
-
+	const forBusinessUse = storedCard?.tax_location?.is_for_business;
 	const dataForProcessor: PaymentProcessorOptions = useMemo(
 		() => ( {
 			createUserAndSiteBeforeTransaction: false,

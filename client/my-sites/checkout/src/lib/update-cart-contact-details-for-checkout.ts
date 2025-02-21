@@ -22,7 +22,7 @@ export async function updateCartContactDetailsForCheckout(
 	updateLocation: UpdateTaxLocationInCart,
 	contactInfo: ManagedContactDetails | undefined,
 	vatDetails: VatDetails,
-	forBusinessUse: boolean | undefined
+	forBusinessUse?: boolean | undefined
 ): Promise< void | ResponseCart > {
 	const areCountriesLoaded = !! countriesList.length;
 	const countryCode = vatDetails.country ?? contactInfo?.countryCode?.value ?? '';
