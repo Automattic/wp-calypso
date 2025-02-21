@@ -96,7 +96,7 @@ const StatsCountries: React.FC< StatsDefaultModuleProps > = ( {
 					skipQuery
 					isRealTime={ isRealTime }
 				>
-					<Geochart query={ query } skipQuery />
+					<Geochart query={ query } skipQuery isRealTime={ isRealTime } />
 				</StatsModule>
 			) }
 			{ ! isRequestingData && ! data?.length && ! shouldGateStatsModule && (

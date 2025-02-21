@@ -97,64 +97,95 @@ class StatsGeochart extends Component {
 	};
 
 	// TODO: Unify this with the same function in StatsModule.
-	updateHistory = ( history, data ) => {
+	updateHistory( history, data ) {
 		// Timestamp the new data snapshot.
+		const now = moment();
 		const newSnapshot = {
-			timestamp: moment(),
+			timestamp: now,
 			data: data,
 		};
 
+		// Filter out snapshots older than minutesLimit prop.
+		// This determines the baseline for the diff calculation.
+		const { minutesLimit } = this.props;
 		const filteredHistory = [ ...history, newSnapshot ].filter(
-			( snapshot ) => moment().diff( snapshot.timestamp, 'minutes' ) <= 30
+			( snapshot ) => now.diff( snapshot.timestamp, 'minutes' ) <= minutesLimit
 		);
 
-		return filteredHistory;
-	};
+		return this.compactHistory( filteredHistory );
+	}
 
 	// TODO: Unify this with the same function in StatsModule.
-	calculateDiff = ( prevData, newData, dataIndexId ) => {
-		// Create a lookup map for previous data using item IDs.
-		const prevDataMap = new Map( prevData.map( ( item ) => [ item[ dataIndexId ], item ] ) );
+	compactHistory( history ) {
+		const MAX_HISTORY_LENGTH = 35;
 
-		// Calculate the difference value for each new item.
-		const diff = newData.map( ( item ) => {
-			// Pull matching data from previous snapshot, or default to 0 if not found.
-			const prevItem = prevDataMap.get( item[ dataIndexId ] ) || { value: 0 };
+		if ( history.length > MAX_HISTORY_LENGTH ) {
+			// Keep every other entry to keep memory usage low.
+			return history.filter( ( _, index ) => index % 2 === 0 );
+		}
+
+		return history;
+	}
+
+	// TODO: Unify this with the same function in StatsModule.
+	calculateDiff( history, statType ) {
+		const key = this.getKeyForStatType( statType );
+		const baselineMap = this.createBaselineLookupMap( history, key );
+		const lastSnapshot = history[ history.length - 1 ].data;
+
+		return lastSnapshot.map( ( item ) => {
+			const baselineItem = baselineMap.get( item[ key ] ) || { value: 0 };
 			return {
 				...item,
-				diffValue: item.value - prevItem.value,
+				diffValue: item.value - baselineItem.value,
 			};
 		} );
+	}
 
-		return diff;
-	};
+	// TODO: Unify this with the same function in StatsModule.
+	createBaselineLookupMap( history, key = 'id' ) {
+		const lookup = new Map();
+
+		history.forEach( ( snapshot ) => {
+			snapshot.data.forEach( ( item ) => {
+				if ( ! lookup.has( item[ key ] ) ) {
+					lookup.set( item[ key ], item );
+				}
+			} );
+		} );
+
+		return lookup;
+	}
+
+	// TODO: Unify this with the same function in StatsModule.
+	getKeyForStatType( statType ) {
+		// Provided data is not consistent across modules.
+		// Ideally we'd have an interface with some common properties.
+		// For now we can't assume an 'id' for all stats types.
+		// Use this function to find the best available key for unique identification.
+		const keys = {
+			statsTopPosts: 'id',
+			statsReferrers: 'label',
+			statsCountryViews: 'countryCode',
+		};
+		return keys[ statType ] || 'id';
+	}
 
 	// TODO: Better manage the real-time data state across components.
 	processRealtimeData = () => {
+		const { data, statType } = this.props;
 		const { dataHistory, lastUpdated } = this.state;
 		const UPDATE_THRESHOLD_IN_SECONDS = 15;
 		const now = moment();
 
 		if ( ! lastUpdated || now.diff( lastUpdated, 'seconds' ) >= UPDATE_THRESHOLD_IN_SECONDS ) {
-			const updatedHistory = this.updateHistory( dataHistory, this.props.data );
-			const firstSnapshot = updatedHistory[ 0 ];
-			const lastSnapshot = updatedHistory[ updatedHistory.length - 1 ];
-
-			const diffData = this.calculateDiff( firstSnapshot.data, lastSnapshot.data, 'countryCode' );
-			const filteredDiffData = diffData
-				.filter( ( diff ) => {
-					return diff.diffValue > 0;
-				} )
-				.map( ( diff ) => {
-					return {
-						...diff,
-						value: diff.diffValue,
-					};
-				} );
+			// Some special data index keys depend on the statType.
+			const updatedHistory = this.updateHistory( dataHistory, data );
+			const diffData = this.calculateDiff( updatedHistory, statType );
 
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( {
-				diffData: filteredDiffData,
+				diffData: diffData,
 				dataHistory: updatedHistory,
 				lastUpdated: now,
 			} );
@@ -295,7 +326,7 @@ class StatsGeochart extends Component {
 	};
 
 	render() {
-		const { siteId, statType, query, data, kind, skipQuery, isLoading } = this.props;
+		const { siteId, statType, query, data, kind, skipQuery, isLoading, isRealTime } = this.props;
 		// Only pass isLoading when kind is email.
 		const isGeoLoading = kind === 'email' ? isLoading : ! data || ! this.state.visualizationsLoaded;
 		const classes = clsx( 'stats-geochart', {
@@ -312,7 +343,7 @@ class StatsGeochart extends Component {
 				<div ref={ this.chartRef } className={ classes } />
 				<StatsModulePlaceholder
 					className={ clsx( classes, 'is-block' ) }
-					isLoading={ isGeoLoading }
+					isLoading={ isGeoLoading && ! isRealTime }
 				/>
 			</>
 		);
