@@ -9,13 +9,16 @@ import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.util
 import UserLists from 'calypso/reader/user-profile/views/lists';
 import UserPosts from 'calypso/reader/user-profile/views/posts';
 import { requestUser } from 'calypso/state/reader/users/actions';
+import getReaderUser from 'calypso/state/selectors/get-reader-user';
 import './style.scss';
 
 interface UserProfileProps {
 	userLogin: string;
-	user: UserData;
+	userId: string;
+	user: UserData | undefined;
+	path: string;
 	isLoading: boolean;
-	requestUser: ( userLogin: string ) => Promise< void >;
+	requestUser: ( userLogin: string, findById?: boolean ) => Promise< void >;
 	showBack: boolean;
 	handleBack: () => void;
 }
@@ -30,12 +33,25 @@ type UserProfileState = {
 };
 
 export function UserProfile( props: UserProfileProps ): JSX.Element | null {
-	const { userLogin, requestUser, user, isLoading, showBack, handleBack } = props;
+	const { userLogin, userId, path, requestUser, user, isLoading, showBack, handleBack } = props;
 	const translate = useTranslate();
 
 	useEffect( () => {
-		requestUser( userLogin );
-	}, [ userLogin, requestUser ] );
+		if ( ! user ) {
+			if ( userLogin ) {
+				requestUser( userLogin );
+			}
+			if ( userId ) {
+				requestUser( userId, true );
+			}
+		}
+	}, [ userLogin, requestUser, userId, user ] );
+
+	useEffect( () => {
+		if ( path.startsWith( '/reader/users/id/' ) && user ) {
+			page.replace( `/reader/users/${ user.user_login }` );
+		}
+	}, [ path, user ] );
 
 	if ( isLoading ) {
 		return <></>;
@@ -81,8 +97,14 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 
 export default connect(
 	( state: UserProfileState, ownProps: UserProfileProps ) => ( {
-		user: state.reader.users.items[ ownProps.userLogin ],
-		isLoading: state.reader.users.requesting[ ownProps.userLogin ] ?? false,
+		// The following logic works because userLogin and userId are mutually exclusive via the
+		// routes.
+		user: getReaderUser(
+			state,
+			ownProps.userLogin || ownProps.userId,
+			ownProps.userLogin ? false : true
+		),
+		isLoading: state.reader.users.requesting[ ownProps.userLogin || ownProps.userId ] ?? false,
 	} ),
 	{ requestUser }
 )( UserProfile );

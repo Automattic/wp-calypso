@@ -100,6 +100,17 @@ export default async function (): Promise< void > {
 		);
 
 		page(
+			`/reader/users/id/:user_id`,
+			blogDiscoveryByFeedId,
+			redirectLoggedOutToSignup,
+			updateLastRoute,
+			sidebar,
+			userPosts,
+			makeLayout,
+			clientRender
+		);
+
+		page(
 			getUserProfileBasePath( 'lists' ),
 			blogDiscoveryByFeedId,
 			redirectLoggedOutToSignup,
