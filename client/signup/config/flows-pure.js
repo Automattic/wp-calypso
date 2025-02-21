@@ -187,16 +187,6 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
-			name: 'domain-transfer',
-			steps: [ userSocialStep, 'domains', 'plans' ],
-			destination: ( dependencies ) => `/domains/manage/${ dependencies.siteSlug }`,
-			description:
-				'Onboarding flow specifically for domain transfers. Read more in https://wp.me/pdhack-Hk.',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
-			hideProgressIndicator: true,
-		},
-		{
 			name: 'onboarding-pm',
 			steps: [ userSocialStep, 'domains', 'plans' ],
 			destination: getSignupDestination,
