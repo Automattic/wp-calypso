@@ -259,8 +259,8 @@
 	}
 }
 
-// X-Posts
 .is-reader-page {
+	// X-Posts
 	.reader__card.card.is-x-post {
 		margin: 0;
 		padding: 16px 0 32px;
@@ -303,6 +303,85 @@
 
 	.reader__card.card.is-x-post + .reader__card.card.is-x-post {
 		padding-top: 32px;
+	}
+
+	// Back Button
+	.back-button {
+		border: none;
+		position: fixed;
+		top: calc(var(--masterbar-height) + 29px);
+		left: var(--sidebar-width-max);
+		background-color: transparent;
+		z-index: z-index(".masterbar", ".reader-back");
+
+		button.is-compact.is-borderless {
+			@media ( max-width: 1180px ) {
+				margin: -5px 0 7px 0;
+				padding: 0;
+			}
+
+			@media ( max-width: 600px ) {
+				margin: 0 0 14px 14px;
+			}
+		}
+
+		@media ( max-width: 1180px ) {
+			position: unset;
+			display: flex;
+		}
+	}
+
+	// Styles to allow a temporary ovarlay positioned over
+	// the stream feed while loading and initial scrolling.
+	.main {
+		position: relative;
+
+		&.tag-stream__main {
+			.back-button {
+				button.is-compact.is-borderless {
+					@media ( max-width: 660px ) {
+						padding: 0 0 0 16px;
+					}
+					@media ( max-width: 600px ) {
+						padding: 0 0 8px 0;
+					}
+				}
+			}
+		}
+
+		&.reader-full-post {
+			.back-button {
+				button.is-compact.is-borderless {
+					@media ( max-width: 1180px ) {
+						margin: 7px 0 0 0;
+						padding: 0 0 0 24px;
+					}
+				}
+			}
+		}
+
+		&.search-stream {
+			.following {
+				.back-button {
+					display: none;
+				}
+			}
+		}
+
+		.stream__init-overlay {
+			display: none;
+
+			&.stream__init-overlay-enabled {
+				background: var( --studio-white );
+				position: absolute;
+				display: block;
+				left: 0;
+				right: 0;
+				top: 0;
+				bottom: 0;
+				z-index: z-index( 'root', '.stream__init-overlay-enabled' );
+			}
+		}
 	}
 }
 
@@ -1003,84 +1082,6 @@
 .following-manage__search-followed-input {
 	@include breakpoint-deprecated( '>960px' ) {
 		min-width: 200px;
-	}
-}
-
-// Styles to allow a temporary ovarlay positioned over the stream feed while loading and initial
-// scrolling.
-.is-reader-page .main {
-	position: relative;
-
-	.stream__init-overlay {
-		display: none;
-
-		&.stream__init-overlay-enabled {
-			background: var( --studio-white );
-			position: absolute;
-			display: block;
-			left: 0;
-			right: 0;
-			top: 0;
-			bottom: 0;
-			z-index: z-index( 'root', '.stream__init-overlay-enabled' );
-		}
-	}
-
-	.back-button {
-		border: none;
-		position: fixed;
-		top: calc(var(--masterbar-height) + 29px);
-		left: var(--sidebar-width-max);
-		background-color: transparent;
-		z-index: z-index(".masterbar", ".reader-back");
-	
-		button.is-compact.is-borderless {
-			@media ( max-width: 1180px ) {
-				margin: -5px 0 7px 0;
-				padding: 0;
-			}
-
-			@media ( max-width: 600px ) {
-				margin: 0 0 14px 14px;
-			}
-		}
-	
-		@media ( max-width: 1180px ) {
-			position: unset;
-			display: flex;
-		}
-	}
-
-	&.tag-stream__main {
-		.back-button {
-			button.is-compact.is-borderless {	
-				@media ( max-width: 660px ) {
-					padding: 0 0 0 16px;
-				}
-				@media ( max-width: 600px ) {
-					padding: 0 0 8px 0;
-				}
-			}
-		}
-	}
-
-	&.reader-full-post {
-		.back-button {
-			button.is-compact.is-borderless {
-				@media ( max-width: 1180px ) {
-					margin: 7px 0 0 0;
-					padding: 0 0 0 24px;
-				}
-			}
-		}
-	}
-
-	&.search-stream {
-		.following {
-			.back-button {
-				display: none;
-			}
-		}
 	}
 }
 
