@@ -83,6 +83,16 @@ export default function UplotChart( {
 
 		const seriesSet = data.length === 3 ? [ mainSeries, subSeries ] : [ mainSeries ];
 
+		// Add padding to y-axis range to smoothen chart visualization when
+		// there's little variation in data. This prevents the chart from
+		// exaggerating small changes.
+		const subscribersData = data[ 1 ] as number[];
+		const min = Math.min( ...subscribersData );
+		const max = Math.max( ...subscribersData );
+		const range = Math.max( 10, max - min );
+		const y_min = Math.max( 0, min - range );
+		const y_max = max + range;
+
 		const defaultOptions: uPlot.Options = {
 			class: 'calypso-uplot-chart',
 			...DEFAULT_DIMENSIONS,
@@ -134,6 +144,12 @@ export default function UplotChart( {
 							: ( stroke as CanvasRenderingContext2D[ 'strokeStyle' ] );
 					},
 					fill: () => '#fff',
+				},
+			},
+			scales: {
+				y: {
+					min: y_min,
+					max: y_max,
 				},
 			},
 			series: [
