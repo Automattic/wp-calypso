@@ -8,6 +8,7 @@ import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getRouteFromContext } from 'calypso/utils';
 import { SidebarItem, Sidebar, PanelWithSidebar } from '../components/panel-sidebar';
+import useBreadcrumbs from '../hooks/use-breadcrumbs';
 import {
 	areAdvancedHostingFeaturesSupported,
 	areHostingFeaturesSupported,
@@ -33,7 +34,9 @@ export function SettingsSidebar() {
 	const areHostingFeaturesSupported = useAreHostingFeaturesSupported();
 	const areAdvancedHostingFeaturesSupported = useAreAdvancedHostingFeaturesSupported();
 
-	if ( isSimple ) {
+	const { shouldShowBreadcrumbs } = useBreadcrumbs();
+
+	if ( isSimple || shouldShowBreadcrumbs ) {
 		return null;
 	}
 

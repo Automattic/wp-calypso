@@ -7,6 +7,7 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import ItemViewContent from './item-view-content';
 import ItemViewHeader from './item-view-header';
+import ItemViewBreadcrumbsHeader from './item-view-header/breadcrumbs';
 import { FeaturePreviewInterface, ItemViewProps } from './types';
 
 import './style.scss';
@@ -42,6 +43,8 @@ export default function ItemView( {
 	hideNavIfSingleTab,
 	enforceTabsView,
 	hideHeader,
+	breadcrumbs,
+	shouldShowBreadcrumbs,
 }: ItemViewProps ) {
 	const [ navRef, setNavRef ] = useState< HTMLElement | null >( null );
 
@@ -84,11 +87,13 @@ export default function ItemView( {
 
 	const isMobileApp = isWpMobileApp();
 
-	const shouldHideNav = ( hideNavIfSingleTab && featureTabs.length <= 1 ) || isMobileApp;
+	const shouldHideHeader = hideHeader || shouldShowBreadcrumbs;
+	const shouldHideNav =
+		( hideNavIfSingleTab && featureTabs.length <= 1 ) || isMobileApp || shouldShowBreadcrumbs;
 
 	return (
 		<div className={ clsx( 'hosting-dashboard-item-view', className ) }>
-			{ ! hideHeader && (
+			{ ! shouldHideHeader && (
 				<ItemViewHeader
 					closeItemView={ closeItemView }
 					itemData={ itemData }
@@ -96,6 +101,7 @@ export default function ItemView( {
 					extraProps={ itemViewHeaderExtraProps }
 				/>
 			) }
+			{ shouldShowBreadcrumbs && <ItemViewBreadcrumbsHeader breadcrumbs={ breadcrumbs } /> }
 			<div ref={ setNavRef }>
 				<SectionNav
 					className={ clsx( 'hosting-dashboard-item-view__navigation', {

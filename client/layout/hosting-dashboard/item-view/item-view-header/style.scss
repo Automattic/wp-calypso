@@ -49,6 +49,11 @@ $blueberry-color: #3858e9;
 		.item-view__close-button {
 			margin-right: 15px;
 		}
+
+		&.hosting-dashboard-item-view__header-breadcrumbs {
+			padding-top: 22px;
+			padding-bottom: 22px;
+		}
 	}
 
 	.hosting-dashboard-item-view__header-favicon {
