@@ -69,7 +69,7 @@ class StatsModule extends Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-		const { data, isRealTime, query, requesting } = this.props;
+		const { data, isRealTime, query, requesting, statType } = this.props;
 		if ( ! requesting && prevProps.requesting ) {
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { loaded: true } );
@@ -85,7 +85,6 @@ class StatsModule extends Component {
 		}
 
 		// Limit data processing to avoid spurious updates.
-		const { statType } = this.props;
 		const { dataHistory, lastUpdated } = this.state;
 		const UPDATE_THRESHOLD_IN_SECONDS = 15;
 		const now = moment();
@@ -167,6 +166,7 @@ class StatsModule extends Component {
 		const keys = {
 			statsTopPosts: 'id',
 			statsReferrers: 'label',
+			statsCountryViews: 'countryCode',
 		};
 		return keys[ statType ] || 'id';
 	}
@@ -348,7 +348,9 @@ class StatsModule extends Component {
 					error={ hasError && <ErrorPanel /> }
 					loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
 					heroElement={
-						path === 'countryviews' && <Geochart query={ query } skipQuery={ skipQuery } />
+						path === 'countryviews' && (
+							<Geochart query={ query } skipQuery={ skipQuery } isRealTime={ isRealTime } />
+						)
 					}
 					additionalColumns={ additionalColumns }
 					splitHeader={ !! additionalColumns }

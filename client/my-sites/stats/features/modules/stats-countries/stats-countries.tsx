@@ -30,6 +30,7 @@ const StatsCountries: React.FC< StatsDefaultModuleProps > = ( {
 	summaryUrl,
 	summary,
 	listItemClassName,
+	isRealTime = false,
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -40,9 +41,11 @@ const StatsCountries: React.FC< StatsDefaultModuleProps > = ( {
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsModule = useShouldGateStats( statType );
 
-	const isRequestingData = useSelector( ( state: StatsStateProps ) =>
-		isRequestingSiteStatsForQuery( state, siteId, statType, query )
-	);
+	// TODO: Determine if data is being requested for real-time stats.
+	const isRequestingData =
+		useSelector( ( state: StatsStateProps ) =>
+			isRequestingSiteStatsForQuery( state, siteId, statType, query )
+		) && ! isRealTime;
 	const data = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ];
@@ -91,8 +94,9 @@ const StatsCountries: React.FC< StatsDefaultModuleProps > = ( {
 					summary={ summary }
 					listItemClassName={ listItemClassName }
 					skipQuery
+					isRealTime={ isRealTime }
 				>
-					<Geochart query={ query } skipQuery />
+					<Geochart query={ query } skipQuery isRealTime={ isRealTime } />
 				</StatsModule>
 			) }
 			{ ! isRequestingData && ! data?.length && ! shouldGateStatsModule && (
