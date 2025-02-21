@@ -1,0 +1,8 @@
+// wp-admin overrides
+/* stylelint-disable-next-line selector-id-pattern */
+#jetpack_newsletter_dashboard_widget {
+    .inside {
+        padding: 0;
+        margin: 0;
+    }
+}

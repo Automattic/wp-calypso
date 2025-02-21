@@ -1447,6 +1447,7 @@ __metadata:
   resolution: "@automattic/newsletter-widget@workspace:packages/newsletter-widget"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@wordpress/base-styles": "npm:^5.18.0"
     typescript: "npm:^5.3.3"
   languageName: unknown
   linkType: soft

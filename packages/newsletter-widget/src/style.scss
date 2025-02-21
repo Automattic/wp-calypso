@@ -1,0 +1,22 @@
+@import '@wordpress/base-styles/colors';
+
+.newsletter-widget {
+	$spacing: 12px;
+
+	&__footer {
+		background-color: $gray-100;
+		padding: $spacing;
+	}
+	
+	&__footer-msg {
+		margin: 0;
+		margin-bottom: $spacing;
+	}
+
+	&__footer-list {
+		margin: 0;
+		padding-left: $spacing;
+		list-style-type: disc;
+		columns: 2;
+	}
+}

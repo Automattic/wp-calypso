@@ -1,43 +1,42 @@
-import './styles.scss';
+import './style.scss';
 
 interface NewsletterWidgetProps {
 	hostname: string;
+	adminUrl: string;
 }
 
-export const NewsletterWidget = ( { hostname }: NewsletterWidgetProps ) => {
+const WPCOM_BASE = 'https://wordpress.com';
+
+export const NewsletterWidget = ( { hostname, adminUrl }: NewsletterWidgetProps ) => {
 	return (
 		<div className="newsletter-widget__footer">
-			<p>
+			<p className="newsletter-widget__footer-msg">
 				Effortlessly turn posts into emails with our Newsletter feature-expand your reach, engage
-				readers, and monetize your writing. No coding required.
-				<a href="https://wordpress.com/learn/courses/newsletters-101/wordpress-com-newsletter/">
+				readers, and monetize your writing. No coding required.{ ' ' }
+				<a href={ `${ WPCOM_BASE }/learn/courses/newsletters-101/wordpress-com-newsletter/` }>
 					Learn more
 				</a>
 			</p>
 			<div>
 				<h3>Quick Links</h3>
-				<ul>
+				<ul className="newsletter-widget__footer-list">
 					<li>
-						<a href="edit.php">Publish your next post</a>
+						<a href={ `${ adminUrl }edit.php` }>Publish your next post</a>
 					</li>
 					<li>
-						<a href={ `https://wordpress.com/stats/subscribers/${ hostname }` }>
-							View subscriber stats
-						</a>
+						<a href={ `${ WPCOM_BASE }/stats/subscribers/${ hostname }` }>View subscriber stats</a>
 					</li>
 					<li>
-						<a href={ `https://wordpress.com/subscribers/${ hostname }` }>Import subscribers</a>
+						<a href={ `${ WPCOM_BASE }/subscribers/${ hostname }` }>Import subscribers</a>
 					</li>
 					<li>
-						<a href={ `https://wordpress.com/subscribers/${ hostname }` }>Manage subscribers</a>
+						<a href={ `${ WPCOM_BASE }/subscribers/${ hostname }` }>Manage subscribers</a>
 					</li>
 					<li>
-						<a href={ `https://wordpress.com/earn/${ hostname }` }>Monetize</a>
+						<a href={ `${ WPCOM_BASE }/earn/${ hostname }` }>Monetize</a>
 					</li>
 					<li>
-						<a href={ `https://wordpress.com/settings/newsletter/${ hostname }` }>
-							Newsletter settings
-						</a>
+						<a href={ `${ WPCOM_BASE }/settings/newsletter/${ hostname }` }>Newsletter settings</a>
 					</li>
 				</ul>
 			</div>

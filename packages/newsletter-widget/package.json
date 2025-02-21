@@ -37,5 +37,8 @@
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"typescript": "^5.3.3"
+	},
+	"dependencies": {
+		"@wordpress/base-styles": "^5.18.0"
 	}
 }
