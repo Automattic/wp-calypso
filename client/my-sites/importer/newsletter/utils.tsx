@@ -28,7 +28,7 @@ export function getStepsProgress(
 ) {
 	const summaryStatus = getImporterStatus(
 		paidNewsletterData?.steps?.content?.status,
-		paidNewsletterData?.steps.subscribers.status
+		paidNewsletterData?.steps?.subscribers?.status
 	);
 
 	const result: ClickHandler[] = [
@@ -42,7 +42,7 @@ export function getStepsProgress(
 				);
 			},
 			show: 'onComplete',
-			indicator: getStepProgressIndicator( paidNewsletterData?.steps.subscribers.status ),
+			indicator: getStepProgressIndicator( paidNewsletterData?.steps?.subscribers?.status ),
 		},
 		{
 			message: __( 'Summary' ),
