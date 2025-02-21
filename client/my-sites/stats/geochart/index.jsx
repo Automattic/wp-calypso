@@ -364,7 +364,7 @@ class StatsGeochart extends Component {
 	};
 
 	render() {
-		const { siteId, statType, query, kind, skipQuery, isLoading, isRealTime } = this.props;
+		const { siteId, statType, query, kind, skipQuery, isLoading } = this.props;
 		const data = this.remapData();
 		// Only pass isLoading when kind is email.
 		const isGeoLoading = kind === 'email' ? isLoading : ! data || ! this.state.visualizationsLoaded;
