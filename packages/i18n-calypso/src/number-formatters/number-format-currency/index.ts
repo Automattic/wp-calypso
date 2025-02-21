@@ -84,7 +84,16 @@ function getPrecisionForLocaleAndCurrency(
 	currency: string
 ): number | undefined {
 	const formatter = getCurrencyFormatter( { number: 0, currency, browserSafeLocale } );
-	return formatter.resolvedOptions().maximumFractionDigits ?? 3; // 3 is the default for Intl.NumberFormat if minimumFractionDigits is not set
+	/**
+	 * For regular numbers, the default is 3 if neither `minimumFractionDigits` or `maximumFractionDigits` are set,
+	 * otherwise the greatest betweem `minimumFractionDigits` and 3.
+	 *
+	 * For currencies, the default is dependent on the currency.
+	 *
+	 * This may also result in undefined, for several reasons:
+	 * see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#significantdigitsfractiondigits_default_values
+	 */
+	return formatter.resolvedOptions().maximumFractionDigits;
 }
 
 /**
@@ -167,6 +176,13 @@ const numberFormatCurrency: NumberFormatCurrency = ( {
 	const validCurrency = getValidCurrency( currency, geoLocation );
 	const currencyOverride = getCurrencyOverride( validCurrency, geoLocation );
 	const currencyPrecision = getPrecisionForLocaleAndCurrency( browserSafeLocale, validCurrency );
+
+	if ( isSmallestUnit && typeof currencyPrecision === 'undefined' ) {
+		throw new Error(
+			`Could not determine currency precision for ${ validCurrency } in ${ browserSafeLocale }`
+		);
+	}
+
 	const numberAsFloat = prepareNumberForFormatting(
 		number,
 		currencyPrecision ?? 0,
