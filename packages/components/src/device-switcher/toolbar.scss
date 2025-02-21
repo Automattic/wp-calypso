@@ -19,7 +19,8 @@
 			transition: color 0.1s ease-in-out;
 
 			svg {
-				fill: var(--studio-gray-10);
+				fill: currentColor;
+				color: var(--studio-gray-10);
 			}
 
 			&.is-selected,
@@ -28,7 +29,7 @@
 				box-shadow: none;
 
 				svg {
-					fill: var(--studio-black);
+					color: var(--studio-black);
 				}
 			}
 

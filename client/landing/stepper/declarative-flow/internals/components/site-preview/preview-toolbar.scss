@@ -39,14 +39,15 @@
 	transition: color 0.1s ease-in-out;
 
 	svg {
-		fill: var(--studio-gray-10);
+		color: var(--studio-gray-10);
+		fill: currentColor;
 	}
 
 	&.is-selected,
 	&:hover,
 	&:focus {
 		svg {
-			fill: var(--studio-black);
+			color: var(--studio-black);
 		}
 	}
 }
