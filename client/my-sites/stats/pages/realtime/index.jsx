@@ -88,7 +88,7 @@ function StatsRealtime() {
 				<NavigationHeader
 					className="stats__section-header modernized-header"
 					title={ STATS_PRODUCT_NAME }
-					subtitle={ translate( "View your site's traffic in real-time." ) }
+					subtitle={ translate( "[Experimental] View your site's traffic in real-time." ) }
 					screenReader={ navItems.realtime?.label }
 					navigationItems={ [] }
 				></NavigationHeader>
