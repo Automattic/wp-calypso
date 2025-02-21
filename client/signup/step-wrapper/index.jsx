@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { ActionButtons } from '@automattic/onboarding';
@@ -239,7 +238,6 @@ class StepWrapper extends Component {
 		} );
 
 		const flow = flows.getFlow( flowName, this.props.userLoggedIn );
-		const enableHelpCenter = flow?.enableHelpCenter && isEnabled( 'signup/help-center-link' );
 
 		let sticky = null;
 		if ( isSticky !== undefined ) {
@@ -254,7 +252,7 @@ class StepWrapper extends Component {
 						{ skipButton }
 						{ nextButton }
 						{ customizedActionButtons }
-						{ enableHelpCenter && (
+						{ flow?.enableHelpCenter && (
 							<HelpCenterButton
 								helpCenterButtonText={ flow?.helpCenterButtonText }
 								hasPremiumSupport={ flow?.enablePremiumSupport }
