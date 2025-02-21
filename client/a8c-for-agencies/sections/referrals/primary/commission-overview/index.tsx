@@ -1,4 +1,5 @@
 import { FoldableCard } from '@automattic/components';
+import { formatCurrency } from '@automattic/format-currency';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -99,7 +100,13 @@ export default function CommissionOverview( {
 						>
 							{ translate(
 								'You will receive a revenue share of 5 basis points (bps) on new WooPayments total payments volume (“TPV”) on client sites through June 30, 2025.' +
-									' For example, if your client’s store generates $1M in TPV per year, your revenue share for that year would be $500.'
+									" For example, if your client's store generates %(maxAmount)s in TPV per year, your revenue share for that year would be %(amount)s.",
+								{
+									args: {
+										maxAmount: formatCurrency( 1000000, 'USD' ),
+										amount: formatCurrency( 500, 'USD' ),
+									},
+								}
 							) }
 						</FoldableCard>
 

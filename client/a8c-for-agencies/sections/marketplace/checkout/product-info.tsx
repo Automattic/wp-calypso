@@ -1,3 +1,4 @@
+import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate, numberFormat } from 'i18n-calypso';
 import wpcomIcon from 'calypso/assets/images/icons/wordpress-logo.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
@@ -119,7 +120,17 @@ export default function ProductInfo( {
 					product.family_slug === 'pressable-hosting' && ! isAutomatedReferrals && (
 						<div className="product-info__pressable-limit-warning">
 							{ translate(
-								"*If you exceed your plan's storage or traffic limits, you will be charged $0.50 per GB and $8 per 10K visits per month."
+								"*If you exceed your plan's storage or traffic limits, you will be charged %(storageCharge)s per GB and %(trafficCharge)s per 10K visits per month.",
+								{
+									args: {
+										storageCharge: formatCurrency( 0.5, 'USD', {
+											stripZeros: true,
+										} ),
+										trafficCharge: formatCurrency( 8, 'USD', {
+											stripZeros: true,
+										} ),
+									},
+								}
 							) }
 						</div>
 					)

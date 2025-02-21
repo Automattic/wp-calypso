@@ -1,3 +1,4 @@
+import { formatCurrency } from '@automattic/format-currency';
 import { external } from '@wordpress/icons';
 import { useTranslate, numberFormatCompact } from 'i18n-calypso';
 import { useState, useCallback, useEffect, useMemo } from 'react';
@@ -245,7 +246,13 @@ export default function PressablePlanSection( {
 
 				<span className="pressable-plan-section__details-footnote">
 					{ translate(
-						"*If you exceed your plan's storage or traffic limits, you will be charged $0.50 per GB and $8 per 10K visits per month."
+						"*If you exceed your plan's storage or traffic limits, you will be charged %(storageCharge)s per GB and %(trafficCharge)s per 10K visits per month.",
+						{
+							args: {
+								storageCharge: formatCurrency( 0.5, 'USD' ),
+								trafficCharge: formatCurrency( 8, 'USD' ),
+							},
+						}
 					) }
 				</span>
 			</HostingPlanSection.Details>
