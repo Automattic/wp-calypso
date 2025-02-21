@@ -1,5 +1,6 @@
 import { registerStore } from '@wordpress/data';
 import { controls } from '@wordpress/data-controls';
+import cookie from 'cookie';
 import { registerPlugins } from '../plugins';
 import { controls as wpcomRequestControls } from '../wpcom-request-controls';
 import * as actions from './actions';
@@ -35,6 +36,7 @@ export const isSupportSession = () => {
 			!! document.querySelector( '#a8c-support-session-overlay' ) ||
 			// Atomic
 			document.body.classList.contains( 'support-session' ) ||
+			cookie.parse( document.cookie )?.[ 'ssp' ] ||
 			// Our failover last hope, don't re-open when proxied.
 			window.helpCenterData?.isProxied
 		);
