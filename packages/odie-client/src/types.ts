@@ -19,7 +19,6 @@ export type OdieAssistantContextInterface = {
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
 	userFieldMessage?: string | null;
-	userFieldFlow?: string | null;
 	waitAnswerToFirstMessageFromHumanSupport: boolean;
 	setExperimentVariationName: ( variationName: string | null | undefined ) => void;
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
@@ -43,7 +42,6 @@ export type OdieAssistantProviderProps = {
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
 	userFieldMessage?: string | null;
-	userFieldFlow?: string | null;
 	version?: string | null;
 	children?: ReactNode;
 	setChatStatus?: ( status: ChatStatus ) => void;

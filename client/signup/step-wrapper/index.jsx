@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { ActionButtons } from '@automattic/onboarding';
-import { getZendeskInitialMessageByFlow } from '@automattic/zendesk-client';
 import { useDispatch, useSelect as useDataStoreSelect } from '@wordpress/data';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -15,7 +14,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import './style.scss';
 
-function HelpCenterButton( { helpCenterButtonText, hasPremiumSupport, flowName } ) {
+function HelpCenterButton( { helpCenterButtonText, hasPremiumSupport } ) {
 	const { setShowHelpCenter, setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
 	const isShowingHelpCenter = useDataStoreSelect(
 		( select ) => select( HELP_CENTER_STORE ).isHelpCenterShown(),
@@ -29,10 +28,7 @@ function HelpCenterButton( { helpCenterButtonText, hasPremiumSupport, flowName }
 	function openHelpCenter() {
 		setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport );
 		if ( hasPremiumSupport ) {
-			const initialMessage = getZendeskInitialMessageByFlow( flowName );
-			setNavigateToRoute(
-				`/odie?provider=zendesk&userFieldMessage=${ initialMessage }&userFieldFlow=${ flowName }`
-			);
+			setNavigateToRoute( `/odie?provider=zendesk` );
 		} else {
 			setNavigateToRoute( `/odie` );
 		}
@@ -256,7 +252,6 @@ class StepWrapper extends Component {
 							<HelpCenterButton
 								helpCenterButtonText={ flow?.helpCenterButtonText }
 								hasPremiumSupport={ flow?.enablePremiumSupport }
-								flowName={ flowName }
 							/>
 						) }
 					</ActionButtons>
