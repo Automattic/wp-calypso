@@ -886,6 +886,5 @@ export function getInitialWpcomStoreState(
 		transactionResult: undefined,
 		contactDetails,
 		vatDetails: {},
-		businessUseDetails: {},
 	};
 }
