@@ -91,11 +91,8 @@ class StatsModule extends Component {
 
 		if ( ! lastUpdated || now.diff( lastUpdated, 'seconds' ) >= UPDATE_THRESHOLD_IN_SECONDS ) {
 			// Some special data index keys depend on the statType.
-			const dataIndexId = 'statsCountryViews' === statType ? 'countryCode' : 'id';
 			const updatedHistory = this.updateHistory( dataHistory, data );
-			const firstSnapshot = updatedHistory[ 0 ];
-			const lastSnapshot = updatedHistory[ updatedHistory.length - 1 ];
-			const diffData = this.calculateDiff( firstSnapshot.data, lastSnapshot.data, dataIndexId );
+			const diffData = this.calculateDiff( updatedHistory, statType );
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( {
 				diffData,
@@ -170,6 +167,7 @@ class StatsModule extends Component {
 		const keys = {
 			statsTopPosts: 'id',
 			statsReferrers: 'label',
+			statsCountryViews: 'countryCode',
 		};
 		return keys[ statType ] || 'id';
 	}
