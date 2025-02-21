@@ -90,6 +90,11 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 	const [ selectedPhpVersion, setSelectedPhpVersion ] = useState( '' );
 	const [ selectedWpVersion, setSelectedWpVersion ] = useState( '' );
 	const [ selectedStaticFile404, setSelectedStaticFile404 ] = useState( '' );
+
+	const isWpVersionChanged = selectedWpVersion && selectedWpVersion !== wpVersion;
+	const isPhpVersionChanged = selectedPhpVersion && selectedPhpVersion !== phpVersion;
+	const isStaticFile404Changed = selectedStaticFile404 && selectedStaticFile404 !== staticFile404;
+
 	const { recommendedValue, phpVersions } = usePhpVersions();
 	const dataCenterOptions = useDataCenterOptions();
 
@@ -102,6 +107,8 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 
 	const isLoading =
 		isGettingGeoAffinity || isGettingPhpVersion || isGettingStaticFile404 || isGettingWpVersion;
+	const isDirty = isWpVersionChanged || isPhpVersionChanged || isStaticFile404Changed;
+	const isUpdating = isUpdatingWpVersion || isUpdatingPhpVersion || isUpdatingStaticFile404;
 
 	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 
@@ -168,8 +175,6 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 			return;
 		}
 
-		const isWpVersionButtonDisabled =
-			disabled || ! selectedWpVersion || selectedWpVersion === wpVersion;
 		const selectedWpVersionValue = selectedWpVersion || wpVersion || ( disabled ? 'latest' : '' );
 
 		return (
@@ -178,7 +183,7 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 				{ isWpcomStagingSite && (
 					<>
 						<FormSelect
-							disabled={ disabled || isUpdatingWpVersion }
+							disabled={ disabled || isUpdating }
 							className="web-server-settings-card__wp-version-select"
 							onChange={ ( event ) => setSelectedWpVersion( event.currentTarget.value ) }
 							inputRef={ wpVersionDropdownRef }
@@ -196,16 +201,6 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 								);
 							} ) }
 						</FormSelect>
-						{ ! isWpVersionButtonDisabled && (
-							<Button
-								className="web-server-settings-card__wp-set-version"
-								onClick={ () => dispatch( updateAtomicWpVersion( siteId, selectedWpVersion ) ) }
-								busy={ isUpdatingWpVersion }
-								disabled={ isUpdatingWpVersion }
-							>
-								<span>{ translate( 'Update WordPress version' ) }</span>
-							</Button>
-						) }
 					</>
 				) }
 				{ ! isWpcomStagingSite && (
@@ -215,15 +210,7 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 								'For testing purposes, you can switch to the beta version of the next WordPress release on {{a}}your staging site{{/a}}.',
 							{
 								components: {
-									a: (
-										<a
-											href={
-												isUntangled
-													? `/sites/tools/staging-site/${ selectedSiteSlug }`
-													: `/staging-site/${ selectedSiteSlug }`
-											}
-										/>
-									),
+									a: <a href={ `/staging-site/${ selectedSiteSlug }` } />,
 								},
 							}
 						) }
@@ -265,15 +252,13 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 			return;
 		}
 
-		const isPhpVersionButtonDisabled =
-			disabled || ! selectedPhpVersion || selectedPhpVersion === phpVersion;
 		const selectedPhpVersionValue =
 			selectedPhpVersion || phpVersion || ( disabled ? recommendedValue : '' );
 		return (
 			<FormFieldset>
 				<FormLabel ref={ phpVersionRef }>{ translate( 'PHP version' ) }</FormLabel>
 				<FormSelect
-					disabled={ disabled || isUpdatingPhpVersion }
+					disabled={ disabled || isUpdating }
 					className="web-server-settings-card__php-version-select"
 					onChange={ ( event ) => {
 						const newVersion = event.currentTarget.value;
@@ -299,24 +284,8 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 						);
 					} ) }
 				</FormSelect>
-				{ ! isPhpVersionButtonDisabled && (
-					<Button
-						className="web-server-settings-card__php-set-version"
-						onClick={ () => {
-							dispatch( updateAtomicPhpVersion( siteId, selectedPhpVersion ) );
-						} }
-						busy={ isUpdatingPhpVersion }
-						disabled={ isUpdatingPhpVersion }
-					>
-						<span>{ translate( 'Update PHP version' ) }</span>
-					</Button>
-				) }
 			</FormFieldset>
 		);
-	};
-
-	const applyStaticFile404 = () => {
-		dispatch( updateAtomicStaticFile404( siteId, selectedStaticFile404 ) );
 	};
 
 	const getStaticFile404Settings = () => [
@@ -345,8 +314,6 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 			return;
 		}
 
-		const isStaticFile404ButtonDisabled =
-			disabled || ! selectedStaticFile404 || selectedStaticFile404 === staticFile404;
 		const selectedStaticFile404Value =
 			selectedStaticFile404 || staticFile404 || ( disabled ? recommendedValue : '' );
 
@@ -361,7 +328,7 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 				</FormLabel>
 				<FormSelect
 					id="staticFile404Select"
-					disabled={ disabled || isUpdatingStaticFile404 }
+					disabled={ disabled || isUpdating }
 					className="web-server-settings-card__static-file-404-select"
 					onChange={ ( event ) => {
 						const newSetting = event.currentTarget.value;
@@ -388,21 +355,6 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 							'missing asset files.'
 					) }
 				</FormSettingExplanation>
-				{ ! isStaticFile404ButtonDisabled && (
-					<Button
-						className="web-server-settings-card__static-file-404-set-setting"
-						onClick={ applyStaticFile404 }
-						busy={ isUpdatingStaticFile404 }
-						disabled={ isUpdatingStaticFile404 }
-					>
-						<span>
-							{ translate( 'Update Handling for Nonexistent Assets', {
-								comment:
-									'Update the way the web server handles requests for nonexistent asset files',
-							} ) }
-						</span>
-					</Button>
-				) }
 			</FormFieldset>
 		);
 	};
@@ -416,6 +368,30 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 				<LabelPlaceholder />
 				<InputPlaceholder />
 			</>
+		);
+	};
+
+	const handleSave = () => {
+		if ( isWpVersionChanged ) {
+			dispatch( updateAtomicWpVersion( siteId, selectedWpVersion ) );
+		}
+		if ( isPhpVersionChanged ) {
+			dispatch( updateAtomicPhpVersion( siteId, selectedPhpVersion ) );
+		}
+		if ( isStaticFile404Changed ) {
+			dispatch( updateAtomicStaticFile404( siteId, selectedStaticFile404 ) );
+		}
+	};
+
+	const getSaveButton = () => {
+		return (
+			<Button
+				onClick={ handleSave }
+				busy={ isUpdating }
+				disabled={ disabled || isUpdating || ! isDirty }
+			>
+				{ translate( 'Save' ) }
+			</Button>
 		);
 	};
 
@@ -438,6 +414,7 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 			{ ! isLoading && getGeoAffinityContent() }
 			{ ! isLoading && getStaticFile404Content() }
 			{ isLoading && getPlaceholderContent() }
+			{ getSaveButton() }
 		</PanelCard>
 	);
 }
