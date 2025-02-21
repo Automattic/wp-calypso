@@ -382,7 +382,7 @@ class StatsGeochart extends Component {
 				<div ref={ this.chartRef } className={ classes } />
 				<StatsModulePlaceholder
 					className={ clsx( classes, 'is-block' ) }
-					isLoading={ isGeoLoading && ! isRealTime }
+					isLoading={ isGeoLoading }
 				/>
 			</>
 		);
