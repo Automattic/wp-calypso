@@ -27,7 +27,7 @@ interface Props {
 	selectedTab: string;
 }
 
-const DiscoverNavigation = ( { selectedTab }: Props ) => {
+const DiscoverNavigationV2 = ( { selectedTab }: Props ) => {
 	const currentLocale = useLocale();
 	const dispatch = useDispatch();
 	const isLoggedIn = useSelector( isUserLoggedIn );
@@ -90,7 +90,7 @@ const DiscoverNavigation = ( { selectedTab }: Props ) => {
 
 	return (
 		<SectionNav
-			className="discover-navigation"
+			className="discover-navigation-v2"
 			selectedText={ selectedTabData?.title }
 			enforceTabsView
 		>
@@ -110,4 +110,4 @@ const DiscoverNavigation = ( { selectedTab }: Props ) => {
 	);
 };
 
-export default DiscoverNavigation;
+export default DiscoverNavigationV2;

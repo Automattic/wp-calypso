@@ -7,7 +7,8 @@ import { addQueryArgs } from 'calypso/lib/url';
 import withDimensions from 'calypso/lib/with-dimensions';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import DiscoverAddNew from 'calypso/reader/discover/components/add-new';
-import DiscoverNavigation from 'calypso/reader/discover/components/navigation';
+import DiscoverNavigation from 'calypso/reader/discover/components/navigation/v1';
+import DiscoverNavigationV2 from 'calypso/reader/discover/components/navigation/v2';
 import Reddit from 'calypso/reader/discover/components/reddit';
 import DiscoverTagsNavigation from 'calypso/reader/discover/components/tags-navigation';
 import Stream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
@@ -20,6 +21,7 @@ import {
 	getSelectedTabTitle,
 	buildDiscoverStreamKey,
 	FIRST_POSTS_TAB,
+	isDiscoveryV2Enabled,
 	ADD_NEW_TAB,
 	REDDIT_TAB,
 } from './helper';
@@ -109,7 +111,11 @@ const DiscoverStream = ( props ) => {
 		return (
 			<>
 				<DiscoverHeader selectedTab={ effectiveTabSelection } width={ props.width } />
-				<DiscoverNavigation selectedTab={ selectedTab } />
+				{ isDiscoveryV2Enabled() ? (
+					<DiscoverNavigationV2 selectedTab={ selectedTab } />
+				) : (
+					<DiscoverNavigation width={ props.width } selectedTab={ selectedTab } />
+				) }
 
 				{ selectedTab === 'tags' && (
 					<DiscoverTagsNavigation

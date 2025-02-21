@@ -1,3 +1,5 @@
+import config from '@automattic/calypso-config';
+
 const DEFAULT_DISCOVER_TAGS = [ 'dailyprompt', 'wordpress' ];
 export const DEFAULT_TAB = 'recommended';
 export const LATEST_TAB = 'latest';
@@ -72,4 +74,8 @@ export function getTagsFromStreamKey( streamKey = '' ) {
 		return tags;
 	}
 	return [];
+}
+
+export function isDiscoveryV2Enabled() {
+	return config.isEnabled( 'reader/discovery-v2' );
 }

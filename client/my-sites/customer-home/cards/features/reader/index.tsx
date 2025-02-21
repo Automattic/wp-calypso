@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import iconReaderLightbulb from 'calypso/assets/images/customer-home/reader-lightbulb.svg';
 import withDimensions from 'calypso/lib/with-dimensions';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
-import DiscoverNavigation from 'calypso/reader/discover/components/navigation';
+import DiscoverNavigation from 'calypso/reader/discover/components/navigation/v1';
 import { DEFAULT_TAB, buildDiscoverStreamKey } from 'calypso/reader/discover/helper';
 import Stream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
@@ -11,7 +11,11 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 
 import './style.scss';
 
-const ReaderCard = () => {
+interface ReaderCardProps {
+	width: number;
+}
+
+const ReaderCard = ( props: ReaderCardProps ) => {
 	const translate = useTranslate();
 
 	const queryParams = new URLSearchParams( window.location.search );
@@ -40,7 +44,7 @@ const ReaderCard = () => {
 						) }
 					</span>
 				</div>
-				<DiscoverNavigation selectedTab={ selectedTab } />
+				<DiscoverNavigation width={ props.width } selectedTab={ selectedTab } />
 				<Stream
 					streamKey={ streamKey }
 					trackScrollPage={ trackScrollPage.bind( null ) }
