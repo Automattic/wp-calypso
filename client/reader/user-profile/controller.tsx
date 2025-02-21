@@ -63,6 +63,7 @@ export function userLists( ctx: Context, next: () => void ): void {
 			require="calypso/reader/user-profile"
 			key={ 'user-lists-' + userLogin }
 			userLogin={ userLogin }
+			path={ context.path }
 		/>
 	);
 
