@@ -21,6 +21,7 @@ export interface CommandPaletteContext
 	setEmptyListNotice: ( message: string ) => void;
 	setFooterMessage: ( message: string | JSX.Element ) => void;
 	setSelectedCommandName: ( name: string ) => void;
+	removeDuplicateViewsExperimentEnabled?: boolean;
 }
 
 const CommandPaletteContext = createContext< CommandPaletteContext | undefined >( undefined );
@@ -44,6 +45,7 @@ export const CommandPaletteContextProvider: FC< PropsWithChildren< CommandPalett
 	setSearch,
 	setSelectedCommandName,
 	isOpen,
+	removeDuplicateViewsExperimentEnabled,
 } ) => {
 	return (
 		<CommandPaletteContext.Provider
@@ -65,6 +67,7 @@ export const CommandPaletteContextProvider: FC< PropsWithChildren< CommandPalett
 				setSearch,
 				setSelectedCommandName,
 				isOpen,
+				removeDuplicateViewsExperimentEnabled,
 			} }
 		>
 			{ children }

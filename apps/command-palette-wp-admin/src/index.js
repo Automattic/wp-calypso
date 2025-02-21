@@ -5,7 +5,6 @@ import { render } from 'react-dom';
 import setLocale from './set-locale';
 import { useCommandsWpAdmin } from './use-commands';
 import { useSites } from './use-sites';
-
 function CommandPaletteApp() {
 	if ( ! window.commandPaletteConfig ) {
 		// Can't load the command palette without a config.
@@ -17,6 +16,7 @@ function CommandPaletteApp() {
 		isAtomic = false,
 		isSimple = false,
 		capabilities,
+		removeDuplicateViewsExperimentEnabled = false,
 	} = window?.commandPaletteConfig || {};
 
 	if ( ! isSimple && ! isAtomic ) {
@@ -41,6 +41,7 @@ function CommandPaletteApp() {
 				currentSiteId={ siteId }
 				useSites={ useSites }
 				userCapabilities={ userCapabilities }
+				removeDuplicateViewsExperimentEnabled={ removeDuplicateViewsExperimentEnabled }
 			/>
 		</QueryClientProvider>
 	);

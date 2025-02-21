@@ -103,6 +103,7 @@ export function CommandMenuGroup() {
 		currentRoute,
 		currentSiteId,
 		useSites,
+		removeDuplicateViewsExperimentEnabled,
 	} = useCommandPaletteContext();
 	const { commands, filterNotice, emptyListNotice, inSiteContext } = useCommandPalette();
 	const { __ } = useI18n();
@@ -167,6 +168,7 @@ export function CommandMenuGroup() {
 								command,
 								navigate,
 								currentRoute,
+								removeDuplicateViewsExperimentEnabled,
 							} )
 						}
 						id={ cleanForSlug( itemValue ) }
@@ -261,6 +263,7 @@ export interface CommandPaletteProps {
 	selectedCommand?: PaletteCommand;
 	onBack?: () => void;
 	shouldCloseOnClickOutside?: boolean;
+	removeDuplicateViewsExperimentEnabled?: boolean;
 }
 
 const COMMAND_PALETTE_MODAL_OPEN_CLASSNAME = 'command-palette-modal-open';
@@ -285,6 +288,7 @@ const CommandPalette = ( {
 	selectedCommand,
 	onBack,
 	shouldCloseOnClickOutside,
+	removeDuplicateViewsExperimentEnabled,
 }: CommandPaletteProps ) => {
 	const [ placeHolderOverride, setPlaceholderOverride ] = useState( '' );
 	const [ search, setSearch ] = useState( '' );
@@ -423,6 +427,7 @@ const CommandPalette = ( {
 			setPlaceholderOverride={ setPlaceholderOverride }
 			setSearch={ setSearch }
 			setSelectedCommandName={ setSelectedCommandName }
+			removeDuplicateViewsExperimentEnabled={ removeDuplicateViewsExperimentEnabled }
 		>
 			<Modal
 				className="commands-command-menu"

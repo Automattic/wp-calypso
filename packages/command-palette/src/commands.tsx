@@ -57,6 +57,7 @@ export interface CommandCallBackParams {
 	navigate: ( url: string, openInNewTab?: boolean ) => void;
 	site?: SiteExcerptData;
 	currentRoute: string;
+	removeDuplicateViewsExperimentEnabled?: boolean;
 }
 
 export enum SiteType {
@@ -168,7 +169,12 @@ export function useCommands() {
 			clearCache: {
 				name: 'clearCache',
 				label: __( 'Clear cache', __i18n_text_domain__ ),
-				callback: commandNavigation( '/hosting-config/:site#cache' ),
+				callback: ( params ) => {
+					if ( params.removeDuplicateViewsExperimentEnabled ) {
+						return commandNavigation( '/sites/settings/performance/:site' )( params );
+					}
+					return commandNavigation( '/hosting-config/:site#cache' )( params );
+				},
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select a site to clear cache', __i18n_text_domain__ ),
 				...siteFilters.hostingEnabled,
@@ -177,7 +183,12 @@ export function useCommands() {
 			enableEdgeCache: {
 				name: 'enableEdgeCache',
 				label: __( 'Enable edge cache', __i18n_text_domain__ ),
-				callback: commandNavigation( '/hosting-config/:site#edge' ),
+				callback: ( params ) => {
+					if ( params.removeDuplicateViewsExperimentEnabled ) {
+						return commandNavigation( '/sites/settings/performance/:site' )( params );
+					}
+					return commandNavigation( '/hosting-config/:site#edge' )( params );
+				},
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select a site to enable edge cache', __i18n_text_domain__ ),
 				...siteFilters.hostingEnabledAndPublic,
@@ -186,7 +197,12 @@ export function useCommands() {
 			disableEdgeCache: {
 				name: 'disableEdgeCache',
 				label: __( 'Disable edge cache', __i18n_text_domain__ ),
-				callback: commandNavigation( '/hosting-config/:site#edge' ),
+				callback: ( params ) => {
+					if ( params.removeDuplicateViewsExperimentEnabled ) {
+						return commandNavigation( '/sites/settings/performance/:site' )( params );
+					}
+					return commandNavigation( '/hosting-config/:site#edge' )( params );
+				},
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select a site to disable edge cache', __i18n_text_domain__ ),
 				...siteFilters.hostingEnabledAndPublic,
@@ -195,7 +211,12 @@ export function useCommands() {
 			manageCacheSettings: {
 				name: 'manageCacheSettings',
 				label: __( 'Manage cache settings', __i18n_text_domain__ ),
-				callback: commandNavigation( '/hosting-config/:site#cache' ),
+				callback: ( params ) => {
+					if ( params.removeDuplicateViewsExperimentEnabled ) {
+						return commandNavigation( '/sites/settings/performance/:site' )( params );
+					}
+					return commandNavigation( '/hosting-config/:site#cache' )( params );
+				},
 				searchLabel: [
 					_x(
 						'manage cache settings',
@@ -290,7 +311,12 @@ export function useCommands() {
 			openHostingConfiguration: {
 				name: 'openHostingConfiguration',
 				label: __( 'Open server settings', __i18n_text_domain__ ),
-				callback: commandNavigation( '/hosting-config/:site' ),
+				callback: ( params ) => {
+					if ( params.removeDuplicateViewsExperimentEnabled ) {
+						return commandNavigation( '/sites/settings/server/:site' )( params );
+					}
+					return commandNavigation( '/hosting-config/:site' )( params );
+				},
 				searchLabel: [
 					_x(
 						'open hosting configuration',
@@ -348,7 +374,12 @@ export function useCommands() {
 			openPHPmyAdmin: {
 				name: 'openPHPmyAdmin',
 				label: __( 'Open database in phpMyAdmin', __i18n_text_domain__ ),
-				callback: commandNavigation( '/hosting-config/:site#database-access' ),
+				callback: ( params ) => {
+					if ( params.removeDuplicateViewsExperimentEnabled ) {
+						return commandNavigation( '/sites/settings/database/:site' )( params );
+					}
+					return commandNavigation( '/hosting-config/:site#database-access' )( params );
+				},
 				searchLabel: [
 					_x(
 						'open database in phpmyadmin',
@@ -642,7 +673,12 @@ export function useCommands() {
 			copySshConnectionString: {
 				name: 'copySshConnectionString',
 				label: __( 'Copy SSH connection string', __i18n_text_domain__ ),
-				callback: commandNavigation( '/hosting-config/:site#sftp-credentials' ),
+				callback: ( params ) => {
+					if ( params.removeDuplicateViewsExperimentEnabled ) {
+						return commandNavigation( '/sites/settings/sftp-ssh/:site' )( params );
+					}
+					return commandNavigation( '/hosting-config/:site#sftp-credentials' )( params );
+				},
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to copy SSH connection string', __i18n_text_domain__ ),
 				...siteFilters.hostingEnabled,
@@ -651,7 +687,12 @@ export function useCommands() {
 			openSshCredentials: {
 				name: 'openSshCredentials',
 				label: __( 'Open SFTP/SSH credentials', __i18n_text_domain__ ),
-				callback: commandNavigation( '/hosting-config/:site#sftp-credentials' ),
+				callback: ( params ) => {
+					if ( params.removeDuplicateViewsExperimentEnabled ) {
+						return commandNavigation( '/sites/settings/sftp-ssh/:site' )( params );
+					}
+					return commandNavigation( '/hosting-config/:site#sftp-credentials' )( params );
+				},
 				...siteFilters.hostingEnabled,
 				icon: keyIcon,
 				siteSelector: true,
@@ -660,7 +701,12 @@ export function useCommands() {
 			resetSshSftpPassword: {
 				name: 'resetSshSftpPassword',
 				label: __( 'Reset SFTP/SSH password', __i18n_text_domain__ ),
-				callback: commandNavigation( '/hosting-config/:site#sftp-credentials' ),
+				callback: ( params ) => {
+					if ( params.removeDuplicateViewsExperimentEnabled ) {
+						return commandNavigation( '/sites/settings/sftp-ssh/:site' )( params );
+					}
+					return commandNavigation( '/hosting-config/:site#sftp-credentials' )( params );
+				},
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to reset SFTP/SSH password', __i18n_text_domain__ ),
 				...siteFilters.hostingEnabled,
@@ -883,7 +929,12 @@ export function useCommands() {
 			changePHPVersion: {
 				name: 'changePHPVersion',
 				label: __( 'Change PHP version', __i18n_text_domain__ ),
-				callback: commandNavigation( '/hosting-config/:site#web-server-settings' ),
+				callback: ( params ) => {
+					if ( params.removeDuplicateViewsExperimentEnabled ) {
+						return commandNavigation( '/sites/settings/server/:site' )( params );
+					}
+					return commandNavigation( '/hosting-config/:site#web-server-settings' )( params );
+				},
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to change PHP version', __i18n_text_domain__ ),
 				...siteFilters.hostingEnabled,

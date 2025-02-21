@@ -1,6 +1,7 @@
 import CommandPalette from '@automattic/command-palette';
 import { useSiteExcerptsSorted } from 'calypso/data/sites/use-site-excerpts-sorted';
 import { navigate } from 'calypso/lib/navigate';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { useCommandsCalypso } from 'calypso/sites-dashboard/components/wpcom-smp-commands';
 import { useDispatch, useSelector } from 'calypso/state';
 import { closeCommandPalette } from 'calypso/state/command-palette/actions';
@@ -28,7 +29,7 @@ const CalypsoCommandPalette = () => {
 	const currentSiteId = useSelector( getSelectedSiteId );
 	const userCapabilities = useSelector( getCurrentUserCapabilities );
 	const onClose = () => dispatch( closeCommandPalette() );
-
+	const removeDuplicateViewsExperimentEnabled = useRemoveDuplicateViewsExperimentEnabled();
 	return (
 		<CommandPalette
 			currentRoute={ currentRoutePattern }
@@ -39,6 +40,7 @@ const CalypsoCommandPalette = () => {
 			useCommands={ useCommandsCalypso }
 			useSites={ useSiteExcerptsSorted }
 			userCapabilities={ userCapabilities }
+			removeDuplicateViewsExperimentEnabled={ removeDuplicateViewsExperimentEnabled }
 		/>
 	);
 };
