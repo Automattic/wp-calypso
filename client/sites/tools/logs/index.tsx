@@ -7,7 +7,7 @@ import {
 } from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
 import { download } from '@wordpress/icons';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useMemo } from 'react';
 import { v4 as uuid } from 'uuid';
 import DateControl from 'calypso/components/date-control';
@@ -42,6 +42,7 @@ export const SiteLogsDataViews = ( {
 	logType: LogType;
 	query: { from: string; to: string };
 } ) => {
+	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
 	const dispatch = useDispatch();
