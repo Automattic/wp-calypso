@@ -135,13 +135,12 @@ export default function ProcessingScreen( props: ProcessingScreenProps ) {
 				'is-force-centered': shouldShowNewSpinner && totalSteps === 0,
 			} ) }
 		>
-			<h1 className="processing-screen__progress-step">{ steps.current[ currentStep ]?.title }</h1>
 			{ shouldShowNewSpinner && (
 				<Loading title={ steps.current[ currentStep ]?.title } progress={ progress } />
 			) }
 			{ ! shouldShowNewSpinner && (
 				<>
-					<h1 className="reskinned-processing-screen__progress-step">
+					<h1 className="processing-screen__progress-step">
 						{ steps.current[ currentStep ]?.title }
 					</h1>
 					<div
