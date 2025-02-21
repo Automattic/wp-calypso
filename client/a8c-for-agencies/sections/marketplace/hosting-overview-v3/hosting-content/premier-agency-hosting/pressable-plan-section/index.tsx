@@ -246,11 +246,12 @@ export default function PressablePlanSection( {
 
 				<span className="pressable-plan-section__details-footnote">
 					{ translate(
-						"*If you exceed your plan's storage or traffic limits, you will be charged %(storageCharge)s per GB and %(trafficCharge)s per 10K visits per month.",
+						"*If you exceed your plan's storage or traffic limits, you will be charged %(storageCharge)s per GB and %(trafficCharge)s per %(visits)s visits per month.",
 						{
 							args: {
 								storageCharge: formatCurrency( 0.5, 'USD' ),
 								trafficCharge: formatCurrency( 8, 'USD' ),
+								visits: numberFormatCompact( 10000 ),
 							},
 						}
 					) }

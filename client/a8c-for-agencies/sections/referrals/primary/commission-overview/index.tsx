@@ -100,11 +100,12 @@ export default function CommissionOverview( {
 						>
 							{ translate(
 								'You will receive a revenue share of 5 basis points (bps) on new WooPayments total payments volume (“TPV”) on client sites through June 30, 2025.' +
-									" For example, if your client's store generates %(maxAmount)s in TPV per year, your revenue share for that year would be %(amount)s.",
+									" For example, if your client's store generates $1M in TPV per year, your revenue share for that year would be %(amount)s.",
 								{
 									args: {
-										maxAmount: formatCurrency( 1000000, 'USD' ),
-										amount: formatCurrency( 500, 'USD' ),
+										amount: formatCurrency( 500, 'USD', {
+											stripZeros: true,
+										} ),
 									},
 								}
 							) }
