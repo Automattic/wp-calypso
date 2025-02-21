@@ -1747,8 +1747,8 @@ export function useCommands() {
 				callback: commandNavigation( '/sites/settings/performance/:site' ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to manage performance settings', __i18n_text_domain__ ),
-				capability: SiteCapabilities.MANAGE_OPTIONS,
 				filterP2: true,
+				...siteFilters.hostingEnabled,
 				icon: settingsIcon,
 			},
 			manageSettingsPermalinks: {
