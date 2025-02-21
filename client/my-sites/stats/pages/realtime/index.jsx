@@ -15,7 +15,6 @@ import StatsModuleTopPosts from 'calypso/my-sites/stats/features/modules/stats-t
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import { requestSiteStats } from 'calypso/state/stats/lists/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import AnnualHighlightsSection from '../../sections/annual-highlights-section';
 import PageViewTracker from '../../stats-page-view-tracker';
 import statsStrings from '../../stats-strings';
 import StatsModuleListing from '../shared/stats-module-listing';
@@ -90,12 +89,11 @@ function StatsRealtime() {
 				<NavigationHeader
 					className="stats__section-header modernized-header"
 					title={ STATS_PRODUCT_NAME }
-					subtitle={ translate( "View your site's performance and learn from trends." ) }
+					subtitle={ translate( "[Experimental] View your site's traffic in real-time." ) }
 					screenReader={ navItems.realtime?.label }
 					navigationItems={ [] }
 				></NavigationHeader>
 				<StatsNavigation selectedItem="realtime" siteId={ siteId } slug={ siteSlug } />
-				<AnnualHighlightsSection siteId={ siteId } />
 				<RealtimeChart siteId={ siteId } />
 				<StatsModuleListing className="stats__module-list--insights" siteId={ siteId }>
 					<StatsModuleTopPosts
