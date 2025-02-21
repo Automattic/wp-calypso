@@ -25,7 +25,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import renderHeaderSection from '../lib/header-section';
 import { DiscoverDocumentHead } from './discover-document-head';
-import { getSelectedTabTitle, DEFAULT_TAB, isDiscoveryV2Enabled } from './helper';
+import { getSelectedTabTitle, DEFAULT_TAB } from './helper';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
 
@@ -51,18 +51,13 @@ const discover = ( context, next ) => {
 
 	// Handle both old query parameter-based routing and new path-based routing.
 	let selectedTab = DEFAULT_TAB;
-	if ( isDiscoveryV2Enabled() ) {
-		// Extract the tab from the path for v2, ignoring query params.
-		const cleanPath = context.path.split( '?' )[ 0 ];
-		// Remove any locale prefix if it exists to get a clean path.
-		const pathWithoutLocale = removeLocaleFromPathLocaleInFront( cleanPath );
-		const pathParts = pathWithoutLocale.split( '/' );
-		// Now pathParts[2] will consistently be the tab.
-		selectedTab = pathParts[ 2 ] || DEFAULT_TAB;
-	} else {
-		// Use query parameter for v1.
-		selectedTab = context.query.selectedTab || DEFAULT_TAB;
-	}
+	// Extract the tab from the path for v2, ignoring query params.
+	const cleanPath = context.path.split( '?' )[ 0 ];
+	// Remove any locale prefix if it exists to get a clean path.
+	const pathWithoutLocale = removeLocaleFromPathLocaleInFront( cleanPath );
+	const pathParts = pathWithoutLocale.split( '/' );
+	// Now pathParts[2] will consistently be the tab.
+	selectedTab = pathParts[ 2 ] || DEFAULT_TAB;
 
 	const tabTitle = getSelectedTabTitle( selectedTab );
 	context.primary = (
@@ -108,34 +103,29 @@ export default function ( router ) {
 		clientRender,
 	];
 
-	if ( isDiscoveryV2Enabled() ) {
-		// Must be logged in to access.
-		router(
-			[
-				'/discover/add-new',
-				'/discover/reddit',
-				`/${ anyLangParam }/discover/add-new`,
-				`/${ anyLangParam }/discover/reddit`,
-			],
-			redirectLoggedOutToSignup,
-			...commonMiddleware
-		);
+	// Must be logged in to access.
+	router(
+		[
+			'/discover/add-new',
+			'/discover/reddit',
+			`/${ anyLangParam }/discover/add-new`,
+			`/${ anyLangParam }/discover/reddit`,
+		],
+		redirectLoggedOutToSignup,
+		...commonMiddleware
+	);
 
-		router(
-			[
-				'/discover',
-				'/discover/firstposts',
-				'/discover/tags',
-				'/discover/latest',
-				`/${ anyLangParam }/discover`,
-				`/${ anyLangParam }/discover/firstposts`,
-				`/${ anyLangParam }/discover/tags`,
-				`/${ anyLangParam }/discover/latest`,
-			],
-			...commonMiddleware
-		);
-	} else {
-		// Original query parameter-based route for v1
-		router( [ '/discover', `/${ anyLangParam }/discover` ], ...commonMiddleware );
-	}
+	router(
+		[
+			'/discover',
+			'/discover/firstposts',
+			'/discover/tags',
+			'/discover/latest',
+			`/${ anyLangParam }/discover`,
+			`/${ anyLangParam }/discover/firstposts`,
+			`/${ anyLangParam }/discover/tags`,
+			`/${ anyLangParam }/discover/latest`,
+		],
+		...commonMiddleware
+	);
 }

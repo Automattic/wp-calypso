@@ -6,7 +6,6 @@ import { useState } from 'react';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import ReaderPostEllipsisMenu from 'calypso/blocks/reader-post-options-menu/reader-post-ellipsis-menu';
 import AutoDirection from 'calypso/components/auto-direction';
-import { isDiscoveryV2Enabled } from 'calypso/reader/discover/helper';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_DISCOVER } from 'calypso/reader/follow-sources';
 import FeaturedAsset from './featured-asset';
@@ -49,7 +48,7 @@ const CompactPost = ( props ) => {
 
 	const postOptions = (
 		<div className="reader-post-card__post-options">
-			{ isDiscoveryV2Enabled() && isDiscoverPage && (
+			{ isDiscoverPage && (
 				<ReaderFollowButton
 					tagName="div"
 					siteUrl={ post.feed_URL || post.site_URL }
