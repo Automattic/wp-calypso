@@ -13,6 +13,9 @@ function StatsLineChart( {
 	height = 400,
 	moment,
 	EmptyState = StatsEmptyState,
+	zeroBaseline = true,
+	xAxisNumTicks,
+	fixedDomain = false,
 }: {
 	chartData: Array< {
 		label: string;
@@ -25,6 +28,9 @@ function StatsLineChart( {
 	height?: number;
 	moment: Moment;
 	EmptyState: typeof StatsEmptyState;
+	zeroBaseline?: boolean;
+	xAxisNumTicks?: number;
+	fixedDomain?: boolean;
 } ) {
 	const translate = useTranslate();
 
@@ -64,11 +70,13 @@ function StatsLineChart( {
 					options={ {
 						yScale: {
 							type: 'linear',
-							domain: [ 0, maxViews ],
+							...( fixedDomain && { domain: [ 0, maxViews ] } ),
+							zero: zeroBaseline,
 						},
 						axis: {
 							x: {
 								tickFormat: formatTime,
+								numTicks: xAxisNumTicks ?? dataSeries.length,
 							},
 							y: {
 								orientation: 'right',

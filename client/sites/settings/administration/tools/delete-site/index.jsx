@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { isFreePlanProduct } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
@@ -16,6 +17,7 @@ import { Panel, PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import withP2HubP2Count from 'calypso/data/p2/with-p2-hub-p2-count';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSettingsSource } from 'calypso/my-sites/site-settings/site-tools/utils';
+import { resetBreadcrumbs, updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getRemoveDuplicateViewsExperimentAssignment } from 'calypso/state/explat-experiments/actions';
 import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/state/explat-experiments/selectors';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
@@ -176,6 +178,17 @@ class DeleteSite extends Component {
 		page( `${ source }/${ siteSlug }` );
 	};
 
+	refreshBreadcrumbs( prevProps ) {
+		if ( this.props.siteId && this.props.siteId !== prevProps?.siteId ) {
+			this.props.updateBreadcrumbs( [
+				{
+					id: 'subtab',
+					label: translate( 'Delete site' ),
+				},
+			] );
+		}
+	}
+
 	componentDidUpdate( prevProps ) {
 		const { siteId, siteExists, useSitesAsLandingPage } = this.props;
 
@@ -187,10 +200,17 @@ class DeleteSite extends Component {
 				page.redirect( '/' );
 			}
 		}
+
+		this.refreshBreadcrumbs( prevProps );
 	}
 
 	componentDidMount() {
 		this.props.getRemoveDuplicateViewsExperimentAssignment();
+		this.refreshBreadcrumbs( undefined );
+	}
+
+	componentWillUnmount() {
+		this.props.resetBreadcrumbs();
 	}
 
 	_checkSiteLoaded = ( event ) => {
@@ -207,7 +227,7 @@ class DeleteSite extends Component {
 	};
 
 	render() {
-		const { isUntangled } = this.state;
+		const { isUntangled } = this.props;
 		const { isAtomic, isFreePlan, siteId, hasCancelablePurchases, p2HubP2Count } = this.props;
 		const isAtomicRemovalInProgress = isFreePlan && isAtomic;
 		const canDeleteSite =
@@ -221,7 +241,9 @@ class DeleteSite extends Component {
 
 		return (
 			<Panel className="settings-administration__delete-site">
-				<HeaderCakeBack icon="chevron-left" onClick={ this._goBack } />
+				{ ! ( isUntangled && config.isEnabled( 'untangling/settings-i2' ) ) && (
+					<HeaderCakeBack icon="chevron-left" onClick={ this._goBack } />
+				) }
 				<NavigationHeader
 					compactBreadcrumb={ false }
 					navigationItems={ [] }
@@ -287,5 +309,7 @@ export default connect(
 		deleteSite,
 		setSelectedSiteId,
 		getRemoveDuplicateViewsExperimentAssignment,
+		updateBreadcrumbs,
+		resetBreadcrumbs,
 	}
 )( localize( withP2HubP2Count( DeleteSite ) ) );

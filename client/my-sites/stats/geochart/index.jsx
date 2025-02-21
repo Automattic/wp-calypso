@@ -3,6 +3,7 @@ import { loadScript } from '@automattic/load-script';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { throttle, map } from 'lodash';
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
@@ -32,16 +33,25 @@ class StatsGeochart extends Component {
 		isLoading: PropTypes.bool,
 		numberLabel: PropTypes.string,
 		customHeight: PropTypes.number,
+		isRealTime: PropTypes.bool,
+		minutesLimit: PropTypes.number,
 	};
 
 	static defaultProps = {
 		geoMode: 'country',
 		kind: 'site',
 		numberLabel: '',
+		valueField: 'value',
+		minutesLimit: 30,
+		isRealTime: false,
 	};
 
 	state = {
 		visualizationsLoaded: false,
+		// For real-time data.
+		diffData: [],
+		dataHistory: [],
+		lastUpdated: null,
 	};
 
 	visualization = null;
@@ -62,6 +72,10 @@ class StatsGeochart extends Component {
 
 	componentDidUpdate() {
 		if ( this.state.visualizationsLoaded ) {
+			// Process real-time data from stats normalized data.
+			if ( this.props.isRealTime ) {
+				this.processRealtimeData();
+			}
 			this.drawData();
 		}
 	}
@@ -84,6 +98,137 @@ class StatsGeochart extends Component {
 	recordEvent = () => {
 		gaRecordEvent( 'Stats', 'Clicked Country on Map' );
 	};
+
+	// TODO: Unify this with the same function in StatsModule.
+	updateHistory( history, data ) {
+		// Timestamp the new data snapshot.
+		const now = moment();
+		const newSnapshot = {
+			timestamp: now,
+			data: data,
+		};
+
+		// Filter out snapshots older than minutesLimit prop.
+		// This determines the baseline for the diff calculation.
+		const { minutesLimit } = this.props;
+		const filteredHistory = [ ...history, newSnapshot ].filter(
+			( snapshot ) => now.diff( snapshot.timestamp, 'minutes' ) <= minutesLimit
+		);
+
+		return this.compactHistory( filteredHistory );
+	}
+
+	// TODO: Unify this with the same function in StatsModule.
+	compactHistory( history ) {
+		const MAX_HISTORY_LENGTH = 35;
+
+		if ( history.length > MAX_HISTORY_LENGTH ) {
+			// Keep every other entry to keep memory usage low.
+			return history.filter( ( _, index ) => index % 2 === 0 );
+		}
+
+		return history;
+	}
+
+	// TODO: Unify this with the same function in StatsModule.
+	calculateDiff( history, statType ) {
+		const key = this.getKeyForStatType( statType );
+		const baselineMap = this.createBaselineLookupMap( history, key );
+		const lastSnapshot = history[ history.length - 1 ].data;
+
+		return lastSnapshot.map( ( item ) => {
+			const baselineItem = baselineMap.get( item[ key ] ) || { value: 0 };
+			return {
+				...item,
+				diffValue: item.value - baselineItem.value,
+			};
+		} );
+	}
+
+	// TODO: Unify this with the same function in StatsModule.
+	createBaselineLookupMap( history, key = 'id' ) {
+		const lookup = new Map();
+
+		history.forEach( ( snapshot ) => {
+			snapshot.data.forEach( ( item ) => {
+				if ( ! lookup.has( item[ key ] ) ) {
+					lookup.set( item[ key ], item );
+				}
+			} );
+		} );
+
+		return lookup;
+	}
+
+	// TODO: Unify this with the same function in StatsModule.
+	getKeyForStatType( statType ) {
+		// Provided data is not consistent across modules.
+		// Ideally we'd have an interface with some common properties.
+		// For now we can't assume an 'id' for all stats types.
+		// Use this function to find the best available key for unique identification.
+		const keys = {
+			statsTopPosts: 'id',
+			statsReferrers: 'label',
+			statsCountryViews: 'countryCode',
+		};
+		return keys[ statType ] || 'id';
+	}
+
+	// TODO: Better manage the real-time data state across components.
+	processRealtimeData = () => {
+		const { data, statType } = this.props;
+		const { dataHistory, lastUpdated } = this.state;
+		const UPDATE_THRESHOLD_IN_SECONDS = 15;
+		const now = moment();
+
+		if ( ! lastUpdated || now.diff( lastUpdated, 'seconds' ) >= UPDATE_THRESHOLD_IN_SECONDS ) {
+			// Some special data index keys depend on the statType.
+			const updatedHistory = this.updateHistory( dataHistory, data );
+			const diffData = this.calculateDiff( updatedHistory, statType );
+
+			// eslint-disable-next-line react/no-did-update-set-state
+			this.setState( {
+				diffData,
+				dataHistory: updatedHistory,
+				lastUpdated: now,
+			} );
+		}
+	};
+
+	remapData() {
+		const { valueField, isRealTime } = this.props;
+		const data = isRealTime ? this.state.diffData : this.props.data;
+
+		// TODO: Handle items with children.
+		// For now, we remove any children to avoid view counts out of context.
+
+		if ( isRealTime ) {
+			return data
+				.filter( ( item ) => item.diffValue !== 0 )
+				.sort( ( a, b ) => {
+					// Primary sort: diffValue (high to low)
+					if ( b.diffValue !== a.diffValue ) {
+						return b.diffValue - a.diffValue;
+					}
+					// Secondary sort: label (alphabetically)
+					return ( a.label || '' ).localeCompare( b.label || '' );
+				} )
+				.map( ( item ) => ( {
+					...item,
+					value: item.diffValue || 0,
+					children: null,
+				} ) );
+		}
+
+		if ( valueField && data ) {
+			return data.map( ( item ) => ( {
+				...item,
+				value: item[ valueField ],
+			} ) );
+		}
+
+		return [];
+	}
 
 	drawRegionsMap = () => {
 		if ( this.chartRef.current ) {
@@ -157,7 +302,9 @@ class StatsGeochart extends Component {
 	};
 
 	drawData = () => {
-		const { currentUserCountryCode, data, geoMode, customHeight } = this.props;
+		const { currentUserCountryCode, geoMode, customHeight } = this.props;
+		// Determine if we should use real-time data or normalized data.
+		const data = this.remapData();
 		if ( ! data || ! data.length ) {
 			return;
 		}
@@ -217,7 +364,8 @@ class StatsGeochart extends Component {
 	};
 
 	render() {
-		const { siteId, statType, query, data, kind, skipQuery, isLoading } = this.props;
+		const { siteId, statType, query, kind, skipQuery, isLoading } = this.props;
+		const data = this.remapData();
 		// Only pass isLoading when kind is email.
 		const isGeoLoading = kind === 'email' ? isLoading : ! data || ! this.state.visualizationsLoaded;
 		const classes = clsx( 'stats-geochart', {

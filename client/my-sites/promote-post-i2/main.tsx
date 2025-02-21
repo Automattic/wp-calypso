@@ -6,7 +6,7 @@ import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import cookie from 'cookie';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -91,10 +91,10 @@ const POST_DEFAULT_SEARCH_OPTIONS: SearchOptions = {
 	},
 };
 
-const SHOW_TSP_BANNER_COOKIE = 'blaze-show-tsp-banner';
+const TSP_BANNER_COLLAPSED_COOKIE = 'blaze-tsp-banner-collapsed';
 
-const setTspBannerCookie = ( value: boolean ) => {
-	document.cookie = cookie.serialize( SHOW_TSP_BANNER_COOKIE, ( +value ).toString(), {
+const setTspBannerCollapsedCookie = ( value: boolean ) => {
+	document.cookie = cookie.serialize( TSP_BANNER_COLLAPSED_COOKIE, ( +value ).toString(), {
 		path: '/',
 		maxAge: 365 * 24 * 60 * 60, // 1 year
 	} );
@@ -206,26 +206,17 @@ export default function PromotedPosts( { tab }: Props ) {
 	];
 
 	const cookies = cookie.parse( document.cookie );
-	const tspBannerCookieValue = cookies[ SHOW_TSP_BANNER_COOKIE ];
-	if ( typeof tspBannerCookieValue === 'undefined' ) {
-		// setTspBannerCookie( true ); // TODO: Uncomment after releasing TSP Ad feature
-	}
-	const userHidTspBanner = ( cookies[ SHOW_TSP_BANNER_COOKIE ] ?? '0' ) === '0';
+	const userHasCollapsedTspBanner = ( cookies[ TSP_BANNER_COLLAPSED_COOKIE ] ?? '0' ) === '1';
 
-	const initialShowTspBanner = // TSP Banner has a higher priority than the regular banner
-		! userHidTspBanner &&
+	const showTspBanner = // TSP Banner has a higher priority than the regular banner
+		false && // TODO remove this false to make the banner display after we release tsp
 		( ( ! campaignsIsLoading && campaignsTspEligible ) ||
 			( ! postsIsLoading && postsTspEligible ) );
 
-	const [ showTspBanner, setShowTspBanner ] = useState( initialShowTspBanner );
-	useEffect( () => {
-		// Since `initialShowTspBanner` depends on posts/campaigns loading, we need do useEffects
-		// otherwise the initial value will be used for `showTspBanner`.
-		setShowTspBanner( initialShowTspBanner );
-	}, [ initialShowTspBanner ] );
+	const [ isTspBannerCollapsed, setIsTspBannerCollapsed ] = useState( userHasCollapsedTspBanner );
 
 	const showRegularBanner =
-		! initialShowTspBanner && ! campaignsIsLoading && ( totalCampaignsUnfiltered || 0 ) < 3;
+		! showTspBanner && ! campaignsIsLoading && ( totalCampaignsUnfiltered || 0 ) < 3;
 
 	if ( selectedSite?.is_coming_soon || selectedSite?.is_private ) {
 		return (
@@ -258,7 +249,7 @@ export default function PromotedPosts( { tab }: Props ) {
 	const isWooBlaze = config.isEnabled( 'is_running_in_woo_site' );
 
 	const headerSubtitle = ( isMobile: boolean ) => {
-		if ( ! isMobile && ( showRegularBanner || showTspBanner ) ) {
+		if ( ! isMobile && showRegularBanner ) {
 			// Do not show subtitle for desktops where banner should be shown
 			return null;
 		}
@@ -309,9 +300,9 @@ export default function PromotedPosts( { tab }: Props ) {
 		) : null;
 	};
 
-	const closeTspBanner = () => {
-		setShowTspBanner( false );
-		setTspBannerCookie( false );
+	const toggleTspBanner = () => {
+		setTspBannerCollapsedCookie( ! isTspBannerCollapsed );
+		setIsTspBannerCollapsed( ! isTspBannerCollapsed );
 	};
 
 	return (
@@ -350,7 +341,9 @@ export default function PromotedPosts( { tab }: Props ) {
 			{ /* Banners */ }
 			{ showRegularBanner && ( isBlazePlugin ? <BlazePluginBanner /> : <PostsListBanner /> ) }
 
-			<TspBanner onClose={ closeTspBanner } display={ showTspBanner } />
+			{ ! showRegularBanner && showTspBanner && (
+				<TspBanner onToggle={ toggleTspBanner } isCollapsed={ isTspBannerCollapsed } />
+			) }
 
 			{
 				// TODO: Uncomment when DebtNotifier is implemented

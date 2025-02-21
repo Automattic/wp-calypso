@@ -136,7 +136,7 @@ export const defaultSiteDetails: SiteDetails = {
 		was_created_with_blank_canvas_design: false,
 		videopress_storage_used: 0,
 		is_difm_lite_in_progress: false,
-		site_intent: 'link-in-bio',
+		site_intent: 'newsletter',
 		site_vertical_id: null,
 		launchpad_screen: 'full',
 		launchpad_checklist_tasks_statuses: {

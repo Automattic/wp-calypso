@@ -9,12 +9,12 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
+import StatsModuleCountries from 'calypso/my-sites/stats/features/modules/stats-countries';
 import StatsModuleReferrers from 'calypso/my-sites/stats/features/modules/stats-referrers';
 import StatsModuleTopPosts from 'calypso/my-sites/stats/features/modules/stats-top-posts';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import { requestSiteStats } from 'calypso/state/stats/lists/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import AnnualHighlightsSection from '../../sections/annual-highlights-section';
 import PageViewTracker from '../../stats-page-view-tracker';
 import statsStrings from '../../stats-strings';
 import StatsModuleListing from '../shared/stats-module-listing';
@@ -57,7 +57,7 @@ function StatsRealtime() {
 	useEffect( () => {
 		// TODO: This array determines which requests are fired.
 		// Currently firing two requests but only displaying top posts.
-		const statTypes = [ 'statsTopPosts', 'statsReferrers' ];
+		const statTypes = [ 'statsTopPosts', 'statsReferrers', 'statsCountryViews' ];
 
 		// Function to dispatch the request
 		const fetchStats = () => {
@@ -89,12 +89,11 @@ function StatsRealtime() {
 				<NavigationHeader
 					className="stats__section-header modernized-header"
 					title={ STATS_PRODUCT_NAME }
-					subtitle={ translate( "View your site's performance and learn from trends." ) }
+					subtitle={ translate( "[Experimental] View your site's traffic in real-time." ) }
 					screenReader={ navItems.realtime?.label }
 					navigationItems={ [] }
 				></NavigationHeader>
 				<StatsNavigation selectedItem="realtime" siteId={ siteId } slug={ siteSlug } />
-				<AnnualHighlightsSection siteId={ siteId } />
 				<RealtimeChart siteId={ siteId } />
 				<StatsModuleListing className="stats__module-list--insights" siteId={ siteId }>
 					<StatsModuleTopPosts
@@ -111,6 +110,14 @@ function StatsRealtime() {
 						query={ query }
 						summaryUrl={ url }
 						className={ halfWidthModuleClasses }
+						isRealTime
+					/>
+					<StatsModuleCountries
+						moduleStrings={ moduleStrings.countries }
+						period={ period }
+						query={ query }
+						summaryUrl={ url }
+						className={ clsx( 'stats__flexible-grid-item--full' ) }
 						isRealTime
 					/>
 				</StatsModuleListing>

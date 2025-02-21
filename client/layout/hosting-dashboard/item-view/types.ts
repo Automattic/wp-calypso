@@ -1,5 +1,6 @@
 import React from 'react';
 import { SiteFaviconFallback } from 'calypso/blocks/site-favicon';
+import { Item as BreadcrumbItem } from 'calypso/components/breadcrumb';
 
 export interface FeaturePreviewInterface {
 	id: string;
@@ -10,6 +11,7 @@ export interface FeaturePreviewInterface {
 
 export interface FeatureTabInterface {
 	label: string | React.ReactNode;
+	href?: string;
 	countValue?: number;
 	countColor?: string;
 	selected?: boolean;
@@ -43,6 +45,8 @@ export interface ItemViewProps {
 	hideNavIfSingleTab?: boolean;
 	enforceTabsView?: boolean;
 	hideHeader?: boolean;
+	breadcrumbs?: BreadcrumbItem[];
+	shouldShowBreadcrumbs?: boolean;
 }
 
 export interface ItemViewHeaderExtraProps {
