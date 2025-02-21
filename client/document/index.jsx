@@ -52,7 +52,7 @@ class Document extends Component {
 			initialReduxState,
 			inlineScriptNonce,
 			isSupportSession,
-			isSSPSession,
+			disableHelpCenterAutoOpen,
 			isWooDna,
 			lang,
 			languageRevisions,
@@ -80,7 +80,7 @@ class Document extends Component {
 			`var BUILD_TARGET = ${ jsonStringifyForHtml( target ) };\n` +
 			( user ? `var currentUser = ${ jsonStringifyForHtml( user ) };\n` : '' ) +
 			( isSupportSession ? 'var isSupportSession = true;\n' : '' ) +
-			( isSSPSession ? 'var isSSPSession = true;\n' : '' ) +
+			( disableHelpCenterAutoOpen ? 'var disableHelpCenterAutoOpen = true;\n' : '' ) +
 			( app ? `var app = ${ jsonStringifyForHtml( app ) };\n` : '' ) +
 			( initialReduxState
 				? `var initialReduxState = ${ jsonStringifyForHtml( initialReduxState ) };\n`

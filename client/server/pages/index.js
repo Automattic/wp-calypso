@@ -88,13 +88,13 @@ function getCurrentCommitShortChecksum() {
  */
 function setupLoggedInContext( req, res, next ) {
 	const isSupportSession = !! req.get( 'x-support-session' ) || !! req.cookies.support_session_id;
-	const isSSPSession = !! req.cookies.ssp;
+	const disableHelpCenterAutoOpen = isSupportSession || !! req.cookies.ssp;
 	const isLoggedIn = !! req.cookies.wordpress_logged_in;
 
 	req.context = {
 		...req.context,
 		isSupportSession,
-		isSSPSession,
+		disableHelpCenterAutoOpen,
 		isLoggedIn,
 	};
 

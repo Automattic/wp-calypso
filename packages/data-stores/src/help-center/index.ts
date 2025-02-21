@@ -28,8 +28,7 @@ export const isE2ETest = () =>
 export const isSupportSession = () => {
 	if ( typeof window !== 'undefined' ) {
 		return (
-			'isSupportSession' in window ||
-			'isSSPSession' in window ||
+			'disableHelpCenterAutoOpen' in window ||
 			// A bit hacky but much easier than passing down data from PHP in Jetpack
 			// Simple
 			!! document.querySelector( '#wp-admin-bar-support-session-details' ) ||
