@@ -1,8 +1,8 @@
 import { FoldableCard } from '@automattic/components';
-import { formatCurrency } from '@automattic/format-currency';
+import { formatCurrency, getCurrencyObject } from '@automattic/format-currency';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, numberFormatCompact } from 'i18n-calypso';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
@@ -35,6 +35,15 @@ export default function CommissionOverview( {
 	const title = isAutomatedReferral
 		? automatedReferralTitle
 		: translate( 'Referrals - Commission details and terms' );
+
+	// TODO: This is a workaround to keep the formatting of the max amount consistent until
+	// we can use the new formatCurrency function that gives the compact number in the correct format.
+	const oneMillion = 1000000;
+	const currencyObjectForOneMillion = getCurrencyObject( oneMillion, 'USD' );
+	const oneMillionFormatted =
+		currencyObjectForOneMillion.symbolPosition === 'before'
+			? `${ currencyObjectForOneMillion.symbol }${ numberFormatCompact( oneMillion ) }`
+			: `${ numberFormatCompact( oneMillion ) }${ currencyObjectForOneMillion.symbol }`;
 
 	return (
 		<Layout
@@ -100,9 +109,10 @@ export default function CommissionOverview( {
 						>
 							{ translate(
 								'You will receive a revenue share of 5 basis points (bps) on new WooPayments total payments volume (“TPV”) on client sites through June 30, 2025.' +
-									" For example, if your client's store generates $1M in TPV per year, your revenue share for that year would be %(amount)s.",
+									" For example, if your client's store generates %(maxAmount)s in TPV per year, your revenue share for that year would be %(amount)s.",
 								{
 									args: {
+										maxAmount: oneMillionFormatted,
 										amount: formatCurrency( 500, 'USD', {
 											stripZeros: true,
 										} ),
