@@ -1430,6 +1430,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-config": "workspace:^"
     "@automattic/newsletter-widget": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.14.0"

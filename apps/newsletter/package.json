@@ -19,6 +19,7 @@
 		"translate": "rm -rf dist/strings && mkdirp dist && wp-babel-makepot '../../{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base '../../' --dir './dist/strings' --output './dist/newsletter-strings.pot' && build-app-languages --stringsFilePath='./dist/newsletter-strings.pot'"
 	},
 	"dependencies": {
+		"@automattic/calypso-config": "workspace:^",
 		"@automattic/newsletter-widget": "workspace:^",
 		"@wordpress/element": "^6.16.0",
 		"react": "^18.2.0"
