@@ -69,7 +69,6 @@ button {
  * Site Setup
  */
 .new-hosted-site,
-.import-hosted-site,
 .site-setup,
 .onboarding.goals,
 .onboarding.design-setup,
@@ -137,7 +136,6 @@ button {
 
 		// Importer flows
 		&.import-focused,
-		&.import-hosted-site,
 		&.site-setup[class*=" import"] {
 			padding: 3.75rem 0;
 		}
@@ -229,8 +227,7 @@ button {
 	margin: 0 auto;
 }
 
-.import-focused .step-container.site-picker,
-.import-hosted-site .step-container.site-picker {
+.import-focused .step-container.site-picker {
 	max-width: 1280px;
 	padding: 1.5rem;
 }
