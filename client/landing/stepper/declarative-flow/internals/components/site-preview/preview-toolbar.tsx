@@ -1,10 +1,9 @@
 import { Button } from '@automattic/components';
 import { STICKY_OFFSET_TOP } from '@automattic/design-picker';
-import { Icon } from '@wordpress/icons';
+import { Icon, desktop, mobile, tablet } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import React, { useEffect, useRef, useState } from 'react';
-import { computer, tablet, phone } from 'calypso/signup/icons';
 import './preview-toolbar.scss';
 
 const possibleDevices = [ 'computer', 'tablet', 'phone' ] as const;
@@ -43,9 +42,9 @@ const PreviewToolbar = ( {
 	devicesToShow,
 }: PreviewToolbarProps ) => {
 	const devices = React.useRef( {
-		computer: { title: translate( 'Desktop' ), icon: computer, iconSize: 36 },
+		computer: { title: translate( 'Desktop' ), icon: desktop, iconSize: 24 },
 		tablet: { title: translate( 'Tablet' ), icon: tablet, iconSize: 24 },
-		phone: { title: translate( 'Phone' ), icon: phone, iconSize: 24 },
+		phone: { title: translate( 'Phone' ), icon: mobile, iconSize: 24 },
 	} );
 
 	const [ stickyStyle, setStickyStyle ] = useState( {} );

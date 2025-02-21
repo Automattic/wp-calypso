@@ -14,24 +14,27 @@
 
 		> button {
 			border-radius: 2px;
-			color: var(--studio-gray-10);
 			height: 28px;
 			padding: 0;
 			transition: color 0.1s ease-in-out;
+
+			svg {
+				fill: currentColor;
+				color: var(--studio-gray-10);
+			}
 
 			&.is-selected,
 			&:hover,
 			&:focus {
 				box-shadow: none;
-				color: var(--studio-black);
+
+				svg {
+					color: var(--studio-black);
+				}
 			}
 
 			&:focus-visible {
 				box-shadow: inset 0 0 0 2px var(--color-primary-light);
-			}
-
-			svg {
-				fill: none;
 			}
 		}
 	}
