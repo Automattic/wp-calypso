@@ -1,4 +1,5 @@
 import { ExternalLink, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import TspBannerImage from './tsp-banner-image';
@@ -36,7 +37,9 @@ function TspBanner( props: TspBannerProps ) {
 								) }
 								&nbsp;
 								<ExternalLink
-									href="#"
+									href={ localizeUrl(
+										'https://wordpress.com/support/promote-a-post/promote-your-content-with-tumblr-native-posts'
+									) }
 									target="_blank"
 									onClick={ () => {
 										recordTracksEvent( 'calypso_dsp_tsp_banner_learn_more_click', {} );
