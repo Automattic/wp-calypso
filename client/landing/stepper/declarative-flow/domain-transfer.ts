@@ -1,17 +1,13 @@
 import { DOMAIN_TRANSFER } from '@automattic/onboarding';
-import { useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { USER_STORE } from '../stores';
-import { useLoginUrl } from '../utils/path';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { STEPS } from './internals/steps';
 import { FlowV2 } from './internals/types';
-import type { UserSelect } from '@automattic/data-stores';
 
 const domainTransfer: FlowV2 = {
 	name: DOMAIN_TRANSFER,
@@ -28,16 +24,6 @@ const domainTransfer: FlowV2 = {
 
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
-		const userIsLoggedIn = useSelect(
-			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
-			[]
-		);
-
-		const logInUrl = useLoginUrl( {
-			variationName: flowName,
-			redirectTo: `/setup/${ flowName }/domains`,
-			pageTitle: 'Bulk Transfer',
-		} );
 
 		const submit: ReturnType< FlowV2[ 'useStepNavigation' ] >[ 'submit' ] = (
 			providedDependencies = {}
@@ -46,13 +32,13 @@ const domainTransfer: FlowV2 = {
 				case 'intro':
 					clearSignupDestinationCookie();
 
-					if ( userIsLoggedIn ) {
-						return navigate( 'domains' );
-					}
-					return window.location.assign( logInUrl );
+					return navigate( 'domains' );
 				case 'domains': {
 					// go to processing step without pushing it to history
 					// so the back button would go back to domains step
+					// Why the explicit undefined?
+					// If we want to replace, should that be using the third
+					// `replace` argument/
 					return navigate( 'processing', undefined );
 				}
 				case 'processing': {
