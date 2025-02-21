@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button, FormLabel } from '@automattic/components';
 import {
 	useSiteResetContentSummaryQuery,
@@ -320,7 +321,7 @@ function SiteResetCard( {
 	return (
 		<Panel className="settings-administration__reset-site">
 			{ ! isLoading && <Interval onTick={ checkStatus } period={ EVERY_FIVE_SECONDS } /> }
-			{ ! isUntangled && (
+			{ ! ( isUntangled && config.isEnabled( 'untangling/settings-i2' ) ) && (
 				<HeaderCakeBack icon="chevron-left" href={ `${ source }/${ selectedSiteSlug }` } />
 			) }
 			<NavigationHeader

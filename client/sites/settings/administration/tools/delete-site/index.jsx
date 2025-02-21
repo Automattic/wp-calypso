@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { isFreePlanProduct } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
@@ -240,7 +241,9 @@ class DeleteSite extends Component {
 
 		return (
 			<Panel className="settings-administration__delete-site">
-				{ ! isUntangled && <HeaderCakeBack icon="chevron-left" onClick={ this._goBack } /> }
+				{ ! ( isUntangled && config.isEnabled( 'untangling/settings-i2' ) ) && (
+					<HeaderCakeBack icon="chevron-left" onClick={ this._goBack } />
+				) }
 				<NavigationHeader
 					compactBreadcrumb={ false }
 					navigationItems={ [] }
