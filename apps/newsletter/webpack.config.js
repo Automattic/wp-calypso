@@ -23,6 +23,9 @@ function getWebpackConfig( env = {}, argv = {} ) {
 			filename: '[name].min.js',
 		},
 		plugins: [
+			...webpackConfig.plugins.filter(
+				( plugin ) => plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'
+			),
 			new webpack.DefinePlugin( {
 				__i18n_text_domain__: JSON.stringify( 'newsletter-widget' ),
 			} ),
