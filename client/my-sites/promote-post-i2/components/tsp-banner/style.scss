@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .tsp-banner__container {
 	background-color: #f6f7f7;
 	border-radius: 4px;
@@ -6,7 +8,7 @@
 		border: 0 none;
 		display: flex;
 		flex-direction: row;
-		justify-content: flex-start;
+		justify-content: space-between;
 		position: relative;
 
 		.tsp-banner__close {
@@ -15,6 +17,15 @@
 			top: 24px;
 			right: 24px;
 		}
+		.tsp-banner__text-collapsed{
+			padding: 24px 64px;
+
+			@media screen and (min-width: $break-huge) {
+				padding: 24px;
+			}
+		}
+
+
 
 		.tsp-banner__text {
 			display: flex;
@@ -22,8 +33,7 @@
 			justify-content: center;
 			// Max width by figma minus paddings
 			max-width: calc(582px - 42px - 72px);
-			padding-left: 42px;
-			padding-right: 72px;
+			padding: 20px 72px 20px 42px;
 
 			.tsp-banner__header {
 				font-size: rem(32px);
@@ -60,5 +70,6 @@
 
 	.tsp-banner__image {
 		padding-bottom: 42px;
+		padding-right: 128px;
 	}
 }
