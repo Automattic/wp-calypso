@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import HeaderCakeBack from 'calypso/components/header-cake/back';
@@ -40,7 +41,9 @@ export function SiteTransferCard( {
 
 	return (
 		<Panel className="settings-administration__transfer-site">
-			{ ! isUntangled && <HeaderCakeBack icon="chevron-left" onClick={ onClick } /> }
+			{ ! ( isUntangled && config.isEnabled( 'untangling/settings-i2' ) ) && (
+				<HeaderCakeBack icon="chevron-left" onClick={ onClick } />
+			) }
 			<NavigationHeader
 				title={ title }
 				subtitle={ translate(
