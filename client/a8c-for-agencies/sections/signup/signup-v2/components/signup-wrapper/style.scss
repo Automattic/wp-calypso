@@ -3,11 +3,14 @@
 
 .signup-wrapper {
     display: flex;
-    height: 90vh;
     background-color: var(--color-surface);
-    padding: 16px;
-    margin: 16px;
     border-radius: 16px; //stylelint-disable-line scales/radii
+
+	@include break-small {
+		padding: 16px;
+		margin: 16px;
+		height: 90vh;
+	}
 
   .signup-wrapper__left {
     display: none;

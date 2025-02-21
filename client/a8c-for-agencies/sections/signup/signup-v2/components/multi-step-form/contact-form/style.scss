@@ -25,6 +25,7 @@
 		cursor: pointer;
 		text-decoration: underline;
 		color: var(--color-primary);
+		text-align: left;
 	}
 
 
@@ -35,8 +36,12 @@
 
 .signup-multi-step-form__name-fields {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 	gap: 16px;
+
+	@include break-small {
+		flex-direction: row;
+	}
 
     > * {
         flex-grow: 1;
