@@ -1,6 +1,6 @@
-import { Button } from '@automattic/components';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { ActionButtons } from '@automattic/onboarding';
+import { Button } from '@wordpress/components';
 import { useDispatch, useSelect as useDataStoreSelect } from '@wordpress/data';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
