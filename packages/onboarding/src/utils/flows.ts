@@ -1,6 +1,5 @@
 export const ACCOUNT_FLOW = 'account';
 export const NEWSLETTER_FLOW = 'newsletter';
-export const NEWSLETTER_POST_SETUP_FLOW = 'newsletter-post-setup';
 export const HOSTING_LP_FLOW = 'hosting-start';
 export const NEW_HOSTED_SITE_FLOW = 'new-hosted-site';
 export const NEW_HOSTED_SITE_FLOW_USER_INCLUDED = 'new-hosted-site-user-included';
@@ -40,9 +39,7 @@ export const EXAMPLE_FLOW = 'example';
 export const ONBOARDING_GUIDED_FLOW = '__disabled_onboarding';
 
 export const isNewsletterFlow = ( flowName: string | null ) => {
-	return Boolean(
-		flowName && [ NEWSLETTER_FLOW, NEWSLETTER_POST_SETUP_FLOW ].includes( flowName )
-	);
+	return Boolean( flowName && NEWSLETTER_FLOW === flowName );
 };
 
 export const isFreeFlow = ( flowName: string | null ) => {

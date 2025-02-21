@@ -36,11 +36,6 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	[ IMPORT_FOCUSED_FLOW ]: () =>
 		import( /* webpackChunkName: "import-flow" */ '../declarative-flow/import-flow' ),
 
-	'newsletter-post-setup': () =>
-		import(
-			/* webpackChunkName: "newsletter-post-setup-flow" */ '../declarative-flow/newsletter-post-setup'
-		),
-
 	[ ENTREPRENEUR_FLOW ]: () =>
 		import( /* webpackChunkName: "entrepreneur-flow" */ '../declarative-flow/entrepreneur-flow' ),
 
