@@ -363,18 +363,6 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
-			name: 'launch-only',
-			steps: [ 'launch' ],
-			destination: getLaunchDestination,
-			description:
-				'Launch flow without domain or plan selected, used for sites that already have a paid plan and domain (e.g. via the launch banner in the site preview)',
-			lastModified: '2020-11-30',
-			get pageTitle() {
-				return translate( 'Launch your site' );
-			},
-			providesDependenciesInQuery: [ 'siteSlug' ],
-		},
-		{
 			name: 'business-monthly',
 			steps: [ userSocialStep, 'domains', 'plans-business-monthly' ],
 			destination: getSignupDestination,
