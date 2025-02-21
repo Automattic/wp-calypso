@@ -120,6 +120,7 @@ function StatsRealtime() {
 						query={ query }
 						summaryUrl={ url }
 						className={ clsx( 'stats__flexible-grid-item--full' ) }
+						isRealTime
 					/>
 				</StatsModuleListing>
 				<JetpackColophon />

@@ -34,12 +34,15 @@ class StatsGeochart extends Component {
 		numberLabel: PropTypes.string,
 		customHeight: PropTypes.number,
 		isRealTime: PropTypes.bool,
+		minutesLimit: PropTypes.number,
 	};
 
 	static defaultProps = {
 		geoMode: 'country',
 		kind: 'site',
 		numberLabel: '',
+		valueField: 'value',
+		minutesLimit: 30,
 		isRealTime: false,
 	};
 
@@ -185,12 +188,47 @@ class StatsGeochart extends Component {
 
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( {
-				diffData: diffData,
+				diffData,
 				dataHistory: updatedHistory,
 				lastUpdated: now,
 			} );
 		}
 	};
+
+	remapData() {
+		const { valueField, isRealTime } = this.props;
+		const data = isRealTime ? this.state.diffData : this.props.data;
+
+		// TODO: Handle items with children.
+		// For now, we remove any children to avoid view counts out of context.
+
+		if ( isRealTime ) {
+			return data
+				.filter( ( item ) => item.diffValue !== 0 )
+				.sort( ( a, b ) => {
+					// Primary sort: diffValue (high to low)
+					if ( b.diffValue !== a.diffValue ) {
+						return b.diffValue - a.diffValue;
+					}
+					// Secondary sort: label (alphabetically)
+					return ( a.label || '' ).localeCompare( b.label || '' );
+				} )
+				.map( ( item ) => ( {
+					...item,
+					value: item.diffValue || 0,
+					children: null,
+				} ) );
+		}
+
+		if ( valueField && data ) {
+			return data.map( ( item ) => ( {
+				...item,
+				value: item[ valueField ],
+			} ) );
+		}
+
+		return [];
+	}
 
 	drawRegionsMap = () => {
 		if ( this.chartRef.current ) {
@@ -264,9 +302,9 @@ class StatsGeochart extends Component {
 	};
 
 	drawData = () => {
-		const { currentUserCountryCode, geoMode, customHeight, isRealTime } = this.props;
+		const { currentUserCountryCode, geoMode, customHeight } = this.props;
 		// Determine if we should use real-time data or normalized data.
-		const data = isRealTime ? this.state.diffData : this.props.data;
+		const data = this.remapData();
 		if ( ! data || ! data.length ) {
 			return;
 		}
@@ -326,7 +364,8 @@ class StatsGeochart extends Component {
 	};
 
 	render() {
-		const { siteId, statType, query, data, kind, skipQuery, isLoading, isRealTime } = this.props;
+		const { siteId, statType, query, kind, skipQuery, isLoading, isRealTime } = this.props;
+		const data = this.remapData();
 		// Only pass isLoading when kind is email.
 		const isGeoLoading = kind === 'email' ? isLoading : ! data || ! this.state.visualizationsLoaded;
 		const classes = clsx( 'stats-geochart', {
