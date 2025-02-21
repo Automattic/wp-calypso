@@ -25,9 +25,9 @@ export function requestUser( userLoginOrId, findById = false ) {
 			dispatch( {
 				type: READER_USER_REQUEST_SUCCESS,
 				// If we find by ID, setting by user_login allows a quick redirect to the normal
-				// route without needing to re-fetch the user. However, for the standard route we
-				// will set by the original requested input to continue being able to handle a
-				// the fallback case of the ID being used in the username route.
+				// route prettified by username without needing to re-fetch the user. However, for
+				// the standard use we must set by the original requested input to continue being
+				// able to handle the fallback case of the ID being used in the username route.
 				userLogin: findById ? userData.user_login : userLoginOrId,
 				userData,
 			} );
