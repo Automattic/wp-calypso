@@ -147,6 +147,8 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 				] }
 				maxViews={ maxViews }
 				formatTimeTick={ formatTimeTick }
+				xAxisNumTicks={ 6 }
+				fixedDomain
 			/>
 		</div>
 	);
