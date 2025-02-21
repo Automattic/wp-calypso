@@ -13,8 +13,19 @@
 
 		div.user-profile__wrapper {
 
+			.back-button {
+
+				@media ( max-width: 1300px ) {
+					padding: 24px 24px 0;
+				}
+
+				@media ( max-width: 600px ) {
+					padding: 24px 0 0;
+				}
+			}
+
 			&-content {
-				padding-top: 36px;
+				padding-top: 24px;
 
 				@include breakpoint-deprecated( '<660px' ) {
 					padding-top: 0;
