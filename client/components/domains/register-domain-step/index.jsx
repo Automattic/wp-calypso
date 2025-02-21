@@ -784,8 +784,9 @@ class RegisterDomainStep extends Component {
 			const premiumDomains = Object.fromEntries(
 				Object.entries( state.premiumDomains ).filter( ( [ key ] ) => key !== domainName )
 			);
-			if ( Array.isArray( state.searchResults ) ) {
-				const newSearchResults = state.searchResults.filter(
+			const { searchResults } = state;
+			if ( Array.isArray( searchResults ) ) {
+				const newSearchResults = searchResults.filter(
 					( suggestion ) => suggestion.domain_name !== domainName
 				);
 				return {
