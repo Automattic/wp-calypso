@@ -781,7 +781,7 @@ class RegisterDomainStep extends Component {
 
 	removeUnavailablePremiumDomain = ( domainName ) => {
 		this.setState( ( state ) => {
-			const newPremiumDomains = Object.fromEntries(
+			const premiumDomains = Object.fromEntries(
 				Object.entries( state.premiumDomains ).filter( ( [ key ] ) => key !== domainName )
 			);
 			if ( Array.isArray( state.searchResults ) ) {
@@ -789,12 +789,12 @@ class RegisterDomainStep extends Component {
 					( suggestion ) => suggestion.domain_name !== domainName
 				);
 				return {
-					premiumDomains: newPremiumDomains,
+					premiumDomains,
 					searchResults: newSearchResults,
 				};
 			}
 			return {
-				premiumDomains: newPremiumDomains,
+				premiumDomains,
 			};
 		} );
 	};
