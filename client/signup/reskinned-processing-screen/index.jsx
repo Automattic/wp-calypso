@@ -4,7 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { useRef, useState, useEffect } from 'react';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import Loading from 'calypso/components/loading';
 import { useInterval } from 'calypso/lib/interval/use-interval';
 import './style.scss';
 
@@ -120,12 +120,14 @@ export default function ReskinnedProcessingScreen( props ) {
 				'is-force-centered': shouldShowNewSpinner && totalSteps === 0,
 			} ) }
 		>
-			<h1 className="reskinned-processing-screen__progress-step">
-				{ steps.current[ currentStep ]?.title }
-			</h1>
-			{ shouldShowNewSpinner && <LoadingEllipsis /> }
+			{ shouldShowNewSpinner && (
+				<Loading title={ steps.current[ currentStep ]?.title } progress={ progress } />
+			) }
 			{ ! shouldShowNewSpinner && (
 				<>
+					<h1 className="reskinned-processing-screen__progress-step">
+						{ steps.current[ currentStep ]?.title }
+					</h1>
 					<div
 						className="reskinned-processing-screen__progress-bar"
 						style={ {
