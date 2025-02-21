@@ -381,7 +381,7 @@ export function useActions( {
 				id: 'prepare-for-launch',
 				label: __( 'Prepare for launch' ),
 				callback: ( sites ) => {
-					page( `/settings/general/${ sites[ 0 ].ID }` );
+					page( `/sites/settings/site/${ sites[ 0 ].ID }` );
 					dispatch(
 						recordTracksEvent( 'calypso_sites_dashboard_site_action_prepare_for_launch_click' )
 					);

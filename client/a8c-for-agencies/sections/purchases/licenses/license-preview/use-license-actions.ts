@@ -44,7 +44,7 @@ export default function useLicenseActions(
 		return [
 			{
 				name: translate( 'Prepare for launch' ),
-				href: `https://wordpress.com/settings/general/${ siteSlug }`,
+				href: `https://wordpress.com/sites/settings/site/${ siteSlug }`,
 				onClick: () => handleClickMenuItem( 'prepare_for_launch' ),
 				isExternalLink: true,
 				isEnabled: isDevSite,
