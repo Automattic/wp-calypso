@@ -48,7 +48,7 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 	}, [ userLogin, requestUser, userId, user ] );
 
 	useEffect( () => {
-		if ( path.startsWith( '/reader/users/id/' ) && user ) {
+		if ( path && path.startsWith( '/reader/users/id/' ) && user ) {
 			page.replace( `/reader/users/${ user.user_login }` );
 		}
 	}, [ path, user ] );
