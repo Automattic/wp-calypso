@@ -6,6 +6,7 @@ import { clearHelpCenterZendeskConversationStarted } from '@automattic/odie-clie
 import { CardHeader, Button, Flex, ToggleControl } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useMemo, useCallback, useEffect, useState } from '@wordpress/element';
+import { decodeEntities } from '@wordpress/html-entities';
 import { _n } from '@wordpress/i18n';
 import {
 	closeSmall,
@@ -41,7 +42,7 @@ export function ArticleTitle() {
 		<>
 			<Icon icon={ page } />
 			<span className="help-center-header__article-title">
-				{ ( post && post?.title ) ?? __( 'Help Center', __i18n_text_domain__ ) }
+				{ ( post && decodeEntities( post?.title ) ) ?? __( 'Help Center', __i18n_text_domain__ ) }
 			</span>
 		</>
 	);
