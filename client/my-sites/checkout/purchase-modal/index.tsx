@@ -23,7 +23,7 @@ import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useCountryList from '../src/hooks/use-country-list';
 import { useStoredPaymentMethods } from '../src/hooks/use-stored-payment-methods';
 import { updateCartContactDetailsForCheckout } from '../src/lib/update-cart-contact-details-for-checkout';
-import { CHECKOUT_STORE } from '../src/lib/wpcom-store';
+import { WpcomCreditCardSelectors } from '../src/payment-methods/credit-card/store';
 import { BEFORE_SUBMIT } from './constants';
 import Content from './content';
 import Placeholder from './placeholder';
@@ -157,8 +157,8 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	const includeDomainDetails = contactDetailsType === 'domain';
 	const includeGSuiteDetails = contactDetailsType === 'gsuite';
 	const storedCard = cards.length > 0 ? cards[ 0 ] : undefined;
-	const businessUseDetails = useSelect(
-		( select ) => select( CHECKOUT_STORE ).getBusinessUseDetails(),
+	const forBusinessUse = useSelect(
+		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).useForBusiness(),
 		[]
 	);
 
@@ -221,7 +221,7 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 				updateLocation,
 				contactInfo,
 				vatDetails,
-				businessUseDetails
+				forBusinessUse
 			);
 			replaceProductsInCart( [ productToAdd ] );
 			if ( coupon ) {

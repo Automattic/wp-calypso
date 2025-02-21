@@ -11,7 +11,6 @@ import type {
 	ManagedContactDetails,
 	ManagedContactDetailsErrors,
 	VatDetails,
-	BusinessUseDetails,
 } from '@automattic/wpcom-checkout';
 
 type WpcomStoreAction =
@@ -36,8 +35,7 @@ type WpcomStoreAction =
 			type: 'LOAD_DOMAIN_CONTACT_DETAILS_FROM_CACHE';
 			payload: PossiblyCompleteDomainContactDetails;
 	  }
-	| { type: 'SET_VAT_DETAILS'; payload: VatDetails }
-	| { type: 'SET_BUSINESS_USE_DETAILS'; payload: BusinessUseDetails };
+	| { type: 'SET_VAT_DETAILS'; payload: VatDetails };
 
 const CHECKOUT_STORE_KEY = 'wpcom-checkout';
 
@@ -107,10 +105,6 @@ const actions = {
 	setVatDetails( payload: VatDetails ): WpcomStoreAction {
 		return { type: 'SET_VAT_DETAILS', payload };
 	},
-
-	setBusinessUseDetails( payload: BusinessUseDetails ): WpcomStoreAction {
-		return { type: 'SET_BUSINESS_USE_DETAILS', payload };
-	},
 };
 
 const selectors = {
@@ -124,10 +118,6 @@ const selectors = {
 
 	getVatDetails( state: WpcomStoreState ): VatDetails {
 		return state.vatDetails;
-	},
-
-	getBusinessUseDetails( state: WpcomStoreState ): BusinessUseDetails {
-		return state.businessUseDetails;
 	},
 };
 
@@ -186,18 +176,6 @@ function vatDetailsReducer( state: VatDetails, action: WpcomStoreAction ): VatDe
 	}
 }
 
-function businessUseDetailsReducer(
-	state: BusinessUseDetails,
-	action: WpcomStoreAction
-): BusinessUseDetails {
-	switch ( action.type ) {
-		case 'SET_BUSINESS_USE_DETAILS':
-			return action.payload;
-		default:
-			return state;
-	}
-}
-
 const store = createReduxStore( CHECKOUT_STORE_KEY, {
 	reducer( state: WpcomStoreState | undefined, action: WpcomStoreAction ): WpcomStoreState {
 		if ( action.type === 'RESET' || state === undefined ) {
@@ -207,7 +185,6 @@ const store = createReduxStore( CHECKOUT_STORE_KEY, {
 			contactDetails: contactReducer( state.contactDetails, action ),
 			recaptchaClientId: recaptchaClientIdReducer( state.recaptchaClientId, action ),
 			vatDetails: vatDetailsReducer( state.vatDetails, action ),
-			businessUseDetails: businessUseDetailsReducer( state.businessUseDetails, action ),
 		};
 	},
 	actions,

@@ -22,7 +22,7 @@ export async function saveCreditCard( {
 	token: string;
 	stripeConfiguration: StripeConfiguration;
 	useForAllSubscriptions: boolean;
-	useForBusiness?: boolean;
+	useForBusiness?: boolean | undefined;
 	eventSource?: string;
 	postalCode?: string;
 	countryCode: string;

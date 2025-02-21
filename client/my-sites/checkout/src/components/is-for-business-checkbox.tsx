@@ -4,7 +4,7 @@ import { CheckboxControl } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { CHECKOUT_STORE } from '../lib/wpcom-store';
+import { WpcomCreditCardSelectors } from '../payment-methods/credit-card/store';
 
 // Styled component for checkbox styles
 const CheckboxWrapper = styled.div`
@@ -45,18 +45,18 @@ function shouldShowBusinessOption( taxInfo: ManagedContactDetails ): boolean {
 export function IsForBusinessCheckbox( { taxInfo }: { taxInfo: ManagedContactDetails } ) {
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
-	const businessUseDetailsInForm = useSelect(
-		( select ) => select( CHECKOUT_STORE ).getBusinessUseDetails(),
+	const useForBusiness = useSelect(
+		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).useForBusiness(),
 		[]
 	);
-	const wpcomStoreActions = useDispatch( CHECKOUT_STORE );
-	const setBusinessUseDetailsInForm = wpcomStoreActions?.setBusinessUseDetails;
+
+	const { setForBusinessUse } = useDispatch( 'wpcom-credit-card' );
 
 	// Determine if the checkbox should be shown
 	const isUnitedStateWithBusinessOption = shouldShowBusinessOption( taxInfo );
 
 	// Ensure the checkbox state is always a boolean
-	const isChecked = Boolean( businessUseDetailsInForm?.is_for_business );
+	const isChecked = Boolean( useForBusiness );
 	const isDisabled = formStatus !== FormStatus.READY;
 
 	// Hide checkbox if not eligible
@@ -87,9 +87,7 @@ export function IsForBusinessCheckbox( { taxInfo }: { taxInfo: ManagedContactDet
 					if ( isDisabled ) {
 						return;
 					}
-					setBusinessUseDetailsInForm( {
-						is_for_business: newValue,
-					} );
+					setForBusinessUse( newValue );
 				} }
 			/>
 		</CheckboxWrapper>
