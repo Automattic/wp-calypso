@@ -1744,12 +1744,7 @@ export function useCommands() {
 					),
 				].join( KEYWORD_SEPARATOR ),
 				context: [ '/settings', '/wp-admin/options-' ],
-				callback: ( params ) =>
-					commandNavigation(
-						params.site?.is_wpcom_atomic && siteUsesWpAdminInterface( params.site )
-							? '/wp-admin/options-general.php?page=page-optimize'
-							: '/settings/performance/:site'
-					)( params ),
+				callback: commandNavigation( '/sites/settings/performance/:site' ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to manage performance settings', __i18n_text_domain__ ),
 				capability: SiteCapabilities.MANAGE_OPTIONS,
