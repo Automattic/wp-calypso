@@ -35,7 +35,7 @@ function HelpCenterButton( { helpCenterButtonText, hasPremiumSupport } ) {
 	}
 
 	return (
-		<Button onClick={ openHelpCenter } borderless className="step-wrapper__help-center-button">
+		<Button onClick={ openHelpCenter } className="step-wrapper__help-center-button">
 			{ helpCenterButtonText }
 		</Button>
 	);
