@@ -10,6 +10,7 @@ import { NEWSLETTER_CATEGORIES_ENABLED_OPTION } from '../newsletter-categories-t
 
 jest.mock( 'i18n-calypso' );
 jest.mock( 'calypso/blocks/term-tree-selector', () => () => 'MockTermTreeSelector' );
+jest.mock( 'calypso/components/inline-support-link', () => () => 'MockInlineSupportLink' );
 
 describe( 'NewsletterCategoriesSettings', () => {
 	beforeEach( () => {

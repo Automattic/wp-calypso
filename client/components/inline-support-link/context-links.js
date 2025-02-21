@@ -324,6 +324,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/stats/',
 		post_id: 4454,
 	},
+	'subscribe-block': {
+		link: 'https://wordpress.com/support/wordpress-editor/blocks/subscribe-block/',
+		post_id: 170164,
+	},
 	tags: {
 		link: 'https://wordpress.com/support/posts/tags/',
 		post_id: 8586,
