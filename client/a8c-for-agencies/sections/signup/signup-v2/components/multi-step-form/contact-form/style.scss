@@ -39,7 +39,7 @@
     flex-direction: column;
 	gap: 16px;
 
-	@include break-medium {
+	@include break-small {
 		flex-direction: row;
 	}
 
