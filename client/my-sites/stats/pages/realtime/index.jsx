@@ -58,7 +58,7 @@ function StatsRealtime() {
 	useEffect( () => {
 		// TODO: This array determines which requests are fired.
 		// Currently firing two requests but only displaying top posts.
-		const statTypes = [ 'statsTopPosts', 'statsCountryViews' ];
+		const statTypes = [ 'statsTopPosts', 'statsReferrers', 'statsCountryViews' ];
 
 		// Function to dispatch the request
 		const fetchStats = () => {
@@ -69,7 +69,7 @@ function StatsRealtime() {
 
 		// Initial fetch, followed by timed fetch.
 		fetchStats();
-		const intervalInMilliseconds = 2000; // 15 seconds
+		const intervalInMilliseconds = 15000; // 15 seconds
 		const intervalId = setInterval( fetchStats, intervalInMilliseconds );
 
 		// Clear the interval when the component unmounts
