@@ -1,5 +1,18 @@
+@import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
+
+.choice-blueprint__buttons {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 8px;
+
+	@include break-small {
+		display: block;
+		align-items: unset;
+	}
+}
 
 .choice-blueprint__button {
 	width: 200px;

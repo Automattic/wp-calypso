@@ -60,7 +60,7 @@ const ChoiceBlueprint: React.FC< Props > = ( { onContinue, onSkip, goBack } ) =>
 					{ translate( 'Back' ) }
 				</Button>
 
-				<div>
+				<div className="choice-blueprint__buttons">
 					<Button
 						className="choice-blueprint__cancel-button"
 						variant="tertiary"
