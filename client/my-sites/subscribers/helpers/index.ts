@@ -25,16 +25,6 @@ const getSubscriberDetailsCacheKey = (
 	type: string
 ) => [ 'subscriber-details', siteId, subscriptionId, userId, type ];
 
-const sanitizeInt = ( intString: string ) => {
-	const parsedInt = parseInt( intString, 10 );
-	return ! Number.isNaN( parsedInt ) && parsedInt > 0 ? parsedInt : undefined;
-};
-
 const getSubscriberDetailsType = ( userId: number | undefined ) => ( userId ? 'wpcom' : 'email' );
 
-export {
-	getSubscriberDetailsCacheKey,
-	getSubscriberDetailsType,
-	getSubscribersCacheKey,
-	sanitizeInt,
-};
+export { getSubscriberDetailsCacheKey, getSubscriberDetailsType, getSubscribersCacheKey };
