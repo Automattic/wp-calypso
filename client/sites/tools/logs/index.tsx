@@ -10,6 +10,7 @@ import { download } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useMemo } from 'react';
 import { v4 as uuid } from 'uuid';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import DateControl from 'calypso/components/date-control';
 import { getShortcuts } from 'calypso/components/date-range/use-shortcuts';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -21,6 +22,7 @@ import { navigate } from 'calypso/lib/navigate';
 import { useSiteLogsDownloader } from 'calypso/sites/tools/logs/hooks/use-site-logs-downloader';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useActions from './hooks/use-actions';
 import useData from './hooks/use-data';
 import useFields from './hooks/use-fields';
@@ -44,6 +46,7 @@ export const SiteLogsDataViews = ( {
 } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
+	const siteId = useSelector( getSelectedSiteId );
 
 	const dispatch = useDispatch();
 
@@ -195,6 +198,7 @@ export const SiteLogsDataViews = ( {
 
 	return (
 		<>
+			{ siteId && <QuerySiteSettings siteId={ siteId } /> }
 			<div className="site-logs-header">
 				<NavigationHeader
 					title={ translate( 'Logs' ) }
