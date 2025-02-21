@@ -25,7 +25,7 @@ jest.mock( 'calypso/data/domains/use-get-domains-query', () => ( {
 		isLoading: true,
 		data: [
 			{
-				domain: 'testlinkinbio.wordpress.com',
+				domain: 'testnewsletter.wordpress.com',
 				wpcom_domain: true,
 			},
 		],
@@ -55,7 +55,7 @@ declare global {
 	}
 }
 
-const siteSlug = `testlinkinbio.wordpress.com`;
+const siteSlug = `testnewsletter.wordpress.com`;
 const user = {
 	ID: 1234,
 	username: 'testUser',
@@ -66,7 +66,7 @@ function renderLaunchpad(
 	props = {},
 	siteDetails = defaultSiteDetails,
 	initialReduxState = {},
-	route = '/setup/link-in-bio/launchpad?siteSlug=testlinkinbio.wordpress.com'
+	route = '/setup/newsletter/launchpad?siteSlug=testnewsletter.wordpress.com'
 ): void {
 	function TestLaunchpad( props ) {
 		window.initialReduxState = initialReduxState;
@@ -148,7 +148,7 @@ describe( 'Launchpad', () => {
 					props,
 					defaultSiteDetails,
 					initialReduxState,
-					`/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }`
+					`/setup/newsletter/launchpad?siteSlug=${ siteSlug }`
 				);
 				expect( replaceMock ).not.toHaveBeenCalled();
 			} );
@@ -163,7 +163,7 @@ describe( 'Launchpad', () => {
 					props,
 					defaultSiteDetails,
 					initialReduxState,
-					`/setup/link-in-bio/launchpad?siteId=${ defaultSiteDetails.ID }`
+					`/setup/newsletter/launchpad?siteId=${ defaultSiteDetails.ID }`
 				);
 				expect( replaceMock ).not.toHaveBeenCalled();
 			} );
@@ -185,7 +185,7 @@ describe( 'Launchpad', () => {
 						},
 					} ),
 					initialReduxState,
-					`/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }`
+					`/setup/newsletter/launchpad?siteSlug=${ siteSlug }`
 				);
 				expect( replaceMock ).toHaveBeenCalledTimes( 1 );
 				expect( replaceMock ).toHaveBeenCalledWith(
@@ -205,7 +205,7 @@ describe( 'Launchpad', () => {
 						},
 					} ),
 					{},
-					`/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }`
+					`/setup/newsletter/launchpad?siteSlug=${ siteSlug }`
 				);
 				expect( replaceMock ).toHaveBeenCalledWith(
 					expect.stringMatching( `/home/${ siteSlug }` )
@@ -225,7 +225,7 @@ describe( 'Launchpad', () => {
 						},
 					} ),
 					initialReduxState,
-					'/setup/link-in-bio/launchpad'
+					'/setup/newsletter/launchpad'
 				);
 				expect( replaceMock ).toHaveBeenCalledWith( `/home` );
 			} );
