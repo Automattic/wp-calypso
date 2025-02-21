@@ -23,7 +23,7 @@ function HelpCenterButton( { helpCenterButtonText, hasPremiumSupport, flowName }
 		[]
 	);
 
-	const { initialMessage, product } = useGetZendeskFieldsByFlow( flowName );
+	const { initialMessage } = useGetZendeskFieldsByFlow( flowName );
 
 	if ( ! helpCenterButtonText ) {
 		return;
@@ -32,7 +32,7 @@ function HelpCenterButton( { helpCenterButtonText, hasPremiumSupport, flowName }
 		setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport );
 		if ( hasPremiumSupport ) {
 			setNavigateToRoute(
-				`/odie?provider=zendesk&userFieldMessage=${ initialMessage }&userFieldProduct=${ product }`
+				`/odie?provider=zendesk&userFieldMessage=${ initialMessage }&userFieldFlow=${ flowName }`
 			);
 		} else {
 			setNavigateToRoute( `/odie` );

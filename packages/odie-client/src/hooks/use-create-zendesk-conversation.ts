@@ -16,7 +16,7 @@ export const useCreateZendeskConversation = (): ( (
 		selectedSiteId,
 		selectedSiteURL,
 		userFieldMessage,
-		userFieldProduct,
+		userFieldFlow,
 		setChat,
 		setWaitAnswerToFirstMessageFromHumanSupport,
 		chat,
@@ -50,7 +50,7 @@ export const useCreateZendeskConversation = (): ( (
 			messaging_site_id: selectedSiteId || null,
 			messaging_ai_chat_id: chatId || undefined,
 			messaging_url: selectedSiteURL || null,
-			messaging_product: userFieldProduct || null,
+			messaging_flow: userFieldFlow || null,
 		} );
 
 		const conversation = await Smooch.createConversation( {
