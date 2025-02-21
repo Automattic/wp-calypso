@@ -90,7 +90,6 @@ class StatsModule extends Component {
 		const now = moment();
 
 		if ( ! lastUpdated || now.diff( lastUpdated, 'seconds' ) >= UPDATE_THRESHOLD_IN_SECONDS ) {
-			// Some special data index keys depend on the statType.
 			const updatedHistory = this.updateHistory( dataHistory, data );
 			const diffData = this.calculateDiff( updatedHistory, statType );
 			// eslint-disable-next-line react/no-did-update-set-state
