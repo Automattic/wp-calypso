@@ -24,8 +24,6 @@ import type { Flow } from '../declarative-flow/internals/types';
 const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	'site-setup': () =>
 		import( /* webpackChunkName: "site-setup-flow" */ '../declarative-flow/site-setup-flow' ),
-	'site-setup-wg': () =>
-		import( /* webpackChunkName: "site-setup-wg" */ '../declarative-flow/site-setup-wg-flow' ),
 
 	'copy-site': () =>
 		import( /* webpackChunkName: "copy-site-flow" */ '../declarative-flow/copy-site' ),
