@@ -12,4 +12,5 @@ export {
 	ZENDESK_STAGING_SUPPORT_CHAT_KEY,
 	ZENDESK_SUPPORT_CHAT_KEY,
 } from './constants';
+export { getZendeskInitialMessageByFlow } from './get-zendesk-initial-message-by-flow';
 export type { ZendeskConfigName, MessagingGroup } from './types';

@@ -1,8 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import { useGetZendeskFieldsByFlow } from '@automattic/help-center/src/hooks';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { ActionButtons } from '@automattic/onboarding';
+import { getZendeskInitialMessageByFlow } from '@automattic/zendesk-client';
 import { useDispatch, useSelect as useDataStoreSelect } from '@wordpress/data';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -23,14 +23,14 @@ function HelpCenterButton( { helpCenterButtonText, hasPremiumSupport, flowName }
 		[]
 	);
 
-	const { initialMessage } = useGetZendeskFieldsByFlow( flowName );
-
 	if ( ! helpCenterButtonText ) {
 		return;
 	}
+
 	function openHelpCenter() {
 		setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport );
 		if ( hasPremiumSupport ) {
+			const initialMessage = getZendeskInitialMessageByFlow( flowName );
 			setNavigateToRoute(
 				`/odie?provider=zendesk&userFieldMessage=${ initialMessage }&userFieldFlow=${ flowName }`
 			);
