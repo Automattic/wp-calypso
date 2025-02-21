@@ -7,6 +7,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import { domainAddNew, domainUseMyDomain } from 'calypso/my-sites/domains/paths';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import { hasPurchasedDomain } from 'calypso/state/purchases/selectors';
 import { EmptyDomainsListCardSkeleton } from './empty-domains-list-card-skeleton';
 
 import './empty-domains-list-card-styles.scss';
@@ -19,6 +20,10 @@ function EmptyDomainsListCard( { selectedSite, hasDomainCredit, isCompact, hasNo
 		selectedSite?.plan?.product_slug && ! isFreePlan( selectedSite.plan.product_slug );
 
 	const siteHasHundredYearPlan = selectedSite?.plan?.product_slug === PLAN_100_YEARS;
+
+	const siteHasPurchasedDomain = !! useSelector(
+		( state ) => selectedSite?.ID && hasPurchasedDomain( state, selectedSite?.ID )
+	);
 
 	let title = translate( 'Get your free domain' );
 	let line = translate(
@@ -35,6 +40,10 @@ function EmptyDomainsListCard( { selectedSite, hasDomainCredit, isCompact, hasNo
 		getProductBySlug( state, domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION )
 	);
 	const domainProductCost = domainRegistrationProduct?.combined_cost_display;
+
+	if ( ! siteHasPaidPlan && siteHasPurchasedDomain ) {
+		return null;
+	}
 
 	if ( siteHasPaidPlan && ! hasDomainCredit ) {
 		if ( hasNonWpcomDomains ) {
