@@ -3,32 +3,30 @@
 @import "@wordpress/base-styles/mixins";
 
 body.is-section-signup {
-	// Use WordPress.com’s brand color for the signup background
-	background: var(--color-wordpress-com);
+	background: #fdfdfd;
 
-	&.is-white-signup {
-		background: #fdfdfd;
+	.layout:not(.dops) .wpcom-site__logo {
+		/* fill: var(--color-neutral-10); */
+		/* color: var(--color-neutral-10); */
+		/* opacity: 1; */
+		fill: var(--color-primary-dark);
+		color: var(--color-primary-dark);
+		opacity: 0.3;
 
-		.layout:not(.dops) .wpcom-site__logo {
+		path {
 			fill: var(--color-neutral-10);
-			color: var(--color-neutral-10);
 			opacity: 1;
-
-			path {
-				fill: var(--color-neutral-10);
-				opacity: 1;
-			}
 		}
+	}
 
-		/**
-		* Removed the navigation back button step from mobile viewports.
-		* This is done because the there is usally already a back button displayed to the user (Browser back button)
-		* and the current back button is redundent.
-		*/
-		.signup__step .plans.plans-step .step-wrapper__navigation {
-			@include breakpoint-deprecated("<660px") {
-				display: none;
-			}
+	/**
+	* Removed the navigation back button step from mobile viewports.
+	* This is done because the there is usally already a back button displayed to the user (Browser back button)
+	* and the current back button is redundent.
+	*/
+	.signup__step .plans.plans-step .step-wrapper__navigation {
+		@include breakpoint-deprecated("<660px") {
+			display: none;
 		}
 	}
 
@@ -115,15 +113,6 @@ body.is-section-signup {
 // Notice the :not(.dops) selector. I've added this to try and
 // avoid stepping on the toes of our oauth users, like Crowdsignal.
 body.is-section-signup .layout:not(.dops) {
-
-	// Update the logo that appears when loading Calypso
-	// to match the homepage, using primary-dark with opacity.
-	.wpcom-site__logo {
-		fill: var(--color-primary-dark);
-		color: var(--color-primary-dark);
-		opacity: 0.3;
-	}
-
 	// If there's an error lets make it look a little better
 	// on the primary colored background.
 	.empty-content {
@@ -259,11 +248,8 @@ body.is-section-signup .layout:not(.dops) {
 	}
 }
 
-/**
- * Common styles for reskinSignupFlow a/b test
- */
 body.is-section-stepper,
-body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-flow) {
+body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) {
 	$gray-100: #101517;
 	$gray-60: #50575e;
 	$gray-50: #646970;

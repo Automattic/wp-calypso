@@ -13,7 +13,7 @@ const plansPageSmallWithSidebarBreakpoint = `${ 780 + sidebarWidth }px`;
  * screen sizes, it might be best to use the mixins defined in `plans-grid-next`.
  */
 export const plansPageBreakSmall = ( styles: SerializedStyles ) => css`
-	body.is-section-signup.is-white-signup &,
+	body.is-section-signup &,
 	body.is-section-stepper & {
 		@media ( min-width: ${ plansPageSmallBreakpoint } ) {
 			${ styles }

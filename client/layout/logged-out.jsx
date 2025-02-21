@@ -325,12 +325,12 @@ export default withCurrentRoute(
 			const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
 			const isBlazePro = getIsBlazePro( state );
 			const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
-			const isReskinLoginRoute =
+			const isWPComLogin =
 				currentRoute.startsWith( '/log-in' ) &&
 				! isJetpackLogin &&
 				! isP2Login &&
 				Boolean( currentQuery?.client_id ) === false;
-			const isWhiteLogin = isReskinLoginRoute || isGravatar || isGravPoweredClient;
+			const isWhiteLogin = isWPComLogin || isGravatar || isGravPoweredClient;
 			const noMasterbarForRoute =
 				isJetpackLogin ||
 				( isWhiteLogin && ! isBlazePro ) ||

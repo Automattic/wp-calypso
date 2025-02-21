@@ -507,7 +507,7 @@ $image-height: 47px;
 	.layout__primary {
 		margin-top: 40px;
 
-		/* START - Note: Patches below needed to continue using the current Divider in the form for both reskin and old versions.
+		/* START - Note: Patches below needed to continue using the current Divider.
 		We can remove when we refactor the Divider itself (or rethink current usage), and leave the default card styles intact.
 		Ideally, the Divider used in Login should be consolidated with the inline Separator's styles used in Signup (see `.auth-form__separator`) */
 		padding-left: 20px;

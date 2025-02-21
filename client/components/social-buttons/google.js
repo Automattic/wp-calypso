@@ -202,11 +202,7 @@ class GoogleSocialButton extends Component {
 						data-social-service="google"
 						disabled={ isDisabled }
 					>
-						<GoogleIcon
-							isDisabled={ isDisabled }
-							width={ this.props.isReskinned ? 19 : 20 }
-							height={ this.props.isReskinned ? 19 : 20 }
-						/>
+						<GoogleIcon isDisabled={ isDisabled } width={ 19 } height={ 19 } />
 
 						<span className="social-buttons__service-name">
 							{ this.props.translate( 'Continue with %(service)s', {

@@ -12,7 +12,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
-import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
+import SideExplainer from 'calypso/components/domains/side-explainer';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import { getDomainSuggestionSearch, getFixedDomainSearch } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
@@ -127,14 +127,14 @@ export function DomainFormControl( {
 
 		const useYourDomain = (
 			<div className="domains__domain-side-content">
-				<ReskinSideExplainer onClick={ handleUseYourDomainClick } type="use-your-domain" />
+				<SideExplainer onClick={ handleUseYourDomainClick } type="use-your-domain" />
 			</div>
 		);
 
 		return (
 			<div className="domains__domain-side-content-container">
 				<div className="domains__domain-side-content domains__free-domain">
-					<ReskinSideExplainer
+					<SideExplainer
 						onClick={ handleDomainExplainerClick }
 						type="free-domain-explainer"
 						flowName={ flow }
@@ -220,7 +220,7 @@ export function DomainFormControl( {
 					initialState={ initialState }
 					isPlanSelectionAvailableInFlow={ isPlanSelectionAvailableLaterInFlow }
 					isOnboarding
-					reskinSideContent={ getSideContent() }
+					sideContent={ getSideContent() }
 					isSignupStep
 					key="domainForm"
 					offerUnavailableOption
