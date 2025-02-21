@@ -136,7 +136,7 @@ export default function ProcessingScreen( props: ProcessingScreenProps ) {
 			} ) }
 		>
 			{ shouldShowNewSpinner && (
-				<Loading title={ steps.current[ currentStep ]?.title } progress={ progress } />
+				<Loading title={ steps.current[ currentStep ]?.title } progress={ progress * 100 } />
 			) }
 			{ ! shouldShowNewSpinner && (
 				<>
