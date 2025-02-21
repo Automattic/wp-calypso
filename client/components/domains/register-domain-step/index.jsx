@@ -796,6 +796,7 @@ class RegisterDomainStep extends Component {
 			}
 			return {
 				premiumDomains,
+				searchResults,
 			};
 		} );
 	};
