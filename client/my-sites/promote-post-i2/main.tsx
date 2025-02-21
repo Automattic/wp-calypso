@@ -209,7 +209,9 @@ export default function PromotedPosts( { tab }: Props ) {
 	const userHasCollapsedTspBanner = ( cookies[ TSP_BANNER_COLLAPSED_COOKIE ] ?? '0' ) === '1';
 
 	const showTspBanner = // TSP Banner has a higher priority than the regular banner
-		( ! campaignsIsLoading && campaignsTspEligible ) || ( ! postsIsLoading && postsTspEligible );
+		false && // TODO remove this false to make the banner display
+		( ( ! campaignsIsLoading && campaignsTspEligible ) ||
+			( ! postsIsLoading && postsTspEligible ) );
 
 	const [ isTspBannerCollapsed, setIsTspBannerCollapsed ] = useState( userHasCollapsedTspBanner );
 
@@ -247,7 +249,7 @@ export default function PromotedPosts( { tab }: Props ) {
 	const isWooBlaze = config.isEnabled( 'is_running_in_woo_site' );
 
 	const headerSubtitle = ( isMobile: boolean ) => {
-		if ( ! isMobile && ( showRegularBanner || ! isTspBannerCollapsed ) ) {
+		if ( ! isMobile && showRegularBanner ) {
 			// Do not show subtitle for desktops where banner should be shown
 			return null;
 		}
