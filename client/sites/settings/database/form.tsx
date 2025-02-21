@@ -69,6 +69,7 @@ export default function PhpMyAdminForm( { disabled }: PhpMyAdminFormProps ) {
 	const siteId = useSelector( getSelectedSiteId );
 	const [ isRestorePasswordDialogVisible, setIsRestorePasswordDialogVisible ] = useState( false );
 	const { openPhpMyAdmin, loading } = useOpenPhpMyAdmin();
+	const dispatch = useDispatch();
 
 	let isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 	isUntangled = isUntangled && config.isEnabled( 'untangling/settings-i2' );
@@ -110,7 +111,12 @@ export default function PhpMyAdminForm( { disabled }: PhpMyAdminFormProps ) {
 								<Button
 									compact
 									borderless
-									onClick={ () => setIsRestorePasswordDialogVisible( true ) }
+									onClick={ () => {
+										dispatch(
+											recordTracksEvent( 'calypso_hosting_configuration_reset_db_password' )
+										);
+										setIsRestorePasswordDialogVisible( true );
+									} }
 								/>
 							),
 						},
