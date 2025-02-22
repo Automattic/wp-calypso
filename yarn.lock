@@ -1034,7 +1034,7 @@ __metadata:
     "@types/jasmine": "npm:^3.10.18"
     "@types/karma": "npm:^6.3.3"
     "@types/karma-spec-reporter": "npm:^0.0.3"
-    "@types/karma-summary-reporter": "npm:^3.1.0"
+    "@types/karma-summary-reporter": "npm:^3.1.3"
     "@types/node": "npm:^22.7.5"
     "@types/ua-parser-js": "npm:^0.7.36"
     "@typescript-eslint/eslint-plugin": "npm:^5.62.0"
@@ -8694,7 +8694,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/karma-summary-reporter@npm:^3.1.0":
+"@types/karma-summary-reporter@npm:^3.1.3":
   version: 3.1.3
   resolution: "@types/karma-summary-reporter@npm:3.1.3"
   dependencies:
