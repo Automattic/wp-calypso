@@ -67,7 +67,7 @@
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-prettier": "^5.2.3",
 		"file-loader": "^6.2.0",
-		"got": "^11.8.5",
+		"got": "^11.8.6",
 		"html-webpack-plugin": "^5.6.3",
 		"karma": "^6.4.1",
 		"karma-chrome-launcher": "^3.1.1",

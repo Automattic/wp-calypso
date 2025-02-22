@@ -1043,7 +1043,7 @@ __metadata:
     eslint-config-prettier: "npm:^9.1.0"
     eslint-plugin-prettier: "npm:^5.2.3"
     file-loader: "npm:^6.2.0"
-    got: "npm:^11.8.5"
+    got: "npm:^11.8.6"
     html-webpack-plugin: "npm:^5.6.3"
     karma: "npm:^6.4.1"
     karma-chrome-launcher: "npm:^3.1.1"
@@ -20374,7 +20374,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"got@npm:^11.7.0, got@npm:^11.8.5":
+"got@npm:^11.7.0, got@npm:^11.8.5, got@npm:^11.8.6":
   version: 11.8.6
   resolution: "got@npm:11.8.6"
   dependencies:
