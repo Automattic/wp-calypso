@@ -1032,7 +1032,7 @@ __metadata:
     "@rollup/plugin-terser": "npm:^0.4.4"
     "@rollup/plugin-typescript": "npm:^10.0.1"
     "@types/jasmine": "npm:^3.10.18"
-    "@types/karma": "npm:^6.3.3"
+    "@types/karma": "npm:^6.3.9"
     "@types/karma-spec-reporter": "npm:^0.0.3"
     "@types/karma-summary-reporter": "npm:^3.1.0"
     "@types/node": "npm:^22.7.5"
@@ -1045,7 +1045,7 @@ __metadata:
     file-loader: "npm:^6.2.0"
     got: "npm:^11.8.5"
     html-webpack-plugin: "npm:^5.6.3"
-    karma: "npm:^6.4.1"
+    karma: "npm:^6.4.4"
     karma-chrome-launcher: "npm:^3.1.1"
     karma-firefox-launcher: "npm:^2.1.2"
     karma-jasmine: "npm:^4.0.2"
@@ -8703,13 +8703,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/karma@npm:*, @types/karma@npm:^6.3.3":
-  version: 6.3.8
-  resolution: "@types/karma@npm:6.3.8"
+"@types/karma@npm:*, @types/karma@npm:^6.3.3, @types/karma@npm:^6.3.9":
+  version: 6.3.9
+  resolution: "@types/karma@npm:6.3.9"
   dependencies:
     "@types/node": "npm:*"
     log4js: "npm:^6.4.1"
-  checksum: 31b556008e545a6c022c213339a06adf84adb0df80c12bd82b119e99ed51b58db60ae7824401a2a5be2e888d2bee5bda75058f0af96e368f0ba9de3f2df620c7
+  checksum: 5a548c66a0e89e5ce0ef5059ed6ef905b22cb4a86fc689f7c3c59e623713fab01fa523443a1ef634beac5626bb96a13bd6546b4efdbb325b55e7ccf6e57b554f
   languageName: node
   linkType: hard
 
@@ -23771,7 +23771,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"karma@npm:^6.4.1":
+"karma@npm:^6.4.4":
   version: 6.4.4
   resolution: "karma@npm:6.4.4"
   dependencies:
