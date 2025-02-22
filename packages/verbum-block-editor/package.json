@@ -57,7 +57,7 @@
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@types/wordpress__blocks": "^12.5.14",
+		"@types/wordpress__blocks": "^12.5.17",
 		"@typescript-eslint/eslint-plugin": "^6.21.0",
 		"@typescript-eslint/parser": "^6.21.0",
 		"@wordpress/eslint-plugin": "^22.5.0",
