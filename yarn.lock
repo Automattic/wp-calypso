@@ -1044,7 +1044,7 @@ __metadata:
     got: "npm:^11.8.6"
     html-webpack-plugin: "npm:^5.6.3"
     karma: "npm:^6.4.4"
-    karma-chrome-launcher: "npm:^3.1.1"
+    karma-chrome-launcher: "npm:^3.2.0"
     karma-firefox-launcher: "npm:^2.1.2"
     karma-jasmine: "npm:^4.0.2"
     karma-spec-reporter: "npm:^0.0.34"
@@ -23623,7 +23623,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"karma-chrome-launcher@npm:^3.1.1":
+"karma-chrome-launcher@npm:^3.1.1, karma-chrome-launcher@npm:^3.2.0":
   version: 3.2.0
   resolution: "karma-chrome-launcher@npm:3.2.0"
   dependencies:
