@@ -26,3 +26,28 @@
 	}
 	/* Style the line chart svg using the user admin color scheme */
 }
+
+@import "@automattic/typography/styles/variables";
+
+.stats-realtime-header {
+	margin-top: 32px;
+}
+
+.stats-realtime-header__title {
+	font-family: $brand-serif;
+	// stylelint-disable-next-line declaration-property-unit-allowed-list
+	font-size: 32px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: 40px;
+}
+
+.stats-realtime-header__description {
+	font-family: inherit;
+	// stylelint-disable-next-line declaration-property-unit-allowed-list
+	font-size: 14px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: 16px;
+	color: var(--color-text-subtle);
+}

@@ -22,6 +22,21 @@ import RealtimeChart from './chart';
 
 import './style.scss';
 
+// TODO: Update header per design review.
+// Each page has slightly different headers so staying simple
+// and requesting feedback first.
+// Not traslating until until design is finalized.
+function StatsRealtimeHeader() {
+	return (
+		<div className="stats-realtime-header">
+			<h2 className="stats-realtime-header__title">Current views</h2>
+			<div className="stats-realtime-header__description">
+				<span>Updates once per minute</span>
+			</div>
+		</div>
+	);
+}
+
 function StatsRealtime() {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state, siteId ) );
@@ -94,6 +109,7 @@ function StatsRealtime() {
 					navigationItems={ [] }
 				></NavigationHeader>
 				<StatsNavigation selectedItem="realtime" siteId={ siteId } slug={ siteSlug } />
+				<StatsRealtimeHeader />
 				<RealtimeChart siteId={ siteId } />
 				<StatsModuleListing className="stats__module-list--insights" siteId={ siteId }>
 					<StatsModuleTopPosts
