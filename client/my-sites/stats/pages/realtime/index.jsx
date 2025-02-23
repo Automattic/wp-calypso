@@ -4,6 +4,7 @@ import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
+import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
@@ -17,8 +18,8 @@ import { requestSiteStats } from 'calypso/state/stats/lists/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import PageViewTracker from '../../stats-page-view-tracker';
 import statsStrings from '../../stats-strings';
+import PageLoading from '../shared/page-loading';
 import StatsModuleListing from '../shared/stats-module-listing';
-import RealtimeChart from './chart';
 
 import './style.scss';
 
@@ -110,7 +111,11 @@ function StatsRealtime() {
 				></NavigationHeader>
 				<StatsNavigation selectedItem="realtime" siteId={ siteId } slug={ siteSlug } />
 				<StatsRealtimeHeader />
-				<RealtimeChart siteId={ siteId } />
+				<AsyncLoad
+					require="calypso/my-sites/stats/pages/realtime/chart"
+					siteId={ siteId }
+					placeholder={ PageLoading }
+				/>
 				<StatsModuleListing className="stats__module-list--insights" siteId={ siteId }>
 					<StatsModuleTopPosts
 						moduleStrings={ moduleStrings.posts }
