@@ -120,13 +120,10 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 	// Format the time in minute difference from now.
 	const formatTimeTick = ( value: number ) => {
 		const date = new Date( value );
-		const datetime = date.getTime();
-
-		const now = new Date();
-		const nowDatetime = now.getTime();
-		const diffMinutes = Math.floor( ( nowDatetime - datetime ) / 1000 / 60 );
-
-		return `-${ diffMinutes }m`;
+		return date.toLocaleDateString( undefined, {
+			month: 'short',
+			day: 'numeric',
+		} );
 	};
 
 	const formatViews = ( value: number ) => {

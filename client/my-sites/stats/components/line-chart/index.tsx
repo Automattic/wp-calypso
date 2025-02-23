@@ -14,7 +14,6 @@ function StatsLineChart( {
 	moment,
 	EmptyState = StatsEmptyState,
 	zeroBaseline = true,
-	xAxisNumTicks,
 	fixedDomain = false,
 }: {
 	chartData: Array< {
@@ -29,7 +28,6 @@ function StatsLineChart( {
 	moment: Moment;
 	EmptyState: typeof StatsEmptyState;
 	zeroBaseline?: boolean;
-	xAxisNumTicks?: number;
 	fixedDomain?: boolean;
 } ) {
 	const translate = useTranslate();
@@ -49,44 +47,45 @@ function StatsLineChart( {
 		return value.toFixed( 0 ).toString();
 	};
 
-	const dataSeries = chartData?.[ 0 ].data || [];
+	const isEmpty = ( chartData?.[ 0 ].data || [] ).length === 0;
 
 	return (
 		<div className={ clsx( 'stats-line-chart', className ) }>
-			{ dataSeries.length === 0 && (
+			{ isEmpty && (
 				<EmptyState
 					headingText={ translate( 'Real-time views' ) }
 					infoText={ translate( 'Collecting data… auto-refreshing in a minute…' ) }
 				/>
 			) }
-			<ThemeProvider theme={ jetpackTheme }>
-				<LineChart
-					data={ chartData }
-					withTooltips
-					withGradientFill
-					height={ height }
-					/** naturalCurve sometime goes off the grid :( */
-					margin={ { left: 15, top: 20, bottom: 20 } }
-					options={ {
-						yScale: {
-							type: 'linear',
-							...( fixedDomain && { domain: [ 0, maxViews ] } ),
-							zero: zeroBaseline,
-						},
-						axis: {
-							x: {
-								tickFormat: formatTime,
-								numTicks: xAxisNumTicks ?? dataSeries.length,
+			{ ! isEmpty && (
+				<ThemeProvider theme={ jetpackTheme }>
+					<LineChart
+						data={ chartData }
+						withTooltips
+						withGradientFill
+						height={ height }
+						/** naturalCurve sometime goes off the grid :( */
+						margin={ { left: 15, top: 20, bottom: 20 } }
+						options={ {
+							yScale: {
+								type: 'linear',
+								...( fixedDomain && { domain: [ 0, maxViews ] } ),
+								zero: zeroBaseline,
 							},
-							y: {
-								orientation: 'right',
-								tickFormat: formatViews,
-								numTicks: maxViews > 4 ? 4 : 1,
+							axis: {
+								x: {
+									tickFormat: formatTime,
+								},
+								y: {
+									orientation: 'right',
+									tickFormat: formatViews,
+									numTicks: maxViews > 4 ? 4 : 1,
+								},
 							},
-						},
-					} }
-				/>
-			</ThemeProvider>
+						} }
+					/>
+				</ThemeProvider>
+			) }
 		</div>
 	);
 }
