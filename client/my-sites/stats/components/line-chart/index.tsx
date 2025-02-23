@@ -2,7 +2,6 @@ import { LineChart, ThemeProvider, jetpackTheme } from '@automattic/charts';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import StatsEmptyState from '../../stats-empty-state';
 
 function StatsLineChart( {
@@ -11,7 +10,6 @@ function StatsLineChart( {
 	formatTimeTick,
 	className,
 	height = 400,
-	moment,
 	EmptyState = StatsEmptyState,
 	zeroBaseline = true,
 	fixedDomain = false,
@@ -36,10 +34,9 @@ function StatsLineChart( {
 		? formatTimeTick
 		: ( value: number ) => {
 				const date = new Date( value );
-				return new Date( date ).toLocaleTimeString( moment.locale(), {
-					hour: '2-digit',
-					minute: '2-digit',
-					hour12: true,
+				return date.toLocaleDateString( undefined, {
+					month: 'short',
+					day: 'numeric',
 				} );
 		  };
 
@@ -90,4 +87,4 @@ function StatsLineChart( {
 	);
 }
 
-export default withLocalizedMoment( StatsLineChart );
+export default StatsLineChart;
