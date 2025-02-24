@@ -48,7 +48,7 @@ function StatsLineChart( {
 	const maxValue = useMemo(
 		() =>
 			Math.max(
-				...chartData.map( ( serires ) => Math.max( ...serires.data.map( ( d ) => d.value ) ) )
+				...chartData.map( ( series ) => Math.max( ...series.data.map( ( d ) => d.value ) ) )
 			),
 		[ chartData ]
 	);
