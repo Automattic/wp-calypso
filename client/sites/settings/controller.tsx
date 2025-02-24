@@ -73,7 +73,15 @@ export async function redirectToHostingConfigIfDuplicatedViewsDisabled(
 	const siteSlug = getSelectedSiteSlug( getState() );
 
 	if ( ! isUntangled || ! config.isEnabled( 'untangling/settings-i2' ) ) {
-		return page.redirect( `/hosting-config/${ siteSlug }` );
+		// Redirect command palette routes to the new hosting config page when not in the treatment group
+		const routes = {
+			[ `/sites/settings/server/${ siteSlug }` ]: `/hosting-config/${ siteSlug }`,
+			[ `/sites/settings/performance/${ siteSlug }` ]: `/hosting-config/${ siteSlug }#cache`,
+			[ `/sites/settings/database/${ siteSlug }` ]: `/hosting-config/${ siteSlug }#database-access`,
+			[ `/sites/settings/sftp-ssh/${ siteSlug }` ]: `/hosting-config/${ siteSlug }#sftp-credentials`,
+		};
+
+		return page.redirect( routes[ context.path ] ?? `/hosting-config/${ siteSlug }` );
 	}
 
 	next();
