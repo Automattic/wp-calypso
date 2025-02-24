@@ -17,7 +17,7 @@ import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import withDimensions from 'calypso/lib/with-dimensions';
 import { getStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent, recordPermalinkClick } from 'calypso/reader/stats';
-import { getUserProfileUrlWithUsername } from 'calypso/reader/user-profile/user-profile.utils';
+import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
 import { expandComments } from 'calypso/state/comments/actions';
 import { PLACEHOLDER_STATE, POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -315,7 +315,7 @@ class PostComment extends PureComponent {
 
 		let commentAuthorUrl;
 		if ( commentAuthor.wpcom_login ) {
-			commentAuthorUrl = getUserProfileUrlWithUsername( commentAuthor.wpcom_login );
+			commentAuthorUrl = getUserProfileUrl( commentAuthor.wpcom_login );
 		} else if ( commentAuthor.site_ID ) {
 			commentAuthorUrl = getStreamUrl( null, commentAuthor.site_ID );
 		} else {

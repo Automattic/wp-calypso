@@ -4,7 +4,7 @@ import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import QueryPostLikers from 'calypso/components/data/query-post-likers';
 import Gravatar from 'calypso/components/gravatar';
-import { getUserProfileUrlWithUsername } from 'calypso/reader/user-profile/user-profile.utils';
+import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
@@ -25,7 +25,7 @@ class PostLikes extends PureComponent {
 	renderLike = ( like ) => {
 		const { showDisplayNames } = this.props;
 
-		const likeUrl = like.login ? getUserProfileUrlWithUsername( like.login ) : null;
+		const likeUrl = like.login ? getUserProfileUrl( like.login ) : null;
 		const LikeWrapper = likeUrl ? 'a' : 'span';
 
 		return (

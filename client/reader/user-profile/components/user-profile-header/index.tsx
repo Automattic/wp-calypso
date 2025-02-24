@@ -7,10 +7,7 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { UserData } from 'calypso/lib/user/user';
-import {
-	getUserProfileUrlWithUsername,
-	getUserProfileUrlWithId,
-} from 'calypso/reader/user-profile/user-profile.utils';
+import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
 
 import './style.scss';
 
@@ -21,20 +18,17 @@ interface UserProfileHeaderProps {
 const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
 	const translate = useTranslate();
 	const currentPath = page.current;
-	const userProfileUrlWithUsername = getUserProfileUrlWithUsername( user.user_login ?? '' );
-	const userProfileUrlWithId = getUserProfileUrlWithId( user.ID.toString() );
+	const userProfileUrl = getUserProfileUrl( user.user_login ?? '' );
 	const navigationItems = [
 		{
 			label: translate( 'Posts' ),
-			path: userProfileUrlWithUsername,
-			selected: currentPath === userProfileUrlWithUsername || currentPath === userProfileUrlWithId,
+			path: userProfileUrl,
+			selected: currentPath === userProfileUrl,
 		},
 		{
 			label: translate( 'Lists' ),
-			path: `${ userProfileUrlWithUsername }/lists`,
-			selected:
-				currentPath === `${ userProfileUrlWithUsername }/lists` ||
-				currentPath === `${ userProfileUrlWithId }/lists`,
+			path: `${ userProfileUrl }/lists`,
+			selected: currentPath === `${ userProfileUrl }/lists`,
 		},
 	];
 

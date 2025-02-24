@@ -3,7 +3,7 @@ import { Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import SiteIcon from 'calypso/blocks/site-icon';
 import Gravatar from 'calypso/components/gravatar';
-import { getUserProfileUrlWithUsername } from 'calypso/reader/user-profile/user-profile.utils';
+import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
 
 import './style.scss';
 
@@ -119,9 +119,7 @@ export default function ReaderAvatar( {
 	const siteIconElement = hasSiteIcon && (
 		<SiteIcon key="site-icon" size={ siteIconSize } site={ fakeSite } />
 	);
-	const avatarUrl = author?.wpcom_login
-		? getUserProfileUrlWithUsername( author.wpcom_login )
-		: null;
+	const avatarUrl = author?.wpcom_login ? getUserProfileUrl( author.wpcom_login ) : null;
 	const authorAvatar = ( hasAvatar || showPlaceholder ) && (
 		<Gravatar key="author-avatar" user={ author } size={ gravatarSize } />
 	);
