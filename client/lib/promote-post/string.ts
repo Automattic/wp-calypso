@@ -114,6 +114,10 @@ const BlazePressStrings = () => {
 	translate( 'Remove location targeting' );
 	translate( 'Remove interests targeting' );
 	translate( 'Remove device targeting' );
+	translate( 'Your campaign has not set language targeting' );
+	translate(
+		'Campaigns typically benefit from language targeting to avoid displaying ads to users who may not understand them. If the required language is unavailable, consider using geo-targeting as an alternative.'
+	);
 	translate( 'All languages' );
 	translate(
 		'Based on the language of your site we suggest targeting %(lang)s speaking users to ensure the ad is seen by the right audience and to increase its effectiveness.'
@@ -134,19 +138,16 @@ const BlazePressStrings = () => {
 	translate( 'Weekly click estimate' );
 	translate( 'Estimated clicks for the campaign duration' );
 	translate( 'Daily people reached estimate' );
-	translate( 'Starts and ends at %(time)s' );
-	translate( 'Starts at %(time)s and runs until you stop it' );
+	translate( 'Starts and ends after %(time)s' );
+	translate( 'Starts after %(time)s and runs until you stop it' );
 	translate( 'Lasts %(days)s day', 'Lasts %(days)s days', { count: 1 } );
 	translate( '(ending %(lastFour)s)' );
 	translate( 'Credits will be automatically applied to your order when available.' );
-	translate( 'Credits: %(creditsUsed)s (%(remainingCredit)s remain)' );
 	translate( 'Review your campaign' );
 	translate(
 		'We created this campaign to deliver the most valuable traffic, yet you can still make changes before submitting it.'
 	);
 	translate( 'Make changes' );
-	translate( 'Campaign Objective' );
-	translate( 'Change' );
 	translate( 'Start Date' );
 	translate( 'Duration' );
 	translate( 'Budget' );
@@ -155,6 +156,8 @@ const BlazePressStrings = () => {
 	translate( 'Total' );
 	translate( 'Est. weekly clicks' );
 	translate( 'Estimated clicks' );
+	translate( 'Tumblr Post views weekly' );
+	translate( 'Tumblr Post views' );
 	translate( '%(impressionsRange)s people reached weekly' );
 	translate( '%(impressionsRange)s people reached' );
 	translate( 'Est. weekly people reached' );
@@ -168,23 +171,6 @@ const BlazePressStrings = () => {
 	translate( 'Start typing country, state or city to see available options' );
 	translate( 'No results found' );
 	translate( 'Search for country, state or city' );
-	translate( 'Good for: ' );
-	translate( 'Traffic' );
-	translate( 'Aims to drive more visitors and increase page views.' );
-	translate( 'E-commerce sites, content-driven websites, startups.' );
-	translate( 'Sales' );
-	translate( 'Converts potential customers into buyers by encouraging purchase.' );
-	translate( 'E-commerce, retailers, subscription services.' );
-	translate( 'Awareness' );
-	translate( 'Focuses on increasing brand recognition and visibility.' );
-	translate( 'New businesses, brands launching new products.' );
-	translate( 'Engagement' );
-	translate( 'Encourages your audience to interact and connect with your brand.' );
-	translate( 'Influencers and community builders looking for followers of the same interest.' );
-	translate( 'Choose campaign objective' );
-	translate( 'Save' );
-	translate( 'Cancel' );
-	translate( 'Save my selection for future campaigns' );
 	translate( 'You won’t be charged until the ad is approved and starts running.' );
 	translate( 'You can pause spending at any time.' );
 	translate( 'Could not retrieve countries. Please try again later.' );
@@ -231,7 +217,11 @@ const BlazePressStrings = () => {
 	translate( 'Mobile' );
 	translate( 'Tablet' );
 	translate( 'Desktop' );
-	translate( 'Starts on %(date)s at %(time)s and runs until you stop it' );
+	translate( 'Continent' );
+	translate( 'Region' );
+	translate( 'State' );
+	translate( 'City' );
+	translate( 'Starts on %(date)s after %(time)s and runs until you stop it' );
 	translate( '%(days)s day', '%(days)s days', { count: 1 } );
 	translate( 'Weekly total' );
 	translate( 'Summary' );
@@ -241,6 +231,13 @@ const BlazePressStrings = () => {
 	translate( '%(impressionsRange)s weekly people reached' );
 	translate( '%(impressionsRange)s total people reached' );
 	translate( 'Suggested using AI' );
+	translate(
+		'Promote your content as a native Tumblr post. Boost views and let Tumblr users like or reply to your ad.'
+	);
+	translate( 'Allow social engagement from Tumblr' );
+	translate(
+		'Reach more people and spark conversations by sharing your content as a native Tumblr post.'
+	);
 	translate( 'Browse Ad copy suggestions' );
 	translate( 'Suggested by AI' );
 	translate( 'Oops, something went wrong' );
@@ -258,7 +255,9 @@ const BlazePressStrings = () => {
 	translate( 'Pick a few categories, like food or movies, to narrow your audience.' );
 	translate( 'All' );
 	translate( 'Now' );
-	translate( '%(creditUsed)s (%(remainingCredit)s remain)', { context: 'amount of money' } );
+	translate( 'Credits: %(creditsUsed)s', { context: 'amount of money' } );
+	translate( '(%(remainingCredit)s remain)', { context: 'amount of money' } );
+	translate( '%(creditUsed)s ', { context: 'amount of money' } );
 	translate( 'Credits', { context: 'amount of money' } );
 };
 

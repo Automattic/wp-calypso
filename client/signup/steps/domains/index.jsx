@@ -21,7 +21,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
-import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
+import SideExplainer from 'calypso/components/domains/side-explainer';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
@@ -946,7 +946,7 @@ export class RenderDomainsStep extends Component {
 						( domainsInCart.length > 0 || this.state.wpcomSubdomainSelected ),
 				} ) }
 			>
-				<ReskinSideExplainer onClick={ this.handleUseYourDomainClick } type="use-your-domain" />
+				<SideExplainer onClick={ this.handleUseYourDomainClick } type="use-your-domain" />
 			</div>
 		) : null;
 
@@ -972,7 +972,7 @@ export class RenderDomainsStep extends Component {
 					! this.shouldHideDomainExplainer() &&
 					hasSearchedDomains && (
 						<div className="domains__domain-side-content domains__free-domain">
-							<ReskinSideExplainer
+							<SideExplainer
 								onClick={ this.handleDomainExplainerClick }
 								type={
 									this.props.isPlanSelectionAvailableLaterInFlow
@@ -987,7 +987,7 @@ export class RenderDomainsStep extends Component {
 				{ useYourDomain }
 				{ this.shouldDisplayDomainOnlyExplainer() && (
 					<div className="domains__domain-side-content">
-						<ReskinSideExplainer
+						<SideExplainer
 							onClick={ this.handleDomainExplainerClick }
 							type="free-domain-only-explainer"
 						/>
@@ -1079,7 +1079,7 @@ export class RenderDomainsStep extends Component {
 					this.props.forceHideFreeDomainExplainerAndStrikeoutUi
 				}
 				isOnboarding
-				reskinSideContent={ this.getSideContent() }
+				sideContent={ this.getSideContent() }
 				isInLaunchFlow={ 'launch-site' === this.props.flowName }
 				promptText={
 					this.isHostingFlow()

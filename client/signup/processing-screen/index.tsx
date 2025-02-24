@@ -2,18 +2,32 @@ import { ACCOUNT_FLOW, HOSTING_LP_FLOW, ENTREPRENEUR_FLOW } from '@automattic/on
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import PropTypes from 'prop-types';
 import { useRef, useState, useEffect } from 'react';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import Loading from 'calypso/components/loading';
 import { useInterval } from 'calypso/lib/interval/use-interval';
 import './style.scss';
 
 // Default estimated time to perform "loading"
 const DURATION_IN_MS = 6000;
 
-const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => {
+interface ProcessingScreenProps {
+	flowName?: string;
+	hasPaidDomain?: boolean;
+	isDestinationSetupSiteFlow?: boolean;
+}
+
+interface Step {
+	title: string;
+	duration?: number;
+}
+
+const useSteps = ( {
+	flowName,
+	hasPaidDomain,
+	isDestinationSetupSiteFlow,
+}: ProcessingScreenProps ) => {
 	const { __ } = useI18n();
-	let steps = [];
+	let steps: Step[] = [];
 
 	switch ( flowName ) {
 		case 'launch-site':
@@ -72,34 +86,31 @@ const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => 
 				{ title: __( 'Turning on the lights' ) },
 				{ title: __( 'Making you cookies' ) },
 				{ title: __( 'Planning the next chess move' ) },
-			];
+			].filter( Boolean ) as Step[];
 	}
 
-	return useRef( steps.filter( Boolean ) );
+	return useRef( steps );
 };
 
 // This component is cloned from the CreateSite component of Gutenboarding flow
 // to work with the onboarding signup flow.
-export default function ReskinnedProcessingScreen( props ) {
+export default function ProcessingScreen( props: ProcessingScreenProps ) {
 	const { __ } = useI18n();
 
 	const steps = useSteps( props );
-	const { isDestinationSetupSiteFlow, flowName } = props;
 	const totalSteps = steps.current.length;
-	const shouldShowNewSpinner =
-		isDestinationSetupSiteFlow ||
-		[ 'setup-site', 'do-it-for-me', 'do-it-for-me-store' ].includes( flowName );
 
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 
 	const defaultDuration = DURATION_IN_MS / totalSteps;
-	const duration = steps.current[ currentStep ]?.duration || defaultDuration;
+	const duration =
+		( steps.current[ currentStep ] && steps.current[ currentStep ]?.duration ) || defaultDuration;
 
 	/**
 	 * Completion progress: 0 <= progress <= 1
 	 */
-	const progress = ( currentStep + 1 ) / totalSteps;
-	const isComplete = progress >= 1;
+	const progress = ( ( currentStep + 1 ) / totalSteps ) * 100;
+	const isComplete = progress >= 100;
 
 	useInterval(
 		() => setCurrentStep( ( s ) => s + 1 ),
@@ -114,43 +125,26 @@ export default function ReskinnedProcessingScreen( props ) {
 		return () => clearTimeout( id );
 	}, [] );
 
+	const progressValue = ! hasStarted ? /* initial 10% progress */ 10 : progress;
+
 	return (
 		<div
-			className={ clsx( 'reskinned-processing-screen', {
-				'is-force-centered': shouldShowNewSpinner && totalSteps === 0,
+			className={ clsx( 'processing-screen', {
+				'is-force-centered': totalSteps === 0,
 			} ) }
 		>
-			<h1 className="reskinned-processing-screen__progress-step">
-				{ steps.current[ currentStep ]?.title }
-			</h1>
-			{ shouldShowNewSpinner && <LoadingEllipsis /> }
-			{ ! shouldShowNewSpinner && (
-				<>
-					<div
-						className="reskinned-processing-screen__progress-bar"
-						style={ {
-							'--progress': ! hasStarted ? /* initial 10% progress */ 0.1 : progress,
-						} }
-					/>
-					{ totalSteps > 1 && (
-						<p className="reskinned-processing-screen__progress-numbered-steps">
-							{
-								// translators: these are progress steps. Eg: step 1 of 4.
-								sprintf( __( 'Step %(currentStep)d of %(totalSteps)d' ), {
-									currentStep: currentStep + 1,
-									totalSteps,
-								} )
-							}
-						</p>
-					) }
-				</>
-			) }
+			<Loading
+				title={ steps.current[ currentStep ]?.title }
+				progress={ progressValue }
+				subtitle={
+					totalSteps > 1 &&
+					// translators: these are progress steps. Eg: step 1 of 4.
+					sprintf( __( 'Step %(currentStep)d of %(totalSteps)d' ), {
+						currentStep: currentStep + 1,
+						totalSteps,
+					} )
+				}
+			/>
 		</div>
 	);
 }
-
-ReskinnedProcessingScreen.propTypes = {
-	flowName: PropTypes.string,
-	hasPaidDomain: PropTypes.bool,
-	isDestinationSetupSiteFlow: PropTypes.bool,
-};

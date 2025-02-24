@@ -42,7 +42,7 @@ const useAvailableStorageAddOns = ( { siteId }: Props ): AddOnMeta[] => {
 		return nonNullAddOns.filter( ( addOn ) =>
 			isStorageQuantityAvailable( addOn?.quantity ?? 0, siteMediaStorageData )
 		);
-	}, [ siteMediaStorage, storageAddOns ] );
+	}, [ siteMediaStorage.data, storageAddOns ] );
 };
 
 export default useAvailableStorageAddOns;

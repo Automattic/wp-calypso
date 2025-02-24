@@ -781,14 +781,22 @@ class RegisterDomainStep extends Component {
 
 	removeUnavailablePremiumDomain = ( domainName ) => {
 		this.setState( ( state ) => {
-			const newPremiumDomains = { ...state.premiumDomains };
-			delete newPremiumDomains[ domainName ];
-			const searchResults = state.searchResults || [];
-			return {
-				premiumDomains: newPremiumDomains,
-				searchResults: searchResults.filter(
+			const premiumDomains = Object.fromEntries(
+				Object.entries( state.premiumDomains ).filter( ( [ key ] ) => key !== domainName )
+			);
+			const { searchResults } = state;
+			if ( Array.isArray( searchResults ) ) {
+				const newSearchResults = searchResults.filter(
 					( suggestion ) => suggestion.domain_name !== domainName
-				),
+				);
+				return {
+					premiumDomains,
+					searchResults: newSearchResults,
+				};
+			}
+			return {
+				premiumDomains,
+				searchResults,
 			};
 		} );
 	};
@@ -1722,7 +1730,7 @@ class RegisterDomainStep extends Component {
 	}
 
 	renderSideContent() {
-		return this.props.isOnboarding && ! this.state.loadingResults && this.props.reskinSideContent;
+		return this.props.isOnboarding && ! this.state.loadingResults && this.props.sideContent;
 	}
 
 	getFetchAlgo() {
