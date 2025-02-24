@@ -5,56 +5,9 @@ $progress-duration: 800ms;
 .processing-screen {
 	padding: 1em;
 	max-width: 540px;
-	text-align: center;
 	margin: 32vh auto;
 
-	&.is-force-centered {
-		position: fixed;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	&__progress-bar {
-		position: relative;
-		overflow: hidden;
-		height: 6px;
-		margin-top: 1em;
-		background: var(--studio-gray-10);
-
-		--progress: 0;
-
-		&::before {
-			background: var(--studio-blue-50);
-			transform: translateX(calc(-100% * min(1 - var(--progress, 0), 1)));
-			position: absolute;
-			content: "";
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			transition: transform $progress-duration ease-out;
-		}
-	}
-
-	&__progress-numbered-steps {
-		margin-top: 0.7em;
-		padding: 1em;
-		text-align: center;
-		color: var(--studio-gray-40);
-	}
-
-	&__progress-step {
-		@include onboarding-font-recoleta;
-		/* stylelint-disable-next-line scales/font-sizes */
-		font-size: 1.625rem;
-		line-height: 40px;
-		text-align: center;
-		vertical-align: middle;
+	.wpcom__loading {
 		margin: 0;
 	}
 }

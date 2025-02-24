@@ -3,7 +3,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useRef, useState, useEffect } from 'react';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import Loading from 'calypso/components/loading';
 import { useInterval } from 'calypso/lib/interval/use-interval';
 import './style.scss';
 
@@ -98,11 +98,7 @@ export default function ProcessingScreen( props: ProcessingScreenProps ) {
 	const { __ } = useI18n();
 
 	const steps = useSteps( props );
-	const { isDestinationSetupSiteFlow, flowName } = props;
 	const totalSteps = steps.current.length;
-	const shouldShowNewSpinner =
-		isDestinationSetupSiteFlow ||
-		[ 'setup-site', 'do-it-for-me', 'do-it-for-me-store' ].includes( flowName || '' );
 
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 
@@ -113,8 +109,8 @@ export default function ProcessingScreen( props: ProcessingScreenProps ) {
 	/**
 	 * Completion progress: 0 <= progress <= 1
 	 */
-	const progress = ( currentStep + 1 ) / totalSteps;
-	const isComplete = progress >= 1;
+	const progress = ( ( currentStep + 1 ) / totalSteps ) * 100;
+	const isComplete = progress >= 100;
 
 	useInterval(
 		() => setCurrentStep( ( s ) => s + 1 ),
@@ -129,37 +125,26 @@ export default function ProcessingScreen( props: ProcessingScreenProps ) {
 		return () => clearTimeout( id );
 	}, [] );
 
+	const progressValue = ! hasStarted ? /* initial 10% progress */ 10 : progress;
+
 	return (
 		<div
 			className={ clsx( 'processing-screen', {
-				'is-force-centered': shouldShowNewSpinner && totalSteps === 0,
+				'is-force-centered': totalSteps === 0,
 			} ) }
 		>
-			<h1 className="processing-screen__progress-step">{ steps.current[ currentStep ]?.title }</h1>
-			{ shouldShowNewSpinner && <LoadingEllipsis /> }
-			{ ! shouldShowNewSpinner && (
-				<>
-					<div
-						className="processing-screen__progress-bar"
-						style={
-							{
-								'--progress': ! hasStarted ? /* initial 10% progress */ 0.1 : progress,
-							} as React.CSSProperties
-						}
-					/>
-					{ totalSteps > 1 && (
-						<p className="processing-screen__progress-numbered-steps">
-							{
-								// translators: these are progress steps. Eg: step 1 of 4.
-								sprintf( __( 'Step %(currentStep)d of %(totalSteps)d' ), {
-									currentStep: currentStep + 1,
-									totalSteps,
-								} )
-							}
-						</p>
-					) }
-				</>
-			) }
+			<Loading
+				title={ steps.current[ currentStep ]?.title }
+				progress={ progressValue }
+				subtitle={
+					totalSteps > 1 &&
+					// translators: these are progress steps. Eg: step 1 of 4.
+					sprintf( __( 'Step %(currentStep)d of %(totalSteps)d' ), {
+						currentStep: currentStep + 1,
+						totalSteps,
+					} )
+				}
+			/>
 		</div>
 	);
 }
