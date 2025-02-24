@@ -209,9 +209,7 @@ export default function PromotedPosts( { tab }: Props ) {
 	const userHasCollapsedTspBanner = ( cookies[ TSP_BANNER_COLLAPSED_COOKIE ] ?? '0' ) === '1';
 
 	const showTspBanner = // TSP Banner has a higher priority than the regular banner
-		false && // TODO remove this false to make the banner display after we release tsp
-		( ( ! campaignsIsLoading && campaignsTspEligible ) ||
-			( ! postsIsLoading && postsTspEligible ) );
+		( ! campaignsIsLoading && campaignsTspEligible ) || ( ! postsIsLoading && postsTspEligible );
 
 	const [ isTspBannerCollapsed, setIsTspBannerCollapsed ] = useState( userHasCollapsedTspBanner );
 
