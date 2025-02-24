@@ -36,10 +36,17 @@ interface UseWaitForAtomicProps {
 	handleTransferFailure?: ( failureInfo: FailureInfo ) => void;
 }
 
-export const useWaitForAtomic = ( { handleTransferFailure }: UseWaitForAtomicProps = {} ) => {
+export const useWaitForAtomic = ( {
+	handleTransferFailure,
+	siteId: providedSiteId,
+}: UseWaitForAtomicProps & { siteId?: number } ) => {
 	const [ searchParams ] = useSearchParams();
 	const reduxDispatch = useReduxDispatch();
-	const { siteId } = useSiteData();
+
+	const { siteId: hookSiteId } = useSiteData();
+	// Use provided siteId if available, otherwise fall back to hookSiteId
+	const siteId = providedSiteId || hookSiteId;
+
 	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
 	const { getSiteLatestAtomicTransfer, getSiteLatestAtomicTransferError } = useSelect(
 		( select ) => select( SITE_STORE ) as SiteSelect,
