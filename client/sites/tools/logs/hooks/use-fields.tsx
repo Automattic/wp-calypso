@@ -37,6 +37,7 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 						args: { siteGsmOffsetDisplay },
 					} ),
 					render: ( { item }: { item: PHPLog } ) => getFormattedDate( item.timestamp ),
+					enableHiding: false,
 				},
 				{
 					id: 'severity',
@@ -102,6 +103,7 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 					args: { siteGsmOffsetDisplay },
 				} ),
 				render: ( { item }: { item: ServerLog } ) => getFormattedDate( item.date ),
+				enableHiding: false,
 			},
 			{
 				id: 'request_type',
