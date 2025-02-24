@@ -60,6 +60,7 @@ const DomainStatusField = ( props: Props ) => {
 			domainStatus={ domainStatus }
 			pendingUpdates={ pendingUpdates }
 			as="div"
+			spinnerSize={ 14 }
 		/>
 	);
 };
