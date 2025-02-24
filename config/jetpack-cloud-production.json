@@ -78,8 +78,7 @@
 		"subscribers-dataviews": true,
 		"upgrades/redirect-payments": false,
 		"jetpack/pricing-page-cart": true,
-		"yolo/command-palette": false,
-		"bulk-plugin-management": true
+		"yolo/command-palette": false
 	},
 	"enable_all_sections": false,
 	"sections": {

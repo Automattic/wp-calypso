@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { SyntheticEvent } from '@wordpress/element';
 import { settings } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -19,7 +18,6 @@ const managePluginsPattern = /^\/plugins\/(manage|active|inactive|updates)/;
 
 const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 	const translate = useTranslate();
-	const isBulkPluginManagementEnabled = config.isEnabled( 'bulk-plugin-management' ) || false;
 
 	const [ previousPath, setPreviousPath ] = useState( path );
 	const isManagedPluginSelected =
@@ -56,17 +54,16 @@ const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 					customIcon={ <SidebarIconPlugins /> }
 				/>
 
-				{ isBulkPluginManagementEnabled && (
-					<SidebarItem
-						className="sidebar__menu-item--plugins"
-						link="/plugins/manage/sites"
-						label={ translate( 'Manage Plugins' ) }
-						tooltip={ isCollapsed && translate( 'Manage Plugins' ) }
-						selected={ isManagedPluginSelected }
-						icon={ settings }
-						onNavigate={ ( _e: SyntheticEvent, link: string ) => setPreviousPath( link ) }
-					/>
-				) }
+				<SidebarItem
+					className="sidebar__menu-item--plugins"
+					link="/plugins/manage/sites"
+					label={ translate( 'Manage Plugins' ) }
+					tooltip={ isCollapsed && translate( 'Manage Plugins' ) }
+					selected={ isManagedPluginSelected }
+					icon={ settings }
+					onNavigate={ ( _e: SyntheticEvent, link: string ) => setPreviousPath( link ) }
+				/>
+
 				<SidebarItem
 					className="sidebar__menu-item--plugins"
 					link="/plugins/scheduled-updates"

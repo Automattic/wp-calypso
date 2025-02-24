@@ -1,7 +1,7 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-body.is-section-plugins .plugin-management-wrapper.is-bulk-plugin-management {
+body.is-section-plugins .plugin-management-wrapper {
 	display: flex;
 	flex-direction: column;
 	flex-wrap: nowrap;
@@ -20,8 +20,8 @@ body.is-section-plugins .plugin-management-wrapper.is-bulk-plugin-management {
 	}
 }
 
-body.is-section-plugins .plugin-management-wrapper.is-bulk-plugin-management,
-.is-section-jetpack-cloud-plugin-management .plugin-management-wrapper.is-bulk-plugin-management {
+body.is-section-plugins .plugin-management-wrapper,
+.is-section-jetpack-cloud-plugin-management .plugin-management-wrapper {
 	.dataviews-wrapper {
 		margin: auto;
 
@@ -136,7 +136,7 @@ body.is-section-plugins .plugin-management-wrapper.is-bulk-plugin-management,
 		margin-inline: -32px;
 	}
 
-	.plugin-management-wrapper.is-bulk-plugin-management {
+	.plugin-management-wrapper {
 		.plugins__page-title-container {
 			padding-inline: 48px;
 		}
