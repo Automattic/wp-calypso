@@ -385,6 +385,12 @@
 	}
 }
 
+body.is-section-reader div.layout.is-global-sidebar-visible .is-site-stream .back-button button.is-compact.is-borderless {
+	@media ( max-width: 1300px ) {
+		margin-bottom: 24px;
+	}
+}
+
 // Featured Image/Video
 .reader__post-featured-image,
 .reader__post-featured-video {
