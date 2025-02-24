@@ -139,13 +139,6 @@
 			&:hover {
 				color: var(--color-accent, #3858e9);
 			}
-
-			&:focus {
-				outline: 1px dashed var(--color-accent, #3858e9);
-				outline-offset: 3px;
-				box-shadow: none;
-				border-radius: 0;
-			}
 		}
 
 		button.button:not(.is-borderless) {
