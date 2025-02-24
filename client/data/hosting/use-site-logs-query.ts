@@ -6,7 +6,7 @@ interface SiteLogsAPIResponse {
 	message: string;
 	data: {
 		total_results: number | { value: number; relation: string };
-		logs: Record< string, unknown >[];
+		logs: ( PHPLog | ServerLog )[];
 		scroll_id: string | null;
 	};
 }
@@ -119,7 +119,7 @@ export function useSiteLogsQuery(
 				has_more: !! data.scroll_id,
 				total_results:
 					typeof data.total_results === 'number' ? data.total_results : data.total_results.value,
-				logs: data.logs as Record< string, ServerLog | PHPLog >[],
+				logs: data.logs,
 				scroll_id: data.scroll_id,
 			};
 		},
