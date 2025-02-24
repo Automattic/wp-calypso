@@ -397,26 +397,6 @@ const goals: Reducer< SiteGoal[], OnboardAction > = ( state = [], action ) => {
 	return state;
 };
 
-const verticalId: Reducer< string, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_VERTICAL_ID' ) {
-		return action.verticalId;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
-	}
-	return state;
-};
-
-const storeLocationCountryCode: Reducer< string, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_STORE_LOCATION_COUNTRY_CODE' ) {
-		return action.storeLocationCountryCode;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
-	}
-	return state;
-};
-
 const ecommerceFlowRecurType: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_ECOMMERCE_FLOW_RECUR_TYPE' ) {
 		return action.ecommerceFlowRecurType;
@@ -693,8 +673,6 @@ const reducer = combineReducers( {
 	siteLogo,
 	siteAccentColor,
 	readymadeTemplate,
-	verticalId,
-	storeLocationCountryCode,
 	ecommerceFlowRecurType,
 	couponCode,
 	storageAddonSlug,

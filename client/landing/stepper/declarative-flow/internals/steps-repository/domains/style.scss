@@ -243,7 +243,7 @@
 				}
 			}
 		}
-		.reskin-side-explainer__subtitle-2 {
+		.side-explainer__subtitle-2 {
 			display: none;
 			@include break-small {
 				display: block;
@@ -427,7 +427,7 @@
 		}
 	}
 
-	.reskin-side-explainer .reskin-side-explainer__cta .reskin-side-explainer__cta-text {
+	.side-explainer .side-explainer__cta .side-explainer__cta-text {
 		padding-left: 0;
 	}
 }

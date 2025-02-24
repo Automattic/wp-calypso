@@ -20,7 +20,7 @@ import StatsEmptyState from '../stats-empty-state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatTabs from '../stats-tabs';
 import ChartHeader from './chart-header';
-import { buildChartData, getQueryDate, formatDate } from './utility';
+import { buildChartData, getQueryDate } from './utility';
 
 import './style.scss';
 
@@ -177,8 +177,6 @@ class StatModuleChartTabs extends Component {
 						chartData={ transformChartDataToLineFormat( chartData, this.props.activeLegend ) }
 						height={ 200 }
 						moment={ moment }
-						formatTimeTick={ ( timestamp ) => formatDate( new Date( timestamp ), selectedPeriod ) }
-						maxViews={ Math.max( ...chartData.map( ( d ) => d.value ) ) }
 					/>
 				) }
 
