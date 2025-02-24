@@ -98,11 +98,7 @@ export default function ProcessingScreen( props: ProcessingScreenProps ) {
 	const { __ } = useI18n();
 
 	const steps = useSteps( props );
-	const { isDestinationSetupSiteFlow, flowName } = props;
 	const totalSteps = steps.current.length;
-	const shouldShowNewSpinner =
-		isDestinationSetupSiteFlow ||
-		[ 'setup-site', 'do-it-for-me', 'do-it-for-me-store' ].includes( flowName || '' );
 
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 
@@ -134,7 +130,7 @@ export default function ProcessingScreen( props: ProcessingScreenProps ) {
 	return (
 		<div
 			className={ clsx( 'processing-screen', {
-				'is-force-centered': shouldShowNewSpinner && totalSteps === 0,
+				'is-force-centered': totalSteps === 0,
 			} ) }
 		>
 			<Loading
