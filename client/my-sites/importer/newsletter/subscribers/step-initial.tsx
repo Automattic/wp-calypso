@@ -52,6 +52,7 @@ export default function StepInitial( {
 					{
 						strong: <strong />,
 						supportLink: isJetpack ? (
+							// @ts-expect-error Used in createInterpolateElement doesn't need children.
 							<ExternalLink
 								href={ localizeUrl(
 									'https://wordpress.com/support/import-subscribers-to-a-newsletter/#troubleshooting-subscriber-imports'
