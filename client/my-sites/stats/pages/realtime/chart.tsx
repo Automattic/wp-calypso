@@ -1,12 +1,11 @@
+import { LineChart, ThemeProvider, jetpackTheme } from '@automattic/charts';
+import clsx from 'clsx';
 import moment from 'moment';
 import { useEffect, useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import AsyncLoad from 'calypso/components/async-load';
 import wpcom from 'calypso/lib/wp';
-import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { parseChartData } from 'calypso/state/stats/lists/utils';
-import PageLoading from '../shared/page-loading';
 
 type Unit = 'hour' | 'day' | 'week' | 'month' | 'year';
 
@@ -32,7 +31,6 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 	const gmtOffset = useSelector( ( state: object ) =>
 		getSiteOption( state, siteId, 'gmt_offset' )
 	) as number;
-	const momentSiteZone = useSelector( ( state: object ) => getMomentSiteZone( state, siteId ) );
 	const [ viewsData, setViewsData ] = useState( {} as chartMinuteDataTypes );
 	const [ initialViewsCount, setInitialViewsCount ] = useState< number | undefined >( undefined );
 
@@ -131,25 +129,46 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 		return `-${ diffMinutes }m`;
 	};
 
+	const formatViews = ( value: number ) => {
+		return value.toFixed( 0 ).toString();
+	};
+
+	const chartDataSeries = [
+		{
+			label: 'Views',
+			options: {}, //TODO: remove this after fixing chart lib typings.
+			data: chartData,
+		},
+	];
+
 	return (
-		<div>
-			<AsyncLoad
-				require="calypso/my-sites/stats/components/line-chart"
-				className="stats-realtime-chart"
-				height={ 425 }
-				placeholder={ PageLoading }
-				moment={ momentSiteZone }
-				chartData={ [
-					{
-						label: 'Views',
-						data: chartData,
-					},
-				] }
-				maxViews={ maxViews }
-				formatTimeTick={ formatTimeTick }
-				xAxisNumTicks={ 6 }
-				fixedDomain
-			/>
+		<div className={ clsx( 'stats-line-chart', 'stats-realtime-chart' ) }>
+			<ThemeProvider theme={ jetpackTheme }>
+				<LineChart
+					data={ chartDataSeries }
+					withTooltips
+					withGradientFill
+					height={ 425 }
+					margin={ { left: 15, top: 20, bottom: 20 } }
+					options={ {
+						yScale: {
+							type: 'linear',
+							domain: [ 0, maxViews ],
+							zero: false,
+						},
+						axis: {
+							x: {
+								tickFormat: formatTimeTick,
+							},
+							y: {
+								orientation: 'right',
+								tickFormat: formatViews,
+								numTicks: maxViews > 4 ? 4 : 1,
+							},
+						},
+					} }
+				/>
+			</ThemeProvider>
 		</div>
 	);
 };

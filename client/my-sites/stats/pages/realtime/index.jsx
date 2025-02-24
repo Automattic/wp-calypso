@@ -4,6 +4,7 @@ import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
+import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
@@ -17,10 +18,25 @@ import { requestSiteStats } from 'calypso/state/stats/lists/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import PageViewTracker from '../../stats-page-view-tracker';
 import statsStrings from '../../stats-strings';
+import PageLoading from '../shared/page-loading';
 import StatsModuleListing from '../shared/stats-module-listing';
-import RealtimeChart from './chart';
 
 import './style.scss';
+
+// TODO: Update header per design review.
+// Each page has slightly different headers so staying simple
+// and requesting feedback first.
+// Not traslating until until design is finalized.
+function StatsRealtimeHeader() {
+	return (
+		<div className="stats-realtime-header">
+			<h2 className="stats-realtime-header__title">Current views</h2>
+			<div className="stats-realtime-header__description">
+				<span>Updates once per minute</span>
+			</div>
+		</div>
+	);
+}
 
 function StatsRealtime() {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -94,7 +110,12 @@ function StatsRealtime() {
 					navigationItems={ [] }
 				></NavigationHeader>
 				<StatsNavigation selectedItem="realtime" siteId={ siteId } slug={ siteSlug } />
-				<RealtimeChart siteId={ siteId } />
+				<StatsRealtimeHeader />
+				<AsyncLoad
+					require="calypso/my-sites/stats/pages/realtime/chart"
+					siteId={ siteId }
+					placeholder={ PageLoading }
+				/>
 				<StatsModuleListing className="stats__module-list--insights" siteId={ siteId }>
 					<StatsModuleTopPosts
 						moduleStrings={ moduleStrings.posts }

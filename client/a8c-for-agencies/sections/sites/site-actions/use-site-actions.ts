@@ -85,7 +85,7 @@ export default function useSiteActions( {
 		return [
 			{
 				name: translate( 'Prepare for launch' ),
-				href: `https://wordpress.com/settings/general/${ blog_id }`,
+				href: `https://wordpress.com/sites/settings/site/${ blog_id }`,
 				onClick: () => handleClickMenuItem( 'prepare_for_launch' ),
 				isExternalLink: true,
 				isEnabled: isDevSite,
@@ -275,7 +275,7 @@ export function useSiteActionsDataViews( {
 					return canHaveActions( item ) && isDevSite( item );
 				},
 				callback( items: SiteData[] ) {
-					window.open( `https://wordpress.com/settings/general/${ getBlogId( items[ 0 ] ) }` );
+					window.open( `https://wordpress.com/sites/settings/site/${ getBlogId( items[ 0 ] ) }` );
 					dispatch(
 						recordTracksEvent( getActionEventName( 'prepare_for_launch', isLargeScreen ) )
 					);

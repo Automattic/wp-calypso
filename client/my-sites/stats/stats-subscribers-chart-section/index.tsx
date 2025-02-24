@@ -157,16 +157,6 @@ export default function SubscribersChartSection( {
 		},
 	];
 
-	// adds in a tick formatting function to pass to the linechart component
-	// this can be modified to add more date formats (eg. month, year, etc.)
-	const formatTimeTick = ( value: number ) => {
-		const date = new Date( value );
-		return date.toLocaleDateString( undefined, {
-			month: 'short',
-			day: 'numeric',
-		} );
-	};
-
 	const subscribers = {
 		label: 'Subscribers',
 		path: `/stats/subscribers/`,
@@ -220,7 +210,6 @@ export default function SubscribersChartSection( {
 							require="calypso/my-sites/stats/components/line-chart"
 							chartData={ lineChartData }
 							height={ 300 }
-							formatTimeTick={ formatTimeTick }
 							EmptyState={ () => null }
 							zeroBaseline={ false }
 						/>
