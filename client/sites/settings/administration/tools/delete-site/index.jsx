@@ -17,6 +17,7 @@ import { Panel, PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import withP2HubP2Count from 'calypso/data/p2/with-p2-hub-p2-count';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSettingsSource } from 'calypso/my-sites/site-settings/site-tools/utils';
+import { FeatureBreadcrumb } from 'calypso/sites/hooks/use-set-feature-breadcrumb';
 import { resetBreadcrumbs, updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getRemoveDuplicateViewsExperimentAssignment } from 'calypso/state/explat-experiments/actions';
 import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/state/explat-experiments/selectors';
@@ -178,17 +179,6 @@ class DeleteSite extends Component {
 		page( `${ source }/${ siteSlug }` );
 	};
 
-	refreshBreadcrumbs( prevProps ) {
-		if ( this.props.siteId && this.props.siteId !== prevProps?.siteId ) {
-			this.props.updateBreadcrumbs( [
-				{
-					id: 'subtab',
-					label: translate( 'Delete site' ),
-				},
-			] );
-		}
-	}
-
 	componentDidUpdate( prevProps ) {
 		const { siteId, siteExists, useSitesAsLandingPage } = this.props;
 
@@ -200,17 +190,10 @@ class DeleteSite extends Component {
 				page.redirect( '/' );
 			}
 		}
-
-		this.refreshBreadcrumbs( prevProps );
 	}
 
 	componentDidMount() {
 		this.props.getRemoveDuplicateViewsExperimentAssignment();
-		this.refreshBreadcrumbs( undefined );
-	}
-
-	componentWillUnmount() {
-		this.props.resetBreadcrumbs();
 	}
 
 	_checkSiteLoaded = ( event ) => {
@@ -244,6 +227,7 @@ class DeleteSite extends Component {
 				{ ! ( isUntangled && config.isEnabled( 'untangling/settings-i2' ) ) && (
 					<HeaderCakeBack icon="chevron-left" onClick={ this._goBack } />
 				) }
+				<FeatureBreadcrumb siteId={ siteId } title={ strings.deleteSite } />
 				<NavigationHeader
 					compactBreadcrumb={ false }
 					navigationItems={ [] }
