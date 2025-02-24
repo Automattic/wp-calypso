@@ -78,7 +78,6 @@ function StatsLineChart( {
 						withTooltips
 						withGradientFill
 						height={ height }
-						/** naturalCurve sometime goes off the grid :( */
 						margin={ { left: 15, top: 20, bottom: 20 } }
 						options={ {
 							yScale: {
@@ -93,7 +92,7 @@ function StatsLineChart( {
 								y: {
 									orientation: 'right',
 									tickFormat: formatViews,
-									numTicks: 4,
+									maxViews > 4 ? 4 : 1,
 								},
 							},
 						} }
