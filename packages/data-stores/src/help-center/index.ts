@@ -35,6 +35,7 @@ export const isSupportSession = () => {
 			!! document.querySelector( '#a8c-support-session-overlay' ) ||
 			// Atomic
 			document.body.classList.contains( 'support-session' ) ||
+			document.querySelector( '#wpcom > .is-support-session' ) ||
 			// Our failover last hope, don't re-open when proxied.
 			window.helpCenterData?.isProxied
 		);
