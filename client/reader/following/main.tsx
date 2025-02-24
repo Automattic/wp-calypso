@@ -4,6 +4,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
 import withDimensions from 'calypso/lib/with-dimensions';
+import QuickPostInput from 'calypso/reader/components/quick-post-input';
 import ReaderOnboarding from 'calypso/reader/onboarding';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import ReaderStream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
@@ -52,6 +53,7 @@ function FollowingStream( { ...props } ) {
 					>
 						<ViewToggle />
 					</NavigationHeader>
+					<QuickPostInput />
 					<ReaderOnboarding />
 				</ReaderStream>
 			) }

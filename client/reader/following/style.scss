@@ -72,3 +72,12 @@
 		}
 	}
 }
+
+// Add spacing between quick post input and stream content
+.following .quick-post-input {
+	margin-bottom: 24px;
+	
+	@media (max-width: $break-small) {
+		margin-bottom: 16px;
+	}
+}

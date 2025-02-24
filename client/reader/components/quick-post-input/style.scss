@@ -1,0 +1,93 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.quick-post-input {
+	background: var( --color-surface );
+	border: 1px solid var( --color-neutral-10 );
+	border-radius: 4px;
+	margin-bottom: 24px;
+	padding: 16px;
+
+	&--loading {
+		text-align: center;
+		padding: 24px;
+	}
+
+	&__header {
+		color: var( --color-text-subtle );
+		font-size: $font-body-small;
+		margin-bottom: 8px;
+	}
+
+	&__fields {
+		margin-bottom: 16px;
+	}
+
+	&__site-select {
+		margin-bottom: 16px;
+		width: 100%;
+	}
+
+	.verbum-editor-wrapper {
+		border: 1px solid var( --color-neutral-10 );
+		border-radius: 4px;
+		overflow: visible;
+
+		.editor__header {
+			background: var( --color-surface );
+			border-bottom: 1px solid var( --color-neutral-10 );
+			padding: 8px;
+			position: relative !important;
+			top: 0 !important;
+			overflow: visible !important;
+
+			&.is-editing {
+				overflow: visible !important;
+			}
+		}
+
+		.editor__main {
+			background: var( --color-surface );
+			min-height: 150px;
+		}
+
+		.editor__block-canvas-container {
+			padding: 8px;
+		}
+
+		.block-editor-block-list__layout {
+			padding: 0;
+		}
+
+		.block-editor-default-block-appender__content {
+			margin-top: 0;
+		}
+
+		.block-editor-block-list__block {
+			margin: 0;
+		}
+	}
+
+	&__actions {
+		display: flex;
+		justify-content: flex-end;
+		gap: 8px;
+	}
+
+	&__cancel {
+		color: var( --color-text-subtle );
+	}
+
+	@media (max-width: $break-small) {
+		margin: 0 16px;
+		border-radius: 4px;
+
+		.quick-post-input__fields {
+			padding: 12px;
+		}
+
+		.quick-post-input__actions {
+			padding: 12px;
+		}
+	}
+} 
