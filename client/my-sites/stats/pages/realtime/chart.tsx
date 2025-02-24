@@ -149,7 +149,6 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 					withTooltips
 					withGradientFill
 					height={ 425 }
-					/** naturalCurve sometime goes off the grid :( */
 					margin={ { left: 15, top: 20, bottom: 20 } }
 					options={ {
 						yScale: {
