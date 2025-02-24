@@ -178,7 +178,6 @@ class StatModuleChartTabs extends Component {
 						height={ 200 }
 						moment={ moment }
 						formatTimeTick={ ( timestamp ) => formatDate( new Date( timestamp ), selectedPeriod ) }
-						maxViews={ Math.max( ...chartData.map( ( d ) => d.value ) ) }
 					/>
 				) }
 

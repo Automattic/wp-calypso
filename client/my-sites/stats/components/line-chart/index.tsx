@@ -2,11 +2,11 @@ import { LineChart, ThemeProvider, jetpackTheme } from '@automattic/charts';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
+import { useMemo } from 'react';
 import StatsEmptyState from '../../stats-empty-state';
 
 function StatsLineChart( {
 	chartData = [],
-	maxViews = 1,
 	formatTimeTick,
 	className,
 	height = 400,
@@ -19,7 +19,6 @@ function StatsLineChart( {
 		options: object;
 		data: Array< { date: Date; value: number } >;
 	} >;
-	maxViews?: number;
 	formatTimeTick?: ( value: number ) => string;
 	className?: string;
 	height?: number;
@@ -45,6 +44,14 @@ function StatsLineChart( {
 	};
 
 	const isEmpty = ( chartData?.[ 0 ].data || [] ).length === 0;
+
+	const maxViews = useMemo(
+		() =>
+			Math.max(
+				...chartData.map( ( serires ) => Math.max( ...serires.data.map( ( d ) => d.value ) ) )
+			),
+		[ chartData ]
+	);
 
 	return (
 		<div className={ clsx( 'stats-line-chart', className ) }>
@@ -76,7 +83,7 @@ function StatsLineChart( {
 								y: {
 									orientation: 'right',
 									tickFormat: formatViews,
-									numTicks: maxViews > 4 ? 4 : 1,
+									numTicks: 4,
 								},
 							},
 						} }
