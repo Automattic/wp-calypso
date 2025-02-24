@@ -2,9 +2,11 @@
  * @jest-environment jsdom
  */
 
+import config from '@automattic/calypso-config';
 import { PLAN_100_YEARS } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
 import React from 'react';
+import { hasPurchasedDomain } from 'calypso/state/purchases/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import EmptyDomainsListCard from '../empty-domains-list-card';
 
@@ -18,7 +20,7 @@ jest.mock( 'calypso/state/products-list/selectors', () => ( {
 } ) );
 
 jest.mock( 'calypso/state/purchases/selectors', () => ( {
-	hasPurchasedDomain: () => false,
+	hasPurchasedDomain: jest.fn().mockReturnValue( false ),
 } ) );
 
 // Mock QueryProductsList component to prevent actual API calls
@@ -26,6 +28,13 @@ jest.mock( 'calypso/components/data/query-products-list', () => {
 	return function MockQueryProductsList() {
 		return null;
 	};
+} );
+
+// Mock isEnabled to control feature flags
+jest.mock( '@automattic/calypso-config', () => {
+	const config = () => {};
+	config.isEnabled = jest.fn().mockReturnValue( false );
+	return config;
 } );
 
 describe( 'EmptyDomainsListCard', () => {
@@ -57,10 +66,10 @@ describe( 'EmptyDomainsListCard', () => {
 			expect( screen.getByText( 'Just search for a domain' ) ).toBeInTheDocument();
 		} );
 
-		it( 'returns null if site has no paid plan but has purchased domain', () => {
-			jest
-				.spyOn( require( 'calypso/state/purchases/selectors' ), 'hasPurchasedDomain' )
-				.mockReturnValue( true );
+		it( 'returns null if feature flag is enabled, site is on free plan, and site has purchased a domain', () => {
+			config.isEnabled.mockImplementation( ( flag: unknown ): boolean => {
+				return flag === 'domain-to-plan-credit';
+			} );
 
 			const selectedSite = {
 				plan: {
@@ -69,6 +78,8 @@ describe( 'EmptyDomainsListCard', () => {
 				slug: 'example.com',
 				ID: 1,
 			};
+
+			hasPurchasedDomain.mockReturnValue( true );
 
 			const { container } = renderWithProvider(
 				<EmptyDomainsListCard

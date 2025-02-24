@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_100_YEARS, domainProductSlugs, isFreePlan } from '@automattic/calypso-products';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import clsx from 'clsx';
@@ -41,7 +42,7 @@ function EmptyDomainsListCard( { selectedSite, hasDomainCredit, isCompact, hasNo
 	);
 	const domainProductCost = domainRegistrationProduct?.combined_cost_display;
 
-	if ( ! siteHasPaidPlan && siteHasPurchasedDomain ) {
+	if ( isEnabled( 'domain-to-plan-credit' ) && ! siteHasPaidPlan && siteHasPurchasedDomain ) {
 		return null;
 	}
 
