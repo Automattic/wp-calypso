@@ -117,7 +117,6 @@
 		"stats/chart-library": false,
 		"stats/empty-module-traffic": true,
 		"stats/empty-module-v2": true,
-		"subscribers-dataviews": true,
 		"themes/premium": true,
 		"untangling/settings-i2": true,
 		"upgrades/redirect-payments": true,
