@@ -92,7 +92,7 @@ function StatsLineChart( {
 								y: {
 									orientation: 'right',
 									tickFormat: formatViews,
-									numTicks: 4,
+									maxViews > 4 ? 4 : 1,
 								},
 							},
 						} }
