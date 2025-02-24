@@ -20,7 +20,7 @@ export type UserFields = {
 	 * Site ID of the site the user is currently on.
 	 */
 	messaging_site_id: string | number | null;
-	messaging_flow_name?: string | null;
+	messaging_flow?: string | null;
 };
 
 export type MessagingAuth = {
