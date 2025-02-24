@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 import PageSection from 'calypso/a8c-for-agencies/components/page-section';
 import { A4A_MIGRATIONS_PAYMENT_SETTINGS } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import FoldableFAQ from 'calypso/components/foldable-faq';
+import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -76,23 +77,25 @@ export default function MigrationsFAQs() {
 			question: translate( 'Are there any special offers for agencies moving multiple sites?' ),
 			answer: (
 				<>
-					{ translate(
-						"Receive %(amount)s for each site you migrate to Pressable or WordPress.com, up to %(maxAmount)s.* If you're a WP\u00A0Engine customer, we'll also credit the costs to set you free. {{a}}Full Terms ↗{{/a}}",
-						{
-							args: {
-								amount: formatCurrency( 100, 'USD' ),
-								maxAmount: formatCurrency( 10000, 'USD' ),
-							},
-							components: {
-								a: (
-									<a
-										href="https://automattic.com/for-agencies/program-incentives"
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						}
+					{ preventWidows(
+						translate(
+							"Receive %(amount)s for each site you migrate to Pressable or WordPress.com, up to %(maxAmount)s.* If you're a WP\u00A0Engine customer, we'll also credit the costs to set you free. {{a}}Full Terms ↗{{/a}}",
+							{
+								args: {
+									amount: formatCurrency( 100, 'USD' ),
+									maxAmount: formatCurrency( 10000, 'USD' ),
+								},
+								components: {
+									a: (
+										<a
+											href="https://automattic.com/for-agencies/program-incentives"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						)
 					) }
 					<br />
 					<br />
