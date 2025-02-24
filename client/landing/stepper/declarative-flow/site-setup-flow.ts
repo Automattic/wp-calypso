@@ -1,3 +1,4 @@
+import configApi from '@automattic/calypso-config';
 import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from 'react';
@@ -167,6 +168,16 @@ const siteSetupFlow: FlowV1 = {
 			);
 		};
 
+		const getEnableFeaturesForGoals = () => {
+			const featuresForGoals: Onboard.SiteGoal[] = [];
+
+			if ( configApi.isEnabled( 'onboarding/enable-write-goal-features' ) ) {
+				featuresForGoals.push( Onboard.SiteGoal.Write );
+			}
+
+			return featuresForGoals.length > 0 ? featuresForGoals : undefined;
+		};
+
 		const exitFlow = ( to: string, options: ExitFlowOptions = {} ) => {
 			setPendingAction( () => {
 				/**
@@ -222,6 +233,15 @@ const siteSetupFlow: FlowV1 = {
 					}
 
 					formData.push( [ 'settings', JSON.stringify( settings ) ] );
+
+					const enableFeaturesForGoals = getEnableFeaturesForGoals();
+
+					if ( enableFeaturesForGoals ) {
+						formData.push( [
+							'enable_features_for_goals',
+							JSON.stringify( enableFeaturesForGoals ),
+						] );
+					}
 
 					pendingActions.push(
 						wpcomRequest( {
