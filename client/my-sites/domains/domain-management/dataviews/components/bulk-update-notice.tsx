@@ -2,9 +2,47 @@ import { StatusPopover } from '@automattic/domains-table/src/status-popover';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
-import Notice from 'calypso/components/notice'; //eslint-disable-line no-restricted-imports
+import Notice, { NoticeStatus } from 'calypso/components/notice'; //eslint-disable-line no-restricted-imports
 import NoticeAction from 'calypso/components/notice/notice-action'; //eslint-disable-line no-restricted-imports
 import { useDomainsDataViewsContext } from '../use-context';
+
+const NoticeWithDetails = ( {
+	status,
+	message,
+	domains,
+	jobId,
+	handleDismissNotice,
+}: {
+	status: NoticeStatus;
+	message: string;
+	domains: Array< string >;
+	jobId: string;
+	handleDismissNotice: ( jobId: string ) => void;
+} ) => {
+	const translate = useTranslate();
+
+	return (
+		<Notice
+			key={ jobId }
+			status={ status }
+			text={ message }
+			onDismissClick={ () => handleDismissNotice( jobId ) }
+		>
+			<StatusPopover
+				position="bottom"
+				popoverTargetElement={
+					<NoticeAction href="#">{ translate( 'Domains list' ) } </NoticeAction>
+				}
+			>
+				<div className="domains-table-bulk-actions-notice-popover">
+					{ domains.map( ( domain ) => (
+						<p key={ domain }> { domain } </p>
+					) ) }
+				</div>
+			</StatusPopover>
+		</Notice>
+	);
+};
 
 export const BulkUpdateNotice = () => {
 	const translate = useTranslate();
@@ -33,25 +71,14 @@ export const BulkUpdateNotice = () => {
 		.map( ( job ) => {
 			if ( job.failed.length ) {
 				return (
-					<Notice
+					<NoticeWithDetails
 						key={ job.id }
 						status="is-error"
-						text={ translate( 'Some domain updates were not successful.' ) }
-						onDismissClick={ () => handleDismissNotice( job.id ) }
-					>
-						<StatusPopover
-							position="bottom"
-							popoverTargetElement={
-								<NoticeAction href="#">{ translate( 'See failures' ) } </NoticeAction>
-							}
-						>
-							<div className="domains-table-bulk-actions-notice-popover">
-								{ job.failed.map( ( domain ) => (
-									<p key={ domain }> { domain } </p>
-								) ) }
-							</div>
-						</StatusPopover>
-					</Notice>
+						message={ translate( 'Some domain updates were not successful.' ) }
+						domains={ job.failed }
+						jobId={ job.id }
+						handleDismissNotice={ handleDismissNotice }
+					/>
 				);
 			}
 
@@ -61,13 +88,14 @@ export const BulkUpdateNotice = () => {
 					: translate( 'Domain update finished successfully.' );
 
 			return (
-				<Notice
+				<NoticeWithDetails
 					key={ job.id }
 					status="is-success"
-					onDismissClick={ () => handleDismissNotice( job.id ) }
-				>
-					{ message }
-				</Notice>
+					message={ message }
+					domains={ job.success }
+					jobId={ job.id }
+					handleDismissNotice={ handleDismissNotice }
+				/>
 			);
 		} );
 };
