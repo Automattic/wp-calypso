@@ -34,12 +34,13 @@ export const transferStates = {
 
 interface UseWaitForAtomicProps {
 	handleTransferFailure?: ( failureInfo: FailureInfo ) => void;
+	siteId?: number;
 }
 
 export const useWaitForAtomic = ( {
 	handleTransferFailure,
 	siteId: providedSiteId,
-}: UseWaitForAtomicProps & { siteId?: number } ) => {
+}: UseWaitForAtomicProps ) => {
 	const [ searchParams ] = useSearchParams();
 	const reduxDispatch = useReduxDispatch();
 
