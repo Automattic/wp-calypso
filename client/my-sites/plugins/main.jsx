@@ -5,7 +5,6 @@ import {
 } from '@automattic/calypso-products/src';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
-import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
 import { Icon, upload } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -23,7 +22,6 @@ import urlSearch from 'calypso/lib/url-search';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { appendBreadcrumb, updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
-import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import {
 	getPlugins,
 	isRequestingForSites,
@@ -36,15 +34,10 @@ import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
-import getUpdateableJetpackSites from 'calypso/state/selectors/get-updateable-jetpack-sites';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import {
-	canJetpackSiteUpdateFiles,
-	isJetpackSite,
-	isRequestingSites,
-} from 'calypso/state/sites/selectors';
+import { isJetpackSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -56,13 +49,6 @@ import PluginsList from './plugins-list';
 import './style.scss';
 
 export class PluginsMain extends Component {
-	constructor( props ) {
-		super( props );
-		this.state = {
-			isMobile: isWithinBreakpoint( '<960px' ),
-		};
-	}
-
 	componentDidUpdate( prevProps ) {
 		const {
 			hasJetpackSites: hasJpSites,
@@ -108,15 +94,6 @@ export class PluginsMain extends Component {
 
 	componentDidMount() {
 		this.resetBreadcrumbs();
-
-		// Change the isMobile state when the size of the browser changes.
-		this.unsubscribe = subscribeIsWithinBreakpoint( '<960px', ( isMobile ) => {
-			this.setState( { isMobile } );
-		} );
-	}
-
-	componentWillUnmount() {
-		this.unsubscribe();
 	}
 
 	resetBreadcrumbs() {
@@ -146,38 +123,6 @@ export class PluginsMain extends Component {
 		return this.addWporgDataToPlugins( this.props.currentPlugins );
 	}
 
-	getFilters() {
-		const { translate, search } = this.props;
-		const siteFilter = `${ this.props.selectedSiteSlug ? '/' + this.props.selectedSiteSlug : '' }${
-			search ? '?s=' + search : ''
-		}`;
-
-		return [
-			{
-				title: isWithinBreakpoint( '<480px' )
-					? translate( 'All Plugins', { context: 'Filter label for plugins list' } )
-					: translate( 'All', { context: 'Filter label for plugins list' } ),
-				path: '/plugins/manage' + siteFilter,
-				id: 'all',
-			},
-			{
-				title: translate( 'Active', { context: 'Filter label for plugins list' } ),
-				path: '/plugins/active' + siteFilter,
-				id: 'active',
-			},
-			{
-				title: translate( 'Inactive', { context: 'Filter label for plugins list' } ),
-				path: '/plugins/inactive' + siteFilter,
-				id: 'inactive',
-			},
-			{
-				title: translate( 'Updates', { context: 'Filter label for plugins list' } ),
-				path: '/plugins/updates' + siteFilter,
-				id: 'updates',
-			},
-		];
-	}
-
 	// plugins for Jetpack sites require additional data from the wporg-data store
 	addWporgDataToPlugins( plugins ) {
 		return plugins.map( ( plugin ) => {
@@ -186,115 +131,8 @@ export class PluginsMain extends Component {
 		} );
 	}
 
-	matchSearchTerms( search, plugin ) {
-		search = search.toLowerCase();
-		return [ 'name', 'description', 'author' ].some(
-			( attribute ) =>
-				plugin[ attribute ] && plugin[ attribute ].toLowerCase().indexOf( search ) !== -1
-		);
-	}
-
 	isFetchingPlugins() {
 		return this.props.requestingPluginsForSites;
-	}
-
-	getPluginCount( filterId ) {
-		let count;
-		if ( 'updates' === filterId ) {
-			count = this.props.pluginUpdateCount;
-		}
-		if ( 'all' === filterId ) {
-			count = this.props.allPluginsCount;
-		}
-		if ( this.props.requestingPluginsForSites && ! count ) {
-			return undefined;
-		}
-		return count;
-	}
-
-	getEmptyContentUpdateData() {
-		const { translate } = this.props;
-		const emptyContentData = { illustration: '/calypso/images/illustrations/illustration-ok.svg' };
-		const { selectedSite } = this.props;
-
-		if ( selectedSite ) {
-			emptyContentData.title = translate(
-				'All plugins on %(siteName)s are {{span}}up to date.{{/span}}',
-				{
-					textOnly: true,
-					args: { siteName: selectedSite.title },
-					components: { span: <span className="plugins__plugin-list-state" /> },
-					comment: 'The span tags prevents single words from showing on a single line.',
-				}
-			);
-		} else {
-			emptyContentData.title = translate( 'All plugins are up to date.', { textOnly: true } );
-		}
-
-		if ( this.getUpdatesTabVisibility() ) {
-			return emptyContentData;
-		}
-
-		emptyContentData.action = translate( 'All Plugins', { textOnly: true } );
-
-		if ( selectedSite ) {
-			emptyContentData.actionURL = '/plugins/' + selectedSite.slug;
-			if ( this.props.selectedSiteIsJetpack ) {
-				emptyContentData.illustration = '/calypso/images/illustrations/illustration-jetpack.svg';
-				emptyContentData.title = translate( "Plugins can't be updated on %(siteName)s.", {
-					textOnly: true,
-					args: { siteName: selectedSite.title },
-				} );
-			} else {
-				// buisness plan sites
-				emptyContentData.title = translate( 'Plugins are updated automatically on %(siteName)s.', {
-					textOnly: true,
-					args: { siteName: selectedSite.title },
-				} );
-			}
-		} else {
-			emptyContentData.title = translate( 'No updates are available.', { textOnly: true } );
-			emptyContentData.illustration =
-				'/calypso/images/illustrations/illustration-empty-results.svg';
-			emptyContentData.actionURL = '/plugins';
-		}
-
-		return emptyContentData;
-	}
-
-	getEmptyContentData() {
-		const { filter } = this.props;
-		if ( filter === 'update' ) {
-			return this.getEmptyContentUpdateData();
-		}
-
-		const { translate } = this.props;
-		const illustration = '/calypso/images/illustrations/illustration-empty-results.svg';
-		if ( filter === 'active' ) {
-			return {
-				title: translate( 'No plugins are active.', { textOnly: true } ),
-				illustration,
-			};
-		}
-
-		if ( filter === 'inactive' ) {
-			return {
-				title: translate( 'No plugins are inactive.', { textOnly: true } ),
-				illustration,
-			};
-		}
-
-		return null;
-	}
-
-	getUpdatesTabVisibility() {
-		const { selectedSite, updateableJetpackSites } = this.props;
-
-		if ( selectedSite ) {
-			return this.props.selectedSiteIsJetpack && this.props.canSelectedJetpackSiteUpdateFiles;
-		}
-
-		return updateableJetpackSites.length > 0;
 	}
 
 	shouldShowPluginListPlaceholders() {
@@ -479,8 +317,6 @@ export default flow(
 				siteHasFeature( state, selectedSiteId, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS ) ||
 				jetpackNonAtomic;
 
-			const breadcrumbs = getBreadcrumbs( state );
-
 			return {
 				hasJetpackSites: hasJetpackSites( state ),
 				sites,
@@ -490,15 +326,11 @@ export default flow(
 				selectedSiteSlug: getSelectedSiteSlug( state ),
 				selectedSiteIsJetpack: selectedSite && isJetpackSite( state, selectedSiteId ),
 				siteIds,
-				canSelectedJetpackSiteUpdateFiles:
-					selectedSite && canJetpackSiteUpdateFiles( state, selectedSiteId ),
 				wporgPlugins: getAllWporgPlugins( state ),
 				isRequestingSites: isRequestingSites( state ),
 				currentPlugins: pluginsWithUpdatesAndStatuses,
-				allPluginsCount: allPlugins && allPlugins.length,
 				requestingPluginsForSites:
 					isRequestingForSites( state, siteIds ) || isRequestingForAllSites( state ),
-				updateableJetpackSites: getUpdateableJetpackSites( state ),
 				userCanManagePlugins: selectedSiteId
 					? canCurrentUser( state, selectedSiteId, 'manage_options' )
 					: canCurrentUserManagePlugins( state ),
@@ -506,9 +338,7 @@ export default flow(
 				hasUploadPlugins: hasUploadPlugins,
 				hasInstallPurchasedPlugins: hasInstallPurchasedPlugins,
 				isJetpackCloud,
-				breadcrumbs,
 				requestPluginsError: requestPluginsError( state ),
-				pluginUpdateCount: 0,
 			};
 		},
 		{
