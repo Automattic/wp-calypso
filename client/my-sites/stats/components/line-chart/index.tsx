@@ -39,16 +39,16 @@ function StatsLineChart( {
 				} );
 		  };
 
-	const formatViews = ( value: number ) => {
+	const formatValue = ( value: number ) => {
 		return value.toFixed( 0 ).toString();
 	};
 
 	const isEmpty = ( chartData?.[ 0 ].data || [] ).length === 0;
 
-	const maxViews = useMemo(
+	const maxValue = useMemo(
 		() =>
 			Math.max(
-				...chartData.map( ( serires ) => Math.max( ...serires.data.map( ( d ) => d.value ) ) )
+				...chartData.map( ( series ) => Math.max( ...series.data.map( ( d ) => d.value ) ) )
 			),
 		[ chartData ]
 	);
@@ -82,7 +82,7 @@ function StatsLineChart( {
 						options={ {
 							yScale: {
 								type: 'linear',
-								...( fixedDomain && { domain: [ 0, maxViews ] } ),
+								...( fixedDomain && { domain: [ 0, maxValue ] } ),
 								zero: zeroBaseline,
 							},
 							axis: {
@@ -91,8 +91,8 @@ function StatsLineChart( {
 								},
 								y: {
 									orientation: 'right',
-									tickFormat: formatViews,
-									numTicks: maxViews > 4 ? 4 : 1,
+									tickFormat: formatValue,
+									numTicks: maxValue > 4 ? 4 : 1,
 								},
 							},
 						} }
