@@ -113,8 +113,8 @@ export default function ProcessingScreen( props: ProcessingScreenProps ) {
 	/**
 	 * Completion progress: 0 <= progress <= 1
 	 */
-	const progress = ( currentStep + 1 ) / totalSteps;
-	const isComplete = progress >= 1;
+	const progress = ( ( currentStep + 1 ) / totalSteps ) * 100;
+	const isComplete = progress >= 100;
 
 	useInterval(
 		() => setCurrentStep( ( s ) => s + 1 ),
@@ -129,41 +129,26 @@ export default function ProcessingScreen( props: ProcessingScreenProps ) {
 		return () => clearTimeout( id );
 	}, [] );
 
+	const progressValue = ! hasStarted ? /* initial 10% progress */ 10 : progress;
+
 	return (
 		<div
 			className={ clsx( 'processing-screen', {
 				'is-force-centered': shouldShowNewSpinner && totalSteps === 0,
 			} ) }
 		>
-			{ shouldShowNewSpinner && (
-				<Loading title={ steps.current[ currentStep ]?.title } progress={ progress * 100 } />
-			) }
-			{ ! shouldShowNewSpinner && (
-				<>
-					<h1 className="processing-screen__progress-step">
-						{ steps.current[ currentStep ]?.title }
-					</h1>
-					<div
-						className="processing-screen__progress-bar"
-						style={
-							{
-								'--progress': ! hasStarted ? /* initial 10% progress */ 0.1 : progress,
-							} as React.CSSProperties
-						}
-					/>
-					{ totalSteps > 1 && (
-						<p className="processing-screen__progress-numbered-steps">
-							{
-								// translators: these are progress steps. Eg: step 1 of 4.
-								sprintf( __( 'Step %(currentStep)d of %(totalSteps)d' ), {
-									currentStep: currentStep + 1,
-									totalSteps,
-								} )
-							}
-						</p>
-					) }
-				</>
-			) }
+			<Loading
+				title={ steps.current[ currentStep ]?.title }
+				progress={ progressValue }
+				subtitle={
+					totalSteps > 1 &&
+					// translators: these are progress steps. Eg: step 1 of 4.
+					sprintf( __( 'Step %(currentStep)d of %(totalSteps)d' ), {
+						currentStep: currentStep + 1,
+						totalSteps,
+					} )
+				}
+			/>
 		</div>
 	);
 }
