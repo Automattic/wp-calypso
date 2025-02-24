@@ -24,8 +24,8 @@ import './style.scss';
 loadBlocksWithCustomizations();
 loadTextFormatting();
 
-// Create an initial empty paragraph block
-const initialBlock = serialize( [ createBlock( 'core/paragraph', { content: '' } ) ] );
+// Create a function to generate an empty block
+const createEmptyBlock = () => serialize( [ createBlock( 'core/paragraph', { content: '' } ) ] );
 
 interface Post {
 	ID: number;
@@ -45,7 +45,8 @@ export default function QuickPostInput() {
 	const dispatch = useDispatch();
 	const locale = useLocale();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
-	const [ postContent, setPostContent ] = useState( initialBlock );
+	const [ postContent, setPostContent ] = useState( createEmptyBlock() );
+	const [ editorKey, setEditorKey ] = useState( 0 );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const [ isRefreshing, setIsRefreshing ] = useState( false );
 	const sites = useSelector( getSites ).filter( ( site ): site is SiteDetails => site !== null );
@@ -59,6 +60,11 @@ export default function QuickPostInput() {
 			setSelectedSiteId( sites[ 0 ].ID );
 		}
 	}, [ hasLoaded, sites, selectedSiteId ] );
+
+	const clearEditor = () => {
+		setPostContent( createEmptyBlock() );
+		setEditorKey( ( key ) => key + 1 );
+	};
 
 	const handleSubmit = () => {
 		if ( ! postContent.trim() || ! selectedSiteId || isSubmitting ) {
@@ -78,7 +84,6 @@ export default function QuickPostInput() {
 			} )
 			.then( ( newPost: Post ) => {
 				recordReaderTracksEvent( 'calypso_reader_quick_post_submitted' );
-				setPostContent( initialBlock );
 
 				// Wait for post to appear in feed before refreshing
 				let attempts = 0;
@@ -106,6 +111,7 @@ export default function QuickPostInput() {
 								// eslint-disable-next-line @typescript-eslint/no-explicit-any
 								dispatch( requestPage( { streamKey: 'following' } as any ) );
 								setIsRefreshing( false );
+								clearEditor();
 							} else if ( attempts < maxAttempts ) {
 								// Check again in 1 second if we haven't hit the limit
 								setTimeout( checkFeedAndRefresh, 1000 );
@@ -137,7 +143,7 @@ export default function QuickPostInput() {
 	};
 
 	const handleCancel = () => {
-		setPostContent( initialBlock );
+		clearEditor();
 	};
 
 	const handleSiteChange = ( event: ChangeEvent< HTMLSelectElement > ) => {
@@ -186,6 +192,7 @@ export default function QuickPostInput() {
 				</FormSelect>
 				<div className="verbum-editor-wrapper" ref={ editorRef }>
 					<Editor
+						key={ editorKey }
 						initialContent={ postContent }
 						onChange={ setPostContent }
 						isRTL={ isLocaleRtl( locale ) ?? false }
