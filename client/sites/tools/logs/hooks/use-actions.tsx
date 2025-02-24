@@ -71,32 +71,32 @@ const useActions = ( { logType, isLoading }: { logType: LogType; isLoading: bool
 								<div className="site-logs-details-modal__field-title">
 									{
 										// translators: %s is the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
-										translate( 'Date & time (%(siteGsmOffsetDisplay)s):', {
+										translate( 'DATE & TIME (%(siteGsmOffsetDisplay)s)', {
 											args: { siteGsmOffsetDisplay },
 										} )
 									}
 								</div>
 								<div>{ getFormattedDate( item.timestamp ) }</div>
 								<div className="site-logs-details-modal__field-title">
-									{ translate( 'Severity:' ) }
+									{ translate( 'SEVERITY' ) }
 								</div>
 								<div>
 									<Badge className={ `badge--${ item.severity }` }>{ item.severity }</Badge>
 								</div>
 								<div className="site-logs-details-modal__field-title">
-									{ translate( 'Message:' ) }
+									{ translate( 'MESSAGE' ) }
 								</div>
 								<div>{ item.message }</div>
-								<div className="site-logs-details-modal__field-title">{ translate( 'Kind:' ) }</div>
+								<div className="site-logs-details-modal__field-title">{ translate( 'KIND' ) }</div>
 								<div>{ item.kind }</div>
-								<div className="site-logs-details-modal__field-title">{ translate( 'Name:' ) }</div>
+								<div className="site-logs-details-modal__field-title">{ translate( 'NAME' ) }</div>
 								<div>{ item.name }</div>
-								<div className="site-logs-details-modal__field-title">{ translate( 'File:' ) }</div>
+								<div className="site-logs-details-modal__field-title">{ translate( 'FILE' ) }</div>
 								<div>{ item.file }</div>
-								<div className="site-logs-details-modal__field-title">{ translate( 'Line:' ) }</div>
+								<div className="site-logs-details-modal__field-title">{ translate( 'LINE' ) }</div>
 								<div>{ numberFormat( item.line ) }</div>
 								<div className="site-logs-details-modal__field-title">
-									{ translate( 'Atomic Site ID:' ) }
+									{ translate( 'ATOMIC SITE ID' ) }
 								</div>
 								<div>{ item.atomic_site_id }</div>
 							</div>
@@ -133,77 +133,75 @@ const useActions = ( { logType, isLoading }: { logType: LogType; isLoading: bool
 							<div className="site-logs-details-modal__field-title">
 								{
 									// translators: %s is the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
-									translate( 'Date & time (%(siteGsmOffsetDisplay)s):', {
+									translate( 'DATE & TIME (%(siteGsmOffsetDisplay)s)', {
 										args: { siteGsmOffsetDisplay },
 									} )
 								}
 							</div>
 							<div>{ getFormattedDate( item.date ) }</div>
 							<div className="site-logs-details-modal__field-title">
-								{ translate( 'Request type:' ) }
+								{ translate( 'REQUEST TYPE' ) }
 							</div>
 							<div>
 								<Badge className={ `badge--${ item.request_type }` }>{ item.request_type }</Badge>
 							</div>
 							<div className="site-logs-details-modal__field-title">
-								{ translate( 'HTTP Status:' ) }
+								{ translate( 'HTTP STATUS' ) }
 							</div>
 							<div>{ item.status }</div>
 							<div className="site-logs-details-modal__field-title">
-								{ translate( 'Request URL:' ) }
+								{ translate( 'REQUEST URL' ) }
 							</div>
 							<div>{ item.request_url }</div>
 							<div className="site-logs-details-modal__field-title">
-								{ translate( 'Body bytes sent:' ) }
+								{ translate( 'BODY BYTES SENT' ) }
 							</div>
 							<div>{ numberFormat( item.body_bytes_sent ) }</div>
-							<div className="site-logs-details-modal__field-title">{ translate( 'Cached:' ) }</div>
+							<div className="site-logs-details-modal__field-title">{ translate( 'CACHED' ) }</div>
 							<div>{ item.cached }</div>
 							<div className="site-logs-details-modal__field-title">
-								{ translate( 'HTTP Host:' ) }
+								{ translate( 'HTTP HOST' ) }
 							</div>
 							<div>{ item.http_host }</div>
 							<div className="site-logs-details-modal__field-title">
-								{ translate( 'HTTP Referrer:' ) }
+								{ translate( 'HTTP REFERRER' ) }
 							</div>
 							<div>{ item.http_referer }</div>
-							<div className="site-logs-details-modal__field-title">{ translate( 'HTTP/2:' ) }</div>
+							<div className="site-logs-details-modal__field-title">{ translate( 'HTTP/2' ) }</div>
 							<div>{ item.http2 }</div>
 							<div className="site-logs-details-modal__field-title">
-								{ translate( 'User Agent:' ) }
+								{ translate( 'User AGENT' ) }
 							</div>
 							<div>{ item.http_user_agent }</div>
 							<div className="site-logs-details-modal__field-title">
-								{ translate( 'HTTP Version:' ) }
+								{ translate( 'HTTP VERSION' ) }
 							</div>
 							<div>{ item.http_version }</div>
 							<div className="site-logs-details-modal__field-title">
-								{ translate( 'X-Forwarded-For:' ) }
+								{ translate( 'X-FORWARDED-FOR' ) }
 							</div>
 							<div>{ item.http_x_forwarded_for }</div>
 							<div className="site-logs-details-modal__field-title">
-								{ translate( 'Renderer:' ) }
+								{ translate( 'RENDERER' ) }
 							</div>
 							<div>{ item.renderer }</div>
 							<div className="site-logs-details-modal__field-title">
-								{ translate( 'Request Completion:' ) }
+								{ translate( 'REQUEST COMPLETION' ) }
 							</div>
 							<div>{ item.request_completion }</div>
 							<div className="site-logs-details-modal__field-title">
-								{ translate( 'Request Time:' ) }
+								{ translate( 'REQUEST TIME' ) }
 							</div>
 							<div>{ item.request_time }</div>
-							<div className="site-logs-details-modal__field-title">{ translate( 'Scheme:' ) }</div>
+							<div className="site-logs-details-modal__field-title">{ translate( 'SCHEME' ) }</div>
 							<div>{ item.scheme }</div>
 							<div className="site-logs-details-modal__field-title">
-								{ translate( 'Timestamp:' ) }
+								{ translate( 'TIMESTAMP' ) }
 							</div>
 							<div>{ item.timestamp }</div>
-							<div className="site-logs-details-modal__field-title">{ translate( 'Type:' ) }</div>
+							<div className="site-logs-details-modal__field-title">{ translate( 'TYPE' ) }</div>
 							<div>{ item.type }</div>
-							<div className="site-logs-details-modal__field-title">
-								{ translate( 'User IP:' ) }
-							</div>
+							<div className="site-logs-details-modal__field-title">{ translate( 'USER IP' ) }</div>
 							<div>{ item.user_ip }</div>
 						</div>
 					);
