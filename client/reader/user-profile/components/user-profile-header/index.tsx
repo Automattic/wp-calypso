@@ -18,17 +18,20 @@ interface UserProfileHeaderProps {
 const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
 	const translate = useTranslate();
 	const currentPath = page.current;
-	const userProfileUrl = getUserProfileUrl( user.user_login ?? '' );
+	const userProfileUrlWithUsername = getUserProfileUrl( user.user_login ?? '' );
+	const userProfileUrlWithId = getUserProfileUrl( user.ID.toString() );
 	const navigationItems = [
 		{
 			label: translate( 'Posts' ),
-			path: userProfileUrl,
-			selected: currentPath === userProfileUrl,
+			path: userProfileUrlWithUsername,
+			selected: currentPath === userProfileUrlWithUsername || currentPath === userProfileUrlWithId,
 		},
 		{
 			label: translate( 'Lists' ),
-			path: `${ userProfileUrl }/lists`,
-			selected: currentPath === `${ userProfileUrl }/lists`,
+			path: `${ userProfileUrlWithUsername }/lists`,
+			selected:
+				currentPath === `${ userProfileUrlWithUsername }/lists` ||
+				currentPath === `${ userProfileUrlWithId }/lists`,
 		},
 	];
 
