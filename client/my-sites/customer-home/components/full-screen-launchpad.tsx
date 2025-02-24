@@ -24,6 +24,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
 import { useLaunchpad } from '../cards/launchpad/use-launchpad';
 import { useLaunchpadContext } from '../cards/launchpad/utils';
+import { useCompleteNonLaunchpadTasks } from './use-complete-non-launchpad-checklists';
 import './full-screen-launchpad.scss';
 
 export const FullScreenLaunchpad = ( {
@@ -106,6 +107,8 @@ export const FullScreenLaunchpad = ( {
 	const {
 		data: { checklist },
 	} = useSortedLaunchpadTasks( siteSlug, checklistSlug, launchpadContext );
+
+	useCompleteNonLaunchpadTasks( siteId, checklist || undefined );
 
 	if ( isDismissed ) {
 		return null;
