@@ -4,12 +4,14 @@ interface Params {
 	locale: string;
 	options?: Intl.NumberFormatOptions;
 	fallbackLocale?: string;
+	retries?: number;
 }
 
 export function getCachedFormatter( {
 	locale,
 	fallbackLocale = 'en',
 	options,
+	retries = 1,
 }: Params ): Intl.NumberFormat {
 	const cacheKey = JSON.stringify( [ locale, options ] );
 
@@ -25,9 +27,14 @@ export function getCachedFormatter( {
 			`Intl.NumberFormat was called with a non-existent locale "${ locale }"; falling back to ${ fallbackLocale }`
 		);
 
-		return getCachedFormatter( {
-			locale: fallbackLocale,
-			options,
-		} );
+		if ( retries ) {
+			return getCachedFormatter( {
+				locale: fallbackLocale,
+				options,
+				retries: retries - 1,
+			} );
+		}
+
+		throw error;
 	}
 }

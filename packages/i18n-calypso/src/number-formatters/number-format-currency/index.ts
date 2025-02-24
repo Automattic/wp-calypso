@@ -11,7 +11,7 @@ function getCurrencyOverride(
 	currency: string,
 	geoLocation?: string
 ): CurrencyOverride | undefined {
-	if ( currency === 'USD' && geoLocation !== '' && geoLocation !== 'US' ) {
+	if ( currency === 'USD' && geoLocation && geoLocation !== '' && geoLocation !== 'US' ) {
 		return { symbol: 'US$' };
 	}
 	return defaultCurrencyOverrides[ currency ];
@@ -25,7 +25,7 @@ function getValidCurrency( currency: string, geoLocation?: string ): string {
 	if ( ! getCurrencyOverride( currency, geoLocation ) ) {
 		// eslint-disable-next-line no-console
 		console.warn(
-			`getCurrencyObject was called with a non-existent currency "${ currency }"; falling back to ${ FALLBACK_CURRENCY }`
+			`getValidCurrency was called with a non-existent currency "${ currency }"; falling back to ${ FALLBACK_CURRENCY }`
 		);
 		return FALLBACK_CURRENCY;
 	}
@@ -81,9 +81,10 @@ function getCurrencyFormatter( {
 
 function getPrecisionForLocaleAndCurrency(
 	browserSafeLocale: string,
-	currency: string
+	currency: string,
+	forceLatin?: boolean
 ): number | undefined {
-	const formatter = getCurrencyFormatter( { number: 0, currency, browserSafeLocale } );
+	const formatter = getCurrencyFormatter( { number: 0, currency, browserSafeLocale, forceLatin } );
 	/**
 	 * For regular numbers, the default is 3 if neither `minimumFractionDigits` or `maximumFractionDigits` are set,
 	 * otherwise the greatest betweem `minimumFractionDigits` and 3.
@@ -175,7 +176,11 @@ const numberFormatCurrency: NumberFormatCurrency = ( {
 } ) => {
 	const validCurrency = getValidCurrency( currency, geoLocation );
 	const currencyOverride = getCurrencyOverride( validCurrency, geoLocation );
-	const currencyPrecision = getPrecisionForLocaleAndCurrency( browserSafeLocale, validCurrency );
+	const currencyPrecision = getPrecisionForLocaleAndCurrency(
+		browserSafeLocale,
+		validCurrency,
+		forceLatin
+	);
 
 	if ( isSmallestUnit && typeof currencyPrecision === 'undefined' ) {
 		throw new Error(
