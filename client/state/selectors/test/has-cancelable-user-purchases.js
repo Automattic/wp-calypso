@@ -98,9 +98,7 @@ describe( 'hasCancelableUserPurchases', () => {
 				hasLoadedUserPurchasesFromServer: false,
 			},
 			memberships: {
-				subscriptions: {
-					items: [],
-				},
+				subscriptions: null,
 			},
 		} );
 

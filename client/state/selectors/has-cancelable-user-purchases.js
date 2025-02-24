@@ -14,16 +14,16 @@ export const hasCancelableUserPurchases = ( state ) => {
 	const purchases = getUserPurchases( state );
 	const subscriptions = getAllSubscriptions( state );
 
-	const hasRefundablePurchases =
-		purchases &&
-		purchases.some(
-			( purchase ) => purchase.isRefundable || purchase.productSlug !== 'premium_theme'
-		);
-	const hasRenewableSubscriptions =
-		subscriptions &&
-		subscriptions.some(
-			( subscription ) => subscription.status === 'active' && subscription.is_renewable
-		);
+	if ( ! purchases || ! subscriptions ) {
+		return null;
+	}
+
+	const hasRefundablePurchases = purchases.some(
+		( purchase ) => purchase.isRefundable || purchase.productSlug !== 'premium_theme'
+	);
+	const hasRenewableSubscriptions = subscriptions.some(
+		( subscription ) => subscription.status === 'active' && subscription.is_renewable
+	);
 
 	return hasRefundablePurchases || hasRenewableSubscriptions;
 };
