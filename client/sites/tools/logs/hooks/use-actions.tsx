@@ -1,6 +1,6 @@
 import { Badge } from '@automattic/components';
 import { copy } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, numberFormat } from 'i18n-calypso';
 import moment from 'moment';
 import { useMemo } from 'react';
 import { LogType, ServerLog, PHPLog } from 'calypso/data/hosting/use-site-logs-query';
@@ -156,7 +156,7 @@ const useActions = ( { logType, isLoading }: { logType: LogType; isLoading: bool
 							<div className="site-logs-details-modal__field-title">
 								{ translate( 'Body bytes sent:' ) }
 							</div>
-							<div>{ item.body_bytes_sent }</div>
+							<div>{ numberFormat( item.body_bytes_sent ) }</div>
 							<div className="site-logs-details-modal__field-title">{ translate( 'Cached:' ) }</div>
 							<div>{ item.cached }</div>
 							<div className="site-logs-details-modal__field-title">
