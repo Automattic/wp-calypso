@@ -1,22 +1,23 @@
 import { Button, Spinner } from '@automattic/components';
-import type { SiteDetails } from '@automattic/data-stores';
+import { isLocaleRtl, useLocale } from '@automattic/i18n-utils';
 import {
 	Editor,
 	loadBlocksWithCustomizations,
 	loadTextFormatting,
 } from '@automattic/verbum-block-editor';
+import { createBlock, serialize } from '@wordpress/blocks';
 import { useTranslate } from 'i18n-calypso';
-import { isLocaleRtl, useLocale } from '@automattic/i18n-utils';
 import { ChangeEvent, useEffect, useState, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import FormSelect from 'calypso/components/forms/form-select';
 import wpcom from 'calypso/lib/wp';
+import { useDispatch } from 'calypso/state';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
+import { requestPage, clearStream } from 'calypso/state/reader/streams/actions';
 import getSites from 'calypso/state/selectors/get-sites';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
-import { createBlock, serialize } from '@wordpress/blocks';
-import { clearStream, requestPage } from 'calypso/state/reader/streams/actions';
-import { AnyAction } from 'redux';
+import type { SiteDetails } from '@automattic/data-stores';
+
 import './style.scss';
 
 // Initialize the editor blocks and text formatting
@@ -25,6 +26,19 @@ loadTextFormatting();
 
 // Create an initial empty paragraph block
 const initialBlock = serialize( [ createBlock( 'core/paragraph', { content: '' } ) ] );
+
+interface Post {
+	ID: number;
+}
+
+interface ReaderPost {
+	ID: number;
+	site_ID: number;
+}
+
+interface ReaderFeedResponse {
+	posts: ReaderPost[];
+}
 
 export default function QuickPostInput() {
 	const translate = useTranslate();
@@ -47,7 +61,9 @@ export default function QuickPostInput() {
 	}, [ hasLoaded, sites, selectedSiteId ] );
 
 	const handleSubmit = () => {
-		if ( ! postContent.trim() || ! selectedSiteId || isSubmitting ) return;
+		if ( ! postContent.trim() || ! selectedSiteId || isSubmitting ) {
+			return;
+		}
 
 		setIsSubmitting( true );
 		setIsRefreshing( true );
@@ -60,7 +76,7 @@ export default function QuickPostInput() {
 				content: postContent,
 				status: 'publish',
 			} )
-			.then( ( newPost ) => {
+			.then( ( newPost: Post ) => {
 				recordReaderTracksEvent( 'calypso_reader_quick_post_submitted' );
 				setPostContent( initialBlock );
 
@@ -70,10 +86,10 @@ export default function QuickPostInput() {
 
 				const checkFeedAndRefresh = () => {
 					if ( attempts >= maxAttempts ) {
-						// If we timeout, still refresh the stream but log it
 						console.warn( 'Timed out waiting for post to appear in feed' );
 						dispatch( clearStream( { streamKey: 'following' } ) );
-						dispatch( requestPage( { streamKey: 'following' } ) );
+						// eslint-disable-next-line @typescript-eslint/no-explicit-any
+						dispatch( requestPage( { streamKey: 'following' } as any ) );
 						setIsRefreshing( false );
 						return;
 					}
@@ -81,13 +97,14 @@ export default function QuickPostInput() {
 					attempts++;
 					wpcom.req
 						.get( '/read/following', { number: 1, meta: 'site' } )
-						.then( ( response ) => {
+						.then( ( response: ReaderFeedResponse ) => {
 							// Check if the latest post in the feed is from our site and matches our post ID
 							const latestPost = response?.posts?.[ 0 ];
 							if ( latestPost?.site_ID === selectedSiteId && latestPost?.ID === newPost.ID ) {
 								// Post is in feed, safe to refresh
 								dispatch( clearStream( { streamKey: 'following' } ) );
-								dispatch( requestPage( { streamKey: 'following' } ) );
+								// eslint-disable-next-line @typescript-eslint/no-explicit-any
+								dispatch( requestPage( { streamKey: 'following' } as any ) );
 								setIsRefreshing( false );
 							} else if ( attempts < maxAttempts ) {
 								// Check again in 1 second if we haven't hit the limit
@@ -96,18 +113,19 @@ export default function QuickPostInput() {
 								setIsRefreshing( false );
 							}
 						} )
-						.catch( ( error ) => {
+						.catch( ( error: Error ) => {
 							// If checking the feed fails, still refresh but log the error
 							console.error( 'Error checking feed for new post:', error );
 							dispatch( clearStream( { streamKey: 'following' } ) );
-							dispatch( requestPage( { streamKey: 'following' } ) );
+							// eslint-disable-next-line @typescript-eslint/no-explicit-any
+							dispatch( requestPage( { streamKey: 'following' } as any ) );
 							setIsRefreshing( false );
 						} );
 				};
 
 				checkFeedAndRefresh();
 			} )
-			.catch( ( error ) => {
+			.catch( ( error: Error ) => {
 				recordReaderTracksEvent( 'calypso_reader_quick_post_error' );
 				// TODO: Add error handling UI
 				console.error( 'Failed to create post:', error );
@@ -124,6 +142,16 @@ export default function QuickPostInput() {
 
 	const handleSiteChange = ( event: ChangeEvent< HTMLSelectElement > ) => {
 		setSelectedSiteId( Number( event.target.value ) );
+	};
+
+	const getButtonText = () => {
+		if ( isSubmitting ) {
+			return translate( 'Posting' );
+		}
+		if ( isRefreshing ) {
+			return translate( 'Refreshing' );
+		}
+		return translate( 'Post' );
 	};
 
 	if ( ! hasLoaded ) {
@@ -174,11 +202,7 @@ export default function QuickPostInput() {
 					{ translate( 'Cancel' ) }
 				</Button>
 				<Button primary onClick={ handleSubmit } disabled={ ! postContent.trim() || isDisabled }>
-					{ isSubmitting
-						? translate( 'Posting...' )
-						: isRefreshing
-						? translate( 'Refreshing...' )
-						: translate( 'Post' ) }
+					{ getButtonText() }
 				</Button>
 			</div>
 		</div>
