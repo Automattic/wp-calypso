@@ -15,12 +15,10 @@ import {
 import { isExpiringSoon } from './is-expiring-soon';
 import { isRecentlyRegistered } from './is-recently-registered';
 import {
-	domainManagementEdit,
 	domainManagementEditContactInfo,
 	domainManagementTransfer,
 	domainMappingSetup,
 	domainUseMyDomain,
-	domainManagementDNS,
 } from './paths';
 import { ResponseDomain } from './types';
 import type { I18N, TranslateResult } from 'i18n-calypso';
@@ -55,6 +53,7 @@ export type ResolveDomainStatusOptionsBag = {
 	isCreditCardExpiring?: boolean | null;
 	monthsUtilCreditCardExpires?: number | null;
 	isVipSite?: boolean | null;
+	onPointToWpcomClick?: () => void;
 };
 
 export type DomainStatusPurchaseActions = {
@@ -76,6 +75,7 @@ export function resolveDomainStatus(
 		isCreditCardExpiring = false,
 		monthsUtilCreditCardExpires = null,
 		isVipSite = false,
+		onPointToWpcomClick,
 	}: ResolveDomainStatusOptionsBag
 ): ResolveDomainStatusReturn | null {
 	const transferOptions = {
@@ -106,20 +106,12 @@ export function resolveDomainStatus(
 			e.stopPropagation(),
 	};
 
-	const editNameserversCallToAction = {
-		href: domainManagementEdit( siteSlug as string, domain.domain, currentRoute, {
-			nameservers: true,
-		} ),
+	const pointToWpcomCallToAction = {
 		label: translate( 'Point to WordPress.com' ),
-		onClick: ( e: React.MouseEvent< HTMLAnchorElement | HTMLButtonElement, MouseEvent > ) =>
-			e.stopPropagation(),
-	};
-
-	const editDNSRecordsCallToAction = {
-		href: domainManagementDNS( siteSlug as string, domain.domain ),
-		label: translate( 'Point to WordPress.com' ),
-		onClick: ( e: React.MouseEvent< HTMLAnchorElement | HTMLButtonElement, MouseEvent > ) =>
-			e.stopPropagation(),
+		onClick: ( e: React.MouseEvent< HTMLAnchorElement | HTMLButtonElement, MouseEvent > ) => {
+			e.stopPropagation();
+			onPointToWpcomClick && onPointToWpcomClick();
+		},
 	};
 
 	switch ( domain.type ) {
@@ -513,25 +505,11 @@ export function resolveDomainStatus(
 						{
 							components: {
 								strong: <strong />,
-								cta: domain.hasWpcomNameservers ? (
-									<a
-										href={ domainManagementDNS( siteSlug as string, domain.domain ) }
-										onClick={ ( e: React.MouseEvent< HTMLAnchorElement > ) => e.stopPropagation() }
-									/>
-								) : (
-									<a
-										href={ domainManagementEdit( siteSlug as string, domain.domain, currentRoute, {
-											nameservers: true,
-										} ) }
-										onClick={ ( e: React.MouseEvent< HTMLAnchorElement > ) => e.stopPropagation() }
-									/>
-								),
+								cta: <button onClick={ () => onPointToWpcomClick && onPointToWpcomClick() } />,
 							},
 						}
 					),
-					callToAction: domain.hasWpcomNameservers
-						? editDNSRecordsCallToAction
-						: editNameserversCallToAction,
+					callToAction: pointToWpcomCallToAction,
 					listStatusWeight: 600,
 				};
 			}

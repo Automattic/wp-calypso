@@ -3,6 +3,8 @@ import { PartialDomainData } from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import { useState } from 'react';
+import { PointToWpcomDialog } from '../point-to-wpcom-dialog/point-to-wpcom-dialog';
 import { PrimaryDomainLabel } from '../primary-domain-label/index';
 import { useDomainRow } from '../use-domain-row';
 import { canBulkUpdate } from '../utils/can-bulk-update';
@@ -21,6 +23,8 @@ type Props = {
 export const DomainsTableMobileCard = ( { domain }: Props ) => {
 	const { __ } = useI18n();
 
+	const [ showPointToWpcomModal, setShowPointToWpcomModal ] = useState( false );
+
 	const {
 		ref,
 		site,
@@ -35,7 +39,7 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 		isLoadingSiteDomainsDetails,
 		isAllSitesView,
 		isManageableDomain,
-	} = useDomainRow( domain );
+	} = useDomainRow( domain, () => setShowPointToWpcomModal( true ) );
 
 	const domainManagementLink = isManageableDomain
 		? getDomainManagementLink( domain, siteSlug, isAllSitesView )
@@ -46,6 +50,10 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 			{ ! showBulkActions && domainManagementLink && (
 				<a className="domains-table__domain-link" href={ domainManagementLink } />
 			) }
+			<PointToWpcomDialog
+				visible={ showPointToWpcomModal }
+				onClose={ () => setShowPointToWpcomModal( false ) }
+			/>
 			<div>
 				<div className="domains-table-mobile-card-header">
 					{ showBulkActions && (
