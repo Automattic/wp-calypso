@@ -11,19 +11,17 @@ import { ChangeEvent, useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FormSelect from 'calypso/components/forms/form-select';
 import wpcom from 'calypso/lib/wp';
-import { READER_STREAMS_PAGE_REQUEST } from 'calypso/state/reader/action-types';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
-import { clearStream } from 'calypso/state/reader/streams/actions';
 import getSites from 'calypso/state/selectors/get-sites';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import { createBlock, serialize } from '@wordpress/blocks';
+import { clearStream, requestPage } from 'calypso/state/reader/streams/actions';
+import { AnyAction } from 'redux';
 import './style.scss';
 
 // Initialize the editor blocks and text formatting
 loadBlocksWithCustomizations();
 loadTextFormatting();
-
-const REFRESH_DELAY = 2000; // 2 seconds delay to allow for post indexing
 
 // Create an initial empty paragraph block
 const initialBlock = serialize( [ createBlock( 'core/paragraph', { content: '' } ) ] );
@@ -41,27 +39,6 @@ export default function QuickPostInput() {
 	const [ selectedSiteId, setSelectedSiteId ] = useState< number | null >( null );
 	const editorRef = useRef< HTMLDivElement >( null );
 
-	// Focus editor on load
-	useEffect( () => {
-		const timeoutId = setTimeout( () => {
-			if ( editorRef.current ) {
-				const rootContainer = editorRef.current.querySelector( '.is-root-container' );
-				if ( rootContainer instanceof HTMLElement ) {
-					rootContainer.focus();
-					// Create a click event to simulate user interaction
-					const clickEvent = new MouseEvent( 'click', {
-						bubbles: true,
-						cancelable: true,
-						view: window,
-					} );
-					rootContainer.dispatchEvent( clickEvent );
-				}
-			}
-		}, 100 );
-
-		return () => clearTimeout( timeoutId );
-	}, [] );
-
 	// Set initial selected site once sites are loaded
 	useEffect( () => {
 		if ( hasLoaded && sites.length > 0 && ! selectedSiteId ) {
@@ -69,49 +46,76 @@ export default function QuickPostInput() {
 		}
 	}, [ hasLoaded, sites, selectedSiteId ] );
 
-	const refreshStream = async () => {
-		setIsRefreshing( true );
-		try {
-			dispatch( clearStream( { streamKey: 'following' } ) );
-			await new Promise( ( resolve ) => setTimeout( resolve, REFRESH_DELAY ) );
-			dispatch( {
-				type: READER_STREAMS_PAGE_REQUEST,
-				payload: {
-					streamKey: 'following',
-					streamType: 'following',
-					pageHandle: null,
-					isPoll: false,
-				},
-			} );
-		} finally {
-			setIsRefreshing( false );
-		}
-	};
-
-	const handleSubmit = async () => {
+	const handleSubmit = () => {
 		if ( ! postContent.trim() || ! selectedSiteId || isSubmitting ) return;
 
 		setIsSubmitting( true );
-		try {
-			await wpcom
-				.site( selectedSiteId )
-				.post()
-				.add( {
-					title: postContent.split( '\n' )[ 0 ], // Use first line as title
-					content: postContent,
-					status: 'publish',
-				} );
+		setIsRefreshing( true );
 
-			recordReaderTracksEvent( 'calypso_reader_quick_post_submitted' );
-			setPostContent( initialBlock );
-			refreshStream();
-		} catch ( error ) {
-			recordReaderTracksEvent( 'calypso_reader_quick_post_error' );
-			// TODO: Add error handling UI
-			console.error( 'Failed to create post:', error );
-		} finally {
-			setIsSubmitting( false );
-		}
+		wpcom
+			.site( selectedSiteId )
+			.post()
+			.add( {
+				title: postContent.split( '\n' )[ 0 ], // Use first line as title
+				content: postContent,
+				status: 'publish',
+			} )
+			.then( ( newPost ) => {
+				recordReaderTracksEvent( 'calypso_reader_quick_post_submitted' );
+				setPostContent( initialBlock );
+
+				// Wait for post to appear in feed before refreshing
+				let attempts = 0;
+				const maxAttempts = 10; // Try for 10 seconds max
+
+				const checkFeedAndRefresh = () => {
+					if ( attempts >= maxAttempts ) {
+						// If we timeout, still refresh the stream but log it
+						console.warn( 'Timed out waiting for post to appear in feed' );
+						dispatch( clearStream( { streamKey: 'following' } ) );
+						dispatch( requestPage( { streamKey: 'following' } ) );
+						setIsRefreshing( false );
+						return;
+					}
+
+					attempts++;
+					wpcom.req
+						.get( '/read/following', { number: 1, meta: 'site' } )
+						.then( ( response ) => {
+							// Check if the latest post in the feed is from our site and matches our post ID
+							const latestPost = response?.posts?.[ 0 ];
+							if ( latestPost?.site_ID === selectedSiteId && latestPost?.ID === newPost.ID ) {
+								// Post is in feed, safe to refresh
+								dispatch( clearStream( { streamKey: 'following' } ) );
+								dispatch( requestPage( { streamKey: 'following' } ) );
+								setIsRefreshing( false );
+							} else if ( attempts < maxAttempts ) {
+								// Check again in 1 second if we haven't hit the limit
+								setTimeout( checkFeedAndRefresh, 1000 );
+							} else {
+								setIsRefreshing( false );
+							}
+						} )
+						.catch( ( error ) => {
+							// If checking the feed fails, still refresh but log the error
+							console.error( 'Error checking feed for new post:', error );
+							dispatch( clearStream( { streamKey: 'following' } ) );
+							dispatch( requestPage( { streamKey: 'following' } ) );
+							setIsRefreshing( false );
+						} );
+				};
+
+				checkFeedAndRefresh();
+			} )
+			.catch( ( error ) => {
+				recordReaderTracksEvent( 'calypso_reader_quick_post_error' );
+				// TODO: Add error handling UI
+				console.error( 'Failed to create post:', error );
+				setIsRefreshing( false );
+			} )
+			.finally( () => {
+				setIsSubmitting( false );
+			} );
 	};
 
 	const handleCancel = () => {
