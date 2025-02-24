@@ -23,6 +23,7 @@ import { useSiteLogsDownloader } from 'calypso/sites/tools/logs/hooks/use-site-l
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import DetailsModal from './components/details-modal';
 import useActions from './hooks/use-actions';
 import useData from './hooks/use-data';
 import useFields from './hooks/use-fields';
@@ -33,7 +34,7 @@ import {
 	getVisibleFields,
 	getFilterValue,
 } from './hooks/use-view';
-import type { View } from '@wordpress/dataviews';
+import type { View, Action } from '@wordpress/dataviews';
 import type { Moment } from 'moment';
 import './style.scss';
 
@@ -163,7 +164,7 @@ export const SiteLogsDataViews = ( {
 		startTime,
 		endTime,
 	} );
-	const actions = useActions( { logType, isLoading } );
+	const actions: Action< PHPLog | ServerLog >[] = useActions( { logType, isLoading } );
 	const dateRange = useMemo( () => {
 		const daysInRange = endTime.diff( startTime, 'days' );
 		return {
@@ -196,9 +197,24 @@ export const SiteLogsDataViews = ( {
 		getShortcuts( state, dateRange, translate )
 	);
 
+	const [ itemDetailsModal, setItemDetailsModal ] = useState< PHPLog | ServerLog | null >( null );
+	const onOpenDetailsModal = useCallback( ( item: PHPLog | ServerLog ) => {
+		setItemDetailsModal( item );
+	}, [] );
+	const onCloseDetailsModal = useCallback( () => {
+		setItemDetailsModal( null );
+	}, [] );
+
 	return (
 		<>
 			{ siteId && <QuerySiteSettings siteId={ siteId } /> }
+			{ !! itemDetailsModal && (
+				<DetailsModal
+					item={ itemDetailsModal }
+					actions={ actions }
+					onClose={ onCloseDetailsModal }
+				/>
+			) }
 			<div className="site-logs-header">
 				<NavigationHeader
 					title={ translate( 'Logs' ) }
@@ -268,6 +284,7 @@ export const SiteLogsDataViews = ( {
 				fields={ fields }
 				view={ view }
 				onChangeView={ setViewWithSideEffects }
+				onClickItem={ onOpenDetailsModal }
 				actions={ actions }
 				search={ false }
 				getItemId={ getItemId }

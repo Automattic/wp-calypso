@@ -64,7 +64,7 @@ const useActions = ( { logType, isLoading }: { logType: LogType; isLoading: bool
 					isPrimary: false,
 					disabled: isLoading,
 					supportsBulk: false,
-					RenderModal: ( { items }: { items: PHPLog[] } ) => {
+					RenderModal: ( { items }: { items: ( PHPLog | ServerLog )[] } ) => {
 						const item = items[ 0 ] as PHPLog;
 						return (
 							<div className="site-logs-details-modal">
@@ -126,7 +126,7 @@ const useActions = ( { logType, isLoading }: { logType: LogType; isLoading: bool
 				isPrimary: false,
 				disabled: isLoading,
 				supportsBulk: false,
-				RenderModal: ( { items }: { items: ServerLog[] } ) => {
+				RenderModal: ( { items }: { items: ( PHPLog | ServerLog )[] } ) => {
 					const item = items[ 0 ] as ServerLog;
 					return (
 						<div className="site-logs-details-modal">
