@@ -46,7 +46,7 @@
 		"domain-to-plan-credit": false,
 		"cookie-banner": false,
 		"google-my-business": false,
-		"global-styles/on-personal-plan": true,
+		"global-styles/on-personal-plan": false,
 		"help": true,
 		"hosting-server-settings-enhancements": true,
 		"importers/newsletter": true,
