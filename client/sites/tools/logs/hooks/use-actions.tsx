@@ -71,7 +71,7 @@ const useActions = ( { logType, isLoading }: { logType: LogType; isLoading: bool
 								<div className="site-logs-details-modal__field-title">
 									{
 										// translators: %s is the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
-										translate( 'Date & time (%(siteGsmOffsetDisplays):', {
+										translate( 'Date & time (%(siteGsmOffsetDisplay)s):', {
 											args: { siteGsmOffsetDisplay },
 										} )
 									}
