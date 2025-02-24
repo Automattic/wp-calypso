@@ -314,7 +314,7 @@
 
 .wpcom-site .hosting-dashboard-layout.sites-dashboard:not(.domains-overview) .site-preview-pane {
 	.hosting-dashboard-item-view__content {
-		> * {
+		> *:not(.site-logs) {
 			max-width: 1400px;
 		}
 	}
