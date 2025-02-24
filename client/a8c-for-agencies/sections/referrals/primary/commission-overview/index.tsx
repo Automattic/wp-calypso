@@ -1,13 +1,14 @@
 import { FoldableCard } from '@automattic/components';
-import { formatCurrency, getCurrencyObject } from '@automattic/format-currency';
+import { formatCurrency } from '@automattic/format-currency';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
-import { useTranslate, numberFormatCompact } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_REFERRALS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import StepSection from 'calypso/a8c-for-agencies/components/step-section';
+import { formatCurrencyCompact } from 'calypso/a8c-for-agencies/lib/currency';
 import WooLogoRebrand2 from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -39,11 +40,7 @@ export default function CommissionOverview( {
 	// TODO: This is a workaround to keep the formatting of the max amount consistent until
 	// we can use the new formatCurrency function that gives the compact number in the correct format.
 	const oneMillion = 1000000;
-	const currencyObjectForOneMillion = getCurrencyObject( oneMillion, 'USD' );
-	const oneMillionFormatted =
-		currencyObjectForOneMillion.symbolPosition === 'before'
-			? `${ currencyObjectForOneMillion.symbol }${ numberFormatCompact( oneMillion ) }`
-			: `${ numberFormatCompact( oneMillion ) }${ currencyObjectForOneMillion.symbol }`;
+	const oneMillionFormatted = formatCurrencyCompact( oneMillion );
 
 	return (
 		<Layout
