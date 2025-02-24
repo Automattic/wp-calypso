@@ -77,7 +77,13 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 					},
 					enableSorting: false,
 				},
-				{ id: 'line', type: 'integer', label: translate( 'Line' ), enableSorting: false },
+				{
+					id: 'line',
+					type: 'integer',
+					label: translate( 'Line' ),
+					render: ( { item }: { item: PHPLog } ) => numberFormat( item.line ),
+					enableSorting: false,
+				},
 				{
 					id: 'atomic_site_id',
 					type: 'integer',

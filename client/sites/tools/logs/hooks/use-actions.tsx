@@ -94,7 +94,7 @@ const useActions = ( { logType, isLoading }: { logType: LogType; isLoading: bool
 								<div className="site-logs-details-modal__field-title">{ translate( 'File:' ) }</div>
 								<div>{ item.file }</div>
 								<div className="site-logs-details-modal__field-title">{ translate( 'Line:' ) }</div>
-								<div>{ item.line }</div>
+								<div>{ numberFormat( item.line ) }</div>
 								<div className="site-logs-details-modal__field-title">
 									{ translate( 'Atomic Site ID:' ) }
 								</div>
