@@ -114,7 +114,7 @@ export const createSite = async ( {
 export const useCreateSite = () => {
 	const flowName = getFlowFromURL();
 	const userIsLoggedIn = useSelector( isUserLoggedIn );
-	const { get } = useFlowState();
+	const { get, set } = useFlowState();
 	const domains = get( 'domains' );
 	const username = useSelector( getCurrentUserName );
 	const planCartItems = get( 'plans' )?.cartItems;
@@ -160,5 +160,9 @@ export const useCreateSite = () => {
 				siteIntent,
 				planCartItems,
 			} ),
+		onSuccess: ( data ) => {
+			set( 'site', data );
+			return data;
+		},
 	} ).mutateAsync;
 };

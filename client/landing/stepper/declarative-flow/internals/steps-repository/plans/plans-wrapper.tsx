@@ -10,6 +10,7 @@ import {
 	isDomainUpsellFlow,
 	DESIGN_FIRST_FLOW,
 	isBlogOnboardingFlow,
+	EXAMPLE_FLOW,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
@@ -45,6 +46,7 @@ function getPlansIntent( flowName: string | null, isWordCampPromo?: boolean ): P
 		case DESIGN_FIRST_FLOW:
 			return 'plans-blog-onboarding';
 		case NEWSLETTER_FLOW:
+		case EXAMPLE_FLOW:
 			return 'plans-newsletter';
 		case NEW_HOSTED_SITE_FLOW:
 			if ( isWordCampPromo ) {

@@ -124,7 +124,7 @@ const newsletter: Flow = {
 							} ).then( () => siteCreationResult );
 						} )
 					);
-					return navigate( 'processing', null, true );
+					return navigate( 'processing' );
 				case 'processing': {
 					const siteFragment = ( providedDependencies.siteId ||
 						providedDependencies.siteSlug ||
@@ -151,7 +151,8 @@ const newsletter: Flow = {
 						setSignupCompleteSlug( providedDependencies?.siteSlug );
 						setSignupCompleteFlowName( flowName );
 
-						return window.location.assign(
+						// Replace the processing step with checkout step, so going back goes to Plans.
+						return window.location.replace(
 							`/checkout/${ encodeURIComponent( siteFragment ) }?redirect_to=${ encodeURIComponent(
 								launchpadUrl
 							) }&signup=1`
@@ -164,7 +165,7 @@ const newsletter: Flow = {
 						siteSlug: providedDependencies?.siteSlug as string,
 					} );
 
-					return window.location.assign( postFlowUrl );
+					return window.location.replace( postFlowUrl );
 				}
 
 				case 'subscribers':
