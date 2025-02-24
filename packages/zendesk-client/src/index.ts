@@ -13,3 +13,4 @@ export {
 	ZENDESK_SUPPORT_CHAT_KEY,
 } from './constants';
 export type { ZendeskConfigName, MessagingGroup } from './types';
+export { getZendeskUserFieldsByFlow } from './get-zendesk-user-fields-by-flow';

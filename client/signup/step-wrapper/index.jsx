@@ -1,8 +1,9 @@
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { ActionButtons } from '@automattic/onboarding';
-import { getZendeskInitialMessageByFlow } from '@automattic/zendesk-client';
+import { getZendeskUserFieldsByFlow } from '@automattic/zendesk-client';
 import { Button } from '@wordpress/components';
 import { useDispatch, useSelect as useDataStoreSelect } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -29,10 +30,12 @@ function HelpCenterButton( { helpCenterButtonText, hasPremiumSupport, flowName }
 	function openHelpCenter() {
 		setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport );
 		if ( hasPremiumSupport ) {
-			const initialMessage = getZendeskInitialMessageByFlow( flowName );
-			setNavigateToRoute(
-				`/odie?provider=zendesk&userFieldMessage=${ initialMessage }&userFieldFlowName=${ flowName }`
-			);
+			const { userFieldMessage, userFieldFlowName } = getZendeskUserFieldsByFlow( flowName );
+			const urlWithQueryArgs = addQueryArgs( '/odie?provider=zendesk', {
+				userFieldMessage,
+				userFieldFlowName,
+			} );
+			setNavigateToRoute( urlWithQueryArgs );
 		} else {
 			setNavigateToRoute( `/odie` );
 		}

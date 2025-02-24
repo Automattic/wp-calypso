@@ -14,14 +14,29 @@ const FLOWS_INITIAL_MESSAGES = {
 	[ HUNDRED_YEAR_DOMAIN_FLOW ]: 'User is purchasing 100 year domain.',
 };
 
-export function getZendeskInitialMessageByFlow( flowName: string ) {
+const FLOWS_FLOWNAME = {
+	[ DIFM_FLOW ]: 'dotcom_difm',
+	[ DIFM_FLOW_STORE ]: 'dotcom_difm',
+	[ WEBSITE_DESIGN_SERVICES ]: 'dotcom_difm',
+};
+
+export function getZendeskUserFieldsByFlow( flowName: string ) {
 	const url = window.location.href;
+	let userFieldFlowName = null;
+	let userFieldMessage = null;
 
 	if ( Object.keys( FLOWS_INITIAL_MESSAGES ).includes( flowName ) ) {
-		return `${
+		userFieldMessage = `${
 			FLOWS_INITIAL_MESSAGES[ flowName as keyof typeof FLOWS_INITIAL_MESSAGES ]
 		} URL: ${ url } }`;
 	}
 
-	return null;
+	if ( Object.keys( FLOWS_FLOWNAME ).includes( flowName ) ) {
+		userFieldFlowName = FLOWS_FLOWNAME[ flowName as keyof typeof FLOWS_FLOWNAME ];
+	}
+
+	return {
+		userFieldMessage,
+		userFieldFlowName,
+	};
 }
