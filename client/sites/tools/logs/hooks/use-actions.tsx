@@ -60,7 +60,7 @@ const useActions = ( { logType, isLoading }: { logType: LogType; isLoading: bool
 				{
 					id: 'details-modal',
 					label: translate( 'View log details' ),
-					modalHeader: translate( 'Log Details' ),
+					modalHeader: translate( 'Log details' ),
 					isPrimary: false,
 					disabled: isLoading,
 					supportsBulk: false,
@@ -122,7 +122,7 @@ const useActions = ( { logType, isLoading }: { logType: LogType; isLoading: bool
 			{
 				id: 'details-modal',
 				label: translate( 'View log details' ),
-				modalHeader: translate( 'Log Details' ),
+				modalHeader: translate( 'Log details' ),
 				isPrimary: false,
 				disabled: isLoading,
 				supportsBulk: false,

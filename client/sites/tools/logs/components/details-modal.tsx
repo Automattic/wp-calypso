@@ -24,10 +24,10 @@ export default function DetailsModal( { item, actions, onClose }: Props ) {
 
 	return (
 		<Modal
-			title={ translate( 'Log Details' ) } /* Same title as dataviews action modal */
+			title={ translate( 'Log details' ) } /* Same title as dataviews action modal */
 			onRequestClose={ onClose }
 			focusOnMount="firstContentElement"
-			size="medium" /* Same size as dataviews modal */
+			size="large"
 		>
 			<RenderModal items={ [ item ] } />
 		</Modal>
