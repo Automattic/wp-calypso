@@ -26,6 +26,16 @@ declare module 'calypso/components/time-since' {
 	export default TimeSince;
 }
 
+declare module 'calypso/components/localized-moment' {
+	const LocalizedMoment: FC;
+	export default LocalizedMoment;
+}
+
+declare module 'calypso/lib/human-date' {
+	const HumanDate: FC;
+	export default HumanDate;
+}
+
 declare module 'calypso/state/data-layer/wpcom-api-middleware' {
 	const WpcomApiMiddleware = ( Function ) => Function;
 	export const WpcomApiMiddleware;
