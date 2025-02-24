@@ -41,7 +41,7 @@ const PostCheckoutOnboarding: Step = ( { navigation } ) => {
 		useSiteTransferStatusQuery( site?.ID );
 
 	const { waitForInitiateTransfer, waitForTransfer, waitForFeature, waitForLatestSiteData } =
-		useWaitForAtomic();
+		useWaitForAtomic( {} );
 
 	const waitForAtomic = async () => {
 		await waitForTransfer();
