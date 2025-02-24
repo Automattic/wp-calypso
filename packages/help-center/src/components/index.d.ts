@@ -21,6 +21,11 @@ declare module 'calypso/components/embed-container' {
 	export default EmbedContainer;
 }
 
+declare module 'calypso/components/time-since' {
+	const TimeSince: FC;
+	export default TimeSince;
+}
+
 declare module 'calypso/state/data-layer/wpcom-api-middleware' {
 	const WpcomApiMiddleware = ( Function ) => Function;
 	export const WpcomApiMiddleware;
