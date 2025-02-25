@@ -55,6 +55,7 @@ export default function DesktopLoginFinalize( props: Props ) {
 			log={ username }
 			authorization={ 'Bearer ' + accessToken }
 			redirectTo={ window.location.href }
+			rememberMe
 		/>
 	);
 }
