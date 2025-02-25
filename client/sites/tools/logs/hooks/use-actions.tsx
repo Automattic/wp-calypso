@@ -70,7 +70,7 @@ const useActions = ( { logType, isLoading }: { logType: LogType; isLoading: bool
 							<div className="site-logs-details-modal">
 								<div className="site-logs-details-modal__field-title">
 									{
-										// translators: %s is the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
+										// translators: %(siteGsmOffsetDisplay)s will be replaced with the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
 										translate( 'DATE & TIME (%(siteGsmOffsetDisplay)s)', {
 											args: { siteGsmOffsetDisplay },
 										} )
@@ -132,7 +132,7 @@ const useActions = ( { logType, isLoading }: { logType: LogType; isLoading: bool
 						<div className="site-logs-details-modal">
 							<div className="site-logs-details-modal__field-title">
 								{
-									// translators: %s is the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
+									// translators: %(siteGsmOffsetDisplay)s will be replaced with the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
 									translate( 'DATE & TIME (%(siteGsmOffsetDisplay)s)', {
 										args: { siteGsmOffsetDisplay },
 									} )

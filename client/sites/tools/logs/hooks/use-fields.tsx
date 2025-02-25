@@ -32,7 +32,7 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 				{
 					id: 'timestamp',
 					type: 'date',
-					// translators: %s is the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
+					// translators: %(siteGsmOffsetDisplay)s will be replaced with the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
 					label: translate( 'Date & time (%(siteGsmOffsetDisplay)s)', {
 						args: { siteGsmOffsetDisplay },
 					} ),
@@ -98,7 +98,7 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 			{
 				id: 'date',
 				type: 'datetime',
-				// translators: %s is the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
+				// translators: %(siteGsmOffsetDisplay)s will be replaced with the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
 				label: translate( 'Date & time (%(siteGsmOffsetDisplay)s)', {
 					args: { siteGsmOffsetDisplay },
 				} ),
