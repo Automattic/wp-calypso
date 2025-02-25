@@ -61,9 +61,13 @@ export const MessageContent = ( {
 	// message type === message are messages being sent from users to zendesk.
 	// They need to be parsed to markdown to appear nicely.
 	const markdownMessageContent = shouldParseMessage() ? parseTextMessage( message ) : message;
+	const isFeedbackMessage = message.type === 'conversation-feedback' && message?.meta?.feedbackUrl;
 
 	return (
 		<>
+			{ isFeedbackMessage && (
+				<ChatWithSupportLabel title={ __( 'Chat with support ended', __i18n_text_domain__ ) } />
+			) }
 			<div className={ containerClasses } data-is-message="true">
 				<div className={ messageClasses }>
 					{ message?.context?.flags?.show_ai_avatar !== false && messageHeader }
@@ -92,21 +96,25 @@ export const MessageContent = ( {
 							</div>
 						</div>
 					) }
-					{ message.type === 'conversation-feedback' && message?.meta?.feedbackUrl && (
-						<div className="odie-introduction-message-content odie-introduction-message-content__conversation_feedback">
-							<p>{ message.content }</p>
-							<p>
-								<a target="_blank" rel="noreferrer" href={ message?.meta?.feedbackUrl }>
-									{ __( 'Submit Rating', __i18n_text_domain__ ) }
-								</a>
-							</p>
-						</div>
+					{ isFeedbackMessage && (
+						<>
+							<div className="odie-introduction-message-content odie-introduction-message-content__conversation_feedback">
+								<p>{ message.content }</p>
+								<p>
+									<a target="_blank" rel="noreferrer" href={ message?.meta?.feedbackUrl }>
+										{ __( 'Submit Rating', __i18n_text_domain__ ) }
+									</a>
+								</p>
+							</div>
+						</>
 					) }
 					{ ! stopConflatingNegativeRatingWithContactSupport &&
 						message.type === 'dislike-feedback' && <DislikeFeedbackMessage /> }
 				</div>
 			</div>
-			{ displayChatWithSupportLabel && <ChatWithSupportLabel /> }
+			{ displayChatWithSupportLabel && (
+				<ChatWithSupportLabel title={ __( 'Chatting with support now', __i18n_text_domain__ ) } />
+			) }
 		</>
 	);
 };
