@@ -76,7 +76,8 @@ export default function NewsletterImporter( {
 		engine,
 		step,
 		selectedSite?.ID,
-		autoFetchData
+		autoFetchData,
+		fromSite
 	);
 
 	useEffect( () => {

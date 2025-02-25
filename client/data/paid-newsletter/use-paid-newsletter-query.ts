@@ -86,12 +86,13 @@ export const usePaidNewsletterQuery = (
 	engine: string,
 	currentStep: StepId,
 	siteId?: number,
-	autoRefresh?: boolean
+	autoRefresh?: boolean,
+	fromSite?: string
 ) => {
 	return useQuery( {
-		enabled: !! siteId,
+		enabled: !! siteId && !! fromSite,
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps
-		queryKey: [ 'paid-newsletter-importer', siteId, engine ],
+		queryKey: [ 'paid-newsletter-importer', siteId, engine, fromSite ],
 		queryFn: (): Promise< PaidNewsletterData > => {
 			return wp.req.get(
 				{
@@ -101,6 +102,7 @@ export const usePaidNewsletterQuery = (
 				{
 					engine: engine,
 					current_step: currentStep,
+					import_url: fromSite,
 				}
 			);
 		},
