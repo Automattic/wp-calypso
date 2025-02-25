@@ -1,4 +1,5 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import './style.scss';
@@ -10,7 +11,6 @@ interface Props {
 	hasBackIcon?: boolean;
 	hasForwardIcon?: boolean;
 	primary?: boolean;
-	borderless?: boolean;
 	cssClass?: string;
 	rel?: string;
 	backUrl?: string;
@@ -24,7 +24,6 @@ const StepNavigationLink: React.FC< Props > = ( {
 	hasBackIcon,
 	hasForwardIcon,
 	primary,
-	borderless = true,
 	cssClass,
 	rel,
 	recordClick,
@@ -55,13 +54,23 @@ const StepNavigationLink: React.FC< Props > = ( {
 		handleClick?.();
 	};
 
-	return (
+	return backUrl ? (
 		<Button
-			primary={ primary }
-			borderless={ borderless }
 			className={ buttonClasses }
 			onClick={ onClick }
 			href={ backUrl }
+			rel={ rel }
+			variant="link"
+		>
+			{ backGridicon }
+			{ text }
+			{ forwardGridicon }
+		</Button>
+	) : (
+		<Button
+			variant={ primary ? 'primary' : 'tertiary' }
+			className={ buttonClasses }
+			onClick={ onClick }
 			rel={ rel }
 		>
 			{ backGridicon }

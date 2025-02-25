@@ -1,39 +1,23 @@
 $font-body-small: 14px !default;
 
-.button.navigation-link {
-	&.is-borderless {
-		background: none;
-		border: none;
-		color: #101517;
-		font-size: $font-body-small;
-		font-weight: 600;
-		padding: 0;
+.components-button.navigation-link {
+	background: none;
+	border: none;
+	color: #101517;
+	font-size: $font-body-small;
+	font-weight: 600;
+	padding: 0;
+	height: auto;
 
-		svg {
-			width: 20px;
-			height: 20px;
-			top: 5px;
-			margin-right: 2px;
-			fill: #101517;
-			.rtl & {
-				transform: scaleX(-1);
-			}
+	svg {
+		width: 20px;
+		height: 20px;
+		top: 5px;
+		margin-right: 2px;
+		fill: #101517;
+		.rtl & {
+			transform: scaleX(-1);
 		}
-	}
-
-	&:focus {
-		border-color: var(--color-accent);
-		box-shadow: 0 0 0 2px var(--color-accent);
-	}
-
-	&.has-underline {
-		text-decoration: underline;
-	}
-
-	&.is-primary {
-		border-radius: 4px;
-		box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
-		padding: 8px 14px;
 	}
 }
 

@@ -140,7 +140,6 @@ const StepContainer: React.FC< Props > = ( {
 					cssClass={ clsx( 'step-container__navigation-link', 'has-underline', {
 						'has-skip-heading': skipHeadingText,
 					} ) }
-					borderless
 					recordClick={ () => recordClick( 'forward' ) }
 				/>
 			</div>
@@ -158,7 +157,6 @@ const StepContainer: React.FC< Props > = ( {
 				handleClick={ goNext }
 				label={ nextLabelText || translate( 'Continue' ) }
 				cssClass="step-container__navigation-link"
-				borderless={ false }
 				primary
 			/>
 		);
