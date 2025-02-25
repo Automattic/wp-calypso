@@ -17,6 +17,7 @@ import { canAnySiteConnectDomains } from 'calypso/state/selectors/can-any-site-c
 import { isSupportSession } from 'calypso/state/support/selectors';
 import DomainHeader, { NavigationItem } from '../components/domain-header';
 import DotcomDomainsDataViews from '../dataviews';
+import { type QueryParams } from '../dataviews/query-params';
 import {
 	createBulkAction,
 	deleteBulkActionStatus,
@@ -37,6 +38,7 @@ interface BulkAllDomainsProps {
 	sidebarMode?: boolean;
 	selectedDomainName?: string;
 	selectedFeature?: string;
+	queryParams: QueryParams;
 }
 
 const domainsDataViewsGlobalStyles = css`
@@ -439,6 +441,7 @@ type RendererProps = {
 	hasConnectableSites?: boolean;
 	domains: PartialDomainData[];
 	isLoading?: boolean;
+	queryParams: QueryParams;
 };
 
 function DomainsTableRenderer( {
@@ -482,6 +485,7 @@ function DomainsDataViewsRenderer( {
 	domains,
 	isLoading,
 	hasConnectableSites,
+	queryParams,
 }: RendererProps ) {
 	return (
 		<DotcomDomainsDataViews
@@ -499,6 +503,7 @@ function DomainsDataViewsRenderer( {
 			selectedFeature={ selectedFeature }
 			hasConnectableSites={ hasConnectableSites }
 			context="domains"
+			queryParams={ queryParams }
 		/>
 	);
 }
@@ -563,6 +568,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						item={ item }
 						domains={ domains }
 						isLoading={ isLoading }
+						queryParams={ props.queryParams }
 					/>
 				) : (
 					<div className="bulk-domains-empty-state">

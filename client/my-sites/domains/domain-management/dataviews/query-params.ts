@@ -1,3 +1,5 @@
+import { Context } from '@automattic/calypso-router';
+
 export const DEFAULT_PAGE = 1;
 export const DEFAULT_PER_PAGE = 50;
 export const DEFAULT_SORT_FIELD = 'domain_name';
@@ -19,22 +21,16 @@ const getDefaultParams = () => ( {
 	sortDirection: DEFAULT_SORT_DIRECTION,
 } );
 
-export function getQueryParams() {
-	const queryParams = new URLSearchParams( window.location.search );
+export function getQueryParams( context: Context ) {
 	return {
 		...getDefaultParams(),
-		page: queryParams.get( 'page' )?.length
-			? parseInt( queryParams.get( 'page' ) as string, 10 )
-			: DEFAULT_PAGE,
-		perPage: queryParams.get( 'perPage' )?.length
-			? parseInt( queryParams.get( 'perPage' ) as string, 10 )
-			: DEFAULT_PER_PAGE,
-		search: queryParams.get( 'search' ),
-		sortField: queryParams.get( 'sortField' ) || DEFAULT_SORT_FIELD,
+		page: context.query.page ? parseInt( context.query.page, 10 ) : DEFAULT_PAGE,
+		perPage: context.query.perPage ? parseInt( context.query.perPage, 10 ) : DEFAULT_PER_PAGE,
+		search: context.query.search,
+		sortField: context.query.sortField || DEFAULT_SORT_FIELD,
 		sortDirection:
-			queryParams.get( 'sortDirection' ) &&
-			[ 'asc', 'desc' ].includes( queryParams.get( 'sortDirection' ) as string )
-				? queryParams.get( 'sortDirection' )
+			context.query.sortDirection && [ 'asc', 'desc' ].includes( context.query.sortDirection )
+				? context.query.sortDirection
 				: DEFAULT_SORT_DIRECTION,
 	} as QueryParams;
 }

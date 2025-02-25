@@ -156,6 +156,13 @@ describe( 'domainManagementPaneView', () => {
 			},
 			primary: <div>Previous Content</div>,
 			store: testStore,
+			query: {
+				page: undefined,
+				perPage: undefined,
+				search: undefined,
+				sortField: undefined,
+				sortDirection: undefined,
+			},
 		};
 
 		const paneViewHandler = domainController.domainManagementPaneView( DOMAIN_OVERVIEW );
@@ -193,6 +200,13 @@ describe( 'domainManagementPaneView', () => {
 			},
 			primary: <div>Previous Content</div>,
 			store: testStore,
+			query: {
+				page: undefined,
+				perPage: undefined,
+				search: undefined,
+				sortField: undefined,
+				sortDirection: undefined,
+			},
 		};
 
 		const paneViewHandler = domainController.domainManagementPaneView( DOMAIN_OVERVIEW );

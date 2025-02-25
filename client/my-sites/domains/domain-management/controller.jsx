@@ -29,6 +29,7 @@ import {
 import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getQueryParams } from './dataviews/query-params';
 import { getSubpageParams } from './subpage-wrapper/subpages';
 import DomainManagement from '.';
 
@@ -66,6 +67,7 @@ export default {
 				<DomainManagement.BulkAllDomains
 					analyticsPath={ domainManagementRoot() }
 					analyticsTitle="Domain Management > All Domains"
+					queryParams={ getQueryParams( pageContext ) }
 				/>
 			</>
 		);
@@ -356,6 +358,7 @@ export default {
 				innerContent={ pageContext.primary }
 				selectedDomainName={ selectedDomainName }
 				selectedFeature={ selectedFeature }
+				queryParams={ getQueryParams( pageContext ) }
 			/>
 		);
 
@@ -395,6 +398,7 @@ export default {
 					siteSlug={ siteSlug }
 					site={ site }
 					inSiteContext={ pageContext.inSiteContext }
+					queryParams={ getQueryParams( pageContext ) }
 				/>
 			);
 
