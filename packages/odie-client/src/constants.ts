@@ -29,21 +29,8 @@ export const ODIE_FORWARD_TO_ZENDESK_MESSAGE = __(
 
 export const ODIE_TRANSFER_MESSAGE: Message[] = [
 	{
-		content: __( "Help's on the way!", __i18n_text_domain__ ),
-		role: 'bot',
-		type: 'message',
-		context: {
-			flags: {
-				hide_disclaimer_content: true,
-				show_contact_support_msg: false,
-				show_ai_avatar: false,
-			},
-			site_id: null,
-		},
-	},
-	{
 		content: __(
-			'Feel free to share more details while we connect you to support.',
+			"No problem. Help is on the way! I'm connecting you with one of our Happiness Engineers.",
 			__i18n_text_domain__
 		),
 		role: 'bot',
@@ -51,7 +38,8 @@ export const ODIE_TRANSFER_MESSAGE: Message[] = [
 		context: {
 			flags: {
 				hide_disclaimer_content: true,
-				show_contact_support_msg: true,
+				show_contact_support_msg: false,
+				show_ai_avatar: false,
 			},
 			site_id: null,
 		},
