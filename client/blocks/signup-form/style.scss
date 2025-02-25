@@ -182,6 +182,7 @@ body.is-section-accept-invite {
 
 				button:not(.is-borderless, .signup-form__domain-suggestion-confirmation) {
 					display: block;
+					width: 100%;
 					max-width: 327px;
 					margin: 0 auto;
 				}
@@ -220,21 +221,10 @@ body.is-section-accept-invite {
 				padding-top: 0;
 			}
 
-			button.back-button {
-				color: #1d2327;
-				text-align: center;
-				font-family: "SF Pro Text", sans-serif;
-				font-size: 0.875rem;
-				font-style: normal;
-				font-weight: 500;
-				line-height: 20px;
-				display: block;
-				margin: 0 auto;
-				text-underline-offset: 5px;
-
-				&:hover {
-					color: var(--studio-blue-50, #0675c4);
-				}
+			.components-button.back-button {
+				font-size: $font-body-small;
+				display: flex;
+				justify-self: center;
 			}
 
 			button.button:not(.is-borderless) {
