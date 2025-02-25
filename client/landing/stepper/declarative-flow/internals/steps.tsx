@@ -33,6 +33,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/design-setup' ),
 	},
 
+	DESIGN_SETUP_LEGACY: {
+		slug: 'designSetup',
+		asyncComponent: () => import( './steps-repository/design-setup' ),
+	},
+
 	DIFM_STARTING_POINT: {
 		slug: 'difmStartingPoint',
 		asyncComponent: () => import( './steps-repository/difm-starting-point' ),

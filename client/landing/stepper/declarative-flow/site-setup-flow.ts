@@ -59,6 +59,7 @@ const siteSetupFlow: FlowV1 = {
 			STEPS.OPTIONS,
 			STEPS.DESIGN_CHOICES,
 			STEPS.DESIGN_SETUP,
+			STEPS.DESIGN_SETUP_LEGACY,
 			STEPS.BLOGGER_STARTING_POINT,
 			STEPS.COURSES,
 			STEPS.IMPORT,
@@ -265,6 +266,7 @@ const siteSetupFlow: FlowV1 = {
 					return navigate( 'bloggerStartingPoint' );
 				}
 
+				case 'designSetup':
 				case 'design-setup': {
 					return navigate( 'processing' );
 				}
@@ -497,6 +499,7 @@ const siteSetupFlow: FlowV1 = {
 				case 'courses':
 					return navigate( 'bloggerStartingPoint' );
 
+				case 'designSetup':
 				case 'design-setup':
 					if ( intent === SiteIntent.DIFM ) {
 						return navigate( 'difmStartingPoint' );

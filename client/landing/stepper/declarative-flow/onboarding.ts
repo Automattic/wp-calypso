@@ -117,6 +117,7 @@ const onboarding: Flow = {
 				STEPS.GOALS,
 				STEPS.DESIGN_CHOICES,
 				STEPS.DESIGN_SETUP,
+				STEPS.DESIGN_SETUP_LEGACY,
 				STEPS.DIFM_STARTING_POINT
 			);
 		}
@@ -227,6 +228,7 @@ const onboarding: Flow = {
 					}
 				}
 
+				case 'designSetup':
 				case 'design-setup': {
 					return navigate( 'domains' );
 				}
@@ -426,6 +428,7 @@ const onboarding: Flow = {
 						}
 						return navigate( 'design-setup' );
 					}
+				case 'designSetup':
 				case 'design-setup':
 					if ( isDesignChoicesStepEnabled ) {
 						return navigate( 'design-choices' );
