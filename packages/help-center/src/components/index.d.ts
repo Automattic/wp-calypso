@@ -174,8 +174,3 @@ declare module '*.svg' {
 	const content: string;
 	export default content;
 }
-
-declare module 'calypso/components/drop-zone' {
-	const DropZone: React.FC;
-	export default DropZone;
-}
