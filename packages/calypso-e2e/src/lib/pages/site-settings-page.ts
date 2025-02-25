@@ -17,12 +17,13 @@ export class SiteSettingsPage {
 	}
 
 	/**
-	 * Visits the `/sites/settings/site` endpoint.
+	 * Visits the `/sites/settings/$tab` endpoint.
 	 *
 	 * @param {string} siteSlug Site URL.
+	 * @param {string} tab      Settings tab.
 	 */
-	async visit( siteSlug: string ): Promise< void > {
-		await this.page.goto( getCalypsoURL( `sites/settings/site/${ siteSlug }` ), {
+	async visit( siteSlug: string, tab: string = 'site' ): Promise< void > {
+		await this.page.goto( getCalypsoURL( `sites/settings/${ tab }/${ siteSlug }` ), {
 			timeout: 20 * 1000,
 		} );
 	}
@@ -33,5 +34,14 @@ export class SiteSettingsPage {
 	async launchSite(): Promise< void > {
 		const launchSite = this.page.getByRole( 'link', { name: 'Launch site' } );
 		await launchSite.click();
+	}
+
+	/**
+	 * Given text, clicks on a button with matching text.
+	 *
+	 * @param {string} text Text to search on the button.
+	 */
+	async clickButton( text: string ) {
+		await this.page.getByRole( 'button', { name: text } ).click();
 	}
 }

@@ -1,5 +1,6 @@
 /**
  * @group jetpack-wpcom-integration
+ * @group calypso-pr
  */
 
 import {
@@ -8,7 +9,7 @@ import {
 	envVariables,
 	getTestAccountByFeature,
 	envToFeatureKey,
-	HostingConfigurationPage,
+	SiteSettingsPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { skipDescribeIf } from '../../jest-helpers';
@@ -30,7 +31,7 @@ skipDescribeIf( ! envVariables.TEST_ON_ATOMIC )(
 		let page: Page;
 		let popupPage: Page;
 		let testAccount: TestAccount;
-		let hostingConfigurationPage: HostingConfigurationPage;
+		let siteSettingsPage: SiteSettingsPage;
 
 		beforeAll( async function () {
 			page = await browser.newPage();
@@ -48,14 +49,14 @@ skipDescribeIf( ! envVariables.TEST_ON_ATOMIC )(
 		} );
 
 		it( 'Navigate to Settings > Hosting Configuration', async function () {
-			hostingConfigurationPage = new HostingConfigurationPage( page );
+			siteSettingsPage = new SiteSettingsPage( page );
 
-			await hostingConfigurationPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+			await siteSettingsPage.visit( testAccount.getSiteURL( { protocol: false } ), 'database' );
 		} );
 
 		it( 'Open phpMyAdmin', async function () {
 			const waitForPopup = page.waitForEvent( 'popup' );
-			await hostingConfigurationPage.clickButton( 'Open phpMyAdmin' );
+			await siteSettingsPage.clickButton( 'Open phpMyAdmin' );
 
 			popupPage = await waitForPopup;
 		} );
