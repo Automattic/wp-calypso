@@ -1,5 +1,5 @@
 import { PRODUCT_JETPACK_STATS_YEARLY, PriceTierEntry } from '@automattic/calypso-products';
-import formatCurrency from '@automattic/format-currency';
+import { formatCurrency } from 'i18n-calypso';
 import {
 	default as usePlanUsageQuery,
 	PlanUsage,

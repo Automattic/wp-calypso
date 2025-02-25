@@ -30,7 +30,6 @@
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/color-studio": "^3.0.1",
-		"@automattic/format-currency": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/load-script": "workspace:^",
 		"@automattic/material-design-icons": "workspace:^",

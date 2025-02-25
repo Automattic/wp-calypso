@@ -674,7 +674,6 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
     "@automattic/color-studio": "npm:^3.0.1"
-    "@automattic/format-currency": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/load-script": "workspace:^"
     "@automattic/material-design-icons": "workspace:^"
@@ -774,7 +773,6 @@ __metadata:
     "@automattic/calypso-products": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/design-picker": "workspace:^"
-    "@automattic/format-currency": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/js-utils": "workspace:^"
     "@automattic/load-script": "workspace:^"
@@ -1069,7 +1067,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/format-currency@workspace:^, @automattic/format-currency@workspace:packages/format-currency":
+"@automattic/format-currency@workspace:packages/format-currency":
   version: 0.0.0-use.local
   resolution: "@automattic/format-currency@workspace:packages/format-currency"
   dependencies:
@@ -1405,7 +1403,6 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
-    "@automattic/format-currency": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
     "@automattic/wpcom-checkout": "workspace:^"
     "@emotion/styled": "npm:^11.11.0"
@@ -1415,6 +1412,7 @@ __metadata:
     "@wordpress/i18n": "npm:^5.16.0"
     "@wordpress/react-i18n": "npm:^4.16.0"
     debug: "npm:^4.3.3"
+    i18n-calypso: "workspace:^"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     typescript: "npm:^5.3.3"
@@ -1686,7 +1684,6 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
-    "@automattic/format-currency": "workspace:^"
     "@automattic/onboarding": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
     "@automattic/viewport": "workspace:^"
@@ -2248,7 +2245,6 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
-    "@automattic/format-currency": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
     "@emotion/styled": "npm:^11.11.0"
     "@stripe/stripe-js": "npm:^1.54.2"
@@ -13709,7 +13705,6 @@ __metadata:
     "@automattic/explat-client": "workspace:^"
     "@automattic/explat-client-react-helpers": "workspace:^"
     "@automattic/fingerprintjs": "workspace:^"
-    "@automattic/format-currency": "workspace:^"
     "@automattic/generate-password": "workspace:^"
     "@automattic/global-styles": "workspace:^"
     "@automattic/help-center": "workspace:^"
@@ -20519,7 +20514,6 @@ __metadata:
     "@automattic/calypso-products": "workspace:^"
     "@automattic/color-studio": "npm:^3.0.1"
     "@automattic/components": "workspace:^"
-    "@automattic/format-currency": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
     "@automattic/wpcom-template-parts": "workspace:^"

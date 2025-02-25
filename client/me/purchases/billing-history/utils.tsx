@@ -6,8 +6,7 @@ import {
 	isTieredVolumeSpaceAddon,
 	isJetpackSearch,
 } from '@automattic/calypso-products';
-import formatCurrency from '@automattic/format-currency';
-import { LocalizeProps, useTranslate } from 'i18n-calypso';
+import { formatCurrency, LocalizeProps, useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import {

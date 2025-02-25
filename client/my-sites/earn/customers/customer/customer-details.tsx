@@ -1,6 +1,5 @@
 import { TimeSince } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, formatCurrency } from 'i18n-calypso';
 import {
 	PLAN_YEARLY_FREQUENCY,
 	PLAN_MONTHLY_FREQUENCY,
@@ -21,13 +20,10 @@ const CustomerDetails = ( { customer }: CustomerDetailsProps ) => {
 		switch ( interval ) {
 			case PLAN_ONE_TIME_FREQUENCY:
 				return translate( ' once' );
-				break;
 			case PLAN_MONTHLY_FREQUENCY:
 				return translate( ' monthly' );
-				break;
 			case PLAN_YEARLY_FREQUENCY:
 				return translate( ' yearly' );
-				break;
 			default:
 				break;
 		}
