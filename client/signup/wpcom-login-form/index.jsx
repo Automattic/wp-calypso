@@ -39,7 +39,7 @@ export default function WpcomLoginForm( {
 			<input type="hidden" name="pwd" value={ pwd } />
 			<input type="hidden" name="authorization" value={ authorization } />
 			<input type="hidden" name="redirect_to" value={ redirectTo } />
-			{ rememberMe ? <input type="hidden" name="rememberme" value="true" /> : undefined }
+			{ rememberMe ? <input type="hidden" name="rememberme" value="forever" /> : undefined }
 		</form>
 	);
 }
