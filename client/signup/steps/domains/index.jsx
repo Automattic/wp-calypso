@@ -1182,7 +1182,7 @@ export class RenderDomainsStep extends Component {
 			return translate( 'Find and claim one or more domain names' );
 		}
 
-		if ( ! stepSectionName && 'domain-transfer' !== flowName ) {
+		if ( ! stepSectionName ) {
 			return translate( 'Enter some descriptive keywords to get started' );
 		}
 
@@ -1194,7 +1194,7 @@ export class RenderDomainsStep extends Component {
 	getHeaderText() {
 		const { headerText, isAllDomains, stepSectionName, translate, flowName } = this.props;
 
-		if ( stepSectionName === 'use-your-domain' || 'domain-transfer' === flowName ) {
+		if ( stepSectionName === 'use-your-domain' ) {
 			return '';
 		}
 
@@ -1232,11 +1232,6 @@ export class RenderDomainsStep extends Component {
 			sideContent = this.getSideContent();
 		}
 
-		if ( 'domain-transfer' === this.props.flowName && ! this.props.stepSectionName ) {
-			content = this.useYourDomainForm();
-			sideContent = null;
-		}
-
 		if ( this.props.step && 'invalid' === this.props.step.status ) {
 			content = (
 				<div className="domains__step-section-wrapper">
@@ -1263,10 +1258,7 @@ export class RenderDomainsStep extends Component {
 	}
 
 	getPreviousStepUrl() {
-		if (
-			'use-your-domain' !== this.props.stepSectionName &&
-			'domain-transfer' !== this.props.flowName
-		) {
+		if ( 'use-your-domain' !== this.props.stepSectionName ) {
 			return null;
 		}
 
@@ -1352,9 +1344,6 @@ export class RenderDomainsStep extends Component {
 		} else if ( isAllDomains ) {
 			backUrl = domainManagementRoot();
 			backLabelText = translate( 'Back to All Domains' );
-		} else if ( ! previousStepBackUrl && 'domain-transfer' === flowName ) {
-			backUrl = null;
-			backLabelText = null;
 		} else if ( 'domain-for-gravatar' === flowName ) {
 			backUrl = null;
 			backLabelText = null;
