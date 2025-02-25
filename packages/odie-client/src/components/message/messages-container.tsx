@@ -136,18 +136,25 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 								displayChatWithSupportLabel={ false }
 							/>
 						) }
-						{ chat.messages.map( ( message, index ) => (
-							<ChatMessage
-								message={ message }
-								key={ index }
-								currentUser={ currentUser }
-								isNextMessageFromSameSender={ isNextMessageFromSameSender(
-									message.role,
-									chat.messages[ index + 1 ]?.role
-								) }
-								displayChatWithSupportLabel={ message.context?.flags?.show_contact_support_msg }
-							/>
-						) ) }
+						{ chat.messages.map( ( message, index ) => {
+							const nextMessage = chat.messages[ index + 1 ];
+							const displayChatWithSupportLabel =
+								! nextMessage?.context?.flags?.show_contact_support_msg &&
+								message.context?.flags?.show_contact_support_msg;
+
+							return (
+								<ChatMessage
+									message={ message }
+									key={ index }
+									currentUser={ currentUser }
+									isNextMessageFromSameSender={ isNextMessageFromSameSender(
+										message.role,
+										chat.messages[ index + 1 ]?.role
+									) }
+									displayChatWithSupportLabel={ displayChatWithSupportLabel }
+								/>
+							);
+						} ) }
 						<JumpToRecent containerReference={ messagesContainerRef } />
 						{ chat.provider === 'odie' && <ViewMostRecentOpenConversationNotice /> }
 						{ chat.status === 'dislike' && ! removeDislikeStatus && <DislikeThumb /> }
