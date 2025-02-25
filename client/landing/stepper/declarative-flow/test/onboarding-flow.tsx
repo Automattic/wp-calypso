@@ -78,7 +78,7 @@ describe( 'Onboarding Flow', () => {
 			expect( getFlowLocation().path ).toBe( '/difmStartingPoint' );
 		} );
 
-		it( 'should navigate to designSetup step for other intents', async () => {
+		it( 'should navigate to design-setup step for other intents', async () => {
 			const { runUseStepNavigationSubmit } = renderFlow( onboarding );
 
 			runUseStepNavigationSubmit( {
@@ -88,7 +88,7 @@ describe( 'Onboarding Flow', () => {
 				},
 			} );
 
-			expect( getFlowLocation().path ).toBe( '/designSetup' );
+			expect( getFlowLocation().path ).toBe( '/design-setup' );
 		} );
 	} );
 } );

@@ -222,12 +222,12 @@ const onboarding: Flow = {
 							if ( isDesignChoicesStepEnabled ) {
 								return navigate( 'design-choices' );
 							}
-							return navigate( 'designSetup' );
+							return navigate( 'design-setup' );
 						}
 					}
 				}
 
-				case 'designSetup': {
+				case 'design-setup': {
 					return navigate( 'domains' );
 				}
 
@@ -424,9 +424,9 @@ const onboarding: Flow = {
 						if ( isBigSkyBeforePlansExperiment && createWithBigSky ) {
 							return navigate( 'design-choices' );
 						}
-						return navigate( 'designSetup' );
+						return navigate( 'design-setup' );
 					}
-				case 'designSetup':
+				case 'design-setup':
 					if ( isDesignChoicesStepEnabled ) {
 						return navigate( 'design-choices' );
 					}

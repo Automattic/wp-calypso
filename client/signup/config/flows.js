@@ -145,7 +145,7 @@ function getWithThemeDestination( {
 		! cartItems &&
 		[ DOT_ORG_THEME, PREMIUM_THEME, MARKETPLACE_THEME, BUNDLED_THEME ].includes( themeType )
 	) {
-		return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }`;
+		return `/setup/site-setup/design-setup?siteSlug=${ siteSlug }`;
 	}
 
 	if ( DOT_ORG_THEME === themeType ) {
@@ -158,7 +158,7 @@ function getWithThemeDestination( {
 		return `/marketplace/thank-you/${ siteSlug }?onboarding=&themes=${ themeParameter }${ style }`;
 	}
 
-	return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }&theme=${ themeParameter }${ style }`;
+	return `/setup/site-setup/design-setup?siteSlug=${ siteSlug }&theme=${ themeParameter }${ style }`;
 }
 
 function getWithPluginDestination( { siteSlug, pluginParameter, pluginBillingPeriod } ) {

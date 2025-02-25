@@ -79,7 +79,7 @@ const updateDesign: Flow = {
 						} )
 					);
 
-				case 'designSetup':
+				case 'design-setup':
 					if ( providedDependencies?.goToCheckout ) {
 						const destination = `/setup/${ flowToReturnTo }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
 						persistSignupDestination( destination );

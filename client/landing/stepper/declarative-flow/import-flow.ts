@@ -169,7 +169,7 @@ const importFlow: Flow = {
 					}
 				}
 
-				case 'designSetup': {
+				case 'design-setup': {
 					return navigate( 'processing' );
 				}
 
@@ -305,7 +305,7 @@ const importFlow: Flow = {
 				case 'importReadyNot':
 				case 'importReadyWpcom':
 				case 'importReadyPreview':
-				case 'designSetup':
+				case 'design-setup':
 					return navigate( `import?siteSlug=${ siteSlugParam }` );
 
 				case 'verifyEmail':
