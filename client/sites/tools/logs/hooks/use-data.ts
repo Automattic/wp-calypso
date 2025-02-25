@@ -6,7 +6,7 @@ import {
 } from 'calypso/data/hosting/use-site-logs-query';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { buildFilter, getFilterValue } from './use-view';
+import { toFilterParams } from './use-view';
 import type { View } from '@wordpress/dataviews';
 import type { Moment } from 'moment';
 
@@ -57,17 +57,12 @@ const useData = ( {
 	endTime: Moment;
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
-	const cached = getFilterValue( view, 'cached' );
-	const severity = getFilterValue( view, 'severity' );
-	const status = getFilterValue( view, 'status' );
-	const requestType = getFilterValue( view, 'request_type' );
-	const renderer = getFilterValue( view, 'renderer' );
 
 	const { data, isFetching, isLoading } = useSiteLogsQuery( siteId, {
 		logType,
 		start: startTime.unix(),
 		end: endTime.unix(),
-		filter: buildFilter( { logType, cached, renderer, requestType, severity, status } ),
+		filter: toFilterParams( { view, logType } ),
 		sortOrder: view.sort?.direction,
 		pageSize: view.perPage,
 		pageIndex: view.page,

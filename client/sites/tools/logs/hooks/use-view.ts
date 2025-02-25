@@ -12,34 +12,25 @@ const getVisibleFields = ( logType: LogType ) => {
 const getFilterValue = ( view: View, fieldName: string ) =>
 	view.filters?.filter( ( filter ) => filter.field === fieldName )?.[ 0 ]?.value;
 
-function buildFilter( {
-	logType,
-	cached,
-	renderer,
-	requestType,
-	severity,
-	status,
-}: {
-	logType: LogType;
-	cached?: string[];
-	renderer?: string[];
-	requestType?: string[];
-	severity?: string[];
-	status?: string[];
-} ): FilterType {
+function toFilterParams( { view, logType }: { view: View; logType: LogType } ): FilterType {
 	const filters: FilterType = {};
 
 	if ( logType === 'php' ) {
+		const severity = getFilterValue( view, 'severity' );
 		if ( severity ) {
 			filters.severity = severity;
 		}
 	}
 
 	if ( logType === 'web' ) {
+		const cached = getFilterValue( view, 'cached' );
+		const requestType = getFilterValue( view, 'request_type' );
+		const status = getFilterValue( view, 'status' );
+		const renderer = getFilterValue( view, 'renderer' );
+
 		if ( cached ) {
 			filters.cached = cached;
 		}
-
 		if ( requestType ) {
 			filters.request_type = requestType;
 		}
@@ -98,4 +89,4 @@ const useView = ( { logType }: { logType: LogType } ) => {
 };
 
 export default useView;
-export { buildFilter, getSortField, getVisibleFields, getFilterValue };
+export { toFilterParams, getSortField, getVisibleFields, getFilterValue };

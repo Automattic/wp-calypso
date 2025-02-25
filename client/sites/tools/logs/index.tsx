@@ -29,7 +29,7 @@ import useData from './hooks/use-data';
 import useFields from './hooks/use-fields';
 import {
 	default as useView,
-	buildFilter,
+	toFilterParams,
 	getSortField,
 	getVisibleFields,
 	getFilterValue,
@@ -182,14 +182,7 @@ export const SiteLogsDataViews = ( {
 			logType,
 			startDateTime: startTime,
 			endDateTime: endTime,
-			filter: buildFilter( {
-				logType,
-				cached: getFilterValue( view, 'cached' ),
-				renderer: getFilterValue( view, 'renderer' ),
-				requestType: getFilterValue( view, 'request_type' ),
-				severity: getFilterValue( view, 'severity' ),
-				status: getFilterValue( view, 'status' ),
-			} ),
+			filter: toFilterParams( { view, logType } ),
 		} );
 	}, [ downloadLogs, logType, startTime, endTime, view ] );
 
