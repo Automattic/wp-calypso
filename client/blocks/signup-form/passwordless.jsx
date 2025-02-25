@@ -1,8 +1,8 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { Button, FormLabel } from '@automattic/components';
+import { Button as A8CButton, FormLabel } from '@automattic/components';
 import { suggestEmailCorrection } from '@automattic/onboarding';
-import { Button as WordPressButton } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
 import { debounce } from 'lodash';
@@ -244,7 +244,7 @@ class PasswordlessSignupForm extends Component {
 				this.props.translate( 'Did you mean {{emailSuggestion/}}?', {
 					components: {
 						emailSuggestion: (
-							<Button
+							<A8CButton
 								plain
 								className="signup-form__domain-suggestion-confirmation"
 								onClick={ () => {
@@ -252,7 +252,7 @@ class PasswordlessSignupForm extends Component {
 								} }
 							>
 								{ newEmail }
-							</Button>
+							</A8CButton>
 						),
 					},
 				} ),
@@ -306,14 +306,14 @@ class PasswordlessSignupForm extends Component {
 
 		return (
 			<LoggedOutFormFooter>
-				<WordPressButton
+				<Button
 					type="submit"
 					variant="primary"
 					isBusy={ isSubmitting }
 					disabled={ isSubmitting || !! this.props.disabled || !! this.props.disableSubmitButton }
 				>
 					{ submitButtonText }
-				</WordPressButton>
+				</Button>
 			</LoggedOutFormFooter>
 		);
 	}
