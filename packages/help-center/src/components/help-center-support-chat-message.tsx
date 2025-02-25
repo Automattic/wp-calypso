@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Gravatar } from '@automattic/components';
+import { Gravatar, TimeSince } from '@automattic/components';
 import { getNumericDateString, useLocale } from '@automattic/i18n-utils';
 import { HumanAvatar } from '@automattic/odie-client/src/assets';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
@@ -8,7 +8,6 @@ import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { Link } from 'react-router-dom';
-import TimeSince from 'calypso/components/time-since';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { HELP_CENTER_STORE } from '../stores';
 import type { SupportInteraction, ZendeskMessage } from '@automattic/odie-client';
