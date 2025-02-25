@@ -6,7 +6,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import { Panel, PanelCard } from 'calypso/components/panel';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
-import { useSetFeatureBreadcrumb } from 'calypso/sites/hooks/use-set-feature-breadcrumb';
+import { useSetFeatureBreadcrumb } from '../../../../hooks/breadcrumbs/use-set-feature-breadcrumb';
 
 export function SiteTransferCard( {
 	children,

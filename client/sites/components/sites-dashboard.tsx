@@ -34,7 +34,6 @@ import { useSelector } from 'calypso/state';
 import { shouldShowSiteDashboard } from 'calypso/state/global-sidebar/selectors';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { useInitializeBreadcrumbs } from '../hooks/use-initialize-breadcrumbs';
 import { useInitializeDataViewsPage } from '../hooks/use-initialize-dataviews-page';
 import { useShowSiteCreationNotice } from '../hooks/use-show-site-creation-notice';
 import { useShowSiteTransferredNotice } from '../hooks/use-show-site-transferred-notice';
@@ -315,7 +314,6 @@ const SitesDashboard = ( {
 
 	const onboardingTours = useOnboardingTours();
 
-	useInitializeBreadcrumbs( selectedSite?.ID );
 	useInitializeDataViewsPage( dataViewsState, setDataViewsState );
 
 	// Update URL with view control params on change.

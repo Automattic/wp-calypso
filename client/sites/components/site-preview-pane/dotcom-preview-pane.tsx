@@ -2,20 +2,19 @@ import config from '@automattic/calypso-config';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import ItemView from 'calypso/layout/hosting-dashboard/item-view';
 import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
+import { useSetTabBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-tab-breadcrumb';
 import HostingFeaturesIcon from 'calypso/sites/hosting-features/components/hosting-features-icon';
 import { areHostingFeaturesSupported } from 'calypso/sites/hosting-features/features';
 import { useStagingSite } from 'calypso/sites/tools/staging-site/hooks/use-staging-site';
 import { getMigrationStatus } from 'calypso/sites-dashboard/utils';
-import { useDispatch, useSelector } from 'calypso/state';
-import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
+import { useSelector } from 'calypso/state';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
 import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
-import useBreadcrumbs from '../../hooks/use-breadcrumbs';
+import { useBreadcrumbs } from '../../hooks/breadcrumbs/use-breadcrumbs';
 import { showSitesPage } from '../sites-dashboard';
-import SiteIcon from '../sites-dataviews/site-icon';
 import { SiteStatus } from '../sites-dataviews/sites-site-status';
 import {
 	FEATURE_TO_ROUTE_MAP,
@@ -250,30 +249,12 @@ const DotcomPreviewPane = ( {
 		stagingStatus === StagingSiteStatus.NONE ||
 		stagingStatus === StagingSiteStatus.UNSET;
 
-	const dispatch = useDispatch();
-
-	useEffect( () => {
-		const selectedTab = features.find( ( feature ) => feature.tab.selected )?.tab;
-		if ( selectedTab ) {
-			dispatch(
-				appendBreadcrumb( {
-					id: 'tab',
-					label: selectedTab.label,
-					href: selectedTab.href,
-				} )
-			);
-			dispatch(
-				appendBreadcrumb( {
-					id: 'site',
-					label: site.title,
-					href: `/overview/${ site.slug }`,
-					icon: <SiteIcon site={ site } viewType="breadcrumb" disableClick />,
-				} )
-			);
-		}
-	}, [ site.ID, features, selectedSiteFeature ] ); // eslint-disable-line react-hooks/exhaustive-deps
-
 	const { breadcrumbs, shouldShowBreadcrumbs } = useBreadcrumbs();
+	useSetTabBreadcrumb( {
+		site,
+		features,
+		selectedFeatureId: selectedSiteFeature,
+	} );
 
 	return (
 		<ItemView
