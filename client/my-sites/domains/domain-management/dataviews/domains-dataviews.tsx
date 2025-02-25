@@ -85,9 +85,8 @@ export const DomainsDataViews = ( {
 		setView( ( previousView ) => ( {
 			...previousView,
 			page: queryParams.page,
-			perPage: queryParams.perPage,
 		} ) );
-	}, [ queryParams.page, queryParams.perPage ] );
+	}, [ queryParams.page ] );
 
 	const layout = sidebarMode ? { list: {} } : { table: {} };
 
