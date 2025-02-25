@@ -40,7 +40,7 @@ exports[`Theme rendering should match snapshot 1`] = `
       >
         <components--theme-tier-badge
           islockedstylevariation="false"
-          isthemeshowcase="true"
+          isthemelist="true"
           themeid="twentyseventeen"
         />
       </div>
