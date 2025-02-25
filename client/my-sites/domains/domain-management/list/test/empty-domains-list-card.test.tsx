@@ -23,6 +23,10 @@ jest.mock( 'calypso/state/purchases/selectors', () => ( {
 	hasPurchasedDomain: jest.fn().mockReturnValue( false ),
 } ) );
 
+jest.mock( 'calypso/state/purchases/selectors/fetching', () => ( {
+	isFetchingUserPurchases: jest.fn().mockReturnValue( false ),
+} ) );
+
 // Mock QueryProductsList component to prevent actual API calls
 jest.mock( 'calypso/components/data/query-products-list', () => {
 	return function MockQueryProductsList() {

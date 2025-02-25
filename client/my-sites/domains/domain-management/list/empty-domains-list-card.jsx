@@ -9,6 +9,7 @@ import { domainAddNew, domainUseMyDomain } from 'calypso/my-sites/domains/paths'
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { hasPurchasedDomain } from 'calypso/state/purchases/selectors';
+import { isFetchingUserPurchases } from 'calypso/state/purchases/selectors/fetching';
 import { EmptyDomainsListCardSkeleton } from './empty-domains-list-card-skeleton';
 
 import './empty-domains-list-card-styles.scss';
@@ -21,6 +22,8 @@ function EmptyDomainsListCard( { selectedSite, hasDomainCredit, isCompact, hasNo
 		selectedSite?.plan?.product_slug && ! isFreePlan( selectedSite.plan.product_slug );
 
 	const siteHasHundredYearPlan = selectedSite?.plan?.product_slug === PLAN_100_YEARS;
+
+	const isLoadingUserPurchases = useSelector( isFetchingUserPurchases );
 
 	const siteHasPurchasedDomain = !! useSelector(
 		( state ) => selectedSite?.ID && hasPurchasedDomain( state, selectedSite?.ID )
@@ -41,6 +44,10 @@ function EmptyDomainsListCard( { selectedSite, hasDomainCredit, isCompact, hasNo
 		getProductBySlug( state, domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION )
 	);
 	const domainProductCost = domainRegistrationProduct?.combined_cost_display;
+
+	if ( isLoadingUserPurchases ) {
+		return null;
+	}
 
 	if ( isEnabled( 'domain-to-plan-credit' ) && ! siteHasPaidPlan && siteHasPurchasedDomain ) {
 		return null;
