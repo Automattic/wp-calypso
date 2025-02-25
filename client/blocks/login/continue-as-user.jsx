@@ -1,4 +1,5 @@
-import { Button } from '@automattic/components';
+import { Button as A8CButton } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import Gravatar from 'calypso/components/gravatar';
@@ -98,14 +99,14 @@ export default function ContinueAsUser( {
 						</button>
 					</div>
 				</div>
-				<Button
+				<A8CButton
 					primary
 					className="continue-as-user__continue-button"
 					busy={ validatingPath }
 					href={ validatedPath || '/' }
 				>
 					{ translate( 'Continue' ) }
-				</Button>
+				</A8CButton>
 			</div>
 		);
 	}
@@ -126,7 +127,7 @@ export default function ContinueAsUser( {
 						</button>
 					</div>
 				</div>
-				<Button
+				<A8CButton
 					primary
 					className="continue-as-user__continue-button"
 					busy={ validatingPath }
@@ -135,7 +136,7 @@ export default function ContinueAsUser( {
 					{ `${ translate( 'Continue as', {
 						context: 'Continue as an existing WordPress.com user',
 					} ) } ${ userName }` }
-				</Button>
+				</A8CButton>
 				<SocialToS />
 			</div>
 		);
@@ -145,7 +146,7 @@ export default function ContinueAsUser( {
 		<div className="continue-as-user">
 			<div className="continue-as-user__user-info">
 				{ gravatarLink }
-				<Button primary busy={ validatingPath } href={ validatedPath || '/' }>
+				<Button variant="primary" isBusy={ validatingPath } href={ validatedPath || '/' }>
 					{ translate( 'Continue' ) }
 				</Button>
 			</div>

@@ -23,10 +23,11 @@
 		margin: 0 auto;
 		display: flex;
 		flex-direction: column;
+		margin-inline: 20px;
 
-		& > a.button {
-			margin: 0 20px;
-			border-radius: 4px;
+		.components-button.is-primary {
+			margin-top: 20px;
+			justify-content: center;
 		}
 	}
 
@@ -44,6 +45,10 @@
 		&:focus,
 		&:active {
 			color: var(--color-link-dark);
+		}
+
+		&:focus {
+			text-decoration: underline;
 		}
 	}
 
