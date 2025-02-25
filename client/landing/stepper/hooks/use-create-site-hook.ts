@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { getLanguage } from '@automattic/i18n-utils';
-import { addPlanToCart, getNewSiteParams, processItemCart } from '@automattic/onboarding/src/cart';
+import { addPlanToCart, getNewSiteParams, processItemCart } from '@automattic/onboarding';
 import { useMutation } from '@tanstack/react-query';
 import { getLocaleSlug } from 'i18n-calypso';
 import wpcomRequest from 'wpcom-proxy-request';
@@ -24,7 +24,6 @@ type Params = {
 	username: string;
 	domainCartItems: MinimalRequestCartProduct[];
 	partnerBundle?: string | null;
-	storedSiteUrl?: string;
 	domainItem?: DomainSuggestion;
 	sourceSlug?: string;
 	siteIntent?: string;
@@ -44,20 +43,17 @@ export const createSite = async ( {
 	username,
 	domainCartItems,
 	partnerBundle = null,
-	storedSiteUrl,
 	domainItem,
 	sourceSlug,
 	siteIntent,
 	planCartItems,
 }: Params ) => {
-	const siteUrl = storedSiteUrl || domainItem?.domain_name;
 	const isFreeThemePreselected = themeSlugWithRepo.startsWith( 'pub' );
 
 	const newSiteParams = getNewSiteParams( {
 		flowToCheck: flowName,
 		isPurchasingDomainItem,
 		themeSlugWithRepo,
-		siteUrl,
 		siteTitle,
 		siteAccentColor,
 		useThemeHeadstart,
@@ -124,6 +120,7 @@ export const useCreateSite = () => {
 	const domains = get( 'domains' );
 	const username = useSelector( getCurrentUserName );
 	const planCartItems = get( 'plans' )?.cartItems;
+	const createdSite = get( 'site' );
 	const siteTitle = get( 'newsletterSetup' )?.siteTitle as string;
 
 	/**
@@ -138,7 +135,7 @@ export const useCreateSite = () => {
 	}
 
 	return useMutation( {
-		mutationFn: ( {
+		mutationFn: async ( {
 			theme,
 			siteIntent,
 		}: {
@@ -146,6 +143,7 @@ export const useCreateSite = () => {
 			siteIntent: string;
 			siteGoals?: SiteGoal[];
 		} ) =>
+			createdSite ||
 			createSite( {
 				flowName,
 				userIsLoggedIn,
@@ -161,7 +159,6 @@ export const useCreateSite = () => {
 				username,
 				domainCartItems: mergedDomainCartItems,
 				partnerBundle: null,
-				storedSiteUrl: domains?.siteUrl,
 				domainItem: domains?.domainItem,
 				siteIntent,
 				planCartItems,
