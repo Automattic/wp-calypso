@@ -21,10 +21,7 @@ const EMPTY_ARRAY: ( ServerLog | PHPLog )[] = [];
  * Otherwise, until the fresh data comes in, the table will display
  * the number of rows of the cached data but with empty fields.
  */
-const isCachedDataOfProperType = (
-	logType: LogType,
-	data: { logs?: ( PHPLog | ServerLog )[] }
-) => {
+const hasLogTypeChanged = ( logType: LogType, data: { logs?: ( PHPLog | ServerLog )[] } ) => {
 	if (
 		logType === 'php' &&
 		!! data.logs &&
@@ -32,7 +29,7 @@ const isCachedDataOfProperType = (
 		'severity' in data.logs[ 0 ] &&
 		'message' in data.logs[ 0 ]
 	) {
-		return true;
+		return false;
 	}
 
 	if (
@@ -42,10 +39,10 @@ const isCachedDataOfProperType = (
 		'request_type' in data.logs[ 0 ] &&
 		'status' in data.logs[ 0 ]
 	) {
-		return true;
+		return false;
 	}
 
-	return false;
+	return true;
 };
 
 const useData = ( {
@@ -78,7 +75,7 @@ const useData = ( {
 
 	return {
 		data:
-			! data?.logs || ! isCachedDataOfProperType( logType, data )
+			! data?.logs || hasLogTypeChanged( logType, data )
 				? EMPTY_ARRAY
 				: ( data.logs as ( PHPLog | ServerLog )[] ),
 		paginationInfo: {
