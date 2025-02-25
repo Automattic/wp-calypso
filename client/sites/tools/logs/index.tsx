@@ -9,7 +9,6 @@ import { DataViews } from '@wordpress/dataviews';
 import { download } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useMemo } from 'react';
-import { v4 as uuid } from 'uuid';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import DateControl from 'calypso/components/date-control';
 import { getShortcuts } from 'calypso/components/date-range/use-shortcuts';
@@ -51,8 +50,36 @@ export const SiteLogsDataViews = ( {
 
 	const dispatch = useDispatch();
 
-	// Can we actually derive an unique ID from the data?
-	const getItemId = useMemo( () => () => uuid(), [] );
+	/**
+	 * Generates a unique key for each row.
+	 * The ID only needs to be unique for each render, because it's used in selection
+	 * or as keys for react components.
+	 *
+	 * - The PHP logs have a resolution of 1 second,
+	 *   so there's no single property that can act as an unique ID.
+	 *   It's unlikely the same line will trigger an error within the same second.
+	 *
+	 * - The Server logs have a resolution of 1 ms,
+	 *   so the date is a better unique ID on its own,
+	 *   but still add some entrophy, just in case.
+	 *
+	 */
+	const getItemId = useMemo(
+		() => ( item: PHPLog | ServerLog ) => {
+			if ( logType === 'php' ) {
+				const phpLog = item as PHPLog;
+				return `${ phpLog.timestamp }-${ phpLog.file }-${ phpLog.line }`;
+			}
+
+			if ( logType === 'web' ) {
+				const serverLog = item as ServerLog;
+				return `${ serverLog.date }-${ serverLog.request_time }-${ serverLog.body_bytes_sent }`;
+			}
+
+			return;
+		},
+		[ logType ]
+	);
 
 	const getMomentFromTimestamp = useCallback(
 		( value: string, fallback?: string ) => {
