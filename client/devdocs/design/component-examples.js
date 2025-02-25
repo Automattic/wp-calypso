@@ -72,7 +72,7 @@ export { default as TextareaAutosize } from 'calypso/components/textarea-autosiz
 export { default as TextDiff } from 'calypso/components/text-diff/docs/example';
 export { default as TileGrid } from 'calypso/components/tile-grid/docs/example';
 export { default as Timeline } from 'calypso/components/timeline/docs/example';
-export { default as TimeSince } from 'calypso/components/time-since/docs/example';
+export { default as TimeSince } from '@automattic/components/src/time-since/docs/example';
 export { default as Timezone } from 'calypso/components/timezone/docs/example';
 export { default as TokenFields } from 'calypso/components/token-field/docs/example';
 export { default as Tooltip } from '@automattic/components/src/tooltip/docs/example';
