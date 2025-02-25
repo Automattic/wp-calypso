@@ -97,13 +97,10 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			! hasChatScolledOnLoad &&
 			! shouldEnableAutoScroll
 		) {
-			const messages = messagesContainerRef.current?.querySelectorAll(
-				'[data-is-message="true"],.odie-chatbox__action-message'
-			);
-			const lastMessage = messages?.length ? messages[ messages.length - 1 ] : null;
-			lastMessage?.scrollIntoView( {
+			const chatContainer = messagesContainerRef.current?.closest( '.chat-box-message-container' );
+			chatContainer?.scrollIntoView( {
 				behavior: 'instant',
-				block: 'start',
+				block: 'end',
 			} );
 			setHasChatScolledOnLoad( true );
 		}
