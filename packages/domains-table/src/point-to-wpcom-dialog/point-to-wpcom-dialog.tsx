@@ -1,7 +1,7 @@
 import { Dialog } from '@automattic/components';
+import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import wpcomRequest from 'wpcom-proxy-request';
 // eslint-disable-next-line no-restricted-imports
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
