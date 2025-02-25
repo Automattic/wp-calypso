@@ -1,14 +1,12 @@
 import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
 import HeaderCakeBack from 'calypso/components/header-cake/back';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { Panel, PanelCard } from 'calypso/components/panel';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
-import { useDispatch } from 'calypso/state';
-import { resetBreadcrumbs, updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
+import { useSetFeatureBreadcrumb } from 'calypso/sites/hooks/use-set-feature-breadcrumb';
 
 export function SiteTransferCard( {
 	children,
@@ -23,21 +21,7 @@ export function SiteTransferCard( {
 	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 	const title = isUntangled ? translate( 'Transfer site' ) : translate( 'Site Transfer' );
 
-	const dispatch = useDispatch();
-
-	useEffect( () => {
-		dispatch(
-			updateBreadcrumbs( [
-				{
-					id: 'subtab',
-					label: title,
-				},
-			] )
-		);
-		return () => {
-			dispatch( resetBreadcrumbs() );
-		};
-	}, [ siteId, title ] ); // eslint-disable-line react-hooks/exhaustive-deps
+	useSetFeatureBreadcrumb( { siteId, title } );
 
 	return (
 		<Panel className="settings-administration__transfer-site">

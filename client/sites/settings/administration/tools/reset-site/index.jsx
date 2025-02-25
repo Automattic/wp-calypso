@@ -9,7 +9,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { createInterpolateElement, useState } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { localize } from 'i18n-calypso';
-import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -23,11 +22,11 @@ import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { getSettingsSource } from 'calypso/my-sites/site-settings/site-tools/utils';
 import { useDispatch, useSelector } from 'calypso/state';
-import { resetBreadcrumbs, updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getSite, getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { useSetFeatureBreadcrumb } from '../../../../hooks/use-set-feature-breadcrumb';
 import { DIFMUpsell } from '../../../components/difm-upsell-banner';
 
 import './style.scss';
@@ -54,19 +53,7 @@ function SiteResetCard( {
 	const title = isUntangled ? translate( 'Reset site' ) : translate( 'Site Reset' );
 	const source = isUntangled ? '/sites/settings/site' : getSettingsSource();
 
-	useEffect( () => {
-		dispatch(
-			updateBreadcrumbs( [
-				{
-					id: 'subtab',
-					label: title,
-				},
-			] )
-		);
-		return () => {
-			dispatch( resetBreadcrumbs() );
-		};
-	}, [ siteId, title ] ); // eslint-disable-line react-hooks/exhaustive-deps
+	useSetFeatureBreadcrumb( { siteId, title } );
 
 	const checkStatus = async () => {
 		if ( status?.status !== 'completed' && isAtomic ) {
