@@ -98,7 +98,7 @@ const HelpCenterRecentConversations: React.FC = () => {
 		...lastMessage,
 		...( unreadConversationsCount > 1
 			? {
-					text: 'Multiple Unread Messages',
+					text: __( 'Multiple Unread Messages', __i18n_text_domain__ ),
 					displayName: sprintf(
 						/* translators: %1$s is total number of unread messages, %2$s is the total number of chats with unread messages */
 						__( '%1$s messages from %2$s chats', __i18n_text_domain__ ),
