@@ -9,6 +9,7 @@ import {
 	__DO_NOT_IMPORT__numberFormat,
 	__DO_NOT_IMPORT__numberFormatCompact,
 	__DO_NOT_IMPORT__numberFormatCurrency,
+	__DO_NOT_IMPORT__getCurrencyObject,
 } from './number-formatters';
 
 const GEO_LOCATION_ENDPOINT_URL = 'https://public-api.wordpress.com/geo/';
@@ -283,6 +284,35 @@ I18N.prototype.formatCurrency = function (
 	}
 
 	return __DO_NOT_IMPORT__numberFormatCurrency( {
+		number,
+		currency,
+		browserSafeLocale,
+		stripZeros,
+		isSmallestUnit,
+		signForPositive,
+		geoLocation,
+		forceLatin,
+	} );
+};
+
+I18N.prototype.getCurrencyObject = function (
+	number,
+	currency,
+	{ stripZeros = false, isSmallestUnit = false, signForPositive = false, forceLatin = true } = {}
+) {
+	const browserSafeLocale = this.getBrowserSafeLocale();
+	const geoLocation = this.geoLocation;
+
+	/**
+	 * TS will flag this as an error, but best to check for undefined here for older usages
+	 * `Intl.NumberFormat` will return NaN for undefined values, which is not helpful. Null becomes 0, also potentially risky.
+	 */
+	if ( typeof number === 'undefined' || number === null ) {
+		warn( 'getCurrencyObject() requires a defined and non-null value as the first argument' );
+		return number;
+	}
+
+	return __DO_NOT_IMPORT__getCurrencyObject( {
 		number,
 		currency,
 		browserSafeLocale,
