@@ -99,7 +99,7 @@ function getSignupDestination( { domainItem, siteId, siteSlug, refParameter, flo
 		queryParam.ref = refParameter;
 	}
 
-	return addQueryArgs( queryParam, '/setup' );
+	return addQueryArgs( queryParam, '/setup/site-setup' );
 }
 
 function getLaunchDestination( dependencies ) {
