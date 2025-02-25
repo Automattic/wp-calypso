@@ -76,7 +76,7 @@ export const SiteLogsDataViews = ( {
 				return `${ serverLog.date }-${ serverLog.request_time }-${ serverLog.body_bytes_sent }`;
 			}
 
-			return;
+			return 'unknown';
 		},
 		[ logType ]
 	);
