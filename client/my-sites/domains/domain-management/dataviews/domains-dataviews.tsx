@@ -81,6 +81,14 @@ export const DomainsDataViews = ( {
 		} );
 	}, [ view.search, view.page, view.perPage, view.sort?.field, view.sort?.direction ] );
 
+	useEffect( () => {
+		setView( ( previousView ) => ( {
+			...previousView,
+			page: queryParams.page,
+			perPage: queryParams.perPage,
+		} ) );
+	}, [ queryParams.page, queryParams.perPage ] );
+
 	const layout = sidebarMode ? { list: {} } : { table: {} };
 
 	const onClickDomain = ( item: PartialDomainData ) => {
