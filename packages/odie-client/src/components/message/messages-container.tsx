@@ -57,20 +57,21 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		searchParams.get( 'provider' ) === 'zendesk' && chat.provider !== 'zendesk';
 	const [ hasForwardedToZendesk, setHasForwardedToZendesk ] = useState( false );
 	const [ chatMessagesLoaded, setChatMessagesLoaded ] = useState( false );
-	const [ shouldEnableAutoScroll, setShouldEnableAutoScroll ] = useState( true );
+	const [ shouldEnableAutoScroll, setShouldEnableAutoScroll ] = useState( false );
+	const [ hasChatScolledOnLoad, setHasChatScolledOnLoad ] = useState( false );
 	const navType: NavigationType = useNavigationType();
 
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
 	const scrollParentRef = useRef< HTMLElement | null >( null );
 
 	useZendeskMessageListener();
-	useHelpCenterChatScroll( chat?.supportInteractionId, scrollParentRef, ! shouldEnableAutoScroll );
+	useHelpCenterChatScroll( chat?.supportInteractionId, scrollParentRef, shouldEnableAutoScroll );
 
 	useEffect( () => {
 		if ( navType === 'POP' && ( isChatLoaded || ! isUserEligibleForPaidSupport ) ) {
-			setShouldEnableAutoScroll( false );
+			setShouldEnableAutoScroll( true );
 		}
-	}, [ navType, isUserEligibleForPaidSupport, shouldEnableAutoScroll, isChatLoaded ] );
+	}, [ navType, isUserEligibleForPaidSupport, isChatLoaded ] );
 
 	useEffect( () => {
 		if ( messagesContainerRef.current && scrollParentRef.current === null ) {
@@ -90,7 +91,12 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	}, [ chat, isForwardingToZendesk, hasForwardedToZendesk ] );
 
 	useEffect( () => {
-		if ( chat?.messages.length > 0 && chatMessagesLoaded && shouldEnableAutoScroll ) {
+		if (
+			chat?.messages.length > 0 &&
+			chatMessagesLoaded &&
+			! hasChatScolledOnLoad &&
+			! shouldEnableAutoScroll
+		) {
 			const messages = messagesContainerRef.current?.querySelectorAll(
 				'[data-is-message="true"],.odie-chatbox__action-message'
 			);
@@ -99,9 +105,9 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				behavior: 'instant',
 				block: 'start',
 			} );
-			// setShouldEnableAutoScroll( false );
+			setHasChatScolledOnLoad( true );
 		}
-	}, [ chat?.messages.length, chatMessagesLoaded, shouldEnableAutoScroll ] );
+	}, [ chat?.messages.length, chatMessagesLoaded, shouldEnableAutoScroll, hasChatScolledOnLoad ] );
 	/**
 	 * Handle the case where we are forwarding to Zendesk.
 	 */
