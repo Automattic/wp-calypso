@@ -70,9 +70,7 @@ export const isAnyHostingFlow = ( flowName?: string | null ) => {
 };
 
 export const isAnyMigrationFlow = ( flowName?: string | null ) => {
-	return Boolean(
-		flowName && [ IMPORT_FOCUSED_FLOW, IMPORT_HOSTED_SITE_FLOW ].includes( flowName )
-	);
+	return Boolean( flowName && [ IMPORT_FOCUSED_FLOW ].includes( flowName ) );
 };
 
 export const isImportFocusedFlow = ( flowName: string | null ) => {
