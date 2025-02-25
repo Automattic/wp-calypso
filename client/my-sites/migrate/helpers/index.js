@@ -37,8 +37,6 @@ export function getImportSectionLocation( siteSlug, isJetpack = false ) {
 // Flow mapping dictionary, key is the path segment, value is the flow name
 const flowMapping = {
 	'import-focused': 'import-focused',
-	// TODO: can we delete this safely?
-	// 'import-hosted-site': 'import-hosted-site',
 };
 
 export function getImportFlowByURL() {
