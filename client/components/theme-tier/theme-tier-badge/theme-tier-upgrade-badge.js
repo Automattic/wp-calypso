@@ -1,31 +1,46 @@
-import { getPlan } from '@automattic/calypso-products';
+import {
+	getPlan,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+} from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/components';
 import { Plans } from '@automattic/data-stores';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useSelector } from 'calypso/state';
+import { getSitePlanSlug } from 'calypso/state/sites/selectors';
 import { useThemeTierForTheme } from 'calypso/state/themes/hooks/use-theme-tier-for-theme';
 import { getMarketplaceThemeSubscriptionPrices } from 'calypso/state/themes/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { THEME_TIERS } from '../constants';
 import { useThemeTierBadgeContext } from './theme-tier-badge-context';
 
 const MAX_LABEL_LENGTH = 45;
 
 const useUpgradeLabel = ( showPartnerPrice, planName, subscriptionPrices, translate ) => {
+	const siteId = useSelector( getSelectedSiteId );
+	const planSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) ?? '' );
+	const isEcommerceTrialMonthly = planSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+
+	const displayPlanName = isEcommerceTrialMonthly
+		? getPlan( PLAN_ECOMMERCE )?.getTitle() ?? planName
+		: planName;
+
 	return useMemo( () => {
 		if ( showPartnerPrice && subscriptionPrices.month ) {
 			const fullLabel = translate( 'On %(planName)s + %(price)s/month', {
 				args: {
-					planName,
+					planName: displayPlanName,
 					price: subscriptionPrices.month,
 				},
 			} );
 
 			return fullLabel.length > MAX_LABEL_LENGTH
-				? translate( '%(planName)s + %(price)s/mo', {
+				? /* translators: This is a shorter version of the text "Available on %(planName)s plus %(price)s/month". */
+				  translate( '%(planName)s + %(price)s/mo', {
 						args: {
-							planName,
+							planName: displayPlanName,
 							price: subscriptionPrices.month,
 						},
 				  } )
@@ -33,9 +48,9 @@ const useUpgradeLabel = ( showPartnerPrice, planName, subscriptionPrices, transl
 		}
 
 		return translate( 'Available on %(planName)s', {
-			args: { planName },
+			args: { planName: displayPlanName },
 		} );
-	}, [ translate, showPartnerPrice, subscriptionPrices.month, planName ] );
+	}, [ translate, showPartnerPrice, subscriptionPrices.month, displayPlanName ] );
 };
 
 export default function ThemeTierPlanUpgradeBadge( { showPartnerPrice, hideBackgroundOnUpgrade } ) {

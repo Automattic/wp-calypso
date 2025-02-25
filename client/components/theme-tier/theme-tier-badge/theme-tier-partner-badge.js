@@ -23,6 +23,7 @@ export default function ThemeTierPartnerBadge( {
 	showPartnerPrice,
 	hideBackgroundOnUpgrade,
 	isLongLabel,
+	hidePartnerBadge,
 } ) {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
@@ -80,5 +81,19 @@ export default function ThemeTierPartnerBadge( {
 		translate,
 	] );
 
-	return <>{ priceBadge }</>;
+	return (
+		<>
+			{ priceBadge }
+			{ ! hidePartnerBadge && (
+				<PremiumBadge
+					className="theme-tier-badge__content is-third-party"
+					focusOnShow={ false }
+					isClickable={ false }
+					labelText={ translate( 'Partner' ) }
+					shouldHideIcon
+					shouldHideTooltip
+				/>
+			) }
+		</>
+	);
 }
