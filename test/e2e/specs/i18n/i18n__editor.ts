@@ -17,12 +17,10 @@ import type { LanguageSlug } from '@automattic/languages';
 
 type Translations = {
 	[ language in LanguageSlug ]?: Partial< {
-		etkPlugin: {
-			welcomeGuide: {
-				openGuideSelector: string;
-				welcomeTitleSelector: string;
-				closeButtonSelector: string;
-			};
+		welcomeGuide: {
+			welcomeTitleSelector: string;
+			nextButtonSelector: string;
+			closeButtonSelector: string;
 		};
 		blocks: {
 			blockName: string;
@@ -34,14 +32,11 @@ type Translations = {
 };
 const translations: Translations = {
 	en: {
-		etkPlugin: {
-			welcomeGuide: {
-				openGuideSelector:
-					'.interface-more-menu-dropdown__content button:has-text("Welcome Guide")',
-				welcomeTitleSelector:
-					'.wpcom-tour-kit-step-card__heading:has-text("Welcome to WordPress!")',
-				closeButtonSelector: '.wpcom-tour-kit button[aria-label="Close Tour"]',
-			},
+		welcomeGuide: {
+			welcomeTitleSelector: '.edit-post-welcome-guide__heading:has-text("Welcome to the editor")',
+			nextButtonSelector:
+				'.components-guide__footer button.components-guide__forward-button:has-text("Next")',
+			closeButtonSelector: '.edit-post-welcome-guide button[aria-label="Close"]',
 		},
 		blocks: [
 			// Core
@@ -103,14 +98,12 @@ const translations: Translations = {
 		],
 	},
 	fr: {
-		etkPlugin: {
-			welcomeGuide: {
-				openGuideSelector:
-					'.interface-more-menu-dropdown__content button:has-text("Guide de bienvenue")',
-				welcomeTitleSelector:
-					'.wpcom-tour-kit-step-card__heading:has-text("Bienvenue dans WordPress !")',
-				closeButtonSelector: '.wpcom-tour-kit button[aria-label="Fermer la visite"]',
-			},
+		welcomeGuide: {
+			welcomeTitleSelector:
+				'.edit-post-welcome-guide__heading:has-text("Bienvenue dans l\'éditeur")',
+			nextButtonSelector:
+				'.components-guide__footer button.components-guide__forward-button:has-text("Suivant")',
+			closeButtonSelector: '.edit-post-welcome-guide button[aria-label="Fermer"]',
 		},
 		blocks: [
 			// Core
@@ -174,14 +167,11 @@ const translations: Translations = {
 		],
 	},
 	he: {
-		etkPlugin: {
-			welcomeGuide: {
-				openGuideSelector:
-					'.interface-more-menu-dropdown__content button:has-text("מדריך ברוכים הבאים")',
-				welcomeTitleSelector:
-					'.wpcom-tour-kit-step-card__heading:has-text("ברוך בואך ל-WordPress!")',
-				closeButtonSelector: '.wpcom-tour-kit button[aria-label="לסגור את הסיור"]',
-			},
+		welcomeGuide: {
+			welcomeTitleSelector: '.edit-post-welcome-guide__heading:has-text("ברוך בואך לעורך")',
+			nextButtonSelector:
+				'.components-guide__footer button.components-guide__forward-button:has-text("לשלב הבא")',
+			closeButtonSelector: '.edit-post-welcome-guide button[aria-label="סגור"]',
 		},
 		blocks: [
 			// Core
@@ -298,15 +288,15 @@ describe( 'I18N: Editor', function () {
 
 				// We know these are all defined because of the filtering above. Non-null asserting is safe here.
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				const etkTranslations = translations[ locale ]!.etkPlugin!;
+				const welcomeGuideTranslations = translations[ locale ]!.welcomeGuide!;
 
 				// Ensure the Welcome Guide component is shown.
 				await editorWelcomeGuideComponent.forceShowWelcomeGuide();
 
 				const editorParent = await editorPage.getEditorParent();
 
-				await editorParent.locator( etkTranslations.welcomeGuide.welcomeTitleSelector ).waitFor();
-				await editorParent.locator( etkTranslations.welcomeGuide.closeButtonSelector ).click();
+				await editorParent.locator( welcomeGuideTranslations.welcomeTitleSelector ).waitFor();
+				await editorParent.locator( welcomeGuideTranslations.closeButtonSelector ).click();
 			} );
 		} );
 
