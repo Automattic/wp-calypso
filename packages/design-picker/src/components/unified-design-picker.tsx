@@ -349,6 +349,7 @@ interface DesignPickerProps {
 	showActiveThemeBadge?: boolean;
 	isMultiFilterEnabled?: boolean;
 	isBigSkyEligible?: boolean;
+	isIntentCreateCourseGoalEnabled?: boolean;
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -367,6 +368,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	showActiveThemeBadge = false,
 	isMultiFilterEnabled = false,
 	isBigSkyEligible = false,
+	isIntentCreateCourseGoalEnabled = false,
 } ) => {
 	const translate = useTranslate();
 	const { selectedCategoriesWithoutDesignTier } = useDesignPickerFilters();
@@ -385,7 +387,14 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 		[ categorization?.categories ]
 	);
 
-	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs );
+	// Use this to prioritize themes in certain categories.
+	// The specified theme will be shown first in the list.
+	const priorityThemes: Record< string, string > = {};
+	if ( isIntentCreateCourseGoalEnabled ) {
+		priorityThemes[ 'education' ] = 'course';
+	}
+
+	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs, priorityThemes );
 
 	// Show no results only when no design matches the selected categories and tiers.
 	const showNoResults = Object.values( designsByGroup ).every(
@@ -509,6 +518,7 @@ export interface UnifiedDesignPickerProps {
 	showActiveThemeBadge?: boolean;
 	isMultiFilterEnabled?: boolean;
 	isBigSkyEligible?: boolean;
+	isIntentCreateCourseGoalEnabled?: boolean;
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
@@ -529,6 +539,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	showActiveThemeBadge = false,
 	isMultiFilterEnabled = false,
 	isBigSkyEligible = false,
+	isIntentCreateCourseGoalEnabled,
 } ) => {
 	const hasCategories = !! ( categorization?.categories || [] ).length;
 
@@ -556,6 +567,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					showActiveThemeBadge={ showActiveThemeBadge }
 					isMultiFilterEnabled={ isMultiFilterEnabled }
 					isBigSkyEligible={ isBigSkyEligible }
+					isIntentCreateCourseGoalEnabled={ isIntentCreateCourseGoalEnabled }
 				/>
 				<InView onChange={ ( inView ) => inView && onViewAllDesigns() } />
 			</div>

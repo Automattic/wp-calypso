@@ -76,6 +76,7 @@ import {
 	recordSelectedDesign,
 	getVirtualDesignProps,
 } from '../../analytics/record-design';
+import { useCreateCourseGoalFeature } from '../../hooks/use-create-course-goal-feature';
 import { getCategorizationOptions } from './categories';
 import { STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
@@ -111,6 +112,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const isSiteRequired = flow !== ONBOARDING_FLOW || ! isGoalsAtFrontExperiment;
 
 	const isUpdatedBadgeDesign = useIsUpdatedBadgeDesign();
+	const isIntentCreateCourseGoalEnabled = useCreateCourseGoalFeature();
 
 	const { isEligible: isBigSkyEligible } = useIsBigSkyEligible();
 
@@ -906,6 +908,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const stepContent = (
 		<>
 			<UnifiedDesignPicker
+				isIntentCreateCourseGoalEnabled={ isIntentCreateCourseGoalEnabled }
 				designs={ designs }
 				locale={ locale }
 				onDesignWithAI={ onDesignWithAI }
