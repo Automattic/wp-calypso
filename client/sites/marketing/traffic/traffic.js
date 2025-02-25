@@ -86,13 +86,15 @@ const SiteSettingsTraffic = ( {
 				<CloudflareAnalyticsSettings />
 			) }
 
-			<JetpackSiteStats
-				handleAutosavingToggle={ handleAutosavingToggle }
-				setFieldValue={ setFieldValue }
-				isSavingSettings={ isSavingSettings }
-				isRequestingSettings={ isRequestingSettings }
-				fields={ fields }
-			/>
+			{ isJetpackAdmin && (
+				<JetpackSiteStats
+					handleAutosavingToggle={ handleAutosavingToggle }
+					setFieldValue={ setFieldValue }
+					isSavingSettings={ isSavingSettings }
+					isRequestingSettings={ isRequestingSettings }
+					fields={ fields }
+				/>
+			) }
 			{ isAdmin && <AnalyticsSettings /> }
 			{ isJetpackAdmin && (
 				<Shortlinks
