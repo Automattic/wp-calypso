@@ -1,5 +1,6 @@
 /**
  * @group jetpack-wpcom-integration
+ * @group calypso-pr
  */
 
 import {
