@@ -1,14 +1,13 @@
 import { FoldableCard } from '@automattic/components';
-import { formatCurrency } from '@automattic/format-currency';
+import { formatCurrency, getCurrencyObject } from '@automattic/format-currency';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, numberFormatCompact } from 'i18n-calypso';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_REFERRALS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import StepSection from 'calypso/a8c-for-agencies/components/step-section';
-import { formatCurrencyCompact } from 'calypso/a8c-for-agencies/lib/currency';
 import WooLogoRebrand2 from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -20,6 +19,17 @@ import LayoutHeader, {
 import ReferralsFooter from '../footer';
 
 import './style.scss';
+
+// TODO: Remove this once we can use the new formatCurrency function that gives the compact number in the correct format.
+const formatCurrencyCompact = ( amount: number, currencyCode = 'USD' ) => {
+	const currencyObject = getCurrencyObject( amount, currencyCode );
+	const formattedAmount =
+		currencyObject.symbolPosition === 'before'
+			? `${ currencyObject.symbol }${ numberFormatCompact( amount ) }`
+			: `${ numberFormatCompact( amount ) }${ currencyObject.symbol }`;
+
+	return formattedAmount;
+};
 
 export default function CommissionOverview( {
 	isAutomatedReferral,
