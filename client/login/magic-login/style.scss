@@ -141,10 +141,9 @@
 .magic-login__form-action {
 	margin-top: 20px;
 
-	button {
+	.components-button {
 		width: 100%;
 		justify-content: center;
-		font-size: rem(14px);
 	}
 
 	.form-button:last-child {

@@ -9,7 +9,7 @@
 .components-button {
 	/* Matches the height of text inputs */
 	height: 40px;
-	border-radius: 4px;
+	font-size: $font-body-small;
 }
 
 .components-button.is-primary {

@@ -3,6 +3,7 @@
 .social-buttons__button {
 	height: 44px;
 	padding-inline: 16px;
+	border-radius: 4px;
 
 	> svg {
 		margin-top: -2px;
@@ -19,7 +20,6 @@
 		font-feature-settings: "clig" off, "liga" off;
 		color: var(--studio-gray-80, #2c3338);
 		font-family: "SF Pro Text", sans-serif;
-		font-size: 0.875rem;
 		font-style: normal;
 		font-weight: 500;
 		letter-spacing: 0.32px;
