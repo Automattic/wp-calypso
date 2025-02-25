@@ -29,7 +29,7 @@ const StatsPostDetailMonths = ( props ) => {
 					<th>{ translate( 'Feb' ) }</th>
 					<th>{ translate( 'Mar' ) }</th>
 					<th>{ translate( 'Apr' ) }</th>
-					<th>{ translate( 'May' ) }</th>
+					<th>{ translate( 'May', { context: 'May abbreviation' } ) }</th>
 					<th>{ translate( 'Jun' ) }</th>
 					<th>{ translate( 'Jul' ) }</th>
 					<th>{ translate( 'Aug' ) }</th>

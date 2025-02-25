@@ -2,12 +2,13 @@
 @import '@wordpress/base-styles/breakpoints';
 
 .discover-reddit {
+	padding: 0 10px;
 
 	&__instructions {
 		border: 1px solid #e2e2e2;
 		border-radius: 4px;
 		padding: 30px 15px;
-		margin: 100px auto 0;
+		margin: 0 auto;
 
 		@include break-mobile {
 			padding: 30px 45px;
@@ -34,13 +35,5 @@
 		strong {
 			font-weight: 700;
 		}
-
-
-	}
-
-	.is-disabled {
-		opacity: 0.5;
-		cursor: not-allowed;
-		pointer-events: none;
 	}
 }

@@ -74,9 +74,19 @@ const SignupContactForm = ( { onContinue, initialFormData }: Props ) => {
 				translate( `Sign up and unlock the blueprint to grow your agency's business` )
 			) }
 			description={ preventWidows(
-				translate( 'Join 5000+ agencies and grow your business with Automattic for Agencies.' )
+				translate(
+					'Join 5000+ agencies and grow your business with {{span}}Automattic for Agencies.{{/span}}',
+					{
+						components: {
+							span: <span className="signup-contact-form__a4a-span" />,
+						},
+					}
+				)
 			) }
 		>
+			<div className="field-mandatory-message">
+				{ translate( 'Fields marked with * are required' ) }
+			</div>
 			<div className="signup-multi-step-form__name-fields">
 				<FormField
 					error={ validationError.firstName }

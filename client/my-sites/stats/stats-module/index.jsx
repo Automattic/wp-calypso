@@ -69,7 +69,7 @@ class StatsModule extends Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-		const { data, isRealTime, query, requesting } = this.props;
+		const { data, isRealTime, query, requesting, statType } = this.props;
 		if ( ! requesting && prevProps.requesting ) {
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { loaded: true } );
@@ -91,7 +91,7 @@ class StatsModule extends Component {
 
 		if ( ! lastUpdated || now.diff( lastUpdated, 'seconds' ) >= UPDATE_THRESHOLD_IN_SECONDS ) {
 			const updatedHistory = this.updateHistory( dataHistory, data );
-			const diffData = this.calculateDiff( updatedHistory );
+			const diffData = this.calculateDiff( updatedHistory, statType );
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( {
 				diffData,
@@ -130,12 +130,13 @@ class StatsModule extends Component {
 		return history;
 	}
 
-	calculateDiff( history ) {
-		const baselineMap = this.createBaselineLookupMap( history );
+	calculateDiff( history, statType ) {
+		const key = this.getKeyForStatType( statType );
+		const baselineMap = this.createBaselineLookupMap( history, key );
 		const lastSnapshot = history[ history.length - 1 ].data;
 
 		return lastSnapshot.map( ( item ) => {
-			const baselineItem = baselineMap.get( item.id ) || { value: 0 };
+			const baselineItem = baselineMap.get( item[ key ] ) || { value: 0 };
 			return {
 				...item,
 				diffValue: item.value - baselineItem.value,
@@ -143,8 +144,7 @@ class StatsModule extends Component {
 		} );
 	}
 
-	createBaselineLookupMap( history ) {
-		const key = 'id';
+	createBaselineLookupMap( history, key = 'id' ) {
 		const lookup = new Map();
 
 		history.forEach( ( snapshot ) => {
@@ -156,6 +156,19 @@ class StatsModule extends Component {
 		} );
 
 		return lookup;
+	}
+
+	getKeyForStatType( statType ) {
+		// Provided data is not consistent across modules.
+		// Ideally we'd have an interface with some common properties.
+		// For now we can't assume an 'id' for all stats types.
+		// Use this function to find the best available key for unique identification.
+		const keys = {
+			statsTopPosts: 'id',
+			statsReferrers: 'label',
+			statsCountryViews: 'countryCode',
+		};
+		return keys[ statType ] || 'id';
 	}
 
 	getModuleLabel() {
@@ -211,6 +224,9 @@ class StatsModule extends Component {
 		const { valueField, isRealTime } = this.props;
 		const data = isRealTime ? this.state.diffData : this.props.data;
 
+		// TODO: Handle items with children.
+		// For now, we remove any children to avoid view counts out of context.
+
 		if ( isRealTime ) {
 			return data
 				.filter( ( item ) => item.diffValue !== 0 )
@@ -225,6 +241,7 @@ class StatsModule extends Component {
 				.map( ( item ) => ( {
 					...item,
 					value: item.diffValue || 0,
+					children: null,
 				} ) );
 		}
 
@@ -331,7 +348,9 @@ class StatsModule extends Component {
 					error={ hasError && <ErrorPanel /> }
 					loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
 					heroElement={
-						path === 'countryviews' && <Geochart query={ query } skipQuery={ skipQuery } />
+						path === 'countryviews' && (
+							<Geochart query={ query } skipQuery={ skipQuery } isRealTime={ isRealTime } />
+						)
 					}
 					additionalColumns={ additionalColumns }
 					splitHeader={ !! additionalColumns }

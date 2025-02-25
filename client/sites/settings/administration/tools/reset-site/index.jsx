@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button, FormLabel } from '@automattic/components';
 import {
 	useSiteResetContentSummaryQuery,
@@ -25,6 +26,7 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getSite, getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { useSetFeatureBreadcrumb } from '../../../../hooks/breadcrumbs/use-set-feature-breadcrumb';
 import { DIFMUpsell } from '../../../components/difm-upsell-banner';
 
 import './style.scss';
@@ -50,6 +52,8 @@ function SiteResetCard( {
 
 	const title = isUntangled ? translate( 'Reset site' ) : translate( 'Site Reset' );
 	const source = isUntangled ? '/sites/settings/site' : getSettingsSource();
+
+	useSetFeatureBreadcrumb( { siteId, title } );
 
 	const checkStatus = async () => {
 		if ( status?.status !== 'completed' && isAtomic ) {
@@ -304,7 +308,9 @@ function SiteResetCard( {
 	return (
 		<Panel className="settings-administration__reset-site">
 			{ ! isLoading && <Interval onTick={ checkStatus } period={ EVERY_FIVE_SECONDS } /> }
-			<HeaderCakeBack icon="chevron-left" href={ `${ source }/${ selectedSiteSlug }` } />
+			{ ! ( isUntangled && config.isEnabled( 'untangling/settings-i2' ) ) && (
+				<HeaderCakeBack icon="chevron-left" href={ `${ source }/${ selectedSiteSlug }` } />
+			) }
 			<NavigationHeader
 				title={ title }
 				subtitle={ translate(

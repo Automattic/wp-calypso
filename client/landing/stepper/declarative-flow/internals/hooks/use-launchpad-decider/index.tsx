@@ -1,5 +1,4 @@
 import { updateLaunchpadSettings } from '@automattic/data-stores';
-import { ExperimentAssignment } from '@automattic/explat-client';
 
 export const LAUNCHPAD_EXPERIMENT_NAME = 'calypso_onboarding_launchpad_removal_test_2024_08';
 
@@ -63,43 +62,3 @@ export const useLaunchpadDecider = ( { exitFlow, navigate }: Props ) => {
 		},
 	};
 };
-
-/**
- * Determine if the customer home should be shown
- * @param isLoadingExperiment
- * @param experimentAssignment
- */
-export function shouldShowCustomerHome(
-	isLoadingExperiment: boolean,
-	experimentAssignment: ExperimentAssignment | null
-): boolean {
-	return ! isLoadingExperiment && 'treatment' === experimentAssignment?.variationName;
-}
-
-/**
- * Get the launchpad state based on the experiment assignment
- * @param expLoading
- * @param experimentAssigment
- * @param shouldSkip
- */
-export function getLaunchpadStateBasedOnExperiment(
-	expLoading: boolean,
-	experimentAssigment: ExperimentAssignment | null,
-	shouldSkip: boolean
-) {
-	if (
-		expLoading ||
-		! experimentAssigment?.variationName ||
-		experimentAssigment.variationName === 'control'
-	) {
-		if ( shouldSkip ) {
-			return 'skipped';
-		}
-
-		return 'full';
-	}
-
-	if ( experimentAssigment.variationName === 'treatment' ) {
-		return 'skipped';
-	}
-}

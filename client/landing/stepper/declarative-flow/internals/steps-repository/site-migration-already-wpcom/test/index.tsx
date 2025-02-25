@@ -6,12 +6,14 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
+import { logToLogstash } from 'calypso/lib/logstash';
 import SiteMigrationAlreadyWPCOM from '../';
 import { StepProps } from '../../../types';
 import { mockStepProps, renderStep, RenderStepOptions } from '../../test/helpers/index';
 
 jest.mock( 'wpcom-proxy-request', () => jest.fn() );
 jest.mock( 'calypso/landing/stepper/hooks/use-site-slug-param' );
+jest.mock( 'calypso/lib/logstash' );
 
 const continueButton = () => screen.getByRole( 'button', { name: 'Continue' } );
 const intentByName = ( intent: string ) => screen.getByRole( 'checkbox', { name: intent } );
@@ -109,7 +111,7 @@ describe( 'SiteMigrationAlreadyWPCOM', () => {
 		const navigation = { submit: jest.fn() };
 		render( { navigation }, { initialEntry: '/some-path?from=https://example.com' } );
 
-		wpcomRequest.mockRejectedValue( {} );
+		( wpcomRequest as jest.Mock ).mockRejectedValue( new Error( 'Some error message' ) );
 
 		await userEvent.click( intentByName( 'Transfer my domain to WordPress.com' ) );
 		await userEvent.click( intentByName( 'Other' ) );
@@ -117,6 +119,16 @@ describe( 'SiteMigrationAlreadyWPCOM', () => {
 		await userEvent.click( continueButton() );
 
 		expect( await screen.findByText( /Something went wrong. Please try again./ ) ).toBeVisible();
+		expect( logToLogstash ).toHaveBeenCalledWith( {
+			message: 'Error submitting migration ticket',
+			feature: 'calypso_client',
+			extra: {
+				siteSlug: 'site-url.wordpress.com',
+				step: 'site-migration-already-wpcom',
+				from: 'https://example.com',
+				error: 'Some error message',
+			},
+		} );
 
 		expect( navigation.submit ).not.toHaveBeenCalled();
 	} );

@@ -30,7 +30,7 @@ const meta: Meta< typeof LaunchpadInternal > = {
 	argTypes: {
 		checklistSlug: {
 			defaultValue: 'free',
-			options: [ 'free', 'link-in-bio' ],
+			options: [ 'free' ],
 			control: { type: 'select' },
 		},
 	},

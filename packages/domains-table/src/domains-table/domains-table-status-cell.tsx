@@ -10,12 +10,14 @@ interface DomainsTableStatusCellProps {
 	domainStatus: ResolveDomainStatusReturn | null;
 	pendingUpdates: DomainUpdateStatus[];
 	as?: 'td' | 'div';
+	spinnerSize?: number;
 }
 
 export const DomainsTableStatusCell = ( {
 	domainStatus,
 	pendingUpdates,
 	as: Element = 'div',
+	spinnerSize = 16,
 }: DomainsTableStatusCellProps ) => {
 	const translate = useTranslate();
 	const locale = useLocale();
@@ -50,7 +52,7 @@ export const DomainsTableStatusCell = ( {
 		>
 			{ domainStatus?.status ?? translate( 'Unknown status' ) }
 			{ pendingUpdates.length > 0 && (
-				<StatusPopover popoverTargetElement={ <Spinner size={ 16 } /> }>
+				<StatusPopover popoverTargetElement={ <Spinner size={ spinnerSize } /> }>
 					<div className="domains-bulk-update-status-popover">
 						<span> { translate( 'Pending updates' ) }</span>
 						{ pendingUpdates.map( ( update, index ) => (

@@ -1,0 +1,13 @@
+@import "@automattic/onboarding/styles/mixins";
+
+$progress-duration: 800ms;
+
+.processing-screen {
+	padding: 1em;
+	max-width: 540px;
+	margin: 32vh auto;
+
+	.wpcom__loading {
+		margin: 0;
+	}
+}

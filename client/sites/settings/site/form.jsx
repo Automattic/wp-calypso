@@ -20,6 +20,7 @@ export default function SiteSettingsForm( {
 	updateFields,
 	onChangeField,
 	handleToggle,
+	handleAutosavingToggle,
 	handleSubmitForm,
 	isRequestingSettings,
 	isSavingSettings,
@@ -84,8 +85,7 @@ export default function SiteSettingsForm( {
 
 			<SubscriptionGiftingForm
 				fields={ fields }
-				handleToggle={ handleToggle }
-				onSave={ handleSubmitForm }
+				handleAutosavingToggle={ handleAutosavingToggle }
 				disabled={ isRequestingSettings || isSavingSettings }
 				isSaving={ isSavingSettings }
 			/>
