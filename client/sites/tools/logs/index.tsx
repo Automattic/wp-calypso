@@ -103,6 +103,27 @@ export const SiteLogsDataViews = ( {
 	);
 	const getTimestampForNow = useCallback( () => moment().unix().toString( 10 ), [ moment ] );
 
+	const startTime = useMemo(
+		() => getMomentFromTimestamp( query.from, '7-days-ago' ),
+		[ query.from, getMomentFromTimestamp ]
+	);
+	const endTime = useMemo(
+		() => getMomentFromTimestamp( query.to ),
+		[ query.to, getMomentFromTimestamp ]
+	);
+	const dateRange = useMemo( () => {
+		const daysInRange = endTime.diff( startTime, 'days' );
+		return {
+			chartStart: startTime.format( 'YYYY-MM-DD' ),
+			chartEnd: endTime.format( 'YYYY-MM-DD' ),
+			daysInRange,
+		};
+	}, [ startTime, endTime ] );
+
+	const { supportedShortcutList } = useSelector( ( state ) =>
+		getShortcuts( state, dateRange, translate )
+	);
+
 	const [ autoRefresh, setAutoRefresh ] = useState( false );
 	const autoRefreshCallback = useCallback( () => {
 		const url = new URL( window.location.href );
@@ -127,15 +148,6 @@ export const SiteLogsDataViews = ( {
 		dispatch( recordTracksEvent( 'calypso_site_logs_auto_refresh', { enabled: isChecked } ) );
 		setAutoRefresh( isChecked );
 	};
-
-	const startTime = useMemo(
-		() => getMomentFromTimestamp( query.from, '7-days-ago' ),
-		[ query.from, getMomentFromTimestamp ]
-	);
-	const endTime = useMemo(
-		() => getMomentFromTimestamp( query.to ),
-		[ query.to, getMomentFromTimestamp ]
-	);
 
 	const handleTimeChange = useCallback( ( updatedStartTime: Moment, updatedEndTime: Moment ) => {
 		setAutoRefresh( false );
@@ -192,15 +204,6 @@ export const SiteLogsDataViews = ( {
 		endTime,
 	} );
 	const actions: Action< PHPLog | ServerLog >[] = useActions( { logType, isLoading } );
-	const dateRange = useMemo( () => {
-		const daysInRange = endTime.diff( startTime, 'days' );
-		return {
-			// TODO: Can we simplify this by passing directly the timestamp to DateControl?
-			chartStart: startTime.format( 'YYYY-MM-DD' ),
-			chartEnd: endTime.format( 'YYYY-MM-DD' ),
-			daysInRange,
-		};
-	}, [ startTime, endTime ] );
 
 	const { downloadLogs, state } = useSiteLogsDownloader( { roundDateRangeToWholeDays: false } );
 	const isDownloading = state.status === 'downloading';
@@ -212,10 +215,6 @@ export const SiteLogsDataViews = ( {
 			filter: toFilterParams( { view, logType } ),
 		} );
 	}, [ downloadLogs, logType, startTime, endTime, view ] );
-
-	const { supportedShortcutList } = useSelector( ( state ) =>
-		getShortcuts( state, dateRange, translate )
-	);
 
 	const [ itemDetailsModal, setItemDetailsModal ] = useState< PHPLog | ServerLog | null >( null );
 	const onOpenDetailsModal = useCallback( ( item: PHPLog | ServerLog ) => {
