@@ -57,8 +57,20 @@ export const PointToWpcomDialog = ( { visible, domain, onClose }: PointToWpcomDi
 	};
 	return (
 		<Dialog isVisible={ visible } onClose={ onClose } buttons={ renderButtons() }>
-			<h1>Point to WordPress.com</h1>
-			<p>You can point your domain to WordPress.com to use it as a site address.</p>
+			<h1>{ __( 'Point to WordPress.com' ) }</h1>
+			<p>
+				{ __(
+					'This action will update your domain settings to point to WordPress.com. Specifically, it will:'
+				) }
+			</p>
+			<ul>
+				<li>Set WordPress.com defaults nameservers</li>
+				<li>Delete any existing A records</li>
+				<li>Delete any existing 'www' CNAME record</li>
+			</ul>
+			<p>
+				{ __( 'These changes may take some time to apply. Are you sure you want to proceed?' ) }
+			</p>
 		</Dialog>
 	);
 };

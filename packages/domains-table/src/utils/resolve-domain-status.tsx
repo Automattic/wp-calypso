@@ -501,11 +501,11 @@ export function resolveDomainStatus(
 					status: translate( 'Active' ),
 					icon: 'info',
 					noticeText: translate(
-						'{{strong}}Transfer successful!{{/strong}} To make this domain work with your WordPress.com site you need to {{cta}}point it to WordPress.com servers.{{/cta}}',
+						'{{strong}}Transfer successful!{{/strong}} To make this domain work with your WordPress.com site you need to {{b}}point it to WordPress.com{{/b}}.',
 						{
 							components: {
 								strong: <strong />,
-								cta: <button onClick={ () => onPointToWpcomClick && onPointToWpcomClick() } />,
+								b: <b />,
 							},
 						}
 					),
