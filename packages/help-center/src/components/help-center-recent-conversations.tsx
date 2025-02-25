@@ -73,7 +73,7 @@ const HelpCenterRecentConversations: React.FC = () => {
 			const lastConversation = lastUnreadConversation || conversations[ 0 ];
 			const lastMessage = lastConversation?.messages[ lastConversation?.messages.length - 1 ];
 			const lastSupportInteraction = supportInteractions.find(
-				( interaction ) => interaction.uuid === lastConversation.metadata.supportInteractionId
+				( interaction ) => interaction.uuid === lastConversation?.metadata.supportInteractionId
 			);
 
 			setLastSupportInteraction( lastSupportInteraction );

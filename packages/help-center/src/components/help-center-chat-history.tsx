@@ -63,7 +63,7 @@ const Conversations = ( {
 			{ conversations.map( ( conversation ) => {
 				const lastMessage = getLastMessage( { conversation } );
 				const lastSupportInteraction = supportInteractions.find(
-					( interaction ) => interaction.uuid === conversation.metadata.supportInteractionId
+					( interaction ) => interaction.uuid === conversation?.metadata.supportInteractionId
 				);
 
 				if ( lastMessage ) {
