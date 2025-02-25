@@ -177,6 +177,7 @@ async function main() {
 
 	// No need to await this, it's not critical to the boot process and will slow booting down.
 	geolocateCurrencySymbol();
+	defaultCalypsoI18n.geolocateCurrencySymbol();
 
 	const root = createRoot( document.getElementById( 'wpcom' ) as HTMLElement );
 

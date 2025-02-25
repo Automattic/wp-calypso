@@ -1,6 +1,6 @@
 import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
-import i18n, { numberFormat, numberFormatCompact, translate } from '..';
+import i18n, { numberFormat, numberFormatCompact, translate, formatCurrency } from '..';
 import data from './data';
 
 /**
@@ -303,6 +303,73 @@ describe( 'I18n', function () {
 						} )
 					).toEqual( '١٫٢ ألف' );
 				} );
+			} );
+		} );
+	} );
+
+	describe( 'formatCurrency', () => {
+		const originalFetch = globalThis.fetch;
+
+		beforeEach( async () => {
+			jest.clearAllMocks();
+			i18n.setLocale( data.locale );
+		} );
+
+		test( 'renders correctly EUR in de-DE locale set by setLocale', () => {
+			i18n.setLocale( {
+				'': {
+					localeSlug: 'de',
+					localeVariant: 'de-DE',
+				},
+			} );
+
+			const money = formatCurrency( 9800900.32, 'EUR' );
+			expect( money ).toBe( '9.800.900,32 €' );
+		} );
+
+		describe( 'geoLocation if present', () => {
+			afterEach( async () => {
+				globalThis.fetch = originalFetch;
+			} );
+
+			test( 'sets USD currency symbol to US$ if geolocation is not US and locale is en', async () => {
+				globalThis.fetch = jest.fn( ( url ) =>
+					Promise.resolve( {
+						json: () =>
+							url.includes( '/geo' )
+								? Promise.resolve( { country_short: 'en' } )
+								: Promise.resolve( 'invalid' ),
+					} )
+				);
+				await i18n.geolocateCurrencySymbol();
+				i18n.setLocale( {
+					'': {
+						localeSlug: 'en',
+					},
+				} );
+
+				const money = formatCurrency( 9800900.32, 'USD' );
+				expect( money ).toBe( 'US$9,800,900.32' );
+			} );
+
+			test( 'sets USD currency symbol to $ if geolocation is US and locale is en', async () => {
+				globalThis.fetch = jest.fn( ( url ) =>
+					Promise.resolve( {
+						json: () =>
+							url.includes( '/geo' )
+								? Promise.resolve( { country_short: 'US' } )
+								: Promise.resolve( 'invalid' ),
+					} )
+				);
+				await i18n.geolocateCurrencySymbol();
+				i18n.setLocale( {
+					'': {
+						localeSlug: 'en',
+					},
+				} );
+
+				const money = formatCurrency( 9800900.32, 'USD' );
+				expect( money ).toBe( '$9,800,900.32' );
 			} );
 		} );
 	} );

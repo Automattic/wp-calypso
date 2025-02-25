@@ -1,32 +1,6 @@
-import getFormatter from './get-formatter';
-
-export interface NumberFormatParams {
-	/**
-	 * Number to format.
-	 */
-	number: number | bigint;
-	/**
-	 * Browser-safe locale string that works with Intl.NumberFormat e.g. 'en-US' (not 'en_US').
-	 */
-	browserSafeLocale: string;
-	/**
-	 * Number of decimal places to use.
-	 * This is just convenience over setting `minimumFractionDigits`, `maximumFractionDigits` to the same value.
-	 * ( default = 0 )
-	 */
-	decimals?: number;
-	/**
-	 * Whether to use latin numbers by default ( default = true ).
-	 */
-	forceLatin?: boolean;
-	/**
-	 * `Intl.NumberFormat` options to pass through.
-	 * `minimumFractionDigits` & `maximumFractionDigits` will override `decimals` if set.
-	 */
-	numberFormatOptions?: Intl.NumberFormatOptions;
-}
-
-export type NumberFormat = ( params: NumberFormatParams ) => string;
+import { getCachedFormatter } from './get-cached-formatter';
+import { __DO_NOT_IMPORT__numberFormatCurrency } from './number-format-currency';
+import type { NumberFormat } from './types';
 
 /**
  * Formats numbers using locale settings and/or passed options.
@@ -47,7 +21,7 @@ const numberFormat: NumberFormat = ( {
 	};
 
 	try {
-		return getFormatter( { locale, options } )?.format( number );
+		return getCachedFormatter( { locale, options } )?.format( number );
 	} catch ( error ) {
 		return String( number );
 	}
@@ -73,4 +47,7 @@ const numberFormatCompact: NumberFormat = ( { numberFormatOptions = {}, ...param
 export {
 	numberFormat as __DO_NOT_IMPORT__numberFormat,
 	numberFormatCompact as __DO_NOT_IMPORT__numberFormatCompact,
+	__DO_NOT_IMPORT__numberFormatCurrency,
 };
+
+export * from './types';
