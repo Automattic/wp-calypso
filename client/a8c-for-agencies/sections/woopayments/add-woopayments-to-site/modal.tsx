@@ -1,18 +1,42 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import A4AModal from 'calypso/a8c-for-agencies/components/a4a-modal';
+import useAddWooPaymentsToSiteMutation from 'calypso/a8c-for-agencies/hooks/use-install-plugin-to-site';
+import { useDispatch } from 'calypso/state';
+import { errorNotice } from 'calypso/state/notices/actions';
 import AddWooPaymentsToSiteTable, { type WooPaymentsSiteItem } from './add-site-table';
 
 const AddWooPaymentsToSiteModal = ( { onClose }: { onClose: () => void } ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const [ selectedSite, setSelectedSite ] = useState< WooPaymentsSiteItem | null >( null );
 
-	const isPending = false;
+	const {
+		mutate: addWooPaymentsToSite,
+		status,
+		error,
+		isPending,
+	} = useAddWooPaymentsToSiteMutation();
+
+	useEffect( () => {
+		if ( status === 'success' ) {
+			onClose();
+		} else if ( status === 'error' ) {
+			dispatch(
+				errorNotice( error.message ?? translate( 'Something went wrong. Please try again.' ) )
+			);
+		}
+	}, [ status, onClose, error, dispatch, translate ] );
 
 	const handleAddSite = () => {
-		// TODO: Add the site
+		if ( selectedSite ) {
+			addWooPaymentsToSite( {
+				siteId: selectedSite.id,
+				pluginSlug: 'woocommerce-payments',
+			} );
+		}
 	};
 
 	const excludedSites = null; // FIXME: Replace this with sites that already have WooPayments enabled
