@@ -54,24 +54,25 @@ const StepNavigationLink: React.FC< Props > = ( {
 		handleClick?.();
 	};
 
-	return backUrl ? (
+	const getVariant = () => {
+		if ( primary ) {
+			return 'primary';
+		}
+
+		if ( backUrl ) {
+			return 'link';
+		}
+
+		return 'tertiary';
+	};
+
+	return (
 		<Button
 			className={ buttonClasses }
 			onClick={ onClick }
 			href={ backUrl }
 			rel={ rel }
-			variant="link"
-		>
-			{ backGridicon }
-			{ text }
-			{ forwardGridicon }
-		</Button>
-	) : (
-		<Button
-			variant={ primary ? 'primary' : 'tertiary' }
-			className={ buttonClasses }
-			onClick={ onClick }
-			rel={ rel }
+			variant={ getVariant() }
 		>
 			{ backGridicon }
 			{ text }
