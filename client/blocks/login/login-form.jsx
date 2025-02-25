@@ -1,10 +1,16 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Button, Card, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
+import {
+	Button as A8CButton,
+	Card,
+	FormInputValidation,
+	FormLabel,
+	Gridicon,
+} from '@automattic/components';
 import { alert } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { suggestEmailCorrection } from '@automattic/onboarding';
-import { Button as WordPressButton, Spinner, TextControl } from '@wordpress/components';
+import { Button, Spinner, TextControl } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import cookie from 'cookie';
@@ -456,7 +462,7 @@ export class LoginForm extends Component {
 
 						<FormLabel htmlFor="usernameOrEmail">
 							{ this.isPasswordView() ? (
-								<Button
+								<A8CButton
 									borderless
 									className="login__form-change-username"
 									onClick={ this.resetView }
@@ -466,7 +472,7 @@ export class LoginForm extends Component {
 									{ includes( this.state.usernameOrEmail, '@' )
 										? this.props.translate( 'Change Email Address' )
 										: this.props.translate( 'Change Username' ) }
-								</Button>
+								</A8CButton>
 							) : null }
 						</FormLabel>
 
@@ -524,14 +530,14 @@ export class LoginForm extends Component {
 					<div className="login__form-footer">
 						<p className="login__social-tos">{ socialToS }</p>
 						<div className="login__form-action">
-							<Button
+							<A8CButton
 								primary
 								disabled={ isFormDisabled }
 								onClick={ this.handleWooCommerceSubmit }
 								type="submit"
 							>
 								{ this.getLoginButtonText() }
-							</Button>
+							</A8CButton>
 						</div>
 
 						{ config.isEnabled( 'signup/social' ) && showSocialLogin && (
@@ -1088,14 +1094,14 @@ export class LoginForm extends Component {
 							{ ! isBlazePro && <p className="login__form-terms">{ socialToS }</p> }
 							{ shouldRenderForgotPasswordLink && this.renderLostPasswordLink() }
 							<div className="login__form-action">
-								<WordPressButton
+								<Button
 									variant="primary"
 									isBusy={ ! isWoo && isSendingEmail }
 									disabled={ isSubmitButtonDisabled }
 									type="submit"
 								>
 									{ isWoo && isSendingEmail ? <Spinner /> : this.getLoginButtonText() }
-								</WordPressButton>
+								</Button>
 							</div>
 
 							{ ! hideSignupLink && isOauthLogin && (
