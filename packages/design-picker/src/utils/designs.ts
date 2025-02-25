@@ -79,14 +79,11 @@ export const getThemeIdFromDesign = ( design: Design ) => {
 };
 
 export const shuffleDesigns = ( designs: Design[], seed: number ) => {
-	const designsToShuffle = [ ...designs ];
-	for ( let i = designsToShuffle.length - 1; i > 0; i-- ) {
-		const j = ( i + seed + designsToShuffle.length ) % i;
-		[ designsToShuffle[ i ], designsToShuffle[ j ] ] = [
-			designsToShuffle[ j ],
-			designsToShuffle[ i ],
-		];
+	const shuffled = [ ...designs ];
+	for ( let i = shuffled.length - 1; i > 0; i-- ) {
+		const j = ( i + seed + shuffled.length ) % ( i + 1 );
+		[ shuffled[ i ], shuffled[ j ] ] = [ shuffled[ j ], shuffled[ i ] ];
 	}
 
-	return designsToShuffle;
+	return shuffled;
 };

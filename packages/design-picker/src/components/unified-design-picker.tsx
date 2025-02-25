@@ -222,7 +222,7 @@ const DesignCardGroup = ( {
 	const shuffleSeed = useMemo(
 		() =>
 			selectedCategories
-				.join( '' )
+				.join( ',' )
 				.split( '' )
 				.reduce( ( acc, char ) => acc + char.charCodeAt( 0 ), 0 ),
 		[ selectedCategories ]
@@ -238,7 +238,7 @@ const DesignCardGroup = ( {
 		if ( category === 'best' ) {
 			return [
 				...shuffleDesigns( boosted, shuffleSeed ),
-				...shuffleDesigns( remaining, shuffleSeed ),
+				...shuffleDesigns( remaining, shuffleSeed * 31 ), // Prime number for better distribution.
 			];
 		}
 
