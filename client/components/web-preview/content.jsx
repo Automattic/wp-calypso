@@ -358,6 +358,8 @@ export default class WebPreviewContent extends Component {
 			fetchpriority,
 			autoHeight,
 			disableTabbing,
+			themeId,
+			themeOptions,
 		} = this.props;
 		const isLoaded = this.state.loaded && ( ! autoHeight || this.state.viewport !== null );
 
@@ -392,6 +394,8 @@ export default class WebPreviewContent extends Component {
 					selectSeoPreview={ this.selectSEO }
 					isLoading={ this.state.isLoadingSubpage }
 					isSticky={ this.props.isStickyToolbar }
+					themeId={ themeId }
+					previewSource={ themeOptions?.previewSource }
 				/>
 				{ this.props.showExternal && this.props.isModalWindow && ! this.props.isPrivateAtomic && (
 					<DomainUpsellCallout trackEvent="site_preview_domain_upsell_callout" />
@@ -520,6 +524,8 @@ WebPreviewContent.propTypes = {
 	scrollToSelector: PropTypes.string,
 	// disable the redirection due to the timeout
 	disableTimeoutRedirect: PropTypes.bool,
+	themeId: PropTypes.string,
+	themeOptions: PropTypes.object,
 };
 
 WebPreviewContent.defaultProps = {

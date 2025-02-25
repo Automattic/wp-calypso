@@ -391,7 +391,7 @@ function getAllThemeOptions( { translate, isFSEActive, isGlobalStylesOnPersonal 
 			siteCount: getCurrentUserSiteCount( state ),
 			siteId: getSelectedSiteId( state ),
 		} )
-			? translate( 'Select a site for this theme', {
+			? translate( 'Select a site', {
 					comment:
 						'On the theme details page, button text shown so the user selects one of their sites before activating the selected theme',
 			  } )

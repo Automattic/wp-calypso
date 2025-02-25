@@ -1,4 +1,6 @@
 import { Button, Gridicon, SelectDropdown } from '@automattic/components';
+import { getThemeIdFromStylesheet } from '@automattic/data-stores';
+import { Spinner } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -8,13 +10,21 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
+import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import { getCustomizerUrl } from 'calypso/state/sites/selectors';
+import { installTheme } from 'calypso/state/themes/actions';
+import { suffixThemeIdForInstall } from 'calypso/state/themes/actions/suffix-theme-id-for-install';
+import { getIsLivePreviewSupported, getTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const possibleDevices = [ 'computer', 'tablet', 'phone' ];
 
 class PreviewToolbar extends Component {
+	state = {
+		isRedirecting: false,
+	};
+
 	static propTypes = {
 		// Show device viewport switcher
 		showDeviceSwitcher: PropTypes.bool,
@@ -30,8 +40,6 @@ class PreviewToolbar extends Component {
 		showEdit: PropTypes.bool,
 		// Show edit the header link button
 		showEditHeaderLink: PropTypes.bool,
-		// The URL for the selected site's customizer
-		customizeUrl: PropTypes.string,
 		// The URL for the edit button
 		editUrl: PropTypes.string,
 		// The device to display, used for setting preview dimensions
@@ -48,6 +56,11 @@ class PreviewToolbar extends Component {
 		canUserEditThemeOptions: PropTypes.bool,
 		isUnlaunchedSite: PropTypes.bool,
 		selectedSiteId: PropTypes.number,
+		installTheme: PropTypes.func,
+		isAtomic: PropTypes.bool,
+		isLivePreviewSupported: PropTypes.bool,
+		siteEditorUrl: PropTypes.string,
+		themeInstallId: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -68,17 +81,30 @@ class PreviewToolbar extends Component {
 		this.props.onEdit();
 	};
 
-	handleEditorWebPreviewEditHeader = ( event ) => {
+	handleEditorWebPreviewEditHeader = async ( event ) => {
 		event.preventDefault();
+		this.setState( { isRedirecting: true } );
+
 		this.props.recordTracksEvent( 'calypso_editor_preview_edit_header_click' );
-		window.location.href = this.props.customizeUrl;
+
+		const { isAtomic, selectedSiteId, siteEditorUrl, themeInstallId } = this.props;
+
+		// For atomic sites, we need to install theme before navigating to site editor
+		// If theme is already installed, installation will silently fail, and we just switch to the site-editor.
+		try {
+			if ( isAtomic ) {
+				await this.props.installTheme( themeInstallId, selectedSiteId );
+			}
+			window.location.href = siteEditorUrl;
+		} catch ( error ) {
+			this.setState( { isRedirecting: false } );
+		}
 	};
 
 	render() {
 		const {
 			canUserEditThemeOptions,
 			device: currentDevice,
-			customizeUrl,
 			editUrl,
 			externalUrl,
 			isModalWindow,
@@ -93,6 +119,7 @@ class PreviewToolbar extends Component {
 			showEditHeaderLink,
 			translate,
 			isUnlaunchedSite,
+			isLivePreviewSupported,
 		} = this.props;
 
 		const devices = {
@@ -155,15 +182,23 @@ class PreviewToolbar extends Component {
 							{ translate( 'Edit' ) }
 						</Button>
 					) }
-					{ showEditHeaderLink && canUserEditThemeOptions && (
+					{ showEditHeaderLink && canUserEditThemeOptions && isLivePreviewSupported && (
 						<Button
 							borderless
-							aria-label={ translate( 'Customize' ) }
-							className="web-preview__edit-header-link"
-							href={ customizeUrl }
+							aria-label={ translate( 'Try and customize' ) }
+							className={
+								this.state.isRedirecting
+									? 'web-preview__loading-spinner'
+									: 'web-preview__edit-header-link'
+							}
 							onClick={ this.handleEditorWebPreviewEditHeader }
+							disabled={ this.state.isRedirecting }
 						>
-							{ translate( 'Customize' ) }
+							{ this.state.isRedirecting ? (
+								<Spinner size={ 16 } />
+							) : (
+								translate( 'Try and customize' )
+							) }
 						</Button>
 					) }
 					{ showExternal && (
@@ -188,19 +223,42 @@ class PreviewToolbar extends Component {
 }
 
 export default connect(
-	( state ) => {
+	( state, ownProps ) => {
 		const currentUser = getCurrentUser( state );
 		const selectedSiteId = getSelectedSiteId( state );
 		const isSingleSite = !! selectedSiteId || currentUser?.site_count === 1;
 		const siteId = selectedSiteId || ( isSingleSite && getPrimarySiteId( state ) ) || null;
 		const canUserEditThemeOptions = canCurrentUser( state, siteId, 'edit_theme_options' );
+		const theme = getTheme( state, 'wpcom', ownProps.themeId );
+		const isAtomic = isSiteAtomic( state, siteId );
+
+		const themePreviewId = isAtomic
+			? getThemeIdFromStylesheet( theme?.stylesheet )
+			: theme?.stylesheet;
+
+		const themeInstallId = isAtomic
+			? suffixThemeIdForInstall( state, selectedSiteId, ownProps.themeId )
+			: null;
+
+		const dashboardLink = `${ window.location.pathname }${ window.location.search }`.replace(
+			/^\/+/,
+			'/'
+		);
+
+		const siteEditorUrl = getSiteEditorUrl( state, siteId, {
+			wp_theme_preview: themePreviewId,
+			wpcom_dashboard_link: dashboardLink,
+		} );
 
 		return {
 			canUserEditThemeOptions,
-			customizeUrl: getCustomizerUrl( state, siteId, null, window.location.href ),
 			isUnlaunchedSite: getIsUnlaunchedSite( state, siteId ),
 			selectedSiteId,
+			siteEditorUrl,
+			isAtomic,
+			themeInstallId,
+			isLivePreviewSupported: getIsLivePreviewSupported( state, ownProps.themeId, siteId ),
 		};
 	},
-	{ recordTracksEvent }
+	{ recordTracksEvent, installTheme }
 )( localize( PreviewToolbar ) );
