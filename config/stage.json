@@ -162,6 +162,7 @@
 		"themes/subscription-purchases": false,
 		"themes/text-search-lots": true,
 		"two-factor/enhanced-security": true,
+		"untangling/settings-i2": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
