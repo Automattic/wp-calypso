@@ -33,7 +33,7 @@
 		"domain-to-plan-credit": false,
 		"cookie-banner": true,
 		"google-my-business": false,
-		"global-styles/on-personal-plan": true,
+		"global-styles/on-personal-plan": false,
 		"help": true,
 		"home/layout-dev": true,
 		"hosting-server-settings-enhancements": true,

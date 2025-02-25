@@ -471,10 +471,10 @@ export function resolveFeatureGroupsForFeaturesGrid( {
 			[ FEATURE_GROUP_ADS ]: featureGroups[ FEATURE_GROUP_ADS ],
 			[ FEATURE_GROUP_THEMES ]: featureGroups[ FEATURE_GROUP_THEMES ],
 			[ FEATURE_GROUP_SUPPORT ]: featureGroups[ FEATURE_GROUP_SUPPORT ],
-			[ FEATURE_GROUP_CUSTOMIZE_STYLE ]: featureGroups[ FEATURE_GROUP_CUSTOMIZE_STYLE ],
 			...( isStatsGroupTranslated() && {
 				[ FEATURE_GROUP_STATS ]: featureGroups[ FEATURE_GROUP_STATS ],
 			} ),
+			[ FEATURE_GROUP_CUSTOMIZE_STYLE ]: featureGroups[ FEATURE_GROUP_CUSTOMIZE_STYLE ],
 			[ FEATURE_GROUP_ANALYTICS ]: featureGroups[ FEATURE_GROUP_ANALYTICS ],
 			...( isUploadVideosTranslated() && {
 				[ FEATURE_GROUP_UPLOAD_VIDEOS ]: featureGroups[ FEATURE_GROUP_UPLOAD_VIDEOS ],

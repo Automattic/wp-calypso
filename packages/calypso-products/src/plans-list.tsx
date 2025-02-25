@@ -728,20 +728,22 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 				'Unlock unlimited, expert customer support via email.'
 		),
 	getPlanCompareFeatures: () =>
-		compact( [
-			// pay attention to ordering, shared features should align on /plan page
-			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_HOSTING,
-			FEATURE_JETPACK_ESSENTIAL,
-			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
-			FEATURE_FREE_THEMES,
-			isGlobalStylesOnPersonalEnabled() ? FEATURE_STYLE_CUSTOMIZATION : null,
-			FEATURE_6GB_STORAGE,
-			FEATURE_NO_ADS,
-			FEATURE_MEMBERSHIPS,
-			FEATURE_PREMIUM_CONTENT_BLOCK,
-			FEATURE_PAYMENT_TRANSACTION_FEES_8,
-		] ),
+		compact(
+			[
+				// pay attention to ordering, shared features should align on /plan page
+				FEATURE_CUSTOM_DOMAIN,
+				FEATURE_HOSTING,
+				FEATURE_JETPACK_ESSENTIAL,
+				FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+				FEATURE_FREE_THEMES,
+				isGlobalStylesOnPersonalEnabled() ? FEATURE_STYLE_CUSTOMIZATION : null,
+				FEATURE_6GB_STORAGE,
+				FEATURE_NO_ADS,
+				FEATURE_MEMBERSHIPS,
+				FEATURE_PREMIUM_CONTENT_BLOCK,
+				FEATURE_PAYMENT_TRANSACTION_FEES_8,
+			].filter( ( feature ) => feature !== null )
+		),
 	getSignupFeatures: () => {
 		const baseFeatures = [
 			FEATURE_FREE_DOMAIN,
