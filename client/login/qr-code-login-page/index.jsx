@@ -1,4 +1,5 @@
-import { Card, Gridicon } from '@automattic/components';
+import { Card } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
 import Main from 'calypso/components/main';
@@ -26,10 +27,9 @@ function QrCodeLoginPage( { locale, redirectTo } ) {
 					redirectToAfterLoginUrl={ redirectTo }
 				/>
 				<div className="qr-code-login-page__footer">
-					<a href={ login( { locale, redirectTo, isWhiteLogin } ) }>
-						<Gridicon icon="arrow-left" size={ 18 } />
+					<Button variant="link" href={ login( { locale, redirectTo, isWhiteLogin } ) }>
 						{ translate( 'Enter a password instead' ) }
-					</a>
+					</Button>
 				</div>
 			</div>
 		</Main>
