@@ -6,7 +6,6 @@ import { NavigationType, useNavigationType, useSearchParams } from 'react-router
 import { ThumbsDown } from '../../assets/thumbs-down';
 import { useOdieAssistantContext } from '../../context';
 import {
-	useAutoScroll,
 	useCreateZendeskConversation,
 	useZendeskMessageListener,
 	useUpdateDocumentTitle,
@@ -65,7 +64,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const scrollParentRef = useRef< HTMLElement | null >( null );
 
 	useZendeskMessageListener();
-	useAutoScroll( messagesContainerRef, shouldEnableAutoScroll );
 	useHelpCenterChatScroll( chat?.supportInteractionId, scrollParentRef, ! shouldEnableAutoScroll );
 
 	useEffect( () => {
@@ -91,6 +89,19 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		( chat?.status === 'loaded' || chat?.status === 'closed' ) && setChatMessagesLoaded( true );
 	}, [ chat, isForwardingToZendesk, hasForwardedToZendesk ] );
 
+	useEffect( () => {
+		if ( chat?.messages.length > 0 && chatMessagesLoaded && shouldEnableAutoScroll ) {
+			const messages = messagesContainerRef.current?.querySelectorAll(
+				'[data-is-message="true"],.odie-chatbox__action-message'
+			);
+			const lastMessage = messages?.length ? messages[ messages.length - 1 ] : null;
+			lastMessage?.scrollIntoView( {
+				behavior: 'instant',
+				block: 'start',
+			} );
+			// setShouldEnableAutoScroll( false );
+		}
+	}, [ chat?.messages.length, chatMessagesLoaded, shouldEnableAutoScroll ] );
 	/**
 	 * Handle the case where we are forwarding to Zendesk.
 	 */
