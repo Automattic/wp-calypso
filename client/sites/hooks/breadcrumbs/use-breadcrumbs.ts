@@ -3,7 +3,7 @@ import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-dup
 import { useSelector } from 'calypso/state';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 
-export default function useBreadcrumbs() {
+export function useBreadcrumbs() {
 	const breadcrumbs = useSelector( getBreadcrumbs );
 	const isRemoveDuplicateViewsExperimentEnabled = useRemoveDuplicateViewsExperimentEnabled();
 

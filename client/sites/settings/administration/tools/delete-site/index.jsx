@@ -17,7 +17,6 @@ import { Panel, PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import withP2HubP2Count from 'calypso/data/p2/with-p2-hub-p2-count';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSettingsSource } from 'calypso/my-sites/site-settings/site-tools/utils';
-import { FeatureBreadcrumb } from 'calypso/sites/hooks/use-set-feature-breadcrumb';
 import { resetBreadcrumbs, updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getRemoveDuplicateViewsExperimentAssignment } from 'calypso/state/explat-experiments/actions';
 import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/state/explat-experiments/selectors';
@@ -30,6 +29,7 @@ import { getSite, getSiteDomain } from 'calypso/state/sites/selectors';
 import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { FeatureBreadcrumb } from '../../../../hooks/breadcrumbs/use-set-feature-breadcrumb';
 import DeleteSiteWarnings from './delete-site-warnings';
 
 import './style.scss';

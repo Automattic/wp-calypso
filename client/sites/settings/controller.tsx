@@ -8,7 +8,7 @@ import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getRouteFromContext } from 'calypso/utils';
 import { SidebarItem, Sidebar, PanelWithSidebar } from '../components/panel-sidebar';
-import useBreadcrumbs from '../hooks/use-breadcrumbs';
+import { useBreadcrumbs } from '../hooks/breadcrumbs/use-breadcrumbs';
 import {
 	areAdvancedHostingFeaturesSupported,
 	areHostingFeaturesSupported,
