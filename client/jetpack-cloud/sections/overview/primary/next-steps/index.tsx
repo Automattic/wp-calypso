@@ -78,20 +78,6 @@ export default function NextSteps( { onDismiss = () => {} } ) {
 			title: translate( 'Learn bulk editing and enabling downtime monitoring' ),
 			useCalypsoPath: true,
 		},
-		{
-			calypso_path: '/plugins/manage?tour=plugin-management',
-			completed: checkTourCompletion( 'pluginOverview' ),
-			disabled: false,
-			actionDispatch: () => {
-				dispatch(
-					recordTracksEvent( 'calypso_jetpack_manage_overview_next_steps_plugin_management_click' )
-				);
-				resetTour( [ 'pluginOverview' ] );
-			},
-			id: 'plugin_management',
-			title: translate( 'Explore plugin management' ),
-			useCalypsoPath: true,
-		},
 	];
 
 	const numberOfTasks = tasks.length;

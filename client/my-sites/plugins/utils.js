@@ -1,4 +1,3 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isMagnificentLocale } from '@automattic/i18n-utils';
 import { createSelector } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -30,39 +29,6 @@ export function useLocalizedPlugins() {
 	);
 
 	return { localizePath };
-}
-
-function getSitePlugin( plugin, siteId, pluginsOnSites ) {
-	return {
-		...plugin,
-		...pluginsOnSites[ plugin.slug ]?.sites[ siteId ],
-	};
-}
-
-export function handleUpdatePlugins( plugins, updateAction, pluginsOnSites ) {
-	const updatedPlugins = new Set();
-	const updatedSites = new Set();
-
-	plugins
-		// only consider plugins needing an update
-		.filter( ( plugin ) => plugin.update )
-		.forEach( ( plugin ) => {
-			Object.entries( plugin.sites )
-				// only consider the sites where the those plugins are installed
-				.filter( ( [ , sitePlugin ] ) => sitePlugin.update?.new_version )
-				.forEach( ( [ siteId ] ) => {
-					updatedPlugins.add( plugin.slug );
-					updatedSites.add( siteId );
-					const sitePlugin = getSitePlugin( plugin, siteId, pluginsOnSites );
-					return updateAction( siteId, sitePlugin );
-				} );
-		} );
-
-	recordTracksEvent( 'calypso_plugins_bulk_action_execute', {
-		action: 'updating',
-		plugins: [ ...updatedPlugins ].join( ',' ),
-		sites: [ ...updatedSites ].join( ',' ),
-	} );
 }
 
 export function useServerEffect( fn ) {

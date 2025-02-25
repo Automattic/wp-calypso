@@ -54,11 +54,6 @@
 		min-width: 50%;
 		vertical-align: middle;
 	}
-	&.has-bulk-management-active {
-		thead {
-			display: none;
-		}
-	}
 }
 td.plugin-common-table__actions {
 	padding: 0;

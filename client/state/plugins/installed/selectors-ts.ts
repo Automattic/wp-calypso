@@ -226,17 +226,6 @@ export function getPluginsWithUpdates( state: AppState, siteIds: number[] ) {
 	} ) );
 }
 
-export function getPluginsOnSites( state: AppState, plugins: Plugin[] ) {
-	return plugins.reduce( ( acc: { [ pluginSlug: string ]: Plugin }, plugin: Plugin ) => {
-		const siteIds = Object.keys( plugin.sites ).map( Number );
-		const pluginOnSites = getPluginOnSites( state, siteIds, plugin.slug );
-		if ( pluginOnSites ) {
-			acc[ plugin.slug ] = pluginOnSites;
-		}
-		return acc;
-	}, {} );
-}
-
 export function getPluginOnSites( state: AppState, siteIds: number[], pluginSlug: string ) {
 	const plugin = getAllPluginsIndexedByPluginSlug( state )[ pluginSlug ];
 
