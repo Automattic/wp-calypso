@@ -37,4 +37,34 @@ export class EditorWelcomeGuideComponent {
 		const closeBtn = editorParent.locator( selectors.welcomeGuideCloseButton );
 		await closeBtn.click();
 	}
+
+	/**
+	 * Force showing of the welcome guide.
+	 */
+	async forceShowWelcomeGuide(): Promise< void > {
+		const editorParent = await this.editor.parent();
+		const editorFrame = await ( await editorParent.elementHandle() )?.ownerFrame();
+		if ( ! editorFrame ) {
+			return;
+		}
+
+		await editorFrame.waitForFunction( async () => {
+			const editPostSelector = ( window as any )?.wp?.data?.select( 'core/edit-post' );
+			const editPostDispatcher = ( window as any )?.wp?.data?.dispatch( 'core/edit-post' );
+
+			if ( typeof editPostSelector?.isFeatureActive !== 'function' ) {
+				return false;
+			}
+
+			if ( typeof editPostDispatcher?.toggleFeature !== 'function' ) {
+				return false;
+			}
+
+			if ( ! editPostSelector.isFeatureActive( 'welcomeGuide' ) ) {
+				editPostDispatcher.toggleFeature( 'welcomeGuide' );
+			}
+
+			return true;
+		} );
+	}
 }

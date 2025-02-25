@@ -9,7 +9,7 @@ import {
 	getTestAccountByFeature,
 	envToFeatureKey,
 	RestAPIClient,
-	EditorWelcomeTourComponent,
+	EditorWelcomeGuideComponent,
 	EditorComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser, Locator } from 'playwright';
@@ -294,14 +294,14 @@ describe( 'I18N: Editor', function () {
 
 				// @TODO Consider moving this to EditorPage.
 				const editor = new EditorComponent( page );
-				const editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, editor );
+				const editorWelcomeGuideComponent = new EditorWelcomeGuideComponent( page, editor );
 
 				// We know these are all defined because of the filtering above. Non-null asserting is safe here.
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 				const etkTranslations = translations[ locale ]!.etkPlugin!;
 
 				// Ensure the Welcome Guide component is shown.
-				await editorWelcomeTourComponent.forceShowWelcomeTour();
+				await editorWelcomeGuideComponent.forceShowWelcomeGuide();
 
 				const editorParent = await editorPage.getEditorParent();
 
