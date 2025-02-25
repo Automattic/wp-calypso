@@ -9,7 +9,6 @@ import {
 	HOSTED_SITE_MIGRATION_FLOW,
 	MIGRATION_SIGNUP_FLOW,
 	SITE_MIGRATION_FLOW,
-	ONBOARDING_FLOW,
 } from '@automattic/onboarding';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { dispatch } from '@wordpress/data';
@@ -59,11 +58,16 @@ function initializeCalypsoUserStore( reduxStore: any, user: CurrentUser ) {
 	reduxStore.dispatch( setCurrentUser( user ) );
 }
 
+function determineFlow() {
+	const flowNameFromPathName = window.location.pathname.split( '/' )[ 2 ];
+
+	return availableFlows[ flowNameFromPathName ] || availableFlows[ 'site-setup' ];
+}
 interface AppWindow extends Window {
 	BUILD_TARGET: string;
 }
 
-const DEFAULT_FLOW = ONBOARDING_FLOW;
+const DEFAULT_FLOW = 'site-setup';
 
 const getSiteIdFromURL = () => {
 	const siteId = new URLSearchParams( window.location.search ).get( 'siteId' );
@@ -91,17 +95,14 @@ async function main() {
 	}
 
 	const flowName = getFlowFromURL();
-	const flowLoader = availableFlows[ flowName ];
+	const siteId = getSiteIdFromURL();
 
-	if ( ! flowLoader ) {
-		// If the URL can't be traced back to an existing flow, stop the boot
-		// process and redirect to the default flow.
-		window.location.href = `/setup/${ DEFAULT_FLOW }${ window.location.search }`;
-
-		return;
+	if ( ! flowName ) {
+		// Stop the boot process if we can't determine the flow, reducing the number of edge cases
+		return ( window.location.href = `/setup/${ DEFAULT_FLOW }${ window.location.search }` );
 	}
 
-	const siteId = getSiteIdFromURL();
+	const flowLoader = determineFlow();
 	// Load the flow asynchronously while things happen in parallel.
 	const flowPromise = flowLoader();
 
