@@ -2,6 +2,8 @@ import { Spinner } from '@wordpress/components';
 import { useCallback, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
+// eslint-disable-next-line no-restricted-imports
+import DropZone from 'calypso/components/drop-zone';
 import { SendMessageIcon } from '../../assets/send-message-icon';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../hooks';
@@ -20,6 +22,26 @@ export const OdieSendMessageButton = () => {
 	const isChatBusy = chat.status === 'loading' || chat.status === 'sending';
 	const [ isMessageSizeValid, setIsMessageSizeValid ] = useState( true );
 	const [ submitDisabled, setSubmitDisabled ] = useState( true );
+	const [ fileToUpload, setFileToUpload ] = useState< File | undefined >();
+	const onFilesDrop = ( files: File[] ) => {
+		setFileToUpload( files?.[ 0 ] );
+	};
+
+	const onPaste = ( event: React.ClipboardEvent ) => {
+		const items = event.clipboardData.items;
+
+		for ( const item of items ) {
+			if ( item.type.startsWith( 'image/' ) ) {
+				event.preventDefault();
+
+				const file = item.getAsFile();
+				if ( file ) {
+					setFileToUpload( file );
+					break;
+				}
+			}
+		}
+	};
 
 	const onKeyUp = useCallback( () => {
 		// Only triggered when the message is empty
@@ -104,14 +126,19 @@ export const OdieSendMessageButton = () => {
 						inputRef={ inputRef }
 						setSubmitDisabled={ setSubmitDisabled }
 						keyUpHandle={ onKeyUp }
+						onPasteHandle={ onPaste }
 					/>
 					{ isChatBusy && <Spinner className="odie-send-message-input-spinner" /> }
-					<AttachmentButton attachmentButtonRef={ attachmentButtonRef } />
+					<AttachmentButton
+						attachmentButtonRef={ attachmentButtonRef }
+						externalFile={ fileToUpload }
+					/>
 					<button type="submit" className={ buttonClasses } disabled={ submitDisabled }>
 						<SendMessageIcon />
 					</button>
 				</form>
 			</div>
+			<DropZone onFilesDrop={ onFilesDrop } />
 		</>
 	);
 };

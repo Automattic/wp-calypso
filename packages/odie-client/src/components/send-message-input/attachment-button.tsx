@@ -6,7 +6,7 @@ import {
 } from '@automattic/zendesk-client';
 import { FormFileUpload, Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { useCallback } from '@wordpress/element';
+import { useCallback, useEffect } from '@wordpress/element';
 import { Icon, image } from '@wordpress/icons';
 import React from 'react';
 import { useOdieAssistantContext } from '../../context';
@@ -35,7 +35,8 @@ const getPlaceholderAttachmentMessage = ( file: File ) => {
 
 export const AttachmentButton: React.FC< {
 	attachmentButtonRef?: React.RefObject< HTMLElement >;
-} > = ( { attachmentButtonRef } ) => {
+	externalFile?: File | null;
+} > = ( { attachmentButtonRef, externalFile } ) => {
 	const { chat, addMessage, trackEvent, isUserEligibleForPaidSupport } = useOdieAssistantContext();
 	const { data: authData } = useAuthenticateZendeskMessaging(
 		isUserEligibleForPaidSupport,
@@ -52,14 +53,8 @@ export const AttachmentButton: React.FC< {
 
 	const inferredClientId = chat.clientId ? chat.clientId : zendeskClientId;
 	const onFileUpload = useCallback(
-		async ( event: React.ChangeEvent< HTMLInputElement > ) => {
-			if (
-				authData &&
-				chat.conversationId &&
-				inferredClientId &&
-				event.currentTarget.files?.length
-			) {
-				const file = event.currentTarget.files[ 0 ];
+		async ( file: File | undefined ) => {
+			if ( authData && chat.conversationId && inferredClientId && file ) {
 				attachFileToConversation( {
 					authData,
 					file,
@@ -81,12 +76,24 @@ export const AttachmentButton: React.FC< {
 		]
 	);
 
+	useEffect( () => {
+		if ( externalFile ) {
+			onFileUpload( externalFile );
+		}
+	}, [ externalFile ] );
+
 	if ( ! chat.conversationId || ! inferredClientId ) {
 		return null;
 	}
 
 	return (
-		<FormFileUpload accept="image/*" onChange={ onFileUpload } disabled={ isAttachingFile }>
+		<FormFileUpload
+			accept="image/*"
+			onChange={ ( event ) => {
+				onFileUpload( event?.currentTarget?.files?.[ 0 ] );
+			} }
+			disabled={ isAttachingFile }
+		>
 			{ isAttachingFile && <Spinner style={ { margin: 0 } } /> }
 			{ ! isAttachingFile && <Icon ref={ attachmentButtonRef } icon={ image } /> }
 		</FormFileUpload>
