@@ -52,6 +52,7 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 			) }
 			<PointToWpcomDialog
 				visible={ showPointToWpcomModal }
+				domain={ domain.domain }
 				onClose={ () => setShowPointToWpcomModal( false ) }
 			/>
 			<div>

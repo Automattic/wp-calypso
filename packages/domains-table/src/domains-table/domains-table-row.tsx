@@ -137,6 +137,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		<>
 			<PointToWpcomDialog
 				visible={ showPointToWpcomModal }
+				domain={ domain.domain }
 				onClose={ () => setShowPointToWpcomModal( false ) }
 			/>
 			<tr
