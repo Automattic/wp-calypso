@@ -410,7 +410,8 @@ export class Login extends Component {
 			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
 
 		return (
-			<a
+			<Button
+				variant="link"
 				href={ addQueryArgs(
 					{
 						user_email: usernameOrEmail,
@@ -422,7 +423,7 @@ export class Login extends Component {
 				rel="external"
 			>
 				{ signupLinkText ?? translate( 'Create a new account' ) }
-			</a>
+			</Button>
 		);
 	}
 
