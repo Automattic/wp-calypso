@@ -1,16 +1,15 @@
 import { Card } from '@automattic/components';
 import { Subscriber } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Button, ExternalLink } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { external } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import i18n from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
 import exportSubstackSubscribersImg from 'calypso/assets/images/importer/export-substack-subscribers.png';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { useSelector } from 'calypso/state';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { SubscribersStepProps } from '../types';
 import { normalizeFromSite } from '../utils';
 import SubscriberUploadForm from './upload-form';
@@ -39,15 +38,14 @@ export default function StepInitial( {
 		}
 		prevInProgress.current = importSelector?.inProgress;
 	}, [ importSelector?.inProgress, setAutoFetchData ] );
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite.ID ) );
 
 	return (
 		<Card>
 			<h2>{ __( 'Step 1: Export your subscribers from Substack' ) }</h2>
 			<p>
 				{ createInterpolateElement(
-					__(
-						fixMe( {
+					// @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this.
+					i18n.fixMe( {
 						text: `Generate a CSV of your Substack subscribers. In Substack, go to Subscribers, click Export under "All subscribers," then upload the CSV in the next step. On the free plan, you can import up to 100 subscribers.`,
 						newCopy: __(
 							`Generate a CSV of your Substack subscribers. In Substack, go to <strong>Subscribers</strong>, click <strong>Export</strong> under "All subscribers," then upload the CSV in the next step. On the free plan, <a>you can import up to 100 subscribers.</a>`
@@ -56,17 +54,9 @@ export default function StepInitial( {
 							`Generate a CSV file of all your Substack subscribers. On Substack, go to the <strong>Subscribers</strong> tab and click the <strong>Export</strong> button you'll find on top of the table. Then, upload the downloaded CSV in the next step.`
 						),
 					} ),
-					),
 					{
 						strong: <strong />,
-						supportLink: isJetpack ? (
-							// @ts-expect-error Used in createInterpolateElement doesn't need children.
-							<ExternalLink
-								href={ localizeUrl(
-									'https://wordpress.com/support/import-subscribers-to-a-newsletter/#troubleshooting-subscriber-imports'
-								) }
-							/>
-						) : (
+						supportLink: (
 							<InlineSupportLink
 								showIcon={ false }
 								supportLink={ localizeUrl(
