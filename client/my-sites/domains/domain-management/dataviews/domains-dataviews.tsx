@@ -12,7 +12,7 @@ import {
 	DEFAULT_SORT_FIELD,
 	DEFAULT_SORT_DIRECTION,
 	buildPathWithQueryParams,
-	getQueryParams,
+	QueryParams,
 } from './query-params';
 import { useActions } from './use-actions';
 import { useDomainsDataViewsContext } from './use-context';
@@ -26,6 +26,7 @@ type Props = {
 	isLoading: boolean;
 	sidebarMode?: boolean;
 	selectedDomainName?: string;
+	queryParams: QueryParams;
 };
 
 export const DomainsDataViews = ( {
@@ -33,11 +34,11 @@ export const DomainsDataViews = ( {
 	isLoading,
 	sidebarMode,
 	selectedDomainName,
+	queryParams,
 }: Props ) => {
 	const translate = useTranslate();
 	const { isDesktop, getSiteSlug, selectedFeature } = useDomainsDataViewsContext();
 
-	const queryParams = getQueryParams();
 	const [ view, setView ] = useState( () =>
 		initializeViewState( isDesktop, queryParams, sidebarMode )
 	);
@@ -86,7 +87,7 @@ export const DomainsDataViews = ( {
 		const siteSlug = getSiteSlug( item );
 		const domainManagementLink = ! item.wpcom_domain
 			? addQueryArgs(
-					getQueryParams(),
+					queryParams,
 					getDomainManagementLink( item, siteSlug, true, selectedFeature )
 			  )
 			: '';
