@@ -1,0 +1,54 @@
+/* stylelint-disable scales/radii */
+.quick-post-input {
+	margin-bottom: 24px;
+
+	&--loading {
+		text-align: center;
+		padding: 24px;
+	}
+
+	&__fields {
+		margin-bottom: 16px;
+	}
+
+	&__site-select {
+		margin-bottom: 16px !important;
+		width: 100%;
+        border-color: var(--color-border-subtle);
+        border-style: solid;
+        border-radius: 6px;
+        border-width: 1px;
+	}
+
+    &__actions {
+		display: flex;
+		justify-content: flex-end;
+		gap: 8px;
+	}
+
+	&__cancel {
+		color: var( --color-text-subtle );
+	}
+
+    .verbum-editor-wrapper {
+        .editor__header {
+            border-color: var(--color-border-subtle);
+            border-style: solid;
+            border-radius: 6px 6px 0 0;
+            border-width: 1px;
+            border-bottom-width: 0;
+        }
+
+        .block-editor-block-contextual-toolbar {
+            background-color: transparent;
+        }
+
+        .editor__main {
+            border-color: var(--color-border-subtle);
+            border-style: solid;
+            border-radius: 0 0 6px 6px;
+            border-width: 1px;
+            border-top-width: 0;
+        }
+    }
+}
