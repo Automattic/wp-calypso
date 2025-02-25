@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { getLanguage } from '@automattic/i18n-utils';
-import { getNewSiteParams, processItemCart } from '@automattic/onboarding/src/cart';
+import { addPlanToCart, getNewSiteParams, processItemCart } from '@automattic/onboarding/src/cart';
 import { useMutation } from '@tanstack/react-query';
 import { getLocaleSlug } from 'i18n-calypso';
 import wpcomRequest from 'wpcom-proxy-request';
@@ -94,6 +94,12 @@ export const createSite = async ( {
 		siteCreated: true,
 		goToCheckout: Boolean( planCartItems?.length ),
 	};
+
+	if ( siteSlug && planCartItems?.length ) {
+		for ( const planCartItem of planCartItems ) {
+			await addPlanToCart( siteSlug, flowName, true, themeSlugWithRepo, planCartItem );
+		}
+	}
 
 	if ( domainCartItems.length ) {
 		for ( const domainCartItem of domainCartItems ) {

@@ -33,6 +33,7 @@ const newsletter: Flow = {
 		return translate( 'Newsletter Example Flow' );
 	},
 	__experimentalUseSessions: true,
+	__experimentalUseBuiltinAuth: true,
 	isSignupFlow: true,
 	initialize() {
 		const query = getQuery();
