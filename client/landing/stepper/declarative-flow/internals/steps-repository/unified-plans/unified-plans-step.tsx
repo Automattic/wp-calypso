@@ -489,7 +489,7 @@ function UnifiedPlansStep( {
 									customerType={ customerType }
 									deemphasizeFreePlan={ deemphasizeFreePlan }
 									plansWithScroll={ isDesktop }
-									intent={ intent || undefined }
+									intent={ intent }
 									flowName={ flowName }
 									hideFreePlan={ hideFreePlan && ! deemphasizeFreePlan }
 									hidePersonalPlan={ hidePersonalPlan }
@@ -557,7 +557,7 @@ function UnifiedPlansStep( {
 									customerType={ customerType }
 									deemphasizeFreePlan={ deemphasizeFreePlan }
 									plansWithScroll={ isDesktop }
-									intent={ intent || undefined }
+									intent={ intent }
 									flowName={ flowName }
 									hideFreePlan={ hideFreePlan }
 									hidePersonalPlan={ hidePersonalPlan }
