@@ -1,3 +1,4 @@
+import { SiteIntent } from '@automattic/data-stores/src/onboard';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import Loading from 'calypso/components/loading';
@@ -16,6 +17,11 @@ const PostCheckoutOnboarding: Step = ( { navigation } ) => {
 
 	const selectedDesign = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+		[]
+	);
+
+	const intent = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 		[]
 	);
 
@@ -49,6 +55,13 @@ const PostCheckoutOnboarding: Step = ( { navigation } ) => {
 		await waitForLatestSiteData();
 	};
 
+	const hasPluginByGoal = intent === SiteIntent.CreateCourseGoal;
+
+	const hasExternalTheme =
+		selectedDesign?.is_externally_managed &&
+		isMarketplaceThemeSubscribed &&
+		isExternallyManagedThemeAvailable;
+
 	useEffect( () => {
 		if (
 			! site ||
@@ -60,7 +73,12 @@ const PostCheckoutOnboarding: Step = ( { navigation } ) => {
 		}
 
 		setPendingAction( async () => {
-			const providedDependencies = { siteSlug };
+			const providedDependencies = {
+				siteSlug,
+				hasExternalTheme,
+				hasPluginByGoal,
+			};
+
 			if ( isJetpackOrAtomic ) {
 				return providedDependencies;
 			}
@@ -79,12 +97,8 @@ const PostCheckoutOnboarding: Step = ( { navigation } ) => {
 			 */
 			if ( siteTransferStatusData?.isTransferring ) {
 				await waitForAtomic();
-			} else if (
-				selectedDesign?.is_externally_managed &&
-				isMarketplaceThemeSubscribed &&
-				isExternallyManagedThemeAvailable
-			) {
-				await waitForInitiateTransfer();
+			} else if ( hasExternalTheme || hasPluginByGoal ) {
+				await waitForInitiateTransfer( 'sensei-lms' );
 				await waitForAtomic();
 			}
 
@@ -102,6 +116,7 @@ const PostCheckoutOnboarding: Step = ( { navigation } ) => {
 		selectedDesign,
 		isMarketplaceThemeSubscribed,
 		isExternallyManagedThemeAvailable,
+		hasPluginByGoal,
 	] );
 
 	return <Loading className="wpcom-loading__boot" />;
