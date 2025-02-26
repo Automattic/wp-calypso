@@ -352,24 +352,15 @@ class StatsGeochart extends Component {
 	 */
 	createRegionTooltip = ( topLocations, totalLocations ) => {
 		const { translate } = this.props;
-
-		// Create list items for top locations
-		const locationItems = topLocations
-			.map( ( location ) => `<div>${ location.label }: ${ location.value.toLocaleString() }</div>` )
-			.join( '' );
-
-		// Add message about additional locations if needed
-		const additionalLocationsText = translate( '…and %d more locations', {
+		const moreLocationsText = translate( '…and %d more locations', {
 			args: [ totalLocations - 10 ],
 		} );
 
-		const additionalLocationsMessage =
-			totalLocations > 10
-				? `<div>
-			${ additionalLocationsText }</div>`
-				: '';
+		const items = topLocations
+			.map( ( location ) => `${ location.label }: ${ location.value.toLocaleString() }` )
+			.join( '<br />' );
 
-		return `${ locationItems }${ additionalLocationsMessage }`;
+		return totalLocations > 10 ? `${ items }<br />${ moreLocationsText }` : items;
 	};
 
 	drawData = () => {
