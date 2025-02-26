@@ -49,19 +49,19 @@ export class EditorWelcomeGuideComponent {
 		}
 
 		await editorFrame.waitForFunction( async () => {
-			const editPostSelector = ( window as any )?.wp?.data?.select( 'core/edit-post' );
-			const editPostDispatcher = ( window as any )?.wp?.data?.dispatch( 'core/edit-post' );
+			const editPostSelectors = ( window as any )?.wp?.data?.select( 'core/edit-post' );
+			const editPostActions = ( window as any )?.wp?.data?.dispatch( 'core/edit-post' );
 
-			if ( typeof editPostSelector?.isFeatureActive !== 'function' ) {
+			if ( typeof editPostSelectors?.isFeatureActive !== 'function' ) {
 				return false;
 			}
 
-			if ( typeof editPostDispatcher?.toggleFeature !== 'function' ) {
+			if ( typeof editPostActions?.toggleFeature !== 'function' ) {
 				return false;
 			}
 
-			if ( ! editPostSelector.isFeatureActive( 'welcomeGuide' ) ) {
-				editPostDispatcher.toggleFeature( 'welcomeGuide' );
+			if ( ! editPostSelectors.isFeatureActive( 'welcomeGuide' ) ) {
+				editPostActions.toggleFeature( 'welcomeGuide' );
 			}
 
 			return true;
