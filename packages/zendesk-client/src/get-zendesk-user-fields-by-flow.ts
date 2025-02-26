@@ -1,23 +1,15 @@
-import {
-	DIFM_FLOW,
-	DIFM_FLOW_STORE,
-	HUNDRED_YEAR_PLAN_FLOW,
-	HUNDRED_YEAR_DOMAIN_FLOW,
-	WEBSITE_DESIGN_SERVICES,
-} from '@automattic/onboarding';
-
 const FLOWS_INITIAL_MESSAGES = {
-	[ DIFM_FLOW ]: 'User is purchasing DIFM plan.',
-	[ DIFM_FLOW_STORE ]: 'User is purchasing DIFM store plan.',
-	[ WEBSITE_DESIGN_SERVICES ]: 'User is purchasing DIFM website design services.',
-	[ HUNDRED_YEAR_PLAN_FLOW ]: 'User is purchasing 100 year plan.',
-	[ HUNDRED_YEAR_DOMAIN_FLOW ]: 'User is purchasing 100 year domain.',
+	'difm-flow': 'User is purchasing DIFM plan.',
+	'difm-flow-store': 'User is purchasing DIFM store plan.',
+	'website-design-services': 'User is purchasing DIFM website design services.',
+	'hundred-year-plan-flow': 'User is purchasing 100 year plan.',
+	'hundred-year-domain-flow': 'User is purchasing 100 year domain.',
 };
 
 const FLOWS_FLOWNAME = {
-	[ DIFM_FLOW ]: 'dotcom_difm',
-	[ DIFM_FLOW_STORE ]: 'dotcom_difm',
-	[ WEBSITE_DESIGN_SERVICES ]: 'dotcom_difm',
+	'difm-flow': 'dotcom_difm',
+	'difm-flow-store': 'dotcom_difm',
+	'website-design-services': 'dotcom_difm',
 };
 
 export function getZendeskUserFieldsByFlow( flowName: string ) {
