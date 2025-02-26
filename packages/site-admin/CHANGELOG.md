@@ -1,4 +1,4 @@
 ## Next
 
 - Introduce package. Create skeleton.
-- Expose [getMeta()](./src/utils/meta/README.md)
+- Added new sidebar navigation components ported from Gutenberg core
