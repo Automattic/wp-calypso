@@ -22,6 +22,7 @@ $stats-tab-outer-padding: 10px;
 		font-size: $font-body;
 		margin: 0;
 		text-align: left;
+		position: relative;
 
 		&:first-child {
 			border-top: none;
