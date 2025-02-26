@@ -1,3 +1,4 @@
+import { ConfigApi } from '@automattic/create-calypso-config';
 import { SiteGoal, SiteIntent } from './constants';
 
 interface Flags {
@@ -58,4 +59,14 @@ export const serializeGoals = ( goals: SiteGoal[] ): string => {
 	return ( firstGoal ? [ firstGoal ] : [] )
 		.concat( goals.filter( ( goal ) => goal !== firstGoal ).sort() )
 		.join( ',' );
+};
+
+export const getEnableFeaturesForGoals = ( configApi: ConfigApi ) => {
+	const featuresForGoals: SiteGoal[] = [];
+
+	if ( configApi.isEnabled( 'onboarding/enable-write-goal-features' ) ) {
+		featuresForGoals.push( SiteGoal.Write );
+	}
+
+	return featuresForGoals.length > 0 ? featuresForGoals : undefined;
 };

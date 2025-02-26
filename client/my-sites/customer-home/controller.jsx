@@ -1,5 +1,6 @@
+import configApi from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { fetchLaunchpad } from '@automattic/data-stores';
+import { Onboard, fetchLaunchpad } from '@automattic/data-stores';
 import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
 import { isRemovedFlow } from 'calypso/landing/stepper/utils/flow-redirect-handler';
 import { getQueryArgs } from 'calypso/lib/query-args';
@@ -88,7 +89,10 @@ export async function maybeRedirect( context, next ) {
 			launchpad_screen: launchpadScreenOption,
 			site_intent: siteIntentOption,
 			checklist: launchpadChecklist,
-		} = await fetchLaunchpad( slug );
+		} = await fetchLaunchpad( slug, null, null, {
+			useGoals: true,
+			enableFeaturesForGoals: Onboard.utils.getEnableFeaturesForGoals( configApi ),
+		} );
 
 		const shouldShowLaunchpad = ! isRemovedFlow( siteIntentOption );
 

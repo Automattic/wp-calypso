@@ -4,6 +4,7 @@ import {
 	type SiteSelect,
 	sortLaunchpadTasksByCompletionStatus,
 	useSortedLaunchpadTasks,
+	UseLaunchpadOptions,
 } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { useState } from 'react';
@@ -22,6 +23,7 @@ type LaunchpadProps = {
 	onTaskClick?: EventHandlers[ 'onTaskClick' ];
 	onPostFilterTasks?: ( tasks: Task[] ) => Task[];
 	highlightNextAction?: boolean;
+	options?: UseLaunchpadOptions;
 };
 
 const Launchpad = ( {
@@ -32,6 +34,7 @@ const Launchpad = ( {
 	onTaskClick,
 	onPostFilterTasks,
 	highlightNextAction,
+	options,
 }: LaunchpadProps ) => {
 	const {
 		data: { checklist },
@@ -76,6 +79,7 @@ const Launchpad = ( {
 
 	const launchpadOptions = {
 		onSuccess: sortLaunchpadTasksByCompletionStatus,
+		...options,
 	};
 
 	if ( ! launchpadContext ) {

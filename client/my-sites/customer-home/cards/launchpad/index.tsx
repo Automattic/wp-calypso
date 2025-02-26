@@ -1,4 +1,6 @@
+import configApi from '@automattic/calypso-config';
 import { Button, CircularProgressBar, Gridicon } from '@automattic/components';
+import { Onboard } from '@automattic/data-stores';
 import { Launchpad } from '@automattic/launchpad';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -88,6 +90,10 @@ const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( {
 				checklistSlug={ checklistSlug }
 				launchpadContext={ launchpadContext }
 				onSiteLaunched={ onSiteLaunched }
+				options={ {
+					useGoals: true,
+					enableFeaturesForGoals: Onboard.utils.getEnableFeaturesForGoals( configApi ),
+				} }
 			/>
 		</div>
 	);

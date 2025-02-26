@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
+import { Onboard } from '..';
 
 interface APIFetchOptions {
 	global: boolean;
@@ -59,12 +60,18 @@ type LaunchpadUpdateSettings = {
 
 export type UseLaunchpadOptions = {
 	onSuccess?: ( data: LaunchpadResponse ) => LaunchpadResponse;
-};
+} & FetchLaunchpadOptions;
+
+interface FetchLaunchpadOptions {
+	useGoals?: boolean;
+	enableFeaturesForGoals?: Onboard.SiteGoal[];
+}
 
 export const fetchLaunchpad = (
 	siteSlug: SiteSlug,
 	checklistSlug?: string | null,
-	launchpadContext?: string
+	launchpadContext?: string,
+	options: FetchLaunchpadOptions = {}
 ): Promise< LaunchpadResponse > => {
 	const slug = encodeURIComponent( siteSlug as string );
 	const checklistSlugEncoded = checklistSlug ? encodeURIComponent( checklistSlug ) : null;
@@ -73,6 +80,10 @@ export const fetchLaunchpad = (
 		_locale: 'user',
 		...( checklistSlug && { checklist_slug: checklistSlugEncoded } ),
 		...( launchpadContext && { launchpad_context: launchpadContextEncoded } ),
+		...( options.useGoals && { use_goals: true } ),
+		...( options.enableFeaturesForGoals && {
+			enable_features_for_goals: options.enableFeaturesForGoals,
+		} ),
 	};
 
 	return canAccessWpcomApis()
@@ -117,16 +128,15 @@ type SiteSlug = string | number | null;
 export const useLaunchpad = (
 	siteSlug: SiteSlug,
 	checklistSlug?: string | null,
-	options?: UseLaunchpadOptions,
+	{ onSuccess = defaultSuccessCallback, ...options }: UseLaunchpadOptions = {},
 	launchpad_context?: string | undefined
 ) => {
 	const key = getKey( siteSlug, checklistSlug );
-	const onSuccessCallback = options?.onSuccess || defaultSuccessCallback;
 
 	return useQuery( {
 		queryKey: key,
 		queryFn: () =>
-			fetchLaunchpad( siteSlug, checklistSlug, launchpad_context ).then( onSuccessCallback ),
+			fetchLaunchpad( siteSlug, checklistSlug, launchpad_context, options ).then( onSuccess ),
 		retry: 3,
 		initialData: {
 			site_intent: '',

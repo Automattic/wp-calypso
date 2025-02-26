@@ -169,16 +169,6 @@ const siteSetupFlow: FlowV1 = {
 			);
 		};
 
-		const getEnableFeaturesForGoals = () => {
-			const featuresForGoals: Onboard.SiteGoal[] = [];
-
-			if ( configApi.isEnabled( 'onboarding/enable-write-goal-features' ) ) {
-				featuresForGoals.push( Onboard.SiteGoal.Write );
-			}
-
-			return featuresForGoals.length > 0 ? featuresForGoals : undefined;
-		};
-
 		const exitFlow = ( to: string, options: ExitFlowOptions = {} ) => {
 			setPendingAction( () => {
 				/**
@@ -235,7 +225,7 @@ const siteSetupFlow: FlowV1 = {
 
 					formData.push( [ 'settings', JSON.stringify( settings ) ] );
 
-					const enableFeaturesForGoals = getEnableFeaturesForGoals();
+					const enableFeaturesForGoals = Onboard.utils.getEnableFeaturesForGoals( configApi );
 
 					if ( enableFeaturesForGoals ) {
 						formData.push( [
