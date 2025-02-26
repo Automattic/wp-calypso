@@ -212,6 +212,19 @@ export default function SubscribersChartSection( {
 		},
 	].filter( ( series ) => series.data.length > 0 );
 
+	const yScaleType = useMemo( () => {
+		if ( lineChartData.length <= 1 ) {
+			return 'linear';
+		}
+		const maxValues: number[] = [];
+		lineChartData.map( ( series ) => {
+			maxValues.push( Math.max( ...series.data.map( ( d ) => d.value ) ) );
+		} );
+		const [ minMax, maxMax ] = [ Math.min( ...maxValues ), Math.max( ...maxValues ) ];
+
+		return maxMax / minMax > 20 ? 'log' : 'linear';
+	}, [ lineChartData ] );
+
 	const subscribers = {
 		label: 'Subscribers',
 		path: `/stats/subscribers/`,
@@ -268,6 +281,7 @@ export default function SubscribersChartSection( {
 							EmptyState={ () => null }
 							zeroBaseline={ false }
 							formatTimeTick={ formatTimeTick }
+							yScaleType={ yScaleType }
 						/>
 					) : (
 						<UplotChart

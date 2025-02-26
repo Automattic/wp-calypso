@@ -13,6 +13,7 @@ function StatsLineChart( {
 	EmptyState = StatsEmptyState,
 	zeroBaseline = true,
 	fixedDomain = false,
+	yScaleType = 'linear',
 }: {
 	chartData: Array< {
 		label: string;
@@ -26,6 +27,7 @@ function StatsLineChart( {
 	EmptyState: typeof StatsEmptyState;
 	zeroBaseline?: boolean;
 	fixedDomain?: boolean;
+	yScaleType?: 'linear' | 'log';
 } ) {
 	const translate = useTranslate();
 
@@ -78,7 +80,7 @@ function StatsLineChart( {
 						} }
 						options={ {
 							yScale: {
-								type: 'linear',
+								type: yScaleType,
 								...( fixedDomain && { domain: [ 0, maxValue ] } ),
 								zero: zeroBaseline,
 							},
