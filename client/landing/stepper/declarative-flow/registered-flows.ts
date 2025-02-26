@@ -45,9 +45,6 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	'readymade-template': () =>
 		import( /* webpackChunkName: "readymade-template-flow" */ './readymade-template' ),
 
-	'free-post-setup': () =>
-		import( /* webpackChunkName: "free-post-setup-flow" */ '../declarative-flow/free-post-setup' ),
-
 	'update-design': () =>
 		import( /* webpackChunkName: "update-design-flow" */ '../declarative-flow/update-design' ),
 
