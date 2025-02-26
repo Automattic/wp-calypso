@@ -8,6 +8,7 @@ import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getRouteFromContext } from 'calypso/utils';
 import { SidebarItem, Sidebar, PanelWithSidebar } from '../components/panel-sidebar';
+import { useBreadcrumbs } from '../hooks/breadcrumbs/use-breadcrumbs';
 import {
 	areAdvancedHostingFeaturesSupported,
 	areHostingFeaturesSupported,
@@ -33,7 +34,9 @@ export function SettingsSidebar() {
 	const areHostingFeaturesSupported = useAreHostingFeaturesSupported();
 	const areAdvancedHostingFeaturesSupported = useAreAdvancedHostingFeaturesSupported();
 
-	if ( isSimple ) {
+	const { shouldShowBreadcrumbs } = useBreadcrumbs();
+
+	if ( isSimple || shouldShowBreadcrumbs ) {
 		return null;
 	}
 
@@ -70,7 +73,15 @@ export async function redirectToHostingConfigIfDuplicatedViewsDisabled(
 	const siteSlug = getSelectedSiteSlug( getState() );
 
 	if ( ! isUntangled || ! config.isEnabled( 'untangling/settings-i2' ) ) {
-		return page.redirect( `/hosting-config/${ siteSlug }` );
+		// Redirect command palette routes to the new hosting config page when not in the treatment group
+		const routes = {
+			[ `/sites/settings/server/${ siteSlug }` ]: `/hosting-config/${ siteSlug }`,
+			[ `/sites/settings/performance/${ siteSlug }` ]: `/hosting-config/${ siteSlug }#cache`,
+			[ `/sites/settings/database/${ siteSlug }` ]: `/hosting-config/${ siteSlug }#database-access`,
+			[ `/sites/settings/sftp-ssh/${ siteSlug }` ]: `/hosting-config/${ siteSlug }#sftp-credentials`,
+		};
+
+		return page.redirect( routes[ context.path ] ?? `/hosting-config/${ siteSlug }` );
 	}
 
 	next();

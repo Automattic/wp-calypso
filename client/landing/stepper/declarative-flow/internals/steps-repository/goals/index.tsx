@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -12,6 +11,7 @@ import { isGoalsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getQueryArgs } from 'calypso/lib/query-args';
+import { useCreateCourseGoalFeature } from '../../hooks/use-create-course-goal-feature';
 import DashboardIcon from './dashboard-icon';
 import { GoalsCaptureContainer } from './goals-capture-container';
 import SelectGoals from './select-goals';
@@ -62,8 +62,7 @@ const GoalsStep: Step = ( { navigation, flow } ) => {
 
 	const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 	const [ , isIntentNewsletterGoalEnabled ] = useGoalsFirstCumulativeExperience();
-	// Use the experiment flag instead of the feature flag to ensure the experiment is running
-	const isIntentCreateCourseGoalEnabled = config.isEnabled( 'onboarding/create-course' );
+	const isIntentCreateCourseGoalEnabled = useCreateCourseGoalFeature();
 
 	useEffect( () => {
 		resetIntent();

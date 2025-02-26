@@ -17,6 +17,7 @@ const STORAGE_ADD_ONS_MOCK: AddOnMeta[] = [
 			yearlyPrice: 120,
 			formattedMonthlyPrice: 'USD10',
 			formattedYearlyPrice: 'USD120',
+			currencyCode: 'USD',
 		},
 		description: 'Make more space for high-quality photos, videos, and other media. ',
 		featured: false,

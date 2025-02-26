@@ -8,10 +8,15 @@ import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
 import { setHelpCenterZendeskConversationStarted } from '../utils';
 
-export const useCreateZendeskConversation = (): ( (
-	avoidTransfer?: boolean,
-	interactionId?: string
-) => Promise< void > ) => {
+export const useCreateZendeskConversation = (): ( ( {
+	avoidTransfer,
+	interactionId,
+	createdFrom,
+}: {
+	avoidTransfer?: boolean;
+	interactionId?: string;
+	createdFrom?: string;
+} ) => Promise< void > ) => {
 	const {
 		selectedSiteId,
 		selectedSiteURL,
@@ -19,6 +24,7 @@ export const useCreateZendeskConversation = (): ( (
 		setChat,
 		setWaitAnswerToFirstMessageFromHumanSupport,
 		chat,
+		trackEvent,
 	} = useOdieAssistantContext();
 	const { currentSupportInteraction } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -30,8 +36,17 @@ export const useCreateZendeskConversation = (): ( (
 		useUpdateZendeskUserFields();
 	const { addEventToInteraction } = useManageSupportInteraction();
 	const chatId = chat.odieId;
-	const createConversation = async ( avoidTransfer = false, interactionId = '' ) => {
-		const currentInteractionID = interactionId ? interactionId : currentSupportInteraction!.uuid;
+
+	const createConversation = async ( {
+		avoidTransfer = false,
+		interactionId = '',
+		createdFrom = '',
+	}: {
+		avoidTransfer?: boolean;
+		interactionId?: string;
+		createdFrom?: string;
+	} ) => {
+		const currentInteractionID = interactionId || currentSupportInteraction!.uuid;
 		if ( isSubmittingZendeskUserFields || chat.conversationId ) {
 			return;
 		}
@@ -59,6 +74,14 @@ export const useCreateZendeskConversation = (): ( (
 			},
 		} );
 		setHelpCenterZendeskConversationStarted();
+
+		trackEvent( 'new_zendesk_conversation', {
+			support_interaction: currentInteractionID,
+			created_from: createdFrom,
+			messaging_site_id: selectedSiteId || null,
+			messaging_url: selectedSiteURL || null,
+		} );
+
 		setWaitAnswerToFirstMessageFromHumanSupport( true );
 		addEventToInteraction( {
 			interactionId: currentInteractionID,

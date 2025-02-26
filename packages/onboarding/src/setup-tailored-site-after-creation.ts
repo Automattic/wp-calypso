@@ -8,12 +8,7 @@ import {
 } from '@automattic/data-stores';
 import { select, dispatch } from '@wordpress/data';
 import wpcomRequest from 'wpcom-proxy-request';
-import {
-	isLinkInBioFlow,
-	isNewsletterFlow,
-	isNewsletterOrLinkInBioFlow,
-	isFreeFlow,
-} from './utils';
+import { isNewsletterFlow, isFreeFlow } from './utils';
 import type { ActiveTheme } from '@automattic/data-stores';
 
 const ONBOARD_STORE = Onboard.register();
@@ -70,11 +65,10 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 
 		const promises = [];
 
-		if ( isNewsletterOrLinkInBioFlow( flowName ) || isFreeFlow( flowName ) ) {
-			// link-in-bio and link-in-bio-tld are considered the same intent.
-			if ( isLinkInBioFlow( flowName ) || isFreeFlow( flowName ) ) {
-				// We removed the link in bio and free flows, we need to keep this reference here to avoid side effects.
-				settings.site_intent = isLinkInBioFlow( flowName ) ? 'link-in-bio' : 'free';
+		if ( isNewsletterFlow( flowName ) || isFreeFlow( flowName ) ) {
+			if ( isFreeFlow( flowName ) ) {
+				// We removed the link in free flow, we need to keep this reference here to avoid side effects.
+				settings.site_intent = 'free';
 				if ( selectedDesign && selectedDesign.is_virtual ) {
 					const { assembleSite } = dispatch( SITE_STORE ) as SiteActions;
 					promises.push(

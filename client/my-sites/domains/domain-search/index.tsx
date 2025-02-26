@@ -12,7 +12,6 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
-import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
@@ -417,31 +416,26 @@ class DomainSearch extends Component< DomainSearchProps > {
 							) }
 						</div>
 
-						<EmailVerificationGate
-							noticeText={ translate( 'You must verify your email to register new domains.' ) }
-							noticeStatus="is-info"
-						>
-							{ ! hasPlanInCart && ! this.props.domainAndPlanUpsellFlow && (
-								<NewDomainsRedirectionNoticeUpsell />
-							) }
-							<RegisterDomainStep
-								suggestion={ this.getInitialSuggestion() }
-								domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
-								domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-								onDomainsAvailabilityChange={ this.handleDomainsAvailabilityChange }
-								onAddDomain={ this.handleAddRemoveDomain }
-								onAddMapping={ this.handleAddMapping }
-								onAddTransfer={ this.handleAddTransfer }
-								isCartPendingUpdate={ this.props.shoppingCartManager.isPendingUpdate }
-								showAlreadyOwnADomain
-								selectedSite={ selectedSite }
-								basePath={ this.props.basePath }
-								products={ this.props.productsList }
-								vendor={ getSuggestionsVendor( {
-									flowName: '',
-								} ) }
-							/>
-						</EmailVerificationGate>
+						{ ! hasPlanInCart && ! this.props.domainAndPlanUpsellFlow && (
+							<NewDomainsRedirectionNoticeUpsell />
+						) }
+						<RegisterDomainStep
+							suggestion={ this.getInitialSuggestion() }
+							domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
+							domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+							onDomainsAvailabilityChange={ this.handleDomainsAvailabilityChange }
+							onAddDomain={ this.handleAddRemoveDomain }
+							onAddMapping={ this.handleAddMapping }
+							onAddTransfer={ this.handleAddTransfer }
+							isCartPendingUpdate={ this.props.shoppingCartManager.isPendingUpdate }
+							showAlreadyOwnADomain
+							selectedSite={ selectedSite }
+							basePath={ this.props.basePath }
+							products={ this.props.productsList }
+							vendor={ getSuggestionsVendor( {
+								flowName: '',
+							} ) }
+						/>
 					</div>
 				</span>
 			);

@@ -1,6 +1,5 @@
-import { formatCurrency } from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, formatCurrency } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';

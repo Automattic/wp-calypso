@@ -1,12 +1,9 @@
 export const ACCOUNT_FLOW = 'account';
 export const NEWSLETTER_FLOW = 'newsletter';
-export const NEWSLETTER_POST_SETUP_FLOW = 'newsletter-post-setup';
 export const HOSTING_LP_FLOW = 'hosting-start';
 export const NEW_HOSTED_SITE_FLOW = 'new-hosted-site';
 export const NEW_HOSTED_SITE_FLOW_USER_INCLUDED = 'new-hosted-site-user-included';
 export const TRANSFERRING_HOSTED_SITE_FLOW = 'transferring-hosted-site';
-export const LINK_IN_BIO_TLD_FLOW = 'link-in-bio-tld';
-export const LINK_IN_BIO_POST_SETUP_FLOW = 'link-in-bio-post-setup';
 export const CONNECT_DOMAIN_FLOW = 'connect-domain';
 export const IMPORT_FOCUSED_FLOW = 'import-focused';
 export const IMPORT_HOSTED_SITE_FLOW = 'import-hosted-site';
@@ -39,38 +36,20 @@ export const REBLOGGING_FLOW = 'reblogging';
 export const DOMAIN_FOR_GRAVATAR_FLOW = 'domain-for-gravatar';
 export const ONBOARDING_FLOW = 'onboarding';
 export const EXAMPLE_FLOW = 'example';
-export const ONBOARDING_GUIDED_FLOW = '__disabled_onboarding';
-
-export const isLinkInBioFlow = ( flowName: string | null | undefined ) => {
-	return Boolean(
-		flowName && [ LINK_IN_BIO_TLD_FLOW, LINK_IN_BIO_POST_SETUP_FLOW ].includes( flowName )
-	);
-};
+export const DIFM_FLOW = 'do-it-for-me';
+export const DIFM_FLOW_STORE = 'do-it-for-me-store';
+export const WEBSITE_DESIGN_SERVICES = 'website-design-services';
 
 export const isNewsletterFlow = ( flowName: string | null ) => {
-	return Boolean(
-		flowName && [ NEWSLETTER_FLOW, NEWSLETTER_POST_SETUP_FLOW ].includes( flowName )
-	);
+	return Boolean( flowName && NEWSLETTER_FLOW === flowName );
 };
 
 export const isFreeFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ FREE_POST_SETUP_FLOW ].includes( flowName ) );
 };
 
-export const isNewsletterOrLinkInBioFlow = ( flowName: string | null ) => {
-	return Boolean(
-		flowName &&
-			[
-				NEWSLETTER_FLOW,
-				NEWSLETTER_POST_SETUP_FLOW,
-				LINK_IN_BIO_TLD_FLOW,
-				LINK_IN_BIO_POST_SETUP_FLOW,
-			].includes( flowName )
-	);
-};
-
 export const isTailoredSignupFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && isNewsletterOrLinkInBioFlow( flowName ) );
+	return Boolean( flowName && isNewsletterFlow( flowName ) );
 };
 
 export const isEntrepreneurSignupFlow = ( flowName: string | null ) => {
@@ -154,10 +133,6 @@ export const isOnboardingFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ ONBOARDING_FLOW ].includes( flowName ) );
 };
 
-export const isOnboardingGuidedFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ ONBOARDING_GUIDED_FLOW ].includes( flowName ) );
-};
-
 export const isDomainUpsellFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ DOMAIN_UPSELL_FLOW ].includes( flowName ) );
 };
@@ -195,4 +170,10 @@ export const isHundredYearPlanFlow = ( flowName: string | null | undefined ) => 
 
 export const isHundredYearDomainFlow = ( flowName: string | null | undefined ) => {
 	return Boolean( flowName && [ HUNDRED_YEAR_DOMAIN_FLOW ].includes( flowName ) );
+};
+
+export const isDIFMFlow = ( flowName: string | null ) => {
+	return Boolean(
+		flowName && [ DIFM_FLOW, DIFM_FLOW_STORE, WEBSITE_DESIGN_SERVICES ].includes( flowName )
+	);
 };

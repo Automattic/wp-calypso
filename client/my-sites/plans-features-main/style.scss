@@ -131,11 +131,7 @@ $plan-features-header-banner-height: 20px;
 	margin: auto;
 }
 
-/**
- * Styles for design reskin
- * The `is-white-signup` class is attached to the body when the user is assigned the `reskinned` group of the `reskinSignupFlow` a/b test
- */
-body.is-section-signup.is-white-signup {
+body.is-section-signup {
 	.plans-features-main {
 		.plan-faq {
 			h1 {
@@ -184,7 +180,7 @@ body.is-section-plans .layout__content .main {
 }
 
 body.is-section-stepper,
-body.is-section-signup.is-white-signup {
+body.is-section-signup {
 	.step-wrapper__header {
 		margin: 24px 20px 38px;
 	}

@@ -1,7 +1,6 @@
 import { CompactCard } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { formatCurrency, useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { getRenewalPrice } from 'calypso/lib/purchases';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';

@@ -6,9 +6,8 @@ import {
 	PlanSlug,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
-import formatCurrency from '@automattic/format-currency';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, formatCurrency } from 'i18n-calypso';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { useSelector } from 'calypso/state';

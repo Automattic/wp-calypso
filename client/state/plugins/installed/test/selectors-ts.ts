@@ -10,7 +10,6 @@ import {
 	getAllPluginsIndexedByPluginSlug,
 	getAllPluginsIndexedBySiteId,
 	getFilteredAndSortedPlugins,
-	getPluginsOnSites,
 	getPluginOnSite,
 	getPluginOnSites,
 	getPluginsOnSite,
@@ -321,44 +320,6 @@ describe( 'getPluginsWithUpdates', () => {
 	test( 'Should get a plugin list with the Jetpack site with "type: plugin" on it', () => {
 		const plugins = getPluginsWithUpdates( state, [ siteOneId, siteTwoId ] );
 		expect( plugins ).toEqual( [ { ...jetpackWithSites, type: 'plugin' } ] );
-	} );
-} );
-
-describe( 'getPluginsOnSites', () => {
-	it( 'returns an object with plugins that are on the specified sites', () => {
-		const plugins = [ jetpackWithSites, akismetWithSites ];
-
-		const result = getPluginsOnSites( state, plugins );
-
-		expect( result ).toEqual( {
-			jetpack: jetpackWithSites,
-			akismet: akismetWithSites,
-		} );
-	} );
-
-	it( 'returns an empty object if the sites have no plugins', () => {
-		const plugins = [
-			{ ...jetpackWithSites, ...{ sites: {} } },
-			{ ...akismetWithSites, ...{ sites: {} } },
-		];
-
-		const result = getPluginsOnSites( state, plugins );
-
-		expect( result ).toEqual( {} );
-	} );
-
-	it( 'returns an empty object for an empty plugins array', () => {
-		const result = getPluginsOnSites( state, [] );
-
-		expect( result ).toEqual( {} );
-	} );
-
-	it( 'returns undefined for a plugin object with an invalid slug', () => {
-		const invalidPlugin = { ...jetpackWithSites, ...{ slug: 'invalid-slug' } };
-
-		const result = getPluginsOnSites( state, [ invalidPlugin ] );
-
-		expect( result ).toEqual( { 'invalid-plugin': undefined } );
 	} );
 } );
 

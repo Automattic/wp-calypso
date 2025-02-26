@@ -1,8 +1,7 @@
 import { Button, FoldableCard } from '@automattic/components';
-import { formatCurrency } from '@automattic/format-currency';
 import { isMobile } from '@automattic/viewport';
 import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
-import { translate } from 'i18n-calypso';
+import { formatCurrency, translate } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';

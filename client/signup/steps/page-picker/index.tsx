@@ -3,11 +3,10 @@ import { getDIFMTieredPriceDetails, WPCOM_DIFM_LITE } from '@automattic/calypso-
 import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { Button } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
 import { createRequestCartProduct } from '@automattic/shopping-cart';
 import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
-import { useTranslate } from 'i18n-calypso';
+import { formatCurrency, useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import InfoPopover from 'calypso/components/info-popover';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';

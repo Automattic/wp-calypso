@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@wordpress/components';
 import { check } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -131,8 +130,6 @@ function ProductCard( props: Props ) {
 		return isSelected ? translate( 'Added to cart' ) : translate( 'Add to cart' );
 	}, [ asReferral, isSelected, quantity, translate ] );
 
-	const isRedesign = isEnabled( 'a4a-product-page-redesign' );
-
 	const hasMultipleProducts = products.length > 1;
 
 	const productTitle = getProductShortTitle( currentProduct, hasMultipleProducts );
@@ -166,17 +163,6 @@ function ProductCard( props: Props ) {
 							{ ! customProductCard && (
 								<>
 									<ProductBadges product={ currentProduct } />
-									{ ! isRedesign && hasMultipleProducts && (
-										<MultipleChoiceQuestion
-											name={ `${ currentProduct.family_slug }-variant-options` }
-											question={ translate( 'Select variant:' ) }
-											answers={ variantOptions }
-											selectedAnswerId={ currentProduct.slug }
-											onAnswerChange={ onChangeOption }
-											shouldShuffleAnswers={ false }
-										/>
-									) }
-
 									<div className="product-card__pricing is-compact">
 										<ProductPriceWithDiscount
 											product={ currentProduct }
@@ -186,7 +172,7 @@ function ProductCard( props: Props ) {
 										/>
 									</div>
 
-									{ isRedesign && hasMultipleProducts && (
+									{ hasMultipleProducts && (
 										<MultipleChoiceQuestion
 											name={ `${ currentProduct.family_slug }-variant-options` }
 											question={ translate( 'Select variant:' ) }
@@ -221,7 +207,7 @@ function ProductCard( props: Props ) {
 							customText={ translate( 'View details' ) }
 							productName={ getProductShortTitle( currentProduct ) }
 							onClick={ onShowLightbox }
-							showIcon={ ! isRedesign }
+							showIcon={ false }
 						/>
 					) }
 				</div>

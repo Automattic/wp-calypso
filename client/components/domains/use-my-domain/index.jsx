@@ -483,7 +483,6 @@ UseMyDomain.propTypes = {
 	selectedSite: PropTypes.object,
 	transferDomainUrl: PropTypes.string,
 	analyticsSection: PropTypes.string,
-	basePath: PropTypes.string,
 	initialMode: PropTypes.string,
 	onSkip: PropTypes.func,
 	useMyDomainMode: PropTypes.string,

@@ -50,7 +50,7 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 	};
 
 	const { waitForInitiateTransfer, waitForTransfer, waitForFeature, waitForLatestSiteData } =
-		useWaitForAtomic( { handleTransferFailure } );
+		useWaitForAtomic( { handleTransferFailure, siteId } );
 
 	useEffect( () => {
 		if ( ! siteId ) {

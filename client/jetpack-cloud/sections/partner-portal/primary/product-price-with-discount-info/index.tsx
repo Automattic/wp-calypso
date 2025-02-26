@@ -1,6 +1,5 @@
-import formatCurrency from '@automattic/format-currency';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { formatCurrency, useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { getProductsList } from 'calypso/state/products-list/selectors';

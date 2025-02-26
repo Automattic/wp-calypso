@@ -216,32 +216,6 @@ describe( 'isPlanFulfilled()', () => {
 		expect( flows.excludeStep ).toHaveBeenCalledWith( stepName );
 	} );
 
-	test( 'should remove a step when a domain transfer is selected in the `domain-transfer` flow', () => {
-		const stepName = 'plans';
-		const nextProps = {
-			isPaidPlan: false,
-			sitePlanSlug: 'sitePlanSlug',
-			flowName: 'domain-transfer',
-			signupDependencies: {
-				domainItem: {
-					product_slug: 'domain_transfer',
-				},
-			},
-			submitSignupStep,
-		};
-
-		expect( flows.excludeStep ).not.toHaveBeenCalled();
-		expect( submitSignupStep ).not.toHaveBeenCalled();
-
-		isPlanFulfilled( stepName, undefined, nextProps );
-
-		expect( submitSignupStep ).toHaveBeenCalledWith(
-			{ stepName, cartItems: null, wasSkipped: true },
-			{ cartItems: null }
-		);
-		expect( flows.excludeStep ).toHaveBeenCalledWith( stepName );
-	} );
-
 	test( 'should not remove unfulfilled step', () => {
 		const stepName = 'plans';
 		const nextProps = {

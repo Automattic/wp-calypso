@@ -29,6 +29,11 @@ export const STEPS = {
 	},
 
 	DESIGN_SETUP: {
+		slug: 'design-setup',
+		asyncComponent: () => import( './steps-repository/design-setup' ),
+	},
+
+	DESIGN_SETUP_LEGACY: {
 		slug: 'designSetup',
 		asyncComponent: () => import( './steps-repository/design-setup' ),
 	},

@@ -28,13 +28,14 @@ export const isE2ETest = () =>
 export const isSupportSession = () => {
 	if ( typeof window !== 'undefined' ) {
 		return (
-			'isSupportSession' in window ||
+			'disableHelpCenterAutoOpen' in window ||
 			// A bit hacky but much easier than passing down data from PHP in Jetpack
 			// Simple
 			!! document.querySelector( '#wp-admin-bar-support-session-details' ) ||
 			!! document.querySelector( '#a8c-support-session-overlay' ) ||
 			// Atomic
 			document.body.classList.contains( 'support-session' ) ||
+			document.querySelector( '#wpcom > .is-support-session' ) ||
 			// Our failover last hope, don't re-open when proxied.
 			window.helpCenterData?.isProxied
 		);

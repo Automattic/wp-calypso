@@ -1,6 +1,5 @@
 import { Badge, Button, Gridicon } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, formatCurrency } from 'i18n-calypso';
 import { memo } from 'react';
 import FormattedDate from 'calypso/components/formatted-date';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
