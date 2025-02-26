@@ -31,7 +31,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MissingPaymentSettingsNotice from '../../common/missing-payment-settings-notice';
 import useFetchReferrals from '../../hooks/use-fetch-referrals';
 import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
-import { getAccountStatus } from '../../lib/get-account-status';
 import ReferralDetails from '../../referral-details';
 import ReferralsFooter from '../footer';
 import AutomatedReferralComingSoonBanner from './automated-referral-coming-soon-banner';
@@ -55,7 +54,6 @@ export default function ReferralsOverview( {
 		fields: [ 'completed-orders', 'pending-orders', 'commissions', 'subscription-status' ],
 		titleField: 'client',
 	} );
-	const [ requiredNoticeClose, setRequiredNoticeClosed ] = useState( false );
 
 	const { value: referralEmail, setValue: setReferralEmail } = useUrlQueryParam(
 		REFERRAL_EMAIL_QUERY_PARAM_KEY
@@ -73,7 +71,6 @@ export default function ReferralsOverview( {
 			: translate( 'Referrals' );
 
 	const { data: tipaltiData, isFetching } = useGetTipaltiPayee();
-	const accountStatus = getAccountStatus( tipaltiData, translate );
 
 	const wrapperRef = useRef< HTMLButtonElement | null >( null );
 
@@ -84,9 +81,6 @@ export default function ReferralsOverview( {
 	} = useFetchReferrals( isAutomatedReferral );
 
 	const hasReferrals = !! referrals?.length;
-
-	const actionRequiredNotice =
-		hasReferrals && accountStatus?.actionRequired && ! requiredNoticeClose;
 
 	const makeAReferral = useCallback( () => {
 		sessionStorage.setItem( MARKETPLACE_TYPE_SESSION_STORAGE_KEY, MARKETPLACE_TYPE_REFERRAL );
@@ -115,11 +109,8 @@ export default function ReferralsOverview( {
 							onClose={ () => setReferralEmail( '' ) }
 						/>
 					) }
-					{ actionRequiredNotice && (
-						<div className="referrals-overview__notice">
-							<MissingPaymentSettingsNotice onClose={ () => setRequiredNoticeClosed( true ) } />
-						</div>
-					) }
+
+					<MissingPaymentSettingsNotice />
 
 					{ ! isAutomatedReferral && <AutomatedReferralComingSoonBanner /> }
 
