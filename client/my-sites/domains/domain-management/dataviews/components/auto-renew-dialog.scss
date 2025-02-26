@@ -40,7 +40,9 @@
 	}
 
 	&__actions {
-		text-align: end;
+		display: flex;
+		justify-content: flex-end;
+		gap: 4px;
 	}
 }
 
