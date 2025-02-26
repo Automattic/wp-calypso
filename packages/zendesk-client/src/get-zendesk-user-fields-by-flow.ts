@@ -28,7 +28,7 @@ export function getZendeskUserFieldsByFlow( flowName: string ) {
 	if ( Object.keys( FLOWS_INITIAL_MESSAGES ).includes( flowName ) ) {
 		userFieldMessage = `${
 			FLOWS_INITIAL_MESSAGES[ flowName as keyof typeof FLOWS_INITIAL_MESSAGES ]
-		} URL: ${ url } }`;
+		} URL: ${ url }`;
 	}
 
 	if ( Object.keys( FLOWS_FLOWNAME ).includes( flowName ) ) {
