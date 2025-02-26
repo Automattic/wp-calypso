@@ -23,6 +23,7 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
+		"@automattic/onboarding": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",
 		"@wordpress/api-fetch": "^7.16.0",
 		"@wordpress/element": "^6.16.0",

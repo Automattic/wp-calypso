@@ -2294,6 +2294,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/onboarding": "workspace:^"
     "@tanstack/react-query": "npm:^5.15.5"
     "@wordpress/api-fetch": "npm:^7.16.0"
     "@wordpress/element": "npm:^6.16.0"
