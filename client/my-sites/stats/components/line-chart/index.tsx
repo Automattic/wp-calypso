@@ -68,7 +68,7 @@ function StatsLineChart( {
 						withTooltips
 						withGradientFill
 						height={ height }
-						margin={ { left: 20, top: 20, bottom: 20 } }
+						margin={ { left: 15, top: 20, bottom: 20 } }
 						options={ {
 							yScale: {
 								type: 'linear',
