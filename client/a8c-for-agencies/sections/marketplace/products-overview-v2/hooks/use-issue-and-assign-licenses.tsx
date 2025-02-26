@@ -84,6 +84,7 @@ type UseIssueAndAssignLicensesOptions = {
 	onSuccess?: () => void;
 	onIssueError?: ( ( error: APIError ) => void ) | ( () => void );
 	onAssignError?: ( ( error: Error ) => void ) | ( () => void );
+	redirectTo?: string;
 };
 function useIssueAndAssignLicenses(
 	selectedSite?: { ID: number; domain: string } | null,
@@ -204,6 +205,11 @@ function useIssueAndAssignLicenses(
 				dispatch( successNotice( message, { displayOnNextPage: true } ) );
 
 				page.redirect( A4A_SITES_LINK );
+				return;
+			}
+
+			if ( options.redirectTo ) {
+				page.redirect( options.redirectTo );
 				return;
 			}
 
