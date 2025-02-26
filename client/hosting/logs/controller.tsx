@@ -1,3 +1,4 @@
+import { LogType } from 'calypso/data/hosting/use-site-logs-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { SiteLogsDataViews } from 'calypso/sites/tools/logs';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -7,7 +8,7 @@ export function phpErrorLogs( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<div className="site-logs">
 			<PageViewTracker path="/site-logs/:site/php" title="PHP Error Logs" />
-			<SiteLogsDataViews logType="php" query={ context.query } />
+			<SiteLogsDataViews logType={ LogType.PHP } query={ context.query } />
 		</div>
 	);
 
@@ -18,7 +19,7 @@ export function webServerLogs( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<div className="site-logs">
 			<PageViewTracker path="/site-logs/:site/web" title="Web Server Logs" />
-			<SiteLogsDataViews logType="web" query={ context.query } />
+			<SiteLogsDataViews logType={ LogType.WEB } query={ context.query } />
 		</div>
 	);
 
