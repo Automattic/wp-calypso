@@ -1,0 +1,24 @@
+.edit-site-sidebar-button {
+	color: $gray-200;
+	flex-shrink: 0;
+
+	// Focus (resets default button focus and use focus-visible).
+	&:focus:not(:disabled) {
+		box-shadow: none;
+		outline: none;
+	}
+	&:focus-visible:not(:disabled) {
+		box-shadow:
+			0 0 0 var(--wp-admin-border-width-focus)
+			var(--wp-admin-theme-color);
+		outline: 3px solid transparent;
+	}
+
+	&:hover:not(:disabled,[aria-disabled="true"]),
+	&:focus-visible,
+	&:focus,
+	&:not(:disabled,[aria-disabled="true"]):active,
+	&[aria-expanded="true"] {
+		color: $gray-100;
+	}
+}
