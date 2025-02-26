@@ -12,37 +12,23 @@ const getVisibleFields = ( logType: LogType ) => {
 const getFilterValue = ( view: View, fieldName: string ) =>
 	view.filters?.filter( ( filter ) => filter.field === fieldName )?.[ 0 ]?.value;
 
+const getFilterParamsFromView = ( view: View, fieldNames: string[] ): FilterType => {
+	return ( view.filters || [] )
+		.filter( ( filter ) => fieldNames.includes( filter.field ) )
+		.reduce( ( acc: FilterType, filter ) => {
+			if ( filter.value ) {
+				acc[ filter.field ] = filter.value;
+			}
+			return acc;
+		}, {} as FilterType );
+};
+
 function toFilterParams( { view, logType }: { view: View; logType: LogType } ): FilterType {
-	const filters: FilterType = {};
-
 	if ( logType === LogType.PHP ) {
-		const severity = getFilterValue( view, 'severity' );
-		if ( severity ) {
-			filters.severity = severity;
-		}
+		return getFilterParamsFromView( view, [ 'severity' ] );
 	}
 
-	if ( logType === LogType.WEB ) {
-		const cached = getFilterValue( view, 'cached' );
-		const requestType = getFilterValue( view, 'request_type' );
-		const status = getFilterValue( view, 'status' );
-		const renderer = getFilterValue( view, 'renderer' );
-
-		if ( cached ) {
-			filters.cached = cached;
-		}
-		if ( requestType ) {
-			filters.request_type = requestType;
-		}
-		if ( status ) {
-			filters.status = status;
-		}
-		if ( renderer ) {
-			filters.renderer = renderer;
-		}
-	}
-
-	return filters;
+	return getFilterParamsFromView( view, [ 'cached', 'request_type', 'status', 'renderer' ] );
 }
 
 const useView = ( { logType }: { logType: LogType } ) => {
