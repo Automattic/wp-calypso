@@ -45,6 +45,10 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 	const { trackEvent } = useOdieAssistantContext();
 
 	useEffect( () => {
+		if ( mainChatState.status === 'loaded' || mainChatState.status === 'transfer' ) {
+			return;
+		}
+
 		if ( odieId && odieChat && ! conversationId ) {
 			setMainChatState( {
 				...odieChat,
@@ -88,14 +92,6 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 					} );
 				}
 			}
-		} else if ( currentSupportInteraction ) {
-			setMainChatState( ( prevChat ) => ( {
-				...( prevChat.supportInteractionId !== currentSupportInteraction!.uuid
-					? emptyChat
-					: prevChat ),
-				supportInteractionId: currentSupportInteraction!.uuid,
-				status: 'loaded',
-			} ) );
 		}
 	}, [
 		isOdieChatLoading,
@@ -107,6 +103,16 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 		canConnectToZendesk,
 		getZendeskConversation,
 	] );
+
+	useEffect( () => {
+		setMainChatState( ( prevChat ) => ( {
+			...( prevChat.supportInteractionId !== currentSupportInteraction!.uuid
+				? emptyChat
+				: prevChat ),
+			supportInteractionId: currentSupportInteraction!.uuid,
+			status: 'loaded',
+		} ) );
+	}, [ currentSupportInteraction?.uuid ] );
 
 	return { mainChatState, setMainChatState };
 };
