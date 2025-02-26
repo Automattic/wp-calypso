@@ -24,6 +24,11 @@
 		display: flex;
 		flex-direction: column;
 
+		& > a.button {
+			margin: 0 20px;
+			border-radius: 4px;
+		}
+
 		.components-button.is-primary {
 			margin-top: 20px;
 			justify-content: center;
