@@ -58,6 +58,7 @@
 	},
 	"dependencies": {
 		"@wordpress/base-styles": "^5.17.0",
+		"@wordpress/components": "^29.4.0",
 		"@wordpress/core-data": "^7.17.0",
 		"@wordpress/i18n": "^5.17.0",
 		"@wordpress/icons": "^10.17.0",
