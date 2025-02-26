@@ -167,5 +167,6 @@ export const useCreateSite = () => {
 			set( 'site', data );
 			return data;
 		},
+		throwOnError: true,
 	} ).mutateAsync;
 };

@@ -56,6 +56,7 @@ const newsletter: Flow = {
 			STEPS.PROCESSING,
 			STEPS.SUBSCRIBERS,
 			STEPS.LAUNCHPAD,
+			STEPS.ERROR,
 		] );
 
 		if ( ! isComingFromMarketingPage ) {
@@ -70,7 +71,7 @@ const newsletter: Flow = {
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
 		const query = useQuery();
-		const { set } = useFlowState();
+		const { get, set } = useFlowState();
 		const { exitFlow } = useExitFlow();
 		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
@@ -127,46 +128,46 @@ const newsletter: Flow = {
 					);
 					return navigate( 'processing' );
 				case 'processing': {
-					const siteFragment = ( providedDependencies.siteId ||
-						providedDependencies.siteSlug ||
-						siteId ) as string;
-
-					if ( siteFragment ) {
+					const site = get( 'site' );
+					if ( site ) {
+						const { siteId, siteSlug } = site;
 						initializeLaunchpadState( {
-							siteId: siteFragment,
-							siteSlug: siteFragment,
+							siteId: siteId,
+							siteSlug: siteSlug,
 						} );
+
+						if ( providedDependencies?.goToHome ) {
+							return window.location.replace(
+								addQueryArgs( `/home/${ siteId }`, {
+									celebrateLaunch: true,
+									launchpadComplete: true,
+								} )
+							);
+						}
+
+						if ( providedDependencies?.goToCheckout ) {
+							persistSignupDestination( launchpadUrl );
+							setSignupCompleteSlug( providedDependencies?.siteSlug );
+							setSignupCompleteFlowName( flowName );
+
+							// Replace the processing step with checkout step, so going back goes to Plans.
+							return window.location.replace(
+								`/checkout/${ encodeURIComponent( siteSlug ) }?redirect_to=${ encodeURIComponent(
+									launchpadUrl
+								) }&signup=1`
+							);
+						}
+
+						const postFlowUrl = getPostFlowUrl( {
+							flow: flowName,
+							siteId: siteId as number,
+							siteSlug: siteSlug as string,
+						} );
+
+						return window.location.replace( postFlowUrl );
 					}
-
-					if ( providedDependencies?.goToHome ) {
-						return window.location.replace(
-							addQueryArgs( `/home/${ siteFragment }`, {
-								celebrateLaunch: true,
-								launchpadComplete: true,
-							} )
-						);
-					}
-
-					if ( providedDependencies?.goToCheckout ) {
-						persistSignupDestination( launchpadUrl );
-						setSignupCompleteSlug( providedDependencies?.siteSlug );
-						setSignupCompleteFlowName( flowName );
-
-						// Replace the processing step with checkout step, so going back goes to Plans.
-						return window.location.replace(
-							`/checkout/${ encodeURIComponent( siteFragment ) }?redirect_to=${ encodeURIComponent(
-								launchpadUrl
-							) }&signup=1`
-						);
-					}
-
-					const postFlowUrl = getPostFlowUrl( {
-						flow: flowName,
-						siteId: providedDependencies?.siteId as number,
-						siteSlug: providedDependencies?.siteSlug as string,
-					} );
-
-					return window.location.replace( postFlowUrl );
+					// handle site creation error.
+					return navigate( 'error' );
 				}
 
 				case 'subscribers':
