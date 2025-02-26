@@ -382,7 +382,7 @@ const onboarding: Flow = {
 									}
 								),
 								signup: 1,
-								checkoutBackUrl: pathToUrl( backDestination ),
+								checkoutBackUrl: pathToUrl( backDestination ?? '' ),
 								coupon,
 								...( createWithBigSky && isBigSkyBeforePlansExperiment && isGoalsAtFrontExperiment
 									? { [ 'big-sky-checkout' ]: 1 }
