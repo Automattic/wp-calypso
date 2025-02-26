@@ -1,3 +1,10 @@
+## 7.3.0
+
+- `formatCurrency` and `getCurrencyObject` methods added. Migrated from `format-currency` package
+- `geolocateCurrencySymbol` method and `geoLocation` state variable added. Migrated from `format-currency` package
+- updated `getCachedFormatter` in `number-formatters` to account for fallback
+- removed `lodash` dependency as not used anywhere
+
 ## 7.2.2
 
 - TS configuration & jest depdencies
