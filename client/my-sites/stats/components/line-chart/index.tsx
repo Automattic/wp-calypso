@@ -43,8 +43,7 @@ function StatsLineChart( {
 		return value.toFixed( 0 ).toString();
 	};
 
-	const dataLength = ( chartData?.[ 0 ].data || [] ).length;
-	const isEmpty = dataLength === 0;
+	const isEmpty = ( chartData?.[ 0 ].data || [] ).length === 0;
 
 	const maxValue = useMemo(
 		() =>
@@ -79,7 +78,6 @@ function StatsLineChart( {
 							axis: {
 								x: {
 									tickFormat: formatTime,
-									numTicks: dataLength < 5 ? dataLength : undefined,
 								},
 								y: {
 									orientation: 'right',
