@@ -565,9 +565,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/charts@npm:^0.8.2":
-  version: 0.8.2
-  resolution: "@automattic/charts@npm:0.8.2"
+"@automattic/charts@npm:^0.8.3":
+  version: 0.8.3
+  resolution: "@automattic/charts@npm:0.8.3"
   dependencies:
     "@babel/runtime": "npm:7.26.0"
     "@react-spring/web": "npm:9.7.3"
@@ -589,7 +589,7 @@ __metadata:
   peerDependencies:
     react: ^17.0.0 || ^18.0.0
     react-dom: ^17.0.0 || ^18.0.0
-  checksum: 1cc176d865d356dc3900d7502a327f8822b6b503a90c4494a99637cd9806bef185abc62fd377f420105b8ae3acec6d9b58c1afe957b88dde6d7ac25c6f75cbd1
+  checksum: 003d54ea7e93ee6562e4a182ffb153745d9397552d908306467444762244ba8f6e7c9f4ae0859f26b599c8124ddb7c57cb772415ac30c02d0e5bf453858f10f1
   languageName: node
   linkType: hard
 
@@ -35928,7 +35928,7 @@ __metadata:
     "@automattic/calypso-razorpay": "workspace:^"
     "@automattic/calypso-router": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
-    "@automattic/charts": "npm:^0.8.2"
+    "@automattic/charts": "npm:^0.8.3"
     "@automattic/color-studio": "npm:^3.0.1"
     "@automattic/command-palette": "workspace:^"
     "@automattic/components": "workspace:^"
