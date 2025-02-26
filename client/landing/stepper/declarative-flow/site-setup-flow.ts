@@ -709,13 +709,11 @@ const siteSetupFlow: FlowV1 = {
 		const dispatch = reduxDispatch();
 
 		const skippedCheckout = useQuery().get( 'skippedCheckout' );
-
 		const activateDesign = useActivateDesign();
-
 		const isPendingActionSet = useRef( false );
 
 		useEffect( () => {
-			if ( ! isGoalsAtFrontExperiment || ! siteSlugOrId || ! siteId ) {
+			if ( ! isGoalsAtFrontExperiment ) {
 				return;
 			}
 
@@ -729,7 +727,6 @@ const siteSetupFlow: FlowV1 = {
 				if ( ! selectedDesign ) {
 					return;
 				}
-
 				try {
 					await activateDesign( selectedDesign, {
 						styleVariation: selectedStyleVariation,
