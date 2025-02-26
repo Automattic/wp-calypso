@@ -53,16 +53,6 @@ function StatsLineChart( {
 		[ chartData ]
 	);
 
-	// TODO: we should have this in charts lib.
-	const chartDataSorted = useMemo(
-		() =>
-			chartData.map( ( series ) => ( {
-				...series,
-				data: series.data.sort( ( a, b ) => a.date.getTime() - b.date.getTime() ),
-			} ) ),
-		[ chartData ]
-	);
-
 	return (
 		<div className={ clsx( 'stats-line-chart', className ) }>
 			{ isEmpty && (
@@ -74,7 +64,7 @@ function StatsLineChart( {
 			{ ! isEmpty && (
 				<ThemeProvider theme={ jetpackTheme }>
 					<LineChart
-						data={ chartDataSorted }
+						data={ chartData }
 						withTooltips
 						withGradientFill
 						height={ height }
