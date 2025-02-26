@@ -345,26 +345,7 @@ body.is-section-accept-invite {
 			display: none;
 
 			&.google {
-				display: block;
-				background-color: #fff;
-				margin-bottom: 20px;
-				box-shadow: none;
-				border: solid var(--color-neutral-10);
-				border-width: 1px 1px 2px;
-				border-radius: 2px;
-				box-sizing: border-box;
-				height: 45px;
-				padding: 13px 40px 12px;
-
-				span {
-					margin-left: 15px;
-					font-family: inherit;
-					font-style: inherit;
-					line-height: normal;
-					letter-spacing: normal;
-					font-weight: 600;
-					font-size: 0.875rem;
-				}
+				display: inline-flex;
 
 				@include break-medium {
 					margin-bottom: 40px;

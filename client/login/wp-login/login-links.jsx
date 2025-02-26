@@ -3,6 +3,7 @@ import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon, ExternalLink } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -222,7 +223,7 @@ export class LoginLinks extends Component {
 		} );
 
 		return (
-			<a
+			<Button
 				// Event listeners added with `onClick` are not called, because
 				// page.js adds an event listener itself. By explicitely adding
 				// an event listener through the ref, we can intercept the event
@@ -233,9 +234,10 @@ export class LoginLinks extends Component {
 				href={ loginLink }
 				key="magic-login-link"
 				data-e2e-link="magic-login-link"
+				variant="link"
 			>
 				{ this.getLoginLinkText() }
-			</a>
+			</Button>
 		);
 	}
 

@@ -110,9 +110,10 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	}
 }
 
-.button.is-primary.signup-form__crowdsignal-submit {
+.components-button.is-primary.signup-form__crowdsignal-submit {
 	background: var(--color-primary);
 	border-color: var(--color-primary-dark);
+	width: 100%;
 }
 
 .signup-form__crowdsignal-wpcom .wordpress-logo {
@@ -133,10 +134,6 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 		@include breakpoint-deprecated( "<660px" ) {
 			margin-bottom: 20px;
 		}
-	}
-
-	.social-buttons__service-name {
-		margin-left: 15px;
 	}
 
 	.auth-form__social-buttons-tos {
@@ -174,9 +171,20 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 	}
 }
 
-.button.signup-form__crowdsignal-wpcom {
+.components-button.signup-form__crowdsignal-wpcom {
 	display: flex;
+	height: 44px;
 	margin-bottom: 40px;
+	padding-inline: 16px;
+
+	> svg {
+		margin-right: auto;
+	}
+
+	> span {
+		margin-left: -20px;
+		margin-right: auto;
+	}
 }
 
 .button.signup-form__crowdsignal-show-form {

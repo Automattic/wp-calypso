@@ -1,10 +1,10 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button as A8CButton, Gridicon } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import AutomatticLogo from 'calypso/components/automattic-logo';
-import FormButton from 'calypso/components/forms/form-button';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
@@ -77,7 +77,7 @@ class CrowdsignalSignupForm extends Component {
 							</p>
 
 							<Button
-								primary
+								variant="primary"
 								href={ this.props.loginLink }
 								className="signup-form__crowdsignal-wpcom"
 							>
@@ -91,12 +91,12 @@ class CrowdsignalSignupForm extends Component {
 									socialServiceResponse={ this.props.socialServiceResponse }
 								/>
 							) }
-							<Button
+							<A8CButton
 								className="signup-form__crowdsignal-show-form"
 								onClick={ this.showSignupForm }
 							>
 								{ translate( 'Create a WordPress.com Account' ) }
-							</Button>
+							</A8CButton>
 						</div>
 					</div>
 
@@ -114,12 +114,14 @@ class CrowdsignalSignupForm extends Component {
 								{ this.props.formFields }
 
 								<LoggedOutFormFooter>
-									<FormButton
+									<Button
 										className="signup-form__crowdsignal-submit"
 										disabled={ this.props.submitting || this.props.disabled }
+										variant="primary"
+										type="submit"
 									>
 										{ translate( 'Create a WordPress.com Account' ) }
-									</FormButton>
+									</Button>
 
 									<p className="signup-form__crowdsignal-learn-more">
 										{ translate( 'Why WordPress.com? {{a}}Learn more{{/a}}.', {
@@ -147,7 +149,7 @@ class CrowdsignalSignupForm extends Component {
 						recordClick={ this.props.recordBackLinkClick }
 					/>
 
-					<Button
+					<A8CButton
 						borderless
 						compact
 						className="signup-form__crowdsignal-prev-button"
@@ -156,7 +158,7 @@ class CrowdsignalSignupForm extends Component {
 					>
 						<Gridicon icon="arrow-left" />
 						<span>{ translate( 'Back' ) }</span>
-					</Button>
+					</A8CButton>
 				</div>
 
 				<div className="signup-form__crowdsignal-footer">
