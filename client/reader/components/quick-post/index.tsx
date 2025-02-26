@@ -7,14 +7,13 @@ import {
 } from '@automattic/verbum-block-editor';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import wpcom from 'calypso/lib/wp';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
-import getSites from 'calypso/state/selectors/get-sites';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
-import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -29,17 +28,11 @@ export default function QuickPost() {
 	const [ postContent, setPostContent ] = useState( '' );
 	const [ editorKey, setEditorKey ] = useState( 0 );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
-	const sites = useSelector( getSites ).filter( ( site ): site is SiteDetails => site !== null );
-	const hasLoaded = useSelector( hasLoadedSites );
 	const [ selectedSiteId, setSelectedSiteId ] = useState< number | null >( null );
 	const editorRef = useRef< HTMLDivElement >( null );
-
-	// Set initial selected site once sites are loaded.
-	useEffect( () => {
-		if ( hasLoaded && sites.length > 0 && ! selectedSiteId ) {
-			setSelectedSiteId( sites[ 0 ].ID );
-		}
-	}, [ hasLoaded, sites, selectedSiteId ] );
+	const currentUser = useSelector( getCurrentUser );
+	const hasLoaded = useSelector( hasLoadedSites );
+	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
 
 	const clearEditor = () => {
 		setEditorKey( ( key ) => key + 1 );
@@ -97,7 +90,7 @@ export default function QuickPost() {
 		);
 	}
 
-	if ( ! sites.length ) {
+	if ( ! hasSites ) {
 		return null; // Don't show QuickPost if user has no sites.
 	}
 
