@@ -17,7 +17,7 @@ export class LoginPage {
 	/**
 	 * Opens the login page.
 	 *
-	 * @param {{path: string}: string } param1 Key/value pair of the path to be appended to /log-in. E.g. /log-in/new is the reskinned login page.
+	 * @param {{path: string}: string } param1 Key/value pair of the path to be appended to /log-in. E.g. /log-in/new.
 	 * Example: {@link https://wordpress.com/log-in}
 	 */
 	async visit( { path }: { path: string } = { path: '' } ): Promise< Response | null > {

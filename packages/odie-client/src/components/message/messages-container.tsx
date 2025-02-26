@@ -2,7 +2,7 @@ import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/us
 import { getShortDateString } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
 import { useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { NavigationType, useNavigationType, useSearchParams } from 'react-router-dom';
 import { ThumbsDown } from '../../assets/thumbs-down';
 import { useOdieAssistantContext } from '../../context';
 import {
@@ -11,6 +11,7 @@ import {
 	useZendeskMessageListener,
 	useUpdateDocumentTitle,
 } from '../../hooks';
+import { useHelpCenterChatScroll } from '../../hooks/use-help-center-chat-scroll';
 import { getOdieInitialMessage } from '../../utils';
 import { ViewMostRecentOpenConversationNotice } from '../odie-notice/view-most-recent-conversation-notice';
 import { DislikeFeedbackMessage } from './dislike-feedback-message';
@@ -48,7 +49,8 @@ interface ChatMessagesProps {
 }
 
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
-	const { chat, botNameSlug, experimentVariationName, isChatLoaded } = useOdieAssistantContext();
+	const { chat, botNameSlug, experimentVariationName, isChatLoaded, isUserEligibleForPaidSupport } =
+		useOdieAssistantContext();
 	const createZendeskConversation = useCreateZendeskConversation();
 	const resetSupportInteraction = useResetSupportInteraction();
 	const [ searchParams, setSearchParams ] = useSearchParams();
@@ -56,10 +58,29 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		searchParams.get( 'provider' ) === 'zendesk' && chat.provider !== 'zendesk';
 	const [ hasForwardedToZendesk, setHasForwardedToZendesk ] = useState( false );
 	const [ chatMessagesLoaded, setChatMessagesLoaded ] = useState( false );
+	const [ shouldEnableAutoScroll, setShouldEnableAutoScroll ] = useState( true );
+	const navType: NavigationType = useNavigationType();
+
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
+	const scrollParentRef = useRef< HTMLElement | null >( null );
 
 	useZendeskMessageListener();
-	useAutoScroll( messagesContainerRef );
+	useAutoScroll( messagesContainerRef, shouldEnableAutoScroll );
+	useHelpCenterChatScroll( chat?.supportInteractionId, scrollParentRef, ! shouldEnableAutoScroll );
+
+	useEffect( () => {
+		if ( navType === 'POP' && ( isChatLoaded || ! isUserEligibleForPaidSupport ) ) {
+			setShouldEnableAutoScroll( false );
+		}
+	}, [ navType, isUserEligibleForPaidSupport, shouldEnableAutoScroll, isChatLoaded ] );
+
+	useEffect( () => {
+		if ( messagesContainerRef.current && scrollParentRef.current === null ) {
+			scrollParentRef.current = messagesContainerRef.current?.closest(
+				'.help-center__container-content'
+			);
+		}
+	}, [ messagesContainerRef ] );
 	useUpdateDocumentTitle();
 
 	useEffect( () => {
@@ -89,7 +110,11 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 
 			resetSupportInteraction().then( ( interaction ) => {
 				if ( isChatLoaded ) {
-					createZendeskConversation( true, interaction?.uuid ).then( () => {
+					createZendeskConversation( {
+						avoidTransfer: true,
+						interactionId: interaction?.uuid,
+						createdFrom: 'direct_url',
+					} ).then( () => {
 						setChatMessagesLoaded( true );
 					} );
 				}
@@ -132,18 +157,25 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 								displayChatWithSupportLabel={ false }
 							/>
 						) }
-						{ chat.messages.map( ( message, index ) => (
-							<ChatMessage
-								message={ message }
-								key={ index }
-								currentUser={ currentUser }
-								isNextMessageFromSameSender={ isNextMessageFromSameSender(
-									message.role,
-									chat.messages[ index + 1 ]?.role
-								) }
-								displayChatWithSupportLabel={ message.context?.flags?.show_contact_support_msg }
-							/>
-						) ) }
+						{ chat.messages.map( ( message, index ) => {
+							const nextMessage = chat.messages[ index + 1 ];
+							const displayChatWithSupportLabel =
+								! nextMessage?.context?.flags?.show_contact_support_msg &&
+								message.context?.flags?.show_contact_support_msg;
+
+							return (
+								<ChatMessage
+									message={ message }
+									key={ index }
+									currentUser={ currentUser }
+									isNextMessageFromSameSender={ isNextMessageFromSameSender(
+										message.role,
+										chat.messages[ index + 1 ]?.role
+									) }
+									displayChatWithSupportLabel={ displayChatWithSupportLabel }
+								/>
+							);
+						} ) }
 						<JumpToRecent containerReference={ messagesContainerRef } />
 						{ chat.provider === 'odie' && <ViewMostRecentOpenConversationNotice /> }
 						{ chat.status === 'dislike' && ! removeDislikeStatus && <DislikeThumb /> }

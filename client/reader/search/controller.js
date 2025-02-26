@@ -5,6 +5,7 @@ import {
 	trackPageLoad,
 	trackUpdatesLoaded,
 	trackScrollPage,
+	userHasHistory,
 } from 'calypso/reader/controller-helper';
 import { SEARCH_TYPES } from 'calypso/reader/search-stream/search-stream-header';
 import { recordTrack } from 'calypso/reader/stats';
@@ -83,7 +84,7 @@ const exported = {
 								mcKey
 							) }
 							onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
-							showBack={ false }
+							showBack={ userHasHistory( context ) }
 							autoFocusInput={ autoFocusInput }
 							onQueryChange={ reportQueryChange }
 							onSortChange={ reportSortChange }

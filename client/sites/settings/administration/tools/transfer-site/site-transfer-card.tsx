@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import HeaderCakeBack from 'calypso/components/header-cake/back';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -5,20 +6,28 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import { Panel, PanelCard } from 'calypso/components/panel';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
+import { useSetFeatureBreadcrumb } from '../../../../hooks/breadcrumbs/use-set-feature-breadcrumb';
 
 export function SiteTransferCard( {
 	children,
+	siteId,
 	onClick,
 }: {
 	children: React.ReactNode;
+	siteId: number;
 	onClick: () => void;
 } ) {
 	const translate = useTranslate();
 	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 	const title = isUntangled ? translate( 'Transfer site' ) : translate( 'Site Transfer' );
+
+	useSetFeatureBreadcrumb( { siteId, title } );
+
 	return (
 		<Panel className="settings-administration__transfer-site">
-			<HeaderCakeBack icon="chevron-left" onClick={ onClick } />
+			{ ! ( isUntangled && config.isEnabled( 'untangling/settings-i2' ) ) && (
+				<HeaderCakeBack icon="chevron-left" onClick={ onClick } />
+			) }
 			<NavigationHeader
 				title={ title }
 				subtitle={ translate(

@@ -12,7 +12,7 @@ import {
 	useClearEdgeCacheMutation,
 } from 'calypso/data/hosting/use-cache';
 import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
-import CacheCard from 'calypso/sites/settings/caching/form';
+import CacheCard from 'calypso/sites/settings/performance/form';
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import getRequest from 'calypso/state/selectors/get-request';
 import { shouldRateLimitAtomicCacheClear } from 'calypso/state/selectors/should-rate-limit-atomic-cache-clear';

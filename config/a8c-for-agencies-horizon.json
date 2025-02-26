@@ -34,7 +34,6 @@
 		"a4a-automated-referrals": true,
 		"a4a-partner-directory": false,
 		"a4a-product-page-redesign": true,
-		"a4a-hosting-page-redesign-v3": true,
 		"a4a-dev-sites": true,
 		"a4a-migrations-page-v2": true,
 		"a8c-for-agencies-agency-tier": true,
@@ -59,7 +58,8 @@
 		"a8c-for-agencies-migrations": true,
 		"a8c-for-agencies-client": true,
 		"a8c-for-agencies-team": true,
-		"a8c-for-agencies-agency-tier": true
+		"a8c-for-agencies-agency-tier": true,
+		"a8c-for-agencies-woopayments": true
 	},
 	"site_filter": [],
 	"theme": "a8c-for-agencies",

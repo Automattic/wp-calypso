@@ -67,16 +67,23 @@ function getLocation( path ) {
 		return 'postlike';
 	}
 	if ( path.indexOf( '/discover' ) === 0 ) {
-		const selectedTab = searchParams.get( 'selectedTab' );
-
-		if ( ! selectedTab || selectedTab === 'recommended' ) {
-			return 'discover_recommended';
-		} else if ( selectedTab === 'latest' ) {
-			return 'discover_latest';
-		} else if ( selectedTab === 'firstposts' ) {
+		const selectedTag = searchParams.get( 'selectedTag' );
+		if ( path.indexOf( '/discover/add-new' ) === 0 ) {
+			return 'discover_addnew';
+		} else if ( path.indexOf( '/discover/firstposts' ) === 0 ) {
 			return 'discover_firstposts';
+		} else if ( path.indexOf( '/discover/reddit' ) === 0 ) {
+			return 'discover_reddit';
+		} else if ( path.indexOf( '/discover/latest' ) === 0 ) {
+			return 'discover_latest';
+		} else if ( path.indexOf( '/discover/tags' ) === 0 ) {
+			return `discover_tag:${ selectedTag }`;
+		} else if ( path.split( '?' )[ 0 ] === '/discover' ) {
+			return `discover_recommended`;
 		}
-		return `discover_tag:${ selectedTab }`;
+		// Ideally we should not get here, but its good to have a fallback if other tabs are
+		// added and not handled.
+		return `discover_unknown`;
 	}
 	if ( path.match( new RegExp( `^(/${ localeRegexString })?/reader/search` ) ) ) {
 		return 'search';

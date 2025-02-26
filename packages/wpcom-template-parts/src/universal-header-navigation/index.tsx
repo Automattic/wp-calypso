@@ -292,13 +292,6 @@ const UniversalNavbarHeader = ( {
 															type="dropdown"
 															target="_self"
 														/>
-														<ClickableItem
-															titleValue=""
-															content={ __( 'Daily Webinars', __i18n_text_domain__ ) }
-															urlValue={ localizeUrl( '//wordpress.com/webinars/' ) }
-															type="dropdown"
-															target="_self"
-														/>
 														{ isEnglishLocale && (
 															<ClickableItem
 																titleValue=""
@@ -610,12 +603,6 @@ const UniversalNavbarHeader = ( {
 												titleValue=""
 												content={ __( 'Blog Search', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/reader/search/' ) }
-												type="menu"
-											/>
-											<ClickableItem
-												titleValue=""
-												content={ __( 'Daily Webinars', __i18n_text_domain__ ) }
-												urlValue={ localizeUrl( '//wordpress.com/webinars/' ) }
 												type="menu"
 											/>
 											{ isEnglishLocale && (

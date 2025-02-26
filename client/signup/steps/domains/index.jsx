@@ -21,7 +21,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
-import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
+import SideExplainer from 'calypso/components/domains/side-explainer';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
@@ -946,7 +946,7 @@ export class RenderDomainsStep extends Component {
 						( domainsInCart.length > 0 || this.state.wpcomSubdomainSelected ),
 				} ) }
 			>
-				<ReskinSideExplainer onClick={ this.handleUseYourDomainClick } type="use-your-domain" />
+				<SideExplainer onClick={ this.handleUseYourDomainClick } type="use-your-domain" />
 			</div>
 		) : null;
 
@@ -972,7 +972,7 @@ export class RenderDomainsStep extends Component {
 					! this.shouldHideDomainExplainer() &&
 					hasSearchedDomains && (
 						<div className="domains__domain-side-content domains__free-domain">
-							<ReskinSideExplainer
+							<SideExplainer
 								onClick={ this.handleDomainExplainerClick }
 								type={
 									this.props.isPlanSelectionAvailableLaterInFlow
@@ -987,7 +987,7 @@ export class RenderDomainsStep extends Component {
 				{ useYourDomain }
 				{ this.shouldDisplayDomainOnlyExplainer() && (
 					<div className="domains__domain-side-content">
-						<ReskinSideExplainer
+						<SideExplainer
 							onClick={ this.handleDomainExplainerClick }
 							type="free-domain-only-explainer"
 						/>
@@ -1079,7 +1079,7 @@ export class RenderDomainsStep extends Component {
 					this.props.forceHideFreeDomainExplainerAndStrikeoutUi
 				}
 				isOnboarding
-				reskinSideContent={ this.getSideContent() }
+				sideContent={ this.getSideContent() }
 				isInLaunchFlow={ 'launch-site' === this.props.flowName }
 				promptText={
 					this.isHostingFlow()
@@ -1092,6 +1092,7 @@ export class RenderDomainsStep extends Component {
 				forceExactSuggestion={ this.props?.queryObject?.source === 'general-settings' }
 				replaceDomainFailedMessage={ this.state.replaceDomainFailedMessage }
 				dismissReplaceDomainFailed={ this.dismissReplaceDomainFailed }
+				handleClickUseYourDomain={ this.handleUseYourDomainClick }
 			/>
 		);
 	};
@@ -1181,7 +1182,7 @@ export class RenderDomainsStep extends Component {
 			return translate( 'Find and claim one or more domain names' );
 		}
 
-		if ( ! stepSectionName && 'domain-transfer' !== flowName ) {
+		if ( ! stepSectionName ) {
 			return translate( 'Enter some descriptive keywords to get started' );
 		}
 
@@ -1193,7 +1194,7 @@ export class RenderDomainsStep extends Component {
 	getHeaderText() {
 		const { headerText, isAllDomains, stepSectionName, translate, flowName } = this.props;
 
-		if ( stepSectionName === 'use-your-domain' || 'domain-transfer' === flowName ) {
+		if ( stepSectionName === 'use-your-domain' ) {
 			return '';
 		}
 
@@ -1231,11 +1232,6 @@ export class RenderDomainsStep extends Component {
 			sideContent = this.getSideContent();
 		}
 
-		if ( 'domain-transfer' === this.props.flowName && ! this.props.stepSectionName ) {
-			content = this.useYourDomainForm();
-			sideContent = null;
-		}
-
 		if ( this.props.step && 'invalid' === this.props.step.status ) {
 			content = (
 				<div className="domains__step-section-wrapper">
@@ -1262,10 +1258,7 @@ export class RenderDomainsStep extends Component {
 	}
 
 	getPreviousStepUrl() {
-		if (
-			'use-your-domain' !== this.props.stepSectionName &&
-			'domain-transfer' !== this.props.flowName
-		) {
+		if ( 'use-your-domain' !== this.props.stepSectionName ) {
 			return null;
 		}
 
@@ -1351,9 +1344,6 @@ export class RenderDomainsStep extends Component {
 		} else if ( isAllDomains ) {
 			backUrl = domainManagementRoot();
 			backLabelText = translate( 'Back to All Domains' );
-		} else if ( ! previousStepBackUrl && 'domain-transfer' === flowName ) {
-			backUrl = null;
-			backLabelText = null;
 		} else if ( 'domain-for-gravatar' === flowName ) {
 			backUrl = null;
 			backLabelText = null;

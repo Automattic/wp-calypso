@@ -21,7 +21,7 @@ export const DirectEscalationLink = ( { messageId }: { messageId: number | undef
 			if ( conversationStarted ) {
 				return;
 			}
-			newConversation();
+			newConversation( { createdFrom: 'direct_escalation' } );
 		} else {
 			navigate( '/contact-form?mode=FORUM' );
 		}

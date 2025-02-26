@@ -69,7 +69,7 @@ class StatsModule extends Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-		const { data, isRealTime, query, requesting } = this.props;
+		const { data, isRealTime, query, requesting, statType } = this.props;
 		if ( ! requesting && prevProps.requesting ) {
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { loaded: true } );
@@ -91,9 +91,7 @@ class StatsModule extends Component {
 
 		if ( ! lastUpdated || now.diff( lastUpdated, 'seconds' ) >= UPDATE_THRESHOLD_IN_SECONDS ) {
 			const updatedHistory = this.updateHistory( dataHistory, data );
-			const firstSnapshot = updatedHistory[ 0 ];
-			const lastSnapshot = updatedHistory[ updatedHistory.length - 1 ];
-			const diffData = this.calculateDiff( firstSnapshot.data, lastSnapshot.data );
+			const diffData = this.calculateDiff( updatedHistory, statType );
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( {
 				diffData,
@@ -105,8 +103,9 @@ class StatsModule extends Component {
 
 	updateHistory( history, data ) {
 		// Timestamp the new data snapshot.
+		const now = moment();
 		const newSnapshot = {
-			timestamp: moment(),
+			timestamp: now,
 			data: data,
 		};
 
@@ -114,7 +113,7 @@ class StatsModule extends Component {
 		// This determines the baseline for the diff calculation.
 		const { minutesLimit } = this.props;
 		const filteredHistory = [ ...history, newSnapshot ].filter(
-			( snapshot ) => moment().diff( snapshot.timestamp, 'minutes' ) <= minutesLimit
+			( snapshot ) => now.diff( snapshot.timestamp, 'minutes' ) <= minutesLimit
 		);
 
 		return this.compactHistory( filteredHistory );
@@ -131,21 +130,45 @@ class StatsModule extends Component {
 		return history;
 	}
 
-	calculateDiff( prevData, newData ) {
-		// Create a lookup map for previous data using item IDs.
-		const prevDataMap = new Map( prevData.map( ( item ) => [ item.id, item ] ) );
+	calculateDiff( history, statType ) {
+		const key = this.getKeyForStatType( statType );
+		const baselineMap = this.createBaselineLookupMap( history, key );
+		const lastSnapshot = history[ history.length - 1 ].data;
 
-		// Calculate the difference value for each new item.
-		const diff = newData.map( ( item ) => {
-			// Pull matching data from previous snapshot, or default to 0 if not found.
-			const prevItem = prevDataMap.get( item.id ) || { value: 0 };
+		return lastSnapshot.map( ( item ) => {
+			const baselineItem = baselineMap.get( item[ key ] ) || { value: 0 };
 			return {
 				...item,
-				diffValue: item.value - prevItem.value,
+				diffValue: item.value - baselineItem.value,
 			};
 		} );
+	}
 
-		return diff;
+	createBaselineLookupMap( history, key = 'id' ) {
+		const lookup = new Map();
+
+		history.forEach( ( snapshot ) => {
+			snapshot.data.forEach( ( item ) => {
+				if ( ! lookup.has( item[ key ] ) ) {
+					lookup.set( item[ key ], item );
+				}
+			} );
+		} );
+
+		return lookup;
+	}
+
+	getKeyForStatType( statType ) {
+		// Provided data is not consistent across modules.
+		// Ideally we'd have an interface with some common properties.
+		// For now we can't assume an 'id' for all stats types.
+		// Use this function to find the best available key for unique identification.
+		const keys = {
+			statsTopPosts: 'id',
+			statsReferrers: 'label',
+			statsCountryViews: 'countryCode',
+		};
+		return keys[ statType ] || 'id';
 	}
 
 	getModuleLabel() {
@@ -183,11 +206,12 @@ class StatsModule extends Component {
 	isAllTimeList() {
 		const { summary, statType } = this.props;
 		const summarizedTypes = [
-			'statsCountryViews',
 			'statsTopPosts',
 			'statsSearchTerms',
 			'statsClicks',
 			'statsReferrers',
+			'statsTopAuthors',
+			'statsFileDownloads',
 			// statsEmailsOpen and statsEmailsClick are not used. statsEmailsSummary are used at the moment,
 			// besides this, email page uses separate summary component: <StatsEmailSummary />
 			'statsEmailsOpen',
@@ -199,6 +223,9 @@ class StatsModule extends Component {
 	remapData() {
 		const { valueField, isRealTime } = this.props;
 		const data = isRealTime ? this.state.diffData : this.props.data;
+
+		// TODO: Handle items with children.
+		// For now, we remove any children to avoid view counts out of context.
 
 		if ( isRealTime ) {
 			return data
@@ -214,6 +241,7 @@ class StatsModule extends Component {
 				.map( ( item ) => ( {
 					...item,
 					value: item.diffValue || 0,
+					children: null,
 				} ) );
 		}
 
@@ -223,6 +251,8 @@ class StatsModule extends Component {
 				value: item[ valueField ],
 			} ) );
 		}
+
+		return [];
 	}
 
 	render() {
@@ -261,9 +291,25 @@ class StatsModule extends Component {
 		const summaryLink = ! this.props.hideSummaryLink && this.getSummaryLink();
 		const displaySummaryLink = data && summaryLink;
 		const isAllTime = this.isAllTimeList();
-		const footerClass = clsx( 'stats-module__footer-actions', {
-			'stats-module__footer-actions--summary': summary,
-		} );
+
+		const renderDownloadCsv = () => {
+			if ( gateDownloads ) {
+				return <DownloadCsvUpsell siteId={ siteId } borderless />;
+			}
+
+			return (
+				<DownloadCsv
+					statType={ statType }
+					query={ query }
+					path={ path }
+					borderless
+					period={ period }
+					skipQuery={ skipQuery }
+				/>
+			);
+		};
+
+		const downloadCsv = renderDownloadCsv();
 
 		const emptyMessage = isRealTime ? 'gathering info…' : moduleStrings.empty;
 		// TODO: Translate empty message
@@ -281,6 +327,7 @@ class StatsModule extends Component {
 					useShortLabel={ useShortLabel }
 					title={ this.props.moduleStrings?.title }
 					titleNodes={ titleNodes }
+					downloadCsv={ downloadCsv }
 					emptyMessage={ emptyMessage }
 					metricLabel={ metricLabel }
 					showMore={
@@ -301,10 +348,13 @@ class StatsModule extends Component {
 					error={ hasError && <ErrorPanel /> }
 					loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
 					heroElement={
-						path === 'countryviews' && <Geochart query={ query } skipQuery={ skipQuery } />
+						path === 'countryviews' && (
+							<Geochart query={ query } skipQuery={ skipQuery } isRealTime={ isRealTime } />
+						)
 					}
 					additionalColumns={ additionalColumns }
 					splitHeader={ !! additionalColumns }
+					multiHeader={ isAllTime }
 					mainItemLabel={ mainItemLabel }
 					showLeftIcon={ path === 'authors' }
 					listItemClassName={ listItemClassName }
@@ -322,22 +372,6 @@ class StatsModule extends Component {
 					}
 					formatValue={ formatValue }
 				/>
-				{ isAllTime && (
-					<div className={ footerClass }>
-						{ gateDownloads ? (
-							<DownloadCsvUpsell siteId={ siteId } borderless />
-						) : (
-							<DownloadCsv
-								statType={ statType }
-								query={ query }
-								path={ path }
-								borderless
-								period={ period }
-								skipQuery={ skipQuery }
-							/>
-						) }
-					</div>
-				) }
 			</>
 		);
 	}

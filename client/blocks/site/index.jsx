@@ -57,9 +57,6 @@ class Site extends Component {
 
 		isP2Hub: false,
 		isSiteP2: false,
-
-		isReskinned: false,
-
 		defaultIcon: null,
 	};
 
@@ -81,7 +78,6 @@ class Site extends Component {
 		compact: PropTypes.bool,
 		isP2Hub: PropTypes.bool,
 		isSiteP2: PropTypes.bool,
-		isReskinned: PropTypes.bool,
 		defaultIcon: PropTypes.node,
 	};
 
@@ -226,7 +222,6 @@ class Site extends Component {
 			'is-selected': this.props.isSelected,
 			'is-highlighted': this.props.isHighlighted,
 			'is-compact': this.props.compact,
-			'is-reskinned': this.props.isReskinned,
 			'is-trial': this.props.isTrialSite,
 			'inline-badges': inlineBadges,
 		} );
@@ -257,10 +252,10 @@ class Site extends Component {
 					}
 				>
 					<SiteIcon
-						defaultIcon={ this.props.isReskinned ? layout : this.props.defaultIcon }
+						defaultIcon={ layout }
 						site={ site }
 						// eslint-disable-next-line no-nested-ternary
-						size={ this.props.compact ? 24 : this.props.isReskinned ? 50 : 32 }
+						size={ this.props.compact ? 24 : 50 }
 					/>
 					<div className="site__info">
 						{ ! this.props.showChevronDownIcon ? (
@@ -277,10 +272,9 @@ class Site extends Component {
 							this.renderDomainAndInlineBadges()
 						) : (
 							<>
-								{ ! this.props.isReskinned && this.renderSiteDomain() }
 								{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 								{ this.renderSiteBadges() }
-								{ this.props.isReskinned && this.renderSiteDomain() }
+								{ this.renderSiteDomain() }
 							</>
 						) }
 

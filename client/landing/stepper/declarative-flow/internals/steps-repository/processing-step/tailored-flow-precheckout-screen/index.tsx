@@ -1,4 +1,4 @@
-import { NEWSLETTER_FLOW, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
+import { NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
 import { useRef, useState, useEffect } from 'react';
@@ -15,13 +15,6 @@ const useSteps = ( flowName: string ) => {
 	let steps = [];
 
 	switch ( flowName ) {
-		case LINK_IN_BIO_TLD_FLOW:
-			steps = [
-				{ title: __( 'Great choices. Nearly there!' ) },
-				{ title: __( 'Shining and polishing your Bio' ) },
-				{ title: __( 'Mounting it on a marble pedestal' ) },
-			];
-			break;
 		case NEWSLETTER_FLOW:
 			steps = [
 				{ title: __( 'Excellent choices. Nearly there!' ) },

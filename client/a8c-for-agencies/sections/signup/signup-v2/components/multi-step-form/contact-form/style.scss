@@ -1,22 +1,31 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .contact-form__phone-input {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     gap: 16px;
 
-    .form-phone-input__country {
-        flex: 1;
-    }
+	@include break-xlarge {
+		flex-direction: row;
+		.form-phone-input__country {
+			flex: 1;
+		}
 
-    .form-phone-input__phone-number {
-        flex: 1;
-    }
+		.form-phone-input__phone-number {
+			flex: 1;
+		}
+	}
 }
 
 .signup-contact-form__tos  p {
 	@include a4a-font-body-sm;
 
-	a {
+	.signup-contact-form__tos-link {
+		cursor: pointer;
 		text-decoration: underline;
+		color: var(--color-primary);
+		text-align: left;
 	}
 
 
@@ -27,8 +36,12 @@
 
 .signup-multi-step-form__name-fields {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 	gap: 16px;
+
+	@include break-small {
+		flex-direction: row;
+	}
 
     > * {
         flex-grow: 1;
@@ -49,4 +62,8 @@
 	.signup-multi-step-form__terms a:hover {
 		text-decoration: underline;
 	}
+}
+
+.signup-contact-form__a4a-span {
+	text-wrap: nowrap;
 }

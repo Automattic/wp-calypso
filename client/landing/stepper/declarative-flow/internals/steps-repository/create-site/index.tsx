@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Site } from '@automattic/data-stores';
 import { FREE_THEME } from '@automattic/design-picker';
 import {
@@ -10,7 +9,6 @@ import {
 	isCopySiteFlow,
 	isDesignFirstFlow,
 	isFreeFlow,
-	isLinkInBioFlow,
 	isImportFocusedFlow,
 	isMigrationSignupFlow,
 	isStartWritingFlow,
@@ -30,7 +28,6 @@ import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
 import useAddEcommerceTrialMutation from 'calypso/data/ecommerce/use-add-ecommerce-trial-mutation';
-import { useGoalsFirstCumulativeExperience } from 'calypso/data/experiment/use-goals-first-cumulative-experience';
 import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/use-add-temp-site-mutation';
 import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -51,7 +48,6 @@ import type { OnboardSelect } from '@automattic/data-stores';
 import './styles.scss';
 
 const DEFAULT_SITE_MIGRATION_THEME = 'pub/zoologist';
-const DEFAULT_LINK_IN_BIO_THEME = 'pub/lynx';
 const DEFAULT_ENTREPRENEUR_FLOW = 'pub/twentytwentytwo';
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 // Changing this? Consider also updating WRITE_INTENT_DEFAULT_DESIGN so the write *intent* matches the write flow
@@ -99,7 +95,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 
 	const { mutateAsync: addEcommerceTrial } = useAddEcommerceTrialMutation( partnerBundle );
 	const [ , isGoalsFirstExperiment ] = useGoalsFirstExperiment();
-	const [ , isGoalsFirstCumulativeExperience ] = useGoalsFirstCumulativeExperience();
 
 	/**
 	 * Support singular and multiple domain cart items.
@@ -123,8 +118,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		theme = DEFAULT_ENTREPRENEUR_FLOW;
 	} else if ( isStartWritingFlow( flow ) ) {
 		theme = DEFAULT_START_WRITING_THEME;
-	} else if ( isLinkInBioFlow( flow ) ) {
-		theme = DEFAULT_LINK_IN_BIO_THEME;
 	} else if ( isNewsletterFlow( flow ) ) {
 		theme = DEFAULT_NEWSLETTER_THEME;
 	}
@@ -160,7 +153,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		isOnboardingFlow( flow ) ||
 		isCopySiteFlow( flow ) ||
 		isFreeFlow( flow ) ||
-		isLinkInBioFlow( flow ) ||
 		isImportFocusedFlow( flow ) ||
 		isBlogOnboardingFlow( flow ) ||
 		isNewHostedSiteCreationFlow( flow ) ||
@@ -231,9 +223,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			domainItem,
 			sourceSlug,
 			siteIntent,
-			shouldSaveSiteGoals ? siteGoals : undefined,
-			isGoalsFirstCumulativeExperience &&
-				config.isEnabled( 'onboarding/enable-write-goal-features' )
+			shouldSaveSiteGoals ? siteGoals : undefined
 		);
 
 		if ( preselectedThemeSlug && site?.siteSlug ) {

@@ -47,7 +47,6 @@ class DomainSearchResults extends Component {
 		onAddMapping: PropTypes.func,
 		onAddTransfer: PropTypes.func,
 		onClickMapping: PropTypes.func,
-		onClickTransfer: PropTypes.func,
 		onClickUseYourDomain: PropTypes.func,
 		showSkipButton: PropTypes.bool,
 		onSkip: PropTypes.func,
@@ -165,7 +164,9 @@ class DomainSearchResults extends Component {
 									// eslint-disable-next-line jsx-a11y/anchor-is-valid
 									<a
 										href="#"
-										onClick={ () => this.props.onClickUseYourDomain( domainArgument ) }
+										onClick={ ( event ) =>
+											this.props.onClickUseYourDomain( event, domainArgument )
+										}
 										data-tracks-button-click-source={ this.props.tracksButtonClickSource }
 									/>
 								),

@@ -1,6 +1,6 @@
 import { getTracksAnonymousUserId, recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { WPCOM_DIFM_LITE, PRODUCT_1GB_SPACE, isDomainTransfer } from '@automattic/calypso-products';
+import { WPCOM_DIFM_LITE, PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Site, AddOns } from '@automattic/data-stores';
 import { STORAGE_ADD_ONS } from '@automattic/data-stores/src/add-ons';
@@ -1271,7 +1271,7 @@ export function maybeAddStorageAddonToCart( stepName, defaultDependencies, nextP
 }
 
 export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
-	const { isPaidPlan, sitePlanSlug, submitSignupStep, flowName, signupDependencies } = nextProps;
+	const { isPaidPlan, sitePlanSlug, submitSignupStep } = nextProps;
 	const fulfilledDependencies = [];
 	const dependenciesFromDefaults = {};
 
@@ -1280,11 +1280,6 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 		fulfilledDependencies.push( 'themeSlugWithRepo' );
 		dependenciesFromDefaults.themeSlugWithRepo = defaultDependencies.themeSlugWithRepo;
 	}
-
-	const isTransferSelectedInDomainTransferFlow =
-		'domain-transfer' === flowName &&
-		signupDependencies?.domainItem &&
-		isDomainTransfer( signupDependencies.domainItem );
 
 	if ( isPaidPlan ) {
 		const cartItems = undefined;
@@ -1301,14 +1296,6 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 			{ cartItems, ...dependenciesFromDefaults }
 		);
 		recordExcludeStepEvent( stepName, defaultDependencies.cartItem );
-		fulfilledDependencies.push( 'cartItems' );
-	} else if ( isTransferSelectedInDomainTransferFlow ) {
-		const cartItems = null;
-		submitSignupStep(
-			{ stepName, cartItems, wasSkipped: true },
-			{ cartItems, ...dependenciesFromDefaults }
-		);
-		recordExcludeStepEvent( stepName, sitePlanSlug );
 		fulfilledDependencies.push( 'cartItems' );
 	}
 

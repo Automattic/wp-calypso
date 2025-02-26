@@ -2,9 +2,10 @@ import config from '@automattic/calypso-config';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import ItemView from 'calypso/layout/hosting-dashboard/item-view';
 import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
+import { useSetTabBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-tab-breadcrumb';
 import HostingFeaturesIcon from 'calypso/sites/hosting-features/components/hosting-features-icon';
 import { areHostingFeaturesSupported } from 'calypso/sites/hosting-features/features';
 import { useStagingSite } from 'calypso/sites/tools/staging-site/hooks/use-staging-site';
@@ -12,6 +13,7 @@ import { getMigrationStatus } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
 import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
+import { useBreadcrumbs } from '../../hooks/breadcrumbs/use-breadcrumbs';
 import { showSitesPage } from '../sites-dashboard';
 import { SiteStatus } from '../sites-dataviews/sites-site-status';
 import {
@@ -31,20 +33,19 @@ import {
 	MARKETING_TRAFFIC,
 	MARKETING_SHARING,
 	SETTINGS_SITE,
-	SETTINGS_ADMINISTRATION,
 	SETTINGS_ADMINISTRATION_RESET_SITE,
 	SETTINGS_ADMINISTRATION_TRANSFER_SITE,
 	SETTINGS_ADMINISTRATION_DELETE_SITE,
-	SETTINGS_CACHING,
-	SETTINGS_WEB_SERVER,
+	SETTINGS_SERVER,
+	SETTINGS_SFTP_SSH,
+	SETTINGS_DATABASE,
+	SETTINGS_PERFORMANCE,
 	TOOLS,
 	TOOLS_STAGING_SITE,
 	TOOLS_DEPLOYMENTS,
 	TOOLS_MONITORING,
 	TOOLS_LOGS_PHP,
 	TOOLS_LOGS_WEB,
-	TOOLS_SFTP_SSH,
-	TOOLS_DATABASE,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
 import SiteEnvironmentSwitcher from './site-environment-switcher';
@@ -60,12 +61,6 @@ interface Props {
 	closeSitePreviewPane: () => void;
 	changeSitePreviewPane: ( siteId: number ) => void;
 }
-
-const OVERLAY_MODAL_SELECTORS = [
-	'body.modal-open',
-	'#wpnc-panel.wpnt-open',
-	'div.help-center__container:not(.is-minimized)',
-];
 
 const DotcomPreviewPane = ( {
 	site,
@@ -155,8 +150,6 @@ const DotcomPreviewPane = ( {
 					TOOLS_MONITORING,
 					TOOLS_LOGS_PHP,
 					TOOLS_LOGS_WEB,
-					TOOLS_SFTP_SSH,
-					TOOLS_DATABASE,
 				],
 			},
 			{
@@ -175,23 +168,21 @@ const DotcomPreviewPane = ( {
 				enabled: isRemoveDuplicateViewsExperimentEnabled,
 				featureIds: [
 					SETTINGS_SITE,
-					SETTINGS_ADMINISTRATION,
 					SETTINGS_ADMINISTRATION_RESET_SITE,
 					SETTINGS_ADMINISTRATION_TRANSFER_SITE,
 					SETTINGS_ADMINISTRATION_DELETE_SITE,
-					SETTINGS_CACHING,
-					SETTINGS_WEB_SERVER,
-					...[ isRemoveDuplicateViewsExperimentEnabled ? DOTCOM_HOSTING_CONFIG : null ],
+					SETTINGS_SERVER,
+					SETTINGS_SFTP_SSH,
+					SETTINGS_DATABASE,
+					SETTINGS_PERFORMANCE,
+					...( ! config.isEnabled( 'untangling/settings-i2' ) ? [ DOTCOM_HOSTING_CONFIG ] : [] ),
 				],
 			},
 			{
 				label: hasEnTranslation( 'Server Settings' )
 					? __( 'Server Settings' )
 					: __( 'Server Config' ),
-				enabled:
-					! isRemoveDuplicateViewsExperimentEnabled &&
-					isActiveAtomicSite &&
-					! config.isEnabled( 'untangling/hosting-menu' ),
+				enabled: ! isRemoveDuplicateViewsExperimentEnabled && isActiveAtomicSite,
 				featureIds: [ DOTCOM_HOSTING_CONFIG ],
 			},
 		];
@@ -199,17 +190,21 @@ const DotcomPreviewPane = ( {
 		return siteFeatures.map( ( { label, enabled, featureIds } ) => {
 			const selected = enabled && featureIds.includes( selectedSiteFeature );
 			const defaultFeatureId = featureIds[ 0 ] as string;
+			const defaultRoute = `/${ FEATURE_TO_ROUTE_MAP[ defaultFeatureId ].replace(
+				':site',
+				site.slug
+			) }`;
+
 			return {
 				id: defaultFeatureId,
 				tab: {
 					label,
+					href: defaultRoute,
 					visible: enabled,
 					selected,
 					onTabClick: () => {
 						if ( enabled && ! selected ) {
-							showSitesPage(
-								`/${ FEATURE_TO_ROUTE_MAP[ defaultFeatureId ].replace( ':site', site.slug ) }`
-							);
+							showSitesPage( defaultRoute );
 						}
 					},
 				},
@@ -239,25 +234,6 @@ const DotcomPreviewPane = ( {
 		withIcon: true,
 	};
 
-	useEffect( () => {
-		const handleKeydown = ( e: KeyboardEvent ) => {
-			if ( e.key !== 'Escape' ) {
-				return;
-			}
-
-			if ( document.querySelector( OVERLAY_MODAL_SELECTORS.join( ',' ) ) ) {
-				return;
-			}
-
-			closeSitePreviewPane();
-		};
-
-		document.addEventListener( 'keydown', handleKeydown, true );
-		return () => {
-			document.removeEventListener( 'keydown', handleKeydown, true );
-		};
-	}, [ closeSitePreviewPane ] );
-
 	const { data: stagingSites } = useStagingSite( site.ID, {
 		enabled: ! site.is_wpcom_staging_site && site.is_wpcom_atomic,
 	} );
@@ -272,6 +248,13 @@ const DotcomPreviewPane = ( {
 		stagingStatus === StagingSiteStatus.COMPLETE ||
 		stagingStatus === StagingSiteStatus.NONE ||
 		stagingStatus === StagingSiteStatus.UNSET;
+
+	const { breadcrumbs, shouldShowBreadcrumbs } = useBreadcrumbs();
+	useSetTabBreadcrumb( {
+		site,
+		features,
+		selectedFeatureId: selectedSiteFeature,
+	} );
 
 	return (
 		<ItemView
@@ -294,6 +277,8 @@ const DotcomPreviewPane = ( {
 					}
 				},
 			} }
+			breadcrumbs={ breadcrumbs }
+			shouldShowBreadcrumbs={ shouldShowBreadcrumbs }
 		/>
 	);
 };

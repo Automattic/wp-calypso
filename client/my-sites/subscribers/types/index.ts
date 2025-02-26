@@ -42,12 +42,13 @@ export type Subscriber = {
 	url?: string;
 };
 
-export type SubscriberListArgs = {
-	currentPage: number;
+export type SubscriberQueryParams = {
+	page: number;
 	perPage?: number;
-	filterOption?: SubscribersFilterBy;
-	searchTerm?: string;
+	filters?: SubscribersFilterBy[];
+	search?: string;
 	sortTerm?: SubscribersSortBy;
+	sortOrder?: 'asc' | 'desc';
 };
 
 export type SubscriberStats = {

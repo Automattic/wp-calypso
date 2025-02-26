@@ -44,7 +44,6 @@ import { isWooOAuth2Client, isGravatarOAuth2Client } from 'calypso/lib/oauth2-cl
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
 import FlowProgressIndicator from 'calypso/signup/flow-progress-indicator';
 import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
-import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 import SignupHeader from 'calypso/signup/signup-header';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import {
@@ -74,6 +73,7 @@ import { getStepComponent } from './config/step-components';
 import steps from './config/steps';
 import { addP2SignupClassName } from './controller';
 import { isP2Flow } from './is-flow';
+import ProcessingScreen from './processing-screen';
 import {
 	persistSignupDestination,
 	setDomainsDependencies,
@@ -90,6 +90,7 @@ import {
 	getStepUrl,
 } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
+
 import './style.scss';
 
 const debug = debugModule( 'calypso:signup' );
@@ -228,9 +229,6 @@ class Signup extends Component {
 		if ( ! this.state.controllerHasReset && ! isEqual( this.props.progress, progress ) ) {
 			this.updateShouldShowLoadingScreen( progress );
 		}
-
-		document.body.classList.add( 'is-white-signup' );
-		debug( 'In componentWillReceiveProps, addded is-white-signup class' );
 	}
 
 	componentWillUnmount() {
@@ -362,7 +360,6 @@ class Signup extends Component {
 
 	completeFlowAfterLoggingIn() {
 		const flowName = this.props.flowName;
-		// p2v1 also has a user step at the end but the flow is otherwise broken.
 		// reader also has a user step at the end, but this change doesn't fix that flow.
 		const eligbleFlows = [ 'domain' ];
 		if ( ! eligbleFlows.includes( flowName ) || ! this.props.progress ) {
@@ -431,12 +428,8 @@ class Signup extends Component {
 	};
 
 	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
-		if (
-			isWooOAuth2Client( this.props.oauth2Client ) ||
-			this.props.isGravatar ||
-			'videopress-account' === this.props.flowName
-		) {
-			// We don't want to show the loading screen for the Woo signup, Gravatar signup, and videopress-account flow.
+		if ( isWooOAuth2Client( this.props.oauth2Client ) || this.props.isGravatar ) {
+			// We don't want to show the loading screen for the Woo signup, and Gravatar signup flow.
 			return;
 		}
 
@@ -804,7 +797,7 @@ class Signup extends Component {
 		const destination = this.signupFlowController.getDestination();
 
 		return (
-			<ReskinnedProcessingScreen
+			<ProcessingScreen
 				flowName={ this.props.flowName }
 				hasPaidDomain={ hasPaidDomain }
 				isDestinationSetupSiteFlow={ destination.startsWith( '/setup' ) }

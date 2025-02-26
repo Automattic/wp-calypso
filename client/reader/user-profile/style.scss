@@ -13,8 +13,19 @@
 
 		div.user-profile__wrapper {
 
+			.back-button {
+
+				@media ( max-width: 1300px ) {
+					padding: 24px 24px 0;
+				}
+
+				@media ( max-width: 600px ) {
+					padding: 24px 0 0;
+				}
+			}
+
 			&-content {
-				padding-top: 36px;
+				padding-top: 24px;
 
 				@include breakpoint-deprecated( '<660px' ) {
 					padding-top: 0;
@@ -23,32 +34,6 @@
 				main.main.is-user-profile {
 					padding: 0;
 					border-block-end: none;
-				}
-			}
-
-			.back-button {
-				position: relative;
-				background: transparent;
-				top: 0;
-				height: auto;
-				border: none;
-
-				.button.is-compact.is-borderless {
-					padding: 20px 0 20px 20px;
-
-					@include breakpoint-deprecated( '<660px' ) {
-						padding: 20px 0 0 20px;
-					}
-				}
-			}
-
-			&.has-back-button {
-				.user-profile__wrapper-content {
-					padding-top: 0;
-				}
-
-				main.main.is-user-profile {
-					margin-top: 0;
 				}
 			}
 		}

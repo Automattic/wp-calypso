@@ -92,14 +92,14 @@ const SiteOwnerTransfer = () => {
 
 	if ( confirmationHash ) {
 		return (
-			<SiteTransferCard onClick={ onBackClick }>
+			<SiteTransferCard siteId={ selectedSite.ID } onClick={ onBackClick }>
 				<ConfirmationTransfer siteId={ selectedSite.ID } confirmationHash={ confirmationHash } />
 			</SiteTransferCard>
 		);
 	}
 
 	return (
-		<SiteTransferCard onClick={ onBackClick }>
+		<SiteTransferCard siteId={ selectedSite.ID } onClick={ onBackClick }>
 			{ pendingDomain && <PendingDomainTransfer domain={ pendingDomain } /> }
 			{ ! pendingDomain && ! newSiteOwner && (
 				<SiteOwnerTransferEligibility

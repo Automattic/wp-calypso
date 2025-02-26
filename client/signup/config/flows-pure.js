@@ -1,5 +1,12 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { HOSTING_LP_FLOW, ONBOARDING_FLOW, ONBOARDING_GUIDED_FLOW } from '@automattic/onboarding';
+import {
+	HOSTING_LP_FLOW,
+	ONBOARDING_FLOW,
+	ONBOARDING_GUIDED_FLOW,
+	DIFM_FLOW,
+	DIFM_FLOW_STORE,
+	WEBSITE_DESIGN_SERVICES,
+} from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 
 const noop = () => {};
@@ -10,14 +17,6 @@ const getUserSocialStepOrFallback = () =>
 const getP2Flows = () => {
 	return isEnabled( 'p2-enabled' )
 		? [
-				{
-					name: 'p2v1',
-					steps: [ 'p2-site', 'p2-details', 'user' ],
-					destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
-					description: 'P2 signup flow',
-					lastModified: '2020-09-01',
-					showRecaptcha: true,
-				},
 				{
 					// When adding steps, make sure that signup campaign ref's continue to work.
 					name: 'p2',
@@ -79,10 +78,10 @@ export function generateFlows( {
 		},
 		{
 			name: 'account',
-			steps: [ userSocialStep ],
+			steps: [ userSocialStep, 'set-reader-landing' ],
 			destination: getRedirectDestination,
 			description: 'Create an account without a blog.',
-			lastModified: '2023-10-11',
+			lastModified: '2025-02-18',
 			get pageTitle() {
 				return translate( 'Create an account' );
 			},
@@ -185,16 +184,6 @@ export function generateFlows( {
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
-			hideProgressIndicator: true,
-		},
-		{
-			name: 'domain-transfer',
-			steps: [ userSocialStep, 'domains', 'plans' ],
-			destination: ( dependencies ) => `/domains/manage/${ dependencies.siteSlug }`,
-			description:
-				'Onboarding flow specifically for domain transfers. Read more in https://wp.me/pdhack-Hk.',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
 			hideProgressIndicator: true,
 		},
 		{
@@ -306,17 +295,6 @@ export function generateFlows( {
 			disallowResume: true, // don't allow resume so we don't clear query params when we go back in the history
 			showRecaptcha: true,
 		},
-		{
-			name: 'videopress-account',
-			steps: [ 'user' ],
-			destination: getRedirectDestination,
-			description: 'VideoPress onboarding signup flow',
-			lastModified: '2022-10-19',
-			get pageTitle() {
-				return translate( 'Create an account' );
-			},
-			showRecaptcha: true,
-		},
 		...p2Flows,
 		{
 			name: 'domain',
@@ -365,11 +343,10 @@ export function generateFlows( {
 		},
 		{
 			name: 'reader',
-			steps: [ userSocialStep ],
+			steps: [ userSocialStep, 'set-reader-landing' ],
 			destination: '/reader',
-			description:
-				'Signup for an account from a Reader interaction (like, comment) or page (/discover) and land on Reader.',
-			lastModified: '2025-01-28',
+			description: 'Signup for an account and land on Reader.',
+			lastModified: '2025-02-18',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
 		},
@@ -381,18 +358,6 @@ export function generateFlows( {
 			lastModified: '2018-11-14',
 			disallowResume: true,
 			showRecaptcha: true,
-		},
-		{
-			name: 'launch-only',
-			steps: [ 'launch' ],
-			destination: getLaunchDestination,
-			description:
-				'Launch flow without domain or plan selected, used for sites that already have a paid plan and domain (e.g. via the launch banner in the site preview)',
-			lastModified: '2020-11-30',
-			get pageTitle() {
-				return translate( 'Launch your site' );
-			},
-			providesDependenciesInQuery: [ 'siteSlug' ],
 		},
 		{
 			name: 'business-monthly',
@@ -447,7 +412,7 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
-			name: 'do-it-for-me',
+			name: DIFM_FLOW,
 			steps: [
 				userSocialStep,
 				'new-or-existing-site',
@@ -463,12 +428,16 @@ export function generateFlows( {
 			lastModified: '2024-05-16',
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
-			enablePresales: false,
+			enableHelpCenter: isEnabled( 'signup/help-center-link' ),
+			enablePremiumSupport: true,
+			get helpCenterButtonText() {
+				return translate( 'Questions? Contact our site building team' );
+			},
 			providesDependenciesInQuery: [ 'coupon', 'back_to', 'newOrExistingSiteChoice' ],
 			optionalDependenciesInQuery: [ 'coupon', 'back_to', 'newOrExistingSiteChoice' ],
 		},
 		{
-			name: 'do-it-for-me-store',
+			name: DIFM_FLOW_STORE,
 			steps: [
 				userSocialStep,
 				'new-or-existing-site',
@@ -484,12 +453,16 @@ export function generateFlows( {
 			lastModified: '2024-05-16',
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
-			enablePresales: false,
+			enableHelpCenter: isEnabled( 'signup/help-center-link' ),
+			enablePremiumSupport: true,
+			get helpCenterButtonText() {
+				return translate( 'Questions? Contact our site building team' );
+			},
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
-			name: 'website-design-services',
+			name: WEBSITE_DESIGN_SERVICES,
 			steps: [ 'difm-options', 'social-profiles', 'difm-design-setup-site', 'difm-page-picker' ],
 			destination: getDIFMSignupDestination,
 			description: 'A flow for DIFM onboarding',
@@ -497,7 +470,11 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'siteSlug', 'back_to' ],
 			optionalDependenciesInQuery: [ 'back_to' ],
 			lastModified: '2024-06-14',
-			enablePresales: false,
+			enableHelpCenter: isEnabled( 'signup/help-center-link' ),
+			enablePremiumSupport: true,
+			get helpCenterButtonText() {
+				return translate( 'Questions? Contact our site building team' );
+			},
 		},
 
 		{

@@ -156,8 +156,9 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 	const renderStep = ( step: StepperStep ) => {
 		switch ( assertCondition.state ) {
 			case AssertConditionState.CHECKING:
-				return <Loading />;
+				return <Loading className="wpcom-loading__boot" />;
 			case AssertConditionState.FAILURE:
+				console.error( assertCondition.message ); // eslint-disable-line no-console
 				return null;
 		}
 

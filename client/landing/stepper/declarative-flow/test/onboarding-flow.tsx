@@ -9,6 +9,17 @@ import { getFlowLocation, renderFlow } from './helpers';
 
 const originalLocation = window.location;
 
+jest.mock( '../../hooks/use-marketplace-theme-products', () => ( {
+	useMarketplaceThemeProducts: () => ( {
+		isLoading: false,
+		selectedMarketplaceProduct: '',
+		selectedMarketplaceProductCartItems: [],
+		isMarketplaceThemeSubscriptionNeeded: false,
+		isMarketplaceThemeSubscribed: false,
+		isExternallyManagedThemeAvailable: false,
+	} ),
+} ) );
+
 describe( 'Onboarding Flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {

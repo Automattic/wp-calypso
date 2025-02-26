@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { DomainData } from '@automattic/data-stores';
 import { Icon } from '@wordpress/components';
 import { lock } from '@wordpress/icons';
@@ -40,13 +41,15 @@ export default function DomainsTableSslCell( {
 
 	if ( sslStatus ) {
 		button = (
-			<a
+			<button
 				className="domains-table-row__ssl-status-button"
-				href={ `${ domainManagementLink }?ssl-open=true` }
-				onClick={ ( event ) => event.stopPropagation() }
+				onClick={ ( event ) => {
+					event.stopPropagation();
+					page.show( `${ domainManagementLink }?ssl-open=true` );
+				} }
 			>
 				{ getSslStatusText() }
-			</a>
+			</button>
 		);
 	} else if ( hasWpcomManagedSslCert ) {
 		button = <span>{ translate( 'Active' ) }</span>;
