@@ -259,7 +259,7 @@ class StatsGeochart extends Component {
 		const { geoMode, numberLabel, translate } = this.props;
 		const chartData = new window.google.visualization.DataTable();
 
-		if ( geoMode !== 'country' ) {
+		if ( geoMode === 'city' ) {
 			chartData.addColumn( 'number', 'Latitude' );
 			chartData.addColumn( 'number', 'Longitude' );
 			chartData.addColumn( 'string', 'Location' );
@@ -283,6 +283,45 @@ class StatsGeochart extends Component {
 			return chartData;
 		}
 
+		if ( geoMode === 'region' ) {
+			chartData.addColumn( 'string', translate( 'Region' ).toString() );
+			chartData.addColumn( 'number', numberLabel || translate( 'Views' ).toString() );
+			chartData.addColumn( { type: 'string', role: 'tooltip', p: { html: true } } );
+
+			const groupedLocations = data.reduce( ( acc, location ) => {
+				const countryCode = location.countryCode || 'unknown';
+				if ( ! acc[ countryCode ] ) {
+					acc[ countryCode ] = [];
+				}
+				acc[ countryCode ].push( location );
+				return acc;
+			}, {} );
+
+			// Create rows for each country with tooltip showing top regions
+			const rows = Object.entries( groupedLocations ).map( ( [ countryCode, locations ] ) => {
+				// Sort locations by value (descending) and take top 10 for tooltip
+				const topLocations = [ ...locations ].sort( ( a, b ) => b.value - a.value ).slice( 0, 10 );
+
+				// Calculate total views for this country
+				const totalViews = locations.reduce( ( sum, location ) => sum + location.value, 0 );
+
+				// Create HTML tooltip content
+				const tooltipContent = this.createRegionTooltip( topLocations, locations.length );
+
+				return [
+					{
+						v: countryCode,
+						f: locations[ 0 ].countryFull || countryCode,
+					},
+					totalViews,
+					tooltipContent,
+				];
+			} );
+
+			chartData.addRows( rows );
+			return chartData;
+		}
+
 		// Default to country
 		chartData.addColumn( 'string', translate( 'Country' ).toString() );
 		chartData.addColumn( 'number', numberLabel || translate( 'Views' ).toString() );
@@ -299,6 +338,34 @@ class StatsGeochart extends Component {
 		);
 
 		return chartData;
+	};
+
+	/**
+	 * Creates an HTML tooltip for region view
+	 * @param {Array} topLocations - Top locations to show in tooltip
+	 * @param {number} totalLocations - Total number of locations
+	 * @returns {string} HTML tooltip content
+	 */
+	createRegionTooltip = ( topLocations, totalLocations ) => {
+		const { translate } = this.props;
+
+		// Create list items for top locations
+		const locationItems = topLocations
+			.map( ( location ) => `<li>${ location.label }: ${ location.value.toLocaleString() }</li>` )
+			.join( '' );
+
+		// Add message about additional locations if needed
+		const additionalLocationsText = translate( '…and %d more locations', {
+			args: [ totalLocations - 10 ],
+		} );
+
+		const additionalLocationsMessage =
+			totalLocations > 10
+				? `<div>
+			${ additionalLocationsText }</div>`
+				: '';
+
+		return `<ul>${ locationItems }</ul>${ additionalLocationsMessage }`;
 	};
 
 	drawData = () => {
@@ -328,8 +395,12 @@ class StatsGeochart extends Component {
 			domain: currentUserCountryCode,
 		};
 
-		if ( geoMode !== 'country' ) {
+		if ( geoMode === 'city' ) {
 			options.displayMode = 'markers';
+		}
+
+		if ( geoMode === 'region' ) {
+			options.tooltip = { trigger: 'focus', isHtml: true };
 		}
 
 		if ( customHeight ) {

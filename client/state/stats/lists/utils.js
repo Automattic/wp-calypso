@@ -439,6 +439,7 @@ export const normalizers = {
 			return {
 				label: viewData.location || country.country_full.replace( /’/, "'" ),
 				countryCode: viewData.country_code,
+				countryFull: country.country_full,
 				value: viewData.views,
 				region: country.map_region,
 				...( viewData.coordinates && { coordinates: viewData.coordinates } ),
