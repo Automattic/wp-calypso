@@ -351,7 +351,7 @@ class StatsGeochart extends Component {
 
 		// Create list items for top locations
 		const locationItems = topLocations
-			.map( ( location ) => `<li>${ location.label }: ${ location.value.toLocaleString() }</li>` )
+			.map( ( location ) => `<div>${ location.label }: ${ location.value.toLocaleString() }</div>` )
 			.join( '' );
 
 		// Add message about additional locations if needed
@@ -365,7 +365,7 @@ class StatsGeochart extends Component {
 			${ additionalLocationsText }</div>`
 				: '';
 
-		return `<ul>${ locationItems }</ul>${ additionalLocationsMessage }`;
+		return `${ locationItems }${ additionalLocationsMessage }`;
 	};
 
 	drawData = () => {
