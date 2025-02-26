@@ -5,16 +5,16 @@ type TransferWithSoftwareStatus = {
 	blog_id: number;
 	atomic_transfer_id: number;
 	atomic_transfer_status: string;
-	plugins: Record< string, boolean >;
-	themes: Record< string, boolean >;
+	plugins: Record< string, 'install' | 'activate' >;
+	themes: Record< string, 'install' | 'activate' >;
 	transfer_with_software_status: string;
 };
 
-export function useTransferWithSoftwareStatus(
+export const useTransferWithSoftwareStatus = (
 	siteId: number,
 	atomicTransferId: number,
 	queryOptions: Omit< UseQueryOptions< any, Error, TransferWithSoftwareStatus >, 'queryKey' > = {}
-): UseQueryResult< TransferWithSoftwareStatus > {
+): UseQueryResult< TransferWithSoftwareStatus > => {
 	return useQuery< any, Error, TransferWithSoftwareStatus >( {
 		queryKey: [ 'transferWithSoftwareStatus', siteId, atomicTransferId ],
 		queryFn: async () => {
@@ -34,4 +34,4 @@ export function useTransferWithSoftwareStatus(
 			...queryOptions.meta,
 		},
 	} );
-}
+};
