@@ -713,7 +713,7 @@ const siteSetupFlow: FlowV1 = {
 		const isPendingActionSet = useRef( false );
 
 		useEffect( () => {
-			if ( ! isGoalsAtFrontExperiment ) {
+			if ( ! isGoalsAtFrontExperiment || ! siteSlugOrId || ! siteId ) {
 				return;
 			}
 
