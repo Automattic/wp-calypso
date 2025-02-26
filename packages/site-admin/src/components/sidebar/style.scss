@@ -1,0 +1,63 @@
+.edit-site-sidebar__content {
+	flex-grow: 1;
+	overflow-y: auto;
+	// Prevents horizontal overflow while animating screen transitions
+	overflow-x: hidden;
+	// Mark this section of the DOM as isolated, providing performance benefits
+	// by limiting calculations of layout, style and paint to a DOM subtree rather
+	// than the entire page.
+	contain: content;
+}
+
+@keyframes local--slide-from-right {
+	from {
+		transform: translateX(50px);
+		opacity: 0;
+	}
+	to {
+		transform: none;
+		opacity: 1;
+	}
+}
+
+@keyframes local--slide-from-left {
+	from {
+		transform: translateX(-50px);
+		opacity: 0;
+	}
+	to {
+		transform: none;
+		opacity: 1;
+	}
+}
+
+.edit-site-sidebar__screen-wrapper {
+	overflow-x: auto;
+	@include custom-scrollbars-on-hover(transparent, $gray-700);
+	scrollbar-gutter: stable;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	max-height: 100%;
+
+	// This matches the logo padding
+	padding: 0 $grid-unit-15;
+
+	// Animation
+	animation-duration: 0.14s;
+	animation-timing-function: ease-in-out;
+	will-change: transform, opacity;
+
+	@media ( prefers-reduced-motion: reduce ) {
+		animation-duration: 0s;
+	}
+
+	&.slide-from-left {
+		animation-name: local--slide-from-left;
+	}
+
+	&.slide-from-right {
+		animation-name: local--slide-from-right;
+	}
+
+}
