@@ -1,10 +1,12 @@
 /**
  * @jest-environment jsdom
  */
+import { SiteDetails } from '@automattic/data-stores';
 import { renderHook } from '@testing-library/react';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { usePreloadSteps } from '../../use-preload-steps';
+import type { Flow } from '../../../types';
 
 // Mock dependencies
 jest.mock( 'calypso/state', () => ( {
@@ -33,7 +35,12 @@ describe( 'usePreloadSteps', () => {
 	];
 
 	// Mock flow
-	const mockFlow = { name: 'test-flow' };
+	const mockFlow = { name: 'test-flow' } as Flow;
+
+	// Add this mock site details object
+	const mockSiteDetails = {
+		ID: 123,
+	} as SiteDetails;
 
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -55,7 +62,7 @@ describe( 'usePreloadSteps', () => {
 
 	it( 'should preload the next step and the step after that', async () => {
 		renderHook( () =>
-			usePreloadSteps( 'site-slug', { ID: 123 }, 'step1', mockFlowSteps, mockFlow )
+			usePreloadSteps( 'site-slug', mockSiteDetails, 'step1', mockFlowSteps, mockFlow )
 		);
 
 		// Wait for async operations
@@ -67,7 +74,7 @@ describe( 'usePreloadSteps', () => {
 
 	it( 'should preload the user step if any step requires authentication and user is not logged in', async () => {
 		renderHook( () =>
-			usePreloadSteps( 'site-slug', { ID: 123 }, 'step1', mockFlowSteps, mockFlow )
+			usePreloadSteps( 'site-slug', mockSiteDetails, 'step1', mockFlowSteps, mockFlow )
 		);
 
 		// Wait for async operations
@@ -85,7 +92,7 @@ describe( 'usePreloadSteps', () => {
 		} );
 
 		renderHook( () =>
-			usePreloadSteps( 'site-slug', { ID: 123 }, 'step1', mockFlowSteps, mockFlow )
+			usePreloadSteps( 'site-slug', mockSiteDetails, 'step1', mockFlowSteps, mockFlow )
 		);
 
 		// Wait for async operations
@@ -96,7 +103,7 @@ describe( 'usePreloadSteps', () => {
 
 	it( 'should preload the first step requiring authentication when current step is user', async () => {
 		renderHook( () =>
-			usePreloadSteps( 'site-slug', { ID: 123 }, 'user', mockFlowSteps, mockFlow )
+			usePreloadSteps( 'site-slug', mockSiteDetails, 'user', mockFlowSteps, mockFlow )
 		);
 
 		// Wait for async operations
@@ -108,7 +115,7 @@ describe( 'usePreloadSteps', () => {
 
 	it( 'should not preload anything if current step is not found in flow steps', async () => {
 		renderHook( () =>
-			usePreloadSteps( 'site-slug', { ID: 123 }, 'non-existent-step', mockFlowSteps, mockFlow )
+			usePreloadSteps( 'site-slug', mockSiteDetails, 'non-existent-step', mockFlowSteps, mockFlow )
 		);
 
 		// Wait for async operations
@@ -121,7 +128,7 @@ describe( 'usePreloadSteps', () => {
 
 	it( 'should handle the case when there are no more steps to preload', async () => {
 		renderHook( () =>
-			usePreloadSteps( 'site-slug', { ID: 123 }, 'step3', mockFlowSteps, mockFlow )
+			usePreloadSteps( 'site-slug', mockSiteDetails, 'step3', mockFlowSteps, mockFlow )
 		);
 
 		// Wait for async operations

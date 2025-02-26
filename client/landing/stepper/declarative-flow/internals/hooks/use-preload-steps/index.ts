@@ -3,7 +3,7 @@ import debugFactory from 'debug';
 import { useEffect } from 'react';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import type { Flow, StepperStep } from '../types';
+import type { Flow, StepperStep } from '../../types';
 
 const debug = debugFactory( 'calypso:stepper:preloading' );
 
