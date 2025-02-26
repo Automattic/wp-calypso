@@ -64,6 +64,14 @@ interface AppWindow extends Window {
 
 const DEFAULT_FLOW = ONBOARDING_FLOW;
 
+const FALLBACK_FLOW_MAP: Record< string, string > = {
+	'site-setup-wg': 'site-setup',
+};
+
+const getFallbackFlow = ( flowName: string ) => {
+	return FALLBACK_FLOW_MAP[ flowName ] ?? DEFAULT_FLOW;
+};
+
 const getSiteIdFromURL = () => {
 	const siteId = new URLSearchParams( window.location.search ).get( 'siteId' );
 	return siteId ? Number( siteId ) : null;
@@ -93,9 +101,10 @@ async function main() {
 	const flowLoader = availableFlows[ flowName ];
 
 	if ( ! flowLoader ) {
+		const fallbackFlow = getFallbackFlow( flowName );
 		// If the URL can't be traced back to an existing flow, stop the boot
-		// process and redirect to the default flow.
-		window.location.href = `/setup/${ DEFAULT_FLOW }${ window.location.search }`;
+		// process and redirect to the computed fallback flow.
+		window.location.href = `/setup/${ fallbackFlow }${ window.location.search }`;
 
 		return;
 	}
