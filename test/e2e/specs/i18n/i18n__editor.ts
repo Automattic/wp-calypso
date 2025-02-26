@@ -18,7 +18,7 @@ import type { LanguageSlug } from '@automattic/languages';
 type Translations = {
 	[ language in LanguageSlug ]?: Partial< {
 		welcomeGuide: {
-			welcomeTitleSelector: string;
+			welcomeTextSelector: string;
 			nextButtonSelector: string;
 			closeButtonSelector: string;
 		};
@@ -33,7 +33,8 @@ type Translations = {
 const translations: Translations = {
 	en: {
 		welcomeGuide: {
-			welcomeTitleSelector: '.edit-post-welcome-guide__heading:has-text("Welcome to the editor")',
+			welcomeTextSelector:
+				'.edit-post-welcome-guide__text:has-text("In the WordPress editor, each paragraph")',
 			nextButtonSelector:
 				'.components-guide__footer button.components-guide__forward-button:has-text("Next")',
 			closeButtonSelector: '.edit-post-welcome-guide button[aria-label="Close"]',
@@ -99,8 +100,8 @@ const translations: Translations = {
 	},
 	fr: {
 		welcomeGuide: {
-			welcomeTitleSelector:
-				'.edit-post-welcome-guide__heading:has-text("Bienvenue dans l\'éditeur")',
+			welcomeTextSelector:
+				'.edit-post-welcome-guide__text:has-text("Dans l’éditeur de WordPress, chaque paragraphe")',
 			nextButtonSelector:
 				'.components-guide__footer button.components-guide__forward-button:has-text("Suivant")',
 			closeButtonSelector: '.edit-post-welcome-guide button[aria-label="Fermer"]',
@@ -168,7 +169,7 @@ const translations: Translations = {
 	},
 	he: {
 		welcomeGuide: {
-			welcomeTitleSelector: '.edit-post-welcome-guide__heading:has-text("ברוך בואך לעורך")',
+			welcomeTextSelector: '.edit-post-welcome-guide__text:has-text("בעורך של וורדפרס כל פסקה")',
 			nextButtonSelector:
 				'.components-guide__footer button.components-guide__forward-button:has-text("לשלב הבא")',
 			closeButtonSelector: '.edit-post-welcome-guide button[aria-label="סגור"]',
@@ -295,7 +296,7 @@ describe( 'I18N: Editor', function () {
 
 				const editorParent = await editorPage.getEditorParent();
 
-				await editorParent.locator( welcomeGuideTranslations.welcomeTitleSelector ).waitFor();
+				await editorParent.locator( welcomeGuideTranslations.welcomeTextSelector ).waitFor();
 				await editorParent.locator( welcomeGuideTranslations.closeButtonSelector ).click();
 			} );
 		} );
