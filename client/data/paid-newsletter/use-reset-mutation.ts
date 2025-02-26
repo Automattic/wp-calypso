@@ -21,16 +21,18 @@ export const useResetMutation = (
 	const queryClient = useQueryClient();
 	const mutation = useMutation( {
 		mutationFn: async ( { siteId, engine, currentStep, import_url }: MutationVariables ) => {
+			const params = {
+				engine,
+				current_step: currentStep,
+				...( import_url && { import_url } ),
+			};
+
 			const response = await wp.req.post(
 				{
 					path: `/sites/${ siteId }/site-importer/paid-newsletter/reset`,
 					apiNamespace: 'wpcom/v2',
 				},
-				{
-					engine: engine,
-					current_step: currentStep,
-					import_url: import_url,
-				}
+				params
 			);
 
 			if ( ! response.current_step ) {
@@ -52,7 +54,12 @@ export const useResetMutation = (
 
 	const resetPaidNewsletter = useCallback(
 		( siteId: number, engine: string, currentStep: StepId, import_url?: string ) =>
-			mutate( { siteId, engine, currentStep, import_url } ),
+			mutate( {
+				siteId,
+				engine,
+				currentStep,
+				...( import_url && { import_url } ),
+			} ),
 		[ mutate ]
 	);
 
