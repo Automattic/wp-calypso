@@ -3,7 +3,7 @@ import { SiteDetails } from '@automattic/data-stores';
 import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useContext, useEffect, useLayoutEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
@@ -26,10 +26,10 @@ import { PRODUCT_FILTER_KEY_CATEGORIES } from '../constants';
 import { MarketplaceTypeContext, ShoppingCartContext } from '../context';
 import withMarketplaceType from '../hoc/with-marketplace-type';
 import useShoppingCart from '../hooks/use-shopping-cart';
-import { useProductBundleSize } from '../products-overview/product-listing/hooks/use-product-bundle-size';
-import useSelectedProductFilters from '../products-overview/product-listing/hooks/use-selected-product-filters';
 import ShoppingCart from '../shopping-cart';
 import useCompactOnScroll from './hooks/use-compact-on-scroll';
+import { useProductBundleSize } from './hooks/use-product-bundle-size';
+import useSelectedProductFilters from './hooks/use-selected-product-filters';
 import ProductActionPanel from './product-action-panel';
 import ProductCategoryMenu from './product-category-menu';
 import ProductListing from './product-listing';
@@ -124,6 +124,13 @@ export function ProductsOverviewV2( {
 		[ dispatch, setSelectedFilters ]
 	);
 
+	const topRef = useRef< HTMLDivElement >( null );
+	const actionPanelRef = useRef< HTMLDivElement >( null );
+
+	const actionPanelStickyTopOffset = topRef.current?.offsetHeight ?? 0;
+	const productListingStickyTopOffset =
+		actionPanelStickyTopOffset + ( actionPanelRef.current?.offsetHeight ?? 0 );
+
 	return (
 		<Layout
 			className={ clsx( 'products-overview-v2', { 'is-compact': isCompact } ) }
@@ -133,73 +140,82 @@ export function ProductsOverviewV2( {
 		>
 			<GuidedTour defaultTourId="marketplaceWalkthrough" />
 
-			<LayoutTop>
-				<A4AAgencyApprovalNotice />
-				<LayoutHeader>
-					<Breadcrumb
-						items={ [
-							{
-								label: translate( 'Marketplace' ),
-								href: A4A_MARKETPLACE_LINK,
-							},
-							{
-								label: translate( 'Products' ),
-							},
-						] }
-						hideOnMobile
-					/>
-
-					<Actions className="a4a-marketplace__header-actions">
-						<MobileSidebarNavigation />
-						<div ref={ ( ref ) => setReferralToggleRef( ref as HTMLElement | null ) }>
-							<ReferralToggle />
-						</div>
-						<ShoppingCart
-							showCart={ showCart }
-							setShowCart={ setShowCart }
-							toggleCart={ toggleCart }
-							items={ selectedCartItems }
-							onRemoveItem={ onRemoveCartItem }
-							onCheckout={ () => {
-								page( A4A_MARKETPLACE_CHECKOUT_LINK );
-							} }
+			<div className="products-overview-v2__top" ref={ topRef }>
+				<LayoutTop>
+					<A4AAgencyApprovalNotice />
+					<LayoutHeader>
+						<Breadcrumb
+							items={ [
+								{
+									label: translate( 'Marketplace' ),
+									href: A4A_MARKETPLACE_LINK,
+								},
+								{
+									label: translate( 'Products' ),
+								},
+							] }
+							hideOnMobile
 						/>
 
-						<GuidedTourStep
-							className="a4a-marketplace__guided-tour"
-							id="marketplace-walkthrough-navigation"
-							tourId="marketplaceWalkthrough"
-							context={ sidebarRef }
-						/>
+						<Actions className="a4a-marketplace__header-actions">
+							<MobileSidebarNavigation />
+							<div ref={ ( ref ) => setReferralToggleRef( ref as HTMLElement | null ) }>
+								<ReferralToggle />
+							</div>
+							<ShoppingCart
+								showCart={ showCart }
+								setShowCart={ setShowCart }
+								toggleCart={ toggleCart }
+								items={ selectedCartItems }
+								onRemoveItem={ onRemoveCartItem }
+								onCheckout={ () => {
+									page( A4A_MARKETPLACE_CHECKOUT_LINK );
+								} }
+							/>
 
-						<GuidedTourStep
-							className="a4a-marketplace__guided-tour"
-							id="marketplace-walkthrough-referral-toggle"
-							tourId="marketplaceWalkthrough"
-							context={ referralToggleRef }
-						/>
-					</Actions>
-				</LayoutHeader>
+							<GuidedTourStep
+								className="a4a-marketplace__guided-tour"
+								id="marketplace-walkthrough-navigation"
+								tourId="marketplaceWalkthrough"
+								context={ sidebarRef }
+							/>
 
-				<ProductCategoryMenu onSelect={ onCategorySelected } />
-			</LayoutTop>
+							<GuidedTourStep
+								className="a4a-marketplace__guided-tour"
+								id="marketplace-walkthrough-referral-toggle"
+								tourId="marketplaceWalkthrough"
+								context={ referralToggleRef }
+							/>
+						</Actions>
+					</LayoutHeader>
 
-			<ProductActionPanel
-				searchQuery={ productSearchQuery }
-				onSearchQueryChange={ setProductSearchQuery }
-				selectedFilters={ selectedFilters }
-				setSelectedFilters={ setSelectedFilters }
-				resetSelectedFilters={ resetFilters }
-				isReferralMode={ isReferralMode }
-				selectedBundleSize={ selectedBundleSize }
-				availableBundleSizes={ availableBundleSizes }
-				setSelectedBundleSize={ setSelectedBundleSize }
-			/>
+					<ProductCategoryMenu onSelect={ onCategorySelected } />
+				</LayoutTop>
+			</div>
+
+			<div
+				className="products-overview-v2__action-panel-wrapper"
+				ref={ actionPanelRef }
+				style={ { top: actionPanelStickyTopOffset } }
+			>
+				<ProductActionPanel
+					searchQuery={ productSearchQuery }
+					onSearchQueryChange={ setProductSearchQuery }
+					selectedFilters={ selectedFilters }
+					setSelectedFilters={ setSelectedFilters }
+					resetSelectedFilters={ resetFilters }
+					isReferralMode={ isReferralMode }
+					selectedBundleSize={ selectedBundleSize }
+					availableBundleSizes={ availableBundleSizes }
+					setSelectedBundleSize={ setSelectedBundleSize }
+				/>
+			</div>
 
 			<ShoppingCartContext.Provider value={ { setSelectedCartItems, selectedCartItems } }>
 				{
 					// we will remove this once we have the new product listing component
 					<ProductListing
+						stickyHeadingTopOffset={ productListingStickyTopOffset }
 						selectedSite={ selectedSite }
 						suggestedProduct={ suggestedProduct }
 						productBrand={ productBrand }

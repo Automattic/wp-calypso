@@ -87,7 +87,10 @@ export const DomainsTableExpiresRenewsOnCell = ( {
 						/>
 					) }
 
-					{ getNotice( { expiryDate, isAutoRenewing, isExpired, isHundredYearDomain } ) }
+					{ /* eslint-disable jsx-a11y/no-noninteractive-tabindex */ }
+					<span tabIndex={ 0 }>
+						{ getNotice( { expiryDate, isAutoRenewing, isExpired, isHundredYearDomain } ) }
+					</span>
 				</>
 			) : (
 				'-'

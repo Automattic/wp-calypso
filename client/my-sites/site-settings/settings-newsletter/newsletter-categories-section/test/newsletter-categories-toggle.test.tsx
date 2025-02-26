@@ -10,6 +10,7 @@ import NewsletterCategoriesToggle, {
 } from '../newsletter-categories-toggle';
 
 jest.mock( 'i18n-calypso' );
+jest.mock( 'calypso/components/inline-support-link', () => () => 'MockInlineSupportLink' );
 
 describe( 'NewsletterCategoriesToggle', () => {
 	beforeEach( () => {

@@ -112,7 +112,7 @@ const ImportLight: Step = function ImportStep( props ) {
 				return (
 					<Summary
 						colorsNum={ colors.length }
-						onContinueClick={ () => navigation.goToStep?.( 'designSetup' ) }
+						onContinueClick={ () => navigation.goToStep?.( 'design-setup' ) }
 					/>
 				);
 

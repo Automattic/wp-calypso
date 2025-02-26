@@ -16,6 +16,7 @@ import {
 	isDefaultGlobalStylesVariationSlug,
 	isFeatureCategory,
 	isLockedStyleVariation,
+	shuffleDesigns,
 } from '../utils';
 import DesignPickerCategoryFilter from './design-picker-category-filter';
 import DesignPreviewImage from './design-preview-image';
@@ -216,21 +217,40 @@ const DesignCardGroup = ( {
 }: DesignCardGroup ) => {
 	const translate = useTranslate();
 	const [ isCollapsed, setIsCollapsed ] = useState( !! categoryName || false );
+	const { selectedCategories } = useDesignPickerFilters();
+
+	const shuffleSeed = useMemo(
+		() =>
+			selectedCategories
+				.join( ',' )
+				.split( '' )
+				.reduce( ( acc, char ) => acc + char.charCodeAt( 0 ), 0 ),
+		[ selectedCategories ]
+	);
 
 	const visibleDesigns = useMemo( () => {
 		const free = designs.filter( ( design ) => design.design_tier === FREE_THEME );
 		const boosted = free.slice( 0, FREE_DESIGNS_BOOSTED_COUNT );
 		const remaining = designs.filter( ( design ) => ! boosted.includes( design ) );
 
-		if ( ! isCollapsed ) {
-			return [ ...boosted, ...remaining ];
+		// Ensure Best Matching Themes changes whenever selected categories are updated.
+		// This provides visual feedback so that users notice that the results have changed.
+		if ( category === 'best' ) {
+			return [
+				...shuffleDesigns( boosted, shuffleSeed ),
+				...shuffleDesigns( remaining, shuffleSeed * 31 ), // Prime number for better distribution.
+			];
 		}
 
-		return [
-			...boosted,
-			...remaining.slice( 0, COLLAPSED_DESIGNS_VISIBLE_COUNT - boosted.length ),
-		];
-	}, [ isCollapsed, designs ] );
+		if ( isCollapsed ) {
+			return [
+				...boosted,
+				...remaining.slice( 0, COLLAPSED_DESIGNS_VISIBLE_COUNT - boosted.length ),
+			];
+		}
+
+		return [ ...boosted, ...remaining ];
+	}, [ isCollapsed, designs, category, shuffleSeed ] );
 
 	const content = (
 		<div className="design-picker__grid">

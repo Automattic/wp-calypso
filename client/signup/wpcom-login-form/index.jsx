@@ -20,7 +20,13 @@ function getFormAction( redirectTo ) {
 	return `https://${ subdomain }wordpress.com/wp-login.php`;
 }
 
-export default function WpcomLoginForm( { redirectTo, authorization, pwd = '', log } ) {
+export default function WpcomLoginForm( {
+	redirectTo,
+	authorization,
+	pwd = '',
+	log,
+	rememberMe = false,
+} ) {
 	const form = useRef();
 
 	useEffect( () => {
@@ -33,6 +39,7 @@ export default function WpcomLoginForm( { redirectTo, authorization, pwd = '', l
 			<input type="hidden" name="pwd" value={ pwd } />
 			<input type="hidden" name="authorization" value={ authorization } />
 			<input type="hidden" name="redirect_to" value={ redirectTo } />
+			{ rememberMe ? <input type="hidden" name="rememberme" value="forever" /> : undefined }
 		</form>
 	);
 }

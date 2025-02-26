@@ -69,12 +69,6 @@ a.button.plugin-row-formatter__plugin-name-card {
 	position: relative;
 }
 
-.has-bulk-management-active {
-	.plugin-row-formatter__plugin-name-container {
-		width: calc(100% - 75px);
-	}
-}
-
 .plugin-row-formatter__toggle {
 	.plugin-action .components-toggle-control .components-base-control__field {
 		flex-direction: row-reverse;

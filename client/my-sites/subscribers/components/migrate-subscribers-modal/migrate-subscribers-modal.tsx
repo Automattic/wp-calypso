@@ -3,10 +3,9 @@ import { ActionButtons, BackButton, NextButton } from '@automattic/onboarding';
 import { Modal, Button, ButtonGroup } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -32,11 +31,16 @@ function useOtherOwnedSiteIDs() {
 
 type MigrateSubscribersModalState = 'selection' | 'confirmation';
 
-const MigrateSubscribersModal = () => {
+const MigrateSubscribersModal = ( {
+	isVisible,
+	onClose,
+	migrateSubscribersCallback,
+}: {
+	isVisible: boolean;
+	onClose: () => void;
+	migrateSubscribersCallback: ( selectedSourceSiteId: number ) => void;
+} ) => {
 	const translate = useTranslate();
-
-	const { showMigrateSubscribersModal, closeAllModals, migrateSubscribersCallback } =
-		useSubscribersPage();
 	const targetSite = useSelector( getSelectedSite );
 	const targetSiteId = useSelector( getSelectedSiteId );
 
@@ -58,13 +62,7 @@ const MigrateSubscribersModal = () => {
 
 	const isWPCOMSite = useSelector( ( state ) => getIsSiteWPCOM( state, targetSiteId ) );
 
-	useEffect( () => {
-		if ( showMigrateSubscribersModal ) {
-			recordTracksEvent( 'calypso_subscribers_migrate_subscribers_selection' );
-		}
-	}, [ showMigrateSubscribersModal ] );
-
-	if ( ! showMigrateSubscribersModal ) {
+	if ( ! isVisible ) {
 		return null;
 	}
 
@@ -162,7 +160,7 @@ const MigrateSubscribersModal = () => {
 							} );
 							selectedSourceSiteId &&
 								targetSiteId &&
-								migrateSubscribersCallback( selectedSourceSiteId, targetSiteId );
+								migrateSubscribersCallback( selectedSourceSiteId );
 						} }
 					>
 						{ translate( 'Confirm subscriber move' ) }
@@ -176,10 +174,10 @@ const MigrateSubscribersModal = () => {
 		<Modal
 			title={ modalTitle as string }
 			onRequestClose={ () => {
-				closeAllModals();
 				recordTracksEvent( 'calypso_subscribers_migrate_subscribers_cancel' );
 				//Setting a delay to prevent a flicker.
 				setTimeout( setModalState, 50, 'selection' );
+				onClose();
 			} }
 			overlayClassName="migrate-subscribers-modal"
 		>

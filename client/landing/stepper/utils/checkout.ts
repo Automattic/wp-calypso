@@ -1,4 +1,4 @@
-import { openCheckoutModal } from 'calypso/my-sites/checkout/modal/utils';
+import { addQueryArgs } from '@wordpress/url';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
@@ -27,7 +27,6 @@ export const goToCheckout = ( {
 	plan,
 	cancelDestination,
 	extraProducts = [],
-	forceRedirection = false,
 	extraQueryParams: extraParams = {},
 }: GoToCheckoutProps ) => {
 	const relativeCurrentPath = window.location.href.replace( window.location.origin, '' );
@@ -44,17 +43,14 @@ export const goToCheckout = ( {
 	setSignupCompleteStepName( stepName );
 
 	const products = [ ...( plan ? [ plan ] : [] ), ...extraProducts ];
-	const hasProducts = products.length > 0;
+	const productSlugs = products.length > 0 ? `/${ products.join( ',' ) }` : '';
 
-	if ( hasProducts && ! forceRedirection ) {
-		openCheckoutModal( products, params );
-	} else {
-		// If no products are provided, we might have added plan to the cart so we just go to the checkout page directly.
-		// If the flag forceRedirection is true, we also go to the checkout page via redirection.
-		// The theme upsell link does not work with siteId and requires a siteSlug.
-		// See https://github.com/Automattic/wp-calypso/pull/64899
-		window.location.href = `/checkout/${ encodeURIComponent( siteSlug ) }${
-			hasProducts ? `/${ products.join( ',' ) }` : ''
-		}?${ new URLSearchParams( params ) }`;
-	}
+	// If no products are provided, we might have added plan to the cart so we just go to the checkout page directly.
+	// If the flag forceRedirection is true, we also go to the checkout page via redirection.
+	// The theme upsell link does not work with siteId and requires a siteSlug.
+	// See https://github.com/Automattic/wp-calypso/pull/64899
+	window.location.href = addQueryArgs(
+		`/checkout/${ encodeURIComponent( siteSlug ) }${ productSlugs }`,
+		params
+	);
 };

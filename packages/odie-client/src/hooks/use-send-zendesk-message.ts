@@ -27,7 +27,7 @@ export const useSendZendeskMessage = () => {
 
 		if ( ! conversationId ) {
 			// Start a new conversation if it doesn't exist
-			await newConversation();
+			await newConversation( { createdFrom: 'send_zendesk_message' } );
 			setChatStatus( 'loaded' );
 			return;
 		}

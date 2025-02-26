@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import { stripHTML } from 'calypso/lib/formatting/strip-html';
 import wpcom from 'calypso/lib/wp';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -13,6 +14,7 @@ export default function RestorePlanSoftwareCard() {
 	const siteId = useSelector( getSelectedSiteId );
 
 	function requestRestore() {
+		dispatch( recordTracksEvent( 'calypso_hosting_restore_plugins_and_themes' ) );
 		wpcom.req
 			.post( {
 				path: `/sites/${ siteId }/hosting/restore-plan-software`,

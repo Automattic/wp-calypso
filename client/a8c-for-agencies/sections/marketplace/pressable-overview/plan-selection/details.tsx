@@ -1,7 +1,6 @@
 import { Button, Tooltip } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
 import { Icon, external } from '@wordpress/icons';
-import { useTranslate, numberFormat, numberFormatCompact } from 'i18n-calypso';
+import { useTranslate, numberFormat, numberFormatCompact, formatCurrency } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import { CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';

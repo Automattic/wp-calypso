@@ -6,6 +6,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { QueryParams } from '../../dataviews/query-params';
 import { DOMAIN_OVERVIEW } from '../constants';
 import DomainOverviewPane, { showDomainManagementPage } from '../index';
 
@@ -88,6 +89,14 @@ describe( 'DomainOverviewPane', () => {
 		},
 	};
 
+	const queryParams: QueryParams = {
+		page: undefined,
+		perPage: undefined,
+		sortField: undefined,
+		sortDirection: undefined,
+		search: undefined,
+	};
+
 	beforeEach( () => {
 		global.window.location = new URL( 'https://wordpress.com' ) as any;
 		jest.clearAllMocks();
@@ -98,7 +107,7 @@ describe( 'DomainOverviewPane', () => {
 		const store = mockStore( createState() );
 		return render(
 			<Provider store={ store }>
-				<DomainOverviewPane { ...defaultProps } { ...props } />
+				<DomainOverviewPane { ...defaultProps } { ...props } queryParams={ queryParams } />
 			</Provider>
 		);
 	};
@@ -132,16 +141,14 @@ describe( 'DomainOverviewPane', () => {
 		renderComponent();
 		fireEvent.click( screen.getByText( 'Email' ) );
 		expect( page.show ).toHaveBeenCalledWith(
-			'/domains/manage/all/email/example.com/example.wordpress.com?page=1&perPage=50&sortField=domain_name&sortDirection=asc'
+			'/domains/manage/all/email/example.com/example.wordpress.com'
 		);
 	} );
 
 	it( 'handles close button click', () => {
 		renderComponent();
 		fireEvent.click( screen.getByText( 'Close' ) );
-		expect( page.show ).toHaveBeenCalledWith(
-			'/domains/manage?page=1&perPage=50&sortField=domain_name&sortDirection=asc'
-		);
+		expect( page.show ).toHaveBeenCalledWith( '/domains/manage' );
 	} );
 } );
 

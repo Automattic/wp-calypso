@@ -3,14 +3,7 @@ import config from '@automattic/calypso-config';
 import { UrlFriendlyTermType } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { FREE_THEME } from '@automattic/design-picker';
-import { localizeUrl } from '@automattic/i18n-utils';
-import {
-	isSiteAssemblerFlow,
-	isTailoredSignupFlow,
-	isOnboardingGuidedFlow,
-	ONBOARDING_FLOW,
-	ONBOARDING_GUIDED_FLOW,
-} from '@automattic/onboarding';
+import { isSiteAssemblerFlow, isTailoredSignupFlow, ONBOARDING_FLOW } from '@automattic/onboarding';
 import { PlansIntent } from '@automattic/plans-grid-next';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { isDesktop as isDesktopViewport, subscribeIsDesktop } from '@automattic/viewport';
@@ -27,10 +20,8 @@ import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/int
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
-import { getSegmentedIntent } from 'calypso/my-sites/plans/utils/get-segmented-intent';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import useLongerPlanTermDefaultExperiment from 'calypso/my-sites/plans-features-main/hooks/experiments/use-longer-plan-term-default-experiment';
-import { SurveyData } from 'calypso/signup/steps/initial-intent/types';
 import { getStepUrl } from 'calypso/signup/utils';
 import { getDomainFromUrl } from 'calypso/site-profiler/utils/get-valid-url';
 import { useDispatch as reduxUseDispatch, useSelector } from 'calypso/state';
@@ -43,7 +34,7 @@ import {
 import { StepState } from 'calypso/state/signup/progress/schema';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
-import { getIntervalType, shouldBasePlansOnSegment } from './util';
+import { getIntervalType } from './util';
 import './unified-plans-step-styles.scss';
 import type { SiteDetails } from '@automattic/data-stores';
 
@@ -95,7 +86,6 @@ export interface UnifiedPlansStepProps {
 		siteTitle?: string | null;
 		username?: string | null;
 		coupon?: string | null;
-		segmentationSurveyAnswers?: SurveyData;
 		selectedThemeType?: string;
 	};
 	onPlanIntervalUpdate: ( path: string ) => void;
@@ -123,9 +113,6 @@ export interface UnifiedPlansStepProps {
 	intent?: PlansIntent;
 	isLaunchPage?: boolean;
 	intervalType?: string;
-	initialContext?: {
-		trailMapExperimentVariant?: null | 'treatment_guided' | 'treatment_survey_only';
-	};
 	fallbackSubHeaderText?: string;
 
 	/**
@@ -202,7 +189,6 @@ function UnifiedPlansStep( {
 	deemphasizeFreePlan: deemphasizeFreePlanFromProps,
 	isLaunchPage,
 	intent,
-	initialContext,
 	intervalType,
 	path,
 	step,
@@ -249,15 +235,8 @@ function UnifiedPlansStep( {
 
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
-	const {
-		siteUrl,
-		domainItem,
-		siteTitle,
-		username,
-		coupon,
-		segmentationSurveyAnswers,
-		selectedThemeType,
-	} = signupDependencies;
+	const { siteUrl, domainItem, siteTitle, username, coupon, selectedThemeType } =
+		signupDependencies;
 
 	const isPaidTheme = selectedThemeType && selectedThemeType !== FREE_THEME;
 
@@ -375,29 +354,6 @@ function UnifiedPlansStep( {
 	};
 
 	const getSubheaderText = () => {
-		const { segmentationSurveyAnswers } = signupDependencies;
-		const { segmentSlug } = getSegmentedIntent( segmentationSurveyAnswers );
-
-		if (
-			isOnboardingGuidedFlow( flowName ) &&
-			segmentSlug === 'plans-guided-segment-developer-or-agency'
-		) {
-			const a4aLinkButton = (
-				<Button
-					href={ localizeUrl( 'https://wordpress.com/for-agencies?ref=onboarding' ) }
-					target="_blank"
-					rel="noopener noreferrer"
-					onClick={ () => recordTracksEvent( 'calypso_guided_onboarding_agency_link_click' ) }
-					borderless
-				/>
-			);
-
-			return translate(
-				'Are you an agency? Get bulk discounts and premier support with {{link}}Automattic for Agencies{{/link}}.',
-				{ components: { link: a4aLinkButton } }
-			);
-		}
-
 		const freePlanButton = (
 			<Button
 				onClick={ () =>
@@ -483,15 +439,6 @@ function UnifiedPlansStep( {
 				: undefined
 		);
 
-	const { segmentSlug } = getSegmentedIntent( segmentationSurveyAnswers );
-
-	const surveyedIntent = shouldBasePlansOnSegment(
-		flowName,
-		initialContext?.trailMapExperimentVariant
-	)
-		? segmentSlug
-		: undefined;
-
 	let paidDomainName = domainItem?.meta;
 
 	if ( ! paidDomainName && isDomainOnlySite && selectedSite?.URL ) {
@@ -504,8 +451,7 @@ function UnifiedPlansStep( {
 	}
 
 	const deemphasizeFreePlan =
-		( [ ONBOARDING_FLOW, ONBOARDING_GUIDED_FLOW ].includes( flowName ) &&
-			( paidDomainName != null || isPaidTheme ) ) ||
+		( ONBOARDING_FLOW === flowName && ( paidDomainName != null || isPaidTheme ) ) ||
 		deemphasizeFreePlanFromProps;
 
 	return (
@@ -543,7 +489,7 @@ function UnifiedPlansStep( {
 									customerType={ customerType }
 									deemphasizeFreePlan={ deemphasizeFreePlan }
 									plansWithScroll={ isDesktop }
-									intent={ intent || surveyedIntent }
+									intent={ intent }
 									flowName={ flowName }
 									hideFreePlan={ hideFreePlan && ! deemphasizeFreePlan }
 									hidePersonalPlan={ hidePersonalPlan }
@@ -611,7 +557,7 @@ function UnifiedPlansStep( {
 									customerType={ customerType }
 									deemphasizeFreePlan={ deemphasizeFreePlan }
 									plansWithScroll={ isDesktop }
-									intent={ intent || surveyedIntent }
+									intent={ intent }
 									flowName={ flowName }
 									hideFreePlan={ hideFreePlan }
 									hidePersonalPlan={ hidePersonalPlan }

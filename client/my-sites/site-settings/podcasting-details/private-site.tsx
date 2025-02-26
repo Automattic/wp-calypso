@@ -1,6 +1,7 @@
 import { localize, LocalizeProps } from 'i18n-calypso';
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -14,6 +15,12 @@ const PodcastingPrivateSiteMessage: React.FC< Props > = function PodcastingPriva
 	translate,
 	isComingSoon,
 }: Props ) {
+	const isRemoveDuplicateViewsExperimentEnabled = useRemoveDuplicateViewsExperimentEnabled();
+
+	const privacySettingsUrl = isRemoveDuplicateViewsExperimentEnabled
+		? `/sites/settings/site/${ siteSlug }#site-privacy-settings`
+		: `/settings/general/${ siteSlug }#site-privacy-settings`;
+
 	return (
 		<div className="podcasting-details__private-site">
 			<p>
@@ -43,9 +50,7 @@ const PodcastingPrivateSiteMessage: React.FC< Props > = function PodcastingPriva
 				) }
 			</p>
 			<p>
-				<a href={ '/settings/general/' + siteSlug + '#site-privacy-settings' }>
-					{ translate( 'Go to Privacy settings' ) }
-				</a>
+				<a href={ privacySettingsUrl }>{ translate( 'Go to Privacy settings' ) }</a>
 			</p>
 		</div>
 	);

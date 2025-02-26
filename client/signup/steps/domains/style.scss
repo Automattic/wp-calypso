@@ -282,12 +282,8 @@ body.is-section-stepper .domains__step-content,
 	}
 }
 
-/**
- * Styles for design reskin
- * The `is-white-signup` class is attached to the body when the user is assigned the `reskinned` group of the `reskinSignupFlow` a/b test
- */
 body.is-section-stepper.is-group-stepper,
-body.is-section-signup.is-white-signup {
+body.is-section-signup {
 	$light-white: #f3f4f5;
 
 	#primary {
@@ -371,7 +367,7 @@ body.is-section-signup.is-white-signup {
 			}
 		}
 
-		.domains__free-domain .reskin-side-explainer__subtitle-2 {
+		.domains__free-domain .side-explainer__subtitle-2 {
 			display: none;
 
 			@include break-small {
@@ -502,65 +498,3 @@ body.is-section-signup.is-white-signup {
 
 	}
 }
-
-// blue signup flow-specific styles
-body.is-section-signup:not(.is-white-signup) {
-
-	.domains__step-content {
-
-		a {
-			text-decoration: underline;
-			color: var(--color-text-inverted);
-		}
-
-		.domain-transfer-or-connect {
-
-			&__content {
-
-				.option-content {
-
-					&__illustration,
-					&__main,
-					&__action,
-					&__header,
-					&__top-text,
-					&__pricing-text {
-						color: var(--color-text-inverted);
-					}
-
-					&__benefits-item-text,
-					&__pricing-cost {
-						filter: brightness(0.9);
-					}
-
-					&__benefits-item .gridicon {
-						fill: var(--studio-green-20);
-					}
-
-					& + .option-content {
-						border-color: var(--studio-gray-40);
-					}
-
-				}
-
-			}
-
-			&__support-link {
-				color: var(--color-text-inverted);
-				filter: brightness(0.9);
-			}
-
-		}
-
-		.use-my-domain {
-
-			.form-input-validation.is-error {
-				color: var(--color-error-30);
-			}
-
-		}
-
-	}
-
-}
-

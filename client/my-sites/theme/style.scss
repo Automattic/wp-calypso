@@ -19,16 +19,10 @@ $button-border: 4px;
 		overflow: clip;
 		padding-top: 47px;
 
-		.theme__sheet-screenshot,
-		.theme__sheet-web-preview {
-			@include breakpoint-deprecated( ">960px" ) {
-				top: calc(var(--masterbar-height) + 16px);
-			}
-		}
-
 		.theme__sheet-web-preview .theme-preview__frame-wrapper {
 			@include breakpoint-deprecated( ">960px" ) {
-				max-height: calc(100vh - 32px - var(--masterbar-height));
+				// Inner padding: 32px.
+				max-height: calc(100vh - var(--content-padding-top) - var(--content-padding-bottom) - var(--masterbar-height) - 32px );
 			}
 		}
 	}
@@ -343,13 +337,19 @@ $button-border: 4px;
 	min-height: $iframe-viewport-height-scaled;
 
 	.theme-preview__frame-wrapper {
+		max-height: 100vw;
 		pointer-events: none;
+
+		.theme-preview__frame {
+			max-height: 100%;
+		}
+
 		@include breakpoint-deprecated( ">960px" ) {
 			max-height: calc(100vh - var(--masterbar-height));
 
 			.theme-preview__frame {
 				height: 200%;
-				max-height: 200vh;
+				max-height: 200%;
 				max-width: 200%;
 				min-height: $iframe-viewport-height-scaled;
 				transform: scale(0.5) !important;

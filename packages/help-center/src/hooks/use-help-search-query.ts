@@ -14,90 +14,44 @@ export interface SearchResult {
 	source?: string;
 }
 
-interface TailoredArticles {
-	post_ids: Array< number >;
-	blog_id: number;
-}
-
 interface APIFetchOptions {
 	global: boolean;
 	path: string;
 }
 
-const filterOutDuplicatedItems = (
-	articlesResponse: SearchResult[],
-	searchResultResponse: SearchResult[]
-) => {
-	const articlesIds = articlesResponse.map( ( result ) => result.post_id );
-	return searchResultResponse.filter(
-		( searchResult ) => ! articlesIds.includes( searchResult.post_id )
-	);
-};
-
 const fetchArticlesAPI = async (
 	search: string,
 	locale: string,
-	sectionName: string,
-	articles?: TailoredArticles
+	sectionName: string
 ): Promise< SearchResult[] > => {
-	let queryString;
-	let articlesResponse: SearchResult[] = [];
 	let searchResultResponse: SearchResult[] = [];
 
-	if ( articles ) {
-		const { post_ids, blog_id } = articles;
-		queryString = buildQueryString( {
-			blog_id: blog_id,
-			post_ids: `${ post_ids.join( ',' ) }`,
-		} );
-		if ( canAccessWpcomApis() ) {
-			articlesResponse = ( await wpcomRequest( {
-				path: `help/articles?${ queryString }`,
-				apiNamespace: 'wpcom/v2/',
-				apiVersion: '2',
-			} ) ) as SearchResult[];
-		} else {
-			articlesResponse = ( await apiFetch( {
-				global: true,
-				path: `/help-center/articles?${ queryString }`,
-			} as APIFetchOptions ) ) as SearchResult[];
-		}
+	const queryString = buildQueryString( { query: search, locale, section: sectionName } );
+	if ( canAccessWpcomApis() ) {
+		searchResultResponse = ( await wpcomRequest( {
+			path: `help/search/wpcom?${ queryString }`,
+			apiNamespace: 'wpcom/v2/',
+			apiVersion: '2',
+		} ) ) as SearchResult[];
+	} else {
+		searchResultResponse = ( await apiFetch( {
+			global: true,
+			path: `/help-center/search?${ queryString }`,
+		} as APIFetchOptions ) ) as SearchResult[];
 	}
 
-	// If less than 5 tailored articles are returned, fetch search results.
-	if ( articlesResponse?.length < 5 ) {
-		queryString = buildQueryString( { query: search, locale, section: sectionName } );
-		if ( canAccessWpcomApis() ) {
-			searchResultResponse = ( await wpcomRequest( {
-				path: `help/search/wpcom?${ queryString }`,
-				apiNamespace: 'wpcom/v2/',
-				apiVersion: '2',
-			} ) ) as SearchResult[];
-		} else {
-			searchResultResponse = ( await apiFetch( {
-				global: true,
-				path: `/help-center/search?${ queryString }`,
-			} as APIFetchOptions ) ) as SearchResult[];
-		}
-		// Remove articles that are already in the tailored articles.
-		searchResultResponse = filterOutDuplicatedItems( articlesResponse, searchResultResponse );
-	}
-
-	//Add tailored results first then add search results.
-	const combinedResults = [ ...articlesResponse, ...searchResultResponse ];
-	return combinedResults.slice( 0, 5 );
+	return searchResultResponse.slice( 0, 5 );
 };
 
 export const useHelpSearchQuery = (
 	search: string,
 	locale = 'en',
 	sectionName = '',
-	tailoredArticles?: TailoredArticles,
 	queryOptions: Record< string, unknown > = {}
 ) => {
 	return useQuery< any >( {
-		queryKey: [ 'help-center-search', search, locale, sectionName, tailoredArticles ],
-		queryFn: () => fetchArticlesAPI( search, locale, sectionName, tailoredArticles ),
+		queryKey: [ 'help-center-search', search, locale, sectionName ],
+		queryFn: () => fetchArticlesAPI( search, locale, sectionName ),
 		refetchOnWindowFocus: false,
 		...queryOptions,
 	} );
