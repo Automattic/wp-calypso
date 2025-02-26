@@ -22,14 +22,6 @@
 		}
 	}
 
-	&__site-loading {
-		position: absolute;
-		right: 10px;
-		top: 50%;
-		transform: translateY(-50%);
-		z-index: 1;
-	}
-
     &__actions {
 		display: flex;
 		justify-content: flex-end;
