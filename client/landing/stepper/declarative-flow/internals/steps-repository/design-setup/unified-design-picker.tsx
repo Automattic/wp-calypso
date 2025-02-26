@@ -76,7 +76,6 @@ import {
 	recordSelectedDesign,
 	getVirtualDesignProps,
 } from '../../analytics/record-design';
-import { useCreateCourseGoalFeature } from '../../hooks/use-create-course-goal-feature';
 import { getCategorizationOptions } from './categories';
 import { STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
@@ -112,7 +111,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const isSiteRequired = flow !== ONBOARDING_FLOW || ! isGoalsAtFrontExperiment;
 
 	const isUpdatedBadgeDesign = useIsUpdatedBadgeDesign();
-	const isIntentCreateCourseGoalEnabled = useCreateCourseGoalFeature();
 
 	const { isEligible: isBigSkyEligible } = useIsBigSkyEligible();
 
@@ -905,11 +903,17 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		navigate( `/setup/site-setup/launch-big-sky?siteSlug=${ siteSlug }&siteId=${ site?.ID }` );
 	}
 
+	// Use this to prioritize themes in certain categories.
+	// The specified theme will be shown first in the list.
+	const priorityThemes: Record< string, string > = {
+		education: 'course',
+	};
+
 	const stepContent = (
 		<>
 			<UnifiedDesignPicker
-				isIntentCreateCourseGoalEnabled={ isIntentCreateCourseGoalEnabled }
 				designs={ designs }
+				priorityThemes={ priorityThemes }
 				locale={ locale }
 				onDesignWithAI={ onDesignWithAI }
 				onPreview={ previewDesign }

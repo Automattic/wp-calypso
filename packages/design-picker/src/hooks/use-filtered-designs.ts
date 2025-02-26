@@ -9,7 +9,7 @@ export const getFilteredDesignsByCategory = (
 	designs: Design[],
 	categorySlugs: string[] | null | undefined,
 	designTierSlugs: string[],
-	priorityThemes: Record< string, string >
+	priorityThemes: Record< string, string > | null
 ) => {
 	const filteredDesigns = designs.filter(
 		( design ) =>
@@ -99,7 +99,7 @@ export const getFilteredDesignsByCategory = (
 
 export const useFilteredDesignsByGroup = (
 	designs: Design[],
-	priorityThemes: Record< string, string >
+	priorityThemes: Record< string, string > | null
 ): { [ key: string ]: Design[] } => {
 	const { selectedCategoriesWithoutDesignTier, selectedDesignTiers } = useDesignPickerFilters();
 
