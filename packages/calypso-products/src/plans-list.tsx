@@ -611,7 +611,6 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( '%d shares per month', { args: [ 30 ] } ),
 		[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '10%' ),
 		[ FEATURE_STATS_JP ]: i18n.translate( 'Last 7 days of basic stats' ),
-		[ FEATURE_SUPPORT ]: i18n.translate( 'Support documentation and public forums' ),
 	} ),
 	getNewsletterSignupFeatures: () => [
 		FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
