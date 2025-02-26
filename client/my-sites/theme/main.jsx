@@ -590,7 +590,8 @@ class ThemeSheet extends Component {
 	};
 
 	renderHeader = () => {
-		const { author, isWPForTeamsSite, name, retired, softLaunched, translate } = this.props;
+		const { author, isWPForTeamsSite, name, retired, softLaunched, translate, themeId } =
+			this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
 		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;

@@ -27,10 +27,7 @@ export default function ThemeTierBadge( {
 	isThemeList = false,
 } ) {
 	const siteId = useSelector( getSelectedSiteId );
-	const themeType = useSelector(
-		( state ) => getThemeType( state, themeId ),
-		( prev, next ) => prev === next
-	);
+	const themeType = useSelector( ( state ) => getThemeType( state, themeId ) );
 	const themeTier = useThemeTierForTheme( themeId );
 	const isThemeAllowed = useIsThemeAllowedOnSite( siteId, themeId );
 
