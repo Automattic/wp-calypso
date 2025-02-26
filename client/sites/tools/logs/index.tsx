@@ -226,7 +226,7 @@ export const SiteLogsDataViews = ( {
 			{ !! itemDetailsModal && (
 				<DetailsModal
 					item={ itemDetailsModal }
-					actions={ actions }
+					logType={ logType }
 					onClose={ onCloseDetailsModal }
 				/>
 			) }

@@ -1,26 +1,32 @@
 import { Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { PHPLog, ServerLog } from 'calypso/data/hosting/use-site-logs-query';
-import type { Action, ActionModal } from '@wordpress/dataviews';
+import { LogType, PHPLog, ServerLog } from 'calypso/data/hosting/use-site-logs-query';
+import DetailsModalPHP from './details-modal-php';
+import DetailsModalServer from './details-modal-server';
+import type { Action } from '@wordpress/dataviews';
 
 interface Props {
 	item: PHPLog | ServerLog;
+	logType: LogType;
 	onClose: () => void;
 	actions: Action< PHPLog | ServerLog >[];
 }
 
-export default function DetailsModal( { item, actions, onClose }: Props ) {
+export default function DetailsModal( { item, logType, onClose }: Props ) {
 	const translate = useTranslate();
 
-	const actionModal = actions.find(
-		( action ) => ( action as ActionModal< PHPLog | ServerLog > ).RenderModal
-	);
-
-	if ( ! actionModal ) {
-		return null;
+	if ( logType === LogType.PHP ) {
+		return (
+			<Modal
+				title={ translate( 'Log details' ) } /* Same title as dataviews action modal */
+				onRequestClose={ onClose }
+				focusOnMount="firstContentElement"
+				size="large"
+			>
+				<DetailsModalPHP item={ item as PHPLog } />
+			</Modal>
+		);
 	}
-
-	const { RenderModal } = actionModal as ActionModal< PHPLog | ServerLog >;
 
 	return (
 		<Modal
@@ -29,7 +35,7 @@ export default function DetailsModal( { item, actions, onClose }: Props ) {
 			focusOnMount="firstContentElement"
 			size="large"
 		>
-			<RenderModal items={ [ item ] } />
+			<DetailsModalServer item={ item as ServerLog } />
 		</Modal>
 	);
 }
