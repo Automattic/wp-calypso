@@ -28,7 +28,7 @@ const useActions = ( { logType, isLoading }: { logType: LogType; isLoading: bool
 	);
 
 	const actions = useMemo( () => {
-		if ( logType === 'php' ) {
+		if ( logType === LogType.PHP ) {
 			return [
 				{
 					id: 'copy-msg',

@@ -66,12 +66,12 @@ export const SiteLogsDataViews = ( {
 	 */
 	const getItemId = useMemo(
 		() => ( item: PHPLog | ServerLog ) => {
-			if ( logType === 'php' ) {
+			if ( logType === LogType.PHP ) {
 				const phpLog = item as PHPLog;
 				return `${ phpLog.timestamp }-${ phpLog.file }-${ phpLog.line }`;
 			}
 
-			if ( logType === 'web' ) {
+			if ( logType === LogType.WEB ) {
 				const serverLog = item as ServerLog;
 				return `${ serverLog.date }-${ serverLog.request_time }-${ serverLog.body_bytes_sent }`;
 			}
@@ -253,7 +253,7 @@ export const SiteLogsDataViews = ( {
 					hideLabelFromVision
 					label=""
 					onChange={ ( value ) => {
-						if ( value === 'php' || value === 'web' ) {
+						if ( value === LogType.PHP || value === LogType.WEB ) {
 							navigate( window.location.pathname.replace( /\/[^/]+$/, '/' + value ) );
 							setView( ( view: View ) => ( {
 								...view,

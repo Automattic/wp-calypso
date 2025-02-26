@@ -23,7 +23,7 @@ const EMPTY_ARRAY: ( ServerLog | PHPLog )[] = [];
  */
 const hasLogTypeChanged = ( logType: LogType, data: { logs?: ( PHPLog | ServerLog )[] } ) => {
 	if (
-		logType === 'php' &&
+		logType === LogType.PHP &&
 		!! data.logs &&
 		data.logs.length > 0 &&
 		'severity' in data.logs[ 0 ] &&
@@ -33,7 +33,7 @@ const hasLogTypeChanged = ( logType: LogType, data: { logs?: ( PHPLog | ServerLo
 	}
 
 	if (
-		logType === 'web' &&
+		logType === LogType.WEB &&
 		!! data.logs &&
 		data.logs.length > 0 &&
 		'request_type' in data.logs[ 0 ] &&

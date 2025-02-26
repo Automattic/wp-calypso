@@ -27,7 +27,7 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 	);
 
 	const fields = useMemo( () => {
-		if ( logType === 'php' ) {
+		if ( logType === LogType.PHP ) {
 			return [
 				{
 					id: 'timestamp',

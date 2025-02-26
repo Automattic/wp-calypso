@@ -126,9 +126,9 @@ export const useSiteLogsDownloader = ( {
 		} );
 
 		let path = null;
-		if ( logType === 'php' ) {
+		if ( logType === LogType.PHP ) {
 			path = `/sites/${ siteId }/hosting/error-logs`;
-		} else if ( logType === 'web' ) {
+		} else if ( logType === LogType.WEB ) {
 			path = `/sites/${ siteId }/hosting/logs`;
 		} else {
 			downloadErrorNotice( translate( 'Invalid log type specified' ) );

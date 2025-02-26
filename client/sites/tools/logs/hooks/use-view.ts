@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { FilterType, LogType } from 'calypso/data/hosting/use-site-logs-query';
 import type { View } from '@wordpress/dataviews';
 
-const getSortField = ( logType: LogType ) => ( logType === 'php' ? 'timestamp' : 'date' );
+const getSortField = ( logType: LogType ) => ( logType === LogType.PHP ? 'timestamp' : 'date' );
 const getVisibleFields = ( logType: LogType ) => {
-	if ( logType === 'php' ) {
+	if ( logType === LogType.PHP ) {
 		return [ 'severity', 'message' ];
 	}
 	return [ 'request_type', 'status', 'request_url' ];
@@ -15,14 +15,14 @@ const getFilterValue = ( view: View, fieldName: string ) =>
 function toFilterParams( { view, logType }: { view: View; logType: LogType } ): FilterType {
 	const filters: FilterType = {};
 
-	if ( logType === 'php' ) {
+	if ( logType === LogType.PHP ) {
 		const severity = getFilterValue( view, 'severity' );
 		if ( severity ) {
 			filters.severity = severity;
 		}
 	}
 
-	if ( logType === 'web' ) {
+	if ( logType === LogType.WEB ) {
 		const cached = getFilterValue( view, 'cached' );
 		const requestType = getFilterValue( view, 'request_type' );
 		const status = getFilterValue( view, 'status' );

@@ -51,7 +51,10 @@ export type SiteLogsData = {
 	has_more: boolean;
 };
 
-export type LogType = 'php' | 'web';
+export enum LogType {
+	PHP = 'php',
+	WEB = 'web',
+}
 
 export interface FilterType {
 	[ key: string ]: Array< string >;
@@ -97,7 +100,7 @@ export function useSiteLogsQuery(
 	const queryResult = useQuery< SiteLogsAPIResponse, unknown, SiteLogsData >( {
 		queryKey: buildQueryKey( siteId, params ),
 		queryFn: () => {
-			const logTypeFragment = params.logType === 'php' ? 'error-logs' : 'logs';
+			const logTypeFragment = params.logType === LogType.PHP ? 'error-logs' : 'logs';
 			const path = `/sites/${ siteId }/hosting/${ logTypeFragment }`;
 			return wpcom.req.get(
 				{ path, apiNamespace: 'wpcom/v2' },
@@ -148,7 +151,7 @@ export function useSiteLogsQuery(
 }
 
 function buildPartialQueryKey( siteId: number | null | undefined, params: SiteLogsParams ) {
-	return [ params.logType === 'php' ? 'site-logs-php' : 'site-logs-web', siteId ];
+	return [ params.logType === LogType.PHP ? 'site-logs-php' : 'site-logs-web', siteId ];
 }
 
 function buildQueryKey( siteId: number | null | undefined, params: SiteLogsParams ) {
