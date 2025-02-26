@@ -28,6 +28,16 @@ const PostCheckoutOnboarding: Step = ( { navigation } ) => {
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { site, siteSlug } = useSiteData();
 
+	const intent = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
+		[]
+	);
+
+	const goals = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
+		[]
+	);
+
 	const selectedDesign = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
 		[]
@@ -57,8 +67,12 @@ const PostCheckoutOnboarding: Step = ( { navigation } ) => {
 	const { waitForInitiateTransfer, waitForTransfer, waitForFeature, waitForLatestSiteData } =
 		useWaitForAtomic( {} );
 
+	const { setIntentOnSite, setGoalsOnSite } = useDispatch( SITE_STORE );
+
 	const waitForAtomic = async () => {
 		await waitForTransfer();
+		await setIntentOnSite( siteSlug, intent );
+		await setGoalsOnSite( siteSlug, goals );
 		await waitForFeature();
 		await waitForLatestSiteData();
 	};
