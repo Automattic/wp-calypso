@@ -1,6 +1,5 @@
-import formatCurrency from '@automattic/format-currency';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { useTranslate } from 'i18n-calypso';
+import { formatCurrency, useTranslate } from 'i18n-calypso';
 import { Discount, Label, Price, PriceTextContainer, Variant } from './styles';
 import type { WPCOMProductVariant } from './types';
 import type { FunctionComponent } from 'react';

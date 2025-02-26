@@ -34,6 +34,7 @@ import {
 	A4A_TEAM_LINK,
 	A4A_AGENCY_TIER_LINK,
 	A4A_MIGRATIONS_OVERVIEW_LINK,
+	A4A_WOOPAYMENTS_LINK,
 } from '../lib/constants';
 import { createItem } from '../lib/utils';
 
@@ -191,6 +192,19 @@ const useMainMenuItems = ( path: string ) => {
 							title: translate( 'Agency Tier' ),
 							trackEventProps: {
 								menu_item: 'Automattic for Agencies / Agency Tier',
+							},
+						},
+				  ]
+				: [] ),
+			...( isSectionNameEnabled( 'a8c-for-agencies-woopayments' )
+				? [
+						{
+							icon: currencyDollar,
+							path: '/',
+							link: A4A_WOOPAYMENTS_LINK,
+							title: translate( 'WooPayments' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / WooPayments',
 							},
 						},
 				  ]

@@ -191,7 +191,7 @@ function getAllThemeOptions( { translate, isFSEActive, isGlobalStylesOnPersonal 
 			const slug = getSiteSlug( state, siteId );
 
 			const redirectTo = encodeURIComponent(
-				addQueryArgs( `${ origin }/setup/site-setup/designSetup`, {
+				addQueryArgs( `${ origin }/setup/site-setup/design-setup`, {
 					siteSlug: slug,
 					theme: themeId,
 					style_variation: options?.styleVariationSlug,

@@ -11,8 +11,8 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { APIError } from 'calypso/state/partner-portal/types';
-import useIssueAndAssignLicenses from '../../hooks/use-issue-and-assign-licenses';
-import { IssueLicenseRequest } from '../../hooks/use-issue-licenses';
+import useIssueAndAssignLicenses from './use-issue-and-assign-licenses';
+import { IssueLicenseRequest } from './use-issue-licenses';
 import type { SiteDetails } from '@automattic/data-stores';
 
 type Props = {

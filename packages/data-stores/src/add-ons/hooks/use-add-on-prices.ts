@@ -1,5 +1,5 @@
-import formatCurrency from '@automattic/format-currency';
 import { useMemo } from '@wordpress/element';
+import { formatCurrency } from 'i18n-calypso';
 import * as ProductsList from '../../products-list';
 import type { AddOnMeta } from '../types';
 

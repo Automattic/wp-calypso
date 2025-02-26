@@ -1,11 +1,10 @@
-import { Gridicon, ExternalLink } from '@automattic/components';
+import { Gridicon, ExternalLink, TimeSince } from '@automattic/components';
 import clsx from 'clsx';
 import { translate, numberFormatCompact } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import TagsList from 'calypso/blocks/reader-post-card/tags-list';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import AutoDirection from 'calypso/components/auto-direction';
-import TimeSince from 'calypso/components/time-since';
 import { recordPermalinkClick } from 'calypso/reader/stats';
 import ReaderFullPostHeaderPlaceholder from './placeholders/header';
 

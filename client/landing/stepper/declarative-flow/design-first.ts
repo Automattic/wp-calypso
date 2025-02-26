@@ -124,7 +124,7 @@ const designFirst: Flow = {
 						] );
 
 						return window.location.assign(
-							addQueryArgs( `/setup/update-design/designSetup`, {
+							addQueryArgs( `/setup/update-design/design-setup`, {
 								siteSlug: providedDependencies?.siteSlug,
 								flowToReturnTo: DESIGN_FIRST_FLOW,
 								theme: getQueryArg( window.location.href, 'theme' ),
@@ -163,7 +163,7 @@ const designFirst: Flow = {
 						}
 
 						return window.location.assign(
-							addQueryArgs( `/setup/update-design/designSetup`, {
+							addQueryArgs( `/setup/update-design/design-setup`, {
 								siteSlug: siteSlug,
 								flowToReturnTo: flowName,
 								theme: getQueryArg( window.location.href, 'theme' ),

@@ -4,8 +4,8 @@ import {
 	PRODUCT_FILTER_KEY_CATEGORIES,
 	PRODUCT_FILTER_KEY_PRICES,
 	PRODUCT_FILTER_KEY_TYPES,
-} from '../../../constants';
-import { SelectedFilters } from '../../../lib/product-filter';
+} from '../../constants';
+import { SelectedFilters } from '../../lib/product-filter';
 
 const DEFAULT_SELECTED_FILTERS = {
 	[ PRODUCT_FILTER_KEY_BRAND ]: '',

@@ -1,6 +1,5 @@
 import { AddOns, Site, StorageAddOnSlug } from '@automattic/data-stores';
 import { useGetPurchasedStorageAddOn } from '@automattic/data-stores/src/add-ons';
-import { formatCurrency } from '@automattic/format-currency';
 import styled from '@emotion/styled';
 import {
 	Card,
@@ -12,7 +11,7 @@ import {
 } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import filesize from 'filesize';
-import { useTranslate } from 'i18n-calypso';
+import { formatCurrency, useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { SiteId } from 'calypso/types';
 

@@ -43,6 +43,8 @@ export const DomainsTableStatusCell = ( {
 		);
 	};
 
+	const domainStatusText = domainStatus?.status ?? translate( 'Unknown status' );
+
 	return (
 		<Element
 			className={ clsx( 'domains-table-row__status-cell', {
@@ -50,7 +52,17 @@ export const DomainsTableStatusCell = ( {
 					!! domainStatus?.statusClass,
 			} ) }
 		>
-			{ domainStatus?.status ?? translate( 'Unknown status' ) }
+			{ /* eslint-disable jsx-a11y/no-noninteractive-tabindex */ }
+			<span
+				tabIndex={ 0 }
+				aria-label={
+					translate( 'Status: %(status)s', {
+						args: { status: domainStatusText },
+					} ) as string
+				}
+			>
+				{ domainStatusText }
+			</span>
 			{ pendingUpdates.length > 0 && (
 				<StatusPopover popoverTargetElement={ <Spinner size={ spinnerSize } /> }>
 					<div className="domains-bulk-update-status-popover">

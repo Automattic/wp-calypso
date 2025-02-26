@@ -50,6 +50,9 @@ export const A4A_TEAM_INVITE_LINK = '/team/invite';
 export const A4A_TEAM_ACCEPT_INVITE_LINK = '/team/invite/accept';
 export const EXTERNAL_A4A_KNOWLEDGE_BASE = 'http://automattic.com/for-agencies/help';
 export const A4A_AGENCY_TIER_LINK = '/agency-tier';
+export const A4A_WOOPAYMENTS_LINK = '/woopayments';
+export const A4A_WOOPAYMENTS_DASHBOARD_LINK = `${ A4A_WOOPAYMENTS_LINK }/dashboard`;
+export const A4A_WOOPAYMENTS_PAYMENT_SETTINGS_LINK = `${ A4A_WOOPAYMENTS_LINK }/payment-settings`;
 
 // Client
 export const A4A_CLIENT_LANDING_LINK = '/client/landing';

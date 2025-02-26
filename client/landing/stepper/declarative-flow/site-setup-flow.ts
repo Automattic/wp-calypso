@@ -60,6 +60,7 @@ const siteSetupFlow: FlowV1 = {
 			STEPS.OPTIONS,
 			STEPS.DESIGN_CHOICES,
 			STEPS.DESIGN_SETUP,
+			STEPS.DESIGN_SETUP_LEGACY,
 			STEPS.BLOGGER_STARTING_POINT,
 			STEPS.COURSES,
 			STEPS.IMPORT,
@@ -280,12 +281,13 @@ const siteSetupFlow: FlowV1 = {
 						 *
 						 * Instead of having the user manually choose between "Start simple" and "More power", we let them select a theme and use the theme choice to determine which path to take.
 						 */
-						return navigate( 'designSetup' );
+						return navigate( 'design-setup' );
 					}
 					return navigate( 'bloggerStartingPoint' );
 				}
 
-				case 'designSetup': {
+				case 'designSetup':
+				case 'design-setup': {
 					return navigate( 'processing' );
 				}
 
@@ -364,7 +366,7 @@ const siteSetupFlow: FlowV1 = {
 							if ( isDesignChoicesStepEnabled ) {
 								return navigate( 'design-choices' );
 							}
-							return navigate( 'designSetup' );
+							return navigate( 'design-setup' );
 						}
 					}
 				}
@@ -388,7 +390,7 @@ const siteSetupFlow: FlowV1 = {
 							return exitFlow( `https://wordpress.com/home/${ siteId ?? siteSlug }` );
 						}
 						case 'build': {
-							return navigate( 'designSetup' );
+							return navigate( 'design-setup' );
 						}
 						case 'sell': {
 							return navigate( 'options' );
@@ -518,6 +520,7 @@ const siteSetupFlow: FlowV1 = {
 					return navigate( 'bloggerStartingPoint' );
 
 				case 'designSetup':
+				case 'design-setup':
 					if ( intent === SiteIntent.DIFM ) {
 						return navigate( 'difmStartingPoint' );
 					}
@@ -600,7 +603,7 @@ const siteSetupFlow: FlowV1 = {
 			switch ( currentStep ) {
 				case 'options':
 					if ( intent === 'sell' ) {
-						return navigate( 'designSetup' );
+						return navigate( 'design-setup' );
 					}
 					return navigate( 'bloggerStartingPoint' );
 
@@ -611,7 +614,7 @@ const siteSetupFlow: FlowV1 = {
 					return navigate( 'importList' );
 
 				case 'difmStartingPoint':
-					return navigate( 'designSetup' );
+					return navigate( 'design-setup' );
 
 				default:
 					return navigate( 'intent' );

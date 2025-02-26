@@ -1,5 +1,4 @@
 import { getCachedFormatter } from './get-cached-formatter';
-import { __DO_NOT_IMPORT__numberFormatCurrency } from './number-format-currency';
 import type { NumberFormat } from './types';
 
 /**
@@ -47,7 +46,8 @@ const numberFormatCompact: NumberFormat = ( { numberFormatOptions = {}, ...param
 export {
 	numberFormat as __DO_NOT_IMPORT__numberFormat,
 	numberFormatCompact as __DO_NOT_IMPORT__numberFormatCompact,
-	__DO_NOT_IMPORT__numberFormatCurrency,
 };
+
+export * from './number-format-currency';
 
 export * from './types';

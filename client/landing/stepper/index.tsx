@@ -4,7 +4,6 @@ import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/current-user';
 import config from '@automattic/calypso-config';
 import { UserActions, User as UserStore } from '@automattic/data-stores';
-import { geolocateCurrencySymbol } from '@automattic/format-currency';
 import {
 	HOSTED_SITE_MIGRATION_FLOW,
 	MIGRATION_SIGNUP_FLOW,
@@ -175,7 +174,6 @@ async function main() {
 	reduxStore.dispatch( setSelectedSiteId( siteId ) as unknown as AnyAction );
 
 	// No need to await this, it's not critical to the boot process and will slow booting down.
-	geolocateCurrencySymbol();
 	defaultCalypsoI18n.geolocateCurrencySymbol();
 
 	const root = createRoot( document.getElementById( 'wpcom' ) as HTMLElement );

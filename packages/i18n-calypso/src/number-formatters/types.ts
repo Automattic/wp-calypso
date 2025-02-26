@@ -82,5 +82,48 @@ export interface NumberFormatCurrencyParams {
 	signForPositive?: boolean;
 }
 
+export interface CurrencyObject {
+	/**
+	 * The negative sign for the price, if it is negative, or the positive sign
+	 * if `signForPositive` is set.
+	 */
+	sign: '-' | '+' | '';
+
+	/**
+	 * The currency symbol for the formatted price.
+	 *
+	 * Note that the symbol's position depends on the `symbolPosition` property,
+	 * and keep RTL locales in mind.
+	 */
+	symbol: string;
+
+	/**
+	 * The position of the currency symbol relative to the formatted price.
+	 */
+	symbolPosition: 'before' | 'after';
+
+	/**
+	 * The section of the formatted price before the decimal.
+	 *
+	 * Note that this is not a number, but a locale-formatted string which may
+	 * include symbols like spaces, commas, or periods as group separators.
+	 */
+	integer: string;
+
+	/**
+	 * The section of the formatted price after and including the decimal.
+	 *
+	 * Note that this is not a number, but a locale-formatted string which may
+	 * include symbols like spaces, commas, or periods as the decimal separator.
+	 */
+	fraction: string;
+
+	/**
+	 * True if the formatted number has a non-0 decimal part.
+	 */
+	hasNonZeroFraction: boolean;
+}
+
 export type NumberFormat = ( params: NumberFormatParams ) => string;
 export type NumberFormatCurrency = ( params: NumberFormatCurrencyParams ) => string;
+export type GetCurrencyObject = ( params: NumberFormatCurrencyParams ) => CurrencyObject;

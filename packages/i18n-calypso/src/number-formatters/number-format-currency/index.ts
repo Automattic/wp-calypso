@@ -1,7 +1,13 @@
 import { FALLBACK_CURRENCY } from '../constants';
 import { getCachedFormatter } from '../get-cached-formatter';
 import { defaultCurrencyOverrides } from './currencies';
-import type { CurrencyOverride, NumberFormatCurrency, NumberFormatCurrencyParams } from '../types';
+import type {
+	CurrencyOverride,
+	GetCurrencyObject,
+	CurrencyObject,
+	NumberFormatCurrency,
+	NumberFormatCurrencyParams,
+} from '../types';
 
 /**
  * Retrieves the currency override for a given currency.
@@ -216,4 +222,130 @@ const numberFormatCurrency: NumberFormatCurrency = ( {
 	}, '' );
 };
 
-export { numberFormatCurrency as __DO_NOT_IMPORT__numberFormatCurrency };
+/**
+ * Returns a formatted price object which can be used to manually render a
+ * formatted currency (eg: if you wanted to render the currency symbol in a
+ * different font size).
+ *
+ * The currency will define the properties to use for this formatting, but
+ * those properties can be overridden using the options. Be careful when doing
+ * this.
+ *
+ * For currencies that include decimals, this will always return the amount
+ * with decimals included, even if those decimals are zeros. To exclude the
+ * zeros, use the `stripZeros` option. For example, the function will normally
+ * format `10.00` in `USD` as `$10.00` but when this option is true, it will
+ * return `$10` instead.
+ *
+ * Since rounding errors are common in floating point math, sometimes a price
+ * is provided as an integer in the smallest unit of a currency (eg: cents in
+ * USD or yen in JPY). Set the `isSmallestUnit` to change the function to
+ * operate on integer numbers instead. If this option is not set or false, the
+ * function will format the amount `1025` in `USD` as `$1,025.00`, but when the
+ * option is true, it will return `$10.25` instead.
+ *
+ * Note that the `integer` return value of this function is not a number, but a
+ * locale-formatted string which may include symbols like spaces, commas, or
+ * periods as group separators. Similarly, the `fraction` property is a string
+ * that contains the decimal separator.
+ *
+ * If the number is NaN, it will be treated as 0.
+ *
+ * If the currency code is not known, this will assume a default currency
+ * similar to USD.
+ *
+ * If `isSmallestUnit` is set and the number is not an integer, it will be
+ * rounded to an integer.
+ * @returns    {CurrencyObject}          A formatted string e.g. { symbol:'$', integer: '$99', fraction: '.99', sign: '-' }
+ */
+const getCurrencyObject: GetCurrencyObject = ( {
+	number,
+	browserSafeLocale,
+	currency,
+	stripZeros,
+	isSmallestUnit,
+	signForPositive,
+	geoLocation,
+	forceLatin,
+} ) => {
+	const validCurrency = getValidCurrency( currency, geoLocation );
+	const currencyOverride = getCurrencyOverride( validCurrency, geoLocation );
+	const currencyPrecision = getPrecisionForLocaleAndCurrency(
+		browserSafeLocale,
+		validCurrency,
+		forceLatin
+	);
+	const numberAsFloat = prepareNumberForFormatting(
+		number,
+		currencyPrecision ?? 0,
+		isSmallestUnit
+	);
+	const formatter = getCurrencyFormatter( {
+		number: numberAsFloat,
+		currency: validCurrency,
+		browserSafeLocale,
+		forceLatin,
+		stripZeros,
+		signForPositive,
+	} );
+	const parts = formatter.formatToParts( numberAsFloat );
+
+	let sign = '' as CurrencyObject[ 'sign' ];
+	let symbol = '$';
+	let symbolPosition = 'before' as CurrencyObject[ 'symbolPosition' ];
+	let hasAmountBeenSet = false;
+	let hasDecimalBeenSet = false;
+	let integer = '';
+	let fraction = '';
+
+	parts.forEach( ( part ) => {
+		switch ( part.type ) {
+			case 'currency':
+				symbol = currencyOverride?.symbol ?? part.value;
+				if ( hasAmountBeenSet ) {
+					symbolPosition = 'after';
+				}
+				return;
+			case 'group':
+				integer += part.value;
+				hasAmountBeenSet = true;
+				return;
+			case 'decimal':
+				fraction += part.value;
+				hasAmountBeenSet = true;
+				hasDecimalBeenSet = true;
+				return;
+			case 'integer':
+				integer += part.value;
+				hasAmountBeenSet = true;
+				return;
+			case 'fraction':
+				fraction += part.value;
+				hasAmountBeenSet = true;
+				hasDecimalBeenSet = true;
+				return;
+			case 'minusSign':
+				sign = '-' as CurrencyObject[ 'sign' ];
+				return;
+			case 'plusSign':
+				sign = '+' as CurrencyObject[ 'sign' ];
+				return;
+		}
+	} );
+
+	const hasNonZeroFraction = ! Number.isInteger( numberAsFloat ) && hasDecimalBeenSet;
+
+	return {
+		sign,
+		symbol,
+		symbolPosition,
+		integer,
+		fraction,
+		hasNonZeroFraction,
+	};
+};
+
+export {
+	numberFormatCurrency as __DO_NOT_IMPORT__numberFormatCurrency,
+	getCurrencyObject as __DO_NOT_IMPORT__getCurrencyObject,
+};

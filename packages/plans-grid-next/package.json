@@ -39,7 +39,6 @@
 		"@automattic/calypso-products": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
-		"@automattic/format-currency": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
 		"@automattic/viewport": "workspace:^",

@@ -9,8 +9,7 @@ import {
 	isJetpackSearchSlug,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { formatCurrency } from '@automattic/format-currency';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, formatCurrency } from 'i18n-calypso';
 import { useMemo } from 'react';
 import BackupImage from 'calypso/assets/images/jetpack/rna-image-backup.png';
 import DefaultImage from 'calypso/assets/images/jetpack/rna-image-default.png';

@@ -1,10 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-import { formatCurrency } from '@automattic/format-currency';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
+import { formatCurrency } from 'i18n-calypso';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';

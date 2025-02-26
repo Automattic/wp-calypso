@@ -10,11 +10,10 @@ import {
 	isYearly,
 	isDomainTransfer,
 } from '@automattic/calypso-products';
-import { formatCurrency } from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_CANCEL, REFUNDS } from '@automattic/urls';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
-import { useTranslate } from 'i18n-calypso';
+import { formatCurrency, useTranslate } from 'i18n-calypso';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { has100YearPlan, has100YearDomain } from 'calypso/lib/cart-values/cart-items';
 import CheckoutTermsItem from './checkout-terms-item';

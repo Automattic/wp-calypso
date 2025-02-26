@@ -36,7 +36,6 @@ export const REBLOGGING_FLOW = 'reblogging';
 export const DOMAIN_FOR_GRAVATAR_FLOW = 'domain-for-gravatar';
 export const ONBOARDING_FLOW = 'onboarding';
 export const EXAMPLE_FLOW = 'example';
-export const ONBOARDING_GUIDED_FLOW = '__disabled_onboarding';
 export const DIFM_FLOW = 'do-it-for-me';
 export const DIFM_FLOW_STORE = 'do-it-for-me-store';
 export const WEBSITE_DESIGN_SERVICES = 'website-design-services';
@@ -132,10 +131,6 @@ export const isBlogOnboardingFlow = ( flowName: string | null ) => {
 
 export const isOnboardingFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ ONBOARDING_FLOW ].includes( flowName ) );
-};
-
-export const isOnboardingGuidedFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ ONBOARDING_GUIDED_FLOW ].includes( flowName ) );
 };
 
 export const isDomainUpsellFlow = ( flowName: string | null ) => {

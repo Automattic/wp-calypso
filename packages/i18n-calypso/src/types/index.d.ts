@@ -2,7 +2,11 @@
 // Project: i18n-calypso
 
 import * as React from 'react';
-import type { NumberFormatParams, NumberFormatCurrencyParams } from '../number-formatters';
+import type {
+	NumberFormatParams,
+	NumberFormatCurrencyParams,
+	CurrencyObject,
+} from '../number-formatters';
 
 type LocaleData = Record< string, unknown >;
 type NormalizedTranslateArgs =
@@ -107,6 +111,11 @@ export interface I18N {
 	numberFormat( number: number, options?: NumberFormatOptions ): string;
 	numberFormatCompact( number: number, options?: NumberFormatOptions ): string;
 	formatCurrency( number: number, currency: string, options?: FormatCurrencyOptions ): string;
+	getCurrencyObject(
+		number: number,
+		currency: string,
+		options?: FormatCurrencyOptions
+	): CurrencyObject;
 
 	setLocale( localeData: LocaleData ): void;
 	addTranslations( localeData: LocaleData ): void;
@@ -163,6 +172,7 @@ export declare const translate: typeof i18n.translate;
 export declare const numberFormat: typeof i18n.numberFormat;
 export declare const numberFormatCompact: typeof i18n.numberFormatCompact;
 export declare const formatCurrency: typeof i18n.formatCurrency;
+export declare const getCurrencyObject: typeof i18n.getCurrencyObject;
 export declare const geolocateCurrencySymbol: typeof i18n.geolocateCurrencySymbol;
 export declare const setLocale: typeof i18n.setLocale;
 export declare const addTranslations: typeof i18n.addTranslations;

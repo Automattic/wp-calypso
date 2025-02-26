@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, TimeSince } from '@automattic/components';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, some, flatMap } from 'lodash';
@@ -9,7 +9,6 @@ import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
 import Gravatar from 'calypso/components/gravatar';
-import TimeSince from 'calypso/components/time-since';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl } from 'calypso/lib/paths';
