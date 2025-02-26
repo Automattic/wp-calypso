@@ -13,7 +13,9 @@ async function tryPreload( step?: StepperStep, followingStep?: StepperStep ) {
 		await step.asyncComponent();
 	}
 	// Flows are indeterminate, they often pick one of the two next steps based on user input, so load two steps ahead.
-	tryPreload( followingStep );
+	if ( followingStep ) {
+		tryPreload( followingStep );
+	}
 }
 
 /**
