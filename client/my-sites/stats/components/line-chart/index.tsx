@@ -43,7 +43,8 @@ function StatsLineChart( {
 		return value.toFixed( 0 ).toString();
 	};
 
-	const isEmpty = ( chartData?.[ 0 ].data || [] ).length === 0;
+	const dataLength = ( chartData?.[ 0 ].data || [] ).length;
+	const isEmpty = dataLength === 0;
 
 	const maxValue = useMemo(
 		() =>
@@ -68,7 +69,7 @@ function StatsLineChart( {
 						withTooltips
 						withGradientFill
 						height={ height }
-						margin={ { left: 15, top: 20, bottom: 20 } }
+						margin={ { left: 20, top: 20, bottom: 20 } }
 						options={ {
 							yScale: {
 								type: 'linear',
@@ -78,6 +79,7 @@ function StatsLineChart( {
 							axis: {
 								x: {
 									tickFormat: formatTime,
+									numTicks: dataLength < 5 ? dataLength : undefined,
 								},
 								y: {
 									orientation: 'right',
