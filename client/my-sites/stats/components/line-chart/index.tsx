@@ -1,6 +1,6 @@
 import { LineChart, ThemeProvider, jetpackTheme } from '@automattic/charts';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { numberFormat, useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import { useMemo } from 'react';
 import StatsEmptyState from '../../stats-empty-state';
@@ -40,7 +40,9 @@ function StatsLineChart( {
 		  };
 
 	const formatValue = ( value: number ) => {
-		return value.toFixed( 0 );
+		return value < 100_000
+			? value.toFixed( 0 )
+			: numberFormat( value, { numberFormatOptions: { notation: 'compact' }, decimals: 1 } );
 	};
 
 	const isEmpty = ( chartData?.[ 0 ].data || [] ).length === 0;
@@ -72,7 +74,7 @@ function StatsLineChart( {
 							left: 15,
 							top: 20,
 							bottom: 20,
-							right: Math.max( maxValue.toFixed().length * 10, 40 ),
+							right: Math.max( formatValue( maxValue ).length * 10, 40 ), //TODO: we should support this from the lib.
 						} }
 						options={ {
 							yScale: {
