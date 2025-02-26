@@ -164,6 +164,29 @@ export interface I18N {
 	on( eventName: string, listener: EventListener ): void;
 	off( eventName: string, listener: EventListener ): void;
 	emit( eventName: string, ...payload: any ): void;
+
+	/**
+	 * Returns `newCopy` if given `text` is translated or locale is English, otherwise returns the `oldCopy`.
+	 *
+	 * `newCopy` prop should be an actual `i18n.translate()` call from the consuming end.
+	 * This is the only way currently to ensure that it is picked up by our string extraction mechanism
+	 * and propagate into GlotPress for translation.
+	 * @param options
+	 * @param options.text - The text to check for translation.
+	 * @param options.newCopy - The translation to return if the text is translated.
+	 * @param options.oldCopy - The fallback to return if the text is not translated.
+	 * @example
+	 * i18n.fixMe( {
+	 * 	text: 'new copy',
+	 * 	newCopy: i18n.translate( 'new copy' ),
+	 * 	oldCopy: i18n.translate( 'old copy' ),
+	 * } );
+	 */
+	fixMe( options: {
+		text: string;
+		newCopy: ExistingReactNode;
+		oldCopy?: ExistingReactNode;
+	} ): ExistingReactNode | null;
 }
 
 declare const i18n: I18N;
@@ -188,6 +211,7 @@ export declare const registerComponentUpdateHook: typeof i18n.registerComponentU
 export declare const on: typeof i18n.on;
 export declare const off: typeof i18n.off;
 export declare const emit: typeof i18n.emit;
+export declare const fixMe: typeof i18n.fixMe;
 
 export interface LocalizeProps {
 	locale: string;
