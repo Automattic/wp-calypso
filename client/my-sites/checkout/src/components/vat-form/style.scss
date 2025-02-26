@@ -21,6 +21,11 @@
 		}
 	}
 
+	// Override the InputWrapper styles for the VAT ID field
+	label[for="contact-vat-id"] + div {
+		border: 1px solid #C3C4C7;
+	}
+
 	& .vat-field__overlay-prefix {
 		flex: 0 0 auto;
 		white-space: nowrap;
@@ -30,15 +35,12 @@
 		box-sizing: border-box;
 		padding-block: 7px;
 		padding-inline: 10px;
-		border: 1px solid #C3C4C7;
-		border-top-left-radius: 3px;
-		border-bottom-left-radius: 3px;
-		border-right: none;
+		border-right: 1px solid #C3C4C7;
 	}
 
 	& #contact-vat-id {
-		border-top-left-radius: 0;
-		border-bottom-left-radius: 0;
+		border: none;
+		min-width: 0;
 		&:focus {
 			outline: unset;
 		}

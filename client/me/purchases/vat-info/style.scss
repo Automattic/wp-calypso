@@ -47,7 +47,7 @@
 		}
 	}
 
-	&--isError {
+	& .isError {
 		outline: 2px solid var( --color-red-50 );
 	}
 

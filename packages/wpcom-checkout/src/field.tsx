@@ -157,9 +157,15 @@ const FieldIcon = styled.div`
 const ButtonIcon = styled.div`
 	flex: 0 0 auto;
 	white-space: nowrap;
+	max-width: 100%;
+	border-left: 1px solid ${ ( props ) => props.theme.colors.borderColor };
+	overflow: hidden;
+
 	button {
-		border: 1px solid transparent;
-		box-shadow: none;
+		padding-block: 7px;
+		padding-inline: 10px;
+		border: none;
+		line-height: 1.5;
 	}
 
 	button:hover {
