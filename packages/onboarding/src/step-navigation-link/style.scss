@@ -1,6 +1,6 @@
 $font-body-small: 14px !default;
 
-.components-button.navigation-link {
+.components-button.navigation-link:not(.is-primary) {
 	background: none;
 	border: none;
 	color: #101517;
