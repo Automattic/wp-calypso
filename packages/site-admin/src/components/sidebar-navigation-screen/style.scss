@@ -1,0 +1,115 @@
+.edit-site-sidebar-navigation-screen {
+	display: flex;
+	flex-direction: column;
+	overflow-x: unset !important;
+	position: relative;
+}
+
+.edit-site-sidebar-navigation-screen__main {
+	// Ensure the sidebar is always at least as tall as the viewport.
+	// This allows the footer section to be sticky at the bottom of the viewport.
+	flex-grow: 1;
+	margin-bottom: $grid-unit-20;
+	&.has-footer {
+		margin-bottom: 0;
+	}
+}
+
+.edit-site-sidebar-navigation-screen__content {
+	padding: 0 $grid-unit-20;
+
+	.components-text {
+		color: $gray-400;
+	}
+
+	.components-heading {
+		margin-bottom: $grid-unit-10;
+	}
+}
+
+.edit-site-sidebar-navigation-screen__title-icon {
+	position: sticky;
+	top: 0;
+	background: $gray-900;
+	padding-top: $grid-unit-60;
+	margin-bottom: $grid-unit-10;
+	padding-bottom: $grid-unit-10;
+	z-index: z-index(".edit-site-sidebar-navigation-screen__title-icon");
+}
+
+.edit-site-sidebar-navigation-screen__title {
+	flex-grow: 1;
+	overflow-wrap: break-word;
+
+	&#{&},
+	&#{&} .edit-site-sidebar-navigation-screen__title {
+		line-height: $font-line-height-x-large;
+	}
+}
+
+.edit-site-sidebar-navigation-screen__actions {
+	display: flex;
+	flex-shrink: 0;
+}
+
+.edit-site-sidebar-navigation-screen__content .edit-site-global-styles-variations_item {
+
+	// Use a white outline to provide contrast with the dark background.
+	.edit-site-global-styles-variations_item-preview {
+		outline-color: rgba($white, 0.05);
+	}
+
+	&:not(.is-active):hover .edit-site-global-styles-variations_item-preview {
+		outline-color: rgba($white, 0.15);
+	}
+
+	&.is-active .edit-site-global-styles-variations_item-preview {
+		outline-color: $white;
+	}
+
+	&:focus-visible .edit-site-global-styles-variations_item-preview {
+		outline-color: var(--wp-admin-theme-color);
+	}
+}
+
+.edit-site-sidebar-navigation-screen__footer {
+	position: sticky;
+	bottom: 0;
+	background-color: $gray-900;
+	gap: 0;
+	padding: $grid-unit-10 $grid-unit-20;
+	margin: $grid-unit-20 0 0;
+	border-top: 1px solid $gray-800;
+
+	.edit-site-sidebar-navigation-screen-details-footer {
+		margin-left: -$grid-unit-20;
+		margin-right: -$grid-unit-20;
+	}
+}
+
+/* In general style overrides are discouraged.
+ * This is a temporary solution to override the InputControl component's styles.
+ * The `Theme` component will potentially be the more appropriate approach
+ * once that component is stabilized.
+ * See: packages/components/src/theme
+ */
+.edit-site-sidebar-navigation-screen__input-control {
+	width: 100%;
+	.components-input-control__container {
+		background: $gray-800;
+
+		.components-button {
+			color: $gray-200 !important;
+		}
+	}
+	.components-input-control__input {
+		color: $gray-200 !important;
+		background: $gray-800 !important;
+	}
+	.components-input-control__backdrop {
+		border: 4px !important;
+	}
+	.components-base-control__help {
+		color: $gray-600;
+	}
+}
