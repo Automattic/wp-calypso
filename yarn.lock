@@ -1847,6 +1847,7 @@ __metadata:
     "@wordpress/base-styles": "npm:^5.17.0"
     "@wordpress/components": "npm:^29.4.0"
     "@wordpress/core-data": "npm:^7.17.0"
+    "@wordpress/element": "npm:^6.18.0"
     "@wordpress/i18n": "npm:^5.17.0"
     "@wordpress/icons": "npm:^10.17.0"
     clsx: "npm:^2.1.1"
