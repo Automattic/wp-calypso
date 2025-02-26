@@ -1,4 +1,7 @@
-import { __DO_NOT_IMPORT__numberFormatCurrency } from '../number-format-currency';
+import {
+	__DO_NOT_IMPORT__numberFormatCurrency,
+	__DO_NOT_IMPORT__getCurrencyObject,
+} from '../number-format-currency';
 
 const browserSafeLocale = 'en-US';
 
@@ -10,6 +13,24 @@ describe( '__DO_NOT_IMPORT__numberFormatCurrency default export', () => {
 			browserSafeLocale,
 		} );
 		expect( money ).toBe( '$99.32' );
+	} );
+} );
+
+describe( '__DO_NOT_IMPORT__getCurrencyObject default export', () => {
+	test( 'handles negative values', () => {
+		const money = __DO_NOT_IMPORT__getCurrencyObject( {
+			number: -1234.56789,
+			currency: 'USD',
+			browserSafeLocale,
+		} );
+		expect( money ).toEqual( {
+			symbol: '$',
+			symbolPosition: 'before',
+			integer: '1,234',
+			fraction: '.57',
+			sign: '-',
+			hasNonZeroFraction: true,
+		} );
 	} );
 } );
 
@@ -399,6 +420,287 @@ describe( '__DO_NOT_IMPORT__numberFormatCurrency', () => {
 				isSmallestUnit: true,
 			} );
 			expect( money ).toBe( 'Rp 1.072.800,00' );
+		} );
+	} );
+} );
+
+describe( '__DO_NOT_IMPORT__getCurrencyObject()', () => {
+	test( 'handles zero', () => {
+		const money = __DO_NOT_IMPORT__getCurrencyObject( {
+			number: 0,
+			currency: 'USD',
+			browserSafeLocale,
+		} );
+		expect( money ).toEqual( {
+			symbol: '$',
+			symbolPosition: 'before',
+			integer: '0',
+			fraction: '.00',
+			sign: '',
+			hasNonZeroFraction: false,
+		} );
+	} );
+
+	test( 'handles negative values', () => {
+		const money = __DO_NOT_IMPORT__getCurrencyObject( {
+			number: -1234.56789,
+			currency: 'USD',
+			browserSafeLocale,
+		} );
+		expect( money ).toEqual( {
+			symbol: '$',
+			symbolPosition: 'before',
+			integer: '1,234',
+			fraction: '.57',
+			sign: '-',
+			hasNonZeroFraction: true,
+		} );
+	} );
+
+	test( 'handles values that round up', () => {
+		const money = __DO_NOT_IMPORT__getCurrencyObject( {
+			number: 9.99876,
+			currency: 'USD',
+			browserSafeLocale,
+		} );
+		expect( money ).toEqual( {
+			symbol: '$',
+			symbolPosition: 'before',
+			integer: '10',
+			fraction: '.00',
+			sign: '',
+			hasNonZeroFraction: false,
+		} );
+	} );
+
+	test( 'handles values that round down', () => {
+		const money = __DO_NOT_IMPORT__getCurrencyObject( {
+			number: 9.99432,
+			currency: 'USD',
+			browserSafeLocale,
+		} );
+		expect( money ).toEqual( {
+			symbol: '$',
+			symbolPosition: 'before',
+			integer: '9',
+			fraction: '.99',
+			sign: '',
+			hasNonZeroFraction: true,
+		} );
+	} );
+
+	test( 'handles a number in the smallest unit', () => {
+		const money = __DO_NOT_IMPORT__getCurrencyObject( {
+			number: 9932,
+			currency: 'USD',
+			browserSafeLocale,
+			isSmallestUnit: true,
+		} );
+		expect( money ).toEqual( {
+			symbol: '$',
+			symbolPosition: 'before',
+			integer: '99',
+			fraction: '.32',
+			sign: '',
+			hasNonZeroFraction: true,
+		} );
+	} );
+
+	test( 'handles a number in the smallest unit for non-decimal currency', () => {
+		const money = __DO_NOT_IMPORT__getCurrencyObject( {
+			number: 9932,
+			currency: 'JPY',
+			browserSafeLocale,
+			isSmallestUnit: true,
+		} );
+		expect( money ).toEqual( {
+			symbol: '¥',
+			symbolPosition: 'before',
+			integer: '9,932',
+			fraction: '',
+			sign: '',
+			hasNonZeroFraction: false,
+		} );
+	} );
+
+	test( 'handles the number as rounded if the number is a float and smallest unit is set', () => {
+		const money = __DO_NOT_IMPORT__getCurrencyObject( {
+			number: 9932.1,
+			currency: 'USD',
+			browserSafeLocale,
+			isSmallestUnit: true,
+		} );
+		expect( money ).toEqual( {
+			symbol: '$',
+			symbolPosition: 'before',
+			integer: '99',
+			fraction: '.32',
+			sign: '',
+			hasNonZeroFraction: true,
+		} );
+	} );
+
+	describe( 'specific currencies', () => {
+		test( 'USD', () => {
+			const money = __DO_NOT_IMPORT__getCurrencyObject( {
+				number: 9800900.32,
+				currency: 'USD',
+				browserSafeLocale,
+			} );
+			expect( money ).toEqual( {
+				symbol: '$',
+				symbolPosition: 'before',
+				integer: '9,800,900',
+				fraction: '.32',
+				sign: '',
+				hasNonZeroFraction: true,
+			} );
+		} );
+
+		test( 'USD with signForPositive set', () => {
+			const money = __DO_NOT_IMPORT__getCurrencyObject( {
+				number: 9800900.32,
+				currency: 'USD',
+				browserSafeLocale,
+				signForPositive: true,
+			} );
+			expect( money ).toEqual( {
+				symbol: '$',
+				symbolPosition: 'before',
+				integer: '9,800,900',
+				fraction: '.32',
+				sign: '+',
+				hasNonZeroFraction: true,
+			} );
+		} );
+
+		test( 'USD with signForPositive set and negative number', () => {
+			const money = __DO_NOT_IMPORT__getCurrencyObject( {
+				number: -9800900.32,
+				currency: 'USD',
+				browserSafeLocale,
+				signForPositive: true,
+			} );
+			expect( money ).toEqual( {
+				symbol: '$',
+				symbolPosition: 'before',
+				integer: '9,800,900',
+				fraction: '.32',
+				sign: '-',
+				hasNonZeroFraction: true,
+			} );
+		} );
+
+		test( 'USD in Canadian English', () => {
+			const money = __DO_NOT_IMPORT__getCurrencyObject( {
+				number: 9800900.32,
+				currency: 'USD',
+				browserSafeLocale: 'en-CA',
+			} );
+			expect( money ).toEqual( {
+				symbol: 'US$',
+				symbolPosition: 'before',
+				integer: '9,800,900',
+				fraction: '.32',
+				sign: '',
+				hasNonZeroFraction: true,
+			} );
+		} );
+
+		test( 'AUD', () => {
+			const money = __DO_NOT_IMPORT__getCurrencyObject( {
+				number: 9800900.32,
+				currency: 'AUD',
+				browserSafeLocale,
+			} );
+			expect( money ).toEqual( {
+				symbol: 'A$',
+				symbolPosition: 'before',
+				integer: '9,800,900',
+				fraction: '.32',
+				sign: '',
+				hasNonZeroFraction: true,
+			} );
+		} );
+
+		test( 'CAD', () => {
+			const money = __DO_NOT_IMPORT__getCurrencyObject( {
+				number: 9800900.32,
+				currency: 'CAD',
+				browserSafeLocale,
+			} );
+			expect( money ).toEqual( {
+				symbol: 'C$',
+				symbolPosition: 'before',
+				integer: '9,800,900',
+				fraction: '.32',
+				sign: '',
+				hasNonZeroFraction: true,
+			} );
+		} );
+
+		test( 'EUR', () => {
+			const money = __DO_NOT_IMPORT__getCurrencyObject( {
+				number: 9800900.32,
+				currency: 'EUR',
+				browserSafeLocale: 'de-DE',
+			} );
+			expect( money ).toEqual( {
+				symbol: '€',
+				symbolPosition: 'after',
+				integer: '9.800.900',
+				fraction: ',32',
+				sign: '',
+				hasNonZeroFraction: true,
+			} );
+		} );
+
+		test( 'GBP', () => {
+			const money = __DO_NOT_IMPORT__getCurrencyObject( {
+				number: 9800900.32,
+				currency: 'GBP',
+				browserSafeLocale,
+			} );
+			expect( money ).toEqual( {
+				symbol: '£',
+				symbolPosition: 'before',
+				integer: '9,800,900',
+				fraction: '.32',
+				sign: '',
+				hasNonZeroFraction: true,
+			} );
+		} );
+
+		test( 'JPY', () => {
+			const money = __DO_NOT_IMPORT__getCurrencyObject( {
+				number: 9800900.32,
+				currency: 'JPY',
+				browserSafeLocale,
+			} );
+			expect( money ).toEqual( {
+				symbol: '¥',
+				symbolPosition: 'before',
+				integer: '9,800,900',
+				fraction: '',
+				sign: '',
+				hasNonZeroFraction: false,
+			} );
+		} );
+
+		test( 'BRL', () => {
+			const money = __DO_NOT_IMPORT__getCurrencyObject( {
+				number: 9800900.32,
+				currency: 'BRL',
+				browserSafeLocale: 'pt-BR',
+			} );
+			expect( money ).toEqual( {
+				symbol: 'R$',
+				symbolPosition: 'before',
+				integer: '9.800.900',
+				fraction: ',32',
+				sign: '',
+				hasNonZeroFraction: true,
+			} );
 		} );
 	} );
 } );

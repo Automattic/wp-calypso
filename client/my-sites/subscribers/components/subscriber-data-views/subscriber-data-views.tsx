@@ -1,4 +1,4 @@
-import { Gravatar } from '@automattic/components';
+import { Gravatar, TimeSince } from '@automattic/components';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Tooltip } from '@wordpress/components';
@@ -6,7 +6,6 @@ import { DataViews, type View, type Action, Operator } from '@wordpress/dataview
 import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
 import { hasTranslation } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso';
-import TimeSince from 'calypso/components/time-since';
 import { useSubscribedNewsletterCategories } from 'calypso/data/newsletter-categories';
 import { useSelector } from 'calypso/state';
 import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/settings/selectors';

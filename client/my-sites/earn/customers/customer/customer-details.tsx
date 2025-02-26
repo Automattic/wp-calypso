@@ -1,6 +1,6 @@
+import { TimeSince } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
-import TimeSince from 'calypso/components/time-since';
 import {
 	PLAN_YEARLY_FREQUENCY,
 	PLAN_MONTHLY_FREQUENCY,

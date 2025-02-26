@@ -476,7 +476,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			destination,
 			plan: requiredPlanSlug,
 			extraProducts: selectedMarketplaceProductCartItems,
-			forceRedirection: true,
 		} );
 	}
 	function handleCheckout() {

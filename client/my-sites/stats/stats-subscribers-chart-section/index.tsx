@@ -121,6 +121,33 @@ export default function SubscribersChartSection( {
 	const legendRef = useRef< HTMLDivElement >( null );
 	const translate = useTranslate();
 
+	const formatTimeTick = useCallback(
+		( timestamp: number ) => {
+			const date = new Date( timestamp );
+			switch ( period ) {
+				case 'week':
+				case 'day':
+					return new Date( timestamp ).toLocaleDateString( undefined, {
+						month: 'short',
+						day: 'numeric',
+					} );
+				case 'month':
+					return date.toLocaleDateString( undefined, {
+						month: 'short',
+						year: 'numeric',
+					} );
+				case 'year':
+					return date.getFullYear().toString();
+				default:
+					return date.toLocaleDateString( undefined, {
+						month: 'short',
+						day: 'numeric',
+					} );
+			}
+		},
+		[ period ]
+	);
+
 	const {
 		isLoading,
 		isError,
@@ -240,6 +267,7 @@ export default function SubscribersChartSection( {
 							height={ 300 }
 							EmptyState={ () => null }
 							zeroBaseline={ false }
+							formatTimeTick={ formatTimeTick }
 						/>
 					) : (
 						<UplotChart

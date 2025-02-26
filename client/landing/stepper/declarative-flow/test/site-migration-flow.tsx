@@ -8,7 +8,6 @@ import nock from 'nock';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
-import { GUIDED_ONBOARDING_FLOW_REFERRER } from '../../../../signup/steps/initial-intent/constants';
 import { HOW_TO_MIGRATE_OPTIONS } from '../../constants';
 import { goToCheckout } from '../../utils/checkout';
 import { STEPS } from '../internals/steps';
@@ -265,28 +264,6 @@ describe( 'Site Migration Flow', () => {
 							siteSlug: 'example.wordpress.com',
 							siteId: 123,
 						},
-					} );
-				} );
-
-				it( 'redirects back to initial-intent flow when the ref is GUIDED_ONBOARDING_FLOW_REFERRER', () => {
-					jest.mocked( useFlowState ).mockReturnValue( {
-						get: jest.fn().mockReturnValue( { entryPoint: GUIDED_ONBOARDING_FLOW_REFERRER } ),
-						set: jest.fn(),
-						sessionId: '123',
-					} );
-
-					runNavigationBack( {
-						from: STEPS.SITE_MIGRATION_IDENTIFY,
-						dependencies: {},
-						query: {
-							siteSlug: 'example.wordpress.com',
-							siteId: 123,
-							ref: GUIDED_ONBOARDING_FLOW_REFERRER,
-						},
-					} );
-
-					expect( window.location.assign ).toMatchURL( {
-						path: '/start/initial-intent',
 					} );
 				} );
 			} );

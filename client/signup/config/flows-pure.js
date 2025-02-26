@@ -2,7 +2,6 @@ import { isEnabled } from '@automattic/calypso-config';
 import {
 	HOSTING_LP_FLOW,
 	ONBOARDING_FLOW,
-	ONBOARDING_GUIDED_FLOW,
 	DIFM_FLOW,
 	DIFM_FLOW_STORE,
 	WEBSITE_DESIGN_SERVICES,
@@ -49,7 +48,6 @@ export function generateFlows( {
 	getDIFMSiteContentCollectionDestination = noop,
 	getHostingFlowDestination = noop,
 	getEntrepreneurFlowDestination = noop,
-	getGuidedOnboardingFlowDestination = noop,
 } = {} ) {
 	const userSocialStep = getUserSocialStepOrFallback();
 	const p2Flows = getP2Flows();
@@ -151,17 +149,6 @@ export function generateFlows( {
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'plugin', 'billing_period' ],
-			hideProgressIndicator: true,
-		},
-		{
-			name: ONBOARDING_GUIDED_FLOW,
-			steps: [ userSocialStep, 'initial-intent', 'domains', 'plans' ],
-			destination: getGuidedOnboardingFlowDestination,
-			description: 'Choose what brings them to WordPress.com',
-			lastModified: '2024-06-19',
-			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'coupon' ],
-			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
 		},
 		{

@@ -24,7 +24,7 @@ const updateDesign: Flow = {
 	},
 	isSignupFlow: false,
 	useSteps() {
-		return [ STEPS.DESIGN_SETUP, STEPS.PROCESSING, STEPS.ERROR ];
+		return [ STEPS.DESIGN_SETUP, STEPS.DESIGN_SETUP_LEGACY, STEPS.PROCESSING, STEPS.ERROR ];
 	},
 	useSideEffect() {
 		const { setIntent } = useDispatch( ONBOARD_STORE );
@@ -80,6 +80,7 @@ const updateDesign: Flow = {
 					);
 
 				case 'designSetup':
+				case 'design-setup':
 					if ( providedDependencies?.goToCheckout ) {
 						const destination = `/setup/${ flowToReturnTo }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
 						persistSignupDestination( destination );
