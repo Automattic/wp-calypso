@@ -31,6 +31,36 @@ type Params = {
 	planCartItems?: MinimalRequestCartProduct[] | null;
 };
 
+async function fillCart(
+	siteSlug: string,
+	flowName: string,
+	userIsLoggedIn: boolean,
+	themeSlugWithRepo: string,
+	domainCartItems: MinimalRequestCartProduct[] | null | undefined,
+	planCartItems: MinimalRequestCartProduct[] | null | undefined
+) {
+	if ( siteSlug && planCartItems?.length ) {
+		for ( const planCartItem of planCartItems ) {
+			await addPlanToCart( siteSlug, flowName, true, themeSlugWithRepo, planCartItem );
+		}
+	}
+
+	const isFreeThemePreselected = themeSlugWithRepo.startsWith( 'pub' );
+
+	if ( domainCartItems?.length ) {
+		for ( const domainCartItem of domainCartItems ) {
+			await processItemCart(
+				siteSlug,
+				isFreeThemePreselected,
+				themeSlugWithRepo,
+				flowName,
+				userIsLoggedIn,
+				domainCartItem
+			);
+		}
+	}
+}
+
 export const createSite = async ( {
 	flowName,
 	userIsLoggedIn,
@@ -48,8 +78,6 @@ export const createSite = async ( {
 	siteIntent,
 	planCartItems,
 }: Params ) => {
-	const isFreeThemePreselected = themeSlugWithRepo.startsWith( 'pub' );
-
 	const newSiteParams = getNewSiteParams( {
 		flowToCheck: flowName,
 		isPurchasingDomainItem,
@@ -91,24 +119,14 @@ export const createSite = async ( {
 		goToCheckout: Boolean( planCartItems?.length ),
 	};
 
-	if ( siteSlug && planCartItems?.length ) {
-		for ( const planCartItem of planCartItems ) {
-			await addPlanToCart( siteSlug, flowName, true, themeSlugWithRepo, planCartItem );
-		}
-	}
-
-	if ( domainCartItems.length ) {
-		for ( const domainCartItem of domainCartItems ) {
-			await processItemCart(
-				siteSlug,
-				isFreeThemePreselected,
-				themeSlugWithRepo,
-				flowName,
-				userIsLoggedIn,
-				domainCartItem
-			);
-		}
-	}
+	await fillCart(
+		siteSlug,
+		flowName,
+		userIsLoggedIn,
+		themeSlugWithRepo,
+		domainCartItems,
+		planCartItems
+	);
 
 	return siteDetails;
 };
@@ -142,9 +160,21 @@ export const useCreateSite = () => {
 			theme: string;
 			siteIntent: string;
 			siteGoals?: SiteGoal[];
-		} ) =>
-			createdSite ||
-			createSite( {
+		} ) => {
+			if ( createdSite ) {
+				// If the site already exists, we need to fill the cart with the domain and plan items.
+				// Because the user may have changed their mind about the domain or plan.
+				await fillCart(
+					createdSite.siteSlug,
+					flowName,
+					userIsLoggedIn,
+					theme,
+					mergedDomainCartItems,
+					planCartItems
+				);
+				return createdSite;
+			}
+			return createSite( {
 				flowName,
 				userIsLoggedIn,
 				isPurchasingDomainItem: false,
@@ -162,7 +192,8 @@ export const useCreateSite = () => {
 				domainItem: domains?.domainItem,
 				siteIntent,
 				planCartItems,
-			} ),
+			} );
+		},
 		onSuccess: ( data ) => {
 			set( 'site', data );
 			return data;
