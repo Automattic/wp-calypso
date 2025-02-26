@@ -40,7 +40,7 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 
 	const [ mainChatState, setMainChatState ] = useState< Chat >( emptyChat );
 	const getZendeskConversation = useGetZendeskConversation();
-	const { data: odieChat, isLoading: isOdieChatLoading } = useOdieChat( Number( odieId ) );
+	const { data: odieChat, isFetching: isOdieChatLoading } = useOdieChat( Number( odieId ) );
 	const { startNewInteraction } = useManageSupportInteraction();
 	const { trackEvent } = useOdieAssistantContext();
 
@@ -110,13 +110,14 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 	] );
 
 	useEffect( () => {
-		setMainChatState( ( prevChat ) => ( {
-			...( prevChat.supportInteractionId !== currentSupportInteraction!.uuid
-				? emptyChat
-				: prevChat ),
-			supportInteractionId: currentSupportInteraction!.uuid,
-			status: 'loaded',
-		} ) );
+		setMainChatState( ( prevChat ) => {
+			const isSameInteraction = prevChat.supportInteractionId === currentSupportInteraction!.uuid;
+			return {
+				...( ! isSameInteraction ? emptyChat : prevChat ),
+				supportInteractionId: currentSupportInteraction!.uuid,
+				status: ! isSameInteraction ? 'loaded' : 'loading',
+			};
+		} );
 	}, [ currentSupportInteraction?.uuid ] );
 
 	return { mainChatState, setMainChatState };
