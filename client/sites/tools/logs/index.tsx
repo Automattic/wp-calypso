@@ -71,12 +71,8 @@ export const SiteLogsDataViews = ( {
 				return `${ phpLog.timestamp }-${ phpLog.file }-${ phpLog.line }`;
 			}
 
-			if ( logType === LogType.WEB ) {
-				const serverLog = item as ServerLog;
-				return `${ serverLog.date }-${ serverLog.request_time }-${ serverLog.body_bytes_sent }`;
-			}
-
-			return 'unknown';
+			const serverLog = item as ServerLog;
+			return `${ serverLog.date }-${ serverLog.request_time }-${ serverLog.body_bytes_sent }`;
 		},
 		[ logType ]
 	);
