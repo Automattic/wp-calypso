@@ -209,14 +209,19 @@ function VatForm( {
 						} )
 					}
 				</FormLabel>
-				<FormTextInput
-					name="vat"
-					disabled={ isUpdating || isVatAlreadySet }
-					value={ currentVatDetails.id ?? vatDetails.id ?? '' }
-					onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
-						setCurrentVatDetails( { ...currentVatDetails, id: event.target.value } )
-					}
-				/>
+				<InputWrapper isError={ updateError !== null }>
+					{ currentVatDetails?.country && (
+						<span className="vat-field__overlay-prefix">{ currentVatDetails.country }</span>
+					) }
+					<FormTextInput
+						name="vat"
+						disabled={ isUpdating || isVatAlreadySet }
+						value={ currentVatDetails.id ?? vatDetails.id ?? '' }
+						onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
+							setCurrentVatDetails( { ...currentVatDetails, id: event.target.value } )
+						}
+					/>
+				</InputWrapper>
 				{ isVatAlreadySet && (
 					<FormSettingExplanation>
 						{ translate(
@@ -404,6 +409,14 @@ function useRecordVatEvents( {
 			return;
 		}
 	}, [ fetchError, updateError, isUpdateSuccessful, reduxDispatch ] );
+}
+
+function InputWrapper( { isError, children }: { isError: boolean; children: React.ReactNode } ) {
+	return (
+		<div className={ isError ? 'vat-form__field-wrapper--isError' : 'vat-form__field-wrapper' }>
+			{ children }
+		</div>
+	);
 }
 
 function LoadingPlaceholder() {

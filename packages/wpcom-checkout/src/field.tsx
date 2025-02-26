@@ -1,5 +1,6 @@
 import { Button } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
+import { VatDetails } from './types';
 import type { ReactNode } from 'react';
 
 // Disabling this to make migrating files easier
@@ -22,6 +23,7 @@ export default function Field( {
 	errorMessage,
 	autoComplete,
 	disabled,
+	vatDetails,
 }: {
 	type?: string;
 	id: string;
@@ -40,6 +42,7 @@ export default function Field( {
 	errorMessage?: ReactNode;
 	autoComplete?: string;
 	disabled?: boolean;
+	vatDetails?: VatDetails;
 } ) {
 	const fieldOnChange = ( event: { target: { value: string } } ) => {
 		if ( onChange ) {
@@ -61,7 +64,8 @@ export default function Field( {
 				</Label>
 			) }
 
-			<InputWrapper>
+			<InputWrapper isError={ isError }>
+				{ vatDetails && <span className="vat-field__overlay-prefix">{ vatDetails?.country }</span> }
 				<Input
 					className={ inputClassName }
 					id={ id }
@@ -75,6 +79,7 @@ export default function Field( {
 					isError={ isError }
 					autoComplete={ autoComplete }
 					disabled={ disabled }
+					country={ vatDetails?.country ?? '' }
 				/>
 				<RenderedIcon icon={ icon } iconAction={ iconAction } isIconVisible={ isIconVisible } />
 			</InputWrapper>
@@ -102,25 +107,15 @@ const Label = styled.label< { disabled?: boolean } >`
 const Input = styled.input< {
 	isError?: boolean;
 	icon?: ReactNode;
+	country?: string;
 } >`
-	display: block;
-	width: 100%;
+	flex: 1;
 	box-sizing: border-box;
 	border: 1px solid
 		${ ( props ) => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor ) };
-	padding: 7px ${ ( props ) => ( props.icon ? '60px' : '10px' ) } 7px 10px;
 	line-height: 1.5;
 	font-size: 14px;
-
-	.rtl & {
-		padding: 7px 10px 7px ${ ( props ) => ( props.icon ? '60px' : '10px' ) };
-	}
-
-	:focus {
-		outline: ${ ( props ) =>
-				props.isError ? props.theme.colors.error : props.theme.colors.outline }
-			solid 2px !important;
-	}
+	padding: 7px;
 
 	::-webkit-inner-spin-button,
 	::-webkit-outer-spin-button {
@@ -142,32 +137,26 @@ const Input = styled.input< {
 	}
 `;
 
-const InputWrapper = styled.div`
+const InputWrapper = styled.div< { isError?: boolean } >`
 	position: relative;
+	display: flex;
+	align-items: center;
+	border-radius: 3px;
+	:focus-within {
+		outline: ${ ( props ) =>
+				props.isError ? props.theme.colors.error : props.theme.colors.outline }
+			solid 2px;
+	}
 `;
 
 const FieldIcon = styled.div`
-	position: absolute;
-	top: 50%;
-	transform: translateY( -50% );
-	right: 10px;
-
-	.rtl & {
-		right: auto;
-		left: 10px;
-	}
+	flex: 0 0 auto;
+	white-space: nowrap;
 `;
 
 const ButtonIcon = styled.div`
-	position: absolute;
-	top: 0;
-	right: 0;
-
-	.rtl & {
-		right: auto;
-		left: 0;
-	}
-
+	flex: 0 0 auto;
+	white-space: nowrap;
 	button {
 		border: 1px solid transparent;
 		box-shadow: none;

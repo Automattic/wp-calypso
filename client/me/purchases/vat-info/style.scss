@@ -4,7 +4,7 @@
 	}
 	.vat-info__form-placeholder {
 		animation: pulse-light 1.8s ease-in-out infinite;
-		background-color: var(--color-neutral-10);
+		background-color: var( --color-neutral-10 );
 		height: 24px;
 		width: 100%;
 		margin-bottom: 16px;
@@ -26,4 +26,60 @@
 
 .vat-info__country-select {
 	width: 100%;
+}
+
+.vat-form__field-wrapper {
+	display: flex;
+	border-radius: 3px;
+
+	&:focus-within {
+		box-shadow: 0 0 0 2px var(--color-primary-20);
+		outline: 1px solid var(--color-primary);
+
+		& > .vat-field__overlay-prefix {
+			border-top-color: transparent;
+			border-left-color: transparent;
+			border-bottom-color: transparent;
+		}
+
+		& > input[type="text"].form-text-input {
+			border: none;
+		}
+	}
+
+	&--isError {
+		outline: 2px solid var( --color-red-50 );
+	}
+
+	& > .vat-field__overlay-prefix {
+		flex: 0 0 auto;
+		white-space: nowrap;
+		line-height: 1.5;
+		font-size: 0.875rem;
+		color: var( --color-neutral-70 );
+		box-sizing: border-box;
+		padding: 7px 10px;
+		border: 1px solid var( --color-neutral-30 );
+		border-radius: 3px 0 0 3px;
+	}
+
+	input[type="text"].form-text-input {
+		flex: 1;
+		border-radius: 3px;
+		padding: 7px 10px;
+		border-color: var(--color-neutral-20);
+
+		&:focus {
+			box-shadow: none !important;
+			border-color: var(--color-neutral-20);
+		}
+	  }
+
+	  & > .vat-field__overlay-prefix + input[type="text"].form-text-input {
+		border-start-start-radius: 0;
+		border-start-end-radius: 3px;
+		border-end-end-radius: 3px;
+		border-end-start-radius: 0;
+		border-left: none;
+	  }
 }
