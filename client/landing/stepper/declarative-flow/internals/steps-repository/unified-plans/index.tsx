@@ -40,7 +40,7 @@ import type { PlansIntent } from '@automattic/plans-grid-next';
 import './style.scss';
 
 /**
- * Copied from /plans
+ * Copied from steps-repository/plans (which should be removed)
  */
 function getPlansIntent( flowName: string | null, isWordCampPromo?: boolean ): PlansIntent | null {
 	switch ( flowName ) {
