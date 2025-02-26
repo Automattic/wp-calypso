@@ -1850,6 +1850,7 @@ __metadata:
     "@wordpress/element": "npm:^6.18.0"
     "@wordpress/i18n": "npm:^5.17.0"
     "@wordpress/icons": "npm:^10.17.0"
+    "@wordpress/router": "npm:^1.16.0"
     clsx: "npm:^2.1.1"
     copyfiles: "npm:^2.4.1"
     postcss: "npm:^8.4.5"

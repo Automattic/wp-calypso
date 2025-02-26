@@ -1,0 +1,41 @@
+.edit-site-sidebar-navigation-item.components-item {
+	color: $gray-600;
+	// 6px right padding to align with + button
+	padding: $grid-unit-10 6px $grid-unit-10 $grid-unit-20;
+	border: none;
+	min-height: $grid-unit-50;
+
+	&:hover,
+	&:focus,
+	&[aria-current="true"] {
+		color: $gray-200;
+
+		.edit-site-sidebar-navigation-item__drilldown-indicator {
+			fill: $gray-200;
+		}
+	}
+
+	&[aria-current="true"] {
+		background: $gray-800;
+		color: $white;
+		font-weight: $font-weight-medium;
+	}
+
+	// Make sure the focus style is drawn on top of the current item background.
+	&:focus-visible {
+		transform: translateZ(0);
+	}
+
+	.edit-site-sidebar-navigation-item__drilldown-indicator {
+		fill: $gray-600;
+	}
+
+	&.with-suffix {
+		padding-right: $grid-unit-20;
+	}
+}
+
+.edit-site-sidebar-navigation-screen__content .block-editor-list-view-block-select-button {
+	cursor: grab;
+	padding: $grid-unit-10 $grid-unit-10 $grid-unit-10 0;
+}
