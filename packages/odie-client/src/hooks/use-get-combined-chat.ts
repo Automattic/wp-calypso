@@ -65,12 +65,17 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 						conversationId: conversationId.toString(),
 					} )?.then( ( conversation ) => {
 						if ( conversation ) {
+							const filteredOdieMessages =
+								odieChat?.messages.filter(
+									( message ) => ! message.context?.flags?.forward_to_human_support
+								) ?? [];
+
 							setMainChatState( {
 								...( odieChat ? odieChat : {} ),
 								supportInteractionId: currentSupportInteraction!.uuid,
 								conversationId: conversation.id,
 								messages: [
-									...( odieChat ? odieChat.messages : [] ),
+									...( odieChat ? filteredOdieMessages : [] ),
 									...( odieChat ? ODIE_TRANSFER_MESSAGE : [] ),
 									...( conversation.messages as Message[] ),
 								],
