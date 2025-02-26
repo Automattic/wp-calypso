@@ -33,7 +33,7 @@ describe( 'usePreloadSteps', () => {
 	];
 
 	// Mock flow
-	const mockFlow = { id: 'test-flow' };
+	const mockFlow = { name: 'test-flow' };
 
 	beforeEach( () => {
 		jest.clearAllMocks();
