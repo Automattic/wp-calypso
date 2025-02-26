@@ -31,8 +31,8 @@ function StatsLineChart( {
 
 	const formatTime = formatTimeTick
 		? formatTimeTick
-		: ( value: number ) => {
-				const date = new Date( value );
+		: ( timestamp: number ) => {
+				const date = new Date( timestamp );
 				return date.toLocaleDateString( undefined, {
 					month: 'short',
 					day: 'numeric',
@@ -40,7 +40,7 @@ function StatsLineChart( {
 		  };
 
 	const formatValue = ( value: number ) => {
-		return value.toFixed( 0 ).toString();
+		return value.toFixed( 0 );
 	};
 
 	const isEmpty = ( chartData?.[ 0 ].data || [] ).length === 0;
@@ -68,7 +68,12 @@ function StatsLineChart( {
 						withTooltips
 						withGradientFill
 						height={ height }
-						margin={ { left: 15, top: 20, bottom: 20 } }
+						margin={ {
+							left: 15,
+							top: 20,
+							bottom: 20,
+							right: Math.max( maxValue.toFixed().length * 10, 40 ),
+						} }
 						options={ {
 							yScale: {
 								type: 'linear',
