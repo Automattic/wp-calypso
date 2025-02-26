@@ -5,9 +5,7 @@ import {
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
 } from '@automattic/calypso-products';
-import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { useGoalsFirstCumulativeExperience } from 'calypso/data/experiment/use-goals-first-cumulative-experience';
 import PlanItem from './plan-item';
 import { RowWithBorder } from '.';
 
@@ -28,42 +26,27 @@ export default function SuggestedPlanSection( {
 	onPlanSelected,
 }: Props ) {
 	const translate = useTranslate();
-	const hasEnTranslation = useHasEnTranslation();
-	const [ , shouldUseNewCopy ] = useGoalsFirstCumulativeExperience();
 
 	const suggestedPlans = [
 		{
 			planSlug: PLAN_PERSONAL,
-			description:
-				hasEnTranslation( 'Free one-year domain and some premium themes' ) && shouldUseNewCopy
-					? translate( 'Free one-year domain and some premium themes' )
-					: translate( 'Domain credit, some premium themes' ),
+			description: translate( 'Free one-year domain and some premium themes' ),
 			disabled: hidePersonalPlan,
 		},
 		{
 			planSlug: PLAN_PREMIUM,
-			description:
-				hasEnTranslation( 'Free one-year domain and all premium themes' ) && shouldUseNewCopy
-					? translate( 'Free one-year domain and all premium themes' )
-					: translate( 'Domain credit, all premium themes' ),
+			description: translate( 'Free one-year domain and all premium themes' ),
 			disabled: hidePremiumPlan,
 		},
 		{
 			planSlug: PLAN_BUSINESS,
-			description:
-				hasEnTranslation( 'Free one-year domain, plugins, and all premium themes' ) &&
-				shouldUseNewCopy
-					? translate( 'Free one-year domain, plugins, and all premium themes' )
-					: translate( 'Domain credit, plugins, all premium themes' ),
+			description: translate( 'Free one-year domain, plugins, and all premium themes' ),
 		},
 		{
 			planSlug: PLAN_ECOMMERCE,
-			description:
-				hasEnTranslation(
-					'Free one-year domain, plugins, all premium and store themes, WooCommerce'
-				) && shouldUseNewCopy
-					? translate( 'Free one-year domain, plugins, all premium and store themes, WooCommerce' )
-					: translate( 'Domain credit, plugins, all premium and store themes, WooCommerce' ),
+			description: translate(
+				'Free one-year domain, plugins, all premium and store themes, WooCommerce'
+			),
 		},
 	];
 
