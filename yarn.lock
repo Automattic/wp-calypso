@@ -21280,7 +21280,6 @@ __metadata:
     debug: "npm:^4.3.3"
     events: "npm:^3.0.0"
     hash.js: "npm:^1.1.5"
-    lodash: "npm:^4.17.21"
     lru: "npm:^3.1.0"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
