@@ -10,6 +10,19 @@ import { useWaitForAtomic } from '../../../../hooks/use-wait-for-atomic';
 import type { Step } from '../../types';
 import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
 
+const usePluginByGoal = () => {
+	const intent = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
+		[]
+	);
+
+	if ( intent === SiteIntent.CreateCourseGoal ) {
+		return 'sensei-lms';
+	}
+
+	return null;
+};
+
 const PostCheckoutOnboarding: Step = ( { navigation } ) => {
 	const { submit } = navigation;
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
@@ -17,11 +30,6 @@ const PostCheckoutOnboarding: Step = ( { navigation } ) => {
 
 	const selectedDesign = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
-		[]
-	);
-
-	const intent = useSelect(
-		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 		[]
 	);
 
@@ -55,8 +63,21 @@ const PostCheckoutOnboarding: Step = ( { navigation } ) => {
 		await waitForLatestSiteData();
 	};
 
-	const hasPluginByGoal = intent === SiteIntent.CreateCourseGoal;
+	const pluginByGoal = usePluginByGoal();
+	const hasPluginByGoal = !! pluginByGoal;
 
+	/**
+	 * If an externally managed theme is selected, we need to check the following:
+	 * - Ensure the theme is available. If it's not, we do nothing, as the user may remove the theme product during checkout.
+	 * - Verify that the site is atomic, as the theme should be installed on the user's site.
+	 *
+	 * The atomic transfer will be initiated immediately after the user purchases an externally managed theme.
+	 * If it’s not initiated, we need to trigger the atomic transfer manually.
+	 *
+	 * Note that an externally managed theme is only available when both of the following conditions are met:
+	 * - The site must be subscribed to the theme.
+	 * - The site must be eligible for managed external themes.
+	 */
 	const hasExternalTheme =
 		selectedDesign?.is_externally_managed &&
 		isMarketplaceThemeSubscribed &&
@@ -83,22 +104,10 @@ const PostCheckoutOnboarding: Step = ( { navigation } ) => {
 				return providedDependencies;
 			}
 
-			/**
-			 * If an externally managed theme is selected, we need to check the following:
-			 * - Ensure the theme is available. If it's not, we do nothing, as the user may remove the theme product during checkout.
-			 * - Verify that the site is atomic, as the theme should be installed on the user's site.
-			 *
-			 * The atomic transfer will be initiated immediately after the user purchases an externally managed theme.
-			 * If it’s not initiated, we need to trigger the atomic transfer manually.
-			 *
-			 * Note that an externally managed theme is only available when both of the following conditions are met:
-			 * - The site must be subscribed to the theme.
-			 * - The site must be eligible for managed external themes.
-			 */
 			if ( siteTransferStatusData?.isTransferring ) {
 				await waitForAtomic();
 			} else if ( hasExternalTheme || hasPluginByGoal ) {
-				await waitForInitiateTransfer( 'sensei-lms' );
+				await waitForInitiateTransfer( pluginByGoal );
 				await waitForAtomic();
 			}
 

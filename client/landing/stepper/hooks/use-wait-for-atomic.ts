@@ -54,7 +54,7 @@ export const useWaitForAtomic = ( {
 		[]
 	);
 
-	const waitForInitiateTransfer = async ( plugin?: string ) => {
+	const waitForInitiateTransfer = async ( plugin?: string | null ) => {
 		const initiateTransferContext = searchParams.get( 'initiate_transfer_context' );
 		if ( ! initiateTransferContext && ! plugin ) {
 			return;
