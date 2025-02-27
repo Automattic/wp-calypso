@@ -30,6 +30,23 @@
 		color: var( --color-text-subtle );
 	}
 
+	&__success-message {
+		padding-left: 5px;
+		color: rgb( 0, 128, 0 );
+		display: flex;
+		align-items: center;
+		opacity: 0;
+		transition: opacity 0.3s ease-in-out;
+
+		&.is-visible {
+			opacity: 1;
+		}
+
+		p {
+			margin: 0;
+		}
+	}
+
     .verbum-editor-wrapper {
         .editor__header {
             border-color: var(--color-border-subtle);

@@ -428,6 +428,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const getBadge = ( themeId: string, isLockedStyleVariation: boolean ) => (
 		<ThemeTierBadge
 			canGoToCheckout={ false }
+			isThemeList
 			isLockedStyleVariation={ isLockedStyleVariation }
 			themeId={ themeId }
 		/>
@@ -902,10 +903,17 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		navigate( `/setup/site-setup/launch-big-sky?siteSlug=${ siteSlug }&siteId=${ site?.ID }` );
 	}
 
+	// Use this to prioritize themes in certain categories.
+	// The specified theme will be shown first in the list.
+	const priorityThemes: Record< string, string > = {
+		education: 'course',
+	};
+
 	const stepContent = (
 		<>
 			<UnifiedDesignPicker
 				designs={ designs }
+				priorityThemes={ priorityThemes }
 				locale={ locale }
 				onDesignWithAI={ onDesignWithAI }
 				onPreview={ previewDesign }

@@ -8,7 +8,6 @@ import {
 	createSiteWithCart,
 	isCopySiteFlow,
 	isDesignFirstFlow,
-	isFreeFlow,
 	isImportFocusedFlow,
 	isMigrationSignupFlow,
 	isStartWritingFlow,
@@ -152,7 +151,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	if (
 		isOnboardingFlow( flow ) ||
 		isCopySiteFlow( flow ) ||
-		isFreeFlow( flow ) ||
 		isImportFocusedFlow( flow ) ||
 		isBlogOnboardingFlow( flow ) ||
 		isNewHostedSiteCreationFlow( flow ) ||

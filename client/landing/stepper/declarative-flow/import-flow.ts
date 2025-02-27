@@ -12,6 +12,7 @@ import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-pa
 import { ONBOARD_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
 import { ImporterMainPlatform } from 'calypso/lib/importer/types';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
+import { useRedirectDesignSetupOldSlug } from './helpers/use-redirect-design-setup-old-slug';
 import { STEPS } from './internals/steps';
 import {
 	AssertConditionState,
@@ -116,6 +117,8 @@ const importFlow: Flow = {
 			);
 		};
 
+		useRedirectDesignSetupOldSlug( _currentStep, navigate );
+
 		const submit = ( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) => {
 			switch ( _currentStep ) {
 				case 'importList':
@@ -169,7 +172,6 @@ const importFlow: Flow = {
 					}
 				}
 
-				case 'designSetup':
 				case 'design-setup': {
 					return navigate( 'processing' );
 				}
@@ -306,7 +308,6 @@ const importFlow: Flow = {
 				case 'importReadyNot':
 				case 'importReadyWpcom':
 				case 'importReadyPreview':
-				case 'designSetup':
 				case 'design-setup':
 					return navigate( `import?siteSlug=${ siteSlugParam }` );
 

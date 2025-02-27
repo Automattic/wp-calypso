@@ -92,7 +92,7 @@ async function main() {
 	const flowName = getFlowFromURL();
 	const flowLoader = availableFlows[ flowName ];
 
-	if ( ! flowLoader ) {
+	if ( typeof flowLoader !== 'function' ) {
 		// If the URL can't be traced back to an existing flow, stop the boot
 		// process and redirect to the default flow.
 		window.location.href = `/setup/${ DEFAULT_FLOW }${ window.location.search }`;
