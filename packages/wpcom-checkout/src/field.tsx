@@ -1,6 +1,5 @@
 import { Button } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
-import { VatDetails } from './types';
 import type { ReactNode } from 'react';
 
 // Disabling this to make migrating files easier
@@ -23,7 +22,6 @@ export default function Field( {
 	errorMessage,
 	autoComplete,
 	disabled,
-	vatDetails,
 	prefix,
 }: {
 	type?: string;
@@ -43,7 +41,6 @@ export default function Field( {
 	errorMessage?: ReactNode;
 	autoComplete?: string;
 	disabled?: boolean;
-	vatDetails?: VatDetails;
 	prefix?: ReactNode;
 } ) {
 	const fieldOnChange = ( event: { target: { value: string } } ) => {
@@ -81,7 +78,6 @@ export default function Field( {
 					isError={ isError }
 					autoComplete={ autoComplete }
 					disabled={ disabled }
-					country={ vatDetails?.country ?? '' }
 				/>
 				<RenderedIcon icon={ icon } iconAction={ iconAction } isIconVisible={ isIconVisible } />
 			</InputWrapper>
@@ -109,7 +105,6 @@ const Label = styled.label< { disabled?: boolean } >`
 const Input = styled.input< {
 	isError?: boolean;
 	icon?: ReactNode;
-	country?: string;
 } >`
 	flex: 1;
 	box-sizing: border-box;
