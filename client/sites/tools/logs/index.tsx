@@ -38,7 +38,7 @@ import {
 	getVisibleFields,
 	getFilterValue,
 } from './hooks/use-view';
-import type { View, Action } from '@wordpress/dataviews';
+import type { View, Action, Filter } from '@wordpress/dataviews';
 import type { Moment } from 'moment';
 import './style.scss';
 
@@ -168,15 +168,46 @@ export const SiteLogsDataViews = ( {
 
 			// Handle URL changes.
 			const url = new URL( window.location.href );
-			const filterNames = [ 'severity', 'request_type', 'status', 'renderer', 'cached' ];
-			filterNames.forEach( ( filterName ) => {
-				url.searchParams.delete( filterName );
-			} );
-			newView.filters?.forEach( ( filter ) => {
-				if ( filterNames.includes( filter.field ) && filter.value.length > 0 ) {
-					url.searchParams.set( filter.field, filter.value.sort().toString() );
+			const isEmpty = ( filter: Filter | undefined ) =>
+				! filter || ! filter?.value || filter?.value.length === 0;
+			[ 'severity', 'request_type', 'status', 'renderer', 'cached' ].forEach( ( filterField ) => {
+				const filter = newView.filters?.find( ( f ) => f.field === filterField );
+
+				// Use cases to cover:
+				//
+				// 1. URL doesn't have the filter and the filter is empty. Do nothing.
+				// 2. URL doesn't have the filter and the filter is not empty. Update URL param.
+				// 3. URL has the filter and the filter is the same as before. Do nothing.
+				// 4. URL has the filter and the filter is different from before. Update URL param.
+				// 5. URL has the filter and the filter is empty. Remove URL param.
+
+				if ( ! url.searchParams.has( filterField ) && isEmpty( filter ) ) {
+					return;
+				}
+
+				if ( ! url.searchParams.has( filterField ) && ! isEmpty( filter ) ) {
+					url.searchParams.set( filterField, filter?.value.sort().toString() );
+				}
+
+				if (
+					url.searchParams.has( filterField ) &&
+					url.searchParams.get( filterField ) === filter?.value.sort().toString()
+				) {
+					return;
+				}
+
+				if (
+					url.searchParams.has( filterField ) &&
+					url.searchParams.get( filterField ) !== filter?.value.sort().toString()
+				) {
+					url.searchParams.set( filterField, filter?.value.sort().toString() );
+				}
+
+				if ( url.searchParams.has( filterField ) && isEmpty( filter ) ) {
+					url.searchParams.delete( filterField );
 				}
 			} );
+
 			page.replace( url.pathname + url.search );
 		},
 		[ autoRefresh, setAutoRefresh, oldSeverity, view.page, setView, dispatch ]
