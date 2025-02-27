@@ -7,11 +7,14 @@ import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import React from 'react';
 import { useTransferWithSoftwareStatus } from '../use-transfer-with-software-status-query';
+import { replyWithError } from './helpers/nock';
 
 // Mock wpcom
 jest.mock( '@automattic/calypso-config', () => ( {
 	isEnabled: jest.fn(),
 } ) );
+
+const installationWithGenericError = replyWithError( { error: 'any generic error' } );
 
 describe( 'useTransferWithSoftwareStatus', () => {
 	beforeAll( () => nock.disableNetConnect() );
@@ -65,7 +68,7 @@ describe( 'useTransferWithSoftwareStatus', () => {
 		);
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/sites/123/atomic/transfer-with-software/456' )
-			.replyWithError( { message: 'API Error' } );
+			.reply( installationWithGenericError );
 
 		const { result } = renderHook( () => useTransferWithSoftwareStatus( 123, 456 ), { wrapper } );
 
