@@ -60,3 +60,14 @@ export const appendQueryStringForRedirection = ( pathname, query = {} ) => {
 
 	return `${ pathname }${ queryString ? '?' : '' }${ queryString }`;
 };
+
+/**
+ * Parse a date string into a Date object
+ * @param {string} dateString
+ * @returns
+ */
+export const parseLocalDate = ( dateString ) => {
+	const [ year, month, day ] = dateString.substring( 0, 10 ).split( '-' ).map( Number );
+	// Note: month is 0-indexed in JavaScript Date
+	return new Date( year, month - 1, day );
+};
