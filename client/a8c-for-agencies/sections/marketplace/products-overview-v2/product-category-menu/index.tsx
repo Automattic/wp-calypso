@@ -4,7 +4,7 @@ import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import A4ACarousel from 'calypso/a8c-for-agencies/components/a4a-carousel';
 import { PRODUCT_FILTER_KEY_CATEGORIES } from '../../constants';
-import useProductFilterOptions from '../../products-overview/product-filter/hooks/use-product-filter-options';
+import useProductFilterOptions from '../product-filter/hooks/use-product-filter-options';
 
 import './style.scss';
 

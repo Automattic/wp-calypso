@@ -1,7 +1,6 @@
 import { Dialog, FormInputValidation, FormLabel, FoldableCard } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
 import { ToggleControl } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { formatCurrency, useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useState, useEffect, useMemo } from 'react';
 import CountedTextArea from 'calypso/components/forms/counted-textarea';
 import FormCurrencyInput from 'calypso/components/forms/form-currency-input';

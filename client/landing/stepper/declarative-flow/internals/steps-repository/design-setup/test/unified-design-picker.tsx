@@ -101,7 +101,7 @@ const renderComponent = ( component, initialState = {} ) => {
 		...initialState,
 	} );
 
-	const initialEntries = [ `/setup/site-setup/designSetup?siteSlug=test.wordpress.com` ];
+	const initialEntries = [ `/setup/site-setup/design-setup?siteSlug=test.wordpress.com` ];
 
 	return render(
 		<Provider store={ store }>

@@ -60,6 +60,7 @@
 		top: 24px;
 		left: 24px;
 		right: 24px;
+		bottom: 24px;
 		width: calc(100% - 46px); /* IE11 fix */
 	}
 }
@@ -94,6 +95,20 @@
 .web-preview__edit-header-link.button {
 	padding: 6px 16px;
 	line-height: 34px;
+	color: var(--color-primary);
+	border-radius: 0;
+
+	@include break-large {
+		padding: 6px 32px;
+	}
+
+	&:hover {
+		color: var(--color-accent);
+	}
+}
+
+.web-preview__loading-spinner.button {
+	padding: 6px 16px;
 	color: var(--color-primary);
 	border-radius: 0;
 

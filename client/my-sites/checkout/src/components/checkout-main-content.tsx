@@ -22,7 +22,6 @@ import {
 	useTransactionStatus,
 	TransactionStatus,
 } from '@automattic/composite-checkout';
-import { formatCurrency } from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	styled,
@@ -33,7 +32,7 @@ import {
 import { keyframes } from '@emotion/react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
-import { useTranslate } from 'i18n-calypso';
+import { formatCurrency, useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import Loading from 'calypso/components/loading';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';

@@ -164,7 +164,7 @@ const SitePerformanceContent = () => {
 	const onLaunchSiteClick = () => {
 		if ( site?.is_a4a_dev_site ) {
 			recordTracksEvent( 'calypso_performance_profiler_prepare_launch_cta_click' );
-			page( `/settings/general/${ site.slug }` );
+			page( `/sites/settings/site/${ site.slug }` );
 			return;
 		}
 		dispatch( launchSite( siteId! ) );

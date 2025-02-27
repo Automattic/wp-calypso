@@ -34,21 +34,29 @@ export const transferStates = {
 
 interface UseWaitForAtomicProps {
 	handleTransferFailure?: ( failureInfo: FailureInfo ) => void;
+	siteId?: number;
 }
 
-export const useWaitForAtomic = ( { handleTransferFailure }: UseWaitForAtomicProps = {} ) => {
+export const useWaitForAtomic = ( {
+	handleTransferFailure,
+	siteId: providedSiteId,
+}: UseWaitForAtomicProps ) => {
 	const [ searchParams ] = useSearchParams();
 	const reduxDispatch = useReduxDispatch();
-	const { siteId } = useSiteData();
+
+	const { siteId: hookSiteId } = useSiteData();
+	// Use provided siteId if available, otherwise fall back to hookSiteId
+	const siteId = providedSiteId || hookSiteId;
+
 	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
 	const { getSiteLatestAtomicTransfer, getSiteLatestAtomicTransferError } = useSelect(
 		( select ) => select( SITE_STORE ) as SiteSelect,
 		[]
 	);
 
-	const waitForInitiateTransfer = async () => {
+	const waitForInitiateTransfer = async ( plugin?: string | null ) => {
 		const initiateTransferContext = searchParams.get( 'initiate_transfer_context' );
-		if ( ! initiateTransferContext ) {
+		if ( ! initiateTransferContext && ! plugin ) {
 			return;
 		}
 
@@ -56,9 +64,9 @@ export const useWaitForAtomic = ( { handleTransferFailure }: UseWaitForAtomicPro
 			initiateThemeTransfer(
 				siteId,
 				null,
-				'',
+				plugin || '',
 				searchParams.get( 'initiate_transfer_geo_affinity' ) || '',
-				initiateTransferContext
+				initiateTransferContext || 'onboarding'
 			)
 		);
 	};

@@ -7,8 +7,7 @@ import {
 	PLAN_MONTHLY_PERIOD,
 	PLAN_TRIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
-import { formatCurrency } from '@automattic/format-currency';
-import { useTranslate } from 'i18n-calypso';
+import { formatCurrency, useTranslate } from 'i18n-calypso';
 import {
 	isIncludedWithPlan,
 	isOneTimePurchase,

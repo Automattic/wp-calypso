@@ -190,10 +190,6 @@ body.is-section-plugins.theme-default.color-scheme {
 	margin-bottom: 16px;
 }
 
-.plugins__plugin-list-state {
-	white-space: nowrap;
-}
-
 .plugins__main-header {
 	background: var(--color-surface);
 	flex-direction: column;
@@ -598,7 +594,7 @@ body.is-section-plugins #primary {
 	}
 }
 
-.plugin-management-wrapper.is-bulk-plugin-management {
+.plugin-management-wrapper {
   .plugins__top-container-jc {
       padding: 4px 0 0;
 

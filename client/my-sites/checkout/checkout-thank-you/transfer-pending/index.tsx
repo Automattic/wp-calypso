@@ -42,7 +42,7 @@ const TransferPending: React.FunctionComponent< Props > = ( props ) => {
 	 * Completion progress: 0 <= progress <= 100
 	 */
 	const progress = ( ( currentStep + 1 ) / totalSteps ) * 100;
-	const isComplete = progress >= 1;
+	const isComplete = progress >= 100;
 
 	useInterval(
 		() => setCurrentStep( ( s ) => s + 1 ),

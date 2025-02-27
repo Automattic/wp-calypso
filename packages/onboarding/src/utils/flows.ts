@@ -1,6 +1,5 @@
 export const ACCOUNT_FLOW = 'account';
 export const NEWSLETTER_FLOW = 'newsletter';
-export const NEWSLETTER_POST_SETUP_FLOW = 'newsletter-post-setup';
 export const HOSTING_LP_FLOW = 'hosting-start';
 export const NEW_HOSTED_SITE_FLOW = 'new-hosted-site';
 export const NEW_HOSTED_SITE_FLOW_USER_INCLUDED = 'new-hosted-site-user-included';
@@ -10,7 +9,6 @@ export const IMPORT_FOCUSED_FLOW = 'import-focused';
 export const IMPORT_HOSTED_SITE_FLOW = 'import-hosted-site';
 export const ENTREPRENEUR_FLOW = 'entrepreneur';
 export const FREE_FLOW = 'free';
-export const FREE_POST_SETUP_FLOW = 'free-post-setup';
 export const SITE_MIGRATION_FLOW = 'site-migration';
 export const MIGRATION_SIGNUP_FLOW = 'migration-signup';
 export const HOSTED_SITE_MIGRATION_FLOW = 'hosted-site-migration';
@@ -37,16 +35,12 @@ export const REBLOGGING_FLOW = 'reblogging';
 export const DOMAIN_FOR_GRAVATAR_FLOW = 'domain-for-gravatar';
 export const ONBOARDING_FLOW = 'onboarding';
 export const EXAMPLE_FLOW = 'example';
-export const ONBOARDING_GUIDED_FLOW = '__disabled_onboarding';
+export const DIFM_FLOW = 'do-it-for-me';
+export const DIFM_FLOW_STORE = 'do-it-for-me-store';
+export const WEBSITE_DESIGN_SERVICES = 'website-design-services';
 
 export const isNewsletterFlow = ( flowName: string | null ) => {
-	return Boolean(
-		flowName && [ NEWSLETTER_FLOW, NEWSLETTER_POST_SETUP_FLOW ].includes( flowName )
-	);
-};
-
-export const isFreeFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ FREE_POST_SETUP_FLOW ].includes( flowName ) );
+	return Boolean( flowName && NEWSLETTER_FLOW === flowName );
 };
 
 export const isTailoredSignupFlow = ( flowName: string | null ) => {
@@ -134,10 +128,6 @@ export const isOnboardingFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ ONBOARDING_FLOW ].includes( flowName ) );
 };
 
-export const isOnboardingGuidedFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ ONBOARDING_GUIDED_FLOW ].includes( flowName ) );
-};
-
 export const isDomainUpsellFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ DOMAIN_UPSELL_FLOW ].includes( flowName ) );
 };
@@ -175,4 +165,10 @@ export const isHundredYearPlanFlow = ( flowName: string | null | undefined ) => 
 
 export const isHundredYearDomainFlow = ( flowName: string | null | undefined ) => {
 	return Boolean( flowName && [ HUNDRED_YEAR_DOMAIN_FLOW ].includes( flowName ) );
+};
+
+export const isDIFMFlow = ( flowName: string | null ) => {
+	return Boolean(
+		flowName && [ DIFM_FLOW, DIFM_FLOW_STORE, WEBSITE_DESIGN_SERVICES ].includes( flowName )
+	);
 };

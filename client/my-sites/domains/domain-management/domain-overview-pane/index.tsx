@@ -11,7 +11,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 import * as paths from 'calypso/my-sites/domains/paths';
 import SiteIcon from 'calypso/sites/components/sites-dataviews/site-icon';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
-import { getQueryParams } from '../dataviews/query-params';
+import { QueryParams } from '../dataviews/query-params';
 import {
 	FEATURE_TO_ROUTE_MAP,
 	DOMAIN_OVERVIEW,
@@ -32,6 +32,7 @@ interface Props {
 	siteSlug: string;
 	site: SiteExcerptData;
 	inSiteContext?: boolean;
+	queryParams: QueryParams;
 }
 
 export function showDomainManagementPage( route: string ) {
@@ -67,6 +68,7 @@ const DomainOverviewPane = ( {
 	siteSlug,
 	site,
 	inSiteContext,
+	queryParams,
 }: Props ) => {
 	const itemData: ItemData = {
 		title: selectedDomain,
@@ -136,7 +138,7 @@ const DomainOverviewPane = ( {
 								.replace( ':domain', selectedDomain )
 								.replace( ':site', siteSlug );
 
-							showDomainManagementPage( addQueryArgs( getQueryParams(), featureUrl ) );
+							showDomainManagementPage( addQueryArgs( queryParams, featureUrl ) );
 						}
 					},
 				},
@@ -144,7 +146,14 @@ const DomainOverviewPane = ( {
 				preview: enabled ? selectedDomainPreview : null,
 			};
 		} );
-	}, [ selectedFeature, selectedDomainPreview, inSiteContext, selectedDomain, siteSlug ] );
+	}, [
+		selectedFeature,
+		selectedDomainPreview,
+		inSiteContext,
+		selectedDomain,
+		siteSlug,
+		queryParams,
+	] );
 
 	const navigationItems = useMemo( () => {
 		if ( ! inSiteContext ) {
@@ -191,7 +200,7 @@ const DomainOverviewPane = ( {
 				closeItemView={ () => {
 					inSiteContext
 						? page.show( '/sites' )
-						: page.show( addQueryArgs( getQueryParams(), paths.domainManagementRoot() ) );
+						: page.show( addQueryArgs( queryParams, paths.domainManagementRoot() ) );
 				} }
 				features={ features }
 				enforceTabsView

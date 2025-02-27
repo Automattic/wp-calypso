@@ -19,16 +19,10 @@ $button-border: 4px;
 		overflow: clip;
 		padding-top: 47px;
 
-		.theme__sheet-screenshot,
-		.theme__sheet-web-preview {
-			@include breakpoint-deprecated( ">960px" ) {
-				top: calc(var(--masterbar-height) + 16px);
-			}
-		}
-
 		.theme__sheet-web-preview .theme-preview__frame-wrapper {
 			@include breakpoint-deprecated( ">960px" ) {
-				max-height: calc(100vh - 32px - var(--masterbar-height));
+				// Inner padding: 32px.
+				max-height: calc(100vh - var(--content-padding-top) - var(--content-padding-bottom) - var(--masterbar-height) - 32px );
 			}
 		}
 	}
@@ -229,25 +223,30 @@ $button-border: 4px;
 		}
 	}
 
+	.theme__sheet-main-info {
+		display: flex;
+		flex-direction: column;
+	}
+	
 	.theme__sheet-main-info-title {
 		@include onboarding-font-recoleta;
-		align-items: center;
 		display: flex;
+		flex-direction: column;
 		font-size: $font-title-large;
-		line-height: 1;
+		line-height: 1.2;
+		margin: 0;
 	}
-
+	
 	.theme__sheet-main-info-type {
-		flex-basis: unset;
-		font-family: $sans;
-		margin-left: 8px;
+		align-self: flex-start;
+		margin: 0;
+		margin-bottom: 8px;
 	}
-
+	
 	.theme__sheet-main-info-tag {
 		color: var(--color-neutral-60);
 		font-size: $font-body;
 		font-weight: 400;
-		letter-spacing: -0.32px;
 		line-height: 24px;
 	}
 }
@@ -343,13 +342,19 @@ $button-border: 4px;
 	min-height: $iframe-viewport-height-scaled;
 
 	.theme-preview__frame-wrapper {
+		max-height: 100vw;
 		pointer-events: none;
+
+		.theme-preview__frame {
+			max-height: 100%;
+		}
+
 		@include breakpoint-deprecated( ">960px" ) {
 			max-height: calc(100vh - var(--masterbar-height));
 
 			.theme-preview__frame {
 				height: 200%;
-				max-height: 200vh;
+				max-height: 200%;
 				max-width: 200%;
 				min-height: $iframe-viewport-height-scaled;
 				transform: scale(0.5) !important;

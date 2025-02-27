@@ -1,19 +1,14 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import {
-	Onboard,
-	Site,
-	OnboardSelect,
-	SiteActions,
-	updateLaunchpadSettings,
-} from '@automattic/data-stores';
-import { select, dispatch } from '@wordpress/data';
+import { Onboard, OnboardSelect, Site } from '@automattic/data-stores';
+import { select } from '@wordpress/data';
 import wpcomRequest from 'wpcom-proxy-request';
-import { isNewsletterFlow, isFreeFlow } from './utils';
-import type { ActiveTheme } from '@automattic/data-stores';
+import { isNewsletterFlow } from './utils';
 
 const ONBOARD_STORE = Onboard.register();
+
+// TODO: This store registration should live somewhere else or just be called more centrally.
 // `client_id` and `client_secret` are only needed when signing up users.
-const SITE_STORE = Site.register( { client_id: '', client_secret: '' } );
+Site.register( { client_id: '', client_secret: '' } );
 
 export const base64ImageToBlob = ( base64String: string ) => {
 	// extract content type and base64 payload from original string
@@ -45,7 +40,6 @@ interface SetupOnboardingSiteOptions {
 export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSiteOptions ) {
 	// const { resetOnboardStore } = dispatch( ONBOARD_STORE );
 	const goals = ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals();
-	const selectedDesign = ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign();
 	const siteTitle = ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle();
 	const siteDescription = ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteDescription();
 	const siteLogo = ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteLogo();
@@ -65,30 +59,8 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 
 		const promises = [];
 
-		if ( isNewsletterFlow( flowName ) || isFreeFlow( flowName ) ) {
-			if ( isFreeFlow( flowName ) ) {
-				// We removed the link in free flow, we need to keep this reference here to avoid side effects.
-				settings.site_intent = 'free';
-				if ( selectedDesign && selectedDesign.is_virtual ) {
-					const { assembleSite } = dispatch( SITE_STORE ) as SiteActions;
-					promises.push(
-						wpcomRequest< ActiveTheme[] >( {
-							path: `/sites/${ encodeURIComponent( siteId ) }/themes?status=active`,
-							apiNamespace: 'wp/v2',
-						} ).then( ( activeThemes ) => {
-							assembleSite( String( siteId ), activeThemes[ 0 ].stylesheet, {
-								homeHtml: selectedDesign.recipe?.pattern_html,
-								headerHtml: selectedDesign.recipe?.header_html,
-								footerHtml: selectedDesign.recipe?.footer_html,
-								siteSetupOption: 'assembler-virtual-theme',
-							} );
-						} )
-					);
-				}
-			} else {
-				settings.site_intent = flowName;
-			}
-
+		if ( isNewsletterFlow( flowName ) ) {
+			settings.site_intent = flowName;
 			settings.launchpad_screen = 'full';
 		}
 
@@ -126,16 +98,6 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 				// resetOnboardStore();
 			} )
 		);
-
-		if ( isFreeFlow( flowName ) ) {
-			if ( siteTitle || siteDescription || siteLogo ) {
-				promises.push(
-					updateLaunchpadSettings( siteId, {
-						checklist_statuses: { setup_free: true },
-					} )
-				);
-			}
-		}
 
 		return Promise.all( promises );
 	}

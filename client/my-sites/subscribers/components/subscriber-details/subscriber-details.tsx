@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
+import { TimeSince } from '@automattic/components';
 import { Button, ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import TimeSince from 'calypso/components/time-since';
 import { NewsletterCategory } from 'calypso/data/newsletter-categories/types';
 import { useSubscriptionPlans } from '../../hooks';
 import { SubscriptionPlanData } from '../../hooks/use-subscription-plans';

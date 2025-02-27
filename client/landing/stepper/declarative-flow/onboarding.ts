@@ -31,6 +31,7 @@ import { getLoginUrl } from '../utils/path';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { useBigSkyBeforePlans } from './helpers/use-bigsky-before-plans-experiment';
 import { useGoalsFirstExperiment } from './helpers/use-goals-first-experiment';
+import { useRedirectDesignSetupOldSlug } from './helpers/use-redirect-design-setup-old-slug';
 import { recordStepNavigation } from './internals/analytics/record-step-navigation';
 import { STEPS } from './internals/steps';
 import { AssertConditionState, Flow, ProvidedDependencies } from './internals/types';
@@ -165,12 +166,13 @@ const onboarding: Flow = {
 		} else if ( typeof window !== 'undefined' ) {
 			window.__a8cBigSkyOnboarding = false;
 		}
+
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
 		 */
 		const getPostCheckoutDestination = (
 			providedDependencies: ProvidedDependencies
-		): [ string, string ] => {
+		): [ string, string | null ] => {
 			if ( createWithBigSky && isBigSkyBeforePlansExperiment && isGoalsAtFrontExperiment ) {
 				const destination = addQueryArgs(
 					withLocale( '/setup/site-setup/launch-big-sky', locale ),
@@ -189,6 +191,10 @@ const onboarding: Flow = {
 				];
 			}
 
+			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
+				return [ `/home/${ providedDependencies.siteSlug }`, null ];
+			}
+
 			const destination = addQueryArgs( withLocale( '/setup/site-setup', locale ), {
 				siteSlug: providedDependencies.siteSlug,
 				...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
@@ -198,6 +204,7 @@ const onboarding: Flow = {
 		};
 
 		clearUseMyDomainsQueryParams( currentStepSlug );
+		useRedirectDesignSetupOldSlug( currentStepSlug, navigate );
 
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			switch ( currentStepSlug ) {
@@ -222,12 +229,12 @@ const onboarding: Flow = {
 							if ( isDesignChoicesStepEnabled ) {
 								return navigate( 'design-choices' );
 							}
-							return navigate( 'designSetup' );
+							return navigate( 'design-setup' );
 						}
 					}
 				}
 
-				case 'designSetup': {
+				case 'design-setup': {
 					return navigate( 'domains' );
 				}
 
@@ -376,7 +383,7 @@ const onboarding: Flow = {
 									}
 								),
 								signup: 1,
-								checkoutBackUrl: pathToUrl( backDestination ),
+								checkoutBackUrl: pathToUrl( backDestination ?? '' ),
 								coupon,
 								...( createWithBigSky && isBigSkyBeforePlansExperiment && isGoalsAtFrontExperiment
 									? { [ 'big-sky-checkout' ]: 1 }
@@ -424,9 +431,9 @@ const onboarding: Flow = {
 						if ( isBigSkyBeforePlansExperiment && createWithBigSky ) {
 							return navigate( 'design-choices' );
 						}
-						return navigate( 'designSetup' );
+						return navigate( 'design-setup' );
 					}
-				case 'designSetup':
+				case 'design-setup':
 					if ( isDesignChoicesStepEnabled ) {
 						return navigate( 'design-choices' );
 					}

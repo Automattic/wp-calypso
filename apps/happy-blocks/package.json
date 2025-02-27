@@ -30,7 +30,6 @@
 		"@automattic/calypso-products": "workspace:^",
 		"@automattic/color-studio": "^3.0.1",
 		"@automattic/components": "workspace:^",
-		"@automattic/format-currency": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
 		"@automattic/wpcom-template-parts": "workspace:^",

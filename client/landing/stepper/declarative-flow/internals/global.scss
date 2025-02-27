@@ -10,7 +10,7 @@
 /**
  * Importers styles
  */
-@import "~calypso/blocks/import/style/base";
+@import "calypso/blocks/import/style/base";
 
 /**
  * General onboarding styling
@@ -82,7 +82,6 @@ button {
 .plugin-bundle,
 .newsletter-setup,
 .newsletter-goals,
-.newsletter-post-setup,
 .plans,
 .domains,
 .patterns,
@@ -296,7 +295,6 @@ button {
 	}
 }
 
-.store-profiler__form,
 .newsletter,
 .setup-form__form {
 	button {

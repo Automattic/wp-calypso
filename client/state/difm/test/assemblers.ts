@@ -18,8 +18,8 @@ describe( 'assembler', () => {
 			displayAddress: 'test displayAddress',
 			selectedPageTitles: [ 'test1', 'test2' ],
 		};
-		const siteSlug = 'testsiteslug';
-		expect( buildDIFMCartExtrasObject( dependencies, siteSlug, 'test-context' ) ).toEqual( {
+		const siteId = 100;
+		expect( buildDIFMCartExtrasObject( dependencies, siteId, 'test-context' ) ).toEqual( {
 			twitter_url: 'test twitterUrl',
 			facebook_url: 'test facebookUrl',
 			linkedin_url: 'test linkedinUrl',
@@ -34,7 +34,9 @@ describe( 'assembler', () => {
 			site_description: 'test tagline',
 			site_title: 'test title',
 			selected_page_titles: [ 'test1', 'test2' ],
-			afterPurchaseUrl: '/start/site-content-collection?siteSlug=testsiteslug',
+			afterPurchaseUrl: '/start/site-content-collection?siteId=100',
+			is_store_flow: undefined,
+			search_terms: undefined,
 		} );
 	} );
 } );

@@ -1,9 +1,8 @@
 import { WPCOM_FEATURES_SITE_PREVIEW_LINKS } from '@automattic/calypso-products';
 import { Card, CompactCard, Button } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
-import { translate } from 'i18n-calypso';
+import { formatCurrency, translate } from 'i18n-calypso';
 import { useState } from 'react';
 import useFetchAgencyFromBlog from 'calypso/a8c-for-agencies/data/agencies/use-fetch-agency-from-blog';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';

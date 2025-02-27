@@ -1,10 +1,13 @@
 import { SelectDropdown } from '@automattic/components';
 import { PartialDomainData } from '@automattic/data-stores';
 import transformIcon from '@automattic/domains-table/src/bulk-actions-toolbar/transform.svg';
+import { Button } from '@wordpress/components';
 import { RenderModalProps } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDomainsDataViewsContext } from '../use-context';
+
+import './auto-renew-dialog.scss';
 
 export const AutoRenewDiolog = ( {
 	items,
@@ -14,6 +17,7 @@ export const AutoRenewDiolog = ( {
 	const { handleAutoRenew } = useDomainsDataViewsContext();
 	const translate = useTranslate();
 	const [ controlKey, setControlKey ] = useState( 1 );
+	const [ value, setValue ] = useState< string | undefined >( undefined );
 
 	const enableLabel = translate( 'Turn {{strong}}on{{/strong}} auto-renew', {
 		components: { strong: <strong /> },
@@ -23,7 +27,7 @@ export const AutoRenewDiolog = ( {
 		components: { strong: <strong /> },
 	} );
 
-	const handleAutoRenewSelect = ( { value }: { value: string } ) => {
+	const onUpdateAutoRenew = () => {
 		if ( value === 'enable' ) {
 			handleAutoRenew( items, true );
 		} else if ( value === 'disable' ) {
@@ -39,9 +43,11 @@ export const AutoRenewDiolog = ( {
 		closeModal?.();
 	};
 
+	const updateButtonDisbled = [ undefined, 'button-label' ].includes( value );
+
 	return (
-		<div>
-			<p>
+		<div className="domains-dataviews-bulk-actions-dialog">
+			<p className="domains-dataviews-bulk-actions-dialog__description">
 				{ translate(
 					/* translators: domainCount will be the number of domains to update */
 					'Update auto-renew settings for %(domainCount)d domain',
@@ -56,17 +62,17 @@ export const AutoRenewDiolog = ( {
 			</p>
 			<SelectDropdown
 				key={ controlKey }
-				className="domains-table-bulk-actions-toolbar__select"
+				className="domains-dataviews-bulk-actions-dialog__select"
 				initialSelected="button-label"
 				showSelectedOption={ false }
-				onSelect={ handleAutoRenewSelect }
+				onSelect={ ( { value: v }: { value: string } ) => setValue( v ) }
 				options={ [
 					{
 						value: 'button-label',
 						label: translate( 'Choose new status…' ),
 						icon: (
 							<img
-								className="domains-table-bulk-actions-toolbar__icon"
+								className="domains-dataviews-bulk-actions-dialog__icon"
 								src={ transformIcon }
 								width={ 18 }
 								height={ 18 }
@@ -78,6 +84,15 @@ export const AutoRenewDiolog = ( {
 					{ value: 'disable', label: disableLabel },
 				] }
 			/>
+
+			<div className="domains-dataviews-bulk-actions-dialog__actions">
+				<Button variant="tertiary" onClick={ closeModal }>
+					{ translate( 'Cancel' ) }
+				</Button>
+				<Button variant="primary" onClick={ onUpdateAutoRenew } disabled={ updateButtonDisbled }>
+					{ translate( 'Update' ) }
+				</Button>
+			</div>
 		</div>
 	);
 };

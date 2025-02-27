@@ -29,7 +29,7 @@ export const STEPS = {
 	},
 
 	DESIGN_SETUP: {
-		slug: 'designSetup',
+		slug: 'design-setup',
 		asyncComponent: () => import( './steps-repository/design-setup' ),
 	},
 

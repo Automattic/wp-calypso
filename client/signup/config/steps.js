@@ -21,7 +21,6 @@ import {
 	excludeStepIfEmailVerified,
 	submitWebsiteContent,
 	excludeStepIfProfileComplete,
-	excludeSegmentSurveyStepIfInactive,
 } from 'calypso/lib/signup/step-actions';
 import { generateSteps } from './steps-pure';
 
@@ -48,5 +47,4 @@ export default generateSteps( {
 	excludeStepIfEmailVerified,
 	excludeStepIfProfileComplete,
 	submitWebsiteContent,
-	excludeSegmentSurveyStepIfInactive,
 } );

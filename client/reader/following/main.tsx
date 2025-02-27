@@ -1,9 +1,11 @@
+import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
 import withDimensions from 'calypso/lib/with-dimensions';
+import QuickPost from 'calypso/reader/components/quick-post';
 import ReaderOnboarding from 'calypso/reader/onboarding';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import ReaderStream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
@@ -52,6 +54,7 @@ function FollowingStream( { ...props } ) {
 					>
 						<ViewToggle />
 					</NavigationHeader>
+					{ config.isEnabled( 'reader/quick-post' ) && <QuickPost /> }
 					<ReaderOnboarding />
 				</ReaderStream>
 			) }
