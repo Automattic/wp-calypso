@@ -522,7 +522,11 @@ const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
 			// Reusable Block
 			name === 'core/block' ||
 			// Post Content
-			name === 'core/post-content'
+			name === 'core/post-content' ||
+			// Page List
+			name === 'core/page-list' ||
+			// Page List Item
+			name === 'core/page-list-item'
 		) {
 			return;
 		}
