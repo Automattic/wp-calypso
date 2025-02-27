@@ -13,7 +13,6 @@ function StatsLineChart( {
 	EmptyState = StatsEmptyState,
 	zeroBaseline = true,
 	fixedDomain = false,
-	yScaleType = 'linear',
 }: {
 	chartData: Array< {
 		label: string;
@@ -27,7 +26,7 @@ function StatsLineChart( {
 	EmptyState: typeof StatsEmptyState;
 	zeroBaseline?: boolean;
 	fixedDomain?: boolean;
-	yScaleType?: 'linear' | 'log';
+	yScaleType?: 'linear' | 'sqrt' | 'log';
 } ) {
 	const translate = useTranslate();
 
@@ -56,6 +55,30 @@ function StatsLineChart( {
 			),
 		[ chartData ]
 	);
+
+	const yScaleType = useMemo( () => {
+		if ( chartData.length <= 1 ) {
+			return 'linear';
+		}
+		const maxValues: number[] = [];
+		chartData.map( ( series ) => {
+			maxValues.push( Math.max( ...series.data.map( ( d ) => d.value ) ) );
+		} );
+		const [ minMax, maxMax ] = [ Math.min( ...maxValues ), Math.max( ...maxValues ) ];
+
+		// Avoid division by zero
+		if ( minMax === 0 ) {
+			return 'linear';
+		}
+
+		const scacle = maxMax / minMax;
+		if ( scacle > 20 && scacle < 200 ) {
+			return 'sqrt';
+		} else if ( scacle >= 200 ) {
+			return 'log';
+		}
+		return 'linear';
+	}, [ chartData ] );
 
 	return (
 		<div className={ clsx( 'stats-line-chart', className ) }>
