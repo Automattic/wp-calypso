@@ -14,6 +14,8 @@ import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { STEPS } from './internals/steps';
 import type { ProvidedDependencies, Flow } from './internals/types';
 
+const steps = [ STEPS.DOMAINS, ...stepsWithRequiredLogin( [ STEPS.PROCESSING ] ) ];
+
 const HundredYearDomainFlow: Flow = {
 	name: HUNDRED_YEAR_DOMAIN_FLOW,
 	isSignupFlow: true,
@@ -23,8 +25,6 @@ const HundredYearDomainFlow: Flow = {
 	},
 
 	useSteps() {
-		const steps = [ STEPS.DOMAINS, ...stepsWithRequiredLogin( [ STEPS.PROCESSING ] ) ];
-
 		return steps;
 	},
 
