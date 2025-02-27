@@ -1653,6 +1653,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: {
 		getSlug: () => FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 		getTitle: () =>
+			/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
 			i18n.fixMe( {
 				text: 'Transaction fee for standard payments (+\u00A0standard processing\u00A0fee)',
 				newCopy: i18n.translate(
@@ -1666,6 +1667,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: {
 		getSlug: () => FEATURE_COMMISSION_FEE_WOO_FEATURES,
 		getTitle: () =>
+			/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
 			i18n.fixMe( {
 				text: 'Transaction fee for standard WooCommerce payments (+ standard processing\u00A0fee)',
 				newCopy: i18n.translate(
