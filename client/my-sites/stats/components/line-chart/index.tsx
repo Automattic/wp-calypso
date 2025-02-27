@@ -45,7 +45,7 @@ function StatsLineChart( {
 			: numberFormat( value, { numberFormatOptions: { notation: 'compact' }, decimals: 1 } );
 	};
 
-	const isEmpty = ( chartData?.[ 0 ].data || [] ).length === 0;
+	const isEmpty = ( chartData?.[ 0 ]?.data || [] ).length === 0;
 
 	const maxValue = useMemo(
 		() =>
