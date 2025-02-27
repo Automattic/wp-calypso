@@ -521,6 +521,16 @@ const plansDescriptionHeadingComponent = {
 };
 /* eslint-enable */
 
+const isStatsFeatureTranslated = () => {
+	const isEnglishLocale = i18n.getLocaleSlug()?.startsWith( 'en' );
+	const hasStatsTranslation =
+		i18n.hasTranslation( 'Full history, filters & peak times' ) ||
+		i18n.hasTranslation( 'Last 7 days of basic stats' ) ||
+		i18n.hasTranslation( 'Advanced insights, including UTM & device analytics' );
+
+	return isEnglishLocale || hasStatsTranslation;
+};
+
 const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
@@ -607,11 +617,16 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		];
 	},
 	getStorageFeature: () => FEATURE_1GB_STORAGE,
-	getPlanComparisonFeatureLabels: () => ( {
-		[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( '%d shares per month', { args: [ 30 ] } ),
-		[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '10%' ),
-		[ FEATURE_STATS_JP ]: i18n.translate( 'Last 7 days of basic stats' ),
-	} ),
+	getPlanComparisonFeatureLabels: () => {
+		const baseFeatures = {
+			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( '%d shares per month', { args: [ 30 ] } ),
+			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '10%' ),
+		};
+
+		return isStatsFeatureTranslated()
+			? { ...baseFeatures, [ FEATURE_STATS_JP ]: i18n.translate( 'Last 7 days of basic stats' ) }
+			: baseFeatures;
+	},
 	getNewsletterSignupFeatures: () => [
 		FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
 		FEATURE_PREMIUM_CONTENT_JP,
@@ -813,13 +828,21 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			: baseFeatures;
 	},
 	getStorageFeature: () => FEATURE_6GB_STORAGE,
-	getPlanComparisonFeatureLabels: () => ( {
-		[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'Dozens of premium themes' ),
-		[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( '%d shares per month', { args: [ 30 ] } ),
-		[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '8%' ),
-		[ FEATURE_STATS_JP ]: i18n.translate( 'Full history, filters & peak times' ),
-		[ FEATURE_SUPPORT ]: i18n.translate( 'Fast support from our expert\u00A0team' ),
-	} ),
+	getPlanComparisonFeatureLabels: () => {
+		const baseFeatures = {
+			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'Dozens of premium themes' ),
+			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( '%d shares per month', { args: [ 30 ] } ),
+			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '8%' ),
+			[ FEATURE_SUPPORT ]: i18n.translate( 'Fast support from our expert\u00A0team' ),
+		};
+
+		return isStatsFeatureTranslated()
+			? {
+					...baseFeatures,
+					[ FEATURE_STATS_JP ]: i18n.translate( 'Full history, filters & peak times' ),
+			  }
+			: baseFeatures;
+	},
 
 	getNewsletterSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
@@ -1027,14 +1050,24 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			? FEATURE_50GB_STORAGE
 			: FEATURE_200GB_STORAGE;
 	},
-	getPlanComparisonFeatureLabels: () => ( {
-		[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'All premium themes' ),
-		[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( 'Unlimited shares' ),
-		[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '0%' ),
-		[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: i18n.translate( '0%' ),
-		[ FEATURE_STATS_JP ]: i18n.translate( 'Advanced insights, including UTM & device analytics' ),
-		[ FEATURE_SUPPORT ]: i18n.translate( 'Priority 24/7 support from our expert\u00A0team' ),
-	} ),
+	getPlanComparisonFeatureLabels: () => {
+		const baseFeatures = {
+			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'All premium themes' ),
+			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( 'Unlimited shares' ),
+			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '0%' ),
+			[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: i18n.translate( '0%' ),
+			[ FEATURE_SUPPORT ]: i18n.translate( 'Priority 24/7 support from our expert\u00A0team' ),
+		};
+
+		return isStatsFeatureTranslated()
+			? {
+					...baseFeatures,
+					[ FEATURE_STATS_JP ]: i18n.translate(
+						'Advanced insights, including UTM & device analytics'
+					),
+			  }
+			: baseFeatures;
+	},
 	getHostingSignupFeatures: ( term ) => () =>
 		compact( [
 			term !== TERM_MONTHLY && FEATURE_CUSTOM_DOMAIN,
@@ -1383,13 +1416,23 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		return [];
 	},
 	getStorageFeature: () => FEATURE_13GB_STORAGE,
-	getPlanComparisonFeatureLabels: () => ( {
-		[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'All premium themes' ),
-		[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( 'Unlimited shares' ),
-		[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '4%' ),
-		[ FEATURE_STATS_JP ]: i18n.translate( 'Advanced insights, including UTM & device analytics' ),
-		[ FEATURE_SUPPORT ]: i18n.translate( 'Fast support from our expert\u00A0team' ),
-	} ),
+	getPlanComparisonFeatureLabels: () => {
+		const baseFeatures = {
+			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'All premium themes' ),
+			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( 'Unlimited shares' ),
+			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '4%' ),
+			[ FEATURE_SUPPORT ]: i18n.translate( 'Fast support from our expert\u00A0team' ),
+		};
+
+		return isStatsFeatureTranslated()
+			? {
+					...baseFeatures,
+					[ FEATURE_STATS_JP ]: i18n.translate(
+						'Advanced insights, including UTM & device analytics'
+					),
+			  }
+			: baseFeatures;
+	},
 	get2023PlanComparisonJetpackFeatureOverride: () => {
 		return [
 			FEATURE_PAYPAL_JP,
@@ -1613,11 +1656,17 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			[ FEATURE_STORE_DESIGN ]: i18n.translate( 'Available with plugins' ),
 			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '2%' ),
 			[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: i18n.translate( '0%' ),
-			[ FEATURE_STATS_JP ]: i18n.translate( 'Advanced insights, including UTM & device analytics' ),
 			[ FEATURE_SUPPORT ]: i18n.translate( 'Priority 24/7 support from our expert team' ),
 		};
 
-		return featureLabels;
+		return isStatsFeatureTranslated()
+			? {
+					...featureLabels,
+					[ FEATURE_STATS_JP ]: i18n.translate(
+						'Advanced insights, including UTM & device analytics'
+					),
+			  }
+			: featureLabels;
 	},
 
 	getStorageFeature: ( showLegacyStorageFeature, isCurrentPlan ) => {
