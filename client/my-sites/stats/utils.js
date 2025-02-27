@@ -67,6 +67,11 @@ export const appendQueryStringForRedirection = ( pathname, query = {} ) => {
  * @returns
  */
 export const parseLocalDate = ( dateString ) => {
+	// Compatible with Date object.
+	const testDate = new Date( dateString );
+	if ( isNaN( testDate.getTime() ) ) {
+		return testDate;
+	}
 	const [ year, month, day ] = dateString.substring( 0, 10 ).split( '-' ).map( Number );
 	// Note: month is 0-indexed in JavaScript Date
 	return new Date( year, month - 1, day );
