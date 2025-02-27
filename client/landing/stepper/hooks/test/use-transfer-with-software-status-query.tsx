@@ -14,7 +14,7 @@ jest.mock( '@automattic/calypso-config', () => ( {
 	isEnabled: jest.fn(),
 } ) );
 
-const installationWithGenericError = replyWithError( { error: 'any generic error' } );
+const transferSoftwareError = replyWithError( { error: 'any generic error' } );
 
 describe( 'useTransferWithSoftwareStatus', () => {
 	beforeAll( () => nock.disableNetConnect() );
@@ -68,7 +68,7 @@ describe( 'useTransferWithSoftwareStatus', () => {
 		);
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/sites/123/atomic/transfer-with-software/456' )
-			.reply( installationWithGenericError );
+			.reply( transferSoftwareError );
 
 		const { result } = renderHook( () => useTransferWithSoftwareStatus( 123, 456 ), { wrapper } );
 
