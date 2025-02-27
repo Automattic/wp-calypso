@@ -619,10 +619,6 @@
 
 	.auth-form__social-buttons {
 		margin-top: 16px;
-
-		.social-buttons__button {
-			box-shadow: 0 2px 0 #afbbc6;
-		}
 	}
 
 	.card.two-factor-authentication__verification-code-form,
@@ -638,7 +634,7 @@
 		box-shadow: 0 0 0 2px var(--color-primary-10);
 	}
 
-	.button:not(.social-buttons__button) {
+	.components-button:not(.social-buttons__button):not(.is-link):not(.is-primary) {
 		color: var(--studio-jetpack-green-60);
 		background: var(--studio-white);
 		border: 1px solid var(--studio-jetpack-green-40);
@@ -667,7 +663,7 @@
 		}
 	}
 
-	.button.is-primary {
+	.components-button.is-primary {
 		color: var(--studio-white);
 		background: var(--studio-jetpack-green-40);
 		border-color: var(--studio-jetpack-green-40);
@@ -691,10 +687,20 @@
 		}
 	}
 
-	a,
+	.wp-login__links {
+		display: flex;
+		justify-content: center;
+
+		.login__lost-password-link {
+			display: inline-flex;
+			width: auto;
+			margin-block: 16px;
+		}
+	}
+
+	a:not(.login__lost-password-link),
 	a:visited,
-	.login__form-change-username,
-	.wp-login__links button {
+	.login__form-change-username {
 		color: var(--studio-jetpack-green-40);
 
 		&:hover,

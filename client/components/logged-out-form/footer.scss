@@ -17,6 +17,10 @@
 		@include elevation( 1dp );
 	}
 
+	.components-button.is-primary {
+		width: 100%;
+	}
+
 	.is-p2-invite.invite-accept &,
 	.is-p2-signup .signup__step.is-user & {
 		margin: 0;

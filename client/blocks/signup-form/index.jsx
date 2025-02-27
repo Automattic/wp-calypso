@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { FormInputValidation, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Spinner, TextControl } from '@wordpress/components';
+import { Button, Spinner, TextControl } from '@wordpress/components';
 import clsx from 'clsx';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -27,7 +27,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import ContinueAsUser from 'calypso/blocks/login/continue-as-user';
-import FormButton from 'calypso/components/forms/form-button';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -1038,7 +1037,8 @@ class SignupForm extends Component {
 		return (
 			<LoggedOutFormFooter isBlended={ this.props.isSocialSignupEnabled }>
 				{ ! this.props.disableTosText && this.termsOfServiceLink() }
-				<FormButton
+				<Button
+					variant="primary"
 					className={ clsx(
 						'signup-form__submit',
 						variationName && `${ variationName }-signup-form`
@@ -1050,9 +1050,10 @@ class SignupForm extends Component {
 						( this.props.isWoo &&
 							( ! this.hasFilledInputValues() || formState.hasErrors( this.state.form ) ) )
 					}
+					type="submit"
 				>
 					{ this.props.submitButtonText }
-				</FormButton>
+				</Button>
 			</LoggedOutFormFooter>
 		);
 	}
