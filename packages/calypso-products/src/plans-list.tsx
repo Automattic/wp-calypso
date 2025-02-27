@@ -1590,7 +1590,6 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_ES_SEARCH_JP,
 			FEATURE_PLUGIN_AUTOUPDATE_JP,
 			FEATURE_SEO_JP,
-			FEATURE_SUPPORT,
 		];
 	},
 	getPlanComparisonFeatureLabels: () => {
