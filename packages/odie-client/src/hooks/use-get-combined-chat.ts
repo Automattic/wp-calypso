@@ -60,7 +60,6 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 				...odieChat,
 				conversationId: null,
 				supportInteractionId: currentSupportInteraction!.uuid,
-				messages: [ ...odieChat.messages ],
 				provider: 'odie',
 				status: 'loaded',
 			} );
