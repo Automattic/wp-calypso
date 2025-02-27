@@ -9,9 +9,12 @@ const getTransferWithSoftwareStatus = async (
 	siteId: number,
 	atomicTransferId: number
 ): Promise< TransferWithSoftwareStatusResponse > => {
-	return wpcom.req.get( `/sites/${ siteId }/atomic/transfer-with-software/${ atomicTransferId }`, {
-		apiNamespace: 'wpcom/v2',
-	} );
+	return wpcom.req.get(
+		`/sites/${ siteId }/atomic/transfer-with-software/${ atomicTransferId }?http_envelope=1`,
+		{
+			apiNamespace: 'wpcom/v2',
+		}
+	);
 };
 
 export const useTransferWithSoftwareStatus = (
@@ -22,7 +25,7 @@ export const useTransferWithSoftwareStatus = (
 	}
 ) => {
 	return useQuery( {
-		queryKey: [ 'transferWithSoftwareStatus', siteId, atomicTransferId ],
+		queryKey: [ 'software-transfer-status', siteId, atomicTransferId ],
 		queryFn: () => getTransferWithSoftwareStatus( siteId, atomicTransferId ),
 		select: ( data ) => ( { softwareTransferStatus: data?.software_transfer_status } ),
 		refetchOnWindowFocus: false,
