@@ -31,26 +31,20 @@
 .vat-form__field-wrapper {
 	display: flex;
 	border-radius: 3px;
-	border: 1px solid var( --color-neutral-30 );
+	border: 1px solid var( --color-neutral-10 );
 	overflow: hidden;
 	width: 100%;
 
 	&:focus-within {
-		box-shadow: 0 0 0 2px var(--color-primary-20);
-		outline: 1px solid var(--color-primary);
+		box-shadow: 0 0 0 2px var(--color-primary-10);
+		border-color: var(--color-primary);
 
-		& > .vat-field__overlay-prefix {
-			border-top-color: transparent;
-			border-left-color: transparent;
-			border-bottom-color: transparent;
-		}
-
-		& > input[type="text"].form-text-input {
-			border: none;
+		&:hover {
+			box-shadow: 0 0 0 2px var(--color-primary-20);
 		}
 	}
 
-	& .error {
+	&--error {
 		outline: 2px solid var( --color-red-50 );
 	}
 

@@ -413,7 +413,13 @@ function useRecordVatEvents( {
 
 function InputWrapper( { isError, children }: { isError: boolean; children: React.ReactNode } ) {
 	return (
-		<div className={ isError ? 'vat-form__field-wrapper .error' : 'vat-form__field-wrapper' }>
+		<div
+			className={
+				isError
+					? 'vat-form__field-wrapper vat-form__field-wrapper--error'
+					: 'vat-form__field-wrapper'
+			}
+		>
 			{ children }
 		</div>
 	);
