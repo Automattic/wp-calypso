@@ -21,9 +21,9 @@ const FLOWS_INITIAL_MESSAGES = {
 };
 
 const FLOWS_FLOWNAME = {
-	[ DIFM_FLOW ]: 'dotcom_difm',
-	[ DIFM_FLOW_STORE ]: 'dotcom_difm',
-	[ WEBSITE_DESIGN_SERVICES ]: 'dotcom_difm',
+	[ DIFM_FLOW ]: 'messaging_flow_dotcom_difm',
+	[ DIFM_FLOW_STORE ]: 'messaging_flow_dotcom_difm',
+	[ WEBSITE_DESIGN_SERVICES ]: 'messaging_flow_dotcom_difm',
 };
 
 export function getZendeskUserFieldsByFlow( flowName: string ) {
