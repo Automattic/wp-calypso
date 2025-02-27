@@ -8,7 +8,7 @@ import EmptyStateAction from 'calypso/my-sites/stats/components/empty-state-acti
 import {
 	JETPACK_SUPPORT_NEWSLETTER_URL,
 	JETPACK_NEWSLETTER_LANDING_PAGE_URL,
-	SUBSCRIBERS_NEWSLETTER_LANDING_PAGE_URL,
+	NEWSLETTER_SUPPORT_URL,
 } from 'calypso/my-sites/stats/const';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -36,7 +36,7 @@ const StatsEmptyActionEmail: React.FC< StatsEmptyActionProps > = ( { from } ) =>
 
 				// If the site is a Jetpack or Atomic site, use the Jetpack links.
 				// Otherwise, use the WordPress.com links.
-				let redirectUrl = localizeUrl( SUBSCRIBERS_NEWSLETTER_LANDING_PAGE_URL );
+				let redirectUrl = localizeUrl( NEWSLETTER_SUPPORT_URL );
 				if ( useJetpackLinks ) {
 					if ( isOdysseyStats ) {
 						redirectUrl = localizeUrl( JETPACK_SUPPORT_NEWSLETTER_URL );

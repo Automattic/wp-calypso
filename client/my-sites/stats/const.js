@@ -11,8 +11,8 @@ export const JETPACK_SUPPORT_URL_SUBSCRIBERS =
 
 // eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 export const SUBSCRIBERS_SUPPORT_URL = 'https://wordpress.com/support/subscribers/';
-export const SUBSCRIBERS_NEWSLETTER_LANDING_PAGE_URL =
-	'https://wordpress.com/learn/courses/newsletters-101/start-here/';
+// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
+export const NEWSLETTER_SUPPORT_URL = 'https://wordpress.com/support/newsletter/';
 export const INSIGHTS_SUPPORT_URL =
 	// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 	'https://wordpress.com/support/stats/learn-insights-about-your-website/';
