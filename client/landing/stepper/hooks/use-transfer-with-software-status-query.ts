@@ -1,37 +1,34 @@
-import { useQuery, UseQueryResult, UseQueryOptions } from '@tanstack/react-query';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
-type TransferWithSoftwareStatus = {
-	blog_id: number;
-	atomic_transfer_id: number;
-	atomic_transfer_status: string;
-	plugins: Record< string, 'install' | 'activate' >;
-	themes: Record< string, 'install' | 'activate' >;
-	transfer_with_software_status: string;
+type TransferWithSoftwareStatusResponse = {
+	software_transfer_status: string;
+};
+
+const getTransferWithSoftwareStatus = async (
+	siteId: number,
+	atomicTransferId: number
+): Promise< TransferWithSoftwareStatusResponse > => {
+	return wpcom.req.get( `/sites/${ siteId }/atomic/transfer-with-software/${ atomicTransferId }`, {
+		apiNamespace: 'wpcom/v2',
+	} );
 };
 
 export const useTransferWithSoftwareStatus = (
 	siteId: number,
 	atomicTransferId: number,
-	queryOptions: Omit< UseQueryOptions< any, Error, TransferWithSoftwareStatus >, 'queryKey' > = {}
-): UseQueryResult< TransferWithSoftwareStatus > => {
-	return useQuery< any, Error, TransferWithSoftwareStatus >( {
+	options?: {
+		retry?: UseQueryOptions[ 'retry' ];
+	}
+) => {
+	return useQuery( {
 		queryKey: [ 'transferWithSoftwareStatus', siteId, atomicTransferId ],
-		queryFn: async () => {
-			const response = await wpcom.req.get(
-				`/sites/${ siteId }/atomic/transfer-with-software/${ atomicTransferId }`,
-				{ apiNamespace: 'wpcom/v2' }
-			);
-			return response;
-		},
-		staleTime: Infinity,
+		queryFn: () => getTransferWithSoftwareStatus( siteId, atomicTransferId ),
+		select: ( data ) => ( { softwareTransferStatus: data?.software_transfer_status } ),
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false,
-		refetchInterval: 5000, // Poll every 5 seconds
-		enabled: !! siteId && !! atomicTransferId, // Only run when both values exist
-		...queryOptions,
-		meta: {
-			...queryOptions.meta,
-		},
+		retryDelay: 5000, // Poll every 5 seconds
+		retry: options?.retry ?? false,
+		enabled: !! siteId && !! atomicTransferId, // Only run when both values exist.
 	} );
 };
