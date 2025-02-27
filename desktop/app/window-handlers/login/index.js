@@ -8,20 +8,19 @@ module.exports = function ( { view } ) {
 		return;
 	}
 
-	// Intercept attempts to load the normal login page,
-	// and instead open the desktop login page.
 	view.webContents.on( 'will-navigate', function ( event, url ) {
-		if ( isNonDesktopLoginUrl( url ) ) {
-			void view.webContents.loadURL( config.loginURL() );
-		}
-	} );
-
-	// The button in the desktop login page links to /desktop-start-login.
-	// We intercept those links here, and start the oauth authentication flow.
-	view.webContents.on( 'will-navigate', function ( event, url ) {
+		// The button in the desktop login page links to /desktop-start-login.
+		// We intercept those links here, and start the oauth authentication flow.
 		if ( url.includes( '/desktop-start-login' ) ) {
 			event.preventDefault();
 			startAuthentication();
+			return;
+		}
+
+		// Intercept attempts to load the normal login page,
+		// and instead open the desktop login page.
+		if ( isNonDesktopLoginUrl( url ) ) {
+			void view.webContents.loadURL( config.loginURL() );
 		}
 	} );
 };
