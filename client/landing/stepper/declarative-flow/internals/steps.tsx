@@ -348,6 +348,26 @@ export const STEPS = {
 				/* webpackChunkName: 'async-step-use-my-domain' */ './steps-repository/use-my-domain'
 			),
 	},
+
+	HUNDRED_YEAR_PLAN_DIY_OR_DIFM: {
+		slug: 'diy-or-difm',
+		asyncComponent: () => import( './steps-repository/hundred-year-plan-diy-or-difm' ),
+	},
+
+	HUNDRED_YEAR_PLAN_THANK_YOU: {
+		slug: 'thank-you',
+		asyncComponent: () => import( './steps-repository/hundred-year-plan-thank-you' ),
+	},
+
+	HUNDRED_YEAR_PLAN_SITE_PICKER: {
+		slug: 'site-picker',
+		asyncComponent: () => import( './steps-repository/hundred-year-plan-site-picker' ),
+	},
+
+	HUNDRED_YEAR_PLAN_SETUP: {
+		slug: 'setup',
+		asyncComponent: () => import( './steps-repository/hundred-year-plan-setup' ),
+	},
 } satisfies Record< string, StepperStep >;
 
 /**
