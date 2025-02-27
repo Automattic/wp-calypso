@@ -333,7 +333,7 @@ class MasterbarLoggedIn extends Component {
 				url={ siteUrl }
 				icon={ <span className="dashicons-before dashicons-admin-home" /> }
 				tipTarget="visit-site"
-				subItems={ [ { label: translate( 'Visit Site' ), url: siteUrl }, siteHomeOrAdminItem ] }
+				subItems={ [ [ { label: translate( 'Visit Site' ), url: siteUrl }, siteHomeOrAdminItem ] ] }
 			>
 				{ siteTitle.length > 40 ? `${ siteTitle.substring( 0, 40 ) }\u2026` : siteTitle }
 			</Item>
@@ -405,7 +405,7 @@ class MasterbarLoggedIn extends Component {
 			<Item
 				className="masterbar__item-my-site-actions"
 				url={ siteActions[ 0 ].url }
-				subItems={ siteActions }
+				subItems={ [ siteActions ] }
 				icon={ <span className="dashicons-before dashicons-plus" /> }
 				tooltip={ translate( 'New', { context: 'admin bar menu group label' } ) }
 				tipTarget="new-menu"
@@ -446,7 +446,7 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderProfileMenu() {
-		const { translate, user } = this.props;
+		const { translate, user, isGlobalSidebarVisible, siteAdminUrl } = this.props;
 		const profileActions = [
 			{
 				label: (
@@ -460,17 +460,35 @@ class MasterbarLoggedIn extends Component {
 						<div className="masterbar__item-howdy-account-details">
 							<span className="display-name">{ user.display_name }</span>
 							<span className="username">{ user.username }</span>
-							<span className="display-name edit-profile">{ translate( 'My Profile' ) }</span>
+							<span className="display-name edit-profile">
+								{ isGlobalSidebarVisible ? translate( 'My Profile' ) : translate( 'Edit Profile' ) }
+							</span>
 						</div>
 					</div>
 				),
-				url: '/me',
+				url: isGlobalSidebarVisible ? '/me' : `${ siteAdminUrl }profile.php`,
 			},
 			{
 				label: translate( 'Log Out' ),
 				onClick: () => this.props.redirectToLogout(),
 				tooltip: translate( 'Log out of WordPress.com' ),
 				className: 'logout-link',
+			},
+		];
+
+		const wpcomActions = [
+			{
+				label: (
+					<span class="button wpcom-button">
+						{ translate( 'My {{wpcomIcon/}} WordPress.com Account', {
+							components: {
+								wpcomIcon: this.wordpressIcon(),
+							},
+						} ) }
+					</span>
+				),
+				url: '/me/account',
+				className: 'wpcom-link',
 			},
 		];
 
@@ -483,7 +501,7 @@ class MasterbarLoggedIn extends Component {
 				className="masterbar__item-howdy"
 				tooltip={ translate( 'Update your profile, personal settings, and more' ) }
 				preloadSection={ this.preloadMe }
-				subItems={ profileActions }
+				subItems={ [ profileActions, wpcomActions ] }
 				hasGlobalBorderStyle
 			>
 				<span className="masterbar__item-howdy-howdy">

@@ -167,6 +167,7 @@ body.is-mobile-app-view {
 
 		.masterbar__item-subitems {
 			right: 0;
+			padding-bottom: 0 !important;
 		}
 		@include breakpoint-deprecated( ">480px" ) {
 			flex-grow: 0;
@@ -258,17 +259,22 @@ body.is-mobile-app-view {
 		text-indent: 0;
 
 		.masterbar__item-subitems-item {
-			margin-right: 6px;
 			padding-left: 6px;
+			padding-right: 6px;
 			white-space: nowrap;
 			min-width: 140px;
 			line-height: 2;
 
+			&.masterbar__item-subitems-item--odd {
+				background: var(--color-sidebar-submenu-background, var(--color-masterbar-item-hover-background));
+			}
+
 			a,
 			button {
 				display: inline-block;
+				box-sizing: border-box;
 				width: 100%;
-				padding: 0 0 0 6px;
+				padding: 0 6px;
 				color: var(--color-masterbar-submenu-text, var(--color-masterbar-text));
 			}
 
@@ -767,11 +773,9 @@ body.is-mobile-app-view {
 
 	+ .masterbar__item-subitems {
 		min-width: 264px !important;
-		max-height: 94px;
-		padding: 12px 0;
+		padding-top: 12px;
 
 		@media only screen and (max-width: 781px) {
-			min-width: 100% !important;
 			max-height: 100%;
 		}
 
@@ -811,9 +815,45 @@ body.is-mobile-app-view {
 			&.account-link,
 			&.logout-link {
 				position: relative;
-				float: left;
 				top: -5px;
 				left: 85px;
+				margin-bottom: 5px;
+			}
+
+			&.wpcom-link {
+				box-sizing: border-box;
+			}
+		}
+
+		span.wpcom-button {
+			display: inline-block;
+			color: #fff;
+			background-color: #3858e9;
+			border-color: #3858e9;
+			border-radius: 2px;
+			padding: 0 14px;
+			box-sizing: border-box;
+			height: 34px;
+			line-height: 32px;
+			width: 100%;
+			text-align: center;
+			margin: 12px 0;
+			font-size: inherit;
+
+			&:hover {
+				background-color: #4664eb;
+				border-color: #4664eb;
+			}
+
+			svg {
+				display: inline-block;
+				position: relative;
+				top: -1px;
+				margin-left: -2px;
+				margin-right: -4px;
+				vertical-align: middle;
+				fill: currentColor;
+				transform: scale(0.8);
 			}
 		}
 	}
