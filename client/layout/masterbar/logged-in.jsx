@@ -416,9 +416,10 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderLaunchButton() {
-		const { isUnlaunchedSite, siteId, translate, isManageSiteOptionsEnabled } = this.props;
+		const { isA4ADevSite, isUnlaunchedSite, siteId, translate, isManageSiteOptionsEnabled } =
+			this.props;
 
-		if ( ! isUnlaunchedSite || ! isManageSiteOptionsEnabled ) {
+		if ( ! isUnlaunchedSite || ! isManageSiteOptionsEnabled || isA4ADevSite ) {
 			return null;
 		}
 
@@ -667,6 +668,7 @@ export default connect(
 			isManageSiteOptionsEnabled: canCurrentUserManageSiteOptions( state, siteId ),
 			isNotificationsShowing: isNotificationsOpen( state ),
 			isEcommerce: isEcommercePlan( sitePlanSlug ),
+			isA4ADevSite: site?.is_a4a_dev_site,
 			siteId: siteId,
 			siteSlug: getSiteSlug( state, siteId ),
 			siteTitle: getSiteTitle( state, siteId ),
