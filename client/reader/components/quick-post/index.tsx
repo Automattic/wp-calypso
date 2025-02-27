@@ -12,6 +12,7 @@ import { useState, useRef } from 'react';
 import { useSelector, useDispatch, connect } from 'react-redux';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import { stripHTML } from 'calypso/lib/formatting';
+import Notice from 'calypso/components/notice';
 import wpcom from 'calypso/lib/wp';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
@@ -62,13 +63,6 @@ function QuickPost( {
 		setEditorKey( ( key ) => key + 1 );
 	};
 
-	const callShowSuccessMessage = () => {
-		setShowSuccessMessage( true );
-		setTimeout( () => {
-			setShowSuccessMessage( false );
-		}, 5000 );
-	};
-
 	const handleSubmit = () => {
 		if ( ! postContent.trim() || ! selectedSiteId || isSubmitting ) {
 			return;
@@ -95,7 +89,9 @@ function QuickPost( {
 			.then( ( postData: PostItem ) => {
 				recordReaderTracksEvent( 'calypso_reader_quick_post_submitted' );
 				clearEditor();
-				callShowSuccessMessage();
+
+				setShowSuccessMessage( true );
+				// TODO: Update the stream with the new post (if they're subscribed?) to signal success.
 
 				if ( config.isEnabled( 'reader/quick-post-v2' ) ) {
 					receivePosts( [ postData ] ).then( () => {
@@ -149,6 +145,11 @@ function QuickPost( {
 
 	return (
 		<div className="quick-post-input">
+			{ showSuccessMessage && (
+				<Notice status="is-success" onDismissClick={ () => setShowSuccessMessage( false ) }>
+					{ translate( 'Post successful! Your message will appear in the feed soon.' ) }
+				</Notice>
+			) }
 			<label htmlFor="quick-post-site-select" className="quick-post-input__label">
 				{ translate( 'Publish a post to' ) }
 			</label>
@@ -171,15 +172,6 @@ function QuickPost( {
 				</div>
 			</div>
 			<div className="quick-post-input__actions">
-				<div
-					className={ `quick-post-input__success-message ${
-						showSuccessMessage ? 'is-visible' : ''
-					}` }
-					aria-hidden={ ! showSuccessMessage }
-				>
-					<p>{ translate( 'Post successful! Your message will appear in the feed soon.' ) }</p>
-				</div>
-
 				<Button
 					onClick={ handleCancel }
 					disabled={ isDisabled }
