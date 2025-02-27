@@ -7,7 +7,6 @@ import { Route, Routes } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
-import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -259,7 +258,6 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 					}
 				/>
 			</Routes>
-			<AsyncCheckoutModal siteId={ site?.ID } />
 		</Boot>
 	);
 };

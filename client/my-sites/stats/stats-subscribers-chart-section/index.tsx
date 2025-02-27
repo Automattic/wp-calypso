@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { UseQueryResult } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import AsyncLoad from 'calypso/components/async-load';
 import UplotChart from 'calypso/components/chart-uplot';
@@ -71,20 +71,31 @@ type ChartDataPoint = {
 	value: number;
 };
 
-const transformLineChartData = ( data: SubscribersData[] ): ChartDataPoint[] => {
-	return ( data
-		?.map( ( point ) => {
-			const dateObj = new Date( point.period );
-			if ( isNaN( dateObj.getTime() ) ) {
-				return null;
-			}
+const transformLineChartData = (
+	data: SubscribersData[],
+	hasAddedPaidSubscriptionProduct: boolean
+): ChartDataPoint[][] => {
+	const subscribersData: ChartDataPoint[] = [];
+	const paidSubscribersData: ChartDataPoint[] = [];
+	data?.map( ( point ) => {
+		const dateObj = new Date( point.period );
+		if ( isNaN( dateObj.getTime() ) ) {
+			return null;
+		}
 
-			return {
+		subscribersData.push( {
+			date: dateObj,
+			value: point.subscribers ?? 0,
+		} );
+
+		if ( hasAddedPaidSubscriptionProduct ) {
+			paidSubscribersData.push( {
 				date: dateObj,
-				value: point.subscribers ?? 0,
-			};
-		} )
-		.filter( Boolean ) || [] ) as ChartDataPoint[]; // Type assertion to ensure null values are filtered out
+				value: point.subscribers_paid ?? 0,
+			} );
+		}
+	} );
+	return [ subscribersData, paidSubscribersData ];
 };
 
 export default function SubscribersChartSection( {
@@ -109,6 +120,33 @@ export default function SubscribersChartSection( {
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const legendRef = useRef< HTMLDivElement >( null );
 	const translate = useTranslate();
+
+	const formatTimeTick = useCallback(
+		( timestamp: number ) => {
+			const date = new Date( timestamp );
+			switch ( period ) {
+				case 'week':
+				case 'day':
+					return new Date( timestamp ).toLocaleDateString( undefined, {
+						month: 'short',
+						day: 'numeric',
+					} );
+				case 'month':
+					return date.toLocaleDateString( undefined, {
+						month: 'short',
+						year: 'numeric',
+					} );
+				case 'year':
+					return date.getFullYear().toString();
+				default:
+					return date.toLocaleDateString( undefined, {
+						month: 'short',
+						day: 'numeric',
+					} );
+			}
+		},
+		[ period ]
+	);
 
 	const {
 		isLoading,
@@ -148,14 +186,31 @@ export default function SubscribersChartSection( {
 	const hasAddedPaidSubscriptionProduct = products && products.length > 0;
 
 	// Prepare data for both chart libraries
-	const uplotData = transformUplotData( data?.data || [], hasAddedPaidSubscriptionProduct );
+	const uplotData = useMemo(
+		() => transformUplotData( data?.data || [], hasAddedPaidSubscriptionProduct ),
+		[ data?.data, hasAddedPaidSubscriptionProduct ]
+	);
+	const [ subscribersData, paidSubscribersData ] = useMemo(
+		() => transformLineChartData( data?.data || [], hasAddedPaidSubscriptionProduct ),
+		[ data?.data, hasAddedPaidSubscriptionProduct ]
+	);
+
 	const lineChartData = [
 		{
-			label: 'Subscribers',
-			options: { stroke: '#069e08' },
-			data: transformLineChartData( data?.data || [] ),
+			label: translate( 'Subscribers' ),
+			options: {
+				stroke: '#069e08',
+			},
+			data: subscribersData,
 		},
-	];
+		{
+			label: translate( 'Paid Subscribers' ),
+			options: {
+				stroke: 'rgb(230, 139, 40)',
+			},
+			data: paidSubscribersData,
+		},
+	].filter( ( series ) => series.data.length > 0 );
 
 	const subscribers = {
 		label: 'Subscribers',
@@ -212,6 +267,7 @@ export default function SubscribersChartSection( {
 							height={ 300 }
 							EmptyState={ () => null }
 							zeroBaseline={ false }
+							formatTimeTick={ formatTimeTick }
 						/>
 					) : (
 						<UplotChart

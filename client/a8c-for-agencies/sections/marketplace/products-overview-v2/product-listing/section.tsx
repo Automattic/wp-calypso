@@ -8,6 +8,7 @@ type Props = {
 	description?: string;
 	children: ReactNode;
 	extraContent?: ReactNode;
+	stickyHeadingTopOffset?: number;
 };
 
 export default function ProductListingSection( {
@@ -16,6 +17,7 @@ export default function ProductListingSection( {
 	description,
 	children,
 	extraContent,
+	stickyHeadingTopOffset,
 }: Props ) {
 	const sectionRef = useRef< HTMLDivElement >( null );
 	const [ isVisibleOnce, setIsVisibleOnce ] = useState( false );
@@ -53,7 +55,18 @@ export default function ProductListingSection( {
 
 	return (
 		<div className="product-listing-section" ref={ sectionRef }>
-			<div className="product-listing-section__header-wrapper">
+			<div
+				className="product-listing-section__header-wrapper"
+				style={
+					stickyHeadingTopOffset
+						? {
+								top: stickyHeadingTopOffset,
+								position: 'sticky',
+								paddingBlock: '16px',
+						  }
+						: undefined
+				}
+			>
 				<div className="product-listing-section__header">
 					{ icon }
 					<h2 className="product-listing-section__header-title">{ title }</h2>

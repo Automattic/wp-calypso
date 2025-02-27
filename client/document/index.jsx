@@ -235,6 +235,7 @@ class Document extends Component {
 							data-provider="wordpress.com"
 							data-service="calypso"
 							data-customproperties={ `{"route_name": "${ sectionName }"}` }
+							data-site-tz="Etc/UTC"
 						/>
 					) }
 

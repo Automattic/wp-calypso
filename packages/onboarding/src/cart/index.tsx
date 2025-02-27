@@ -158,8 +158,7 @@ export const createSiteWithCart = async (
 	domainItem?: DomainSuggestion,
 	sourceSlug?: string,
 	siteIntent?: string,
-	siteGoals?: SiteGoal[],
-	enableFeaturesForGoals?: SiteGoal[]
+	siteGoals?: SiteGoal[]
 ) => {
 	const siteUrl = storedSiteUrl || domainItem?.domain_name;
 	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' );
@@ -207,9 +206,6 @@ export const createSiteWithCart = async (
 					? { segmentation_survey_answers_anon_id: segmentationSurveyAnswersAnonId }
 					: {} ),
 				...( siteGoals && { site_goals: siteGoals } ),
-				...( enableFeaturesForGoals && {
-					enable_features_for_goals: enableFeaturesForGoals,
-				} ),
 			},
 		},
 	} );

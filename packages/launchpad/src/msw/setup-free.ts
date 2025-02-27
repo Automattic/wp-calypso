@@ -36,7 +36,7 @@ export default {
 			subtitle: '',
 			badge_text: '',
 			isLaunchTask: false,
-			calypso_path: '/setup/update-design/designSetup?siteSlug=site62798.wordpress.com',
+			calypso_path: '/setup/update-design/design-setup?siteSlug=site62798.wordpress.com',
 		},
 		{
 			id: 'domain_upsell',

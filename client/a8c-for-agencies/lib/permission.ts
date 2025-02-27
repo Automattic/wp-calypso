@@ -44,6 +44,9 @@ import {
 	A4A_MIGRATIONS_PAYMENT_SETTINGS,
 	A4A_TEAM_INVITE_LINK,
 	A4A_AGENCY_TIER_LINK,
+	A4A_WOOPAYMENTS_LINK,
+	A4A_WOOPAYMENTS_DASHBOARD_LINK,
+	A4A_WOOPAYMENTS_PAYMENT_SETTINGS_LINK,
 } from '../components/sidebar-menu/lib/constants';
 import type { Agency } from 'calypso/state/a8c-for-agencies/types';
 
@@ -93,6 +96,10 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_TEAM_INVITE_LINK ]: [ 'a4a_edit_user_invites' ],
 	[ A4A_AGENCY_TIER_LINK ]: [ 'a4a_read_agency_tier' ],
 	[ A4A_PLUGINS_LINK ]: [ 'a4a_read_managed_sites' ],
+	// TODO: Add the correct capability for WooPayments
+	[ A4A_WOOPAYMENTS_LINK ]: [ 'a4a_read_referrals' ],
+	[ A4A_WOOPAYMENTS_DASHBOARD_LINK ]: [ 'a4a_read_referrals' ],
+	[ A4A_WOOPAYMENTS_PAYMENT_SETTINGS_LINK ]: [ 'a4a_read_referrals' ],
 };
 
 const MEMBER_ACCESSIBLE_DYNAMIC_PATHS: Record< string, string[] > = {

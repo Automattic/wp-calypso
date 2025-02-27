@@ -31,15 +31,46 @@ const ChartTabShape = PropTypes.shape( {
 	legendOptions: PropTypes.arrayOf( PropTypes.string ),
 } );
 
-const transformChartDataToLineFormat = ( chartData, activeLegend ) => {
-	return activeLegend.map( ( legend ) => ( {
-		label: legend,
+// data validation for line chart
+const transformChartDataToLineFormat = ( chartData ) => {
+	if ( ! Array.isArray( chartData ) ) {
+		return [];
+	}
+
+	// Create the first data series for views
+	const viewsSeries = {
+		label: 'Views',
 		options: {},
-		data: chartData.map( ( record ) => ( {
-			date: new Date( record.data.period ),
-			value: record.data[ legend ] || 0,
-		} ) ),
-	} ) );
+		data: chartData
+			.map( ( record ) => {
+				const date = new Date( record.data.period );
+				const value = record.data.views;
+				if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
+					return null;
+				}
+				return { date, value };
+			} )
+			.filter( Boolean ),
+	};
+
+	// Create the second data series for visitors
+	const visitorsSeries = {
+		label: 'Visitors',
+		options: {},
+		data: chartData
+			.map( ( record ) => {
+				const date = new Date( record.data.period );
+				const value = record.data.visitors;
+				if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
+					return null;
+				}
+				return { date, value };
+			} )
+			.filter( Boolean ),
+	};
+
+	// Return both series
+	return [ viewsSeries, visitorsSeries ];
 };
 
 class StatModuleChartTabs extends Component {
@@ -174,7 +205,7 @@ class StatModuleChartTabs extends Component {
 					<AsyncLoad
 						require="calypso/my-sites/stats/components/line-chart"
 						className="stats-chart-tabs__line-chart"
-						chartData={ transformChartDataToLineFormat( chartData, this.props.activeLegend ) }
+						chartData={ transformChartDataToLineFormat( chartData ) }
 						height={ 200 }
 						moment={ moment }
 					/>

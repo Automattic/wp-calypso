@@ -113,7 +113,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 			job?.importerFileType !== 'playground' &&
 			isEnabled( 'onboarding/import-redirect-to-themes' )
 		) {
-			stepNavigator?.navigate?.( 'designSetup' );
+			stepNavigator?.navigate?.( 'design-setup' );
 		} else {
 			stepNavigator?.goToSiteViewPage?.();
 		}
