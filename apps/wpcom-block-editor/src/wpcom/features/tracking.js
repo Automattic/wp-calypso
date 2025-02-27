@@ -525,8 +525,8 @@ const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
 			name === 'core/post-content' ||
 			// Page List
 			name === 'core/page-list' ||
-			// Page List Item
-			name === 'core/page-list-item'
+			// Navigation
+			name === 'core/navigation'
 		) {
 			return;
 		}
