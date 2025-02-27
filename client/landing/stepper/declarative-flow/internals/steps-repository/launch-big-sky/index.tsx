@@ -157,7 +157,7 @@ const LaunchBigSky: Step = function () {
 					<div className="big-sky-disclaimer">
 						<p>
 							{ translate(
-								'By using the AI builder you agree on our{{br/}} {{ai_guidelines}}AI guidelines{{/ai_guidelines}} and our {{user_guidelines}}User Guidelines{{/user_guidelines}}.',
+								'Please review our {{ai_guidelines}}AI Guidelines{{/ai_guidelines}} and the contents of your site to ensure it complies with our {{user_guidelines}}User Guidelines{{/user_guidelines}}.',
 								{
 									components: {
 										ai_guidelines: (
