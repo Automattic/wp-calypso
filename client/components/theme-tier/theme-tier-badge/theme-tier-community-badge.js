@@ -13,8 +13,7 @@ export default function ThemeTierCommunityBadge( { hideBackgroundOnUpgrade, hide
 	const { showUpgradeBadge, themeId } = useThemeTierBadgeContext();
 
 	const isThemeIncluded = useSelector(
-		( state ) => siteId && canUseTheme( state, siteId, themeId ),
-		( prev, next ) => prev === next
+		( state ) => siteId && canUseTheme( state, siteId, themeId )
 	);
 
 	return (

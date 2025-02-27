@@ -29,9 +29,8 @@ export default function ThemeTierPartnerBadge( {
 	const siteId = useSelector( getSelectedSiteId );
 	const { themeId } = useThemeTierBadgeContext();
 
-	const isPartnerThemePurchased = useSelector(
-		( state ) => ( siteId ? isMarketplaceThemeSubscribed( state, themeId, siteId ) : false ),
-		( prev, next ) => prev === next
+	const isPartnerThemePurchased = useSelector( ( state ) =>
+		siteId ? isMarketplaceThemeSubscribed( state, themeId, siteId ) : false
 	);
 
 	const subscriptionPrices = useSelector(
