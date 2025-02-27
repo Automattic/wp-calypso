@@ -47,35 +47,7 @@ export const SiteLogsDataViews = ( {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const siteId = useSelector( getSelectedSiteId );
-
 	const dispatch = useDispatch();
-
-	/**
-	 * Generates a unique key for each row.
-	 * The ID only needs to be unique for each render, because it's used in selection
-	 * or as keys for react components.
-	 *
-	 * - The PHP logs have a resolution of 1 second,
-	 *   so there's no single property that can act as an unique ID.
-	 *   It's unlikely the same line will trigger an error within the same second.
-	 *
-	 * - The Server logs have a resolution of 1 ms,
-	 *   so the date is a better unique ID on its own,
-	 *   but still add some entrophy, just in case.
-	 *
-	 */
-	const getItemId = useMemo(
-		() => ( item: PHPLog | ServerLog ) => {
-			if ( logType === LogType.PHP ) {
-				const phpLog = item as PHPLog;
-				return `${ phpLog.timestamp }-${ phpLog.file }-${ phpLog.line }`;
-			}
-
-			const serverLog = item as ServerLog;
-			return `${ serverLog.date }-${ serverLog.request_time }-${ serverLog.body_bytes_sent }`;
-		},
-		[ logType ]
-	);
 
 	const getMomentFromTimestamp = useCallback(
 		( value: string, fallback?: string ) => {
@@ -302,7 +274,6 @@ export const SiteLogsDataViews = ( {
 				onClickItem={ onOpenDetailsModal }
 				actions={ actions }
 				search={ false }
-				getItemId={ getItemId }
 				defaultLayouts={ { table: {} } }
 				header={
 					<>

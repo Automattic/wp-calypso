@@ -6,12 +6,19 @@ interface SiteLogsAPIResponse {
 	message: string;
 	data: {
 		total_results: number | { value: number; relation: string };
-		logs: ( PHPLog | ServerLog )[];
+		logs: ( PHPLogFromEndpoint | ServerLogFromEndpoint )[];
 		scroll_id: string | null;
 	};
 }
 
-export interface ServerLog {
+interface SiteLogsData {
+	total_results: number;
+	logs: ( ServerLog | PHPLog )[];
+	scroll_id: string | null;
+	has_more: boolean;
+}
+
+interface ServerLogFromEndpoint {
 	date: string;
 	request_type: 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE';
 	status: '200' | '301' | '302' | '400' | '401' | '403' | '404' | '429' | '500';
@@ -33,7 +40,11 @@ export interface ServerLog {
 	user_ip: string;
 }
 
-export interface PHPLog {
+export interface ServerLog extends ServerLogFromEndpoint {
+	id: string;
+}
+
+interface PHPLogFromEndpoint {
 	timestamp: string;
 	severity: 'User' | 'Warning' | 'Deprecated' | 'Fatal error';
 	message: string;
@@ -44,12 +55,9 @@ export interface PHPLog {
 	atomic_site_id: number;
 }
 
-export type SiteLogsData = {
-	total_results: number;
-	logs: ( ServerLog | PHPLog )[];
-	scroll_id: string | null;
-	has_more: boolean;
-};
+export interface PHPLog extends PHPLogFromEndpoint {
+	id: string;
+}
 
 export enum LogType {
 	PHP = 'php',
@@ -60,7 +68,7 @@ export interface FilterType {
 	[ key: string ]: Array< string >;
 }
 
-export interface SiteLogsParams {
+interface SiteLogsParams {
 	logType: LogType;
 	start: number;
 	end: number;
@@ -117,12 +125,12 @@ export function useSiteLogsQuery(
 		placeholderData: keepPreviousData,
 		enabled: !! siteId && params.start <= params.end,
 		staleTime: Infinity, // The logs within a specified time range never change.
-		select( { data } ) {
+		select( { data }: SiteLogsAPIResponse ): SiteLogsData {
 			return {
 				has_more: !! data.scroll_id,
 				total_results:
 					typeof data.total_results === 'number' ? data.total_results : data.total_results.value,
-				logs: data.logs,
+				logs: data.logs.map( ( log, key ) => ( { ...log, id: String( key ) } ) ),
 				scroll_id: data.scroll_id,
 			};
 		},
