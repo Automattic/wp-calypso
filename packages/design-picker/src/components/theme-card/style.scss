@@ -27,10 +27,11 @@ $theme-card-info-margin-top: 16px;
 	}
 
 	.theme-card__info-badge-container {
-		position: absolute;
-		bottom: 0;
+		align-items: center;
 		display: flex;
-		flex-basis: 100%;
+		font-size: 0;
+		gap: 4px;
+		height: 24px;
 	}
 
 	.theme-card__info-badge-active {
@@ -307,6 +308,6 @@ $theme-card-info-margin-top: 16px;
 		cursor: pointer;
 		font-size: 0;
 		padding: 0;
-
+		margin-bottom: 27px;
 	}
 }

@@ -298,7 +298,7 @@ __metadata:
     postcss-loader: "npm:^6.2.1"
     recursive-copy: "npm:^2.0.14"
     sass: "npm:1.54.0"
-    sass-loader: "npm:^12.1.0"
+    sass-loader: "npm:^13.1.0"
     semver: "npm:^7.3.2"
     stream-browserify: "npm:^3.0.0"
     terser-webpack-plugin: "npm:^5.3.11"
@@ -527,7 +527,7 @@ __metadata:
     css-loader: "npm:^6.11.0"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    sass-loader: "npm:^12.1.0"
+    sass-loader: "npm:^13.1.0"
     style-loader: "npm:^1.3.0"
     webpack: "npm:^5.97.1"
   peerDependencies:
@@ -565,9 +565,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/charts@npm:^0.8.3":
-  version: 0.8.3
-  resolution: "@automattic/charts@npm:0.8.3"
+"@automattic/charts@npm:^0.8.4":
+  version: 0.8.4
+  resolution: "@automattic/charts@npm:0.8.4"
   dependencies:
     "@babel/runtime": "npm:7.26.0"
     "@react-spring/web": "npm:9.7.3"
@@ -589,7 +589,7 @@ __metadata:
   peerDependencies:
     react: ^17.0.0 || ^18.0.0
     react-dom: ^17.0.0 || ^18.0.0
-  checksum: 003d54ea7e93ee6562e4a182ffb153745d9397552d908306467444762244ba8f6e7c9f4ae0859f26b599c8124ddb7c57cb772415ac30c02d0e5bf453858f10f1
+  checksum: 3bc71ac84e3d44afbbeab1abb8d27b6d11ab43b5fdb8b05f6024a467f9fc001e3d143c958d1c4106b6915a977abeeacdb9cc61b480a5c83793fe2fb23680ebe4
   languageName: node
   linkType: hard
 
@@ -1629,7 +1629,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     react-router-dom: "npm:^6.23.1"
     redux: "npm:^5.0.1"
-    sass-loader: "npm:^10.1.1"
+    sass-loader: "npm:^13.1.0"
     style-loader: "npm:^1.3.0"
     tslib: "npm:^2.5.0"
     typescript: "npm:^5.3.3"
@@ -21280,7 +21280,6 @@ __metadata:
     debug: "npm:^4.3.3"
     events: "npm:^3.0.0"
     hash.js: "npm:^1.1.5"
-    lodash: "npm:^4.17.21"
     lru: "npm:^3.1.0"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -23879,7 +23878,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"klona@npm:^2.0.4, klona@npm:^2.0.5":
+"klona@npm:^2.0.5":
   version: 2.0.5
   resolution: "klona@npm:2.0.5"
   checksum: 5b752c11ca8e2996612386699f52cc5aed802aa4116663d26239ac0b054fae25191dacb95587ecf1a167b039daa9fc3fa2da17dfd5d0821f3037de3821d9a9e5
@@ -31356,53 +31355,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sass-loader@npm:^10.1.1":
-  version: 10.2.1
-  resolution: "sass-loader@npm:10.2.1"
-  dependencies:
-    klona: "npm:^2.0.4"
-    loader-utils: "npm:^2.0.0"
-    neo-async: "npm:^2.6.2"
-    schema-utils: "npm:^3.0.0"
-    semver: "npm:^7.3.2"
-  peerDependencies:
-    fibers: ">= 3.1.0"
-    node-sass: ^4.0.0 || ^5.0.0 || ^6.0.0
-    sass: ^1.3.0
-    webpack: ^4.36.0 || ^5.0.0
-  peerDependenciesMeta:
-    fibers:
-      optional: true
-    node-sass:
-      optional: true
-    sass:
-      optional: true
-  checksum: 03286a3b46c6d1c606c7e382cf9fefc569e45758d7d6e813a20a5b00926336baa8a45e833a7a4e461b4092aac22f6859052437e7d7c0d6f726c71328f8c25173
-  languageName: node
-  linkType: hard
-
-"sass-loader@npm:^12.1.0":
-  version: 12.1.0
-  resolution: "sass-loader@npm:12.1.0"
-  dependencies:
-    klona: "npm:^2.0.4"
-    neo-async: "npm:^2.6.2"
-  peerDependencies:
-    fibers: ">= 3.1.0"
-    node-sass: ^4.0.0 || ^5.0.0 || ^6.0.0
-    sass: ^1.3.0
-    webpack: ^5.0.0
-  peerDependenciesMeta:
-    fibers:
-      optional: true
-    node-sass:
-      optional: true
-    sass:
-      optional: true
-  checksum: 4fe94e330239ecf4eb35bf2fcb0abe7981380d3e308761d3ab774b6e8741ef11d5f513734aa0bb43c06b91a26d24f365c2d71bdbf4027f897b6abc98648247cb
-  languageName: node
-  linkType: hard
-
 "sass-loader@npm:^13.1.0":
   version: 13.3.3
   resolution: "sass-loader@npm:13.3.3"
@@ -35922,7 +35874,7 @@ __metadata:
     "@automattic/calypso-razorpay": "workspace:^"
     "@automattic/calypso-router": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
-    "@automattic/charts": "npm:^0.8.3"
+    "@automattic/charts": "npm:^0.8.4"
     "@automattic/color-studio": "npm:^3.0.1"
     "@automattic/command-palette": "workspace:^"
     "@automattic/components": "workspace:^"

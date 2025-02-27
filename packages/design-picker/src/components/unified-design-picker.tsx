@@ -349,6 +349,7 @@ interface DesignPickerProps {
 	showActiveThemeBadge?: boolean;
 	isMultiFilterEnabled?: boolean;
 	isBigSkyEligible?: boolean;
+	priorityThemes?: Record< string, string > | null;
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
@@ -363,6 +364,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	getBadge,
 	getOptionsMenu,
 	oldHighResImageLoading,
+	priorityThemes = null,
 	siteActiveTheme = null,
 	showActiveThemeBadge = false,
 	isMultiFilterEnabled = false,
@@ -385,7 +387,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 		[ categorization?.categories ]
 	);
 
-	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs );
+	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs, priorityThemes );
 
 	// Show no results only when no design matches the selected categories and tiers.
 	const showNoResults = Object.values( designsByGroup ).every(
@@ -509,6 +511,7 @@ export interface UnifiedDesignPickerProps {
 	showActiveThemeBadge?: boolean;
 	isMultiFilterEnabled?: boolean;
 	isBigSkyEligible?: boolean;
+	priorityThemes?: Record< string, string >;
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
@@ -529,6 +532,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	showActiveThemeBadge = false,
 	isMultiFilterEnabled = false,
 	isBigSkyEligible = false,
+	priorityThemes = null,
 } ) => {
 	const hasCategories = !! ( categorization?.categories || [] ).length;
 
@@ -556,6 +560,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					showActiveThemeBadge={ showActiveThemeBadge }
 					isMultiFilterEnabled={ isMultiFilterEnabled }
 					isBigSkyEligible={ isBigSkyEligible }
+					priorityThemes={ priorityThemes }
 				/>
 				<InView onChange={ ( inView ) => inView && onViewAllDesigns() } />
 			</div>

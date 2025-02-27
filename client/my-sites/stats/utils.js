@@ -60,3 +60,19 @@ export const appendQueryStringForRedirection = ( pathname, query = {} ) => {
 
 	return `${ pathname }${ queryString ? '?' : '' }${ queryString }`;
 };
+
+/**
+ * Parse a date string into a Date object
+ * @param {string} dateString YYYY-MM-DD format
+ * @returns
+ */
+export const parseLocalDate = ( dateString ) => {
+	// Compatible with Date object.
+	const date = new Date( dateString );
+	if ( isNaN( date.getTime() ) ) {
+		return date;
+	}
+
+	date.setMinutes( date.getMinutes() - date.getTimezoneOffset() );
+	return date;
+};

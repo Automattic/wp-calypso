@@ -3,6 +3,7 @@
  */
 import { SiteIntent } from '@automattic/data-stores/src/onboard/constants';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
+import { addQueryArgs } from '@wordpress/url';
 import { STEPS } from '../internals/steps';
 import onboarding from '../onboarding';
 import { getFlowLocation, renderFlow } from './helpers';
@@ -89,6 +90,41 @@ describe( 'Onboarding Flow', () => {
 			} );
 
 			expect( getFlowLocation().path ).toBe( '/design-setup' );
+		} );
+	} );
+
+	describe( 'Processing step navigation', () => {
+		it( 'should redirect to home when hasPluginByGoal true and hasExternalTheme false', async () => {
+			const { runUseStepNavigationSubmit } = renderFlow( onboarding );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.PROCESSING.slug,
+				dependencies: {
+					hasExternalTheme: false,
+					hasPluginByGoal: true,
+					siteSlug: 'test-site.wordpress.com',
+				},
+			} );
+
+			expect( window.location.replace ).toHaveBeenCalledWith( '/home/test-site.wordpress.com' );
+		} );
+
+		it( 'should redirect to home when hasExternalTheme true', async () => {
+			const { runUseStepNavigationSubmit } = renderFlow( onboarding );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.PROCESSING.slug,
+				dependencies: {
+					hasExternalTheme: true,
+					siteSlug: 'test-site.wordpress.com',
+				},
+			} );
+
+			expect( window.location.replace ).toHaveBeenCalledWith(
+				addQueryArgs( '/setup/site-setup', {
+					siteSlug: 'test-site.wordpress.com',
+				} )
+			);
 		} );
 	} );
 } );

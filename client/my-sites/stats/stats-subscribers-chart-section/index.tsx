@@ -9,6 +9,7 @@ import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-qu
 import { useSelector } from 'calypso/state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsPeriodHeader from '../stats-period-header';
+import { parseLocalDate } from '../utils';
 import { hideFractionNumber } from './chart-utils';
 import SubscribersNavigationArrows from './subscribers-navigation-arrows';
 import type uPlot from 'uplot';
@@ -78,7 +79,7 @@ const transformLineChartData = (
 	const subscribersData: ChartDataPoint[] = [];
 	const paidSubscribersData: ChartDataPoint[] = [];
 	data?.map( ( point ) => {
-		const dateObj = new Date( point.period );
+		const dateObj = parseLocalDate( point.period );
 		if ( isNaN( dateObj.getTime() ) ) {
 			return null;
 		}
@@ -266,7 +267,7 @@ export default function SubscribersChartSection( {
 							chartData={ lineChartData }
 							height={ 300 }
 							EmptyState={ () => null }
-							zeroBaseline={ false }
+							zeroBaseline={ lineChartData.length > 1 }
 							formatTimeTick={ formatTimeTick }
 						/>
 					) : (

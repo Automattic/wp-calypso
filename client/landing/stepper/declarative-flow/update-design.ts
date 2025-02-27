@@ -12,6 +12,7 @@ import { useQuery } from '../hooks/use-query';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
+import { useRedirectDesignSetupOldSlug } from './helpers/use-redirect-design-setup-old-slug';
 import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import { ProvidedDependencies } from './internals/types';
@@ -24,7 +25,7 @@ const updateDesign: Flow = {
 	},
 	isSignupFlow: false,
 	useSteps() {
-		return [ STEPS.DESIGN_SETUP, STEPS.DESIGN_SETUP_LEGACY, STEPS.PROCESSING, STEPS.ERROR ];
+		return [ STEPS.DESIGN_SETUP, STEPS.PROCESSING, STEPS.ERROR ];
 	},
 	useSideEffect() {
 		const { setIntent } = useDispatch( ONBOARD_STORE );
@@ -55,6 +56,8 @@ const updateDesign: Flow = {
 			navigate,
 		} );
 
+		useRedirectDesignSetupOldSlug( currentStep, navigate );
+
 		function submit( providedDependencies: ProvidedDependencies = {}, ...results: string[] ) {
 			switch ( currentStep ) {
 				case 'processing':
@@ -79,7 +82,6 @@ const updateDesign: Flow = {
 						} )
 					);
 
-				case 'designSetup':
 				case 'design-setup':
 					if ( providedDependencies?.goToCheckout ) {
 						const destination = `/setup/${ flowToReturnTo }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
