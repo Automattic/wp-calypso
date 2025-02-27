@@ -6,8 +6,13 @@
  * @returns {boolean}
  */
 function isNonDesktopLoginUrl( url ) {
-	const u = new URL( url );
-	const path = u.pathname.replace( u.search, '' );
+	let path = '';
+	try {
+		const u = new URL( url );
+		path = u.pathname.replace( u.search, '' );
+	} catch ( e ) {
+		return false;
+	}
 	return path === '/log-in' || path === '/log-in/';
 }
 
