@@ -39,22 +39,29 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 	);
 
 	const [ mainChatState, setMainChatState ] = useState< Chat >( emptyChat );
+	const [ isEnabled, setIsEnabled ] = useState( true );
+	const chatStatus = mainChatState?.status;
 	const getZendeskConversation = useGetZendeskConversation();
 	const { data: odieChat, isFetching: isOdieChatLoading } = useOdieChat( Number( odieId ) );
 	const { startNewInteraction } = useManageSupportInteraction();
 	const { trackEvent } = useOdieAssistantContext();
 
 	useEffect( () => {
-		if ( mainChatState.status === 'loaded' || mainChatState.status === 'transfer' ) {
+		if ( isOdieChatLoading || ! isEnabled ) {
+			return;
+		}
+		if ( chatStatus === 'loaded' ) {
+			setIsEnabled( false );
 			return;
 		}
 
 		if ( odieId && odieChat && ! conversationId ) {
 			setMainChatState( {
 				...odieChat,
-				provider: 'odie',
 				conversationId: null,
 				supportInteractionId: currentSupportInteraction!.uuid,
+				messages: [ ...odieChat.messages ],
+				provider: 'odie',
 				status: 'loaded',
 			} );
 		} else if ( conversationId && canConnectToZendesk ) {
@@ -69,7 +76,6 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 								odieChat?.messages.filter(
 									( message ) => ! message.context?.flags?.forward_to_human_support
 								) ?? [];
-
 							setMainChatState( {
 								...( odieChat ? odieChat : {} ),
 								supportInteractionId: currentSupportInteraction!.uuid,
@@ -99,7 +105,10 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 			}
 		}
 	}, [
+		isEnabled,
+		setIsEnabled,
 		isOdieChatLoading,
+		chatStatus,
 		isChatLoaded,
 		odieChat,
 		conversationId,
@@ -107,16 +116,29 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 		currentSupportInteraction,
 		canConnectToZendesk,
 		getZendeskConversation,
+		startNewInteraction,
+		trackEvent,
 	] );
 
 	useEffect( () => {
 		setMainChatState( ( prevChat ) => {
+			if ( ! prevChat.supportInteractionId ) {
+				return {
+					...prevChat,
+					supportInteractionId: currentSupportInteraction!.uuid,
+					status: 'loading',
+				};
+			}
 			const isSameInteraction = prevChat.supportInteractionId === currentSupportInteraction!.uuid;
-			return {
-				...( ! isSameInteraction ? emptyChat : prevChat ),
-				supportInteractionId: currentSupportInteraction!.uuid,
-				status: ! isSameInteraction ? 'loaded' : 'loading',
-			};
+			if ( ! isSameInteraction ) {
+				return {
+					...emptyChat,
+					supportInteractionId: currentSupportInteraction!.uuid,
+					status: 'loaded',
+				};
+			}
+
+			return { ...prevChat };
 		} );
 	}, [ currentSupportInteraction?.uuid ] );
 
