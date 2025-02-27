@@ -10,7 +10,11 @@ import { resolveDomainStatus } from './utils/resolve-domain-status';
 
 const notNull = < T >( x: T ): x is Exclude< T, null > => x !== null;
 
-export const useDomainRow = ( domain: PartialDomainData, onPointToWpcomClick?: () => void ) => {
+export const useDomainRow = (
+	domain: PartialDomainData,
+	onPointToWpcomClick?: () => void,
+	showBusyButton?: boolean
+) => {
 	const {
 		isAllSitesView,
 		fetchSiteDomains,
@@ -78,6 +82,7 @@ export const useDomainRow = ( domain: PartialDomainData, onPointToWpcomClick?: (
 						domainStatusPurchaseActions?.isCreditCardExpiring?.( currentDomainData ),
 					isVipSite: site?.is_vip,
 					onPointToWpcomClick,
+					showBusyButton,
 				} )
 			)
 			.filter( notNull );
@@ -91,6 +96,7 @@ export const useDomainRow = ( domain: PartialDomainData, onPointToWpcomClick?: (
 		translate,
 		isLoadingRowDetails,
 		onPointToWpcomClick,
+		showBusyButton,
 	] );
 
 	useEffect( () => {
@@ -142,6 +148,7 @@ export const useDomainRow = ( domain: PartialDomainData, onPointToWpcomClick?: (
 					domainStatusPurchaseActions?.monthsUtilCreditCardExpires?.( currentDomainData ),
 				isVipSite: site?.is_vip,
 				onPointToWpcomClick,
+				showBusyButton,
 		  } )
 		: null;
 

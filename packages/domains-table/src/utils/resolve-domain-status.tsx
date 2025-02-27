@@ -40,6 +40,7 @@ export type ResolveDomainStatusReturn = {
 		href?: string;
 		onClick?: React.MouseEventHandler< HTMLAnchorElement | HTMLButtonElement >;
 		label: string;
+		showBusyButton?: boolean;
 	};
 };
 
@@ -54,6 +55,7 @@ export type ResolveDomainStatusOptionsBag = {
 	monthsUtilCreditCardExpires?: number | null;
 	isVipSite?: boolean | null;
 	onPointToWpcomClick?: () => void;
+	showBusyButton?: boolean;
 };
 
 export type DomainStatusPurchaseActions = {
@@ -76,6 +78,7 @@ export function resolveDomainStatus(
 		monthsUtilCreditCardExpires = null,
 		isVipSite = false,
 		onPointToWpcomClick,
+		showBusyButton = false,
 	}: ResolveDomainStatusOptionsBag
 ): ResolveDomainStatusReturn | null {
 	const transferOptions = {
@@ -108,6 +111,7 @@ export function resolveDomainStatus(
 
 	const pointToWpcomCallToAction = {
 		label: translate( 'Point to WordPress.com' ),
+		showBusyButton,
 		onClick: ( e: React.MouseEvent< HTMLAnchorElement | HTMLButtonElement, MouseEvent > ) => {
 			e.stopPropagation();
 			onPointToWpcomClick && onPointToWpcomClick();

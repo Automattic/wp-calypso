@@ -3,10 +3,13 @@ import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products'
 import page from '@automattic/calypso-router';
 import { PartialDomainData } from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useState } from 'react';
+import wpcomRequest from 'wpcom-proxy-request';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions'; // eslint-disable-line no-restricted-imports
 import { PointToWpcomDialog } from '../point-to-wpcom-dialog/point-to-wpcom-dialog';
 import { PrimaryDomainLabel } from '../primary-domain-label';
 import { useDomainRow } from '../use-domain-row';
@@ -31,9 +34,9 @@ interface DomainsTableRowProps {
 
 export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 	const { __ } = useI18n();
-
+	const [ isLoadingButton, setIsLoadingButton ] = useState( false );
 	const [ showPointToWpcomModal, setShowPointToWpcomModal ] = useState( false );
-
+	const dispatch = useDispatch();
 	const {
 		ref,
 		site,
@@ -53,7 +56,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		pendingUpdates,
 		sslStatus,
 		hasWpcomManagedSslCert,
-	} = useDomainRow( domain, () => setShowPointToWpcomModal( true ) );
+	} = useDomainRow( domain, () => setShowPointToWpcomModal( true ), isLoadingButton );
 	const {
 		context,
 		canSelectAnyDomains,
@@ -133,12 +136,36 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 	const handleDomainLinkClick = ( e: MouseEvent ) =>
 		isAllDomainManagementEnabled ? undefined : e.stopPropagation();
 
+	const handlePointToWpcom = async () => {
+		setIsLoadingButton( true );
+		try {
+			await wpcomRequest( {
+				path: '/domains/point-to-wpcom',
+				apiNamespace: 'wpcom/v2',
+				method: 'POST',
+				body: {
+					domain: domain.domain,
+				},
+			} );
+			dispatch( successNotice( __( 'Domain pointed to WordPress.com' ) ) );
+		} catch ( error ) {
+			dispatch( errorNotice( __( 'Error pointing domain to WordPress.com' ) ) );
+		} finally {
+			setIsLoadingButton( false );
+			setShowPointToWpcomModal( false );
+		}
+	};
+
 	return (
 		<>
 			<PointToWpcomDialog
 				visible={ showPointToWpcomModal }
-				domain={ domain.domain }
-				onClose={ () => setShowPointToWpcomModal( false ) }
+				onClose={ ( accepted: boolean ) => {
+					setShowPointToWpcomModal( false );
+					if ( accepted ) {
+						handlePointToWpcom();
+					}
+				} }
 			/>
 			<tr
 				key={ domain.domain }
