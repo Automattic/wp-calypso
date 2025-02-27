@@ -6,9 +6,9 @@ import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { domainAddNew, domainUseMyDomain } from 'calypso/my-sites/domains/paths';
+import { useDomainToPlanCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-domain-to-plan-credits-applicable';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
-import { hasPurchasedDomain } from 'calypso/state/purchases/selectors';
 import { isFetchingUserPurchases } from 'calypso/state/purchases/selectors/fetching';
 import { EmptyDomainsListCardSkeleton } from './empty-domains-list-card-skeleton';
 
@@ -25,10 +25,6 @@ function EmptyDomainsListCard( { selectedSite, hasDomainCredit, isCompact, hasNo
 
 	const isLoadingUserPurchases = useSelector( isFetchingUserPurchases );
 
-	const siteHasPurchasedDomain = !! useSelector(
-		( state ) => selectedSite?.ID && hasPurchasedDomain( state, selectedSite?.ID )
-	);
-
 	let title = translate( 'Get your free domain' );
 	let line = translate(
 		'Get a free one-year domain registration or transfer with any annual paid plan.'
@@ -44,12 +40,17 @@ function EmptyDomainsListCard( { selectedSite, hasDomainCredit, isCompact, hasNo
 		getProductBySlug( state, domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION )
 	);
 	const domainProductCost = domainRegistrationProduct?.combined_cost_display;
+	const domainToPlanCreditsApplicable = useDomainToPlanCreditsApplicable( selectedSite?.ID );
 
 	if ( isLoadingUserPurchases ) {
 		return null;
 	}
 
-	if ( isEnabled( 'domain-to-plan-credit' ) && ! siteHasPaidPlan && siteHasPurchasedDomain ) {
+	if (
+		isEnabled( 'domain-to-plan-credit' ) &&
+		domainToPlanCreditsApplicable !== null &&
+		domainToPlanCreditsApplicable > 0
+	) {
 		return null;
 	}
 

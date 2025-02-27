@@ -6,7 +6,7 @@ import config from '@automattic/calypso-config';
 import { PLAN_100_YEARS } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
 import React from 'react';
-import { hasPurchasedDomain } from 'calypso/state/purchases/selectors';
+import { useDomainToPlanCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-domain-to-plan-credits-applicable';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import EmptyDomainsListCard from '../empty-domains-list-card';
 
@@ -27,10 +27,6 @@ const hundredYearSite = {
 	slug: 'example.com',
 };
 
-jest.mock( 'calypso/state/purchases/selectors', () => ( {
-	hasPurchasedDomain: jest.fn().mockReturnValue( false ),
-} ) );
-
 jest.mock( 'calypso/state/purchases/selectors/fetching', () => ( {
 	isFetchingUserPurchases: jest.fn().mockReturnValue( false ),
 } ) );
@@ -47,6 +43,13 @@ jest.mock( '@automattic/calypso-config', () => {
 	return config;
 } );
 
+jest.mock(
+	'calypso/my-sites/plans-features-main/hooks/use-domain-to-plan-credits-applicable',
+	() => ( {
+		useDomainToPlanCreditsApplicable: jest.fn().mockReturnValue( null ),
+	} )
+);
+
 describe( 'EmptyDomainsListCard', () => {
 	describe( 'Free plan scenarios', () => {
 		it( "displays 'upgrade to a plan' message when site has no domain credit", () => {
@@ -62,12 +65,12 @@ describe( 'EmptyDomainsListCard', () => {
 			).toBeInTheDocument();
 		} );
 
-		it( 'displays empty if feature flag is enabled and site has purchased a domain', () => {
+		it( 'displays empty if feature flag is enabled and site has domain-to-plan credit', () => {
 			config.isEnabled.mockImplementation( ( flag: unknown ): boolean => {
 				return flag === 'domain-to-plan-credit';
 			} );
 
-			hasPurchasedDomain.mockReturnValue( true );
+			useDomainToPlanCreditsApplicable.mockImplementationOnce( () => 1 );
 
 			const { container } = renderWithProvider(
 				<EmptyDomainsListCard selectedSite={ freeSite } />
