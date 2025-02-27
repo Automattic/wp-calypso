@@ -21,6 +21,21 @@ import { useExitFlow } from '../hooks/use-exit-flow';
 import { useSiteData } from '../hooks/use-site-data';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 
+const steps = stepsWithRequiredLogin( [
+	STEPS.CHECK_SITES,
+	STEPS.NEW_OR_EXISTING_SITE,
+	STEPS.SITE_PICKER,
+	STEPS.SITE_CREATION_STEP,
+	STEPS.PROCESSING,
+	STEPS.DOMAINS,
+	STEPS.USE_MY_DOMAIN,
+	STEPS.PLANS,
+	STEPS.SETUP_BLOG,
+	STEPS.LAUNCHPAD,
+	STEPS.SITE_LAUNCH,
+	STEPS.CELEBRATION,
+] );
+
 const designFirst: Flow = {
 	name: DESIGN_FIRST_FLOW,
 	get title() {
@@ -28,20 +43,7 @@ const designFirst: Flow = {
 	},
 	isSignupFlow: true,
 	useSteps() {
-		return stepsWithRequiredLogin( [
-			STEPS.CHECK_SITES,
-			STEPS.NEW_OR_EXISTING_SITE,
-			STEPS.SITE_PICKER,
-			STEPS.SITE_CREATION_STEP,
-			STEPS.PROCESSING,
-			STEPS.DOMAINS,
-			STEPS.USE_MY_DOMAIN,
-			STEPS.PLANS,
-			STEPS.SETUP_BLOG,
-			STEPS.LAUNCHPAD,
-			STEPS.SITE_LAUNCH,
-			STEPS.CELEBRATION,
-		] );
+		return steps;
 	},
 
 	useStepNavigation( currentStep, navigate ) {
@@ -68,20 +70,20 @@ const designFirst: Flow = {
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
-				case STEPS.CHECK_SITES.slug:
+				case 'check-sites':
 					// Check for unlaunched sites
 					if ( providedDependencies?.filteredSitesCount === 0 ) {
 						// No unlaunched sites, redirect to new site creation step
-						return navigate( STEPS.SITE_CREATION_STEP.slug );
+						return navigate( 'create-site' );
 					}
 					// With unlaunched sites, continue to new-or-existing-site step
-					return navigate( STEPS.NEW_OR_EXISTING_SITE.slug );
-				case STEPS.NEW_OR_EXISTING_SITE.slug:
+					return navigate( 'new-or-existing-site' );
+				case 'new-or-existing-site':
 					if ( 'new-site' === providedDependencies?.newExistingSiteChoice ) {
-						return navigate( STEPS.SITE_CREATION_STEP.slug );
+						return navigate( 'create-site' );
 					}
-					return navigate( STEPS.SITE_PICKER.slug );
-				case STEPS.SITE_PICKER.slug: {
+					return navigate( 'site-picker' );
+				case 'site-picker': {
 					if ( providedDependencies?.siteId && providedDependencies?.siteSlug ) {
 						setSelectedSite( providedDependencies?.siteId );
 						await Promise.all( [
@@ -100,11 +102,11 @@ const designFirst: Flow = {
 							} )
 						);
 					}
-					return navigate( STEPS.LAUNCHPAD.slug );
+					return navigate( 'launchpad' );
 				}
-				case STEPS.SITE_CREATION_STEP.slug:
-					return navigate( STEPS.PROCESSING.slug );
-				case STEPS.PROCESSING.slug: {
+				case 'create-site':
+					return navigate( 'processing' );
+				case 'processing': {
 					// If we just created a new site.
 					const siteSlug = providedDependencies?.siteSlug;
 					if ( ! providedDependencies?.isLaunched && siteSlug ) {
@@ -151,15 +153,15 @@ const designFirst: Flow = {
 							// Remove the site_intent.
 							setIntentOnSite( providedDependencies?.siteSlug, '' ),
 						] );
-						return navigate( STEPS.CELEBRATION.slug );
+						return navigate( 'celebration-step' );
 					}
 					if ( providedDependencies?.goToCheckout ) {
 						// Do nothing and wait for checkout redirect
 						return;
 					}
-					return navigate( STEPS.LAUNCHPAD.slug );
+					return navigate( 'launchpad' );
 				}
-				case STEPS.DOMAINS.slug:
+				case 'domains':
 					if ( siteId ) {
 						await updateLaunchpadSettings( siteId, {
 							checklist_statuses: { domain_upsell_deferred: true },
@@ -170,40 +172,40 @@ const designFirst: Flow = {
 						return window.location.assign( `/setup/design-first/launchpad?siteId=${ site?.ID }` );
 					}
 
-					return navigate( STEPS.PLANS.slug );
-				case STEPS.USE_MY_DOMAIN.slug:
+					return navigate( 'plans' );
+				case 'use-my-domain':
 					if ( siteId ) {
 						await updateLaunchpadSettings( siteId, {
 							checklist_statuses: { domain_upsell_deferred: true },
 						} );
 					}
-					return navigate( STEPS.PLANS.slug );
-				case STEPS.PLANS.slug:
+					return navigate( 'plans' );
+				case 'plans':
 					if ( siteId ) {
 						await updateLaunchpadSettings( siteId, {
 							checklist_statuses: { plan_completed: true },
 						} );
 					}
-					return navigate( STEPS.LAUNCHPAD.slug );
-				case STEPS.SETUP_BLOG.slug:
+					return navigate( 'launchpad' );
+				case 'setup-blog':
 					if ( siteId ) {
 						await updateLaunchpadSettings( siteId, {
 							checklist_statuses: { setup_blog: true },
 						} );
 					}
-					return navigate( STEPS.LAUNCHPAD.slug );
-				case STEPS.LAUNCHPAD.slug:
-					return navigate( STEPS.PROCESSING.slug );
-				case STEPS.SITE_LAUNCH.slug:
-					return navigate( STEPS.PROCESSING.slug );
-				case STEPS.CELEBRATION.slug:
+					return navigate( 'launchpad' );
+				case 'launchpad':
+					return navigate( 'processing' );
+				case 'site-launch':
+					return navigate( 'processing' );
+				case 'celebration-step':
 					return window.location.assign( providedDependencies.destinationUrl as string );
 			}
 		}
 
 		const goNext = async () => {
 			switch ( currentStep ) {
-				case STEPS.LAUNCHPAD.slug:
+				case 'launchpad':
 					skipLaunchpad( {
 						siteId,
 						siteSlug,
