@@ -27,14 +27,18 @@
 	}
 
 	& .field__overlay-prefix {
+		display: flex;
 		flex: 0 0 auto;
+		justify-content: center;
+		align-items: center;
+		align-self: stretch;
 		white-space: nowrap;
+		min-width: 3.5rem;
+		min-height: 100%;
 		line-height: 1.5;
 		font-size: 0.875rem;
 		color: var(--studio-gray-60);
 		box-sizing: border-box;
-		padding-block: 7px;
-		padding-inline: 14px;
 		border-right: 1px solid #C3C4C7;
 	}
 

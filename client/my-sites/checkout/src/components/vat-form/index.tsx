@@ -246,7 +246,6 @@ export function VatForm( {
 							id: newValue,
 						} );
 					} }
-					vatDetails={ vatDetailsInForm }
 					prefix={ vatDetailsInForm?.country ? vatDetailsInForm.country : '' }
 				/>
 			</div>
