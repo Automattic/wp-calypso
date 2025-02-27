@@ -27,7 +27,6 @@ const NewsletterCategoriesToggle = ( {
 				label={ translate( 'Enable newsletter categories' ) }
 			/>
 			<FormSettingExplanation>
-				{ /* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */ }
 				{ i18n.fixMe( {
 					text: "Newsletter categories let you select the content that's emailed to subscribers. When enabled, only posts in the selected categories will be sent as newsletters. By default, subscribers can choose from your selected categories, or you can pre-select categories using the subscribe block.",
 					newCopy: translate(
