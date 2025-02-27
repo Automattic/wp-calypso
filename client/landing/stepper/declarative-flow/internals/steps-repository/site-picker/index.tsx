@@ -100,6 +100,7 @@ const SitePickerStep: Step = function SitePickerStep( { navigation, flow } ) {
 			<DocumentHead title={ __( 'Pick your destination' ) } />
 			<StepContainer
 				stepName="site-picker"
+				hideBack
 				goBack={ navigation.goBack }
 				hideSkip={ SITE_MIGRATION_FLOW === flow }
 				skipLabelText={ __( 'Skip and create a new site' ) }
