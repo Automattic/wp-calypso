@@ -33,6 +33,7 @@ export default function QuickPost() {
 	const currentUser = useSelector( getCurrentUser );
 	const hasLoaded = useSelector( hasLoadedSites );
 	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
+	const [ showSuccessMessage, setShowSuccessMessage ] = useState( false );
 
 	const clearEditor = () => {
 		setEditorKey( ( key ) => key + 1 );
