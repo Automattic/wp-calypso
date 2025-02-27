@@ -53,12 +53,12 @@ import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteId, getSitePlan } from 'calypso/state/sites/selectors';
-import { SiteSlug } from 'calypso/types';
 import ShoppingCartForDIFM from './shopping-cart-for-difm';
 import useCartForDIFM from './use-cart-for-difm';
 import type { PageId } from 'calypso/signup/difm/constants';
 import type { BBETranslationContext } from 'calypso/signup/difm/translation-hooks';
 import type { Dependencies } from 'calypso/signup/types';
+import type { SiteId, SiteSlug } from 'calypso/types';
 
 import './style.scss';
 
@@ -377,6 +377,7 @@ const Placeholder = styled.span`
 function OneClickPurchaseModal( {
 	onClose,
 	siteSlug,
+	siteId,
 	selectedPages,
 	isStoreFlow,
 	flowName,
@@ -384,6 +385,7 @@ function OneClickPurchaseModal( {
 }: {
 	onClose: () => void;
 	siteSlug: SiteSlug;
+	siteId: SiteId;
 	selectedPages: string[];
 	isStoreFlow: boolean;
 	flowName: string;
@@ -400,12 +402,12 @@ function OneClickPurchaseModal( {
 					selectedPageTitles: selectedPages,
 					isStoreFlow,
 				},
-				siteSlug,
+				siteId,
 				`page-picker-one-click-modal-flow-${ flowName }`
 			),
 			quantity: selectedPages.length,
 		} );
-	}, [ flowName, isStoreFlow, selectedPages, signupDependencies, siteSlug ] );
+	}, [ flowName, isStoreFlow, selectedPages, signupDependencies, siteId ] );
 
 	return (
 		<CalypsoShoppingCartProvider>
@@ -581,6 +583,7 @@ function DIFMPagePicker( props: StepProps ) {
 						<OneClickPurchaseModal
 							onClose={ handleModalOnClose }
 							siteSlug={ siteSlug }
+							siteId={ siteId }
 							selectedPages={ selectedPages }
 							isStoreFlow={ isStoreFlow }
 							flowName={ flowName }

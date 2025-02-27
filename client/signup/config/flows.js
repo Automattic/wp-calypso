@@ -199,8 +199,8 @@ function getDestinationFromIntent( dependencies ) {
 	return getChecklistThemeDestination( dependencies );
 }
 
-function getDIFMSignupDestination( { siteSlug } ) {
-	return addQueryArgs( { siteSlug }, '/start/site-content-collection' );
+function getDIFMSignupDestination( { siteId } ) {
+	return addQueryArgs( { siteId }, '/start/site-content-collection' );
 }
 
 function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
