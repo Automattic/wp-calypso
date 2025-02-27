@@ -934,13 +934,14 @@ const ComparisonGrid = ( {
 	const { gridPlans, gridPlansIndex, featureGroupMap } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const [ visiblePlans, setVisiblePlans ] = useState< PlanSlug[] >( [] );
+	const isTruncated = visiblePlans.length !== gridPlans.length;
 
 	const displayedGridPlans = useMemo( () => {
-		return sortPlans( gridPlans, currentSitePlanSlug, 'small' === gridSize );
-	}, [ gridPlans, currentSitePlanSlug, gridSize ] );
+		return sortPlans( gridPlans, currentSitePlanSlug, isTruncated );
+	}, [ gridPlans, currentSitePlanSlug, isTruncated ] );
 
 	useEffect( () => {
-		setVisiblePlans( ( prev ) => {
+		setVisiblePlans( () => {
 			let visibleLength = displayedGridPlans.length;
 			switch ( gridSize ) {
 				case 'large':
@@ -955,27 +956,7 @@ const ComparisonGrid = ( {
 					break;
 			}
 
-			// visible length changed, update with the current gridPlans
-			// - we don't care about previous order
-			if ( prev.length !== visibleLength ) {
-				return displayedGridPlans.slice( 0, visibleLength ).map( ( { planSlug } ) => planSlug );
-			}
-
-			// prev state out of sync with current gridPlans (e.g. gridPlans updated to a different term)
-			// - we care about previous order
-			const isPrevStale = prev.some( ( planSlug ) => ! gridPlansIndex[ planSlug ] );
-			if ( isPrevStale ) {
-				return prev.map( ( planSlug ) => {
-					const gridPlan = displayedGridPlans.find(
-						( gridPlan ) => getPlanClass( gridPlan.planSlug ) === getPlanClass( planSlug )
-					);
-
-					return gridPlan?.planSlug ?? planSlug;
-				} );
-			}
-
-			// nothing to update
-			return prev;
+			return displayedGridPlans.slice( 0, visibleLength ).map( ( { planSlug } ) => planSlug );
 		} );
 	}, [ gridSize, displayedGridPlans, gridPlansIndex ] );
 
