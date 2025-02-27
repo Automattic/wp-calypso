@@ -52,6 +52,10 @@ export function generateFlows( {
 	const userSocialStep = getUserSocialStepOrFallback();
 	const p2Flows = getP2Flows();
 
+	const queryParams = new URLSearchParams( window.location.search );
+	const flags = queryParams.get( 'flags' );
+	const isHelpCenterLinkEnabled = flags === 'signup/help-center-link';
+
 	const flows = [
 		{
 			name: 'hosting', // This flow is to be removed once the Landpack changes are completed.
@@ -415,7 +419,7 @@ export function generateFlows( {
 			lastModified: '2024-05-16',
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
-			enableHelpCenter: isEnabled( 'signup/help-center-link' ),
+			enableHelpCenter: isHelpCenterLinkEnabled,
 			enablePremiumSupport: true,
 			get helpCenterButtonText() {
 				return translate( 'Questions? Contact our site building team' );
@@ -440,7 +444,7 @@ export function generateFlows( {
 			lastModified: '2024-05-16',
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
-			enableHelpCenter: isEnabled( 'signup/help-center-link' ),
+			enableHelpCenter: isHelpCenterLinkEnabled,
 			enablePremiumSupport: true,
 			get helpCenterButtonText() {
 				return translate( 'Questions? Contact our site building team' );
@@ -457,7 +461,7 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'siteSlug', 'back_to' ],
 			optionalDependenciesInQuery: [ 'back_to' ],
 			lastModified: '2024-06-14',
-			enableHelpCenter: isEnabled( 'signup/help-center-link' ),
+			enableHelpCenter: isHelpCenterLinkEnabled,
 			enablePremiumSupport: true,
 			get helpCenterButtonText() {
 				return translate( 'Questions? Contact our site building team' );
