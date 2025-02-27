@@ -12,6 +12,7 @@ const REMOVED_TAILORED_FLOWS = [
 	{ flow: 'videopress', to: '/start:lang?' },
 	{ flow: 'videopress-tv', to: '/start:lang?' },
 	{ flow: 'videopress-tv-purchase', to: '/start:lang?' },
+	{ flow: 'site-setup-wg', to: '/setup/site-setup' },
 ];
 
 export const isRemovedFlow = ( flowToCheck: string ) =>

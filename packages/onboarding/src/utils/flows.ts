@@ -9,7 +9,6 @@ export const IMPORT_FOCUSED_FLOW = 'import-focused';
 export const IMPORT_HOSTED_SITE_FLOW = 'import-hosted-site';
 export const ENTREPRENEUR_FLOW = 'entrepreneur';
 export const FREE_FLOW = 'free';
-export const FREE_POST_SETUP_FLOW = 'free-post-setup';
 export const SITE_MIGRATION_FLOW = 'site-migration';
 export const MIGRATION_SIGNUP_FLOW = 'migration-signup';
 export const HOSTED_SITE_MIGRATION_FLOW = 'hosted-site-migration';
@@ -42,10 +41,6 @@ export const WEBSITE_DESIGN_SERVICES = 'website-design-services';
 
 export const isNewsletterFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && NEWSLETTER_FLOW === flowName );
-};
-
-export const isFreeFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ FREE_POST_SETUP_FLOW ].includes( flowName ) );
 };
 
 export const isTailoredSignupFlow = ( flowName: string | null ) => {

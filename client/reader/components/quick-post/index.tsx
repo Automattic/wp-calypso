@@ -38,11 +38,19 @@ export default function QuickPost() {
 		setEditorKey( ( key ) => key + 1 );
 	};
 
+	const callShowSuccessMessage = () => {
+		setShowSuccessMessage( true );
+		setTimeout( () => {
+			setShowSuccessMessage( false );
+		}, 5000 );
+	};
+
 	const handleSubmit = () => {
 		if ( ! postContent.trim() || ! selectedSiteId || isSubmitting ) {
 			return;
 		}
 
+		setShowSuccessMessage( false );
 		setIsSubmitting( true );
 
 		wpcom
@@ -56,6 +64,7 @@ export default function QuickPost() {
 			.then( () => {
 				recordReaderTracksEvent( 'calypso_reader_quick_post_submitted' );
 				clearEditor();
+				callShowSuccessMessage();
 				// TODO: Update the stream with the new post (if they're subscribed?) to signal success.
 			} )
 			.catch( () => {
@@ -120,6 +129,15 @@ export default function QuickPost() {
 				</div>
 			</div>
 			<div className="quick-post-input__actions">
+				<div
+					className={ `quick-post-input__success-message ${
+						showSuccessMessage ? 'is-visible' : ''
+					}` }
+					aria-hidden={ ! showSuccessMessage }
+				>
+					<p>{ translate( 'Post successful! Your message will appear in the feed soon.' ) }</p>
+				</div>
+
 				<Button
 					onClick={ handleCancel }
 					disabled={ isDisabled }

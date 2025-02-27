@@ -7,6 +7,7 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
+import AddWooPaymentsToSite from '../../add-woopayments-to-site';
 
 const WooPaymentsDashboard = () => {
 	const translate = useTranslate();
@@ -26,6 +27,7 @@ const WooPaymentsDashboard = () => {
 					<Title>{ title }</Title>
 					<Actions>
 						<MobileSidebarNavigation />
+						<AddWooPaymentsToSite />
 					</Actions>
 				</LayoutHeader>
 			</LayoutTop>

@@ -45,7 +45,7 @@ function StatsLineChart( {
 			: numberFormat( value, { numberFormatOptions: { notation: 'compact' }, decimals: 1 } );
 	};
 
-	const isEmpty = ( chartData?.[ 0 ].data || [] ).length === 0;
+	const isEmpty = ( chartData?.[ 0 ]?.data || [] ).length === 0;
 
 	const maxValue = useMemo(
 		() =>
@@ -54,6 +54,31 @@ function StatsLineChart( {
 			),
 		[ chartData ]
 	);
+
+	const yScaleType = useMemo( () => {
+		if ( chartData.length <= 1 ) {
+			return 'linear';
+		}
+
+		const maxValues = chartData.map( ( series ) =>
+			Math.max( ...series.data.map( ( d ) => d.value ) )
+		);
+		const [ minMax, maxMax ] = [ Math.min( ...maxValues ), Math.max( ...maxValues ) ];
+
+		// Avoid division by zero
+		if ( minMax === 0 ) {
+			return 'linear';
+		}
+
+		const scacle = maxMax / minMax;
+		if ( scacle > 20 && scacle < 200 ) {
+			return 'sqrt';
+		} else if ( scacle >= 200 ) {
+			return 'log';
+		}
+
+		return 'linear';
+	}, [ chartData ] );
 
 	return (
 		<div className={ clsx( 'stats-line-chart', className ) }>
@@ -78,7 +103,7 @@ function StatsLineChart( {
 						} }
 						options={ {
 							yScale: {
-								type: 'linear',
+								type: yScaleType,
 								...( fixedDomain && { domain: [ 0, maxValue ] } ),
 								zero: zeroBaseline,
 							},

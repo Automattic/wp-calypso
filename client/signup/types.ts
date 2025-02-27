@@ -21,7 +21,6 @@ export interface Flow {
 	showRecaptcha?: boolean;
 	enableBranchSteps?: boolean;
 	hideProgressIndicator?: boolean;
-	enableHelpCenter?: boolean;
 	enablePremiumSupport?: boolean;
 	helpCenterButtonText?: string;
 	enableHotjar?: boolean;

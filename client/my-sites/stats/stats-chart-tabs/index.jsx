@@ -19,6 +19,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import StatsEmptyState from '../stats-empty-state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatTabs from '../stats-tabs';
+import { parseLocalDate } from '../utils';
 import ChartHeader from './chart-header';
 import { buildChartData, getQueryDate } from './utility';
 
@@ -43,7 +44,7 @@ const transformChartDataToLineFormat = ( chartData ) => {
 		options: {},
 		data: chartData
 			.map( ( record ) => {
-				const date = new Date( record.data.period );
+				const date = parseLocalDate( record.data.period );
 				const value = record.data.views;
 				if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
 					return null;
@@ -59,7 +60,7 @@ const transformChartDataToLineFormat = ( chartData ) => {
 		options: {},
 		data: chartData
 			.map( ( record ) => {
-				const date = new Date( record.data.period );
+				const date = parseLocalDate( record.data.period );
 				const value = record.data.visitors;
 				if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
 					return null;

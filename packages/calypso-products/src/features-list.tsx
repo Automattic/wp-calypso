@@ -332,6 +332,7 @@ import {
 	FEATURE_UPLOAD_VIDEO,
 	FEATURE_STATS_BASIC_20250206,
 	FEATURE_STATS_ADVANCED_20250206,
+	FEATURE_SUPPORT,
 } from './constants';
 import type { FeatureList } from './types';
 
@@ -1652,16 +1653,30 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: {
 		getSlug: () => FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 		getTitle: () =>
-			i18n.translate(
-				'Commission fee for standard payment features (plus standard processing\u00A0fee)'
-			),
+			/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
+			i18n.fixMe( {
+				text: 'Transaction fee for standard payments (+\u00A0standard processing\u00A0fee)',
+				newCopy: i18n.translate(
+					'Transaction fee for standard payments (+\u00A0standard processing\u00A0fee)'
+				),
+				oldCopy: i18n.translate(
+					'Commission fee for standard payment features (plus standard processing\u00A0fee)'
+				),
+			} ),
 	},
 	[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: {
 		getSlug: () => FEATURE_COMMISSION_FEE_WOO_FEATURES,
 		getTitle: () =>
-			i18n.translate(
-				'Commission fee for standard WooCommerce payment features (plus standard processing\u00A0fee)'
-			),
+			/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
+			i18n.fixMe( {
+				text: 'Transaction fee for standard WooCommerce payments (+ standard processing\u00A0fee)',
+				newCopy: i18n.translate(
+					'Transaction fee for standard WooCommerce payments (+ standard processing\u00A0fee)'
+				),
+				oldCopy: i18n.translate(
+					'Commission fee for standard WooCommerce payment features (plus standard processing\u00A0fee)'
+				),
+			} ),
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_10 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_10,
@@ -2133,8 +2148,6 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_STATS_JP ]: {
 		getSlug: () => FEATURE_STATS_JP,
 		getTitle: () => i18n.translate( 'Visitor stats' ),
-		getDescription: () =>
-			i18n.translate( 'Basic integrated analytics to measure your site’s performance.' ),
 	},
 	[ FEATURE_SPAM_JP ]: {
 		getSlug: () => FEATURE_SPAM_JP,
@@ -2411,15 +2424,19 @@ const FEATURES_LIST: FeatureList = {
 			),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
+	[ FEATURE_SUPPORT ]: {
+		getSlug: () => FEATURE_SUPPORT,
+		getTitle: () => i18n.translate( 'Support' ),
+	},
 	[ FEATURE_FAST_SUPPORT_FROM_EXPERTS ]: {
 		getSlug: () => FEATURE_FAST_SUPPORT_FROM_EXPERTS,
-		getTitle: () => i18n.translate( 'Fast support from our expert team' ),
+		getTitle: () => i18n.translate( 'Fast support from our expert\u00A0team' ),
 		getDescription: () =>
 			i18n.translate( 'Prompt support from our expert, friendly Happiness team' ),
 	},
 	[ FEATURE_PRIORITY_24_7_SUPPORT ]: {
 		getSlug: () => FEATURE_PRIORITY_24_7_SUPPORT,
-		getTitle: () => i18n.translate( 'Priority 24/7 support from our expert team' ),
+		getTitle: () => i18n.translate( 'Priority 24/7 support from our expert\u00A0team' ),
 		getDescription: () =>
 			i18n.translate( 'The fastest 24/7 support from our expert, friendly Happiness team' ),
 	},

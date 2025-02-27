@@ -204,7 +204,9 @@
 				color: unset;
 				margin-bottom: 0;
 			}
-			text-wrap: pretty;
+			text-wrap: balance;
+			max-width: 160px;
+			hyphens: unset;
 		}
 
 		&:not(.has-feature):not(.has-feature-label) {

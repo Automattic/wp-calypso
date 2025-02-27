@@ -223,25 +223,30 @@ $button-border: 4px;
 		}
 	}
 
+	.theme__sheet-main-info {
+		display: flex;
+		flex-direction: column;
+	}
+	
 	.theme__sheet-main-info-title {
 		@include onboarding-font-recoleta;
-		align-items: center;
 		display: flex;
+		flex-direction: column;
 		font-size: $font-title-large;
-		line-height: 1;
+		line-height: 1.2;
+		margin: 0;
 	}
-
+	
 	.theme__sheet-main-info-type {
-		flex-basis: unset;
-		font-family: $sans;
-		margin-left: 8px;
+		align-self: flex-start;
+		margin: 0;
+		margin-bottom: 8px;
 	}
-
+	
 	.theme__sheet-main-info-tag {
 		color: var(--color-neutral-60);
 		font-size: $font-body;
 		font-weight: 400;
-		letter-spacing: -0.32px;
 		line-height: 24px;
 	}
 }

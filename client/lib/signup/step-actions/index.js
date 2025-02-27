@@ -344,13 +344,14 @@ export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo, themeSt
 }
 
 function addDIFMLiteProductToCart( callback, dependencies, step, reduxStore ) {
-	const { selectedDesign, selectedSiteCategory, isLetUsChooseSelected, siteSlug } = dependencies;
+	const { selectedDesign, selectedSiteCategory, isLetUsChooseSelected, siteSlug, siteId } =
+		dependencies;
 	if ( step.lastKnownFlow === 'do-it-for-me-store' ) {
 		dependencies.isStoreFlow = true;
 	}
 	const extra = buildDIFMCartExtrasObject(
 		dependencies,
-		siteSlug,
+		siteId,
 		`step-actions-flow-${ step.lastKnownFlow || '' }`
 	);
 	const cartItem = {
