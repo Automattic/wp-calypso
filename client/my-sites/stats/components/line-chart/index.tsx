@@ -26,7 +26,6 @@ function StatsLineChart( {
 	EmptyState: typeof StatsEmptyState;
 	zeroBaseline?: boolean;
 	fixedDomain?: boolean;
-	yScaleType?: 'linear' | 'sqrt' | 'log';
 } ) {
 	const translate = useTranslate();
 
