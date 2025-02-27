@@ -52,7 +52,7 @@ export function generateFlows( {
 	const userSocialStep = getUserSocialStepOrFallback();
 	const p2Flows = getP2Flows();
 
-	const queryParams = new URLSearchParams( window.location.search );
+	const queryParams = new URLSearchParams( window?.location.search );
 	const flags = queryParams.get( 'flags' );
 	const isHelpCenterLinkEnabled = flags === 'signup/help-center-link';
 
