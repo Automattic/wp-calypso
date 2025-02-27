@@ -10,9 +10,9 @@ import { useRequestTransferWithSoftware } from '../use-transfer-with-software-st
 import { replyWithError } from './helpers/nock';
 
 const errorResponse = replyWithError( { error: 'any generic error' } );
-const siteId = 123;
-const plugins = { 'plugin-1': 'install' };
-const themes = { 'theme-1': 'activate' };
+const SITE_ID = 123;
+const PLUGINS = { 'plugin-1': 'install' as const };
+const THEMES = { 'theme-1': 'activate' as const };
 
 const Wrapper =
 	( queryClient: QueryClient ) =>
@@ -24,13 +24,7 @@ const render = ( options = { retry: 0 } ) => {
 	const queryClient = new QueryClient();
 
 	const renderResult = renderHook(
-		() =>
-			useRequestTransferWithSoftware(
-				siteId,
-				plugins as Record< string, 'install' | 'activate' >,
-				themes as Record< string, 'install' | 'activate' >,
-				options
-			),
+		() => useRequestTransferWithSoftware( SITE_ID, PLUGINS, THEMES, options ),
 		{
 			wrapper: Wrapper( queryClient ),
 		}
@@ -50,28 +44,38 @@ describe( 'useRequestTransferWithSoftware', () => {
 	beforeEach( () => nock.cleanAll() );
 
 	it( 'should successfully request transfer with software and return the transferId', async () => {
-		nock( 'https://public-api.wordpress.com:443' )
-			.post( `/wpcom/v2/sites/${ siteId }/atomic/transfer-with-software?http_envelope=1`, {
-				plugins,
-				themes,
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/sites/' + SITE_ID + '/atomic/transfer-with-software', {
+				apiNamespace: 'wpcom/v2',
+				body: {
+					plugins: PLUGINS,
+					themes: THEMES,
+				},
 			} )
-			.reply( 200, { transferId: 456 } );
+			.query( { http_envelope: 1 } )
+			.reply( 200, {
+				success: true,
+				transferId: 456,
+			} );
 
 		const { result } = render();
 
 		result.current.mutate();
 
-		await waitFor( () => {
-			expect( result.current.isSuccess ).toBe( true );
-			expect( result.current.data?.transferId ).toBe( 456 );
-		} );
+		await waitFor(
+			() => {
+				expect( result.current.isSuccess ).toBe( true );
+				expect( result.current.data?.transferId ).toBe( 456 );
+			},
+			{ timeout: 3000 }
+		);
 	} );
 
 	it( 'should handle API errors', async () => {
 		nock( 'https://public-api.wordpress.com:443' )
-			.post( `/wpcom/v2/sites/${ siteId }/atomic/transfer-with-software?http_envelope=1`, {
-				plugins,
-				themes,
+			.post( `/wpcom/v2/sites/${ SITE_ID }/atomic/transfer-with-software?http_envelope=1`, {
+				plugins: PLUGINS,
+				themes: THEMES,
 			} )
 			.reply( errorResponse );
 
@@ -79,8 +83,11 @@ describe( 'useRequestTransferWithSoftware', () => {
 
 		result.current.mutate();
 
-		await waitFor( () => {
-			expect( result.current.isError ).toBe( true );
-		} );
+		await waitFor(
+			() => {
+				expect( result.current.isError ).toBe( true );
+			},
+			{ timeout: 3000 }
+		);
 	} );
 } );

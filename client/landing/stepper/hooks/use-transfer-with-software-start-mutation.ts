@@ -28,7 +28,7 @@ const requestTransferWithSoftware: (
 	if ( ! response.success ) {
 		throw new Error( 'Transfer with software failed' );
 	}
-	return response.transferId;
+	return response;
 };
 
 export const useRequestTransferWithSoftware = (
