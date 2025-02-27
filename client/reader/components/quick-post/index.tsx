@@ -52,14 +52,14 @@ function QuickPost( { receivePosts } ) {
 		if ( ! postContent.trim() || ! selectedSiteId || isSubmitting ) {
 			return;
 		}
-		const title = postContent.split( '\n' )[ 0 ];
+
 		setIsSubmitting( true );
 
 		wpcom
 			.site( selectedSiteId )
 			.post()
 			.add( {
-				title: title,
+				title: postContent.split( '\n' )[ 0 ],
 				content: postContent,
 				status: 'publish',
 			} )
