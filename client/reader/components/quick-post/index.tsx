@@ -8,10 +8,12 @@ import {
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useEffect, useState, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch, connect } from 'react-redux';
 import FormSelect from 'calypso/components/forms/form-select';
 import wpcom from 'calypso/lib/wp';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
+import { receivePosts } from 'calypso/state/reader/posts/actions';
+import { receiveNewPost } from 'calypso/state/reader/streams/actions';
 import getSites from 'calypso/state/selectors/get-sites';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -22,7 +24,7 @@ import './style.scss';
 loadBlocksWithCustomizations();
 loadTextFormatting();
 
-export default function QuickPost() {
+function QuickPost( { receivePosts } ) {
 	const translate = useTranslate();
 	const locale = useLocale();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
@@ -33,6 +35,7 @@ export default function QuickPost() {
 	const hasLoaded = useSelector( hasLoadedSites );
 	const [ selectedSiteId, setSelectedSiteId ] = useState< number | null >( null );
 	const editorRef = useRef< HTMLDivElement >( null );
+	const dispatch = useDispatch();
 
 	// Set initial selected site once sites are loaded.
 	useEffect( () => {
@@ -49,21 +52,32 @@ export default function QuickPost() {
 		if ( ! postContent.trim() || ! selectedSiteId || isSubmitting ) {
 			return;
 		}
-
+		const title = postContent.split( '\n' )[ 0 ];
 		setIsSubmitting( true );
 
 		wpcom
 			.site( selectedSiteId )
 			.post()
 			.add( {
-				title: postContent.split( '\n' )[ 0 ], // Use first line as title.
+				title: title,
 				content: postContent,
 				status: 'publish',
 			} )
-			.then( () => {
+			.then( ( postData ) => {
 				recordReaderTracksEvent( 'calypso_reader_quick_post_submitted' );
-				clearEditor();
-				// TODO: Update the stream with the new post (if they're subscribed?) to signal success.
+
+				receivePosts( [ postData ] ).then( () => {
+					clearEditor();
+					// Actual API response will update the stream with the real post data
+					dispatch(
+						receiveNewPost( {
+							streamKey: `following`,
+							postData,
+						} )
+					);
+
+					// dispatch( showUpdates( { streamKey: 'following' } ) );
+				} );
 			} )
 			.catch( () => {
 				recordReaderTracksEvent( 'calypso_reader_quick_post_error' );
@@ -151,3 +165,7 @@ export default function QuickPost() {
 		</div>
 	);
 }
+
+export default connect( ( state ) => state, {
+	receivePosts,
+} )( QuickPost );
