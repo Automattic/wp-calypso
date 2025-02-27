@@ -206,11 +206,7 @@ export const pendingItems = ( state = PENDING_ITEMS_DEFAULT, action ) => {
 			}
 
 			// there is a gap if the oldest item in the poll is newer than last update time
-			if (
-				state.lastUpdated &&
-				minDate.isAfter( state.lastUpdated ) &&
-				! action.payload.manualUpdate
-			) {
+			if ( state.lastUpdated && minDate.isAfter( state.lastUpdated ) ) {
 				newItems.push( {
 					isGap: true,
 					from: state.lastUpdated,
