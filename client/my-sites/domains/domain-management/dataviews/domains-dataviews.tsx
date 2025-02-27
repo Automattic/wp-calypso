@@ -4,9 +4,11 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
+import { connect } from 'react-redux';
 import { navigate } from 'calypso/lib/navigate';
 import { addQueryArgs } from 'calypso/lib/url';
-import { BulkUpdateNotice } from './components/bulk-update-notice';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { NoticeActionCreator } from 'calypso/state/notices/types';
 import {
 	DEFAULT_PER_PAGE,
 	DEFAULT_SORT_FIELD,
@@ -15,6 +17,7 @@ import {
 	QueryParams,
 } from './query-params';
 import { useActions } from './use-actions';
+import useBulkActionNotice from './use-bulk-action-notice';
 import { useDomainsDataViewsContext } from './use-context';
 import { getDomainId } from './use-domains';
 import './style.scss';
@@ -27,17 +30,23 @@ type Props = {
 	sidebarMode?: boolean;
 	selectedDomainName?: string;
 	queryParams: QueryParams;
+	successNotice: NoticeActionCreator;
+	errorNotice: NoticeActionCreator;
 };
 
-export const DomainsDataViews = ( {
+const DomainsDataViewsUnwrapped = ( {
 	domains,
 	isLoading,
 	sidebarMode,
 	selectedDomainName,
 	queryParams,
+	successNotice,
+	errorNotice,
 }: Props ) => {
 	const translate = useTranslate();
 	const { isDesktop, getSiteSlug, selectedFeature } = useDomainsDataViewsContext();
+
+	useBulkActionNotice( successNotice, errorNotice );
 
 	const [ view, setView ] = useState( () =>
 		initializeViewState( isDesktop, queryParams, sidebarMode )
@@ -98,6 +107,7 @@ export const DomainsDataViews = ( {
 					getDomainManagementLink( item, siteSlug, true, selectedFeature )
 			  )
 			: '';
+		// test
 
 		if ( ! domainManagementLink ) {
 			return;
@@ -118,7 +128,6 @@ export const DomainsDataViews = ( {
 
 	return (
 		<>
-			{ ! sidebarMode && <BulkUpdateNotice /> }
 			<div className={ clsx( 'domains-dataviews', { 'domains-dataviews-list': sidebarMode } ) }>
 				<DataViews
 					data={ domainsToDisplay }
@@ -140,3 +149,7 @@ export const DomainsDataViews = ( {
 		</>
 	);
 };
+
+export const DomainsDataViews = connect( null, { successNotice, errorNotice } )(
+	DomainsDataViewsUnwrapped
+);
