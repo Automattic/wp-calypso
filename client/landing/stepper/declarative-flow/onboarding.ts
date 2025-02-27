@@ -31,6 +31,7 @@ import { getLoginUrl } from '../utils/path';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { useBigSkyBeforePlans } from './helpers/use-bigsky-before-plans-experiment';
 import { useGoalsFirstExperiment } from './helpers/use-goals-first-experiment';
+import { useRedirectDesignSetupOldSlug } from './helpers/use-redirect-design-setup-old-slug';
 import { recordStepNavigation } from './internals/analytics/record-step-navigation';
 import { STEPS } from './internals/steps';
 import { AssertConditionState, Flow, ProvidedDependencies } from './internals/types';
@@ -117,7 +118,6 @@ const onboarding: Flow = {
 				STEPS.GOALS,
 				STEPS.DESIGN_CHOICES,
 				STEPS.DESIGN_SETUP,
-				STEPS.DESIGN_SETUP_LEGACY,
 				STEPS.DIFM_STARTING_POINT
 			);
 		}
@@ -166,6 +166,7 @@ const onboarding: Flow = {
 		} else if ( typeof window !== 'undefined' ) {
 			window.__a8cBigSkyOnboarding = false;
 		}
+
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
 		 */
@@ -199,6 +200,7 @@ const onboarding: Flow = {
 		};
 
 		clearUseMyDomainsQueryParams( currentStepSlug );
+		useRedirectDesignSetupOldSlug( currentStepSlug, navigate );
 
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			switch ( currentStepSlug ) {
@@ -228,7 +230,6 @@ const onboarding: Flow = {
 					}
 				}
 
-				case 'designSetup':
 				case 'design-setup': {
 					return navigate( 'domains' );
 				}
@@ -428,7 +429,6 @@ const onboarding: Flow = {
 						}
 						return navigate( 'design-setup' );
 					}
-				case 'designSetup':
 				case 'design-setup':
 					if ( isDesignChoicesStepEnabled ) {
 						return navigate( 'design-choices' );

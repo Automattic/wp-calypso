@@ -21,6 +21,7 @@ import { useSiteData } from '../hooks/use-site-data';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { shouldRedirectToSiteMigration } from './helpers';
+import { useRedirectDesignSetupOldSlug } from './helpers/use-redirect-design-setup-old-slug';
 import { useLaunchpadDecider } from './internals/hooks/use-launchpad-decider';
 import { STEPS } from './internals/steps';
 import { redirect } from './internals/steps-repository/import/util';
@@ -60,7 +61,6 @@ const siteSetupFlow: FlowV1 = {
 			STEPS.OPTIONS,
 			STEPS.DESIGN_CHOICES,
 			STEPS.DESIGN_SETUP,
-			STEPS.DESIGN_SETUP_LEGACY,
 			STEPS.BLOGGER_STARTING_POINT,
 			STEPS.COURSES,
 			STEPS.IMPORT,
@@ -272,6 +272,8 @@ const siteSetupFlow: FlowV1 = {
 			navigate,
 		} );
 
+		useRedirectDesignSetupOldSlug( currentStep, navigate );
+
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
 			switch ( currentStep ) {
 				case 'options': {
@@ -286,7 +288,6 @@ const siteSetupFlow: FlowV1 = {
 					return navigate( 'bloggerStartingPoint' );
 				}
 
-				case 'designSetup':
 				case 'design-setup': {
 					return navigate( 'processing' );
 				}
@@ -519,7 +520,6 @@ const siteSetupFlow: FlowV1 = {
 				case 'courses':
 					return navigate( 'bloggerStartingPoint' );
 
-				case 'designSetup':
 				case 'design-setup':
 					if ( intent === SiteIntent.DIFM ) {
 						return navigate( 'difmStartingPoint' );
