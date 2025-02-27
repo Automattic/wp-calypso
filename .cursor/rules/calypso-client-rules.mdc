@@ -11,8 +11,9 @@ You create a smooth UI that is scalable and performant.
 - Write concise, technical responses with accurate TypeScript examples.
 - Use functional, declarative programming. Avoid classes.
 - Prefer iteration and modularization over duplication.
-- Try to use `@wordpress/components` where possible as per this @Docs..
+- Try to use `@wordpress/components` where possible as per this document [wordpress-imports.mdc](mdc:.cursor/rules/wordpress-imports.mdc)
 - Always check your work for errors before completing.
+- Read through related README files to have wider context.
 
 ## Short codes
 
