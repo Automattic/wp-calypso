@@ -495,7 +495,7 @@ export function generateFlows( {
 			excludeFromManageSiteFlows: true,
 			providesDependenciesInQuery: [ 'siteId', 'siteSlug' ],
 			optionalDependenciesInQuery: [ 'siteId', 'siteSlug' ],
-			lastModified: '2024-06-14',
+			lastModified: '2025-02-27',
 			hideProgressIndicator: true,
 		},
 		{
