@@ -55,7 +55,7 @@ const useSubscribedNewsletterCategories = ( {
 				};
 			}
 		},
-		enabled: !! siteId,
+		enabled: !! siteId && ( !! subscriptionId || !! userId ),
 	} );
 };
 
