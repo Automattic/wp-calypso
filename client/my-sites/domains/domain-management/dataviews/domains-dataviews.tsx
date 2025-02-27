@@ -4,6 +4,7 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
+import { connect } from 'react-redux';
 import { navigate } from 'calypso/lib/navigate';
 import { addQueryArgs } from 'calypso/lib/url';
 import {
@@ -29,7 +30,7 @@ type Props = {
 	queryParams: QueryParams;
 };
 
-export const DomainsDataViews = ( {
+const DomainsDataViewsUnwrapped = ( {
 	domains,
 	isLoading,
 	sidebarMode,
@@ -100,6 +101,7 @@ export const DomainsDataViews = ( {
 					getDomainManagementLink( item, siteSlug, true, selectedFeature )
 			  )
 			: '';
+		// test
 
 		if ( ! domainManagementLink ) {
 			return;
@@ -141,3 +143,7 @@ export const DomainsDataViews = ( {
 		</>
 	);
 };
+
+export const DomainsDataViews = connect( null, { successNotice, errorNotice } )(
+	DomainsDataViewsUnwrapped
+);
