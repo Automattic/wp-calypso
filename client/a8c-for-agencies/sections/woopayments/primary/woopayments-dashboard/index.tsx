@@ -8,6 +8,9 @@ import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
 import AddWooPaymentsToSite from '../../add-woopayments-to-site';
+import WooPaymentsDashboardContent from '../../dashboard-content';
+
+import './style.scss';
 
 const WooPaymentsDashboard = () => {
 	const translate = useTranslate();
@@ -21,7 +24,7 @@ const WooPaymentsDashboard = () => {
 	}
 
 	return (
-		<Layout title={ title } wide>
+		<Layout className="woopayments-dashboard" title={ title } wide>
 			<LayoutTop>
 				<LayoutHeader>
 					<Title>{ title }</Title>
@@ -33,7 +36,7 @@ const WooPaymentsDashboard = () => {
 			</LayoutTop>
 
 			<LayoutBody>
-				<>{ /* TODO: Add the content */ }</>
+				<WooPaymentsDashboardContent />
 			</LayoutBody>
 		</Layout>
 	);
