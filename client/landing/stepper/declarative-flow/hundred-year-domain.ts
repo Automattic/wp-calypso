@@ -11,6 +11,7 @@ import {
 } from 'calypso/signup/storageUtils';
 import { ONBOARD_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
+import { STEPS } from './internals/steps';
 import type { ProvidedDependencies, Flow } from './internals/types';
 
 const HundredYearDomainFlow: Flow = {
@@ -22,18 +23,7 @@ const HundredYearDomainFlow: Flow = {
 	},
 
 	useSteps() {
-		const steps = [
-			{
-				slug: 'domains',
-				asyncComponent: () => import( './internals/steps-repository/domains' ),
-			},
-			...stepsWithRequiredLogin( [
-				{
-					slug: 'processing',
-					asyncComponent: () => import( './internals/steps-repository/processing-step' ),
-				},
-			] ),
-		];
+		const steps = [ STEPS.DOMAINS, ...stepsWithRequiredLogin( [ STEPS.PROCESSING ] ) ];
 
 		return steps;
 	},
