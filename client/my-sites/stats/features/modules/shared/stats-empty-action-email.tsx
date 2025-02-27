@@ -38,7 +38,8 @@ const StatsEmptyActionEmail: React.FC< StatsEmptyActionProps > = ( { from } ) =>
 					redirectUrl = localizeUrl( JETPACK_SUPPORT_NEWSLETTER_URL );
 				}
 
-				setTimeout( () => ( window.location.href = redirectUrl ), 250 );
+				// open in new tab
+				setTimeout( () => window.open( redirectUrl, '_blank' ), 250 );
 			} }
 		/>
 	);
