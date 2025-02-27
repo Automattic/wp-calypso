@@ -18,6 +18,7 @@ import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { useLoginUrl } from '../utils/path';
+import { STEPS } from './internals/steps';
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -34,27 +35,11 @@ const hosting: Flow = {
 	useSteps() {
 		const showDomainStep = useShowDomainStep();
 		return [
-			...( showDomainStep
-				? [
-						{
-							slug: 'domains',
-							asyncComponent: () => import( './internals/steps-repository/domains' ),
-						},
-				  ]
-				: [] ),
-			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
-			{
-				slug: 'trialAcknowledge',
-				asyncComponent: () => import( './internals/steps-repository/trial-acknowledge' ),
-			},
-			{
-				slug: 'createSite',
-				asyncComponent: () => import( './internals/steps-repository/create-site' ),
-			},
-			{
-				slug: 'processing',
-				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
-			},
+			...( showDomainStep ? [ STEPS.DOMAINS ] : [] ),
+			STEPS.PLANS,
+			STEPS.TRIAL_ACKNOWLEDGE,
+			STEPS.SITE_CREATION_STEP,
+			STEPS.PROCESSING,
 		];
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
