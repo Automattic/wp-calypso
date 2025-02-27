@@ -59,7 +59,7 @@ function QuickPost( { receivePosts } ) {
 			.site( selectedSiteId )
 			.post()
 			.add( {
-				title: postContent.split( '\n' )[ 0 ],
+				title: postContent.split( '\n' )[ 0 ], // Use first line as title.
 				content: postContent,
 				status: 'publish',
 			} )
