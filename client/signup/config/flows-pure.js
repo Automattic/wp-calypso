@@ -415,7 +415,6 @@ export function generateFlows( {
 			lastModified: '2024-05-16',
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
-			enableHelpCenter: isEnabled( 'signup/help-center-link' ),
 			enablePremiumSupport: true,
 			get helpCenterButtonText() {
 				return translate( 'Questions? Contact our site building team' );
@@ -440,7 +439,6 @@ export function generateFlows( {
 			lastModified: '2024-05-16',
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
-			enableHelpCenter: isEnabled( 'signup/help-center-link' ),
 			enablePremiumSupport: true,
 			get helpCenterButtonText() {
 				return translate( 'Questions? Contact our site building team' );
@@ -457,7 +455,6 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'siteSlug', 'back_to' ],
 			optionalDependenciesInQuery: [ 'back_to' ],
 			lastModified: '2024-06-14',
-			enableHelpCenter: isEnabled( 'signup/help-center-link' ),
 			enablePremiumSupport: true,
 			get helpCenterButtonText() {
 				return translate( 'Questions? Contact our site building team' );
@@ -470,8 +467,9 @@ export function generateFlows( {
 			destination: getDIFMSiteContentCollectionDestination,
 			description: 'A flow to collect DIFM lite site content',
 			excludeFromManageSiteFlows: true,
-			providesDependenciesInQuery: [ 'siteSlug' ],
-			lastModified: '2024-06-14',
+			providesDependenciesInQuery: [ 'siteId', 'siteSlug' ],
+			optionalDependenciesInQuery: [ 'siteId', 'siteSlug' ],
+			lastModified: '2025-02-27',
 			hideProgressIndicator: true,
 		},
 		{

@@ -1422,26 +1422,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/newsletter@workspace:^, @automattic/newsletter@workspace:apps/newsletter":
-  version: 0.0.0-use.local
-  resolution: "@automattic/newsletter@workspace:apps/newsletter"
-  dependencies:
-    "@automattic/calypso-apps-builder": "workspace:^"
-    "@automattic/calypso-build": "workspace:^"
-    "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/newsletter": "workspace:^"
-    "@automattic/wp-babel-makepot": "workspace:^"
-    "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.14.0"
-    "@wordpress/element": "npm:^6.16.0"
-    "@wordpress/i18n": "npm:^5.16.0"
-    i18n-calypso: "workspace:^"
-    mkdirp: "npm:^3.0.1"
-    postcss: "npm:^8.5.2"
-    react: "npm:^18.2.0"
-    webpack: "npm:^5.97.1"
-  languageName: unknown
-  linkType: soft
-
 "@automattic/notifications@workspace:^, @automattic/notifications@workspace:apps/notifications":
   version: 0.0.0-use.local
   resolution: "@automattic/notifications@workspace:apps/notifications"
@@ -26042,15 +26022,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mkdirp@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "mkdirp@npm:3.0.1"
-  bin:
-    mkdirp: dist/cjs/src/bin.js
-  checksum: 9f2b975e9246351f5e3a40dcfac99fcd0baa31fbfab615fe059fb11e51f10e4803c63de1f384c54d656e4db31d000e4767e9ef076a22e12a641357602e31d57d
-  languageName: node
-  linkType: hard
-
 "mock-fs@npm:^5.4.1":
   version: 5.5.0
   resolution: "mock-fs@npm:5.5.0"
@@ -28494,7 +28465,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.2.4, postcss@npm:^8.3.11, postcss@npm:^8.3.5, postcss@npm:^8.4.21, postcss@npm:^8.4.33, postcss@npm:^8.4.5, postcss@npm:^8.5.1, postcss@npm:^8.5.2":
+"postcss@npm:^8.2.4, postcss@npm:^8.3.11, postcss@npm:^8.3.5, postcss@npm:^8.4.21, postcss@npm:^8.4.33, postcss@npm:^8.4.5, postcss@npm:^8.5.1":
   version: 8.5.2
   resolution: "postcss@npm:8.5.2"
   dependencies:

@@ -7,16 +7,15 @@ import {
 } from '@automattic/verbum-block-editor';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useEffect, useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { useSelector, useDispatch, connect } from 'react-redux';
-import FormSelect from 'calypso/components/forms/form-select';
+import SitesDropdown from 'calypso/components/sites-dropdown';
 import wpcom from 'calypso/lib/wp';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { receiveNewPost } from 'calypso/state/reader/streams/actions';
-import getSites from 'calypso/state/selectors/get-sites';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
-import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -31,21 +30,23 @@ function QuickPost( { receivePosts } ) {
 	const [ postContent, setPostContent ] = useState( '' );
 	const [ editorKey, setEditorKey ] = useState( 0 );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
-	const sites = useSelector( getSites ).filter( ( site ): site is SiteDetails => site !== null );
-	const hasLoaded = useSelector( hasLoadedSites );
 	const [ selectedSiteId, setSelectedSiteId ] = useState< number | null >( null );
 	const editorRef = useRef< HTMLDivElement >( null );
 	const dispatch = useDispatch();
-
-	// Set initial selected site once sites are loaded.
-	useEffect( () => {
-		if ( hasLoaded && sites.length > 0 && ! selectedSiteId ) {
-			setSelectedSiteId( sites[ 0 ].ID );
-		}
-	}, [ hasLoaded, sites, selectedSiteId ] );
+	const currentUser = useSelector( getCurrentUser );
+	const hasLoaded = useSelector( hasLoadedSites );
+	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
+	const [ showSuccessMessage, setShowSuccessMessage ] = useState( false );
 
 	const clearEditor = () => {
 		setEditorKey( ( key ) => key + 1 );
+	};
+
+	const callShowSuccessMessage = () => {
+		setShowSuccessMessage( true );
+		setTimeout( () => {
+			setShowSuccessMessage( false );
+		}, 5000 );
 	};
 
 	const handleSubmit = () => {
@@ -53,6 +54,7 @@ function QuickPost( { receivePosts } ) {
 			return;
 		}
 
+		setShowSuccessMessage( false );
 		setIsSubmitting( true );
 
 		wpcom
@@ -68,6 +70,7 @@ function QuickPost( { receivePosts } ) {
 
 				receivePosts( [ postData ] ).then( () => {
 					clearEditor();
+					callShowSuccessMessage();
 					// Actual API response will update the stream with the real post data
 					dispatch(
 						receiveNewPost( {
@@ -90,8 +93,8 @@ function QuickPost( { receivePosts } ) {
 		clearEditor();
 	};
 
-	const handleSiteChange = ( event: ChangeEvent< HTMLSelectElement > ) => {
-		setSelectedSiteId( Number( event.target.value ) );
+	const handleSiteSelect = ( siteId: number ) => {
+		setSelectedSiteId( siteId );
 	};
 
 	const getButtonText = () => {
@@ -109,7 +112,7 @@ function QuickPost( { receivePosts } ) {
 		);
 	}
 
-	if ( ! sites.length ) {
+	if ( ! hasSites ) {
 		return null; // Don't show QuickPost if user has no sites.
 	}
 
@@ -121,19 +124,13 @@ function QuickPost( { receivePosts } ) {
 				{ translate( 'Publish a post to' ) }
 			</label>
 			<div className="quick-post-input__fields">
-				<FormSelect
-					id="quick-post-site-select"
-					value={ selectedSiteId || '' }
-					onChange={ handleSiteChange }
-					disabled={ isDisabled }
-					className="quick-post-input__site-select"
-				>
-					{ sites.map( ( site ) => (
-						<option key={ site.ID } value={ site.ID }>
-							{ site.name } ({ site.domain })
-						</option>
-					) ) }
-				</FormSelect>
+				<div className="quick-post-input__site-select-wrapper">
+					<SitesDropdown
+						selectedSiteId={ selectedSiteId || undefined }
+						onSiteSelect={ handleSiteSelect }
+						isPlaceholder={ ! hasLoaded }
+					/>
+				</div>
 				<div className="verbum-editor-wrapper" ref={ editorRef }>
 					<Editor
 						key={ editorKey }
@@ -145,6 +142,15 @@ function QuickPost( { receivePosts } ) {
 				</div>
 			</div>
 			<div className="quick-post-input__actions">
+				<div
+					className={ `quick-post-input__success-message ${
+						showSuccessMessage ? 'is-visible' : ''
+					}` }
+					aria-hidden={ ! showSuccessMessage }
+				>
+					<p>{ translate( 'Post successful! Your message will appear in the feed soon.' ) }</p>
+				</div>
+
 				<Button
 					onClick={ handleCancel }
 					disabled={ isDisabled }

@@ -211,6 +211,10 @@ class StepWrapper extends Component {
 			sticky = isSticky;
 		}
 
+		const queryParams = new URLSearchParams( window?.location.search );
+		const flags = queryParams.get( 'flags' );
+		const isHelpCenterLinkEnabled = flags === 'signup/help-center-link';
+
 		return (
 			<>
 				<div className={ classes }>
@@ -219,7 +223,7 @@ class StepWrapper extends Component {
 						{ skipButton }
 						{ nextButton }
 						{ customizedActionButtons }
-						{ flow?.enableHelpCenter && (
+						{ isHelpCenterLinkEnabled && (
 							<HelpCenterStepButton
 								helpCenterButtonText={ flow?.helpCenterButtonText }
 								hasPremiumSupport={ flow?.enablePremiumSupport }

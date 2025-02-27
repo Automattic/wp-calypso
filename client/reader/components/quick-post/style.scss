@@ -11,13 +11,15 @@
 		margin-bottom: 16px;
 	}
 
-	&__site-select {
-		margin-bottom: 16px !important;
-		width: 100%;
-        border-color: var(--color-border-subtle);
-        border-style: solid;
-        border-radius: 6px;
-        border-width: 1px;
+	&__site-select-wrapper {
+		margin-bottom: 16px;
+
+		.sites-dropdown__wrapper {
+			border-color: var(--color-border-subtle);
+			border-style: solid;
+			border-radius: 6px;
+			border-width: 1px;
+		}
 	}
 
     &__actions {
@@ -28,6 +30,23 @@
 
 	&__cancel {
 		color: var( --color-text-subtle );
+	}
+
+	&__success-message {
+		padding-left: 5px;
+		color: rgb( 0, 128, 0 );
+		display: flex;
+		align-items: center;
+		opacity: 0;
+		transition: opacity 0.3s ease-in-out;
+
+		&.is-visible {
+			opacity: 1;
+		}
+
+		p {
+			margin: 0;
+		}
 	}
 
     .verbum-editor-wrapper {
