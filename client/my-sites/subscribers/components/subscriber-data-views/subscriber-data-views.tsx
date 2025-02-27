@@ -139,6 +139,7 @@ const SubscriberDataViews = ( {
 			siteId: siteId as number,
 			subscriptionId: selectedSubscriber?.subscription_id,
 			userId: selectedSubscriber?.user_id,
+			enabled: !! selectedSubscriber,
 		} );
 
 	const { data: subscribersTotals } = useSubscriberCountQuery( siteId ?? null );
