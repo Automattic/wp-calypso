@@ -3,6 +3,7 @@ import { Subscriber } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
+import { createInterpolateElement } from '@wordpress/element';
 import { external } from '@wordpress/icons';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
@@ -61,12 +62,12 @@ export default function StepInitial( {
 							},
 						}
 					),
-					oldCopy: translate(
-						`Generate a CSV file of all your Substack subscribers. On Substack, go to the {{strong}}Subscribers{{/strong}} tab and click the {{strong}}Export{{/strong}} button you’ll find on top of the table. Then, upload the downloaded CSV in the next step.`,
+					oldCopy: createInterpolateElement(
+						translate(
+							`Generate a CSV file of all your Substack subscribers. On Substack, go to the <strong>Subscribers</strong> tab and click the <strong>Export</strong> button you’ll find on top of the table. Then, upload the downloaded CSV in the next step.`
+						),
 						{
-							components: {
-								strong: <strong />,
-							},
+							strong: <strong />,
 						}
 					),
 				} ) }
