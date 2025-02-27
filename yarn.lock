@@ -1087,16 +1087,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/format-currency@workspace:packages/format-currency":
-  version: 0.0.0-use.local
-  resolution: "@automattic/format-currency@workspace:packages/format-currency"
-  dependencies:
-    "@automattic/calypso-typescript-config": "workspace:^"
-    tslib: "npm:^2.3.0"
-    typescript: "npm:^5.8.2"
-  languageName: unknown
-  linkType: soft
-
 "@automattic/generate-password@workspace:^, @automattic/generate-password@workspace:packages/generate-password":
   version: 0.0.0-use.local
   resolution: "@automattic/generate-password@workspace:packages/generate-password"
