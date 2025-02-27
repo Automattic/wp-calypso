@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { mail } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
@@ -7,7 +6,6 @@ import { useSelector } from 'react-redux';
 import EmptyStateAction from 'calypso/my-sites/stats/components/empty-state-action';
 import {
 	JETPACK_SUPPORT_NEWSLETTER_URL,
-	JETPACK_NEWSLETTER_LANDING_PAGE_URL,
 	NEWSLETTER_SUPPORT_URL,
 } from 'calypso/my-sites/stats/const';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
@@ -17,7 +15,6 @@ import type { StatsEmptyActionProps } from './';
 
 const StatsEmptyActionEmail: React.FC< StatsEmptyActionProps > = ( { from } ) => {
 	const translate = useTranslate();
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const siteId = useSelector( getSelectedSiteId );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state as any, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state as any, siteId ) );
@@ -38,11 +35,7 @@ const StatsEmptyActionEmail: React.FC< StatsEmptyActionProps > = ( { from } ) =>
 				// Otherwise, use the WordPress.com links.
 				let redirectUrl = localizeUrl( NEWSLETTER_SUPPORT_URL );
 				if ( useJetpackLinks ) {
-					if ( isOdysseyStats ) {
-						redirectUrl = localizeUrl( JETPACK_SUPPORT_NEWSLETTER_URL );
-					} else {
-						redirectUrl = localizeUrl( JETPACK_NEWSLETTER_LANDING_PAGE_URL );
-					}
+					redirectUrl = localizeUrl( JETPACK_SUPPORT_NEWSLETTER_URL );
 				}
 
 				setTimeout( () => ( window.location.href = redirectUrl ), 250 );
