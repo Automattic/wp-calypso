@@ -348,6 +348,16 @@ export const STEPS = {
 				/* webpackChunkName: 'async-step-use-my-domain' */ './steps-repository/use-my-domain'
 			),
 	},
+
+	GET_CURRENT_THEME_SOFTWARE_SETS: {
+		slug: 'getCurrentThemeSoftwareSets',
+		asyncComponent: () => import( './steps-repository/get-current-theme-software-sets' ),
+	},
+
+	CHECK_FOR_PLUGINS: {
+		slug: 'checkForPlugins',
+		asyncComponent: () => import( './steps-repository/check-for-plugins' ),
+	},
 } satisfies Record< string, StepperStep >;
 
 /**
