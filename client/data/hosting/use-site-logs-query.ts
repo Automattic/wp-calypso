@@ -64,6 +64,18 @@ export enum LogType {
 	WEB = 'web',
 }
 
+export interface LogQueryParams {
+	from: string;
+	to: string;
+	// PHP filters
+	severity: string;
+	// Web filters
+	request_type: string;
+	status: string;
+	renderer: string;
+	cached: string;
+}
+
 export interface FilterType {
 	[ key: string ]: Array< string >;
 }

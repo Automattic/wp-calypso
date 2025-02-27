@@ -15,7 +15,12 @@ import { getShortcuts } from 'calypso/components/date-range/use-shortcuts';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { LogType, PHPLog, ServerLog } from 'calypso/data/hosting/use-site-logs-query';
+import {
+	LogType,
+	LogQueryParams,
+	PHPLog,
+	ServerLog,
+} from 'calypso/data/hosting/use-site-logs-query';
 import { useInterval } from 'calypso/lib/interval';
 import { navigate } from 'calypso/lib/navigate';
 import { useSiteLogsDownloader } from 'calypso/sites/tools/logs/hooks/use-site-logs-downloader';
@@ -42,7 +47,7 @@ export const SiteLogsDataViews = ( {
 	query,
 }: {
 	logType: LogType;
-	query: { from: string; to: string };
+	query: LogQueryParams;
 } ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -137,7 +142,7 @@ export const SiteLogsDataViews = ( {
 		page.replace( url.pathname + url.search );
 	}, [] );
 
-	const [ view, setView ] = useView( { logType } );
+	const [ view, setView ] = useView( { logType, query } );
 	const oldSeverity = getFilterValue( view, 'severity' )?.sort().toString() || '';
 	const setViewWithSideEffects = useCallback(
 		( newView: View ) => {
@@ -160,6 +165,19 @@ export const SiteLogsDataViews = ( {
 			}
 
 			setView( newView );
+
+			// Handle URL changes.
+			const url = new URL( window.location.href );
+			const filterNames = [ 'severity', 'request_type', 'status', 'renderer', 'cached' ];
+			filterNames.forEach( ( filterName ) => {
+				url.searchParams.delete( filterName );
+			} );
+			newView.filters?.forEach( ( filter ) => {
+				if ( filterNames.includes( filter.field ) && filter.value.length > 0 ) {
+					url.searchParams.set( filter.field, filter.value.sort().toString() );
+				}
+			} );
+			page.replace( url.pathname + url.search );
 		},
 		[ autoRefresh, setAutoRefresh, oldSeverity, view.page, setView, dispatch ]
 	);

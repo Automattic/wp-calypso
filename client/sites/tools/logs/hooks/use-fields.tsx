@@ -8,6 +8,32 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { useCurrentSiteGmtOffset } from './use-current-site-gmt-offset';
 import type { Field, Operator } from '@wordpress/dataviews';
 
+const getLabelCached = ( cached: string ) => {
+	switch ( cached ) {
+		case 'false':
+			return 'False';
+		case 'true':
+			return 'True';
+		default:
+			return cached;
+	}
+};
+const getLabelRenderer = ( renderer: string ) => {
+	switch ( renderer ) {
+		case 'php':
+			return 'PHP';
+		case 'static':
+			return 'Static';
+		default:
+			return renderer;
+	}
+};
+export const VALUES_CACHED = [ 'false', 'true' ];
+export const VALUES_RENDERER = [ 'php', 'static' ];
+export const VALUES_REQUEST_TYPE = [ 'GET', 'HEAD', 'POST', 'PUT', 'DELETE' ];
+export const VALUES_SEVERITY = [ 'User', 'Warning', 'Deprecated', 'Fatal error' ];
+export const VALUES_STATUS = [ '200', '301', '302', '400', '401', '403', '404', '429', '500' ];
+
 const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPLog >[] => {
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentUserLocale );
@@ -43,12 +69,7 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 					id: 'severity',
 					type: 'text',
 					label: translate( 'Severity' ),
-					elements: [
-						{ value: 'User', label: translate( 'User' ) },
-						{ value: 'Warning', label: translate( 'Warning' ) },
-						{ value: 'Deprecated', label: translate( 'Deprecated' ) },
-						{ value: 'Fatal error', label: translate( 'Fatal error' ) },
-					],
+					elements: VALUES_SEVERITY.map( ( severity ) => ( { value: severity, label: severity } ) ),
 					filterBy: {
 						operators: [ 'isAny' as Operator ],
 					},
@@ -109,13 +130,7 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 				id: 'request_type',
 				type: 'text',
 				label: translate( 'Request type' ),
-				elements: [
-					{ value: 'GET', label: translate( 'GET' ) },
-					{ value: 'HEAD', label: translate( 'HEAD' ) },
-					{ value: 'POST', label: translate( 'POST' ) },
-					{ value: 'PUT', label: translate( 'PUT' ) },
-					{ value: 'DELETE', label: translate( 'DELETE' ) },
-				],
+				elements: VALUES_REQUEST_TYPE.map( ( type ) => ( { value: type, label: type } ) ),
 				filterBy: {
 					operators: [ 'isAny' as Operator ],
 				},
@@ -129,17 +144,7 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 				id: 'status',
 				type: 'text',
 				label: translate( 'Status' ),
-				elements: [
-					{ value: '200', label: '200' },
-					{ value: '301', label: '301' },
-					{ value: '302', label: '302' },
-					{ value: '400', label: '400' },
-					{ value: '401', label: '401' },
-					{ value: '403', label: '403' },
-					{ value: '404', label: '404' },
-					{ value: '429', label: '429' },
-					{ value: '500', label: '500' },
-				],
+				elements: VALUES_STATUS.map( ( status ) => ( { value: status, label: status } ) ),
 				filterBy: {
 					operators: [ 'isAny' as Operator ],
 				},
@@ -166,10 +171,10 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 				type: 'text',
 				label: translate( 'Cached' ),
 				enableSorting: false,
-				elements: [
-					{ value: 'false', label: translate( 'False' ) },
-					{ value: 'true', label: translate( 'True' ) },
-				],
+				elements: VALUES_CACHED.map( ( cached ) => ( {
+					value: cached,
+					label: getLabelCached( cached ),
+				} ) ),
 				filterBy: {
 					operators: [ 'isAny' as Operator ],
 				},
@@ -212,10 +217,10 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 				id: 'renderer',
 				type: 'text',
 				label: translate( 'Renderer' ),
-				elements: [
-					{ value: 'php', label: 'PHP' },
-					{ value: 'static', label: translate( 'Static' ) },
-				],
+				elements: VALUES_RENDERER.map( ( renderer ) => ( {
+					value: renderer,
+					label: getLabelRenderer( renderer ),
+				} ) ),
 				filterBy: {
 					operators: [ 'isAny' as Operator ],
 				},
