@@ -8,6 +8,7 @@ import {
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
+import { STEPS } from './internals/steps';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
 const reblogging: Flow = {
@@ -18,16 +19,10 @@ const reblogging: Flow = {
 	isSignupFlow: true,
 	useSteps() {
 		return stepsWithRequiredLogin( [
-			{ slug: 'domains', asyncComponent: () => import( './internals/steps-repository/domains' ) },
-			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
-			{
-				slug: 'createSite',
-				asyncComponent: () => import( './internals/steps-repository/create-site' ),
-			},
-			{
-				slug: 'processing',
-				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
-			},
+			STEPS.DOMAINS,
+			STEPS.PLANS,
+			STEPS.SITE_CREATION_STEP,
+			STEPS.PROCESSING,
 		] );
 	},
 
