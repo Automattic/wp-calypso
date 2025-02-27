@@ -60,10 +60,10 @@ function StatsLineChart( {
 		if ( chartData.length <= 1 ) {
 			return 'linear';
 		}
-		const maxValues: number[] = [];
-		chartData.map( ( series ) => {
-			maxValues.push( Math.max( ...series.data.map( ( d ) => d.value ) ) );
-		} );
+
+		const maxValues = chartData.map( ( series ) =>
+			Math.max( ...series.data.map( ( d ) => d.value ) )
+		);
 		const [ minMax, maxMax ] = [ Math.min( ...maxValues ), Math.max( ...maxValues ) ];
 
 		// Avoid division by zero
@@ -77,6 +77,7 @@ function StatsLineChart( {
 		} else if ( scacle >= 200 ) {
 			return 'log';
 		}
+
 		return 'linear';
 	}, [ chartData ] );
 
