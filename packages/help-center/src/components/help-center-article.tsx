@@ -79,7 +79,8 @@ export const HelpCenterArticle = () => {
 								blog_id: post?.site_ID,
 								section_id: entry?.target?.id,
 							};
-							recordTracksEvent( 'calypso_helpcenter_article_section_scroll_viewed', tracksData );
+							recordTracksEvent( 'calypso_helpcenter_article_section_view', tracksData );
+							observer.unobserve( entry.target ); // Unobserve after first intersection
 						}
 					} );
 				},
@@ -90,7 +91,7 @@ export const HelpCenterArticle = () => {
 			h2Elements.forEach( ( h2 ) => observer.observe( h2 ) );
 
 			return () => {
-				h2Elements.forEach( ( h2 ) => observer.unobserve( h2 ) );
+				observer.disconnect();
 			};
 		}
 	}, [ elementRef, post?.ID, post?.URL, post?.site_ID ] );
