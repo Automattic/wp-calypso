@@ -75,8 +75,6 @@ function QuickPost( { receivePosts } ) {
 							postData,
 						} )
 					);
-
-					// dispatch( showUpdates( { streamKey: 'following' } ) );
 				} );
 			} )
 			.catch( () => {
