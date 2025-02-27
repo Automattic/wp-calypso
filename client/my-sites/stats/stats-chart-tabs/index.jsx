@@ -60,7 +60,7 @@ const transformChartDataToLineFormat = ( chartData ) => {
 		options: {},
 		data: chartData
 			.map( ( record ) => {
-				const date = new Date( record.data.period );
+				const date = parseLocalDate( record.data.period );
 				const value = record.data.visitors;
 				if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
 					return null;
