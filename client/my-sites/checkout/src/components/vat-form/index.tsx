@@ -247,6 +247,7 @@ export function VatForm( {
 						} );
 					} }
 					vatDetails={ vatDetailsInForm }
+					prefix={ vatDetailsInForm?.country ? vatDetailsInForm.country : '' }
 				/>
 			</div>
 			<div className="vat-form__row vat-form__row--full-width">

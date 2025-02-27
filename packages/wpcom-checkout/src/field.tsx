@@ -24,6 +24,7 @@ export default function Field( {
 	autoComplete,
 	disabled,
 	vatDetails,
+	prefix,
 }: {
 	type?: string;
 	id: string;
@@ -43,6 +44,7 @@ export default function Field( {
 	autoComplete?: string;
 	disabled?: boolean;
 	vatDetails?: VatDetails;
+	prefix?: ReactNode;
 } ) {
 	const fieldOnChange = ( event: { target: { value: string } } ) => {
 		if ( onChange ) {
@@ -65,7 +67,7 @@ export default function Field( {
 			) }
 
 			<InputWrapper isError={ isError }>
-				{ vatDetails && <span className="vat-field__overlay-prefix">{ vatDetails?.country }</span> }
+				{ prefix && <span className="field__overlay-prefix">{ prefix }</span> }
 				<Input
 					className={ inputClassName }
 					id={ id }
