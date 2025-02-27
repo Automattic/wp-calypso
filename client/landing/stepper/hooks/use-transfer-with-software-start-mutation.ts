@@ -2,6 +2,7 @@ import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
 type transferWithSoftwareResponse = {
+	success: boolean;
 	transferId: number;
 };
 
@@ -23,7 +24,11 @@ const requestTransferWithSoftware: (
 			body: { plugins, themes },
 		}
 	);
-	return response;
+
+	if ( ! response.success ) {
+		throw new Error( 'Transfer with software failed' );
+	}
+	return response.transferId;
 };
 
 export const useRequestTransferWithSoftware = (
@@ -36,8 +41,5 @@ export const useRequestTransferWithSoftware = (
 		mutationKey: [ 'transfer-with-software', siteId, plugins, themes ],
 		mutationFn: async () => requestTransferWithSoftware( siteId!, plugins!, themes! ),
 		retry: options?.retry ?? 3, // Default retry 3 times
-		onSuccess: ( data ) => {
-			return data?.transferId;
-		},
 	} );
 };
