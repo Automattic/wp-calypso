@@ -1,7 +1,7 @@
 import { Card, Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, numberFormat } from 'i18n-calypso';
 import { ReactElement } from 'react';
 import InfiniteList from 'calypso/components/infinite-list';
 import NoResults from 'calypso/my-sites/no-results';
@@ -75,10 +75,14 @@ function TeamMembers( props: Props ) {
 			);
 		}
 
-		return translate( 'You have %(number)d user', 'You have %(number)d users', {
-			args: { number: membersTotal as number, searchTerm: search as string },
-			count: membersTotal as number,
-		} );
+		return translate(
+			'You have %(membersTotalCount)s user',
+			'You have %(membersTotalCount)s users',
+			{
+				args: { membersTotalCount: numberFormat( membersTotal as number ) },
+				count: membersTotal as number,
+			}
+		);
 	}
 
 	function renderSSOMessageWrapper( key: number, children: ReactElement ) {
