@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
@@ -43,10 +42,7 @@ export function SettingsSidebar() {
 	return (
 		<Sidebar>
 			<SidebarItem href={ `/sites/settings/site/${ slug }` }>{ __( 'General' ) }</SidebarItem>
-			{ ! config.isEnabled( 'untangling/settings-i2' ) && areAdvancedHostingFeaturesSupported && (
-				<SidebarItem href={ `/hosting-config/${ slug }` }>{ __( 'Server' ) }</SidebarItem>
-			) }
-			{ config.isEnabled( 'untangling/settings-i2' ) && areAdvancedHostingFeaturesSupported && (
+			{ areAdvancedHostingFeaturesSupported && (
 				<>
 					<SidebarItem href={ `/sites/settings/server/${ slug }` }>{ __( 'Server' ) }</SidebarItem>
 					<SidebarItem href={ `/sites/settings/sftp-ssh/${ slug }` }>{ sftpSshTitle }</SidebarItem>
@@ -55,7 +51,7 @@ export function SettingsSidebar() {
 					</SidebarItem>
 				</>
 			) }
-			{ config.isEnabled( 'untangling/settings-i2' ) && areHostingFeaturesSupported && (
+			{ areHostingFeaturesSupported && (
 				<SidebarItem href={ `/sites/settings/performance/${ slug }` }>
 					{ __( 'Performance' ) }
 				</SidebarItem>
@@ -72,7 +68,7 @@ export async function redirectToHostingConfigIfDuplicatedViewsDisabled(
 	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
 	const siteSlug = getSelectedSiteSlug( getState() );
 
-	if ( ! isUntangled || ! config.isEnabled( 'untangling/settings-i2' ) ) {
+	if ( ! isUntangled ) {
 		// Redirect command palette routes to the new hosting config page when not in the treatment group
 		const routes = {
 			[ `/sites/settings/server/${ siteSlug }` ]: `/hosting-config/${ siteSlug }`,
