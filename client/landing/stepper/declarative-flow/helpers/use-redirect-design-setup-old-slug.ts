@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { getStepOldSlug } from './helpers/get-step-old-slug';
+import { getStepOldSlug } from './get-step-old-slug';
 import type { StepperStep, Navigate } from '../internals/types';
 
 const DESIGN_SETUP_SLUG = 'design-setup';
