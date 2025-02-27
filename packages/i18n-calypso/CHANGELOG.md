@@ -1,3 +1,7 @@
+## 7.4.0
+
+- Add type for `fixMe` method
+
 ## 7.3.0
 
 - `formatCurrency` and `getCurrencyObject` methods added. Migrated from `format-currency` package
