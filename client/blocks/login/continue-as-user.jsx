@@ -99,14 +99,14 @@ export default function ContinueAsUser( {
 						</button>
 					</div>
 				</div>
-				<A8CButton
-					primary
+				<Button
+					variant="primary"
 					className="continue-as-user__continue-button"
-					busy={ validatingPath }
+					isBusy={ validatingPath }
 					href={ validatedPath || '/' }
 				>
 					{ translate( 'Continue' ) }
-				</A8CButton>
+				</Button>
 			</div>
 		);
 	}

@@ -177,6 +177,7 @@ $breakpoint-mobile: 660px;
 	}
 
 	.button.is-primary,
+	.components-button.is-primary,
 	.login .button.is-primary,
 	.magic-login.is-white-login .magic-login__form-action .button.is-primary:not([disabled]) {
 		background-color: var(--woo-purple-60);
@@ -197,6 +198,12 @@ $breakpoint-mobile: 660px;
 			background-color: var(--studio-gray-0);
 			color: var(--studio-gray-20);
 		}
+	}
+
+	.components-button.is-primary {
+		height: 48px;
+		font-size: 1rem;
+		font-weight: 500;
 	}
 
 	button {
@@ -906,10 +913,6 @@ $breakpoint-mobile: 660px;
 			font-size: $woo-font-size-small;
 		}
 
-		button {
-			padding: 0;
-		}
-
 		.auth-form__social-buttons-tos {
 			text-align: left;
 			color: $gray-50;
@@ -922,7 +925,6 @@ $breakpoint-mobile: 660px;
 
 	.auth-form__social-buttons button {
 		text-align: start;
-		box-shadow: none;
 		border: 0;
 
 		svg {
@@ -2290,9 +2292,14 @@ $breakpoint-mobile: 660px;
 	}
 
 	.button.is-primary,
+	.components-button.is-primary,
 	.login .button.is-primary,
 	.magic-login.is-white-login .magic-login__form-action .button.is-primary:not([disabled]) {
 		@include button-primary;
+	}
+
+	.login__form-action .components-button.is-primary {
+		height: 48px;
 	}
 
 	.notice__text a,
