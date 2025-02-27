@@ -57,8 +57,7 @@ button {
 }
 
 .accessible-focus {
-	.site-setup,
-	.import-focused {
+	.site-setup {
 		.button.is-primary:focus {
 			box-shadow: 0 0 0 2px var(--color-primary-light);
 		}
@@ -77,7 +76,6 @@ button {
 .site-migration,
 .migration,
 .migration-signup,
-.import-focused,
 .plugin-bundle,
 .newsletter-setup,
 .newsletter-goals,
@@ -139,7 +137,6 @@ button {
 		}
 
 		// Importer flows
-		&.import-focused,
 		&.site-setup[class*=" import"] {
 			padding: 3.75rem 0;
 		}
@@ -229,11 +226,6 @@ button {
 
 .step-route.onboarding {
 	margin: 0 auto;
-}
-
-.import-focused .step-container.site-picker {
-	max-width: 1280px;
-	padding: 1.5rem;
 }
 
 .is-section-stepper {
