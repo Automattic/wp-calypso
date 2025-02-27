@@ -31,6 +31,9 @@
 .vat-form__field-wrapper {
 	display: flex;
 	border-radius: 3px;
+	border: 1px solid var( --color-neutral-30 );
+	overflow: hidden;
+	width: 100%;
 
 	&:focus-within {
 		box-shadow: 0 0 0 2px var(--color-primary-20);
@@ -58,28 +61,19 @@
 		font-size: 0.875rem;
 		color: var( --color-neutral-70 );
 		box-sizing: border-box;
-		padding: 7px 10px;
-		border: 1px solid var( --color-neutral-30 );
-		border-radius: 3px 0 0 3px;
+		padding: 7px 14px;
+		border-inline-end: 1px solid var( --color-neutral-30 );
+
 	}
 
 	input[type="text"].form-text-input {
 		flex: 1;
 		border-radius: 3px;
 		padding: 7px 10px;
-		border-color: var(--color-neutral-20);
+		border: none;
 
-		&:focus {
-			box-shadow: none !important;
-			border-color: var(--color-neutral-20);
+		&:focus, &:focus:hover {
+			box-shadow: none;
 		}
-	  }
-
-	  & > .vat-field__overlay-prefix + input[type="text"].form-text-input {
-		border-start-start-radius: 0;
-		border-start-end-radius: 3px;
-		border-end-end-radius: 3px;
-		border-end-start-radius: 0;
-		border-left: none;
 	  }
 }
