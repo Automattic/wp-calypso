@@ -9,7 +9,7 @@ config.author = pkg.author;
 
 config.protocol = 'wpdesktop';
 
-config.oauthLoginEnabled = true;
+config.oauthLoginEnabled = process.platform !== 'linux';
 
 config.loginURL = function () {
 	const loginUri = ! config.oauthLoginEnabled ? 'log-in' : 'log-in/desktop';
