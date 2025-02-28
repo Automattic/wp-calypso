@@ -382,6 +382,16 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
+					// Escaping to "Do it for me flow"
+					if ( providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
+						return navigate(
+							addQueryArgs(
+								{ siteId, from: fromQueryParam, siteSlug },
+								STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
+							)
+						);
+					}
+
 					return navigate(
 						addQueryArgs(
 							{

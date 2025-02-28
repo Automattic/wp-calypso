@@ -1,9 +1,8 @@
-import { ExternalLink } from '@automattic/components';
-import { Spinner } from '@wordpress/components';
-import { Icon, closeSmall, check } from '@wordpress/icons';
+import { Button, Spinner } from '@wordpress/components';
+import { Icon, closeSmall } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { FC, ReactNode } from 'react';
-import { recordMigrationInstructionsLinkClick } from '../tracking';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import './style.scss';
 
 export type Status = 'idle' | 'pending' | 'success' | 'error';
@@ -14,9 +13,11 @@ interface ProvisionStatusProps {
 		migrationKey: string;
 		pluginInstallation?: Status;
 	};
+
+	navigateToDoItForMe: () => void;
 }
 
-export const ProvisionStatus: FC< ProvisionStatusProps > = ( { status } ) => {
+export const ProvisionStatus: FC< ProvisionStatusProps > = ( { status, navigateToDoItForMe } ) => {
 	const {
 		siteTransfer: siteTransferStatus,
 		migrationKey: migrationKeyStatus,
@@ -65,19 +66,18 @@ export const ProvisionStatus: FC< ProvisionStatusProps > = ( { status } ) => {
 	// Error handler.
 	if ( currentAction.status === 'error' ) {
 		const contactClickHandler = () => {
-			recordMigrationInstructionsLinkClick( 'error-contact-support' );
+			recordTracksEvent( 'calypso_migration_instructions_difm_click' );
+			navigateToDoItForMe();
 		};
 
 		text = translate(
-			'Sorry, we couldn’t finish setting up your site. {{link}}Please contact support{{/link}}.',
+			'Sorry, there was a problem setting up your site. {{button}}Let us take it from here{{/button}}.',
 			{
 				components: {
-					link: (
-						<ExternalLink
-							href="https://wordpress.com/help/contact"
-							icon
-							iconSize={ 14 }
-							target="_blank"
+					button: (
+						<Button
+							className="migration-instructions-provisioning__difm-link"
+							variant="link"
 							onClick={ contactClickHandler }
 						/>
 					),
