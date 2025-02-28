@@ -85,6 +85,10 @@ class PostLifecycle extends Component {
 		const { post, postKey, isSelected, recsStreamKey, streamKey, siteId, isDiscoverStream } =
 			this.props;
 
+		if ( this.props.isSynthetic ) {
+			return <TrackedPost { ...this.props } />;
+		}
+
 		if ( postKey.isRecommendationBlock ) {
 			return (
 				<RecommendedPosts
@@ -157,9 +161,13 @@ class PostLifecycle extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => ( {
-		post: getPostByKey( state, ownProps.postKey ),
-	} ),
+	( state, ownProps ) => {
+		return {
+			post: ownProps.postKey.isSynthetic
+				? ownProps.postKey
+				: getPostByKey( state, ownProps.postKey ),
+		};
+	},
 	{
 		recordReaderTracksEvent,
 	},

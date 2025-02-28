@@ -43,6 +43,16 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/domain-contact-info' ),
 	},
 
+	DOMAIN_TRANSFER_INTRO: {
+		slug: 'intro',
+		asyncComponent: () => import( './steps-repository/domain-transfer-intro' ),
+	},
+
+	DOMAIN_TRANSFER_DOMAINS: {
+		slug: 'domains',
+		asyncComponent: () => import( './steps-repository/domain-transfer-domains' ),
+	},
+
 	DOMAINS: {
 		slug: 'domains',
 		asyncComponent: () => import( './steps-repository/domains' ),
@@ -352,6 +362,11 @@ export const STEPS = {
 			import(
 				/* webpackChunkName: 'async-step-use-my-domain' */ './steps-repository/use-my-domain'
 			),
+	},
+
+	SETUP_BLOG: {
+		slug: 'setup-blog',
+		asyncComponent: () => import( './steps-repository/setup-blog' ),
 	},
 } satisfies Record< string, StepperStep >;
 

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Spinner } from '@automattic/components';
 import { isLocaleRtl, useLocale } from '@automattic/i18n-utils';
 import {
@@ -7,14 +8,15 @@ import {
 } from '@automattic/verbum-block-editor';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useEffect, useState, useRef } from 'react';
-import { useSelector } from 'react-redux';
-import FormSelect from 'calypso/components/forms/form-select';
+import { useState, useRef } from 'react';
+import { useSelector, useDispatch, connect } from 'react-redux';
+import SitesDropdown from 'calypso/components/sites-dropdown';
 import wpcom from 'calypso/lib/wp';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
-import getSites from 'calypso/state/selectors/get-sites';
+import { receivePosts } from 'calypso/state/reader/posts/actions';
+import { receiveNewPost } from 'calypso/state/reader/streams/actions';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
-import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -22,25 +24,31 @@ import './style.scss';
 loadBlocksWithCustomizations();
 loadTextFormatting();
 
-export default function QuickPost() {
+// Note: The post data we receive from the API response does
+// not match the type in the stream data, but we can insert
+// the post data there for now until we create a corresponding
+// structure for the newly created post in the stream.
+interface PostItem {
+	ID: number;
+	site_ID: number;
+	title: string;
+	content: string;
+}
+
+function QuickPost( { receivePosts }: { receivePosts: ( posts: PostItem[] ) => Promise< void > } ) {
 	const translate = useTranslate();
 	const locale = useLocale();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 	const [ postContent, setPostContent ] = useState( '' );
 	const [ editorKey, setEditorKey ] = useState( 0 );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
-	const sites = useSelector( getSites ).filter( ( site ): site is SiteDetails => site !== null );
-	const hasLoaded = useSelector( hasLoadedSites );
 	const [ selectedSiteId, setSelectedSiteId ] = useState< number | null >( null );
 	const editorRef = useRef< HTMLDivElement >( null );
+	const dispatch = useDispatch();
+	const currentUser = useSelector( getCurrentUser );
+	const hasLoaded = useSelector( hasLoadedSites );
+	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
 	const [ showSuccessMessage, setShowSuccessMessage ] = useState( false );
-
-	// Set initial selected site once sites are loaded.
-	useEffect( () => {
-		if ( hasLoaded && sites.length > 0 && ! selectedSiteId ) {
-			setSelectedSiteId( sites[ 0 ].ID );
-		}
-	}, [ hasLoaded, sites, selectedSiteId ] );
 
 	const clearEditor = () => {
 		setEditorKey( ( key ) => key + 1 );
@@ -69,11 +77,22 @@ export default function QuickPost() {
 				content: postContent,
 				status: 'publish',
 			} )
-			.then( () => {
+			.then( ( postData: PostItem ) => {
 				recordReaderTracksEvent( 'calypso_reader_quick_post_submitted' );
-				clearEditor();
-				callShowSuccessMessage();
-				// TODO: Update the stream with the new post (if they're subscribed?) to signal success.
+
+				if ( config.isEnabled( 'reader/quick-post-v2' ) ) {
+					receivePosts( [ postData ] ).then( () => {
+						clearEditor();
+						callShowSuccessMessage();
+						// Actual API response will update the stream with the real post data
+						dispatch(
+							receiveNewPost( {
+								streamKey: `following`,
+								postData,
+							} )
+						);
+					} );
+				}
 			} )
 			.catch( () => {
 				recordReaderTracksEvent( 'calypso_reader_quick_post_error' );
@@ -88,8 +107,8 @@ export default function QuickPost() {
 		clearEditor();
 	};
 
-	const handleSiteChange = ( event: ChangeEvent< HTMLSelectElement > ) => {
-		setSelectedSiteId( Number( event.target.value ) );
+	const handleSiteSelect = ( siteId: number ) => {
+		setSelectedSiteId( siteId );
 	};
 
 	const getButtonText = () => {
@@ -107,7 +126,7 @@ export default function QuickPost() {
 		);
 	}
 
-	if ( ! sites.length ) {
+	if ( ! hasSites ) {
 		return null; // Don't show QuickPost if user has no sites.
 	}
 
@@ -119,19 +138,13 @@ export default function QuickPost() {
 				{ translate( 'Publish a post to' ) }
 			</label>
 			<div className="quick-post-input__fields">
-				<FormSelect
-					id="quick-post-site-select"
-					value={ selectedSiteId || '' }
-					onChange={ handleSiteChange }
-					disabled={ isDisabled }
-					className="quick-post-input__site-select"
-				>
-					{ sites.map( ( site ) => (
-						<option key={ site.ID } value={ site.ID }>
-							{ site.name } ({ site.domain })
-						</option>
-					) ) }
-				</FormSelect>
+				<div className="quick-post-input__site-select-wrapper">
+					<SitesDropdown
+						selectedSiteId={ selectedSiteId || undefined }
+						onSiteSelect={ handleSiteSelect }
+						isPlaceholder={ ! hasLoaded }
+					/>
+				</div>
 				<div className="verbum-editor-wrapper" ref={ editorRef }>
 					<Editor
 						key={ editorKey }
@@ -170,3 +183,7 @@ export default function QuickPost() {
 		</div>
 	);
 }
+
+export default connect( null, {
+	receivePosts: ( posts: PostItem[] ) => receivePosts( posts ) as Promise< void >,
+} )( QuickPost );

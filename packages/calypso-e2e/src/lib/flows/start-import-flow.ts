@@ -255,15 +255,6 @@ export class StartImportFlow {
 	}
 
 	/**
-	 * Import hosted site flow, go to first import step
-	 */
-	async startImportHostedSite( step: string, siteSlug: string, from: string ): Promise< void > {
-		const route = `/setup/import-hosted-site/${ step }`;
-
-		await this.page.goto( DataHelper.getCalypsoURL( route, { siteSlug, from } ) );
-	}
-
-	/**
 	 * Start the building.
 	 */
 	async startBuilding(): Promise< void > {

@@ -1,5 +1,5 @@
 import { ProgressBar } from '@automattic/components';
-import { localize, getLocaleSlug } from 'i18n-calypso';
+import { localize, getLocaleSlug, numberFormat } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import Rating from 'calypso/components/rating';
@@ -73,11 +73,11 @@ class PluginRatings extends Component {
 	renderDownloaded() {
 		let downloaded = this.props.downloaded;
 		if ( downloaded > 100000 ) {
-			downloaded = this.props.numberFormat( Math.floor( downloaded / 10000 ) * 10000 ) + '+';
+			downloaded = numberFormat( Math.floor( downloaded / 10000 ) * 10000 ) + '+';
 		} else if ( downloaded > 10000 ) {
-			downloaded = this.props.numberFormat( Math.floor( downloaded / 1000 ) * 1000 ) + '+';
+			downloaded = numberFormat( Math.floor( downloaded / 1000 ) * 1000 ) + '+';
 		} else {
-			downloaded = this.props.numberFormat( downloaded );
+			downloaded = numberFormat( downloaded );
 		}
 
 		return (
@@ -119,7 +119,9 @@ class PluginRatings extends Component {
 						</span>
 					) }
 					{ ! hideRatingNumber && rating > 0 && (
-						<span className="plugin-ratings__number">{ rating / 20 }</span>
+						<span className="plugin-ratings__number">
+							{ numberFormat( rating / 20, { decimals: 1 } ) }
+						</span>
 					) }
 				</div>
 				{ ! inlineNumRatings && numRatings && (
