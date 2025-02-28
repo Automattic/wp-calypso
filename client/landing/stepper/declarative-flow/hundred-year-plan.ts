@@ -105,8 +105,8 @@ const HundredYearPlanFlow: Flow = {
 					setPlanCartItem( {
 						product_slug: PLAN_100_YEARS,
 					} );
-					return navigate( 'createSite' );
-				case 'createSite':
+					return navigate( 'create-site' );
+				case 'create-site':
 					return navigate( 'processing' );
 				case 'processing':
 					if ( providedDependencies?.goToCheckout && providedDependencies?.siteSlug ) {
