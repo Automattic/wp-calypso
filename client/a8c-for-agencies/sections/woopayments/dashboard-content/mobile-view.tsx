@@ -4,15 +4,16 @@ import {
 	ListItemCard,
 	ListItemCardContent,
 } from 'calypso/a8c-for-agencies/components/list-item-cards';
+import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
+import { getSiteData } from '../lib/site-data';
 import {
 	SiteColumn,
 	WooPaymentsStatusColumn,
 	TransactionsColumn,
 	CommissionsPaidColumn,
 } from './site-columns';
+import { useWooPaymentsContext } from './woopayments-context';
 import type { SitesWithWooPaymentsState } from '../types';
-
-import './style.scss';
 
 export default function SitesWithWooPaymentsMobileView( {
 	items,
@@ -20,6 +21,7 @@ export default function SitesWithWooPaymentsMobileView( {
 	items: SitesWithWooPaymentsState[];
 } ) {
 	const translate = useTranslate();
+	const { woopaymentsData, isLoadingWooPaymentsData } = useWooPaymentsContext();
 
 	return (
 		<div className="sites-with-woopayments-list-mobile-view">
@@ -33,12 +35,24 @@ export default function SitesWithWooPaymentsMobileView( {
 						</ListItemCardContent>
 						<ListItemCardContent title={ translate( 'Transactions' ) }>
 							<div className="sites-with-woopayments-list-mobile-view__column">
-								<TransactionsColumn transactions={ item.transactions } />
+								{ isLoadingWooPaymentsData ? (
+									<TextPlaceholder />
+								) : (
+									<TransactionsColumn
+										transactions={ getSiteData( woopaymentsData, item.blogId ).transactions }
+									/>
+								) }
 							</div>
 						</ListItemCardContent>
 						<ListItemCardContent title={ translate( 'Commissions Paid' ) }>
 							<div className="sites-with-woopayments-list-mobile-view__column">
-								<CommissionsPaidColumn payout={ item.payout } />
+								{ isLoadingWooPaymentsData ? (
+									<TextPlaceholder />
+								) : (
+									<CommissionsPaidColumn
+										payout={ getSiteData( woopaymentsData, item.blogId ).payout }
+									/>
+								) }
 							</div>
 						</ListItemCardContent>
 						<ListItemCardContent title={ translate( 'Review status' ) }>

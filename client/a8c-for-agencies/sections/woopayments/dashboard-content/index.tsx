@@ -8,9 +8,13 @@ import {
 	LicenseSortDirection,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import useFetchWooPaymentsData from '../hooks/use-fetch-woopayments-data';
+import WooPaymentsConsolidatedViews from './consolidated-views';
 import SitesWithWooPayments from './sites-with-woopayments';
+import { WooPaymentsProvider } from './woopayments-context';
 import type { SitesWithWooPaymentsState, SitesWithWooPaymentsPlugins } from '../types';
 import type { License } from 'calypso/state/partner-portal/types';
+
+import './style.scss';
 
 const sortByState = ( a: SitesWithWooPaymentsState, b: SitesWithWooPaymentsState ) => {
 	// Sites without state go first
@@ -42,7 +46,7 @@ const WooPaymentsDashboardContent = () => {
 		[ 'woocommerce-payments/woocommerce-payments' ]
 	);
 
-	const { data: woopaymentsData } = useFetchWooPaymentsData( {} );
+	const { data: woopaymentsData, isFetching: isLoadingWooPaymentsData } = useFetchWooPaymentsData();
 
 	const createInitialSiteState = useCallback(
 		( license: License ) => {
@@ -54,23 +58,11 @@ const WooPaymentsDashboardContent = () => {
 				blogId: license.blogId,
 				siteUrl: license.siteUrl,
 				state: sitePlugin?.state || null,
-				transactions: 0,
 			} as SitesWithWooPaymentsState;
 		},
 		[ sitesWithPlugins ]
 	);
 
-	const updateSitesWithTransactions = useCallback(
-		( currentStates: SitesWithWooPaymentsState[] ) =>
-			currentStates.map( ( site ) => ( {
-				...site,
-				transactions: woopaymentsData?.sites?.[ String( site.blogId ) ]?.tpv ?? 0,
-				payout: woopaymentsData?.sites?.[ String( site.blogId ) ]?.payout ?? 0,
-			} ) ),
-		[ woopaymentsData ]
-	);
-
-	// Initial setup of sites without transactions
 	useEffect( () => {
 		if ( ! sitesWithPlugins?.length || ! licensesWithWooPayments?.items ) {
 			return;
@@ -81,15 +73,6 @@ const WooPaymentsDashboardContent = () => {
 		setSitesWithPluginsStates( states );
 	}, [ sitesWithPlugins, licensesWithWooPayments, createInitialSiteState ] );
 
-	// Update transactions when woopaymentsData arrives
-	useEffect( () => {
-		if ( ! woopaymentsData || ! sitesWithPluginsStates.length ) {
-			return;
-		}
-
-		setSitesWithPluginsStates( updateSitesWithTransactions );
-	}, [ woopaymentsData, updateSitesWithTransactions, sitesWithPluginsStates.length ] );
-
 	if ( isLoadingLicensesWithWooPayments || isLoadingSitesWithPlugins ) {
 		return <div>Loading...</div>;
 	}
@@ -98,7 +81,17 @@ const WooPaymentsDashboardContent = () => {
 		return <div>No sites with WooPayments</div>;
 	}
 
-	return <SitesWithWooPayments items={ sitesWithPluginsStates } />;
+	return (
+		<WooPaymentsProvider
+			value={ {
+				woopaymentsData,
+				isLoadingWooPaymentsData,
+			} }
+		>
+			<WooPaymentsConsolidatedViews />
+			<SitesWithWooPayments items={ sitesWithPluginsStates } />
+		</WooPaymentsProvider>
+	);
 };
 
 export default WooPaymentsDashboardContent;
