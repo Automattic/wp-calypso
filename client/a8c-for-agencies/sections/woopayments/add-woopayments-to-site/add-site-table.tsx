@@ -9,11 +9,13 @@ import FormRadio from 'calypso/components/forms/form-radio';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useFetchAllManagedSites } from '../../migrations/hooks/use-fetch-all-managed-sites';
+import { Site } from '../../sites/types';
 
 export type WooPaymentsSiteItem = {
 	id: number;
 	site: string;
 	date: string;
+	rawSite: Site;
 };
 
 const AddWooPaymentsToSiteTable = ( {
@@ -78,7 +80,7 @@ const AddWooPaymentsToSiteTable = ( {
 	}, [ onSelectSite, selectedSite?.id, translate ] );
 
 	const { data: allSites, paginationInfo } = useMemo( () => {
-		return filterSortAndPaginate( availableSites, dataViewsState, fields );
+		return filterSortAndPaginate( availableSites as WooPaymentsSiteItem[], dataViewsState, fields );
 	}, [ availableSites, dataViewsState, fields ] );
 
 	return (

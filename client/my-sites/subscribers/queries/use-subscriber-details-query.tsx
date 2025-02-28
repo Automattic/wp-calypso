@@ -19,7 +19,7 @@ const useSubscriberDetailsQuery = (
 					: `/sites/${ siteId }/subscribers/individual?subscription_id=${ subscriptionId }&type=${ type }`,
 				apiNamespace: 'wpcom/v2',
 			} ),
-		enabled: !! siteId,
+		enabled: !! siteId && ( !! subscriptionId || !! userId ),
 		placeholderData: keepPreviousData,
 	} );
 };

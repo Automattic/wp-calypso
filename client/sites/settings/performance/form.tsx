@@ -126,8 +126,7 @@ export default function CachingForm( { disabled }: CachingFormProps ) {
 				}
 		  );
 
-	let isUntangled = useRemoveDuplicateViewsExperimentEnabled();
-	isUntangled = isUntangled && config.isEnabled( 'untangling/settings-i2' );
+	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 
 	return (
 		<HostingCard

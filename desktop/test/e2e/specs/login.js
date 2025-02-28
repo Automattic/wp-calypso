@@ -3,6 +3,7 @@ const { createWriteStream } = require( 'fs' );
 const { mkdir } = require( 'fs/promises' );
 const path = require( 'path' );
 const { _electron: electron } = require( 'playwright' );
+const config = require( '../../../app/lib/config' );
 
 let APP_PATH;
 
@@ -35,6 +36,9 @@ const HAR_PATH = path.join( __dirname, '../results/network.har' );
 const WP_DEBUG_LOG = path.resolve( __dirname, '../results/app.log' );
 
 const BASE_URL = process.env.WP_DESKTOP_BASE_URL?.replace( /\/$/, '' ) ?? 'https://wordpress.com';
+
+const skipIfOAuthLogin = config.oauthLoginEnabled ? it.skip : it;
+const runIfOAuthLogin = config.oauthLoginEnabled ? it : it.skip;
 
 describe( 'User Can log in', () => {
 	jest.setTimeout( 60000 );
@@ -89,8 +93,16 @@ describe( 'User Can log in', () => {
 		}
 	} );
 
-	// eslint-disable-next-line jest/expect-expect
-	it( 'Log in', async function () {
+	runIfOAuthLogin( 'Start the OAuth login flow', async function () {
+		const loginButton = await mainWindow.waitForSelector(
+			'a:has-text("Log in with WordPress.com")'
+		);
+		const href = await loginButton.getAttribute( 'href' );
+		// eslint-disable-next-line jest/no-standalone-expect
+		expect( href ).toBe( '/desktop-start-login' );
+	} );
+
+	skipIfOAuthLogin( 'Log in with username and password', async function () {
 		await mainWindow.fill( '#usernameOrEmail', process.env.E2EGUTENBERGUSER );
 		await mainWindow.keyboard.press( 'Enter' );
 		await mainWindow.fill( '#password', process.env.E2EPASSWORD );
@@ -114,6 +126,7 @@ describe( 'User Can log in', () => {
 			);
 		}
 
+		// eslint-disable-next-line jest/no-standalone-expect
 		expect( response.status() ).toBe( 200 );
 	} );
 
