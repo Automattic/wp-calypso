@@ -28,18 +28,18 @@ const getSuccessMessage = ( job: JobStatus, translate: ( original: string ) => s
 
 const getFailureMessage = ( job: JobStatus, translate: ( original: string ) => string ) => {
 	if ( job.action !== 'set_auto_renew' ) {
-		return job.success.length > 1
+		return job.failed.length > 1
 			? translate( 'Some domain updates were not successful.' )
 			: translate( 'Your domain update has failed.' );
 	}
 
 	if ( job.params.auto_renew ) {
-		return job.success.length > 1
+		return job.failed.length > 1
 			? translate( 'Enabling automatic renewal has failed for your domains.' )
 			: translate( 'Enabling automatic renewal has failed for your domain.' );
 	}
 
-	return job.success.length > 1
+	return job.failed.length > 1
 		? translate( 'Disabling automatic renewal has failed for your domains.' )
 		: translate( 'Disabling automatic renewal has failed for your domain.' );
 };
