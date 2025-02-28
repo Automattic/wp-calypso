@@ -16,11 +16,11 @@ import { useDispatch as reduxUseDispatch, useSelector } from 'calypso/state';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useQuery } from '../hooks/use-query';
-import { ONBOARD_STORE, USER_STORE } from '../stores';
+import { ONBOARD_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { STEPS } from './internals/steps';
 import { Flow, ProvidedDependencies } from './internals/types';
-import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
+import type { OnboardSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import './internals/new-hosted-site-flow.scss';
 
@@ -166,20 +166,17 @@ const hosting: Flow = {
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
 		const query = useQuery();
 		const isEligible = useSelector( isUserEligibleForFreeHostingTrial );
-		const userIsLoggedIn = useSelect(
-			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
-			[]
-		);
 
 		const queryParams = Object.fromEntries( query );
 
 		useLayoutEffect( () => {
-			const urlWithQueryParams = addQueryArgs( 'setup/new-hosted-site', queryParams );
-
 			if ( currentStepSlug === 'trialAcknowledge' && ! isEligible ) {
-				navigate( urlWithQueryParams );
+				// Go to the first step if the user is not eligible for a free hosting trial
+				// If domains is not the first, Stepper will figure it out.
+				// This automatically preserves the query params.
+				navigate( 'domains' );
 			}
-		}, [ userIsLoggedIn, isEligible, currentStepSlug, queryParams, navigate ] );
+		}, [ isEligible, currentStepSlug, navigate ] );
 
 		useEffect( () => {
 			if ( queryParams.studioSiteId ) {
