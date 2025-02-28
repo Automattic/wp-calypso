@@ -16,6 +16,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { receiveNewPost } from 'calypso/state/reader/streams/actions';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 
 import './style.scss';
@@ -35,14 +36,20 @@ interface PostItem {
 	content: string;
 }
 
-function QuickPost( { receivePosts }: { receivePosts: ( posts: PostItem[] ) => Promise< void > } ) {
+function QuickPost( {
+	primarySiteId,
+	receivePosts,
+}: {
+	primarySiteId: number;
+	receivePosts: ( posts: PostItem[] ) => Promise< void >;
+} ) {
 	const translate = useTranslate();
 	const locale = useLocale();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 	const [ postContent, setPostContent ] = useState( '' );
 	const [ editorKey, setEditorKey ] = useState( 0 );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
-	const [ selectedSiteId, setSelectedSiteId ] = useState< number | null >( null );
+	const [ selectedSiteId, setSelectedSiteId ] = useState< number | null >( primarySiteId ?? null );
 	const editorRef = useRef< HTMLDivElement >( null );
 	const dispatch = useDispatch();
 	const currentUser = useSelector( getCurrentUser );
@@ -184,6 +191,11 @@ function QuickPost( { receivePosts }: { receivePosts: ( posts: PostItem[] ) => P
 	);
 }
 
-export default connect( null, {
-	receivePosts: ( posts: PostItem[] ) => receivePosts( posts ) as Promise< void >,
-} )( QuickPost );
+export default connect(
+	( state: any ) => ( {
+		primarySiteId: getPrimarySiteId( state ),
+	} ),
+	{
+		receivePosts: ( posts: PostItem[] ) => receivePosts( posts ) as Promise< void >,
+	}
+)( QuickPost );
