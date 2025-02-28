@@ -201,43 +201,6 @@ const SubscriberDataViews = ( {
 		[ getSubscriberId, handleSubscriberSelect, recordSubscriberClicked, siteId ]
 	);
 
-	const handleViewChange = useCallback(
-		( newView: View ) => {
-			// Track search changes.
-			if ( newView.search !== currentView.search && newView.search ) {
-				recordSubscriberSearch( { site_id: siteId, query: newView.search } );
-			}
-
-			// Track filter changes.
-			const newFilters = ( newView.filters?.map( ( f ) => f.value ).filter( Boolean ) ??
-				[] ) as SubscribersFilterBy[];
-			const currentFilters = ( currentView.filters?.map( ( f ) => f.value ).filter( Boolean ) ??
-				[] ) as SubscribersFilterBy[];
-			if ( JSON.stringify( newFilters ) !== JSON.stringify( currentFilters ) ) {
-				newFilters.forEach( ( filter ) => {
-					if ( filter ) {
-						recordSubscriberFilter( { site_id: siteId, filter } );
-					}
-				} );
-			}
-
-			// Track sort changes.
-			if (
-				newView.sort?.field !== currentView.sort?.field ||
-				newView.sort?.direction !== currentView.sort?.direction
-			) {
-				recordSubscriberSort( {
-					site_id: siteId,
-					sort_field: newView.sort?.field as SubscribersSortBy,
-					sort_direction: newView.sort?.direction as 'asc' | 'desc',
-				} );
-			}
-
-			setCurrentView( newView );
-		},
-		[ currentView, recordSubscriberSearch, recordSubscriberFilter, recordSubscriberSort, siteId ]
-	);
-
 	const fields = useMemo(
 		() => [
 			{
@@ -373,6 +336,55 @@ const SubscriberDataViews = ( {
 		recordSubscriberClicked,
 		siteId,
 	] );
+
+	const handleViewChange = useCallback(
+		( newView: View ) => {
+			// Track search changes.
+			if ( newView.search !== currentView.search && newView.search ) {
+				recordSubscriberSearch( { site_id: siteId, query: newView.search } );
+			}
+
+			// Track filter changes.
+			const newFilters = newView.filters?.filter( Boolean ) ?? [];
+			const currentFilters = currentView.filters?.filter( Boolean ) ?? [];
+			if ( JSON.stringify( newFilters ) !== JSON.stringify( currentFilters ) ) {
+				newFilters.forEach( ( filter ) => {
+					if ( filter?.value ) {
+						const field = fields.find( ( f ) => f.id === filter.field );
+						const element = field?.elements?.find( ( e ) => e.value === filter.value );
+						recordSubscriberFilter( {
+							site_id: siteId,
+							filter: filter.value as SubscribersFilterBy,
+							filter_field: filter.field,
+							filter_label: element?.label ?? '',
+						} );
+					}
+				} );
+			}
+
+			// Track sort changes.
+			if (
+				newView.sort?.field !== currentView.sort?.field ||
+				newView.sort?.direction !== currentView.sort?.direction
+			) {
+				recordSubscriberSort( {
+					site_id: siteId,
+					sort_field: newView.sort?.field as SubscribersSortBy,
+					sort_direction: newView.sort?.direction as 'asc' | 'desc',
+				} );
+			}
+
+			setCurrentView( newView );
+		},
+		[
+			currentView,
+			recordSubscriberSearch,
+			recordSubscriberFilter,
+			recordSubscriberSort,
+			siteId,
+			fields,
+		]
+	);
 
 	useEffect( () => {
 		// If we're on mobile, we only want to show the name field.
