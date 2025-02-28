@@ -60,7 +60,7 @@ export default function Summary( {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite.ID ) );
 	const siteAdmminUrl = useSelector( ( state ) => getSiteAdminUrl( state, selectedSite.ID ) );
 
-	const resetImporter = () => resetPaidNewsletter( selectedSite.ID, engine, 'content' );
+	const resetImporter = () => resetPaidNewsletter( selectedSite.ID, engine, 'content', fromSite );
 	const paidSubscribersCount = parseInt(
 		steps.subscribers.content?.meta?.paid_subscribed_count || '0'
 	);
