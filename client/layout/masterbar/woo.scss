@@ -2298,6 +2298,7 @@ $breakpoint-mobile: 660px;
 	.login .button.is-primary,
 	.magic-login.is-white-login .magic-login__form-action .button.is-primary:not([disabled]) {
 		@include button-primary;
+		width: 100%;
 	}
 
 	.login__form-action .components-button.is-primary {
