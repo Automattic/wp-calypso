@@ -934,11 +934,10 @@ const ComparisonGrid = ( {
 	const { gridPlans, gridPlansIndex, featureGroupMap } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const [ visiblePlans, setVisiblePlans ] = useState< PlanSlug[] >( [] );
-	const isTruncated = visiblePlans.length !== gridPlans.length;
 
 	const displayedGridPlans = useMemo( () => {
-		return sortPlans( gridPlans, currentSitePlanSlug, isTruncated );
-	}, [ gridPlans, currentSitePlanSlug, isTruncated ] );
+		return sortPlans( gridPlans, currentSitePlanSlug );
+	}, [ gridPlans, currentSitePlanSlug ] );
 
 	useEffect( () => {
 		setVisiblePlans( () => {
