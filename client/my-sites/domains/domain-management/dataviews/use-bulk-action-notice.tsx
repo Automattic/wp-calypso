@@ -12,8 +12,15 @@ export default function useBulkActionNotice(
 	const translate = useTranslate();
 	const { completedJobs, handleRestartDomainStatusPolling, deleteBulkActionStatus } =
 		useDomainsDataViewsContext();
+	const [ shownNotices, setShownNotices ] = useState< string[] >( [] );
 
-	const deleteBulkActionStatusWhenShown = useCallback( async () => {
+	const unprocessedJobs = useMemo(
+		() => completedJobs.filter( ( job ) => ! shownNotices.includes( job.id ) ),
+		[ completedJobs, shownNotices ]
+	);
+	const unshownJobIds = useMemo( () => unprocessedJobs.map( ( j ) => j.id ), [ unprocessedJobs ] );
+
+	const deleteBulkActionStatusOnDismiss = useCallback( async () => {
 		if ( deleteBulkActionStatus ) {
 			await deleteBulkActionStatus();
 		} else {
@@ -27,57 +34,45 @@ export default function useBulkActionNotice(
 		handleRestartDomainStatusPolling();
 	}, [ deleteBulkActionStatus, handleRestartDomainStatusPolling ] );
 
-	const [ shownSuccessNotices, setShownSuccessNotices ] = useState< string[] >( [] );
-	const unshownJobs = useMemo(
-		() => completedJobs.filter( ( job ) => ! shownSuccessNotices.includes( job.id ) ),
-		[ completedJobs, shownSuccessNotices ]
-	);
-	const unshownJobIds = useMemo( () => unshownJobs.map( ( j ) => j.id ), [ unshownJobs ] );
-
 	useEffect( () => {
-		// completed jobs can be announced
-		unshownJobs
-			.map( ( job ) => {
-				return job;
-			} )
-			.map( ( job ) => {
-				if ( job.failed.length ) {
-					errorNotice(
-						<div style={ { display: 'flex', alignItems: 'center', gap: '8px' } }>
-							{ translate( 'Some domain updates were not successful.' ) }
-							<StatusPopover
-								position="bottom"
-								popoverTargetElement={
-									<div style={ { color: 'var(--color-text-inverted)', fontSize: '0.875rem' } }>
-										{ translate( 'Domains list' ) }{ ' ' }
-									</div>
-								}
-							>
-								<div className="domains-table-bulk-actions-notice-popover">
-									{ job.failed.map( ( domain ) => (
-										<p key={ domain }> { domain } </p>
-									) ) }
+		unprocessedJobs.map( ( job ) => {
+			if ( job.failed.length ) {
+				errorNotice(
+					<div style={ { display: 'flex', alignItems: 'center', gap: '8px' } }>
+						{ translate( 'Some domain updates were not successful.' ) }
+						<StatusPopover
+							position="bottom"
+							popoverTargetElement={
+								<div style={ { color: 'var(--color-text-inverted)', fontSize: '0.875rem' } }>
+									{ translate( 'Domains list' ) }{ ' ' }
 								</div>
-							</StatusPopover>
-						</div>,
-						{
-							onDismissClick: deleteBulkActionStatusWhenShown,
-						}
-					);
+							}
+						>
+							<div className="domains-table-bulk-actions-notice-popover">
+								{ job.failed.map( ( domain ) => (
+									<p key={ domain }> { domain } </p>
+								) ) }
+							</div>
+						</StatusPopover>
+					</div>,
+					{
+						onDismissClick: deleteBulkActionStatusOnDismiss,
+					}
+				);
 
-					return;
-				}
+				return;
+			}
 
-				const message =
-					job.success.length > 1
-						? translate( 'Bulk domain updates finished successfully.' )
-						: translate( 'Domain update finished successfully.' );
+			const message =
+				job.success.length > 1
+					? translate( 'Bulk domain updates finished successfully.' )
+					: translate( 'Domain update finished successfully.' );
 
-				successNotice( message );
-			} );
+			successNotice( message );
+		} );
 
 		if ( unshownJobIds.length > 0 ) {
-			setShownSuccessNotices( ( prevShownNotices ) => [ ...prevShownNotices, ...unshownJobIds ] );
+			setShownNotices( ( prevShownNotices ) => [ ...prevShownNotices, ...unshownJobIds ] );
 		}
-	}, [ unshownJobs, unshownJobIds ] );
+	}, [ unprocessedJobs, unshownJobIds ] );
 }
