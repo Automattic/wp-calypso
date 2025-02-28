@@ -7,14 +7,13 @@ import {
 } from '@automattic/verbum-block-editor';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useEffect, useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import FormSelect from 'calypso/components/forms/form-select';
+import SitesDropdown from 'calypso/components/sites-dropdown';
 import wpcom from 'calypso/lib/wp';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
-import getSites from 'calypso/state/selectors/get-sites';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
-import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -29,18 +28,12 @@ export default function QuickPost() {
 	const [ postContent, setPostContent ] = useState( '' );
 	const [ editorKey, setEditorKey ] = useState( 0 );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
-	const sites = useSelector( getSites ).filter( ( site ): site is SiteDetails => site !== null );
-	const hasLoaded = useSelector( hasLoadedSites );
 	const [ selectedSiteId, setSelectedSiteId ] = useState< number | null >( null );
 	const editorRef = useRef< HTMLDivElement >( null );
+	const currentUser = useSelector( getCurrentUser );
+	const hasLoaded = useSelector( hasLoadedSites );
+	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
 	const [ showSuccessMessage, setShowSuccessMessage ] = useState( false );
-
-	// Set initial selected site once sites are loaded.
-	useEffect( () => {
-		if ( hasLoaded && sites.length > 0 && ! selectedSiteId ) {
-			setSelectedSiteId( sites[ 0 ].ID );
-		}
-	}, [ hasLoaded, sites, selectedSiteId ] );
 
 	const clearEditor = () => {
 		setEditorKey( ( key ) => key + 1 );
@@ -88,8 +81,8 @@ export default function QuickPost() {
 		clearEditor();
 	};
 
-	const handleSiteChange = ( event: ChangeEvent< HTMLSelectElement > ) => {
-		setSelectedSiteId( Number( event.target.value ) );
+	const handleSiteSelect = ( siteId: number ) => {
+		setSelectedSiteId( siteId );
 	};
 
 	const getButtonText = () => {
@@ -107,7 +100,7 @@ export default function QuickPost() {
 		);
 	}
 
-	if ( ! sites.length ) {
+	if ( ! hasSites ) {
 		return null; // Don't show QuickPost if user has no sites.
 	}
 
@@ -119,19 +112,13 @@ export default function QuickPost() {
 				{ translate( 'Publish a post to' ) }
 			</label>
 			<div className="quick-post-input__fields">
-				<FormSelect
-					id="quick-post-site-select"
-					value={ selectedSiteId || '' }
-					onChange={ handleSiteChange }
-					disabled={ isDisabled }
-					className="quick-post-input__site-select"
-				>
-					{ sites.map( ( site ) => (
-						<option key={ site.ID } value={ site.ID }>
-							{ site.name } ({ site.domain })
-						</option>
-					) ) }
-				</FormSelect>
+				<div className="quick-post-input__site-select-wrapper">
+					<SitesDropdown
+						selectedSiteId={ selectedSiteId || undefined }
+						onSiteSelect={ handleSiteSelect }
+						isPlaceholder={ ! hasLoaded }
+					/>
+				</div>
 				<div className="verbum-editor-wrapper" ref={ editorRef }>
 					<Editor
 						key={ editorKey }

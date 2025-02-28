@@ -11,13 +11,15 @@
 		margin-bottom: 16px;
 	}
 
-	&__site-select {
-		margin-bottom: 16px !important;
-		width: 100%;
-        border-color: var(--color-border-subtle);
-        border-style: solid;
-        border-radius: 6px;
-        border-width: 1px;
+	&__site-select-wrapper {
+		margin-bottom: 16px;
+
+		.sites-dropdown__wrapper {
+			border-color: var(--color-border-subtle);
+			border-style: solid;
+			border-radius: 6px;
+			border-width: 1px;
+		}
 	}
 
     &__actions {
