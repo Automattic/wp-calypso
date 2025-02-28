@@ -41,15 +41,24 @@ body.is-section-signup {
 		}
 	}
 }
-
 .blaze-pro,
-.is-blaze-pro { // is-blaze-pro is used by Sign Up flow (for logged in users)
-	font-family: $inter;
+.is-blaze-pro,
+body.is-section-stepper,
+body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) {
 	--color-white: #fff;
 	--color-black: $colorBlack;
 	--color-gray: #50575e;
 	--color-orange: #ff6433;
 
+	--color-accent: var(--color-orange);
+	--color-accent-60: var(--color-orange);
+	--color-link: var(--color-orange);
+	--color-link-dark: var(--color-orange);
+}
+
+.blaze-pro,
+.is-blaze-pro { // is-blaze-pro is used by Sign Up flow (for logged in users)
+	font-family: $inter;
 	background: var(--color-white);
 	min-height: 100%;
 
@@ -197,6 +206,10 @@ body.is-section-signup {
 		}
 	}
 
+	.social-buttons__button {
+		height: 40px;
+	}
+
 	.continue-as-user {
 		margin: 0;
 		width: 326px;
@@ -272,30 +285,22 @@ body.is-section-signup {
 		}
 
 		.continue-as-user__change-user-link {
-			color: var(--color-orange);
 			font-family: $inter;
 			font-size: 0.875rem;
 			font-style: normal;
 			font-weight: 500;
 			line-height: 20px;
 			text-decoration: none;
-
-			&:hover {
-				color: var(--color-orange);
-			}
 		}
 
 		.continue-as-user__continue-button {
-			background: var(--color-orange);
-			border-color: var(--color-orange);
 			border-radius: 4px;
 			font-family: $inter;
 			font-size: rem(13px);
 			font-weight: 600;
 			line-height: 14px;
 			margin-top: 24px;
-			padding: 12px 16px;
-			width: 326px;
+			width: 100%;
 		}
 	}
 
@@ -420,7 +425,7 @@ body.is-section-signup {
 
 		a.logged-out-form__link-item,
 		a {
-			color: var(--color-orange);
+			color: var(--color-link);
 			padding: 0;
 			text-decoration: none;
 		}
@@ -432,6 +437,11 @@ body.is-section-signup {
 			font-weight: 500;
 			line-height: 25px;
 		}
+	}
+
+	.signup .signup__step .signup-form.is-horizontal .logged-out-form__links .logged-out-form__link-item {
+		color: var(--color-link);
+		text-decoration: underline;
 	}
 
 	.login__lost-password-footer {
@@ -483,17 +493,10 @@ body.is-section-signup {
 	.signup-form .logged-out-form,
 	.login__lostpassword-form,
 	.two-factor-authentication__verification-code-form-wrapper {
-		.login .button.is-primary,
-		.login .button.is-primary:hover,
-		.form-button {
-			background: var(--color-orange);
-			border-color: var(--color-orange);
+		.components-button.is-primary {
 			border-radius: 4px;
-			color: var(--color-white);
-			font-size: rem(13px);
 			font-weight: 600;
-			line-height: 14px;
-			padding: 12px 16px;
+			height: 40px;
 		}
 	}
 
@@ -501,7 +504,8 @@ body.is-section-signup {
 		margin-bottom: 12px;
 	}
 
-	.login__header-subtitle {
+	.login__header-subtitle,
+	.formatted-header__subtitle {
 		color: var(--color-neutral-50);
 		font-family: $sfProText !important;
 		font-size: rem(18px);
@@ -510,7 +514,7 @@ body.is-section-signup {
 
 		a,
 		a:visited {
-			color: var(--color-orange);
+			text-decoration: underline;
 		}
 	}
 
@@ -587,7 +591,6 @@ body.is-section-signup {
 		}
 
 		.login__lost-password-link {
-			color: var(--color-orange);
 			font-family: $sfProText;
 			font-size: rem(18px);
 			font-weight: 500;

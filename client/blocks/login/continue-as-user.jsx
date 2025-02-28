@@ -1,4 +1,3 @@
-import { Button as A8CButton } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -117,26 +116,26 @@ export default function ContinueAsUser( {
 				<div className="continue-as-user__user-info">
 					{ gravatarLink }
 					<div className="continue-as-user__not-you">
-						<button
-							type="button"
+						<Button
 							id="loginAsAnotherUser"
 							className="continue-as-user__change-user-link"
 							onClick={ onChangeAccount }
+							variant="tertiary"
 						>
 							{ translate( 'Sign in as a different user' ) }
-						</button>
+						</Button>
 					</div>
 				</div>
-				<A8CButton
-					primary
+				<Button
+					variant="primary"
 					className="continue-as-user__continue-button"
-					busy={ validatingPath }
+					isBusy={ validatingPath }
 					href={ validatedPath || '/' }
 				>
 					{ `${ translate( 'Continue as', {
 						context: 'Continue as an existing WordPress.com user',
 					} ) } ${ userName }` }
-				</A8CButton>
+				</Button>
 				<SocialToS />
 			</div>
 		);
