@@ -333,6 +333,7 @@ import {
 	FEATURE_STATS_BASIC_20250206,
 	FEATURE_STATS_ADVANCED_20250206,
 	FEATURE_SUPPORT,
+	FEATURE_AI_ASSISTANT,
 } from './constants';
 import type { FeatureList } from './types';
 
@@ -2460,6 +2461,12 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Premium stats' ),
 		getDescription: () =>
 			i18n.translate( 'Unlock all stats, including UTM tracking and device insights.' ),
+	},
+	[ FEATURE_AI_ASSISTANT ]: {
+		getSlug: () => FEATURE_AI_ASSISTANT,
+		getTitle: () => i18n.translate( 'AI Assistant' ),
+		getDescription: () =>
+			i18n.translate( 'Enhance your content creation with AI-powered writing, images and more.' ),
 	},
 	/* END: 2023 Pricing Grid Features */
 
