@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Badge, Button, Gridicon } from '@automattic/components';
@@ -70,8 +69,6 @@ export default function LicensePreview( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const isAutomatedReferralsEnabled = config.isEnabled( 'a4a-automated-referrals' );
-
 	const site = useSelector( ( state ) => getSite( state, blogId as number ) );
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
 	const isWPCOMLicense = isWPCOMHostingProduct( licenseKey );
@@ -99,7 +96,7 @@ export default function LicensePreview( {
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const domain = siteUrl && ! isPressableLicense ? getUrlParts( siteUrl ).hostname || siteUrl : '';
 
-	const isClientLicense = isAutomatedReferralsEnabled && referral;
+	const isClientLicense = referral;
 
 	const assign = useCallback( () => {
 		const redirectUrl = isWPCOMLicense

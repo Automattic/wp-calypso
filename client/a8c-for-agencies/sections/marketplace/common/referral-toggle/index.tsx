@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -16,8 +15,6 @@ import './style.scss';
 const PREFERENCE_NAME = 'a4a-marketplace-referral-guide-seen';
 
 const ReferralToggle = () => {
-	const isAutomatedReferrals = isEnabled( 'a4a-automated-referrals' );
-
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { marketplaceType, toggleMarketplaceType } = useContext( MarketplaceTypeContext );
@@ -35,10 +32,6 @@ const ReferralToggle = () => {
 			openGuide();
 		}
 	}, [ dispatch, guideModalSeen, marketplaceType, openGuide ] );
-
-	if ( ! isAutomatedReferrals ) {
-		return null;
-	}
 
 	return (
 		<div className="a4a-marketplace__toggle-marketplace-type">
