@@ -353,7 +353,6 @@ export interface Domain {
 	expired: boolean;
 	auto_renewing: boolean;
 	pending_registration: boolean;
-	pending_registration_time: string;
 	has_registration: boolean;
 	points_to_wpcom: boolean;
 	privacy_available: boolean;
