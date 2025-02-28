@@ -35,8 +35,9 @@ export function getImportSectionLocation( siteSlug, isJetpack = false ) {
 		: `/import/${ siteSlug }/?engine=wordpress`;
 }
 // Flow mapping dictionary, key is the path segment, value is the flow name
+// TODO: can we delete `getImportFlowByURL` instead?
 const flowMapping = {
-	'import-focused': 'import-focused',
+	'import-focused': 'site-setup',
 };
 
 export function getImportFlowByURL() {

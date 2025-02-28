@@ -11,7 +11,7 @@ import SectionImport from 'calypso/my-sites/importer/section-import';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import 'calypso/blocks/import/style/base.scss';
 
-const onboardingFlowRoute = `/setup/import-focused`;
+const onboardingFlowRoute = '/setup/site-setup';
 
 export function importSite( context, next ) {
 	const state = context.store.getState();

@@ -195,7 +195,7 @@ export function generateFlows( {
 			name: 'import',
 			steps: [ userSocialStep, 'domains', 'plans-import' ],
 			destination: ( dependencies ) =>
-				`/setup/import-focused/import?siteSlug=${ dependencies.siteSlug }`,
+				`/setup/site-setup/import?siteSlug=${ dependencies.siteSlug }`,
 			description: 'Beginning of the flow to import content',
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
