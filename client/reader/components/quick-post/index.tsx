@@ -10,6 +10,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import SitesDropdown from 'calypso/components/sites-dropdown';
+import { stripHTML } from 'calypso/lib/formatting';
 import wpcom from 'calypso/lib/wp';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
@@ -58,7 +59,14 @@ export default function QuickPost() {
 			.site( selectedSiteId )
 			.post()
 			.add( {
-				title: postContent.split( '\n' )[ 0 ], // Use first line as title.
+				title:
+					(
+						stripHTML( postContent )
+							.split( '\n' )
+							.find( ( line ) => line.trim() ) || ''
+					)
+						.substring( 0, 57 )
+						.trim() + '...',
 				content: postContent,
 				status: 'publish',
 			} )
