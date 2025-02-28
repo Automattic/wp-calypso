@@ -59,6 +59,7 @@ $image-height: 47px;
 }
 
 .wp-login__links {
+	text-align: center;
 
 	a,
 	button {
@@ -79,6 +80,12 @@ $image-height: 47px;
 
 		&:last-child {
 			border-bottom: none;
+		}
+
+		&.components-button.is-link {
+			display: inline-flex;
+			margin-block: 16px;
+			width: auto;
 		}
 	}
 

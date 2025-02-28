@@ -690,12 +690,6 @@
 	.wp-login__links {
 		display: flex;
 		justify-content: center;
-
-		.login__lost-password-link {
-			display: inline-flex;
-			width: auto;
-			margin-block: 16px;
-		}
 	}
 
 	a:not(.login__lost-password-link),
@@ -766,6 +760,21 @@
 			color: var(--studio-white);
 			background: var(--studio-gray-10);
 			border-color: var(--studio-gray-10);
+		}
+	}
+
+	.components-button {
+		&.is-primary,
+		&.is-link {
+			--wp-components-color-accent: var(--color-primary-40);
+		}
+
+		&.is-primary {
+			--wp-components-color-accent-darker-10: var(--color-primary-30);
+		}
+
+		&.is-secondary:focus {
+			--wp-components-color-accent: var(--color-primary-40);
 		}
 	}
 
