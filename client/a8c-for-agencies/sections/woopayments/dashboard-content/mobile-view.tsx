@@ -5,6 +5,7 @@ import {
 	ListItemCardContent,
 } from 'calypso/a8c-for-agencies/components/list-item-cards';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
+import { useWooPaymentsContext } from '../context';
 import { getSiteData } from '../lib/site-data';
 import {
 	SiteColumn,
@@ -12,7 +13,6 @@ import {
 	TransactionsColumn,
 	CommissionsPaidColumn,
 } from './site-columns';
-import { useWooPaymentsContext } from './woopayments-context';
 import type { SitesWithWooPaymentsState } from '../types';
 
 export default function SitesWithWooPaymentsMobileView( {

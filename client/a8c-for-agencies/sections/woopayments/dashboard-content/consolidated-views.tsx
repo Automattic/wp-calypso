@@ -4,7 +4,7 @@ import {
 	ConsolidatedStatsGroup,
 } from 'calypso/a8c-for-agencies/components/consolidated-stats-card';
 import useGetPayoutData from '../../referrals/hooks/use-get-payout-data';
-import { useWooPaymentsContext } from './woopayments-context';
+import { useWooPaymentsContext } from '../context';
 
 const WooPaymentsConsolidatedViews = () => {
 	const translate = useTranslate();

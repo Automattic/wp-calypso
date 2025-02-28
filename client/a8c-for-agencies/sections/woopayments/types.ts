@@ -16,3 +16,14 @@ export interface SitesWithWooPaymentsState {
 	siteUrl: string;
 	state: string;
 }
+
+export interface WooPaymentsData {
+	total?: {
+		sites?: {
+			[ key: number ]: {
+				tpv?: number;
+				payout?: number;
+			};
+		};
+	};
+}

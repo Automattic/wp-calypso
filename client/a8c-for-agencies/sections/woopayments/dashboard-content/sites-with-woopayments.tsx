@@ -6,6 +6,7 @@ import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
+import { useWooPaymentsContext } from '../context';
 import { getSiteData } from '../lib/site-data';
 import SitesWithWooPaymentsMobileView from './mobile-view';
 import {
@@ -14,12 +15,15 @@ import {
 	CommissionsPaidColumn,
 	WooPaymentsStatusColumn,
 } from './site-columns';
-import { useWooPaymentsContext } from './woopayments-context';
 import type { SitesWithWooPaymentsState } from '../types';
 
-export default function SitesWithWooPayments( { items }: { items: SitesWithWooPaymentsState[] } ) {
+export default function SitesWithWooPayments() {
 	const translate = useTranslate();
-	const { woopaymentsData, isLoadingWooPaymentsData } = useWooPaymentsContext();
+	const {
+		sitesWithPluginsStates: items,
+		woopaymentsData,
+		isLoadingWooPaymentsData,
+	} = useWooPaymentsContext();
 	const isDesktop = useDesktopBreakpoint();
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
@@ -86,7 +90,7 @@ export default function SitesWithWooPayments( { items }: { items: SitesWithWooPa
 	}, [ items, dataViewsState, fields ] );
 
 	if ( ! isDesktop ) {
-		return <SitesWithWooPaymentsMobileView items={ items } />;
+		return <SitesWithWooPaymentsMobileView items={ data } />;
 	}
 
 	return (

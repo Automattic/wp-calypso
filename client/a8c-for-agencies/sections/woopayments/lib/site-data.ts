@@ -1,17 +1,8 @@
+import { WooPaymentsData } from '../types';
+
 interface WooPaymentsSiteData {
 	transactions: number | null;
 	payout: number | null;
-}
-
-interface WooPaymentsData {
-	total?: {
-		sites?: {
-			[ key: number ]: {
-				tpv?: number;
-				payout?: number;
-			};
-		};
-	};
 }
 
 export const getSiteData = (

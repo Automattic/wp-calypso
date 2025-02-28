@@ -1,8 +1,10 @@
 import { createContext, useContext } from '@wordpress/element';
+import type { SitesWithWooPaymentsState, WooPaymentsData } from './types';
 
 interface WooPaymentsContextType {
-	woopaymentsData: any;
+	woopaymentsData: WooPaymentsData;
 	isLoadingWooPaymentsData: boolean;
+	sitesWithPluginsStates: SitesWithWooPaymentsState[];
 }
 
 const WooPaymentsContext = createContext< WooPaymentsContextType | undefined >( undefined );
