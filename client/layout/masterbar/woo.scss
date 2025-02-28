@@ -7,7 +7,6 @@
 $breakpoint-mobile: 660px;
 
 @mixin button-primary {
-	background-color: var(--woo-purple-40);
 	border-radius: 8px; /* stylelint-disable-line scales/radii */
 
 	&:hover,
@@ -177,7 +176,6 @@ $breakpoint-mobile: 660px;
 	}
 
 	.button.is-primary,
-	.components-button.is-primary,
 	.login .button.is-primary,
 	.magic-login.is-white-login .magic-login__form-action .button.is-primary:not([disabled]) {
 		background-color: var(--woo-purple-60);
@@ -198,6 +196,10 @@ $breakpoint-mobile: 660px;
 			background-color: var(--studio-gray-0);
 			color: var(--studio-gray-20);
 		}
+	}
+
+	.components-button {
+		--color-accent: var(--woo-purple-40);
 	}
 
 	.components-button.is-primary {
