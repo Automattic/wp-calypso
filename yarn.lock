@@ -1658,7 +1658,6 @@ __metadata:
   dependencies:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
-    "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-products": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
@@ -1666,7 +1665,6 @@ __metadata:
     "@automattic/data-stores": "workspace:^"
     "@automattic/onboarding": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
-    "@automattic/viewport": "workspace:^"
     "@emotion/react": "npm:11.11.1"
     "@emotion/styled": "npm:^11.11.0"
     "@storybook/addon-actions": "npm:^7.6.20"

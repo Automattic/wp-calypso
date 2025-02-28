@@ -35,13 +35,10 @@
 		"storybook": "yarn msw init && sb dev"
 	},
 	"dependencies": {
-		"@automattic/calypso-config": "workspace:^",
 		"@automattic/calypso-products": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
-		"@automattic/shopping-cart": "workspace:^",
-		"@automattic/viewport": "workspace:^",
 		"@emotion/react": "11.11.1",
 		"@emotion/styled": "^11.11.0",
 		"@wordpress/data": "^10.16.0",
@@ -66,6 +63,7 @@
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"@automattic/shopping-cart": "workspace:^",
 		"@storybook/addon-actions": "^7.6.20",
 		"@storybook/cli": "^7.6.20",
 		"@storybook/react": "^7.6.20",
