@@ -272,6 +272,10 @@
 			width: 100%;
 		}
 
+		> .site-logs {
+			margin-bottom: 0;
+		}
+
 		@media (max-width: $break-large) {
 			padding-top: 24px;
 			padding-left: 24px;
