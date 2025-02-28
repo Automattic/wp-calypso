@@ -1,9 +1,48 @@
+import { JobStatus } from '@automattic/data-stores';
 import { StatusPopover } from '@automattic/domains-table/src/status-popover';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { NoticeActionCreator } from 'calypso/state/notices/types';
 import { useDomainsDataViewsContext } from './use-context';
+
+const getSuccessMessage = ( job: JobStatus, translate: ( original: string ) => string ) => {
+	if ( job.action !== 'set_auto_renew' ) {
+		return job.success.length > 1
+			? translate( 'Your domains have been updated.' )
+			: translate( 'Your domain has been updated.' );
+	}
+
+	// If the user tried to enable auto-renew:
+	if ( job.params.auto_renew ) {
+		return job.success.length > 1
+			? translate( 'Automatic renewal has been enabled for your domains.' )
+			: translate( 'Automatic renewal has been enabled for your domain.' );
+	}
+
+	// If the user tired to disable auto-renew:
+	return job.success.length > 1
+		? translate( 'Automatic renewal has been disabled for your domains.' )
+		: translate( 'Automatic renewal has been disabled for your domain.' );
+};
+
+const getFailureMessage = ( job: JobStatus, translate: ( original: string ) => string ) => {
+	if ( job.action !== 'set_auto_renew' ) {
+		return job.success.length > 1
+			? translate( 'Some domain updates were not successful.' )
+			: translate( 'Your domain update has failed.' );
+	}
+
+	if ( job.params.auto_renew ) {
+		return job.success.length > 1
+			? translate( 'Enabling automatic renewal has failed for your domains.' )
+			: translate( 'Enabling automatic renewal has failed for your domain.' );
+	}
+
+	return job.success.length > 1
+		? translate( 'Disabling automatic renewal has failed for your domains.' )
+		: translate( 'Disabling automatic renewal has failed for your domain.' );
+};
 
 export default function useBulkActionNotice(
 	successNotice: NoticeActionCreator,
@@ -39,12 +78,12 @@ export default function useBulkActionNotice(
 			if ( job.failed.length ) {
 				errorNotice(
 					<div style={ { display: 'flex', alignItems: 'center', gap: '8px' } }>
-						{ translate( 'Some domain updates were not successful.' ) }
+						{ getFailureMessage( job, translate ) }
 						<StatusPopover
 							position="bottom"
 							popoverTargetElement={
 								<div style={ { color: 'var(--color-text-inverted)', fontSize: '0.875rem' } }>
-									{ translate( 'Domains list' ) }{ ' ' }
+									{ translate( 'Details' ) }{ ' ' }
 								</div>
 							}
 						>
@@ -63,12 +102,7 @@ export default function useBulkActionNotice(
 				return;
 			}
 
-			const message =
-				job.success.length > 1
-					? translate( 'Bulk domain updates finished successfully.' )
-					: translate( 'Domain update finished successfully.' );
-
-			successNotice( message );
+			successNotice( getSuccessMessage( job, translate ) );
 		} );
 
 		if ( unshownJobIds.length > 0 ) {
