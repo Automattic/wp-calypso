@@ -38,6 +38,16 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/difm-starting-point' ),
 	},
 
+	DOMAIN_TRANSFER_INTRO: {
+		slug: 'intro',
+		asyncComponent: () => import( './steps-repository/domain-transfer-intro' ),
+	},
+
+	DOMAIN_TRANSFER_DOMAINS: {
+		slug: 'domains',
+		asyncComponent: () => import( './steps-repository/domain-transfer-domains' ),
+	},
+
 	DOMAINS: {
 		slug: 'domains',
 		asyncComponent: () => import( './steps-repository/domains' ),
@@ -357,6 +367,11 @@ export const STEPS = {
 	CHECK_FOR_PLUGINS: {
 		slug: 'checkForPlugins',
 		asyncComponent: () => import( './steps-repository/check-for-plugins' ),
+	},
+
+	SETUP_BLOG: {
+		slug: 'setup-blog',
+		asyncComponent: () => import( './steps-repository/setup-blog' ),
 	},
 } satisfies Record< string, StepperStep >;
 

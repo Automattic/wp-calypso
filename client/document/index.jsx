@@ -125,6 +125,9 @@ class Document extends Component {
 			}
 		}
 
+		const shouldNotShowLoadingLogo =
+			sectionName === 'checkout' || sectionName === 'stepper' || sectionName === 'signup';
+
 		return (
 			<html
 				lang={ lang }
@@ -179,7 +182,7 @@ class Document extends Component {
 								} ) }
 							>
 								<div className="layout__content">
-									{ sectionName === 'checkout' || sectionName === 'stepper' ? (
+									{ shouldNotShowLoadingLogo ? (
 										<Loading className="wpcom-loading__boot" />
 									) : (
 										<LoadingLogo size={ 72 } className="wpcom-site__logo" />

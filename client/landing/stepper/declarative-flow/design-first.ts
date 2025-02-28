@@ -6,6 +6,7 @@ import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { useLaunchpadDecider } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-launchpad-decider';
+import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
 import {
 	type AssertConditionResult,
@@ -20,6 +21,21 @@ import { useExitFlow } from '../hooks/use-exit-flow';
 import { useSiteData } from '../hooks/use-site-data';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 
+const steps = stepsWithRequiredLogin( [
+	STEPS.CHECK_SITES,
+	STEPS.NEW_OR_EXISTING_SITE,
+	STEPS.SITE_PICKER,
+	STEPS.SITE_CREATION_STEP,
+	STEPS.PROCESSING,
+	STEPS.DOMAINS,
+	STEPS.USE_MY_DOMAIN,
+	STEPS.PLANS,
+	STEPS.SETUP_BLOG,
+	STEPS.LAUNCHPAD,
+	STEPS.SITE_LAUNCH,
+	STEPS.CELEBRATION,
+] );
+
 const designFirst: Flow = {
 	name: DESIGN_FIRST_FLOW,
 	get title() {
@@ -27,53 +43,7 @@ const designFirst: Flow = {
 	},
 	isSignupFlow: true,
 	useSteps() {
-		return stepsWithRequiredLogin( [
-			{
-				slug: 'check-sites',
-				asyncComponent: () => import( './internals/steps-repository/sites-checker' ),
-			},
-			{
-				slug: 'new-or-existing-site',
-				asyncComponent: () => import( './internals/steps-repository/new-or-existing-site' ),
-			},
-			{
-				slug: 'site-picker',
-				asyncComponent: () => import( './internals/steps-repository/site-picker-list' ),
-			},
-			{
-				slug: 'create-site',
-				asyncComponent: () => import( './internals/steps-repository/create-site' ),
-			},
-			{
-				slug: 'processing',
-				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
-			},
-			{
-				slug: 'domains',
-				asyncComponent: () => import( './internals/steps-repository/domains' ),
-			},
-			{
-				slug: 'use-my-domain',
-				asyncComponent: () => import( './internals/steps-repository/use-my-domain' ),
-			},
-			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
-			{
-				slug: 'setup-blog',
-				asyncComponent: () => import( './internals/steps-repository/setup-blog' ),
-			},
-			{
-				slug: 'launchpad',
-				asyncComponent: () => import( './internals/steps-repository/launchpad' ),
-			},
-			{
-				slug: 'site-launch',
-				asyncComponent: () => import( './internals/steps-repository/site-launch' ),
-			},
-			{
-				slug: 'celebration-step',
-				asyncComponent: () => import( './internals/steps-repository/celebration-step' ),
-			},
-		] );
+		return steps;
 	},
 
 	useStepNavigation( currentStep, navigate ) {

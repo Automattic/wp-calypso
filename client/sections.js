@@ -914,7 +914,12 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-woopayments',
-		paths: [ '/woopayments', '/woopayments/dashboard', '/woopayments/payment-settings' ],
+		paths: [
+			'/woopayments',
+			'/woopayments/dashboard',
+			'/woopayments/payment-settings',
+			'/woopayments/site-setup',
+		],
 		module: 'calypso/a8c-for-agencies/sections/woopayments',
 		group: 'a8c-for-agencies',
 	},
