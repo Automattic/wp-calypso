@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import A4AModal from 'calypso/a8c-for-agencies/components/a4a-modal';
 import { A4A_WOOPAYMENTS_SITE_SETUP_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import useIssueAndAssignLicenses from 'calypso/a8c-for-agencies/sections/marketplace/products-overview/hooks/use-issue-and-assign-licenses';
+import useIssueAndAssignLicenses from 'calypso/a8c-for-agencies/sections/marketplace/products-overview-v2/hooks/use-issue-and-assign-licenses';
 import AddWooPaymentsToSiteTable, { type WooPaymentsSiteItem } from './add-site-table';
 
 const AddWooPaymentsToSiteModal = ( { onClose }: { onClose: () => void } ) => {
