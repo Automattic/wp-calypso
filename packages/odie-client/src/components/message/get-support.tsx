@@ -1,6 +1,7 @@
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
@@ -52,6 +53,8 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 	canConnectToZendesk = false,
 } ) => {
 	const navigate = useNavigate();
+	const [ hasTrackedEventForCookies, setHasTrackedEventForCookies ] = useState( false );
+	const [ hasTrackedEventForButtons, setHasTrackedEventForButtons ] = useState( false );
 	const newConversation = useCreateZendeskConversation();
 	const location = useLocation();
 	const {
@@ -78,7 +81,25 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		! ( canConnectToZendesk || contextCanConnectToZendesk ) &&
 		( isUserEligibleForPaidSupport || contextIsUserEligibleForPaidSupport )
 	) {
+		if ( ! hasTrackedEventForCookies ) {
+			trackEvent( 'display_third_party_cookies_notice', {
+				provider: chat.provider,
+				can_connect_to_zendesk: contextCanConnectToZendesk || canConnectToZendesk,
+				is_user_eligible_for_paid_support:
+					contextIsUserEligibleForPaidSupport || isUserEligibleForPaidSupport,
+			} );
+			setHasTrackedEventForCookies( true );
+		}
 		return <NewThirdPartyCookiesNotice />;
+	}
+	if ( ! hasTrackedEventForButtons ) {
+		trackEvent( 'display_get_support_buttons', {
+			provider: chat.provider,
+			can_connect_to_zendesk: contextCanConnectToZendesk || canConnectToZendesk,
+			is_user_eligible_for_paid_support:
+				contextIsUserEligibleForPaidSupport || isUserEligibleForPaidSupport,
+		} );
+		setHasTrackedEventForButtons( true );
 	}
 
 	const getButtonConfig = (): ButtonConfig[] => {
