@@ -167,6 +167,7 @@
 		"reader/comment-polling": false,
 		"reader/full-errors": true,
 		"reader/quick-post": false,
+		"reader/quick-post-v2": false,
 		"readymade-templates/showcase": true,
 		"redirect-fallback-browsers": false,
 		"rum-tracking/logstash": true,
