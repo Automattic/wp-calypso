@@ -44,6 +44,7 @@ import {
 } from 'calypso/state/sites/selectors';
 import canCurrentUserManageSiteOptions from 'calypso/state/sites/selectors/can-current-user-manage-site-options';
 import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
+import isSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
@@ -247,7 +248,15 @@ class MasterbarLoggedIn extends Component {
 
 	// will render as back button on mobile and in editor
 	renderMySites() {
-		const { domainOnlySite, siteSlug, translate, section, currentRoute } = this.props;
+		const {
+			domainOnlySite,
+			siteSlug,
+			translate,
+			section,
+			currentRoute,
+			isGlobalSidebarVisible,
+			siteAdminUrl,
+		} = this.props;
 
 		const mySitesUrl = domainOnlySite
 			? domainManagementList( siteSlug, currentRoute, true )
@@ -259,12 +268,42 @@ class MasterbarLoggedIn extends Component {
 			return <Item icon={ icon } className="masterbar__item-no-sites" disabled />;
 		}
 
+		const subItems = isGlobalSidebarVisible
+			? null
+			: [
+					[
+						{
+							label: translate( 'Sites' ),
+							url: '/sites',
+						},
+						{
+							label: translate( 'Domains' ),
+							url: '/domains/manage',
+						},
+					],
+					...( this.props.isSimpleSite
+						? []
+						: [
+								[
+									{
+										label: translate( 'About WordPress' ),
+										url: `${ siteAdminUrl }about.php`,
+									},
+									{
+										label: translate( 'Get Involved' ),
+										url: `${ siteAdminUrl }contribute.php`,
+									},
+								],
+						  ] ),
+			  ];
+
 		return (
 			<Item
 				className="masterbar__item-my-sites"
 				url={ mySitesUrl }
 				tipTarget="my-sites"
 				icon={ icon }
+				subItems={ subItems }
 				onClick={ this.clickMySites }
 				isActive={ this.isMySitesActive() }
 				tooltip={ translate( 'Manage your sites' ) }
@@ -704,6 +743,7 @@ export default connect(
 			isClassicView,
 			currentSelectedSiteSlug: siteId ? getSiteSlug( state, siteId ) : undefined,
 			previousPath: getPreviousRoute( state ),
+			isSimpleSite: isSimpleSite( state, siteId ),
 			isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			currentRoute: getCurrentRoute( state ),
