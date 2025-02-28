@@ -123,7 +123,7 @@ export default function NewsletterImporter( {
 	useEffect( () => {
 		if ( urlData?.platform === engine ) {
 			if ( selectedSite && shouldResetImport && validFromSite === false ) {
-				resetPaidNewsletter( selectedSite.ID, engine, stepSlugs[ 0 ] );
+				resetPaidNewsletter( selectedSite.ID, engine, stepSlugs[ 0 ], fromSite );
 				setShouldResetImport( false );
 				window.history.replaceState(
 					null,

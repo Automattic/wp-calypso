@@ -38,6 +38,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/difm-starting-point' ),
 	},
 
+	DOMAIN_CONTACT_INFO: {
+		slug: 'domain-contact-info',
+		asyncComponent: () => import( './steps-repository/domain-contact-info' ),
+	},
+
 	DOMAIN_TRANSFER_INTRO: {
 		slug: 'intro',
 		asyncComponent: () => import( './steps-repository/domain-transfer-intro' ),
@@ -367,6 +372,26 @@ export const STEPS = {
 	CHECK_FOR_PLUGINS: {
 		slug: 'checkForPlugins',
 		asyncComponent: () => import( './steps-repository/check-for-plugins' ),
+	},
+
+	HUNDRED_YEAR_PLAN_DIY_OR_DIFM: {
+		slug: 'diy-or-difm',
+		asyncComponent: () => import( './steps-repository/hundred-year-plan-diy-or-difm' ),
+	},
+
+	HUNDRED_YEAR_PLAN_THANK_YOU: {
+		slug: 'thank-you',
+		asyncComponent: () => import( './steps-repository/hundred-year-plan-thank-you' ),
+	},
+
+	HUNDRED_YEAR_PLAN_SITE_PICKER: {
+		slug: 'site-picker',
+		asyncComponent: () => import( './steps-repository/hundred-year-plan-site-picker' ),
+	},
+
+	HUNDRED_YEAR_PLAN_SETUP: {
+		slug: 'setup',
+		asyncComponent: () => import( './steps-repository/hundred-year-plan-setup' ),
 	},
 
 	SETUP_BLOG: {
