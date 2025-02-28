@@ -9,7 +9,7 @@ import { MigrationReady } from 'calypso/blocks/importer/wordpress/import-everyth
 import { UpdatePluginInfo } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/update-plugins';
 import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
 import QuerySites from 'calypso/components/data/query-sites';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import Loading from 'calypso/components/loading';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -187,7 +187,7 @@ export const PreMigrationScreen: React.FunctionComponent< PreMigrationProps > = 
 		case 'loading':
 			return (
 				<div className="import-layout__center">
-					<LoadingEllipsis />
+					<Loading />
 				</div>
 			);
 

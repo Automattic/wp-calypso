@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import ImportUsers from 'calypso/blocks/importer/wordpress/import-everything/import-users';
 import PreMigrationScreen from 'calypso/blocks/importer/wordpress/import-everything/pre-migration';
 import AsyncLoad from 'calypso/components/async-load';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import Loading from 'calypso/components/loading';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import { SectionMigrate } from 'calypso/my-sites/migrate/section-migrate';
 import { isMigrationTrialSite } from 'calypso/sites-dashboard/utils';
@@ -164,7 +164,7 @@ export class ImportEverything extends SectionMigrate {
 	renderLoading() {
 		return (
 			<div className="import-layout__center">
-				<LoadingEllipsis />
+				<Loading />
 			</div>
 		);
 	}

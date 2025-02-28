@@ -3,7 +3,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import clsx from 'clsx';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import Loading from 'calypso/components/loading';
 import { resetImport, startImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
@@ -148,7 +148,7 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 						);
 					}
 
-					return <LoadingEllipsis />;
+					return <Loading />;
 				} )() }
 
 				{ showVideoComponent() && <GettingStartedVideo /> }

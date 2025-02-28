@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useSelect, useDispatch } from '@wordpress/data';
 import React, { useEffect, useState } from 'react';
 import { convertToFriendlyWebsiteName } from 'calypso/blocks/import/util';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import Loading from 'calypso/components/loading';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -158,7 +158,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 				) {
 					return (
 						<div className="import-layout__center">
-							<LoadingEllipsis />;
+							<Loading />
 						</div>
 					);
 				} else if ( undefined === option && fromSite ) {

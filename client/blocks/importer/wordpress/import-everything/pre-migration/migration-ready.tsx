@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { StartImportTrackingProps } from 'calypso/blocks/importer/wordpress/import-everything/pre-migration/types';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import Loading from 'calypso/components/loading';
 import useMigrationConfirmation from 'calypso/landing/stepper/hooks/use-migration-confirmation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
@@ -100,7 +100,7 @@ export function MigrationReady( props: Props ) {
 			) }
 			{ isFetchingUserSettingsSelector ? (
 				<div className="import-layout__center">
-					<LoadingEllipsis />
+					<Loading />
 				</div>
 			) : (
 				<div className="import__pre-migration import__import-everything import__import-everything--redesign">
