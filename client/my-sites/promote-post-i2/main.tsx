@@ -4,6 +4,7 @@ import './style.scss';
 import { InfiniteData, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
+import cookie from 'cookie';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -43,6 +44,7 @@ import CampaignsTotalStats from './components/campaigns-total-stats';
 import CreditBalance from './components/credit-balance';
 import MainWrapper from './components/main-wrapper';
 import PostsListBanner from './components/posts-list-banner';
+import TspBanner from './components/tsp-banner';
 import useIsRunningInWpAdmin from './hooks/use-is-running-in-wpadmin';
 import useOpenPromoteWidget from './hooks/use-open-promote-widget';
 import { getAdvertisingDashboardPath } from './utils';
@@ -75,6 +77,7 @@ export type PagedBlazeContentData = {
 		total_impressions: number;
 		total_clicks: number;
 	};
+	tsp_eligible: boolean;
 };
 
 export type PagedBlazeSearchResponse = {
@@ -86,6 +89,15 @@ const POST_DEFAULT_SEARCH_OPTIONS: SearchOptions = {
 	filter: {
 		postType: isWooStore ? 'product' : '',
 	},
+};
+
+const TSP_BANNER_COLLAPSED_COOKIE = 'blaze-tsp-banner-collapsed';
+
+const setTspBannerCollapsedCookie = ( value: boolean ) => {
+	document.cookie = cookie.serialize( TSP_BANNER_COLLAPSED_COOKIE, ( +value ).toString(), {
+		path: '/',
+		maxAge: 365 * 24 * 60 * 60, // 1 year
+	} );
 };
 
 export default function PromotedPosts( { tab }: Props ) {
@@ -137,6 +149,7 @@ export default function PromotedPosts( { tab }: Props ) {
 		has_more_pages: campaignsHasMorePages,
 		items: pagedCampaigns,
 		campaigns_stats: campaignsStats,
+		tsp_eligible: campaignsTspEligible,
 	} = getPagedBlazeSearchData( 'campaigns', campaignsData );
 
 	const { total_items: totalCampaignsUnfiltered } = getPagedBlazeSearchData(
@@ -168,6 +181,7 @@ export default function PromotedPosts( { tab }: Props ) {
 		has_more_pages: postsHasMorePages,
 		items: posts,
 		warnings: postsWarnings,
+		tsp_eligible: postsTspEligible,
 	} = getPagedBlazeSearchData( 'posts', postsData );
 
 	const tabs: TabOption[] = [
@@ -190,6 +204,17 @@ export default function PromotedPosts( { tab }: Props ) {
 			enabled: parseFloat( creditBalance ) > 0,
 		},
 	];
+
+	const cookies = cookie.parse( document.cookie );
+	const userHasCollapsedTspBanner = ( cookies[ TSP_BANNER_COLLAPSED_COOKIE ] ?? '0' ) === '1';
+
+	const showTspBanner = // TSP Banner has a higher priority than the regular banner
+		( ! campaignsIsLoading && campaignsTspEligible ) || ( ! postsIsLoading && postsTspEligible );
+
+	const [ isTspBannerCollapsed, setIsTspBannerCollapsed ] = useState( userHasCollapsedTspBanner );
+
+	const showRegularBanner =
+		! showTspBanner && ! campaignsIsLoading && ( totalCampaignsUnfiltered || 0 ) < 3;
 
 	if ( selectedSite?.is_coming_soon || selectedSite?.is_private ) {
 		return (
@@ -218,13 +243,11 @@ export default function PromotedPosts( { tab }: Props ) {
 		);
 	}
 
-	const showBanner = ! campaignsIsLoading && ( totalCampaignsUnfiltered || 0 ) < 3;
-
 	const isBlazePlugin = config.isEnabled( 'is_running_in_blaze_plugin' );
 	const isWooBlaze = config.isEnabled( 'is_running_in_woo_site' );
 
 	const headerSubtitle = ( isMobile: boolean ) => {
-		if ( ! isMobile && showBanner ) {
+		if ( ! isMobile && showRegularBanner ) {
 			// Do not show subtitle for desktops where banner should be shown
 			return null;
 		}
@@ -275,6 +298,11 @@ export default function PromotedPosts( { tab }: Props ) {
 		) : null;
 	};
 
+	const toggleTspBanner = () => {
+		setTspBannerCollapsedCookie( ! isTspBannerCollapsed );
+		setIsTspBannerCollapsed( ! isTspBannerCollapsed );
+	};
+
 	return (
 		<MainWrapper>
 			<DocumentHead title={ translate( 'Advertising' ) } />
@@ -283,7 +311,7 @@ export default function PromotedPosts( { tab }: Props ) {
 				<FormattedHeader
 					brandFont
 					className={ clsx( 'advertising__page-header', {
-						'advertising__page-header_has-banner': showBanner,
+						'advertising__page-header_has-banner': showRegularBanner,
 					} ) }
 					children={ headerSubtitle( false ) /* for desktop */ }
 					headerText={ isBlazePlugin ? translate( 'Blaze Ads' ) : translate( 'Advertising' ) }
@@ -308,7 +336,12 @@ export default function PromotedPosts( { tab }: Props ) {
 			</div>
 			{ headerSubtitle( true ) /* for mobile */ }
 
-			{ showBanner && ( isBlazePlugin ? <BlazePluginBanner /> : <PostsListBanner /> ) }
+			{ /* Banners */ }
+			{ showRegularBanner && ( isBlazePlugin ? <BlazePluginBanner /> : <PostsListBanner /> ) }
+
+			{ ! showRegularBanner && showTspBanner && (
+				<TspBanner onToggle={ toggleTspBanner } isCollapsed={ isTspBannerCollapsed } />
+			) }
 
 			{
 				// TODO: Uncomment when DebtNotifier is implemented
@@ -317,18 +350,18 @@ export default function PromotedPosts( { tab }: Props ) {
 			<CampaignsTotalStats
 				totalImpressions={ campaignsStats?.total_impressions }
 				totalClicks={ campaignsStats?.total_clicks }
-				outerContainerClass={ ! showBanner ? 'promote-post-i2__divider' : '' }
+				outerContainerClass={ ! showRegularBanner ? 'promote-post-i2__divider' : '' }
 			/>
 
 			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
 
 			{ ! isLoadingBillingSummary && paymentBlocked && (
 				<Notice
-					isReskinned
 					showDismiss={ false }
 					status="is-error"
 					icon="notice-outline"
 					className="promote-post-i2__payment-blocked-notice"
+					theme="light"
 				>
 					{ translate(
 						'Your account does not have the capabilities to promote. {{wpcomSupport}}Reach out to us{{/wpcomSupport}} for support.',
@@ -350,11 +383,11 @@ export default function PromotedPosts( { tab }: Props ) {
 			{ shouldDisplayDebtAndPaymentLinks && (
 				<>
 					<Notice
-						isReskinned
+						theme="light"
 						showDismiss={ false }
 						status="is-error"
 						icon="notice-outline"
-						className="promote-post-i2__payment-blocked-notice"
+						className="promote-post-i2__payment-blocked-notice wpcomsh-notice"
 					>
 						{ translate(
 							'Your account currently has an outstanding balance of $%(debtAmount)s. Please resolve this using the links below before creating new campaigns.',

@@ -356,12 +356,12 @@ const pendingAction: Reducer< undefined | ( () => Promise< any > ), OnboardActio
 	return state;
 };
 
-const progress: Reducer< number, OnboardAction > = ( state = -1, action ) => {
+const progress: Reducer< number | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_PROGRESS' ) {
 		return action.progress;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return -1;
+		return undefined;
 	}
 	return state;
 };
@@ -394,26 +394,6 @@ const goals: Reducer< SiteGoal[], OnboardAction > = ( state = [], action ) => {
 		return [];
 	}
 
-	return state;
-};
-
-const verticalId: Reducer< string, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_VERTICAL_ID' ) {
-		return action.verticalId;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
-	}
-	return state;
-};
-
-const storeLocationCountryCode: Reducer< string, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_STORE_LOCATION_COUNTRY_CODE' ) {
-		return action.storeLocationCountryCode;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
-	}
 	return state;
 };
 
@@ -649,6 +629,9 @@ const createWithBigSky: Reducer< boolean | undefined, OnboardAction > = (
 	if ( action.type === 'SET_CREATE_WITH_BIG_SKY' ) {
 		return action.createWithBigSky;
 	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
 
 	return state;
 };
@@ -690,8 +673,6 @@ const reducer = combineReducers( {
 	siteLogo,
 	siteAccentColor,
 	readymadeTemplate,
-	verticalId,
-	storeLocationCountryCode,
 	ecommerceFlowRecurType,
 	couponCode,
 	storageAddonSlug,

@@ -7,8 +7,13 @@ config.description = 'WordPress Desktop';
 config.version = pkg.version;
 config.author = pkg.author;
 
+config.protocol = 'wpdesktop';
+
+config.oauthLoginEnabled = process.platform !== 'linux';
+
 config.loginURL = function () {
-	return this.baseURL() + 'log-in';
+	const loginUri = ! config.oauthLoginEnabled ? 'log-in' : 'log-in/desktop';
+	return this.baseURL() + loginUri;
 };
 
 config.baseURL = function () {

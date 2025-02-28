@@ -65,6 +65,7 @@ export { isSiteEligibleForBundledSoftware } from 'calypso/state/themes/selectors
 export { isSiteEligibleForManagedExternalThemes } from 'calypso/state/themes/selectors/is-site-eligible-for-managed-external-themes';
 export { isThemeActivationSyncStarted } from 'calypso/state/themes/selectors/is-theme-activation-sync-started';
 export { isThemeActive } from 'calypso/state/themes/selectors/is-theme-active';
+export { isThemeAllowedOnSite } from 'calypso/state/themes/selectors/is-theme-allowed-on-site';
 export { isThemeGutenbergFirst } from 'calypso/state/themes/selectors/is-theme-gutenberg-first';
 export { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
 export { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';

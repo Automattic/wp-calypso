@@ -5,6 +5,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
 import withDimensions from 'calypso/lib/with-dimensions';
+import QuickPost from 'calypso/reader/components/quick-post';
 import ReaderOnboarding from 'calypso/reader/onboarding';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import ReaderStream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
@@ -17,7 +18,6 @@ import './style.scss';
 function FollowingStream( { ...props } ) {
 	const { currentView } = useFollowingView();
 	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
-	const viewToggle = config.isEnabled( 'reader/recent-feed-overhaul' ) ? <ViewToggle /> : null;
 
 	if ( ! isLoading && ! hasNonSelfSubscriptions ) {
 		return (
@@ -40,8 +40,8 @@ function FollowingStream( { ...props } ) {
 
 	return (
 		<>
-			{ currentView === 'recent' && config.isEnabled( 'reader/recent-feed-overhaul' ) ? (
-				<Recent viewToggle={ viewToggle } />
+			{ currentView === 'recent' ? (
+				<Recent viewToggle={ <ViewToggle /> } />
 			) : (
 				<ReaderStream { ...props } className="following">
 					<BloganuaryHeader />
@@ -52,8 +52,9 @@ function FollowingStream( { ...props } ) {
 							'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
 						} ) }
 					>
-						{ viewToggle }
+						<ViewToggle />
 					</NavigationHeader>
+					{ config.isEnabled( 'reader/quick-post' ) && <QuickPost /> }
 					<ReaderOnboarding />
 				</ReaderStream>
 			) }

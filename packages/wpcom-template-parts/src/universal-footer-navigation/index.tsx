@@ -115,14 +115,6 @@ export const PureUniversalNavbarFooter = ( {
 								</li>
 								<li>
 									<a
-										href={ localizeUrl( 'https://wordpress.com/p2/?ref=wpcom-product-menu' ) }
-										target="_self"
-									>
-										{ __( 'P2: WordPress for Teams', __i18n_text_domain__ ) }
-									</a>
-								</li>
-								<li>
-									<a
 										href={ localizeUrl(
 											'https://wordpress.com/website-design-service/?ref=footer_pricing'
 										) }
@@ -231,13 +223,8 @@ export const PureUniversalNavbarFooter = ( {
 									</a>
 								</li>
 								<li>
-									<a href={ localizeUrl( 'https://wordpress.com/read/search/' ) } target="_self">
+									<a href={ localizeUrl( 'https://wordpress.com/reader/search/' ) } target="_self">
 										{ __( 'Blog Search', __i18n_text_domain__ ) }
-									</a>
-								</li>
-								<li>
-									<a href={ localizeUrl( 'https://wordpress.com/webinars/' ) } target="_self">
-										{ __( 'Daily Webinars', __i18n_text_domain__ ) }
 									</a>
 								</li>
 								<li>

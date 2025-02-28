@@ -1,10 +1,7 @@
-import {
-	Onboard,
-	updateLaunchpadSettings,
-	getThemeIdFromStylesheet,
-} from '@automattic/data-stores';
+import configApi from '@automattic/calypso-config';
+import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
@@ -15,14 +12,16 @@ import { addQueryArgs } from 'calypso/lib/route';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getInitialQueryArguments } from 'calypso/state/selectors/get-initial-query-arguments';
-import { setActiveTheme, activateOrInstallThenActivate } from 'calypso/state/themes/actions';
+import { requestSite } from 'calypso/state/sites/actions';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
+import { useActivateDesign } from '../hooks/use-activate-design';
 import { useIsPluginBundleEligible } from '../hooks/use-is-plugin-bundle-eligible';
 import { useSiteData } from '../hooks/use-site-data';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { shouldRedirectToSiteMigration } from './helpers';
+import { useRedirectDesignSetupOldSlug } from './helpers/use-redirect-design-setup-old-slug';
 import { useLaunchpadDecider } from './internals/hooks/use-launchpad-decider';
 import { STEPS } from './internals/steps';
 import { redirect } from './internals/steps-repository/import/util';
@@ -34,9 +33,6 @@ import {
 	ProvidedDependencies,
 } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
-import type { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
-import type { AnyAction } from 'redux';
-import type { ThunkAction } from 'redux-thunk';
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -166,10 +162,21 @@ const siteSetupFlow: FlowV1 = {
 
 		const goToFlow = ( fullStepPath: string ) => {
 			const path = `/setup/${ fullStepPath }`.replace( /([^:])(\/\/+)/g, '$1/' );
+			const sessionId = urlQueryParams.get( 'sessionId' );
 
 			return window.location.assign(
-				addQueryArgs( { siteSlug, from, origin: `site-setup/${ currentStep }` }, path )
+				addQueryArgs( { siteSlug, from, sessionId, origin: `site-setup/${ currentStep }` }, path )
 			);
+		};
+
+		const getEnableFeaturesForGoals = () => {
+			const featuresForGoals: Onboard.SiteGoal[] = [];
+
+			if ( configApi.isEnabled( 'onboarding/enable-write-goal-features' ) ) {
+				featuresForGoals.push( Onboard.SiteGoal.Write );
+			}
+
+			return featuresForGoals.length > 0 ? featuresForGoals : undefined;
 		};
 
 		const exitFlow = ( to: string, options: ExitFlowOptions = {} ) => {
@@ -199,7 +206,9 @@ const siteSetupFlow: FlowV1 = {
 					const pendingActions = [];
 
 					if ( siteIntent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
-						pendingActions.push( setDesignOnSite( siteSlug, WRITE_INTENT_DEFAULT_DESIGN ) );
+						pendingActions.push(
+							setDesignOnSite( siteSlug, WRITE_INTENT_DEFAULT_DESIGN, { enableThemeSetup: true } )
+						);
 					}
 
 					// Update Launchpad option based on site intent
@@ -226,6 +235,15 @@ const siteSetupFlow: FlowV1 = {
 
 					formData.push( [ 'settings', JSON.stringify( settings ) ] );
 
+					const enableFeaturesForGoals = getEnableFeaturesForGoals();
+
+					if ( enableFeaturesForGoals ) {
+						formData.push( [
+							'enable_features_for_goals',
+							JSON.stringify( enableFeaturesForGoals ),
+						] );
+					}
+
 					pendingActions.push(
 						wpcomRequest( {
 							path: `/sites/${ siteId }/onboarding-customization`,
@@ -236,7 +254,10 @@ const siteSetupFlow: FlowV1 = {
 						} )
 					);
 
-					Promise.all( pendingActions ).then( () => window.location.assign( redirectionUrl ) );
+					Promise.all( pendingActions )
+						// Refetch the site to get the latest data, including the new intent.
+						.then( () => dispatch( requestSite( siteSlug ) ) )
+						.then( () => window.location.assign( redirectionUrl ) );
 				} );
 			} );
 
@@ -251,6 +272,8 @@ const siteSetupFlow: FlowV1 = {
 			navigate,
 		} );
 
+		useRedirectDesignSetupOldSlug( currentStep, navigate );
+
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
 			switch ( currentStep ) {
 				case 'options': {
@@ -260,12 +283,12 @@ const siteSetupFlow: FlowV1 = {
 						 *
 						 * Instead of having the user manually choose between "Start simple" and "More power", we let them select a theme and use the theme choice to determine which path to take.
 						 */
-						return navigate( 'designSetup' );
+						return navigate( 'design-setup' );
 					}
 					return navigate( 'bloggerStartingPoint' );
 				}
 
-				case 'designSetup': {
+				case 'design-setup': {
 					return navigate( 'processing' );
 				}
 
@@ -344,7 +367,7 @@ const siteSetupFlow: FlowV1 = {
 							if ( isDesignChoicesStepEnabled ) {
 								return navigate( 'design-choices' );
 							}
-							return navigate( 'designSetup' );
+							return navigate( 'design-setup' );
 						}
 					}
 				}
@@ -368,7 +391,7 @@ const siteSetupFlow: FlowV1 = {
 							return exitFlow( `https://wordpress.com/home/${ siteId ?? siteSlug }` );
 						}
 						case 'build': {
-							return navigate( 'designSetup' );
+							return navigate( 'design-setup' );
 						}
 						case 'sell': {
 							return navigate( 'options' );
@@ -497,7 +520,7 @@ const siteSetupFlow: FlowV1 = {
 				case 'courses':
 					return navigate( 'bloggerStartingPoint' );
 
-				case 'designSetup':
+				case 'design-setup':
 					if ( intent === SiteIntent.DIFM ) {
 						return navigate( 'difmStartingPoint' );
 					}
@@ -580,7 +603,7 @@ const siteSetupFlow: FlowV1 = {
 			switch ( currentStep ) {
 				case 'options':
 					if ( intent === 'sell' ) {
-						return navigate( 'designSetup' );
+						return navigate( 'design-setup' );
 					}
 					return navigate( 'bloggerStartingPoint' );
 
@@ -591,7 +614,7 @@ const siteSetupFlow: FlowV1 = {
 					return navigate( 'importList' );
 
 				case 'difmStartingPoint':
-					return navigate( 'designSetup' );
+					return navigate( 'design-setup' );
 
 				default:
 					return navigate( 'intent' );
@@ -612,7 +635,7 @@ const siteSetupFlow: FlowV1 = {
 	},
 
 	useAssertConditions(): AssertConditionResult {
-		const { siteSlug, siteId } = useSiteData();
+		const { site, siteSlug, siteId } = useSiteData();
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
@@ -647,8 +670,9 @@ const siteSetupFlow: FlowV1 = {
 			};
 		}
 
+		const isLoadingSite = ( siteSlug || siteId ) && ! site;
 		const { canManageOptions, isLoading } = useCanUserManageOptions();
-		if ( isLoading ) {
+		if ( isLoadingSite || isLoading ) {
 			result = {
 				state: AssertConditionState.CHECKING,
 			};
@@ -668,7 +692,6 @@ const siteSetupFlow: FlowV1 = {
 		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
 		const { siteSlugOrId, siteId } = useSiteData();
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
-		const { setDesignOnSite, assembleSite } = useDispatch( SITE_STORE );
 		const { selectedDesign, selectedStyleVariation, selectedGlobalStyles } = useSelect(
 			( select ) => {
 				const { getSelectedDesign, getSelectedStyleVariation, getSelectedGlobalStyles } = select(
@@ -686,71 +709,50 @@ const siteSetupFlow: FlowV1 = {
 		const dispatch = reduxDispatch();
 
 		const skippedCheckout = useQuery().get( 'skippedCheckout' );
+		const activateDesign = useActivateDesign();
+		const isPendingActionSet = useRef( false );
 
 		useEffect( () => {
 			if ( ! isGoalsAtFrontExperiment || ! siteSlugOrId || ! siteId ) {
 				return;
 			}
 
+			// Avoid the pending action to be triggered multiple times.
+			if ( isPendingActionSet.current ) {
+				return;
+			}
+
+			isPendingActionSet.current = true;
 			setPendingAction( async () => {
 				if ( ! selectedDesign ) {
 					return;
 				}
+				try {
+					await activateDesign( selectedDesign, {
+						styleVariation: selectedStyleVariation,
+						globalStyles: selectedGlobalStyles,
+					} );
+				} catch ( error: any ) {
+					// We attempt to set the design on the site anyway even when the checkout is skipped.
+					// That's because the user might have selected a free design, and there's no reason
+					// we shouldn't set that design on the site when the checkout is skipped.
+					// If the ThemeNotPurchasedError is thrown we know that they actually selected a
+					// paid theme and we're unable to apply it.
+					if ( error.name !== 'ThemeNotPurchasedError' || skippedCheckout !== '1' ) {
+						throw error;
+					}
+				}
 
-				// Complete the "Select a design" task only when there is a selected design.
 				const design_completed = selectedDesign?.default ? false : true;
 				await updateLaunchpadSettings( siteSlugOrId, {
 					checklist_statuses: { design_completed },
 				} );
-
-				if ( selectedDesign?.is_virtual ) {
-					const themeId = getThemeIdFromStylesheet( selectedDesign.recipe?.stylesheet ?? '' );
-					return Promise.resolve()
-						.then( () =>
-							dispatch(
-								activateOrInstallThenActivate( themeId ?? '', siteId, {
-									source: 'assembler',
-								} ) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
-							)
-						)
-						.then( ( activeThemeStylesheet: string ) =>
-							assembleSite( siteSlugOrId, activeThemeStylesheet, {
-								homeHtml: selectedDesign.recipe?.pattern_html,
-								headerHtml: selectedDesign.recipe?.header_html,
-								footerHtml: selectedDesign.recipe?.footer_html,
-								siteSetupOption: 'assembler-virtual-theme',
-							} )
-						);
-				}
-
-				return setDesignOnSite( siteSlugOrId, selectedDesign, {
-					styleVariation: selectedStyleVariation,
-					globalStyles: selectedGlobalStyles,
-				} )
-					.then( async ( theme: ActiveTheme ) => {
-						const design_completed = selectedDesign?.default ? false : true;
-						await updateLaunchpadSettings( siteSlugOrId, {
-							checklist_statuses: { design_completed },
-						} );
-						return dispatch( setActiveTheme( siteId, theme ) );
-					} )
-					.catch( ( error: Error ) => {
-						// We attempt to set the design on the site anyway even when the checkout is skipped.
-						// That's because the user might have selected a free design, and there's no reason
-						// we shouldn't set that design on the site when the checkout is skipped.
-						// If the ThemeNotPurchasedError is thrown we know that they actually selected a
-						// paid theme and we're unable to apply it.
-						if ( error.name === 'ThemeNotPurchasedError' && skippedCheckout === '1' ) {
-							return;
-						}
-						throw error;
-					} );
 			} );
 		}, [
 			isGoalsAtFrontExperiment,
 			siteSlugOrId,
 			siteId,
-			setDesignOnSite,
+			activateDesign,
 			selectedDesign,
 			setPendingAction,
 			dispatch,

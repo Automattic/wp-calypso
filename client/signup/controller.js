@@ -67,14 +67,6 @@ function setReferrerPolicy() {
 	} catch ( e ) {}
 }
 
-export const addVideoPressSignupClassName = () => {
-	if ( ! document ) {
-		return;
-	}
-
-	document.body.classList.add( 'is-videopress-signup' );
-};
-
 export const addP2SignupClassName = () => {
 	if ( ! document ) {
 		return;
@@ -92,13 +84,6 @@ export const removeP2SignupClassName = function () {
 };
 
 export default {
-	redirectTests( context, next ) {
-		if ( context.pathname.includes( 'videopress' ) ) {
-			addVideoPressSignupClassName();
-		}
-
-		next();
-	},
 	redirectWithoutLocaleIfLoggedIn( context, next ) {
 		const userLoggedIn = isUserLoggedIn( context.store.getState() );
 		if ( userLoggedIn && context.params.lang ) {
@@ -127,8 +112,15 @@ export default {
 	},
 
 	saveInitialContext( context, next ) {
+		const userLoggedIn = isUserLoggedIn( context.store.getState() );
 		if ( ! initialContext ) {
 			initialContext = Object.assign( {}, context );
+		} else if (
+			getFlowName( initialContext.params, userLoggedIn ) !==
+			getFlowName( context.params, userLoggedIn )
+		) {
+			// Update the `initialContext` when the flow changes.
+			initialContext = Object.assign( {}, initialContext, context );
 		}
 
 		next();
@@ -225,18 +217,6 @@ export default {
 			return;
 		}
 
-		// const isOnboardingFlow = flowName === 'onboarding';
-		// // See: 1113-gh-Automattic/experimentation-platform for details.
-		// if ( isOnboardingFlow || isOnboardingGuidedFlow( flowName ) ) {
-		// 	// `isTokenLoaded` covers users who just logged in.
-		// 	if ( wpcom.isTokenLoaded() || userLoggedIn ) {
-		// 		const trailMapExperimentAssignment = await loadExperimentAssignment(
-		// 			'calypso_signup_onboarding_trailmap_guided_flow'
-		// 		);
-		// 		initialContext.trailMapExperimentVariant = trailMapExperimentAssignment.variationName;
-		// 	}
-		// }
-
 		if ( context.pathname !== getValidPath( context.params, userLoggedIn ) ) {
 			return page.redirect(
 				getValidPath( context.params, userLoggedIn ) +
@@ -276,12 +256,6 @@ export default {
 		const params = {
 			flow: flowName,
 		};
-
-		// Clean me up after the experiment is over (see: pdDR7T-1xi-p2)
-		// This is kept for documentation purposes.
-		// if ( isOnboardingGuidedFlow( flowName ) ) {
-		// 	params.trailmap_variant = initialContext.trailMapExperimentVariant || 'control';
-		// }
 
 		recordPageView( basePath, basePageTitle + ' > Start > ' + flowName + ' > ' + stepName, params );
 

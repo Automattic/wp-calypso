@@ -5,6 +5,7 @@ import {
 	trackPageLoad,
 	trackUpdatesLoaded,
 	trackScrollPage,
+	userHasHistory,
 } from 'calypso/reader/controller-helper';
 import { SEARCH_TYPES } from 'calypso/reader/search-stream/search-stream-header';
 import { recordTrack } from 'calypso/reader/stats';
@@ -15,7 +16,7 @@ const analyticsPageTitle = 'Reader';
 
 // TODO: delete this after launching sites in search
 function replaceSearchUrl( newValue, sort ) {
-	let searchUrl = '/read/search';
+	let searchUrl = '/reader/search';
 	if ( newValue ) {
 		searchUrl += '?' + stringify( { q: newValue, sort } );
 	}
@@ -24,7 +25,7 @@ function replaceSearchUrl( newValue, sort ) {
 
 const exported = {
 	search: function ( context, next ) {
-		const basePath = '/read/search';
+		const basePath = '/reader/search';
 		const fullAnalyticsPageTitle = analyticsPageTitle + ' > Search';
 		const mcKey = 'search';
 		const state = context.store.getState();
@@ -83,7 +84,7 @@ const exported = {
 								mcKey
 							) }
 							onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
-							showBack={ false }
+							showBack={ userHasHistory( context ) }
 							autoFocusInput={ autoFocusInput }
 							onQueryChange={ reportQueryChange }
 							onSortChange={ reportSortChange }

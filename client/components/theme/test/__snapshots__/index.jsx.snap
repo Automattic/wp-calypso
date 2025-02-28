@@ -35,9 +35,15 @@ exports[`Theme rendering should match snapshot 1`] = `
           Twenty Seventeen
         </span>
       </h2>
-      <components--theme-tier-badge
-        themeid="twentyseventeen"
-      />
+      <div
+        class="theme-card__info-badge-container"
+      >
+        <components--theme-tier-badge
+          islockedstylevariation="false"
+          isthemelist="true"
+          themeid="twentyseventeen"
+        />
+      </div>
     </div>
   </div>
 </div>

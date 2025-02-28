@@ -186,7 +186,7 @@ const Settings = ( {
 		if (
 			! ( domain && selectedSite?.options?.is_domain_only ) ||
 			domain?.type === domainTypes.TRANSFER ||
-			domain?.isGravatarDomain
+			domain?.isGravatarRestrictedDomain
 		) {
 			return null;
 		}
@@ -324,7 +324,7 @@ const Settings = ( {
 	};
 
 	const renderNameServersSection = () => {
-		if ( ! domain || domain.type !== domainTypes.REGISTERED || domain.isGravatarDomain ) {
+		if ( ! domain || domain.type !== domainTypes.REGISTERED || domain.isGravatarRestrictedDomain ) {
 			return null;
 		}
 
@@ -439,6 +439,8 @@ const Settings = ( {
 			return null;
 		}
 
+		const showDnsRecordsSummary = areAllWpcomNameServers();
+
 		const selectedDomain = domains.find( ( domain ) => selectedDomainName === domain.name );
 		if ( ! selectedDomain ) {
 			return null;
@@ -460,6 +462,7 @@ const Settings = ( {
 								selectedDomainName={ selectedDomainName }
 								selectedSite={ selectedSite }
 								currentRoute={ currentRoute }
+								showDetails={ showDnsRecordsSummary }
 							/>
 						</>
 					) : (
@@ -772,9 +775,7 @@ const Settings = ( {
 		}
 		return (
 			<>
-				{ ! domain.isGravatarDomain && (
-					<DomainEmailInfoCard selectedSite={ selectedSite } domain={ domain } />
-				) }
+				<DomainEmailInfoCard selectedSite={ selectedSite } domain={ domain } />
 				{ ! domain.isHundredYearDomain && (
 					<DomainTransferInfoCard selectedSite={ selectedSite } domain={ domain } />
 				) }

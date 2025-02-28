@@ -75,7 +75,7 @@ const getGlobalStylesInfoForSite = (
 	}
 
 	if ( siteId === null ) {
-		return loadExperimentAssignment( 'calypso_plans_global_styles_personal_20240127' ).then(
+		return loadExperimentAssignment( 'calypso_plans_global_styles_personal_v2_20240225' ).then(
 			( experimentAssignment ) =>
 				Promise.resolve( {
 					shouldLimitGlobalStyles: true,

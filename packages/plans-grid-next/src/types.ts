@@ -57,7 +57,6 @@ export type PlansIntent =
 	| 'plans-affiliate'
 	| 'plans-blog-onboarding'
 	| 'plans-newsletter'
-	| 'plans-link-in-bio'
 	| 'plans-new-hosted-site'
 	| 'plans-new-hosted-site-business-only'
 	| 'plans-plugins'
@@ -105,7 +104,6 @@ export interface CommonGridProps {
 	siteId?: number | null;
 	isInSignup: boolean;
 	isInAdmin: boolean;
-	isReskinned?: boolean;
 	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	currentSitePlanSlug?: string | null;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206

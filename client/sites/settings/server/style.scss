@@ -1,0 +1,40 @@
+@import 'node_modules/@wordpress/base-styles/breakpoints';
+@import 'node_modules/@wordpress/base-styles/mixins';
+
+.settings-server {
+	select {
+		width: unset;
+		max-width: 250px;
+
+		@include break-small {
+			max-width: unset;
+		}
+	}
+
+	.defensive-mode__heading {
+		font-size: 1rem;
+		font-weight: 500;
+		line-height: 24px;
+		margin-bottom: 10px;
+	}
+
+	.defensive-mode__description {
+		font-size: rem(14px);
+		font-weight: 400;
+		line-height: 20px;
+	}
+
+	> .defensive-mode__description {
+		margin-bottom: 16px;
+	}
+
+	// Downtime monitoring indent child toggles
+	.jetpack-monitor-settings__child-settings {
+		margin: 16px 48px 0;
+	}
+
+	// Downtime monitoring duplicates style from site-settings/style.scss
+	.support-info + .jetpack-module-toggle {
+		display: flex;
+	}
+}

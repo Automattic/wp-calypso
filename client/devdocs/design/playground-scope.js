@@ -18,6 +18,7 @@ export {
 	FormLabel,
 	Tooltip,
 	SelectDropdown,
+	TimeSince,
 } from '@automattic/components';
 
 /**
@@ -104,7 +105,6 @@ export { default as TextareaAutosize } from 'calypso/components/textarea-autosiz
 export { default as TextDiff } from 'calypso/components/text-diff';
 export { default as TileGrid } from 'calypso/components/tile-grid';
 export { default as Timeline } from 'calypso/components/timeline';
-export { default as TimeSince } from 'calypso/components/time-since';
 export { default as Timezone } from 'calypso/components/timezone';
 export { default as TokenFields } from 'calypso/components/token-field';
 export { default as VerticalMenu } from 'calypso/components/vertical-menu';

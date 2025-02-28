@@ -26,12 +26,12 @@ const TRANSFER_COMPLETED = ( siteId: number ) => ( {
 	status: 'completed',
 } );
 
+jest.mock( 'calypso/lib/analytics/tracks' );
+jest.mock( 'calypso/lib/logstash' );
+
 const errorCaptureMigrationKey = replyWithError( {
 	error: 'anyError',
 } );
-
-jest.mock( 'calypso/lib/analytics/tracks' );
-jest.mock( 'calypso/lib/logstash' );
 
 describe( 'usePrepareSiteForMigrationWithMigrateGuru', () => {
 	beforeAll( () => nock.disableNetConnect() );
@@ -89,29 +89,6 @@ describe( 'usePrepareSiteForMigrationWithMigrateGuru', () => {
 				siteTransfer: 'pending',
 			},
 			migrationKey: null,
-		} );
-	} );
-
-	it( 'starts the plugin installation after the siteTransfer is completed', async () => {
-		const siteId = 123;
-		nock( 'https://public-api.wordpress.com:443' )
-			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
-			.once()
-			.reply( 200, TRANSFER_COMPLETED( siteId ) );
-
-		const { result } = render( { siteId: 123 } );
-
-		await waitFor( () => {
-			expect( result.current ).toEqual( {
-				completed: false,
-				error: null,
-				detailedStatus: {
-					migrationKey: 'idle',
-					pluginInstallation: 'pending',
-					siteTransfer: 'success',
-				},
-				migrationKey: null,
-			} );
 		} );
 	} );
 
@@ -182,5 +159,28 @@ describe( 'usePrepareSiteForMigrationWithMigrateGuru', () => {
 			},
 			{ timeout: 3000 }
 		);
+	} );
+
+	it( 'starts the plugin installation after the siteTransfer is completed', async () => {
+		const siteId = 123;
+		nock( 'https://public-api.wordpress.com:443' )
+			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
+			.once()
+			.reply( 200, TRANSFER_COMPLETED( siteId ) );
+
+		const { result } = render( { siteId: 123 } );
+
+		await waitFor( () => {
+			expect( result.current ).toEqual( {
+				completed: false,
+				error: null,
+				detailedStatus: {
+					migrationKey: 'idle',
+					pluginInstallation: 'pending',
+					siteTransfer: 'success',
+				},
+				migrationKey: null,
+			} );
+		} );
 	} );
 } );

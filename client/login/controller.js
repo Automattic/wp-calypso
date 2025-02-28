@@ -2,13 +2,14 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { isGravPoweredOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { DesktopLoginStart, DesktopLoginFinalize } from 'calypso/login/desktop-login';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
-import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
+import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 import HandleEmailedLinkFormJetpackConnect from './magic-login/handle-emailed-link-form-jetpack-connect';
@@ -132,6 +133,19 @@ export async function login( context, next ) {
 
 	enhanceContextWithLogin( context );
 
+	next();
+}
+
+export function desktopLogin( context, next ) {
+	context.primary = <DesktopLoginStart />;
+	next();
+}
+
+export function desktopLoginFinalize( context, next ) {
+	const { hash } = context;
+	context.primary = (
+		<DesktopLoginFinalize error={ hash?.error } accessToken={ hash?.access_token } />
+	);
 	next();
 }
 
@@ -322,9 +336,7 @@ export function redirectLostPassword( context, next ) {
 	const oauth2Client = getCurrentOAuth2Client( state );
 
 	const shouldRedirectToLostPassword = () =>
-		! getIsBlazePro( state ) &&
-		! isWooOAuth2Client( oauth2Client ) &&
-		! isWooPasswordlessJPCFlow( state );
+		! getIsBlazePro( state ) && ! isWooOAuth2Client( oauth2Client ) && ! isWooJPCFlow( state );
 
 	if ( shouldRedirectToLostPassword() ) {
 		return context.redirect( 301, '/wp-login.php?action=lostpassword' );

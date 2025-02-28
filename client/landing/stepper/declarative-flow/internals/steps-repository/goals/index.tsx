@@ -5,11 +5,13 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import { useGoalsFirstCumulativeExperience } from 'calypso/data/experiment/use-goals-first-cumulative-experience';
 import { useGoalsFirstExperiment } from 'calypso/landing/stepper/declarative-flow/helpers/use-goals-first-experiment';
 import { isGoalsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getQueryArgs } from 'calypso/lib/query-args';
+import { useCreateCourseGoalFeature } from '../../hooks/use-create-course-goal-feature';
 import DashboardIcon from './dashboard-icon';
 import { GoalsCaptureContainer } from './goals-capture-container';
 import SelectGoals from './select-goals';
@@ -59,6 +61,8 @@ const GoalsStep: Step = ( { navigation, flow } ) => {
 	const refParameter = getQueryArgs()?.ref as string;
 
 	const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
+	const [ , isIntentNewsletterGoalEnabled ] = useGoalsFirstCumulativeExperience();
+	const isIntentCreateCourseGoalEnabled = useCreateCourseGoalFeature();
 
 	useEffect( () => {
 		resetIntent();
@@ -111,7 +115,10 @@ const GoalsStep: Step = ( { navigation, flow } ) => {
 	const getStepSubmissionHandler =
 		( action: string, eventProps: Record< string, unknown > = {} ) =>
 		() => {
-			const intent = goalsToIntent( goals );
+			const intent = goalsToIntent( goals, {
+				isIntentNewsletterGoalEnabled,
+				isIntentCreateCourseGoalEnabled,
+			} );
 			setIntent( intent );
 
 			recordGoalsSelectTracksEvent( goals, intent );
@@ -175,7 +182,7 @@ const GoalsStep: Step = ( { navigation, flow } ) => {
 				skipLabelText={ translate( 'Skip' ) }
 				recordTracksEvent={ recordTracksEvent }
 				stepContent={
-					<>
+					<div className="select-goals">
 						<SelectGoals selectedGoals={ goals } onChange={ setGoals } />
 						{ isMediumOrBiggerScreen && (
 							<Button
@@ -206,7 +213,7 @@ const GoalsStep: Step = ( { navigation, flow } ) => {
 								</Button>
 							) }
 						</div>
-					</>
+					</div>
 				}
 			/>
 		</>

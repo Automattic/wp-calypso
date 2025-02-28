@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { MaterialIcon, ExternalLink, ExternalLinkWithTracking } from '@automattic/components';
+import { MaterialIcon, ExternalLink } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from '@automattic/urls';
 import i18n from 'i18n-calypso';
@@ -327,6 +327,12 @@ import {
 	FEATURE_WOO_AUTOMATE,
 	FEATURE_CONNECT_ANALYTICS,
 	FEATURE_LIMITED_SITE_ACTIVITY_LOG,
+	FEATURE_BIG_SKY_WEBSITE_BUILDER,
+	FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT,
+	FEATURE_UPLOAD_VIDEO,
+	FEATURE_STATS_BASIC_20250206,
+	FEATURE_STATS_ADVANCED_20250206,
+	FEATURE_SUPPORT,
 } from './constants';
 import type { FeatureList } from './types';
 
@@ -381,17 +387,7 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () =>
 			i18n.translate( '{{a}}All free features{{/a}}', {
 				components: {
-					a: (
-						<ExternalLinkWithTracking
-							href="https://jetpack.com/features/comparison"
-							target="_blank"
-							tracksEventName="calypso_plan_link_click"
-							tracksEventProps={ {
-								link_location: 'plan_features_list_item',
-								link_slug: FEATURE_ALL_FREE_FEATURES_JETPACK,
-							} }
-						/>
-					),
+					a: <ExternalLink href="https://jetpack.com/features/comparison" target="_blank" />,
 				},
 			} ),
 		getDescription: () =>
@@ -409,17 +405,7 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () =>
 			i18n.translate( '{{a}}All Personal features{{/a}}', {
 				components: {
-					a: (
-						<ExternalLinkWithTracking
-							href="https://jetpack.com/features/comparison"
-							target="_blank"
-							tracksEventName="calypso_plan_link_click"
-							tracksEventProps={ {
-								link_location: 'plan_features_list_item',
-								link_slug: FEATURE_ALL_PERSONAL_FEATURES_JETPACK,
-							} }
-						/>
-					),
+					a: <ExternalLink href="https://jetpack.com/features/comparison" target="_blank" />,
 				},
 			} ),
 		getDescription: () =>
@@ -440,17 +426,7 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () =>
 			i18n.translate( '{{a}}All Premium features{{/a}}', {
 				components: {
-					a: (
-						<ExternalLinkWithTracking
-							href="https://jetpack.com/features/comparison"
-							target="_blank"
-							tracksEventName="calypso_plan_link_click"
-							tracksEventProps={ {
-								link_location: 'plan_features_list_item',
-								link_slug: FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
-							} }
-						/>
-					),
+					a: <ExternalLink href="https://jetpack.com/features/comparison" target="_blank" />,
 				},
 			} ),
 		getDescription: () =>
@@ -1677,16 +1653,30 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: {
 		getSlug: () => FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 		getTitle: () =>
-			i18n.translate(
-				'Commission fee for standard payment features (plus standard processing\u00A0fee)'
-			),
+			/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
+			i18n.fixMe( {
+				text: 'Transaction fee for standard payments (+\u00A0standard processing\u00A0fee)',
+				newCopy: i18n.translate(
+					'Transaction fee for standard payments (+\u00A0standard processing\u00A0fee)'
+				),
+				oldCopy: i18n.translate(
+					'Commission fee for standard payment features (plus standard processing\u00A0fee)'
+				),
+			} ),
 	},
 	[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: {
 		getSlug: () => FEATURE_COMMISSION_FEE_WOO_FEATURES,
 		getTitle: () =>
-			i18n.translate(
-				'Commission fee for standard WooCommerce payment features (plus standard processing\u00A0fee)'
-			),
+			/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
+			i18n.fixMe( {
+				text: 'Transaction fee for standard WooCommerce payments (+ standard processing\u00A0fee)',
+				newCopy: i18n.translate(
+					'Transaction fee for standard WooCommerce payments (+ standard processing\u00A0fee)'
+				),
+				oldCopy: i18n.translate(
+					'Commission fee for standard WooCommerce payment features (plus standard processing\u00A0fee)'
+				),
+			} ),
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_10 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_10,
@@ -2158,8 +2148,6 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_STATS_JP ]: {
 		getSlug: () => FEATURE_STATS_JP,
 		getTitle: () => i18n.translate( 'Visitor stats' ),
-		getDescription: () =>
-			i18n.translate( 'Basic integrated analytics to measure your site’s performance.' ),
 	},
 	[ FEATURE_SPAM_JP ]: {
 		getSlug: () => FEATURE_SPAM_JP,
@@ -2436,17 +2424,42 @@ const FEATURES_LIST: FeatureList = {
 			),
 		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
+	[ FEATURE_SUPPORT ]: {
+		getSlug: () => FEATURE_SUPPORT,
+		getTitle: () => i18n.translate( 'Support' ),
+	},
 	[ FEATURE_FAST_SUPPORT_FROM_EXPERTS ]: {
 		getSlug: () => FEATURE_FAST_SUPPORT_FROM_EXPERTS,
-		getTitle: () => i18n.translate( 'Fast support from our expert team' ),
+		getTitle: () => i18n.translate( 'Fast support from our expert\u00A0team' ),
 		getDescription: () =>
 			i18n.translate( 'Prompt support from our expert, friendly Happiness team' ),
 	},
 	[ FEATURE_PRIORITY_24_7_SUPPORT ]: {
 		getSlug: () => FEATURE_PRIORITY_24_7_SUPPORT,
-		getTitle: () => i18n.translate( 'Priority 24/7 support from our expert team' ),
+		getTitle: () => i18n.translate( 'Priority 24/7 support from our expert\u00A0team' ),
 		getDescription: () =>
 			i18n.translate( 'The fastest 24/7 support from our expert, friendly Happiness team' ),
+	},
+	[ FEATURE_UPLOAD_VIDEO ]: {
+		getSlug: () => FEATURE_UPLOAD_VIDEO,
+		getTitle: () => i18n.translate( 'Upload videos' ),
+		getDescription: () =>
+			i18n.translate(
+				'Upload video files like mp4 and display them beautifully in 4K resolution, with picture-in-picture, subtitles, and without intrusive ads.'
+			),
+	},
+	// For the copy request dated 20250207 in pcNC1U-1vN-p2
+	[ FEATURE_STATS_BASIC_20250206 ]: {
+		getSlug: () => FEATURE_STATS_BASIC_20250206,
+		getTitle: () => i18n.translate( 'Stats' ),
+		getDescription: () =>
+			i18n.translate( 'Access full traffic history, filter by date, and see peak traffic times.' ),
+	},
+	[ FEATURE_STATS_ADVANCED_20250206 ]: {
+		getSlug: () => FEATURE_STATS_ADVANCED_20250206,
+		getTitle: () => i18n.translate( 'Premium stats' ),
+		getDescription: () =>
+			i18n.translate( 'Unlock all stats, including UTM tracking and device insights.' ),
 	},
 	/* END: 2023 Pricing Grid Features */
 
@@ -2630,9 +2643,43 @@ const FEATURES_LIST: FeatureList = {
 	},
 	/* END: Sensei Features */
 
+	[ FEATURE_BIG_SKY_WEBSITE_BUILDER ]: {
+		getSlug: () => FEATURE_BIG_SKY_WEBSITE_BUILDER,
+		getTitle: () =>
+			i18n.translate( '{{strong}}Unlimited AI Website Builder edits{{/strong}}', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
+		getDescription: () =>
+			i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+			i18n.hasTranslation(
+				'Enjoy unrestricted usage of our AI tool to design your perfect website.'
+			)
+				? i18n.translate(
+						'Enjoy unrestricted usage of our AI tool to design your perfect website.'
+				  )
+				: i18n.translate( 'Build your site with our AI Website Builder.' ),
+	},
+	[ FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT ]: {
+		getSlug: () => FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT,
+		getTitle: () => i18n.translate( 'Unlimited AI Website Builder edits' ),
+		getDescription: () =>
+			i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+			i18n.hasTranslation(
+				'Enjoy unrestricted usage of our AI tool to design your perfect website.'
+			)
+				? i18n.translate(
+						'Enjoy unrestricted usage of our AI tool to design your perfect website.'
+				  )
+				: i18n.translate( 'Build your site with our AI Website Builder.' ),
+	},
+
 	[ FEATURE_UNLIMITED_ENTITIES ]: {
 		getSlug: () => FEATURE_UNLIMITED_ENTITIES,
 		getTitle: () => i18n.translate( 'Unlimited pages, posts, users, and visitors' ),
+		getDescription: () =>
+			i18n.translate( 'Grow your site without limits — unlimited content, users, and traffic.' ),
 	},
 	[ FEATURE_WOO_THEMES ]: {
 		getSlug: () => FEATURE_WOO_THEMES,
@@ -2690,7 +2737,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_CONNECT_ANALYTICS ]: {
 		getSlug: () => FEATURE_CONNECT_ANALYTICS,
-		getTitle: () => i18n.translate( 'Connect Google Analytics and Cloudflare Web Analytics' ),
+		getTitle: () => i18n.translate( 'Connect Google Analytics' ),
 		getDescription: () =>
 			i18n.translate(
 				'Link your accounts to gain more valuable insights in seconds. No coding required.'

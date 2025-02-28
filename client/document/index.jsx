@@ -16,6 +16,7 @@ import EnvironmentBadge, {
 } from 'calypso/components/environment-badge';
 import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import Loading from 'calypso/components/loading';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import WordPressLogo from 'calypso/components/wordpress-logo';
@@ -51,6 +52,7 @@ class Document extends Component {
 			initialReduxState,
 			inlineScriptNonce,
 			isSupportSession,
+			disableHelpCenterAutoOpen,
 			isWooDna,
 			lang,
 			languageRevisions,
@@ -60,7 +62,6 @@ class Document extends Component {
 			query,
 			reactQueryDevtoolsHelper,
 			renderedLayout,
-			requestFrom,
 			sectionGroup,
 			sectionName,
 			storeSandboxHelper,
@@ -79,6 +80,7 @@ class Document extends Component {
 			`var BUILD_TARGET = ${ jsonStringifyForHtml( target ) };\n` +
 			( user ? `var currentUser = ${ jsonStringifyForHtml( user ) };\n` : '' ) +
 			( isSupportSession ? 'var isSupportSession = true;\n' : '' ) +
+			( disableHelpCenterAutoOpen ? 'var disableHelpCenterAutoOpen = true;\n' : '' ) +
 			( app ? `var app = ${ jsonStringifyForHtml( app ) };\n` : '' ) +
 			( initialReduxState
 				? `var initialReduxState = ${ jsonStringifyForHtml( initialReduxState ) };\n`
@@ -95,9 +97,6 @@ class Document extends Component {
 			( params && params.hasOwnProperty( 'lang' )
 				? `var localeFromRoute = ${ jsonStringifyForHtml( params.lang ?? '' ) };\n`
 				: '' );
-
-		const isJetpackWooCommerceFlow =
-			'jetpack-connect' === sectionName && 'woocommerce-onboarding' === requestFrom;
 
 		const isJetpackWooDnaFlow = 'jetpack-connect' === sectionName && isWooDna;
 
@@ -125,6 +124,9 @@ class Document extends Component {
 				headFaviconUrl = gravatarClientData.favicon;
 			}
 		}
+
+		const shouldNotShowLoadingLogo =
+			sectionName === 'checkout' || sectionName === 'stepper' || sectionName === 'signup';
 
 		return (
 			<html
@@ -157,7 +159,6 @@ class Document extends Component {
 						[ 'theme-' + theme ]: theme,
 						[ 'is-group-' + sectionGroup ]: sectionGroup,
 						[ 'is-section-' + sectionName ]: sectionName,
-						'is-white-signup': sectionName === 'signup',
 						'is-mobile-app-view': app?.isWpMobileApp || app?.isWcMobileApp,
 					} ) }
 				>
@@ -177,12 +178,15 @@ class Document extends Component {
 								className={ clsx( 'layout', {
 									[ 'is-group-' + sectionGroup ]: sectionGroup,
 									[ 'is-section-' + sectionName ]: sectionName,
-									'is-jetpack-woocommerce-flow': isJetpackWooCommerceFlow,
 									'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
 								} ) }
 							>
 								<div className="layout__content">
-									<LoadingLogo size={ 72 } className="wpcom-site__logo" />
+									{ shouldNotShowLoadingLogo ? (
+										<Loading className="wpcom-loading__boot" />
+									) : (
+										<LoadingLogo size={ 72 } className="wpcom-site__logo" />
+									) }
 								</div>
 							</div>
 						</div>
@@ -234,6 +238,7 @@ class Document extends Component {
 							data-provider="wordpress.com"
 							data-service="calypso"
 							data-customproperties={ `{"route_name": "${ sectionName }"}` }
+							data-site-tz="Etc/UTC"
 						/>
 					) }
 
@@ -246,9 +251,6 @@ class Document extends Component {
 					{ entrypoint.js.map( ( asset ) => (
 						<script key={ asset } src={ asset } />
 					) ) }
-					<script nonce={ inlineScriptNonce } type="text/javascript">
-						window.AppBoot();
-					</script>
 					<script
 						nonce={ inlineScriptNonce }
 						dangerouslySetInnerHTML={ {

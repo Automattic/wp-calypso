@@ -4,13 +4,19 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { InView } from 'react-intersection-observer';
-import { SHOW_ALL_SLUG } from '../constants';
+import {
+	COLLAPSED_DESIGNS_VISIBLE_COUNT,
+	FREE_THEME,
+	FREE_DESIGNS_BOOSTED_COUNT,
+	SHOW_ALL_SLUG,
+} from '../constants';
 import { useDesignTiers, useDesignPickerFilters } from '../hooks/use-design-picker-filters';
 import { useFilteredDesignsByGroup } from '../hooks/use-filtered-designs';
 import {
 	isDefaultGlobalStylesVariationSlug,
 	isFeatureCategory,
 	isLockedStyleVariation,
+	shuffleDesigns,
 } from '../utils';
 import DesignPickerCategoryFilter from './design-picker-category-filter';
 import DesignPreviewImage from './design-preview-image';
@@ -211,8 +217,40 @@ const DesignCardGroup = ( {
 }: DesignCardGroup ) => {
 	const translate = useTranslate();
 	const [ isCollapsed, setIsCollapsed ] = useState( !! categoryName || false );
-	const collapsedDesignCount = 6;
-	const visibleDesigns = isCollapsed ? designs.slice( 0, collapsedDesignCount ) : designs;
+	const { selectedCategories } = useDesignPickerFilters();
+
+	const shuffleSeed = useMemo(
+		() =>
+			selectedCategories
+				.join( ',' )
+				.split( '' )
+				.reduce( ( acc, char ) => acc + char.charCodeAt( 0 ), 0 ),
+		[ selectedCategories ]
+	);
+
+	const visibleDesigns = useMemo( () => {
+		const free = designs.filter( ( design ) => design.design_tier === FREE_THEME );
+		const boosted = free.slice( 0, FREE_DESIGNS_BOOSTED_COUNT );
+		const remaining = designs.filter( ( design ) => ! boosted.includes( design ) );
+
+		// Ensure Best Matching Themes changes whenever selected categories are updated.
+		// This provides visual feedback so that users notice that the results have changed.
+		if ( category === 'best' ) {
+			return [
+				...shuffleDesigns( boosted, shuffleSeed ),
+				...shuffleDesigns( remaining, shuffleSeed * 31 ), // Prime number for better distribution.
+			];
+		}
+
+		if ( isCollapsed ) {
+			return [
+				...boosted,
+				...remaining.slice( 0, COLLAPSED_DESIGNS_VISIBLE_COUNT - boosted.length ),
+			];
+		}
+
+		return [ ...boosted, ...remaining ];
+	}, [ isCollapsed, designs, category, shuffleSeed ] );
 
 	const content = (
 		<div className="design-picker__grid">
@@ -254,7 +292,7 @@ const DesignCardGroup = ( {
 				</div>
 			) }
 			{ content }
-			{ isCollapsed && designs.length > collapsedDesignCount && (
+			{ isCollapsed && designs.length > COLLAPSED_DESIGNS_VISIBLE_COUNT && (
 				<div className="design-picker__design-card-group-footer">
 					<Button onClick={ () => setIsCollapsed( false ) }>
 						{ translate( 'Show all %s themes', {
@@ -311,11 +349,12 @@ interface DesignPickerProps {
 	showActiveThemeBadge?: boolean;
 	isMultiFilterEnabled?: boolean;
 	isBigSkyEligible?: boolean;
+	priorityThemes?: Record< string, string > | null;
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
-	onDesignWithAI,
+	//onDesignWithAI,
 	onPreview,
 	onChangeVariation,
 	designs,
@@ -325,6 +364,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	getBadge,
 	getOptionsMenu,
 	oldHighResImageLoading,
+	priorityThemes = null,
 	siteActiveTheme = null,
 	showActiveThemeBadge = false,
 	isMultiFilterEnabled = false,
@@ -347,7 +387,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 		[ categorization?.categories ]
 	);
 
-	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs );
+	const { all, best, ...designsByGroup } = useFilteredDesignsByGroup( designs, priorityThemes );
 
 	// Show no results only when no design matches the selected categories and tiers.
 	const showNoResults = Object.values( designsByGroup ).every(
@@ -398,7 +438,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						/>
 					</DesignPickerFilterGroup>
 				) }
-				{ isBigSkyEligible && (
+				{ /* isBigSkyEligible && (
 					<DesignPickerFilterGroup>
 						<Button
 							className={ clsx(
@@ -412,7 +452,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 							{ translate( 'Design with AI' ) }
 						</Button>
 					</DesignPickerFilterGroup>
-				) }
+				) */ }
 			</div>
 
 			{ isMultiFilterEnabled && selectedCategoriesWithoutDesignTier.length > 1 && (
@@ -471,6 +511,7 @@ export interface UnifiedDesignPickerProps {
 	showActiveThemeBadge?: boolean;
 	isMultiFilterEnabled?: boolean;
 	isBigSkyEligible?: boolean;
+	priorityThemes?: Record< string, string >;
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
@@ -491,6 +532,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	showActiveThemeBadge = false,
 	isMultiFilterEnabled = false,
 	isBigSkyEligible = false,
+	priorityThemes = null,
 } ) => {
 	const hasCategories = !! ( categorization?.categories || [] ).length;
 
@@ -518,6 +560,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					showActiveThemeBadge={ showActiveThemeBadge }
 					isMultiFilterEnabled={ isMultiFilterEnabled }
 					isBigSkyEligible={ isBigSkyEligible }
+					priorityThemes={ priorityThemes }
 				/>
 				<InView onChange={ ( inView ) => inView && onViewAllDesigns() } />
 			</div>

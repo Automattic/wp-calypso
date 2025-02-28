@@ -1,5 +1,5 @@
 import { getPopularPlanSpec } from '../src';
-import { GROUP_WPCOM, TYPE_BUSINESS, TYPE_PREMIUM, TYPE_PERSONAL } from '../src/constants';
+import { GROUP_WPCOM, TYPE_BUSINESS, TYPE_PREMIUM } from '../src/constants';
 
 describe( 'getPopularPlanSpec()', () => {
 	const availablePlans = [
@@ -69,27 +69,5 @@ describe( 'getPopularPlanSpec()', () => {
 				isJetpack: true,
 			} )
 		).toBe( false );
-	} );
-
-	test( 'Should return personal for link-in-bio flows', () => {
-		expect(
-			getPopularPlanSpec( {
-				availablePlans,
-				flowName: 'link-in-bio',
-			} )
-		).toEqual( {
-			type: TYPE_PERSONAL,
-			group: GROUP_WPCOM,
-		} );
-
-		expect(
-			getPopularPlanSpec( {
-				availablePlans,
-				flowName: 'link-in-bio-tld',
-			} )
-		).toEqual( {
-			type: TYPE_PERSONAL,
-			group: GROUP_WPCOM,
-		} );
 	} );
 } );

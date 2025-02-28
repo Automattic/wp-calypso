@@ -6,6 +6,7 @@ import { useSelect } from '@wordpress/data';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { ODIE_ERROR_MESSAGE, ODIE_RATE_LIMIT_MESSAGE } from '../constants';
 import { useOdieAssistantContext } from '../context';
+import { useCreateZendeskConversation } from '../hooks';
 import { generateUUID } from '../utils';
 import { useManageSupportInteraction, broadcastOdieMessage } from '.';
 import type { Chat, Message, ReturnedChat } from '../types';
@@ -31,6 +32,7 @@ export const useSendOdieMessage = () => {
 	}, [] );
 
 	const { addEventToInteraction } = useManageSupportInteraction();
+	const newConversation = useCreateZendeskConversation();
 	const internal_message_id = generateUUID();
 	const queryClient = useQueryClient();
 
@@ -42,9 +44,18 @@ export const useSendOdieMessage = () => {
 		odieBroadcastClientId,
 		setChatStatus,
 		setExperimentVariationName,
+		isUserEligibleForPaidSupport,
 	} = useOdieAssistantContext();
 
 	const addMessage = ( message: Message | Message[], props?: Partial< Chat > ) => {
+		if ( ! Array.isArray( message ) ) {
+			const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support ?? false;
+			if ( isRequestingHumanSupport && isUserEligibleForPaidSupport ) {
+				newConversation( { createdFrom: 'automatic_escalation' } );
+				return;
+			}
+		}
+
 		setChat( ( prevChat ) => ( {
 			...prevChat,
 			...props,

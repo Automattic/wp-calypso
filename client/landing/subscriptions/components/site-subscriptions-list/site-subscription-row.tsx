@@ -1,4 +1,4 @@
-import { Gridicon } from '@automattic/components';
+import { Gridicon, ExternalLink, TimeSince } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { __experimentalHStack as HStack } from '@wordpress/components';
@@ -6,9 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
-import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
-import TimeSince from 'calypso/components/time-since';
 import {
 	useRecordSiteUnsubscribed,
 	useRecordSiteResubscribed,
@@ -173,7 +171,7 @@ const SiteSubscriptionRow = ( {
 
 	const siteTitleUrl = useMemo( () => {
 		if ( isReaderPortal ) {
-			const feedUrl = `/read/feeds/${ feed_id }`;
+			const feedUrl = `/reader/feeds/${ feed_id }`;
 
 			if ( ! blog_id ) {
 				// The site subscription page does not support non-wpcom feeds yet
@@ -182,16 +180,16 @@ const SiteSubscriptionRow = ( {
 
 			if ( resubscribed ) {
 				// If the site was resubscribed, the id of the optmistic update is not the same as the id of the new subscription
-				return `/read/site/subscription/${ blog_id }`;
+				return `/reader/site/subscription/${ blog_id }`;
 			}
 
-			return `/read/subscriptions/${ subscriptionId }`;
+			return `/reader/subscriptions/${ subscriptionId }`;
 		}
 
 		if ( isSubscriptionsPortal ) {
 			if ( ! Reader.isValidId( blog_id ) ) {
 				// If it is a non-wpcom feed item, we want to open the reader's page for that feed
-				return `/read/feeds/${ feed_id }`;
+				return `/reader/feeds/${ feed_id }`;
 			}
 			return `/subscriptions/site/${ blog_id }`;
 		}
@@ -281,7 +279,6 @@ const SiteSubscriptionRow = ( {
 					<ExternalLink
 						className="title-url"
 						{ ...( url && { href: url } ) }
-						rel="noreferrer noopener"
 						target="_blank"
 						onClick={ () => {
 							recordSiteUrlClicked( { blog_id, feed_id, source: SOURCE_SUBSCRIPTIONS_SITE_LIST } );

@@ -33,11 +33,11 @@ export class ReaderPage {
 	/**
 	 * Opens the Reader page.
 	 *
-	 * Example {@link https://wordpress.com/read}
+	 * Example {@link https://wordpress.com/reader}
 	 */
 	async visit(): Promise< void > {
-		await this.page.goto( getCalypsoURL( 'read' ) );
-		await this.page.waitForURL( /read/ );
+		await this.page.goto( getCalypsoURL( 'reader' ) );
+		await this.page.waitForURL( /reader/ );
 	}
 
 	/**
@@ -70,7 +70,7 @@ export class ReaderPage {
 		}
 
 		await Promise.all( [
-			this.page.waitForURL( /read\/feeds\/[\d]+\/posts.*/ ),
+			this.page.waitForURL( /reader\/feeds\/[\d]+\/posts.*/ ),
 			this.page.click( selector ),
 		] );
 	}

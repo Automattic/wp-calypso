@@ -26,10 +26,10 @@ const SuggestedFollowItem = ( { site, followSource } ) => {
 	let streamLink = null;
 
 	if ( site && site.feed_ID ) {
-		streamLink = `/read/feeds/${ site.feed_ID }`;
+		streamLink = `/reader/feeds/${ site.feed_ID }`;
 	} else if ( site && site.blog_ID ) {
 		// If subscription is missing a feed ID, fallback to blog stream
-		streamLink = `/read/blogs/${ site.blog_ID }`;
+		streamLink = `/reader/blogs/${ site.blog_ID }`;
 	}
 
 	const urlForDisplay = site && site.URL ? formatUrlForDisplay( site.URL ) : '';

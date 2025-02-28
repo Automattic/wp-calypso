@@ -4,13 +4,13 @@ import { PLAN_PREMIUM } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Gridicon, PlanPrice } from '@automattic/components';
 import { Plans, PlanNext } from '@automattic/data-stores';
-import formatCurrency from '@automattic/format-currency';
 import { Button, Modal } from '@wordpress/components';
 import { close } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import { formatCurrency, useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
+import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import { useSelector } from 'calypso/state';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
@@ -83,7 +83,9 @@ export default function StatsUpsellModal( { siteId }: { siteId: number } ) {
 			<div className="stats-upsell-modal__content">
 				<div className="stats-upsell-modal__left">
 					<h1 className="stats-upsell-modal__title">
-						{ translate( 'Grow faster with Jetpack Stats' ) }
+						{ translate( 'Grow faster with %(product)s', {
+							args: { product: STATS_PRODUCT_NAME },
+						} ) }
 					</h1>
 					<div className="stats-upsell-modal__text">
 						{ translate( 'Finesse your scaling-up strategy with detailed insights and data.' ) }

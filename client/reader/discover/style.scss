@@ -1,0 +1,34 @@
+.is-section-reader {
+	.navigation-header.discover-stream-header {
+		&.reader-dual-column {
+			max-width: 968px; // Max width of dual column reader stream.
+		}
+	}
+}
+
+.is-discover-stream {
+	.subscriptions-add-sites__form--container {
+		display: flex;
+		align-items: flex-start;
+		gap: 8px;
+		margin-bottom: 30px;
+	}
+
+	.subscriptions-add-sites__form-field {
+		flex: 1;
+
+		.components-base-control__field {
+			margin-bottom: 0;
+		}
+	}
+
+	.components-text-control__input {
+		height: 40px;
+	}
+
+	.is-disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+		pointer-events: none;
+	}
+}

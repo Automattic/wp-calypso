@@ -1,7 +1,8 @@
-import { JetpackLogo, WooLogo } from '@automattic/components';
+import { JetpackLogo } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useEffect, useMemo, useRef } from 'react';
+import WooLogoRebrand2 from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { parseQueryStringProducts } from 'calypso/jetpack-cloud/sections/partner-portal/lib/querystring-products';
 import {
@@ -13,10 +14,9 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { ShoppingCartContext } from '../../context';
 import useProductAndPlans from '../../hooks/use-product-and-plans';
 import { SelectedFilters } from '../../lib/product-filter';
-import MultiProductCard from '../../products-overview/multi-product-card';
-import ProductCard from '../../products-overview/product-card';
-import { getSupportedBundleSizes } from '../../products-overview/product-listing/hooks/use-product-bundle-size';
-import useSubmitForm from '../../products-overview/product-listing/hooks/use-submit-form';
+import { getSupportedBundleSizes } from '../hooks/use-product-bundle-size';
+import useSubmitForm from '../hooks/use-submit-form';
+import ProductCard from '../product-card';
 import ProductListingEmpty from './empty';
 import ProductListingSection from './section';
 import type { ShoppingCartItem } from '../../types';
@@ -33,6 +33,7 @@ interface ProductListingProps {
 	isReferralMode: boolean;
 	selectedBundleSize: number;
 	selectedFilters: SelectedFilters;
+	stickyHeadingTopOffset?: number;
 }
 
 export default function ProductListing( {
@@ -42,6 +43,7 @@ export default function ProductListing( {
 	isReferralMode,
 	selectedBundleSize,
 	selectedFilters,
+	stickyHeadingTopOffset,
 }: ProductListingProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -155,13 +157,6 @@ export default function ProductListing( {
 		[ dispatch, quantity, selectedCartItems, setSelectedCartItems ]
 	);
 
-	const onSelectProduct = useCallback(
-		( product: APIProductFamilyProduct ) => {
-			handleSelectBundleLicense( product );
-		},
-		[ handleSelectBundleLicense ]
-	);
-
 	const onSelectOrReplaceProduct = useCallback(
 		( product: APIProductFamilyProduct, replace?: APIProductFamilyProduct ) => {
 			if ( replace ) {
@@ -221,44 +216,33 @@ export default function ProductListing( {
 
 	const isSingleLicenseView = quantity === 1;
 
-	const getProductCards = ( products: APIProductFamilyProduct[] ) => {
-		return products.map( ( productOption ) =>
-			Array.isArray( productOption ) ? (
-				<MultiProductCard
+	const getProductCards = (
+		products: APIProductFamilyProduct[],
+		withCustomCard: boolean = false
+	) => {
+		return products.map( ( productOption ) => {
+			const options = Array.isArray( productOption ) ? productOption : [ productOption ];
+
+			return (
+				<ProductCard
 					asReferral={ isReferralMode }
-					key={ productOption.map( ( { slug } ) => slug ).join( ',' ) }
-					products={ productOption }
+					key={ options.map( ( { slug } ) => slug ).join( ',' ) }
+					products={ options }
 					onSelectProduct={ onSelectOrReplaceProduct }
 					onVariantChange={ onClickVariantOption }
-					isSelected={ isSelected( productOption.map( ( { slug } ) => slug ) ) }
-					selectedOption={ productOption.find( ( option ) =>
-						selectedCartItems.find(
-							( item ) => item.slug === option.slug && item.quantity === quantity
-						)
-					) }
+					isSelected={ isSelected( options.map( ( { slug } ) => slug ) ) }
 					isDisabled={
 						! isReady ||
 						( isIncompatibleProduct( productOption, incompatibleProducts ) &&
-							! isSelected( productOption.map( ( { slug } ) => slug ) ) )
+							! isSelected( options.map( ( { slug } ) => slug ) ) )
 					}
 					hideDiscount={ isSingleLicenseView }
 					suggestedProduct={ suggestedProduct }
 					quantity={ quantity }
+					withCustomCard={ withCustomCard }
 				/>
-			) : (
-				<ProductCard
-					asReferral={ isReferralMode }
-					key={ productOption.slug }
-					product={ productOption }
-					onSelectProduct={ onSelectProduct }
-					isSelected={ isSelected( productOption.slug ) }
-					isDisabled={ ! isReady || isIncompatibleProduct( productOption, incompatibleProducts ) }
-					hideDiscount={ isSingleLicenseView }
-					suggestedProduct={ suggestedProduct }
-					quantity={ quantity }
-				/>
-			)
-		);
+			);
+		} );
 	};
 
 	if ( isLoadingProducts ) {
@@ -276,18 +260,22 @@ export default function ProductListing( {
 			{ isEmptyList && <ProductListingEmpty /> }
 
 			{ featuredProducts.length > 0 && (
-				<ProductListingSection title={ translate( 'Featured products' ) }>
-					{ getProductCards( featuredProducts ) }
+				<ProductListingSection
+					title={ translate( 'Featured products' ) }
+					stickyHeadingTopOffset={ stickyHeadingTopOffset }
+				>
+					{ getProductCards( featuredProducts, true ) }
 				</ProductListingSection>
 			) }
 
 			{ wooExtensions.length > 0 && (
 				<ProductListingSection
-					icon={ <WooLogo width={ 45 } height={ 28 } /> }
+					icon={ <img width={ 45 } src={ WooLogoRebrand2 } alt="WooCommerce" /> }
 					title={ translate( 'WooCommerce Extensions' ) }
 					description={ translate(
 						"Explore the tools and integrations you need to grow your client's Woo store."
 					) }
+					stickyHeadingTopOffset={ stickyHeadingTopOffset }
 				>
 					{ getProductCards( wooExtensions ) }
 				</ProductListingSection>
@@ -300,6 +288,7 @@ export default function ProductListing( {
 					description={ translate(
 						'Save big with comprehensive bundles of Jetpack security, performance, and growth tools.'
 					) } // FIXME: Add proper description for A4A
+					stickyHeadingTopOffset={ stickyHeadingTopOffset }
 				>
 					{ getProductCards( jetpackPlans ) }
 				</ProductListingSection>
@@ -312,6 +301,7 @@ export default function ProductListing( {
 					description={ translate(
 						'Mix and match powerful security, performance, and growth tools for your sites.'
 					) }
+					stickyHeadingTopOffset={ stickyHeadingTopOffset }
 				>
 					{ getProductCards( jetpackProducts ) }
 				</ProductListingSection>
@@ -324,6 +314,7 @@ export default function ProductListing( {
 					description={ translate(
 						'Add additional storage to your current VaultPress Backup plans.'
 					) }
+					stickyHeadingTopOffset={ stickyHeadingTopOffset }
 				>
 					{ getProductCards( jetpackBackupAddons ) }
 				</ProductListingSection>

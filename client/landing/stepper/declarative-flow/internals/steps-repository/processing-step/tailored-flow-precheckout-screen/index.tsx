@@ -1,14 +1,9 @@
-import {
-	NEWSLETTER_FLOW,
-	LINK_IN_BIO_TLD_FLOW,
-	isNewsletterOrLinkInBioFlow,
-} from '@automattic/onboarding';
+import { NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
 import { useRef, useState, useEffect } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import { LoadingBar } from 'calypso/components/loading-bar';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import Loading from 'calypso/components/loading';
 import { useInterval } from 'calypso/lib/interval/use-interval';
 import './style.scss';
 
@@ -20,13 +15,6 @@ const useSteps = ( flowName: string ) => {
 	let steps = [];
 
 	switch ( flowName ) {
-		case LINK_IN_BIO_TLD_FLOW:
-			steps = [
-				{ title: __( 'Great choices. Nearly there!' ) },
-				{ title: __( 'Shining and polishing your Bio' ) },
-				{ title: __( 'Mounting it on a marble pedestal' ) },
-			];
-			break;
 		case NEWSLETTER_FLOW:
 			steps = [
 				{ title: __( 'Excellent choices. Nearly there!' ) },
@@ -62,11 +50,12 @@ export default function TailoredFlowPreCheckoutScreen( { flowName }: { flowName:
 	const defaultDuration = DURATION_IN_MS / totalSteps;
 	const duration = steps.current[ currentStep ]?.duration || defaultDuration;
 
-	/**
-	 * Completion progress: 0 <= progress <= 1
-	 */
-	const progress = ( currentStep + 1 ) / totalSteps;
-	const isComplete = progress >= 1;
+	// Force animated progress bar to start at 0
+	const [ hasStarted, setHasStarted ] = useState( false );
+	useEffect( () => {
+		const id = setTimeout( () => setHasStarted( true ), 750 );
+		return () => clearTimeout( id );
+	}, [] );
 
 	// Temporarily override document styles to prevent scrollbars from showing
 	useEffect( () => {
@@ -75,6 +64,13 @@ export default function TailoredFlowPreCheckoutScreen( { flowName }: { flowName:
 			document.documentElement.classList.remove( 'no-scroll' );
 		};
 	}, [] );
+	/**
+	 * Completion progress: 0 <= progress <= 100
+	 */
+	const progress = ! hasStarted
+		? /* initial 10% progress */ 10
+		: ( ( currentStep + 1 ) * 100 ) / totalSteps;
+	const isComplete = progress >= 100;
 
 	useInterval(
 		() => setCurrentStep( ( s ) => s + 1 ),
@@ -82,33 +78,15 @@ export default function TailoredFlowPreCheckoutScreen( { flowName }: { flowName:
 		isComplete ? null : duration
 	);
 
-	// Force animated progress bar to start at 0
-	const [ hasStarted, setHasStarted ] = useState( false );
-	useEffect( () => {
-		const id = setTimeout( () => setHasStarted( true ), 750 );
-		return () => clearTimeout( id );
-	}, [] );
-
 	return (
-		<div className="processing-step__container">
-			<div className="processing-step">
-				<h1 className="processing-step__progress-step">{ steps.current[ currentStep ]?.title }</h1>
-				{ isNewsletterOrLinkInBioFlow( flowName ) ? (
-					<LoadingBar
-						className="processing-step__progress-bar"
-						progress={ ! hasStarted ? /* initial 10% progress */ 0.1 : progress }
-					/>
-				) : (
-					<LoadingEllipsis />
-				) }
-			</div>
-
+		<>
+			<Loading title={ steps.current[ currentStep ]?.title } progress={ progress } />
 			{ flowName === NEWSLETTER_FLOW && (
 				<div className="processing-step__jetpack-powered">
 					<JetpackLogo monochrome size={ 18 } /> <span>Jetpack powered</span>
 				</div>
 			) }
-		</div>
+		</>
 	);
 }
 

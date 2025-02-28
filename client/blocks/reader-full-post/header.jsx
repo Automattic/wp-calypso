@@ -1,13 +1,10 @@
-import { Gridicon } from '@automattic/components';
-import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
+import { Gridicon, ExternalLink, TimeSince } from '@automattic/components';
 import clsx from 'clsx';
-import { translate, getLocaleSlug } from 'i18n-calypso';
+import { translate, numberFormatCompact } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import TagsList from 'calypso/blocks/reader-post-card/tags-list';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import AutoDirection from 'calypso/components/auto-direction';
-import ExternalLink from 'calypso/components/external-link';
-import TimeSince from 'calypso/components/time-since';
 import { recordPermalinkClick } from 'calypso/reader/stats';
 import ReaderFullPostHeaderPlaceholder from './placeholders/header';
 
@@ -68,7 +65,6 @@ const ReaderFullPostHeader = ( { post, authorProfile, layout = 'default' } ) => 
 							className="reader-full-post__header-title-link"
 							href={ post.URL }
 							target="_blank"
-							icon={ false }
 							onClick={ handlePermalinkClick }
 						>
 							{ post.title }
@@ -97,7 +93,7 @@ const ReaderFullPostHeader = ( { post, authorProfile, layout = 'default' } ) => 
 								{ translate( '%(followCount)s subscriber', '%(followCount)s subscribers', {
 									count: followCount,
 									args: {
-										followCount: formatNumber( followCount, getLocaleSlug() ),
+										followCount: numberFormatCompact( followCount ),
 									},
 								} ) }
 							</span>

@@ -7,6 +7,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/account-settings/',
 		post_id: 80368,
 	},
+	'action-bar': {
+		link: 'https://wordpress.com/support/action-bar/',
+		post_id: 319993,
+	},
 	'admin-interface-style': {
 		link: 'https://wordpress.com/support/set-your-admin-interface-style/',
 		post_id: 386651,
@@ -179,6 +183,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/user-roles/#adding-users-to-your-site',
 		post_id: 1221,
 	},
+	'invite-people': {
+		link: 'https://wordpress.com/support/invite-people/',
+		post_id: 1221,
+	},
 	'manage-profile': {
 		link: 'https://wordpress.com/support/manage-my-profile/',
 		post_id: 19775,
@@ -279,6 +287,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/manage-purchases/',
 		post_id: 111349,
 	},
+	'restore-site': {
+		link: 'https://wordpress.com/support/delete-site/#restore-a-deleted-site',
+		post_id: 14411,
+	},
 	'reusable-blocks': {
 		link: 'https://wordpress.com/support/wordpress-editor/blocks/reusable-block/',
 		post_id: 157539,
@@ -311,6 +323,10 @@ const contextLinks = {
 	stats: {
 		link: 'https://wordpress.com/support/stats/',
 		post_id: 4454,
+	},
+	'subscribe-block': {
+		link: 'https://wordpress.com/support/wordpress-editor/blocks/subscribe-block/',
+		post_id: 170164,
 	},
 	tags: {
 		link: 'https://wordpress.com/support/posts/tags/',

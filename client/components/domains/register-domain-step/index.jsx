@@ -126,7 +126,10 @@ class RegisterDomainStep extends Component {
 		deemphasiseTlds: PropTypes.array,
 		recordFiltersSubmit: PropTypes.func.isRequired,
 		recordFiltersReset: PropTypes.func.isRequired,
-		isReskinned: PropTypes.bool,
+		/**
+		 * A flag signalling if the step is being used in the onboarding flow
+		 */
+		isOnboarding: PropTypes.bool,
 		showSkipButton: PropTypes.bool,
 		onSkip: PropTypes.func,
 		promoTlds: PropTypes.array,
@@ -537,7 +540,7 @@ class RegisterDomainStep extends Component {
 			! Array.isArray( this.state.searchResults ) &&
 			! this.state.loadingResults &&
 			! this.props.showExampleSuggestions;
-		const showFilters = ! isRenderingInitialSuggestions || this.props.isReskinned;
+		const showFilters = ! isRenderingInitialSuggestions || this.props.isOnboarding;
 
 		const showTldFilter =
 			( Array.isArray( this.state.availableTlds ) && this.state.availableTlds.length > 0 ) ||
@@ -622,7 +625,7 @@ class RegisterDomainStep extends Component {
 			onSearch: this.onSearch,
 			onSearchChange: this.onSearchChange,
 			ref: this.bindSearchCardReference,
-			isReskinned: this.props.isReskinned,
+			isOnboarding: this.props.isOnboarding,
 			childrenBeforeCloseButton:
 				this.props.isDomainAndPlanPackageFlow && this.renderSearchFilters(),
 		};
@@ -778,13 +781,22 @@ class RegisterDomainStep extends Component {
 
 	removeUnavailablePremiumDomain = ( domainName ) => {
 		this.setState( ( state ) => {
-			const newPremiumDomains = { ...state.premiumDomains };
-			delete newPremiumDomains[ domainName ];
-			return {
-				premiumDomains: newPremiumDomains,
-				searchResults: state.searchResults.filter(
+			const premiumDomains = Object.fromEntries(
+				Object.entries( state.premiumDomains ).filter( ( [ key ] ) => key !== domainName )
+			);
+			const { searchResults } = state;
+			if ( Array.isArray( searchResults ) ) {
+				const newSearchResults = searchResults.filter(
 					( suggestion ) => suggestion.domain_name !== domainName
-				),
+				);
+				return {
+					premiumDomains,
+					searchResults: newSearchResults,
+				};
+			}
+			return {
+				premiumDomains,
+				searchResults,
 			};
 		} );
 	};
@@ -1449,6 +1461,15 @@ class RegisterDomainStep extends Component {
 				lastQuery: domain,
 				lastFilters: this.state.filters,
 				hideInitialQuery: false,
+				showAvailabilityNotice: false,
+				showSuggestionNotice: false,
+				availabilityError: null,
+				availabilityErrorData: null,
+				availabilityErrorDomain: null,
+				suggestionError: null,
+				suggestionErrorData: null,
+				suggestionErrorDomain: null,
+				lastDomainStatus: null,
 			},
 			this.save
 		);
@@ -1524,10 +1545,9 @@ class RegisterDomainStep extends Component {
 	}
 
 	renderExampleSuggestions() {
-		const { isReskinned, domainsWithPlansOnly, offerUnavailableOption, products, path } =
-			this.props;
+		const { isOnboarding, domainsWithPlansOnly, offerUnavailableOption, products } = this.props;
 
-		if ( isReskinned ) {
+		if ( isOnboarding ) {
 			return this.renderBestNamesPrompt();
 		}
 
@@ -1536,7 +1556,6 @@ class RegisterDomainStep extends Component {
 				domainsWithPlansOnly={ domainsWithPlansOnly }
 				offerUnavailableOption={ offerUnavailableOption }
 				onClickExampleSuggestion={ this.handleClickExampleSuggestion }
-				path={ path }
 				products={ products }
 				url={ this.getUseYourDomainUrl() }
 			/>
@@ -1671,7 +1690,6 @@ class RegisterDomainStep extends Component {
 				onClickResult={ this.onAddDomain }
 				onClickMapping={ this.goToMapDomainStep }
 				onAddTransfer={ this.props.onAddTransfer }
-				onClickTransfer={ this.goToTransferDomainStep }
 				onClickUseYourDomain={ this.props.handleClickUseYourDomain ?? this.useYourDomainFunction() }
 				tracksButtonClickSource="exact-match-top"
 				suggestions={ suggestions }
@@ -1694,7 +1712,8 @@ class RegisterDomainStep extends Component {
 				unavailableDomains={ this.state.unavailableDomains }
 				onSkip={ this.props.onSkip }
 				showSkipButton={ this.props.showSkipButton }
-				isReskinned={ this.props.isReskinned }
+				hideMatchReasons={ this.props.isOnboarding }
+				showDomainTransferSuggestion={ this.props.isOnboarding }
 				domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 				useProvidedProductsList={ this.props.useProvidedProductsList }
 				isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
@@ -1702,7 +1721,7 @@ class RegisterDomainStep extends Component {
 				temporaryCart={ this.props.temporaryCart }
 				domainRemovalQueue={ this.props.domainRemovalQueue }
 			>
-				{ ! this.props.isReskinned &&
+				{ ! this.props.isOnboarding &&
 					hasResults &&
 					isFreeDomainExplainerVisible &&
 					this.renderFreeDomainExplainer() }
@@ -1711,7 +1730,7 @@ class RegisterDomainStep extends Component {
 	}
 
 	renderSideContent() {
-		return this.props.isReskinned && ! this.state.loadingResults && this.props.reskinSideContent;
+		return this.props.isOnboarding && ! this.state.loadingResults && this.props.sideContent;
 	}
 
 	getFetchAlgo() {
@@ -1742,22 +1761,6 @@ class RegisterDomainStep extends Component {
 		return mapDomainUrl;
 	}
 
-	getTransferDomainUrl() {
-		let transferDomainUrl;
-
-		if ( this.props.transferDomainUrl ) {
-			transferDomainUrl = this.props.transferDomainUrl;
-		} else {
-			const query = stringify( { initialQuery: this.state.lastQuery.trim() } );
-			transferDomainUrl = `${ this.props.basePath }/transfer`;
-			if ( this.props.selectedSite ) {
-				transferDomainUrl += `/${ this.props.selectedSite.slug }?${ query }`;
-			}
-		}
-
-		return transferDomainUrl;
-	}
-
 	getUseYourDomainUrl() {
 		let useYourDomainUrl;
 
@@ -1781,20 +1784,6 @@ class RegisterDomainStep extends Component {
 		this.props.recordMapDomainButtonClick( this.props.analyticsSection, this.props.flowName );
 
 		page( this.getMapDomainUrl() );
-	};
-
-	goToTransferDomainStep = ( event ) => {
-		event.preventDefault();
-
-		const source = event.currentTarget.dataset.tracksButtonClickSource;
-
-		this.props.recordTransferDomainButtonClick(
-			this.props.analyticsSection,
-			source,
-			this.props.flowName
-		);
-
-		page( this.getTransferDomainUrl() );
 	};
 
 	goToUseYourDomainStep = ( event ) => {

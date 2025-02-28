@@ -1,3 +1,4 @@
+import { createSelector } from '@automattic/state-utils';
 import { translate } from 'i18n-calypso';
 import {
 	STATS_FEATURE_INTERVAL_DROPDOWN_DAY,
@@ -43,8 +44,8 @@ const intervals = {
 	},
 };
 
-function useIntervals( siteId: number | null ): IntervalsType {
-	const gatedIntervals = useSelector( ( state ) => {
+const getGatedIntervals = createSelector(
+	( state, siteId ) => {
 		return Object.keys( intervals ).reduce( ( acc, key ) => {
 			const interval = intervals[ key ];
 
@@ -56,9 +57,16 @@ function useIntervals( siteId: number | null ): IntervalsType {
 				},
 			};
 		}, {} );
-	} );
+	},
+	Object.values( intervals ).map(
+		( { statType } ) =>
+			( state: object, siteId ) =>
+				shouldGateStats( state, siteId, statType )
+	)
+);
 
-	return gatedIntervals;
+function useIntervals( siteId: number | null ): IntervalsType {
+	return useSelector( ( state ) => getGatedIntervals( state, siteId ) );
 }
 
 export default useIntervals;

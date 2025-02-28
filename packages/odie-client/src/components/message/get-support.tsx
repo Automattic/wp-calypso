@@ -102,7 +102,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 					waitTimeText: __( 'Average wait time < 5 minutes', __i18n_text_domain__ ),
 					action: async () => {
 						onClickAdditionalEvent?.( 'chat' );
-						await newConversation();
+						await newConversation( { createdFrom: 'chat_support_button' } );
 					},
 				},
 				{
@@ -110,7 +110,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 					waitTimeText: __( 'Average wait time < 8 hours', __i18n_text_domain__ ),
 					action: async () => {
 						onClickAdditionalEvent?.( 'email' );
-						await newConversation();
+						await newConversation( { createdFrom: 'email_support_button' } );
 					},
 				},
 			];

@@ -1,13 +1,15 @@
 import config from '@automattic/calypso-config';
-import UplotChart from '@automattic/components/src/chart-uplot';
 import { UseQueryResult } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
+import AsyncLoad from 'calypso/components/async-load';
+import UplotChart from 'calypso/components/chart-uplot';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
 import { useSelector } from 'calypso/state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsPeriodHeader from '../stats-period-header';
+import { parseLocalDate } from '../utils';
 import { hideFractionNumber } from './chart-utils';
 import SubscribersNavigationArrows from './subscribers-navigation-arrows';
 import type uPlot from 'uplot';
@@ -37,7 +39,7 @@ interface QuantityDefaultType {
 export type PeriodType = 'day' | 'week' | 'month' | 'year';
 
 // New Subscriber Stats
-function transformData(
+function transformUplotData(
 	data: SubscribersData[],
 	hasAddedPaidSubscriptionProduct: boolean
 ): uPlot.AlignedData {
@@ -65,6 +67,38 @@ function transformData(
 	return [ x, y1 ];
 }
 
+type ChartDataPoint = {
+	date: Date;
+	value: number;
+};
+
+const transformLineChartData = (
+	data: SubscribersData[],
+	hasAddedPaidSubscriptionProduct: boolean
+): ChartDataPoint[][] => {
+	const subscribersData: ChartDataPoint[] = [];
+	const paidSubscribersData: ChartDataPoint[] = [];
+	data?.map( ( point ) => {
+		const dateObj = parseLocalDate( point.period );
+		if ( isNaN( dateObj.getTime() ) ) {
+			return null;
+		}
+
+		subscribersData.push( {
+			date: dateObj,
+			value: point.subscribers ?? 0,
+		} );
+
+		if ( hasAddedPaidSubscriptionProduct ) {
+			paidSubscribersData.push( {
+				date: dateObj,
+				value: point.subscribers_paid ?? 0,
+			} );
+		}
+	} );
+	return [ subscribersData, paidSubscribersData ];
+};
+
 export default function SubscribersChartSection( {
 	siteId,
 	slug,
@@ -75,6 +109,7 @@ export default function SubscribersChartSection( {
 	period?: PeriodType;
 } ) {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const isChartLibraryEnabled = config.isEnabled( 'stats/chart-library' );
 	const quantityDefault: QuantityDefaultType = {
 		day: 30,
 		week: 12,
@@ -86,6 +121,33 @@ export default function SubscribersChartSection( {
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const legendRef = useRef< HTMLDivElement >( null );
 	const translate = useTranslate();
+
+	const formatTimeTick = useCallback(
+		( timestamp: number ) => {
+			const date = new Date( timestamp );
+			switch ( period ) {
+				case 'week':
+				case 'day':
+					return new Date( timestamp ).toLocaleDateString( undefined, {
+						month: 'short',
+						day: 'numeric',
+					} );
+				case 'month':
+					return date.toLocaleDateString( undefined, {
+						month: 'short',
+						year: 'numeric',
+					} );
+				case 'year':
+					return date.getFullYear().toString();
+				default:
+					return date.toLocaleDateString( undefined, {
+						month: 'short',
+						day: 'numeric',
+					} );
+			}
+		},
+		[ period ]
+	);
 
 	const {
 		isLoading,
@@ -123,7 +185,33 @@ export default function SubscribersChartSection( {
 	const isChartLoading = isLoading || isPaidSubscriptionProductsLoading;
 
 	const hasAddedPaidSubscriptionProduct = products && products.length > 0;
-	const chartData = transformData( data?.data || [], hasAddedPaidSubscriptionProduct );
+
+	// Prepare data for both chart libraries
+	const uplotData = useMemo(
+		() => transformUplotData( data?.data || [], hasAddedPaidSubscriptionProduct ),
+		[ data?.data, hasAddedPaidSubscriptionProduct ]
+	);
+	const [ subscribersData, paidSubscribersData ] = useMemo(
+		() => transformLineChartData( data?.data || [], hasAddedPaidSubscriptionProduct ),
+		[ data?.data, hasAddedPaidSubscriptionProduct ]
+	);
+
+	const lineChartData = [
+		{
+			label: translate( 'Subscribers' ),
+			options: {
+				stroke: '#069e08',
+			},
+			data: subscribersData,
+		},
+		{
+			label: translate( 'Paid Subscribers' ),
+			options: {
+				stroke: 'rgb(230, 139, 40)',
+			},
+			data: paidSubscribersData,
+		},
+	].filter( ( series ) => series.data.length > 0 );
 
 	const subscribers = {
 		label: 'Subscribers',
@@ -164,25 +252,35 @@ export default function SubscribersChartSection( {
 				</div>
 			</div>
 			{ isChartLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
-			{ ! isChartLoading && chartData.length === 0 && (
+			{ ! isChartLoading && uplotData.length === 0 && (
 				<p className="subscribers-section__no-data">
 					{ translate( 'No data available for the specified period.' ) }
 				</p>
 			) }
 			{ errorMessage && <div>Error: { errorMessage }</div> }
-			{ ! isChartLoading && chartData.length !== 0 && (
+			{ ! isChartLoading && uplotData.length !== 0 && (
 				<>
 					<div className="subscribers-section-legend" ref={ legendRef }></div>
-					<UplotChart
-						data={ chartData }
-						legendContainer={ legendRef }
-						period={ period }
-						// Use variable --studio-jetpack-green for chart colors on Odyssey Stats.
-						mainColor={ isOdysseyStats ? '#069e08' : undefined }
-						fillColorFrom={ isOdysseyStats ? 'rgba(6, 158, 8, 0.4)' : undefined }
-						fillColorTo={ isOdysseyStats ? 'rgba(6, 158, 8, 0)' : undefined }
-						yAxisFilter={ hideFractionNumber }
-					/>
+					{ isChartLibraryEnabled ? (
+						<AsyncLoad
+							require="calypso/my-sites/stats/components/line-chart"
+							chartData={ lineChartData }
+							height={ 300 }
+							EmptyState={ () => null }
+							zeroBaseline={ lineChartData.length > 1 }
+							formatTimeTick={ formatTimeTick }
+						/>
+					) : (
+						<UplotChart
+							data={ uplotData }
+							legendContainer={ legendRef }
+							period={ period }
+							mainColor={ isOdysseyStats ? '#069e08' : undefined }
+							fillColorFrom={ isOdysseyStats ? 'rgba(6, 158, 8, 0.4)' : undefined }
+							fillColorTo={ isOdysseyStats ? 'rgba(6, 158, 8, 0)' : undefined }
+							yAxisFilter={ hideFractionNumber }
+						/>
+					) }
 				</>
 			) }
 		</div>

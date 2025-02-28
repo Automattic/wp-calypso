@@ -1,7 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/onboarding/styles/mixins";
 
-.import-hosted-site,
 .site-migration :not(.site-migration-instructions--launchpad, .is-wide-layout),
 .migrate-message {
 	.step-container__header {

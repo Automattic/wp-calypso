@@ -1,8 +1,10 @@
 import { StepContainer } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
+import { useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { useSiteDomains } from '../../../../hooks/use-site-domains';
 import { useSiteSetupError } from '../../../../hooks/use-site-setup-error';
 import SupportCard from '../store-address/support-card';
@@ -13,11 +15,11 @@ const WarningsOrHoldsSection = styled.div`
 	margin-top: 40px;
 `;
 
-const ErrorStep: Step = function ErrorStep( { navigation } ) {
+const ErrorStep: Step = function ErrorStep( { navigation, flow, variantSlug } ) {
 	const { goBack, goNext } = navigation;
 	const { __ } = useI18n();
 	const siteDomains = useSiteDomains();
-	const siteSetupError = useSiteSetupError();
+	const { error, message } = useSiteSetupError();
 
 	let domain = '';
 
@@ -25,20 +27,32 @@ const ErrorStep: Step = function ErrorStep( { navigation } ) {
 		domain = siteDomains[ 0 ].domain;
 	}
 
-	const messageCopy = () => {
-		return __(
-			'It looks like something went wrong while setting up your site. Please contact support so that we can help you out.'
-		);
-	};
+	useEffect( () => {
+		if ( ! error || ! message ) {
+			return;
+		}
 
-	const headerText = siteSetupError?.error || __( "We've hit a snag" );
-	const bodyText = siteSetupError?.message || messageCopy();
+		logToLogstash( {
+			feature: 'calypso_client',
+			message: 'Error in Stepper flow',
+			extra: {
+				error,
+				message,
+				flow,
+				variant: variantSlug,
+			},
+		} );
+	}, [ error, flow, message, variantSlug ] );
 
 	const getContent = () => {
+		const errorMessage = [ error, message ].filter( Boolean ).join( ': ' );
 		return (
-			<WarningsOrHoldsSection>
-				<SupportCard domain={ domain } />
-			</WarningsOrHoldsSection>
+			<>
+				{ !! errorMessage && <p className="error-step__message">{ errorMessage }</p> }
+				<WarningsOrHoldsSection>
+					<SupportCard domain={ domain } />
+				</WarningsOrHoldsSection>
+			</>
 		);
 	};
 
@@ -50,8 +64,16 @@ const ErrorStep: Step = function ErrorStep( { navigation } ) {
 			isHorizontalLayout={ false }
 			formattedHeader={
 				<>
-					<FormattedHeader id="step-error-header" headerText={ headerText } align="left" />
-					<p>{ bodyText }</p>
+					<FormattedHeader
+						id="step-error-header"
+						headerText={ __( "We've hit a snag" ) }
+						align="left"
+					/>
+					<p>
+						{ __(
+							'It looks like something went wrong while setting up your site. Please contact support so that we can help you out.'
+						) }
+					</p>
 				</>
 			}
 			stepContent={ getContent() }

@@ -1,6 +1,6 @@
 import { isFreePlan } from '@automattic/calypso-products';
 import { FREE_THEME } from '@automattic/design-picker';
-import { ONBOARDING_GUIDED_FLOW, ONBOARDING_FLOW } from '@automattic/onboarding';
+import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useCallback } from '@wordpress/element';
 import {
 	FREE_PLAN_FREE_DOMAIN_DIALOG,
@@ -16,6 +16,7 @@ type Props = {
 	paidDomainName?: string | null;
 	intent?: string | null;
 	selectedThemeType?: string;
+	createWithBigSky?: boolean;
 };
 
 /**
@@ -27,6 +28,7 @@ export function useModalResolutionCallback( {
 	paidDomainName,
 	intent,
 	selectedThemeType,
+	createWithBigSky,
 }: Props ) {
 	return useCallback(
 		( currentSelectedPlan?: string | null ): ModalType | null => {
@@ -45,10 +47,14 @@ export function useModalResolutionCallback( {
 				return FREE_PLAN_FREE_DOMAIN_DIALOG;
 			}
 
+			if ( createWithBigSky && ONBOARDING_FLOW === flowName ) {
+				return PAID_PLAN_IS_REQUIRED_DIALOG;
+			}
+
 			// TODO: look into decoupling the flowName from here as well.
 			if (
 				paidDomainName &&
-				( ( flowName && [ ONBOARDING_GUIDED_FLOW, ONBOARDING_FLOW ].includes( flowName ) ) ||
+				( ( flowName && ONBOARDING_FLOW === flowName ) ||
 					[ 'plans-jetpack-app-site-creation', 'plans-site-selected-legacy' ].includes(
 						intent || ''
 					) )
@@ -58,6 +64,13 @@ export function useModalResolutionCallback( {
 
 			return null;
 		},
-		[ isCustomDomainAllowedOnFreePlan, flowName, paidDomainName, intent, selectedThemeType ]
+		[
+			isCustomDomainAllowedOnFreePlan,
+			flowName,
+			paidDomainName,
+			intent,
+			selectedThemeType,
+			createWithBigSky,
+		]
 	);
 }

@@ -5,8 +5,8 @@ import { translate } from 'i18n-calypso';
 import useFetchAgencyFromBlog from 'calypso/a8c-for-agencies/data/agencies/use-fetch-agency-from-blog';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { isHostingMenuUntangled } from '../utils';
 import type { SiteDetails } from '@automattic/data-stores';
 
 type Props = {
@@ -28,6 +28,8 @@ export function A4AFullyManagedSiteForm( {
 }: Props ) {
 	const isDevSite = site.is_a4a_dev_site;
 	const isAtomicSite = site.is_wpcom_atomic;
+
+	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 
 	const { data: agencySite } = useFetchAgencyFromBlog( site?.ID, { enabled: !! site?.ID } );
 
@@ -101,7 +103,7 @@ export function A4AFullyManagedSiteForm( {
 		);
 	};
 
-	if ( ! isHostingMenuUntangled() ) {
+	if ( ! isUntangled ) {
 		return (
 			<div className="site-settings__a4a-fully-managed-container">
 				<SettingsSectionHeader

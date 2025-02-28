@@ -23,7 +23,7 @@
 		}
 
 		&--selected {
-			font-weight: 700;
+			color: var( --color-sidebar-submenu-selected-text );
 		}
 
 		&--without-icon {

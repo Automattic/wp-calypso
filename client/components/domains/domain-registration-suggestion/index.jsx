@@ -1,10 +1,9 @@
 import { Badge, Gridicon } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { HUNDRED_YEAR_DOMAIN_FLOW } from '@automattic/onboarding';
 import { HTTPS_SSL } from '@automattic/urls';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
+import { localize, formatCurrency } from 'i18n-calypso';
 import { get, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -68,7 +67,7 @@ class DomainRegistrationSuggestion extends Component {
 		productCost: PropTypes.string,
 		renewCost: PropTypes.string,
 		productSaleCost: PropTypes.string,
-		isReskinned: PropTypes.bool,
+		hideMatchReasons: PropTypes.bool,
 		domainAndPlanUpsellFlow: PropTypes.bool,
 		products: PropTypes.object,
 	};
@@ -393,17 +392,12 @@ class DomainRegistrationSuggestion extends Component {
 	}
 
 	renderMatchReason() {
-		if ( this.props.isReskinned ) {
-			return null;
-		}
-
 		const {
 			suggestion: { domain_name: domain },
-			isFeatured,
 		} = this.props;
 
-		if ( ! isFeatured || ! Array.isArray( this.props.suggestion.match_reasons ) ) {
-			return null;
+		if ( ! Array.isArray( this.props.suggestion.match_reasons ) ) {
+			return <div className="domain-registration-suggestion__match-reasons"></div>;
 		}
 
 		const matchReasons = parseMatchReasons( domain, this.props.suggestion.match_reasons );
@@ -430,7 +424,7 @@ class DomainRegistrationSuggestion extends Component {
 			productSaleCost,
 			premiumDomain,
 			showStrikedOutPrice,
-			isReskinned,
+			hideMatchReasons,
 		} = this.props;
 
 		const isUnavailableDomain = this.isUnavailableDomain( domain );
@@ -454,11 +448,11 @@ class DomainRegistrationSuggestion extends Component {
 				{ ...this.getButtonProps() }
 				isFeatured={ isFeatured }
 				showStrikedOutPrice={ showStrikedOutPrice }
-				isReskinned={ isReskinned }
+				hideMatchReasons={ hideMatchReasons }
 			>
 				{ this.renderBadges() }
 				{ this.renderDomain() }
-				{ this.renderMatchReason() }
+				{ ! hideMatchReasons && isFeatured && this.renderMatchReason() }
 			</DomainSuggestion>
 		);
 	}

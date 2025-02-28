@@ -243,6 +243,12 @@ function getEditorPath( currentRoute ) {
 	return '/post';
 }
 
+/**
+ * Builds the deep link fragment for the iOS app.
+ * @param {string} currentRoute The current route.
+ * @param {string} currentSection The current section.
+ * @returns {string} The deep link fragment.
+ */
 export function buildDeepLinkFragment( currentRoute, currentSection ) {
 	const hasRoute = currentRoute !== null && currentRoute !== '/';
 
@@ -256,7 +262,12 @@ export function buildDeepLinkFragment( currentRoute, currentSection ) {
 				// The Reader is generally accessed at the root of WordPress.com ('/').
 				// In this case, we need to manually add the section name to the
 				// URL so that the iOS app knows which section to open.
-				return hasRoute ? currentRoute : '/read';
+				if ( ! hasRoute ) {
+					return '/read';
+				}
+
+				// Replacing '/reader' with '/read' to ensure backwards compatibility i.e. updating the URL on web app should not break the deep link.
+				return currentRoute.replace( /^\/reader/, '/read' );
 			case STATS:
 				return hasRoute ? currentRoute : '/stats';
 			default:

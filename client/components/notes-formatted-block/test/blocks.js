@@ -149,7 +149,7 @@ describe( 'Post block', () => {
 
 		expect( link ).toHaveAttribute(
 			'href',
-			`/read/blogs/${ content.siteId }/posts/${ content.postId }`
+			`/reader/blogs/${ content.siteId }/posts/${ content.postId }`
 		);
 		expect( link ).toHaveTextContent( text );
 	} );
@@ -194,7 +194,7 @@ describe( 'Comment block', () => {
 
 		expect( link ).toHaveAttribute(
 			'href',
-			`/read/blogs/${ content.siteId }/posts/${ content.postId }#comment-${ content.commentId }`
+			`/reader/blogs/${ content.siteId }/posts/${ content.postId }#comment-${ content.commentId }`
 		);
 		expect( link ).toHaveTextContent( text );
 	} );

@@ -28,6 +28,7 @@ const newsletter: Flow = {
 	get title() {
 		return translate( 'Newsletter Example Flow' );
 	},
+	__experimentalUseSessions: true,
 	isSignupFlow: true,
 	initialize() {
 		const query = getQuery();
@@ -100,9 +101,9 @@ const newsletter: Flow = {
 					return navigate( 'plans' );
 
 				case 'plans':
-					return navigate( 'createSite' );
+					return navigate( 'create-site' );
 
-				case 'createSite':
+				case 'create-site':
 					return navigate( 'processing' );
 
 				case 'processing':

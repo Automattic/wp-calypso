@@ -20,10 +20,6 @@
 	}
 }
 
-.products-overview-v2.main.hosting-dashboard-layout.is-compact .product-action-panel.hosting-dashboard-layout__body {
-	box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .10);
-}
-
 .product-action-panel__filter {
 	display: flex;
 	flex-direction: row;
@@ -31,39 +27,5 @@
 
 	.components-search-control {
 		flex-grow: 1;
-	}
-}
-
-.bundle-price-selector {
-	display: flex;
-	flex-direction: row;
-	gap: 8px;
-	align-items: center;
-}
-
-.bundle-price-selector__label {
-	@include a4a-font-heading-sm;
-	text-transform: uppercase;
-	display: none;
-
-	@include break-medium {
-		display: block;
-	}
-}
-
-.bundle-price-selector__menu-button {
-	flex-grow: 1;
-}
-
-.bundle-price-selector__popover {
-	margin-inline-start: -135px;
-
-	.popover__menu .popover__menu-item {
-		display: block;
-
-		&.is-selected {
-			background: var( --color-neutral-5 );
-			color: var( --color-text );
-		}
 	}
 }

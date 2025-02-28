@@ -29,13 +29,23 @@ export const STEPS = {
 	},
 
 	DESIGN_SETUP: {
-		slug: 'designSetup',
+		slug: 'design-setup',
 		asyncComponent: () => import( './steps-repository/design-setup' ),
 	},
 
 	DIFM_STARTING_POINT: {
 		slug: 'difmStartingPoint',
 		asyncComponent: () => import( './steps-repository/difm-starting-point' ),
+	},
+
+	DOMAIN_TRANSFER_INTRO: {
+		slug: 'intro',
+		asyncComponent: () => import( './steps-repository/domain-transfer-intro' ),
+	},
+
+	DOMAIN_TRANSFER_DOMAINS: {
+		slug: 'domains',
+		asyncComponent: () => import( './steps-repository/domain-transfer-domains' ),
 	},
 
 	DOMAINS: {
@@ -227,11 +237,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/wait-for-plugin-install' ),
 	},
 
-	ASSIGN_TRIAL_PLAN: {
-		slug: 'assignTrialPlan',
-		asyncComponent: () => import( './steps-repository/assign-trial-plan' ),
-	},
-
 	SITE_MIGRATION_ASSIGN_TRIAL_PLAN: {
 		slug: 'site-migration-assign-trial-plan',
 		asyncComponent: () => import( './steps-repository/site-migration-assign-trial-plan' ),
@@ -318,6 +323,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-picker' ),
 	},
 
+	POST_CHECKOUT_ONBOARDING: {
+		slug: 'post-checkout-onboarding',
+		asyncComponent: () => import( './steps-repository/post-checkout/post-checkout-onboarding' ),
+	},
+
 	SEGMENTATION_SURVEY: {
 		slug: 'segmentation-survey',
 		asyncComponent: () => import( './steps-repository/segmentation-survey' ),
@@ -325,6 +335,33 @@ export const STEPS = {
 	PLATFORM_IDENTIFICATION: {
 		slug: 'platform-identification',
 		asyncComponent: () => import( './steps-repository/platform-identification' ),
+	},
+	UNIFIED_DOMAINS: {
+		slug: 'domains',
+		asyncComponent: () =>
+			import(
+				/* webpackChunkName: 'async-step-unified-domains' */ './steps-repository/unified-domains'
+			),
+	},
+	UNIFIED_PLANS: {
+		slug: 'plans',
+		asyncComponent: () =>
+			import(
+				/* webpackChunkName: 'async-step-unified-plans' */ './steps-repository/unified-plans'
+			),
+	},
+
+	USE_MY_DOMAIN: {
+		slug: 'use-my-domain',
+		asyncComponent: () =>
+			import(
+				/* webpackChunkName: 'async-step-use-my-domain' */ './steps-repository/use-my-domain'
+			),
+	},
+
+	SETUP_BLOG: {
+		slug: 'setup-blog',
+		asyncComponent: () => import( './steps-repository/setup-blog' ),
 	},
 } satisfies Record< string, StepperStep >;
 

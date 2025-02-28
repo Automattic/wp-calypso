@@ -17,11 +17,13 @@ export type PartialDomainData = Pick<
 	| 'google_apps_subscription'
 	| 'has_registration'
 	| 'is_wpcom_staging_domain'
+	| 'is_hundred_year_domain'
 	| 'registration_date'
 	| 'titan_mail_subscription'
 	| 'tld_maintenance_end_time'
 	| 'type'
 	| 'wpcom_domain'
+	| 'domain_status'
 >;
 
 export interface AllDomainsQueryFnData {
@@ -30,6 +32,7 @@ export interface AllDomainsQueryFnData {
 
 export interface AllDomainsQueryArgs {
 	no_wpcom?: boolean;
+	resolve_status?: boolean;
 }
 
 export const getAllDomainsQueryKey = ( queryArgs: AllDomainsQueryArgs = {} ) => [

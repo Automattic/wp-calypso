@@ -21,11 +21,11 @@ function getFormAction( redirectTo ) {
 }
 
 export default function WpcomLoginForm( {
-	extraFields = {},
 	redirectTo,
 	authorization,
 	pwd = '',
 	log,
+	rememberMe = false,
 } ) {
 	const form = useRef();
 
@@ -39,11 +39,7 @@ export default function WpcomLoginForm( {
 			<input type="hidden" name="pwd" value={ pwd } />
 			<input type="hidden" name="authorization" value={ authorization } />
 			<input type="hidden" name="redirect_to" value={ redirectTo } />
-			{ extraFields
-				? Object.entries( extraFields ).map( ( [ field, value ] ) => (
-						<input key={ field } type="hidden" name={ field } value={ value } />
-				  ) )
-				: null }
+			{ rememberMe ? <input type="hidden" name="rememberme" value="forever" /> : undefined }
 		</form>
 	);
 }

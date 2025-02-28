@@ -8,8 +8,8 @@ import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import AsyncLoad from 'calypso/components/async-load';
-import EmptyContent from 'calypso/components/empty-content';
 import NavigationHeader from 'calypso/components/navigation-header';
+import FollowingEmptyContent from 'calypso/reader/stream/empty';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { requestPaginatedStream } from 'calypso/state/reader/streams/actions';
 import { viewStream } from 'calypso/state/reader-ui/actions';
@@ -54,10 +54,9 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 		fields: [],
 		perPage: 10,
 		page: 1,
-		layout: {
-			primaryField: 'post',
-			mediaField: 'icon',
-		},
+		titleField: 'post',
+		mediaField: 'icon',
+		showMedia: true,
 	} );
 
 	const selectedRecentSidebarFeedId = useSelector< AppState, number | null >(
@@ -217,7 +216,6 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 		},
 		[ shownData ]
 	);
-
 	return (
 		/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */
 		<div className="recent-feed" onKeyDown={ handleKeyDown }>
@@ -235,12 +233,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 						data={ shownData }
 						onChangeView={ ( newView ) =>
 							setView( {
-								type: newView.type,
-								fields: [],
-								layout: view.layout,
-								perPage: newView.perPage,
-								page: newView.page,
-								search: newView.search,
+								...newView,
 							} )
 						}
 						paginationInfo={ view.search === '' ? defaultPaginationInfo : paginationInfo }
@@ -269,13 +262,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				{ ! ( selectedItem && getPostFromItem( selectedItem ) ) && isLoading && (
 					<RecentPostSkeleton />
 				) }
-				{ ! isLoading && data?.items.length === 0 && (
-					<EmptyContent
-						title={ translate( 'Nothing Posted Yet' ) }
-						line={ translate( 'This feed is currently empty.' ) }
-						illustration=""
-					/>
-				) }
+				{ ! isLoading && data?.items.length === 0 && <FollowingEmptyContent /> }
 				{ data?.items.length > 0 && selectedItem && getPostFromItem( selectedItem ) && (
 					<>
 						<AsyncLoad
@@ -291,6 +278,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 									focusItem?.focus();
 								} );
 							} }
+							setSelectedItem={ setSelectedItem }
 							layout="recent"
 						/>
 						<EngagementBar feedId={ selectedItem?.feedId } postId={ selectedItem?.postId } />

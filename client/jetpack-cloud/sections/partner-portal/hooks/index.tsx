@@ -422,6 +422,29 @@ export function useProductDescription( productSlug: string ): {
 					'This is a tool to create ajax product filters that make the process of finding products in your store simple and fast.'
 				);
 				break;
+			case 'woocommerce-constellation':
+				description = translate(
+					'A flexible, WooCommerce memberships platform to support publishers, purchasing clubs, online learning, associations, and more.'
+				);
+				break;
+			case 'woocommerce-rental-products':
+				description = translate(
+					'Sell rental products in your store, manage rental orders and more.'
+				);
+				break;
+			case 'woocommerce-smart-coupons':
+				description = translate(
+					'Boost sales and customer loyalty. Create advanced discounts, sell gift cards, set BOGO deals, give store credits, and all types of rule based dynamic discounts with this all-in-one Smart Coupons plugin for WooCommerce.'
+				);
+				break;
+			case 'woocommerce-dynamic-pricing':
+				description = translate( 'Bulk discounts, role-based pricing and much more.' );
+				break;
+			case 'woocommerce-variation-swatches-and-photos':
+				description = translate(
+					'Show color and image swatches instead of dropdowns for variable products.'
+				);
+				break;
 			case 'jetpack-stats':
 				description = translate( 'Powerful analytics to help you understand your audience.' );
 				break;

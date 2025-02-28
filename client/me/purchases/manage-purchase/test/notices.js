@@ -14,6 +14,47 @@ describe( 'PurchaseNotice', () => {
 	const pastYearDate = new Date();
 	pastYearDate.setFullYear( pastYearDate.getFullYear() - 10 );
 
+	it( 'renders pending payment text and no buttons if purchase has a payment pending', () => {
+		const purchase = {
+			product_slug: 'value_bundle',
+			productName: 'Premium',
+			isRechargeable: true,
+			expiryStatus: 'manualRenew',
+			asyncPendingPaymentBlockIsSet: true,
+			canDisableAutoRenew: false,
+			canReenableAutoRenewal: false,
+			canExplicitRenew: false,
+			isCancelable: false,
+			isLocked: true,
+			isRefundable: false,
+			isRenewable: false,
+
+			payment: {
+				type: 'credit_card',
+				creditCard: {
+					expiryDate: '01/' + futureYearDate.getYear(),
+					type: 'visa',
+					number: 1111,
+				},
+			},
+		};
+		render(
+			<ReduxProvider store={ store }>
+				<PurchaseNotice
+					purchase={ purchase }
+					isProductOwner
+					selectedSite={ { slug: 'testingsite' } }
+					renewableSitePurchases={ [] }
+				/>
+			</ReduxProvider>
+		);
+		expect(
+			screen.getByText( /There is currently a payment processing for this subscription/ )
+		).toBeInTheDocument();
+		expect( screen.queryByText( 'Add Payment Method' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Renew Now' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'renders nothing when data is still loading', () => {
 		render(
 			<ReduxProvider store={ store }>

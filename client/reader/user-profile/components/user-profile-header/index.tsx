@@ -1,5 +1,7 @@
 import page from '@automattic/calypso-router';
+import { external, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import React, { useEffect, useRef, useState } from 'react';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
@@ -16,17 +18,20 @@ interface UserProfileHeaderProps {
 const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
 	const translate = useTranslate();
 	const currentPath = page.current;
-	const userProfileUrl = getUserProfileUrl( user.user_login ?? '' );
+	const userProfileUrlWithUsername = getUserProfileUrl( user.user_login ?? '' );
+	const userProfileUrlWithId = getUserProfileUrl( user.ID.toString() );
 	const navigationItems = [
 		{
 			label: translate( 'Posts' ),
-			path: userProfileUrl,
-			selected: currentPath === userProfileUrl,
+			path: userProfileUrlWithUsername,
+			selected: currentPath === userProfileUrlWithUsername || currentPath === userProfileUrlWithId,
 		},
 		{
 			label: translate( 'Lists' ),
-			path: `${ userProfileUrl }/lists`,
-			selected: currentPath === `${ userProfileUrl }/lists`,
+			path: `${ userProfileUrlWithUsername }/lists`,
+			selected:
+				currentPath === `${ userProfileUrlWithUsername }/lists` ||
+				currentPath === `${ userProfileUrlWithId }/lists`,
 		},
 	];
 
@@ -35,6 +40,26 @@ const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
 	const avatarElement = (
 		<ReaderAvatar author={ { ...user, has_avatar: !! user.avatar_URL } } iconSize={ 116 } />
 	);
+
+	const bioRef = useRef< HTMLSpanElement >( null );
+	const [ isClamped, setIsClamped ] = useState( false );
+
+	useEffect( () => {
+		if ( bioRef.current ) {
+			const element = bioRef.current;
+			const originalHeight = element.offsetHeight;
+
+			// Temporarily remove the clamp
+			element.style.webkitLineClamp = 'unset';
+			const fullHeight = element.scrollHeight;
+
+			// Restore the clamp
+			element.style.webkitLineClamp = '3';
+
+			// Determine if the text is clamped
+			setIsClamped( fullHeight > originalHeight );
+		}
+	}, [ user.bio ] );
 
 	return (
 		<div className="user-profile-header">
@@ -51,7 +76,20 @@ const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
 					</div>
 					{ user.bio && (
 						<div className="user-profile-header__bio">
-							<p className="user-profile-header__bio-desc">{ user.bio }</p>
+							<p className="user-profile-header__bio-desc">
+								<span ref={ bioRef } className="user-profile-header__bio-desc-text">
+									{ user.bio }
+								</span>
+								{ isClamped && user.profile_URL && (
+									<>
+										<div className="user-profile-header__bio-desc-fader"></div>
+										<a className="user-profile-header__bio-desc-link" href={ user.profile_URL }>
+											{ translate( 'Read More' ) }{ ' ' }
+											<Icon width={ 18 } height={ 18 } icon={ external } />
+										</a>
+									</>
+								) }
+							</p>
 						</div>
 					) }
 				</div>

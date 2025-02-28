@@ -8,8 +8,6 @@ import {
 import { Gridicon, MaterialIcon } from '@automattic/components';
 import {
 	Button,
-	useTransactionStatus,
-	TransactionStatus,
 	CheckoutStep,
 	CheckoutStepGroup,
 	CheckoutStepBody,
@@ -21,8 +19,9 @@ import {
 	PaymentMethodStep,
 	FormStatus,
 	usePaymentMethod,
+	useTransactionStatus,
+	TransactionStatus,
 } from '@automattic/composite-checkout';
-import { formatCurrency } from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	styled,
@@ -33,8 +32,9 @@ import {
 import { keyframes } from '@emotion/react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
-import { useTranslate } from 'i18n-calypso';
+import { formatCurrency, useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
+import Loading from 'calypso/components/loading';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import {
 	hasGoogleApps,
@@ -78,7 +78,6 @@ import badge14Src from './assets/icons/badge-14.svg';
 import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
 import badgeSecurity from './assets/icons/security.svg';
-import { CheckoutCompleteRedirecting } from './checkout-complete-redirecting';
 import CheckoutNextSteps from './checkout-next-steps';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
@@ -88,7 +87,10 @@ import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-
 import BeforeSubmitCheckoutHeader from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import WPCheckoutOrderReview, { CouponFieldArea } from './wp-checkout-order-review';
-import { WPCheckoutOrderSummary } from './wp-checkout-order-summary';
+import {
+	LoadingCheckoutSummaryFeaturesList,
+	WPCheckoutOrderSummary,
+} from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -115,38 +117,42 @@ const LoadingSidebar = styled.div`
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		display: block;
-		padding: 24px;
 		box-sizing: border-box;
-		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-		max-width: 328px;
-		background: ${ ( props ) => props.theme.colors.surface };
+		max-width: 288px;
 		margin-top: 46px;
 	}
 `;
 
 const pulse = keyframes`
-	0% {
-		opacity: 1;
-	}
+	0% { opacity: 1; }
 
-	70% {
-		opacity: 0.5;
-	}
+	70% { opacity: 0.25; }
 
-	100% {
-		opacity: 1;
-	}
+	100% { opacity: 1; }
 `;
 
-const SideBarLoadingCopy = styled.p`
+const LoadingFooter = styled.div`
+	margin-top: 20px;
+	padding-top: 20px;
+	display: flex;
+	justify-content: space-between;
+	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+`;
+
+interface LoadingContainerProps {
+	width?: string;
+	height?: string;
+}
+
+const SideBarLoadingCopy = styled.div< LoadingContainerProps >`
 	font-size: 14px;
-	height: 16px;
 	content: '';
 	background: ${ ( props ) => props.theme.colors.borderColorLight };
 	color: ${ ( props ) => props.theme.colors.borderColorLight };
-	margin: 8px 0 0 0;
 	padding: 0;
-	animation: ${ pulse } 2s ease-in-out infinite;
+	animation: ${ pulse } 1.5s ease-in-out infinite;
+	width: ${ ( props ) => props.width ?? 'inherit' };
+	height: ${ ( props ) => props.height ?? '16px' };
 `;
 
 const ContactDetailsFormDescription = styled.p`
@@ -174,8 +180,15 @@ function LoadingSidebarContent() {
 	return (
 		<LoadingSidebar>
 			<SideBarLoadingCopy />
-			<SideBarLoadingCopy />
-			<SideBarLoadingCopy />
+			<LoadingCheckoutSummaryFeaturesList />
+			<LoadingFooter>
+				<SideBarLoadingCopy width="50px" />
+				<SideBarLoadingCopy width="75px" />
+			</LoadingFooter>
+			<LoadingFooter>
+				<SideBarLoadingCopy height="30px" width="75px" />
+				<SideBarLoadingCopy height="30px" width="125px" />
+			</LoadingFooter>
 		</LoadingSidebar>
 	);
 }
@@ -488,23 +501,16 @@ export default function CheckoutMainContent( {
 	} = checkoutActions;
 
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
-		debug( 'rendering post-checkout redirecting page' );
 		return (
-			<WPCheckoutWrapper>
-				<WPCheckoutSidebarContent></WPCheckoutSidebarContent>
-				<WPCheckoutMainContent>
+			<WPCheckoutCompletedWrapper>
+				<WPCheckoutCompletedMainContent>
 					<PerformanceTrackerStop />
-					<WPCheckoutTitle>{ translate( 'Checkout' ) }</WPCheckoutTitle>
-					<CheckoutCompleteRedirecting />
-					<CheckoutFormSubmit
-						submitButton={
-							<Button buttonType="primary" fullWidth isBusy disabled>
-								{ translate( 'Please wait…' ) }
-							</Button>
-						}
+					<Loading
+						className="checkout__pending-content"
+						title={ translate( "Almost there – we're currently finalizing your order." ) }
 					/>
-				</WPCheckoutMainContent>
-			</WPCheckoutWrapper>
+				</WPCheckoutCompletedMainContent>
+			</WPCheckoutCompletedWrapper>
 		);
 	}
 
@@ -1179,6 +1185,26 @@ const WPCheckoutWrapper = styled.div`
 	}
 `;
 
+const WPCheckoutCompletedWrapper = styled.div`
+	display: flex;
+	justify-content: center;
+	justify-items: center;
+	min-height: 100vh;
+
+	& > * {
+		box-sizing: border-box;
+		width: 100%;
+
+		@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+			min-height: 100vh;
+		}
+	}
+
+	& *:focus {
+		outline: ${ ( props ) => props.theme.colors.outline } solid 2px;
+	}
+`;
+
 const WPCheckoutMainContent = styled.div`
 	grid-area: main-content;
 	margin-top: 50px;
@@ -1201,6 +1227,16 @@ const WPCheckoutMainContent = styled.div`
 
 	.editor-checkout-modal & {
 		margin-top: 20px;
+	}
+`;
+
+const WPCheckoutCompletedMainContent = styled.div`
+	margin-top: 60px;
+	min-height: 100vh;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		padding: 0 24px;
+		max-width: 648px;
 	}
 `;
 

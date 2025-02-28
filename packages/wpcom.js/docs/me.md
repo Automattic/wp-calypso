@@ -38,23 +38,3 @@ me.sites( function ( err, list ) {
 	// posts list object
 } );
 ```
-
-### Me#likes([query, ]fn)
-
-Get a list the currently authorized user's likes
-
-```js
-me.likes( function ( err, data ) {
-	// likes data object
-} );
-```
-
-### Me#groups([query, ]fn)
-
-Get a list of the current user's group
-
-```js
-me.groups( function ( err, list ) {
-	// groups list object
-} );
-```

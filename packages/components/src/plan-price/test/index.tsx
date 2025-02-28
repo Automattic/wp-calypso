@@ -1,8 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { geolocateCurrencySymbol, setDefaultLocale } from '@automattic/format-currency';
 import { render, screen } from '@testing-library/react';
+import i18n, { geolocateCurrencySymbol } from 'i18n-calypso';
 import React from 'react';
 import PlanPrice from '../index';
 
@@ -10,7 +10,11 @@ describe( 'PlanPrice', () => {
 	const originalFetch = globalThis.fetch;
 
 	beforeEach( () => {
-		setDefaultLocale( 'en-US' );
+		i18n.setLocale( {
+			'': {
+				localeSlug: 'en-US',
+			},
+		} );
 		globalThis.fetch = originalFetch;
 	} );
 
@@ -67,7 +71,7 @@ describe( 'PlanPrice', () => {
 		render(
 			<PlanPrice
 				rawPrice={ 10 }
-				productDisplayPrice={ '<abbr title="United States Dollars">$</abbr>96.00' }
+				productDisplayPrice='<abbr title="United States Dollars">$</abbr>96.00'
 			/>
 		);
 		expect( document.body ).toHaveTextContent( '$96.00' );
@@ -81,7 +85,7 @@ describe( 'PlanPrice', () => {
 		render(
 			<PlanPrice
 				rawPrice={ [ 10 ] }
-				productDisplayPrice={ '<abbr title="United States Dollars">$</abbr>96.00' }
+				productDisplayPrice='<abbr title="United States Dollars">$</abbr>96.00'
 			/>
 		);
 		expect( document.body ).toHaveTextContent( '$96.00' );
@@ -95,7 +99,7 @@ describe( 'PlanPrice', () => {
 		render(
 			<PlanPrice
 				rawPrice={ [ 5, 10 ] }
-				productDisplayPrice={ '<abbr title="United States Dollars">$</abbr>96.00' }
+				productDisplayPrice='<abbr title="United States Dollars">$</abbr>96.00'
 			/>
 		);
 		expect( document.body ).toHaveTextContent( '$5-10' );
@@ -108,7 +112,7 @@ describe( 'PlanPrice', () => {
 	it( 'ignores currencyCode when productDisplayPrice is set', () => {
 		render(
 			<PlanPrice
-				productDisplayPrice={ '<abbr title="United States Dollars">$</abbr>96.00' }
+				productDisplayPrice='<abbr title="United States Dollars">$</abbr>96.00'
 				currencyCode="IDR"
 			/>
 		);
@@ -174,10 +178,7 @@ describe( 'PlanPrice', () => {
 
 	it( 'renders a price without sale text when productDisplayPrice is set', () => {
 		render(
-			<PlanPrice
-				productDisplayPrice={ '<abbr title="United States Dollars">$</abbr>96.00' }
-				isOnSale
-			/>
+			<PlanPrice productDisplayPrice='<abbr title="United States Dollars">$</abbr>96.00' isOnSale />
 		);
 		expect( document.body ).toHaveTextContent( '$96.00' );
 		expect( screen.queryByText( 'Sale' ) ).not.toBeInTheDocument();
@@ -368,13 +369,23 @@ describe( 'PlanPrice', () => {
 	} );
 
 	it( 'renders the symbol to the left of the integer when symbolPosition is "before"', () => {
-		setDefaultLocale( 'en-US' );
+		i18n.setLocale( {
+			'': {
+				localeSlug: 'en',
+				localeVariant: 'en-US',
+			},
+		} );
 		render( <PlanPrice rawPrice={ 48 } currencyCode="CAD" /> );
 		expect( document.body ).toHaveTextContent( 'C$48' );
 	} );
 
 	it( 'renders the symbol to the right of the integer when symbolPosition is "after"', () => {
-		setDefaultLocale( 'fr-CA' );
+		i18n.setLocale( {
+			'': {
+				localeVariant: 'fr-CA',
+				localeSlug: 'fr',
+			},
+		} );
 		render( <PlanPrice rawPrice={ 48 } currencyCode="CAD" /> );
 		expect( document.body ).toHaveTextContent( '48C$' );
 	} );

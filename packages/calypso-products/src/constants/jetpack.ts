@@ -180,6 +180,12 @@ export const PRODUCT_WOOCOMMERCE_ACCOMMODATIONS_BOOKINGS =
 export const PRODUCT_WOOCOMMERCE_TAX = 'woocommerce_tax_yearly';
 export const PRODUCT_WOOCOMMERCE_WOOPAYMENTS = 'woocommerce_woopayments_yearly';
 export const PRODUCT_WOOCOMMERCE_PRODUCT_FILTERS = 'woocommerce_product_filters_yearly';
+export const PRODUCT_WOOCOMMERCE_CONSTELLATION = 'woocommerce_constellation_yearly';
+export const PRODUCT_WOOCOMMERCE_RENTAL_PRODUCTS = 'woocommerce_rental_products_yearly';
+export const PRODUCT_WOOCOMMERCE_SMART_COUPONS = 'woocommerce_smart_coupons_yearly';
+export const PRODUCT_WOOCOMMERCE_DYNAMIC_PRICING = 'woocommerce_dynamic_pricing_yearly';
+export const PRODUCT_WOOCOMMERCE_VARIATION_SWATCHES_AND_PHOTOS =
+	'woocommerce_variation_swatches_and_photos_yearly';
 
 // Backup
 export const JETPACK_BACKUP_PRODUCTS_YEARLY = < const >[
@@ -418,6 +424,11 @@ export const WOOCOMMERCE_PRODUCTS = < const >[
 	PRODUCT_WOOCOMMERCE_TAX,
 	PRODUCT_WOOCOMMERCE_WOOPAYMENTS,
 	PRODUCT_WOOCOMMERCE_PRODUCT_FILTERS,
+	PRODUCT_WOOCOMMERCE_CONSTELLATION,
+	PRODUCT_WOOCOMMERCE_RENTAL_PRODUCTS,
+	PRODUCT_WOOCOMMERCE_SMART_COUPONS,
+	PRODUCT_WOOCOMMERCE_DYNAMIC_PRICING,
+	PRODUCT_WOOCOMMERCE_VARIATION_SWATCHES_AND_PHOTOS,
 ];
 
 export const JETPACK_PRODUCTS_LIST = < const >[
@@ -816,15 +827,6 @@ export const JETPACK_PRODUCT_CATEGORIES = < const >[
 ];
 
 // URL
-export const JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/backup/';
-export const JETPACK_SEARCH_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/search/';
-export const JETPACK_STATS_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/stats/';
-export const JETPACK_SCAN_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/scan/';
-export const JETPACK_ANTI_SPAM_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/anti-spam/';
-export const JETPACK_BOOST_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/boost/';
-export const JETPACK_SOCIAL_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/social/';
-export const JETPACK_VIDEOPRESS_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/videopress/';
-export const JETPACK_CRM_PRODUCT_LANDING_PAGE_URL = 'https://jetpackcrm.com/';
 // If JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN is true, checkout will redirect to the site's wp-admin,
 // otherwise it will redirect to the JETPACK_REDIRECT_URL. Checkout references these constants in:
 // client/my-sites/checkout/src/hooks/use-get-thank-you-url/get-thank-you-page-url.ts
@@ -1110,6 +1112,10 @@ export const JETPACK_PRODUCT_RECCOMENDATION_MAP: Record< string, string[] > = {
 	[ PRODUCT_WOOCOMMERCE_SHIPPING ]: [ JETPACK_TAG_FOR_WOOCOMMERCE_STORES ],
 	[ PRODUCT_WOOCOMMERCE_ACCOMMODATIONS_BOOKINGS ]: [ JETPACK_TAG_FOR_WOOCOMMERCE_STORES ],
 	[ PRODUCT_WOOCOMMERCE_TAX ]: [ JETPACK_TAG_FOR_WOOCOMMERCE_STORES ],
-	[ PRODUCT_WOOCOMMERCE_WOOPAYMENTS ]: [ JETPACK_TAG_FOR_WOOCOMMERCE_STORES ],
 	[ PRODUCT_WOOCOMMERCE_PRODUCT_FILTERS ]: [ JETPACK_TAG_FOR_WOOCOMMERCE_STORES ],
+	[ PRODUCT_WOOCOMMERCE_CONSTELLATION ]: [ JETPACK_TAG_FOR_WOOCOMMERCE_STORES ],
+	[ PRODUCT_WOOCOMMERCE_RENTAL_PRODUCTS ]: [ JETPACK_TAG_FOR_WOOCOMMERCE_STORES ],
+	[ PRODUCT_WOOCOMMERCE_SMART_COUPONS ]: [ JETPACK_TAG_FOR_WOOCOMMERCE_STORES ],
+	[ PRODUCT_WOOCOMMERCE_DYNAMIC_PRICING ]: [ JETPACK_TAG_FOR_WOOCOMMERCE_STORES ],
+	[ PRODUCT_WOOCOMMERCE_VARIATION_SWATCHES_AND_PHOTOS ]: [ JETPACK_TAG_FOR_WOOCOMMERCE_STORES ],
 };

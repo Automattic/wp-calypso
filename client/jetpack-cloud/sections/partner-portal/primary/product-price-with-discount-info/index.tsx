@@ -1,6 +1,5 @@
-import formatCurrency from '@automattic/format-currency';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { formatCurrency, useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { getProductsList } from 'calypso/state/products-list/selectors';
@@ -33,6 +32,14 @@ export default function ProductPriceWithDiscount( {
 		product,
 		quantity
 	);
+
+	if ( actualCost === 0 && discountedCost === 0 ) {
+		return (
+			<div className={ clsx( 'product-price-with-discount__price', { 'is-compact': compact } ) }>
+				{ translate( 'Free' ) }
+			</div>
+		);
+	}
 
 	return (
 		<div>

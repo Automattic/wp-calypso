@@ -25,7 +25,7 @@ Each action takes a `step` object with the following properties:
 
 ```js
 const object = {
-	stepName: 'theme-selection', // required
+	stepName: 'user-social', // required
 	apiRequestFunction: function ( callback ) {
 		// optional
 		wpcom.req.post( '/some-endpoint', function ( errors, response ) {

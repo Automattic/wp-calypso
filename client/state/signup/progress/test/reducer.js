@@ -75,7 +75,7 @@ describe( 'reducer', () => {
 			},
 			{
 				type: SIGNUP_PROGRESS_SUBMIT_STEP,
-				step: { stepName: 'theme-selection' },
+				step: { stepName: 'select-theme' },
 			},
 		];
 
@@ -83,7 +83,7 @@ describe( 'reducer', () => {
 
 		expect( Object.keys( state ) ).toHaveLength( 2 );
 		expect( state[ 'site-selection' ].stepName ).toBe( 'site-selection' );
-		expect( state[ 'theme-selection' ].stepName ).toBe( 'theme-selection' );
+		expect( state[ 'select-theme' ].stepName ).toBe( 'select-theme' );
 	} );
 
 	test( 'should mark only new saved steps as in-progress', () => {

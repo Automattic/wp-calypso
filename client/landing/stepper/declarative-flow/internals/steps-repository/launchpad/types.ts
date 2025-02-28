@@ -36,11 +36,10 @@ export type TaskId =
 	| 'first_post_published'
 	| 'first_post_published_newsletter'
 	| 'subscribers_added'
+	| 'add_first_subscribers'
 	| 'plan_selected'
 	| 'plan_completed'
 	| 'newsletter_plan_created'
-	| 'setup_link_in_bio'
-	| 'link_in_bio_launched'
 	| 'migrate_content'
 	| 'links_added'
 	| 'set_up_payments';

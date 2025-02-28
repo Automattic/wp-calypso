@@ -11,7 +11,7 @@ import { getImporterTypeForEngine } from 'calypso/blocks/importer/util';
 import { retrieveMigrationStatus } from 'calypso/blocks/importer/wordpress/utils';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySites from 'calypso/components/data/query-sites';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import Loading from 'calypso/components/loading';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSaveHostingFlowPathStep } from 'calypso/landing/stepper/hooks/use-save-hosting-flow-path-step';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -171,7 +171,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 			if ( isLoading() ) {
 				return (
 					<div className="import-layout__center">
-						<LoadingEllipsis />
+						<Loading />
 					</div>
 				);
 			} else if ( ! siteSlug || ! site || ! siteId ) {

@@ -1,7 +1,6 @@
-import formatCurrency from '@automattic/format-currency';
 import { Button } from '@wordpress/components';
-import { Icon, external } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import { external } from '@wordpress/icons';
+import { useTranslate, formatCurrency } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useGetProductPricingInfo } from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-total-invoice-value';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/pressable-logo.svg';
@@ -84,8 +83,12 @@ export default function PressablePlanSelectorCard( {
 					target="_blank"
 					rel="norefferer nooppener"
 					href="https://my.pressable.com/agency/auth"
+					icon={ external }
+					iconSize={ 18 }
+					iconPosition="right"
+					__next40pxDefaultSize
 				>
-					{ translate( 'Manage in Pressable' ) } <Icon icon={ external } size={ 18 } />
+					{ translate( 'Manage in Pressable' ) }
 				</Button>
 			) : (
 				<Button

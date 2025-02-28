@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -15,8 +14,7 @@ export class JetpackHeader extends PureComponent {
 		darkColorScheme: PropTypes.bool,
 		partnerSlug: PropTypes.string,
 		isFromAutomatticForAgenciesPlugin: PropTypes.bool,
-		isWooOnboarding: PropTypes.bool,
-		isWooPasswordlessJPC: PropTypes.bool,
+		isWooJPC: PropTypes.bool,
 		isWooDna: PropTypes.bool,
 		width: PropTypes.number,
 	};
@@ -27,37 +25,13 @@ export class JetpackHeader extends PureComponent {
 			partnerSlug,
 			width,
 			isFromAutomatticForAgenciesPlugin,
-			isWooOnboarding,
-			isWooPasswordlessJPC,
+			isWooJPC,
 			isWooDna,
 			translate,
 		} = this.props;
 
-		if ( isWooPasswordlessJPC ) {
+		if ( isWooJPC ) {
 			return null;
-		}
-
-		if ( isWooOnboarding ) {
-			// @todo Implement WooCommerce + partner co-branding in the future.
-			return (
-				<JetpackPartnerLogoGroup
-					width={ width || 662.5 }
-					viewBox="0 0 1270 170"
-					partnerName="WooCommerce"
-				>
-					<g
-						transform={
-							config.isEnabled( 'woocommerce/rebrand-2-0' ) ? 'translate(360 25)' : 'translate(360)'
-						}
-					>
-						<AsyncLoad
-							require="calypso/components/jetpack-header/woocommerce"
-							darkColorScheme={ darkColorScheme }
-							placeholder={ null }
-						/>
-					</g>
-				</JetpackPartnerLogoGroup>
-			);
 		}
 
 		if ( isWooDna ) {
@@ -65,13 +39,7 @@ export class JetpackHeader extends PureComponent {
 				<svg width={ width } viewBox="0 0 1270 170">
 					<title>{ translate( 'WooCommerce logo' ) }</title>
 					<g fill="none" fillRule="evenodd">
-						<g
-							transform={
-								config.isEnabled( 'woocommerce/rebrand-2-0' )
-									? 'translate(125 25)'
-									: 'translate(240)'
-							}
-						>
+						<g transform="translate(125 25)">
 							<AsyncLoad
 								require="calypso/components/jetpack-header/woocommerce"
 								darkColorScheme={ darkColorScheme }

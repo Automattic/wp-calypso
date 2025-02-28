@@ -1,4 +1,4 @@
-import { Context } from '@automattic/calypso-router';
+import page, { Context } from '@automattic/calypso-router';
 import { addQueryArgs } from 'calypso/lib/url';
 // Adapts route paths to also include wildcard
 // subroutes under the root level section.
@@ -60,4 +60,35 @@ export function getRouteFromContext( context: Context ) {
 		}
 	}
 	return route;
+}
+
+export interface RedirectRouteList {
+	path: string;
+	regex?: RegExp;
+	getRedirect: ( params?: Record< string, string > ) => string;
+}
+
+/**
+ * Setup redirect routes for the provided list of routes.
+ */
+export function setupRedirectRoutes( redirectRouteList: RedirectRouteList[] ): void {
+	redirectRouteList.forEach( ( { path, regex, getRedirect } ): void => {
+		// Get the URL query parameters to append to the new URL.
+		const urlQueryParams = location.search;
+
+		// If no regex is provided, just redirect to the new URL.
+		if ( ! regex ) {
+			page( path, getRedirect() + urlQueryParams );
+			return;
+		}
+
+		// If a regex is provided, redirect to the new URL by extracting the parameters from the URL.
+		page( path, ( context, next ): void => {
+			if ( context.path.match( regex ) ) {
+				page.redirect( getRedirect( context.params ) + urlQueryParams );
+			}
+
+			next();
+		} );
+	} );
 }

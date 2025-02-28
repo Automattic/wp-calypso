@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import page, { Context } from '@automattic/calypso-router';
+import { getAnyLanguageRouteParam, getLanguageRouteParam } from '@automattic/i18n-utils';
 import { addMiddleware } from 'redux-dynamic-middlewares';
 import {
 	makeLayout,
@@ -9,13 +10,12 @@ import {
 	setSelectedSiteIdByOrigin,
 } from 'calypso/controller';
 import { getUserProfileBasePath } from 'calypso/reader/user-profile/user-profile.utils';
+import { RedirectRouteList, setupRedirectRoutes } from 'calypso/utils';
 import {
 	blogListing,
 	feedDiscovery,
 	feedListing,
 	following,
-	incompleteUrlRedirects,
-	legacyRedirects,
 	readA8C,
 	readFollowingP2,
 	redirectLoggedOutToDiscover,
@@ -26,6 +26,7 @@ import {
 	siteSubscription,
 	commentSubscriptionsManager,
 	pendingSubscriptionsManager,
+	setupReadRoutes,
 } from './controller';
 import { userPosts, userLists } from './user-profile/controller';
 
@@ -48,10 +49,11 @@ export async function lazyLoadDependencies(): Promise< void > {
 
 export default async function (): Promise< void > {
 	await lazyLoadDependencies();
+	setupReadRoutes();
 
 	if ( config.isEnabled( 'reader' ) ) {
 		page(
-			'/read',
+			'/reader',
 			redirectLoggedOutToDiscover,
 			updateLastRoute,
 			sidebar,
@@ -61,19 +63,9 @@ export default async function (): Promise< void > {
 			clientRender
 		);
 
-		// Old and incomplete paths that should be redirected to /
-		page( '/read/following', '/read' );
-		page( '/read/blogs', '/read' );
-		page( '/read/feeds', '/read' );
-		page( '/read/blog', '/read' );
-		page( '/read/post', '/read' );
-		page( '/read/feed', '/read' );
-
 		// Feed stream
-		page( '/read/blog/feed/:feed_id', legacyRedirects );
-		page( '/read/feeds/:feed_id/posts', incompleteUrlRedirects );
 		page(
-			'/read/feeds/:feed_id',
+			'/reader/feeds/:feed_id',
 			blogDiscoveryByFeedId,
 			redirectLoggedOutToSignup,
 			updateLastRoute,
@@ -85,10 +77,8 @@ export default async function (): Promise< void > {
 		);
 
 		// Blog stream
-		page( '/read/blog/id/:blog_id', legacyRedirects );
-		page( '/read/blogs/:blog_id/posts', incompleteUrlRedirects );
 		page(
-			'/read/blogs/:blog_id',
+			'/reader/blogs/:blog_id',
 			redirectLoggedOutToSignup,
 			updateLastRoute,
 			sidebar,
@@ -108,6 +98,18 @@ export default async function (): Promise< void > {
 			makeLayout,
 			clientRender
 		);
+
+		page(
+			`/reader/users/id/:user_id`,
+			blogDiscoveryByFeedId,
+			redirectLoggedOutToSignup,
+			updateLastRoute,
+			sidebar,
+			userPosts,
+			makeLayout,
+			clientRender
+		);
+
 		page(
 			getUserProfileBasePath( 'lists' ),
 			blogDiscoveryByFeedId,
@@ -119,17 +121,12 @@ export default async function (): Promise< void > {
 			clientRender
 		);
 
-		// Old full post view
-		page( '/read/post/feed/:feed_id/:post_id', legacyRedirects );
-		page( '/read/post/id/:blog_id/:post_id', legacyRedirects );
-
-		// Old Freshly Pressed
-		page( '/read/fresh', '/discover' );
+		setupReaderRedirects();
 	}
 
 	// Automattic Employee Posts
 	page(
-		'/read/a8c',
+		'/reader/a8c',
 		redirectLoggedOut,
 		updateLastRoute,
 		sidebar,
@@ -141,7 +138,7 @@ export default async function (): Promise< void > {
 
 	// new P2 Posts
 	page(
-		'/read/p2',
+		'/reader/p2',
 		redirectLoggedOut,
 		updateLastRoute,
 		sidebar,
@@ -152,7 +149,7 @@ export default async function (): Promise< void > {
 
 	// Sites subscription management
 	page(
-		'/read/subscriptions',
+		'/reader/subscriptions',
 		redirectLoggedOut,
 		updateLastRoute,
 		sidebar,
@@ -161,7 +158,7 @@ export default async function (): Promise< void > {
 		clientRender
 	);
 	page(
-		'/read/subscriptions/comments',
+		'/reader/subscriptions/comments',
 		redirectLoggedOut,
 		updateLastRoute,
 		sidebar,
@@ -170,7 +167,7 @@ export default async function (): Promise< void > {
 		clientRender
 	);
 	page(
-		'/read/subscriptions/pending',
+		'/reader/subscriptions/pending',
 		redirectLoggedOut,
 		updateLastRoute,
 		sidebar,
@@ -179,7 +176,7 @@ export default async function (): Promise< void > {
 		clientRender
 	);
 	page(
-		'/read/subscriptions/:subscription_id',
+		'/reader/subscriptions/:subscription_id',
 		redirectLoggedOut,
 		updateLastRoute,
 		sidebar,
@@ -188,7 +185,7 @@ export default async function (): Promise< void > {
 		clientRender
 	);
 	page(
-		'/read/site/subscription/:blog_id',
+		'/reader/site/subscription/:blog_id',
 		redirectLoggedOut,
 		updateLastRoute,
 		sidebar,
@@ -196,4 +193,62 @@ export default async function (): Promise< void > {
 		makeLayout,
 		clientRender
 	);
+}
+
+/**
+ * Setup redirects for the reader routes.
+ */
+function setupReaderRedirects(): void {
+	const langParam = getLanguageRouteParam();
+	const anyLangParam = getAnyLanguageRouteParam();
+
+	const readerRedirectsList: RedirectRouteList[] = [
+		{
+			path: `/${ langParam }/reader`,
+			getRedirect: () => '/reader',
+		},
+		{
+			path: `/${ anyLangParam }/reader`,
+			getRedirect: () => '/reader',
+		},
+		// Incomplete paths that should be redirected to `/reader`
+		{
+			path: '/reader/following',
+			getRedirect: () => '/reader',
+		},
+		{
+			path: '/reader/blogs',
+			getRedirect: () => '/reader',
+		},
+		{
+			path: '/reader/feeds',
+			getRedirect: () => '/reader',
+		},
+		{
+			path: '/reader/blog',
+			getRedirect: () => '/reader',
+		},
+		{
+			path: '/reader/post',
+			getRedirect: () => '/reader',
+		},
+		{
+			path: '/reader/feed',
+			getRedirect: () => '/reader',
+		},
+		// Feed stream
+		{
+			path: '/reader/feeds/:feed_id/posts',
+			regex: /^\/reader\/feeds\/([0-9]+)\/posts$/i,
+			getRedirect: ( params?: Record< string, string > ) => `/reader/feeds/${ params?.feed_id }`,
+		},
+		// Blog stream
+		{
+			path: '/reader/blogs/:blog_id/posts',
+			regex: /^\/reader\/blogs\/([0-9]+)\/posts$/i,
+			getRedirect: ( params?: Record< string, string > ) => `/reader/blogs/${ params?.blog_id }`,
+		},
+	];
+
+	setupRedirectRoutes( readerRedirectsList );
 }

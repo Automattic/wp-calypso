@@ -616,6 +616,10 @@ function getAvailabilityNotice(
 			);
 			break;
 
+		case domainAvailability.INVALID_LENGTH:
+			message = translate( 'The domain name is too long.' );
+			break;
+
 		case 'blocked':
 			const supportURL = 'https://wordpress.com/error-report/?url=496@' + ( site?.slug || '' );
 			message = translate(
@@ -648,7 +652,9 @@ function getAvailabilityNotice(
 			break;
 
 		case 'hundred_year_domain_tld_restriction':
-			message = translate( 'Only .com, .net and .org domains can be registered for 100 years.' );
+			message = translate(
+				'Only .com, .net, .org and .blog domains can be registered for 100 years.'
+			);
 			severity = 'info';
 			break;
 

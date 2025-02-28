@@ -74,7 +74,7 @@ export function isAutoRefreshAllowedForQuery( query ) {
  * @param   {string} avatarUrl Raw avatar URL
  * @returns {string}           Parsed URL
  */
-function parseAvatar( avatarUrl ) {
+export function parseAvatar( avatarUrl ) {
 	if ( ! avatarUrl ) {
 		return null;
 	}
@@ -439,8 +439,10 @@ export const normalizers = {
 			return {
 				label: viewData.location || country.country_full.replace( /’/, "'" ),
 				countryCode: viewData.country_code,
+				countryFull: country.country_full,
 				value: viewData.views,
 				region: country.map_region,
+				...( viewData.coordinates && { coordinates: viewData.coordinates } ),
 			};
 		} );
 	},

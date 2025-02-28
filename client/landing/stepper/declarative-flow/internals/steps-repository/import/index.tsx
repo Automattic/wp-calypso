@@ -1,8 +1,4 @@
-import {
-	StepContainer,
-	IMPORT_FOCUSED_FLOW,
-	IMPORT_HOSTED_SITE_FLOW,
-} from '@automattic/onboarding';
+import { StepContainer, IMPORT_FOCUSED_FLOW } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { ReactElement, useEffect } from 'react';
 import CaptureStep from 'calypso/blocks/import/capture';
@@ -26,9 +22,6 @@ export const ImportWrapper: Step = function ( props ) {
 
 	const getSkipLabelText = () => {
 		switch ( flow ) {
-			case IMPORT_HOSTED_SITE_FLOW:
-				return __( 'Create a site' );
-
 			case IMPORT_FOCUSED_FLOW:
 				return __( 'Skip to dashboard' );
 
@@ -37,20 +30,9 @@ export const ImportWrapper: Step = function ( props ) {
 		}
 	};
 
-	const getGoNext = () => {
-		switch ( flow ) {
-			case IMPORT_HOSTED_SITE_FLOW:
-				return () => window.location.assign( '/setup/new-hosted-site' );
-
-			default:
-				return navigation.goNext;
-		}
-	};
-
 	const shouldHideSkipBtn = () => {
 		switch ( flow ) {
 			case IMPORT_FOCUSED_FLOW:
-			case IMPORT_HOSTED_SITE_FLOW:
 				return currentRoute !== `${ flow }/${ BASE_ROUTE }`;
 
 			default:
@@ -72,7 +54,7 @@ export const ImportWrapper: Step = function ( props ) {
 				hideBack={ shouldHideBackBtn }
 				hideFormattedHeader
 				goBack={ navigation.goBack }
-				goNext={ getGoNext() }
+				goNext={ navigation.goNext }
 				skipLabelText={ getSkipLabelText() }
 				isFullLayout
 				stepContent={ children as ReactElement }
@@ -83,7 +65,7 @@ export const ImportWrapper: Step = function ( props ) {
 };
 
 const ImportStep: Step = function ImportStep( props ) {
-	const { navigation, flow } = props;
+	const { navigation } = props;
 	const siteSlug = useSiteSlug();
 	const fromUrl = useQuery().get( 'from' ) || '';
 
@@ -91,7 +73,6 @@ const ImportStep: Step = function ImportStep( props ) {
 		<ImportWrapper { ...props }>
 			<CaptureStep
 				initialUrl={ fromUrl }
-				disableImportListStep={ IMPORT_HOSTED_SITE_FLOW === flow }
 				goToStep={ ( step, section, params ) => {
 					const stepPath = generateStepPath( step, section );
 					const from = encodeURIComponent( params?.fromUrl || '' );

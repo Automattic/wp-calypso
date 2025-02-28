@@ -245,6 +245,10 @@ $custom-stats-tab-mobile-break: $break-medium;
 						// Prevent different heights of Flexbox items.
 						white-space: nowrap;
 					}
+					.stats-tabs__highlight-loading {
+						padding: 5px;
+						width: 100%;
+					}
 					.stats-tabs__highlight {
 						display: flex;
 						justify-content: start;

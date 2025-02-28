@@ -288,14 +288,7 @@ const UniversalNavbarHeader = ( {
 														<ClickableItem
 															titleValue=""
 															content={ __( 'Blog Search', __i18n_text_domain__ ) }
-															urlValue={ localizeUrl( '//wordpress.com/read/search/' ) }
-															type="dropdown"
-															target="_self"
-														/>
-														<ClickableItem
-															titleValue=""
-															content={ __( 'Daily Webinars', __i18n_text_domain__ ) }
-															urlValue={ localizeUrl( '//wordpress.com/webinars/' ) }
+															urlValue={ localizeUrl( '//wordpress.com/reader/search/' ) }
 															type="dropdown"
 															target="_self"
 														/>
@@ -609,13 +602,7 @@ const UniversalNavbarHeader = ( {
 											<ClickableItem
 												titleValue=""
 												content={ __( 'Blog Search', __i18n_text_domain__ ) }
-												urlValue={ localizeUrl( '//wordpress.com/read/search/' ) }
-												type="menu"
-											/>
-											<ClickableItem
-												titleValue=""
-												content={ __( 'Daily Webinars', __i18n_text_domain__ ) }
-												urlValue={ localizeUrl( '//wordpress.com/webinars/' ) }
+												urlValue={ localizeUrl( '//wordpress.com/reader/search/' ) }
 												type="menu"
 											/>
 											{ isEnglishLocale && (

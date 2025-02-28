@@ -125,8 +125,8 @@ export const isEligibleForUnseen = ( {
 
 	if ( currentRoute ) {
 		if (
-			[ '/read/a8c', '/read/p2' ].includes( currentRoute ) ||
-			[ '/read/feeds/', '/read/blogs/' ].some( ( route ) => currentRoute.startsWith( route ) )
+			[ '/reader/a8c', '/reader/p2' ].includes( currentRoute ) ||
+			[ '/reader/feeds/', '/reader/blogs/' ].some( ( route ) => currentRoute.startsWith( route ) )
 		) {
 			return isEligible;
 		}

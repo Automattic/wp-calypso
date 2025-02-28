@@ -12,6 +12,7 @@ type NewsletterCategoriesSectionProps = {
 	disabled?: boolean;
 	handleToggle: ( field: string ) => ( value: boolean ) => void;
 	newsletterCategoriesEnabled?: boolean;
+	newsletterCategoriesModalHiddenEnabled?: boolean;
 	newsletterCategoryIds: number[];
 	updateFields: ( fields: { [ key: string ]: unknown } ) => void;
 };

@@ -965,7 +965,7 @@ class ManagePurchase extends Component<
 		if ( this.isHundredYearDomain( purchase ) ) {
 			return (
 				<div className="manage-purchase__plan-icon">
-					<HundredYearPlanLogo width={ 50 } />
+					<HundredYearPlanLogo width={ 60 } />
 				</div>
 			);
 		}
@@ -1300,35 +1300,44 @@ class ManagePurchase extends Component<
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
 						{ this.renderPurchaseIcon() }
-						<h2 className="manage-purchase__title">{ this.getProductDisplayName() }</h2>
-						<div className="manage-purchase__description">
-							{ isHundredYearDomain
-								? translate( '100-Year Domain Registration' )
-								: purchaseType( purchase ) }
+						<div className="manage-purchase__header-content">
+							<h2 className="manage-purchase__title">{ this.getProductDisplayName() }</h2>
+							<div className="manage-purchase__description">
+								{ isHundredYearDomain
+									? translate( '100-Year Domain Registration' )
+									: purchaseType( purchase ) }
+							</div>
+							<div className="manage-purchase__price">
+								{ isPartnerPurchase( purchase ) ? (
+									<div className="manage-purchase__contact-partner">
+										{ translate( 'Please contact %(partnerName)s for details', {
+											args: {
+												partnerName: getPartnerName( purchase ) ?? '',
+											},
+										} ) }
+									</div>
+								) : (
+									<>
+										{ isOneTimePurchase( purchase ) && (
+											<PlanPrice
+												rawPrice={ purchase.regularPriceInteger }
+												isSmallestUnit
+												currencyCode={ purchase.currencyCode }
+												taxText={ purchase.taxText }
+												isOnSale={ !! purchase.saleAmount }
+											/>
+										) }
+									</>
+								) }
+							</div>
 						</div>
-						<div className="manage-purchase__price">
-							{ isPartnerPurchase( purchase ) ? (
-								<div className="manage-purchase__contact-partner">
-									{ translate( 'Please contact %(partnerName)s for details', {
-										args: {
-											partnerName: getPartnerName( purchase ) ?? '',
-										},
-									} ) }
-								</div>
-							) : (
-								<>
-									{ isOneTimePurchase( purchase ) && (
-										<PlanPrice
-											rawPrice={ purchase.regularPriceInteger }
-											isSmallestUnit
-											currencyCode={ purchase.currencyCode }
-											taxText={ purchase.taxText }
-											isOnSale={ !! purchase.saleAmount }
-										/>
-									) }
-								</>
-							) }
-						</div>
+						{ isProductOwner && ! purchase.isLocked && (
+							<div className="manage-purchase__renew-upgrade-buttons">
+								{ preventRenewal && this.renderSelectNewButton() }
+								{ this.renderUpgradeButton( preventRenewal ) }
+								{ ! preventRenewal && this.renderRenewButton() }
+							</div>
+						) }
 					</header>
 					{ this.renderPurchaseDescription() }
 					{ ! isPartnerPurchase( purchase ) && (
@@ -1341,13 +1350,6 @@ class ManagePurchase extends Component<
 								getChangePaymentMethodUrlFor ?? getChangePaymentMethodPath
 							}
 						/>
-					) }
-					{ isProductOwner && ! purchase.isLocked && (
-						<div className="manage-purchase__renew-upgrade-buttons">
-							{ preventRenewal && this.renderSelectNewButton() }
-							{ this.renderUpgradeButton( preventRenewal ) }
-							{ ! preventRenewal && this.renderRenewButton() }
-						</div>
 					) }
 				</Card>
 				{ ! isPartnerPurchase( purchase ) && (

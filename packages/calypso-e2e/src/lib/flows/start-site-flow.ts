@@ -9,7 +9,7 @@ export type StepName =
 	| 'goals'
 	| 'vertical'
 	| 'intent'
-	| 'designSetup'
+	| 'design-setup'
 	| 'options'
 	| 'designChoices';
 type WriteActions = 'Start writing' | 'Start learning' | 'View designs';
@@ -31,9 +31,6 @@ const selectors = {
 		`.select-card-checkbox__container:has-text("${ goal.toLowerCase() }")`,
 	selectedGoalButton: ( goal: string ) =>
 		`.select-card-checkbox__container:has(:checked):has-text("${ goal }")`,
-
-	// Design choices
-	designChoiceButton: ( choice: string ) => `button.design-choice:has-text("${ choice }")`,
 
 	// Step containers
 	contentAgnosticContainer: '.step-container',
@@ -82,7 +79,7 @@ export class StartSiteFlow {
 			return 'intent';
 		}
 		if ( ( await this.page.locator( selectors.themePickerContainer ).count() ) > 0 ) {
-			return 'designSetup';
+			return 'design-setup';
 		}
 		if ( ( await this.page.locator( selectors.optionsStepContainer ).count() ) > 0 ) {
 			return 'options';
@@ -110,9 +107,9 @@ export class StartSiteFlow {
 	 */
 	async clickDesignChoice( choice: 'theme' | 'ai' ): Promise< void > {
 		// It's best to select the element using accessible text
-		const choiceLabel = choice === 'theme' ? 'Choose a theme' : 'Design with AI';
+		const choiceLabel = choice === 'theme' ? 'Start with a theme' : 'Create with AI (BETA)';
 
-		await this.page.click( selectors.designChoiceButton( choiceLabel ) );
+		await this.page.getByRole( 'button', { name: choiceLabel } ).click();
 	}
 
 	/**
@@ -168,7 +165,7 @@ export class StartSiteFlow {
 			await this.page.waitForURL( /setup\/site-setup\/courses/ );
 		}
 		if ( action === 'View designs' ) {
-			await this.page.waitForURL( /setup\/site-setup\/designSetup/ );
+			await this.page.waitForURL( /setup\/site-setup\/design-setup/ );
 		}
 	}
 

@@ -10,7 +10,6 @@ import {
 import { GroupableSiteLaunchStatuses } from '@automattic/sites/src/use-sites-list-grouping';
 import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -48,7 +47,6 @@ import { DOTCOM_OVERVIEW, FEATURE_TO_ROUTE_MAP, OVERVIEW } from './site-preview-
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardBannersManager from './sites-dashboard-banners-manager';
 import SitesDashboardHeader from './sites-dashboard-header';
-import SitesDashboardSurvey from './sites-dashboard-survey';
 import DotcomSitesDataViews, { useSiteStatusGroups } from './sites-dataviews';
 import { getSitesPagination } from './sites-dataviews/utils';
 import type { View } from '@wordpress/dataviews';
@@ -80,9 +78,9 @@ const siteSortingKeys = [
 const DEFAULT_PER_PAGE = 50;
 const DEFAULT_SITE_TYPE = 'non-p2';
 
-const desktopFields = [ 'site', 'plan', 'status', 'last-publish', 'stats' ];
-const mobileFields = [ 'site' ];
-const listViewFields = [ 'site-title' ];
+const desktopFields = [ 'plan', 'status', 'last-publish', 'stats' ];
+const mobileFields: string[] = [];
+const listViewFields: string[] = [];
 
 const getFieldsByBreakpoint = ( selectedSite: boolean, isDesktop: boolean ) => {
 	if ( selectedSite ) {
@@ -199,23 +197,18 @@ const SitesDashboard = ( {
 		...( selectedSite
 			? {
 					type: 'list',
-					layout: {
-						primaryField: 'site-title',
-						mediaField: 'icon',
-					},
+					titleField: 'site-title',
+					showTitle: true,
+					mediaField: 'icon',
+					showMedia: true,
 			  }
 			: {
 					type: 'table',
+					titleField: 'site-title',
+					showTitle: true,
+					mediaField: 'icon',
+					showMedia: true,
 					layout: {
-						primaryField: 'site',
-						combinedFields: [
-							{
-								id: 'site',
-								label: __( 'Site' ),
-								children: [ 'icon', 'site-title' ],
-								direction: 'horizontal',
-							},
-						],
 						styles: {
 							site: {
 								width: '40%',
@@ -298,9 +291,17 @@ const SitesDashboard = ( {
 		sortOrder: dataViewsState.sort?.direction || undefined,
 	} );
 
+	const hasA8CSitesFilter =
+		dataViewsState.filters?.some(
+			( { field, operator, value } ) => field === 'a8c_owned' && operator === 'is' && value === true
+		) ?? false;
+
+	const includeA8CSites = siteType === 'p2' || hasA8CSitesFilter;
+
 	// Filter sites list by search query.
 	const filteredSites = useSitesListFiltering( sortedSites, {
 		search: dataViewsState.search,
+		includeA8CSites,
 	} );
 
 	const paginatedSites =
@@ -416,6 +417,7 @@ const SitesDashboard = ( {
 
 					<DotcomSitesDataViews
 						sites={ paginatedSites }
+						siteType={ siteType }
 						isLoading={ isLoading || ! initialSortApplied }
 						paginationInfo={ getSitesPagination( filteredSites, perPage ) }
 						dataViewsState={ dataViewsState }
@@ -454,8 +456,6 @@ const SitesDashboard = ( {
 					<GuidedTour defaultTourId="siteManagementTour" />
 				</GuidedTourContextProvider>
 			) }
-
-			<SitesDashboardSurvey />
 		</Layout>
 	);
 };

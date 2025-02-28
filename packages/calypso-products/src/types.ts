@@ -55,6 +55,9 @@ import {
 	FEATURE_GROUP_CUSTOMIZE_STYLE,
 	FEATURE_GROUP_CUSTOM_PLUGINS,
 	FEATURE_GROUP_DEV_TOOLS,
+	FEATURE_GROUP_BIG_SKY,
+	FEATURE_GROUP_UPLOAD_VIDEOS,
+	FEATURE_GROUP_STATS,
 } from './constants';
 import { PriceTierEntry } from './get-price-tier-for-units';
 import type { TranslateResult } from 'i18n-calypso';
@@ -117,7 +120,6 @@ export interface WPComPlan extends Plan {
 	getStoreAudience?: () => TranslateResult;
 	getPlanTagline?: () => TranslateResult;
 	getNewsletterTagLine?: () => TranslateResult;
-	getLinkInBioTagLine?: () => TranslateResult;
 	getBlogOnboardingTagLine?: () => TranslateResult;
 	getSubTitle?: () => TranslateResult;
 	getPlanCompareFeatures?: (
@@ -129,8 +131,6 @@ export interface WPComPlan extends Plan {
 	getPortfolioSignupFeatures?: () => Feature[];
 	getNewsletterSignupFeatures?: () => Feature[];
 	getNewsletterHighlightedFeatures?: () => Feature[];
-	getLinkInBioSignupFeatures?: () => Feature[];
-	getLinkInBioHighlightedFeatures?: () => Feature[];
 	getBlogOnboardingSignupFeatures?: () => Feature[];
 	getBlogOnboardingHighlightedFeatures?: () => Feature[];
 	getBlogOnboardingSignupJetpackFeatures?: () => Feature[];
@@ -264,6 +264,9 @@ export type FeatureGroupSlug =
 	| typeof FEATURE_GROUP_CUSTOMIZE_STYLE
 	| typeof FEATURE_GROUP_DOMAIN
 	| typeof FEATURE_GROUP_ENTITIES
+	| typeof FEATURE_GROUP_BIG_SKY
+	| typeof FEATURE_GROUP_UPLOAD_VIDEOS
+	| typeof FEATURE_GROUP_STATS
 	| typeof FEATURE_GROUP_PERFORMANCE
 	| typeof FEATURE_GROUP_THEMES
 	| typeof FEATURE_GROUP_WOO
@@ -368,7 +371,6 @@ export type Plan = BillingTerm & {
 	 */
 	getInferiorFeatures?: () => Feature[];
 	getNewsletterSignupFeatures?: () => Feature[];
-	getLinkInBioSignupFeatures?: () => Feature[];
 	getBlogOnboardingSignupFeatures?: () => Feature[];
 	getBlogOnboardingHighlightedFeatures?: () => Feature[];
 	getBlogOnboardingSignupJetpackFeatures?: () => Feature[];

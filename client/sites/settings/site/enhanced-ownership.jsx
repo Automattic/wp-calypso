@@ -9,10 +9,10 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
-import { isHostingMenuUntangled } from '../utils';
 
 // Add settings for enhanced ownership: ability to enable locked mode and add the name of a person who will inherit the site.
 export default function EnhancedOwnershipForm( {
@@ -28,6 +28,7 @@ export default function EnhancedOwnershipForm( {
 	const translate = useTranslate();
 	const hasLockedMode = useSelectedSiteSelector( siteHasFeature, WPCOM_FEATURES_LOCKED_MODE );
 	const hasLegacyContact = useSelectedSiteSelector( siteHasFeature, WPCOM_FEATURES_LEGACY_CONTACT );
+	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 
 	// if has neither locked mode nor legacy contact, return
 	if ( ! hasLockedMode && ! hasLegacyContact ) {
@@ -94,7 +95,7 @@ export default function EnhancedOwnershipForm( {
 		);
 	};
 
-	if ( ! isHostingMenuUntangled() ) {
+	if ( ! isUntangled ) {
 		return (
 			<div className="site-settings__enhanced-ownership-container">
 				<SettingsSectionHeader

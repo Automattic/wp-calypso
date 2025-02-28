@@ -1,6 +1,5 @@
-import { ProgressBar, WooCommerceWooLogo } from '@automattic/components';
+import { ProgressBar } from '@automattic/components';
 import { useFlowProgress } from '@automattic/onboarding';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import './style.scss';
@@ -13,19 +12,15 @@ interface ProgressBarData {
 interface Props {
 	progressBar?: ProgressBarData;
 	shouldShowLoadingScreen?: boolean;
-	isReskinned?: boolean;
 	rightComponent?: React.ReactNode;
 	pageTitle?: string;
-	showWooLogo?: boolean;
 }
 
 const SignupHeader = ( {
 	shouldShowLoadingScreen,
-	isReskinned,
 	rightComponent,
 	progressBar = {},
 	pageTitle,
-	showWooLogo = false,
 }: Props ) => {
 	const translate = useTranslate();
 	const VARIATION_TITLES: Record< string, string > = {
@@ -40,9 +35,7 @@ const SignupHeader = ( {
 		variationName ? { flowName: variationName, stepName: progressBar.stepName } : progressBar
 	);
 
-	const logoClasses = clsx( 'wordpress-logo', {
-		'is-large': shouldShowLoadingScreen && ! isReskinned,
-	} );
+	const logoClasses = 'wordpress-logo';
 
 	return (
 		<>
@@ -54,10 +47,7 @@ const SignupHeader = ( {
 						total={ flowProgress.count }
 					/>
 				) }
-				{ ! showWooLogo && <WordPressLogo size={ 120 } className={ logoClasses } /> }
-				{ showWooLogo && (
-					<WooCommerceWooLogo width={ 120 } height={ 120 } className={ logoClasses } />
-				) }
+				<WordPressLogo size={ 120 } className={ logoClasses } />
 				{ showPageTitle && <h1>{ variablePageTitle }</h1> }
 				{ /* This should show a sign in link instead of
 			   the progressIndicator on the account step. */ }

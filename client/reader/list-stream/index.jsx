@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -84,7 +83,6 @@ class ListStream extends Component {
 				/>
 				<QueryReaderList owner={ this.props.owner } slug={ this.props.slug } />
 				<ListStreamHeader
-					isPlaceholder={ ! list }
 					isPublic={ list?.is_public }
 					icon={
 						<svg
@@ -110,7 +108,7 @@ class ListStream extends Component {
 					showFollow={ shouldShowFollow }
 					following={ this.props.isSubscribed }
 					onFollowToggle={ this.toggleFollowing }
-					showEdit={ config.isEnabled( 'reader/list-management' ) && list && list.is_owner }
+					showEdit={ list && list.is_owner }
 					editUrl={ window.location.href + '/edit' }
 				/>
 			</Stream>

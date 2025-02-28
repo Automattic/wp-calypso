@@ -1,6 +1,6 @@
 import { Card } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
 import { payment, chartBar } from '@wordpress/icons';
+import { formatCurrency } from 'i18n-calypso';
 import { Subscriber } from '../../types';
 
 import '@automattic/components/src/highlight-cards/style.scss';

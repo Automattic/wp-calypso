@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import { OnboardSelect, Onboard, UserSelect, ProductsList } from '@automattic/data-stores';
 import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
@@ -25,14 +24,23 @@ import {
 } from '../constants';
 import { useFlowLocale } from '../hooks/use-flow-locale';
 import { useIsBigSkyEligible } from '../hooks/use-is-site-big-sky-eligible';
+import { useMarketplaceThemeProducts } from '../hooks/use-marketplace-theme-products';
 import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { getLoginUrl } from '../utils/path';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
+import { useBigSkyBeforePlans } from './helpers/use-bigsky-before-plans-experiment';
 import { useGoalsFirstExperiment } from './helpers/use-goals-first-experiment';
+import { useRedirectDesignSetupOldSlug } from './helpers/use-redirect-design-setup-old-slug';
 import { recordStepNavigation } from './internals/analytics/record-step-navigation';
 import { STEPS } from './internals/steps';
 import { AssertConditionState, Flow, ProvidedDependencies } from './internals/types';
+
+declare global {
+	interface Window {
+		__a8cBigSkyOnboarding?: boolean;
+	}
+}
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -46,6 +54,10 @@ const clearUseMyDomainsQueryParams = ( currentStepSlug: string | undefined ) => 
 		const newURL = removeQueryArgs( pathname + search, 'step', 'initialQuery', 'lastQuery' );
 		window.history.replaceState( {}, document.title, newURL );
 	}
+};
+
+const withLocale = ( url: string, locale: string ) => {
+	return locale && locale !== 'en' ? `${ url }/${ locale }` : url;
 };
 
 const onboarding: Flow = {
@@ -92,26 +104,12 @@ const onboarding: Flow = {
 		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 
 		const steps = stepsWithRequiredLogin( [
-			{
-				slug: 'domains',
-				asyncComponent: () => import( './internals/steps-repository/unified-domains' ),
-			},
-			{
-				slug: 'use-my-domain',
-				asyncComponent: () => import( './internals/steps-repository/use-my-domain' ),
-			},
-			{
-				slug: 'plans',
-				asyncComponent: () => import( './internals/steps-repository/unified-plans' ),
-			},
-			{
-				slug: 'create-site',
-				asyncComponent: () => import( './internals/steps-repository/create-site' ),
-			},
-			{
-				slug: 'processing',
-				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
-			},
+			STEPS.UNIFIED_DOMAINS,
+			STEPS.USE_MY_DOMAIN,
+			STEPS.UNIFIED_PLANS,
+			STEPS.SITE_CREATION_STEP,
+			STEPS.PROCESSING,
+			STEPS.POST_CHECKOUT_ONBOARDING,
 		] );
 
 		if ( isGoalsAtFrontExperiment ) {
@@ -143,7 +141,6 @@ const onboarding: Flow = {
 
 		const { planCartItem, signupDomainOrigin, isUserLoggedIn, createWithBigSky } = useSelect(
 			( select ) => ( {
-				domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
 				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
 				isUserLoggedIn: ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
@@ -158,48 +155,66 @@ const onboarding: Flow = {
 		const [ useMyDomainTracksEventProps, setUseMyDomainTracksEventProps ] = useState( {} );
 
 		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
-
+		const [ , isBigSkyBeforePlansExperiment ] = useBigSkyBeforePlans();
 		const { isEligible: isBigSkyEligible } = useIsBigSkyEligible();
 		const isDesignChoicesStepEnabled = isBigSkyEligible && isGoalsAtFrontExperiment;
 
-		const getPostCheckoutDestination = ( providedDependencies: ProvidedDependencies ) => {
-			if (
-				createWithBigSky &&
-				config.isEnabled( 'onboarding/big-sky-before-plans' ) &&
-				isGoalsAtFrontExperiment
-			) {
-				return addQueryArgs( '/setup/site-setup/launch-big-sky', {
-					siteSlug: providedDependencies.siteSlug,
-				} );
+		const { selectedMarketplaceProduct } = useMarketplaceThemeProducts();
+
+		if ( typeof window !== 'undefined' && createWithBigSky ) {
+			window.__a8cBigSkyOnboarding = true;
+		} else if ( typeof window !== 'undefined' ) {
+			window.__a8cBigSkyOnboarding = false;
+		}
+
+		/**
+		 * Returns [destination, backDestination] for the post-checkout destination.
+		 */
+		const getPostCheckoutDestination = (
+			providedDependencies: ProvidedDependencies
+		): [ string, string | null ] => {
+			if ( createWithBigSky && isBigSkyBeforePlansExperiment && isGoalsAtFrontExperiment ) {
+				const destination = addQueryArgs(
+					withLocale( '/setup/site-setup/launch-big-sky', locale ),
+					{
+						siteSlug: providedDependencies.siteSlug,
+						isBigSkyBeforePlansFlow: true,
+					}
+				);
+
+				return [
+					destination,
+					addQueryArgs( withLocale( '/setup/onboarding/plans', locale ), {
+						skippedCheckout: 1,
+						isBigSkyBeforePlansFlow: true,
+					} ),
+				];
 			}
 
-			return addQueryArgs( '/setup/site-setup', {
+			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
+				return [ `/home/${ providedDependencies.siteSlug }`, null ];
+			}
+
+			const destination = addQueryArgs( withLocale( '/setup/site-setup', locale ), {
 				siteSlug: providedDependencies.siteSlug,
 				...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
-				...( config.isEnabled( 'onboarding/newsletter-goal' ) && {
-					flags: 'onboarding/newsletter-goal',
-				} ),
 			} );
+
+			return [ destination, addQueryArgs( destination, { skippedCheckout: 1 } ) ];
 		};
 
 		clearUseMyDomainsQueryParams( currentStepSlug );
+		useRedirectDesignSetupOldSlug( currentStepSlug, navigate );
 
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			switch ( currentStepSlug ) {
 				case 'goals': {
-					const goalsUrl =
-						locale && locale !== 'en'
-							? `/setup/onboarding/goals/${ locale }`
-							: '/setup/onboarding/goals';
-
+					const goalsUrl = withLocale( '/setup/onboarding/goals', locale );
 					const { intent } = providedDependencies;
 
 					switch ( intent ) {
 						case SiteIntent.Import: {
-							const migrationFlowLink =
-								locale && locale !== 'en'
-									? `/setup/hosted-site-migration/${ locale }`
-									: '/setup/hosted-site-migration';
+							const migrationFlowLink = withLocale( '/setup/hosted-site-migration', locale );
 							return window.location.assign(
 								addQueryArgs( migrationFlowLink, {
 									back_to: goalsUrl,
@@ -214,16 +229,19 @@ const onboarding: Flow = {
 							if ( isDesignChoicesStepEnabled ) {
 								return navigate( 'design-choices' );
 							}
-							return navigate( 'designSetup' );
+							return navigate( 'design-setup' );
 						}
 					}
 				}
 
-				case 'designSetup': {
+				case 'design-setup': {
 					return navigate( 'domains' );
 				}
 
 				case 'design-choices': {
+					// __a8cBigSkyOnboarding is set as a hack so that the @automattic/calypso-products can know what the users
+					// selection was. Accessing the data store is tricky from there.
+					// See is-big-sky-onboarding.ts
 					if ( providedDependencies.destination === 'launch-big-sky' ) {
 						setCreateWithBigSky( true );
 						return navigate( 'domains' );
@@ -234,13 +252,10 @@ const onboarding: Flow = {
 
 				case 'difmStartingPoint': {
 					const { newOrExistingSiteChoice } = providedDependencies;
-					const difmFlowLink = addQueryArgs(
-						locale && locale !== 'en' ? `/start/do-it-for-me/${ locale }` : '/start/do-it-for-me',
-						{
-							back_to: window.location.href.replace( window.location.origin, '' ),
-							newOrExistingSiteChoice,
-						}
-					);
+					const difmFlowLink = addQueryArgs( withLocale( '/start/do-it-for-me', locale ), {
+						back_to: window.location.href.replace( window.location.origin, '' ),
+						newOrExistingSiteChoice,
+					} );
 
 					if ( isUserLoggedIn ) {
 						return window.location.assign( difmFlowLink );
@@ -334,17 +349,21 @@ const onboarding: Flow = {
 					}
 
 					// Make sure to put the rest of products into the cart, e.g. the storage add-ons.
-					if ( cartItems?.length > 0 ) {
-						setProductCartItems( cartItems.slice( 1 ) );
-					}
+					setProductCartItems( [
+						...( selectedMarketplaceProduct ? [ selectedMarketplaceProduct ] : [] ),
+						...( cartItems || [] ).slice( 1 ),
+					] );
 
 					setSignupCompleteFlowName( flowName );
 					return navigate( 'create-site', undefined, false );
 				}
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
+				case 'post-checkout-onboarding':
+					return navigate( 'processing' );
 				case 'processing': {
-					const destination = getPostCheckoutDestination( providedDependencies );
+					const [ destination, backDestination ] =
+						getPostCheckoutDestination( providedDependencies );
 
 					persistSignupDestination( destination );
 					setSignupCompleteFlowName( flowName );
@@ -356,10 +375,19 @@ const onboarding: Flow = {
 						// replace the location to delete processing step from history.
 						window.location.replace(
 							addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-								redirect_to: destination,
+								// Go to the post-checkout step to see whether to wait for the atomic transfer
+								redirect_to: addQueryArgs(
+									withLocale( '/setup/onboarding/post-checkout-onboarding', locale ),
+									{
+										siteSlug,
+									}
+								),
 								signup: 1,
-								checkoutBackUrl: pathToUrl( addQueryArgs( destination, { skippedCheckout: 1 } ) ),
+								checkoutBackUrl: pathToUrl( backDestination ?? '' ),
 								coupon,
+								...( createWithBigSky && isBigSkyBeforePlansExperiment && isGoalsAtFrontExperiment
+									? { [ 'big-sky-checkout' ]: 1 }
+									: {} ),
 							} )
 						);
 					} else {
@@ -400,12 +428,12 @@ const onboarding: Flow = {
 					return navigate( 'domains' );
 				case 'domains':
 					if ( isGoalsAtFrontExperiment ) {
-						if ( config.isEnabled( 'onboarding/big-sky-before-plans' ) && createWithBigSky ) {
+						if ( isBigSkyBeforePlansExperiment && createWithBigSky ) {
 							return navigate( 'design-choices' );
 						}
-						return navigate( 'designSetup' );
+						return navigate( 'design-setup' );
 					}
-				case 'designSetup':
+				case 'design-setup':
 					if ( isDesignChoicesStepEnabled ) {
 						return navigate( 'design-choices' );
 					}
@@ -447,15 +475,17 @@ const onboarding: Flow = {
 				clearSignupDestinationCookie();
 				clearSignupCompleteFlowName();
 				clearSignupCompleteSlug();
+
+				if ( typeof window !== 'undefined' ) {
+					delete window.__a8cBigSkyOnboarding;
+				}
 			}
 		}, [ currentStepSlug, reduxDispatch, resetOnboardStore ] );
 
 		const [ isGoalsFirstExperimentLoading, isGoalsFirstExperiment ] = useGoalsFirstExperiment();
 		// The personal plan price appears on the design choice step under these conditions. Pre-load it so it doesn't flash into existence
-		const preloadPersonalProduct =
-			! isGoalsFirstExperimentLoading &&
-			isGoalsFirstExperiment &&
-			config.isEnabled( 'onboarding/big-sky-before-plans' );
+		// Preload even before we know whether use is in the big-sky-before-plans experiment. By the time we know it will be too late.
+		const preloadPersonalProduct = ! isGoalsFirstExperimentLoading && isGoalsFirstExperiment;
 
 		useSelect(
 			( select ) =>

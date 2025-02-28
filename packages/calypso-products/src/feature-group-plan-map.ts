@@ -107,7 +107,6 @@ import {
 	FEATURE_UNLIMITED_PRODUCTS,
 	FEATURE_UPTIME_MONITOR_JP,
 	FEATURE_USERS,
-	FEATURE_VIDEOPRESS_JP,
 	FEATURE_WAF_V2,
 	FEATURE_WOOCOMMERCE_MOBILE_APP,
 	FEATURE_WOOCOMMERCE_STORE,
@@ -135,8 +134,33 @@ import {
 	FEATURE_CONNECT_ANALYTICS,
 	FEATURE_GROUP_DEV_TOOLS,
 	FEATURE_UNLTD_SOCIAL_MEDIA_JP,
+	FEATURE_BIG_SKY_WEBSITE_BUILDER,
+	FEATURE_GROUP_BIG_SKY,
+	FEATURE_GROUP_UPLOAD_VIDEOS,
+	FEATURE_UPLOAD_VIDEO,
+	FEATURE_GROUP_STATS,
+	FEATURE_STATS_BASIC_20250206,
+	FEATURE_STATS_ADVANCED_20250206,
+	FEATURE_SUPPORT,
 } from './constants';
 import { FeatureGroupMap } from './types';
+
+const isUploadVideosTranslated = () => {
+	const isEnglishLocale = i18n.getLocaleSlug()?.startsWith( 'en' );
+	const hasUploadVideoTranslation =
+		i18n.hasTranslation( 'Upload videos' ) &&
+		i18n.hasTranslation(
+			'Upload video files like mp4 and display them beautifully in 4K resolution, with picture-in-picture, subtitles, and without intrusive ads.'
+		);
+
+	return isEnglishLocale || hasUploadVideoTranslation;
+};
+
+const isStatsGroupTranslated = () => {
+	const isEnglishLocale = i18n.getLocaleSlug()?.startsWith( 'en' );
+	const hasTranslation = i18n.hasTranslation( 'Stats' ) && i18n.hasTranslation( 'Premium stats' );
+	return isEnglishLocale || hasTranslation;
+};
 
 export const featureGroups: Partial< FeatureGroupMap > = {
 	[ FEATURE_GROUP_ALL_FEATURES ]: {
@@ -160,8 +184,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_BANDWIDTH,
 			FEATURE_STATS_JP,
-			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
-			FEATURE_PRIORITY_24_7_SUPPORT,
+			FEATURE_SUPPORT,
 			FEATURE_PLUGINS_THEMES,
 			FEATURE_PLUGIN_AUTOUPDATE_JP,
 			FEATURE_CONTACT_FORM_JP,
@@ -254,7 +277,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 			FEATURE_STATS_PAID,
 			FEATURE_UNLTD_SOCIAL_MEDIA_JP,
 			FEATURE_SEO_JP,
-			FEATURE_VIDEOPRESS_JP,
+			...( isUploadVideosTranslated() ? [ FEATURE_UPLOAD_VIDEO ] : [] ),
 			FEATURE_PREMIUM_CONTENT_JP,
 			FEATURE_PAID_SUBSCRIBERS_JP,
 			FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
@@ -374,11 +397,29 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 			WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 		],
 	},
+	[ FEATURE_GROUP_BIG_SKY ]: {
+		slug: FEATURE_GROUP_BIG_SKY,
+		getTitle: () => null,
+		getFeatures: () => [ FEATURE_BIG_SKY_WEBSITE_BUILDER ],
+	},
 	[ FEATURE_GROUP_ENTITIES ]: {
 		slug: FEATURE_GROUP_ENTITIES,
 		getTitle: () => null,
 		getFeatures: () => [ FEATURE_UNLIMITED_ENTITIES ],
 	},
+
+	[ FEATURE_GROUP_UPLOAD_VIDEOS ]: {
+		slug: FEATURE_GROUP_UPLOAD_VIDEOS,
+		getTitle: () => null,
+		getFeatures: () => [ FEATURE_UPLOAD_VIDEO ],
+	},
+
+	[ FEATURE_GROUP_STATS ]: {
+		slug: FEATURE_GROUP_STATS,
+		getTitle: () => null,
+		getFeatures: () => [ FEATURE_STATS_BASIC_20250206, FEATURE_STATS_ADVANCED_20250206 ],
+	},
+
 	[ FEATURE_GROUP_ADS ]: {
 		slug: FEATURE_GROUP_ADS,
 		getTitle: () => null,
@@ -424,13 +465,20 @@ export function resolveFeatureGroupsForFeaturesGrid( {
 	if ( showSimplifiedFeatures ) {
 		return {
 			[ FEATURE_GROUP_STORAGE ]: featureGroups[ FEATURE_GROUP_STORAGE ],
+			[ FEATURE_GROUP_BIG_SKY ]: featureGroups[ FEATURE_GROUP_BIG_SKY ],
 			[ FEATURE_GROUP_ENTITIES ]: featureGroups[ FEATURE_GROUP_ENTITIES ],
 			[ FEATURE_GROUP_DOMAIN ]: featureGroups[ FEATURE_GROUP_DOMAIN ],
 			[ FEATURE_GROUP_ADS ]: featureGroups[ FEATURE_GROUP_ADS ],
 			[ FEATURE_GROUP_THEMES ]: featureGroups[ FEATURE_GROUP_THEMES ],
 			[ FEATURE_GROUP_SUPPORT ]: featureGroups[ FEATURE_GROUP_SUPPORT ],
+			...( isStatsGroupTranslated() && {
+				[ FEATURE_GROUP_STATS ]: featureGroups[ FEATURE_GROUP_STATS ],
+			} ),
 			[ FEATURE_GROUP_CUSTOMIZE_STYLE ]: featureGroups[ FEATURE_GROUP_CUSTOMIZE_STYLE ],
 			[ FEATURE_GROUP_ANALYTICS ]: featureGroups[ FEATURE_GROUP_ANALYTICS ],
+			...( isUploadVideosTranslated() && {
+				[ FEATURE_GROUP_UPLOAD_VIDEOS ]: featureGroups[ FEATURE_GROUP_UPLOAD_VIDEOS ],
+			} ),
 			[ FEATURE_GROUP_CUSTOM_PLUGINS ]: featureGroups[ FEATURE_GROUP_CUSTOM_PLUGINS ],
 			[ FEATURE_GROUP_DEV_TOOLS ]: featureGroups[ FEATURE_GROUP_DEV_TOOLS ],
 			[ FEATURE_GROUP_WOO ]: featureGroups[ FEATURE_GROUP_WOO ],

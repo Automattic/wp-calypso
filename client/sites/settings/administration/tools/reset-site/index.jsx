@@ -18,14 +18,15 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import { Panel, PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { getSettingsSource } from 'calypso/my-sites/site-settings/site-tools/utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getSite, getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { useSetFeatureBreadcrumb } from '../../../../hooks/breadcrumbs/use-set-feature-breadcrumb';
 import { DIFMUpsell } from '../../../components/difm-upsell-banner';
-import { isHostingMenuUntangled } from '../../../utils';
 
 import './style.scss';
 
@@ -46,10 +47,12 @@ function SiteResetCard( {
 	const [ isDomainConfirmed, setDomainConfirmed ] = useState( false );
 	const [ resetComplete, setResetComplete ] = useState( false );
 
-	const isUntangled = isHostingMenuUntangled();
+	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 
 	const title = isUntangled ? translate( 'Reset site' ) : translate( 'Site Reset' );
-	const source = isUntangled ? '/sites/settings/administration' : getSettingsSource();
+	const source = isUntangled ? '/sites/settings/site' : getSettingsSource();
+
+	useSetFeatureBreadcrumb( { siteId, title } );
 
 	const checkStatus = async () => {
 		if ( status?.status !== 'completed' && isAtomic ) {
@@ -304,7 +307,9 @@ function SiteResetCard( {
 	return (
 		<Panel className="settings-administration__reset-site">
 			{ ! isLoading && <Interval onTick={ checkStatus } period={ EVERY_FIVE_SECONDS } /> }
-			<HeaderCakeBack icon="chevron-left" href={ `${ source }/${ selectedSiteSlug }` } />
+			{ ! isUntangled && (
+				<HeaderCakeBack icon="chevron-left" href={ `${ source }/${ selectedSiteSlug }` } />
+			) }
 			<NavigationHeader
 				title={ title }
 				subtitle={ translate(

@@ -28,7 +28,7 @@ import useProductsBySlug from '../hooks/use-products-by-slug';
 import useReferralDevSite from '../hooks/use-referral-dev-site';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import { getClientReferralQueryArgs } from '../lib/get-client-referral-query-args';
-import useSubmitForm from '../products-overview/product-listing/hooks/use-submit-form';
+import useSubmitForm from '../products-overview-v2/hooks/use-submit-form';
 import NoticeSummary from './notice-summary';
 import PendingPaymentPopover from './pending-payment-popover';
 import PricingSummary from './pricing-summary';

@@ -29,6 +29,7 @@ export const useTracking = ( params: Params ) => {
 	const isCheckListCompleted = completedSteps.length === tasks.length;
 	const isSiteAvailable = !! site;
 	const hasNoTask = tasks.length === 0;
+	const goals = site?.options?.site_goals?.join( ',' );
 
 	// We skip the view events until we have fetched the site details to avoid sending incomplete data
 	const shoulSkipTracking = hasNoTask || ! isSiteAvailable;
@@ -49,6 +50,7 @@ export const useTracking = ( params: Params ) => {
 			context: context,
 			site_intent: siteIntent,
 			flow,
+			goals,
 		} );
 
 		tasks.forEach( ( task: Task ) => {
@@ -60,6 +62,7 @@ export const useTracking = ( params: Params ) => {
 				order: task.order,
 				site_intent: siteIntent,
 				flow,
+				goals,
 			} );
 		} );
 		// Array of tasks requires deep comparison
@@ -78,6 +81,7 @@ export const useTracking = ( params: Params ) => {
 			task_id: task.id,
 			flow,
 			order: task.order,
+			goals,
 		} );
 	};
 

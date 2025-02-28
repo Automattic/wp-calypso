@@ -48,7 +48,7 @@ const DevelopmentSiteActions = () => {
 					/>
 					<Action
 						icon={ <LaunchIcon /> }
-						href={ `/settings/general/${ site?.slug }` }
+						href={ `/sites/settings/site/${ site?.slug }` }
 						text={ translate( 'Prepare for launch' ) }
 					/>
 				</ul>

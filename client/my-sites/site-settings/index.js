@@ -1,7 +1,6 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { get } from 'lodash';
-import { makeLayout, render as clientRender } from 'calypso/controller';
+import { makeLayout, render as clientRender, redirectIfDuplicatedView } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
 	acceptSiteTransfer,
@@ -17,18 +16,23 @@ import {
 	startSiteOwnerTransfer,
 	renderSiteTransferredScreen,
 } from 'calypso/my-sites/site-settings/controller';
-import { setScroll, siteSettings } from 'calypso/my-sites/site-settings/settings-controller';
+import {
+	setScroll,
+	siteSettings,
+	redirectToolsIfRemoveDuplicateViewsExperimentEnabled,
+	redirectSettingsIfDuplciatedViewsEnabled,
+} from 'calypso/my-sites/site-settings/settings-controller';
 import {
 	redirectIfCantDeleteSite,
 	redirectIfCantStartSiteOwnerTransfer,
 } from 'calypso/sites/settings/administration/controller';
-
 export default function () {
-	page( '/settings', '/settings/general' );
+	page( '/settings', redirectSettingsIfDuplciatedViewsEnabled );
 
 	page(
 		'/settings/general/:site_id',
 		siteSelection,
+		redirectIfDuplicatedView( 'options-general.php' ),
 		navigation,
 		setScroll,
 		siteSettings,
@@ -55,22 +59,17 @@ export default function () {
 		return page.redirect( redirectPath );
 	} );
 
-	if ( isEnabled( 'untangling/hosting-menu' ) ) {
-		page( '/settings/delete-site/:site', ( context ) => {
-			page.redirect( `/sites/settings/administration/${ context.params.site }/delete-site` );
-		} );
-	} else {
-		page(
-			'/settings/delete-site/:site_id',
-			siteSelection,
-			redirectIfCantDeleteSite,
-			navigation,
-			setScroll,
-			deleteSite,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		'/settings/delete-site/:site_id',
+		siteSelection,
+		redirectToolsIfRemoveDuplicateViewsExperimentEnabled,
+		redirectIfCantDeleteSite,
+		navigation,
+		setScroll,
+		deleteSite,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		`/settings/disconnect-site/:site_id`,
@@ -90,22 +89,17 @@ export default function () {
 		clientRender
 	);
 
-	if ( isEnabled( 'untangling/hosting-menu' ) ) {
-		page( '/settings/start-over/:site', ( context ) => {
-			page.redirect( `/sites/settings/administration/${ context.params.site }/reset-site` );
-		} );
-	} else {
-		page(
-			'/settings/start-over/:site_id',
-			siteSelection,
-			redirectIfCantDeleteSite,
-			navigation,
-			setScroll,
-			startOver,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		'/settings/start-over/:site_id',
+		siteSelection,
+		redirectToolsIfRemoveDuplicateViewsExperimentEnabled,
+		redirectIfCantDeleteSite,
+		navigation,
+		setScroll,
+		startOver,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/settings/manage-connection/:site_id',
@@ -117,22 +111,17 @@ export default function () {
 		clientRender
 	);
 
-	if ( isEnabled( 'untangling/hosting-menu' ) ) {
-		page( '/settings/start-site-transfer/:site', ( context ) => {
-			page.redirect( `/sites/settings/administration/${ context.params.site }/transfer-site` );
-		} );
-	} else {
-		page(
-			'/settings/start-site-transfer/:site_id',
-			siteSelection,
-			redirectIfCantStartSiteOwnerTransfer,
-			navigation,
-			setScroll,
-			startSiteOwnerTransfer,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		'/settings/start-site-transfer/:site_id',
+		siteSelection,
+		redirectToolsIfRemoveDuplicateViewsExperimentEnabled,
+		redirectIfCantStartSiteOwnerTransfer,
+		navigation,
+		setScroll,
+		startSiteOwnerTransfer,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/settings/site-transferred/:site_id',

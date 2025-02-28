@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { DomainData } from '@automattic/data-stores';
 import { Icon } from '@wordpress/components';
 import { lock } from '@wordpress/icons';
@@ -8,12 +9,14 @@ interface DomainsTableSslCellProps {
 	domainManagementLink: string;
 	sslStatus: DomainData[ 'ssl_status' ];
 	hasWpcomManagedSslCert: boolean;
+	as?: 'td' | 'div';
 }
 
 export default function DomainsTableSslCell( {
 	domainManagementLink,
 	sslStatus,
 	hasWpcomManagedSslCert,
+	as: Element = 'td',
 }: DomainsTableSslCellProps ) {
 	const translate = useTranslate();
 	// WordPress.com managed subdomains (e.g. *.wordpress.com, *.wpcomstaging.com, etc.)
@@ -38,13 +41,15 @@ export default function DomainsTableSslCell( {
 
 	if ( sslStatus ) {
 		button = (
-			<a
+			<button
 				className="domains-table-row__ssl-status-button"
-				href={ `${ domainManagementLink }?ssl-open=true` }
-				onClick={ ( event ) => event.stopPropagation() }
+				onClick={ ( event ) => {
+					event.stopPropagation();
+					page.show( `${ domainManagementLink }?ssl-open=true` );
+				} }
 			>
 				{ getSslStatusText() }
-			</a>
+			</button>
 		);
 	} else if ( hasWpcomManagedSslCert ) {
 		button = <span>{ translate( 'Active' ) }</span>;
@@ -53,7 +58,7 @@ export default function DomainsTableSslCell( {
 	}
 
 	return (
-		<td
+		<Element
 			className={ clsx( `domains-table-row__ssl-cell`, {
 				[ `domains-table-row__ssl-cell__active` ]: isActiveSsl,
 				[ `domains-table-row__ssl-cell__pending` ]: isPendingSsl,
@@ -62,6 +67,6 @@ export default function DomainsTableSslCell( {
 		>
 			{ domainHasSsl && <Icon icon={ lock } size={ 18 } /> }
 			{ button }
-		</td>
+		</Element>
 	);
 }

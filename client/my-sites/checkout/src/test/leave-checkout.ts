@@ -62,6 +62,69 @@ describe( 'leaveCheckout', () => {
 			expect( navigate ).not.toHaveBeenCalledWith( '/\\example.com' );
 		} );
 	} );
+
+	describe( 'getCloseURL handling', () => {
+		it( 'returns to plans page when previous path is empty', () => {
+			const siteSlug = 'mywpsite.wordpress.com';
+
+			leaveCheckout( {
+				siteSlug: siteSlug,
+				tracksEvent: 'checkout_cancel',
+				userHasClearedCart: true,
+			} );
+
+			expect( navigate ).toHaveBeenCalledWith( `/plans/${ siteSlug }` );
+		} );
+
+		it( 'returns to /start if missing site slug', () => {
+			leaveCheckout( {
+				tracksEvent: 'checkout_cancel',
+				userHasClearedCart: true,
+			} );
+
+			expect( navigate ).toHaveBeenCalledWith( '/start' );
+		} );
+
+		it( 'returns to domain page when previous page is email upsell and cart is emptied', () => {
+			const siteSlug = 'mywpsite.wordpress.com';
+
+			leaveCheckout( {
+				siteSlug: siteSlug,
+				tracksEvent: 'checkout_cancel',
+				previousPath: '/domains/add/my-search-domain/email/mywpsite.wordpress.com?',
+				userHasClearedCart: true,
+			} );
+
+			expect( navigate ).toHaveBeenCalledWith( `/domains/add/${ siteSlug }` );
+		} );
+
+		it( 'returns to previousPath', () => {
+			const previousPath = `/previous-path`;
+
+			leaveCheckout( {
+				tracksEvent: 'checkout_cancel',
+				previousPath: previousPath,
+				userHasClearedCart: false,
+			} );
+
+			expect( navigate ).toHaveBeenCalledWith( previousPath );
+		} );
+
+		it( 'returns to previousPath if email upsell and cart is not emptied', () => {
+			const siteSlug = 'mywpsite.wordpress.com';
+			const domain = 'my-search-domain';
+			const previousPath = `/domains/add/${ domain }/email/${ siteSlug }?`;
+
+			leaveCheckout( {
+				siteSlug: siteSlug,
+				tracksEvent: 'checkout_cancel',
+				previousPath: previousPath,
+				userHasClearedCart: false,
+			} );
+
+			expect( navigate ).toHaveBeenCalledWith( previousPath );
+		} );
+	} );
 } );
 
 describe( 'isRelativeUrl', () => {

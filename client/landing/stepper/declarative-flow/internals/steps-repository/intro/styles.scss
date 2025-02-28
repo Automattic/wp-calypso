@@ -42,54 +42,6 @@
 		}
 	}
 
-	&.link-in-bio {
-		background-color: #d0cce3;
-
-		.step-container {
-			background-image:
-				url(calypso/assets/images/onboarding/link-in-bio-intro-left.webp),
-				url(calypso/assets/images/onboarding/link-in-bio-intro-right.webp);
-			background-position-y: 85%, 15%;
-			/*!rtl:ignore*/
-			background-position-x: 0, 100%;
-			background-repeat: no-repeat, no-repeat;
-			background-attachment: fixed;
-			background-size: auto 15%, auto 15%;
-
-			@include break-huge {
-				background-size: auto 25%, auto 25%;
-				background-position-y: 85%, 10%;
-				background-image:
-					url(calypso/assets/images/onboarding/link-in-bio-intro-left-desktop.webp),
-					url(calypso/assets/images/onboarding/link-in-bio-intro-right-desktop.webp);
-			}
-		}
-	}
-
-	&.ecommerce {
-		background-color: #fff;
-		background-image:
-			url(calypso/assets/images/onboarding/ecommerce-intro-1.jpg),
-			url(calypso/assets/images/onboarding/ecommerce-intro-2.jpg);
-		background-position-y: -40px, 110%;
-		/*!rtl:ignore*/
-		background-position-x: 109%, -10%;
-		background-repeat: no-repeat, no-repeat;
-		background-attachment: fixed;
-		background-size: auto 15%, auto 25%;
-		padding-top: 0;
-
-		@include break-huge {
-			background-size: auto 15%, auto 35%, auto 50%;
-			background-position-x: 65%, -100px, 120%;
-			background-position-y: 5%, 85%, 125%;
-			background-image:
-				url(calypso/assets/images/onboarding/ecommerce-intro-1.jpg),
-				url(calypso/assets/images/onboarding/ecommerce-intro-2.jpg),
-				url(calypso/assets/images/onboarding/ecommerce-intro-3.jpg);
-		}
-	}
-
 	min-height: 100%;
 	min-width: 100%;
 	width: 100%;

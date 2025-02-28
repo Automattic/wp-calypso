@@ -10,9 +10,7 @@ import {
 import page from '@automattic/calypso-router';
 import { Button, Card, Gridicon } from '@automattic/components';
 import {
-	BUNDLED_THEME,
 	DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,
-	DOT_ORG_THEME,
 	ThemePreview as ThemeWebPreview,
 	getDesignPreviewUrl,
 	isDefaultGlobalStylesVariationSlug,
@@ -45,6 +43,8 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import ThemeSiteSelectorModal from 'calypso/components/theme-site-selector-modal';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
+import { HOSTING_THEME_SELCETED_HASH } from 'calypso/hosting/constants';
+import { withCompleteLaunchpadTasksWithNotice } from 'calypso/launchpad/hooks/with-complete-launchpad-tasks-with-notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -65,6 +65,7 @@ import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { useSiteOption } from 'calypso/state/sites/hooks';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { withSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/with-site-global-styles-on-personal';
 import { getCurrentPlan, isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
@@ -99,13 +100,13 @@ import {
 	isThemeWooCommerce,
 	isActivatingTheme as getIsActivatingTheme,
 	isInstallingTheme as getIsInstallingTheme,
+	hasActivatedTheme as getHasActivatedTheme,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ReviewsModal } from '../marketplace/components/reviews-modal';
 import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
-import { LivePreviewButton } from './live-preview-button';
 import ThemeDownloadCard from './theme-download-card';
 import ThemeFeaturesCard from './theme-features-card';
 import ThemeNotFoundError from './theme-not-found-error';
@@ -177,11 +178,18 @@ class ThemeSheet extends Component {
 		isWide: isWithinBreakpoint( '>960px' ),
 	};
 
+	// This is a plain instance property because we only want to know the state of the
+	// hash at the time of the component mounting.
+	// Checking hash in `componentDidMount` to preserve SSR behavior.
+	isThemeSelectedTask = false;
+
 	scrollToTop = () => {
 		window.scroll( 0, 0 );
 	};
 
 	componentDidMount() {
+		this.isThemeSelectedTask = window.location.hash === HOSTING_THEME_SELCETED_HASH;
+
 		this.scrollToTop();
 
 		const { syncActiveTheme, themeStartActivationSync, siteId, themeId } = this.props;
@@ -205,6 +213,24 @@ class ThemeSheet extends Component {
 
 		if ( defaultOption?.key !== prevProps.defaultOption?.key ) {
 			this.maybeAutoActivate();
+		}
+
+		if (
+			this.props.hasActivatedTheme &&
+			! prevProps.hasActivatedTheme &&
+			this.props.isActive &&
+			! prevProps.isActive &&
+			( this.isThemeSelectedTask || this.props.defaultOption?.key === 'activate' )
+		) {
+			const noticeSettings = {
+				id: 'site-theme-activated',
+				duration: 10000,
+			};
+			this.props.completeLaunchpadTasks(
+				[ 'site_theme_selected' ],
+				this.props.translate( 'Congratulations! You’ve activated your theme!' ),
+				noticeSettings
+			);
 		}
 	}
 
@@ -336,31 +362,36 @@ class ThemeSheet extends Component {
 	};
 
 	previewAction = ( event, type, source ) => {
-		const { demoUrl, isLivePreviewSupported } = this.props;
+		const { isLivePreviewSupported } = this.props;
 		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
 			return;
 		}
 
 		event.preventDefault();
+
+		const previewSource = isLivePreviewSupported ? 'live-preview' : 'regular';
+
 		this.props.recordTracksEvent( 'calypso_theme_live_demo_preview_click', {
 			theme: this.props.themeId,
 			type,
 			source,
-			/**
-			 * To see tracks as the UI changes depending on whether Live Preview is available or not.
-			 * @see https://github.com/Automattic/wp-calypso/pull/80540
-			 */
 			has_live_preview_cta: isLivePreviewSupported,
 		} );
 
-		// The embed live demo works only for WP.com themes
-		if ( this.isWpcomOnlyTheme() ) {
-			const { preview } = this.props.options;
-			this.onBeforeOptionAction();
-			return preview.action( this.props.themeId );
-		}
+		const { preview } = this.props.options;
+		this.onBeforeOptionAction();
 
-		return window.open( demoUrl, '_blank', 'noreferrer,noopener' );
+		this.props.setThemePreviewOptions(
+			this.props.themeId,
+			this.props.defaultOption,
+			this.props.secondaryOption,
+			{
+				styleVariation: this.getSelectedStyleVariation(),
+				previewSource: previewSource,
+			}
+		);
+
+		return preview.action( this.props.themeId );
 	};
 
 	shouldRenderForStaging() {
@@ -394,8 +425,12 @@ class ThemeSheet extends Component {
 		);
 	}
 
-	isWpcomOnlyTheme() {
-		return this.props.isWpcomTheme && ! this.props.isExternallyManagedTheme;
+	isWebPreviewAvailable() {
+		return (
+			this.props.isWpcomTheme &&
+			! this.props.isExternallyManagedTheme &&
+			! this.props.stylesheet.startsWith( 'a8c' )
+		);
 	}
 
 	isThemeCurrentOne() {
@@ -554,51 +589,27 @@ class ThemeSheet extends Component {
 		);
 	};
 
-	renderThemeBadge = () => {
-		const { themeId, themeTier, themeType } = this.props;
-
-		const isCommunityTheme = themeType === DOT_ORG_THEME;
-		const isPartnerTheme = themeTier.slug === 'partner';
-		const isSenseiOrWooCommerceTheme = themeType === BUNDLED_THEME;
-
-		if ( ! isCommunityTheme && ! isPartnerTheme && ! isSenseiOrWooCommerceTheme ) {
-			return null;
-		}
-
-		return (
-			<ThemeTierBadge
-				className="theme__sheet-main-info-type"
-				showUpgradeBadge={ false }
-				themeId={ themeId }
-			/>
-		);
-	};
-
 	renderHeader = () => {
-		const {
-			author,
-			isLivePreviewSupported,
-			isWPForTeamsSite,
-			name,
-			retired,
-			siteId,
-			softLaunched,
-			themeId,
-			translate,
-		} = this.props;
+		const { author, isWPForTeamsSite, name, retired, softLaunched, translate, themeId } =
+			this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
 		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;
 		const shouldRenderButton = ! retired && ! isWPForTeamsSite && ! this.shouldRenderForStaging();
-		const isExternalLink = ! this.props.isWpcomTheme || this.props.isExternallyManagedTheme;
 
 		return (
 			<div className="theme__sheet-header">
 				<div className="theme__sheet-main">
 					<div className="theme__sheet-main-info">
 						<h1 className="theme__sheet-main-info-title">
+							<ThemeTierBadge
+								className="theme__sheet-main-info-type"
+								showUpgradeBadge
+								showPartnerPrice
+								themeId={ themeId }
+							/>
+
 							{ title }
-							{ this.renderThemeBadge() }
 							{ softLaunched && (
 								<span className="theme__sheet-bar-soft-launched">{ translate( 'A8C Only' ) }</span>
 							) }
@@ -606,28 +617,11 @@ class ThemeSheet extends Component {
 						<span className="theme__sheet-main-info-tag">{ tag }</span>
 					</div>
 					<div className="theme__sheet-main-actions">
+						{ this.renderPreviewButton() }
 						{ shouldRenderButton &&
 							( this.shouldRenderUnlockStyleButton()
 								? this.renderUnlockStyleButton()
 								: this.renderButton() ) }
-						<LivePreviewButton
-							siteId={ siteId }
-							themeId={ themeId }
-							onBeforeLivePreview={ this.onBeforeOptionAction }
-						/>
-						{ this.shouldRenderPreviewButton() && ! isLivePreviewSupported && (
-							<Button
-								className="theme__sheet-demo-button"
-								onClick={ ( e ) => {
-									this.previewAction( e, 'link', 'actions' );
-								} }
-							>
-								{ translate( 'Demo site', {
-									context: 'The button to open the demo site of individual theme',
-								} ) }
-								{ isExternalLink && <Icon icon={ external } size={ 16 } /> }
-							</Button>
-						) }
 					</div>
 				</div>
 				{ ! retired && this.renderStyleVariations() }
@@ -933,7 +927,7 @@ class ThemeSheet extends Component {
 					</span>
 				);
 			} else if ( defaultOption.label === translate( 'Activate' ) ) {
-				return translate( 'Activate this design' );
+				return translate( 'Activate' );
 			}
 			// else: fall back to default label
 		}
@@ -1027,6 +1021,27 @@ class ThemeSheet extends Component {
 				target={ isActive ? '_blank' : null }
 			>
 				{ this.isLoaded() ? label : placeholder }
+			</Button>
+		);
+	};
+
+	renderPreviewButton = () => {
+		const { translate, isWpcomTheme, isExternallyManagedTheme } = this.props;
+		const isExternalLink = ! isWpcomTheme || isExternallyManagedTheme;
+
+		if ( ! this.shouldRenderPreviewButton() ) {
+			return null;
+		}
+
+		return (
+			<Button
+				className="theme__sheet-demo-button"
+				onClick={ ( e ) => this.previewAction( e, 'link', 'preview', 'regular' ) }
+			>
+				{ translate( 'Preview', {
+					context: 'Button to preview a theme',
+				} ) }
+				{ isExternalLink && <Icon icon={ external } size={ 16 } /> }
 			</Button>
 		);
 	};
@@ -1248,7 +1263,11 @@ class ThemeSheet extends Component {
 						}
 					} }
 				/>
-				<ActivationModal source="details" />
+				<ActivationModal
+					source="details"
+					siteIntent={ this.props.siteIntent }
+					showSuccessNotice={ ! this.isThemeSelectedTask }
+				/>
 				<NavigationHeader
 					navigationItems={ navigationItems }
 					compactBreadcrumb={ ! this.state.isWide }
@@ -1265,7 +1284,7 @@ class ThemeSheet extends Component {
 					</div>
 					{ ! isRemoved && (
 						<div className="theme__sheet-column-right">
-							{ this.isWpcomOnlyTheme() ? this.renderWebPreview() : this.renderScreenshot() }
+							{ this.isWebPreviewAvailable() ? this.renderWebPreview() : this.renderScreenshot() }
 						</div>
 					) }
 				</div>
@@ -1336,6 +1355,7 @@ const ThemeSheetWithOptions = ( props ) => {
 	let defaultOption;
 	let secondaryOption = 'tryandcustomize';
 	const needsJetpackPlanUpgrade = isStandaloneJetpack && isPremium && ! isThemePurchased;
+	const siteIntent = useSiteOption( 'site_intent' );
 
 	if ( ! showTryAndCustomize ) {
 		secondaryOption = null;
@@ -1386,6 +1406,7 @@ const ThemeSheetWithOptions = ( props ) => {
 			defaultOption={ defaultOption }
 			secondaryOption={ secondaryOption }
 			source="showcase-sheet"
+			siteIntent={ siteIntent }
 		/>
 	);
 };
@@ -1477,6 +1498,7 @@ export default connect(
 			themeType: getThemeType( state, themeId ),
 			isActivatingTheme: getIsActivatingTheme( state, siteId ),
 			isInstallingTheme: getIsInstallingTheme( state, themeId, siteId ),
+			hasActivatedTheme: getHasActivatedTheme( state, siteId ),
 		};
 	},
 	{
@@ -1487,5 +1509,9 @@ export default connect(
 		errorNotice,
 	}
 )(
-	withSiteGlobalStylesStatus( withSiteGlobalStylesOnPersonal( localize( ThemeSheetWithOptions ) ) )
+	withCompleteLaunchpadTasksWithNotice(
+		withSiteGlobalStylesStatus(
+			withSiteGlobalStylesOnPersonal( localize( ThemeSheetWithOptions ) )
+		)
+	)
 );

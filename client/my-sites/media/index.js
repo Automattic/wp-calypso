@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { makeLayout, render as clientRender } from 'calypso/controller';
+import { makeLayout, render as clientRender, redirectIfDuplicatedView } from 'calypso/controller';
 import { getSiteFragment } from 'calypso/lib/route';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import mediaController from './controller';
@@ -10,6 +10,7 @@ export default function () {
 	page(
 		'/media/:filter(this-post|images|documents|videos|audio)?/:domain',
 		siteSelection,
+		redirectIfDuplicatedView( 'upload.php' ),
 		navigation,
 		mediaController.media,
 		makeLayout,

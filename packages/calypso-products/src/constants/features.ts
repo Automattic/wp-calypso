@@ -438,6 +438,10 @@ export const FEATURE_UNLIMITED_TRAFFIC = 'unlimited-traffic';
 export const FEATURE_TIERED_STORAGE_PLANS_AVAILABLE = 'tiered-storage-plans-available';
 export const FEATURE_FAST_SUPPORT_FROM_EXPERTS = 'fast-support-from-experts';
 export const FEATURE_PRIORITY_24_7_SUPPORT = 'priority-24-7-support';
+export const FEATURE_SUPPORT = 'support';
+export const FEATURE_UPLOAD_VIDEO = 'upload-video';
+export const FEATURE_STATS_BASIC_20250206 = 'stats-basic-20250206';
+export const FEATURE_STATS_ADVANCED_20250206 = 'stats-advanced-20250206';
 
 // Woo Express Features
 export const FEATURE_WOOCOMMERCE_STORE = 'woocommerce-store'; // WooCommerce store
@@ -500,3 +504,5 @@ export const FEATURE_WOO_AUTOMATE = 'feature-woo-automate';
 export const FEATURE_GOOGLE_LISTING_ADS = 'feature-google-listing-ads';
 export const FEATURE_CONNECT_ANALYTICS = 'feature-connect-analytics';
 export const FEATURE_LIMITED_SITE_ACTIVITY_LOG = 'feature-limited-site-activity-log';
+export const FEATURE_BIG_SKY_WEBSITE_BUILDER = 'feature-big-sky-website-builder';
+export const FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT = 'feature-big-sky-website-builder-checkout';

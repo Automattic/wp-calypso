@@ -4,11 +4,11 @@ import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/current-user';
 import config from '@automattic/calypso-config';
 import { UserActions, User as UserStore } from '@automattic/data-stores';
-import { geolocateCurrencySymbol } from '@automattic/format-currency';
 import {
 	HOSTED_SITE_MIGRATION_FLOW,
 	MIGRATION_SIGNUP_FLOW,
 	SITE_MIGRATION_FLOW,
+	ONBOARDING_FLOW,
 } from '@automattic/onboarding';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { dispatch } from '@wordpress/data';
@@ -23,6 +23,7 @@ import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import getSuperProps from 'calypso/lib/analytics/super-props';
 import { setupErrorLogger } from 'calypso/lib/error-logger/setup-error-logger';
+import { addQueryArgs } from 'calypso/lib/url';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { onDisablePersistence } from 'calypso/lib/user/store';
 import { createReduxStore } from 'calypso/state';
@@ -37,6 +38,7 @@ import { FlowRenderer } from './declarative-flow/internals';
 import { AsyncHelpCenter } from './declarative-flow/internals/components';
 import 'calypso/components/environment-badge/style.scss';
 import 'calypso/assets/stylesheets/style.scss';
+import { createSessionId } from './declarative-flow/internals/state-manager/create-session-id';
 import availableFlows from './declarative-flow/registered-flows';
 import { USER_STORE } from './stores';
 import { setupWpDataDebug } from './utils/devtools';
@@ -45,6 +47,7 @@ import { enhanceFlowWithAuth, injectUserStepInSteps } from './utils/enhanceFlowW
 import redirectPathIfNecessary from './utils/flow-redirect-handler';
 import { getFlowFromURL } from './utils/get-flow-from-url';
 import { startStepperPerformanceTracking } from './utils/performance-tracking';
+import { getSessionId } from './utils/use-session-id';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
 import type { AnyAction } from 'redux';
 
@@ -55,16 +58,11 @@ function initializeCalypsoUserStore( reduxStore: any, user: CurrentUser ) {
 	reduxStore.dispatch( setCurrentUser( user ) );
 }
 
-function determineFlow() {
-	const flowNameFromPathName = window.location.pathname.split( '/' )[ 2 ];
-
-	return availableFlows[ flowNameFromPathName ] || availableFlows[ 'site-setup' ];
-}
 interface AppWindow extends Window {
 	BUILD_TARGET: string;
 }
 
-const DEFAULT_FLOW = 'site-setup';
+const DEFAULT_FLOW = ONBOARDING_FLOW;
 
 const getSiteIdFromURL = () => {
 	const siteId = new URLSearchParams( window.location.search ).get( 'siteId' );
@@ -83,7 +81,7 @@ const initializeHotJar = ( flowName: string ) => {
 	}
 };
 
-window.AppBoot = async () => {
+async function main() {
 	const { pathname, search } = window.location;
 
 	// Before proceeding we redirect the user if necessary.
@@ -92,14 +90,17 @@ window.AppBoot = async () => {
 	}
 
 	const flowName = getFlowFromURL();
-	const siteId = getSiteIdFromURL();
+	const flowLoader = availableFlows[ flowName ];
 
-	if ( ! flowName ) {
-		// Stop the boot process if we can't determine the flow, reducing the number of edge cases
-		return ( window.location.href = `/setup/${ DEFAULT_FLOW }${ window.location.search }` );
+	if ( typeof flowLoader !== 'function' ) {
+		// If the URL can't be traced back to an existing flow, stop the boot
+		// process and redirect to the default flow.
+		window.location.href = `/setup/${ DEFAULT_FLOW }${ window.location.search }`;
+
+		return;
 	}
 
-	const flowLoader = determineFlow();
+	const siteId = getSiteIdFromURL();
 	// Load the flow asynchronously while things happen in parallel.
 	const flowPromise = flowLoader();
 
@@ -118,8 +119,26 @@ window.AppBoot = async () => {
 
 	const user = ( await initializeCurrentUser() ) as unknown;
 	const userId = ( user as CurrentUser ).ID;
+	let queryClient;
 
-	const { queryClient } = await createQueryClient( userId );
+	let { default: flow } = await flowPromise;
+	let flowSteps = 'initialize' in flow ? await flow.initialize() : null;
+
+	if ( '__experimentalUseSessions' in flow ) {
+		const sessionId = getSessionId() || createSessionId();
+		history.replaceState( null, '', addQueryArgs( { sessionId }, window.location.href ) );
+		queryClient = ( await createQueryClient( 'stepper-persistence-session-' + sessionId ) )
+			.queryClient;
+	} else {
+		queryClient = ( await createQueryClient( userId ) ).queryClient;
+	}
+
+	/**
+	 * When `initialize` returns false, it means the app should be killed (the user probably issued a redirect).
+	 */
+	if ( flowSteps === false ) {
+		return;
+	}
 
 	const initialState = getInitialState( initialReducer, userId );
 	const reduxStore = createReduxStore( initialState, initialReducer );
@@ -136,16 +155,6 @@ window.AppBoot = async () => {
 	initializeAnalytics( user, getSuperProps( reduxStore ) );
 
 	setupErrorLogger( reduxStore );
-
-	let { default: flow } = await flowPromise;
-	let flowSteps = 'initialize' in flow ? await flow.initialize() : null;
-
-	/**
-	 * When `initialize` returns false, it means the app should be killed (the user probably issued a redirect).
-	 */
-	if ( flowSteps === false ) {
-		return;
-	}
 
 	// Checking for initialize implies this is a V2 flow.
 	// CLEAN UP: once the `onboarding` flow is migrated to V2, this can be cleaned up to only support V2
@@ -165,7 +174,7 @@ window.AppBoot = async () => {
 	reduxStore.dispatch( setSelectedSiteId( siteId ) as unknown as AnyAction );
 
 	// No need to await this, it's not critical to the boot process and will slow booting down.
-	geolocateCurrencySymbol();
+	defaultCalypsoI18n.geolocateCurrencySymbol();
 
 	const root = createRoot( document.getElementById( 'wpcom' ) as HTMLElement );
 
@@ -193,4 +202,6 @@ window.AppBoot = async () => {
 			</Provider>
 		</CalypsoI18nProvider>
 	);
-};
+}
+
+main();

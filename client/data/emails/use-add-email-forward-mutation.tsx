@@ -8,10 +8,13 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getCacheKey as getEmailAccountsQueryKey } from './use-get-email-accounts-query';
+import type { ResponseError } from './types';
 import type { UseMutationOptions } from '@tanstack/react-query';
 
+const ArrayOfFive = new Array( 5 );
+
 type AddMailboxFormData = {
-	destination: string;
+	destinations: typeof ArrayOfFive;
 	mailbox: string;
 };
 
@@ -38,7 +41,7 @@ export function useIsLoading() {
 export default function useAddEmailForwardMutation(
 	domainName: string,
 	mutationOptions: Omit<
-		UseMutationOptions< any, unknown, AddMailboxFormData, Context >,
+		UseMutationOptions< any, ResponseError, AddMailboxFormData, Context >,
 		'mutationFn'
 	> = {}
 ) {
@@ -65,7 +68,7 @@ export default function useAddEmailForwardMutation(
 	};
 
 	mutationOptions.onMutate = async ( variables ) => {
-		const { mailbox, destination } = variables;
+		const { mailbox, destinations } = variables;
 		suppliedOnMutate?.( variables );
 
 		await queryClient.cancelQueries( { queryKey: emailAccountsQueryKey } );
@@ -79,16 +82,16 @@ export default function useAddEmailForwardMutation(
 			const newEmailForwards = orderBy(
 				[
 					...emailForwards,
-					{
+					...destinations.map( ( d ) => ( {
 						domain: domainName,
 						email_type: 'email_forward',
 						is_verified: false,
 						mailbox,
 						role: 'standard',
-						target: destination,
+						target: d,
 						temporary: true,
 						warnings: [],
-					},
+					} ) ),
 				],
 				[ 'mailbox' ],
 				[ 'asc' ]
@@ -135,7 +138,7 @@ export default function useAddEmailForwardMutation(
 		};
 	};
 
-	mutationOptions.onError = ( error, variables, context ) => {
+	mutationOptions.onError = ( error: ResponseError, variables, context ) => {
 		suppliedOnError?.( error, variables, context );
 
 		if ( context ) {
@@ -163,12 +166,14 @@ export default function useAddEmailForwardMutation(
 		);
 
 		if ( error ) {
+			const message =
+				typeof error.message === 'object' ? error.message.error_message : error.message;
 			errorMessage = translate(
 				'Failed to add email forward for {{strong}}%(emailAddress)s{{/strong}} with message "%(message)s". Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 				{
 					args: {
 						emailAddress: variables.mailbox,
-						message: error as string,
+						message,
 					},
 					components: noticeComponents,
 				}
@@ -178,11 +183,11 @@ export default function useAddEmailForwardMutation(
 		dispatch( errorNotice( errorMessage ) );
 	};
 
-	return useMutation< any, unknown, AddMailboxFormData, Context >( {
-		mutationFn: ( { mailbox, destination } ) =>
+	return useMutation< any, ResponseError, AddMailboxFormData, Context >( {
+		mutationFn: ( { mailbox, destinations } ) =>
 			wp.req.post( `/domains/${ encodeURIComponent( domainName ) }/email/new`, {
 				mailbox,
-				destination,
+				destinations,
 			} ),
 		...mutationOptions,
 	} );

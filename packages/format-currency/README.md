@@ -20,6 +20,20 @@ formatter.formatCurrency( /* ... */ );
 
 The formatting functions exposed by this package are actually methods on a `CurrencyFormatter` object. A default global formatter is created by the package but you can create your own formatter by using the `createFormatter` function if you want more control.
 
+## Why does this package exist?
+
+Formatting currency amounts can be surprisingly complex. Most people assume that the currency itself is the main thing that defines how to write an amount of money but it is actually more affected by locale and a number of options.
+
+Technically this package just provides a wrapper for `Intl.NumberFormat`, but it handles a lot of things automatically to make things simple and provide consistency. Here's what the functions of this package provide:
+
+- A cached number formatter for performance, keyed by currency and locale as well as any other options which must be passed to the `Intl` formatter (whether to show non-zero decimals, and whether to display a `+` sign for positive amounts).
+- The locale is set from WordPress, if available, but also falls back to the browser’s locale, and can be set explicitly if WordPress is not available (eg: for a logged-out pricing page).
+- This uses a forced latin character set to make sure we always display latin numbers for consistency.
+- We override currency codes with a hard-coded list. This is for consistency and so that some currencies seem less confusing when viewed in EN locales, since those are the default locales for many users (eg: always use `C$` for CAD instead of `CA$` or just `$` which are the CLDR standard depending on locale since `$` might imply CAD and it might imply USD).
+- We always show `US$` for USD when the user’s geolocation is not inside the US. This is important because other currencies use `$` for their currency and are surprised sometimes if they are actually charged in USD (which is the default for many users). We can’t safely display `US$` for everyone because we've found that US users are confused by that style and it decreases confidence in the product.
+- An option to format currency from the currency’s smallest unit (eg: cents in USD, yen in JPY). This is important because doing price math with floating point numbers in code produces unexpected rounding errors, so most currency amounts should be provided and manipulated as integers.
+- An optional API to return the formatted pieces of a price separately, so the consumer can decide how best to render them (eg: this is used to wrap different HTML tags around prices and currency symbols). JS already includes this feature as `Intl.NumberFormat.formatToParts()` but our API must also include the other features listed here and extra information like the position of the currency symbol (before or after the number).
+
 ## createFormatter()
 
 `createFormatter(): CurrencyFormatter`
@@ -29,16 +43,15 @@ Returns a formatter object that exposes the following methods:
 - `formatCurrency` (see below)
 - `getCurrencyObject` (see below)
 - `setDefaultLocale` (see below)
-- `setCurrencySymbol` (see below)
 - `geolocateCurrencySymbol` (see below)
 
 ## geolocateCurrencySymbol()
 
 `geolocateCurrencySymbol(): Promise<void>`
 
-This will attempt to make an unauthenticated network request to `https://public-api.wordpress.com/geo/`. This is to determine the country code to provide better USD formatting. By default, the currency symbol for USD will be based on the locale (unlike other currency codes which use a hard-coded list of overrides; see `setCurrencySymbol`); for `en-US`/`en` it will be `$` and for all other locales it will be `US$`. However, if the geolocation determines that the country is not inside the US, the USD symbol will be `US$` regardless of locale. This is to prevent confusion for users in non-US countries using an English locale.
+This will attempt to make an unauthenticated network request to `https://public-api.wordpress.com/geo/`. This is to determine the country code to provide better USD formatting. By default, the currency symbol for USD will be based on the locale (unlike other currency codes which use a hard-coded list of overrides); for `en-US`/`en` it will be `$` and for all other locales it will be `US$`. However, if the geolocation determines that the country is not inside the US, the USD symbol will be `US$` regardless of locale. This is to prevent confusion for users in non-US countries using an English locale.
 
-In the US, users will expect to see USD prices rendered with the currency symbol `$`. However, there are many other currencies which use `$` as their currency symbol (eg: `CAD`). This package tries to prevent confusion between these symbols by using an international version of the symbol when the locale does not match the currency. So if your locale is `en-CA`, USD prices will be rendered with the symbol `US$`. 
+In the US, users will expect to see USD prices rendered with the currency symbol `$`. However, there are many other currencies which use `$` as their currency symbol (eg: `CAD`). This package tries to prevent confusion between these symbols by using an international version of the symbol when the locale does not match the currency. So if your locale is `en-CA`, USD prices will be rendered with the symbol `US$`.
 
 However, this relies on the user having set their interface language to something other than `en-US`/`en`, and many English-speaking non-US users still have that interface language (eg: there's no English locale available in our settings for Argentinian English so such users would probably still have `en`). As a result, those users will see a price with `$` and could be misled about what currency is being displayed. `geolocateCurrencySymbol()` helps prevent that from happening by showing `US$` for those users.
 
@@ -71,18 +84,6 @@ Since rounding errors are common in floating point math, sometimes a price is pr
 `setDefaultLocale( locale: string | undefined ): void`
 
 A function that can be used to set a default locale for use by `formatCurrency()` and `getCurrencyObject()`. Note that this is global and will override any browser locale that is set! Use it with care.
-
-## setCurrencySymbol()
-
-`setCurrencySymbol( currencyCode: string, currencySymbol: string | undefined ): void`
-
-Change the currency symbol override used by formatting.
-
-By default, `formatCurrency` and `getCurrencyObject` use a currency symbol from a list of hard-coded overrides in this package keyed by the currency code. For example, `CAD` is always rendered as `C$` even if the locale is `en-CA` which would normally render the symbol `$`.
-
-With this function, you can change the override used by any given currency.
-
-Note that USD is the only currency that does not have a default override so it will use the locale's preference unless the geolocation network call succeeds (see `geolocateCurrencySymbol`).
 
 ## FormatCurrencyOptions
 

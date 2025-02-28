@@ -1,12 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { GOOGLE_TRANSFER, HUNDRED_YEAR_DOMAIN_TRANSFER } from '@automattic/onboarding';
 import { Button, Icon } from '@wordpress/components';
 import { check, closeSmall } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
+import { formatCurrency } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -130,7 +130,8 @@ export function DomainCodePair( {
 		onChange( id, { domain, auth, valid, rawPrice, saleCost, currencyCode } );
 	}, [ domain, id, onChange, auth, valid, loading, rawPrice, saleCost, currencyCode ] );
 
-	const shouldReportError = hasDuplicates || ( ! loading && domain && auth ? true : false );
+	const authCheck = ! isHundredYearDomainsTransferFlow ? Boolean( auth ) : message;
+	const shouldReportError = hasDuplicates || ( ! loading && domain && authCheck ? true : false );
 
 	useEffect( () => {
 		if ( shouldReportError && ! valid && message ) {

@@ -1,8 +1,8 @@
 const { app, BrowserWindow, BrowserView, ipcMain: ipc } = require( 'electron' );
-const appInstance = require( '../lib/app-instance' );
 const { getPath } = require( '../lib/assets' );
 const Config = require( '../lib/config' );
 const log = require( '../lib/logger' )( 'desktop:runapp' );
+const { isNonDesktopLoginUrl } = require( '../lib/login' );
 const platform = require( '../lib/platform' );
 const SessionManager = require( '../lib/session' );
 const Settings = require( '../lib/settings' );
@@ -16,17 +16,32 @@ const TITLE_BAR_HEIGHT = 38;
 
 let mainWindow = null;
 
+function getInitialUrl() {
+	let appUrl = Config.loginURL();
+	if ( process.env.CI || process.env.WP_DESKTOP_DEBUG ) {
+		return appUrl;
+	}
+
+	const lastLocation = Settings.getSetting( settingConstants.LAST_LOCATION );
+	if ( ! lastLocation || ! lastLocation.startsWith( 'http' ) ) {
+		return appUrl;
+	}
+
+	log.info( `Will use last location as initial URL: ${ lastLocation }` );
+	appUrl = lastLocation;
+
+	if ( Config.oauthLoginEnabled && isNonDesktopLoginUrl( appUrl ) ) {
+		appUrl = Config.loginURL();
+		log.info(
+			`Last location pointed to the regular login URL, will use the desktop login URL instead: ${ appUrl }`
+		);
+	}
+	return appUrl;
+}
+
 function showAppWindow() {
 	const preloadFile = getPath( 'preload.js' );
-	let appUrl = Config.loginURL();
-
-	if ( ! process.env.CI && ! process.env.WP_DESKTOP_DEBUG ) {
-		log.info( 'Overriding window with last location...' );
-		const lastLocation = Settings.getSetting( settingConstants.LAST_LOCATION );
-		if ( lastLocation && lastLocation.startsWith( 'http' ) ) {
-			appUrl = lastLocation;
-		}
-	}
+	const appUrl = getInitialUrl();
 	log.info( 'Loading app (' + appUrl + ') in mainWindow' );
 
 	const windowConfig = Settings.getSettingGroup( Config.mainWindow, null );
@@ -143,7 +158,8 @@ function showAppWindow() {
 		return Settings.toRenderer();
 	} );
 
-	mainView.webContents.loadURL( appUrl );
+	log.info( `Loading URL: '${ appUrl }'` );
+	void mainView.webContents.loadURL( appUrl );
 
 	mainWindow.on( 'close', function () {
 		const currentURL = mainView.webContents.getURL();
@@ -157,6 +173,8 @@ function showAppWindow() {
 	} );
 
 	const appWindow = { view: mainView, window: mainWindow };
+	require( '../window-handlers/login' )( appWindow );
+	require( '../window-handlers/incoming-urls' )( appWindow );
 	require( '../window-handlers/failed-to-load' )( appWindow );
 	require( '../window-handlers/login-status' )( appWindow );
 	require( '../window-handlers/notifications' )( appWindow );
@@ -174,7 +192,5 @@ function showAppWindow() {
 }
 
 module.exports = function () {
-	if ( appInstance.isSingleInstance() ) {
-		app.on( 'ready', showAppWindow );
-	}
+	app.on( 'ready', showAppWindow );
 };

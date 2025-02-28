@@ -6,6 +6,7 @@ import { PremiumBadge } from '@automattic/components';
 import { isBlankCanvasDesign, useThemeDesignsQuery } from '@automattic/design-picker';
 import { englishLocales } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
+import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -15,8 +16,6 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { THEME_TIER_PARTNER, THEME_TIER_PREMIUM } from 'calypso/components/theme-tier/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
-import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
-import { openCheckoutModal } from 'calypso/my-sites/checkout/modal/utils';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
@@ -30,7 +29,6 @@ export default function DesignPickerStep( props ) {
 	const {
 		flowName,
 		stepName,
-		isReskinned,
 		showDesignPickerCategories,
 		showLetUsChoose,
 		hideFullScreenPreview,
@@ -154,7 +152,14 @@ export default function DesignPickerStep( props ) {
 	}
 
 	function upgradePlan() {
-		openCheckoutModal( [ PLAN_PREMIUM ] );
+		const relativeCurrentPath = window.location.href.replace( window.location.origin, '' );
+		const checkoutUrl = addQueryArgs( `/checkout/${ siteId }/${ PLAN_PREMIUM }`, {
+			redirect_to: relativeCurrentPath,
+			cancel_to: relativeCurrentPath,
+			signup: '1',
+		} );
+
+		window.location.href = checkoutUrl;
 	}
 
 	function upgradePlanFromDesignPicker( design ) {
@@ -170,16 +175,12 @@ export default function DesignPickerStep( props ) {
 		props.goToNextStep();
 	}
 
-	function renderCheckoutModal() {
-		return <AsyncCheckoutModal siteId={ siteId } />;
-	}
-
 	function renderDesignPicker() {
 		return (
 			<>
 				<DesignPicker
 					designs={ designs }
-					theme={ isReskinned ? 'light' : 'dark' }
+					theme="light"
 					locale={ translate.localeSlug }
 					onSelect={ pickDesign }
 					onUpgrade={ upgradePlanFromDesignPicker }
@@ -209,7 +210,6 @@ export default function DesignPickerStep( props ) {
 					hideBadge={ hideBadge }
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
 				/>
-				{ renderCheckoutModal() }
 			</>
 		);
 	}
@@ -291,8 +291,8 @@ export default function DesignPickerStep( props ) {
 			} ) }
 			{ ...headerProps }
 			stepContent={ renderDesignPicker() }
-			align={ isReskinned ? 'left' : 'center' }
-			skipButtonAlign={ isReskinned ? 'top' : 'bottom' }
+			align="left"
+			skipButtonAlign="top"
 			skipLabelText={ skipLabelText() }
 		/>
 	);

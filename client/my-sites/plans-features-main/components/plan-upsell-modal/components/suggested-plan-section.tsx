@@ -26,24 +26,27 @@ export default function SuggestedPlanSection( {
 	onPlanSelected,
 }: Props ) {
 	const translate = useTranslate();
+
 	const suggestedPlans = [
 		{
 			planSlug: PLAN_PERSONAL,
-			description: translate( 'Domain credit, some premium themes' ),
+			description: translate( 'Free one-year domain and some premium themes' ),
 			disabled: hidePersonalPlan,
 		},
 		{
 			planSlug: PLAN_PREMIUM,
-			description: translate( 'Domain credit, all premium themes' ),
+			description: translate( 'Free one-year domain and all premium themes' ),
 			disabled: hidePremiumPlan,
 		},
 		{
 			planSlug: PLAN_BUSINESS,
-			description: translate( 'Domain credit, plugins, all premium themes' ),
+			description: translate( 'Free one-year domain, plugins, and all premium themes' ),
 		},
 		{
 			planSlug: PLAN_ECOMMERCE,
-			description: translate( 'Domain credit, plugins, all premium and store themes, WooCommerce' ),
+			description: translate(
+				'Free one-year domain, plugins, all premium and store themes, WooCommerce'
+			),
 		},
 	];
 
@@ -53,9 +56,8 @@ export default function SuggestedPlanSection( {
 				.filter( ( plan ) => ! plan.disabled )
 				.slice( 0, 2 )
 				.map( ( { planSlug, description } ) => (
-					<RowWithBorder>
+					<RowWithBorder key={ planSlug }>
 						<PlanItem
-							key={ planSlug }
 							planSlug={ planSlug as PlanSlug }
 							description={ description }
 							isBusy={ isBusy }

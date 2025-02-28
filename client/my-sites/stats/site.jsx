@@ -32,6 +32,7 @@ import {
 	STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
 	STATS_FEATURE_PAGE_TRAFFIC,
 	STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
+	STATS_PRODUCT_NAME,
 } from 'calypso/my-sites/stats/constants';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import {
@@ -69,6 +70,7 @@ import StatsFeedbackPresentor from './feedback';
 import { shouldGateStats } from './hooks/use-should-gate-stats';
 import MiniCarousel from './mini-carousel';
 import { StatsGlobalValuesContext } from './pages/providers/global-provider';
+import StatsModuleListing from './pages/shared/stats-module-listing';
 import PromoCards from './promo-cards';
 import StatsCardUpdateJetpackVersion from './stats-card-upsell/stats-card-update-jetpack-version';
 import ChartTabs from './stats-chart-tabs';
@@ -201,7 +203,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		supportsPlanUsage,
 		supportsUTMStats: supportsUTMStatsFeature,
 		supportsDevicesStats: supportsDevicesStatsFeature,
-		supportsLocationsStats: supportsLocationsStatsFeature,
 		isOldJetpack,
 		supportUserFeedback,
 	} = useSelector( ( state ) => getEnvStatsFeatureSupportChecks( state, siteId ) );
@@ -252,7 +253,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const shouldShowUpsells = isOdysseyStats && ! isAtomic;
 	const supportsUTMStats = supportsUTMStatsFeature || isInternal;
 	const supportsDevicesStats = supportsDevicesStatsFeature || isInternal;
-	const supportsLocationsStats = supportsLocationsStatsFeature || isInternal;
 	const getAvailableLegend = () => {
 		const activeTab = getActiveTab( chartTab );
 		// TODO: remove this when we support hourly visitors.
@@ -525,13 +525,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		'is-period-year': period === 'year',
 	} );
 
-	const moduleListClasses = clsx(
-		'is-events',
-		'stats__module-list',
-		'stats__module-list--traffic',
-		'stats__module--unified',
-		'stats__flexible-grid-container'
-	);
+	const moduleListClassNames = clsx( 'is-events', 'stats__module-list--traffic' );
 
 	const halfWidthModuleClasses = clsx(
 		'stats__flexible-grid-item--half',
@@ -551,7 +545,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 			) }
 			<NavigationHeader
 				className="stats__section-header modernized-header"
-				title={ translate( 'Jetpack Stats' ) }
+				title={ STATS_PRODUCT_NAME }
 				subtitle={ translate(
 					"Gain insights into the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
 					{
@@ -624,7 +618,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 					<>
 						{ ! isOdysseyStats && <MiniCarousel slug={ slug } isSitePrivate={ isSitePrivate } /> }
 
-						<div className={ moduleListClasses }>
+						<StatsModuleListing className={ moduleListClassNames } siteId={ siteId }>
 							<StatsModuleTopPosts
 								moduleStrings={ moduleStrings.posts }
 								period={ props.period }
@@ -640,7 +634,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 								className={ halfWidthModuleClasses }
 							/>
 
-							{ config.isEnabled( 'stats/locations' ) && supportsLocationsStats ? (
+							{ config.isEnabled( 'stats/locations' ) ? (
 								<>
 									<StatsModuleLocations
 										moduleStrings={ moduleStrings.locations }
@@ -759,7 +753,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 									}
 								/>
 							) }
-						</div>
+						</StatsModuleListing>
 					</>
 				) }
 
@@ -805,11 +799,12 @@ const EnableStatsModule = ( props ) => {
 			line={
 				<p>
 					{ translate(
-						'Enable Jetpack Stats to see detailed information about your traffic, likes, comments, and subscribers.'
+						'Enable %(product)s to see detailed information about your traffic, likes, comments, and subscribers.',
+						{ args: { product: STATS_PRODUCT_NAME } }
 					) }
 				</p>
 			}
-			action={ translate( 'Enable Jetpack Stats' ) }
+			action={ translate( 'Enable %(product)s', { args: { product: STATS_PRODUCT_NAME } } ) }
 			actionCallback={ enableStatsModule }
 		/>
 	);
@@ -874,7 +869,7 @@ const StatsSite = ( props ) => {
 	); // Track the last viewed tab.
 
 	return (
-		<Main fullWidthLayout ariaLabel={ translate( 'Jetpack Stats' ) }>
+		<Main fullWidthLayout ariaLabel={ STATS_PRODUCT_NAME }>
 			{ config.isEnabled( 'stats/paid-wpcom-v2' ) && ! isOdysseyStats && (
 				<QuerySiteFeatures siteIds={ [ siteId ] } />
 			) }
@@ -887,7 +882,7 @@ const StatsSite = ( props ) => {
 			) }
 			{ /* Odyssey: if Stats module is not enabled, the page will not be rendered. */ }
 			{ ! isOdysseyStats && isJetpack && <QueryJetpackModules siteId={ siteId } /> }
-			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
+			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<PageViewTracker
 				path={ `/stats/${ period }/:site` }
 				title={ `Stats > ${ titlecase( period ) }` }

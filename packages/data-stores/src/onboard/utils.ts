@@ -1,7 +1,13 @@
-import config from '@automattic/calypso-config';
 import { SiteGoal, SiteIntent } from './constants';
 
-export const goalsToIntent = ( goals: SiteGoal[] ): SiteIntent => {
+interface Flags {
+	isIntentNewsletterGoalEnabled?: boolean;
+	isIntentCreateCourseGoalEnabled?: boolean;
+}
+
+export const goalsToIntent = ( goals: SiteGoal[], flags?: Flags ): SiteIntent => {
+	const { isIntentNewsletterGoalEnabled, isIntentCreateCourseGoalEnabled } = flags ?? {};
+
 	// When DIFM and Import goals are selected together, DIFM Intent will have the priority and will be set.
 	if ( goals.includes( SiteGoal.DIFM ) ) {
 		return SiteIntent.DIFM;
@@ -11,8 +17,12 @@ export const goalsToIntent = ( goals: SiteGoal[] ): SiteIntent => {
 		return SiteIntent.Import;
 	}
 
+	if ( goals.includes( SiteGoal.Courses ) && isIntentCreateCourseGoalEnabled ) {
+		return SiteIntent.CreateCourseGoal;
+	}
+
 	// Newsletter flow
-	if ( config.isEnabled( 'onboarding/newsletter-goal' ) && goals.includes( SiteGoal.Newsletter ) ) {
+	if ( isIntentNewsletterGoalEnabled && goals.includes( SiteGoal.Newsletter ) ) {
 		return SiteIntent.NewsletterGoal;
 	}
 
