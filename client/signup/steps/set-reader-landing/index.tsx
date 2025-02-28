@@ -6,19 +6,28 @@ import { READER_AS_LANDING_PAGE_PREFERENCE } from 'calypso/state/sites/selectors
 interface Props {
 	submitSignupStep: ( args: { stepName: string } ) => void;
 	goToNextStep: () => void;
+	initialContext?: {
+		query?: {
+			ref?: string;
+		};
+	};
 }
 
-const SetReaderLanding = ( { submitSignupStep, goToNextStep }: Props ): null => {
+const SetReaderLanding = ( { submitSignupStep, goToNextStep, initialContext }: Props ): null => {
 	const dispatch = useDispatch();
+	const refParam = initialContext?.query?.ref;
 
 	useEffect( () => {
 		const saveAndProceed = async () => {
-			await dispatch(
-				savePreference( READER_AS_LANDING_PAGE_PREFERENCE, {
-					useReaderAsLandingPage: true,
-					updatedAt: Date.now(),
-				} )
-			);
+			if ( 'reader-lp' === refParam ) {
+				await dispatch(
+					savePreference( READER_AS_LANDING_PAGE_PREFERENCE, {
+						useReaderAsLandingPage: true,
+						updatedAt: Date.now(),
+					} )
+				);
+			}
+
 			submitSignupStep( { stepName: 'set-reader-landing' } );
 			goToNextStep();
 		};
