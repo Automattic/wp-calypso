@@ -143,6 +143,7 @@ import {
 	FEATURE_STATS_ADVANCED_20250206,
 	FEATURE_SUPPORT,
 	FEATURE_SUPPORT_FROM_EXPERTS,
+	FEATURE_AI_ASSISTANT,
 } from './constants';
 import { FeatureGroupMap } from './types';
 
@@ -272,6 +273,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 		slug: FEATURE_GROUP_MARKETING_GROWTH_AND_MONETIZATION_TOOLS,
 		getTitle: () => i18n.translate( 'Growth and monetization tools' ),
 		getFeatures: () => [
+			FEATURE_AI_ASSISTANT,
 			FEATURE_NEWSLETTERS_RSS,
 			FEATURE_AD_FREE_EXPERIENCE,
 			FEATURE_WORDADS,

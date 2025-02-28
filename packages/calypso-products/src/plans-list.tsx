@@ -445,6 +445,7 @@ import {
 	FEATURE_STATS_ADVANCED_20250206,
 	FEATURE_SUPPORT,
 	FEATURE_SUPPORT_FROM_EXPERTS,
+	FEATURE_AI_ASSISTANT,
 } from './constants';
 import { isBigSkyOnboarding } from './is-big-sky-onboarding';
 import { isGlobalStylesOnPersonalEnabled } from './is-global-styles-on-personal-enabled';
@@ -581,6 +582,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 
 	get2023PlanComparisonFeatureOverride: () => {
 		return [
+			FEATURE_AI_ASSISTANT,
 			FEATURE_BEAUTIFUL_THEMES,
 			FEATURE_PAGES,
 			FEATURE_USERS,
@@ -626,6 +628,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		const baseFeatures = {
 			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( '%d shares per month', { args: [ 30 ] } ),
 			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '10%' ),
+			[ FEATURE_AI_ASSISTANT ]: i18n.translate( 'Limited to 20 requests' ),
 		};
 
 		return isStatsFeatureTranslated()

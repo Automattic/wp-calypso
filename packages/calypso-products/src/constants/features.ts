@@ -443,6 +443,7 @@ export const FEATURE_SUPPORT_FROM_EXPERTS = 'support-from-experts';
 export const FEATURE_UPLOAD_VIDEO = 'upload-video';
 export const FEATURE_STATS_BASIC_20250206 = 'stats-basic-20250206';
 export const FEATURE_STATS_ADVANCED_20250206 = 'stats-advanced-20250206';
+export const FEATURE_AI_ASSISTANT = 'ai-assistant';
 
 // Woo Express Features
 export const FEATURE_WOOCOMMERCE_STORE = 'woocommerce-store'; // WooCommerce store
