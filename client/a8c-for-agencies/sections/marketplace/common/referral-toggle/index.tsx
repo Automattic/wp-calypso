@@ -5,6 +5,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useContext, useEffect } from 'react';
 import useReferralsGuide from 'calypso/a8c-for-agencies/components/guide-modal/guides/useReferralsGuide';
 import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { ApprovalStatus } from 'calypso/state/a8c-for-agencies/types';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { MarketplaceTypeContext } from '../../context';
@@ -22,6 +24,11 @@ const ReferralToggle = () => {
 	const { guideModal, openGuide } = useReferralsGuide();
 
 	const guideModalSeen = useSelector( ( state ) => getPreference( state, PREFERENCE_NAME ) );
+
+	const agency = useSelector( getActiveAgency );
+
+	const isAgencyApproved = agency?.approval_status === ApprovalStatus.APPROVED;
+
 	useEffect( () => {
 		if ( marketplaceType === 'referral' && ! guideModalSeen ) {
 			dispatch( savePreference( PREFERENCE_NAME, true ) );
@@ -42,6 +49,7 @@ const ReferralToggle = () => {
 				checked={ marketplaceType === 'referral' }
 				id="a4a-marketplace__toggle-marketplace-type"
 				label={ translate( 'Refer products' ) }
+				disabled={ ! isAgencyApproved }
 			/>
 
 			<Gridicon icon="info-outline" size={ 16 } onClick={ openGuide } />
