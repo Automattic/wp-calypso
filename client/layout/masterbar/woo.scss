@@ -148,7 +148,7 @@ $breakpoint-mobile: 660px;
 		letter-spacing: 0;
 	}
 
-	a,
+	a:not(.components-button),
 	.wp-login__links a,
 	.wp-login__links button,
 	.button:not(.social-buttons__button),
