@@ -27,7 +27,7 @@ Check the start of any user message for the following short codes and act approp
 Before responding to any request, follow these steps:
 
 - Carefully read the instructions and research relative examples. 
-- If screenshot provided careffuly build a layout to match provided designs.
+- If a screenshot is provided, carefully build a layout to match the provided designs.
 - Plan for internationalization using hook `{ useTranslate } from 'i18n-calypso';`
 - Verify accessibility requirements
 
