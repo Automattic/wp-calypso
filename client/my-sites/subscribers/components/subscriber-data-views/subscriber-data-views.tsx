@@ -203,12 +203,12 @@ const SubscriberDataViews = ( {
 
 	const handleViewChange = useCallback(
 		( newView: View ) => {
-			// Track search changes
+			// Track search changes.
 			if ( newView.search !== currentView.search && newView.search ) {
 				recordSubscriberSearch( { site_id: siteId, query: newView.search } );
 			}
 
-			// Track filter changes
+			// Track filter changes.
 			const newFilters = ( newView.filters?.map( ( f ) => f.value ).filter( Boolean ) ??
 				[] ) as SubscribersFilterBy[];
 			const currentFilters = ( currentView.filters?.map( ( f ) => f.value ).filter( Boolean ) ??
@@ -221,7 +221,7 @@ const SubscriberDataViews = ( {
 				} );
 			}
 
-			// Track sort changes
+			// Track sort changes.
 			if (
 				newView.sort?.field !== currentView.sort?.field ||
 				newView.sort?.direction !== currentView.sort?.direction
@@ -414,7 +414,7 @@ const SubscriberDataViews = ( {
 		setFilters( filterValues.length ? filterValues : [ SubscribersFilterBy.All ] );
 	}, [ currentView.search, currentView.filters ] );
 
-	// Remove the tracking useEffects and keep only the data and pagination memoization
+	// Memoize the data and pagination info.
 	const { data, paginationInfo } = useMemo( () => {
 		return {
 			data: subscribers,
