@@ -10,9 +10,7 @@ import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE } from '../stores';
 import { getLoginUrl } from '../utils/path';
-import LaunchPad from './internals/steps-repository/launchpad';
-import Processing from './internals/steps-repository/processing-step';
-import Subscribers from './internals/steps-repository/subscribers';
+import { STEPS } from './internals/steps';
 import {
 	AssertConditionResult,
 	AssertConditionState,
@@ -21,6 +19,8 @@ import {
 } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 
+const WRITE_FLOW_STEPS = [ STEPS.LAUNCHPAD, STEPS.SUBSCRIBERS, STEPS.PROCESSING ];
+
 const write: Flow = {
 	name: WRITE_FLOW,
 	get title() {
@@ -28,11 +28,7 @@ const write: Flow = {
 	},
 	isSignupFlow: false,
 	useSteps() {
-		return [
-			{ slug: 'launchpad', component: LaunchPad },
-			{ slug: 'subscribers', component: Subscribers },
-			{ slug: 'processing', component: Processing },
-		];
+		return WRITE_FLOW_STEPS;
 	},
 
 	useStepNavigation( _currentStep, navigate ) {

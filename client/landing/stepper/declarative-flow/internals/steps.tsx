@@ -362,6 +362,11 @@ export const STEPS = {
 				/* webpackChunkName: 'async-step-use-my-domain' */ './steps-repository/use-my-domain'
 			),
 	},
+
+	SETUP_BLOG: {
+		slug: 'setup-blog',
+		asyncComponent: () => import( './steps-repository/setup-blog' ),
+	},
 } satisfies Record< string, StepperStep >;
 
 /**
