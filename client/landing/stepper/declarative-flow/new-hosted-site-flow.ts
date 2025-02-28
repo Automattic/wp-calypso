@@ -17,7 +17,7 @@ import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-us
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
-import { useLoginUrl } from '../utils/path';
+import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { STEPS } from './internals/steps';
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
@@ -35,13 +35,13 @@ const hosting: Flow = {
 	isSignupFlow: true,
 	useSteps() {
 		const showDomainStep = useShowDomainStep();
-		return [
+		return stepsWithRequiredLogin( [
 			...( showDomainStep ? [ STEPS.DOMAINS ] : [] ),
 			STEPS.PLANS,
 			STEPS.TRIAL_ACKNOWLEDGE,
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PROCESSING,
-		];
+		] );
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const { setPlanCartItem, resetCouponCode } = useDispatch( ONBOARD_STORE );
@@ -161,8 +161,7 @@ const hosting: Flow = {
 			submit,
 		};
 	},
-	useSideEffect( currentStepSlug ) {
-		const flowName = this.name;
+	useSideEffect( currentStepSlug, navigate ) {
 		const dispatch = reduxUseDispatch();
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
 		const query = useQuery();
@@ -174,27 +173,13 @@ const hosting: Flow = {
 
 		const queryParams = Object.fromEntries( query );
 
-		const logInUrl = useLoginUrl( {
-			variationName: flowName,
-			redirectTo: addQueryArgs( `/setup/${ flowName }`, { ...queryParams } ),
-		} );
-
 		useLayoutEffect( () => {
-			const urlWithQueryParams = addQueryArgs( '/setup/new-hosted-site', queryParams );
-
-			if ( ! userIsLoggedIn ) {
-				window.location.assign(
-					addQueryArgs( logInUrl, {
-						...queryParams,
-						flow: 'new-hosted-site',
-					} )
-				);
-			}
+			const urlWithQueryParams = addQueryArgs( 'setup/new-hosted-site', queryParams );
 
 			if ( currentStepSlug === 'trialAcknowledge' && ! isEligible ) {
-				window.location.assign( urlWithQueryParams );
+				navigate( urlWithQueryParams );
 			}
-		}, [ userIsLoggedIn, isEligible, currentStepSlug, queryParams, logInUrl ] );
+		}, [ userIsLoggedIn, isEligible, currentStepSlug, queryParams, navigate ] );
 
 		useEffect( () => {
 			if ( queryParams.studioSiteId ) {
