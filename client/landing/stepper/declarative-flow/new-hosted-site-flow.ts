@@ -83,7 +83,7 @@ const hosting: Flow = {
 						setPlanCartItem( {
 							product_slug: plan,
 						} );
-						return navigate( 'createSite' );
+						return navigate( 'create-site' );
 					}
 					return navigate( 'plans' );
 				}
@@ -105,14 +105,14 @@ const hosting: Flow = {
 					}
 
 					setSignupCompleteFlowName( flowName );
-					return navigate( 'createSite' );
+					return navigate( 'create-site' );
 				}
 
 				case 'trialAcknowledge': {
-					return navigate( 'createSite' );
+					return navigate( 'create-site' );
 				}
 
-				case 'createSite':
+				case 'create-site':
 					return navigate( 'processing' );
 
 				case 'processing': {
