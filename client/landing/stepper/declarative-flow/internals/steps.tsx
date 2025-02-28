@@ -333,6 +333,10 @@ export const STEPS = {
 				/* webpackChunkName: 'async-step-unified-domains' */ './steps-repository/unified-domains'
 			),
 	},
+	SETUP_BLOG: {
+		slug: 'setup-blog',
+		asyncComponent: () => import( './steps-repository/setup-blog' ),
+	},
 	UNIFIED_PLANS: {
 		slug: 'plans',
 		asyncComponent: () =>
