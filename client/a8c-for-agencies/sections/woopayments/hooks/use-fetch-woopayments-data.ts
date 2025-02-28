@@ -37,6 +37,5 @@ export default function useFetchWooPaymentsData( {
 				: Promise.resolve( [] ),
 		enabled: !! agencyId,
 		refetchOnWindowFocus: false,
-		staleTime: 0,
 	} );
 }
