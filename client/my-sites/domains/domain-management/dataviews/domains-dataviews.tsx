@@ -34,7 +34,7 @@ type Props = {
 	errorNotice: NoticeActionCreator;
 };
 
-const DomainsDataViewsUnwrapped = ( {
+const DomainsDataViews = ( {
 	domains,
 	isLoading,
 	sidebarMode,
@@ -150,6 +150,4 @@ const DomainsDataViewsUnwrapped = ( {
 	);
 };
 
-export const DomainsDataViews = connect( null, { successNotice, errorNotice } )(
-	DomainsDataViewsUnwrapped
-);
+export default connect( null, { successNotice, errorNotice } )( DomainsDataViews );

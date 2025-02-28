@@ -1,4 +1,4 @@
-import { DomainsDataViews } from './domains-dataviews';
+import DomainsDataViews from './domains-dataviews';
 import { DomainsDataViewsProps } from './types';
 import { useGenerateDomainsDataViewsState, DomainsDataViewsContext } from './use-context';
 
