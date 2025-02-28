@@ -1,5 +1,5 @@
 import { Button, Spinner } from '@wordpress/components';
-import { Icon, closeSmall } from '@wordpress/icons';
+import { Icon, closeSmall, check } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { FC, ReactNode } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';

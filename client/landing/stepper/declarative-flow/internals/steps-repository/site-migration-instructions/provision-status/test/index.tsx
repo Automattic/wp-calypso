@@ -75,7 +75,7 @@ describe( 'ProvisionStatus', () => {
 			screen.getAllByText(
 				( content, element ) =>
 					!! element?.textContent?.match(
-						/Sorry, we couldn’t finish setting up your site. Please contact support/
+						/Sorry, there was a problem setting up your site. Let us take it from here/
 					)
 			)[ 0 ]
 		).toBeVisible();
