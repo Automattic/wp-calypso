@@ -109,7 +109,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 			.map( ( subItems, groupIndex ) =>
 				subItems.map( ( item, i ) => (
 					<li
-						key={ i }
+						key={ `${ groupIndex }-${ i }` }
 						className={ clsx( 'masterbar__item-subitems-item', item.className, {
 							'masterbar__item-subitems-item--odd': groupIndex % 2 === 1,
 						} ) }
