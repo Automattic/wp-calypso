@@ -1,9 +1,49 @@
 import { LineChart, ThemeProvider, jetpackTheme } from '@automattic/charts';
+import { DataPointDate } from '@automattic/charts/src/types';
 import clsx from 'clsx';
 import { numberFormat, useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import { useMemo } from 'react';
+import ChartBarTooltip from 'calypso/components/chart/bar-tooltip';
 import StatsEmptyState from '../../stats-empty-state';
+
+import './styles.scss';
+
+const renderTooltip = ( {
+	tooltipData,
+}: {
+	tooltipData?: {
+		nearestDatum?: {
+			datum: DataPointDate;
+			key: string;
+		};
+		datumByKey?: { [ key: string ]: { datum: DataPointDate } };
+	};
+} ) => {
+	const nearestDatum = tooltipData?.nearestDatum?.datum;
+	if ( ! nearestDatum ) {
+		return null;
+	}
+	const tooltipPoints = Object.entries( tooltipData?.datumByKey || {} )
+		.map( ( [ key, { datum } ] ) => ( {
+			key,
+			value: datum.value as number,
+		} ) )
+		.sort( ( a, b ) => b.value - a.value );
+
+	return (
+		<div className="stats-line-chart-tooltip">
+			<div className="module-content-list-item is-date-label">
+				{ nearestDatum.date?.toLocaleDateString() }
+			</div>
+			<ul>
+				{ tooltipPoints.map( ( point ) => (
+					<ChartBarTooltip key={ point.key } label={ point.key } value={ point.value } />
+				) ) }
+			</ul>
+		</div>
+	);
+};
 
 function StatsLineChart( {
 	chartData = [],
@@ -118,6 +158,7 @@ function StatsLineChart( {
 								},
 							},
 						} }
+						renderTooltip={ renderTooltip }
 					/>
 				</ThemeProvider>
 			) }
