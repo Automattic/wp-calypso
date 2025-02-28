@@ -4,7 +4,7 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
-import { connect } from 'react-redux';
+import { connect, ConnectedProps } from 'react-redux';
 import { navigate } from 'calypso/lib/navigate';
 import { addQueryArgs } from 'calypso/lib/url';
 import {
@@ -22,7 +22,11 @@ import './style.scss';
 import { useFields } from './use-fields';
 import { initializeViewState, getFieldsByBreakpoint } from './view';
 
-type Props = {
+const connector = connect( null, { successNotice, errorNotice } );
+
+type ReduxProps = ConnectedProps< typeof connector >;
+
+type DomainsDataViewsProps = {
 	domains: PartialDomainData[] | undefined;
 	isLoading: boolean;
 	sidebarMode?: boolean;
@@ -30,7 +34,9 @@ type Props = {
 	queryParams: QueryParams;
 };
 
-const DomainsDataViews = ( {
+type Props = DomainsDataViewsProps & ReduxProps;
+
+const DomainsDataViews: React.FC< Props > = ( {
 	domains,
 	isLoading,
 	sidebarMode,
@@ -144,4 +150,4 @@ const DomainsDataViews = ( {
 	);
 };
 
-export default connect( null, { successNotice, errorNotice } )( DomainsDataViews );
+export default connector( DomainsDataViews );
