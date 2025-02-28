@@ -209,7 +209,6 @@ body.is-mobile-app-view {
 	padding: 0 8px;
 	text-decoration: none;
 	cursor: default;
-	transition: all 0.2s ease-in-out;
 	justify-content: center;
 
 	&.masterbar__reader {
@@ -596,7 +595,6 @@ body.is-mobile-app-view {
 			height: var(--masterbar-item-active-border-radius);
 			background-color: var(--color-sidebar-background);
 			opacity: 0;
-			transition: opacity 0.2s ease-in-out;
 			bottom: 0;
 			z-index: 1;
 			pointer-events: none;
