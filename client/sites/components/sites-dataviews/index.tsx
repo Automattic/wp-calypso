@@ -24,14 +24,7 @@ type Props = {
 	dataViewsState: View;
 	setDataViewsState: ( callback: ( prevState: View ) => View ) => void;
 	selectedItem: SiteExcerptData | null | undefined;
-	sitePreviewPane: {
-		open: (
-			site: SiteExcerptData,
-			source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher'
-		) => void;
-		getUrl: ( site: SiteExcerptData ) => string;
-	};
-};
+} & Pick< React.ComponentProps< typeof SiteField >, 'sitePreviewPane' >;
 
 export function useSiteStatusGroups() {
 	const { __ } = useI18n();
