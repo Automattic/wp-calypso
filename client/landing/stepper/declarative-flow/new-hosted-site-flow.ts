@@ -31,6 +31,7 @@ function useShowDomainStep(): boolean {
 
 const hosting: Flow = {
 	name: NEW_HOSTED_SITE_FLOW,
+	__experimentalUseBuiltinAuth: true,
 	isSignupFlow: true,
 	useSteps() {
 		const showDomainStep = useShowDomainStep();
