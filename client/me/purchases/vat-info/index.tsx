@@ -209,7 +209,7 @@ function VatForm( {
 						} )
 					}
 				</FormLabel>
-				<InputWrapper isError={ updateError !== null }>
+				<InputWrapper>
 					{ currentVatDetails?.country && (
 						<span className="vat-field__overlay-prefix">{ currentVatDetails.country }</span>
 					) }
@@ -411,18 +411,9 @@ function useRecordVatEvents( {
 	}, [ fetchError, updateError, isUpdateSuccessful, reduxDispatch ] );
 }
 
-function InputWrapper( { isError, children }: { isError: boolean; children: React.ReactNode } ) {
-	return (
-		<div
-			className={
-				isError
-					? 'vat-form__field-wrapper vat-form__field-wrapper--error'
-					: 'vat-form__field-wrapper'
-			}
-		>
-			{ children }
-		</div>
-	);
+// TODO - We'll need to fix the error handling for touch fields and pass the error to this component
+function InputWrapper( { children }: { children: React.ReactNode } ) {
+	return <div className="vat-form__field-wrapper">{ children }</div>;
 }
 
 function LoadingPlaceholder() {

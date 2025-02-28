@@ -44,6 +44,10 @@
 		}
 	}
 
+	/* TODO - this error class is currently unused in the InputWrapper component
+	 * because the error handling doesn't currently work for this field and will
+	 * need to be added in a future update
+	 */
 	&--error {
 		outline: 2px solid var( --color-red-50 );
 	}
