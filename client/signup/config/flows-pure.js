@@ -263,6 +263,8 @@ export function generateFlows( {
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
 			name: 'ecommerce-monthly',
@@ -272,6 +274,8 @@ export function generateFlows( {
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
 			name: 'wpcc',
@@ -355,6 +359,8 @@ export function generateFlows( {
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
 			name: 'premium-monthly',
@@ -365,6 +371,8 @@ export function generateFlows( {
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
 			name: 'personal-monthly',
@@ -375,6 +383,8 @@ export function generateFlows( {
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
 			name: 'setup-site',
@@ -494,6 +504,8 @@ export function generateFlows( {
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
 			name: 'business-3y',
@@ -504,6 +516,8 @@ export function generateFlows( {
 			lastModified: '2024-04-17',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 
 		{
@@ -515,6 +529,8 @@ export function generateFlows( {
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
 			name: 'premium-3y',
@@ -525,6 +541,8 @@ export function generateFlows( {
 			lastModified: '2024-04-17',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
 			name: 'personal-2y',
@@ -535,6 +553,8 @@ export function generateFlows( {
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
 			name: 'personal-3y',
@@ -545,6 +565,8 @@ export function generateFlows( {
 			lastModified: '2024-04-17',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
 			name: 'entrepreneur',

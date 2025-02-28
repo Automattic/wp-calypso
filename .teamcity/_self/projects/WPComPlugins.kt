@@ -44,7 +44,6 @@ object WPComPlugins : Project({
 					"command-palette-wp-admin-release-build",
 					"help-center-release-build",
 					"whats-new-release-build",
-					"newsletter-release-build",
 				)
 			}
 			dataToKeep = everything()
@@ -128,7 +127,6 @@ object CalypsoApps: BuildType({
 		apps/command-palette-wp-admin/dist => command-palette-wp-admin.zip
 		apps/help-center/dist => help-center.zip
 		apps/whats-new/dist => whats-new.zip
-		apps/newsletter/dist => newsletter.zip
 	""".trimIndent()
 
 	steps {
