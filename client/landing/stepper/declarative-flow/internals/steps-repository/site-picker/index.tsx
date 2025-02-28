@@ -1,8 +1,4 @@
-import {
-	IMPORT_HOSTED_SITE_FLOW,
-	SITE_MIGRATION_FLOW,
-	StepContainer,
-} from '@automattic/onboarding';
+import { SITE_MIGRATION_FLOW, StepContainer } from '@automattic/onboarding';
 import {
 	DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE,
 	GroupableSiteLaunchStatuses,
@@ -104,7 +100,7 @@ const SitePickerStep: Step = function SitePickerStep( { navigation, flow } ) {
 			<DocumentHead title={ __( 'Pick your destination' ) } />
 			<StepContainer
 				stepName="site-picker"
-				hideBack={ IMPORT_HOSTED_SITE_FLOW !== flow }
+				hideBack
 				goBack={ navigation.goBack }
 				hideSkip={ SITE_MIGRATION_FLOW === flow }
 				skipLabelText={ __( 'Skip and create a new site' ) }

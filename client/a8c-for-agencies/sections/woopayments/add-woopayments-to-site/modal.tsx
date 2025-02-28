@@ -1,41 +1,34 @@
 import { Button } from '@wordpress/components';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import A4AModal from 'calypso/a8c-for-agencies/components/a4a-modal';
-import useAddWooPaymentsToSiteMutation from 'calypso/a8c-for-agencies/hooks/use-install-plugin-to-site';
-import { useDispatch } from 'calypso/state';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { A4A_WOOPAYMENTS_SITE_SETUP_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useIssueAndAssignLicenses from 'calypso/a8c-for-agencies/sections/marketplace/products-overview-v2/hooks/use-issue-and-assign-licenses';
 import AddWooPaymentsToSiteTable, { type WooPaymentsSiteItem } from './add-site-table';
 
 const AddWooPaymentsToSiteModal = ( { onClose }: { onClose: () => void } ) => {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 
 	const [ selectedSite, setSelectedSite ] = useState< WooPaymentsSiteItem | null >( null );
 
-	const {
-		mutate: addWooPaymentsToSite,
-		status,
-		error,
-		isPending,
-	} = useAddWooPaymentsToSiteMutation();
-
-	useEffect( () => {
-		if ( status === 'success' ) {
-			onClose();
-		} else if ( status === 'error' ) {
-			dispatch(
-				errorNotice( error.message ?? translate( 'Something went wrong. Please try again.' ) )
-			);
+	const { issueAndAssignLicenses, isReady: isIssueAndAssignReady } = useIssueAndAssignLicenses(
+		selectedSite ? { ID: selectedSite.rawSite.blog_id, domain: selectedSite.site } : null,
+		{
+			redirectTo: addQueryArgs( A4A_WOOPAYMENTS_SITE_SETUP_LINK, {
+				site_id: selectedSite?.rawSite.blog_id,
+			} ),
 		}
-	}, [ status, onClose, error, dispatch, translate ] );
+	);
 
 	const handleAddSite = () => {
 		if ( selectedSite ) {
-			addWooPaymentsToSite( {
-				siteId: selectedSite.id,
-				pluginSlug: 'woocommerce-payments',
-			} );
+			issueAndAssignLicenses( [
+				{
+					slug: 'woocommerce-woopayments',
+					quantity: 1,
+				},
+			] );
 		}
 	};
 
@@ -52,8 +45,8 @@ const AddWooPaymentsToSiteModal = ( { onClose }: { onClose: () => void } ) => {
 				<Button
 					variant="primary"
 					onClick={ handleAddSite }
-					disabled={ isPending || ! selectedSite }
-					isBusy={ isPending }
+					disabled={ ! selectedSite || ! isIssueAndAssignReady }
+					isBusy={ ! isIssueAndAssignReady }
 				>
 					{ translate( 'Add WooPayments to selected site' ) }
 				</Button>

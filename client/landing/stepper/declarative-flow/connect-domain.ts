@@ -15,6 +15,7 @@ import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from '../constants';
 import { useDomainParams } from '../hooks/use-domain-params';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { useLoginUrl } from '../utils/path';
+import { STEPS } from './internals/steps';
 import { redirect } from './internals/steps-repository/import/util';
 import {
 	AssertConditionResult,
@@ -24,20 +25,7 @@ import {
 } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 
-const CONNECT_DOMAIN_STEPS = [
-	{
-		slug: 'plans',
-		asyncComponent: () => import( './internals/steps-repository/plans' ),
-	},
-	{
-		slug: 'createSite',
-		asyncComponent: () => import( './internals/steps-repository/create-site' ),
-	},
-	{
-		slug: 'processing',
-		asyncComponent: () => import( './internals/steps-repository/processing-step' ),
-	},
-];
+const CONNECT_DOMAIN_STEPS = [ STEPS.PLANS, STEPS.SITE_CREATION_STEP, STEPS.PROCESSING ];
 
 const connectDomain: Flow = {
 	name: CONNECT_DOMAIN_FLOW,

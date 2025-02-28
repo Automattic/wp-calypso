@@ -1640,7 +1640,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'All premium themes' ),
 			[ FEATURE_PREMIUM_STORE_THEMES ]: i18n.translate( 'Available with plugins' ),
 			[ FEATURE_UNLIMITED_PRODUCTS ]: i18n.translate( 'Available with plugins' ),
-			[ FEATURE_DISPLAY_PRODUCTS_BRAND ]: i18n.translate( 'Available with paid plugins' ),
+			[ FEATURE_DISPLAY_PRODUCTS_BRAND ]: i18n.translate( 'Available with plugins' ),
 			[ FEATURE_PRODUCT_ADD_ONS ]: i18n.translate( 'Available with paid plugins' ),
 			[ FEATURE_ASSEMBLED_KITS ]: i18n.translate( 'Available with paid plugins' ),
 			[ FEATURE_MIN_MAX_ORDER_QUANTITY ]: i18n.translate( 'Available with paid plugins' ),

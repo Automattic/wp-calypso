@@ -6,6 +6,7 @@ type NewsletterCategoryQueryProps = {
 	siteId: number;
 	subscriptionId?: number;
 	userId?: number;
+	enabled?: boolean;
 };
 
 type NewsletterCategoryResponse = {
@@ -16,8 +17,9 @@ type NewsletterCategoryResponse = {
 export const getSubscribedNewsletterCategoriesKey = (
 	siteId?: string | number,
 	subscriptionId?: number,
-	userId?: number
-) => [ 'subscribed-newsletter-categories', siteId, subscriptionId, userId ];
+	userId?: number,
+	enabled?: boolean
+) => [ 'subscribed-newsletter-categories', siteId, subscriptionId, userId, enabled ];
 
 const convertNewsletterCategoryResponse = (
 	response: NewsletterCategoryResponse
@@ -30,6 +32,7 @@ const useSubscribedNewsletterCategories = ( {
 	siteId,
 	subscriptionId,
 	userId,
+	enabled = true,
 }: NewsletterCategoryQueryProps ): UseQueryResult< NewsletterCategories > => {
 	let path = `/sites/${ siteId }/newsletter-categories/subscriptions`;
 	if ( userId ) {
@@ -55,7 +58,7 @@ const useSubscribedNewsletterCategories = ( {
 				};
 			}
 		},
-		enabled: !! siteId,
+		enabled: !! siteId && enabled,
 	} );
 };
 

@@ -8,22 +8,18 @@ import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { isAdminInterfaceWPAdmin } from 'calypso/state/sites/selectors';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { ONBOARD_STORE } from '../stores';
-import ErrorStep from './internals/steps-repository/error-step';
-import ProcessingStep from './internals/steps-repository/processing-step';
+import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
-import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
 import type { Flow, ProvidedDependencies } from './internals/types';
+
+const TRANSFERRING_HOSTED_SITE_STEPS = [ STEPS.WAIT_FOR_ATOMIC, STEPS.PROCESSING, STEPS.ERROR ];
 
 const transferringHostedSite: Flow = {
 	name: TRANSFERRING_HOSTED_SITE_FLOW,
 	isSignupFlow: false,
 
 	useSteps() {
-		return [
-			{ slug: 'waitForAtomic', component: WaitForAtomic },
-			{ slug: 'processing', component: ProcessingStep },
-			{ slug: 'error', component: ErrorStep },
-		];
+		return TRANSFERRING_HOSTED_SITE_STEPS;
 	},
 	useSideEffect() {
 		const { setProgress } = useDispatch( ONBOARD_STORE );

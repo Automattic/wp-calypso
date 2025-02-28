@@ -45,7 +45,6 @@ export const Capture: FunctionComponent< Props > = ( props ) => {
 
 type StepProps = {
 	initialUrl?: string;
-	disableImportListStep?: boolean;
 	goToStep: GoToStep;
 	onValidFormSubmit?: ( dependencies: Record< string, unknown > ) => void;
 	onImportListClick?: () => void;
@@ -59,7 +58,6 @@ const trackEventParams = {
 
 export const CaptureStep: React.FunctionComponent< StepProps > = ( {
 	initialUrl = '',
-	disableImportListStep,
 	goToStep,
 	onValidFormSubmit,
 	onImportListClick,
@@ -165,9 +163,7 @@ export const CaptureStep: React.FunctionComponent< StepProps > = ( {
 					onInputEnter={ ( url ) => {
 						onValidFormSubmit ? onValidFormSubmit( { url } ) : setUrl( url );
 					} }
-					onDontHaveSiteAddressClick={
-						disableImportListStep ? undefined : onDontHaveSiteAddressClick
-					}
+					onDontHaveSiteAddressClick={ onDontHaveSiteAddressClick }
 					hasError={ !! analyzerError }
 					onInputChange={ () => {
 						// resets the error when the user starts typing again
