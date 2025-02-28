@@ -8,6 +8,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import UplotChart from 'calypso/components/chart-uplot';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
 import { useSelector } from 'calypso/state';
+import useCssVariable from '../hooks/use-css-variable';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsPeriodHeader from '../stats-period-header';
 import { parseLocalDate } from '../utils';
@@ -109,6 +110,7 @@ export default function SubscribersChartSection( {
 	slug?: string | null;
 	period?: PeriodType;
 } ) {
+	const containerRef = useRef< HTMLDivElement >( null );
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const isChartLibraryEnabled = config.isEnabled( 'stats/chart-library' );
 	const quantityDefault: QuantityDefaultType = {
@@ -179,6 +181,7 @@ export default function SubscribersChartSection( {
 		}
 	}, [ status, isError ] );
 
+	const primaryColor = useCssVariable( '--color-primary-dark', containerRef.current );
 	const products = useSelector( ( state ) => state.memberships?.productList?.items[ siteId ?? 0 ] );
 
 	// Products with an undefined value rather than an empty array means the API call has not been completed yet.
@@ -202,7 +205,7 @@ export default function SubscribersChartSection( {
 			label: translate( 'Subscribers' ),
 			icon: <Icon className="gridicon" icon={ people } />,
 			options: {
-				stroke: '#069e08',
+				stroke: primaryColor,
 			},
 			data: subscribersData,
 		},
@@ -229,7 +232,7 @@ export default function SubscribersChartSection( {
 		: `/subscribers/${ slug }`;
 
 	return (
-		<div className="subscribers-section">
+		<div ref={ containerRef } className="subscribers-section">
 			{ /* TODO: Remove highlight-cards class and use a highlight cards heading component instead. */ }
 			<div className="subscribers-section-heading highlight-cards">
 				<h1 className="highlight-cards-heading">
