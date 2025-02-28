@@ -216,7 +216,9 @@ body.is-mobile-app-view {
 	}
 
 	&.masterbar__item-my-site,
-	&.masterbar__item-my-site-actions {
+	&.masterbar__item-my-site-actions,
+	&.masterbar__item-updates,
+	&.masterbar__item-comments {
 		padding-left: 7px;
 		gap: 6px;
 	}
@@ -351,6 +353,13 @@ body.is-mobile-app-view {
 	}
 	.dashicons-plus {
 		padding-top: 4px;
+	}
+	.dashicons-admin-comments {
+		padding-top: 2px;
+
+		& + span .count-0 {
+			opacity: .5;
+		}
 	}
 
 	&:hover,
@@ -525,6 +534,11 @@ body.is-mobile-app-view {
 		}
 	}
 
+	@media only screen and (max-width: 600px) {
+		&.masterbar__item-updates {
+			display: none;
+		}
+	}
 
 	@media only screen and (max-width: 480px) {
 		// reset flex value on mobile
