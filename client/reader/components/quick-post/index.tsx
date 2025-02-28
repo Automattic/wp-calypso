@@ -24,7 +24,18 @@ import './style.scss';
 loadBlocksWithCustomizations();
 loadTextFormatting();
 
-function QuickPost( { receivePosts } ) {
+// Note: The post data we receive from the API response does
+// not match the type in the stream data, but we can insert
+// the post data there for now until we create a corresponding
+// structure for the newly created post in the stream.
+interface PostItem {
+	ID: number;
+	site_ID: number;
+	title: string;
+	content: string;
+}
+
+function QuickPost( { receivePosts }: { receivePosts: ( posts: PostItem[] ) => Promise< void > } ) {
 	const translate = useTranslate();
 	const locale = useLocale();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
@@ -66,7 +77,7 @@ function QuickPost( { receivePosts } ) {
 				content: postContent,
 				status: 'publish',
 			} )
-			.then( ( postData ) => {
+			.then( ( postData: PostItem ) => {
 				recordReaderTracksEvent( 'calypso_reader_quick_post_submitted' );
 
 				if ( config.isEnabled( 'reader/quick-post-v2' ) ) {
@@ -173,6 +184,6 @@ function QuickPost( { receivePosts } ) {
 	);
 }
 
-export default connect( ( state ) => state, {
-	receivePosts,
+export default connect( null, {
+	receivePosts: ( posts: PostItem[] ) => receivePosts( posts ) as Promise< void >,
 } )( QuickPost );
