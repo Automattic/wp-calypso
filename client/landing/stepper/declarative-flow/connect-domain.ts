@@ -119,9 +119,9 @@ const connectDomain: Flow = {
 			switch ( _currentStepSlug ) {
 				case 'plans':
 					clearSignupDestinationCookie();
-					return navigate( 'createSite' );
+					return navigate( 'create-site' );
 
-				case 'createSite':
+				case 'create-site':
 					return navigate( 'processing' );
 
 				case 'processing': {

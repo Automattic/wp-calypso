@@ -96,9 +96,9 @@ const newsletter: Flow = {
 					return navigate( 'plans' );
 
 				case 'plans':
-					return navigate( 'createSite' );
+					return navigate( 'create-site' );
 
-				case 'createSite':
+				case 'create-site':
 					return navigate( 'processing' );
 
 				case 'processing':
