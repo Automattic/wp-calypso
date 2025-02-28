@@ -56,7 +56,7 @@ export function RouterProvider( {
 	pathArg,
 	beforeNavigate,
 	children,
-}: RouterProviderProps ) {
+}: RouterProviderProps ): JSX.Element {
 	const location = useSyncExternalStore(
 		browserHistory.listen,
 		getLocationWithQuery,
