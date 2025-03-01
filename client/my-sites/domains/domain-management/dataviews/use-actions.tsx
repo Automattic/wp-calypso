@@ -260,7 +260,6 @@ export function useActions( viewType: 'table' | 'list' | 'grid', onClose?: () =>
 			label: translate( 'Manage auto-renew' ),
 			supportsBulk: true,
 			isEligible( partialDomain: PartialDomainData ) {
-				return true;
 				const domain = getFullDomain( partialDomain );
 				if ( ! domain ) {
 					return false;
