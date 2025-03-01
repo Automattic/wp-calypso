@@ -15,7 +15,6 @@ import {
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
 	isBlogOnboardingFlow,
-	isSiteAssemblerFlow,
 	isReadymadeFlow,
 	isOnboardingFlow,
 	setThemeOnSite,
@@ -154,7 +153,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		isImportFocusedFlow( flow ) ||
 		isBlogOnboardingFlow( flow ) ||
 		isNewHostedSiteCreationFlow( flow ) ||
-		isSiteAssemblerFlow( flow ) ||
 		isReadymadeFlow( flow ) ||
 		wooFlows.includes( flow || '' )
 	) {
@@ -176,7 +174,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	const useThemeHeadstart =
 		! isStartWritingFlow( flow ) &&
 		! isNewHostedSiteCreationFlow( flow ) &&
-		! isSiteAssemblerFlow( flow ) &&
 		! isMigrationSignupFlow( flow );
 	const shouldGoToCheckout = Boolean( planCartItem );
 

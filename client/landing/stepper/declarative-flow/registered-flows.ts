@@ -36,9 +36,6 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	[ ENTREPRENEUR_FLOW ]: () =>
 		import( /* webpackChunkName: "entrepreneur-flow" */ '../declarative-flow/entrepreneur-flow' ),
 
-	'assembler-first': () =>
-		import( /* webpackChunkName: "assembler-first-flow" */ './assembler-first-flow' ),
-
 	'readymade-template': () =>
 		import( /* webpackChunkName: "readymade-template-flow" */ './readymade-template' ),
 
