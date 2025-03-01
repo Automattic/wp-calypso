@@ -96,6 +96,15 @@ body.is-section-domains.is-bulk-all-domains-page {
 				}
 			}
 
+			.domains-dataviews__domain-failed-label {
+				color: var(--studio-red-80);
+				background: var(--studio-red-5);
+				font-size: 0.75rem;
+				border-radius: 2px;
+				padding: 2px 8px;
+				margin-left: 8px;
+			}
+
 			.domains-dataviews__primary-domain-label {
 				margin-bottom: 4px;
 			}

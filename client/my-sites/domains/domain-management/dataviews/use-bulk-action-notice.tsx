@@ -1,5 +1,4 @@
 import { JobStatus } from '@automattic/data-stores';
-import { StatusPopover } from '@automattic/domains-table/src/status-popover';
 import { TranslateOptionsPlural, useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -49,15 +48,15 @@ const getFailureMessage = ( job: JobStatus, translate: TranslateFunction ) => {
 
 	if ( job.params.auto_renew ) {
 		return translate(
-			'Enabling automatic renewal has failed for your domain.',
-			'Enabling automatic renewal has failed for your domains.',
+			'We were unable to enable automatic renewal for your domain. Please try again.',
+			'We were unable to enable automatic renewal for your domains. Please try again.',
 			{ count: job.failed.length }
 		);
 	}
 
 	return translate(
-		'Disabling automatic renewal has failed for your domain.',
-		'Disabling automatic renewal has failed for your domains.',
+		'We were unable to disable automatic renewal for your domain. Please try again.',
+		'We were unable to disable automatic renewal for your domains. Please try again.',
 		{ count: job.failed.length }
 	);
 };
@@ -94,34 +93,19 @@ export default function useBulkActionNotice() {
 		unprocessedJobs.map( ( job ) => {
 			if ( job.failed.length ) {
 				dispatch(
-					errorNotice(
-						<div className="domains-dataviews-bulk-actions-notice">
-							{ getFailureMessage( job, translate ) }
-							<StatusPopover
-								position="bottom"
-								popoverTargetElement={
-									<div className="domains-dataviews-bulk-actions-notice__label">
-										{ translate( 'Details' ) }{ ' ' }
-									</div>
-								}
-							>
-								<div className="domains-dataviews-bulk-actions-notice__details">
-									{ job.failed.map( ( domain ) => (
-										<p key={ domain }> { domain } </p>
-									) ) }
-								</div>
-							</StatusPopover>
-						</div>,
-						{
-							onDismissClick: deleteBulkActionStatusOnDismiss,
-						}
-					)
+					errorNotice( getFailureMessage( job, translate ), {
+						onDismissClick: deleteBulkActionStatusOnDismiss,
+					} )
 				);
 
 				return;
 			}
 
-			dispatch( successNotice( getSuccessMessage( job, translate ) ) );
+			dispatch(
+				successNotice( getSuccessMessage( job, translate ), {
+					onDismissClick: deleteBulkActionStatusOnDismiss,
+				} )
+			);
 		} );
 
 		if ( unshownJobIds.length > 0 ) {
