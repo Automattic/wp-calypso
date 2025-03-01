@@ -13,12 +13,16 @@ interface Props {
 	};
 }
 
-const SetReaderLanding = ( { submitSignupStep, goToNextStep, initialContext }: Props ): null => {
+const SetReaderLanding = ( { submitSignupStep, goToNextStep, initialContext }: Props ) => {
 	const dispatch = useDispatch();
 	const refParam = initialContext?.query?.ref;
 
 	useEffect( () => {
+		// Submit the step immediately to trigger the processing screen.
+		submitSignupStep( { stepName: 'set-reader-landing' } );
+
 		const saveAndProceed = async () => {
+			// Save the preference
 			if ( 'reader-lp' === refParam ) {
 				await dispatch(
 					savePreference( READER_AS_LANDING_PAGE_PREFERENCE, {
@@ -28,15 +32,12 @@ const SetReaderLanding = ( { submitSignupStep, goToNextStep, initialContext }: P
 				);
 			}
 
-			submitSignupStep( { stepName: 'set-reader-landing' } );
 			goToNextStep();
 		};
 
 		saveAndProceed();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
-
-	return null; // Non-interactive step.
 };
 
 export default SetReaderLanding;
