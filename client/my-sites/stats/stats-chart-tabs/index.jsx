@@ -5,7 +5,7 @@ import { localize, translate } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, useRef } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import Chart from 'calypso/components/chart';
@@ -103,6 +103,9 @@ class StatModuleChartTabs extends Component {
 		),
 		isActiveTabLoading: PropTypes.bool,
 		onChangeLegend: PropTypes.func.isRequired,
+		chartContainerRef: PropTypes.object,
+		primaryColor: PropTypes.string,
+		secondaryColor: PropTypes.string,
 	};
 
 	state = {
@@ -170,6 +173,7 @@ class StatModuleChartTabs extends Component {
 			countsComp,
 			primaryColor,
 			secondaryColor,
+			chartContainerRef,
 		} = this.props;
 		const { chartType } = this.state;
 
@@ -188,7 +192,7 @@ class StatModuleChartTabs extends Component {
 		];
 		/* pass bars count as `key` to disable transitions between tabs with different column count */
 		return (
-			<div className={ clsx( ...classes ) }>
+			<div className={ clsx( ...classes ) } ref={ chartContainerRef }>
 				<ChartHeader
 					activeLegend={ this.props.activeLegend }
 					activeTab={ this.props.activeTab }
@@ -377,14 +381,19 @@ const connectComponent = connect(
 	{ recordGoogleEvent, requestChartCounts }
 );
 
+// TODO: let's convert it to a function component and remove all the hassle.
 const withCssColors = ( WrappedComponent ) => ( props ) => {
-	const primaryColor = useCssVariable( '--color-primary-light', document.body, true );
-	const secondaryColor = useCssVariable( '--color-primary-dark', document.body, true );
+	const chartContainerRef = useRef( null );
+
+	const primaryColor = useCssVariable( '--color-primary-light', chartContainerRef.current );
+	const secondaryColor = useCssVariable( '--color-primary-dark', chartContainerRef.current );
+
 	return (
 		<WrappedComponent
 			{ ...props }
 			primaryColor={ primaryColor }
 			secondaryColor={ secondaryColor }
+			chartContainerRef={ chartContainerRef }
 		/>
 	);
 };
