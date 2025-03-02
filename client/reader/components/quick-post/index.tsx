@@ -86,11 +86,11 @@ function QuickPost( {
 			} )
 			.then( ( postData: PostItem ) => {
 				recordReaderTracksEvent( 'calypso_reader_quick_post_submitted' );
+				clearEditor();
+				callShowSuccessMessage();
 
 				if ( config.isEnabled( 'reader/quick-post-v2' ) ) {
 					receivePosts( [ postData ] ).then( () => {
-						clearEditor();
-						callShowSuccessMessage();
 						// Actual API response will update the stream with the real post data
 						dispatch(
 							receiveNewPost( {
