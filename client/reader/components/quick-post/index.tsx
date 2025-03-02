@@ -40,7 +40,7 @@ function QuickPost( {
 	primarySiteId,
 	receivePosts,
 }: {
-	primarySiteId: number;
+	primarySiteId: number | null;
 	receivePosts: ( posts: PostItem[] ) => Promise< void >;
 } ) {
 	const translate = useTranslate();
