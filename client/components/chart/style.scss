@@ -195,7 +195,7 @@ $y-axis-padding: 0 20px;
 
 .chart__bar-section {
 	display: inline-block;
-	background-color: var(--color-primary-light);
+	background-color: var(--color-primary);
 	position: absolute;
 	right: 16%; // 1
 	bottom: 0; // 1
@@ -275,7 +275,7 @@ $y-axis-padding: 0 20px;
 	.chart__legend-color {
 		width: 20px;
 		height: 20px;
-		background: var(--color-primary-light);
+		background: var(--color-primary);
 		display: inline-block;
 		border-radius: 4px;
 		vertical-align: top;
