@@ -181,7 +181,7 @@ export default function SubscribersChartSection( {
 		}
 	}, [ status, isError ] );
 
-	const primaryColor = useCssVariable( '--color-primary-dark', containerRef.current );
+	const subscriberLineStroke = useCssVariable( '--color-primary-light', containerRef.current );
 	const products = useSelector( ( state ) => state.memberships?.productList?.items[ siteId ?? 0 ] );
 
 	// Products with an undefined value rather than an empty array means the API call has not been completed yet.
@@ -205,7 +205,7 @@ export default function SubscribersChartSection( {
 			label: translate( 'Subscribers' ),
 			icon: <Icon className="gridicon" icon={ people } />,
 			options: {
-				stroke: primaryColor,
+				stroke: subscriberLineStroke,
 			},
 			data: subscribersData,
 		},

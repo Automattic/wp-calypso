@@ -378,7 +378,7 @@ const connectComponent = connect(
 );
 
 const withCssColors = ( WrappedComponent ) => ( props ) => {
-	const primaryColor = useCssVariable( '--color-primary', document.body, true );
+	const primaryColor = useCssVariable( '--color-primary-light', document.body, true );
 	const secondaryColor = useCssVariable( '--color-primary-dark', document.body, true );
 	return (
 		<WrappedComponent
