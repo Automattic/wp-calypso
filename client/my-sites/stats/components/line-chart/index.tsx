@@ -3,47 +3,12 @@ import { DataPointDate } from '@automattic/charts/src/types';
 import clsx from 'clsx';
 import { numberFormat, useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import ChartBarTooltip from 'calypso/components/chart/bar-tooltip';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import StatsEmptyState from '../../stats-empty-state';
 
 import './styles.scss';
-
-const renderTooltip = ( {
-	tooltipData,
-}: {
-	tooltipData?: {
-		nearestDatum?: {
-			datum: DataPointDate;
-			key: string;
-		};
-		datumByKey?: { [ key: string ]: { datum: DataPointDate } };
-	};
-} ) => {
-	const nearestDatum = tooltipData?.nearestDatum?.datum;
-	if ( ! nearestDatum ) {
-		return null;
-	}
-	const tooltipPoints = Object.entries( tooltipData?.datumByKey || {} )
-		.map( ( [ key, { datum } ] ) => ( {
-			key,
-			value: datum.value as number,
-		} ) )
-		.sort( ( a, b ) => b.value - a.value );
-
-	return (
-		<div className="stats-line-chart-tooltip">
-			<div className="module-content-list-item is-date-label">
-				{ nearestDatum.date?.toLocaleDateString() }
-			</div>
-			<ul>
-				{ tooltipPoints.map( ( point ) => (
-					<ChartBarTooltip key={ point.key } label={ point.key } value={ point.value } />
-				) ) }
-			</ul>
-		</div>
-	);
-};
 
 function StatsLineChart( {
 	chartData = [],
@@ -56,6 +21,7 @@ function StatsLineChart( {
 }: {
 	chartData: Array< {
 		label: string;
+		icon: JSX.Element;
 		options: object;
 		data: Array< { date: Date; value: number } >;
 	} >;
@@ -68,6 +34,7 @@ function StatsLineChart( {
 	fixedDomain?: boolean;
 } ) {
 	const translate = useTranslate();
+	const moment = useLocalizedMoment();
 
 	const formatTime = formatTimeTick
 		? formatTimeTick
@@ -119,6 +86,62 @@ function StatsLineChart( {
 
 		return 'linear';
 	}, [ chartData ] );
+
+	const seriesIcons = useMemo(
+		() =>
+			Object.fromEntries(
+				chartData
+					.map( ( series ) => {
+						return series.icon && [ series.label, series.icon ];
+					} )
+					.filter( Boolean )
+			),
+		[ chartData ]
+	);
+
+	const renderTooltip = useCallback(
+		( {
+			tooltipData,
+		}: {
+			tooltipData?: {
+				nearestDatum?: {
+					datum: DataPointDate & { tooltipData: object[] };
+					key: string;
+				};
+				datumByKey?: { [ key: string ]: { datum: DataPointDate } };
+			};
+		} ) => {
+			const nearestDatum = tooltipData?.nearestDatum?.datum;
+			if ( ! nearestDatum ) {
+				return null;
+			}
+			const tooltipPoints = Object.entries( tooltipData?.datumByKey || {} ).map(
+				( [ key, { datum } ] ) => ( {
+					key,
+					value: datum.value as number,
+				} )
+			);
+
+			return (
+				<div className="stats-line-chart-tooltip">
+					<div className="module-content-list-item is-date-label">
+						{ nearestDatum.date && moment( nearestDatum.date ).format( 'LL' ) }
+					</div>
+					<ul>
+						{ tooltipPoints.map( ( point ) => (
+							<ChartBarTooltip
+								key={ point.key }
+								label={ point.key }
+								value={ point.value }
+								icon={ seriesIcons[ point.key ] }
+							/>
+						) ) }
+					</ul>
+				</div>
+			);
+		},
+		[ moment ]
+	);
 
 	return (
 		<div className={ clsx( 'stats-line-chart', className ) }>

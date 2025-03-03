@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { UseQueryResult } from '@tanstack/react-query';
+import { Icon, people, currencyDollar } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
@@ -199,6 +200,7 @@ export default function SubscribersChartSection( {
 	const lineChartData = [
 		{
 			label: translate( 'Subscribers' ),
+			icon: <Icon className="gridicon" icon={ people } />,
 			options: {
 				stroke: '#069e08',
 			},
@@ -206,6 +208,7 @@ export default function SubscribersChartSection( {
 		},
 		{
 			label: translate( 'Paid Subscribers' ),
+			icon: <Icon className="gridicon" icon={ currencyDollar } />,
 			options: {
 				stroke: 'rgb(230, 139, 40)',
 			},

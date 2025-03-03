@@ -1,3 +1,5 @@
+import { eye } from '@automattic/components/src/icons';
+import { Icon, people } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -40,8 +42,9 @@ const transformChartDataToLineFormat = ( chartData ) => {
 
 	// Create the first data series for views
 	const viewsSeries = {
-		label: 'Views',
+		label: translate( 'Views' ),
 		options: {},
+		icon: <Icon className="gridicon" icon={ eye } />,
 		data: chartData
 			.map( ( record ) => {
 				const date = parseLocalDate( record.data.period );
@@ -56,8 +59,9 @@ const transformChartDataToLineFormat = ( chartData ) => {
 
 	// Create the second data series for visitors
 	const visitorsSeries = {
-		label: 'Visitors',
+		label: translate( 'Visitors' ),
 		options: {},
+		icon: <Icon className="gridicon" icon={ people } />,
 		data: chartData
 			.map( ( record ) => {
 				const date = parseLocalDate( record.data.period );
