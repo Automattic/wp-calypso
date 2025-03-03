@@ -53,7 +53,7 @@ const transformChartDataToLineFormat = ( chartData, primaryColor, secondaryColor
 				if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
 					return null;
 				}
-				return { date, value };
+				return { date, value, label: record.tooltipData?.[ 0 ].label };
 			} )
 			.filter( Boolean ),
 	};
@@ -72,7 +72,7 @@ const transformChartDataToLineFormat = ( chartData, primaryColor, secondaryColor
 				if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
 					return null;
 				}
-				return { date, value };
+				return { date, value, label: record.tooltipData?.[ 0 ].label };
 			} )
 			.filter( Boolean ),
 	};
