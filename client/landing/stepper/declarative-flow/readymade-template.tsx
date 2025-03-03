@@ -41,7 +41,7 @@ const readymadeTemplateFlow: Flow = {
 		// We have to query theme for the Jetpack site.
 		setIntent( SiteIntent.ReadyMadeTemplate );
 	},
-
+	__experimentalUseBuiltinAuth: true,
 	useSteps() {
 		return stepsWithRequiredLogin( [
 			STEPS.CHECK_SITES,
