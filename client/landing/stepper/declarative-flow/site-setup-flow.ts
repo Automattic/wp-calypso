@@ -19,7 +19,7 @@ import { useActivateDesign } from '../hooks/use-activate-design';
 import { useIsPluginBundleEligible } from '../hooks/use-is-plugin-bundle-eligible';
 import { useSiteData } from '../hooks/use-site-data';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
-import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
+import { ONBOARD_STORE, SITE_STORE } from '../stores';
 import { shouldRedirectToSiteMigration } from './helpers';
 import { useRedirectDesignSetupOldSlug } from './helpers/use-redirect-design-setup-old-slug';
 import { useLaunchpadDecider } from './internals/hooks/use-launchpad-decider';
@@ -32,7 +32,7 @@ import {
 	FlowV1,
 	ProvidedDependencies,
 } from './internals/types';
-import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
+import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -51,7 +51,7 @@ function useGoalsAtFrontExperimentQueryParam() {
 const siteSetupFlow: FlowV1 = {
 	name: 'site-setup',
 	isSignupFlow: false,
-
+	__experimentalUseBuiltinAuth: true,
 	useSteps() {
 		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
 
@@ -87,7 +87,7 @@ const siteSetupFlow: FlowV1 = {
 			return [ STEPS.PROCESSING, STEPS.ERROR ];
 		}
 
-		return steps;
+		return stepsWithRequiredLogin( steps );
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
@@ -636,23 +636,11 @@ const siteSetupFlow: FlowV1 = {
 
 	useAssertConditions(): AssertConditionResult {
 		const { site, siteSlug, siteId } = useSiteData();
-		const userIsLoggedIn = useSelect(
-			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
-			[]
-		);
 		const fetchingSiteError = useSelect(
 			( select ) => ( select( SITE_STORE ) as SiteSelect ).getFetchingSiteError(),
 			[]
 		);
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
-
-		if ( ! userIsLoggedIn ) {
-			redirect( '/start' );
-			result = {
-				state: AssertConditionState.FAILURE,
-				message: 'site-setup requires a logged in user',
-			};
-		}
 
 		if ( ! siteSlug && ! siteId ) {
 			redirect( '/' );
