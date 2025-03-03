@@ -26,7 +26,7 @@ import type { SiteExcerptData } from '@automattic/sites';
 const importFlow: Flow = {
 	name: IMPORT_FOCUSED_FLOW,
 	isSignupFlow: true,
-
+	__experimentalUseBuiltinAuth: true,
 	useSteps() {
 		return stepsWithRequiredLogin( [
 			STEPS.IMPORT,
