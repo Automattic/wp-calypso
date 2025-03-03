@@ -15,8 +15,6 @@ import { useLocation, RouterProvider } from '../../../router';
 import type { SidebarContentProps } from '..';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import './style.stories.scss';
-
 /**
  * Storybook metadata
  */
