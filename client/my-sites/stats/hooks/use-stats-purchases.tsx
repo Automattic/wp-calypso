@@ -34,7 +34,7 @@ const JETPACK_BUSINESS_PLANS = [ PLAN_JETPACK_BUSINESS, PLAN_JETPACK_BUSINESS_MO
  * Checks if a purchase is valid.
  *
  * A purchase is considered valid if it is not expired or if it is within the grace period.
- * The grace period accounts for timezones and auto-renewals.
+ * The grace period accounts for time zones and auto-renewals.
  * @param {Purchase} purchase - The purchase object to check.
  * @returns {boolean} - Returns false if the purchase is both expired and outside the grace period, otherwise true.
  */
@@ -48,7 +48,7 @@ const isPurchaseValid = ( purchase: Purchase ) => {
 		return false;
 	}
 
-	// Allow for a grace period to account for timezones and auto-renewals.
+	// Allow for a grace period to account for time zones and auto-renewals.
 	const EXPIRY_THRESHOLD_DAYS = 2;
 	const expiryThreshold = moment().subtract( EXPIRY_THRESHOLD_DAYS, 'days' );
 	const isExpiredAndOld = moment( purchase.expiryDate ).isBefore( expiryThreshold );
