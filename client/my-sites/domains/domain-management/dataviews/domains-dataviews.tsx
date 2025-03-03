@@ -4,10 +4,8 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
-import { connect, ConnectedProps } from 'react-redux';
 import { navigate } from 'calypso/lib/navigate';
 import { addQueryArgs } from 'calypso/lib/url';
-import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import {
 	DEFAULT_PER_PAGE,
 	DEFAULT_SORT_FIELD,
@@ -23,11 +21,7 @@ import './style.scss';
 import { useFields } from './use-fields';
 import { initializeViewState, getFieldsByBreakpoint } from './view';
 
-const connector = connect( null, { successNotice, errorNotice } );
-
-type ReduxProps = ConnectedProps< typeof connector >;
-
-type DomainsDataViewsProps = {
+type Props = {
 	domains: PartialDomainData[] | undefined;
 	isLoading: boolean;
 	sidebarMode?: boolean;
@@ -35,21 +29,17 @@ type DomainsDataViewsProps = {
 	queryParams: QueryParams;
 };
 
-type Props = DomainsDataViewsProps & ReduxProps;
-
-const DomainsDataViews: React.FC< Props > = ( {
+export const DomainsDataViews = ( {
 	domains,
 	isLoading,
 	sidebarMode,
 	selectedDomainName,
 	queryParams,
-	successNotice,
-	errorNotice,
 }: Props ) => {
 	const translate = useTranslate();
 	const { isDesktop, getSiteSlug, selectedFeature } = useDomainsDataViewsContext();
 
-	useBulkActionNotice( successNotice, errorNotice );
+	useBulkActionNotice();
 
 	const [ view, setView ] = useState( () =>
 		initializeViewState( isDesktop, queryParams, sidebarMode )
@@ -110,7 +100,6 @@ const DomainsDataViews: React.FC< Props > = ( {
 					getDomainManagementLink( item, siteSlug, true, selectedFeature )
 			  )
 			: '';
-		// test
 
 		if ( ! domainManagementLink ) {
 			return;
@@ -152,5 +141,3 @@ const DomainsDataViews: React.FC< Props > = ( {
 		</>
 	);
 };
-
-export default connector( DomainsDataViews );

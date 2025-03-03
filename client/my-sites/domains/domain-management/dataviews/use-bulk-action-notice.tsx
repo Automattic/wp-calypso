@@ -2,8 +2,9 @@ import { JobStatus } from '@automattic/data-stores';
 import { StatusPopover } from '@automattic/domains-table/src/status-popover';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import wpcomRequest from 'wpcom-proxy-request';
-import { NoticeActionCreator } from 'calypso/state/notices/types';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { useDomainsDataViewsContext } from './use-context';
 
 const getSuccessMessage = ( job: JobStatus, translate: ( original: string ) => string ) => {
@@ -44,11 +45,10 @@ const getFailureMessage = ( job: JobStatus, translate: ( original: string ) => s
 		: translate( 'Disabling automatic renewal has failed for your domain.' );
 };
 
-export default function useBulkActionNotice(
-	successNotice: NoticeActionCreator,
-	errorNotice: NoticeActionCreator
-) {
+export default function useBulkActionNotice() {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
 	const { completedJobs, handleRestartDomainStatusPolling, deleteBulkActionStatus } =
 		useDomainsDataViewsContext();
 	const [ shownNotices, setShownNotices ] = useState< string[] >( [] );
@@ -76,33 +76,35 @@ export default function useBulkActionNotice(
 	useEffect( () => {
 		unprocessedJobs.map( ( job ) => {
 			if ( job.failed.length ) {
-				errorNotice(
-					<div style={ { display: 'flex', alignItems: 'center', gap: '8px' } }>
-						{ getFailureMessage( job, translate ) }
-						<StatusPopover
-							position="bottom"
-							popoverTargetElement={
-								<div style={ { color: 'var(--color-text-inverted)', fontSize: '0.875rem' } }>
-									{ translate( 'Details' ) }{ ' ' }
+				dispatch(
+					errorNotice(
+						<div style={ { display: 'flex', alignItems: 'center', gap: '8px' } }>
+							{ getFailureMessage( job, translate ) }
+							<StatusPopover
+								position="bottom"
+								popoverTargetElement={
+									<div style={ { color: 'var(--color-text-inverted)', fontSize: '0.875rem' } }>
+										{ translate( 'Details' ) }{ ' ' }
+									</div>
+								}
+							>
+								<div className="domains-table-bulk-actions-notice-popover">
+									{ job.failed.map( ( domain ) => (
+										<p key={ domain }> { domain } </p>
+									) ) }
 								</div>
-							}
-						>
-							<div className="domains-table-bulk-actions-notice-popover">
-								{ job.failed.map( ( domain ) => (
-									<p key={ domain }> { domain } </p>
-								) ) }
-							</div>
-						</StatusPopover>
-					</div>,
-					{
-						onDismissClick: deleteBulkActionStatusOnDismiss,
-					}
+							</StatusPopover>
+						</div>,
+						{
+							onDismissClick: deleteBulkActionStatusOnDismiss,
+						}
+					)
 				);
 
 				return;
 			}
 
-			successNotice( getSuccessMessage( job, translate ) );
+			dispatch( successNotice( getSuccessMessage( job, translate ) ) );
 		} );
 
 		if ( unshownJobIds.length > 0 ) {
