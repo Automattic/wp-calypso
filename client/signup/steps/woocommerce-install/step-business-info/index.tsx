@@ -81,7 +81,6 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ) {
 
 		return (
 			<>
-				<div className="step-business-info__info-section" />
 				<div className="step-business-info__instructions-container">
 					<form
 						onSubmit={ ( e ) => {
