@@ -30,6 +30,7 @@ export interface BaseNoticeOptions {
 	isPersistent?: boolean;
 	onClick?: () => void;
 	showDismiss?: boolean;
+	onDismissClick?: () => void;
 }
 
 // Notice options as they're expected by the action creator
