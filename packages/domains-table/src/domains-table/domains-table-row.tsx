@@ -3,12 +3,12 @@ import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products'
 import page from '@automattic/calypso-router';
 import { PartialDomainData } from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { useState } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
+import { useDispatch } from 'calypso/state'; // eslint-disable-line no-restricted-imports
 import { errorNotice, successNotice } from 'calypso/state/notices/actions'; // eslint-disable-line no-restricted-imports
 import { PointToWpcomDialog } from '../point-to-wpcom-dialog/point-to-wpcom-dialog';
 import { PrimaryDomainLabel } from '../primary-domain-label';
