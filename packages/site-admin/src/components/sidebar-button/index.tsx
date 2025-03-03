@@ -17,7 +17,7 @@ export function SidebarButton( props: ButtonProps ) {
 		<Button
 			size="compact"
 			{ ...props }
-			className={ clsx( 'site-admin-sidebar-button', props.className ) }
+			className={ clsx( 'a8c-site-admin-sidebar-button', props.className ) }
 		/>
 	);
 }

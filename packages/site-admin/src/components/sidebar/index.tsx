@@ -96,7 +96,7 @@ function SidebarContentWrapper( { children, shouldAnimate }: SidebarContentWrapp
 	}, [ navState ] );
 
 	const wrapperCssClasses = clsx(
-		'site-admin-sidebar__screen-wrapper',
+		'a8c-site-admin-sidebar__screen-wrapper',
 		shouldAnimate
 			? {
 					'slide-from-left': navAnimation === 'back',
@@ -123,7 +123,7 @@ export function SidebarContent( { routeKey, shouldAnimate, children }: SidebarCo
 
 	return (
 		<SidebarNavigationContext.Provider value={ navState }>
-			<div className="site-admin-sidebar__content">
+			<div className="a8c-site-admin-sidebar__content">
 				<SidebarContentWrapper shouldAnimate={ shouldAnimate } key={ routeKey }>
 					{ children }
 				</SidebarContentWrapper>

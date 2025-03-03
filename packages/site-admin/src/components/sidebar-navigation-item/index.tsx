@@ -61,7 +61,7 @@ export function SidebarNavigationItem( {
 	return (
 		<Item
 			className={ clsx(
-				'site-admin-sidebar-navigation-item',
+				'a8c-site-admin-sidebar-navigation-item',
 				{ 'with-suffix': ! withChevron && suffix },
 				className
 			) }
@@ -77,7 +77,7 @@ export function SidebarNavigationItem( {
 				{ withChevron && (
 					<Icon
 						icon={ isRTL() ? chevronLeftSmall : chevronRightSmall }
-						className="site-admin-sidebar-navigation-item__drilldown-indicator"
+						className="a8c-site-admin-sidebar-navigation-item__drilldown-indicator"
 						size={ 24 }
 					/>
 				) }

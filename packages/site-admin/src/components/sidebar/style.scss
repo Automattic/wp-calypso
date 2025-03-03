@@ -1,7 +1,7 @@
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/mixins';
 
-.site-admin-sidebar__content {
+.a8c-site-admin-sidebar__content {
 	flex-grow: 1;
 	overflow-y: auto;
 	// Prevents horizontal overflow while animating screen transitions
@@ -34,7 +34,7 @@
 	}
 }
 
-.site-admin-sidebar__screen-wrapper {
+.a8c-site-admin-sidebar__screen-wrapper {
 	overflow-x: auto;
 	@include custom-scrollbars-on-hover( transparent, $gray-700 );
 	scrollbar-gutter: stable;
