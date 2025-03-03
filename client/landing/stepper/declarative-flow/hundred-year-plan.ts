@@ -20,7 +20,7 @@ const HundredYearPlanFlow: Flow = {
 	get title() {
 		return ( getPlan( PLAN_100_YEARS )?.getTitle() || '' ) as string;
 	},
-
+	__experimentalUseBuiltinAuth: true,
 	isSignupFlow: true,
 	useSteps() {
 		const currentUser = useSelect(
