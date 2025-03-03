@@ -2,9 +2,8 @@ import { useTranslate } from 'i18n-calypso';
 import { get, isEmpty, map } from 'lodash';
 import { useReducer } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { FilterType } from 'calypso/data/hosting/use-site-logs-query';
+import { FilterType, LogType } from 'calypso/data/hosting/use-site-logs-query';
 import wpcom from 'calypso/lib/wp';
-import { LogType } from 'calypso/sites/tools/logs';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -127,9 +126,9 @@ export const useSiteLogsDownloader = ( {
 		} );
 
 		let path = null;
-		if ( logType === 'php' ) {
+		if ( logType === LogType.PHP ) {
 			path = `/sites/${ siteId }/hosting/error-logs`;
-		} else if ( logType === 'web' ) {
+		} else if ( logType === LogType.WEB ) {
 			path = `/sites/${ siteId }/hosting/logs`;
 		} else {
 			downloadErrorNotice( translate( 'Invalid log type specified' ) );
