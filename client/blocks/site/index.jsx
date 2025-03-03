@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
-import { Icon, chevronDown, layout } from '@wordpress/icons';
+import { Icon, chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -252,7 +252,11 @@ class Site extends Component {
 					}
 				>
 					<SiteIcon
-						defaultIcon={ layout }
+						defaultIcon={
+							this.props.defaultIcon || (
+								<Gridicon icon="globe" size={ this.props.compact ? 20 : 28 } />
+							)
+						}
 						site={ site }
 						// eslint-disable-next-line no-nested-ternary
 						size={ this.props.compact ? 24 : 32 }
