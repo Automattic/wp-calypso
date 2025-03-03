@@ -8,7 +8,7 @@ import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSitePluginSlug } from '../hooks/use-site-plugin-slug';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
-import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
+import { ONBOARD_STORE, SITE_STORE } from '../stores';
 import { redirect } from './internals/steps-repository/import/util';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import {
@@ -24,7 +24,7 @@ import {
 	afterCustomBundleSteps,
 	bundleStepsSettings,
 } from './plugin-bundle-data';
-import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
+import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
 
 const getNextStep = ( currentStep: string, steps: StepperStep[] ): string | undefined => {
 	const stepsIndex = steps.map( ( step ) => step.slug );
@@ -52,7 +52,7 @@ const pluginBundleFlow: FlowV1 = {
 				...afterCustomBundleSteps,
 			];
 		}
-		return [ ...initialBundleSteps, ...bundlePluginSteps ];
+		return stepsWithRequiredLogin( [ ...initialBundleSteps, ...bundlePluginSteps ] );
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const steps = this.useSteps();
@@ -253,23 +253,11 @@ const pluginBundleFlow: FlowV1 = {
 	useAssertConditions(): AssertConditionResult {
 		const siteSlug = useSiteSlugParam();
 		const siteId = useSiteIdParam();
-		const userIsLoggedIn = useSelect(
-			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
-			[]
-		);
 		const fetchingSiteError = useSelect(
 			( select ) => ( select( SITE_STORE ) as SiteSelect ).getFetchingSiteError(),
 			[]
 		);
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
-
-		if ( ! userIsLoggedIn ) {
-			redirect( '/start' );
-			result = {
-				state: AssertConditionState.FAILURE,
-				message: 'site-setup requires a logged in user',
-			};
-		}
 
 		if ( ! siteSlug && ! siteId ) {
 			redirect( '/' );
