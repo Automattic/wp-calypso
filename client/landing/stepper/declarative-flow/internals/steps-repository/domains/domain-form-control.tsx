@@ -3,7 +3,6 @@ import {
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
 	isDomainUpsellFlow,
-	isSiteAssemblerFlow,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { isEmpty } from 'lodash';
@@ -255,7 +254,7 @@ export function DomainFormControl( {
 		content = renderDomainForm();
 	}
 
-	if ( ( isDomainUpsellFlow( flow ) || isSiteAssemblerFlow( flow ) ) && ! showUseYourDomain ) {
+	if ( isDomainUpsellFlow( flow ) && ! showUseYourDomain ) {
 		sideContent = getSideContent();
 	}
 

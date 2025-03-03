@@ -3,7 +3,6 @@ import { useTranslate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
 import { UserData } from 'calypso/lib/user/user';
 import Stream from 'calypso/reader/stream';
-import UserProfileHeader from 'calypso/reader/user-profile/components/user-profile-header';
 
 interface UserPostsProps {
 	user: UserData;
@@ -31,9 +30,7 @@ const UserPosts = ( { user }: UserPostsProps ): JSX.Element => {
 				/>
 			) }
 			showBack={ false }
-		>
-			<UserProfileHeader user={ user } />
-		</Stream>
+		/>
 	);
 };
 

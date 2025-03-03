@@ -125,11 +125,12 @@ function StatsLineChart( {
 				} )
 			);
 
+			const tooltipLabel =
+				nearestDatum.label || ( nearestDatum.date && moment( nearestDatum.date ).format( 'LL' ) );
+
 			return (
 				<div className="stats-line-chart-tooltip">
-					<div className="module-content-list-item is-date-label">
-						{ nearestDatum.date && moment( nearestDatum.date ).format( 'LL' ) }
-					</div>
+					<div className="module-content-list-item is-date-label">{ tooltipLabel }</div>
 					<ul>
 						{ tooltipPoints.map( ( point ) => (
 							<ChartBarTooltip

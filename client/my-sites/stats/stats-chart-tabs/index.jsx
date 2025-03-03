@@ -17,6 +17,7 @@ import { getSiteOption } from 'calypso/state/sites/selectors';
 import { requestChartCounts } from 'calypso/state/stats/chart-tabs/actions';
 import { QUERY_FIELDS } from 'calypso/state/stats/chart-tabs/constants';
 import { getCountRecords, getLoadingTabs } from 'calypso/state/stats/chart-tabs/selectors';
+import { chartLabelformats } from 'calypso/state/stats/lists/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useCssVariable from '../hooks/use-css-variable';
 import StatsEmptyState from '../stats-empty-state';
@@ -40,7 +41,8 @@ const transformChartDataToLineFormat = (
 	chartData,
 	activeLegend = [],
 	primaryColor,
-	secondaryColor
+	secondaryColor,
+	gmtOffset = 0
 ) => {
 	if ( ! Array.isArray( chartData ) || chartData.length === 0 ) {
 		return [];
@@ -51,12 +53,12 @@ const transformChartDataToLineFormat = (
 	// Views are always shown
 	const viewsData = chartData
 		.map( ( record ) => {
-			const date = parseLocalDate( record.data.period );
+			const date = parseLocalDate( record.data.period, gmtOffset );
 			const value = record.data.views;
 			if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
 				return null;
 			}
-			return { date, value };
+			return { date, value, label: record.tooltipData?.[ 0 ].label };
 		} )
 		.filter( Boolean );
 
@@ -73,12 +75,12 @@ const transformChartDataToLineFormat = (
 	if ( activeLegend.includes( 'visitors' ) ) {
 		const visitorsData = chartData
 			.map( ( record ) => {
-				const date = parseLocalDate( record.data.period );
+				const date = parseLocalDate( record.data.period, gmtOffset );
 				const value = record.data.visitors;
 				if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
 					return null;
 				}
-				return { date, value };
+				return { date, value, label: record.tooltipData?.[ 0 ].label };
 			} )
 			.filter( Boolean );
 
@@ -227,6 +229,13 @@ class StatModuleChartTabs extends Component {
 		this.setState( { chartType: newType } );
 	};
 
+	formatLineChartTimeTick = ( date ) => {
+		// Align the format with the original chart data parser.
+		const timeformat = chartLabelformats[ this.props.selectedPeriod ];
+
+		return moment.utc( date ).format( timeformat );
+	};
+
 	render() {
 		const {
 			siteId,
@@ -239,6 +248,7 @@ class StatModuleChartTabs extends Component {
 			primaryColor,
 			secondaryColor,
 			chartContainerRef,
+			gmtOffset,
 		} = this.props;
 		const { chartType } = this.state;
 
@@ -299,11 +309,13 @@ class StatModuleChartTabs extends Component {
 							chartData,
 							this.props.activeLegend,
 							primaryColor,
-							secondaryColor
+							secondaryColor,
+							gmtOffset
 						) }
 						height={ 200 }
 						moment={ moment }
 						onClick={ this.props.barClick }
+						formatTimeTick={ this.formatLineChartTimeTick }
 					/>
 				) }
 
@@ -451,6 +463,7 @@ const connectComponent = connect(
 			tabCountsAlt: tabCountsAlt?.[ 0 ],
 			queryDayComp,
 			tabCountsAltComp: tabCountsAltComp?.[ 0 ],
+			gmtOffset: timezoneOffset,
 		};
 	},
 	{ recordGoogleEvent, requestChartCounts }

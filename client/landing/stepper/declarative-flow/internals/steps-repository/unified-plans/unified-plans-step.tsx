@@ -3,7 +3,7 @@ import config from '@automattic/calypso-config';
 import { UrlFriendlyTermType } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { FREE_THEME } from '@automattic/design-picker';
-import { isSiteAssemblerFlow, isTailoredSignupFlow, ONBOARDING_FLOW } from '@automattic/onboarding';
+import { isTailoredSignupFlow, ONBOARDING_FLOW } from '@automattic/onboarding';
 import { PlansIntent } from '@automattic/plans-grid-next';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { isDesktop as isDesktopViewport, subscribeIsDesktop } from '@automattic/viewport';
@@ -342,7 +342,7 @@ function UnifiedPlansStep( {
 	);
 
 	const shouldHideEcommercePlan = () => {
-		return isSiteAssemblerFlow( flowName ) || hideEcommercePlan;
+		return hideEcommercePlan;
 	};
 
 	const HeaderText = () => {
