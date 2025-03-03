@@ -1,4 +1,3 @@
-import { eye } from '@automattic/components/src/icons';
 import { Icon, people } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
@@ -40,6 +39,7 @@ const ChartTabShape = PropTypes.shape( {
 const transformChartDataToLineFormat = (
 	chartData,
 	activeLegend = [],
+	activeTab,
 	primaryColor,
 	secondaryColor,
 	gmtOffset = 0
@@ -50,11 +50,10 @@ const transformChartDataToLineFormat = (
 
 	const series = [];
 
-	// Views are always shown
-	const viewsData = chartData
+	const mainSeries = chartData
 		.map( ( record ) => {
 			const date = parseLocalDate( record.data.period, gmtOffset );
-			const value = record.data.views;
+			const value = record.data[ activeTab.attr ];
 			if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
 				return null;
 			}
@@ -62,21 +61,21 @@ const transformChartDataToLineFormat = (
 		} )
 		.filter( Boolean );
 
-	if ( viewsData.length > 0 ) {
+	if ( mainSeries.length > 0 ) {
 		series.push( {
-			label: translate( 'Views' ),
+			label: activeTab.label,
 			options: { stroke: primaryColor },
-			icon: <Icon className="gridicon" icon={ eye } />,
-			data: viewsData,
+			icon: activeTab.icon,
+			data: mainSeries,
 		} );
 	}
 
 	// Only add visitors series if visitors is active in legend
-	if ( activeLegend.includes( 'visitors' ) ) {
-		const visitorsData = chartData
+	if ( activeLegend.length > 0 ) {
+		const secondarySeries = chartData
 			.map( ( record ) => {
 				const date = parseLocalDate( record.data.period, gmtOffset );
-				const value = record.data.visitors;
+				const value = record.data[ activeLegend[ 0 ] ];
 				if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
 					return null;
 				}
@@ -84,68 +83,17 @@ const transformChartDataToLineFormat = (
 			} )
 			.filter( Boolean );
 
-		if ( visitorsData.length > 0 ) {
+		if ( secondarySeries.length > 0 ) {
 			series.push( {
-				label: translate( 'Visitors' ),
+				label: translate( 'Visitors' ), // It has to be visitors as that is the only case where we show two series.
 				options: { stroke: secondaryColor },
 				icon: <Icon className="gridicon" icon={ people } />,
-				data: visitorsData,
+				data: secondarySeries,
 			} );
 		}
 	}
 
 	return series;
-};
-
-// Transform bar chart data to respect activeLegend
-const transformBarChartData = ( chartData, activeLegend = [] ) => {
-	if ( ! Array.isArray( chartData ) ) {
-		return [];
-	}
-
-	return chartData.map( ( record ) => {
-		const newRecord = { ...record };
-
-		// Keep original data structure
-		newRecord.data = { ...record.data };
-
-		// For likes and comments tabs, use the direct value
-		if (
-			record.tooltipData?.some(
-				( item ) => item.className === 'is-likes' || item.className === 'is-comments'
-			)
-		) {
-			newRecord.value = record.value;
-			return newRecord;
-		}
-
-		// For views/visitors tab
-		// Filter tooltip data based on activeLegend
-		if ( newRecord.tooltipData ) {
-			newRecord.tooltipData = newRecord.tooltipData.filter( ( item ) => {
-				if ( item.className === 'is-date-label' ) {
-					return true;
-				}
-				if ( item.className === 'is-views' ) {
-					return true;
-				}
-				if ( item.className === 'is-visitors' || item.className === 'is-views-per-visitor' ) {
-					return activeLegend.includes( 'visitors' );
-				}
-				return true;
-			} );
-		}
-
-		// Always show views as the main bar value
-		newRecord.value = record.data.views;
-
-		// Show visitors as nested value when visitors legend is active
-		if ( activeLegend.includes( 'visitors' ) ) {
-			newRecord.nestedValue = record.data.visitors;
-		}
-
-		return newRecord;
-	} );
 };
 
 class StatModuleChartTabs extends Component {
@@ -285,11 +233,7 @@ class StatModuleChartTabs extends Component {
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
 
 				{ chartType === 'bar' ? (
-					<Chart
-						barClick={ this.props.barClick }
-						data={ transformBarChartData( chartData, this.props.activeLegend ) }
-						minBarWidth={ 35 }
-					>
+					<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 35 }>
 						<StatsEmptyState
 							headingText={
 								selectedPeriod === 'hour' ? translate( 'No hourly data available' ) : null
@@ -308,6 +252,7 @@ class StatModuleChartTabs extends Component {
 						chartData={ transformChartDataToLineFormat(
 							chartData,
 							this.props.activeLegend,
+							this.props.activeTab,
 							primaryColor,
 							secondaryColor,
 							gmtOffset
