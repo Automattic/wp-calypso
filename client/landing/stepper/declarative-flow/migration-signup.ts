@@ -20,7 +20,7 @@ const FLOW_NAME = MIGRATION_SIGNUP_FLOW;
 const migrationSignup: Flow = {
 	name: FLOW_NAME,
 	isSignupFlow: true,
-	__experimentalUseBuiltinAuth: true,
+
 	useSteps() {
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
