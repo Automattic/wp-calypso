@@ -37,7 +37,7 @@ describe( 'useTransferWithSoftwareStatus', () => {
 		const { result } = renderHook( () => useTransferWithSoftwareStatus( 123, 456 ), { wrapper } );
 
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
-		expect( result.current.data?.softwareTransferStatus ).toEqual( 'pending' );
+		expect( result.current.data ).toEqual( mockSuccessResponse );
 	} );
 
 	it( 'should not fetch when siteId or atomicTransferId is missing', () => {

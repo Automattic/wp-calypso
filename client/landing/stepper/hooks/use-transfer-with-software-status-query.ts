@@ -27,7 +27,7 @@ export const useTransferWithSoftwareStatus = (
 	return useQuery( {
 		queryKey: [ 'software-transfer-status', siteId, atomicTransferId ],
 		queryFn: () => getTransferWithSoftwareStatus( siteId, atomicTransferId ),
-		select: ( data ) => ( { softwareTransferStatus: data?.software_transfer_status } ),
+		select: ( data ) => ( { software_transfer_status: data?.software_transfer_status } ),
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false,
 		retryDelay: 5000, // Poll every 5 seconds
