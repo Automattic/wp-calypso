@@ -26,7 +26,7 @@ export const getConfirmationTasks = ( { translate, hasWCPay }: ConfirmationTasks
 			title: translate( 'Launch your store' ),
 			subtitle: translate( 'Share your store with the world and start accepting orders.' ),
 			getActionUrl: ( { wooAdminUrl }: GetActionUrlProps ) =>
-				`${ wooAdminUrl }&path=launch-your-store`,
+				`${ wooAdminUrl }&path=%2Flaunch-your-store`,
 		},
 		{
 			id: 'promote-products',
