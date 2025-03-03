@@ -2,7 +2,7 @@ import { isFreeHostingTrial, isDotComPlan } from '@automattic/calypso-products';
 import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
-import { useEffect, useLayoutEffect } from 'react';
+import { useEffect } from 'react';
 import { recordFreeHostingTrialStarted } from 'calypso/lib/analytics/ad-tracking/ad-track-trial-start';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
@@ -166,17 +166,17 @@ const hosting: Flow = {
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
 		const query = useQuery();
 		const isEligible = useSelector( isUserEligibleForFreeHostingTrial );
+		// Support for FlowV1 and V2, remove useSteps once FlowV1 is removed.
+		const steps = 'useSteps' in this ? this.useSteps() : this.getSteps?.();
 
 		const queryParams = Object.fromEntries( query );
 
-		useLayoutEffect( () => {
-			if ( currentStepSlug === 'trialAcknowledge' && ! isEligible ) {
+		useEffect( () => {
+			if ( currentStepSlug === 'trialAcknowledge' && ! isEligible && steps?.[ 0 ] ) {
 				// Go to the first step if the user is not eligible for a free hosting trial
-				// If domains is not the first, Stepper will figure it out.
-				// This automatically preserves the query params.
-				navigate( 'domains' );
+				navigate( steps[ 0 ].slug );
 			}
-		}, [ isEligible, currentStepSlug, navigate ] );
+		}, [ isEligible, currentStepSlug, navigate, steps ] );
 
 		useEffect( () => {
 			if ( queryParams.studioSiteId ) {
