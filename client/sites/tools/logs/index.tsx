@@ -1,253 +1,348 @@
-import { sprintf } from '@wordpress/i18n';
-import { useI18n } from '@wordpress/react-i18n';
-import { useCallback, useEffect, useState } from 'react';
-import QuerySiteSettings from 'calypso/components/data/query-site-settings';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import Pagination from 'calypso/components/pagination';
-import { useSiteLogsQuery, FilterType } from 'calypso/data/hosting/use-site-logs-query';
-import { useInterval } from 'calypso/lib/interval';
+import page from '@automattic/calypso-router';
 import {
-	getDateRangeQueryParam,
-	updateDateRangeQueryParam,
-	getFilterQueryParam,
-	updateFilterQueryParam,
-} from 'calypso/sites/tools/logs/components/filter-params';
-import { SiteLogsHeader } from 'calypso/sites/tools/logs/components/site-logs-header';
-import { SiteLogsTable } from 'calypso/sites/tools/logs/components/site-logs-table';
-import { SiteLogsToolbar } from 'calypso/sites/tools/logs/components/site-logs-toolbar';
+	Button,
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+	ToggleControl,
+} from '@wordpress/components';
+import { DataViews } from '@wordpress/dataviews';
+import { download } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
+import { useCallback, useState, useMemo } from 'react';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import DateControl from 'calypso/components/date-control';
+import { getShortcuts } from 'calypso/components/date-range/use-shortcuts';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import NavigationHeader from 'calypso/components/navigation-header';
+import {
+	LogType,
+	LogQueryParams,
+	PHPLog,
+	ServerLog,
+} from 'calypso/data/hosting/use-site-logs-query';
+import { useInterval } from 'calypso/lib/interval';
+import { navigate } from 'calypso/lib/navigate';
+import { useSiteLogsDownloader } from 'calypso/sites/tools/logs/hooks/use-site-logs-downloader';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import DetailsModal from './components/details-modal';
+import useActions from './hooks/use-actions';
+import useData from './hooks/use-data';
+import useFields from './hooks/use-fields';
+import {
+	default as useView,
+	toFilterParams,
+	getSortField,
+	getVisibleFields,
+	getFilterValue,
+} from './hooks/use-view';
+import type { View, Action, Filter } from '@wordpress/dataviews';
 import type { Moment } from 'moment';
-
 import './style.scss';
 
-export type LogType = 'php' | 'web';
-
-const DEFAULT_PAGE_SIZE = 50;
-
-export function buildFilterParam(
-	logType: LogType,
-	severity: string,
-	requestType: string,
-	requestStatus: string
-): FilterType {
-	const filters: FilterType = {};
-
-	if ( logType === 'php' ) {
-		if ( severity ) {
-			filters.severity = [ severity ];
-		}
-	}
-
-	if ( logType === 'web' ) {
-		if ( requestType ) {
-			filters.request_type = [ requestType ];
-		}
-		if ( requestStatus ) {
-			filters.status = [ requestStatus ];
-		}
-	}
-
-	return filters;
-}
-
-export const SiteLogs = ( {
+export const SiteLogsDataViews = ( {
 	logType,
-	pageSize = DEFAULT_PAGE_SIZE,
+	query,
 }: {
 	logType: LogType;
-	pageSize?: number;
+	query: LogQueryParams;
 } ) => {
-	const { __ } = useI18n();
-	const siteId = useSelector( getSelectedSiteId );
+	const translate = useTranslate();
 	const moment = useLocalizedMoment();
+	const siteId = useSelector( getSelectedSiteId );
 	const dispatch = useDispatch();
 
-	const [ autoRefresh, setAutoRefresh ] = useState( false );
-
-	const getLatestDateRange = useCallback( () => {
-		const startTime = moment().subtract( 7, 'd' );
-		const endTime = moment();
-		return { startTime, endTime };
-	}, [ moment ] );
-
-	const [ dateRange, setDateRange ] = useState( () => {
-		const latest = getLatestDateRange();
-		const dateRangeQuery = getDateRangeQueryParam( moment );
-		return {
-			startTime: dateRangeQuery.startTime || latest.startTime,
-			endTime: dateRangeQuery.endTime || latest.endTime,
-		};
-	} );
-
-	const [ severity, setSeverity ] = useState( () => {
-		return getFilterQueryParam( 'severity' ) || '';
-	} );
-
-	const [ requestType, setRequestType ] = useState( () => {
-		return getFilterQueryParam( 'request_type' ) || '';
-	} );
-
-	const [ requestStatus, setRequestStatus ] = useState( () => {
-		return getFilterQueryParam( 'request_status' ) || '';
-	} );
-
-	const [ currentPageIndex, setCurrentPageIndex ] = useState( 0 );
-
-	const autoRefreshCallback = useCallback( () => {
-		setDateRange( getLatestDateRange() );
-		setCurrentPageIndex( 0 );
-	}, [ getLatestDateRange ] );
-	useInterval( autoRefreshCallback, autoRefresh && 10 * 1000 );
-
-	const { data, isInitialLoading, isFetching } = useSiteLogsQuery( siteId, {
-		logType,
-		start: dateRange.startTime.unix(),
-		end: dateRange.endTime.unix(),
-		filter: buildFilterParam( logType, severity, requestType, requestStatus ),
-		sortOrder: 'desc',
-		pageSize,
-		pageIndex: currentPageIndex,
-	} );
-
-	const [ latestLogType, setLatestLogType ] = useState< LogType | undefined | null >( null );
-	useEffect( () => {
-		if ( ! isFetching && logType !== latestLogType ) {
-			setLatestLogType( logType );
-			if ( latestLogType ) {
-				setSeverity( '' );
-				setRequestType( '' );
-				setRequestStatus( '' );
+	const getMomentFromTimestamp = useCallback(
+		( value: string, fallback?: string ) => {
+			const fromValue = parseInt( value || '', 10 );
+			if ( ! isNaN( fromValue ) ) {
+				return moment.unix( fromValue );
 			}
-		}
-	}, [ latestLogType, logType, isFetching ] );
 
+			if ( fallback === '7-days-ago' ) {
+				return moment().subtract( 7, 'd' );
+			}
+
+			return moment();
+		},
+		[ moment ]
+	);
+
+	const getTimestampFor7DaysAgo = useCallback(
+		() => moment().subtract( 7, 'd' ).unix().toString( 10 ),
+		[ moment ]
+	);
+	const getTimestampForNow = useCallback( () => moment().unix().toString( 10 ), [ moment ] );
+
+	const startTime = useMemo(
+		() => getMomentFromTimestamp( query.from, '7-days-ago' ),
+		[ query.from, getMomentFromTimestamp ]
+	);
+	const endTime = useMemo(
+		() => getMomentFromTimestamp( query.to ),
+		[ query.to, getMomentFromTimestamp ]
+	);
+	const dateRange = useMemo( () => {
+		const daysInRange = endTime.diff( startTime, 'days' );
+		return {
+			chartStart: startTime.format( 'YYYY-MM-DD' ),
+			chartEnd: endTime.format( 'YYYY-MM-DD' ),
+			daysInRange,
+		};
+	}, [ startTime, endTime ] );
+
+	const { supportedShortcutList } = useSelector( ( state ) =>
+		getShortcuts( state, dateRange, translate )
+	);
+
+	const [ autoRefresh, setAutoRefresh ] = useState( false );
+	const autoRefreshCallback = useCallback( () => {
+		const url = new URL( window.location.href );
+		url.searchParams.set( 'from', getTimestampFor7DaysAgo() );
+		url.searchParams.set( 'to', getTimestampForNow() );
+		page.replace( url.pathname + url.search );
+	}, [ getTimestampFor7DaysAgo, getTimestampForNow ] );
+	useInterval( autoRefreshCallback, autoRefresh && 10 * 1000 );
 	const handleAutoRefreshClick = ( isChecked: boolean ) => {
 		if ( isChecked ) {
-			setDateRange( getLatestDateRange() );
-			updateDateRangeQueryParam( null );
-			setCurrentPageIndex( 0 );
+			const url = new URL( window.location.href );
+			url.searchParams.delete( 'from' );
+			url.searchParams.delete( 'to' );
+			page.replace( url.pathname + url.search );
 		} else {
-			updateDateRangeQueryParam( dateRange );
+			const url = new URL( window.location.href );
+			url.searchParams.set( 'from', getTimestampFor7DaysAgo() );
+			url.searchParams.set( 'to', getTimestampForNow() );
+			page.replace( url.pathname + url.search );
 		}
 
 		dispatch( recordTracksEvent( 'calypso_site_logs_auto_refresh', { enabled: isChecked } ) );
 		setAutoRefresh( isChecked );
 	};
 
-	const handlePageClick = ( nextPageNumber: number ) => {
-		if ( isInitialLoading ) {
-			return;
+	const handleTimeChange = useCallback( ( updatedStartTime: Moment, updatedEndTime: Moment ) => {
+		setAutoRefresh( false );
+
+		const url = new URL( window.location.href );
+
+		if ( ! updatedStartTime.isValid() ) {
+			url.searchParams.delete( 'from' );
+		} else {
+			url.searchParams.set( 'from', updatedStartTime.unix().toString( 10 ) );
 		}
 
-		const nextPageIndex = nextPageNumber - 1;
-		if ( nextPageIndex < currentPageIndex && currentPageIndex > 0 ) {
-			setCurrentPageIndex( currentPageIndex - 1 );
-		} else if (
-			nextPageIndex > currentPageIndex &&
-			( currentPageIndex + 1 ) * pageSize < ( data?.total_results ?? 0 )
-		) {
-			setCurrentPageIndex( currentPageIndex + 1 );
+		if ( ! updatedEndTime.isValid() ) {
+			url.searchParams.delete( 'to' );
+		} else {
+			url.searchParams.set( 'to', updatedEndTime.unix().toString( 10 ) );
 		}
 
-		setAutoRefresh( false );
-	};
+		page.replace( url.pathname + url.search );
+	}, [] );
 
-	const paginationText =
-		data?.total_results && data.total_results > pageSize
-			? /* translators: Describes which log entries we're showing on the page: "start" and "end" represent the range of log entries currently displayed, "total" is the number of log entries there are overall; e.g. Showing 1–20 of 428 */
-			  sprintf( __( 'Showing %(start)d\u2013%(end)d of %(total)d' ), {
-					start: currentPageIndex * pageSize + 1,
-					end: currentPageIndex * pageSize + data.logs.length,
-					total: data.total_results,
-			  } )
-			: null;
+	const [ view, setView ] = useView( { logType, query } );
+	const oldSeverity = getFilterValue( view, 'severity' )?.sort().toString() || '';
+	const setViewWithSideEffects = useCallback(
+		( newView: View ) => {
+			const severity = getFilterValue( newView, 'severity' )?.sort().toString() || '';
+			if ( severity !== oldSeverity ) {
+				dispatch(
+					recordTracksEvent( 'calypso_site_logs_severity_filter', {
+						severity,
+						severity_user: severity.includes( 'User' ),
+						severity_warning: severity.includes( 'Warning' ),
+						severity_deprecated: severity.includes( 'Deprecated' ),
+						severity_fatal: severity.includes( 'Fatal' ),
+					} )
+				);
+			}
 
-	const handleDateTimeChange = ( startTime: Moment, endTime: Moment ) => {
-		// check for "clear" pressed
-		if ( ! startTime.isValid() || ! endTime.isValid() ) {
-			const latest = getLatestDateRange();
-			startTime = latest.startTime;
-			endTime = latest.endTime;
-		}
+			// Disable auto-refresh if the user navigates to a different page.
+			if ( autoRefresh === true && newView.page !== view.page ) {
+				setAutoRefresh( false );
+			}
 
-		setDateRange( { startTime, endTime } );
-		setAutoRefresh( false );
-		updateDateRangeQueryParam( { startTime, endTime } );
-	};
+			setView( newView );
 
-	const handleSeverityChange = ( severity: string ) => {
-		setSeverity( severity );
-		setAutoRefresh( false );
-		updateFilterQueryParam( 'severity', severity );
-	};
+			// Handle URL changes.
+			const url = new URL( window.location.href );
+			const isEmpty = ( filter: Filter | undefined ) =>
+				! filter || ! filter?.value || filter?.value.length === 0;
+			[ 'severity', 'request_type', 'status', 'renderer', 'cached' ].forEach( ( filterField ) => {
+				const filter = newView.filters?.find( ( f ) => f.field === filterField );
 
-	const handleRequestTypeChange = ( requestType: string ) => {
-		setRequestType( requestType );
-		setAutoRefresh( false );
-		updateFilterQueryParam( 'request_type', requestType );
-	};
+				// Use cases to cover:
+				//
+				// 1. URL doesn't have the filter and the filter is empty. Do nothing.
+				// 2. URL doesn't have the filter and the filter is not empty. Update URL param.
+				// 3. URL has the filter and the filter is the same as before. Do nothing.
+				// 4. URL has the filter and the filter is different from before. Update URL param.
+				// 5. URL has the filter and the filter is empty. Remove URL param.
 
-	const handleRequestStatusChange = ( requestStatus: string ) => {
-		setRequestStatus( requestStatus );
-		setAutoRefresh( false );
-		updateFilterQueryParam( 'request_status', requestStatus );
-	};
+				if ( ! url.searchParams.has( filterField ) && isEmpty( filter ) ) {
+					return;
+				}
 
-	const headerTitles =
-		logType === 'php'
-			? [ 'severity', 'timestamp', 'message' ]
-			: [ 'request_type', 'date', 'status', 'request_url' ];
+				if ( ! url.searchParams.has( filterField ) && ! isEmpty( filter ) ) {
+					url.searchParams.set( filterField, filter?.value.sort().toString() );
+				}
+
+				if (
+					url.searchParams.has( filterField ) &&
+					url.searchParams.get( filterField ) === filter?.value.sort().toString()
+				) {
+					return;
+				}
+
+				if (
+					url.searchParams.has( filterField ) &&
+					url.searchParams.get( filterField ) !== filter?.value.sort().toString()
+				) {
+					url.searchParams.set( filterField, filter?.value.sort().toString() );
+				}
+
+				if ( url.searchParams.has( filterField ) && isEmpty( filter ) ) {
+					url.searchParams.delete( filterField );
+				}
+			} );
+
+			page.replace( url.pathname + url.search );
+		},
+		[ autoRefresh, setAutoRefresh, oldSeverity, view.page, setView, dispatch ]
+	);
+
+	const fields = useFields( { logType } );
+	const { data, paginationInfo, isLoading } = useData( {
+		view,
+		logType,
+		startTime,
+		endTime,
+	} );
+	const actions: Action< PHPLog | ServerLog >[] = useActions( { logType, isLoading } );
+
+	const { downloadLogs, state } = useSiteLogsDownloader( { roundDateRangeToWholeDays: false } );
+	const isDownloading = state.status === 'downloading';
+	const onDownloadLogs = useCallback( () => {
+		downloadLogs( {
+			logType,
+			startDateTime: startTime,
+			endDateTime: endTime,
+			filter: toFilterParams( { view, logType } ),
+		} );
+	}, [ downloadLogs, logType, startTime, endTime, view ] );
+
+	const [ itemDetailsModal, setItemDetailsModal ] = useState< PHPLog | ServerLog | null >( null );
+	const onOpenDetailsModal = useCallback( ( item: PHPLog | ServerLog ) => {
+		setItemDetailsModal( item );
+	}, [] );
+	const onCloseDetailsModal = useCallback( () => {
+		setItemDetailsModal( null );
+	}, [] );
 
 	return (
-		<div>
-			<SiteLogsHeader
-				endDateTime={ dateRange.endTime }
-				logType={ logType }
-				requestStatus={ requestStatus }
-				requestType={ requestType }
-				severity={ severity }
-				startDateTime={ dateRange.startTime }
-			/>
-
-			<div className="site-logs-container">
-				{ siteId && <QuerySiteSettings siteId={ siteId } /> }
-				<SiteLogsToolbar
-					onDateTimeChange={ handleDateTimeChange }
-					onSeverityChange={ handleSeverityChange }
-					onRequestTypeChange={ handleRequestTypeChange }
-					onRequestStatusChange={ handleRequestStatusChange }
-					onAutoRefreshChange={ handleAutoRefreshClick }
+		<>
+			{ siteId && <QuerySiteSettings siteId={ siteId } /> }
+			{ !! itemDetailsModal && (
+				<DetailsModal
+					item={ itemDetailsModal }
 					logType={ logType }
-					startDateTime={ dateRange.startTime }
-					endDateTime={ dateRange.endTime }
-					autoRefresh={ autoRefresh }
-					severity={ severity }
-					requestType={ requestType }
-					requestStatus={ requestStatus }
+					onClose={ onCloseDetailsModal }
 				/>
-				<SiteLogsTable
-					logs={ data?.logs }
-					isLoading={ isFetching }
-					headerTitles={ headerTitles }
-					logType={ logType }
-					latestLogType={ latestLogType }
+			) }
+			<div className="site-logs-header">
+				<NavigationHeader
+					title={ translate( 'Logs' ) }
+					subtitle={ translate(
+						'View and download various server logs. {{link}}Learn more{{/link}}',
+						{
+							components: {
+								link: (
+									<InlineSupportLink supportContext="site-monitoring-logs" showIcon={ false } />
+								),
+							},
+						}
+					) }
 				/>
-				{ paginationText && (
-					<div className="site-monitoring__pagination-text">{ paginationText }</div>
-				) }
-				{ !! data?.total_results && (
-					<div className="site-monitoring__pagination-click-guard">
-						<Pagination
-							page={ currentPageIndex + 1 }
-							perPage={ pageSize }
-							total={ data.total_results }
-							pageClick={ handlePageClick }
-						/>
-					</div>
-				) }
+				<ToggleGroupControl
+					className="site-logs-toolbar__toggle"
+					hideLabelFromVision
+					label=""
+					onChange={ ( value ) => {
+						if ( value === LogType.PHP || value === LogType.WEB ) {
+							navigate( window.location.pathname.replace( /\/[^/]+$/, '/' + value ) );
+							setView( ( view: View ) => ( {
+								...view,
+								filters: [],
+								sort: {
+									field: getSortField( value ),
+									direction: view?.sort?.direction || 'desc',
+								},
+								titleField: getSortField( value ),
+								fields: getVisibleFields( value ),
+							} ) );
+						}
+					} }
+					value={ logType }
+					__nextHasNoMarginBottom
+				>
+					<ToggleGroupControlOption
+						className="site-logs-toolbar__toggle-option"
+						label={ translate( 'PHP error', {
+							textOnly: true,
+						} ) }
+						value="php"
+					/>
+					<ToggleGroupControlOption
+						className="site-logs-toolbar__toggle-option"
+						label={ translate( 'Web server', {
+							textOnly: true,
+						} ) }
+						value="web"
+					/>
+				</ToggleGroupControl>
+				<DateControl
+					dateRange={ dateRange }
+					onApplyButtonClick={ handleTimeChange }
+					shortcutList={ supportedShortcutList }
+					onShortcutClick={ ( shortcut, closePopoverAndCommit ) => {
+						/* Time change is handled by onApplyButtonClick */
+						closePopoverAndCommit();
+					} }
+					tooltip={ translate( 'Select a date range' ) }
+				/>
 			</div>
-		</div>
+			<DataViews< PHPLog | ServerLog >
+				data={ data }
+				isLoading={ isLoading }
+				paginationInfo={ paginationInfo }
+				fields={ fields }
+				view={ view }
+				onChangeView={ setViewWithSideEffects }
+				onClickItem={ onOpenDetailsModal }
+				actions={ actions }
+				search={ false }
+				defaultLayouts={ { table: {} } }
+				header={
+					<>
+						<Button
+							size="compact"
+							icon={ download }
+							label="Download logs"
+							onClick={ onDownloadLogs }
+							isBusy={ isDownloading }
+						/>
+						<ToggleControl
+							__nextHasNoMarginBottom
+							className="site-logs__auto-refresh site-logs__auto-refresh_desktop"
+							label={ translate( 'Auto-refresh', { textOnly: true } ) }
+							checked={ autoRefresh }
+							onChange={ handleAutoRefreshClick }
+						/>
+					</>
+				}
+			/>
+		</>
 	);
 };
