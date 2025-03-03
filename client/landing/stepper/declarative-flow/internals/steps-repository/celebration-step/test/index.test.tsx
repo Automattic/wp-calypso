@@ -37,21 +37,6 @@ jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
 	useSite: () => mockSite,
 } ) );
 
-const mockIsFirstPostPublished = false;
-
-jest.mock( '@automattic/data-stores', () => ( {
-	...jest.requireActual( '@automattic/data-stores' ),
-	useLaunchpad: () => {
-		return {
-			data: {
-				checklist_statuses: {
-					first_post_published: mockIsFirstPostPublished,
-				},
-			},
-		};
-	},
-} ) );
-
 const user = {
 	ID: 1234,
 	username: 'testUser',
