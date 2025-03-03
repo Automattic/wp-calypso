@@ -31,7 +31,7 @@ const siteMigration: Flow = {
 	name: FLOW_NAME,
 	isSignupFlow: false,
 	__experimentalUseSessions: true,
-
+	__experimentalUseBuiltinAuth: true,
 	useSideEffect() {
 		const { setIntent } = useDispatch( ONBOARD_STORE );
 		useEffect( () => {
