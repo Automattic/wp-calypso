@@ -4,7 +4,7 @@ import { TextControl, ComboboxControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import emailValidator from 'email-validator';
 import { useEffect, useState } from 'react';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import Loading from 'calypso/components/loading';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchWooCommerceCountries } from 'calypso/state/countries/actions';
@@ -99,7 +99,6 @@ export default function StepStoreAddress( props: WooCommerceStoreAddressProps ) 
 	function getContent() {
 		return (
 			<>
-				<div className="step-store-address__info-section" />
 				<div className="step-store-address__instructions-container">
 					<form
 						onSubmit={ ( e ) => {
@@ -204,7 +203,7 @@ export default function StepStoreAddress( props: WooCommerceStoreAddressProps ) 
 	if ( ! siteId ) {
 		return (
 			<div className="step-store-address__info-section">
-				<LoadingEllipsis />
+				<Loading />
 			</div>
 		);
 	}
