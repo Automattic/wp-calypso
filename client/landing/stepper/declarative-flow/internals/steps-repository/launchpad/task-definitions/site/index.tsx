@@ -2,7 +2,6 @@ import { OnboardActions, SiteActions } from '@automattic/data-stores';
 import { Task } from '@automattic/launchpad';
 import {
 	isBlogOnboardingFlow,
-	isDesignFirstFlow,
 	isStartWritingFlow,
 	replaceProductsInCart,
 } from '@automattic/onboarding';
@@ -41,10 +40,6 @@ const getIsLaunchSiteTaskDisabled = ( flow: string, context: TaskContext ) => {
 
 	if ( isStartWritingFlow( flow ) ) {
 		return ! ( firstPostPublished && planCompleted && domainUpsellCompleted && setupBlogCompleted );
-	}
-
-	if ( isDesignFirstFlow( flow ) ) {
-		return ! ( planCompleted && domainUpsellCompleted && setupBlogCompleted );
 	}
 
 	return false;

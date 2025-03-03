@@ -8,7 +8,6 @@ import {
 	StepContainer,
 	isBlogOnboardingFlow,
 	START_WRITING_FLOW,
-	DESIGN_FIRST_FLOW,
 	READYMADE_TEMPLATE_FLOW,
 } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
@@ -61,7 +60,6 @@ const useIntentsForFlow = ( flowName: string ): NewOrExistingSiteIntent[] => {
 					actionText: translate( 'Start a new site' ),
 				},
 			];
-		case DESIGN_FIRST_FLOW:
 		case START_WRITING_FLOW:
 		case READYMADE_TEMPLATE_FLOW:
 			return [

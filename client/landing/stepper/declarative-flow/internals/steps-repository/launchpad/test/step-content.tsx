@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { DESIGN_FIRST_FLOW, NEWSLETTER_FLOW, START_WRITING_FLOW } from '@automattic/onboarding';
+import { NEWSLETTER_FLOW, START_WRITING_FLOW } from '@automattic/onboarding';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import nock from 'nock';
@@ -36,9 +36,6 @@ const stepContentProps = {
 // completionStatuses is defined here so we can change it dynamically in tests
 // feel free to add more attributes as needed
 const completionStatuses = {
-	'design-first': {
-		plan_completed: false,
-	},
 	'start-writing': {
 		plan_completed: false,
 	},
@@ -160,32 +157,6 @@ jest.mock( '@automattic/data-stores', () => ( {
 						completed: completionStatuses[ 'start-writing' ][ 'plan_completed' ],
 						disabled: false,
 						title: 'Choose a plan',
-					},
-					{
-						id: 'blog_launched',
-						completed: false,
-						disabled: false,
-						title: 'Launch your blog',
-					},
-				];
-				break;
-
-			case 'design-first':
-				checklist = [
-					{ id: 'design_selected', completed: false, disabled: false, title: 'Select a design' },
-					{ id: 'setup_blog', completed: false, disabled: false, title: 'Name your blog' },
-					{ id: 'domain_upsell', completed: false, disabled: false, title: 'Choose a domain' },
-					{
-						id: 'plan_completed',
-						completed: completionStatuses[ 'design-first' ][ 'plan_completed' ],
-						disabled: false,
-						title: 'Choose a plan',
-					},
-					{
-						id: 'first_post_published',
-						completed: false,
-						disabled: false,
-						title: 'Write your first post',
 					},
 					{
 						id: 'blog_launched',
@@ -369,55 +340,6 @@ describe( 'StepContent', () => {
 
 			expect( screen.getByText( 'Checkout and launch' ) ).toBeInTheDocument();
 			completionStatuses[ 'start-writing' ][ 'plan_completed' ] = false;
-		} );
-	} );
-
-	describe( 'when flow is Design first', () => {
-		beforeEach( () => {
-			mockSite.options.site_intent = DESIGN_FIRST_FLOW;
-		} );
-		it( 'renders correct sidebar header content', () => {
-			renderStepContent( false, DESIGN_FIRST_FLOW );
-
-			expect( screen.getByText( "Your blog's almost ready!" ) ).toBeInTheDocument();
-			expect(
-				screen.getByText( 'Keep up the momentum with these final steps.' )
-			).toBeInTheDocument();
-		} );
-
-		it( 'renders correct sidebar tasks', () => {
-			renderStepContent( false, START_WRITING_FLOW );
-
-			expect( screen.getByText( 'Select a design' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Name your blog' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Choose a domain' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Choose a plan' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Write your first post' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Launch your blog' ) ).toBeInTheDocument();
-		} );
-
-		it( 'renders correct status for each task', () => {
-			renderStepContent( false, DESIGN_FIRST_FLOW );
-
-			const setupBlogListItem = screen.getByText( 'Name your blog' ).closest( 'li' );
-			expect( setupBlogListItem ).toHaveClass( 'pending' );
-
-			const choosePlanListItem = screen.getByText( 'Choose a plan' ).closest( 'li' );
-			expect( choosePlanListItem ).toHaveClass( 'pending' );
-		} );
-
-		it( 'renders web preview section', () => {
-			renderStepContent( false, DESIGN_FIRST_FLOW );
-
-			expect( screen.getByTitle( 'Preview' ) ).toBeInTheDocument();
-		} );
-
-		it( 'renders correct launch CTA text when plan not free', () => {
-			completionStatuses[ 'design-first' ][ 'plan_completed' ] = true;
-			renderStepContent( false, DESIGN_FIRST_FLOW );
-
-			expect( screen.getByText( 'Checkout and launch' ) ).toBeInTheDocument();
-			completionStatuses[ 'design-first' ][ 'plan_completed' ] = false;
 		} );
 	} );
 } );

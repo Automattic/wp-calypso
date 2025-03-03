@@ -8,7 +8,6 @@ import {
 	NEW_HOSTED_SITE_FLOW,
 	isNewHostedSiteCreationFlow,
 	isDomainUpsellFlow,
-	DESIGN_FIRST_FLOW,
 	isBlogOnboardingFlow,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -42,7 +41,6 @@ interface Props {
 function getPlansIntent( flowName: string | null, isWordCampPromo?: boolean ): PlansIntent | null {
 	switch ( flowName ) {
 		case START_WRITING_FLOW:
-		case DESIGN_FIRST_FLOW:
 			return 'plans-blog-onboarding';
 		case NEWSLETTER_FLOW:
 			return 'plans-newsletter';

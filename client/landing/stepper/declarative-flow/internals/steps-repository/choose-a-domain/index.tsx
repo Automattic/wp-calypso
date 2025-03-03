@@ -1,10 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { ProductsList } from '@automattic/data-stores';
-import {
-	DESIGN_FIRST_FLOW,
-	START_WRITING_FLOW,
-	isBlogOnboardingFlow,
-} from '@automattic/onboarding';
+import { START_WRITING_FLOW, isBlogOnboardingFlow } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
@@ -133,7 +129,6 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	const getStepContent = () => {
 		switch ( flow ) {
 			case START_WRITING_FLOW:
-			case DESIGN_FIRST_FLOW:
 				return getBlogOnboardingFlowStepContent();
 			default:
 				return getDefaultStepContent();
