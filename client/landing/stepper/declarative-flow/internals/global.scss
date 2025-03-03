@@ -106,6 +106,10 @@ button {
 .create-site {
 	box-sizing: border-box;
 
+	.wpcom-loading__boot {
+		margin-top: 32vh;
+	}
+
 	&.step-route {
 		padding: 60px 0 0;
 
