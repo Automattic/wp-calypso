@@ -108,7 +108,7 @@ const appRoutes = [
 The `eSidebarContent` component renders navigation items within the sidebar. Each item corresponds to a specific route, and the `useLocation` hook determines whether it is active.
 
 ```tsx
-const eSidebarContent = () => {
+const SidebarContent = () => {
     const { path } = useLocation();
 
     return (
