@@ -23,7 +23,7 @@
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@storybook/addon-themes": "7.6.20",
-		"@storybook/addon-viewport": "^7.6.19"
+		"@storybook/addon-viewport": "^7.6.20"
 	},
 	"dependencies": {
 		"@automattic/calypso-babel-config": "workspace:^",
