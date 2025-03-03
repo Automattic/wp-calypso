@@ -383,6 +383,11 @@ export const STEPS = {
 		slug: 'setup-blog',
 		asyncComponent: () => import( './steps-repository/setup-blog' ),
 	},
+
+	PLAYGROUND: {
+		slug: 'playground',
+		asyncComponent: () => import( './steps-repository/playground' ),
+	},
 } as const;
 
 /**
