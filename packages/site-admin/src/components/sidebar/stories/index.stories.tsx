@@ -37,7 +37,7 @@ const SidebarItems = () => {
 				key="sidebar-item-reports"
 				to="/reports"
 				uid="reports"
-				withChevron={ false }
+				suffix="CHEVRON"
 				aria-current={ path === '/reports' }
 			>
 				{ __( 'Reports' ) }
@@ -48,7 +48,6 @@ const SidebarItems = () => {
 				key="sidebar-item-settings"
 				to="/settings"
 				uid="settings"
-				withChevron={ false }
 				aria-current={ path === '/settings' }
 			>
 				{ __( 'Settings' ) }
@@ -59,7 +58,6 @@ const SidebarItems = () => {
 				key="sidebar-item-archive"
 				to="/archive"
 				uid="archive"
-				withChevron={ false }
 				aria-current={ path === '/archive' }
 			>
 				{ __( 'Archive' ) }
