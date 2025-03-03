@@ -3,7 +3,7 @@
  */
 import { __experimentalItemGroup as ItemGroup } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { archive, Icon, navigation, settings } from '@wordpress/icons';
+import { archive, navigation, settings } from '@wordpress/icons';
 /**
  * Internal dependencies
  */
@@ -33,7 +33,7 @@ const SidebarItems = () => {
 	return (
 		<ItemGroup>
 			<SidebarNavigationItem
-				icon={ <Icon icon={ navigation } /> }
+				icon={ navigation }
 				key="sidebar-item-reports"
 				to="/reports"
 				uid="reports"
@@ -44,7 +44,7 @@ const SidebarItems = () => {
 			</SidebarNavigationItem>
 
 			<SidebarNavigationItem
-				icon={ <Icon icon={ settings } /> }
+				icon={ settings }
 				key="sidebar-item-settings"
 				to="/settings"
 				uid="settings"
@@ -54,7 +54,7 @@ const SidebarItems = () => {
 			</SidebarNavigationItem>
 
 			<SidebarNavigationItem
-				icon={ <Icon icon={ archive } /> }
+				icon={ archive }
 				key="sidebar-item-archive"
 				to="/archive"
 				uid="archive"
