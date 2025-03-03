@@ -6,6 +6,7 @@ import { Moment } from 'moment';
 import { useCallback, useMemo } from 'react';
 import ChartBarTooltip from 'calypso/components/chart/bar-tooltip';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { DATE_FORMAT } from '../../constants';
 import StatsEmptyState from '../../stats-empty-state';
 
 import './styles.scss';
@@ -14,6 +15,7 @@ function StatsLineChart( {
 	chartData = [],
 	formatTimeTick,
 	className,
+	onClick,
 	height = 400,
 	EmptyState = StatsEmptyState,
 	zeroBaseline = true,
@@ -23,7 +25,7 @@ function StatsLineChart( {
 		label: string;
 		icon?: JSX.Element;
 		options: object;
-		data: Array< { date: Date; value: number } >;
+		data: Array< DataPointDate >;
 	} >;
 	formatTimeTick?: ( value: number ) => string;
 	className?: string;
@@ -32,6 +34,7 @@ function StatsLineChart( {
 	EmptyState: typeof StatsEmptyState;
 	zeroBaseline?: boolean;
 	fixedDomain?: boolean;
+	onClick?: ( item: { data: { period: string } } ) => void;
 } ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -57,7 +60,9 @@ function StatsLineChart( {
 	const maxValue = useMemo(
 		() =>
 			Math.max(
-				...chartData.map( ( series ) => Math.max( ...series.data.map( ( d ) => d.value ) ) )
+				...chartData.map( ( series ) =>
+					Math.max( ...series.data.map( ( d ) => d.value as number ) )
+				)
 			),
 		[ chartData ]
 	);
@@ -68,7 +73,7 @@ function StatsLineChart( {
 		}
 
 		const maxValues = chartData.map( ( series ) =>
-			Math.max( ...series.data.map( ( d ) => d.value ) )
+			Math.max( ...series.data.map( ( d ) => d.value as number ) )
 		);
 		const [ minMax, maxMax ] = [ Math.min( ...maxValues ), Math.max( ...maxValues ) ];
 
@@ -141,6 +146,15 @@ function StatsLineChart( {
 		[ moment ]
 	);
 
+	const onPointerDown = useCallback(
+		( { datum }: { datum: DataPointDate } ) => {
+			if ( datum && datum.date ) {
+				onClick && onClick( { data: { period: moment( datum.date ).format( DATE_FORMAT ) } } );
+			}
+		},
+		[ moment, onClick ]
+	);
+
 	return (
 		<div className={ clsx( 'stats-line-chart', className ) }>
 			{ isEmpty && (
@@ -156,6 +170,9 @@ function StatsLineChart( {
 						withTooltips
 						withGradientFill
 						height={ height }
+						// TODO: figure out the right type for onPointerDown
+						// eslint-disable-next-line @typescript-eslint/no-explicit-any
+						onPointerDown={ onPointerDown as any }
 						margin={ {
 							left: 15,
 							top: 20,

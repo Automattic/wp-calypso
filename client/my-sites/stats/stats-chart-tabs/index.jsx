@@ -213,6 +213,7 @@ class StatModuleChartTabs extends Component {
 						chartData={ transformChartDataToLineFormat( chartData ) }
 						height={ 200 }
 						moment={ moment }
+						onClick={ this.props.barClick }
 					/>
 				) }
 
