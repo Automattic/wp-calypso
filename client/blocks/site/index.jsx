@@ -255,7 +255,7 @@ class Site extends Component {
 						defaultIcon={ layout }
 						site={ site }
 						// eslint-disable-next-line no-nested-ternary
-						size={ this.props.compact ? 24 : 50 }
+						size={ this.props.compact ? 24 : 32 }
 					/>
 					<div className="site__info">
 						{ ! this.props.showChevronDownIcon ? (
