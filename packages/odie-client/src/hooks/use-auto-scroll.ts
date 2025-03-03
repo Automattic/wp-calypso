@@ -1,12 +1,20 @@
 import { RefObject, useEffect, useRef } from 'react';
 import { useOdieAssistantContext } from '../context';
 
-export const useAutoScroll = ( messagesContainerRef: RefObject< HTMLDivElement > ) => {
+export const useAutoScroll = (
+	messagesContainerRef: RefObject< HTMLDivElement >,
+	isEnabled: boolean
+) => {
 	const { chat, experimentVariationName } = useOdieAssistantContext();
 	const debounceTimeoutRef = useRef< number >( 500 );
 	const debounceTimeoutIdRef = useRef< number | null >( null );
 	const lastChatStatus = useRef< string | null >( null );
+
 	useEffect( () => {
+		if ( ! isEnabled ) {
+			return;
+		}
+
 		const messageCount = chat.messages.length;
 		if ( messageCount < 1 || chat.status === 'loading' ) {
 			return;
@@ -43,5 +51,5 @@ export const useAutoScroll = ( messagesContainerRef: RefObject< HTMLDivElement >
 			} );
 		}, debounceTimeoutRef.current ) as unknown as number;
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ chat.messages.length, chat.status, messagesContainerRef.current ] );
+	}, [ chat.messages.length, chat.status, messagesContainerRef.current, isEnabled ] );
 };

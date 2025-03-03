@@ -66,3 +66,24 @@ export const getDesignPreviewUrl = (
 export const getAssemblerDesign = () => {
 	return ASSEMBLER_V2_DESIGN;
 };
+
+export const getThemeIdFromDesign = ( design: Design ) => {
+	const stylesheet = design?.recipe?.stylesheet;
+	if ( stylesheet ) {
+		// Transform stylesheet "premium/skivers" into themeId "skivers"
+		const slashIndex = stylesheet.lastIndexOf( '/' );
+		const themeId = stylesheet.substring( slashIndex + 1 );
+		return themeId;
+	}
+	return null;
+};
+
+export const shuffleDesigns = ( designs: Design[], seed: number ) => {
+	const shuffled = [ ...designs ];
+	for ( let i = shuffled.length - 1; i > 0; i-- ) {
+		const j = ( i + seed + shuffled.length ) % ( i + 1 );
+		[ shuffled[ i ], shuffled[ j ] ] = [ shuffled[ j ], shuffled[ i ] ];
+	}
+
+	return shuffled;
+};

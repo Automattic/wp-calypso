@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, Card, FormLabel } from '@automattic/components';
-import { formatCurrency } from '@automattic/format-currency';
 import { IntroductoryOfferTerms } from '@automattic/shopping-cart';
 import {
 	LineItemCostOverrideForDisplay,
@@ -10,7 +9,7 @@ import {
 	isUserVisibleCostOverride,
 } from '@automattic/wpcom-checkout';
 import clsx from 'clsx';
-import { localize, useTranslate } from 'i18n-calypso';
+import { formatCurrency, localize, useTranslate } from 'i18n-calypso';
 import { Component, useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';

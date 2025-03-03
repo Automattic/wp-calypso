@@ -8,7 +8,6 @@ export interface WooCommerceInstallProps {
 	goToNextStep: GoToNextStep;
 	stepName: string;
 	stepSectionName: string;
-	isReskinned: boolean;
 	headerTitle: string;
 	headerDescription: string;
 	queryObject: {
@@ -25,7 +24,6 @@ export interface WooCommerceStoreAddressProps {
 	goToNextStep: GoToNextStep;
 	stepName: string;
 	stepSectionName: string;
-	isReskinned: boolean;
 	headerTitle: string;
 	headerDescription: string;
 	queryObject: {

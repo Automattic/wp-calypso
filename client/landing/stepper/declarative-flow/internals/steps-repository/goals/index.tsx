@@ -11,6 +11,7 @@ import { isGoalsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getQueryArgs } from 'calypso/lib/query-args';
+import { useCreateCourseGoalFeature } from '../../hooks/use-create-course-goal-feature';
 import DashboardIcon from './dashboard-icon';
 import { GoalsCaptureContainer } from './goals-capture-container';
 import SelectGoals from './select-goals';
@@ -61,6 +62,7 @@ const GoalsStep: Step = ( { navigation, flow } ) => {
 
 	const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 	const [ , isIntentNewsletterGoalEnabled ] = useGoalsFirstCumulativeExperience();
+	const isIntentCreateCourseGoalEnabled = useCreateCourseGoalFeature();
 
 	useEffect( () => {
 		resetIntent();
@@ -113,7 +115,10 @@ const GoalsStep: Step = ( { navigation, flow } ) => {
 	const getStepSubmissionHandler =
 		( action: string, eventProps: Record< string, unknown > = {} ) =>
 		() => {
-			const intent = goalsToIntent( goals, isIntentNewsletterGoalEnabled );
+			const intent = goalsToIntent( goals, {
+				isIntentNewsletterGoalEnabled,
+				isIntentCreateCourseGoalEnabled,
+			} );
 			setIntent( intent );
 
 			recordGoalsSelectTracksEvent( goals, intent );

@@ -251,6 +251,11 @@
 				box-shadow: none;
 				border-bottom: 1px solid var(--color-border-subtle);
 				padding-top: 1px;
+
+				&.is-hidden {
+					border-bottom: none;
+					padding-top: none;
+				}
 			}
 		}
 

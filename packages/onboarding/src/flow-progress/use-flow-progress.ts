@@ -1,4 +1,4 @@
-import { LINK_IN_BIO_TLD_FLOW, COPY_SITE_FLOW } from '../utils/flows';
+import { COPY_SITE_FLOW } from '../utils/flows';
 
 /* eslint-disable no-restricted-imports */
 interface FlowProgress {
@@ -16,14 +16,6 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		domains: 2,
 		'plans-newsletter': 3,
 		subscribers: 4,
-		launchpad: 5,
-	},
-	[ LINK_IN_BIO_TLD_FLOW ]: {
-		domains: 0,
-		user: 1,
-		patterns: 2,
-		linkInBioSetup: 3,
-		plans: 4,
 		launchpad: 5,
 	},
 	[ COPY_SITE_FLOW ]: {

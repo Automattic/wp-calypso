@@ -6,7 +6,6 @@ import {
 	UrlFriendlyTermType,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
-import { isOnboardingGuidedFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { UnifiedPlansStepProps } from './unified-plans-step';
@@ -34,13 +33,6 @@ export const getIntervalType = (
 			? intervalType
 			: defaultType
 	) as SupportedIntervalTypes;
-};
-
-export const shouldBasePlansOnSegment = (
-	flowName: string,
-	trailMapExperimentVariant: undefined | null | 'treatment_guided' | 'treatment_survey_only'
-): boolean => {
-	return isOnboardingGuidedFlow( flowName ) && trailMapExperimentVariant === 'treatment_guided';
 };
 
 export const buildUpgradeFunction = (

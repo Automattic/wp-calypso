@@ -12,7 +12,7 @@
 .site-settings__analytics {
 	display: flex;
 	flex-direction: row;
-	align-items: flex-start;
+	align-items: center;
 	margin-bottom: 12px;
 	margin-top: 16px;
 	.support-info {
@@ -27,13 +27,14 @@
 	line-height: 1rem;
 }
 .site-settings__analytics-text p {
-	margin: 0;
+	margin-bottom: 0.5em;
 }
 
 .site-settings__analytics-illustration {
 	width: 50px;
 	img {
 		width: 100%;
+		display: block;
 	}
 }
 

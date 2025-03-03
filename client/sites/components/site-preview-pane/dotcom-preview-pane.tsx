@@ -5,6 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo } from 'react';
 import ItemView from 'calypso/layout/hosting-dashboard/item-view';
 import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
+import { useSetTabBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-tab-breadcrumb';
 import HostingFeaturesIcon from 'calypso/sites/hosting-features/components/hosting-features-icon';
 import { areHostingFeaturesSupported } from 'calypso/sites/hosting-features/features';
 import { useStagingSite } from 'calypso/sites/tools/staging-site/hooks/use-staging-site';
@@ -12,6 +13,7 @@ import { getMigrationStatus } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
 import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
+import { useBreadcrumbs } from '../../hooks/breadcrumbs/use-breadcrumbs';
 import { showSitesPage } from '../sites-dashboard';
 import { SiteStatus } from '../sites-dataviews/sites-site-status';
 import {
@@ -173,7 +175,6 @@ const DotcomPreviewPane = ( {
 					SETTINGS_SFTP_SSH,
 					SETTINGS_DATABASE,
 					SETTINGS_PERFORMANCE,
-					...( ! config.isEnabled( 'untangling/settings-i2' ) ? [ DOTCOM_HOSTING_CONFIG ] : [] ),
 				],
 			},
 			{
@@ -188,17 +189,21 @@ const DotcomPreviewPane = ( {
 		return siteFeatures.map( ( { label, enabled, featureIds } ) => {
 			const selected = enabled && featureIds.includes( selectedSiteFeature );
 			const defaultFeatureId = featureIds[ 0 ] as string;
+			const defaultRoute = `/${ FEATURE_TO_ROUTE_MAP[ defaultFeatureId ].replace(
+				':site',
+				site.slug
+			) }`;
+
 			return {
 				id: defaultFeatureId,
 				tab: {
 					label,
+					href: defaultRoute,
 					visible: enabled,
 					selected,
 					onTabClick: () => {
 						if ( enabled && ! selected ) {
-							showSitesPage(
-								`/${ FEATURE_TO_ROUTE_MAP[ defaultFeatureId ].replace( ':site', site.slug ) }`
-							);
+							showSitesPage( defaultRoute );
 						}
 					},
 				},
@@ -243,6 +248,13 @@ const DotcomPreviewPane = ( {
 		stagingStatus === StagingSiteStatus.NONE ||
 		stagingStatus === StagingSiteStatus.UNSET;
 
+	const { breadcrumbs, shouldShowBreadcrumbs } = useBreadcrumbs();
+	useSetTabBreadcrumb( {
+		site,
+		features,
+		selectedFeatureId: selectedSiteFeature,
+	} );
+
 	return (
 		<ItemView
 			itemData={ itemData }
@@ -264,6 +276,8 @@ const DotcomPreviewPane = ( {
 					}
 				},
 			} }
+			breadcrumbs={ breadcrumbs }
+			shouldShowBreadcrumbs={ shouldShowBreadcrumbs }
 		/>
 	);
 };

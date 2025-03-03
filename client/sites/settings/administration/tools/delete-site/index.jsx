@@ -16,6 +16,7 @@ import { Panel, PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import withP2HubP2Count from 'calypso/data/p2/with-p2-hub-p2-count';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSettingsSource } from 'calypso/my-sites/site-settings/site-tools/utils';
+import { resetBreadcrumbs, updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getRemoveDuplicateViewsExperimentAssignment } from 'calypso/state/explat-experiments/actions';
 import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/state/explat-experiments/selectors';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
@@ -27,6 +28,7 @@ import { getSite, getSiteDomain } from 'calypso/state/sites/selectors';
 import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { FeatureBreadcrumb } from '../../../../hooks/breadcrumbs/use-set-feature-breadcrumb';
 import DeleteSiteWarnings from './delete-site-warnings';
 
 import './style.scss';
@@ -207,7 +209,7 @@ class DeleteSite extends Component {
 	};
 
 	render() {
-		const { isUntangled } = this.state;
+		const { isUntangled } = this.props;
 		const { isAtomic, isFreePlan, siteId, hasCancelablePurchases, p2HubP2Count } = this.props;
 		const isAtomicRemovalInProgress = isFreePlan && isAtomic;
 		const canDeleteSite =
@@ -221,7 +223,8 @@ class DeleteSite extends Component {
 
 		return (
 			<Panel className="settings-administration__delete-site">
-				<HeaderCakeBack icon="chevron-left" onClick={ this._goBack } />
+				{ ! isUntangled && <HeaderCakeBack icon="chevron-left" onClick={ this._goBack } /> }
+				<FeatureBreadcrumb siteId={ siteId } title={ strings.deleteSite } />
 				<NavigationHeader
 					compactBreadcrumb={ false }
 					navigationItems={ [] }
@@ -287,5 +290,7 @@ export default connect(
 		deleteSite,
 		setSelectedSiteId,
 		getRemoveDuplicateViewsExperimentAssignment,
+		updateBreadcrumbs,
+		resetBreadcrumbs,
 	}
 )( localize( withP2HubP2Count( DeleteSite ) ) );

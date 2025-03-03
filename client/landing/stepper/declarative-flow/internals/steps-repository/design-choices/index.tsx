@@ -146,7 +146,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 									title={ translate( 'Choose a theme' ) }
 									description={ translate( 'Choose one of our professionally designed themes.' ) }
 									imageSrc={ themesIllustrationImage }
-									destination="designSetup"
+									destination="design-setup"
 									onSelect={ handleSubmit }
 								/>
 							) : (
@@ -156,7 +156,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 										'Choose a professionally designed theme and make it yours.'
 									) }
 									fgImageSrc={ themeChoiceFg }
-									destination="designSetup"
+									destination="design-setup"
 									onSelect={ handleSubmit }
 								/>
 							) }

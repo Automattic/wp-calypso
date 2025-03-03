@@ -1,8 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { isGoogleWorkspace, isTitanMail } from '@automattic/calypso-products';
-import formatCurrency from '@automattic/format-currency';
-import { useTranslate } from 'i18n-calypso';
+import { formatCurrency, useTranslate } from 'i18n-calypso';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import InfoPopover from 'calypso/components/info-popover';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';

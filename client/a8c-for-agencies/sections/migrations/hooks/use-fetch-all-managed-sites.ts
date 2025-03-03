@@ -49,6 +49,7 @@ export const useFetchAllManagedSites = () => {
 						id: site.a4a_site_id,
 						site: urlToSlug( site.url ),
 						date: foundSite.options?.created_at || '',
+						rawSite: site,
 				  }
 				: null;
 		} )

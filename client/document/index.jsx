@@ -52,6 +52,7 @@ class Document extends Component {
 			initialReduxState,
 			inlineScriptNonce,
 			isSupportSession,
+			disableHelpCenterAutoOpen,
 			isWooDna,
 			lang,
 			languageRevisions,
@@ -79,6 +80,7 @@ class Document extends Component {
 			`var BUILD_TARGET = ${ jsonStringifyForHtml( target ) };\n` +
 			( user ? `var currentUser = ${ jsonStringifyForHtml( user ) };\n` : '' ) +
 			( isSupportSession ? 'var isSupportSession = true;\n' : '' ) +
+			( disableHelpCenterAutoOpen ? 'var disableHelpCenterAutoOpen = true;\n' : '' ) +
 			( app ? `var app = ${ jsonStringifyForHtml( app ) };\n` : '' ) +
 			( initialReduxState
 				? `var initialReduxState = ${ jsonStringifyForHtml( initialReduxState ) };\n`
@@ -123,6 +125,9 @@ class Document extends Component {
 			}
 		}
 
+		const shouldNotShowLoadingLogo =
+			sectionName === 'checkout' || sectionName === 'stepper' || sectionName === 'signup';
+
 		return (
 			<html
 				lang={ lang }
@@ -154,7 +159,6 @@ class Document extends Component {
 						[ 'theme-' + theme ]: theme,
 						[ 'is-group-' + sectionGroup ]: sectionGroup,
 						[ 'is-section-' + sectionName ]: sectionName,
-						'is-white-signup': sectionName === 'signup',
 						'is-mobile-app-view': app?.isWpMobileApp || app?.isWcMobileApp,
 					} ) }
 				>
@@ -178,7 +182,7 @@ class Document extends Component {
 								} ) }
 							>
 								<div className="layout__content">
-									{ sectionName === 'checkout' || sectionName === 'stepper' ? (
+									{ shouldNotShowLoadingLogo ? (
 										<Loading className="wpcom-loading__boot" />
 									) : (
 										<LoadingLogo size={ 72 } className="wpcom-site__logo" />
@@ -234,6 +238,7 @@ class Document extends Component {
 							data-provider="wordpress.com"
 							data-service="calypso"
 							data-customproperties={ `{"route_name": "${ sectionName }"}` }
+							data-site-tz="Etc/UTC"
 						/>
 					) }
 

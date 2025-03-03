@@ -49,6 +49,7 @@ export default function PersonalizationForm( { onContinue, goBack, initialFormDa
 			...prev,
 			servicesOffered: services.value,
 		} ) );
+		updateValidationError( { servicesOffered: undefined } );
 	};
 
 	const handleSetProductsOffered = ( products: { value: string[] } ) => {
@@ -56,6 +57,7 @@ export default function PersonalizationForm( { onContinue, goBack, initialFormDa
 			...prev,
 			productsOffered: products.value,
 		} ) );
+		updateValidationError( { productsOffered: undefined } );
 	};
 
 	const servicesOfferedOptions = useMemo(
@@ -77,6 +79,7 @@ export default function PersonalizationForm( { onContinue, goBack, initialFormDa
 			{ value: 'Jetpack', label: translate( 'Jetpack' ) },
 			{ value: 'Pressable', label: translate( 'Pressable' ) },
 			{ value: 'WordPress VIP', label: translate( 'WordPress VIP' ) },
+			{ value: 'None', label: translate( 'None' ) },
 		],
 		[ translate ]
 	);
@@ -111,6 +114,9 @@ export default function PersonalizationForm( { onContinue, goBack, initialFormDa
 				title={ translate( 'Personalize your experience' ) }
 				description={ translate( "We'll tailor the product and onboarding for you." ) }
 			>
+				<div className="field-mandatory-message">
+					{ translate( 'Fields marked with * are required' ) }
+				</div>
 				<FormFieldset>
 					<FormField
 						error={ validationError.country }
@@ -164,7 +170,11 @@ export default function PersonalizationForm( { onContinue, goBack, initialFormDa
 						</FormFieldset>
 
 						<FormFieldset className="signup-personalization-form__checkbox">
-							<FormField label={ translate( 'What services do you offer?' ) }>
+							<FormField
+								error={ validationError.servicesOffered }
+								label={ translate( 'What services do you offer?' ) }
+								isRequired
+							>
 								<MultiCheckbox
 									id="services_offered"
 									name="services_offered"
@@ -177,9 +187,11 @@ export default function PersonalizationForm( { onContinue, goBack, initialFormDa
 
 						<FormFieldset className="signup-personalization-form__checkbox">
 							<FormField
+								error={ validationError.productsOffered }
 								label={ translate(
 									'What Automattic products do you currently offer your clients?'
 								) }
+								isRequired
 							>
 								<MultiCheckbox
 									id="products_offered"

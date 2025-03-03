@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { FEATURE_SFTP, FEATURE_SSH } from '@automattic/calypso-products';
 import { Button, FormLabel, Spinner, ExternalLink } from '@automattic/components';
 import { PanelBody, ToggleControl } from '@wordpress/components';
@@ -285,7 +284,13 @@ export const SftpForm = ( { disabled }: SftpFormProps ) => {
 		<div className="sftp-card__wrapper">
 			{ displayQuestionsAndButton && (
 				<div className="sftp-card__questions-container">
-					<PanelBody title={ translate( 'What is SFTP?' ) } initialOpen={ false }>
+					<PanelBody
+						title={ translate( 'What is SFTP?' ) }
+						initialOpen={ false }
+						onToggle={ () =>
+							dispatch( recordTracksEvent( 'calypso_hosting_configuration_toggle_sftp_card' ) )
+						}
+					>
 						{ translate(
 							'SFTP stands for Secure File Transfer Protocol (or SSH File Transfer Protocol). It’s a secure way for you to access your website files on your local computer via a client program such as {{a}}Filezilla{{/a}}. ' +
 								'For more information see {{supportLink}}SFTP on WordPress.com{{/supportLink}}.',
@@ -300,7 +305,13 @@ export const SftpForm = ( { disabled }: SftpFormProps ) => {
 						) }
 					</PanelBody>
 					{ showSshPanel && (
-						<PanelBody title={ translate( 'What is SSH?' ) } initialOpen={ false }>
+						<PanelBody
+							title={ translate( 'What is SSH?' ) }
+							initialOpen={ false }
+							onToggle={ () =>
+								dispatch( recordTracksEvent( 'calypso_hosting_configuration_toggle_ssh_card' ) )
+							}
+						>
 							{ translate(
 								'SSH stands for Secure Shell. It’s a way to perform advanced operations on your site using the command line. ' +
 									'For more information see {{supportLink}}Connect to SSH on WordPress.com{{/supportLink}}.',
@@ -383,8 +394,7 @@ export const SftpForm = ( { disabled }: SftpFormProps ) => {
 		</div>
 	);
 
-	let isUntangled = useRemoveDuplicateViewsExperimentEnabled();
-	isUntangled = isUntangled && config.isEnabled( 'untangling/settings-i2' );
+	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 
 	let ContainerComponent = HostingCard;
 	if ( isUntangled ) {

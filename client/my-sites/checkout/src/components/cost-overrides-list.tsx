@@ -6,7 +6,6 @@ import {
 	isYearly,
 } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
-import formatCurrency from '@automattic/format-currency';
 import {
 	type ResponseCart,
 	type RemoveCouponFromCart,
@@ -22,7 +21,7 @@ import {
 	isOverrideCodeIntroductoryOffer,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
-import { useTranslate } from 'i18n-calypso';
+import { formatCurrency, useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import useCartKey from '../../use-cart-key';
@@ -234,7 +233,7 @@ function LineItemCostOverride( {
 				{ costOverride.discountAmount &&
 					formatCurrency( -costOverride.discountAmount, product.currency, {
 						isSmallestUnit: true,
-						signForPositive: true,
+						signForPositive: true, // TODO clk numberFormatCurrency signForPositive only usage
 					} ) }
 			</span>
 			<LineItemIntroOfferCostOverrideDetail product={ product } costOverride={ costOverride } />

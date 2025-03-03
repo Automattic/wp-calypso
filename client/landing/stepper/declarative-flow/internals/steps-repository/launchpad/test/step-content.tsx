@@ -22,7 +22,7 @@ const mockSite = {
 	},
 };
 
-const siteSlug = 'testlinkinbio.wordpress.com';
+const siteSlug = 'testnewsletter.wordpress.com';
 
 const stepContentProps = {
 	siteSlug,
@@ -108,7 +108,7 @@ jest.mock( 'react-router-dom', () => ( {
 	...( jest.requireActual( 'react-router-dom' ) as object ),
 	useLocation: jest.fn().mockImplementation( () => ( {
 		pathname: '/setup/launchpad',
-		search: `?flow=newsletter&siteSlug=testlinkinbio.wordpress.com`,
+		search: `?flow=newsletter&siteSlug=testnewsletter.wordpress.com`,
 		hash: '',
 		state: undefined,
 	} ) ),

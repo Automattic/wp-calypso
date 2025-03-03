@@ -1,8 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
-import { useTranslate } from 'i18n-calypso';
+import { formatCurrency, useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { getRenewalPrice, isExpiring } from 'calypso/lib/purchases';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';

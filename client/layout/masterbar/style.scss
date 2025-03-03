@@ -209,7 +209,6 @@ body.is-mobile-app-view {
 	padding: 0 8px;
 	text-decoration: none;
 	cursor: default;
-	transition: all 0.2s ease-in-out;
 	justify-content: center;
 
 	&.masterbar__reader {
@@ -596,7 +595,6 @@ body.is-mobile-app-view {
 			height: var(--masterbar-item-active-border-radius);
 			background-color: var(--color-sidebar-background);
 			opacity: 0;
-			transition: opacity 0.2s ease-in-out;
 			bottom: 0;
 			z-index: 1;
 			pointer-events: none;
@@ -653,8 +651,20 @@ body.is-mobile-app-view {
 }
 
 .masterbar__item-launch-site {
+	gap: 6px;
 	cursor: pointer;
 	background-color: var(--wp-admin-theme-color);
+	@media only screen and (max-width: 480px) {
+		display: none;
+	}
+	svg {
+		width: 15px;
+		height: 15px;
+		@media only screen and (max-width: 781px) {
+			width: 28px;
+			height: 28px;
+		}
+	}
 }
 
 .masterbar__item-logo {

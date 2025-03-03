@@ -42,9 +42,14 @@ export function generateSteps( {
 	excludeStepIfEmailVerified = noop,
 	excludeStepIfProfileComplete = noop,
 	submitWebsiteContent = noop,
-	excludeSegmentSurveyStepIfInactive = noop,
 } = {} ) {
 	return {
+		'set-reader-landing': {
+			stepName: 'set-reader-landing',
+			props: {
+				nonInteractive: true,
+			},
+		},
 		'domains-launch': {
 			stepName: 'domains-launch',
 			apiRequestFunction: addDomainToCart,
@@ -95,12 +100,6 @@ export function generateSteps( {
 			},
 		},
 
-		// TODO
-		// The new pricing grid and the legacy one act differently
-		// when a paid domain is picked, and the new pricing grid is currently
-		// having different behavior on different flow on the paid domain +
-		// Free plan case. We can deprecate this once that specific behavior
-		// is settled and that we decide to migrate `site-selected` as a reskinned flow.
 		'plans-site-selected-legacy': {
 			stepName: 'plans-site-selected-legacy',
 			apiRequestFunction: addPlanToCart,
@@ -916,15 +915,6 @@ export function generateSteps( {
 		transfer: {
 			stepName: 'transfer',
 			dependencies: [ 'siteSlug', 'siteConfirmed' ],
-		},
-		'initial-intent': {
-			stepName: 'initial-intent',
-			fulfilledStepCallback: excludeSegmentSurveyStepIfInactive,
-			providesDependencies: [
-				'segmentationSurveyAnswers',
-				'onboardingSegment',
-				'trailMapExperimentVariant',
-			],
 		},
 	};
 }

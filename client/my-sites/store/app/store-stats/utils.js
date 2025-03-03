@@ -1,5 +1,4 @@
-import formatCurrency from '@automattic/format-currency';
-import { translate, numberFormat } from 'i18n-calypso';
+import { formatCurrency, translate, numberFormat } from 'i18n-calypso';
 import { find } from 'lodash';
 import moment from 'moment'; // No localization needed in this file.
 import qs from 'qs';

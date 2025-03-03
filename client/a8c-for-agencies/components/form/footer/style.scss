@@ -1,11 +1,18 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .a4a-form__footer {
 	margin-block-start: 8px;
 	padding-block: 24px;
 	border-block-start: 1px solid #C3C4C7;
-
 	display: flex;
-	gap: 24px;
+	flex-direction: column;
+	gap: 8px;
 
-	justify-content: space-between;
-	align-items: center;
+	@include break-small {
+		flex-direction: row;
+		gap: 24px;
+		justify-content: space-between;
+		align-items: center;
+	}
 }

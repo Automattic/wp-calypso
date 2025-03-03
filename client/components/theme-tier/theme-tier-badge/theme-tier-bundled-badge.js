@@ -1,21 +1,17 @@
-import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
-import { BundledBadge, PremiumBadge } from '@automattic/components';
-import { createInterpolateElement } from '@wordpress/element';
-import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { BundledBadge } from '@automattic/components';
 import useIsUpdatedBadgeDesign from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/design-setup/hooks/use-is-updated-badge-design';
 import { useBundleSettingsByTheme } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { useSelector } from 'calypso/state';
 import { canUseTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import ThemeTierBadgeCheckoutLink from './theme-tier-badge-checkout-link';
 import { useThemeTierBadgeContext } from './theme-tier-badge-context';
-import ThemeTierTooltipTracker from './theme-tier-tooltip-tracker';
+import ThemeTierIncludedBadge from './theme-tier-included-badge';
+import ThemeTierUpgradeBadge from './theme-tier-upgrade-badge';
 
-export default function ThemeTierBundledBadge() {
-	const translate = useTranslate();
+export default function ThemeTierBundledBadge( { hideBackgroundOnUpgrade, hideBundledBadge } ) {
 	const siteId = useSelector( getSelectedSiteId );
 	const { showUpgradeBadge, themeId } = useThemeTierBadgeContext();
+
 	const bundleSettings = useBundleSettingsByTheme( themeId );
 	const isThemeIncluded = useSelector(
 		( state ) => siteId && canUseTheme( state, siteId, themeId )
@@ -23,60 +19,23 @@ export default function ThemeTierBundledBadge() {
 	const isUpdatedBadgeDesign = useIsUpdatedBadgeDesign();
 
 	if ( ! bundleSettings ) {
-		return;
+		return null;
 	}
 
-	const BadgeIcon = bundleSettings.iconComponent;
-	const bundleName = bundleSettings.name;
-
-	const tooltipContent = (
-		<>
-			<ThemeTierTooltipTracker />
-			<div data-testid="upsell-message">
-				{ createInterpolateElement(
-					translate( 'This theme is included in the <Link>%(businessPlanName)s plan</Link>.', {
-						args: {
-							businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
-						},
-						textOnly: true,
-					} ),
-					{
-						Link: <ThemeTierBadgeCheckoutLink plan="business" />,
-					}
-				) }
-			</div>
-		</>
-	);
-
-	const labelText = isUpdatedBadgeDesign
-		? translate( 'Available on %(businessPlanName)s', {
-				args: {
-					businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
-				},
-		  } )
-		: translate( 'Upgrade' );
+	const { iconComponent: BadgeIcon, name: bundleName, color } = bundleSettings;
 
 	return (
 		<div className="theme-tier-badge">
 			{ showUpgradeBadge && ! isThemeIncluded && (
-				<PremiumBadge
-					className={ clsx( 'theme-tier-badge__content', {
-						'theme-tier-badge__without-background': isUpdatedBadgeDesign,
-					} ) }
-					focusOnShow={ false }
-					labelText={ labelText }
-					tooltipClassName="theme-tier-badge-tooltip"
-					tooltipContent={ tooltipContent }
-					tooltipPosition="top"
-					shouldHideTooltip={ isUpdatedBadgeDesign }
-					isClickable={ ! isUpdatedBadgeDesign }
-				/>
+				<ThemeTierUpgradeBadge hideBackgroundOnUpgrade={ hideBackgroundOnUpgrade } />
 			) }
 
-			{ ! isUpdatedBadgeDesign && (
+			{ isThemeIncluded && <ThemeTierIncludedBadge /> }
+
+			{ ! isUpdatedBadgeDesign && ! hideBundledBadge && (
 				<BundledBadge
 					className="theme-tier-badge__content"
-					color={ bundleSettings.color }
+					color={ color }
 					icon={ <BadgeIcon /> }
 					isClickable={ false }
 					shouldHideTooltip

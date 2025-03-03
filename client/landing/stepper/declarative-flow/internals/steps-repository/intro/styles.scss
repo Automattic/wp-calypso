@@ -42,30 +42,6 @@
 		}
 	}
 
-	&.link-in-bio {
-		background-color: #d0cce3;
-
-		.step-container {
-			background-image:
-				url(calypso/assets/images/onboarding/link-in-bio-intro-left.webp),
-				url(calypso/assets/images/onboarding/link-in-bio-intro-right.webp);
-			background-position-y: 85%, 15%;
-			/*!rtl:ignore*/
-			background-position-x: 0, 100%;
-			background-repeat: no-repeat, no-repeat;
-			background-attachment: fixed;
-			background-size: auto 15%, auto 15%;
-
-			@include break-huge {
-				background-size: auto 25%, auto 25%;
-				background-position-y: 85%, 10%;
-				background-image:
-					url(calypso/assets/images/onboarding/link-in-bio-intro-left-desktop.webp),
-					url(calypso/assets/images/onboarding/link-in-bio-intro-right-desktop.webp);
-			}
-		}
-	}
-
 	min-height: 100%;
 	min-width: 100%;
 	width: 100%;

@@ -22,3 +22,6 @@ d26e6d3d415d1a56256dc3a9beec2a2bab3bf386
 b359eb43a7aa2ed3d14381f683965e7f563eef05
 # Stylelint format in #91201
 9f3437d1783480d387f896aa2067510f6fc8b192
+# Update navigation menu link colors in #99587 and remove accidentally committed checkstyle file in #99659
+7e2f527a4197c92a555b825424ddd1ff51f485ab
+e40f2f68b27bdfa935cf2acd6d604050d5bcbaaa

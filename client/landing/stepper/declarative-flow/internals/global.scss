@@ -10,7 +10,7 @@
 /**
  * Importers styles
  */
-@import "~calypso/blocks/import/style/base";
+@import "calypso/blocks/import/style/base";
 
 /**
  * General onboarding styling
@@ -69,7 +69,6 @@ button {
  * Site Setup
  */
 .new-hosted-site,
-.import-hosted-site,
 .site-setup,
 .onboarding.goals,
 .onboarding.design-setup,
@@ -82,11 +81,9 @@ button {
 .plugin-bundle,
 .newsletter-setup,
 .newsletter-goals,
-.newsletter-post-setup,
 .plans,
 .domains,
 .patterns,
-.link-in-bio-post-setup,
 .anchor-fm,
 .subscribers,
 .copy-site,
@@ -103,7 +100,6 @@ button {
 .update-options,
 .hundred-year-plan,
 .hundred-year-domain,
-.link-in-bio-tld,
 .entrepreneur,
 .generate-content,
 .processing {
@@ -140,7 +136,6 @@ button {
 
 		// Importer flows
 		&.import-focused,
-		&.import-hosted-site,
 		&.site-setup[class*=" import"] {
 			padding: 3.75rem 0;
 		}
@@ -232,8 +227,7 @@ button {
 	margin: 0 auto;
 }
 
-.import-focused .step-container.site-picker,
-.import-hosted-site .step-container.site-picker {
+.import-focused .step-container.site-picker {
 	max-width: 1280px;
 	padding: 1.5rem;
 }
@@ -254,8 +248,7 @@ button {
 /**
  * Tailored flow stylings
  */
-.newsletter:not(.domains),
-.link-in-bio-tld:not(.domains) {
+.newsletter:not(.domains) {
 	&:not(.launchpad):not(.subscribers) {
 		@include onboarding-break-mobile-landscape {
 			padding: 40px 0 0;
@@ -299,9 +292,7 @@ button {
 	}
 }
 
-.store-profiler__form,
 .newsletter,
-.link-in-bio-tld,
 .setup-form__form {
 	button {
 		&.site-icon-with-picker__upload-button {

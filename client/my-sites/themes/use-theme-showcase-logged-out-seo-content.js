@@ -259,45 +259,6 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					),
 				},
 			},
-			'link-in-bio': {
-				all: {
-					title: translate( 'Link in Bio WordPress Themes' ),
-					header: translate( 'Find the perfect theme for your link in bio website.' ),
-					description: translate(
-						"Start your link in bio website with the perfect theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you."
-					),
-				},
-				free: {
-					title: translate( 'Free Link in Bio WordPress Themes' ),
-					header: translate( 'Discover the perfect free theme for your link in bio website.' ),
-					description: translate(
-						"Launch your link in bio website with the perfect free theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you."
-					),
-				},
-				premium: {
-					title: translate( 'Premium Link in Bio WordPress Themes' ),
-					header: translate( 'Choose premium themes for your link in bio website.' ),
-					description:
-						/* translators: %(planName1)s, %(planName2)s, and %(planName3)s the short-hand version of the Premium, Business, and Commerce plan names */
-						translate(
-							"Enhance your link in bio website with the perfect premium theme. Available on all %(planName1)s, %(planName2)s, and %(planName3)s plans. Activate the one that's right for you.",
-							{
-								args: {
-									planName1: getPlan( PLAN_PERSONAL )?.getTitle() ?? '',
-									planName2: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
-									planName3: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
-								},
-							}
-						),
-				},
-				marketplace: {
-					title: translate( 'Partner Link in Bio WordPress Themes' ),
-					header: translate( 'Select partner themes for your link in bio website.' ),
-					description: translate(
-						"Improve your link in bio website with the perfect partner theme. Browse high-quality, professionally-designed options. Then, purchase the one that's right for you."
-					),
-				},
-			},
 			newsletter: {
 				all: {
 					title: translate( 'Newsletter WordPress Themes' ),

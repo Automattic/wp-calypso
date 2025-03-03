@@ -19,8 +19,9 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import StatsEmptyState from '../stats-empty-state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatTabs from '../stats-tabs';
+import { parseLocalDate } from '../utils';
 import ChartHeader from './chart-header';
-import { buildChartData, getQueryDate, formatDate } from './utility';
+import { buildChartData, getQueryDate } from './utility';
 
 import './style.scss';
 
@@ -30,6 +31,48 @@ const ChartTabShape = PropTypes.shape( {
 	label: PropTypes.string,
 	legendOptions: PropTypes.arrayOf( PropTypes.string ),
 } );
+
+// data validation for line chart
+const transformChartDataToLineFormat = ( chartData ) => {
+	if ( ! Array.isArray( chartData ) ) {
+		return [];
+	}
+
+	// Create the first data series for views
+	const viewsSeries = {
+		label: 'Views',
+		options: {},
+		data: chartData
+			.map( ( record ) => {
+				const date = parseLocalDate( record.data.period );
+				const value = record.data.views;
+				if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
+					return null;
+				}
+				return { date, value };
+			} )
+			.filter( Boolean ),
+	};
+
+	// Create the second data series for visitors
+	const visitorsSeries = {
+		label: 'Visitors',
+		options: {},
+		data: chartData
+			.map( ( record ) => {
+				const date = parseLocalDate( record.data.period );
+				const value = record.data.visitors;
+				if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
+					return null;
+				}
+				return { date, value };
+			} )
+			.filter( Boolean ),
+	};
+
+	// Return both series
+	return [ viewsSeries, visitorsSeries ];
+};
 
 class StatModuleChartTabs extends Component {
 	static propTypes = {
@@ -109,25 +152,6 @@ class StatModuleChartTabs extends Component {
 		this.setState( { chartType: newType } );
 	};
 
-	//TODO: remove this once we connect up the real data
-	generateDummyLineChartData = () => {
-		return [
-			{
-				label: 'Views',
-				options: {},
-				data: [
-					{ date: new Date( '2024-01-01' ), value: 45 },
-					{ date: new Date( '2024-01-02' ), value: 32 },
-					{ date: new Date( '2024-01-03' ), value: 67 },
-					{ date: new Date( '2024-01-04' ), value: 89 },
-					{ date: new Date( '2024-01-05' ), value: 54 },
-					{ date: new Date( '2024-01-06' ), value: 78 },
-					{ date: new Date( '2024-01-07' ), value: 93 },
-				],
-			},
-		];
-	};
-
 	render() {
 		const { siteId, slug, queryParams, selectedPeriod, isActiveTabLoading, className, countsComp } =
 			this.props;
@@ -182,14 +206,9 @@ class StatModuleChartTabs extends Component {
 					<AsyncLoad
 						require="calypso/my-sites/stats/components/line-chart"
 						className="stats-chart-tabs__line-chart"
-						chartData={ this.generateDummyLineChartData() }
+						chartData={ transformChartDataToLineFormat( chartData ) }
 						height={ 200 }
-						moment={ this.props.moment }
-						formatTimeTick={ ( timestamp ) => {
-							const date = new Date( timestamp );
-							return formatDate( date, this.props.selectedPeriod );
-						} }
-						maxViews={ 100 }
+						moment={ moment }
 					/>
 				) }
 

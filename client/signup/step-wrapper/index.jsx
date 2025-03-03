@@ -1,3 +1,4 @@
+import { HelpCenterStepButton } from '@automattic/help-center';
 import { ActionButtons } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -5,17 +6,11 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { usePresalesChat } from 'calypso/lib/presales-chat';
 import flows from 'calypso/signup/config/flows';
 import NavigationLink from 'calypso/signup/navigation-link';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import './style.scss';
-
-function PresalesChat() {
-	usePresalesChat( 'wpcom' );
-	return null;
-}
 
 class StepWrapper extends Component {
 	static propTypes = {
@@ -208,12 +203,17 @@ class StepWrapper extends Component {
 			'is-large-skip-layout': isLargeSkipLayout,
 			'has-navigation': hasNavigation,
 		} );
-		const enablePresales = flows.getFlow( flowName, this.props.userLoggedIn )?.enablePresales;
+
+		const flow = flows.getFlow( flowName, this.props.userLoggedIn );
 
 		let sticky = null;
 		if ( isSticky !== undefined ) {
 			sticky = isSticky;
 		}
+
+		const queryParams = new URLSearchParams( window?.location.search );
+		const flags = queryParams.get( 'flags' );
+		const isHelpCenterLinkEnabled = flags === 'signup/help-center-link';
 
 		return (
 			<>
@@ -223,6 +223,13 @@ class StepWrapper extends Component {
 						{ skipButton }
 						{ nextButton }
 						{ customizedActionButtons }
+						{ isHelpCenterLinkEnabled && (
+							<HelpCenterStepButton
+								helpCenterButtonText={ flow?.helpCenterButtonText }
+								hasPremiumSupport={ flow?.enablePremiumSupport }
+								flowName={ flowName }
+							/>
+						) }
 					</ActionButtons>
 					{ ! hideFormattedHeader && (
 						<div className="step-wrapper__header">
@@ -258,7 +265,6 @@ class StepWrapper extends Component {
 						</div>
 					) }
 				</div>
-				{ enablePresales && <PresalesChat /> }
 			</>
 		);
 	}

@@ -10,11 +10,7 @@
 	@include breakpoint-deprecated( ">660px" ) {
 		align-items: flex-end;
 		font-size: $font-body;
-
-		.is-white-signup & {
-			align-items: flex-end;
-			width: 180px;
-		}
+		width: 180px;
 	}
 
 	@include breakpoint-deprecated( "<660px" ) {
@@ -22,7 +18,7 @@
 		font-size: $font-body-small;
 		text-align: left;
 
-		.is-white-signup &.domain-product-price__domain-step-signup-flow {
+		&.domain-product-price__domain-step-signup-flow {
 			display: flex;
 			flex-direction: column-reverse;
 			margin-top: 4px;

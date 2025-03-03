@@ -1,5 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { HOSTING_LP_FLOW, ONBOARDING_FLOW, ONBOARDING_GUIDED_FLOW } from '@automattic/onboarding';
+import {
+	HOSTING_LP_FLOW,
+	ONBOARDING_FLOW,
+	DIFM_FLOW,
+	DIFM_FLOW_STORE,
+	WEBSITE_DESIGN_SERVICES,
+} from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 
 const noop = () => {};
@@ -42,7 +48,6 @@ export function generateFlows( {
 	getDIFMSiteContentCollectionDestination = noop,
 	getHostingFlowDestination = noop,
 	getEntrepreneurFlowDestination = noop,
-	getGuidedOnboardingFlowDestination = noop,
 } = {} ) {
 	const userSocialStep = getUserSocialStepOrFallback();
 	const p2Flows = getP2Flows();
@@ -71,10 +76,10 @@ export function generateFlows( {
 		},
 		{
 			name: 'account',
-			steps: [ userSocialStep ],
+			steps: [ userSocialStep, 'set-reader-landing' ],
 			destination: getRedirectDestination,
 			description: 'Create an account without a blog.',
-			lastModified: '2023-10-11',
+			lastModified: '2025-02-18',
 			get pageTitle() {
 				return translate( 'Create an account' );
 			},
@@ -147,17 +152,6 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
-			name: ONBOARDING_GUIDED_FLOW,
-			steps: [ userSocialStep, 'initial-intent', 'domains', 'plans' ],
-			destination: getGuidedOnboardingFlowDestination,
-			description: 'Choose what brings them to WordPress.com',
-			lastModified: '2024-06-19',
-			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'coupon' ],
-			optionalDependenciesInQuery: [ 'coupon' ],
-			hideProgressIndicator: true,
-		},
-		{
 			name: ONBOARDING_FLOW,
 			steps: [ userSocialStep, 'domains', 'plans' ],
 			destination: getSignupDestination,
@@ -177,16 +171,6 @@ export function generateFlows( {
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
-			hideProgressIndicator: true,
-		},
-		{
-			name: 'domain-transfer',
-			steps: [ userSocialStep, 'domains', 'plans' ],
-			destination: ( dependencies ) => `/domains/manage/${ dependencies.siteSlug }`,
-			description:
-				'Onboarding flow specifically for domain transfers. Read more in https://wp.me/pdhack-Hk.',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
 			hideProgressIndicator: true,
 		},
 		{
@@ -279,6 +263,8 @@ export function generateFlows( {
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
 			name: 'ecommerce-monthly',
@@ -288,6 +274,8 @@ export function generateFlows( {
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
 			name: 'wpcc',
@@ -346,11 +334,10 @@ export function generateFlows( {
 		},
 		{
 			name: 'reader',
-			steps: [ userSocialStep ],
+			steps: [ userSocialStep, 'set-reader-landing' ],
 			destination: '/reader',
-			description:
-				'Signup for an account from a Reader interaction (like, comment) or page (/discover) and land on Reader.',
-			lastModified: '2025-01-28',
+			description: 'Signup for an account and land on Reader.',
+			lastModified: '2025-02-18',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
 		},
@@ -364,18 +351,6 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
-			name: 'launch-only',
-			steps: [ 'launch' ],
-			destination: getLaunchDestination,
-			description:
-				'Launch flow without domain or plan selected, used for sites that already have a paid plan and domain (e.g. via the launch banner in the site preview)',
-			lastModified: '2020-11-30',
-			get pageTitle() {
-				return translate( 'Launch your site' );
-			},
-			providesDependenciesInQuery: [ 'siteSlug' ],
-		},
-		{
 			name: 'business-monthly',
 			steps: [ userSocialStep, 'domains', 'plans-business-monthly' ],
 			destination: getSignupDestination,
@@ -384,6 +359,8 @@ export function generateFlows( {
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
 			name: 'premium-monthly',
@@ -394,6 +371,8 @@ export function generateFlows( {
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
 			name: 'personal-monthly',
@@ -404,6 +383,8 @@ export function generateFlows( {
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
 			name: 'setup-site',
@@ -428,7 +409,7 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
-			name: 'do-it-for-me',
+			name: DIFM_FLOW,
 			steps: [
 				userSocialStep,
 				'new-or-existing-site',
@@ -444,12 +425,15 @@ export function generateFlows( {
 			lastModified: '2024-05-16',
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
-			enablePresales: false,
+			enablePremiumSupport: true,
+			get helpCenterButtonText() {
+				return translate( 'Questions? Contact our site building team' );
+			},
 			providesDependenciesInQuery: [ 'coupon', 'back_to', 'newOrExistingSiteChoice' ],
 			optionalDependenciesInQuery: [ 'coupon', 'back_to', 'newOrExistingSiteChoice' ],
 		},
 		{
-			name: 'do-it-for-me-store',
+			name: DIFM_FLOW_STORE,
 			steps: [
 				userSocialStep,
 				'new-or-existing-site',
@@ -465,12 +449,15 @@ export function generateFlows( {
 			lastModified: '2024-05-16',
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
-			enablePresales: false,
+			enablePremiumSupport: true,
+			get helpCenterButtonText() {
+				return translate( 'Questions? Contact our site building team' );
+			},
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
-			name: 'website-design-services',
+			name: WEBSITE_DESIGN_SERVICES,
 			steps: [ 'difm-options', 'social-profiles', 'difm-design-setup-site', 'difm-page-picker' ],
 			destination: getDIFMSignupDestination,
 			description: 'A flow for DIFM onboarding',
@@ -478,7 +465,10 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'siteSlug', 'back_to' ],
 			optionalDependenciesInQuery: [ 'back_to' ],
 			lastModified: '2024-06-14',
-			enablePresales: false,
+			enablePremiumSupport: true,
+			get helpCenterButtonText() {
+				return translate( 'Questions? Contact our site building team' );
+			},
 		},
 
 		{
@@ -487,8 +477,9 @@ export function generateFlows( {
 			destination: getDIFMSiteContentCollectionDestination,
 			description: 'A flow to collect DIFM lite site content',
 			excludeFromManageSiteFlows: true,
-			providesDependenciesInQuery: [ 'siteSlug' ],
-			lastModified: '2024-06-14',
+			providesDependenciesInQuery: [ 'siteId', 'siteSlug' ],
+			optionalDependenciesInQuery: [ 'siteId', 'siteSlug' ],
+			lastModified: '2025-02-27',
 			hideProgressIndicator: true,
 		},
 		{
@@ -513,6 +504,8 @@ export function generateFlows( {
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
 			name: 'business-3y',
@@ -523,6 +516,8 @@ export function generateFlows( {
 			lastModified: '2024-04-17',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 
 		{
@@ -534,6 +529,8 @@ export function generateFlows( {
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
 			name: 'premium-3y',
@@ -544,6 +541,8 @@ export function generateFlows( {
 			lastModified: '2024-04-17',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
 			name: 'personal-2y',
@@ -554,6 +553,8 @@ export function generateFlows( {
 			lastModified: '2023-10-11',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
 			name: 'personal-3y',
@@ -564,6 +565,8 @@ export function generateFlows( {
 			lastModified: '2024-04-17',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			providesDependenciesInQuery: [ 'coupon' ],
+			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
 			name: 'entrepreneur',

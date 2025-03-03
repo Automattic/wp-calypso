@@ -1,6 +1,7 @@
+import configApi from '@automattic/calypso-config';
 import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
@@ -20,6 +21,7 @@ import { useSiteData } from '../hooks/use-site-data';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { shouldRedirectToSiteMigration } from './helpers';
+import { useRedirectDesignSetupOldSlug } from './helpers/use-redirect-design-setup-old-slug';
 import { useLaunchpadDecider } from './internals/hooks/use-launchpad-decider';
 import { STEPS } from './internals/steps';
 import { redirect } from './internals/steps-repository/import/util';
@@ -167,6 +169,16 @@ const siteSetupFlow: FlowV1 = {
 			);
 		};
 
+		const getEnableFeaturesForGoals = () => {
+			const featuresForGoals: Onboard.SiteGoal[] = [];
+
+			if ( configApi.isEnabled( 'onboarding/enable-write-goal-features' ) ) {
+				featuresForGoals.push( Onboard.SiteGoal.Write );
+			}
+
+			return featuresForGoals.length > 0 ? featuresForGoals : undefined;
+		};
+
 		const exitFlow = ( to: string, options: ExitFlowOptions = {} ) => {
 			setPendingAction( () => {
 				/**
@@ -223,6 +235,15 @@ const siteSetupFlow: FlowV1 = {
 
 					formData.push( [ 'settings', JSON.stringify( settings ) ] );
 
+					const enableFeaturesForGoals = getEnableFeaturesForGoals();
+
+					if ( enableFeaturesForGoals ) {
+						formData.push( [
+							'enable_features_for_goals',
+							JSON.stringify( enableFeaturesForGoals ),
+						] );
+					}
+
 					pendingActions.push(
 						wpcomRequest( {
 							path: `/sites/${ siteId }/onboarding-customization`,
@@ -251,6 +272,8 @@ const siteSetupFlow: FlowV1 = {
 			navigate,
 		} );
 
+		useRedirectDesignSetupOldSlug( currentStep, navigate );
+
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
 			switch ( currentStep ) {
 				case 'options': {
@@ -260,12 +283,12 @@ const siteSetupFlow: FlowV1 = {
 						 *
 						 * Instead of having the user manually choose between "Start simple" and "More power", we let them select a theme and use the theme choice to determine which path to take.
 						 */
-						return navigate( 'designSetup' );
+						return navigate( 'design-setup' );
 					}
 					return navigate( 'bloggerStartingPoint' );
 				}
 
-				case 'designSetup': {
+				case 'design-setup': {
 					return navigate( 'processing' );
 				}
 
@@ -344,7 +367,7 @@ const siteSetupFlow: FlowV1 = {
 							if ( isDesignChoicesStepEnabled ) {
 								return navigate( 'design-choices' );
 							}
-							return navigate( 'designSetup' );
+							return navigate( 'design-setup' );
 						}
 					}
 				}
@@ -368,7 +391,7 @@ const siteSetupFlow: FlowV1 = {
 							return exitFlow( `https://wordpress.com/home/${ siteId ?? siteSlug }` );
 						}
 						case 'build': {
-							return navigate( 'designSetup' );
+							return navigate( 'design-setup' );
 						}
 						case 'sell': {
 							return navigate( 'options' );
@@ -497,7 +520,7 @@ const siteSetupFlow: FlowV1 = {
 				case 'courses':
 					return navigate( 'bloggerStartingPoint' );
 
-				case 'designSetup':
+				case 'design-setup':
 					if ( intent === SiteIntent.DIFM ) {
 						return navigate( 'difmStartingPoint' );
 					}
@@ -580,7 +603,7 @@ const siteSetupFlow: FlowV1 = {
 			switch ( currentStep ) {
 				case 'options':
 					if ( intent === 'sell' ) {
-						return navigate( 'designSetup' );
+						return navigate( 'design-setup' );
 					}
 					return navigate( 'bloggerStartingPoint' );
 
@@ -591,7 +614,7 @@ const siteSetupFlow: FlowV1 = {
 					return navigate( 'importList' );
 
 				case 'difmStartingPoint':
-					return navigate( 'designSetup' );
+					return navigate( 'design-setup' );
 
 				default:
 					return navigate( 'intent' );
@@ -612,7 +635,7 @@ const siteSetupFlow: FlowV1 = {
 	},
 
 	useAssertConditions(): AssertConditionResult {
-		const { siteSlug, siteId } = useSiteData();
+		const { site, siteSlug, siteId } = useSiteData();
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
@@ -647,8 +670,9 @@ const siteSetupFlow: FlowV1 = {
 			};
 		}
 
+		const isLoadingSite = ( siteSlug || siteId ) && ! site;
 		const { canManageOptions, isLoading } = useCanUserManageOptions();
-		if ( isLoading ) {
+		if ( isLoadingSite || isLoading ) {
 			result = {
 				state: AssertConditionState.CHECKING,
 			};
@@ -685,19 +709,24 @@ const siteSetupFlow: FlowV1 = {
 		const dispatch = reduxDispatch();
 
 		const skippedCheckout = useQuery().get( 'skippedCheckout' );
-
 		const activateDesign = useActivateDesign();
+		const isPendingActionSet = useRef( false );
 
 		useEffect( () => {
 			if ( ! isGoalsAtFrontExperiment || ! siteSlugOrId || ! siteId ) {
 				return;
 			}
 
+			// Avoid the pending action to be triggered multiple times.
+			if ( isPendingActionSet.current ) {
+				return;
+			}
+
+			isPendingActionSet.current = true;
 			setPendingAction( async () => {
 				if ( ! selectedDesign ) {
 					return;
 				}
-
 				try {
 					await activateDesign( selectedDesign, {
 						styleVariation: selectedStyleVariation,

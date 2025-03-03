@@ -168,7 +168,7 @@ export function useCommands() {
 			clearCache: {
 				name: 'clearCache',
 				label: __( 'Clear cache', __i18n_text_domain__ ),
-				callback: commandNavigation( '/hosting-config/:site#cache' ),
+				callback: commandNavigation( '/sites/settings/performance/:site' ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select a site to clear cache', __i18n_text_domain__ ),
 				...siteFilters.hostingEnabled,
@@ -177,7 +177,7 @@ export function useCommands() {
 			enableEdgeCache: {
 				name: 'enableEdgeCache',
 				label: __( 'Enable edge cache', __i18n_text_domain__ ),
-				callback: commandNavigation( '/hosting-config/:site#edge' ),
+				callback: commandNavigation( '/sites/settings/performance/:site' ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select a site to enable edge cache', __i18n_text_domain__ ),
 				...siteFilters.hostingEnabledAndPublic,
@@ -186,7 +186,7 @@ export function useCommands() {
 			disableEdgeCache: {
 				name: 'disableEdgeCache',
 				label: __( 'Disable edge cache', __i18n_text_domain__ ),
-				callback: commandNavigation( '/hosting-config/:site#edge' ),
+				callback: commandNavigation( '/sites/settings/performance/:site' ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select a site to disable edge cache', __i18n_text_domain__ ),
 				...siteFilters.hostingEnabledAndPublic,
@@ -195,7 +195,7 @@ export function useCommands() {
 			manageCacheSettings: {
 				name: 'manageCacheSettings',
 				label: __( 'Manage cache settings', __i18n_text_domain__ ),
-				callback: commandNavigation( '/hosting-config/:site#cache' ),
+				callback: commandNavigation( '/sites/settings/performance/:site' ),
 				searchLabel: [
 					_x(
 						'manage cache settings',
@@ -290,7 +290,7 @@ export function useCommands() {
 			openHostingConfiguration: {
 				name: 'openHostingConfiguration',
 				label: __( 'Open server settings', __i18n_text_domain__ ),
-				callback: commandNavigation( '/hosting-config/:site' ),
+				callback: commandNavigation( '/sites/settings/server/:site' ),
 				searchLabel: [
 					_x(
 						'open hosting configuration',
@@ -348,7 +348,7 @@ export function useCommands() {
 			openPHPmyAdmin: {
 				name: 'openPHPmyAdmin',
 				label: __( 'Open database in phpMyAdmin', __i18n_text_domain__ ),
-				callback: commandNavigation( '/hosting-config/:site#database-access' ),
+				callback: commandNavigation( '/sites/settings/database/:site' ),
 				searchLabel: [
 					_x(
 						'open database in phpmyadmin',
@@ -642,7 +642,7 @@ export function useCommands() {
 			copySshConnectionString: {
 				name: 'copySshConnectionString',
 				label: __( 'Copy SSH connection string', __i18n_text_domain__ ),
-				callback: commandNavigation( '/hosting-config/:site#sftp-credentials' ),
+				callback: commandNavigation( '/sites/settings/sftp-ssh/:site' ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to copy SSH connection string', __i18n_text_domain__ ),
 				...siteFilters.hostingEnabled,
@@ -651,7 +651,7 @@ export function useCommands() {
 			openSshCredentials: {
 				name: 'openSshCredentials',
 				label: __( 'Open SFTP/SSH credentials', __i18n_text_domain__ ),
-				callback: commandNavigation( '/hosting-config/:site#sftp-credentials' ),
+				callback: commandNavigation( '/sites/settings/sftp-ssh/:site' ),
 				...siteFilters.hostingEnabled,
 				icon: keyIcon,
 				siteSelector: true,
@@ -660,7 +660,7 @@ export function useCommands() {
 			resetSshSftpPassword: {
 				name: 'resetSshSftpPassword',
 				label: __( 'Reset SFTP/SSH password', __i18n_text_domain__ ),
-				callback: commandNavigation( '/hosting-config/:site#sftp-credentials' ),
+				callback: commandNavigation( '/sites/settings/sftp-ssh/:site' ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to reset SFTP/SSH password', __i18n_text_domain__ ),
 				...siteFilters.hostingEnabled,
@@ -883,7 +883,7 @@ export function useCommands() {
 			changePHPVersion: {
 				name: 'changePHPVersion',
 				label: __( 'Change PHP version', __i18n_text_domain__ ),
-				callback: commandNavigation( '/hosting-config/:site#web-server-settings' ),
+				callback: commandNavigation( '/sites/settings/server/:site' ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to change PHP version', __i18n_text_domain__ ),
 				...siteFilters.hostingEnabled,
@@ -1744,16 +1744,11 @@ export function useCommands() {
 					),
 				].join( KEYWORD_SEPARATOR ),
 				context: [ '/settings', '/wp-admin/options-' ],
-				callback: ( params ) =>
-					commandNavigation(
-						params.site?.is_wpcom_atomic && siteUsesWpAdminInterface( params.site )
-							? '/wp-admin/options-general.php?page=page-optimize'
-							: '/settings/performance/:site'
-					)( params ),
+				callback: commandNavigation( '/sites/settings/performance/:site' ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to manage performance settings', __i18n_text_domain__ ),
-				capability: SiteCapabilities.MANAGE_OPTIONS,
 				filterP2: true,
+				...siteFilters.hostingEnabled,
 				icon: settingsIcon,
 			},
 			manageSettingsPermalinks: {

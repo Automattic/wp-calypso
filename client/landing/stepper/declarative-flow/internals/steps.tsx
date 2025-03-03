@@ -29,13 +29,28 @@ export const STEPS = {
 	},
 
 	DESIGN_SETUP: {
-		slug: 'designSetup',
+		slug: 'design-setup',
 		asyncComponent: () => import( './steps-repository/design-setup' ),
 	},
 
 	DIFM_STARTING_POINT: {
 		slug: 'difmStartingPoint',
 		asyncComponent: () => import( './steps-repository/difm-starting-point' ),
+	},
+
+	DOMAIN_CONTACT_INFO: {
+		slug: 'domain-contact-info',
+		asyncComponent: () => import( './steps-repository/domain-contact-info' ),
+	},
+
+	DOMAIN_TRANSFER_INTRO: {
+		slug: 'intro',
+		asyncComponent: () => import( './steps-repository/domain-transfer-intro' ),
+	},
+
+	DOMAIN_TRANSFER_DOMAINS: {
+		slug: 'domains',
+		asyncComponent: () => import( './steps-repository/domain-transfer-domains' ),
 	},
 
 	DOMAINS: {
@@ -313,6 +328,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-picker' ),
 	},
 
+	POST_CHECKOUT_ONBOARDING: {
+		slug: 'post-checkout-onboarding',
+		asyncComponent: () => import( './steps-repository/post-checkout/post-checkout-onboarding' ),
+	},
+
 	SEGMENTATION_SURVEY: {
 		slug: 'segmentation-survey',
 		asyncComponent: () => import( './steps-repository/segmentation-survey' ),
@@ -320,6 +340,53 @@ export const STEPS = {
 	PLATFORM_IDENTIFICATION: {
 		slug: 'platform-identification',
 		asyncComponent: () => import( './steps-repository/platform-identification' ),
+	},
+	UNIFIED_DOMAINS: {
+		slug: 'domains',
+		asyncComponent: () =>
+			import(
+				/* webpackChunkName: 'async-step-unified-domains' */ './steps-repository/unified-domains'
+			),
+	},
+	UNIFIED_PLANS: {
+		slug: 'plans',
+		asyncComponent: () =>
+			import(
+				/* webpackChunkName: 'async-step-unified-plans' */ './steps-repository/unified-plans'
+			),
+	},
+
+	USE_MY_DOMAIN: {
+		slug: 'use-my-domain',
+		asyncComponent: () =>
+			import(
+				/* webpackChunkName: 'async-step-use-my-domain' */ './steps-repository/use-my-domain'
+			),
+	},
+
+	HUNDRED_YEAR_PLAN_DIY_OR_DIFM: {
+		slug: 'diy-or-difm',
+		asyncComponent: () => import( './steps-repository/hundred-year-plan-diy-or-difm' ),
+	},
+
+	HUNDRED_YEAR_PLAN_THANK_YOU: {
+		slug: 'thank-you',
+		asyncComponent: () => import( './steps-repository/hundred-year-plan-thank-you' ),
+	},
+
+	HUNDRED_YEAR_PLAN_SITE_PICKER: {
+		slug: 'site-picker',
+		asyncComponent: () => import( './steps-repository/hundred-year-plan-site-picker' ),
+	},
+
+	HUNDRED_YEAR_PLAN_SETUP: {
+		slug: 'setup',
+		asyncComponent: () => import( './steps-repository/hundred-year-plan-setup' ),
+	},
+
+	SETUP_BLOG: {
+		slug: 'setup-blog',
+		asyncComponent: () => import( './steps-repository/setup-blog' ),
 	},
 } satisfies Record< string, StepperStep >;
 

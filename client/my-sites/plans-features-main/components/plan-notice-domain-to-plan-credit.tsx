@@ -17,11 +17,7 @@ const PlanNoticeDomainToPlanCredit = ( {
 	visiblePlans,
 }: Props ) => {
 	const domainToPlanCreditsApplicable = useDomainToPlanCreditsApplicable( siteId, visiblePlans );
-	const showNotice =
-		visiblePlans &&
-		visiblePlans.length > 0 &&
-		domainToPlanCreditsApplicable !== null &&
-		domainToPlanCreditsApplicable > 0;
+	const showNotice = domainToPlanCreditsApplicable !== null && domainToPlanCreditsApplicable > 0;
 
 	return (
 		<>

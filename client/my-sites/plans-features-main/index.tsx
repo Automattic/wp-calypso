@@ -21,7 +21,7 @@ import {
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
 import { WpcomPlansUI, AddOns, Plans, OnboardSelect } from '@automattic/data-stores';
-import { isAnyHostingFlow, isOnboardingGuidedFlow } from '@automattic/onboarding';
+import { isAnyHostingFlow } from '@automattic/onboarding';
 import {
 	FeaturesGrid,
 	ComparisonGrid,
@@ -357,8 +357,7 @@ const PlansFeaturesMain = ( {
 	 * It exists temporarily till the flows with the following intents are removed.
 	 */
 	const showSimplifiedFeatures = ! (
-		intent &&
-		[ 'plans-newsletter', 'plans-link-in-bio', 'plans-blog-onboarding' ].includes( intent )
+		intent && [ 'plans-newsletter', 'plans-blog-onboarding' ].includes( intent )
 	);
 
 	const [ isLoadingHideLowerTierPlansExperiment, hideLowerTierPlansExperimentAssignment ] =
@@ -732,15 +731,6 @@ const PlansFeaturesMain = ( {
 	const getComparisonGridToggleLabel = () => {
 		if ( showPlansComparisonGrid ) {
 			return translate( 'Hide comparison' );
-		}
-		if (
-			Array.isArray( gridPlansForFeaturesGrid ) &&
-			Array.isArray( gridPlansForComparisonGrid ) &&
-			gridPlansForFeaturesGrid.length < gridPlansForComparisonGrid.length &&
-			flowName &&
-			isOnboardingGuidedFlow( flowName )
-		) {
-			return translate( 'Compare all plans' );
 		}
 		return translate( 'Compare plans' );
 	};

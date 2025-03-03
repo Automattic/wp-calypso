@@ -16,3 +16,20 @@
 		max-width: 300px;
 	}
 }
+
+.a4a-marketplace__header-actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	justify-content: flex-end;
+	& > * {
+		flex-grow: 0;
+	}
+
+	@include breakpoint-deprecated( "<660px" ) {
+		.current-section button {
+			border: none;
+		}
+		justify-content: space-between;
+	}
+}

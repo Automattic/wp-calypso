@@ -27,9 +27,9 @@ import {
 	isJetpackStatsPaidProductSlug,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { formatCurrency } from '@automattic/format-currency';
 import { encodeProductForUrl } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
+import { formatCurrency } from 'i18n-calypso';
 import i18n, { numberFormat, type TranslateResult } from 'i18n-calypso';
 import moment from 'moment';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
