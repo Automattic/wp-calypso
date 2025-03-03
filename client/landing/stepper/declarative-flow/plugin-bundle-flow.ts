@@ -9,6 +9,7 @@ import { useSitePluginSlug } from '../hooks/use-site-plugin-slug';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE } from '../stores';
+import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { redirect } from './internals/steps-repository/import/util';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import {
