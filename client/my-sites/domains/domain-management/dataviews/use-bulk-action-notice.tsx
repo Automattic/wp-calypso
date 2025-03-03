@@ -30,7 +30,7 @@ const getSuccessMessage = ( job: JobStatus, translate: TranslateFunction ) => {
 		);
 	}
 
-	// If the user tired to disable auto-renew:
+	// If the user tried to disable auto-renew:
 	return translate(
 		'Automatic renewal has been disabled for your domain.',
 		'Automatic renewal has been disabled for your domains.',
