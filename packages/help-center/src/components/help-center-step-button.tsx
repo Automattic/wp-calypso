@@ -8,13 +8,11 @@ import { HELP_CENTER_STORE } from '../stores';
 import type { FC } from 'react';
 
 interface HelpCenterStepButtonProps {
-	helpCenterButtonText?: string;
 	hasPremiumSupport?: boolean;
 	flowName?: string;
 }
 
 const HelpCenterStepButton: FC< HelpCenterStepButtonProps > = ( {
-	helpCenterButtonText,
 	hasPremiumSupport,
 	flowName,
 } ) => {
@@ -26,10 +24,6 @@ const HelpCenterStepButton: FC< HelpCenterStepButtonProps > = ( {
 	);
 	const flowCustomOptions = useFlowCustomOptions( flowName || '' );
 	const { userFieldMessage, userFieldFlowName } = useFlowZendeskUserFields( flowName || '' );
-
-	if ( ! helpCenterButtonText ) {
-		return null;
-	}
 
 	function openHelpCenter() {
 		setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport, flowCustomOptions );
