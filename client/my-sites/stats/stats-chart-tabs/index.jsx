@@ -75,7 +75,7 @@ const transformChartDataToLineFormat = (
 		const secondarySeries = chartData
 			.map( ( record ) => {
 				const date = parseLocalDate( record.data.period, gmtOffset );
-				const value = record.data[ activeLegend[ 0 ] ];
+				const value = record.data.visitors;
 				if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
 					return null;
 				}
