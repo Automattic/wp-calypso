@@ -18,7 +18,7 @@ import { useHistory, useLink } from '../../router';
 
 import './style.scss';
 
-export type SidebarNavigationItemProps = {
+type SidebarNavigationItemProps = {
 	className?: string;
 	withChevron?: boolean;
 	suffix?: JSX.Element;
