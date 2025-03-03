@@ -17,6 +17,7 @@ import { getSiteOption } from 'calypso/state/sites/selectors';
 import { requestChartCounts } from 'calypso/state/stats/chart-tabs/actions';
 import { QUERY_FIELDS } from 'calypso/state/stats/chart-tabs/constants';
 import { getCountRecords, getLoadingTabs } from 'calypso/state/stats/chart-tabs/selectors';
+import { chartLabelformats } from 'calypso/state/stats/lists/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useCssVariable from '../hooks/use-css-variable';
 import StatsEmptyState from '../stats-empty-state';
@@ -162,6 +163,13 @@ class StatModuleChartTabs extends Component {
 		this.setState( { chartType: newType } );
 	};
 
+	formatLineChartTimeTick = ( date ) => {
+		// Align the format with the original chart data parser.
+		const timeformat = chartLabelformats[ this.props.selectedPeriod ];
+
+		return moment.utc( date ).format( timeformat );
+	};
+
 	render() {
 		const {
 			siteId,
@@ -230,6 +238,7 @@ class StatModuleChartTabs extends Component {
 						height={ 200 }
 						moment={ moment }
 						onClick={ this.props.barClick }
+						formatTimeTick={ this.formatLineChartTimeTick }
 					/>
 				) }
 
