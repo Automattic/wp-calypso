@@ -1,7 +1,7 @@
 import { CheckboxControl, SelectControl, TextControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { without } from 'lodash';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import Loading from 'calypso/components/loading';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { useDispatch, useSelector } from 'calypso/state';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
@@ -229,7 +229,7 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ) {
 	if ( ! siteId ) {
 		return (
 			<div className="step-business-info__info-section">
-				<LoadingEllipsis />
+				<Loading />
 			</div>
 		);
 	}
