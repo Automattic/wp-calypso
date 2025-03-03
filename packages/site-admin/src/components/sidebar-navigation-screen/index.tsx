@@ -40,7 +40,7 @@ export function SidebarNavigationScreen( {
 	footer,
 	description,
 	backPath,
-	goBackLabel = __( 'Go to the Dashboard', 'woocommerce-analytics' ),
+	goBackLabel = __( 'Go to the Dashboard', 'a8c-site-admin' ),
 	goBackLink = '/',
 }: SidebarNavigationScreenProps ) {
 	const history = useHistory();
@@ -74,7 +74,7 @@ export function SidebarNavigationScreen( {
 								navigate( 'back' );
 							} }
 							icon={ icon }
-							label={ __( 'Back', 'woocommerce-analytics' ) }
+							label={ __( 'Back', 'a8c-site-admin' ) }
 							showTooltip={ false }
 						/>
 					) }

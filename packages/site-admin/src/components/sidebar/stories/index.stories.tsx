@@ -40,7 +40,7 @@ const SidebarItems = () => {
 				suffix="CHEVRON"
 				aria-current={ path === '/reports' }
 			>
-				{ __( 'Reports' ) }
+				{ __( 'Reports', 'a8c-site-admin' ) }
 			</SidebarNavigationItem>
 
 			<SidebarNavigationItem
@@ -50,7 +50,7 @@ const SidebarItems = () => {
 				uid="settings"
 				aria-current={ path === '/settings' }
 			>
-				{ __( 'Settings' ) }
+				{ __( 'Settings', 'a8c-site-admin' ) }
 			</SidebarNavigationItem>
 
 			<SidebarNavigationItem
@@ -60,7 +60,7 @@ const SidebarItems = () => {
 				uid="archive"
 				aria-current={ path === '/archive' }
 			>
-				{ __( 'Archive' ) }
+				{ __( 'Archive', 'a8c-site-admin' ) }
 			</SidebarNavigationItem>
 		</ItemGroup>
 	);
@@ -75,7 +75,7 @@ export const Default: Story = {
 				<RouterProvider routes={ [] } pathArg="page">
 					<SidebarNavigationScreen
 						isRoot
-						title={ __( 'Analytics' ) }
+						title={ __( 'Analytics', 'a8c-site-admin' ) }
 						content={ <SidebarItems /> }
 					/>
 				</RouterProvider>

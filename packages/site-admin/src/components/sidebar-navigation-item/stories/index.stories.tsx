@@ -62,7 +62,7 @@ export const Default: Story = {
 
 Default.storyName = 'SidebarNavigationItem';
 Default.args = {
-	children: __( 'Site Photos Gallery' ),
+	children: __( 'Site Photos Gallery', 'a8c-site-admin' ),
 	as: 'button',
 	onClick: action( 'clicked' ),
 };
@@ -70,7 +70,7 @@ Default.args = {
 // Add a story for the suffix prop.
 export const WithChevronSuffix: Story = {
 	args: {
-		children: __( 'More options' ),
+		children: __( 'More options', 'a8c-site-admin' ),
 		suffix: 'CHEVRON',
 	},
 };
