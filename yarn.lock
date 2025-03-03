@@ -1673,18 +1673,19 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.2.0"
-    "@testing-library/user-event": "npm:^14.6.0"
     "@testing-library/user-event": "npm:^14.6.1"
     "@wordpress/data": "npm:^10.19.0"
     "@wordpress/element": "npm:^6.19.0"
     "@wordpress/icons": "npm:^10.19.0"
     "@wordpress/primitives": "npm:^4.19.0"
+    "@wordpress/url": "npm:^4.19.0"
     "@wordpress/warning": "npm:^3.19.0"
     clsx: "npm:^2.1.1"
     i18n-calypso: "workspace:^"
     msw: "npm:^2.2.14"
     msw-storybook-addon: "npm:^2.0.2"
     react-intersection-observer: "npm:^9.4.3"
+    react-transition-group: "npm:^4.3.0"
     resize-observer-polyfill: "npm:^1.5.1"
     typescript: "npm:^5.3.3"
     webpack: "npm:^5.97.1"
@@ -1784,6 +1785,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     redux: "npm:^5.0.1"
     tslib: "npm:^2.3.0"
+    typescript: "npm:^5.3.3"
     webpack: "npm:^5.97.1"
   peerDependencies:
     react: ^18.3.1
@@ -1792,6 +1794,7 @@ __metadata:
   linkType: soft
 
 "@automattic/shopping-cart@workspace:^, @automattic/shopping-cart@workspace:packages/shopping-cart":
+  version: 0.0.0-use.local
   resolution: "@automattic/shopping-cart@workspace:packages/shopping-cart"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
