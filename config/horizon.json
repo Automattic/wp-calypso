@@ -102,6 +102,7 @@
 		"purchases/billing-history-data-view": false,
 		"purchases/new-payment-methods": true,
 		"reader": true,
+		"reader/quick-post": true,
 		"readymade-templates/showcase": false,
 		"redirect-fallback-browsers": true,
 		"safari-idb-mitigation": true,

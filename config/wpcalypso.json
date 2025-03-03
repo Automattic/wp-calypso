@@ -138,6 +138,7 @@
 		"purchases/new-payment-methods": true,
 		"reader": true,
 		"reader/full-errors": true,
+		"reader/quick-post": true,
 		"readymade-templates/showcase": true,
 		"redirect-fallback-browsers": true,
 		"rum-tracking/logstash": true,

@@ -130,6 +130,7 @@
 		"push-notifications": true,
 		"reader": true,
 		"reader/full-errors": false,
+		"reader/quick-post": true,
 		"readymade-templates/showcase": false,
 		"redirect-fallback-browsers": true,
 		"rum-tracking/logstash": true,
