@@ -18,7 +18,6 @@ const SetReaderLanding = ( { submitSignupStep, goToNextStep, initialContext }: P
 	useEffect( () => {
 		const saveAndProceed = async () => {
 			if ( 'reader-lp' === refParam ) {
-				// Fire PUT request directly without awaiting the response
 				const payload = {
 					[ USER_SETTING_KEY ]: {
 						[ READER_AS_LANDING_PAGE_PREFERENCE ]: {
@@ -28,7 +27,7 @@ const SetReaderLanding = ( { submitSignupStep, goToNextStep, initialContext }: P
 					},
 				};
 
-				// Send the request but don't wait for it
+				// Fire PUT request directly without awaiting the response.
 				wpcom.req.put( '/me/preferences', payload );
 			}
 			submitSignupStep( { stepName: 'set-reader-landing' } );
