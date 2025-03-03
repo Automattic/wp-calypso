@@ -180,7 +180,7 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 		} );
 	} );
 
-	describe( 'Launch site using Focused Launchpad', function () {
+	describe( 'Launch site without Focused Launchpad', function () {
 		it( 'Verify site is not yet launched', async function () {
 			const tmpPage = await browser.newPage();
 			await tmpPage.goto( newSiteDetails.blog_details.url as string );

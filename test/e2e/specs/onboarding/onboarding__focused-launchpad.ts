@@ -79,7 +79,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 			await title.waitFor( { timeout: 30 * 1000 } );
 		} );
 
-		it( 'Will add subscribers', async function () {
+		it( 'It will add subscribers', async function () {
 			const addSubscribersButton = await page.getByText( 'Add subscribers' );
 			await addSubscribersButton.waitFor();
 			await addSubscribersButton.click();
@@ -89,7 +89,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 			);
 		} );
 
-		it( 'will Write your first post', async function () {
+		it( "It will write the user's first post", async function () {
 			const writeFirstPostButton = await page.getByText( 'Write your first post' );
 			await writeFirstPostButton.waitFor();
 			await writeFirstPostButton.click();
