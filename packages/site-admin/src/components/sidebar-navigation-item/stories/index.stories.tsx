@@ -12,7 +12,7 @@ import { SidebarNavigationItem, SidebarNavigationContext, createNavState } from 
  * Types
  */
 import type { SidebarNavigationItemProps } from '../';
-import type { Meta, StoryFn } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react';
 
 type IconName = keyof typeof allIcons;
 
@@ -51,23 +51,25 @@ const meta: Meta< typeof SidebarNavigationItem > = {
 
 export default meta;
 
-export const Default: StoryFn< typeof SidebarNavigationItem > = (
-	args: SidebarNavigationItemProps
-) => {
-	const { icon: iconName, children, ...validArgs } = args;
+type Story = StoryObj< typeof SidebarNavigationItem >;
 
-	// Pick the icon component based on the icon name.
-	const iconKey = iconName as unknown as IconName;
-	const icon = allIcons?.[ iconKey ];
+export const Default: Story = {
+	render: function Template( args: SidebarNavigationItemProps ) {
+		const { icon: iconName, children, ...validArgs } = args;
 
-	const [ navState ] = useState( createNavState() );
-	return (
-		<SidebarNavigationContext.Provider value={ navState }>
-			<SidebarNavigationItem { ...validArgs } icon={ icon }>
-				{ children }
-			</SidebarNavigationItem>
-		</SidebarNavigationContext.Provider>
-	);
+		// Pick the icon component based on the icon name.
+		const iconKey = iconName as unknown as IconName;
+		const icon = allIcons?.[ iconKey ];
+
+		const [ navState ] = useState( createNavState() );
+		return (
+			<SidebarNavigationContext.Provider value={ navState }>
+				<SidebarNavigationItem { ...validArgs } icon={ icon }>
+					{ children }
+				</SidebarNavigationItem>
+			</SidebarNavigationContext.Provider>
+		);
+	},
 };
 
 Default.storyName = 'SidebarNavigationItem';

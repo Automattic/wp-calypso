@@ -13,7 +13,7 @@ import { useLocation, RouterProvider } from '../../../router';
  * Types
  */
 import type { SidebarContentProps } from '..';
-import type { Meta, StoryFn } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react';
 
 import './style.stories.scss';
 
@@ -68,10 +68,20 @@ const SidebarItems = () => {
 	);
 };
 
-export const Default: StoryFn< typeof SidebarContent > = ( args: SidebarContentProps ) => (
-	<SidebarContent { ...args }>
-		<RouterProvider routes={ [] } pathArg="page">
-			<SidebarNavigationScreen isRoot title={ __( 'Analytics' ) } content={ <SidebarItems /> } />
-		</RouterProvider>
-	</SidebarContent>
-);
+type Story = StoryObj< typeof SidebarContent >;
+
+export const Default: Story = {
+	render: function Template( args: SidebarContentProps ) {
+		return (
+			<SidebarContent { ...args }>
+				<RouterProvider routes={ [] } pathArg="page">
+					<SidebarNavigationScreen
+						isRoot
+						title={ __( 'Analytics' ) }
+						content={ <SidebarItems /> }
+					/>
+				</RouterProvider>
+			</SidebarContent>
+		);
+	},
+};
