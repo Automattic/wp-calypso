@@ -1,4 +1,3 @@
-import { Icon, people } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -22,9 +21,8 @@ import useCssVariable from '../hooks/use-css-variable';
 import StatsEmptyState from '../stats-empty-state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatTabs from '../stats-tabs';
-import { parseLocalDate } from '../utils';
 import ChartHeader from './chart-header';
-import { buildChartData, getQueryDate } from './utility';
+import { buildChartData, getQueryDate, transformChartDataToLineFormat } from './utility';
 
 import './style.scss';
 
@@ -34,71 +32,6 @@ const ChartTabShape = PropTypes.shape( {
 	label: PropTypes.string,
 	legendOptions: PropTypes.arrayOf( PropTypes.string ),
 } );
-
-// data validation for line chart
-const transformChartDataToLineFormat = (
-	chartData,
-	activeLegend = [],
-	activeTab,
-	primaryColor,
-	secondaryColor,
-	gmtOffset = 0
-) => {
-	if ( ! Array.isArray( chartData ) || chartData.length === 0 ) {
-		return [];
-	}
-
-	const series = [];
-
-	const mainSeries = chartData
-		.map( ( record ) => {
-			const date = parseLocalDate( record.data.period, gmtOffset );
-			const value = record.data[ activeTab.attr ];
-			if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
-				return null;
-			}
-			return { date, value, label: record.tooltipData?.[ 0 ].label };
-		} )
-		.filter( Boolean );
-
-	if ( mainSeries.length > 0 ) {
-		series.push( {
-			label: activeTab.label,
-			options: { stroke: primaryColor },
-			icon: activeTab.icon,
-			data: mainSeries,
-		} );
-	}
-
-	// Only add visitors series if visitors is active in legend
-	// It has to be visitors as that is the only case where we show two series, i.e. activeLegend[ 0 ] is 'visitors' only.
-	// We should probably figure out a more general to handle this.
-	if ( activeLegend.length > 0 ) {
-		activeLegend.forEach( ( legend ) => {
-			const secondarySeries = chartData
-				.map( ( record ) => {
-					const date = parseLocalDate( record.data.period, gmtOffset );
-					const value = record.data[ legend ];
-					if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
-						return null;
-					}
-					return { date, value, label: record.tooltipData?.[ 0 ].label };
-				} )
-				.filter( Boolean );
-
-			if ( secondarySeries.length > 0 ) {
-				series.push( {
-					label: translate( 'Visitors' ),
-					options: { stroke: secondaryColor },
-					icon: <Icon className="gridicon" icon={ people } />,
-					data: secondarySeries,
-				} );
-			}
-		} );
-	}
-
-	return series;
-};
 
 class StatModuleChartTabs extends Component {
 	static propTypes = {

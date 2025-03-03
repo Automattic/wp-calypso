@@ -123,29 +123,27 @@ export const transformChartDataToLineFormat = memoizeLast(
 
 		// Only add visitors series if visitors is active in legend
 		// It has to be visitors as that is the only case where we show two series, i.e. activeLegend[ 0 ] is 'visitors' only.
-		// We should probably figure out a more general to handle this.
+		// We should probably figure out a more general way to handle this.
 		if ( activeLegend.length > 0 ) {
-			activeLegend.forEach( ( legend ) => {
-				const secondarySeries = chartData
-					.map( ( record ) => {
-						const date = parseLocalDate( record.data.period, gmtOffset );
-						const value = record.data[ legend ];
-						if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
-							return null;
-						}
-						return { date, value, label: record.tooltipData?.[ 0 ].label };
-					} )
-					.filter( Boolean );
+			const secondarySeries = chartData
+				.map( ( record ) => {
+					const date = parseLocalDate( record.data.period, gmtOffset );
+					const value = record.data.visitors;
+					if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
+						return null;
+					}
+					return { date, value, label: record.tooltipData?.[ 0 ].label };
+				} )
+				.filter( Boolean );
 
-				if ( secondarySeries.length > 0 ) {
-					series.push( {
-						label: translate( 'Visitors' ),
-						options: { stroke: secondaryColor },
-						icon: <Icon className="gridicon" icon={ people } />,
-						data: secondarySeries,
-					} );
-				}
-			} );
+			if ( secondarySeries.length > 0 ) {
+				series.push( {
+					label: translate( 'Visitors' ),
+					options: { stroke: secondaryColor },
+					icon: <Icon className="gridicon" icon={ people } />,
+					data: secondarySeries,
+				} );
+			}
 		}
 
 		return series;
