@@ -16,23 +16,14 @@ function mutationInstallPluginToSite( {
 	siteId,
 	pluginSlug,
 }: InstallPluginToSiteMutationOptions ): Promise< void > {
-	const isAPIEnabled = false; // FIXME: Remove this once the API is enabled
-	return isAPIEnabled
-		? wpcom.req.post(
-				{
-					path: `/jetpack-blogs/${ siteId }/rest-api`,
-					apiNamespace: 'rest/v1.1',
-				},
-				{
-					path: '/wp/v2/plugins/',
-					body: JSON.stringify( {
-						slug: pluginSlug,
-						status: 'active',
-					} ),
-					json: true,
-				}
-		  )
-		: Promise.resolve();
+	return wpcom.req.post( {
+		apiNamespace: 'wp/v2',
+		path: `/sites/${ siteId }/plugins`,
+		body: {
+			slug: pluginSlug,
+			status: 'active',
+		},
+	} );
 }
 
 export default function useInstallPluginToSiteMutation< TContext = unknown >(

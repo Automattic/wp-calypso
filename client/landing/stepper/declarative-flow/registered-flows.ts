@@ -4,7 +4,6 @@ import {
 	NEW_HOSTED_SITE_FLOW,
 	DESIGN_FIRST_FLOW,
 	TRANSFERRING_HOSTED_SITE_FLOW,
-	IMPORT_HOSTED_SITE_FLOW,
 	DOMAIN_TRANSFER,
 	GOOGLE_TRANSFER,
 	HUNDRED_YEAR_DOMAIN_TRANSFER,
@@ -36,9 +35,6 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	[ ENTREPRENEUR_FLOW ]: () =>
 		import( /* webpackChunkName: "entrepreneur-flow" */ '../declarative-flow/entrepreneur-flow' ),
-
-	'assembler-first': () =>
-		import( /* webpackChunkName: "assembler-first-flow" */ './assembler-first-flow' ),
 
 	'readymade-template': () =>
 		import( /* webpackChunkName: "readymade-template-flow" */ './readymade-template' ),
@@ -76,8 +72,6 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		import(
 			/* webpackChunkName: "transferring-hosted-site-flow" */ './transferring-hosted-site-flow'
 		),
-	[ IMPORT_HOSTED_SITE_FLOW ]: () =>
-		import( /* webpackChunkName: "import-hosted-site-flow" */ './import-hosted-site' ),
 
 	[ DOMAIN_TRANSFER ]: () =>
 		import( /* webpackChunkName: "domain-transfer" */ './domain-transfer' ),

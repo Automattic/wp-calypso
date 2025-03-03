@@ -1,5 +1,5 @@
 import { Task } from '@automattic/launchpad';
-import { isBlogOnboardingFlow, isSiteAssemblerFlow, isReadymadeFlow } from '@automattic/onboarding';
+import { isBlogOnboardingFlow, isReadymadeFlow } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { isDomainUpsellCompleted, getSiteIdOrSlug } from '../../task-helper';
@@ -10,7 +10,7 @@ export const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => 
 	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
 
 	const getDestionationUrl = () => {
-		if ( isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow ) || isReadymadeFlow( flow ) ) {
+		if ( isBlogOnboardingFlow( flow ) || isReadymadeFlow( flow ) ) {
 			return addQueryArgs( `/setup/${ flow }/domains`, {
 				...getSiteIdOrSlug( flow, site, siteSlug ),
 				flowToReturnTo: flow,
@@ -33,9 +33,7 @@ export const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => 
 		completed: domainUpsellCompleted,
 		calypso_path: getDestionationUrl(),
 		badge_text:
-			domainUpsellCompleted || isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow )
-				? ''
-				: translate( 'Upgrade plan' ),
+			domainUpsellCompleted || isBlogOnboardingFlow( flow ) ? '' : translate( 'Upgrade plan' ),
 		useCalypsoPath: true,
 	};
 };

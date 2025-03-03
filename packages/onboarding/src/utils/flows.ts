@@ -6,7 +6,6 @@ export const NEW_HOSTED_SITE_FLOW_USER_INCLUDED = 'new-hosted-site-user-included
 export const TRANSFERRING_HOSTED_SITE_FLOW = 'transferring-hosted-site';
 export const CONNECT_DOMAIN_FLOW = 'connect-domain';
 export const IMPORT_FOCUSED_FLOW = 'import-focused';
-export const IMPORT_HOSTED_SITE_FLOW = 'import-hosted-site';
 export const ENTREPRENEUR_FLOW = 'entrepreneur';
 export const FREE_FLOW = 'free';
 export const SITE_MIGRATION_FLOW = 'site-migration';
@@ -19,7 +18,6 @@ export const START_WRITING_FLOW = 'start-writing';
 export const DESIGN_FIRST_FLOW = 'design-first';
 export const SITE_SETUP_FLOW = 'site-setup';
 export const WITH_THEME_FLOW = 'with-theme';
-export const ASSEMBLER_FIRST_FLOW = 'assembler-first';
 
 export const READYMADE_TEMPLATE_FLOW = 'readymade-template';
 
@@ -71,9 +69,7 @@ export const isAnyHostingFlow = ( flowName?: string | null ) => {
 };
 
 export const isAnyMigrationFlow = ( flowName?: string | null ) => {
-	return Boolean(
-		flowName && [ IMPORT_FOCUSED_FLOW, IMPORT_HOSTED_SITE_FLOW ].includes( flowName )
-	);
+	return Boolean( flowName && [ IMPORT_FOCUSED_FLOW ].includes( flowName ) );
 };
 
 export const isImportFocusedFlow = ( flowName: string | null ) => {
@@ -130,11 +126,6 @@ export const isOnboardingFlow = ( flowName: string | null ) => {
 
 export const isDomainUpsellFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ DOMAIN_UPSELL_FLOW ].includes( flowName ) );
-};
-
-export const isSiteAssemblerFlow = ( flowName: string | null ) => {
-	const SITE_ASSEMBLER_FLOWS = [ ASSEMBLER_FIRST_FLOW ];
-	return !! flowName && SITE_ASSEMBLER_FLOWS.includes( flowName );
 };
 
 export const isReadymadeFlow = ( flowName: string | null ) => flowName === READYMADE_TEMPLATE_FLOW;

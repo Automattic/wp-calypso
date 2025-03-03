@@ -3,7 +3,6 @@ import { Task } from '@automattic/launchpad';
 import {
 	isBlogOnboardingFlow,
 	isDesignFirstFlow,
-	isSiteAssemblerFlow,
 	isStartWritingFlow,
 	replaceProductsInCart,
 } from '@automattic/onboarding';
@@ -31,14 +30,12 @@ const getCompletedInfo = ( tasks: Task[], flow: string ): Record< string, boolea
 		firstPostPublished: completedTasks.first_post_published,
 		planCompleted: completedTasks.plan_completed,
 		setupBlogCompleted: completedTasks.setup_blog || ! isStartWritingFlow( flow ),
-		setupSiteCompleted: completedTasks.setup_free,
 	};
 };
 
 const getIsLaunchSiteTaskDisabled = ( flow: string, context: TaskContext ) => {
 	const { tasks, site, checklistStatuses } = context;
-	const { firstPostPublished, planCompleted, setupBlogCompleted, setupSiteCompleted } =
-		getCompletedInfo( tasks, flow );
+	const { firstPostPublished, planCompleted, setupBlogCompleted } = getCompletedInfo( tasks, flow );
 
 	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses! );
 
@@ -48,10 +45,6 @@ const getIsLaunchSiteTaskDisabled = ( flow: string, context: TaskContext ) => {
 
 	if ( isDesignFirstFlow( flow ) ) {
 		return ! ( planCompleted && domainUpsellCompleted && setupBlogCompleted );
-	}
-
-	if ( isSiteAssemblerFlow( flow ) ) {
-		return ! ( planCompleted && domainUpsellCompleted && setupSiteCompleted );
 	}
 
 	return false;
@@ -68,7 +61,7 @@ const getOnboardingCartItems = ( context: TaskContext ) => {
 const getLaunchSiteTaskTitle = ( task: Task, flow: string, context: TaskContext ) => {
 	const { tasks } = context;
 	const onboardingCartItems = getOnboardingCartItems( context );
-	const isSupportedFlow = isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow );
+	const isSupportedFlow = isBlogOnboardingFlow( flow );
 	const { planCompleted } = getCompletedInfo( tasks, flow );
 	if ( isSupportedFlow && planCompleted && onboardingCartItems.length ) {
 		return translate( 'Checkout and launch' );
@@ -113,7 +106,7 @@ const completeLaunchSiteTask = async ( task: Task, flow: string, context: TaskCo
 
 		return {
 			siteSlug,
-			// For the blog onboarding flow and the assembler-first flow.
+			// For the blog onboarding flow.
 			isLaunched: true,
 			// For the general onboarding flow.
 			goToHome: true,

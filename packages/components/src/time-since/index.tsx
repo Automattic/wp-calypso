@@ -71,6 +71,10 @@ function useRelativeTime( date: string, dateFormat = 'll' ) {
  * Format a date using Intl.DateTimeFormat
  */
 function formatDate( date: Date, format: string ): string {
+	if ( ! date || isNaN( date.getTime() ) ) {
+		return '';
+	}
+
 	// Map moment-style formats to Intl options
 	const formatOptions: Intl.DateTimeFormatOptions = {
 		// Default to medium date format

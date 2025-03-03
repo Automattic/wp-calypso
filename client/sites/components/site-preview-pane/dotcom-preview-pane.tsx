@@ -175,7 +175,6 @@ const DotcomPreviewPane = ( {
 					SETTINGS_SFTP_SSH,
 					SETTINGS_DATABASE,
 					SETTINGS_PERFORMANCE,
-					...( ! config.isEnabled( 'untangling/settings-i2' ) ? [ DOTCOM_HOSTING_CONFIG ] : [] ),
 				],
 			},
 			{
