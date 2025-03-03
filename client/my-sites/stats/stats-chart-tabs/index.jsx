@@ -36,36 +36,42 @@ const ChartTabShape = PropTypes.shape( {
 } );
 
 // data validation for line chart
-const transformChartDataToLineFormat = ( chartData, primaryColor, secondaryColor ) => {
-	if ( ! Array.isArray( chartData ) ) {
+const transformChartDataToLineFormat = (
+	chartData,
+	activeLegend = [],
+	primaryColor,
+	secondaryColor
+) => {
+	if ( ! Array.isArray( chartData ) || chartData.length === 0 ) {
 		return [];
 	}
 
-	// Create the first data series for views
-	const viewsSeries = {
-		label: translate( 'Views' ),
-		options: { stroke: primaryColor },
-		icon: <Icon className="gridicon" icon={ eye } />,
-		data: chartData
-			.map( ( record ) => {
-				const date = parseLocalDate( record.data.period );
-				const value = record.data.views;
-				if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
-					return null;
-				}
-				return { date, value };
-			} )
-			.filter( Boolean ),
-	};
+	const series = [];
 
-	// Create the second data series for visitors
-	const visitorsSeries = {
-		label: translate( 'Visitors' ),
-		options: {
-			stroke: secondaryColor,
-		},
-		icon: <Icon className="gridicon" icon={ people } />,
-		data: chartData
+	// Views are always shown
+	const viewsData = chartData
+		.map( ( record ) => {
+			const date = parseLocalDate( record.data.period );
+			const value = record.data.views;
+			if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
+				return null;
+			}
+			return { date, value };
+		} )
+		.filter( Boolean );
+
+	if ( viewsData.length > 0 ) {
+		series.push( {
+			label: translate( 'Views' ),
+			options: { stroke: primaryColor },
+			icon: <Icon className="gridicon" icon={ eye } />,
+			data: viewsData,
+		} );
+	}
+
+	// Only add visitors series if visitors is active in legend
+	if ( activeLegend.includes( 'visitors' ) ) {
+		const visitorsData = chartData
 			.map( ( record ) => {
 				const date = parseLocalDate( record.data.period );
 				const value = record.data.visitors;
@@ -74,11 +80,70 @@ const transformChartDataToLineFormat = ( chartData, primaryColor, secondaryColor
 				}
 				return { date, value };
 			} )
-			.filter( Boolean ),
-	};
+			.filter( Boolean );
 
-	// Return both series
-	return [ viewsSeries, visitorsSeries ];
+		if ( visitorsData.length > 0 ) {
+			series.push( {
+				label: translate( 'Visitors' ),
+				options: { stroke: secondaryColor },
+				icon: <Icon className="gridicon" icon={ people } />,
+				data: visitorsData,
+			} );
+		}
+	}
+
+	return series;
+};
+
+// Transform bar chart data to respect activeLegend
+const transformBarChartData = ( chartData, activeLegend = [] ) => {
+	if ( ! Array.isArray( chartData ) ) {
+		return [];
+	}
+
+	return chartData.map( ( record ) => {
+		const newRecord = { ...record };
+
+		// Keep original data structure
+		newRecord.data = { ...record.data };
+
+		// For likes and comments tabs, use the direct value
+		if (
+			record.tooltipData?.some(
+				( item ) => item.className === 'is-likes' || item.className === 'is-comments'
+			)
+		) {
+			newRecord.value = record.value;
+			return newRecord;
+		}
+
+		// For views/visitors tab
+		// Filter tooltip data based on activeLegend
+		if ( newRecord.tooltipData ) {
+			newRecord.tooltipData = newRecord.tooltipData.filter( ( item ) => {
+				if ( item.className === 'is-date-label' ) {
+					return true;
+				}
+				if ( item.className === 'is-views' ) {
+					return true;
+				}
+				if ( item.className === 'is-visitors' || item.className === 'is-views-per-visitor' ) {
+					return activeLegend.includes( 'visitors' );
+				}
+				return true;
+			} );
+		}
+
+		// Always show views as the main bar value
+		newRecord.value = record.data.views;
+
+		// Show visitors as nested value when visitors legend is active
+		if ( activeLegend.includes( 'visitors' ) ) {
+			newRecord.nestedValue = record.data.visitors;
+		}
+
+		return newRecord;
+	} );
 };
 
 class StatModuleChartTabs extends Component {
@@ -210,7 +275,11 @@ class StatModuleChartTabs extends Component {
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
 
 				{ chartType === 'bar' ? (
-					<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 35 }>
+					<Chart
+						barClick={ this.props.barClick }
+						data={ transformBarChartData( chartData, this.props.activeLegend ) }
+						minBarWidth={ 35 }
+					>
 						<StatsEmptyState
 							headingText={
 								selectedPeriod === 'hour' ? translate( 'No hourly data available' ) : null
@@ -226,7 +295,12 @@ class StatModuleChartTabs extends Component {
 					<AsyncLoad
 						require="calypso/my-sites/stats/components/line-chart"
 						className="stats-chart-tabs__line-chart"
-						chartData={ transformChartDataToLineFormat( chartData, primaryColor, secondaryColor ) }
+						chartData={ transformChartDataToLineFormat(
+							chartData,
+							this.props.activeLegend,
+							primaryColor,
+							secondaryColor
+						) }
 						height={ 200 }
 						moment={ moment }
 						onClick={ this.props.barClick }
