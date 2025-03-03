@@ -7,9 +7,12 @@ import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import React from 'react';
 import { useRequestTransferWithSoftware } from '../use-transfer-with-software-start-mutation';
-import { replyWithError } from './helpers/nock';
 
-const errorResponse = replyWithError( { error: 'any generic error' } );
+const replyErrorWithEnvelope =
+	( status: number, defaultBody: Record< string, string | number > = {} ) =>
+	( body = {} ) =>
+	() => [ 200, { code: status, body: { ...defaultBody, ...body } } ];
+const errorResponse = replyErrorWithEnvelope( 400, { error: 'any error' } );
 const SITE_ID = 123;
 const PLUGINS = { 'plugin-1': 'install' as const };
 const THEMES = { 'theme-1': 'activate' as const };
