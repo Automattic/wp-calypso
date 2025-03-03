@@ -1,4 +1,4 @@
-import { getSiteUrl, getSiteName } from '../get-helpers';
+import { getSiteUrl, getSiteName, getPostIcon } from '../get-helpers';
 
 describe( 'getSiteUrl', () => {
 	const siteWithUrl = { URL: 'siteWithUrl.com' };
@@ -38,6 +38,35 @@ describe( 'getSiteUrl', () => {
 
 		const emptySiteAndFeed = getSiteUrl( { feed: {}, site: {} } );
 		expect( emptySiteAndFeed ).toEqual( undefined );
+	} );
+} );
+
+describe( 'getPostIcon', () => {
+	test.each( [
+		[
+			'returns site_icon.img if site_icon is an object',
+			{
+				site_icon: { img: 'https://example.com/icon.png' },
+				author: { avatar_URL: 'https://example.com/avatar.png' },
+			},
+			'https://example.com/icon.png',
+		],
+		[
+			'returns site_icon if it is a string',
+			{
+				site_icon: 'https://example.com/icon2.png',
+				author: { avatar_URL: 'https://example.com/avatar.png' },
+			},
+			'https://example.com/icon2.png',
+		],
+		[
+			'returns author.avatar_URL if site_icon is undefined',
+			{ author: { avatar_URL: 'https://example.com/avatar.png' } },
+			'https://example.com/avatar.png',
+		],
+		[ 'returns undefined if site_icon and author.avatar_URL are missing', {}, undefined ],
+	] )( '%s', ( testCase, args, expected ): void => {
+		expect( getPostIcon( args ) ).toEqual( expected );
 	} );
 } );
 
