@@ -27,8 +27,8 @@ type SidebarNavigationScreenProps = {
 	description?: string;
 	backPath?: string;
 
-	goBackLabel?: string; // not defined in core
-	goBackLink?: string; // not defined in core
+	exitLabel?: string;
+	exitLink?: string;
 };
 
 export function SidebarNavigationScreen( {
@@ -40,8 +40,8 @@ export function SidebarNavigationScreen( {
 	footer,
 	description,
 	backPath,
-	goBackLabel = __( 'Go to the Dashboard', 'a8c-site-admin' ),
-	goBackLink = '/',
+	exitLabel = __( 'Go to the Dashboard', 'a8c-site-admin' ),
+	exitLink = '/',
 }: SidebarNavigationScreenProps ) {
 	const history = useHistory();
 
@@ -78,7 +78,7 @@ export function SidebarNavigationScreen( {
 						/>
 					) }
 
-					{ isRoot && <SidebarButton icon={ icon } label={ goBackLabel } href={ goBackLink } /> }
+					{ isRoot && <SidebarButton icon={ icon } label={ exitLabel } href={ exitLink } /> }
 
 					<Heading
 						className="a8c-site-admin-sidebar-navigation-screen__title"
