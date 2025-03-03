@@ -511,6 +511,8 @@ export const StagingSiteCard = ( {
 				siteId={ siteId }
 				onAddClick={ onAddClick }
 				isDevelopmentSite={ isDevelopmentSite }
+				isSyncInProgress={ isSyncInProgress }
+				isPossibleJetpackConnectionProblem={ isPossibleJetpackConnectionProblem }
 				isButtonDisabled={
 					disabled ||
 					isLoadingAddStagingSite ||
