@@ -81,7 +81,7 @@ const A4AAgencyApprovalNotice = () => {
 			className="a4a-agency-approval-notice"
 			hideCloseButton={ bannerDetails.hideCloseButton }
 		>
-			<div>{ bannerDetails.text }</div>
+			<div className="a4a-agency-approval-notice__text">{ bannerDetails.text }</div>
 		</LayoutBanner>
 	);
 };
