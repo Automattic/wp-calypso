@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import BackButton from 'calypso/components/back-button';
 import EmptyContent from 'calypso/components/empty-content';
 import { UserData } from 'calypso/lib/user/user';
+import UserProfileHeader from 'calypso/reader/user-profile/components/user-profile-header';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
 import UserLists from 'calypso/reader/user-profile/views/lists';
 import UserPosts from 'calypso/reader/user-profile/views/posts';
@@ -88,7 +89,10 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 		<div className="user-profile">
 			<div className={ `user-profile__wrapper${ showBack ? ' has-back-button' : '' }` }>
 				{ showBack && <BackButton onClick={ handleBack } /> }
-				<div className="user-profile__wrapper-content">{ renderContent() }</div>
+				<div className="user-profile__wrapper-content">
+					<UserProfileHeader user={ user } />
+					{ renderContent() }
+				</div>
 			</div>
 		</div>
 	);
