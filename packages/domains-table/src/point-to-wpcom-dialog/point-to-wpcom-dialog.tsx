@@ -12,19 +12,13 @@ export const PointToWpcomDialog = ( { visible, onClose }: PointToWpcomDialogProp
 	const renderContent = () => {
 		return (
 			<>
-				<p>
-					{ __(
-						'This action will update your domain settings to point to WordPress.com. Specifically, it will:'
-					) }
-				</p>
+				<p>{ __( 'When you point your domain to WordPress.com, we will:' ) }</p>
 				<ul>
-					<li>Set WordPress.com defaults nameservers</li>
-					<li>Delete any existing A records</li>
-					<li>Delete any existing "www" CNAME record</li>
+					<li>{ __( 'Change your name servers to use the WordPress.com defaults,' ) }</li>
+					<li>{ __( 'Delete any A records, and' ) }</li>
+					<li>{ __( "Delete any 'www' CNAME records" ) }</li>
 				</ul>
-				<p>
-					{ __( 'These changes may take some time to apply. Are you sure you want to proceed?' ) }
-				</p>
+				<p>{ __( 'Please note that these changes may take some time to apply.' ) }</p>
 			</>
 		);
 	};
@@ -33,7 +27,7 @@ export const PointToWpcomDialog = ( { visible, onClose }: PointToWpcomDialogProp
 		<AcceptDialog
 			message={ renderContent() }
 			onClose={ onClose }
-			confirmButtonText={ __( 'Confirm' ) }
+			confirmButtonText={ __( 'Continue' ) }
 			cancelButtonText={ __( 'Cancel' ) }
 			options={ {
 				useModal: true,
