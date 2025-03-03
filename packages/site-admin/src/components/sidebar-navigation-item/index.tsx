@@ -20,8 +20,7 @@ import './style.scss';
 
 type SidebarNavigationItemProps = {
 	className?: string;
-	withChevron?: boolean;
-	suffix?: JSX.Element;
+	suffix?: 'CHEVRON' | React.ReactNode;
 	uid: string;
 	to?: string;
 	as?: 'button' | 'a';
@@ -33,11 +32,10 @@ type SidebarNavigationItemProps = {
 export function SidebarNavigationItem( {
 	className,
 	icon,
-	withChevron = false,
 	suffix,
 	uid,
-	to = '', // default value is not defined in the core component.
-	as = 'button', // `as` prop is not defined in the core component.
+	to = '',
+	as = 'button',
 	onClick,
 	children,
 	...props
@@ -62,7 +60,7 @@ export function SidebarNavigationItem( {
 		<Item
 			className={ clsx(
 				'a8c-site-admin-sidebar-navigation-item',
-				{ 'with-suffix': ! withChevron && suffix },
+				{ 'with-suffix': typeof suffix !== 'undefined' },
 				className
 			) }
 			id={ uid }
@@ -74,14 +72,15 @@ export function SidebarNavigationItem( {
 			<HStack justify="flex-start">
 				{ icon && <Icon style={ { fill: 'currentcolor' } } icon={ icon } size={ 24 } /> }
 				<FlexBlock>{ children }</FlexBlock>
-				{ withChevron && (
+				{ suffix === 'CHEVRON' ? (
 					<Icon
 						icon={ isRTL() ? chevronLeftSmall : chevronRightSmall }
 						className="a8c-site-admin-sidebar-navigation-item__drilldown-indicator"
 						size={ 24 }
 					/>
+				) : (
+					suffix
 				) }
-				{ ! withChevron && suffix }
 			</HStack>
 		</Item>
 	);
