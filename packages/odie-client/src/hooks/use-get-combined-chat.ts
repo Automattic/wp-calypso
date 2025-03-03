@@ -45,6 +45,7 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 	const { data: odieChat, isFetching: isOdieChatLoading } = useOdieChat( Number( odieId ) );
 	const { startNewInteraction } = useManageSupportInteraction();
 	const { trackEvent } = useOdieAssistantContext();
+	const canFetchConversation = conversationId && canConnectToZendesk;
 
 	useEffect( () => {
 		if ( isOdieChatLoading || ! isEnabled ) {
@@ -55,7 +56,7 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 			return;
 		}
 
-		if ( odieId && odieChat && ! conversationId ) {
+		if ( odieId && odieChat && ! canFetchConversation ) {
 			setMainChatState( {
 				...odieChat,
 				conversationId: null,
@@ -63,44 +64,42 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 				provider: 'odie',
 				status: 'loaded',
 			} );
-		} else if ( conversationId && canConnectToZendesk ) {
-			if ( isChatLoaded ) {
-				try {
-					getZendeskConversation( {
-						chatId: odieChat?.odieId,
-						conversationId: conversationId.toString(),
-					} )?.then( ( conversation ) => {
-						if ( conversation ) {
-							const filteredOdieMessages =
-								odieChat?.messages.filter(
-									( message ) => ! message.context?.flags?.forward_to_human_support
-								) ?? [];
-							setMainChatState( {
-								...( odieChat ? odieChat : {} ),
-								supportInteractionId: currentSupportInteraction!.uuid,
-								conversationId: conversation.id,
-								messages: [
-									...( odieChat ? filteredOdieMessages : [] ),
-									...( odieChat ? ODIE_TRANSFER_MESSAGE : [] ),
-									...( conversation.messages as Message[] ),
-								],
-								provider: 'zendesk',
-								status: currentSupportInteraction?.status === 'closed' ? 'closed' : 'loaded',
-							} );
-						}
-					} );
-				} catch ( error ) {
-					// Conversation id was passed but the conversion was not found. Something went wrong.
-					trackEvent( 'zendesk_conversation_not_found', {
-						conversationId,
-						odieId,
-					} );
+		} else if ( isChatLoaded && canFetchConversation ) {
+			try {
+				getZendeskConversation( {
+					chatId: odieChat?.odieId,
+					conversationId: conversationId.toString(),
+				} )?.then( ( conversation ) => {
+					if ( conversation ) {
+						const filteredOdieMessages =
+							odieChat?.messages.filter(
+								( message ) => ! message.context?.flags?.forward_to_human_support
+							) ?? [];
+						setMainChatState( {
+							...( odieChat ? odieChat : {} ),
+							supportInteractionId: currentSupportInteraction!.uuid,
+							conversationId: conversation.id,
+							messages: [
+								...( odieChat ? filteredOdieMessages : [] ),
+								...( odieChat ? ODIE_TRANSFER_MESSAGE : [] ),
+								...( conversation.messages as Message[] ),
+							],
+							provider: 'zendesk',
+							status: currentSupportInteraction?.status === 'closed' ? 'closed' : 'loaded',
+						} );
+					}
+				} );
+			} catch ( error ) {
+				// Conversation id was passed but the conversion was not found. Something went wrong.
+				trackEvent( 'zendesk_conversation_not_found', {
+					conversationId,
+					odieId,
+				} );
 
-					startNewInteraction( {
-						event_source: 'help-center',
-						event_external_id: uuidv4(),
-					} );
-				}
+				startNewInteraction( {
+					event_source: 'help-center',
+					event_external_id: uuidv4(),
+				} );
 			}
 		}
 	}, [
