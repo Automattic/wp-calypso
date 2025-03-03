@@ -76,7 +76,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'account',
-			steps: [ userSocialStep, 'set-reader-landing' ],
+			steps: [ userSocialStep ],
 			destination: getRedirectDestination,
 			description: 'Create an account without a blog.',
 			lastModified: '2025-02-18',
@@ -426,9 +426,6 @@ export function generateFlows( {
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
 			enablePremiumSupport: true,
-			get helpCenterButtonText() {
-				return translate( 'Questions? Contact our site building team' );
-			},
 			providesDependenciesInQuery: [ 'coupon', 'back_to', 'newOrExistingSiteChoice' ],
 			optionalDependenciesInQuery: [ 'coupon', 'back_to', 'newOrExistingSiteChoice' ],
 		},
@@ -450,9 +447,6 @@ export function generateFlows( {
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
 			enablePremiumSupport: true,
-			get helpCenterButtonText() {
-				return translate( 'Questions? Contact our site building team' );
-			},
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
 		},
@@ -466,9 +460,6 @@ export function generateFlows( {
 			optionalDependenciesInQuery: [ 'back_to' ],
 			lastModified: '2024-06-14',
 			enablePremiumSupport: true,
-			get helpCenterButtonText() {
-				return translate( 'Questions? Contact our site building team' );
-			},
 		},
 
 		{
