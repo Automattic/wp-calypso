@@ -93,11 +93,7 @@ export function SidebarNavigationScreen( {
 						<div className="a8c-site-admin-sidebar-navigation-screen__actions">{ actions }</div>
 					) }
 				</HStack>
-				{ meta && (
-					<>
-						<div className="a8c-site-admin-sidebar-navigation-screen__meta">{ meta }</div>
-					</>
-				) }
+				{ meta && <div className="a8c-site-admin-sidebar-navigation-screen__meta">{ meta }</div> }
 
 				<div className="a8c-site-admin-sidebar-navigation-screen__content">
 					{ description && (
