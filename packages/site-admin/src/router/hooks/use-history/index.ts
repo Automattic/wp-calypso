@@ -56,10 +56,10 @@ type UseNavigation = {
 export default function useHistory(): UseNavigation {
 	const { pathArg, beforeNavigate } = useContext( ConfigContext );
 
-	const navigate = useEvent( async ( rawPath: string, options: NavigationOptions = {} ) => {
+	const navigate = useEvent( ( rawPath: string, options: NavigationOptions = {} ) => {
 		const query = getQueryArgs( rawPath );
-
 		const path = getPath( 'http://domain.com/' + rawPath ) || '';
+
 		const performPush = () => {
 			const result = beforeNavigate ? beforeNavigate( { path, query } ) : { path, query };
 
@@ -74,31 +74,7 @@ export default function useHistory(): UseNavigation {
 			);
 		};
 
-		/*
-		 * Skip transition in mobile, otherwise it crashes the browser.
-		 * See: https://github.com/WordPress/gutenberg/pull/63002.
-		 */
-		const isMediumOrBigger = window.matchMedia( '(min-width: 782px)' ).matches;
-		if ( ! isMediumOrBigger || ! document.startViewTransition || ! options.transition ) {
-			performPush();
-			return;
-		}
-
-		await new Promise< void >( ( resolve ) => {
-			const classname = options.transition ?? '';
-			document.documentElement.classList.add( classname );
-			if ( document.startViewTransition ) {
-				const transition = document.startViewTransition( () => performPush() );
-				transition.finished.finally( () => {
-					document.documentElement.classList.remove( classname );
-					resolve();
-				} );
-			} else {
-				performPush();
-				document.documentElement.classList.remove( classname );
-				resolve();
-			}
-		} );
+		performPush();
 	} );
 
 	return useMemo(
