@@ -26,11 +26,11 @@ By providing a self-contained framework, it enables the development of custom da
 
 ### Independence from Gutenberg Core
 
-This package is a standalone solution, not tightly coupled to Gutenberg Core’s source code. While some components are adapted for efficiency, the objective is not to fork or replicate Core but to offer a well-structured and optimized implementation for specific admin UI needs.
+This package is a standalone solution, not tightly coupled to Gutenberg Core's source code. While some components are adapted for efficiency, the objective is not to fork or replicate Core but to offer a well-structured and optimized implementation for specific admin UI needs.
 
-That said, aligning with Core’s guidelines ensures compatibility, maintainability, and potential future contributions to WordPress Core. 
+That said, aligning with Core's guidelines ensures compatibility, maintainability, and potential future contributions to WordPress Core. 
 
-While developed independently, parts of this package—or even the entire package—could eventually be integrated into Core if beneficial to the broader WordPress ecosystem. Regardless of whether this migration occurs, adhering to Core’s best practices enhances productivity and ensures long-term integration possibilities.
+While developed independently, parts of this package—or even the entire package—could eventually be integrated into Core if beneficial to the broader WordPress ecosystem. Regardless of whether this migration occurs, adhering to Core's best practices enhances productivity and ensures long-term integration possibilities.
 
 ### Consistency in Design and Behavior
 
@@ -48,13 +48,16 @@ The package is designed as a reliable foundation for administrative applications
 
 This section provides a basic guide to creating a complete admin interface using the components provided by this package.
 
-The following example demonstrates how navigation is structured within the sidebar. It includes a sidebar layout, individual navigation items, and a routing context to manage navigation state dynamically.
+The following example demonstrates how navigation is structured within the sidebar.
+It includes a sidebar layout, individual navigation items, and a routing context to manage navigation state dynamically.
 
 ## 1. Navigation System
 
 ### 1.1 The `RouterProvider` Component
 
-At the core of the navigation system is the `RouterProvider` component, which establishes a routing context to manage navigation state throughout your application.
+At the core of the navigation system is the `RouterProvider` component,
+which establishes a routing context to manage navigation state
+throughout your application.
 
 ```tsx
 <RouterProvider routes={ [your-routes-here] }>
@@ -66,12 +69,46 @@ The `routes` property is an array of route definitions that map paths to handler
 
 ## 2. The App Sidebar
 
-### 2.1 Defining Sidebar Content
+### 2.1 Defining Routes
 
-The `ExampleSidebarItems` component renders navigation items within the sidebar. Each item corresponds to a specific route, and the `useLocation` hook determines whether it is active.
+Before creating navigation elements, we need to define the routes that our application will use. Each route must have a unique name, a path, and optionally areas and width configurations.
 
 ```tsx
-const ExampleSidebarItems = () => {
+// Define our application routes
+const appRoutes = [
+  {
+    name: 'reports',
+    path: '/reports',
+    areas: {
+      content: <ReportsScreen />
+    },
+    widths: {
+      content: 100
+    }
+  },
+  {
+    name: 'settings',
+    path: '/settings',
+    areas: {
+      content: <SettingsScreen />
+    },
+  },
+  {
+    name: 'archive',
+    path: '/archive',
+    areas: {
+      content: <ArchiveScreen />
+    },
+  }
+];
+```
+
+### 2.2 Defining Sidebar Content
+
+The `eSidebarContent` component renders navigation items within the sidebar. Each item corresponds to a specific route, and the `useLocation` hook determines whether it is active.
+
+```tsx
+const eSidebarContent = () => {
     const { path } = useLocation();
 
     return (
@@ -81,7 +118,6 @@ const ExampleSidebarItems = () => {
                 key="sidebar-item-reports"
                 to="/reports"
                 uid="reports"
-                withChevron={ false }
                 aria-current={ path === '/reports' }
             >
                 { __( 'Reports' ) }
@@ -92,7 +128,6 @@ const ExampleSidebarItems = () => {
                 key="sidebar-item-settings"
                 to="/settings"
                 uid="settings"
-                withChevron={ false }
                 aria-current={ path === '/settings' }
             >
                 { __( 'Settings' ) }
@@ -103,7 +138,6 @@ const ExampleSidebarItems = () => {
                 key="sidebar-item-archive"
                 to="/archive"
                 uid="archive"
-                withChevron={ false }
                 aria-current={ path === '/archive' }
             >
                 { __( 'Archive' ) }
@@ -113,17 +147,47 @@ const ExampleSidebarItems = () => {
 };
 ```
 
-### 2.2 Integrating Navigation Items into the Sidebar
+### 2.3 Integrating the Navigation System
 
-Once navigation items are defined, they are passed as content to the `SidebarNavigationScreen`. This ensures that navigation updates dynamically as users interact with the application.
+Once the routes and navigation elements are defined, we integrate them
+into the `RouterProvider` and `SidebarNavigationScreen`.
+The `RouterProvider` manages the navigation state and provides
+the necessary context for the navigation elements to work correctly.
 
 ```tsx
 <SidebarContent>
-    <RouterProvider routes={ [] } pathArg="page">
+    <RouterProvider routes={ appRoutes } pathArg="page">
         <SidebarNavigationScreen
             isRoot
             title={ __( 'Home' ) }
-            content={ <ExampleSidebarItems /> }
+            content={ <eSidebarContent /> }
         />
+        
+        {/* The main content will be rendered according to the active route */}
+        <div className="site-admin-main-content">
+            {/* Here we can use a component that displays content based on the current route */}
+            <MainContent />
+        </div>
     </RouterProvider>
 </SidebarContent>
+```
+
+### 2.4 Component to Display Active Route Content
+
+To complete our navigation system, we can create a component that displays
+the content corresponding to the active route:
+
+```tsx
+const MainContent = () => {
+    // Get information about the current route
+    const match = useLocation();
+    
+    // If there's no match, show a message or redirect
+    if ( ! match ) {
+        return <h1>404</h1>;
+    }
+    
+    // Render the content area defined in the route
+    return <>{ match.areas.content }</>;
+};
+```
