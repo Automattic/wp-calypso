@@ -26,15 +26,6 @@ const meta: Meta< typeof SidebarNavigationItem > = {
 	title: 'Components/SidebarNavigationItem',
 	component: SidebarNavigationItem,
 	argTypes: {
-		className: {
-			control: 'text',
-		},
-		uid: {
-			control: 'text',
-		},
-		withChevron: {
-			control: 'boolean',
-		},
 		icon: {
 			control: 'select',
 			options: [ ...iconNames, 'none' ],
@@ -42,9 +33,6 @@ const meta: Meta< typeof SidebarNavigationItem > = {
 		as: {
 			control: 'select',
 			options: [ 'button', 'a' ],
-		},
-		to: {
-			control: 'text',
 		},
 	},
 };
