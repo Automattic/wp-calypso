@@ -19,6 +19,7 @@ const steps = [ STEPS.DOMAINS, ...stepsWithRequiredLogin( [ STEPS.PROCESSING ] )
 const HundredYearDomainFlow: Flow = {
 	name: HUNDRED_YEAR_DOMAIN_FLOW,
 	isSignupFlow: true,
+	__experimentalUseBuiltinAuth: true,
 
 	get title() {
 		return translate( '100-Year Domain' );
