@@ -1649,11 +1649,6 @@ $breakpoint-mobile: 660px;
 			}
 
 			.continue-as-user__user-info {
-				display: flex;
-				flex-direction: column;
-				justify-content: center;
-				align-items: center;
-				align-self: stretch;
 				border-radius: 8px; // stylelint-disable-line scales/radii
 				border: 1px solid #dcdcde;
 				height: 221px;
