@@ -522,7 +522,7 @@ __metadata:
     "@storybook/addon-docs": "npm:^7.6.20"
     "@storybook/addon-themes": "npm:7.6.20"
     "@storybook/addon-toolbars": "npm:^7.6.20"
-    "@storybook/addon-viewport": "npm:^7.6.19"
+    "@storybook/addon-viewport": "npm:^7.6.20"
     "@storybook/react-webpack5": "npm:^7.6.20"
     "@storybook/test": "npm:^7.6.20"
     css-loader: "npm:^6.11.0"
@@ -6903,7 +6903,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-viewport@npm:^7.6.19":
+"@storybook/addon-viewport@npm:^7.6.20":
   version: 7.6.20
   resolution: "@storybook/addon-viewport@npm:7.6.20"
   dependencies:
