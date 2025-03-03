@@ -1,9 +1,11 @@
+import { eye } from '@automattic/components/src/icons';
+import { Icon, people } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, useRef } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import Chart from 'calypso/components/chart';
@@ -16,6 +18,7 @@ import { requestChartCounts } from 'calypso/state/stats/chart-tabs/actions';
 import { QUERY_FIELDS } from 'calypso/state/stats/chart-tabs/constants';
 import { getCountRecords, getLoadingTabs } from 'calypso/state/stats/chart-tabs/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import useCssVariable from '../hooks/use-css-variable';
 import StatsEmptyState from '../stats-empty-state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatTabs from '../stats-tabs';
@@ -33,15 +36,16 @@ const ChartTabShape = PropTypes.shape( {
 } );
 
 // data validation for line chart
-const transformChartDataToLineFormat = ( chartData ) => {
+const transformChartDataToLineFormat = ( chartData, primaryColor, secondaryColor ) => {
 	if ( ! Array.isArray( chartData ) ) {
 		return [];
 	}
 
 	// Create the first data series for views
 	const viewsSeries = {
-		label: 'Views',
-		options: {},
+		label: translate( 'Views' ),
+		options: { stroke: primaryColor },
+		icon: <Icon className="gridicon" icon={ eye } />,
 		data: chartData
 			.map( ( record ) => {
 				const date = parseLocalDate( record.data.period );
@@ -56,8 +60,11 @@ const transformChartDataToLineFormat = ( chartData ) => {
 
 	// Create the second data series for visitors
 	const visitorsSeries = {
-		label: 'Visitors',
-		options: {},
+		label: translate( 'Visitors' ),
+		options: {
+			stroke: secondaryColor,
+		},
+		icon: <Icon className="gridicon" icon={ people } />,
 		data: chartData
 			.map( ( record ) => {
 				const date = parseLocalDate( record.data.period );
@@ -96,6 +103,9 @@ class StatModuleChartTabs extends Component {
 		),
 		isActiveTabLoading: PropTypes.bool,
 		onChangeLegend: PropTypes.func.isRequired,
+		chartContainerRef: PropTypes.object,
+		primaryColor: PropTypes.string,
+		secondaryColor: PropTypes.string,
 	};
 
 	state = {
@@ -153,8 +163,18 @@ class StatModuleChartTabs extends Component {
 	};
 
 	render() {
-		const { siteId, slug, queryParams, selectedPeriod, isActiveTabLoading, className, countsComp } =
-			this.props;
+		const {
+			siteId,
+			slug,
+			queryParams,
+			selectedPeriod,
+			isActiveTabLoading,
+			className,
+			countsComp,
+			primaryColor,
+			secondaryColor,
+			chartContainerRef,
+		} = this.props;
 		const { chartType } = this.state;
 
 		const chartData = this.props.chartData.map( ( record ) => {
@@ -172,7 +192,7 @@ class StatModuleChartTabs extends Component {
 		];
 		/* pass bars count as `key` to disable transitions between tabs with different column count */
 		return (
-			<div className={ clsx( ...classes ) }>
+			<div className={ clsx( ...classes ) } ref={ chartContainerRef }>
 				<ChartHeader
 					activeLegend={ this.props.activeLegend }
 					activeTab={ this.props.activeTab }
@@ -206,9 +226,10 @@ class StatModuleChartTabs extends Component {
 					<AsyncLoad
 						require="calypso/my-sites/stats/components/line-chart"
 						className="stats-chart-tabs__line-chart"
-						chartData={ transformChartDataToLineFormat( chartData ) }
+						chartData={ transformChartDataToLineFormat( chartData, primaryColor, secondaryColor ) }
 						height={ 200 }
 						moment={ moment }
+						onClick={ this.props.barClick }
 					/>
 				) }
 
@@ -361,7 +382,24 @@ const connectComponent = connect(
 	{ recordGoogleEvent, requestChartCounts }
 );
 
+// TODO: let's convert it to a function component and remove all the hassle.
+const withCssColors = ( WrappedComponent ) => ( props ) => {
+	const chartContainerRef = useRef( null );
+
+	const primaryColor = useCssVariable( '--color-primary-light', chartContainerRef.current );
+	const secondaryColor = useCssVariable( '--color-primary-dark', chartContainerRef.current );
+
+	return (
+		<WrappedComponent
+			{ ...props }
+			primaryColor={ primaryColor }
+			secondaryColor={ secondaryColor }
+			chartContainerRef={ chartContainerRef }
+		/>
+	);
+};
+
 export default flowRight(
 	localize,
 	connectComponent
-)( withPerformanceTrackerStop( StatModuleChartTabs ) );
+)( withPerformanceTrackerStop( withCssColors( StatModuleChartTabs ) ) );

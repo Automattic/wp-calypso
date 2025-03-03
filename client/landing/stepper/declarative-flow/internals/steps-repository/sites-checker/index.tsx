@@ -1,5 +1,5 @@
 import { SiteDetails } from '@automattic/data-stores';
-import { StepContainer, isBlogOnboardingFlow, isSiteAssemblerFlow } from '@automattic/onboarding';
+import { StepContainer, isBlogOnboardingFlow } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
@@ -28,12 +28,11 @@ const SitesChecker: Step = function SitePicker( { navigation, flow } ) {
 
 	useEffect( () => {
 		if ( hasAllSitesFetched ) {
-			const filteredSites =
-				isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow )
-					? allSites?.filter(
-							( site: SiteDetails | null | undefined ) => site?.launch_status === 'unlaunched'
-					  )
-					: allSites;
+			const filteredSites = isBlogOnboardingFlow( flow )
+				? allSites?.filter(
+						( site: SiteDetails | null | undefined ) => site?.launch_status === 'unlaunched'
+				  )
+				: allSites;
 			submit?.( { filteredSitesCount: filteredSites.length } );
 			return;
 		}

@@ -1,5 +1,5 @@
 import { type SiteDetails, type ChecklistStatuses } from '@automattic/data-stores';
-import { isBlogOnboardingFlow, isSiteAssemblerFlow, isReadymadeFlow } from '@automattic/onboarding';
+import { isBlogOnboardingFlow, isReadymadeFlow } from '@automattic/onboarding';
 import { launchpadFlowTasks } from './tasks';
 import { LaunchpadChecklist, Task } from './types';
 
@@ -15,7 +15,7 @@ export const getSiteIdOrSlug = (
 	site: SiteDetails | null,
 	siteSlug?: string | null
 ) => {
-	return isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow ) || isReadymadeFlow( flow )
+	return isBlogOnboardingFlow( flow ) || isReadymadeFlow( flow )
 		? { siteId: site?.ID }
 		: { siteSlug };
 };
