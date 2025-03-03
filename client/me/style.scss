@@ -56,7 +56,7 @@ body.is-section-me {
 				max-width: none;
 				& > * {
 					max-width: 1040px;
-					margin: 0 auto;
+					margin: 1px auto 0;
 				}
 				& > div.section-nav {
                     margin-bottom: 24px; /* Preserve margin for Purchases mobile nav */
