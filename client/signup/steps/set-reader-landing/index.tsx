@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { useDispatch } from 'calypso/state';
-import { savePreference } from 'calypso/state/preferences/actions';
+import wpcom from 'calypso/lib/wp';
+import { USER_SETTING_KEY } from 'calypso/state/preferences/constants';
 import { READER_AS_LANDING_PAGE_PREFERENCE } from 'calypso/state/sites/selectors/has-reader-as-landing-page';
 
 interface Props {
@@ -14,24 +14,24 @@ interface Props {
 }
 
 const SetReaderLanding = ( { submitSignupStep, goToNextStep, initialContext }: Props ): null => {
-	const dispatch = useDispatch();
 	const refParam = initialContext?.query?.ref;
-
 	useEffect( () => {
-		// Submit the step immediately to trigger the processing screen.
-		submitSignupStep( { stepName: 'set-reader-landing' } );
-
 		const saveAndProceed = async () => {
-			// Save the preference
 			if ( 'reader-lp' === refParam ) {
-				await dispatch(
-					savePreference( READER_AS_LANDING_PAGE_PREFERENCE, {
-						useReaderAsLandingPage: true,
-						updatedAt: Date.now(),
-					} )
-				);
-			}
+				// Fire PUT request directly without awaiting the response
+				const payload = {
+					[ USER_SETTING_KEY ]: {
+						[ READER_AS_LANDING_PAGE_PREFERENCE ]: {
+							useReaderAsLandingPage: true,
+							updatedAt: Date.now(),
+						},
+					},
+				};
 
+				// Send the request but don't wait for it
+				wpcom.req.put( '/me/preferences', payload );
+			}
+			submitSignupStep( { stepName: 'set-reader-landing' } );
 			goToNextStep();
 		};
 
