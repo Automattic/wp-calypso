@@ -13,7 +13,7 @@ interface Props {
 	};
 }
 
-const SetReaderLanding = ( { submitSignupStep, goToNextStep, initialContext }: Props ) => {
+const SetReaderLanding = ( { submitSignupStep, goToNextStep, initialContext }: Props ): null => {
 	const dispatch = useDispatch();
 	const refParam = initialContext?.query?.ref;
 
@@ -38,6 +38,8 @@ const SetReaderLanding = ( { submitSignupStep, goToNextStep, initialContext }: P
 		saveAndProceed();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
+
+	return null; // Non-interactive step.
 };
 
 export default SetReaderLanding;
