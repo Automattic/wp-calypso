@@ -1,8 +1,8 @@
 import { Button, Spinner } from '@wordpress/components';
-import { Icon, closeSmall, check } from '@wordpress/icons';
+import { Icon, closeSmall, check, external } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
-import { FC, ReactNode } from 'react';
 import { recordMigrationInstructionsLinkClick } from '../tracking';
+import type { FC, ReactNode } from 'react';
 import './style.scss';
 
 export type Status = 'idle' | 'pending' | 'success' | 'error';
@@ -67,22 +67,35 @@ export const ProvisionStatus: FC< ProvisionStatusProps > = ( { status, navigateT
 	if ( currentAction.status === 'error' ) {
 		const contactClickHandler = () => {
 			recordMigrationInstructionsLinkClick( 'error-contact-support' );
+		};
+
+		const requestDifmClickHandler = () => {
+			recordMigrationInstructionsLinkClick( 'error-request-difm' );
 			navigateToDoItForMe();
 		};
 
-		text = translate(
-			'Sorry, there was a problem setting up your site. {{button}}Let us take it from here{{/button}}.',
-			{
-				components: {
-					button: (
-						<Button
-							className="migration-instructions-provisioning__difm-link"
-							variant="link"
-							onClick={ contactClickHandler }
-						/>
-					),
-				},
-			}
+		text = (
+			<>
+				{ translate( 'Sorry, there was a problem setting up your site.' ) }
+				<span className="migration-instructions-provisioning__error-actions">
+					<Button
+						className="migration-instructions-provisioning__support-link"
+						variant="secondary"
+						onClick={ contactClickHandler }
+						icon={ <Icon icon={ external } /> }
+						iconPosition="right"
+					>
+						{ translate( 'Contact support' ) }
+					</Button>
+					<Button
+						className="migration-instructions-provisioning__difm-link"
+						variant="secondary"
+						onClick={ requestDifmClickHandler }
+					>
+						{ translate( 'Let us migrate your site' ) }
+					</Button>
+				</span>
+			</>
 		);
 		icon = (
 			<div className="migration-instructions-provisioning__action-icon-error">

@@ -53,6 +53,21 @@
 	margin-left: auto;
 }
 
-.migration-instructions-provisioning__difm-link {
-	font-size: 0.875rem;
+.migration-instructions-provisioning__error-actions {
+	display: flex;
+	gap: 12px;
+	justify-content: space-between;
+	margin-top: 12px;
+
+	@media (max-width: $break-mobile) {
+		flex-direction: column-reverse;
+
+		.components-button {
+			&.has-icon.has-text {
+				justify-content: center;
+			}
+
+			justify-content: center;
+		}
+	}
 }
