@@ -565,34 +565,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/charts@npm:^0.8.4":
-  version: 0.8.4
-  resolution: "@automattic/charts@npm:0.8.4"
-  dependencies:
-    "@babel/runtime": "npm:7.26.0"
-    "@react-spring/web": "npm:9.7.3"
-    "@visx/axis": "npm:^3.12.0"
-    "@visx/curve": "npm:3.12.0"
-    "@visx/event": "npm:^3.8.0"
-    "@visx/gradient": "npm:3.12.0"
-    "@visx/grid": "npm:^3.12.0"
-    "@visx/group": "npm:^3.12.0"
-    "@visx/legend": "npm:^3.12.0"
-    "@visx/responsive": "npm:3.12.0"
-    "@visx/scale": "npm:^3.12.0"
-    "@visx/shape": "npm:^3.12.0"
-    "@visx/text": "npm:3.12.0"
-    "@visx/tooltip": "npm:^3.8.0"
-    "@visx/xychart": "npm:3.12.0"
-    clsx: "npm:2.1.1"
-    tslib: "npm:2.5.0"
-  peerDependencies:
-    react: ^17.0.0 || ^18.0.0
-    react-dom: ^17.0.0 || ^18.0.0
-  checksum: 3bc71ac84e3d44afbbeab1abb8d27b6d11ab43b5fdb8b05f6024a467f9fc001e3d143c958d1c4106b6915a977abeeacdb9cc61b480a5c83793fe2fb23680ebe4
-  languageName: node
-  linkType: hard
-
 "@automattic/charts@npm:^0.9.0":
   version: 0.9.0
   resolution: "@automattic/charts@npm:0.9.0"
@@ -35887,7 +35859,7 @@ __metadata:
     "@automattic/calypso-razorpay": "workspace:^"
     "@automattic/calypso-router": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
-    "@automattic/charts": "npm:^0.8.4"
+    "@automattic/charts": "npm:^0.9.0"
     "@automattic/color-studio": "npm:^3.0.1"
     "@automattic/command-palette": "workspace:^"
     "@automattic/components": "workspace:^"
