@@ -35,6 +35,7 @@ const connectDomain: Flow = {
 		return translate( 'Connect your domain' );
 	},
 	isSignupFlow: false,
+	__experimentalUseBuiltinAuth: true,
 	useAssertConditions: () => {
 		const { domain } = useDomainParams();
 
