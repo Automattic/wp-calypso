@@ -95,17 +95,17 @@ export default function useBulkActionNotice() {
 			if ( job.failed.length ) {
 				dispatch(
 					errorNotice(
-						<div style={ { display: 'flex', alignItems: 'center', gap: '8px' } }>
+						<div className="domains-dataviews-bulk-actions-notice">
 							{ getFailureMessage( job, translate ) }
 							<StatusPopover
 								position="bottom"
 								popoverTargetElement={
-									<div style={ { color: 'var(--color-text-inverted)', fontSize: '0.875rem' } }>
+									<div className="domains-dataviews-bulk-actions-notice__label">
 										{ translate( 'Details' ) }{ ' ' }
 									</div>
 								}
 							>
-								<div className="domains-table-bulk-actions-notice-popover">
+								<div className="domains-dataviews-bulk-actions-notice__details">
 									{ job.failed.map( ( domain ) => (
 										<p key={ domain }> { domain } </p>
 									) ) }
