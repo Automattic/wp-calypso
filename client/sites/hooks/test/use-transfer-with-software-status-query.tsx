@@ -4,9 +4,9 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
-import { useTransferWithSoftwareStatus } from 'client/sites/hooks/use-transfer-with-software-status-query';
 import nock from 'nock';
 import React from 'react';
+import { useTransferWithSoftwareStatus } from '../use-transfer-with-software-status-query';
 
 // Mock wpcom
 jest.mock( '@automattic/calypso-config', () => ( {
