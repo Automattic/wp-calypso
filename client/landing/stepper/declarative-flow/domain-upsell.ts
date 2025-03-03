@@ -6,11 +6,12 @@ import { useQuery } from '../hooks/use-query';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
+import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { STEPS } from './internals/steps';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
 
-const DOMAIN_UPSELL_STEPS = [ STEPS.DOMAINS, STEPS.PLANS ];
+const DOMAIN_UPSELL_STEPS = stepsWithRequiredLogin( [ STEPS.DOMAINS, STEPS.PLANS ] );
 
 const domainUpsell: Flow = {
 	name: DOMAIN_UPSELL_FLOW,
@@ -22,7 +23,7 @@ const domainUpsell: Flow = {
 	useSteps() {
 		return DOMAIN_UPSELL_STEPS;
 	},
-
+	__experimentalUseBuiltinAuth: true,
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = useQuery().get( 'flowToReturnTo' );
 		const siteSlug = useSiteSlug();
