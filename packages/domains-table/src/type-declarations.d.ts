@@ -8,3 +8,5 @@ declare module '*.svg' {
 declare module 'calypso/components/notice';
 
 declare module 'calypso/lib/wp';
+
+declare module 'calypso/lib/accept/dialog';
