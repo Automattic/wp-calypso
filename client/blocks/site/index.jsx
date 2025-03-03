@@ -273,8 +273,8 @@ class Site extends Component {
 						) : (
 							<>
 								{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
-								{ this.renderSiteBadges() }
 								{ this.renderSiteDomain() }
+								{ this.renderSiteBadges() }
 							</>
 						) }
 
