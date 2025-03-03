@@ -38,6 +38,7 @@ const steps = stepsWithRequiredLogin( [
 
 const designFirst: Flow = {
 	name: DESIGN_FIRST_FLOW,
+	__experimentalUseBuiltinAuth: true,
 	get title() {
 		return translate( 'Blog' );
 	},
