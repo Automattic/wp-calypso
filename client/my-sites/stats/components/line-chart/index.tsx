@@ -21,7 +21,7 @@ function StatsLineChart( {
 }: {
 	chartData: Array< {
 		label: string;
-		icon: JSX.Element;
+		icon?: JSX.Element;
 		options: object;
 		data: Array< { date: Date; value: number } >;
 	} >;
@@ -91,10 +91,8 @@ function StatsLineChart( {
 		() =>
 			Object.fromEntries(
 				chartData
-					.map( ( series ) => {
-						return series.icon && [ series.label, series.icon ];
-					} )
-					.filter( Boolean )
+					.filter( ( series ) => series.icon !== undefined )
+					.map( ( series ) => [ series.label, series.icon ] as const )
 			),
 		[ chartData ]
 	);
@@ -105,7 +103,7 @@ function StatsLineChart( {
 		}: {
 			tooltipData?: {
 				nearestDatum?: {
-					datum: DataPointDate & { tooltipData: object[] };
+					datum: DataPointDate;
 					key: string;
 				};
 				datumByKey?: { [ key: string ]: { datum: DataPointDate } };
