@@ -54,23 +54,23 @@ form {
 	font-size: 0.75rem;
 }
 
-.layout.is-white-login .login.is-akismet .login__form,
-.layout.is-white-login .login.is-akismet .continue-as-user {
-	.button.is-primary {
-		background-color: var(--color-akismet);
+.is-akismet {
+	.login__form,
+	.magic-login__form,
+	.continue-as-user {
+		.components-button.is-primary:not(:disabled) {
+			--wp-components-color-accent: var(--color-akismet);
+			--wp-components-color-accent-darker-20: var(--color-akismet);
 
-		&:hover,
-    	&:focus {
-        	background-color: var(--color-akismet);
-    	}
-    }
-}
+			&:hover {
+				--wp-components-color-accent-darker-10: var(--color-akismet);
+			}
+		}
+	}
 
-.wp-login__main .login.is-akismet .is-social-first .card.login__form > .social-buttons__button.button {
-	background-color: var(--color-akismet);
-
-	&:hover,
-	&:focus {
-    	background-color: var(--color-akismet);
-	}	
+	.is-social-first .card.auth-form__social .social-buttons__button {
+		&:focus:not(:disabled) {
+			--wp-components-color-accent: var(--color-akismet);
+		}
+	}
 }

@@ -32,7 +32,7 @@ import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getOnboardingUrl as getPatternLibraryOnboardingUrl } from 'calypso/my-sites/patterns/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { isTwoFactorEnabled } from 'calypso/state/login/selectors';
+import { isTwoFactorEnabled, getRedirectToOriginal } from 'calypso/state/login/selectors';
 import {
 	getCurrentOAuth2Client,
 	showOAuth2Layout,
@@ -71,6 +71,7 @@ const LayoutLoggedOut = ( {
 	redirectUri,
 	useOAuth2Layout,
 	showGdprBanner,
+	isFromAkismet,
 	isWooJPC,
 	isWoo,
 	isBlazePro,
@@ -145,6 +146,7 @@ const LayoutLoggedOut = ( {
 		'is-woo-com-oauth': isWooOAuth2Client( oauth2Client ),
 		'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
 		'feature-flag-woocommerce-rebrand-2-0': true,
+		'is-akismet': isFromAkismet,
 	};
 
 	let masterbar = null;
@@ -350,6 +352,11 @@ export default withCurrentRoute(
 				noMasterbarForSection ||
 				noMasterbarForRoute;
 			const twoFactorEnabled = isTwoFactorEnabled( state );
+			const isFromAkismet = !! new URLSearchParams(
+				getRedirectToOriginal( state )?.split( '?' )[ 1 ]
+			)
+				.get( 'back' )
+				?.startsWith( 'https://akismet.com' );
 
 			const colorScheme = isWooJPC ? getColorSchemeFromCurrentQuery( currentQuery ) : null;
 
@@ -369,6 +376,7 @@ export default withCurrentRoute(
 				sectionTitle,
 				oauth2Client,
 				useOAuth2Layout: showOAuth2Layout( state ),
+				isFromAkismet,
 				isWooJPC,
 				isWoo: getIsWoo( state ),
 				isBlazePro: getIsBlazePro( state ),
