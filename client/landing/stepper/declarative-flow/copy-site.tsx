@@ -12,6 +12,7 @@ import {
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
 import { useSiteCopy } from '../hooks/use-site-copy';
+import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import AutomatedCopySite from './internals/steps-repository/automated-copy-site';
 import CreateSite from './internals/steps-repository/create-site';
 import DomainsStep from './internals/steps-repository/domains';
@@ -81,18 +82,18 @@ function ProcessingCopy( props: StepProps ) {
 	);
 }
 
-const COPY_SITE_STEPS = [
+const COPY_SITE_STEPS = stepsWithRequiredLogin( [
 	{ slug: 'domains', component: DomainsStep },
 	{ slug: 'create-site', component: CreateSite },
 	{ slug: 'processing', component: ProcessingStep },
 	{ slug: 'automated-copy', component: AutomatedCopySite },
 	{ slug: 'processing-copy', component: ProcessingCopy },
 	{ slug: 'resuming', component: ProcessingStep }, // Needs siteSlug param
-];
+] );
 
 const copySite: Flow = {
 	name: COPY_SITE_FLOW,
-
+	__experimentalUseBuiltinAuth: true,
 	get title() {
 		return '';
 	},
