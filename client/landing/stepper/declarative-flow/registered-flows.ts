@@ -16,6 +16,7 @@ import {
 	ONBOARDING_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	EXAMPLE_FLOW,
+	PLAYGROUND_FLOW,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -97,6 +98,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		),
 	[ EXAMPLE_FLOW ]: () =>
 		import( /* webpackChunkName: "example-flow" */ '../declarative-flow/example' ),
+
+	[ PLAYGROUND_FLOW ]: () =>
+		import( /* webpackChunkName: "playground-flow" */ '../declarative-flow/playground' ),
 };
 
 const hostedSiteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = {
