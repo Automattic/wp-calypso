@@ -1,7 +1,7 @@
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/mixins';
 
-.a8c-site-admin-sidebar-navigation-item.components-item {
+.a8c-site-admin-sidebar__content .a8c-site-admin-sidebar-navigation-item {
 	color: $gray-600;
 	// 6px right padding to align with + button
 	padding: $grid-unit-10 6px $grid-unit-10 $grid-unit-20;
