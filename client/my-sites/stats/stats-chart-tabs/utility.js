@@ -13,6 +13,7 @@ import { capitalize } from 'lodash';
 import moment from 'moment';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { rangeOfPeriod } from 'calypso/state/stats/lists/utils';
+import { parseLocalDate } from '../utils';
 
 export function formatDate( date, period, chartStart = null, chartEnd = null ) {
 	// NOTE: Consider localizing the dates, especially for the 'week' case.
@@ -71,9 +72,7 @@ export const buildChartData = memoizeLast(
 
 			const recordClassName =
 				record.classNames && record.classNames.length ? record.classNames.join( ' ' ) : null;
-			const className = clsx( recordClassName, {
-				'is-selected': record.period === queryDate,
-			} );
+			const className = clsx( recordClassName );
 
 			const item = addTooltipData(
 				chartTab,
@@ -90,6 +89,66 @@ export const buildChartData = memoizeLast(
 
 			return item;
 		} );
+	}
+);
+
+// data validation for line chart
+export const transformChartDataToLineFormat = memoizeLast(
+	( chartData, activeLegend = [], activeTab, primaryColor, secondaryColor, gmtOffset = 0 ) => {
+		if ( ! Array.isArray( chartData ) || chartData.length === 0 ) {
+			return [];
+		}
+
+		const series = [];
+
+		const mainSeries = chartData
+			.map( ( record ) => {
+				const date = parseLocalDate( record.data.period, gmtOffset );
+				const value = record.data[ activeTab.attr ];
+				if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
+					return null;
+				}
+				return { date, value, label: record.tooltipData?.[ 0 ].label };
+			} )
+			.filter( Boolean );
+
+		if ( mainSeries.length > 0 ) {
+			series.push( {
+				label: activeTab.label,
+				options: { stroke: primaryColor },
+				icon: activeTab.icon,
+				data: mainSeries,
+			} );
+		}
+
+		// Only add visitors series if visitors is active in legend
+		// It has to be visitors as that is the only case where we show two series, i.e. activeLegend[ 0 ] is 'visitors' only.
+		// We should probably figure out a more general to handle this.
+		if ( activeLegend.length > 0 ) {
+			activeLegend.forEach( ( legend ) => {
+				const secondarySeries = chartData
+					.map( ( record ) => {
+						const date = parseLocalDate( record.data.period, gmtOffset );
+						const value = record.data[ legend ];
+						if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
+							return null;
+						}
+						return { date, value, label: record.tooltipData?.[ 0 ].label };
+					} )
+					.filter( Boolean );
+
+				if ( secondarySeries.length > 0 ) {
+					series.push( {
+						label: translate( 'Visitors' ),
+						options: { stroke: secondaryColor },
+						icon: <Icon className="gridicon" icon={ people } />,
+						data: secondarySeries,
+					} );
+				}
+			} );
+		}
+
+		return series;
 	}
 );
 

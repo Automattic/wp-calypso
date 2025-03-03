@@ -71,26 +71,30 @@ const transformChartDataToLineFormat = (
 	}
 
 	// Only add visitors series if visitors is active in legend
+	// It has to be visitors as that is the only case where we show two series, i.e. activeLegend[ 0 ] is 'visitors' only.
+	// We should probably figure out a more general to handle this.
 	if ( activeLegend.length > 0 ) {
-		const secondarySeries = chartData
-			.map( ( record ) => {
-				const date = parseLocalDate( record.data.period, gmtOffset );
-				const value = record.data[ activeLegend[ 0 ] ];
-				if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
-					return null;
-				}
-				return { date, value, label: record.tooltipData?.[ 0 ].label };
-			} )
-			.filter( Boolean );
+		activeLegend.forEach( ( legend ) => {
+			const secondarySeries = chartData
+				.map( ( record ) => {
+					const date = parseLocalDate( record.data.period, gmtOffset );
+					const value = record.data[ legend ];
+					if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
+						return null;
+					}
+					return { date, value, label: record.tooltipData?.[ 0 ].label };
+				} )
+				.filter( Boolean );
 
-		if ( secondarySeries.length > 0 ) {
-			series.push( {
-				label: translate( 'Visitors' ), // It has to be visitors as that is the only case where we show two series.
-				options: { stroke: secondaryColor },
-				icon: <Icon className="gridicon" icon={ people } />,
-				data: secondarySeries,
-			} );
-		}
+			if ( secondarySeries.length > 0 ) {
+				series.push( {
+					label: translate( 'Visitors' ),
+					options: { stroke: secondaryColor },
+					icon: <Icon className="gridicon" icon={ people } />,
+					data: secondarySeries,
+				} );
+			}
+		} );
 	}
 
 	return series;
@@ -200,11 +204,6 @@ class StatModuleChartTabs extends Component {
 		} = this.props;
 		const { chartType } = this.state;
 
-		const chartData = this.props.chartData.map( ( record ) => {
-			record.className = record.className?.replaceAll( 'is-selected', '' );
-			return record;
-		} );
-
 		const classes = [
 			'is-chart-tabs',
 			className,
@@ -213,6 +212,17 @@ class StatModuleChartTabs extends Component {
 				'has-less-than-three-bars': this.props.chartData.length < 3,
 			},
 		];
+
+		//Transform the data to the format required by the line chart.
+		const lineChartData = transformChartDataToLineFormat(
+			this.props.chartData,
+			this.props.activeLegend,
+			this.props.activeTab,
+			primaryColor,
+			secondaryColor,
+			gmtOffset
+		);
+
 		/* pass bars count as `key` to disable transitions between tabs with different column count */
 		return (
 			<div className={ clsx( ...classes ) } ref={ chartContainerRef }>
@@ -233,7 +243,7 @@ class StatModuleChartTabs extends Component {
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
 
 				{ chartType === 'bar' ? (
-					<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 35 }>
+					<Chart barClick={ this.props.barClick } data={ this.props.chartData } minBarWidth={ 35 }>
 						<StatsEmptyState
 							headingText={
 								selectedPeriod === 'hour' ? translate( 'No hourly data available' ) : null
@@ -249,14 +259,7 @@ class StatModuleChartTabs extends Component {
 					<AsyncLoad
 						require="calypso/my-sites/stats/components/line-chart"
 						className="stats-chart-tabs__line-chart"
-						chartData={ transformChartDataToLineFormat(
-							chartData,
-							this.props.activeLegend,
-							this.props.activeTab,
-							primaryColor,
-							secondaryColor,
-							gmtOffset
-						) }
+						chartData={ lineChartData }
 						height={ 200 }
 						moment={ moment }
 						onClick={ this.props.barClick }
