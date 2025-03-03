@@ -16,6 +16,7 @@ const hundredYearDomainTransfer: Flow = {
 	get title() {
 		return translate( '100-Year Domain' );
 	},
+	__experimentalUseBuiltinAuth: true,
 
 	// Always start on the "domains" step, as we don't need what comes before it for the 100-year domain transfer flow.
 	// It doesn't make sense to show it as it contains additional cluttering information that doesn't matter
