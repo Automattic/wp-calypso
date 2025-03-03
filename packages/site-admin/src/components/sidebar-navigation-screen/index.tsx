@@ -82,7 +82,6 @@ export function SidebarNavigationScreen( {
 
 					<Heading
 						className="a8c-site-admin-sidebar-navigation-screen__title"
-						color={ '#e0e0e0' /* $gray-200 */ }
 						level={ 1 }
 						size={ 20 }
 					>

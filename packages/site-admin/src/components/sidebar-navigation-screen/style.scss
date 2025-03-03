@@ -2,13 +2,6 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/breakpoints";
 
-.a8c-site-admin-sidebar-navigation-screen {
-	display: flex;
-	flex-direction: column;
-	overflow-x: unset !important;
-	position: relative;
-}
-
 .a8c-site-admin-sidebar-navigation-screen__main {
 	// Ensure the sidebar is always at least as tall as the viewport.
 	// This allows the footer section to be sticky at the bottom of the viewport.
@@ -16,6 +9,15 @@
 	margin-bottom: $grid-unit-20;
 	&.has-footer {
 		margin-bottom: 0;
+	}
+
+	// Nest title class to override the default styles
+	.a8c-site-admin-sidebar-navigation-screen__title {
+		flex-grow: 1;
+		overflow-wrap: break-word;
+	
+		line-height: $font-line-height-x-large;
+		color: $gray-200;
 	}
 }
 
@@ -63,15 +65,6 @@
 	z-index: z-index(".a8c-site-admin-sidebar-navigation-screen__title-icon");
 }
 
-.a8c-site-admin-sidebar-navigation-screen__title {
-	flex-grow: 1;
-	overflow-wrap: break-word;
-
-	&#{&},
-	&#{&} .a8c-site-admin-sidebar-navigation-screen__title {
-		line-height: $font-line-height-x-large;
-	}
-}
 
 .a8c-site-admin-sidebar-navigation-screen__actions {
 	display: flex;
