@@ -67,7 +67,18 @@ export const buildChartData = memoizeLast(
 			return EMPTY_RESULT;
 		}
 		return data.map( ( record ) => {
-			const nestedValue = activeLegend.length ? record[ activeLegend[ 0 ] ] : null;
+			// For views/visitors tab, we want to show the primary metric (views) if both are active
+			// or show whichever one is active if only one is
+			let value = null;
+			if ( chartTab === 'views' ) {
+				if ( activeLegend.includes( 'views' ) ) {
+					value = record.views;
+				} else if ( activeLegend.includes( 'visitors' ) ) {
+					value = record.visitors;
+				}
+			} else {
+				value = record[ chartTab ];
+			}
 
 			const recordClassName =
 				record.classNames && record.classNames.length ? record.classNames.join( ' ' ) : null;
@@ -79,9 +90,8 @@ export const buildChartData = memoizeLast(
 				chartTab,
 				{
 					label: record[ `label${ capitalize( period ) }` ],
-					value: record[ chartTab ],
+					value,
 					data: record,
-					nestedValue,
 					className,
 				},
 				period,
