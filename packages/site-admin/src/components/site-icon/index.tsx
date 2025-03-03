@@ -36,7 +36,7 @@ type SiteIconProps = {
  * }
  * ```
  * This component is strongly inspired by the SiteIcon component from the Edit Site package.
- * @see https://github.com/WordPress/gutenberg/blob/177743059a87db2ba5f11f83dc8964e543bf3a03/packages/site-admin/src/components/site-icon/index.js#L15
+ * @see https://github.com/WordPress/gutenberg/blob/177743059a87db2ba5f11f83dc8964e543bf3a03/packages/edit-site/src/components/site-icon/index.js#L15
  * @param {SiteIconProps} props - SiteIcon props.
  * @returns {JSX.Element} SiteIcon component.
  */
