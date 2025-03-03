@@ -32,10 +32,15 @@ const useUsersQuery = ( siteId, fetchOptions = {}, queryOptions = {} ) => {
 			return allPages.length * n;
 		},
 		select: ( data ) => {
+			/* @TODO:
+			 * `uniqueBy` is necessary, because the API can return duplicates.
+			 * This is most commonly seen where a user has both a "regular" user role
+			 * such as Administrator and Editor, and has also been added as a "Viewer" .
+			 */
+			const users = uniqueBy( extractPages( data.pages ), compareUnique );
 			return {
-				/* @TODO: `uniqueBy` is necessary, because the API can return duplicates */
 				users: uniqueBy( extractPages( data.pages ), compareUnique ),
-				total: data.pages[ 0 ].found,
+				total: users?.length ?? data.pages[ 0 ].found,
 				...data,
 			};
 		},

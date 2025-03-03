@@ -1,9 +1,8 @@
 import { Card, Gridicon } from '@automattic/components';
-import { formatCurrency } from '@automattic/format-currency';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, formatCurrency } from 'i18n-calypso';
 import { useState, useRef } from 'react';
 import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';

@@ -11,12 +11,11 @@ import {
 	getFeatureByKey,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { NextButton } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
-import { numberFormat, useTranslate } from 'i18n-calypso';
+import { formatCurrency, numberFormat, useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';

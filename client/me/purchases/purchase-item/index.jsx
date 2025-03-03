@@ -11,12 +11,11 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { CompactCard, Gridicon } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { ExternalLink } from '@wordpress/components';
 import { Icon, warning as warningIcon } from '@wordpress/icons';
 import clsx from 'clsx';
-import { localize, useTranslate } from 'i18n-calypso';
+import { formatCurrency, localize, useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';

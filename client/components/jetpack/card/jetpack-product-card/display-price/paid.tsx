@@ -1,6 +1,5 @@
 import { PlanPrice } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
-import { TranslateResult } from 'i18n-calypso';
+import { TranslateResult, formatCurrency } from 'i18n-calypso';
 import { isNumber } from 'lodash';
 import InfoPopover from 'calypso/components/info-popover';
 import PriceAriaLabel from './price-aria-label';

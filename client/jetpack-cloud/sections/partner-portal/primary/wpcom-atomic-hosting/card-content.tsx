@@ -7,8 +7,7 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, JetpackLogo, WooLogo, CloudLogo, Tooltip } from '@automattic/components';
-import { formatCurrency } from '@automattic/format-currency';
-import { useTranslate } from 'i18n-calypso';
+import { formatCurrency, useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import useIssueLicenses from 'calypso/jetpack-cloud/sections/partner-portal/hooks/use-issue-licenses';
 import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';

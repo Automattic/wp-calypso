@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { isFreePlanProduct } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
@@ -29,6 +28,7 @@ import { getSite, getSiteDomain } from 'calypso/state/sites/selectors';
 import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { FeatureBreadcrumb } from '../../../../hooks/breadcrumbs/use-set-feature-breadcrumb';
 import DeleteSiteWarnings from './delete-site-warnings';
 
 import './style.scss';
@@ -178,17 +178,6 @@ class DeleteSite extends Component {
 		page( `${ source }/${ siteSlug }` );
 	};
 
-	refreshBreadcrumbs( prevProps ) {
-		if ( this.props.siteId && this.props.siteId !== prevProps?.siteId ) {
-			this.props.updateBreadcrumbs( [
-				{
-					id: 'subtab',
-					label: translate( 'Delete site' ),
-				},
-			] );
-		}
-	}
-
 	componentDidUpdate( prevProps ) {
 		const { siteId, siteExists, useSitesAsLandingPage } = this.props;
 
@@ -200,17 +189,10 @@ class DeleteSite extends Component {
 				page.redirect( '/' );
 			}
 		}
-
-		this.refreshBreadcrumbs( prevProps );
 	}
 
 	componentDidMount() {
 		this.props.getRemoveDuplicateViewsExperimentAssignment();
-		this.refreshBreadcrumbs( undefined );
-	}
-
-	componentWillUnmount() {
-		this.props.resetBreadcrumbs();
 	}
 
 	_checkSiteLoaded = ( event ) => {
@@ -241,9 +223,8 @@ class DeleteSite extends Component {
 
 		return (
 			<Panel className="settings-administration__delete-site">
-				{ ! ( isUntangled && config.isEnabled( 'untangling/settings-i2' ) ) && (
-					<HeaderCakeBack icon="chevron-left" onClick={ this._goBack } />
-				) }
+				{ ! isUntangled && <HeaderCakeBack icon="chevron-left" onClick={ this._goBack } /> }
+				<FeatureBreadcrumb siteId={ siteId } title={ strings.deleteSite } />
 				<NavigationHeader
 					compactBreadcrumb={ false }
 					navigationItems={ [] }

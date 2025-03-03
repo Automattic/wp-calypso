@@ -67,7 +67,7 @@ function useResolveNoticeType(
 		discountInformation &&
 		getDiscountByName( discountInformation.coupon, discountInformation.discountEndDate );
 	const planUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable( siteId, visiblePlans );
-	const domainToPlanCreditsApplicable = useDomainToPlanCreditsApplicable( siteId );
+	const domainToPlanCreditsApplicable = useDomainToPlanCreditsApplicable( siteId, visiblePlans );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const sitePlanSlug = sitePlan?.product_slug ?? '';
 	const isCurrentPlanRetired = isProPlan( sitePlanSlug ) || isStarterPlan( sitePlanSlug );

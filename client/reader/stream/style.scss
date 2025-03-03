@@ -385,6 +385,12 @@
 	}
 }
 
+body.is-section-reader div.layout.is-global-sidebar-visible .is-site-stream .back-button button.is-compact.is-borderless {
+	@media ( max-width: 1300px ) {
+		margin-bottom: 24px;
+	}
+}
+
 // Featured Image/Video
 .reader__post-featured-image,
 .reader__post-featured-video {
@@ -1082,25 +1088,5 @@
 .following-manage__search-followed-input {
 	@include breakpoint-deprecated( '>960px' ) {
 		min-width: 200px;
-	}
-}
-
-.user-profile__content-wrapper {
-	.back-button {
-		border: none;
-		position: fixed;
-		top: calc(var(--masterbar-height) + 29px);
-		left: var(--sidebar-width-max);
-		background-color: transparent;
-		z-index: z-index(".masterbar", ".reader-back");
-	
-		button.is-compact.is-borderless {
-			padding: 20px 0 0 20px;
-		}
-	
-		@media ( max-width: 1280px ) {
-			position: unset;
-			display: flex;
-		}
 	}
 }

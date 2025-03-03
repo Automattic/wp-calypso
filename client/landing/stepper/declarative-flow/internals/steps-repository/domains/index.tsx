@@ -8,7 +8,6 @@ import {
 	DOMAIN_UPSELL_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
 	isDomainUpsellFlow,
-	isSiteAssemblerFlow,
 	isHundredYearDomainFlow,
 	HUNDRED_YEAR_DOMAIN_FLOW,
 } from '@automattic/onboarding';
@@ -286,21 +285,21 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			return setShowUseYourDomain( false );
 		}
 
-		if ( isDomainUpsellFlow( flow ) || isSiteAssemblerFlow( flow ) ) {
+		if ( isDomainUpsellFlow( flow ) ) {
 			return goBack?.();
 		}
 		return exitFlow?.( '/sites' );
 	};
 
 	const getBackLabelText = () => {
-		if ( isDomainUpsellFlow( flow ) || isSiteAssemblerFlow( flow ) ) {
+		if ( isDomainUpsellFlow( flow ) ) {
 			return __( 'Back' );
 		}
 		return __( 'Back to sites' );
 	};
 
 	const shouldHideBackButton = () => {
-		if ( isDomainUpsellFlow( flow ) || isSiteAssemblerFlow( flow ) ) {
+		if ( isDomainUpsellFlow( flow ) ) {
 			return false;
 		}
 		return ! isCopySiteFlow( flow );

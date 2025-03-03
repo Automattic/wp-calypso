@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { type Callback } from '@automattic/calypso-router';
 import page from '@automattic/calypso-router';
 import PageViewTracker from 'calypso/a8c-for-agencies/components/a4a-page-view-tracker';
@@ -16,7 +15,6 @@ import HostingOverviewV3 from './hosting-overview-v3';
 import { getValidHostingSection } from './lib/hosting';
 import { getValidBrand } from './lib/product-brand';
 import DownloadProducts from './primary/download-products';
-import ProductsOverview from './products-overview';
 import ProductsOverviewV2 from './products-overview-v2';
 
 export const marketplaceContext: Callback = () => {
@@ -33,23 +31,13 @@ export const marketplaceProductsContext: Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Products" path={ context.path } />
-			{ isEnabled( 'a4a-product-page-redesign' ) ? (
-				<ProductsOverviewV2
-					siteId={ site_id }
-					suggestedProduct={ product_slug }
-					defaultMarketplaceType={ purchaseType }
-					productBrand={ getValidBrand( productBrand ) }
-					searchQuery={ search_query }
-				/>
-			) : (
-				<ProductsOverview
-					siteId={ site_id }
-					suggestedProduct={ product_slug }
-					defaultMarketplaceType={ purchaseType }
-					productBrand={ getValidBrand( productBrand ) }
-					searchQuery={ search_query }
-				/>
-			) }
+			<ProductsOverviewV2
+				siteId={ site_id }
+				suggestedProduct={ product_slug }
+				defaultMarketplaceType={ purchaseType }
+				productBrand={ getValidBrand( productBrand ) }
+				searchQuery={ search_query }
+			/>
 		</>
 	);
 	next();

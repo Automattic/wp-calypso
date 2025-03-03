@@ -141,6 +141,7 @@ import {
 	FEATURE_GROUP_STATS,
 	FEATURE_STATS_BASIC_20250206,
 	FEATURE_STATS_ADVANCED_20250206,
+	FEATURE_SUPPORT,
 } from './constants';
 import { FeatureGroupMap } from './types';
 
@@ -183,8 +184,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_BANDWIDTH,
 			FEATURE_STATS_JP,
-			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
-			FEATURE_PRIORITY_24_7_SUPPORT,
+			FEATURE_SUPPORT,
 			FEATURE_PLUGINS_THEMES,
 			FEATURE_PLUGIN_AUTOUPDATE_JP,
 			FEATURE_CONTACT_FORM_JP,
@@ -471,10 +471,10 @@ export function resolveFeatureGroupsForFeaturesGrid( {
 			[ FEATURE_GROUP_ADS ]: featureGroups[ FEATURE_GROUP_ADS ],
 			[ FEATURE_GROUP_THEMES ]: featureGroups[ FEATURE_GROUP_THEMES ],
 			[ FEATURE_GROUP_SUPPORT ]: featureGroups[ FEATURE_GROUP_SUPPORT ],
-			[ FEATURE_GROUP_CUSTOMIZE_STYLE ]: featureGroups[ FEATURE_GROUP_CUSTOMIZE_STYLE ],
 			...( isStatsGroupTranslated() && {
 				[ FEATURE_GROUP_STATS ]: featureGroups[ FEATURE_GROUP_STATS ],
 			} ),
+			[ FEATURE_GROUP_CUSTOMIZE_STYLE ]: featureGroups[ FEATURE_GROUP_CUSTOMIZE_STYLE ],
 			[ FEATURE_GROUP_ANALYTICS ]: featureGroups[ FEATURE_GROUP_ANALYTICS ],
 			...( isUploadVideosTranslated() && {
 				[ FEATURE_GROUP_UPLOAD_VIDEOS ]: featureGroups[ FEATURE_GROUP_UPLOAD_VIDEOS ],

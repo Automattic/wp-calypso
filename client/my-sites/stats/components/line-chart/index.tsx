@@ -1,14 +1,21 @@
 import { LineChart, ThemeProvider, jetpackTheme } from '@automattic/charts';
+import { DataPointDate } from '@automattic/charts/src/types';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { numberFormat, useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
+import ChartBarTooltip from 'calypso/components/chart/bar-tooltip';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { DATE_FORMAT } from '../../constants';
 import StatsEmptyState from '../../stats-empty-state';
+
+import './styles.scss';
 
 function StatsLineChart( {
 	chartData = [],
 	formatTimeTick,
 	className,
+	onClick,
 	height = 400,
 	EmptyState = StatsEmptyState,
 	zeroBaseline = true,
@@ -16,8 +23,9 @@ function StatsLineChart( {
 }: {
 	chartData: Array< {
 		label: string;
+		icon?: JSX.Element;
 		options: object;
-		data: Array< { date: Date; value: number } >;
+		data: Array< DataPointDate >;
 	} >;
 	formatTimeTick?: ( value: number ) => string;
 	className?: string;
@@ -26,41 +34,125 @@ function StatsLineChart( {
 	EmptyState: typeof StatsEmptyState;
 	zeroBaseline?: boolean;
 	fixedDomain?: boolean;
+	onClick?: ( item: { data: { period: string } } ) => void;
 } ) {
 	const translate = useTranslate();
+	const moment = useLocalizedMoment();
 
 	const formatTime = formatTimeTick
 		? formatTimeTick
-		: ( value: number ) => {
-				const date = new Date( value );
+		: ( timestamp: number ) => {
+				const date = new Date( timestamp );
 				return date.toLocaleDateString( undefined, {
 					month: 'short',
 					day: 'numeric',
 				} );
 		  };
 
-	const formatViews = ( value: number ) => {
-		return value.toFixed( 0 ).toString();
+	const formatValue = ( value: number ) => {
+		return value < 100_000
+			? value.toFixed( 0 )
+			: numberFormat( value, { numberFormatOptions: { notation: 'compact' }, decimals: 1 } );
 	};
 
-	const isEmpty = ( chartData?.[ 0 ].data || [] ).length === 0;
+	const isEmpty = ( chartData?.[ 0 ]?.data || [] ).length === 0;
 
-	const maxViews = useMemo(
+	const maxValue = useMemo(
 		() =>
 			Math.max(
-				...chartData.map( ( serires ) => Math.max( ...serires.data.map( ( d ) => d.value ) ) )
+				...chartData.map( ( series ) =>
+					Math.max( ...series.data.map( ( d ) => d.value as number ) )
+				)
 			),
 		[ chartData ]
 	);
 
-	// TODO: we should have this in charts lib.
-	const chartDataSorted = useMemo(
+	const yScaleType = useMemo( () => {
+		if ( chartData.length <= 1 ) {
+			return 'linear';
+		}
+
+		const maxValues = chartData.map( ( series ) =>
+			Math.max( ...series.data.map( ( d ) => d.value as number ) )
+		);
+		const [ minMax, maxMax ] = [ Math.min( ...maxValues ), Math.max( ...maxValues ) ];
+
+		// Avoid division by zero
+		if ( minMax === 0 ) {
+			return 'linear';
+		}
+
+		const scacle = maxMax / minMax;
+		if ( scacle > 20 && scacle < 200 ) {
+			return 'sqrt';
+		} else if ( scacle >= 200 ) {
+			return 'log';
+		}
+
+		return 'linear';
+	}, [ chartData ] );
+
+	const seriesIcons = useMemo(
 		() =>
-			chartData.map( ( series ) => ( {
-				...series,
-				data: series.data.sort( ( a, b ) => a.date.getTime() - b.date.getTime() ),
-			} ) ),
+			Object.fromEntries(
+				chartData
+					.filter( ( series ) => series.icon !== undefined )
+					.map( ( series ) => [ series.label, series.icon ] as const )
+			),
 		[ chartData ]
+	);
+
+	const renderTooltip = useCallback(
+		( {
+			tooltipData,
+		}: {
+			tooltipData?: {
+				nearestDatum?: {
+					datum: DataPointDate;
+					key: string;
+				};
+				datumByKey?: { [ key: string ]: { datum: DataPointDate } };
+			};
+		} ) => {
+			const nearestDatum = tooltipData?.nearestDatum?.datum;
+			if ( ! nearestDatum ) {
+				return null;
+			}
+			const tooltipPoints = Object.entries( tooltipData?.datumByKey || {} ).map(
+				( [ key, { datum } ] ) => ( {
+					key,
+					value: datum.value as number,
+				} )
+			);
+
+			return (
+				<div className="stats-line-chart-tooltip">
+					<div className="module-content-list-item is-date-label">
+						{ nearestDatum.date && moment( nearestDatum.date ).format( 'LL' ) }
+					</div>
+					<ul>
+						{ tooltipPoints.map( ( point ) => (
+							<ChartBarTooltip
+								key={ point.key }
+								label={ point.key }
+								value={ point.value }
+								icon={ seriesIcons[ point.key ] }
+							/>
+						) ) }
+					</ul>
+				</div>
+			);
+		},
+		[ moment ]
+	);
+
+	const onPointerDown = useCallback(
+		( { datum }: { datum: DataPointDate } ) => {
+			if ( datum && datum.date ) {
+				onClick && onClick( { data: { period: moment( datum.date ).format( DATE_FORMAT ) } } );
+			}
+		},
+		[ moment, onClick ]
 	);
 
 	return (
@@ -74,15 +166,23 @@ function StatsLineChart( {
 			{ ! isEmpty && (
 				<ThemeProvider theme={ jetpackTheme }>
 					<LineChart
-						data={ chartDataSorted }
+						data={ chartData }
 						withTooltips
 						withGradientFill
 						height={ height }
-						margin={ { left: 15, top: 20, bottom: 20 } }
+						// TODO: figure out the right type for onPointerDown
+						// eslint-disable-next-line @typescript-eslint/no-explicit-any
+						onPointerDown={ onPointerDown as any }
+						margin={ {
+							left: 15,
+							top: 20,
+							bottom: 20,
+							right: Math.max( formatValue( maxValue ).length * 10, 40 ), //TODO: we should support this from the lib.
+						} }
 						options={ {
 							yScale: {
-								type: 'linear',
-								...( fixedDomain && { domain: [ 0, maxViews ] } ),
+								type: yScaleType,
+								...( fixedDomain && { domain: [ 0, maxValue ] } ),
 								zero: zeroBaseline,
 							},
 							axis: {
@@ -91,11 +191,12 @@ function StatsLineChart( {
 								},
 								y: {
 									orientation: 'right',
-									tickFormat: formatViews,
-									numTicks: maxViews > 4 ? 4 : 1,
+									tickFormat: formatValue,
+									numTicks: maxValue > 4 ? 4 : 1,
 								},
 							},
 						} }
+						renderTooltip={ renderTooltip }
 					/>
 				</ThemeProvider>
 			) }

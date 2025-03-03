@@ -28,6 +28,11 @@ describe( 'hasCancelableUserPurchases', () => {
 				hasLoadedSitePurchasesFromServer: false,
 				hasLoadedUserPurchasesFromServer: true,
 			},
+			memberships: {
+				subscriptions: {
+					items: [],
+				},
+			},
 		} );
 
 		expect( hasCancelableUserPurchases( state ) ).toBe( false );
@@ -45,6 +50,11 @@ describe( 'hasCancelableUserPurchases', () => {
 				isFetchingUserPurchases: false,
 				hasLoadedSitePurchasesFromServer: false,
 				hasLoadedUserPurchasesFromServer: true,
+			},
+			memberships: {
+				subscriptions: {
+					items: [],
+				},
 			},
 		} );
 
@@ -64,6 +74,11 @@ describe( 'hasCancelableUserPurchases', () => {
 				hasLoadedSitePurchasesFromServer: false,
 				hasLoadedUserPurchasesFromServer: true,
 			},
+			memberships: {
+				subscriptions: {
+					items: [],
+				},
+			},
 		} );
 
 		expect( hasCancelableUserPurchases( state ) ).toBe( false );
@@ -81,6 +96,9 @@ describe( 'hasCancelableUserPurchases', () => {
 				isFetchingUserPurchases: false,
 				hasLoadedSitePurchasesFromServer: false,
 				hasLoadedUserPurchasesFromServer: false,
+			},
+			memberships: {
+				subscriptions: null,
 			},
 		} );
 
@@ -109,6 +127,11 @@ describe( 'hasCancelableUserPurchases', () => {
 				hasLoadedSitePurchasesFromServer: false,
 				hasLoadedUserPurchasesFromServer: true,
 			},
+			memberships: {
+				subscriptions: {
+					items: [],
+				},
+			},
 		} );
 
 		expect( hasCancelableUserPurchases( state ) ).toBe( false );
@@ -136,8 +159,115 @@ describe( 'hasCancelableUserPurchases', () => {
 				hasLoadedSitePurchasesFromServer: false,
 				hasLoadedUserPurchasesFromServer: true,
 			},
+			memberships: {
+				subscriptions: {
+					items: [],
+				},
+			},
 		} );
 
 		expect( hasCancelableUserPurchases( state ) ).toBe( true );
+	} );
+
+	test( 'should return true because there is a renewable paid subscription', () => {
+		const state = deepFreeze( {
+			currentUser: {
+				id: targetUserId,
+			},
+			purchases: {
+				data: [],
+				error: null,
+				isFetchingSitePurchases: false,
+				isFetchingUserPurchases: false,
+				hasLoadedSitePurchasesFromServer: false,
+				hasLoadedUserPurchasesFromServer: true,
+			},
+			memberships: {
+				subscriptions: {
+					items: [
+						{
+							ID: 1,
+							currency: 'USD',
+							is_renewable: true,
+							product_id: '123456',
+							renew_interval: '1 year',
+							renewal_price: '1',
+							status: 'active',
+							title: 'Newsletter Tier',
+						},
+					],
+				},
+			},
+		} );
+
+		expect( hasCancelableUserPurchases( state ) ).toBe( true );
+	} );
+
+	test( 'should return false because the paid subscription is not renewable', () => {
+		const state = deepFreeze( {
+			currentUser: {
+				id: targetUserId,
+			},
+			purchases: {
+				data: [],
+				error: null,
+				isFetchingSitePurchases: false,
+				isFetchingUserPurchases: false,
+				hasLoadedSitePurchasesFromServer: false,
+				hasLoadedUserPurchasesFromServer: true,
+			},
+			memberships: {
+				subscriptions: {
+					items: [
+						{
+							ID: 1,
+							currency: 'USD',
+							is_renewable: false,
+							product_id: '123456',
+							renew_interval: '1 year',
+							renewal_price: '1',
+							status: 'active',
+							title: 'Newsletter Tier',
+						},
+					],
+				},
+			},
+		} );
+
+		expect( hasCancelableUserPurchases( state ) ).toBe( false );
+	} );
+
+	test( 'should return false because the paid subscription is cancelled', () => {
+		const state = deepFreeze( {
+			currentUser: {
+				id: targetUserId,
+			},
+			purchases: {
+				data: [],
+				error: null,
+				isFetchingSitePurchases: false,
+				isFetchingUserPurchases: false,
+				hasLoadedSitePurchasesFromServer: false,
+				hasLoadedUserPurchasesFromServer: true,
+			},
+			memberships: {
+				subscriptions: {
+					items: [
+						{
+							ID: 1,
+							currency: 'USD',
+							is_renewable: true,
+							product_id: '123456',
+							renew_interval: '1 year',
+							renewal_price: '1',
+							status: 'cancelled',
+							title: 'Newsletter Tier',
+						},
+					],
+				},
+			},
+		} );
+
+		expect( hasCancelableUserPurchases( state ) ).toBe( false );
 	} );
 } );

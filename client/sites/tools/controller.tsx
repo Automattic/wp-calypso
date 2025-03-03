@@ -1,9 +1,10 @@
 import page, { Context as PageJSContext } from '@automattic/calypso-router';
 import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
+import { LogType } from 'calypso/data/hosting/use-site-logs-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import HostingFeatures from 'calypso/sites/hosting-features/components/hosting-features';
-import { SiteLogs } from 'calypso/sites/tools/logs';
+import { SiteLogsDataViews } from 'calypso/sites/tools/logs';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getRouteFromContext } from 'calypso/utils';
 import { SidebarItem, Sidebar, PanelWithSidebar } from '../components/panel-sidebar';
@@ -161,7 +162,7 @@ export function phpErrorLogs( context: PageJSContext, next: () => void ) {
 				path={ getRouteFromContext( context ) }
 			/>
 			<ToolsSidebar />
-			<SiteLogs logType="php" />
+			<SiteLogsDataViews logType={ LogType.PHP } query={ context.query } />
 		</PanelWithSidebar>
 	);
 	next();
@@ -175,7 +176,7 @@ export function webServerLogs( context: PageJSContext, next: () => void ) {
 				path={ getRouteFromContext( context ) }
 			/>
 			<ToolsSidebar />
-			<SiteLogs logType="web" />
+			<SiteLogsDataViews logType={ LogType.WEB } query={ context.query } />
 		</PanelWithSidebar>
 	);
 	next();

@@ -4,7 +4,6 @@
 /**
  * Common importer integration styles
  */
-.import-hosted-site,
 .site-setup,
 .import-focused {
 	.step-container__content > div[class^="importer-"] {
@@ -25,6 +24,10 @@
 		.wpcom__loading-ellipsis {
 			display: block;
 			margin: auto;
+		}
+
+		.wpcom__loading {
+			margin: 0 auto;
 		}
 	}
 }

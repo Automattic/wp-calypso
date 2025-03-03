@@ -37,14 +37,13 @@ export function getImportSectionLocation( siteSlug, isJetpack = false ) {
 // Flow mapping dictionary, key is the path segment, value is the flow name
 const flowMapping = {
 	'import-focused': 'import-focused',
-	'import-hosted-site': 'import-hosted-site',
 };
 
 export function getImportFlowByURL() {
 	const url = window.location.href;
 	const parsedUrl = new URL( url );
 	const pathSegments = parsedUrl.pathname.split( '/' );
-	// E.g. setup/import-focused/import returns import-foceused
+	// E.g. setup/import-focused/import returns import-focused
 	if ( pathSegments.length >= 3 && pathSegments[ 2 ] in flowMapping ) {
 		return flowMapping[ pathSegments[ 2 ] ];
 	}

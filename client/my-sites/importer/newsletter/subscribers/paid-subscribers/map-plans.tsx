@@ -1,7 +1,7 @@
-import { formatCurrency } from '@automattic/format-currency';
 import { useQueryClient } from '@tanstack/react-query';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
+import { formatCurrency } from 'i18n-calypso';
 import { useEffect, useState, useRef } from 'react';
 import { useMapStripePlanToProductMutation } from 'calypso/data/paid-newsletter/use-map-stripe-plan-to-product-mutation';
 import { navigate } from 'calypso/lib/navigate';

@@ -1,5 +1,4 @@
-import formatCurrency from '@automattic/format-currency';
-import { translate } from 'i18n-calypso';
+import { formatCurrency, translate } from 'i18n-calypso';
 import { hasIntroductoryOfferFreeTrial } from 'calypso/lib/emails';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';

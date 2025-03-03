@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { ComponentType, useState } from 'react';
-import useGetTipaltiPayee from '../../referrals/hooks/use-get-tipalti-payee';
 import { MarketplaceTypeContext } from '../context';
 import { MarketplaceType } from '../types';
 
@@ -17,16 +16,13 @@ function withMarketplaceType< T >(
 ): ComponentType< T & ContextProps > {
 	return ( props ) => {
 		const isAutomatedReferrals = isEnabled( 'a4a-automated-referrals' );
-		const { data: tipaltiData } = useGetTipaltiPayee( true );
-		const isPayable = tipaltiData?.IsPayable;
 
 		const usedMarketplaceType =
 			props.defaultMarketplaceType ??
 			( sessionStorage.getItem( MARKETPLACE_TYPE_SESSION_STORAGE_KEY ) as MarketplaceType ) ??
 			MARKETPLACE_TYPE_REGULAR;
 
-		const defaultType =
-			isAutomatedReferrals && isPayable ? usedMarketplaceType : MARKETPLACE_TYPE_REGULAR;
+		const defaultType = isAutomatedReferrals ? usedMarketplaceType : MARKETPLACE_TYPE_REGULAR;
 		const [ marketplaceType, setMarketplaceType ] = useState( defaultType );
 
 		const updateMarketplaceType = ( type: MarketplaceType ) => {
@@ -35,7 +31,7 @@ function withMarketplaceType< T >(
 		};
 
 		const toggleMarketplaceType = () => {
-			if ( ! isAutomatedReferrals || ! isPayable ) {
+			if ( ! isAutomatedReferrals ) {
 				return;
 			}
 			const nextType =

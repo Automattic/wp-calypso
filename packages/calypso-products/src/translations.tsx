@@ -160,6 +160,11 @@ import {
 	PRODUCT_JETPACK_SOCIAL_V1_YEARLY,
 	PRODUCT_JETPACK_SOCIAL_V1_MONTHLY,
 	PRODUCT_WOOCOMMERCE_PRODUCT_FILTERS,
+	PRODUCT_WOOCOMMERCE_CONSTELLATION,
+	PRODUCT_WOOCOMMERCE_RENTAL_PRODUCTS,
+	PRODUCT_WOOCOMMERCE_SMART_COUPONS,
+	PRODUCT_WOOCOMMERCE_DYNAMIC_PRICING,
+	PRODUCT_WOOCOMMERCE_VARIATION_SWATCHES_AND_PHOTOS,
 } from './constants';
 import type { FAQ, SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -1111,6 +1116,21 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 	const woocommercProductFiltersLightboxDescription = translate(
 		'This is a tool to create ajax product filters that make the process of finding products in your store simple and fast.'
 	);
+	const woocommerceConstellationLightboxDescription = translate(
+		'A flexible, WooCommerce memberships platform to support publishers, purchasing clubs, online learning, associations, and more.'
+	);
+	const woocommerceRentalProductsLightboxDescription = translate(
+		'Sell rental products in your store, manage rental orders and more.'
+	);
+	const woocommerceSmartCouponsLightboxDescription = translate(
+		'Boost sales and customer loyalty. Create advanced discounts, sell gift cards, set BOGO deals, give store credits, and all types of rule based dynamic discounts with this all-in-one Smart Coupons plugin for WooCommerce.'
+	);
+	const woocommerceDynamicPricingLightboxDescription = translate(
+		'Bulk discounts, role-based pricing and much more.'
+	);
+	const woocommerceVariationSwatchesAndPhotosLightboxDescription = translate(
+		'Show color and image swatches instead of dropdowns for variable products.'
+	);
 
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantLightboxDescription,
@@ -1228,6 +1248,12 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 		[ PRODUCT_WOOCOMMERCE_TAX ]: woocommerceTaxLightboxDescription,
 		[ PRODUCT_WOOCOMMERCE_WOOPAYMENTS ]: woocommerceWoopaymentsLightboxDescription,
 		[ PRODUCT_WOOCOMMERCE_PRODUCT_FILTERS ]: woocommercProductFiltersLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_CONSTELLATION ]: woocommerceConstellationLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_RENTAL_PRODUCTS ]: woocommerceRentalProductsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_SMART_COUPONS ]: woocommerceSmartCouponsLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_DYNAMIC_PRICING ]: woocommerceDynamicPricingLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_VARIATION_SWATCHES_AND_PHOTOS ]:
+			woocommerceVariationSwatchesAndPhotosLightboxDescription,
 	};
 };
 
@@ -2314,6 +2340,85 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'Potentially boost SEO when implemented correctly' ),
 	];
 
+	const woocommerceConstellationBenefits = [
+		translate(
+			'Integrates seamlessly with WooCommerce to manage memberships, offering perks like exclusive content and discounts.'
+		),
+		translate( 'Supports publishers, purchasing clubs, online learning, associations, and more.' ),
+		translate(
+			'Offers one-time payments, recurring billing, and free trials to suit various business models.'
+		),
+		translate(
+			'Schedules access to content over time, enhancing member engagement and retention.'
+		),
+		translate( 'Allows unlimited membership plans and unlimited members without restrictions.' ),
+	];
+
+	const woocommerceRentalProductsBenefits = [
+		translate(
+			'Enables the sale and management of rental products with advanced pricing, availability, and deposit options.'
+		),
+		translate(
+			'Allows customers to select rental dates via a calendar, calculate costs, and add items to their cart.'
+		),
+		translate(
+			'Provides a rentals dashboard with summaries, calendars, inventory management, and tools for efficient oversight.'
+		),
+		translate(
+			'Sends return reminder emails to customers, ensuring timely returns and improved inventory management.'
+		),
+		translate(
+			'Supports both shipped rentals and in-person pick-up/returns, accommodating various business models.'
+		),
+	];
+
+	const woocommerceSmartCouponsBenefits = [
+		translate(
+			'Creates dynamic pricing rules, bulk discounts, and percentage-based offers to boost sales.'
+		),
+		translate(
+			'Sells gift cards with scheduling options, enhancing customer loyalty and increasing revenue.'
+		),
+		translate(
+			'Easily sets up "Buy One, Get One" promotions and offers free gifts based on customizable rules.'
+		),
+		translate( 'Generates, exports, and emails thousands of unique coupon codes efficiently.' ),
+		translate(
+			'Creates shareable links that auto-apply discounts, simplifying the customer experience and increasing conversions.'
+		),
+	];
+
+	const woocommerceDynamicPricingBenefits = [
+		translate(
+			'Sets up bulk discounts for products with flexible pricing adjustments, including fixed or percentage.'
+		),
+		translate(
+			'Offers discounts based on user roles, allowing for targeted pricing strategies for different customer segments.'
+		),
+		translate(
+			'Applies bulk discounts across entire product categories, streamlining promotional efforts.'
+		),
+		translate(
+			'Allows custom quantity calculations for pricing rules, accommodating various sales strategies.'
+		),
+	];
+
+	const woocommerceVariationSwatchesAndPhotosBenefits = [
+		translate(
+			'Replaces dropdowns with color and image swatches, providing a more intuitive and visually appealing shopping experience.'
+		),
+		translate(
+			'Defines colors and images at both attribute and product levels, offering flexibility in product display.'
+		),
+		translate(
+			'Allows customers to view product variations more clearly, aiding in decision-making and reducing return rates.'
+		),
+		translate( 'Integrates smoothly with WooCommerce, ensuring compatibility and ease of use.' ),
+		translate(
+			'Enhances product listings by showcasing variations in color, size, style, or any other attribute.'
+		),
+	];
+
 	const monitorBenefits = [
 		translate(
 			'Rapid detection: With our 1-minute interval monitoring, we detect potential issues faster than ever before.'
@@ -2428,6 +2533,12 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		[ PRODUCT_WOOCOMMERCE_TAX ]: woocommerceTaxBenefits,
 		[ PRODUCT_WOOCOMMERCE_WOOPAYMENTS ]: woocommerceWoopaymentsBenefits,
 		[ PRODUCT_WOOCOMMERCE_PRODUCT_FILTERS ]: woocommerceProductFiltersBenefits,
+		[ PRODUCT_WOOCOMMERCE_CONSTELLATION ]: woocommerceConstellationBenefits,
+		[ PRODUCT_WOOCOMMERCE_RENTAL_PRODUCTS ]: woocommerceRentalProductsBenefits,
+		[ PRODUCT_WOOCOMMERCE_SMART_COUPONS ]: woocommerceSmartCouponsBenefits,
+		[ PRODUCT_WOOCOMMERCE_DYNAMIC_PRICING ]: woocommerceDynamicPricingBenefits,
+		[ PRODUCT_WOOCOMMERCE_VARIATION_SWATCHES_AND_PHOTOS ]:
+			woocommerceVariationSwatchesAndPhotosBenefits,
 	};
 };
 

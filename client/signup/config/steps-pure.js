@@ -42,7 +42,6 @@ export function generateSteps( {
 	excludeStepIfEmailVerified = noop,
 	excludeStepIfProfileComplete = noop,
 	submitWebsiteContent = noop,
-	excludeSegmentSurveyStepIfInactive = noop,
 } = {} ) {
 	return {
 		'set-reader-landing': {
@@ -916,15 +915,6 @@ export function generateSteps( {
 		transfer: {
 			stepName: 'transfer',
 			dependencies: [ 'siteSlug', 'siteConfirmed' ],
-		},
-		'initial-intent': {
-			stepName: 'initial-intent',
-			fulfilledStepCallback: excludeSegmentSurveyStepIfInactive,
-			providesDependencies: [
-				'segmentationSurveyAnswers',
-				'onboardingSegment',
-				'trailMapExperimentVariant',
-			],
 		},
 	};
 }
