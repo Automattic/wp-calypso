@@ -34,6 +34,7 @@ export const DIFM_FLOW = 'do-it-for-me';
 export const DIFM_FLOW_STORE = 'do-it-for-me-store';
 export const WEBSITE_DESIGN_SERVICES = 'website-design-services';
 export const AI_SITE_BUILDER_FLOW = 'ai-site-builder';
+export const PLAYGROUND_FLOW = 'playground';
 
 export const isNewsletterFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && NEWSLETTER_FLOW === flowName );
@@ -140,4 +141,8 @@ export const isDIFMFlow = ( flowName: string | null ) => {
 	return Boolean(
 		flowName && [ DIFM_FLOW, DIFM_FLOW_STORE, WEBSITE_DESIGN_SERVICES ].includes( flowName )
 	);
+};
+
+export const isPlaygroundFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ PLAYGROUND_FLOW ].includes( flowName ) );
 };
