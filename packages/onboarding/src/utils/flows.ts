@@ -112,7 +112,7 @@ export const isStartWritingFlow = ( flowName: string | null ) => {
 };
 
 export const isBlogOnboardingFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ START_WRITING_FLOW, DESIGN_FIRST_FLOW ].includes( flowName ) );
+	return Boolean( flowName && [ START_WRITING_FLOW ].includes( flowName ) );
 };
 
 export const isOnboardingFlow = ( flowName: string | null ) => {
