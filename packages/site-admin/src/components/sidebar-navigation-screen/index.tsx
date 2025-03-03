@@ -75,7 +75,6 @@ export function SidebarNavigationScreen( {
 							} }
 							icon={ icon }
 							label={ __( 'Back', 'a8c-site-admin' ) }
-							showTooltip={ false }
 						/>
 					) }
 
