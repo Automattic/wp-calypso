@@ -22,7 +22,7 @@ export default function TagsPage( { trendingTags, alphabeticTags }: Props ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	return (
 		<ReaderMain className="tags__main">
-			{ previousRoute && <BackButton onClick={ () => page.back( previousRoute ) } /> }
+			{ isLoggedIn && previousRoute && <BackButton onClick={ () => page.back( previousRoute ) } /> }
 			{ isLoggedIn && (
 				<NavigationHeader
 					title={ translate( 'All the Tags' ) }
