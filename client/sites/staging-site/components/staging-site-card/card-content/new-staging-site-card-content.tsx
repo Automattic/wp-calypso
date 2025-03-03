@@ -72,14 +72,14 @@ export const NewStagingSiteCardContent = ( {
 						{ translate( 'Staging sites are only available to sites launched in production.' ) }
 					</p>
 				) }
-				<Button primary disabled={ isButtonDisabled } onClick={ onAddClick }>
-					<span>{ translate( 'Add staging site' ) }</span>
-				</Button>
 				{ isButtonDisabled && disabledMessage && (
 					<Notice status="is-error" showDismiss={ false }>
 						{ disabledMessage }
 					</Notice>
 				) }
+				<Button primary disabled={ isButtonDisabled } onClick={ onAddClick }>
+					<span>{ translate( 'Add staging site' ) }</span>
+				</Button>
 				{ showQuotaError && <ExceedQuotaErrorContent /> }
 			</>
 		);
