@@ -47,20 +47,12 @@ export function SidebarNavigationScreen( {
 
 	const { navigate } = useContext( SidebarNavigationContext );
 
-	/*
-	 * Note:
-	 * Core use the `location.state?.backPath` like a fallback for `backPathProp`
-	 * However, the `location.state` is not provided by the RoutesContext instance.
-	 * Its value is provided by the `useMatch` custom hook.
-	 */
-	//const backPath = backPathProp ?? location.state?.backPath;
-
 	const icon = isRTL() ? chevronRight : chevronLeft;
 
 	return (
 		<>
 			<VStack
-				className={ clsx( 'admin-site-sidebar-navigation-screen__main', {
+				className={ clsx( 'a8c-site-admin-sidebar-navigation-screen__main', {
 					'has-footer': !! footer,
 				} ) }
 				spacing={ 0 }
@@ -69,7 +61,7 @@ export function SidebarNavigationScreen( {
 				<HStack
 					spacing={ 3 }
 					alignment="flex-start"
-					className="admin-site-sidebar-navigation-screen__title-icon"
+					className="a8c-site-admin-sidebar-navigation-screen__title-icon"
 				>
 					{ ! isRoot && (
 						<SidebarButton
@@ -90,7 +82,7 @@ export function SidebarNavigationScreen( {
 					{ isRoot && <SidebarButton icon={ icon } label={ goBackLabel } href={ goBackLink } /> }
 
 					<Heading
-						className="admin-site-sidebar-navigation-screen__title"
+						className="a8c-site-admin-sidebar-navigation-screen__title"
 						color={ '#e0e0e0' /* $gray-200 */ }
 						level={ 1 }
 						size={ 20 }
@@ -99,25 +91,25 @@ export function SidebarNavigationScreen( {
 					</Heading>
 
 					{ actions && (
-						<div className="admin-site-sidebar-navigation-screen__actions">{ actions }</div>
+						<div className="a8c-site-admin-sidebar-navigation-screen__actions">{ actions }</div>
 					) }
 				</HStack>
 				{ meta && (
 					<>
-						<div className="admin-site-sidebar-navigation-screen__meta">{ meta }</div>
+						<div className="a8c-site-admin-sidebar-navigation-screen__meta">{ meta }</div>
 					</>
 				) }
 
-				<div className="admin-site-sidebar-navigation-screen__content">
+				<div className="a8c-site-admin-sidebar-navigation-screen__content">
 					{ description && (
-						<p className="admin-site-sidebar-navigation-screen__description">{ description }</p>
+						<p className="a8c-site-admin-sidebar-navigation-screen__description">{ description }</p>
 					) }
 					{ content }
 				</div>
 			</VStack>
 
 			{ footer && (
-				<footer className="admin-site-sidebar-navigation-screen__footer">{ footer }</footer>
+				<footer className="a8c-site-admin-sidebar-navigation-screen__footer">{ footer }</footer>
 			) }
 		</>
 	);
