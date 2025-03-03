@@ -11,7 +11,6 @@ import { SidebarNavigationItem, SidebarNavigationContext, createNavState } from 
 /**
  * Types
  */
-import type { SidebarNavigationItemProps } from '../';
 import type { Meta, StoryObj } from '@storybook/react';
 
 type IconName = keyof typeof allIcons;
@@ -42,7 +41,7 @@ export default meta;
 type Story = StoryObj< typeof SidebarNavigationItem >;
 
 export const Default: Story = {
-	render: function Template( args: SidebarNavigationItemProps ) {
+	render: function Template( args ) {
 		const { icon: iconName, children, ...validArgs } = args;
 
 		// Pick the icon component based on the icon name.
