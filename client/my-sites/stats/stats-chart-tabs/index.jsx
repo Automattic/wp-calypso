@@ -137,6 +137,11 @@ class StatModuleChartTabs extends Component {
 		} = this.props;
 		const { chartType } = this.state;
 
+		const chartData = this.props.chartData.map( ( record ) => {
+			record.className = record.className?.replaceAll( 'is-selected', '' );
+			return record;
+		} );
+
 		const classes = [
 			'is-chart-tabs',
 			className,
@@ -148,7 +153,7 @@ class StatModuleChartTabs extends Component {
 
 		//Transform the data to the format required by the line chart.
 		const lineChartData = transformChartDataToLineFormat(
-			this.props.chartData,
+			chartData,
 			this.props.activeLegend,
 			this.props.activeTab,
 			primaryColor,
@@ -176,7 +181,7 @@ class StatModuleChartTabs extends Component {
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
 
 				{ chartType === 'bar' ? (
-					<Chart barClick={ this.props.barClick } data={ this.props.chartData } minBarWidth={ 35 }>
+					<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 35 }>
 						<StatsEmptyState
 							headingText={
 								selectedPeriod === 'hour' ? translate( 'No hourly data available' ) : null

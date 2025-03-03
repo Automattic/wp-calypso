@@ -72,7 +72,9 @@ export const buildChartData = memoizeLast(
 
 			const recordClassName =
 				record.classNames && record.classNames.length ? record.classNames.join( ' ' ) : null;
-			const className = clsx( recordClassName );
+			const className = clsx( recordClassName, {
+				'is-selected': record.period === queryDate,
+			} );
 
 			const item = addTooltipData(
 				chartTab,

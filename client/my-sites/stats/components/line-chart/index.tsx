@@ -136,7 +136,7 @@ function StatsLineChart( {
 							<ChartBarTooltip
 								key={ point.key }
 								label={ point.key }
-								value={ point.value }
+								value={ numberFormat( point.value ) }
 								icon={ seriesIcons[ point.key ] }
 							/>
 						) ) }
