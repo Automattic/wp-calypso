@@ -36,7 +36,12 @@ const ChartTabShape = PropTypes.shape( {
 } );
 
 // data validation for line chart
-const transformChartDataToLineFormat = ( chartData, primaryColor, secondaryColor ) => {
+const transformChartDataToLineFormat = (
+	chartData,
+	primaryColor,
+	secondaryColor,
+	gmtOffset = 0
+) => {
 	if ( ! Array.isArray( chartData ) ) {
 		return [];
 	}
@@ -48,7 +53,7 @@ const transformChartDataToLineFormat = ( chartData, primaryColor, secondaryColor
 		icon: <Icon className="gridicon" icon={ eye } />,
 		data: chartData
 			.map( ( record ) => {
-				const date = parseLocalDate( record.data.period );
+				const date = parseLocalDate( record.data.period, gmtOffset );
 				const value = record.data.views;
 				if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
 					return null;
@@ -67,7 +72,7 @@ const transformChartDataToLineFormat = ( chartData, primaryColor, secondaryColor
 		icon: <Icon className="gridicon" icon={ people } />,
 		data: chartData
 			.map( ( record ) => {
-				const date = parseLocalDate( record.data.period );
+				const date = parseLocalDate( record.data.period, gmtOffset );
 				const value = record.data.visitors;
 				if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
 					return null;
@@ -174,6 +179,7 @@ class StatModuleChartTabs extends Component {
 			primaryColor,
 			secondaryColor,
 			chartContainerRef,
+			gmtOffset,
 		} = this.props;
 		const { chartType } = this.state;
 
@@ -226,7 +232,12 @@ class StatModuleChartTabs extends Component {
 					<AsyncLoad
 						require="calypso/my-sites/stats/components/line-chart"
 						className="stats-chart-tabs__line-chart"
-						chartData={ transformChartDataToLineFormat( chartData, primaryColor, secondaryColor ) }
+						chartData={ transformChartDataToLineFormat(
+							chartData,
+							primaryColor,
+							secondaryColor,
+							gmtOffset
+						) }
 						height={ 200 }
 						moment={ moment }
 						onClick={ this.props.barClick }
@@ -377,6 +388,7 @@ const connectComponent = connect(
 			tabCountsAlt: tabCountsAlt?.[ 0 ],
 			queryDayComp,
 			tabCountsAltComp: tabCountsAltComp?.[ 0 ],
+			gmtOffset: timezoneOffset,
 		};
 	},
 	{ recordGoogleEvent, requestChartCounts }
