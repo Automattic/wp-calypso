@@ -522,6 +522,13 @@ body.is-mobile-app-view {
 			}
 		}
 
+		.dashicons-update {
+			&::before {
+				font-size: 40px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				top: 3px;
+			}
+		}
+
 		.dashicons-menu-alt {
 			padding-top: 0;
 			position: relative;
