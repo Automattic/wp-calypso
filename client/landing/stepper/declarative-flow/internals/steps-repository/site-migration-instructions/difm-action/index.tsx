@@ -1,14 +1,14 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { FC } from 'react';
+import { recordMigrationInstructionsLinkClick } from '../tracking';
+import type { FC } from 'react';
 import './style.scss';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
-interface DifmActionrops {
+interface DifmActionProps {
 	navigateToDoItForMe: () => void;
 }
 
-export const DifmAction: FC< DifmActionrops > = ( { navigateToDoItForMe } ) => {
+export const DifmAction: FC< DifmActionProps > = ( { navigateToDoItForMe } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -19,7 +19,7 @@ export const DifmAction: FC< DifmActionrops > = ( { navigateToDoItForMe } ) => {
 						<Button
 							variant="link"
 							onClick={ () => {
-								recordTracksEvent( 'calypso_migration_instructions_difm_click' );
+								recordMigrationInstructionsLinkClick( 'trouble-migrate-site' );
 								navigateToDoItForMe();
 							} }
 							type="button"
