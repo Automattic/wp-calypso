@@ -68,6 +68,10 @@
 		}
 	}
 
+	&.is-group-reader .layout__content .layout__primary > div {
+		overflow-y: auto;
+	}
+
 	.tags__main {
 		box-sizing: border-box;
 		max-width: 968px; // Max width of dual column reader stream.

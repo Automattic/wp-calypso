@@ -20,6 +20,7 @@ export default function TagsPage( { trendingTags, alphabeticTags }: Props ) {
 	const translate = useTranslate();
 	const previousRoute = useSelector( getPreviousRoute );
 	const isLoggedIn = useSelector( isUserLoggedIn );
+
 	return (
 		<ReaderMain className="tags__main">
 			{ isLoggedIn && previousRoute && <BackButton onClick={ () => page.back( previousRoute ) } /> }
