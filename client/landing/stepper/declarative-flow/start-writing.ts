@@ -26,6 +26,7 @@ const startWriting: Flow = {
 		return translate( 'Start writing' );
 	},
 	isSignupFlow: true,
+	__experimentalUseBuiltinAuth: true,
 	useSteps() {
 		return stepsWithRequiredLogin( [
 			STEPS.CHECK_SITES,
