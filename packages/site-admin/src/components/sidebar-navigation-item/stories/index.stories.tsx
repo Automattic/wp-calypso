@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { action } from '@storybook/addon-actions';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import * as allIconComponents from '@wordpress/icons';
@@ -46,7 +47,7 @@ export const Default: Story = {
 
 		// Pick the icon component based on the icon name.
 		const iconKey = iconName as unknown as IconName;
-		const icon = allIcons?.[ iconKey ];
+		const icon = allIcons?.[ iconKey ] || allIcons.capturePhoto;
 
 		const [ navState ] = useState( createNavState() );
 		return (
@@ -61,11 +62,15 @@ export const Default: Story = {
 
 Default.storyName = 'SidebarNavigationItem';
 Default.args = {
-	withChevron: true,
-	children: __( 'Delete item' ),
-	icon: undefined,
+	children: __( 'Site Photos Gallery' ),
 	as: 'button',
-	to: 'https://example.com',
-	className: '',
-	uid: 'item-1',
+	onClick: action( 'clicked' ),
+};
+
+// Add a story for the suffix prop.
+export const WithChevronSuffix: Story = {
+	args: {
+		children: __( 'More options' ),
+		suffix: 'CHEVRON',
+	},
 };
