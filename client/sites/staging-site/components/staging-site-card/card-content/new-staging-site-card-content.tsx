@@ -30,8 +30,7 @@ type CardContentProps = {
 	isButtonDisabled: boolean;
 	showQuotaError: boolean;
 	isDevelopmentSite?: boolean;
-	isSyncInProgress: boolean;
-	isPossibleJetpackConnectionProblem: boolean;
+	disabledMessage?: string;
 };
 
 export const NewStagingSiteCardContent = ( {
@@ -40,8 +39,7 @@ export const NewStagingSiteCardContent = ( {
 	isButtonDisabled,
 	showQuotaError,
 	isDevelopmentSite,
-	isSyncInProgress,
-	isPossibleJetpackConnectionProblem,
+	disabledMessage,
 }: CardContentProps ) => {
 	{
 		const translate = useTranslate();
@@ -74,23 +72,14 @@ export const NewStagingSiteCardContent = ( {
 						{ translate( 'Staging sites are only available to sites launched in production.' ) }
 					</p>
 				) }
-				{ isSyncInProgress && (
-					<Notice status="is-error" showDismiss={ false }>
-						{ translate(
-							'Unable to create a new staging site. If the issue persists, please contact support.'
-						) }
-					</Notice>
-				) }
-				{ isPossibleJetpackConnectionProblem && (
-					<Notice status="is-error" showDismiss={ false }>
-						{ translate(
-							'Unable to create a new staging site. There is a site connection issue. If the issue persists, please contact support.'
-						) }
-					</Notice>
-				) }
 				<Button primary disabled={ isButtonDisabled } onClick={ onAddClick }>
 					<span>{ translate( 'Add staging site' ) }</span>
 				</Button>
+				{ isButtonDisabled && disabledMessage && (
+					<Notice status="is-error" showDismiss={ false }>
+						{ disabledMessage }
+					</Notice>
+				) }
 				{ showQuotaError && <ExceedQuotaErrorContent /> }
 			</>
 		);
