@@ -1,6 +1,6 @@
 import { getSiteUrl, getSiteName } from '../get-helpers';
 
-describe( '#getSiteUrl', () => {
+describe( 'getSiteUrl', () => {
 	const siteWithUrl = { URL: 'siteWithUrl.com' };
 	const feedWithUrl = { URL: 'feedWithUrl.com' };
 	const feedWithFeedUrl = { feed_URL: 'feedwithFeedUrl.com' };
@@ -31,17 +31,17 @@ describe( '#getSiteUrl', () => {
 
 	test( 'should return undefined if cannot find a reasonable url', () => {
 		const noArg = getSiteUrl();
-		expect( noArg ).not.ok;
+		expect( noArg ).toEqual( undefined );
 
 		const emptyArg = getSiteUrl( {} );
-		expect( emptyArg ).not.ok;
+		expect( emptyArg ).toEqual( undefined );
 
 		const emptySiteAndFeed = getSiteUrl( { feed: {}, site: {} } );
-		expect( emptySiteAndFeed ).not.ok;
+		expect( emptySiteAndFeed ).toEqual( undefined );
 	} );
 } );
 
-describe( '#getSiteName', () => {
+describe( 'getSiteName', () => {
 	const siteWithDomain = { domain: 'siteDomain.com' };
 	const siteWithTitleAndDomain = {
 		title: 'siteWithTitleAndDomainTitle',

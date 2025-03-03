@@ -49,9 +49,9 @@ interface ReaderFeed {
 }
 
 interface GetSiteUrlArgs {
-	feed?: ReaderFeed;
-	site?: ReaderSite;
-	post?: ReaderPost;
+	feed?: Partial< ReaderFeed >;
+	site?: Partial< ReaderSite >;
+	post?: Partial< ReaderPost >;
 }
 
 /**
@@ -70,9 +70,9 @@ export const getSiteUrl = ( { feed, site, post }: GetSiteUrlArgs = {} ): string 
 };
 
 interface GetFeedUrlArgs {
-	feed?: ReaderFeed;
-	site?: ReaderSite;
-	post?: ReaderPost;
+	feed?: Partial< ReaderFeed >;
+	site?: Partial< ReaderSite >;
+	post?: Partial< ReaderPost >;
 }
 /**
  * Given a feed, site, or post: return the feed url. return false if one could not be found.
@@ -90,7 +90,7 @@ export const getFeedUrl = ( { feed, site, post }: GetFeedUrlArgs = {} ) => {
 /**
  * Given a feed, site, or post: return the site icon. return false if one could not be found.
  */
-export function getPostIcon( post: ReaderPost ): string | undefined {
+export function getPostIcon( post: Partial< ReaderPost > ): string | undefined {
 	if ( typeof post?.site_icon === 'object' ) {
 		return post.site_icon?.img;
 	}
@@ -99,8 +99,8 @@ export function getPostIcon( post: ReaderPost ): string | undefined {
 }
 
 interface GetSiteDomainArgs {
-	feed?: ReaderFeed;
-	site?: ReaderSite;
+	feed?: Partial< ReaderFeed >;
+	site?: Partial< ReaderSite >;
 }
 
 /**
@@ -122,16 +122,16 @@ export const getSiteDomain = ( { feed, site }: GetSiteDomainArgs = {} ): string 
 };
 
 interface GetSiteNameArgs {
-	feed?: ReaderFeed;
-	post?: ReaderPost;
-	site?: ReaderSite;
+	feed?: Partial< ReaderFeed >;
+	post?: Partial< ReaderPost >;
+	site?: Partial< ReaderSite >;
 }
 
 /**
  * Given a feed, site, or post: output the best title to use for the owning site.
  */
-export const getSiteName = ( { feed, site, post }: GetSiteNameArgs = {} ): string => {
-	let siteName: string | null = null;
+export const getSiteName = ( { feed, site, post }: GetSiteNameArgs = {} ): string | null => {
+	let siteName: string | null | undefined = null;
 	const isDefaultSiteTitle =
 		( site && site.name === translate( 'Site Title' ) ) ||
 		( feed && feed.name === translate( 'Site Title' ) );
@@ -151,12 +151,16 @@ export const getSiteName = ( { feed, site, post }: GetSiteNameArgs = {} ): strin
 		siteName = siteUrl ? getUrlParts( siteUrl ).hostname : null;
 	}
 
-	return decodeEntities( siteName || '' );
+	if ( ! siteName ) {
+		return null;
+	}
+
+	return decodeEntities( siteName );
 };
 
 interface GetSiteDescriptionArgs {
-	feed?: ReaderFeed;
-	site?: ReaderSite;
+	feed?: Partial< ReaderFeed >;
+	site?: Partial< ReaderSite >;
 }
 
 export const getSiteDescription = ( { site, feed }: GetSiteDescriptionArgs ): string | null => {
