@@ -61,4 +61,15 @@ body.is-section-signup .is-woocommerce-install .signup__step.is-store-address {
 			}
 		}
 	}
+
+	&:has(.step-store-address__info-section) {
+		align-items: normal;
+		justify-content: center;
+	}
+
+	.step-store-address__info-section {
+		.wpcom__loading {
+			margin: calc(32vh + 12px) auto 0;
+		}
+	}
 }
