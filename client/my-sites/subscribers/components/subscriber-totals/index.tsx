@@ -94,29 +94,37 @@ const SubscriberTotals: React.FC< SubscriberTotalsProps > = ( {
 				<>
 					<span className="subscriber-totals__filtered-count">
 						{ searchTerm
-							? translate( '%(count)s matching result', '%(count)s matching results', {
-									count: filteredCount || 2,
-									args: { count: numberFormat( filteredCount ) },
-							  } )
-							: translate( '%(count)s %(filterLabel)s', {
+							? translate(
+									'%(matchingSubscriberCount)s matching result',
+									'%(matchingSubscriberCount)s matching results',
+									{
+										count: filteredCount,
+										args: { matchingSubscriberCount: numberFormat( filteredCount ) },
+									}
+							  )
+							: translate( '%(filteredSubscriberCount)s %(filterLabel)s', {
 									args: {
-										count: numberFormat( filteredCount ),
+										filteredSubscriberCount: numberFormat( filteredCount ),
 										filterLabel,
 									},
 							  } ) }
 					</span>
 					<span className="subscriber-totals__total">
-						{ translate( 'out of %(total)s total subscribers', {
-							args: { total: numberFormat( totalSubscribers ) },
+						{ translate( 'out of %(totalSubscriberCount)s total subscribers', {
+							args: { totalSubscriberCount: numberFormat( totalSubscribers ) },
 						} ) }
 					</span>
 				</>
 			) : (
 				<span className="subscriber-totals__total-count">
-					{ translate( '%(count)s total subscriber', '%(count)s total subscribers', {
-						count: totalSubscribers,
-						args: { count: numberFormat( totalSubscribers ) },
-					} ) }
+					{ translate(
+						'%(subscriberCount)s total subscriber',
+						'%(subscriberCount)s total subscribers',
+						{
+							count: totalSubscribers,
+							args: { subscriberCount: numberFormat( totalSubscribers ) },
+						}
+					) }
 				</span>
 			) }
 		</div>
