@@ -1,9 +1,10 @@
 .tools-staging-site__site-url.is-link {
 	word-wrap: break-word;
 	text-decoration: none;
+	display: inline-block;
 
 	svg {
-		margin-left: 3px;
+		margin: 0 0 -3px 3px;
 	}
 }
 
