@@ -80,6 +80,11 @@ const ActionButtons = styled.div( {
 	},
 } );
 
+const ExternalIcon = styled( Icon )( {
+	verticalAlign: 'middle',
+	marginLeft: 4,
+} );
+
 type CardContentProps = {
 	stagingSite: StagingSite;
 	siteId: number;
@@ -161,7 +166,7 @@ export const ManageStagingSiteCardContent = ( {
 							>
 								<span>
 									{ stagingSite.url }
-									<Icon icon={ external } size={ 16 } />
+									<ExternalIcon icon={ external } size={ 16 } />
 								</span>
 							</WPButton>
 						</SiteInfo>
