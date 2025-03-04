@@ -99,7 +99,7 @@
 		"post-list/qr-code-link": false,
 		"press-this": true,
 		"publicize-preview": true,
-		"purchases/billing-history-data-view": false,
+		"purchases/billing-history-data-view": true,
 		"purchases/new-payment-methods": true,
 		"reader": true,
 		"reader/quick-post": true,
