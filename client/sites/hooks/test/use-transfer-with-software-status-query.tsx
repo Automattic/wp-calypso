@@ -15,6 +15,7 @@ jest.mock( '@automattic/calypso-config', () => ( {
 
 const mockSuccessResponse = {
 	software_transfer_status: 'pending',
+	extra_field: 'extra_value',
 };
 
 describe( 'useTransferWithSoftwareStatus', () => {
@@ -38,7 +39,7 @@ describe( 'useTransferWithSoftwareStatus', () => {
 
 		await waitFor( () => {
 			expect( result.current.isSuccess ).toBe( true );
-			expect( result.current.data ).toEqual( mockSuccessResponse );
+			expect( result.current.data ).toEqual( { software_transfer_status: 'pending' } );
 		} );
 	} );
 
@@ -62,5 +63,23 @@ describe( 'useTransferWithSoftwareStatus', () => {
 
 		expect( result.current.isFetching ).toBe( false );
 		expect( nock.isDone() ).toBe( true ); // No pending nock requests
+	} );
+
+	it( 'should ignore extra fields in the response', async () => {
+		const queryClient = new QueryClient();
+		const wrapper = ( { children }: { children: React.ReactNode } ) => (
+			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+		);
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/sites/123/atomic/transfer-with-software/456' )
+			.query( { http_envelope: 1 } )
+			.reply( 200, mockSuccessResponse );
+
+		const { result } = renderHook( () => useTransferWithSoftwareStatus( 123, 456 ), { wrapper } );
+
+		await waitFor( () => {
+			expect( result.current.isSuccess ).toBe( true );
+			expect( result.current.data ).not.toContain( { extra_field: 'extra_value' } );
+		} );
 	} );
 } );

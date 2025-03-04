@@ -1,9 +1,10 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
-type TransferWithSoftwareStatusResponse = {
+interface TransferWithSoftwareStatusResponse {
 	software_transfer_status: string;
-};
+	[ key: string ]: unknown; // Allow any additional fields in the response
+}
 
 const getTransferWithSoftwareStatus = async (
 	siteId: number,
@@ -27,7 +28,9 @@ export const useTransferWithSoftwareStatus = (
 	return useQuery( {
 		queryKey: [ 'software-transfer-status', siteId, atomicTransferId ],
 		queryFn: () => getTransferWithSoftwareStatus( siteId, atomicTransferId ),
-		select: ( data ) => ( { software_transfer_status: data?.software_transfer_status } ),
+		select: ( data: TransferWithSoftwareStatusResponse ) => ( {
+			software_transfer_status: data.software_transfer_status,
+		} ),
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false,
 		retryDelay: 5000, // Poll every 5 seconds
