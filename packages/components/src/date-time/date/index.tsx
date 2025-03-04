@@ -2,6 +2,16 @@
  * External dependencies
  */
 import {
+	Button,
+	__experimentalHStack as HStack,
+	__experimentalHeading as Heading,
+} from '@wordpress/components';
+import { dateI18n, getSettings } from '@wordpress/date';
+import { useState, useRef, useEffect } from '@wordpress/element';
+import { __, _n, sprintf, isRTL } from '@wordpress/i18n';
+import { arrowLeft, arrowRight } from '@wordpress/icons';
+import clsx from 'clsx';
+import {
 	format,
 	isSameDay,
 	subMonths,
@@ -15,32 +25,16 @@ import {
 	startOfWeek,
 	endOfWeek,
 } from 'date-fns';
-import type { KeyboardEventHandler } from 'react';
-
-/**
- * WordPress dependencies
- */
-import { __, _n, sprintf, isRTL } from '@wordpress/i18n';
-import { arrowLeft, arrowRight } from '@wordpress/icons';
-import { dateI18n, getSettings } from '@wordpress/date';
-import { useState, useRef, useEffect } from '@wordpress/element';
-
 /**
  * Internal dependencies
  */
+import { TIMEZONELESS_FORMAT } from '../constants';
+import { inputToDate } from '../utils';
 import { useLilius } from './use-lilius';
 import type { DatePickerProps } from '../types';
-import {
-	Wrapper,
-	Navigator,
-	NavigatorHeading,
-	Calendar,
-	DayOfWeek,
-	DayButton,
-} from './styles';
-import { inputToDate } from '../utils';
-import Button from '../../button';
-import { TIMEZONELESS_FORMAT } from '../constants';
+import type { KeyboardEventHandler } from 'react';
+
+import './styles.scss';
 
 /**
  * DatePicker is a React component that renders a calendar for date selection.
@@ -92,8 +86,7 @@ export function DatePicker( {
 	// Allows us to only programmatically focus() a day when focus was already
 	// within the calendar. This stops us stealing focus from e.g. a TimePicker
 	// input.
-	const [ isFocusWithinCalendar, setIsFocusWithinCalendar ] =
-		useState( false );
+	const [ isFocusWithinCalendar, setIsFocusWithinCalendar ] = useState( false );
 
 	// Update internal state when currentDate prop changes.
 	const [ prevCurrentDate, setPrevCurrentDate ] = useState( currentDate );
@@ -105,12 +98,8 @@ export function DatePicker( {
 	}
 
 	return (
-		<Wrapper
-			className="components-datetime__date"
-			role="application"
-			aria-label={ __( 'Calendar' ) }
-		>
-			<Navigator>
+		<div className="calendar" role="application" aria-label={ __( 'Calendar' ) }>
+			<HStack className="calendar__navigator">
 				<Button
 					icon={ isRTL() ? arrowRight : arrowLeft }
 					variant="tertiary"
@@ -118,25 +107,16 @@ export function DatePicker( {
 					onClick={ () => {
 						viewPreviousMonth();
 						setFocusable( subMonths( focusable, 1 ) );
-						onMonthPreviewed?.(
-							format(
-								subMonths( viewing, 1 ),
-								TIMEZONELESS_FORMAT
-							)
-						);
+						onMonthPreviewed?.( format( subMonths( viewing, 1 ), TIMEZONELESS_FORMAT ) );
 					} }
 					size="compact"
 				/>
-				<NavigatorHeading level={ 3 }>
-					<strong>
-						{ dateI18n(
-							'F',
-							viewing,
-							-viewing.getTimezoneOffset()
-						) }
-					</strong>{ ' ' }
+
+				<Heading level={ 3 } className="calendar__month-heading">
+					<strong>{ dateI18n( 'F', viewing, -viewing.getTimezoneOffset() ) }</strong>{ ' ' }
 					{ dateI18n( 'Y', viewing, -viewing.getTimezoneOffset() ) }
-				</NavigatorHeading>
+				</Heading>
+
 				<Button
 					icon={ isRTL() ? arrowLeft : arrowRight }
 					variant="tertiary"
@@ -144,24 +124,21 @@ export function DatePicker( {
 					onClick={ () => {
 						viewNextMonth();
 						setFocusable( addMonths( focusable, 1 ) );
-						onMonthPreviewed?.(
-							format(
-								addMonths( viewing, 1 ),
-								TIMEZONELESS_FORMAT
-							)
-						);
+						onMonthPreviewed?.( format( addMonths( viewing, 1 ), TIMEZONELESS_FORMAT ) );
 					} }
 					size="compact"
 				/>
-			</Navigator>
-			<Calendar
+			</HStack>
+
+			<div
+				className="calendar__month"
 				onFocus={ () => setIsFocusWithinCalendar( true ) }
 				onBlur={ () => setIsFocusWithinCalendar( false ) }
 			>
 				{ calendar[ 0 ][ 0 ].map( ( day ) => (
-					<DayOfWeek key={ day.toString() }>
+					<div className="calendar__day-of-week" key={ day.toString() }>
 						{ dateI18n( 'D', day, -day.getTimezoneOffset() ) }
-					</DayOfWeek>
+					</div>
 				) ) }
 				{ calendar[ 0 ].map( ( week ) =>
 					week.map( ( day, index ) => {
@@ -177,14 +154,8 @@ export function DatePicker( {
 								isFocusable={ isEqual( day, focusable ) }
 								isFocusAllowed={ isFocusWithinCalendar }
 								isToday={ isSameDay( day, new Date() ) }
-								isInvalid={
-									isInvalidDate ? isInvalidDate( day ) : false
-								}
-								numEvents={
-									events.filter( ( event ) =>
-										isSameDay( event.date, day )
-									).length
-								}
+								isInvalid={ isInvalidDate ? isInvalidDate( day ) : false }
+								numEvents={ events.filter( ( event ) => isSameDay( event.date, day ) ).length }
 								onClick={ () => {
 									setSelected( [ day ] );
 									setFocusable( day );
@@ -207,16 +178,10 @@ export function DatePicker( {
 								onKeyDown={ ( event ) => {
 									let nextFocusable;
 									if ( event.key === 'ArrowLeft' ) {
-										nextFocusable = addDays(
-											day,
-											isRTL() ? 1 : -1
-										);
+										nextFocusable = addDays( day, isRTL() ? 1 : -1 );
 									}
 									if ( event.key === 'ArrowRight' ) {
-										nextFocusable = addDays(
-											day,
-											isRTL() ? -1 : 1
-										);
+										nextFocusable = addDays( day, isRTL() ? -1 : 1 );
 									}
 									if ( event.key === 'ArrowUp' ) {
 										nextFocusable = subWeeks( day, 1 );
@@ -234,26 +199,14 @@ export function DatePicker( {
 										nextFocusable = startOfWeek( day );
 									}
 									if ( event.key === 'End' ) {
-										nextFocusable = startOfDay(
-											endOfWeek( day )
-										);
+										nextFocusable = startOfDay( endOfWeek( day ) );
 									}
 									if ( nextFocusable ) {
 										event.preventDefault();
 										setFocusable( nextFocusable );
-										if (
-											! isSameMonth(
-												nextFocusable,
-												viewing
-											)
-										) {
+										if ( ! isSameMonth( nextFocusable, viewing ) ) {
 											setViewing( nextFocusable );
-											onMonthPreviewed?.(
-												format(
-													nextFocusable,
-													TIMEZONELESS_FORMAT
-												)
-											);
+											onMonthPreviewed?.( format( nextFocusable, TIMEZONELESS_FORMAT ) );
 										}
 									}
 								} }
@@ -261,8 +214,8 @@ export function DatePicker( {
 						);
 					} )
 				) }
-			</Calendar>
-		</Wrapper>
+			</div>
+		</div>
 	);
 }
 
@@ -305,32 +258,29 @@ function Day( {
 	}, [ isFocusable ] );
 
 	return (
-		<DayButton
+		<Button
 			__next40pxDefaultSize
 			ref={ ref }
-			className="components-datetime__date__day" // Unused, for backwards compatibility.
+			className={ clsx( 'calendar__day', `calendar__day--column-${ column }`, {
+				'is-selected': isSelected,
+				'is-today': isToday,
+				'is-invalid': isInvalid,
+				'has-events': numEvents > 0,
+			} ) }
 			disabled={ isInvalid }
 			tabIndex={ isFocusable ? 0 : -1 }
 			aria-label={ getDayLabel( day, isSelected, numEvents ) }
-			column={ column }
-			isSelected={ isSelected }
-			isToday={ isToday }
-			hasEvents={ numEvents > 0 }
 			onClick={ onClick }
 			onKeyDown={ onKeyDown }
 		>
 			{ dateI18n( 'j', day, -day.getTimezoneOffset() ) }
-		</DayButton>
+		</Button>
 	);
 }
 
 function getDayLabel( date: Date, isSelected: boolean, numEvents: number ) {
 	const { formats } = getSettings();
-	const localizedDate = dateI18n(
-		formats.date,
-		date,
-		-date.getTimezoneOffset()
-	);
+	const localizedDate = dateI18n( formats.date, date, -date.getTimezoneOffset() );
 	if ( isSelected && numEvents > 0 ) {
 		return sprintf(
 			// translators: 1: The calendar date. 2: Number of events on the calendar date.
@@ -351,11 +301,7 @@ function getDayLabel( date: Date, isSelected: boolean, numEvents: number ) {
 	} else if ( numEvents > 0 ) {
 		return sprintf(
 			// translators: 1: The calendar date. 2: Number of events on the calendar date.
-			_n(
-				'%1$s. There is %2$d event',
-				'%1$s. There are %2$d events',
-				numEvents
-			),
+			_n( '%1$s. There is %2$d event', '%1$s. There are %2$d events', numEvents ),
 			localizedDate,
 			numEvents
 		);

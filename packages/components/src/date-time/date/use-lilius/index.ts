@@ -32,6 +32,7 @@
 /**
  * External dependencies
  */
+import { useCallback, useMemo, useState } from '@wordpress/element';
 import {
 	addMonths,
 	addYears,
@@ -52,11 +53,6 @@ import {
 	subMonths,
 	subYears,
 } from 'date-fns';
-
-/**
- * WordPress dependencies
- */
-import { useCallback, useMemo, useState } from '@wordpress/element';
 
 export enum Month {
 	JANUARY,
@@ -86,28 +82,24 @@ export enum Day {
 export interface Options {
 	/**
 	 * What day a week starts on within the calendar matrix.
-	 *
 	 * @default Day.SUNDAY
 	 */
 	weekStartsOn?: Day;
 
 	/**
 	 * The initial viewing date.
-	 *
 	 * @default new Date()
 	 */
 	viewing?: Date;
 
 	/**
 	 * The initial date(s) selection.
-	 *
 	 * @default []
 	 */
 	selected?: Date[];
 
 	/**
 	 * The number of months in the calendar.
-	 *
 	 * @default 1
 	 */
 	numberOfMonths?: number;
@@ -237,77 +229,48 @@ export const useLilius = ( {
 }: Options = {} ): Returns => {
 	const [ viewing, setViewing ] = useState< Date >( initialViewing );
 
-	const viewToday = useCallback(
-		() => setViewing( startOfToday() ),
-		[ setViewing ]
-	);
+	const viewToday = useCallback( () => setViewing( startOfToday() ), [ setViewing ] );
 
 	const viewMonth = useCallback(
 		( month: Month ) => setViewing( ( v ) => setMonth( v, month ) ),
 		[]
 	);
 
-	const viewPreviousMonth = useCallback(
-		() => setViewing( ( v ) => subMonths( v, 1 ) ),
-		[]
-	);
+	const viewPreviousMonth = useCallback( () => setViewing( ( v ) => subMonths( v, 1 ) ), [] );
 
-	const viewNextMonth = useCallback(
-		() => setViewing( ( v ) => addMonths( v, 1 ) ),
-		[]
-	);
+	const viewNextMonth = useCallback( () => setViewing( ( v ) => addMonths( v, 1 ) ), [] );
 
-	const viewYear = useCallback(
-		( year: number ) => setViewing( ( v ) => setYear( v, year ) ),
-		[]
-	);
+	const viewYear = useCallback( ( year: number ) => setViewing( ( v ) => setYear( v, year ) ), [] );
 
-	const viewPreviousYear = useCallback(
-		() => setViewing( ( v ) => subYears( v, 1 ) ),
-		[]
-	);
+	const viewPreviousYear = useCallback( () => setViewing( ( v ) => subYears( v, 1 ) ), [] );
 
-	const viewNextYear = useCallback(
-		() => setViewing( ( v ) => addYears( v, 1 ) ),
-		[]
-	);
+	const viewNextYear = useCallback( () => setViewing( ( v ) => addYears( v, 1 ) ), [] );
 
-	const [ selected, setSelected ] = useState< Date[] >(
-		initialSelected.map( clearTime )
-	);
+	const [ selected, setSelected ] = useState< Date[] >( initialSelected.map( clearTime ) );
 
 	const clearSelected = () => setSelected( [] );
 
 	const isSelected = useCallback(
-		( date: Date ) =>
-			selected.findIndex( ( s ) => isEqual( s, date ) ) > -1,
+		( date: Date ) => selected.findIndex( ( s ) => isEqual( s, date ) ) > -1,
 		[ selected ]
 	);
 
-	const select = useCallback(
-		( date: Date | Date[], replaceExisting?: boolean ) => {
-			if ( replaceExisting ) {
-				setSelected( Array.isArray( date ) ? date : [ date ] );
-			} else {
-				setSelected( ( selectedItems ) =>
-					selectedItems.concat(
-						Array.isArray( date ) ? date : [ date ]
-					)
-				);
-			}
-		},
-		[]
-	);
+	const select = useCallback( ( date: Date | Date[], replaceExisting?: boolean ) => {
+		if ( replaceExisting ) {
+			setSelected( Array.isArray( date ) ? date : [ date ] );
+		} else {
+			setSelected( ( selectedItems ) =>
+				selectedItems.concat( Array.isArray( date ) ? date : [ date ] )
+			);
+		}
+	}, [] );
 
 	const deselect = useCallback(
 		( date: Date | Date[] ) =>
 			setSelected( ( selectedItems ) =>
 				Array.isArray( date )
 					? selectedItems.filter(
-							( s ) =>
-								! date
-									.map( ( d ) => d.getTime() )
-									.includes( s.getTime() )
+							( s ) => ! date.map( ( d ) => d.getTime() ).includes( s.getTime() )
 					  )
 					: selectedItems.filter( ( s ) => ! isEqual( s, date ) )
 			),
@@ -316,24 +279,19 @@ export const useLilius = ( {
 
 	const toggle = useCallback(
 		( date: Date, replaceExisting?: boolean ) =>
-			isSelected( date )
-				? deselect( date )
-				: select( date, replaceExisting ),
+			isSelected( date ) ? deselect( date ) : select( date, replaceExisting ),
 		[ deselect, isSelected, select ]
 	);
 
-	const selectRange = useCallback(
-		( start: Date, end: Date, replaceExisting?: boolean ) => {
-			if ( replaceExisting ) {
-				setSelected( eachDayOfInterval( { start, end } ) );
-			} else {
-				setSelected( ( selectedItems ) =>
-					selectedItems.concat( eachDayOfInterval( { start, end } ) )
-				);
-			}
-		},
-		[]
-	);
+	const selectRange = useCallback( ( start: Date, end: Date, replaceExisting?: boolean ) => {
+		if ( replaceExisting ) {
+			setSelected( eachDayOfInterval( { start, end } ) );
+		} else {
+			setSelected( ( selectedItems ) =>
+				selectedItems.concat( eachDayOfInterval( { start, end } ) )
+			);
+		}
+	}, [] );
 
 	const deselectRange = useCallback( ( start: Date, end: Date ) => {
 		setSelected( ( selectedItems ) =>
