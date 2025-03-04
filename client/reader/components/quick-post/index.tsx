@@ -12,9 +12,9 @@ import { useState, useRef } from 'react';
 import { useSelector, useDispatch, connect } from 'react-redux';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import { stripHTML } from 'calypso/lib/formatting';
-import Notice from 'calypso/components/notice';
 import wpcom from 'calypso/lib/wp';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { successNotice } from 'calypso/state/notices/actions';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { receiveNewPost } from 'calypso/state/reader/streams/actions';
@@ -36,14 +36,17 @@ interface PostItem {
 	site_ID: number;
 	title: string;
 	content: string;
+	URL: string;
 }
 
 function QuickPost( {
 	primarySiteId,
 	receivePosts,
+	successNotice,
 }: {
 	primarySiteId: number | null;
 	receivePosts: ( posts: PostItem[] ) => Promise< void >;
+	successNotice: ( message: string, options: object ) => void;
 } ) {
 	const translate = useTranslate();
 	const locale = useLocale();
@@ -57,7 +60,6 @@ function QuickPost( {
 	const currentUser = useSelector( getCurrentUser );
 	const hasLoaded = useSelector( hasLoadedSites );
 	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
-	const [ showSuccessMessage, setShowSuccessMessage ] = useState( false );
 
 	const clearEditor = () => {
 		setEditorKey( ( key ) => key + 1 );
@@ -68,7 +70,6 @@ function QuickPost( {
 			return;
 		}
 
-		setShowSuccessMessage( false );
 		setIsSubmitting( true );
 
 		wpcom
@@ -90,7 +91,13 @@ function QuickPost( {
 				recordReaderTracksEvent( 'calypso_reader_quick_post_submitted' );
 				clearEditor();
 
-				setShowSuccessMessage( true );
+				successNotice( translate( 'Post successful! Your message will appear in the feed soon.' ), {
+					button: translate( 'View Post.' ),
+					buttonOptions: {
+						external: true,
+					},
+					href: postData.URL,
+				} );
 				// TODO: Update the stream with the new post (if they're subscribed?) to signal success.
 
 				if ( config.isEnabled( 'reader/quick-post-v2' ) ) {
@@ -145,11 +152,6 @@ function QuickPost( {
 
 	return (
 		<div className="quick-post-input">
-			{ showSuccessMessage && (
-				<Notice status="is-success" onDismissClick={ () => setShowSuccessMessage( false ) }>
-					{ translate( 'Post successful! Your message will appear in the feed soon.' ) }
-				</Notice>
-			) }
 			<label htmlFor="quick-post-site-select" className="quick-post-input__label">
 				{ translate( 'Publish a post to' ) }
 			</label>
@@ -196,6 +198,7 @@ export default connect(
 		primarySiteId: getPrimarySiteId( state ),
 	} ),
 	{
+		successNotice: ( message: string, options: object ) => successNotice( message, options ),
 		receivePosts: ( posts: PostItem[] ) => receivePosts( posts ) as Promise< void >,
 	}
 )( QuickPost );
