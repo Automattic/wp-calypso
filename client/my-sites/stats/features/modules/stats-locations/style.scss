@@ -29,6 +29,8 @@ $locations-horizontal-bar-width: 380px;
 		margin: 12px 24px 0;
 
 		.stats-download-csv {
+			color: var(--color-link);
+			gap: 4px;
 			margin-left: auto;
 		}
 	}
