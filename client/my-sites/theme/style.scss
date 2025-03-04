@@ -459,16 +459,12 @@ $button-border: 4px;
 	position: absolute;
 	left: 50%;
 	top: 50%;
-	z-index: 1;
+	z-index: 2;
 	transform: translate(-50%, 0);
 
 	&.button {
 		border-radius: $button-border;
 	}
-}
-
-.theme__sheet-screenshot-demo-site {
-	z-index: 2;
 
 	@include breakpoint-deprecated( ">960px" ) {
 		position: sticky;

@@ -1010,11 +1010,8 @@ class ThemeSheet extends Component {
 		let classNames = 'theme__sheet-demo-button';
 		switch ( context ) {
 			case 'web-preview':
-				classNames = 'theme__sheet-preview-demo-site';
-				break;
-
 			case 'screenshot':
-				classNames = 'theme__sheet-preview-demo-site theme__sheet-screenshot-demo-site';
+				classNames = 'theme__sheet-preview-demo-site';
 				break;
 		}
 
