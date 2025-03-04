@@ -27,7 +27,7 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"css-loader": "^6.11.0",
 		"mini-css-extract-plugin": "^1.6.2",
-		"webpack": "^5.97.1"
+		"webpack": "^5.98.0"
 	},
 	"peerDependencies": {
 		"webpack": "^5.97.1"

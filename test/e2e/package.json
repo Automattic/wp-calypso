@@ -28,7 +28,7 @@
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@babel/core": "^7.16.0",
-		"webpack": "^5.63.0"
+		"webpack": "^5.98.0"
 	},
 	"dependencies": {
 		"@automattic/calypso-babel-config": "workspace:^",

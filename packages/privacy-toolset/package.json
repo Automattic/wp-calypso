@@ -53,6 +53,6 @@
 		"postcss": "^8.5.1",
 		"require-from-string": "^2.0.2",
 		"typescript": "^5.3.3",
-		"webpack": "^5.97.1"
+		"webpack": "^5.98.0"
 	}
 }

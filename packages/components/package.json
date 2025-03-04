@@ -83,7 +83,7 @@
 		"postcss": "^8.5.1",
 		"resize-observer-polyfill": "^1.5.1",
 		"typescript": "^5.3.3",
-		"webpack": "^5.97.1"
+		"webpack": "^5.98.0"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",

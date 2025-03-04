@@ -67,7 +67,7 @@
 		"node-fetch": "^2.7.0",
 		"path-browserify": "^1.0.1",
 		"postcss": "^8.5.1",
-		"webpack": "^5.97.1",
+		"webpack": "^5.98.0",
 		"webpack-bundle-analyzer": "^4.10.2"
 	}
 }
