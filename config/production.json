@@ -154,7 +154,7 @@
 		"ssr/log-prefetch-errors": true,
 		"ssr/prefetch-timebox": true,
 		"ssr/sample-log-cache-misses": true,
-		"stats/chart-library": false,
+		"stats/chart-library": true,
 		"stats/empty-module-traffic": true,
 		"stats/empty-module-v2": true,
 		"stats/locations": true,
