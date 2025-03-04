@@ -6,6 +6,17 @@ body.is-section-signup .is-woocommerce-install .signup__step.is-business-info {
 	.step-business-info__components-group .components-checkbox-control:not(:last-child) {
 		margin-bottom: $grid-unit;
 	}
+
+	&:has(.step-business-info__info-section) {
+		align-items: normal;
+		justify-content: center;
+	}
+
+	.step-business-info__info-section {
+		.wpcom__loading {
+			margin: calc(32vh + 12px) auto 0;
+		}
+	}
 }
 
 .step-business-info__components-group-label {
