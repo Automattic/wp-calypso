@@ -127,11 +127,11 @@ $accent-inverted: $gray-900;
 				left: 50%;
 				transform: translate(-50%, 9px);
 				border-radius: 50%;
-				border: 2px solid $gray-300;
+				border: 2px solid #3858e9;
 			}
 	
 			&.is-selected::before {
-				border-color: $accent-inverted;
+				border-color: $white;
 			}
 		}
 	}	
