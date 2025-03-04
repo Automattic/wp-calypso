@@ -149,10 +149,6 @@ class StatModuleChartTabs extends Component {
 		this.props.recordTracksEvent( CHART_TYPE_EVENTS[ event_from ][ newType ] );
 	};
 
-	getInitialChartType() {
-		return getChartType( this.props.siteId );
-	}
-
 	formatLineChartTimeTick = ( date ) => {
 		// Align the format with the original chart data parser.
 		const timeformat = chartLabelformats[ this.props.selectedPeriod ];
