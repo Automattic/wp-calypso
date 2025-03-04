@@ -8,7 +8,6 @@ import AsyncLoad from 'calypso/components/async-load';
 import UplotChart from 'calypso/components/chart-uplot';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
 import { useSelector } from 'calypso/state';
-import { getSiteOption } from 'calypso/state/sites/selectors';
 import useCssVariable from '../hooks/use-css-variable';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsPeriodHeader from '../stats-period-header';
@@ -76,13 +75,12 @@ type ChartDataPoint = {
 
 const transformLineChartData = (
 	data: SubscribersData[],
-	hasAddedPaidSubscriptionProduct: boolean,
-	gmtOffset: number = 0
+	hasAddedPaidSubscriptionProduct: boolean
 ): ChartDataPoint[][] => {
 	const subscribersData: ChartDataPoint[] = [];
 	const paidSubscribersData: ChartDataPoint[] = [];
 	data?.map( ( point ) => {
-		const dateObj = parseLocalDate( point.period, gmtOffset );
+		const dateObj = parseLocalDate( point.period );
 		if ( isNaN( dateObj.getTime() ) ) {
 			return null;
 		}
@@ -125,7 +123,6 @@ export default function SubscribersChartSection( {
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const legendRef = useRef< HTMLDivElement >( null );
 	const translate = useTranslate();
-	const gmtOffset = useSelector( ( state ) => getSiteOption( state, siteId, 'gmt_offset' ) );
 
 	const formatTimeTick = useCallback(
 		( timestamp: number ) => {
@@ -198,12 +195,7 @@ export default function SubscribersChartSection( {
 		[ data?.data, hasAddedPaidSubscriptionProduct ]
 	);
 	const [ subscribersData, paidSubscribersData ] = useMemo(
-		() =>
-			transformLineChartData(
-				data?.data || [],
-				hasAddedPaidSubscriptionProduct,
-				gmtOffset as number
-			),
+		() => transformLineChartData( data?.data || [], hasAddedPaidSubscriptionProduct ),
 		[ data?.data, hasAddedPaidSubscriptionProduct ]
 	);
 
