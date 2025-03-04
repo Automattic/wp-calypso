@@ -160,8 +160,8 @@ function StatsLineChart( {
 		<div className={ clsx( 'stats-line-chart', className ) }>
 			{ isEmpty && (
 				<EmptyState
-					headingText={ translate( 'Real-time views' ) }
-					infoText={ translate( 'Collecting data… auto-refreshing in a minute…' ) }
+					headingText={ translate( 'No data available' ) }
+					infoText={ translate( 'Try selecting a different time frame.' ) }
 				/>
 			) }
 			{ ! isEmpty && (
