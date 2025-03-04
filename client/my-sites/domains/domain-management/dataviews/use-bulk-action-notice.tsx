@@ -1,69 +1,125 @@
 import { JobStatus } from '@automattic/data-stores';
-import { TranslateOptionsPlural, useTranslate } from 'i18n-calypso';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { hasTranslation } from '@wordpress/i18n';
+import { translate, useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import wpcomRequest from 'wpcom-proxy-request';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { useDomainsDataViewsContext } from './use-context';
 
-type ExistingReactNode = React.ReactElement | string | number;
-type TranslateFunction = (
-	original: string,
-	plural: string,
-	options: TranslateOptionsPlural
-) => ExistingReactNode;
+type TranslateFunction = typeof translate;
 
-const getSuccessMessage = ( job: JobStatus, translate: TranslateFunction ) => {
+const fallbackSuccessMessage = ( job: JobStatus, translate: TranslateFunction ) => {
+	return job.success.length > 1
+		? translate( 'Bulk domain updates finished successfully.' )
+		: translate( 'Domain update finished successfully.' );
+};
+
+const getSuccessMessage = (
+	job: JobStatus,
+	translate: TranslateFunction,
+	isEnglishLocale: boolean
+) => {
 	if ( job.action !== 'set_auto_renew' ) {
-		return translate( 'Your domain has been updated.', 'Your domains have been updated.', {
-			count: job.success.length,
-		} );
+		if ( isEnglishLocale || hasTranslation( 'Your domain has been updated.' ) ) {
+			return translate( 'Your domain has been updated.', 'Your domains have been updated.', {
+				count: job.success.length,
+			} );
+		}
+
+		return fallbackSuccessMessage( job, translate );
 	}
 
 	// If the user tried to enable auto-renew:
 	if ( job.params.auto_renew ) {
+		if (
+			isEnglishLocale ||
+			hasTranslation( 'Automatic renewal has been enabled for your domain.' )
+		) {
+			return translate(
+				'Automatic renewal has been enabled for your domain.',
+				'Automatic renewal has been enabled for your domains.',
+				{ count: job.success.length }
+			);
+		}
+
+		return fallbackSuccessMessage( job, translate );
+	}
+
+	// If the user tried to disable auto-renew:
+	if (
+		isEnglishLocale ||
+		hasTranslation( 'Automatic renewal has been disabled for your domain.' )
+	) {
 		return translate(
-			'Automatic renewal has been enabled for your domain.',
-			'Automatic renewal has been enabled for your domains.',
+			'Automatic renewal has been disabled for your domain.',
+			'Automatic renewal has been disabled for your domains.',
 			{ count: job.success.length }
 		);
 	}
 
-	// If the user tried to disable auto-renew:
-	return translate(
-		'Automatic renewal has been disabled for your domain.',
-		'Automatic renewal has been disabled for your domains.',
-		{ count: job.success.length }
-	);
+	return fallbackSuccessMessage( job, translate );
 };
 
-const getFailureMessage = ( job: JobStatus, translate: TranslateFunction ) => {
+const fallbackFailureMessage = ( job: JobStatus, translate: TranslateFunction ) => {
+	return translate( 'Some domain updates were not successful.' );
+};
+
+const getFailureMessage = (
+	job: JobStatus,
+	translate: TranslateFunction,
+	isEnglishLocale: boolean
+) => {
 	if ( job.action !== 'set_auto_renew' ) {
-		return translate(
-			'Your domain update has failed.',
-			'Some domain updates were not successful.',
-			{ count: job.failed.length }
-		);
+		if ( isEnglishLocale || hasTranslation( 'Your domain update has failed.' ) ) {
+			return translate(
+				'Your domain update has failed.',
+				'Some domain updates were not successful.',
+				{ count: job.failed.length }
+			);
+		}
+
+		return fallbackFailureMessage( job, translate );
 	}
 
 	if ( job.params.auto_renew ) {
+		if (
+			isEnglishLocale ||
+			hasTranslation(
+				'We were unable to enable automatic renewal for your domain. Please try again.'
+			)
+		) {
+			return translate(
+				'We were unable to enable automatic renewal for your domain. Please try again.',
+				'We were unable to enable automatic renewal for your domains. Please try again.',
+				{ count: job.failed.length }
+			);
+		}
+
+		return fallbackFailureMessage( job, translate );
+	}
+
+	if (
+		isEnglishLocale ||
+		hasTranslation(
+			'We were unable to disable automatic renewal for your domain. Please try again.'
+		)
+	) {
 		return translate(
-			'We were unable to enable automatic renewal for your domain. Please try again.',
-			'We were unable to enable automatic renewal for your domains. Please try again.',
+			'We were unable to disable automatic renewal for your domain. Please try again.',
+			'We were unable to disable automatic renewal for your domains. Please try again.',
 			{ count: job.failed.length }
 		);
 	}
 
-	return translate(
-		'We were unable to disable automatic renewal for your domain. Please try again.',
-		'We were unable to disable automatic renewal for your domains. Please try again.',
-		{ count: job.failed.length }
-	);
+	return fallbackFailureMessage( job, translate );
 };
 
 export default function useBulkActionNotice() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const isEnglishLocale = useIsEnglishLocale();
 
 	const { completedJobs, handleRestartDomainStatusPolling, deleteBulkActionStatus } =
 		useDomainsDataViewsContext();
@@ -93,7 +149,7 @@ export default function useBulkActionNotice() {
 		unprocessedJobs.map( ( job ) => {
 			if ( job.failed.length ) {
 				dispatch(
-					errorNotice( getFailureMessage( job, translate ), {
+					errorNotice( getFailureMessage( job, translate, isEnglishLocale ), {
 						onDismissClick: deleteBulkActionStatusOnDismiss,
 					} )
 				);
@@ -102,7 +158,7 @@ export default function useBulkActionNotice() {
 			}
 
 			dispatch(
-				successNotice( getSuccessMessage( job, translate ), {
+				successNotice( getSuccessMessage( job, translate, isEnglishLocale ), {
 					onDismissClick: deleteBulkActionStatusOnDismiss,
 				} )
 			);
