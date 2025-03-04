@@ -53,21 +53,8 @@
 	margin-left: auto;
 }
 
-.migration-instructions-provisioning__error-actions {
-	display: flex;
-	gap: 12px;
-	justify-content: space-between;
-	margin-top: 12px;
-
-	@media (max-width: $break-mobile) {
-		flex-direction: column-reverse;
-
-		.components-button {
-			&.has-icon.has-text {
-				justify-content: center;
-			}
-
-			justify-content: center;
-		}
+.migration-instructions-provisioning__error.components-notice {
+	.components-notice__actions:not(:empty) {
+		padding-top: 1em;
 	}
 }
