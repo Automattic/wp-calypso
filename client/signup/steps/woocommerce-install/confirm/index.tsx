@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import DomainEligibilityWarning from 'calypso/components/eligibility-warnings/domain-warning';
 import PlanWarning from 'calypso/components/eligibility-warnings/plan-warning';
 import EligibilityWarningsList from 'calypso/components/eligibility-warnings/warnings-list';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import Loading from 'calypso/components/loading';
 import WarningCard from 'calypso/components/warning-card';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -103,7 +103,6 @@ export default function Confirm( props: WooCommerceInstallProps ) {
 	function getContent() {
 		return (
 			<>
-				<div className="confirm__info-section" />
 				<div className="confirm__instructions-container">
 					{ getWPComSubdomainWarningContent() }
 					{ getCheckoutContent() }
@@ -138,7 +137,7 @@ export default function Confirm( props: WooCommerceInstallProps ) {
 	if ( ! siteId || ! isDataReady || isReadyToStart ) {
 		return (
 			<div className="confirm__info-section">
-				<LoadingEllipsis />
+				<Loading />
 			</div>
 		);
 	}

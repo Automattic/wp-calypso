@@ -2,13 +2,16 @@
 
 body.is-section-signup .is-woocommerce-install .signup__step.is-confirm {
 	@include woocommerce-install-two-column-layout;
-}
 
-.confirm__info-section {
-	flex: 1;
+	&:has(.confirm__info-section) {
+		align-items: normal;
+		justify-content: center;
+	}
 
-	.wpcom__loading-ellipsis {
-		display: block;
-		margin: 0 auto;
+	.confirm__info-section {
+		flex: 1;
+		.wpcom__loading {
+			margin: calc(32vh + 12px) auto 0;
+		}
 	}
 }
