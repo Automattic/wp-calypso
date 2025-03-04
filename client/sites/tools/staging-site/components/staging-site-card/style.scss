@@ -1,10 +1,6 @@
-.tools-staging-site__site-url {
+.tools-staging-site__site-url.is-link {
 	word-wrap: break-word;
 	text-decoration: none;
-
-	&.is-link {
-		text-decoration: none;
-	}
 
 	svg {
 		vertical-align: middle;
