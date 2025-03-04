@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { withGeoLocation } from 'calypso/data/geo/with-geolocation';
 import flows from 'calypso/signup/config/flows';
 import NavigationLink from 'calypso/signup/navigation-link';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -39,6 +40,7 @@ class StepWrapper extends Component {
 		queryParams: PropTypes.object,
 		customizedActionButtons: PropTypes.element,
 		userLoggedIn: PropTypes.bool,
+		geo: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -186,6 +188,7 @@ class StepWrapper extends Component {
 			customizedActionButtons,
 			isExtraWideLayout,
 			isSticky,
+			geo,
 		} = this.props;
 
 		const backButton = ! hideBack && this.renderBack();
@@ -213,7 +216,9 @@ class StepWrapper extends Component {
 
 		const queryParams = new URLSearchParams( window?.location.search );
 		const flags = queryParams.get( 'flags' );
-		const isHelpCenterLinkEnabled = flags === 'signup/help-center-link';
+		const isHelpCenterLinkEnabled =
+			flow?.enabledHelpCenterGeos.includes( geo?.country_short ) &&
+			flags === 'signup/help-center-link';
 
 		return (
 			<>
@@ -280,4 +285,4 @@ export default connect( ( state, ownProps ) => {
 		backUrl,
 		userLoggedIn: isUserLoggedIn( state ),
 	};
-} )( localize( StepWrapper ) );
+} )( localize( withGeoLocation( StepWrapper ) ) );
