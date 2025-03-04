@@ -56,5 +56,6 @@
 .migration-instructions-provisioning__error.components-notice {
 	.components-notice__actions:not(:empty) {
 		padding-top: 1em;
+		row-gap: 1em;
 	}
 }
