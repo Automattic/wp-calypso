@@ -425,7 +425,6 @@ export function generateFlows( {
 			lastModified: '2024-05-16',
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
-			enablePremiumSupport: true,
 			get helpCenterButtonCopy() {
 				return translate( 'Questions?' );
 			},
@@ -452,7 +451,6 @@ export function generateFlows( {
 			lastModified: '2024-05-16',
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
-			enablePremiumSupport: true,
 			get helpCenterButtonCopy() {
 				return translate( 'Questions?' );
 			},
@@ -471,7 +469,6 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'siteSlug', 'back_to' ],
 			optionalDependenciesInQuery: [ 'back_to' ],
 			lastModified: '2024-06-14',
-			enablePremiumSupport: true,
 			get helpCenterButtonCopy() {
 				return translate( 'Questions?' );
 			},
