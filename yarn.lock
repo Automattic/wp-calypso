@@ -1031,7 +1031,7 @@ __metadata:
     "@rollup/plugin-typescript": "npm:^10.0.1"
     "@types/jasmine": "npm:^3.10.18"
     "@types/karma": "npm:^6.3.9"
-    "@types/karma-spec-reporter": "npm:^0.0.3"
+    "@types/karma-spec-reporter": "npm:^0.0.6"
     "@types/karma-summary-reporter": "npm:^3.1.3"
     "@types/node": "npm:^22.7.5"
     "@types/ua-parser-js": "npm:^0.7.36"
@@ -1047,7 +1047,7 @@ __metadata:
     karma-chrome-launcher: "npm:^3.1.1"
     karma-firefox-launcher: "npm:^2.1.2"
     karma-jasmine: "npm:^4.0.2"
-    karma-spec-reporter: "npm:^0.0.34"
+    karma-spec-reporter: "npm:^0.0.36"
     karma-summary-reporter: "npm:^3.1.1"
     karma-typescript: "npm:^5.5.3"
     prettier: "npm:^3.4.2"
@@ -8659,12 +8659,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/karma-spec-reporter@npm:^0.0.3":
-  version: 0.0.3
-  resolution: "@types/karma-spec-reporter@npm:0.0.3"
+"@types/karma-spec-reporter@npm:^0.0.6":
+  version: 0.0.6
+  resolution: "@types/karma-spec-reporter@npm:0.0.6"
   dependencies:
     "@types/karma": "npm:*"
-  checksum: 7e119f187593526990294763ed45b016879184528d333e74ccb1855a62901400a22ea62c96473bc8ce010275da9728bce53acd5ee8fecaf65d8e2061669e1466
+  checksum: 0af621a31aa0adf88997111ab3b41dde7fd1995b57784869dc97d5b949188e3364a4ac826b1eb45f51fa775ecda307148b0a16a19a3bfa645c01454c0ca62dbc
   languageName: node
   linkType: hard
 
@@ -23653,17 +23653,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"karma-spec-reporter@npm:^0.0.34":
-  version: 0.0.34
-  resolution: "karma-spec-reporter@npm:0.0.34"
-  dependencies:
-    colors: "npm:1.4.0"
-  peerDependencies:
-    karma: ">=0.9"
-  checksum: 1b76006f3d9f0ce0ff93193542e452bdb9db2d4923e7f96c396a7846063d7e138669f634ef346d79e054441af31163ea125512a059c59c462d11f33e52a82e88
-  languageName: node
-  linkType: hard
-
 "karma-spec-reporter@npm:^0.0.35":
   version: 0.0.35
   resolution: "karma-spec-reporter@npm:0.0.35"
@@ -23672,6 +23661,17 @@ __metadata:
   peerDependencies:
     karma: ">=0.9"
   checksum: d2b6124ed14471206d811884f322a04acbf1fd7f0ac157743a7068fb192e6a58b115a2bc123a4d43f12c89223a99c70e56afe77ad1c6d80476d45b8fb0f81db0
+  languageName: node
+  linkType: hard
+
+"karma-spec-reporter@npm:^0.0.36":
+  version: 0.0.36
+  resolution: "karma-spec-reporter@npm:0.0.36"
+  dependencies:
+    colors: "npm:1.4.0"
+  peerDependencies:
+    karma: ">=0.9"
+  checksum: ae2e9cb5e2af74f0d4d8faa752c7c7204c296566906ea0d1a0eb98e76a02224b3aa60fe58c2b7cb40df4161ecd8a89feb0bd3ced5fffcae4fd5a40b72d48db9d
   languageName: node
   linkType: hard
 
