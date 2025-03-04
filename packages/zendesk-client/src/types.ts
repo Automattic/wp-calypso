@@ -14,7 +14,7 @@ export type UserFields = {
 	messaging_ai_chat_id?: string | number;
 	messaging_initial_message?: string;
 	messaging_plan?: string;
-	messaging_source?: string;
+	messaging_source?: string | null;
 	messaging_url?: string | null;
 	messaging_flow?: string | null;
 	/**
