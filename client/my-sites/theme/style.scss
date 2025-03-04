@@ -275,10 +275,17 @@ $button-border: 4px;
 	&:has(.theme__sheet-web-preview:hover),
 	&:has(.theme__sheet-web-preview:focus),
 	&:has(.theme__sheet-screenshot:hover),
-	&:has(.theme__sheet-screenshot:focus) {
+	&:has(.theme__sheet-screenshot:focus),
+	&:has(.theme__sheet-preview-demo-site:hover),
+	&:has(.theme__sheet-preview-demo-site:focus) {
 		.theme__sheet-preview-demo-site {
 			opacity: 1;
 			animation: theme__sheet-preview-demo-site 150ms ease-in-out;
+		}
+
+		.theme__sheet-img,
+		.theme-preview__frame-wrapper {
+			opacity: 0.8;
 		}
 	}
 }
@@ -373,12 +380,6 @@ $button-border: 4px;
 			}
 		}
 	}
-	&:hover,
-	&:focus {
-		.theme-preview__frame-wrapper {
-			opacity: 0.8;
-		}
-	}
 
 	.theme-preview__container {
 		position: relative;
@@ -386,15 +387,6 @@ $button-border: 4px;
 
 	.theme-preview__frame {
 		transform: none !important;
-	}
-}
-
-.theme__sheet-screenshot {
-	&:hover,
-	&:focus {
-		.theme__sheet-img {
-			opacity: 0.8;
-		}
 	}
 }
 
@@ -471,7 +463,6 @@ $button-border: 4px;
 		left: 0;
 		margin-left: 50%;
 		margin-top: -16px;
-		pointer-events: none;
 		top: 50%;
 		transform: translate(-50%, 0);
 	}

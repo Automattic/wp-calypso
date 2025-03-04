@@ -529,18 +529,20 @@ class ThemeSheet extends Component {
 		}
 
 		return (
-			<div className="theme__sheet-web-preview">
+			<>
 				{ this.renderPreviewButton( 'web-preview' ) }
-				<ThemeWebPreview
-					url={ url }
-					inlineCss={ baseStyleVariationInlineCss + selectedStyleVariationInlineCss }
-					iframeScaleRatio={ 0.5 }
-					iframeToken={ iframeToken }
-					isShowFrameBorder={ false }
-					isShowDeviceSwitcher={ false }
-					isFitHeight
-				/>
-			</div>
+				<div className="theme__sheet-web-preview">
+					<ThemeWebPreview
+						url={ url }
+						inlineCss={ baseStyleVariationInlineCss + selectedStyleVariationInlineCss }
+						iframeScaleRatio={ 0.5 }
+						iframeToken={ iframeToken }
+						isShowFrameBorder={ false }
+						isShowDeviceSwitcher={ false }
+						isFitHeight
+					/>
+				</div>
+			</>
 		);
 	};
 
