@@ -1,5 +1,4 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useLayoutEffect, useState } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
@@ -8,6 +7,7 @@ import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar
 import {
 	A4A_REFERRALS_LINK,
 	A4A_MIGRATIONS_LINK,
+	A4A_WOOPAYMENTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
@@ -22,31 +22,51 @@ import { getAccountStatus } from '../../lib/get-account-status';
 
 import './style.scss';
 
-export default function ReferralsBankDetails( {
-	isAutomatedReferral = false,
-	isMigrations = false,
-}: {
-	isAutomatedReferral?: boolean;
-	isMigrations?: boolean;
-} ) {
+const getPageInfo = (
+	translate: ReturnType< typeof useTranslate >,
+	type?: 'migrations' | 'woopayments',
+	isDesktop?: boolean
+) => {
+	switch ( type ) {
+		case 'migrations':
+			return {
+				title: isDesktop
+					? translate( 'Migrations: Set up secure payments' )
+					: translate( 'Migrations: Payout Settings' ),
+				mainPageBreadCrumb: {
+					label: translate( 'Migrations' ),
+					href: A4A_MIGRATIONS_LINK,
+				},
+			};
+		case 'woopayments':
+			return {
+				title: isDesktop
+					? translate( 'WooPayments Commissions: Set up secure payments' )
+					: translate( 'WooPayments: Payout Settings' ),
+				mainPageBreadCrumb: {
+					label: translate( 'WooPayments Commissions' ),
+					href: A4A_WOOPAYMENTS_LINK,
+				},
+			};
+		default:
+			return {
+				title: isDesktop
+					? translate( 'Your referrals and commissions: Set up secure payments' )
+					: translate( 'Referrals: Payout Settings' ),
+				mainPageBreadCrumb: {
+					label: isDesktop
+						? translate( 'Your referrals and commissions' )
+						: translate( 'Referrals' ),
+					href: A4A_REFERRALS_LINK,
+				},
+			};
+	}
+};
+export default function ReferralsBankDetails( { type }: { type?: 'migrations' | 'woopayments' } ) {
 	const translate = useTranslate();
 	const isDesktop = useDesktopBreakpoint();
 
 	const [ iFrameHeight, setIFrameHeight ] = useState( '100%' );
-
-	const automatedReferralTitle = isDesktop
-		? translate( 'Your referrals and commissions: Set up secure payments' )
-		: translate( 'Payment Settings' );
-
-	let title = isAutomatedReferral
-		? automatedReferralTitle
-		: translate( 'Referrals: Add bank details' );
-
-	if ( isMigrations ) {
-		title = isDesktop
-			? translate( 'Migrations: Set up secure payments' )
-			: translate( 'Migrations: Payment Settings' );
-	}
 
 	const { data, isFetching } = useGetTipaltiIFrameURL();
 	const { data: tipaltiData } = useGetTipaltiPayee();
@@ -69,43 +89,24 @@ export default function ReferralsBankDetails( {
 		};
 	}, [] );
 
-	let mainPageBreadCrumb = {
-		label:
-			isAutomatedReferral && isDesktop
-				? translate( 'Your referrals and commissions' )
-				: translate( 'Referrals' ),
-		href: A4A_REFERRALS_LINK,
-	};
-
-	if ( isMigrations ) {
-		mainPageBreadCrumb = { label: translate( 'Migrations' ), href: A4A_MIGRATIONS_LINK };
-	}
+	const { title, mainPageBreadCrumb } = getPageInfo( translate, type, isDesktop );
 
 	return (
-		<Layout
-			className={ clsx( 'bank-details__layout', {
-				'bank-details__layout--automated': isAutomatedReferral && ! isMigrations,
-			} ) }
-			title={ title }
-			wide
-			sidebarNavigation={ ! isMigrations ? <MobileSidebarNavigation /> : undefined }
-		>
+		<Layout className="bank-details__layout" title={ title } wide>
 			<LayoutTop>
 				<LayoutHeader>
 					<Breadcrumb
-						hideOnMobile={ isMigrations }
+						hideOnMobile
 						items={ [
 							mainPageBreadCrumb,
 							{
-								label: isAutomatedReferral
-									? translate( 'Set up secure payments' )
-									: translate( 'Add bank details' ),
+								label: translate( 'Set up secure payments' ),
 							},
 						] }
 					/>
 					{ accountStatus && (
-						<Actions useColumnAlignment={ isMigrations }>
-							{ isMigrations && <MobileSidebarNavigation /> }
+						<Actions useColumnAlignment>
+							<MobileSidebarNavigation />
 							<div className="bank-details__status">
 								{ translate( 'Payment status: {{badge}}%(status)s{{/badge}}', {
 									args: {
@@ -132,30 +133,27 @@ export default function ReferralsBankDetails( {
 
 			<LayoutBody>
 				<>
-					{ isAutomatedReferral && (
-						<>
-							<div className="bank-details__heading">
-								{ translate( 'Connect your bank to receive payments' ) }
-							</div>
-							<div className="bank-details__subheading">
-								{ translate(
-									'Enter your bank details to start receiving payments through {{a}}Tipalti{{/a}}↗, our secure payments platform.',
-									{
-										components: {
-											a: (
-												<a
-													className="referrals-overview__link"
-													href="https://tipalti.com/"
-													target="_blank"
-													rel="noopener noreferrer"
-												/>
-											),
-										},
-									}
-								) }
-							</div>
-						</>
-					) }
+					<div className="bank-details__heading">
+						{ translate( 'Connect your bank to receive payments' ) }
+					</div>
+					<div className="bank-details__subheading">
+						{ translate(
+							'Enter your bank details to start receiving payments through {{a}}Tipalti{{/a}}↗, our secure payments platform.',
+							{
+								components: {
+									a: (
+										<a
+											className="referrals-overview__link"
+											href="https://tipalti.com/"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						) }
+					</div>
+
 					<div className="bank-details__iframe-container">
 						{ isFetching ? (
 							<TextPlaceholder />
