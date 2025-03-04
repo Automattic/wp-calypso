@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
@@ -97,13 +97,17 @@ const WooPaymentsDashboard = () => {
 		setSitesWithPluginsStates( states );
 	}, [ sitesWithPlugins, licensesWithWooPayments, createInitialSiteState ] );
 
-	if ( isLoadingLicensesWithWooPayments || isLoadingSitesWithPlugins ) {
-		return <div>Loading...</div>;
-	}
+	const content = useMemo( () => {
+		if ( isLoadingLicensesWithWooPayments || isLoadingSitesWithPlugins ) {
+			return <div>Loading...</div>;
+		}
 
-	if ( ! sitesWithPluginsStates.length ) {
-		return <div>No sites with WooPayments</div>;
-	}
+		if ( ! sitesWithPluginsStates.length ) {
+			return <div>No sites with WooPayments</div>;
+		}
+
+		return <WooPaymentsDashboardContent />;
+	}, [ isLoadingLicensesWithWooPayments, isLoadingSitesWithPlugins, sitesWithPluginsStates ] );
 
 	return (
 		<Layout className="woopayments-dashboard" title={ title } wide>
@@ -124,9 +128,7 @@ const WooPaymentsDashboard = () => {
 					</LayoutHeader>
 				</LayoutTop>
 
-				<LayoutBody>
-					<WooPaymentsDashboardContent />
-				</LayoutBody>
+				<LayoutBody>{ content }</LayoutBody>
 			</WooPaymentsProvider>
 		</Layout>
 	);
