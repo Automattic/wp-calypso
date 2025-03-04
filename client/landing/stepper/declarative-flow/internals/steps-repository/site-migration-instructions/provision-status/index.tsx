@@ -1,8 +1,8 @@
-import { Button, Spinner } from '@wordpress/components';
-import { Icon, closeSmall, check, external } from '@wordpress/icons';
+import { Notice, Spinner } from '@wordpress/components';
+import { Icon, check } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { recordMigrationInstructionsLinkClick } from '../tracking';
-import type { FC, ReactNode } from 'react';
+import type { ComponentProps, FC, MouseEvent } from 'react';
 import './style.scss';
 
 export type Status = 'idle' | 'pending' | 'success' | 'error';
@@ -60,65 +60,65 @@ export const ProvisionStatus: FC< ProvisionStatusProps > = ( { status, navigateT
 		return;
 	}
 
-	let text: ReactNode = translate( "We're preparing everything to ensure your new site is ready." );
-	let icon = <Spinner />;
+	if ( currentAction.status !== 'error' ) {
+		return (
+			<div className="migration-instructions-provisioning">
+				<p className="migration-instructions-provisioning__message">
+					{ translate( "We're preparing everything to ensure your new site is ready." ) }
+				</p>
 
-	// Error handler.
-	if ( currentAction.status === 'error' ) {
-		const contactClickHandler = () => {
-			recordMigrationInstructionsLinkClick( 'error-contact-support' );
-		};
+				<div className="migration-instructions-provisioning__action">
+					<div className="migration-instructions-provisioning__action-icon">
+						<Spinner />
+					</div>
 
-		const requestDifmClickHandler = () => {
-			recordMigrationInstructionsLinkClick( 'error-request-difm' );
-			navigateToDoItForMe();
-		};
+					<div className="migration-instructions-provisioning__action-text">
+						{ currentAction.text }
+					</div>
 
-		text = (
-			<>
-				{ translate( 'Sorry, there was a problem setting up your site.' ) }
-				<span className="migration-instructions-provisioning__error-actions">
-					<Button
-						className="migration-instructions-provisioning__support-link"
-						variant="secondary"
-						onClick={ contactClickHandler }
-						icon={ <Icon icon={ external } /> }
-						iconPosition="right"
-					>
-						{ translate( 'Contact support' ) }
-					</Button>
-					<Button
-						className="migration-instructions-provisioning__difm-link"
-						variant="secondary"
-						onClick={ requestDifmClickHandler }
-					>
-						{ translate( 'Let us migrate your site' ) }
-					</Button>
-				</span>
-			</>
-		);
-		icon = (
-			<div className="migration-instructions-provisioning__action-icon-error">
-				<Icon icon={ closeSmall } />
+					<div className="migration-instructions-provisioning__action-progress">
+						{ currentActionIndex + 1 }/{ actions.length }
+					</div>
+				</div>
 			</div>
 		);
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const contactClickHandler = ( event: MouseEvent< HTMLButtonElement > ) => {
+		recordMigrationInstructionsLinkClick( 'error-contact-support' );
+	};
+
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const requestDifmClickHandler = ( event: MouseEvent< HTMLButtonElement > ) => {
+		recordMigrationInstructionsLinkClick( 'error-request-difm' );
+		navigateToDoItForMe();
+	};
+
+	const noticeActions = [
+		{
+			label: translate( 'Contact support' ),
+			onClick: contactClickHandler,
+			variant: 'primary',
+		},
+		{
+			label: translate( 'Let us migrate your site' ),
+			onClick: requestDifmClickHandler,
+			variant: 'tertiary',
+			// Ensure we use the tertiary variant - onClick defaults to a secondary button
+			noDefaultClasses: true,
+		},
+	] as ComponentProps< typeof Notice >[ 'actions' ];
+
 	return (
-		<div className="migration-instructions-provisioning">
-			<p className="migration-instructions-provisioning__message">{ text }</p>
-
-			<div className="migration-instructions-provisioning__action">
-				<div className="migration-instructions-provisioning__action-icon">{ icon }</div>
-
-				<div className="migration-instructions-provisioning__action-text">
-					{ currentAction.text }
-				</div>
-
-				<div className="migration-instructions-provisioning__action-progress">
-					{ currentActionIndex + 1 }/{ actions.length }
-				</div>
-			</div>
-		</div>
+		<Notice
+			status="warning"
+			actions={ noticeActions }
+			className="migration-instructions-provisioning__error"
+			isDismissible={ false }
+			politeness="assertive"
+		>
+			{ translate( 'Sorry, there was a problem setting up your site.' ) }
+		</Notice>
 	);
 };
