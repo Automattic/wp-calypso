@@ -3,6 +3,7 @@ import wpcom from 'calypso/lib/wp';
 
 interface TransferWithSoftwareStatusResponse {
 	software_transfer_status: string;
+	atomic_transfer_status: string;
 	[ key: string ]: unknown; // Allow any additional fields in the response
 }
 
@@ -30,6 +31,7 @@ export const useTransferWithSoftwareStatus = (
 		queryFn: () => getTransferWithSoftwareStatus( siteId, atomicTransferId ),
 		select: ( data: TransferWithSoftwareStatusResponse ) => ( {
 			software_transfer_status: data.software_transfer_status,
+			atomic_transfer_status: data.atomic_transfer_status,
 		} ),
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false,
