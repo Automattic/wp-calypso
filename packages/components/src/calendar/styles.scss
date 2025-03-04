@@ -5,7 +5,7 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/colors";
  
-$font-weight-heading: 600; // not defined in base-styles, but defined in DatePicker style.ts
+$font-weight-heading: 600; // not defined in base-styles, but defined in DatePicker core style.ts
 $accent-inverted: $gray-900;
 
 .calendar {

@@ -5,17 +5,17 @@ import { useState, useEffect } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import DatePicker from '../calendar';
+import Calendar from '../calendar';
 import { daysFromNow, isWeekend } from './utils';
 /**
  * Types
  */
 import type { Meta, StoryFn } from '@storybook/react';
 
-const meta: Meta< typeof DatePicker > = {
+const meta: Meta< typeof Calendar > = {
 	title: 'packages/components/Calendar',
-	id: 'packages-components-datepicker',
-	component: DatePicker,
+	id: 'packages-components-calendar',
+	component: Calendar,
 	argTypes: {
 		currentDate: { control: 'date' },
 		onChange: { action: 'onChange', control: false },
@@ -27,13 +27,13 @@ const meta: Meta< typeof DatePicker > = {
 };
 export default meta;
 
-const Template: StoryFn< typeof DatePicker > = ( { currentDate, onChange, ...args } ) => {
+const Template: StoryFn< typeof Calendar > = ( { currentDate, onChange, ...args } ) => {
 	const [ date, setDate ] = useState( currentDate );
 	useEffect( () => {
 		setDate( currentDate );
 	}, [ currentDate ] );
 	return (
-		<DatePicker
+		<Calendar
 			{ ...args }
 			currentDate={ date }
 			onChange={ ( newDate ) => {
@@ -44,12 +44,12 @@ const Template: StoryFn< typeof DatePicker > = ( { currentDate, onChange, ...arg
 	);
 };
 
-export const Default: StoryFn< typeof DatePicker > = Template.bind( {} );
+export const Default: StoryFn< typeof Calendar > = Template.bind( {} );
 Default.args = {
 	currentDate: new Date(),
 };
 
-export const WithEvents: StoryFn< typeof DatePicker > = Template.bind( {} );
+export const WithEvents: StoryFn< typeof Calendar > = Template.bind( {} );
 WithEvents.args = {
 	currentDate: new Date(),
 	events: [
@@ -60,7 +60,7 @@ WithEvents.args = {
 	],
 };
 
-export const WithInvalidDates: StoryFn< typeof DatePicker > = Template.bind( {} );
+export const WithInvalidDates: StoryFn< typeof Calendar > = Template.bind( {} );
 WithInvalidDates.args = {
 	currentDate: new Date(),
 	isInvalidDate: isWeekend,

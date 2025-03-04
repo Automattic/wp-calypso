@@ -1,11 +1,11 @@
-export type DatePickerEvent = {
+export type CalendarEvent = {
 	/**
 	 * The date of the event.
 	 */
 	date: Date;
 };
 
-export type DatePickerProps = {
+export type CalendarProps = {
 	/**
 	 * The current date and time at initialization. Optionally pass in a `null`
 	 * value to specify no date is currently selected.
@@ -36,7 +36,7 @@ export type DatePickerProps = {
 	 * List of events to show in the date picker. Each event will appear as a
 	 * dot on the day of the event.
 	 */
-	events?: DatePickerEvent[];
+	events?: CalendarEvent[];
 
 	/**
 	 * The day that the week should start on. 0 for Sunday, 1 for Monday, etc.

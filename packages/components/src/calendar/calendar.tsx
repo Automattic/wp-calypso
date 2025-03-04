@@ -29,25 +29,25 @@ import {
  * Internal dependencies
  */
 import { TIMEZONELESS_FORMAT } from './constants';
-import { inputToDate } from './utils';
 import { useLilius } from './use-lilius';
-import type { DatePickerProps } from './types';
+import { inputToDate } from './utils';
+import type { CalendarProps } from './types';
 import type { KeyboardEventHandler } from 'react';
 
 import './styles.scss';
 
 /**
- * DatePicker is a React component that renders a calendar for date selection.
+ * Calendar is a React component that renders a calendar for date selection.
  *
  * ```jsx
- * import { DatePicker } from '@wordpress/components';
+ * import { Calendar } from '@wordpress/components';
  * import { useState } from '@wordpress/element';
  *
- * const MyDatePicker = () => {
+ * const MyCalendar = () => {
  *   const [ date, setDate ] = useState( new Date() );
  *
  *   return (
- *     <DatePicker
+ *     <Calendar
  *       currentDate={ date }
  *       onChange={ ( newDate ) => setDate( newDate ) }
  *     />
@@ -55,14 +55,14 @@ import './styles.scss';
  * };
  * ```
  */
-export function DatePicker( {
+export function Calendar( {
 	currentDate,
 	onChange,
 	events = [],
 	isInvalidDate,
 	onMonthPreviewed,
 	startOfWeek: weekStartsOn = 0,
-}: DatePickerProps ) {
+}: CalendarProps ) {
 	const date = currentDate ? inputToDate( currentDate ) : new Date();
 
 	const {
@@ -309,4 +309,4 @@ function getDayLabel( date: Date, isSelected: boolean, numEvents: number ) {
 	return localizedDate;
 }
 
-export default DatePicker;
+export default Calendar;
