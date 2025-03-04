@@ -33,6 +33,8 @@ const ChartTabShape = PropTypes.shape( {
 	legendOptions: PropTypes.arrayOf( PropTypes.string ),
 } );
 
+const CHART_TYPE_STORAGE_KEY = ( siteId ) => `jetpack_stats_chart_type_${ siteId }`;
+
 class StatModuleChartTabs extends Component {
 	static propTypes = {
 		slug: PropTypes.string,
@@ -58,10 +60,11 @@ class StatModuleChartTabs extends Component {
 		chartContainerRef: PropTypes.object,
 		primaryColor: PropTypes.string,
 		secondaryColor: PropTypes.string,
+		siteId: PropTypes.number,
 	};
 
 	state = {
-		chartType: 'bar',
+		chartType: this.getInitialChartType(),
 	};
 
 	intervalId = null;
@@ -111,8 +114,21 @@ class StatModuleChartTabs extends Component {
 	};
 
 	handleChartTypeChange = ( newType ) => {
+		const { siteId } = this.props;
 		this.setState( { chartType: newType } );
+		if ( siteId ) {
+			localStorage.setItem( CHART_TYPE_STORAGE_KEY( siteId ), newType );
+		}
 	};
+
+	getInitialChartType() {
+		const { siteId } = this.props;
+		if ( ! siteId ) {
+			return 'bar';
+		}
+		const savedChartType = localStorage.getItem( CHART_TYPE_STORAGE_KEY( siteId ) );
+		return savedChartType || 'bar';
+	}
 
 	formatLineChartTimeTick = ( date ) => {
 		// Align the format with the original chart data parser.
