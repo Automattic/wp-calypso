@@ -13,6 +13,7 @@ import LoggedOutForm from 'calypso/components/logged-out-form';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import Notice from 'calypso/components/notice';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
+import { stripHTML } from 'calypso/lib/formatting';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
 import wpcom from 'calypso/lib/wp';
@@ -140,8 +141,13 @@ class PasswordlessSignupForm extends Component {
 
 	createAccountError = async ( error ) => {
 		this.submitTracksEvent( false, { action_message: error.message, error_code: error.error } );
-
-		if ( ! isExistingAccountError( error.error ) ) {
+		// This error only happens when users sign up with an email belongs to a8c.
+		if ( error.error === 'account_unactivated' ) {
+			this.setState( {
+				// No need to translate the error message, it's for a8c users only.
+				errorMessages: [ stripHTML( error.message ) ],
+			} );
+		} else if ( ! isExistingAccountError( error.error ) ) {
 			this.setState( {
 				errorMessages: [
 					this.props.translate(
