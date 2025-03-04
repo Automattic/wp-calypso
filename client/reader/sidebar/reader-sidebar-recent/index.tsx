@@ -37,7 +37,7 @@ type Props = {
 };
 
 const SITE_DISPLAY_CUTOFF = 8;
-const RECENT_PATH_REGEX = /^\/reader\/?(?:\?|$)/;
+const RECENT_PATH_REGEX = /^\/reader(?:\/recent\/\d+)?\/?(?:\?|$)/;
 
 const ReaderSidebarRecent = ( {
 	translate,
@@ -52,7 +52,7 @@ const ReaderSidebarRecent = ( {
 		( state ) => state.readerUi.sidebar.selectedRecentSite
 	);
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
-	const isRecentStream = RECENT_PATH_REGEX.test( path ); // likely need to adjust
+	const isRecentStream = RECENT_PATH_REGEX.test( path );
 
 	let sitesToShow = showAllSites ? sites : sites.slice( 0, SITE_DISPLAY_CUTOFF );
 	// const totalUnseenCount = sites.reduce( ( total, site ) => total + site.unseen_count, 0 );
