@@ -1,8 +1,9 @@
 import isAkismetRedirect from '../is-redirect-from-akismet';
 
 describe( 'isAkismetRedirect', () => {
-	test( 'should return false for null input', () => {
+	test( 'should return false for null or empty input', () => {
 		expect( isAkismetRedirect( null ) ).toBe( false );
+		expect( isAkismetRedirect( '' ) ).toBe( false );
 	} );
 
 	test( 'should return true for valid Akismet domains', () => {
