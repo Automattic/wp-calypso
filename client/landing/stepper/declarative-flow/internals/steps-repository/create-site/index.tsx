@@ -8,7 +8,6 @@ import {
 	isCopySiteFlow,
 	isImportFocusedFlow,
 	isMigrationSignupFlow,
-	isStartWritingFlow,
 	isEntrepreneurFlow,
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
