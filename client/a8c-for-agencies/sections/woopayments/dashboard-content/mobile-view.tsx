@@ -3,6 +3,8 @@ import {
 	ListItemCards,
 	ListItemCard,
 	ListItemCardContent,
+	ListItemCardActions,
+	type Action,
 } from 'calypso/a8c-for-agencies/components/list-item-cards';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import { useWooPaymentsContext } from '../context';
@@ -17,8 +19,10 @@ import type { SitesWithWooPaymentsState } from '../types';
 
 export default function SitesWithWooPaymentsMobileView( {
 	items,
+	actions,
 }: {
 	items: SitesWithWooPaymentsState[];
+	actions: Action[];
 } ) {
 	const translate = useTranslate();
 	const { woopaymentsData, isLoadingWooPaymentsData } = useWooPaymentsContext();
@@ -28,6 +32,7 @@ export default function SitesWithWooPaymentsMobileView( {
 			<ListItemCards>
 				{ items.map( ( item ) => (
 					<ListItemCard key={ item.blogId }>
+						<ListItemCardActions actions={ actions } item={ item } />
 						<ListItemCardContent title={ translate( 'Site' ) }>
 							<div className="sites-with-woopayments-list-mobile-view__column">
 								<SiteColumn site={ item.siteUrl } />

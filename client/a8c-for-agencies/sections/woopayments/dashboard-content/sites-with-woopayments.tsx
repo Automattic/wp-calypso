@@ -1,11 +1,14 @@
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
+import { external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useWooPaymentsContext } from '../context';
 import { getSiteData } from '../lib/site-data';
 import SitesWithWooPaymentsMobileView from './mobile-view';
@@ -24,6 +27,8 @@ export default function SitesWithWooPayments() {
 		woopaymentsData,
 		isLoadingWooPaymentsData,
 	} = useWooPaymentsContext();
+	const dispatch = useDispatch();
+
 	const isDesktop = useDesktopBreakpoint();
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
@@ -89,8 +94,28 @@ export default function SitesWithWooPayments() {
 		return filterSortAndPaginate( items, dataViewsState, fields );
 	}, [ items, dataViewsState, fields ] );
 
+	const actions = useMemo(
+		() => [
+			{
+				id: 'visit-wp-admin',
+				label: translate( 'Visit WP-Admin' ),
+				icon: external,
+				callback( items: SitesWithWooPaymentsState[] ) {
+					const isInstalled = items[ 0 ].state === 'active';
+					const siteUrl = items[ 0 ].siteUrl;
+					const url = isInstalled
+						? `${ siteUrl }/wp-admin/admin.php?page=wc-admin&path=/payments/connect`
+						: `${ siteUrl }/wp-admin/plugin-install.php?s=woopayments&tab=search&type=term`;
+					window.open( url, '_blank' );
+					dispatch( recordTracksEvent( 'calypso_a4a_woopayments_visit_wp_admin' ) );
+				},
+			},
+		],
+		[ translate, dispatch ]
+	);
+
 	if ( ! isDesktop ) {
-		return <SitesWithWooPaymentsMobileView items={ data } />;
+		return <SitesWithWooPaymentsMobileView items={ items } actions={ actions } />;
 	}
 
 	return (
@@ -102,7 +127,7 @@ export default function SitesWithWooPayments() {
 					pagination: paginationInfo,
 					enableSearch: false,
 					fields,
-					actions: [],
+					actions,
 					setDataViewsState,
 					dataViewsState,
 					defaultLayouts: { table: {} },
