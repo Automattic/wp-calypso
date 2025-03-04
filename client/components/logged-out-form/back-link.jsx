@@ -1,10 +1,10 @@
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
-
 import './link-item.scss';
 
 export default function LoggedOutFormBackLink( { locale, oauth2Client, recordClick, classes } ) {
@@ -27,7 +27,7 @@ export default function LoggedOutFormBackLink( { locale, oauth2Client, recordCli
 	}
 
 	return (
-		<a
+		<Button
 			href={ url }
 			key="return-to-wpcom-link"
 			onClick={ recordClick }
@@ -37,10 +37,11 @@ export default function LoggedOutFormBackLink( { locale, oauth2Client, recordCli
 				'logged-out-form__back-link': true,
 				...classes,
 			} ) }
+			variant="link"
 		>
 			<Gridicon icon="arrow-left" size={ 18 } />
 			{ message }
-		</a>
+		</Button>
 	);
 }
 

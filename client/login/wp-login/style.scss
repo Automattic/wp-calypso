@@ -44,49 +44,17 @@ $image-height: 47px;
 	}
 }
 
-.wp-login__links,
-.wp-login__footer {
-
-	a,
-	a:visited,
-	button {
-		color: var(--color-neutral-50);
-
-		body.is-section-signup & {
-			color: var(--color-text-inverted);
-		}
-	}
-}
-
 .wp-login__links {
-	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 16px;
+	margin-block: 16px 24px;
 
 	a,
 	button {
-		border-bottom: 1px solid var(--color-neutral-10);
-		box-sizing: border-box;
-		cursor: pointer;
-		display: block;
 		font-size: $font-body-small;
 		font-weight: 600;
-		padding: 16px 24px;
-		text-align: center;
-		width: 100%;
-
-		&:hover,
-		&:active {
-			color: var(--color-accent);
-		}
-
-		&:last-child {
-			border-bottom: none;
-		}
-
-		&.components-button.is-link {
-			display: inline-flex;
-			margin-block: 16px;
-			width: auto;
-		}
 	}
 
 	.gridicon {
@@ -108,6 +76,16 @@ $image-height: 47px;
 	height: $image-height;
 	line-height: $image-height;
 	width: 100%;
+
+	a,
+	a:visited,
+	button {
+		color: var(--color-neutral-50);
+
+		body.is-section-signup & {
+			color: var(--color-text-inverted);
+		}
+	}
 }
 
 .wp-login__footer--jetpack {

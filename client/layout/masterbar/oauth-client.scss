@@ -402,24 +402,6 @@
 			color: var(--color-text);
 		}
 
-		.wp-login__links {
-			padding: 20px 0 15px;
-
-			a,
-			button {
-				border: 0;
-				color: var(--color-text);
-				line-height: 21px;
-				padding: 10px 16px;
-				text-align: center;
-
-				&:hover,
-				&:active {
-					color: var(--color-text);
-				}
-			}
-		}
-
 		.wp-login__main.main {
 			max-width: 550px;
 			margin-bottom: 80px;
@@ -687,11 +669,6 @@
 		}
 	}
 
-	.wp-login__links {
-		display: flex;
-		justify-content: center;
-	}
-
 	a:not(.login__lost-password-link),
 	a:visited,
 	.login__form-change-username {
@@ -780,8 +757,7 @@
 
 	a,
 	a:visited,
-	.login__form-change-username,
-	.wp-login__links button {
+	.login__form-change-username {
 		color: var(--color-primary-40);
 
 		&:hover,
