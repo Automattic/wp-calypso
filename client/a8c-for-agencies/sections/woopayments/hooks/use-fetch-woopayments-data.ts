@@ -6,13 +6,17 @@ import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selecto
 export default function useFetchWooPaymentsData() {
 	const agencyId = useSelector( getActiveAgencyId );
 
+	const isApiEnabled = false;
+
 	return useQuery( {
-		queryKey: [ 'a4a-site-woopayments-data', agencyId ],
+		queryKey: [ 'a4a-site-woopayments-data', agencyId, isApiEnabled ],
 		queryFn: () =>
-			wpcom.req.get( {
-				apiNamespace: 'wpcom/v2',
-				path: `/agency/${ agencyId }/woopayments`,
-			} ),
+			isApiEnabled
+				? wpcom.req.get( {
+						apiNamespace: 'wpcom/v2',
+						path: `/agency/${ agencyId }/woopayments`,
+				  } )
+				: Promise.resolve(),
 		enabled: !! agencyId,
 		refetchOnWindowFocus: false,
 		staleTime: 0,
