@@ -645,22 +645,3 @@ $breakpoint-mobile: 782px; //Mobile size.
 		}
 	}
 }
-
-.is-gravatar {
-	.login__form-terms {
-		display: block;
-	}
-
-	.auth-form__social {
-		.auth-form__social-buttons-container {
-			width: unset;
-			.social-buttons__button {
-				> svg {
-					border: 1px solid var(--studio-gray-10);
-					border-radius: 24px; /* stylelint-disable-line scales/radii */
-					padding: 12px;
-				}
-			}
-		}
-	}
-}

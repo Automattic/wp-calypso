@@ -583,12 +583,13 @@ $image-height: 47px;
 	background-color: #fff;
 
 	&.is-wp-job-manager {
-		background-color: #efefef;
+		--color-accent: var(--color-wp-job-manager);
+		/* equivalent to sass darken(#2404eb, 10%); */
+		--color-accent-dark: #1c03b9;
+		--color-link: var(--color-wp-job-manager);
+		--color-link-dark: var(--color-accent-dark);
 
-		.login a,
-		.login__form-change-username {
-			color: #2404eb;
-		}
+		background-color: #efefef;
 
 		.login {
 			border-radius: 2px;
@@ -597,12 +598,12 @@ $image-height: 47px;
 		.form-button.is-primary {
 			&,
 			&:disabled {
-				background-color: #2404eb;
+				background-color: var(--color-accent);
 			}
 
 			&:hover:not(&:disabled),
 			&:focus {
-				background-color: darken(#2404eb, 10%);
+				background-color: var(--color-accent-dark);
 			}
 		}
 	}
@@ -802,6 +803,7 @@ $image-height: 47px;
 			width: 20px;
 			height: 20px;
 			margin-right: 12px;
+			padding: 12px;
 		}
 
 		> span {
@@ -859,7 +861,7 @@ $image-height: 47px;
 
 		a,
 		button {
-			color: #1d4fc4;
+			color: var(--color-link);
 			font-weight: normal;
 			text-decoration: underline;
 			padding: 0;
