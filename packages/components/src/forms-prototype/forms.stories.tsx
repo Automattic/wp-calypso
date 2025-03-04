@@ -12,6 +12,10 @@ import {
 	ToggleControl,
 	TextareaControl,
 	TextControl,
+	CustomSelectControl,
+	ComboboxControl,
+	RadioControl,
+	RangeControl,
 } from '@wordpress/components';
 import { caution } from '@wordpress/icons';
 import { cloneElement, useRef, useState } from 'react';
@@ -101,6 +105,8 @@ export const Default: StoryObj = {
 	render: function Template() {
 		const [ toggleControlChecked, setToggleControlChecked ] = useState( false );
 		const [ checkboxControlChecked, setCheckboxControlChecked ] = useState( false );
+		const [ radioControlChecked, setRadioControlChecked ] = useState< string | undefined >();
+
 		return (
 			<form
 				style={ {
@@ -174,6 +180,7 @@ export const Default: StoryObj = {
 						render={
 							// TODO: Rest props are not passed down.
 							<ToggleControl
+								required
 								__nextHasNoMarginBottom
 								label="Toggle"
 								checked={ toggleControlChecked }
@@ -206,6 +213,7 @@ export const Default: StoryObj = {
 					<ControlWithError
 						render={
 							<SelectControl
+								required
 								__nextHasNoMarginBottom
 								__next40pxDefaultSize
 								label="Select"
@@ -220,6 +228,87 @@ export const Default: StoryObj = {
 						onReportCustomValidity={ ( value ) => {
 							if ( value === '1' ) {
 								return 'Option 1 is not allowed.';
+							}
+						} }
+					/>
+					<ControlWithError
+						render={
+							<CustomSelectControl
+								// TODO: Required isn't passed down correctly.
+								required
+								__next40pxDefaultSize
+								label="Custom Select"
+								options={ [
+									{ key: '', name: 'Select an option' },
+									{ key: 'a', name: 'Option A (not allowed)' },
+									{ key: 'b', name: 'Option B' },
+								] }
+							/>
+						}
+						// TODO: Ref is not forwarded.
+						onReportCustomValidity={ ( value ) => {
+							if ( value === 'a' ) {
+								return 'Option A is not allowed.';
+							}
+						} }
+					/>
+					<ControlWithError
+						render={
+							<ComboboxControl
+								__nextHasNoMarginBottom
+								__next40pxDefaultSize
+								// TODO: Rest props are not passed down.
+								required
+								label="Combobox"
+								help="Option A is not allowed."
+								options={ [
+									{ value: 'a', label: 'Option A (not allowed)' },
+									{ value: 'b', label: 'Option B' },
+								] }
+							/>
+						}
+						// TODO: onBlur is not passed down.
+						onReportCustomValidity={ ( value ) => {
+							if ( value === 'a' ) {
+								return 'Option A is not allowed.';
+							}
+						} }
+					/>
+					<ControlWithError
+						render={
+							<RadioControl
+								label="Radio"
+								required
+								help="Option A is not allowed"
+								selected={ radioControlChecked }
+								onChange={ setRadioControlChecked }
+								options={ [
+									{ label: 'Option A', value: 'a' },
+									{ label: 'Option B (not allowed)', value: 'b' },
+								] }
+							/>
+						}
+						// TODO: Ref is not forwarded.
+						onReportCustomValidity={ ( value ) => {
+							if ( value === 'b' ) {
+								return 'Option B is not allowed.';
+							}
+						} }
+					/>
+					<ControlWithError
+						render={
+							<RangeControl
+								// TODO: Use of `required` renders an invalid label in HTML.
+								required
+								label="Range"
+								help="Odd numbers are not allowed."
+								min={ 0 }
+								max={ 20 }
+							/>
+						}
+						onReportCustomValidity={ ( value ) => {
+							if ( value && parseInt( value, 10 ) % 2 !== 0 ) {
+								return 'Choose an even number.';
 							}
 						} }
 					/>
