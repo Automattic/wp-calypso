@@ -1,8 +1,7 @@
 import { HelpCenterStepButton } from '@automattic/help-center';
-import { englishLocales } from '@automattic/i18n-utils';
 import { ActionButtons } from '@automattic/onboarding';
 import clsx from 'clsx';
-import { localize, getLocaleSlug } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -214,8 +213,7 @@ class StepWrapper extends Component {
 
 		const queryParams = new URLSearchParams( window?.location.search );
 		const flags = queryParams.get( 'flags' );
-		const isHelpCenterLinkEnabled =
-			flags === 'signup/help-center-link' && englishLocales.includes( getLocaleSlug() );
+		const isHelpCenterLinkEnabled = flags === 'signup/help-center-link';
 
 		return (
 			<>
