@@ -4,7 +4,6 @@ import { NextButton, SubTitle, Title } from '@automattic/onboarding';
 import {
 	useCanConnectToZendeskMessaging,
 	useZendeskMessagingAvailability,
-	useOpenZendeskMessaging,
 } from '@automattic/zendesk-client';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -49,31 +48,23 @@ export const MigrationError = ( props: Props ) => {
 		'wpcom_messaging',
 		isEligibleForChat
 	);
-	const { openZendeskWidget, isOpeningZendeskWidget } = useOpenZendeskMessaging(
-		'migration-error',
-		isEligibleForChat
-	);
+
 	const { title, subTitle, hintId, goBackCta, getHelpCta, tryAgainCta, importContentCta } =
 		useErrorDetails( status, sourceSiteUrl, targetSiteUrl );
 
 	const getHelp = useCallback( () => {
-		if ( isMessagingAvailable && canConnectToZendeskMessaging ) {
-			openZendeskWidget( {
-				siteUrl: targetSiteUrl,
-				siteId: targetSiteID,
-				message: `${ status }: Import onboarding flow; migration failed`,
-				onSuccess: () => {
-					resetStore();
-					setShowHelpCenter( false );
-				},
-			} );
+		if ( isMessagingAvailable && canConnectToZendeskMessaging && isEligibleForChat ) {
+			const initialMessage = `${ status }: Import onboarding flow; migration failed`;
+			setShowHelpCenter( true );
+			setNavigateToRoute(
+				`/odie?provider=zendesk&userFieldMessage=${ initialMessage }&section=migration-error&siteUrl=${ targetSiteUrl }&siteId=${ targetSiteID }`
+			);
 		} else {
 			setNavigateToRoute( '/contact-form?mode=CHAT' );
 			setShowHelpCenter( true );
 		}
 	}, [
 		resetStore,
-		openZendeskWidget,
 		targetSiteUrl,
 		status,
 		isMessagingAvailable,
@@ -119,7 +110,6 @@ export const MigrationError = ( props: Props ) => {
 						<NextButton
 							onClick={ getHelp }
 							variant={ goBackCta || tryAgainCta || importContentCta ? 'secondary' : 'primary' }
-							isBusy={ isOpeningZendeskWidget }
 						>
 							{ translate( 'Contact support' ) }
 						</NextButton>
