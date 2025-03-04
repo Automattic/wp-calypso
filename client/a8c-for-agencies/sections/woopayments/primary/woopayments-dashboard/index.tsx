@@ -45,6 +45,8 @@ const WooPaymentsDashboard = () => {
 		SitesWithWooPaymentsState[]
 	>( [] );
 
+	const [ isWooPaymentsDataLoading, setIsWooPaymentsDataLoading ] = useState( false );
+
 	const { data: licensesWithWooPayments, isLoading: isLoadingLicensesWithWooPayments } =
 		useFetchLicenses(
 			LicenseFilter.Attached,
@@ -59,7 +61,16 @@ const WooPaymentsDashboard = () => {
 		[ 'woocommerce-payments/woocommerce-payments' ]
 	);
 
-	const { data: woopaymentsData, isFetching: isLoadingWooPaymentsData } = useFetchWooPaymentsData();
+	const { data: woopaymentsData, isLoading: isLoadingWooPaymentsData } =
+		useFetchWooPaymentsData( isWooPaymentsDataLoading );
+
+	const isInProgress = woopaymentsData?.status === 'in_progress';
+
+	useEffect( () => {
+		if ( isInProgress ) {
+			setIsWooPaymentsDataLoading( true );
+		}
+	}, [ isInProgress ] );
 
 	const createInitialSiteState = useCallback(
 		( license: License ) => {
