@@ -302,6 +302,10 @@ body.is-section-accept-invite {
 		transition: 0.2s ease-in-out;
 		width: 100%;
 
+		&:not(:focus) {
+			--wp-components-color-accent: var(--p2-color-button);
+		}
+
 		> svg {
 			margin-right: 0;
 		}

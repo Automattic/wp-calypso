@@ -260,7 +260,11 @@ export class LoginLinks extends Component {
 			redirectTo: this.props.query?.redirect_to,
 			signupUrl: this.props.query?.signup_url,
 		} );
-		return <a href={ loginUrl }>{ this.props.translate( 'Login via the mobile app' ) }</a>;
+		return (
+			<Button variant="link" href={ loginUrl }>
+				{ this.props.translate( 'Login via the mobile app' ) }
+			</Button>
+		);
 	}
 
 	render() {

@@ -82,44 +82,6 @@
 	}
 
 	/**
-	* P2 Login
-	*/
-	@at-root .is-p2-login & .auth-form__social-buttons-container .social-buttons__button {
-		align-items: center;
-		background-color: var(--p2-color-button);
-		border: none;
-		/* stylelint-disable-next-line scales/radii */
-		border-radius: 50px;
-		color: var(--p2-color-text);
-		display: flex;
-		font-family: var(--p2-font-inter);
-		font-size: var(--p2-font-size-form-xs);
-		height: auto;
-		justify-content: center;
-		letter-spacing: -0.01em;
-		line-height: 1.5;
-		padding: 1em 2em;
-		transition: 0.2s ease-in-out;
-		width: 100%;
-
-		> svg {
-			margin-right: 0;
-		}
-
-		span {
-			margin-left: 9px;
-			margin-right: 0;
-			font-family: inherit;
-			font-size: inherit;
-			font-style: inherit;
-			font-weight: inherit;
-			letter-spacing: -0.01em;
-			line-height: 1.5;
-		}
-	}
-
-
-	/**
 	* Jetpack Login
 	*/
 	@at-root .is-jetpack-login & {
@@ -264,6 +226,10 @@
 		padding: 1em 2em;
 		transition: 0.2s ease-in-out;
 		width: 100%;
+
+		&:not(:focus) {
+			--wp-components-color-accent: var(--p2-color-button);
+		}
 
 		> svg {
 			margin-right: 0;

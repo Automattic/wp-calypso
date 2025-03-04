@@ -493,22 +493,7 @@ $breakpoint-mobile: 782px; //Mobile size.
 	}
 
 	.wp-login__links {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
 		margin-bottom: 2em;
-
-		a {
-			@extend %p2-link;
-			border-bottom: 1px solid currentColor;
-			font-size: var(--p2-font-size-form-xs);
-			font-weight: 400;
-			margin: 0 0 0.8em;
-			padding: 0;
-			line-height: 1.5;
-			display: inline-block;
-			width: auto;
-		}
 	}
 
 	.auth-form__separator {
