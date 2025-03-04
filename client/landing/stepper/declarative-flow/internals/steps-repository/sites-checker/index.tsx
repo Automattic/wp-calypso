@@ -1,5 +1,5 @@
 import { SiteDetails } from '@automattic/data-stores';
-import { StepContainer, isBlogOnboardingFlow } from '@automattic/onboarding';
+import { StepContainer, isStartWritingFlow } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
@@ -28,7 +28,7 @@ const SitesChecker: Step = function SitePicker( { navigation, flow } ) {
 
 	useEffect( () => {
 		if ( hasAllSitesFetched ) {
-			const filteredSites = isBlogOnboardingFlow( flow )
+			const filteredSites = isStartWritingFlow( flow )
 				? allSites?.filter(
 						( site: SiteDetails | null | undefined ) => site?.launch_status === 'unlaunched'
 				  )

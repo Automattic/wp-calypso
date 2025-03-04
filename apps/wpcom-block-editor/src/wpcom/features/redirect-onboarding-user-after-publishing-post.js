@@ -5,7 +5,6 @@ import useLaunchpadScreen from './use-launchpad-screen';
 import useSiteIntent from './use-site-intent';
 
 const START_WRITING_FLOW = 'start-writing';
-const DESIGN_FIRST_FLOW = 'design-first';
 
 export function RedirectOnboardingUserAfterPublishingPost() {
 	const { siteIntent: intent } = useSiteIntent();
@@ -21,7 +20,7 @@ export function RedirectOnboardingUserAfterPublishingPost() {
 		getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true';
 
 	const shouldShowMinimalUIAndRedirectToFullscreenLaunchpad =
-		( intent === START_WRITING_FLOW || intent === DESIGN_FIRST_FLOW ) &&
+		intent === START_WRITING_FLOW &&
 		hasStartWritingFlowQueryArg &&
 		'full' === launchpadScreen &&
 		currentPostType === 'post';

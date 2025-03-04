@@ -15,7 +15,6 @@ export const COPY_SITE_FLOW = 'copy-site';
 export const BUILD_FLOW = 'build';
 export const WRITE_FLOW = 'write';
 export const START_WRITING_FLOW = 'start-writing';
-export const DESIGN_FIRST_FLOW = 'design-first';
 export const SITE_SETUP_FLOW = 'site-setup';
 export const WITH_THEME_FLOW = 'with-theme';
 
@@ -110,14 +109,6 @@ export const isUpdateDesignFlow = ( flowName: string | null ) => {
 
 export const isStartWritingFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ START_WRITING_FLOW ].includes( flowName ) );
-};
-
-export const isDesignFirstFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ DESIGN_FIRST_FLOW ].includes( flowName ) );
-};
-
-export const isBlogOnboardingFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ START_WRITING_FLOW, DESIGN_FIRST_FLOW ].includes( flowName ) );
 };
 
 export const isOnboardingFlow = ( flowName: string | null ) => {

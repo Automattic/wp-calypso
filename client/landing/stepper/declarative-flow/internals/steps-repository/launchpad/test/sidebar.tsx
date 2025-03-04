@@ -177,18 +177,6 @@ describe( 'Sidebar', () => {
 		expect( renderedDomain ).toBeNull();
 	} );
 
-	it( 'design-first flow does not display the current site url', () => {
-		renderSidebar( {
-			...props,
-			flow: 'design-first',
-		} );
-
-		const renderedDomain = screen.queryByText( ( content ) =>
-			content.includes( secondAndTopLevelDomain )
-		);
-		expect( renderedDomain ).toBeNull();
-	} );
-
 	it( 'displays customize badge for wpcom domains (free)', () => {
 		renderSidebar( props );
 		expect( screen.getByRole( 'link', { name: upgradeDomainBadgeText } ) ).toHaveAttribute(

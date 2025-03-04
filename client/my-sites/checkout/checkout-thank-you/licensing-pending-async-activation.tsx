@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useState, useCallback, useEffect, useMemo } from 'react';
 import QueryProducts from 'calypso/components/data/query-products-list';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import Loading from 'calypso/components/loading';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -235,8 +235,7 @@ function PendingContent( {
 
 	return (
 		<div className="pending-content__wrapper">
-			<div className="pending-content__title">{ headingText }</div>
-			<LoadingEllipsis />
+			<Loading title={ headingText } />
 			<br />
 			<div className="pending-content__info-text-container">
 				{ productName && (

@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { DESIGN_FIRST_FLOW, START_WRITING_FLOW } from '@automattic/onboarding';
+import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
@@ -35,31 +35,6 @@ const stepContentProps = {
 
 jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
 	useSite: () => mockSite,
-} ) );
-
-let mockIsFirstPostPublished = false;
-
-jest.mock( '@automattic/data-stores', () => ( {
-	...jest.requireActual( '@automattic/data-stores' ),
-	useLaunchpad: () => {
-		return {
-			data: {
-				checklist_statuses: {
-					first_post_published: mockIsFirstPostPublished,
-				},
-			},
-		};
-	},
-} ) );
-
-jest.mock( 'react-router-dom', () => ( {
-	...jest.requireActual( 'react-router-dom' ),
-	useLocation: jest.fn().mockImplementation( () => ( {
-		pathname: '/setup/design-first',
-		search: `?siteSlug=testcelebrationscreen.wordpress.com`,
-		hash: '',
-		state: undefined,
-	} ) ),
 } ) );
 
 const user = {
@@ -101,35 +76,6 @@ function renderCelebrationScreen( flow ) {
 }
 
 describe( 'The celebration step', () => {
-	describe( `The ${ DESIGN_FIRST_FLOW } flow`, () => {
-		const flow = DESIGN_FIRST_FLOW;
-
-		it( 'renders correct content and CTAs when first post is NOT published', () => {
-			mockIsFirstPostPublished = false;
-			renderCelebrationScreen( flow );
-
-			expect( screen.getByText( 'Your blog’s ready!' ) ).toBeInTheDocument();
-			expect( screen.getByTitle( 'Preview' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Now it’s time to start posting.' ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'button', { name: 'Visit your blog' } ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'button', { name: 'Write your first post' } ) ).toBeInTheDocument();
-		} );
-
-		it( 'renders correct content and CTAs when first post is published', () => {
-			mockIsFirstPostPublished = true;
-			renderCelebrationScreen( flow );
-
-			expect( screen.getByText( 'Your blog’s ready!' ) ).toBeInTheDocument();
-			expect( screen.getByTitle( 'Preview' ) ).toBeInTheDocument();
-			expect(
-				screen.getByText( 'Now it’s time to connect your social accounts.' )
-			).toBeInTheDocument();
-
-			expect( screen.getByRole( 'button', { name: 'Visit your blog' } ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'button', { name: 'Connect to social' } ) ).toBeInTheDocument();
-		} );
-	} );
-
 	describe( `The ${ START_WRITING_FLOW } flow`, () => {
 		const flow = START_WRITING_FLOW;
 

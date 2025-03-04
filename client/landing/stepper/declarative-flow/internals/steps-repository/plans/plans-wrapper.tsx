@@ -8,9 +8,7 @@ import {
 	NEW_HOSTED_SITE_FLOW,
 	isNewHostedSiteCreationFlow,
 	isDomainUpsellFlow,
-	DESIGN_FIRST_FLOW,
-	isBlogOnboardingFlow,
-	EXAMPLE_FLOW,
+	isStartWritingFlow,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
@@ -43,10 +41,8 @@ interface Props {
 function getPlansIntent( flowName: string | null, isWordCampPromo?: boolean ): PlansIntent | null {
 	switch ( flowName ) {
 		case START_WRITING_FLOW:
-		case DESIGN_FIRST_FLOW:
 			return 'plans-blog-onboarding';
 		case NEWSLETTER_FLOW:
-		case EXAMPLE_FLOW:
 			return 'plans-newsletter';
 		case NEW_HOSTED_SITE_FLOW:
 			if ( isWordCampPromo ) {
@@ -207,7 +203,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			return __( 'Choose your flavor of WordPress' );
 		}
 
-		if ( isNewsletterFlow( flowName ) || isBlogOnboardingFlow( flowName ) ) {
+		if ( isNewsletterFlow( flowName ) || isStartWritingFlow( flowName ) ) {
 			return __( `There's a plan for you.` );
 		}
 
@@ -224,7 +220,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		);
 
 		if (
-			isBlogOnboardingFlow( flowName ) ||
+			isStartWritingFlow( flowName ) ||
 			isNewsletterFlow( flowName ) ||
 			isDomainUpsellFlow( flowName )
 		) {
