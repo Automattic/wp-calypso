@@ -109,6 +109,7 @@ export function following( context, next ) {
 			mcKey
 		),
 		onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
+		feedId: context.params.feed_id,
 	} );
 	next();
 }
