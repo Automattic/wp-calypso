@@ -255,20 +255,22 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 					<div className="checkout__main">
 						<h1 className="checkout__main-title">{ title }</h1>
 
-						<LayoutBanner level="error" hideCloseButton>
-							{ translate(
-								'This referral is not intended for your account. Please make sure you sign in using {{b}}%(referralEmail)s{{/b}}.',
-								{
-									args: {
-										referralEmail: referral?.client?.email,
-									},
-									components: {
-										b: <b />,
-									},
-									comment: '%(referralEmail)s is the email of the referral client.',
-								}
-							) }
-						</LayoutBanner>
+						{ isClient && isDoNotMatchReferralClientEmail && (
+							<LayoutBanner level="error" hideCloseButton>
+								{ translate(
+									'This referral is not intended for your account. Please make sure you sign in using {{b}}%(referralEmail)s{{/b}}.',
+									{
+										args: {
+											referralEmail: referral?.client?.email,
+										},
+										components: {
+											b: <b />,
+										},
+										comment: '%(referralEmail)s is the email of the referral client.',
+									}
+								) }
+							</LayoutBanner>
+						) }
 
 						<div className="checkout__main-list">
 							{ referralBlogId && isLoadingReferralDevSite ? (
