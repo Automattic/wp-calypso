@@ -2,14 +2,13 @@ import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import Favicon from 'calypso/reader/components/favicon';
 import ReaderFollowingIcon from 'calypso/reader/components/icons/following-icon';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
-import { selectSidebarRecentSite } from 'calypso/state/reader-ui/sidebar/actions';
 import { AppState } from 'calypso/types';
 
 import './style.scss';
@@ -53,8 +52,7 @@ const ReaderSidebarRecent = ( {
 		( state ) => state.readerUi.sidebar.selectedRecentSite
 	);
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
-	const dispatch = useDispatch();
-	const isRecentStream = RECENT_PATH_REGEX.test( path );
+	const isRecentStream = RECENT_PATH_REGEX.test( path ); // likely need to adjust
 
 	let sitesToShow = showAllSites ? sites : sites.slice( 0, SITE_DISPLAY_CUTOFF );
 	// const totalUnseenCount = sites.reduce( ( total, site ) => total + site.unseen_count, 0 );
@@ -75,8 +73,9 @@ const ReaderSidebarRecent = ( {
 	};
 
 	const selectSite = ( feedId: number | null ) => {
-		dispatch( selectSidebarRecentSite( { feedId } ) );
-		if ( ! isRecentStream ) {
+		if ( feedId ) {
+			page( `/reader/recent/${ feedId }` );
+		} else {
 			page( '/reader' );
 		}
 
@@ -97,9 +96,6 @@ const ReaderSidebarRecent = ( {
 			onClick();
 		}
 		selectSite( null );
-		if ( ! isRecentStream ) {
-			page( '/reader' );
-		}
 	};
 
 	return (
