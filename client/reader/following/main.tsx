@@ -26,7 +26,7 @@ function FollowingStream( { ...props } ) {
 	// Set the selected feed based on route param.
 	useEffect( () => {
 		// Note that 'null' specifically sets the all view.
-		dispatch( selectSidebarRecentSite( { feedId: props.feedId || null } ) );
+		dispatch( selectSidebarRecentSite( { feedId: Number( props.feedId ) || null } ) );
 	}, [ props.feedId, dispatch ] );
 
 	if ( ! isLoading && ! hasNonSelfSubscriptions ) {
