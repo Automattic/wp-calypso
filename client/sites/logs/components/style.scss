@@ -53,7 +53,6 @@
 }
 
 // Long fields in PHP Errors.
-.site-logs-table__message,
 .site-logs-table__file,
 // Long fields in Web Errors.
 .site-logs-table__request-url,
@@ -61,6 +60,12 @@
 	overflow: visible;
 	white-space: normal;
 	word-break: break-word;
+}
+// Long field in PHP Errors that we want to truncate.
+.site-logs-table__message {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 
 // Badges
