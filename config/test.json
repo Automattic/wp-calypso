@@ -114,7 +114,7 @@
 		"site-indicator": true,
 		"sites/drive-migrations": true,
 		"ssr/prefetch-timebox": true,
-		"stats/chart-library": true,
+		"stats/chart-library": false,
 		"stats/empty-module-traffic": true,
 		"stats/empty-module-v2": true,
 		"themes/premium": true,
