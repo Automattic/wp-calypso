@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { HelpCenterStepButton } from '@automattic/help-center';
 import { ActionButtons } from '@automattic/onboarding';
 import clsx from 'clsx';
@@ -214,11 +215,9 @@ class StepWrapper extends Component {
 			sticky = isSticky;
 		}
 
-		const queryParams = new URLSearchParams( window?.location.search );
-		const flags = queryParams.get( 'flags' );
 		const isHelpCenterLinkEnabled =
 			flow?.enabledHelpCenterGeos.includes( geo?.country_short ) &&
-			flags === 'signup/help-center-link';
+			isEnabled( 'signup/help-center-link' );
 
 		return (
 			<>
