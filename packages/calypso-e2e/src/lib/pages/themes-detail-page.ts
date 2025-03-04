@@ -4,7 +4,7 @@ import { PreviewComponent } from '../components';
 
 const selectors = {
 	// Preview
-	demoButton: 'button:text("Demo site")',
+	demoButton: 'button:text("Preview")',
 
 	// Main body
 	activateDesignButton: 'button:text("Activate this design")',
