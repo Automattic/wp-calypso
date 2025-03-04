@@ -14,6 +14,7 @@ const replyErrorWithEnvelope =
 	() => [ 200, { code: status, body: { ...defaultBody, ...body } } ];
 const errorResponse = replyErrorWithEnvelope( 400, { error: 'any error' } );
 const SITE_ID = 123;
+const FROM = 'example.com';
 const PLUGINS = { 'plugin-1': 'install' as const };
 const THEMES = { 'theme-1': 'activate' as const };
 
@@ -27,7 +28,7 @@ const render = ( options = { retry: 0 } ) => {
 	const queryClient = new QueryClient();
 
 	const renderResult = renderHook(
-		() => useRequestTransferWithSoftware( SITE_ID, PLUGINS, THEMES, options ),
+		() => useRequestTransferWithSoftware( SITE_ID, FROM, PLUGINS, THEMES, options ),
 		{
 			wrapper: Wrapper( queryClient ),
 		}
@@ -53,11 +54,11 @@ describe( 'useRequestTransferWithSoftware', () => {
 				body: {
 					plugins: PLUGINS,
 					themes: THEMES,
+					migration_source_site_domain: FROM,
 				},
 			} )
 			.query( { http_envelope: 1 } )
 			.reply( 200, {
-				success: true,
 				transferId: 456,
 			} );
 
@@ -68,7 +69,31 @@ describe( 'useRequestTransferWithSoftware', () => {
 		await waitFor(
 			() => {
 				expect( result.current.isSuccess ).toBe( true );
-				expect( result.current.data?.transferId ).toBe( 456 );
+				expect( result.current.data ).toEqual( { transferId: 456 } );
+			},
+			{ timeout: 3000 }
+		);
+	} );
+
+	it( 'should return an error if plugins or themes are not provided', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/sites/' + SITE_ID + '/atomic/transfer-with-software', {
+				apiNamespace: 'wpcom/v2',
+				body: {
+					plugins: null,
+					themes: null,
+					migration_source_site_domain: FROM,
+				},
+			} )
+			.query( { http_envelope: 1 } )
+			.reply( replyErrorWithEnvelope( 400, { error: 'plugins and themes are required' } ) );
+		const { result } = render();
+
+		result.current.mutate();
+
+		await waitFor(
+			() => {
+				expect( result.current.isError ).toBe( true );
 			},
 			{ timeout: 3000 }
 		);
@@ -79,6 +104,7 @@ describe( 'useRequestTransferWithSoftware', () => {
 			.post( `/wpcom/v2/sites/${ SITE_ID }/atomic/transfer-with-software?http_envelope=1`, {
 				plugins: PLUGINS,
 				themes: THEMES,
+				migration_source_site_domain: FROM,
 			} )
 			.reply( errorResponse );
 

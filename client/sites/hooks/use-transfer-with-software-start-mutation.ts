@@ -1,4 +1,4 @@
-import { useMutation, UseMutationResult, useQueryClient } from '@tanstack/react-query';
+import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
 type transferWithSoftwareResponse = {
@@ -26,9 +26,10 @@ const requestTransferWithSoftware: (
 		}
 	);
 
-	if ( ! response.success ) {
+	if ( ! response ) {
 		throw new Error( 'Transfer with software failed' );
 	}
+
 	return response;
 };
 
@@ -39,13 +40,9 @@ export const useRequestTransferWithSoftware = (
 	themes?: Record< string, 'install' | 'activate' >,
 	options?: { retry?: number }
 ): UseMutationResult< transferWithSoftwareResponse, Error, void > => {
-	const queryClient = useQueryClient();
 	return useMutation( {
-		mutationKey: [ 'transfer-with-software', siteId, plugins, themes ],
+		mutationKey: [ 'transfer-with-software', siteId, from, plugins, themes ],
 		mutationFn: async () => requestTransferWithSoftware( siteId!, from!, plugins!, themes! ),
 		retry: options?.retry ?? 3, // Default retry 3 times
-		onSuccess: ( data ) => {
-			queryClient.setQueryData( [ 'transfer-with-software', siteId, plugins, themes ], data );
-		},
 	} );
 };
