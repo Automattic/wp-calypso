@@ -20,7 +20,7 @@ export function useLaunchpad( { checklistSlug, launchpadContext }: UseLaunchpadP
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) || '' );
 
-	const { mutate: dismiss } = useLaunchpadDismisser( siteSlug, checklistSlug );
+	const { mutate: dismiss } = useLaunchpadDismisser( siteSlug, checklistSlug, launchpadContext );
 
 	const {
 		data: { checklist, is_dismissed: isDismissed, is_dismissible: isDismissible, title },

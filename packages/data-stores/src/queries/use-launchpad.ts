@@ -204,7 +204,11 @@ const getDismissParams = ( settings: DismissSettings ) => {
 	}
 };
 
-export const useLaunchpadDismisser = ( siteSlug: SiteSlug, checklistSlug: string ) => {
+export const useLaunchpadDismisser = (
+	siteSlug: SiteSlug,
+	checklistSlug: string,
+	launchpadContext: string
+) => {
 	const queryClient = useQueryClient();
 	const key = getKey( siteSlug, checklistSlug );
 
@@ -231,7 +235,7 @@ export const useLaunchpadDismisser = ( siteSlug: SiteSlug, checklistSlug: string
 		onSuccess: () => {
 			recordTracksEvent( 'calypso_launchpad_dismiss_guide', {
 				checklist_slug: checklistSlug,
-				context: 'customer-home',
+				context: launchpadContext,
 			} );
 		},
 		onError: ( _, _2, context ) => {
