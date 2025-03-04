@@ -36,8 +36,10 @@ describe( 'useTransferWithSoftwareStatus', () => {
 
 		const { result } = renderHook( () => useTransferWithSoftwareStatus( 123, 456 ), { wrapper } );
 
-		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
-		expect( result.current.data ).toEqual( mockSuccessResponse );
+		await waitFor( () => {
+			expect( result.current.isSuccess ).toBe( true );
+			expect( result.current.data ).toEqual( mockSuccessResponse );
+		} );
 	} );
 
 	it( 'should not fetch when siteId is missing', () => {
