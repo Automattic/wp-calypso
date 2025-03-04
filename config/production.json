@@ -29,7 +29,7 @@
 		"calypso/all-domain-management": true,
 		"calypso/big-sky": true,
 		"bilmur-script": true,
-		"calypso/domains-dataviews": false,
+		"calypso/domains-dataviews": true,
 		"cancellation-offers": true,
 		"catch-js-errors": true,
 		"checkout/ebanx-pix": true,
