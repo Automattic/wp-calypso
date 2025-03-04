@@ -8,7 +8,7 @@ import {
 } from '@automattic/verbum-block-editor';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch, connect } from 'react-redux';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import { stripHTML } from 'calypso/lib/formatting';
@@ -57,6 +57,66 @@ function QuickPost( {
 	const hasLoaded = useSelector( hasLoadedSites );
 	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
 	const [ showSuccessMessage, setShowSuccessMessage ] = useState( false );
+
+	// Add effect to focus editor as soon as it's available
+	useEffect( () => {
+		let observer: MutationObserver | null = null;
+
+		// Function to attempt focusing the editor
+		const attemptEditorFocus = () => {
+			// Find the editable area in the block editor iframe
+			const editorIframe = document.querySelector(
+				'iframe[name="editor-canvas"]'
+			) as HTMLIFrameElement;
+			if ( editorIframe?.contentDocument ) {
+				const editableArea = editorIframe.contentDocument.querySelector(
+					'[contenteditable="true"]'
+				);
+				if ( editableArea ) {
+					// We found the editable area - focus it
+					( editableArea as HTMLElement ).focus();
+					const clickEvent = new MouseEvent( 'click', {
+						bubbles: true,
+						cancelable: true,
+						view: editorIframe.contentWindow || window,
+					} );
+					editableArea.dispatchEvent( clickEvent );
+
+					// Disconnect the observer since we've succeeded
+					if ( observer ) {
+						observer.disconnect();
+						observer = null;
+					}
+					return true;
+				}
+			}
+			return false;
+		};
+
+		// Try immediately first
+		if ( ! attemptEditorFocus() ) {
+			// If immediate attempt fails, set up an observer to watch for DOM changes
+			observer = new MutationObserver( ( mutations, obs ) => {
+				// Try to focus on each DOM mutation
+				if ( attemptEditorFocus() ) {
+					obs.disconnect();
+				}
+			} );
+
+			// Start observing the document with configured parameters
+			observer.observe( document.body, {
+				childList: true,
+				subtree: true,
+			} );
+		}
+
+		return () => {
+			// Clean up the observer on component unmount
+			if ( observer ) {
+				observer.disconnect();
+			}
+		};
+	}, [ editorKey ] ); // Re-run when editor is reset
 
 	const clearEditor = () => {
 		setEditorKey( ( key ) => key + 1 );
