@@ -16,6 +16,7 @@ import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
+import isAkismetRedirect from 'calypso/lib/akismet/is-redirect-from-akismet';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import {
@@ -352,11 +353,9 @@ export default withCurrentRoute(
 				noMasterbarForSection ||
 				noMasterbarForRoute;
 			const twoFactorEnabled = isTwoFactorEnabled( state );
-			const isFromAkismet = !! new URLSearchParams(
-				getRedirectToOriginal( state )?.split( '?' )[ 1 ]
-			)
-				.get( 'back' )
-				?.startsWith( 'https://akismet.com' );
+			const isFromAkismet = isAkismetRedirect(
+				new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'back' )
+			);
 
 			const colorScheme = isWooJPC ? getColorSchemeFromCurrentQuery( currentQuery ) : null;
 
