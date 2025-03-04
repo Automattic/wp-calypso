@@ -5,7 +5,7 @@ The Calendar component provides a date picker interface that allows users to sel
 ## Usage
 
 ```jsx
-import { Calendar } from '@wordpress/components';
+import { Calendar } from '@automattic/components';
 import { useState } from '@wordpress/element';
 
 function MyCalendar() {
