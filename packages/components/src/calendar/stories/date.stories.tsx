@@ -5,7 +5,7 @@ import { useState, useEffect } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import DatePicker from '../date';
+import DatePicker from '../calendar';
 import { daysFromNow, isWeekend } from './utils';
 /**
  * Types
@@ -13,7 +13,7 @@ import { daysFromNow, isWeekend } from './utils';
 import type { Meta, StoryFn } from '@storybook/react';
 
 const meta: Meta< typeof DatePicker > = {
-	title: 'packages/components/DatePicker',
+	title: 'packages/components/Calendar',
 	id: 'packages-components-datepicker',
 	component: DatePicker,
 	argTypes: {

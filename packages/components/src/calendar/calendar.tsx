@@ -28,10 +28,10 @@ import {
 /**
  * Internal dependencies
  */
-import { TIMEZONELESS_FORMAT } from '../constants';
-import { inputToDate } from '../utils';
+import { TIMEZONELESS_FORMAT } from './constants';
+import { inputToDate } from './utils';
 import { useLilius } from './use-lilius';
-import type { DatePickerProps } from '../types';
+import type { DatePickerProps } from './types';
 import type { KeyboardEventHandler } from 'react';
 
 import './styles.scss';
