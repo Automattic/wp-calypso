@@ -1,21 +1,13 @@
-import { globe, group, Icon, scheduled } from '@wordpress/icons';
+import { globe, group, Icon, scheduled, envelope } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { Container, Header } from './layout';
-import type { SiteDetails } from '@automattic/data-stores';
 
-export const MigrationStartedDIFM = ( { site }: { site?: SiteDetails } ) => {
+export const MigrationStartedDIFM = () => {
 	const translate = useTranslate();
-	const migrationSourceSiteDomain = site?.options?.migration_source_site_domain
-		? site?.options?.migration_source_site_domain?.replace( /^https?:\/\/|\/+$/g, '' )
-		: translate( 'your site' );
 
-	const title = translate( 'Your migration is underway' );
+	const title = translate( "We've received your migration request" );
 	const subTitle = translate(
-		"Sit back as {{strong}}%(siteName)s{{/strong}} transfers to its new home. Here's what you can expect.",
-		{
-			components: { strong: <strong /> },
-			args: { siteName: migrationSourceSiteDomain },
-		}
+		"Our team has received your details. We will review your site to make sure we have everything we need. Here's what you can expect next:"
 	) as string;
 
 	return (
@@ -24,6 +16,16 @@ export const MigrationStartedDIFM = ( { site }: { site?: SiteDetails } ) => {
 			<div className="migration-started-difm">
 				<h2 className="migration-started-difm__title">{ translate( 'What to expect' ) }</h2>
 				<ul className="migration-started-difm__list">
+					<li className="migration-started-difm__item">
+						<div className="migration-started-difm__icon-wrapper">
+							<Icon icon={ envelope } className="migration-started-difm__icon" size={ 30 } />
+						</div>
+						<span>
+							{ translate(
+								"We'll send you an email with more details on the process and we'll let you know when we start the migration."
+							) }
+						</span>
+					</li>
 					<li className="migration-started-difm__item">
 						<div className="migration-started-difm__icon-wrapper">
 							<Icon icon={ group } className="migration-started-difm__icon" size={ 30 } />
