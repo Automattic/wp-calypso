@@ -1,9 +1,8 @@
 import page from '@automattic/calypso-router';
 import { FormInputValidation, FormLabel } from '@automattic/components';
-import { Spinner } from '@wordpress/components';
+import { Spinner, Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import FormsButton from 'calypso/components/forms/form-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { login } from 'calypso/lib/paths';
 import { useDispatch } from 'calypso/state';
@@ -142,9 +141,13 @@ const LostPasswordForm = ( {
 				{ showError && <FormInputValidation isError text={ error } /> }
 			</div>
 			<div className="login__form-action">
-				<FormsButton primary type="submit" disabled={ email.length === 0 || showError || isBusy }>
+				<Button
+					variant="primary"
+					type="submit"
+					disabled={ email.length === 0 || showError || isBusy }
+				>
 					{ isBusy ? <Spinner /> : translate( 'Reset my password' ) }
-				</FormsButton>
+				</Button>
 			</div>
 		</form>
 	);
