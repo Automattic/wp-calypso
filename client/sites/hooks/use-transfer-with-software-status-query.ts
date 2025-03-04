@@ -24,6 +24,7 @@ export const useTransferWithSoftwareStatus = (
 	atomicTransferId: number,
 	options?: {
 		retry?: UseQueryOptions[ 'retry' ];
+		enabled?: UseQueryOptions[ 'enabled' ];
 	}
 ) => {
 	return useQuery( {
@@ -37,6 +38,6 @@ export const useTransferWithSoftwareStatus = (
 		refetchOnReconnect: false,
 		retryDelay: 5000, // Poll every 5 seconds
 		retry: options?.retry ?? false,
-		enabled: !! siteId && !! atomicTransferId, // Only run when both values exist.
+		enabled: options?.enabled,
 	} );
 };

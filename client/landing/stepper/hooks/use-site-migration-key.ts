@@ -23,8 +23,7 @@ export const useSiteMigrationKey = ( siteId?: number, options?: Options ) => {
 	return useQuery( {
 		queryKey: [ 'site-migration-key', siteId ],
 		queryFn: () => getMigrationKey( siteId! ),
-		retry: options?.retry ?? false,
-		retryDelay: 5000,
+		retry: false,
 		enabled: !! siteId && ( options?.enabled ?? true ),
 		select: ( data ) => ( { migrationKey: data?.migration_key } ),
 		refetchOnWindowFocus: false,
