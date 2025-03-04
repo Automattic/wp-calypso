@@ -52,6 +52,8 @@ interface BaseDomainsTableProps {
 	isAllSitesView: boolean;
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
 	onDomainAction?: OnDomainAction;
+	onPointToWpcom?: ( domain: string ) => void;
+	isPointingToWpcom?: boolean;
 	userCanSetPrimaryDomains?: boolean;
 	hideCheckbox?: boolean;
 	isLoadingDomains?: boolean;
@@ -125,6 +127,8 @@ type Value = {
 	showBulkActions: boolean;
 	setShowBulkActions: ( showBulkActions: boolean ) => void;
 	onDomainAction( ...parameters: Parameters< OnDomainAction > ): void;
+	onPointToWpcom?: ( domain: string ) => void;
+	isPointingToWpcom?: boolean;
 	updatingDomain: DomainsTableUpdatingDomain | null;
 	userCanSetPrimaryDomains: BaseDomainsTableProps[ 'userCanSetPrimaryDomains' ];
 	domainsTableColumns: DomainsTableColumn[];
@@ -154,6 +158,8 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		isAllSitesView,
 		domainStatusPurchaseActions,
 		onDomainAction,
+		onPointToWpcom,
+		isPointingToWpcom,
 		userCanSetPrimaryDomains,
 		isLoadingDomains,
 		currentUserCanBulkUpdateContactInfo = false,
@@ -315,7 +321,6 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 	);
 
 	const [ updatingDomain, setUpdatingDomain ] = useState< Value[ 'updatingDomain' ] >( null );
-
 	const onSortChange = ( selectedColumn: DomainsTableColumn, direction?: 'asc' | 'desc' ) => {
 		if ( ! selectedColumn.isSortable ) {
 			return;
@@ -440,13 +445,10 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		setShowBulkActions,
 		onDomainAction: async ( actionType, domain ) => {
 			const actionDescription = onDomainAction?.( actionType, domain );
-
 			if ( ! actionDescription ) {
 				return;
 			}
-
 			const { action, message } = actionDescription;
-
 			setUpdatingDomain( {
 				action: actionType,
 				domain: domain.domain,
@@ -458,6 +460,8 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 
 			setUpdatingDomain( null );
 		},
+		onPointToWpcom,
+		isPointingToWpcom,
 		updatingDomain,
 		userCanSetPrimaryDomains,
 		domainsTableColumns,
