@@ -6,7 +6,6 @@ import {
 	useStarterDesignBySlug,
 } from '@automattic/data-stores';
 import {
-	DESIGN_FIRST_FLOW,
 	EXAMPLE_FLOW,
 	isOnboardingFlow,
 	NEW_HOSTED_SITE_FLOW,
@@ -45,7 +44,6 @@ import './style.scss';
 function getPlansIntent( flowName: string | null, isWordCampPromo?: boolean ): PlansIntent | null {
 	switch ( flowName ) {
 		case START_WRITING_FLOW:
-		case DESIGN_FIRST_FLOW:
 			return 'plans-blog-onboarding';
 		case NEWSLETTER_FLOW:
 		case EXAMPLE_FLOW:
