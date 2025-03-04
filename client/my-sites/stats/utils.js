@@ -63,14 +63,21 @@ export const appendQueryStringForRedirection = ( pathname, query = {} ) => {
 
 /**
  * Parse a date string into a Date object
- *
  * @param {string|number} dateString YYYY-MM-DD format or a timestamp
  * @param {number} gmtOffset GMT offset in minutes
  * @returns
  */
 export const parseLocalDate = ( dateString, gmtOffset = 0 ) => {
+	let validDateString = dateString;
+
+	const dateStringSplits = dateString.split( ' ' );
+	// For date strings like '2025-01-01 01:00:00'.
+	if ( dateStringSplits.length === 2 ) {
+		validDateString = `${ dateStringSplits[ 0 ] }T${ dateStringSplits[ 1 ] }Z`;
+	}
+
 	// Compatible with Date object.
-	const date = new Date( dateString );
+	const date = new Date( validDateString );
 	if ( isNaN( date.getTime() ) ) {
 		return date;
 	}

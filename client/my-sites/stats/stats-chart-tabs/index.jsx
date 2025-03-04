@@ -153,7 +153,8 @@ class StatModuleChartTabs extends Component {
 		// Align the format with the original chart data parser.
 		const timeformat = chartLabelformats[ this.props.selectedPeriod ];
 
-		return moment.utc( date ).format( timeformat );
+		// Use browser's timezone offset to display the correct datetime.
+		return moment( date ).format( timeformat );
 	};
 
 	render() {
