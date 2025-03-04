@@ -64,9 +64,24 @@ const useActions = ( { logType, isLoading }: { logType: LogType; isLoading: bool
 				isPrimary: true,
 				disabled: isLoading,
 				supportsBulk: false,
-				callback: ( items: ( PHPLog | ServerLog )[] ) => {
+				callback: async ( items: ( PHPLog | ServerLog )[] ) => {
 					const url = ( items[ 0 ] as ServerLog ).request_url;
-					navigator.clipboard.writeText( url );
+					try {
+						await navigator.clipboard.writeText( url );
+						dispatch(
+							successNotice(
+								/* translators: notice shown upon copy of request URL */
+								translate( 'Copied' )
+							)
+						);
+					} catch ( error ) {
+						dispatch(
+							errorNotice(
+								/* translators: notice shown upon failed copy of request URL */
+								translate( 'Copy failed' )
+							)
+						);
+					}
 				},
 			},
 			{
