@@ -288,6 +288,13 @@ $button-border: 4px;
 			opacity: 0.8;
 		}
 	}
+
+	&:has(.theme-preview__container--loading) {
+		.theme__sheet-preview-demo-site {
+			opacity: 0 !important;
+			pointer-events: none;
+		}
+	}
 }
 
 .theme__sheet-primary-button {
