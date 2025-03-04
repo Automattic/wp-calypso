@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -10,7 +11,7 @@ import Chart from 'calypso/components/chart';
 import { DEFAULT_HEARTBEAT } from 'calypso/components/data/query-site-stats/constants';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { requestChartCounts } from 'calypso/state/stats/chart-tabs/actions';
 import { QUERY_FIELDS } from 'calypso/state/stats/chart-tabs/constants';
@@ -34,6 +35,18 @@ const ChartTabShape = PropTypes.shape( {
 } );
 
 const CHART_TYPE_STORAGE_KEY = ( siteId ) => `jetpack_stats_chart_type_${ siteId }`;
+
+// Define chart type change event names
+const CHART_TYPE_EVENTS = {
+	jetpack_odyssey: {
+		bar: 'jetpack_odyssey_stats_chart_type_bar_selected',
+		line: 'jetpack_odyssey_stats_chart_type_line_selected',
+	},
+	calypso: {
+		bar: 'calypso_stats_chart_type_bar_selected',
+		line: 'calypso_stats_chart_type_line_selected',
+	},
+};
 
 class StatModuleChartTabs extends Component {
 	static propTypes = {
@@ -61,6 +74,7 @@ class StatModuleChartTabs extends Component {
 		primaryColor: PropTypes.string,
 		secondaryColor: PropTypes.string,
 		siteId: PropTypes.number,
+		recordTracksEvent: PropTypes.func.isRequired,
 	};
 
 	state = {
@@ -115,10 +129,16 @@ class StatModuleChartTabs extends Component {
 
 	handleChartTypeChange = ( newType ) => {
 		const { siteId } = this.props;
+		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+
 		this.setState( { chartType: newType } );
 		if ( siteId ) {
 			localStorage.setItem( CHART_TYPE_STORAGE_KEY( siteId ), newType );
 		}
+
+		// Record the chart type change event
+		this.props.recordTracksEvent( CHART_TYPE_EVENTS[ event_from ][ newType ] );
 	};
 
 	getInitialChartType() {
@@ -368,7 +388,7 @@ const connectComponent = connect(
 			gmtOffset: timezoneOffset,
 		};
 	},
-	{ recordGoogleEvent, requestChartCounts }
+	{ recordGoogleEvent, recordTracksEvent, requestChartCounts }
 );
 
 // TODO: let's convert it to a function component and remove all the hassle.
