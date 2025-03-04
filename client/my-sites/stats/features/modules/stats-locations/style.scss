@@ -24,8 +24,16 @@ $locations-horizontal-bar-width: 380px;
 		}
 	}
 
-	.stats-module-locations__country-filter {
+	.stats-module-locations__actions {
+		display: block;
 		margin: 12px 24px 0;
+
+		.stats-download-csv {
+			margin-left: auto;
+		}
+	}
+
+	.stats-module-locations__country-filter {
 		width: fit-content;
 		display: flex;
 	}
@@ -125,6 +133,17 @@ $locations-horizontal-bar-width: 380px;
 	}
 }
 
+@include break-small {
+	.stats-card.list-locations,
+	.stats-card-skeleton.locations-skeleton {
+		.stats-module-locations__actions {
+			align-items: center;
+			display: flex;
+			justify-content: space-between;
+		}
+	}
+}
+
 @include break-large {
 	.stats-card.list-locations, .stats-card-skeleton.locations-skeleton {
 		.stats-card-header--main {
@@ -181,7 +200,7 @@ $locations-horizontal-bar-width: 380px;
 			flex-basis: 100%;
 		}
 
-		.stats-module-locations__country-filter {
+		.stats-module-locations__actions {
 			margin: 12px 0 0;
 		}
 	}
