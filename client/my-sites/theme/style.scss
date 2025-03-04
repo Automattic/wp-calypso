@@ -270,6 +270,17 @@ $button-border: 4px;
 
 .theme__sheet-column-right {
 	grid-area: preview;
+	position: relative;
+
+	&:has(.theme__sheet-web-preview:hover),
+	&:has(.theme__sheet-web-preview:focus),
+	&:has(.theme__sheet-screenshot:hover),
+	&:has(.theme__sheet-screenshot:focus) {
+		.theme__sheet-preview-demo-site {
+			opacity: 1;
+			animation: theme__sheet-preview-demo-site 150ms ease-in-out;
+		}
+	}
 }
 
 .theme__sheet-primary-button {
@@ -408,14 +419,6 @@ $button-border: 4px;
 	width: 98%;
 	z-index: 1;
 
-	&:hover,
-	&:focus {
-		.theme__sheet-preview-demo-site {
-			opacity: 1;
-			animation: theme__sheet-preview-demo-site 150ms ease-in-out;
-		}
-	}
-
 	@include breakpoint-deprecated( "<960px" ) {
 		border-radius: 0;
 		box-shadow: none;
@@ -458,8 +461,23 @@ $button-border: 4px;
 	top: 50%;
 	z-index: 1;
 	transform: translate(-50%, 0);
+
 	&.button {
 		border-radius: $button-border;
+	}
+}
+
+.theme__sheet-screenshot-demo-site {
+	z-index: 2;
+
+	@include breakpoint-deprecated( ">960px" ) {
+		position: sticky;
+		left: 0;
+		margin-left: 50%;
+		margin-top: -16px;
+		pointer-events: none;
+		top: 50%;
+		transform: translate(-50%, 0);
 	}
 }
 

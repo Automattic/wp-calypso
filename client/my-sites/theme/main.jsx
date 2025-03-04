@@ -481,40 +481,27 @@ class ThemeSheet extends Component {
 
 		if ( this.isThemeAvailable() && ! this.shouldRenderForStaging() ) {
 			return (
-				<a
-					className="theme__sheet-screenshot is-active"
-					href={ demoUrl }
-					onClick={ ( e ) => {
-						this.previewAction( e, 'screenshot', 'preview' );
-					} }
-					rel="noopener noreferrer"
-				>
-					{ this.shouldRenderPreviewButton() && (
-						<Button className="theme__sheet-preview-demo-site">
-							{ translate( 'Preview demo site' ) }
-							<Icon icon={ external } size={ 16 } />
-						</Button>
-					) }
-					{ img }
-				</a>
+				<>
+					{ this.renderPreviewButton( 'screenshot' ) }
+					<a
+						className="theme__sheet-screenshot is-active"
+						href={ demoUrl }
+						onClick={ ( e ) => {
+							this.previewAction( e, 'screenshot', 'preview' );
+						} }
+						rel="noopener noreferrer"
+					>
+						{ img }
+					</a>
+				</>
 			);
 		}
 
 		return (
-			<div className="theme__sheet-screenshot">
-				{ this.shouldRenderPreviewButton() && (
-					<Button
-						className="theme__sheet-preview-demo-site"
-						onClick={ ( e ) => {
-							this.previewAction( e, 'link', 'preview' );
-						} }
-					>
-						{ translate( 'Preview demo site' ) }
-						<Icon icon={ external } size={ 16 } />
-					</Button>
-				) }
-				{ img }
-			</div>
+			<>
+				{ this.renderPreviewButton( 'screenshot' ) }
+				<div className="theme__sheet-screenshot">{ img }</div>
+			</>
 		);
 	}
 
@@ -522,7 +509,7 @@ class ThemeSheet extends Component {
 	 * Render web preview for wpcom themes.
 	 */
 	renderWebPreview = () => {
-		const { locale, siteSlug, stylesheet, styleVariations, themeId, translate } = this.props;
+		const { locale, siteSlug, stylesheet, styleVariations, themeId } = this.props;
 		const baseStyleVariation = styleVariations.find( ( style ) =>
 			isDefaultGlobalStylesVariationSlug( style.slug )
 		);
@@ -543,16 +530,7 @@ class ThemeSheet extends Component {
 
 		return (
 			<div className="theme__sheet-web-preview">
-				{ this.shouldRenderPreviewButton() && (
-					<Button
-						className="theme__sheet-preview-demo-site"
-						onClick={ ( e ) => {
-							this.previewAction( e, 'link', 'preview' );
-						} }
-					>
-						{ translate( 'Preview demo site' ) }
-					</Button>
-				) }
+				{ this.renderPreviewButton( 'web-preview' ) }
 				<ThemeWebPreview
 					url={ url }
 					inlineCss={ baseStyleVariationInlineCss + selectedStyleVariationInlineCss }
@@ -1025,9 +1003,20 @@ class ThemeSheet extends Component {
 		);
 	};
 
-	renderPreviewButton = () => {
+	renderPreviewButton = ( context ) => {
 		const { translate, isWpcomTheme, isExternallyManagedTheme } = this.props;
 		const isExternalLink = ! isWpcomTheme || isExternallyManagedTheme;
+
+		let classNames = 'theme__sheet-demo-button';
+		switch ( context ) {
+			case 'web-preview':
+				classNames = 'theme__sheet-preview-demo-site';
+				break;
+
+			case 'screenshot':
+				classNames = 'theme__sheet-preview-demo-site theme__sheet-screenshot-demo-site';
+				break;
+		}
 
 		if ( ! this.shouldRenderPreviewButton() ) {
 			return null;
@@ -1035,12 +1024,10 @@ class ThemeSheet extends Component {
 
 		return (
 			<Button
-				className="theme__sheet-demo-button"
-				onClick={ ( e ) => this.previewAction( e, 'link', 'preview', 'regular' ) }
+				className={ classNames }
+				onClick={ ( e ) => this.previewAction( e, 'link', 'preview' ) }
 			>
-				{ translate( 'Preview', {
-					context: 'Button to preview a theme',
-				} ) }
+				{ translate( 'Preview', { context: 'Button to preview a theme' } ) }
 				{ isExternalLink && <Icon icon={ external } size={ 16 } /> }
 			</Button>
 		);
