@@ -58,65 +58,31 @@ function QuickPost( {
 	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
 	const [ showSuccessMessage, setShowSuccessMessage ] = useState( false );
 
-	// Add effect to focus editor as soon as it's available
+	// Add effect to focus editor as soon as it's available.
 	useEffect( () => {
-		let observer: MutationObserver | null = null;
+		const attemptFocus = () => {
+			const editable = document
+				.querySelector< HTMLIFrameElement >( 'iframe[name="editor-canvas"]' )
+				?.contentDocument?.querySelector< HTMLElement >( '[contenteditable="true"]' );
 
-		// Function to attempt focusing the editor
-		const attemptEditorFocus = () => {
-			// Find the editable area in the block editor iframe
-			const editorIframe = document.querySelector(
-				'iframe[name="editor-canvas"]'
-			) as HTMLIFrameElement;
-			if ( editorIframe?.contentDocument ) {
-				const editableArea = editorIframe.contentDocument.querySelector(
-					'[contenteditable="true"]'
-				);
-				if ( editableArea ) {
-					// We found the editable area - focus it
-					( editableArea as HTMLElement ).focus();
-					const clickEvent = new MouseEvent( 'click', {
-						bubbles: true,
-						cancelable: true,
-						view: editorIframe.contentWindow || window,
-					} );
-					editableArea.dispatchEvent( clickEvent );
-
-					// Disconnect the observer since we've succeeded
-					if ( observer ) {
-						observer.disconnect();
-						observer = null;
-					}
-					return true;
-				}
+			if ( ! editable ) {
+				return false;
 			}
-			return false;
+
+			editable.focus();
+			editable.dispatchEvent( new MouseEvent( 'click' ) );
+
+			return true;
 		};
 
-		// Try immediately first
-		if ( ! attemptEditorFocus() ) {
-			// If immediate attempt fails, set up an observer to watch for DOM changes
-			observer = new MutationObserver( ( mutations, obs ) => {
-				// Try to focus on each DOM mutation
-				if ( attemptEditorFocus() ) {
-					obs.disconnect();
-				}
-			} );
-
-			// Start observing the document with configured parameters
-			observer.observe( document.body, {
-				childList: true,
-				subtree: true,
-			} );
+		// If immediate focus attempt fails, watch for DOM changes until
+		// the editor becomes available, then focus and auto-disconnect.
+		if ( ! attemptFocus() ) {
+			const obs = new MutationObserver( ( _, o ) => attemptFocus() && o.disconnect() );
+			obs.observe( document.body, { childList: true, subtree: true } );
+			return () => obs.disconnect();
 		}
-
-		return () => {
-			// Clean up the observer on component unmount
-			if ( observer ) {
-				observer.disconnect();
-			}
-		};
-	}, [ editorKey ] ); // Re-run when editor is reset
+	}, [ editorKey ] );
 
 	const clearEditor = () => {
 		setEditorKey( ( key ) => key + 1 );
