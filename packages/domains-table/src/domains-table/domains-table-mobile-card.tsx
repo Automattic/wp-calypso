@@ -3,12 +3,11 @@ import { PartialDomainData } from '@automattic/data-stores';
 import { CheckboxControl } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useState } from 'react';
-import { PointToWpcomDialog } from '../point-to-wpcom-dialog/point-to-wpcom-dialog';
 import { PrimaryDomainLabel } from '../primary-domain-label/index';
 import { useDomainRow } from '../use-domain-row';
 import { canBulkUpdate } from '../utils/can-bulk-update';
 import { domainManagementLink as getDomainManagementLink } from '../utils/paths';
+import { useDomainsTable } from './domains-table';
 import { DomainsTableEmailIndicator } from './domains-table-email-indicator';
 import { DomainsTableExpiresRenewsOnCell } from './domains-table-expires-renews-cell';
 import { DomainsTablePlaceholder } from './domains-table-placeholder';
@@ -22,9 +21,7 @@ type Props = {
 
 export const DomainsTableMobileCard = ( { domain }: Props ) => {
 	const { __ } = useI18n();
-
-	const [ showPointToWpcomModal, setShowPointToWpcomModal ] = useState( false );
-
+	const { onPointToWpcom, isPointingToWpcom } = useDomainsTable();
 	const {
 		ref,
 		site,
@@ -39,7 +36,13 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 		isLoadingSiteDomainsDetails,
 		isAllSitesView,
 		isManageableDomain,
-	} = useDomainRow( domain, () => setShowPointToWpcomModal( true ) );
+	} = useDomainRow(
+		domain,
+		() => {
+			onPointToWpcom?.( domain.domain );
+		},
+		isPointingToWpcom
+	);
 
 	const domainManagementLink = isManageableDomain
 		? getDomainManagementLink( domain, siteSlug, isAllSitesView )
@@ -50,11 +53,6 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 			{ ! showBulkActions && domainManagementLink && (
 				<a className="domains-table__domain-link" href={ domainManagementLink } />
 			) }
-			<PointToWpcomDialog
-				visible={ showPointToWpcomModal }
-				domain={ domain.domain }
-				onClose={ () => setShowPointToWpcomModal( false ) }
-			/>
 			<div>
 				<div className="domains-table-mobile-card-header">
 					{ showBulkActions && (
