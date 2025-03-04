@@ -1,10 +1,6 @@
 import { OnboardActions, SiteActions } from '@automattic/data-stores';
 import { Task } from '@automattic/launchpad';
-import {
-	isBlogOnboardingFlow,
-	isStartWritingFlow,
-	replaceProductsInCart,
-} from '@automattic/onboarding';
+import { isStartWritingFlow, replaceProductsInCart } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
@@ -56,7 +52,7 @@ const getOnboardingCartItems = ( context: TaskContext ) => {
 const getLaunchSiteTaskTitle = ( task: Task, flow: string, context: TaskContext ) => {
 	const { tasks } = context;
 	const onboardingCartItems = getOnboardingCartItems( context );
-	const isSupportedFlow = isBlogOnboardingFlow( flow );
+	const isSupportedFlow = isStartWritingFlow( flow );
 	const { planCompleted } = getCompletedInfo( tasks, flow );
 	if ( isSupportedFlow && planCompleted && onboardingCartItems.length ) {
 		return translate( 'Checkout and launch' );

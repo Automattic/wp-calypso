@@ -1,6 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { ProductsList } from '@automattic/data-stores';
-import { START_WRITING_FLOW, isBlogOnboardingFlow } from '@automattic/onboarding';
+import { START_WRITING_FLOW, isStartWritingFlow } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
@@ -47,7 +47,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	};
 
 	const onSkip = async () => {
-		if ( isBlogOnboardingFlow( flow ) ) {
+		if ( isStartWritingFlow( flow ) ) {
 			setDomain( null );
 			setDomainCartItem( undefined );
 			setHideFreePlan( false );
@@ -136,7 +136,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	};
 
 	const getFormattedHeader = () => {
-		if ( isBlogOnboardingFlow( flow ) ) {
+		if ( isStartWritingFlow( flow ) ) {
 			return (
 				<FormattedHeader
 					id="choose-a-domain-writer-header"
@@ -161,7 +161,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 			<StepContainer
 				stepName="chooseADomain"
 				shouldHideNavButtons={ false }
-				hideSkip={ isBlogOnboardingFlow( flow ) }
+				hideSkip={ isStartWritingFlow( flow ) }
 				goBack={ goBack }
 				goNext={ goNext }
 				isHorizontalLayout={ false }

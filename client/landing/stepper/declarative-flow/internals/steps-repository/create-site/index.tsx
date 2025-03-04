@@ -12,8 +12,8 @@ import {
 	isEntrepreneurFlow,
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
-	isBlogOnboardingFlow,
 	isReadymadeFlow,
+	isStartWritingFlow,
 	isOnboardingFlow,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -130,7 +130,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		isOnboardingFlow( flow ) ||
 		isCopySiteFlow( flow ) ||
 		isImportFocusedFlow( flow ) ||
-		isBlogOnboardingFlow( flow ) ||
+		isStartWritingFlow( flow ) ||
 		isNewHostedSiteCreationFlow( flow ) ||
 		isReadymadeFlow( flow ) ||
 		wooFlows.includes( flow || '' )

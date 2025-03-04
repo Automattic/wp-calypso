@@ -220,7 +220,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		);
 
 		if (
-			isBlogOnboardingFlow( flowName ) ||
+			isStartWritingFlow( flowName ) ||
 			isNewsletterFlow( flowName ) ||
 			isDomainUpsellFlow( flowName )
 		) {

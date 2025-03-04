@@ -6,7 +6,7 @@ import {
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
 	StepContainer,
-	isBlogOnboardingFlow,
+	isStartWritingFlow,
 	START_WRITING_FLOW,
 	READYMADE_TEMPLATE_FLOW,
 } from '@automattic/onboarding';
@@ -96,7 +96,7 @@ const NewOrExistingSiteStep: Step = function NewOrExistingSiteStep( { navigation
 	};
 
 	const getHeaderText = () => {
-		if ( isBlogOnboardingFlow( flow ) ) {
+		if ( isStartWritingFlow( flow ) ) {
 			return translate( 'New or existing site' );
 		}
 		switch ( flow ) {
@@ -127,7 +127,7 @@ const NewOrExistingSiteStep: Step = function NewOrExistingSiteStep( { navigation
 			stepName="new-or-existing-site"
 			flowName={ flow }
 			recordTracksEvent={ recordTracksEvent }
-			hideBack={ isBlogOnboardingFlow( flow ) }
+			hideBack={ isStartWritingFlow( flow ) }
 		/>
 	);
 };
