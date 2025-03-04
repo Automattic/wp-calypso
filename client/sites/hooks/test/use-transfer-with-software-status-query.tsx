@@ -40,12 +40,23 @@ describe( 'useTransferWithSoftwareStatus', () => {
 		expect( result.current.data ).toEqual( mockSuccessResponse );
 	} );
 
-	it( 'should not fetch when siteId or atomicTransferId is missing', () => {
+	it( 'should not fetch when siteId is missing', () => {
 		const queryClient = new QueryClient();
 		const wrapper = ( { children }: { children: React.ReactNode } ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		);
 		const { result } = renderHook( () => useTransferWithSoftwareStatus( 0, 456 ), { wrapper } );
+
+		expect( result.current.isFetching ).toBe( false );
+		expect( nock.isDone() ).toBe( true ); // No pending nock requests
+	} );
+
+	it( 'should not fetch when atomicTransferId is missing', () => {
+		const queryClient = new QueryClient();
+		const wrapper = ( { children }: { children: React.ReactNode } ) => (
+			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+		);
+		const { result } = renderHook( () => useTransferWithSoftwareStatus( 123, 0 ), { wrapper } );
 
 		expect( result.current.isFetching ).toBe( false );
 		expect( nock.isDone() ).toBe( true ); // No pending nock requests
