@@ -426,6 +426,12 @@ export function generateFlows( {
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
 			enablePremiumSupport: true,
+			get helpCenterButtonCopy() {
+				return translate( 'Questions?' );
+			},
+			get helpCenterButtonLink() {
+				return translate( 'Contact our site building team' );
+			},
 			providesDependenciesInQuery: [ 'coupon', 'back_to', 'newOrExistingSiteChoice' ],
 			optionalDependenciesInQuery: [ 'coupon', 'back_to', 'newOrExistingSiteChoice' ],
 		},
@@ -447,6 +453,12 @@ export function generateFlows( {
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
 			enablePremiumSupport: true,
+			get helpCenterButtonCopy() {
+				return translate( 'Questions?' );
+			},
+			get helpCenterButtonLink() {
+				return translate( 'Contact our site building team' );
+			},
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
 		},
@@ -460,6 +472,12 @@ export function generateFlows( {
 			optionalDependenciesInQuery: [ 'back_to' ],
 			lastModified: '2024-06-14',
 			enablePremiumSupport: true,
+			get helpCenterButtonCopy() {
+				return translate( 'Questions?' );
+			},
+			get helpCenterButtonLink() {
+				return translate( 'Contact our site building team' );
+			},
 		},
 
 		{

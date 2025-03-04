@@ -227,6 +227,8 @@ class StepWrapper extends Component {
 							<HelpCenterStepButton
 								hasPremiumSupport={ flow?.enablePremiumSupport }
 								flowName={ flowName }
+								helpCenterButtonCopy={ flow?.helpCenterButtonCopy }
+								helpCenterButtonLink={ flow?.helpCenterButtonLink }
 							/>
 						) }
 					</ActionButtons>

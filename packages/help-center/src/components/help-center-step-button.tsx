@@ -10,11 +10,15 @@ import type { FC } from 'react';
 interface HelpCenterStepButtonProps {
 	hasPremiumSupport?: boolean;
 	flowName?: string;
+	helpCenterButtonCopy?: string;
+	helpCenterButtonLink?: string;
 }
 
 const HelpCenterStepButton: FC< HelpCenterStepButtonProps > = ( {
 	hasPremiumSupport,
 	flowName,
+	helpCenterButtonCopy,
+	helpCenterButtonLink,
 } ) => {
 	const translate = useTranslate();
 	const { setShowHelpCenter, setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
@@ -25,26 +29,28 @@ const HelpCenterStepButton: FC< HelpCenterStepButtonProps > = ( {
 	const flowCustomOptions = useFlowCustomOptions( flowName || '' );
 	const { userFieldMessage, userFieldFlowName } = useFlowZendeskUserFields( flowName || '' );
 
-	function openHelpCenter() {
-		setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport, flowCustomOptions );
-		if ( hasPremiumSupport ) {
-			const urlWithQueryArgs = addQueryArgs( '/odie?provider=zendesk', {
-				userFieldMessage,
-				userFieldFlowName,
-			} );
-			setNavigateToRoute( urlWithQueryArgs );
-		} else {
-			setNavigateToRoute( `/odie` );
+	function toggleHelpCenter() {
+		if ( ! isShowingHelpCenter ) {
+			if ( hasPremiumSupport ) {
+				const urlWithQueryArgs = addQueryArgs( '/odie?provider=zendesk', {
+					userFieldMessage,
+					userFieldFlowName,
+				} );
+				setNavigateToRoute( urlWithQueryArgs );
+			} else {
+				setNavigateToRoute( `/odie` );
+			}
 		}
+
+		setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport, flowCustomOptions );
 	}
 
 	return (
 		<div className="step-wrapper__help-center-button-container">
-			{ translate( 'Questions? {{a}}Contact our site building team{{/a}}', {
-				components: {
-					a: <Button onClick={ openHelpCenter } className="step-wrapper__help-center-button" />,
-				},
-			} ) }
+			<label>{ helpCenterButtonCopy ?? translate( 'Need extra help?' ) }</label>
+			<Button className="step-wrapper__help-center-button" onClick={ toggleHelpCenter }>
+				{ helpCenterButtonLink ?? translate( 'Visit Help Center' ) }
+			</Button>
 		</div>
 	);
 };
