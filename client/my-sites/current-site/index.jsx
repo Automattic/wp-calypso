@@ -1,14 +1,12 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import Site from 'calypso/blocks/site';
-import AsyncLoad from 'calypso/components/async-load';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { useSelector } from 'calypso/state';
 import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
 import { hasAllSitesList } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import SiteNotices from './site-notices';
 
 import './style.scss';
 
@@ -52,24 +50,7 @@ function CurrentSite( { forceAllSitesView } ) {
 						<Site site={ selectedSite } homeLink />
 					</div>
 				) }
-				{ selectedSite && isEnabled( 'current-site/domain-warning' ) && (
-					<AsyncLoad require="calypso/my-sites/current-site/domain-warnings" placeholder={ null } />
-				) }
-				{ selectedSite && isEnabled( 'current-site/stale-cart-notice' ) && (
-					<CalypsoShoppingCartProvider>
-						<AsyncLoad
-							require="calypso/my-sites/current-site/stale-cart-items-notice"
-							placeholder={ null }
-						/>
-					</CalypsoShoppingCartProvider>
-				) }
-				{ selectedSite && isEnabled( 'current-site/notice' ) && (
-					<AsyncLoad
-						require="calypso/my-sites/current-site/notice"
-						placeholder={ null }
-						site={ selectedSite }
-					/>
-				) }
+				<SiteNotices />
 			</div>
 		</Card>
 	);

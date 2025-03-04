@@ -19,6 +19,7 @@ import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import isJetpackConnectionUnhealthy from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-unhealthy';
 import { savePreference } from 'calypso/state/preferences/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
@@ -30,14 +31,19 @@ import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { updateSiteMigrationMeta } from 'calypso/state/sites/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
+import { isTrialSite } from 'calypso/state/sites/plans/selectors';
 import { isTrialExpired } from 'calypso/state/sites/plans/selectors/trials/trials-expiration';
 import {
+	getUpdatesBySiteId,
 	getSiteSlug,
 	isJetpackSite,
 	getSitePlanSlug,
+	getSitePlanName,
 	getSiteTitle,
 	getSiteUrl,
 	getSiteAdminUrl,
@@ -46,6 +52,7 @@ import {
 } from 'calypso/state/sites/selectors';
 import canCurrentUserManageSiteOptions from 'calypso/state/sites/selectors/can-current-user-manage-site-options';
 import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
+import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import isSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -400,6 +407,139 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
+	renderSiteBadges() {
+		const {
+			site,
+			translate,
+			isUnlaunchedSite,
+			isTrial,
+			isSiteP2,
+			isP2Hub,
+			isAtomicAndEditingToolkitDeactivated,
+			siteIsConnected,
+			siteUpdates,
+		} = this.props;
+
+		if ( ! site ) {
+			return null;
+		}
+
+		// Status badges
+		const badges = [];
+
+		// We show public coming soon badge only when the site is not private.
+		const shouldShowPublicComingSoonSiteBadge =
+			! site.is_private &&
+			site.is_coming_soon &&
+			! isAtomicAndEditingToolkitDeactivated &&
+			! isTrial;
+
+		// Cover the coming Soon v1 cases for sites still unlaunched and/or in Coming Soon private by default.
+		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
+		const isPrivateAndUnlaunched = site.is_private && isUnlaunchedSite;
+		const shouldShowPrivateByDefaultComingSoonBadge = site.is_coming_soon || isPrivateAndUnlaunched;
+
+		// P2 Badge
+		if ( isSiteP2 && ! isP2Hub ) {
+			badges.push(
+				<span key="p2" className="masterbar__site-badge is-p2">
+					P2
+				</span>
+			);
+		}
+
+		// Staging Badge
+		if ( site?.is_wpcom_staging_site ) {
+			badges.push(
+				<span key="staging" className="masterbar__site-badge is-staging">
+					{ translate( 'Staging' ) }
+				</span>
+			);
+		}
+
+		// Trial Badge
+		if ( isTrial ) {
+			badges.push(
+				<span key="trial" className="masterbar__site-badge is-trial">
+					{ translate( 'Trial' ) }
+				</span>
+			);
+		}
+
+		// P2 Workspace Badge
+		if ( isP2Hub ) {
+			badges.push(
+				<span key="p2-workspace" className="masterbar__site-badge is-p2-workspace">
+					P2 Workspace
+				</span>
+			);
+		}
+
+		// Private/Coming Soon Badge
+		if ( site.is_private ) {
+			badges.push(
+				<span key="private" className="masterbar__site-badge is-private">
+					{ shouldShowPrivateByDefaultComingSoonBadge
+						? translate( 'Coming Soon' )
+						: translate( 'Private' ) }
+				</span>
+			);
+		}
+
+		// Express Service Badge
+		if ( site.options && site.options.is_difm_lite_in_progress ) {
+			badges.push(
+				<span key="express" className="masterbar__site-badge is-express">
+					{ translate( 'Express Service' ) }
+				</span>
+			);
+		}
+
+		// Public Coming Soon Badge
+		if ( shouldShowPublicComingSoonSiteBadge ) {
+			badges.push(
+				<span key="coming-soon" className="masterbar__site-badge is-coming-soon">
+					{ translate( 'Coming Soon' ) }
+				</span>
+			);
+		}
+
+		// Redirect Badge
+		if ( site.options && site.options.is_redirect ) {
+			badges.push(
+				<span key="redirect" className="masterbar__site-badge is-redirect">
+					{ translate( 'Redirect' ) }
+				</span>
+			);
+		}
+
+		// Domain Badge
+		if ( site.options && site.options.is_domain_only ) {
+			badges.push(
+				<span key="domain" className="masterbar__site-badge is-domain-only">
+					{ translate( 'Domain' ) }
+				</span>
+			);
+		}
+
+		// Site updates/errors indicators
+		if ( siteUpdates && ! siteIsConnected === false && siteUpdates.total > 0 ) {
+			badges.push(
+				<span key="updates" className="masterbar__site-badge is-updates">
+					{ translate( 'Updates' ) }
+				</span>
+			);
+		} else if ( siteIsConnected === false ) {
+			badges.push(
+				<span key="error" className="masterbar__site-badge is-error">
+					{ translate( 'Connection Error' ) }
+				</span>
+			);
+		}
+
+		return badges.length > 0 ? badges : null;
+	}
+
 	renderSiteMenu() {
 		const {
 			siteSlug,
@@ -410,6 +550,7 @@ class MasterbarLoggedIn extends Component {
 			siteAdminUrl,
 			siteHomeUrl,
 			domainOnlySite,
+			sitePlanName,
 		} = this.props;
 
 		// Only display when a site is selected and is not domain-only site.
@@ -427,13 +568,41 @@ class MasterbarLoggedIn extends Component {
 					url: siteHomeUrl,
 			  };
 
+		// Get site badges
+		const siteBadges = this.renderSiteBadges();
+
+		// Create a site status item for the dropdown if we have badges
+		const menuItems = [
+			[ { label: translate( 'Visit Site' ), url: siteUrl }, siteHomeOrAdminItem ],
+			[
+				{
+					label: (
+						<div className="masterbar__site-infos">
+							{ siteBadges && siteBadges.length > 0 && (
+								<div className="masterbar__site-info">
+									<span className="masterbar__site-info-label">{ translate( 'Status' ) }</span>
+									<div className="masterbar__info-badges">{ siteBadges }</div>
+								</div>
+							) }
+							<div className="masterbar__site-info">
+								<span className="masterbar__site-info-label">{ translate( 'Plan' ) }</span>
+								<div className="masterbar__info-badges">
+									<span className="masterbar__site-badge is-plan">{ sitePlanName }</span>
+								</div>
+							</div>
+						</div>
+					),
+				},
+			],
+		];
+
 		return (
 			<Item
 				className="masterbar__item-my-site"
 				url={ siteUrl }
 				icon={ <span className="dashicons-before dashicons-admin-home" /> }
 				tipTarget="visit-site"
-				subItems={ [ [ { label: translate( 'Visit Site' ), url: siteUrl }, siteHomeOrAdminItem ] ] }
+				subItems={ menuItems }
 			>
 				{ siteTitle.length > 40 ? `${ siteTitle.substring( 0, 40 ) }\u2026` : siteTitle }
 			</Item>
@@ -790,7 +959,9 @@ export default connect(
 			isEcommerce: isEcommercePlan( sitePlanSlug ),
 			isA4ADevSite: site?.is_a4a_dev_site,
 			siteId: siteId,
+			site: site,
 			siteSlug: getSiteSlug( state, siteId ),
+			sitePlanName: getSitePlanName( state, siteId ),
 			siteTitle: getSiteTitle( state, siteId ),
 			siteUrl: getSiteUrl( state, siteId ),
 			siteAdminUrl: getSiteAdminUrl( state, siteId ),
@@ -815,6 +986,14 @@ export default connect(
 			newPostUrl: getEditorUrl( state, siteId, null, 'post' ),
 			newPageUrl: getEditorUrl( state, siteId, null, 'page' ),
 			isUnlaunchedSite: getIsUnlaunchedSite( state, siteId ),
+			isTrial: isTrialSite( state, siteId ),
+			isSiteP2: isSiteWPForTeams( state, siteId ),
+			isP2Hub: isSiteP2Hub( state, siteId ),
+			isAtomicAndEditingToolkitDeactivated:
+				isAtomicSite( state, siteId ) &&
+				getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
+			siteIsConnected: site && ! isJetpackConnectionUnhealthy( state, site.ID ),
+			siteUpdates: site && getUpdatesBySiteId( state, site.ID ),
 		};
 	},
 	{
