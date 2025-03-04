@@ -274,20 +274,10 @@ body.is-section-accept-invite {
 	* Akismet Signup
 	*/
 	@at-root .is-akismet {
-		.auth-form__social-buttons-container .social-buttons__button {
-			&:focus:not(:disabled) {
-				--wp-components-color-accent: var(--color-akismet);
-			}
-		}
-
-		.signup__step {
-			.components-button.is-primary:not(:disabled) {
-				--wp-components-color-accent: var(--color-akismet);
-
-				&:hover {
-					--wp-components-color-accent-darker-10: var(--color-akismet);
-				}
-			}
+		.components-button {
+			--color-accent: var(--color-akismet);
+			--color-link: var(--color-akismet);
+			--wp-components-color-accent-darker-10: var(--color-akismet);
 		}
 	}
 

@@ -55,22 +55,13 @@ form {
 }
 
 .is-akismet {
-	.login__form,
-	.magic-login__form,
+	.wp-login__main,
+	.magic-login,
 	.continue-as-user {
-		.components-button.is-primary:not(:disabled) {
-			--wp-components-color-accent: var(--color-akismet);
-			--wp-components-color-accent-darker-20: var(--color-akismet);
-
-			&:hover {
-				--wp-components-color-accent-darker-10: var(--color-akismet);
-			}
-		}
-	}
-
-	.is-social-first .card.auth-form__social .social-buttons__button {
-		&:focus:not(:disabled) {
-			--wp-components-color-accent: var(--color-akismet);
+		.components-button {
+			--color-accent: var(--color-akismet);
+			--color-link: var(--color-akismet);
+			--wp-components-color-accent-darker-10: var(--color-akismet);
 		}
 	}
 }
