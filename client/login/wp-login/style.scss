@@ -574,8 +574,6 @@ $image-height: 47px;
 
 /* stylelint-disable declaration-property-unit-allowed-list, scales/font-weights, scales/radii */
 .layout.is-section-login.is-grav-powered-client {
-	--color-gravatar: #1d4fc4;
-
 	--color-accent: var(--color-gravatar);
 	/* equivalent to sass darken(#1d4fc4, 13%); */
 	--color-accent-dark: #163d98;
