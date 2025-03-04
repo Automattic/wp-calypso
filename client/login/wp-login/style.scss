@@ -387,6 +387,11 @@ $image-height: 47px;
 				text-align: start;
 				min-width: 194px;
 				height: unset;
+
+				&.is-tertiary {
+					min-width: unset;
+					padding: 0;
+				}
 			}
 		}
 	}
@@ -569,6 +574,14 @@ $image-height: 47px;
 
 /* stylelint-disable declaration-property-unit-allowed-list, scales/font-weights, scales/radii */
 .layout.is-section-login.is-grav-powered-client {
+	--color-gravatar: #1d4fc4;
+
+	--color-accent: var(--color-gravatar);
+	/* equivalent to sass darken(#1d4fc4, 13%); */
+	--color-accent-dark: #163d98;
+	--color-link: var(--color-accent);
+	--color-link-dark: var(--color-accent-dark);
+
 	background-color: #fff;
 
 	&.is-wp-job-manager {
@@ -620,10 +633,6 @@ $image-height: 47px;
 		color: #101517;
 		font-size: 14px;
 		line-height: 1.5;
-
-		a:not(.notice.is-error a) {
-			color: #1d4fc4;
-		}
 
 		button {
 			font-family: inherit;
@@ -679,10 +688,6 @@ $image-height: 47px;
 		display: none;
 	}
 
-	.login__form-change-username {
-		color: #1d4fc4;
-	}
-
 	.login__form-password {
 		margin-top: 15px;
 	}
@@ -716,32 +721,21 @@ $image-height: 47px;
 		}
 	}
 
-	button.form-button.is-primary,
+	.components-button.is-primary,
 	.two-factor-authentication__actions .button {
 		min-height: 56px;
 		margin: 0;
 		padding: 10px 16px;
 		font-size: 16px;
 		font-weight: 600;
-
-		&:disabled {
-			opacity: 0.3;
-		}
 	}
 
-	button.form-button.is-primary {
-		margin-top: 16px;
-		margin-bottom: 0;
-		border: 0;
+	.components-button {
+		--wp-components-color-accent: var(--color-accent);
+		--wp-components-color-accent-darker-10: var(--color-accent-dark);
 
-		&,
-		&:disabled {
-			background-color: #1d4fc4;
-		}
-
-		&:hover:not(&:disabled),
-		&:focus {
-			background-color: darken(#1d4fc4, 10%);
+		&.is-primary {
+			margin-top: 16px;
 		}
 	}
 
@@ -758,13 +752,13 @@ $image-height: 47px;
 		}
 
 		.button {
-			color: #1d4fc4;
+			color: var(--color-accent);
 			border: 1px solid #1d4fc44d;
 			box-shadow: none;
 
 			&:hover:not(&:disabled),
 			&:focus {
-				color: darken(#1d4fc4, 13%);
+				color: var(--color-accent-dark);
 				border-color: darken(#1d4fc44d, 13%);
 			}
 		}
@@ -794,23 +788,45 @@ $image-height: 47px;
 	}
 
 	.auth-form__social-buttons-container {
-		padding: 2px 0;
+		padding: 4px;
 	}
 
 	.social-buttons__button {
-		display: flex;
-		align-items: center;
-		padding: 0;
-
-		&:focus {
-			outline: dotted;
-		}
+		box-shadow: none;
+		padding: unset;
+		border-radius: unset;
+		height: auto;
 
 		> svg {
 			border: 1px solid var(--studio-gray-10);
-			border-radius: 24px;
+			border-radius: 50%;
 			margin: 0;
-			padding: 12px;
+			width: 20px;
+			height: 20px;
+			margin-right: 12px;
+		}
+
+		> span {
+			margin-left: unset;
+		}
+
+		&:hover {
+			background: unset;
+
+			> svg {
+				/* Matches hover state of .components-button */
+				background: color-mix(in srgb, var(--wp-components-color-accent) 4%, transparent);
+			}
+		}
+
+		&:focus {
+			box-shadow: none;
+
+			> svg {
+				border-color: transparent;
+				/* Matches focus state of .components-button */
+				box-shadow: 0 0 0 currentColor inset, 0 0 0 var(--wp-admin-border-width-focus) var(--wp-components-color-accent);
+			}
 		}
 	}
 
