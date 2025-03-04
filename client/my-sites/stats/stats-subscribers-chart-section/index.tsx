@@ -10,7 +10,6 @@ import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-qu
 import { useSelector } from 'calypso/state';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import useCssVariable from '../hooks/use-css-variable';
-import PageLoading from '../pages/shared/page-loading';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsPeriodHeader from '../stats-period-header';
 import { parseLocalDate } from '../utils';
@@ -283,7 +282,7 @@ export default function SubscribersChartSection( {
 							EmptyState={ () => null }
 							zeroBaseline={ lineChartData.length > 1 }
 							formatTimeTick={ formatTimeTick }
-							placeholder={ PageLoading }
+							placeholder={ <StatsModulePlaceholder className="is-chart" isLoading /> }
 						/>
 					) : (
 						<UplotChart
