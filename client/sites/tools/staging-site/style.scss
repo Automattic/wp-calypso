@@ -1,18 +1,6 @@
 .tools-staging-site {
 	display: flex;
-    flex-direction: column;
+	flex-direction: column;
 	align-items: flex-start;
-    gap: 16px;
-}
-
-.tools-staging-site__site-url {
-    word-wrap: break-word;
-
-    &.is-link {
-        text-decoration: none;
-    }
-
-    svg {
-        vertical-align: middle;
-    }
+	gap: 16px;
 }

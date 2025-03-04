@@ -1,0 +1,14 @@
+.tools-staging-site__site-url {
+	word-wrap: break-word;
+	text-decoration: none;
+
+	&.is-link {
+		text-decoration: none;
+	}
+
+	svg {
+		vertical-align: middle;
+		margin-left: 4px;
+		margin-bottom: 2px;
+	}
+}

@@ -39,6 +39,7 @@ import { NewStagingSiteCardContent } from './card-content/new-staging-site-card-
 import { StagingSiteLoadingBarCardContent } from './card-content/staging-site-loading-bar-card-content';
 import { StagingSiteLoadingErrorCardContent } from './card-content/staging-site-loading-error-card-content';
 import { LoadingPlaceholder } from './loading-placeholder';
+import './style.scss';
 const stagingSiteAddSuccessNoticeId = 'staging-site-add-success';
 const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
 const stagingSiteDeleteSuccessNoticeId = 'staging-site-remove-success';
