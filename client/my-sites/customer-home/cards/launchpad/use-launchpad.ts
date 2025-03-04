@@ -12,7 +12,7 @@ import type { AppState } from 'calypso/types';
 
 interface UseLaunchpadProps {
 	checklistSlug: string;
-	launchpadContext: string | null;
+	launchpadContext: string;
 }
 
 export function useLaunchpad( { checklistSlug, launchpadContext }: UseLaunchpadProps ) {
@@ -25,11 +25,7 @@ export function useLaunchpad( { checklistSlug, launchpadContext }: UseLaunchpadP
 	const {
 		data: { checklist, is_dismissed: isDismissed, is_dismissible: isDismissible, title },
 		refetch,
-	} = useSortedLaunchpadTasks(
-		launchpadContext ? siteSlug : null, // Prevents launchpad data from loading until launchpadContext is loaded
-		checklistSlug,
-		launchpadContext ?? ''
-	);
+	} = useSortedLaunchpadTasks( siteSlug, checklistSlug, launchpadContext );
 
 	const numberOfSteps = checklist?.length || 0;
 	const completedSteps = ( checklist?.filter( ( task: Task ) => task.completed ) || [] ).length;
