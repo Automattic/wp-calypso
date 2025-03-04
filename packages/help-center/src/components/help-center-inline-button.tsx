@@ -8,14 +8,12 @@ import { HELP_CENTER_STORE } from '../stores';
 import type { FC, ReactNode } from 'react';
 
 interface HelpCenterInlineButtonProps {
-	hasPremiumSupport?: boolean;
 	flowName?: string;
 	children?: ReactNode;
 	className?: string;
 }
 
 const HelpCenterInlineButton: FC< HelpCenterInlineButtonProps > = ( {
-	hasPremiumSupport,
 	flowName,
 	children,
 	className,
@@ -29,8 +27,12 @@ const HelpCenterInlineButton: FC< HelpCenterInlineButtonProps > = ( {
 	const { userFieldMessage, userFieldFlowName } = useFlowZendeskUserFields( flowName || '' );
 
 	function toggleHelpCenter() {
-		setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport, flowCustomOptions );
-		if ( hasPremiumSupport ) {
+		setShowHelpCenter(
+			! isShowingHelpCenter,
+			flowCustomOptions?.hasPremiumSupport,
+			flowCustomOptions
+		);
+		if ( flowCustomOptions?.hasPremiumSupport ) {
 			const urlWithQueryArgs = addQueryArgs( '/odie?provider=zendesk', {
 				userFieldMessage,
 				userFieldFlowName,
