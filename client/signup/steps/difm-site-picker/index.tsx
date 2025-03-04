@@ -62,11 +62,7 @@ export default function DIFMSitePickerStep( props: Props ) {
 		{
 			components: {
 				SupportLink: (
-					<HelpCenterInlineButton
-						className="subtitle-link"
-						hasPremiumSupport
-						flowName={ props.flowName }
-					/>
+					<HelpCenterInlineButton className="subtitle-link" flowName={ props.flowName } />
 				),
 				NewSiteLink: (
 					<Button variant="link" className="subtitle-link" onClick={ onNewSiteClicked } />
