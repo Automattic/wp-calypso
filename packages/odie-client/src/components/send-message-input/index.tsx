@@ -17,7 +17,7 @@ export const OdieSendMessageButton = () => {
 	const attachmentButtonRef = useRef< HTMLElement >( null );
 	const { trackEvent, chat } = useOdieAssistantContext();
 	const sendMessage = useSendChatMessage();
-	const [ isChatBusy, setIsChatBusy ] = useState( false );
+	const isChatBusy = chat.status === 'loading' || chat.status === 'sending';
 	const [ isMessageSizeValid, setIsMessageSizeValid ] = useState( true );
 	const [ submitDisabled, setSubmitDisabled ] = useState( true );
 
@@ -26,10 +26,6 @@ export const OdieSendMessageButton = () => {
 		// used to remove validation message.
 		setIsMessageSizeValid( true );
 	}, [] );
-
-	useCallback( () => {
-		setIsChatBusy( chat.status === 'loading' || chat.status === 'sending' );
-	}, [ chat.status ] );
 
 	const sendMessageHandler = useCallback( async () => {
 		const message = inputRef.current?.value.trim();
