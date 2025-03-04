@@ -20,7 +20,7 @@ const playground: Flow = {
 
 		const goNext = () => {
 			// TODO: Implement go next
-			navigate( 'onboarding' );
+			navigate( 'onboarding/domains' );
 		};
 
 		const goToStep = ( step: string ) => {
@@ -30,7 +30,7 @@ const playground: Flow = {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		function submit( providedDependencies: ProvidedDependencies ) {
 			// TODO: Implement submit
-			navigate( 'onboarding' );
+			navigate( 'onboarding/domains' );
 		}
 
 		return { goBack, goNext, goToStep, submit };

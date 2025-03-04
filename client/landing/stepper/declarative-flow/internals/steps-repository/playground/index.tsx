@@ -1,52 +1,66 @@
-import { StepContainer } from '@automattic/onboarding';
+import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
+import { PlaygroundClient } from '@wp-playground/client';
+import { useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import StepWrapper from 'calypso/signup/step-wrapper';
 import { useIsPlaygroundEligible } from '../../../../hooks/use-is-playground-eligible';
+import { PlaygroundIframe } from './components/playground-iframe';
 import type { Step } from '../../types';
 import './style.scss';
 
-export const PlaygroundStep: Step = () => {
+export const PlaygroundStep: Step = ( { navigation } ) => {
+	const { submit } = navigation;
 	const isPlaygroundEligible = useIsPlaygroundEligible();
-
 	if ( ! isPlaygroundEligible ) {
 		window.location.assign( '/start' );
 	}
-
+	const playgroundClientRef = useRef< PlaygroundClient | null >( null );
 	const { __ } = useI18n();
 
-	const getBackLabelText = () => {
-		// TODO: Implement this
-		return __( 'Back' );
-	};
-
 	const shouldHideBackButton = () => {
-		// TODO: Implement this
 		return true;
 	};
 
 	const shouldHideSkip = () => {
-		// TODO: Implement this
 		return true;
 	};
 
-	// TODO: Implement this
-	const renderContent = () => (
-		<iframe title="Playground" src="https://playground.wordpress.net/"></iframe>
-	);
+	const setPlaygroundClient = ( client: PlaygroundClient ) => {
+		playgroundClientRef.current = client;
+	};
+
+	const launchSite = () => {
+		if ( ! submit ) {
+			return;
+		}
+		submit();
+	};
 
 	return (
 		<>
 			<DocumentHead title={ __( 'Playground' ) } />
-			<StepContainer
-				isFullLayout
-				flowName="setup"
-				stepName="playground"
+			<StepWrapper
 				hideBack={ shouldHideBackButton() }
-				backLabelText={ getBackLabelText() }
 				hideSkip={ shouldHideSkip() }
-				recordTracksEvent={ recordTracksEvent }
-				stepContent={ <div className="playground__onboarding-page">{ renderContent() }</div> }
+				customizedActionButtons={
+					<Button
+						variant="primary"
+						className="step-wrapper__navigation-link forward"
+						onClick={ launchSite }
+					>
+						{ __( 'Launch on WordPress.com' ) }
+					</Button>
+				}
+				stepContent={
+					<div className="playground__onboarding-page">
+						<PlaygroundIframe
+							className="playground__onboarding-iframe"
+							playgroundClient={ playgroundClientRef.current }
+							setPlaygroundClient={ setPlaygroundClient }
+						/>
+					</div>
+				}
 			/>
 		</>
 	);

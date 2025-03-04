@@ -202,6 +202,8 @@
 		"@wordpress/primitives": "^4.16.0",
 		"@wordpress/rich-text": "^7.16.0",
 		"@wordpress/url": "^4.16.0",
+		"@wp-playground/blueprints": "^1.0.28",
+		"@wp-playground/client": "^1.0.28",
 		"animate.css": "^4.1.1",
 		"browserslist": "^4.16.0",
 		"calypso": "workspace:^",
