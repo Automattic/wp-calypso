@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
-import { useTranslate } from 'i18n-calypso';
+import { formatCurrency, useTranslate } from 'i18n-calypso';
 import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import SectionHeader from 'calypso/components/section-header';

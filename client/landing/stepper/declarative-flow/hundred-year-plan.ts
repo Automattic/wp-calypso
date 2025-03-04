@@ -12,6 +12,7 @@ import {
 import { SiteId, SiteSlug } from 'calypso/types';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
+import { STEPS } from './internals/steps';
 import type { ProvidedDependencies, Flow } from './internals/types';
 
 const HundredYearPlanFlow: Flow = {
@@ -33,50 +34,15 @@ const HundredYearPlanFlow: Flow = {
 		const steps = [
 			// VIP step (conditional)
 			...( isVipFeatureEnabled
-				? [
-						{
-							slug: 'diy-or-difm',
-							asyncComponent: () =>
-								import( './internals/steps-repository/hundred-year-plan-diy-or-difm' ),
-						},
-						{
-							slug: 'thank-you',
-							asyncComponent: () =>
-								import( './internals/steps-repository/hundred-year-plan-thank-you' ),
-						},
-				  ]
+				? [ STEPS.HUNDRED_YEAR_PLAN_DIY_OR_DIFM, STEPS.HUNDRED_YEAR_PLAN_THANK_YOU ]
 				: [] ),
 
 			// If the user has a site, we show them a different flow
-			...( hasSite
-				? [
-						{
-							slug: 'new-or-existing-site',
-							asyncComponent: () => import( './internals/steps-repository/new-or-existing-site' ),
-						},
-						{
-							slug: 'site-picker',
-							asyncComponent: () =>
-								import( './internals/steps-repository/hundred-year-plan-site-picker' ),
-						},
-				  ]
-				: [] ),
-			{
-				slug: 'setup',
-				asyncComponent: () => import( './internals/steps-repository/hundred-year-plan-setup' ),
-			},
-			{
-				slug: 'domains',
-				asyncComponent: () => import( './internals/steps-repository/domains' ),
-			},
-			{
-				slug: 'processing',
-				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
-			},
-			{
-				slug: 'createSite',
-				asyncComponent: () => import( './internals/steps-repository/create-site' ),
-			},
+			...( hasSite ? [ STEPS.NEW_OR_EXISTING_SITE, STEPS.HUNDRED_YEAR_PLAN_SITE_PICKER ] : [] ),
+			STEPS.HUNDRED_YEAR_PLAN_SETUP,
+			STEPS.DOMAINS,
+			STEPS.PROCESSING,
+			STEPS.SITE_CREATION_STEP,
 		];
 
 		return stepsWithRequiredLogin( steps );
@@ -139,8 +105,8 @@ const HundredYearPlanFlow: Flow = {
 					setPlanCartItem( {
 						product_slug: PLAN_100_YEARS,
 					} );
-					return navigate( 'createSite' );
-				case 'createSite':
+					return navigate( 'create-site' );
+				case 'create-site':
 					return navigate( 'processing' );
 				case 'processing':
 					if ( providedDependencies?.goToCheckout && providedDependencies?.siteSlug ) {

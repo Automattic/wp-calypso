@@ -88,7 +88,7 @@ If your step requires certain data from other steps before it can submit to the 
 
 ```javascript
 const object = {
-	stepName: 'theme-selection',
+	stepName: 'user-social',
 	dependencies: [ 'siteSlug' ],
 	apiRequestFunction: function ( callback, dependencies ) {
 		wpcom.req.post( '/some-endpoint', dependencies.siteSlug, function ( errors, response ) {

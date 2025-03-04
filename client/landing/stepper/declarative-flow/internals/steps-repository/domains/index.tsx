@@ -4,11 +4,9 @@ import {
 	COPY_SITE_FLOW,
 	isCopySiteFlow,
 	NEWSLETTER_FLOW,
-	DESIGN_FIRST_FLOW,
 	DOMAIN_UPSELL_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
 	isDomainUpsellFlow,
-	isSiteAssemblerFlow,
 	isHundredYearDomainFlow,
 	HUNDRED_YEAR_DOMAIN_FLOW,
 } from '@automattic/onboarding';
@@ -201,7 +199,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			return '';
 		}
 
-		if ( flow === DESIGN_FIRST_FLOW || flow === NEWSLETTER_FLOW ) {
+		if ( flow === NEWSLETTER_FLOW ) {
 			return __( 'Your domain. Your identity.' );
 		}
 
@@ -286,21 +284,21 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			return setShowUseYourDomain( false );
 		}
 
-		if ( isDomainUpsellFlow( flow ) || isSiteAssemblerFlow( flow ) ) {
+		if ( isDomainUpsellFlow( flow ) ) {
 			return goBack?.();
 		}
 		return exitFlow?.( '/sites' );
 	};
 
 	const getBackLabelText = () => {
-		if ( isDomainUpsellFlow( flow ) || isSiteAssemblerFlow( flow ) ) {
+		if ( isDomainUpsellFlow( flow ) ) {
 			return __( 'Back' );
 		}
 		return __( 'Back to sites' );
 	};
 
 	const shouldHideBackButton = () => {
-		if ( isDomainUpsellFlow( flow ) || isSiteAssemblerFlow( flow ) ) {
+		if ( isDomainUpsellFlow( flow ) ) {
 			return false;
 		}
 		return ! isCopySiteFlow( flow );

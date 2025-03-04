@@ -11,6 +11,7 @@ import {
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { USER_STORE } from '../stores';
 import { useLoginUrl } from '../utils/path';
+import { STEPS } from './internals/steps';
 import {
 	ProvidedDependencies,
 	AssertConditionResult,
@@ -19,6 +20,12 @@ import {
 } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 
+const DOMAIN_TRANSFER_STEPS = [
+	STEPS.DOMAIN_TRANSFER_INTRO,
+	STEPS.DOMAIN_TRANSFER_DOMAINS,
+	STEPS.PROCESSING,
+];
+
 const domainTransfer: FlowV1 = {
 	name: DOMAIN_TRANSFER,
 	get title() {
@@ -26,20 +33,7 @@ const domainTransfer: FlowV1 = {
 	},
 	isSignupFlow: false,
 	useSteps() {
-		return [
-			{
-				slug: 'intro',
-				asyncComponent: () => import( './internals/steps-repository/domain-transfer-intro' ),
-			},
-			{
-				slug: 'domains',
-				asyncComponent: () => import( './internals/steps-repository/domain-transfer-domains' ),
-			},
-			{
-				slug: 'processing',
-				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
-			},
-		];
+		return DOMAIN_TRANSFER_STEPS;
 	},
 
 	useAssertConditions( navigate ): AssertConditionResult {

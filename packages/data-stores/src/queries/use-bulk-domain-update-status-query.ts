@@ -24,6 +24,11 @@ export interface JobStatus {
 	failed: string[];
 	pending: string[];
 	complete: boolean;
+	params: {
+		auto_renew?: boolean;
+		whois?: unknown;
+		transfer_lock?: boolean;
+	};
 }
 
 interface DomainUpdateRemoteStatus {
@@ -69,12 +74,12 @@ export function useBulkDomainUpdateStatusQuery< TError = unknown >(
 		select: ( data ): BulkDomainUpdateStatusResult => {
 			// get top-level info about recent jobs
 			const allJobs: JobStatus[] = Object.keys( data ).map( ( jobId ) => {
-				const job = data[ jobId ];
+				const { action, created_at, results, ...rest } = data[ jobId ];
 				const success: string[] = [];
 				const failed: string[] = [];
 				const pending: string[] = [];
 
-				Object.entries( job.results ).forEach( ( entry ) => {
+				Object.entries( results ).forEach( ( entry ) => {
 					if ( entry[ 1 ] === 'success' ) {
 						success.push( entry[ 0 ] );
 					} else if ( entry[ 1 ] === 'failed' ) {
@@ -86,12 +91,13 @@ export function useBulkDomainUpdateStatusQuery< TError = unknown >(
 
 				return {
 					id: jobId,
-					action: job.action,
-					created_at: job.created_at,
+					action: action,
+					created_at: created_at,
 					success,
 					failed,
 					pending,
 					complete: pending.length === 0,
+					params: rest,
 				};
 			} );
 

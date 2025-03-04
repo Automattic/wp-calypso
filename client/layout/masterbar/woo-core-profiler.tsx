@@ -53,9 +53,9 @@ const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) 
 									name="woocommerce-logo"
 									icon={ WooLogo }
 									classes="masterbar__woo-client-logo"
-									width="60"
+									width="64"
 									height="24"
-									viewBox="0 0 60 24"
+									viewBox="0 0 64 24"
 								/>
 							</a>
 						</li>

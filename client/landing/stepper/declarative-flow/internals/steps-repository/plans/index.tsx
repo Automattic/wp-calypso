@@ -1,7 +1,7 @@
 import {
-	isBlogOnboardingFlow,
 	isDomainUpsellFlow,
 	isNewHostedSiteCreationFlow,
+	isStartWritingFlow,
 	StepContainer,
 } from '@automattic/onboarding';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -20,7 +20,7 @@ const plans: Step = function Plans( { navigation, flow } ) {
 			plan,
 		};
 
-		if ( isDomainUpsellFlow( flow ) || isBlogOnboardingFlow( flow ) ) {
+		if ( isDomainUpsellFlow( flow ) || isStartWritingFlow( flow ) ) {
 			providedDependencies.goToCheckout = true;
 		}
 

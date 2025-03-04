@@ -1,8 +1,8 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useResendEmailVerification } from 'calypso/landing/stepper/hooks/use-resend-email-verification';
 import { AddSitesModal } from 'calypso/landing/subscriptions/components/add-sites-modal';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -13,23 +13,20 @@ const AddSitesButton = () => {
 	const translate = useTranslate();
 	const [ isAddSitesModalVisible, setIsAddSitesModalVisible ] = useState( false );
 	const dispatch = useDispatch();
-	const resendEmailVerification = useResendEmailVerification();
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
 	return (
 		<>
 			<Button
-				primary
-				className="subscriptions-add-sites__button"
+				variant="primary"
+				className="button subscriptions-add-sites__button"
 				onClick={ () => {
 					if ( ! isEmailVerified ) {
 						return dispatch(
-							errorNotice( translate( 'Your email has not been verified yet.' ), {
+							errorNotice( translate( 'Please verify your email before subscribing.' ), {
 								id: 'resend-verification-email',
-								button: translate( 'Resend Email' ),
-								onClick: () => {
-									resendEmailVerification();
-								},
+								button: translate( 'Account Settings' ),
+								href: '/me/account',
 							} )
 						);
 					}

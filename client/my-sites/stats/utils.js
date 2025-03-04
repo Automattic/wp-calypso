@@ -60,3 +60,21 @@ export const appendQueryStringForRedirection = ( pathname, query = {} ) => {
 
 	return `${ pathname }${ queryString ? '?' : '' }${ queryString }`;
 };
+
+/**
+ * Parse a date string into a Date object
+ *
+ * @param {string|number} dateString YYYY-MM-DD format or a timestamp
+ * @param {number} gmtOffset GMT offset in minutes
+ * @returns
+ */
+export const parseLocalDate = ( dateString, gmtOffset = 0 ) => {
+	// Compatible with Date object.
+	const date = new Date( dateString );
+	if ( isNaN( date.getTime() ) ) {
+		return date;
+	}
+
+	date.setMinutes( date.getMinutes() - ( gmtOffset - date.getTimezoneOffset() ) );
+	return date;
+};

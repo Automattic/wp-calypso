@@ -49,12 +49,6 @@ export interface Article {
 	is_external?: boolean;
 }
 
-export interface TailoredArticles {
-	post_ids: Array< number >;
-	blog_id: number;
-	locale: string;
-}
-
 export interface FeatureFlags {
 	loadNextStepsTutorial: boolean;
 }

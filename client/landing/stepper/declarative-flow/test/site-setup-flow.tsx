@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHookWithProvider } from '../../../../test-helpers/testing-library';
 import { STEPS } from '../internals/steps';
 import siteSetupFlow from '../site-setup-flow';
 import { getFlowLocation, renderFlow } from './helpers';
@@ -21,24 +20,6 @@ describe( 'Site Setup Flow', () => {
 
 	beforeEach( () => {
 		jest.resetAllMocks();
-	} );
-
-	/**
-	 * This test is important because site-setup-wg assumes the first two steps are goals and intent capture.
-	 * It's totally fine to change this test if the flow changes. But please make sure to update and test the site-setup-wg accordingly.
-	 */
-	describe( 'First steps should be goals and intent capture', () => {
-		const { result } = renderHookWithProvider( () => siteSetupFlow.useSteps() );
-		const firstStep = result.current[ 0 ];
-		const secondStep = result.current[ 1 ];
-
-		it( 'should be goals', () => {
-			expect( firstStep.slug ).toBe( STEPS.GOALS.slug );
-		} );
-
-		it( 'should be intent capture', () => {
-			expect( secondStep.slug ).toBe( STEPS.INTENT.slug );
-		} );
 	} );
 
 	describe( 'when the current step is importListing', () => {

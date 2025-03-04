@@ -1,6 +1,5 @@
 import {
 	StepContainer,
-	isFreeFlow,
 	isNewSiteMigrationFlow,
 	isUpdateDesignFlow,
 	HUNDRED_YEAR_DOMAIN_FLOW,
@@ -181,7 +180,7 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 	const isJetpackPowered = isNewsletterFlow( flowName );
 
 	// Return tailored processing screens for flows that need them
-	if ( isNewsletterFlow( flowName ) || isFreeFlow( flowName ) || isUpdateDesignFlow( flowName ) ) {
+	if ( isNewsletterFlow( flowName ) || isUpdateDesignFlow( flowName ) ) {
 		return <TailoredFlowPreCheckoutScreen flowName={ flowName } />;
 	}
 

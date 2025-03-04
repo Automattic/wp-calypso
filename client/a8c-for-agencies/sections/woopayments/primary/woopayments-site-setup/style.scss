@@ -1,0 +1,38 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+.woopayments-site-setup .hosting-dashboard-layout__body-wrapper {
+	max-width: 900px;
+	padding-block-start: calc(24px + 48px);
+
+	.step-section .step-section__header .step-section__step-heading {
+		@include heading-large;
+	}
+
+	.step-section-item__description {
+		.components-button {
+			margin-block-start: 16px;
+		}
+	}
+
+	.a4a-text-placeholder {
+		margin-block-end: 32px;
+		height: 100px;
+	}
+}
+
+.woopayments-site-setup__page-title {
+	@include heading-x-large;
+	margin-block-end: 8px;
+}
+
+.woopayments-site-setup__page-description {
+	@include body-large;
+	margin-block-end: 40px;
+}
+
+.woopayments-site-setup__error {
+	@include body-small;
+	margin-block-start: 16px;
+	color: var(--color-error);
+}

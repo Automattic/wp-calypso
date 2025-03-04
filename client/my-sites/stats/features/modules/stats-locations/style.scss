@@ -58,6 +58,15 @@ $locations-horizontal-bar-width: 380px;
 		width: 75px;
 		text-align: right;
 	}
+
+	.stats-geochart .google-visualization-tooltip-item-list .google-visualization-tooltip-item:first-child {
+		margin-bottom: 0;
+	}
+
+	.stats-geochart .google-visualization-tooltip-item-list .google-visualization-tooltip-item {
+		margin-top: 0;
+		margin-bottom: 0;
+	}
 }
 
 .stats-summary-view {

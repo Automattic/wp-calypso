@@ -144,12 +144,10 @@
 
 // Launchpad - Sidebar heading text
 .start-writing,
-.design-first,
 .newsletter,
 .free,
 .build,
-.write,
-.assembler-first {
+.write {
 	.step-container {
 		.step-container__content h1,
 		.step-container__content h1.launchpad__sidebar-h1 {
@@ -269,8 +267,7 @@
 
 }
 
-.start-writing .launchpad__sidebar-admin-link,
-.design-first .launchpad__sidebar-admin-link {
+.start-writing .launchpad__sidebar-admin-link {
 	display: none;
 }
 
@@ -306,7 +303,6 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		margin-top: 25vh;
 	}
 
 	.step-container__content {
@@ -343,10 +339,9 @@
 	}
 }
 
-// Write, Build, and Assembler First flow
+// Write and Build flow
 .write.launchpad,
-.build.launchpad,
-.assembler-first.launchpad {
+.build.launchpad {
 	.launchpad__sidebar-header-flow-name {
 		display: none;
 	}

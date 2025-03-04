@@ -167,6 +167,7 @@ body.is-mobile-app-view {
 
 		.masterbar__item-subitems {
 			right: 0;
+			padding-bottom: 0 !important;
 		}
 		@include breakpoint-deprecated( ">480px" ) {
 			flex-grow: 0;
@@ -209,7 +210,6 @@ body.is-mobile-app-view {
 	padding: 0 8px;
 	text-decoration: none;
 	cursor: default;
-	transition: all 0.2s ease-in-out;
 	justify-content: center;
 
 	&.masterbar__reader {
@@ -217,7 +217,9 @@ body.is-mobile-app-view {
 	}
 
 	&.masterbar__item-my-site,
-	&.masterbar__item-my-site-actions {
+	&.masterbar__item-my-site-actions,
+	&.masterbar__item-updates,
+	&.masterbar__item-comments {
 		padding-left: 7px;
 		gap: 6px;
 	}
@@ -258,17 +260,22 @@ body.is-mobile-app-view {
 		text-indent: 0;
 
 		.masterbar__item-subitems-item {
-			margin-right: 6px;
 			padding-left: 6px;
+			padding-right: 6px;
 			white-space: nowrap;
 			min-width: 140px;
 			line-height: 2;
 
+			&.masterbar__item-subitems-item--odd {
+				background: var(--color-sidebar-submenu-background, var(--color-masterbar-item-hover-background));
+			}
+
 			a,
 			button {
 				display: inline-block;
+				box-sizing: border-box;
 				width: 100%;
-				padding: 0 0 0 6px;
+				padding: 0 6px;
 				color: var(--color-masterbar-submenu-text, var(--color-masterbar-text));
 			}
 
@@ -353,21 +360,30 @@ body.is-mobile-app-view {
 	.dashicons-plus {
 		padding-top: 4px;
 	}
+	.dashicons-admin-comments {
+		padding-top: 2px;
+
+		& + span .count-0 {
+			opacity: .5;
+		}
+	}
+
+	&:hover,
+	&.is-open,
+	&:has(+ .masterbar__item-subitems:hover) {
+		& + .masterbar__item-subitems {
+			display: block;
+			z-index: 99999;
+		}
+	}
 
 	// The hover colors are supposed to be the same as those in wp-admin.
 	&:hover,
-	&:has(+ .masterbar__item-subitems:hover),
 	&.is-open {
 		svg path,
 		.gridicon {
 			fill: var(--color-masterbar-highlight);
 		}
-
-		& + .masterbar__item-subitems {
-			display: block;
-			z-index: 99999;
-		}
-
 
 		@include breakpoint-deprecated( ">480px" ) {
 			background: var(--color-masterbar-item-hover-background);
@@ -512,6 +528,13 @@ body.is-mobile-app-view {
 			}
 		}
 
+		.dashicons-update {
+			&::before {
+				font-size: 40px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				top: 3px;
+			}
+		}
+
 		.dashicons-menu-alt {
 			padding-top: 0;
 			position: relative;
@@ -524,6 +547,11 @@ body.is-mobile-app-view {
 		}
 	}
 
+	@media only screen and (max-width: 600px) {
+		&.masterbar__item-updates {
+			display: none;
+		}
+	}
 
 	@media only screen and (max-width: 480px) {
 		// reset flex value on mobile
@@ -596,7 +624,6 @@ body.is-mobile-app-view {
 			height: var(--masterbar-item-active-border-radius);
 			background-color: var(--color-sidebar-background);
 			opacity: 0;
-			transition: opacity 0.2s ease-in-out;
 			bottom: 0;
 			z-index: 1;
 			pointer-events: none;
@@ -767,11 +794,9 @@ body.is-mobile-app-view {
 
 	+ .masterbar__item-subitems {
 		min-width: 264px !important;
-		max-height: 94px;
-		padding: 12px 0;
+		padding-top: 12px;
 
 		@media only screen and (max-width: 781px) {
-			min-width: 100% !important;
 			max-height: 100%;
 		}
 
@@ -811,9 +836,45 @@ body.is-mobile-app-view {
 			&.account-link,
 			&.logout-link {
 				position: relative;
-				float: left;
 				top: -5px;
 				left: 85px;
+				margin-bottom: 5px;
+			}
+
+			&.wpcom-link {
+				box-sizing: border-box;
+			}
+		}
+
+		span.wpcom-button {
+			display: inline-block;
+			color: #fff;
+			background-color: #3858e9;
+			border-color: #3858e9;
+			border-radius: 2px;
+			padding: 0 14px;
+			box-sizing: border-box;
+			height: 34px;
+			line-height: 32px;
+			width: 100%;
+			text-align: center;
+			margin: 12px 0;
+			font-size: inherit;
+
+			&:hover {
+				background-color: #4664eb;
+				border-color: #4664eb;
+			}
+
+			svg {
+				display: inline-block;
+				position: relative;
+				top: -1px;
+				margin-left: -2px;
+				margin-right: -4px;
+				vertical-align: middle;
+				fill: currentColor;
+				transform: scale(0.8);
 			}
 		}
 	}

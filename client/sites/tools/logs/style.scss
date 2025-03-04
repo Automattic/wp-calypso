@@ -1,7 +1,130 @@
-.site-logs-container {
-	// The logging API doesn't allow us to jump directly to a page, so hide page buttons.
-	.pagination__page-number,
-	.pagination__ellipsis {
-		display: none;
+.site-logs-header {
+	align-items: center;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	gap: 16px;
+
+	.date-control {
+		flex-shrink: 0;
+	}
+
+	.site-logs-toolbar__toggle {
+		border-color: var( --color-neutral-10 );
+	}
+	.site-logs-toolbar__toggle-option {
+		white-space: nowrap;
+	}
+}
+
+@media ( max-width: 600px ) {
+	.site-logs-header {
+		align-items: flex-start;
+		flex-direction: column;
+	}
+
+	.site-logs-header > .components-base-control {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		.site-logs-toolbar__toggle {
+			width: 100%;
+		}
+	}
+}
+
+// This is to compensate the padding set by the wrapper .hosting-dashboard-item-view__content
+.site-logs .dataviews-wrapper {
+	margin-right: -48px;
+	margin-left: -48px;
+}
+
+// https://github.com/WordPress/gutenberg/issues/69194
+// Needs discussion and implementation upstream.
+.site-logs .dataviews-wrapper table.dataviews-view-table[aria-busy='true'] {
+	opacity: 0.5;
+}
+
+// There's no way for a consumer to disable the per-page pagination
+// in DataViews: https://github.com/WordPress/gutenberg/issues/69193
+// This needs to be fixed upstream.
+.site-logs .dataviews-pagination__page-select {
+	display: none !important;
+}
+
+// Long fields in PHP Errors.
+.site-logs-table__message,
+.site-logs-table__file,
+// Long fields in Web Errors.
+.site-logs-table__request-url,
+.site-logs-table__http-referer {
+	overflow: visible;
+	white-space: normal;
+	word-break: break-word;
+}
+
+// Badges
+.site-logs,
+.site-logs-details-modal {
+	.badge {
+		text-transform: uppercase;
+		border-radius: 4px;
+		font-size: 0.75rem;
+		font-weight: 500;
+		padding: 1px 10px;
+	}
+
+	.badge.badge--POST,
+	.badge.badge--Deprecated {
+		background-color: rgba( 187, 224, 250, 1 );
+		color: rgba( 2, 57, 92, 1 );
+	}
+
+	.badge.badge--GET {
+		background-color: rgba( 184, 230, 191, 1 );
+		color: rgba( 0, 69, 12, 1 );
+	}
+
+	.badge.badge--DELETE,
+	.badge.badge--Error,
+	.badge.badge--Fatal.error {
+		background-color: rgba( 250, 207, 210, 1 );
+		color: rgba( 105, 28, 28, 1 );
+	}
+
+	.badge.badge--Fatal.error {
+		white-space: nowrap;
+	}
+
+	.badge.badge--Warning {
+		background-color: rgba( 245, 230, 179, 1 );
+		color: rgba( 79, 53, 0, 1 );
+	}
+
+	.badge.badge--User {
+		background-color: rgba( 220, 220, 222, 1 );
+		color: rgba( 44, 51, 56, 1 );
+	}
+}
+
+.site-logs-details-modal {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: 10px;
+	margin-bottom: 20px;
+	align-items: baseline;
+
+	.site-logs-details-modal__field-title {
+		white-space: nowrap;
+		font-weight: 500;
+		font-size: 0.75rem;
+	}
+	:not( .site-logs-details-modal__field-title ) {
+		word-wrap: break-word;
+		min-width: 0;
+		font-size: 0.875rem;
+	}
+	:not( .site-logs-details-modal__field-title ) .badge {
+		font-size: 0.75rem;
 	}
 }

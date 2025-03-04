@@ -3,6 +3,7 @@ import PageViewTracker from 'calypso/a8c-for-agencies/components/a4a-page-view-t
 import WooPaymentsSidebar from 'calypso/a8c-for-agencies/components/sidebar-menu/woopayments';
 import ReferralsBankDetails from '../referrals/primary/bank-details';
 import WooPaymentsDashboard from './primary/woopayments-dashboard';
+import WooPaymentsSiteSetup from './primary/woopayments-site-setup';
 
 export const woopaymentsDashboardContext: Callback = ( context, next ) => {
 	context.primary = (
@@ -20,6 +21,19 @@ export const woopaymentsPaymentSettingsContext: Callback = ( context, next ) => 
 		<>
 			<PageViewTracker title="WooPayments > Payment Settings" path={ context.path } />
 			<ReferralsBankDetails isAutomatedReferral />
+		</>
+	);
+	context.secondary = <WooPaymentsSidebar path={ context.path } />;
+	next();
+};
+
+export const woopaymentsSiteSetupContext: Callback = ( context, next ) => {
+	const siteId = context.query.site_id;
+
+	context.primary = (
+		<>
+			<PageViewTracker title="WooPayments > Site Setup" path={ context.path } />
+			<WooPaymentsSiteSetup siteId={ siteId } />
 		</>
 	);
 	context.secondary = <WooPaymentsSidebar path={ context.path } />;

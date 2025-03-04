@@ -19,6 +19,13 @@ export const useQuerySitePurchases = ( siteId ) => {
 		if ( siteId === previousSiteId.current ) {
 			return;
 		}
+
+		// No need to request /rest/v1.1/sites/-1/purchases.
+		const siteIdNumber = Number( siteId );
+		if ( ! isNaN( siteIdNumber ) && siteIdNumber < 0 ) {
+			return;
+		}
+
 		debug(
 			`siteId "${ siteId }" has changed from previous "${ previousSiteId.current }"; fetching site purchases`
 		);

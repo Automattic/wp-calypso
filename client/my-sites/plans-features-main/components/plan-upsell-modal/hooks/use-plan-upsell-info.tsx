@@ -1,6 +1,6 @@
 import { getPlan, type PlanSlug } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
-import formatCurrency from '@automattic/format-currency';
+import { formatCurrency } from 'i18n-calypso';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { useSelector } from 'calypso/state';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
