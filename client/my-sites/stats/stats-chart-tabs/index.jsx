@@ -19,6 +19,7 @@ import { getCountRecords, getLoadingTabs } from 'calypso/state/stats/chart-tabs/
 import { chartLabelformats } from 'calypso/state/stats/lists/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useCssVariable from '../hooks/use-css-variable';
+import PageLoading from '../pages/shared/page-loading';
 import StatsEmptyState from '../stats-empty-state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatTabs from '../stats-tabs';
@@ -216,7 +217,7 @@ class StatModuleChartTabs extends Component {
 
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
 
-				{ chartType === 'bar' ? (
+				{ chartType === 'bar' || chartData.length === 0 ? (
 					<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 35 }>
 						<StatsEmptyState
 							headingText={
@@ -238,6 +239,7 @@ class StatModuleChartTabs extends Component {
 						moment={ moment }
 						onClick={ this.props.barClick }
 						formatTimeTick={ this.formatLineChartTimeTick }
+						placeholder={ PageLoading }
 					/>
 				) }
 
