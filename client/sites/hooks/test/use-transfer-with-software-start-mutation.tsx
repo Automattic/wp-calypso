@@ -68,7 +68,6 @@ describe( 'useRequestTransferWithSoftware', () => {
 
 		await waitFor(
 			() => {
-				console.log( result.current.data );
 				expect( result.current.isSuccess ).toBe( true );
 				expect( result.current.data ).toEqual( { transferId: 456 } );
 			},
