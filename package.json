@@ -184,7 +184,7 @@
 		"@types/store": "^2.0.2",
 		"@types/uuid": "^9.0.7",
 		"@types/validator": "^13.7.1",
-		"@types/webpack-env": "^1.18.5",
+		"@types/webpack-env": "^1.18.8",
 		"@types/wordpress__block-editor": "^11.5.8",
 		"@wordpress/base-styles": "^5.19.0",
 		"@wordpress/block-editor": "^14.14.0",

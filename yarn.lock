@@ -281,7 +281,7 @@ __metadata:
     "@automattic/webpack-rtl-plugin": "workspace:^"
     "@babel/compat-data": "npm:^7.26.3"
     "@babel/core": "npm:^7.26.0"
-    "@types/webpack-env": "npm:^1.18.5"
+    "@types/webpack-env": "npm:^1.18.8"
     "@wordpress/browserslist-config": "npm:^6.19.0"
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.14.0"
     autoprefixer: "npm:^10.2.5"
@@ -9227,10 +9227,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/webpack-env@npm:^1.18.5":
-  version: 1.18.5
-  resolution: "@types/webpack-env@npm:1.18.5"
-  checksum: b9e4876e8c7cae419896249f9ed795db283c008fe1d38efa679cbbf05194fc2eea2a5bfb4ff4393d109e3a9895416dadf5f3ddd5c22931b678062230f860454e
+"@types/webpack-env@npm:^1.18.8":
+  version: 1.18.8
+  resolution: "@types/webpack-env@npm:1.18.8"
+  checksum: 527a5d1eb75c5243e4f3665d956c7c340f899955dd25d16c9fd9750406f32e95a3a17d207640295038e8235c0c2a2daf084f420e088e58b965d82fc74f6012d7
   languageName: node
   linkType: hard
 
@@ -35913,7 +35913,7 @@ __metadata:
     "@types/superagent": "npm:^4.1.24"
     "@types/uuid": "npm:^9.0.7"
     "@types/validator": "npm:^13.7.1"
-    "@types/webpack-env": "npm:^1.18.5"
+    "@types/webpack-env": "npm:^1.18.8"
     "@types/wordpress__block-editor": "npm:^11.5.8"
     "@types/wordpress__blocks": "npm:^12.5.14"
     "@typescript-eslint/eslint-plugin": "npm:^6.21.0"
