@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
-import { flowRight } from 'lodash';
+import { flowRight, memoize } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component, useRef } from 'react';
@@ -35,6 +35,13 @@ const ChartTabShape = PropTypes.shape( {
 } );
 
 const CHART_TYPE_STORAGE_KEY = ( siteId ) => `jetpack_stats_chart_type_${ siteId }`;
+
+const getChartType = memoize( ( siteId ) => {
+	if ( ! siteId ) {
+		return 'bar';
+	}
+	return localStorage.getItem( CHART_TYPE_STORAGE_KEY( siteId ) ) || 'bar';
+} );
 
 // Define chart type change event names
 const CHART_TYPE_EVENTS = {
@@ -78,7 +85,7 @@ class StatModuleChartTabs extends Component {
 	};
 
 	state = {
-		chartType: this.getInitialChartType(),
+		chartType: getChartType( this.props.siteId ),
 	};
 
 	intervalId = null;
@@ -135,20 +142,12 @@ class StatModuleChartTabs extends Component {
 		this.setState( { chartType: newType } );
 		if ( siteId ) {
 			localStorage.setItem( CHART_TYPE_STORAGE_KEY( siteId ), newType );
+			getChartType.cache.clear(); // Clear memoization cache when type changes
 		}
 
 		// Record the chart type change event
 		this.props.recordTracksEvent( CHART_TYPE_EVENTS[ event_from ][ newType ] );
 	};
-
-	getInitialChartType() {
-		const { siteId } = this.props;
-		if ( ! siteId ) {
-			return 'bar';
-		}
-		const savedChartType = localStorage.getItem( CHART_TYPE_STORAGE_KEY( siteId ) );
-		return savedChartType || 'bar';
-	}
 
 	formatLineChartTimeTick = ( date ) => {
 		// Align the format with the original chart data parser.

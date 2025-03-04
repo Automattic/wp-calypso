@@ -14,6 +14,8 @@ import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
 import { siteUsesWpAdminInterface } from 'calypso/sites-dashboard/utils';
+import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
+import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
@@ -336,6 +338,65 @@ class MasterbarLoggedIn extends Component {
 				shouldClearCartWhenLeaving={ ! isCheckoutFailed }
 				loadHelpCenterIcon={ loadHelpCenterIcon }
 			/>
+		);
+	}
+
+	renderUpdatesMenu() {
+		const { adminMenu } = this.props;
+		if ( ! adminMenu ) {
+			return null;
+		}
+
+		let updatesCount = 0;
+		let updatesUrl = '';
+		for ( const menu of adminMenu ) {
+			for ( const menuItem of menu.children || [] ) {
+				if ( menuItem.slug === 'update-core-php' ) {
+					updatesCount = menuItem.count;
+					updatesUrl = menuItem.url;
+					break;
+				}
+			}
+		}
+
+		if ( updatesCount ) {
+			return (
+				<Item
+					className="masterbar__item-updates"
+					url={ updatesUrl }
+					icon={ <span className="dashicons-before dashicons-update" /> }
+				>
+					{ updatesCount }
+				</Item>
+			);
+		}
+		return null;
+	}
+
+	renderCommentsMenu() {
+		const { adminMenu } = this.props;
+		if ( ! adminMenu ) {
+			return null;
+		}
+
+		let commentsCount = 0;
+		let commentsUrl = '';
+		for ( const menu of adminMenu ) {
+			if ( menu.icon === 'dashicons-admin-comments' ) {
+				commentsCount = menu.count || 0;
+				commentsUrl = menu.url;
+				break;
+			}
+		}
+
+		return (
+			<Item
+				className="masterbar__item-comments"
+				url={ commentsUrl }
+				icon={ <span className="dashicons-before dashicons-admin-comments" /> }
+			>
+				<span className={ commentsCount === 0 ? 'count-0' : '' }>{ commentsCount }</span>
+			</Item>
 		);
 	}
 
@@ -689,6 +750,8 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderSidebarMobileMenu() }
 					{ this.renderMySites() }
 					{ this.renderSiteMenu() }
+					{ this.renderUpdatesMenu() }
+					{ this.renderCommentsMenu() }
 					{ this.renderSiteActionMenu() }
 					{ this.renderLanguageSwitcher() }
 					{ this.renderLaunchButton() }
@@ -732,6 +795,7 @@ export default connect(
 			siteUrl: getSiteUrl( state, siteId ),
 			siteAdminUrl: getSiteAdminUrl( state, siteId ),
 			siteHomeUrl: getSiteHomeUrl( state, siteId ),
+			adminMenu: getAdminMenu( state, siteId ),
 			sectionGroup,
 			domainOnlySite: isDomainOnlySite( state, siteId ),
 			hasNoSites: siteCount === 0,
@@ -759,6 +823,7 @@ export default connect(
 		updateSiteMigrationMeta,
 		activateNextLayoutFocus,
 		savePreference,
+		requestAdminMenu,
 		redirectToLogout,
 		launchSiteOrRedirectToLaunchSignupFlow,
 	}
