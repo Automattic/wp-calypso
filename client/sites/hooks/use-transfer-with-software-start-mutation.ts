@@ -2,18 +2,19 @@ import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
 type transferWithSoftwareResponse = {
-	success: boolean;
 	transferId: number;
 };
 
 const requestTransferWithSoftware: (
 	siteId: number,
-	plugins: Record< string, 'install' | 'activate' >,
-	themes: Record< string, 'install' | 'activate' >
+	from?: string,
+	plugins?: Record< string, 'install' | 'activate' >,
+	themes?: Record< string, 'install' | 'activate' >
 ) => Promise< transferWithSoftwareResponse > = async (
 	siteId: number,
-	plugins: Record< string, 'install' | 'activate' >,
-	themes: Record< string, 'install' | 'activate' >
+	from?: string,
+	plugins?: Record< string, 'install' | 'activate' >,
+	themes?: Record< string, 'install' | 'activate' >
 ) => {
 	const response = await wpcom.req.post(
 		{
@@ -21,25 +22,27 @@ const requestTransferWithSoftware: (
 		},
 		{
 			apiNamespace: 'wpcom/v2',
-			body: { plugins, themes },
+			body: { plugins, themes, migration_source_site_domain: from },
 		}
 	);
 
-	if ( ! response.success ) {
+	if ( ! response ) {
 		throw new Error( 'Transfer with software failed' );
 	}
+
 	return response;
 };
 
 export const useRequestTransferWithSoftware = (
 	siteId?: number,
+	from?: string,
 	plugins?: Record< string, 'install' | 'activate' >,
 	themes?: Record< string, 'install' | 'activate' >,
 	options?: { retry?: number }
 ): UseMutationResult< transferWithSoftwareResponse, Error, void > => {
 	return useMutation( {
-		mutationKey: [ 'transfer-with-software', siteId, plugins, themes ],
-		mutationFn: async () => requestTransferWithSoftware( siteId!, plugins!, themes! ),
+		mutationKey: [ 'transfer-with-software', siteId, from, plugins, themes ],
+		mutationFn: async () => requestTransferWithSoftware( siteId!, from!, plugins!, themes! ),
 		retry: options?.retry ?? 3, // Default retry 3 times
 	} );
 };
