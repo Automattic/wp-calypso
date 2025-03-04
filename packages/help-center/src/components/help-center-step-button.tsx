@@ -17,9 +17,11 @@ const HelpCenterStepButton: FC< HelpCenterStepButtonProps > = ( {
 } ) => {
 	const translate = useTranslate();
 	const { data: geoData } = useGeoLocationQuery();
+
 	if ( geoData?.country_short === 'US' ) {
 		return null;
 	}
+
 	return (
 		<div className="step-wrapper__help-center-button-container">
 			<label>{ helpCenterButtonCopy ?? translate( 'Need extra help?' ) }</label>{ ' ' }
