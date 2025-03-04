@@ -1,6 +1,11 @@
 import { StepperInternal } from '@automattic/data-stores';
 import React from 'react';
 import { STEPPER_TRACKS_EVENTS } from '../../constants';
+import type { STEPS, PRIVATE_STEPS } from './steps';
+
+export type StepperStepSlug =
+	| ( typeof STEPS )[ keyof typeof STEPS ][ 'slug' ]
+	| ( typeof PRIVATE_STEPS )[ keyof typeof PRIVATE_STEPS ][ 'slug' ];
 
 /**
  * This is the return type of useStepNavigation hook
@@ -29,7 +34,7 @@ export type NavigationControls = {
 	 * screen(s) to a new stepper flow and linking directly
 	 * between flows/screens.
 	 */
-	goToStep?: ( step: string ) => void;
+	goToStep?: ( step: StepperStepSlug | `${ StepperStepSlug }?${ string }` ) => void;
 
 	/**
 	 * Submits the answers provided in the flow
@@ -46,7 +51,7 @@ export type DeprecatedStepperStep = {
 	/**
 	 * The step slug is what appears as part of the pathname. Eg the intro in /setup/link-in-bio/intro
 	 */
-	slug: string;
+	slug: StepperStepSlug;
 	/**
 	 * Does the step require a logged-in user?
 	 */
@@ -63,7 +68,7 @@ export type AsyncStepperStep = {
 	/**
 	 * The step slug is what appears as part of the pathname. Eg the intro in /setup/link-in-bio/intro
 	 */
-	slug: Exclude< string, 'user' >;
+	slug: StepperStepSlug;
 	/**
 	 * Does the step require a logged-in user?
 	 */
@@ -85,8 +90,8 @@ export interface AsyncUserStep extends AsyncStepperStep {
 
 export type StepperStep = DeprecatedStepperStep | AsyncStepperStep | AsyncUserStep;
 
-export type Navigate< FlowSteps extends readonly StepperStep[] > = (
-	stepName: FlowSteps[ number ][ 'slug' ] | `${ FlowSteps[ number ][ 'slug' ] }?${ string }`,
+export type Navigate = (
+	stepName: StepperStepSlug | `${ StepperStepSlug }?${ string }`,
 	extraData?: any,
 	/**
 	 * If true, the current step will be replaced in the history stack.
@@ -99,19 +104,14 @@ export type Navigate< FlowSteps extends readonly StepperStep[] > = (
  */
 export type UseStepsHook = () => StepperStep[];
 
-export type UseStepNavigationHook< FlowSteps extends StepperStep[] > = (
-	currentStepSlug: FlowSteps[ number ][ 'slug' ],
-	navigate: Navigate< FlowSteps >
+export type UseStepNavigationHook = (
+	currentStepSlug: StepperStepSlug,
+	navigate: Navigate
 ) => NavigationControls;
 
-export type UseAssertConditionsHook< FlowSteps extends readonly StepperStep[] > = (
-	navigate?: Navigate< FlowSteps >
-) => AssertConditionResult;
+export type UseAssertConditionsHook = ( navigate?: Navigate ) => AssertConditionResult;
 
-export type UseSideEffectHook< FlowSteps extends readonly StepperStep[] > = (
-	currentStepSlug: FlowSteps[ number ][ 'slug' ],
-	navigate: Navigate< FlowSteps >
-) => void;
+export type UseSideEffectHook = ( currentStepSlug: StepperStepSlug, navigate: Navigate ) => void;
 
 /**
  * Used for overriding props recorded by the default Tracks event loggers.
@@ -166,15 +166,15 @@ export type FlowV1 = {
 	 * Use this method to define the steps of the flow and do any actions that need to run before the flow starts.
 	 * This hook is called only once when the flow is mounted. It can be asynchronous if you would like to load an experiment or other data.
 	 */
-	useStepNavigation: UseStepNavigationHook< StepperStep[] >;
+	useStepNavigation: UseStepNavigationHook;
 	/**
 	 * @deprecated Use `initialize` instead. `initialize` will run before the flow is rendered and you can make any decisions there.
 	 */
-	useAssertConditions?: UseAssertConditionsHook< ReturnType< FlowV1[ 'useSteps' ] > >;
+	useAssertConditions?: UseAssertConditionsHook;
 	/**
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
 	 */
-	useSideEffect?: UseSideEffectHook< ReturnType< FlowV1[ 'useSteps' ] > >;
+	useSideEffect?: UseSideEffectHook;
 	useTracksEventProps?: UseTracksEventPropsHook;
 	/**
 	 * Temporary hook to allow gradual migration of flows to the globalised/default event tracking.
@@ -237,11 +237,11 @@ export type FlowV2 = {
 		| Promise< false >
 		| Promise< readonly StepperStep[] >
 		| readonly StepperStep[];
-	useStepNavigation: UseStepNavigationHook< StepperStep[] >;
+	useStepNavigation: UseStepNavigationHook;
 	/**
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
 	 */
-	useSideEffect?: UseSideEffectHook< StepperStep[] >;
+	useSideEffect?: UseSideEffectHook;
 	useTracksEventProps?: UseTracksEventPropsHook;
 	/**
 	 * Temporary hook to allow gradual migration of flows to the globalised/default event tracking.
@@ -251,14 +251,14 @@ export type FlowV2 = {
 	/**
 	 * @deprecated Avoid this. Assert your conditions in `initialize` instead unless you're 100% sure you need this.
 	 */
-	useAssertConditions?: UseAssertConditionsHook< ReturnType< FlowV1[ 'useSteps' ] > >;
+	useAssertConditions?: UseAssertConditionsHook;
 };
 
 export type Flow = FlowV1 | FlowV2;
 
 export type StepProps = {
 	navigation: NavigationControls;
-	stepName: string;
+	stepName: StepperStepSlug;
 	flow: string;
 	/**
 	 * If this is a step of a flow that extends another, pass the variantSlug of the variant flow, it can come handy.
