@@ -1,11 +1,14 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
-interface TransferWithSoftwareStatusResponse {
-	software_transfer_status: string;
+type TransferWithSoftwareStatusResponse = {
+	blog_id: number;
+	atomic_transfer_id: number;
+	plugins: { [ key: string ]: boolean };
+	themes: { [ key: string ]: boolean };
+	transfer_with_software_status: string;
 	atomic_transfer_status: string;
-	[ key: string ]: unknown; // Allow any additional fields in the response
-}
+};
 
 const getTransferWithSoftwareStatus = async (
 	siteId: number,
@@ -24,20 +27,19 @@ export const useTransferWithSoftwareStatus = (
 	atomicTransferId: number,
 	options?: {
 		retry?: UseQueryOptions[ 'retry' ];
-		enabled?: UseQueryOptions[ 'enabled' ];
 	}
 ) => {
 	return useQuery( {
 		queryKey: [ 'software-transfer-status', siteId, atomicTransferId ],
 		queryFn: () => getTransferWithSoftwareStatus( siteId, atomicTransferId ),
 		select: ( data: TransferWithSoftwareStatusResponse ) => ( {
-			software_transfer_status: data.software_transfer_status,
+			transfer_with_software_status: data.transfer_with_software_status,
 			atomic_transfer_status: data.atomic_transfer_status,
 		} ),
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false,
 		retryDelay: 5000, // Poll every 5 seconds
 		retry: options?.retry ?? false,
-		enabled: options?.enabled,
+		enabled: !! siteId && !! atomicTransferId, // Only run when both values exist.
 	} );
 };
