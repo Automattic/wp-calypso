@@ -12,7 +12,7 @@ interface Props {
 }
 
 const hasFailedJobs = ( domain: string, completedJobs: JobStatus[] ) => {
-	return completedJobs.filter( ( job ) => job.failed.includes( domain ) ).length > 0;
+	return completedJobs.some( ( job ) => job.failed.includes( domain ) );
 };
 
 const DomainField = ( { domain: partialDomain, isAllSitesView, completedJobs }: Props ) => {
