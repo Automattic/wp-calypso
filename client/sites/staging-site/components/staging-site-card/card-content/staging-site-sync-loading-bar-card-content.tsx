@@ -1,13 +1,9 @@
-import styled from '@emotion/styled';
+import { ProgressBar } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { LoadingBar } from 'calypso/components/loading-bar';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-
-const StyledLoadingBar = styled( LoadingBar )( {
-	marginBottom: '1em',
-} );
+import './style.scss';
 
 type CardContentProps = {
 	progress: number;
@@ -39,8 +35,8 @@ export const StagingSiteSyncLoadingBarCardContent = ( {
 	}
 
 	return (
-		<div data-testid="syncing-site-content">
-			<StyledLoadingBar progress={ progress } />
+		<div data-testid="syncing-site-content" className="staging-site-card__sync-content">
+			<ProgressBar value={ progress } className="staging-site-card__loading-bar" />
 			<p>{ message }</p>
 		</div>
 	);
