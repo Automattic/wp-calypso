@@ -952,3 +952,12 @@ main.akismet-checkout-thank-you {
 	background: #fff;
 	height: calc(100vh - 72px);
 }
+
+main.checkout-thank-you__pending {
+	.wpcom__loading {
+		margin: 0 auto;
+	}
+	.wpcom__loading-title {
+		height: auto;
+	}
+}

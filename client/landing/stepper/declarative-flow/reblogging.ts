@@ -17,6 +17,7 @@ const reblogging: Flow = {
 		return translate( 'Reblogging' );
 	},
 	isSignupFlow: true,
+	__experimentalUseBuiltinAuth: true,
 	useSteps() {
 		return stepsWithRequiredLogin( [
 			STEPS.DOMAINS,

@@ -152,6 +152,23 @@ export function parseOrderDeltas( payload ) {
 	} );
 }
 
+export const chartLabelformats = {
+	hour: translate( 'HH:mm', {
+		context: 'momentjs format string (hour)',
+		comment: 'This specifies an hour for the stats x-axis label.',
+	} ),
+	day: translate( 'MMM D', {
+		context: 'momentjs format string (day)',
+		comment: 'This specifies a day for the stats x-axis label.',
+	} ),
+	week: translate( 'MMM D', {
+		context: 'momentjs format string (week)',
+		comment: 'This specifies a week for the stats x-axis label.',
+	} ),
+	month: 'MMM',
+	year: 'YYYY',
+};
+
 /**
  * Create the correct property and value for a label to be used in a chart
  * @param {string} unit - day, week, month, year
@@ -167,24 +184,8 @@ export function getChartLabels( unit, date, localizedDate ) {
 		const dayOfWeek = date.toDate().getDay();
 		const isWeekend = 'day' === unit && ( 6 === dayOfWeek || 0 === dayOfWeek );
 		const labelName = `label${ unit.charAt( 0 ).toUpperCase() + unit.slice( 1 ) }`;
-		const formats = {
-			hour: translate( 'HH:mm', {
-				context: 'momentjs format string (hour)',
-				comment: 'This specifies an hour for the stats x-axis label.',
-			} ),
-			day: translate( 'MMM D', {
-				context: 'momentjs format string (day)',
-				comment: 'This specifies a day for the stats x-axis label.',
-			} ),
-			week: translate( 'MMM D', {
-				context: 'momentjs format string (week)',
-				comment: 'This specifies a week for the stats x-axis label.',
-			} ),
-			month: 'MMM',
-			year: 'YYYY',
-		};
 		return {
-			[ labelName ]: localizedDate.format( formats[ unit ] ),
+			[ labelName ]: localizedDate.format( chartLabelformats[ unit ] ),
 			classNames: isWeekend ? [ 'is-weekend' ] : [],
 		};
 	}

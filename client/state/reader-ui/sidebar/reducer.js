@@ -45,14 +45,14 @@ export const openOrganizations = withPersistence( ( state = [], action ) => {
 	return state;
 } );
 
-export const selectedRecentSite = withPersistence( ( state = null, action ) => {
+export const selectedRecentSite = ( state = null, action ) => {
 	switch ( action.type ) {
 		case READER_SIDEBAR_SELECT_RECENT_SITE:
 			return action.feedId;
 	}
 
 	return state;
-} );
+};
 
 export default combineReducers( {
 	isListsOpen,

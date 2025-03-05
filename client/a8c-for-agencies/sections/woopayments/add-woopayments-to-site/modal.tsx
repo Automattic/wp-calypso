@@ -32,8 +32,6 @@ const AddWooPaymentsToSiteModal = ( { onClose }: { onClose: () => void } ) => {
 		}
 	};
 
-	const excludedSites = null; // FIXME: Replace this with sites that already have WooPayments enabled
-
 	return (
 		<A4AModal
 			title={ translate( 'Which site would you like to add WooPayments to?' ) }
@@ -55,7 +53,6 @@ const AddWooPaymentsToSiteModal = ( { onClose }: { onClose: () => void } ) => {
 			<AddWooPaymentsToSiteTable
 				setSelectedSite={ setSelectedSite }
 				selectedSite={ selectedSite }
-				excludedSites={ excludedSites }
 			/>
 		</A4AModal>
 	);

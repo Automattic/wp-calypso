@@ -209,14 +209,19 @@ function VatForm( {
 						} )
 					}
 				</FormLabel>
-				<FormTextInput
-					name="vat"
-					disabled={ isUpdating || isVatAlreadySet }
-					value={ currentVatDetails.id ?? vatDetails.id ?? '' }
-					onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
-						setCurrentVatDetails( { ...currentVatDetails, id: event.target.value } )
-					}
-				/>
+				<InputWrapper>
+					{ currentVatDetails?.country && (
+						<span className="vat-field__overlay-prefix">{ currentVatDetails.country }</span>
+					) }
+					<FormTextInput
+						name="vat"
+						disabled={ isUpdating || isVatAlreadySet }
+						value={ currentVatDetails.id ?? vatDetails.id ?? '' }
+						onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
+							setCurrentVatDetails( { ...currentVatDetails, id: event.target.value } )
+						}
+					/>
+				</InputWrapper>
 				{ isVatAlreadySet && (
 					<FormSettingExplanation>
 						{ translate(
@@ -404,6 +409,11 @@ function useRecordVatEvents( {
 			return;
 		}
 	}, [ fetchError, updateError, isUpdateSuccessful, reduxDispatch ] );
+}
+
+// TODO - We'll need to fix the error handling for touch fields and pass the error to this component
+function InputWrapper( { children }: { children: React.ReactNode } ) {
+	return <div className="vat-form__field-wrapper">{ children }</div>;
 }
 
 function LoadingPlaceholder() {

@@ -5,6 +5,7 @@ import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { stringify } from 'qs';
@@ -185,6 +186,8 @@ const EmailProvidersStackedComparison = ( {
 		);
 	};
 
+	const queryArgs = getQueryArgs( window.location.href );
+
 	if ( hasLoadedDomains && ! domain && ! isDomainInCart ) {
 		return null;
 	}
@@ -242,8 +245,8 @@ const EmailProvidersStackedComparison = ( {
 
 			{ ! hideNavigation && isDomainInCart && (
 				<EmailUpsellNavigation
-					backUrl={ domainAddNew( selectedSite?.slug ) }
-					skipUrl={ `/checkout/${ selectedSite?.slug }` }
+					backUrl={ addQueryArgs( domainAddNew( selectedSite?.slug ), queryArgs ) }
+					skipUrl={ addQueryArgs( `/checkout/${ selectedSite?.slug }`, queryArgs ) }
 				/>
 			) }
 

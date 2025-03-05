@@ -1,8 +1,7 @@
-import { eye } from '@automattic/components/src/icons';
-import { Icon, people } from '@wordpress/icons';
+import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
-import { flowRight } from 'lodash';
+import { flowRight, memoize } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component, useRef } from 'react';
@@ -12,19 +11,19 @@ import Chart from 'calypso/components/chart';
 import { DEFAULT_HEARTBEAT } from 'calypso/components/data/query-site-stats/constants';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { requestChartCounts } from 'calypso/state/stats/chart-tabs/actions';
 import { QUERY_FIELDS } from 'calypso/state/stats/chart-tabs/constants';
 import { getCountRecords, getLoadingTabs } from 'calypso/state/stats/chart-tabs/selectors';
+import { chartLabelformats } from 'calypso/state/stats/lists/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useCssVariable from '../hooks/use-css-variable';
 import StatsEmptyState from '../stats-empty-state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatTabs from '../stats-tabs';
-import { parseLocalDate } from '../utils';
 import ChartHeader from './chart-header';
-import { buildChartData, getQueryDate } from './utility';
+import { buildChartData, getQueryDate, transformChartDataToLineFormat } from './utility';
 
 import './style.scss';
 
@@ -35,50 +34,25 @@ const ChartTabShape = PropTypes.shape( {
 	legendOptions: PropTypes.arrayOf( PropTypes.string ),
 } );
 
-// data validation for line chart
-const transformChartDataToLineFormat = ( chartData, primaryColor, secondaryColor ) => {
-	if ( ! Array.isArray( chartData ) ) {
-		return [];
+const CHART_TYPE_STORAGE_KEY = ( siteId ) => `jetpack_stats_chart_type_${ siteId }`;
+
+const getChartType = memoize( ( siteId ) => {
+	if ( ! siteId ) {
+		return 'bar';
 	}
+	return localStorage.getItem( CHART_TYPE_STORAGE_KEY( siteId ) ) || 'bar';
+} );
 
-	// Create the first data series for views
-	const viewsSeries = {
-		label: translate( 'Views' ),
-		options: { stroke: primaryColor },
-		icon: <Icon className="gridicon" icon={ eye } />,
-		data: chartData
-			.map( ( record ) => {
-				const date = parseLocalDate( record.data.period );
-				const value = record.data.views;
-				if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
-					return null;
-				}
-				return { date, value };
-			} )
-			.filter( Boolean ),
-	};
-
-	// Create the second data series for visitors
-	const visitorsSeries = {
-		label: translate( 'Visitors' ),
-		options: {
-			stroke: secondaryColor,
-		},
-		icon: <Icon className="gridicon" icon={ people } />,
-		data: chartData
-			.map( ( record ) => {
-				const date = parseLocalDate( record.data.period );
-				const value = record.data.visitors;
-				if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
-					return null;
-				}
-				return { date, value };
-			} )
-			.filter( Boolean ),
-	};
-
-	// Return both series
-	return [ viewsSeries, visitorsSeries ];
+// Define chart type change event names
+const CHART_TYPE_EVENTS = {
+	jetpack_odyssey: {
+		bar: 'jetpack_odyssey_stats_chart_type_bar_selected',
+		line: 'jetpack_odyssey_stats_chart_type_line_selected',
+	},
+	calypso: {
+		bar: 'calypso_stats_chart_type_bar_selected',
+		line: 'calypso_stats_chart_type_line_selected',
+	},
 };
 
 class StatModuleChartTabs extends Component {
@@ -106,10 +80,12 @@ class StatModuleChartTabs extends Component {
 		chartContainerRef: PropTypes.object,
 		primaryColor: PropTypes.string,
 		secondaryColor: PropTypes.string,
+		siteId: PropTypes.number,
+		recordTracksEvent: PropTypes.func.isRequired,
 	};
 
 	state = {
-		chartType: 'bar',
+		chartType: getChartType( this.props.siteId ),
 	};
 
 	intervalId = null;
@@ -159,7 +135,26 @@ class StatModuleChartTabs extends Component {
 	};
 
 	handleChartTypeChange = ( newType ) => {
+		const { siteId } = this.props;
+		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+
 		this.setState( { chartType: newType } );
+		if ( siteId ) {
+			localStorage.setItem( CHART_TYPE_STORAGE_KEY( siteId ), newType );
+			getChartType.cache.clear(); // Clear memoization cache when type changes
+		}
+
+		// Record the chart type change event
+		this.props.recordTracksEvent( CHART_TYPE_EVENTS[ event_from ][ newType ] );
+	};
+
+	formatLineChartTimeTick = ( date ) => {
+		// Align the format with the original chart data parser.
+		const timeformat = chartLabelformats[ this.props.selectedPeriod ];
+
+		// Use browser's timezone offset to display the correct datetime.
+		return moment( date ).format( timeformat );
 	};
 
 	render() {
@@ -174,6 +169,7 @@ class StatModuleChartTabs extends Component {
 			primaryColor,
 			secondaryColor,
 			chartContainerRef,
+			gmtOffset,
 		} = this.props;
 		const { chartType } = this.state;
 
@@ -190,6 +186,17 @@ class StatModuleChartTabs extends Component {
 				'has-less-than-three-bars': this.props.chartData.length < 3,
 			},
 		];
+
+		//Transform the data to the format required by the line chart.
+		const lineChartData = transformChartDataToLineFormat(
+			chartData,
+			this.props.activeLegend,
+			this.props.activeTab,
+			primaryColor,
+			secondaryColor,
+			gmtOffset
+		);
+
 		/* pass bars count as `key` to disable transitions between tabs with different column count */
 		return (
 			<div className={ clsx( ...classes ) } ref={ chartContainerRef }>
@@ -209,7 +216,7 @@ class StatModuleChartTabs extends Component {
 
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
 
-				{ chartType === 'bar' ? (
+				{ chartType === 'bar' || chartData.length === 0 ? (
 					<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 35 }>
 						<StatsEmptyState
 							headingText={
@@ -226,10 +233,14 @@ class StatModuleChartTabs extends Component {
 					<AsyncLoad
 						require="calypso/my-sites/stats/components/line-chart"
 						className="stats-chart-tabs__line-chart"
-						chartData={ transformChartDataToLineFormat( chartData, primaryColor, secondaryColor ) }
+						chartData={ lineChartData }
 						height={ 200 }
 						moment={ moment }
 						onClick={ this.props.barClick }
+						formatTimeTick={ this.formatLineChartTimeTick }
+						placeholder={
+							<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
+						}
 					/>
 				) }
 
@@ -377,9 +388,10 @@ const connectComponent = connect(
 			tabCountsAlt: tabCountsAlt?.[ 0 ],
 			queryDayComp,
 			tabCountsAltComp: tabCountsAltComp?.[ 0 ],
+			gmtOffset: timezoneOffset,
 		};
 	},
-	{ recordGoogleEvent, requestChartCounts }
+	{ recordGoogleEvent, recordTracksEvent, requestChartCounts }
 );
 
 // TODO: let's convert it to a function component and remove all the hassle.

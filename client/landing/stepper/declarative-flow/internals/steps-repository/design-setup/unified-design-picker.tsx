@@ -22,12 +22,7 @@ import {
 	getThemeIdFromDesign,
 } from '@automattic/design-picker';
 import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
-import {
-	StepContainer,
-	DESIGN_FIRST_FLOW,
-	ONBOARDING_FLOW,
-	isSiteSetupFlow,
-} from '@automattic/onboarding';
+import { StepContainer, ONBOARDING_FLOW, isSiteSetupFlow } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -41,7 +36,6 @@ import Loading from 'calypso/components/loading';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import {
 	THEME_TIERS,
-	THEME_TIER_PARTNER,
 	THEME_TIER_PREMIUM,
 	THEME_TIER_FREE,
 } from 'calypso/components/theme-tier/constants';
@@ -84,12 +78,7 @@ import useIsUpdatedBadgeDesign from './hooks/use-is-updated-badge-design';
 import useRecipe from './hooks/use-recipe';
 import useTrackFilters from './hooks/use-track-filters';
 import type { Step, ProvidedDependencies } from '../../types';
-import type {
-	OnboardSelect,
-	SiteSelect,
-	StarterDesigns,
-	GlobalStyles,
-} from '@automattic/data-stores';
+import type { OnboardSelect, SiteSelect, GlobalStyles } from '@automattic/data-stores';
 import type { Design, StyleVariation } from '@automattic/design-picker';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import './style.scss';
@@ -139,18 +128,11 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	// @TODO Cleanup once the test phase is over.
 	const isGlobalStylesOnPersonal = useSiteGlobalStylesOnPersonal( site?.ID );
 
-	const isDesignFirstFlow =
-		flow === DESIGN_FIRST_FLOW || queryParams.get( 'flowToReturnTo' ) === DESIGN_FIRST_FLOW;
-
 	const wpcomSiteSlug = useSelector( ( state ) => getSiteSlug( state, site?.ID ) );
 	const didPurchaseDomain = useSelector(
 		( state ) => site?.ID && hasPurchasedDomain( state, site.ID )
 	);
 
-	// The design-first flow put the checkout at the last step, so we cannot show any upsell modal.
-	// Therefore, we need to hide any feature that needs to check out right away, e.g.: Premium theme.
-	// But maybe we can enable the global styles since it's gated under the Premium plan.
-	const disableCheckoutImmediately = isDesignFirstFlow;
 	const [ shouldHideActionButtons, setShouldHideActionButtons ] = useState( false );
 	const [ showEligibility, setShowEligibility ] = useState( false );
 
@@ -180,27 +162,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const { setDesignOnSite, assembleSite } = useDispatch( SITE_STORE );
 	const activateDesign = useActivateDesign();
 
-	// ********** Logic for fetching designs
-	const selectStarterDesigns = ( allDesigns: StarterDesigns ) => {
-		if ( disableCheckoutImmediately ) {
-			allDesigns.designs = allDesigns.designs
-				.filter(
-					( design ) =>
-						! (
-							design?.design_tier === THEME_TIER_PREMIUM ||
-							design?.design_tier === THEME_TIER_PARTNER ||
-							( design.software_sets && design.software_sets.length > 0 )
-						)
-				)
-				.map( ( design ) => {
-					design.style_variations = [];
-					return design;
-				} );
-		}
-
-		return allDesigns;
-	};
-
 	const { data: allDesigns, isLoading: isLoadingDesigns } = useStarterDesignsQuery(
 		{
 			seed: siteSlugOrId ? String( siteSlugOrId ) : undefined,
@@ -209,7 +170,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		},
 		{
 			enabled: true,
-			select: selectStarterDesigns,
 		}
 	);
 
@@ -258,13 +218,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const selectedDesignHasStyleVariations = ( selectedDesign?.style_variations || [] ).length > 0;
 	const { data: selectedDesignDetails } = useStarterDesignBySlug( selectedDesign?.slug || '', {
 		enabled: isPreviewingDesign,
-		select: ( design: Design ) => {
-			if ( disableCheckoutImmediately && design?.style_variations ) {
-				design.style_variations = [];
-			}
-
-			return design;
-		},
 	} );
 
 	function getEventPropsByDesign(
@@ -849,7 +802,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					screenshot={ fullLengthScreenshot }
 					isExternallyManaged={ selectedDesign.is_externally_managed }
 					isVirtual={ selectedDesign.is_virtual }
-					disableGlobalStyles={ disableCheckoutImmediately }
 					selectedColorVariation={ selectedColorVariation }
 					onSelectColorVariation={ handleSelectColorVariation }
 					selectedFontVariation={ selectedFontVariation }
@@ -892,11 +844,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			) }
 		/>
 	);
-
-	if ( isDesignFirstFlow ) {
-		categorization.categories = [];
-		categorization.selections = [ 'blog' ];
-	}
 
 	function onDesignWithAI() {
 		recordTracksEvent( 'calypso_design_picker_big_sky_button_click', commonFilterProperties );

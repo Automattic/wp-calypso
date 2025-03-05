@@ -56,11 +56,9 @@ body.is-section-me {
 				max-width: none;
 				& > * {
 					max-width: 1040px;
-					margin: 0 auto;
+					margin-left: auto;
+					margin-right: auto;
 				}
-				& > div.section-nav {
-                    margin-bottom: 24px; /* Preserve margin for Purchases mobile nav */
-	            }
 			}
 		}
 	}

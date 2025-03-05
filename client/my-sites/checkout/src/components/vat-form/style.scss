@@ -1,0 +1,64 @@
+/* Defaults to 2 col grid on larger viewports
+ * Collapses to 1 col grid on smaller viewports
+ * Use .vat-form__row--full-width class to force a 1 col grid
+ * across all viewports
+ */
+.vat-form__row {
+	display: -ms-grid;
+	display: grid;
+	width: 100%;
+	-ms-grid-columns: 48% 4% 48%;
+	grid-template-columns: 48% 48%;
+	grid-column-gap: 4%;
+	justify-items: stretch;
+	margin-top: 16px;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		display: block;
+
+		> div:not(:first-child) {
+			margin-block-start: 16px;
+		}
+	}
+
+	// Override the InputWrapper styles for the VAT ID field
+	label[for="contact-vat-id"] + div {
+		border: 1px solid #C3C4C7;
+	}
+
+	& .field__overlay-prefix {
+		display: flex;
+		flex: 0 0 auto;
+		justify-content: center;
+		align-items: center;
+		align-self: stretch;
+		white-space: nowrap;
+		min-width: 3.5rem;
+		min-height: 100%;
+		line-height: 1.5;
+		font-size: 0.875rem;
+		color: var(--studio-gray-60);
+		box-sizing: border-box;
+		border-right: 1px solid #C3C4C7;
+	}
+
+	& #contact-vat-id {
+		border: none;
+		min-width: 0;
+		&:focus {
+			outline: unset;
+		}
+	}
+}
+
+.vat-form__row--full-width {
+	display: block;
+}
+
+.vat-form__row input[type="checkbox"]:disabled {
+	opacity: 0.5;
+}
+
+.is-section-checkout .components-checkbox-control__input[type="checkbox"]:checked {
+	--wp-admin-theme-color: var(--studio-wordpress-blue-50);
+}

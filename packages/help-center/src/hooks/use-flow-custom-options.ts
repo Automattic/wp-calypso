@@ -9,6 +9,7 @@ export function useFlowCustomOptions( flowName: string ) {
 	) {
 		return {
 			hideBackButton: true,
+			hasPremiumSupport: true,
 		};
 	}
 

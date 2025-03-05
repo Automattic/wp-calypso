@@ -13,6 +13,7 @@ import { recordTrack } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { shouldShowBackButton } from '../controller-helper';
 import renderHeaderSection from '../lib/header-section';
 
 const analyticsPageTitle = 'Reader';
@@ -76,7 +77,7 @@ export const tagListing = ( context, next ) => {
 				) }
 				startDate={ startDate }
 				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) } // eslint-disable-line
-				showBack={ !! context.lastRoute }
+				showBack={ shouldShowBackButton( context ) }
 			/>
 		</>
 	);

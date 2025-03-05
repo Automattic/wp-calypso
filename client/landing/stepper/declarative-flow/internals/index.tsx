@@ -2,7 +2,7 @@ import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { lazy, useEffect } from 'react';
 import Modal from 'react-modal';
-import { generatePath, useParams } from 'react-router';
+import { createPath, generatePath, useParams } from 'react-router';
 import { Route, Routes } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
@@ -143,10 +143,14 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 		const postAuthStepSlug = stepData?.nextStep ?? '';
 		if ( step.slug === PRIVATE_STEPS.USER.slug && postAuthStepSlug ) {
 			const previousAuthStepSlug = stepData?.previousStep;
-			const postAuthStepPath = generatePath( '/setup/:flow/:step/:lang?', {
-				flow: flow.name,
-				step: postAuthStepSlug,
-				lang: lang === 'en' || isLoggedIn ? null : lang,
+			const postAuthStepPath = createPath( {
+				pathname: generatePath( '/setup/:flow/:step/:lang?', {
+					flow: flow.name,
+					step: postAuthStepSlug,
+					lang: lang === 'en' || isLoggedIn ? null : lang,
+				} ),
+				search: window.location.search,
+				hash: window.location.hash,
 			} );
 
 			const signupUrl = generatePath( '/setup/:flow/:step/:lang?', {

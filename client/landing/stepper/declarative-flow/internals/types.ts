@@ -85,6 +85,12 @@ export interface AsyncUserStep extends AsyncStepperStep {
 
 export type StepperStep = DeprecatedStepperStep | AsyncStepperStep | AsyncUserStep;
 
+/**
+ * Navigates to a step in the current flow. Preserves the current query params.
+ * @param stepName - The name of the step to navigate to.
+ * @param extraData - Extra data to pass to the step.
+ * @param replace - If true, the current step will be replaced in the history stack.
+ */
 export type Navigate< FlowSteps extends readonly StepperStep[] > = (
 	stepName: FlowSteps[ number ][ 'slug' ] | `${ FlowSteps[ number ][ 'slug' ] }?${ string }`,
 	extraData?: any,

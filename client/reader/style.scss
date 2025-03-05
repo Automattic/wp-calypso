@@ -84,6 +84,10 @@ body.is-section-reader {
 			overflow-y: auto;
 			overflow-x: hidden;
 		}
+
+		.async-load__placeholder {
+			width: 100%;
+		}
 	}
 
 	@media only screen and (max-width: 781px) {

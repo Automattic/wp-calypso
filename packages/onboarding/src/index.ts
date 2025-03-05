@@ -4,6 +4,8 @@ export { default as ActionButtons, BackButton, NextButton } from './action-butto
 export {
 	createSiteWithCart,
 	addPlanToCart,
+	processItemCart,
+	getNewSiteParams,
 	addProductsToCart,
 	replaceProductsInCart,
 	setThemeOnSite,
