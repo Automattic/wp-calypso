@@ -368,7 +368,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 						heroElement={ heroElement }
 						mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
 						toggleControl={ toggleControlComponent }
-						downloadCsv={ downloadCsvElement }
+						downloadCsv={ ! shouldGateTab ? downloadCsvElement : null }
 						showMore={
 							summaryUrl
 								? {
