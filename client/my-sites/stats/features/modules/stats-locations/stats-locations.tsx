@@ -264,6 +264,24 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 
 	const hasLocationData = Array.isArray( locationData ) && locationData.length > 0;
 
+	const downloadCsvElement = shouldGateDownloads ? (
+		<DownloadCsvUpsell
+			className="stats-module-locations__download-csv-upsell"
+			siteId={ siteId }
+			borderless
+		/>
+	) : (
+		<DownloadCsv
+			borderless
+			data={ locationCsvData }
+			path="locations"
+			period={ period }
+			query={ query }
+			skipQuery
+			statType={ statType }
+		/>
+	);
+
 	const heroElementActions = (
 		<div className="stats-module-locations__actions">
 			{ geoMode !== 'country' && (
@@ -275,23 +293,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 					tooltip={ divisionsTooltip }
 				/>
 			) }
-			{ shouldGateDownloads ? (
-				<DownloadCsvUpsell
-					className="stats-module-locations__download-csv-upsell"
-					siteId={ siteId }
-					borderless
-				/>
-			) : (
-				<DownloadCsv
-					borderless
-					data={ locationCsvData }
-					path="locations"
-					period={ period }
-					query={ query }
-					skipQuery
-					statType={ statType }
-				/>
-			) }
+			{ downloadCsvElement }
 		</div>
 	);
 
@@ -366,6 +368,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 						heroElement={ heroElement }
 						mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
 						toggleControl={ toggleControlComponent }
+						downloadCsv={ downloadCsvElement }
 						showMore={
 							summaryUrl
 								? {
