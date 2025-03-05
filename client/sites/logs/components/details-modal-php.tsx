@@ -50,7 +50,7 @@ const DetailsModalPHP = ( { item }: DetailsModalPHPProps ) => {
 			<div>{ item.file }</div>
 			<div className="site-logs-details-modal__field-title">{ translate( 'LINE' ) }</div>
 			<div>{ numberFormat( item.line ) }</div>
-			<div className="site-logs-details-modal__field-title">{ translate( 'SITE ID' ) }</div>
+			<div className="site-logs-details-modal__field-title">{ translate( 'ATOMIC SITE ID' ) }</div>
 			<div>{ item.atomic_site_id }</div>
 		</div>
 	);

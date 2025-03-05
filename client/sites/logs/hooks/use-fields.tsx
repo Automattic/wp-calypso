@@ -109,7 +109,7 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 				{
 					id: 'atomic_site_id',
 					type: 'integer',
-					label: translate( 'Site ID' ),
+					label: translate( 'Atomic Site ID' ),
 					enableSorting: false,
 				},
 			] as Field< PHPLog | ServerLog >[];
