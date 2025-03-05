@@ -1,36 +1,36 @@
 .color-scheme.is-classic-bright {
 	/* Theme Properties */
 	--theme-text-color: #044b7a; /* Direct from wp-admin */
-	--color-primary: var(--studio-blue-50);
-	--color-primary-rgb: var(--studio-blue-50-rgb);
-	--color-primary-dark: var(--studio-blue-70);
-	--color-primary-dark-rgb: var(--studio-blue-70-rgb);
-	--color-primary-light: var(--studio-blue-30);
-	--color-primary-light-rgb: var(--studio-blue-30-rgb);
-	--color-primary-0: var(--studio-blue-0);
-	--color-primary-0-rgb: var(--studio-blue-0-rgb);
-	--color-primary-5: var(--studio-blue-5);
-	--color-primary-5-rgb: var(--studio-blue-5-rgb);
-	--color-primary-10: var(--studio-blue-10);
-	--color-primary-10-rgb: var(--studio-blue-10-rgb);
-	--color-primary-20: var(--studio-blue-20);
-	--color-primary-20-rgb: var(--studio-blue-20-rgb);
-	--color-primary-30: var(--studio-blue-30);
-	--color-primary-30-rgb: var(--studio-blue-30-rgb);
-	--color-primary-40: var(--studio-blue-40);
-	--color-primary-40-rgb: var(--studio-blue-40-rgb);
-	--color-primary-50: var(--studio-blue-50);
-	--color-primary-50-rgb: var(--studio-blue-50-rgb);
-	--color-primary-60: var(--studio-blue-60);
-	--color-primary-60-rgb: var(--studio-blue-60-rgb);
-	--color-primary-70: var(--studio-blue-70);
-	--color-primary-70-rgb: var(--studio-blue-70-rgb);
-	--color-primary-80: var(--studio-blue-80);
-	--color-primary-80-rgb: var(--studio-blue-80-rgb);
-	--color-primary-90: var(--studio-blue-90);
-	--color-primary-90-rgb: var(--studio-blue-90-rgb);
-	--color-primary-100: var(--studio-blue-100);
-	--color-primary-100-rgb: var(--studio-blue-100-rgb);
+	--color-primary: #0675c4;
+	--color-primary-rgb: 6, 117, 196;
+	--color-primary-dark: #044b7a;
+	--color-primary-dark-rgb: 4, 75, 122;
+	--color-primary-light: #399ce3;
+	--color-primary-light-rgb: 57, 156, 227;
+	--color-primary-0: #e9f0f5;
+	--color-primary-0-rgb: 233, 240, 245;
+	--color-primary-5: #bbe0fa;
+	--color-primary-5-rgb: 187, 224, 250;
+	--color-primary-10: #91caf2;
+	--color-primary-10-rgb: 145, 202, 242;
+	--color-primary-20: #68b3e8;
+	--color-primary-20-rgb: 104, 179, 232;
+	--color-primary-30: #399ce3);
+	--color-primary-30-rgb: 57, 156, 227;
+	--color-primary-40: #1689db;
+	--color-primary-40-rgb: 22, 137, 219;
+	--color-primary-50: #0675c4;
+	--color-primary-50-rgb: 6, 117, 196;
+	--color-primary-60: #055d9c;
+	--color-primary-60-rgb: 5, 93, 156;
+	--color-primary-70: #044b7a;
+	--color-primary-70-rgb: 4, 75, 122;
+	--color-primary-80: #02395c;
+	--color-primary-80-rgb: 2, 57, 92;
+	--color-primary-90: #01283d;
+	--color-primary-90-rgb: 1, 40, 61;
+	--color-primary-100: #001621;
+	--color-primary-100-rgb:0, 22, 33;
 
 	--color-accent: var(--studio-pink-50);
 	--color-accent-rgb: var(--studio-pink-50-rgb);
@@ -64,13 +64,13 @@
 	--color-accent-100-rgb: var(--studio-pink-100-rgb);
 
 	/* Masterbar */
-	--color-masterbar-background: var(--studio-blue-60);
-	--color-masterbar-border: var(--studio-blue-70);
+	--color-masterbar-background: #055d9c;
+	--color-masterbar-border: #044b7a;
 	--color-masterbar-text: var(--studio-white);
 	--color-masterbar-icon: var(--studio-white);
 	--color-masterbar-highlight: var(--color-accent-30);
-	--color-masterbar-item-hover-background: var(--studio-blue-70);
-	--color-masterbar-item-active-background: var(--studio-blue-90);
+	--color-masterbar-item-hover-background: #044b7a;
+	--color-masterbar-item-active-background: #01283d;
 	--color-masterbar-item-new-editor-background: var(--studio-gray-50);
 	--color-masterbar-item-new-editor-hover-background: var(--studio-gray-40);
 	--color-masterbar-unread-dot-background: var(--color-accent-20);
@@ -89,10 +89,10 @@
 	--color-sidebar-gridicon-fill: var(--studio-gray-50);
 
 	/* Sidebar Selected */
-	--color-sidebar-menu-selected-background: var(--studio-blue-5);
-	--color-sidebar-menu-selected-background-rgb: var(--studio-blue-5-rgb);
-	--color-sidebar-menu-selected-text: var(--studio-blue-70);
-	--color-sidebar-menu-selected-text-rgb: var(--studio-blue-70-rgb);
+	--color-sidebar-menu-selected-background: #bbe0fa;
+	--color-sidebar-menu-selected-background-rgb: 187, 224, 250;
+	--color-sidebar-menu-selected-text: #044b7a;
+	--color-sidebar-menu-selected-text-rgb: 4, 75, 122;
 
 	/* Sidebar Hover */
 	--color-sidebar-menu-hover-background: var(--studio-gray-5);
@@ -101,7 +101,7 @@
 
 	/* Sidebar Submenu - Nav Unification */
 	--color-sidebar-submenu-background: #e9f0f6;
-	--color-sidebar-submenu-text: var(--studio-blue-70);
+	--color-sidebar-submenu-text: #044b7a;
 	--color-sidebar-submenu-hover-text: var(--color-accent);
 	--color-sidebar-submenu-selected-text: var(--color-accent);
 	--color-sidebar-submenu-selected-hover-text: var(--color-accent);
