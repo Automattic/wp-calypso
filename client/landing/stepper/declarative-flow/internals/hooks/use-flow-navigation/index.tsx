@@ -108,6 +108,7 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 				? new URLSearchParams( nextStep.split( '?' )[ 1 ] )
 				: [];
 
+			// Merge the current and step query params. Give precedence to the step query params because they're new and more deliberate.
 			const queryParams = new URLSearchParams( {
 				...Object.fromEntries( currentQueryParams ),
 				...Object.fromEntries( stepQueryParams ),
