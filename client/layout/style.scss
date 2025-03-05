@@ -393,6 +393,10 @@ body.is-mobile-app-view {
 		@media print {
 			padding: 0;
 		}
+
+		.wpcom-loading__boot:only-child {
+			margin: calc(32vh - 19px) auto var(--sidebar-width-max) 0;
+		}
 	}
 }
 // Only apply the no-masterbar rule to logged in sections

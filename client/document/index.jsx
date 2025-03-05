@@ -17,7 +17,6 @@ import EnvironmentBadge, {
 import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Loading from 'calypso/components/loading';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
@@ -294,7 +293,7 @@ class Document extends Component {
 
 function chooseLoadingLogo( { useLoadingEllipsis }, isWpMobileApp, isWcMobileApp ) {
 	if ( useLoadingEllipsis ) {
-		return LoadingEllipsis;
+		return () => <Loading className="wpcom-loading__boot" />;
 	}
 
 	if ( isWcMobileApp ) {
