@@ -579,7 +579,7 @@ export function useActions( {
 					page(
 						isStagingSite( site )
 							? `/staging-site/${ site.slug }`
-							: `/settings/delete-site/${ site.slug }`
+							: `/sites/settings/site/${ site.slug }/delete-site`
 					);
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_delete_click' ) );
 				},
