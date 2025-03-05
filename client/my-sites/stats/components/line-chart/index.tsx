@@ -147,7 +147,7 @@ function StatsLineChart( {
 		[ moment ]
 	);
 
-	const onPointerDown = useCallback(
+	const onPointerUp = useCallback(
 		( { datum }: { datum: DataPointDate } ) => {
 			if ( datum && datum.date ) {
 				onClick && onClick( { data: { period: moment( datum.date ).format( DATE_FORMAT ) } } );
@@ -173,7 +173,7 @@ function StatsLineChart( {
 						height={ height }
 						// TODO: figure out the right type for onPointerDown
 						// eslint-disable-next-line @typescript-eslint/no-explicit-any
-						onPointerDown={ onPointerDown as any }
+						onPointerUp={ onPointerUp as any }
 						margin={ {
 							left: 15,
 							top: 20,
