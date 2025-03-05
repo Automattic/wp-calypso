@@ -28,14 +28,14 @@ const useActions = ( { logType, isLoading }: { logType: LogType; isLoading: bool
 							dispatch(
 								successNotice(
 									/* translators: notice shown upon copy of Logs entry */
-									translate( 'Copied' )
+									translate( 'Copied message' )
 								)
 							);
 						} catch ( error ) {
 							dispatch(
 								errorNotice(
 									/* translators: notice shown upon failed copy of Logs entry */
-									translate( 'Copy failed' )
+									translate( 'Message could not be copied' )
 								)
 							);
 						}
@@ -71,14 +71,14 @@ const useActions = ( { logType, isLoading }: { logType: LogType; isLoading: bool
 						dispatch(
 							successNotice(
 								/* translators: notice shown upon copy of request URL */
-								translate( 'Copied' )
+								translate( 'Copied request URL' )
 							)
 						);
 					} catch ( error ) {
 						dispatch(
 							errorNotice(
 								/* translators: notice shown upon failed copy of request URL */
-								translate( 'Copy failed' )
+								translate( 'Request URL could not be copied' )
 							)
 						);
 					}
