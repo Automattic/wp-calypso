@@ -56,7 +56,6 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 				// In-stepper auth.
 				if ( flow.__experimentalUseBuiltinAuth ) {
 					const signInPath = createPath( {
-						// We have to include /setup, as this URL should be absolute and we can't use `useHref`.
 						pathname: generatePath( `/:flow/:step/:lang?`, {
 							flow: flowName,
 							lang,
