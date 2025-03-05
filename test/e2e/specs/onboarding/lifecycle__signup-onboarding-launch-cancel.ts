@@ -149,8 +149,6 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 		} );
 	} );
 
-	// wpcalypso is currently using the goals-first onboarding flow, so this is
-	// skipped for now. Check out the "Goals-first Signup" test below.
 	describe( 'Sell', function () {
 		const themeName = 'Attar';
 		let startSiteFlow: StartSiteFlow;
@@ -180,19 +178,21 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 		} );
 	} );
 
-	describe( 'Launch site without Focused Launchpad', function () {
+	describe( 'Check if site is launched', function () {
 		it( 'Verify site is not yet launched', async function () {
 			const tmpPage = await browser.newPage();
 			await tmpPage.goto( newSiteDetails.blog_details.url as string );
 
 			// View site.
-			const comingSoonPage = new ComingSoonPage( tmpPage );
+			const comingSoonPage = new ComingSoonPage( page );
 			await comingSoonPage.validateComingSoonState();
 
 			// Dispose the test page and context.
 			await tmpPage.close();
 		} );
+	} );
 
+	describe( 'Launch site without Focused Launchpad', function () {
 		it( 'Start site launch', async function () {
 			const siteSettingsPage = new SiteSettingsPage( page );
 			await siteSettingsPage.visit( newSiteDetails.blog_details.site_slug );
@@ -206,9 +206,14 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 		} );
 
 		it( 'Navigated to Home dashboard', async function () {
+			await page.waitForURL(
+				DataHelper.getCalypsoURL( `/home/${ newSiteDetails.blog_details.site_slug }` ),
+				{ timeout: 30 * 1000 }
+			);
 			const myHomePage = new MyHomePage( page );
-			await myHomePage.visit( newSiteDetails.blog_details.site_slug );
-			await myHomePage.validateTaskHeadingMessage( 'You launched your site!' );
+			await new Promise( ( r ) => setTimeout( r, 2000 ) );
+			await page.reload();
+			return await myHomePage.validateTaskHeadingMessage( 'You launched your site!' );
 		} );
 	} );
 
@@ -265,5 +270,8 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 			username: newUserDetails.body.username,
 			email: testUser.email,
 		} );
+
+		// Close the page to prevent hanging
+		await page.close();
 	} );
 } );
