@@ -123,7 +123,7 @@ export default function Content( {
 					<h2>{ __( 'Step 2: Import your content to WordPress.com' ) }</h2>
 					<p>
 						{ i18n.fixMe( {
-							text: '',
+							text: 'Your posts may be added to your homepage by default. If you prefer your posts to load on a separate page, first go to Reading Settings, and change "Your homepage displays" to a Static page.',
 							newCopy: createInterpolateElement(
 								__(
 									'Your posts may be added to your homepage by default. If you prefer your posts to load on a separate page, first go to <a>Reading Settings</a>, and change "Your homepage displays" to a Static page.'
