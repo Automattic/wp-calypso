@@ -93,7 +93,7 @@ function QuickPost( {
 
 				successNotice( translate( 'Post successful! Your post will appear in the feed soon.' ), {
 					button: translate( 'View Post.' ),
-					buttonOptions: {
+					noticeActionProps: {
 						external: true,
 					},
 					href: postData.URL,
