@@ -21,7 +21,7 @@ import { requestSite } from 'calypso/state/sites/actions';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
-import { useLaunchpad } from '../cards/launchpad/use-launchpad';
+import { useMyHomeCardLaunchpad } from '../cards/launchpad/use-my-home-card-launchpad';
 import './full-screen-launchpad.scss';
 
 export const FullScreenLaunchpad = ( {
@@ -53,7 +53,7 @@ export const FullScreenLaunchpad = ( {
 		launchpadTitle,
 		hasChecklist,
 		refetch,
-	} = useLaunchpad( {
+	} = useMyHomeCardLaunchpad( {
 		checklistSlug,
 		launchpadContext,
 	} );

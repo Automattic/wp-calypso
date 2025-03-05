@@ -15,7 +15,7 @@ interface UseLaunchpadProps {
 	launchpadContext: string;
 }
 
-export function useLaunchpad( { checklistSlug, launchpadContext }: UseLaunchpadProps ) {
+export function useMyHomeCardLaunchpad( { checklistSlug, launchpadContext }: UseLaunchpadProps ) {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) || '' );
