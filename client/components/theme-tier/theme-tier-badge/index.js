@@ -28,11 +28,16 @@ export default function ThemeTierBadge( {
 	isThemeList = false,
 } ) {
 	const themeType = useSelector( ( state ) => getThemeType( state, themeId ) );
-	const themeTier = useThemeTierForTheme( themeId );
+	const { slug: themeTierSlug } = useThemeTierForTheme( themeId );
 	const isThemeAllowed = useIsThemeAllowedOnSite( siteId, themeId );
 
 	const badge = useMemo( () => {
-		if ( themeTier?.slug === 'free' ) {
+		// We're still loading the theme tier, so don't render anything.
+		if ( ! themeTierSlug ) {
+			return null;
+		}
+
+		if ( themeTierSlug === 'free' ) {
 			return <ThemeTierFreeBadge />;
 		}
 
@@ -66,7 +71,7 @@ export default function ThemeTierBadge( {
 			);
 		}
 
-		if ( themeTier?.slug === 'partner' || themeType === MARKETPLACE_THEME ) {
+		if ( themeTierSlug === 'partner' || themeType === MARKETPLACE_THEME ) {
 			return (
 				<ThemeTierPartnerBadge
 					showPartnerPrice={ showPartnerPrice }
@@ -88,7 +93,7 @@ export default function ThemeTierBadge( {
 
 		return null;
 	}, [
-		themeTier,
+		themeTierSlug,
 		siteId,
 		isThemeAllowed,
 		themeType,
@@ -104,7 +109,7 @@ export default function ThemeTierBadge( {
 
 	return (
 		<div
-			className={ clsx( 'theme-tier-badge', `theme-tier-badge--${ themeTier.slug }`, className ) }
+			className={ clsx( 'theme-tier-badge', `theme-tier-badge--${ themeTierSlug }`, className ) }
 		>
 			<ThemeTierBadgeContextProvider
 				canGoToCheckout={ canGoToCheckout }
