@@ -1,4 +1,4 @@
-import { details, info } from '@wordpress/icons';
+import { details } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { LogType, ServerLog, PHPLog } from 'calypso/data/hosting/use-site-logs-query';
@@ -61,7 +61,7 @@ const useActions = ({ logType, isLoading }: { logType: LogType; isLoading: boole
 				label: translate('View log details'),
 				modalHeader: translate('Log details'),
 				isPrimary: true,
-				icon: info,
+				icon: details,
 				disabled: isLoading,
 				supportsBulk: false,
 				RenderModal: ({ items }: { items: (PHPLog | ServerLog)[] }) => {

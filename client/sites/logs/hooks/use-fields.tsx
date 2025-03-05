@@ -91,15 +91,17 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 				{
 					id: 'kind',
 					type: 'text',
-					label: translate( 'Type' ),
-					render: ( { item }: { item: PHPLog } ) => item.kind ?? translate( 'Core' ),
+					label: translate( 'Kind' ),
+					render: ( { item }: { item: PHPLog } ) =>
+						item.kind !== '' ? item.kind : translate( 'core' ),
 					enableSorting: false,
 				},
 				{
 					id: 'name',
 					type: 'text',
 					label: translate( 'Source' ),
-					render: ( { item }: { item: PHPLog } ) => item.name ?? translate( 'Core' ),
+					render: ( { item }: { item: PHPLog } ) =>
+						item.name !== '' ? item.name : translate( 'core' ),
 					enableSorting: false,
 				},
 				{
