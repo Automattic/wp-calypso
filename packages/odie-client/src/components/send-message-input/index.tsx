@@ -1,4 +1,7 @@
+import { HelpCenterSelect } from '@automattic/data-stores';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { Spinner } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 import { useCallback, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
@@ -27,6 +30,12 @@ export const OdieSendMessageButton = () => {
 		setFileToUpload( files?.[ 0 ] );
 	};
 
+	const { zendeskClientId } = useSelect( ( select ) => {
+		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		return {
+			zendeskClientId: helpCenterSelect.getZendeskClientId(),
+		};
+	}, [] );
 	const onPaste = ( event: React.ClipboardEvent ) => {
 		const items = event.clipboardData.items;
 
@@ -104,6 +113,9 @@ export const OdieSendMessageButton = () => {
 		'odie-send-message-inner-button__flag'
 	);
 
+	const inferredClientId = chat.clientId ? chat.clientId : zendeskClientId;
+	const showAttachmentButton = chat.conversationId && inferredClientId;
+
 	return (
 		<>
 			{ ! isMessageSizeValid && (
@@ -129,16 +141,19 @@ export const OdieSendMessageButton = () => {
 						onPasteHandle={ onPaste }
 					/>
 					{ isChatBusy && <Spinner className="odie-send-message-input-spinner" /> }
-					<AttachmentButton
-						attachmentButtonRef={ attachmentButtonRef }
-						externalFile={ fileToUpload }
-					/>
+					{ showAttachmentButton && (
+						<AttachmentButton
+							attachmentButtonRef={ attachmentButtonRef }
+							externalFile={ fileToUpload }
+							inferredClientId={ inferredClientId }
+						/>
+					) }
 					<button type="submit" className={ buttonClasses } disabled={ submitDisabled }>
 						<SendMessageIcon />
 					</button>
 				</form>
 			</div>
-			<DropZone onFilesDrop={ onFilesDrop } />
+			{ showAttachmentButton && <DropZone onFilesDrop={ onFilesDrop } /> }
 		</>
 	);
 };

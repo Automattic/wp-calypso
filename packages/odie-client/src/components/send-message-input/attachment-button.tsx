@@ -1,11 +1,8 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import {
 	useAttachFileToConversation,
 	useAuthenticateZendeskMessaging,
 } from '@automattic/zendesk-client';
 import { FormFileUpload, Spinner } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
 import { useCallback, useEffect } from '@wordpress/element';
 import { Icon, image } from '@wordpress/icons';
 import React from 'react';
@@ -36,7 +33,8 @@ const getPlaceholderAttachmentMessage = ( file: File ) => {
 export const AttachmentButton: React.FC< {
 	attachmentButtonRef?: React.RefObject< HTMLElement >;
 	externalFile?: File | null;
-} > = ( { attachmentButtonRef, externalFile } ) => {
+	inferredClientId?: string;
+} > = ( { attachmentButtonRef, externalFile, inferredClientId } ) => {
 	const { chat, addMessage, trackEvent, isUserEligibleForPaidSupport } = useOdieAssistantContext();
 	const { data: authData } = useAuthenticateZendeskMessaging(
 		isUserEligibleForPaidSupport,
@@ -44,14 +42,6 @@ export const AttachmentButton: React.FC< {
 	);
 	const { isPending: isAttachingFile, mutateAsync: attachFileToConversation } =
 		useAttachFileToConversation();
-	const { zendeskClientId } = useSelect( ( select ) => {
-		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
-		return {
-			zendeskClientId: helpCenterSelect.getZendeskClientId(),
-		};
-	}, [] );
-
-	const inferredClientId = chat.clientId ? chat.clientId : zendeskClientId;
 	const onFileUpload = useCallback(
 		async ( file: File | undefined ) => {
 			if ( authData && chat.conversationId && inferredClientId && file ) {
@@ -81,10 +71,6 @@ export const AttachmentButton: React.FC< {
 			onFileUpload( externalFile );
 		}
 	}, [ externalFile ] );
-
-	if ( ! chat.conversationId || ! inferredClientId ) {
-		return null;
-	}
 
 	return (
 		<FormFileUpload
