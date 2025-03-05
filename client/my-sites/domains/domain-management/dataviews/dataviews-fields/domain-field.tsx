@@ -1,6 +1,7 @@
 import { JobStatus, PartialDomainData } from '@automattic/data-stores';
 import { PrimaryDomainLabel } from '@automattic/domains-table';
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import { useDomainsDataViewsContext } from '../use-context';
 
 interface Props {
@@ -10,8 +11,8 @@ interface Props {
 	completedJobs: JobStatus[];
 }
 
-const hasFailedJobs = ( domain: PartialDomainData, completedJobs: JobStatus[] ) => {
-	return completedJobs.filter( ( job ) => job.failed.includes( domain.domain ) ).length > 0;
+const hasFailedJobs = ( domain: string, completedJobs: JobStatus[] ) => {
+	return completedJobs.filter( ( job ) => job.failed.includes( domain ) ).length > 0;
 };
 
 const DomainField = ( { domain: partialDomain, isAllSitesView, completedJobs }: Props ) => {
@@ -19,7 +20,10 @@ const DomainField = ( { domain: partialDomain, isAllSitesView, completedJobs }: 
 	const { getFullDomain } = useDomainsDataViewsContext();
 	const domain = getFullDomain( partialDomain );
 	const showPrimaryDomainLabel = ! isAllSitesView && domain && domain.isPrimary;
-	const hasFailedLabel = hasFailedJobs( partialDomain, completedJobs );
+	const hasFailedLabel = useMemo(
+		() => hasFailedJobs( partialDomain.domain, completedJobs ),
+		[ partialDomain.domain, completedJobs ]
+	);
 
 	return (
 		<>
