@@ -125,17 +125,18 @@ function StatsLineChart( {
 				} )
 			);
 
+			const tooltipLabel =
+				nearestDatum.label || ( nearestDatum.date && moment( nearestDatum.date ).format( 'LL' ) );
+
 			return (
 				<div className="stats-line-chart-tooltip">
-					<div className="module-content-list-item is-date-label">
-						{ nearestDatum.date && moment( nearestDatum.date ).format( 'LL' ) }
-					</div>
+					<div className="module-content-list-item is-date-label">{ tooltipLabel }</div>
 					<ul>
 						{ tooltipPoints.map( ( point ) => (
 							<ChartBarTooltip
 								key={ point.key }
 								label={ point.key }
-								value={ point.value }
+								value={ numberFormat( point.value ) }
 								icon={ seriesIcons[ point.key ] }
 							/>
 						) ) }
@@ -146,7 +147,7 @@ function StatsLineChart( {
 		[ moment ]
 	);
 
-	const onPointerDown = useCallback(
+	const onPointerUp = useCallback(
 		( { datum }: { datum: DataPointDate } ) => {
 			if ( datum && datum.date ) {
 				onClick && onClick( { data: { period: moment( datum.date ).format( DATE_FORMAT ) } } );
@@ -159,8 +160,8 @@ function StatsLineChart( {
 		<div className={ clsx( 'stats-line-chart', className ) }>
 			{ isEmpty && (
 				<EmptyState
-					headingText={ translate( 'Real-time views' ) }
-					infoText={ translate( 'Collecting data… auto-refreshing in a minute…' ) }
+					headingText={ translate( 'No data available' ) }
+					infoText={ translate( 'Try selecting a different time frame.' ) }
 				/>
 			) }
 			{ ! isEmpty && (
@@ -172,9 +173,9 @@ function StatsLineChart( {
 						height={ height }
 						// TODO: figure out the right type for onPointerDown
 						// eslint-disable-next-line @typescript-eslint/no-explicit-any
-						onPointerDown={ onPointerDown as any }
+						onPointerUp={ onPointerUp as any }
 						margin={ {
-							left: 15,
+							left: 20,
 							top: 20,
 							bottom: 20,
 							right: Math.max( formatValue( maxValue ).length * 10, 40 ), //TODO: we should support this from the lib.

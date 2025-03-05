@@ -17,7 +17,7 @@ import {
 	trackPageLoad,
 	trackUpdatesLoaded,
 	trackScrollPage,
-	userHasHistory,
+	shouldShowBackButton,
 } from 'calypso/reader/controller-helper';
 import { recordTrack } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -79,9 +79,9 @@ const discover = ( context, next ) => {
 				suppressSiteNameLink
 				isDiscoverStream
 				useCompactCards
-				showBack={ userHasHistory( context ) }
 				className="is-discover-stream"
 				selectedTab={ selectedTab }
+				showBack={ shouldShowBackButton( context ) }
 				query={ context.query }
 			/>
 		</>

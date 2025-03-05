@@ -9,7 +9,7 @@ import type { ReactNode, LegacyRef } from 'react';
 const noop = () => {};
 
 interface MasterbarSubItemProps {
-	label: string;
+	label: string | React.ReactNode;
 	url?: string;
 	onClick?: () => void;
 	className?: string;
@@ -29,7 +29,7 @@ interface MasterbarItemProps {
 	children?: ReactNode;
 	alwaysShowContent?: boolean;
 	disabled?: boolean;
-	subItems?: Array< MasterbarSubItemProps >;
+	subItems?: Array< Array< MasterbarSubItemProps > >;
 	hasGlobalBorderStyle?: boolean;
 }
 
@@ -101,10 +101,19 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		if ( ! subItems ) {
 			return null;
 		}
-		return (
-			<ul className="masterbar__item-subitems">
-				{ subItems.map( ( item, i ) => (
-					<li key={ i } className={ clsx( 'masterbar__item-subitems-item', item.className ) }>
+		return <ul className="masterbar__item-subitems">{ this.renderSubItemGroups( subItems ) }</ul>;
+	}
+
+	renderSubItemGroups = ( subItemGroups: Array< Array< MasterbarSubItemProps > > ) => {
+		return subItemGroups
+			.map( ( subItems, groupIndex ) =>
+				subItems.map( ( item, i ) => (
+					<li
+						key={ `${ groupIndex }-${ i }` }
+						className={ clsx( 'masterbar__item-subitems-item', item.className, {
+							'masterbar__item-subitems-item--odd': groupIndex % 2 === 1,
+						} ) }
+					>
 						{ item.onClick && (
 							<Button
 								className="is-link"
@@ -129,10 +138,10 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 							</a>
 						) }
 					</li>
-				) ) }
-			</ul>
-		);
-	}
+				) )
+			)
+			.flat();
+	};
 
 	toggleMenuByTouch = ( event: React.TouchEvent | React.KeyboardEvent ) => {
 		// If there are no subItems, there is nothing to toggle.

@@ -189,7 +189,17 @@
 	}
 }
 
-.step-wrapper__help-center-button {
-	margin-left: auto;
+.step-wrapper__help-center-button-container {
+	font-size: rem(14px);
 	font-weight: 500;
+	margin-left: auto;
+
+	.components-button.step-wrapper__help-center-button {
+		color: var( --studio-wordpress-blue );
+		text-decoration: underline;
+
+		&:hover {
+			text-decoration: none;
+		}
+	}
 }

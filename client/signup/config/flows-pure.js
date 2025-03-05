@@ -425,9 +425,11 @@ export function generateFlows( {
 			lastModified: '2024-05-16',
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
-			enablePremiumSupport: true,
-			get helpCenterButtonText() {
-				return translate( 'Questions? Contact our site building team' );
+			get helpCenterButtonCopy() {
+				return translate( 'Questions?' );
+			},
+			get helpCenterButtonLink() {
+				return translate( 'Contact our site building team' );
 			},
 			providesDependenciesInQuery: [ 'coupon', 'back_to', 'newOrExistingSiteChoice' ],
 			optionalDependenciesInQuery: [ 'coupon', 'back_to', 'newOrExistingSiteChoice' ],
@@ -449,9 +451,11 @@ export function generateFlows( {
 			lastModified: '2024-05-16',
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
-			enablePremiumSupport: true,
-			get helpCenterButtonText() {
-				return translate( 'Questions? Contact our site building team' );
+			get helpCenterButtonCopy() {
+				return translate( 'Questions?' );
+			},
+			get helpCenterButtonLink() {
+				return translate( 'Contact our site building team' );
 			},
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
@@ -465,9 +469,11 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'siteSlug', 'back_to' ],
 			optionalDependenciesInQuery: [ 'back_to' ],
 			lastModified: '2024-06-14',
-			enablePremiumSupport: true,
-			get helpCenterButtonText() {
-				return translate( 'Questions? Contact our site building team' );
+			get helpCenterButtonCopy() {
+				return translate( 'Questions?' );
+			},
+			get helpCenterButtonLink() {
+				return translate( 'Contact our site building team' );
 			},
 		},
 

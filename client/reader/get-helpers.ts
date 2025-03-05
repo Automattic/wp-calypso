@@ -74,6 +74,7 @@ interface GetFeedUrlArgs {
 	site?: Partial< ReaderSite >;
 	post?: Partial< ReaderPost >;
 }
+
 /**
  * Given a feed, site, or post: return the feed url. return false if one could not be found.
  * The feed url is different from the site url in that it is unique per feed. A single siteUrl may

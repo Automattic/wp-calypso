@@ -9,6 +9,7 @@ export type SiteItem = {
 	id: number;
 	site: string;
 	date: string;
+	rawSite: Site;
 };
 
 export const useFetchAllManagedSites = () => {

@@ -1,52 +1,35 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
-import { Button } from '@wordpress/components';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { addQueryArgs } from '@wordpress/url';
-import { useFlowCustomOptions, useFlowZendeskUserFields } from '../hooks';
-import { HELP_CENTER_STORE } from '../stores';
+/* eslint-disable no-restricted-imports */
+import { useTranslate } from 'i18n-calypso';
+import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
+import HelpCenterInlineButton from './help-center-inline-button';
 import type { FC } from 'react';
 
-interface HelpCenterButtonProps {
-	helpCenterButtonText?: string;
-	hasPremiumSupport?: boolean;
+interface HelpCenterStepButtonProps {
 	flowName?: string;
+	helpCenterButtonCopy?: string;
+	helpCenterButtonLink?: string;
 }
 
-const HelpCenterButton: FC< HelpCenterButtonProps > = ( {
-	helpCenterButtonText,
-	hasPremiumSupport,
+const HelpCenterStepButton: FC< HelpCenterStepButtonProps > = ( {
 	flowName,
+	helpCenterButtonCopy,
+	helpCenterButtonLink,
 } ) => {
-	const { setShowHelpCenter, setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
-	const isShowingHelpCenter = useSelect(
-		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
-		[]
-	);
-	const flowCustomOptions = useFlowCustomOptions( flowName || '' );
-	const { userFieldMessage, userFieldFlowName } = useFlowZendeskUserFields( flowName || '' );
+	const translate = useTranslate();
+	const { data: geoData } = useGeoLocationQuery();
 
-	if ( ! helpCenterButtonText ) {
+	if ( geoData?.country_short === 'US' ) {
 		return null;
 	}
 
-	function openHelpCenter() {
-		setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport, flowCustomOptions );
-		if ( hasPremiumSupport ) {
-			const urlWithQueryArgs = addQueryArgs( '/odie?provider=zendesk', {
-				userFieldMessage,
-				userFieldFlowName,
-			} );
-			setNavigateToRoute( urlWithQueryArgs );
-		} else {
-			setNavigateToRoute( `/odie` );
-		}
-	}
-
 	return (
-		<Button onClick={ openHelpCenter } className="step-wrapper__help-center-button">
-			{ helpCenterButtonText }
-		</Button>
+		<div className="step-wrapper__help-center-button-container">
+			<label>{ helpCenterButtonCopy ?? translate( 'Need extra help?' ) }</label>{ ' ' }
+			<HelpCenterInlineButton flowName={ flowName } className="step-wrapper__help-center-button">
+				{ helpCenterButtonLink ?? translate( 'Visit Help Center' ) }
+			</HelpCenterInlineButton>
+		</div>
 	);
 };
 
-export default HelpCenterButton;
+export default HelpCenterStepButton;
