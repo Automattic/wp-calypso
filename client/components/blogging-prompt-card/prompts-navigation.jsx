@@ -30,7 +30,15 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index, menu } ) => 
 	const thisIsAIPrompt = isAIBLoggingPrompt( prompts[ promptIndex ] );
 
 	const getPrompt = () => {
-		return prompts ? prompts[ promptIndex ] : null;
+		const selectedPrompt = prompts ? prompts[ promptIndex ] : null;
+
+		if ( ! selectedPrompt ) {
+			return null;
+		}
+
+		selectedPrompt.answered = true;
+
+		return selectedPrompt;
 	};
 
 	// If no site ID set, go through site selector before rendering post editor
