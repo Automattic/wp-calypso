@@ -6,26 +6,82 @@ interface SiteLogsAPIResponse {
 	message: string;
 	data: {
 		total_results: number | { value: number; relation: string };
-		logs: Record< string, unknown >[];
+		logs: ( PHPLogFromEndpoint | ServerLogFromEndpoint )[];
 		scroll_id: string | null;
 	};
 }
 
-export type SiteLogsData = {
+interface SiteLogsData {
 	total_results: number;
-	logs: Record< string, unknown >[];
+	logs: ( ServerLog | PHPLog )[];
 	scroll_id: string | null;
 	has_more: boolean;
-};
+}
 
-export type SiteLogsTab = 'php' | 'web';
+interface ServerLogFromEndpoint {
+	date: string;
+	request_type: 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE';
+	status: '200' | '301' | '302' | '400' | '401' | '403' | '404' | '429' | '500';
+	request_url: string;
+	body_bytes_sent: number;
+	cached: string;
+	http_host: string;
+	http_referer: string;
+	http2: string;
+	http_user_agent: string;
+	http_version: string;
+	http_x_forwarded_for: string;
+	renderer: string;
+	request_completion: string;
+	request_time: string;
+	scheme: string;
+	timestamp: number;
+	type: string;
+	user_ip: string;
+}
+
+export interface ServerLog extends ServerLogFromEndpoint {
+	id: string;
+}
+
+interface PHPLogFromEndpoint {
+	timestamp: string;
+	severity: 'User' | 'Warning' | 'Deprecated' | 'Fatal error';
+	message: string;
+	kind: string;
+	name: string;
+	file: string;
+	line: number;
+	atomic_site_id: number;
+}
+
+export interface PHPLog extends PHPLogFromEndpoint {
+	id: string;
+}
+
+export enum LogType {
+	PHP = 'php',
+	WEB = 'web',
+}
+
+export interface LogQueryParams {
+	from: string;
+	to: string;
+	// PHP filters
+	severity: string;
+	// Web filters
+	request_type: string;
+	status: string;
+	renderer: string;
+	cached: string;
+}
 
 export interface FilterType {
 	[ key: string ]: Array< string >;
 }
 
-export interface SiteLogsParams {
-	logType: SiteLogsTab;
+interface SiteLogsParams {
+	logType: LogType;
 	start: number;
 	end: number;
 	filter: FilterType;
@@ -64,7 +120,7 @@ export function useSiteLogsQuery(
 	const queryResult = useQuery< SiteLogsAPIResponse, unknown, SiteLogsData >( {
 		queryKey: buildQueryKey( siteId, params ),
 		queryFn: () => {
-			const logTypeFragment = params.logType === 'php' ? 'error-logs' : 'logs';
+			const logTypeFragment = params.logType === LogType.PHP ? 'error-logs' : 'logs';
 			const path = `/sites/${ siteId }/hosting/${ logTypeFragment }`;
 			return wpcom.req.get(
 				{ path, apiNamespace: 'wpcom/v2' },
@@ -81,12 +137,13 @@ export function useSiteLogsQuery(
 		placeholderData: keepPreviousData,
 		enabled: !! siteId && params.start <= params.end,
 		staleTime: Infinity, // The logs within a specified time range never change.
-		select( { data } ) {
+		select( { data }: SiteLogsAPIResponse ): SiteLogsData {
 			return {
-				...data,
 				has_more: !! data.scroll_id,
 				total_results:
 					typeof data.total_results === 'number' ? data.total_results : data.total_results.value,
+				logs: data.logs.map( ( log, key ) => ( { ...log, id: String( key ) } ) ),
+				scroll_id: data.scroll_id,
 			};
 		},
 		meta: {
@@ -114,7 +171,7 @@ export function useSiteLogsQuery(
 }
 
 function buildPartialQueryKey( siteId: number | null | undefined, params: SiteLogsParams ) {
-	return [ params.logType === 'php' ? 'site-logs-php' : 'site-logs-web', siteId ];
+	return [ params.logType === LogType.PHP ? 'site-logs-php' : 'site-logs-web', siteId ];
 }
 
 function buildQueryKey( siteId: number | null | undefined, params: SiteLogsParams ) {

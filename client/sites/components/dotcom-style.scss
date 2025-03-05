@@ -272,6 +272,10 @@
 			width: 100%;
 		}
 
+		> .site-logs {
+			margin-bottom: 0;
+		}
+
 		@media (max-width: $break-large) {
 			padding-top: 24px;
 			padding-left: 24px;
@@ -314,7 +318,7 @@
 
 .wpcom-site .hosting-dashboard-layout.sites-dashboard:not(.domains-overview) .site-preview-pane {
 	.hosting-dashboard-item-view__content {
-		> * {
+		> *:not(.site-logs) {
 			max-width: 1400px;
 		}
 	}

@@ -1,0 +1,97 @@
+.visx-tooltip {
+	background-color: transparent !important;
+	border: none !important;
+	box-shadow: none !important;
+
+	.stats-line-chart-tooltip {
+		color: var(--color-text-inverted);
+		background: var(--color-neutral-100);
+		border-radius: 4px;
+		font-size: $font-body-small;
+		padding: 16px 24px;
+
+		// Default tooltip is 230px wide. We need a bit more room
+		// to account for longer date labels and post titles.
+		width: fit-content;
+		min-width: 230px;
+		max-width: 300px;
+
+		ul {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+
+			li {
+				font-size: $font-body-small;
+				font-weight: 500;
+				line-height: 20px;
+				letter-spacing: -0.24px;
+				margin-bottom: 10px;
+				text-transform: none;
+
+				.wrapper {
+					display: block;
+					line-height: 24px;
+					clear: both;
+				}
+
+				.value {
+					color: inherit;
+					text-align: right;
+					float: right;
+					min-width: 22px;
+				}
+
+				.label {
+					display: block;
+					overflow: hidden;
+					word-break: break-all;
+					vertical-align: baseline;
+				}
+
+				.gridicon {
+					margin-right: 12px;
+					vertical-align: middle;
+					margin-top: -3px;
+				}
+
+				&:last-child {
+					margin-bottom: 0;
+				}
+			}
+		}
+
+		.module-content-list-item {
+			&.is-date-label {
+				font-weight: 600;
+				border-bottom: 0;
+			}
+
+			&.is-published {
+				margin-bottom: 4px;
+			}
+
+			&.is-published-item {
+				height: auto;
+				font-size: $font-body-extra-small;
+				margin-bottom: 0;
+				padding-left: 30px;
+
+				.label {
+					height: auto;
+					line-height: 20px;
+					color: inherit;
+					letter-spacing: inherit;
+					word-break: break-word;
+				}
+
+				// Override the default gradient.
+				.value::before {
+					background: none;
+				}
+			}
+		}
+
+	}
+
+}

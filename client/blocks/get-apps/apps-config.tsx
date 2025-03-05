@@ -160,17 +160,17 @@ export const createWordPressStudioConfig = (
 			[ PlatformType.MacIntel ]: {
 				...platformConfigs[ PlatformType.MacIntel ],
 				onClick: () => recordTracksEvent( 'calypso_studio_download_mac_click' ),
-				link: 'https://cdn.a8c-ci.services/studio/studio-darwin-x64-v1.3.4.dmg',
+				link: 'https://cdn.a8c-ci.services/studio/studio-darwin-x64-v1.3.5.dmg',
 			},
 			[ PlatformType.MacSilicon ]: {
 				...platformConfigs[ PlatformType.MacSilicon ],
 				onClick: () => recordTracksEvent( 'calypso_studio_download_mac_silicon_click' ),
-				link: 'https://cdn.a8c-ci.services/studio/studio-darwin-arm64-v1.3.4.dmg',
+				link: 'https://cdn.a8c-ci.services/studio/studio-darwin-arm64-v1.3.5.dmg',
 			},
 			[ PlatformType.Windows ]: {
 				...platformConfigs[ PlatformType.Windows ],
 				onClick: () => recordTracksEvent( 'calypso_studio_download_windows_click' ),
-				link: 'https://cdn.a8c-ci.services/studio/studio-win32-v1.3.4.exe',
+				link: 'https://cdn.a8c-ci.services/studio/studio-win32-v1.3.5.exe',
 			},
 		},
 	};

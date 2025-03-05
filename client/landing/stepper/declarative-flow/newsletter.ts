@@ -19,11 +19,13 @@ import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
+import { STEPS } from './internals/steps';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
 
 const newsletter: Flow = {
 	name: NEWSLETTER_FLOW,
+	__experimentalUseBuiltinAuth: true,
 	get title() {
 		return translate( 'Newsletter' );
 	},
@@ -32,41 +34,17 @@ const newsletter: Flow = {
 		const query = useQuery();
 		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
 
-		const publicSteps = [
-			...( ! isComingFromMarketingPage
-				? [
-						{ slug: 'intro', asyncComponent: () => import( './internals/steps-repository/intro' ) },
-				  ]
-				: [] ),
-		];
+		const publicSteps = [ ...( ! isComingFromMarketingPage ? [ STEPS.INTRO ] : [] ) ];
 
 		const privateSteps = stepsWithRequiredLogin( [
-			{
-				slug: 'newsletterSetup',
-				asyncComponent: () => import( './internals/steps-repository/newsletter-setup' ),
-			},
-			{
-				slug: 'newsletterGoals',
-				asyncComponent: () => import( './internals/steps-repository/newsletter-goals' ),
-			},
-			{ slug: 'domains', asyncComponent: () => import( './internals/steps-repository/domains' ) },
-			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
-			{
-				slug: 'processing',
-				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
-			},
-			{
-				slug: 'subscribers',
-				asyncComponent: () => import( './internals/steps-repository/subscribers' ),
-			},
-			{
-				slug: 'createSite',
-				asyncComponent: () => import( './internals/steps-repository/create-site' ),
-			},
-			{
-				slug: 'launchpad',
-				asyncComponent: () => import( './internals/steps-repository/launchpad' ),
-			},
+			STEPS.NEWSLETTER_SETUP,
+			STEPS.NEWSLETTER_GOALS,
+			STEPS.DOMAINS,
+			STEPS.PLANS,
+			STEPS.PROCESSING,
+			STEPS.SUBSCRIBERS,
+			STEPS.SITE_CREATION_STEP,
+			STEPS.LAUNCHPAD,
 		] );
 
 		return [ ...publicSteps, ...privateSteps ];
@@ -119,9 +97,9 @@ const newsletter: Flow = {
 					return navigate( 'plans' );
 
 				case 'plans':
-					return navigate( 'createSite' );
+					return navigate( 'create-site' );
 
-				case 'createSite':
+				case 'create-site':
 					return navigate( 'processing' );
 
 				case 'processing':

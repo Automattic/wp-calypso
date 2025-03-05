@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import { HelpCenterInlineButton } from '@automattic/help-center';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -60,7 +61,9 @@ export default function DIFMSitePickerStep( props: Props ) {
 		'Please {{SupportLink}}contact support{{/SupportLink}} if your existing WordPress.com site isn’t listed, or create a {{NewSiteLink}}new site{{/NewSiteLink}} instead.',
 		{
 			components: {
-				SupportLink: <a className="subtitle-link" rel="noopener noreferrer" href="/help/contact" />,
+				SupportLink: (
+					<HelpCenterInlineButton className="subtitle-link" flowName={ props.flowName } />
+				),
 				NewSiteLink: (
 					<Button variant="link" className="subtitle-link" onClick={ onNewSiteClicked } />
 				),

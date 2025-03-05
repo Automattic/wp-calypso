@@ -1,4 +1,4 @@
-import { NEWSLETTER_FLOW } from '@automattic/onboarding';
+import { EXAMPLE_FLOW, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
@@ -11,7 +11,7 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 	const { __ } = useI18n();
 
 	return useMemo( () => {
-		if ( flowName === NEWSLETTER_FLOW ) {
+		if ( flowName === NEWSLETTER_FLOW || flowName === EXAMPLE_FLOW ) {
 			return {
 				title: __( 'Write. Grow. Earn. This is Newsletter.' ),
 				text: __(

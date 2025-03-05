@@ -748,7 +748,7 @@ const sections = [
 	{
 		name: 'site-monitoring',
 		paths: [ '/site-monitoring' ],
-		module: 'calypso/hosting/monitoring',
+		module: 'calypso/sites/monitoring',
 		group: 'sites',
 	},
 	{
@@ -760,7 +760,7 @@ const sections = [
 	{
 		name: 'site-logs',
 		paths: [ '/site-logs' ],
-		module: 'calypso/hosting/logs',
+		module: 'calypso/sites/logs',
 		group: 'sites',
 	},
 	{
@@ -772,7 +772,7 @@ const sections = [
 	{
 		name: 'staging-site',
 		paths: [ '/staging-site' ],
-		module: 'calypso/hosting/staging-site',
+		module: 'calypso/sites/staging-site',
 		group: 'sites',
 	},
 	{

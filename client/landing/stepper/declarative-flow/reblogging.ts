@@ -17,6 +17,7 @@ const reblogging: Flow = {
 		return translate( 'Reblogging' );
 	},
 	isSignupFlow: true,
+	__experimentalUseBuiltinAuth: true,
 	useSteps() {
 		return stepsWithRequiredLogin( [
 			STEPS.DOMAINS,
@@ -37,9 +38,9 @@ const reblogging: Flow = {
 					return navigate( 'plans' );
 
 				case 'plans':
-					return navigate( 'createSite' );
+					return navigate( 'create-site' );
 
-				case 'createSite':
+				case 'create-site':
 					return navigate( 'processing' );
 
 				case 'processing': {

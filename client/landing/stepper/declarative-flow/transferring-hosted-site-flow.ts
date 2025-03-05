@@ -1,13 +1,12 @@
 import { SiteSelect } from '@automattic/data-stores';
 import { SITE_STORE } from '@automattic/launchpad/src/launchpad';
 import { TRANSFERRING_HOSTED_SITE_FLOW } from '@automattic/onboarding';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import { useSelector } from 'calypso/state';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { isAdminInterfaceWPAdmin } from 'calypso/state/sites/selectors';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
-import { ONBOARD_STORE } from '../stores';
 import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import type { Flow, ProvidedDependencies } from './internals/types';
@@ -20,10 +19,6 @@ const transferringHostedSite: Flow = {
 
 	useSteps() {
 		return TRANSFERRING_HOSTED_SITE_STEPS;
-	},
-	useSideEffect() {
-		const { setProgress } = useDispatch( ONBOARD_STORE );
-		setProgress( 0 );
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const siteId = useSiteIdParam();
