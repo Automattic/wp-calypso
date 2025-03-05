@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import {
@@ -18,7 +19,6 @@ import { getErrorFromHTTPError, postLoginRequest } from 'calypso/state/login/uti
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getRedirectUri } from './utils';
 import type { AppState } from 'calypso/types';
-
 import './style.scss';
 
 type GithubLoginButtonProps = {
@@ -175,10 +175,11 @@ const GitHubLoginButton = ( {
 			{ customButton ? (
 				customButton
 			) : (
-				<button
-					className={ clsx( 'social-buttons__button button github', { disabled: isDisabled } ) }
+				<Button
+					className={ clsx( 'social-buttons__button github', { disabled: isDisabled } ) }
 					data-social-service="github"
 					{ ...eventHandlers }
+					variant="secondary"
 				>
 					<GitHubIcon isDisabled={ isDisabled } />
 
@@ -189,7 +190,7 @@ const GitHubLoginButton = ( {
 								'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
 						} ) }
 					</span>
-				</button>
+				</Button>
 			) }
 		</>
 	);
