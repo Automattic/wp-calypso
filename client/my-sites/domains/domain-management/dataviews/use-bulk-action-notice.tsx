@@ -10,7 +10,7 @@ import { useDomainsDataViewsContext } from './use-context';
 
 type TranslateFunction = typeof translate;
 
-const fallbackSuccessMessage = ( job: JobStatus, translate: TranslateFunction ) => {
+const fallbackSuccessMessage = ( translate: TranslateFunction ) => {
 	return translate( 'Bulk domain updates finished successfully.' );
 };
 
@@ -26,7 +26,7 @@ const getSuccessMessage = (
 			} );
 		}
 
-		return fallbackSuccessMessage( job, translate );
+		return fallbackSuccessMessage( translate );
 	}
 
 	// If the user tried to enable auto-renew:
@@ -42,7 +42,7 @@ const getSuccessMessage = (
 			);
 		}
 
-		return fallbackSuccessMessage( job, translate );
+		return fallbackSuccessMessage( translate );
 	}
 
 	// If the user tried to disable auto-renew:
@@ -57,10 +57,10 @@ const getSuccessMessage = (
 		);
 	}
 
-	return fallbackSuccessMessage( job, translate );
+	return fallbackSuccessMessage( translate );
 };
 
-const fallbackFailureMessage = ( job: JobStatus, translate: TranslateFunction ) => {
+const fallbackFailureMessage = ( translate: TranslateFunction ) => {
 	return translate( 'Some domain updates were not successful.' );
 };
 
@@ -78,7 +78,7 @@ const getFailureMessage = (
 			);
 		}
 
-		return fallbackFailureMessage( job, translate );
+		return fallbackFailureMessage( translate );
 	}
 
 	if ( job.params.auto_renew ) {
@@ -95,7 +95,7 @@ const getFailureMessage = (
 			);
 		}
 
-		return fallbackFailureMessage( job, translate );
+		return fallbackFailureMessage( translate );
 	}
 
 	if (
@@ -111,7 +111,7 @@ const getFailureMessage = (
 		);
 	}
 
-	return fallbackFailureMessage( job, translate );
+	return fallbackFailureMessage( translate );
 };
 
 export default function useBulkActionNotice() {
