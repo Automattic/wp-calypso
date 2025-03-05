@@ -6,7 +6,7 @@ import {
 	DOTCOM_LOGS_WEB,
 } from 'calypso/sites/components/site-preview-pane/constants';
 import { siteDashboard, redirectToHostingFeaturesIfNotAtomic } from 'calypso/sites/controller';
-import { phpErrorLogs, webServerLogs, redirectHomeIfIneligible } from './controller';
+import { phpErrorLogs, webServerLogs } from './controller';
 
 export default function () {
 	page( '/site-logs', siteSelection, sites, makeLayout, clientRender );
@@ -20,7 +20,6 @@ export default function () {
 		'/site-logs/:site/php',
 		siteSelection,
 		redirectToHostingFeaturesIfNotAtomic,
-		redirectHomeIfIneligible,
 		navigation,
 		phpErrorLogs,
 		siteDashboard( DOTCOM_LOGS_PHP ),
@@ -31,7 +30,6 @@ export default function () {
 		'/site-logs/:site/web',
 		siteSelection,
 		redirectToHostingFeaturesIfNotAtomic,
-		redirectHomeIfIneligible,
 		navigation,
 		webServerLogs,
 		siteDashboard( DOTCOM_LOGS_WEB ),
