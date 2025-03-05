@@ -55,7 +55,7 @@ interface PHPLogFromEndpoint {
 	atomic_site_id: number;
 }
 
-export interface PHPLog extends PHPLogFromEndpoint {
+export interface PHPLog extends Omit< PHPLogFromEndpoint, 'atomic_site_id' > {
 	id: string;
 }
 
@@ -142,7 +142,12 @@ export function useSiteLogsQuery(
 				has_more: !! data.scroll_id,
 				total_results:
 					typeof data.total_results === 'number' ? data.total_results : data.total_results.value,
-				logs: data.logs.map( ( log, key ) => ( { ...log, id: String( key ) } ) ),
+				logs: data.logs.map( ( { atomic_site_id, ...restLog }: any, key ) => {
+					return {
+						...restLog,
+						id: String( key ),
+					};
+				} ),
 				scroll_id: data.scroll_id,
 			};
 		},
