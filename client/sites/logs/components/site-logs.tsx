@@ -23,21 +23,21 @@ import {
 } from 'calypso/data/hosting/use-site-logs-query';
 import { useInterval } from 'calypso/lib/interval';
 import { navigate } from 'calypso/lib/navigate';
-import { useSiteLogsDownloader } from 'calypso/sites/tools/logs/hooks/use-site-logs-downloader';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import DetailsModal from './components/details-modal';
-import useActions from './hooks/use-actions';
-import useData from './hooks/use-data';
-import useFields from './hooks/use-fields';
+import useActions from '../hooks/use-actions';
+import useData from '../hooks/use-data';
+import useFields from '../hooks/use-fields';
+import { useSiteLogsDownloader } from '../hooks/use-site-logs-downloader';
 import {
 	default as useView,
 	toFilterParams,
 	getSortField,
 	getVisibleFields,
 	getFilterValue,
-} from './hooks/use-view';
+} from '../hooks/use-view';
+import DetailsModal from './details-modal';
 import type { View, Action, Filter } from '@wordpress/dataviews';
 import type { Moment } from 'moment';
 import './style.scss';

@@ -760,7 +760,7 @@ const sections = [
 	{
 		name: 'site-logs',
 		paths: [ '/site-logs' ],
-		module: 'calypso/hosting/logs',
+		module: 'calypso/sites/logs',
 		group: 'sites',
 	},
 	{
