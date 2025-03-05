@@ -28,7 +28,7 @@ $button-border: 4px;
 		.theme__sheet-screenshot,
 		.theme__sheet-web-preview .theme-preview__frame-wrapper {
 			@include breakpoint-deprecated( ">960px" ) {
-				$offset-y: $layout-padding-top - $theme-preview-offset-y + 16px;
+				$offset-y: $layout-padding-top + $theme-preview-offset-y + 16px;
 				max-height: calc(100vh - var(--content-padding-top, 0px) - var(--content-padding-bottom, 0px) - $offset-y);
 			}
 		}
