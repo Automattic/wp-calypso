@@ -15,11 +15,7 @@ export const MARKETING_CONNECTIONS = 'marketing-connections';
 export const MARKETING_TRAFFIC = 'marketing-traffic';
 export const MARKETING_SHARING = 'marketing-sharing';
 
-export const TOOLS_STAGING_SITE = 'tools-staging-site';
 export const TOOLS_DEPLOYMENTS = 'tools-deployments';
-export const TOOLS_MONITORING = 'tools-monitoring';
-export const TOOLS_LOGS_PHP = 'tools-logs-php';
-export const TOOLS_LOGS_WEB = 'tools-logs-web';
 export const TOOLS = 'tools';
 
 export const SETTINGS_SITE = 'settings-site';
@@ -49,11 +45,7 @@ export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
 	[ MARKETING_CONNECTIONS ]: 'sites/marketing/connections/:site',
 	[ MARKETING_TRAFFIC ]: 'sites/marketing/traffic/:site',
 	[ MARKETING_SHARING ]: 'sites/marketing/sharing-buttons/:site',
-	[ TOOLS_STAGING_SITE ]: 'sites/tools/staging-site/:site',
 	[ TOOLS_DEPLOYMENTS ]: 'sites/tools/deployments/:site',
-	[ TOOLS_MONITORING ]: 'sites/tools/monitoring/:site',
-	[ TOOLS_LOGS_PHP ]: 'sites/tools/logs/:site/php',
-	[ TOOLS_LOGS_WEB ]: 'sites/tools/logs/:site/web',
 	[ TOOLS ]: 'sites/tools/:site',
 	[ SETTINGS_SITE ]: 'sites/settings/site/:site',
 	[ SETTINGS_ADMINISTRATION_RESET_SITE ]: 'sites/settings/site/:site/reset-site',

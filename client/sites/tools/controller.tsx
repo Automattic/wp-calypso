@@ -1,10 +1,8 @@
 import page, { Context as PageJSContext } from '@automattic/calypso-router';
 import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
-import { LogType } from 'calypso/data/hosting/use-site-logs-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import HostingFeatures from 'calypso/sites/hosting-features/components/hosting-features';
-import { SiteLogsDataViews } from 'calypso/sites/tools/logs';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getRouteFromContext } from 'calypso/utils';
 import { SidebarItem, Sidebar, PanelWithSidebar } from '../components/panel-sidebar';
@@ -16,22 +14,15 @@ import {
 	Deployments,
 } from './deployments';
 import { indexPage } from './deployments/routes';
-import Monitoring from './monitoring';
-import StagingSite from './staging-site';
 
 export function ToolsSidebar() {
 	const slug = useSelector( getSelectedSiteSlug );
 
 	return (
 		<Sidebar>
-			<SidebarItem href={ `/sites/tools/staging-site/${ slug }` }>
-				{ __( 'Staging site' ) }
-			</SidebarItem>
 			<SidebarItem href={ `/sites/tools/deployments/${ slug }` }>
 				{ __( 'Deployments' ) }
 			</SidebarItem>
-			<SidebarItem href={ `/sites/tools/monitoring/${ slug }` }>{ __( 'Monitoring' ) }</SidebarItem>
-			<SidebarItem href={ `/sites/tools/logs/${ slug }` }>{ __( 'Logs' ) }</SidebarItem>
 		</Sidebar>
 	);
 }
@@ -50,20 +41,6 @@ export function tools( context: PageJSContext, next: () => void ) {
 			<PageViewTracker title="Sites > Advanced Tools" path={ getRouteFromContext( context ) } />
 			<HostingFeatures showAsTools />
 		</>
-	);
-	next();
-}
-
-export function stagingSite( context: PageJSContext, next: () => void ) {
-	context.primary = (
-		<PanelWithSidebar>
-			<PageViewTracker
-				title="Sites > Advanced Tools > Staging site"
-				path={ getRouteFromContext( context ) }
-			/>
-			<ToolsSidebar />
-			<StagingSite />
-		</PanelWithSidebar>
 	);
 	next();
 }
@@ -135,48 +112,6 @@ export function deploymentRunLogs( context: PageJSContext, next: () => void ) {
 			/>
 			<ToolsSidebar />
 			<DeploymentRunLogs codeDeploymentId={ codeDeploymentId } />
-		</PanelWithSidebar>
-	);
-	next();
-}
-
-export function monitoring( context: PageJSContext, next: () => void ) {
-	context.primary = (
-		<PanelWithSidebar>
-			<PageViewTracker
-				title="Sites > Advanced Tools > Monitoring"
-				path={ getRouteFromContext( context ) }
-			/>
-			<ToolsSidebar />
-			<Monitoring />
-		</PanelWithSidebar>
-	);
-	next();
-}
-
-export function phpErrorLogs( context: PageJSContext, next: () => void ) {
-	context.primary = (
-		<PanelWithSidebar>
-			<PageViewTracker
-				title="Sites > Advanced Tools > Logs > PHP"
-				path={ getRouteFromContext( context ) }
-			/>
-			<ToolsSidebar />
-			<SiteLogsDataViews logType={ LogType.PHP } query={ context.query } />
-		</PanelWithSidebar>
-	);
-	next();
-}
-
-export function webServerLogs( context: PageJSContext, next: () => void ) {
-	context.primary = (
-		<PanelWithSidebar>
-			<PageViewTracker
-				title="Sites > Advanced Tools > Logs > Web"
-				path={ getRouteFromContext( context ) }
-			/>
-			<ToolsSidebar />
-			<SiteLogsDataViews logType={ LogType.WEB } query={ context.query } />
 		</PanelWithSidebar>
 	);
 	next();
