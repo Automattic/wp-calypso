@@ -1050,7 +1050,7 @@ __metadata:
     karma-spec-reporter: "npm:^0.0.36"
     karma-summary-reporter: "npm:^3.1.1"
     karma-typescript: "npm:^5.5.3"
-    prettier: "npm:^3.5.3"
+    prettier: "npm:^3.4.2"
     rimraf: "npm:^3.0.2"
     rollup: "npm:^3.3.0"
     rollup-plugin-dts: "npm:^5.2.0"
@@ -28538,12 +28538,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.5.3":
-  version: 3.5.3
-  resolution: "prettier@npm:3.5.3"
+"prettier@npm:^3.4.2":
+  version: 3.4.2
+  resolution: "prettier@npm:3.4.2"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 3880cb90b9dc0635819ab52ff571518c35bd7f15a6e80a2054c05dbc8a3aa6e74f135519e91197de63705bcb38388ded7e7230e2178432a1468005406238b877
+  checksum: 99e076a26ed0aba4ebc043880d0f08bbb8c59a4c6641cdee6cdadf2205bdd87aa1d7823f50c3aea41e015e99878d37c58d7b5f0e663bba0ef047f94e36b96446
+  languageName: node
+  linkType: hard
+
+"prettier@npm:wp-prettier@3.0.3":
+  version: 3.0.3
+  resolution: "wp-prettier@npm:3.0.3"
+  bin:
+    prettier: bin/prettier.cjs
+  checksum: a8026c481a9d7957826da0ab8bfa6d79032d159a0bb99a322a53962874913b08b9f0470803fc465da0a8287b78004079cba606fdcd89f3086edefd42de2a545c
   languageName: node
   linkType: hard
 
@@ -35985,7 +35994,7 @@ __metadata:
     postcss: "npm:^8.5.1"
     postcss-cli: "npm:^9.0.1"
     postcss-custom-properties: "npm:^11.0.0"
-    prettier: "npm:^3.5.3"
+    prettier: "npm:wp-prettier@3.0.3"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     react-hook-form: "npm:^7.52.2"
