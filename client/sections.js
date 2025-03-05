@@ -582,12 +582,6 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'site-tools',
-		paths: [ '/sites/tools' ],
-		module: 'calypso/sites/tools',
-		group: 'sites',
-	},
-	{
 		name: 'site-overview',
 		paths: [ '/sites/overview' ],
 		module: 'calypso/sites/overview',
@@ -766,7 +760,7 @@ const sections = [
 	{
 		name: 'github-deployments',
 		paths: [ '/github-deployments' ],
-		module: 'calypso/hosting/deployments',
+		module: 'calypso/sites/deployments',
 		group: 'sites',
 	},
 	{

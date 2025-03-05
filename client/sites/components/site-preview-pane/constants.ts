@@ -15,9 +15,6 @@ export const MARKETING_CONNECTIONS = 'marketing-connections';
 export const MARKETING_TRAFFIC = 'marketing-traffic';
 export const MARKETING_SHARING = 'marketing-sharing';
 
-export const TOOLS_DEPLOYMENTS = 'tools-deployments';
-export const TOOLS = 'tools';
-
 export const SETTINGS_SITE = 'settings-site';
 export const SETTINGS_ADMINISTRATION = 'settings-administration';
 export const SETTINGS_ADMINISTRATION_RESET_SITE = 'settings-administration-reset-site';
@@ -45,8 +42,6 @@ export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
 	[ MARKETING_CONNECTIONS ]: 'sites/marketing/connections/:site',
 	[ MARKETING_TRAFFIC ]: 'sites/marketing/traffic/:site',
 	[ MARKETING_SHARING ]: 'sites/marketing/sharing-buttons/:site',
-	[ TOOLS_DEPLOYMENTS ]: 'sites/tools/deployments/:site',
-	[ TOOLS ]: 'sites/tools/:site',
 	[ SETTINGS_SITE ]: 'sites/settings/site/:site',
 	[ SETTINGS_ADMINISTRATION_RESET_SITE ]: 'sites/settings/site/:site/reset-site',
 	[ SETTINGS_ADMINISTRATION_TRANSFER_SITE ]: 'sites/settings/site/:site/transfer-site',

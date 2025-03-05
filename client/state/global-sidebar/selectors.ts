@@ -21,7 +21,6 @@ const SITE_DASHBOARD_ROUTES = [
 	// New Information Architecture
 	'/sites/overview',
 	'/sites/marketing',
-	'/sites/tools',
 	'/sites/settings',
 
 	// Domain Management
