@@ -26,13 +26,14 @@ const MagicLoginButton = ( { loginUrl }: MagicLoginButtonProps ) => {
 
 	return (
 		<Button
-			className={ clsx( 'social-buttons__button button magic-login-link', {
+			className={ clsx( 'social-buttons__button magic-login-link', {
 				disabled: isDisabled,
 			} ) }
 			href={ loginUrl }
 			onClick={ handleClick }
 			data-e2e-link="magic-login-link"
 			key="magic-login-link"
+			variant="secondary"
 		>
 			<MailIcon width="20" height="20" isDisabled={ isDisabled } />
 			<span className="social-buttons__service-name">{ translate( 'Email me a login link' ) }</span>
