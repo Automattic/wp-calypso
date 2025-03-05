@@ -6,7 +6,7 @@ import {
 	Step,
 } from '@automattic/onboarding';
 import { Icon, next, published, shield } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import { numberFormat, useTranslate } from 'i18n-calypso';
 import { type FC, ReactElement, useEffect, useState, useCallback } from 'react';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
 import ScanningStep from 'calypso/blocks/import/scanning';
@@ -101,7 +101,17 @@ export const Analyzer: FC< Props > = ( {
 		},
 		'unmatched-uptime': {
 			icon: published,
-			description: translate( 'Unmatched reliability with 99.999% uptime and unmetered traffic.' ),
+			description: translate(
+				'Unmatched reliability with %(uptimePercent)s uptime and unmetered traffic.',
+				{
+					args: {
+						uptimePercent: numberFormat( 0.99999, {
+							numberFormatOptions: { style: 'percent' },
+						} ),
+					},
+					comment: '99.999% uptime',
+				}
+			),
 		},
 		security: {
 			icon: shield,
