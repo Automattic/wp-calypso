@@ -80,20 +80,22 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 			if ( isPaddingItem( item ) ) {
 				return acc;
 			}
+
 			const post = getPostByKey( state, {
 				feedId: item.feedId,
 				postId: item.postId,
 			} );
+			if ( ! post ) {
+				return acc;
+			}
 
 			// Add site icon to feed object so have icon for external feeds
-			if ( post ) {
+			if ( ! post.site_icon ) {
 				const feedSubscription = getReaderFollowForFeed( state, item.feedId );
 				post.site_icon = feedSubscription?.site_icon;
 			}
 
-			if ( post ) {
-				acc[ `${ item?.feedId }-${ item?.postId }` ] = post;
-			}
+			acc[ `${ item?.feedId }-${ item?.postId }` ] = post;
 
 			return acc;
 		}, {} );
