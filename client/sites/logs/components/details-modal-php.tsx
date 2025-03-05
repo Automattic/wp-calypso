@@ -30,27 +30,27 @@ const DetailsModalPHP = ( { item }: DetailsModalPHPProps ) => {
 			<div className="site-logs-details-modal__field-title">
 				{
 					// translators: %(siteGsmOffsetDisplay)s will be replaced with the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
-					translate( 'DATE & TIME (%(siteGsmOffsetDisplay)s)', {
+					translate( 'Date & Time (%(siteGsmOffsetDisplay)s)', {
 						args: { siteGsmOffsetDisplay },
 					} )
 				}
 			</div>
 			<div>{ getFormattedDate( item.timestamp ) }</div>
-			<div className="site-logs-details-modal__field-title">{ translate( 'SEVERITY' ) }</div>
+			<div className="site-logs-details-modal__field-title">{ translate( 'Severity' ) }</div>
 			<div>
 				<Badge className={ `badge--${ item.severity }` }>{ item.severity }</Badge>
 			</div>
-			<div className="site-logs-details-modal__field-title">{ translate( 'MESSAGE' ) }</div>
+			<div className="site-logs-details-modal__field-title">{ translate( 'Message' ) }</div>
 			<div>{ item.message }</div>
-			<div className="site-logs-details-modal__field-title">{ translate( 'KIND' ) }</div>
+			<div className="site-logs-details-modal__field-title">{ translate( 'Kind' ) }</div>
 			<div>{ item.kind }</div>
-			<div className="site-logs-details-modal__field-title">{ translate( 'NAME' ) }</div>
+			<div className="site-logs-details-modal__field-title">{ translate( 'Name' ) }</div>
 			<div>{ item.name }</div>
-			<div className="site-logs-details-modal__field-title">{ translate( 'FILE' ) }</div>
+			<div className="site-logs-details-modal__field-title">{ translate( 'File' ) }</div>
 			<div>{ item.file }</div>
-			<div className="site-logs-details-modal__field-title">{ translate( 'LINE' ) }</div>
+			<div className="site-logs-details-modal__field-title">{ translate( 'Line' ) }</div>
 			<div>{ numberFormat( item.line ) }</div>
-			<div className="site-logs-details-modal__field-title">{ translate( 'ATOMIC SITE ID' ) }</div>
+			<div className="site-logs-details-modal__field-title">{ translate( 'Atomic Site Id' ) }</div>
 			<div>{ item.atomic_site_id }</div>
 		</div>
 	);
