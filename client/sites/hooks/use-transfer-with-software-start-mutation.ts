@@ -5,19 +5,19 @@ type transferWithSoftwareResponse = {
 	transferId: number;
 };
 
-type transferOptions = {
-	siteId: number;
-	from?: string;
-	plugins?: Record< string, 'install' | 'activate' >;
-	themes?: Record< string, 'install' | 'activate' >;
-};
-
 type SoftwareSlug = string;
 type SoftwareStatus = 'install' | 'activate';
 type Software = Record< SoftwareSlug, SoftwareStatus >;
 
+type transferOptions = {
+	siteId: number;
+	from?: string;
+	plugins?: Software;
+	themes?: Software;
+};
+
 const requestTransferWithSoftware: (
-	options: transferOptions
+	transferOptions: transferOptions
 ) => Promise< transferWithSoftwareResponse > = async ( { siteId, from, plugins, themes } ) => {
 	const response = await wpcom.req.post(
 		{
@@ -37,20 +37,28 @@ const requestTransferWithSoftware: (
 };
 
 export const useRequestTransferWithSoftware = (
-	siteId?: number,
-	from?: string,
-	plugins?: Software,
-	themes?: Software,
-	options?: { retry?: number }
+	transferOptions: transferOptions,
+	queryOptions?: { retry?: number }
 ): UseMutationResult< transferWithSoftwareResponse, Error, void > => {
 	return useMutation( {
-		mutationKey: [ 'transfer-with-software', siteId, from, plugins, themes ],
+		mutationKey: [
+			'transfer-with-software',
+			transferOptions.siteId,
+			transferOptions.from,
+			transferOptions.plugins,
+			transferOptions.themes,
+		],
 		mutationFn: async () => {
-			if ( ! siteId ) {
+			if ( ! transferOptions.siteId ) {
 				throw new Error( 'Site ID is required' );
 			}
-			return requestTransferWithSoftware( { siteId, from, plugins, themes } );
+			return requestTransferWithSoftware( {
+				siteId: transferOptions.siteId,
+				from: transferOptions.from,
+				plugins: transferOptions.plugins,
+				themes: transferOptions.themes,
+			} );
 		},
-		retry: options?.retry ?? 3, // Default retry 3 times
+		retry: queryOptions?.retry ?? 3, // Default retry 3 times
 	} );
 };

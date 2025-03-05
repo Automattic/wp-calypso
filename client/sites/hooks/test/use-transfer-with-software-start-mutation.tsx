@@ -12,7 +12,6 @@ const replyErrorWithEnvelope =
 	( status: number, defaultBody: Record< string, string | number > = {} ) =>
 	( body = {} ) =>
 	() => [ 200, { code: status, body: { ...defaultBody, ...body } } ];
-const errorResponse = replyErrorWithEnvelope( 400, { error: 'any error' } );
 const SITE_ID = 123;
 const FROM = 'example.com';
 const PLUGINS = { 'plugin-1': 'install' as const };
@@ -28,7 +27,11 @@ const render = ( options = { retry: 0 } ) => {
 	const queryClient = new QueryClient();
 
 	const renderResult = renderHook(
-		() => useRequestTransferWithSoftware( SITE_ID, FROM, PLUGINS, THEMES, options ),
+		() =>
+			useRequestTransferWithSoftware(
+				{ siteId: SITE_ID, from: FROM, plugins: PLUGINS, themes: THEMES },
+				options
+			),
 		{
 			wrapper: Wrapper( queryClient ),
 		}
@@ -87,27 +90,6 @@ describe( 'useRequestTransferWithSoftware', () => {
 			} )
 			.query( { http_envelope: 1 } )
 			.reply( replyErrorWithEnvelope( 400, { error: 'plugins and themes are required' } ) );
-		const { result } = render();
-
-		result.current.mutate();
-
-		await waitFor(
-			() => {
-				expect( result.current.isError ).toBe( true );
-			},
-			{ timeout: 3000 }
-		);
-	} );
-
-	it( 'should handle API errors', async () => {
-		nock( 'https://public-api.wordpress.com:443' )
-			.post( `/wpcom/v2/sites/${ SITE_ID }/atomic/transfer-with-software?http_envelope=1`, {
-				plugins: PLUGINS,
-				themes: THEMES,
-				migration_source_site_domain: FROM,
-			} )
-			.reply( errorResponse );
-
 		const { result } = render();
 
 		result.current.mutate();
