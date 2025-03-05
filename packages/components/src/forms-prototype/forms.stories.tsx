@@ -76,7 +76,7 @@ function ControlWithError< C extends React.ReactElement >( {
 
 	const label = render.props.required ? (
 		<>
-			{ render.props.label } <span aria-hidden="true">*</span>
+			{ render.props.label } <span aria-hidden="true">(Required)</span>
 		</>
 	) : (
 		render.props.label
@@ -130,7 +130,7 @@ export const Default: StoryObj = {
 							<InputControl
 								__next40pxDefaultSize
 								required
-								label="Text (InputControl)"
+								label="Input"
 								help="The word 'error' will trigger an error."
 							/>
 						}
@@ -314,12 +314,7 @@ export const Default: StoryObj = {
 					/>
 					<ControlWithError
 						render={
-							<TextControl
-								__next40pxDefaultSize
-								__nextHasNoMarginBottom
-								label="Text (TextControl)"
-								required
-							/>
+							<TextControl __next40pxDefaultSize __nextHasNoMarginBottom label="Text" required />
 						}
 						onReportCustomValidity={ ( value ) => {
 							if ( value.toLowerCase() === 'error' ) {
