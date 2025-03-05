@@ -14,7 +14,7 @@ jest.mock( '@automattic/calypso-config', () => ( {
 } ) );
 
 const mockSuccessResponse = {
-	software_transfer_status: 'pending',
+	transfer_with_software_status: 'pending',
 	atomic_transfer_status: 'success',
 	extra_field: 'extra_value',
 };
@@ -41,7 +41,7 @@ describe( 'useTransferWithSoftwareStatus', () => {
 		await waitFor( () => {
 			expect( result.current.isSuccess ).toBe( true );
 			expect( result.current.data ).toEqual( {
-				software_transfer_status: 'pending',
+				transfer_with_software_status: 'pending',
 				atomic_transfer_status: 'success',
 			} );
 		} );

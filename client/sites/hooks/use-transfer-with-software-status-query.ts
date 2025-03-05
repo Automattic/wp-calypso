@@ -2,7 +2,7 @@ import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
 interface TransferWithSoftwareStatusResponse {
-	software_transfer_status: string;
+	transfer_with_software_status: string;
 	atomic_transfer_status: string;
 	[ key: string ]: unknown; // Allow any additional fields in the response
 }
@@ -30,7 +30,7 @@ export const useTransferWithSoftwareStatus = (
 		queryKey: [ 'software-transfer-status', siteId, atomicTransferId ],
 		queryFn: () => getTransferWithSoftwareStatus( siteId, atomicTransferId ),
 		select: ( data: TransferWithSoftwareStatusResponse ) => ( {
-			software_transfer_status: data.software_transfer_status,
+			transfer_with_software_status: data.transfer_with_software_status,
 			atomic_transfer_status: data.atomic_transfer_status,
 		} ),
 		refetchOnWindowFocus: false,
