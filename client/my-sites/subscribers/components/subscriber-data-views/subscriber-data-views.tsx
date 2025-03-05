@@ -170,6 +170,10 @@ const SubscriberDataViews = ( {
 	const handleSubscriberSelection = useCallback(
 		( input: Subscriber | string[] ) => {
 			if ( Array.isArray( input ) ) {
+				if ( input.length === 0 ) {
+					setSelectedSubscriber( null );
+					return;
+				}
 				const subscriber = subscribers.find( ( s ) => s.subscription_id.toString() === input[ 0 ] );
 				if ( subscriber ) {
 					recordSubscriberClicked( 'list', {
