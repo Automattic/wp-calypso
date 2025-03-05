@@ -54,7 +54,7 @@ describe( 'useRequestTransferWithSoftware', () => {
 				body: {
 					plugins: PLUGINS,
 					themes: THEMES,
-					migration_source_site_domain: FROM,
+					settings: { migration_source_site_domain: FROM },
 				},
 			} )
 			.query( { http_envelope: 1 } )

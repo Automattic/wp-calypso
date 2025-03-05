@@ -22,7 +22,7 @@ const requestTransferWithSoftware: (
 		},
 		{
 			apiNamespace: 'wpcom/v2',
-			body: { plugins, themes, migration_source_site_domain: from },
+			body: { plugins, themes, settings: { migration_source_site_domain: from } },
 		}
 	);
 
