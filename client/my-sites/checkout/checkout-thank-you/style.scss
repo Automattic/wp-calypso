@@ -615,8 +615,10 @@
 
 .is-section-checkout-pending {
 	&.has-no-sidebar {
+		background: #fff;
 		.layout__content {
 			padding: 0;
+			overflow: hidden;
 		}
 	
 		.checkout-thank-you__pending {
