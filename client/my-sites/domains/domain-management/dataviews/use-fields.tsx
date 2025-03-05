@@ -44,34 +44,6 @@ export function useFields() {
 				render: ( { item }: { item: PartialDomainData } ) => <DomainType item={ item } />,
 			},
 			{
-				id: 'owner',
-				label: translate( 'Owner' ),
-				enableHiding: false,
-				enableSorting: true,
-				getValue: ( { item }: { item: PartialDomainData } ) => {
-					const domain = getFullDomain( item );
-					if ( ! domain ) {
-						return '';
-					}
-					if ( ! domain.owner ) {
-						return '';
-					}
-					// Removes the username that appears in parentheses after the owner's name.
-					// Uses $ and the negative lookahead assertion (?!.*\() to ensure we only match the very last parenthetical.
-					return domain.owner.replace( / \((?!.*\().+\)$/, '' );
-				},
-				render: ( { item }: { item: PartialDomainData } ) => {
-					const domain = getFullDomain( item );
-					if ( ! domain ) {
-						return <LoadingPlaceholder />;
-					}
-					if ( ! domain.owner ) {
-						return '-';
-					}
-					return domain.owner.replace( / \((?!.*\().+\)$/, '' );
-				},
-			},
-			{
 				id: 'site',
 				label: translate( 'Site' ),
 				enableHiding: false,

@@ -9,7 +9,7 @@ import {
 
 export function getFieldsByBreakpoint( isDesktop: boolean, sidebarMode?: boolean ) {
 	if ( isDesktop && ! sidebarMode ) {
-		return [ 'owner', 'site', 'ssl_status', 'expiry', 'domain_status' ];
+		return [ 'site', 'ssl_status', 'expiry', 'domain_status' ];
 	}
 
 	return [];
@@ -41,9 +41,6 @@ export function initializeViewState(
 			domain_name: {
 				minWidth: '1fr',
 				maxWidth: '2fr',
-			},
-			owner: {
-				width: '2fr',
 			},
 			blog_name: {},
 			ssl: {
