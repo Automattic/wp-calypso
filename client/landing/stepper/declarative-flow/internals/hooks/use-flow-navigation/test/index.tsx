@@ -94,6 +94,17 @@ describe( 'useFlowNavigation', () => {
 			expect( screen.getByTestId( 'location-display' ) ).toHaveTextContent( '/some-flow/step2/es' );
 		} );
 
+		it( 'includes any existing query params', () => {
+			const { result } = render( { initialEntry: '/setup/some-flow/some-step?randomKey=value' } );
+			const navigate = result.current.navigate;
+
+			act( () => navigate( 'step2' ) );
+
+			expect( screen.getByTestId( 'location-display' ) ).toHaveTextContent(
+				'/some-flow/step2?randomKey=value'
+			);
+		} );
+
 		it( 'uses the existent query params on the new step', () => {
 			const { result } = render( { initialEntry: '/setup/some-flow/some-step/?key=value' } );
 			const navigate = result.current.navigate;

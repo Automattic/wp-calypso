@@ -104,13 +104,23 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 				...extraData,
 			} );
 
+			const currentQueryParams = new URLSearchParams( window.location.search );
+			const stepQueryParams = nextStep.includes( '?' )
+				? new URLSearchParams( nextStep.split( '?' )[ 1 ] )
+				: [];
+
+			const queryParams = new URLSearchParams( {
+				...Object.fromEntries( currentQueryParams ),
+				...Object.fromEntries( stepQueryParams ),
+			} );
+
 			const newPath = createPath( {
 				pathname: generatePath( `/:flow/:step/:lang?`, {
 					flow: flowName,
 					lang,
-					step: nextStep,
+					step: nextStep.split( '?' )[ 0 ],
 				} ),
-				search: window.location.search,
+				search: queryParams.toString(),
 				hash: window.location.hash,
 			} );
 
