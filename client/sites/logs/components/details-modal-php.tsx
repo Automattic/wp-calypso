@@ -40,8 +40,6 @@ const DetailsModalPHP = ( { item }: DetailsModalPHPProps ) => {
 			<div>
 				<Badge className={ `badge--${ item.severity }` }>{ item.severity }</Badge>
 			</div>
-			<div className="site-logs-details-modal__field-title">{ translate( 'Message' ) }</div>
-			<div>{ item.message }</div>
 			<div className="site-logs-details-modal__field-title">{ translate( 'Kind' ) }</div>
 			<div>{ item.kind }</div>
 			<div className="site-logs-details-modal__field-title">{ translate( 'Name' ) }</div>
@@ -50,6 +48,8 @@ const DetailsModalPHP = ( { item }: DetailsModalPHPProps ) => {
 			<div>{ item.file }</div>
 			<div className="site-logs-details-modal__field-title">{ translate( 'Line' ) }</div>
 			<div>{ numberFormat( item.line ) }</div>
+			<div className="site-logs-details-modal__field-title">{ translate( 'Message' ) }</div>
+			<div>{ item.message }</div>
 		</div>
 	);
 };
