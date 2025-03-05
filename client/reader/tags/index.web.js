@@ -5,8 +5,7 @@ import {
 	render as clientRender,
 } from 'calypso/controller';
 import { setLocaleMiddleware } from 'calypso/controller/shared';
-import { updateLastRoute } from 'calypso/reader/controller';
-import { sidebar } from '../controller';
+import { sidebar, updateLastRoute } from 'calypso/reader/controller';
 import { tagsListing, fetchTrendingTags, fetchAlphabeticTags } from './controller';
 
 export default function ( router ) {
