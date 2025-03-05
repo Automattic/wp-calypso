@@ -200,7 +200,7 @@ const onboarding: Flow = {
 
 			// TODO find a way to redirect to the playground step
 			const playgroundId = getQueryArg( window.location.href, 'playground' );
-			if ( playgroundId ) {
+			if ( playgroundId && providedDependencies.siteSlug ) {
 				return [
 					addQueryArgs( withLocale( '/setup/onboarding/playground', locale ), {
 						siteSlug: providedDependencies.siteSlug,
@@ -387,16 +387,24 @@ const onboarding: Flow = {
 					if ( providedDependencies.goToCheckout ) {
 						const siteSlug = providedDependencies.siteSlug as string;
 
+						/**
+						 * If the user comes from the Playground onboarding flow,
+						 * redirect the user back to Playground to start the import.
+						 */
+						const playgroundId = getQueryArg( window.location.href, 'playground' );
+						const redirectTo: string = playgroundId
+							? addQueryArgs( withLocale( '/setup/onboarding/playground', locale ), {
+									siteSlug,
+									playground: playgroundId,
+							  } )
+							: addQueryArgs( withLocale( '/setup/onboarding/post-checkout-onboarding', locale ), {
+									siteSlug,
+							  } );
+
 						// replace the location to delete processing step from history.
 						window.location.replace(
 							addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-								// Go to the post-checkout step to see whether to wait for the atomic transfer
-								redirect_to: addQueryArgs(
-									withLocale( '/setup/onboarding/post-checkout-onboarding', locale ),
-									{
-										siteSlug,
-									}
-								),
+								redirect_to: redirectTo,
 								signup: 1,
 								checkoutBackUrl: pathToUrl( backDestination ?? '' ),
 								coupon,

@@ -9,6 +9,9 @@ $header-height: 78px;
     overflow-y: hidden;
 	// TODO: Check why does this value need to be set manually
 	padding-top: $header-height;
+	.step-wrapper__header {
+		display: none;
+	}
 }
 
 .playground__onboarding-iframe {
