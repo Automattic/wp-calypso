@@ -3,7 +3,6 @@ import { makeLayout, render as clientRender } from 'calypso/controller';
 import { siteSelection, navigation, sites } from 'calypso/my-sites/controller';
 import {
 	TOOLS_DEPLOYMENTS,
-	TOOLS_MONITORING,
 	TOOLS_STAGING_SITE,
 	TOOLS,
 } from 'calypso/sites/components/site-preview-pane/constants';
@@ -11,7 +10,6 @@ import { redirectToHostingFeaturesIfNotAtomic, siteDashboard } from 'calypso/sit
 import {
 	stagingSite,
 	deployments,
-	monitoring,
 	deploymentCreation,
 	deploymentManagement,
 	deploymentRunLogs,
@@ -80,18 +78,6 @@ export default function () {
 		navigation,
 		deploymentRunLogs,
 		siteDashboard( TOOLS_DEPLOYMENTS ),
-		makeLayout,
-		clientRender
-	);
-
-	page( '/sites/tools/monitoring', siteSelection, sites, makeLayout, clientRender );
-	page(
-		'/sites/tools/monitoring/:site',
-		siteSelection,
-		redirectToHostingFeaturesIfNotAtomic,
-		navigation,
-		monitoring,
-		siteDashboard( TOOLS_MONITORING ),
 		makeLayout,
 		clientRender
 	);

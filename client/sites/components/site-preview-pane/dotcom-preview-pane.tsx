@@ -43,7 +43,6 @@ import {
 	TOOLS,
 	TOOLS_STAGING_SITE,
 	TOOLS_DEPLOYMENTS,
-	TOOLS_MONITORING,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
 import SiteEnvironmentSwitcher from './site-environment-switcher';
@@ -142,7 +141,7 @@ const DotcomPreviewPane = ( {
 				label: __( 'Advanced Tools' ),
 				enabled:
 					areHostingFeaturesSupported( site ) && config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ TOOLS_STAGING_SITE, TOOLS_DEPLOYMENTS, TOOLS_MONITORING ],
+				featureIds: [ TOOLS_STAGING_SITE, TOOLS_DEPLOYMENTS ],
 			},
 			{
 				label: (

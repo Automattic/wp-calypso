@@ -14,7 +14,6 @@ import {
 	Deployments,
 } from './deployments';
 import { indexPage } from './deployments/routes';
-import Monitoring from './monitoring';
 import StagingSite from './staging-site';
 
 export function ToolsSidebar() {
@@ -28,7 +27,6 @@ export function ToolsSidebar() {
 			<SidebarItem href={ `/sites/tools/deployments/${ slug }` }>
 				{ __( 'Deployments' ) }
 			</SidebarItem>
-			<SidebarItem href={ `/sites/tools/monitoring/${ slug }` }>{ __( 'Monitoring' ) }</SidebarItem>
 		</Sidebar>
 	);
 }
@@ -132,20 +130,6 @@ export function deploymentRunLogs( context: PageJSContext, next: () => void ) {
 			/>
 			<ToolsSidebar />
 			<DeploymentRunLogs codeDeploymentId={ codeDeploymentId } />
-		</PanelWithSidebar>
-	);
-	next();
-}
-
-export function monitoring( context: PageJSContext, next: () => void ) {
-	context.primary = (
-		<PanelWithSidebar>
-			<PageViewTracker
-				title="Sites > Advanced Tools > Monitoring"
-				path={ getRouteFromContext( context ) }
-			/>
-			<ToolsSidebar />
-			<Monitoring />
 		</PanelWithSidebar>
 	);
 	next();
