@@ -11,7 +11,7 @@ import { useSiteMetricsData } from '../components/site-monitoring';
 import { calculateTimeRange } from '../components/time-range-picker';
 import { useSiteMetricsQuery } from '../hooks/use-metrics-query';
 
-jest.mock( 'calypso/sites/tools/monitoring/hooks/use-metrics-query.ts', () => ( {
+jest.mock( 'calypso/sites/monitoring/hooks/use-metrics-query.ts', () => ( {
 	__esModule: true,
 	useSiteMetricsQuery: jest.fn( () => {
 		return {
