@@ -141,7 +141,7 @@ class PasswordlessSignupForm extends Component {
 
 	createAccountError = async ( error ) => {
 		this.submitTracksEvent( false, { action_message: error.message, error_code: error.error } );
-		// This error only happens when users sign up with an email belongs to a8c.
+		// This error only happens when users sign up with an email that belongs to a8c.
 		if ( error.error === 'account_unactivated' ) {
 			this.setState( {
 				// No need to translate the error message, it's for a8c users only.
