@@ -77,6 +77,11 @@
 		max-width: 968px; // Max width of dual column reader stream.
 		padding: 24px 0;
 
+		.navigation-header {
+			// Align the header text with the text in tags page content below.
+			padding-inline: 35px;
+		}
+
 		.tags__header h4 {
 			margin: -4px 0 19px;
 		}
