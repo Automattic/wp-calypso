@@ -121,6 +121,7 @@
 
 	.card {
 		--color-link-hover: #4ccee4;
+		clip-path: unset;
 	}
 
 	&.is-section-login {
@@ -170,22 +171,6 @@
 		}
 
 		.auth-form__social-buttons {
-			.button {
-				display: none;
-				margin-bottom: 40px;
-
-				&:first-child {
-					display: block;
-				}
-
-				@include breakpoint-deprecated("<660px") {
-					margin-bottom: 20px;
-				}
-			}
-
-			.social-buttons__service-name {
-				margin-left: 15px;
-			}
 
 			.login__social-tos {
 				display: none;
