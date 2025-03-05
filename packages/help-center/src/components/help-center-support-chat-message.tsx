@@ -28,6 +28,7 @@ export const HelpCenterSupportChatMessage = ( {
 	navigateTo = '',
 	supportInteraction,
 	sectionName,
+	conversationStatus,
 }: {
 	message: ZendeskMessage;
 	badgeCount?: number;
@@ -37,6 +38,7 @@ export const HelpCenterSupportChatMessage = ( {
 	altText?: string;
 	supportInteraction: SupportInteraction | undefined;
 	sectionName?: string;
+	conversationStatus?: string;
 } ) => {
 	const { __ } = useI18n();
 	const locale = useLocale();
@@ -72,6 +74,7 @@ export const HelpCenterSupportChatMessage = ( {
 			} }
 			className={ clsx( 'help-center-support-chat__conversation-container', {
 				'is-unread-message': isUnread,
+				[ `is-${ conversationStatus }` ]: conversationStatus,
 			} ) }
 		>
 			<div

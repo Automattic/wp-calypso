@@ -234,6 +234,7 @@ type Metadata = {
 	odieChatId: number;
 	createdAt: number;
 	supportInteractionId: string;
+	status: 'open' | 'closed' | 'resolved';
 };
 
 export type ZendeskConversation = {
