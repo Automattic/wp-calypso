@@ -445,10 +445,13 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		setShowBulkActions,
 		onDomainAction: async ( actionType, domain ) => {
 			const actionDescription = onDomainAction?.( actionType, domain );
+
 			if ( ! actionDescription ) {
 				return;
 			}
+
 			const { action, message } = actionDescription;
+
 			setUpdatingDomain( {
 				action: actionType,
 				domain: domain.domain,
