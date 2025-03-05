@@ -1,6 +1,6 @@
 /* stylelint-disable scales/radii */
 .quick-post-input {
-	margin-bottom: 24px;
+	margin: 20px;
 
 	&--loading {
 		text-align: center;
@@ -15,14 +15,14 @@
 		margin-bottom: 16px;
 
 		.sites-dropdown__wrapper {
-			border-color: var(--color-border-subtle);
+			border-color: var( --color-border-subtle );
 			border-style: solid;
 			border-radius: 6px;
 			border-width: 1px;
 		}
 	}
 
-    &__actions {
+	&__actions {
 		display: flex;
 		justify-content: flex-end;
 		gap: 8px;
@@ -49,25 +49,25 @@
 		}
 	}
 
-    .verbum-editor-wrapper {
-        .editor__header {
-            border-color: var(--color-border-subtle);
-            border-style: solid;
-            border-radius: 6px 6px 0 0;
-            border-width: 1px;
-            border-bottom-width: 0;
-        }
+	.verbum-editor-wrapper {
+		.editor__header {
+			border-color: var( --color-border-subtle );
+			border-style: solid;
+			border-radius: 6px 6px 0 0;
+			border-width: 1px;
+			border-bottom-width: 0;
+		}
 
-        .block-editor-block-contextual-toolbar {
-            background-color: transparent;
-        }
+		.block-editor-block-contextual-toolbar {
+			background-color: transparent;
+		}
 
-        .editor__main {
-            border-color: var(--color-border-subtle);
-            border-style: solid;
-            border-radius: 0 0 6px 6px;
-            border-width: 1px;
-            border-top-width: 0;
-        }
-    }
+		.editor__main {
+			border-color: var( --color-border-subtle );
+			border-style: solid;
+			border-radius: 0 0 6px 6px;
+			border-width: 1px;
+			border-top-width: 0;
+		}
+	}
 }
