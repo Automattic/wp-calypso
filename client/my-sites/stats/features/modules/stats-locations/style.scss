@@ -22,6 +22,12 @@ $locations-horizontal-bar-width: 380px;
 		.segmented-control.stats-module-locations__tabs .segmented-control__item {
 			flex: 1 1 0;
 		}
+
+		&.stats-card-header--split .stats-card-header--main__left {
+			.stats-download-csv {
+				display: none;
+			}
+		}
 	}
 
 	.stats-module-locations__actions {
