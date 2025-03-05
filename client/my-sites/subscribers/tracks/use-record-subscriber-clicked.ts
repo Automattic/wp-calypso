@@ -4,10 +4,10 @@ const useRecordSubscriberClicked = () => {
 	const recordSubscribersTracksEvent = useRecordSubscriberTrackEvent();
 
 	return (
-		where: 'title' | 'icon' | 'row',
+		where: 'title' | 'icon' | 'row' | 'list',
 		tracksProps: { site_id?: number | null; subscription_id?: number; user_id?: number }
 	) => {
-		// Allows for calypso_subscribers_subscriber_title_clicked, calypso_subscribers_subscriber_icon_clicked & calypso_subscribers_subscriber_row_clicked
+		// Allows for calypso_subscribers_subscriber_title_clicked, calypso_subscribers_subscriber_icon_clicked, calypso_subscribers_subscriber_row_clicked,
 		recordSubscribersTracksEvent(
 			`calypso_subscribers_subscriber_${ where }_clicked`,
 			tracksProps
