@@ -14,6 +14,7 @@ import SitesDropdown from 'calypso/components/sites-dropdown';
 import { stripHTML } from 'calypso/lib/formatting';
 import wpcom from 'calypso/lib/wp';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { successNotice } from 'calypso/state/notices/actions';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { receiveNewPost } from 'calypso/state/reader/streams/actions';
@@ -35,14 +36,17 @@ interface PostItem {
 	site_ID: number;
 	title: string;
 	content: string;
+	URL: string;
 }
 
 function QuickPost( {
 	primarySiteId,
 	receivePosts,
+	successNotice,
 }: {
 	primarySiteId: number | null;
 	receivePosts: ( posts: PostItem[] ) => Promise< void >;
+	successNotice: ( message: string, options: object ) => void;
 } ) {
 	const translate = useTranslate();
 	const locale = useLocale();
@@ -56,17 +60,9 @@ function QuickPost( {
 	const currentUser = useSelector( getCurrentUser );
 	const hasLoaded = useSelector( hasLoadedSites );
 	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
-	const [ showSuccessMessage, setShowSuccessMessage ] = useState( false );
 
 	const clearEditor = () => {
 		setEditorKey( ( key ) => key + 1 );
-	};
-
-	const callShowSuccessMessage = () => {
-		setShowSuccessMessage( true );
-		setTimeout( () => {
-			setShowSuccessMessage( false );
-		}, 5000 );
 	};
 
 	const handleSubmit = () => {
@@ -74,7 +70,6 @@ function QuickPost( {
 			return;
 		}
 
-		setShowSuccessMessage( false );
 		setIsSubmitting( true );
 
 		wpcom
@@ -95,7 +90,15 @@ function QuickPost( {
 			.then( ( postData: PostItem ) => {
 				recordReaderTracksEvent( 'calypso_reader_quick_post_submitted' );
 				clearEditor();
-				callShowSuccessMessage();
+
+				successNotice( translate( 'Post successful! Your post will appear in the feed soon.' ), {
+					button: translate( 'View Post.' ),
+					noticeActionProps: {
+						external: true,
+					},
+					href: postData.URL,
+				} );
+				// TODO: Update the stream with the new post (if they're subscribed?) to signal success.
 
 				if ( config.isEnabled( 'reader/quick-post-v2' ) ) {
 					receivePosts( [ postData ] ).then( () => {
@@ -171,15 +174,6 @@ function QuickPost( {
 				</div>
 			</div>
 			<div className="quick-post-input__actions">
-				<div
-					className={ `quick-post-input__success-message ${
-						showSuccessMessage ? 'is-visible' : ''
-					}` }
-					aria-hidden={ ! showSuccessMessage }
-				>
-					<p>{ translate( 'Post successful! Your message will appear in the feed soon.' ) }</p>
-				</div>
-
 				<Button
 					onClick={ handleCancel }
 					disabled={ isDisabled }
@@ -204,6 +198,7 @@ export default connect(
 		primarySiteId: getPrimarySiteId( state ),
 	} ),
 	{
+		successNotice: ( message: string, options: object ) => successNotice( message, options ),
 		receivePosts: ( posts: PostItem[] ) => receivePosts( posts ) as Promise< void >,
 	}
 )( QuickPost );

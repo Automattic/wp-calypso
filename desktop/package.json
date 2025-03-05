@@ -1,6 +1,6 @@
 {
 	"name": "WordPressDesktop",
-	"version": "8.1.0-beta3",
+	"version": "8.1.0-beta4",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/Automattic/wp-calypso/",
@@ -56,7 +56,7 @@
 		"cross-env": "^7.0.3",
 		"electron-fetch": "^1.7.4",
 		"electron-store": "^8.1.0",
-		"electron-updater": "^6.3.0",
+		"electron-updater": "^4.2.5",
 		"js-yaml": "^4.0.0",
 		"make-dir": "^3.1.0",
 		"semver": "^7.3.2",
