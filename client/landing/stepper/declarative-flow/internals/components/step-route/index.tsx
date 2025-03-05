@@ -55,7 +55,7 @@ const StepRoute = ( { step, flow, renderStep, navigate }: StepRouteProps ) => {
 			nextStep: step.slug,
 		};
 
-		navigate( PRIVATE_STEPS.USER.slug, extraData, true );
+		navigate( PRIVATE_STEPS.USER.slug + window.location.search, extraData, true );
 		return null;
 	}
 

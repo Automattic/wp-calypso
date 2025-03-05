@@ -74,7 +74,7 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 						nextStep,
 					} );
 
-					return navigate( signInPath );
+					return navigate( signInPath + window.location.search );
 				}
 				// Classic /login auth.
 				const nextStepPath = createPath( {
