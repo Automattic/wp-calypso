@@ -20,13 +20,6 @@ const useOnboardingIntent = () => {
 	return intent;
 };
 
-const addQueryParams = ( uri: string, params?: URLSearchParams | null ) => {
-	if ( params ) {
-		return uri + '?' + params.toString();
-	}
-	return uri;
-};
-
 interface FlowNavigation {
 	navigate: Navigate< StepperStep[] >;
 	params: {
@@ -62,10 +55,15 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 			) {
 				// In-stepper auth.
 				if ( flow.__experimentalUseBuiltinAuth ) {
-					const signInPath = generatePath( `/:flow/:step/:lang?`, {
-						flow: flowName,
-						lang,
-						step: PRIVATE_STEPS.USER.slug,
+					const signInPath = createPath( {
+						// We have to include /setup, as this URL should be absolute and we can't use `useHref`.
+						pathname: generatePath( `/:flow/:step/:lang?`, {
+							flow: flowName,
+							lang,
+							step: PRIVATE_STEPS.USER.slug,
+						} ),
+						search: currentSearchParams.toString(),
+						hash: window.location.hash,
 					} );
 
 					// Inform the user step where to go after the user is authenticated.
@@ -74,7 +72,7 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 						nextStep,
 					} );
 
-					return navigate( signInPath + window.location.search );
+					return navigate( signInPath );
 				}
 				// Classic /login auth.
 				const nextStepPath = createPath( {
@@ -99,11 +97,6 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 				return window.location.assign( loginUrl );
 			}
 
-			const hasQueryParams = nextStep.includes( '?' );
-
-			// Get the latest search params from the current location
-			const queryParams = ! hasQueryParams ? new URLSearchParams( window.location.search ) : null;
-
 			setStepData( {
 				path: nextStep,
 				intent: intent,
@@ -111,13 +104,17 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 				...extraData,
 			} );
 
-			const newPath = generatePath( `/:flow/:step/:lang?`, {
-				flow: flowName,
-				lang,
-				step: nextStep,
+			const newPath = createPath( {
+				pathname: generatePath( `/:flow/:step/:lang?`, {
+					flow: flowName,
+					lang,
+					step: nextStep,
+				} ),
+				search: window.location.search,
+				hash: window.location.hash,
 			} );
 
-			navigate( addQueryParams( newPath, queryParams ), { replace } );
+			navigate( newPath, { replace } );
 		},
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- steps array is recreated on every render, use stepsSlugs instead.
 		[
