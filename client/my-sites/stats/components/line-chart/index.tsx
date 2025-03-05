@@ -175,7 +175,7 @@ function StatsLineChart( {
 						// eslint-disable-next-line @typescript-eslint/no-explicit-any
 						onPointerDown={ onPointerDown as any }
 						margin={ {
-							left: 15,
+							left: 20,
 							top: 20,
 							bottom: 20,
 							right: Math.max( formatValue( maxValue ).length * 10, 40 ), //TODO: we should support this from the lib.
