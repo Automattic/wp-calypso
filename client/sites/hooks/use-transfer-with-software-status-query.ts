@@ -1,11 +1,14 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
-interface TransferWithSoftwareStatusResponse {
+type TransferWithSoftwareStatusResponse = {
+	blog_id: number;
+	atomic_transfer_id: number;
+	plugins: { [ key: string ]: boolean };
+	themes: { [ key: string ]: boolean };
 	transfer_with_software_status: string;
 	atomic_transfer_status: string;
-	[ key: string ]: unknown; // Allow any additional fields in the response
-}
+};
 
 const getTransferWithSoftwareStatus = async (
 	siteId: number,

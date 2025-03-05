@@ -14,9 +14,12 @@ jest.mock( '@automattic/calypso-config', () => ( {
 } ) );
 
 const mockSuccessResponse = {
+	blog_id: 123,
+	atomic_transfer_id: 456,
 	transfer_with_software_status: 'pending',
 	atomic_transfer_status: 'success',
-	extra_field: 'extra_value',
+	plugins: { 'wpcom-migration': true },
+	themes: { 'twenty-twenty-four': false },
 };
 
 describe( 'useTransferWithSoftwareStatus', () => {
