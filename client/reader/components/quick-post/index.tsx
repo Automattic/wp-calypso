@@ -91,7 +91,7 @@ function QuickPost( {
 				recordReaderTracksEvent( 'calypso_reader_quick_post_submitted' );
 				clearEditor();
 
-				successNotice( translate( 'Post successful! Your message will appear in the feed soon.' ), {
+				successNotice( translate( 'Post successful! Your post will appear in the feed soon.' ), {
 					button: translate( 'View Post.' ),
 					buttonOptions: {
 						external: true,
