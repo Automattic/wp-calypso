@@ -274,7 +274,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 		<DownloadCsv
 			borderless
 			data={ locationCsvData }
-			path="locations"
+			path={ `locations-${ geoMode }` }
 			period={ period }
 			query={ query }
 			skipQuery
