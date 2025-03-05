@@ -8,24 +8,30 @@ type transferWithSoftwareResponse = {
 type SoftwareSlug = string;
 type SoftwareStatus = 'install' | 'activate';
 type Software = Record< SoftwareSlug, SoftwareStatus >;
+type ApiSettings = Record< string, unknown >;
 
 type transferOptions = {
 	siteId: number;
-	from?: string;
+	apiSettings?: ApiSettings;
 	plugins?: Software;
 	themes?: Software;
 };
 
 const requestTransferWithSoftware: (
 	transferOptions: transferOptions
-) => Promise< transferWithSoftwareResponse > = async ( { siteId, from, plugins, themes } ) => {
+) => Promise< transferWithSoftwareResponse > = async ( {
+	siteId,
+	apiSettings,
+	plugins,
+	themes,
+} ) => {
 	const response = await wpcom.req.post(
 		{
 			path: `/sites/${ siteId }/atomic/transfer-with-software?http_envelope=1`,
 		},
 		{
 			apiNamespace: 'wpcom/v2',
-			body: { plugins, themes, settings: { migration_source_site_domain: from } },
+			body: { plugins, themes, settings: { ...apiSettings } },
 		}
 	);
 
@@ -44,7 +50,7 @@ export const useRequestTransferWithSoftware = (
 		mutationKey: [
 			'transfer-with-software',
 			transferOptions.siteId,
-			transferOptions.from,
+			transferOptions.apiSettings,
 			transferOptions.plugins,
 			transferOptions.themes,
 		],
@@ -54,7 +60,7 @@ export const useRequestTransferWithSoftware = (
 			}
 			return requestTransferWithSoftware( {
 				siteId: transferOptions.siteId,
-				from: transferOptions.from,
+				apiSettings: transferOptions.apiSettings,
 				plugins: transferOptions.plugins,
 				themes: transferOptions.themes,
 			} );
