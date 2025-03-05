@@ -17,14 +17,14 @@ export const StagingSiteLoadingBarCardContent = ( {
 		const translate = useTranslate();
 		if ( isReverting ) {
 			return (
-				<div className="staging-site-card__sync-content">
+				<>
 					<ProgressBar
 						key="delete-loading-bar"
 						value={ progress }
 						className="staging-site-card__loading-bar"
 					/>
 					<p>{ translate( 'We are deleting your staging site.' ) }</p>
-				</div>
+				</>
 			);
 		}
 
