@@ -27,7 +27,10 @@ export const OdieSendMessageButton = () => {
 	const [ submitDisabled, setSubmitDisabled ] = useState( true );
 	const [ fileToUpload, setFileToUpload ] = useState< File | undefined >();
 	const onFilesDrop = ( files: File[] ) => {
-		setFileToUpload( files?.[ 0 ] );
+		const file = files?.[ 0 ];
+		if ( file && file.type.startsWith( 'image/' ) ) {
+			setFileToUpload( file );
+		}
 	};
 
 	const { zendeskClientId } = useSelect( ( select ) => {
