@@ -79,9 +79,8 @@ const fillNoteField = async () => {
 };
 
 const requestPayload = {
-	path: 'sites/site-url.wordpress.com/automated-migration?_locale=en',
-	apiNamespace: 'wpcom/v2/',
-	apiVersion: '2',
+	path: '/sites/site-url.wordpress.com/automated-migration?_locale=en',
+	apiNamespace: 'wpcom/v2',
 	method: 'POST',
 	body: {
 		migration_type: 'credentials',
@@ -156,9 +155,8 @@ describe( 'SiteMigrationCredentials', () => {
 		await userEvent.click( continueButton() );
 
 		expect( wpcomRequest ).toHaveBeenCalledWith( {
-			path: 'sites/site-url.wordpress.com/automated-migration?_locale=en',
-			apiNamespace: 'wpcom/v2/',
-			apiVersion: '2',
+			path: '/sites/site-url.wordpress.com/automated-migration?_locale=en',
+			apiNamespace: 'wpcom/v2',
 			method: 'POST',
 			body: {
 				migration_type: 'credentials',
@@ -201,9 +199,8 @@ describe( 'SiteMigrationCredentials', () => {
 		await userEvent.click( continueButton() );
 
 		expect( wpcomRequest ).toHaveBeenCalledWith( {
-			path: 'sites/site-url.wordpress.com/automated-migration?_locale=en',
-			apiNamespace: 'wpcom/v2/',
-			apiVersion: '2',
+			path: '/sites/site-url.wordpress.com/automated-migration?_locale=en',
+			apiNamespace: 'wpcom/v2',
 			method: 'POST',
 			body: {
 				migration_type: 'credentials',
@@ -236,9 +233,8 @@ describe( 'SiteMigrationCredentials', () => {
 
 		//TODO: Ideally we should use nock to mock the request, but it is not working with the current implementation due to wpcomRequest usage that is well captured by nock.
 		expect( wpcomRequest ).toHaveBeenCalledWith( {
-			path: 'sites/site-url.wordpress.com/automated-migration?_locale=en',
-			apiNamespace: 'wpcom/v2/',
-			apiVersion: '2',
+			path: '/sites/site-url.wordpress.com/automated-migration?_locale=en',
+			apiNamespace: 'wpcom/v2',
 			method: 'POST',
 			body: {
 				blog_url: 'site-url.wordpress.com',
@@ -650,9 +646,8 @@ describe( 'SiteMigrationCredentials', () => {
 		await userEvent.click( continueButton() );
 
 		expect( wpcomRequest ).toHaveBeenCalledWith( {
-			path: 'help/migration-ticket/new',
-			apiNamespace: 'wpcom/v2/',
-			apiVersion: '2',
+			path: '/help/migration-ticket/new',
+			apiNamespace: 'wpcom/v2',
 			method: 'POST',
 			body: {
 				locale: 'en',

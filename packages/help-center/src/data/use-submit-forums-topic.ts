@@ -58,9 +58,8 @@ export function useSubmitForumsMutation() {
 
 			return canAccessWpcomApis()
 				? wpcomRequest< ForumResponse >( {
-						path: 'help/forum/new',
-						apiNamespace: 'wpcom/v2/',
-						apiVersion: '2',
+						path: '/help/forum/new',
+						apiNamespace: 'wpcom/v2',
 						method: 'POST',
 						body: requestData,
 				  } )

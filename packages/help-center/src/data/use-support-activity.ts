@@ -11,9 +11,8 @@ export function useSupportActivity( enabled = true ) {
 		queryFn: () =>
 			canAccessWpcomApis()
 				? wpcomRequest< SupportActivity[] >( {
-						path: 'support-activity',
-						apiNamespace: 'wpcom/v2/',
-						apiVersion: '2',
+						path: '/support-activity',
+						apiNamespace: 'wpcom/v2',
 				  } )
 				: apiFetch< SupportActivity[] >( {
 						path: 'help-center/support-activity',

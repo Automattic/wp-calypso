@@ -15,9 +15,8 @@ export function usePostByUrl( url: string ) {
 		queryFn: () =>
 			canAccessWpcomApis()
 				? wpcomRequest( {
-						path: `help/article?post_url=${ postUrl }`,
-						apiNamespace: 'wpcom/v2/',
-						apiVersion: '2',
+						path: `/help/article?post_url=${ postUrl }`,
+						apiNamespace: 'wpcom/v2',
 				  } )
 				: apiFetch( {
 						path: `/help-center/fetch-post?post_url=${ postUrl }`,

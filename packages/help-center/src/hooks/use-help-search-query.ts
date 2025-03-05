@@ -29,9 +29,8 @@ const fetchArticlesAPI = async (
 	const queryString = buildQueryString( { query: search, locale, section: sectionName } );
 	if ( canAccessWpcomApis() ) {
 		searchResultResponse = ( await wpcomRequest( {
-			path: `help/search/wpcom?${ queryString }`,
-			apiNamespace: 'wpcom/v2/',
-			apiVersion: '2',
+			path: `/help/search/wpcom?${ queryString }`,
+			apiNamespace: 'wpcom/v2',
 		} ) ) as SearchResult[];
 	} else {
 		searchResultResponse = ( await apiFetch( {

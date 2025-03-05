@@ -17,9 +17,8 @@ export function useSupportStatus( enabled = true ) {
 		queryFn: async () =>
 			canAccessWpcomApis()
 				? await wpcomRequest( {
-						path: `help/support-status`,
-						apiNamespace: 'wpcom/v2/',
-						apiVersion: '2',
+						path: `/help/support-status`,
+						apiNamespace: 'wpcom/v2',
 				  } )
 				: await apiFetch( {
 						path: `help-center/support-status`,
