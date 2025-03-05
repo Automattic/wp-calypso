@@ -1,13 +1,13 @@
 /**
  * @jest-environment jsdom
  */
-jest.mock( 'calypso/sites/tools/staging-site/components/staging-site-card', () => () => (
+jest.mock( 'calypso/sites/staging-site/components/staging-site-card', () => () => (
 	<div data-testid="staging-site-card">
 		<span>Staging site</span>
 	</div>
 ) );
 jest.mock(
-	'calypso/sites/tools/staging-site/components/staging-site-card/staging-site-production-card',
+	'calypso/sites/staging-site/components/staging-site-card/staging-site-production-card',
 	() => () => (
 		<div data-testid="staging-site-production-card">
 			<span>Staging site</span>

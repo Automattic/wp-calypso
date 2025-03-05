@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	PLAN_BUSINESS,
 	FEATURE_SITE_STAGING_SITES,
@@ -16,30 +15,17 @@ const StagingSiteUpsellNudge = () => {
 
 	const siteId = useSelector( getSelectedSiteId );
 
-	const isUntangled = isEnabled( 'untangling/hosting-menu' );
-
 	const href = addQueryArgs( `/checkout/${ siteId }/business`, {
-		redirect_to: isUntangled
-			? `/sites/tools/staging-site/${ siteId }`
-			: `/staging-site/${ siteId }`,
+		redirect_to: `/staging-site/${ siteId }`,
 	} );
 
 	return (
 		<CardContentWrapper>
 			<UpsellNudge
 				className="staging-site-upsell-nudge"
-				title={
-					isUntangled
-						? translate(
-								'Upgrade to the %(businessPlanName)s plan to get access to this feature.',
-								{
-									args: { businessPlanName: getPlanBusinessTitle() },
-								}
-						  )
-						: translate( 'Upgrade to the %(businessPlanName)s plan to add a staging site.', {
-								args: { businessPlanName: getPlanBusinessTitle() },
-						  } )
-				}
+				title={ translate( 'Upgrade to the %(businessPlanName)s plan to add a staging site.', {
+					args: { businessPlanName: getPlanBusinessTitle() },
+				} ) }
 				tracksImpressionName="calypso_staging_site_upgrade_impression"
 				event="calypso_staging_site_upgrade_upsell"
 				tracksClickName="calypso_staging_site_upgrade_click"

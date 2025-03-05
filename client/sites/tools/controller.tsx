@@ -14,16 +14,12 @@ import {
 	Deployments,
 } from './deployments';
 import { indexPage } from './deployments/routes';
-import StagingSite from './staging-site';
 
 export function ToolsSidebar() {
 	const slug = useSelector( getSelectedSiteSlug );
 
 	return (
 		<Sidebar>
-			<SidebarItem href={ `/sites/tools/staging-site/${ slug }` }>
-				{ __( 'Staging site' ) }
-			</SidebarItem>
 			<SidebarItem href={ `/sites/tools/deployments/${ slug }` }>
 				{ __( 'Deployments' ) }
 			</SidebarItem>
@@ -45,20 +41,6 @@ export function tools( context: PageJSContext, next: () => void ) {
 			<PageViewTracker title="Sites > Advanced Tools" path={ getRouteFromContext( context ) } />
 			<HostingFeatures showAsTools />
 		</>
-	);
-	next();
-}
-
-export function stagingSite( context: PageJSContext, next: () => void ) {
-	context.primary = (
-		<PanelWithSidebar>
-			<PageViewTracker
-				title="Sites > Advanced Tools > Staging site"
-				path={ getRouteFromContext( context ) }
-			/>
-			<ToolsSidebar />
-			<StagingSite />
-		</PanelWithSidebar>
 	);
 	next();
 }

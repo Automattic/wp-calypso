@@ -8,7 +8,7 @@ import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-dup
 import { useSetTabBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-tab-breadcrumb';
 import HostingFeaturesIcon from 'calypso/sites/hosting-features/components/hosting-features-icon';
 import { areHostingFeaturesSupported } from 'calypso/sites/hosting-features/features';
-import { useStagingSite } from 'calypso/sites/tools/staging-site/hooks/use-staging-site';
+import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
 import { getMigrationStatus } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
@@ -41,7 +41,6 @@ import {
 	SETTINGS_DATABASE,
 	SETTINGS_PERFORMANCE,
 	TOOLS,
-	TOOLS_STAGING_SITE,
 	TOOLS_DEPLOYMENTS,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
@@ -141,7 +140,7 @@ const DotcomPreviewPane = ( {
 				label: __( 'Advanced Tools' ),
 				enabled:
 					areHostingFeaturesSupported( site ) && config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ TOOLS_STAGING_SITE, TOOLS_DEPLOYMENTS ],
+				featureIds: [ TOOLS_DEPLOYMENTS ],
 			},
 			{
 				label: (

@@ -1,14 +1,9 @@
 import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { siteSelection, navigation, sites } from 'calypso/my-sites/controller';
-import {
-	TOOLS_DEPLOYMENTS,
-	TOOLS_STAGING_SITE,
-	TOOLS,
-} from 'calypso/sites/components/site-preview-pane/constants';
+import { TOOLS_DEPLOYMENTS, TOOLS } from 'calypso/sites/components/site-preview-pane/constants';
 import { redirectToHostingFeaturesIfNotAtomic, siteDashboard } from 'calypso/sites/controller';
 import {
-	stagingSite,
 	deployments,
 	deploymentCreation,
 	deploymentManagement,
@@ -24,18 +19,6 @@ export default function () {
 		navigation,
 		tools,
 		siteDashboard( TOOLS ),
-		makeLayout,
-		clientRender
-	);
-
-	page( '/sites/tools/staging-site', siteSelection, sites, makeLayout, clientRender );
-	page(
-		'/sites/tools/staging-site/:site',
-		siteSelection,
-		redirectToHostingFeaturesIfNotAtomic,
-		navigation,
-		stagingSite,
-		siteDashboard( TOOLS_STAGING_SITE ),
 		makeLayout,
 		clientRender
 	);
