@@ -1,16 +1,13 @@
 @import "calypso/signup/style";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/onboarding/styles/mixins";
 
 $header-height: 78px;
 
-.step-route.playground,
-.step-route.playground-setup {
+.step-route.playground {
     height: calc(100vh - $header-height);
     overflow-y: hidden;
-}
-
-.step-route.playground {
 	// TODO: Check why does this value need to be set manually
 	padding-top: $header-height;
 	.step-wrapper__header {

@@ -1,14 +1,10 @@
-@import "calypso/signup/style";
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
 @import "../../style";
-
-$header-height: 78px;
 
 .step-route.playground-setup {
     display: flex;
     align-items: center;
     justify-content: center;
+
 	.playground__onboarding-iframe {
 		display: none;
 	}
