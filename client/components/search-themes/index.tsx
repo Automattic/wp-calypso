@@ -13,7 +13,6 @@ interface SearchThemesProps {
 const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch, recordTracksEvent } ) => {
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const searchRef = useRef< Search | null >( null );
-	const suggestionsRef = useRef< KeyedSuggestions | null >( null );
 	const translate = useTranslate();
 	const [ searchInput, setSearchInput ] = useState( query );
 	const [ isApplySearch, setIsApplySearch ] = useState( false );
@@ -38,7 +37,6 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch, recordT
 		searchRef.current?.blur();
 	};
 	const onKeyDown = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
-		suggestionsRef.current?.handleKeyEvent( event );
 		if ( event.key === 'Enter' ) {
 			searchRef.current?.blur();
 		}
