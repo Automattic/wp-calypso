@@ -1,16 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { FormInputValidation } from '@automattic/components';
-import { HelpCenterSelect, HelpCenterSite } from '@automattic/data-stores';
-import {
-	useCanConnectToZendeskMessaging,
-	useOpenZendeskMessaging,
-} from '@automattic/zendesk-client';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { Icon, comment } from '@wordpress/icons';
-import { useI18n } from '@wordpress/react-i18n';
-import { useState } from 'react';
+import { HelpCenterSite } from '@automattic/data-stores';
+import { GetSupport } from '@automattic/odie-client/src/components/message/get-support';
+import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
+import { useNavigate } from 'react-router-dom';
 import useChatStatus from '../hooks/use-chat-status';
-import { HELP_CENTER_STORE } from '../stores';
+import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
 import ThirdPartyCookiesNotice from './help-center-third-party-cookies-notice';
 import { generateContactOnClickEvent } from './utils';
 
@@ -25,106 +19,34 @@ interface HelpCenterContactSupportOptionProps {
 	trackEventName?: string;
 }
 
-const HelpCenterContactSupportOption = ( {
-	productId,
-	sectionName,
-	site,
-	triggerSource,
-	articleUrl,
-	trackEventName,
-}: HelpCenterContactSupportOptionProps ) => {
-	const { __ } = useI18n();
-	const { hasActiveChats, isEligibleForChat } = useChatStatus();
-	const { resetStore, setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
-	const currentSupportInteraction = useSelect(
-		( select ) =>
-			( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getCurrentSupportInteraction(),
-		[]
-	);
-	const odieId =
-		currentSupportInteraction?.events.find( ( event ) => event.event_source === 'odie' )
-			?.event_external_id ?? null;
-
+const HelpCenterContactSupportOption = ( { sectionName }: HelpCenterContactSupportOptionProps ) => {
+	const { isEligibleForChat } = useChatStatus();
+	const navigate = useNavigate();
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
+	const resetSupportInteraction = useResetSupportInteraction();
 
-	const { isOpeningZendeskWidget, openZendeskWidget } = useOpenZendeskMessaging(
-		sectionName,
-		isEligibleForChat || hasActiveChats
-	);
-
-	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
-
-	const handleOnClick = () => {
-		generateContactOnClickEvent( 'chat', trackEventName );
-
-		recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
-			support_variation: 'messaging',
-			force_site_id: true,
+	const handleContactSupportClick = async ( destination: string ) => {
+		recordTracksEvent( 'calypso_odie_chat_get_support', {
 			location: 'help-center',
 			section: sectionName,
+			destination,
+			is_user_eligible: isEligibleForChat,
 		} );
-
-		recordTracksEvent( 'calypso_help_live_chat_begin', {
-			site_plan_product_id: productId,
-			is_automated_transfer: site?.is_wpcom_atomic,
-			force_site_id: true,
-			location: 'help-center',
-			section: sectionName,
-		} );
-
-		const escapedWapuuChatId = encodeURIComponent( odieId || '' );
-
-		const zendeskWidgetProps = {
-			aiChatId: escapedWapuuChatId,
-			siteUrl: site?.URL,
-			siteId: site?.ID,
-			onError: () => setHasSubmittingError( true ),
-			onSuccess: () => {
-				resetStore();
-				setShowHelpCenter( false );
-			},
-			message: '',
-		};
-
-		if ( triggerSource === 'article-feedback-form' ) {
-			let zendeskWidgetMessage = 'The user is contacting support from the article feedback form';
-			if ( articleUrl ) {
-				zendeskWidgetMessage += '<br/><br/>';
-				zendeskWidgetMessage += 'They were viewing the article at: ' + articleUrl;
-			}
-			zendeskWidgetProps.message = zendeskWidgetMessage;
+		generateContactOnClickEvent( 'chat', 'calypso_helpcenter_feedback_contact_support' );
+		if ( isEligibleForChat ) {
+			await resetSupportInteraction();
+			navigate( '/odie' );
 		}
-
-		openZendeskWidget( zendeskWidgetProps );
 	};
 
 	return (
 		<>
 			{ ! canConnectToZendesk && <ThirdPartyCookiesNotice /> }
-
-			<div className="help-center-contact-support">
-				<button
-					disabled={ ! canConnectToZendesk || isOpeningZendeskWidget }
-					onClick={ handleOnClick }
-				>
-					<div className="help-center-contact-support__box support" role="button" tabIndex={ 0 }>
-						<div className="help-center-contact-support__box-icon">
-							<Icon icon={ comment } />
-						</div>
-						<div>
-							<h2>{ __( 'Contact WordPress.com Support', __i18n_text_domain__ ) }</h2>
-							<p>{ __( 'Our Happiness team will get back to you soon', __i18n_text_domain__ ) }</p>
-						</div>
-					</div>
-				</button>
-
-				{ hasSubmittingError && (
-					<FormInputValidation
-						isError
-						text={ __( 'Something went wrong, please try again later.', __i18n_text_domain__ ) }
-					/>
-				) }
-			</div>
+			<GetSupport
+				onClickAdditionalEvent={ handleContactSupportClick }
+				isUserEligibleForPaidSupport={ isEligibleForChat }
+				canConnectToZendesk={ canConnectToZendesk }
+			/>
 		</>
 	);
 };
