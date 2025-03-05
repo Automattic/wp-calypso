@@ -122,6 +122,9 @@ const onboarding: Flow = {
 			);
 		}
 
+		// TODO: Add an experiment to test the playground step
+		steps.push( STEPS.PLAYGROUND );
+
 		return steps;
 	},
 
@@ -193,6 +196,18 @@ const onboarding: Flow = {
 
 			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
 				return [ `/home/${ providedDependencies.siteSlug }`, null ];
+			}
+
+			// TODO find a way to redirect to the playground step
+			const playgroundId = getQueryArg( window.location.href, 'playground' );
+			if ( playgroundId ) {
+				return [
+					addQueryArgs( withLocale( '/setup/onboarding/playground', locale ), {
+						siteSlug: providedDependencies.siteSlug,
+						playground: playgroundId,
+					} ),
+					null,
+				];
 			}
 
 			const destination = addQueryArgs( withLocale( '/setup/site-setup', locale ), {
@@ -395,6 +410,8 @@ const onboarding: Flow = {
 						window.location.replace( destination );
 					}
 				}
+				case 'playground':
+					return navigate( 'domains' );
 				default:
 					return;
 			}
