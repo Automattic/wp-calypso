@@ -393,6 +393,11 @@ export const STEPS = {
 		slug: 'playground',
 		asyncComponent: () => import( './steps-repository/playground' ),
 	},
+
+	PLAYGROUND_SETUP: {
+		slug: 'playground-setup',
+		asyncComponent: () => import( './steps-repository/playground/components/playground-setup' ),
+	},
 } satisfies Record< string, StepperStep >;
 
 /**

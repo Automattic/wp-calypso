@@ -124,6 +124,7 @@ const onboarding: Flow = {
 
 		// TODO: Add an experiment to test the playground step
 		steps.push( STEPS.PLAYGROUND );
+		steps.push( STEPS.PLAYGROUND_SETUP );
 
 		return steps;
 	},
@@ -202,7 +203,7 @@ const onboarding: Flow = {
 			const playgroundId = getQueryArg( window.location.href, 'playground' );
 			if ( playgroundId && providedDependencies.siteSlug ) {
 				return [
-					addQueryArgs( withLocale( '/setup/onboarding/playground', locale ), {
+					addQueryArgs( withLocale( '/setup/onboarding/playground-setup', locale ), {
 						siteSlug: providedDependencies.siteSlug,
 						playground: playgroundId,
 					} ),
@@ -393,7 +394,7 @@ const onboarding: Flow = {
 						 */
 						const playgroundId = getQueryArg( window.location.href, 'playground' );
 						const redirectTo: string = playgroundId
-							? addQueryArgs( withLocale( '/setup/onboarding/playground', locale ), {
+							? addQueryArgs( withLocale( '/setup/onboarding/playground-setup', locale ), {
 									siteSlug,
 									playground: playgroundId,
 							  } )

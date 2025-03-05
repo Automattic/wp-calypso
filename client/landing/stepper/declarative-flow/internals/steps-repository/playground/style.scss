@@ -4,9 +4,13 @@
 
 $header-height: 78px;
 
-.step-route.playground {
-    max-height: 100vh;
+.step-route.playground,
+.step-route.playground-setup {
+    height: calc(100vh - $header-height);
     overflow-y: hidden;
+}
+
+.step-route.playground {
 	// TODO: Check why does this value need to be set manually
 	padding-top: $header-height;
 	.step-wrapper__header {
