@@ -615,7 +615,7 @@
 
 .is-section-checkout-pending {
 	&.has-no-sidebar {
-		background: #fff;
+		background: var(--studio-white, #fff );
 		.layout__content {
 			padding: 0;
 			overflow: hidden;
