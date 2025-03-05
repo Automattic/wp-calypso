@@ -11,9 +11,7 @@ import { useDomainsDataViewsContext } from './use-context';
 type TranslateFunction = typeof translate;
 
 const fallbackSuccessMessage = ( job: JobStatus, translate: TranslateFunction ) => {
-	return job.success.length > 1
-		? translate( 'Bulk domain updates finished successfully.' )
-		: translate( 'Domain update finished successfully.' );
+	return translate( 'Bulk domain updates finished successfully.' );
 };
 
 const getSuccessMessage = (
