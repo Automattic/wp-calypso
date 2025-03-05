@@ -6,7 +6,7 @@ import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { isSiteDescriptionBlocked } from 'calypso/reader/lib/site-description-blocklist';
 
-interface ReaderSite {
+export interface ReaderSite {
 	description: string;
 	domain: string;
 	feed_URL: string;
@@ -22,7 +22,7 @@ interface ReaderSite {
 	URL?: string;
 }
 
-interface ReaderPost {
+export interface ReaderPost {
 	attachments?: { [ key: number ]: { alt: string } };
 	author?: {
 		avatar_URL: string;
@@ -38,7 +38,7 @@ interface ReaderPost {
 	title: string;
 }
 
-interface ReaderFeed {
+export interface ReaderFeed {
 	description: string;
 	feed_URL: string;
 	is_error: boolean;
