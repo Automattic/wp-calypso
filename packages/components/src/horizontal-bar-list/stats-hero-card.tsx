@@ -24,6 +24,7 @@ const StatsHeroCard = ( {
 	toggleControl,
 	headerClassName,
 	overlay,
+	downloadCsv,
 }: StatsCardProps ) => {
 	const translate = useTranslate();
 
@@ -71,7 +72,10 @@ const StatsHeroCard = ( {
 				className={ `${ BASE_CLASS_NAME }-header ${ headerClassName } ${ BASE_CLASS_NAME }-header--split` }
 			>
 				<div className={ `${ BASE_CLASS_NAME }-header--main` }>
-					{ titleNode }
+					<div className={ `${ BASE_CLASS_NAME }-header--main__left` }>
+						{ titleNode }
+						{ downloadCsv }
+					</div>
 					{ toggleControl }
 				</div>
 			</div>

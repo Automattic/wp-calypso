@@ -1,7 +1,5 @@
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { HelpCenterStepButton } from '@automattic/help-center';
 import { ActionButtons } from '@automattic/onboarding';
-import { Button } from '@wordpress/components';
-import { useDispatch, useSelect as useDataStoreSelect } from '@wordpress/data';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -13,33 +11,6 @@ import NavigationLink from 'calypso/signup/navigation-link';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import './style.scss';
-
-function HelpCenterButton( { helpCenterButtonText, hasPremiumSupport } ) {
-	const { setShowHelpCenter, setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
-	const isShowingHelpCenter = useDataStoreSelect(
-		( select ) => select( HELP_CENTER_STORE ).isHelpCenterShown(),
-		[]
-	);
-
-	if ( ! helpCenterButtonText ) {
-		return;
-	}
-
-	function openHelpCenter() {
-		setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport );
-		if ( hasPremiumSupport ) {
-			setNavigateToRoute( `/odie?provider=zendesk` );
-		} else {
-			setNavigateToRoute( `/odie` );
-		}
-	}
-
-	return (
-		<Button onClick={ openHelpCenter } className="step-wrapper__help-center-button">
-			{ helpCenterButtonText }
-		</Button>
-	);
-}
 
 class StepWrapper extends Component {
 	static propTypes = {
@@ -240,6 +211,10 @@ class StepWrapper extends Component {
 			sticky = isSticky;
 		}
 
+		const queryParams = new URLSearchParams( window?.location.search );
+		const flags = queryParams.get( 'flags' );
+		const isHelpCenterLinkEnabled = flags === 'signup/help-center-link';
+
 		return (
 			<>
 				<div className={ classes }>
@@ -248,10 +223,11 @@ class StepWrapper extends Component {
 						{ skipButton }
 						{ nextButton }
 						{ customizedActionButtons }
-						{ flow?.enableHelpCenter && (
-							<HelpCenterButton
-								helpCenterButtonText={ flow?.helpCenterButtonText }
-								hasPremiumSupport={ flow?.enablePremiumSupport }
+						{ isHelpCenterLinkEnabled && (
+							<HelpCenterStepButton
+								flowName={ flowName }
+								helpCenterButtonCopy={ flow?.helpCenterButtonCopy }
+								helpCenterButtonLink={ flow?.helpCenterButtonLink }
 							/>
 						) }
 					</ActionButtons>

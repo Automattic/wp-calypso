@@ -1,5 +1,6 @@
 import { useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
+import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
 import {
 	AssertConditionResult,
@@ -12,13 +13,14 @@ import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useLoginUrl } from '../utils/path';
-import DomainContactInfo from './internals/steps-repository/domain-contact-info';
+
+const DOMAIN_USER_TRANSFER_STEPS = [ STEPS.DOMAIN_CONTACT_INFO ];
 
 const domainUserTransfer: Flow = {
 	name: 'domain-user-transfer',
 	isSignupFlow: false,
 	useSteps() {
-		return [ { slug: 'domain-contact-info', component: DomainContactInfo } ];
+		return DOMAIN_USER_TRANSFER_STEPS;
 	},
 
 	useStepNavigation( currentStep, navigate ) {

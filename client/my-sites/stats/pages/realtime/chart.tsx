@@ -136,7 +136,6 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 	const chartDataSeries = [
 		{
 			label: 'Views',
-			options: {}, //TODO: remove this after fixing chart lib typings.
 			data: chartData,
 		},
 	];

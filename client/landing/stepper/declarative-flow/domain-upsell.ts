@@ -6,10 +6,11 @@ import { useQuery } from '../hooks/use-query';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
-import DomainsStep from './internals/steps-repository/domains';
-import PlansStep from './internals/steps-repository/plans';
+import { STEPS } from './internals/steps';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
+
+const DOMAIN_UPSELL_STEPS = [ STEPS.DOMAINS, STEPS.PLANS ];
 
 const domainUpsell: Flow = {
 	name: DOMAIN_UPSELL_FLOW,
@@ -19,10 +20,7 @@ const domainUpsell: Flow = {
 	isSignupFlow: false,
 
 	useSteps() {
-		return [
-			{ slug: 'domains', component: DomainsStep },
-			{ slug: 'plans', component: PlansStep },
-		];
+		return DOMAIN_UPSELL_STEPS;
 	},
 
 	useStepNavigation( currentStep, navigate ) {

@@ -2,7 +2,7 @@
 @import "@wordpress/base-styles/mixins";
 @import "calypso/assets/stylesheets/p2-extends";
 
-@import "~@automattic/color-studio/dist/color-variables";
+@import "@automattic/color-studio/dist/color-variables";
 
 $breakpoint-mobile: 782px; //Mobile size.
 

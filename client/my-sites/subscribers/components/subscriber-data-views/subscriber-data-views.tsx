@@ -1,12 +1,9 @@
-import { Gravatar } from '@automattic/components';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { Gravatar, TimeSince } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Tooltip } from '@wordpress/components';
 import { DataViews, type View, type Action, Operator } from '@wordpress/dataviews';
 import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
-import { hasTranslation } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso';
-import TimeSince from 'calypso/components/time-since';
 import { useSubscribedNewsletterCategories } from 'calypso/data/newsletter-categories';
 import { useSelector } from 'calypso/state';
 import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/settings/selectors';
@@ -74,7 +71,6 @@ const SubscriberDataViews = ( {
 	isUnverified,
 }: SubscriberDataViewsProps ) => {
 	const isMobile = useBreakpoint( '<660px' );
-	const isEnglishLocale = useIsEnglishLocale();
 
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ filters, setFilters ] = useState< SubscribersFilterBy[] >( [ SubscribersFilterBy.All ] );
@@ -140,6 +136,7 @@ const SubscriberDataViews = ( {
 			siteId: siteId as number,
 			subscriptionId: selectedSubscriber?.subscription_id,
 			userId: selectedSubscriber?.user_id,
+			enabled: !! selectedSubscriber,
 		} );
 
 	const { data: subscribersTotals } = useSubscriberCountQuery( siteId ?? null );
@@ -237,14 +234,11 @@ const SubscriberDataViews = ( {
 				label: translate( 'Email subscriber' ),
 				getValue: ( { item }: { item: Subscriber } ) => ( item.is_email_subscriber ? 'yes' : 'no' ),
 				render: ( { item }: { item: Subscriber } ) => {
-					const noTooltip =
-						isEnglishLocale || hasTranslation( 'Reader only subscriber' ) ? (
-							<Tooltip text={ translate( 'Reader only subscriber' ) }>
-								<span className="subscriber-data-views__tooltip-text">{ translate( 'No' ) }</span>
-							</Tooltip>
-						) : (
-							translate( 'No' )
-						);
+					const noTooltip = (
+						<Tooltip text={ translate( 'Reader only subscriber' ) }>
+							<span className="subscriber-data-views__tooltip-text">{ translate( 'No' ) }</span>
+						</Tooltip>
+					);
 
 					return <div>{ item.is_email_subscriber ? translate( 'Yes' ) : noTooltip }</div>;
 				},
@@ -270,7 +264,7 @@ const SubscriberDataViews = ( {
 				enableSorting: true,
 			},
 		],
-		[ isEnglishLocale ]
+		[]
 	);
 
 	const actions = useMemo< Action< Subscriber >[] >( () => {
@@ -409,11 +403,7 @@ const SubscriberDataViews = ( {
 							defaultLayouts={ selectedSubscriber ? { list: {} } : { table: {} } }
 							actions={ actions }
 							search
-							searchLabel={
-								isEnglishLocale || hasTranslation( 'Search subscribers…' )
-									? translate( 'Search subscribers…' )
-									: translate( 'Search by name, username or email…' )
-							}
+							searchLabel={ translate( 'Search subscribers…' ) }
 						/>
 					</>
 				) }

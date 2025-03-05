@@ -37,6 +37,11 @@
 	}
 }
 
+.is-section-signup {
+	.wpcom-loading__boot {
+		margin: calc( 32vh + 12px ) auto 0;
+	}
+}
 
 .wpcom__loading-ellipsis {
 	display: inline-block;

@@ -16,6 +16,7 @@ export type UserFields = {
 	messaging_plan?: string;
 	messaging_source?: string;
 	messaging_url?: string | null;
+	messaging_flow?: string | null;
 	/**
 	 * Site ID of the site the user is currently on.
 	 */

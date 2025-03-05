@@ -12,7 +12,6 @@ import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/url';
-import { GUIDED_ONBOARDING_FLOW_REFERRER } from 'calypso/signup/steps/initial-intent/constants';
 import { HOW_TO_MIGRATE_OPTIONS } from '../constants';
 import { useIsSiteAdmin } from '../hooks/use-is-site-admin';
 import { useSiteData } from '../hooks/use-site-data';
@@ -615,10 +614,6 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
-					if ( entryPoint === GUIDED_ONBOARDING_FLOW_REFERRER ) {
-						return exitFlow( '/start/initial-intent' );
-					}
-
 					return exitFlow( `/setup/site-setup/goals?${ urlQueryParams }` );
 				}
 

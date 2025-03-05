@@ -59,7 +59,7 @@ class ThemePreview extends Component {
 	};
 
 	render() {
-		const { themeId, siteId, demoUrl, children, isWPForTeamsSite } = this.props;
+		const { themeId, siteId, demoUrl, children, isWPForTeamsSite, themeOptions } = this.props;
 
 		if ( ! themeId || isWPForTeamsSite ) {
 			return null;
@@ -71,8 +71,10 @@ class ThemePreview extends Component {
 				{ children }
 				{ demoUrl && (
 					<WebPreview
+						themeId={ themeId }
 						showPreview
 						showExternal={ false }
+						showEditHeaderLink
 						showSEO={ false }
 						onClose={ this.props.hideThemePreview }
 						previewUrl={ this.appendStyleVariationOptionToUrl(
@@ -81,6 +83,7 @@ class ThemePreview extends Component {
 						) }
 						externalUrl={ demoUrl }
 						belowToolbar={ this.props.belowToolbar }
+						themeOptions={ themeOptions }
 					/>
 				) }
 			</div>

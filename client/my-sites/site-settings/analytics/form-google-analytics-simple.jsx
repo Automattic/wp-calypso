@@ -100,6 +100,8 @@ const GoogleAnalyticsSimpleForm = ( {
 								{ translate(
 									'A free analytics tool that offers additional insights into your site.'
 								) }{ ' ' }
+							</p>
+							<p>
 								<a
 									onClick={ recordSupportLinkClick }
 									href={ analyticsSupportUrl }
@@ -175,7 +177,7 @@ const GoogleAnalyticsSimpleForm = ( {
 								checked={ displayForm }
 								disabled={ isRequestingSettings || isSavingSettings }
 								onChange={ handleFormToggle }
-								label={ translate( 'Add Google' ) }
+								label={ translate( 'Add Google Analytics' ) }
 							/>
 						</div>
 						<Button

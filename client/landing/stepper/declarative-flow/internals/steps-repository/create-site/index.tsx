@@ -1,6 +1,4 @@
-import config from '@automattic/calypso-config';
-import { Site, Onboard } from '@automattic/data-stores';
-import { FREE_THEME } from '@automattic/design-picker';
+import { Site } from '@automattic/data-stores';
 import {
 	ENTREPRENEUR_FLOW,
 	StepContainer,
@@ -8,28 +6,21 @@ import {
 	addProductsToCart,
 	createSiteWithCart,
 	isCopySiteFlow,
-	isDesignFirstFlow,
-	isFreeFlow,
 	isImportFocusedFlow,
 	isMigrationSignupFlow,
-	isStartWritingFlow,
 	isEntrepreneurFlow,
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
-	isBlogOnboardingFlow,
-	isSiteAssemblerFlow,
 	isReadymadeFlow,
+	isStartWritingFlow,
 	isOnboardingFlow,
-	setThemeOnSite,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import { getQueryArg } from '@wordpress/url';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
 import useAddEcommerceTrialMutation from 'calypso/data/ecommerce/use-add-ecommerce-trial-mutation';
-import { useGoalsFirstCumulativeExperience } from 'calypso/data/experiment/use-goals-first-cumulative-experience';
 import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/use-add-temp-site-mutation';
 import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -97,7 +88,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 
 	const { mutateAsync: addEcommerceTrial } = useAddEcommerceTrialMutation( partnerBundle );
 	const [ , isGoalsFirstExperiment ] = useGoalsFirstExperiment();
-	const [ , isGoalsFirstCumulativeExperience ] = useGoalsFirstCumulativeExperience();
 
 	/**
 	 * Support singular and multiple domain cart items.
@@ -125,23 +115,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		theme = DEFAULT_NEWSLETTER_THEME;
 	}
 
-	let preselectedThemeSlug = '';
-	let preselectedThemeStyleVariation = '';
-
-	// Maybe set the theme for the user instead of taking them to the update-design flow.
-	// See: https://github.com/Automattic/wp-calypso/issues/83077
-	if ( isDesignFirstFlow( flow ) ) {
-		const themeSlug = getQueryArg( window.location.href, 'theme' );
-		const themeType = getQueryArg( window.location.href, 'theme_type' );
-		const styleVariation = getQueryArg( window.location.href, 'style_variation' );
-
-		// Only do this for preselected free themes with style variation.
-		if ( !! themeSlug && themeType === FREE_THEME && !! styleVariation ) {
-			preselectedThemeSlug = `pub/${ themeSlug }`;
-			preselectedThemeStyleVariation = styleVariation as string;
-		}
-	}
-
 	const isPaidDomainItem = Boolean(
 		domainCartItem?.product_slug ||
 			( Array.isArray( domainCartItems ) && domainCartItems.some( ( el ) => el.product_slug ) )
@@ -155,11 +128,9 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	if (
 		isOnboardingFlow( flow ) ||
 		isCopySiteFlow( flow ) ||
-		isFreeFlow( flow ) ||
 		isImportFocusedFlow( flow ) ||
-		isBlogOnboardingFlow( flow ) ||
+		isStartWritingFlow( flow ) ||
 		isNewHostedSiteCreationFlow( flow ) ||
-		isSiteAssemblerFlow( flow ) ||
 		isReadymadeFlow( flow ) ||
 		wooFlows.includes( flow || '' )
 	) {
@@ -181,7 +152,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	const useThemeHeadstart =
 		! isStartWritingFlow( flow ) &&
 		! isNewHostedSiteCreationFlow( flow ) &&
-		! isSiteAssemblerFlow( flow ) &&
 		! isMigrationSignupFlow( flow );
 	const shouldGoToCheckout = Boolean( planCartItem );
 
@@ -206,20 +176,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 
 		const siteIntent = isMigrationSignupFlow( flow ) ? 'migration' : '';
 
-		const getEnableFeaturesForGoals = () => {
-			if ( ! isGoalsFirstCumulativeExperience ) {
-				return undefined;
-			}
-
-			const featuresForGoals: Onboard.SiteGoal[] = [];
-
-			if ( config.isEnabled( 'onboarding/enable-write-goal-features' ) ) {
-				featuresForGoals.push( Onboard.SiteGoal.Write );
-			}
-
-			return featuresForGoals.length > 0 ? featuresForGoals : undefined;
-		};
-
 		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
 		const site = await createSiteWithCart(
 			flow,
@@ -240,13 +196,8 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			domainItem,
 			sourceSlug,
 			siteIntent,
-			shouldSaveSiteGoals ? siteGoals : undefined,
-			getEnableFeaturesForGoals()
+			shouldSaveSiteGoals ? siteGoals : undefined
 		);
-
-		if ( preselectedThemeSlug && site?.siteSlug ) {
-			await setThemeOnSite( site.siteSlug, preselectedThemeSlug, preselectedThemeStyleVariation );
-		}
 
 		if ( isEntrepreneurFlow( flow ) && site ) {
 			await addEcommerceTrial( { siteId: site.siteId } );
@@ -280,7 +231,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			siteId: site?.siteId,
 			siteSlug: site?.siteSlug,
 			goToCheckout: shouldGoToCheckout,
-			hasSetPreselectedTheme: Boolean( preselectedThemeSlug ),
 			siteCreated: true,
 			skipMigration,
 		};

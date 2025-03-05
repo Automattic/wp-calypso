@@ -1,7 +1,6 @@
 import { isPlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card, Button, Gridicon } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import {
@@ -9,7 +8,7 @@ import {
 	INCOMING_DOMAIN_TRANSFER,
 	MAP_EXISTING_DOMAIN,
 } from '@automattic/urls';
-import { localize } from 'i18n-calypso';
+import { formatCurrency, localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';

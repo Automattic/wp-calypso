@@ -1,21 +1,10 @@
-import page, { Callback, Context as PageJSContext } from '@automattic/calypso-router';
+import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { siteSelection, navigation, sites } from 'calypso/my-sites/controller';
-import {
-	TOOLS_DEPLOYMENTS,
-	TOOLS_MONITORING,
-	TOOLS_LOGS_PHP,
-	TOOLS_LOGS_WEB,
-	TOOLS_STAGING_SITE,
-	TOOLS,
-} from 'calypso/sites/components/site-preview-pane/constants';
+import { TOOLS_DEPLOYMENTS, TOOLS } from 'calypso/sites/components/site-preview-pane/constants';
 import { redirectToHostingFeaturesIfNotAtomic, siteDashboard } from 'calypso/sites/controller';
 import {
-	stagingSite,
 	deployments,
-	monitoring,
-	phpErrorLogs,
-	webServerLogs,
 	deploymentCreation,
 	deploymentManagement,
 	deploymentRunLogs,
@@ -30,18 +19,6 @@ export default function () {
 		navigation,
 		tools,
 		siteDashboard( TOOLS ),
-		makeLayout,
-		clientRender
-	);
-
-	page( '/sites/tools/staging-site', siteSelection, sites, makeLayout, clientRender );
-	page(
-		'/sites/tools/staging-site/:site',
-		siteSelection,
-		redirectToHostingFeaturesIfNotAtomic,
-		navigation,
-		stagingSite,
-		siteDashboard( TOOLS_STAGING_SITE ),
 		makeLayout,
 		clientRender
 	);
@@ -84,44 +61,6 @@ export default function () {
 		navigation,
 		deploymentRunLogs,
 		siteDashboard( TOOLS_DEPLOYMENTS ),
-		makeLayout,
-		clientRender
-	);
-
-	page( '/sites/tools/monitoring', siteSelection, sites, makeLayout, clientRender );
-	page(
-		'/sites/tools/monitoring/:site',
-		siteSelection,
-		redirectToHostingFeaturesIfNotAtomic,
-		navigation,
-		monitoring,
-		siteDashboard( TOOLS_MONITORING ),
-		makeLayout,
-		clientRender
-	);
-
-	const redirectLogsToPhp: Callback = ( context: PageJSContext ) => {
-		return context.page.redirect( `/sites/tools/logs/${ context.params.site }/php` );
-	};
-	page( '/sites/tools/logs/:site', redirectLogsToPhp );
-	page( '/sites/tools/logs', siteSelection, sites, makeLayout, clientRender );
-	page(
-		'/sites/tools/logs/:site/php',
-		siteSelection,
-		redirectToHostingFeaturesIfNotAtomic,
-		navigation,
-		phpErrorLogs,
-		siteDashboard( TOOLS_LOGS_PHP ),
-		makeLayout,
-		clientRender
-	);
-	page(
-		'/sites/tools/logs/:site/web',
-		siteSelection,
-		redirectToHostingFeaturesIfNotAtomic,
-		navigation,
-		webServerLogs,
-		siteDashboard( TOOLS_LOGS_WEB ),
 		makeLayout,
 		clientRender
 	);

@@ -107,6 +107,20 @@
 	}
 }
 
+.web-preview__loading-spinner.button {
+	padding: 6px 16px;
+	color: var(--color-primary);
+	border-radius: 0;
+
+	@include break-large {
+		padding: 6px 32px;
+	}
+
+	&:hover {
+		color: var(--color-accent);
+	}
+}
+
 .web-preview__external {
 	min-width: 120px;
 	text-align: center;

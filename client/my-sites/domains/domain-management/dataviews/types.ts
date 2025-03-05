@@ -9,6 +9,7 @@ import { SiteDomainsQueryFnData } from '@automattic/data-stores/src/queries/use-
 import { DomainStatusPurchaseActions, ResponseDomain } from '@automattic/domains-table';
 import { DomainAction } from '@automattic/domains-table/src/domains-table/domains-table-row-actions';
 import { SiteExcerptData } from '@automattic/sites';
+import { QueryParams } from './query-params';
 
 /**
  * Utility type for domain action descriptions.
@@ -65,6 +66,7 @@ interface BaseDomainsDataViewsProps {
 	currentUserCanBulkUpdateContactInfo?: boolean;
 	hasConnectableSites?: boolean;
 	context?: DomainsDataViewUsage;
+	queryParams: QueryParams;
 }
 
 /**
