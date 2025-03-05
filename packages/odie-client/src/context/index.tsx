@@ -88,9 +88,10 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 		};
 	}, [] );
 
+	// Default to give_wapuu_a_chance behavior since the experiment has concluded
 	const [ experimentVariationName, setExperimentVariationName ] = useState<
 		string | null | undefined
-	>( null );
+	>( 'give_wapuu_a_chance' );
 
 	/**
 	 * The main chat thread.

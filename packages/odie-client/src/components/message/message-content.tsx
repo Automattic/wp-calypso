@@ -25,7 +25,6 @@ export const MessageContent = ( {
 	displayChatWithSupportLabel?: boolean;
 } ) => {
 	const { __ } = useI18n();
-	const { experimentVariationName } = useOdieAssistantContext();
 	const messageClasses = clsx(
 		'odie-chatbox-message',
 		`odie-chatbox-message-${ message.role }`,
@@ -37,8 +36,8 @@ export const MessageContent = ( {
 		isNextMessageFromSameSender && 'next-chat-message-same-sender'
 	);
 
-	const stopConflatingNegativeRatingWithContactSupport =
-		experimentVariationName === 'give_wapuu_a_chance';
+	// Default to give_wapuu_a_chance behavior
+	const stopConflatingNegativeRatingWithContactSupport = true;
 
 	const isMessageWithOnlyText =
 		message.context?.flags?.hide_disclaimer_content ||

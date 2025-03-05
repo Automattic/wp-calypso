@@ -22,34 +22,19 @@ export const UserMessage = ( {
 	message: Message;
 	isMessageWithoutEscalationOption?: boolean;
 } ) => {
-	const {
-		isUserEligibleForPaidSupport,
-		hasUserEverEscalatedToHumanSupport,
-		trackEvent,
-		chat,
-		experimentVariationName,
-	} = useOdieAssistantContext();
+	const { isUserEligibleForPaidSupport, hasUserEverEscalatedToHumanSupport, trackEvent, chat } =
+		useOdieAssistantContext();
 
 	const hasCannedResponse = message.context?.flags?.canned_response;
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support ?? false;
 	const hasFeedback = !! message?.rating_value;
 	const isBot = message.role === 'bot';
 	const isConnectedToZendesk = chat?.provider === 'zendesk';
-	const isPositiveFeedback =
-		hasFeedback && message && message.rating_value && +message.rating_value === 1;
 
-	const isExperimentGiveWapuuAChance = experimentVariationName === 'give_wapuu_a_chance';
+	// Default to give_wapuu_a_chance behavior
+	const showExtraContactOptions = isRequestingHumanSupport;
 
-	let showExtraContactOptions = false;
-	if ( isExperimentGiveWapuuAChance ) {
-		showExtraContactOptions = isRequestingHumanSupport;
-	} else {
-		showExtraContactOptions = ( hasFeedback && ! isPositiveFeedback ) || isRequestingHumanSupport;
-	}
-
-	const showDirectEscalationLink = isExperimentGiveWapuuAChance
-		? hasUserEverEscalatedToHumanSupport
-		: ! ( hasFeedback && ! isPositiveFeedback ) || isRequestingHumanSupport;
+	const showDirectEscalationLink = hasUserEverEscalatedToHumanSupport;
 
 	const forwardMessage = isUserEligibleForPaidSupport
 		? ODIE_FORWARD_TO_ZENDESK_MESSAGE

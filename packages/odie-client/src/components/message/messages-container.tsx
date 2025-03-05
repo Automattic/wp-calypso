@@ -49,7 +49,7 @@ interface ChatMessagesProps {
 }
 
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
-	const { chat, botNameSlug, experimentVariationName, isChatLoaded, isUserEligibleForPaidSupport } =
+	const { chat, botNameSlug, isChatLoaded, isUserEligibleForPaidSupport } =
 		useOdieAssistantContext();
 	const createZendeskConversation = useCreateZendeskConversation();
 	const resetSupportInteraction = useResetSupportInteraction();
@@ -134,11 +134,10 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		return currentMessage === nextMessage;
 	};
 
-	const removeDislikeStatus = experimentVariationName === 'give_wapuu_a_chance';
+	// Default to give_wapuu_a_chance behavior
+	const removeDislikeStatus = true;
 
-	const availableStatusWithFeedback = removeDislikeStatus
-		? [ 'sending', 'transfer' ]
-		: [ 'sending', 'dislike', 'transfer' ];
+	const availableStatusWithFeedback = [ 'sending', 'transfer' ];
 
 	return (
 		<>
