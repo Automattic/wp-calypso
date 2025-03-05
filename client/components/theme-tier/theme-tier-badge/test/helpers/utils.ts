@@ -4,7 +4,7 @@ import productsListReducer from 'calypso/state/products-list/reducer';
 import purchasesReducer from 'calypso/state/purchases/reducer';
 import themeReducer from 'calypso/state/themes/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import ThemeTierBadge from '../index';
+import ThemeTierBadge from '../../index';
 import { themes } from './fixtures';
 
 type ReduxSettings = {

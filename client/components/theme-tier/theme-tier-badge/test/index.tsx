@@ -4,8 +4,8 @@ import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import wpcomProxyRequest from 'wpcom-proxy-request';
 import ThemeTierBadge from '../index';
-import { PERSONAL_PLAN } from './fixtures';
-import { render } from './utils';
+import { PERSONAL_PLAN } from './helpers/fixtures';
+import { render } from './helpers/utils';
 
 jest.mock( 'wpcom-proxy-request', () => jest.fn() );
 
