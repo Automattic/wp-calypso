@@ -17,8 +17,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
-import { localizeThemesPath, shouldSelectSite } from 'calypso/my-sites/themes/helpers';
-import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
@@ -57,7 +57,6 @@ import {
 	isWporgTheme,
 } from 'calypso/state/themes/selectors';
 import { isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors/is-marketplace-theme-subscribed';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Get the checkout path slug for the given site and minimum plan.
@@ -385,23 +384,9 @@ function getAllThemeOptions( { translate, isFSEActive, isGlobalStylesOnPersonal 
 		},
 	};
 
-	const signupLabel = ( state ) =>
-		shouldSelectSite( {
-			isLoggedIn: isUserLoggedIn( state ),
-			siteCount: getCurrentUserSiteCount( state ),
-			siteId: getSelectedSiteId( state ),
-		} )
-			? translate( 'Select a site', {
-					comment:
-						'On the theme details page, button text shown so the user selects one of their sites before activating the selected theme',
-			  } )
-			: translate( 'Pick this design', {
-					comment: 'when signing up for a WordPress.com account with a selected theme',
-			  } );
-
 	const signup = {
-		label: signupLabel,
-		extendedLabel: signupLabel,
+		label: translate( 'Activate' ),
+		extendedLabel: translate( 'Activate' ),
 		getUrl: ( state, themeId, siteId, options ) => getThemeSignupUrl( state, themeId, options ),
 		hideForTheme: ( state, themeId, siteId ) => isUserLoggedIn( state ) && siteId,
 	};
