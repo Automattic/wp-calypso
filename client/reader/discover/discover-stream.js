@@ -112,7 +112,7 @@ const DiscoverStream = ( props ) => {
 	const HeaderAndNavigation = () => {
 		return (
 			<>
-				{ previousRoute && <BackButton onClick={ () => page.back( previousRoute ) } /> }
+				{ props.showBack && <BackButton onClick={ () => page.back( previousRoute ) } /> }
 				<DiscoverHeader selectedTab={ effectiveTabSelection } width={ props.width } />
 				<DiscoverNavigation selectedTab={ selectedTab } />
 

@@ -23,6 +23,15 @@ export const getSiteUrl = ( { feed, site, post } = {} ) => {
 };
 
 /**
+ * Given a feed, site, or post: return the site icon. return false if one could not be found.
+ * @param {Object} post - Post object.
+ * @returns {string|undefined} Url of the site icon or undefined if not found.
+ */
+export function getPostIcon( post ) {
+	return post?.site_icon?.img || post?.site_icon || post?.author?.avatar_URL;
+}
+
+/**
  * Given a feed, site, or post: return the feed url. return false if one could not be found.
  * The feed url is different from the site url in that it is unique per feed. A single siteUrl may
  * be home to many feeds
