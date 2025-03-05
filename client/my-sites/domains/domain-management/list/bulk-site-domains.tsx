@@ -227,6 +227,11 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 					visible={ showPointToWpcomModal }
 					onClose={ ( accepted: boolean ) => {
 						setShowPointToWpcomModal( false );
+						dispatch(
+							recordTracksEvent( 'calypso_domain_management_point_to_wpcom', {
+								accepted,
+							} )
+						);
 						if ( accepted ) {
 							onPointToWpcom( domainToPointToWpcom ?? '' );
 						}
