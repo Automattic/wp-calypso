@@ -1,9 +1,10 @@
+import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import { ReactElement } from 'react';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
@@ -82,6 +83,16 @@ export const SubscribersHeader = ( {
 	const closeSubscriberModal = () => {
 		setShowSubscriberModal( SubscriberModalType.NONE );
 	};
+
+	// Open the add subscribers modal on mount if the URL hash is #add-subscribers
+	useEffect( () => {
+		if ( window.location.hash === '#add-subscribers' ) {
+			setShowSubscriberModal( SubscriberModalType.ADD );
+
+			// Remove the hash from the URL and the entry from the browser history to clean up
+			page.redirect( window.location.pathname + window.location.search );
+		}
+	}, [] );
 
 	return (
 		<>
