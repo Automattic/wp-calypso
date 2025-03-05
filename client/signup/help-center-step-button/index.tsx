@@ -1,20 +1,28 @@
-/* eslint-disable no-restricted-imports */
+import { HelpCenterInlineButton } from '@automattic/help-center';
 import { useTranslate } from 'i18n-calypso';
-import HelpCenterInlineButton from './help-center-inline-button';
+import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import type { FC } from 'react';
 
 interface HelpCenterStepButtonProps {
 	flowName?: string;
+	enabledGeos?: string[];
 	helpCenterButtonCopy?: string;
 	helpCenterButtonLink?: string;
 }
 
 const HelpCenterStepButton: FC< HelpCenterStepButtonProps > = ( {
 	flowName,
+	enabledGeos,
 	helpCenterButtonCopy,
 	helpCenterButtonLink,
 } ) => {
 	const translate = useTranslate();
+
+	const { data: geoData } = useGeoLocationQuery();
+
+	if ( ! geoData?.country_short || ! enabledGeos?.includes( geoData.country_short ) ) {
+		return null;
+	}
 
 	return (
 		<div className="step-wrapper__help-center-button-container">

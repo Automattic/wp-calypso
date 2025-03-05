@@ -1,13 +1,11 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { HelpCenterStepButton } from '@automattic/help-center';
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import DIFMLanding from 'calypso/my-sites/marketing/do-it-for-me/difm-landing';
+import HelpCenterStepButton from 'calypso/signup/help-center-step-button';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import type { Step } from '../../types';
 import type { AppState } from 'calypso/types';
@@ -20,10 +18,9 @@ const DIFMStartingPoint: Step = function ( { navigation, flow } ) {
 	const siteId = useSite()?.ID;
 	const showNewOrExistingSiteChoice = ! siteId && !! existingSiteCount && existingSiteCount > 0;
 
-	const { data: geoData } = useGeoLocationQuery();
-
-	const isHelpCenterLinkEnabled =
-		geoData?.country_short === 'US' && isEnabled( 'signup/help-center-link' );
+	const queryParams = new URLSearchParams( window?.location.search );
+	const flags = queryParams.get( 'flags' )?.split( ',' );
+	const isHelpCenterLinkEnabled = flags?.includes( 'signup/help-center-link' );
 
 	const onSubmit = ( value: string ) => {
 		submit?.( {
@@ -46,6 +43,7 @@ const DIFMStartingPoint: Step = function ( { navigation, flow } ) {
 					isHelpCenterLinkEnabled ? (
 						<HelpCenterStepButton
 							flowName={ flow }
+							enabledGeos={ [ 'US' ] }
 							helpCenterButtonCopy={ translate( 'Questions?' ) }
 							helpCenterButtonLink={ translate( 'Contact our site building team' ) }
 						/>

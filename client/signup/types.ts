@@ -23,6 +23,7 @@ export interface Flow {
 	hideProgressIndicator?: boolean;
 	helpCenterButtonText?: string;
 	enableHotjar?: boolean;
+	enabledHelpCenterGeos?: string[];
 	onEnterFlow?: ( flowName: string ) => void;
 }
 

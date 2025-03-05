@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { HelpCenterInlineButton } from '@automattic/help-center';
 import { Button } from '@wordpress/components';
@@ -61,8 +60,10 @@ export default function DIFMSitePickerStep( props: Props ) {
 
 	const { data: geoData } = useGeoLocationQuery();
 
+	const queryParams = new URLSearchParams( window?.location.search );
+	const flags = queryParams.get( 'flags' )?.split( ',' );
 	const isHelpCenterLinkEnabled =
-		geoData?.country_short === 'US' && isEnabled( 'signup/help-center-link' );
+		flags?.includes( 'signup/help-center-link' ) && geoData?.country_short === 'US';
 
 	const subHeaderText = translate(
 		'Please {{SupportLink}}contact support{{/SupportLink}} if your existing WordPress.com site isn’t listed, or create a {{NewSiteLink}}new site{{/NewSiteLink}} instead.',

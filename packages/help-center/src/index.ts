@@ -4,7 +4,6 @@ export { SuccessIcon } from './components/success-icon';
 export { SuccessScreen } from './components/ticket-success-screen';
 export { BackButton } from './components/back-button';
 export { HelpCenterContactForm } from './components/help-center-contact-form';
-export { default as HelpCenterStepButton } from './components/help-center-step-button';
 export { default as HelpCenterInlineButton } from './components/help-center-inline-button';
 export { default as Mail } from './icons/mail';
 export { default as NewReleases } from './icons/new-releases';
