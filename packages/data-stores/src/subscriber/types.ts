@@ -31,7 +31,7 @@ export type ImportJob = {
 
 export type CompletedImportJob = {
 	id: number;
-	status: 'imported';
+	status: 'imported' | 'cancelled';
 	email_count: number;
 	subscribed_count: number;
 	already_subscribed_count: number;

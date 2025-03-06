@@ -3,6 +3,7 @@ import { Subscriber } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ExternalLink } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
+import { useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
@@ -43,10 +44,11 @@ export const StaleImportJobsNotice = ( {
 	isJetpack: boolean | null;
 	siteId: number | null;
 } ) => {
+	const [ isCancelling, setIsCancelling ] = useState( false );
 	const translate = useTranslate();
 	const imports =
 		useSelect( ( select ) => select( Subscriber.store ).getImportJobsSelector(), [] ) || [];
-	const lastImportWasCancelled = imports[ imports.length - 1 ]?.status === 'cancelled';
+	const lastImportWasCancelled = imports[ 1 ]?.status === 'cancelled';
 	const { mutate: resetImportStatus } = useSubscriberImportStatusReset( siteId );
 
 	return (
@@ -76,10 +78,11 @@ export const StaleImportJobsNotice = ( {
 					</span>
 					<NoticeAction
 						onClick={ () => {
+							setIsCancelling( true );
 							resetImportStatus();
 						} }
 					>
-						{ translate( 'Cancel import' ) }
+						{ isCancelling ? translate( 'Cancelling import…' ) : translate( 'Cancel import' ) }
 					</NoticeAction>
 				</>
 			) }
