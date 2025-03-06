@@ -98,6 +98,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 		it( 'Editor loads', async function () {
 			editorPage = new EditorPage( page );
 			await editorPage.waitUntilLoaded();
+			await new Promise( ( r ) => setTimeout( r, 2000 ) );
 			await editorPage.closeWelcomeGuideIfNeeded();
 		} );
 
@@ -106,7 +107,6 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 		} );
 
 		it( 'Publish post', async function () {
-			await editorPage.closeWelcomeGuideIfNeeded();
 			await editorPage.publish();
 			await page.goto(
 				DataHelper.getCalypsoURL( `/home/${ newSiteDetails.blog_details.site_slug }` )
