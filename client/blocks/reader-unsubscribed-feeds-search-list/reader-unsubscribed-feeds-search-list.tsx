@@ -1,9 +1,8 @@
 import { Reader } from '@automattic/data-stores';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useMemo } from 'react';
-import { isNonWpcomFeedItem, isWpcomFeedItem } from 'calypso/reader/helpers/types';
-import ReaderUnsubscribedNonWpcomFeedItem from './reader-unsubscribed-non-wpcom-feed-item';
-import ReaderUnsubscribedWpcomFeedItem from './reader-unsubscribed-wpcom-feed-item';
+import ReaderFeedItemRow from 'calypso/blocks/reader-feed-item';
+import { SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST } from 'calypso/landing/subscriptions/tracks';
 import './style.scss';
 
 const ReaderUnsubscribedFeedsSearchList = () => {
@@ -14,28 +13,21 @@ const ReaderUnsubscribedFeedsSearchList = () => {
 			return [];
 		}
 
-		return feedItems?.map( ( feed, index ) => {
-			if ( isWpcomFeedItem( feed ) ) {
-				return (
-					<ReaderUnsubscribedWpcomFeedItem
-						key={ `${ feed.blog_ID }-${ feed.feed_ID }` }
-						feed={ feed }
-						uiPosition={ index }
-					/>
-				);
+		return feedItems?.map( ( feed, index ): JSX.Element | null => {
+			if ( ! feed.feed_ID ) {
+				return null;
 			}
 
-			if ( isNonWpcomFeedItem( feed ) ) {
-				return (
-					<ReaderUnsubscribedNonWpcomFeedItem
-						key={ `${ feed.feed_ID }-${ feed.subscribe_URL }` }
-						feed={ feed }
-						uiPosition={ index }
-					/>
-				);
-			}
-
-			return null;
+			return (
+				<ReaderFeedItemRow
+					key={ `${ feed.blog_ID }-${ feed.feed_ID }` }
+					blogId={ feed.blog_ID ?? null } // null is used for non-wpcom feeds.
+					feedId={ feed.feed_ID }
+					uiPosition={ index }
+					railcar={ feed.railcar }
+					source={ SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST }
+				/>
+			);
 		} );
 	}, [ feedItems ] );
 
