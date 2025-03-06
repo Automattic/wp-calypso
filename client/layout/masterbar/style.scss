@@ -962,18 +962,12 @@ body.is-mobile-app-view {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 4px;
-	}
-}
 
-.masterbar__site-badge {
-	display: inline-block;
-	border-radius: 3px;
-	padding: 6px;
-	font-size: 12px; /* stylelint-disable-line declaration-property-unit-allowed-list */
-	line-height: 1.3;
-	position: relative;
-	background-color: var(--color-global-masterbar-site-info-badge-background, var(--studio-gray-70) );
-	color: var(--color-global-masterbar-site-info-badge-color);
+		.components-badge:where(.is-default) {
+			background-color: var(--color-global-masterbar-site-info-badge-background, var(--studio-gray-70));
+			color: var(--color-global-masterbar-site-info-badge-color);
+		}
+	}
 }
 
 .masterbar__item-reader-label {

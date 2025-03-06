@@ -8,6 +8,7 @@ import { parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
+import CoreBadge from 'calypso/components/core/badge';
 import Gravatar from 'calypso/components/gravatar';
 import { getStatsPathForTab } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
@@ -441,103 +442,63 @@ class MasterbarLoggedIn extends Component {
 
 		// P2 Badge
 		if ( isSiteP2 && ! isP2Hub ) {
-			badges.push(
-				<span key="p2" className="masterbar__site-badge is-p2">
-					P2
-				</span>
-			);
+			badges.push( 'P2' );
 		}
 
 		// Staging Badge
 		if ( site?.is_wpcom_staging_site ) {
-			badges.push(
-				<span key="staging" className="masterbar__site-badge is-staging">
-					{ translate( 'Staging' ) }
-				</span>
-			);
+			badges.push( translate( 'Staging' ) );
 		}
 
 		// Trial Badge
 		if ( isTrial ) {
-			badges.push(
-				<span key="trial" className="masterbar__site-badge is-trial">
-					{ translate( 'Trial' ) }
-				</span>
-			);
+			badges.push( translate( 'Trial' ) );
 		}
 
 		// P2 Workspace Badge
 		if ( isP2Hub ) {
-			badges.push(
-				<span key="p2-workspace" className="masterbar__site-badge is-p2-workspace">
-					P2 Workspace
-				</span>
-			);
+			badges.push( 'P2 Workspace' );
 		}
 
 		// Private/Coming Soon Badge
 		if ( site.is_private ) {
 			badges.push(
-				<span key="private" className="masterbar__site-badge is-private">
-					{ shouldShowPrivateByDefaultComingSoonBadge
-						? translate( 'Coming Soon' )
-						: translate( 'Private' ) }
-				</span>
+				shouldShowPrivateByDefaultComingSoonBadge
+					? translate( 'Coming Soon' )
+					: translate( 'Private' )
 			);
 		}
 
 		// Express Service Badge
 		if ( site.options && site.options.is_difm_lite_in_progress ) {
-			badges.push(
-				<span key="express" className="masterbar__site-badge is-express">
-					{ translate( 'Express Service' ) }
-				</span>
-			);
+			badges.push( translate( 'Express Service' ) );
 		}
 
 		// Public Coming Soon Badge
 		if ( shouldShowPublicComingSoonSiteBadge ) {
-			badges.push(
-				<span key="coming-soon" className="masterbar__site-badge is-coming-soon">
-					{ translate( 'Coming Soon' ) }
-				</span>
-			);
+			badges.push( translate( 'Coming Soon' ) );
 		}
 
 		// Redirect Badge
 		if ( site.options && site.options.is_redirect ) {
-			badges.push(
-				<span key="redirect" className="masterbar__site-badge is-redirect">
-					{ translate( 'Redirect' ) }
-				</span>
-			);
+			badges.push( translate( 'Redirect' ) );
 		}
 
 		// Domain Badge
 		if ( site.options && site.options.is_domain_only ) {
-			badges.push(
-				<span key="domain" className="masterbar__site-badge is-domain-only">
-					{ translate( 'Domain' ) }
-				</span>
-			);
+			badges.push( translate( 'Domain' ) );
 		}
 
 		// Site updates/errors indicators
 		if ( siteUpdates && ! siteIsConnected === false && siteUpdates.total > 0 ) {
-			badges.push(
-				<span key="updates" className="masterbar__site-badge is-updates">
-					{ translate( 'Updates' ) }
-				</span>
-			);
+			badges.push( translate( 'Updates' ) );
 		} else if ( siteIsConnected === false ) {
-			badges.push(
-				<span key="error" className="masterbar__site-badge is-error">
-					{ translate( 'Connection Error' ) }
-				</span>
-			);
+			badges.push( translate( 'Connection Error' ) );
 		}
 
-		return badges.length > 0 ? badges : null;
+		return badges.length > 0
+			? badges.map( ( badge ) => <CoreBadge key={ badge }>{ badge }</CoreBadge> )
+			: null;
 	}
 
 	renderSiteMenu() {
@@ -587,7 +548,7 @@ class MasterbarLoggedIn extends Component {
 							<div className="masterbar__site-info">
 								<span className="masterbar__site-info-label">{ translate( 'Plan' ) }</span>
 								<div className="masterbar__info-badges">
-									<span className="masterbar__site-badge is-plan">{ sitePlanName }</span>
+									<CoreBadge>{ sitePlanName }</CoreBadge>
 								</div>
 							</div>
 						</div>
