@@ -7,6 +7,7 @@ import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import AsyncLoad from 'calypso/components/async-load';
 import UplotChart from 'calypso/components/chart-uplot';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
+import { formatDate } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import { useSelector } from 'calypso/state';
 import useCssVariable from '../hooks/use-css-variable';
 import StatsModulePlaceholder from '../stats-module/placeholder';
@@ -71,11 +72,36 @@ function transformUplotData(
 type ChartDataPoint = {
 	date: Date;
 	value: number;
+	label?: string | null;
+};
+
+const formatDateLabel = ( date: Date, period: PeriodType ): string => {
+	switch ( period ) {
+		case 'week':
+		case 'day':
+			return date.toLocaleDateString( undefined, {
+				month: 'short',
+				day: 'numeric',
+			} );
+		case 'month':
+			return date.toLocaleDateString( undefined, {
+				month: 'short',
+				year: 'numeric',
+			} );
+		case 'year':
+			return date.getFullYear().toString();
+		default:
+			return date.toLocaleDateString( undefined, {
+				month: 'short',
+				day: 'numeric',
+			} );
+	}
 };
 
 const transformLineChartData = (
 	data: SubscribersData[],
-	hasAddedPaidSubscriptionProduct: boolean
+	hasAddedPaidSubscriptionProduct: boolean,
+	period: PeriodType
 ): ChartDataPoint[][] => {
 	const subscribersData: ChartDataPoint[] = [];
 	const paidSubscribersData: ChartDataPoint[] = [];
@@ -88,6 +114,7 @@ const transformLineChartData = (
 		subscribersData.push( {
 			date: dateObj,
 			value: point.subscribers ?? 0,
+			label: formatDate( point.period, period ),
 		} );
 
 		if ( hasAddedPaidSubscriptionProduct ) {
@@ -127,26 +154,8 @@ export default function SubscribersChartSection( {
 	const formatTimeTick = useCallback(
 		( timestamp: number ) => {
 			const date = new Date( timestamp );
-			switch ( period ) {
-				case 'week':
-				case 'day':
-					return new Date( timestamp ).toLocaleDateString( undefined, {
-						month: 'short',
-						day: 'numeric',
-					} );
-				case 'month':
-					return date.toLocaleDateString( undefined, {
-						month: 'short',
-						year: 'numeric',
-					} );
-				case 'year':
-					return date.getFullYear().toString();
-				default:
-					return date.toLocaleDateString( undefined, {
-						month: 'short',
-						day: 'numeric',
-					} );
-			}
+
+			return formatDateLabel( date, period );
 		},
 		[ period ]
 	);
@@ -195,8 +204,8 @@ export default function SubscribersChartSection( {
 		[ data?.data, hasAddedPaidSubscriptionProduct ]
 	);
 	const [ subscribersData, paidSubscribersData ] = useMemo(
-		() => transformLineChartData( data?.data || [], hasAddedPaidSubscriptionProduct ),
-		[ data?.data, hasAddedPaidSubscriptionProduct ]
+		() => transformLineChartData( data?.data || [], hasAddedPaidSubscriptionProduct, period ),
+		[ data?.data, hasAddedPaidSubscriptionProduct, period ]
 	);
 
 	const lineChartData = [
