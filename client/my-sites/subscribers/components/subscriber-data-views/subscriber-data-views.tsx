@@ -288,11 +288,6 @@ const SubscriberDataViews = ( {
 				label: translate( 'View' ),
 				callback: ( items: Subscriber[] ) => {
 					if ( items[ 0 ] ) {
-						recordSubscriberClicked( 'row', {
-							site_id: siteId,
-							subscription_id: items[ 0 ].subscription_id,
-							user_id: items[ 0 ].user_id,
-						} );
 						handleSubscriberSelection( items[ 0 ] );
 					}
 				},
