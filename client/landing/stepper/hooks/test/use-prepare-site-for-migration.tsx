@@ -63,23 +63,24 @@ describe( 'usePrepareSiteForMigration', () => {
 	} );
 
 	it( 'should handle successful migration preparation', async () => {
-		// Mock transfer initiation
 		nock( API_ROOT )
-			.post( '/wpcom/v2/sites/123/atomic/transfer-with-software?http_envelope=1', {
-				body: {
-					plugins: { 'wpcom-migration': 'activate' },
-					settings: {},
-				},
+			.post( '/wpcom/v2/sites/123/atomic/transfer-with-software', {
+				plugins: [ 'wpcom-migration', 'activate' ],
+				themes: null,
+				settings: {},
 			} )
+			.query( { http_envelope: 1 } )
 			.reply( 200, {
 				transfer_with_software_id: 456,
 			} )
-			.get( `/wpcom/v2/sites/${ SITE_ID }/transfer-with-software/456?http_envelope=1` )
+			.get( `/wpcom/v2/sites/${ SITE_ID }/transfer-with-software/456` )
+			.query( { http_envelope: 1 } )
 			.reply( 200, {
 				atomic_transfer_status: 'success',
 				transfer_with_software_status: 'success',
 			} )
-			.get( `/wpcom/v2/sites/${ SITE_ID }/migration/key?http_envelope=1` )
+			.get( `/wpcom/v2/sites/${ SITE_ID }/migration/key` )
+			.query( { http_envelope: 1 } )
 			.reply( 200, { migration_key: 'test-key-123' } );
 
 		const { result } = render( { siteId: SITE_ID } );
