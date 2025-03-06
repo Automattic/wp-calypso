@@ -14,7 +14,7 @@ const fetchIntroOffers = ( action: { siteId: number | 'none'; currency: string |
 	return http(
 		{
 			method: 'GET',
-			path: `/introductory-offers`,
+			path: '/introductory-offers',
 			apiNamespace: 'wpcom/v2',
 			query: {
 				site: typeof action.siteId === 'number' && action.siteId > 0 ? action.siteId : undefined,

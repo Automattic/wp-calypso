@@ -154,15 +154,7 @@ const ProtectModule: FunctionComponent< ProtectModuleProps > = ( { siteId } ) =>
 
 	const activateModule = ( module: string ) => () => {
 		return wpcom.req
-			.post(
-				{
-					apiNamespace: 'jetpack/v4',
-					path: `/settings`,
-				},
-				{
-					[ module ]: true,
-				}
-			)
+			.post( { path: '/settings', apiNamespace: 'jetpack/v4' }, { [ module ]: true } )
 			.then( refetchProtectData );
 	};
 

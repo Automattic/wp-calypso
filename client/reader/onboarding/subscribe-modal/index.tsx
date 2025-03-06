@@ -82,7 +82,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 		queryFn: () =>
 			wpcom.req.get(
 				{
-					path: `/read/tags/cards`,
+					path: '/read/tags/cards',
 					apiNamespace: 'wpcom/v2',
 				},
 				{

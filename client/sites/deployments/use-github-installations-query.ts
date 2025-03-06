@@ -3,10 +3,7 @@ import wp from 'calypso/lib/wp';
 import { GITHUB_DEPLOYMENTS_QUERY_KEY } from './constants';
 
 const fetchInstallations = (): GitHubInstallationData[] =>
-	wp.req.get( {
-		path: `/hosting/github/installations`,
-		apiNamespace: 'wpcom/v2',
-	} );
+	wp.req.get( { path: '/hosting/github/installations', apiNamespace: 'wpcom/v2' } );
 
 const GITHUB_DEPLOYMENTS_INSTALLATIONS_QUERY_KEY = [
 	GITHUB_DEPLOYMENTS_QUERY_KEY,

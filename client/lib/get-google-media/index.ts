@@ -2,7 +2,7 @@ import wpcom from 'calypso/lib/wp';
 
 export function getGoogleMediaViaProxy( mediaUrl: string ): Promise< Blob > {
 	const params = {
-		path: `/meta/external-media/proxy/google_photos`,
+		path: '/meta/external-media/proxy/google_photos',
 		apiNamespace: 'wpcom/v2',
 		body: {
 			url: mediaUrl,

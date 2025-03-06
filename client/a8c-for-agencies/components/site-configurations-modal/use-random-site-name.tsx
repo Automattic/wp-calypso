@@ -22,8 +22,8 @@ export const getRandomSiteBaseUrl = async ( title: string ) => {
 const getRandomSiteName = async () => {
 	try {
 		const { suggestions } = await wpcom.req.get( {
+			path: '/site-suggestions',
 			apiNamespace: 'wpcom/v2',
-			path: `/site-suggestions`,
 		} );
 		const { title } = suggestions[ 0 ];
 

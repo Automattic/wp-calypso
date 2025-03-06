@@ -21,9 +21,9 @@ const useJetpackMasterbarDataQuery = (): UseQueryResult< MasterbarData > => {
 
 	return useQuery( {
 		queryKey,
-		queryFn: async () =>
+		queryFn: () =>
 			wpcom.req.get( {
-				path: `/jetpack-marketing/jetpack-menu`,
+				path: '/jetpack-marketing/jetpack-menu',
 				apiNamespace: 'wpcom/v2',
 			} ),
 		refetchOnWindowFocus: false,
