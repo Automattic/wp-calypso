@@ -1,19 +1,22 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
-import { ENTREPRENEUR_FLOW } from '@automattic/onboarding';
+import { ENTREPRENEUR_FLOW, SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useState } from 'react';
 import { anonIdCache, useCachedAnswers } from 'calypso/data/segmentaton-survey';
+import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
+import { getLoginUrl } from 'calypso/landing/stepper/utils/path';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { useFlowLocale } from '../hooks/use-flow-locale';
-import { USER_STORE, ONBOARD_STORE } from '../stores';
-import { getLoginUrl } from '../utils/path';
+import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
 import { STEPS } from './internals/steps';
+import { getSiteIdParam } from './internals/steps-repository/import/util';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import { ENTREPRENEUR_TRIAL_SURVEY_KEY } from './internals/steps-repository/segmentation-survey';
 import type { Flow, ProvidedDependencies } from './internals/types';
-import type { UserSelect } from '@automattic/data-stores';
-
+import type { SiteSelect, UserSelect } from '@automattic/data-stores';
 const SEGMENTATION_SURVEY_SLUG = 'start';
 
 const entrepreneurFlow: Flow = {
@@ -51,6 +54,10 @@ const entrepreneurFlow: Flow = {
 		const [ lastQuestionPath, setlastQuestionPath ] = useState( '#1' );
 		const { clearAnswers } = useCachedAnswers( ENTREPRENEUR_TRIAL_SURVEY_KEY );
 
+		const siteSlugParam = useSiteSlugParam();
+		const urlQueryParams = useQuery();
+		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
+
 		const getEntrepreneurLoginUrl = () => {
 			const redirectTo = `${ window.location.protocol }//${ window.location.host }/setup/entrepreneur/trialAcknowledge${ window.location.search }`;
 
@@ -71,6 +78,9 @@ const entrepreneurFlow: Flow = {
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
+			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
+			const siteId = getSiteIdBySlug( siteSlug ) || getSiteIdParam( urlQueryParams );
+
 			switch ( currentStep ) {
 				case SEGMENTATION_SURVEY_SLUG: {
 					setIsMigrationFlow( !! providedDependencies.isMigrationFlow );
@@ -108,8 +118,6 @@ const entrepreneurFlow: Flow = {
 						return navigate( STEPS.ERROR.slug );
 					}
 
-					const { siteId, siteSlug } = providedDependencies;
-
 					if ( providedDependencies?.finishedWaitingForAtomic ) {
 						return navigate( STEPS.WAIT_FOR_PLUGIN_INSTALL.slug, { siteId, siteSlug } );
 					}
@@ -121,9 +129,17 @@ const entrepreneurFlow: Flow = {
 						);
 
 						if ( isMigrationFlow ) {
-							return window.location.replace(
-								`/setup/migration-signup?siteSlug=${ stagingUrl }&ref=entrepreneur-signup`
+							// If the user is migrating a site, send them to the DIFM credentials step in the site migration flow.
+							const migrationFlowUrl = addQueryArgs(
+								`/setup/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }`,
+								{
+									siteSlug: stagingUrl,
+									siteId,
+									ref: 'entrepreneur-signup',
+								}
 							);
+
+							return window.location.assign( migrationFlowUrl );
 						}
 
 						const redirectTo = encodeURIComponent(
@@ -140,13 +156,11 @@ const entrepreneurFlow: Flow = {
 				}
 
 				case STEPS.WAIT_FOR_ATOMIC.slug: {
-					return navigate( STEPS.PROCESSING.slug, {
-						currentStep,
-					} );
+					return navigate( STEPS.PROCESSING.slug, { currentStep, siteId, siteSlug } );
 				}
 
 				case STEPS.WAIT_FOR_PLUGIN_INSTALL.slug: {
-					return navigate( STEPS.PROCESSING.slug );
+					return navigate( STEPS.PROCESSING.slug, { currentStep, siteId, siteSlug } );
 				}
 			}
 			return providedDependencies;
