@@ -14,6 +14,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SectionHeader from 'calypso/components/section-header';
+import { CompleteLaunchpadTaskWithNoticeOnLoad } from 'calypso/launchpad/hooks/use-complete-launchpad-task-with-notice-on-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { protectForm } from 'calypso/lib/protect-form';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
@@ -28,6 +29,8 @@ import WPAndGravatarLogo from './wp-and-gravatar-logo';
 import './style.scss';
 
 class Profile extends Component {
+	initiallyLoadedWithTaskCompletionHash = window.location.hash === '#complete-your-profile';
+
 	getClickHandler( action ) {
 		return () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 	}
@@ -50,6 +53,12 @@ class Profile extends Component {
 			<Main wideLayout className="profile">
 				<PageViewTracker path="/me" title="Me > My Profile" />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<CompleteLaunchpadTaskWithNoticeOnLoad
+					enabled={ this.initiallyLoadedWithTaskCompletionHash }
+					taskSlug="complete_profile"
+					noticeId="tasklist_complete_your_profile"
+					noticeText={ this.props.translate( 'Explored profile settings' ) }
+				/>
 				<NavigationHeader
 					navigationItems={ [] }
 					title={ this.props.translate( 'My Profile' ) }
