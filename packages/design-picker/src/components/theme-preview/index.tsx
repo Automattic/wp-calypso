@@ -141,6 +141,7 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 						width: viewportWidth,
 						height: viewport?.height,
 						transform: `scale(${ scale })`,
+						pointerEvents: 'all',
 					} }
 					src={ addQueryArgs( url, { calypso_token } ) }
 					tabIndex={ -1 }
