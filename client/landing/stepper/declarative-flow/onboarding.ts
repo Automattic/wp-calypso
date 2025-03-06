@@ -286,7 +286,7 @@ const onboarding: Flow = {
 						currentQueryArgs.step = 'domain-input';
 
 						setRedirectedToUseMyDomain( true );
-						let useMyDomainURL = addQueryArgs( `/use-my-domain`, currentQueryArgs );
+						let useMyDomainURL = addQueryArgs( '/use-my-domain', currentQueryArgs );
 
 						const lastQueryParam = ( providedDependencies?.domainForm as { lastQuery?: string } )
 							?.lastQuery;
