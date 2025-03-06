@@ -1,5 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { FEATURE_SFTP, getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
+import {
+	FEATURE_HOSTING,
+	FEATURE_SFTP,
+	getPlan,
+	PLAN_BUSINESS,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
@@ -78,7 +83,7 @@ const HostingFeatures = ( { showAsTools }: HostingFeaturesProps ) => {
 		}
 	}, [ isSiteAtomic, isPlanExpired, redirectUrl ] );
 
-	const upgradeLink = `https://wordpress.com/checkout/${ encodeURIComponent( siteSlug ) }/business`;
+	const upgradeLink = `/plans/${ siteSlug }?feature=${ FEATURE_HOSTING }&plan=${ PLAN_BUSINESS }`;
 	const promoCards = [
 		{
 			title: translate( 'Deployments' ),
