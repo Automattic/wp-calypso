@@ -7,46 +7,46 @@ import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import DetailsModalPHP from '../components/details-modal-php';
 import DetailsModalServer from '../components/details-modal-server';
 
-const useActions = ({ logType, isLoading }: { logType: LogType; isLoading: boolean }) => {
+const useActions = ( { logType, isLoading }: { logType: LogType; isLoading: boolean } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const actions = useMemo(() => {
-		if (logType === LogType.PHP) {
+	const actions = useMemo( () => {
+		if ( logType === LogType.PHP ) {
 			return [
 				{
 					id: 'details-modal',
-					label: translate('View log details'),
-					modalHeader: translate('Log details'),
+					label: translate( 'View log details' ),
+					modalHeader: translate( 'Log details' ),
 					isPrimary: true,
 					icon: details,
 					disabled: isLoading,
 					supportsBulk: false,
-					RenderModal: ({ items }: { items: (PHPLog | ServerLog)[] }) => {
-						const item = items[0] as PHPLog;
-						return <DetailsModalPHP item={item} />;
+					RenderModal: ( { items }: { items: ( PHPLog | ServerLog )[] } ) => {
+						const item = items[ 0 ] as PHPLog;
+						return <DetailsModalPHP item={ item } />;
 					},
 				},
 				{
 					id: 'copy-msg',
-					label: translate('Copy message'),
+					label: translate( 'Copy message' ),
 					disabled: isLoading,
 					supportsBulk: false,
-					callback: async (items: (PHPLog | ServerLog)[]) => {
-						const message = (items[0] as PHPLog).message;
+					callback: async ( items: ( PHPLog | ServerLog )[] ) => {
+						const message = ( items[ 0 ] as PHPLog ).message;
 						try {
-							await navigator.clipboard.writeText(message);
+							await navigator.clipboard.writeText( message );
 							dispatch(
 								successNotice(
 									/* translators: notice shown upon copy of Logs entry */
-									translate('Copied message')
+									translate( 'Copied message' )
 								)
 							);
-						} catch (error) {
+						} catch ( error ) {
 							dispatch(
 								errorNotice(
 									/* translators: notice shown upon failed copy of Logs entry */
-									translate('Message could not be copied')
+									translate( 'Message could not be copied' )
 								)
 							);
 						}
@@ -58,44 +58,44 @@ const useActions = ({ logType, isLoading }: { logType: LogType; isLoading: boole
 		return [
 			{
 				id: 'details-modal',
-				label: translate('View log details'),
-				modalHeader: translate('Log details'),
+				label: translate( 'View log details' ),
+				modalHeader: translate( 'Log details' ),
 				isPrimary: true,
 				icon: details,
 				disabled: isLoading,
 				supportsBulk: false,
-				RenderModal: ({ items }: { items: (PHPLog | ServerLog)[] }) => {
-					const item = items[0] as ServerLog;
-					return <DetailsModalServer item={item} />;
+				RenderModal: ( { items }: { items: ( PHPLog | ServerLog )[] } ) => {
+					const item = items[ 0 ] as ServerLog;
+					return <DetailsModalServer item={ item } />;
 				},
 			},
 			{
 				id: 'copy-url',
-				label: translate('Copy request URL'),
+				label: translate( 'Copy request URL' ),
 				disabled: isLoading,
 				supportsBulk: false,
-				callback: async (items: (PHPLog | ServerLog)[]) => {
-					const url = (items[0] as ServerLog).request_url;
+				callback: async ( items: ( PHPLog | ServerLog )[] ) => {
+					const url = ( items[ 0 ] as ServerLog ).request_url;
 					try {
-						await navigator.clipboard.writeText(url);
+						await navigator.clipboard.writeText( url );
 						dispatch(
 							successNotice(
 								/* translators: notice shown upon copy of request URL */
-								translate('Copied request URL')
+								translate( 'Copied request URL' )
 							)
 						);
-					} catch (error) {
+					} catch ( error ) {
 						dispatch(
 							errorNotice(
 								/* translators: notice shown upon failed copy of request URL */
-								translate('Request URL could not be copied')
+								translate( 'Request URL could not be copied' )
 							)
 						);
 					}
 				},
 			},
 		];
-	}, [logType, translate, isLoading, dispatch]);
+	}, [ logType, translate, isLoading, dispatch ] );
 
 	return actions;
 };

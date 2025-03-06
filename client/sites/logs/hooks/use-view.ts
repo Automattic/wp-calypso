@@ -9,80 +9,83 @@ import {
 } from './use-fields';
 import type { View, Filter } from '@wordpress/dataviews';
 
-const getTitleField = (logType: LogType) => (logType === LogType.PHP ? 'name' : 'date');
-const getSortField = (logType: LogType) => (logType === LogType.PHP ? 'timestamp' : 'date');
-const getVisibleFields = (logType: LogType) => {
-	if (logType === LogType.PHP) {
-		return ['severity', 'timestamp', 'message'];
+const getTitleField = ( logType: LogType ) => ( logType === LogType.PHP ? 'name' : 'date' );
+const getSortField = ( logType: LogType ) => ( logType === LogType.PHP ? 'timestamp' : 'date' );
+const getVisibleFields = ( logType: LogType ) => {
+	if ( logType === LogType.PHP ) {
+		return [ 'severity', 'timestamp', 'message' ];
 	}
-	return ['request_type', 'status', 'request_url'];
+	return [ 'request_type', 'status', 'request_url' ];
 };
-const getFilterValue = (view: View, fieldName: string) =>
-	view.filters?.filter((filter) => filter.field === fieldName)?.[0]?.value;
+const getFilterValue = ( view: View, fieldName: string ) =>
+	view.filters?.filter( ( filter ) => filter.field === fieldName )?.[ 0 ]?.value;
 
-const getFilterParamsFromView = (view: View, fieldNames: string[]): FilterType => {
-	return (view.filters || [])
-		.filter((filter) => fieldNames.includes(filter.field))
-		.reduce((acc: FilterType, filter) => {
-			if (filter.value) {
-				acc[filter.field] = filter.value;
+const getFilterParamsFromView = ( view: View, fieldNames: string[] ): FilterType => {
+	return ( view.filters || [] )
+		.filter( ( filter ) => fieldNames.includes( filter.field ) )
+		.reduce( ( acc: FilterType, filter ) => {
+			if ( filter.value ) {
+				acc[ filter.field ] = filter.value;
 			}
 			return acc;
-		}, {} as FilterType);
+		}, {} as FilterType );
 };
 
-function toFilterParams({ view, logType }: { view: View; logType: LogType }): FilterType {
-	if (logType === LogType.PHP) {
-		return getFilterParamsFromView(view, ['severity']);
+function toFilterParams( { view, logType }: { view: View; logType: LogType } ): FilterType {
+	if ( logType === LogType.PHP ) {
+		return getFilterParamsFromView( view, [ 'severity' ] );
 	}
 
-	return getFilterParamsFromView(view, ['cached', 'request_type', 'status', 'renderer']);
+	return getFilterParamsFromView( view, [ 'cached', 'request_type', 'status', 'renderer' ] );
 }
 
-function fromFilterParams(query: LogQueryParams): Filter[] {
+function fromFilterParams( query: LogQueryParams ): Filter[] {
 	const filters = [];
 
-	const severity = query.severity?.split(',') || [];
-	if (severity.length > 0 && severity.every((s) => VALUES_SEVERITY.includes(s))) {
-		filters.push({ field: 'severity', operator: 'isAny' as const, value: severity });
+	const severity = query.severity?.split( ',' ) || [];
+	if ( severity.length > 0 && severity.every( ( s ) => VALUES_SEVERITY.includes( s ) ) ) {
+		filters.push( { field: 'severity', operator: 'isAny' as const, value: severity } );
 	}
 
-	const request_type = query.request_type?.split(',') || [];
-	if (request_type.length > 0 && request_type.every((r) => VALUES_REQUEST_TYPE.includes(r))) {
-		filters.push({ field: 'request_type', operator: 'isAny' as const, value: request_type });
+	const request_type = query.request_type?.split( ',' ) || [];
+	if (
+		request_type.length > 0 &&
+		request_type.every( ( r ) => VALUES_REQUEST_TYPE.includes( r ) )
+	) {
+		filters.push( { field: 'request_type', operator: 'isAny' as const, value: request_type } );
 	}
 
-	const status = query.status?.split(',') || [];
-	if (status.length > 0 && status.every((s) => VALUES_STATUS.includes(s))) {
-		filters.push({ field: 'status', operator: 'isAny' as const, value: status });
+	const status = query.status?.split( ',' ) || [];
+	if ( status.length > 0 && status.every( ( s ) => VALUES_STATUS.includes( s ) ) ) {
+		filters.push( { field: 'status', operator: 'isAny' as const, value: status } );
 	}
 
-	const renderer = query.renderer?.split(',') || [];
-	if (renderer.length > 0 && renderer.every((r) => VALUES_RENDERER.includes(r))) {
-		filters.push({ field: 'renderer', operator: 'isAny' as const, value: renderer });
+	const renderer = query.renderer?.split( ',' ) || [];
+	if ( renderer.length > 0 && renderer.every( ( r ) => VALUES_RENDERER.includes( r ) ) ) {
+		filters.push( { field: 'renderer', operator: 'isAny' as const, value: renderer } );
 	}
 
-	const cached = query.cached?.split(',') || [];
-	if (cached.length > 0 && cached.every((c) => VALUES_CACHED.includes(c))) {
-		filters.push({ field: 'cached', operator: 'isAny' as const, value: cached });
+	const cached = query.cached?.split( ',' ) || [];
+	if ( cached.length > 0 && cached.every( ( c ) => VALUES_CACHED.includes( c ) ) ) {
+		filters.push( { field: 'cached', operator: 'isAny' as const, value: cached } );
 	}
 
 	return filters;
 }
 
-const useView = ({ logType, query }: { logType: LogType; query: LogQueryParams }) => {
-	return useState<View>(() => {
+const useView = ( { logType, query }: { logType: LogType; query: LogQueryParams } ) => {
+	return useState< View >( () => {
 		return {
 			type: 'table' as const,
 			page: 1,
 			perPage: 50,
 			sort: {
-				field: getSortField(logType),
+				field: getSortField( logType ),
 				direction: 'desc',
 			},
-			filters: fromFilterParams(query),
-			titleField: getTitleField(logType),
-			fields: getVisibleFields(logType),
+			filters: fromFilterParams( query ),
+			titleField: getTitleField( logType ),
+			fields: getVisibleFields( logType ),
 			layout: {
 				styles: {
 					// PHP errors
@@ -114,7 +117,7 @@ const useView = ({ logType, query }: { logType: LogType; query: LogQueryParams }
 				},
 			},
 		};
-	});
+	} );
 };
 
 export default useView;
