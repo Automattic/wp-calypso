@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { getEntrepreneurAdminDestination } from 'calypso/landing/stepper/utils/get-entrepreneur-admin-destination';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { ImporterPlatform } from 'calypso/lib/importer/types';
@@ -630,6 +631,12 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {
+					if ( entryPoint === 'entrepreneur-signup' ) {
+						const entrepreneurDestination = getEntrepreneurAdminDestination( { siteSlug } );
+
+						return exitFlow( entrepreneurDestination );
+					}
+
 					return navigate( `${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?${ urlQueryParams }` );
 				}
 
