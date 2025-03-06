@@ -6,6 +6,7 @@ import {
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
 	getPlanPath,
+	getPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { AddOns, Plans } from '@automattic/data-stores';
@@ -14,6 +15,7 @@ import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
+import { cancelAndRefundPurchase } from 'calypso/lib/purchases/actions';
 import { addQueryArgs } from 'calypso/lib/url';
 import { cancelPurchase } from 'calypso/me/purchases/paths';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
@@ -120,6 +122,23 @@ function useDowngradeHandler( {
 			if ( isFreePlan( planSlug ) ) {
 				page( cancelPurchase( siteSlug, currentPlan?.purchaseId ) );
 				return;
+			} else if ( siteSlug && currentPlan?.purchaseId ) {
+				return cancelAndRefundPurchase(
+					currentPlan.purchaseId,
+					{
+						product_id: currentPlan.productId,
+						type: 'downgrade',
+						to_product_id: getPlan( planSlug )?.getProductId(),
+					},
+					( error: Error | null, response: { message: string } | null ) => {
+						if ( error ) {
+							alert( error.message );
+							return;
+						}
+						alert( response?.message );
+						window.location.reload();
+					}
+				);
 			}
 
 			const chatUrl = `/contact-form?${ new URLSearchParams( {
