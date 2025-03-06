@@ -27,10 +27,6 @@ import {
 	DOTCOM_HOSTING_FEATURES,
 	DOTCOM_STAGING_SITE,
 	OVERVIEW,
-	MARKETING_TOOLS,
-	MARKETING_CONNECTIONS,
-	MARKETING_TRAFFIC,
-	MARKETING_SHARING,
 	SETTINGS_SITE,
 	SETTINGS_ADMINISTRATION_RESET_SITE,
 	SETTINGS_ADMINISTRATION_TRANSFER_SITE,
@@ -122,16 +118,6 @@ const DotcomPreviewPane = ( {
 				label: __( 'Staging Site' ),
 				enabled: isActiveAtomicSite && ! config.isEnabled( 'untangling/hosting-menu' ),
 				featureIds: [ DOTCOM_STAGING_SITE ],
-			},
-			{
-				label: __( 'Marketing' ),
-				enabled: config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [
-					MARKETING_TOOLS,
-					MARKETING_CONNECTIONS,
-					MARKETING_TRAFFIC,
-					MARKETING_SHARING,
-				],
 			},
 			{
 				label: __( 'Settings' ),
