@@ -1,10 +1,10 @@
 import { NextButton } from '@automattic/onboarding';
 import { Icon, loop, backup, shield } from '@wordpress/icons';
-import { numberFormat, useTranslate } from 'i18n-calypso';
+import { numberFormat, useTranslate, type TranslateResult } from 'i18n-calypso';
 
 interface AuthorizationBenefitsItem {
 	icon: React.ReactElement;
-	text: string;
+	text: TranslateResult;
 }
 
 interface AuthorizationBenefitsProps {
