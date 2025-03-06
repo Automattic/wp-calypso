@@ -14,8 +14,6 @@ const replyErrorWithEnvelope =
 	() => [ 200, { code: status, body: { ...defaultBody, ...body } } ];
 const SITE_ID = 123;
 const API_SETTINGS = { migration_source_site_domain: 'example.com' };
-const PLUGINS = { 'plugin-1': 'install' as const };
-const THEMES = { 'theme-1': 'activate' as const };
 
 const Wrapper =
 	( queryClient: QueryClient ) =>
@@ -29,7 +27,12 @@ const render = ( options = { retry: 0 } ) => {
 	const renderResult = renderHook(
 		() =>
 			useRequestTransferWithSoftware(
-				{ siteId: SITE_ID, apiSettings: API_SETTINGS, plugins: PLUGINS, themes: THEMES },
+				{
+					siteId: SITE_ID,
+					apiSettings: API_SETTINGS,
+					plugins: [ 'plugin-1', 'install' ],
+					themes: [ 'theme-1', 'activate' ],
+				},
 				options
 			),
 		{
@@ -51,18 +54,11 @@ describe( 'useRequestTransferWithSoftware', () => {
 	beforeEach( () => nock.cleanAll() );
 
 	it( 'should successfully request transfer with software and return the transfer_with_software_id', async () => {
-		/*
-		 * @TODO: Investigate why Nock throws a no-match error for the correct namespace.
-		 * The correct endpoint is /wpcom/v2/sites/:site/atomic/transfer-with-software but Nock sees
-		 * /rest/v1.1/sites/:site/atomic/transfer-with-software endpoint.
-		 */
 		nock( 'https://public-api.wordpress.com' )
 			.post( '/wpcom/v2/sites/' + SITE_ID + '/atomic/transfer-with-software', {
-				body: {
-					plugins: PLUGINS,
-					themes: THEMES,
-					settings: API_SETTINGS,
-				},
+				plugins: [ 'plugin-1', 'install' ],
+				themes: [ 'theme-1', 'activate' ],
+				settings: API_SETTINGS,
 			} )
 			.query( {
 				http_envelope: 1,
@@ -88,13 +84,10 @@ describe( 'useRequestTransferWithSoftware', () => {
 
 	it( 'should return an error if plugins or themes are not provided', async () => {
 		nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/sites/' + SITE_ID + '/atomic/transfer-with-software', {
-				apiNamespace: 'wpcom/v2',
-				body: {
-					plugins: null,
-					themes: null,
-					settings: API_SETTINGS,
-				},
+			.post( '/wpcom/v2/sites/' + SITE_ID + '/atomic/transfer-with-software', {
+				plugins: null,
+				themes: null,
+				settings: API_SETTINGS,
 			} )
 			.query( { http_envelope: 1 } )
 			.reply( replyErrorWithEnvelope( 400, { error: 'plugins and themes are required' } ) );

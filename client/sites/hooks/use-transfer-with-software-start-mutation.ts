@@ -7,7 +7,7 @@ type TransferWithSoftwareResponse = {
 
 type SoftwareSlug = string;
 type SoftwareStatus = 'install' | 'activate';
-type Software = Record< SoftwareSlug, SoftwareStatus >;
+type Software = [ SoftwareSlug, SoftwareStatus ];
 type ApiSettings = Record< string, unknown >;
 
 type TransferOptions = {
@@ -25,15 +25,15 @@ const requestTransferWithSoftware: (
 	plugins,
 	themes,
 } ) => {
-	const response = await wpcom.req.post(
-		{
-			path: `/sites/${ siteId }/atomic/transfer-with-software?http_envelope=1`,
-			apiNamespace: 'wpcom/v2',
+	const response = await wpcom.req.post( {
+		path: `/sites/${ siteId }/atomic/transfer-with-software?http_envelope=1`,
+		apiNamespace: 'wpcom/v2',
+		body: {
+			plugins: plugins,
+			themes: themes,
+			settings: { ...apiSettings },
 		},
-		{
-			body: { plugins, themes, settings: { ...apiSettings } },
-		}
-	);
+	} );
 
 	if ( ! response ) {
 		throw new Error( 'Transfer with software failed' );
