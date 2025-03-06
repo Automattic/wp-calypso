@@ -87,7 +87,6 @@ export const usePrepareSiteForMigration = (
 	}, [ siteId, from ] ); // Dependencies that should trigger a new transfer
 
 	const transfer_id = transferMutation.data?.transfer_with_software_id;
-	console.log( 'transfer_id', transfer_id );
 	const softwareTransferState = useTransferWithSoftwareStatus( siteId, transfer_id ?? 0, {
 		retry: options.retry ?? 0,
 	} );
