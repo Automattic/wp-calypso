@@ -34,7 +34,6 @@ import {
 	default as useView,
 	toFilterParams,
 	getSortField,
-	getTitleField,
 	getVisibleFields,
 	getFilterValue,
 } from '../hooks/use-view';
@@ -280,7 +279,7 @@ export const SiteLogsDataViews = ( {
 									field: getSortField( value ),
 									direction: view?.sort?.direction || 'desc',
 								},
-								titleField: getTitleField( value ),
+								titleField: getSortField( value ),
 								fields: getVisibleFields( value ),
 							} ) );
 						}

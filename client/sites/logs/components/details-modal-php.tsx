@@ -27,14 +27,6 @@ const DetailsModalPHP = ( { item }: DetailsModalPHPProps ) => {
 
 	return (
 		<div className="site-logs-details-modal">
-			<div className="site-logs-details-modal__field-title">{ translate( 'Kind' ) }</div>
-			<div>{ item.kind !== '' ? item.kind : translate( 'core' ) }</div>
-			<div className="site-logs-details-modal__field-title">{ translate( 'Source' ) }</div>
-			<div>{ item.name !== '' ? item.name : translate( 'core' ) }</div>
-			<div className="site-logs-details-modal__field-title">{ translate( 'Severity' ) }</div>
-			<div>
-				<Badge className={ `badge--${ item.severity }` }>{ item.severity }</Badge>
-			</div>
 			<div className="site-logs-details-modal__field-title">
 				{
 					// translators: %(siteGsmOffsetDisplay)s will be replaced with the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
@@ -44,6 +36,14 @@ const DetailsModalPHP = ( { item }: DetailsModalPHPProps ) => {
 				}
 			</div>
 			<div>{ getFormattedDate( item.timestamp ) }</div>
+			<div className="site-logs-details-modal__field-title">{ translate( 'Group' ) }</div>
+			<div>{ item.kind }</div>
+			<div className="site-logs-details-modal__field-title">{ translate( 'Source' ) }</div>
+			<div>{ item.name }</div>
+			<div className="site-logs-details-modal__field-title">{ translate( 'Severity' ) }</div>
+			<div>
+				<Badge className={ `badge--${ item.severity }` }>{ item.severity }</Badge>
+			</div>
 			<div className="site-logs-details-modal__field-title">{ translate( 'File' ) }</div>
 			<div>{ item.file }</div>
 			<div className="site-logs-details-modal__field-title">{ translate( 'Line' ) }</div>

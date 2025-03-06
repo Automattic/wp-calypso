@@ -9,11 +9,10 @@ import {
 } from './use-fields';
 import type { View, Filter } from '@wordpress/dataviews';
 
-const getTitleField = ( logType: LogType ) => ( logType === LogType.PHP ? 'name' : 'date' );
 const getSortField = ( logType: LogType ) => ( logType === LogType.PHP ? 'timestamp' : 'date' );
 const getVisibleFields = ( logType: LogType ) => {
 	if ( logType === LogType.PHP ) {
-		return [ 'severity', 'timestamp', 'message' ];
+		return [ 'severity', 'name', 'message' ];
 	}
 	return [ 'request_type', 'status', 'request_url' ];
 };
@@ -84,18 +83,18 @@ const useView = ( { logType, query }: { logType: LogType; query: LogQueryParams 
 				direction: 'desc',
 			},
 			filters: fromFilterParams( query ),
-			titleField: getTitleField( logType ),
+			titleField: getSortField( logType ),
 			fields: getVisibleFields( logType ),
 			layout: {
 				styles: {
 					// PHP errors
-					name: {
+					timestamp: {
 						maxWidth: '150px',
 					},
 					severity: {
 						maxWidth: '150px',
 					},
-					timestamp: {
+					name: {
 						maxWidth: '150px',
 					},
 					message: {
@@ -121,4 +120,4 @@ const useView = ( { logType, query }: { logType: LogType; query: LogQueryParams 
 };
 
 export default useView;
-export { toFilterParams, getSortField, getTitleField, getVisibleFields, getFilterValue };
+export { toFilterParams, getSortField, getVisibleFields, getFilterValue };
