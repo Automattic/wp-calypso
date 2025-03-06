@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import pagejs from '@automattic/calypso-router';
 import {
 	type SiteExcerptData,
@@ -43,7 +42,7 @@ import {
 	CALYPSO_ONBOARDING_TOURS_EVENT_NAMES,
 	useOnboardingTours,
 } from '../onboarding-tours';
-import { DOTCOM_OVERVIEW, FEATURE_TO_ROUTE_MAP, OVERVIEW } from './site-preview-pane/constants';
+import { DOTCOM_OVERVIEW, FEATURE_TO_ROUTE_MAP } from './site-preview-pane/constants';
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardBannersManager from './sites-dashboard-banners-manager';
 import SitesDashboardHeader from './sites-dashboard-header';
@@ -127,7 +126,7 @@ const SitesDashboard = ( {
 		status,
 		siteType = DEFAULT_SITE_TYPE,
 	},
-	initialSiteFeature = isEnabled( 'untangling/hosting-menu' ) ? OVERVIEW : DOTCOM_OVERVIEW,
+	initialSiteFeature = DOTCOM_OVERVIEW,
 	selectedSiteFeaturePreview = undefined,
 	isOnlyLayoutView = undefined,
 }: SitesDashboardProps ) => {
