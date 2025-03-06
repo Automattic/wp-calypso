@@ -2,15 +2,15 @@ import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
 type TransferWithSoftwareResponse = {
-	transfer_id: number;
+	transferId: number;
 };
 
-export type SoftwareSlug = string;
-export type SoftwareStatus = 'install' | 'activate';
-export type Software = Record<SoftwareSlug, SoftwareStatus>;
-export type ApiSettings = Record<string, unknown>;
+type SoftwareSlug = string;
+type SoftwareStatus = 'install' | 'activate';
+type Software = Record<SoftwareSlug, SoftwareStatus>;
+type ApiSettings = Record<string, unknown>;
 
-export type TransferOptions = {
+type TransferOptions = {
 	siteId: number;
 	apiSettings?: ApiSettings;
 	plugins?: Software;
