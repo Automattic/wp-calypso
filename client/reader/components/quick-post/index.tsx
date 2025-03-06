@@ -152,9 +152,6 @@ function QuickPost( {
 
 	return (
 		<div className="quick-post-input">
-			<label htmlFor="quick-post-site-select" className="quick-post-input__label">
-				{ translate( 'Publish a post to' ) }
-			</label>
 			<div className="quick-post-input__fields">
 				<div className="quick-post-input__site-select-wrapper">
 					<SitesDropdown

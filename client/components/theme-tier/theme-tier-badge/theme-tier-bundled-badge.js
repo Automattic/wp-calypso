@@ -3,14 +3,12 @@ import useIsUpdatedBadgeDesign from 'calypso/landing/stepper/declarative-flow/in
 import { useBundleSettingsByTheme } from 'calypso/my-sites/theme/hooks/use-bundle-settings';
 import { useSelector } from 'calypso/state';
 import { canUseTheme } from 'calypso/state/themes/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useThemeTierBadgeContext } from './theme-tier-badge-context';
 import ThemeTierIncludedBadge from './theme-tier-included-badge';
 import ThemeTierUpgradeBadge from './theme-tier-upgrade-badge';
 
 export default function ThemeTierBundledBadge( { hideBackgroundOnUpgrade, hideBundledBadge } ) {
-	const siteId = useSelector( getSelectedSiteId );
-	const { showUpgradeBadge, themeId } = useThemeTierBadgeContext();
+	const { showUpgradeBadge, themeId, siteId } = useThemeTierBadgeContext();
 
 	const bundleSettings = useBundleSettingsByTheme( themeId );
 	const isThemeIncluded = useSelector(

@@ -590,8 +590,17 @@ class ThemeSheet extends Component {
 	};
 
 	renderHeader = () => {
-		const { author, isWPForTeamsSite, name, retired, softLaunched, translate, themeId } =
-			this.props;
+		const {
+			author,
+			isWPForTeamsSite,
+			name,
+			retired,
+			softLaunched,
+			translate,
+			themeId,
+			siteId,
+			siteSlug,
+		} = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
 		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;
@@ -607,6 +616,8 @@ class ThemeSheet extends Component {
 								showUpgradeBadge
 								showPartnerPrice
 								themeId={ themeId }
+								siteId={ siteId }
+								siteSlug={ siteSlug }
 							/>
 
 							{ title }

@@ -1,0 +1,138 @@
+/**
+ * External dependencies
+ */
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/colors";
+ 
+$font-weight-heading: 600; // not defined in base-styles, but defined in DatePicker core style.ts
+$accent-inverted: $gray-900;
+
+.calendar {
+	box-sizing: border-box;
+
+	*, *::before, *::after {
+		box-sizing: inherit;
+	}
+
+	font-family: $default-font;
+
+	// Calendar navigator
+	&__navigator {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: $grid-unit-20;
+	}
+
+	&__month {
+		column-gap: $grid-unit;
+		display: grid;
+		grid-template-columns: 0.5fr repeat(5, 1fr) 0.5fr;
+		justify-items: center;
+		row-gap: $grid-unit;
+	}
+
+	.calendar__month-heading {
+		font-size: $font-size-medium;
+		font-weight: $font-weight-medium;
+	
+		strong {
+			font-weight: $font-weight-heading;
+		}
+	}
+
+	&__day-of-week {
+		color: $gray-700;
+		font-size: $font-size-medium;
+		line-height: $default-line-height;
+	
+		&:nth-of-type(1) {
+			justify-self: start;
+		}
+	
+		&:nth-of-type(7) {
+			justify-self: end;
+		}
+	}
+
+	.calendar__day {
+		position: relative;
+		justify-content: center;
+		border-radius: 50%;
+		height: calc( $grid-unit * 3.5); // 28px
+		width: calc( $grid-unit * 3.5); // 28px
+	
+		&--column-1 {
+			grid-column: 1;
+			justify-self: start;
+		}
+	
+		&--column-2 {
+			grid-column: 2;
+		}
+	
+		&--column-3 {
+			grid-column: 3;
+		}
+	
+		&--column-4 {
+			grid-column: 4;
+		}
+	
+		&--column-5 {
+			grid-column: 5;
+		}
+	
+		&--column-6 {
+			grid-column: 6;
+		}
+	
+		&--column-7 {
+			grid-column: 7;
+			justify-self: end;
+		}
+	
+		&:disabled {
+			pointer-events: none;
+		}
+	
+		&.is-selected {
+			background: #3858e9;
+			color: $white;
+		
+			&:focus:not(:disabled) {
+				border: 1.5px solid currentColor;
+			}
+	
+			// Highlight the selected day for high-contrast mode
+			&::after {
+				content: '';
+				position: absolute;
+				pointer-events: none;
+				inset: 0;
+				border-radius: inherit;
+				border: 1px solid transparent;
+			}
+		}
+	
+		&.is-today:not(.is-selected) {
+			background: $gray-200;
+		}
+	
+		&.has-events {
+			&::before {
+				content: " ";
+				position: absolute;
+				left: 50%;
+				transform: translate(-50%, 9px);
+				border-radius: 50%;
+				border: 2px solid #3858e9;
+			}
+	
+			&.is-selected::before {
+				border-color: $white;
+			}
+		}
+	}	
+}

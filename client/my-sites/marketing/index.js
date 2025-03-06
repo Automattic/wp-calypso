@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
@@ -44,58 +43,43 @@ export default function () {
 	page( '/marketing/:domain', redirectMarketingTools );
 	page( '/marketing/business-tools/:domain', redirectMarketingBusinessTools );
 
-	if ( isEnabled( 'untangling/hosting-menu' ) ) {
-		page( '/marketing/tools/:site', ( context ) => {
-			page.redirect( `/sites/marketing/tools/${ context.params.site }` );
-		} );
-		page( '/marketing/connections/:site', ( context ) => {
-			page.redirect( `/sites/marketing/connections/${ context.params.site }` );
-		} );
-		page( '/marketing/traffic/:site', ( context ) => {
-			page.redirect( `/sites/marketing/traffic/${ context.params.site }` );
-		} );
-		page( '/marketing/sharing-buttons/:site', ( context ) => {
-			page.redirect( `/sites/marketing/sharing-buttons/${ context.params.site }` );
-		} );
-	} else {
-		page(
-			'/marketing/connections/:domain',
-			siteSelection,
-			navigation,
-			connections,
-			layout,
-			makeLayout,
-			clientRender
-		);
+	page(
+		'/marketing/connections/:domain',
+		siteSelection,
+		navigation,
+		connections,
+		layout,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			'/marketing/traffic/:domain',
-			siteSelection,
-			navigation,
-			traffic,
-			layout,
-			makeLayout,
-			clientRender
-		);
+	page(
+		'/marketing/traffic/:domain',
+		siteSelection,
+		navigation,
+		traffic,
+		layout,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			'/marketing/sharing-buttons/:domain',
-			siteSelection,
-			navigation,
-			sharingButtons,
-			layout,
-			makeLayout,
-			clientRender
-		);
+	page(
+		'/marketing/sharing-buttons/:domain',
+		siteSelection,
+		navigation,
+		sharingButtons,
+		layout,
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			'/marketing/tools/:domain',
-			siteSelection,
-			navigation,
-			marketingTools,
-			layout,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		'/marketing/tools/:domain',
+		siteSelection,
+		navigation,
+		marketingTools,
+		layout,
+		makeLayout,
+		clientRender
+	);
 }

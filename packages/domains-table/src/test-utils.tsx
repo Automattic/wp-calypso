@@ -92,7 +92,6 @@ export function testDomain(
 		expired: false,
 		auto_renewing: false,
 		pending_registration: false,
-		pending_registration_time: '',
 		has_email_forward_dns_records: null,
 		points_to_wpcom: false,
 		privacy_available: false,

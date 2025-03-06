@@ -582,21 +582,9 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'site-tools',
-		paths: [ '/sites/tools' ],
-		module: 'calypso/sites/tools',
-		group: 'sites',
-	},
-	{
 		name: 'site-overview',
 		paths: [ '/sites/overview' ],
 		module: 'calypso/sites/overview',
-		group: 'sites',
-	},
-	{
-		name: 'site-marketing',
-		paths: [ '/sites/marketing' ],
-		module: 'calypso/sites/marketing',
 		group: 'sites',
 	},
 	{
@@ -766,7 +754,7 @@ const sections = [
 	{
 		name: 'github-deployments',
 		paths: [ '/github-deployments' ],
-		module: 'calypso/hosting/deployments',
+		module: 'calypso/sites/deployments',
 		group: 'sites',
 	},
 	{

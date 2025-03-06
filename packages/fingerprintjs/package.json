@@ -76,7 +76,7 @@
 		"karma-spec-reporter": "^0.0.36",
 		"karma-summary-reporter": "^3.1.1",
 		"karma-typescript": "^5.5.3",
-		"prettier": "^3.5.3",
+		"prettier": "^3.4.2",
 		"rimraf": "^3.0.2",
 		"rollup": "^3.3.0",
 		"rollup-plugin-dts": "^5.2.0",

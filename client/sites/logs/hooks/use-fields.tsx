@@ -106,12 +106,6 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 					render: ( { item }: { item: PHPLog } ) => numberFormat( item.line ),
 					enableSorting: false,
 				},
-				{
-					id: 'atomic_site_id',
-					type: 'integer',
-					label: translate( 'Atomic Site ID' ),
-					enableSorting: false,
-				},
 			] as Field< PHPLog | ServerLog >[];
 		}
 
