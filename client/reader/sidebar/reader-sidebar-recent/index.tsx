@@ -49,7 +49,7 @@ const ReaderSidebarRecent = ( {
 }: Props ): React.JSX.Element => {
 	const [ showAllSites, setShowAllSites ] = useState( false );
 	const sites = useSelector< AppState, Site[] >( getReaderFollowedSites );
-	const selectedSiteFeedId = useSelector< AppState, number >( getSelectedRecentFeedId );
+	const selectedSiteFeedId = useSelector< AppState, number | null >( getSelectedRecentFeedId );
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 	const isRecentStream = RECENT_PATH_REGEX.test( path );
 
