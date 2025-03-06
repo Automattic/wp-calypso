@@ -388,6 +388,15 @@ body.is-section-accept-invite {
 			padding: 24px;
 		}
 	}
+
+	/**
+	* Akismet Signup
+	*/
+	@at-root .is-akismet & {
+		.auth-form__social-buttons .auth-form__social-buttons-container .social-buttons__button {
+			--color-accent: var(--color-akismet);
+		}
+	}
 }
 
 .is-woo-passwordless .signup-form .auth-form__separator {
