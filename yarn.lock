@@ -8480,6 +8480,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/ga-gtag@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "@types/ga-gtag@npm:1.2.0"
+  dependencies:
+    "@types/gtag.js": "npm:^0.0"
+  checksum: 154080cfd240da068b8e4339c0781d46d522680ca1b27e61b27d71fa95f10f6afad8d3d26c4e78b6dfb03451ce7844c09c805f36c31b35b133eeba1d76ae888d
+  languageName: node
+  linkType: hard
+
 "@types/geojson@npm:*":
   version: 7946.0.16
   resolution: "@types/geojson@npm:7946.0.16"
@@ -8523,7 +8532,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/gtag.js@npm:^0.0.20":
+"@types/gtag.js@npm:^0.0, @types/gtag.js@npm:^0.0.20":
   version: 0.0.20
   resolution: "@types/gtag.js@npm:0.0.20"
   checksum: eb878aa3cfab6b98f5e69ef3383e9788aaea6a4d0611c72078678374dcbb4731f533ff2bf479a865536f1626a57887b1198279ff35a65d223fe4f93d9c76dbdd
@@ -35898,6 +35907,7 @@ __metadata:
     "@types/debug": "npm:^4.1.7"
     "@types/eslint": "npm:^9.6.1"
     "@types/fast-json-stable-stringify": "npm:^2.0.0"
+    "@types/ga-gtag": "npm:^1.2.0"
     "@types/gtag.js": "npm:^0.0.20"
     "@types/jest": "npm:^29.5.14"
     "@types/lodash": "npm:^4.14.199"
