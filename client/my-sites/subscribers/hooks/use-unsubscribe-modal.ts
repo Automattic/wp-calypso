@@ -28,6 +28,22 @@ const useUnsubscribeModal = (
 	};
 
 	const onConfirmModal = ( action: UnsubscribeActionType, subscriber?: Subscriber ) => {
+		const modal = document.querySelector('.components-modal__frame');  // Get the modal
+		const mainContent = document.getElementById('wpcom') || document.body;  // Replace 'main-content' with an appropriate ID of a visible element outside the modal
+
+		console.log( 'modal', modal );
+		console.log( 'mainContent', mainContent );
+		// Hide the modal safely
+		if (modal) {
+			modal.setAttribute('aria-hidden', 'true');
+		}
+		// Move focus to a safe element before hiding the modal
+		if (mainContent) {
+			mainContent.setAttribute('aria-hidden', 'false');
+			mainContent.focus();  // Move focus outside the modal
+		}
+
+		
 		if ( action === UnsubscribeActionType.Manage ) {
 			recordRemoveModal( true, 'manage_button_clicked' );
 			const link = isJetpackCloud()
