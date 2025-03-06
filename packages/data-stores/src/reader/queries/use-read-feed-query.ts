@@ -22,6 +22,7 @@ export type ReadFeedResponse = {
 	name: string;
 	next_refresh_time: string | null;
 	organization_id: number;
+	subscribe_URL: string;
 	subscribers_count: number;
 	unseen_count: number;
 };
