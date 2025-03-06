@@ -1583,31 +1583,13 @@ $breakpoint-mobile: 660px;
 						box-shadow: inset 0 0 0 2px var(--wp-components-color-accent-darker-20), 0 0 0 currentColor;
 					}
 
-					> svg {
-						margin-right: auto;
-					}
-
 					> span {
 						color: var(--studio-gray-100);
-						font-family: Inter, -apple-system, system-ui, sans-serif;
+						font-family: $woo-inter-font;
 						font-size: 1rem;
-						font-style: normal;
-						font-weight: 500;
-						line-height: 24px;
-						letter-spacing: 0.32px;
 						margin-left: -20px;
 						margin-right: auto;
 					}
-				}
-
-
-				.social-buttons__service-name {
-					font-size: 1rem;
-					font-style: normal;
-					font-weight: 500;
-					line-height: 24px;
-					color: var(--studio-gray-100);
-					font-family: $woo-inter-font;
 				}
 
 				.social-icons {
