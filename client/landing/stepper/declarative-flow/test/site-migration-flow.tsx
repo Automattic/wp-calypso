@@ -654,6 +654,29 @@ describe( 'Site Migration Flow', () => {
 					},
 				} );
 			} );
+
+			it( 'redirects to SITE_MIGRATION_CREDENTIALS step when the user decides to ask for an assisted migration', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_INSTRUCTIONS,
+					dependencies: {
+						how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
+					},
+					query: {
+						siteSlug: 'example.wordpress.com',
+						siteId: 123,
+						from: 'https://site-to-be-migrated.com',
+					},
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_CREDENTIALS,
+					query: {
+						siteSlug: 'example.wordpress.com',
+						siteId: 123,
+						from: 'https://site-to-be-migrated.com',
+					},
+				} );
+			} );
 		} );
 
 		describe( 'SITE_MIGRATION_ASSISTED_MIGRATION', () => {
