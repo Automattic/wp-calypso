@@ -9,7 +9,7 @@ import { translate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { useDispatch, useSelector } from '../../../../state';
+import { useDispatch, useSelector } from '../../../state';
 import { manageDeploymentPage, viewDeploymentLogs } from '../routes';
 import { formatDate } from '../utils/dates';
 import { DeleteDeploymentDialog } from './delete-deployment-dialog';

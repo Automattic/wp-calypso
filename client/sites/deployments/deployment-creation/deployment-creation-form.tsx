@@ -3,7 +3,7 @@ import { useMemo, useReducer } from 'react';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { useDispatch, useSelector } from '../../../../state';
+import { useDispatch, useSelector } from '../../../state';
 import { GitHubConnectionForm } from '../components/github-connection-form';
 import { GitHubInstallationData } from '../use-github-installations-query';
 import { GitHubRepositoryData } from '../use-github-repositories-query';

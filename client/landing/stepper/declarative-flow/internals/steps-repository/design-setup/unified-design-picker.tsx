@@ -120,7 +120,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		};
 	}, [] );
 
-	const { site, siteSlug, siteSlugOrId } = useSiteData();
+	const { site, siteSlug, siteId, siteSlugOrId } = useSiteData();
 	const siteTitle = site?.name;
 	const siteDescription = site?.description;
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
@@ -383,6 +383,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			canGoToCheckout={ false }
 			isThemeList
 			isLockedStyleVariation={ isLockedStyleVariation }
+			siteId={ siteId }
+			siteSlug={ siteSlug }
 			themeId={ themeId }
 		/>
 	);
@@ -712,7 +714,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	if ( selectedDesign && isPreviewingDesign ) {
 		const designTitle = selectedDesign.design_type !== 'vertical' ? selectedDesign.title : '';
 		const headerDesignTitle = (
-			<DesignPickerDesignTitle designTitle={ designTitle } selectedDesign={ selectedDesign } />
+			<DesignPickerDesignTitle
+				designTitle={ designTitle }
+				selectedDesign={ selectedDesign }
+				siteId={ siteId }
+				siteSlug={ siteSlug }
+			/>
 		);
 
 		// If the user fills out the site title and/or tagline with write or sell intent, we show it on the design preview

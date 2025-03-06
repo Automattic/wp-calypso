@@ -51,7 +51,7 @@ const useMigrationsMenuItems = ( path: string ) => {
 					icon: cog,
 					path: A4A_MIGRATIONS_LINK,
 					link: A4A_MIGRATIONS_PAYMENT_SETTINGS,
-					title: translate( 'Payment Settings' ),
+					title: translate( 'Payout Settings' ),
 					trackEventProps: {
 						menu_item: 'Automattic for Agencies / Migrations / Payment Settings',
 					},

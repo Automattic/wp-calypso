@@ -4,6 +4,7 @@ const BlazePressStrings = () => {
 	const translate = useTranslate();
 	translate( 'Calculating' );
 	translate( 'Cannot calculate' );
+	translate( '-' );
 	translate( 'Redirecting to my campaigns…' );
 	translate( 'Oops!' );
 	translate( 'The campaign cannot be created. Please {{a}}contact our support team{{/a}}.' );
@@ -103,6 +104,9 @@ const BlazePressStrings = () => {
 	translate( 'Click or drag an image here to upload.' );
 	translate( 'Upload an image file, or pick one from your media library.' );
 	translate( 'Audience' );
+	translate(
+		'Campaigns typically benefit from language targeting to avoid displaying ads to users who may not understand them. If the required language is unavailable, consider using geo-targeting as an alternative.'
+	);
 	translate( 'Language' );
 	translate( 'Location' );
 	translate( 'If you do not specify the location, the campaign will be displayed everywhere.' );
@@ -115,9 +119,6 @@ const BlazePressStrings = () => {
 	translate( 'Remove interests targeting' );
 	translate( 'Remove device targeting' );
 	translate( 'Your campaign has not set language targeting' );
-	translate(
-		'Campaigns typically benefit from language targeting to avoid displaying ads to users who may not understand them. If the required language is unavailable, consider using geo-targeting as an alternative.'
-	);
 	translate( 'All languages' );
 	translate(
 		'Based on the language of your site we suggest targeting %(lang)s speaking users to ensure the ad is seen by the right audience and to increase its effectiveness.'
@@ -164,6 +165,9 @@ const BlazePressStrings = () => {
 	translate( 'Estimated people reached' );
 	translate( 'Payment method' );
 	translate( 'Everywhere' );
+	translate(
+		"Campaigns typically benefit from language targeting to avoid displaying ads to users who may not understand them. To enhance your campaign's reach and impact, we may refine the language settings. If a particular language is crucial for your campaign, please update your settings accordingly."
+	);
 	translate( 'Languages' );
 	translate( 'Devices' );
 	translate( 'Destination' );
@@ -173,6 +177,9 @@ const BlazePressStrings = () => {
 	translate( 'Search for country, state or city' );
 	translate( 'You won’t be charged until the ad is approved and starts running.' );
 	translate( 'You can pause spending at any time.' );
+	translate(
+		'Your free credits cover up to %(creditsToBeUsed)s, and your card will only be charged once they’re used.'
+	);
 	translate( 'Could not retrieve countries. Please try again later.' );
 	translate( 'Could not connect to payment provider. Please try again later.' );
 	translate( 'Error setting up payment. Please try again later' );
