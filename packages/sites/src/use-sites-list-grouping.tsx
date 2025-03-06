@@ -67,6 +67,7 @@ export const useSitesListGrouping = < T extends SiteForGrouping >(
 		const groupedByStatus = allSites.reduce< { [ K in Status[ 'name' ] ]: T[] } >(
 			( groups, site ) => {
 				const siteStatus = getSiteLaunchStatus( site );
+
 				if ( ! site.visible && ! showHidden ) {
 					hiddenCounts.all++;
 					hiddenCounts[ siteStatus ]++;
