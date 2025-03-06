@@ -231,7 +231,7 @@ export const setNewMessagingChat = function* ( {
 	siteId?: string;
 } ) {
 	yield setNavigateToRoute(
-		`/odie?provider=zendesk&userFieldMessage=${ initialMessage ?? '' }&section=${
+		`/odie?provider=zendesk&userFieldMessage=${ initialMessage }&section=${
 			section ?? ''
 		}&siteUrl=${ siteUrl ?? '' }&siteId=${ siteId ?? '' }`
 	);
