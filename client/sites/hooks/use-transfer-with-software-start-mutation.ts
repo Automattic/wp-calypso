@@ -28,9 +28,9 @@ const requestTransferWithSoftware: (
 	const response = await wpcom.req.post(
 		{
 			path: `/sites/${ siteId }/atomic/transfer-with-software?http_envelope=1`,
+			apiNamespace: 'wpcom/v2',
 		},
 		{
-			apiNamespace: 'wpcom/v2',
 			body: { plugins, themes, settings: { ...apiSettings } },
 		}
 	);

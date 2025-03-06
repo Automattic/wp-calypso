@@ -90,6 +90,8 @@ export const usePrepareSiteForMigration = (
 
 	const transfer_id = transferMutation.data?.transfer_id;
 
+	console.log( transferMutation.data );
+
 	const softwareTransferState = useTransferWithSoftwareStatus( siteId, transfer_id ?? 0, {
 		retry: options.retry ?? 0,
 	} );

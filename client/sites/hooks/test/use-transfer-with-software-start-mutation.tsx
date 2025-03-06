@@ -57,8 +57,7 @@ describe( 'useRequestTransferWithSoftware', () => {
 		 * /rest/v1.1/sites/:site/atomic/transfer-with-software endpoint.
 		 */
 		nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/sites/' + SITE_ID + '/atomic/transfer-with-software', {
-				apiNamespace: 'wpcom/v2',
+			.post( '/wpcom/v2/sites/' + SITE_ID + '/atomic/transfer-with-software', {
 				body: {
 					plugins: PLUGINS,
 					themes: THEMES,
