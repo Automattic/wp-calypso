@@ -62,7 +62,8 @@ const ChatButton: FC< Props > = ( {
 		messagingGroup,
 		isEligibleForChat
 	);
-	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setShowHelpCenter, setNavigateToRoute, setNewMessagingChat } =
+		useDataStoreDispatch( HELP_CENTER_STORE );
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
 
 	function shouldShowChatButton(): boolean {
@@ -96,10 +97,7 @@ const ChatButton: FC< Props > = ( {
 	const handleClick = () => {
 		if ( canConnectToZendesk && initialMessage ) {
 			onClick?.();
-			setShowHelpCenter( true );
-			setNavigateToRoute(
-				`/odie?provider=zendesk&userFieldMessage=${ initialMessage }&section=${ section }&siteUrl=${ siteUrl }&siteId=${ siteId }`
-			);
+			setNewMessagingChat( { initialMessage, section, siteUrl, siteId } );
 		} else {
 			setNavigateToRoute( '/contact-form?mode=CHAT' );
 			setShowHelpCenter( true );

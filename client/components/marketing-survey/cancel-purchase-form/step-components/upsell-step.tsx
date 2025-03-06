@@ -117,7 +117,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 	const couponCode = 'BIZWPC25';
 	const builtByURL = 'https://wordpress.com/website-design-service/?ref=wpcom-cancel-flow';
 	const { refundAmount } = props;
-	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setNewMessagingChat } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const businessPlanName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
 
 	switch ( upsell ) {
@@ -145,10 +145,12 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 						const initialMessage =
 							"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
 							props.cancellationReason;
-						setShowHelpCenter( true );
-						setNavigateToRoute(
-							`/odie?provider=zendesk&userFieldMessage=${ initialMessage }&section=pre-cancellation-upsell&siteUrl=${ site.URL }&siteId=${ site.ID }`
-						);
+						setNewMessagingChat( {
+							initialMessage,
+							section: 'pre-cancellation-upsell',
+							siteUrl: site.URL,
+							siteId: site.ID,
+						} );
 
 						props.closeDialog();
 					} }

@@ -76,17 +76,20 @@ export default function EducationalContentStep( { type, site, ...props }: StepPr
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const localizeUrl = useLocalizeUrl();
-	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setNewMessagingChat } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const onRequestHelpClick = () => {
 		page( `/domains/manage/${ site.slug }` );
 		const initialMessage =
 			"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
 			props.cancellationReason;
-		setShowHelpCenter( true );
-		setNavigateToRoute(
-			`/odie?provider=zendesk&userFieldMessage=${ initialMessage }&section=pre-cancellation&siteUrl=${ site.URL }&siteId=${ site.ID }`
-		);
+
+		setNewMessagingChat( {
+			initialMessage,
+			section: 'pre-cancellation',
+			siteUrl: site.URL,
+			siteId: site.ID,
+		} );
 	};
 
 	switch ( type ) {

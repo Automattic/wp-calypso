@@ -17,7 +17,8 @@ const HELP_CENTER_STORE = HelpCenter.register();
 const CancelPurchaseSupportLink = ( { purchase } ) => {
 	const translate = useTranslate();
 	const { siteId, siteUrl } = purchase;
-	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setShowHelpCenter, setNavigateToRoute, setNewMessagingChat } =
+		useDataStoreDispatch( HELP_CENTER_STORE );
 	const { isEligibleForChat } = useChatStatus();
 	const { data: canConnectToZendeskMessaging } = useCanConnectToZendeskMessaging();
 	const { data: isMessagingAvailable } = useZendeskMessagingAvailability(
@@ -31,10 +32,11 @@ const CancelPurchaseSupportLink = ( { purchase } ) => {
 
 	const getHelp = useCallback( () => {
 		if ( isMessagingAvailable && canConnectToZendeskMessaging ) {
-			setShowHelpCenter( true );
-			setNavigateToRoute(
-				`/odie?provider=zendesk&userFieldMessage=${ 'Purchase cancellation flow' }&siteUrl=${ siteUrl }&siteId=${ siteId }`
-			);
+			setNewMessagingChat( {
+				initialMessage: 'Purchase cancellation flow',
+				siteUrl: siteUrl,
+				siteId: siteId,
+			} );
 		} else {
 			setNavigateToRoute( '/contact-options' );
 			setShowHelpCenter( true );

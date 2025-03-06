@@ -30,7 +30,7 @@ interface Props {
 }
 
 export const MigrationError = ( props: Props ) => {
-	const { setShowHelpCenter, setNavigateToRoute, resetStore } =
+	const { setShowHelpCenter, setNavigateToRoute, resetStore, setNewMessagingChat } =
 		useDataStoreDispatch( HELP_CENTER_STORE );
 	const {
 		sourceSiteUrl,
@@ -55,10 +55,12 @@ export const MigrationError = ( props: Props ) => {
 	const getHelp = useCallback( () => {
 		if ( isMessagingAvailable && canConnectToZendeskMessaging && isEligibleForChat ) {
 			const initialMessage = `${ status }: Import onboarding flow; migration failed`;
-			setShowHelpCenter( true );
-			setNavigateToRoute(
-				`/odie?provider=zendesk&userFieldMessage=${ initialMessage }&section=migration-error&siteUrl=${ targetSiteUrl }&siteId=${ targetSiteID }`
-			);
+			setNewMessagingChat( {
+				initialMessage,
+				section: 'migration-error',
+				siteUrl: targetSiteUrl,
+				siteId: targetSiteID,
+			} );
 		} else {
 			setNavigateToRoute( '/contact-form?mode=CHAT' );
 			setShowHelpCenter( true );

@@ -203,6 +203,25 @@ export const setShowMessagingChat = function* () {
 	yield resetStore();
 };
 
+export const setNewMessagingChat = function* ( {
+	initialMessage,
+	section,
+	siteUrl,
+	siteId,
+}: {
+	initialMessage: string;
+	section?: string;
+	siteUrl?: string;
+	siteId?: string;
+} ) {
+	yield setNavigateToRoute(
+		`/odie?provider=zendesk&userFieldMessage=${ initialMessage ?? '' }&section=${
+			section ?? ''
+		}&siteUrl=${ siteUrl ?? '' }&siteId=${ siteId ?? '' }`
+	);
+	yield setShowHelpCenter( true );
+};
+
 export const setShowSupportDoc = function* ( link: string, postId?: number, blogId?: number ) {
 	const params = new URLSearchParams( {
 		link,
@@ -237,4 +256,6 @@ export type HelpCenterAction =
 			| typeof setAllowPremiumSupport
 			| typeof setHelpCenterOptions
 	  >
-	| GeneratorReturnType< typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal >;
+	| GeneratorReturnType<
+			typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal | typeof setNewMessagingChat
+	  >;

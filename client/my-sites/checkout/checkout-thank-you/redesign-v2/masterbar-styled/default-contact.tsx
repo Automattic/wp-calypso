@@ -78,7 +78,7 @@ export function DefaultMasterbarContact() {
 
 	const helpCenterOptions = useProductsCustomOptions( responseCart.products );
 
-	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setShowHelpCenter, setNewMessagingChat } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const isShowingHelpCenter = useDataStoreSelect(
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
@@ -92,9 +92,11 @@ export function DefaultMasterbarContact() {
 
 		if ( hasPremiumSupport ) {
 			setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport, helpCenterOptions );
-			setNavigateToRoute(
-				`/odie?provider=zendesk&userFieldMessage=${ initialMessage }&siteUrl=${ siteSlug }&siteId=${ siteId }`
-			);
+			setNewMessagingChat( {
+				initialMessage,
+				siteUrl: siteSlug,
+				siteId: siteId,
+			} );
 		} else {
 			setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport );
 		}
