@@ -35,6 +35,7 @@ export const EXAMPLE_FLOW = 'example';
 export const DIFM_FLOW = 'do-it-for-me';
 export const DIFM_FLOW_STORE = 'do-it-for-me-store';
 export const WEBSITE_DESIGN_SERVICES = 'website-design-services';
+export const AI_SITE_BUILDER_FLOW = 'ai-site-builder';
 
 export const isNewsletterFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && NEWSLETTER_FLOW === flowName );

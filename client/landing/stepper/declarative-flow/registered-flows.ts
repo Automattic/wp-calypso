@@ -18,6 +18,7 @@ import {
 	EXAMPLE_FLOW,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
+import { AI_SITE_BUILDER_FLOW } from './ai-site-builder';
 
 const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	'site-setup': () =>
@@ -97,6 +98,8 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		),
 	[ EXAMPLE_FLOW ]: () =>
 		import( /* webpackChunkName: "example-flow" */ '../declarative-flow/example' ),
+
+	[ AI_SITE_BUILDER_FLOW ]: () => import( './ai-site-builder' ),
 };
 
 const hostedSiteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = {
