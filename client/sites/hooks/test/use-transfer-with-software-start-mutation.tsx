@@ -51,6 +51,11 @@ describe( 'useRequestTransferWithSoftware', () => {
 	beforeEach( () => nock.cleanAll() );
 
 	it( 'should successfully request transfer with software and return the transferId', async () => {
+		/*
+		 * @TODO: Investigate why Nock throws a no-match error for the correct namespace.
+		 * The correct endpoint is /wpcom/v2/sites/:site/atomic/transfer-with-software but Nock sees
+		 * /rest/v1.1/sites/:site/atomic/transfer-with-software endpoint.
+		 */
 		nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/sites/' + SITE_ID + '/atomic/transfer-with-software', {
 				apiNamespace: 'wpcom/v2',
