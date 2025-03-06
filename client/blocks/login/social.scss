@@ -100,35 +100,6 @@
 			padding: 24px;
 		}
 	}
-
-	/**
-	* Jetpack Cloud
-	*/
-	@at-root .jetpack-cloud & {
-		max-width: 375px;
-		width: 100%;
-		padding: 16px;
-		margin-bottom: 0;
-
-		.auth-form__social-buttons .auth-form__social-buttons-container .social-buttons__button {
-			> svg {
-				margin-right: 0;
-			}
-
-			span {
-				font-weight: 400;
-				font-family: inherit;
-				letter-spacing: normal;
-				line-height: 22px;
-				margin-left: 9px;
-				margin-right: 0;
-			}
-		}
-
-		@include break-mobile {
-			padding: 24px;
-		}
-	}
 }
 
 .auth-form__social {
@@ -255,21 +226,6 @@
 		width: 100%;
 		padding: 16px;
 		margin-bottom: 0;
-
-		.auth-form__social-buttons .auth-form__social-buttons-container .social-buttons__button {
-			> svg {
-				margin-right: 0;
-			}
-
-			span {
-				font-weight: 400;
-				font-family: inherit;
-				letter-spacing: normal;
-				line-height: 22px;
-				margin-left: 9px;
-				margin-right: 0;
-			}
-		}
 
 		@include break-mobile {
 			padding: 24px;
