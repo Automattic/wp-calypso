@@ -403,6 +403,20 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
+					// User decided to ask for an assisted migration - try to collect credentials.
+					if ( providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
+						return navigate(
+							addQueryArgs(
+								{
+									siteId,
+									from: fromQueryParam,
+									siteSlug,
+								},
+								STEPS.SITE_MIGRATION_CREDENTIALS.slug
+							)
+						);
+					}
+
 					return navigate(
 						addQueryArgs(
 							{
