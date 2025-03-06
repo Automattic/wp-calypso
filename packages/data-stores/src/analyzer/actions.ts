@@ -24,7 +24,6 @@ export function createActions() {
 			const data: AnalyzeColorsResponse = yield wpcomRequest( {
 				path: '/imports/url-analyzer/colors/?url=' + encodeURIComponent( url ),
 				apiNamespace: 'wpcom/v2',
-				apiVersion: '2',
 			} );
 
 			yield colorsAnalyzeSuccess( url, data );

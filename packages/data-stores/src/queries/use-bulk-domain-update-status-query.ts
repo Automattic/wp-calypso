@@ -69,7 +69,6 @@ export function useBulkDomainUpdateStatusQuery< TError = unknown >(
 			wpcomRequest< BulkDomainUpdateStatusQueryFnData >( {
 				path: '/domains/bulk-actions',
 				apiNamespace: 'wpcom/v2',
-				apiVersion: '2',
 			} ),
 		select: ( data ): BulkDomainUpdateStatusResult => {
 			// get top-level info about recent jobs

@@ -35,7 +35,6 @@ export const useNewsletterCategories = ( {
 			try {
 				const response = await request< NewsletterCategoryResponse >( {
 					path: `/sites/${ siteId }/newsletter-categories`,
-					apiVersion: '2',
 					apiNamespace: 'wpcom/v2',
 				} );
 				return {

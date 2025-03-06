@@ -25,9 +25,8 @@ export function useZendeskMessagingAvailability( group: MessagingGroup, enabled 
 			return canAccessWpcomApis()
 				? wpcomRequest< MessagingAvailability >( {
 						path: '/help/support-status/messaging',
-						query: wpcomParams.toString(),
 						apiNamespace: 'wpcom/v2',
-						apiVersion: '2',
+						query: wpcomParams.toString(),
 						method: 'GET',
 				  } )
 				: apiFetch< MessagingAvailability >( {

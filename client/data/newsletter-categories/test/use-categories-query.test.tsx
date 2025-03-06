@@ -69,8 +69,7 @@ describe( 'useCategoriesQuery', () => {
 		await waitFor( () => expect( result.current.isFetched ).toBe( true ) );
 
 		expect( request ).toHaveBeenCalledWith( {
-			path: `/sites/123/categories`,
-			apiVersion: '2',
+			path: '/sites/123/categories',
 			apiNamespace: 'wp/v2',
 		} );
 	} );

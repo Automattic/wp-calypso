@@ -148,7 +148,6 @@ class GoogleSocialButton extends Component {
 			const response = await wpcomRequest( {
 				path: '/generate-authorization-nonce',
 				apiNamespace: 'wpcom/v2',
-				apiVersion: '2',
 				method: 'GET',
 			} );
 			const state = response.nonce;

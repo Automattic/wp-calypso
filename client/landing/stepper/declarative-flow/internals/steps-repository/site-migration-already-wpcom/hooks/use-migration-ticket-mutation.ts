@@ -17,7 +17,6 @@ const setMigration = (
 	return wpcomRequest( {
 		path: `/sites/${ siteSlug }/automated-migration/wpcom-survey`,
 		apiNamespace: 'wpcom/v2',
-		apiVersion: '2',
 		method: 'POST',
 		body: {
 			intents,

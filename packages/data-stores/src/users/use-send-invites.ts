@@ -12,9 +12,8 @@ export function useSendInvites( siteId: number ) {
 			return wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId ) }/invites/new`,
 				apiNamespace: 'wpcom/v2',
-				apiVersion: '2',
 				method: 'POST',
-				body: { invitees: invitees },
+				body: { invitees },
 			} );
 		},
 	} );

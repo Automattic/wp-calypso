@@ -20,7 +20,6 @@ export const DomainsTableBulkUpdateNotice = () => {
 			await wpcomRequest< void >( {
 				path: '/domains/bulk-actions',
 				apiNamespace: 'wpcom/v2',
-				apiVersion: '2',
 				method: 'DELETE',
 			} );
 		}
