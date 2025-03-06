@@ -57,7 +57,6 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_STARTED,
 			STEPS.ERROR,
 			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
-			STEPS.SITE_MIGRATION_SOURCE_URL,
 			STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS,
 			STEPS.SITE_MIGRATION_CREDENTIALS,
 			STEPS.SITE_MIGRATION_ALREADY_WPCOM,
@@ -392,22 +391,6 @@ const siteMigration: Flow = {
 							STEPS.SITE_MIGRATION_STARTED.slug
 						)
 					);
-				}
-
-				//TODO: Remove this step, it is not used anywhere.
-				case STEPS.SITE_MIGRATION_SOURCE_URL.slug: {
-					const { from } = providedDependencies as {
-						from: string;
-					};
-					const nextStepUrl = addQueryArgs(
-						{ from, siteSlug, siteId },
-						STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
-					);
-					// Navigate to the assisted migration step.
-					return navigate( nextStepUrl, {
-						siteId,
-						siteSlug,
-					} );
 				}
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {
