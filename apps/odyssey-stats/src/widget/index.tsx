@@ -1,7 +1,7 @@
 import '@automattic/calypso-polyfills';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import config from '../lib/config-api';
 import getSiteAdminUrl from '../lib/selectors/get-site-admin-url';
@@ -26,8 +26,13 @@ export function init() {
 	const queryClient = new QueryClient();
 
 	// Ensure locale files are loaded before rendering.
-	setLocale( localeSlug ).then( () =>
-		render(
+	setLocale( localeSlug ).then( () => {
+		const statsWidgetEl = document.getElementById( 'dashboard_stats' );
+		if ( ! statsWidgetEl ) {
+			return;
+		}
+		const root = createRoot( statsWidgetEl );
+		root.render(
 			<QueryClientProvider client={ queryClient }>
 				<div id="stats-widget-content" className="stats-widget-content">
 					<MiniChart
@@ -57,8 +62,7 @@ export function init() {
 						</div>
 					</div>
 				</div>
-			</QueryClientProvider>,
-			document.getElementById( 'dashboard_stats' )
-		)
-	);
+			</QueryClientProvider>
+		);
+	} );
 }
