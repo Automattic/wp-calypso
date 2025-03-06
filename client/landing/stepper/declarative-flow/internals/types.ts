@@ -1,11 +1,12 @@
 import { StepperInternal } from '@automattic/data-stores';
 import React from 'react';
 import { STEPPER_TRACKS_EVENTS } from '../../constants';
+import { PRIVATE_STEPS, STEPS } from './steps';
 
 /**
  * This is the return type of useStepNavigation hook
  */
-export type NavigationControls = {
+export type NavigationControls< StepSubmittedTypes extends Record< string, unknown > > = {
 	/**
 	 * Call this function if you want to go to the previous step.
 	 *
@@ -34,7 +35,7 @@ export type NavigationControls = {
 	/**
 	 * Submits the answers provided in the flow
 	 */
-	submit?: ( providedDependencies?: ProvidedDependencies, ...params: string[] ) => void;
+	submit?: ( providedDependencies?: StepSubmittedTypes, ...params: string[] ) => void;
 
 	/**
 	 * Exits the flow and continue to the given path
@@ -56,32 +57,11 @@ export type DeprecatedStepperStep = {
 	 *
 	 * It should look like this: component: () => import( './internals/steps-repository/newsletter-setup' )
 	 */
-	component: React.FC< StepProps >;
+	component: React.FC< StepProps< any > >;
 };
 
-export type AsyncStepperStep = {
-	/**
-	 * The step slug is what appears as part of the pathname. Eg the intro in /setup/link-in-bio/intro
-	 */
-	slug: Exclude< string, 'user' >;
-	/**
-	 * Does the step require a logged-in user?
-	 */
-	requiresLoggedInUser?: boolean;
-	/**
-	 * The Async loaded component that will be rendered for this step
-	 *
-	 * It should look like this: component: () => import( './internals/steps-repository/newsletter-setup' )
-	 */
-	asyncComponent: () => Promise< { default: React.FC< StepProps > } >;
-};
-
-export interface AsyncUserStep extends AsyncStepperStep {
-	/**
-	 * The step slug is what appears as part of the pathname. Eg the intro in /setup/link-in-bio/intro
-	 */
-	slug: 'user';
-}
+export type AsyncStepperStep = ( typeof STEPS )[ keyof typeof STEPS ];
+export type AsyncUserStep = ( typeof PRIVATE_STEPS )[ keyof typeof PRIVATE_STEPS ];
 
 export type StepperStep = DeprecatedStepperStep | AsyncStepperStep | AsyncUserStep;
 
@@ -99,10 +79,10 @@ export type Navigate< FlowSteps extends readonly StepperStep[] > = (
  */
 export type UseStepsHook = () => StepperStep[];
 
-export type UseStepNavigationHook< FlowSteps extends StepperStep[] > = (
+export type UseStepNavigationHook< FlowSteps extends readonly StepperStep[] > = (
 	currentStepSlug: FlowSteps[ number ][ 'slug' ],
 	navigate: Navigate< FlowSteps >
-) => NavigationControls;
+) => NavigationControls< any >;
 
 export type UseAssertConditionsHook< FlowSteps extends readonly StepperStep[] > = (
 	navigate?: Navigate< FlowSteps >
@@ -232,16 +212,12 @@ export type FlowV2 = {
 	 *
 	 * Returning false will kill the app.
 	 */
-	initialize():
-		| false
-		| Promise< false >
-		| Promise< readonly StepperStep[] >
-		| readonly StepperStep[];
-	useStepNavigation: UseStepNavigationHook< StepperStep[] >;
+	initialize: () => readonly AsyncStepperStep[];
+	useStepNavigation: UseStepNavigationHook< readonly AsyncStepperStep[] >;
 	/**
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
 	 */
-	useSideEffect?: UseSideEffectHook< StepperStep[] >;
+	useSideEffect?: UseSideEffectHook< readonly AsyncStepperStep[] >;
 	useTracksEventProps?: UseTracksEventPropsHook;
 	/**
 	 * Temporary hook to allow gradual migration of flows to the globalised/default event tracking.
@@ -256,7 +232,7 @@ export type FlowV2 = {
 
 export type Flow = FlowV1 | FlowV2;
 
-export type StepProps = {
+export type StepProps< StepSubmittedTypes extends Record< string, unknown > > = {
 	navigation: NavigationControls;
 	stepName: string;
 	flow: string;
@@ -273,7 +249,9 @@ export type StepProps = {
 	signupUrl?: string;
 };
 
-export type Step = React.FC< StepProps >;
+export type Step< StepSubmittedTypes extends Record< string, unknown > > = React.FC<
+	StepProps< StepSubmittedTypes >
+>;
 
 export type ProvidedDependencies = Record< string, unknown >;
 

@@ -23,11 +23,11 @@ import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { useFlowState } from './internals/state-manager/store';
 import { STEPS } from './internals/steps';
 import { ProvidedDependencies } from './internals/types';
-import type { Flow } from './internals/types';
+import type { FlowV2 } from './internals/types';
 
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 
-const newsletter: Flow = {
+const newsletter = {
 	name: EXAMPLE_FLOW,
 	get title() {
 		return translate( 'Newsletter Example Flow' );
@@ -57,10 +57,10 @@ const newsletter: Flow = {
 			STEPS.SUBSCRIBERS,
 			STEPS.LAUNCHPAD,
 			STEPS.ERROR,
-		] );
+		] as const );
 
 		if ( ! isComingFromMarketingPage ) {
-			return [ STEPS.INTRO, ...privateSteps ];
+			return [ STEPS.INTRO, ...privateSteps ] as const;
 		}
 
 		return privateSteps;
@@ -71,13 +71,15 @@ const newsletter: Flow = {
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
 		const query = useQuery();
-		const { get, set } = useFlowState();
+		const { get, set } = useFlowState< typeof newsletter >( newsletter );
 		const { exitFlow } = useExitFlow();
 		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const { saveSiteSettings } = useDispatch( SITE_STORE );
 
 		const createSite = useCreateSite();
+
+		const a = get( 's' );
 
 		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
 			exitFlow,
@@ -200,6 +202,6 @@ const newsletter: Flow = {
 
 		return { goNext, goBack, goToStep, submit };
 	},
-};
+} satisfies FlowV2;
 
 export default newsletter;
