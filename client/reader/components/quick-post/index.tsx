@@ -9,17 +9,19 @@ import {
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef } from 'react';
-import { useSelector, useDispatch, connect } from 'react-redux';
+import { connect } from 'react-redux';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import { stripHTML } from 'calypso/lib/formatting';
 import wpcom from 'calypso/lib/wp';
+import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { receiveNewPost } from 'calypso/state/reader/streams/actions';
-import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -40,11 +42,9 @@ interface PostItem {
 }
 
 function QuickPost( {
-	primarySiteId,
 	receivePosts,
 	successNotice,
 }: {
-	primarySiteId: number | null;
 	receivePosts: ( posts: PostItem[] ) => Promise< void >;
 	successNotice: ( message: string, options: object ) => void;
 } ) {
@@ -54,7 +54,7 @@ function QuickPost( {
 	const [ postContent, setPostContent ] = useState( '' );
 	const [ editorKey, setEditorKey ] = useState( 0 );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
-	const [ selectedSiteId, setSelectedSiteId ] = useState< number | null >( primarySiteId ?? null );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const editorRef = useRef< HTMLDivElement >( null );
 	const dispatch = useDispatch();
 	const currentUser = useSelector( getCurrentUser );
@@ -126,7 +126,7 @@ function QuickPost( {
 	};
 
 	const handleSiteSelect = ( siteId: number ) => {
-		setSelectedSiteId( siteId );
+		dispatch( setSelectedSiteId( siteId ) );
 	};
 
 	const getButtonText = () => {
@@ -190,12 +190,7 @@ function QuickPost( {
 	);
 }
 
-export default connect(
-	( state: any ) => ( {
-		primarySiteId: getPrimarySiteId( state ),
-	} ),
-	{
-		successNotice: ( message: string, options: object ) => successNotice( message, options ),
-		receivePosts: ( posts: PostItem[] ) => receivePosts( posts ) as Promise< void >,
-	}
-)( QuickPost );
+export default connect( null, {
+	successNotice: ( message: string, options: object ) => successNotice( message, options ),
+	receivePosts: ( posts: PostItem[] ) => receivePosts( posts ) as Promise< void >,
+} )( QuickPost );
