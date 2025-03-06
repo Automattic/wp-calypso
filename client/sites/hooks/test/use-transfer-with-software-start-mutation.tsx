@@ -9,21 +9,19 @@ import React from 'react';
 import { useRequestTransferWithSoftware } from '../use-transfer-with-software-start-mutation';
 
 const replyErrorWithEnvelope =
-	( status: number, defaultBody: Record< string, string | number > = {} ) =>
-	( body = {} ) =>
-	() => [ 200, { code: status, body: { ...defaultBody, ...body } } ];
+	(status: number, defaultBody: Record<string, string | number> = {}) =>
+	(body = {}) =>
+	() => [200, { code: status, body: { ...defaultBody, ...body } }];
 const SITE_ID = 123;
 const API_SETTINGS = { migration_source_site_domain: 'example.com' };
 const PLUGINS = { 'plugin-1': 'install' as const };
 const THEMES = { 'theme-1': 'activate' as const };
 
 const Wrapper =
-	( queryClient: QueryClient ) =>
-	( { children } ) => (
-		<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
-	);
+	(queryClient: QueryClient) =>
+	({ children }) => <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 
-const render = ( options = { retry: 0 } ) => {
+const render = (options = { retry: 0 }) => {
 	const queryClient = new QueryClient();
 
 	const renderResult = renderHook(
@@ -33,7 +31,7 @@ const render = ( options = { retry: 0 } ) => {
 				options
 			),
 		{
-			wrapper: Wrapper( queryClient ),
+			wrapper: Wrapper(queryClient),
 		}
 	);
 
@@ -43,34 +41,28 @@ const render = ( options = { retry: 0 } ) => {
 	};
 };
 
-describe( 'useRequestTransferWithSoftware', () => {
-	beforeAll( () => {
+describe('useRequestTransferWithSoftware', () => {
+	beforeAll(() => {
 		nock.disableNetConnect();
-	} );
+	});
 
-	beforeEach( () => nock.cleanAll() );
+	beforeEach(() => nock.cleanAll());
 
-	it( 'should successfully request transfer with software and return the transfer_with_software_id', async () => {
-		/*
-		 * @TODO: Investigate why Nock throws a no-match error for the correct namespace.
-		 * The correct endpoint is /wpcom/v2/sites/:site/atomic/transfer-with-software but Nock sees
-		 * /rest/v1.1/sites/:site/atomic/transfer-with-software endpoint.
-		 */
-		nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/sites/' + SITE_ID + '/atomic/transfer-with-software', {
-				apiNamespace: 'wpcom/v2',
+	it('should successfully request transfer with software and return the transfer_with_software_id', async () => {
+		nock('https://public-api.wordpress.com')
+			.post('/wpcom/v2/sites/' + SITE_ID + '/atomic/transfer-with-software', {
 				body: {
 					plugins: PLUGINS,
 					themes: THEMES,
 					settings: API_SETTINGS,
 				},
-			} )
-			.query( {
+			})
+			.query({
 				http_envelope: 1,
-			} )
-			.reply( 200, {
+			})
+			.reply(200, {
 				transfer_with_software_id: 456,
-			} );
+			});
 
 		const { result } = render();
 
@@ -78,36 +70,35 @@ describe( 'useRequestTransferWithSoftware', () => {
 
 		await waitFor(
 			() => {
-				expect( result.current.isSuccess ).toBe( true );
-				expect( result.current.data ).toEqual( {
+				expect(result.current.isSuccess).toBe(true);
+				expect(result.current.data).toEqual({
 					transfer_with_software_id: 456,
-				} );
+				});
 			},
 			{ timeout: 3000 }
 		);
-	} );
+	});
 
-	it( 'should return an error if plugins or themes are not provided', async () => {
-		nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/sites/' + SITE_ID + '/atomic/transfer-with-software', {
-				apiNamespace: 'wpcom/v2',
+	it('should return an error if plugins or themes are not provided', async () => {
+		nock('https://public-api.wordpress.com')
+			.post('/wpcom/v2/sites/' + SITE_ID + '/atomic/transfer-with-software', {
 				body: {
 					plugins: null,
 					themes: null,
 					settings: API_SETTINGS,
 				},
-			} )
-			.query( { http_envelope: 1 } )
-			.reply( replyErrorWithEnvelope( 400, { error: 'plugins and themes are required' } ) );
+			})
+			.query({ http_envelope: 1 })
+			.reply(replyErrorWithEnvelope(400, { error: 'plugins and themes are required' }));
 		const { result } = render();
 
 		result.current.mutate();
 
 		await waitFor(
 			() => {
-				expect( result.current.isError ).toBe( true );
+				expect(result.current.isError).toBe(true);
 			},
 			{ timeout: 3000 }
 		);
-	} );
-} );
+	});
+});
