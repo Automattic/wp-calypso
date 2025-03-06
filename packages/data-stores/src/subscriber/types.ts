@@ -14,7 +14,7 @@ export interface SubscriberState {
 	hydrated?: boolean;
 }
 
-export type ImportJobStatus = 'pending' | 'importing' | 'imported' | 'failed';
+export type ImportJobStatus = 'pending' | 'importing' | 'imported' | 'failed' | 'cancelled';
 
 export type ImportJob = {
 	id: number;
