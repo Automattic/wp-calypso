@@ -242,11 +242,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/wait-for-plugin-install' ),
 	},
 
-	AI_SITE_BUILDER_PROCESSING: {
-		slug: 'ai-site-builder-processing',
-		asyncComponent: () => import( './steps-repository/ai-site-builder-processing' ),
-	},
-
 	SITE_MIGRATION_ASSIGN_TRIAL_PLAN: {
 		slug: 'site-migration-assign-trial-plan',
 		asyncComponent: () => import( './steps-repository/site-migration-assign-trial-plan' ),
