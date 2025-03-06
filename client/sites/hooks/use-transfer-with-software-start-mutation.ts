@@ -7,8 +7,8 @@ type TransferWithSoftwareResponse = {
 
 type SoftwareSlug = string;
 type SoftwareStatus = 'install' | 'activate';
-type Software = Record<SoftwareSlug, SoftwareStatus>;
-type ApiSettings = Record<string, unknown>;
+type Software = Record< SoftwareSlug, SoftwareStatus >;
+type ApiSettings = Record< string, unknown >;
 
 type TransferOptions = {
 	siteId: number;
@@ -19,10 +19,15 @@ type TransferOptions = {
 
 const requestTransferWithSoftware: (
 	transferOptions: TransferOptions
-) => Promise<TransferWithSoftwareResponse> = async ({ siteId, apiSettings, plugins, themes }) => {
+) => Promise< TransferWithSoftwareResponse > = async ( {
+	siteId,
+	apiSettings,
+	plugins,
+	themes,
+} ) => {
 	const response = await wpcom.req.post(
 		{
-			path: `/sites/${siteId}/atomic/transfer-with-software?http_envelope=1`,
+			path: `/sites/${ siteId }/atomic/transfer-with-software?http_envelope=1`,
 		},
 		{
 			apiNamespace: 'wpcom/v2',
@@ -30,8 +35,8 @@ const requestTransferWithSoftware: (
 		}
 	);
 
-	if (!response) {
-		throw new Error('Transfer with software failed');
+	if ( ! response ) {
+		throw new Error( 'Transfer with software failed' );
 	}
 
 	return response;
@@ -41,11 +46,11 @@ export const useRequestTransferWithSoftware = (
 	transferOptions: TransferOptions,
 	queryOptions?: {
 		retry?: number;
-		onSuccess?: (data: TransferWithSoftwareResponse) => void;
-		onError?: (error: Error) => void;
+		onSuccess?: ( data: TransferWithSoftwareResponse ) => void;
+		onError?: ( error: Error ) => void;
 	}
-): UseMutationResult<TransferWithSoftwareResponse, Error, void> => {
-	return useMutation({
+): UseMutationResult< TransferWithSoftwareResponse, Error, void > => {
+	return useMutation( {
 		mutationKey: [
 			'transfer-with-software',
 			transferOptions.siteId,
@@ -54,18 +59,18 @@ export const useRequestTransferWithSoftware = (
 			transferOptions.themes,
 		],
 		mutationFn: async () => {
-			if (!transferOptions.siteId) {
-				throw new Error('Site ID is required');
+			if ( ! transferOptions.siteId ) {
+				throw new Error( 'Site ID is required' );
 			}
-			return requestTransferWithSoftware({
+			return requestTransferWithSoftware( {
 				siteId: transferOptions.siteId,
 				apiSettings: transferOptions.apiSettings,
 				plugins: transferOptions.plugins,
 				themes: transferOptions.themes,
-			});
+			} );
 		},
 		retry: queryOptions?.retry ?? 3, // Default retry 3 times
 		onSuccess: queryOptions?.onSuccess,
 		onError: queryOptions?.onError,
-	});
+	} );
 };
