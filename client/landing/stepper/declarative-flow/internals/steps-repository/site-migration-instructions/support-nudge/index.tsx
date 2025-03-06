@@ -1,15 +1,15 @@
 import { ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { FC } from 'react';
+import React, { type FC } from 'react';
 import { recordMigrationInstructionsLinkClick } from '../tracking';
 import './style.scss';
 
-export const Questions: FC = () => {
+export const SupportNudge: FC = () => {
 	const translate = useTranslate();
 
 	return (
-		<div className="site-migration-instructions-questions">
-			<span className="site-migration-instructions-questions__label">
+		<div className="site-migration-instructions-support-nudge">
+			<span className="site-migration-instructions-support-nudge__label">
 				{ translate( 'Questions?' ) }
 			</span>
 			<ExternalLink

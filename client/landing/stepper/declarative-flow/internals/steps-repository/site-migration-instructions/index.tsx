@@ -14,10 +14,10 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { HostingBadge } from './hosting-badge';
 import { MigrationInstructions } from './migration-instructions';
 import { ProvisionStatus } from './provision-status';
-import { Questions } from './questions';
 import { SitePreview } from './site-preview';
 import { Steps } from './steps';
 import { useSteps } from './steps/use-steps';
+import { SupportNudge } from './support-nudge';
 import type { Step } from '../../types';
 import './style.scss';
 
@@ -192,7 +192,7 @@ const SiteMigrationInstructions: Step< {
 		</div>
 	);
 
-	const questions = <Questions />;
+	const supportNudge = <SupportNudge />;
 
 	return (
 		<StepContainer
@@ -204,7 +204,7 @@ const SiteMigrationInstructions: Step< {
 			hideBack
 			stepContent={ stepContent }
 			recordTracksEvent={ recordTracksEvent }
-			customizedActionButtons={ questions }
+			customizedActionButtons={ supportNudge }
 		/>
 	);
 };
