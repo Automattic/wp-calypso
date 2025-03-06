@@ -106,7 +106,7 @@ export const Analyzer: FC< Props > = ( {
 				{
 					args: {
 						uptimePercent: numberFormat( 0.99999, {
-							numberFormatOptions: { style: 'percent' },
+							numberFormatOptions: { style: 'percent', maximumFractionDigits: 3 },
 						} ),
 					},
 					comment: '99.999% uptime',
