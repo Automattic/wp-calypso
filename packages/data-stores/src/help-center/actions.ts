@@ -272,6 +272,4 @@ export type HelpCenterAction =
 			| typeof setAllowPremiumSupport
 			| typeof setHelpCenterOptions
 	  >
-	| GeneratorReturnType<
-			typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal | typeof setNewMessagingChat
-	  >;
+	| GeneratorReturnType< typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal >;
