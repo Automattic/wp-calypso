@@ -19,6 +19,25 @@ jest.mock( 'calypso/lib/logstash', () => ( {
 const SITE_ID = 123;
 const API_ROOT = 'https://public-api.wordpress.com';
 
+const Wrapper =
+	( queryClient: QueryClient ) =>
+	( { children } ) => (
+		<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+	);
+
+const render = ( { siteId } ) => {
+	const queryClient = new QueryClient();
+
+	const renderResult = renderHook( () => usePrepareSiteForMigration( siteId ), {
+		wrapper: Wrapper( queryClient ),
+	});
+
+	return {
+		...renderResult,
+		queryClient,
+	};
+};
+
 describe( 'usePrepareSiteForMigration', () => {
 	beforeAll( () => {
 		nock.disableNetConnect();
@@ -27,25 +46,6 @@ describe( 'usePrepareSiteForMigration', () => {
 	beforeEach( () => {
 		nock.cleanAll();
 	} );
-
-	const Wrapper =
-		( queryClient: QueryClient ) =>
-		( { children } ) => (
-			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
-		);
-
-	const render = ( { siteId } ) => {
-		const queryClient = new QueryClient();
-
-		const renderResult = renderHook( () => usePrepareSiteForMigration( siteId ), {
-			wrapper: Wrapper( queryClient ),
-		} );
-
-		return {
-			...renderResult,
-			queryClient,
-		};
-	};
 
 	it( 'should return "idle" when site id is not available', () => {
 		const { result } = render( { siteId: undefined } );
@@ -66,7 +66,6 @@ describe( 'usePrepareSiteForMigration', () => {
 		nock( API_ROOT )
 			.post( '/wpcom/v2/sites/123/atomic/transfer-with-software', {
 				plugins: [ 'wpcom-migration', 'activate' ],
-				themes: null,
 				settings: {},
 			} )
 			.query( { http_envelope: 1 } )
