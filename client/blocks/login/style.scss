@@ -458,6 +458,7 @@ $breakpoint-mobile: 782px; //Mobile size.
 		padding: 0;
 		box-shadow: none;
 		margin-bottom: 2em;
+		clip-path: unset;
 	}
 
 	.login__social-tos {
@@ -479,6 +480,10 @@ $breakpoint-mobile: 782px; //Mobile size.
 		&.login__form-change-username:hover:not(:disabled):not(.disabled) {
 			background: none;
 			color: var(--p2-color-link-dark);
+		}
+
+		&.social-buttons__button:not(:focus) {
+			box-shadow: none;
 		}
 	}
 
