@@ -37,7 +37,7 @@ export type NavigationControls<
 	/**
 	 * Submits the answers provided in the flow
 	 */
-	submit?: ( providedDependencies?: StepSubmittedTypes, ...params: string[] ) => void;
+	submit: ( providedDependencies?: StepSubmittedTypes, ...params: string[] ) => void;
 
 	/**
 	 * Exits the flow and continue to the given path
@@ -173,12 +173,12 @@ export type FlowV2 = {
 	 * The steps of the flow. **Please don't use this variable unless absolutely necessary**. It's meant to be used internally by the Stepper.
 	 * Use `getSteps` instead.
 	 */
-	__flowSteps?: StepperStep[];
+	__flowSteps?: AsyncStepperStep[];
 
 	/**
 	 * Use this method to retrieve the steps of the flow.
 	 */
-	getSteps?(): StepperStep[];
+	getSteps?(): AsyncStepperStep[];
 
 	name: string;
 	/**
@@ -209,12 +209,12 @@ export type FlowV2 = {
 	 *
 	 * Returning false will kill the app.
 	 */
-	readonly initialize: () => readonly StepperStep[];
-	useStepNavigation: UseStepNavigationHook< StepperStep[] >;
+	readonly initialize: () => AsyncStepperStep[];
+	readonly useStepNavigation: UseStepNavigationHook< AsyncStepperStep[] >;
 	/**
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
 	 */
-	useSideEffect?: UseSideEffectHook< StepperStep[] >;
+	useSideEffect?: UseSideEffectHook< AsyncStepperStep[] >;
 	useTracksEventProps?: UseTracksEventPropsHook;
 	/**
 	 * @deprecated Avoid this. Assert your conditions in `initialize` instead unless you're 100% sure you need this.

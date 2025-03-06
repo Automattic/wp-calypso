@@ -30,7 +30,7 @@ import { removeStep } from 'calypso/state/signup/progress/actions';
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
-import { ProvidedDependencies, StepProps } from '../../types';
+import { ProvidedDependencies, Step, StepProps } from '../../types';
 import { useIsManagedSiteFlowProps } from './use-is-managed-site-flow';
 
 const RenderDomainsStepConnect = connect(
@@ -86,7 +86,7 @@ const RenderDomainsStepConnect = connect(
  */
 let mostRecentState: ProvidedDependencies = {};
 
-export default function DomainsStep( props: StepProps ) {
+const DomainsStep: Step< { shouldSkipSubmitTracking: boolean } > = ( props ) => {
 	const [ stepState, setStepState ] =
 		useStepPersistedState< ProvidedDependencies >( 'domains-step' );
 	const managedSiteFlowProps = useIsManagedSiteFlowProps();
@@ -118,4 +118,6 @@ export default function DomainsStep( props: StepProps ) {
 			/>
 		</CalypsoShoppingCartProvider>
 	);
-}
+};
+
+export default DomainsStep;

@@ -71,7 +71,9 @@ const newsletter = {
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
 		const query = useQuery();
-		const { get, set } = useFlowState();
+		const { get, set } = useFlowState< typeof newsletter >();
+		const a = get( 'domains' );
+		const b = a?.shouldSkipSubmitTracking;
 		const { exitFlow } = useExitFlow();
 		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
@@ -200,6 +202,6 @@ const newsletter = {
 
 		return { goNext, goBack, goToStep, submit };
 	},
-} satisfies FlowV2;
+} as const satisfies FlowV2;
 
 export default newsletter;
