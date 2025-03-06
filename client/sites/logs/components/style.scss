@@ -10,14 +10,14 @@
 	}
 
 	.site-logs-toolbar__toggle {
-		border-color: var(--color-neutral-10);
+		border-color: var( --color-neutral-10 );
 	}
 	.site-logs-toolbar__toggle-option {
 		white-space: nowrap;
 	}
 }
 
-@media (max-width: 600px) {
+@media ( max-width: 600px ) {
 	.site-logs-header {
 		align-items: flex-start;
 		flex-direction: column;
@@ -81,20 +81,20 @@
 
 	.badge.badge--POST,
 	.badge.badge--Deprecated {
-		background-color: rgba(187, 224, 250, 1);
-		color: rgba(2, 57, 92, 1);
+		background-color: rgba( 187, 224, 250, 1 );
+		color: rgba( 2, 57, 92, 1 );
 	}
 
 	.badge.badge--GET {
-		background-color: rgba(184, 230, 191, 1);
-		color: rgba(0, 69, 12, 1);
+		background-color: rgba( 184, 230, 191, 1 );
+		color: rgba( 0, 69, 12, 1 );
 	}
 
 	.badge.badge--DELETE,
 	.badge.badge--Error,
 	.badge.badge--Fatal.error {
-		background-color: rgba(250, 207, 210, 1);
-		color: rgba(105, 28, 28, 1);
+		background-color: rgba( 250, 207, 210, 1 );
+		color: rgba( 105, 28, 28, 1 );
 	}
 
 	.badge.badge--Fatal.error {
@@ -102,13 +102,13 @@
 	}
 
 	.badge.badge--Warning {
-		background-color: rgba(245, 230, 179, 1);
-		color: rgba(79, 53, 0, 1);
+		background-color: rgba( 245, 230, 179, 1 );
+		color: rgba( 79, 53, 0, 1 );
 	}
 
 	.badge.badge--User {
-		background-color: rgba(220, 220, 222, 1);
-		color: rgba(44, 51, 56, 1);
+		background-color: rgba( 220, 220, 222, 1 );
+		color: rgba( 44, 51, 56, 1 );
 	}
 }
 
@@ -125,12 +125,12 @@
 		font-size: 0.75rem;
 		text-transform: uppercase;
 	}
-	:not(.site-logs-details-modal__field-title) {
+	:not( .site-logs-details-modal__field-title ) {
 		word-wrap: break-word;
 		min-width: 0;
 		font-size: 0.875rem;
 	}
-	:not(.site-logs-details-modal__field-title) .badge {
+	:not( .site-logs-details-modal__field-title ) .badge {
 		font-size: 0.75rem;
 	}
 }
