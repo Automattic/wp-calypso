@@ -44,7 +44,11 @@ const requestTransferWithSoftware: (
 
 export const useRequestTransferWithSoftware = (
 	transferOptions: TransferOptions,
-	queryOptions?: { retry?: number }
+	queryOptions?: {
+		retry?: number;
+		onSuccess?: ( data: TransferWithSoftwareResponse ) => void;
+		onError?: ( error: Error ) => void;
+	}
 ): UseMutationResult< TransferWithSoftwareResponse, Error, void > => {
 	return useMutation( {
 		mutationKey: [
@@ -66,5 +70,7 @@ export const useRequestTransferWithSoftware = (
 			} );
 		},
 		retry: queryOptions?.retry ?? 3, // Default retry 3 times
+		onSuccess: queryOptions?.onSuccess,
+		onError: queryOptions?.onError,
 	} );
 };
