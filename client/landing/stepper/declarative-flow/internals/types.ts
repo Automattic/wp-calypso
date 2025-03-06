@@ -6,7 +6,9 @@ import { PRIVATE_STEPS, STEPS } from './steps';
 /**
  * This is the return type of useStepNavigation hook
  */
-export type NavigationControls< StepSubmittedTypes extends Record< string, unknown > > = {
+export type NavigationControls<
+	StepSubmittedTypes extends Record< string, unknown > = Record< string, unknown >,
+> = {
 	/**
 	 * Call this function if you want to go to the previous step.
 	 *
@@ -156,11 +158,6 @@ export type FlowV1 = {
 	 */
 	useSideEffect?: UseSideEffectHook< ReturnType< FlowV1[ 'useSteps' ] > >;
 	useTracksEventProps?: UseTracksEventPropsHook;
-	/**
-	 * Temporary hook to allow gradual migration of flows to the globalised/default event tracking.
-	 * IMPORTANT: This hook will be removed in the future.
-	 */
-	use__Temporary__ShouldTrackEvent?: ( event: keyof NavigationControls ) => boolean;
 };
 
 export type FlowV2 = {
@@ -176,12 +173,12 @@ export type FlowV2 = {
 	 * The steps of the flow. **Please don't use this variable unless absolutely necessary**. It's meant to be used internally by the Stepper.
 	 * Use `getSteps` instead.
 	 */
-	__flowSteps?: readonly StepperStep[];
+	__flowSteps?: StepperStep[];
 
 	/**
 	 * Use this method to retrieve the steps of the flow.
 	 */
-	getSteps?(): readonly StepperStep[];
+	getSteps?(): StepperStep[];
 
 	name: string;
 	/**
@@ -212,18 +209,13 @@ export type FlowV2 = {
 	 *
 	 * Returning false will kill the app.
 	 */
-	initialize: () => readonly AsyncStepperStep[];
-	useStepNavigation: UseStepNavigationHook< readonly AsyncStepperStep[] >;
+	readonly initialize: () => readonly StepperStep[];
+	useStepNavigation: UseStepNavigationHook< StepperStep[] >;
 	/**
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
 	 */
-	useSideEffect?: UseSideEffectHook< readonly AsyncStepperStep[] >;
+	useSideEffect?: UseSideEffectHook< StepperStep[] >;
 	useTracksEventProps?: UseTracksEventPropsHook;
-	/**
-	 * Temporary hook to allow gradual migration of flows to the globalised/default event tracking.
-	 * IMPORTANT: This hook will be removed in the future.
-	 */
-	use__Temporary__ShouldTrackEvent?: ( event: keyof NavigationControls ) => boolean;
 	/**
 	 * @deprecated Avoid this. Assert your conditions in `initialize` instead unless you're 100% sure you need this.
 	 */
@@ -232,8 +224,10 @@ export type FlowV2 = {
 
 export type Flow = FlowV1 | FlowV2;
 
-export type StepProps< StepSubmittedTypes extends Record< string, unknown > > = {
-	navigation: NavigationControls;
+export type StepProps<
+	StepSubmittedTypes extends Record< string, unknown > = Record< string, unknown >,
+> = {
+	navigation: NavigationControls< StepSubmittedTypes >;
 	stepName: string;
 	flow: string;
 	/**

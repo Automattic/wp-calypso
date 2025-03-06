@@ -71,15 +71,13 @@ const newsletter = {
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
 		const query = useQuery();
-		const { get, set } = useFlowState< typeof newsletter >( newsletter );
+		const { get, set } = useFlowState();
 		const { exitFlow } = useExitFlow();
 		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const { saveSiteSettings } = useDispatch( SITE_STORE );
 
 		const createSite = useCreateSite();
-
-		const a = get( 's' );
 
 		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
 			exitFlow,
