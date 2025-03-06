@@ -403,33 +403,6 @@ body.is-section-accept-invite {
 			padding: 24px;
 		}
 	}
-
-	/**
-	* WooCommerce Signup
-	*/
-	@at-root .is-woo-passwordless & {
-		.auth-form__social-buttons .auth-form__social-buttons-container .social-buttons__button {
-			height: 48px;
-			/* stylelint-disable-next-line scales/radii */
-			border-radius: 8px;
-
-			> svg {
-				margin-right: auto;
-			}
-
-			span {
-				color: var(--studio-gray-100);
-				font-family: Inter, -apple-system, system-ui, sans-serif;
-				font-size: 1rem;
-				font-style: normal;
-				font-weight: 500;
-				line-height: 24px;
-				letter-spacing: 0.32px;
-				margin-left: -20px;
-				margin-right: auto;
-			}
-		}
-	}
 }
 
 .is-woo-passwordless .signup-form .auth-form__separator {
