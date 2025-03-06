@@ -1,28 +1,32 @@
-import { ExternalLink } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { type FC } from 'react';
 import { recordMigrationInstructionsLinkClick } from '../tracking';
+import type { FC } from 'react';
 import './style.scss';
 
-export const SupportNudge: FC = () => {
+type SupportNudgeProps = {
+	navigateToDoItForMe: () => void;
+};
+
+export const SupportNudge: FC< SupportNudgeProps > = ( { navigateToDoItForMe } ) => {
 	const translate = useTranslate();
 
 	return (
 		<div className="site-migration-instructions-support-nudge">
-			<span className="site-migration-instructions-support-nudge__label">
-				{ translate( 'Questions?' ) }
-			</span>
-			<ExternalLink
-				href="https://wordpress.com/help/contact/"
-				icon
-				iconSize={ 12 }
-				target="_blank"
-				onClick={ () => {
-					recordMigrationInstructionsLinkClick( 'questions-happiness-engineer' );
-				} }
-			>
-				{ translate( 'Ask a Happiness Engineer' ) }
-			</ExternalLink>
+			{ translate( 'Having trouble? {{button}}Let us migrate your site{{/button}}', {
+				components: {
+					button: (
+						<Button
+							variant="link"
+							onClick={ () => {
+								recordMigrationInstructionsLinkClick( 'trouble-migrate-site' );
+								navigateToDoItForMe();
+							} }
+							type="button"
+						/>
+					),
+				},
+			} ) }
 		</div>
 	);
 };
