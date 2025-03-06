@@ -1,7 +1,7 @@
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
-type transferWithSoftwareResponse = {
+type TransferWithSoftwareResponse = {
 	transferId: number;
 };
 
@@ -10,7 +10,7 @@ type SoftwareStatus = 'install' | 'activate';
 type Software = Record< SoftwareSlug, SoftwareStatus >;
 type ApiSettings = Record< string, unknown >;
 
-type transferOptions = {
+type TransferOptions = {
 	siteId: number;
 	apiSettings?: ApiSettings;
 	plugins?: Software;
@@ -18,8 +18,8 @@ type transferOptions = {
 };
 
 const requestTransferWithSoftware: (
-	transferOptions: transferOptions
-) => Promise< transferWithSoftwareResponse > = async ( {
+	transferOptions: TransferOptions
+) => Promise< TransferWithSoftwareResponse > = async ( {
 	siteId,
 	apiSettings,
 	plugins,
@@ -43,9 +43,9 @@ const requestTransferWithSoftware: (
 };
 
 export const useRequestTransferWithSoftware = (
-	transferOptions: transferOptions,
+	transferOptions: TransferOptions,
 	queryOptions?: { retry?: number }
-): UseMutationResult< transferWithSoftwareResponse, Error, void > => {
+): UseMutationResult< TransferWithSoftwareResponse, Error, void > => {
 	return useMutation( {
 		mutationKey: [
 			'transfer-with-software',
