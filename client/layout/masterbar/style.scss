@@ -940,10 +940,12 @@ body.is-mobile-app-view {
 	box-sizing: border-box;
 	min-width: 260px;
 	margin: 6px -6px -6px;
-	padding: 6px 12px;
-	border-top: 1px solid var(--color-global-masterbar-site-info-separator);
-	background-color: var(--color-global-masterbar-submenu-background, var(--studio-gray-90));
+	padding: 12px;
+	background-color: var(--color-global-masterbar-site-info-background, var(--studio-gray-90));
 	color: var(--color-masterbar-submenu-text);
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
 }
 
 .masterbar__site-info {
@@ -966,73 +968,12 @@ body.is-mobile-app-view {
 .masterbar__site-badge {
 	display: inline-block;
 	border-radius: 3px;
-	padding: 4px;
-	font-size: 11px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+	padding: 6px;
+	font-size: 12px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 	line-height: 1.3;
-	font-weight: 600;
 	position: relative;
-	padding-left: 16px;
-	background-color: var(--studio-gray-70);
-	color: var(--studio-white);
-
-	&::before {
-		content: '';
-		position: absolute;
-		left: 6px;
-		top: 50%;
-		transform: translateY(-50%);
-		width: 6px;
-		height: 6px;
-		border-radius: 50%;
-	}
-
-	&.is-plan::before {
-		background-color: var(--studio-blue-30);
-	}
-	
-	&.is-p2::before {
-		background-color: var(--studio-blue-50);
-	}
-	
-	&.is-p2-workspace::before {
-		background-color: var(--studio-blue-50);
-	}
-	
-	&.is-staging::before {
-		background-color: var(--studio-orange-50);
-	}
-	
-	&.is-private::before {
-		background-color: var(--studio-purple-30);
-	}
-	
-	&.is-coming-soon::before {
-		background-color: var(--studio-yellow-30);
-	}
-	
-	&.is-redirect::before {
-		background-color: var(--studio-gray-50);
-	}
-	
-	&.is-domain-only::before {
-		background-color: var(--studio-gray-50);
-	}
-	
-	&.is-express::before {
-		background-color: var(--studio-green-40);
-	}
-	
-	&.is-trial::before {
-		background-color: var(--studio-green-40);
-	}
-	
-	&.is-updates::before {
-		background-color: var(--studio-blue-50);
-	}
-	
-	&.is-error::before {
-		background-color: var(--studio-red-50);
-	}
+	background-color: var(--color-global-masterbar-site-info-badge-background, var(--studio-gray-70) );
+	color: var(--color-global-masterbar-site-info-badge-color);
 }
 
 .masterbar__item-reader-label {
