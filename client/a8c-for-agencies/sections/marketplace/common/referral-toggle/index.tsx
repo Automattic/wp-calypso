@@ -24,7 +24,9 @@ const ReferralToggle = () => {
 
 	const agency = useSelector( getActiveAgency );
 
-	const isAgencyApproved = agency?.approval_status === ApprovalStatus.APPROVED;
+	// Old agencies didn't had approval_status set, so we need to check for that
+	const isAgencyApproved =
+		agency?.approval_status === ApprovalStatus.APPROVED || agency?.approval_status === '';
 
 	useEffect( () => {
 		if ( marketplaceType === 'referral' && ! guideModalSeen ) {
