@@ -1,31 +1,37 @@
 import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
-type transferWithSoftwareResponse = {
+type TransferWithSoftwareResponse = {
 	transferId: number;
 };
 
 type SoftwareSlug = string;
 type SoftwareStatus = 'install' | 'activate';
 type Software = Record< SoftwareSlug, SoftwareStatus >;
+type ApiSettings = Record< string, unknown >;
 
-type transferOptions = {
+type TransferOptions = {
 	siteId: number;
-	from?: string;
+	apiSettings?: ApiSettings;
 	plugins?: Software;
 	themes?: Software;
 };
 
 const requestTransferWithSoftware: (
-	transferOptions: transferOptions
-) => Promise< transferWithSoftwareResponse > = async ( { siteId, from, plugins, themes } ) => {
+	transferOptions: TransferOptions
+) => Promise< TransferWithSoftwareResponse > = async ( {
+	siteId,
+	apiSettings,
+	plugins,
+	themes,
+} ) => {
 	const response = await wpcom.req.post(
 		{
 			path: `/sites/${ siteId }/atomic/transfer-with-software?http_envelope=1`,
 		},
 		{
 			apiNamespace: 'wpcom/v2',
-			body: { plugins, themes, settings: { migration_source_site_domain: from } },
+			body: { plugins, themes, settings: { ...apiSettings } },
 		}
 	);
 
@@ -37,14 +43,18 @@ const requestTransferWithSoftware: (
 };
 
 export const useRequestTransferWithSoftware = (
-	transferOptions: transferOptions,
-	queryOptions?: { retry?: number }
-): UseMutationResult< transferWithSoftwareResponse, Error, void > => {
+	transferOptions: TransferOptions,
+	queryOptions?: {
+		retry?: number;
+		onSuccess?: ( data: TransferWithSoftwareResponse ) => void;
+		onError?: ( error: Error ) => void;
+	}
+): UseMutationResult< TransferWithSoftwareResponse, Error, void > => {
 	return useMutation( {
 		mutationKey: [
 			'transfer-with-software',
 			transferOptions.siteId,
-			transferOptions.from,
+			transferOptions.apiSettings,
 			transferOptions.plugins,
 			transferOptions.themes,
 		],
@@ -54,11 +64,13 @@ export const useRequestTransferWithSoftware = (
 			}
 			return requestTransferWithSoftware( {
 				siteId: transferOptions.siteId,
-				from: transferOptions.from,
+				apiSettings: transferOptions.apiSettings,
 				plugins: transferOptions.plugins,
 				themes: transferOptions.themes,
 			} );
 		},
 		retry: queryOptions?.retry ?? 3, // Default retry 3 times
+		onSuccess: queryOptions?.onSuccess,
+		onError: queryOptions?.onError,
 	} );
 };

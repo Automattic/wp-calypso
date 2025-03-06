@@ -13,7 +13,7 @@ const replyErrorWithEnvelope =
 	( body = {} ) =>
 	() => [ 200, { code: status, body: { ...defaultBody, ...body } } ];
 const SITE_ID = 123;
-const FROM = 'example.com';
+const API_SETTINGS = { migration_source_site_domain: 'example.com' };
 const PLUGINS = { 'plugin-1': 'install' as const };
 const THEMES = { 'theme-1': 'activate' as const };
 
@@ -29,7 +29,7 @@ const render = ( options = { retry: 0 } ) => {
 	const renderResult = renderHook(
 		() =>
 			useRequestTransferWithSoftware(
-				{ siteId: SITE_ID, from: FROM, plugins: PLUGINS, themes: THEMES },
+				{ siteId: SITE_ID, apiSettings: API_SETTINGS, plugins: PLUGINS, themes: THEMES },
 				options
 			),
 		{
@@ -57,10 +57,12 @@ describe( 'useRequestTransferWithSoftware', () => {
 				body: {
 					plugins: PLUGINS,
 					themes: THEMES,
-					settings: { migration_source_site_domain: FROM },
+					settings: API_SETTINGS,
 				},
 			} )
-			.query( { http_envelope: 1 } )
+			.query( {
+				http_envelope: 1,
+			} )
 			.reply( 200, {
 				transferId: 456,
 			} );
@@ -85,7 +87,7 @@ describe( 'useRequestTransferWithSoftware', () => {
 				body: {
 					plugins: null,
 					themes: null,
-					migration_source_site_domain: FROM,
+					settings: API_SETTINGS,
 				},
 			} )
 			.query( { http_envelope: 1 } )
