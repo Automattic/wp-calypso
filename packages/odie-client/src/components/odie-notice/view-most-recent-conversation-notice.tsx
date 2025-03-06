@@ -5,7 +5,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import { useGetSupportInteractionById } from '../../data';
 import { useGetMostRecentOpenConversation } from '../../hooks/use-get-most-recent-open-conversation';
-import { OdieNotice } from '.';
 
 export const ViewMostRecentOpenConversationNotice = () => {
 	const { mostRecentSupportInteractionId, totalNumberOfConversations } =
@@ -17,7 +16,7 @@ export const ViewMostRecentOpenConversationNotice = () => {
 			: null;
 	const { data: supportInteraction } = useGetSupportInteractionById( fetchSupportInteraction );
 	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );
-	const { trackEvent } = useOdieAssistantContext();
+	const { trackEvent, setNotice } = useOdieAssistantContext();
 	const location = useLocation();
 	const navigate = useNavigate();
 	const shouldDisplayNotice = supportInteraction || totalNumberOfConversations > 1;
@@ -37,24 +36,25 @@ export const ViewMostRecentOpenConversationNotice = () => {
 		} );
 	};
 
-	return (
-		shouldDisplayNotice && (
-			<OdieNotice>
-				<div className="odie-notice__view-conversation">
-					<span>
-						{ __( 'You have another open conversation already started.', __i18n_text_domain__ ) }
-					</span>
-					&nbsp;
-					<button onClick={ handleNoticeOnClick }>
-						{ _n(
-							'View conversation',
-							'View conversations',
-							totalNumberOfConversations,
-							__i18n_text_domain__
-						) }
-					</button>
-				</div>
-			</OdieNotice>
-		)
-	);
+	if ( shouldDisplayNotice ) {
+		setNotice(
+			'view-most-recent-conversation-notice',
+			<div className="odie-notice__view-conversation">
+				<span>
+					{ __( 'You have another open conversation already started.', __i18n_text_domain__ ) }
+				</span>
+				&nbsp;
+				<button onClick={ handleNoticeOnClick }>
+					{ _n(
+						'View conversation',
+						'View conversations',
+						totalNumberOfConversations,
+						__i18n_text_domain__
+					) }
+				</button>
+			</div>
+		);
+	}
+
+	return null;
 };

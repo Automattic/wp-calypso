@@ -22,6 +22,7 @@ import {
 	hasCSATMessage,
 	hasSubmittedCSATRating,
 } from '../../utils';
+import { OdieNotices } from '../odie-notice';
 import { ViewMostRecentOpenConversationNotice } from '../odie-notice/view-most-recent-conversation-notice';
 import { JumpToRecent } from './jump-to-recent';
 import { ThinkingPlaceholder } from './thinking-placeholder';
@@ -222,6 +223,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 							);
 						} ) }
 						<JumpToRecent containerReference={ messagesContainerRef } />
+
 						{ chat.provider === 'odie' && (
 							<>
 								{ ! forceEmailSupport && <ViewMostRecentOpenConversationNotice /> }
@@ -232,6 +234,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 								) }
 							</>
 						) }
+						<OdieNotices />
 					</>
 				) }
 			</div>

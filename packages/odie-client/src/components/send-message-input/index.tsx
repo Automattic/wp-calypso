@@ -65,6 +65,7 @@ export const OdieSendMessageButton = () => {
 		isUserEligibleForPaidSupport,
 		canConnectToZendesk,
 		forceEmailSupport,
+		setNotice,
 	} = useOdieAssistantContext();
 	const cantTransferToZendesk =
 		( chat.messages?.[ chat.messages.length - 1 ]?.context?.flags?.forward_to_human_support &&
@@ -73,7 +74,6 @@ export const OdieSendMessageButton = () => {
 	const sendMessage = useSendChatMessage();
 	const isChatBusy = chat.status === 'loading' || chat.status === 'sending';
 	const isInitialLoading = chat.status === 'loading';
-	const [ isMessageSizeValid, setIsMessageSizeValid ] = useState( true );
 	const [ submitDisabled, setSubmitDisabled ] = useState( true );
 
 	// Focus input when chat is ready
@@ -147,15 +147,20 @@ export const OdieSendMessageButton = () => {
 	const onKeyUp = useCallback( () => {
 		// Only triggered when the message is empty
 		// used to remove validation message.
-		setIsMessageSizeValid( true );
-	}, [] );
+		setNotice( 'message-size-error', null );
+	}, [ setNotice ] );
 
 	const sendMessageHandler = useCallback( async () => {
 		const message = inputRef.current?.value.trim();
 		const messageLength = message?.length || 0;
 		const isMessageLengthValid = messageLength <= 4096; // zendesk api validation
 
-		setIsMessageSizeValid( isMessageLengthValid );
+		if ( ! isMessageLengthValid ) {
+			setNotice(
+				'message-size-error',
+				__( 'Message exceeds 4096 characters limit.', __i18n_text_domain__ )
+			);
+		}
 
 		if ( message === '' || isChatBusy || ! isMessageLengthValid ) {
 			return;
@@ -216,11 +221,6 @@ export const OdieSendMessageButton = () => {
 
 	return (
 		<>
-			{ ! isMessageSizeValid && (
-				<div className="odie-chatbox-invalid__message">
-					{ __( 'Message exceeds 4096 characters limit.' ) }
-				</div>
-			) }
 			<div className={ inputContainerClasses } ref={ divContainerRef }>
 				{ isEmailFallback ? (
 					<EmailFallbackNotice />

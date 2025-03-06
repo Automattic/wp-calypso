@@ -1,27 +1,41 @@
 import './style.scss';
-import { useState } from '@wordpress/element';
 import { Icon, close } from '@wordpress/icons';
+import { useOdieAssistantContext } from '../../context';
 
 interface OdieNoticeProps {
-	children: React.ReactNode;
+	content?: string | React.ReactNode;
+	onClose?: () => void;
 }
 
-export const OdieNotice: React.FC< OdieNoticeProps > = ( props ) => {
-	const [ isNoticeVisible, setIsNoticeVisible ] = useState( true );
+export const OdieNotice: React.FC< OdieNoticeProps > = ( { content, onClose } ) => {
+	return (
+		<div className="odie-notice">
+			<div className="odie-notice__container">
+				{ content && <span>{ content }</span> }
+				<button className="odie-notice__close-button" onClick={ onClose }>
+					<Icon icon={ close } size={ 12 } />
+				</button>
+			</div>
+		</div>
+	);
+};
+
+export const OdieNotices = () => {
+	const { notices, setNotice } = useOdieAssistantContext();
+
+	if ( Object.keys( notices ).length === 0 ) {
+		return null;
+	}
 
 	return (
-		isNoticeVisible && (
-			<div className="odie-notice">
-				<div className="odie-notice__container">
-					{ props.children }
-					<button
-						className="odie-notice__close-button"
-						onClick={ () => setIsNoticeVisible( false ) }
-					>
-						<Icon icon={ close } size={ 12 } />
-					</button>
-				</div>
-			</div>
-		)
+		<div className="odie-notices">
+			{ Object.entries( notices ).map( ( [ noticeId, noticeContent ] ) => (
+				<OdieNotice
+					key={ noticeId }
+					content={ noticeContent }
+					onClose={ () => setNotice( noticeId, null ) }
+				/>
+			) ) }
+		</div>
 	);
 };
