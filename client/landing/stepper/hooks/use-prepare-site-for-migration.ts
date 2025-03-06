@@ -7,20 +7,20 @@ import { useSiteMigrationKey } from './use-site-migration-key';
 
 type Status = 'idle' | 'pending' | 'success' | 'error';
 
-const safeLogToLogstash = ( message: string, properties: Record< string, unknown > ) => {
+const safeLogToLogstash = (message: string, properties: Record<string, unknown>) => {
 	try {
-		logToLogstash( {
+		logToLogstash({
 			feature: 'calypso_client',
 			message,
 			properties: {
-				env: config( 'env_id' ),
+				env: config('env_id'),
 				type: 'calypso_prepare_site_for_migration',
 				...properties,
 			},
-		} );
-	} catch ( e ) {
+		});
+	} catch (e) {
 		// eslint-disable-next-line no-console
-		console.error( e );
+		console.error(e);
 	}
 };
 
@@ -30,34 +30,34 @@ const useLogMigration = (
 	error?: Error | null,
 	siteId?: number
 ) => {
-	useEffect( () => {
-		if ( siteTransferStatus === 'pending' ) {
-			return safeLogToLogstash( 'Site migration preparation started', {
+	useEffect(() => {
+		if (siteTransferStatus === 'pending') {
+			return safeLogToLogstash('Site migration preparation started', {
 				status: 'started',
 				site_id: siteId,
-			} );
+			});
 		}
-	}, [ siteTransferStatus, siteId ] );
+	}, [siteTransferStatus, siteId]);
 
-	useEffect( () => {
-		if ( error ) {
-			return safeLogToLogstash( 'Site migration preparation failed', {
+	useEffect(() => {
+		if (error) {
+			return safeLogToLogstash('Site migration preparation failed', {
 				status: 'error',
 				error: error.message,
 				error_type: error.name,
 				site_id: siteId,
-			} );
+			});
 		}
-	}, [ error, siteId ] );
+	}, [error, siteId]);
 
-	useEffect( () => {
-		if ( completed ) {
-			return safeLogToLogstash( 'Site migration preparation completed', {
+	useEffect(() => {
+		if (completed) {
+			return safeLogToLogstash('Site migration preparation completed', {
 				status: 'success',
 				site_id: siteId,
-			} );
+			});
 		}
-	}, [ completed, siteId ] );
+	}, [completed, siteId]);
 };
 
 type Options = {
@@ -73,41 +73,45 @@ export const usePrepareSiteForMigration = (
 	from?: string,
 	options: Options = {}
 ) => {
-	const plugins: Record< string, 'activate' | 'install' > = { 'wpcom-migration': 'activate' };
+	const plugins: Record<string, 'activate' | 'install'> = { 'wpcom-migration': 'activate' };
 
-	const { data: { transferId } = {}, error: siteTransferError } = useRequestTransferWithSoftware(
+	const { data: { transferId } = {} } = useRequestTransferWithSoftware({
 		siteId,
-		from,
-		plugins
-	);
+		apiSettings: {
+			migration_source_site_domain: from,
+		},
+		plugins,
+	});
 
-	const softwareTransferState = useTransferWithSoftwareStatus( siteId, transferId ?? 0, {
-		enabled: Boolean( transferId && ! siteTransferError ),
-	} );
+	console.log('transferId', transferId);
+
+	const softwareTransferState = useTransferWithSoftwareStatus(siteId, transferId ?? 0, {
+		retry: options.retry ?? 0,
+	});
 
 	const softwareTransferCompleted =
 		'success' === softwareTransferState.data?.atomic_transfer_status &&
-		'success' === softwareTransferState.data?.software_transfer_status;
+		'success' === softwareTransferState.data?.transfer_with_software_status;
 
 	const {
 		data: { migrationKey } = {},
 		error: migrationKeyError,
 		status: migrationKeyStatus,
-	} = useSiteMigrationKey( siteId, {
-		enabled: Boolean( softwareTransferCompleted ),
+	} = useSiteMigrationKey(siteId, {
+		enabled: Boolean(softwareTransferCompleted),
 		retry: options.retry ?? 0,
-	} );
+	});
 
 	const error = softwareTransferState.error || migrationKeyError;
 	const criticalError = softwareTransferState.error;
 
 	const detailedStatus = {
 		siteTransfer: softwareTransferState.data?.atomic_transfer_status,
-		pluginInstallation: softwareTransferState.data?.software_transfer_status,
-		migrationKey: ! softwareTransferCompleted ? 'idle' : migrationKeyStatus,
+		pluginInstallation: softwareTransferState.data?.transfer_with_software_status,
+		migrationKey: !softwareTransferCompleted ? 'idle' : migrationKeyStatus,
 	};
 
-	useLogMigration( softwareTransferCompleted, softwareTransferState.status, criticalError, siteId );
+	useLogMigration(softwareTransferCompleted, softwareTransferState.status, criticalError, siteId);
 
 	return {
 		detailedStatus,
