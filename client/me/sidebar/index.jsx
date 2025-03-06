@@ -3,7 +3,6 @@ import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import {
 	bell,
-	category,
 	code,
 	cog,
 	commentAuthorAvatar,
@@ -181,16 +180,6 @@ class MeSidebar extends Component {
 						icon={ code }
 						onNavigate={ this.onNavigate }
 						preloadSectionName="developer"
-					/>
-
-					<SidebarItem
-						link="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs"
-						label={ translate( 'Manage Blogs' ) }
-						icon={ category }
-						forceInternalLink
-						onNavigate={ ( event, urlPath ) => {
-							this.handleGlobalSidebarMenuItemClick( urlPath );
-						} }
 					/>
 
 					<SidebarItem
