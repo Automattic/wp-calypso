@@ -23,7 +23,7 @@ import {
 	hasSubmittedCSATRating,
 } from '../../utils';
 import { OdieNotices } from '../odie-notice';
-import { ViewMostRecentOpenConversationNotice } from '../odie-notice/view-most-recent-conversation-notice';
+import useViewMostRecentOpenConversationNotice from '../odie-notice/use-view-most-recent-conversation-notice';
 import { JumpToRecent } from './jump-to-recent';
 import { ThinkingPlaceholder } from './thinking-placeholder';
 import ChatMessage from '.';
@@ -54,6 +54,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		useOdieAssistantContext();
 	const createZendeskConversation = useCreateZendeskConversation();
 	const resetSupportInteraction = useResetSupportInteraction();
+	useViewMostRecentOpenConversationNotice( chat?.provider === 'odie' );
 	const [ searchParams, setSearchParams ] = useSearchParams();
 	const isForwardingToZendesk =
 		searchParams.get( 'provider' ) === 'zendesk' && chat.provider !== 'zendesk';
@@ -224,15 +225,10 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 						} ) }
 						<JumpToRecent containerReference={ messagesContainerRef } />
 
-						{ chat.provider === 'odie' && (
-							<>
-								{ ! forceEmailSupport && <ViewMostRecentOpenConversationNotice /> }
-								{ chat.status === 'sending' && (
-									<div className="odie-chatbox__action-message">
-										<ThinkingPlaceholder />
-									</div>
-								) }
-							</>
+						{ chat.provider === 'odie' && chat.status === 'sending' && (
+							<div className="odie-chatbox__action-message">
+								<ThinkingPlaceholder />
+							</div>
 						) }
 						<OdieNotices />
 					</>

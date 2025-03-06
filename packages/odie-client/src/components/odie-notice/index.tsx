@@ -10,12 +10,10 @@ interface OdieNoticeProps {
 export const OdieNotice: React.FC< OdieNoticeProps > = ( { content, onClose } ) => {
 	return (
 		<div className="odie-notice">
-			<div className="odie-notice__container">
-				{ content && <span>{ content }</span> }
-				<button className="odie-notice__close-button" onClick={ onClose }>
-					<Icon icon={ close } size={ 12 } />
-				</button>
-			</div>
+			{ content && <span>{ content }</span> }
+			<button className="odie-notice__close-button" onClick={ onClose }>
+				<Icon icon={ close } size={ 12 } />
+			</button>
 		</div>
 	);
 };

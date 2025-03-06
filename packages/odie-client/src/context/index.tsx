@@ -178,22 +178,25 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	 * Set a notice with a specific ID.
 	 * If noticeText is null, the notice with the given ID will be removed.
 	 */
-	const setNotice = ( noticeId: string, content: string | React.ReactNode | null ) => {
-		setNotices( ( prevNotices ) => {
-			if ( content === null ) {
-				// Remove the notice if content is null
-				const newNotices = { ...prevNotices };
-				delete newNotices[ noticeId ];
-				return newNotices;
-			}
+	const setNotice = useCallback(
+		( noticeId: string, content: string | React.ReactNode | null ) => {
+			setNotices( ( prevNotices ) => {
+				if ( content === null ) {
+					// Remove the notice if content is null
+					const newNotices = { ...prevNotices };
+					delete newNotices[ noticeId ];
+					return newNotices;
+				}
 
-			// Add or update the notice
-			return {
-				...prevNotices,
-				[ noticeId ]: content,
-			};
-		} );
-	};
+				// Add or update the notice
+				return {
+					...prevNotices,
+					[ noticeId ]: content,
+				};
+			} );
+		},
+		[ setNotices ]
+	);
 
 	/**
 	 * Version for Odie API.

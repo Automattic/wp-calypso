@@ -1,12 +1,13 @@
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
+import { useCallback, useEffect } from '@wordpress/element';
 import { __, _n } from '@wordpress/i18n';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import { useGetSupportInteractionById } from '../../data';
 import { useGetMostRecentOpenConversation } from '../../hooks/use-get-most-recent-open-conversation';
 
-export const ViewMostRecentOpenConversationNotice = () => {
+export default function useViewMostRecentOpenConversationNotice( isEnabled: boolean ) {
 	const { mostRecentSupportInteractionId, totalNumberOfConversations } =
 		useGetMostRecentOpenConversation();
 
@@ -21,7 +22,7 @@ export const ViewMostRecentOpenConversationNotice = () => {
 	const navigate = useNavigate();
 	const shouldDisplayNotice = supportInteraction || totalNumberOfConversations > 1;
 
-	const handleNoticeOnClick = () => {
+	const handleNoticeOnClick = useCallback( () => {
 		if ( supportInteraction ) {
 			setCurrentSupportInteraction( supportInteraction );
 			if ( ! location.pathname.includes( '/odie' ) ) {
@@ -34,27 +35,34 @@ export const ViewMostRecentOpenConversationNotice = () => {
 			destination: supportInteraction ? 'support-interaction' : 'chat-history',
 			total_number_of_conversations: totalNumberOfConversations,
 		} );
-	};
+	}, [
+		supportInteraction,
+		setCurrentSupportInteraction,
+		location.pathname,
+		navigate,
+		trackEvent,
+		totalNumberOfConversations,
+	] );
 
-	if ( shouldDisplayNotice ) {
-		setNotice(
-			'view-most-recent-conversation-notice',
-			<div className="odie-notice__view-conversation">
-				<span>
-					{ __( 'You have another open conversation already started.', __i18n_text_domain__ ) }
-				</span>
-				&nbsp;
-				<button onClick={ handleNoticeOnClick }>
-					{ _n(
-						'View conversation',
-						'View conversations',
-						totalNumberOfConversations,
-						__i18n_text_domain__
-					) }
-				</button>
-			</div>
-		);
-	}
-
-	return null;
-};
+	useEffect( () => {
+		if ( isEnabled && shouldDisplayNotice ) {
+			setNotice(
+				'view-most-recent-conversation-notice',
+				<div className="odie-notice__view-conversation">
+					<span>
+						{ __( 'You have another open conversation already started.', __i18n_text_domain__ ) }
+					</span>
+					&nbsp;
+					<button onClick={ handleNoticeOnClick }>
+						{ _n(
+							'View conversation',
+							'View conversations',
+							totalNumberOfConversations,
+							__i18n_text_domain__
+						) }
+					</button>
+				</div>
+			);
+		}
+	}, [ shouldDisplayNotice, setNotice, handleNoticeOnClick, totalNumberOfConversations ] );
+}
