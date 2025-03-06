@@ -10,56 +10,80 @@ export enum UnsubscribeActionType {
 }
 
 type UnsubscribeModalProps = {
-	subscriber?: Subscriber;
+	subscribers?: Subscriber[];
 	onCancel: () => void;
 	onConfirm: ( action: UnsubscribeActionType, subscriber?: Subscriber ) => void;
 };
 
-const UnsubscribeModal = ( { subscriber, onCancel, onConfirm }: UnsubscribeModalProps ) => {
+const UnsubscribeModal = ( { subscribers, onCancel, onConfirm }: UnsubscribeModalProps ) => {
 	const translate = useTranslate();
-	const subscriberHasPlans = !! subscriber?.plans?.length;
+	const subscriber = subscribers?.[ 0 ];
+	const someSubscriberHasPlans = !! subscribers?.some( ( subscriber ) => subscriber.plans?.length );
+	const isSingleSubscriber = subscribers?.length === 1;
 	const recordRemoveModal = useRecordRemoveModal();
 
-	const freeSubscriberProps = {
-		action: UnsubscribeActionType.Unsubscribe,
-		confirmButtonLabel: translate( 'Remove subscriber' ),
-		text: translate(
-			'Are you sure you want to remove %s from your list? They will no longer receive new notifications from your site.',
-			{
-				args: [ subscriber?.display_name as string ],
-				comment: "%s is the subscriber's public display name",
-			}
-		),
-		title: translate( 'Remove free subscriber' ),
-	};
+	const freeSubscriberProps = isSingleSubscriber
+		? {
+				action: UnsubscribeActionType.Unsubscribe,
+				confirmButtonLabel: translate( 'Remove subscriber' ),
+				text: translate(
+					'Are you sure you want to remove %s from your list? They will no longer receive new notifications from your site.',
+					{
+						args: [ subscriber?.display_name as string ],
+						comment: "%s is the subscriber's public display name",
+					}
+				),
+				title: translate( 'Remove free subscriber' ),
+		  }
+		: {
+				action: UnsubscribeActionType.Unsubscribe,
+				confirmButtonLabel: translate( 'Remove subscribers' ),
+				text: translate(
+					'Are you sure you want to remove %d subscibers from your list? They will no longer receive new notifications from your site.',
+					{
+						args: [ subscribers?.length as number ],
+						comment: '%d is the number of subscribers',
+					}
+				),
+				title: translate( 'Remove free subscribers' ),
+		  };
 
-	const paidSubscriberProps = {
-		action: UnsubscribeActionType.Manage,
-		confirmButtonLabel: translate( 'Manage paid subscribers' ),
-		text: translate(
-			'To remove %s from your list, you’ll need to cancel their paid subscription first.',
-			{
-				args: [ subscriber?.display_name as string ],
-				comment: "%s is the subscriber's public display name",
-			}
-		),
-		title: translate( 'Remove paid subscriber' ),
-	};
+	const paidSubscriberProps = isSingleSubscriber
+		? {
+				action: UnsubscribeActionType.Manage,
+				confirmButtonLabel: translate( 'Manage paid subscribers' ),
+				text: translate(
+					'To remove %s from your list, you’ll need to cancel their paid subscription first.',
+					{
+						args: [ subscriber?.display_name as string ],
+						comment: "%s is the subscriber's public display name",
+					}
+				),
+				title: translate( 'Remove paid subscriber' ),
+		  }
+		: {
+				action: UnsubscribeActionType.Manage,
+				confirmButtonLabel: translate( 'Manage paid subscribers' ),
+				text: translate(
+					'Some subscribers have paid subscriptions. To remove them from your list, you’ll need to cancel their paid subscription first.'
+				),
+				title: translate( 'Remove paid subscribers' ),
+		  };
 
-	const { action, confirmButtonLabel, text, title } = subscriberHasPlans
+	const { action, confirmButtonLabel, text, title } = someSubscriberHasPlans
 		? paidSubscriberProps
 		: freeSubscriberProps;
 
 	useEffect( () => {
 		if ( subscriber ) {
-			recordRemoveModal( subscriberHasPlans, 'modal_showed' );
+			recordRemoveModal( someSubscriberHasPlans, 'modal_showed' );
 		}
-	}, [ recordRemoveModal, subscriberHasPlans, subscriber ] );
+	}, [ recordRemoveModal, someSubscriberHasPlans, subscriber ] );
 
 	const onCancelClick = useCallback( () => {
-		recordRemoveModal( subscriberHasPlans, 'modal_dismissed' );
+		recordRemoveModal( someSubscriberHasPlans, 'modal_dismissed' );
 		onCancel();
-	}, [ subscriberHasPlans, onCancel ] );
+	}, [ someSubscriberHasPlans, onCancel ] );
 
 	return (
 		<ConfirmModal
