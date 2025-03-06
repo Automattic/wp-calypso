@@ -66,24 +66,6 @@ A callback invoked when selecting the previous/next month in the date picker. Th
 -   Required: No
 -   Default: `undefined`
 
-### events
-
-List of events to show in the date picker. Each event will appear as a dot on the day of the event.
-
--   Type: `Array<{ date: Date }>`
--   Required: No
--   Default: `[]`
-
-```jsx
-// Example: Show events on specific dates
-<Calendar
-	events={ [
-		{ date: new Date(2023, 0, 1) }, // January 1, 2023
-		{ date: new Date(2023, 0, 15) }, // January 15, 2023
-	] }
-/>
-```
-
 ### startOfWeek
 
 The day that the week should start on. 0 for Sunday, 1 for Monday, etc.
@@ -96,7 +78,6 @@ The day that the week should start on. 0 for Sunday, 1 for Monday, etc.
 
 - Month navigation with previous/next buttons
 - Keyboard navigation support for accessibility
-- Event indicators for dates with events
 - Support for marking specific dates as invalid
 - Customizable week start day
 - Internationalization support via WordPress i18n

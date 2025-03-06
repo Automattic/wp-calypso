@@ -6,7 +6,7 @@ import { useState, useEffect } from '@wordpress/element';
  * Internal dependencies
  */
 import Calendar from '../calendar';
-import { daysFromNow, isWeekend } from './utils';
+import { isWeekend } from './utils';
 /**
  * Types
  */
@@ -47,17 +47,6 @@ const Template: StoryFn< typeof Calendar > = ( { currentDate, onChange, ...args 
 export const Default: StoryFn< typeof Calendar > = Template.bind( {} );
 Default.args = {
 	currentDate: new Date(),
-};
-
-export const WithEvents: StoryFn< typeof Calendar > = Template.bind( {} );
-WithEvents.args = {
-	currentDate: new Date(),
-	events: [
-		{ date: daysFromNow( 2 ) },
-		{ date: daysFromNow( 4 ) },
-		{ date: daysFromNow( 6 ) },
-		{ date: daysFromNow( 8 ) },
-	],
 };
 
 export const WithInvalidDates: StoryFn< typeof Calendar > = Template.bind( {} );
