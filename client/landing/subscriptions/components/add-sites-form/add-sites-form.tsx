@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversation/dialog';
+import FeedPreview from 'calypso/landing/subscriptions/components/feed-preview/feed-preview';
 import { isValidUrl } from '../../helpers';
 import { useAddSitesModalNotices } from '../../hooks';
 import { useRecordSiteSubscribed } from '../../tracks';
@@ -163,6 +164,8 @@ const AddSitesForm = ( {
 					{ buttonText || translate( 'Add site' ) }
 				</Button>
 			</form>
+
+			{ isValidInput ? <FeedPreview url={ inputValue } /> : null }
 
 			<ReaderJoinConversationDialog
 				isVisible={ showLoginDialog }
