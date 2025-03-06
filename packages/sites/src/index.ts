@@ -12,6 +12,7 @@ export {
 	withSitesListSorting,
 } from './use-sites-list-sorting';
 export type { SitesSortOptions, SitesSortKey, SitesSortOrder } from './use-sites-list-sorting';
+export { useSitesListDefaultFiltering } from './use-sites-list-default-filtering';
 export {
 	SITE_EXCERPT_COMPUTED_FIELDS,
 	SITE_EXCERPT_REQUEST_OPTIONS,

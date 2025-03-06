@@ -3,6 +3,7 @@ import pagejs from '@automattic/calypso-router';
 import {
 	type SiteExcerptData,
 	SitesSortKey,
+	useSitesListDefaultFiltering,
 	useSitesListFiltering,
 	useSitesListGrouping,
 	useSitesListSorting,
@@ -284,8 +285,14 @@ const SitesDashboard = ( {
 		showHidden: true,
 	} );
 
+	// Remove deleted sites from default view
+	const filteredStatusGroup = useSitesListDefaultFiltering( currentStatusGroup, {
+		search: dataViewsState.search,
+		statusSlug: statusSlug,
+	} );
+
 	// Perform sorting actions
-	const sortedSites = useSitesListSorting( currentStatusGroup, {
+	const sortedSites = useSitesListSorting( filteredStatusGroup, {
 		sortKey: siteSortingKeys.find( ( key ) => key.dataView === dataViewsState.sort?.field )
 			?.sortKey as SitesSortKey,
 		sortOrder: dataViewsState.sort?.direction || undefined,
