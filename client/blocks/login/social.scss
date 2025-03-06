@@ -129,33 +129,6 @@
 			padding: 24px;
 		}
 	}
-
-	/**
-	* WooCommerce Login
-	*/
-	@at-root .is-woo-passwordless & {
-		.auth-form__social-buttons .auth-form__social-buttons-container .social-buttons__button {
-			height: 48px;
-			/* stylelint-disable-next-line scales/radii */
-			border-radius: 8px;
-
-			> svg {
-				margin-right: auto;
-			}
-
-			span {
-				color: var(--studio-gray-100);
-				font-family: Inter, -apple-system, system-ui, sans-serif;
-				font-size: 1rem;
-				font-style: normal;
-				font-weight: 500;
-				line-height: 24px;
-				letter-spacing: 0.32px;
-				margin-left: -20px;
-				margin-right: auto;
-			}
-		}
-	}
 }
 
 .auth-form__social {
@@ -300,33 +273,6 @@
 
 		@include break-mobile {
 			padding: 24px;
-		}
-	}
-
-	/**
-	* WooCommerce Login
-	*/
-	@at-root .is-woo-passwordless & {
-		.auth-form__social-buttons .auth-form__social-buttons-container .social-buttons__button {
-			height: 48px;
-			/* stylelint-disable-next-line scales/radii */
-			border-radius: 8px;
-
-			> svg {
-				margin-right: auto;
-			}
-
-			span {
-				color: var(--studio-gray-100);
-				font-family: Inter, -apple-system, system-ui, sans-serif;
-				font-size: 1rem;
-				font-style: normal;
-				font-weight: 500;
-				line-height: 24px;
-				letter-spacing: 0.32px;
-				margin-left: -20px;
-				margin-right: auto;
-			}
 		}
 	}
 }
