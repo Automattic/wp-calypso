@@ -66,7 +66,7 @@ export default function NeedSetup( { licenseKey }: Props ) {
 	// Filter out sites that have a referral
 	const availableSites =
 		allAvailableSites.filter(
-			( { features }: NeedsSetupSite ) => features.wpcom_atomic.referral
+			( { features }: NeedsSetupSite ) => ! features.wpcom_atomic.referral
 		) ?? [];
 
 	// Find the site license by license key

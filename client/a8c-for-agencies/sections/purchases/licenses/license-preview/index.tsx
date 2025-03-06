@@ -96,13 +96,11 @@ export default function LicensePreview( {
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const domain = siteUrl && ! isPressableLicense ? getUrlParts( siteUrl ).hostname || siteUrl : '';
 
-	const isClientLicense = referral;
-
 	const assign = useCallback( () => {
 		const redirectUrl = isWPCOMLicense
 			? A4A_SITES_LINK_NEEDS_SETUP
 			: addQueryArgs( { key: licenseKey }, '/marketplace/assign-license' );
-		if ( paymentMethodRequired && ! isClientLicense ) {
+		if ( paymentMethodRequired && ! referral ) {
 			const noticeLinkHref = addQueryArgs(
 				{
 					return: redirectUrl,
@@ -125,7 +123,7 @@ export default function LicensePreview( {
 		}
 
 		page.redirect( redirectUrl );
-	}, [ isWPCOMLicense, licenseKey, paymentMethodRequired, isClientLicense, translate, dispatch ] );
+	}, [ isWPCOMLicense, licenseKey, paymentMethodRequired, referral, translate, dispatch ] );
 
 	useEffect( () => {
 		if ( isHighlighted ) {
@@ -251,13 +249,13 @@ export default function LicensePreview( {
 					<span className="license-preview__product">
 						<div className="license-preview__product-title">
 							{ productTitle }
-							{ isClientLicense && (
+							{ referral && (
 								<Badge className="license-preview__client-badge" type="info">
 									{ translate( 'Referral' ) }
 								</Badge>
 							) }
 						</div>
-						{ isClientLicense && (
+						{ referral && (
 							<div className="license-preview__client-email">
 								<ClientSite referral={ referral } />
 							</div>
@@ -375,7 +373,7 @@ export default function LicensePreview( {
 							revokedAt={ revokedAt }
 							licenseType={ licenseType }
 							isChildLicense={ isChildLicense }
-							isClientLicense={ !! isClientLicense }
+							isClientLicense={ !! referral }
 						/>
 					) : (
 						/*
