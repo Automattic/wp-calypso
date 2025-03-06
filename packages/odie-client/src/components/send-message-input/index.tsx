@@ -1,44 +1,101 @@
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
-import { Spinner } from '@wordpress/components';
+import {
+	useAttachFileToConversation,
+	useAuthenticateZendeskMessaging,
+} from '@automattic/zendesk-client';
+import { DropZone, Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useCallback, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-// eslint-disable-next-line no-restricted-imports
-import DropZone from 'calypso/components/drop-zone';
 import { SendMessageIcon } from '../../assets/send-message-icon';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../hooks';
 import { Message } from '../../types';
+import { zendeskMessageConverter } from '../../utils';
 import { AttachmentButton } from './attachment-button';
 import { ResizableTextarea } from './resizable-textarea';
 
 import './style.scss';
 
+const getFileType = ( file: File ) => {
+	if ( file.type.includes( 'image' ) ) {
+		return 'image-placeholder';
+	}
+
+	return 'text';
+};
+
+const getPlaceholderAttachmentMessage = ( file: File ) => {
+	return zendeskMessageConverter( {
+		role: 'user',
+		type: getFileType( file ),
+		displayName: '',
+		text: '',
+		id: String( new Date().getTime() ),
+		received: new Date().getTime(),
+		source: { type: 'web', id: '', integrationId: '' },
+		mediaUrl: URL.createObjectURL( file ),
+	} );
+};
+
 export const OdieSendMessageButton = () => {
 	const divContainerRef = useRef< HTMLDivElement >( null );
 	const inputRef = useRef< HTMLTextAreaElement >( null );
 	const attachmentButtonRef = useRef< HTMLElement >( null );
-	const { trackEvent, chat } = useOdieAssistantContext();
+	const { trackEvent, chat, addMessage, isUserEligibleForPaidSupport } = useOdieAssistantContext();
 	const sendMessage = useSendChatMessage();
 	const isChatBusy = chat.status === 'loading' || chat.status === 'sending';
 	const [ isMessageSizeValid, setIsMessageSizeValid ] = useState( true );
 	const [ submitDisabled, setSubmitDisabled ] = useState( true );
-	const [ fileToUpload, setFileToUpload ] = useState< File | undefined >();
-	const onFilesDrop = ( files: File[] ) => {
-		const file = files?.[ 0 ];
-		if ( file && file.type.startsWith( 'image/' ) ) {
-			setFileToUpload( file );
-		}
-	};
 
+	const { data: authData } = useAuthenticateZendeskMessaging(
+		isUserEligibleForPaidSupport,
+		'messenger'
+	);
 	const { zendeskClientId } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
 			zendeskClientId: helpCenterSelect.getZendeskClientId(),
 		};
 	}, [] );
+	const inferredClientId = chat.clientId ? chat.clientId : zendeskClientId;
+
+	const { isPending: isAttachingFile, mutateAsync: attachFileToConversation } =
+		useAttachFileToConversation();
+
+	const handleFileUpload = useCallback(
+		async ( file: File | undefined ) => {
+			if ( authData && chat.conversationId && inferredClientId && file ) {
+				attachFileToConversation( {
+					authData,
+					file,
+					conversationId: chat.conversationId,
+					clientId: inferredClientId,
+				} ).then( () => {
+					addMessage( getPlaceholderAttachmentMessage( file ) );
+					trackEvent( 'send_message_attachment', { type: file.type } );
+				} );
+			}
+		},
+		[
+			authData,
+			chat.conversationId,
+			inferredClientId,
+			attachFileToConversation,
+			addMessage,
+			trackEvent,
+		]
+	);
+
+	const onFilesDrop = ( files: File[] ) => {
+		const file = files?.[ 0 ];
+		if ( file && file.type.startsWith( 'image/' ) ) {
+			handleFileUpload( file );
+		}
+	};
+
 	const onPaste = ( event: React.ClipboardEvent ) => {
 		const items = event.clipboardData.items;
 
@@ -48,7 +105,7 @@ export const OdieSendMessageButton = () => {
 
 				const file = item.getAsFile();
 				if ( file ) {
-					setFileToUpload( file );
+					handleFileUpload( file );
 					break;
 				}
 			}
@@ -116,7 +173,6 @@ export const OdieSendMessageButton = () => {
 		'odie-send-message-inner-button__flag'
 	);
 
-	const inferredClientId = chat.clientId ? chat.clientId : zendeskClientId;
 	const showAttachmentButton = chat.conversationId && inferredClientId;
 
 	return (
@@ -147,8 +203,8 @@ export const OdieSendMessageButton = () => {
 					{ showAttachmentButton && (
 						<AttachmentButton
 							attachmentButtonRef={ attachmentButtonRef }
-							externalFile={ fileToUpload }
-							inferredClientId={ inferredClientId }
+							onFileUpload={ handleFileUpload }
+							isAttachingFile={ isAttachingFile }
 						/>
 					) }
 					<button type="submit" className={ buttonClasses } disabled={ submitDisabled }>
