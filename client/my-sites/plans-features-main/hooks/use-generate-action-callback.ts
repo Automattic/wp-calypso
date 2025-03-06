@@ -17,8 +17,8 @@ import { useTranslate } from 'i18n-calypso';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { cancelAndRefundPurchase } from 'calypso/lib/purchases/actions';
 import { addQueryArgs } from 'calypso/lib/url';
-import { cancelPurchase } from 'calypso/me/purchases/paths';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
+import { getCancelPurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { useSelector } from 'calypso/state';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
@@ -119,8 +119,9 @@ function useDowngradeHandler( {
 	return useCallback(
 		( planSlug: PlanSlug ) => {
 			// A downgrade to the free plan is essentially cancelling the current plan.
-			if ( isFreePlan( planSlug ) ) {
-				page( cancelPurchase( siteSlug, currentPlan?.purchaseId ) );
+			if ( isFreePlan( planSlug ) && siteSlug && currentPlan?.purchaseId ) {
+				page( getCancelPurchaseUrlFor( siteSlug, currentPlan?.purchaseId ) );
+
 				return;
 			} else if ( siteSlug && currentPlan?.purchaseId ) {
 				return cancelAndRefundPurchase(
