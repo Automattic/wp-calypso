@@ -8,6 +8,16 @@
 .jetpack-cloud-sidebar {
 	.jetpack-cloud-sidebar__site-selector {
 		background-color: var(--color-sidebar-background);
+		.components-button {
+			border: none;
+		}
+		form {
+			width: 100%;
+			flex: 1;
+			input {
+				width: 100%;
+			}
+		}
 	}
 
 
