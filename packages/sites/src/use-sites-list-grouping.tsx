@@ -64,8 +64,8 @@ export const useSitesListGrouping = < T extends SiteForGrouping >(
 			'migration-started': 0,
 		};
 
-		// Filter out deleted sites by default;
-		const defaultSiteList = allSites.filter( ( site ) => ! site.is_deleted );
+		// Filter out deleted sites by default.
+		const filteredDefaultSites = allSites.filter( ( site ) => ! site.is_deleted );
 
 		const groupedByStatus = allSites.reduce< { [ K in Status[ 'name' ] ]: T[] } >(
 			( groups, site ) => {
@@ -84,7 +84,7 @@ export const useSitesListGrouping = < T extends SiteForGrouping >(
 				return groups;
 			},
 			{
-				all: showHidden ? defaultSiteList : [],
+				all: showHidden ? filteredDefaultSites : [],
 				'coming-soon': [],
 				public: [],
 				private: [],
