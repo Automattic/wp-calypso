@@ -50,7 +50,7 @@ describe( 'useRequestTransferWithSoftware', () => {
 
 	beforeEach( () => nock.cleanAll() );
 
-	it( 'should successfully request transfer with software and return the transferId', async () => {
+	it( 'should successfully request transfer with software and return the transfer_with_software_id', async () => {
 		/*
 		 * @TODO: Investigate why Nock throws a no-match error for the correct namespace.
 		 * The correct endpoint is /wpcom/v2/sites/:site/atomic/transfer-with-software but Nock sees
@@ -69,7 +69,7 @@ describe( 'useRequestTransferWithSoftware', () => {
 				http_envelope: 1,
 			} )
 			.reply( 200, {
-				transferId: 456,
+				transfer_with_software_id: 456,
 			} );
 
 		const { result } = render();
@@ -79,7 +79,9 @@ describe( 'useRequestTransferWithSoftware', () => {
 		await waitFor(
 			() => {
 				expect( result.current.isSuccess ).toBe( true );
-				expect( result.current.data ).toEqual( { transferId: 456 } );
+				expect( result.current.data ).toEqual( {
+					transfer_with_software_id: 456,
+				} );
 			},
 			{ timeout: 3000 }
 		);
