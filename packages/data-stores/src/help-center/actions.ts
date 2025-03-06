@@ -196,13 +196,6 @@ export const resetStore = () =>
 		type: 'HELP_CENTER_RESET_STORE',
 	} ) as const;
 
-export const setShowMessagingChat = function* () {
-	yield setShowHelpCenter( false );
-	yield setShowMessagingLauncher( true );
-	yield setShowMessagingWidget( true );
-	yield resetStore();
-};
-
 export const setNewMessagingChat = function* ( {
 	initialMessage,
 	section,
