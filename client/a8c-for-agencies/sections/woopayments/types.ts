@@ -18,18 +18,24 @@ export interface SitesWithWooPaymentsState {
 }
 
 export interface WooPaymentsData {
-	total?: {
-		payout: number;
-		tpv: number;
-		sites?: {
-			[ key: number ]: {
-				tpv?: number;
-				payout?: number;
+	data: {
+		total?: {
+			payout: number;
+			tpv: number;
+			transactions: number;
+			sites?: {
+				[ key: number ]: {
+					tpv?: number;
+					payout?: number;
+					transactions?: number;
+				};
 			};
 		};
+		estimated?: {
+			payout: number;
+			tpv: number;
+			transactions: number;
+		};
 	};
-	estimated?: {
-		payout: number;
-		tpv: number;
-	};
+	status: string;
 }
