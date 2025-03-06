@@ -1,5 +1,6 @@
-/* eslint-disable no-console */
 import { zipWpContent, type PlaygroundClient } from '@wp-playground/client';
+import wp from 'calypso/lib/wp';
+import { uploadExportFile, updateImporter, createClearOrder } from 'calypso/state/imports/actions';
 
 export async function getSiteZip( playground: PlaygroundClient ): Promise< File > {
 	const zipBytes = await zipWpContent( playground, {
@@ -11,25 +12,28 @@ export async function getSiteZip( playground: PlaygroundClient ): Promise< File 
 
 export async function importPlaygroundSite(
 	playground: PlaygroundClient,
-	siteSlug: string
+	siteId: number
 ): Promise< string > {
 	const siteZip = await getSiteZip( playground );
-	console.log( 'siteZip', siteZip );
-	console.log( 'siteSlug', siteSlug );
-	const importId = await new Promise< string >( ( resolve ) => {
-		setTimeout( () => {
-			resolve( '123' );
-		}, 1000 );
+
+	const importStatus = {
+		importStatus: 'importer-ready-for-upload',
+		siteId,
+		type: 'wordpress',
+	};
+
+	const importer = await uploadExportFile( siteId, {
+		importStatus,
+		file: siteZip,
 	} );
-	return importId;
+	return importer.importId;
 }
 
-export async function getImportStatus( importId: string ): Promise< string > {
-	console.log( 'getImportStatus', importId );
-	const importStatus = new Promise< string >( ( resolve ) => {
-		setTimeout( () => {
-			resolve( 'completed' );
-		}, 3000 );
-	} );
-	return importStatus;
+export async function clearImport( siteId: number, importId: string ) {
+	await updateImporter( siteId, createClearOrder( siteId, importId ) );
+}
+
+export async function getImportStatus( siteId: number ): Promise< string > {
+	const data = await wp.req.get( `/sites/${ siteId }/imports/` );
+	return data.importStatus;
 }
