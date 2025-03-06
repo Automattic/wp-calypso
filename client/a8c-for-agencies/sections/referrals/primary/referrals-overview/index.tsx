@@ -122,17 +122,19 @@ export default function ReferralsOverview( {
 
 					<LayoutHeader>
 						<Title>{ title } </Title>
-						{ isAutomatedReferral && isAgencyApproved && (
+						{ isAutomatedReferral && (
 							<Actions>
 								<MobileSidebarNavigation />
-								<Button
-									variant="primary"
-									href={ A4A_MARKETPLACE_PRODUCTS_LINK }
-									onClick={ makeAReferral }
-									ref={ wrapperRef }
-								>
-									{ hasReferrals ? translate( 'New referral' ) : translate( 'Make a referral' ) }
-								</Button>
+								{ isAgencyApproved && (
+									<Button
+										variant="primary"
+										href={ A4A_MARKETPLACE_PRODUCTS_LINK }
+										onClick={ makeAReferral }
+										ref={ wrapperRef }
+									>
+										{ hasReferrals ? translate( 'New referral' ) : translate( 'Make a referral' ) }
+									</Button>
+								) }
 							</Actions>
 						) }
 					</LayoutHeader>
