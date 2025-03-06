@@ -18,8 +18,13 @@ export const OdieAssistant: React.FC = () => {
 		};
 	}, [] );
 
+	const showClosedConversationFooter =
+		currentSupportInteraction?.status === 'closed' ||
+		currentSupportInteraction?.status === 'solved';
+
 	useEffect( () => {
 		trackEvent( 'chatbox_view' );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
 	return (
@@ -27,8 +32,8 @@ export const OdieAssistant: React.FC = () => {
 			<div className="chat-box-message-container" id="odie-messages-container">
 				<MessagesContainer currentUser={ currentUser } />
 			</div>
-			{ currentSupportInteraction?.status !== 'closed' && <OdieSendMessageButton /> }
-			{ currentSupportInteraction?.status === 'closed' && <ClosedConversationFooter /> }
+			{ ! showClosedConversationFooter && <OdieSendMessageButton /> }
+			{ showClosedConversationFooter && <ClosedConversationFooter /> }
 		</div>
 	);
 };

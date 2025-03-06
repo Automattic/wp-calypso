@@ -264,7 +264,7 @@ export type SupportInteractionEvent = {
 
 export type SupportInteraction = {
 	uuid: string;
-	status: 'open' | 'closed';
+	status: 'open' | 'closed' | 'solved';
 	start_date: string;
 	last_updated: string;
 	users: SupportInteractionUser[];
