@@ -2,6 +2,8 @@
 @import "@wordpress/base-styles/mixins";
 
 .migrations-hosting-features {
+	overflow: hidden;
+
 	.a4a-carousel__navigation {
 		display: none;
 
