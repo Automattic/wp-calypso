@@ -1,9 +1,8 @@
-import { Badge, Card, Button, Dialog, Gridicon } from '@automattic/components';
+import { Badge, Card, Button, Dialog, Gridicon, Spinner } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useCallback } from 'react';
 import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import SectionHeader from 'calypso/components/section-header';
@@ -268,7 +267,7 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 	}
 
 	if ( ! site ) {
-		return <LoadingEllipsis />;
+		return <Spinner />;
 	}
 
 	return (
@@ -277,7 +276,7 @@ function MembershipsSection( { query }: MembershipsSectionProps ) {
 			<QueryMembershipsEarnings siteId={ site?.ID ?? 0 } />
 			{ ! hasConnectedAccount && ! connectUrl && (
 				<div className="earn__payments-loading">
-					<LoadingEllipsis />
+					<Spinner />
 				</div>
 			) }
 			<div>

@@ -1,7 +1,6 @@
-import { Card } from '@automattic/components';
+import { Card, Spinner } from '@automattic/components';
 import { formatCurrency, useTranslate } from 'i18n-calypso';
 import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import SectionHeader from 'calypso/components/section-header';
 import { useSelector } from 'calypso/state';
 import { getEarningsWithDefaultsForSiteId } from 'calypso/state/memberships/earnings/selectors';
@@ -23,7 +22,7 @@ function StatsSection() {
 
 	function renderEarnings() {
 		if ( ! site ) {
-			return <LoadingEllipsis />;
+			return <Spinner />;
 		}
 
 		return (
@@ -73,7 +72,7 @@ function StatsSection() {
 	}
 
 	if ( ! site ) {
-		return <LoadingEllipsis />;
+		return <Spinner />;
 	}
 
 	return (

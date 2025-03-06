@@ -1,4 +1,4 @@
-import { Button, Card, FormLabel } from '@automattic/components';
+import { Button, Card, FormLabel, Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -13,7 +13,6 @@ import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import SectionHeader from 'calypso/components/section-header';
 import SupportInfo from 'calypso/components/support-info';
 import { ProtectFormGuard } from 'calypso/lib/protect-form';
@@ -512,7 +511,7 @@ const AdsFormSettings = () => {
 	}
 
 	if ( ! site ) {
-		return <LoadingEllipsis />;
+		return <Spinner />;
 	}
 
 	return (

@@ -3,13 +3,12 @@ import {
 	FEATURE_PREMIUM_CONTENT_CONTAINER,
 	FEATURE_RECURRING_PAYMENTS,
 } from '@automattic/calypso-products';
-import { CompactCard, Button, Badge, Gridicon } from '@automattic/components';
+import { CompactCard, Button, Badge, Gridicon, Spinner } from '@automattic/components';
 import { formatCurrency, useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import QueryMembershipsCoupons from 'calypso/components/data/query-memberships-coupons';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SectionHeader from 'calypso/components/section-header';
 import { useSelector } from 'calypso/state';
@@ -235,7 +234,7 @@ function CouponsList() {
 				) }
 				{ ! hasLoadedFeatures && (
 					<div className="memberships__loading">
-						<LoadingEllipsis />
+						<Spinner />
 					</div>
 				) }
 			</div>

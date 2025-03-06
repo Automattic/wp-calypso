@@ -1,4 +1,4 @@
-import { Card, Button, Gridicon } from '@automattic/components';
+import { Card, Button, Gridicon, Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Tooltip } from '@wordpress/components';
 import { formatCurrency, useTranslate } from 'i18n-calypso';
@@ -11,7 +11,6 @@ import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import Gravatar from 'calypso/components/gravatar';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { decodeEntities } from 'calypso/lib/formatting';
@@ -234,7 +233,7 @@ const CustomerSection = ( { query }: CustomerSectionProps ) => {
 	}, [ fetchNextSubscriberPage ] );
 
 	if ( ! site ) {
-		return <LoadingEllipsis />;
+		return <Spinner />;
 	}
 
 	if ( subscriberId ) {
