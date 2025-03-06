@@ -80,7 +80,10 @@ const entrepreneurFlow: Flow = {
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
-			const siteId = getSiteIdBySlug( siteSlug ) || getSiteIdParam( urlQueryParams );
+			const siteId =
+				getSiteIdBySlug( siteSlug ) ||
+				getSiteIdParam( urlQueryParams ) ||
+				( providedDependencies?.siteId as string | undefined );
 
 			switch ( currentStep ) {
 				case SEGMENTATION_SURVEY_SLUG: {
