@@ -115,7 +115,6 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 		} );
 
 		it( 'Publish post', async function () {
-			await editorPage.closeWelcomeGuideIfNeeded();
 			await editorPage.publish();
 		} );
 
