@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { __experimentalUseFocusOutside as useFocusOutside } from '@wordpress/compose';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import Search, { SEARCH_MODE_ON_ENTER } from 'calypso/components/search';
 import './style.scss';
 interface SearchThemesProps {
@@ -16,15 +16,6 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch, recordT
 	const translate = useTranslate();
 	const [ searchInput, setSearchInput ] = useState( query );
 	const [ isApplySearch, setIsApplySearch ] = useState( false );
-	const [ isSearchOpen, setIsSearchOpen ] = useState( false );
-	// Sync the value of the search input with the subject filter,
-	// which is equivalent to adding `subject:<term>` to the search input
-	useEffect( () => {
-		// Prevent unnecessary render when there is unfinished filter subject:
-		if ( ! isSearchOpen ) {
-			setSearchInput( query );
-		}
-	}, [ isSearchOpen, query ] );
 	const focusOnInput = () => {
 		searchRef.current?.focus();
 	};
@@ -33,7 +24,6 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch, recordT
 		focusOnInput();
 	};
 	const closeSearch = () => {
-		setIsSearchOpen( false );
 		searchRef.current?.blur();
 	};
 	const onKeyDown = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
@@ -64,7 +54,6 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch, recordT
 					hideClose
 					onKeyDown={ onKeyDown }
 					onSearch={ onSearch }
-					onSearchOpen={ () => setIsSearchOpen( true ) }
 					onSearchClose={ closeSearch }
 					onSearchChange={ ( inputValue: string ) => {
 						setSearchInput( inputValue );
