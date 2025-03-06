@@ -31,7 +31,7 @@
 	}
 
 	&:not(.is-unread-message) {
-		&.is-closed, &.is-resolved {
+		&.is-closed, &.is-solved {
 			background-color: var(--studio-gray-0);
 		}
 	}
