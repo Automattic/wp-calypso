@@ -6,10 +6,6 @@ $theme-sheet-content-padding-y: 48px;
 $button-border: 4px;
 
 .is-section-theme {
-	$layout-header-height: 68px;
-	$layout-padding-top: 47px;
-	$theme-preview-offset-y: $layout-header-height + $theme-sheet-content-padding-y;
-
 	// overwrite notices z-index so they are visible on top of the theme preview
 	.global-notices {
 		// This should be - z-index: z-index("root", ".is-section-theme .global-notices")
@@ -23,13 +19,12 @@ $button-border: 4px;
 
 	.layout.is-logged-in .layout__content {
 		overflow: clip;
-		padding-top: $layout-padding-top;
+		padding-top: 47px;
 
 		.theme__sheet-screenshot,
 		.theme__sheet-web-preview .theme-preview__frame-wrapper {
 			@include breakpoint-deprecated( ">960px" ) {
-				$offset-y: $layout-padding-top + $theme-preview-offset-y + 16px;
-				max-height: calc(100vh - var(--content-padding-top, 0px) - var(--content-padding-bottom, 0px) - $offset-y);
+				max-height: calc(100vh - var(--content-padding-top, 0px) - var(--content-padding-bottom, 0px) - 32px);
 			}
 		}
 	}
@@ -52,14 +47,6 @@ $button-border: 4px;
 
 			@media screen and (min-width: 782px) {
 				padding: calc(var(--masterbar-height) + var(--content-padding-top)) 16px var(--content-padding-bottom) var(--sidebar-width-max);
-			}
-
-			.theme__sheet-screenshot,
-			.theme__sheet-web-preview .theme-preview__frame-wrapper {
-				@include breakpoint-deprecated( ">960px" ) {
-					$offset-y: $theme-preview-offset-y + 16px;
-					max-height: calc(100vh - var(--content-padding-top, 0px) - var(--content-padding-bottom, 0px) - var(--masterbar-height) - $offset-y);
-				}
 			}
 		}
 
@@ -418,6 +405,7 @@ $button-border: 4px;
 		0 1px 18px rgba(0, 0, 0, 0.12),
 		0 3px 5px rgba(0, 0, 0, 0.2);
 	display: block;
+	margin-bottom: 16px;
 	margin-top: 0;
 	overflow: hidden;
 	transition: all 200ms ease-in-out;
@@ -457,7 +445,11 @@ $button-border: 4px;
 		overflow-y: scroll;
 		pointer-events: all;
 		position: sticky;
-		top: 16px;
+		top: $theme-sheet-content-padding-y;
+
+		.is-global-sidebar-visible & {
+			top: 16px;
+		}
 
 		&.is-active:hover {
 			cursor: pointer;
