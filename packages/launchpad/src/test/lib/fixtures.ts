@@ -275,7 +275,6 @@ export const defaultDomainResponse: any = {
 	owner: '',
 	partnerDomain: false,
 	pendingRegistration: false,
-	pendingRegistrationTime: '',
 	pointsToWpcom: false,
 	privacyAvailable: false,
 	privateDomain: false,

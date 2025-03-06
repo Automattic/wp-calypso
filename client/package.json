@@ -75,7 +75,7 @@
 		"@automattic/wpcom-checkout": "workspace:^",
 		"@automattic/wpcom-template-parts": "workspace:^",
 		"@automattic/zendesk-client": "workspace:^",
-		"@babel/core": "^7.26.0",
+		"@babel/core": "^7.26.9",
 		"@emotion/css": "^11.11.2",
 		"@emotion/jest": "^11.11.0",
 		"@emotion/react": "^11.11.1",

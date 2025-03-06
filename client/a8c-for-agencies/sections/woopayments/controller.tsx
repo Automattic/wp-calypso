@@ -20,7 +20,7 @@ export const woopaymentsPaymentSettingsContext: Callback = ( context, next ) => 
 	context.primary = (
 		<>
 			<PageViewTracker title="WooPayments > Payment Settings" path={ context.path } />
-			<ReferralsBankDetails isAutomatedReferral />
+			<ReferralsBankDetails type="woopayments" />
 		</>
 	);
 	context.secondary = <WooPaymentsSidebar path={ context.path } />;

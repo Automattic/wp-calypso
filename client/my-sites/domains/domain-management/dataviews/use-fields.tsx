@@ -21,6 +21,7 @@ export function useFields() {
 		getSiteSlug,
 		getFullDomain,
 		hasConnectableSites,
+		completedJobs,
 	} = useDomainsDataViewsContext();
 
 	const fields = useMemo< Field< PartialDomainData >[] >(
@@ -33,7 +34,11 @@ export function useFields() {
 				enableGlobalSearch: true,
 				getValue: ( { item }: { item: PartialDomainData } ) => item.domain,
 				render: ( { item }: { item: PartialDomainData } ) => (
-					<DomainField domain={ item } isAllSitesView={ isAllSitesView } />
+					<DomainField
+						domain={ item }
+						isAllSitesView={ isAllSitesView }
+						completedJobs={ completedJobs }
+					/>
 				),
 			},
 			{

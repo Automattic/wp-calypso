@@ -96,7 +96,7 @@ export const buildChartData = memoizeLast(
 
 // data validation for line chart
 export const transformChartDataToLineFormat = memoizeLast(
-	( chartData, activeLegend = [], activeTab, primaryColor, secondaryColor, gmtOffset = 0 ) => {
+	( chartData, activeLegend = [], activeTab, primaryColor, secondaryColor ) => {
 		if ( ! Array.isArray( chartData ) || chartData.length === 0 ) {
 			return [];
 		}
@@ -105,7 +105,7 @@ export const transformChartDataToLineFormat = memoizeLast(
 
 		const mainSeries = chartData
 			.map( ( record ) => {
-				const date = parseLocalDate( record.data.period, gmtOffset );
+				const date = parseLocalDate( record.data.period );
 				const value = record.data[ activeTab.attr ];
 				if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
 					return null;
@@ -129,7 +129,7 @@ export const transformChartDataToLineFormat = memoizeLast(
 		if ( activeLegend.length > 0 ) {
 			const secondarySeries = chartData
 				.map( ( record ) => {
-					const date = parseLocalDate( record.data.period, gmtOffset );
+					const date = parseLocalDate( record.data.period );
 					const value = record.data.visitors;
 					if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
 						return null;

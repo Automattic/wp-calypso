@@ -9,7 +9,9 @@ import { ThunkDispatch } from 'redux-thunk';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import AsyncLoad from 'calypso/components/async-load';
 import NavigationHeader from 'calypso/components/navigation-header';
+import { getPostIcon } from 'calypso/reader/get-helpers';
 import FollowingEmptyContent from 'calypso/reader/stream/empty';
+import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { requestPaginatedStream } from 'calypso/state/reader/streams/actions';
 import { viewStream } from 'calypso/state/reader-ui/actions';
@@ -78,13 +80,23 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 			if ( isPaddingItem( item ) ) {
 				return acc;
 			}
+
 			const post = getPostByKey( state, {
 				feedId: item.feedId,
 				postId: item.postId,
 			} );
-			if ( post ) {
-				acc[ `${ item?.feedId }-${ item?.postId }` ] = post;
+			if ( ! post ) {
+				return acc;
 			}
+
+			// Add site icon to feed object so have icon for external feeds
+			if ( ! post.site_icon ) {
+				const feedSubscription = getReaderFollowForFeed( state, item.feedId );
+				post.site_icon = feedSubscription?.site_icon;
+			}
+
+			acc[ `${ item?.feedId }-${ item?.postId }` ] = post;
+
 			return acc;
 		}, {} );
 	}, shallowEqual );
@@ -107,7 +119,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 						return <Skeleton height="24px" width="24px" shape="circle" />;
 					}
 					const post = getPostFromItem( item );
-					const iconUrl = post?.site_icon?.img || post?.author?.avatar_URL || '';
+					const iconUrl = getPostIcon( post );
 					return iconUrl ? <ReaderAvatar siteIcon={ iconUrl } iconSize={ 24 } /> : null;
 				},
 				enableHiding: false,

@@ -582,21 +582,9 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'site-tools',
-		paths: [ '/sites/tools' ],
-		module: 'calypso/sites/tools',
-		group: 'sites',
-	},
-	{
 		name: 'site-overview',
 		paths: [ '/sites/overview' ],
 		module: 'calypso/sites/overview',
-		group: 'sites',
-	},
-	{
-		name: 'site-marketing',
-		paths: [ '/sites/marketing' ],
-		module: 'calypso/sites/marketing',
 		group: 'sites',
 	},
 	{
@@ -748,7 +736,7 @@ const sections = [
 	{
 		name: 'site-monitoring',
 		paths: [ '/site-monitoring' ],
-		module: 'calypso/hosting/monitoring',
+		module: 'calypso/sites/monitoring',
 		group: 'sites',
 	},
 	{
@@ -760,19 +748,19 @@ const sections = [
 	{
 		name: 'site-logs',
 		paths: [ '/site-logs' ],
-		module: 'calypso/hosting/logs',
+		module: 'calypso/sites/logs',
 		group: 'sites',
 	},
 	{
 		name: 'github-deployments',
 		paths: [ '/github-deployments' ],
-		module: 'calypso/hosting/deployments',
+		module: 'calypso/sites/deployments',
 		group: 'sites',
 	},
 	{
 		name: 'staging-site',
 		paths: [ '/staging-site' ],
-		module: 'calypso/hosting/staging-site',
+		module: 'calypso/sites/staging-site',
 		group: 'sites',
 	},
 	{

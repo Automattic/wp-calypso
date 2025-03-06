@@ -2264,7 +2264,13 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_ES_SEARCH_JP ]: {
 		getSlug: () => FEATURE_ES_SEARCH_JP,
-		getTitle: () => i18n.translate( 'Built-in Elasticsearch' ),
+		getTitle: () =>
+			/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
+			i18n.fixMe( {
+				text: 'Jetpack Search',
+				newCopy: i18n.translate( 'Jetpack Search' ),
+				oldCopy: i18n.translate( 'Built-in Elasticsearch' ),
+			} ),
 		getDescription: () =>
 			i18n.translate( 'Make surfacing your content simple with built-in premium site search.' ),
 	},
@@ -2276,7 +2282,13 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SITE_ACTIVITY_LOG_JP ]: {
 		getSlug: () => FEATURE_SITE_ACTIVITY_LOG_JP,
-		getTitle: () => i18n.translate( 'Unlimited site activity log' ),
+		getTitle: () =>
+			/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
+			i18n.fixMe( {
+				text: 'Site activity log',
+				newCopy: i18n.translate( 'Site activity log' ),
+				oldCopy: i18n.translate( 'Unlimited site activity log' ),
+			} ),
 		getDescription: () =>
 			i18n.translate( 'Keep an administrative eye on activity across your site.' ),
 	},

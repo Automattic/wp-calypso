@@ -33,6 +33,18 @@ export function getStepsProgress(
 
 	const result: ClickHandler[] = [
 		{
+			message: __( 'Content' ),
+			onClick: () => {
+				navigate(
+					addQueryArgs( `/import/newsletter/${ engine }/${ selectedSiteSlug }/content`, {
+						from: fromSite,
+					} )
+				);
+			},
+			show: 'onComplete',
+			indicator: getStepProgressIndicator( paidNewsletterData?.steps?.content?.status ),
+		},
+		{
 			message: __( 'Subscribers' ),
 			onClick: () => {
 				navigate(
@@ -58,22 +70,6 @@ export function getStepsProgress(
 		},
 	];
 
-	// Content step as first only when it's available (not available for Jetpack sites)
-	if ( paidNewsletterData?.steps?.content ) {
-		result.unshift( {
-			message: __( 'Content' ),
-			onClick: () => {
-				navigate(
-					addQueryArgs( `/import/newsletter/${ engine }/${ selectedSiteSlug }/content`, {
-						from: fromSite,
-					} )
-				);
-			},
-			show: 'onComplete',
-			indicator: getStepProgressIndicator( paidNewsletterData?.steps?.content?.status ),
-		} );
-	}
-
 	return result;
 }
 
@@ -84,28 +80,27 @@ export function getImporterStatus(
 	contentStepStatus?: StepStatus,
 	subscribersStepStatus?: StepStatus
 ): StepStatus {
-	// When content step is hidden for Jetpack sites, we can rely on subscriber status for entire engine's status
-	if ( ! contentStepStatus ) {
-		return subscribersStepStatus || 'initial';
-	}
+	// Initialize both statuses to 'initial' if undefined.
+	const content = contentStepStatus || 'initial';
+	const subscribers = subscribersStepStatus || 'initial';
 
-	if ( contentStepStatus === 'done' && subscribersStepStatus === 'done' ) {
+	if ( content === 'done' && subscribers === 'done' ) {
 		return 'done';
 	}
 
-	if ( contentStepStatus === 'done' && subscribersStepStatus === 'skipped' ) {
+	if ( content === 'done' && subscribers === 'skipped' ) {
 		return 'done';
 	}
 
-	if ( contentStepStatus === 'skipped' && subscribersStepStatus === 'done' ) {
+	if ( content === 'skipped' && subscribers === 'done' ) {
 		return 'done';
 	}
 
-	if ( contentStepStatus === 'skipped' && subscribersStepStatus === 'skipped' ) {
+	if ( content === 'skipped' && subscribers === 'skipped' ) {
 		return 'skipped';
 	}
 
-	if ( contentStepStatus === 'importing' || subscribersStepStatus === 'importing' ) {
+	if ( content === 'importing' || subscribers === 'importing' ) {
 		return 'importing';
 	}
 

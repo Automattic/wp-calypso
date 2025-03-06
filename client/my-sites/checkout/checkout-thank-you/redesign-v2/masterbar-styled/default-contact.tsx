@@ -12,6 +12,7 @@ import {
 	useDispatch as useDataStoreDispatch,
 	useSelect as useDataStoreSelect,
 } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -71,14 +72,14 @@ export function DefaultMasterbarContact() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 
-	const { hasPremiumSupport, initialMessage } = useProductsWithPremiumSupport(
+	const { hasPremiumSupport, userFieldMessage, userFieldFlowName } = useProductsWithPremiumSupport(
 		responseCart.products,
 		'checkout'
 	);
 
 	const helpCenterOptions = useProductsCustomOptions( responseCart.products );
 
-	const { setShowHelpCenter, setNewMessagingChat } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const isShowingHelpCenter = useDataStoreSelect(
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
@@ -92,11 +93,13 @@ export function DefaultMasterbarContact() {
 
 		if ( hasPremiumSupport ) {
 			setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport, helpCenterOptions );
-			setNewMessagingChat( {
-				initialMessage,
+			const urlWithQueryArgs = addQueryArgs( '/odie?provider=zendesk', {
+				userFieldMessage,
+				userFieldFlowName,
 				siteUrl: siteSlug,
-				siteId: siteId,
+				siteId,
 			} );
+			setNavigateToRoute( urlWithQueryArgs );
 		} else {
 			setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport );
 		}

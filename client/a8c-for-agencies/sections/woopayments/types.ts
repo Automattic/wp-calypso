@@ -15,6 +15,21 @@ export interface SitesWithWooPaymentsState {
 	blogId: number;
 	siteUrl: string;
 	state: string;
-	transactions: number;
-	payout: number;
+}
+
+export interface WooPaymentsData {
+	total?: {
+		payout: number;
+		tpv: number;
+		sites?: {
+			[ key: number ]: {
+				tpv?: number;
+				payout?: number;
+			};
+		};
+	};
+	estimated?: {
+		payout: number;
+		tpv: number;
+	};
 }

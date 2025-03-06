@@ -190,12 +190,12 @@
 }
 
 .step-wrapper__help-center-button-container {
+	font-size: rem(14px);
+	font-weight: 500;
 	margin-left: auto;
+
 	.components-button.step-wrapper__help-center-button {
 		color: var( --studio-wordpress-blue );
-		font-size: rem(14px);
-		font-weight: 500;
-		padding-left: 0;
 		text-decoration: underline;
 
 		&:hover {

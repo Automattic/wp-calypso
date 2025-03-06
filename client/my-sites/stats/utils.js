@@ -62,19 +62,31 @@ export const appendQueryStringForRedirection = ( pathname, query = {} ) => {
 };
 
 /**
- * Parse a date string into a Date object
+ * Parse a date string into a Date object in the timezone of browser.
  *
  * @param {string|number} dateString YYYY-MM-DD format or a timestamp
- * @param {number} gmtOffset GMT offset in minutes
- * @returns
+ *
+ * @returns {Date} A Date object in the timezone of the browser.
  */
-export const parseLocalDate = ( dateString, gmtOffset = 0 ) => {
+export const parseLocalDate = ( dateString ) => {
+	let validDateString = dateString;
+
+	const dateStringSplits = dateString.split( ' ' );
+	// For date strings like '2025-01-01 01:00:00'.
+	if ( dateStringSplits.length === 2 ) {
+		validDateString = `${ dateStringSplits[ 0 ] }T${ dateStringSplits[ 1 ] }Z`;
+	} else if ( dateStringSplits.length === 1 ) {
+		validDateString = `${ dateStringSplits[ 0 ] }T00:00:00Z`;
+	}
+
 	// Compatible with Date object.
-	const date = new Date( dateString );
+	const date = new Date( validDateString );
 	if ( isNaN( date.getTime() ) ) {
 		return date;
 	}
 
-	date.setMinutes( date.getMinutes() - ( gmtOffset - date.getTimezoneOffset() ) );
+	// Adjust the date to the timezone of the browser.
+	date.setMinutes( date.getMinutes() + date.getTimezoneOffset() );
+
 	return date;
 };

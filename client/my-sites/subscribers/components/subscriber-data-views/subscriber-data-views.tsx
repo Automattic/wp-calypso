@@ -17,6 +17,12 @@ import {
 	useSubscriberCountQuery,
 	useSubscriberDetailsQuery,
 } from '../../queries';
+import {
+	useRecordSubscriberClicked,
+	useRecordSubscriberSearch,
+	useRecordSubscriberFilter,
+	useRecordSubscriberSort,
+} from '../../tracks';
 import { Subscriber } from '../../types';
 import { EmptyListView } from '../empty-list-view';
 import { SubscriberDetails } from '../subscriber-details';
@@ -71,6 +77,10 @@ const SubscriberDataViews = ( {
 	isUnverified,
 }: SubscriberDataViewsProps ) => {
 	const isMobile = useBreakpoint( '<660px' );
+	const recordSubscriberClicked = useRecordSubscriberClicked();
+	const recordSubscriberSearch = useRecordSubscriberSearch();
+	const recordSubscriberFilter = useRecordSubscriberFilter();
+	const recordSubscriberSort = useRecordSubscriberSort();
 
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ filters, setFilters ] = useState< SubscribersFilterBy[] >( [ SubscribersFilterBy.All ] );
@@ -181,9 +191,14 @@ const SubscriberDataViews = ( {
 
 	const handleSubscriberOnClick = useCallback(
 		( subscriber: Subscriber ) => {
+			recordSubscriberClicked( 'row', {
+				site_id: siteId,
+				subscription_id: subscriber.subscription_id,
+				user_id: subscriber.user_id,
+			} );
 			handleSubscriberSelect( [ getSubscriberId( subscriber ) ] );
 		},
-		[ getSubscriberId, handleSubscriberSelect ]
+		[ getSubscriberId, handleSubscriberSelect, recordSubscriberClicked, siteId ]
 	);
 
 	const fields = useMemo(
@@ -279,6 +294,11 @@ const SubscriberDataViews = ( {
 				label: translate( 'View' ),
 				callback: ( items: Subscriber[] ) => {
 					if ( items[ 0 ] ) {
+						recordSubscriberClicked( 'row', {
+							site_id: siteId,
+							subscription_id: items[ 0 ].subscription_id,
+							user_id: items[ 0 ].user_id,
+						} );
 						handleSubscriberSelect( [ getSubscriberId( items[ 0 ] ) ] );
 					}
 				},
@@ -313,7 +333,58 @@ const SubscriberDataViews = ( {
 		onGiftSubscription,
 		couponsAndGiftsEnabled,
 		getSubscriberId,
+		recordSubscriberClicked,
+		siteId,
 	] );
+
+	const handleViewChange = useCallback(
+		( newView: View ) => {
+			// Track search changes.
+			if ( newView.search !== currentView.search && newView.search ) {
+				recordSubscriberSearch( { site_id: siteId, query: newView.search } );
+			}
+
+			// Track filter changes.
+			const newFilters = newView.filters?.filter( Boolean ) ?? [];
+			const currentFilters = currentView.filters?.filter( Boolean ) ?? [];
+			if ( JSON.stringify( newFilters ) !== JSON.stringify( currentFilters ) ) {
+				newFilters.forEach( ( filter ) => {
+					if ( filter?.value ) {
+						const field = fields.find( ( f ) => f.id === filter.field );
+						const element = field?.elements?.find( ( e ) => e.value === filter.value );
+						recordSubscriberFilter( {
+							site_id: siteId,
+							filter: filter.value as SubscribersFilterBy,
+							filter_field: filter.field,
+							filter_label: element?.label ?? '',
+						} );
+					}
+				} );
+			}
+
+			// Track sort changes.
+			if (
+				newView.sort?.field !== currentView.sort?.field ||
+				newView.sort?.direction !== currentView.sort?.direction
+			) {
+				recordSubscriberSort( {
+					site_id: siteId,
+					sort_field: newView.sort?.field as SubscribersSortBy,
+					sort_direction: newView.sort?.direction as 'asc' | 'desc',
+				} );
+			}
+
+			setCurrentView( newView );
+		},
+		[
+			currentView,
+			recordSubscriberSearch,
+			recordSubscriberFilter,
+			recordSubscriberSort,
+			siteId,
+			fields,
+		]
+	);
 
 	useEffect( () => {
 		// If we're on mobile, we only want to show the name field.
@@ -392,7 +463,7 @@ const SubscriberDataViews = ( {
 							fields={ fields }
 							view={ currentView }
 							onClickItem={ handleSubscriberOnClick }
-							onChangeView={ setCurrentView }
+							onChangeView={ handleViewChange }
 							selection={
 								selectedSubscriber ? [ selectedSubscriber.subscription_id.toString() ] : undefined
 							}

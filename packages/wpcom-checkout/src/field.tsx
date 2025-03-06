@@ -22,6 +22,7 @@ export default function Field( {
 	errorMessage,
 	autoComplete,
 	disabled,
+	prefix,
 }: {
 	type?: string;
 	id: string;
@@ -40,6 +41,7 @@ export default function Field( {
 	errorMessage?: ReactNode;
 	autoComplete?: string;
 	disabled?: boolean;
+	prefix?: ReactNode;
 } ) {
 	const fieldOnChange = ( event: { target: { value: string } } ) => {
 		if ( onChange ) {
@@ -61,7 +63,8 @@ export default function Field( {
 				</Label>
 			) }
 
-			<InputWrapper>
+			<InputWrapper isError={ isError }>
+				{ prefix && <span className="field__overlay-prefix">{ prefix }</span> }
 				<Input
 					className={ inputClassName }
 					id={ id }
@@ -103,24 +106,13 @@ const Input = styled.input< {
 	isError?: boolean;
 	icon?: ReactNode;
 } >`
-	display: block;
-	width: 100%;
+	flex: 1;
 	box-sizing: border-box;
 	border: 1px solid
 		${ ( props ) => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor ) };
-	padding: 7px ${ ( props ) => ( props.icon ? '60px' : '10px' ) } 7px 10px;
 	line-height: 1.5;
 	font-size: 14px;
-
-	.rtl & {
-		padding: 7px 10px 7px ${ ( props ) => ( props.icon ? '60px' : '10px' ) };
-	}
-
-	:focus {
-		outline: ${ ( props ) =>
-				props.isError ? props.theme.colors.error : props.theme.colors.outline }
-			solid 2px !important;
-	}
+	padding: 7px;
 
 	::-webkit-inner-spin-button,
 	::-webkit-outer-spin-button {
@@ -142,35 +134,35 @@ const Input = styled.input< {
 	}
 `;
 
-const InputWrapper = styled.div`
+const InputWrapper = styled.div< { isError?: boolean } >`
 	position: relative;
+	display: flex;
+	align-items: center;
+	border-radius: 3px;
+	:focus-within {
+		outline: ${ ( props ) =>
+				props.isError ? props.theme.colors.error : props.theme.colors.outline }
+			solid 2px;
+	}
 `;
 
 const FieldIcon = styled.div`
-	position: absolute;
-	top: 50%;
-	transform: translateY( -50% );
-	right: 10px;
-
-	.rtl & {
-		right: auto;
-		left: 10px;
-	}
+	flex: 0 0 auto;
+	white-space: nowrap;
 `;
 
 const ButtonIcon = styled.div`
-	position: absolute;
-	top: 0;
-	right: 0;
-
-	.rtl & {
-		right: auto;
-		left: 0;
-	}
+	flex: 0 0 auto;
+	white-space: nowrap;
+	max-width: 100%;
+	border-left: 1px solid ${ ( props ) => props.theme.colors.borderColor };
+	overflow: hidden;
 
 	button {
-		border: 1px solid transparent;
-		box-shadow: none;
+		padding-block: 7px;
+		padding-inline: 10px;
+		border: none;
+		line-height: 1.5;
 	}
 
 	button:hover {

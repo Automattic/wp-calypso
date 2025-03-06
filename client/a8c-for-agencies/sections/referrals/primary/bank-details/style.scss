@@ -40,18 +40,22 @@ $iframe-background-color: #f7f7f7;
 	color: var(--color-neutral-60);
 }
 
-.bank-details__layout--automated {
-	.hosting-dashboard-layout__top-wrapper {
-		padding-block-start: 24px;
-		padding-block-end: 0;
-	}
-}
-
 .bank-details__status {
 	@include a4a-font-label-button;
 	color: var(--color-accent-80);
 
 	.badge {
 		margin-inline-start: 6px;
+	}
+}
+
+.referrals-overview__link {
+	color: var(--color-accent-100);
+	text-decoration: underline;
+
+	&:hover,
+	&:visited,
+	&:focus {
+		color: var(--color-accent-100);
 	}
 }

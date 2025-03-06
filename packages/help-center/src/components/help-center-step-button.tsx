@@ -1,50 +1,33 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
-import { Button } from '@wordpress/components';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { addQueryArgs } from '@wordpress/url';
+/* eslint-disable no-restricted-imports */
 import { useTranslate } from 'i18n-calypso';
-import { useFlowCustomOptions, useFlowZendeskUserFields } from '../hooks';
-import { HELP_CENTER_STORE } from '../stores';
+import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
+import HelpCenterInlineButton from './help-center-inline-button';
 import type { FC } from 'react';
 
 interface HelpCenterStepButtonProps {
-	hasPremiumSupport?: boolean;
 	flowName?: string;
+	helpCenterButtonCopy?: string;
+	helpCenterButtonLink?: string;
 }
 
 const HelpCenterStepButton: FC< HelpCenterStepButtonProps > = ( {
-	hasPremiumSupport,
 	flowName,
+	helpCenterButtonCopy,
+	helpCenterButtonLink,
 } ) => {
 	const translate = useTranslate();
-	const { setShowHelpCenter, setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
-	const isShowingHelpCenter = useSelect(
-		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
-		[]
-	);
-	const flowCustomOptions = useFlowCustomOptions( flowName || '' );
-	const { userFieldMessage, userFieldFlowName } = useFlowZendeskUserFields( flowName || '' );
+	const { data: geoData } = useGeoLocationQuery();
 
-	function openHelpCenter() {
-		setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport, flowCustomOptions );
-		if ( hasPremiumSupport ) {
-			const urlWithQueryArgs = addQueryArgs( '/odie?provider=zendesk', {
-				userFieldMessage,
-				userFieldFlowName,
-			} );
-			setNavigateToRoute( urlWithQueryArgs );
-		} else {
-			setNavigateToRoute( `/odie` );
-		}
+	if ( geoData?.country_short === 'US' ) {
+		return null;
 	}
 
 	return (
 		<div className="step-wrapper__help-center-button-container">
-			{ translate( 'Questions? {{a}}Contact our site building team{{/a}}', {
-				components: {
-					a: <Button onClick={ openHelpCenter } className="step-wrapper__help-center-button" />,
-				},
-			} ) }
+			<label>{ helpCenterButtonCopy ?? translate( 'Need extra help?' ) }</label>{ ' ' }
+			<HelpCenterInlineButton flowName={ flowName } className="step-wrapper__help-center-button">
+				{ helpCenterButtonLink ?? translate( 'Visit Help Center' ) }
+			</HelpCenterInlineButton>
 		</div>
 	);
 };
