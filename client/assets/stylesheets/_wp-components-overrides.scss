@@ -29,6 +29,7 @@
 }
 
 .components-button.is-secondary {
+	// Used for the box-shadow color
 	--wp-components-color-accent: var(--color-neutral-10);
 
 	background-color: var(--color-surface);
@@ -36,7 +37,9 @@
 
 	&:active:not(:disabled),
 	&:hover:not(:disabled) {
+		// Change the background color
 		--wp-components-color-accent: var(--color-accent);
+		// Change the box-shadow color
 		--wp-components-color-accent-darker-20: var(--color-neutral-20);
 		color: var(--color-neutral-70);
 	}
