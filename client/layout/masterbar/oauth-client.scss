@@ -763,6 +763,10 @@
 			color: var(--color-primary-60);
 		}
 	}
+
+	.social-buttons__button {
+		--color-accent: var(--color-primary-40);
+	}
 }
 
 // Adding some CSS to cover the --color-primary
