@@ -75,7 +75,7 @@ export const usePrepareSiteForMigration = (
 ) => {
 	const plugins: Record<string, 'activate' | 'install'> = { 'wpcom-migration': 'activate' };
 
-	const { data: { transferId } = {} } = useRequestTransferWithSoftware({
+	const transferMutation = useRequestTransferWithSoftware({
 		siteId,
 		apiSettings: {
 			migration_source_site_domain: from,
@@ -83,9 +83,14 @@ export const usePrepareSiteForMigration = (
 		plugins,
 	});
 
-	console.log('transferId', transferId);
+	// Trigger the mutation when the hook is first used
+	useEffect(() => {
+		transferMutation.mutate();
+	}, [siteId, from]); // Dependencies that should trigger a new transfer
 
-	const softwareTransferState = useTransferWithSoftwareStatus(siteId, transferId ?? 0, {
+	const transfer_id = transferMutation.data?.transfer_id;
+
+	const softwareTransferState = useTransferWithSoftwareStatus(siteId, transfer_id ?? 0, {
 		retry: options.retry ?? 0,
 	});
 
@@ -106,8 +111,8 @@ export const usePrepareSiteForMigration = (
 	const criticalError = softwareTransferState.error;
 
 	const detailedStatus = {
-		siteTransfer: softwareTransferState.data?.atomic_transfer_status,
-		pluginInstallation: softwareTransferState.data?.transfer_with_software_status,
+		siteTransfer: softwareTransferState.data?.atomic_transfer_status ?? 'idle',
+		pluginInstallation: softwareTransferState.data?.transfer_with_software_status ?? 'idle',
 		migrationKey: !softwareTransferCompleted ? 'idle' : migrationKeyStatus,
 	};
 
