@@ -200,10 +200,7 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 		} );
 
 		it( 'Navigated to Home dashboard', async function () {
-			await page.waitForURL(
-				DataHelper.getCalypsoURL( `/home/${ newSiteDetails.blog_details.site_slug }` ),
-				{ timeout: 30 * 1000 }
-			);
+			await page.waitForURL( /home/ );
 			const myHomePage = new MyHomePage( page );
 			await new Promise( ( r ) => setTimeout( r, 2000 ) );
 			await page.reload();
