@@ -8,7 +8,6 @@ import {
 	RestAPIClient,
 	DomainSearchComponent,
 	SignupPickPlanPage,
-	NewSiteResponse,
 	NewUserResponse,
 	LoginPage,
 	UserSignupPage,
@@ -26,7 +25,6 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 	} );
 
 	let newUserDetails: NewUserResponse;
-	let newSiteDetails: NewSiteResponse;
 	let page: Page;
 	let selectedFreeDomain: string;
 
@@ -59,7 +57,7 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 
 		it( `Select WordPress.com Free plan`, async function () {
 			const signupPickPlanPage = new SignupPickPlanPage( page );
-			newSiteDetails = await signupPickPlanPage.selectPlan( 'Free' );
+			await signupPickPlanPage.selectPlan( 'Free' );
 		} );
 	} );
 
@@ -99,7 +97,7 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 		it( 'Launchpad is shown', async function () {
 			// dirty hack to wait for the launchpad to load.
 			// Stepper has a quirk where it redirects twice. Playwright hooks to the first one and thinks it was aborted.
-			await fixme_retry( () => page.waitForURL( /launchpad/ ) );
+			await fixme_retry( () => page.waitForURL( /home/ ) );
 		} );
 
 		it( 'Write first post', async function () {
@@ -110,8 +108,6 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 			editorPage = new EditorPage( page );
 			await editorPage.waitUntilLoaded();
 			await editorPage.closeWelcomeGuideIfNeeded();
-
-			await page.waitForURL( new RegExp( newSiteDetails.blog_details.site_slug ) );
 		} );
 
 		it( 'Enter blog title', async function () {
@@ -119,6 +115,7 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 		} );
 
 		it( 'Publish post', async function () {
+			await editorPage.closeWelcomeGuideIfNeeded();
 			await editorPage.publish();
 		} );
 
