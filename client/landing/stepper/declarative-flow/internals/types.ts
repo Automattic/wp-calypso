@@ -243,7 +243,7 @@ export type StepProps<
 	signupUrl?: string;
 };
 
-export type Step< StepSubmittedTypes extends Record< string, unknown > > = React.FC<
+export type Step< StepSubmittedTypes extends Record< string, unknown > | never = never >  = React.FC<
 	StepProps< StepSubmittedTypes >
 >;
 

@@ -32,6 +32,20 @@ import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors'
 import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
 import { ProvidedDependencies, Step, StepProps } from '../../types';
 import { useIsManagedSiteFlowProps } from './use-is-managed-site-flow';
+import { DomainSuggestion } from '@automattic/data-stores';
+import { ResponseCartProduct } from '@automattic/shopping-cart';
+
+type DomainStepSubmittedTypes = {
+	stepName?: 'domains';
+	suggestion?: DomainSuggestion;
+	shouldHideFreePlan?: boolean;
+	signupDomainOrigin?: string;
+	siteUrl?: string;
+	lastDomainSearched?: string;
+	domainCart?: ResponseCartProduct[] | object;
+	shouldSkipSubmitTracking?: boolean;
+	domainItem?: DomainSuggestion;
+}
 
 const RenderDomainsStepConnect = connect(
 	( state, { flow, step }: { flow: string; step: ProvidedDependencies } ) => {
@@ -86,7 +100,7 @@ const RenderDomainsStepConnect = connect(
  */
 let mostRecentState: ProvidedDependencies = {};
 
-const DomainsStep: Step< { shouldSkipSubmitTracking: boolean } > = ( props ) => {
+const DomainsStep: Step< DomainStepSubmittedTypes > = ( props ) => {
 	const [ stepState, setStepState ] =
 		useStepPersistedState< ProvidedDependencies >( 'domains-step' );
 	const managedSiteFlowProps = useIsManagedSiteFlowProps();

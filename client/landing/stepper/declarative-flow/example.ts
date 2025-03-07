@@ -72,8 +72,7 @@ const newsletter = {
 		const siteSlug = useSiteSlug();
 		const query = useQuery();
 		const { get, set } = useFlowState< typeof newsletter >();
-		const a = get( 'domains' );
-		const b = a?.shouldSkipSubmitTracking;
+		const domainStepState = get('')
 		const { exitFlow } = useExitFlow();
 		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
