@@ -45,7 +45,7 @@ class SocialLogin extends Component {
 					</Notice>
 				) }
 
-				<CompactCard>
+				<CompactCard className="social-login__description">
 					{ translate(
 						'Log in faster with the accounts you already use. We’ll never post without your permission.'
 					) }
