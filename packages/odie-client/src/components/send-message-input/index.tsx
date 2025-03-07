@@ -213,7 +213,7 @@ export const OdieSendMessageButton = () => {
 			{ showAttachmentButton && (
 				<DropZone
 					onFilesDrop={ onFilesDrop }
-					label={ __( 'Share this image with our Happiness Engineers' ) }
+					label={ __( 'Share this image with our Happiness Engineers', __i18n_text_domain__ ) }
 				/>
 			) }
 		</>
