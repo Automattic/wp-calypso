@@ -5,7 +5,15 @@ import { render, screen } from '@testing-library/react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
 import AccountSettingsClose from '../main';
-
+jest.mock( '@automattic/help-center/src/hooks', () => {
+	return {
+		useChatStatus: () => {
+			return {
+				isEligibleForChat: true,
+			};
+		},
+	};
+} );
 describe( 'AccountSettingsClose', () => {
 	it( 'Shows Manage purchases button when refundable purchases exist', () => {
 		render(
