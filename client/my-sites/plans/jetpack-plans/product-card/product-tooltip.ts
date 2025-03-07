@@ -63,7 +63,6 @@ export default function productTooltip(
 				strong: createElement( 'strong' ),
 				p: createElement( 'p' ),
 				Info: createElement( ExternalLink, {
-					// @ts-expect-error -- icon is a prop of the ExternalLink component, not an HTML one
 					icon: true,
 					href: 'https://jetpack.com/upgrade/search/',
 				} ),
