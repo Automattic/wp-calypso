@@ -46,11 +46,16 @@ const refGoals: Record< string, Onboard.SiteGoal[] > = {
 /**
  * The goals capture step
  */
-const GoalsStep: Step = ( { navigation, flow } ) => {
+const GoalsStep: Step< {
+	intent: Onboard.SiteIntent;
+	skip?: true;
+	action?: 'dashboard';
+	shouldSkipSubmitTracking?: true;
+} > = ( { navigation, flow } ) => {
 	const translate = useTranslate();
 	const whatAreYourGoalsText = translate( 'What would you like to do?' );
 	const subHeaderText = translate(
-		'Pick one or more goals and we’ll tailor the setup experience for you.'
+		"Pick one or more goals and we'll tailor the setup experience for you."
 	);
 
 	const goals = useSelect(
@@ -112,20 +117,18 @@ const GoalsStep: Step = ( { navigation, flow } ) => {
 		} );
 	};
 
-	const getStepSubmissionHandler =
-		( action: string, eventProps: Record< string, unknown > = {} ) =>
-		() => {
-			const intent = goalsToIntent( goals, {
-				isIntentNewsletterGoalEnabled,
-				isIntentCreateCourseGoalEnabled,
-			} );
-			setIntent( intent );
+	const getStepSubmissionHandler = ( action: string ) => () => {
+		const intent = goalsToIntent( goals, {
+			isIntentNewsletterGoalEnabled,
+			isIntentCreateCourseGoalEnabled,
+		} );
+		setIntent( intent );
 
-			recordGoalsSelectTracksEvent( goals, intent );
-			recordNavigationSelectTracksEvent( intent, action );
+		recordGoalsSelectTracksEvent( goals, intent );
+		recordNavigationSelectTracksEvent( intent, action );
 
-			navigation.submit?.( { intent, ...eventProps } );
-		};
+		navigation.submit?.( { intent } );
+	};
 
 	const handleSkip = getStepSubmissionHandler( 'skip' );
 	const handleNext = getStepSubmissionHandler( 'next' );

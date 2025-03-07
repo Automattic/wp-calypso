@@ -10,7 +10,7 @@ import type { Step } from '../../types';
 import type { AppState } from 'calypso/types';
 
 const STEP_NAME = 'difmStartingPoint';
-const DIFMStartingPoint: Step = function ( { navigation } ) {
+const DIFMStartingPoint: Step< { newOrExistingSiteChoice: string } > = function ( { navigation } ) {
 	const { goNext, goBack, submit } = navigation;
 	const translate = useTranslate();
 	const existingSiteCount = useSelector( ( state: AppState ) => getCurrentUserSiteCount( state ) );

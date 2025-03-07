@@ -27,7 +27,7 @@ interface WhatToExpectProps {
 	text: string;
 }
 
-const ImporterMigrateMessage: Step = ( { navigation } ) => {
+const ImporterMigrateMessage: Step< { hasError: 'ticket-creation' } > = ( { navigation } ) => {
 	const locale = useLocale();
 	const hasEnTranslation = useHasEnTranslation();
 	const user = useSelector( getCurrentUser ) as UserData;

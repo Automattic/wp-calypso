@@ -37,7 +37,7 @@ export type NavigationControls<
 	/**
 	 * Submits the answers provided in the flow
 	 */
-	submit: ( providedDependencies?: StepSubmittedTypes, ...params: string[] ) => void;
+	submit: ( providedDependencies?: StepSubmittedTypes ) => void;
 
 	/**
 	 * Exits the flow and continue to the given path
@@ -243,7 +243,7 @@ export type StepProps<
 	signupUrl?: string;
 };
 
-export type Step< StepSubmittedTypes extends Record< string, unknown > | never = never >  = React.FC<
+export type Step< StepSubmittedTypes extends Record< string, unknown > | never = never > = React.FC<
 	StepProps< StepSubmittedTypes >
 >;
 

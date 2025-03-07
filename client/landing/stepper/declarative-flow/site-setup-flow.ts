@@ -385,7 +385,7 @@ const siteSetupFlow: FlowV1 = {
 				}
 
 				case 'intent': {
-					const submittedIntent = params[ 0 ];
+					const submittedIntent = providedDependencies.intent as string;
 					switch ( submittedIntent ) {
 						case 'wpadmin': {
 							return exitFlow( `https://wordpress.com/home/${ siteId ?? siteSlug }` );

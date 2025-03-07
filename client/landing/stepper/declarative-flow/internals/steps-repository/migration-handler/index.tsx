@@ -14,10 +14,18 @@ import { ONBOARD_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { triggerMigrationStartingEvent } from 'calypso/my-sites/migrate/helpers';
 import type { Step } from '../../types';
-import type { UserSelect } from '@automattic/data-stores';
+import type { MigrationStatus, UserSelect } from '@automattic/data-stores';
 import './styles.scss';
 
-const MigrationHandler: Step = function MigrationHandler( { navigation } ) {
+const MigrationHandler: Step< {
+	isFromMigrationPlugin: boolean;
+	status: MigrationStatus;
+	targetBlogId: number | undefined;
+	isAdminOnTarget: boolean | undefined;
+	isTargetBlogUpgraded: boolean | undefined;
+	targetBlogSlug: string | undefined;
+	userHasSite: boolean;
+} > = function MigrationHandler( { navigation } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
 	const currentUser = useSelect(

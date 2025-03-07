@@ -39,7 +39,16 @@ import type { Step } from '../../types';
 import type { DomainSuggestion } from '@automattic/data-stores';
 import './style.scss';
 
-const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
+const DomainsStep: Step<
+	| {
+			freeDomain?: boolean;
+			domainName?: string;
+			productSlug?: string;
+			domainItem?: DomainSuggestion;
+	  }
+	| { freeDomain: boolean }
+	| { deferDomainSelection: true }
+> = function DomainsStep( { navigation, flow } ) {
 	const { setHideFreePlan, setDomainCartItem, setDomain } = useDispatch( ONBOARD_STORE );
 	const { __ } = useI18n();
 
