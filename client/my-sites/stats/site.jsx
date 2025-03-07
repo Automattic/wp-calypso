@@ -317,7 +317,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 			if ( ! tab.loading && tab.attr !== chartTab ) {
 				dispatch( recordGoogleEvent( 'Stats', 'Clicked ' + titlecase( tab.attr ) + ' Tab' ) );
 				// switch the tab by navigating to route with updated query string
-				page.show( getPathWithUpdatedQueryString( { tab: tab.attr } ) );
+				page.redirect( getPathWithUpdatedQueryString( { tab: tab.attr } ) );
 			}
 		},
 		[ chartTab, dispatch ]
