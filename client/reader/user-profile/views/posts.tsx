@@ -29,7 +29,6 @@ const UserPosts = ( { user }: UserPostsProps ): JSX.Element => {
 					line={ translate( 'No posts yet.' ) }
 				/>
 			) }
-			showBack={ false }
 		/>
 	);
 };
