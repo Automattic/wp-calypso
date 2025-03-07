@@ -13,18 +13,12 @@ const ReaderUnsubscribedFeedsSearchList = () => {
 			return [];
 		}
 
-		return feedItems?.map( ( feed, index ): JSX.Element | null => {
-			if ( ! feed.feed_ID ) {
-				return null;
-			}
-
+		return feedItems?.map( ( feed, index ): JSX.Element => {
 			return (
 				<ReaderFeedItemRow
 					key={ `${ feed.blog_ID }-${ feed.feed_ID }` }
-					blogId={ feed.blog_ID ?? null } // null is used for non-wpcom feeds.
-					feedId={ feed.feed_ID }
+					feed={ feed }
 					uiPosition={ index }
-					railcar={ feed.railcar }
 					source={ SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST }
 				/>
 			);
