@@ -1,7 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { CircularProgressBar } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useInView } from 'react-intersection-observer';
+import { useMyHomeCardLaunchpad } from 'calypso/my-sites/customer-home/cards/launchpad/use-my-home-card-launchpad';
 import { getDashboardUrl } from '../utils';
 import type { SiteExcerptData } from '@automattic/sites';
 
@@ -9,29 +11,20 @@ interface SiteLaunchNagProps {
 	site: SiteExcerptData;
 }
 
-const SiteLaunchDonutBase = styled.svg( {
-	position: 'absolute',
-	top: 0,
-	left: 0,
-	bottom: 0,
-	right: 0,
-} );
-
-const SiteLaunchDonutProgress = styled( SiteLaunchDonutBase )( {
-	zIndex: 1,
-} );
-
 const SiteLaunchDonutContainer = styled.div( {
 	position: 'relative',
+	display: 'flex',
+	alignItems: 'center',
+	justifyContent: 'center',
 	flexShrink: 0,
 	height: '25px',
+	width: '25px',
 	zIndex: 0,
 } );
 
 const SiteLaunchNagLink = styled.a( {
 	display: 'flex',
 	alignItems: 'center',
-	gap: '25px',
 	marginLeft: '-5px',
 	fontSize: '12px',
 	lineHeight: '16px',
@@ -45,35 +38,23 @@ const SiteLaunchNagText = styled.span( {
 	textOverflow: 'ellipsis',
 } );
 
-const SiteLaunchDonut = () => {
+const SiteLaunchDonut = ( {
+	numberOfSteps,
+	completedSteps,
+}: {
+	numberOfSteps: number;
+	completedSteps: number;
+} ) => {
 	return (
 		<SiteLaunchDonutContainer>
-			<SiteLaunchDonutProgress
-				width="25"
-				height="25"
-				viewBox="0 0 27 27"
-				version="1.1"
-				xmlns="http://www.w3.org/2000/svg"
-			>
-				<circle
-					r="7"
-					cx="13.5"
-					cy="13.5"
-					fill="transparent"
-					stroke="#DCDCDE"
-					strokeWidth="3"
-				></circle>
-				<circle
-					r="7"
-					cx="13.5"
-					cy="13.5"
-					fill="transparent"
-					strokeDashoffset="-32.9823"
-					strokeDasharray="43.9823 11"
-					stroke="currentColor"
-					strokeWidth="3"
-				></circle>
-			</SiteLaunchDonutProgress>
+			<CircularProgressBar
+				size={ 16 }
+				strokeWidth={ 3 }
+				enableDesktopScaling={ false }
+				showProgressText={ false }
+				numberOfSteps={ numberOfSteps }
+				currentStep={ completedSteps }
+			/>
 		</SiteLaunchDonutContainer>
 	);
 };
@@ -88,10 +69,15 @@ export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 		onChange: ( inView ) => inView && recordNagView(),
 	} );
 
-	// Don't show nag to all Coming Soon sites, only those that are "unlaunched"
-	// That's because sites that have been previously launched before going back to
-	// Coming Soon mode don't have a launch checklist.
-	if ( 'unlaunched' !== site.launch_status ) {
+	const checklistSlug = site?.options?.site_intent || 'legacy-site-setup';
+
+	const { numberOfSteps, completedSteps, hasChecklist, isLoading } = useMyHomeCardLaunchpad( {
+		checklistSlug,
+		launchpadContext: 'sites-dashboard',
+		siteId: site.ID,
+	} );
+
+	if ( 'unlaunched' !== site.launch_status || ! hasChecklist || isLoading ) {
 		return null;
 	}
 
@@ -106,7 +92,8 @@ export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 				recordTracksEvent( 'calypso_sites_dashboard_site_launch_nag_click' );
 			} }
 		>
-			<SiteLaunchDonut /> <SiteLaunchNagText>{ text }</SiteLaunchNagText>
+			<SiteLaunchDonut numberOfSteps={ numberOfSteps } completedSteps={ completedSteps } />
+			<SiteLaunchNagText>{ text }</SiteLaunchNagText>
 		</SiteLaunchNagLink>
 	);
 };
