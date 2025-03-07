@@ -58,10 +58,6 @@ export async function initializeWordPressPlayground(
 			iframe,
 			remoteUrl: 'https://playground.wordpress.net/remote.html',
 			blueprint,
-			onClientConnected: ( playground: PlaygroundClient ) => {
-				// TODO remove for production
-				( window as any )[ 'playground' ] = playground;
-			},
 			shouldInstallWordPress: ! isWordPressInstalled,
 			mounts: [ mountDescriptor ],
 		} );
