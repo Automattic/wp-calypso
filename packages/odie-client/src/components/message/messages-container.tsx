@@ -83,6 +83,14 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	}, [ messagesContainerRef ] );
 	useUpdateDocumentTitle();
 
+	// prevent zd transfer for non-eligible users
+	useEffect( () => {
+		if ( isForwardingToZendesk && ! isUserEligibleForPaidSupport ) {
+			searchParams.delete( 'provider' );
+			setChatMessagesLoaded( true );
+		}
+	}, [ isForwardingToZendesk, isUserEligibleForPaidSupport, setChatMessagesLoaded ] );
+
 	useEffect( () => {
 		if ( isForwardingToZendesk || hasForwardedToZendesk ) {
 			return;
