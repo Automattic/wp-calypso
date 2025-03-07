@@ -154,7 +154,7 @@ const AccountSettingsClose = ( {
 									'We are still in the process of removing one or more of your sites. This process normally takes 15-20 minutes. Once removal is completed, you should be able to close your account from this page.'
 								) }
 							</p>
-							{ isEligibleForChat && (
+							{ ! isLoading && isEligibleForChat && (
 								<p className="account-close__body-copy">
 									{ translate( 'To close this account now, {{a}}contact our support team{{/a}}.', {
 										components: {
@@ -201,7 +201,7 @@ const AccountSettingsClose = ( {
 									'You will not be able to log in to any other Automattic Services that use your WordPress.com account as a login. This includes WooCommerce.com, Crowdsignal.com, IntenseDebate.com, and Gravatar.com. Once your WordPress.com account is deleted, these services will also be deleted and you will lose access to any orders or support history you may have.'
 								) }
 							</p>
-							{ isEligibleForChat && (
+							{ ! isLoading && isEligibleForChat && (
 								<p className="account-close__body-copy">
 									{ translate(
 										'If you have any questions at all about what happens when you delete an account, ' +
