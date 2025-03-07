@@ -2452,8 +2452,20 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SUPPORT_FROM_EXPERTS ]: {
 		getSlug: () => FEATURE_SUPPORT_FROM_EXPERTS,
-		getTitle: () => i18n.translate( 'Support from our expert\u00A0team' ),
-		getDescription: () => i18n.translate( 'Get support from our expert, friendly Happiness team' ),
+		getTitle: () =>
+			/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
+			i18n.fixMe( {
+				text: 'Support from our expert\u00A0team',
+				newCopy: i18n.translate( 'Support from our expert\u00A0team' ),
+				oldCopy: i18n.translate( 'Fast support from our expert\u00A0team' ),
+			} ),
+		/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
+		getDescription: () =>
+			i18n.fixMe( {
+				text: 'Get support from our expert, friendly Happiness team',
+				newCopy: i18n.translate( 'Get support from our expert, friendly Happiness team' ),
+				oldCopy: i18n.translate( 'Prompt support from our expert, friendly Happiness team' ),
+			} ),
 	},
 	[ FEATURE_FAST_SUPPORT_FROM_EXPERTS ]: {
 		getSlug: () => FEATURE_FAST_SUPPORT_FROM_EXPERTS,
