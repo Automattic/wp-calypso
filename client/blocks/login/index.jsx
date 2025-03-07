@@ -512,9 +512,7 @@ class Login extends Component {
 
 			if ( isPartnerPortalOAuth2Client( oauth2Client ) ) {
 				if ( document.location.search?.includes( 'wpcloud' ) ) {
-					headerText = translate(
-						'Howdy! Log into the WP Cloud Partner Portal with your WordPress.com account.'
-					);
+					headerText = translate( 'Log in to WP Cloud with WordPress.com' );
 					preHeader = (
 						<div>
 							<WPCloudLogo className="login__wpcloud-logo" size={ 256 } />
