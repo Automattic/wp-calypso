@@ -11,7 +11,6 @@
 		margin-bottom: 0;
 	}
 
-	// Nest title class to override the default styles
 	.a8c-site-admin-sidebar-navigation-screen__title {
 		flex-grow: 1;
 		overflow-wrap: break-word;
@@ -23,29 +22,6 @@
 
 .a8c-site-admin-sidebar-navigation-screen__content {
 	padding: 0 $grid-unit-20;
-}
-
-.a8c-site-admin-sidebar-navigation-screen__meta {
-	margin: 0 0 $grid-unit-20 $grid-unit-20;
-	color: $gray-400;
-	.components-text {
-		color: $gray-400;
-	}
-}
-
-.a8c-site-admin-sidebar-navigation-screen__page-link {
-	color: $gray-600;
-	display: inline-block;
-	word-break: break-word;
-
-	&:hover,
-	&:focus {
-		color: $white;
-	}
-
-	.components-external-link__icon {
-		margin-left: $grid-unit-05;
-	}
 }
 
 .a8c-site-admin-sidebar-navigation-screen__title-icon {
