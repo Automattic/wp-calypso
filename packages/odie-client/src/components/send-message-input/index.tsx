@@ -189,7 +189,7 @@ export const OdieSendMessageButton = () => {
 					className="odie-send-message-input-container"
 				>
 					<ResizableTextarea
-						shouldDisableInputField={ isChatBusy }
+						shouldDisableInputField={ isChatBusy || isAttachingFile }
 						sendMessageHandler={ sendMessageHandler }
 						className="odie-send-message-input"
 						inputRef={ inputRef }
