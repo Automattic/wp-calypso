@@ -643,6 +643,35 @@ $breakpoint-mobile: 782px; //Mobile size.
 			display: none;
 		}
 	}
+
+	.connecting-app__banner {
+		position: absolute;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+		gap: 4px;
+		top: 50px;
+		left: 0;
+		margin: 0;
+		width: 100%;
+
+		.connecting-app__banner-inner {
+			background: #f6f7f7;
+			color: var(--studio-gray-70, #3c434a);
+			border-radius: 2px;
+			padding: 2px 6px;
+			font-style: normal;
+			font-weight: 400;
+			font-size: $font-body-small;
+			font-family: var(--font-sf-pro-text);
+			line-height: 20px;
+		}
+	}
 }
 
 .is-gravatar {
