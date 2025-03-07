@@ -1831,6 +1831,7 @@ __metadata:
     clsx: "npm:^2.1.1"
     copyfiles: "npm:^2.4.1"
     postcss: "npm:^8.5.3"
+    route-recognizer: "npm:^0.3.4"
     typescript: "npm:^5.5.4"
     webpack: "npm:^5.97.1"
   peerDependencies:
