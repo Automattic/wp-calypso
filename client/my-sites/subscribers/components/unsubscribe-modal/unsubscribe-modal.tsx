@@ -12,7 +12,7 @@ export enum UnsubscribeActionType {
 type UnsubscribeModalProps = {
 	subscribers?: Subscriber[];
 	onCancel: () => void;
-	onConfirm: ( action: UnsubscribeActionType, subscriber?: Subscriber ) => void;
+	onConfirm: ( action: UnsubscribeActionType, subscribers: Subscriber[] | undefined ) => void;
 };
 
 const UnsubscribeModal = ( { subscribers, onCancel, onConfirm }: UnsubscribeModalProps ) => {
