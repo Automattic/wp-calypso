@@ -20,7 +20,7 @@ import { ResizableTextarea } from './resizable-textarea';
 import './style.scss';
 
 const getFileType = ( file: File ) => {
-	if ( file.type.includes( 'image' ) ) {
+	if ( file.type.startsWith( 'image/' ) ) {
 		return 'image-placeholder';
 	}
 
