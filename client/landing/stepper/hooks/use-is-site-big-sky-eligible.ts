@@ -39,6 +39,9 @@ export function useIsBigSkyEligible() {
 		return { isLoading: true, isEligible: null };
 	}
 
+	// TODO: Checks if we are in a proper experiment
+	return { isLoading: false, isEligible: true };
+
 	if ( isBigSkyBeforePlansExperiment ) {
 		const eligibilityResult = featureFlagEnabled && isEligibleGoals && onSupportedDevice;
 		return { isLoading: false, isEligible: eligibilityResult };

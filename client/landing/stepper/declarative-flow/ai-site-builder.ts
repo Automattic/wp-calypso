@@ -13,7 +13,11 @@ const aiSiteBuilder: Flow = {
 	__experimentalUseBuiltinAuth: true,
 	initialize() {
 		// stepsWithRequiredLogin will take care of redirecting to the login step if the user is not logged in.
-		return stepsWithRequiredLogin( [ STEPS.SITE_CREATION_STEP, STEPS.PROCESSING ] );
+		return stepsWithRequiredLogin( [
+			STEPS.SITE_CREATION_STEP,
+			STEPS.PROCESSING,
+			STEPS.LAUNCH_BIG_SKY,
+		] );
 	},
 	useStepNavigation( currentStep, navigate ) {
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
@@ -26,6 +30,14 @@ const aiSiteBuilder: Flow = {
 				// The processing step will wait the aforementioned promise to be resolved and then will submit to you whatever the promise resolves to.
 				// Which will be the created site { "siteId": "242341575", "siteSlug": "something.wordpress.com", "goToCheckout": false, "siteCreated": true }
 				case 'processing': {
+					const { siteSlug, siteId } = providedDependencies;
+					return navigate(
+						`launch-big-sky?siteId=${ siteId }&siteSlug=${ siteSlug }`,
+						undefined,
+						true
+					);
+				}
+				case 'launch-big-sky': {
 					const { siteSlug } = providedDependencies;
 					// Make sure to redirect using window.location.replace, so the user cannot go back to the processing step.
 					// This is the known Big Sky URL. The site is free at this point so we have to work on displaying Big Sky on free sites.
