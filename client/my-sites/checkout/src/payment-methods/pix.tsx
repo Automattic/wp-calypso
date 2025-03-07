@@ -97,7 +97,8 @@ function usePrefillState( state: PixPaymentMethodState ): void {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const isLoggedOut = responseCart.cart_key === 'no-user';
-	const contactDetails = useCachedContactDetails( { isLoggedOut } );
+	const { contactDetails } = useCachedContactDetails( { isLoggedOut } );
+
 	// Don't try to pre-fill if the form has been edited. (Also prevents
 	// infinite loops.)
 	if ( state.isTouched ) {
