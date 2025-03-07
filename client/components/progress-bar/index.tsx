@@ -16,20 +16,17 @@ export function ProgressBar( { className, progress }: ProgressBarProps ) {
 		let timeoutReference: NodeJS.Timeout;
 		if ( progress >= 0 ) {
 			timeoutReference = setTimeout( () => {
-				if ( progress > simulatedProgress || progress === 1 ) {
-					setSimulatedProgress( progress );
-				} else if ( simulatedProgress < 1 ) {
-					setSimulatedProgress( ( previousProgress: number ) => {
-						let newProgress = previousProgress + Math.random() * 0.04;
-						// Stall at 95%, allow complete to finish up
-						if ( newProgress >= 0.95 ) {
-							newProgress = 0.95;
-						}
-						return newProgress;
-					} );
-				}
-				// Save our simulated progress to state to persist between step changes
-				setProgress( simulatedProgress );
+				setSimulatedProgress( ( previousProgress: number ) => {
+					// Jump to actual progress if it's ahead or complete
+					if ( progress > previousProgress || progress === 1 ) {
+						setProgress( progress );
+						return progress;
+					}
+					// Otherwise increment smoothly, stalling at 95%
+					const newProgress = Math.min( 0.95, previousProgress + Math.random() * 0.04 );
+					setProgress( newProgress );
+					return newProgress;
+				} );
 			}, 1000 );
 		}
 
