@@ -73,6 +73,7 @@ const siteSetupFlow: FlowV1 = {
 			STEPS.IMPORTER_WIX,
 			STEPS.IMPORTER_BLOGGER,
 			STEPS.IMPORTER_MEDIUM,
+			STEPS.IMPORTER_PLAYGROUND,
 			STEPS.IMPORTER_SQUARESPACE,
 			STEPS.IMPORTER_WORDPRESS,
 			STEPS.LAUNCH_BIG_SKY,
@@ -482,6 +483,10 @@ const siteSetupFlow: FlowV1 = {
 						default:
 							return navigate( providedDependencies?.url as string );
 					}
+				}
+
+				case 'importerPlayground': {
+					return navigate( `importerWordpress?${ urlQueryParams.toString() }&option=content` );
 				}
 
 				case 'trialAcknowledge': {
