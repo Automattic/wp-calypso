@@ -94,7 +94,7 @@ describe( 'state', () => {
 				);
 				expect( newState ).toHaveProperty( 'isSyncingInProgress', false );
 				expect( newState ).toHaveProperty( 'status', SiteSyncStatus.COMPLETED );
-				expect( newState ).toHaveProperty( 'progress', 100 );
+				expect( newState ).toHaveProperty( 'progress', 1 );
 				expect( newState ).toHaveProperty( 'fetchingStatus', false );
 			} );
 
@@ -102,7 +102,7 @@ describe( 'state', () => {
 				const SITE_ID = 12345;
 				const AT_STATE = {
 					status: SiteSyncStatus.PENDING,
-					progress: 100,
+					progress: 1,
 					isSyncingInProgress: true,
 					syncingTargetSite: 'production',
 					syncingSourceSite: 'staging',

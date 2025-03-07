@@ -8,11 +8,11 @@ export enum SiteSyncStatus {
 }
 
 export enum SiteSyncStatusProgress {
-	PENDING = 20,
-	BACKUP = 30,
-	RESTORE = 60,
-	COMPLETED = 100,
+	PENDING = 0.2,
+	BACKUP = 0.3,
+	RESTORE = 0.6,
+	COMPLETED = 1,
 	FAILED = 0,
-	ALLOW_RETRY = 10,
-	DELTA = 0.4,
+	ALLOW_RETRY = 0.1,
+	DELTA = 0.004,
 }

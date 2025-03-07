@@ -129,7 +129,7 @@ export const progress = withPersistence( ( state = 0, action ) => {
 			}
 			// Set initial progress to 5% when sync is initiated
 			if ( action.isSyncingInProgress === true && state === 0 ) {
-				return 5;
+				return 0.05;
 			}
 		case REQUEST_STATUS:
 			return state;

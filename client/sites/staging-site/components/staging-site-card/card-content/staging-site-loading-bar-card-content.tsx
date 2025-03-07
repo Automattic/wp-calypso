@@ -20,7 +20,7 @@ export const StagingSiteLoadingBarCardContent = ( {
 				<>
 					<ProgressBar
 						key="delete-loading-bar"
-						value={ progress }
+						value={ progress * 100 }
 						className="staging-site-card__loading-bar"
 					/>
 					<p>{ translate( 'We are deleting your staging site.' ) }</p>
@@ -35,7 +35,7 @@ export const StagingSiteLoadingBarCardContent = ( {
 			  );
 		return (
 			<div data-testid="transferring-staging-content">
-				<ProgressBar value={ progress } className="staging-site-card__loading-bar" />
+				<ProgressBar value={ progress * 100 } className="staging-site-card__loading-bar" />
 				<p>{ message }</p>
 			</div>
 		);

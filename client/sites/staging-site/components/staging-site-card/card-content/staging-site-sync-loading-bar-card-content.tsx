@@ -36,7 +36,7 @@ export const StagingSiteSyncLoadingBarCardContent = ( {
 
 	return (
 		<div data-testid="syncing-site-content">
-			<ProgressBar value={ progress } className="staging-site-card__loading-bar" />
+			<ProgressBar value={ progress * 100 } className="staging-site-card__loading-bar" />
 			<p>{ message }</p>
 		</div>
 	);

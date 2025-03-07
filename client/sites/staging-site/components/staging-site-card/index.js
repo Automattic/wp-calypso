@@ -61,7 +61,7 @@ export const StagingSiteCard = ( {
 	const [ syncError, setSyncError ] = useState( null );
 	// eslint-disable-next-line no-unused-vars
 	const [ _, setIsErrorValidQuota ] = useState( false );
-	const [ progress, setProgress ] = useState( 10 );
+	const [ progress, setProgress ] = useState( 0.1 );
 
 	const isSyncInProgress = useSelector( ( state ) => getIsSyncingInProgress( state, siteId ) );
 
@@ -111,13 +111,13 @@ export const StagingSiteCard = ( {
 				removeAllNotices();
 			},
 			onSuccess: ( response ) => {
-				setProgress( 10 );
+				setProgress( 0.1 );
 				queryClient.invalidateQueries( [ USE_STAGING_SITE_LOCK_QUERY_KEY, siteId ] );
 				dispatch( fetchAutomatedTransferStatus( response.id ) );
 			},
 			onError: ( error ) => {
 				queryClient.invalidateQueries( [ USE_STAGING_SITE_LOCK_QUERY_KEY, siteId ] );
-				setProgress( 10 );
+				setProgress( 0.1 );
 				dispatch(
 					recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_failure', {
 						code: error.code,
@@ -184,7 +184,7 @@ export const StagingSiteCard = ( {
 			removeAllNotices();
 		},
 		onError: ( error ) => {
-			setProgress( 10 );
+			setProgress( 0.1 );
 			dispatch(
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_failure', {
 					code: error.code,
@@ -201,7 +201,7 @@ export const StagingSiteCard = ( {
 			);
 		},
 		onSuccess: () => {
-			setProgress( 10 );
+			setProgress( 0.1 );
 		},
 	} );
 
@@ -258,17 +258,17 @@ export const StagingSiteCard = ( {
 		setProgress( ( prevProgress ) => {
 			switch ( stagingSiteStatus ) {
 				case null:
-					return 10;
+					return 0.1;
 				case transferStates.RELOCATING_REVERT:
 				case transferStates.ACTIVE:
-					return 20;
+					return 0.2;
 				case transferStates.PROVISIONED:
-					return 60;
+					return 0.6;
 				case transferStates.REVERTED:
 				case transferStates.RELOCATING:
-					return 85;
+					return 0.85;
 				default:
-					return prevProgress + 5;
+					return prevProgress + 0.05;
 			}
 		} );
 	}, [ stagingSiteStatus ] );
@@ -390,13 +390,13 @@ export const StagingSiteCard = ( {
 	const onAddClick = useCallback( () => {
 		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_TRANSFERRING ) );
 		dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' ) );
-		setProgress( 10 );
+		setProgress( 0.1 );
 		addStagingSite();
 	}, [ dispatch, siteId, addStagingSite ] );
 
 	const initiateDelete = useCallback( () => {
 		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_REVERTING ) );
-		setProgress( 10 );
+		setProgress( 0.1 );
 		deleteStagingSite();
 	}, [ dispatch, siteId, deleteStagingSite ] );
 
