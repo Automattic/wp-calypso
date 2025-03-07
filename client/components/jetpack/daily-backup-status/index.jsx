@@ -1,6 +1,5 @@
 import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -46,8 +45,6 @@ const DailyBackupStatus = ( {
 	deltas,
 	refetch,
 } ) => {
-	const translate = useTranslate();
-
 	// Ref for interval ID of Activity Log fetching.
 	const activityLogIntervalRef = useRef( null );
 
@@ -174,7 +171,7 @@ const DailyBackupStatus = ( {
 		}
 
 		// Fallback: If we don't have definitive status information yet,
-		// show a "Finalizing backup..." message and continue polling for updates.
+		// show "Backup in progress" and continue polling for updates.
 		// This prevents showing a false failure message during state transitions.
 		return (
 			<>
@@ -184,7 +181,6 @@ const DailyBackupStatus = ( {
 					percent={ 99 }
 					inProgressDate={ inProgressDate }
 					lastBackupDate={ lastBackupDate }
-					statusText={ translate( 'Finalizing backup' ) }
 				/>
 			</>
 		);
