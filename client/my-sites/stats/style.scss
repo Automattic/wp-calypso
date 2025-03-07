@@ -6,6 +6,27 @@
 
 $stats-card-min-width: 390px;
 
+// Odyssey font overrides
+$font-sf-pro-display: "SF Pro Display", $sans;
+
+// Shared across sections/modules
+.is-odyssey-stats .highlight-cards-heading,
+.is-odyssey-stats .highlight-card-count-value,
+.is-odyssey-stats .post-stats-card__post-title,
+.is-odyssey-stats .post-stats-card__count-value {
+	font-family: $font-sf-pro-display;
+}
+
+// All-time highlights section
+.is-odyssey-stats .highlight-card-content .highlight-card-detail-item-content {
+	font-family: $font-sf-pro-display;
+}
+
+// Posting Activity module
+.is-odyssey-stats .post-trends__title {
+	font-family: $font-sf-pro-display;
+}
+
 // Module container
 @include breakpoint-deprecated( ">960px" ) {
 	.stats__module-column {

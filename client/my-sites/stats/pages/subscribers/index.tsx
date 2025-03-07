@@ -25,8 +25,6 @@ import SubscribersHighlightSection from '../../stats-subscribers-highlight-secti
 import StatsModuleListing from '../shared/stats-module-listing';
 import type { Moment } from 'moment';
 
-import './style.scss';
-
 function StatsSubscribersPageError() {
 	const translate = useTranslate();
 	const classes = clsx( 'stats-module__placeholder', 'is-void' );
