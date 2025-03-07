@@ -167,7 +167,7 @@ const SitesDashboard = ( {
 		[ 'is_a4a_dev_site', 'site_migration' ],
 		[ 'theme_slug' ],
 		// Don't fetch sites on narrow screens since it's not visible.
-		isWide
+		! selectedSite || isWide
 	);
 
 	useShowSiteCreationNotice( allSites, newSiteID );
@@ -380,7 +380,7 @@ const SitesDashboard = ( {
 	}
 
 	// Hide the listing on narrow screens since it's not visible.
-	const hideListing = ! isWide;
+	const hideListing = selectedSite && ! isWide;
 
 	// todo: temporary mock data
 	const isNarrowView = false;
