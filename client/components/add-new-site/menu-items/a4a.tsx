@@ -65,7 +65,7 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 					icon={ <WordPressLogo /> }
 					heading={ translate( 'Via WordPress.com connection' ) }
 					description={ preventWidows(
-						translate( 'Import connected WordPress.com or Jetpack sites' )
+						translate( 'Import connected WordPress.com or Jetpack sites.' )
 					) }
 					buttonProps={ {
 						onClick: () => {
@@ -77,7 +77,7 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 					icon={ <A4ALogo /> }
 					heading={ translate( 'Via the Automattic plugin' ) }
 					description={ preventWidows(
-						translate( 'Connect with the Automattic for Agencies plugin' )
+						translate( 'Connect with the Automattic for Agencies plugin.' )
 					) }
 					buttonProps={ {
 						onClick: () => {
@@ -89,7 +89,7 @@ const AddNewSiteA4AMenuItems = ( { setMenuVisible }: AddNewSiteMenuItemsProps ) 
 					icon={ <JetpackLogo /> }
 					heading={ translate( 'Via the Jetpack plugin' ) }
 					description={ preventWidows(
-						translate( 'Install the Jetpack plugin on an existing site' )
+						translate( 'Install the Jetpack plugin on an existing site.' )
 					) }
 					buttonProps={ {
 						onClick: () => {
