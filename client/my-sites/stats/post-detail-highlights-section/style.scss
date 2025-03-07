@@ -3,6 +3,14 @@
 @import "@automattic/components/src/highlight-cards/variables";
 @import "@wordpress/base-styles/mixins";
 
+$font-sf-pro-display: "SF Pro Display", $sans;
+
+.is-odyssey-stats .highlight-cards-heading,
+.is-odyssey-stats .post-stats-card__post-title,
+.is-odyssey-stats .post-stats-card__count-value {
+	font-family: $font-sf-pro-display;
+}
+
 .stats__post-detail-highlights-section {
 	@include break-small {
 		// padding-bottom: $vertical-margin;
