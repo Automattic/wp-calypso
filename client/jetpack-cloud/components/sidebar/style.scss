@@ -11,12 +11,13 @@
 		.components-button {
 			border: none;
 		}
-		form {
+		.search-component.is-open.has-focus {
+			box-sizing: border-box;
+			border: 2px solid var(--color-primary);
+			box-shadow: none; // Use border instead of box-shadow to avoid hiding the shadow at 100% width
+		}
+		.search-component__input{
 			width: 100%;
-			flex: 1;
-			input {
-				width: 100%;
-			}
 		}
 	}
 
