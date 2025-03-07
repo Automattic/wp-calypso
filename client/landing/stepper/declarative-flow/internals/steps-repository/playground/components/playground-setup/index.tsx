@@ -46,7 +46,6 @@ export const PlaygroundSetupStep: Step = ( props ) => {
 		submit( {
 			siteSlug,
 			siteId,
-			option: 'content',
 		} );
 	};
 

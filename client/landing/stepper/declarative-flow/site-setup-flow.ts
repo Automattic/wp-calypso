@@ -486,7 +486,7 @@ const siteSetupFlow: FlowV1 = {
 				}
 
 				case 'importerPlayground': {
-					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
+					return navigate( `importerWordpress?${ urlQueryParams.toString() }&option=content` );
 				}
 
 				case 'trialAcknowledge': {
