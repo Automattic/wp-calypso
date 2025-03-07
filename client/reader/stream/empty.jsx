@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { getSelectedFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
+import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
 import { withReaderPerformanceTrackerStop } from '../reader-performance-tracker';
 
 class FollowingEmptyContent extends Component {
@@ -50,7 +50,7 @@ class FollowingEmptyContent extends Component {
 
 export default connect(
 	( state ) => ( {
-		selectedFeedId: getSelectedFeedId( state ),
+		selectedFeedId: getSelectedRecentFeedId( state ),
 	} ),
 	{
 		recordReaderTracksEvent,

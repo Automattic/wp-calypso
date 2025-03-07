@@ -489,7 +489,15 @@ function DIFMPagePicker( props: StepProps ) {
 				return;
 			}
 
-			dispatch( submitSignupStep( { stepName }, { selectedPageTitles: selectedPages } ) );
+			dispatch(
+				submitSignupStep(
+					{ stepName },
+					{
+						selectedPageTitles: selectedPages,
+						newOrExistingSiteChoice: isExistingSite ? 'existing-site' : 'new-site', // Ensure the value of newOrExistingSiteChoice is set if it's not already
+					}
+				)
+			);
 			goToNextStep();
 		}
 	};

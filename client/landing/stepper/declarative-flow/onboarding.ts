@@ -251,11 +251,12 @@ const onboarding: Flow = {
 				}
 
 				case 'difmStartingPoint': {
-					const { newOrExistingSiteChoice } = providedDependencies;
-					const difmFlowLink = addQueryArgs( withLocale( '/start/do-it-for-me', locale ), {
-						back_to: window.location.href.replace( window.location.origin, '' ),
-						newOrExistingSiteChoice,
-					} );
+					const difmFlowLink = addQueryArgs(
+						withLocale( '/start/website-design-services', locale ),
+						{
+							back_to: window.location.href.replace( window.location.origin, '' ),
+						}
+					);
 
 					if ( isUserLoggedIn ) {
 						return window.location.assign( difmFlowLink );
@@ -285,7 +286,7 @@ const onboarding: Flow = {
 						currentQueryArgs.step = 'domain-input';
 
 						setRedirectedToUseMyDomain( true );
-						let useMyDomainURL = addQueryArgs( `/use-my-domain`, currentQueryArgs );
+						let useMyDomainURL = addQueryArgs( '/use-my-domain', currentQueryArgs );
 
 						const lastQueryParam = ( providedDependencies?.domainForm as { lastQuery?: string } )
 							?.lastQuery;

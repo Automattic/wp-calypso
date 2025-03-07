@@ -48,7 +48,6 @@ export const itemsSchema = {
 					owner: { type: 'string', optional: true },
 					partnerDomain: { type: 'boolean' },
 					pendingRegistration: { type: 'boolean' },
-					pendingRegistrationTime: { type: 'string' },
 					pointsToWpcom: { type: 'boolean' },
 					registrar: { type: 'string' },
 					registrationDate: { type: 'string' },

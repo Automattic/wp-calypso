@@ -159,10 +159,8 @@ export const ManageStagingSiteCardContent = ( {
 								target="_blank"
 								className="tools-staging-site__site-url"
 							>
-								<span>
-									{ stagingSite.url }
-									<Icon icon={ external } size={ 16 } />
-								</span>
+								{ stagingSite.url }
+								<Icon icon={ external } size={ 16 } />
 							</WPButton>
 						</SiteInfo>
 					</SiteRow>

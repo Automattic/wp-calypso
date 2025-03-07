@@ -8,7 +8,6 @@ import {
 	RestAPIClient,
 	DomainSearchComponent,
 	SignupPickPlanPage,
-	NewSiteResponse,
 	NewUserResponse,
 	LoginPage,
 	UserSignupPage,
@@ -19,16 +18,13 @@ import { apiCloseAccount, fixme_retry } from '../shared';
 
 declare const browser: Browser;
 
-// wpcalypso is currently using the goals-first onboarding flow, so this is
-// skipped for now. Check out the "Goals-First Onboarding: Write Focus" test below.
-describe.skip( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () {
+describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () {
 	const blogName = DataHelper.getBlogName();
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'signupfree',
 	} );
 
 	let newUserDetails: NewUserResponse;
-	let newSiteDetails: NewSiteResponse;
 	let page: Page;
 	let selectedFreeDomain: string;
 
@@ -61,12 +57,12 @@ describe.skip( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), functio
 
 		it( `Select WordPress.com Free plan`, async function () {
 			const signupPickPlanPage = new SignupPickPlanPage( page );
-			newSiteDetails = await signupPickPlanPage.selectPlan( 'Free' );
+			await signupPickPlanPage.selectPlan( 'Free' );
 		} );
 	} );
 
 	describe( 'Onboarding', function () {
-		const themeName = 'Poema';
+		const themeName = 'Retrospect';
 		let startSiteFlow: StartSiteFlow;
 
 		beforeAll( async function () {
@@ -101,160 +97,7 @@ describe.skip( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), functio
 		it( 'Launchpad is shown', async function () {
 			// dirty hack to wait for the launchpad to load.
 			// Stepper has a quirk where it redirects twice. Playwright hooks to the first one and thinks it was aborted.
-			await fixme_retry( () => page.waitForURL( /launchpad/ ) );
-		} );
-
-		it( 'Write first post', async function () {
-			await page.getByRole( 'link', { name: 'Write your first post' } ).click();
-		} );
-
-		it( 'Editor loads', async function () {
-			editorPage = new EditorPage( page );
-			await editorPage.waitUntilLoaded();
-
-			await page.waitForURL( new RegExp( newSiteDetails.blog_details.site_slug ) );
-		} );
-
-		it( 'Enter blog title', async function () {
-			await editorPage.enterTitle( postTitle );
-		} );
-
-		it( 'Publish post', async function () {
-			await editorPage.publish();
-		} );
-
-		it( 'First post congratulatory message is shown', async function () {
-			const editorParent = await editorPage.getEditorParent();
-			await editorParent
-				.getByRole( 'heading', { name: 'Your first post is published!' } )
-				.waitFor();
-		} );
-
-		it( 'View Next Steps', async function () {
-			const editorParent = await editorPage.getEditorParent();
-			await editorParent.getByRole( 'button', { name: 'Next steps' } ).click();
-		} );
-	} );
-
-	describe( 'Launchpad', function () {
-		it( 'Launchpad is shown', async function () {
-			// dirty hack to wait for the launchpad to load.
-			// Stepper has a quirk where it redirects twice. Playwright hooks to the first one and thinks it was aborted.
-			await fixme_retry( () => page.waitForURL( /launchpad/ ) );
-		} );
-
-		it( 'Launch site', async function () {
-			await page.getByRole( 'button', { name: 'Launch your site' } ).click();
-
-			await page.waitForURL( /setup\/write\/processing/ );
-		} );
-
-		it( 'Post-launch congratulatory message is shown', async function () {
-			// User is redirected to the Home dashboard.
-			await page.waitForURL( /home/ );
-
-			await page.getByRole( 'dialog' ).getByRole( 'heading', { name: 'Congrats' } ).waitFor();
-		} );
-
-		it( 'Close congratulatory message', async function () {
-			await page.getByRole( 'dialog' ).getByRole( 'button', { name: 'Close' } ).click();
-		} );
-	} );
-
-	afterAll( async function () {
-		if ( ! newUserDetails ) {
-			return;
-		}
-
-		const restAPIClient = new RestAPIClient(
-			{ username: testUser.username, password: testUser.password },
-			newUserDetails.body.bearer_token
-		);
-
-		await apiCloseAccount( restAPIClient, {
-			userID: newUserDetails.body.user_id,
-			username: newUserDetails.body.username,
-			email: testUser.email,
-		} );
-	} );
-} );
-
-// The steps in this test don't match what happens on production, because only wpcalypso
-// is using the goals-first onboarding flow. Check out the "Onboarding: Write Focus" test above
-// for the steps that work on production.
-describe( DataHelper.createSuiteTitle( 'Goals-First Onboarding: Write Focus' ), function () {
-	const themeName = 'Poema';
-	const blogName = DataHelper.getBlogName();
-	const testUser = DataHelper.getNewTestUser( {
-		usernamePrefix: 'signupfree',
-	} );
-
-	let newUserDetails: NewUserResponse;
-	let newSiteDetails: NewSiteResponse;
-	let page: Page;
-	let selectedFreeDomain: string;
-	let startSiteFlow: StartSiteFlow;
-
-	beforeAll( async function () {
-		page = await browser.newPage();
-	} );
-
-	describe( 'Register as new user with "Write" goal', function () {
-		let loginPage: LoginPage;
-
-		it( 'Navigate to the Login page', async function () {
-			loginPage = new LoginPage( page );
-			await loginPage.visit();
-		} );
-
-		it( 'Click on button to create a new account', async function () {
-			await loginPage.clickCreateNewAccount();
-		} );
-
-		it( 'Select "Publish a blog" goal', async function () {
-			await page.waitForURL( /setup\/onboarding\/goals/, { timeout: 30 * 1000 } );
-
-			startSiteFlow = new StartSiteFlow( page );
-			await startSiteFlow.selectGoal( 'Publish a blog' );
-			await startSiteFlow.clickButton( 'Next' );
-		} );
-
-		it( 'Choose to proceed with theme', async function () {
-			await startSiteFlow.clickDesignChoice( 'theme' );
-		} );
-
-		it( 'Select theme', async function () {
-			await startSiteFlow.clickButton( 'Show all Blog themes' );
-			await startSiteFlow.selectTheme( themeName );
-			await startSiteFlow.clickButton( 'Continue' );
-		} );
-
-		it( 'Sign up as a new user', async function () {
-			const userSignupPage = new UserSignupPage( page );
-			newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
-		} );
-
-		it( 'Select a .wordpress.com domain name', async function () {
-			const domainSearchComponent = new DomainSearchComponent( page );
-			await domainSearchComponent.search( blogName );
-			selectedFreeDomain = await domainSearchComponent.selectDomain( '.wordpress.com' );
-		} );
-
-		it( `Select WordPress.com Free plan`, async function () {
-			const signupPickPlanPage = new SignupPickPlanPage( page );
-			newSiteDetails = await signupPickPlanPage.selectPlan( 'Free' );
-		} );
-	} );
-
-	describe( 'Write', function () {
-		const postTitle = DataHelper.getRandomPhrase();
-
-		let editorPage: EditorPage;
-
-		it( 'Launchpad is shown', async function () {
-			// dirty hack to wait for the launchpad to load.
-			// Stepper has a quirk where it redirects twice. Playwright hooks to the first one and thinks it was aborted.
-			await fixme_retry( () => page.waitForURL( /launchpad/ ) );
+			await fixme_retry( () => page.waitForURL( /home/ ) );
 		} );
 
 		it( 'Write first post', async function () {
@@ -265,8 +108,6 @@ describe( DataHelper.createSuiteTitle( 'Goals-First Onboarding: Write Focus' ), 
 			editorPage = new EditorPage( page );
 			await editorPage.waitUntilLoaded();
 			await editorPage.closeWelcomeGuideIfNeeded();
-
-			await page.waitForURL( new RegExp( newSiteDetails.blog_details.site_slug ) );
 		} );
 
 		it( 'Enter blog title', async function () {
@@ -291,31 +132,9 @@ describe( DataHelper.createSuiteTitle( 'Goals-First Onboarding: Write Focus' ), 
 	} );
 
 	describe( 'Launchpad', function () {
-		it( 'Launchpad is shown', async function () {
-			// dirty hack to wait for the launchpad to load.
-			// Stepper has a quirk where it redirects twice. Playwright hooks to the first one and thinks it was aborted.
-			await fixme_retry( () => page.waitForURL( /launchpad/ ) );
-		} );
-
-		it( 'Launch site', async function () {
-			await page.getByRole( 'button', { name: 'Launch your site' } ).click();
-
-			await page.waitForURL( /setup\/write\/processing/ );
-			//
-			// Additional assertions for the URL.
-			expect( page.url() ).toContain( 'siteSlug' );
-			expect( page.url() ).toContain( selectedFreeDomain );
-		} );
-
-		it( 'Post-launch congratulatory message is shown', async function () {
-			// User is redirected to the Home dashboard.
-			await page.waitForURL( /home/ );
-
-			await page.getByRole( 'dialog' ).getByRole( 'heading', { name: 'Congrats' } ).waitFor();
-		} );
-
-		it( 'Close congratulatory message', async function () {
-			await page.getByRole( 'dialog' ).getByRole( 'button', { name: 'Close' } ).click();
+		it( 'Focused Launchpad is shown', async function () {
+			const title = await page.getByText( "Let's get started!" );
+			await title.waitFor( { timeout: 30 * 1000 } );
 		} );
 	} );
 

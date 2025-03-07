@@ -88,8 +88,18 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 					},
 					enableSorting: false,
 				},
-				{ id: 'kind', type: 'text', label: translate( 'Kind' ), enableSorting: false },
-				{ id: 'name', type: 'text', label: translate( 'Name' ), enableSorting: false },
+				{
+					id: 'kind',
+					type: 'text',
+					label: translate( 'Group' ),
+					enableSorting: false,
+				},
+				{
+					id: 'name',
+					type: 'text',
+					label: translate( 'Source' ),
+					enableSorting: false,
+				},
 				{
 					id: 'file',
 					type: 'text',
@@ -104,12 +114,6 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 					type: 'integer',
 					label: translate( 'Line' ),
 					render: ( { item }: { item: PHPLog } ) => numberFormat( item.line ),
-					enableSorting: false,
-				},
-				{
-					id: 'atomic_site_id',
-					type: 'integer',
-					label: translate( 'Atomic Site ID' ),
 					enableSorting: false,
 				},
 			] as Field< PHPLog | ServerLog >[];
@@ -192,13 +196,13 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 			{
 				id: 'http2',
 				type: 'text',
-				label: translate( 'HTTP2' ),
+				label: translate( 'HTTP/2' ),
 				enableSorting: false,
 			},
 			{
 				id: 'http_user_agent',
 				type: 'text',
-				label: translate( 'HTTP User Agent' ),
+				label: translate( 'User Agent' ),
 				enableSorting: false,
 			},
 			{
@@ -210,7 +214,7 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 			{
 				id: 'http_x_forwarded_for',
 				type: 'text',
-				label: translate( 'HTTP X Forwarded Port' ),
+				label: translate( 'X-Forwarded-For' ),
 				enableSorting: false,
 			},
 			{

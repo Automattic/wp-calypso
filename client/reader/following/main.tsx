@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { FoldableCard } from '@automattic/components';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -64,7 +65,19 @@ function FollowingStream( { ...props } ) {
 					>
 						<ViewToggle />
 					</NavigationHeader>
-					{ config.isEnabled( 'reader/quick-post' ) && <QuickPost /> }
+					{ config.isEnabled( 'reader/quick-post' ) && (
+						<FoldableCard
+							header={ translate( 'Write a quick post' ) }
+							clickableHeader
+							compact
+							expanded={ false }
+							className="following-stream__quick-post-card"
+							smooth
+							contentExpandedStyle={ { maxHeight: '800px' } }
+						>
+							<QuickPost />
+						</FoldableCard>
+					) }
 					<ReaderOnboarding />
 				</ReaderStream>
 			) }

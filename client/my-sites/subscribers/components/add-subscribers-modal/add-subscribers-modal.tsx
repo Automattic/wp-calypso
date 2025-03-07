@@ -3,15 +3,13 @@ import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_UNLIMITED_SUBSCRIBERS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Gridicon, FlowQuestion } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { AddSubscriberForm, UploadSubscribersForm } from '@automattic/subscriber';
 import { useHasStaleImportJobs } from '@automattic/subscriber/src/hooks/use-has-stale-import-jobs';
 import { useInProgressState } from '@automattic/subscriber/src/hooks/use-in-progress-state';
-import { ExternalLink, Modal, __experimentalVStack as VStack } from '@wordpress/components';
+import { Modal, __experimentalVStack as VStack } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { copy, upload, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import Notice from 'calypso/components/notice';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -21,6 +19,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
+import { StaleImportJobsNotice } from './stale-job-notice';
 
 import './style.scss';
 
@@ -87,32 +86,6 @@ const AddSubscribersModal = ( {
 		} else {
 			page( `/import/newsletter/substack/${ site?.slug || site?.ID || '' }` );
 		}
-	};
-
-	const renderLearnMoreLink = ( isJetpack: boolean | null ) => {
-		// Jetpack sites
-		if ( isJetpack ) {
-			return (
-				<ExternalLink
-					href={ localizeUrl( 'https://jetpack.com/support/newsletter/import-subscribers/' ) }
-				>
-					{ translate( 'Learn more' ) }
-				</ExternalLink>
-			);
-		}
-
-		// WP.com sites
-		return (
-			<InlineSupportLink
-				showIcon={ false }
-				supportLink={ localizeUrl(
-					'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
-				) }
-				supportPostId={ 220199 }
-			>
-				{ translate( 'Learn more' ) }
-			</InlineSupportLink>
-		);
 	};
 
 	return (
@@ -191,21 +164,7 @@ const AddSubscribersModal = ( {
 						</Notice>
 					) }
 					{ ! isUploading && isImportInProgress && hasStaleImportJobs && (
-						<Notice
-							className="add-subscribers-modal__notice"
-							icon={ <Gridicon icon="notice" /> }
-							isCompact
-							theme="light"
-							status="is-warning"
-							showDismiss={ false }
-						>
-							<span className="add-subscribers-modal__notice-text">
-								{ translate(
-									'Your recent import is taking longer than expected to complete. If this issue persists, please contact our support team for assistance.'
-								) }
-							</span>
-							{ renderLearnMoreLink( isJetpack ) }
-						</Notice>
+						<StaleImportJobsNotice isJetpack={ isJetpack } siteId={ site?.ID || null } />
 					) }
 					<label className="add-subscribers-modal__label">{ translate( 'Email' ) }</label>
 					<AddSubscriberForm
@@ -253,21 +212,7 @@ const AddSubscribersModal = ( {
 						</Notice>
 					) }
 					{ ! isUploading && isImportInProgress && hasStaleImportJobs && (
-						<Notice
-							className="add-subscribers-modal__notice"
-							icon={ <Gridicon icon="notice" /> }
-							isCompact
-							theme="light"
-							status="is-warning"
-							showDismiss={ false }
-						>
-							<span className="add-subscribers-modal__notice-text">
-								{ translate(
-									'Your recent import is taking longer than expected to complete. If this issue persists, please contact our support team for assistance.'
-								) }
-							</span>
-							{ renderLearnMoreLink( isJetpack ) }
-						</Notice>
+						<StaleImportJobsNotice isJetpack={ isJetpack } siteId={ site?.ID || null } />
 					) }
 					<UploadSubscribersForm
 						siteId={ site?.ID || 0 }
