@@ -27,9 +27,9 @@ const aiSiteBuilder: Flow = {
 				// Which will be the created site { "siteId": "242341575", "siteSlug": "something.wordpress.com", "goToCheckout": false, "siteCreated": true }
 				case 'processing': {
 					const { siteSlug } = providedDependencies;
-					// You can redirect anywhere you want.
 					// Make sure to redirect using window.location.replace, so the user cannot go back to the processing step.
-					window.location.replace( `/home/${ siteSlug }` );
+					// This is the known Big Sky URL. The site is free at this point so we have to work on displaying Big Sky on free sites.
+					window.location.replace( `https://${ siteSlug }/wp-admin/site-editor.php?canvas=edit` );
 				}
 				default:
 					return;
