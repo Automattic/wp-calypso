@@ -6,9 +6,10 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 type ProgressBarProps = {
 	className?: string;
 	progress: number;
+	delta?: number;
 };
 
-export function ProgressBar( { className, progress }: ProgressBarProps ) {
+export function ProgressBar( { className, progress, delta = 0.04 }: ProgressBarProps ) {
 	const [ simulatedProgress, setSimulatedProgress ] = useState( progress );
 	const { setProgress } = useDispatch( ONBOARD_STORE );
 
@@ -23,7 +24,7 @@ export function ProgressBar( { className, progress }: ProgressBarProps ) {
 						return progress;
 					}
 					// Otherwise increment smoothly, stalling at 95%
-					const newProgress = Math.min( 0.95, previousProgress + Math.random() * 0.04 );
+					const newProgress = Math.min( 0.95, previousProgress + Math.random() * delta );
 					setProgress( newProgress );
 					return newProgress;
 				} );

@@ -35,7 +35,11 @@ export const StagingSiteLoadingBarCardContent = ( {
 			  );
 		return (
 			<div data-testid="transferring-staging-content">
-				<ProgressBar progress={ progress } className="staging-site-card__loading-bar" />
+				<ProgressBar
+					progress={ progress }
+					delta={ 0.01 }
+					className="staging-site-card__loading-bar"
+				/>
 				<p>{ message }</p>
 			</div>
 		);
