@@ -17,8 +17,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
-import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { localizeThemesPath, shouldSelectSite } from 'calypso/my-sites/themes/helpers';
+import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
@@ -57,6 +57,7 @@ import {
 	isWporgTheme,
 } from 'calypso/state/themes/selectors';
 import { isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors/is-marketplace-theme-subscribed';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Get the checkout path slug for the given site and minimum plan.
@@ -384,9 +385,18 @@ function getAllThemeOptions( { translate, isFSEActive, isGlobalStylesOnPersonal 
 		},
 	};
 
+	const signupLabel = ( state ) =>
+		shouldSelectSite( {
+			isLoggedIn: isUserLoggedIn( state ),
+			siteCount: getCurrentUserSiteCount( state ),
+			siteId: getSelectedSiteId( state ),
+		} )
+			? translate( 'Activate' )
+			: translate( 'Get started' );
+
 	const signup = {
-		label: translate( 'Activate' ),
-		extendedLabel: translate( 'Activate' ),
+		label: signupLabel,
+		extendedLabel: signupLabel,
 		getUrl: ( state, themeId, siteId, options ) => getThemeSignupUrl( state, themeId, options ),
 		hideForTheme: ( state, themeId, siteId ) => isUserLoggedIn( state ) && siteId,
 	};

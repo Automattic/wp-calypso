@@ -66,7 +66,7 @@ export class ThemesDetailPage {
 	 * Click on the Activate button displayed in Logged out theme details.
 	 */
 	async pickThisDesign(): Promise< void > {
-		await this.page.getByRole( 'link', { name: 'Activate' } ).click();
+		await this.page.getByRole( 'link', { name: 'Get started' } ).click();
 	}
 
 	/**
