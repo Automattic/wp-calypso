@@ -7,23 +7,27 @@ import type { AppState } from 'calypso/types';
 
 export default function ReaderBackButton( {
 	handleBack,
+	preventRouteChange = false,
+	forceShow = false,
 	...props
 }: {
-	handleBack?: () => void;
+	handleBack?: ( event?: React.MouseEvent< HTMLButtonElement > ) => void;
+	preventRouteChange?: boolean;
+	forceShow?: boolean;
 } ): JSX.Element | null {
 	const previousRoute = useSelector< AppState, string >( getPreviousRoute );
 	const isLoggedIn = useSelector< AppState, boolean >( isUserLoggedIn );
 
-	if ( ! isLoggedIn || ! previousRoute ) {
+	if ( ! forceShow && ( ! isLoggedIn || ! previousRoute ) ) {
 		return null;
 	}
 
 	return (
 		<BackButton
 			{ ...props }
-			onClick={ () => {
-				handleBack?.();
-				page.back( previousRoute );
+			onClick={ ( event?: React.MouseEvent< HTMLButtonElement > ) => {
+				handleBack?.( event );
+				! preventRouteChange && page.back( previousRoute );
 			} }
 		/>
 	);
