@@ -1,5 +1,8 @@
 import page from '@automattic/calypso-router';
-import { Button, Gridicon } from '@automattic/components';
+import { Button as LegacyButton, Gridicon } from '@automattic/components';
+import { HelpCenter } from '@automattic/data-stores';
+import { Button } from '@wordpress/components';
+import { dispatch as dataStoreDispatch } from '@wordpress/data';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
@@ -27,6 +30,8 @@ import userHasAnyAtomicSites from 'calypso/state/selectors/user-has-any-atomic-s
 import AccountCloseConfirmDialog from './confirm-dialog';
 
 import './style.scss';
+
+const HELP_CENTER_STORE = HelpCenter.register();
 
 class AccountSettingsClose extends Component {
 	state = {
@@ -165,7 +170,7 @@ class AccountSettingsClose extends Component {
 								<p className="account-close__body-copy">
 									{ translate( 'To close this account now, {{a}}contact our support team{{/a}}.', {
 										components: {
-											a: <ActionPanelLink href="/help/contact" />,
+											a: <Button onClick={ this.props.handleContactSupport } variant="link" />,
 										},
 									} ) }
 								</p>
@@ -214,7 +219,7 @@ class AccountSettingsClose extends Component {
 											"They'll explain the ramifications and help you explore alternatives. ",
 										{
 											components: {
-												a: <ActionPanelLink href="/help/contact" />,
+												a: <Button onClick={ this.props.handleContactSupport } variant="link" />,
 											},
 										}
 									) }
@@ -224,20 +229,28 @@ class AccountSettingsClose extends Component {
 					</ActionPanelBody>
 					<ActionPanelFooter>
 						{ ( isLoading || isDeletePossible ) && (
-							<Button scary onClick={ this.handleDeleteClick } data-testid="close-account-button">
+							<LegacyButton
+								scary
+								onClick={ this.handleDeleteClick }
+								data-testid="close-account-button"
+							>
 								<Gridicon icon="trash" />
 								{ translate( 'Delete account', { context: 'button label' } ) }
-							</Button>
+							</LegacyButton>
 						) }
 						{ hasAtomicSites && ! hasCancelablePurchases && (
-							<Button primary href="/help/contact" data-testid="contact-support-button">
+							<LegacyButton
+								primary
+								onClick={ this.props.handleContactSupport }
+								data-testid="contact-support-button"
+							>
 								{ translate( 'Contact support' ) }
-							</Button>
+							</LegacyButton>
 						) }
 						{ hasCancelablePurchases && (
-							<Button primary href="/me/purchases" data-testid="manage-purchases-button">
+							<LegacyButton primary href="/me/purchases" data-testid="manage-purchases-button">
 								{ translate( 'Manage purchases', { context: 'button label' } ) }
-							</Button>
+							</LegacyButton>
 						) }
 					</ActionPanelFooter>
 					<AccountCloseConfirmDialog
@@ -269,5 +282,11 @@ export default connect(
 	},
 	{
 		redirectToLogout,
+		handleContactSupport: () => {
+			dataStoreDispatch( HELP_CENTER_STORE ).setNewMessagingChat( {
+				initialMessage: 'User is contacting us requesting information about account deletion',
+				section: 'account-deletion',
+			} );
+		},
 	}
 )( localize( AccountSettingsClose ) );
