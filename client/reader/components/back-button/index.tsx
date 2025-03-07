@@ -5,12 +5,26 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import type { AppState } from 'calypso/types';
 
-export default function ReaderBackButton(): JSX.Element | null {
+export default function ReaderBackButton( {
+	handleBack,
+	...props
+}: {
+	handleBack?: () => void;
+} ): JSX.Element | null {
 	const previousRoute = useSelector< AppState, string >( getPreviousRoute );
 	const isLoggedIn = useSelector< AppState, boolean >( isUserLoggedIn );
 
 	if ( ! isLoggedIn || ! previousRoute ) {
 		return null;
 	}
-	return <BackButton onClick={ () => page.back( previousRoute ) } />;
+
+	return (
+		<BackButton
+			{ ...props }
+			onClick={ () => {
+				handleBack?.();
+				page.back( previousRoute );
+			} }
+		/>
+	);
 }
