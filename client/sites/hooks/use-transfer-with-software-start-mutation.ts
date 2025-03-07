@@ -2,7 +2,12 @@ import { useMutation, UseMutationResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
 type TransferWithSoftwareResponse = {
-	transfer_with_software_id: number;
+	blog_id: number;
+	atomic_transfer_id: number;
+	atomic_transfer_status: string;
+	plugins: Record< string, string >;
+	themes: Record< string, string >;
+	transfer_with_software_status: string;
 };
 
 type SoftwareSlug = string;
