@@ -321,6 +321,7 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 	);
 
 	const [ updatingDomain, setUpdatingDomain ] = useState< Value[ 'updatingDomain' ] >( null );
+
 	const onSortChange = ( selectedColumn: DomainsTableColumn, direction?: 'asc' | 'desc' ) => {
 		if ( ! selectedColumn.isSortable ) {
 			return;

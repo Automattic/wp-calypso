@@ -9,21 +9,25 @@ type PointToWpcomDialogProps = {
 export const PointToWpcomDialog = ( { visible, onClose }: PointToWpcomDialogProps ) => {
 	const { __ } = useI18n();
 
+	if ( ! visible ) {
+		return null;
+	}
+
 	const renderContent = () => {
 		return (
 			<>
 				<p>{ __( 'When you point your domain to WordPress.com, we will:' ) }</p>
 				<ul>
 					<li>{ __( 'Change your name servers to use the WordPress.com defaults,' ) }</li>
-					<li>{ __( 'Delete any A records, and' ) }</li>
-					<li>{ __( "Delete any 'www' CNAME records" ) }</li>
+					<li>{ __( 'Reset to default A records, and' ) }</li>
+					<li>{ __( "Set the default 'www' CNAME records" ) }</li>
 				</ul>
 				<p>{ __( 'Please note that these changes may take some time to apply.' ) }</p>
 			</>
 		);
 	};
 
-	return visible ? (
+	return (
 		<AcceptDialog
 			message={ renderContent() }
 			onClose={ onClose }
@@ -36,7 +40,7 @@ export const PointToWpcomDialog = ( { visible, onClose }: PointToWpcomDialogProp
 				},
 			} }
 		/>
-	) : null;
+	);
 };
 
 export default PointToWpcomDialog;

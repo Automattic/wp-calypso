@@ -137,7 +137,7 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 				},
 			} );
 			await refetch();
-			dispatch( successNotice( __( 'Domain pointed to WordPress.com' ) ) );
+			dispatch( successNotice( __( 'Domain is pointing to WordPress.com' ) ) );
 		} catch ( error ) {
 			dispatch( errorNotice( __( 'Error pointing domain to WordPress.com' ) ) );
 		} finally {
