@@ -67,11 +67,7 @@ export const OdieSendMessageButton = () => {
 		useAttachFileToConversation();
 
 	const handleFileUpload = useCallback(
-		async ( file: File | null ) => {
-			if ( ! file ) {
-				return;
-			}
-
+		async ( file: File ) => {
 			if ( file.type.startsWith( 'image/' ) ) {
 				if ( authData && chat.conversationId && inferredClientId && file ) {
 					attachFileToConversation( {
@@ -99,13 +95,19 @@ export const OdieSendMessageButton = () => {
 	);
 
 	const onFilesDrop = ( files: File[] ) => {
-		handleFileUpload( files?.[ 0 ] );
+		const file = files?.[ 0 ];
+		if ( file && file.type.startsWith( 'image/' ) ) {
+			handleFileUpload( file );
+		}
 	};
 
 	const onPaste = ( event: React.ClipboardEvent ) => {
 		const items = event.clipboardData.items;
 		const file = items?.[ 0 ]?.getAsFile();
-		handleFileUpload( file );
+		if ( file && file.type.startsWith( 'image/' ) ) {
+			event.preventDefault();
+			handleFileUpload( file );
+		}
 	};
 
 	const onKeyUp = useCallback( () => {
