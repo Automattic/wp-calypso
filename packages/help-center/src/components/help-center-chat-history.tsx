@@ -1,23 +1,18 @@
 /* eslint-disable no-restricted-imports */
 import { HelpCenterSelect } from '@automattic/data-stores';
-import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
 import { Card, CardHeader, CardBody, Spinner } from '@wordpress/components';
-import { useSelect, useDispatch as useDataStoreDispatch } from '@wordpress/data';
-import { useEffect, useState } from '@wordpress/element';
+import { useSelect } from '@wordpress/data';
+import { useState } from '@wordpress/element';
 import { comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { Link } from 'react-router-dom';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import { useGetHistoryChats } from '../hooks/use-get-history-chats';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
-import {
-	getConversationsFromSupportInteractions,
-	getSortedRecentAndArchivedConversations,
-	getLastMessage,
-	getZendeskConversations,
-} from './utils';
+import { getLastMessage } from './utils';
 import type { SupportInteraction, ZendeskConversation } from '@automattic/odie-client';
 
 import './help-center-chat-history.scss';
@@ -85,80 +80,16 @@ const Conversations = ( {
 
 export const HelpCenterChatHistory = () => {
 	const { __ } = useI18n();
-	const [ conversations, setConversations ] = useState< ZendeskConversation[] >( [] );
-	const [ supportInteractions, setSupportInteractions ] = useState< SupportInteraction[] >( [] );
 	const [ selectedTab, setSelectedTab ] = useState( TAB_STATES.recent );
-	const { data: supportInteractionsResolved, isLoading: isLoadingResolvedInteractions } =
-		useGetSupportInteractions( 'zendesk', 100, 'resolved' );
-	const { data: supportInteractionsClosed, isLoading: isLoadingClosedInteractions } =
-		useGetSupportInteractions( 'zendesk', 100, 'closed' );
-	const { data: supportInteractionsOpen, isLoading: isLoadingOpenInteractions } =
-		useGetSupportInteractions( 'zendesk', 10, 'open' );
+	const { supportInteractions, isLoadingInteractions, recentConversations, archivedConversations } =
+		useGetHistoryChats();
 
-	const { isChatLoaded, unreadCount } = useSelect( ( select ) => {
+	const { unreadCount } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
-			isChatLoaded: store.getIsChatLoaded(),
 			unreadCount: store.getUnreadCount(),
 		};
 	}, [] );
-
-	const { recentConversations, archivedConversations } = getSortedRecentAndArchivedConversations( {
-		conversations,
-	} );
-	const { setUnreadCount } = useDataStoreDispatch( HELP_CENTER_STORE );
-
-	const isLoadingInteractions =
-		isLoadingResolvedInteractions || isLoadingClosedInteractions || isLoadingOpenInteractions;
-
-	useEffect( () => {
-		if ( isChatLoaded && getZendeskConversations && ! isLoadingInteractions ) {
-			const allConversations = getZendeskConversations();
-			const supportInteractions = [
-				...( supportInteractionsResolved || [] ),
-				...( supportInteractionsOpen || [] ),
-				...( supportInteractionsClosed || [] ),
-			];
-
-			const filteredConversations = getConversationsFromSupportInteractions(
-				allConversations,
-				supportInteractions
-			);
-			setConversations( filteredConversations );
-			setSupportInteractions( supportInteractions );
-		}
-	}, [
-		isLoadingInteractions,
-		supportInteractionsResolved,
-		supportInteractionsOpen,
-		isChatLoaded,
-		setUnreadCount,
-		supportInteractionsClosed,
-	] );
-
-	const EmptyArchivedConversations = () => {
-		return (
-			<Card isBorderless size="small" className="help-center-chat-history__archive-no-results">
-				<CardHeader className="help-center-chat-history__archive-no-results-header">
-					<h4>{ __( 'Your Archive is Empty', __i18n_text_domain__ ) }</h4>
-				</CardHeader>
-				<CardBody className="help-center-chat-history__archive-no-results-body">
-					{ __(
-						'Resolved issues and past conversations will be available here',
-						__i18n_text_domain__
-					) }
-					<Link
-						to="/odie"
-						onClick={ () => {} }
-						className="help-center-chat-history__archive-no-results-button"
-					>
-						<Icon icon={ comment } />
-						{ __( 'Get support', __i18n_text_domain__ ) }
-					</Link>
-				</CardBody>
-			</Card>
-		);
-	};
 
 	// Temporarily simplified version
 	if ( simplifiedHistoryChat ) {
@@ -209,4 +140,28 @@ export const HelpCenterChatHistory = () => {
 				) ) }
 		</div>
 	);
+
+	function EmptyArchivedConversations() {
+		return (
+			<Card isBorderless size="small" className="help-center-chat-history__archive-no-results">
+				<CardHeader className="help-center-chat-history__archive-no-results-header">
+					<h4>{ __( 'Your Archive is Empty', __i18n_text_domain__ ) }</h4>
+				</CardHeader>
+				<CardBody className="help-center-chat-history__archive-no-results-body">
+					{ __(
+						'Resolved issues and past conversations will be available here',
+						__i18n_text_domain__
+					) }
+					<Link
+						to="/odie"
+						onClick={ () => {} }
+						className="help-center-chat-history__archive-no-results-button"
+					>
+						<Icon icon={ comment } />
+						{ __( 'Get support', __i18n_text_domain__ ) }
+					</Link>
+				</CardBody>
+			</Card>
+		);
+	}
 };
