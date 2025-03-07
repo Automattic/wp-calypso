@@ -57,14 +57,14 @@
 	},
 	"dependencies": {
 		"@wordpress/base-styles": "^5.19.0",
-		"@wordpress/components": "^29.4.0",
-		"@wordpress/compose": "^7.18.0",
+		"@wordpress/components": "^29.5.0",
+		"@wordpress/compose": "^7.19.0",
 		"@wordpress/core-data": "^7.19.0",
-		"@wordpress/dom": "^4.18.0",
-		"@wordpress/element": "^6.18.0",
+		"@wordpress/dom": "^4.19.0",
+		"@wordpress/element": "^6.19.0",
 		"@wordpress/i18n": "^5.19.0",
 		"@wordpress/icons": "^10.19.0",
-		"@wordpress/url": "^4.18.0",
+		"@wordpress/url": "^4.19.0",
 		"clsx": "^2.1.1"
 	}
 }
