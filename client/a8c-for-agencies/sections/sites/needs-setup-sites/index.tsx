@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -50,8 +49,6 @@ export default function NeedSetup( { licenseKey }: Props ) {
 
 	const closeModal = () => setCurrentSiteConfigurationId( null );
 
-	const isAutomatedReferralsEnabled = config.isEnabled( 'a4a-automated-referrals' );
-
 	const title = translate( 'Sites' );
 
 	const { data: pendingSites, isFetching, refetch: refetchPendingSites } = useFetchPendingSites();
@@ -68,8 +65,8 @@ export default function NeedSetup( { licenseKey }: Props ) {
 
 	// Filter out sites that have a referral
 	const availableSites =
-		allAvailableSites.filter( ( { features }: NeedsSetupSite ) =>
-			isAutomatedReferralsEnabled ? ! features.wpcom_atomic.referral : true
+		allAvailableSites.filter(
+			( { features }: NeedsSetupSite ) => ! features.wpcom_atomic.referral
 		) ?? [];
 
 	// Find the site license by license key
@@ -77,17 +74,14 @@ export default function NeedSetup( { licenseKey }: Props ) {
 		( { features }: NeedsSetupSite ) => features.wpcom_atomic.license_key === licenseKey
 	);
 
-	const hasReferral =
-		isAutomatedReferralsEnabled && !! foundSiteLicenseByLicenseKey?.features.wpcom_atomic.referral;
+	const hasReferral = !! foundSiteLicenseByLicenseKey?.features.wpcom_atomic.referral;
 
 	// Filter out the site license we found by license key
-	const otherReferralSites = isAutomatedReferralsEnabled
-		? allAvailableSites.filter(
-				( { features }: NeedsSetupSite ) =>
-					!! features.wpcom_atomic.referral &&
-					( hasReferral ? features.wpcom_atomic.license_key !== licenseKey : true )
-		  )
-		: [];
+	const otherReferralSites = allAvailableSites.filter(
+		( { features }: NeedsSetupSite ) =>
+			!! features.wpcom_atomic.referral &&
+			( hasReferral ? features.wpcom_atomic.license_key !== licenseKey : true )
+	);
 
 	const availablePlans: AvailablePlans[] = [
 		// If the site license we found by license key has a referral, we should show it first

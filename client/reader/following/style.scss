@@ -72,3 +72,12 @@
 		}
 	}
 }
+
+.following-stream__quick-post-card.card.is-compact {
+	margin-bottom: 20px !important;
+	border-radius: 6px; /* stylelint-disable-line scales/radii */
+
+	.foldable-card__main {
+		font-weight: 600;
+	}
+}

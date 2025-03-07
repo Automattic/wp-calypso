@@ -7,17 +7,6 @@ export const DOTCOM_HOSTING_CONFIG = 'dotcom-hosting-config';
 export const DOTCOM_HOSTING_FEATURES = 'dotcom-hosting-features';
 export const DOTCOM_STAGING_SITE = 'dotcom-staging-site';
 export const DOTCOM_SITE_PERFORMANCE = 'dotcom-site-performance';
-
-export const OVERVIEW = 'overview';
-
-export const MARKETING_TOOLS = 'marketing-tools';
-export const MARKETING_CONNECTIONS = 'marketing-connections';
-export const MARKETING_TRAFFIC = 'marketing-traffic';
-export const MARKETING_SHARING = 'marketing-sharing';
-
-export const TOOLS_DEPLOYMENTS = 'tools-deployments';
-export const TOOLS = 'tools';
-
 export const SETTINGS_SITE = 'settings-site';
 export const SETTINGS_ADMINISTRATION = 'settings-administration';
 export const SETTINGS_ADMINISTRATION_RESET_SITE = 'settings-administration-reset-site';
@@ -38,15 +27,6 @@ export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
 	[ DOTCOM_HOSTING_FEATURES ]: 'hosting-features/:site',
 	[ DOTCOM_STAGING_SITE ]: 'staging-site/:site',
 	[ DOTCOM_SITE_PERFORMANCE ]: 'sites/performance/:site',
-
-	// New Information Architecture
-	[ OVERVIEW ]: 'sites/overview/:site',
-	[ MARKETING_TOOLS ]: 'sites/marketing/tools/:site',
-	[ MARKETING_CONNECTIONS ]: 'sites/marketing/connections/:site',
-	[ MARKETING_TRAFFIC ]: 'sites/marketing/traffic/:site',
-	[ MARKETING_SHARING ]: 'sites/marketing/sharing-buttons/:site',
-	[ TOOLS_DEPLOYMENTS ]: 'sites/tools/deployments/:site',
-	[ TOOLS ]: 'sites/tools/:site',
 	[ SETTINGS_SITE ]: 'sites/settings/site/:site',
 	[ SETTINGS_ADMINISTRATION_RESET_SITE ]: 'sites/settings/site/:site/reset-site',
 	[ SETTINGS_ADMINISTRATION_TRANSFER_SITE ]: 'sites/settings/site/:site/transfer-site',

@@ -506,11 +506,27 @@ export const StagingSiteCard = ( {
 			/>
 		);
 	} else if ( showAddStagingSiteCard ) {
+		const getDisabledMessage = () => {
+			if ( isSyncInProgress ) {
+				return translate(
+					'Unable to create a new staging site. If the issue persists, please contact support.'
+				);
+			}
+			if ( isPossibleJetpackConnectionProblem ) {
+				return translate(
+					'Unable to create a new staging site. There is a site connection issue. If the issue persists, please contact support.'
+				);
+			}
+			return null;
+		};
+
+		const disabledMessage = getDisabledMessage();
 		stagingSiteCardContent = (
 			<NewStagingSiteCardContent
 				siteId={ siteId }
 				onAddClick={ onAddClick }
 				isDevelopmentSite={ isDevelopmentSite }
+				disabledMessage={ disabledMessage }
 				isButtonDisabled={
 					disabled ||
 					isLoadingAddStagingSite ||

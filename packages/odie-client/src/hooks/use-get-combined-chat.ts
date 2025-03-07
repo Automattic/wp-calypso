@@ -39,66 +39,74 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 	);
 
 	const [ mainChatState, setMainChatState ] = useState< Chat >( emptyChat );
+	const [ isEnabled, setIsEnabled ] = useState( true );
+	const chatStatus = mainChatState?.status;
 	const getZendeskConversation = useGetZendeskConversation();
-	const { data: odieChat, isLoading: isOdieChatLoading } = useOdieChat( Number( odieId ) );
+	const { data: odieChat, isFetching: isOdieChatLoading } = useOdieChat( Number( odieId ) );
 	const { startNewInteraction } = useManageSupportInteraction();
 	const { trackEvent } = useOdieAssistantContext();
+	const canFetchConversation = conversationId && canConnectToZendesk;
 
 	useEffect( () => {
-		if ( odieId && odieChat && ! conversationId ) {
+		if ( isOdieChatLoading || ! isEnabled ) {
+			return;
+		}
+		if ( chatStatus === 'loaded' ) {
+			setIsEnabled( false );
+			return;
+		}
+
+		if ( odieId && odieChat && ! canFetchConversation ) {
 			setMainChatState( {
 				...odieChat,
-				provider: 'odie',
 				conversationId: null,
 				supportInteractionId: currentSupportInteraction!.uuid,
+				provider: 'odie',
 				status: 'loaded',
 			} );
-		} else if ( conversationId && canConnectToZendesk ) {
-			if ( isChatLoaded ) {
-				try {
-					getZendeskConversation( {
-						chatId: odieChat?.odieId,
-						conversationId: conversationId.toString(),
-					} )?.then( ( conversation ) => {
-						if ( conversation ) {
-							setMainChatState( {
-								...( odieChat ? odieChat : {} ),
-								supportInteractionId: currentSupportInteraction!.uuid,
-								conversationId: conversation.id,
-								messages: [
-									...( odieChat ? odieChat.messages : [] ),
-									...( odieChat ? ODIE_TRANSFER_MESSAGE : [] ),
-									...( conversation.messages as Message[] ),
-								],
-								provider: 'zendesk',
-								status: currentSupportInteraction?.status === 'closed' ? 'closed' : 'loaded',
-							} );
-						}
-					} );
-				} catch ( error ) {
-					// Conversation id was passed but the conversion was not found. Something went wrong.
-					trackEvent( 'zendesk_conversation_not_found', {
-						conversationId,
-						odieId,
-					} );
+		} else if ( isChatLoaded && canFetchConversation ) {
+			try {
+				getZendeskConversation( {
+					chatId: odieChat?.odieId,
+					conversationId: conversationId.toString(),
+				} )?.then( ( conversation ) => {
+					if ( conversation ) {
+						const filteredOdieMessages =
+							odieChat?.messages.filter(
+								( message ) => ! message.context?.flags?.forward_to_human_support
+							) ?? [];
+						setMainChatState( {
+							...( odieChat ? odieChat : {} ),
+							supportInteractionId: currentSupportInteraction!.uuid,
+							conversationId: conversation.id,
+							messages: [
+								...( odieChat ? filteredOdieMessages : [] ),
+								...( odieChat ? ODIE_TRANSFER_MESSAGE : [] ),
+								...( conversation.messages as Message[] ),
+							],
+							provider: 'zendesk',
+							status: currentSupportInteraction?.status === 'closed' ? 'closed' : 'loaded',
+						} );
+					}
+				} );
+			} catch ( error ) {
+				// Conversation id was passed but the conversion was not found. Something went wrong.
+				trackEvent( 'zendesk_conversation_not_found', {
+					conversationId,
+					odieId,
+				} );
 
-					startNewInteraction( {
-						event_source: 'help-center',
-						event_external_id: uuidv4(),
-					} );
-				}
+				startNewInteraction( {
+					event_source: 'help-center',
+					event_external_id: uuidv4(),
+				} );
 			}
-		} else if ( currentSupportInteraction ) {
-			setMainChatState( ( prevChat ) => ( {
-				...( prevChat.supportInteractionId !== currentSupportInteraction!.uuid
-					? emptyChat
-					: prevChat ),
-				supportInteractionId: currentSupportInteraction!.uuid,
-				status: 'loaded',
-			} ) );
 		}
 	}, [
+		isEnabled,
+		setIsEnabled,
 		isOdieChatLoading,
+		chatStatus,
 		isChatLoaded,
 		odieChat,
 		conversationId,
@@ -106,7 +114,31 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 		currentSupportInteraction,
 		canConnectToZendesk,
 		getZendeskConversation,
+		startNewInteraction,
+		trackEvent,
 	] );
+
+	useEffect( () => {
+		setMainChatState( ( prevChat ) => {
+			if ( ! prevChat.supportInteractionId ) {
+				return {
+					...prevChat,
+					supportInteractionId: currentSupportInteraction!.uuid,
+					status: 'loading',
+				};
+			}
+			const isSameInteraction = prevChat.supportInteractionId === currentSupportInteraction!.uuid;
+			if ( ! isSameInteraction ) {
+				return {
+					...emptyChat,
+					supportInteractionId: currentSupportInteraction!.uuid,
+					status: 'loaded',
+				};
+			}
+
+			return { ...prevChat };
+		} );
+	}, [ currentSupportInteraction?.uuid ] );
 
 	return { mainChatState, setMainChatState };
 };

@@ -202,17 +202,6 @@ $data-view-border-color: #f1f1f1;
 	}
 }
 
-.referrals-overview__link {
-	color: var(--color-accent-100);
-	text-decoration: underline;
-
-	&:hover,
-	&:visited,
-	&:focus {
-		color: var(--color-accent-100);
-	}
-}
-
 /* FIXME: This is a temporary fix to make the referral
  * layout columns the same height
  */

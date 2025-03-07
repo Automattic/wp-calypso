@@ -22,7 +22,7 @@ export default function GlobalNotices( { id = 'overlay-notices' } ) {
 	const noticesList = storeNotices.map(
 		// We'll rest/spread props to notice so arbitrary props can be passed to `Notice`.
 		// Be sure to destructure any props that aren't for at `Notice`, e.g. `button`.
-		( { button, href, noticeId, onClick, onDismissClick, ...notice } ) => (
+		( { button, noticeActionProps, href, noticeId, onClick, onDismissClick, ...notice } ) => (
 			<Notice
 				{ ...notice }
 				key={ noticeId }
@@ -30,7 +30,7 @@ export default function GlobalNotices( { id = 'overlay-notices' } ) {
 				theme="dark"
 			>
 				{ button && (
-					<NoticeAction href={ href } onClick={ onClick }>
+					<NoticeAction href={ href } onClick={ onClick } { ...noticeActionProps }>
 						{ button }
 					</NoticeAction>
 				) }

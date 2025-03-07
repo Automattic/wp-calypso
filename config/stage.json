@@ -125,7 +125,7 @@
 		"post-list/qr-code-link": true,
 		"press-this": true,
 		"publicize-preview": true,
-		"purchases/billing-history-data-view": false,
+		"purchases/billing-history-data-view": true,
 		"purchases/new-payment-methods": true,
 		"push-notifications": true,
 		"reader": true,

@@ -12,6 +12,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useMemo } from 'react';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import useRestoreSiteMutation from 'calypso/sites/hooks/use-restore-site-mutation';
 import {
 	getAdminInterface,
@@ -321,6 +322,8 @@ export function useActions( {
 		Capabilities
 	>( ( state ) => state.currentUser.capabilities );
 
+	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
+
 	return useMemo(
 		() => [
 			...( viewType !== 'list'
@@ -576,16 +579,31 @@ export function useActions( {
 				label: __( 'Delete site' ),
 				callback: ( sites ) => {
 					const site = sites[ 0 ];
-					page(
-						isStagingSite( site )
-							? `/staging-site/${ site.slug }`
-							: `/settings/delete-site/${ site.slug }`
-					);
+					let urlPath;
+
+					if ( isStagingSite( site ) ) {
+						urlPath = `/staging-site/${ site.slug }`;
+					} else if ( isUntangled ) {
+						urlPath = `/sites/settings/site/${ site.slug }/delete-site`;
+					} else {
+						urlPath = `/settings/delete-site/${ site.slug }`;
+					}
+
+					page( urlPath );
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_delete_click' ) );
 				},
 				isEligible: isActionEligible( 'delete-site', capabilities ),
 			},
 		],
-		[ __, capabilities, dispatch, openSitePreviewPane, restoreSite, viewType, localizeUrl ]
+		[
+			__,
+			capabilities,
+			dispatch,
+			openSitePreviewPane,
+			restoreSite,
+			viewType,
+			localizeUrl,
+			isUntangled,
+		]
 	);
 }

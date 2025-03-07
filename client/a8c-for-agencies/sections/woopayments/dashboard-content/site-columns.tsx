@@ -29,7 +29,7 @@ export const WooPaymentsStatusColumn = ( {
 	if ( ! state ) {
 		return (
 			<Button
-				variant="secondary"
+				variant="tertiary"
 				href={ `${ siteUrl }/wp-admin/plugin-install.php?s=woopayments&tab=search&type=term` }
 				target="_blank"
 				rel="noopener noreferrer"

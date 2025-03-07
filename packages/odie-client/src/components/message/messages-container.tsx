@@ -89,7 +89,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		}
 
 		( chat?.status === 'loaded' || chat?.status === 'closed' ) && setChatMessagesLoaded( true );
-	}, [ chat, isForwardingToZendesk, hasForwardedToZendesk ] );
+	}, [ chat?.status, isForwardingToZendesk, hasForwardedToZendesk ] );
 
 	/**
 	 * Handle the case where we are forwarding to Zendesk.

@@ -13,7 +13,7 @@ import {
 	areHostingFeaturesSupported,
 	useAreAdvancedHostingFeaturesSupported,
 	useAreHostingFeaturesSupported,
-} from '../hosting-features/features';
+} from '../hosting/features';
 import DeleteSite from './administration/tools/delete-site';
 import ResetSite from './administration/tools/reset-site';
 import TransferSite from './administration/tools/transfer-site';

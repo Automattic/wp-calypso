@@ -40,7 +40,6 @@ export interface DomainData {
 	expired: boolean;
 	auto_renewing: boolean;
 	pending_registration: boolean;
-	pending_registration_time: string;
 	has_registration: boolean;
 	has_email_forward_dns_records: unknown;
 	points_to_wpcom: boolean;

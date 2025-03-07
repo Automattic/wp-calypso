@@ -6,8 +6,7 @@ import React, { useMemo } from 'react';
 import ItemView from 'calypso/layout/hosting-dashboard/item-view';
 import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { useSetTabBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-tab-breadcrumb';
-import HostingFeaturesIcon from 'calypso/sites/hosting-features/components/hosting-features-icon';
-import { areHostingFeaturesSupported } from 'calypso/sites/hosting-features/features';
+import HostingFeaturesIcon from 'calypso/sites/hosting/components/hosting-features-icon';
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
 import { getMigrationStatus } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
@@ -27,11 +26,6 @@ import {
 	DOTCOM_GITHUB_DEPLOYMENTS,
 	DOTCOM_HOSTING_FEATURES,
 	DOTCOM_STAGING_SITE,
-	OVERVIEW,
-	MARKETING_TOOLS,
-	MARKETING_CONNECTIONS,
-	MARKETING_TRAFFIC,
-	MARKETING_SHARING,
 	SETTINGS_SITE,
 	SETTINGS_ADMINISTRATION_RESET_SITE,
 	SETTINGS_ADMINISTRATION_TRANSFER_SITE,
@@ -40,8 +34,6 @@ import {
 	SETTINGS_SFTP_SSH,
 	SETTINGS_DATABASE,
 	SETTINGS_PERFORMANCE,
-	TOOLS,
-	TOOLS_DEPLOYMENTS,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
 import SiteEnvironmentSwitcher from './site-environment-switcher';
@@ -84,16 +76,9 @@ const DotcomPreviewPane = ( {
 				featureIds: [ DOTCOM_OVERVIEW ],
 			},
 			{
-				label: __( 'Overview' ),
-				enabled: config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ OVERVIEW ],
-			},
-			{
 				label: (
 					<span>
-						{ hasEnTranslation( 'Hosting Features' )
-							? __( 'Hosting Features' )
-							: __( 'Dev Tools' ) }
+						{ __( 'Hosting Features' ) }
 						<HostingFeaturesIcon />
 					</span>
 				),
@@ -125,33 +110,6 @@ const DotcomPreviewPane = ( {
 				label: __( 'Staging Site' ),
 				enabled: isActiveAtomicSite && ! config.isEnabled( 'untangling/hosting-menu' ),
 				featureIds: [ DOTCOM_STAGING_SITE ],
-			},
-			{
-				label: __( 'Marketing' ),
-				enabled: config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [
-					MARKETING_TOOLS,
-					MARKETING_CONNECTIONS,
-					MARKETING_TRAFFIC,
-					MARKETING_SHARING,
-				],
-			},
-			{
-				label: __( 'Advanced Tools' ),
-				enabled:
-					areHostingFeaturesSupported( site ) && config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ TOOLS_DEPLOYMENTS ],
-			},
-			{
-				label: (
-					<span>
-						{ __( 'Advanced Tools' ) }
-						<HostingFeaturesIcon />
-					</span>
-				),
-				enabled:
-					! areHostingFeaturesSupported( site ) && config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ TOOLS ],
 			},
 			{
 				label: __( 'Settings' ),
