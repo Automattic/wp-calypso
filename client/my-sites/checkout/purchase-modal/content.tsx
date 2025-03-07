@@ -215,7 +215,7 @@ function PayButton( {
 	// translators: %s is the total to be paid in localized currency
 	const payText =
 		totalCost === 0
-			? translate( 'Complete Checkout 3' )
+			? translate( 'Complete Checkout' )
 			: sprintf( translate( 'Pay %s' ), totalCostDisplay );
 	const processingText = translate( 'Processing…' );
 
