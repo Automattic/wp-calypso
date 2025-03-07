@@ -50,7 +50,7 @@ describe( 'CelebrateLaunchModal', () => {
 		).toBeInTheDocument();
 	} );
 
-	it( 'renders the custom domain content if custom domain is not primary yet', () => {
+	it( 'renders the custom domain content if a custom domain is not yet as primary', () => {
 		const allDomains = [
 			{ wpcom_domain: false, primary_domain: false, domain: 'example.com' },
 			{ wpcom_domain: true, primary_domain: true, domain: 'subdomain.wordpress.com' },
@@ -66,7 +66,7 @@ describe( 'CelebrateLaunchModal', () => {
 		expect( screen.getByText( /We're setting up your domain/i ) ).toBeInTheDocument();
 	} );
 
-	it( 'renders the multiple custom domain content', () => {
+	it( 'renders the multiple custom domain content if a custom domain is not yet as primary', () => {
 		const allDomains = [
 			{ wpcom_domain: false, primary_domain: false, domain: 'example.com' },
 			{ wpcom_domain: false, primary_domain: false, domain: 'exampletwo.com' },
