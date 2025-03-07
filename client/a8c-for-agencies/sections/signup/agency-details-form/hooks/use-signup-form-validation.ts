@@ -31,20 +31,20 @@ const useSignupFormValidation = () => {
 		async ( payload: AgencyDetailsPayload ) => {
 			const newValidationError: ValidationState = {};
 			if ( payload.firstName === '' ) {
-				newValidationError.firstName = translate( `First name can't be empty` );
+				newValidationError.firstName = translate( "First name can't be empty" );
 			}
 			if ( payload.lastName === '' ) {
-				newValidationError.lastName = translate( `Last name can't be empty` );
+				newValidationError.lastName = translate( "Last name can't be empty" );
 			}
 
 			if ( payload.agencyName === '' ) {
-				newValidationError.agencyName = translate( `Agency name can't be empty` );
+				newValidationError.agencyName = translate( "Agency name can't be empty" );
 			}
 
 			if ( payload.agencyUrl === '' ) {
-				newValidationError.agencyUrl = translate( `Agency URL can't be empty` );
+				newValidationError.agencyUrl = translate( "Agency URL can't be empty" );
 			} else if ( ! CAPTURE_URL_RGX.test( payload.agencyUrl ) ) {
-				newValidationError.agencyUrl = translate( `Please enter a valid URL` );
+				newValidationError.agencyUrl = translate( 'Please enter a valid URL' );
 			} else if (
 				CAPTURE_SOCIAL_URL_RGX.test( payload.agencyUrl ) ||
 				! ( await isSiteActive( payload.agencyUrl ) )
@@ -57,15 +57,15 @@ const useSignupFormValidation = () => {
 			}
 
 			if ( payload.line1 === '' ) {
-				newValidationError.line1 = translate( `Address can't be empty` );
+				newValidationError.line1 = translate( "Address can't be empty" );
 			}
 
 			if ( payload.city === '' ) {
-				newValidationError.city = translate( `City can't be empty` );
+				newValidationError.city = translate( "City can't be empty" );
 			}
 
 			if ( payload.country === '' ) {
-				newValidationError.country = translate( `Please select your country` );
+				newValidationError.country = translate( 'Please select your country' );
 			}
 
 			if ( Object.keys( newValidationError ).length > 0 ) {

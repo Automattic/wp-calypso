@@ -15,7 +15,7 @@ import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( `Editor: Navbar` ), function () {
+describe( DataHelper.createSuiteTitle( 'Editor: Navbar' ), function () {
 	const features = envToFeatureKey( envVariables );
 	// @todo Does it make sense to create a `simpleSitePersonalPlanUserEdge` with GB edge?
 	// for now, it will pick up the default `gutenbergAtomicSiteEdgeUser` if edge is set.

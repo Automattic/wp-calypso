@@ -176,7 +176,7 @@ const copySite: Flow = {
 		const { isValidSite, hasFetchedSiteDetails, isFetchingError } = useIsValidSite();
 
 		if ( ! sourceSlug || isFetchingError || ( ! isValidSite && hasFetchedSiteDetails ) ) {
-			window.location.assign( `/sites` );
+			window.location.assign( '/sites' );
 			result = {
 				state: AssertConditionState.FAILURE,
 				message: isFetchingError

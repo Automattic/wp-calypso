@@ -270,4 +270,4 @@ export const getEmailCheckoutPath = (
 };
 
 export const getMailboxesPath = ( siteName?: string | null ) =>
-	siteName ? `/mailboxes/${ siteName }` : `/mailboxes`;
+	siteName ? `/mailboxes/${ siteName }` : '/mailboxes';

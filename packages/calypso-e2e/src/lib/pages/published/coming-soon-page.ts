@@ -1,7 +1,7 @@
 import { Page } from 'playwright';
 
 const selectors = {
-	comingSoonText: `:text("Coming Soon")`,
+	comingSoonText: ':text("Coming Soon")',
 };
 
 /**

@@ -119,7 +119,7 @@ describe.skip( 'Hosted site Migration Flow', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( hostedSiteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
-				currentURL: `/processing?siteSlug=example.wordpress.com`,
+				currentURL: '/processing?siteSlug=example.wordpress.com',
 				currentStep: STEPS.PROCESSING.slug,
 				dependencies: {
 					siteCreated: true,
@@ -134,7 +134,8 @@ describe.skip( 'Hosted site Migration Flow', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( hostedSiteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
-				currentURL: `/processing?siteSlug=example.wordpress.com&from=https://site-to-be-migrated.com`,
+				currentURL:
+					'/processing?siteSlug=example.wordpress.com&from=https://site-to-be-migrated.com',
 				currentStep: STEPS.PROCESSING.slug,
 				dependencies: {
 					siteCreated: true,

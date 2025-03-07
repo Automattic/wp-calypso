@@ -86,13 +86,13 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 			{
 				icon: group,
 				text: __(
-					`We'll bring over a copy of your site, without affecting the current live version.`
+					"We'll bring over a copy of your site, without affecting the current live version."
 				),
 			},
 			{
 				icon: scheduled,
 				text: __(
-					`We'll send you an update within 2–3 business days. You can also check the progress of your migration from your Sites dashboard.`
+					"We'll send you an update within 2–3 business days. You can also check the progress of your migration from your Sites dashboard."
 				),
 			},
 		];
@@ -100,24 +100,24 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 		whatToExpect = [
 			{
 				icon: shield,
-				text: __( `We'll explain how to securely share your site credentials with us.` ),
+				text: __( "We'll explain how to securely share your site credentials with us." ),
 			},
 			{
 				icon: backup,
 				text: __(
-					`We'll update you on the progress of the migration, which usually takes 2–3 business days.`
+					"We'll update you on the progress of the migration, which usually takes 2–3 business days."
 				),
 			},
 			{
 				icon: group,
-				text: __( `We'll create a copy of your live site, allowing you to compare the two.` ),
+				text: __( "We'll create a copy of your live site, allowing you to compare the two." ),
 			},
 		];
 	}
 
 	whatToExpect.push( {
 		icon: globe,
-		text: __( `We'll help you switch your domain over after the migration is complete.` ),
+		text: __( "We'll help you switch your domain over after the migration is complete." ),
 	} );
 
 	const title = hasEnTranslation( "We'll take it from here!" )

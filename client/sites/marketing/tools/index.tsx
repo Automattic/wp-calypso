@@ -58,7 +58,7 @@ export default function MarketingTools() {
 		}
 		setIsUserTyping( false );
 		setSearchTerm( term );
-		recordTracksEvent( `calypso_marketing_tools_business_tools_search`, {
+		recordTracksEvent( 'calypso_marketing_tools_business_tools_search', {
 			search_term: term,
 		} );
 	};

@@ -100,7 +100,7 @@ const ReadymadeTemplateGenerateContent: React.FC< ReadymadeTemplateGenerateConte
 						<FormLabel htmlFor="tagline">{ translate( 'Describe your site' ) }</FormLabel>
 						<p className="generate-content__description">
 							{ translate(
-								`Describe your site in a few sentences. The more details you give us the better results you'll get.`
+								"Describe your site in a few sentences. The more details you give us the better results you'll get."
 							) }
 						</p>
 						<FormTextarea

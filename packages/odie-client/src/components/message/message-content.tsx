@@ -30,7 +30,7 @@ export const MessageContent = ( {
 		'odie-chatbox-message',
 		`odie-chatbox-message-${ message.role }`,
 		`odie-chatbox-message-${ message.type ?? 'message' }`,
-		message?.context?.flags?.show_ai_avatar === false && `odie-chatbox-message-no-avatar`
+		message?.context?.flags?.show_ai_avatar === false && 'odie-chatbox-message-no-avatar'
 	);
 	const containerClasses = clsx(
 		'odie-chatbox-message-sources-container',

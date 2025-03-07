@@ -6,7 +6,7 @@ export const TESTIMONIALS = [
 		name: 'Lauren Robinson',
 		position: translate( 'Growth Strategist' ),
 		quote: translate(
-			`"Our streamlined process, facilitated by Automattic for Agencies, enhances both website functionality and our clients' business outcomes."`
+			'"Our streamlined process, facilitated by Automattic for Agencies, enhances both website functionality and our clients\' business outcomes."'
 		),
 		avatar: TestimonialAvatar1,
 		company: { name: 'Big Red Jelly' },

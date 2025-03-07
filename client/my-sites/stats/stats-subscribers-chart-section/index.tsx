@@ -220,7 +220,7 @@ export default function SubscribersChartSection( {
 
 	const subscribers = {
 		label: 'Subscribers',
-		path: `/stats/subscribers/`,
+		path: '/stats/subscribers/',
 	};
 
 	const slugPath = slug ? `/${ slug }` : '';

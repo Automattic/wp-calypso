@@ -204,7 +204,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		}
 
 		if ( isNewsletterFlow( flowName ) || isStartWritingFlow( flowName ) ) {
-			return __( `There's a plan for you.` );
+			return __( "There's a plan for you." );
 		}
 
 		if ( isDesktop ) {
@@ -235,7 +235,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 		if ( ! hideFreePlan ) {
 			return translate(
-				`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
+				'Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.',
 				{ components: { link: freePlanButton } }
 			);
 		}

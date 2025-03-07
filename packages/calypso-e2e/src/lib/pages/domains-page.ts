@@ -2,8 +2,8 @@ import { Page } from 'playwright';
 
 const selectors = {
 	// Domain actions
-	searchForDomainButton: `a:text-matches("search", "i")`,
-	useADomainIOwnButton: `text=Use a domain I own`,
+	searchForDomainButton: 'a:text-matches("search", "i")',
+	useADomainIOwnButton: 'text=Use a domain I own',
 
 	// Purchased domains
 	purchasedDomains: ( domain: string ) => `div.card:has-text("${ domain }")`,

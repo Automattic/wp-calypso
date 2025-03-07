@@ -1600,7 +1600,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_ADD_MULTIPLE_PAGES_NEWSLETTER ]: {
 		getSlug: () => FEATURE_ADD_MULTIPLE_PAGES_NEWSLETTER,
-		getTitle: () => i18n.translate( `Add multiple pages to your Newsletter's website` ),
+		getTitle: () => i18n.translate( "Add multiple pages to your Newsletter's website" ),
 	},
 	[ FEATURE_AD_FREE_EXPERIENCE ]: {
 		getSlug: () => FEATURE_AD_FREE_EXPERIENCE,

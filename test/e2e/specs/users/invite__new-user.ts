@@ -20,7 +20,7 @@ import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
+describe( DataHelper.createSuiteTitle( 'Invite: New User' ), function () {
 	const role = 'Editor';
 	const invitingUser = 'calypsoPreReleaseUser';
 	const testUser = DataHelper.getNewTestUser( {
@@ -44,7 +44,7 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 			await testAccount.authenticate( page );
 
 			userManagementRevampFeature = await page.evaluate(
-				`configData.features['user-management-revamp']`
+				"configData.features['user-management-revamp']"
 			);
 		} );
 
@@ -53,7 +53,7 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 			await sidebarComponent.navigate( 'Users', 'All Users' );
 		} );
 
-		it( `Create new invite`, async function () {
+		it( 'Create new invite', async function () {
 			peoplePage = new PeoplePage( page );
 			if ( userManagementRevampFeature ) {
 				await peoplePage.clickAddTeamMember();
@@ -84,7 +84,7 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 	} );
 
 	describe( 'Accept invite', function () {
-		it( `Invite email was received for test user`, async function () {
+		it( 'Invite email was received for test user', async function () {
 			const emailClient = new EmailClient();
 			const message = await emailClient.getLastMatchingMessage( {
 				inboxId: testUser.inboxId,

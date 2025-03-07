@@ -46,7 +46,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 		} );
 
 		it( 'Visit onboarding page', async function () {
-			await page.goto( DataHelper.getCalypsoURL( `/setup/onboarding` ) );
+			await page.goto( DataHelper.getCalypsoURL( '/setup/onboarding' ) );
 		} );
 
 		it( 'Skip domain selection', async function () {
@@ -55,7 +55,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 			await signupDomainPage.skipDomainSelection();
 		} );
 
-		it( `Select WordPress.com Free plan`, async function () {
+		it( 'Select WordPress.com Free plan', async function () {
 			const signupPickPlanPage = new SignupPickPlanPage( page );
 			newSiteDetails = await signupPickPlanPage.selectPlan( 'Free' );
 		} );
