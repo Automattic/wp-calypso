@@ -4,7 +4,7 @@ import { StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
-import { Icon, globe, group, shield, backup, scheduled } from '@wordpress/icons';
+import { Icon, envelope, globe, group, shield, backup, scheduled } from '@wordpress/icons';
 import { createElement, useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -84,6 +84,12 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 	if ( shouldPreventTicketCreation ) {
 		whatToExpect = [
 			{
+				icon: envelope,
+				text: __(
+					`We'll send you an email with more details on the process and we'll let you know when we start the migration.`
+				),
+			},
+			{
 				icon: group,
 				text: __(
 					"We'll bring over a copy of your site, without affecting the current live version."
@@ -120,8 +126,8 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 		text: __( "We'll help you switch your domain over after the migration is complete." ),
 	} );
 
-	const title = hasEnTranslation( "We'll take it from here!" )
-		? __( "We'll take it from here!" )
+	const title = hasEnTranslation( "We've received your migration request" )
+		? __( "We've received your migration request" )
 		: __( 'Let us take it from here!' );
 
 	const sitesDashboardButton = (
