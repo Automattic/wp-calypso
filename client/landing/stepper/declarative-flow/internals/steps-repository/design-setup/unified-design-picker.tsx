@@ -335,8 +335,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const selectedDesignSlug = selectedDesign?.slug || '';
 
 	// Get theme URL for the design preview.
-	const themeDemoUrl = useSelector( ( state ) =>
-		getThemeDemoUrl( state, selectedDesignSlug, siteId + '' )
+	const themeDemoUrl = useSelector(
+		( state ) =>
+			getThemeDemoUrl( state, selectedDesignSlug, siteId + '' ) +
+			'?demo=true&iframe=true&theme_preview=true'
 	);
 	const screenshot = theme?.screenshots?.[ 0 ] ?? theme?.screenshot;
 	const fullLengthScreenshot = screenshot?.replace( /\?.*/, '' );
