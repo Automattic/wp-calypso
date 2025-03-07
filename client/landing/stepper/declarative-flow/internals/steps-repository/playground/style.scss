@@ -1,9 +1,21 @@
-.playground__onboarding-page {
-	width: 100%;
-	height: 100%;
+@import "calypso/signup/style";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@automattic/onboarding/styles/mixins";
 
-	iframe {
-		width: 100%;
-		height: 100%;
+$header-height: 78px;
+
+.step-route.playground {
+    height: calc(100vh - $header-height);
+    overflow-y: hidden;
+	// TODO: Check why does this value need to be set manually
+	padding-top: $header-height;
+	.step-wrapper__header {
+		display: none;
 	}
+}
+
+.playground__onboarding-iframe {
+	width: 100%;
+	height: calc(100vh - $header-height);
 }
