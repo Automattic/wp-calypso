@@ -69,15 +69,15 @@ type Story = StoryObj< typeof SidebarContent >;
 export const Default: Story = {
 	render: function Template( args: SidebarContentProps ) {
 		return (
-			<SidebarContent { ...args }>
-				<RouterProvider routes={ [] } pathArg="page">
+			<RouterProvider routes={ [] } pathArg="page">
+				<SidebarContent { ...args }>
 					<SidebarNavigationScreen
 						isRoot
 						title={ __( 'Analytics', 'a8c-site-admin' ) }
 						content={ <SidebarItems /> }
 					/>
-				</RouterProvider>
-			</SidebarContent>
+				</SidebarContent>
+			</RouterProvider>
 		);
 	},
 };
