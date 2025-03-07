@@ -575,19 +575,61 @@ object CheckCodeStyleBranch : BuildType({
 
 				# Find files to lint
 				TOTAL_FILES_TO_LINT=$(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -cE '(\.[jt]sx?|\.json|\.md)${'$'}' || true)
+				FILES_TO_LINT=$(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -E '(\.[jt]sx?|\.json|\.md)${'$'}' || echo "")
 
-				# Avoid running more than 16 parallel eslint tasks as it could OOM
-				if [ "%run_full_eslint%" = "true" ] || [ "${'$'}TOTAL_FILES_TO_LINT" -gt 16 ] || [ "${'$'}TOTAL_FILES_TO_LINT" == "0" ]; then
+				# Create temporary output directory
+				mkdir -p "./checkstyle_results/eslint"
+
+				if [ "%run_full_eslint%" = "true" ] || [ "${'$'}TOTAL_FILES_TO_LINT" == "0" ]; then
 					echo "Linting all files"
 					yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" .
 				else
-					# To avoid `ENAMETOOLONG` errors linting files, we have to lint them one by one,
-					# instead of passing the full list of files to eslint directly.
-					for file in ${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -E '(\.[jt]sx?|\.json|\.md)${'$'}' || true); do
-						( echo "Linting ${'$'}file"
-						yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/${'$'}{file//\//_}.xml" "${'$'}file" ) &
+					# When linting the files we have to cover for two issues:
+					#
+					# - ENAMETOOLONG: we cannot pass to eslint too many files as input because we can exceed the maximum command line length.
+					# - OOM (Out Of Memory): we cannot spawn too many processes in parallel.
+					#
+					# To prevent running into any of these issues, we process the files in batches.
+					#
+					# - BATCH_SIZE is the number of files each eslint process will take.
+					# - MAX_PARALLEL_BATCHES is the maximum number of eslint processes to execute in parallel.
+
+					BATCH_SIZE=15
+					MAX_PARALLEL_BATCHES=15
+
+					# This rounds up the division (total files / batch size) to the next integer.
+					TOTAL_BATCHES=$(( (${'$'}TOTAL_FILES_TO_LINT + ${'$'}BATCH_SIZE - 1) / ${'$'}BATCH_SIZE ))
+					echo "Linting ${'$'}TOTAL_FILES_TO_LINT files in ${'$'}TOTAL_BATCHES batches"
+
+					# Create a temporary file with all files to process.
+					TMP_FILE_LIST=$(mktemp)
+					echo "${'$'}FILES_TO_LINT" > "${'$'}TMP_FILE_LIST"
+
+					# Process them in batches
+					for BATCH_NUM in $(seq 1 ${'$'}TOTAL_BATCHES); do
+						BATCH_START=$(( (${'$'}BATCH_NUM - 1) * ${'$'}BATCH_SIZE + 1 ))
+						BATCH_END=$(( ${'$'}BATCH_NUM * ${'$'}BATCH_SIZE ))
+
+						# Extract batch of filenames
+						BATCH_FILES=$(sed -n "${'$'}{BATCH_START},${'$'}{BATCH_END}p" "${'$'}TMP_FILE_LIST" | tr '\n' ' ')
+
+						if [ -n "${'$'}BATCH_FILES" ]; then
+							echo "Linting batch ${'$'}BATCH_NUM of ${'$'}TOTAL_BATCHES"
+							yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/batch_${'$'}{BATCH_NUM}.xml" ${'$'}BATCH_FILES &
+
+							# Limit concurrent processes to avoid OutOfMemory errors
+							if [ $(( ${'$'}BATCH_NUM % ${'$'}MAX_PARALLEL_BATCHES )) -eq 0 ]; then
+								echo "Waiting for batch ${'$'}BATCH_NUM to complete"
+								wait
+							fi
+						fi
 					done
+
+					# Wait for any remaining processes
 					wait
+
+					# Clean up
+					rm "${'$'}TMP_FILE_LIST"
 				fi
 			"""
 		}
@@ -1058,4 +1100,3 @@ object QuarantinedE2ETests: E2EBuildType(
 	buildTriggers = {
 	}
 )
-
