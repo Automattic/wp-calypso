@@ -21,9 +21,9 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 	const transformedDomains = allDomains.map( createSiteDomainObject );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const clipboardButtonEl = useRef( null );
-	const hasCustomDomain = Boolean(
-		transformedDomains.find( ( domain ) => ! domain.isWPCOMDomain )
-	);
+	const customDomains = transformedDomains.filter( ( domain ) => ! domain.isWPCOMDomain );
+	const hasCustomDomain = Boolean( customDomains.length );
+
 	const hasEnTranslation = useHasEnTranslation();
 
 	useEffect( () => {
@@ -109,6 +109,43 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 		);
 	}
 
+	function renderPrimaryDomainContent() {
+		return (
+			<p>{ translate( 'Now you can head over to your site and share it with the world.' ) }</p>
+		);
+	}
+
+	function renderCustomDomainContent() {
+		if ( customDomains.some( ( domain ) => domain.isPrimary ) ) {
+			return renderPrimaryDomainContent();
+		}
+
+		const domainSetupString =
+			customDomains.length > 1
+				? translate( "We're setting up your domains." )
+				: translate( "We're setting up your domain, {{strong}}%(domain)s{{/strong}} now.", {
+						args: {
+							domain: customDomains[ 0 ]?.domain,
+						},
+						components: {
+							strong: <strong />,
+						},
+				  } );
+
+		return (
+			<>
+				<p>
+					{ domainSetupString } { translate( 'This usually takes 24-48 hours to complete.' ) }
+				</p>
+				<p>
+					{ translate(
+						'While you wait, you can explore your site and start creating content using this temporary address.'
+					) }
+				</p>
+			</>
+		);
+	}
+
 	return (
 		<Modal onRequestClose={ () => setModalIsOpen( false ) } className="launched__modal">
 			<ConfettiAnimation />
@@ -117,9 +154,7 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 					<h1 className="launched__modal-heading">
 						{ translate( 'Congrats, your site is live!' ) }
 					</h1>
-					<p className="launched__modal-body">
-						{ translate( 'Now you can head over to your site and share it with the world.' ) }
-					</p>
+					{ hasCustomDomain ? renderCustomDomainContent() : renderPrimaryDomainContent() }
 				</div>
 				<div className="launched__modal-actions">
 					<div className="launched__modal-site">
