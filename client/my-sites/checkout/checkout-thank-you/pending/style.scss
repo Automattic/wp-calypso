@@ -2,7 +2,7 @@
 
 .checkout__pending-content {
 	&.wpcom__loading {
-		margin: 32vh auto 0;
+		margin: calc( 32vh + 60px)  auto 0;
 	}
 
 	.wpcom__loading-title {
