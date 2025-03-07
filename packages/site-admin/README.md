@@ -124,7 +124,7 @@ const SidebarContent = () => {
             </SidebarNavigationItem>
 
             <SidebarNavigationItem
-                icon={ <Icon icon={ settings } /> }
+                icon={ settings }
                 key="sidebar-item-settings"
                 to="/settings"
                 uid="settings"
@@ -134,7 +134,7 @@ const SidebarContent = () => {
             </SidebarNavigationItem>
 
             <SidebarNavigationItem
-                icon={ <Icon icon={ archive } /> }
+                icon={ archive }
                 key="sidebar-item-archive"
                 to="/archive"
                 uid="archive"
