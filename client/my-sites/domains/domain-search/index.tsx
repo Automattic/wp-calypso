@@ -3,6 +3,7 @@ import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { BackButton } from '@automattic/onboarding';
 import { UseShoppingCart, withShoppingCart } from '@automattic/shopping-cart';
+import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
 import moment from 'moment';
@@ -24,7 +25,6 @@ import {
 	ObjectWithProducts,
 } from 'calypso/lib/cart-values/cart-items';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { addQueryArgs } from 'calypso/lib/url';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import DomainAndPlanPackageNavigation from 'calypso/my-sites/domains/components/domain-and-plan-package/navigation';
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
@@ -193,6 +193,7 @@ class DomainSearch extends Component< DomainSearchProps > {
 	}
 
 	async addDomain( suggestion: DomainSuggestion, position: number ) {
+		const queryArgs = getQueryArgs( window.location.href );
 		const {
 			domain_name: domain,
 			product_slug: productSlug,
@@ -225,14 +226,12 @@ class DomainSearch extends Component< DomainSearchProps > {
 			const intervalTypePath = this.props.isSiteOnMonthlyPlan ? 'yearly/' : '';
 			const nextStepLink =
 				! this.props.isSiteOnFreePlan && ! this.props.isSiteOnMonthlyPlan
-					? `/checkout/${ this.props.selectedSiteSlug }`
-					: addQueryArgs(
-							{
-								domainAndPlanPackage: true,
-								domain: this.props.isDomainUpsell ? domain : undefined,
-							},
-							`/plans/${ intervalTypePath }${ this.props.selectedSiteSlug }`
-					  );
+					? addQueryArgs( `/checkout/${ this.props.selectedSiteSlug }`, queryArgs )
+					: addQueryArgs( `/plans/${ intervalTypePath }${ this.props.selectedSiteSlug }`, {
+							...queryArgs,
+							domainAndPlanPackage: true,
+							domain: this.props.isDomainUpsell ? domain : undefined,
+					  } );
 			page( nextStepLink );
 			return;
 		}
@@ -243,7 +242,7 @@ class DomainSearch extends Component< DomainSearchProps > {
 			// Nothing needs to be done here. CartMessages will display the error to the user.
 			return;
 		}
-		page( domainAddEmailUpsell( this.props.selectedSiteSlug, domain ) );
+		page( addQueryArgs( domainAddEmailUpsell( this.props.selectedSiteSlug, domain ), queryArgs ) );
 	}
 
 	removeDomain( suggestion: DomainSuggestion ) {
@@ -313,12 +312,9 @@ class DomainSearch extends Component< DomainSearchProps > {
 		const { domainRegistrationMaintenanceEndTime } = this.state;
 
 		const hasPlanInCart = hasPlan( cart );
-		const hrefForDecideLater = addQueryArgs(
-			{
-				domainAndPlanPackage: true,
-			},
-			`/plans/yearly/${ selectedSiteSlug }`
-		);
+		const hrefForDecideLater = addQueryArgs( `/plans/yearly/${ selectedSiteSlug }`, {
+			domainAndPlanPackage: true,
+		} );
 
 		let content;
 

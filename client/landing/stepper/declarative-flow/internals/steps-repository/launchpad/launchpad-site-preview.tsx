@@ -4,7 +4,6 @@ import {
 	BUILD_FLOW,
 	WRITE_FLOW,
 	START_WRITING_FLOW,
-	DESIGN_FIRST_FLOW,
 	READYMADE_TEMPLATE_FLOW,
 } from '@automattic/onboarding';
 import SitePreview from '../../components/site-preview';
@@ -21,7 +20,6 @@ const LaunchpadSitePreview = ( { siteSlug, flow }: Props ) => {
 			case BUILD_FLOW:
 			case WRITE_FLOW:
 			case START_WRITING_FLOW:
-			case DESIGN_FIRST_FLOW:
 			case READYMADE_TEMPLATE_FLOW:
 				return DEVICE_TYPES.COMPUTER;
 			default:

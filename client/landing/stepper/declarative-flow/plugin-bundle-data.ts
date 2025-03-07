@@ -1,42 +1,27 @@
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import BundleConfirm from './internals/steps-repository/bundle-confirm';
-import BundleInstallPlugins from './internals/steps-repository/bundle-install-plugins';
-import BundleTransfer from './internals/steps-repository/bundle-transfer';
-import BusinessInfo from './internals/steps-repository/business-info';
-import CheckForPlugins from './internals/steps-repository/check-for-plugins';
-import ErrorStep from './internals/steps-repository/error-step';
-import GetCurrentThemeSoftwareSets from './internals/steps-repository/get-current-theme-software-sets';
-import ProcessingStep from './internals/steps-repository/processing-step';
-import StoreAddress from './internals/steps-repository/store-address';
+import { STEPS } from './internals/steps';
 import type { StepperStep, Navigate } from './internals/types';
 import type { CalypsoDispatch } from 'calypso/state/types';
 
 /**
  * First steps that will always run, regardless of the plugin bundle being registered here or not.
  */
-export const initialBundleSteps: StepperStep[] = [
-	{
-		slug: 'getCurrentThemeSoftwareSets',
-		component: GetCurrentThemeSoftwareSets,
-	},
-];
+export const initialBundleSteps: StepperStep[] = [ STEPS.GET_CURRENT_THEME_SOFTWARE_SETS ];
 
 /**
  * Steps that will run before the custom bundle steps.
  */
-export const beforeCustomBundleSteps: StepperStep[] = [
-	{ slug: 'checkForPlugins', component: CheckForPlugins },
-];
+export const beforeCustomBundleSteps: StepperStep[] = [ STEPS.CHECK_FOR_PLUGINS ];
 
 /**
  * Steps that will run after the custom bundle steps.
  */
 export const afterCustomBundleSteps: StepperStep[] = [
-	{ slug: 'bundleConfirm', component: BundleConfirm },
-	{ slug: 'bundleTransfer', component: BundleTransfer },
-	{ slug: 'bundleInstallPlugins', component: BundleInstallPlugins },
-	{ slug: 'processing', component: ProcessingStep },
-	{ slug: 'error', component: ErrorStep },
+	STEPS.BUNDLE_CONFIRM,
+	STEPS.BUNDLE_TRANSFER,
+	STEPS.BUNDLE_INSTALL_PLUGINS,
+	STEPS.PROCESSING,
+	STEPS.ERROR,
 ];
 
 interface BundleStepsSettings {
@@ -68,10 +53,7 @@ interface BundleStepsSettings {
  */
 export const bundleStepsSettings: BundleStepsSettings = {
 	'woo-on-plans': {
-		customSteps: [
-			{ slug: 'storeAddress', component: StoreAddress },
-			{ slug: 'businessInfo', component: BusinessInfo },
-		],
+		customSteps: [ STEPS.STORE_ADDRESS, STEPS.BUSINESS_INFO ],
 		goBack: ( currentStep, navigate ) => {
 			switch ( currentStep ) {
 				case 'businessInfo':

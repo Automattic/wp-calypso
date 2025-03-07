@@ -304,3 +304,12 @@ ul.module-tabs {
 	padding: 0 24px;
 	min-height: 200px;
 }
+
+.stats-chart-tabs__type-toggle {
+	margin-left: 8px;
+	height: 24px;
+
+	&.components-button-group .components-button.is-primary {
+		z-index: 0;
+	}
+}

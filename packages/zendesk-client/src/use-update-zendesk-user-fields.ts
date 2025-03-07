@@ -14,9 +14,8 @@ export function useUpdateZendeskUserFields() {
 		mutationFn: ( userFields: UserFields ) => {
 			return canAccessWpcomApis()
 				? wpcomRequest( {
-						path: 'help/zendesk/update-user-fields',
-						apiNamespace: 'wpcom/v2/',
-						apiVersion: '2',
+						path: '/help/zendesk/update-user-fields',
+						apiNamespace: 'wpcom/v2',
 						method: 'POST',
 						body: { fields: userFields },
 				  } )

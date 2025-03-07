@@ -1,5 +1,7 @@
 import { Plans } from '@automattic/data-stores';
 import { translate, TranslateResult } from 'i18n-calypso';
+import { useEffect } from 'react';
+import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
 import { useSelector } from 'calypso/state';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { statTypeToPlan } from '../stat-type-to-plan';
@@ -33,6 +35,12 @@ const StatsCardUpsell: React.FC< Props > = ( { className, statType, siteId, butt
 		UpsellComponent = StatsCardUpsellJetpack;
 		upsellButtonLabel = buttonLabel ?? translate( 'Upgrade plan' );
 	}
+
+	useEffect( () => {
+		trackStatsAnalyticsEvent( 'stats_card_upsell_view', {
+			stat_type: statType,
+		} );
+	}, [ statType ] );
 
 	return (
 		<UpsellComponent

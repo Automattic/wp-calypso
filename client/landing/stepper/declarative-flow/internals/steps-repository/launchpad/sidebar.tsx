@@ -6,7 +6,7 @@ import {
 	useLaunchpad,
 } from '@automattic/data-stores';
 import { LaunchpadInternal, type Task } from '@automattic/launchpad';
-import { isBlogOnboardingFlow } from '@automattic/onboarding';
+import { isStartWritingFlow } from '@automattic/onboarding';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSelect } from '@wordpress/data';
 import { useRef, useState } from '@wordpress/element';
@@ -90,7 +90,7 @@ const Sidebar = ( {
 	);
 
 	const showDomain =
-		! isBlogOnboardingFlow( flow ) ||
+		! isStartWritingFlow( flow ) ||
 		( checklistStatuses?.domain_upsell_deferred === true && selectedDomain );
 
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
@@ -170,7 +170,7 @@ const Sidebar = ( {
 	const showLaunchTitle = launchTask && ! launchTask.disabled;
 
 	function getDomainUpgradeBadgeUrl() {
-		if ( isBlogOnboardingFlow( siteIntentOption ) ) {
+		if ( isStartWritingFlow( siteIntentOption ) ) {
 			return `/setup/${ siteIntentOption }/domains?siteSlug=${ selectedDomain?.domain_name }&domainAndPlanPackage=true`;
 		}
 		return ! site?.plan?.is_free
@@ -179,7 +179,7 @@ const Sidebar = ( {
 	}
 
 	function showDomainUpgradeBadge() {
-		if ( isBlogOnboardingFlow( siteIntentOption ) ) {
+		if ( isStartWritingFlow( siteIntentOption ) ) {
 			return selectedDomain?.is_free;
 		}
 

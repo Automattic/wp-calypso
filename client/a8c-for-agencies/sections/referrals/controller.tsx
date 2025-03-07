@@ -20,7 +20,7 @@ export const referralsPaymentSettingsContext: Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<PageViewTracker title="Referrals > Payment Settings" path={ context.path } />
-			<ReferralsBankDetails isAutomatedReferral />
+			<ReferralsBankDetails />
 		</>
 	);
 	context.secondary = <ReferralsSidebar path={ context.path } />;

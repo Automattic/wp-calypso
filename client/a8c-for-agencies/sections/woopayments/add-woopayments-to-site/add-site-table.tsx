@@ -9,7 +9,8 @@ import FormRadio from 'calypso/components/forms/form-radio';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useFetchAllManagedSites } from '../../migrations/hooks/use-fetch-all-managed-sites';
-import { Site } from '../../sites/types';
+import { useWooPaymentsContext } from '../context';
+import type { Site } from '../../sites/types';
 
 export type WooPaymentsSiteItem = {
 	id: number;
@@ -21,11 +22,9 @@ export type WooPaymentsSiteItem = {
 const AddWooPaymentsToSiteTable = ( {
 	selectedSite,
 	setSelectedSite,
-	excludedSites,
 }: {
 	selectedSite: WooPaymentsSiteItem | null;
 	setSelectedSite: ( site: WooPaymentsSiteItem | null ) => void;
-	excludedSites: WooPaymentsSiteItem[] | null;
 } ) => {
 	const translate = useTranslate();
 
@@ -33,14 +32,16 @@ const AddWooPaymentsToSiteTable = ( {
 
 	const { items, isLoading } = useFetchAllManagedSites();
 
+	const { sitesWithPluginsStates: excludedSites } = useWooPaymentsContext();
+
 	const excludedSitesIds = useMemo(
-		() => excludedSites?.map( ( site ) => site.id ) || [],
+		() => excludedSites?.map( ( site ) => site.blogId ) || [],
 		[ excludedSites ]
 	);
 
 	// Filter out sites that are already tagged
 	const availableSites = useMemo( () => {
-		return items.filter( ( item ) => ! excludedSitesIds.includes( item.id ) );
+		return items.filter( ( item ) => ! excludedSitesIds.includes( item?.rawSite.blog_id ) );
 	}, [ items, excludedSitesIds ] );
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {

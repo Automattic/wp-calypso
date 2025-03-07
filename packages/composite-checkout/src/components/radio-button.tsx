@@ -175,7 +175,7 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 			flex-direction: row;
 			align-items: center;
 			justify-content: space-between;
-			gap: 7px:
+			gap: 7px;
 		}
 }
 

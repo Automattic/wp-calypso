@@ -1,7 +1,25 @@
-.sites-with-woopayments-list-mobile-view {
-	padding: 16px;
-}
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .sites-with-woopayments-list-mobile-view__column {
 	@include a4a-font-body-md;
 }
+
+.woopayments-dashboard {
+	.consolidated-view {
+		padding-block: 16px 48px;
+
+		.card {
+			@include break-mobile {
+				max-width: 100%;
+				flex: unset;
+			}
+		}
+	}
+
+	.a4a-text-placeholder {
+		min-width: 70px;
+		height: 20px;
+	}
+}
+
