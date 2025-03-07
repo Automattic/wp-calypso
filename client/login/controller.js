@@ -1,7 +1,11 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
-import { isGravPoweredOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import {
+	isGravPoweredOAuth2Client,
+	isWooOAuth2Client,
+	isPartnerPortalOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import { DesktopLoginStart, DesktopLoginFinalize } from 'calypso/login/desktop-login';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
@@ -58,12 +62,15 @@ const enhanceContextWithLogin = ( context ) => {
 	const oauth2Client =
 		getOAuth2Client( context.store.getState(), Number( clientId || oauth2ClientId ) ) || {};
 	const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
+	const isPartnerPortalClient = isPartnerPortalOAuth2Client( oauth2Client );
+
 	const isWhiteLogin =
 		( ! isJetpackLogin &&
 			! isP2Login &&
 			Boolean( clientId ) === false &&
 			Boolean( oauth2ClientId ) === false ) ||
-		isGravPoweredClient;
+		isGravPoweredClient ||
+		isPartnerPortalClient;
 
 	context.primary = (
 		<WPLogin
