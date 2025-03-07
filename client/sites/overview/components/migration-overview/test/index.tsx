@@ -121,9 +121,14 @@ describe( 'MigrationOverview', () => {
 		it( 'shows the migrating started instructions', () => {
 			const site = buildMigrationSite( { status: 'started', how: 'difm' } );
 
-			render( <MigrationOverview site={ site } /> );
+			const { getByText } = render( <MigrationOverview site={ site } /> );
 
-			expect( screen.queryByText( /Your migration is underway/ ) ).toBeVisible();
+			expect( getByText( /We've received your migration request/ ) ).toBeVisible();
+			expect(
+				getByText(
+					/Our team has received your details. We will review your site to make sure we have everything we need. Here's what you can expect next:/
+				)
+			).toBeVisible();
 		} );
 
 		it( 'does not show the continue migration link', () => {

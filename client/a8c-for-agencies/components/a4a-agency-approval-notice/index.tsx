@@ -40,7 +40,7 @@ const A4AAgencyApprovalNotice = () => {
 	const availableBannerDetails = {
 		[ ApprovalStatus.PENDING ]: {
 			text: translate(
-				'Your application to Automattic for Agencies is under review. You won’t be able to make any purchases until you have been approved.'
+				"Welcome to Automattic for Agencies! While we review your agency, feel free to explore. Purchases and referrals will be unlocked once you're approved for the program. Don't worry, we review most applications within a few hours!"
 			),
 			level: 'warning',
 			hideCloseButton: true,
@@ -81,7 +81,7 @@ const A4AAgencyApprovalNotice = () => {
 			className="a4a-agency-approval-notice"
 			hideCloseButton={ bannerDetails.hideCloseButton }
 		>
-			<div>{ bannerDetails.text }</div>
+			<div className="a4a-agency-approval-notice__text">{ bannerDetails.text }</div>
 		</LayoutBanner>
 	);
 };

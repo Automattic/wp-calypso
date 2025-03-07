@@ -292,7 +292,7 @@ export default function HundredYearThankYou( {
 						</div>
 						<VideoContainer isMobile={ isMobile }>
 							<video
-								src="https://wpcom.files.wordpress.com/2023/08/century-100-banner.mp4"
+								src="https://wpcom.files.wordpress.com/2025/03/century-100-banner-new.mp4"
 								preload="auto"
 								width="100%"
 								height="auto"

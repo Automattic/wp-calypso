@@ -40,7 +40,7 @@ const DetailsModalServer = ( { item }: DetailsModalServerProps ) => {
 			<div>
 				<Badge className={ `badge--${ item.request_type }` }>{ item.request_type }</Badge>
 			</div>
-			<div className="site-logs-details-modal__field-title">{ translate( 'HTTP Status' ) }</div>
+			<div className="site-logs-details-modal__field-title">{ translate( 'Status' ) }</div>
 			<div>{ item.status }</div>
 			<div className="site-logs-details-modal__field-title">{ translate( 'Request URL' ) }</div>
 			<div>{ item.request_url }</div>

@@ -45,7 +45,7 @@ import {
 } from 'calypso/state/reader/streams/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
-import { getSelectedFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
+import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
@@ -780,7 +780,7 @@ class ReaderStream extends Component {
  */
 function getStreamKey( state, streamKey ) {
 	// For "following" stream, use a unique streamKey if a feed is selected. This prevent feed overwrites when rapid selections are made.
-	const selectedFeedId = getSelectedFeedId( state );
+	const selectedFeedId = getSelectedRecentFeedId( state );
 	const isFollowingFiltered = streamKey === 'following' && selectedFeedId;
 	if ( isFollowingFiltered ) {
 		return `following:feed-${ selectedFeedId }`;
@@ -810,7 +810,7 @@ export default connect(
 			stream,
 			streamKey,
 			recsStream: getStream( state, recsStreamKey ),
-			selectedFeedId: getSelectedFeedId( state ),
+			selectedFeedId: getSelectedRecentFeedId( state ),
 			selectedPostKey: stream.selected,
 			selectedPost,
 			lastPage: stream.lastPage,

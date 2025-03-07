@@ -28,7 +28,11 @@ export const getSiteUrl = ( { feed, site, post } = {} ) => {
  * @returns {string|undefined} Url of the site icon or undefined if not found.
  */
 export function getPostIcon( post ) {
-	return post?.site_icon?.img || post?.site_icon || post?.author?.avatar_URL;
+	return (
+		post?.site_icon?.img ||
+		( typeof post?.site_icon === 'string' && post?.site_icon ) ||
+		post?.author?.avatar_URL
+	);
 }
 
 /**

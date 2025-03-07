@@ -28,16 +28,14 @@ export default function NewOrExistingSiteStep( props: Props ) {
 	const dispatch = useDispatch();
 
 	const { stepName, goToNextStep, existingSiteCount, flowName, signupDependencies } = props;
-	const { back_to: backUrl, newOrExistingSiteChoice: preselectedChoice } = signupDependencies;
+	const { back_to: backUrl } = signupDependencies;
 
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
 		triggerGuidesForStep( flowName, stepName );
 	}, [ dispatch, flowName, stepName ] );
 
-	const branchSteps = useBranchSteps( stepName, () =>
-		preselectedChoice ? [ 'new-or-existing-site', 'difm-site-picker' ] : [ 'difm-site-picker' ]
-	);
+	const branchSteps = useBranchSteps( stepName, () => [ 'difm-site-picker' ] );
 
 	const newOrExistingSiteSelected = ( value: ChoiceType ) => {
 		// If 'new-site' is selected, skip the `difm-site-picker` step.
@@ -58,17 +56,6 @@ export default function NewOrExistingSiteStep( props: Props ) {
 	};
 
 	const showNewOrExistingSiteChoice = existingSiteCount > 0;
-
-	// Support pre-selected choice.
-	useEffect( () => {
-		if ( preselectedChoice ) {
-			newOrExistingSiteSelected( preselectedChoice );
-		}
-	}, [ preselectedChoice ] );
-
-	if ( preselectedChoice ) {
-		return null;
-	}
 
 	return (
 		<StepWrapper

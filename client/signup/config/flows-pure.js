@@ -422,17 +422,18 @@ export function generateFlows( {
 			destination: getDIFMSignupDestination,
 			description: 'A flow for DIFM Lite leads',
 			excludeFromManageSiteFlows: true,
-			lastModified: '2024-05-16',
+			lastModified: '2025-03-04',
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
+			enabledHelpCenterGeos: [ 'US' ],
 			get helpCenterButtonCopy() {
 				return translate( 'Questions?' );
 			},
 			get helpCenterButtonLink() {
 				return translate( 'Contact our site building team' );
 			},
-			providesDependenciesInQuery: [ 'coupon', 'back_to', 'newOrExistingSiteChoice' ],
-			optionalDependenciesInQuery: [ 'coupon', 'back_to', 'newOrExistingSiteChoice' ],
+			providesDependenciesInQuery: [ 'coupon', 'back_to' ],
+			optionalDependenciesInQuery: [ 'coupon', 'back_to' ],
 		},
 		{
 			name: DIFM_FLOW_STORE,
@@ -446,11 +447,12 @@ export function generateFlows( {
 				'difm-page-picker',
 			],
 			destination: getDIFMSignupDestination,
-			description: 'The BBE store flow',
+			description: 'The DIFM store flow',
 			excludeFromManageSiteFlows: true,
-			lastModified: '2024-05-16',
+			lastModified: '2025-03-04',
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
+			enabledHelpCenterGeos: [ 'US' ],
 			get helpCenterButtonCopy() {
 				return translate( 'Questions?' );
 			},
@@ -467,8 +469,9 @@ export function generateFlows( {
 			description: 'A flow for DIFM onboarding',
 			excludeFromManageSiteFlows: true,
 			providesDependenciesInQuery: [ 'siteSlug', 'back_to' ],
-			optionalDependenciesInQuery: [ 'back_to' ],
-			lastModified: '2024-06-14',
+			optionalDependenciesInQuery: [ 'siteSlug', 'back_to' ],
+			lastModified: '2025-03-04',
+			enabledHelpCenterGeos: [ 'US' ],
 			get helpCenterButtonCopy() {
 				return translate( 'Questions?' );
 			},

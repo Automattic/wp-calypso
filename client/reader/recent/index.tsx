@@ -15,6 +15,7 @@ import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { requestPaginatedStream } from 'calypso/state/reader/streams/actions';
 import { viewStream } from 'calypso/state/reader-ui/actions';
+import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
 import Skeleton from '../components/skeleton';
 import EngagementBar from './engagement-bar';
 import RecentPostField from './recent-post-field';
@@ -62,7 +63,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 	} );
 
 	const selectedRecentSidebarFeedId = useSelector< AppState, number | null >(
-		( state ) => state.readerUi.sidebar.selectedRecentSite
+		getSelectedRecentFeedId
 	);
 
 	const streamKey =

@@ -12,7 +12,7 @@ import type { Moment } from 'moment';
 
 interface LogsAPIResponse {
 	data: {
-		logs: Record<string, unknown>[];
+		logs: Record< string, unknown >[];
 		scroll_id: string | null;
 		total_results: number;
 	};
@@ -48,7 +48,7 @@ const siteLogsDownloaderReducer = (
 	state: SiteLogsDownloaderReducerState = initialState,
 	action: SiteLogsDownloaderReducerAction
 ): SiteLogsDownloaderReducerState => {
-	if (action.type === 'DOWNLOAD_START') {
+	if ( action.type === 'DOWNLOAD_START' ) {
 		return {
 			status: 'downloading',
 			recordsDownloaded: 0,
@@ -56,20 +56,20 @@ const siteLogsDownloaderReducer = (
 		};
 	}
 
-	if (action.type === 'DOWNLOAD_UPDATE') {
+	if ( action.type === 'DOWNLOAD_UPDATE' ) {
 		return {
 			status: 'downloading',
 			...action.payload,
 		};
 	}
 
-	if (action.type === 'DOWNLOAD_ERROR') {
+	if ( action.type === 'DOWNLOAD_ERROR' ) {
 		return {
 			status: 'error',
 		};
 	}
 
-	if (action.type === 'DOWNLOAD_COMPLETE') {
+	if ( action.type === 'DOWNLOAD_COMPLETE' ) {
 		return {
 			status: 'complete',
 			...action.payload,
@@ -86,68 +86,68 @@ interface UseSiteLogsDownloaderArgs {
 	filter: FilterType;
 }
 
-export const useSiteLogsDownloader = ({
+export const useSiteLogsDownloader = ( {
 	roundDateRangeToWholeDays = true,
-}: { roundDateRangeToWholeDays?: boolean } = {}) => {
+}: { roundDateRangeToWholeDays?: boolean } = {} ) => {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
-	const localeDateFormat = moment.localeData().longDateFormat('L');
+	const localeDateFormat = moment.localeData().longDateFormat( 'L' );
 
-	const siteId = useSelector(getSelectedSiteId);
-	const siteSlug = useSelector(getSelectedSiteSlug);
+	const siteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	const reduxDispatch = useDispatch();
 
-	const recordDownloadStarted = (props: Record<string, unknown>) =>
-		reduxDispatch(recordTracksEvent('calypso_atomic_logs_download_started', props));
+	const recordDownloadStarted = ( props: Record< string, unknown > ) =>
+		reduxDispatch( recordTracksEvent( 'calypso_atomic_logs_download_started', props ) );
 
-	const recordDownloadCompleted = (props: Record<string, unknown>) =>
-		reduxDispatch(recordTracksEvent('calypso_atomic_logs_download_completed', props));
+	const recordDownloadCompleted = ( props: Record< string, unknown > ) =>
+		reduxDispatch( recordTracksEvent( 'calypso_atomic_logs_download_completed', props ) );
 
-	const recordDownloadError = (props: Record<string, unknown>) =>
-		reduxDispatch(recordTracksEvent('calypso_atomic_logs_download_error', props));
+	const recordDownloadError = ( props: Record< string, unknown > ) =>
+		reduxDispatch( recordTracksEvent( 'calypso_atomic_logs_download_error', props ) );
 
-	const downloadSuccessNotice = (...props: Parameters<typeof successNotice>) =>
-		reduxDispatch(successNotice(...props));
+	const downloadSuccessNotice = ( ...props: Parameters< typeof successNotice > ) =>
+		reduxDispatch( successNotice( ...props ) );
 
-	const downloadErrorNotice = (...props: Parameters<typeof errorNotice>) =>
-		reduxDispatch(errorNotice(...props));
+	const downloadErrorNotice = ( ...props: Parameters< typeof errorNotice > ) =>
+		reduxDispatch( errorNotice( ...props ) );
 
-	const [state, dispatch] = useReducer(siteLogsDownloaderReducer, initialState);
+	const [ state, dispatch ] = useReducer( siteLogsDownloaderReducer, initialState );
 
-	const downloadLogs = async ({
+	const downloadLogs = async ( {
 		logType,
 		startDateTime,
 		endDateTime,
 		filter,
-	}: UseSiteLogsDownloaderArgs) => {
-		dispatch({
+	}: UseSiteLogsDownloaderArgs ) => {
+		dispatch( {
 			type: 'DOWNLOAD_START',
-		});
+		} );
 
 		let path = null;
-		if (logType === LogType.PHP) {
-			path = `/sites/${siteId}/hosting/error-logs`;
-		} else if (logType === LogType.WEB) {
-			path = `/sites/${siteId}/hosting/logs`;
+		if ( logType === LogType.PHP ) {
+			path = `/sites/${ siteId }/hosting/error-logs`;
+		} else if ( logType === LogType.WEB ) {
+			path = `/sites/${ siteId }/hosting/logs`;
 		} else {
-			downloadErrorNotice(translate('Invalid log type specified'));
-			dispatch({
+			downloadErrorNotice( translate( 'Invalid log type specified' ) );
+			dispatch( {
 				type: 'DOWNLOAD_ERROR',
-			});
+			} );
 			return;
 		}
 
 		const startMoment = roundDateRangeToWholeDays
-			? moment.utc(startDateTime, localeDateFormat).startOf('day')
-			: moment.utc(startDateTime, localeDateFormat);
+			? moment.utc( startDateTime, localeDateFormat ).startOf( 'day' )
+			: moment.utc( startDateTime, localeDateFormat );
 		const endMoment = roundDateRangeToWholeDays
-			? moment.utc(endDateTime, localeDateFormat).endOf('day')
-			: moment.utc(endDateTime, localeDateFormat);
+			? moment.utc( endDateTime, localeDateFormat ).endOf( 'day' )
+			: moment.utc( endDateTime, localeDateFormat );
 
 		const dateFormat = 'YYYYMMDDHHmmss';
-		const startString = startMoment.format(dateFormat);
-		const endString = endMoment.format(dateFormat);
+		const startString = startMoment.format( dateFormat );
+		const endString = endMoment.format( dateFormat );
 
 		const startTime = startMoment.unix();
 		const endTime = endMoment.unix();
@@ -156,12 +156,12 @@ export const useSiteLogsDownloader = ({
 		const tracksProps = {
 			site_slug: siteSlug,
 			site_id: siteId,
-			start_time: startMoment.format(trackDateFormat),
-			end_time: endMoment.format(trackDateFormat),
+			start_time: startMoment.format( trackDateFormat ),
+			end_time: endMoment.format( trackDateFormat ),
 			log_type: logType,
 		};
 
-		recordDownloadStarted(tracksProps);
+		recordDownloadStarted( tracksProps );
 
 		let scrollId = null;
 		let logs: string[] = [];
@@ -184,91 +184,91 @@ export const useSiteLogsDownloader = ({
 						scroll_id: scrollId,
 					}
 				)
-				.then((response: LogsAPIResponse) => {
-					const newLogData = get(response, 'data.logs', []);
-					scrollId = get(response, 'data.scroll_id', null);
+				.then( ( response: LogsAPIResponse ) => {
+					const newLogData = get( response, 'data.logs', [] );
+					scrollId = get( response, 'data.scroll_id', null );
 
-					if (isEmpty(logs)) {
-						if (isEmpty(newLogData)) {
-							downloadErrorNotice(translate('No logs available for this time range'));
+					if ( isEmpty( logs ) ) {
+						if ( isEmpty( newLogData ) ) {
+							downloadErrorNotice( translate( 'No logs available for this time range' ) );
 							isError = true;
 						} else {
 							logs = [
-								Object.keys(newLogData[0])
-									.filter((key) => key !== 'atomic_site_id')
-									.join(',') + '\n',
+								Object.keys( newLogData[ 0 ] )
+									.filter( ( key ) => key !== 'atomic_site_id' )
+									.join( ',' ) + '\n',
 							];
-							totalLogs = get(response, 'data.total_results', 1);
+							totalLogs = get( response, 'data.total_results', 1 );
 						}
 					}
 
 					logs = [
 						...logs,
-						...map(newLogData, (entry) => {
+						...map( newLogData, ( entry ) => {
 							const cleanedEntry = Object.fromEntries(
-								Object.entries(entry).filter(([key]) => key !== 'atomic_site_id')
+								Object.entries( entry ).filter( ( [ key ] ) => key !== 'atomic_site_id' )
 							);
-							return Object.values(cleanedEntry).join(',') + '\n';
-						}),
+							return Object.values( cleanedEntry ).join( ',' ) + '\n';
+						} ),
 					];
 
-					if (logs.length > MAX_LOGS_DOWNLOAD) {
+					if ( logs.length > MAX_LOGS_DOWNLOAD ) {
 						scrollId = null;
 					}
 
-					dispatch({
+					dispatch( {
 						type: 'DOWNLOAD_UPDATE',
 						payload: {
 							recordsDownloaded: logs.length - 1,
 							totalRecordsAvailable: totalLogs,
 						},
-					});
-				})
-				.catch((error: { message: string; status: number }) => {
+					} );
+				} )
+				.catch( ( error: { message: string; status: number } ) => {
 					isError = true;
-					let message = get(error, 'message', 'Could not retrieve logs.');
-					if (error?.status === 500) {
-						message = translate('Could not retrieve logs. Please try again in a few minutes.');
-					} else if (error?.status === 400) {
-						message = translate('Could not retrieve. Please try with a different time range.');
+					let message = get( error, 'message', 'Could not retrieve logs.' );
+					if ( error?.status === 500 ) {
+						message = translate( 'Could not retrieve logs. Please try again in a few minutes.' );
+					} else if ( error?.status === 400 ) {
+						message = translate( 'Could not retrieve. Please try with a different time range.' );
 					}
-					downloadErrorNotice(message);
-					recordDownloadError({
+					downloadErrorNotice( message );
+					recordDownloadError( {
 						error_message: message,
 						...tracksProps,
-					});
-				});
-		} while (null !== scrollId);
+					} );
+				} );
+		} while ( null !== scrollId );
 
-		if (isError) {
-			dispatch({ type: 'DOWNLOAD_ERROR' });
+		if ( isError ) {
+			dispatch( { type: 'DOWNLOAD_ERROR' } );
 			return;
 		}
 
-		logFile = new Blob(logs);
+		logFile = new Blob( logs );
 
-		const url = window.URL.createObjectURL(logFile);
-		const link = document.createElement('a');
+		const url = window.URL.createObjectURL( logFile );
+		const link = document.createElement( 'a' );
 		const downloadFilename =
 			siteSlug + '-' + logType + '-logs-' + startString + '-' + endString + '.csv';
 		link.href = url;
-		link.setAttribute('download', downloadFilename);
+		link.setAttribute( 'download', downloadFilename );
 		link.click();
-		window.URL.revokeObjectURL(url);
+		window.URL.revokeObjectURL( url );
 
-		downloadSuccessNotice(translate('Logs downloaded.'));
-		recordDownloadCompleted({
+		downloadSuccessNotice( translate( 'Logs downloaded.' ) );
+		recordDownloadCompleted( {
 			download_filename: downloadFilename,
 			total_log_records_downloaded: totalLogs,
 			...tracksProps,
-		});
-		dispatch({
+		} );
+		dispatch( {
 			type: 'DOWNLOAD_COMPLETE',
 			payload: {
 				recordsDownloaded: logs.length - 1,
 				totalRecordsAvailable: totalLogs,
 			},
-		});
+		} );
 	};
 
 	return { downloadLogs, state };

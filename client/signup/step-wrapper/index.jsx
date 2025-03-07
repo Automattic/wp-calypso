@@ -1,4 +1,3 @@
-import { HelpCenterStepButton } from '@automattic/help-center';
 import { ActionButtons } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -10,6 +9,7 @@ import flows from 'calypso/signup/config/flows';
 import NavigationLink from 'calypso/signup/navigation-link';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import HelpCenterStepButton from '../help-center-step-button';
 import './style.scss';
 
 class StepWrapper extends Component {
@@ -212,8 +212,9 @@ class StepWrapper extends Component {
 		}
 
 		const queryParams = new URLSearchParams( window?.location.search );
-		const flags = queryParams.get( 'flags' );
-		const isHelpCenterLinkEnabled = flags === 'signup/help-center-link';
+		const flags = queryParams.get( 'flags' )?.split( ',' );
+		const isHelpCenterLinkEnabled =
+			flags?.includes( 'signup/help-center-link' ) && flow?.enabledHelpCenterGeos;
 
 		return (
 			<>
@@ -226,6 +227,7 @@ class StepWrapper extends Component {
 						{ isHelpCenterLinkEnabled && (
 							<HelpCenterStepButton
 								flowName={ flowName }
+								enabledGeos={ flow?.enabledHelpCenterGeos }
 								helpCenterButtonCopy={ flow?.helpCenterButtonCopy }
 								helpCenterButtonLink={ flow?.helpCenterButtonLink }
 							/>
