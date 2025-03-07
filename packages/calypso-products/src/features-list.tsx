@@ -2295,6 +2295,7 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_DONATIONS_AND_TIPS_JP ]: {
 		getSlug: () => FEATURE_DONATIONS_AND_TIPS_JP,
 		getTitle: () => i18n.translate( 'Donations and tips' ),
+		/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
 		getDescription: () =>
 			i18n.fixMe( {
 				text: 'Allow your audience to support your work easily with charitable donations and tips.',
