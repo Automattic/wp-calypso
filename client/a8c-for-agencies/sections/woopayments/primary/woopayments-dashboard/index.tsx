@@ -22,6 +22,7 @@ import AddWooPaymentsToSite from '../../add-woopayments-to-site';
 import { WooPaymentsProvider } from '../../context';
 import WooPaymentsDashboardContent from '../../dashboard-content';
 import useFetchWooPaymentsData from '../../hooks/use-fetch-woopayments-data';
+import MissingPaymentSettingsNotice from '../../missing-payment-settings-notice';
 import WooPaymentsDashboardEmptyState from './empty-state';
 import type { SitesWithWooPaymentsState, SitesWithWooPaymentsPlugins } from '../../types';
 import type { License } from 'calypso/state/partner-portal/types';
@@ -130,6 +131,7 @@ const WooPaymentsDashboard = () => {
 				} }
 			>
 				<LayoutTop>
+					{ !! sitesWithPluginsStates.length && <MissingPaymentSettingsNotice /> }
 					<LayoutHeader>
 						<Title>{ title }</Title>
 						<Actions>
