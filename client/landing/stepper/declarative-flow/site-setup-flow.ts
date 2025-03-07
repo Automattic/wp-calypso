@@ -48,6 +48,10 @@ function useGoalsAtFrontExperimentQueryParam() {
 	return Boolean( useSelector( getInitialQueryArguments )?.[ 'goals-at-front-experiment' ] );
 }
 
+function useEnablePublishABlogQueryParam() {
+	return Boolean( useSelector( getInitialQueryArguments )?.[ 'enable-publish-a-blog' ] );
+}
+
 const siteSetupFlow: FlowV1 = {
 	name: 'site-setup',
 	isSignupFlow: false,
@@ -91,6 +95,7 @@ const siteSetupFlow: FlowV1 = {
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
+		const enablePublishABlog = useEnablePublishABlogQueryParam();
 
 		const intent = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
@@ -172,7 +177,11 @@ const siteSetupFlow: FlowV1 = {
 		const getEnableFeaturesForGoals = () => {
 			const featuresForGoals: Onboard.SiteGoal[] = [];
 
-			if ( configApi.isEnabled( 'onboarding/enable-write-goal-features' ) ) {
+			if (
+				configApi.isEnabled( 'onboarding/enable-write-goal-features' ) ||
+				configApi.isEnabled( 'onboarding/publish-a-blog' ) ||
+				enablePublishABlog
+			) {
 				featuresForGoals.push( Onboard.SiteGoal.Write );
 			}
 
