@@ -47,6 +47,7 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 	const iframeRef = useRef< HTMLIFrameElement >( null );
 	const [ isLoaded, setIsLoaded ] = useState( ! isUrlWpcomApi( url ) );
 	const [ isFullyLoaded, setIsFullyLoaded ] = useState( ! isUrlWpcomApi( url ) );
+	const [ frameLocation, setFrameLocation ] = useState( '' );
 	const [ viewport, setViewport ] = useState< Viewport >();
 	const [ containerResizeListener, { width: containerWidth } ] = useResizeObserver();
 	const calypso_token = useMemo( () => iframeToken || uuid(), [ iframeToken ] );
@@ -84,6 +85,14 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 						setViewport( data.payload );
 					}
 					return;
+				case 'location-change':
+					// We need to make sure location changes so it triggers the effect to send inline CSS.
+					if ( data.payload.pathname === frameLocation ) {
+						setFrameLocation( '' );
+						return;
+					}
+					setFrameLocation( data.payload.pathname );
+					return;
 				default:
 					return;
 			}
@@ -94,7 +103,7 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 		return () => {
 			window.removeEventListener( 'message', handleMessage );
 		};
-	}, [ setIsLoaded, setViewport ] );
+	}, [ calypso_token, isFitHeight, setIsLoaded, setViewport, frameLocation ] );
 
 	// Ideally the iframe's document.body is already available on isLoaded = true.
 	// Unfortunately that's not always the case, so isFullyLoaded serves as another retry.
@@ -109,7 +118,7 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 				'*'
 			);
 		}
-	}, [ inlineCss, isLoaded, isFullyLoaded ] );
+	}, [ inlineCss, isLoaded, isFullyLoaded, frameLocation, calypso_token ] );
 
 	return (
 		<DeviceSwitcher
