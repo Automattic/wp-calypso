@@ -9,7 +9,6 @@ import { HostingCard, HostingCardGrid } from 'calypso/components/hosting-card';
 import { HostingHero, HostingHeroButton } from 'calypso/components/hosting-hero';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useSiteTransferStatusQuery } from 'calypso/landing/stepper/hooks/use-site-transfer/query';
-import HostingActivationButton from 'calypso/sites/hosting-features/components/hosting-activation-button';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
@@ -17,8 +16,9 @@ import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import HostingActivationButton from './hosting-activation-button';
 
-import './style.scss';
+import './hosting-features.scss';
 
 type PromoCardProps = {
 	title: string;

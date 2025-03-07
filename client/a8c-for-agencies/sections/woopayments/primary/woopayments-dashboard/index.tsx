@@ -1,3 +1,4 @@
+import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
@@ -123,7 +124,14 @@ const WooPaymentsDashboard = () => {
 						<Title>{ title }</Title>
 						<Actions>
 							<MobileSidebarNavigation />
-							<AddWooPaymentsToSite />
+							<div className="woopayments-dashboard__actions">
+								{ isInProgress && (
+									<div className="woopayments-dashboard__spinner">
+										<Spinner /> { translate( 'Loading and refreshing data' ) }
+									</div>
+								) }
+								<AddWooPaymentsToSite />
+							</div>
 						</Actions>
 					</LayoutHeader>
 				</LayoutTop>

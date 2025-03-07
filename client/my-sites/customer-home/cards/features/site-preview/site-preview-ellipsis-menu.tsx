@@ -60,7 +60,7 @@ export const SitePreviewEllipsisMenu = () => {
 								item: 'manage-domains',
 							} );
 						} }
-						href={ `/domains/add/${ selectedSite?.slug }` }
+						href={ `/domains/manage/${ selectedSite?.slug }` }
 					>
 						{ __( 'Manage domains' ) }
 					</PopoverMenuItem>

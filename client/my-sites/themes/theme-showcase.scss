@@ -169,8 +169,7 @@
 			max-width: 100%;
 		}
 
-		.search,
-		.keyed-suggestions {
+		.search {
 			border: none;
 			box-shadow:
 				0 0 0 0 rgba(38, 19, 19, 0.03),
@@ -180,9 +179,6 @@
 				0 16px 6px 0 rgba(38, 19, 19, 0),
 				0 25px 7px 0 rgba(38, 19, 19, 0);
 			margin: 0;
-		}
-
-		.search {
 			height: 55px;
 			border-radius: 4px;
 
@@ -345,10 +341,6 @@
 
 		@include break-mobile {
 			flex-direction: row;
-		}
-
-		.keyed-suggestions {
-			top: 42px;
 		}
 
 		.select-dropdown__header {
