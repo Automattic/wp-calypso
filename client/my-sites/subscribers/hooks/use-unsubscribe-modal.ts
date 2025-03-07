@@ -35,7 +35,7 @@ const useUnsubscribeModal = (
 				: `/earn/supporters/${ selectedSiteSlug }`;
 			navigate( link ?? '' );
 		} else if ( action === UnsubscribeActionType.Unsubscribe && subscriber ) {
-			mutate( subscriber, {
+			mutate( currentSubscribers, {
 				onSuccess: () => {
 					resetSubscribers();
 					onSuccess?.();
