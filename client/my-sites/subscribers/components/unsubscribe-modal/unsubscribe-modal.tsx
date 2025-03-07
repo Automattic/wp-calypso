@@ -92,7 +92,7 @@ const UnsubscribeModal = ( { subscribers, onCancel, onConfirm }: UnsubscribeModa
 			text={ text }
 			title={ title }
 			onCancel={ onCancelClick }
-			onConfirm={ () => onConfirm( action, subscriber ) }
+			onConfirm={ () => onConfirm( action, subscribers ) }
 		/>
 	);
 };

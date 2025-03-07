@@ -27,15 +27,19 @@ const useUnsubscribeModal = (
 		setCurrentSubscribers( undefined );
 	};
 
-	const onConfirmModal = ( action: UnsubscribeActionType, subscriber?: Subscriber ) => {
+	const onConfirmModal = ( action: UnsubscribeActionType, subscribers?: Subscriber[] ) => {
 		if ( action === UnsubscribeActionType.Manage ) {
 			recordRemoveModal( true, 'manage_button_clicked' );
 			const link = isJetpackCloud()
 				? `/monetize/supporters/${ selectedSiteSlug }`
 				: `/earn/supporters/${ selectedSiteSlug }`;
 			navigate( link ?? '' );
-		} else if ( action === UnsubscribeActionType.Unsubscribe && subscriber ) {
-			mutate( currentSubscribers, {
+		} else if (
+			action === UnsubscribeActionType.Unsubscribe &&
+			subscribers &&
+			subscribers.length
+		) {
+			mutate( subscribers, {
 				onSuccess: () => {
 					resetSubscribers();
 					onSuccess?.();
