@@ -10,7 +10,6 @@ const useCategoriesQuery = ( siteId?: string | number ): UseQueryResult< Categor
 		queryFn: () =>
 			request< Category[] >( {
 				path: `/sites/${ siteId }/categories`,
-				apiVersion: '2',
 				apiNamespace: 'wp/v2',
 			} ),
 		initialData: [],

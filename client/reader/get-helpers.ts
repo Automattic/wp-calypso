@@ -96,7 +96,11 @@ export function getPostIcon( post: Partial< ReaderPost > ): string | undefined {
 		return post.site_icon?.img;
 	}
 
-	return post?.site_icon || post?.author?.avatar_URL;
+	if ( typeof post?.site_icon === 'string' ) {
+		return post.site_icon;
+	}
+
+	return post?.author?.avatar_URL;
 }
 
 interface GetSiteDomainArgs {

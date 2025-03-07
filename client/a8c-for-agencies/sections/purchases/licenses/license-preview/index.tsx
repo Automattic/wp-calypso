@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Badge, Button, Gridicon } from '@automattic/components';
@@ -70,8 +69,6 @@ export default function LicensePreview( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const isAutomatedReferralsEnabled = config.isEnabled( 'a4a-automated-referrals' );
-
 	const site = useSelector( ( state ) => getSite( state, blogId as number ) );
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
 	const isWPCOMLicense = isWPCOMHostingProduct( licenseKey );
@@ -99,13 +96,11 @@ export default function LicensePreview( {
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const domain = siteUrl && ! isPressableLicense ? getUrlParts( siteUrl ).hostname || siteUrl : '';
 
-	const isClientLicense = isAutomatedReferralsEnabled && referral;
-
 	const assign = useCallback( () => {
 		const redirectUrl = isWPCOMLicense
 			? A4A_SITES_LINK_NEEDS_SETUP
 			: addQueryArgs( { key: licenseKey }, '/marketplace/assign-license' );
-		if ( paymentMethodRequired && ! isClientLicense ) {
+		if ( paymentMethodRequired && ! referral ) {
 			const noticeLinkHref = addQueryArgs(
 				{
 					return: redirectUrl,
@@ -128,7 +123,7 @@ export default function LicensePreview( {
 		}
 
 		page.redirect( redirectUrl );
-	}, [ isWPCOMLicense, licenseKey, paymentMethodRequired, isClientLicense, translate, dispatch ] );
+	}, [ isWPCOMLicense, licenseKey, paymentMethodRequired, referral, translate, dispatch ] );
 
 	useEffect( () => {
 		if ( isHighlighted ) {
@@ -254,13 +249,13 @@ export default function LicensePreview( {
 					<span className="license-preview__product">
 						<div className="license-preview__product-title">
 							{ productTitle }
-							{ isClientLicense && (
+							{ referral && (
 								<Badge className="license-preview__client-badge" type="info">
 									{ translate( 'Referral' ) }
 								</Badge>
 							) }
 						</div>
-						{ isClientLicense && (
+						{ referral && (
 							<div className="license-preview__client-email">
 								<ClientSite referral={ referral } />
 							</div>
@@ -378,7 +373,7 @@ export default function LicensePreview( {
 							revokedAt={ revokedAt }
 							licenseType={ licenseType }
 							isChildLicense={ isChildLicense }
-							isClientLicense={ !! isClientLicense }
+							isClientLicense={ !! referral }
 						/>
 					) : (
 						/*

@@ -10,8 +10,8 @@ const WooPaymentsConsolidatedViews = () => {
 	const translate = useTranslate();
 
 	const { woopaymentsData, isLoadingWooPaymentsData } = useWooPaymentsContext();
-	const totalCommission = woopaymentsData?.total?.payout ?? 0;
-	const expectedCommission = woopaymentsData?.estimated?.payout ?? 0;
+	const totalCommission = woopaymentsData?.data?.total?.payout ?? 0;
+	const expectedCommission = woopaymentsData?.data?.estimated?.payout ?? 0;
 
 	const { nextPayoutActivityWindow, nextPayoutDate } = useGetPayoutData();
 

@@ -2,15 +2,13 @@ import { PremiumBadge } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { canUseTheme } from 'calypso/state/themes/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useThemeTierBadgeContext } from './theme-tier-badge-context';
 import ThemeTierIncludedBadge from './theme-tier-included-badge';
 import ThemeTierPlanUpgradeBadge from './theme-tier-upgrade-badge';
 
 export default function ThemeTierCommunityBadge( { hideBackgroundOnUpgrade, hideCommunityBadge } ) {
 	const translate = useTranslate();
-	const siteId = useSelector( getSelectedSiteId );
-	const { showUpgradeBadge, themeId } = useThemeTierBadgeContext();
+	const { showUpgradeBadge, themeId, siteId } = useThemeTierBadgeContext();
 
 	const isThemeIncluded = useSelector(
 		( state ) => siteId && canUseTheme( state, siteId, themeId )

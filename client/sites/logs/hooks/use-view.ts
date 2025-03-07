@@ -12,7 +12,7 @@ import type { View, Filter } from '@wordpress/dataviews';
 const getSortField = ( logType: LogType ) => ( logType === LogType.PHP ? 'timestamp' : 'date' );
 const getVisibleFields = ( logType: LogType ) => {
 	if ( logType === LogType.PHP ) {
-		return [ 'severity', 'message' ];
+		return [ 'severity', 'name', 'message' ];
 	}
 	return [ 'request_type', 'status', 'request_url' ];
 };
@@ -94,8 +94,11 @@ const useView = ( { logType, query }: { logType: LogType; query: LogQueryParams 
 					severity: {
 						maxWidth: '150px',
 					},
+					name: {
+						maxWidth: '150px',
+					},
 					message: {
-						minWidth: '300px',
+						maxWidth: '30vw',
 					},
 					file: {
 						minWidth: '300px',

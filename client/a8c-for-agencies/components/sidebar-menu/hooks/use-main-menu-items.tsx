@@ -44,35 +44,21 @@ const useMainMenuItems = ( path: string ) => {
 	const agency = useSelector( getActiveAgency );
 
 	const menuItems = useMemo( () => {
-		const isAutomatedReferralsEnabled = config.isEnabled( 'a4a-automated-referrals' );
-
 		let referralItems = [] as any[];
 
 		if ( isSectionNameEnabled( 'a8c-for-agencies-referrals' ) ) {
-			referralItems = isAutomatedReferralsEnabled
-				? [
-						{
-							icon: reusableBlock,
-							path: A4A_REFERRALS_LINK,
-							link: A4A_REFERRALS_DASHBOARD,
-							title: translate( 'Referrals' ),
-							trackEventProps: {
-								menu_item: 'Automattic for Agencies / Referrals',
-							},
-							withChevron: true,
-						},
-				  ]
-				: [
-						{
-							icon: reusableBlock,
-							path: '/',
-							link: A4A_REFERRALS_LINK,
-							title: translate( 'Referrals' ),
-							trackEventProps: {
-								menu_item: 'Automattic for Agencies / Referrals',
-							},
-						},
-				  ];
+			referralItems = [
+				{
+					icon: reusableBlock,
+					path: A4A_REFERRALS_LINK,
+					link: A4A_REFERRALS_DASHBOARD,
+					title: translate( 'Referrals' ),
+					trackEventProps: {
+						menu_item: 'Automattic for Agencies / Referrals',
+					},
+					withChevron: true,
+				},
+			];
 		}
 
 		const migrationMenuItem = isSectionNameEnabled( 'a8c-for-agencies-migrations' )

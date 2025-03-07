@@ -8,7 +8,6 @@ import {
 	isMarketplaceThemeSubscribed,
 	getMarketplaceThemeSubscriptionPrices,
 } from 'calypso/state/themes/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useThemeTierBadgeContext } from './theme-tier-badge-context';
 import ThemeTierPlanUpgradeBadge from './theme-tier-upgrade-badge';
 
@@ -26,8 +25,7 @@ export default function ThemeTierPartnerBadge( {
 	hidePartnerBadge,
 } ) {
 	const translate = useTranslate();
-	const siteId = useSelector( getSelectedSiteId );
-	const { themeId } = useThemeTierBadgeContext();
+	const { themeId, siteId } = useThemeTierBadgeContext();
 
 	const isPartnerThemePurchased = useSelector( ( state ) =>
 		siteId ? isMarketplaceThemeSubscribed( state, themeId, siteId ) : false
@@ -77,6 +75,7 @@ export default function ThemeTierPartnerBadge( {
 		subscriptionPrices.month,
 		showPartnerPrice,
 		hideBackgroundOnUpgrade,
+		isLongLabel,
 		translate,
 	] );
 

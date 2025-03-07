@@ -2,6 +2,7 @@ export { default as Badge } from './badge';
 export type { BadgeType } from './badge';
 export { Button } from './button';
 export type { ButtonProps } from './button';
+export { Calendar } from './calendar';
 export { default as Card } from './card';
 export { default as CompactCard } from './card/compact';
 export { default as FoldableCard } from './foldable-card';

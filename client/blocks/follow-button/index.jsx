@@ -15,7 +15,7 @@ function FollowButtonContainer( props ) {
 	const following = useSelector( ( state ) => isFollowing( state, { feedUrl: props.siteUrl } ) );
 
 	const dispatch = useDispatch();
-	const resendEmailVerification = useResendEmailVerification();
+	const resendEmailVerification = useResendEmailVerification( { from: 'wpcom-reader' } );
 	const translate = useTranslate();
 
 	const handleFollowToggle = ( followingSite ) => {

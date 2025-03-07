@@ -17,9 +17,9 @@ function mutationSaveFeedback( { params }: MutationSaveFeedbackVariables ): Prom
 	};
 
 	return wpcom.req.post( {
+		path: '/marketing/survey',
 		apiNamespace: 'wpcom/v2',
-		path: `/marketing/survey`,
-		body: { ...prefixedParams },
+		body: prefixedParams,
 	} );
 }
 

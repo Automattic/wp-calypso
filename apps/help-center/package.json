@@ -49,8 +49,8 @@
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
-		"@wordpress/dependency-extraction-webpack-plugin": "6.14.0",
-		"@wordpress/readable-js-assets-webpack-plugin": "3.14.0",
+		"@wordpress/dependency-extraction-webpack-plugin": "^6.19.0",
+		"@wordpress/readable-js-assets-webpack-plugin": "^3.19.0",
 		"copy-webpack-plugin": "^10.2.4",
 		"typescript": "^5.3.3",
 		"webpack": "^5.97.1"

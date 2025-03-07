@@ -63,10 +63,10 @@ export class ThemesDetailPage {
 	}
 
 	/**
-	 * Click on the Pick this design button displayed in Logged out theme details.
+	 * Click on the Activate button displayed in Logged out theme details.
 	 */
 	async pickThisDesign(): Promise< void > {
-		await this.page.getByRole( 'link', { name: 'Pick this design' } ).click();
+		await this.page.getByRole( 'link', { name: 'Get started' } ).click();
 	}
 
 	/**

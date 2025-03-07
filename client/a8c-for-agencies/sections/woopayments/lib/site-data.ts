@@ -9,6 +9,6 @@ export const getSiteData = (
 	woopaymentsData: WooPaymentsData,
 	siteId: number
 ): WooPaymentsSiteData => ( {
-	transactions: woopaymentsData?.total?.sites?.[ siteId ]?.tpv ?? 0,
-	payout: woopaymentsData?.total?.sites?.[ siteId ]?.payout ?? 0,
+	transactions: woopaymentsData?.data?.total?.sites?.[ siteId ]?.transactions ?? 0,
+	payout: woopaymentsData?.data?.total?.sites?.[ siteId ]?.payout ?? 0,
 } );
