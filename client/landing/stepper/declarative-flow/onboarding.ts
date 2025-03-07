@@ -393,8 +393,9 @@ const onboarding: Flow = {
 						 */
 						const playgroundId = getQueryArg( window.location.href, 'playground' );
 						const redirectTo: string = playgroundId
-							? addQueryArgs( withLocale( '/setup/site-setup/playground', locale ), {
+							? addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
 									siteSlug,
+									siteId: providedDependencies.siteId,
 									playground: playgroundId,
 							  } )
 							: addQueryArgs( withLocale( '/setup/onboarding/post-checkout-onboarding', locale ), {
