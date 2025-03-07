@@ -105,7 +105,7 @@ const appRoutes = [
 
 ### 2.2 Defining Sidebar Content
 
-The `eSidebarContent` component renders navigation items within the sidebar. Each item corresponds to a specific route, and the `useLocation` hook determines whether it is active.
+The `SidebarContent` component renders navigation items within the sidebar. Each item corresponds to a specific route, and the `useLocation` hook determines whether it is active.
 
 ```tsx
 const SidebarContent = () => {
@@ -160,7 +160,7 @@ the necessary context for the navigation elements to work correctly.
         <SidebarNavigationScreen
             isRoot
             title={ __( 'Home' ) }
-            content={ <eSidebarContent /> }
+            content={ <SidebarContent /> }
         />
         
         {/* The main content will be rendered according to the active route */}
