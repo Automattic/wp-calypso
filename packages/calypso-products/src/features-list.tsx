@@ -2296,7 +2296,15 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_DONATIONS_AND_TIPS_JP,
 		getTitle: () => i18n.translate( 'Donations and tips' ),
 		getDescription: () =>
-			i18n.translate( 'Allow your audience to support your work easily with donations and tips.' ),
+			i18n.fixMe( {
+				text: 'Allow your audience to support your work easily with charitable donations and tips.',
+				newCopy: i18n.translate(
+					'Allow your audience to support your work easily with charitable donations and tips.'
+				),
+				oldCopy: i18n.translate(
+					'Allow your audience to support your work easily with donations and tips.'
+				),
+			} ),
 	},
 	[ FEATURE_PAYPAL_JP ]: {
 		getSlug: () => FEATURE_PAYPAL_JP,
