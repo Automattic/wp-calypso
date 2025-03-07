@@ -4,20 +4,19 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useState } from 'react';
 import { anonIdCache, useCachedAnswers } from 'calypso/data/segmentaton-survey';
+import { useEntrepreneurAdminDestination } from 'calypso/landing/stepper/hooks/use-entrepreneur-admin-destination';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
-import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
-import { getEntrepreneurAdminDestination } from 'calypso/landing/stepper/utils/get-entrepreneur-admin-destination';
+import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { getLoginUrl } from 'calypso/landing/stepper/utils/path';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { STEPS } from './internals/steps';
-import { getSiteIdParam } from './internals/steps-repository/import/util';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import { ENTREPRENEUR_TRIAL_SURVEY_KEY } from './internals/steps-repository/segmentation-survey';
 import type { Flow, ProvidedDependencies } from './internals/types';
-import type { SiteSelect, UserSelect } from '@automattic/data-stores';
+import type { UserSelect } from '@automattic/data-stores';
 const SEGMENTATION_SURVEY_SLUG = 'start';
 
 const entrepreneurFlow: Flow = {
@@ -55,9 +54,10 @@ const entrepreneurFlow: Flow = {
 		const [ lastQuestionPath, setlastQuestionPath ] = useState( '#1' );
 		const { clearAnswers } = useCachedAnswers( ENTREPRENEUR_TRIAL_SURVEY_KEY );
 
-		const siteSlugParam = useSiteSlugParam();
-		const urlQueryParams = useQuery();
-		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
+		const { siteId, siteSlug } = useSiteData();
+
+		const entrepreneurAdminDestination = useEntrepreneurAdminDestination();
+		const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
 		const getEntrepreneurLoginUrl = () => {
 			const redirectTo = `${ window.location.protocol }//${ window.location.host }/setup/entrepreneur/trialAcknowledge${ window.location.search }`;
@@ -79,11 +79,14 @@ const entrepreneurFlow: Flow = {
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
-			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
-			const siteId =
-				getSiteIdBySlug( siteSlug ) ||
-				getSiteIdParam( urlQueryParams ) ||
-				( providedDependencies?.siteId as string | undefined );
+			const siteSlugDependency = providedDependencies?.siteSlug as string | undefined;
+			const siteIdDependency = providedDependencies?.siteId as string | number | undefined;
+
+			const navigateWithSiteId = ( url: string, extraData?: any, replace?: boolean ) => {
+				const urlWithSiteId = addQueryArgs( url, { siteId: siteId || siteIdDependency } );
+
+				return navigate( urlWithSiteId, extraData, replace );
+			};
 
 			switch ( currentStep ) {
 				case SEGMENTATION_SURVEY_SLUG: {
@@ -119,26 +122,24 @@ const entrepreneurFlow: Flow = {
 					const processingResult = providedDependencies.processingResult as ProcessingResult;
 
 					if ( processingResult === ProcessingResult.FAILURE ) {
-						return navigate( STEPS.ERROR.slug );
+						return navigateWithSiteId( STEPS.ERROR.slug );
 					}
 
 					if ( providedDependencies?.finishedWaitingForAtomic ) {
-						return navigate( STEPS.WAIT_FOR_PLUGIN_INSTALL.slug, { siteId, siteSlug } );
+						return navigateWithSiteId( STEPS.WAIT_FOR_PLUGIN_INSTALL.slug, {
+							siteId: siteId || siteIdDependency,
+							siteSlug: siteSlug || siteSlugDependency,
+						} );
 					}
 
 					if ( providedDependencies?.pluginsInstalled ) {
 						if ( isMigrationFlow ) {
-							const stagingUrl = ( siteSlug as string ).replace(
-								'.wordpress.com',
-								'.wpcomstaging.com'
-							);
-
 							// If the user is migrating a site, send them to the DIFM credentials step in the site migration flow.
 							const migrationFlowUrl = addQueryArgs(
 								`/setup/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }`,
 								{
-									siteSlug: stagingUrl,
-									siteId,
+									siteSlug: siteSlug || siteSlugDependency,
+									siteId: siteId || siteIdDependency,
 									ref: 'entrepreneur-signup',
 								}
 							);
@@ -146,20 +147,37 @@ const entrepreneurFlow: Flow = {
 							return window.location.assign( migrationFlowUrl );
 						}
 
-						const entrepreneurDestination = getEntrepreneurAdminDestination( { siteSlug } );
+						if ( entrepreneurAdminDestination ) {
+							return window.location.assign( entrepreneurAdminDestination );
+						} else if ( siteAdminUrl ) {
+							return window.location.assign( siteAdminUrl );
+						}
 
-						return window.location.assign( entrepreneurDestination );
+						// Default to /home if we don't have the site admin URL.
+						// We shouldn't get here, but better safe than sorry.
+						return window.location.assign( `/home/${ siteId }` );
 					}
 
-					return navigate( STEPS.WAIT_FOR_ATOMIC.slug, { siteId, siteSlug } );
+					return navigateWithSiteId( STEPS.WAIT_FOR_ATOMIC.slug, {
+						siteId: siteId || siteIdDependency,
+						siteSlug: siteSlug || siteSlugDependency,
+					} );
 				}
 
 				case STEPS.WAIT_FOR_ATOMIC.slug: {
-					return navigate( STEPS.PROCESSING.slug, { currentStep, siteId, siteSlug } );
+					return navigateWithSiteId( STEPS.PROCESSING.slug, {
+						currentStep,
+						siteId: siteId || siteIdDependency,
+						siteSlug: siteSlug || siteSlugDependency,
+					} );
 				}
 
 				case STEPS.WAIT_FOR_PLUGIN_INSTALL.slug: {
-					return navigate( STEPS.PROCESSING.slug, { currentStep, siteId, siteSlug } );
+					return navigateWithSiteId( STEPS.PROCESSING.slug, {
+						currentStep,
+						siteId: siteId || siteIdDependency,
+						siteSlug: siteSlug || siteSlugDependency,
+					} );
 				}
 			}
 			return providedDependencies;
