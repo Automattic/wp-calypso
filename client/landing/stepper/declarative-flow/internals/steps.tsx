@@ -364,6 +364,16 @@ export const STEPS = {
 			),
 	},
 
+	GET_CURRENT_THEME_SOFTWARE_SETS: {
+		slug: 'getCurrentThemeSoftwareSets',
+		asyncComponent: () => import( './steps-repository/get-current-theme-software-sets' ),
+	},
+
+	CHECK_FOR_PLUGINS: {
+		slug: 'checkForPlugins',
+		asyncComponent: () => import( './steps-repository/check-for-plugins' ),
+	},
+
 	HUNDRED_YEAR_PLAN_DIY_OR_DIFM: {
 		slug: 'diy-or-difm',
 		asyncComponent: () => import( './steps-repository/hundred-year-plan-diy-or-difm' ),

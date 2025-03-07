@@ -215,7 +215,7 @@ const Settings = ( {
 		return (
 			<Accordion
 				title={ translate( 'Gravatar profile domain', { textOnly: true } ) }
-				key="status"
+				key="gravatar"
 				expanded
 			>
 				<GravatarDomainCard />

@@ -12,6 +12,7 @@ import {
 	useDispatch as useDataStoreDispatch,
 	useSelect as useDataStoreSelect,
 } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -71,7 +72,7 @@ export function DefaultMasterbarContact() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 
-	const { hasPremiumSupport, initialMessage } = useProductsWithPremiumSupport(
+	const { hasPremiumSupport, userFieldMessage, userFieldFlowName } = useProductsWithPremiumSupport(
 		responseCart.products,
 		'checkout'
 	);
@@ -92,9 +93,13 @@ export function DefaultMasterbarContact() {
 
 		if ( hasPremiumSupport ) {
 			setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport, helpCenterOptions );
-			setNavigateToRoute(
-				`/odie?provider=zendesk&userFieldMessage=${ initialMessage }&siteUrl=${ siteSlug }&siteId=${ siteId }`
-			);
+			const urlWithQueryArgs = addQueryArgs( '/odie?provider=zendesk', {
+				userFieldMessage,
+				userFieldFlowName,
+				siteUrl: siteSlug,
+				siteId,
+			} );
+			setNavigateToRoute( urlWithQueryArgs );
 		} else {
 			setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport );
 		}

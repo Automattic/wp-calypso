@@ -6,7 +6,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { navigate } from 'calypso/lib/navigate';
 import { addQueryArgs } from 'calypso/lib/url';
-import { BulkUpdateNotice } from './components/bulk-update-notice';
 import {
 	DEFAULT_PER_PAGE,
 	DEFAULT_SORT_FIELD,
@@ -15,6 +14,7 @@ import {
 	QueryParams,
 } from './query-params';
 import { useActions } from './use-actions';
+import useBulkActionNotice from './use-bulk-action-notice';
 import { useDomainsDataViewsContext } from './use-context';
 import { getDomainId } from './use-domains';
 import './style.scss';
@@ -38,6 +38,8 @@ export const DomainsDataViews = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	const { isDesktop, getSiteSlug, selectedFeature } = useDomainsDataViewsContext();
+
+	useBulkActionNotice();
 
 	const [ view, setView ] = useState( () =>
 		initializeViewState( isDesktop, queryParams, sidebarMode )
@@ -118,7 +120,6 @@ export const DomainsDataViews = ( {
 
 	return (
 		<>
-			{ ! sidebarMode && <BulkUpdateNotice /> }
 			<div className={ clsx( 'domains-dataviews', { 'domains-dataviews-list': sidebarMode } ) }>
 				<DataViews
 					data={ domainsToDisplay }

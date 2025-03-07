@@ -5,7 +5,7 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, ChangeEvent, useCallback } from 'react';
 import errorIllustration from 'calypso/assets/images/customer-home/disconnected.svg';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import Loading from 'calypso/components/loading';
 import AccordionForm from 'calypso/signup/accordion-form/accordion-form';
 import {
 	BBE_STORE_WEBSITE_CONTENT_FILLING_STEP,
@@ -203,8 +203,7 @@ function Loader() {
 	const translate = useTranslate();
 	return (
 		<LoadingContainer>
-			<h1 className="wp-brand-font">{ translate( 'Loading your site information' ) }</h1>
-			<LoadingEllipsis />
+			<Loading title={ translate( 'Loading your site information' ) } />
 		</LoadingContainer>
 	);
 }

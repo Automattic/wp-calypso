@@ -5,7 +5,7 @@ import { DataHelper, UserSignupPage } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import uploadScreenshotsToBlog from '../../lib/martech-tos-helper';
 
-const selectors = { isSignup: 'body.is-section-signup' };
+const selectors = { isSignup: 'body.is-section-stepper' };
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), function () {

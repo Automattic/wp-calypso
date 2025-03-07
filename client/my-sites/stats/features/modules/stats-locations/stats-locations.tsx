@@ -9,8 +9,9 @@ import useLocationViewsQuery, {
 	StatsLocationViewsData,
 } from 'calypso/my-sites/stats/hooks/use-location-views-query';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
-import { QueryStatsParams } from 'calypso/my-sites/stats/hooks/utils';
 import StatsCardUpsell from 'calypso/my-sites/stats/stats-card-upsell';
+import DownloadCsv from 'calypso/my-sites/stats/stats-download-csv';
+import DownloadCsvUpsell from 'calypso/my-sites/stats/stats-download-csv-upsell';
 import StatsListCard from 'calypso/my-sites/stats/stats-list/stats-list-card';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
 import {
@@ -28,11 +29,13 @@ import {
 	STATS_FEATURE_LOCATION_REGION_VIEWS,
 	STATS_FEATURE_LOCATION_COUNTRY_VIEWS,
 	STATS_FEATURE_LOCATION_CITY_VIEWS,
+	STATS_FEATURE_DOWNLOAD_CSV,
 } from '../../../constants';
 import Geochart from '../../../geochart';
 import StatsCardUpdateJetpackVersion from '../../../stats-card-upsell/stats-card-update-jetpack-version';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import StatsInfoArea from '../shared/stats-info-area';
+import { StatsDefaultModuleProps } from '../types';
 import CountryFilter from './country-filter';
 import sampleLocations from './sample-locations';
 
@@ -57,16 +60,15 @@ type SelectOptionType = {
 	value: string;
 };
 
-interface StatsModuleLocationsProps {
-	query: QueryStatsParams;
-	summaryUrl?: string;
+interface StatsModuleLocationsProps extends StatsDefaultModuleProps {
 	initialGeoMode?: string;
 }
 
 const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
+	initialGeoMode,
+	period,
 	query,
 	summaryUrl,
-	initialGeoMode,
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -108,6 +110,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsModule = useShouldGateStats( statType );
+	const shouldGateDownloads = useShouldGateStats( STATS_FEATURE_DOWNLOAD_CSV );
 	const shouldGateTab = useShouldGateStats( optionLabels[ selectedOption ].feature );
 	const shouldGate = shouldGateStatsModule || shouldGateTab;
 	const geoMode = GEO_MODES[ selectedOption ];
@@ -254,13 +257,34 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 	const showUpsell = shouldGate || showJetpackUpgradePrompt;
 
 	const locationData = showUpsell ? sampleLocations : data;
+	const locationCsvData = locationData.map( ( item ) => [
+		typeof item.label === 'string' ? `"${ item.label.replace( /"/g, '""' ) }"` : item.label,
+		item.value,
+	] );
 
 	const hasLocationData = Array.isArray( locationData ) && locationData.length > 0;
 
-	const heroElement = (
-		<>
-			<Geochart data={ locationData } geoMode={ geoMode } skipQuery customHeight={ 480 } />
-			{ geoMode !== 'country' && ! summaryUrl && (
+	const downloadCsvElement = shouldGateDownloads ? (
+		<DownloadCsvUpsell
+			className="stats-module-locations__download-csv-upsell"
+			siteId={ siteId }
+			borderless
+		/>
+	) : (
+		<DownloadCsv
+			borderless
+			data={ locationCsvData }
+			path={ `locations-${ geoMode }` }
+			period={ period }
+			query={ query }
+			skipQuery
+			statType={ statType }
+		/>
+	);
+
+	const heroElementActions = (
+		<div className="stats-module-locations__actions">
+			{ geoMode !== 'country' && (
 				<CountryFilter
 					countries={ countriesList }
 					defaultLabel={ optionLabels[ selectedOption ].countryFilterLabel }
@@ -269,6 +293,14 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 					tooltip={ divisionsTooltip }
 				/>
 			) }
+			{ downloadCsvElement }
+		</div>
+	);
+
+	const heroElement = (
+		<>
+			<Geochart data={ locationData } geoMode={ geoMode } skipQuery customHeight={ 480 } />
+			{ ! summaryUrl && heroElementActions }
 		</>
 	);
 
@@ -336,6 +368,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 						heroElement={ heroElement }
 						mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
 						toggleControl={ toggleControlComponent }
+						downloadCsv={ ! shouldGateTab ? downloadCsvElement : null }
 						showMore={
 							summaryUrl
 								? {

@@ -1,6 +1,8 @@
 @import "@automattic/onboarding/styles/mixins";
 
 $theme-sheet-content-max-width: 1462px;
+$theme-sheet-content-padding-x: 20px;
+$theme-sheet-content-padding-y: 48px;
 $button-border: 4px;
 
 .is-section-theme {
@@ -19,10 +21,10 @@ $button-border: 4px;
 		overflow: clip;
 		padding-top: 47px;
 
+		.theme__sheet-screenshot,
 		.theme__sheet-web-preview .theme-preview__frame-wrapper {
 			@include breakpoint-deprecated( ">960px" ) {
-				// Inner padding: 32px.
-				max-height: calc(100vh - var(--content-padding-top) - var(--content-padding-bottom) - var(--masterbar-height) - 32px );
+				max-height: calc(100vh - var(--content-padding-top, 0px) - var(--content-padding-bottom, 0px) - 32px);
 			}
 		}
 	}
@@ -40,8 +42,9 @@ $button-border: 4px;
 	&.is-global-sidebar-visible {
 		background: var(--studio-gray-0);
 
-		.layout__content {
+		&.layout.is-logged-in .layout__content {
 			min-height: 100vh;
+
 			@media screen and (min-width: 782px) {
 				padding: calc(var(--masterbar-height) + var(--content-padding-top)) 16px var(--content-padding-bottom) var(--sidebar-width-max);
 			}
@@ -126,7 +129,7 @@ $button-border: 4px;
 	grid-template-rows: auto 1fr;
 	margin: 0 auto;
 	max-width: $theme-sheet-content-max-width;
-	padding: 48px 20px;
+	padding: $theme-sheet-content-padding-y $theme-sheet-content-padding-x;
 
 	@include breakpoint-deprecated( "<960px" ) {
 		display: flex;
@@ -402,6 +405,7 @@ $button-border: 4px;
 		0 1px 18px rgba(0, 0, 0, 0.12),
 		0 3px 5px rgba(0, 0, 0, 0.2);
 	display: block;
+	margin-bottom: 16px;
 	margin-top: 0;
 	overflow: hidden;
 	transition: all 200ms ease-in-out;
@@ -438,9 +442,14 @@ $button-border: 4px;
 	}
 
 	@include breakpoint-deprecated( ">960px" ) {
+		overflow-y: scroll;
 		pointer-events: all;
 		position: sticky;
-		top: 16px;
+		top: $theme-sheet-content-padding-y;
+
+		.is-global-sidebar-visible & {
+			top: 16px;
+		}
 
 		&.is-active:hover {
 			cursor: pointer;
@@ -452,14 +461,23 @@ $button-border: 4px;
 }
 
 .theme__sheet-preview-demo-site {
+	$button-height: 40px;
+
+	height: $button-height;
 	opacity: 0;
-	position: absolute;
+	position: sticky;
 	left: 50%;
 	top: 50%;
 	z-index: 1;
 	transform: translate(-50%, 0);
+
 	&.button {
 		border-radius: $button-border;
+	}
+
+	+ .theme__sheet-img,
+	+ .theme-preview__container {
+		margin-top: -$button-height;
 	}
 }
 

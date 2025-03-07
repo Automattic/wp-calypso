@@ -10,6 +10,7 @@ import { A4A_WOOPAYMENTS_DASHBOARD_LINK } from 'calypso/a8c-for-agencies/compone
 import StepSection from 'calypso/a8c-for-agencies/components/step-section';
 import StepSectionItem from 'calypso/a8c-for-agencies/components/step-section-item';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
+import useFetchSitePlugins from 'calypso/a8c-for-agencies/data/sites/use-fetch-site-plugins';
 import useInstallPluginToSiteMutation from 'calypso/a8c-for-agencies/hooks/use-install-plugin-to-site';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
@@ -33,6 +34,17 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 
 	const [ selectedSite, setSelectedSite ] = useState< SiteDetails | null | undefined >( null );
 
+	const { data: plugins, isLoading: isLoadingPlugins } = useFetchSitePlugins( parseInt( siteId ) );
+
+	const isWooCommerceActive =
+		plugins?.find( ( { plugin }: { plugin: string } ) => plugin === 'woocommerce/woocommerce' )
+			?.status === 'active';
+
+	const isWooPaymentsActive =
+		plugins?.find(
+			( { plugin }: { plugin: string } ) => plugin === 'woocommerce-payments/woocommerce-payments'
+		)?.status === 'active';
+
 	const title = translate( 'WooPayments Site Setup' );
 
 	const onInstallPluginClick = async () => {
@@ -44,13 +56,15 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 
 		const wooSetupUrl = `${ selectedSite?.URL }/wp-admin/admin.php?page=wc-admin&path=/payments/connect`;
 
-		if ( isInstalled ) {
+		if ( isInstalled || isWooPaymentsActive ) {
 			window.open( wooSetupUrl, '_blank' );
 			return;
 		}
 
-		// TODO: We need to check if the WooCommerce plugin is already installed
-		const plugins = [ 'woocommerce', 'woocommerce-payments' ];
+		// Install WooPayments and WooCommerce if not installed
+		const plugins = isWooCommerceActive
+			? [ 'woocommerce-payments' ]
+			: [ 'woocommerce', 'woocommerce-payments' ];
 
 		// Install plugins sequentially
 		try {
@@ -110,7 +124,7 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 			</LayoutTop>
 
 			<LayoutBody>
-				{ ! selectedSite ? (
+				{ ! selectedSite || isLoadingPlugins ? (
 					<>
 						<TextPlaceholder />
 						<TextPlaceholder />
@@ -169,8 +183,8 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 												variant="primary"
 												onClick={ onInstallPluginClick }
 											>
-												{ isInstalled
-													? translate( 'View WooPayments ↗' )
+												{ isInstalled || isWooPaymentsActive
+													? translate( 'Finish setup ↗' )
 													: translate( 'Install and activate the plugin ↗' ) }
 											</Button>
 										) }

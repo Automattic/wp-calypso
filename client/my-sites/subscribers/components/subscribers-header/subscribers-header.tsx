@@ -5,7 +5,7 @@ import { Button } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
-import { ReactElement } from 'react';
+import { useEffect, ReactElement } from 'react';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import NavigationHeader from 'calypso/components/navigation-header';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -81,7 +81,28 @@ export const SubscribersHeader = ( {
 	);
 	const closeSubscriberModal = () => {
 		setShowSubscriberModal( SubscriberModalType.NONE );
+
+		if ( window.location.hash === '#add-subscribers' ) {
+			// Doing this instead of window.location.hash = '' because window.location.hash keeps the # symbol
+			// Also this makes the back button show the modal again, which is neat
+			history.pushState( '', document.title, window.location.pathname + window.location.search );
+		}
 	};
+
+	useEffect( () => {
+		const handleHashChange = () => {
+			if ( window.location.hash === '#add-subscribers' ) {
+				setShowSubscriberModal( SubscriberModalType.ADD );
+			}
+		};
+
+		window.addEventListener( 'hashchange', handleHashChange );
+		handleHashChange();
+
+		return () => {
+			window.removeEventListener( 'hashchange', handleHashChange );
+		};
+	}, [] );
 
 	return (
 		<>

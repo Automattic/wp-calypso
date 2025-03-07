@@ -1,6 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import {
-	DESIGN_FIRST_FLOW,
 	START_WRITING_FLOW,
 	ONBOARDING_FLOW,
 	StepContainer,
@@ -102,7 +101,6 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 	const getStepContent = () => {
 		switch ( flow ) {
 			case START_WRITING_FLOW:
-			case DESIGN_FIRST_FLOW:
 			case ONBOARDING_FLOW:
 				return getBlogOnboardingFlowStepContent();
 			default:

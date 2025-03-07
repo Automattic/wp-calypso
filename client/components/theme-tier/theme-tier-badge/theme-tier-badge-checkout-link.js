@@ -1,12 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
-import { useSelector } from 'calypso/state';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useThemeTierBadgeContext } from './theme-tier-badge-context';
 
 export default function ThemeTierBadgeCheckoutLink( { children, plan } ) {
-	const siteSlug = useSelector( getSelectedSiteSlug );
-	const { canGoToCheckout } = useThemeTierBadgeContext();
+	const { canGoToCheckout, siteSlug } = useThemeTierBadgeContext();
 
 	if ( ! canGoToCheckout || ! siteSlug ) {
 		return <>{ children }</>;

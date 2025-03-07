@@ -17,7 +17,6 @@ import SubscribersNavigationArrows from './subscribers-navigation-arrows';
 import type uPlot from 'uplot';
 
 import './style.scss';
-
 interface SubscribersData {
 	period: PeriodType;
 	subscribers: number;
@@ -275,6 +274,7 @@ export default function SubscribersChartSection( {
 							EmptyState={ () => null }
 							zeroBaseline={ lineChartData.length > 1 }
 							formatTimeTick={ formatTimeTick }
+							placeholder={ <StatsModulePlaceholder className="is-chart" isLoading /> }
 						/>
 					) : (
 						<UplotChart

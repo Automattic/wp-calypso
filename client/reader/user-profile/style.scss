@@ -26,6 +26,8 @@
 
 			&-content {
 				padding-top: 24px;
+				max-width: 768px;
+				margin: 0 auto;
 
 				@include breakpoint-deprecated( '<660px' ) {
 					padding-top: 0;

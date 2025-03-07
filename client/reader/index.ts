@@ -53,7 +53,7 @@ export default async function (): Promise< void > {
 
 	if ( config.isEnabled( 'reader' ) ) {
 		page(
-			'/reader',
+			[ '/reader', '/reader/recent/:feed_id' ],
 			redirectLoggedOutToDiscover,
 			updateLastRoute,
 			sidebar,

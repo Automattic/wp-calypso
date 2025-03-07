@@ -30,7 +30,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
-import { withSyncStatus } from 'calypso/sites/tools/staging-site/hooks/use-site-sync-status';
+import { withSyncStatus } from 'calypso/sites/staging-site/hooks/use-site-sync-status';
 import {
 	getRewindRestoreProgress,
 	rewindRequestDismiss,

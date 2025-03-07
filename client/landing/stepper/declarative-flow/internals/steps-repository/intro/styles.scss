@@ -2,6 +2,7 @@
 @import "@automattic/onboarding/styles/mixins";
 
 .intro {
+	&.example,
 	&.newsletter {
 		.step-container {
 			background-color: var(--studio-gray-0);

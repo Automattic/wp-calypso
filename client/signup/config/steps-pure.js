@@ -879,7 +879,8 @@ export function generateSteps( {
 		},
 		'difm-page-picker': {
 			stepName: 'difm-page-picker',
-			providesDependencies: [ 'selectedPageTitles' ],
+			providesDependencies: [ 'selectedPageTitles', 'newOrExistingSiteChoice' ],
+			optionalDependencies: [ 'newOrExistingSiteChoice' ],
 			props: {
 				hideSkip: true,
 			},

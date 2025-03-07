@@ -590,8 +590,17 @@ class ThemeSheet extends Component {
 	};
 
 	renderHeader = () => {
-		const { author, isWPForTeamsSite, name, retired, softLaunched, translate, themeId } =
-			this.props;
+		const {
+			author,
+			isWPForTeamsSite,
+			name,
+			retired,
+			softLaunched,
+			translate,
+			themeId,
+			siteId,
+			siteSlug,
+		} = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
 		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;
@@ -607,6 +616,8 @@ class ThemeSheet extends Component {
 								showUpgradeBadge
 								showPartnerPrice
 								themeId={ themeId }
+								siteId={ siteId }
+								siteSlug={ siteSlug }
 							/>
 
 							{ title }
@@ -866,28 +877,8 @@ class ThemeSheet extends Component {
 	};
 
 	getDefaultOptionLabel = () => {
-		const {
-			siteId,
-			defaultOption,
-			canInstallPlugins,
-			isActive,
-			isLoggedIn,
-			isPremium,
-			isThemePurchased,
-			translate,
-			isBundledSoftwareSet,
-			isExternallyManagedTheme,
-			isSiteEligibleForManagedExternalThemes,
-			isMarketplaceThemeSubscribed,
-			isThemeActivationSyncStarted,
-			isThemeAllowed,
-			isThemeInstalled,
-			isSiteWooExpressFreeTrial,
-			isThemeBundleWooCommerce,
-		} = this.props;
-		const { isAtomicTransferCompleted } = this.state;
+		const { defaultOption, isActive, isLoggedIn, siteId, translate } = this.props;
 		if ( isActive ) {
-			// Customize site
 			return (
 				<span className="theme__sheet-customize-button">
 					<Gridicon icon="external" />
@@ -895,41 +886,7 @@ class ThemeSheet extends Component {
 				</span>
 			);
 		} else if ( isLoggedIn && siteId ) {
-			if (
-				( ( ! isThemeAllowed || isPremium ) && ! isThemePurchased && ! isExternallyManagedTheme ) ||
-				( isBundledSoftwareSet &&
-					! canInstallPlugins &&
-					! ( isSiteWooExpressFreeTrial && isThemeBundleWooCommerce ) )
-			) {
-				// upgrade plan
-				return translate( 'Upgrade to activate', {
-					comment:
-						'label prompting user to upgrade the WordPress.com plan to activate a certain theme',
-				} );
-			} else if (
-				isExternallyManagedTheme &&
-				! isMarketplaceThemeSubscribed &&
-				! isSiteEligibleForManagedExternalThemes
-			) {
-				return translate( 'Upgrade to subscribe' );
-			} else if (
-				isExternallyManagedTheme &&
-				! isMarketplaceThemeSubscribed &&
-				isSiteEligibleForManagedExternalThemes &&
-				! isThemeInstalled
-			) {
-				return translate( 'Subscribe to activate' );
-			} else if ( isThemeActivationSyncStarted && ! isAtomicTransferCompleted ) {
-				return (
-					<span className="theme__sheet-customize-button spin">
-						<Gridicon icon="sync" />
-						{ translate( 'Activate this design' ) }
-					</span>
-				);
-			} else if ( defaultOption.label === translate( 'Activate' ) ) {
-				return translate( 'Activate' );
-			}
-			// else: fall back to default label
+			return translate( 'Activate' );
 		}
 		return defaultOption.label;
 	};

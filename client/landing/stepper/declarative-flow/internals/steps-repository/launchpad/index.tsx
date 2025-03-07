@@ -16,7 +16,7 @@ import { urlToSlug } from 'calypso/lib/url';
 import { useSelector, useDispatch } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
-import { useShouldShowLaunchpadFirst } from 'calypso/state/selectors/should-show-launchpad-first';
+import { shouldShowLaunchpadFirst } from 'calypso/state/selectors/should-show-launchpad-first';
 import { useQuery } from '../../../../hooks/use-query';
 import StepContent from './step-content';
 import { areLaunchpadTasksCompleted } from './task-helper';
@@ -92,11 +92,8 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 		}
 	}, [ verifiedParam, translate, dispatch ] );
 
-	const [ loadingShouldShowLaunchpadFirst, shouldShowLaunchpadFirst ] =
-		useShouldShowLaunchpadFirst( site );
-
 	// Avoid screen flickering when redirecting to other paths
-	if ( ! site?.options || loadingShouldShowLaunchpadFirst ) {
+	if ( ! site?.options ) {
 		return null;
 	}
 
@@ -105,7 +102,7 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 		return null;
 	}
 
-	if ( shouldShowLaunchpadFirst ) {
+	if ( shouldShowLaunchpadFirst( site ) ) {
 		window.location.replace( `/home/${ siteSlug }` );
 		return null;
 	}

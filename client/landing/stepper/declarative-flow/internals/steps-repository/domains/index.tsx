@@ -4,7 +4,6 @@ import {
 	COPY_SITE_FLOW,
 	isCopySiteFlow,
 	NEWSLETTER_FLOW,
-	DESIGN_FIRST_FLOW,
 	DOMAIN_UPSELL_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
 	isDomainUpsellFlow,
@@ -132,6 +131,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			freeDomain: suggestion?.is_free,
 			domainName: suggestion?.domain_name,
 			productSlug: suggestion?.product_slug,
+			domainItem: suggestion,
 		} );
 	};
 
@@ -200,7 +200,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			return '';
 		}
 
-		if ( flow === DESIGN_FIRST_FLOW || flow === NEWSLETTER_FLOW ) {
+		if ( flow === NEWSLETTER_FLOW ) {
 			return __( 'Your domain. Your identity.' );
 		}
 

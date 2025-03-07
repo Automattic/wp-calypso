@@ -17,9 +17,8 @@ const useStoreApplicationPassword = ( siteSlug: string ) => {
 		{
 			mutationFn: ( { password, username, source } ) => {
 				return wpcomRequest( {
-					path: `sites/${ siteSlug }/automated-migration/application-passwords`,
-					apiNamespace: 'wpcom/v2/',
-					apiVersion: '2',
+					path: `/sites/${ siteSlug }/automated-migration/application-passwords`,
+					apiNamespace: 'wpcom/v2',
 					method: 'POST',
 					body: {
 						password,
