@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { action } from '@storybook/addon-actions';
+import { fn } from '@storybook/test';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import * as allIconComponents from '@wordpress/icons';
@@ -64,7 +64,7 @@ Default.storyName = 'SidebarNavigationItem';
 Default.args = {
 	children: __( 'Site Photos Gallery', 'a8c-site-admin' ),
 	as: 'button',
-	onClick: action( 'clicked' ),
+	onClick: fn(),
 };
 
 // Add a story for the suffix prop.
