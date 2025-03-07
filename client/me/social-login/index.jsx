@@ -47,8 +47,7 @@ class SocialLogin extends Component {
 
 				<CompactCard>
 					{ translate(
-						'You’ll be able to log in faster by linking your WordPress.com account with the following ' +
-							'third-party services. We’ll never post without your permission.'
+						'Log in faster with the accounts you already use. We’ll never post without your permission.'
 					) }
 				</CompactCard>
 
