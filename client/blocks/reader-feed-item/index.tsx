@@ -1,4 +1,4 @@
-import { recordTrainTracksInteract, recordTrainTracksRender } from '@automattic/calypso-analytics';
+import { recordTrainTracksInteract } from '@automattic/calypso-analytics';
 import { ExternalLink } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import {
@@ -9,7 +9,6 @@ import {
 import { rss } from '@wordpress/icons';
 import { filterURLForDisplay } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import {
@@ -24,15 +23,24 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import './style.scss';
 
 interface ReaderFeedItemProps {
-	feedItem: Reader.FeedItem;
+	feed: Reader.FeedItem;
 	source: string; // Indicates where the feed item is rendered.
-	uiPosition?: number; // The position of the feed item in case of list.
 }
 
 /**
  * A component that renders a single feed item row. This includes both wpcom and non-wpcom feeds.
  */
-export default function ReaderFeedItem( { feedItem, source, uiPosition }: ReaderFeedItemProps ) {
+export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Element | null {
+	const {
+		feed: {
+			blog_ID: blogId = null,
+			feed_ID: feedId,
+			subscribe_URL: subscribeUrl, // For non-wpcom feeds, use the subscribe URL as it's available in all cases even for new feeds.
+			railcar,
+		},
+		source,
+	} = props;
+	const isWpcomFeed = !! blogId;
 	const translate = useTranslate();
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const dispatch = useDispatch();
@@ -48,24 +56,7 @@ export default function ReaderFeedItem( { feedItem, source, uiPosition }: Reader
 	const recordSiteUrlClicked = useRecordSiteUrlClicked();
 	const recordSearchSiteSubscribed = useRecordSearchSiteSubscribed();
 
-	const railcar = feedItem.railcar;
-	useEffect( () => {
-		if ( railcar ) {
-			// reader: railcar, ui_algo: following_manage, ui_position, fetch_algo, fetch_position, rec_blog_id (incorrect: fetch_lang, action)
-			// subscriptions: railcar, ui_algo: reader-subscriptions-search, ui_position, fetch_algo, fetch_position, rec_blog_id
-			recordTrainTracksRender( {
-				railcarId: railcar.railcar,
-				uiAlgo: 'reader-subscriptions-search',
-				uiPosition: uiPosition ?? -1,
-				fetchAlgo: railcar.fetch_algo,
-				fetchPosition: railcar.fetch_position,
-				recBlogId: railcar.rec_blog_id,
-			} );
-		}
-	}, [ railcar, uiPosition ] );
-
-	const { blog_ID: blogId = null, feed_ID: feedId } = feedItem;
-	const isWpcomFeed = !! blogId;
+	// Fetch feed and site data.
 	const { data: feed, isLoading: isFeedLoading } = Reader.useReadFeedQuery( feedId );
 	const { data: site, isLoading: isSiteLoading } = Reader.useReadFeedSiteQuery( Number( blogId ) );
 
@@ -73,8 +64,7 @@ export default function ReaderFeedItem( { feedItem, source, uiPosition }: Reader
 		return null;
 	}
 
-	// Reader feed item row fields.
-	const subscribeUrl = feedItem?.subscribe_URL; // For non-wpcom feeds, use the subscribe URL as it's available in all cases.
+	// Reader feed item fields to show in the UI.
 	const description = isWpcomFeed ? site?.description : feed?.description;
 	const displayUrl = isWpcomFeed ? getSiteUrl( { feed, site } ) : subscribeUrl;
 	const filteredDisplayUrl = filterURLForDisplay( displayUrl );

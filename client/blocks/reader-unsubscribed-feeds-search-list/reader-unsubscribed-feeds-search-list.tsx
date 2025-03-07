@@ -1,3 +1,4 @@
+import { recordTrainTracksRender } from '@automattic/calypso-analytics';
 import { Reader } from '@automattic/data-stores';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useMemo } from 'react';
@@ -14,11 +15,24 @@ const ReaderUnsubscribedFeedsSearchList = () => {
 		}
 
 		return feedItems?.map( ( feed, index ): JSX.Element => {
+			const railcar = feed.railcar;
+			if ( railcar ) {
+				// reader: railcar, ui_algo: following_manage, ui_position, fetch_algo, fetch_position, rec_blog_id (incorrect: fetch_lang, action)
+				// subscriptions: railcar, ui_algo: reader-subscriptions-search, ui_position, fetch_algo, fetch_position, rec_blog_id
+				recordTrainTracksRender( {
+					railcarId: railcar.railcar,
+					uiAlgo: 'reader-subscriptions-search',
+					uiPosition: index ?? -1,
+					fetchAlgo: railcar.fetch_algo,
+					fetchPosition: railcar.fetch_position,
+					recBlogId: railcar.rec_blog_id,
+				} );
+			}
+
 			return (
 				<ReaderFeedItem
 					key={ `${ feed.blog_ID }-${ feed.feed_ID }` }
-					feedItem={ feed }
-					uiPosition={ index }
+					feed={ feed }
 					source={ SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST }
 				/>
 			);
