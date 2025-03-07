@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { Button as LegacyButton, Gridicon } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
+import { useChatStatus } from '@automattic/help-center/src/hooks';
 import { Button } from '@wordpress/components';
 import { dispatch as useDataStoreDispatch } from '@wordpress/data';
 import clsx from 'clsx';
@@ -46,6 +47,7 @@ const AccountSettingsClose = ( {
 	const [ showConfirmDialog, setShowConfirmDialog ] = useState( false );
 	const [ showSiteDropdown, setShowSiteDropdown ] = useState( true );
 	const { setNewMessagingChat } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { isEligibleForChat } = useChatStatus();
 
 	useEffect( () => {
 		if ( isAccountAlreadyClosed ) {
@@ -152,13 +154,15 @@ const AccountSettingsClose = ( {
 									'We are still in the process of removing one or more of your sites. This process normally takes 15-20 minutes. Once removal is completed, you should be able to close your account from this page.'
 								) }
 							</p>
-							<p className="account-close__body-copy">
-								{ translate( 'To close this account now, {{a}}contact our support team{{/a}}.', {
-									components: {
-										a: <Button onClick={ handleContactSupport } variant="link" />,
-									},
-								} ) }
-							</p>
+							{ isEligibleForChat && (
+								<p className="account-close__body-copy">
+									{ translate( 'To close this account now, {{a}}contact our support team{{/a}}.', {
+										components: {
+											a: <Button onClick={ handleContactSupport } variant="link" />,
+										},
+									} ) }
+								</p>
+							) }
 						</Fragment>
 					) }
 
@@ -197,18 +201,20 @@ const AccountSettingsClose = ( {
 									'You will not be able to log in to any other Automattic Services that use your WordPress.com account as a login. This includes WooCommerce.com, Crowdsignal.com, IntenseDebate.com, and Gravatar.com. Once your WordPress.com account is deleted, these services will also be deleted and you will lose access to any orders or support history you may have.'
 								) }
 							</p>
-							<p className="account-close__body-copy">
-								{ translate(
-									'If you have any questions at all about what happens when you delete an account, ' +
-										'please {{a}}contact someone from our support team{{/a}} first. ' +
-										"They'll explain the ramifications and help you explore alternatives. ",
-									{
-										components: {
-											a: <Button onClick={ handleContactSupport } variant="link" />,
-										},
-									}
-								) }
-							</p>
+							{ isEligibleForChat && (
+								<p className="account-close__body-copy">
+									{ translate(
+										'If you have any questions at all about what happens when you delete an account, ' +
+											'please {{a}}contact someone from our support team{{/a}} first. ' +
+											"They'll explain the ramifications and help you explore alternatives. ",
+										{
+											components: {
+												a: <Button onClick={ handleContactSupport } variant="link" />,
+											},
+										}
+									) }
+								</p>
+							) }
 						</Fragment>
 					) }
 				</ActionPanelBody>
