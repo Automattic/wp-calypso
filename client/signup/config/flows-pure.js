@@ -76,7 +76,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'account',
-			steps: [ userSocialStep, 'set-reader-landing' ],
+			steps: [ userSocialStep ],
 			destination: getRedirectDestination,
 			description: 'Create an account without a blog.',
 			lastModified: '2025-02-18',
@@ -334,7 +334,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'reader',
-			steps: [ userSocialStep, 'set-reader-landing' ],
+			steps: [ userSocialStep ],
 			destination: '/reader',
 			description: 'Signup for an account and land on Reader.',
 			lastModified: '2025-02-18',
