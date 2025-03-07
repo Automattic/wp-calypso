@@ -29,7 +29,16 @@ type UseNavigation = {
  * Custom hook for handling navigation history within the application.
  *
  * This hook provides programmatic navigation capabilities, including
- * transitioning between pages, managing query parameters, and handling back navigation.
+ * transitioning between pages, managing query parameters,
+ * and handling back navigation.
+ *
+ * The `navigate` function passes the `state` option
+ * from `NavigationOptions` to `browserHistory.push`.
+ * This state can be later retrieved using the browser's history API
+ * (e.g., `window.history.state`).
+ *
+ * Note: The `transition` option is currently not utilized
+ * in this implementation.
  * @returns {UseNavigation} An object containing:
  * - `navigate`: A function to navigate to a given path with options.
  * - `back`: A function to navigate back in browser history.
@@ -38,18 +47,29 @@ type UseNavigation = {
  * import useHistory from '../use-history';
  *
  * function MyComponent() {
- *     const { navigate, back } = useHistory();
+ *   const { navigate, back } = useHistory();
  *
- *     return (
- *         <div>
- *             <button onClick={ () => navigate('/dashboard', { state: { from: 'home' } } ) }>
- *                 Go to Dashboard
- *             </button>
- *             <button onClick={ back }>
- *                 Go Back
- *             </button>
- *         </div>
- *     );
+ *   const goToDashboard = () => {
+ *     navigate( '/dashboard', {
+ *       state: { from: 'home', user: 'JohnDoe' },
+ *       transition: 'slide-in' // Note: currently not utilized
+ *     } );
+ *   };
+ *
+ *   const goBack = () => {
+ *     back();
+ *   };
+ *
+ *   return (
+ *     <div>
+ *       <button onClick={goToDashboard}>
+ *         Go to Dashboard
+ *       </button>
+ *       <button onClick={goBack}>
+ *         Go Back
+ *       </button>
+ *     </div>
+ *   );
  * }
  * ```
  */
