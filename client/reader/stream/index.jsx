@@ -621,12 +621,6 @@ class ReaderStream extends Component {
 		return this.getScrollContainer( node.parentNode );
 	};
 
-	handleBack = () => {
-		if ( typeof window !== 'undefined' ) {
-			window.history.back();
-		}
-	};
-
 	render() {
 		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey, selectedPostKey } =
 			this.props;
