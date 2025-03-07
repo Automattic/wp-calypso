@@ -333,6 +333,7 @@ import {
 	FEATURE_STATS_BASIC_20250206,
 	FEATURE_STATS_ADVANCED_20250206,
 	FEATURE_SUPPORT,
+	FEATURE_SUPPORT_FROM_EXPERTS,
 } from './constants';
 import type { FeatureList } from './types';
 
@@ -2448,6 +2449,11 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_SUPPORT ]: {
 		getSlug: () => FEATURE_SUPPORT,
 		getTitle: () => i18n.translate( 'Support' ),
+	},
+	[ FEATURE_SUPPORT_FROM_EXPERTS ]: {
+		getSlug: () => FEATURE_SUPPORT_FROM_EXPERTS,
+		getTitle: () => i18n.translate( 'Support from our expert\u00A0team' ),
+		getDescription: () => i18n.translate( 'Get support from our expert, friendly Happiness team' ),
 	},
 	[ FEATURE_FAST_SUPPORT_FROM_EXPERTS ]: {
 		getSlug: () => FEATURE_FAST_SUPPORT_FROM_EXPERTS,

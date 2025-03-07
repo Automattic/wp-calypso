@@ -142,6 +142,7 @@ import {
 	FEATURE_STATS_BASIC_20250206,
 	FEATURE_STATS_ADVANCED_20250206,
 	FEATURE_SUPPORT,
+	FEATURE_SUPPORT_FROM_EXPERTS,
 } from './constants';
 import { FeatureGroupMap } from './types';
 
@@ -384,7 +385,11 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 	[ FEATURE_GROUP_SUPPORT ]: {
 		slug: FEATURE_GROUP_SUPPORT,
 		getTitle: () => null,
-		getFeatures: () => [ FEATURE_FAST_SUPPORT_FROM_EXPERTS, FEATURE_PRIORITY_24_7_SUPPORT ],
+		getFeatures: () => [
+			FEATURE_SUPPORT_FROM_EXPERTS,
+			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+			FEATURE_PRIORITY_24_7_SUPPORT,
+		],
 	},
 	[ FEATURE_GROUP_THEMES ]: {
 		slug: FEATURE_GROUP_THEMES,

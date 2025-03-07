@@ -444,6 +444,7 @@ import {
 	FEATURE_STATS_BASIC_20250206,
 	FEATURE_STATS_ADVANCED_20250206,
 	FEATURE_SUPPORT,
+	FEATURE_SUPPORT_FROM_EXPERTS,
 } from './constants';
 import { isBigSkyOnboarding } from './is-big-sky-onboarding';
 import { isGlobalStylesOnPersonalEnabled } from './is-global-styles-on-personal-enabled';
@@ -590,6 +591,9 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_ALWAYS_ONLINE,
 			FEATURE_PAYMENT_TRANSACTION_FEES_10,
 			FEATURE_GLOBAL_EDGE_CACHING,
+			FEATURE_BURST,
+			FEATURE_WAF_V2,
+			FEATURE_CPUS,
 			FEATURE_CDN,
 			FEATURE_MULTI_SITE,
 			FEATURE_WP_UPDATES,
@@ -802,7 +806,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_AD_FREE_EXPERIENCE,
 			WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
-			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+			FEATURE_SUPPORT_FROM_EXPERTS,
 			FEATURE_STATS_BASIC_20250206,
 		];
 
@@ -833,7 +837,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'Dozens of premium themes' ),
 			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( '%d shares per month', { args: [ 30 ] } ),
 			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '8%' ),
-			[ FEATURE_SUPPORT ]: i18n.translate( 'Fast support from our expert\u00A0team' ),
+			[ FEATURE_SUPPORT ]: i18n.translate( 'Support from our expert\u00A0team' ),
 		};
 
 		return isStatsFeatureTranslated()
@@ -1585,10 +1589,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_BANDWIDTH,
 			FEATURE_UNLIMITED_TRAFFIC,
 			FEATURE_GLOBAL_EDGE_CACHING,
-			FEATURE_BURST,
-			FEATURE_WAF_V2,
 			FEATURE_CDN,
-			FEATURE_CPUS,
 			FEATURE_DATACENTRE_FAILOVER,
 			FEATURE_ISOLATED_INFRA,
 			FEATURE_SECURITY_MALWARE,
