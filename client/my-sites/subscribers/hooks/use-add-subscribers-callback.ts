@@ -2,7 +2,6 @@ import { useActiveJobRecognition } from '@automattic/subscriber';
 import { useImportError } from '@automattic/subscriber/src/hooks/use-import-error';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'calypso/state';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
@@ -17,17 +16,12 @@ import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 export const useAddSubscribersCallback = ( siteId: number | null ) => {
 	const { completedJob } = useActiveJobRecognition( siteId ?? 0 );
 	const importError = useImportError();
-
-	const selectorResult = useSelector( ( state ) => ( {
-		isJetpackNonAtomic: isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } ),
-		selectedSiteSlug: getSelectedSiteSlug( state ),
-	} ) );
-
-	const { isJetpackNonAtomic, selectedSiteSlug } = useMemo(
-		() => selectorResult,
-		[ selectorResult ]
-	);
-
+	const { isJetpackNonAtomic, selectedSiteSlug } = useSelector( ( state ) => {
+		return {
+			isJetpackNonAtomic: isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } ),
+			selectedSiteSlug: getSelectedSiteSlug( state ),
+		};
+	} );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
