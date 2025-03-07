@@ -2,9 +2,9 @@ import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
-import BackButton from 'calypso/components/back-button';
 import EmptyContent from 'calypso/components/empty-content';
 import { UserData } from 'calypso/lib/user/user';
+import ReaderBackButton from 'calypso/reader/components/back-button';
 import UserProfileHeader from 'calypso/reader/user-profile/components/user-profile-header';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
 import UserLists from 'calypso/reader/user-profile/views/lists';
@@ -20,8 +20,6 @@ interface UserProfileProps {
 	path: string;
 	isLoading: boolean;
 	requestUser: ( userLogin: string, findById?: boolean ) => Promise< void >;
-	showBack: boolean;
-	handleBack: () => void;
 }
 
 type UserProfileState = {
@@ -34,7 +32,7 @@ type UserProfileState = {
 };
 
 export function UserProfile( props: UserProfileProps ): JSX.Element | null {
-	const { userLogin, userId, path, requestUser, user, isLoading, showBack, handleBack } = props;
+	const { userLogin, userId, path, requestUser, user, isLoading } = props;
 	const translate = useTranslate();
 
 	useEffect( () => {
@@ -87,8 +85,8 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 
 	return (
 		<div className="user-profile">
-			<div className={ `user-profile__wrapper${ showBack ? ' has-back-button' : '' }` }>
-				{ showBack && <BackButton onClick={ handleBack } /> }
+			<div className="user-profile__wrapper">
+				<ReaderBackButton />
 				<div className="user-profile__wrapper-content">
 					<UserProfileHeader user={ user } />
 					{ renderContent() }
