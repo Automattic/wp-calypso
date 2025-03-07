@@ -1,8 +1,4 @@
-import {
-	Railcar,
-	recordTrainTracksInteract,
-	recordTrainTracksRender,
-} from '@automattic/calypso-analytics';
+import { recordTrainTracksInteract, recordTrainTracksRender } from '@automattic/calypso-analytics';
 import { ExternalLink } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import {
@@ -27,19 +23,20 @@ import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import './style.scss';
 
-type ReaderFeedItemRowProps = {
-	blogId: string | null;
-	feedId: string;
-	railcar?: Railcar;
-	source: string;
-	uiPosition?: number;
-};
+interface ReaderFeedItemRowProps {
+	feed: Reader.FeedItem;
+	source: string; // Indicates where the feed item is rendered.
+	uiPosition?: number; // The position of the feed item in case of list.
+}
 
 /**
  * A component that renders a single feed item row. This includes both wpcom and non-wpcom feeds.
  */
-export default function ReaderFeedItemRow( props: ReaderFeedItemRowProps ) {
-	const { blogId, feedId, railcar, source, uiPosition } = props;
+export default function ReaderFeedItemRow( {
+	feed: feedItem,
+	source,
+	uiPosition,
+}: ReaderFeedItemRowProps ) {
 	const translate = useTranslate();
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const dispatch = useDispatch();
@@ -55,6 +52,7 @@ export default function ReaderFeedItemRow( props: ReaderFeedItemRowProps ) {
 	const recordSiteUrlClicked = useRecordSiteUrlClicked();
 	const recordSearchSiteSubscribed = useRecordSearchSiteSubscribed();
 
+	const railcar = feedItem.railcar;
 	useEffect( () => {
 		if ( railcar ) {
 			// reader: railcar, ui_algo: following_manage, ui_position, fetch_algo, fetch_position, rec_blog_id (incorrect: fetch_lang, action)
@@ -70,27 +68,28 @@ export default function ReaderFeedItemRow( props: ReaderFeedItemRowProps ) {
 		}
 	}, [ railcar, uiPosition ] );
 
+	const { blog_ID: blogId = null, feed_ID: feedId } = feedItem;
 	const { data: feed, isLoading: isFeedLoading } = Reader.useReadFeedQuery( feedId );
 	const { data: site, isLoading: isSiteLoading } = Reader.useReadFeedSiteQuery( Number( blogId ) );
 
-	if ( isFeedLoading || isSiteLoading || ! feed ) {
+	if ( isFeedLoading || isSiteLoading ) {
 		return null;
 	}
 
 	// Reader feed item row fields.
-	const isWpcomFeed = !! feed.blog_ID;
-	const description = isWpcomFeed ? site?.description : feed.description;
-	const displayUrl = isWpcomFeed ? getSiteUrl( { feed, site } ) : feed.subscribe_URL;
+	const isWpcomFeed = !! feed?.blog_ID;
+	const subscribeUrl = feedItem?.subscribe_URL; // For non-wpcom feeds, use the subscribe URL as it's available in all cases.
+	const description = isWpcomFeed ? site?.description : feed?.description;
+	const displayUrl = isWpcomFeed ? getSiteUrl( { feed, site } ) : subscribeUrl;
 	const filteredDisplayUrl = filterURLForDisplay( displayUrl );
-	const feedUrl = isWpcomFeed ? getFeedUrl( feed.feed_ID ) : feed.subscribe_URL;
-	const hasSubscribed = ( isWpcomFeed ? site?.is_following : feed.is_following ) || isSubscribed;
-	const iconUrl = isWpcomFeed ? site?.icon?.img ?? site?.icon?.ico : feed.image;
+	const feedUrl = isWpcomFeed ? getFeedUrl( feed?.feed_ID ) : subscribeUrl;
+	const hasSubscribed = ( isWpcomFeed ? site?.is_following : feed?.is_following ) || isSubscribed;
+	const iconUrl = isWpcomFeed ? site?.icon?.img ?? site?.icon?.ico : feed?.image;
 	const subscribeDisabled =
-		( isWpcomFeed ? site?.is_following : feed.is_following ) || isSubscribing || isSubscribed;
+		( isWpcomFeed ? site?.is_following : feed?.is_following ) || isSubscribing || isSubscribed;
 	const title = isWpcomFeed
 		? getSiteName( { feed, site } )
-		: feed.name ?? filterURLForDisplay( feed.subscribe_URL );
-	const url = feed.subscribe_URL;
+		: feed?.name ?? filterURLForDisplay( subscribeUrl );
 
 	function onSubscribeClick(): void {
 		if ( ! isEmailVerified ) {
@@ -108,7 +107,7 @@ export default function ReaderFeedItemRow( props: ReaderFeedItemRowProps ) {
 		onSubscribe( {
 			blog_id: blogId ?? undefined,
 			feed_id: feedId,
-			url,
+			url: subscribeUrl,
 			onSuccess: () => {
 				dispatch(
 					successNotice(
@@ -126,7 +125,7 @@ export default function ReaderFeedItemRow( props: ReaderFeedItemRowProps ) {
 			},
 		} );
 
-		recordSearchSiteSubscribed( { blog_id: blogId, url, source } );
+		recordSearchSiteSubscribed( { blog_id: blogId, url: subscribeUrl, source } );
 
 		if ( railcar ) {
 			// reader: action: site_followed, railcar, ui_algo, ui_position, fetch_algo, fetch_position, fetch_lang, rec_blog_id, (incorrect: only railcar & action accepted)
@@ -177,7 +176,7 @@ export default function ReaderFeedItemRow( props: ReaderFeedItemRowProps ) {
 		}
 	}
 
-	const SubscribeButton = () => (
+	const SubscribeButton = (): JSX.Element => (
 		<Button
 			variant="primary"
 			disabled={ subscribeDisabled }
