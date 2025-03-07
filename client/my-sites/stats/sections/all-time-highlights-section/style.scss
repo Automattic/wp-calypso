@@ -178,3 +178,12 @@
 		}
 	}
 }
+
+
+$font-sf-pro-display: "SF Pro Display", $sans;
+
+.is-odyssey-stats .post-stats-card__post-title,
+.is-odyssey-stats .post-stats-card__count-value,
+.is-odyssey-stats .highlight-card-detail-item-content {
+	font-family: $font-sf-pro-display;
+}
