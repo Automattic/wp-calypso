@@ -1,0 +1,17 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+.copy-to-clipboard-button__status {
+	@include body-small;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+
+	&.is-success {
+		fill: var(--color-success);
+	}
+
+	&.is-error {
+		fill: var(--color-error);
+	}
+}
