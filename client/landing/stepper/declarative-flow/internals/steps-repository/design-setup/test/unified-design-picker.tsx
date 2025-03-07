@@ -64,6 +64,12 @@ jest.mock( 'calypso/state/themes/selectors', () => ( {
 	},
 } ) );
 
+jest.mock( 'calypso/state/themes/selectors', () => ( {
+	getThemeDemoUrl: () => {
+		return;
+	},
+} ) );
+
 jest.mock( '../../../../../hooks/use-marketplace-theme-products', () => ( {
 	useMarketplaceThemeProducts: () => ( {
 		isLoading: false,
