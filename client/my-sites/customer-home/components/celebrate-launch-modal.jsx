@@ -123,7 +123,7 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 		const domainSetupString =
 			customDomains.length > 1
 				? translate( "We're setting up your domains." )
-				: translate( "We're setting up your domain, {{strong}}%(domain)s{{/strong}} now.", {
+				: translate( "We're setting up your domain, {{strong}}%(domain)s{{/strong}}, now.", {
 						args: {
 							domain: customDomains[ 0 ]?.domain,
 						},
