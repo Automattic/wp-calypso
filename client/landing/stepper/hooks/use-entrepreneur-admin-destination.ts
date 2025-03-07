@@ -1,3 +1,4 @@
+import { URL } from 'url';
 import { addQueryArgs } from '@wordpress/url';
 import { useSiteData } from './use-site-data';
 
