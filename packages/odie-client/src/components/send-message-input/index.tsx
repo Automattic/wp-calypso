@@ -10,6 +10,7 @@ import { useCallback, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { SendMessageIcon } from '../../assets/send-message-icon';
+import { ODIE_WRONG_FILE_TYPE_MESSAGE } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../hooks';
 import { Message } from '../../types';
@@ -66,17 +67,25 @@ export const OdieSendMessageButton = () => {
 		useAttachFileToConversation();
 
 	const handleFileUpload = useCallback(
-		async ( file: File | undefined ) => {
-			if ( authData && chat.conversationId && inferredClientId && file ) {
-				attachFileToConversation( {
-					authData,
-					file,
-					conversationId: chat.conversationId,
-					clientId: inferredClientId,
-				} ).then( () => {
-					addMessage( getPlaceholderAttachmentMessage( file ) );
-					trackEvent( 'send_message_attachment', { type: file.type } );
-				} );
+		async ( file: File | null ) => {
+			if ( ! file ) {
+				return;
+			}
+
+			if ( file.type.startsWith( 'image/' ) ) {
+				if ( authData && chat.conversationId && inferredClientId && file ) {
+					attachFileToConversation( {
+						authData,
+						file,
+						conversationId: chat.conversationId,
+						clientId: inferredClientId,
+					} ).then( () => {
+						addMessage( getPlaceholderAttachmentMessage( file ) );
+						trackEvent( 'send_message_attachment', { type: file.type } );
+					} );
+				}
+			} else {
+				addMessage( ODIE_WRONG_FILE_TYPE_MESSAGE );
 			}
 		},
 		[
@@ -90,26 +99,13 @@ export const OdieSendMessageButton = () => {
 	);
 
 	const onFilesDrop = ( files: File[] ) => {
-		const file = files?.[ 0 ];
-		if ( file && file.type.startsWith( 'image/' ) ) {
-			handleFileUpload( file );
-		}
+		handleFileUpload( files?.[ 0 ] );
 	};
 
 	const onPaste = ( event: React.ClipboardEvent ) => {
 		const items = event.clipboardData.items;
-
-		for ( const item of items ) {
-			if ( item.type.startsWith( 'image/' ) ) {
-				event.preventDefault();
-
-				const file = item.getAsFile();
-				if ( file ) {
-					handleFileUpload( file );
-					break;
-				}
-			}
-		}
+		const file = items?.[ 0 ]?.getAsFile();
+		handleFileUpload( file );
 	};
 
 	const onKeyUp = useCallback( () => {
