@@ -17,7 +17,6 @@ import {
 	trackPageLoad,
 	trackUpdatesLoaded,
 	trackScrollPage,
-	shouldShowBackButton,
 } from 'calypso/reader/controller-helper';
 import { recordTrack } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -81,7 +80,6 @@ const discover = ( context, next ) => {
 				useCompactCards
 				className="is-discover-stream"
 				selectedTab={ selectedTab }
-				showBack={ shouldShowBackButton( context ) }
 				query={ context.query }
 			/>
 		</>
