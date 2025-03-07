@@ -119,7 +119,6 @@
 		"onboarding/trail-map-feature-grid-structure": false,
 		"onboarding/trail-map-feature-grid": false,
 		"onboarding/user-on-stepper-hosting": true,
-		"onboarding/force-big-sky-before-plan": true,
 		"p2/p2-plus": true,
 		"p2-enabled": false,
 		"plans/hosting-trial": true,

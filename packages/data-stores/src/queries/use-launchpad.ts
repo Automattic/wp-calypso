@@ -79,7 +79,6 @@ export const fetchLaunchpad = (
 		? wpcomRequest( {
 				path: addQueryArgs( `/sites/${ slug }/launchpad`, queryArgs ),
 				apiNamespace: 'wpcom/v2',
-				apiVersion: '2',
 				method: 'GET',
 		  } )
 		: apiFetch( {

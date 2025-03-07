@@ -167,38 +167,32 @@ const SubscriberDataViews = ( {
 	const shouldShowLaunchpad =
 		! isLoading && ! searchTerm && ( ! grandTotal || ( grandTotal === 1 && isOwnerSubscribed ) );
 
-	const handleSubscriberSelect = useCallback(
-		( items: string[] ) => {
-			if ( items.length === 0 ) {
-				setSelectedSubscriber( null );
-				return;
-			}
-			const selectedId = items[ 0 ];
-			const subscriber = subscribers.find(
-				( s: Subscriber ) => s.subscription_id.toString() === selectedId
-			);
-			if ( subscriber ) {
-				setSelectedSubscriber( subscriber );
+	const handleSubscriberSelection = useCallback(
+		( input: Subscriber | string[] ) => {
+			if ( Array.isArray( input ) ) {
+				if ( input.length === 0 ) {
+					setSelectedSubscriber( null );
+					return;
+				}
+				const subscriber = subscribers.find( ( s ) => s.subscription_id.toString() === input[ 0 ] );
+				if ( subscriber ) {
+					recordSubscriberClicked( 'list', {
+						site_id: siteId,
+						subscription_id: subscriber.subscription_id,
+						user_id: subscriber.user_id,
+					} );
+					setSelectedSubscriber( subscriber );
+				}
+			} else {
+				recordSubscriberClicked( 'row', {
+					site_id: siteId,
+					subscription_id: input.subscription_id,
+					user_id: input.user_id,
+				} );
+				setSelectedSubscriber( input );
 			}
 		},
-		[ subscribers ]
-	);
-
-	const getSubscriberId = useCallback(
-		( subscriber: Subscriber ) => subscriber.subscription_id.toString(),
-		[]
-	);
-
-	const handleSubscriberOnClick = useCallback(
-		( subscriber: Subscriber ) => {
-			recordSubscriberClicked( 'row', {
-				site_id: siteId,
-				subscription_id: subscriber.subscription_id,
-				user_id: subscriber.user_id,
-			} );
-			handleSubscriberSelect( [ getSubscriberId( subscriber ) ] );
-		},
-		[ getSubscriberId, handleSubscriberSelect, recordSubscriberClicked, siteId ]
+		[ subscribers, recordSubscriberClicked, siteId ]
 	);
 
 	const fields = useMemo(
@@ -294,12 +288,7 @@ const SubscriberDataViews = ( {
 				label: translate( 'View' ),
 				callback: ( items: Subscriber[] ) => {
 					if ( items[ 0 ] ) {
-						recordSubscriberClicked( 'row', {
-							site_id: siteId,
-							subscription_id: items[ 0 ].subscription_id,
-							user_id: items[ 0 ].user_id,
-						} );
-						handleSubscriberSelect( [ getSubscriberId( items[ 0 ] ) ] );
+						handleSubscriberSelection( items[ 0 ] );
 					}
 				},
 				isPrimary: true,
@@ -328,11 +317,10 @@ const SubscriberDataViews = ( {
 		return baseActions;
 	}, [
 		selectedSubscriber,
-		handleSubscriberSelect,
+		handleSubscriberSelection,
 		handleUnsubscribe,
 		onGiftSubscription,
 		couponsAndGiftsEnabled,
-		getSubscriberId,
 		recordSubscriberClicked,
 		siteId,
 	] );
@@ -462,12 +450,12 @@ const SubscriberDataViews = ( {
 							data={ data }
 							fields={ fields }
 							view={ currentView }
-							onClickItem={ handleSubscriberOnClick }
+							onClickItem={ handleSubscriberSelection }
 							onChangeView={ handleViewChange }
 							selection={
 								selectedSubscriber ? [ selectedSubscriber.subscription_id.toString() ] : undefined
 							}
-							onChangeSelection={ handleSubscriberSelect }
+							onChangeSelection={ handleSubscriberSelection }
 							isLoading={ isLoading }
 							paginationInfo={ paginationInfo }
 							getItemId={ ( item: Subscriber ) => item.subscription_id.toString() }

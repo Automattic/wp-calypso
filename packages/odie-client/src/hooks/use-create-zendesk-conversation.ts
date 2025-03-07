@@ -99,6 +99,7 @@ export const useCreateZendeskConversation = (): ( ( {
 			...prevChat,
 			conversationId: conversation.id,
 			provider: 'zendesk',
+			status: 'loaded',
 		} ) );
 	};
 

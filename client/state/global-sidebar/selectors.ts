@@ -17,9 +17,6 @@ const SITE_DASHBOARD_ROUTES = [
 	'/site-logs/',
 	'/hosting-features/',
 	'/staging-site/',
-
-	// New Information Architecture
-	'/sites/overview',
 	'/sites/settings',
 
 	// Domain Management

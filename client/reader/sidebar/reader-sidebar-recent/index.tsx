@@ -9,6 +9,7 @@ import ReaderFollowingIcon from 'calypso/reader/components/icons/following-icon'
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
+import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
 import { AppState } from 'calypso/types';
 
 import './style.scss';
@@ -48,9 +49,7 @@ const ReaderSidebarRecent = ( {
 }: Props ): React.JSX.Element => {
 	const [ showAllSites, setShowAllSites ] = useState( false );
 	const sites = useSelector< AppState, Site[] >( getReaderFollowedSites );
-	const selectedSiteFeedId = useSelector< AppState, number >(
-		( state ) => state.readerUi.sidebar.selectedRecentSite
-	);
+	const selectedSiteFeedId = useSelector< AppState, number | null >( getSelectedRecentFeedId );
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 	const isRecentStream = RECENT_PATH_REGEX.test( path );
 

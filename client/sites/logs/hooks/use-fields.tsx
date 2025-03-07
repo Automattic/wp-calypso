@@ -186,13 +186,13 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 			{
 				id: 'http2',
 				type: 'text',
-				label: translate( 'HTTP2' ),
+				label: translate( 'HTTP/2' ),
 				enableSorting: false,
 			},
 			{
 				id: 'http_user_agent',
 				type: 'text',
-				label: translate( 'HTTP User Agent' ),
+				label: translate( 'User Agent' ),
 				enableSorting: false,
 			},
 			{
@@ -204,7 +204,7 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 			{
 				id: 'http_x_forwarded_for',
 				type: 'text',
-				label: translate( 'HTTP X Forwarded Port' ),
+				label: translate( 'X-Forwarded-For' ),
 				enableSorting: false,
 			},
 			{

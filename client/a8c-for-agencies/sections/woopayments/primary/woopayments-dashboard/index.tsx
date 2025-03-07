@@ -1,11 +1,11 @@
+import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import useFetchLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-licenses';
+import useFetchAllLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-all-licenses';
 import useFetchSitesWithPlugins from 'calypso/a8c-for-agencies/data/sites/use-fetch-sites-with-plugins';
-import { LICENSES_PER_PAGE } from 'calypso/a8c-for-agencies/sections/purchases/lib/constants';
 import {
 	LicenseFilter,
 	LicenseSortField,
@@ -48,13 +48,11 @@ const WooPaymentsDashboard = () => {
 	const [ isWooPaymentsDataLoading, setIsWooPaymentsDataLoading ] = useState( false );
 
 	const { data: licensesWithWooPayments, isLoading: isLoadingLicensesWithWooPayments } =
-		useFetchLicenses(
+		useFetchAllLicenses(
 			LicenseFilter.Attached,
 			'woopayments',
 			LicenseSortField.IssuedAt,
-			LicenseSortDirection.Descending,
-			1,
-			LICENSES_PER_PAGE
+			LicenseSortDirection.Descending
 		);
 
 	const { isLoading: isLoadingSitesWithPlugins, data: sitesWithPlugins } = useFetchSitesWithPlugins(
@@ -123,7 +121,14 @@ const WooPaymentsDashboard = () => {
 						<Title>{ title }</Title>
 						<Actions>
 							<MobileSidebarNavigation />
-							<AddWooPaymentsToSite />
+							<div className="woopayments-dashboard__actions">
+								{ isInProgress && (
+									<div className="woopayments-dashboard__spinner">
+										<Spinner /> { translate( 'Loading and refreshing data' ) }
+									</div>
+								) }
+								<AddWooPaymentsToSite />
+							</div>
 						</Actions>
 					</LayoutHeader>
 				</LayoutTop>

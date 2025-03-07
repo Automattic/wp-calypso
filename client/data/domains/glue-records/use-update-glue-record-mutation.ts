@@ -19,7 +19,7 @@ export default function useUpdateGlueRecordMutation(
 			wp.req
 				.put(
 					{
-						path: `/domains/glue-records`,
+						path: '/domains/glue-records',
 						apiNamespace: 'wpcom/v2',
 						method: 'PUT',
 					},

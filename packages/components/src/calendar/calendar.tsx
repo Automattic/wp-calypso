@@ -8,7 +8,7 @@ import {
 } from '@wordpress/components';
 import { dateI18n, getSettings } from '@wordpress/date';
 import { useState, useRef, useEffect } from '@wordpress/element';
-import { __, _n, sprintf, isRTL } from '@wordpress/i18n';
+import { __, sprintf, isRTL } from '@wordpress/i18n';
 import { arrowLeft, arrowRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import {
@@ -58,7 +58,6 @@ import './styles.scss';
 export function Calendar( {
 	currentDate,
 	onChange,
-	events = [],
 	isInvalidDate,
 	onMonthPreviewed,
 	startOfWeek: weekStartsOn = 0,
@@ -155,7 +154,6 @@ export function Calendar( {
 								isFocusAllowed={ isFocusWithinCalendar }
 								isToday={ isSameDay( day, new Date() ) }
 								isInvalid={ isInvalidDate ? isInvalidDate( day ) : false }
-								numEvents={ events.filter( ( event ) => isSameDay( event.date, day ) ).length }
 								onClick={ () => {
 									setSelected( [ day ] );
 									setFocusable( day );
@@ -226,7 +224,6 @@ type DayProps = {
 	isFocusable: boolean;
 	isFocusAllowed: boolean;
 	isToday: boolean;
-	numEvents: number;
 	isInvalid: boolean;
 	onClick: () => void;
 	onKeyDown: KeyboardEventHandler;
@@ -240,7 +237,6 @@ function Day( {
 	isFocusAllowed,
 	isToday,
 	isInvalid,
-	numEvents,
 	onClick,
 	onKeyDown,
 }: DayProps ) {
@@ -265,11 +261,10 @@ function Day( {
 				'is-selected': isSelected,
 				'is-today': isToday,
 				'is-invalid': isInvalid,
-				'has-events': numEvents > 0,
 			} ) }
 			disabled={ isInvalid }
 			tabIndex={ isFocusable ? 0 : -1 }
-			aria-label={ getDayLabel( day, isSelected, numEvents ) }
+			aria-label={ getDayLabel( day, isSelected ) }
 			onClick={ onClick }
 			onKeyDown={ onKeyDown }
 		>
@@ -278,34 +273,17 @@ function Day( {
 	);
 }
 
-function getDayLabel( date: Date, isSelected: boolean, numEvents: number ) {
+function getDayLabel( date: Date, isSelected: boolean ) {
 	const { formats } = getSettings();
 	const localizedDate = dateI18n( formats.date, date, -date.getTimezoneOffset() );
-	if ( isSelected && numEvents > 0 ) {
-		return sprintf(
-			// translators: 1: The calendar date. 2: Number of events on the calendar date.
-			_n(
-				'%1$s. Selected. There is %2$d event',
-				'%1$s. Selected. There are %2$d events',
-				numEvents
-			),
-			localizedDate,
-			numEvents
-		);
-	} else if ( isSelected ) {
+	if ( isSelected ) {
 		return sprintf(
 			// translators: %s: The calendar date.
 			__( '%1$s. Selected' ),
 			localizedDate
 		);
-	} else if ( numEvents > 0 ) {
-		return sprintf(
-			// translators: 1: The calendar date. 2: Number of events on the calendar date.
-			_n( '%1$s. There is %2$d event', '%1$s. There are %2$d events', numEvents ),
-			localizedDate,
-			numEvents
-		);
 	}
+
 	return localizedDate;
 }
 

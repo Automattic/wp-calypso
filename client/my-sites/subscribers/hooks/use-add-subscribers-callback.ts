@@ -29,29 +29,43 @@ export const useAddSubscribersCallback = ( siteId: number | null ) => {
 	const addSubscribersCallback = () => {
 		if ( ! importError ) {
 			if ( completedJob ) {
-				const { email_count, subscribed_count, already_subscribed_count, failed_subscribed_count } =
-					completedJob;
-				dispatch(
-					successNotice(
-						translate(
-							'Import completed. %(added)d subscribed, %(skipped)d already subscribed, and %(failed)d failed out of %(total)d %(totalLabel)s.',
-							{
-								args: {
-									added: subscribed_count,
-									skipped: already_subscribed_count,
-									failed: failed_subscribed_count,
-									total: email_count,
-									totalLabel: translate( 'subscriber', 'subscribers', {
-										count: email_count,
-									} ),
-								},
-							}
+				const {
+					email_count,
+					subscribed_count,
+					already_subscribed_count,
+					failed_subscribed_count,
+					status,
+				} = completedJob;
+				if ( status === 'cancelled' ) {
+					// Handle when the import is cancelled.
+					dispatch(
+						successNotice(
+							translate( 'Import has been successfully cancelled. Please try again.' )
 						)
-					)
-				);
+					);
+				} else {
+					dispatch(
+						successNotice(
+							translate(
+								'Import completed. %(added)d subscribed, %(skipped)d already subscribed, and %(failed)d failed out of %(total)d %(totalLabel)s.',
+								{
+									args: {
+										added: subscribed_count,
+										skipped: already_subscribed_count,
+										failed: failed_subscribed_count,
+										total: email_count,
+										totalLabel: translate( 'subscriber', 'subscribers', {
+											count: email_count,
+										} ),
+									},
+								}
+							)
+						)
+					);
 
-				// Invalidate the subscribers query to ensure the new subscribers are fetched
-				queryClient.invalidateQueries( { queryKey: [ 'subscribers', siteId ] } );
+					// Invalidate the subscribers query to ensure the new subscribers are fetched
+					queryClient.invalidateQueries( { queryKey: [ 'subscribers', siteId ] } );
+				}
 			} else {
 				dispatch(
 					successNotice(

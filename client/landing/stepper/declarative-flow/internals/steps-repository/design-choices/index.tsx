@@ -1,7 +1,7 @@
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import { OnboardSelect, ProductsList } from '@automattic/data-stores';
 import { themesIllustrationImage } from '@automattic/design-picker';
-import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer, isOnboardingFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import clsx from 'clsx';
@@ -10,14 +10,13 @@ import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { preventWidows } from 'calypso/lib/formatting';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { ONBOARD_STORE } from '../../../../stores';
 import kebabCase from '../../../../utils/kebabCase';
 import { useBigSkyBeforePlans } from '../../../helpers/use-bigsky-before-plans-experiment';
 import bigSkyBg from './big-sky-bg.png';
 import bigSkyFg from './big-sky-fg.png';
-import hiBigSky from './big-sky-no-text-small.png';
+import hiBigSky from './big-sky-no-text.svg';
 import DesignChoice from './design-choice';
 import GoalsFirstDesignChoice from './goals-first-design-choice';
 import themeChoiceFg from './theme-choice-fg.png';
@@ -34,9 +33,18 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const { submit, goBack } = navigation;
-	const headerText = isGoalsFirstVariation
-		? translate( 'How would you like to start?' )
-		: translate( 'Bring your vision to life' );
+
+	let documentHeaderText = translate( 'Bring your vision to life' );
+	let headerText = translate( 'Time to build your site!{{br/}}How would you like to get started?', {
+		components: {
+			br: <br />,
+		},
+	} );
+
+	if ( isGoalsFirstVariation ) {
+		documentHeaderText = headerText = translate( 'How would you like to start?' );
+	}
+
 	const subHeaderText = isGoalsFirstVariation
 		? translate( 'Select an option to begin. You can always change your mind later.' )
 		: undefined;
@@ -118,7 +126,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 
 	return (
 		<>
-			<DocumentHead title={ headerText } />
+			<DocumentHead title={ documentHeaderText } />
 			<StepContainer
 				flowName={ flow }
 				stepName={ stepName }
@@ -155,32 +163,12 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 							{ ! isLoading && isEligible && ! isGoalsFirstVariation && (
 								<DesignChoice
 									className="design-choices__try-big-sky"
-									title={ translate( 'Design with AI' ) }
+									title={ translate( 'Create your site with AI' ) }
 									description={ translate(
-										'Use our AI website builder to easily and quickly build the site of your dreams.'
+										'Tell our AI what you need, and watch it come to life.'
 									) }
-									imageSrc={ hiBigSky }
+									bgImageSrc={ hiBigSky }
 									destination="launch-big-sky"
-									footer={ preventWidows(
-										translate(
-											'To learn more about AI, you can review our {{a}}AI guidelines{{/a}}.',
-											{
-												components: {
-													a: (
-														<a
-															href={ localizeUrl( 'https://automattic.com/ai-guidelines/' ) }
-															target="_blank"
-															rel="noreferrer noopener"
-															onClick={ ( event ) => {
-																recordTracksEvent( 'calypso_big_sky_ai_guidelines_click' );
-																event.stopPropagation();
-															} }
-														/>
-													),
-												},
-											}
-										)
-									) }
 									onSelect={ ( destination ) => {
 										recordTracksEvent( 'calypso_big_sky_choose', {
 											flow,

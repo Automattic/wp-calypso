@@ -225,15 +225,15 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'hosting-overview',
+		name: 'overview',
 		paths: [ '/overview' ],
-		module: 'calypso/hosting/overview',
+		module: 'calypso/sites/overview',
 		group: 'sites',
 	},
 	{
-		name: 'hosting-features',
-		paths: [ '/hosting-features' ],
-		module: 'calypso/hosting/hosting-features',
+		name: 'hosting',
+		paths: [ '/hosting-config', '/hosting-features' ],
+		module: 'calypso/sites/hosting',
 		group: 'sites',
 	},
 	{
@@ -574,18 +574,6 @@ const sections = [
 		module: 'calypso/my-sites/customer-home',
 		group: 'sites',
 		trackLoadPerformance: true,
-	},
-	{
-		name: 'hosting',
-		paths: [ '/hosting-config' ],
-		module: 'calypso/hosting/overview',
-		group: 'sites',
-	},
-	{
-		name: 'site-overview',
-		paths: [ '/sites/overview' ],
-		module: 'calypso/sites/overview',
-		group: 'sites',
 	},
 	{
 		name: 'site-settings',

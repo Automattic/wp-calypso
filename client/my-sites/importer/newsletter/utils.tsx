@@ -108,6 +108,9 @@ export function getImporterStatus(
 }
 
 export function normalizeFromSite( fromSite: string ) {
+	if ( ! fromSite ) {
+		return '';
+	}
 	const result = fromSite.match( /\/@(?<slug>\w+)$/ );
 	if ( result?.groups?.slug ) {
 		return result.groups.slug + '.substack.com';

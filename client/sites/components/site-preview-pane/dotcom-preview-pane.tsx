@@ -6,7 +6,7 @@ import React, { useMemo } from 'react';
 import ItemView from 'calypso/layout/hosting-dashboard/item-view';
 import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { useSetTabBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-tab-breadcrumb';
-import HostingFeaturesIcon from 'calypso/sites/hosting-features/components/hosting-features-icon';
+import HostingFeaturesIcon from 'calypso/sites/hosting/components/hosting-features-icon';
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
 import { getMigrationStatus } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
@@ -26,7 +26,6 @@ import {
 	DOTCOM_GITHUB_DEPLOYMENTS,
 	DOTCOM_HOSTING_FEATURES,
 	DOTCOM_STAGING_SITE,
-	OVERVIEW,
 	SETTINGS_SITE,
 	SETTINGS_ADMINISTRATION_RESET_SITE,
 	SETTINGS_ADMINISTRATION_TRANSFER_SITE,
@@ -77,16 +76,9 @@ const DotcomPreviewPane = ( {
 				featureIds: [ DOTCOM_OVERVIEW ],
 			},
 			{
-				label: __( 'Overview' ),
-				enabled: config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ OVERVIEW ],
-			},
-			{
 				label: (
 					<span>
-						{ hasEnTranslation( 'Hosting Features' )
-							? __( 'Hosting Features' )
-							: __( 'Dev Tools' ) }
+						{ __( 'Hosting Features' ) }
 						<HostingFeaturesIcon />
 					</span>
 				),
