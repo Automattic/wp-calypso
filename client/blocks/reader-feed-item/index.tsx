@@ -23,8 +23,8 @@ import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import './style.scss';
 
-interface ReaderFeedItemRowProps {
-	feed: Reader.FeedItem;
+interface ReaderFeedItemProps {
+	feedItem: Reader.FeedItem;
 	source: string; // Indicates where the feed item is rendered.
 	uiPosition?: number; // The position of the feed item in case of list.
 }
@@ -32,11 +32,7 @@ interface ReaderFeedItemRowProps {
 /**
  * A component that renders a single feed item row. This includes both wpcom and non-wpcom feeds.
  */
-export default function ReaderFeedItemRow( {
-	feed: feedItem,
-	source,
-	uiPosition,
-}: ReaderFeedItemRowProps ) {
+export default function ReaderFeedItem( { feedItem, source, uiPosition }: ReaderFeedItemProps ) {
 	const translate = useTranslate();
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const dispatch = useDispatch();

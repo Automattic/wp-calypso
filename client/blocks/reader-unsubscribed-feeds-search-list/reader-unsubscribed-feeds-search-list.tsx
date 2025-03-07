@@ -1,7 +1,7 @@
 import { Reader } from '@automattic/data-stores';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useMemo } from 'react';
-import ReaderFeedItemRow from 'calypso/blocks/reader-feed-item';
+import ReaderFeedItem from 'calypso/blocks/reader-feed-item';
 import { SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST } from 'calypso/landing/subscriptions/tracks';
 import './style.scss';
 
@@ -15,9 +15,9 @@ const ReaderUnsubscribedFeedsSearchList = () => {
 
 		return feedItems?.map( ( feed, index ): JSX.Element => {
 			return (
-				<ReaderFeedItemRow
+				<ReaderFeedItem
 					key={ `${ feed.blog_ID }-${ feed.feed_ID }` }
-					feed={ feed }
+					feedItem={ feed }
 					uiPosition={ index }
 					source={ SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST }
 				/>
