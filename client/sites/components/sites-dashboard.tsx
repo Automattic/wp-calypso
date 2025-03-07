@@ -165,7 +165,9 @@ const SitesDashboard = ( {
 		sitesFilterCallback,
 		'all',
 		[ 'is_a4a_dev_site', 'site_migration' ],
-		[ 'theme_slug' ]
+		[ 'theme_slug' ],
+		// Don't fetch sites on narrow screens since it's not visible.
+		isWide
 	);
 
 	useShowSiteCreationNotice( allSites, newSiteID );
@@ -377,8 +379,10 @@ const SitesDashboard = ( {
 		return null;
 	}
 
+	// Hide the listing on narrow screens since it's not visible.
+	const hideListing = ! isWide;
+
 	// todo: temporary mock data
-	const hideListing = false;
 	const isNarrowView = false;
 
 	const dashboardTitle = siteType === 'p2' ? translate( 'P2s' ) : translate( 'Sites' );
