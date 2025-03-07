@@ -1,3 +1,4 @@
+// @ts-nocheck
 import imjv from 'is-my-json-valid';
 import { forEach, get, isEmpty } from 'lodash';
 import jsonSchemaDraft04 from './lib/json-schema-draft-04.json';
