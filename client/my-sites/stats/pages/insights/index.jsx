@@ -57,8 +57,8 @@ function StatsInsights() {
 	// Necessary to properly configure the fixed navigation headers.
 	sessionStorage.setItem( 'jp-stats-last-tab', 'insights' );
 
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const insightsPageClasses = clsx( 'stats', { 'is-odyssey-stats': isOdysseyStats } );
+	const isWPAdmin = config.isEnabled( 'is_odyssey' );
+	const insightsPageClasses = clsx( 'stats', { 'is-odyssey-stats': isWPAdmin } );
 
 	// TODO: should be refactored into separate components
 	/* eslint-disable wpcalypso/jsx-classname-namespace */

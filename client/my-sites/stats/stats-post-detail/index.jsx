@@ -185,9 +185,9 @@ class StatsPostDetail extends Component {
 			noViewsLabel = translate( 'Your post has not received any views yet!' );
 		}
 
-		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+		const isWPAdmin = config.isEnabled( 'is_odyssey' );
 		const postDetailPageClasses = clsx( 'stats has-fixed-nav', {
-			'is-odyssey-stats': isOdysseyStats,
+			'is-odyssey-stats': isWPAdmin,
 		} );
 
 		return (

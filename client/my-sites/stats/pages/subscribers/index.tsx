@@ -101,8 +101,8 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 		'YYYY-MM-DD'
 	) }`;
 
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const subscribersPageClasses = clsx( 'stats', { 'is-odyssey-stats': isOdysseyStats } );
+	const isWPAdmin = config.isEnabled( 'is_odyssey' );
+	const subscribersPageClasses = clsx( 'stats', { 'is-odyssey-stats': isWPAdmin } );
 
 	return (
 		<Main fullWidthLayout>
