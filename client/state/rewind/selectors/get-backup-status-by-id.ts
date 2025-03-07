@@ -12,6 +12,10 @@ const getBackupStatusById = ( state: AppState, siteId: number, id: number ): obj
 	const allBackups = getRewindBackups( state, siteId );
 	const backup = allBackups?.find( ( b ) => b.id === id );
 
+	if ( ! backup ) {
+		return null;
+	}
+
 	return {
 		// Is this backup currently in progress?
 		isInProgress: backup?.status === 'started',
@@ -20,7 +24,7 @@ const getBackupStatusById = ( state: AppState, siteId: number, id: number ): obj
 		isFinished: backup?.status === 'finished',
 
 		// Has this backup failed? (any status other than started/finished)
-		hasFailed: backup && backup.status !== 'started' && backup.status !== 'finished',
+		hasFailed: backup?.status !== 'started' && backup?.status !== 'finished',
 
 		// The current status of the backup
 		status: backup?.status,
