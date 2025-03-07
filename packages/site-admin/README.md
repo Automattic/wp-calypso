@@ -114,7 +114,7 @@ const SidebarContent = () => {
     return (
         <ItemGroup>
             <SidebarNavigationItem
-                icon={ <Icon icon={ navigation } /> }
+                icon={ navigation }
                 key="sidebar-item-reports"
                 to="/reports"
                 uid="reports"
