@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
@@ -23,6 +24,8 @@ import SubscribersChartSection, { PeriodType } from '../../stats-subscribers-cha
 import SubscribersHighlightSection from '../../stats-subscribers-highlight-section';
 import StatsModuleListing from '../shared/stats-module-listing';
 import type { Moment } from 'moment';
+
+import './style.scss';
 
 function StatsSubscribersPageError() {
 	const translate = useTranslate();
@@ -100,11 +103,14 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 		'YYYY-MM-DD'
 	) }`;
 
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const subscribersPageClasses = clsx( 'stats', { 'is-odyssey-stats': isOdysseyStats } );
+
 	return (
 		<Main fullWidthLayout>
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<PageViewTracker path="/stats/subscribers/:site" title="Stats > Subscribers" />
-			<div className="stats">
+			<div className={ subscribersPageClasses }>
 				<NavigationHeader
 					className="stats__section-header modernized-header"
 					title={ STATS_PRODUCT_NAME }
