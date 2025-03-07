@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import { LICENSES_PER_PAGE } from 'calypso/a8c-for-agencies/sections/purchases/lib/constants';
 import {
 	LicenseFilter,
 	LicenseSortDirection,
@@ -19,6 +18,8 @@ export const getFetchLicensesQueryKey = (
 ) => {
 	return [ 'a4a-all-licenses', filter, search, sortField, sortDirection, agencyId ];
 };
+
+const FETCH_SIZE = 100;
 
 export default function useFetchAllLicenses(
 	filter: LicenseFilter,
@@ -48,7 +49,7 @@ export default function useFetchAllLicenses(
 						page: currentPage,
 						sort_field: sortField,
 						sort_direction: sortDirection,
-						per_page: LICENSES_PER_PAGE,
+						per_page: FETCH_SIZE,
 					}
 				);
 
