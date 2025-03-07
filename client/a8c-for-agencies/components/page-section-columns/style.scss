@@ -22,8 +22,15 @@
 		padding-inline: 64px;
 	}
 
-	@include break-medium {
+	@include break-large {
 		padding: 80px 64px;
+	}
+
+	> * {
+		@include break-medium {
+			max-width: 1500px;
+			margin-inline: auto;
+		}
 	}
 }
 
