@@ -134,6 +134,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/importer-medium' ),
 	},
 
+	IMPORTER_PLAYGROUND: {
+		slug: 'importerPlayground',
+		asyncComponent: () => import( './steps-repository/playground/components/playground-setup' ),
+	},
+
 	IMPORTER_SQUARESPACE: {
 		slug: 'importerSquarespace',
 		asyncComponent: () => import( './steps-repository/importer-squarespace' ),
@@ -392,11 +397,6 @@ export const STEPS = {
 	PLAYGROUND: {
 		slug: 'playground',
 		asyncComponent: () => import( './steps-repository/playground' ),
-	},
-
-	PLAYGROUND_SETUP: {
-		slug: 'playground-setup',
-		asyncComponent: () => import( './steps-repository/playground/components/playground-setup' ),
 	},
 } satisfies Record< string, StepperStep >;
 

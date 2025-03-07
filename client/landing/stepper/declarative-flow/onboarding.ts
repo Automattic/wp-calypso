@@ -110,7 +110,6 @@ const onboarding: Flow = {
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PROCESSING,
 			STEPS.POST_CHECKOUT_ONBOARDING,
-			STEPS.PLAYGROUND_SETUP,
 		] );
 
 		if ( isGoalsAtFrontExperiment ) {
@@ -125,7 +124,6 @@ const onboarding: Flow = {
 
 		// TODO: Add an experiment to test the playground step
 		steps.push( STEPS.PLAYGROUND );
-		steps.push( STEPS.PLAYGROUND_SETUP );
 
 		return steps;
 	},
@@ -200,12 +198,12 @@ const onboarding: Flow = {
 				return [ `/home/${ providedDependencies.siteSlug }`, null ];
 			}
 
-			// TODO find a way to redirect to the playground step
 			const playgroundId = getQueryArg( window.location.href, 'playground' );
 			if ( playgroundId && providedDependencies.siteSlug ) {
 				return [
-					addQueryArgs( withLocale( '/setup/onboarding/playground-setup', locale ), {
+					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
 						siteSlug: providedDependencies.siteSlug,
+						siteId: providedDependencies.siteId,
 						playground: playgroundId,
 					} ),
 					null,
@@ -395,7 +393,7 @@ const onboarding: Flow = {
 						 */
 						const playgroundId = getQueryArg( window.location.href, 'playground' );
 						const redirectTo: string = playgroundId
-							? addQueryArgs( withLocale( '/setup/onboarding/playground-setup', locale ), {
+							? addQueryArgs( withLocale( '/setup/site-setup/playground', locale ), {
 									siteSlug,
 									playground: playgroundId,
 							  } )

@@ -37,21 +37,21 @@ const createCancelOrder = ( siteId, importerId ) =>
 	toApi( { importerId, importerState: appStates.CANCEL_PENDING, site: { ID: siteId } } );
 
 // Creates a request to expire an importer session
-export const createExpiryOrder = ( siteId, importerId ) =>
+const createExpiryOrder = ( siteId, importerId ) =>
 	toApi( { importerId, importerState: appStates.EXPIRE_PENDING, site: { ID: siteId } } );
 
 // Creates a request to clear all import sessions
-export const createClearOrder = ( siteId, importerId ) =>
+const createClearOrder = ( siteId, importerId ) =>
 	toApi( { importerId, importerState: appStates.IMPORT_CLEAR, site: { ID: siteId } } );
 
 // Creates a request object to start performing the actual import
-export const createImportOrder = ( importerStatus ) =>
+const createImportOrder = ( importerStatus ) =>
 	toApi( {
 		...importerStatus,
 		importerState: appStates.IMPORTING,
 	} );
 
-export const updateImporter = ( siteId, importerStatus ) =>
+const updateImporter = ( siteId, importerStatus ) =>
 	wp.req.post( {
 		path: `/sites/${ siteId }/imports/${ importerStatus.importerId }`,
 		formData: [ [ 'importStatus', JSON.stringify( importerStatus ) ] ],

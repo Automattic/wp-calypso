@@ -1,6 +1,15 @@
 import { zipWpContent, type PlaygroundClient } from '@wp-playground/client';
-import wp from 'calypso/lib/wp';
-import { uploadExportFile, updateImporter, createClearOrder } from 'calypso/state/imports/actions';
+import { uploadExportFile } from 'calypso/state/imports/actions';
+
+export type ImportStatus =
+	| 'loading'
+	| 'uploading'
+	| 'uploadSuccess'
+	| 'importing'
+	| 'importSuccess'
+	| 'importStopped'
+	| 'importExpired'
+	| 'importFailure';
 
 export async function getSiteZip( playground: PlaygroundClient ): Promise< File > {
 	const zipBytes = await zipWpContent( playground, {
@@ -27,13 +36,4 @@ export async function importPlaygroundSite(
 		file: siteZip,
 	} );
 	return importer.importId;
-}
-
-export async function clearImport( siteId: number, importId: string ) {
-	await updateImporter( siteId, createClearOrder( siteId, importId ) );
-}
-
-export async function getImportStatus( siteId: number ): Promise< string > {
-	const data = await wp.req.get( `/sites/${ siteId }/imports/` );
-	return data.importStatus;
 }
