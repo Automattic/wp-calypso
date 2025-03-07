@@ -50,10 +50,3 @@ declare module 'calypso/components/async-load' {
 
 	export default AsyncLoad;
 }
-
-declare module 'calypso/components/drop-zone' {
-	const DropZone: React.FC< {
-		onFilesDrop: ( files: File[] ) => void;
-	} >;
-	export default DropZone;
-}
