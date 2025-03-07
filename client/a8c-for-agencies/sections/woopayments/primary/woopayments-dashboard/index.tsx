@@ -1,8 +1,10 @@
 import { Spinner } from '@wordpress/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
+import { PageBodyPlaceholder } from 'calypso/a8c-for-agencies/components/page-placeholder';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import useFetchAllLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-all-licenses';
 import useFetchSitesWithPlugins from 'calypso/a8c-for-agencies/data/sites/use-fetch-sites-with-plugins';
@@ -20,6 +22,7 @@ import AddWooPaymentsToSite from '../../add-woopayments-to-site';
 import { WooPaymentsProvider } from '../../context';
 import WooPaymentsDashboardContent from '../../dashboard-content';
 import useFetchWooPaymentsData from '../../hooks/use-fetch-woopayments-data';
+import WooPaymentsDashboardEmptyState from './empty-state';
 import type { SitesWithWooPaymentsState, SitesWithWooPaymentsPlugins } from '../../types';
 import type { License } from 'calypso/state/partner-portal/types';
 
@@ -59,16 +62,22 @@ const WooPaymentsDashboard = () => {
 		[ 'woocommerce-payments/woocommerce-payments' ]
 	);
 
-	const { data: woopaymentsData, isLoading: isLoadingWooPaymentsData } =
-		useFetchWooPaymentsData( isWooPaymentsDataLoading );
+	const isLoading = isLoadingLicensesWithWooPayments || isLoadingSitesWithPlugins;
+	const showEmptyState = ! isLoading && ! sitesWithPluginsStates.length;
 
-	const isInProgress = woopaymentsData?.status === 'in_progress';
+	const { data: woopaymentsData, isLoading: isLoadingWooPaymentsData } = useFetchWooPaymentsData(
+		isWooPaymentsDataLoading,
+		!! sitesWithPluginsStates.length
+	);
+
+	const isInProgress =
+		woopaymentsData?.status === 'in_progress' && !! sitesWithPluginsStates.length;
 
 	useEffect( () => {
 		if ( isInProgress ) {
 			setIsWooPaymentsDataLoading( true );
 		}
-	}, [ isInProgress ] );
+	}, [ isInProgress, sitesWithPluginsStates ] );
 
 	const createInitialSiteState = useCallback(
 		( license: License ) => {
@@ -96,19 +105,23 @@ const WooPaymentsDashboard = () => {
 	}, [ sitesWithPlugins, licensesWithWooPayments, createInitialSiteState ] );
 
 	const content = useMemo( () => {
-		if ( isLoadingLicensesWithWooPayments || isLoadingSitesWithPlugins ) {
-			return <div>Loading...</div>;
+		if ( isLoading ) {
+			return <PageBodyPlaceholder />;
 		}
 
-		if ( ! sitesWithPluginsStates.length ) {
-			return <div>No sites with WooPayments</div>;
+		if ( showEmptyState ) {
+			return <WooPaymentsDashboardEmptyState />;
 		}
 
 		return <WooPaymentsDashboardContent />;
-	}, [ isLoadingLicensesWithWooPayments, isLoadingSitesWithPlugins, sitesWithPluginsStates ] );
+	}, [ isLoading, showEmptyState ] );
 
 	return (
-		<Layout className="woopayments-dashboard" title={ title } wide>
+		<Layout
+			className={ clsx( 'woopayments-dashboard', { 'is-empty': showEmptyState } ) }
+			title={ title }
+			wide
+		>
 			<WooPaymentsProvider
 				value={ {
 					woopaymentsData,
@@ -127,7 +140,7 @@ const WooPaymentsDashboard = () => {
 										<Spinner /> { translate( 'Loading and refreshing data' ) }
 									</div>
 								) }
-								<AddWooPaymentsToSite />
+								{ ! isLoading && <AddWooPaymentsToSite /> }
 							</div>
 						</Actions>
 					</LayoutHeader>
