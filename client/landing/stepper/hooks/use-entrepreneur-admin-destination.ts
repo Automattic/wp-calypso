@@ -1,4 +1,3 @@
-import { URL } from 'url';
 import { addQueryArgs } from '@wordpress/url';
 import { useSiteData } from './use-site-data';
 
@@ -8,7 +7,8 @@ export const useEntrepreneurAdminDestination = (): string | null => {
 		return null;
 	}
 
-	const siteUrl = URL.parse( site.URL );
+	const siteUrl = globalThis.URL.parse( site.URL );
+
 	if ( ! siteUrl ) {
 		return null;
 	}
