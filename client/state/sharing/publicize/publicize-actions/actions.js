@@ -24,7 +24,7 @@ export function fetchPostShareActionsScheduled( siteId, postId ) {
 			postId,
 		} );
 
-		const getScheduledPath = `/sites/${ siteId }/publicize/scheduled-actions/posts/${ postId }`;
+		const getScheduledPath = `/sites/${ siteId }/publicize/scheduled-actions?post_id=${ postId }`;
 		return wpcom.req.get(
 			{
 				path: getScheduledPath,
@@ -100,7 +100,7 @@ export function deletePostShareAction( siteId, postId, actionId ) {
 			actionId,
 		} );
 
-		const deleteActionPath = `/sites/${ siteId }/publicize/scheduled-actions/posts/${ postId }/${ actionId }`;
+		const deleteActionPath = `/sites/${ siteId }/publicize/scheduled-actions/${ actionId }`;
 		return wpcom.req.get(
 			{
 				path: deleteActionPath,
@@ -136,7 +136,7 @@ export function schedulePostShareAction( siteId, postId, message, share_date, co
 		return Promise.all(
 			connections.map( ( connection_id ) =>
 				wpcom.req.post( {
-					path: `/sites/${ siteId }/publicize/scheduled-actions/posts/${ postId }/`,
+					path: `/sites/${ siteId }/publicize/scheduled-actions?post_id=${ postId }`,
 					body: { message, share_date, connection_id },
 					apiNamespace: 'wpcom/v2',
 				} )
