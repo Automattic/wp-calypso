@@ -20,7 +20,11 @@ const urlQuery = buildQueryString( {
 const useReadFeedSiteQuery = ( siteId?: number ) => {
 	return useQuery( {
 		queryKey: [ 'read', 'sites', siteId, urlQuery ],
-		queryFn: async () => {
+		queryFn: async (): Promise< ReadFeedSiteResponse | undefined > => {
+			if ( ! siteId ) {
+				return;
+			}
+
 			return wpcomRequest< ReadFeedSiteResponse >( {
 				path: `/read/sites/${ siteId }`,
 				query: urlQuery,

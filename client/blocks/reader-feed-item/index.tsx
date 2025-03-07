@@ -69,15 +69,15 @@ export default function ReaderFeedItemRow( {
 	}, [ railcar, uiPosition ] );
 
 	const { blog_ID: blogId = null, feed_ID: feedId } = feedItem;
+	const isWpcomFeed = !! blogId;
 	const { data: feed, isLoading: isFeedLoading } = Reader.useReadFeedQuery( feedId );
 	const { data: site, isLoading: isSiteLoading } = Reader.useReadFeedSiteQuery( Number( blogId ) );
 
-	if ( isFeedLoading || isSiteLoading ) {
+	if ( isFeedLoading || ( isWpcomFeed && isSiteLoading ) ) {
 		return null;
 	}
 
 	// Reader feed item row fields.
-	const isWpcomFeed = !! feed?.blog_ID;
 	const subscribeUrl = feedItem?.subscribe_URL; // For non-wpcom feeds, use the subscribe URL as it's available in all cases.
 	const description = isWpcomFeed ? site?.description : feed?.description;
 	const displayUrl = isWpcomFeed ? getSiteUrl( { feed, site } ) : subscribeUrl;
@@ -182,6 +182,7 @@ export default function ReaderFeedItemRow( {
 			disabled={ subscribeDisabled }
 			isBusy={ isSubscribing }
 			onClick={ onSubscribeClick }
+			__next40pxDefaultSize
 		>
 			{ hasSubscribed
 				? translate( 'Subscribed', {
@@ -196,64 +197,62 @@ export default function ReaderFeedItemRow( {
 	);
 
 	return (
-		<>
-			<HStack as="li" className="reader-feed-item" alignment="center" spacing={ 8 }>
-				<VStack className="reader-feed-item__site-preview-v-stack">
-					<HStack>
-						<HStack className="reader-feed-item__site-preview-h-stack" spacing={ 3 }>
+		<HStack as="li" className="reader-feed-item" alignment="center" spacing={ 8 }>
+			<VStack className="reader-feed-item__site-preview-v-stack">
+				<HStack>
+					<HStack className="reader-feed-item__site-preview-h-stack" spacing={ 3 }>
+						{ ! isWpcomFeed ? (
+							<ExternalLink
+								className="reader-feed-item__icon"
+								href={ feedUrl }
+								onClick={ onIconClick }
+								target="_blank"
+							>
+								<SiteIcon iconUrl={ iconUrl } defaultIcon={ rss } size={ 40 } />
+							</ExternalLink>
+						) : (
+							<a className="reader-feed-item__icon" href={ feedUrl } onClick={ onIconClick }>
+								<SiteIcon iconUrl={ iconUrl } defaultIcon={ rss } size={ 40 } />
+							</a>
+						) }
+						<VStack className="reader-feed-item__title-with-url-v-stack" spacing={ 0 }>
 							{ ! isWpcomFeed ? (
 								<ExternalLink
-									className="reader-feed-item__icon"
+									className="reader-feed-item__title"
 									href={ feedUrl }
-									onClick={ onIconClick }
 									target="_blank"
+									onClick={ onTitleClick }
 								>
-									<SiteIcon iconUrl={ iconUrl } defaultIcon={ rss } size={ 40 } />
+									{ title ? title : filteredDisplayUrl }
 								</ExternalLink>
 							) : (
-								<a className="reader-feed-item__icon" href={ feedUrl } onClick={ onIconClick }>
-									<SiteIcon iconUrl={ iconUrl } defaultIcon={ rss } size={ 40 } />
+								<a className="reader-feed-item__title" href={ feedUrl } onClick={ onTitleClick }>
+									{ title ? title : filteredDisplayUrl }
 								</a>
 							) }
-							<VStack className="reader-feed-item__title-with-url-v-stack" spacing={ 0 }>
-								{ ! isWpcomFeed ? (
-									<ExternalLink
-										className="reader-feed-item__title"
-										href={ feedUrl }
-										target="_blank"
-										onClick={ onTitleClick }
-									>
-										{ title ? title : filteredDisplayUrl }
-									</ExternalLink>
-								) : (
-									<a className="reader-feed-item__title" href={ feedUrl } onClick={ onTitleClick }>
-										{ title ? title : filteredDisplayUrl }
-									</a>
-								) }
-								<ExternalLink
-									className="reader-feed-item__url"
-									href={ displayUrl }
-									target="_blank"
-									onClick={ onDisplayUrlClick }
-								>
-									{ filteredDisplayUrl }
-								</ExternalLink>
-							</VStack>
-						</HStack>
-						<div className="reader-feed-item__description">{ description }</div>
-
-						<div className="reader-feed-item__subscribe-button">
-							<SubscribeButton />
-						</div>
+							<ExternalLink
+								className="reader-feed-item__url"
+								href={ displayUrl }
+								target="_blank"
+								onClick={ onDisplayUrlClick }
+							>
+								{ filteredDisplayUrl }
+							</ExternalLink>
+						</VStack>
 					</HStack>
-					<div className="reader-feed-item__mobile-description" aria-hidden="true">
-						{ description }
-					</div>
-					<div className="reader-feed-item__mobile-subscribe-button">
+					<div className="reader-feed-item__description">{ description }</div>
+
+					<div className="reader-feed-item__subscribe-button">
 						<SubscribeButton />
 					</div>
-				</VStack>
-			</HStack>
-		</>
+				</HStack>
+				<div className="reader-feed-item__mobile-description" aria-hidden="true">
+					{ description }
+				</div>
+				<div className="reader-feed-item__mobile-subscribe-button">
+					<SubscribeButton />
+				</div>
+			</VStack>
+		</HStack>
 	);
 }
