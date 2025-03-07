@@ -1,5 +1,5 @@
-import { ProgressBar } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { ProgressBar } from 'calypso/components/progress-bar';
 import './style.scss';
 
 type CardContentProps = {
@@ -20,7 +20,7 @@ export const StagingSiteLoadingBarCardContent = ( {
 				<>
 					<ProgressBar
 						key="delete-loading-bar"
-						value={ progress * 100 }
+						progress={ progress }
 						className="staging-site-card__loading-bar"
 					/>
 					<p>{ translate( 'We are deleting your staging site.' ) }</p>
@@ -35,7 +35,7 @@ export const StagingSiteLoadingBarCardContent = ( {
 			  );
 		return (
 			<div data-testid="transferring-staging-content">
-				<ProgressBar value={ progress * 100 } className="staging-site-card__loading-bar" />
+				<ProgressBar progress={ progress } className="staging-site-card__loading-bar" />
 				<p>{ message }</p>
 			</div>
 		);
