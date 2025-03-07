@@ -122,6 +122,9 @@ const onboarding: Flow = {
 			);
 		}
 
+		// TODO: Add an experiment to test the playground step
+		steps.push( STEPS.PLAYGROUND );
+
 		return steps;
 	},
 
@@ -193,6 +196,18 @@ const onboarding: Flow = {
 
 			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
 				return [ `/home/${ providedDependencies.siteSlug }`, null ];
+			}
+
+			const playgroundId = getQueryArg( window.location.href, 'playground' );
+			if ( playgroundId && providedDependencies.siteSlug ) {
+				return [
+					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
+						siteSlug: providedDependencies.siteSlug,
+						siteId: providedDependencies.siteId,
+						playground: playgroundId,
+					} ),
+					null,
+				];
 			}
 
 			const destination = addQueryArgs( withLocale( '/setup/site-setup', locale ), {
@@ -373,16 +388,25 @@ const onboarding: Flow = {
 					if ( providedDependencies.goToCheckout ) {
 						const siteSlug = providedDependencies.siteSlug as string;
 
+						/**
+						 * If the user comes from the Playground onboarding flow,
+						 * redirect the user back to Playground to start the import.
+						 */
+						const playgroundId = getQueryArg( window.location.href, 'playground' );
+						const redirectTo: string = playgroundId
+							? addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
+									siteSlug,
+									siteId: providedDependencies.siteId,
+									playground: playgroundId,
+							  } )
+							: addQueryArgs( withLocale( '/setup/onboarding/post-checkout-onboarding', locale ), {
+									siteSlug,
+							  } );
+
 						// replace the location to delete processing step from history.
 						window.location.replace(
 							addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-								// Go to the post-checkout step to see whether to wait for the atomic transfer
-								redirect_to: addQueryArgs(
-									withLocale( '/setup/onboarding/post-checkout-onboarding', locale ),
-									{
-										siteSlug,
-									}
-								),
+								redirect_to: redirectTo,
 								signup: 1,
 								checkoutBackUrl: pathToUrl( backDestination ?? '' ),
 								coupon,
@@ -396,6 +420,8 @@ const onboarding: Flow = {
 						window.location.replace( destination );
 					}
 				}
+				case 'playground':
+					return navigate( 'domains' );
 				default:
 					return;
 			}
