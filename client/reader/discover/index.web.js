@@ -12,7 +12,7 @@ import {
 } from 'calypso/controller';
 import { setLocaleMiddleware } from 'calypso/controller/shared';
 import { sectionify } from 'calypso/lib/route';
-import { sidebar, updateLastRoute } from 'calypso/reader/controller';
+import { sidebar } from 'calypso/reader/controller';
 import {
 	trackPageLoad,
 	trackUpdatesLoaded,
@@ -94,7 +94,6 @@ export default function ( router ) {
 		redirectInvalidLanguage,
 		redirectWithoutLocaleParamInFrontIfLoggedIn,
 		setLocaleMiddleware(),
-		updateLastRoute,
 		sidebar,
 		discover,
 		makeLayout,

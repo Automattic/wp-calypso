@@ -26,18 +26,9 @@ import {
 } from './controller-helper';
 
 const analyticsPageTitle = 'Reader';
-let lastRoute = null;
 
 function renderFeedError( context, next ) {
 	context.primary = createElement( FeedError );
-	next();
-}
-
-export function updateLastRoute( context, next ) {
-	if ( lastRoute ) {
-		context.lastRoute = lastRoute;
-	}
-	lastRoute = context.path;
 	next();
 }
 
