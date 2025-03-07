@@ -32,7 +32,7 @@ export function ProgressBar( { className, progress, delta = 0.04 }: ProgressBarP
 		}
 
 		return () => clearTimeout( timeoutReference );
-	}, [ simulatedProgress, progress, setProgress ] );
+	}, [ simulatedProgress, progress, setProgress, delta ] );
 
 	return <WPProgressBar value={ simulatedProgress * 100 } className={ className } />;
 }
