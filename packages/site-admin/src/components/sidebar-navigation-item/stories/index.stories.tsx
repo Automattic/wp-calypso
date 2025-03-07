@@ -63,7 +63,6 @@ export const Default: Story = {
 Default.storyName = 'SidebarNavigationItem';
 Default.args = {
 	children: __( 'Site Photos Gallery', 'a8c-site-admin' ),
-	as: 'button',
 	onClick: fn(),
 };
 
