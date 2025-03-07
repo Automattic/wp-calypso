@@ -119,6 +119,10 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 	] );
 
 	useEffect( () => {
+		if ( ! currentSupportInteraction?.uuid ) {
+			return;
+		}
+
 		setMainChatState( ( prevChat ) => {
 			if ( ! prevChat.supportInteractionId ) {
 				return {
