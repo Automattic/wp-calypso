@@ -7,7 +7,11 @@ export const useEntrepreneurAdminDestination = (): string | null => {
 		return null;
 	}
 
-	const siteUrl = globalThis.URL.parse( site.URL );
+	if ( ! globalThis.URL.canParse( site.URL ) ) {
+		return null;
+	}
+
+	const siteUrl = new globalThis.URL( site.URL );
 
 	if ( ! siteUrl ) {
 		return null;
