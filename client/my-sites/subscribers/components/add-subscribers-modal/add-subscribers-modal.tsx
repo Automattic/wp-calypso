@@ -27,32 +27,44 @@ const AddSubscribersModal = ( {
 	isVisible,
 	onClose,
 	addSubscribersCallback,
+	initialMethod = '',
 }: {
 	isVisible: boolean;
 	onClose: () => void;
 	addSubscribersCallback: () => void;
+	initialMethod?: string;
 } ) => {
 	const site = useSelector( getSelectedSite );
-	const translate = useTranslate();
-	const [ addingMethod, setAddingMethod ] = useState( '' );
 	const hasUnlimitedSubscribers = useSelector( ( state: AppState ) =>
 		siteHasFeature( state, site?.ID, FEATURE_UNLIMITED_SUBSCRIBERS )
 	);
 	const isJetpack = useSelector( ( state: AppState ) => isJetpackSite( state, site?.ID ) );
+	const translate = useTranslate();
+	const [ addingMethod, setAddingMethod ] = useState( initialMethod );
+	const [ isUploading, setIsUploading ] = useState( false );
+	const isImportInProgress = useInProgressState();
+	const hasStaleImportJobs = useHasStaleImportJobs();
 	// There is also a separate `importers/substack` flag but that refers to a separate Substack content importer.
 	// This flag refers to Substack free/paid subscriber + content importer.
 	const isSubstackSubscriberImporterEnabled = isEnabled( 'importers/newsletter' );
 
-	const modalTitle = translate( 'Add subscribers to %s', {
-		args: [ site?.title || '' ],
-		comment: "%s is the site's title",
-	} );
+	const importFromSubstack = () => {
+		recordTracksEvent( 'calypso_subscribers_add_question', {
+			method: 'substack',
+		} );
+		if ( isJetpackCloud() ) {
+			window.location.href = `https://wordpress.com/import/newsletter/substack/${
+				site?.slug || site?.ID || ''
+			}`;
+		} else {
+			page( `/import/newsletter/substack/${ site?.slug || site?.ID || '' }` );
+		}
+	};
 
-	const [ isUploading, setIsUploading ] = useState( false );
-	const onImportStarted = ( hasFile: boolean ) => setIsUploading( hasFile );
-
-	const isImportInProgress = useInProgressState();
-	const hasStaleImportJobs = useHasStaleImportJobs();
+	// Update addingMethod when initialMethod changes
+	useEffect( () => {
+		setAddingMethod( initialMethod );
+	}, [ initialMethod ] );
 
 	const onImportFinished = () => {
 		setIsUploading( false );
@@ -63,6 +75,13 @@ const AddSubscribersModal = ( {
 	if ( ! isVisible ) {
 		return null;
 	}
+
+	const modalTitle = translate( 'Add subscribers to %s', {
+		args: [ site?.title || '' ],
+		comment: "%s is the site's title",
+	} );
+
+	const onImportStarted = ( hasFile: boolean ) => setIsUploading( hasFile );
 
 	const isFreeSite = site?.plan?.is_free ?? false;
 	const isBusinessTrial = site ? isBusinessTrialSite( site ) : false;
