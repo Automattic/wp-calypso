@@ -46,9 +46,7 @@ class SocialLogin extends Component {
 				) }
 
 				<CompactCard className="social-login__description">
-					{ translate(
-						'Log in faster with the accounts you already use. We’ll never post without your permission.'
-					) }
+					{ translate( 'Log in faster with the accounts you already use.' ) }
 				</CompactCard>
 
 				<SocialLoginService service="google" icon={ <GoogleIcon /> } />
