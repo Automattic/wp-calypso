@@ -17,7 +17,8 @@ import {
 	useRecordSiteTitleClicked,
 	useRecordSiteUrlClicked,
 } from 'calypso/landing/subscriptions/tracks';
-import { getFeedUrl, getSiteName, getSiteUrl } from 'calypso/reader/get-helpers';
+import { getSiteName, getSiteUrl } from 'calypso/reader/get-helpers';
+import { getFeedUrl } from 'calypso/reader/route';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import './style.scss';
