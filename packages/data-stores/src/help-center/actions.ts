@@ -1,5 +1,6 @@
 import { default as apiFetchPromise } from '@wordpress/api-fetch';
 import { apiFetch } from '@wordpress/data-controls';
+import { addQueryArgs } from '@wordpress/url';
 import { default as wpcomRequestPromise, canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
@@ -207,11 +208,14 @@ export const setNewMessagingChat = function* ( {
 	siteUrl?: string;
 	siteId?: string;
 } ) {
-	yield setNavigateToRoute(
-		`/odie?provider=zendesk&userFieldMessage=${ initialMessage }&section=${
-			section ?? ''
-		}&siteUrl=${ siteUrl ?? '' }&siteId=${ siteId ?? '' }`
-	);
+	const url = addQueryArgs( '/odie', {
+		provider: 'zendesk',
+		userFieldMessage: initialMessage,
+		section,
+		siteUrl,
+		siteId,
+	} );
+	yield setNavigateToRoute( url );
 	yield setShowHelpCenter( true );
 };
 
