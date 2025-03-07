@@ -9,6 +9,10 @@ $common-border-radius: 4px;
 $mobile-container-margin: 16px;
 $lowestLevelColor: var(--color-neutral-5);
 
+.is-odyssey-stats .post-trends__title {
+	font-family: $font-label;
+}
+
 .post-trends {
 	border-bottom: 1px solid var(--studio-gray-5);
 	border-top: 1px solid var(--studio-gray-5);
