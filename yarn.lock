@@ -1053,7 +1053,7 @@ __metadata:
     prettier: "npm:^3.4.2"
     rimraf: "npm:^3.0.2"
     rollup: "npm:^3.3.0"
-    rollup-plugin-dts: "npm:^5.2.0"
+    rollup-plugin-dts: "npm:^5.3.1"
     rollup-plugin-license: "npm:^3.0.1"
     terser-webpack-plugin: "npm:^5.3.11"
     ts-loader: "npm:^9.4.2"
@@ -31128,7 +31128,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup-plugin-dts@npm:^5.2.0":
+"rollup-plugin-dts@npm:^5.3.1":
   version: 5.3.1
   resolution: "rollup-plugin-dts@npm:5.3.1"
   dependencies:
