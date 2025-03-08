@@ -9,6 +9,7 @@ import {
 import { rss } from '@wordpress/icons';
 import { filterURLForDisplay } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import {
@@ -21,6 +22,9 @@ import { getSiteName, getSiteUrl } from 'calypso/reader/get-helpers';
 import { getFeedUrl } from 'calypso/reader/route';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { NoticeOptions } from 'calypso/state/notices/types';
+import { requestFollows } from 'calypso/state/reader/follows/actions';
+import getFeedSubscriptionById from 'calypso/state/reader/follows/selectors/get-reader-follow-for-feed';
 import './style.scss';
 
 interface ReaderFeedItemProps {
@@ -43,13 +47,20 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 	} = props;
 	const isWpcomFeed = !! blogId;
 	const translate = useTranslate();
-	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const dispatch = useDispatch();
-	const {
-		isPending: isSubscribing,
-		isSuccess: isSubscribed,
-		mutate: onSubscribe,
-	} = SubscriptionManager.useSiteSubscribeMutation();
+	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
+	const { isPending: isSubscribing, mutate: onSubscribe } =
+		SubscriptionManager.useSiteSubscribeMutation();
+	const { isPending: isUnsubscribing, mutate: onUnsubscribe } =
+		SubscriptionManager.useSiteUnsubscribeMutation();
+
+	// Get feed subscription data. This is used to determine if the user is already subscribed to the feed.
+	useEffect( (): void => {
+		dispatch( requestFollows() ); // Update feed subscriptions.
+	} );
+	const feedSubscription = useSelector( ( state ) =>
+		getFeedSubscriptionById( state, Number( feedId ) )
+	);
 
 	// Hook for tracking.
 	const recordSiteIconClicked = useRecordSiteIconClicked();
@@ -70,15 +81,13 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 	const displayUrl = isWpcomFeed ? getSiteUrl( { feed, site } ) : subscribeUrl;
 	const filteredDisplayUrl = filterURLForDisplay( displayUrl );
 	const feedUrl = isWpcomFeed ? getFeedUrl( feed?.feed_ID ) : subscribeUrl;
-	const hasSubscribed = ( isWpcomFeed ? site?.is_following : feed?.is_following ) || isSubscribed;
+	const hasSubscribed = feedSubscription?.ID ?? false;
 	const iconUrl = isWpcomFeed ? site?.icon?.img ?? site?.icon?.ico : feed?.image;
-	const subscribeDisabled =
-		( isWpcomFeed ? site?.is_following : feed?.is_following ) || isSubscribing || isSubscribed;
 	const title = isWpcomFeed
 		? getSiteName( { feed, site } )
 		: feed?.name ?? filterURLForDisplay( subscribeUrl );
 
-	function onSubscribeClick(): void {
+	function onSubscribeToggle(): void {
 		if ( ! isEmailVerified ) {
 			dispatch(
 				errorNotice( translate( 'Please verify your email before subscribing.' ), {
@@ -91,35 +100,76 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 			return;
 		}
 
-		onSubscribe( {
-			blog_id: blogId ?? undefined,
-			feed_id: feedId,
-			url: subscribeUrl,
-			onSuccess: () => {
-				dispatch(
-					successNotice(
-						translate( 'Success! You are now subscribed to %s.', { args: filteredDisplayUrl } ),
-						{ duration: 5000 }
-					)
-				);
-			},
-			onError: () => {
-				dispatch(
-					errorNotice( translate( 'Sorry, we had a problem subscribing. Please try again.' ), {
-						duration: 5000,
-					} )
-				);
-			},
-		} );
+		const noticeOptions: NoticeOptions = { duration: 5000 };
+		if ( feedSubscription?.ID ) {
+			onUnsubscribe(
+				{
+					subscriptionId: feedSubscription.ID,
+					blog_id: blogId ?? undefined,
+					url: subscribeUrl,
+				},
+				{
+					onSuccess: () => {
+						dispatch(
+							successNotice(
+								translate( 'Success! You are now unsubscribed to %s.', {
+									args: filteredDisplayUrl,
+								} ),
+								noticeOptions
+							)
+						);
 
-		recordSearchSiteSubscribed( { blog_id: blogId, url: subscribeUrl, source } );
+						if ( railcar ) {
+							// reader: action: site_followed, railcar, ui_algo, ui_position, fetch_algo, fetch_position, fetch_lang, rec_blog_id, (incorrect: only railcar & action accepted)
+							// subscriptions: action: recommended_search_item_site_subscribed, railcar
+							recordTrainTracksInteract( {
+								railcarId: railcar.railcar,
+								action: 'recommended_search_item_site_unsubscribed',
+							} );
+						}
+					},
+					onError: () => {
+						dispatch(
+							errorNotice(
+								translate( 'Sorry, we had a problem unsubscribing. Please try again.' ),
+								noticeOptions
+							)
+						);
+					},
+				}
+			);
+		} else {
+			onSubscribe( {
+				blog_id: blogId ?? undefined,
+				feed_id: feedId,
+				url: subscribeUrl,
+				onSuccess: () => {
+					dispatch(
+						successNotice(
+							translate( 'Success! You are now subscribed to %s.', { args: filteredDisplayUrl } ),
+							noticeOptions
+						)
+					);
 
-		if ( railcar ) {
-			// reader: action: site_followed, railcar, ui_algo, ui_position, fetch_algo, fetch_position, fetch_lang, rec_blog_id, (incorrect: only railcar & action accepted)
-			// subscriptions: action: recommended_search_item_site_subscribed, railcar
-			recordTrainTracksInteract( {
-				railcarId: railcar.railcar,
-				action: 'recommended_search_item_site_subscribed',
+					recordSearchSiteSubscribed( { blog_id: blogId, url: subscribeUrl, source } );
+
+					if ( railcar ) {
+						// reader: action: site_followed, railcar, ui_algo, ui_position, fetch_algo, fetch_position, fetch_lang, rec_blog_id, (incorrect: only railcar & action accepted)
+						// subscriptions: action: recommended_search_item_site_subscribed, railcar
+						recordTrainTracksInteract( {
+							railcarId: railcar.railcar,
+							action: 'recommended_search_item_site_subscribed',
+						} );
+					}
+				},
+				onError: () => {
+					dispatch(
+						errorNotice(
+							translate( 'Sorry, we had a problem subscribing. Please try again.' ),
+							noticeOptions
+						)
+					);
+				},
 			} );
 		}
 	}
@@ -166,9 +216,8 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 	const SubscribeButton = (): JSX.Element => (
 		<Button
 			variant="primary"
-			disabled={ subscribeDisabled }
-			isBusy={ isSubscribing }
-			onClick={ onSubscribeClick }
+			isBusy={ isSubscribing || isUnsubscribing }
+			onClick={ onSubscribeToggle }
 			__next40pxDefaultSize
 		>
 			{ hasSubscribed ? translate( 'Unsubscribe' ) : translate( 'Subscribe' ) }

@@ -107,7 +107,6 @@ export function receiveFollows( { follows, totalCount } ) {
 
 /**
  * Returns an action object to signal that follows have been requested.
- * @returns {Object} 		Action object
  */
 export function requestFollows() {
 	return {

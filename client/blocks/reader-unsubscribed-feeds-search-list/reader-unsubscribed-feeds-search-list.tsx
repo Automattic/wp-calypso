@@ -7,7 +7,7 @@ import { SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST } from 'calypso/landing
 import './style.scss';
 
 const ReaderUnsubscribedFeedsSearchList = () => {
-	const { feedItems, searchQueryResult } = Reader.useUnsubscribedFeedsSearch() ?? {};
+	const { feedItems } = Reader.useUnsubscribedFeedsSearch() ?? {};
 
 	const feedItemComponents = useMemo( () => {
 		if ( ! feedItems?.length ) {
@@ -39,7 +39,7 @@ const ReaderUnsubscribedFeedsSearchList = () => {
 		} );
 	}, [ feedItems ] );
 
-	if ( ! feedItemComponents?.length || searchQueryResult?.isFetching ) {
+	if ( ! feedItemComponents?.length ) {
 		return null;
 	}
 
