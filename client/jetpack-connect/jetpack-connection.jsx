@@ -66,6 +66,15 @@ const jetpackConnection = ( WrappedComponent ) => {
 			}
 		}
 
+		/**
+		 * Check if there is a history of pages to go back to
+		 *
+		 * @returns {boolean}
+		 */
+		canGoBack = () => {
+			return page.len > 0 || window.history.length > 1;
+		};
+
 		renderFooter = () => {
 			const { translate } = this.props;
 			return (
@@ -74,17 +83,19 @@ const jetpackConnection = ( WrappedComponent ) => {
 						{ translate( 'Install Jetpack manually' ) }
 					</LoggedOutFormLinkItem>
 					<HelpButton />
-					<div className="jetpack-connect__navigation">
-						<Button
-							compact
-							borderless
-							className="jetpack-connect__back-button"
-							onClick={ this.goBack }
-						>
-							<Gridicon icon="arrow-left" size={ 18 } />
-							{ translate( 'Back' ) }
-						</Button>
-					</div>
+					{ this.canGoBack() && (
+						<div className="jetpack-connect__navigation">
+							<Button
+								compact
+								borderless
+								className="jetpack-connect__back-button"
+								onClick={ this.goBack }
+							>
+								<Gridicon icon="arrow-left" size={ 18 } />
+								{ translate( 'Back' ) }
+							</Button>
+						</div>
+					) }
 				</LoggedOutFormLinks>
 			);
 		};
