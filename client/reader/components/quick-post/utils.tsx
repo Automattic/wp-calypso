@@ -1,11 +1,12 @@
 /**
- * Returns the contenteditable element inside the editor iframe, or null if not found.
+ * Returns the editor iframe element, or null if not found.
  * @returns {HTMLElement | null}
  */
-const getEditableElement = (): HTMLElement | null => {
-	const iframe = document.querySelector< HTMLIFrameElement >( 'iframe[name="editor-canvas"]' );
-	const doc = iframe?.contentDocument;
-	return doc?.querySelector< HTMLElement >( '[contenteditable="true"]' ) || null;
+const getEditorIframe = (): HTMLIFrameElement | null => {
+	const editorIframe = document.querySelector< HTMLIFrameElement >(
+		'iframe[name="editor-canvas"]'
+	);
+	return editorIframe || null;
 };
 
 /**
@@ -13,8 +14,10 @@ const getEditableElement = (): HTMLElement | null => {
  * @returns {boolean} Whether the editor iframe has focus.
  */
 export const isEditorIframeFocused = (): boolean => {
-	const editable = getEditableElement();
-	return editable !== null && editable.ownerDocument?.activeElement === editable;
+	const editorIframe = getEditorIframe();
+	const iframeFocused =
+		editorIframe?.contentDocument?.activeElement?.getAttribute( 'contenteditable' ) === 'true';
+	return !! iframeFocused;
 };
 
 /**
@@ -23,12 +26,15 @@ export const isEditorIframeFocused = (): boolean => {
  */
 export const focusEditor = (): void => {
 	const attemptFocus = () => {
-		const editable = getEditableElement();
+		const editorIframe = getEditorIframe();
+		const editable = editorIframe?.contentDocument?.querySelector< HTMLElement >(
+			'[contenteditable="true"]'
+		);
+
 		if ( ! editable ) {
 			return false;
 		}
 		editable.focus();
-		editable.dispatchEvent( new MouseEvent( 'click' ) );
 		return true;
 	};
 

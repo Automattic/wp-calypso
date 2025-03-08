@@ -60,6 +60,14 @@
 	}
 
 	.verbum-editor-wrapper {
+		.editor__main iframe {
+			min-height: none;
+		}
+
+		.is-root-container.block-editor-block-list__layout {
+			padding: 10px 20px;
+		}
+
 		.editor__header {
 			border-color: var( --color-border-subtle );
 			border-style: solid;
