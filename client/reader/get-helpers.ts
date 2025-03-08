@@ -194,7 +194,6 @@ interface isEligibleForUnseenArgs {
 
 /**
  * Check if route or feed/blog is eligible to use seen posts feature (unseen counts and mark as seen)
- * @returns {boolean} whether or not the user can use the feature for the given site
  */
 export const isEligibleForUnseen = ( {
 	isWPForTeamsItem = false,
@@ -227,7 +226,6 @@ interface CanBeMarkedAsSeenArgs {
 
 /**
  * Check if the post/posts can be marked as seen based on the existence of `is_seen` flag and the current route.
- * @returns {boolean} whether or not the post can be marked as seen
  */
 export const canBeMarkedAsSeen = ( {
 	post = null,
@@ -250,7 +248,6 @@ export const canBeMarkedAsSeen = ( {
 
 /**
  * Return Featured image alt text.
- * @returns {string} Featured image alt text
  */
 export const getFeaturedImageAlt = ( post: ReaderPost ): string | ReactNode => {
 	// Each post can have multiple images attached. To make sure we are selecting
