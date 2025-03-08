@@ -42,7 +42,6 @@ export default function ThemeTierBadge( {
 		}
 
 		if (
-			siteId &&
 			isThemeAllowed &&
 			! [ DOT_ORG_THEME, MARKETPLACE_THEME, BUNDLED_THEME ].includes( themeType )
 		) {
@@ -71,6 +70,7 @@ export default function ThemeTierBadge( {
 			);
 		}
 
+		// All partner themes are also marketplace themes... Do we need this OR?
 		if ( themeTierSlug === 'partner' || themeType === MARKETPLACE_THEME ) {
 			return (
 				<ThemeTierPartnerBadge
@@ -94,7 +94,6 @@ export default function ThemeTierBadge( {
 		return null;
 	}, [
 		themeTierSlug,
-		siteId,
 		isThemeAllowed,
 		themeType,
 		isLockedStyleVariation,
