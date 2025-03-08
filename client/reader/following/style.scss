@@ -73,6 +73,12 @@
 	}
 }
 
+.following-stream__quick-post-card.card.is-expanded {
+	.foldable-card__content {
+		overflow: visible;
+	}
+}
+
 .following-stream__quick-post-card.card.is-compact {
 	margin-bottom: 20px !important;
 	border-radius: 6px; /* stylelint-disable-line scales/radii */

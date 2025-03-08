@@ -245,7 +245,7 @@ export class AuthFormHeader extends Component {
 				return translate( 'Your new plan requires a connection to WordPress.com' );
 			case 'logged-in':
 			default:
-				return translate( 'Jetpack is finishing setup' );
+				return undefined;
 		}
 	}
 

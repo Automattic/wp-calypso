@@ -13,6 +13,7 @@ import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import {
+	SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST,
 	useRecordSearchSiteSubscribed,
 	useRecordSiteIconClicked,
 	useRecordSiteTitleClicked,
@@ -83,6 +84,8 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 	const feedUrl = isWpcomFeed ? getFeedUrl( feed?.feed_ID ) : subscribeUrl;
 	const hasSubscribed = feedSubscription?.ID ?? false;
 	const iconUrl = isWpcomFeed ? site?.icon?.img ?? site?.icon?.ico : feed?.image;
+	const shouldTrackRecommendedSearch =
+		source === SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST && railcar;
 	const title = isWpcomFeed
 		? getSiteName( { feed, site } )
 		: feed?.name ?? filterURLForDisplay( subscribeUrl );
@@ -177,7 +180,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 	function onTitleClick(): void {
 		recordSiteTitleClicked( { blog_id: blogId, feed_id: feedId, source } );
 
-		if ( railcar ) {
+		if ( shouldTrackRecommendedSearch ) {
 			// reader: action: feed_link_clicked, railcar, ui_algo, ui_position, fetch_algo, fetch_position, fetch_lang, rec_blog_id, (incorrect: only railcar & action accepted)
 			// subscriptions: action: recommended_search_item_site_title_click, railcar
 			recordTrainTracksInteract( {
@@ -190,7 +193,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 	function onIconClick(): void {
 		recordSiteIconClicked( { blog_id: blogId, feed_id: feedId, source } );
 
-		if ( railcar ) {
+		if ( shouldTrackRecommendedSearch ) {
 			// reader: action: avatar_click, railcar, ui_algo, ui_position, fetch_algo, fetch_position, fetch_lang, rec_blog_id, (incorrect: only railcar & action accepted)
 			// subscriptions: action: recommended_search_item_site_icon_click, railcar
 			recordTrainTracksInteract( {
@@ -203,7 +206,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 	function onDisplayUrlClick(): void {
 		recordSiteUrlClicked( { blog_id: blogId, feed_id: feedId, source } );
 
-		if ( railcar ) {
+		if ( shouldTrackRecommendedSearch ) {
 			// reader: action: site_url_clicked, railcar, ui_algo, ui_position, fetch_algo, fetch_position, fetch_lang, rec_blog_id, (incorrect: only railcar & action accepted)
 			// subscriptions: action: recommended_search_item_site_icon_click, railcar
 			recordTrainTracksInteract( {

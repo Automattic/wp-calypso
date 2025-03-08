@@ -153,18 +153,12 @@ export function parseOrderDeltas( payload ) {
 }
 
 export const chartLabelformats = {
-	hour: translate( 'HH:mm', {
-		context: 'momentjs format string (hour)',
-		comment: 'This specifies an hour for the stats x-axis label.',
-	} ),
-	day: translate( 'MMM D', {
-		context: 'momentjs format string (day)',
-		comment: 'This specifies a day for the stats x-axis label.',
-	} ),
-	week: translate( 'MMM D', {
-		context: 'momentjs format string (week)',
-		comment: 'This specifies a week for the stats x-axis label.',
-	} ),
+	// This specifies an hour for the stats x-axis label.
+	hour: 'HH:mm',
+	// This specifies a day for the stats x-axis label.
+	day: 'MMM D',
+	// This specifies a week for the stats x-axis label.
+	week: 'MMM D',
 	month: 'MMM',
 	year: 'YYYY',
 };
