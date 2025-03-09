@@ -73,7 +73,7 @@ class AccountCloseConfirmDialog extends Component {
 						{
 							englishText: "Change your site's address",
 							text: translate( "Change your site's address" ),
-							href: '/settings/general',
+							href: '/domains/manage',
 							supportLink: localizeUrl( 'https://wordpress.com/support/changing-site-address/' ),
 							supportPostId: 11280,
 						},
