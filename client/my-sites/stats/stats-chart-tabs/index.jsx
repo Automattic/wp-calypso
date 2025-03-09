@@ -396,7 +396,7 @@ const connectComponent = connect(
 const withCssColors = ( WrappedComponent ) => ( props ) => {
 	const chartContainerRef = useRef( null );
 
-	const primaryColor = useCssVariable( '--color-primary-light', chartContainerRef.current );
+	const primaryColor = useCssVariable( '--color-primary', chartContainerRef.current );
 	const secondaryColor = useCssVariable( '--color-primary-dark', chartContainerRef.current );
 
 	return (

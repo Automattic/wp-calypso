@@ -189,7 +189,7 @@ export default function SubscribersChartSection( {
 		}
 	}, [ status, isError ] );
 
-	const subscriberLineStroke = useCssVariable( '--color-primary-light', containerRef.current );
+	const subscriberLineStroke = useCssVariable( '--color-primary', containerRef.current );
 	const products = useSelector( ( state ) => state.memberships?.productList?.items[ siteId ?? 0 ] );
 
 	// Products with an undefined value rather than an empty array means the API call has not been completed yet.
