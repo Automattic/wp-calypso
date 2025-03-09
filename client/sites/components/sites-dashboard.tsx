@@ -46,6 +46,7 @@ import {
 } from '../onboarding-tours';
 import { DOTCOM_OVERVIEW, FEATURE_TO_ROUTE_MAP, OVERVIEW } from './site-preview-pane/constants';
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
+import { useRestoreSitesBanner } from './sites-dashboard-banners/use-restore-sites-reminder-banner';
 import SitesDashboardBannersManager from './sites-dashboard-banners-manager';
 import SitesDashboardHeader from './sites-dashboard-header';
 import DotcomSitesDataViews, { useSiteStatusGroups } from './sites-dataviews';
@@ -137,6 +138,7 @@ const SitesDashboard = ( {
 	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
 	const selectedSite = useSelector( getSelectedSite );
+	const { shouldShow: isRestoringAccount } = useRestoreSitesBanner();
 
 	const sitesFilterCallback = ( site: SiteExcerptData ) => {
 		const { options } = site || {};
@@ -287,7 +289,8 @@ const SitesDashboard = ( {
 
 	// Remove deleted sites from default view
 	const filteredStatusGroup = useSitesListFilterDelete( currentStatusGroup, {
-		shouldApplyFilter: ! search && ( ! statusSlug || statusSlug === 'all' ),
+		shouldApplyFilter:
+			! search && ( ! statusSlug || statusSlug === 'all' ) && ! isRestoringAccount(),
 	} );
 
 	// Perform sorting actions
