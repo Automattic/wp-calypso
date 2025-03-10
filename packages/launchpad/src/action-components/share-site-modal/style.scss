@@ -3,44 +3,9 @@
 .share-site-modal__modal {
 	max-width: 640px;
 
-	.components-modal__header {
-		padding: 48px;
-	}
-
-	.components-modal__content {
-		margin: 0;
-		padding: 0;
-	}
-
-	.share-site-modal__modal-content {
-		padding: 48px;
-		padding-bottom: 40px;
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
-	}
-
-	.share-site-modal__modal-actions {
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
-	}
-
 	.share-site-modal__modal-heading {
-		color: var(--studio-gray-100);
-		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
-		font-size: 2rem;
-		line-height: 40px;
-		font-weight: 400;
-		letter-spacing: 0.2px;
-		margin: 0;
-		padding-bottom: 8px;
-	}
-
-	.share-site-modal__modal-domain {
-		display: flex;
-		justify-content: center;
-		align-items: center;
+		font-size: 1.2rem;
+		font-weight: 600;
 	}
 
 	.share-site-modal__modal-domain-text {
@@ -55,11 +20,10 @@
 		overflow: hidden;
 	}
 
-	.share-site-modal__modal-buttons {
-		display: flex;
-		flex-direction: row;
+	.share-site-modal__modal-actions-buttons {
 		justify-content: end;
-		gap: 16px;
+		width: auto;
+		min-width: 180px;
 	}
 
 	.share-site-modal__modal-site {
@@ -85,43 +49,10 @@
 		}
 	}
 
-	.share-site-modal__modal-customize {
-		color: var(--studio-blue-50);
-		font-size: 0.875rem;
-		display: inline-flex;
-		flex-direction: row;
-		justify-content: start;
-		gap: 6px;
-		padding: 0;
-		margin: 0;
-		margin-top: 16px;
-	}
-
-	.share-site-modal__modal-upsell {
-		border-top: 1px solid var(--studio-gray-5);
-		background: var(--studio-gray-0);
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		padding: 32px 48px;
-		gap: 32px;
-
-		.components-button {
-			height: 42px;
-		}
-	}
-
-	.share-site-modal__modal-upsell-content p {
-		margin-bottom: 0;
-	}
-
-	.share-site-modal__modal-upsell-content-highlight {
-		font-weight: bold;
-	}
-
 	.share-site-modal__modal-social {
-		display: flex;
 		flex-wrap: wrap;
+		margin: 0;
+		list-style: none;
 	}
 
 	.share-site-modal__modal-copy-link,
@@ -149,6 +80,10 @@
 	.share-site-modal__modal-copy-link {
 		background-color: #fff;
 		margin: 0 0 0 4px;
+	}
+
+	.share-site-modal__modal-copy-link:disabled {
+		opacity: 0.5;
 	}
 
 	.share-site-modal__modal-share-link:visited {
