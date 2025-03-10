@@ -207,7 +207,7 @@ const SiteMigrationInstructions: Step< {
 			hideBack
 			stepContent={ stepContent }
 			recordTracksEvent={ recordTracksEvent }
-			customizedActionButtons={ <SupportNudge navigateToDoItForMe={ navigateToDoItForMe } /> }
+			customizedActionButtons={ <SupportNudge onAskForHelp={ navigateToDoItForMe } /> }
 		/>
 	);
 };

@@ -5,10 +5,10 @@ import type { FC } from 'react';
 import './style.scss';
 
 type SupportNudgeProps = {
-	navigateToDoItForMe: () => void;
+	onAskForHelp: () => void;
 };
 
-export const SupportNudge: FC< SupportNudgeProps > = ( { navigateToDoItForMe } ) => {
+export const SupportNudge: FC< SupportNudgeProps > = ( { onAskForHelp } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -20,7 +20,7 @@ export const SupportNudge: FC< SupportNudgeProps > = ( { navigateToDoItForMe } )
 							variant="link"
 							onClick={ () => {
 								recordMigrationInstructionsLinkClick( 'trouble-migrate-site' );
-								navigateToDoItForMe();
+								onAskForHelp();
 							} }
 							type="button"
 						/>
