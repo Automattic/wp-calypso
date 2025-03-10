@@ -1,6 +1,10 @@
 .reader-import-button {
 	cursor: pointer;
 
+	&.has-icon {
+		justify-content: start;
+	}
+
 	&__label {
 		padding-left: 4px;
 	}

@@ -57,7 +57,7 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 			context: 'domain-different-owner',
 		};
 
-		recordTracksEvent( `calypso_email_providers_nonowner_click`, properties );
+		recordTracksEvent( 'calypso_email_providers_nonowner_click', properties );
 	};
 
 	const translateOptions = {

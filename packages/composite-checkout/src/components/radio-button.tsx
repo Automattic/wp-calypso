@@ -53,7 +53,7 @@ const RadioButtonWrapper = styled.div<
 	}
 
 	.credit-card__logos {
-		${ ( props ) => ( props.checked ? `display:flex;` : `display:none;` ) }
+		${ ( props ) => ( props.checked ? 'display:flex;' : 'display:none;' ) }
 
 		@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
 			display: flex;
@@ -175,7 +175,7 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 			flex-direction: row;
 			align-items: center;
 			justify-content: space-between;
-			gap: 7px:
+			gap: 7px;
 		}
 }
 

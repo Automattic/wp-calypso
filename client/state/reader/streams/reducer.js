@@ -11,6 +11,7 @@ import {
 	READER_STREAMS_SHOW_UPDATES,
 	READER_DISMISS_POST,
 	READER_STREAMS_CLEAR,
+	READER_STREAMS_NEW_POST_RECEIVE,
 } from 'calypso/state/reader/action-types';
 import { keyedReducer, combineReducers } from 'calypso/state/utils';
 import { combineXPosts } from './utils';
@@ -122,6 +123,13 @@ export const items = ( state = [], action ) => {
 
 			// Filter out duplicate x-posts
 			return combineXPosts( newState );
+		case READER_STREAMS_NEW_POST_RECEIVE: {
+			const newPost = {
+				...action.payload.postData,
+				isSynthetic: true,
+			};
+			return [ newPost, ...state ];
+		}
 		case READER_STREAMS_SHOW_UPDATES:
 			return combineXPosts( [ ...action.payload.items, ...state ] );
 		case READER_DISMISS_POST: {

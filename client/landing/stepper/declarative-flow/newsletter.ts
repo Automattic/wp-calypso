@@ -25,6 +25,7 @@ import type { Flow } from './internals/types';
 
 const newsletter: Flow = {
 	name: NEWSLETTER_FLOW,
+	__experimentalUseBuiltinAuth: true,
 	get title() {
 		return translate( 'Newsletter' );
 	},

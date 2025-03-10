@@ -11,7 +11,7 @@ $mobile-card-max-width: 440px;
 
 .plans-grid-next-storage-feature-label__container {
 	display: flex;
-	gap: 5px;
+	gap: 10px;
 	flex-direction: column;
 	align-items: baseline;
 
@@ -76,14 +76,19 @@ $mobile-card-max-width: 440px;
 	margin-left: 4px;
 }
 
+// Height of the <CustomSelectControl /> component defined here: https://github.com/WordPress/gutenberg/blob/7c02f292165c182ffc126134b82e01074db6f631/packages/components/src/custom-select-control-v2/styles.ts#L40
+$storage-feature-dropdown-height: 40px;
+$storage-feature-label-y-padding: 4px;
+
 .plans-grid-next-storage-feature-label__volume {
 	color: var(--studio-gray-90);
-	padding: 4px 0;
+	padding: $storage-feature-label-y-padding 0;
 	font-weight: 400;
-	line-height: 20px;
+	line-height: $storage-feature-dropdown-height - 2 * $storage-feature-label-y-padding;
 	font-size: $font-body-extra-small;
 
 	&.is-badge {
+		line-height: 20px;
 		background: #f2f2f2;
 		/* stylelint-disable-next-line */
 		border-radius: 5px;

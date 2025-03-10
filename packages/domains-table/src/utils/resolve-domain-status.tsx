@@ -15,12 +15,10 @@ import {
 import { isExpiringSoon } from './is-expiring-soon';
 import { isRecentlyRegistered } from './is-recently-registered';
 import {
-	domainManagementEdit,
 	domainManagementEditContactInfo,
 	domainManagementTransfer,
 	domainMappingSetup,
 	domainUseMyDomain,
-	domainManagementDNS,
 } from './paths';
 import { ResponseDomain } from './types';
 import type { I18N, TranslateResult } from 'i18n-calypso';
@@ -42,6 +40,7 @@ export type ResolveDomainStatusReturn = {
 		href?: string;
 		onClick?: React.MouseEventHandler< HTMLAnchorElement | HTMLButtonElement >;
 		label: string;
+		showBusyButton?: boolean;
 	};
 };
 
@@ -55,6 +54,8 @@ export type ResolveDomainStatusOptionsBag = {
 	isCreditCardExpiring?: boolean | null;
 	monthsUtilCreditCardExpires?: number | null;
 	isVipSite?: boolean | null;
+	onPointToWpcomClick?: () => void;
+	showBusyButton?: boolean;
 };
 
 export type DomainStatusPurchaseActions = {
@@ -76,6 +77,8 @@ export function resolveDomainStatus(
 		isCreditCardExpiring = false,
 		monthsUtilCreditCardExpires = null,
 		isVipSite = false,
+		onPointToWpcomClick,
+		showBusyButton = false,
 	}: ResolveDomainStatusOptionsBag
 ): ResolveDomainStatusReturn | null {
 	const transferOptions = {
@@ -106,20 +109,13 @@ export function resolveDomainStatus(
 			e.stopPropagation(),
 	};
 
-	const editNameserversCallToAction = {
-		href: domainManagementEdit( siteSlug as string, domain.domain, currentRoute, {
-			nameservers: true,
-		} ),
+	const pointToWpcomCallToAction = {
 		label: translate( 'Point to WordPress.com' ),
-		onClick: ( e: React.MouseEvent< HTMLAnchorElement | HTMLButtonElement, MouseEvent > ) =>
-			e.stopPropagation(),
-	};
-
-	const editDNSRecordsCallToAction = {
-		href: domainManagementDNS( siteSlug as string, domain.domain ),
-		label: translate( 'Point to WordPress.com' ),
-		onClick: ( e: React.MouseEvent< HTMLAnchorElement | HTMLButtonElement, MouseEvent > ) =>
-			e.stopPropagation(),
+		showBusyButton,
+		onClick: ( e: React.MouseEvent< HTMLAnchorElement | HTMLButtonElement, MouseEvent > ) => {
+			e.stopPropagation();
+			onPointToWpcomClick && onPointToWpcomClick();
+		},
 	};
 
 	switch ( domain.type ) {
@@ -509,29 +505,15 @@ export function resolveDomainStatus(
 					status: translate( 'Active' ),
 					icon: 'info',
 					noticeText: translate(
-						'{{strong}}Transfer successful!{{/strong}} To make this domain work with your WordPress.com site you need to {{cta}}point it to WordPress.com servers.{{/cta}}',
+						'{{strong}}Transfer successful!{{/strong}} To make this domain work with your WordPress.com site you need to {{b}}point it to WordPress.com{{/b}}.',
 						{
 							components: {
 								strong: <strong />,
-								cta: domain.hasWpcomNameservers ? (
-									<a
-										href={ domainManagementDNS( siteSlug as string, domain.domain ) }
-										onClick={ ( e: React.MouseEvent< HTMLAnchorElement > ) => e.stopPropagation() }
-									/>
-								) : (
-									<a
-										href={ domainManagementEdit( siteSlug as string, domain.domain, currentRoute, {
-											nameservers: true,
-										} ) }
-										onClick={ ( e: React.MouseEvent< HTMLAnchorElement > ) => e.stopPropagation() }
-									/>
-								),
+								b: <b />,
 							},
 						}
 					),
-					callToAction: domain.hasWpcomNameservers
-						? editDNSRecordsCallToAction
-						: editNameserversCallToAction,
+					callToAction: pointToWpcomCallToAction,
 					listStatusWeight: 600,
 				};
 			}

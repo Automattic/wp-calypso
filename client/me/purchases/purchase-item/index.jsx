@@ -383,11 +383,56 @@ class PurchaseItem extends Component {
 
 		const productType = purchaseType( purchase );
 		if ( showSite && site ) {
+			if ( productType && site.name ) {
+				// translators: The string contains the product name, the name of the site, and the URL for the site e.g. Premium plan for Block Store (blockstore.com)
+				return translate(
+					'%(purchaseType)s for {{button}}%(siteName)s{{/button}} ({{link}}%(siteDomain)s{{/link}})',
+					{
+						args: {
+							purchaseType: productType,
+							siteName: site.name,
+							siteDomain: site.domain,
+						},
+						components: {
+							button: (
+								<button
+									className="purchase-item__link"
+									onClick={ ( event ) => {
+										event.stopPropagation();
+										event.preventDefault();
+										page( getPurchaseListUrlFor( slug ) );
+									} }
+									title={ translate( 'View subscriptions for %(siteName)s', {
+										args: {
+											siteName: site.name,
+										},
+									} ) }
+								/>
+							),
+							link: (
+								<a
+									className="purchase-item__link"
+									href={ 'https://' + site.domain }
+									target="_blank"
+									rel="noreferrer"
+									title={ translate( 'View %(siteName)s', {
+										args: {
+											siteName: site.name,
+										},
+									} ) }
+								/>
+							),
+						},
+					}
+				);
+			}
+
 			if ( productType ) {
-				return translate( '%(purchaseType)s for {{button}}%(site)s{{/button}}', {
+				// translators: The string contains the product name, and the URL of the site e.g. Premium plan for blockstore.com
+				return translate( '%(purchaseType)s for {{button}}%(siteDomain)s{{/button}}', {
 					args: {
 						purchaseType: productType,
-						site: site.domain,
+						siteDomain: site.domain,
 					},
 					components: {
 						button: (
@@ -398,9 +443,9 @@ class PurchaseItem extends Component {
 									event.preventDefault();
 									page( getPurchaseListUrlFor( slug ) );
 								} }
-								title={ translate( 'View subscriptions for %(siteName)s', {
+								title={ translate( 'View subscriptions for %(siteDomain)s', {
 									args: {
-										siteName: site.name,
+										siteDomain: site.domain,
 									},
 								} ) }
 							/>
@@ -409,9 +454,11 @@ class PurchaseItem extends Component {
 				} );
 			}
 
-			return translate( 'for {{button}}%(site)s{{/button}}', {
+			// translators: The string contains the name of the site, and the URL of the site e.g. for Block Store (blockstore.com)
+			return translate( 'for {{button}}%(siteName)s{{/button}} ({{link}}%(siteDomain)s{{/link}})', {
 				args: {
-					site: site.domain,
+					siteName: site.name,
+					siteDomain: site.domain,
 				},
 				components: {
 					button: (
@@ -423,6 +470,19 @@ class PurchaseItem extends Component {
 								page( getPurchaseListUrlFor( slug ) );
 							} }
 							title={ translate( 'View subscriptions for %(siteName)s', {
+								args: {
+									siteName: site.name,
+								},
+							} ) }
+						/>
+					),
+					link: (
+						<a
+							className="purchase-item__link"
+							href={ 'https://' + site.domain }
+							target="_blank"
+							rel="noreferrer"
+							title={ translate( 'View %(siteName)s', {
 								args: {
 									siteName: site.name,
 								},

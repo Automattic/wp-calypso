@@ -3,7 +3,12 @@ import {
 	ListItemCards,
 	ListItemCard,
 	ListItemCardContent,
+	ListItemCardActions,
+	type Action,
 } from 'calypso/a8c-for-agencies/components/list-item-cards';
+import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
+import { useWooPaymentsContext } from '../context';
+import { getSiteData } from '../lib/site-data';
 import {
 	SiteColumn,
 	WooPaymentsStatusColumn,
@@ -12,20 +17,22 @@ import {
 } from './site-columns';
 import type { SitesWithWooPaymentsState } from '../types';
 
-import './style.scss';
-
 export default function SitesWithWooPaymentsMobileView( {
 	items,
+	actions,
 }: {
 	items: SitesWithWooPaymentsState[];
+	actions: Action[];
 } ) {
 	const translate = useTranslate();
+	const { woopaymentsData, isLoadingWooPaymentsData } = useWooPaymentsContext();
 
 	return (
 		<div className="sites-with-woopayments-list-mobile-view">
 			<ListItemCards>
 				{ items.map( ( item ) => (
 					<ListItemCard key={ item.blogId }>
+						<ListItemCardActions actions={ actions } item={ item } />
 						<ListItemCardContent title={ translate( 'Site' ) }>
 							<div className="sites-with-woopayments-list-mobile-view__column">
 								<SiteColumn site={ item.siteUrl } />
@@ -33,12 +40,24 @@ export default function SitesWithWooPaymentsMobileView( {
 						</ListItemCardContent>
 						<ListItemCardContent title={ translate( 'Transactions' ) }>
 							<div className="sites-with-woopayments-list-mobile-view__column">
-								<TransactionsColumn transactions={ item.transactions } />
+								{ isLoadingWooPaymentsData ? (
+									<TextPlaceholder />
+								) : (
+									<TransactionsColumn
+										transactions={ getSiteData( woopaymentsData, item.blogId ).transactions }
+									/>
+								) }
 							</div>
 						</ListItemCardContent>
 						<ListItemCardContent title={ translate( 'Commissions Paid' ) }>
 							<div className="sites-with-woopayments-list-mobile-view__column">
-								<CommissionsPaidColumn payout={ item.payout } />
+								{ isLoadingWooPaymentsData ? (
+									<TextPlaceholder />
+								) : (
+									<CommissionsPaidColumn
+										payout={ getSiteData( woopaymentsData, item.blogId ).payout }
+									/>
+								) }
 							</div>
 						</ListItemCardContent>
 						<ListItemCardContent title={ translate( 'Review status' ) }>

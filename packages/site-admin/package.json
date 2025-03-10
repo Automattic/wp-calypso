@@ -40,7 +40,7 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/site-admin#readme",
 	"peerDependencies": {
-		"@wordpress/data": "^10.16.0",
+		"@wordpress/data": "^10.19.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
 	},
@@ -53,14 +53,14 @@
 		"@storybook/react": "^7.6.20",
 		"copyfiles": "^2.4.1",
 		"postcss": "^8.4.5",
-		"typescript": "^5.3.3",
+		"typescript": "^5.5.4",
 		"webpack": "^5.97.1"
 	},
 	"dependencies": {
-		"@wordpress/base-styles": "^5.17.0",
-		"@wordpress/core-data": "^7.17.0",
-		"@wordpress/i18n": "^5.17.0",
-		"@wordpress/icons": "^10.17.0",
+		"@wordpress/base-styles": "^5.19.0",
+		"@wordpress/core-data": "^7.19.0",
+		"@wordpress/i18n": "^5.19.0",
+		"@wordpress/icons": "^10.19.0",
 		"clsx": "^2.1.1"
 	}
 }

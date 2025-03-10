@@ -53,7 +53,7 @@ export default async function (): Promise< void > {
 
 	if ( config.isEnabled( 'reader' ) ) {
 		page(
-			'/reader',
+			[ '/reader', '/reader/recent/:feed_id' ],
 			redirectLoggedOutToDiscover,
 			updateLastRoute,
 			sidebar,
@@ -100,7 +100,7 @@ export default async function (): Promise< void > {
 		);
 
 		page(
-			`/reader/users/id/:user_id`,
+			'/reader/users/id/:user_id',
 			blogDiscoveryByFeedId,
 			redirectLoggedOutToSignup,
 			updateLastRoute,

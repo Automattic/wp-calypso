@@ -11,6 +11,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/business-info' ),
 	},
 
+	AUTOMATED_COPY_SITE: {
+		slug: 'automated-copy',
+		asyncComponent: () => import( './steps-repository/automated-copy-site' ),
+	},
+
 	CELEBRATION: {
 		slug: 'celebration-step',
 		asyncComponent: () => import( './steps-repository/celebration-step' ),
@@ -36,6 +41,11 @@ export const STEPS = {
 	DIFM_STARTING_POINT: {
 		slug: 'difmStartingPoint',
 		asyncComponent: () => import( './steps-repository/difm-starting-point' ),
+	},
+
+	DOMAIN_CONTACT_INFO: {
+		slug: 'domain-contact-info',
+		asyncComponent: () => import( './steps-repository/domain-contact-info' ),
 	},
 
 	DOMAIN_TRANSFER_INTRO: {
@@ -180,6 +190,12 @@ export const STEPS = {
 	PROCESSING: {
 		slug: 'processing',
 		asyncComponent: () => import( './steps-repository/processing-step' ),
+	},
+
+	/** Temporary step until we allow passing props to steps */
+	PROCESSING_COPY_SITE_FLOW: {
+		slug: 'processing-copy',
+		asyncComponent: () => import( './steps-repository/processing-step-copy-site-flow' ),
 	},
 
 	SITE_CREATION_STEP: {
@@ -357,6 +373,36 @@ export const STEPS = {
 			import(
 				/* webpackChunkName: 'async-step-use-my-domain' */ './steps-repository/use-my-domain'
 			),
+	},
+
+	GET_CURRENT_THEME_SOFTWARE_SETS: {
+		slug: 'getCurrentThemeSoftwareSets',
+		asyncComponent: () => import( './steps-repository/get-current-theme-software-sets' ),
+	},
+
+	CHECK_FOR_PLUGINS: {
+		slug: 'checkForPlugins',
+		asyncComponent: () => import( './steps-repository/check-for-plugins' ),
+	},
+
+	HUNDRED_YEAR_PLAN_DIY_OR_DIFM: {
+		slug: 'diy-or-difm',
+		asyncComponent: () => import( './steps-repository/hundred-year-plan-diy-or-difm' ),
+	},
+
+	HUNDRED_YEAR_PLAN_THANK_YOU: {
+		slug: 'thank-you',
+		asyncComponent: () => import( './steps-repository/hundred-year-plan-thank-you' ),
+	},
+
+	HUNDRED_YEAR_PLAN_SITE_PICKER: {
+		slug: 'site-picker',
+		asyncComponent: () => import( './steps-repository/hundred-year-plan-site-picker' ),
+	},
+
+	HUNDRED_YEAR_PLAN_SETUP: {
+		slug: 'setup',
+		asyncComponent: () => import( './steps-repository/hundred-year-plan-setup' ),
 	},
 
 	SETUP_BLOG: {

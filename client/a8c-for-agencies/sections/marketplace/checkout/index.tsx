@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useContext, useEffect, useRef, useState } from 'react';
 import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
+import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
@@ -19,6 +20,7 @@ import LayoutHeader, {
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
 import useFetchClientReferral from '../../client/hooks/use-fetch-client-referral';
 import { MarketplaceTypeContext } from '../context';
@@ -48,6 +50,7 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const agency = useSelector( getActiveAgency );
+	const userEmail = useSelector( ( state ) => getCurrentUser( state )?.email );
 
 	const canIssueLicenses = agency?.can_issue_licenses ?? true;
 	const [ showPopover, setShowPopover ] = useState( false );
@@ -63,10 +66,12 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 	const { selectedProductsBySlug } = useProductsBySlug();
 
 	// Fetch client referral items if it's a client referral checkout
-	const { data: clientCheckoutItems } = useFetchClientReferral( getClientReferralQueryArgs() );
+	const { data: referral } = useFetchClientReferral( getClientReferralQueryArgs() );
 
 	// Get referred products for client referral checkout only if it's a client referral checkout
-	const { referredProducts } = useProductsById( clientCheckoutItems?.products ?? [], isClient );
+	const { referredProducts } = useProductsById( referral?.products ?? [], isClient );
+
+	const isDoNotMatchReferralClientEmail = referral?.client?.email !== userEmail;
 
 	// Get sites and selected site
 	const sites = useSelector( getSites );
@@ -210,7 +215,13 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 	}
 
 	if ( isClient ) {
-		actionContent = <SubmitPaymentInfo disableButton={ checkoutItems?.length === 0 } />;
+		actionContent = (
+			<SubmitPaymentInfo
+				disableButton={
+					checkoutItems?.length === 0 || ( isClient && isDoNotMatchReferralClientEmail )
+				}
+			/>
+		);
 	}
 
 	return (
@@ -243,6 +254,23 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 				<div className="checkout__container">
 					<div className="checkout__main">
 						<h1 className="checkout__main-title">{ title }</h1>
+
+						{ isClient && isDoNotMatchReferralClientEmail && (
+							<LayoutBanner level="error" hideCloseButton>
+								{ translate(
+									'This referral is not intended for your account. Please make sure you sign in using {{b}}%(referralEmail)s{{/b}}.',
+									{
+										args: {
+											referralEmail: referral?.client?.email,
+										},
+										components: {
+											b: <b />,
+										},
+										comment: '%(referralEmail)s is the email of the referral client.',
+									}
+								) }
+							</LayoutBanner>
+						) }
 
 						<div className="checkout__main-list">
 							{ referralBlogId && isLoadingReferralDevSite ? (

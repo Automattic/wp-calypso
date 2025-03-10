@@ -5,7 +5,7 @@ import {
 	render as clientRender,
 } from 'calypso/controller';
 import { setLocaleMiddleware } from 'calypso/controller/shared';
-import { sidebar } from '../controller';
+import { sidebar, updateLastRoute } from 'calypso/reader/controller';
 import { tagsListing, fetchTrendingTags, fetchAlphabeticTags } from './controller';
 
 export default function ( router ) {
@@ -15,6 +15,7 @@ export default function ( router ) {
 		[ '/tags', `/${ langParam }/tags` ],
 		redirectWithoutLocaleParamInFrontIfLoggedIn,
 		setLocaleMiddleware(),
+		updateLastRoute,
 		fetchTrendingTags,
 		fetchAlphabeticTags,
 		sidebar,

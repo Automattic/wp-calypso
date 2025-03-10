@@ -1,5 +1,5 @@
 import { Task } from '@automattic/launchpad';
-import { isBlogOnboardingFlow, isNewsletterFlow } from '@automattic/onboarding';
+import { isNewsletterFlow, isStartWritingFlow } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { TaskAction } from '../../types';
 
@@ -11,9 +11,9 @@ export const getFirstPostPublished: TaskAction = ( task, flow, context ): Task =
 		...task,
 		disabled:
 			mustVerifyEmailBeforePosting ||
-			( task.completed && isBlogOnboardingFlow( flow || null ) ) ||
+			( task.completed && isStartWritingFlow( flow || null ) ) ||
 			false,
-		calypso_path: ! isBlogOnboardingFlow( flow || null )
+		calypso_path: ! isStartWritingFlow( flow || null )
 			? task.calypso_path
 			: addQueryArgs( task.calypso_path, {
 					origin: window.location.origin,

@@ -1,0 +1,50 @@
+$color-white: #fff;
+$color-big-sky-background: #000cb2;
+
+.is-section-stepper:has(.launch-big-sky) {
+	background-color: $color-big-sky-background;
+
+	.launch-big-sky {
+		padding-top: 0;
+	}
+
+	.wordpress-logo {
+		fill: $color-white;
+	}
+
+	.processing-step__container {
+		height: 100vh;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+
+		.processing-step {
+			margin-top: 0;
+			width: 100%;
+			max-width: 188px;
+		}
+
+		.big-sky-disclaimer {
+			color: $color-white;
+			text-align: center;
+			position: absolute;
+			bottom: 24px;
+			max-width: 415px;
+
+			a {
+				font-weight: 700;
+				text-decoration: underline;
+				color: $color-white;
+			}
+		}
+	}
+
+	.progress-bar {
+		background-color: var(--color-neutral-30);
+
+		.progress-bar__progress {
+			background-color: $color-white;
+		}
+	}
+}

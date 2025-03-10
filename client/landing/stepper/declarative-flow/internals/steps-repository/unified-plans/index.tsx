@@ -5,7 +5,14 @@ import {
 	updateLaunchpadSettings,
 	useStarterDesignBySlug,
 } from '@automattic/data-stores';
-import { isOnboardingFlow, useStepPersistedState } from '@automattic/onboarding';
+import {
+	EXAMPLE_FLOW,
+	isOnboardingFlow,
+	NEW_HOSTED_SITE_FLOW,
+	NEWSLETTER_FLOW,
+	START_WRITING_FLOW,
+	useStepPersistedState,
+} from '@automattic/onboarding';
 import { useDispatch, useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useState } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
@@ -27,8 +34,29 @@ import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experi
 import UnifiedPlansStep from './unified-plans-step';
 import { getIntervalType } from './util';
 import type { ProvidedDependencies, StepProps } from '../../types';
+import type { PlansIntent } from '@automattic/plans-grid-next';
 
 import './style.scss';
+
+/**
+ * Copied from steps-repository/plans (which should be removed)
+ */
+function getPlansIntent( flowName: string | null, isWordCampPromo?: boolean ): PlansIntent | null {
+	switch ( flowName ) {
+		case START_WRITING_FLOW:
+			return 'plans-blog-onboarding';
+		case NEWSLETTER_FLOW:
+		case EXAMPLE_FLOW:
+			return 'plans-newsletter';
+		case NEW_HOSTED_SITE_FLOW:
+			if ( isWordCampPromo ) {
+				return 'plans-new-hosted-site-business-only';
+			}
+			return 'plans-new-hosted-site';
+		default:
+			return null;
+	}
+}
 
 export default function PlansStepAdaptor( props: StepProps ) {
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
@@ -92,6 +120,13 @@ export default function PlansStepAdaptor( props: StepProps ) {
 	const site = useSite( postSignUpSiteSlugParam || postSignUpSiteIdParam );
 	const customerType = useQuery().get( 'customerType' ) ?? undefined;
 	const [ planInterval, setPlanInterval ] = useState< string | undefined >( undefined );
+
+	/**
+	 * isWordCampPromo is temporary
+	 */
+	const isWordCampPromo = new URLSearchParams( location.search ).has( 'utm_source', 'wordcamp' );
+	const plansIntent = getPlansIntent( props.flow, isWordCampPromo );
+
 	const hidePlanProps =
 		createWithBigSky && isGoalFirstExperiment
 			? getHidePlanPropsBasedOnCreateWithBigSky()
@@ -171,6 +206,7 @@ export default function PlansStepAdaptor( props: StepProps ) {
 			signupDependencies={ signupDependencies }
 			stepName="plans"
 			flowName={ props.flow }
+			intent={ plansIntent ?? undefined }
 			onPlanIntervalUpdate={ onPlanIntervalUpdate }
 			intervalType={ planInterval }
 			wrapperProps={ {

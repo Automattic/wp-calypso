@@ -16,7 +16,7 @@ const fetchCancellationOffers = ( action: { siteId: number; purchaseId: number }
 	return http(
 		{
 			method: 'GET',
-			path: `/cancellation-offers`,
+			path: '/cancellation-offers',
 			apiNamespace: 'wpcom/v2',
 			query: {
 				site: action.siteId,
@@ -52,7 +52,7 @@ const applyCancellationOffer = ( action: { siteId: number; purchaseId: number } 
 	return http(
 		{
 			method: 'POST',
-			path: `/cancellation-offers/apply`,
+			path: '/cancellation-offers/apply',
 			apiNamespace: 'wpcom/v2',
 			body: {
 				site: action.siteId,

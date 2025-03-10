@@ -93,9 +93,7 @@ export class FormPatternsFlow implements BlockFlow {
 		// There must be some slow-ish Editor rerender that is dismissing the dialog.
 		// This wait, although "against the rules", has proved to be the most reliable approach so far.
 		await context.page.waitForTimeout( 2 * 1000 );
-		await context.addedBlockLocator
-			.getByRole( 'button', { name: 'Explore Form Patterns' } )
-			.click();
+		await context.addedBlockLocator.getByRole( 'button', { name: 'Browse form patterns' } ).click();
 
 		const editorParent = await context.editorPage.getEditorParent();
 		await editorParent

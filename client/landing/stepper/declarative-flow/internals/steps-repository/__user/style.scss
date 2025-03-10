@@ -28,6 +28,12 @@
 		margin-left: auto;
 	}
 
+	// Hide the back button in the user step.
+	// This is unfortunate as it works perfectly, but it classes with the flow title.
+	button.navigation-link {
+		display: none;
+	}
+
 	.signup-header .wordpress-logo {
 		position: absolute;
 		inset-inline-start: 20px;

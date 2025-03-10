@@ -30,18 +30,8 @@ export const useRecommendedTags = (): Tag[] => {
 	const { data: interestTags = [] } = useQuery< InterestResponse, unknown, Tag[] >( {
 		queryKey: [ 'read/interests', locale ],
 		queryFn: () =>
-			wpcom.req.get(
-				{
-					path: `/read/interests`,
-					apiNamespace: 'wpcom/v2',
-				},
-				{
-					_locale: locale,
-				}
-			),
-		select: ( data ) => {
-			return data.interests;
-		},
+			wpcom.req.get( { path: '/read/interests', apiNamespace: 'wpcom/v2' }, { _locale: locale } ),
+		select: ( data ) => data.interests,
 	} );
 
 	const promptSlug = isBloganuary() ? 'bloganuary' : 'dailyprompt';

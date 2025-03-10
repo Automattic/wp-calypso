@@ -428,7 +428,12 @@ export function createSiteAndAddDIFMToCart( callback, dependencies, step, reduxS
 				return;
 			}
 			siteSlug = result.siteSlug;
-			addDIFMLiteProductToCart( callback, { ...providedDependencies, siteSlug }, step, reduxStore );
+			addDIFMLiteProductToCart(
+				callback,
+				{ ...providedDependencies, siteSlug, siteId: result.siteId },
+				step,
+				reduxStore
+			);
 		};
 
 		createSiteWithCart( createSiteWithCartCallback, providedDependencies, step, reduxStore );

@@ -19,7 +19,7 @@ const selectors = {
 	postPasswordInput: '.editor-post-visibility__password-input',
 
 	// Schedule
-	scheduleButton: `button.editor-post-schedule__dialog-toggle`,
+	scheduleButton: 'button.editor-post-schedule__dialog-toggle',
 	schedulePopoverCloseButton:
 		'[data-wp-component="Popover"][aria-label="Change publish date"] [aria-label="Close"]',
 	scheduleInput: ( name: string ) => `.editor-post-schedule__dialog label:has-text("${ name }")`,
@@ -103,7 +103,7 @@ export class EditorSettingsSidebarComponent {
 			return await editorParent.getByLabel( label ).fill( text );
 		}
 
-		throw new Error( `Must specify a method to locate the text field.` );
+		throw new Error( 'Must specify a method to locate the text field.' );
 	}
 
 	//#endregion
@@ -269,7 +269,7 @@ export class EditorSettingsSidebarComponent {
 			// single responsibility principle for this case.
 			// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
 			const dialogConfirmLocator = editorParent.locator(
-				`div[role="dialog"] button:has-text("OK")`
+				'div[role="dialog"] button:has-text("OK")'
 			);
 			await dialogConfirmLocator.click();
 		}

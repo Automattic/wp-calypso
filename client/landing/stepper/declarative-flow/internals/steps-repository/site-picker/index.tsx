@@ -84,7 +84,7 @@ const SitePickerStep: Step = function SitePickerStep( { navigation, flow } ) {
 				{ sprintf(
 					/* translators: the `sourceSite` and `targetSite` fields could be any site URL (eg: "yourname.com") */
 					__(
-						'Your site %(sourceSite)s will be migrated to %(targetSite)s, overriding all the content in your destination site. '
+						'Your site %(sourceSite)s will be migrated to %(targetSite)s, overriding all the content in your destination site.'
 					),
 					{
 						sourceSite: sourceSiteSlug,

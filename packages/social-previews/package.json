@@ -42,9 +42,9 @@
 	},
 	"dependencies": {
 		"@emotion/react": "^11.11.1",
-		"@wordpress/components": "^29.2.0",
-		"@wordpress/element": "^6.16.0",
-		"@wordpress/i18n": "^5.16.0",
+		"@wordpress/components": "^29.5.0",
+		"@wordpress/element": "^6.19.0",
+		"@wordpress/i18n": "^5.19.0",
 		"clsx": "^2.1.1",
 		"prop-types": "^15.7.2",
 		"tslib": "^2.3.0"
@@ -58,11 +58,11 @@
 		"postcss": "^8.5.1",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"typescript": "^5.3.3",
+		"typescript": "^5.5.4",
 		"webpack": "^5.97.1"
 	},
 	"peerDependencies": {
-		"@babel/runtime": "^7.26.0",
+		"@babel/runtime": "^7.26.9",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
 	},

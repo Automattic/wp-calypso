@@ -73,7 +73,7 @@ export const Content = () => {
 					icon={ <JetpackLogo /> }
 					heading={ translate( 'Via the Jetpack plugin' ) }
 					description={ preventWidows(
-						translate( 'Install the Jetpack plugin on an existing site' )
+						translate( 'Install the Jetpack plugin on an existing site.' )
 					) }
 					buttonProps={ {
 						onClick: jetpackClick,

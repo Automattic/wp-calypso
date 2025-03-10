@@ -245,7 +245,7 @@ export default function PressablePlanSection( {
 
 				<span className="pressable-plan-section__details-footnote">
 					{ translate(
-						`*If you exceed your plan's storage or traffic limits, you will be charged $0.50 per GB and $8 per 10K visits per month.`
+						"*If you exceed your plan's storage or traffic limits, you will be charged $0.50 per GB and $8 per 10K visits per month."
 					) }
 				</span>
 			</HostingPlanSection.Details>

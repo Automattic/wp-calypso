@@ -1,5 +1,4 @@
 import { Plans, AddOns, PlanPricing } from '@automattic/data-stores';
-import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
 	UrlFriendlyTermType,
 	PlanSlug,
@@ -8,6 +7,7 @@ import type {
 	FeatureGroupMap,
 	Feature,
 } from '@automattic/calypso-products';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
 
 /******************

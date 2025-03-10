@@ -14,7 +14,7 @@ import type { OnboardSelect } from '@automattic/data-stores';
 const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 	const [ searchParams ] = useSearchParams();
 	const { submit } = navigation;
-	const { setPendingAction } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
 	const site = useSite();
 
 	let siteId = site?.ID as number;
@@ -58,10 +58,15 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 		}
 
 		setPendingAction( async () => {
+			setProgress( 10 );
 			await waitForInitiateTransfer();
+			setProgress( 25 );
 			await waitForTransfer();
+			setProgress( 50 );
 			await waitForFeature();
+			setProgress( 75 );
 			await waitForLatestSiteData();
+			setProgress( 100 );
 
 			return {
 				finishedWaitingForAtomic: true,

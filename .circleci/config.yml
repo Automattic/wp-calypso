@@ -186,6 +186,11 @@ jobs:
           no_output_timeout: 45m
           environment:
             USE_HARD_LINKS: 'false'
+            # Code-signing does not normally run on PRs for security reasons.
+            # If you need to debug the code-signing process, you can temporarily uncomment the following line, and push
+            # a commit to your branch.
+            # Make sure to then remove the commit before merging to trunk!
+            # CSC_FOR_PULL_REQUEST: 'true'
           command: |
             set +e
             source $HOME/.nvm/nvm.sh

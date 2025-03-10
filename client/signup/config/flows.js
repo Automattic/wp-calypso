@@ -4,7 +4,6 @@ import {
 	BUNDLED_THEME,
 	MARKETPLACE_THEME,
 } from '@automattic/design-picker';
-import { isSiteAssemblerFlow } from '@automattic/onboarding';
 import { isURL } from '@wordpress/url';
 import { get, includes, reject } from 'lodash';
 import { getQueryArgs } from 'calypso/lib/query-args';
@@ -113,12 +112,7 @@ function getEmailSignupFlowDestination( { siteId, siteSlug } ) {
 	);
 }
 
-function getChecklistThemeDestination( { flowName, siteSlug } ) {
-	if ( isSiteAssemblerFlow( flowName ) ) {
-		const params = new URLSearchParams( { canvas: 'edit' } );
-		return `/site-editor/${ siteSlug }?${ params }`;
-	}
-
+function getChecklistThemeDestination( { siteSlug } ) {
 	return `/home/${ siteSlug }`;
 }
 

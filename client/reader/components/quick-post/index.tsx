@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Spinner } from '@automattic/components';
 import { isLocaleRtl, useLocale } from '@automattic/i18n-utils';
 import {
@@ -8,12 +9,19 @@ import {
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import SitesDropdown from 'calypso/components/sites-dropdown';
+import { stripHTML } from 'calypso/lib/formatting';
 import wpcom from 'calypso/lib/wp';
+import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { successNotice } from 'calypso/state/notices/actions';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
+import { receivePosts } from 'calypso/state/reader/posts/actions';
+import { receiveNewPost } from 'calypso/state/reader/streams/actions';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -21,29 +29,40 @@ import './style.scss';
 loadBlocksWithCustomizations();
 loadTextFormatting();
 
-export default function QuickPost() {
+// Note: The post data we receive from the API response does
+// not match the type in the stream data, but we can insert
+// the post data there for now until we create a corresponding
+// structure for the newly created post in the stream.
+interface PostItem {
+	ID: number;
+	site_ID: number;
+	title: string;
+	content: string;
+	URL: string;
+}
+
+function QuickPost( {
+	receivePosts,
+	successNotice,
+}: {
+	receivePosts: ( posts: PostItem[] ) => Promise< void >;
+	successNotice: ( message: string, options: object ) => void;
+} ) {
 	const translate = useTranslate();
 	const locale = useLocale();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 	const [ postContent, setPostContent ] = useState( '' );
 	const [ editorKey, setEditorKey ] = useState( 0 );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
-	const [ selectedSiteId, setSelectedSiteId ] = useState< number | null >( null );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const editorRef = useRef< HTMLDivElement >( null );
+	const dispatch = useDispatch();
 	const currentUser = useSelector( getCurrentUser );
 	const hasLoaded = useSelector( hasLoadedSites );
 	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
-	const [ showSuccessMessage, setShowSuccessMessage ] = useState( false );
 
 	const clearEditor = () => {
 		setEditorKey( ( key ) => key + 1 );
-	};
-
-	const callShowSuccessMessage = () => {
-		setShowSuccessMessage( true );
-		setTimeout( () => {
-			setShowSuccessMessage( false );
-		}, 5000 );
 	};
 
 	const handleSubmit = () => {
@@ -51,22 +70,47 @@ export default function QuickPost() {
 			return;
 		}
 
-		setShowSuccessMessage( false );
 		setIsSubmitting( true );
 
 		wpcom
 			.site( selectedSiteId )
 			.post()
 			.add( {
-				title: postContent.split( '\n' )[ 0 ], // Use first line as title.
+				title:
+					(
+						stripHTML( postContent )
+							.split( '\n' )
+							.find( ( line ) => line.trim() ) || ''
+					)
+						.substring( 0, 57 )
+						.trim() + '...',
 				content: postContent,
 				status: 'publish',
 			} )
-			.then( () => {
+			.then( ( postData: PostItem ) => {
 				recordReaderTracksEvent( 'calypso_reader_quick_post_submitted' );
 				clearEditor();
-				callShowSuccessMessage();
+
+				successNotice( translate( 'Post successful! Your post will appear in the feed soon.' ), {
+					button: translate( 'View Post.' ),
+					noticeActionProps: {
+						external: true,
+					},
+					href: postData.URL,
+				} );
 				// TODO: Update the stream with the new post (if they're subscribed?) to signal success.
+
+				if ( config.isEnabled( 'reader/quick-post-v2' ) ) {
+					receivePosts( [ postData ] ).then( () => {
+						// Actual API response will update the stream with the real post data
+						dispatch(
+							receiveNewPost( {
+								streamKey: 'following',
+								postData,
+							} )
+						);
+					} );
+				}
 			} )
 			.catch( () => {
 				recordReaderTracksEvent( 'calypso_reader_quick_post_error' );
@@ -82,7 +126,7 @@ export default function QuickPost() {
 	};
 
 	const handleSiteSelect = ( siteId: number ) => {
-		setSelectedSiteId( siteId );
+		dispatch( setSelectedSiteId( siteId ) );
 	};
 
 	const getButtonText = () => {
@@ -108,9 +152,6 @@ export default function QuickPost() {
 
 	return (
 		<div className="quick-post-input">
-			<label htmlFor="quick-post-site-select" className="quick-post-input__label">
-				{ translate( 'Publish a post to' ) }
-			</label>
 			<div className="quick-post-input__fields">
 				<div className="quick-post-input__site-select-wrapper">
 					<SitesDropdown
@@ -130,15 +171,6 @@ export default function QuickPost() {
 				</div>
 			</div>
 			<div className="quick-post-input__actions">
-				<div
-					className={ `quick-post-input__success-message ${
-						showSuccessMessage ? 'is-visible' : ''
-					}` }
-					aria-hidden={ ! showSuccessMessage }
-				>
-					<p>{ translate( 'Post successful! Your message will appear in the feed soon.' ) }</p>
-				</div>
-
 				<Button
 					onClick={ handleCancel }
 					disabled={ isDisabled }
@@ -157,3 +189,8 @@ export default function QuickPost() {
 		</div>
 	);
 }
+
+export default connect( null, {
+	successNotice: ( message: string, options: object ) => successNotice( message, options ),
+	receivePosts: ( posts: PostItem[] ) => receivePosts( posts ) as Promise< void >,
+} )( QuickPost );

@@ -12,6 +12,7 @@ import {
 	useDispatch as useDataStoreDispatch,
 	useSelect as useDataStoreSelect,
 } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -71,11 +72,13 @@ export function DefaultMasterbarContact() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 
-	const { hasPremiumSupport, initialMessage } = useProductsWithPremiumSupport(
-		responseCart.products,
-		'checkout'
-	);
-
+	const {
+		hasPremiumSupport,
+		userFieldMessage,
+		userFieldFlowName,
+		helpCenterButtonCopy,
+		helpCenterButtonLink,
+	} = useProductsWithPremiumSupport( responseCart.products, 'checkout' );
 	const helpCenterOptions = useProductsCustomOptions( responseCart.products );
 
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
@@ -92,9 +95,13 @@ export function DefaultMasterbarContact() {
 
 		if ( hasPremiumSupport ) {
 			setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport, helpCenterOptions );
-			setNavigateToRoute(
-				`/odie?provider=zendesk&userFieldMessage=${ initialMessage }&siteUrl=${ siteSlug }&siteId=${ siteId }`
-			);
+			const urlWithQueryArgs = addQueryArgs( '/odie?provider=zendesk', {
+				userFieldMessage,
+				userFieldFlowName,
+				siteUrl: siteSlug,
+				siteId,
+			} );
+			setNavigateToRoute( urlWithQueryArgs );
 		} else {
 			setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport );
 		}
@@ -108,10 +115,10 @@ export function DefaultMasterbarContact() {
 
 	return (
 		<ContactContainer>
-			<label>{ translate( 'Need extra help?' ) }</label>
+			<label>{ helpCenterButtonCopy ?? translate( 'Need extra help?' ) }</label>
 			<Button className="thank-you-help-center" variant="link" onClick={ toggleHelpCenter }>
 				<Gridicon icon="help-outline" />
-				<span>{ translate( 'Visit Help Center' ) }</span>
+				<span>{ helpCenterButtonLink ?? translate( 'Visit Help Center' ) }</span>
 			</Button>
 		</ContactContainer>
 	);
