@@ -48,13 +48,14 @@
 
 .sites-dropdown__selected {
 	display: flex;
+	border-bottom: 1px solid transparent;
 
 	.has-multiple-sites & {
 		cursor: pointer;
 	}
 
 	.is-open & {
-		border-bottom: 1px solid var(--color-neutral-0);
+		border-bottom-color: var(--color-neutral-0);
 	}
 
 	&:hover {
