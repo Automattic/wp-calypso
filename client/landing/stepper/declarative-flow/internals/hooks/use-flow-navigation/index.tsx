@@ -21,7 +21,7 @@ const useOnboardingIntent = () => {
 };
 
 interface FlowNavigation {
-	navigate: Navigate< StepperStep[] >;
+	navigate: Navigate< readonly StepperStep[] >;
 	params: {
 		flow: string;
 		step: StepperStepSlug | null;
@@ -37,7 +37,8 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
 	const navigate = useNavigate();
 	const match = useMatch( '/:flow/:step?/:lang?' );
-	const { step: currentStepSlug = null, lang = null } = match?.params || {};
+	const { lang = null } = match?.params || {};
+	const currentStepSlug: StepperStepSlug | null = match?.params?.step as StepperStepSlug | null;
 	const [ currentSearchParams ] = useSearchParams();
 	const steps = 'useSteps' in flow ? flow.useSteps() : flow.__flowSteps ?? [];
 	const flowName = flow.variantSlug ?? flow.name;
@@ -46,7 +47,7 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 	const locale = useFlowLocale();
 	const { siteId, siteSlug } = useSiteData();
 
-	const customNavigate = useCallback< Navigate< StepperStep[] > >(
+	const customNavigate = useCallback< Navigate< readonly StepperStep[] > >(
 		( nextStep: string, extraData = {}, replace = false ) => {
 			// If the user is not logged in, and the next step requires a logged in user, redirect to the login step.
 			if (

@@ -51,6 +51,7 @@ type AsyncUserStep = ( typeof PRIVATE_STEPS )[ keyof typeof PRIVATE_STEPS ];
 export type StepperStep = ( AsyncStepperStep | AsyncUserStep ) & {
 	requiresLoggedInUser?: boolean;
 };
+
 export type StepperStepSlug = AsyncStepperStep[ 'slug' ] | AsyncUserStep[ 'slug' ];
 
 export type Navigate< FlowSteps extends readonly StepperStep[] > = (
@@ -82,7 +83,7 @@ export type UseAssertConditionsHook< FlowSteps extends readonly StepperStep[] > 
 ) => AssertConditionResult;
 
 export type UseSideEffectHook< FlowSteps extends readonly StepperStep[] > = (
-	currentStepSlug: FlowSteps[ number ][ 'slug' ],
+	currentStepSlug: FlowSteps[ number ][ 'slug' ] | null,
 	navigate: Navigate< FlowSteps >
 ) => void;
 

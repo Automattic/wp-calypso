@@ -10,7 +10,7 @@ export interface RecordStepNavigationParams {
 	intent: string;
 	goals?: string[];
 	flow: string;
-	step: string;
+	step: string | null;
 	variant?: string;
 	providedDependencies?: ProvidedDependencies;
 	additionalProps?: ProvidedDependencies;
