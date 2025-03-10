@@ -140,6 +140,7 @@ const UpgradeNudge = ( {
 	// This banner upsells the ability to install free and paid plugins on a Business plan.
 	return (
 		<UpsellNudge
+			compactButton={ false }
 			description={ description }
 			event="calypso_plugins_browser_upgrade_nudge"
 			className="plugins-discovery-page__upsell"
