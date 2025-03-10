@@ -6,7 +6,7 @@ interface Props extends Omit< HTMLProps< HTMLAnchorElement >, 'href' > {
 }
 
 export const LinkWithRedirect = ( props: Props ) => {
-	const [ delayedEvent, setDelayedEvent ] =
+	const [delayedEvent, setDelayedEvent] =
 		useState< React.MouseEvent< HTMLAnchorElement > | null >( null );
 	const { __ } = useI18n();
 

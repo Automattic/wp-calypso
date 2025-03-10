@@ -18,7 +18,7 @@ export const useSkipNextStepMutation = (
 	options: UseMutationOptions< unknown, DefaultError, MutationVariables > = {}
 ) => {
 	const queryClient = useQueryClient();
-	const mutation = useMutation( {
+	const mutation = useMutation({
 		mutationFn: async ( { siteId, engine, currentStep, skipStep }: MutationVariables ) => {
 			queryClient.setQueryData(
 				[ 'paid-newsletter-importer', siteId, engine ],

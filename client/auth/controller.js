@@ -6,7 +6,7 @@ export function storeToken( context ) {
 		store.set( 'wpcom_token', context.hash.access_token );
 	}
 
-	if ( context.hash?.expires_in ) {
+	if (context.hash?.expires_in) {
 		store.set( 'wpcom_token_expires_in', context.hash.expires_in );
 	}
 

@@ -7,8 +7,8 @@ import type { AddPluginUpgrade } from './types';
  * @returns {Promise} Promise object represents the result of the request.
  */
 export const addMailPoetUpgrade = ( siteId: number ): Promise< AddPluginUpgrade > => {
-	return wpcom.req.post( {
+	return wpcom.req.post({
 		path: `/sites/${ siteId }/mailpoet/add-upgrade`,
 		apiNamespace: 'wpcom/v2',
-	} );
+	});
 };

@@ -19,8 +19,8 @@ export const useMapStripePlanToProductMutation = (
 	options: UseMutationOptions< unknown, DefaultError, MutationVariables > = {}
 ) => {
 	const queryClient = useQueryClient();
-	const mutation = useMutation( {
-		mutationFn: async ( {
+	const mutation = useMutation({
+		mutationFn: async ({
 			siteId,
 			engine,
 			currentStep,

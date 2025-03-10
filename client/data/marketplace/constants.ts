@@ -28,8 +28,7 @@ export const RETURNABLE_FIELDS = [
 	'slug',
 
 	// Versions
-	'plugin.tested',
-	'plugin.stable_tag',
+	'plugin.tested','plugin.stable_tag',
 
 	// Install Info
 	'plugin.active_installs',

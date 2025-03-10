@@ -3,7 +3,7 @@ import wpcom from 'calypso/lib/wp';
 
 const useAkismetKeyQuery = (): UseQueryResult< string > => {
 	const queryKey = [ 'me', 'akismet-key' ];
-	return useQuery( {
+	return useQuery({
 		queryKey,
 		queryFn: async () =>
 			wpcom.req.get( {
@@ -12,7 +12,7 @@ const useAkismetKeyQuery = (): UseQueryResult< string > => {
 			} ),
 		refetchIntervalInBackground: false,
 		refetchOnWindowFocus: false,
-	} );
+	});
 };
 
 export default useAkismetKeyQuery;

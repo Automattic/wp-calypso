@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import wp from 'calypso/lib/wp';
 
-const useCreateAppPasswordMutation = ( queryOptions = {} ) => {
+const useCreateAppPasswordMutation = (queryOptions = {}) => {
 	const queryClient = useQueryClient();
 	const mutation = useMutation( {
 		mutationFn: ( { appName } ) =>

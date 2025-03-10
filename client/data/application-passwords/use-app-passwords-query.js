@@ -3,7 +3,7 @@ import wp from 'calypso/lib/wp';
 
 const useAppPasswordsQuery = () =>
 	useQuery( {
-		queryKey: [ 'application-passwords' ],
+		queryKey: ['application-passwords'],
 		queryFn: () => wp.req.get( '/me/two-step/application-passwords' ),
 		refetchOnWindowFocus: false,
 		select( data ) {

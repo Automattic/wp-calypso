@@ -8,7 +8,7 @@ type NewsletterCategorySubscription = {
 	subscribe: boolean;
 };
 
-const useNewsletterCategorySubscriptionMutation = ( siteId: string | number ) => {
+const useNewsletterCategorySubscriptionMutation = (siteId: string | number) => {
 	const queryClient = useQueryClient();
 	const subscribedCategoriesCacheKey = getSubscribedNewsletterCategoriesKey( siteId );
 	const { isLoggedIn } = useIsLoggedIn();

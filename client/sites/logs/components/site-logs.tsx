@@ -55,7 +55,7 @@ export const SiteLogsDataViews = ( {
 	const dispatch = useDispatch();
 
 	const getMomentFromTimestamp = useCallback(
-		( value: string, fallback?: string ) => {
+		(value: string, fallback?: string) => {
 			const fromValue = parseInt( value || '', 10 );
 			if ( ! isNaN( fromValue ) ) {
 				return moment.unix( fromValue );

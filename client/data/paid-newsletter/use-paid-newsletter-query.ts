@@ -88,7 +88,7 @@ export const usePaidNewsletterQuery = (
 	siteId?: number,
 	autoRefresh?: boolean
 ) => {
-	return useQuery( {
+	return useQuery({
 		enabled: !! siteId,
 		// eslint-disable-next-line @tanstack/query/exhaustive-deps
 		queryKey: [ 'paid-newsletter-importer', siteId, engine ],
