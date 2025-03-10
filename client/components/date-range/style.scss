@@ -110,7 +110,7 @@ $date-range-mobile-layout-switch: $break-small;
 	justify-content: flex-end;
 	padding: 10px 0 0;
 
-	.button {
+	.components-button {
 		margin-left: 0.5em;
 		margin-right: 0;
 	}
@@ -120,7 +120,7 @@ $date-range-mobile-layout-switch: $break-small;
 		flex-direction: column-reverse;
 		align-items: stretch;
 
-		.button {
+		.components-button {
 			height: 40px;
 			border: 0;
 		}
