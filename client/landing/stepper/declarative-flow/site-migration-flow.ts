@@ -5,7 +5,6 @@ import { SiteExcerptData } from '@automattic/sites';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
-import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
@@ -111,12 +110,7 @@ const siteMigration: Flow = {
 		const urlQueryParams = useQuery();
 		const fromQueryParam = urlQueryParams.get( 'from' );
 		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
-		const { data: urlData, isLoading: isLoadingFromData } = useAnalyzeUrlQuery(
-			fromQueryParam || '',
-			true
-		);
 
-		const isFromSiteWordPress = ! isLoadingFromData && urlData?.platform === 'wordpress';
 		const { get, sessionId } = useFlowState();
 
 		const exitFlow = ( to: string ) => {
@@ -618,22 +612,11 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
-					if ( urlQueryParams.has( 'showModal' ) || ! isFromSiteWordPress ) {
+					if ( urlQueryParams.has( 'showModal' ) ) {
 						urlQueryParams.delete( 'showModal' );
-						return navigate( `${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?${ urlQueryParams }` );
 					}
 
-					// If the user selected the "Do it for me" option, we should take them back to the how to migrate step skipping
-					// the modal.
-					if ( urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
-						return navigate( `${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?${ urlQueryParams }` );
-					}
-
-					if ( isFromSiteWordPress ) {
-						urlQueryParams.set( 'showModal', 'true' );
-					}
-
-					return navigate( `site-migration-upgrade-plan?${ urlQueryParams.toString() }` );
+					return navigate( `${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?${ urlQueryParams }` );
 				}
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {
