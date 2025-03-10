@@ -38,7 +38,6 @@ export enum SiteIntent {
 	Newsletter = 'newsletter',
 	NewsletterGoal = 'intent-newsletter-goal',
 	CreateCourseGoal = 'create-course-goal',
-	PublishABlog = 'publish-a-blog',
 	FreePostSetup = 'free-post-setup', // non-signup flow
 	SiteMigration = 'site-migration',
 	UpdateDesign = 'update-design', // non-signup flow

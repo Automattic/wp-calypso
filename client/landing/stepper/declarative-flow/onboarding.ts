@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import { OnboardSelect, Onboard, UserSelect, ProductsList } from '@automattic/data-stores';
 import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
@@ -199,7 +198,6 @@ const onboarding: Flow = {
 			const destination = addQueryArgs( withLocale( '/setup/site-setup', locale ), {
 				siteSlug: providedDependencies.siteSlug,
 				...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
-				...( isEnabled( 'onboarding/publish-a-blog' ) && { 'enable-publish-a-blog': true } ),
 			} );
 
 			return [ destination, addQueryArgs( destination, { skippedCheckout: 1 } ) ];

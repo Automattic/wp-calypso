@@ -7,11 +7,7 @@ interface Flags {
 }
 
 export const goalsToIntent = ( goals: SiteGoal[], flags?: Flags ): SiteIntent => {
-	const {
-		isIntentNewsletterGoalEnabled,
-		isIntentCreateCourseGoalEnabled,
-		isIntentPublishABlogEnabled,
-	} = flags ?? {};
+	const { isIntentNewsletterGoalEnabled, isIntentCreateCourseGoalEnabled } = flags ?? {};
 
 	// When DIFM and Import goals are selected together, DIFM Intent will have the priority and will be set.
 	if ( goals.includes( SiteGoal.DIFM ) ) {
@@ -46,9 +42,6 @@ export const goalsToIntent = ( goals: SiteGoal[], flags?: Flags ): SiteIntent =>
 	}
 
 	if ( goals.includes( SiteGoal.Write ) ) {
-		if ( isIntentPublishABlogEnabled ) {
-			return SiteIntent.PublishABlog;
-		}
 		return SiteIntent.Write;
 	}
 

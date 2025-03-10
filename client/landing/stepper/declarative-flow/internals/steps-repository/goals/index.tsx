@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -64,9 +63,6 @@ const GoalsStep: Step = ( { navigation, flow } ) => {
 	const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 	const [ , isIntentNewsletterGoalEnabled ] = useGoalsFirstCumulativeExperience();
 	const isIntentCreateCourseGoalEnabled = useCreateCourseGoalFeature();
-	const isIntentPublishABlogEnabled =
-		isEnabled( 'onboarding/publish-a-blog' ) ||
-		Boolean( getQueryArgs()?.[ 'enable-publish-a-blog' ] );
 
 	useEffect( () => {
 		resetIntent();
@@ -122,7 +118,6 @@ const GoalsStep: Step = ( { navigation, flow } ) => {
 			const intent = goalsToIntent( goals, {
 				isIntentNewsletterGoalEnabled,
 				isIntentCreateCourseGoalEnabled,
-				isIntentPublishABlogEnabled,
 			} );
 			setIntent( intent );
 
