@@ -18,7 +18,6 @@ import { useTranslate, default as i18n } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -53,16 +52,11 @@ const EmptyListCTALink = ( { icon, text, onClick }: EmptyListCTALinkProps ) => {
 const JetpackEmptyListView = () => {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
-	const isWPCOMSite = useSelector( ( state ) => getIsSiteWPCOM( state, selectedSite?.ID ) );
 
 	// Record an event when the empty view is rendered
 	useEffect( () => {
 		recordTracksEvent( 'calypso_subscribers_empty_view_displayed' );
 	}, [] );
-
-	const subscribeBlockUrl = ! isWPCOMSite
-		? 'https://jetpack.com/support/jetpack-blocks/subscription-form-block/'
-		: 'https://wordpress.com/support/wordpress-editor/blocks/subscribe-block/';
 
 	const handleMethodSelect = ( method: string ) => {
 		recordTracksEvent( 'calypso_subscribers_empty_view_add_method_clicked', {
@@ -99,7 +93,9 @@ const JetpackEmptyListView = () => {
 							components: {
 								howToTurnVisitorsLink: (
 									<a
-										href={ localizeUrl( subscribeBlockUrl ) }
+										href={ localizeUrl(
+											'https://jetpack.com/support/jetpack-blocks/subscription-form-block/'
+										) }
 										target="_blank"
 										rel="noopener noreferrer"
 										onClick={ () =>
