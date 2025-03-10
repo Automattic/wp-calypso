@@ -1,9 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Card, CardBody, Icon } from '@wordpress/components';
 import { copy, upload, reusableBlock, chevronRight } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, default as i18n } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -67,9 +68,45 @@ const EmptyListView = () => {
 				} ) }
 			</h2>
 			<p className="empty-list-view__description">
-				{ translate(
-					'We’ll automatically clean duplicate, incomplete, outdated, or spammy emails to boost open rates and engagement.'
-				) }
+				{ i18n.fixMe( {
+					text: translate(
+						'Learn more about how to import subscribers. No subscribers yet? Turn your site visitors into subscribers.'
+					),
+					newCopy: translate(
+						'{{howToImportLink}}Learn more{{/howToImportLink}} about how to import subscribers. No subscribers yet? {{howToTurnVisitorsLink}}Turn your site visitors into subscribers{{/howToTurnVisitorsLink}}.',
+						{
+							components: {
+								howToImportLink: (
+									<a
+										href={ localizeUrl(
+											'https://jetpack.com/support/newsletter/import-subscribers/'
+										) }
+										target="_blank"
+										rel="noopener noreferrer"
+										onClick={ () =>
+											recordTracksEvent(
+												'calypso_subscribers_empty_view_import_subscribers_clicked'
+											)
+										}
+									/>
+								),
+								howToTurnVisitorsLink: (
+									<a
+										href={ localizeUrl(
+											'https://jetpack.com/support/jetpack-blocks/subscription-form-block/'
+										) }
+										target="_blank"
+										rel="noopener noreferrer"
+										onClick={ () =>
+											recordTracksEvent( 'calypso_subscribers_empty_view_subscribe_block_clicked' )
+										}
+									/>
+								),
+							},
+						}
+					),
+					oldCopy: '',
+				} ) }
 			</p>
 			<EmptyListCTALink
 				icon={ copy }
