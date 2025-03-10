@@ -103,6 +103,12 @@ const DoYouLoveJetpackStatsNotice = ( {
 		return null;
 	}
 
+	// This upsell should no longer be shown on Simple sites.
+	// A full-page upsell is shown below the chart instead.
+	if ( isWPCOMPaidStatsFlow ) {
+		return null;
+	}
+
 	const noPurchaseTitle = isWPCOMPaidStatsFlow
 		? ( translate( 'Grow faster with %(product)s', {
 				args: { product: STATS_PRODUCT_NAME },
