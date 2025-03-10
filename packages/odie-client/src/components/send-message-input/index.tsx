@@ -96,7 +96,7 @@ export const OdieSendMessageButton = () => {
 
 	const onFilesDrop = ( files: File[] ) => {
 		const file = files?.[ 0 ];
-		if ( file && file.type.startsWith( 'image/' ) ) {
+		if ( file ) {
 			handleFileUpload( file );
 		}
 	};
@@ -104,7 +104,7 @@ export const OdieSendMessageButton = () => {
 	const onPaste = ( event: React.ClipboardEvent ) => {
 		const items = event.clipboardData.items;
 		const file = items?.[ 0 ]?.getAsFile();
-		if ( file && file.type.startsWith( 'image/' ) ) {
+		if ( file ) {
 			event.preventDefault();
 			handleFileUpload( file );
 		}
