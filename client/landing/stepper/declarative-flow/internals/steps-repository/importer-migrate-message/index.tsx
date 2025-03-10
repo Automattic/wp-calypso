@@ -85,7 +85,7 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 			{
 				icon: envelope,
 				text: __(
-					`We'll send you an email with more details on the process and we'll let you know when we start the migration.`
+					"We'll send you an email with more details on the process and we'll let you know when we start the migration."
 				),
 			},
 			{
