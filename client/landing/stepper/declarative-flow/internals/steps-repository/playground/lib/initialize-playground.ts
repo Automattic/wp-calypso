@@ -66,7 +66,7 @@ export async function initializeWordPressPlayground(
 		window.history.replaceState( {}, '', window.location.pathname + window.location.search );
 
 		await client.isReady();
-		return await client;
+		return client;
 	} catch ( error ) {
 		// console.error( 'Error initializing WordPress Playground:', error );
 		logToLogstash( {
