@@ -613,6 +613,20 @@ html {
 		overflow-y: auto;
 		margin-block: 24px;
 
+		&::-webkit-scrollbar {
+			width: 4px;
+		}
+
+		&::-webkit-scrollbar-track {
+			background: transparent;
+		}
+
+		&::-webkit-scrollbar-thumb {
+			background-color: rgba(155, 155, 155, 0.5);
+			border-radius: 4px;
+			border: transparent;
+		}
+
 		&::after {
 			content: "";
 			position: absolute;
