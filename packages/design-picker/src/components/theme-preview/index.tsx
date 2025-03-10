@@ -15,6 +15,10 @@ interface Viewport {
 
 interface ThemePreviewProps {
 	url: string;
+	siteInfo?: {
+		title: string;
+		tagline: string;
+	};
 	inlineCss?: string;
 	viewportWidth?: number;
 	iframeScaleRatio?: number;
@@ -33,6 +37,7 @@ const isUrlWpcomApi = ( url: string ) =>
 
 const ThemePreview: React.FC< ThemePreviewProps > = ( {
 	url,
+	siteInfo,
 	inlineCss,
 	viewportWidth,
 	iframeScaleRatio = 1,
@@ -52,6 +57,7 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 	const [ containerResizeListener, { width: containerWidth } ] = useResizeObserver();
 	const calypso_token = useMemo( () => iframeToken || uuid(), [ iframeToken ] );
 	const scale = containerWidth && viewportWidth ? containerWidth / viewportWidth : iframeScaleRatio;
+	const { title, tagline } = siteInfo || {};
 
 	const wrapperHeight = useMemo( () => {
 		if ( ! viewport || iframeScaleRatio === 1 ) {
@@ -86,7 +92,7 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 					}
 					return;
 				case 'location-change':
-					// We need to make sure location changes so it triggers the effect to send inline CSS.
+					// We need to make sure location changes so it triggers the post message effects.
 					if ( data.payload.pathname === frameLocation ) {
 						setFrameLocation( '' );
 						return;
@@ -119,6 +125,24 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 			);
 		}
 	}, [ inlineCss, isLoaded, isFullyLoaded, frameLocation, calypso_token ] );
+
+	// Send site info to the iframe.
+	useEffect( () => {
+		// We only want to send info if it exists.
+		if ( ! title && ! tagline ) {
+			return;
+		}
+		if ( isLoaded || isFullyLoaded ) {
+			iframeRef.current?.contentWindow?.postMessage(
+				{
+					channel: `preview-${ calypso_token }`,
+					type: 'site-info',
+					site_info: { title, tagline },
+				},
+				'*'
+			);
+		}
+	}, [ title, tagline, calypso_token, isLoaded, isFullyLoaded, frameLocation ] );
 
 	return (
 		<DeviceSwitcher

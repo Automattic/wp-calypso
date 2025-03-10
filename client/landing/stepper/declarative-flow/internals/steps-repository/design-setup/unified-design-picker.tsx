@@ -788,6 +788,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					require="@automattic/design-preview"
 					placeholder={ null }
 					previewUrl={ themeDemoUrl || previewUrl }
+					siteInfo={ {
+						title: shouldCustomizeText ? site?.name : '',
+						tagline: shouldCustomizeText ? site?.description : '',
+					} }
 					splitDefaultVariation={
 						( isGlobalStylesOnPersonal &&
 							selectedDesign?.design_tier === THEME_TIER_FREE &&
