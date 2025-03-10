@@ -472,6 +472,7 @@ export function generateFlows( {
 			optionalDependenciesInQuery: [ 'siteSlug', 'back_to' ],
 			lastModified: '2025-03-04',
 			enabledHelpCenterGeos: [ 'US' ],
+			hideProgressIndicator: true,
 			get helpCenterButtonCopy() {
 				return translate( 'Questions?' );
 			},
