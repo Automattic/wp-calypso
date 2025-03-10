@@ -83,6 +83,7 @@ export function ConfirmationModal( {
 								onCancel?.();
 								closeModal();
 							} }
+							borderless
 						>
 							{ cancelLabel }
 						</Button>
