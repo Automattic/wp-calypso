@@ -1568,6 +1568,7 @@ class RegisterDomainStep extends Component {
 
 	onAddDomain = async ( suggestion, position, previousState ) => {
 		const domain = get( suggestion, 'domain_name' );
+		const vendor = get( suggestion, 'vendor' );
 		const { premiumDomains } = this.state;
 		const { includeOwnedDomainInSuggestions } = this.props;
 		const {

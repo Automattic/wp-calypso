@@ -27,7 +27,7 @@ export const recordAddDomainButtonClick = (
 			section,
 			is_premium: isPremium,
 			flow_name: flowName,
-			vendor: vendor,
+			vendor,
 		} )
 	);
 

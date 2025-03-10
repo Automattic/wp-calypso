@@ -619,16 +619,21 @@ export class RenderDomainsStep extends Component {
 	};
 
 	async addDomain( suggestion ) {
+		console.log( 'addDomain' );
+		console.log( suggestion );
+		console.log( 'UOUOUOUOUOUOUOUOUOU' );
+
 		const {
 			domain_name: domain,
 			product_slug: productSlug,
 			supports_privacy: supportsPrivacy,
+			vendor,
 		} = suggestion;
 
 		let registration = domainRegistration( {
 			domain,
 			productSlug,
-			extra: { privacy_available: supportsPrivacy },
+			extra: { privacy_available: supportsPrivacy, vendor },
 		} );
 
 		if ( supportsPrivacy ) {

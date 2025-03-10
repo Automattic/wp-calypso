@@ -98,6 +98,7 @@ class DomainRegistrationSuggestion extends Component {
 				railcar: this.props.railcarId,
 				ui_position: this.props.uiPosition,
 				fetch_algo: `${ this.props.fetchAlgo }/${ this.props.suggestion.vendor }`,
+				vendor: this.props.suggestion.vendor,
 				rec_result: `${ this.props.suggestion.domain_name }${ resultSuffix }`,
 				fetch_query: this.props.query,
 				domain_type: this.props.suggestion.is_premium ? 'premium' : 'standard',

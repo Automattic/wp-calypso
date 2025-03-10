@@ -114,7 +114,8 @@ export const recordDomainAddAvailabilityPreCheck = (
 	domain,
 	unavailableStatus,
 	section,
-	flowName
+	flowName,
+	vendor
 ) =>
 	composeAnalytics(
 		recordGoogleEvent(
@@ -128,6 +129,7 @@ export const recordDomainAddAvailabilityPreCheck = (
 			unavailable_status: unavailableStatus,
 			section,
 			flow_name: flowName,
+			vendor,
 		} )
 	);
 

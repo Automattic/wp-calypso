@@ -214,7 +214,7 @@ class DomainSearch extends Component< DomainSearchProps > {
 		let registration = domainRegistration( {
 			domain,
 			productSlug: productSlug as string,
-			extra: { privacy_available: supportsPrivacy },
+			extra: { privacy_available: supportsPrivacy, vendor: suggestion.vendor },
 		} );
 
 		if ( supportsPrivacy ) {
