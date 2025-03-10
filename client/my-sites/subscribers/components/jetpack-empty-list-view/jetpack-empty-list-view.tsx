@@ -1,3 +1,14 @@
+/**
+ * JetpackEmptyListView Component
+ *
+ * This component is specifically designed for the subscribers page
+ * when there are no subscribers on a Jetpack site.
+ * It's visible in both Jetpack Cloud and WordPress.com.
+ * It differs from the original EmptyListView:
+ *    - Original: Used in stats page to show subscriber growth and engagement
+ *    - Jetpack: Used in subscribers page to add subscribers
+ */
+
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
