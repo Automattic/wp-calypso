@@ -166,7 +166,9 @@ export default function () {
 	// Allows the user to select a site to manage domains for.
 	// Workaround for not listing wordpress.com subdomains on the global /domains/manage.
 	// This is **not** a workaround for /domains/manage omitting to render a site selector.
-	// See https://github.com/Automattic/wp-calypso/issues/100339
+	// This and the below route will need to be removed if we ever add wordpress.com subdomains
+	// to the global domain management pages and remove site specific domain management.
+	// See https://github.com/Automattic/wp-calypso/issues/100339 for more details.
 	page( paths.domainManagementSelectSite(), siteSelection, sites, makeLayout, clientRender );
 
 	// /domains/manage/select-site/:site
