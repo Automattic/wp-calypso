@@ -7,10 +7,8 @@ type MigrationStartedListProps = {
 	children: ReactElement< MigrationStartedItemProps > | ReactElement< MigrationStartedItemProps >[];
 };
 
-type IconType = Parameters< typeof Icon >[ 0 ][ 'icon' ];
-
 type MigrationStartedItemProps = {
-	icon: IconType;
+	icon: Parameters< typeof Icon >[ 0 ][ 'icon' ];
 	text: string;
 };
 
