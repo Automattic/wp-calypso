@@ -26,7 +26,6 @@ describe( 'useSiteMigrationKey', () => {
 
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/sites/123/atomic-migration-status/wpcom-migration-key' )
-			.query( { http_envelope: 1 } )
 			.once()
 			.reply( 200, { migration_key: 'some-migration-key' } );
 

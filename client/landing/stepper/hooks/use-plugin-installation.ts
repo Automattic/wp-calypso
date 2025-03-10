@@ -9,10 +9,8 @@ interface WPError {
 const installPlugin = async ( siteId: number, pluginSlug: string ) => {
 	try {
 		const response = await wpcom.req.post(
-			{
-				path: `/sites/${ siteId }/plugins/${ pluginSlug }/install`,
-			},
-			{ apiVersion: '1.2', http_envelope: 1 },
+			`/sites/${ siteId }/plugins/${ pluginSlug }/install`,
+			{ apiVersion: '1.2' },
 			{}
 		);
 		return response;

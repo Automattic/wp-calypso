@@ -5,14 +5,10 @@ interface ApiResponse {
 	migration_key: string;
 }
 
-const getMigrationKey = async ( siteId: number ): Promise< ApiResponse > => {
-	return wpcom.req.get(
-		`/sites/${ siteId }/atomic-migration-status/wpcom-migration-key?http_envelope=1`,
-		{
-			apiNamespace: 'wpcom/v2',
-		}
-	);
-};
+const getMigrationKey = ( siteId: number ): Promise< ApiResponse > =>
+	wpcom.req.get( `/sites/${ siteId }/atomic-migration-status/wpcom-migration-key`, {
+		apiNamespace: 'wpcom/v2',
+	} );
 
 type Options = {
 	enabled?: UseQueryOptions[ 'enabled' ];

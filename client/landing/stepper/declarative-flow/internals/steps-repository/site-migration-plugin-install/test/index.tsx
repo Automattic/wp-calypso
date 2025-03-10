@@ -47,7 +47,7 @@ describe( 'SiteMigrationPluginInstall', () => {
 		const { getProgress, getPendingAction } = select( ONBOARD_STORE );
 
 		nock( 'https://public-api.wordpress.com:443' )
-			.get( '/rest/v1.1/sites/123/plugins?http_envelope=1' )
+			.get( '/rest/v1.1/sites/123/plugins' )
 			.once()
 			.reply( 200, { plugins: [ { slug: 'migrate-guru' } ] } );
 
@@ -69,7 +69,7 @@ describe( 'SiteMigrationPluginInstall', () => {
 		const { getProgress, getPendingAction } = select( ONBOARD_STORE );
 
 		nock( 'https://public-api.wordpress.com:443' )
-			.get( '/rest/v1.1/sites/123/plugins?http_envelope=1' )
+			.get( '/rest/v1.1/sites/123/plugins' )
 			.once()
 			.reply( 200, { plugins: [] } );
 
@@ -95,10 +95,10 @@ describe( 'SiteMigrationPluginInstall', () => {
 		const { getProgress, getPendingAction } = select( ONBOARD_STORE );
 
 		nock( 'https://public-api.wordpress.com:443' )
-			.get( '/rest/v1.1/sites/123/plugins?http_envelope=1' )
+			.get( '/rest/v1.1/sites/123/plugins' )
 			.times( 2 ) // Returns error 2 times
 			.reply( 500, 'Internal Server Error' )
-			.get( '/rest/v1.1/sites/123/plugins?http_envelope=1' )
+			.get( '/rest/v1.1/sites/123/plugins' )
 			.reply( 200, { plugins: [ { slug: 'migrate-guru' } ] } ); // Returns success
 
 		nock( 'https://public-api.wordpress.com:443' )

@@ -26,28 +26,18 @@ const DEFAULT_RETRY_DELAY = process.env.NODE_ENV === 'test' ? 300 : 5000;
 
 const REFRESH_JETPACK_TOTAL_ATTEMPTS = process.env.NODE_ENV === 'test' ? 1 : 3;
 
-const fetchPluginsForSite = async ( siteId: number ): Promise< Response > =>
-	wpcom.req.get( `/sites/${ siteId }/plugins?http_envelope=1`, {
-		apiNamespace: 'rest/v1.2',
-	} );
+const fetchPluginsForSite = ( siteId: number ): Promise< Response > =>
+	wpcom.req.get( `/sites/${ siteId }/plugins`, { apiVersion: '1.2' } );
 
-const refreshJetpackConnection = async ( siteId: number ) =>
+const refreshJetpackConnection = ( siteId: number ) =>
+	wpcom.req.post( `/sites/${ siteId }/migration-force-reconnection`, { apiVersion: '1.2' }, {} );
+
+const activatePlugin = ( siteId: number, pluginName: string ) =>
 	wpcom.req.post(
-		{
-			path: `/sites/${ siteId }/migration-force-reconnection`,
-		},
+		`/sites/${ siteId }/plugins/${ encodeURIComponent( pluginName ) }`,
 		{ apiVersion: '1.2' },
-		{}
+		{ active: true }
 	);
-
-const activatePlugin = async ( siteId: number, pluginName: string ) =>
-	wpcom.req.post( {
-		path: `/sites/${ siteId }/plugins/${ encodeURIComponent( pluginName ) }`,
-		apiNamespace: 'rest/v1.2',
-		body: {
-			active: true,
-		},
-	} );
 
 const safeLogToLogstash = ( message: string, properties: Record< string, unknown > ) => {
 	try {
@@ -130,7 +120,7 @@ const usePluginStatus = ( pluginSlug: string, siteId?: number, options?: Options
 const usePluginActivation = ( pluginName: string, siteId?: number, options?: Options ) => {
 	return useMutation( {
 		mutationKey: [ 'onboarding-site-plugin-activation', siteId, pluginName ],
-		mutationFn: async () => activatePlugin( siteId!, pluginName ),
+		mutationFn: () => activatePlugin( siteId!, pluginName ),
 		retryDelay: DEFAULT_RETRY_DELAY,
 		retry: options?.retry ?? DEFAULT_RETRY,
 	} );

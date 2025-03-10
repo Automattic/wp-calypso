@@ -7,7 +7,6 @@ import nock from 'nock';
 import React from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { usePluginAutoInstallation } from '../use-plugin-auto-installation';
-import { replyWithEnvelope } from './helpers/nock';
 
 const Wrapper =
 	( queryClient: QueryClient ) =>
@@ -16,14 +15,13 @@ const Wrapper =
 	};
 
 const PLUGIN = { name: 'migrate-guru/migrateguru', slug: 'migrate-guru' };
-const getSitePluginsEndpoint = ( siteId: number ) =>
-	`/rest/v1.2/sites/${ siteId }/plugins?http_envelope=1`;
+const getSitePluginsEndpoint = ( siteId: number ) => `/rest/v1.2/sites/${ siteId }/plugins`;
 
 const getJetpackReconnectionEndpoint = ( siteId: number ) =>
 	`/rest/v1.2/sites/${ siteId }/migration-force-reconnection`;
 
 const getPluginInstallationEndpoint = ( siteId: number ) =>
-	`/rest/v1.2/sites/${ siteId }/plugins/migrate-guru/install?http_envelope=1`;
+	`/rest/v1.2/sites/${ siteId }/plugins/migrate-guru/install`;
 
 const getPluginActivationEndpoint = ( siteId: number ) =>
 	`/rest/v1.2/sites/${ siteId }/plugins/migrate-guru%2Fmigrateguru`;
@@ -45,8 +43,7 @@ const render = ( { retry = 0, enabled = true } = {} ) => {
 		queryClient,
 	};
 };
-const installationWithSuccess = replyWithEnvelope( 200 );
-const installationWithGenericError = replyWithEnvelope( 400, { error: 'any error' } );
+
 jest.mock( 'calypso/lib/logstash' );
 
 describe( 'usePluginAutoInstallation', () => {
@@ -100,7 +97,7 @@ describe( 'usePluginAutoInstallation', () => {
 			.once()
 			.reply( 200, { plugins: [] } )
 			.post( getPluginInstallationEndpoint( SITE_ID ) )
-			.reply( installationWithGenericError() );
+			.reply( 400, { error: 'error' } );
 		const { result } = render( { retry: 2 } );
 
 		await waitFor(
@@ -121,7 +118,7 @@ describe( 'usePluginAutoInstallation', () => {
 			.once()
 			.reply( 200, { plugins: [] } )
 			.post( getPluginInstallationEndpoint( SITE_ID ) )
-			.reply( installationWithSuccess() )
+			.reply( 200 )
 			.post( getPluginActivationEndpoint( SITE_ID ) )
 			.reply( 500, new Error( 'Error activating plugin' ) );
 
@@ -145,7 +142,7 @@ describe( 'usePluginAutoInstallation', () => {
 			.once()
 			.reply( 200, { plugins: [] } )
 			.post( getPluginInstallationEndpoint( SITE_ID ) )
-			.reply( installationWithSuccess() )
+			.reply( 200 )
 			.post( getPluginActivationEndpoint( SITE_ID ) )
 			.reply( 200 );
 
@@ -257,7 +254,7 @@ describe( 'usePluginAutoInstallation', () => {
 			.reply( 200, { plugins: [] } )
 			.post( getPluginInstallationEndpoint( SITE_ID ) )
 			.times( 4 )
-			.reply( installationWithGenericError )
+			.reply( 400, { error: 'error' } )
 			.post( getPluginActivationEndpoint( SITE_ID ) )
 			.reply( 200 );
 

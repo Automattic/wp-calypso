@@ -31,9 +31,7 @@ const SiteMigrationPluginInstall: Step = ( { navigation } ) => {
 			// Poll until plugins are installed. Once this is done, it's safe to install our plugin.
 			while ( ! stopPollingPlugins ) {
 				try {
-					const response = await wpcom.req.get( `/sites/${ siteId }/plugins?http_envelope=1`, {
-						apiNamespace: 'rest/v1.1',
-					} );
+					const response = await wpcom.req.get( `/sites/${ siteId }/plugins` );
 
 					if ( response?.plugins ) {
 						installedPlugins = response?.plugins;
