@@ -3,6 +3,8 @@ import React from 'react';
 import StatsCardUpsell from 'calypso/my-sites/stats/stats-card-upsell';
 import { STATS_FEATURE_UTM_STATS } from '../../../constants';
 import StatsListCard from '../../../stats-list/stats-list-card';
+import useUTMSupportURL from './utm-support-url';
+import UTMTitleInfoNode from './utm-title-info-node';
 
 import './stats-module-utm-overlay.scss';
 
@@ -17,6 +19,8 @@ const StatsModuleUTMOverlay: React.FC< StatsModuleUTMOverlayProps > = ( {
 	className,
 	overlay,
 } ) => {
+	const supportUrl = useUTMSupportURL( siteId );
+
 	const fakeData = [
 		{
 			label: 'google / cpc',
@@ -57,6 +61,7 @@ const StatsModuleUTMOverlay: React.FC< StatsModuleUTMOverlayProps > = ( {
 			data={ fakeData }
 			mainItemLabel="Posts by Source / Medium"
 			splitHeader
+			titleNodes={ <UTMTitleInfoNode supportUrl={ supportUrl } /> }
 			showMore={ {
 				label: 'View all',
 			} }
