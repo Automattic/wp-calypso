@@ -17,7 +17,7 @@
 			margin-right: 8px;
 
 			.circular__progress-bar-text {
-				@include body-small;
+				@include heading-x-small;
 				color: var(--color-neutral-100);
 			}
 
