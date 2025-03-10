@@ -1,8 +1,9 @@
 @import "../../assets/stylesheets/shared/mixins/breakpoints";
 
 .sites-dropdown {
+	position: relative;
+	
 	&.is-open {
-		height: 69px;
 		.gridicons-chevron-down {
 			transform: rotate(180deg);
 		}
@@ -24,7 +25,7 @@
 	border-width: 1px;
 	border-radius: 2px;
 	margin: 0;
-	overflow: hidden;
+	overflow: visible;
 	position: relative;
 	width: 300px;
 	transition: all 0.2s ease-in;
@@ -48,6 +49,7 @@
 
 .sites-dropdown__selected {
 	display: flex;
+	min-height: 54px;
 
 	.has-multiple-sites & {
 		cursor: pointer;
@@ -67,8 +69,18 @@
 
 .sites-dropdown .site-selector {
 	padding: 0;
-	position: static;
+	position: absolute;
+	top: 100%;
+	left: 0;
+	width: calc(100% + 2px);
+	margin-left: -1px;
+	z-index: 10;
 	overflow-y: auto;
+	background: var(--color-surface);
+	border: 1px solid var(--color-neutral-10);
+	border-top: none;
+	border-radius: 0 0 2px 2px;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .sites-dropdown .site-selector__sites {
