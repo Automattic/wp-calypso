@@ -2,7 +2,7 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 
-.empty-list-view {
+.jetpack-empty-list-view {
 	color: $studio-gray-100;
 	font-family: "SF Pro Text", $sans;
 	margin-top: 92px;
@@ -10,7 +10,7 @@
 	flex-direction: column;
 	align-items: center;
 
-	.empty-list-view__title {
+	&__title {
 		font-size: $font-title-small;
 		font-weight: 500;
 		line-height: rem(26px);
@@ -19,7 +19,7 @@
 		text-align: center;
 	}
 
-	.empty-list-view__description {
+	&__description {
 		font-size: $font-body;
 		font-weight: 400;
 		line-height: rem(24px);
@@ -27,24 +27,21 @@
 		text-align: center;
 	}
 
-	.empty-list-view__cta-link {
+	&__cta-link {
 		width: 571px;
 		height: 52px;
 		margin-bottom: 12px;
 		border: 1px solid $studio-gray-5;
 		border-radius: 4px;
 		box-shadow: none;
-
-		&:hover {
-			background: $studio-gray-0;
-			border: 1px solid $studio-gray-80;
-		}
+		text-align: left;
+		cursor: pointer;
 
 		&:last-child {
 			margin-bottom: 0;
 		}
 
-		.empty-list-view__card-body {
+		.jetpack-empty-list-view__card-body {
 			display: flex;
 			flex-direction: row;
 			align-items: center;
@@ -54,12 +51,12 @@
 			line-height: rem(20px);
 		}
 
-		.empty-list-view__cta-link-text {
+		.jetpack-empty-list-view__cta-link-text {
 			color: $studio-gray-80 !important;
 			flex-grow: 1;
 		}
 
-		.empty-list-view__cta-link-icon {
+		.jetpack-empty-list-view__cta-link-icon {
 			color: $studio-gray-90 !important;
 		}
 	}
@@ -67,18 +64,18 @@
 
 @media screen and (max-width: $break-large) {
 	body:not(.is-sidebar-collapsed) {
-		.empty-list-view .empty-list-view__cta-link {
+		.jetpack-empty-list-view .jetpack-empty-list-view__cta-link {
 			width: 100%;
 		}
 	}
 }
 
 @media screen and (max-width: $break-medium) {
-	.empty-list-view {
+	.jetpack-empty-list-view {
 		margin-top: 64px;
 		padding: 32px;
 
-		.empty-list-view__cta-link {
+		.jetpack-empty-list-view__cta-link {
 			width: 100%;
 		}
 	}
