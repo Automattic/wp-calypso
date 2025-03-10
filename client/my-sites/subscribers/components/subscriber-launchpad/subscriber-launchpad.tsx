@@ -16,6 +16,15 @@ const SubscriberLaunchpad = ( {
 	const translate = useTranslate();
 	const site = useSelector( getSelectedSite );
 
+	console.log(
+		'subscriber launchpad',
+		site,
+		checklistSlug,
+		taskFilter,
+		numberOfSteps,
+		completedSteps
+	);
+
 	return (
 		<div className="subscriber-launchpad">
 			<div className="subscriber-launchpad__header">

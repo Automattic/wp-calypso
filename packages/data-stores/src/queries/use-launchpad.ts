@@ -79,6 +79,8 @@ export const fetchLaunchpad = (
 		} ),
 	};
 
+	console.log( 'fetchLaunchpad', canAccessWpcomApis(), `/sites/${ slug }/launchpad` );
+
 	return canAccessWpcomApis()
 		? wpcomRequest( {
 				path: addQueryArgs( `/sites/${ slug }/launchpad`, queryArgs ),

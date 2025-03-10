@@ -11,6 +11,8 @@ const useSubscriberLaunchpadTasks = () => {
 		data: { checklist },
 	} = useLaunchpad( site?.slug ?? null, checklistSlug );
 
+	console.log( 'checklist', checklist );
+
 	// We can alter the tasks here, keeping this in for future use
 	const taskFilter = ( tasks: Task[] ): Task[] => {
 		if ( ! tasks ) {
