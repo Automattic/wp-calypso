@@ -4,6 +4,8 @@ import { useTranslate, formatCurrency } from 'i18n-calypso';
 import { memo } from 'react';
 import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 export const SiteColumn = ( { site }: { site: string } ) => {
 	return urlToSlug( site );
@@ -25,10 +27,14 @@ export const WooPaymentsStatusColumn = ( {
 	siteUrl: string;
 } ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	if ( ! state ) {
 		return (
 			<Button
+				onClick={ () => {
+					dispatch( recordTracksEvent( 'calypso_a4a_woopayments_setup_in_wp_admin' ) );
+				} }
 				variant="tertiary"
 				href={ `${ siteUrl }/wp-admin/plugin-install.php?s=woopayments&tab=search&type=term` }
 				target="_blank"

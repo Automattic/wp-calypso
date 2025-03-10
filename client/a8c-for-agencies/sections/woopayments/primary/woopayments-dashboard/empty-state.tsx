@@ -9,10 +9,13 @@ import cartImage from 'calypso/assets/images/a8c-for-agencies/woopayments/cart.p
 import ccImage from 'calypso/assets/images/a8c-for-agencies/woopayments/cc-image.png';
 import demoImage from 'calypso/assets/images/a8c-for-agencies/woopayments/demo.png';
 import wooPaymentsLogo from 'calypso/assets/images/a8c-for-agencies/woopayments/logo.svg';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import AddWooPaymentsToSite from '../../add-woopayments-to-site';
 
 const WooPaymentsDashboardEmptyState = () => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const isNarrowView = useBreakpoint( '<960px' );
 
@@ -91,6 +94,11 @@ const WooPaymentsDashboardEmptyState = () => {
 													href="https://agencieshelp.automattic.com/knowledge-base/earn-revenue-share-when-clients-use-woopayments/"
 													target="_blank"
 													rel="noopener noreferrer"
+													onClick={ () => {
+														dispatch(
+															recordTracksEvent( 'calypso_a4a_woopayments_learn_more_button_click' )
+														);
+													} }
 												/>
 											),
 										},
@@ -107,6 +115,11 @@ const WooPaymentsDashboardEmptyState = () => {
 													href="https://agencieshelp.automattic.com/knowledge-base/earn-revenue-share-when-clients-use-woopayments/"
 													target="_blank"
 													rel="noopener noreferrer"
+													onClick={ () => {
+														dispatch(
+															recordTracksEvent( 'calypso_a4a_woopayments_view_terms_button_click' )
+														);
+													} }
 												/>
 											),
 										},
@@ -118,6 +131,11 @@ const WooPaymentsDashboardEmptyState = () => {
 							__next40pxDefaultSize
 							href="/marketplace/products?show_license_modal=woocommerce-woopayments"
 							className="woopayments-dashboard-empty-state__button"
+							onClick={ () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_woopayments_view_details_button_click' )
+								);
+							} }
 						>
 							{ translate( 'View details and start earning ↗' ) }
 						</Button>
@@ -155,6 +173,11 @@ const WooPaymentsDashboardEmptyState = () => {
 							textToCopy={ [ ...listItems1, ...listItems2 ]
 								.map( ( item ) => `• ${ item }` )
 								.join( '\n' ) }
+							onClick={ () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_woopayments_copy_benefits_button_click' )
+								);
+							} }
 						/>
 					</>
 				}
@@ -186,6 +209,11 @@ const WooPaymentsDashboardEmptyState = () => {
 							href="https://woocommerce.com/products/woopayments/"
 							target="_blank"
 							rel="noopener noreferrer"
+							onClick={ () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_woopayments_explore_woocommerce_button_click' )
+								);
+							} }
 						>
 							{ translate( 'Explore WooPayments on WooCommerce.com ↗' ) }
 						</Button>

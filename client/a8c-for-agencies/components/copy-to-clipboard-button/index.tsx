@@ -7,7 +7,13 @@ import { useState } from 'react';
 
 import './style.scss';
 
-const CopyToClipboardButton = ( { textToCopy }: { textToCopy: string } ) => {
+const CopyToClipboardButton = ( {
+	textToCopy,
+	onClick,
+}: {
+	textToCopy: string;
+	onClick?: () => void;
+} ) => {
 	const translate = useTranslate();
 	const isNarrowView = useBreakpoint( '<960px' );
 
@@ -21,6 +27,7 @@ const CopyToClipboardButton = ( { textToCopy }: { textToCopy: string } ) => {
 	};
 
 	const copyToClipboard = () => {
+		onClick?.();
 		navigator.clipboard
 			.writeText( textToCopy )
 			.then( () => {
