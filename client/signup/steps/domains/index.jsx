@@ -619,10 +619,6 @@ export class RenderDomainsStep extends Component {
 	};
 
 	async addDomain( suggestion ) {
-		console.log( 'addDomain' );
-		console.log( suggestion );
-		console.log( 'UOUOUOUOUOUOUOUOUOU' );
-
 		const {
 			domain_name: domain,
 			product_slug: productSlug,
