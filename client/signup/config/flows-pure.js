@@ -430,7 +430,7 @@ export function generateFlows( {
 				return translate( 'Questions?' );
 			},
 			get helpCenterButtonLink() {
-				return translate( 'Contact our site building team' );
+				return translate( 'Contact our site-building team' );
 			},
 			providesDependenciesInQuery: [ 'coupon', 'back_to' ],
 			optionalDependenciesInQuery: [ 'coupon', 'back_to' ],
@@ -457,7 +457,7 @@ export function generateFlows( {
 				return translate( 'Questions?' );
 			},
 			get helpCenterButtonLink() {
-				return translate( 'Contact our site building team' );
+				return translate( 'Contact our site-building team' );
 			},
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
@@ -476,7 +476,7 @@ export function generateFlows( {
 				return translate( 'Questions?' );
 			},
 			get helpCenterButtonLink() {
-				return translate( 'Contact our site building team' );
+				return translate( 'Contact our site-building team' );
 			},
 		},
 
