@@ -8,6 +8,7 @@ import { useTranslate, default as i18n } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -33,6 +34,7 @@ const EmptyListCTALink = ( { icon, text, onClick }: EmptyListCTALinkProps ) => {
 const EmptyListView = () => {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
+	const isWPCOMSite = useSelector( ( state ) => getIsSiteWPCOM( state, selectedSite?.ID ) );
 
 	// Record an event when the empty view is rendered
 	useEffect( () => {
@@ -40,6 +42,14 @@ const EmptyListView = () => {
 	}, [] );
 
 	const isSubstackSubscriberImporterEnabled = isEnabled( 'importers/newsletter' );
+
+	const importSubscribersUrl = ! isWPCOMSite
+		? 'https://jetpack.com/support/newsletter/import-subscribers/'
+		: 'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/';
+
+	const subscribeBlockUrl = ! isWPCOMSite
+		? 'https://jetpack.com/support/jetpack-blocks/subscription-form-block/'
+		: 'https://wordpress.com/support/wordpress-editor/blocks/subscribe-block/';
 
 	const handleMethodSelect = ( method: string ) => {
 		recordTracksEvent( 'calypso_subscribers_empty_view_add_method_clicked', {
@@ -78,9 +88,7 @@ const EmptyListView = () => {
 							components: {
 								howToImportLink: (
 									<a
-										href={ localizeUrl(
-											'https://jetpack.com/support/newsletter/import-subscribers/'
-										) }
+										href={ localizeUrl( importSubscribersUrl ) }
 										target="_blank"
 										rel="noopener noreferrer"
 										onClick={ () =>
@@ -92,9 +100,7 @@ const EmptyListView = () => {
 								),
 								howToTurnVisitorsLink: (
 									<a
-										href={ localizeUrl(
-											'https://jetpack.com/support/jetpack-blocks/subscription-form-block/'
-										) }
+										href={ localizeUrl( subscribeBlockUrl ) }
 										target="_blank"
 										rel="noopener noreferrer"
 										onClick={ () =>
