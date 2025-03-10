@@ -19,11 +19,6 @@ if ( typeof globalThis.location === 'object' ) {
 const REGEXP_A8C_HOST = /^([-a-zA-Z0-9_]+\.)*(gravatar\.com|wordpress\.com|wp\.com|a8c\.com)$/;
 
 /**
- * Hosts that are trusted to serve images.
- */
-const TRUSTED_HOSTS = [ 'www.redditstatic.com' ];
-
-/**
  * Query parameters to be treated as image dimensions
  */
 const SIZE_PARAMS = [ 'w', 'h', 'resize', 'fit', 's' ];
@@ -55,10 +50,7 @@ export function safeImageUrl( url?: string | null ) {
 
 	const parsedUrl = getUrlParts( url );
 
-	if (
-		REGEXP_A8C_HOST.test( parsedUrl.hostname ) ||
-		TRUSTED_HOSTS.includes( parsedUrl.hostname )
-	) {
+	if ( REGEXP_A8C_HOST.test( parsedUrl.hostname ) ) {
 		// Safely promote Automattic domains to HTTPS
 		parsedUrl.protocol = 'https';
 		return getUrlFromParts( parsedUrl ).toString();
