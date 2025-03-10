@@ -40,10 +40,6 @@ const EmptyListView = () => {
 		recordTracksEvent( 'calypso_subscribers_empty_view_displayed' );
 	}, [] );
 
-	const importSubscribersUrl = ! isWPCOMSite
-		? 'https://jetpack.com/support/newsletter/import-subscribers/'
-		: 'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/';
-
 	const subscribeBlockUrl = ! isWPCOMSite
 		? 'https://jetpack.com/support/jetpack-blocks/subscription-form-block/'
 		: 'https://wordpress.com/support/wordpress-editor/blocks/subscribe-block/';
@@ -76,25 +72,11 @@ const EmptyListView = () => {
 			</h2>
 			<p className="empty-list-view__description">
 				{ i18n.fixMe( {
-					text: translate(
-						'Learn more about how to import subscribers. No subscribers yet? Turn your site visitors into subscribers.'
-					),
+					text: translate( 'No subscribers yet? Turn your site visitors into subscribers.' ),
 					newCopy: translate(
-						'{{howToImportLink}}Learn more{{/howToImportLink}} about how to import subscribers. No subscribers yet? {{howToTurnVisitorsLink}}Turn your site visitors into subscribers{{/howToTurnVisitorsLink}}.',
+						'No subscribers yet? {{howToTurnVisitorsLink}}Turn your site visitors into subscribers.{{/howToTurnVisitorsLink}}',
 						{
 							components: {
-								howToImportLink: (
-									<a
-										href={ localizeUrl( importSubscribersUrl ) }
-										target="_blank"
-										rel="noopener noreferrer"
-										onClick={ () =>
-											recordTracksEvent(
-												'calypso_subscribers_empty_view_import_subscribers_clicked'
-											)
-										}
-									/>
-								),
 								howToTurnVisitorsLink: (
 									<a
 										href={ localizeUrl( subscribeBlockUrl ) }
