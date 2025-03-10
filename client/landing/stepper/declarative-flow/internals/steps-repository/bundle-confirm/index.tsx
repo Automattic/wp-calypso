@@ -277,6 +277,7 @@ const BundleConfirm: Step = function BundleConfirm( { navigation } ) {
 	if ( site === null || ! site.ID || ! isDataReady || isReadyToStart ) {
 		return (
 			<div className="bundle-confirm__loading-container">
+				<QueryEligibility siteId={ siteId } />
 				<LoadingEllipsis />
 			</div>
 		);
