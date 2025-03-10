@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
+import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -29,7 +29,6 @@ interface WhatToExpectProps {
 
 const ImporterMigrateMessage: Step = ( { navigation } ) => {
 	const locale = useLocale();
-	const hasEnTranslation = useHasEnTranslation();
 	const user = useSelector( getCurrentUser ) as UserData;
 	const siteSlugParam = useSiteSlugParam();
 	const fromUrl = useQuery().get( 'from' ) || '';
@@ -126,9 +125,7 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 		text: __( "We'll help you switch your domain over after the migration is complete." ),
 	} );
 
-	const title = hasEnTranslation( "We've received your migration request" )
-		? __( "We've received your migration request" )
-		: __( 'Let us take it from here!' );
+	const title = __( "We've received your migration request" );
 
 	const sitesDashboardButton = (
 		<div className="migration-message__cta-wrapper">
