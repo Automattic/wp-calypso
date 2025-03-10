@@ -20,7 +20,7 @@ type EmptyListCTALinkProps = {
 
 const EmptyListCTALink = ( { icon, text, onClick }: EmptyListCTALinkProps ) => {
 	return (
-		<Card className="empty-list-view__cta-link" size="small" as="a" onClick={ onClick }>
+		<Card className="empty-list-view__cta-link" size="small" as="button" onClick={ onClick }>
 			<CardBody className="empty-list-view__card-body">
 				<Icon className="empty-list-view__cta-link-icon" icon={ icon } size={ 20 } />
 				<span className="empty-list-view__cta-link-text">{ text }</span>
