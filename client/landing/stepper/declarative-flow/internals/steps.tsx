@@ -12,7 +12,7 @@ export const STEPS = {
 	},
 
 	AUTOMATED_COPY_SITE: {
-		slug: 'automated-copy-site',
+		slug: 'automated-copy',
 		asyncComponent: () => import( './steps-repository/automated-copy-site' ),
 	},
 
