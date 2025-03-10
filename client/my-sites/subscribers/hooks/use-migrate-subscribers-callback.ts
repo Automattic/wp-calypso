@@ -9,10 +9,6 @@ type Response = {
 	message: string;
 };
 
-type ResponseWithBody = {
-	body: Response;
-};
-
 /**
  * This callback is used to initiate the migrate subscribers process.
  * @param siteId - The site ID of the current site.
@@ -33,16 +29,11 @@ export const useMigrateSubscribersCallback = ( siteId: number | null ) => {
 		}
 
 		try {
-			const response = await wpcom.req
-				.post(
-					`/jetpack-blogs/${ encodeURIComponent( siteId ) }/source/${ encodeURIComponent(
-						sourceSiteId
-					) }/migrate?http_envelope=1`
-				)
-				.then( ( data: ResponseWithBody & Response ) => {
-					// In Calypso green the response has body
-					return data.body ?? data;
-				} );
+			const response: Response = await wpcom.req.post(
+				`/jetpack-blogs/${ encodeURIComponent( siteId ) }/source/${ encodeURIComponent(
+					sourceSiteId
+				) }/migrate`
+			);
 
 			if ( response.success ) {
 				dispatch(
