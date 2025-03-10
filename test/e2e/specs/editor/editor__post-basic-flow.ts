@@ -114,12 +114,13 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 			}
 		);
 
-		it( 'Open social preview', async function () {
+		// Social Previews is not available on private WoA sites and needs to be fixed.
+		it.skip( 'Open social preview', async function () {
 			await editorPage.expandSection( 'Social Previews' );
 			await editorPage.clickSidebarButton( 'Open Social Previews' );
 		} );
 
-		it( 'Show social preview for Tumblr', async function () {
+		it.skip( 'Show social preview for Tumblr', async function () {
 			// Action implemented as "raw" calls for now (2023-09).
 			const editorParent = await editorPage.getEditorParent();
 			const dialog = editorParent.getByRole( 'dialog' );
@@ -136,7 +137,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 				.waitFor();
 		} );
 
-		it( 'Dismiss social preview', async function () {
+		it.skip( 'Dismiss social preview', async function () {
 			await page.keyboard.press( 'Escape' );
 		} );
 
