@@ -3,7 +3,6 @@ import { SiteGoal, SiteIntent } from './constants';
 interface Flags {
 	isIntentNewsletterGoalEnabled?: boolean;
 	isIntentCreateCourseGoalEnabled?: boolean;
-	isIntentPublishABlogEnabled?: boolean;
 }
 
 export const goalsToIntent = ( goals: SiteGoal[], flags?: Flags ): SiteIntent => {
