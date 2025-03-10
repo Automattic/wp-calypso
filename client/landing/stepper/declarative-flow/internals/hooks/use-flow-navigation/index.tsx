@@ -10,7 +10,7 @@ import { ONBOARD_STORE, STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/s
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { PRIVATE_STEPS } from '../../steps';
-import type { Flow, Navigate, StepperStep } from '../../types';
+import type { Flow, Navigate, StepperStep, StepperStepSlug } from '../../types';
 
 const useOnboardingIntent = () => {
 	const intent = useSelect(
@@ -23,8 +23,8 @@ const useOnboardingIntent = () => {
 interface FlowNavigation {
 	navigate: Navigate< StepperStep[] >;
 	params: {
-		flow: string | null;
-		step: string | null;
+		flow: string;
+		step: StepperStepSlug | null;
 	};
 	search: URLSearchParams;
 }

@@ -40,16 +40,12 @@ function flowStepComponent( flowStep: StepperStep | undefined ) {
 		return null;
 	}
 
-	if ( 'asyncComponent' in flowStep ) {
-		let lazyComponent = lazyCache.get( flowStep.asyncComponent );
-		if ( ! lazyComponent ) {
-			lazyComponent = lazy( flowStep.asyncComponent );
-			lazyCache.set( flowStep.asyncComponent, lazyComponent );
-		}
-		return lazyComponent;
+	let lazyComponent = lazyCache.get( flowStep.asyncComponent );
+	if ( ! lazyComponent ) {
+		lazyComponent = lazy( flowStep.asyncComponent );
+		lazyCache.set( flowStep.asyncComponent, lazyComponent );
 	}
-
-	return flowStep.component;
+	return lazyComponent;
 }
 
 /**
@@ -75,7 +71,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 	const stepPaths = flowSteps.map( ( step ) => step.slug );
 	const firstStepSlug = useFirstStep( stepPaths );
 	const { navigate, params } = useFlowNavigation( flow );
-	const currentStepRoute = params.step || '';
+	const currentStepRoute = params.step;
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const { lang = null } = useParams();
 	const isValidStep = params.step != null && stepPaths.includes( params.step );

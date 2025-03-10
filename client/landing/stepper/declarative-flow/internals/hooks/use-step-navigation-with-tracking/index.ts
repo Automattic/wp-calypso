@@ -17,7 +17,7 @@ import type { Flow, Navigate, ProvidedDependencies, StepperStep } from '../../ty
 
 interface Params< FlowSteps extends StepperStep[] > {
 	flow: Flow;
-	currentStepRoute: string;
+	currentStepRoute: string | null;
 	navigate: Navigate< FlowSteps >;
 }
 
@@ -69,14 +69,14 @@ export const useStepNavigationWithTracking = ( {
 	return useMemo(
 		() => ( {
 			...( stepNavigation.submit && {
-				submit: ( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) => {
+				submit: ( providedDependencies: ProvidedDependencies = {} ) => {
 					if ( ! providedDependencies?.shouldSkipSubmitTracking ) {
 						handleRecordStepNavigation( {
 							event: STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
 							providedDependencies,
 						} );
 					}
-					stepNavigation.submit?.( providedDependencies, ...params );
+					stepNavigation.submit?.( providedDependencies );
 				},
 			} ),
 			...( stepNavigation.exitFlow && {

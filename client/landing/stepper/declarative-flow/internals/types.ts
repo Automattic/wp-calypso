@@ -46,9 +46,12 @@ export type NavigationControls<
 };
 
 export type AsyncStepperStep = ( typeof STEPS )[ keyof typeof STEPS ];
-export type AsyncUserStep = ( typeof PRIVATE_STEPS )[ keyof typeof PRIVATE_STEPS ];
+type AsyncUserStep = ( typeof PRIVATE_STEPS )[ keyof typeof PRIVATE_STEPS ];
 
-export type StepperStep = AsyncStepperStep | AsyncUserStep;
+export type StepperStep = ( AsyncStepperStep | AsyncUserStep ) & {
+	requiresLoggedInUser?: boolean;
+};
+export type StepperStepSlug = AsyncStepperStep[ 'slug' ] | AsyncUserStep[ 'slug' ];
 
 export type Navigate< FlowSteps extends readonly StepperStep[] > = (
 	// TODO: remove | string once we have typed all the steps
@@ -70,7 +73,7 @@ export type UseStepsHook = () => readonly StepperStep[];
 
 export type UseStepNavigationHook< FlowSteps extends readonly StepperStep[] > = (
 	// TODO: pass FlowSteps[ number ][ 'slug' ]
-	currentStepSlug: string,
+	currentStepSlug: string | null,
 	navigate: Navigate< FlowSteps >
 ) => NavigationControls< any >;
 

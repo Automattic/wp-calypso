@@ -29,7 +29,7 @@ async function tryPreload( step?: StepperStep, followingStep?: StepperStep ) {
 export function usePreloadSteps(
 	siteSlugOrId: string | number,
 	selectedSite: SiteDetails | undefined | null,
-	currentStepRoute: string,
+	currentStepRoute: string | null,
 	flowSteps: readonly StepperStep[],
 	flow: Flow
 ) {

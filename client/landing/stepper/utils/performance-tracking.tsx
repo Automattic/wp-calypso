@@ -22,14 +22,14 @@ export function startStepperPerformanceTracking( {
 	startPerformanceTracking( 'stepper', { fullPageLoad } );
 }
 
-// This hook starts performance gathering for the Stepper everytime the flow or step change.
+// This hook starts performance gathering for the Stepper every time the flow or step change.
 // The library we're using ignores follow-up `start` calls while there's an inflight tracking
 // report, so this hook is always safe, even though the entry point starts its own report on
 // first render.
-export function useStartStepperPerformanceTracking( flow: string, step: string ) {
+export function useStartStepperPerformanceTracking( flow: string, step: string | null ) {
 	useMemo( () => {
 		startStepperPerformanceTracking( { fullPageLoad: false } );
-		// We need to start tracking again everytime we change flow or step.
+		// We need to start tracking again every time we change flow or step.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ flow, step ] );
 }
