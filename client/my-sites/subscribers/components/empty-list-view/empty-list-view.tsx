@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Card, CardBody, Icon } from '@wordpress/components';
@@ -40,8 +39,6 @@ const EmptyListView = () => {
 	useEffect( () => {
 		recordTracksEvent( 'calypso_subscribers_empty_view_displayed' );
 	}, [] );
-
-	const isSubstackSubscriberImporterEnabled = isEnabled( 'importers/newsletter' );
 
 	const importSubscribersUrl = ! isWPCOMSite
 		? 'https://jetpack.com/support/newsletter/import-subscribers/'
@@ -124,13 +121,11 @@ const EmptyListView = () => {
 				text={ translate( 'Use a CSV file' ) }
 				onClick={ () => handleMethodSelect( 'upload' ) }
 			/>
-			{ isSubstackSubscriberImporterEnabled && (
-				<EmptyListCTALink
-					icon={ reusableBlock }
-					text={ translate( 'Import from Substack' ) }
-					onClick={ () => handleMethodSelect( 'substack' ) }
-				/>
-			) }
+			<EmptyListCTALink
+				icon={ reusableBlock }
+				text={ translate( 'Import from Substack' ) }
+				onClick={ () => handleMethodSelect( 'substack' ) }
+			/>
 		</div>
 	);
 };
