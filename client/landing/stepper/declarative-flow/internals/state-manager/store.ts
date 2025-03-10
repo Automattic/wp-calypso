@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getSessionId } from 'calypso/landing/stepper/utils/use-session-id';
-import { StepperStep, FlowV2 } from '../types';
+import { StepperStep, Flow, FlowV1, FlowV2 } from '../types';
 import type { FlowStateManifest } from './stepper-state-manifest';
 
 const PREFIX = 'stepper-state-item';
@@ -37,39 +37,44 @@ type ArrayToRecord< T extends readonly StepperStep[] > = {
  * This type is used to aggregate the state of a flow.
  * It loops all the steps in the flow and unions their types.
  */
-type AggregatedFlowState< Flow extends FlowV2 > = ArrayToRecord<
-	ReturnType< Flow[ 'initialize' ] >
+type AggregatedFlowState< FlowType extends Flow > = ArrayToRecord<
+	FlowType extends FlowV1
+		? StepperStep[]
+		: FlowType extends FlowV2
+		? ReturnType< FlowType[ 'initialize' ] >
+		: StepperStep[]
 >;
 
 /**
  * Returns a setter and a getter for the flow state. This persists the state for 7 days. The persistence is based on the flow and the session ID.
  */
-export function useFlowState< Flow extends FlowV2 >( flow: Flow ) {
-	type FlowState = AggregatedFlowState< Flow >;
+export function useFlowState< FlowType extends Flow >( flow: Flow ) {
+	type FlowState = AggregatedFlowState< FlowType >;
+	type GeneralAndFlowState = FlowState & FlowStateManifest;
 
 	const queryClient = useQueryClient();
 	const flowName = flow.name;
 	const session = getSessionId();
 
-	const { data: state = {} as FlowState } = useQuery< FlowState >( {
+	const { data: state } = useQuery< GeneralAndFlowState >( {
 		queryKey: [ PREFIX, flowName, session, VERSION ],
 		...PERSISTENCE_CONFIG,
 	} );
 
-	function get< T extends keyof FlowState >( key: T ) {
-		return state[ key ];
+	function get< T extends keyof GeneralAndFlowState >( key: T ) {
+		return state?.[ key ];
 	}
 
-	function set< T extends keyof FlowStateManifest >(
+	function set< T extends keyof GeneralAndFlowState >(
 		key: T,
-		value: unknown
-	): FlowStateManifest[ T ] {
+		value: GeneralAndFlowState[ T ]
+	): GeneralAndFlowState[ T ] {
 		queryClient.setQueryData( [ PREFIX, flow, session, VERSION ], {
 			...state,
 			[ key ]: value,
 		} );
 
-		return value as FlowStateManifest[ T ];
+		return value;
 	}
 
 	return {

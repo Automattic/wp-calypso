@@ -7,6 +7,7 @@ import wpcomRequest from 'wpcom-proxy-request';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserName, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useFlowState } from '../declarative-flow/internals/state-manager/store';
+import { Flow } from '../declarative-flow/internals/types';
 import { getFlowFromURL } from '../utils/get-flow-from-url';
 import type { DomainSuggestion, NewSiteSuccessResponse, Site } from '@automattic/data-stores';
 import type { SiteGoal } from '@automattic/data-stores/src/onboard';
@@ -131,10 +132,10 @@ export const createSite = async ( {
 	return siteDetails;
 };
 
-export const useCreateSite = () => {
+export const useCreateSite = ( flow: Flow ) => {
 	const flowName = getFlowFromURL();
 	const userIsLoggedIn = useSelector( isUserLoggedIn );
-	const { get, set } = useFlowState();
+	const { get, set } = useFlowState( flow );
 	const domains = get( 'domains' );
 	const username = useSelector( getCurrentUserName );
 	const planCartItems = get( 'plans' )?.cartItems;
@@ -170,7 +171,7 @@ export const useCreateSite = () => {
 					userIsLoggedIn,
 					theme,
 					mergedDomainCartItems,
-					planCartItems
+					planCartItems as MinimalRequestCartProduct[] | null | undefined
 				);
 				return createdSite;
 			}
@@ -189,9 +190,9 @@ export const useCreateSite = () => {
 				username,
 				domainCartItems: mergedDomainCartItems,
 				partnerBundle: null,
-				domainItem: domains?.domainItem,
+				domainItem: domains?.domainItem as DomainSuggestion | undefined,
 				siteIntent,
-				planCartItems,
+				planCartItems: planCartItems as MinimalRequestCartProduct[] | null | undefined,
 			} );
 		},
 		onSuccess: ( data ) => {

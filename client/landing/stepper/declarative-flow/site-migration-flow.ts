@@ -37,7 +37,7 @@ const siteMigration: Flow = {
 		useEffect( () => {
 			setIntent( Onboard.SiteIntent.SiteMigration );
 		}, [] );
-		const { set, get } = useFlowState();
+		const { set, get } = useFlowState( siteMigration );
 		const urlQueryParams = useQuery();
 		const ref = urlQueryParams.get( 'ref' );
 
@@ -46,7 +46,7 @@ const siteMigration: Flow = {
 		}
 	},
 
-	useSteps() {
+	initialize() {
 		const baseSteps = [
 			STEPS.SITE_MIGRATION_IDENTIFY,
 			STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
@@ -117,7 +117,7 @@ const siteMigration: Flow = {
 		);
 
 		const isFromSiteWordPress = ! isLoadingFromData && urlData?.platform === 'wordpress';
-		const { get, sessionId } = useFlowState();
+		const { get, sessionId } = useFlowState( siteMigration );
 
 		const exitFlow = ( to: string ) => {
 			return window.location.assign( addQueryArgs( { sessionId }, to ) );
@@ -342,7 +342,7 @@ const siteMigration: Flow = {
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
 					if ( providedDependencies?.goToCheckout ) {
-						let redirectAfterCheckout = STEPS.SITE_MIGRATION_INSTRUCTIONS.slug;
+						let redirectAfterCheckout: string = STEPS.SITE_MIGRATION_INSTRUCTIONS.slug;
 
 						if (
 							providedDependencies?.userAcceptedDeal ||

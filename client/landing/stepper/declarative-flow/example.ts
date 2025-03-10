@@ -77,7 +77,7 @@ const exampleFlow = {
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const { saveSiteSettings } = useDispatch( SITE_STORE );
 
-		const createSite = useCreateSite();
+		const createSite = useCreateSite( exampleFlow );
 
 		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
 			exitFlow,
