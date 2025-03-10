@@ -138,17 +138,18 @@ const ConfirmationModal = ( {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 
-	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HelpCenter.register() );
+	const { setShowHelpCenter, setNewMessagingChat } = useDataStoreDispatch( HelpCenter.register() );
 
-	const userFieldMessage =
+	const initialMessage =
 		'Automated message: This is a user looking to purchase the 100-Year Plan and is currently in the site picker step: https://wordpress.com/setup/hundred-year-plan/site-picker';
-	const helpCenterUrl = `/odie?provider=zendesk&userFieldMessage=${ encodeURIComponent(
-		userFieldMessage
-	) }&siteUrl=${ siteDomain }&siteId=${ siteId }`;
-
 	const openHelpCenter = () => {
 		recordTracksEvent( 'calypso_hundred_year_plan_help_click' );
-		setNavigateToRoute( helpCenterUrl );
+		setNewMessagingChat( {
+			initialMessage,
+			section: '100-year-plan',
+			siteUrl: siteDomain,
+			siteId: siteId,
+		} );
 		setShowHelpCenter( true, true );
 		closeModal();
 	};

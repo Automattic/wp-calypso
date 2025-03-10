@@ -27,6 +27,7 @@ import {
 	isWPJobManagerOAuth2Client,
 	isGravPoweredOAuth2Client,
 	isBlazeProOAuth2Client,
+	isPartnerPortalOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
@@ -330,7 +331,8 @@ export default withCurrentRoute(
 				! isJetpackLogin &&
 				! isP2Login &&
 				Boolean( currentQuery?.client_id ) === false;
-			const isWhiteLogin = isWPComLogin || isGravatar || isGravPoweredClient;
+			const isPartnerPortal = isPartnerPortalOAuth2Client( oauth2Client );
+			const isWhiteLogin = isWPComLogin || isGravatar || isGravPoweredClient || isPartnerPortal;
 			const noMasterbarForRoute =
 				isJetpackLogin ||
 				( isWhiteLogin && ! isBlazePro ) ||

@@ -88,8 +88,18 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 					},
 					enableSorting: false,
 				},
-				{ id: 'kind', type: 'text', label: translate( 'Kind' ), enableSorting: false },
-				{ id: 'name', type: 'text', label: translate( 'Name' ), enableSorting: false },
+				{
+					id: 'kind',
+					type: 'text',
+					label: translate( 'Group' ),
+					enableSorting: false,
+				},
+				{
+					id: 'name',
+					type: 'text',
+					label: translate( 'Source' ),
+					enableSorting: false,
+				},
 				{
 					id: 'file',
 					type: 'text',

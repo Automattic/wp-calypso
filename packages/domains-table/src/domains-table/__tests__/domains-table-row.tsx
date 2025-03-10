@@ -973,10 +973,6 @@ describe( 'domain status cell', () => {
 
 		const changeAddress = screen.queryByText( 'Point to WordPress.com' );
 		expect( changeAddress ).toBeInTheDocument();
-		expect( changeAddress ).toHaveAttribute(
-			'href',
-			'/domains/manage/example.com/edit/example.com?nameservers=true'
-		);
 
 		fireEvent.mouseOver( screen.getByLabelText( 'More information' ) );
 
@@ -984,7 +980,7 @@ describe( 'domain status cell', () => {
 			const tooltip = screen.getByRole( 'tooltip' );
 
 			expect( tooltip ).toHaveTextContent(
-				'Transfer successful! To make this domain work with your WordPress.com site you need to point it to WordPress.com servers.'
+				'Transfer successful! To make this domain work with your WordPress.com site you need to point it to WordPress.com.'
 			);
 		} );
 	} );

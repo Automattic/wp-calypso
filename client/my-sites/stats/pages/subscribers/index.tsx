@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
@@ -100,11 +101,14 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 		'YYYY-MM-DD'
 	) }`;
 
+	const isWPAdmin = config.isEnabled( 'is_odyssey' );
+	const subscribersPageClasses = clsx( 'stats', { 'is-odyssey-stats': isWPAdmin } );
+
 	return (
 		<Main fullWidthLayout>
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<PageViewTracker path="/stats/subscribers/:site" title="Stats > Subscribers" />
-			<div className="stats">
+			<div className={ subscribersPageClasses }>
 				<NavigationHeader
 					className="stats__section-header modernized-header"
 					title={ STATS_PRODUCT_NAME }

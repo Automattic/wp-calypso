@@ -101,14 +101,8 @@ export const HelpCenterContactForm = () => {
 		currentSupportInteraction?.events.find( ( event ) => event.event_source === 'odie' )
 			?.event_external_id ?? null;
 
-	const {
-		resetStore,
-		setShowHelpCenter,
-		setUserDeclaredSite,
-		setShowMessagingChat,
-		setSubject,
-		setMessage,
-	} = useDispatch( HELP_CENTER_STORE );
+	const { resetStore, setShowHelpCenter, setUserDeclaredSite, setSubject, setMessage } =
+		useDispatch( HELP_CENTER_STORE );
 
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
 	const { hasActiveChats, isEligibleForChat, isLoading: isLoadingChatStatus } = useChatStatus();
@@ -533,10 +527,6 @@ export const HelpCenterContactForm = () => {
 
 		return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
 	};
-
-	if ( hasActiveChats ) {
-		setShowMessagingChat( true );
-	}
 
 	if ( isLoadingChatStatus ) {
 		return (

@@ -1,5 +1,6 @@
 import { default as apiFetchPromise } from '@wordpress/api-fetch';
 import { apiFetch } from '@wordpress/data-controls';
+import { addQueryArgs } from '@wordpress/url';
 import { default as wpcomRequestPromise, canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
@@ -196,11 +197,26 @@ export const resetStore = () =>
 		type: 'HELP_CENTER_RESET_STORE',
 	} ) as const;
 
-export const setShowMessagingChat = function* () {
-	yield setShowHelpCenter( false );
-	yield setShowMessagingLauncher( true );
-	yield setShowMessagingWidget( true );
-	yield resetStore();
+export const setNewMessagingChat = function* ( {
+	initialMessage,
+	section,
+	siteUrl,
+	siteId,
+}: {
+	initialMessage: string;
+	section?: string;
+	siteUrl?: string;
+	siteId?: string;
+} ) {
+	const url = addQueryArgs( '/odie', {
+		provider: 'zendesk',
+		userFieldMessage: initialMessage,
+		section,
+		siteUrl,
+		siteId,
+	} );
+	yield setNavigateToRoute( url );
+	yield setShowHelpCenter( true );
 };
 
 export const setShowSupportDoc = function* ( link: string, postId?: number, blogId?: number ) {

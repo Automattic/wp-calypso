@@ -1,8 +1,9 @@
 import page from '@automattic/calypso-router';
 import { MaterialIcon } from '@automattic/components';
+import { HelpCenter } from '@automattic/data-stores';
 import { useHasEnTranslation, useLocalizeUrl } from '@automattic/i18n-utils';
-import { useOpenZendeskMessaging } from '@automattic/zendesk-client';
 import { Button } from '@wordpress/components';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import imgConnectDomain from 'calypso/assets/images/cancellation/connect-domain.png';
@@ -13,6 +14,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import type { UpsellType } from '../get-upsell-type';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { TranslateResult } from 'i18n-calypso';
+const HELP_CENTER_STORE = HelpCenter.register();
 
 type ContentProps = {
 	children: React.ReactNode[];
@@ -70,12 +72,25 @@ type StepProps = {
 	cancellationReason: string;
 };
 
-export default function EducationalCotnentStep( { type, site, ...props }: StepProps ) {
+export default function EducationalContentStep( { type, site, ...props }: StepProps ) {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const localizeUrl = useLocalizeUrl();
-	const { isOpeningZendeskWidget, openZendeskWidget } =
-		useOpenZendeskMessaging( 'pre-cancellation' );
+	const { setNewMessagingChat } = useDataStoreDispatch( HELP_CENTER_STORE );
+
+	const onRequestHelpClick = () => {
+		page( `/domains/manage/${ site.slug }` );
+		const initialMessage =
+			"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
+			props.cancellationReason;
+
+		setNewMessagingChat( {
+			initialMessage,
+			section: 'pre-cancellation',
+			siteUrl: site.URL,
+			siteId: site.ID,
+		} );
+	};
 
 	switch ( type ) {
 		case 'education:loading-time':
@@ -253,23 +268,7 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 														variant="link"
 													/>
 												),
-												chat: (
-													<Button
-														isBusy={ isOpeningZendeskWidget }
-														disabled={ isOpeningZendeskWidget }
-														onClick={ () => {
-															page( `/domains/manage/${ site.slug }` );
-															openZendeskWidget( {
-																message:
-																	"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
-																	props.cancellationReason,
-																siteUrl: site.URL,
-																siteId: site.ID,
-															} );
-														} }
-														variant="link"
-													/>
-												),
+												chat: <Button onClick={ onRequestHelpClick } variant="link" />,
 											},
 										}
 								  )
@@ -285,23 +284,7 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 														variant="link"
 													/>
 												),
-												chat: (
-													<Button
-														isBusy={ isOpeningZendeskWidget }
-														disabled={ isOpeningZendeskWidget }
-														onClick={ () => {
-															page( `/domains/manage/${ site.slug }` );
-															openZendeskWidget( {
-																message:
-																	"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
-																	props.cancellationReason,
-																siteUrl: site.URL,
-																siteId: site.ID,
-															} );
-														} }
-														variant="link"
-													/>
-												),
+												chat: <Button onClick={ onRequestHelpClick } variant="link" />,
 											},
 										}
 								  ) }

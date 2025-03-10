@@ -1,7 +1,7 @@
 import { LineChart, ThemeProvider, jetpackTheme } from '@automattic/charts';
 import { DataPointDate } from '@automattic/charts/src/types';
 import clsx from 'clsx';
-import { numberFormat, useTranslate } from 'i18n-calypso';
+import { numberFormat, translate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import { useCallback, useMemo } from 'react';
 import ChartBarTooltip from 'calypso/components/chart/bar-tooltip';
@@ -17,7 +17,12 @@ function StatsLineChart( {
 	className,
 	onClick,
 	height = 400,
-	EmptyState = StatsEmptyState,
+	emptyState = (
+		<StatsEmptyState
+			headingText={ translate( 'No data available' ) }
+			infoText={ translate( 'Try selecting a different time frame.' ) }
+		/>
+	),
 	zeroBaseline = true,
 	fixedDomain = false,
 }: {
@@ -31,12 +36,11 @@ function StatsLineChart( {
 	className?: string;
 	height?: number;
 	moment: Moment;
-	EmptyState: typeof StatsEmptyState;
+	emptyState: JSX.Element;
 	zeroBaseline?: boolean;
 	fixedDomain?: boolean;
 	onClick?: ( item: { data: { period: string } } ) => void;
 } ) {
-	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
 	const formatTime = formatTimeTick
@@ -158,12 +162,7 @@ function StatsLineChart( {
 
 	return (
 		<div className={ clsx( 'stats-line-chart', className ) }>
-			{ isEmpty && (
-				<EmptyState
-					headingText={ translate( 'No data available' ) }
-					infoText={ translate( 'Try selecting a different time frame.' ) }
-				/>
-			) }
+			{ isEmpty && emptyState }
 			{ ! isEmpty && (
 				<ThemeProvider theme={ jetpackTheme }>
 					<LineChart

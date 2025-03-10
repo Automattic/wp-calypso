@@ -57,13 +57,16 @@ function StatsInsights() {
 	// Necessary to properly configure the fixed navigation headers.
 	sessionStorage.setItem( 'jp-stats-last-tab', 'insights' );
 
+	const isWPAdmin = config.isEnabled( 'is_odyssey' );
+	const insightsPageClasses = clsx( 'stats', { 'is-odyssey-stats': isWPAdmin } );
+
 	// TODO: should be refactored into separate components
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Main fullWidthLayout>
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<PageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
-			<div className="stats">
+			<div className={ insightsPageClasses }>
 				<NavigationHeader
 					className="stats__section-header modernized-header"
 					title={ STATS_PRODUCT_NAME }

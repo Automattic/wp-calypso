@@ -83,13 +83,21 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	}, [ messagesContainerRef ] );
 	useUpdateDocumentTitle();
 
+	// prevent zd transfer for non-eligible users
+	useEffect( () => {
+		if ( isForwardingToZendesk && ! isUserEligibleForPaidSupport ) {
+			searchParams.delete( 'provider' );
+			setChatMessagesLoaded( true );
+		}
+	}, [ isForwardingToZendesk, isUserEligibleForPaidSupport, setChatMessagesLoaded ] );
+
 	useEffect( () => {
 		if ( isForwardingToZendesk || hasForwardedToZendesk ) {
 			return;
 		}
 
 		( chat?.status === 'loaded' || chat?.status === 'closed' ) && setChatMessagesLoaded( true );
-	}, [ chat, isForwardingToZendesk, hasForwardedToZendesk ] );
+	}, [ chat?.status, isForwardingToZendesk, hasForwardedToZendesk ] );
 
 	/**
 	 * Handle the case where we are forwarding to Zendesk.
@@ -113,6 +121,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 					createZendeskConversation( {
 						avoidTransfer: true,
 						interactionId: interaction?.uuid,
+						section: searchParams.get( 'section' ),
 						createdFrom: 'direct_url',
 					} ).then( () => {
 						setChatMessagesLoaded( true );
