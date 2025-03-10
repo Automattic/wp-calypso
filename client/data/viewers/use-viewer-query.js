@@ -3,12 +3,8 @@ import wpcom from 'calypso/lib/wp';
 
 const useViewerQuery = ( siteId, userId ) => {
 	return useQuery( {
-		queryKey: [ 'viewer', userId ],
-		queryFn: () =>
-			wpcom.req.get( {
-				path: `/sites/${ siteId }/viewer/${ userId }?http_envelope=1`,
-				apiNamespace: 'rest/v1.1',
-			} ),
+		queryKey: [ 'viewer', siteId, userId ],
+		queryFn: () => wpcom.req.get( `/sites/${ siteId }/viewer/${ userId }` ),
 	} );
 };
 

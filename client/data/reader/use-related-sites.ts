@@ -62,17 +62,11 @@ export const useRelatedSites = (
 	return useQuery( {
 		queryKey: [ 'related-sites', SITE_RECOMMENDATIONS_COUNT, siteId, postId ],
 		queryFn: () =>
-			wpcom.req.get(
-				{
-					path: `/read/site/${ siteId }/sites/related`,
-					apiNamespace: 'rest/v1.2',
-				},
-				{
-					size_global: SITE_RECOMMENDATIONS_COUNT,
-					post_id: postId,
-					http_envelope: 1,
-				}
-			),
+			wpcom.req.get( `/read/site/${ siteId }/sites/related`, {
+				apiVersion: '1.2',
+				size_global: SITE_RECOMMENDATIONS_COUNT,
+				post_id: postId,
+			} ),
 		enabled: !! siteId,
 		staleTime: 3600000, // 1 hour
 		select: selectRelatedSites,

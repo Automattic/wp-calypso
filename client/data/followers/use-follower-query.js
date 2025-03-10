@@ -16,11 +16,7 @@ const useFollowerQuery = ( siteId, subscriberId, type ) => {
 
 	return useQuery( {
 		queryKey: [ 'subscriber', siteId, subscriberId, type ],
-		queryFn: () =>
-			wpcom.req.get( {
-				path: `/sites/${ siteId }/followers/${ subscriberId }?type=${ type }&http_envelope=1`,
-				apiNamespace: 'rest/v1.1',
-			} ),
+		queryFn: () => wpcom.req.get( `/sites/${ siteId }/followers/${ subscriberId }`, { type } ),
 		select: normalizeFollower,
 	} );
 };
