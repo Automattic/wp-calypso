@@ -23,6 +23,7 @@ export const SupportNudge: FC< SupportNudgeProps > = ( { onAskForHelp } ) => {
 								onAskForHelp();
 							} }
 							type="button"
+							className="site-migration-instructions-support-nudge__button"
 						/>
 					),
 				},
