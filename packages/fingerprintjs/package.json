@@ -83,7 +83,7 @@
 		"rollup-plugin-license": "^3.0.1",
 		"terser-webpack-plugin": "^5.3.11",
 		"ts-loader": "^9.4.2",
-		"ts-node": "^10.9.1",
+		"ts-node": "^10.9.2",
 		"typescript": "^5.5.4",
 		"ua-parser-js": "^0.7.32",
 		"webpack": "^5.97.1",
