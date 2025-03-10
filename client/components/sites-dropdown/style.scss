@@ -27,7 +27,7 @@
 	margin: 0;
 	position: relative;
 	width: 300px;
-	transition: all 0.2s ease-in;
+	transition: border-color 0.2s ease-in;
 	z-index: 1;
 
 	@include breakpoint-deprecated( "<660px" ) {
@@ -84,7 +84,7 @@
 	border: 1px solid var(--color-neutral-10);
 	border-top: none;
 	border-radius: 0 0 2px 2px;
-	transition: all 0.2s ease-in;
+	transition: border-color 0.2s ease-in;
 
 	.search-component {
 		.components-button {
