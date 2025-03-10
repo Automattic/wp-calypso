@@ -110,6 +110,7 @@ const siteMigration: Flow = {
 		const siteSlugParam = useSiteSlugParam();
 		const urlQueryParams = useQuery();
 		const fromQueryParam = urlQueryParams.get( 'from' );
+		const actionQueryParam = urlQueryParams.get( 'action' );
 		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
 		const { data: urlData, isLoading: isLoadingFromData } = useAnalyzeUrlQuery(
 			fromQueryParam || '',
@@ -208,6 +209,16 @@ const siteMigration: Flow = {
 						case 'select-site': {
 							const { ID: newSiteId, slug: newSiteSlug } =
 								providedDependencies.site as SiteExcerptData;
+
+							// If the action is migrate, navigate to the DIY/DIFM selector screen.
+							if ( 'migrate' === actionQueryParam ) {
+								return navigate(
+									addQueryArgs(
+										{ siteId: newSiteId, siteSlug: newSiteSlug, from: fromQueryParam },
+										STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug
+									)
+								);
+							}
 							return navigate(
 								addQueryArgs(
 									{ siteId: newSiteId, siteSlug: newSiteSlug, from: fromQueryParam },
@@ -244,6 +255,13 @@ const siteMigration: Flow = {
 								)
 							);
 						}
+
+						if ( 'migrate' === actionQueryParam ) {
+							return navigate(
+								addQueryArgs( { from: fromQueryParam }, STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug )
+							);
+						}
+
 						return navigate(
 							addQueryArgs(
 								{ siteId, siteSlug, from: fromQueryParam },
