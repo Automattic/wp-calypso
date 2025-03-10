@@ -69,8 +69,8 @@ const COPY_SITE_STEPS = [
 	STEPS.SITE_CREATION_STEP,
 	STEPS.PROCESSING,
 	STEPS.AUTOMATED_COPY_SITE,
-	STEPS.PROCESSING_COPY,
-	STEPS.PROCESSING,
+	STEPS.PROCESSING_COPY_SITE_FLOW,
+	{ ...STEPS.PROCESSING, slug: 'resuming' },
 ];
 
 const copySite: Flow = {
@@ -101,6 +101,7 @@ const copySite: Flow = {
 					return navigate( 'processing' );
 				}
 
+				case 'resuming':
 				case 'processing': {
 					const siteSlug = providedDependencies?.siteSlug || urlQueryParams.get( 'siteSlug' );
 					const destination = addQueryArgs( `/setup/${ this.name }/automated-copy`, {
@@ -158,7 +159,7 @@ const copySite: Flow = {
 		const { isValidSite, hasFetchedSiteDetails, isFetchingError } = useIsValidSite();
 
 		if ( ! sourceSlug || isFetchingError || ( ! isValidSite && hasFetchedSiteDetails ) ) {
-			window.location.assign( `/sites` );
+			window.location.assign( '/sites' );
 			result = {
 				state: AssertConditionState.FAILURE,
 				message: isFetchingError
