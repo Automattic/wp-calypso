@@ -186,10 +186,10 @@ const WooPaymentsDashboardEmptyState = () => {
 				} }
 			>
 				<PageSectionColumns.Column>
-					<SimpleList items={ listItems1 } />
+					<SimpleList applyCoreStyles items={ listItems1 } />
 				</PageSectionColumns.Column>
 				<PageSectionColumns.Column>
-					<SimpleList items={ listItems2 } />
+					<SimpleList applyCoreStyles items={ listItems2 } />
 				</PageSectionColumns.Column>
 			</PageSectionColumns>
 
