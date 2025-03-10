@@ -68,12 +68,12 @@ $tab-background-selected: var(--color-surface);
 
 
 .hosting-v3-hero-section__heading {
-	@include heading-2x-large;
+	@include heading-x-large;
 	color: var( --color-text-inverted );
 	margin-block-start: 0;
 
 	@include break-medium {
-		@include heading-x-large;
+		@include heading-2x-large;
 	}
 }
 
