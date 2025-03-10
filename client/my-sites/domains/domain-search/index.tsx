@@ -85,7 +85,8 @@ type DomainSearchProps = {
 		section: string,
 		position: number,
 		isPremium?: boolean,
-		flowName?: string
+		flowName?: string,
+		vendor?: string
 	) => void;
 	recordRemoveDomainButtonClick: ( domainName: string ) => void;
 	isSiteOnFreePlan?: boolean;
@@ -201,7 +202,14 @@ class DomainSearch extends Component< DomainSearchProps > {
 			is_premium: isPremium,
 		} = suggestion;
 
-		this.props.recordAddDomainButtonClick( domain, 'domains', position, isPremium, 'domains/add' );
+		this.props.recordAddDomainButtonClick(
+			domain,
+			'domains',
+			position,
+			isPremium,
+			'domains/add',
+			suggestion.vendor
+		);
 
 		let registration = domainRegistration( {
 			domain,
