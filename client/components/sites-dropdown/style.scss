@@ -36,7 +36,14 @@
 
 	.has-multiple-sites &:hover {
 		border-color: var(--color-neutral-20);
-		box-shadow: 0 1px var(--color-neutral-20);
+
+		.site-selector {
+			border-color: var(--color-neutral-20);
+		}
+	}
+
+	.is-open & {
+		border-radius: 2px 2px 0 0;
 	}
 }
 
@@ -77,7 +84,8 @@
 	border: 1px solid var(--color-neutral-10);
 	border-top: none;
 	border-radius: 0 0 2px 2px;
-	
+	transition: all 0.2s ease-in;
+
 	.search-component {
 		.components-button {
 			right: 8px;
