@@ -61,6 +61,27 @@ const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 		? ! hasData && ! presentLoadingUI
 		: ! isRequestingData && ! hasData && ! shouldGateStatsModule;
 
+	const titleInfoNode = (
+		<StatsInfoArea>
+			{ translate(
+				'Websites {{link}}referring visitors{{/link}} sorted by most clicked. Learn about where your audience comes from.',
+				{
+					comment: '{{link}} links to support documentation.',
+					components: {
+						link: (
+							<a
+								target="_blank"
+								rel="noreferrer"
+								href={ localizeUrl( `${ supportUrl }#referrers` ) }
+							/>
+						),
+					},
+					context: 'Stats: Link in a popover for the Referrers when the module has data',
+				}
+			) }
+		</StatsInfoArea>
+	);
+
 	return (
 		<>
 			{ ! shouldGateStatsModule && siteId && statType && (
@@ -78,26 +99,7 @@ const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 				// show data or an overlay
 				<StatsModule
 					path="referrers"
-					titleNodes={
-						<StatsInfoArea>
-							{ translate(
-								'Websites {{link}}referring visitors{{/link}} sorted by most clicked. Learn about where your audience comes from.',
-								{
-									comment: '{{link}} links to support documentation.',
-									components: {
-										link: (
-											<a
-												target="_blank"
-												rel="noreferrer"
-												href={ localizeUrl( `${ supportUrl }#referrers` ) }
-											/>
-										),
-									},
-									context: 'Stats: Link in a popover for the Referrers when the module has data',
-								}
-							) }
-						</StatsInfoArea>
-					}
+					titleNodes={ titleInfoNode }
 					moduleStrings={ moduleStrings }
 					period={ period }
 					query={ query }
@@ -116,6 +118,7 @@ const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 					className={ clsx( 'stats-card--empty-variant', className ) } // when removing stats/empty-module-traffic add this to the root of the card
 					title={ moduleStrings.title }
 					isEmpty
+					titleNodes={ titleInfoNode }
 					emptyMessage={
 						<EmptyModuleCard
 							icon={ megaphone }

@@ -395,6 +395,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 					title={ title }
 					isEmpty
 					emptyMessage={ emptyMessage }
+					titleNodes={ titleTooltip }
 					footerAction={
 						summaryUrl
 							? {

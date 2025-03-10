@@ -61,6 +61,21 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 		? ! hasData && ! presentLoadingUI
 		: ! isRequestingData && ! hasData && ! shouldGateStatsModule;
 
+	const titleInfoNode = (
+		<StatsInfoArea>
+			{ translate(
+				'{{link}}Posts and pages{{/link}} sorted by most visited. Learn about what content resonates the most.',
+				{
+					comment: '{{link}} links to support documentation.',
+					components: {
+						link: <a target="_blank" rel="noreferrer" href={ localizeUrl( supportUrl ) } />,
+					},
+					context: 'Stats: Link in a popover for the Posts & Pages when the module has data',
+				}
+			) }
+		</StatsInfoArea>
+	);
+
 	return (
 		<>
 			{ ! shouldGateStatsModule && siteId && statType && (
@@ -78,21 +93,7 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 				// show data or an overlay
 				<StatsModule
 					path="posts"
-					titleNodes={
-						<StatsInfoArea>
-							{ translate(
-								'{{link}}Posts and pages{{/link}} sorted by most visited. Learn about what content resonates the most.',
-								{
-									comment: '{{link}} links to support documentation.',
-									components: {
-										link: <a target="_blank" rel="noreferrer" href={ localizeUrl( supportUrl ) } />,
-									},
-									context:
-										'Stats: Link in a popover for the Posts & Pages when the module has data',
-								}
-							) }
-						</StatsInfoArea>
-					}
+					titleNodes={ titleInfoNode }
 					moduleStrings={ moduleStrings }
 					period={ period }
 					query={ query }
@@ -111,6 +112,7 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 					className={ clsx( 'stats-card--empty-variant', className ) } // when removing stats/empty-module-traffic add this to the root of the card
 					title={ moduleStrings.title }
 					isEmpty
+					titleNodes={ titleInfoNode }
 					emptyMessage={
 						<EmptyModuleCard
 							icon={ postList }
