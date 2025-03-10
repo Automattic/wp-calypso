@@ -110,6 +110,7 @@ const siteMigration: Flow = {
 		const siteSlugParam = useSiteSlugParam();
 		const urlQueryParams = useQuery();
 		const fromQueryParam = urlQueryParams.get( 'from' );
+		const actionQueryParam = urlQueryParams.get( 'action' );
 		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
 		const { data: urlData, isLoading: isLoadingFromData } = useAnalyzeUrlQuery(
 			fromQueryParam || '',
@@ -223,6 +224,10 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_CREATION_STEP.slug: {
+					if ( 'import' === actionQueryParam ) {
+						return navigate( addQueryArgs( { skipMigration: true }, STEPS.PROCESSING.slug ) );
+					}
+
 					return navigate( addQueryArgs( { from: fromQueryParam }, STEPS.PROCESSING.slug ) );
 				}
 
