@@ -1,5 +1,7 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
@@ -183,6 +185,11 @@ class StatsPostDetail extends Component {
 			noViewsLabel = translate( 'Your post has not received any views yet!' );
 		}
 
+		const isWPAdmin = config.isEnabled( 'is_odyssey' );
+		const postDetailPageClasses = clsx( 'stats has-fixed-nav', {
+			'is-odyssey-stats': isWPAdmin,
+		} );
+
 		return (
 			<Main fullWidthLayout>
 				<PageViewTracker
@@ -192,7 +199,7 @@ class StatsPostDetail extends Component {
 				{ siteId && ! isPostHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }
 				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
 
-				<div className="stats has-fixed-nav">
+				<div className={ postDetailPageClasses }>
 					<NavigationHeader navigationItems={ this.getNavigationItemsWithTitle( this.getTitle() ) }>
 						{ showViewLink && (
 							<Button onClick={ this.openPreview }>

@@ -30,6 +30,12 @@
 		}
 	}
 
+	&:not(.is-unread-message) {
+		&.is-closed, &.is-solved {
+			background-color: var(--studio-gray-0);
+		}
+	}
+
 	& > * {
 		display: flex;
 	}

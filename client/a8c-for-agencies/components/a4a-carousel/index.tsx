@@ -66,7 +66,7 @@ export default function A4ACarousel( { children, className }: Props ) {
 	};
 
 	return (
-		<div className={ clsx( `a4a-carousel-wrapper`, className ) }>
+		<div className={ clsx( 'a4a-carousel-wrapper', className ) }>
 			<div
 				className={ clsx( 'a4a-carousel', { 'is-touch-active': !! touchStart } ) }
 				ref={ containerRef }

@@ -12,7 +12,7 @@ const selectors = {
 	// Team people
 	teamUser: ( username: string ) => `.people-profile:has(:text("${ username }"))`,
 	deletedUserContentAction: ( action: 'reassign' | 'delete' ) => `input[value="${ action }"]`,
-	deleteUserButton: `button:text("Delete user")`,
+	deleteUserButton: 'button:text("Delete user")',
 	deleteConfirmBanner: ':text("Successfully deleted")',
 
 	// Header

@@ -541,18 +541,39 @@ class ThemeSheet extends Component {
 			iframeToken.concat( '-', getTracksAnonymousUserId() ?? siteSlug );
 		}
 
+		if ( ! this.shouldRenderPreviewButton() ) {
+			return (
+				<div className="theme__sheet-web-preview">
+					<ThemeWebPreview
+						url={ url }
+						inlineCss={ baseStyleVariationInlineCss + selectedStyleVariationInlineCss }
+						iframeScaleRatio={ 0.5 }
+						iframeToken={ iframeToken }
+						isShowFrameBorder={ false }
+						isShowDeviceSwitcher={ false }
+						isFitHeight
+					/>
+				</div>
+			);
+		}
+
 		return (
-			<div className="theme__sheet-web-preview">
-				{ this.shouldRenderPreviewButton() && (
-					<Button
-						className="theme__sheet-preview-demo-site"
-						onClick={ ( e ) => {
-							this.previewAction( e, 'link', 'preview' );
-						} }
-					>
-						{ translate( 'Preview demo site' ) }
-					</Button>
-				) }
+			<div
+				className="theme__sheet-web-preview is-clickable"
+				role="button"
+				tabIndex="0"
+				onClick={ ( e ) => {
+					this.previewAction( e, 'link', 'preview' );
+				} }
+				onKeyDown={ ( e ) => {
+					if ( e.key === 'Enter' ) {
+						this.previewAction( e, 'link', 'preview' );
+					}
+				} }
+			>
+				<Button className="theme__sheet-preview-demo-site">
+					{ translate( 'Preview demo site' ) }
+				</Button>
 				<ThemeWebPreview
 					url={ url }
 					inlineCss={ baseStyleVariationInlineCss + selectedStyleVariationInlineCss }
@@ -877,28 +898,8 @@ class ThemeSheet extends Component {
 	};
 
 	getDefaultOptionLabel = () => {
-		const {
-			siteId,
-			defaultOption,
-			canInstallPlugins,
-			isActive,
-			isLoggedIn,
-			isPremium,
-			isThemePurchased,
-			translate,
-			isBundledSoftwareSet,
-			isExternallyManagedTheme,
-			isSiteEligibleForManagedExternalThemes,
-			isMarketplaceThemeSubscribed,
-			isThemeActivationSyncStarted,
-			isThemeAllowed,
-			isThemeInstalled,
-			isSiteWooExpressFreeTrial,
-			isThemeBundleWooCommerce,
-		} = this.props;
-		const { isAtomicTransferCompleted } = this.state;
+		const { defaultOption, isActive, isLoggedIn, siteId, translate } = this.props;
 		if ( isActive ) {
-			// Customize site
 			return (
 				<span className="theme__sheet-customize-button">
 					<Gridicon icon="external" />
@@ -906,41 +907,7 @@ class ThemeSheet extends Component {
 				</span>
 			);
 		} else if ( isLoggedIn && siteId ) {
-			if (
-				( ( ! isThemeAllowed || isPremium ) && ! isThemePurchased && ! isExternallyManagedTheme ) ||
-				( isBundledSoftwareSet &&
-					! canInstallPlugins &&
-					! ( isSiteWooExpressFreeTrial && isThemeBundleWooCommerce ) )
-			) {
-				// upgrade plan
-				return translate( 'Upgrade to activate', {
-					comment:
-						'label prompting user to upgrade the WordPress.com plan to activate a certain theme',
-				} );
-			} else if (
-				isExternallyManagedTheme &&
-				! isMarketplaceThemeSubscribed &&
-				! isSiteEligibleForManagedExternalThemes
-			) {
-				return translate( 'Upgrade to subscribe' );
-			} else if (
-				isExternallyManagedTheme &&
-				! isMarketplaceThemeSubscribed &&
-				isSiteEligibleForManagedExternalThemes &&
-				! isThemeInstalled
-			) {
-				return translate( 'Subscribe to activate' );
-			} else if ( isThemeActivationSyncStarted && ! isAtomicTransferCompleted ) {
-				return (
-					<span className="theme__sheet-customize-button spin">
-						<Gridicon icon="sync" />
-						{ translate( 'Activate this design' ) }
-					</span>
-				);
-			} else if ( defaultOption.label === translate( 'Activate' ) ) {
-				return translate( 'Activate' );
-			}
-			// else: fall back to default label
+			return translate( 'Activate' );
 		}
 		return defaultOption.label;
 	};

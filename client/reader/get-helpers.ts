@@ -1,16 +1,63 @@
 import { getUrlParts } from '@automattic/calypso-url';
 import { translate } from 'i18n-calypso';
 import { trim } from 'lodash';
+import { ReactNode } from 'react';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { isSiteDescriptionBlocked } from 'calypso/reader/lib/site-description-blocklist';
 
+export interface ReaderSite {
+	description: string;
+	domain: string;
+	feed_URL: string;
+	is_error: boolean;
+	name: string;
+	title: string;
+	owner?: {
+		name: string;
+		first_name: string;
+		last_name: string;
+	};
+	subscribers_count: number;
+	URL?: string;
+}
+
+export interface ReaderPost {
+	attachments?: { [ key: number ]: { alt: string } };
+	author?: {
+		avatar_URL: string;
+	};
+	feed_URL: string;
+	is_seen: boolean;
+	post_thumbnail?: {
+		ID: number;
+	};
+	site_icon?: { img: string } | string;
+	site_name: string;
+	site_URL: string;
+	title: string;
+}
+
+export interface ReaderFeed {
+	description: string;
+	feed_URL: string;
+	is_error: boolean;
+	name: string;
+	title: string;
+	URL?: string;
+	subscribers_count: number;
+}
+
+interface GetSiteUrlArgs {
+	feed?: Partial< ReaderFeed >;
+	site?: Partial< ReaderSite >;
+	post?: Partial< ReaderPost >;
+}
+
 /**
  * Given a feed, site, or post: return the site url. return false if one could not be found.
- * @param {*} options - an object containing a feed, site, and post. all optional.
- * @returns {string} the site url
  */
-export const getSiteUrl = ( { feed, site, post } = {} ) => {
+export const getSiteUrl = ( { feed, site, post }: GetSiteUrlArgs = {} ): string | undefined => {
 	const siteUrl = !! site && ( site.URL || site.domain );
 	const feedUrl = !! feed && ( feed.URL || feed.feed_URL );
 	const postUrl = !! post && post.site_URL;
@@ -19,30 +66,21 @@ export const getSiteUrl = ( { feed, site, post } = {} ) => {
 		return undefined;
 	}
 
-	return siteUrl || feedUrl || postUrl;
+	return siteUrl || feedUrl || postUrl || undefined;
 };
 
-/**
- * Given a feed, site, or post: return the site icon. return false if one could not be found.
- * @param {Object} post - Post object.
- * @returns {string|undefined} Url of the site icon or undefined if not found.
- */
-export function getPostIcon( post ) {
-	return (
-		post?.site_icon?.img ||
-		( typeof post?.site_icon === 'string' && post?.site_icon ) ||
-		post?.author?.avatar_URL
-	);
+interface GetFeedUrlArgs {
+	feed?: Partial< ReaderFeed >;
+	site?: Partial< ReaderSite >;
+	post?: Partial< ReaderPost >;
 }
 
 /**
  * Given a feed, site, or post: return the feed url. return false if one could not be found.
  * The feed url is different from the site url in that it is unique per feed. A single siteUrl may
  * be home to many feeds
- * @param {*} options - an object containing a feed, site, and post. all optional.
- * @returns {string} the site url
  */
-export const getFeedUrl = ( { feed, site, post } = {} ) => {
+export const getFeedUrl = ( { feed, site, post }: GetFeedUrlArgs = {} ) => {
 	const siteUrl = !! site && site.feed_URL;
 	const feedUrl = !! feed && ( feed.feed_URL || feed.URL );
 	const postUrl = !! post && post.feed_URL;
@@ -51,33 +89,54 @@ export const getFeedUrl = ( { feed, site, post } = {} ) => {
 };
 
 /**
+ * Given a feed, site, or post: return the site icon. return false if one could not be found.
+ */
+export function getPostIcon( post: Partial< ReaderPost > ): string | undefined {
+	if ( typeof post?.site_icon === 'object' ) {
+		return post.site_icon?.img;
+	}
+
+	if ( typeof post?.site_icon === 'string' ) {
+		return post.site_icon;
+	}
+
+	return post?.author?.avatar_URL;
+}
+
+interface GetSiteDomainArgs {
+	feed?: Partial< ReaderFeed >;
+	site?: Partial< ReaderSite >;
+}
+
+/**
  * getSiteDomain function extracts the domain of a website from the provided `site` and `feed` objects.
  * It returns the domain of the site if available, otherwise, it extracts the domain from the site URL.
- * @param {Object} param0 - An object containing `feed` and `site` objects.
- * @param {Object|undefined} param0.feed - An object representing the feed data.
- * @param {Object} param0.site - An object representing the site data. If it has a `domain` property and it is a string, that will be returned directly.
  * @returns {string} - The domain of the site. If the `site` object has a `domain` property that is a string,
  *                      it returns that. Otherwise, it gets the URL of the site from the `feed` and `site` objects,
  *                      extracts the hostname from the URL, and returns it. If the hostname is an empty string,
  *                      it returns the site URL. If the hostname starts with "www.", it removes the "www." and returns the rest.
  */
-export const getSiteDomain = ( { feed, site } = {} ) => {
+export const getSiteDomain = ( { feed, site }: GetSiteDomainArgs = {} ): string | undefined => {
 	if ( typeof site?.domain === 'string' ) {
 		return site.domain;
 	}
 
-	const siteUrl = getSiteUrl( { feed, site } );
+	const siteUrl = getSiteUrl( { feed, site } ) ?? '';
 	const hostname = getUrlParts( siteUrl ).hostname;
 	return formatUrlForDisplay( hostname === '' ? siteUrl : hostname );
 };
 
+interface GetSiteNameArgs {
+	feed?: Partial< ReaderFeed >;
+	post?: Partial< ReaderPost >;
+	site?: Partial< ReaderSite >;
+}
+
 /**
  * Given a feed, site, or post: output the best title to use for the owning site.
- * @param {*} options - an object containing a feed, site, and post. all optional
- * @returns {string} the site title
  */
-export const getSiteName = ( { feed, site, post } = {} ) => {
-	let siteName = null;
+export const getSiteName = ( { feed, site, post }: GetSiteNameArgs = {} ): string | null => {
+	let siteName: string | null | undefined = null;
 	const isDefaultSiteTitle =
 		( site && site.name === translate( 'Site Title' ) ) ||
 		( feed && feed.name === translate( 'Site Title' ) );
@@ -97,40 +156,50 @@ export const getSiteName = ( { feed, site, post } = {} ) => {
 		siteName = siteUrl ? getUrlParts( siteUrl ).hostname : null;
 	}
 
+	if ( ! siteName ) {
+		return null;
+	}
+
 	return decodeEntities( siteName );
 };
 
-export const getSiteDescription = ( { site, feed } ) => {
-	const description = ( site && site.description ) || ( feed && feed.description );
+interface GetSiteDescriptionArgs {
+	feed?: Partial< ReaderFeed >;
+	site?: Partial< ReaderSite >;
+}
+
+export const getSiteDescription = ( { site, feed }: GetSiteDescriptionArgs ): string | null => {
+	const description = ( site && site.description ) || ( feed && feed.description ) || '';
 	if ( isSiteDescriptionBlocked( description ) ) {
 		return null;
 	}
 	return description ? stripHTML( description ) : description;
 };
 
-export const getSiteAuthorName = ( site ) => {
+export const getSiteAuthorName = ( site: ReaderSite ): string => {
 	const siteAuthor = site && site.owner;
 	const authorFullName =
 		siteAuthor &&
 		( siteAuthor.name ||
 			trim( `${ siteAuthor.first_name || '' } ${ siteAuthor.last_name || '' }` ) );
 
-	return decodeEntities( authorFullName );
+	return decodeEntities( authorFullName || '' );
 };
+
+interface isEligibleForUnseenArgs {
+	isWPForTeamsItem: boolean;
+	currentRoute: string | null;
+	hasOrganization: boolean | null;
+}
 
 /**
  * Check if route or feed/blog is eligible to use seen posts feature (unseen counts and mark as seen)
- * @param {Object} flags eligibility data
- * @param {string} flags.currentRoute current route
- * @param {boolean} flags.isWPForTeamsItem id if exists
- * @param {boolean} flags.hasOrganization id if exists
- * @returns {boolean} whether or not the user can use the feature for the given site
  */
 export const isEligibleForUnseen = ( {
 	isWPForTeamsItem = false,
 	currentRoute = null,
 	hasOrganization = null,
-} ) => {
+}: isEligibleForUnseenArgs ): boolean => {
 	let isEligible = isWPForTeamsItem;
 	if ( hasOrganization !== null ) {
 		isEligible = hasOrganization;
@@ -150,14 +219,18 @@ export const isEligibleForUnseen = ( {
 	return isEligible;
 };
 
+interface CanBeMarkedAsSeenArgs {
+	post: ReaderPost | null;
+	posts: ReaderPost[];
+}
+
 /**
  * Check if the post/posts can be marked as seen based on the existence of `is_seen` flag and the current route.
- * @param {Object} params method params
- * @param {Object} params.post object
- * @param {Array} params.posts list
- * @returns {boolean} whether or not the post can be marked as seen
  */
-export const canBeMarkedAsSeen = ( { post = null, posts = [] } ) => {
+export const canBeMarkedAsSeen = ( {
+	post = null,
+	posts = [],
+}: CanBeMarkedAsSeenArgs ): boolean => {
 	if ( post !== null ) {
 		return post.hasOwnProperty( 'is_seen' );
 	}
@@ -175,14 +248,16 @@ export const canBeMarkedAsSeen = ( { post = null, posts = [] } ) => {
 
 /**
  * Return Featured image alt text.
- * @param {Object} post object containing post information
- * @returns {string} Featured image alt text
  */
-export const getFeaturedImageAlt = ( post ) => {
+export const getFeaturedImageAlt = ( post: ReaderPost ): string | ReactNode => {
 	// Each post can have multiple images attached. To make sure we are selecting
 	// the alt text of the correct image attachment, we get the ID of the post thumbnail first
 	// and then use it to get the alt text of the Featured image.
 	const postThumbnailId = post?.post_thumbnail?.ID;
+	if ( ! postThumbnailId ) {
+		return '';
+	}
+
 	const featuredImageAlt = post?.attachments?.[ postThumbnailId ]?.alt;
 	const postTitle = post.title;
 
@@ -198,11 +273,8 @@ export const getFeaturedImageAlt = ( post ) => {
 
 /**
  * Get the follower count from a site/feed.
- * @param {Object} feed Feed object.
- * @param {Object} site Site object.
- * @returns {number|null}
  */
-export const getFollowerCount = ( feed, site ) => {
+export const getFollowerCount = ( feed: ReaderFeed, site: ReaderSite ): number | null => {
 	if ( site && site.subscribers_count ) {
 		return site.subscribers_count;
 	}

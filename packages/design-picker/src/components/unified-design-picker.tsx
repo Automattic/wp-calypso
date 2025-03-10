@@ -538,7 +538,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 
 	return (
 		<div
-			className={ clsx( 'design-picker', `design-picker--theme-light`, 'design-picker__unified', {
+			className={ clsx( 'design-picker', 'design-picker--theme-light', 'design-picker__unified', {
 				'design-picker--has-categories': hasCategories,
 			} ) }
 		>

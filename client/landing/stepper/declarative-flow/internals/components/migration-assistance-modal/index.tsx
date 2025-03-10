@@ -75,7 +75,7 @@ export const MigrationAssistanceModal: React.FunctionComponent< MigrationAssista
 							}
 					  )
 					: translate(
-							`Subscribe to the Creator plan now, and get a complimentary migration service (normally $500) to move %(importSiteHostName)s to WordPress.com.`,
+							'Subscribe to the Creator plan now, and get a complimentary migration service (normally $500) to move %(importSiteHostName)s to WordPress.com.',
 							{
 								args: {
 									importSiteHostName,

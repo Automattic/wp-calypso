@@ -512,9 +512,7 @@ class Login extends Component {
 
 			if ( isPartnerPortalOAuth2Client( oauth2Client ) ) {
 				if ( document.location.search?.includes( 'wpcloud' ) ) {
-					headerText = translate(
-						'Howdy! Log into the WP Cloud Partner Portal with your WordPress.com account.'
-					);
+					headerText = translate( 'Log in to WP Cloud with WordPress.com' );
 					preHeader = (
 						<div>
 							<WPCloudLogo className="login__wpcloud-logo" size={ 256 } />
@@ -671,7 +669,11 @@ class Login extends Component {
 			headerText = preventWidows( translate( 'Log in to your existing account' ) );
 		}
 
-		if ( isWhiteLogin && ! isBlazeProOAuth2Client( oauth2Client ) ) {
+		if (
+			isWhiteLogin &&
+			! isBlazeProOAuth2Client( oauth2Client ) &&
+			! isPartnerPortalOAuth2Client( oauth2Client )
+		) {
 			preHeader = (
 				<div className="login__form-gutenboarding-wordpress-logo">
 					<svg

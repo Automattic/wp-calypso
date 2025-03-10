@@ -365,12 +365,17 @@ $button-border: 4px;
 			}
 		}
 	}
-	&:hover,
-	&:focus {
-		.theme-preview__frame-wrapper {
-			opacity: 0.8;
-		}
-	}
+
+    &.is-clickable {
+      cursor: pointer;
+
+      &:hover,
+      &:focus {
+          .theme-preview__frame-wrapper {
+              opacity: 0.8;
+          }
+      }
+    }
 
 	.theme-preview__container {
 		position: relative;

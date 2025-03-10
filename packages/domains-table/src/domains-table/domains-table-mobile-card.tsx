@@ -7,6 +7,7 @@ import { PrimaryDomainLabel } from '../primary-domain-label/index';
 import { useDomainRow } from '../use-domain-row';
 import { canBulkUpdate } from '../utils/can-bulk-update';
 import { domainManagementLink as getDomainManagementLink } from '../utils/paths';
+import { useDomainsTable } from './domains-table';
 import { DomainsTableEmailIndicator } from './domains-table-email-indicator';
 import { DomainsTableExpiresRenewsOnCell } from './domains-table-expires-renews-cell';
 import { DomainsTablePlaceholder } from './domains-table-placeholder';
@@ -20,7 +21,7 @@ type Props = {
 
 export const DomainsTableMobileCard = ( { domain }: Props ) => {
 	const { __ } = useI18n();
-
+	const { onPointToWpcom, isPointingToWpcom } = useDomainsTable();
 	const {
 		ref,
 		site,
@@ -35,7 +36,13 @@ export const DomainsTableMobileCard = ( { domain }: Props ) => {
 		isLoadingSiteDomainsDetails,
 		isAllSitesView,
 		isManageableDomain,
-	} = useDomainRow( domain );
+	} = useDomainRow(
+		domain,
+		() => {
+			onPointToWpcom?.( domain.domain );
+		},
+		isPointingToWpcom
+	);
 
 	const domainManagementLink = isManageableDomain
 		? getDomainManagementLink( domain, siteSlug, isAllSitesView )

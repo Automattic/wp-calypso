@@ -19,7 +19,7 @@ const useBlueprintForm2Validation = () => {
 			const newValidationError: ValidationState = {};
 
 			if ( payload.workWithClients === '' ) {
-				newValidationError.workWithClients = translate( `Please select an option` );
+				newValidationError.workWithClients = translate( 'Please select an option' );
 			}
 
 			if ( Object.keys( newValidationError ).length > 0 ) {

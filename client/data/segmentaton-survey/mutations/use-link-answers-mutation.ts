@@ -10,7 +10,7 @@ const useLinkAnswersMutation = () => {
 	return useMutation( {
 		mutationFn: async ( { blogId, surveyKey }: LinkAnswersMutationArgs ) => {
 			return wpcom.req.post( {
-				path: `/segmentation-survey/answers/link`,
+				path: '/segmentation-survey/answers/link',
 				apiNamespace: 'wpcom/v2',
 				body: {
 					blog_id: blogId,

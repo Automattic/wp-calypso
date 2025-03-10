@@ -52,13 +52,14 @@ describe( 'RestAPIClient: getBearerToken', function () {
 	test.each( [
 		{
 			code: 'incorrect_password',
-			message: `Oops, that's not the right password. Please try again!`,
+			message: "Oops, that's not the right password. Please try again!",
 		},
 		{
 			code: 'invalid_username',
-			message: `We don't seem to have an account with that name. Double-check the spelling and try again!`,
+			message:
+				"We don't seem to have an account with that name. Double-check the spelling and try again!",
 		},
-	] )( `Throws error with expected code and message ($code)`, async function ( { code, message } ) {
+	] )( 'Throws error with expected code and message ($code)', async function ( { code, message } ) {
 		nock( BEARER_TOKEN_URL )
 			.post( /.*/ )
 			.reply( 200, {

@@ -119,20 +119,5 @@ $accent-inverted: $gray-900;
 		&.is-today:not(.is-selected) {
 			background: $gray-200;
 		}
-	
-		&.has-events {
-			&::before {
-				content: " ";
-				position: absolute;
-				left: 50%;
-				transform: translate(-50%, 9px);
-				border-radius: 50%;
-				border: 2px solid #3858e9;
-			}
-	
-			&.is-selected::before {
-				border-color: $white;
-			}
-		}
 	}	
 }

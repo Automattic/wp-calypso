@@ -69,7 +69,9 @@ export class JetpackConnectNotices extends Component {
 		const noticeValues = {
 			icon: 'notice',
 			status: 'is-error',
-			text: translate( "That's not a valid url." ),
+			text: translate(
+				'The URL you entered appears to be invalid. Please enter a valid WordPress site address.'
+			),
 			showDismiss: false,
 		};
 
@@ -108,7 +110,9 @@ export class JetpackConnectNotices extends Component {
 
 			case NOT_WORDPRESS:
 				noticeValues.icon = 'block';
-				noticeValues.text = translate( "That's not a WordPress site." );
+				noticeValues.text = translate(
+					"The site doesn't appear to be running WordPress. Please verify you're using the correct URL."
+				);
 				return noticeValues;
 
 			case NOT_ACTIVE_JETPACK:
@@ -117,12 +121,16 @@ export class JetpackConnectNotices extends Component {
 
 			case OUTDATED_JETPACK:
 				noticeValues.icon = 'block';
-				noticeValues.text = translate( 'You must update Jetpack before connecting.' );
+				noticeValues.text = translate(
+					'Your Jetpack plugin is outdated. Please update Jetpack to the latest version before connecting.'
+				);
 				return noticeValues;
 
 			case JETPACK_IS_DISCONNECTED:
 				noticeValues.icon = 'link-break';
-				noticeValues.text = translate( 'Jetpack is currently disconnected.' );
+				noticeValues.text = translate(
+					'Jetpack is currently disconnected. Please reconnect it to continue.'
+				);
 				return noticeValues;
 
 			case JETPACK_IS_VALID:
@@ -136,7 +144,9 @@ export class JetpackConnectNotices extends Component {
 				return null;
 
 			case WORDPRESS_DOT_COM:
-				noticeValues.text = translate( "Oops, that's us." );
+				noticeValues.text = translate(
+					'This is a WordPress.com site, which already includes Jetpack features.'
+				);
 				noticeValues.status = 'is-warning';
 				noticeValues.icon = 'status';
 				return noticeValues;
@@ -160,7 +170,9 @@ export class JetpackConnectNotices extends Component {
 				return noticeValues;
 
 			case SECRET_EXPIRED:
-				noticeValues.text = translate( "Oops, that took a while. You'll have to try again." );
+				noticeValues.text = translate(
+					'The connection request has expired. Please refresh the page and try connecting again.'
+				);
 				noticeValues.status = 'is-error';
 				noticeValues.icon = 'notice';
 				return noticeValues;
@@ -185,7 +197,7 @@ export class JetpackConnectNotices extends Component {
 				return noticeValues;
 
 			case ALREADY_CONNECTED:
-				noticeValues.text = translate( 'This site is already connected' );
+				noticeValues.text = translate( 'This site is already connected to WordPress.com.' );
 				noticeValues.status = 'is-info';
 				noticeValues.icon = 'notice';
 				return noticeValues;
@@ -209,12 +221,14 @@ export class JetpackConnectNotices extends Component {
 				return noticeValues;
 
 			case XMLRPC_ERROR:
-				noticeValues.text = translate( 'We had trouble connecting.' );
+				noticeValues.text = translate(
+					'We had trouble connecting to your site. Please check that your site is accessible and try again.'
+				);
 				return noticeValues;
 
 			case INVALID_CREDENTIALS:
 				noticeValues.text = translate(
-					'Oops, the credentials you entered were invalid. Please try again'
+					'The credentials you entered were invalid. Please double-check your username and password and try again.'
 				);
 				noticeValues.status = 'is-error';
 				noticeValues.icon = 'notice';

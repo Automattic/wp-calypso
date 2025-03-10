@@ -194,6 +194,10 @@ function addTooltipData( chartTab, item, period, customRange = {} ) {
 					className: 'is-visitors',
 					icon: <Icon className="gridicon" icon={ people } />,
 				} );
+			}
+
+			// Ensure the Views/Visitors ratio number is finite.
+			if ( item.data.visitors > 0 ) {
 				tooltipData.push( {
 					label: translate( 'Views Per Visitor' ),
 					value: numberFormat( item.data.views / item.data.visitors, { decimals: 2 } ),

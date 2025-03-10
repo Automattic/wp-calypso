@@ -167,7 +167,7 @@ describe( '<PluginRowFormatter>', () => {
 			},
 		} );
 
-		const [ autoManagedSite ] = getAllByText( `Install` );
+		const [ autoManagedSite ] = getAllByText( 'Install' );
 		expect( autoManagedSite ).toBeInTheDocument();
 	} );
 
@@ -175,7 +175,7 @@ describe( '<PluginRowFormatter>', () => {
 		props.columnKey = 'install';
 		const { getAllByText } = render( <PluginRowFormatter { ...props } item={ paidPlugin } /> );
 
-		const [ autoManagedSite ] = getAllByText( `Upgrade disabled` );
+		const [ autoManagedSite ] = getAllByText( 'Upgrade disabled' );
 		expect( autoManagedSite ).toBeInTheDocument();
 	} );
 } );

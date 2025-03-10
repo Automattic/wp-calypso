@@ -31,7 +31,7 @@ function usePlans( {
 		queryKey: queryKeys.plans( coupon ),
 		queryFn: async (): Promise< PlansIndex > => {
 			const data: PricedAPIPlan[] = await wpcomRequest( {
-				path: `/plans`,
+				path: '/plans',
 				apiVersion: '1.5',
 				query: params.toString(),
 			} );

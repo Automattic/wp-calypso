@@ -11,9 +11,7 @@
 	border-color: var(--color-accent);
 	color: var(--color-text-inverted);
 
-	&:active:not(:disabled),
-	&:hover:not(:disabled),
-	&:focus:not(:disabled) {
+	&:is(:active, :hover, :focus):not(:disabled, [aria-disabled="true"]) {
 		background-color: var(--color-accent-60);
 		border-color: var(--color-accent-60);
 		color: var(--color-text-inverted);
@@ -33,8 +31,7 @@
 	color: var(--color-neutral-70);
 	box-shadow: inset 0 0 0 1px var(--color-neutral-10);
 
-	&:active:not(:disabled),
-	&:hover:not(:disabled) {
+	&:is(:active, :hover):not(:disabled, [aria-disabled="true"]) {
 		box-shadow: inset 0 0 0 1px var(--color-neutral-20);
 		color: var(--color-neutral-70);
 	}
@@ -55,8 +52,7 @@
 .components-button.is-tertiary {
 	color: var(--color-accent);
 
-	&:active:not(:disabled),
-	&:hover:not(:disabled) {
+	&:is(:active, :hover):not(:disabled, [aria-disabled="true"]) {
 		box-shadow: inset 0 0 0 1px var(--color-neutral-20);
 		color: var(--color-accent-60);
 	}

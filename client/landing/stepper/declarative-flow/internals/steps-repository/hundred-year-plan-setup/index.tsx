@@ -19,7 +19,7 @@ const HundredYearPlanSetup: Step = function HundredYearPlanSetup( { navigation, 
 
 	const HundredYearPlanFormText = {
 		titlePlaceholder: translate( 'Site name' ),
-		titleMissing: translate( `Please enter a site name.` ),
+		titleMissing: translate( 'Please enter a site name.' ),
 		taglinePlaceholder: translate( 'Add a brief description' ),
 		iconPlaceholder: translate( 'Add an icon' ),
 	};

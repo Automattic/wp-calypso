@@ -20,7 +20,6 @@ import { siteUsesWpAdminInterface } from './utils';
 import type { Command as PaletteCommand } from './commands';
 import type { SiteExcerptData } from '@automattic/sites';
 import './style.scss';
-import '@wordpress/commands/build-style/style.css';
 
 const StyledCommandsMenuContainer = styled.div( {
 	'[cmdk-root] > [cmdk-list]': {

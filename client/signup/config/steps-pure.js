@@ -44,12 +44,6 @@ export function generateSteps( {
 	submitWebsiteContent = noop,
 } = {} ) {
 	return {
-		'set-reader-landing': {
-			stepName: 'set-reader-landing',
-			props: {
-				nonInteractive: true,
-			},
-		},
 		'domains-launch': {
 			stepName: 'domains-launch',
 			apiRequestFunction: addDomainToCart,
@@ -879,7 +873,8 @@ export function generateSteps( {
 		},
 		'difm-page-picker': {
 			stepName: 'difm-page-picker',
-			providesDependencies: [ 'selectedPageTitles' ],
+			providesDependencies: [ 'selectedPageTitles', 'newOrExistingSiteChoice' ],
+			optionalDependencies: [ 'newOrExistingSiteChoice' ],
 			props: {
 				hideSkip: true,
 			},

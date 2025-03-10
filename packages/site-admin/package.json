@@ -53,7 +53,7 @@
 		"@storybook/react": "^7.6.20",
 		"copyfiles": "^2.4.1",
 		"postcss": "^8.4.5",
-		"typescript": "^5.3.3",
+		"typescript": "^5.5.4",
 		"webpack": "^5.97.1"
 	},
 	"dependencies": {
