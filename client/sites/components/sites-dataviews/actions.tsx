@@ -468,7 +468,7 @@ export function useActions( {
 				callback: ( sites ) => {
 					const site = sites[ 0 ];
 					page(
-						addQueryArgs( `/setup/copy-site`, {
+						addQueryArgs( '/setup/copy-site', {
 							sourceSlug: site.slug,
 							plan: getPlanPath( site.plan?.product_slug ?? 'business' ),
 						} )
@@ -559,7 +559,7 @@ export function useActions( {
 				id: 'jetpack-support',
 				label: __( 'Support' ),
 				callback: () => {
-					window.location.href = `https://jetpack.com/support`;
+					window.location.href = 'https://jetpack.com/support';
 					recordTracksEvent( 'calypso_sites_dashboard_site_action_jetpack_support_click' );
 				},
 				isEligible: isActionEligible( 'jetpack-support', capabilities ),

@@ -2042,7 +2042,7 @@ expect.extend( {
 		}
 		if ( pass ) {
 			return {
-				message: () => `expected element to appear but it did not.`,
+				message: () => 'expected element to appear but it did not.',
 				pass: true,
 			};
 		}

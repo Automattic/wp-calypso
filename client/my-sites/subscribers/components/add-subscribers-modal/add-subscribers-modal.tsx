@@ -69,14 +69,14 @@ const AddSubscribersModal = ( {
 	const hasSubscriberLimit = ( isFreeSite || isBusinessTrial ) && ! hasUnlimitedSubscribers;
 
 	const trackAndSetAddingMethod = ( method: string ) => {
-		recordTracksEvent( `calypso_subscribers_add_question`, {
+		recordTracksEvent( 'calypso_subscribers_add_question', {
 			method,
 		} );
 		setAddingMethod( method );
 	};
 
 	const importFromSubstack = () => {
-		recordTracksEvent( `calypso_subscribers_add_question`, {
+		recordTracksEvent( 'calypso_subscribers_add_question', {
 			method: 'substack',
 		} );
 		if ( isJetpackCloud() ) {

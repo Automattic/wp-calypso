@@ -12,7 +12,7 @@ const useColorPaletteVariations = ( stylesheet: string, { enabled = true }: Opti
 		queryKey: [ 'global-styles-color-palette', stylesheet ],
 		queryFn: async () =>
 			wpcomRequest< GlobalStylesObject[] >( {
-				path: `/global-styles-variation/color-palettes`,
+				path: '/global-styles-variation/color-palettes',
 				method: 'GET',
 				apiNamespace: 'wpcom/v3',
 				query: new URLSearchParams( {

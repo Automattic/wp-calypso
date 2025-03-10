@@ -310,7 +310,7 @@ const BundleConfirm: Step = function BundleConfirm( { navigation } ) {
 
 	const headerText = __( 'One final step' );
 	const subHeaderText = __(
-		'We’ve highlighted a few important details you should review before we create your store. '
+		'We’ve highlighted a few important details you should review before we create your store.'
 	);
 
 	return (

@@ -274,7 +274,7 @@ const siteMigration: Flow = {
 									option: 'content',
 									backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }`,
 								},
-								`/setup/site-setup/importerWordpress`
+								'/setup/site-setup/importerWordpress'
 							)
 						);
 					}

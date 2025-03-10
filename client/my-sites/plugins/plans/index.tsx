@@ -44,7 +44,7 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 			appendBreadcrumb( {
 				label: translate( 'Plan Upgrade' ),
 				href: `/plugins/plans/${ intervalType }/${ selectedSite?.slug || '' }`,
-				id: `plugin-plans`,
+				id: 'plugin-plans',
 			} )
 		);
 	}, [ dispatch, translate, selectedSite, breadcrumbs.length, intervalType ] );
@@ -94,8 +94,8 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 
 			<FormattedHeader
 				className="plugin-plans-header"
-				headerText={ `Your current plan doesn't support plugins` }
-				subHeaderText={ `Choose the plan that's right for you and reimagine what's possible with plugins` }
+				headerText="Your current plan doesn't support plugins"
+				subHeaderText="Choose the plan that's right for you and reimagine what's possible with plugins"
 				brandFont
 			/>
 

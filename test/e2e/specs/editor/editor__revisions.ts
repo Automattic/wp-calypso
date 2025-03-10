@@ -20,7 +20,7 @@ declare const browser: Browser;
  * This spec requires the following:
  * 	- theme: a non-block-based theme (eg. Twenty-Twenty One)
  */
-describe( `Editor: Revisions`, function () {
+describe( 'Editor: Revisions', function () {
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature( features, [
 		{ gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },

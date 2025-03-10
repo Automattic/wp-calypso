@@ -226,7 +226,7 @@ export default function SitesOverview() {
 	const serializedLicenses = serializeQueryStringProducts( selectedProducts );
 
 	const issueLicenseRedirectUrl = useMemo( () => {
-		return addQueryArgs( `/partner-portal/issue-license/`, {
+		return addQueryArgs( '/partner-portal/issue-license/', {
 			site_id: selectedLicensesSiteId,
 			products: serializedLicenses,
 			source: 'dashboard',

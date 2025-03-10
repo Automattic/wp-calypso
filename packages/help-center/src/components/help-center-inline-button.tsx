@@ -39,7 +39,7 @@ const HelpCenterInlineButton: FC< HelpCenterInlineButtonProps > = ( {
 			} );
 			setNavigateToRoute( urlWithQueryArgs );
 		} else {
-			setNavigateToRoute( `/odie` );
+			setNavigateToRoute( '/odie' );
 		}
 	}
 

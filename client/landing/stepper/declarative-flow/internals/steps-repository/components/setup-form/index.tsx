@@ -103,7 +103,7 @@ const SetupForm = ( {
 						isError
 						text={
 							translatedText?.titleMissing ||
-							__( `Oops. Looks like your site doesn't have a name yet.` )
+							__( "Oops. Looks like your site doesn't have a name yet." )
 						}
 					/>
 				) }

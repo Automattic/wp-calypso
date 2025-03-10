@@ -120,7 +120,7 @@ const BlueprintForm2: React.FC< Props > = ( { onContinue, initialFormData, goBac
 
 			<FormField
 				label={ translate(
-					`Is there anything specific about your agency's approach or any challenges you face that you would like us to consider when creating your blueprint?`
+					"Is there anything specific about your agency's approach or any challenges you face that you would like us to consider when creating your blueprint?"
 				) }
 			>
 				<FormTextarea

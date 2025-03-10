@@ -83,7 +83,7 @@ export const fetchLaunchpad = (
 		  } )
 		: apiFetch( {
 				global: true,
-				path: addQueryArgs( `/wpcom/v2/launchpad`, queryArgs ),
+				path: addQueryArgs( '/wpcom/v2/launchpad', queryArgs ),
 		  } as APIFetchOptions );
 };
 
@@ -168,7 +168,7 @@ export const updateLaunchpadSettings = (
 		  } )
 		: apiFetch( {
 				global: true,
-				path: `/wpcom/v2/launchpad`,
+				path: '/wpcom/v2/launchpad',
 				method: 'PUT',
 				data: settings,
 		  } as APIFetchOptions );
