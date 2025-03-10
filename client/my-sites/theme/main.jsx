@@ -541,18 +541,39 @@ class ThemeSheet extends Component {
 			iframeToken.concat( '-', getTracksAnonymousUserId() ?? siteSlug );
 		}
 
+		if ( ! this.shouldRenderPreviewButton() ) {
+			return (
+				<div className="theme__sheet-web-preview">
+					<ThemeWebPreview
+						url={ url }
+						inlineCss={ baseStyleVariationInlineCss + selectedStyleVariationInlineCss }
+						iframeScaleRatio={ 0.5 }
+						iframeToken={ iframeToken }
+						isShowFrameBorder={ false }
+						isShowDeviceSwitcher={ false }
+						isFitHeight
+					/>
+				</div>
+			);
+		}
+
 		return (
-			<div className="theme__sheet-web-preview">
-				{ this.shouldRenderPreviewButton() && (
-					<Button
-						className="theme__sheet-preview-demo-site"
-						onClick={ ( e ) => {
-							this.previewAction( e, 'link', 'preview' );
-						} }
-					>
-						{ translate( 'Preview demo site' ) }
-					</Button>
-				) }
+			<div
+				className="theme__sheet-web-preview is-clickable"
+				role="button"
+				tabIndex="0"
+				onClick={ ( e ) => {
+					this.previewAction( e, 'link', 'preview' );
+				} }
+				onKeyDown={ ( e ) => {
+					if ( e.key === 'Enter' ) {
+						this.previewAction( e, 'link', 'preview' );
+					}
+				} }
+			>
+				<Button className="theme__sheet-preview-demo-site">
+					{ translate( 'Preview demo site' ) }
+				</Button>
 				<ThemeWebPreview
 					url={ url }
 					inlineCss={ baseStyleVariationInlineCss + selectedStyleVariationInlineCss }
