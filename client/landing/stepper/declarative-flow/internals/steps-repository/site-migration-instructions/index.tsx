@@ -197,8 +197,6 @@ const SiteMigrationInstructions: Step< {
 		</div>
 	);
 
-	const supportNudge = <SupportNudge navigateToDoItForMe={ navigateToDoItForMe } />;
-
 	return (
 		<StepContainer
 			stepName="site-migration-instructions"
@@ -209,7 +207,7 @@ const SiteMigrationInstructions: Step< {
 			hideBack
 			stepContent={ stepContent }
 			recordTracksEvent={ recordTracksEvent }
-			customizedActionButtons={ supportNudge }
+			customizedActionButtons={ <SupportNudge navigateToDoItForMe={ navigateToDoItForMe } /> }
 		/>
 	);
 };
