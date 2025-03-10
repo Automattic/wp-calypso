@@ -23,11 +23,11 @@ import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { useFlowState } from './internals/state-manager/store';
 import { STEPS } from './internals/steps';
 import { ProvidedDependencies } from './internals/types';
-import type { Flow } from './internals/types';
+import type { FlowV2 } from './internals/types';
 
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 
-const newsletter: Flow = {
+const exampleFlow = {
 	name: EXAMPLE_FLOW,
 	get title() {
 		return translate( 'Newsletter Example Flow' );
@@ -57,10 +57,10 @@ const newsletter: Flow = {
 			STEPS.SUBSCRIBERS,
 			STEPS.LAUNCHPAD,
 			STEPS.ERROR,
-		] );
+		] as const );
 
 		if ( ! isComingFromMarketingPage ) {
-			return [ STEPS.INTRO, ...privateSteps ];
+			return [ STEPS.INTRO, ...privateSteps ] as const;
 		}
 
 		return privateSteps;
@@ -71,7 +71,7 @@ const newsletter: Flow = {
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
 		const query = useQuery();
-		const { get, set } = useFlowState();
+		const { set } = useFlowState( exampleFlow );
 		const { exitFlow } = useExitFlow();
 		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
@@ -128,12 +128,12 @@ const newsletter: Flow = {
 					);
 					return navigate( 'processing' );
 				case 'processing': {
-					const site = get( 'site' );
+					const site = providedDependencies;
 					if ( site ) {
 						const { siteId, siteSlug } = site;
 						initializeLaunchpadState( {
-							siteId: siteId,
-							siteSlug: siteSlug,
+							siteId: siteId as number,
+							siteSlug: siteSlug as string,
 						} );
 
 						if ( providedDependencies?.goToHome ) {
@@ -152,9 +152,9 @@ const newsletter: Flow = {
 
 							// Replace the processing step with checkout step, so going back goes to Plans.
 							return window.location.replace(
-								`/checkout/${ encodeURIComponent( siteSlug ) }?redirect_to=${ encodeURIComponent(
-									launchpadUrl
-								) }&signup=1`
+								`/checkout/${ encodeURIComponent(
+									siteSlug as string
+								) }?redirect_to=${ encodeURIComponent( launchpadUrl ) }&signup=1`
 							);
 						}
 
@@ -200,6 +200,6 @@ const newsletter: Flow = {
 
 		return { goNext, goBack, goToStep, submit };
 	},
-};
+} as const satisfies FlowV2;
 
-export default newsletter;
+export default exampleFlow;

@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getFlowFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import { getSessionId } from 'calypso/landing/stepper/utils/use-session-id';
+import { StepperStep, FlowV2 } from '../types';
 import type { FlowStateManifest } from './stepper-state-manifest';
 
 const PREFIX = 'stepper-state-item';
@@ -22,19 +22,41 @@ const PERSISTENCE_CONFIG = {
 } as const;
 
 /**
+ * This type is used to convert an array of steps to a record of step slugs to step state.
+ * It's used to type the state of the flow. i.e it makes a Record of all the step slugs to the step state, making up the flow state.
+ */
+type ArrayToRecord< T extends readonly StepperStep[] > = {
+	[ K in T[ number ][ 'slug' ] ]: Parameters<
+		Parameters<
+			Awaited< ReturnType< Extract< T[ number ], { slug: K } >[ 'asyncComponent' ] > >[ 'default' ]
+		>[ 0 ][ 'navigation' ][ 'submit' ]
+	>[ 0 ];
+};
+
+/**
+ * This type is used to aggregate the state of a flow.
+ * It loops all the steps in the flow and unions their types.
+ */
+type AggregatedFlowState< Flow extends FlowV2 > = ArrayToRecord<
+	ReturnType< Flow[ 'initialize' ] >
+>;
+
+/**
  * Returns a setter and a getter for the flow state. This persists the state for 7 days. The persistence is based on the flow and the session ID.
  */
-export function useFlowState() {
+export function useFlowState< Flow extends FlowV2 >( flow: Flow ) {
+	type FlowState = AggregatedFlowState< Flow >;
+
 	const queryClient = useQueryClient();
-	const flow = getFlowFromURL() || 'flow';
+	const flowName = flow.name;
 	const session = getSessionId();
 
-	const { data: state = {} } = useQuery< FlowStateManifest >( {
-		queryKey: [ PREFIX, flow, session, VERSION ],
+	const { data: state = {} as FlowState } = useQuery< FlowState >( {
+		queryKey: [ PREFIX, flowName, session, VERSION ],
 		...PERSISTENCE_CONFIG,
 	} );
 
-	function get< T extends keyof FlowStateManifest >( key: T ) {
+	function get< T extends keyof FlowState >( key: T ) {
 		return state[ key ];
 	}
 
