@@ -48,12 +48,12 @@ type AggregatedFlowState< FlowType extends Flow > = ArrayToRecord<
 /**
  * Returns a setter and a getter for the flow state. This persists the state for 7 days. The persistence is based on the flow and the session ID.
  */
-export function useFlowState< FlowType extends Flow >( flow: Flow ) {
+export function useFlowState< FlowType extends Flow >( flow: Flow | null ) {
 	type FlowState = AggregatedFlowState< FlowType >;
 	type GeneralAndFlowState = FlowState & FlowStateManifest;
 
 	const queryClient = useQueryClient();
-	const flowName = flow.name;
+	const flowName = flow?.name ?? 'flow';
 	const session = getSessionId();
 
 	const { data: state } = useQuery< GeneralAndFlowState >( {
