@@ -2,12 +2,63 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
 
+$woocommerce-purple-50: #720EEC;
+
 .woopayments-dashboard {
 	.hosting-dashboard-layout__header-actions {
 		display: flex;
 		flex-direction: column;
 		align-items: normal;
 		justify-content: normal;
+	}
+
+	&.is-empty {
+		.hosting-dashboard-layout__body-wrapper {
+			max-width: unset;
+			padding-inline: 0;
+			margin: 0;
+		}
+	}
+}
+
+
+.woopayments-dashboard-empty-state__content {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+
+	img {
+		width: max-content;
+	}
+}
+
+.woopayments-dashboard-empty-state__heading {
+	@include heading-2x-large;
+	margin-block-end: 8px;
+}
+
+.woopayments-dashboard-empty-state__description {
+	@include body-large;
+
+	> div {
+		margin-block-end: 16px;
+	}
+
+	a {
+		text-decoration: underline;
+	}
+}
+
+a.components-button.woopayments-dashboard-empty-state__button {
+	&,
+	&:hover,
+	&:focus,
+	&:focus-visible {
+		color: $woocommerce-purple-50;
+		background-color: var(--color-surface);
+		border: none;
+		outline: none;
+		box-shadow: none;
 	}
 }
 

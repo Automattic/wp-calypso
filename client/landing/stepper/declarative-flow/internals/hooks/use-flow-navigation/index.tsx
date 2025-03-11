@@ -56,7 +56,7 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 				// In-stepper auth.
 				if ( flow.__experimentalUseBuiltinAuth ) {
 					const signInPath = createPath( {
-						pathname: generatePath( `/:flow/:step/:lang?`, {
+						pathname: generatePath( '/:flow/:step/:lang?', {
 							flow: flowName,
 							lang,
 							step: PRIVATE_STEPS.USER.slug,
@@ -76,7 +76,7 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 				// Classic /login auth.
 				const nextStepPath = createPath( {
 					// We have to include /setup, as this URL should be absolute and we can't use `useHref`.
-					pathname: generatePath( `/setup/:flow/:step/:lang?`, {
+					pathname: generatePath( '/setup/:flow/:step/:lang?', {
 						flow: flowName,
 						lang,
 						step: nextStep,
@@ -115,7 +115,7 @@ export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
 			} );
 
 			const newPath = createPath( {
-				pathname: generatePath( `/:flow/:step/:lang?`, {
+				pathname: generatePath( '/:flow/:step/:lang?', {
 					flow: flowName,
 					lang,
 					step: nextStep.split( '?' )[ 0 ],

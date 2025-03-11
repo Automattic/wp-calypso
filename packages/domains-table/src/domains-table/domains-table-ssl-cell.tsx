@@ -59,10 +59,10 @@ export default function DomainsTableSslCell( {
 
 	return (
 		<Element
-			className={ clsx( `domains-table-row__ssl-cell`, {
-				[ `domains-table-row__ssl-cell__active` ]: isActiveSsl,
-				[ `domains-table-row__ssl-cell__pending` ]: isPendingSsl,
-				[ `domains-table-row__ssl-cell__disabled` ]: sslStatus === 'disabled',
+			className={ clsx( 'domains-table-row__ssl-cell', {
+				[ 'domains-table-row__ssl-cell__active' ]: isActiveSsl,
+				[ 'domains-table-row__ssl-cell__pending' ]: isPendingSsl,
+				[ 'domains-table-row__ssl-cell__disabled' ]: sslStatus === 'disabled',
 			} ) }
 		>
 			{ domainHasSsl && <Icon icon={ lock } size={ 18 } /> }

@@ -18,11 +18,11 @@ const selectors = {
 	previewButton: `${ panel } :text("View"):visible, [aria-label="View"]:visible`,
 
 	// Post status
-	postStatusButton: `.editor-post-status > button`,
+	postStatusButton: '.editor-post-status > button',
 
 	desktopPreviewMenuItem: ( target: EditorPreviewOptions ) =>
 		`button[role*="menuitem"] span:text-is("${ target }")`,
-	previewPane: `.edit-post-visual-editor`,
+	previewPane: '.edit-post-visual-editor',
 
 	// Publish
 	publishButton: ( state: 'disabled' | 'enabled' ) => {
@@ -39,7 +39,7 @@ const selectors = {
 	// Document Actions dropdown
 	documentActionsDropdown: `${ panel } button[aria-label="Show template details"]`,
 	documentActionsDropdownItem: ( itemSelector: string ) => `.popover-slot ${ itemSelector }`,
-	documentActionsDropdownShowAll: `.popover-slot .edit-site-template-details__show-all-button`,
+	documentActionsDropdownShowAll: '.popover-slot .edit-site-template-details__show-all-button',
 
 	// Undo/Redo
 	undoButton: 'button[aria-disabled=false][aria-label="Undo"]',
@@ -358,7 +358,7 @@ export class EditorToolbarComponent {
 
 		const buttonNames =
 			envVariables.VIEWPORT_NAME === 'mobile'
-				? `Settings`
+				? 'Settings'
 				: `${ translatedCloseJetpackSettingsName }|${ translatedCloseSettingsName }`;
 
 		const button = editorParent.getByRole( 'button', {

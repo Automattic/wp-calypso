@@ -209,7 +209,7 @@ export class StartImportFlow {
 		] );
 
 		if ( ! element ) {
-			throw new Error( `No matching URL input found at Site Importer.` );
+			throw new Error( 'No matching URL input found at Site Importer.' );
 		}
 		await element.fill( url );
 		const continueLocator = this.page.locator(

@@ -1,12 +1,18 @@
 import { FormStatus, useFormStatus, useIsStepActive } from '@automattic/composite-checkout';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
+import { useTranslate } from 'i18n-calypso';
 import { usePrefillCheckoutContactForm } from '../hooks/use-prefill-checkout-contact-form';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import ContactDetailsContainer from './contact-details-container';
 import type { CountryListItem, ContactDetailsType } from '@automattic/wpcom-checkout';
 
-const BillingFormFields = styled.div`
+interface BillingFormFieldsProps {
+	isLoading: boolean;
+}
+
+const BillingFormFields = styled.div< BillingFormFieldsProps >`
 	margin-bottom: 16px;
 
 	& input,
@@ -41,6 +47,19 @@ const BillingFormFields = styled.div`
 			margin-right: 0;
 		}
 	}
+
+	${ ( props ) =>
+		props.isLoading &&
+		css`
+			+ button {
+				display: none;
+			}
+		` }
+`;
+
+const LoadingText = styled.p`
+	font-size: 14px;
+	color: ${ ( props ) => props.theme.colors.textColor };
 `;
 
 export default function WPContactForm( {
@@ -56,26 +75,31 @@ export default function WPContactForm( {
 	isLoggedOutCart: boolean;
 	setShouldShowContactDetailsValidationErrors: ( allowed: boolean ) => void;
 } ) {
+	const translate = useTranslate();
 	const contactInfo = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
 	const { formStatus } = useFormStatus();
 	const isStepActive = useIsStepActive();
 	const isDisabled = ! isStepActive || formStatus !== FormStatus.READY;
 
-	usePrefillCheckoutContactForm( {
+	const hasCompleted = usePrefillCheckoutContactForm( {
 		setShouldShowContactDetailsValidationErrors,
 		isLoggedOut: isLoggedOutCart,
 	} );
 
 	return (
-		<BillingFormFields>
-			<ContactDetailsContainer
-				contactDetailsType={ contactDetailsType }
-				contactInfo={ contactInfo }
-				countriesList={ countriesList }
-				shouldShowContactDetailsValidationErrors={ shouldShowContactDetailsValidationErrors }
-				isDisabled={ isDisabled }
-				isLoggedOutCart={ isLoggedOutCart }
-			/>
+		<BillingFormFields isLoading={ ! hasCompleted }>
+			{ hasCompleted ? (
+				<ContactDetailsContainer
+					contactDetailsType={ contactDetailsType }
+					contactInfo={ contactInfo }
+					countriesList={ countriesList }
+					shouldShowContactDetailsValidationErrors={ shouldShowContactDetailsValidationErrors }
+					isDisabled={ isDisabled }
+					isLoggedOutCart={ isLoggedOutCart }
+				/>
+			) : (
+				<LoadingText>{ translate( 'Retrieving contact details…' ) }</LoadingText>
+			) }
 		</BillingFormFields>
 	);
 }

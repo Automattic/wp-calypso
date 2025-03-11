@@ -23,12 +23,12 @@ export const useSeenWhatsNewAnnouncementsQuery = () => {
 		queryFn: async () =>
 			canAccessWpcomApis()
 				? await wpcomRequest( {
-						path: `/whats-new/seen-announcement-ids`,
+						path: '/whats-new/seen-announcement-ids',
 						apiNamespace: 'wpcom/v2',
 				  } )
 				: await apiFetch( {
 						global: true,
-						path: `/wpcom/v2/whats-new/seen-announcement-ids`,
+						path: '/wpcom/v2/whats-new/seen-announcement-ids',
 				  } as APIFetchOptions ),
 		refetchOnWindowFocus: false,
 		select: ( data ) => data.seen_announcement_ids,

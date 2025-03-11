@@ -112,7 +112,7 @@ module.exports = {
 					'no-unused-vars': 'off',
 					'no-use-before-define': 'off',
 					'no-useless-constructor': 'off',
-					quotes: 'off',
+					quotes: [ 'error', 'single', 'avoid-escape' ],
 					'require-await': 'off',
 					'return-await': 'off',
 					semi: 'off',

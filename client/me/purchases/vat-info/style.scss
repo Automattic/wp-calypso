@@ -18,6 +18,14 @@
 .vat-info__sidebar-paragraph {
 	margin-bottom: 0;
 	font-size: 0.875rem;
+
+	.vat-info__open-help-center-support {
+		font-size: 0.875rem;
+		text-decoration: none;
+		&:hover, &:focus, &:active {
+			color: var( --color-link-dark );
+		}
+	}
 }
 
 .vat-info__sidebar-paragraph ul {

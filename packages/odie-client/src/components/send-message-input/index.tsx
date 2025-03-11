@@ -1,25 +1,114 @@
-import { Spinner } from '@wordpress/components';
+import { HelpCenterSelect } from '@automattic/data-stores';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import {
+	useAttachFileToConversation,
+	useAuthenticateZendeskMessaging,
+} from '@automattic/zendesk-client';
+import { DropZone, Spinner } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 import { useCallback, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { SendMessageIcon } from '../../assets/send-message-icon';
+import { ODIE_WRONG_FILE_TYPE_MESSAGE } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../hooks';
 import { Message } from '../../types';
+import { zendeskMessageConverter } from '../../utils';
 import { AttachmentButton } from './attachment-button';
 import { ResizableTextarea } from './resizable-textarea';
 
 import './style.scss';
 
+const getFileType = ( file: File ) => {
+	if ( file.type.startsWith( 'image/' ) ) {
+		return 'image-placeholder';
+	}
+
+	return 'text';
+};
+
+const getPlaceholderAttachmentMessage = ( file: File ) => {
+	return zendeskMessageConverter( {
+		role: 'user',
+		type: getFileType( file ),
+		displayName: '',
+		text: '',
+		id: String( new Date().getTime() ),
+		received: new Date().getTime(),
+		source: { type: 'web', id: '', integrationId: '' },
+		mediaUrl: URL.createObjectURL( file ),
+	} );
+};
+
 export const OdieSendMessageButton = () => {
 	const divContainerRef = useRef< HTMLDivElement >( null );
 	const inputRef = useRef< HTMLTextAreaElement >( null );
 	const attachmentButtonRef = useRef< HTMLElement >( null );
-	const { trackEvent, chat } = useOdieAssistantContext();
+	const { trackEvent, chat, addMessage, isUserEligibleForPaidSupport } = useOdieAssistantContext();
 	const sendMessage = useSendChatMessage();
 	const isChatBusy = chat.status === 'loading' || chat.status === 'sending';
 	const [ isMessageSizeValid, setIsMessageSizeValid ] = useState( true );
 	const [ submitDisabled, setSubmitDisabled ] = useState( true );
+
+	const { data: authData } = useAuthenticateZendeskMessaging(
+		isUserEligibleForPaidSupport,
+		'messenger'
+	);
+	const { zendeskClientId } = useSelect( ( select ) => {
+		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		return {
+			zendeskClientId: helpCenterSelect.getZendeskClientId(),
+		};
+	}, [] );
+	const inferredClientId = chat.clientId ? chat.clientId : zendeskClientId;
+
+	const { isPending: isAttachingFile, mutateAsync: attachFileToConversation } =
+		useAttachFileToConversation();
+
+	const handleFileUpload = useCallback(
+		async ( file: File ) => {
+			if ( file.type.startsWith( 'image/' ) ) {
+				if ( authData && chat.conversationId && inferredClientId && file ) {
+					attachFileToConversation( {
+						authData,
+						file,
+						conversationId: chat.conversationId,
+						clientId: inferredClientId,
+					} ).then( () => {
+						addMessage( getPlaceholderAttachmentMessage( file ) );
+						trackEvent( 'send_message_attachment', { type: file.type } );
+					} );
+				}
+			} else {
+				addMessage( ODIE_WRONG_FILE_TYPE_MESSAGE );
+			}
+		},
+		[
+			authData,
+			chat.conversationId,
+			inferredClientId,
+			attachFileToConversation,
+			addMessage,
+			trackEvent,
+		]
+	);
+
+	const onFilesDrop = ( files: File[] ) => {
+		const file = files?.[ 0 ];
+		if ( file ) {
+			handleFileUpload( file );
+		}
+	};
+
+	const onPaste = ( event: React.ClipboardEvent ) => {
+		const items = event.clipboardData.items;
+		const file = items?.[ 0 ]?.getAsFile();
+		if ( file ) {
+			event.preventDefault();
+			handleFileUpload( file );
+		}
+	};
 
 	const onKeyUp = useCallback( () => {
 		// Only triggered when the message is empty
@@ -82,6 +171,8 @@ export const OdieSendMessageButton = () => {
 		'odie-send-message-inner-button__flag'
 	);
 
+	const showAttachmentButton = chat.conversationId && inferredClientId;
+
 	return (
 		<>
 			{ ! isMessageSizeValid && (
@@ -98,20 +189,33 @@ export const OdieSendMessageButton = () => {
 					className="odie-send-message-input-container"
 				>
 					<ResizableTextarea
-						shouldDisableInputField={ isChatBusy }
+						shouldDisableInputField={ isChatBusy || isAttachingFile }
 						sendMessageHandler={ sendMessageHandler }
 						className="odie-send-message-input"
 						inputRef={ inputRef }
 						setSubmitDisabled={ setSubmitDisabled }
 						keyUpHandle={ onKeyUp }
+						onPasteHandle={ onPaste }
 					/>
 					{ isChatBusy && <Spinner className="odie-send-message-input-spinner" /> }
-					<AttachmentButton attachmentButtonRef={ attachmentButtonRef } />
+					{ showAttachmentButton && (
+						<AttachmentButton
+							attachmentButtonRef={ attachmentButtonRef }
+							onFileUpload={ handleFileUpload }
+							isAttachingFile={ isAttachingFile }
+						/>
+					) }
 					<button type="submit" className={ buttonClasses } disabled={ submitDisabled }>
 						<SendMessageIcon />
 					</button>
 				</form>
 			</div>
+			{ showAttachmentButton && (
+				<DropZone
+					onFilesDrop={ onFilesDrop }
+					label={ __( 'Share this image with our Happiness Engineers', __i18n_text_domain__ ) }
+				/>
+			) }
 		</>
 	);
 };

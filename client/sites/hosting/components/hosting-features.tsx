@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_SFTP, getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
@@ -55,11 +54,7 @@ const HostingFeatures = ( { showAsTools }: HostingFeaturesProps ) => {
 
 	let redirectUrl = redirectToRef.current as string;
 	if ( ! redirectUrl ) {
-		if ( isEnabled( 'untangling/hosting-menu' ) ) {
-			redirectUrl = `/sites/tools/${ siteId }`;
-		} else {
-			redirectUrl = hasSftpFeature ? `/hosting-config/${ siteSlug }` : `/overview/${ siteId }`;
-		}
+		redirectUrl = hasSftpFeature ? `/hosting-config/${ siteSlug }` : `/overview/${ siteId }`;
 	}
 
 	const hasEnTranslation = useHasEnTranslation();

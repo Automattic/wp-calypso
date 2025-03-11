@@ -46,7 +46,7 @@ const LocationChart = ( { stats, total, source }: Props ) => {
 							<div className="location-chart__country-info">
 								<span>{ regionNames.of( stat.country ) }</span>
 								<span className="location-chart__percentage">
-									{ stat.percentage > 0 ? stat.percentage : `~0` }%
+									{ stat.percentage > 0 ? stat.percentage : '~0' }%
 								</span>
 							</div>
 							<div className="location-chart__progress-bar">

@@ -21,7 +21,7 @@ export const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => 
 
 		return domainUpsellCompleted
 			? `/domains/manage/${ siteSlug }`
-			: addQueryArgs( `/setup/domain-upsell/domains`, {
+			: addQueryArgs( '/setup/domain-upsell/domains', {
 					...getSiteIdOrSlug( flow, site, siteSlug ),
 					flowToReturnTo: flow,
 					new: site?.name,

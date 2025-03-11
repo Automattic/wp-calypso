@@ -151,7 +151,7 @@ export default function ( pageBase = '/' ) {
 
 	// Email stats Pages
 	statsPage( `/stats/email/:statType/:period(${ validEmailPeriods })/:email_id/:site`, emailStats );
-	statsPage( `/stats/day/emails/:site`, emailSummary );
+	statsPage( '/stats/day/emails/:site', emailSummary );
 
 	// Anything else should redirect to default stats page
 	statsPage( '*', redirectToSiteTrafficPage );

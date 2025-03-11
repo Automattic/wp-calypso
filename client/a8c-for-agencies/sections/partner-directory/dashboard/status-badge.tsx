@@ -55,7 +55,7 @@ export default function DashboardStatusBadge( { statusProps, showPopoverOnLoad }
 				</Button>
 				{ ! popoverShown && (
 					<Button compact onClick={ onClickDoItLater }>
-						{ translate( `I'll do it later` ) }
+						{ translate( "I'll do it later" ) }
 					</Button>
 				) }
 			</div>
