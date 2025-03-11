@@ -1,4 +1,4 @@
-import isAkismetRedirect from '../is-redirect-from-akismet';
+import isAkismetRedirect from '../is-akismet-redirect';
 
 describe( 'isAkismetRedirect', () => {
 	test( 'should return false for null or empty input', () => {
