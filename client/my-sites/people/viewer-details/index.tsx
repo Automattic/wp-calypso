@@ -117,11 +117,7 @@ export default function ViewerDetails( props: Props ) {
 			<PageViewTracker path="/people/viewers/:site/:id" title="People > User Details" />
 			{ site?.ID && <QuerySiteInvites siteId={ site?.ID } /> }
 
-			<NavigationHeader
-				navigationItems={ [] }
-				title={ translate( 'Users' ) }
-				subtitle={ translate( 'People who have subscribed to your site and team members.' ) }
-			/>
+			<NavigationHeader navigationItems={ [] } title={ translate( 'Users' ) } />
 
 			<HeaderCake isCompact onClick={ onBackClick }>
 				{ translate( 'User Details' ) }
