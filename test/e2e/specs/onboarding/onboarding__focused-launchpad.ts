@@ -25,6 +25,7 @@ import { Page, Browser } from 'playwright';
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
+	const planName = 'Personal';
 	let page: Page;
 	let newSiteDetails: NewSiteResponse;
 
