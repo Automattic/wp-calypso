@@ -187,6 +187,7 @@ body.is-section-stepper .domains__step-content,
 				min-width: 50px;
 				margin-right: 10px;
 				text-align: left;
+				text-decoration: underline;
 			}
 
 			.domain-product-price__price {
@@ -242,6 +243,7 @@ body.is-section-stepper .domains__step-content,
 			height: 40px;
 			color: var(--studio-gray-100);
 			text-decoration: underline;
+			text-align: left;
 			margin-top: 5px;
 		}
 	}
