@@ -11,6 +11,7 @@ export function ControlWithError< C extends React.ReactElement >( {
 	render: C;
 } ) {
 	const [ errorMessage, setErrorMessage ] = useState< string | undefined >();
+	const [ isTouched, setIsTouched ] = useState( false );
 	const ref = useRef< HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement >( null );
 
 	const validate = () => {
@@ -25,6 +26,8 @@ export function ControlWithError< C extends React.ReactElement >( {
 	};
 
 	const onBlur = ( ...args ) => {
+		setIsTouched( true );
+
 		validate();
 
 		// Workaround for setCustomValidity() forcing an immediate re-render,
@@ -41,7 +44,7 @@ export function ControlWithError< C extends React.ReactElement >( {
 
 	const onChange = ( ...args ) => {
 		// Only validate incrementally if the value is already marked as invalid.
-		if ( ! ref.current?.validity?.valid ) {
+		if ( isTouched ) {
 			validate();
 		}
 

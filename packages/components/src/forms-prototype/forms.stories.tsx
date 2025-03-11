@@ -272,3 +272,31 @@ export const Default: StoryObj = {
 		);
 	},
 };
+
+export const Password: StoryObj = {
+	render: () => {
+		return (
+			<ControlWithError
+				render={
+					<InputControl
+						__next40pxDefaultSize
+						label="Password"
+						help="Minimum 8 characters, include a number, capital letter, and symbol (!@£$%^&*#)."
+						minLength={ 8 }
+					/>
+				}
+				onReportCustomValidity={ ( value ) => {
+					if ( ! /\d/.test( value ) ) {
+						return 'Password must include at least one number.';
+					}
+					if ( ! /[A-Z]/.test( value ) ) {
+						return 'Password must include at least one capital letter.';
+					}
+					if ( ! /[!@£$%^&*#]/.test( value ) ) {
+						return 'Password must include at least one symbol.';
+					}
+				} }
+			/>
+		);
+	},
+};
