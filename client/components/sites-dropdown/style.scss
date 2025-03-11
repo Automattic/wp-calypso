@@ -86,8 +86,16 @@
 
 	.search-component {
 		.components-button {
-			right: 8px;
-			position: relative;
+			border: none;
+			box-shadow: none;
+
+			&:hover {
+				background: transparent;
+			}
+		}
+
+		.search-component__input {
+			width: 100%;
 		}
 	}
 }
