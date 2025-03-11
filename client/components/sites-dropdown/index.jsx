@@ -107,7 +107,7 @@ export class SitesDropdown extends PureComponent {
 					{ this.props.hasMultipleSites && this.state.open && (
 						<SiteSelector
 							// eslint-disable-next-line jsx-a11y/no-autofocus
-							autoFocus={ false }
+							autoFocus
 							onClose={ this.onClose }
 							onSiteSelect={ this.selectSite }
 							selected={ this.state.selectedSiteId }
