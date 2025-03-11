@@ -440,19 +440,6 @@ export function useActions( {
 			},
 
 			{
-				id: 'privacy-settings',
-				label: __( 'Privacy settings' ),
-				callback: ( sites ) => {
-					const site = sites[ 0 ];
-					page( `/settings/general/${ site.slug }#site-privacy-settings` );
-					dispatch(
-						recordTracksEvent( 'calypso_sites_dashboard_site_action_privacy_settings_click' )
-					);
-				},
-				isEligible: isActionEligible( 'privacy-settings', capabilities ),
-			},
-
-			{
 				id: 'domains-and-dns',
 				label: __( 'Domains and DNS' ),
 				callback: ( sites ) => {
