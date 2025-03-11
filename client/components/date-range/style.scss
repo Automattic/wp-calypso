@@ -113,6 +113,10 @@ $date-range-mobile-layout-switch: $break-small;
 	.components-button {
 		margin-left: 0.5em;
 		margin-right: 0;
+		&.is-compact {
+			height: 28px;
+			font-size: $font-body-extra-small;
+		}
 	}
 	margin-top: 10px;
 
@@ -123,6 +127,8 @@ $date-range-mobile-layout-switch: $break-small;
 		.components-button {
 			height: 40px;
 			border: 0;
+			margin-top: 0.5em;
+			justify-content: center;
 		}
 	}
 }
@@ -370,7 +376,7 @@ $date-range-mobile-layout-switch: $break-small;
 }
 
 .date-range-picker-shortcuts__shortcut {
-	border-radius: 4px;
+	border-radius: 2px;
 	min-width: $date-range-shortcut-min-width;
 
 

@@ -26,7 +26,7 @@ const DateRangeFooter: FunctionComponent< Props > = ( {
 	return (
 		<div className="date-range__popover-footer">
 			<Button
-				className="date-range__cancel-btn is-secondary"
+				className="date-range__cancel-btn"
 				onClick={ onCancelClick }
 				variant="secondary"
 				size="compact"
