@@ -632,11 +632,11 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'SITE_MIGRATION_INSTRUCTIONS', () => {
-			it( 'redirects to SITE_MIGRATION_STARTED step when the migration has started', () => {
-				const destination = runNavigation( {
+			it( 'redirects to site overview when the migration has started', () => {
+				runNavigation( {
 					from: STEPS.SITE_MIGRATION_INSTRUCTIONS,
 					dependencies: {
-						destination: 'migration-started',
+						destination: '/overview/example.wordpress.com?ref=site-migration',
 					},
 					query: {
 						siteSlug: 'example.wordpress.com',
@@ -645,12 +645,10 @@ describe( 'Site Migration Flow', () => {
 					},
 				} );
 
-				expect( destination ).toMatchDestination( {
-					step: STEPS.SITE_MIGRATION_STARTED,
+				expect( window.location.assign ).toMatchURL( {
+					path: '/overview/example.wordpress.com',
 					query: {
-						siteSlug: 'example.wordpress.com',
-						siteId: 123,
-						from: 'https://site-to-be-migrated.com',
+						ref: 'site-migration',
 					},
 				} );
 			} );
