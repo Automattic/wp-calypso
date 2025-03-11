@@ -320,6 +320,7 @@
 	.hosting-dashboard-item-view__content {
 		> *:not(.site-logs) {
 			max-width: 1400px;
+			overflow-wrap: break-word;
 		}
 	}
 }
