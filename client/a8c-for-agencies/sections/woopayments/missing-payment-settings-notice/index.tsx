@@ -19,16 +19,20 @@ export const MissingPaymentSettingsNotice = () => {
 	return (
 		<LayoutBanner
 			level="warning"
-			title={ translate( 'Add your payment information to get paid' ) }
+			title={ translate( 'Add your payout information to get paid.' ) }
 			className="missing-payment-settings-notice"
 			hideCloseButton
 		>
-			<div>{ translate( 'To receive your revenue share, add your payment information.' ) }</div>
+			<div>
+				{ translate(
+					'Ensure you receive your share of revenue by providing your payout details in the Payout Settings screen.'
+				) }
+			</div>
 			<Button
 				className="missing-payment-settings-notice__button is-dark"
 				href={ A4A_WOOPAYMENTS_PAYMENT_SETTINGS_LINK }
 			>
-				{ translate( 'Add your payment information' ) }
+				{ translate( 'Add payout information now' ) }
 			</Button>
 		</LayoutBanner>
 	);
