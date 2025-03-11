@@ -29,7 +29,10 @@ import type { StepProps } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
 
-interface ProcessingStepProps extends StepProps {
+interface ProcessingStepProps
+	extends StepProps< {
+		destination: string;
+	} > {
 	title?: string;
 	subtitle?: string;
 }

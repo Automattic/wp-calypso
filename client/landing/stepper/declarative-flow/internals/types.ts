@@ -5,7 +5,9 @@ import { STEPPER_TRACKS_EVENTS } from '../../constants';
 /**
  * This is the return type of useStepNavigation hook
  */
-export type NavigationControls = {
+export type NavigationControls<
+	StepSubmittedTypes extends Record< string, unknown > = Record< string, unknown >,
+> = {
 	/**
 	 * Call this function if you want to go to the previous step.
 	 *
@@ -34,7 +36,7 @@ export type NavigationControls = {
 	/**
 	 * Submits the answers provided in the flow
 	 */
-	submit?: ( providedDependencies?: ProvidedDependencies, ...params: string[] ) => void;
+	submit?: ( providedDependencies?: StepSubmittedTypes ) => void;
 
 	/**
 	 * Exits the flow and continue to the given path
@@ -262,8 +264,10 @@ export type FlowV2 = {
 
 export type Flow = FlowV1 | FlowV2;
 
-export type StepProps = {
-	navigation: NavigationControls;
+export type StepProps<
+	StepSubmittedTypes extends Record< string, unknown > = Record< string, unknown >,
+> = {
+	navigation: NavigationControls< StepSubmittedTypes >;
 	stepName: string;
 	flow: string;
 	/**
@@ -279,7 +283,9 @@ export type StepProps = {
 	signupUrl?: string;
 };
 
-export type Step = React.FC< StepProps >;
+export type Step< StepSubmittedTypes extends Record< string, unknown > | never = never > = React.FC<
+	StepProps< StepSubmittedTypes >
+>;
 
 export type ProvidedDependencies = Record< string, unknown >;
 

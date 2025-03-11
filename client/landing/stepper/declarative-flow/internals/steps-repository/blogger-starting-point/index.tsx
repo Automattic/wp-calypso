@@ -12,7 +12,9 @@ import type { Step } from '../../types';
 /**
  * The starting point step
  */
-const StartingPointStep: Step = function StartingPointStep( { navigation } ) {
+const StartingPointStep: Step< { startingPoint: string } > = function StartingPointStep( {
+	navigation,
+} ) {
 	const { goBack, submit } = navigation;
 	const translate = useTranslate();
 	const headerText = translate( 'Nice job! Now it’s{{br}}{{/br}} time to get creative.', {
@@ -23,8 +25,10 @@ const StartingPointStep: Step = function StartingPointStep( { navigation } ) {
 
 	const submitIntent = ( startingPoint: string ) => {
 		const providedDependencies = { startingPoint };
-		recordTracksEvent( 'calypso_signup_starting_point_select', { starting_point: startingPoint } );
-		submit?.( providedDependencies, startingPoint );
+		recordTracksEvent( 'calypso_signup_starting_point_select', {
+			starting_point: startingPoint,
+		} );
+		submit?.( providedDependencies );
 	};
 
 	return (

@@ -12,7 +12,11 @@ import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
 
-const NewsletterSetup: Step = ( { navigation } ) => {
+const NewsletterSetup: Step< {
+	siteTitle: string;
+	tagline: string;
+	paidSubscribers: boolean;
+} > = ( { navigation } ) => {
 	const { submit } = navigation;
 	const translate = useTranslate();
 	const site = useSite();

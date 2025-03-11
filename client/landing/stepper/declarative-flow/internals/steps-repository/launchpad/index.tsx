@@ -30,7 +30,7 @@ type LaunchpadProps = {
 	flow: string;
 };
 
-const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
+const Launchpad: Step< Record< string, unknown > > = ( { navigation, flow }: LaunchpadProps ) => {
 	const translate = useTranslate();
 	const almostReadyToLaunchText = translate( 'Almost ready to launch' );
 	const verifiedParam = useQuery().get( 'verified' );

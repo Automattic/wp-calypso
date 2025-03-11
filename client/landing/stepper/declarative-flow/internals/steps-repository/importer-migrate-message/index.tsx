@@ -27,7 +27,7 @@ interface WhatToExpectProps {
 	text: string;
 }
 
-const ImporterMigrateMessage: Step = ( { navigation } ) => {
+const ImporterMigrateMessage: Step< { hasError: 'ticket-creation' } > = ( { navigation } ) => {
 	const locale = useLocale();
 	const hasEnTranslation = useHasEnTranslation();
 	const user = useSelector( getCurrentUser ) as UserData;
@@ -128,7 +128,7 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 		<div className="migration-message__cta-wrapper">
 			<Button
 				className="migration-message__cta"
-				href={ '/overview/' + siteSlug }
+				href={ '/sites/overview/' + siteSlug }
 				variant="primary"
 				onClick={ () =>
 					recordTracksEvent( 'calypso_migration_message_view_sites_dashboard_click' )
