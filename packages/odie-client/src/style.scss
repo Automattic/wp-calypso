@@ -38,6 +38,10 @@ $blueberry-blue: #3858e9;
 	overscroll-behavior: contain;
 	padding-top: 16px;
 
+	&.chat-closed {
+		margin-bottom: 94px;
+	}
+
 	&:has(.odie-notice) {
 		margin-bottom: 135px;
 	}
@@ -109,7 +113,7 @@ $blueberry-blue: #3858e9;
 	width: 100%;
 }
 
-.odie-chat-message-input-container {
+.odie-chat-message-input-container, .odie-closed-conversation-footer {
 	z-index: 10;
 	position: fixed;
 	bottom: 0;
