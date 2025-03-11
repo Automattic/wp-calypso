@@ -31,6 +31,10 @@
 	}
 
 	.search-component {
+		.search-component__input {
+			width: 100%;
+		}
+
 		.components-button {
 			border: none;
 			box-shadow: none;
