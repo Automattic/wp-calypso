@@ -9,6 +9,7 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Card, Gridicon } from '@automattic/components';
+import { Onboard } from '@automattic/data-stores';
 import {
 	DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,
 	ThemePreview as ThemeWebPreview,
@@ -52,6 +53,7 @@ import { ReviewsSummary } from 'calypso/my-sites/marketplace/components/reviews-
 import { localizeThemesPath, shouldSelectSite } from 'calypso/my-sites/themes/helpers';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
+import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
@@ -64,6 +66,7 @@ import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { useSiteOption } from 'calypso/state/sites/hooks';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { withSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/with-site-global-styles-on-personal';
 import { getCurrentPlan, isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
@@ -99,6 +102,7 @@ import {
 	isActivatingTheme as getIsActivatingTheme,
 	isInstallingTheme as getIsInstallingTheme,
 	hasActivatedTheme as getHasActivatedTheme,
+	getActiveTheme,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
@@ -111,6 +115,8 @@ import ThemeNotFoundError from './theme-not-found-error';
 import ThemeStyleVariations from './theme-style-variations';
 
 import './style.scss';
+
+const SiteIntent = Onboard.SiteIntent;
 
 class ThemeSheet extends Component {
 	static displayName = 'ThemeSheet';
@@ -721,6 +727,31 @@ class ThemeSheet extends Component {
 		return <div>{ this.props.description }</div>;
 	};
 
+	renderNotice = () => {
+		const { activeThemeId, name, siteIntent, translate } = this.props;
+		const isAIAssembler = siteIntent === SiteIntent.AIAssembler && activeThemeId === 'assembler';
+		if ( ! isAIAssembler ) {
+			return null;
+		}
+
+		return (
+			<Banner
+				icon="notice"
+				title={ translate( 'AI Website Builder' ) }
+				description={ translate(
+					'{{strong}}%(newThemeName)s{{/strong}} is currently not compatible with our AI Website Builder. Changing to this theme means you can no longer use our AI Website Builder on this site.',
+					{
+						args: { newThemeName: name },
+						components: {
+							br: <br />,
+							strong: <strong />,
+						},
+					}
+				) }
+			/>
+		);
+	};
+
 	renderStagingPaidThemeNotice = () => {
 		if ( ! this.shouldRenderForStaging() ) {
 			return null;
@@ -1225,6 +1256,7 @@ class ThemeSheet extends Component {
 				<div className={ columnsClassName }>
 					<div className="theme__sheet-column-header">
 						{ this.renderStagingPaidThemeNotice() }
+						{ this.renderNotice() }
 						{ this.renderHeader() }
 						{ this.renderReviews() }
 					</div>
@@ -1305,6 +1337,8 @@ const ThemeSheetWithOptions = ( props ) => {
 	let defaultOption;
 	let secondaryOption = 'tryandcustomize';
 	const needsJetpackPlanUpgrade = isStandaloneJetpack && isPremium && ! isThemePurchased;
+	const activeThemeId = useSelector( ( state ) => getActiveTheme( state, siteId ) );
+	const siteIntent = useSiteOption( 'site_intent' );
 
 	if ( ! showTryAndCustomize ) {
 		secondaryOption = null;
@@ -1355,6 +1389,8 @@ const ThemeSheetWithOptions = ( props ) => {
 			defaultOption={ defaultOption }
 			secondaryOption={ secondaryOption }
 			source="showcase-sheet"
+			activeThemeId={ activeThemeId }
+			siteIntent={ siteIntent }
 		/>
 	);
 };
