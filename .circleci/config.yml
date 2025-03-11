@@ -182,6 +182,19 @@ jobs:
       - run: *yarn-install
       - save_cache: *save-yarn-cache
       - run:
+          name: Set environment variables
+          command: |
+            if [[ $CIRCLE_TAG == desktop-v* ]]; then
+              echo "export RELEASE_BUILD=true" >> "$BASH_ENV"
+              source "$BASH_ENV"
+            fi
+
+            # If this is not a release build, build all artifacts only when project config changes.
+            # Otherwise only build application executable required for end-to-end testing.
+            if [[ "$RELEASE_BUILD" != "true" ]]; then
+              ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|yarn.lock' && echo "export ELECTRON_BUILDER_ARGS='-c.mac.target=dir'" >> "$BASH_ENV"
+            fi
+      - run:
           name: Build Desktop Mac
           no_output_timeout: 45m
           environment:
@@ -196,17 +209,14 @@ jobs:
             source $HOME/.nvm/nvm.sh
             nvm use
 
+            echo RELEASE_BUILD=$RELEASE_BUILD
+            echo ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS
+
             pushd desktop
 
             rbenv global $(cat .ruby-version) && rbenv rehash
-
             bundle install
-
             bundle exec fastlane configure_code_signing
-
-            # Build all artifacts only when project config changes.
-            # Otherwise only build application executable required for end-to-end testing.
-            ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|yarn.lock' && ELECTRON_BUILDER_ARGS='-c.mac.target=dir'
 
             ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run ci:build-mac
       - run:
