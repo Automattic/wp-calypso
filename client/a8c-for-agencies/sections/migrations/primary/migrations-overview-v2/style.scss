@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .migrations-overview-v2 {
 	.hosting-dashboard-layout__body {
@@ -13,12 +14,12 @@
 	}
 
 	.page-section__header-description {
-		@include a4a-font-heading-md;
+		@include heading-medium;
 		color: var(--color-neutral-70);
 		max-width: 600px;
 
 		@include break-medium {
-			@include a4a-font-heading-xl;
+			@include heading-x-large;
 		}
 
 		@include break-large {
