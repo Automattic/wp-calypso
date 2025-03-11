@@ -3,9 +3,9 @@
  */
 import { renderHook } from '@testing-library/react';
 import {
-	useSitesListFilterDelete,
-	SitesFilterDeleteOptions,
-} from '../src/use-sites-list-filter-delete';
+	useSitesListFilterDeleted,
+	SitesFilterDeletedOptions,
+} from '../src/use-sites-list-filter-deleted';
 
 // Mock the MinimumSite type for testing
 interface MockSite {
@@ -15,7 +15,7 @@ interface MockSite {
 	is_deleted: boolean;
 }
 
-describe( 'useSitesListFilterDelete', () => {
+describe( 'useSitesListFilterDeleted', () => {
 	// Sample test data
 	const testSites: MockSite[] = [
 		{ id: 1, name: 'Site 1', status: 'active', is_deleted: false },
@@ -26,11 +26,11 @@ describe( 'useSitesListFilterDelete', () => {
 	];
 
 	test( 'filters out deleted sites', () => {
-		const options: SitesFilterDeleteOptions = {
+		const options: SitesFilterDeletedOptions = {
 			shouldApplyFilter: true,
 		};
 
-		const { result } = renderHook( () => useSitesListFilterDelete( testSites, options ) );
+		const { result } = renderHook( () => useSitesListFilterDeleted( testSites, options ) );
 
 		const filteredSites = result.current;
 		expect( filteredSites ).toHaveLength( 4 );
@@ -39,10 +39,10 @@ describe( 'useSitesListFilterDelete', () => {
 	} );
 
 	test( 'does not filter out deleted sites', () => {
-		const options: SitesFilterDeleteOptions = {
+		const options: SitesFilterDeletedOptions = {
 			shouldApplyFilter: false,
 		};
-		const { result } = renderHook( () => useSitesListFilterDelete( testSites, options ) );
+		const { result } = renderHook( () => useSitesListFilterDeleted( testSites, options ) );
 
 		const filteredSites = result.current;
 		expect( filteredSites ).toHaveLength( 5 );
@@ -51,7 +51,7 @@ describe( 'useSitesListFilterDelete', () => {
 
 	test( 'recalculates when dependencies change', () => {
 		const { result, rerender } = renderHook(
-			( props ) => useSitesListFilterDelete( props.sites, props.options ),
+			( props ) => useSitesListFilterDeleted( props.sites, props.options ),
 			{
 				initialProps: {
 					sites: testSites,

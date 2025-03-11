@@ -3,13 +3,13 @@ import { MinimumSite } from './site-type';
 
 type SiteForFiltering = Pick< MinimumSite, 'is_deleted' >;
 
-export interface SitesFilterDeleteOptions {
+export interface SitesFilterDeletedOptions {
 	shouldApplyFilter: boolean;
 }
 
-export function useSitesListFilterDelete< T extends SiteForFiltering >(
+export function useSitesListFilterDeleted< T extends SiteForFiltering >(
 	sites: T[],
-	{ shouldApplyFilter = true }: SitesFilterDeleteOptions
+	{ shouldApplyFilter = true }: SitesFilterDeletedOptions
 ) {
 	return useMemo( () => {
 		if ( shouldApplyFilter ) {
