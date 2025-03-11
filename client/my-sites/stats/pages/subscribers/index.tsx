@@ -11,8 +11,9 @@ import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import StatsModuleEmails from 'calypso/my-sites/stats/features/modules/stats-emails';
 import statsStrings from 'calypso/my-sites/stats/stats-strings';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
+import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
 import { useSelector } from 'calypso/state';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isSimpleSite } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useSubscribersTotalsQueries from '../../hooks/use-subscribers-totals-query';
@@ -80,12 +81,11 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 
 	// TODO: Pass subscribersTotals as props to SubscribersHighlightSection to avoid duplicate queries.
 	const { data: subscribersTotals, isLoading, isError } = useSubscribersTotalsQueries( siteId );
+	const isSimple = useSelector( isSimpleSite );
 	const hasNoSubscriberOtherThanAdmin =
 		! subscribersTotals?.total ||
 		( subscribersTotals?.total === 1 && subscribersTotals?.is_owner_subscribing );
 	const showLaunchpad = ! isLoading && hasNoSubscriberOtherThanAdmin;
-
-	const emptyComponent = <EmptyListView />;
 
 	// Track the last viewed tab.
 	// Necessary to properly configure the fixed navigation headers.
@@ -97,6 +97,13 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 
 	const isWPAdmin = config.isEnabled( 'is_odyssey' );
 	const subscribersPageClasses = clsx( 'stats', { 'is-odyssey-stats': isWPAdmin } );
+
+	const emptyComponent =
+		isSimple && ! isWPAdmin ? (
+			<SubscriberLaunchpad launchpadContext="subscriber-stats" />
+		) : (
+			<EmptyListView />
+		);
 
 	return (
 		<Main fullWidthLayout>
