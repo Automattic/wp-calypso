@@ -61,7 +61,7 @@ const AddWooPaymentsToSiteTable = ( {
 		const siteColumn = {
 			id: 'site',
 			label: translate( 'Site' ),
-			getValue: () => '-',
+			getValue: ( { item }: { item: WooPaymentsSiteItem } ) => item.site,
 			render: ( { item }: { item: WooPaymentsSiteItem } ) => (
 				<div>
 					<FormRadio
@@ -73,6 +73,7 @@ const AddWooPaymentsToSiteTable = ( {
 					/>
 				</div>
 			),
+			enableGlobalSearch: true,
 			enableHiding: false,
 			enableSorting: false,
 		};
@@ -85,7 +86,7 @@ const AddWooPaymentsToSiteTable = ( {
 	}, [ availableSites, dataViewsState, fields ] );
 
 	return (
-		<div className="redesigned-a8c-table show-overflow-overlay hide-actions">
+		<div className="redesigned-a8c-table show-overflow-overlay search-enabled">
 			{ isLoading ? (
 				<A4ATablePlaceholder />
 			) : (
@@ -95,7 +96,7 @@ const AddWooPaymentsToSiteTable = ( {
 						fields,
 						getItemId: ( item ) => `${ item.id }`,
 						pagination: paginationInfo,
-						enableSearch: false,
+						enableSearch: true,
 						actions: [],
 						dataViewsState: dataViewsState,
 						setDataViewsState: setDataViewsState,

@@ -2,6 +2,7 @@ import { BadgeType, Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate, formatCurrency } from 'i18n-calypso';
 import { memo } from 'react';
+import { A4A_WOOPAYMENTS_SITE_SETUP_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch } from 'calypso/state';
@@ -19,13 +20,7 @@ export const CommissionsPaidColumn = memo( ( { payout }: { payout: number | null
 	return payout ? formatCurrency( payout, 'USD', { stripZeros: true } ) : <Gridicon icon="minus" />;
 } );
 
-export const WooPaymentsStatusColumn = ( {
-	state,
-	siteUrl,
-}: {
-	state: string;
-	siteUrl: string;
-} ) => {
+export const WooPaymentsStatusColumn = ( { state, siteId }: { state: string; siteId: number } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -36,11 +31,9 @@ export const WooPaymentsStatusColumn = ( {
 					dispatch( recordTracksEvent( 'calypso_a4a_woopayments_setup_in_wp_admin' ) );
 				} }
 				variant="tertiary"
-				href={ `${ siteUrl }/wp-admin/plugin-install.php?s=woopayments&tab=search&type=term` }
-				target="_blank"
-				rel="noopener noreferrer"
+				href={ `${ A4A_WOOPAYMENTS_SITE_SETUP_LINK }/?site_id=${ siteId }` }
 			>
-				{ translate( 'Setup in WP-Admin ↗' ) }
+				{ translate( 'Continue setup' ) }
 			</Button>
 		);
 	}

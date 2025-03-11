@@ -609,10 +609,10 @@ html {
 		}
 	}
 
-	// TODO: Remove this once we have support to hide actions in the DataViews component
-	&.hide-actions {
+
+	&.search-enabled {
 		.dataviews__view-actions {
-			display: none;
+			padding: 1px;
 		}
 	}
 
