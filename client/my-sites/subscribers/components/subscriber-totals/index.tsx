@@ -86,7 +86,25 @@ const SubscriberTotals: React.FC< SubscriberTotalsProps > = ( {
 	}
 
 	const isFiltered = ! filters.includes( SubscribersFilterBy.All ) || !! searchTerm;
+	const isFilteredByUnconfirmed = filters.includes( SubscribersFilterBy.UnconfirmedSubscriber );
 	const filterLabel = getFilterLabel( filters, filteredCount );
+
+	if ( isFilteredByUnconfirmed ) {
+		return (
+			<div className="subscriber-totals">
+				<span className="subscriber-totals__total-count">
+					{ translate(
+						'%(count)d unconfirmed subscriber',
+						'%(count)d unconfirmed subscribers',
+						{
+							count: filteredCount,
+							args: { count: filteredCount },
+						}
+					) }
+				</span>
+			</div>
+		);
+	}
 
 	return (
 		<div className="subscriber-totals">
