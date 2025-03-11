@@ -46,7 +46,7 @@ class AuthorMappingPane extends PureComponent {
 		if ( numTargetUsers === 1 && numSourceUsers === 1 ) {
 			return this.props.translate(
 				'There is one author on your %(sourceType)s site. ' +
-					"Because you're the only author on {{b}}%(destinationSiteTitle)s{{/b}}, " +
+					"Because you're the only author on your new site, " +
 					'all imported content will be assigned to you. ' +
 					'Click {{em}}Import{{/em}} to proceed.',
 				{
@@ -55,7 +55,6 @@ class AuthorMappingPane extends PureComponent {
 						destinationSiteTitle: targetTitle,
 					},
 					components: {
-						b: <strong />,
 						em: <em />,
 					},
 				}
@@ -63,7 +62,7 @@ class AuthorMappingPane extends PureComponent {
 		} else if ( numTargetUsers === 1 && numSourceUsers > 1 ) {
 			return this.props.translate(
 				'There are multiple authors on your %(sourceType)s site. ' +
-					"Because you're the only author on {{b}}%(destinationSiteTitle)s{{/b}}, " +
+					"Because you're the only author on your new site, " +
 					'all imported content will be assigned to you. ' +
 					'Click {{em}}Import{{/em}} to proceed.',
 				{
@@ -72,7 +71,6 @@ class AuthorMappingPane extends PureComponent {
 						destinationSiteTitle: targetTitle,
 					},
 					components: {
-						b: <strong />,
 						em: <em />,
 					},
 				}
@@ -81,14 +79,13 @@ class AuthorMappingPane extends PureComponent {
 			return this.props.translate(
 				'There are multiple authors on your site. ' +
 					'Please reassign the authors of the imported items to an existing ' +
-					'user on {{b}}%(destinationSiteTitle)s{{/b}}, then click {{em}}Import{{/em}}.',
+					'user on your new site, then click {{em}}Import{{/em}}.',
 				{
 					args: {
 						sourceType: 'WordPress',
 						destinationSiteTitle: targetTitle,
 					},
 					components: {
-						b: <strong />,
 						em: <em />,
 					},
 				}
@@ -97,14 +94,13 @@ class AuthorMappingPane extends PureComponent {
 			return this.props.translate(
 				'There are multiple authors on your %(sourceType)s site. ' +
 					'Please reassign the authors of the imported items to an existing ' +
-					'user on {{b}}%(destinationSiteTitle)s{{/b}}, then click {{em}}Import{{/em}}.',
+					'user on your new site, then click {{em}}Import{{/em}}.',
 				{
 					args: {
 						sourceType: 'WordPress',
 						destinationSiteTitle: targetTitle,
 					},
 					components: {
-						b: <strong />,
 						em: <em />,
 					},
 				}
@@ -119,7 +115,6 @@ class AuthorMappingPane extends PureComponent {
 	render() {
 		const {
 			sourceAuthors,
-			sourceTitle,
 			targetTitle,
 			onMap,
 			onStartImport,
@@ -128,6 +123,7 @@ class AuthorMappingPane extends PureComponent {
 			importerStatus,
 			site,
 			totalUsers,
+			translate,
 		} = this.props;
 
 		const hasSingleAuthor = totalUsers === 1;
@@ -143,8 +139,10 @@ class AuthorMappingPane extends PureComponent {
 			<div className="importer__mapping-pane">
 				<div className="importer__mapping-description">{ mappingDescription }</div>
 				<div className="importer__mapping-header">
-					<span className="importer__mapping-source-title">{ sourceTitle }</span>
-					<span className="importer__mapping-target-title">{ targetTitle }</span>
+					<span className="importer__mapping-source-title">
+						{ translate( 'Original Site Users' ) }
+					</span>
+					<span className="importer__mapping-target-title">{ translate( 'New Site Users' ) }</span>
 				</div>
 				{ sourceAuthors.map( ( author ) => {
 					return (
