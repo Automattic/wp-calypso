@@ -575,20 +575,20 @@ object CheckCodeStyleBranch : BuildType({
 				# Find lintable files touched in this branch, except those deleted
 				function _find_files_to_lint() {
 					git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD \
-						| grep -E '(\.[jt]sx?|\.json|\.md)$$'
+						| grep -E '(\.[jt]sx?|\.json|\.md)${'$'}'
 				}
 
 				# Use with `grep -c .` to prevent miscounts due to newlines
-				FILE_COUNT=$$(_find_files_to_lint | grep -c .)
+				FILE_COUNT=${'$'}(_find_files_to_lint | grep -c .)
 
 				# Create temporary output directory. Export the variable so that it is
 				# available in the batch runs.
 				export RESULTS_DIR=checkstyle_results/eslint
-				mkdir -p "$$RESULTS_DIR"
+				mkdir -p "${'$'}RESULTS_DIR"
 
-				if [ "%run_full_eslint%" = true ] || [ "$$FILE_COUNT" -eq 0 ]; then
+				if [ "%run_full_eslint%" = true ] || [ "${'$'}FILE_COUNT" -eq 0 ]; then
 					echo "Linting all files"
-					yarn run eslint --format checkstyle --output-file "$$RESULTS_DIR/results.xml" .
+					yarn run eslint --format checkstyle --output-file "${'$'}RESULTS_DIR/results.xml" .
 				else
 					echo "Linting affected files"
 
@@ -601,7 +601,7 @@ object CheckCodeStyleBranch : BuildType({
 					# xargs has.
 					#
 					# So we resort to a little bit of shell magic:
-					# - `rs` reshapes our list of files into rows of "$$BATCH_SIZE"
+					# - `rs` reshapes our list of files into rows of "${'$'}BATCH_SIZE"
 					# - `nl` prepends each row with an index (1-based)
 					#
 					# The output of the `rs | nl` chain now looks like:
@@ -619,15 +619,15 @@ object CheckCodeStyleBranch : BuildType({
 					MAX_PARALLEL_BATCHES=15 # Number of concurrent ESLint processes
 
 					_find_files_to_lint \
-						| rs 0 "$$BATCH_SIZE" \
+						| rs 0 "${'$'}BATCH_SIZE" \
 						| nl \
-						| xargs -L1 -P"$$MAX_PARALLEL_BATCHES" bash -c '
-							BATCH_NUM="$$1"; shift
-							BATCH_FILES="$$@"
+						| xargs -L1 -P"${'$'}MAX_PARALLEL_BATCHES" bash -c '
+							BATCH_NUM="${'$'}1"; shift
+							BATCH_FILES="${'$'}@"
 							yarn run eslint \
 								--format checkstyle \
-								--output-file "$$RESULTS_DIR/batch_$${BATCH_NUM}.xml" \
-								$$BATCH_FILES
+								--output-file "${'$'}RESULTS_DIR/batch_${'$'}{BATCH_NUM}.xml" \
+								${'$'}BATCH_FILES
 						' yarn-batch # Arbitrary name to be used as each batch's progname
 				fi
 			"""
