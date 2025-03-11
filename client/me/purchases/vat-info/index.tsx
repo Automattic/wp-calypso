@@ -137,11 +137,8 @@ export default function VatInfoPage() {
 									ul: <ul />,
 									li: <li />,
 									contactSupportLink: (
-										// eslint-disable-next-line jsx-a11y/anchor-is-valid
 										<a
-											target="_blank"
-											href="#"
-											rel="noreferrer"
+											href="/help"
 											title={ contactSupportLinkTitle }
 											onClick={ handleOpenCenterChat }
 										/>
