@@ -450,6 +450,10 @@
 			> :last-child:not(.wp-login__links) {
 				margin-bottom: 64px;
 			}
+
+			.login__form-action .components-button {
+				font-size: $font-body;
+			}
 		}
 
 	}
@@ -493,11 +497,6 @@
 	.wp-login__links {
 		font-size: $font-body;
 		font-weight: 400;
-	}
-
-	.login__form-action button {
-		font-size: $font-body;
-		line-height: 23px;
 	}
 
 	.login__form-terms {

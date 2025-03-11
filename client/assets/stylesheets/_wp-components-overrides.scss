@@ -6,6 +6,11 @@
 }
 
 /* @wordpress/components Button overrides */
+.components-button {
+	justify-content: center;
+	font-size: $font-body-small;
+}
+
 .components-button.is-primary {
 	background-color: var(--color-accent);
 	border-color: var(--color-accent);
