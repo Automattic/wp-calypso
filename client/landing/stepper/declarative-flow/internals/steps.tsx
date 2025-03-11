@@ -11,6 +11,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/business-info' ),
 	},
 
+	AUTOMATED_COPY_SITE: {
+		slug: 'automated-copy',
+		asyncComponent: () => import( './steps-repository/automated-copy-site' ),
+	},
+
 	CELEBRATION: {
 		slug: 'celebration-step',
 		asyncComponent: () => import( './steps-repository/celebration-step' ),
@@ -185,6 +190,12 @@ export const STEPS = {
 	PROCESSING: {
 		slug: 'processing',
 		asyncComponent: () => import( './steps-repository/processing-step' ),
+	},
+
+	/** Temporary step until we allow passing props to steps */
+	PROCESSING_COPY_SITE_FLOW: {
+		slug: 'processing-copy',
+		asyncComponent: () => import( './steps-repository/processing-step-copy-site-flow' ),
 	},
 
 	SITE_CREATION_STEP: {

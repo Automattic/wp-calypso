@@ -15,7 +15,7 @@ import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
+describe( DataHelper.createSuiteTitle( 'Invite: Revoke' ), function () {
 	const newUsername = `e2eflowtestinginvite${ DataHelper.getTimestamp() }`;
 	const inboxId = SecretsManager.secrets.mailosaur.inviteInboxId;
 	const testEmailAddress = DataHelper.getTestEmailAddress( {
@@ -63,7 +63,7 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 			const testAccount = new TestAccount( 'defaultUser' );
 			await testAccount.authenticate( page );
 			userManagementRevampFeature = await page.evaluate(
-				`configData.features['user-management-revamp']`
+				"configData.features['user-management-revamp']"
 			);
 		} );
 
@@ -88,12 +88,12 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 			revoked = true;
 		} );
 
-		it( `Ensure invite link is no longer valid`, async function () {
+		it( 'Ensure invite link is no longer valid', async function () {
 			const newPage = await browser.newPage();
 			await newPage.goto( acceptInviteLink );
 
 			// Text selector will suffice for now.
-			await newPage.waitForSelector( `:text("Oops, that invite is not valid")` );
+			await newPage.waitForSelector( ':text("Oops, that invite is not valid")' );
 		} );
 	} );
 

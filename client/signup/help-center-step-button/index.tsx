@@ -1,6 +1,6 @@
 import { HelpCenterInlineButton } from '@automattic/help-center';
 import { useTranslate } from 'i18n-calypso';
-import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
+import useShouldRenderHelpCenterButton from './use-should-render-help-center-button';
 import type { FC } from 'react';
 
 interface HelpCenterStepButtonProps {
@@ -18,9 +18,9 @@ const HelpCenterStepButton: FC< HelpCenterStepButtonProps > = ( {
 } ) => {
 	const translate = useTranslate();
 
-	const { data: geoData } = useGeoLocationQuery();
+	const shouldRenderHelpCenterButton = useShouldRenderHelpCenterButton( { enabledGeos } );
 
-	if ( ! geoData?.country_short || ! enabledGeos?.includes( geoData.country_short ) ) {
+	if ( ! shouldRenderHelpCenterButton ) {
 		return null;
 	}
 

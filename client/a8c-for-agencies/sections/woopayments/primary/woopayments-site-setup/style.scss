@@ -5,10 +5,6 @@
 	max-width: 900px;
 	padding-block-start: calc(24px + 48px);
 
-	.step-section .step-section__header .step-section__step-heading {
-		@include heading-large;
-	}
-
 	.step-section-item__description {
 		.components-button {
 			margin-block-start: 16px;

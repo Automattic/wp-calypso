@@ -89,4 +89,13 @@
 	ul.wp-submenu-wrap {
 		margin-left: 0;
 	}
+
+	&.wp-core-ui .button.is-secondary {
+		border-color: var(--color-neutral-20);
+		background-color: inherit;
+		&:hover {
+			color: var(--color-text-subtle);
+			border-color: var(--color-neutral-60);
+		}
+	}
 }

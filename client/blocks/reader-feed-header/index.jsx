@@ -15,6 +15,7 @@ import {
 	getSiteName,
 	getSiteUrl,
 } from 'calypso/reader/get-helpers';
+import { getSafeImageUrlForReader } from 'calypso/reader/utils';
 import ReaderFeedHeaderSiteBadge from './badge';
 import ReaderFeedHeaderFollow from './follow';
 import './style.scss';
@@ -56,7 +57,7 @@ class FeedHeader extends Component {
 		let fakeSite;
 
 		const safeSiteIcon = safeImageUrl( siteIcon );
-		const safeFeedIcon = safeImageUrl( feedIcon );
+		const safeFeedIcon = getSafeImageUrlForReader( feedIcon );
 
 		if ( safeSiteIcon ) {
 			fakeSite = {

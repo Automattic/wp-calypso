@@ -1,8 +1,13 @@
 import { CompactCard, Button, Card, FormLabel } from '@automattic/components';
+import { HelpCenter } from '@automattic/data-stores';
+import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { clearHelpCenterZendeskConversationStarted } from '@automattic/odie-client/src/utils/storage-utils';
 import { CALYPSO_CONTACT } from '@automattic/urls';
+import { Button as WordPressButton } from '@wordpress/components';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState, useRef, useMemo } from 'react';
+import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
@@ -25,6 +30,8 @@ import type { CountryListItem, VatDetails } from '@automattic/wpcom-checkout';
 
 import './style.scss';
 
+const HELP_CENTER_STORE = HelpCenter.register();
+
 export default function VatInfoPage() {
 	const translate = useTranslate();
 	const { data: geoData } = useGeoLocationQuery();
@@ -33,12 +40,11 @@ export default function VatInfoPage() {
 	const taxName = useTaxName(
 		currentVatDetails.country ?? vatDetails.country ?? geoData?.country_short ?? 'GB'
 	);
+	const resetSupportInteraction = useResetSupportInteraction();
+
+	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const reduxDispatch = useDispatch();
-
-	const clickSupport = () => {
-		reduxDispatch( recordTracksEvent( 'calypso_vat_details_support_click' ) );
-	};
 
 	/* This is a call to action for contacting support */
 	const contactSupportLinkTitle = translate( 'Contact Happiness Engineers' );
@@ -47,6 +53,14 @@ export default function VatInfoPage() {
 
 	/* This is the title of the support page from https://wordpress.com/support/vat-gst-other-taxes/ */
 	const taxSupportPageLinkTitle = translate( 'VAT, GST, and other taxes' );
+
+	const handleOpenCenterChat = useCallback( async () => {
+		clearHelpCenterZendeskConversationStarted();
+		setNavigateToRoute( '/odie' );
+		setShowHelpCenter( true );
+		await resetSupportInteraction();
+		reduxDispatch( recordTracksEvent( 'calypso_vat_details_support_click' ) );
+	}, [ reduxDispatch, resetSupportInteraction, setNavigateToRoute, setShowHelpCenter ] );
 
 	useRecordVatEvents( { fetchError } );
 
@@ -120,12 +134,11 @@ export default function VatInfoPage() {
 									ul: <ul />,
 									li: <li />,
 									contactSupportLink: (
-										<a
-											target="_blank"
-											href={ CALYPSO_CONTACT }
-											rel="noreferrer"
-											onClick={ clickSupport }
+										<WordPressButton
+											className="vat-info__open-help-center-support"
 											title={ contactSupportLinkTitle }
+											variant="link"
+											onClick={ handleOpenCenterChat }
 										/>
 									),
 								},

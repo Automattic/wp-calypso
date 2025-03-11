@@ -175,7 +175,7 @@ describe( 'Site Migration Flow', () => {
 						siteId: 123,
 						siteSlug: 'example.wordpress.com',
 						origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
-						backToFlow: `/site-migration/site-migration-identify`,
+						backToFlow: '/site-migration/site-migration-identify',
 					},
 				} );
 			} );
@@ -981,7 +981,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 
 				expect( window.location.assign ).toMatchURL( {
-					path: `https://oldsite.com/wp-admin/authorize-application.php`,
+					path: 'https://oldsite.com/wp-admin/authorize-application.php',
 					query: {
 						app_id: 'c95b5f6a-b93f-4ece-96c2-a6660bfcb6d2',
 						app_name: 'Migrate to WordPress.com',

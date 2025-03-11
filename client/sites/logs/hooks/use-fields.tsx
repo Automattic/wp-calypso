@@ -98,6 +98,9 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 					id: 'name',
 					type: 'text',
 					label: translate( 'Source' ),
+					render: ( { item }: { item: PHPLog } ) => {
+						return <span className="site-logs-table__name">{ item.name }</span>;
+					},
 					enableSorting: false,
 				},
 				{

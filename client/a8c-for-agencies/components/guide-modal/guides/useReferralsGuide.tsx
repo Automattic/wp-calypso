@@ -16,7 +16,7 @@ function useReferralsGuide() {
 			{
 				title: translate( 'Welcome to product referral mode' ),
 				description: translate(
-					`Manage your clients' products without the burden of managing the billing. Assemble a cart of products, send a request for payment to your clients, and make commissions based on what you sell.`
+					"Manage your clients' products without the burden of managing the billing. Assemble a cart of products, send a request for payment to your clients, and make commissions based on what you sell."
 				),
 				preview: <img src={ step1 } alt="" />,
 			},
@@ -39,7 +39,7 @@ function useReferralsGuide() {
 			{
 				title: translate( 'Review your selection during checkout' ),
 				description: translate(
-					`During checkout, add your client's email address and a note about the invoice for the selected products.`
+					"During checkout, add your client's email address and a note about the invoice for the selected products."
 				),
 				preview: (
 					<video
@@ -55,7 +55,7 @@ function useReferralsGuide() {
 			{
 				title: translate( 'Send your client the payment request' ),
 				description: translate(
-					`Once sent, your client will get the invoice delivered to their inbox. After they pay, you'll be able to assign the products to their site.`
+					"Once sent, your client will get the invoice delivered to their inbox. After they pay, you'll be able to assign the products to their site."
 				),
 				preview: (
 					<video
@@ -71,7 +71,7 @@ function useReferralsGuide() {
 			{
 				title: translate( 'Get paid real commissions' ),
 				description: translate(
-					`Clients will be billed at the end of every month for their products. When they pay, you'll make commissions on those products, which you'll be able to manage under the Referrals section, soon.`
+					"Clients will be billed at the end of every month for their products. When they pay, you'll make commissions on those products, which you'll be able to manage under the Referrals section, soon."
 				),
 				preview: <img src={ step5 } alt="" />,
 			},

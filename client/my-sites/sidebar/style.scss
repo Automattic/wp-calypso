@@ -519,9 +519,7 @@ $font-size: rem(14px);
 		}
 
 		.sidebar__menu.is-togglable .sidebar__heading {
-			padding: 12px 10px;
-			margin: 0 12px;
-			border-radius: 4px;
+			box-sizing: border-box;
 
 			&:hover {
 				.sidebar__expandable-arrow {
@@ -948,6 +946,10 @@ $font-size: rem(14px);
 	// Reader specific styles
 	// client/reader/sidebar/style.scss
 	&.is-section-reader {
+		.sidebar__menu .components-button.has-icon {
+			padding: 0 0 0 6px;
+		}
+		
 		.sidebar__menu .count {
 			background: transparent;
 			color: var(--color-sidebar-menu-text);
