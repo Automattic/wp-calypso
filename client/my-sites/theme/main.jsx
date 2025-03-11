@@ -728,9 +728,9 @@ class ThemeSheet extends Component {
 	};
 
 	renderNotice = () => {
-		const { activeThemeId, name, siteIntent, translate } = this.props;
+		const { activeThemeId, themeId, name, siteIntent, translate } = this.props;
 		const isAIAssembler = siteIntent === SiteIntent.AIAssembler && activeThemeId === 'assembler';
-		if ( ! isAIAssembler ) {
+		if ( ! isAIAssembler || themeId === 'assembler' ) {
 			return null;
 		}
 
