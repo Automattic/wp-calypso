@@ -1,7 +1,3 @@
-
-@import "@wordpress/base-styles/mixins";
-@import "@wordpress/base-styles/variables";
-
 .simple-list {
 	display: flex;
 	flex-direction: column;
@@ -15,12 +11,6 @@
 		display: flex;
 		flex-direction: row;
 		@include a4a-font-body-lg($line-height: 1.625);
-	}
-
-	&.is-core-styles {
-		li {
-			@include body-large;
-		}
 	}
 }
 

@@ -51,8 +51,6 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_woopayments_site_setup_install_plugin_click', {
 				status: isInstalled ? 'installed' : 'not_installed',
-				isWooPaymentsActive,
-				isWooCommerceActive,
 			} )
 		);
 
@@ -144,9 +142,8 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 								'Follow the steps below to complete the process so you can earn commissions.'
 							) }
 						</div>
-						<StepSection applyCoreStyles heading={ translate( 'Next steps' ) }>
+						<StepSection heading={ translate( 'Next steps' ) }>
 							<StepSectionItem
-								applyCoreStyles
 								isNewLayout
 								heading={ translate( 'Install and activate the plugin on WP-Admin' ) }
 								description={
@@ -195,7 +192,6 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 								}
 							/>
 							<StepSectionItem
-								applyCoreStyles
 								isNewLayout
 								heading={ translate( 'Earn commissions' ) }
 								description={
