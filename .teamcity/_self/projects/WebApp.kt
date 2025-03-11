@@ -603,11 +603,10 @@ object CheckCodeStyleBranch : BuildType({
 					# want to know which batch we are currently in -- a concept that I don't think
 					# xargs has.
 					#
-					# So we resort to a little bit of shell magic:
-					# - `rs` reshapes our list of files into rows of "${'$'}BATCH_SIZE"
-					# - `nl` prepends each row with an index (1-based)
+					# So we resort to a little bit of AWK magic to reshape our list of files into
+					# rows of BATCH_SIZE. Then, we use `nl` to prepend each row with an index.
 					#
-					# The output of the `rs | nl` chain now looks like:
+					# The output of the `awk | nl` chain now looks like:
 					#
 					#     1 file1 file2 file3
 					#     2 file4 file5 file6
@@ -622,7 +621,7 @@ object CheckCodeStyleBranch : BuildType({
 					MAX_PARALLEL_BATCHES=15 # Number of concurrent ESLint processes
 
 					_find_files_to_lint \
-						| rs 0 "${'$'}BATCH_SIZE" \
+						| awk -v"n=${'$'}BATCH_SIZE" '{printf "%s%s", $0, (NR%n?"\t":"\n")}' \
 						| nl \
 						| xargs -L1 -P"${'$'}MAX_PARALLEL_BATCHES" bash -c '
 							BATCH_NUM="${'$'}1"; shift
