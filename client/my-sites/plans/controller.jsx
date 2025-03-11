@@ -2,6 +2,8 @@ import { PLAN_100_YEARS, isValidFeatureKey } from '@automattic/calypso-products'
 import page from '@automattic/calypso-router';
 import { productSelect } from 'calypso/my-sites/plans/jetpack-plans/controller';
 import setJetpackPlansHeader from 'calypso/my-sites/plans/jetpack-plans/plans-header';
+import { PLAN } from 'calypso/sites/components/site-preview-pane/constants';
+import { siteDashboard } from 'calypso/sites/controller';
 import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Plans from './main';
@@ -59,7 +61,13 @@ export function plans( context, next ) {
 			jetpackAppPlans={ context.query.jetpackAppPlans === 'true' }
 		/>
 	);
-	next();
+
+	const isUntangled = true;
+	if ( isUntangled ) {
+		siteDashboard( PLAN )( context, next );
+	} else {
+		next();
+	}
 }
 
 export function features( context ) {
