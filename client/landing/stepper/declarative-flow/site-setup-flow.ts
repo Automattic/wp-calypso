@@ -327,7 +327,7 @@ const siteSetupFlow: FlowV1 = {
 				}
 
 				case 'bloggerStartingPoint': {
-					const intent = providedDependencies.intent as string;
+					const intent = providedDependencies.startingPoint as string;
 					switch ( intent ) {
 						case 'firstPost': {
 							return exitFlow( `/post/${ siteSlug }` );

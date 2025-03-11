@@ -102,7 +102,7 @@ const entrepreneurFlow: Flow = {
 				}
 
 				case STEPS.PROCESSING.slug: {
-					const processingResult = providedDependencies.processingResult;
+					const processingResult = providedDependencies.processingResult as ProcessingResult;
 
 					if ( processingResult === ProcessingResult.FAILURE ) {
 						return navigate( STEPS.ERROR.slug );
