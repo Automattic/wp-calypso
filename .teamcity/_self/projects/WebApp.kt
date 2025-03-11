@@ -570,66 +570,65 @@ object CheckCodeStyleBranch : BuildType({
 		bashNodeScript {
 			name = "Run eslint"
 			scriptContent = """
-				set -x
 				export NODE_ENV="test"
 
-				# Find files to lint
-				TOTAL_FILES_TO_LINT=$(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -cE '(\.[jt]sx?|\.json|\.md)${'$'}' || true)
-				FILES_TO_LINT=$(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -E '(\.[jt]sx?|\.json|\.md)${'$'}' || echo "")
+				# Find lintable files touched in this branch, except those deleted
+				function _find_files_to_lint() {
+					git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD \
+						| grep -E '(\.[jt]sx?|\.json|\.md)$$'
+				}
 
-				# Create temporary output directory
-				mkdir -p "./checkstyle_results/eslint"
+				# Use with `grep -c .` to prevent miscounts due to newlines
+				FILE_COUNT=$$(_find_files_to_lint | grep -c .)
 
-				if [ "%run_full_eslint%" = "true" ] || [ "${'$'}TOTAL_FILES_TO_LINT" == "0" ]; then
+				# Create temporary output directory. Export the variable so that it is
+				# available in the batch runs.
+				export RESULTS_DIR=checkstyle_results/eslint
+				mkdir -p "$$RESULTS_DIR"
+
+				if [ "%run_full_eslint%" = true ] || [ "$$FILE_COUNT" -eq 0 ]; then
 					echo "Linting all files"
-					yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" .
+					yarn run eslint --format checkstyle --output-file "$$RESULTS_DIR/results.xml" .
 				else
-					# When linting the files we have to cover for two issues:
+					echo "Linting affected files"
+
+					# In an ideal scenario, we'd simply pipe the list of target files to `xargs`:
 					#
-					# - ENAMETOOLONG: we cannot pass to eslint too many files as input because we can exceed the maximum command line length.
-					# - OOM (Out Of Memory): we cannot spawn too many processes in parallel.
+					# _find_files | xargs -n3 -P5 yarn run eslint...
 					#
-					# To prevent running into any of these issues, we process the files in batches.
+					# where -n3 is the batch size and -P5 the number of parallel runs. However, we
+					# want to know which batch we are currently in -- a concept that I don't think
+					# xargs has.
 					#
-					# - BATCH_SIZE is the number of files each eslint process will take.
-					# - MAX_PARALLEL_BATCHES is the maximum number of eslint processes to execute in parallel.
+					# So we resort to a little bit of shell magic:
+					# - `rs` reshapes our list of files into rows of "$$BATCH_SIZE"
+					# - `nl` prepends each row with an index (1-based)
+					#
+					# The output of the `rs | nl` chain now looks like:
+					#
+					#     1 file1 file2 file3
+					#     2 file4 file5 file6
+					#     3 file7
+					#
+					# - `xargs` must now use the `-L1` option to process one line at a time
+					# - instead of calling `yarn` directly, we use `bash` to split the arguments
+					#
+					# CAVEAT: ASSUMES NO SPACES IN FILENAMES.
 
-					BATCH_SIZE=15
-					MAX_PARALLEL_BATCHES=15
+					BATCH_SIZE=15 # Number of files handled by each ESLint process
+					MAX_PARALLEL_BATCHES=15 # Number of concurrent ESLint processes
 
-					# This rounds up the division (total files / batch size) to the next integer.
-					TOTAL_BATCHES=$(( (${'$'}TOTAL_FILES_TO_LINT + ${'$'}BATCH_SIZE - 1) / ${'$'}BATCH_SIZE ))
-					echo "Linting ${'$'}TOTAL_FILES_TO_LINT files in ${'$'}TOTAL_BATCHES batches"
-
-					# Create a temporary file with all files to process.
-					TMP_FILE_LIST=$(mktemp)
-					echo "${'$'}FILES_TO_LINT" > "${'$'}TMP_FILE_LIST"
-
-					# Process them in batches
-					for BATCH_NUM in $(seq 1 ${'$'}TOTAL_BATCHES); do
-						BATCH_START=$(( (${'$'}BATCH_NUM - 1) * ${'$'}BATCH_SIZE + 1 ))
-						BATCH_END=$(( ${'$'}BATCH_NUM * ${'$'}BATCH_SIZE ))
-
-						# Extract batch of filenames
-						BATCH_FILES=$(sed -n "${'$'}{BATCH_START},${'$'}{BATCH_END}p" "${'$'}TMP_FILE_LIST" | tr '\n' ' ')
-
-						if [ -n "${'$'}BATCH_FILES" ]; then
-							echo "Linting batch ${'$'}BATCH_NUM of ${'$'}TOTAL_BATCHES"
-							yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/batch_${'$'}{BATCH_NUM}.xml" ${'$'}BATCH_FILES &
-
-							# Limit concurrent processes to avoid OutOfMemory errors
-							if [ $(( ${'$'}BATCH_NUM % ${'$'}MAX_PARALLEL_BATCHES )) -eq 0 ]; then
-								echo "Waiting for batch ${'$'}BATCH_NUM to complete"
-								wait
-							fi
-						fi
-					done
-
-					# Wait for any remaining processes
-					wait
-
-					# Clean up
-					rm "${'$'}TMP_FILE_LIST"
+					_find_files_to_lint \
+						| rs 0 "$$BATCH_SIZE" \
+						| nl \
+						| xargs -L1 -P"$$MAX_PARALLEL_BATCHES" bash -c '
+							BATCH_NUM="$$1"; shift
+							BATCH_FILES="$$@"
+							yarn run eslint \
+								--format checkstyle \
+								--output-file "$$RESULTS_DIR/batch_$${BATCH_NUM}.xml" \
+								$$BATCH_FILES
+						' yarn-batch # Arbitrary name to be used as each batch's progname
 				fi
 			"""
 		}
