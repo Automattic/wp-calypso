@@ -68,7 +68,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 					...conversation,
 					metadata: {
 						...conversation.metadata,
-						status: supportInteraction ? supportInteraction.status : conversation.metadata?.status,
+						...( supportInteraction?.status && { status: supportInteraction.status } ),
 					},
 				};
 
