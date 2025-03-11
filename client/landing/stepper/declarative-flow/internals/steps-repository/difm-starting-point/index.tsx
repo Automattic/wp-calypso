@@ -23,7 +23,10 @@ const DIFMStartingPoint: Step = function ( { navigation, flow } ) {
 	const flags = queryParams.get( 'flags' )?.split( ',' );
 	const isHelpCenterLinkEnabled = flags?.includes( 'signup/help-center-link' );
 
-	const shouldRenderHelpCenterLink = useShouldRenderHelpCenterButton( { enabledGeos: [ 'US' ] } );
+	const shouldRenderHelpCenterLink = useShouldRenderHelpCenterButton( {
+		flowName: flow,
+		enabledGeos: [ 'US' ],
+	} );
 
 	const onSubmit = ( value: string ) => {
 		submit?.( {
