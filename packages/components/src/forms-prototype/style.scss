@@ -15,12 +15,17 @@
 
 .a8c-use-validation__error {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	gap: 4px;
 	font-family: typography.$sans;
 	font-size: 0.75rem;
+	line-height: 16px; // matches the icon size
 	color: #{colors.$alert-red};
 	animation: a8c-use-validation__error-jump 0.2s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+.a8c-use-validation__error-icon {
+	flex-shrink: 0;
 }
 
 @keyframes a8c-use-validation__error-jump {

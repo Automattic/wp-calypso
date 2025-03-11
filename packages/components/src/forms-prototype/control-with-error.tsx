@@ -70,7 +70,12 @@ export function ControlWithError< C extends React.ReactElement >( {
 			} ) }
 			{ errorMessage && (
 				<p className="a8c-use-validation__error">
-					<Icon icon={ caution } size={ 16 } fill="currentColor" />
+					<Icon
+						className="a8c-use-validation__error-icon"
+						icon={ caution }
+						size={ 16 }
+						fill="currentColor"
+					/>
 					{ errorMessage }
 				</p>
 			) }
