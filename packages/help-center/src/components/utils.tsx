@@ -100,17 +100,9 @@ export const getConversationsFromSupportInteractions = (
 	supportInteractions: SupportInteraction[]
 ) => {
 	return conversations.filter( ( conversation ) => {
-		const interaction = supportInteractions.find(
+		return supportInteractions.some(
 			( interaction ) => interaction.uuid === conversation.metadata?.supportInteractionId
 		);
-
-		// If an interaction is found, update the conversation status
-		if ( interaction ) {
-			conversation.metadata.status = interaction.status;
-			return true;
-		}
-
-		return false;
 	} );
 };
 
