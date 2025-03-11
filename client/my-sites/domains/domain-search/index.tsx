@@ -200,6 +200,7 @@ class DomainSearch extends Component< DomainSearchProps > {
 			product_slug: productSlug,
 			supports_privacy: supportsPrivacy,
 			is_premium: isPremium,
+			vendor: rootVendor,
 		} = suggestion;
 
 		this.props.recordAddDomainButtonClick(
@@ -208,7 +209,7 @@ class DomainSearch extends Component< DomainSearchProps > {
 			position,
 			isPremium,
 			'domains/add',
-			suggestion.vendor
+			rootVendor
 		);
 
 		let registration = domainRegistration( {
