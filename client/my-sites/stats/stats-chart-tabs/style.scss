@@ -307,9 +307,16 @@ ul.module-tabs {
 
 .stats-chart-tabs__type-toggle {
 	margin-left: 8px;
-	height: 24px;
 
 	&.components-button-group .components-button.is-primary {
 		z-index: 0;
+	}
+
+	.components-button.is-primary:focus:not(:disabled) {
+		box-shadow: none;
+	}
+
+	.components-button.is-compact.has-icon:not(.has-text) {
+		width: 44px;
 	}
 }
