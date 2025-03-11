@@ -11,12 +11,14 @@ type SectionBackground = {
 };
 
 interface ColumnProps {
+	heading?: ReactNode;
 	children?: ReactNode;
 	alignCenter?: boolean;
 }
 
-const Column = ( { children, alignCenter }: ColumnProps ) => (
+const Column = ( { heading, children, alignCenter }: ColumnProps ) => (
 	<div className={ clsx( 'page-section-column', { 'is-align-center': alignCenter } ) }>
+		{ heading && <div className="page-section-columns__heading">{ heading }</div> }
 		<div className="page-section-column__content">{ children }</div>
 	</div>
 );

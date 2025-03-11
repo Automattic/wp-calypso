@@ -1,13 +1,16 @@
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
-import { Icon, copy, check, error } from '@wordpress/icons';
-import clsx from 'clsx';
+import { copy, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 
-import './style.scss';
-
-const CopyToClipboardButton = ( { textToCopy }: { textToCopy: string } ) => {
+const CopyToClipboardButton = ( {
+	textToCopy,
+	onClick,
+}: {
+	textToCopy: string;
+	onClick?: () => void;
+} ) => {
 	const translate = useTranslate();
 	const isNarrowView = useBreakpoint( '<960px' );
 
@@ -21,6 +24,7 @@ const CopyToClipboardButton = ( { textToCopy }: { textToCopy: string } ) => {
 	};
 
 	const copyToClipboard = () => {
+		onClick?.();
 		navigator.clipboard
 			.writeText( textToCopy )
 			.then( () => {
@@ -32,33 +36,14 @@ const CopyToClipboardButton = ( { textToCopy }: { textToCopy: string } ) => {
 	};
 	return (
 		<>
-			<Button icon={ copy } variant="tertiary" onClick={ copyToClipboard }>
+			<Button
+				icon={ copyStatus === 'success' ? check : copy }
+				variant="tertiary"
+				onClick={ copyToClipboard }
+			>
 				{ ! isNarrowView &&
-					( copyStatus === 'success'
-						? translate( 'Copied to clipboard' )
-						: translate( 'Copy to clipboard' ) ) }
+					( copyStatus === 'success' ? translate( 'Copied' ) : translate( 'Copy to clipboard' ) ) }
 			</Button>
-			{ copyStatus && (
-				<div
-					className={ clsx( 'copy-to-clipboard-button__status', {
-						'is-success': copyStatus === 'success',
-						'is-error': copyStatus === 'error',
-					} ) }
-				>
-					{ copyStatus === 'success' && (
-						<>
-							<Icon icon={ check } size={ 24 } />
-							{ isNarrowView ? translate( 'Copied' ) : translate( 'Copied to clipboard' ) }
-						</>
-					) }
-					{ copyStatus === 'error' && (
-						<>
-							<Icon icon={ error } size={ 24 } />
-							{ isNarrowView ? translate( 'Failed' ) : translate( 'Failed to copy to clipboard' ) }
-						</>
-					) }
-				</div>
-			) }
 		</>
 	);
 };

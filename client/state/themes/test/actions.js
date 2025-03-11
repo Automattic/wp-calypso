@@ -212,7 +212,7 @@ describe( 'actions', () => {
 		describe( 'with a wpcom site', () => {
 			let nockScope;
 			useNock( ( nock ) => {
-				const url = '/rest/v1.2/themes?include_blankcanvas_theme=';
+				const url = '/wpcom/v2/themes?include_blankcanvas_theme=';
 				nockScope = nock( 'https://public-api.wordpress.com:443' )
 					.get( url )
 					.reply( 200, {

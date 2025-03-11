@@ -75,6 +75,7 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'does not complete the contact step when the contact step button has not been clicked and there are no cached details', async () => {
+		mockCachedContactDetailsEndpoint( {} );
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />, {
 			legacyRoot: true,

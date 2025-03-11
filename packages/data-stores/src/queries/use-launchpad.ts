@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isEnabled } from '@automattic/calypso-config';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
@@ -73,6 +74,9 @@ export const fetchLaunchpad = (
 		_locale: 'user',
 		...( checklistSlug && { checklist_slug: checklistSlugEncoded } ),
 		...( launchpadContext && { launchpad_context: launchpadContextEncoded } ),
+		...( isEnabled( 'onboarding/enable-write-goal-features' ) && {
+			updated_write_tasklist: 'true',
+		} ),
 	};
 
 	return canAccessWpcomApis()

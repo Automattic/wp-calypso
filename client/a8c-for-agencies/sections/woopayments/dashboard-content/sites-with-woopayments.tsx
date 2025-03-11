@@ -81,7 +81,7 @@ export default function SitesWithWooPayments() {
 				label: translate( 'WooPayments Status' ).toUpperCase(),
 				getValue: () => '-',
 				render: ( { item } ) => (
-					<WooPaymentsStatusColumn state={ item.state } siteUrl={ item.siteUrl } />
+					<WooPaymentsStatusColumn state={ item.state } siteId={ item.blogId } />
 				),
 				enableHiding: false,
 				enableSorting: false,
