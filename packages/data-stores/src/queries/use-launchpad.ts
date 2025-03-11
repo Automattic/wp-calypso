@@ -164,13 +164,14 @@ export const updateLaunchpadSettings = (
 	settings: LaunchpadUpdateSettings = {}
 ) => {
 	const slug = siteSlug ? encodeURIComponent( siteSlug ) : null;
-
+	const token = oauthToken.getToken();
 	return canAccessWpcomApis()
 		? wpcomRequest( {
 				path: `/sites/${ slug }/launchpad`,
 				apiNamespace: 'wpcom/v2',
 				method: 'PUT',
 				body: settings,
+				token: typeof token === 'string' ? token : undefined,
 		  } )
 		: apiFetch( {
 				global: true,
