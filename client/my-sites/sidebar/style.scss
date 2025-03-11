@@ -519,7 +519,7 @@ $font-size: rem(14px);
 		}
 
 		.sidebar__menu.is-togglable .sidebar__heading {
-			padding: 10px;
+			box-sizing: border-box;
 
 			&:hover {
 				.sidebar__expandable-arrow {
