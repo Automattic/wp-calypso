@@ -157,6 +157,30 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
+			it( 'redirects to HOW_TO_MIGRATE step if there is a from parameter and the action is migrate', () => {
+				const destination = runNavigation( {
+					from: STEPS.PROCESSING,
+					dependencies: {
+						siteCreated: true,
+					},
+					query: {
+						from: 'https://site-to-be-migrated.com',
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+						action: 'migrate',
+					},
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
+					query: {
+						sessionId: '123',
+						siteSlug: 'example.wordpress.com',
+						siteId: 123,
+					},
+				} );
+			} );
+
 			it( 'redirects to the import flow if there is no from query parameter', () => {
 				runNavigation( {
 					from: STEPS.PROCESSING,
@@ -388,6 +412,31 @@ describe( 'Site Migration Flow', () => {
 				expect( destination ).toMatchDestination( {
 					step: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 					query: {
+						siteSlug: 'example.wordpress.com',
+						siteId: 123,
+					},
+				} );
+			} );
+
+			it( 'redirects to HOW_TO_MIGRATE step if a site is selected and the query action is migrate', () => {
+				const destination = runNavigation( {
+					from: STEPS.PICK_SITE,
+					query: {
+						action: 'migrate',
+					},
+					dependencies: {
+						action: 'select-site',
+						site: {
+							ID: 123,
+							slug: 'example.wordpress.com',
+						},
+					},
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
+					query: {
+						sessionId: '123',
 						siteSlug: 'example.wordpress.com',
 						siteId: 123,
 					},
