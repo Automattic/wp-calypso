@@ -256,9 +256,13 @@ const siteMigration: Flow = {
 							);
 						}
 
+						// If the action is migrate, navigate to the DIY/DIFM selector screen.
 						if ( 'migrate' === actionQueryParam ) {
 							return navigate(
-								addQueryArgs( { from: fromQueryParam }, STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug )
+								addQueryArgs(
+									{ siteId, siteSlug, from: fromQueryParam },
+									STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug
+								)
 							);
 						}
 
