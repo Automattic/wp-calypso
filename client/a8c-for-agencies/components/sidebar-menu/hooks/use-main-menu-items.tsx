@@ -120,7 +120,7 @@ const useMainMenuItems = ( path: string ) => {
 			...( isSectionNameEnabled( 'a8c-for-agencies-woopayments' )
 				? [
 						{
-							sidebarIcon: <img src={ wooPaymentsIcon } alt="WooPayments" />,
+							icon: <img src={ wooPaymentsIcon } alt="WooPayments" />,
 							path: '/',
 							link: A4A_WOOPAYMENTS_LINK,
 							title: translate( 'WooPayments' ),

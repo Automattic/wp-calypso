@@ -24,7 +24,6 @@ interface Props {
 	isSelected?: boolean;
 	openInSameTab?: boolean;
 	extraContent?: JSX.Element;
-	sidebarIcon?: JSX.Element;
 }
 
 export const SidebarNavigatorMenuItem = ( {
@@ -39,7 +38,6 @@ export const SidebarNavigatorMenuItem = ( {
 	isSelected = false,
 	openInSameTab = false,
 	extraContent,
-	sidebarIcon,
 }: Props ) => {
 	const SidebarItem = ( { children }: { children?: JSX.Element } ) => {
 		return (
@@ -62,7 +60,6 @@ export const SidebarNavigatorMenuItem = ( {
 							size={ ICON_SIZE }
 						/>
 					) }
-					{ sidebarIcon }
 					<FlexBlock>{ children }</FlexBlock>
 					{ withChevron && <Icon icon={ chevronRightSmall } size={ ICON_SIZE } /> }
 					{ isExternalLink && (
