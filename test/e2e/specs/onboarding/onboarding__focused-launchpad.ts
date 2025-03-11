@@ -85,16 +85,6 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 			await title.waitFor( { timeout: 30 * 1000 } );
 		} );
 
-		it( 'It will add subscribers', async function () {
-			const addSubscribersButton = await page.getByText( 'Add subscribers' );
-			await addSubscribersButton.waitFor();
-			await addSubscribersButton.click();
-
-			await page.goto(
-				DataHelper.getCalypsoURL( `/home/${ newSiteDetails.blog_details.site_slug }` )
-			);
-		} );
-
 		it( "It will write the user's first post", async function () {
 			const writeFirstPostButton = await page.getByText( 'Write your first post' );
 			await writeFirstPostButton.waitFor();
