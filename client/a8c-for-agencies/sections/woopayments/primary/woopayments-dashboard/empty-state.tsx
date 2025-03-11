@@ -74,14 +74,13 @@ const WooPaymentsDashboardEmptyState = () => {
 			</PageSectionColumns>
 
 			<PageSectionColumns
-				heading={ translate( 'How to earn revenue share' ) }
 				background={ {
 					isDarkBackground: true,
 					image: backgroundImage1,
 					color: '#720EEC',
 				} }
 			>
-				<PageSectionColumns.Column>
+				<PageSectionColumns.Column heading={ translate( 'How to earn revenue share' ) }>
 					<>
 						<div className="woopayments-dashboard-empty-state__description">
 							<div>
@@ -143,8 +142,8 @@ const WooPaymentsDashboardEmptyState = () => {
 				</PageSectionColumns.Column>
 			</PageSectionColumns>
 
-			<PageSectionColumns heading={ translate( 'About WooPayments' ) }>
-				<PageSectionColumns.Column>
+			<PageSectionColumns>
+				<PageSectionColumns.Column heading={ translate( 'About WooPayments' ) }>
 					<div className="woopayments-dashboard-empty-state__description">
 						<div>
 							{ translate(
@@ -193,10 +192,10 @@ const WooPaymentsDashboardEmptyState = () => {
 				</PageSectionColumns.Column>
 			</PageSectionColumns>
 
-			<PageSectionColumns
-				heading={ translate( 'Still undecided if WooPayments is right for your clients?' ) }
-			>
-				<PageSectionColumns.Column>
+			<PageSectionColumns>
+				<PageSectionColumns.Column
+					heading={ translate( 'Still undecided if WooPayments is right for your clients?' ) }
+				>
 					<>
 						<div className="woopayments-dashboard-empty-state__description">
 							{ translate(

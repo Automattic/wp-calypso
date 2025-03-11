@@ -85,7 +85,7 @@ const AddWooPaymentsToSiteTable = ( {
 	}, [ availableSites, dataViewsState, fields ] );
 
 	return (
-		<div className="redesigned-a8c-table show-overflow-overlay">
+		<div className="redesigned-a8c-table show-overflow-overlay hide-actions">
 			{ isLoading ? (
 				<A4ATablePlaceholder />
 			) : (
