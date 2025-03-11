@@ -577,11 +577,12 @@ object CheckCodeStyleBranch : BuildType({
 				# Find lintable files touched in this branch, except those deleted
 				function _find_files_to_lint() {
 					git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD \
-						| grep -E '(\.[jt]sx?|\.json|\.md)${'$'}'
+						| grep -E '(\.[jt]sx?|\.json|\.md)${'$'}' \
+						|| true
 				}
 
 				# Use with `grep -c .` to prevent miscounts due to newlines
-				FILE_COUNT=${'$'}(_find_files_to_lint | grep -c .)
+				FILE_COUNT=${'$'}(_find_files_to_lint | grep -c . || true)
 
 				# Create temporary output directory. Export the variable so that it is
 				# available in the batch runs.
