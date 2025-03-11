@@ -6,15 +6,33 @@ import { useState } from 'react';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import ReaderPostEllipsisMenu from 'calypso/blocks/reader-post-options-menu/reader-post-ellipsis-menu';
 import AutoDirection from 'calypso/components/auto-direction';
+import { ADD_NEW_TAB, REDDIT_TAB } from 'calypso/reader/discover/helper';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_DISCOVER } from 'calypso/reader/follow-sources';
 import FeaturedAsset from './featured-asset';
 
-// Rather than create complex logic to create context or pass props
-// to see if the user is on thediscover page, let's check the pathname
+/**
+ * Rather than create complex logic to create context or pass props
+ * to see if the user is on thediscover page, let's check the pathname
+ * @returns {boolean}
+ */
 const getIsDiscoverPage = () => {
 	const path = window.location.pathname.split( '/' );
-	return path.length > 0 && path[ 1 ].includes( 'discover' );
+	if ( ! path.length ) {
+		return false;
+	}
+
+	// Do not show if the user is not on the discover page.
+	if ( path[ 1 ] !== 'discover' ) {
+		return false;
+	}
+
+	// Do not show if the user is on the add new or reddit tab.
+	if ( [ ADD_NEW_TAB, REDDIT_TAB ].includes( path[ 2 ] ) ) {
+		return false;
+	}
+
+	return true;
 };
 
 const CompactPost = ( props ) => {
