@@ -1,10 +1,8 @@
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { hasCheckoutVersion, ManagedContactDetails, styled } from '@automattic/wpcom-checkout';
 import { CheckboxControl } from '@wordpress/components';
-import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { WpcomCreditCardSelectors } from '../payment-methods/credit-card/store';
 
 // Styled component for checkbox styles
 const CheckboxWrapper = styled.div`
@@ -42,21 +40,23 @@ function shouldShowBusinessOption( taxInfo: ManagedContactDetails ): boolean {
  * Renders a checkbox for users to indicate if the purchase is for business purposes.
  * The checkbox is only shown for eligible locations.
  */
-export function IsForBusinessCheckbox( { taxInfo }: { taxInfo: ManagedContactDetails } ) {
+export function IsForBusinessCheckbox( {
+	taxInfo,
+	isForBusiness,
+	handleOnChange,
+}: {
+	taxInfo: ManagedContactDetails;
+	isForBusiness: boolean;
+	handleOnChange: ( newValue: boolean ) => void;
+} ) {
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
-	const useForBusiness = useSelect(
-		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).useForBusiness(),
-		[]
-	);
-
-	const { setForBusinessUse } = useDispatch( 'wpcom-credit-card' );
 
 	// Determine if the checkbox should be shown
 	const isUnitedStateWithBusinessOption = shouldShowBusinessOption( taxInfo );
 
 	// Ensure the checkbox state is always a boolean
-	const isChecked = Boolean( useForBusiness );
+	const isChecked = isForBusiness;
 	const isDisabled = formStatus !== FormStatus.READY;
 
 	// Hide checkbox if not eligible
@@ -83,12 +83,7 @@ export function IsForBusinessCheckbox( { taxInfo }: { taxInfo: ManagedContactDet
 				}
 				checked={ isChecked }
 				disabled={ isDisabled }
-				onChange={ ( newValue ) => {
-					if ( isDisabled ) {
-						return;
-					}
-					setForBusinessUse( newValue );
-				} }
+				onChange={ ( newValue ) => ! isDisabled && handleOnChange( newValue ) }
 			/>
 		</CheckboxWrapper>
 	);
