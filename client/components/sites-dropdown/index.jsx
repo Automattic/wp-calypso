@@ -73,8 +73,10 @@ export class SitesDropdown extends PureComponent {
 	}
 
 	handleKeyDown = ( event ) => {
-		// Check if Enter key is pressed (key code 13)
 		if ( event.key === 'Enter' || event.keyCode === 13 ) {
+			if ( ! this.state.open ) {
+				event.preventDefault();
+			}
 			this.toggleOpen( event );
 		}
 	};
