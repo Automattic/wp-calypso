@@ -623,13 +623,12 @@ export class RenderDomainsStep extends Component {
 			domain_name: domain,
 			product_slug: productSlug,
 			supports_privacy: supportsPrivacy,
-			vendor,
 		} = suggestion;
 
 		let registration = domainRegistration( {
 			domain,
 			productSlug,
-			extra: { privacy_available: supportsPrivacy, vendor },
+			extra: { privacy_available: supportsPrivacy },
 		} );
 
 		if ( supportsPrivacy ) {

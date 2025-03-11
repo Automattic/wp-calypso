@@ -867,8 +867,6 @@ export interface ResponseCartProductExtra {
 	legal_agreements?: never[] | DomainLegalAgreements;
 	is_gravatar_domain?: boolean;
 	is_hundred_year_domain?: boolean;
-	// which domain vendor (Donuts, Verisign, etc.) generated this domain suggestion
-	domain_vendor?: string;
 
 	/**
 	 * Set to 'renewal' if requesting a renewal.
@@ -953,8 +951,6 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	headstart_theme?: string;
 	feature_slug?: string;
 	is_hundred_year_domain?: boolean;
-	// domain suggestion vendor string that generated this domain suggestion
-	vendor?: string;
 
 	/**
 	 * A way to signal intent to the back end when included as an extra with

@@ -83,7 +83,6 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 			const domainCartItem = domainRegistration( {
 				domain: suggestion?.domain_name || '',
 				productSlug: suggestion?.product_slug || '',
-				extra: { vendor: suggestion?.vendor },
 			} );
 
 			setHideFreePlan( true );

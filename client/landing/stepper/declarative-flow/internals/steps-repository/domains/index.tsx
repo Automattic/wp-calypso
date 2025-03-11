@@ -116,7 +116,6 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			const domainCartItem = domainRegistration( {
 				domain: suggestion.domain_name,
 				productSlug: suggestion.product_slug || '',
-				extra: { vendor: suggestion.vendor },
 			} );
 			dispatch( submitDomainStepSelection( suggestion, getAnalyticsSection() ) );
 

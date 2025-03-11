@@ -86,7 +86,7 @@ type DomainSearchProps = {
 		position: number,
 		isPremium?: boolean,
 		flowName?: string,
-		vendor?: string
+		rootVendor?: string
 	) => void;
 	recordRemoveDomainButtonClick: ( domainName: string ) => void;
 	isSiteOnFreePlan?: boolean;
@@ -214,7 +214,7 @@ class DomainSearch extends Component< DomainSearchProps > {
 		let registration = domainRegistration( {
 			domain,
 			productSlug: productSlug as string,
-			extra: { privacy_available: supportsPrivacy, vendor: suggestion.vendor },
+			extra: { privacy_available: supportsPrivacy },
 		} );
 
 		if ( supportsPrivacy ) {
