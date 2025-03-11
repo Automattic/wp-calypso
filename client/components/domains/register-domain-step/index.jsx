@@ -1605,7 +1605,8 @@ class RegisterDomainStep extends Component {
 						domain,
 						status,
 						this.props.analyticsSection,
-						this.props.flowName
+						this.props.flowName,
+						vendor
 					);
 
 					const skipAvailabilityErrors =
