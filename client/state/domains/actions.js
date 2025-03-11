@@ -12,7 +12,7 @@ export const recordAddDomainButtonClick = (
 	position,
 	isPremium = false,
 	flowName = '',
-	vendor = ''
+	rootVendor = ''
 ) =>
 	composeAnalytics(
 		recordGoogleEvent(
@@ -27,7 +27,7 @@ export const recordAddDomainButtonClick = (
 			section,
 			is_premium: isPremium,
 			flow_name: flowName,
-			vendor,
+			root_vendor: rootVendor,
 		} )
 	);
 
