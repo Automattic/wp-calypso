@@ -15,7 +15,12 @@ const mockFlow: Flow = {
 	name: 'some-flow',
 	isSignupFlow: false,
 	useSteps() {
-		return [ { slug: 'some-step', component: () => <div>Step 1</div> } ];
+		return [
+			{
+				slug: 'some-step',
+				asyncComponent: () => Promise.resolve( { default: () => <div>Step 1</div> } ),
+			},
+		];
 	},
 	useStepNavigation() {
 		return {};
