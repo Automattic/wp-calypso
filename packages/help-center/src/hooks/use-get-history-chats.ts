@@ -58,7 +58,20 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 				allConversations,
 				allSupportInteractions
 			);
-			setConversations( filteredConversations );
+
+			const conversationsWithUpdatedStatuses = filteredConversations.map( ( conversation ) => {
+				const supportInteraction = allSupportInteractions.find(
+					( interaction ) => interaction.uuid === conversation.metadata?.supportInteractionId
+				);
+
+				if ( supportInteraction ) {
+					conversation.metadata.status = supportInteraction.status;
+				}
+
+				return conversation;
+			} );
+
+			setConversations( conversationsWithUpdatedStatuses );
 			setSupportInteractions( allSupportInteractions );
 		}
 	}, [
