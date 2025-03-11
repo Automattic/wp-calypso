@@ -118,8 +118,6 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 					captureFlowException( e );
 					setSiteSetupError( e.error || e.code, e.message );
 					submit?.( {
-						...destinationState,
-						...props.data,
 						processingResult: ProcessingResult.FAILURE,
 					} );
 				}
@@ -137,8 +135,6 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 			// but only for the onboarding flow to mitigate risks.
 			isSubmittedRef.current = flow === 'site-setup' ? true : false;
 			submit?.( {
-				...destinationState,
-				...props.data,
 				processingResult: ProcessingResult.NO_ACTION,
 			} );
 		}
@@ -180,7 +176,6 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 			// Default processing handler.
 			submit?.( {
 				...destinationState,
-				...props.data,
 				processingResult: ProcessingResult.SUCCESS,
 			} );
 		}
