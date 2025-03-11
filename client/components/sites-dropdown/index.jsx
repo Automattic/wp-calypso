@@ -72,6 +72,13 @@ export class SitesDropdown extends PureComponent {
 		this.props.onClose && this.props.onClose( e );
 	}
 
+	handleKeyDown = ( event ) => {
+		// Check if Enter key is pressed (key code 13)
+		if ( event.key === 'Enter' || event.keyCode === 13 ) {
+			this.toggleOpen( event );
+		}
+	};
+
 	render() {
 		return (
 			<div
@@ -83,7 +90,13 @@ export class SitesDropdown extends PureComponent {
 			>
 				<div className="sites-dropdown__wrapper">
 					{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions */ }
-					<div className="sites-dropdown__selected" onClick={ this.toggleOpen }>
+					<div
+						className="sites-dropdown__selected"
+						onClick={ this.toggleOpen }
+						onKeyDown={ this.handleKeyDown }
+						// eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+						tabIndex={ 0 }
+					>
 						{ this.props.isPlaceholder ? (
 							<SitePlaceholder />
 						) : (
@@ -94,7 +107,7 @@ export class SitesDropdown extends PureComponent {
 					{ this.props.hasMultipleSites && this.state.open && (
 						<SiteSelector
 							// eslint-disable-next-line jsx-a11y/no-autofocus
-							autoFocus
+							autoFocus={ false }
 							onClose={ this.onClose }
 							onSiteSelect={ this.selectSite }
 							selected={ this.state.selectedSiteId }

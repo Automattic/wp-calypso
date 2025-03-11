@@ -63,6 +63,15 @@
 			color: var(--color-neutral-50);
 		}
 	}
+
+	svg {
+		box-sizing: border-box;
+	}
+
+	&:focus svg {
+		border: 2px solid var(--color-primary);
+		border-radius: 2px;
+	}
 }
 
 .sites-dropdown .site-selector {
