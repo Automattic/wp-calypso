@@ -1174,7 +1174,7 @@ export class RenderDomainsStep extends Component {
 			shouldUseMultipleDomainsInCart( flowName ) &&
 			! [ 'use-your-domain' ].includes( stepSectionName )
 		) {
-			return translate( 'Find and claim one or more domain names' );
+			return translate( 'Find and claim one or more domain names.' );
 		}
 
 		if ( ! stepSectionName ) {
