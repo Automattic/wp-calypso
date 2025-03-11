@@ -119,6 +119,8 @@ class DomainRegistrationSuggestion extends Component {
 			this.props.recordTracksEvent( 'calypso_traintracks_interact', {
 				railcar: railcarId,
 				action: 'domain_added_to_cart',
+				domain: suggestion.domain_name,
+				vendor: suggestion.vendor,
 			} );
 		}
 
