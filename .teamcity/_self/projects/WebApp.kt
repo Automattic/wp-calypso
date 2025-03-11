@@ -625,8 +625,8 @@ object CheckCodeStyleBranch : BuildType({
 					#
 					# CAVEAT: ASSUMES NO SPACES IN FILENAMES.
 
-					BATCH_SIZE=15 # Number of files handled by each ESLint process
-					MAX_PARALLEL_BATCHES=15 # Number of concurrent ESLint processes
+					BATCH_SIZE=1 # Number of files handled by each ESLint process
+					MAX_PARALLEL_BATCHES=5 # Number of concurrent ESLint processes
 
 					_find_files_to_lint \
 						| awk -v"n=${'$'}BATCH_SIZE" '{printf "%%s%%s", $0, (NR%%n?"\t":"\n")}' \
