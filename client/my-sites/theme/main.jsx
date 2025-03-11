@@ -1257,8 +1257,14 @@ class ThemeSheet extends Component {
 						{ this.renderReviews() }
 					</div>
 					<div className="theme__sheet-column-left">
-						{ ! retired && this.renderSectionContent( section ) }
-						{ retired && this.renderRetired() }
+						{ retired ? (
+							<>
+								{ this.renderRetired() }
+								{ this.renderSectionContent( section ) }
+							</>
+						) : (
+							this.renderSectionContent( section )
+						) }
 					</div>
 					{ ! isRemoved && (
 						<div className="theme__sheet-column-right">
