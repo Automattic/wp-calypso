@@ -180,6 +180,7 @@ const GitHubLoginButton = ( {
 					data-social-service="github"
 					{ ...eventHandlers }
 					variant="secondary"
+					__next40pxDefaultSize
 				>
 					<GitHubIcon isDisabled={ isDisabled } />
 

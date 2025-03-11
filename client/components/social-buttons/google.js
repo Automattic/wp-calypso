@@ -201,6 +201,7 @@ class GoogleSocialButton extends Component {
 						data-social-service="google"
 						disabled={ isDisabled }
 						variant="secondary"
+						__next40pxDefaultSize
 					>
 						<GoogleIcon isDisabled={ isDisabled } width={ 19 } height={ 19 } />
 

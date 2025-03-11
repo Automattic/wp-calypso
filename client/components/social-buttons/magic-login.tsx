@@ -34,6 +34,7 @@ const MagicLoginButton = ( { loginUrl }: MagicLoginButtonProps ) => {
 			data-e2e-link="magic-login-link"
 			key="magic-login-link"
 			variant="secondary"
+			__next40pxDefaultSize
 		>
 			<MailIcon width="20" height="20" isDisabled={ isDisabled } />
 			<span className="social-buttons__service-name">{ translate( 'Email me a login link' ) }</span>

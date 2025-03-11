@@ -19,6 +19,7 @@ const UsernameOrEmailButton = ( { onClick }: UsernameOrEmailButtonProps ) => {
 			onClick={ onClick }
 			disabled={ isDisabled }
 			variant="secondary"
+			__next40pxDefaultSize
 		>
 			<WordPressLogo
 				className={ clsx( 'social-icons', {

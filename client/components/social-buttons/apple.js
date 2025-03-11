@@ -152,6 +152,7 @@ class AppleLoginButton extends Component {
 						data-social-service="apple"
 						onClick={ this.handleClick }
 						variant="secondary"
+						__next40pxDefaultSize
 					>
 						<AppleIcon isDisabled={ isDisabled } width={ 17 } height={ 17 } />
 
