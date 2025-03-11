@@ -64,11 +64,15 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 					( interaction ) => interaction.uuid === conversation.metadata?.supportInteractionId
 				);
 
-				if ( supportInteraction ) {
-					conversation.metadata.status = supportInteraction.status;
-				}
+				const updatedConversation = {
+					...conversation,
+					metadata: {
+						...conversation.metadata,
+						status: supportInteraction ? supportInteraction.status : conversation.metadata?.status,
+					},
+				};
 
-				return conversation;
+				return updatedConversation;
 			} );
 
 			setConversations( conversationsWithUpdatedStatuses );
