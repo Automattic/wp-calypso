@@ -61,9 +61,7 @@ const getShareLinks = ( siteUrl: string, text: string ): ShareLink[] => {
 			label: __( 'LinkedIn', 'launchpad' ),
 		},
 		{
-			href: `https://t.me/share/url?url=${ encodeURIComponent(
-				encodedSiteUrl
-			) }&text=${ encodedText }`,
+			href: `https://t.me/share/url?url=${ encodedSiteUrl }&text=${ encodedText }`,
 			className: 'share-site-modal__modal-share-link',
 			title: __( 'Share on Telegram', 'launchpad' ),
 			icon: 'telegram',
