@@ -7,6 +7,7 @@ import {
 import { ResponseCartProduct } from '@automattic/shopping-cart';
 import { __ } from '@wordpress/i18n';
 import { FLOWS_ZENDESK_INITIAL_MESSAGES, FLOWS_ZENDESK_FLOWNAME } from '../constants';
+import { useSupportStatus } from '../data/use-support-status';
 
 const getUserFieldMessage = ( flowName: string, url?: string ) => {
 	return `${
@@ -15,13 +16,15 @@ const getUserFieldMessage = ( flowName: string, url?: string ) => {
 };
 
 export function useProductsWithPremiumSupport( products: ResponseCartProduct[], url?: string ) {
+	const { data: supportStatus } = useSupportStatus();
+
 	for ( const product of products ) {
 		if ( isDIFMProduct( product ) ) {
 			return {
 				userFieldMessage: getUserFieldMessage( DIFM_FLOW, url ),
 				userFieldFlowName:
 					FLOWS_ZENDESK_FLOWNAME[ DIFM_FLOW as keyof typeof FLOWS_ZENDESK_FLOWNAME ],
-				hasPremiumSupport: true,
+				hasPremiumSupport: supportStatus?.availability.is_difm_chat_open,
 				helpCenterButtonCopy: __( 'Questions?', __i18n_text_domain__ ),
 				helpCenterButtonLink: __( 'Contact our site-building team', __i18n_text_domain__ ),
 			};
