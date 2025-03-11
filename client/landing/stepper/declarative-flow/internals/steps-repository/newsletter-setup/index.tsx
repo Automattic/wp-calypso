@@ -97,7 +97,6 @@ const NewsletterSetup: Step< {
 		<StepContainer
 			stepName="newsletter-setup"
 			isWideLayout
-			hideBack
 			flowName="newsletter"
 			formattedHeader={
 				<FormattedHeader
