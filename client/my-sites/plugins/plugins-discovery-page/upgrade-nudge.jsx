@@ -132,7 +132,7 @@ const UpgradeNudge = ( {
 	}
 
 	const title = translate(
-		'You need to upgrade to a %(businessPlanName)s Plan to install plugins.',
+		'You need to upgrade to a %(businessPlanName)s Plan to install plugins',
 		{ args: { businessPlanName: getPlan( plan )?.getTitle() } }
 	);
 
