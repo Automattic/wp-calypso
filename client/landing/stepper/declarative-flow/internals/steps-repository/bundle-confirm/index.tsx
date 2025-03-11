@@ -284,12 +284,10 @@ const BundleConfirm: Step = function BundleConfirm( { navigation } ) {
 								}
 
 								const providedDependencies = {
-									checkoutUrl: siteUpgrading.checkoutUrl,
+									checkoutUrl: siteUpgrading.required ? siteUpgrading.checkoutUrl : '',
 								};
-								submit?.(
-									providedDependencies,
-									siteUpgrading.required ? siteUpgrading.checkoutUrl : ''
-								);
+
+								submit?.( providedDependencies );
 							} }
 						>
 							{ __( 'Confirm' ) }

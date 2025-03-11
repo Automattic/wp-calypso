@@ -27,16 +27,19 @@ const updateOptions: Flow = {
 		const flowToReturnTo = useQuery().get( 'flowToReturnTo' ) || 'free';
 
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		function submit( providedDependencies: ProvidedDependencies = {}, ...results: string[] ) {
+		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
-				case 'processing':
-					if ( results.some( ( result ) => result === ProcessingResult.FAILURE ) ) {
+				case 'processing': {
+					const processingResult = providedDependencies.processingResult as ProcessingResult;
+
+					if ( processingResult === ProcessingResult.FAILURE ) {
 						return navigate( 'error' );
 					}
 
 					return window.location.assign(
 						`/setup/${ flowToReturnTo }/launchpad?siteSlug=${ siteSlug }`
 					);
+				}
 				case 'options': {
 					return navigate( `processing?siteSlug=${ siteSlug }&flowToReturnTo=${ flowToReturnTo }` );
 				}
