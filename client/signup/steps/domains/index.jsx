@@ -1178,7 +1178,7 @@ export class RenderDomainsStep extends Component {
 		}
 
 		if ( ! stepSectionName ) {
-			return translate( 'Enter some descriptive keywords to get started' );
+			return translate( 'Enter some descriptive keywords to get started.' );
 		}
 
 		return 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName
