@@ -14,6 +14,11 @@ import {
 	StartSiteFlow,
 	MyHomePage,
 	EditorPage,
+	MyProfilePage,
+	MeSidebarComponent,
+	cancelPurchaseFlow,
+	NoticeComponent,
+	PurchasesPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
@@ -128,6 +133,41 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 		it( 'Make sure launch modal shows', async function () {
 			const myHomePage = new MyHomePage( page );
 			await myHomePage.validateTaskHeadingMessage( 'Congrats, your site is live!' );
+		} );
+	} );
+
+	describe( 'Cancel and remove plan', function () {
+		let noticeComponent: NoticeComponent;
+		let purchasesPage: PurchasesPage;
+
+		it( 'Navigate to Me > Purchases', async function () {
+			const mePage = new MyProfilePage( page );
+			await mePage.visit();
+
+			const meSidebarComponent = new MeSidebarComponent( page );
+			await meSidebarComponent.navigate( 'Purchases' );
+		} );
+
+		it( 'View details of purchased plan', async function () {
+			purchasesPage = new PurchasesPage( page );
+
+			await purchasesPage.clickOnPurchase(
+				`WordPress.com ${ planName }`,
+				newSiteDetails.blog_details.site_slug
+			);
+			await purchasesPage.purchaseAction( 'Cancel plan' );
+		} );
+
+		it( 'Cancel plan renewal', async function () {
+			await cancelPurchaseFlow( page, {
+				reason: 'Another reason…',
+				customReasonText: 'E2E TEST CANCELLATION',
+			} );
+
+			noticeComponent = new NoticeComponent( page );
+			await noticeComponent.noticeShown( 'You successfully canceled your purchase', {
+				timeout: 30 * 1000,
+			} );
 		} );
 	} );
 } );
