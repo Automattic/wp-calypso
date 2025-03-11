@@ -247,7 +247,7 @@ const SubscriberDataViews = ( {
 				elements: [
 					{ label: translate( 'Subscribed' ), value: SubscribersFilterBy.EmailSubscriber },
 					{
-						label: translate( 'Unconfirmed' ),
+						label: translate( 'Not confirmed' ),
 						value: SubscribersFilterBy.UnconfirmedSubscriber,
 					},
 					{ label: translate( 'Not subscribed' ), value: SubscribersFilterBy.ReaderSubscriber },
