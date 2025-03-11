@@ -1,5 +1,4 @@
-import config from '@automattic/calypso-config';
-import { CompactCard, Card } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryBillingTransactions from 'calypso/components/data/query-billing-transactions';
@@ -50,7 +49,6 @@ function BillingHistory() {
 			<QueryBillingTransactions transactionType="past" />
 			<PurchasesNavigation section="billingHistory" />
 			<BillingHistoryContent siteId={ null } getReceiptUrlFor={ billingHistoryReceipt } />
-			<CompactCard href={ vatDetailsPath }>{ vatText }</CompactCard>
 		</Main>
 	);
 }

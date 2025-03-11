@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { DataViews, View } from '@wordpress/dataviews';
@@ -35,7 +34,6 @@ export default function BillingHistoryListDataView( {
 	const isLoading = useSelector( isRequestingBillingTransactions );
 	const viewState = useViewStateUpdate();
 	const receiptActions = useReceiptActions( getReceiptUrlFor );
-
 	const translate = useTranslate();
 	const { vatDetails } = useVatDetails();
 	const { data: geoData } = useGeoLocationQuery();
@@ -78,11 +76,9 @@ export default function BillingHistoryListDataView( {
 		<DataViews
 			data={ paginatedItems }
 			header={
-				config.isEnabled( 'me/vat-details' ) && (
-					<Button className="dataviews__tax-details-notice" variant="link" href={ vatDetailsPath }>
-						{ vatText }
-					</Button>
-				)
+				<Button className="dataviews__tax-details-notice" variant="link" href={ vatDetailsPath }>
+					{ vatText }
+				</Button>
 			}
 			paginationInfo={ {
 				totalItems,
