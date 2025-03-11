@@ -595,6 +595,14 @@ object CheckCodeStyleBranch : BuildType({
 				else
 					echo "Linting affected files"
 
+					# When linting a large set of files we have to guard against two errors:
+					#
+					# - ENAMETOOLONG: we cannot pass ESLint too many files as arguments, lest we exceed
+					# the maximum command line length.
+					# - OOM (Out Of Memory): we cannot spawn too many processes in parallel.
+					#
+					# Thus, we'll process the files in batches.
+					#
 					# In an ideal scenario, we'd simply pipe the list of target files to `xargs`:
 					#
 					# _find_files | xargs -n3 -P5 yarn run eslint...
