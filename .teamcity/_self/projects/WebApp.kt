@@ -570,6 +570,8 @@ object CheckCodeStyleBranch : BuildType({
 		bashNodeScript {
 			name = "Run eslint"
 			scriptContent = """
+				set -x
+
 				export NODE_ENV="test"
 
 				# Find lintable files touched in this branch, except those deleted
