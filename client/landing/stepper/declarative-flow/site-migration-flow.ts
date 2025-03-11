@@ -224,11 +224,12 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_CREATION_STEP.slug: {
-					if ( 'import' === actionQueryParam ) {
-						return navigate( addQueryArgs( { skipMigration: true }, STEPS.PROCESSING.slug ) );
-					}
+					const queryArgs = {
+						from: fromQueryParam,
+						skipMigration: 'import' === actionQueryParam ? true : undefined,
+					};
 
-					return navigate( addQueryArgs( { from: fromQueryParam }, STEPS.PROCESSING.slug ) );
+					return navigate( addQueryArgs( queryArgs, STEPS.PROCESSING.slug ) );
 				}
 
 				case STEPS.PROCESSING.slug: {

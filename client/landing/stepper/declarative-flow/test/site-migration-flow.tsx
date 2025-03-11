@@ -131,6 +131,27 @@ describe( 'Site Migration Flow', () => {
 					step: STEPS.PROCESSING,
 				} );
 			} );
+
+			it( 'redirects to PROCESSING and skips migration if the action is import', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_CREATION_STEP,
+					dependencies: {
+						siteCreated: true,
+					},
+					query: {
+						action: 'import',
+						from: 'https://site-to-be-migrated.com',
+					},
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.PROCESSING,
+					query: {
+						skipMigration: true,
+						from: 'https://site-to-be-migrated.com',
+					},
+				} );
+			} );
 		} );
 
 		describe( 'PROCESSING', () => {
