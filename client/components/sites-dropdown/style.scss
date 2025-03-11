@@ -85,15 +85,6 @@
 	box-sizing: initial;
 
 	.search-component {
-		.components-button {
-			border: none;
-			box-shadow: none;
-
-			&:hover {
-				background: transparent;
-			}
-		}
-
 		.search-component__input {
 			width: 100%;
 		}
