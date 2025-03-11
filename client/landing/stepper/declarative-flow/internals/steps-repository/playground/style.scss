@@ -6,9 +6,7 @@
 $header-height: 78px;
 
 .step-route.playground {
-    height: calc(100vh - $header-height);
     overflow-y: hidden;
-	// TODO: Check why does this value need to be set manually
 	padding-top: $header-height;
 	.step-wrapper__header {
 		display: none;
@@ -17,5 +15,5 @@ $header-height: 78px;
 
 .playground__onboarding-iframe {
 	width: 100%;
-	height: calc(100vh - $header-height);
+	height: calc(100vh);
 }
