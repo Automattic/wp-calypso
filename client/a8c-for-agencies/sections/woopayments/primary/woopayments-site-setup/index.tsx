@@ -11,6 +11,7 @@ import StepSection from 'calypso/a8c-for-agencies/components/step-section';
 import StepSectionItem from 'calypso/a8c-for-agencies/components/step-section-item';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import useFetchSitePlugins from 'calypso/a8c-for-agencies/data/sites/use-fetch-site-plugins';
+import useActivatePluginToSiteMutation from 'calypso/a8c-for-agencies/hooks/use-activate-plugin-to-site';
 import useInstallPluginToSiteMutation from 'calypso/a8c-for-agencies/hooks/use-install-plugin-to-site';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
@@ -23,12 +24,18 @@ import getSites from 'calypso/state/selectors/get-sites';
 
 import './style.scss';
 
+const WOOCOMMERCE_PLUGIN_SLUG = 'woocommerce/woocommerce';
+const WOOCOMMERCE_PAYMENTS_PLUGIN_SLUG = 'woocommerce-payments/woocommerce-payments';
+
 const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const sites = useSelector( getSites );
 
-	const { mutateAsync: installPluginToSite, isPending } = useInstallPluginToSiteMutation();
+	const { mutateAsync: installPluginToSite, isPending: isPendingInstall } =
+		useInstallPluginToSiteMutation();
+	const { mutateAsync: activatePluginToSite, isPending: isPendingActivate } =
+		useActivatePluginToSiteMutation();
 	const [ error, setError ] = useState( false );
 	const [ isInstalled, setIsInstalled ] = useState( false );
 
@@ -36,14 +43,20 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 
 	const { data: plugins, isLoading: isLoadingPlugins } = useFetchSitePlugins( parseInt( siteId ) );
 
-	const isWooCommerceActive =
-		plugins?.find( ( { plugin }: { plugin: string } ) => plugin === 'woocommerce/woocommerce' )
-			?.status === 'active';
+	const woocommercePlugin = plugins?.find(
+		( { plugin }: { plugin: string } ) => plugin === 'woocommerce/woocommerce'
+	);
 
-	const isWooPaymentsActive =
-		plugins?.find(
-			( { plugin }: { plugin: string } ) => plugin === 'woocommerce-payments/woocommerce-payments'
-		)?.status === 'active';
+	const woocommerceStatus = woocommercePlugin?.status;
+	const isWooCommerceInactive = woocommerceStatus === 'inactive';
+
+	const woocommercePaymentsPlugin = plugins?.find(
+		( { plugin }: { plugin: string } ) => plugin === 'woocommerce-payments/woocommerce-payments'
+	);
+
+	const woocommercePaymentsStatus = woocommercePaymentsPlugin?.status;
+	const isWooPaymentsActive = woocommercePaymentsStatus === 'active';
+	const isWooPaymentsInactive = woocommercePaymentsStatus === 'inactive';
 
 	const title = translate( 'WooPayments Site Setup' );
 
@@ -51,8 +64,8 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_woopayments_site_setup_install_plugin_click', {
 				status: isInstalled ? 'installed' : 'not_installed',
-				isWooPaymentsActive,
-				isWooCommerceActive,
+				woocommerceStatus,
+				woocommercePaymentsStatus,
 			} )
 		);
 
@@ -63,24 +76,41 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 			return;
 		}
 
-		// Install WooPayments and WooCommerce if not installed
-		const plugins = isWooCommerceActive
-			? [ 'woocommerce-payments' ]
-			: [ 'woocommerce', 'woocommerce-payments' ];
-
-		// Install plugins sequentially
 		try {
-			for ( const plugin of plugins ) {
+			// Install WooCommerce if not installed
+			if ( ! woocommercePlugin ) {
 				await installPluginToSite( {
 					siteId: parseInt( siteId ),
-					pluginSlug: plugin,
+					pluginSlug: 'woocommerce',
 				} );
-				if ( plugin === 'woocommerce-payments' ) {
-					window.open( wooSetupUrl, '_blank' );
-					setIsInstalled( true );
-					return;
-				}
 			}
+
+			// Activate WooCommerce if it is installed but inactive
+			if ( isWooCommerceInactive ) {
+				await activatePluginToSite( {
+					siteId: parseInt( siteId ),
+					pluginSlug: WOOCOMMERCE_PLUGIN_SLUG,
+				} );
+			}
+
+			// Install WooPayments if not installed
+			if ( ! woocommercePaymentsPlugin ) {
+				await installPluginToSite( {
+					siteId: parseInt( siteId ),
+					pluginSlug: 'woocommerce-payments',
+				} );
+			}
+
+			// Activate WooPayments if it is installed but inactive
+			if ( isWooPaymentsInactive ) {
+				await activatePluginToSite( {
+					siteId: parseInt( siteId ),
+					pluginSlug: WOOCOMMERCE_PAYMENTS_PLUGIN_SLUG,
+				} );
+			}
+			// Open WooPayments setup page
+			window.open( wooSetupUrl, '_blank' );
+			setIsInstalled( true );
 		} catch {
 			setError( true );
 		}
@@ -102,6 +132,8 @@ const WooPaymentsSiteSetup = ( { siteId }: { siteId: string } ) => {
 			return;
 		}
 	}, [ siteId, sites ] );
+
+	const isPending = isPendingInstall || isPendingActivate;
 
 	return (
 		<Layout className="woopayments-site-setup" title={ title } wide>
