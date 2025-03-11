@@ -1,9 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { CircularProgressBar } from '@automattic/components';
+import { useLaunchpad } from '@automattic/data-stores';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useInView } from 'react-intersection-observer';
-import { useMyHomeCardLaunchpad } from 'calypso/my-sites/customer-home/cards/launchpad/use-my-home-card-launchpad';
 import { getDashboardUrl } from '../utils';
 import type { SiteExcerptData } from '@automattic/sites';
 
@@ -71,15 +71,17 @@ export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 
 	const checklistSlug = site?.options?.site_intent || 'legacy-site-setup';
 
-	const { numberOfSteps, completedSteps, hasChecklist, isLoading } = useMyHomeCardLaunchpad( {
-		checklistSlug,
-		launchpadContext: 'sites-dashboard',
-		siteId: site.ID,
-	} );
+	const {
+		data: { checklist },
+		isLoading,
+	} = useLaunchpad( site.ID, checklistSlug, undefined, 'sites-dashboard' );
 
-	if ( 'unlaunched' !== site.launch_status || ! hasChecklist || isLoading ) {
+	if ( 'unlaunched' !== site.launch_status || ! checklist || isLoading ) {
 		return null;
 	}
+
+	const numberOfSteps = checklist.length || 0;
+	const completedSteps = ( checklist.filter( ( task ) => task.completed ) || [] ).length;
 
 	const link = getDashboardUrl( site.slug );
 	const text = __( 'Checklist' );

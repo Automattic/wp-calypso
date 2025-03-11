@@ -13,27 +13,18 @@ import type { AppState } from 'calypso/types';
 interface UseLaunchpadProps {
 	checklistSlug: string;
 	launchpadContext: string;
-	siteId?: number;
 }
 
-export function useMyHomeCardLaunchpad( {
-	checklistSlug,
-	launchpadContext,
-	siteId: providedSiteId,
-}: UseLaunchpadProps ) {
+export function useMyHomeCardLaunchpad( { checklistSlug, launchpadContext }: UseLaunchpadProps ) {
 	const translate = useTranslate();
-	const selectedSiteId = useSelector( getSelectedSiteId );
-	const effectiveSiteId = providedSiteId || selectedSiteId;
-	const siteSlug = useSelector(
-		( state: AppState ) => getSiteSlug( state, effectiveSiteId ) || ''
-	);
+	const siteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) || '' );
 
 	const { mutate: dismiss } = useLaunchpadDismisser( siteSlug, checklistSlug, launchpadContext );
 
 	const {
 		data: { checklist, is_dismissed: isDismissed, is_dismissible: isDismissible, title },
 		refetch,
-		isLoading,
 	} = useSortedLaunchpadTasks( siteSlug, checklistSlug, launchpadContext );
 
 	const numberOfSteps = checklist?.length || 0;
@@ -60,6 +51,5 @@ export function useMyHomeCardLaunchpad( {
 		temporaryDismiss,
 		permanentDismiss,
 		refetch,
-		isLoading,
 	};
 }
