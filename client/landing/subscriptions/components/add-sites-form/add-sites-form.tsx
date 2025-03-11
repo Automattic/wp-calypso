@@ -5,11 +5,13 @@ import { check, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
+import { useSelector } from 'react-redux';
 import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversation/dialog';
 import FeedPreview from 'calypso/landing/subscriptions/components/feed-preview/feed-preview';
-import { isValidUrl } from '../../helpers';
-import { useAddSitesModalNotices } from '../../hooks';
-import { useRecordSiteSubscribed } from '../../tracks';
+import { isValidUrl } from 'calypso/landing/subscriptions/helpers';
+import { useAddSitesModalNotices } from 'calypso/landing/subscriptions/hooks';
+import { useRecordSiteSubscribed } from 'calypso/landing/subscriptions/tracks';
+import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import './styles.scss';
 
 type AddSitesFormProps = {
@@ -39,6 +41,7 @@ const AddSitesForm = ( {
 	const { showErrorNotice, showWarningNotice, showSuccessNotice } = useAddSitesModalNotices();
 	const recordSiteSubscribed = useRecordSiteSubscribed();
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
+	const isAutomattician = useSelector( isA8cTeamMember );
 
 	const { mutate: subscribe, isPending: subscribing } =
 		SubscriptionManager.useSiteSubscribeMutation();
@@ -165,7 +168,7 @@ const AddSitesForm = ( {
 				</Button>
 			</form>
 
-			{ isValidInput ? <FeedPreview url={ inputValue } /> : null }
+			{ isValidInput && isAutomattician ? <FeedPreview url={ inputValue } /> : null }
 
 			<ReaderJoinConversationDialog
 				isVisible={ showLoginDialog }
