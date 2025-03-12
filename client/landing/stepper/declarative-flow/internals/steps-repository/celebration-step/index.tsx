@@ -15,10 +15,9 @@ import type { OnboardSelect } from '@automattic/data-stores';
 
 import './styles.scss';
 
-const CelebrationStep: Step< { destinationName: string; destinationUrl: string } > = ( {
-	flow,
-	navigation,
-} ) => {
+const CelebrationStep: Step< {
+	submits: { destinationName: string; destinationUrl: string };
+} > = ( { flow, navigation } ) => {
 	const { submit } = navigation;
 
 	const site = useSite();

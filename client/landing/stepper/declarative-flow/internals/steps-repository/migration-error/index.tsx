@@ -4,7 +4,7 @@ import ErrorMessage from 'calypso/blocks/importer/components/error-message';
 import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
-const MigrationError: Step< { url: 'migrationHandler' } > = function ( props ) {
+const MigrationError: Step< { submits: { url: 'migrationHandler' } } > = function ( props ) {
 	const { submit } = props.navigation;
 
 	function goToMigrationHandler() {

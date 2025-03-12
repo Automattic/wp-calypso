@@ -89,12 +89,14 @@ const EMPTY_ARRAY: Design[] = [];
 const EMPTY_OBJECT = {};
 
 const UnifiedDesignPickerStep: Step< {
-	selectedDesign?: Design;
-	eventProps: {
-		is_filter_included_with_plan_enabled: boolean;
-		is_big_sky_eligible: boolean;
-		preselected_filters: string;
-		selected_filters: string;
+	submits: {
+		selectedDesign?: Design;
+		eventProps: {
+			is_filter_included_with_plan_enabled: boolean;
+			is_big_sky_eligible: boolean;
+			preselected_filters: string;
+			selected_filters: string;
+		};
 	};
 } > = ( { navigation, flow, stepName } ) => {
 	// imageOptimizationExperimentAssignment, exerimentAssignment

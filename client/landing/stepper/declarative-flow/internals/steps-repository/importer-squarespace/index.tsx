@@ -5,7 +5,7 @@ import './style.scss';
 
 const Importer = withImporterWrapper( SquarespaceImporter );
 
-const ImporterSquarespace: Step< Record< string, unknown > > = function ( props ) {
+const ImporterSquarespace: Step< { submits: Record< string, unknown > } > = function ( props ) {
 	return <Importer importer="squarespace" { ...props } />;
 };
 

@@ -57,7 +57,9 @@ const TRANSFERRING_NOT_BLOCKERS = [
 	eligibilityHoldsConstants.TRANSFER_ALREADY_EXISTS, // Already Atomic sites are handled in the install flow.
 ];
 
-const BundleConfirm: Step< { checkoutUrl: string } > = function BundleConfirm( { navigation } ) {
+const BundleConfirm: Step< { submits: { checkoutUrl: string } } > = function BundleConfirm( {
+	navigation,
+} ) {
 	const { goBack, submit } = navigation;
 	const { __ } = useI18n();
 	const site = useSite();

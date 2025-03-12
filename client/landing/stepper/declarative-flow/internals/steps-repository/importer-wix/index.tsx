@@ -5,7 +5,7 @@ import './style.scss';
 
 const Importer = withImporterWrapper( WixImporter );
 
-const ImporterWix: Step< Record< string, unknown > > = function ( props ) {
+const ImporterWix: Step< { submits: Record< string, unknown > } > = function ( props ) {
 	return <Importer importer="wix" { ...props } navigation={ props.navigation } />;
 };
 

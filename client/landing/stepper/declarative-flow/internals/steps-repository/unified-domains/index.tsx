@@ -99,7 +99,7 @@ const RenderDomainsStepConnect = connect(
  */
 let mostRecentState: ProvidedDependencies = {};
 
-const DomainsStep: Step< DomainStepSubmittedTypes > = ( props ) => {
+const DomainsStep: Step< { submits: DomainStepSubmittedTypes } > = ( props ) => {
 	const [ stepState, setStepState ] =
 		useStepPersistedState< ProvidedDependencies >( 'domains-step' );
 	const managedSiteFlowProps = useIsManagedSiteFlowProps();

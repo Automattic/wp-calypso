@@ -12,8 +12,14 @@ import { BASE_ROUTE } from './config';
 import { generateStepPath } from './helper';
 import type { Step } from '../../types';
 import './style.scss';
+import type { ImporterPlatform } from 'calypso/lib/importer/types';
 
-export const ImportWrapper: Step = function ( props ) {
+export const ImportWrapper: Step< {
+	submits: {
+		platform: ImporterPlatform;
+		url: string;
+	};
+} > = function ( props ) {
 	const { __ } = useI18n();
 	const { navigation, children, stepName, flow } = props;
 	const currentRoute = useCurrentRoute();

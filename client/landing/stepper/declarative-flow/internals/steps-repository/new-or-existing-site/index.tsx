@@ -85,7 +85,7 @@ const useIntentsForFlow = ( flowName: string ): NewOrExistingSiteIntent[] => {
 	}
 };
 
-const NewOrExistingSiteStep: Step< { newExistingSiteChoice: ChoiceType } > =
+const NewOrExistingSiteStep: Step< { submits: { newExistingSiteChoice: ChoiceType } } > =
 	function NewOrExistingSiteStep( { navigation, flow } ) {
 		const { submit } = navigation;
 		const translate = useTranslate();

@@ -12,7 +12,7 @@ import type { OnboardSelect } from '@automattic/data-stores';
 
 import './styles.scss';
 
-const HundredYearPlanSetup: Step< { siteTitle: string; tagline: string } > =
+const HundredYearPlanSetup: Step< { submits: { siteTitle: string; tagline: string } } > =
 	function HundredYearPlanSetup( { navigation, flow } ) {
 		const { submit } = navigation;
 		const translate = useTranslate();

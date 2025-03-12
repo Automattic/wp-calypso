@@ -47,10 +47,12 @@ const refGoals: Record< string, Onboard.SiteGoal[] > = {
  * The goals capture step
  */
 const GoalsStep: Step< {
-	intent: Onboard.SiteIntent;
-	skip?: true;
-	action?: 'dashboard';
-	shouldSkipSubmitTracking?: true;
+	submits: {
+		intent: Onboard.SiteIntent;
+		skip?: true;
+		action?: 'dashboard';
+		shouldSkipSubmitTracking?: true;
+	};
 } > = ( { navigation, flow } ) => {
 	const translate = useTranslate();
 	const whatAreYourGoalsText = translate( 'What would you like to do?' );

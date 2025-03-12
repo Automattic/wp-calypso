@@ -231,7 +231,7 @@ const ConfirmationModal = ( {
 	);
 };
 
-const HundredYearPlanSitePicker: Step< { siteSlug: string; siteId: number } > =
+const HundredYearPlanSitePicker: Step< { submits: { siteSlug: string; siteId: number } } > =
 	function HundredYearPlanSitePicker( { navigation, flow } ) {
 		const translate = useTranslate();
 
