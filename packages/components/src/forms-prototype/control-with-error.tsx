@@ -1,7 +1,7 @@
 import { speak } from '@wordpress/a11y';
 import { Icon } from '@wordpress/components';
 import { caution } from '@wordpress/icons';
-import { cloneElement, useRef, useState } from 'react';
+import { cloneElement, forwardRef, useRef, useState } from 'react';
 
 /**
  * HTML elements that support the Constraint Validation API.
@@ -14,28 +14,29 @@ type ValidityTarget =
 	| HTMLSelectElement
 	| HTMLTextAreaElement;
 
-export function ControlWithError< C extends React.ReactElement >( {
-	onReportCustomValidity,
-	onSetCustomValidityTarget = ( refElement ) => refElement,
-	render,
-	...props
-}: {
-	onReportCustomValidity?: ( value: string ) => string | void;
-	onSetCustomValidityTarget?: ( refElement: HTMLElement ) => ValidityTarget | null;
-	render: C;
-} ) {
+function UnforwardedControlWithError< C extends React.ReactElement >(
+	{
+		onReportCustomValidity,
+		onSetCustomValidityTarget = ( refElement ) => refElement.current,
+		render,
+		...props
+	}: {
+		onReportCustomValidity?: () => string | void;
+		onSetCustomValidityTarget?: (
+			refElement: React.MutableRefObject< HTMLElement | null >
+		) => ValidityTarget | null | undefined;
+		render: C;
+	},
+	forwardedRef: React.ForwardedRef< HTMLDivElement >
+) {
 	const [ errorMessage, setErrorMessage ] = useState< string | undefined >();
 	const [ isTouched, setIsTouched ] = useState( false );
 	const ref = useRef( null );
 
 	const validate = () => {
-		if ( ! ref.current ) {
-			return;
-		}
-
 		// TODO: Fix this
-		const message = onReportCustomValidity?.( ref.current.value );
-		const validityTarget = onSetCustomValidityTarget( ref.current );
+		const message = onReportCustomValidity?.();
+		const validityTarget = onSetCustomValidityTarget( ref );
 		validityTarget?.setCustomValidity?.( message ?? '' );
 
 		const newErrorMessage = validityTarget?.validationMessage ?? '';
@@ -76,7 +77,7 @@ export function ControlWithError< C extends React.ReactElement >( {
 	const label = render.props.required ? `${ render.props.label } (Required)` : render.props.label;
 
 	return (
-		<div className="a8c-use-validation">
+		<div className="a8c-use-validation" ref={ forwardedRef }>
 			{ cloneElement( render, {
 				...props,
 				label,
@@ -98,3 +99,5 @@ export function ControlWithError< C extends React.ReactElement >( {
 		</div>
 	);
 }
+
+export const ControlWithError = forwardRef( UnforwardedControlWithError );

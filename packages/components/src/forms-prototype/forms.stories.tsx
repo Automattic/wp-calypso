@@ -16,7 +16,7 @@ import {
 	RadioControl,
 	RangeControl,
 } from '@wordpress/components';
-import { useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { ControlWithError } from './control-with-error';
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -60,7 +60,6 @@ export const Default: StoryObj = {
 	render: function Template() {
 		const [ toggleControlChecked, setToggleControlChecked ] = useState( false );
 		const [ checkboxControlChecked, setCheckboxControlChecked ] = useState( false );
-		const [ radioControlChecked, setRadioControlChecked ] = useState< string | undefined >();
 
 		return (
 			<>
@@ -193,27 +192,6 @@ export const Default: StoryObj = {
 				/>
 				<ControlWithError
 					render={
-						<RadioControl
-							label="Radio"
-							required
-							help="Option A is not allowed"
-							selected={ radioControlChecked }
-							onChange={ setRadioControlChecked }
-							options={ [
-								{ label: 'Option A', value: 'a' },
-								{ label: 'Option B (not allowed)', value: 'b' },
-							] }
-						/>
-					}
-					// TODO: Ref is not forwarded.
-					onReportCustomValidity={ ( value ) => {
-						if ( value === 'b' ) {
-							return 'Option B is not allowed.';
-						}
-					} }
-				/>
-				<ControlWithError
-					render={
 						<RangeControl
 							// TODO: Use of `required` renders an invalid label in HTML.
 							required
@@ -288,6 +266,43 @@ export const Password: StoryObj = {
 	},
 };
 
+export const Radio: StoryObj = {
+	render: function Template() {
+		const [ radioControlChecked, setRadioControlChecked ] =
+			useState< React.ComponentProps< typeof RadioControl >[ 'selected' ] >();
+		const ref = useRef< HTMLDivElement >( null );
+		const valueRef = useRef< React.ComponentProps< typeof RadioControl >[ 'selected' ] >();
+
+		return (
+			<ControlWithError
+				render={
+					<RadioControl
+						label="Radio"
+						required
+						help="Option B is not allowed."
+						selected={ radioControlChecked }
+						onChange={ ( value ) => {
+							valueRef.current = value;
+							setRadioControlChecked( value );
+						} }
+						options={ [
+							{ label: 'Option A', value: 'a' },
+							{ label: 'Option B (not allowed)', value: 'b' },
+						] }
+					/>
+				}
+				ref={ ref }
+				onReportCustomValidity={ () => {
+					if ( valueRef.current === 'b' ) {
+						return 'Option B is not allowed.';
+					}
+				} }
+				onSetCustomValidityTarget={ () => ref.current?.querySelector( 'input[type="radio"]' ) }
+			/>
+		);
+	},
+};
+
 export const ToggleGroup: StoryObj = {
 	render: function Template() {
 		const customValidityTargetRef = useRef< HTMLInputElement >( null );
@@ -297,7 +312,6 @@ export const ToggleGroup: StoryObj = {
 			<div className="a8c-use-validation__toggle-group-wrapper">
 				<ControlWithError
 					render={
-						// TODO: Use of `required` renders an invalid label in HTML.
 						<ToggleGroupControl
 							__nextHasNoMarginBottom
 							label="Toggle Group"
