@@ -18,7 +18,6 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { MigrationAssistanceModal } from '../../components/migration-assistance-modal';
 import type { StepProps } from '../../types';
 import './style.scss';
 
@@ -60,7 +59,6 @@ const SiteMigrationUpgradePlan: FC< Props > = ( {
 		return;
 	}
 	const migrateFrom = queryParams.get( 'from' );
-	const showMigrationModal = queryParams.get( 'showModal' );
 
 	const goToMigrationAssistanceCheckout = ( planSlug: PlanSlug, userAcceptedDeal = false ) => {
 		const plan = getPlan( planSlug );
@@ -77,43 +75,31 @@ const SiteMigrationUpgradePlan: FC< Props > = ( {
 	};
 
 	const stepContent = (
-		<>
-			{ showMigrationModal && (
-				<MigrationAssistanceModal
-					onConfirm={ ( planSlug: PlanSlug ) => {
-						const userAcceptedDeal = true;
-						goToMigrationAssistanceCheckout( planSlug, userAcceptedDeal );
-					} }
-					migrateFrom={ migrateFrom }
-					navigateBack={ navigation.goBack }
-				/>
-			) }
-			<UpgradePlan
-				site={ siteItem }
-				ctaText={ translate( 'Upgrade and migrate' ) }
-				subTitleText=""
-				isBusy={ false }
-				hideTitleAndSubTitle
-				onCtaClick={ ( planSlug: PlanSlug ) => {
-					const userAcceptedDeal = false;
-					goToMigrationAssistanceCheckout( planSlug, userAcceptedDeal );
-				} }
-				onFreeTrialClick={ () => {
-					navigation.submit?.( {
-						goToCheckout: true,
-						plan: PLAN_MIGRATION_TRIAL_MONTHLY,
-						sendIntentWhenCreatingTrial: true,
-					} );
-				} }
-				navigateToVerifyEmailStep={ () => {
-					navigation.submit?.( { verifyEmail: true } );
-				} }
-				hideFreeMigrationTrialForNonVerifiedEmail={ hideFreeMigrationTrialForNonVerifiedEmail }
-				trackingEventsProps={ customTracksEventProps }
-				visiblePlan={ plan.getStoreSlug() }
-				showVariants={ showVariants }
-			/>
-		</>
+		<UpgradePlan
+			site={ siteItem }
+			ctaText={ translate( 'Upgrade and migrate' ) }
+			subTitleText=""
+			isBusy={ false }
+			hideTitleAndSubTitle
+			onCtaClick={ ( planSlug: PlanSlug ) => {
+				const userAcceptedDeal = false;
+				goToMigrationAssistanceCheckout( planSlug, userAcceptedDeal );
+			} }
+			onFreeTrialClick={ () => {
+				navigation.submit?.( {
+					goToCheckout: true,
+					plan: PLAN_MIGRATION_TRIAL_MONTHLY,
+					sendIntentWhenCreatingTrial: true,
+				} );
+			} }
+			navigateToVerifyEmailStep={ () => {
+				navigation.submit?.( { verifyEmail: true } );
+			} }
+			hideFreeMigrationTrialForNonVerifiedEmail={ hideFreeMigrationTrialForNonVerifiedEmail }
+			trackingEventsProps={ customTracksEventProps }
+			visiblePlan={ plan.getStoreSlug() }
+			showVariants={ showVariants }
+		/>
 	);
 
 	const className = clsx(
