@@ -20,7 +20,7 @@ const SetupBlog: Step = ( { navigation, flow } ) => {
 	const formText = {
 		titleLabel: translate( 'Give your blog a name' ),
 		titlePlaceholder: translate( 'A catchy name to make your blog memorable' ),
-		titleMissing: translate( `A catchy name to make your blog memorable` ),
+		titleMissing: translate( 'A catchy name to make your blog memorable' ),
 		taglineLabel: translate( 'Add a brief description' ),
 		taglinePlaceholder: translate( "Let people know what your blog's about" ),
 		buttonText: translate( 'Save and continue' ),

@@ -69,7 +69,7 @@ const ReaderUnsubscribedWpcomFeedItem = ( {
 	return (
 		<ReaderUnsubscribedFeedItem
 			description={ site?.description }
-			displayUrl={ getSiteUrl( { feed, site } ) }
+			displayUrl={ getSiteUrl( { feed, site } ) || '' }
 			feedUrl={ getFeedUrl( feed_id ) }
 			iconUrl={ site?.icon?.img ?? site?.icon?.ico }
 			isSubscribing={ subscribing }
@@ -81,7 +81,7 @@ const ReaderUnsubscribedWpcomFeedItem = ( {
 					onSuccess: () => {
 						dispatch(
 							successNotice(
-								translate( 'Success! You are now subscribed to %s.', { args: siteName } ),
+								translate( 'Success! You are now subscribed to %s.', { args: siteName ?? '' } ),
 								{ duration: 5000 }
 							)
 						);
@@ -140,7 +140,7 @@ const ReaderUnsubscribedWpcomFeedItem = ( {
 			} }
 			subscribeDisabled={ site?.is_following || subscribing || subscribed }
 			hasSubscribed={ site?.is_following || subscribed }
-			title={ siteName }
+			title={ siteName ?? '' }
 		/>
 	);
 };

@@ -37,7 +37,7 @@ const BackupTips: React.FC< BackupTipsProps > = ( { location } ) => {
 						<b>{ translate( 'Did you know' ) }</b>
 					</div>
 					{ translate(
-						`If there are issues with your backup, we will automatically try again. You'll also get an email if something goes wrong.`
+						"If there are issues with your backup, we will automatically try again. You'll also get an email if something goes wrong."
 					) }
 				</div>
 			</DotPager>

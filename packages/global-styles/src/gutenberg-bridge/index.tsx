@@ -71,7 +71,6 @@ const useSafeGlobalStylesOutput = () => {
  * maintain the original object tree structure.
  * The function is recursive, so it will perform a deep search for the given properties.
  * E.g., the function will return `{ a: { b: { c: { test: 1 } } } }` if the properties are  `[ 'test' ]`.
- *
  * @param {Object}   object     The object to filter
  * @param {string[]} properties The properties to filter by
  * @returns {Object} The merged object.
@@ -101,7 +100,6 @@ const filterObjectByProperties = ( object: Record< string, any >, properties: st
 /**
  * Compares a style variation to the same variation filtered by the specified properties.
  * Returns true if the variation contains only the properties specified.
- *
  * @param {Object}   variation  The variation to compare.
  * @param {string[]} properties The properties to compare.
  * @returns {boolean} Whether the variation contains only the specified properties.

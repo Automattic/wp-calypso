@@ -73,7 +73,7 @@ export default function usePlanBillingDescription( {
 			yearlyVariantMaybeDiscountedPrice &&
 			yearlyVariantMaybeDiscountedPrice < originalPrice.monthly
 		) {
-			return translate( `Save %(discountRate)s%% by paying annually`, {
+			return translate( 'Save %(discountRate)s%% by paying annually', {
 				args: {
 					discountRate: Math.floor(
 						( 100 * ( originalPrice.monthly - yearlyVariantMaybeDiscountedPrice ) ) /

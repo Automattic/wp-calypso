@@ -107,10 +107,10 @@ describe( 'initializeAnonId', () => {
 
 	it( 'should attempt once and return the anonId if immediately logged in', async () => {
 		mockedGetTracksLoadPromise.mockImplementationOnce( () => Promise.resolve() );
-		mockedGetTracksAnonymousUserId.mockImplementation( () => `the-anon-id` );
+		mockedGetTracksAnonymousUserId.mockImplementation( () => 'the-anon-id' );
 		mockedGetCurrentUser.mockImplementationOnce( () => ( {} ) );
 		const initializeAnonIdPromise = AnonId.initializeAnonId();
-		expect( await initializeAnonIdPromise ).toBe( `the-anon-id` );
+		expect( await initializeAnonIdPromise ).toBe( 'the-anon-id' );
 		expect( mockedRecordTracksEvent.mock.calls.length ).toBe( 1 );
 		expect( mockedGetTracksAnonymousUserId.mock.calls.length ).toBe( 1 );
 	} );
@@ -120,18 +120,18 @@ describe( 'initializeAnonId', () => {
 		mockedGetTracksLoadPromise.mockImplementationOnce( () => Promise.resolve() );
 		mockedGetTracksAnonymousUserId.mockImplementationOnce( () => null );
 		mockedGetTracksAnonymousUserId.mockImplementationOnce( () => null );
-		mockedGetTracksAnonymousUserId.mockImplementationOnce( () => `the-anon-id` );
+		mockedGetTracksAnonymousUserId.mockImplementationOnce( () => 'the-anon-id' );
 		mockedGetCurrentUser.mockImplementationOnce( () => undefined );
 		mockedGetCurrentUser.mockImplementationOnce( () => undefined );
 		mockedGetCurrentUser.mockImplementationOnce( () => ( {} ) );
 		const initializeAnonIdPromise = AnonId.initializeAnonId();
 		jest.runAllTimers();
-		expect( await initializeAnonIdPromise ).toBe( `the-anon-id` );
+		expect( await initializeAnonIdPromise ).toBe( 'the-anon-id' );
 		expect( mockedRecordTracksEvent.mock.calls.length ).toBe( 1 );
 		expect( mockedGetTracksAnonymousUserId.mock.calls.length ).toBe( 3 );
 	} );
 
-	it( `should give up and return null if tracks doesn't load`, async () => {
+	it( "should give up and return null if tracks doesn't load", async () => {
 		jest.useFakeTimers();
 		mockedGetTracksLoadPromise.mockImplementationOnce( () => Promise.reject() );
 		mockedGetTracksAnonymousUserId.mockImplementationOnce( () => null );

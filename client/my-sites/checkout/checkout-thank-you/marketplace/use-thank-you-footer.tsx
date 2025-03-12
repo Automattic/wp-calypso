@@ -61,7 +61,7 @@ function usePluginSteps(): FooterStep[] {
 			key: 'thank_you_footer_support_guides',
 			title: translate( 'All-in-one plugin documentation' ),
 			description: translate(
-				`Unlock your plugin's potential with our comprehensive support documentation.`
+				"Unlock your plugin's potential with our comprehensive support documentation."
 			),
 			link: localizeUrl( 'https://wordpress.com/support/category/plugins-and-integrations/' ),
 			linkText: translate( 'Plugin documentation' ),

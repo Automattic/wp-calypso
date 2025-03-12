@@ -26,14 +26,14 @@ export const UpdatePluginInfo: React.FunctionComponent< Props > = ( props: Props
 
 	function renderTitle() {
 		return isMigrateFromWp
-			? translate( `Update ‘Move to WordPress.com’` )
-			: translate( `Install Jetpack` );
+			? translate( 'Update ‘Move to WordPress.com’' )
+			: translate( 'Install Jetpack' );
 	}
 
 	function renderSubTitle() {
 		return isMigrateFromWp
-			? translate( `The latest version of the plugin is required to migrate all the content` )
-			: translate( `Jetpack is required to migrate all the content` );
+			? translate( 'The latest version of the plugin is required to migrate all the content' )
+			: translate( 'Jetpack is required to migrate all the content' );
 	}
 
 	function renderSelectBoxContent() {
@@ -85,7 +85,7 @@ export const UpdatePluginInfo: React.FunctionComponent< Props > = ( props: Props
 
 	function onInstallJetpackManuallyClick() {
 		recordTracksEvent( 'calypso_site_importer_install_jetpack_manually' );
-		window.open( `https://jetpack.com/support/getting-started-with-jetpack/` );
+		window.open( 'https://jetpack.com/support/getting-started-with-jetpack/' );
 	}
 
 	return (

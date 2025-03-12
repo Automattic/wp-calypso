@@ -8,6 +8,7 @@ export const ResizableTextarea: React.FC< {
 	inputRef: React.RefObject< HTMLTextAreaElement >;
 	keyUpHandle: () => void;
 	sendMessageHandler: () => Promise< void >;
+	onPasteHandle: ( event: React.ClipboardEvent ) => void;
 	setSubmitDisabled: ( shouldBeDisabled: boolean ) => void;
 	shouldDisableInputField: boolean;
 } > = ( {
@@ -17,6 +18,7 @@ export const ResizableTextarea: React.FC< {
 	keyUpHandle,
 	setSubmitDisabled,
 	shouldDisableInputField = false,
+	onPasteHandle,
 } ) => {
 	const textAreaPlaceholder = shouldDisableInputField
 		? __( 'Just a moment…', __i18n_text_domain__ )
@@ -81,6 +83,7 @@ export const ResizableTextarea: React.FC< {
 			rows={ 1 }
 			className={ className }
 			onKeyUp={ onKeyUp }
+			onPaste={ onPasteHandle }
 			placeholder={ textAreaPlaceholder }
 			onKeyDown={ onKeyDown }
 			style={ { transition: 'none' } }

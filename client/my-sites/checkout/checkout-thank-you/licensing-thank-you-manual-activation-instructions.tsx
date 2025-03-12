@@ -60,7 +60,7 @@ const LicensingActivationInstructions: FC< JetpackLicenseKeyProps > = ( {
 			<LicensingActivation
 				title={
 					jetpackStandaloneProduct
-						? translate( `Ok, let's install Jetpack %(pluginName)s`, {
+						? translate( "Ok, let's install Jetpack %(pluginName)s", {
 								args: { pluginName: jetpackStandaloneProduct?.shortName },
 						  } )
 						: translate( 'Be sure that you have the latest version of Jetpack' )

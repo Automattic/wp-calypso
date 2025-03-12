@@ -42,7 +42,7 @@ export function useActions(
 	const actions = [
 		{
 			id: 'manage-plugin',
-			href: `some-url`,
+			href: 'some-url',
 			callback: ( plugins: Array< Plugin > ) => {
 				recordIntentionEvent( plugins, 'manage-plugin' );
 				plugins.length && navigate( '/plugins/' + plugins[ 0 ].slug );
@@ -54,7 +54,7 @@ export function useActions(
 		},
 		{
 			id: 'activate-plugin',
-			href: `some-url`,
+			href: 'some-url',
 			callback: ( plugins: Array< Plugin > ) => {
 				recordIntentionEvent( plugins, 'activate-plugin' );
 				bulkActionDialog( PluginActions.ACTIVATE, plugins );
@@ -72,7 +72,7 @@ export function useActions(
 		},
 		{
 			id: 'deactivate-plugin',
-			href: `some-url`,
+			href: 'some-url',
 			callback: ( plugins: Array< Plugin > ) => {
 				recordIntentionEvent( plugins, 'deactivate-plugin' );
 				bulkActionDialog( PluginActions.DEACTIVATE, plugins );
@@ -90,7 +90,7 @@ export function useActions(
 		},
 		{
 			id: 'enable-autoupdate',
-			href: `some-url`,
+			href: 'some-url',
 			callback: ( plugins: Array< Plugin > ) => {
 				recordIntentionEvent( plugins, 'enable-autoupdate' );
 				bulkActionDialog( PluginActions.ENABLE_AUTOUPDATES, plugins );
@@ -107,7 +107,7 @@ export function useActions(
 		},
 		{
 			id: 'disable-autoupdate',
-			href: `some-url`,
+			href: 'some-url',
 			callback: ( plugins: Array< Plugin > ) => {
 				recordIntentionEvent( plugins, 'disable-autoupdate' );
 				bulkActionDialog( PluginActions.DISABLE_AUTOUPDATES, plugins );
@@ -124,7 +124,7 @@ export function useActions(
 		},
 		{
 			id: 'remove-plugin',
-			href: `some-url`,
+			href: 'some-url',
 			callback: ( plugins: Array< Plugin > ) => {
 				recordIntentionEvent( plugins, 'remove-plugin' );
 				bulkActionDialog( PluginActions.REMOVE, plugins );

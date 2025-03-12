@@ -69,10 +69,10 @@ const ScrollableHorizontalNavigation = < T extends object >( {
 	const handleScroll = throttle( () => {
 		// Determine and set visibility classes on scroll button wrappers.
 		const leftScrollButton = document.querySelector(
-			`.scrollable-horizontal-navigation__left-button-wrapper`
+			'.scrollable-horizontal-navigation__left-button-wrapper'
 		);
 		const rightScrollButton = document.querySelector(
-			`.scrollable-horizontal-navigation__right-button-wrapper`
+			'.scrollable-horizontal-navigation__right-button-wrapper'
 		);
 		shouldHideLeftScrollButton()
 			? hideElement( leftScrollButton )
@@ -89,7 +89,7 @@ const ScrollableHorizontalNavigation = < T extends object >( {
 			} ) }
 		>
 			<div
-				className={ clsx( `scrollable-horizontal-navigation__left-button-wrapper`, {
+				className={ clsx( 'scrollable-horizontal-navigation__left-button-wrapper', {
 					'display-none': shouldHideLeftScrollButton(),
 				} ) }
 				aria-hidden
@@ -104,7 +104,7 @@ const ScrollableHorizontalNavigation = < T extends object >( {
 			</div>
 
 			<div
-				className={ clsx( `scrollable-horizontal-navigation__right-button-wrapper`, {
+				className={ clsx( 'scrollable-horizontal-navigation__right-button-wrapper', {
 					'display-none': shouldHideRightScrollButton(),
 				} ) }
 				aria-hidden

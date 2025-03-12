@@ -21,7 +21,7 @@ export function* setHasSeenWhatsNewModal( value: boolean ) {
 	};
 	if ( canAccessWpcomApis() ) {
 		response = yield wpcomRequest( {
-			path: `/block-editor/has-seen-whats-new-modal`,
+			path: '/block-editor/has-seen-whats-new-modal',
 			apiNamespace: 'wpcom/v2',
 			method: 'PUT',
 			body: {
@@ -31,7 +31,7 @@ export function* setHasSeenWhatsNewModal( value: boolean ) {
 	} else {
 		response = yield apiFetch( {
 			global: true,
-			path: `/wpcom/v2/block-editor/has-seen-whats-new-modal`,
+			path: '/wpcom/v2/block-editor/has-seen-whats-new-modal',
 			method: 'PUT',
 			data: { has_seen_whats_new_modal: value },
 		} as APIFetchOptions );
@@ -128,7 +128,7 @@ export const setShowHelpCenter = function* (
 			if ( canAccessWpcomApis() ) {
 				// Use the promise version to do that action without waiting for the result.
 				wpcomRequestPromise( {
-					path: `/me/preferences`,
+					path: '/me/preferences',
 					apiNamespace: 'wpcom/v2',
 					method: 'PUT',
 					body: {
@@ -139,7 +139,7 @@ export const setShowHelpCenter = function* (
 				// Use the promise version to do that action without waiting for the result.
 				apiFetchPromise( {
 					global: true,
-					path: `/help-center/open-state`,
+					path: '/help-center/open-state',
 					method: 'PUT',
 					data: { help_center_open: show },
 				} as APIFetchOptions );

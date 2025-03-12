@@ -91,7 +91,7 @@ export function generateAdminSections(
 		},
 		{
 			title: __( 'Cancel my plan', __i18n_text_domain__ ),
-			link: `/me/purchases`,
+			link: '/me/purchases',
 			synonyms: [ 'upgrade', 'business', 'professional', 'personal' ],
 			icon: 'plans',
 		},
@@ -104,7 +104,7 @@ export function generateAdminSections(
 		{
 			/* translators: %(googleMailService)s can be either "G Suite" or "Google Workspace */
 			title: sprintf( __( 'Cancel %s', __i18n_text_domain__ ), googleMailService ),
-			link: `/me/purchases`,
+			link: '/me/purchases',
 			synonyms: [ 'upgrade', 'business', 'professional', 'personal', 'google' ],
 			icon: 'plans',
 		},
@@ -353,7 +353,7 @@ export function generateAdminSections(
 		},
 		{
 			title: __( 'New post', __i18n_text_domain__ ),
-			description: __( `Create a new blog post on your site.` ),
+			description: __( 'Create a new blog post on your site.' ),
 			link: `/post/${ siteSlug }`,
 			synonyms: [ 'lists', 'posts' ],
 			icon: 'my-sites',

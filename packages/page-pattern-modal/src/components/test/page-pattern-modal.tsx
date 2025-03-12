@@ -23,7 +23,7 @@ const patterns = [
 		name: 'layout-one',
 		description: 'Descriptive Name One',
 		categories: { blog: { slug: 'blog', title: 'Blog' } },
-		html: `<!-- wp:test/test-block -->layout content ...<!-- /wp:test/test-block -->`,
+		html: '<!-- wp:test/test-block -->layout content ...<!-- /wp:test/test-block -->',
 	},
 	{
 		ID: 2,
@@ -31,7 +31,7 @@ const patterns = [
 		name: 'layout-two',
 		description: 'Descriptive Name Two',
 		categories: { blog: { slug: 'blog', title: 'Blog' }, home: { slug: 'home', title: 'Home' } },
-		html: `<!-- wp:test/test-block -->layout content ...<!-- /wp:test/test-block -->`,
+		html: '<!-- wp:test/test-block -->layout content ...<!-- /wp:test/test-block -->',
 	},
 ];
 
