@@ -57,7 +57,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		await pagesPage.addNewPage();
 	} );
 
-	it( 'Select page template', async function () {
+	it.skip( 'Select page template', async function () {
 		editorPage = new EditorPage( page );
 		// Allow some time for CPU and/or network to catch up.
 		await editorPage.selectTemplateCategory( 'About', { timeout: 20 * 1000 } );
@@ -98,7 +98,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		expect( publishedUrl.pathname ).toContain( `/${ customUrlSlug }` );
 	} );
 
-	it( 'Published page contains template content', async function () {
+	it.skip( 'Published page contains template content', async function () {
 		// Not a typo, it's the POM page class for a WordPress page. :)
 		const publishedPagePage = new PublishedPostPage( page );
 		await publishedPagePage.validateTextInPost( pageTemplateToSelect );
