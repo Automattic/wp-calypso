@@ -97,7 +97,7 @@ const GlobalStylesVariationPreview = ( { title, inlineCss, isFocused, onFocusOut
 		.concat( buttonBackgroundColorObject )
 		.concat( paletteColors )
 		.filter(
-			// we exclude these background color because it is already visible in the preview.
+			// we exclude this background color because it is already visible in the preview.
 			( { color }: { color: Color } ) => color !== backgroundColor
 		)
 		.slice( 0, 2 );
