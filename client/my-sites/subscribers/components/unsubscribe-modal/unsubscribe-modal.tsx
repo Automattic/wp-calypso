@@ -1,4 +1,4 @@
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, fixMe } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
 import ConfirmModal from 'calypso/components/confirm-modal';
 import { useRecordRemoveModal } from '../../tracks';
@@ -19,60 +19,7 @@ const UnsubscribeModal = ( { subscribers, onCancel, onConfirm }: UnsubscribeModa
 	const translate = useTranslate();
 	const subscriber = subscribers?.[ 0 ];
 	const someSubscriberHasPlans = !! subscribers?.some( ( subscriber ) => subscriber.plans?.length );
-	const isSingleSubscriber = subscribers?.length === 1;
 	const recordRemoveModal = useRecordRemoveModal();
-
-	const freeSubscriberProps = isSingleSubscriber
-		? {
-				action: UnsubscribeActionType.Unsubscribe,
-				confirmButtonLabel: translate( 'Remove subscriber' ),
-				text: translate(
-					'Are you sure you want to remove %s from your list? They will no longer receive new notifications from your site.',
-					{
-						args: [ subscriber?.display_name as string ],
-						comment: "%s is the subscriber's public display name",
-					}
-				),
-				title: translate( 'Remove free subscriber' ),
-		  }
-		: {
-				action: UnsubscribeActionType.Unsubscribe,
-				confirmButtonLabel: translate( 'Remove subscribers' ),
-				text: translate(
-					'Are you sure you want to remove %d subscibers from your list? They will no longer receive new notifications from your site.',
-					{
-						args: [ subscribers?.length as number ],
-						comment: '%d is the number of subscribers',
-					}
-				),
-				title: translate( 'Remove free subscribers' ),
-		  };
-
-	const paidSubscriberProps = isSingleSubscriber
-		? {
-				action: UnsubscribeActionType.Manage,
-				confirmButtonLabel: translate( 'Manage paid subscribers' ),
-				text: translate(
-					'To remove %s from your list, you’ll need to cancel their paid subscription first.',
-					{
-						args: [ subscriber?.display_name as string ],
-						comment: "%s is the subscriber's public display name",
-					}
-				),
-				title: translate( 'Remove paid subscriber' ),
-		  }
-		: {
-				action: UnsubscribeActionType.Manage,
-				confirmButtonLabel: translate( 'Manage paid subscribers' ),
-				text: translate(
-					'Some subscribers have paid subscriptions. To remove them from your list, you’ll need to cancel their paid subscription first.'
-				),
-				title: translate( 'Remove paid subscribers' ),
-		  };
-
-	const { action, confirmButtonLabel, text, title } = someSubscriberHasPlans
-		? paidSubscriberProps
-		: freeSubscriberProps;
 
 	useEffect( () => {
 		if ( subscriber ) {
@@ -85,12 +32,79 @@ const UnsubscribeModal = ( { subscribers, onCancel, onConfirm }: UnsubscribeModa
 		onCancel();
 	}, [ someSubscriberHasPlans, onCancel ] );
 
+	if ( ! subscribers || ! subscribers.length ) {
+		return null;
+	}
+
+	const freeSubscriberProps = {
+		action: UnsubscribeActionType.Unsubscribe,
+		confirmButtonLabel: fixMe( {
+			text: 'Remove subscribers',
+			newCopy: translate( 'Remove subscriber', 'Remove subscribers', {
+				count: subscribers.length,
+			} ),
+			oldCopy: translate( 'Remove subscriber' ),
+		} ),
+		text: translate(
+			'Are you sure you want to remove %(displayName)s from your list? They will no longer receive new notifications from your site.',
+			'Are you sure you want to remove %(numberOfSubscribers)d subscibers from your list? They will no longer receive new notifications from your site.',
+			{
+				count: subscribers.length,
+				args: {
+					displayName: subscriber?.display_name || '',
+					numberOfSubscribers: subscribers.length,
+				},
+			}
+		),
+		title: fixMe( {
+			text: 'Remove free subscribers',
+			newCopy: translate( 'Remove free subscriber', 'Remove free subscribers', {
+				count: subscribers.length,
+			} ),
+			oldCopy: translate( 'Remove free subscriber' ),
+		} ),
+	};
+
+	const paidSubscriberProps = {
+		action: UnsubscribeActionType.Manage,
+		confirmButtonLabel: fixMe( {
+			text: 'Manage paid subscribers',
+			newCopy: translate( 'Manage paid subscriber', 'Manage paid subscribers', {
+				count: subscribers.length,
+			} ),
+			oldCopy: translate( 'Manage paid subscriber' ),
+		} ),
+		// eslint-disable-next-line wpcalypso/i18n-mismatched-placeholders
+		text: translate(
+			'To remove %s from your list, you’ll need to cancel their paid subscription first.',
+			'Some subscribers have paid subscriptions. To remove them from your list, you’ll need to cancel their paid subscription first.',
+			{
+				count: subscribers.length,
+				args: {
+					displayName: subscriber?.display_name || '',
+					numberOfSubscribers: subscribers.length,
+				},
+			}
+		),
+		title: fixMe( {
+			text: 'Remove paid subscribers',
+			newCopy: translate( 'Remove paid subscriber', 'Remove paid subscribers', {
+				count: subscribers.length,
+			} ),
+			oldCopy: translate( 'Remove paid subscriber' ),
+		} ),
+	};
+
+	const { action, confirmButtonLabel, text, title } = someSubscriberHasPlans
+		? paidSubscriberProps
+		: freeSubscriberProps;
+
 	return (
 		<ConfirmModal
 			isVisible={ !! subscriber }
-			confirmButtonLabel={ confirmButtonLabel }
+			confirmButtonLabel={ confirmButtonLabel || undefined }
 			text={ text }
-			title={ title }
+			title={ title || undefined }
 			onCancel={ onCancelClick }
 			onConfirm={ () => onConfirm( action, subscribers ) }
 		/>

@@ -44,6 +44,13 @@ const useSubscriberRemoveMutation = (
 				);
 			}
 
+			if ( subscribers.length > 100 ) {
+				throw new Error(
+					// reminder: translate this string when we add it to the UI
+					'The maximum number of subscribers you can remove at once is 100.'
+				);
+			}
+
 			const subscriberPromises = subscribers.map( async ( subscriber ) => {
 				if ( subscriber.plans?.length ) {
 					// unsubscribe this user from all plans
