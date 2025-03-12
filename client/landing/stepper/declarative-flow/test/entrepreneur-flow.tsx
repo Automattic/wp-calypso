@@ -57,7 +57,7 @@ describe( 'Entrepreneur Flow', () => {
 
 			runUseStepNavigationSubmit( {
 				currentStep: 'start' /* We use "start" as the survey step slug */,
-				currentURL: `/setup/entrepreneur/start`,
+				currentURL: '/setup/entrepreneur/start',
 				dependencies: {
 					lastQuestionPath: '#1',
 				},
@@ -74,7 +74,7 @@ describe( 'Entrepreneur Flow', () => {
 
 			runUseStepNavigationSubmit( {
 				currentStep: STEPS.SITE_CREATION_STEP.slug,
-				currentURL: `/setup/entrepreneur/create-site`,
+				currentURL: '/setup/entrepreneur/create-site',
 			} );
 
 			expect( getFlowLocation() ).toEqual( {
@@ -187,7 +187,7 @@ describe( 'Entrepreneur Flow', () => {
 
 			expect( window.location.assign ).toHaveBeenCalledWith(
 				`https://example.wpcomstaging.com/wp-login.php?action=jetpack-sso&redirect_to=${ encodeURIComponent(
-					`https://example.wpcomstaging.com/wp-admin/admin.php?page=wc-admin&path=%2Fcustomize-store%2Fdesign-with-ai&ref=entrepreneur-signup`
+					'https://example.wpcomstaging.com/wp-admin/admin.php?page=wc-admin&path=%2Fcustomize-store%2Fdesign-with-ai&ref=entrepreneur-signup'
 				) }`
 			);
 		} );
