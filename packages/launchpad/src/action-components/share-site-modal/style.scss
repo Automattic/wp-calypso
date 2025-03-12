@@ -3,49 +3,10 @@
 .share-site-modal__modal {
 	max-width: 640px;
 
-	.share-site-modal__modal-heading {
-		font-size: 1.25rem;
-		font-weight: 600;
-	}
-
-	.share-site-modal__modal-domain-text {
-		padding: 0 8px;
-		margin: 0;
-		color: var(--studio-gray-80);
-		font-size: 1rem;
-		line-height: 24px;
-		// prevent text overflow
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		overflow: hidden;
-	}
-
-	.share-site-modal__modal-actions-buttons {
-		justify-content: end;
-		width: auto;
-		min-width: 180px;
-	}
-
-	.share-site-modal__modal-site {
-		padding: 8px;
-		background: var(--studio-gray-0);
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-		align-items: center;
-	}
-
-	.launchpad__clipboard-button {
-		opacity: 0;
-	}
-
-	.launchpad__clipboard-button:focus {
-		opacity: 1;
-	}
-
-	.share-site-modal__modal-site:hover {
-		.launchpad__clipboard-button {
-			opacity: 1;
+	.share-site-modal__modal-input-container {
+		input {
+			/* Required to tame the WordPress component's outrageously specific font size */
+			font-size: $font-body !important;
 		}
 	}
 
@@ -62,24 +23,14 @@
 		align-items: center;
 		font-weight: 500;
 		padding: 4px 8px;
-		margin: 0 4px 4px 0;
-		background-color: var(--studio-gray-0);
-		/* stylelint-disable-next-line */
-		font-size: 14px;
+		font-size: $font-body-small;
 		line-height: 20px;
 		letter-spacing: -0.154px;
 		color: #101517;
 		.share-site-modal__modal-icon {
-			background-color: #fff;
-			border: 1px solid var(--studio-gray-90);
 			border-radius: 100%;
 			padding: 4px;
 		}
-	}
-
-	.share-site-modal__modal-copy-link {
-		background-color: #fff;
-		margin: 0 0 0 4px;
 	}
 
 	.share-site-modal__modal-copy-link:disabled {

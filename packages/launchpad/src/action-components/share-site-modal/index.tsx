@@ -4,12 +4,14 @@ import { useQueryClient } from '@tanstack/react-query';
 import {
 	Button,
 	Modal,
+	__experimentalInputControl as InputControl,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	IconType,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { link, share, check } from '@wordpress/icons';
-import { useState, useRef } from 'react';
+import { copy, share, check } from '@wordpress/icons';
+import { useState, useRef, useMemo, useCallback } from 'react';
 import { SocialLogo } from 'social-logos';
 import type { SiteDetails } from '@automattic/data-stores';
 
@@ -20,13 +22,25 @@ interface ShareSiteModalProps {
 	site: SiteDetails | null;
 }
 
-interface ShareLink {
-	href: string;
+interface BaseShareLink {
 	className: string;
-	title: string;
-	icon: 'mail' | 'tumblr' | 'bluesky' | 'linkedin' | 'telegram' | 'reddit' | 'whatsapp' | 'x';
 	label: string;
 }
+
+interface SocialShareLink extends BaseShareLink {
+	type?: 'link';
+	href: string;
+	title: string;
+	icon: 'mail' | 'tumblr' | 'bluesky' | 'linkedin' | 'telegram' | 'reddit' | 'whatsapp' | 'x';
+}
+
+interface WordPressShareLink extends BaseShareLink {
+	type: 'button';
+	icon: IconType;
+	onClick: () => void;
+}
+
+type ShareLink = SocialShareLink | WordPressShareLink;
 
 const getShareLinks = ( siteUrl: string, text: string ): ShareLink[] => {
 	const encodedSiteUrl = encodeURIComponent( siteUrl );
@@ -91,24 +105,24 @@ const getShareLinks = ( siteUrl: string, text: string ): ShareLink[] => {
 	];
 };
 
-const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
-	const queryClient = useQueryClient();
-	const getSiteSlug = ( site: SiteDetails | null ) => {
-		if ( ! site ) {
-			return '';
-		}
-
-		if ( site.slug ) {
-			return site.slug;
-		}
-
-		if ( site.URL ) {
-			return new URL( site.URL ).host;
-		}
+const getSiteSlug = ( site: SiteDetails | null ) => {
+	if ( ! site ) {
 		return '';
-	};
+	}
+
+	if ( site.slug ) {
+		return site.slug;
+	}
+
+	if ( site.URL ) {
+		return new URL( site.URL ).host;
+	}
+	return '';
+};
+
+const getShareData = ( site: SiteDetails | null ) => {
 	const siteSlug = getSiteSlug( site );
-	const shareData = {
+	return {
 		title: siteSlug,
 		text: sprintf(
 			/* translators: siteSlug is the short form of the site URL with the https:// */
@@ -119,32 +133,37 @@ const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 		),
 		url: site?.URL || '',
 	};
-	const canUseWebShare = window.navigator?.canShare && window.navigator.canShare( shareData );
+};
+const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
+	const queryClient = useQueryClient();
+	const shareData = getShareData( site );
 
-	const [ clipboardCopied, setClipboardCopied ] = useState( false );
-	const clipboardTextEl = useRef( null );
-	const trackShareClick = async () => {
+	const trackShareClick = useCallback( async () => {
 		if ( shareData.title ) {
 			await updateLaunchpadSettings( shareData.title, {
 				checklist_statuses: { share_site: true },
 			} );
 		}
 		queryClient.invalidateQueries( { queryKey: [ 'launchpad' ] } );
-	};
-	const copyHandler = async () => {
+	}, [ shareData, queryClient ] );
+
+	const [ clipboardCopied, setClipboardCopied ] = useState( false );
+	const clipboardTextEl = useRef( null );
+	const copyHandler = () => {
 		navigator.clipboard.writeText( shareData.url );
 		setClipboardCopied( true );
 		trackShareClick();
 		setTimeout( () => setClipboardCopied( false ), 3000 );
 	};
 
-	const webShareClickHandler = async () => {
+	const canUseWebShare = window.navigator?.canShare && window.navigator.canShare( shareData );
+	const webShareClickHandler = useCallback( async () => {
 		if ( ! canUseWebShare ) {
 			return;
 		}
 		trackShareClick();
 		await navigator.share( shareData );
-	};
+	}, [ canUseWebShare, shareData, trackShareClick ] );
 
 	const socialLinkClickHandler = ( event: React.MouseEvent< HTMLAnchorElement > ) => {
 		event.preventDefault();
@@ -152,81 +171,84 @@ const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 		window.open( event.currentTarget.href, '_blank' );
 	};
 
-	return (
-		<>
-			<Modal
-				onRequestClose={ () => setModalIsOpen( false ) }
-				className="share-site-modal__modal"
-				title={ __( 'Share your site', 'launchpad' ) }
-			>
-				<VStack className="share-site-modal__modal-content" spacing={ 4 }>
-					<VStack className="share-site-modal__modal-actions" spacing={ 4 }>
-						<HStack className="share-site-modal__modal-site">
-							<div className="share-site-modal__modal-domain">
-								<p className="share-site-modal__modal-domain-text" ref={ clipboardTextEl }>
-									{ shareData.title }
-								</p>
-							</div>
+	const shareLinks = useMemo( () => {
+		const _shareLinks: ShareLink[] = [
+			{
+				type: 'button',
+				className: 'share-site-modal__modal-share-link',
+				label: __( 'Share via device', 'launchpad' ),
+				icon: share,
+				onClick: webShareClickHandler,
+			},
+			...getShareLinks( shareData.url, shareData.text ),
+		];
+		return _shareLinks;
+	}, [ shareData, webShareClickHandler ] );
 
-							<HStack className="share-site-modal__modal-actions-buttons">
-								<Button
-									onClick={ copyHandler }
-									className="share-site-modal__modal-copy-link"
-									disabled={ ! shareData.title || clipboardCopied }
-									icon={ clipboardCopied ? check : link }
-								>
-									<span className="share-site-modal__modal-view-site-text">
-										{ __( 'Copy', 'launchpad' ) }
-									</span>
-								</Button>
-								<Popover
-									className="share-site-modal__popover"
-									isVisible={ clipboardCopied }
-									context={ clipboardTextEl.current }
-									position="top"
-								>
-									{ __( 'Copied to clipboard!', 'launchpad' ) }
-								</Popover>
-								{ canUseWebShare && (
+	return (
+		<Modal
+			onRequestClose={ () => setModalIsOpen( false ) }
+			className="share-site-modal__modal"
+			title={ __( 'Share your site', 'launchpad' ) }
+		>
+			<VStack className="share-site-modal__modal-content" spacing={ 4 }>
+				<VStack className="share-site-modal__modal-actions" spacing={ 4 }>
+					<Popover
+						className="share-site-modal__popover"
+						isVisible={ clipboardCopied }
+						context={ clipboardTextEl.current }
+						position="top"
+					>
+						{ __( 'Copied to clipboard!', 'launchpad' ) }
+					</Popover>
+					<InputControl
+						className="share-site-modal__modal-input-container"
+						__next40pxDefaultSize
+						value={ shareData.title }
+						label={ __( 'Site URL', 'launchpad' ) }
+						ref={ clipboardTextEl }
+						readOnly
+						hideLabelFromVision
+						suffix={
+							<Button
+								onClick={ copyHandler }
+								className="share-site-modal__modal-copy-link"
+								disabled={ ! shareData.title || clipboardCopied }
+								icon={ clipboardCopied ? check : copy }
+								label={ __( 'Copy Site URL', 'launchpad' ) }
+							/>
+						}
+					/>
+					<HStack className="share-site-modal__modal-social" as="ul" justify="start">
+						{ shareLinks.map( ( link, index ) => (
+							<li key={ index }>
+								{ link.type === 'button' ? (
+									<Button className={ link.className } onClick={ link.onClick } icon={ link.icon }>
+										{ link.label }
+									</Button>
+								) : (
 									<Button
-										className="share-site-modal__modal-copy-link"
-										onClick={ webShareClickHandler }
-										icon={ share }
+										href={ link.href }
+										className={ link.className }
+										label={ link.title }
+										rel="noopener noreferrer"
+										target="_blank"
+										onClick={ socialLinkClickHandler }
 									>
-										<span className="share-site-modal__modal-view-site-text">
-											{ __( 'Share', 'launchpad' ) }
-										</span>
+										<SocialLogo
+											className="share-site-modal__modal-icon"
+											size={ 24 }
+											icon={ link.icon }
+										/>
+										<span>{ link.label }</span>
 									</Button>
 								) }
-							</HStack>
-						</HStack>
-						<HStack className="share-site-modal__modal-social" as="ul" justify="start">
-							{ getShareLinks( shareData.url, shareData.text ).map(
-								( { href, className, title, icon, label }, index ) => (
-									<li key={ index }>
-										<a
-											href={ href }
-											className={ className }
-											title={ title }
-											rel="noopener noreferrer"
-											target="_blank"
-											onClick={ socialLinkClickHandler }
-										>
-											<SocialLogo
-												className="share-site-modal__modal-icon"
-												size={ 24 }
-												icon={ icon }
-											/>
-											<span>{ label }</span>
-										</a>
-									</li>
-								)
-							) }
-						</HStack>
-					</VStack>
+							</li>
+						) ) }
+					</HStack>
 				</VStack>
-			</Modal>
-		</>
+			</VStack>
+		</Modal>
 	);
 };
 
