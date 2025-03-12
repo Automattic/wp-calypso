@@ -1,7 +1,6 @@
 import { Badge } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import SelectCardCheckbox from '../select-card-checkbox';
 import { StepContainerV2 } from './index';
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -34,96 +33,6 @@ export const Default: Story = {
 			);
 		},
 	},
-};
-
-const goals = [
-	{
-		key: 'write',
-		title: 'Publish a blog',
-	},
-	{
-		key: 'engagement',
-		title: 'Build and engage an audience',
-	},
-	{
-		key: 'collect-donations',
-		title: 'Collect donations',
-	},
-	{
-		key: 'portfolio',
-		title: 'Showcase work/portfolio',
-	},
-	{
-		key: 'build-nonprofit',
-		title: 'Build a site for a school or nonprofit',
-	},
-	{
-		key: 'newsletter',
-		title: 'Create a newsletter',
-	},
-	{
-		key: 'sell-digital',
-		title: 'Sell services or digital goods',
-	},
-	{
-		key: 'sell-physical',
-		title: 'Sell physical goods',
-	},
-	{
-		key: 'promote',
-		title: 'Promote my business',
-	},
-	{
-		key: 'courses',
-		title: 'Create a course',
-	},
-	{
-		key: 'contact-form',
-		title: 'Create a contact form',
-	},
-	{
-		key: 'videos',
-		title: 'Upload videos',
-	},
-	{
-		key: 'paid-subscribers',
-		title: 'Offer paid content to members',
-	},
-	{
-		key: 'announce-events',
-		title: 'Announce events',
-	},
-];
-
-export const Goals = () => {
-	return (
-		<StepContainerV2
-			heading={ {
-				text: 'What would you like to create?',
-				subText: 'Pick one or more goals to get started.',
-			} }
-			backButton={ () => {} }
-			skipButton={ () => {} }
-			nextButton={ {
-				label: 'Continue',
-				onClick: () => {},
-			} }
-			render={ ( { nextButton } ) => {
-				return (
-					<div className="goals">
-						<div className="goals__list">
-							{ goals.map( ( goal ) => (
-								<SelectCardCheckbox key={ goal.key } checked={ false } onChange={ () => {} }>
-									<span>{ goal.title }</span>
-								</SelectCardCheckbox>
-							) ) }
-						</div>
-						{ nextButton && <div style={ { marginTop: '3rem' } }>{ nextButton }</div> }
-					</div>
-				);
-			} }
-		/>
-	);
 };
 
 export const User = () => {

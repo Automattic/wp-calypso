@@ -1,0 +1,13 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.goals__list {
+	display: grid;
+	width: 100%;
+	gap: 1rem;
+
+	@include break-small {
+		width: auto;
+		grid-template-columns: repeat(2, 1fr);
+	}
+}

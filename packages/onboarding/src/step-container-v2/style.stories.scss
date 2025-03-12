@@ -2,20 +2,8 @@
 @import "@wordpress/base-styles/mixins";
 
 .default,
-.goals,
 .user {
 	text-align: center;
-}
-
-.goals {
-	&__list {
-		display: grid;
-		gap: 1rem;
-
-		@include break-small {
-			grid-template-columns: repeat(2, 1fr);
-		}
-	}
 }
 
 .user {
