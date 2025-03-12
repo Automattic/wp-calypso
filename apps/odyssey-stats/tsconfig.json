@@ -6,12 +6,7 @@
 		"typeRoots": [ "./node_modules/@types", "../../node_modules/@types" ],
 		"types": [ "node" ]
 	},
-	"include": [
-		"./src/**/*",
-		"./package.json",
-		"../../config/production.json",
-		"../../client/my-sites/stats/components/stats-main/stats-main.tsx"
-	],
+	"include": [ "./src/**/*", "./package.json", "../../config/production.json" ],
 	"exclude": [ "./**/node_modules/**/*", "./**/test/**/*", "./**/.stories.tsx" ],
 	"references": [ { "path": "../../packages" }, { "path": "../../client/tsconfig-reference.json" } ]
 }
