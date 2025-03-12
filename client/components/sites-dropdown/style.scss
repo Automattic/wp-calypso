@@ -63,12 +63,14 @@
 			color: var(--color-neutral-50);
 		}
 	}
+}
 
-	svg {
+.accessible-focus .sites-dropdown__selected {
+	svg.gridicons-chevron-down {
 		box-sizing: border-box;
 	}
 
-	&:focus svg {
+	&:focus svg.gridicons-chevron-down {
 		border: 2px solid var(--color-primary);
 		border-radius: 2px;
 	}
