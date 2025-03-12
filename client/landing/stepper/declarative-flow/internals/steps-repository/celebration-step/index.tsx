@@ -49,11 +49,8 @@ const CelebrationStep: Step< {
 		siteSlug,
 		isFirstPostPublished: checklistStatuses?.first_post_published,
 	} );
-	const handleSubmit = ( destinationName: string, destinationUrl: string ) => {
-		if ( submit ) {
-			submit( { destinationName, destinationUrl } );
-		}
-	};
+	const handleSubmit = ( destinationName: string, destinationUrl: string ) =>
+		submit?.( { destinationName, destinationUrl } );
 
 	if ( ! site ) {
 		return null;
