@@ -57,6 +57,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		await pagesPage.addNewPage();
 	} );
 
+	// Test will be updated to test test equvalent core functionality.
 	it.skip( 'Select page template', async function () {
 		editorPage = new EditorPage( page );
 		// Allow some time for CPU and/or network to catch up.
@@ -98,6 +99,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		expect( publishedUrl.pathname ).toContain( `/${ customUrlSlug }` );
 	} );
 
+	// Test will be updated to test test equvalent core functionality.
 	it.skip( 'Published page contains template content', async function () {
 		// Not a typo, it's the POM page class for a WordPress page. :)
 		const publishedPagePage = new PublishedPostPage( page );
