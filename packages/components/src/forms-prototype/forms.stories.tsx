@@ -35,6 +35,7 @@ const meta: Meta = {
 					gap: 16,
 				} }
 				onSubmit={ ( e ) => {
+					// TODO: Add example for how to check all custom validity on submit.
 					e.preventDefault();
 					alert( 'Form submitted!' );
 				} }
@@ -105,16 +106,6 @@ export const Default: StoryObj = {
 				/>
 				<ControlWithError
 					render={
-						<TextControl __next40pxDefaultSize __nextHasNoMarginBottom label="Text" required />
-					}
-					onReportCustomValidity={ ( value ) => {
-						if ( value.toLowerCase() === 'error' ) {
-							return 'The word "error" is not allowed.';
-						}
-					} }
-				/>
-				<ControlWithError
-					render={
 						<TextareaControl
 							__nextHasNoMarginBottom
 							label="Textarea"
@@ -171,6 +162,42 @@ export const Password: StoryObj = {
 	},
 };
 
+// TODO: Add error styles.
+export const Text: StoryObj = {
+	name: 'TextControl',
+	render: function Template() {
+		const [ value, setValue ] = useState< string >( '' );
+		const valueRef = useRef< string >( '' );
+		const validityTargetRef = useRef< HTMLInputElement >( null );
+
+		return (
+			<ControlWithError
+				render={
+					<TextControl
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom
+						label="Text"
+						required
+						value={ value }
+						onChange={ ( value ) => {
+							setValue( value );
+							valueRef.current = value;
+						} }
+						help="The word 'error' will trigger an error."
+						ref={ validityTargetRef }
+					/>
+				}
+				onReportCustomValidity={ () => {
+					if ( valueRef.current.toLowerCase() === 'error' ) {
+						return 'The word "error" is not allowed.';
+					}
+				} }
+				getValidityTarget={ () => validityTargetRef.current }
+			/>
+		);
+	},
+};
+
 export const Number: StoryObj = {
 	render: function Template() {
 		const valueRef = useRef< string >( '' );
@@ -209,8 +236,6 @@ export const Checkbox: StoryObj = {
 		const valueRef = useRef< boolean >();
 		const validityTargetRef = useRef< HTMLInputElement >( null );
 
-		valueRef.current = checkboxControlChecked;
-
 		return (
 			<ControlWithError
 				render={
@@ -220,7 +245,10 @@ export const Checkbox: StoryObj = {
 						label="Checkbox"
 						// TODO: CheckboxControl doesn't support uncontrolled mode, visually.
 						checked={ checkboxControlChecked }
-						onChange={ setCheckboxControlChecked }
+						onChange={ ( value ) => {
+							setCheckboxControlChecked( value );
+							valueRef.current = value;
+						} }
 						help="This checkbox may neither be checked nor unchecked."
 					/>
 				}
@@ -244,8 +272,6 @@ export const Toggle: StoryObj = {
 		const valueRef = useRef< boolean >();
 		const validityTargetRef = useRef< HTMLInputElement >( null );
 
-		valueRef.current = checked;
-
 		// TODO: The `required` attribute is not passed down to the input,
 		// so we need to set it manually.
 		useEffect( () => {
@@ -265,7 +291,10 @@ export const Toggle: StoryObj = {
 						label="Toggle"
 						// TODO: FormToggle (and thus ToggleControl) doesn't support uncontrolled mode, visually.
 						checked={ checked }
-						onChange={ setChecked }
+						onChange={ ( value ) => {
+							setChecked( value );
+							valueRef.current = value;
+						} }
 						required
 						ref={ validityTargetRef }
 						help="This toggle may neither be enabled nor disabled."
@@ -363,8 +392,6 @@ export const CustomSelect: StoryObj = {
 		const valueRef = useRef< React.ComponentProps< typeof CustomSelectControl >[ 'value' ] >();
 		const validityTargetRef = useRef< HTMLSelectElement >( null );
 
-		valueRef.current = value;
-
 		return (
 			<div style={ { position: 'relative' } }>
 				<ControlWithError
@@ -381,7 +408,10 @@ export const CustomSelect: StoryObj = {
 								{ key: 'b', name: 'Option B' },
 							] }
 							value={ value }
-							onChange={ setValue }
+							onChange={ ( value ) => {
+								setValue( value );
+								valueRef.current = value;
+							} }
 						/>
 					}
 					onReportCustomValidity={ () => {
@@ -403,6 +433,7 @@ export const CustomSelect: StoryObj = {
 					ref={ validityTargetRef }
 					required
 					tabIndex={ -1 }
+					// TODO: This doesn't prevent a missing value error once the control is touched.
 					value={ value ? 'hasvalue' : '' }
 					onChange={ () => {} } // Prevent React warning.
 					onFocus={ ( e ) => {
