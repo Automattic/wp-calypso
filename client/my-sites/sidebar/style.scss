@@ -12,29 +12,6 @@ $brand-text: "SF Pro Text", $sans;
 	--sidebar-width-max: 272px;
 	--sidebar-width-min: 272px;
 
-	--color-sidebar-background: #23282d;
-	--color-sidebar-background-rgb: 35, 40, 45;
-	--color-sidebar-menu-hover-background: #1a1e23;
-	--color-sidebar-menu-hover-background-rgb: rgb(var(--color-sidebar-menu-hover-background));
-	--color-sidebar-menu-hover-text: #00b9eb;
-	--color-sidebar-menu-selected-background: #0073aa;
-	--color-sidebar-menu-selected-text: var(--color-text-inverted);
-	--color-sidebar-border: #333;
-	--color-sidebar-text: #eee;
-	--color-sidebar-text-rgb: 238, 238, 238;
-	--color-sidebar-text-alternative: #a2aab2;
-	--color-sidebar-gridicon-fill: #a2aab2;
-	--color-sidebar-gridicon-hover-fill: #00b9eb;
-	--color-sidebar-gridicon-selected-fill: #00b9eb;
-	--color-sidebar-notice-background: #3c434a;
-
-	--color-sidebar-submenu-background: #32373c;
-	--color-sidebar-submenu-text: #b4b9be;
-	--color-sidebar-submenu-hover-background: transparent;
-	--color-sidebar-submenu-hover-text: #00b9eb;
-	--color-sidebar-submenu-selected-background: transparent;
-	--color-sidebar-submenu-selected-text: var(--color-text-inverted);
-
 	.is-global-sidebar-visible {
 		--sidebar-width-max: 295px;
 		--sidebar-width-min: 295px;
@@ -949,7 +926,7 @@ $font-size: rem(14px);
 		.sidebar__menu .components-button.has-icon {
 			padding: 0 0 0 6px;
 		}
-		
+
 		.sidebar__menu .count {
 			background: transparent;
 			color: var(--color-sidebar-menu-text);
