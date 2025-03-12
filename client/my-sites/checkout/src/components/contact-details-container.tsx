@@ -150,7 +150,7 @@ export default function ContactDetailsContainer( {
 						section="contact"
 						taxInfo={ contactInfo }
 						onChange={ onChangeContactInfo }
-						showIsForBusinessUseCheckbox
+						allowIsForBusinessUseCheckbox
 						handleIsForBusinessChange={ handleIsForBusinessChange }
 						isForBusinessValue={ vatDetails?.isForBusiness ?? false }
 						countriesList={ countriesList }

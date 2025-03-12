@@ -63,7 +63,7 @@ export default function ContactFields( {
 					section="update-to-new-card"
 					taxInfo={ fields }
 					onChange={ onChangeContactInfo }
-					showIsForBusinessUseCheckbox
+					allowIsForBusinessUseCheckbox
 					handleIsForBusinessChange={ handleIsForBusinessChange }
 					isForBusinessValue={ isForBusiness }
 					countriesList={ countriesList }

@@ -56,12 +56,12 @@ type TaxFieldsPropsBase = {
 type TaxFieldsProps = TaxFieldsPropsBase &
 	(
 		| {
-				showIsForBusinessUseCheckbox: true;
+				allowIsForBusinessUseCheckbox: true;
 				isForBusinessValue: boolean | undefined;
 				handleIsForBusinessChange: ( newValue: boolean ) => void;
 		  }
 		| {
-				showIsForBusinessUseCheckbox?: false;
+				allowIsForBusinessUseCheckbox?: false;
 				isForBusinessValue?: boolean | undefined;
 				handleIsForBusinessChange?: ( newValue: boolean ) => void;
 		  }
@@ -74,7 +74,7 @@ export default function TaxFields( {
 	onChange,
 	handleIsForBusinessChange,
 	isForBusinessValue,
-	showIsForBusinessUseCheckbox = false,
+	allowIsForBusinessUseCheckbox = false,
 	allowVat,
 	isDisabled,
 }: TaxFieldsProps ) {
@@ -276,7 +276,7 @@ export default function TaxFields( {
 			{ isVatSupported && (
 				<VatForm section={ section } isDisabled={ isDisabled } countryCode={ countryCode?.value } />
 			) }
-			{ showIsForBusinessUseCheckbox && handleIsForBusinessChange && (
+			{ allowIsForBusinessUseCheckbox && handleIsForBusinessChange && (
 				<IsForBusinessCheckbox
 					taxInfo={ taxInfo }
 					isForBusiness={ isForBusinessValue ?? false }
