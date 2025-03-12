@@ -5701,14 +5701,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@php-wasm/fs-journal@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-fs-journal-1.0.28.tar.gz":
-  version: 1.0.28
-  resolution: "@php-wasm/fs-journal@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-fs-journal-1.0.28.tar.gz"
+"@php-wasm/fs-journal@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-fs-journal-1.0.29.tar.gz":
+  version: 1.0.29
+  resolution: "@php-wasm/fs-journal@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-fs-journal-1.0.29.tar.gz"
   dependencies:
-    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-logger-1.0.28.tar.gz"
-    "@php-wasm/node": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-node-1.0.28.tar.gz"
-    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-universal-1.0.28.tar.gz"
-    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-util-1.0.28.tar.gz"
+    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-logger-1.0.29.tar.gz"
+    "@php-wasm/node": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-node-1.0.29.tar.gz"
+    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-universal-1.0.29.tar.gz"
+    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-util-1.0.29.tar.gz"
     comlink: "npm:^4.4.1"
     events: "npm:3.3.0"
     express: "npm:4.19.2"
@@ -5716,36 +5716,36 @@ __metadata:
     wasm-feature-detect: "npm:1.8.0"
     ws: "npm:8.18.0"
     yargs: "npm:17.7.2"
-  checksum: 196a40ba63fe87d4cbdb7627a1f356a1e0234fe5896c2514d820b205dc0a4a8c37ce11c284294c2e933e3a96c99fa04851bd10a57555dc0c26619498542f943a
+  checksum: f14f4925ee1d115e00873583c07e18a84d0d83e3f71f2a8ecc5c66df329dd1134f5e0e36ea54a101b0e8910803f57fdbc0e39b09e4b06a9363c14cef58865ccb
   languageName: node
   linkType: hard
 
-"@php-wasm/logger@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-logger-1.0.28.tar.gz":
-  version: 1.0.28
-  resolution: "@php-wasm/logger@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-logger-1.0.28.tar.gz"
+"@php-wasm/logger@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-logger-1.0.29.tar.gz":
+  version: 1.0.29
+  resolution: "@php-wasm/logger@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-logger-1.0.29.tar.gz"
   dependencies:
-    "@php-wasm/node-polyfills": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-node-polyfills-1.0.28.tar.gz"
-  checksum: 2d2cb9a2d63fee0c9985d35468a76ec069be734a35ff4d4301448917574ec22d0f12b9656a9ee984c3f591f74fe3b2c4572024a889705afb1965fb9916a1c504
+    "@php-wasm/node-polyfills": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-node-polyfills-1.0.29.tar.gz"
+  checksum: 4f51cfd9c3c75eb6fbf334a87a81228d2d64df760b6e9cd7302f1214b18f803cd8cb020b0a91b5e1e39f164468370658470cad04c09dcee15040b3f17fe70e78
   languageName: node
   linkType: hard
 
-"@php-wasm/node-polyfills@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-node-polyfills-1.0.28.tar.gz":
-  version: 1.0.28
-  resolution: "@php-wasm/node-polyfills@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-node-polyfills-1.0.28.tar.gz"
-  checksum: 452264c509ee4c1876a33ed392979022c0bb934d3a940a978ba3d1a8a0dc1575d88f7f9bbdec563324aaa87db517d5b811242e62a855765ffec24da8068f0393
+"@php-wasm/node-polyfills@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-node-polyfills-1.0.29.tar.gz":
+  version: 1.0.29
+  resolution: "@php-wasm/node-polyfills@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-node-polyfills-1.0.29.tar.gz"
+  checksum: 3b3e8e24c2c1658432e35fa9fd356e04ccecfef8dd3c6335107f2ab66921f075bbfc8a4f15c5749e1090f5f2ae47738bbd296b3d422beb3501a87895da4ccb73
   languageName: node
   linkType: hard
 
-"@php-wasm/node@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-node-1.0.28.tar.gz":
-  version: 1.0.28
-  resolution: "@php-wasm/node@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-node-1.0.28.tar.gz"
+"@php-wasm/node@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-node-1.0.29.tar.gz":
+  version: 1.0.29
+  resolution: "@php-wasm/node@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-node-1.0.29.tar.gz"
   dependencies:
-    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-logger-1.0.28.tar.gz"
-    "@php-wasm/node-polyfills": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-node-polyfills-1.0.28.tar.gz"
-    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-universal-1.0.28.tar.gz"
-    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-util-1.0.28.tar.gz"
-    "@wp-playground/common": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@wp-playground-common-1.0.28.tar.gz"
-    "@wp-playground/wordpress": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@wp-playground-wordpress-1.0.28.tar.gz"
+    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-logger-1.0.29.tar.gz"
+    "@php-wasm/node-polyfills": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-node-polyfills-1.0.29.tar.gz"
+    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-universal-1.0.29.tar.gz"
+    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-util-1.0.29.tar.gz"
+    "@wp-playground/common": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-common-1.0.29.tar.gz"
+    "@wp-playground/wordpress": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-wordpress-1.0.29.tar.gz"
     comlink: "npm:^4.4.1"
     events: "npm:3.3.0"
     express: "npm:4.19.2"
@@ -5753,77 +5753,77 @@ __metadata:
     wasm-feature-detect: "npm:1.8.0"
     ws: "npm:8.18.0"
     yargs: "npm:17.7.2"
-  checksum: 28f742efc8eacf6ebf6a64116c3882cc757bf9d6522341326a35b57d4ccd348bdd53e168b3a1d966ab920f06d327bd0dd12a1e456b80005d9511decb7c4d1afd
+  checksum: 4e8404a942261128e987c73d7d1cefc8541a6ac448be447ccd030dbba7c695ce91e7e6127fead4b2306c314c13373bad56e6b49160c3274eb2af52a3275184c2
   languageName: node
   linkType: hard
 
-"@php-wasm/progress@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-progress-1.0.28.tar.gz":
-  version: 1.0.28
-  resolution: "@php-wasm/progress@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-progress-1.0.28.tar.gz"
+"@php-wasm/progress@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-progress-1.0.29.tar.gz":
+  version: 1.0.29
+  resolution: "@php-wasm/progress@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-progress-1.0.29.tar.gz"
   dependencies:
-    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-logger-1.0.28.tar.gz"
-    "@php-wasm/node-polyfills": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-node-polyfills-1.0.28.tar.gz"
-  checksum: 0e65752be5bdca5a4e3c8191b9ef63fe6e2a49cc47e404670ada746c84a18a7beabf89050ec382290ba304683d882c20403654f6e1cac0a58fe921a1f4034c17
+    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-logger-1.0.29.tar.gz"
+    "@php-wasm/node-polyfills": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-node-polyfills-1.0.29.tar.gz"
+  checksum: b872c7b97d715220b29c8480ff7acf4bec3583ce12f33b564cc3b9415a1365667632183dd1494e42fb9a54b54a2a0ad4845c60703cf95117e7ae93b52925b49d
   languageName: node
   linkType: hard
 
-"@php-wasm/scopes@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-scopes-1.0.28.tar.gz":
-  version: 1.0.28
-  resolution: "@php-wasm/scopes@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-scopes-1.0.28.tar.gz"
-  checksum: e1a548b48207bbd9b808947141c870f163b64f5222c84b8653c9f78d88942c35c3798ee85adcbfc3130c2a22c87fe7478d3fdc3559dfa0c1ad5d6089e1acf854
+"@php-wasm/scopes@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-scopes-1.0.29.tar.gz":
+  version: 1.0.29
+  resolution: "@php-wasm/scopes@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-scopes-1.0.29.tar.gz"
+  checksum: ce565f73c597feba8d2d66a2c891e42c40271251e8c27d990ccb7bdf92d5bda79a3f51a6a6107334d4377bf1d8c0999d107ab74be7fa334c23208b55a2f7af61
   languageName: node
   linkType: hard
 
-"@php-wasm/stream-compression@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-stream-compression-1.0.28.tar.gz":
-  version: 1.0.28
-  resolution: "@php-wasm/stream-compression@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-stream-compression-1.0.28.tar.gz"
+"@php-wasm/stream-compression@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-stream-compression-1.0.29.tar.gz":
+  version: 1.0.29
+  resolution: "@php-wasm/stream-compression@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-stream-compression-1.0.29.tar.gz"
   dependencies:
-    "@php-wasm/node-polyfills": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-node-polyfills-1.0.28.tar.gz"
-    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-util-1.0.28.tar.gz"
-  checksum: 77f56a4997c147c60ac471f719586f27aff304b8d1b252328261bd1352e24777c00d464da3a1aac8354be0afd9a0f98d18b757d013e8e376c31f4f647999172c
+    "@php-wasm/node-polyfills": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-node-polyfills-1.0.29.tar.gz"
+    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-util-1.0.29.tar.gz"
+  checksum: 8b8a7f40d45cbe88cd59a90c7eb3b0a7d8ddb6c0491d5966cf494e7cbfebfa52172fd384f552753f1bc68ba5617b0596423a6baf40a99321edf69cafd3116152
   languageName: node
   linkType: hard
 
-"@php-wasm/universal@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-universal-1.0.28.tar.gz":
-  version: 1.0.28
-  resolution: "@php-wasm/universal@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-universal-1.0.28.tar.gz"
+"@php-wasm/universal@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-universal-1.0.29.tar.gz":
+  version: 1.0.29
+  resolution: "@php-wasm/universal@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-universal-1.0.29.tar.gz"
   dependencies:
-    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-logger-1.0.28.tar.gz"
-    "@php-wasm/node-polyfills": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-node-polyfills-1.0.28.tar.gz"
-    "@php-wasm/progress": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-progress-1.0.28.tar.gz"
-    "@php-wasm/stream-compression": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-stream-compression-1.0.28.tar.gz"
-    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-util-1.0.28.tar.gz"
+    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-logger-1.0.29.tar.gz"
+    "@php-wasm/node-polyfills": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-node-polyfills-1.0.29.tar.gz"
+    "@php-wasm/progress": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-progress-1.0.29.tar.gz"
+    "@php-wasm/stream-compression": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-stream-compression-1.0.29.tar.gz"
+    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-util-1.0.29.tar.gz"
     comlink: "npm:^4.4.1"
     ini: "npm:4.1.2"
-  checksum: 6f2dd6b7030518057880ac6d0b3ee767d93af8e048028859f578374a6fe9f03c499f73780c309f5bb76d0baa7c838c83c66167046b8eeebd6eb6a74bc7867c80
+  checksum: 44fa5578c839f9a3f086476e1255cd0fa62f0c8f214a851b59735bf6b266aed2d5d73fb6ebb1785508f98fe86f6d353109fd62a9b478c4163e650c6e1cb84f0a
   languageName: node
   linkType: hard
 
-"@php-wasm/util@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-util-1.0.28.tar.gz":
-  version: 1.0.28
-  resolution: "@php-wasm/util@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-util-1.0.28.tar.gz"
-  checksum: 1bdc63a0d672a66bb4b00489d4e392adae0bdd67288a52307abee572b42f6fd6ec19ee8d6c0e9195dafc02d2b5d9604826a7e270ffe228bf449933d5617c8e5f
+"@php-wasm/util@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-util-1.0.29.tar.gz":
+  version: 1.0.29
+  resolution: "@php-wasm/util@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-util-1.0.29.tar.gz"
+  checksum: 85dbbaba37a9e2d5ac71664ecf57b734443a2a61edbe8c37be8df7d6548602477611bb25e4bb672c15ee2e74594d39885ad15358d66817ae7e9c5305de60667e
   languageName: node
   linkType: hard
 
-"@php-wasm/web-service-worker@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-web-service-worker-1.0.28.tar.gz":
-  version: 1.0.28
-  resolution: "@php-wasm/web-service-worker@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-web-service-worker-1.0.28.tar.gz"
+"@php-wasm/web-service-worker@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-web-service-worker-1.0.29.tar.gz":
+  version: 1.0.29
+  resolution: "@php-wasm/web-service-worker@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-web-service-worker-1.0.29.tar.gz"
   dependencies:
-    "@php-wasm/scopes": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-scopes-1.0.28.tar.gz"
-  checksum: b6f4815feed6fb262e4509bb973e3f225e208f3160520f0ce29edd18b5836843d49818b2368b858f8c1cb735b554f55908a56ac5b92b0d18003f23a85908cc44
+    "@php-wasm/scopes": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-scopes-1.0.29.tar.gz"
+  checksum: 00cbfbba43ac432a5050a6f10303f4985e28946fa54ac4f065f96248e4d1c94c0b3c65fbc897cb11f9a04aa3e61f283bd998003ee925e065c9f347529836f6d1
   languageName: node
   linkType: hard
 
-"@php-wasm/web@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-web-1.0.28.tar.gz":
-  version: 1.0.28
-  resolution: "@php-wasm/web@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-web-1.0.28.tar.gz"
+"@php-wasm/web@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-web-1.0.29.tar.gz":
+  version: 1.0.29
+  resolution: "@php-wasm/web@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-web-1.0.29.tar.gz"
   dependencies:
-    "@php-wasm/fs-journal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-fs-journal-1.0.28.tar.gz"
-    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-logger-1.0.28.tar.gz"
-    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-universal-1.0.28.tar.gz"
-    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-util-1.0.28.tar.gz"
-    "@php-wasm/web-service-worker": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-web-service-worker-1.0.28.tar.gz"
+    "@php-wasm/fs-journal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-fs-journal-1.0.29.tar.gz"
+    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-logger-1.0.29.tar.gz"
+    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-universal-1.0.29.tar.gz"
+    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-util-1.0.29.tar.gz"
+    "@php-wasm/web-service-worker": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-web-service-worker-1.0.29.tar.gz"
     comlink: "npm:^4.4.1"
     events: "npm:3.3.0"
     express: "npm:4.19.2"
@@ -5831,7 +5831,7 @@ __metadata:
     wasm-feature-detect: "npm:1.8.0"
     ws: "npm:8.18.0"
     yargs: "npm:17.7.2"
-  checksum: 9b05b6428df1de2eab9a6723ee9f21b176e39f42599c8382379e46f6fe7f4047b0b72d0c0d8d203219409632950dabdb01d668e25b5e4f4efa8eb3c668902c3d
+  checksum: afb59b61e9476809869c5aa1ee7921d02494bac6ee8f31fbe658a2e9c9878510663c1837cf3379c46e10e6d298501b4937dd0e940f55add66dc2962b7c5b4e33
   languageName: node
   linkType: hard
 
@@ -12017,20 +12017,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wp-playground/blueprints@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@wp-playground-blueprints-1.0.28.tar.gz":
-  version: 1.0.28
-  resolution: "@wp-playground/blueprints@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@wp-playground-blueprints-1.0.28.tar.gz"
+"@wp-playground/blueprints@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-blueprints-1.0.29.tar.gz":
+  version: 1.0.29
+  resolution: "@wp-playground/blueprints@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-blueprints-1.0.29.tar.gz"
   dependencies:
-    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-logger-1.0.28.tar.gz"
-    "@php-wasm/node": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-node-1.0.28.tar.gz"
-    "@php-wasm/node-polyfills": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-node-polyfills-1.0.28.tar.gz"
-    "@php-wasm/progress": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-progress-1.0.28.tar.gz"
-    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-universal-1.0.28.tar.gz"
-    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-util-1.0.28.tar.gz"
-    "@php-wasm/web": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-web-1.0.28.tar.gz"
-    "@wp-playground/common": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@wp-playground-common-1.0.28.tar.gz"
-    "@wp-playground/storage": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@wp-playground-storage-1.0.28.tar.gz"
-    "@wp-playground/wordpress": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@wp-playground-wordpress-1.0.28.tar.gz"
+    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-logger-1.0.29.tar.gz"
+    "@php-wasm/node": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-node-1.0.29.tar.gz"
+    "@php-wasm/node-polyfills": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-node-polyfills-1.0.29.tar.gz"
+    "@php-wasm/progress": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-progress-1.0.29.tar.gz"
+    "@php-wasm/stream-compression": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-stream-compression-1.0.29.tar.gz"
+    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-universal-1.0.29.tar.gz"
+    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-util-1.0.29.tar.gz"
+    "@php-wasm/web": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-web-1.0.29.tar.gz"
+    "@wp-playground/common": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-common-1.0.29.tar.gz"
+    "@wp-playground/storage": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-storage-1.0.29.tar.gz"
+    "@wp-playground/wordpress": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-wordpress-1.0.29.tar.gz"
+    "@zip.js/zip.js": "npm:2.7.57"
     ajv: "npm:8.12.0"
     async-lock: "npm:1.4.1"
     buffer: "npm:6.0.3"
@@ -12048,21 +12050,22 @@ __metadata:
     sha.js: "npm:2.4.11"
     simple-get: "npm:4.0.1"
     wasm-feature-detect: "npm:1.8.0"
-  checksum: 882330e70185bb63cc10d36df3744b820b652b336ea1d0250b1e0c710938c230f16995e8808e7578b6761161cf856dc9ae6266b752220fa19b34f3df9826d3d5
+  checksum: a7307ccbfbd43038ec17f09741e77f764d51d748b44f462ec0b7f6c6774c190da364065b7a960b1680c09723c4765d80d0649c8870d72cb2f86fae469f42c0d0
   languageName: node
   linkType: hard
 
-"@wp-playground/client@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@wp-playground-client-1.0.28.tar.gz":
-  version: 1.0.28
-  resolution: "@wp-playground/client@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@wp-playground-client-1.0.28.tar.gz"
+"@wp-playground/client@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-client-1.0.29.tar.gz":
+  version: 1.0.29
+  resolution: "@wp-playground/client@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-client-1.0.29.tar.gz"
   dependencies:
-    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-logger-1.0.28.tar.gz"
-    "@php-wasm/progress": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-progress-1.0.28.tar.gz"
-    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-universal-1.0.28.tar.gz"
-    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-util-1.0.28.tar.gz"
-    "@php-wasm/web": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-web-1.0.28.tar.gz"
-    "@wp-playground/blueprints": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@wp-playground-blueprints-1.0.28.tar.gz"
-    "@wp-playground/remote": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@wp-playground-remote-1.0.28.tar.gz"
+    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-logger-1.0.29.tar.gz"
+    "@php-wasm/progress": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-progress-1.0.29.tar.gz"
+    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-universal-1.0.29.tar.gz"
+    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-util-1.0.29.tar.gz"
+    "@php-wasm/web": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-web-1.0.29.tar.gz"
+    "@wp-playground/blueprints": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-blueprints-1.0.29.tar.gz"
+    "@wp-playground/remote": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-remote-1.0.29.tar.gz"
+    "@zip.js/zip.js": "npm:2.7.57"
     ajv: "npm:8.12.0"
     async-lock: "npm:1.4.1"
     buffer: "npm:6.0.3"
@@ -12080,36 +12083,38 @@ __metadata:
     sha.js: "npm:2.4.11"
     simple-get: "npm:4.0.1"
     wasm-feature-detect: "npm:1.8.0"
-  checksum: f9c131f106efba8f1a07d557da8a3e23d277f8c41c0017c975d299819959936f2556cda53a310f1b5b75780eb0978a5b804eafe44f9b5c88d1140d84e6b82158
+  checksum: 979bfcaf7ce24c1de336aa0f7eda0714eec8e87a1062d25155efc154ae4214ba5d320be547bcebe3c537000fb8ec1ddec2142a02bd8eae042c4303cdad8dd2dc
   languageName: node
   linkType: hard
 
-"@wp-playground/common@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@wp-playground-common-1.0.28.tar.gz":
-  version: 1.0.28
-  resolution: "@wp-playground/common@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@wp-playground-common-1.0.28.tar.gz"
+"@wp-playground/common@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-common-1.0.29.tar.gz":
+  version: 1.0.29
+  resolution: "@wp-playground/common@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-common-1.0.29.tar.gz"
   dependencies:
-    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-universal-1.0.28.tar.gz"
-    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-util-1.0.28.tar.gz"
+    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-universal-1.0.29.tar.gz"
+    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-util-1.0.29.tar.gz"
     comlink: "npm:^4.4.1"
     ini: "npm:4.1.2"
-  checksum: 9c561fed4c843d2ea48512fbf43c76ccd3d9931fd1ce745fdb6e1ef75cc89051c2f69a40d51c331a333833d06430cb9448f9612b11dee7959dfcb48ac1ca1cba
+  checksum: 12423e3617abb4aca9f8d408ada554e7e35ae867fefc3d842c1aed96f95ac1ca3fa67fe5a2694b9d9214e46ec90d3a2363225652a76dab4555efece91b627aba
   languageName: node
   linkType: hard
 
-"@wp-playground/remote@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@wp-playground-remote-1.0.28.tar.gz":
-  version: 1.0.28
-  resolution: "@wp-playground/remote@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@wp-playground-remote-1.0.28.tar.gz"
-  checksum: 27d7e66f73228b73ac53ab61548ae85a9399779ffdabbe22eff3b3cdf402e7b1da16df40d9a90ed7da38aa04952a8def27c7e6a11e24851746cb6f3db9921196
+"@wp-playground/remote@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-remote-1.0.29.tar.gz":
+  version: 1.0.29
+  resolution: "@wp-playground/remote@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-remote-1.0.29.tar.gz"
+  checksum: 825f8a7869d363965bae798102262c80af428dc88454e93a62c2895b60939d314d32221921379ff68a624ce2c9d6842de1f7d330efb10c523da8e55c505cfbbe
   languageName: node
   linkType: hard
 
-"@wp-playground/storage@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@wp-playground-storage-1.0.28.tar.gz":
-  version: 1.0.28
-  resolution: "@wp-playground/storage@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@wp-playground-storage-1.0.28.tar.gz"
+"@wp-playground/storage@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-storage-1.0.29.tar.gz":
+  version: 1.0.29
+  resolution: "@wp-playground/storage@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-storage-1.0.29.tar.gz"
   dependencies:
-    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-universal-1.0.28.tar.gz"
-    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-util-1.0.28.tar.gz"
-    "@php-wasm/web": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-web-1.0.28.tar.gz"
+    "@php-wasm/stream-compression": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-stream-compression-1.0.29.tar.gz"
+    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-universal-1.0.29.tar.gz"
+    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-util-1.0.29.tar.gz"
+    "@php-wasm/web": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-web-1.0.29.tar.gz"
+    "@zip.js/zip.js": "npm:2.7.57"
     async-lock: "npm:^1.4.1"
     buffer: "npm:6.0.3"
     clean-git-ref: "npm:^2.0.1"
@@ -12130,19 +12135,19 @@ __metadata:
     wasm-feature-detect: "npm:1.8.0"
     ws: "npm:8.18.0"
     yargs: "npm:17.7.2"
-  checksum: ef4ab47ddc584def125027e413f4010f3d34267a78d52314c1f4f9eaa96eb99e84de0079d7f237987404fc5df46d894204c363a1fdac48dfd50a0c41c9743e88
+  checksum: 2ce1cd4d95a60c7edf77794b64c2fa3067a18a085b38ba63a2ac3062f557b56db86ef1deecb72e63b4cdcba9027ac474e087328fd65c9fb99089e2768c053392
   languageName: node
   linkType: hard
 
-"@wp-playground/wordpress@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@wp-playground-wordpress-1.0.28.tar.gz":
-  version: 1.0.28
-  resolution: "@wp-playground/wordpress@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@wp-playground-wordpress-1.0.28.tar.gz"
+"@wp-playground/wordpress@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-wordpress-1.0.29.tar.gz":
+  version: 1.0.29
+  resolution: "@wp-playground/wordpress@https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-wordpress-1.0.29.tar.gz"
   dependencies:
-    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-logger-1.0.28.tar.gz"
-    "@php-wasm/node": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-node-1.0.28.tar.gz"
-    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-universal-1.0.28.tar.gz"
-    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@php-wasm-util-1.0.28.tar.gz"
-    "@wp-playground/common": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@wp-playground-common-1.0.28.tar.gz"
+    "@php-wasm/logger": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-logger-1.0.29.tar.gz"
+    "@php-wasm/node": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-node-1.0.29.tar.gz"
+    "@php-wasm/universal": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-universal-1.0.29.tar.gz"
+    "@php-wasm/util": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@php-wasm-util-1.0.29.tar.gz"
+    "@wp-playground/common": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-common-1.0.29.tar.gz"
     comlink: "npm:^4.4.1"
     events: "npm:3.3.0"
     express: "npm:4.19.2"
@@ -12150,7 +12155,7 @@ __metadata:
     wasm-feature-detect: "npm:1.8.0"
     ws: "npm:8.18.0"
     yargs: "npm:17.7.2"
-  checksum: 24a99b0afe81426c483ad6bbf04b39869e03bab3b31d5503618366c194cadeda4fe81c77e2bcbb1edf7678ce3cc003636d351b0cb61ece104876f70e29873575
+  checksum: f3dd03e66d6070a254206bd1f96d5bc9f281e318bf7eb2654ea991399617443fa5386562f270b93c01b31c1db06cc58bb1cb027da3da35f22e7d120130e2bc6a
   languageName: node
   linkType: hard
 
@@ -12196,6 +12201,13 @@ __metadata:
     "@types/emscripten": "npm:^1.39.6"
     tslib: "npm:^1.13.0"
   checksum: 0c2361ccb002e28463ed98541f3bdaab54f52aad6a2080666c2a9ea605ebd9cdfb7b0340b1db6f105820d05bcb803cdfb3ce755a8f6034657298c291bf884f81
+  languageName: node
+  linkType: hard
+
+"@zip.js/zip.js@npm:2.7.57":
+  version: 2.7.57
+  resolution: "@zip.js/zip.js@npm:2.7.57"
+  checksum: fdb25fc5e9a78992ee61dae382a8ea54cdaeefe6d48e583df52218b0316bf8cc0cf91eb02898237cd91d27d417c90f0022b396abf129784306b5dad94da0f49a
   languageName: node
   linkType: hard
 
@@ -36947,8 +36959,8 @@ __metadata:
     "@wordpress/rich-text": "npm:^7.19.0"
     "@wordpress/stylelint-config": "npm:^23.11.0"
     "@wordpress/url": "npm:^4.19.0"
-    "@wp-playground/blueprints": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@wp-playground-blueprints-1.0.28.tar.gz"
-    "@wp-playground/client": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.28/@wp-playground-client-1.0.28.tar.gz"
+    "@wp-playground/blueprints": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-blueprints-1.0.29.tar.gz"
+    "@wp-playground/client": "https://wpcomplaygroundpackages.wpcomstaging.com/packages/v1.0.29/@wp-playground-client-1.0.29.tar.gz"
     animate.css: "npm:^4.1.1"
     babel-loader: "npm:^8.2.3"
     browserslist: "npm:^4.16.0"
