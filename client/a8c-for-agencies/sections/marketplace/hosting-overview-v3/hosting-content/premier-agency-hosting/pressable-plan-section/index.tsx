@@ -248,8 +248,12 @@ export default function PressablePlanSection( {
 						"*If you exceed your plan's storage or traffic limits, you will be charged %(storageCharge)s per GB and %(trafficCharge)s per %(visits)s visits per month.",
 						{
 							args: {
-								storageCharge: formatCurrency( 0.5, 'USD' ),
-								trafficCharge: formatCurrency( 8, 'USD' ),
+								storageCharge: formatCurrency( 0.5, 'USD', {
+									stripZeros: true,
+								} ),
+								trafficCharge: formatCurrency( 8, 'USD', {
+									stripZeros: true,
+								} ),
 								visits: numberFormatCompact( 10000 ),
 							},
 						}
