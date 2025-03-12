@@ -72,7 +72,6 @@ import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
-import { WpcomCreditCardSelectors } from '../payment-methods/credit-card/store';
 import { CheckoutMoneyBackGuarantee } from './CheckoutMoneyBackGuarantee';
 import AcceptTermsOfServiceCheckbox from './accept-terms-of-service-checkbox';
 import badge14Src from './assets/icons/badge-14.svg';
@@ -409,10 +408,6 @@ export default function CheckoutMainContent( {
 
 	const vatDetailsInForm = useSelect( ( select ) => select( CHECKOUT_STORE ).getVatDetails(), [] );
 	const { setVatDetails, vatDetails: vatDetailsFromServer } = useVatDetails();
-	const forBusinessUse = useSelect(
-		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).useForBusiness(),
-		[]
-	);
 
 	const checkoutActions = useDispatch( CHECKOUT_STORE );
 
@@ -687,8 +682,7 @@ export default function CheckoutMainContent( {
 											responseCart,
 											updateLocation,
 											contactInfo,
-											vatDetailsInForm,
-											forBusinessUse
+											vatDetailsInForm
 										);
 									} catch {
 										// If updating the cart fails, we should not continue. No need

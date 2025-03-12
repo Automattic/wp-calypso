@@ -21,8 +21,7 @@ export async function updateCartContactDetailsForCheckout(
 	responseCart: ResponseCart,
 	updateLocation: UpdateTaxLocationInCart,
 	contactInfo: ManagedContactDetails | undefined,
-	vatDetails: VatDetails,
-	forBusinessUse?: boolean | undefined
+	vatDetails: VatDetails
 ): Promise< void | ResponseCart > {
 	const areCountriesLoaded = !! countriesList.length;
 	const countryCode = vatDetails.country ?? contactInfo?.countryCode?.value ?? '';
@@ -80,7 +79,7 @@ export async function updateCartContactDetailsForCheckout(
 		organization,
 		address,
 		city: ( taxRequirements.city ? contactInfo.city?.value : undefined ) ?? '',
-		isForBusiness: forBusinessUse,
+		isForBusiness: vatDetails?.isForBusiness ?? false,
 	};
 	debug( 'updating cart with', cartLocationData );
 	return updateLocation( cartLocationData );
