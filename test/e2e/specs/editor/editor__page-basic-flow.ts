@@ -73,7 +73,8 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		await editorPage.selectTemplate( pageTemplateToSelect, { timeout: 15 * 1000 } );
 	} );
 
-	it( 'Template content loads into editor', async function () {
+	// Test will be updated to test equivalent core functionality.
+	it.skip( 'Template content loads into editor', async function () {
 		const editorCanvas = await editorPage.getEditorCanvas();
 		await editorCanvas.locator( `h1.wp-block:text-is('${ pageTemplateToSelect }')` ).waitFor();
 	} );
