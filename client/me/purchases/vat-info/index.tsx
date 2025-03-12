@@ -4,7 +4,6 @@ import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/us
 import { localizeUrl } from '@automattic/i18n-utils';
 import { clearHelpCenterZendeskConversationStarted } from '@automattic/odie-client/src/utils/storage-utils';
 import { CALYPSO_CONTACT } from '@automattic/urls';
-import { Button as WordPressButton } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
@@ -54,13 +53,17 @@ export default function VatInfoPage() {
 	/* This is the title of the support page from https://wordpress.com/support/vat-gst-other-taxes/ */
 	const taxSupportPageLinkTitle = translate( 'VAT, GST, and other taxes' );
 
-	const handleOpenCenterChat = useCallback( async () => {
-		clearHelpCenterZendeskConversationStarted();
-		setNavigateToRoute( '/odie' );
-		setShowHelpCenter( true );
-		await resetSupportInteraction();
-		reduxDispatch( recordTracksEvent( 'calypso_vat_details_support_click' ) );
-	}, [ reduxDispatch, resetSupportInteraction, setNavigateToRoute, setShowHelpCenter ] );
+	const handleOpenCenterChat = useCallback(
+		async ( e: React.MouseEvent< HTMLAnchorElement > ) => {
+			e.preventDefault();
+			clearHelpCenterZendeskConversationStarted();
+			setNavigateToRoute( '/odie' );
+			setShowHelpCenter( true );
+			await resetSupportInteraction();
+			reduxDispatch( recordTracksEvent( 'calypso_vat_details_support_click' ) );
+		},
+		[ reduxDispatch, resetSupportInteraction, setNavigateToRoute, setShowHelpCenter ]
+	);
 
 	useRecordVatEvents( { fetchError } );
 
@@ -134,10 +137,9 @@ export default function VatInfoPage() {
 									ul: <ul />,
 									li: <li />,
 									contactSupportLink: (
-										<WordPressButton
-											className="vat-info__open-help-center-support"
+										<a
+											href="/help"
 											title={ contactSupportLinkTitle }
-											variant="link"
 											onClick={ handleOpenCenterChat }
 										/>
 									),

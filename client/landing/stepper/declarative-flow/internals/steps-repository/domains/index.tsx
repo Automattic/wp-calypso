@@ -248,7 +248,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 				getAnalyticsSection(),
 				position,
 				suggestion?.is_premium,
-				flow
+				flow,
+				suggestion?.vendor
 			)
 		);
 

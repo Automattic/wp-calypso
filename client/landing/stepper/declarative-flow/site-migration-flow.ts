@@ -11,6 +11,8 @@ import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/url';
+import { useSelector } from 'calypso/state';
+import { getSiteAdminUrl, getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { HOW_TO_MIGRATE_OPTIONS } from '../constants';
 import { useIsSiteAdmin } from '../hooks/use-is-site-admin';
 import { useSiteData } from '../hooks/use-site-data';
@@ -112,6 +114,9 @@ const siteMigration: Flow = {
 		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
 
 		const { get, sessionId } = useFlowState();
+
+		const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
+		const siteWooCommerceUrl = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) );
 
 		const exitFlow = ( to: string ) => {
 			return window.location.assign( addQueryArgs( { sessionId }, to ) );
@@ -630,6 +635,18 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {
+					if ( entryPoint === 'entrepreneur-signup' ) {
+						// Note that the main entrepreneur flow takes users into the customize your store (CYS) UI,
+						// but that's a bit abrupt for users who've gone through this secondary flow.
+						if ( siteWooCommerceUrl ) {
+							return exitFlow( siteWooCommerceUrl );
+						} else if ( siteAdminUrl ) {
+							return exitFlow( siteAdminUrl );
+						}
+
+						return exitFlow( `/home/${ siteId }` );
+					}
+
 					return navigate( `${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?${ urlQueryParams }` );
 				}
 

@@ -87,12 +87,6 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 		( subscribersTotals?.total === 1 && subscribersTotals?.is_owner_subscribing );
 	const showLaunchpad = ! isLoading && hasNoSubscriberOtherThanAdmin;
 
-	const emptyComponent = isSimple ? (
-		<SubscriberLaunchpad launchpadContext="subscriber-stats" />
-	) : (
-		<EmptyListView />
-	);
-
 	// Track the last viewed tab.
 	// Necessary to properly configure the fixed navigation headers.
 	// sessionStorage.setItem( 'jp-stats-last-tab', 'subscribers' );
@@ -103,6 +97,13 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 
 	const isWPAdmin = config.isEnabled( 'is_odyssey' );
 	const subscribersPageClasses = clsx( 'stats', { 'is-odyssey-stats': isWPAdmin } );
+
+	const emptyComponent =
+		isSimple && ! isWPAdmin ? (
+			<SubscriberLaunchpad launchpadContext="subscriber-stats" />
+		) : (
+			<EmptyListView />
+		);
 
 	return (
 		<Main fullWidthLayout>

@@ -1,19 +1,22 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
-import { ENTREPRENEUR_FLOW } from '@automattic/onboarding';
+import { ENTREPRENEUR_FLOW, SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useState } from 'react';
 import { anonIdCache, useCachedAnswers } from 'calypso/data/segmentaton-survey';
+import { useEntrepreneurAdminDestination } from 'calypso/landing/stepper/hooks/use-entrepreneur-admin-destination';
+import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
+import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
+import { getLoginUrl } from 'calypso/landing/stepper/utils/path';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { useFlowLocale } from '../hooks/use-flow-locale';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
-import { getLoginUrl } from '../utils/path';
 import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import { ENTREPRENEUR_TRIAL_SURVEY_KEY } from './internals/steps-repository/segmentation-survey';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
-
 const SEGMENTATION_SURVEY_SLUG = 'start';
 
 const entrepreneurFlow: Flow = {
@@ -51,6 +54,11 @@ const entrepreneurFlow: Flow = {
 		const [ lastQuestionPath, setlastQuestionPath ] = useState( '#1' );
 		const { clearAnswers } = useCachedAnswers( ENTREPRENEUR_TRIAL_SURVEY_KEY );
 
+		const { siteId, siteSlug } = useSiteData();
+
+		const entrepreneurAdminDestination = useEntrepreneurAdminDestination();
+		const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
+
 		const getEntrepreneurLoginUrl = () => {
 			const redirectTo = `${ window.location.protocol }//${ window.location.host }/setup/entrepreneur/trialAcknowledge${ window.location.search }`;
 
@@ -71,6 +79,15 @@ const entrepreneurFlow: Flow = {
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
+			const siteSlugDependency = providedDependencies?.siteSlug as string | undefined;
+			const siteIdDependency = providedDependencies?.siteId as string | number | undefined;
+
+			const navigateWithSiteId = ( url: string, extraData?: any, replace?: boolean ) => {
+				const urlWithSiteId = addQueryArgs( url, { siteId: siteId || siteIdDependency } );
+
+				return navigate( urlWithSiteId, extraData, replace );
+			};
+
 			switch ( currentStep ) {
 				case SEGMENTATION_SURVEY_SLUG: {
 					setIsMigrationFlow( !! providedDependencies.isMigrationFlow );
@@ -105,48 +122,62 @@ const entrepreneurFlow: Flow = {
 					const processingResult = providedDependencies.processingResult as ProcessingResult;
 
 					if ( processingResult === ProcessingResult.FAILURE ) {
-						return navigate( STEPS.ERROR.slug );
+						return navigateWithSiteId( STEPS.ERROR.slug );
 					}
 
-					const { siteId, siteSlug } = providedDependencies;
-
 					if ( providedDependencies?.finishedWaitingForAtomic ) {
-						return navigate( STEPS.WAIT_FOR_PLUGIN_INSTALL.slug, { siteId, siteSlug } );
+						return navigateWithSiteId( STEPS.WAIT_FOR_PLUGIN_INSTALL.slug, {
+							siteId: siteId || siteIdDependency,
+							siteSlug: siteSlug || siteSlugDependency,
+						} );
 					}
 
 					if ( providedDependencies?.pluginsInstalled ) {
-						const stagingUrl = ( siteSlug as string ).replace(
-							'.wordpress.com',
-							'.wpcomstaging.com'
-						);
-
 						if ( isMigrationFlow ) {
-							return window.location.replace(
-								`/setup/migration-signup?siteSlug=${ stagingUrl }&ref=entrepreneur-signup`
+							// If the user is migrating a site, send them to the DIFM credentials step in the site migration flow.
+							const migrationFlowUrl = addQueryArgs(
+								`/setup/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }`,
+								{
+									siteSlug: siteSlug || siteSlugDependency,
+									siteId: siteId || siteIdDependency,
+									ref: 'entrepreneur-signup',
+								}
 							);
+
+							return window.location.assign( migrationFlowUrl );
 						}
 
-						const redirectTo = encodeURIComponent(
-							`https://${ stagingUrl }/wp-admin/admin.php?page=wc-admin&path=%2Fcustomize-store%2Fdesign-with-ai&ref=entrepreneur-signup`
-						);
+						if ( entrepreneurAdminDestination ) {
+							return window.location.assign( entrepreneurAdminDestination );
+						} else if ( siteAdminUrl ) {
+							return window.location.assign( siteAdminUrl );
+						}
 
-						// Redirect users to the login page with the 'action=jetpack-sso' parameter to initiate Jetpack SSO login and redirect them to Woo CYS's Design With AI after. This URL, however, is just symbolic because somewhere within Jetpack SSO or some plugin is stripping off the `redirect_to` param. The actual work that is doing the redirection is in wpcomsh/1801.
-						const redirectToWithSSO = `https://${ stagingUrl }/wp-login.php?action=jetpack-sso&redirect_to=${ redirectTo }`;
-
-						return window.location.assign( redirectToWithSSO );
+						// Default to /home if we don't have the site admin URL.
+						// We shouldn't get here, but better safe than sorry.
+						return window.location.assign( `/home/${ siteId }` );
 					}
 
-					return navigate( STEPS.WAIT_FOR_ATOMIC.slug, { siteId, siteSlug } );
+					return navigateWithSiteId( STEPS.WAIT_FOR_ATOMIC.slug, {
+						siteId: siteId || siteIdDependency,
+						siteSlug: siteSlug || siteSlugDependency,
+					} );
 				}
 
 				case STEPS.WAIT_FOR_ATOMIC.slug: {
-					return navigate( STEPS.PROCESSING.slug, {
+					return navigateWithSiteId( STEPS.PROCESSING.slug, {
 						currentStep,
+						siteId: siteId || siteIdDependency,
+						siteSlug: siteSlug || siteSlugDependency,
 					} );
 				}
 
 				case STEPS.WAIT_FOR_PLUGIN_INSTALL.slug: {
-					return navigate( STEPS.PROCESSING.slug );
+					return navigateWithSiteId( STEPS.PROCESSING.slug, {
+						currentStep,
+						siteId: siteId || siteIdDependency,
+						siteSlug: siteSlug || siteSlugDependency,
+					} );
 				}
 			}
 			return providedDependencies;
