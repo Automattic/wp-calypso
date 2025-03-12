@@ -3,7 +3,6 @@ import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
-import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ImporterMainPlatform } from 'calypso/lib/importer/types';
@@ -107,7 +106,6 @@ const siteSetupFlow: FlowV1 = {
 		);
 
 		const { site, siteSlug, siteId } = useSiteData();
-		const isSitePlanCompatible = site && isTargetSitePlanCompatible( site );
 		const currentThemeId = useSelector( ( state ) => getActiveTheme( state, site?.ID || -1 ) );
 		const currentTheme = useSelector( ( state ) =>
 			getCanonicalTheme( state, site?.ID || -1, currentThemeId )
@@ -558,18 +556,6 @@ const siteSetupFlow: FlowV1 = {
 
 					if ( urlQueryParams.get( 'option' ) === 'content' ) {
 						return navigate( `importList?siteSlug=${ siteSlug }` );
-					}
-
-					if ( urlQueryParams.has( 'showModal' ) ) {
-						// remove the siteSlug in case they want to change the destination site
-						urlQueryParams.delete( 'siteSlug' );
-						urlQueryParams.delete( 'showModal' );
-						return navigate( `import?siteSlug=${ siteSlug }` );
-					}
-
-					if ( ! isSitePlanCompatible ) {
-						urlQueryParams.set( 'showModal', 'true' );
-						return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
 					}
 
 					return navigate( `import?siteSlug=${ siteSlug }` );
