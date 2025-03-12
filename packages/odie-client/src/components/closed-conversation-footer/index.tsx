@@ -11,7 +11,7 @@ import './style.scss';
 
 export const ClosedConversationFooter = () => {
 	const { __ } = useI18n();
-	const { trackEvent, chat } = useOdieAssistantContext();
+	const { trackEvent } = useOdieAssistantContext();
 
 	const { startNewInteraction } = useManageSupportInteraction();
 
@@ -30,7 +30,7 @@ export const ClosedConversationFooter = () => {
 		} );
 	};
 
-	if ( chat?.status !== 'closed' && currentSupportInteraction?.status !== 'solved' ) {
+	if ( ! [ 'closed', 'solved' ].includes( currentSupportInteraction?.status ?? '' ) ) {
 		return null;
 	}
 
