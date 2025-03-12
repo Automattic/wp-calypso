@@ -36,7 +36,6 @@ export const ClosedConversationFooter = () => {
 
 	return (
 		<div className="odie-closed-conversation-footer">
-
 			<Button onClick={ handleOnClick } className="odie-closed-conversation-footer__button">
 				<Icon icon={ comment } />
 				{ __( 'New conversation', __i18n_text_domain__ ) }
