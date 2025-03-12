@@ -9,6 +9,7 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ImporterMainPlatform } from 'calypso/lib/importer/types';
 import { navigate as calypsoLibNavigate } from 'calypso/lib/navigate';
 import { addQueryArgs } from 'calypso/lib/route';
+import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getInitialQueryArguments } from 'calypso/state/selectors/get-initial-query-arguments';
@@ -264,6 +265,10 @@ const siteSetupFlow: FlowV1 = {
 
 			// Clean-up the store so that if onboard for new site will be launched it will be launched with no preselected values
 			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction', 'skipIntent', 'skipGoals' ] );
+
+			// After finishing the site setup flow, we can safely clean the signup destination cookie.
+			// This will prevent undesired redirects to the /site-setup from the Plans page after the onboarding flow is finished.
+			clearSignupDestinationCookie();
 		};
 
 		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
