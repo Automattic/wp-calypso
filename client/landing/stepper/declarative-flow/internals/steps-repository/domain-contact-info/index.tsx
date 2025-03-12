@@ -20,7 +20,7 @@ import './styles.scss';
 
 export default function DomainContactInfo( {
 	navigation,
-}: StepProps< { domain: string | null } > ) {
+}: StepProps< { submits: { domain: string | null } } > ) {
 	const { submit } = navigation;
 	const translate = useTranslate();
 
