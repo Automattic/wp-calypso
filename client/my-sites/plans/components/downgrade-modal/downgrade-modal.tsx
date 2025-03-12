@@ -1,10 +1,11 @@
 import { getPlan } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
+import { Plans } from '@automattic/data-stores';
 import { Modal, Button } from '@wordpress/components';
-import { useCallback } from '@wordpress/element';
+import { useCallback, useMemo, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import Notice from 'calypso/components/notice';
 import { cancelAndRefundPurchaseAsync } from 'calypso/lib/purchases/actions';
+import getPlanFeatures from 'calypso/my-sites/checkout/src/lib/get-plan-features';
 import { useSelector, useDispatch } from 'calypso/state';
 import { closeDowngradeModal } from 'calypso/state/downgrade-modal/actions';
 import {
@@ -13,7 +14,6 @@ import {
 } from 'calypso/state/downgrade-modal/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
-import { getSitePlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -24,16 +24,22 @@ const DowngradeModal = () => {
 	const isVisible = useSelector( isDowngradeModalOpen );
 	const toPlanSlug = useSelector( getDowngradeModalToPlanSlug );
 	const siteId = useSelector( getSelectedSiteId );
-	const currentPlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
+	const currentPlan = Plans.useCurrentPlan( { siteId } );
+	const [ isDowngrading, setIsDowngrading ] = useState( false );
 
 	const handleClose = useCallback( () => {
-		dispatch( closeDowngradeModal() );
-	}, [ dispatch ] );
-
-	const handleDowngrade = useCallback( async () => {
-		if ( ! currentPlan?.purchaseId || ! currentPlan?.productId || ! toPlanSlug ) {
+		if ( isDowngrading ) {
 			return;
 		}
+		dispatch( closeDowngradeModal() );
+	}, [ dispatch, isDowngrading ] );
+
+	const handleDowngrade = useCallback( async () => {
+		if ( ! currentPlan?.purchaseId || ! currentPlan?.productId || ! toPlanSlug || isDowngrading ) {
+			return;
+		}
+
+		setIsDowngrading( true );
 
 		try {
 			const response = await cancelAndRefundPurchaseAsync( currentPlan.purchaseId, {
@@ -57,9 +63,40 @@ const DowngradeModal = () => {
 			}
 		} finally {
 			// Close the modal after all operations are complete
+			setIsDowngrading( false );
 			handleClose();
 		}
-	}, [ currentPlan, toPlanSlug, siteId, dispatch, translate, handleClose ] );
+	}, [ currentPlan, toPlanSlug, siteId, dispatch, translate, handleClose, isDowngrading ] );
+
+	// Get features that will be lost when downgrading
+	const lostFeatures = useMemo( () => {
+		if ( ! currentPlan?.productSlug || ! toPlanSlug ) {
+			return [];
+		}
+
+		// Get features for current plan
+		const currentPlanFeatures = getPlanFeatures(
+			{ product_slug: currentPlan.productSlug } as any,
+			translate,
+			false,
+			false,
+			false,
+			true
+		);
+
+		// Get features for target plan
+		const targetPlanFeatures = getPlanFeatures(
+			{ product_slug: toPlanSlug } as any,
+			translate,
+			false,
+			false,
+			false,
+			true
+		);
+
+		// Find features that are in current plan but not in target plan
+		return currentPlanFeatures.filter( ( feature ) => ! targetPlanFeatures.includes( feature ) );
+	}, [ currentPlan?.productSlug, toPlanSlug, translate ] );
 
 	if ( ! isVisible ) {
 		return null;
@@ -68,29 +105,57 @@ const DowngradeModal = () => {
 	// Get the target plan name for the modal title
 	const targetPlan = toPlanSlug ? getPlan( toPlanSlug ) : null;
 	const targetPlanName = targetPlan?.getTitle() || toPlanSlug || '';
+	const currentPlanObj = currentPlan?.productSlug ? getPlan( currentPlan.productSlug ) : null;
+	const currentPlanName = currentPlanObj?.getTitle() || currentPlan?.productSlug || '';
 	const modalTitle = translate( 'Back to plan %s', { args: [ targetPlanName ] } ) as string;
 
 	return (
 		<Modal title={ modalTitle } onRequestClose={ handleClose } overlayClassName="downgrade-modal">
-			<Notice
-				className="downgrade-modal__notice"
-				icon={ <Gridicon icon="info" /> }
-				isCompact
-				theme="light"
-				status="is-info"
-				showDismiss={ false }
-			>
-				<span className="downgrade-modal__notice-text">
+			<div className="downgrade-modal__info">
+				<p>
 					{ translate(
-						'Are you sure you want to downgrade your plan? This action cannot be undone.'
+						'When you downgrade, you can use WordPress.com %(currentPlanName)s until the end of your subscription, after which it will automatically switch to %(targetPlanName)s.',
+						{
+							args: {
+								currentPlanName,
+								targetPlanName,
+							},
+						}
 					) }
-				</span>
-			</Notice>
+				</p>
+				<p>
+					<strong>
+						{ translate(
+							"Your current plan remains active until it expires, after which you'll lose access to the benefits below."
+						) }
+					</strong>
+				</p>
+			</div>
+
+			{ lostFeatures.length > 0 && (
+				<div className="downgrade-modal__lost-features">
+					<ul>
+						{ lostFeatures.map( ( feature, index ) => (
+							<li key={ index }>
+								<Gridicon icon="cross" size={ 18 } />
+								{ feature }
+							</li>
+						) ) }
+					</ul>
+				</div>
+			) }
+
 			<div className="downgrade-modal__actions">
-				<Button variant="secondary" onClick={ handleClose }>
+				<Button variant="secondary" onClick={ handleClose } disabled={ isDowngrading }>
 					{ translate( 'Cancel' ) }
 				</Button>
-				<Button variant="primary" onClick={ handleDowngrade } isPrimary>
+				<Button
+					variant="primary"
+					onClick={ handleDowngrade }
+					isPrimary
+					isBusy={ isDowngrading }
+					disabled={ isDowngrading }
+				>
 					{ translate( 'Downgrade' ) }
 				</Button>
 			</div>
