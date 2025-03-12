@@ -159,6 +159,9 @@ class WordAds extends Component {
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ wordads.path }/{{ interval }}${ slugPath }`;
 
+		const isWPAdmin = config.isEnabled( 'is_odyssey' );
+		const wordAdsPageClasses = clsx( 'stats', { 'is-odyssey-stats': isWPAdmin } );
+
 		const statsWrapperClass = clsx( 'wordads stats-content', {
 			'is-period-year': period === 'year',
 		} );
@@ -172,7 +175,7 @@ class WordAds extends Component {
 					title={ `WordAds > ${ titlecase( period ) }` }
 				/>
 
-				<div className="stats">
+				<div className={ wordAdsPageClasses }>
 					<NavigationHeader
 						className="stats__section-header modernized-header"
 						title={ STATS_PRODUCT_NAME }
