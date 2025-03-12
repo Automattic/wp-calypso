@@ -36,11 +36,6 @@ export const ClosedConversationFooter = () => {
 
 	return (
 		<div className="odie-closed-conversation-footer">
-			{ chat?.status === 'closed' && (
-				<span className="odie-closed-conversation-footer__content">
-					{ __( 'This conversation has been completed', __i18n_text_domain__ ) }
-				</span>
-			) }
 
 			<Button onClick={ handleOnClick } className="odie-closed-conversation-footer__button">
 				<Icon icon={ comment } />
