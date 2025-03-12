@@ -21,7 +21,6 @@ import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
-import useLongerPlanTermDefaultExperiment from 'calypso/my-sites/plans-features-main/hooks/experiments/use-longer-plan-term-default-experiment';
 import { getStepUrl } from 'calypso/signup/utils';
 import { getDomainFromUrl } from 'calypso/site-profiler/utils/get-valid-url';
 import { useDispatch as reduxUseDispatch, useSelector } from 'calypso/state';
@@ -210,7 +209,6 @@ function UnifiedPlansStep( {
 }: UnifiedPlansStepProps ) {
 	const [ isDesktop, setIsDesktop ] = useState< boolean | undefined >( isDesktopViewport() );
 	const dispatch = reduxUseDispatch();
-	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment( flowName );
 	const translate = useTranslate();
 	const initializedSitesBackUrl = useSelector( ( state ) =>
 		getCurrentUserSiteCount( state ) ? '/sites/' : null
@@ -430,14 +428,7 @@ function UnifiedPlansStep( {
 		}
 	}
 
-	const intervalTypeValue =
-		intervalType ||
-		getIntervalType(
-			path,
-			flowName === ONBOARDING_FLOW && longerPlanTermDefaultExperiment?.term
-				? longerPlanTermDefaultExperiment.term
-				: undefined
-		);
+	const intervalTypeValue = intervalType || getIntervalType( path );
 
 	let paidDomainName = domainItem?.meta;
 
