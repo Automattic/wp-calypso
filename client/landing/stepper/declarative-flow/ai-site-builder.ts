@@ -1,7 +1,7 @@
+import wpcom from 'calypso/lib/wp';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { STEPS } from './internals/steps';
 import { Flow, ProvidedDependencies } from './internals/types';
-
 export const AI_SITE_BUILDER_FLOW = 'ai-site-builder';
 
 const aiSiteBuilder: Flow = {
@@ -20,7 +20,7 @@ const aiSiteBuilder: Flow = {
 		] );
 	},
 	useStepNavigation( currentStep, navigate ) {
-		function submit( providedDependencies: ProvidedDependencies = {} ) {
+		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
 				// The create-site step will start creating a site and will add the promise of that operation to pendingAction field in the store.
 				case 'create-site': {
@@ -31,6 +31,19 @@ const aiSiteBuilder: Flow = {
 				// Which will be the created site { "siteId": "242341575", "siteSlug": "something.wordpress.com", "goToCheckout": false, "siteCreated": true }
 				case 'processing': {
 					const { siteSlug, siteId } = providedDependencies;
+
+					try {
+						await wpcom.req.post( {
+							apiNamespace: 'wpcom/v2',
+							path: `/sites/${ siteId }/send-email-continue-site-build`,
+							body: {
+								continue_url: `https://${ siteSlug }/wp-admin/site-editor.php?canvas=edit`,
+							},
+						} );
+					} catch ( error ) {
+						// eslint-disable-next-line no-console
+						console.error( 'Failed to send continue build email:', error );
+					}
 					return navigate(
 						`launch-big-sky?siteId=${ siteId }&siteSlug=${ siteSlug }`,
 						undefined,
@@ -39,6 +52,7 @@ const aiSiteBuilder: Flow = {
 				}
 				case 'launch-big-sky': {
 					const { siteSlug } = providedDependencies;
+
 					// Make sure to redirect using window.location.replace, so the user cannot go back to the processing step.
 					// This is the known Big Sky URL. The site is free at this point so we have to work on displaying Big Sky on free sites.
 					window.location.replace( `https://${ siteSlug }/wp-admin/site-editor.php?canvas=edit` );

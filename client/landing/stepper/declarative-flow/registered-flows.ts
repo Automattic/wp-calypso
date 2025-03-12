@@ -17,8 +17,8 @@ import {
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	EXAMPLE_FLOW,
 } from '@automattic/onboarding';
-import type { Flow } from '../declarative-flow/internals/types';
 import { AI_SITE_BUILDER_FLOW } from './ai-site-builder';
+import type { Flow } from '../declarative-flow/internals/types';
 
 const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	'site-setup': () =>
