@@ -5,6 +5,9 @@
 	@include jetpack-theme-for-odyssey-stats;
 }
 
-.stats-main.color-scheme {
+// Stats Dashboard
+.stats-main.color-scheme,
+// Stats popups including date range picker and tooltips etc.
+.popover.color-scheme {
 	--wp-components-color-accent: var(--color-accent);
 }
