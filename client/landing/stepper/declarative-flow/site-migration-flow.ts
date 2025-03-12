@@ -612,12 +612,12 @@ const siteMigration: Flow = {
 					}
 
 					if ( entryPoint === 'wp-admin' ) {
-						const siteId = getSiteIdBySlug( siteSlug );
-						// Prevent redirect if the site does not belong to the current user
-						if ( undefined !== siteId ) {
-							window.location.replace( `https://${ siteSlug }/wp-admin/import.php` );
+						if ( null !== siteAdminUrl ) {
+							window.location.replace( `${ siteAdminUrl }import.php` );
 							return;
 						}
+						// Unexpected behavior probably caused by the user tinkering with the URL. Redirect to /start.
+						return exitFlow( '/start' );
 					}
 
 					return navigate(
