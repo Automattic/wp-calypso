@@ -243,7 +243,7 @@ class StatsPeriodNavigation extends PureComponent {
 		const path = `/stats/${ period }/${ slug }`;
 		const url = getPathWithUpdatedQueryString( { chartStart, chartEnd }, path );
 
-		page( url );
+		page.redirect( url );
 	};
 
 	queryParamsForPreviousDate = ( previousDay ) => {
