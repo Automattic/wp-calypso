@@ -54,6 +54,7 @@ import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
+import DowngradeModal from 'calypso/my-sites/plans/components/downgrade-modal/downgrade-modal';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import { shouldForceDefaultPlansBasedOnIntent } from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
@@ -769,6 +770,7 @@ const PlansFeaturesMain = ( {
 				<QuerySitePlans siteId={ siteId } />
 				<QueryActivePromotions />
 				<QueryProductsList />
+				<DowngradeModal />
 				<PlanUpsellModal
 					isModalOpen={ isModalOpen }
 					paidDomainName={ paidDomainName }

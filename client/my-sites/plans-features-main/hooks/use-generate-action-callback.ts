@@ -6,7 +6,6 @@ import {
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
 	getPlanPath,
-	getPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { AddOns, Plans } from '@automattic/data-stores';
@@ -15,11 +14,11 @@ import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
-import { cancelAndRefundPurchase } from 'calypso/lib/purchases/actions';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import { getCancelPurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
-import { useSelector } from 'calypso/state';
+import { useSelector, useDispatch as useReduxDispatch } from 'calypso/state';
+import { openDowngradeModal } from 'calypso/state/downgrade-modal/actions';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
@@ -114,32 +113,19 @@ function useDowngradeHandler( {
 	currentPlan: Plans.SitePlan | undefined;
 } ) {
 	const { setShowHelpCenter, setNavigateToRoute, setMessage } = useDispatch( HELP_CENTER_STORE );
+	const dispatch = useReduxDispatch();
 	const translate = useTranslate();
 
 	return useCallback(
-		( planSlug: PlanSlug ) => {
+		async ( planSlug: PlanSlug ) => {
 			// A downgrade to the free plan is essentially cancelling the current plan.
 			if ( isFreePlan( planSlug ) && siteSlug && currentPlan?.purchaseId ) {
 				page( getCancelPurchaseUrlFor( siteSlug, currentPlan?.purchaseId ) );
-
 				return;
 			} else if ( siteSlug && currentPlan?.purchaseId ) {
-				return cancelAndRefundPurchase(
-					currentPlan.purchaseId,
-					{
-						product_id: currentPlan.productId,
-						type: 'downgrade',
-						to_product_id: getPlan( planSlug )?.getProductId(),
-					},
-					( error: Error | null, response: { message: string } | null ) => {
-						if ( error ) {
-							alert( error.message );
-							return;
-						}
-						alert( response?.message );
-						window.location.reload();
-					}
-				);
+				// Dispatch action to open the downgrade modal with the target plan slug
+				dispatch( openDowngradeModal( planSlug ) );
+				return;
 			}
 
 			const chatUrl = `/contact-form?${ new URLSearchParams( {
@@ -158,6 +144,7 @@ function useDowngradeHandler( {
 			setShowHelpCenter,
 			siteSlug,
 			translate,
+			dispatch,
 		]
 	);
 }
@@ -261,8 +248,7 @@ function useGenerateActionCallback( {
 					current_plan: sitePlanSlug,
 					downgrading_to: planSlug,
 				} );
-				handleDowngradeClick( planSlug );
-				return;
+				return await handleDowngradeClick( planSlug );
 			}
 
 			/* 4. Handle plan upgrade and plan upgrade tracks events */
