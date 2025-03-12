@@ -83,6 +83,10 @@
 	border-radius: 0 0 2px 2px;
 	transition: border-color 0.2s ease-in;
 	box-sizing: initial;
+
+	.search-component {
+		box-sizing: border-box;
+	}
 }
 
 .sites-dropdown .site-selector__sites {
