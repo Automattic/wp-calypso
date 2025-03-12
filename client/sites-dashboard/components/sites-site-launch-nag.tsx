@@ -17,7 +17,6 @@ const SiteLaunchDonutContainer = styled.div( {
 	alignItems: 'center',
 	justifyContent: 'center',
 	flexShrink: 0,
-	height: '25px',
 	width: '25px',
 	zIndex: 0,
 } );
