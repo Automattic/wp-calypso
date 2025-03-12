@@ -76,7 +76,7 @@ const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
 					</div>
 					{ user.bio && (
 						<div className="user-profile-header__bio">
-							<p className="user-profile-header__bio-desc">
+							<div className="user-profile-header__bio-desc">
 								<span ref={ bioRef } className="user-profile-header__bio-desc-text">
 									{ user.bio }
 								</span>
@@ -89,7 +89,7 @@ const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
 										</a>
 									</>
 								) }
-							</p>
+							</div>
 						</div>
 					) }
 				</div>
