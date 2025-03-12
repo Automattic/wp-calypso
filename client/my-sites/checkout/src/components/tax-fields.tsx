@@ -7,14 +7,12 @@ import {
 	CountryTaxRequirements,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
-import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import {
 	getStateLabelText,
 	STATE_SELECT_TEXT,
 } from 'calypso/components/domains/contact-details-form-fields/custom-form-fieldsets/utils';
 import { StateSelect } from 'calypso/my-sites/domains/components/form';
-import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import { isValid } from '../types/wpcom-store-state';
 import CountrySelectMenu from './country-select-menu';
 import { LeftColumn, RightColumn } from './ie-fallback';
@@ -50,14 +48,18 @@ export default function TaxFields( {
 	taxInfo,
 	countriesList,
 	onChange,
+	handleIsForBusinessChange,
 	allowVat,
+	isForBusiness,
 	isDisabled,
 }: {
 	section: string;
 	taxInfo: ManagedContactDetails;
 	countriesList: CountryListItem[];
 	onChange: ( taxInfo: ManagedContactDetails ) => void;
+	handleIsForBusinessChange: ( newValue: boolean ) => void;
 	allowVat?: boolean;
+	isForBusiness?: boolean;
 	isDisabled?: boolean;
 } ) {
 	const translate = useTranslate();
@@ -71,16 +73,6 @@ export default function TaxFields( {
 			? getCountryTaxRequirements( countriesList, countryCode?.value )
 			: {};
 	const isVatSupported = config.isEnabled( 'checkout/vat-form' ) && allowVat;
-	const vatDetails = useSelect( ( select ) => select( CHECKOUT_STORE ).getVatDetails(), [] );
-	const wpcomStoreActions = useDispatch( CHECKOUT_STORE );
-	const setVatDetailsInForm = wpcomStoreActions?.setVatDetails;
-	const handleIsForBusinessChange = ( newValue: boolean ): void => {
-		setVatDetailsInForm( {
-			...vatDetails,
-			isForBusiness: newValue, // ✅ Correctly update only this field
-		} );
-	};
-
 	const fields: ReactElement[] = [
 		<CountrySelectMenu
 			onChange={ ( event: ChangeEvent< HTMLSelectElement > ) => {
@@ -270,7 +262,7 @@ export default function TaxFields( {
 			) }
 			<IsForBusinessCheckbox
 				taxInfo={ taxInfo }
-				isForBusiness={ vatDetails?.isForBusiness ?? false }
+				isForBusiness={ isForBusiness ?? false }
 				handleOnChange={ handleIsForBusinessChange }
 			/>
 		</>

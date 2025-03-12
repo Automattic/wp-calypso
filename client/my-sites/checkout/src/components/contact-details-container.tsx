@@ -62,12 +62,23 @@ export default function ContactDetailsContainer( {
 		.filter( ( product ) => isDomainProduct( product ) || isDomainTransfer( product ) )
 		.filter( ( product ) => ! isDomainMapping( product ) )
 		.map( getDomain );
+
+	const vatDetails = useSelect( ( select ) => select( CHECKOUT_STORE ).getVatDetails(), [] );
 	const checkoutActions = useDispatch( CHECKOUT_STORE );
 	const { email } = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
 
 	if ( ! checkoutActions ) {
 		return null;
 	}
+
+	const setVatDetails = checkoutActions?.setVatDetails;
+
+	const handleIsForBusinessChange = ( newValue: boolean ): void => {
+		setVatDetails( {
+			...vatDetails,
+			isForBusiness: newValue,
+		} );
+	};
 
 	const { updateDomainContactFields, updateTaxFields, updateEmail } = checkoutActions;
 	const contactDetails = prepareDomainContactDetails( contactInfo );
@@ -139,9 +150,11 @@ export default function ContactDetailsContainer( {
 						section="contact"
 						taxInfo={ contactInfo }
 						onChange={ onChangeContactInfo }
+						handleIsForBusinessChange={ handleIsForBusinessChange }
 						countriesList={ countriesList }
 						isDisabled={ isDisabled }
 						allowVat
+						isForBusiness={ vatDetails?.isForBusiness ?? false }
 					/>
 					{ /* For Jetpack and Akismet - we want to inform users that by continuing checkout process they create WordPress.com account */ }
 					{ ( isJetpackCheckout() || isAkismetCheckout() ) && isLoggedOutCart && (
