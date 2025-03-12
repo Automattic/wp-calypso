@@ -150,3 +150,4 @@ export * from './translations';
 export { findProductKeys } from './find-product-keys';
 export { isRenewable } from './is-renewable';
 export { isSenseiProduct } from './is-sensei-product';
+export { isGlobalStylesOnPersonalEnabled } from './is-global-styles-on-personal-enabled';
