@@ -55,6 +55,18 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 	it( 'Start a new page', async function () {
 		await pagesPage.addNewPage();
+		editorPage = new EditorPage( page );
+		// Insert a random block to make the page dirty so it can be published and follow up tests can be run.
+		// Temporary solution we update tests to equivalent core functionality.
+		await editorPage.waitUntilLoaded();
+		const editorCanvas = await editorPage.getEditorParent();
+		if ( await editorCanvas.getByRole( 'button', { name: 'Close Block Inserter' } ).isVisible() ) {
+			await editorCanvas.getByRole( 'button', { name: 'Close Block Inserter' } ).click();
+		}
+		await editorCanvas.getByRole( 'button', { name: 'Block Inserter' } ).first().click();
+		await page.keyboard.press( 'Tab' );
+		await page.keyboard.press( 'Tab' );
+		await page.keyboard.press( 'Enter' );
 	} );
 
 	// Test will be updated to test equivalent core functionality.
@@ -80,7 +92,6 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	it( 'Open setting sidebar', async function () {
-		editorPage = new EditorPage( page );
 		await editorPage.openSettings();
 	} );
 
