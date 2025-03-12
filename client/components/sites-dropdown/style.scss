@@ -65,15 +65,10 @@
 	}
 }
 
-.accessible-focus .sites-dropdown__selected {
-	svg.gridicons-chevron-down {
-		box-sizing: border-box;
-	}
-
-	&:focus svg.gridicons-chevron-down {
-		border: 2px solid var(--color-primary);
-		border-radius: 2px;
-	}
+.accessible-focus .sites-dropdown__selected:focus svg.gridicons-chevron-down {
+	box-sizing: border-box;
+	border: 2px solid var(--color-primary);
+	border-radius: 2px;
 }
 
 .sites-dropdown .site-selector {
