@@ -35,13 +35,13 @@ interface ProcessingStepProps
 		submits:
 			| {
 					destination: string;
-					processingResult: ProcessingResult;
+					processingResult?: ProcessingResult;
 			  }
 			| {
-					processingResult: ProcessingResult.FAILURE | ProcessingResult.NO_ACTION;
+					processingResult?: ProcessingResult.FAILURE | ProcessingResult.NO_ACTION;
 			  }
 			| {
-					processingResult: ProcessingResult.SUCCESS;
+					processingResult?: ProcessingResult.SUCCESS;
 					path?: string;
 					intent?: SiteIntent;
 					previousStep?: string;

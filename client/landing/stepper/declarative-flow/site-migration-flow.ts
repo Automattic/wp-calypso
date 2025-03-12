@@ -362,7 +362,7 @@ const siteMigration: Flow = {
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
 					if ( providedDependencies?.goToCheckout ) {
-						let redirectAfterCheckout = STEPS.SITE_MIGRATION_INSTRUCTIONS.slug;
+						let redirectAfterCheckout: string = STEPS.SITE_MIGRATION_INSTRUCTIONS.slug;
 
 						if (
 							providedDependencies?.userAcceptedDeal ||
