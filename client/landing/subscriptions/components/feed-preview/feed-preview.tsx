@@ -1,6 +1,5 @@
 import './feed-preview.styles.scss';
 import { Reader } from '@automattic/data-stores';
-import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDebounce } from 'use-debounce';
@@ -23,7 +22,6 @@ interface FeedPreviewProps {
 
 export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | null {
 	const { url, source } = props;
-	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ debouncedUrl ] = useDebounce( url, 700 );
 	const [ feed, setFeed ] = useState< Reader.FeedItem >();
@@ -44,7 +42,7 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 
 				setFeed( feed );
 			} );
-	}, [ dispatch, debouncedUrl, translate ] );
+	}, [ dispatch, debouncedUrl ] );
 
 	const FeedPreviewContent = (): JSX.Element | null => {
 		if ( ! feed ) {
@@ -63,6 +61,7 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 						streamKey={ `feed:${ feed.feed_ID }` }
 						useCompactCards
 						showFollowButton={ false }
+						trackScrollPage={ () => {} }
 						suppressSiteNameLink
 					/>
 				</div>
