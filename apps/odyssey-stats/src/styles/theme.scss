@@ -1,6 +1,10 @@
 @import "variables";
 
-:root {
+:root,
+.color-scheme.is-jetpack {
 	@include jetpack-theme-for-odyssey-stats;
-	--wp-components-color-accent: var(--color-primary);
+}
+
+.stats-main.color-scheme {
+	--wp-components-color-accent: var(--color-accent);
 }

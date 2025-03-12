@@ -9,7 +9,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import Main from 'calypso/components/main';
+import Main from 'calypso/my-sites/stats/components/stats-main';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getVisibleSites from 'calypso/state/selectors/get-visible-sites';
 import { ALL_SITES_ID } from 'calypso/state/stats/lists/actions';

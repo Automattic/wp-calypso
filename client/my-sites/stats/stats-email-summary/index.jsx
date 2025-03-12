@@ -2,8 +2,8 @@ import { localize, numberFormat } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
-import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import Main from 'calypso/my-sites/stats/components/stats-main';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	TooltipWrapper,

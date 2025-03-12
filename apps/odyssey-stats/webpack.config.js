@@ -201,6 +201,10 @@ module.exports = {
 			/^calypso\/components\/data\/query-memberships$/,
 			path.resolve( __dirname, 'src/components/odyssey-query-memberships' )
 		),
+		new webpack.NormalModuleReplacementPlugin(
+			/^..\/root-child$/,
+			path.resolve( __dirname, 'src/components/root-child' )
+		),
 		...excludedPackagePlugins,
 		shouldEmitStats &&
 			new BundleAnalyzerPlugin( {
