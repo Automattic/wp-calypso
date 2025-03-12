@@ -17,6 +17,7 @@ import {
 	AssertConditionState,
 	Flow,
 	ProvidedDependencies,
+	StepperStep,
 } from './internals/types';
 import type { SiteSelect } from '@automattic/data-stores';
 
@@ -101,7 +102,7 @@ const copySite: Flow = {
 					return navigate( 'processing' );
 				}
 
-				case 'resuming':
+				case 'resuming' as StepperStep[ 'slug' ]:
 				case 'processing': {
 					const siteSlug = providedDependencies?.siteSlug || urlQueryParams.get( 'siteSlug' );
 					const destination = addQueryArgs( `/setup/${ this.name }/automated-copy`, {
@@ -140,7 +141,7 @@ const copySite: Flow = {
 			return;
 		};
 
-		const goToStep = ( step: string ) => {
+		const goToStep = ( step: StepperStep[ 'slug' ] ) => {
 			navigate( step );
 		};
 

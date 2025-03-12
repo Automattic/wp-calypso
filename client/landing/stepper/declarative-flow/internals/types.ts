@@ -69,7 +69,7 @@ export type Navigate< FlowSteps extends readonly StepperStep[] > = (
 /**
  * This is the return type of useSteps hook
  */
-export type UseStepsHook = () => StepperStep[];
+export type UseStepsHook = () => readonly StepperStep[];
 
 export type UseStepNavigationHook< FlowSteps extends StepperStep[] > = (
 	currentStepSlug: FlowSteps[ number ][ 'slug' ],

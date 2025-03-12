@@ -105,7 +105,7 @@ const build: Flow = {
 					} );
 					return;
 				default:
-					return navigate( 'freeSetup' );
+					return navigate( 'launchpad' );
 			}
 		};
 
