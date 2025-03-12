@@ -4,7 +4,6 @@ import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { getShortDateString } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { NavigationType, useNavigationType, useSearchParams } from 'react-router-dom';
 import { ThumbsDown } from '../../assets/thumbs-down';
@@ -75,13 +74,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		};
 	}, [] );
 
-	const hasChatEnded = currentSupportInteraction?.status
-		? [ 'solved', 'closed' ].includes( currentSupportInteraction?.status )
-		: false;
-
-	const className = clsx( 'chatbox-messages', {
-		[ `chat-${ currentSupportInteraction?.status }` ]: currentSupportInteraction?.status,
-	} );
+	const chatHasEnded = [ 'solved', 'closed' ].includes( currentSupportInteraction?.status || '' );
 
 	useZendeskMessageListener();
 	useAutoScroll( messagesContainerRef, shouldEnableAutoScroll );
@@ -170,7 +163,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 
 	return (
 		<>
-			<div className={ className } ref={ messagesContainerRef }>
+			<div className="chatbox-messages" ref={ messagesContainerRef }>
 				<ChatDate chat={ chat } />
 				{ ! chatMessagesLoaded ? (
 					<LoadingChatSpinner />
@@ -190,9 +183,9 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 							const displayChatWithSupportLabel =
 								! nextMessage?.context?.flags?.show_contact_support_msg &&
 								message.context?.flags?.show_contact_support_msg &&
-								! hasChatEnded;
+								! chatHasEnded;
 
-							const displayChatWithSupportEndedLabel = ! nextMessage && hasChatEnded;
+							const displayChatWithSupportEndedLabel = ! nextMessage && chatHasEnded;
 
 							return (
 								<ChatMessage
