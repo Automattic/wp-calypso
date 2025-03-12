@@ -58,11 +58,10 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 	// we need to keep the query param up-to-date with that
 	// Search term is used to set a search term before opening help center
 	useEffect( () => {
-		const hasSearchQuery = query || searchTerm;
-		if ( hasSearchQuery ) {
+		if ( query ) {
 			navigate( '/?query=' + searchQuery );
 		}
-	}, [ searchTerm, searchQuery, query, navigate ] );
+	}, [ searchQuery, query, navigate ] );
 
 	const redirectToArticle = useCallback(
 		( event: React.MouseEvent< HTMLAnchorElement, MouseEvent >, result: SearchResult ) => {
