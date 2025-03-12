@@ -6,7 +6,7 @@ import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
 import { wpcomRequest } from '../wpcom-request-controls';
 import { isE2ETest } from '.';
-import type { APIFetchOptions, HelpCenterOptions } from './types';
+import type { APIFetchOptions, HelpCenterOptions, HelpCenterShowOptions } from './types';
 import type { SupportInteraction } from '@automattic/odie-client/src/types';
 
 export const receiveHasSeenWhatsNewModal = ( value: boolean | undefined ) =>
@@ -127,7 +127,7 @@ export const setHelpCenterOptions = ( options: HelpCenterOptions ) => ( {
 export const setShowHelpCenter = function* (
 	show: boolean,
 	allowPremiumSupport = false,
-	options = { hideBackButton: false, searchTerm: '' }
+	options: HelpCenterShowOptions = { hideBackButton: false, searchTerm: '' }
 ) {
 	if ( ! isE2ETest() ) {
 		try {
