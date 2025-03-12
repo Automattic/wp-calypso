@@ -385,7 +385,6 @@ const siteMigration: Flow = {
 							`/setup/${ flowPath }/${ redirectAfterCheckout }`
 						);
 
-						urlQueryParams.delete( 'showModal' );
 						goToCheckout( {
 							flowName: flowPath,
 							stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
@@ -627,10 +626,6 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
-					if ( urlQueryParams.has( 'showModal' ) ) {
-						urlQueryParams.delete( 'showModal' );
-					}
-
 					return navigate( `${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?${ urlQueryParams }` );
 				}
 
