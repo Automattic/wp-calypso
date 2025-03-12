@@ -336,6 +336,7 @@ export const ToggleGroup: StoryObj = {
 					tabIndex={ -1 }
 					// TODO: Make this unique.
 					name="foo"
+					onChange={ () => {} } // Prevent React warning.
 					onFocus={ ( e ) => {
 						e.target.previousElementSibling
 							?.querySelector< HTMLButtonElement | HTMLInputElement >( '[role="radio"]' )
