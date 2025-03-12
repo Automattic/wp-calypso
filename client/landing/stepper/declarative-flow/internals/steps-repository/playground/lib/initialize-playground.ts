@@ -3,6 +3,7 @@ import { Blueprint } from '@wp-playground/blueprints';
 import { MountDescriptor, PlaygroundClient, startPlaygroundWeb } from '@wp-playground/client';
 import { logToLogstash } from 'calypso/lib/logstash';
 
+const OPFS_PATH_PREFIX = '/wpcom-onboarding';
 const DEFAULT_BLUEPRINT: Blueprint = {
 	preferredVersions: {
 		php: '8.3',
@@ -48,7 +49,7 @@ export async function initializeWordPressPlayground(
 		const mountDescriptor: MountDescriptor = {
 			device: {
 				type: 'opfs',
-				path: `/sites/${ playgroundId }/`,
+				path: `${ OPFS_PATH_PREFIX }/${ playgroundId }/`,
 			},
 			mountpoint: '/wordpress',
 			initialSyncDirection: 'opfs-to-memfs',
