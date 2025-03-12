@@ -22,8 +22,7 @@ export async function initializeWordPressPlayground(
 	const url = new URL( window.location.href );
 	let playgroundId = url.searchParams.get( 'playground' );
 	if ( ! playgroundId ) {
-		playgroundId = Math.floor( Math.random() * 1000000 ).toString();
-		// TODO: check in OPFS dir to be sure it doesn't exist
+		playgroundId = crypto.randomUUID();
 		url.searchParams.set( 'playground', playgroundId );
 		window.history.replaceState( {}, '', url.toString() );
 	} else {
