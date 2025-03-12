@@ -5,6 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, FormEvent, useState } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import Loading from 'calypso/components/loading';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { useSiteData } from '../../../../hooks/use-site-data';
@@ -18,6 +19,8 @@ const LaunchBigSky: Step = function () {
 	const { __ } = useI18n();
 	const [ isError, setError ] = useState( false );
 	const { siteSlug, siteId, site } = useSiteData();
+	const urlQueryParams = useQuery();
+	const referrer = urlQueryParams.get( 'referrer' );
 	const { isEligible, isLoading } = useIsBigSkyEligible();
 	const { setDesignOnSite, setStaticHomepageOnSite, setGoalsOnSite, setIntentOnSite } =
 		useDispatch( SITE_STORE );
@@ -92,7 +95,9 @@ const LaunchBigSky: Step = function () {
 				await setStaticHomepageOnSite( selectedSiteId, homePagePostId );
 			}
 
-			window.location.replace( `${ siteURL }/wp-admin/site-editor.php?canvas=edit` );
+			window.location.replace(
+				`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${ referrer }`
+			);
 		} catch ( error ) {
 			// eslint-disable-next-line no-console
 			console.error( 'An error occurred:', error );

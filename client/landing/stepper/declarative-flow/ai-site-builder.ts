@@ -45,17 +45,10 @@ const aiSiteBuilder: Flow = {
 						console.error( 'Failed to send continue build email:', error );
 					}
 					return navigate(
-						`launch-big-sky?siteId=${ siteId }&siteSlug=${ siteSlug }`,
+						`launch-big-sky?siteId=${ siteId }&siteSlug=${ siteSlug }&referrer=ai-site-builder`,
 						undefined,
 						true
 					);
-				}
-				case 'launch-big-sky': {
-					const { siteSlug } = providedDependencies;
-
-					// Make sure to redirect using window.location.replace, so the user cannot go back to the processing step.
-					// This is the known Big Sky URL. The site is free at this point so we have to work on displaying Big Sky on free sites.
-					window.location.replace( `https://${ siteSlug }/wp-admin/site-editor.php?canvas=edit` );
 				}
 				default:
 					return;
