@@ -611,6 +611,15 @@ const siteMigration: Flow = {
 						return exitFlow( addQueryArgs( { ref: 'site-migration' }, `/import/${ siteSlug }` ) );
 					}
 
+					if ( entryPoint === 'wp-admin' ) {
+						const siteId = getSiteIdBySlug( siteSlug );
+						// Prevent redirect if the site does not belong to the current user
+						if ( undefined !== siteId ) {
+							window.location.replace( `https://${ siteSlug }/wp-admin/import.php` );
+							return;
+						}
+					}
+
 					return navigate(
 						addQueryArgs( { siteSlug, siteId }, STEPS.SITE_MIGRATION_IDENTIFY.slug )
 					);
