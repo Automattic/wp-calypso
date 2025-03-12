@@ -11,10 +11,6 @@ import './style.scss';
 
 interface DesignPreviewProps {
 	previewUrl: string;
-	siteInfo?: {
-		title: string;
-		tagline: string;
-	};
 	title?: string;
 	author?: string;
 	categories?: Category[];
@@ -50,7 +46,6 @@ interface DesignPreviewProps {
 // @todo Get the style variations of theme, and then combine the selected one with colors & fonts for consistency
 const Preview: React.FC< DesignPreviewProps > = ( {
 	previewUrl,
-	siteInfo,
 	title,
 	author,
 	categories = [],
@@ -142,7 +137,6 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 			/>
 			<SitePreview
 				url={ previewUrl }
-				siteInfo={ siteInfo }
 				inlineCss={ inlineCss }
 				isFullscreen={ isFullscreen }
 				animated={ ! isDesktop && screens.length > 0 }

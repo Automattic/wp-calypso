@@ -58,14 +58,8 @@ jest.mock( 'calypso/state/themes/hooks/use-is-theme-allowed-on-site', () => ( {
 	useIsThemeAllowedOnSite: () => false,
 } ) );
 
-jest.mock( 'calypso/state/themes/selectors/get-theme', () => ( {
+jest.mock( 'calypso/state/themes/selectors', () => ( {
 	getTheme: () => {
-		return;
-	},
-} ) );
-
-jest.mock( 'calypso/state/themes/selectors/get-theme-demo-url', () => ( {
-	getThemeDemoUrl: () => {
 		return;
 	},
 } ) );

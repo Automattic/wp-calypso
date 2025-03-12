@@ -6,10 +6,6 @@ import AnimatedFullscreen from './animated-fullscreen';
 
 interface SitePreviewProps {
 	url: string;
-	siteInfo?: {
-		title: string;
-		tagline: string;
-	};
 	inlineCss?: string;
 	isFullscreen?: boolean;
 	animated?: boolean;
@@ -21,7 +17,6 @@ interface SitePreviewProps {
 
 const SitePreview: React.FC< SitePreviewProps > = ( {
 	url,
-	siteInfo,
 	inlineCss = '',
 	isFullscreen,
 	animated,
@@ -68,7 +63,6 @@ const SitePreview: React.FC< SitePreviewProps > = ( {
 		>
 			<ThemePreview
 				url={ url }
-				siteInfo={ siteInfo }
 				inlineCss={ inlineCss }
 				isShowFrameBorder
 				isShowDeviceSwitcher
