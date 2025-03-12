@@ -1,6 +1,6 @@
 import './feed-preview.styles.scss';
 import { Reader } from '@automattic/data-stores';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDebounce } from 'use-debounce';
 import ReaderFeedItem from 'calypso/blocks/reader-feed-item';
@@ -44,34 +44,32 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 			} );
 	}, [ dispatch, debouncedUrl ] );
 
-	const FeedPreviewContent = (): JSX.Element | null => {
-		if ( ! feed ) {
-			return null;
-		}
+	const memoizedFeedStream = useMemo(
+		() =>
+			feed?.feed_ID ? (
+				<Stream
+					className="no-padding"
+					streamKey={ `feed:${ feed?.feed_ID }` }
+					useCompactCards
+					showFollowButton={ false }
+					trackScrollPage={ () => {} }
+					suppressSiteNameLink
+				/>
+			) : null,
+		[ feed?.feed_ID ]
+	);
 
-		return (
-			<>
-				<ul className="feed-preview__site">
-					<ReaderFeedItem feed={ feed } source={ source } />
-				</ul>
-
-				<div className="feed-preview__stream">
-					<Stream
-						className="no-padding"
-						streamKey={ `feed:${ feed.feed_ID }` }
-						useCompactCards
-						showFollowButton={ false }
-						trackScrollPage={ () => {} }
-						suppressSiteNameLink
-					/>
-				</div>
-			</>
-		);
-	};
+	if ( ! feed ) {
+		return null;
+	}
 
 	return (
 		<div className="feed-preview">
-			<FeedPreviewContent />
+			<ul className="feed-preview__site">
+				<ReaderFeedItem feed={ feed } source={ source } />
+			</ul>
+
+			<div className="feed-preview__stream">{ memoizedFeedStream }</div>
 		</div>
 	);
 }
