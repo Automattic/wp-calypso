@@ -104,7 +104,7 @@ const UnsubscribeModal = ( { subscribers, onCancel, onConfirm }: UnsubscribeModa
 			isVisible={ !! subscriber }
 			confirmButtonLabel={ confirmButtonLabel || '' }
 			text={ text }
-			title={ title || '' }
+			title={ ( title || '' ) as string }
 			onCancel={ onCancelClick }
 			onConfirm={ () => onConfirm( action, subscribers ) }
 		/>
