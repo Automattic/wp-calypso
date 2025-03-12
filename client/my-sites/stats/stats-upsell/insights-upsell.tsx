@@ -1,3 +1,4 @@
+import { isGlobalStylesOnPersonalEnabled } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import statsFeaturesPNG from 'calypso/assets/images/stats/paid-features-2.png';
 import { STATS_FEATURE_PAGE_INSIGHTS } from '../constants';
@@ -20,8 +21,10 @@ const InsightsUpsell: React.FC = () => {
 				translate( 'Free domain for one year' ),
 				translate( 'Ad-free browsing experience for your visitors' ),
 				translate( 'Dozens of premium themes' ),
-				translate( 'Fast support from our expert team' ),
-				translate( 'Customize fonts and colors sitewide' ),
+				translate( 'Get support from our expert team' ),
+				...( isGlobalStylesOnPersonalEnabled()
+					? [ translate( 'Customize fonts and colors site wide' ) ]
+					: [] ),
 			] }
 			image={ statsFeaturesPNG }
 			expandableView
