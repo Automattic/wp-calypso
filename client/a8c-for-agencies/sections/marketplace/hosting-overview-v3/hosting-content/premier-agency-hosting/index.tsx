@@ -1,6 +1,5 @@
 import { JetpackLogo } from '@automattic/components';
-import { formatCurrency } from '@automattic/format-currency';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, formatCurrency } from 'i18n-calypso';
 import { useContext } from 'react';
 import { BackgroundType10 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
 import useFetchLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-licenses';

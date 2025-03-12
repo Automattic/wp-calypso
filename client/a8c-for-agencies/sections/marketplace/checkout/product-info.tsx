@@ -1,5 +1,4 @@
-import { formatCurrency } from '@automattic/format-currency';
-import { useTranslate, numberFormatCompact } from 'i18n-calypso';
+import { useTranslate, numberFormatCompact, formatCurrency } from 'i18n-calypso';
 import wpcomIcon from 'calypso/assets/images/icons/wordpress-logo.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import { useLicenseLightboxData } from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox/hooks/use-license-lightbox-data';

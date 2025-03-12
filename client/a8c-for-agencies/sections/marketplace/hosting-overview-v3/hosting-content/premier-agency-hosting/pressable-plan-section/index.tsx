@@ -1,6 +1,5 @@
-import { formatCurrency } from '@automattic/format-currency';
 import { external } from '@wordpress/icons';
-import { useTranslate, numberFormatCompact } from 'i18n-calypso';
+import { useTranslate, numberFormatCompact, formatCurrency } from 'i18n-calypso';
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import useProductAndPlans from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-product-and-plans';

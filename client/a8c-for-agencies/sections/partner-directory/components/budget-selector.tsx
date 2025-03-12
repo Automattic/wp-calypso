@@ -1,6 +1,5 @@
-import { formatCurrency } from '@automattic/format-currency';
 import { SelectControl } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, formatCurrency } from 'i18n-calypso';
 
 type Props = {
 	setBudget: ( minBudget: string ) => void;
