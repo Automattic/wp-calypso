@@ -194,10 +194,9 @@ jobs:
               source "$BASH_ENV"
             fi
 
-            # If this is not a release build, build all artifacts only when project config changes.
-            # Otherwise only build application executable required for end-to-end testing.
+            # If this is not a release build, only build the executable required for end-to-end testing.
             if [[ "$RELEASE_BUILD" != "true" ]]; then
-              ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|yarn.lock' && echo "export ELECTRON_BUILDER_ARGS='-c.mac.target=dir'" >> "$BASH_ENV"
+              echo "export ELECTRON_BUILDER_ARGS='-c.mac.target=dir'" >> "$BASH_ENV"
               source "$BASH_ENV"
             fi
 
@@ -295,10 +294,9 @@ jobs:
               source "$BASH_ENV"
             fi
 
-            # If this is not a release build, build all artifacts only when project config changes.
-            # Otherwise only build application executable required for end-to-end testing.
+            # If this is not a release build, only build the executable required for end-to-end testing.
             if [[ "$RELEASE_BUILD" != "true" ]]; then
-              ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|yarn.lock' && echo "export ELECTRON_BUILDER_ARGS='-c.linux.target=dir'" >> "$BASH_ENV"
+              echo "export ELECTRON_BUILDER_ARGS='-c.linux.target=dir'" >> "$BASH_ENV"
               source "$BASH_ENV"
             fi
 
@@ -436,10 +434,9 @@ jobs:
           command: |
             If ( $env:CIRCLE_TAG -or $env:PR_DEBUG_RELEASE ) { $env:RELEASE_BUILD='true' }
 
-            # If this is not a release build, build all artifacts only when project config changes.
-            # Otherwise only build application executable required for end-to-end testing.
+            # If this is not a release build, only build the executable required for end-to-end testing.
             If ( -Not $env:RELEASE_BUILD ) {
-              If ( -Not $(git diff --name-only origin/trunk...HEAD | Select-String -Pattern desktop/package.json,yarn.lock) ) { $env:ARG2='-c.win.target=dir' }
+              $env:ARG2='-c.win.target=dir'
             }
 
             # Use make (not yarn/npm directly) for bash-like environment variable substitution
