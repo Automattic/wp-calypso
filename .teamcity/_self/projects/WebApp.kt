@@ -640,10 +640,10 @@ object CheckCodeStyleBranch : BuildType({
 								${'$'}BATCH_FILES
 
 							# xargs will return 123 if any run returns a non-zero value. Ensure we
-							# only catch relevant issues. ESLint's exit codes seem to be:
+							# only catch relevant issues. ESLint exit codes seem to be:
 							# - 0 for no errors
-							# - 1 for linting errors (let's ignore)
-							# - 2 for other errors (let's propagate)
+							# - 1 for linting errors (should ignore)
+							# - 2 for other errors (should propagate)
 							status=${'$'}?
 							if [ ${'$'}status -gt 1 ]; then
 								exit ${'$'}status
