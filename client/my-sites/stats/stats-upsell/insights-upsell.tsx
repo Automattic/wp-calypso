@@ -1,4 +1,13 @@
-import { isGlobalStylesOnPersonalEnabled } from '@automattic/calypso-products';
+import {
+	isGlobalStylesOnPersonalEnabled,
+	getFeature,
+	FEATURE_UNLIMITED_ENTITIES,
+	FEATURE_CUSTOM_DOMAIN,
+	FEATURE_AD_FREE_EXPERIENCE,
+	WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
+	FEATURE_SUPPORT_FROM_EXPERTS,
+	FEATURE_STYLE_CUSTOMIZATION,
+} from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import statsFeaturesPNG from 'calypso/assets/images/stats/paid-features-2.png';
 import { STATS_FEATURE_PAGE_INSIGHTS } from '../constants';
@@ -17,13 +26,13 @@ const InsightsUpsell: React.FC = () => {
 				translate( 'Keep your data private and GDPR-compliant' ),
 				translate( '14-day money-back guarantee' ),
 				translate( '6 GB storage' ),
-				translate( 'Unlimited pages, posts, users, and visitors' ),
-				translate( 'Free domain for one year' ),
-				translate( 'Ad-free browsing experience for your visitors' ),
-				translate( 'Dozens of premium themes' ),
-				translate( 'Get support from our expert team' ),
+				getFeature( FEATURE_UNLIMITED_ENTITIES ).getTitle(),
+				getFeature( FEATURE_CUSTOM_DOMAIN ).getTitle(),
+				getFeature( FEATURE_AD_FREE_EXPERIENCE ).getTitle(),
+				getFeature( WPCOM_FEATURES_PREMIUM_THEMES_LIMITED ).getTitle(),
+				getFeature( FEATURE_SUPPORT_FROM_EXPERTS ).getTitle(),
 				...( isGlobalStylesOnPersonalEnabled()
-					? [ translate( 'Customize fonts and colors site wide' ) ]
+					? [ getFeature( FEATURE_STYLE_CUSTOMIZATION ).getTitle() ]
 					: [] ),
 			] }
 			image={ statsFeaturesPNG }

@@ -336,7 +336,7 @@ import {
 	FEATURE_SUPPORT_FROM_EXPERTS,
 	FEATURE_AI_ASSISTANT,
 } from './constants';
-import type { FeatureList } from './types';
+import type { FeatureList, FeatureObject } from './types';
 
 const getTransactionFeeCopy = ( commission = 0, variation = '' ) => {
 	switch ( variation ) {
@@ -2795,6 +2795,10 @@ const FEATURES_LIST: FeatureList = {
 		getDescription: () =>
 			i18n.translate( 'Keep an administrative eye on activity across your site.' ),
 	},
+};
+
+export const getFeature = ( featureName: string ): FeatureObject => {
+	return FEATURES_LIST[ featureName ];
 };
 
 export { FEATURES_LIST };
