@@ -61,6 +61,7 @@ export const StagingSiteCard = ( {
 	const [ syncError, setSyncError ] = useState( null );
 	// eslint-disable-next-line no-unused-vars
 	const [ _, setIsErrorValidQuota ] = useState( false );
+	// eslint-disable-next-line no-unused-vars
 	const [ progress, setProgress ] = useState( 0.1 );
 
 	const isSyncInProgress = useSelector( ( state ) => getIsSyncingInProgress( state, siteId ) );
@@ -449,11 +450,10 @@ export const StagingSiteCard = ( {
 						StagingSiteStatus.INITIATE_REVERTING === stagingSiteStatus ||
 						isReverting
 					}
-					progress={ progress }
 				/>
 			</>
 		);
-	}, [ siteOwnerId, currentUserId, stagingSiteStatus, isReverting, progress ] );
+	}, [ siteOwnerId, currentUserId, stagingSiteStatus, isReverting ] );
 
 	let stagingSiteCardContent;
 
