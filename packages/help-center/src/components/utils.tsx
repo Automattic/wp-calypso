@@ -99,11 +99,11 @@ export const getConversationsFromSupportInteractions = (
 	conversations: ZendeskConversation[],
 	supportInteractions: SupportInteraction[]
 ) => {
-	return conversations.filter( ( conversation ) => {
-		return supportInteractions.some(
+	return conversations.filter( ( conversation ) =>
+		supportInteractions.some(
 			( interaction ) => interaction.uuid === conversation.metadata?.supportInteractionId
-		);
-	} );
+		)
+	);
 };
 
 export const matchSupportInteractionId = (
