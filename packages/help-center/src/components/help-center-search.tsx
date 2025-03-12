@@ -56,8 +56,10 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 
 	// Search query can be a query param, if the user searches or clears the search field
 	// we need to keep the query param up-to-date with that
+	// Search term is used to set a search term before opening help center
 	useEffect( () => {
-		if ( query || searchTerm ) {
+		const hasSearchQuery = query || searchTerm;
+		if ( hasSearchQuery ) {
 			navigate( '/?query=' + searchQuery );
 		}
 	}, [ searchTerm, searchQuery, query, navigate ] );
