@@ -583,7 +583,8 @@ class RegisterDomainStep extends Component {
 			return { key: `${ tld }`, text: `.${ tld }` };
 		} );
 
-		items.unshift( { key: 'all', text: 'All' } );
+		// translators: filter label displayed when all TLDs are enabled
+		items.unshift( { key: 'all', text: this.props.translate( 'All' ) } );
 
 		const handleClick = ( index ) => {
 			const option = items[ index ].key;
