@@ -18,9 +18,9 @@ export const OdieAssistant: React.FC = () => {
 		};
 	}, [] );
 
-	const showClosedConversationFooter =
-		currentSupportInteraction?.status === 'closed' ||
-		currentSupportInteraction?.status === 'solved';
+	const showClosedConversationFooter = [ 'closed', 'solved' ].includes(
+		currentSupportInteraction?.status ?? ''
+	);
 
 	useEffect( () => {
 		trackEvent( 'chatbox_view' );
