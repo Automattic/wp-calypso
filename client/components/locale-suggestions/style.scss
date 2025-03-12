@@ -3,6 +3,15 @@
 	max-width: 500px;
 	display: flex;
 	justify-content: center;
+
+	.notice.is-light {
+		.notice__icon-wrapper {
+			color: var(--color-neutral-20);
+			.notice__icon-wrapper-drop {
+				background: var(--color-text-inverted);
+			}
+		}
+	}
 }
 
 .locale-suggestions__list-item {
