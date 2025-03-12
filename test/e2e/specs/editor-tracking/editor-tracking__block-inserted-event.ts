@@ -160,9 +160,16 @@ describe(
 			} );
 
 			describe( 'From adding a page template', function () {
-				it( 'Add "Two column about me layout" page template', async function () {
-					await editorPage.selectTemplateCategory( 'About' );
-					await editorPage.selectTemplate( 'Two column about me layout' );
+				it( 'Add a page template', async function () {
+					const editor = await editorPage.getEditorParent();
+					const pageTemplateToSelect =
+						( await editor
+							.getByRole( 'listbox', { name: 'Block patterns' } )
+							.or( editor.getByRole( 'listbox', { name: 'Block patterns' } ) )
+							.getByRole( 'option' )
+							.first()
+							.getAttribute( 'aria-label' ) ) ?? '';
+					await editorPage.selectTemplate( pageTemplateToSelect );
 				} );
 
 				it( '"wpcom_block_inserted" event fires with "from_template_selector" set to true', async function () {

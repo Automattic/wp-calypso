@@ -60,13 +60,13 @@ describe.skip( DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ), functio
 
 	it( 'Select page template', async function () {
 		editorPage = new EditorPage( page );
-		// Allow some time for CPU and/or network to catch up.
-		await editorPage.selectTemplateCategory( 'About', { timeout: 20 * 1000 } );
 
 		const editorParent = await editorPage.getEditorParent();
+
 		pageTemplateToSelect =
 			( await editorParent
 				.getByRole( 'listbox', { name: 'Block patterns' } )
+				.or( editorParent.getByRole( 'listbox', { name: 'Block patterns' } ) )
 				.getByRole( 'option' )
 				.first()
 				.getAttribute( 'aria-label' ) ) ?? '';
