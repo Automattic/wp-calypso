@@ -44,8 +44,17 @@ const aiSiteBuilder: Flow = {
 						// eslint-disable-next-line no-console
 						console.error( 'Failed to send continue build email:', error );
 					}
+
+					// get the prompt from the get url
+					const prompt = new URLSearchParams( window.location.search ).get( 'prompt' );
+					let promptParam = '';
+
+					if ( prompt ) {
+						promptParam = `&prompt=${ prompt }`;
+					}
+
 					return navigate(
-						`launch-big-sky?siteId=${ siteId }&siteSlug=${ siteSlug }&referrer=ai-site-builder`,
+						`launch-big-sky?siteId=${ siteId }&siteSlug=${ siteSlug }&referrer=ai-site-builder${ promptParam }`,
 						undefined,
 						true
 					);
