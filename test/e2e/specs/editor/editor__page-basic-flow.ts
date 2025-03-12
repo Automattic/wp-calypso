@@ -57,7 +57,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		await pagesPage.addNewPage();
 	} );
 
-	// Test will be updated to test test equivalent core functionality.
+	// Test will be updated to test equivalent core functionality.
 	it.skip( 'Select page template', async function () {
 		editorPage = new EditorPage( page );
 		// Allow some time for CPU and/or network to catch up.
