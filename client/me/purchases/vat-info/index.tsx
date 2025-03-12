@@ -54,7 +54,7 @@ export default function VatInfoPage() {
 	const taxSupportPageLinkTitle = translate( 'VAT, GST, and other taxes' );
 
 	const handleOpenCenterChat = useCallback(
-		async ( e: MouseEvent ) => {
+		async ( e: React.MouseEvent< HTMLAnchorElement > ) => {
 			e.preventDefault();
 			clearHelpCenterZendeskConversationStarted();
 			setNavigateToRoute( '/odie' );
