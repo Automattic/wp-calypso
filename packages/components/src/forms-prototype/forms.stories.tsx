@@ -104,21 +104,6 @@ export const Default: StoryObj = {
 						}
 					} }
 				/>
-				<ControlWithError
-					render={
-						<TextareaControl
-							__nextHasNoMarginBottom
-							label="Textarea"
-							required
-							help="The word 'error' will trigger an error."
-						/>
-					}
-					onReportCustomValidity={ ( value ) => {
-						if ( value.toLowerCase() === 'error' ) {
-							return 'The word "error" is not allowed.';
-						}
-					} }
-				/>
 			</>
 		);
 	},
@@ -184,6 +169,40 @@ export const Text: StoryObj = {
 							valueRef.current = value;
 						} }
 						help="The word 'error' will trigger an error."
+						ref={ validityTargetRef }
+					/>
+				}
+				onReportCustomValidity={ () => {
+					if ( valueRef.current.toLowerCase() === 'error' ) {
+						return 'The word "error" is not allowed.';
+					}
+				} }
+				getValidityTarget={ () => validityTargetRef.current }
+			/>
+		);
+	},
+};
+
+// TODO: Add error styles.
+export const Textarea: StoryObj = {
+	render: function Template() {
+		const [ value, setValue ] = useState< string >( '' );
+		const valueRef = useRef< string >( '' );
+		const validityTargetRef = useRef< HTMLTextAreaElement >( null );
+
+		return (
+			<ControlWithError
+				render={
+					<TextareaControl
+						__nextHasNoMarginBottom
+						label="Textarea"
+						required
+						help="The word 'error' will trigger an error."
+						value={ value }
+						onChange={ ( value ) => {
+							setValue( value );
+							valueRef.current = value;
+						} }
 						ref={ validityTargetRef }
 					/>
 				}
