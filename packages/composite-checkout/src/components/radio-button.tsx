@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import * as React from 'react';
@@ -25,7 +26,7 @@ const RadioButtonWrapper = styled.div<
 		border: ${ ( props ) => ( props.checked ? '1px solid ' + getBorderColor( props ) : 'none' ) };
 		border-bottom: ${ ( props ) => '1px solid ' + getBorderColor( props ) };
 		box-sizing: border-box;
-		border-radius: 3px;
+		border-radius: ${ ( props ) => ( props.checked ? '3px' : 0 ) };
 
 		.rtl & {
 			right: 0;
@@ -209,6 +210,7 @@ export default function RadioButton( {
 			isFocused={ isFocused }
 			checked={ checked }
 			hidden={ hidden }
+			className={ clsx( { 'is-checked': checked } ) }
 		>
 			<Radio
 				type="radio"
@@ -266,7 +268,6 @@ function handleWrapperDisabled( { disabled }: { disabled?: boolean } ) {
 	}
 
 	return `
-		::before,
 		:hover::before {
 			border: 1px solid lightgray;
 		}

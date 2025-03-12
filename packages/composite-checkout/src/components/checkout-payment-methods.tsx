@@ -23,6 +23,12 @@ const debug = debugFactory( 'composite-checkout:checkout-payment-methods' );
 
 const CheckoutPaymentMethodsWrapper = styled.div`
 	padding-top: 4px;
+
+	&
+		> div:has( > div:not( .is-checked )[disabled]:hover )
+		> div:not( .is-checked ):not( :hover )[disabled]::before {
+		border: none;
+	}
 `;
 
 export default function CheckoutPaymentMethods( {
