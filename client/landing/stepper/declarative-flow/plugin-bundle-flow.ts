@@ -144,7 +144,7 @@ const pluginBundleFlow: FlowV1 = {
 			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction' ] );
 		};
 
-		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
+		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			let defaultExitDest = `/home/${ siteSlug }`;
 
 			if ( siteDetails?.options?.theme_slug ) {
@@ -171,7 +171,7 @@ const pluginBundleFlow: FlowV1 = {
 
 			switch ( currentStep ) {
 				case 'bundleConfirm': {
-					const [ checkoutUrl ] = params;
+					const checkoutUrl = providedDependencies.checkoutUrl as string;
 
 					if ( checkoutUrl ) {
 						window.location.replace( checkoutUrl.toString() );
@@ -180,7 +180,7 @@ const pluginBundleFlow: FlowV1 = {
 					return navigate( 'bundleTransfer' );
 				}
 				case 'processing': {
-					const processingResult = params[ 0 ] as ProcessingResult;
+					const processingResult = providedDependencies.processingResult;
 
 					if ( processingResult === ProcessingResult.FAILURE ) {
 						return navigate( 'error' );

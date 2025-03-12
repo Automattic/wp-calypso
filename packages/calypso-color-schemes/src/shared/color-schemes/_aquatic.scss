@@ -1,35 +1,35 @@
 .color-scheme.is-aquatic {
 	/* Theme Properties */
-	--color-primary: var(--studio-blue-50);
-	--color-primary-rgb: var(--studio-blue-50-rgb);
-	--color-primary-dark: var(--studio-blue-70);
-	--color-primary-dark-rgb: var(--studio-blue-70-rgb);
-	--color-primary-light: var(--studio-blue-30);
-	--color-primary-light-rgb: var(--studio-blue-30-rgb);
-	--color-primary-0: var(--studio-blue-0);
-	--color-primary-0-rgb: var(--studio-blue-0-rgb);
-	--color-primary-5: var(--studio-blue-5);
-	--color-primary-5-rgb: var(--studio-blue-5-rgb);
-	--color-primary-10: var(--studio-blue-10);
-	--color-primary-10-rgb: var(--studio-blue-10-rgb);
-	--color-primary-20: var(--studio-blue-20);
-	--color-primary-20-rgb: var(--studio-blue-20-rgb);
-	--color-primary-30: var(--studio-blue-30);
-	--color-primary-30-rgb: var(--studio-blue-30-rgb);
-	--color-primary-40: var(--studio-blue-40);
-	--color-primary-40-rgb: var(--studio-blue-40-rgb);
-	--color-primary-50: var(--studio-blue-50);
-	--color-primary-50-rgb: var(--studio-blue-50-rgb);
-	--color-primary-60: var(--studio-blue-60);
-	--color-primary-60-rgb: var(--studio-blue-60-rgb);
-	--color-primary-70: var(--studio-blue-70);
-	--color-primary-70-rgb: var(--studio-blue-70-rgb);
-	--color-primary-80: var(--studio-blue-80);
-	--color-primary-80-rgb: var(--studio-blue-80-rgb);
-	--color-primary-90: var(--studio-blue-90);
-	--color-primary-90-rgb: var(--studio-blue-90-rgb);
-	--color-primary-100: var(--studio-blue-100);
-	--color-primary-100-rgb: var(--studio-blue-100-rgb);
+	--color-primary: var(--color-deprecated-blue-50);
+	--color-primary-rgb: var(--color-deprecated-blue-50-rgb);
+	--color-primary-dark: var(--color-deprecated-blue-70);
+	--color-primary-dark-rgb: var(--color-deprecated-blue-70-rgb);
+	--color-primary-light: var(--color-deprecated-blue-30);
+	--color-primary-light-rgb: var(--color-deprecated-blue-30-rgb);
+	--color-primary-0: var(--color-deprecated-blue-0);
+	--color-primary-0-rgb: var(--color-deprecated-blue-0-rgb);
+	--color-primary-5: var(--color-deprecated-blue-5);
+	--color-primary-5-rgb: var(--color-deprecated-blue-5-rgb);
+	--color-primary-10: var(--color-deprecated-blue-10);
+	--color-primary-10-rgb: var(--color-deprecated-blue-10-rgb);
+	--color-primary-20: var(--color-deprecated-blue-20);
+	--color-primary-20-rgb: var(--color-deprecated-blue-20-rgb);
+	--color-primary-30: var(--color-deprecated-blue-30);
+	--color-primary-30-rgb: var(--color-deprecated-blue-30-rgb);
+	--color-primary-40: var(--color-deprecated-blue-40);
+	--color-primary-40-rgb: var(--color-deprecated-blue-40-rgb);
+	--color-primary-50: var(--color-deprecated-blue-50);
+	--color-primary-50-rgb: var(--color-deprecated-blue-50-rgb);
+	--color-primary-60: var(--color-deprecated-blue-60);
+	--color-primary-60-rgb: var(--color-deprecated-blue-60-rgb);
+	--color-primary-70: var(--color-deprecated-blue-70);
+	--color-primary-70-rgb: var(--color-deprecated-blue-70-rgb);
+	--color-primary-80: var(--color-deprecated-blue-80);
+	--color-primary-80-rgb: var(--color-deprecated-blue-80-rgb);
+	--color-primary-90: var(--color-deprecated-blue-90);
+	--color-primary-90-rgb: var(--color-deprecated-blue-90-rgb);
+	--color-primary-100: var(--color-deprecated-blue-100);
+	--color-primary-100-rgb: var(--color-deprecated-blue-100-rgb);
 
 	--color-accent: var(--studio-celadon-50);
 	--color-accent-rgb: var(--studio-celadon-50-rgb);
@@ -94,13 +94,13 @@
 	--color-link-100-rgb: var(--studio-celadon-100-rgb);
 
 	/* Component Properties */
-	--color-masterbar-background: var(--studio-blue-80);
-	--color-masterbar-border: var(--studio-blue-80);
+	--color-masterbar-background: var(--color-deprecated-blue-80);
+	--color-masterbar-border: var(--color-deprecated-blue-80);
 	--color-masterbar-text: var(--studio-white);
 	--color-masterbar-icon: var(--studio-white);
 	--color-masterbar-highlight: var(--studio-yellow-20);
-	--color-masterbar-item-hover-background: var(--studio-blue-90);
-	--color-masterbar-item-active-background: var(--studio-blue-100);
+	--color-masterbar-item-hover-background: var(--color-deprecated-blue-90);
+	--color-masterbar-item-active-background: var(--color-deprecated-blue-100);
 	--color-masterbar-item-new-editor-background: var(--studio-gray-50);
 	--color-masterbar-item-new-editor-hover-background: var(--studio-gray-60);
 	--color-masterbar-unread-dot-background: var(--color-accent-30);
@@ -108,28 +108,28 @@
 	--color-masterbar-toggle-drafts-editor-hover-background: var(--studio-gray-40);
 	--color-masterbar-toggle-drafts-editor-border: var(--studio-gray-10);
 
-	--color-sidebar-background: var(--studio-blue-60);
-	--color-sidebar-background-rgb: var(--studio-blue-60-rgb);
-	--color-sidebar-border: var(--studio-blue-70);
+	--color-sidebar-background: var(--color-deprecated-blue-60);
+	--color-sidebar-background-rgb: var(--color-deprecated-blue-60-rgb);
+	--color-sidebar-border: var(--color-deprecated-blue-70);
 	--color-sidebar-text: var(--studio-white);
 	--color-sidebar-text-rgb: var(--studio-white-rgb);
-	--color-sidebar-text-alternative: var(--studio-blue-5);
-	--color-sidebar-gridicon-fill: var(--studio-blue-5);
+	--color-sidebar-text-alternative: var(--color-deprecated-blue-5);
+	--color-sidebar-gridicon-fill: var(--color-deprecated-blue-5);
 	--color-sidebar-menu-selected-background: var(--studio-yellow-20);
 	--color-sidebar-menu-selected-background-rgb: var(--studio-yellow-20-rgb);
-	--color-sidebar-menu-selected-text: var(--studio-blue-90);
-	--color-sidebar-menu-selected-text-rgb: var(--studio-blue-90-rgb);
-	--color-sidebar-menu-hover-background: var(--studio-blue-50);
-	--color-sidebar-menu-hover-background-rgb: var(--studio-blue-50-rgb);
+	--color-sidebar-menu-selected-text: var(--color-deprecated-blue-90);
+	--color-sidebar-menu-selected-text-rgb: var(--color-deprecated-blue-90-rgb);
+	--color-sidebar-menu-hover-background: var(--color-deprecated-blue-50);
+	--color-sidebar-menu-hover-background-rgb: var(--color-deprecated-blue-50-rgb);
 	--color-sidebar-menu-hover-text: var(--studio-white);
 
 	/* Sidebar Submenu - Nav Unification */
-	--color-sidebar-submenu-background: var(--studio-blue-80);
+	--color-sidebar-submenu-background: var(--color-deprecated-blue-80);
 	--color-sidebar-submenu-text: var(--studio-white);
 	--color-sidebar-submenu-hover-text: var(--studio-yellow-20);
 
 	/* Sidebar Menu - Nav Redesign */
-	--color-navredesign-sidebar-menu-selected-text: var(--studio-blue-90);
+	--color-navredesign-sidebar-menu-selected-text: var(--color-deprecated-blue-90);
 
 	/* Sidebar Submenu - Nav Redesign */
 	--color-navredesign-sidebar-submenu-text: var(--color-sidebar-submenu-text);

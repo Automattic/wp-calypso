@@ -255,8 +255,17 @@ export default function PlanSelectionDetails( {
 
 			<div className="pressable-overview-plan-selection__details-hint">
 				{ translate(
-					"*If you exceed your plan's storage or traffic limits, you will be charged {{b}}$0.50{{/b}} per GB and {{b}}$8{{/b}} per 10K visits per month.",
+					"*If you exceed your plan's storage or traffic limits, you will be charged {{b}}%(storageCharge)s{{/b}} per GB and {{b}}%(trafficCharge)s{{/b}} per %(visits)s visits per month.",
 					{
+						args: {
+							storageCharge: formatCurrency( 0.5, 'USD', {
+								stripZeros: true,
+							} ),
+							trafficCharge: formatCurrency( 8, 'USD', {
+								stripZeros: true,
+							} ),
+							visits: numberFormatCompact( 10000 ),
+						},
 						components: {
 							b: <b />,
 						},

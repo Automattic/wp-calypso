@@ -45,11 +45,13 @@ export const WooPaymentsStatusColumn = ( { state, siteId }: { state: string; sit
 					statusText: translate( 'Active' ),
 					statusType: 'success',
 				};
-			default:
+			case 'disconnected':
 				return {
 					statusText: translate( 'Disconnected' ),
-					statusType: 'warning',
+					statusType: 'error',
 				};
+			default:
+				return null;
 		}
 	};
 

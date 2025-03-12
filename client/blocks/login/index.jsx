@@ -17,6 +17,7 @@ import Notice from 'calypso/components/notice';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import WPCloudLogo from 'calypso/components/wp-cloud-logo';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
+import isAkismetRedirect from 'calypso/lib/akismet/is-akismet-redirect';
 import { preventWidows } from 'calypso/lib/formatting';
 import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
 import { getPluginTitle, getSignupUrl } from 'calypso/lib/login';
@@ -1056,9 +1057,9 @@ export default connect(
 		isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),
 		linkingSocialService: getSocialAccountLinkService( state ),
 		partnerSlug: getPartnerSlugFromQuery( state ),
-		isFromAkismet: !! new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] )
-			.get( 'back' )
-			?.startsWith( 'https://akismet.com' ),
+		isFromAkismet: isAkismetRedirect(
+			new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'back' )
+		),
 		isFromAutomatticForAgenciesPlugin:
 			'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ) ||
 			'automattic-for-agencies-client' ===
