@@ -165,7 +165,7 @@ describe(
 					const pageTemplateToSelect =
 						( await editor
 							.getByRole( 'listbox', { name: 'Block patterns' } )
-							.or( editor.getByRole( 'listbox', { name: 'Block patterns' } ) )
+							.or( editor.getByRole( 'listbox', { name: 'All' } ) )
 							.getByRole( 'option' )
 							.first()
 							.getAttribute( 'aria-label' ) ) ?? '';

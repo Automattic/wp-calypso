@@ -217,7 +217,7 @@ export class EditorPage {
 		const editor = await this.getEditorCanvas();
 		return await editor
 			.getByRole( 'listbox', { name: 'Block patterns' } )
-			.or( editor.getByRole( 'listbox', { name: 'Block patterns' } ) )
+			.or( editor.getByRole( 'listbox', { name: 'All' } ) )
 			.getByRole( 'option', { name: label, exact: true } )
 			.first()
 			.click( { timeout: timeout } );
