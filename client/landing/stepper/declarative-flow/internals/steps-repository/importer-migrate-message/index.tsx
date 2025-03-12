@@ -142,35 +142,39 @@ const ImporterMigrateMessage: Step = ( { navigation } ) => {
 		</div>
 	);
 
+	const subHeaderText = isPending ? (
+		<LoadingEllipsis />
+	) : (
+		<>
+			{ createInterpolateElement(
+				sprintf(
+					// translators: %(email)s is the customer's email and %(webSite)s his site.
+					__(
+						'You are all set! Our Happiness Engineers will be reaching out to you shortly at <strong>%(email)s</strong> to help you migrate <strong>%(webSite)s</strong> to WordPress.com.'
+					),
+					{
+						email: user?.email,
+						// Strip protocol and trailing slash.
+						webSite: urlToDomainAndPath( fromUrl ),
+					}
+				),
+				{
+					strong: createElement( 'strong' ),
+				}
+			) }
+		</>
+	);
+
 	return (
 		<StepContainer
 			stepName="migration-message"
 			hideBack
-			formattedHeader={ <FormattedHeader headerText={ title } /> }
+			formattedHeader={
+				<FormattedHeader align="center" headerText={ title } subHeaderText={ subHeaderText } />
+			}
 			isHorizontalLayout={ false }
 			stepContent={
 				<>
-					{ isPending && <LoadingEllipsis /> }
-					{ ! isPending && (
-						<div className="message">
-							{ createInterpolateElement(
-								sprintf(
-									// translators: %(email)s is the customer's email and %(webSite)s his site.
-									__(
-										'You are all set! Our Happiness Engineers will be reaching out to you shortly at <strong>%(email)s</strong> to help you migrate <strong>%(webSite)s</strong> to WordPress.com.'
-									),
-									{
-										email: user?.email,
-										// Strip protocol and trailing slash.
-										webSite: urlToDomainAndPath( fromUrl ),
-									}
-								),
-								{
-									strong: createElement( 'strong' ),
-								}
-							) }
-						</div>
-					) }
 					<h3>{ __( 'What to expect' ) }</h3>
 					{ whatToExpect.map( ( { icon, text }, index ) => (
 						<div key={ index } className="feature">

@@ -10,6 +10,11 @@
 		width: auto;
 	}
 
+	.formatted-header__subtitle {
+		margin-top: 16px;
+		margin-bottom: 16px;
+	}
+
 	.step-container__content {
 		margin: auto;
 		max-width: 720px;
@@ -19,15 +24,6 @@
 		h3 {
 			font-weight: 600;
 			margin-bottom: 16px;
-		}
-
-		.message {
-			margin-top: 8px;
-			margin-bottom: 40px;
-			text-align: center;
-			min-width: 0;
-			overflow-wrap: break-word;
-			white-space: pre-wrap;
 		}
 
 		.feature {
