@@ -99,7 +99,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		expect( publishedUrl.pathname ).toContain( `/${ customUrlSlug }` );
 	} );
 
-	// Test will be updated to test test equivalent core functionality.
+	// Test will be updated to test equivalent core functionality.
 	it.skip( 'Published page contains template content', async function () {
 		// Not a typo, it's the POM page class for a WordPress page. :)
 		const publishedPagePage = new PublishedPostPage( page );
