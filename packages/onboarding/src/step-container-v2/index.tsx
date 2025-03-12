@@ -167,7 +167,7 @@ export const StepContainerV2 = ( {
 					<WordPressLogo size={ 21 } className="step-container-v2__wordpress-logo" />
 				) : (
 					<WordPressWordmark
-						size={ { width: 133, height: 18 } }
+						size={ { width: 134, height: 18 } }
 						className="step-container-v2__wordpress-logo"
 						color="currentColor"
 					/>
