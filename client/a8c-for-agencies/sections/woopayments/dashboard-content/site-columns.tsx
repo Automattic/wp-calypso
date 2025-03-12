@@ -7,7 +7,6 @@ import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/s
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { useFetchTestConnection } from '../../sites/hooks/use-fetch-test-connection';
 
 export const SiteColumn = ( { site }: { site: string } ) => {
 	return urlToSlug( site );
@@ -25,8 +24,6 @@ export const WooPaymentsStatusColumn = ( { state, siteId }: { state: string; sit
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const jetpackConnectionStatus = useFetchTestConnection( true, true, siteId );
-
 	if ( ! state ) {
 		return (
 			<Button
@@ -42,19 +39,20 @@ export const WooPaymentsStatusColumn = ( { state, siteId }: { state: string; sit
 	}
 
 	const getStatusProps = () => {
-		const isActive = jetpackConnectionStatus?.data?.connected && state === 'active';
-
-		if ( isActive ) {
-			return {
-				statusText: translate( 'Active' ),
-				statusType: 'success',
-			};
+		switch ( state ) {
+			case 'active':
+				return {
+					statusText: translate( 'Active' ),
+					statusType: 'success',
+				};
+			case 'disconnected':
+				return {
+					statusText: translate( 'Disconnected' ),
+					statusType: 'error',
+				};
+			default:
+				return null;
 		}
-
-		return {
-			statusText: translate( 'Disconnected' ),
-			statusType: 'warning',
-		};
 	};
 
 	const statusProps = getStatusProps();
