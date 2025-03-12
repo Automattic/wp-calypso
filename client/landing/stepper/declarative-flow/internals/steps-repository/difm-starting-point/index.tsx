@@ -1,4 +1,4 @@
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, DIFM_FLOW } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -24,7 +24,7 @@ const DIFMStartingPoint: Step = function ( { navigation, flow } ) {
 	const isHelpCenterLinkEnabled = flags?.includes( 'signup/help-center-link' );
 
 	const shouldRenderHelpCenterLink = useShouldRenderHelpCenterButton( {
-		flowName: 'do-it-for-me',
+		flowName: DIFM_FLOW,
 		enabledGeos: [ 'US' ],
 	} );
 
