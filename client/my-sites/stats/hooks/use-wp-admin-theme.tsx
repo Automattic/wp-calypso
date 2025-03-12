@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useSelector } from 'calypso/state';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 
-export default function useWPAdminTheme( { siteId }: { siteId: number | null } ) {
+export default function useWPAdminTheme( siteId: number | null ) {
 	const isSiteJetpack = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: true } )
 	);

@@ -14,7 +14,7 @@ const RootChild: FunctionComponent< { children: ReactNode } > = ( { children } )
 	const [ containerEl, setContainerEl ] = useState< HTMLDivElement | null >( null );
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const customTheme = useWPAdminTheme( { siteId } );
+	const customTheme = useWPAdminTheme( siteId );
 
 	useLayoutEffect( () => {
 		const element = document.createElement( 'div' );
