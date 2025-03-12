@@ -155,7 +155,6 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	const includeDomainDetails = contactDetailsType === 'domain';
 	const includeGSuiteDetails = contactDetailsType === 'gsuite';
 	const storedCard = cards.length > 0 ? cards[ 0 ] : undefined;
-	const forBusinessUse = storedCard?.tax_location?.is_for_business;
 	const dataForProcessor: PaymentProcessorOptions = useMemo(
 		() => ( {
 			createUserAndSiteBeforeTransaction: false,
@@ -200,6 +199,7 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 				id: storedCard.tax_location?.vat_id,
 				name: storedCard.tax_location?.organization,
 				address: storedCard.tax_location?.address,
+				isForBusiness: storedCard?.tax_location?.is_for_business,
 			};
 			const contactInfo: ManagedContactDetails = {
 				state: wrapValueInManagedValue( storedCard.tax_location?.subdivision_code ),
@@ -214,8 +214,7 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 				responseCart,
 				updateLocation,
 				contactInfo,
-				vatDetails,
-				forBusinessUse
+				vatDetails
 			);
 			replaceProductsInCart( [ productToAdd ] );
 			if ( coupon ) {
