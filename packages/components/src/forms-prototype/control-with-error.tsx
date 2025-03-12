@@ -1,7 +1,7 @@
 import { speak } from '@wordpress/a11y';
 import { Icon } from '@wordpress/components';
 import { caution } from '@wordpress/icons';
-import { cloneElement, forwardRef, useRef, useState } from 'react';
+import { cloneElement, forwardRef, useState } from 'react';
 
 /**
  * HTML elements that support the Constraint Validation API.
@@ -17,26 +17,22 @@ type ValidityTarget =
 function UnforwardedControlWithError< C extends React.ReactElement >(
 	{
 		onReportCustomValidity,
-		onSetCustomValidityTarget = ( refElement ) => refElement.current,
+		getValidityTarget,
 		render,
 		...props
 	}: {
 		onReportCustomValidity?: () => string | void;
-		onSetCustomValidityTarget?: (
-			refElement: React.MutableRefObject< HTMLElement | null >
-		) => ValidityTarget | null | undefined;
+		getValidityTarget: () => ValidityTarget | null | undefined;
 		render: C;
 	},
 	forwardedRef: React.ForwardedRef< HTMLDivElement >
 ) {
 	const [ errorMessage, setErrorMessage ] = useState< string | undefined >();
 	const [ isTouched, setIsTouched ] = useState( false );
-	const ref = useRef( null );
 
 	const validate = () => {
-		// TODO: Fix this
 		const message = onReportCustomValidity?.();
-		const validityTarget = onSetCustomValidityTarget( ref );
+		const validityTarget = getValidityTarget?.();
 		validityTarget?.setCustomValidity?.( message ?? '' );
 
 		const newErrorMessage = validityTarget?.validationMessage ?? '';
@@ -48,21 +44,28 @@ function UnforwardedControlWithError< C extends React.ReactElement >(
 		}
 	};
 
-	const onBlur = ( ...args ) => {
+	const onBlur = ( event: React.FocusEvent< HTMLDivElement > ) => {
+		// Only consider the blur event if focus has fully left the wrapping div.
+		if ( event.relatedTarget && event.currentTarget.contains( event.relatedTarget ) ) {
+			return;
+		}
+
 		setIsTouched( true );
 
 		validate();
 
 		// Workaround for setCustomValidity() forcing an immediate re-render,
-		// which can reset the field value in uncontrolled mode.
-		const previousValue = ref.current?.value;
-		setTimeout( () => {
-			if ( ref.current ) {
-				ref.current.value = previousValue ?? '';
-			}
-		}, 0 );
-
-		render.props.onBlur?.( ...args );
+		// which can reset the text field value in uncontrolled mode.
+		const validityTarget = getValidityTarget?.();
+		if (
+			validityTarget instanceof HTMLInputElement &&
+			[ 'text', 'number' ].includes( validityTarget.type )
+		) {
+			const correctValue = validityTarget.value;
+			setTimeout( () => {
+				validityTarget.value = correctValue ?? '';
+			}, 0 );
+		}
 	};
 
 	const onChange = ( ...args ) => {
@@ -77,13 +80,11 @@ function UnforwardedControlWithError< C extends React.ReactElement >(
 	const label = render.props.required ? `${ render.props.label } (Required)` : render.props.label;
 
 	return (
-		<div className="a8c-use-validation" ref={ forwardedRef }>
+		<div className="a8c-use-validation" ref={ forwardedRef } onBlur={ onBlur }>
 			{ cloneElement( render, {
 				...props,
 				label,
-				onBlur,
 				onChange,
-				ref,
 			} ) }
 			{ errorMessage && (
 				<p className="a8c-use-validation__error">

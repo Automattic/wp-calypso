@@ -16,7 +16,7 @@ import {
 	RadioControl,
 	RangeControl,
 } from '@wordpress/components';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ControlWithError } from './control-with-error';
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -58,74 +58,8 @@ export default meta;
 
 export const Default: StoryObj = {
 	render: function Template() {
-		const [ toggleControlChecked, setToggleControlChecked ] = useState( false );
-		const [ checkboxControlChecked, setCheckboxControlChecked ] = useState( false );
-
 		return (
 			<>
-				<ControlWithError
-					render={
-						<InputControl
-							__next40pxDefaultSize
-							required
-							label="Input"
-							help="The word 'error' will trigger an error."
-						/>
-					}
-					onReportCustomValidity={ ( value ) => {
-						if ( value.toLowerCase() === 'error' ) {
-							return 'The word "error" is not allowed.';
-						}
-					} }
-				/>
-				<ControlWithError
-					render={
-						<NumberControl
-							__next40pxDefaultSize
-							label="Number"
-							help="Odd numbers are not allowed."
-						/>
-					}
-					onReportCustomValidity={ ( value ) => {
-						if ( value && parseInt( value, 10 ) % 2 !== 0 ) {
-							return 'Choose an even number.';
-						}
-					} }
-				/>
-				<ControlWithError
-					render={
-						// TODO: Rest props are not passed down.
-						<ToggleControl
-							required
-							__nextHasNoMarginBottom
-							label="Toggle"
-							checked={ toggleControlChecked }
-							onChange={ setToggleControlChecked }
-						/>
-					}
-					onReportCustomValidity={ ( value ) => {
-						if ( value ) {
-							return 'Checkbox is not allowed.';
-						}
-					} }
-				/>
-				<ControlWithError
-					render={
-						<CheckboxControl
-							__nextHasNoMarginBottom
-							required
-							label="Checkbox"
-							checked={ checkboxControlChecked }
-							onChange={ setCheckboxControlChecked }
-						/>
-					}
-					// TODO: Ref is not forwarded.
-					onReportCustomValidity={ ( value ) => {
-						if ( value ) {
-							return 'Checkbox is not allowed.';
-						}
-					} }
-				/>
 				<ControlWithError
 					render={
 						<SelectControl
@@ -238,7 +172,11 @@ export const Default: StoryObj = {
 };
 
 export const Password: StoryObj = {
-	render: () => {
+	name: 'Input (Password)',
+	render: function Template() {
+		const valueRef = useRef< string >( '' );
+		const validityTargetRef = useRef< HTMLInputElement >( null );
+
 		return (
 			<ControlWithError
 				render={
@@ -247,20 +185,136 @@ export const Password: StoryObj = {
 						label="Password"
 						help="Minimum 8 characters, include a number, capital letter, and symbol (!@£$%^&*#)."
 						minLength={ 8 }
+						onChange={ ( value ) => {
+							valueRef.current = value ?? '';
+						} }
 						required
+						ref={ validityTargetRef }
 					/>
 				}
-				onReportCustomValidity={ ( value ) => {
-					if ( ! /\d/.test( value ) ) {
+				onReportCustomValidity={ () => {
+					if ( ! /\d/.test( valueRef.current ) ) {
 						return 'Password must include at least one number.';
 					}
-					if ( ! /[A-Z]/.test( value ) ) {
+					if ( ! /[A-Z]/.test( valueRef.current ) ) {
 						return 'Password must include at least one capital letter.';
 					}
-					if ( ! /[!@£$%^&*#]/.test( value ) ) {
+					if ( ! /[!@£$%^&*#]/.test( valueRef.current ) ) {
 						return 'Password must include at least one symbol.';
 					}
 				} }
+				getValidityTarget={ () => validityTargetRef.current }
+			/>
+		);
+	},
+};
+
+export const Number: StoryObj = {
+	render: function Template() {
+		const valueRef = useRef< string >( '' );
+		const validityTargetRef = useRef< HTMLInputElement >( null );
+
+		return (
+			<ControlWithError
+				render={
+					<NumberControl
+						__next40pxDefaultSize
+						label="Number"
+						help="Odd numbers are not allowed."
+						// TODO: When form is submitted when value is undefined, it will automatically
+						// set a clamped value (as defined by `min` attribute, so 0 by default).
+						onChange={ ( value ) => {
+							valueRef.current = value ?? '';
+						} }
+						required
+						ref={ validityTargetRef }
+					/>
+				}
+				onReportCustomValidity={ () => {
+					if ( valueRef.current && parseInt( valueRef.current, 10 ) % 2 !== 0 ) {
+						return 'Choose an even number.';
+					}
+				} }
+				getValidityTarget={ () => validityTargetRef.current }
+			/>
+		);
+	},
+};
+
+export const Checkbox: StoryObj = {
+	render: function Template() {
+		const [ checkboxControlChecked, setCheckboxControlChecked ] = useState( false );
+		const valueRef = useRef< boolean >();
+		const validityTargetRef = useRef< HTMLInputElement >( null );
+
+		valueRef.current = checkboxControlChecked;
+
+		return (
+			<ControlWithError
+				render={
+					<CheckboxControl
+						__nextHasNoMarginBottom
+						required
+						label="Checkbox"
+						// TODO: CheckboxControl doesn't support uncontrolled mode, visually.
+						checked={ checkboxControlChecked }
+						onChange={ setCheckboxControlChecked }
+						help="This checkbox may neither be checked nor unchecked."
+					/>
+				}
+				ref={ validityTargetRef }
+				onReportCustomValidity={ () => {
+					if ( valueRef.current ) {
+						return 'This checkbox may not be checked.';
+					}
+				} }
+				getValidityTarget={ () =>
+					validityTargetRef.current?.querySelector( 'input[type="checkbox"]' )
+				}
+			/>
+		);
+	},
+};
+
+export const Toggle: StoryObj = {
+	render: function Template() {
+		const [ checked, setChecked ] = useState( false );
+		const valueRef = useRef< boolean >();
+		const validityTargetRef = useRef< HTMLInputElement >( null );
+
+		valueRef.current = checked;
+
+		// TODO: The `required` attribute is not passed down to the input,
+		// so we need to set it manually.
+		useEffect( () => {
+			const required = true; // TODO: Make this changeable by the consumer.
+
+			if ( validityTargetRef.current ) {
+				validityTargetRef.current.required = required;
+			}
+		}, [] );
+
+		// TODO: Should we customize the default `missingValue` message? It says to "check this box".
+		return (
+			<ControlWithError
+				render={
+					<ToggleControl
+						__nextHasNoMarginBottom
+						label="Toggle"
+						// TODO: FormToggle (and thus ToggleControl) doesn't support uncontrolled mode, visually.
+						checked={ checked }
+						onChange={ setChecked }
+						required
+						ref={ validityTargetRef }
+						help="This toggle may neither be enabled nor disabled."
+					/>
+				}
+				onReportCustomValidity={ () => {
+					if ( valueRef.current ) {
+						return 'This toggle may not be enabled.';
+					}
+				} }
+				getValidityTarget={ () => validityTargetRef.current }
 			/>
 		);
 	},
@@ -297,7 +351,7 @@ export const Radio: StoryObj = {
 						return 'Option B is not allowed.';
 					}
 				} }
-				onSetCustomValidityTarget={ () => ref.current?.querySelector( 'input[type="radio"]' ) }
+				getValidityTarget={ () => ref.current?.querySelector( 'input[type="radio"]' ) }
 			/>
 		);
 	},
@@ -332,7 +386,7 @@ export const ToggleGroup: StoryObj = {
 							return 'Option 1 is not allowed.';
 						}
 					} }
-					onSetCustomValidityTarget={ () => customValidityTargetRef.current }
+					getValidityTarget={ () => customValidityTargetRef.current }
 				/>
 				<input
 					style={ {
