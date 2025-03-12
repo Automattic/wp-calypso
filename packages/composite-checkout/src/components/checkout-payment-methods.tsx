@@ -23,11 +23,9 @@ const debug = debugFactory( 'composite-checkout:checkout-payment-methods' );
 
 const CheckoutPaymentMethodsWrapper = styled.div`
 	padding-top: 4px;
-
-	&
-		> div:has( > div:not( .is-checked )[disabled]:hover )
-		> div:not( .is-checked ):not( :hover )[disabled]::before {
-		border: none;
+	> div > div[disabled]:has( + div[disabled]:hover )::before,
+	> div > div[disabled]:has( + div.is-checked[disabled] )::before {
+		border-bottom: none;
 	}
 `;
 

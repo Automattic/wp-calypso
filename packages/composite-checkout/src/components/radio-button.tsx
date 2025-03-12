@@ -268,7 +268,13 @@ function handleWrapperDisabled( { disabled }: { disabled?: boolean } ) {
 	}
 
 	return `
-		:hover::before {
+		:hover:not( :first-child )::before {
+			border: 1px solid lightgray;
+			border-radius: 3px;
+		}
+
+		:hover:first-child::before,
+		:hover:last-child::before {
 			border: 1px solid lightgray;
 		}
 
