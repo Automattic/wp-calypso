@@ -14,6 +14,7 @@ export type OdieAssistantContextInterface = {
 	hasUserEverEscalatedToHumanSupport: boolean;
 	isMinimized?: boolean;
 	isUserEligibleForPaidSupport: boolean;
+	isLoadingExternalProvider?: boolean;
 	extraContactOptions?: ReactNode;
 	odieBroadcastClientId: string;
 	selectedSiteId?: number | null;
@@ -37,6 +38,7 @@ export type OdieAssistantProviderProps = {
 	botName?: string;
 	botNameSlug?: OdieAllowedBots;
 	isUserEligibleForPaidSupport?: boolean;
+	isLoadingExternalProvider?: boolean;
 	isMinimized?: boolean;
 	currentUser: CurrentUser;
 	extraContactOptions?: ReactNode;

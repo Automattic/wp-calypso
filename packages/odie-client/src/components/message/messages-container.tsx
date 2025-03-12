@@ -49,8 +49,15 @@ interface ChatMessagesProps {
 }
 
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
-	const { chat, botNameSlug, experimentVariationName, isChatLoaded, isUserEligibleForPaidSupport } =
-		useOdieAssistantContext();
+	const {
+		chat,
+		botNameSlug,
+		experimentVariationName,
+		isChatLoaded,
+		isUserEligibleForPaidSupport,
+		isLoadingExternalProvider,
+		setChatStatus,
+	} = useOdieAssistantContext();
 	const createZendeskConversation = useCreateZendeskConversation();
 	const resetSupportInteraction = useResetSupportInteraction();
 	const [ searchParams, setSearchParams ] = useSearchParams();
@@ -137,6 +144,18 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		resetSupportInteraction,
 		createZendeskConversation,
 	] );
+
+	// Handle the case where chat status remains "loading" for non-eligible users
+	useEffect( () => {
+		if (
+			! isUserEligibleForPaidSupport &&
+			chat?.status === 'loading' &&
+			! isLoadingExternalProvider
+		) {
+			setChatStatus( 'loaded' );
+			setChatMessagesLoaded( true );
+		}
+	}, [ chat?.status, isUserEligibleForPaidSupport, isLoadingExternalProvider, setChatStatus ] );
 
 	// Used to apply the correct styling on messages
 	const isNextMessageFromSameSender = ( currentMessage: string, nextMessage: string ) => {

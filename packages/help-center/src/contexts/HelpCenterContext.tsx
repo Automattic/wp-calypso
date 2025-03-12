@@ -7,6 +7,7 @@ export type HelpCenterRequiredInformation = {
 	sectionName: string;
 	currentUser: CurrentUser;
 	// some users have no sites at all.
+	isLoading: boolean;
 	site: HelpCenterSite | null;
 	hasPurchases: false;
 	primarySiteId: number;
@@ -29,6 +30,7 @@ const HelpCenterRequiredContext = createContext< HelpCenterRequiredInformation >
 		localeVariant: '',
 		site_count: 0,
 	},
+	isLoading: false,
 	site: null,
 	hasPurchases: false,
 	primarySiteId: 0,
@@ -45,7 +47,11 @@ export const HelpCenterRequiredContextProvider: React.FC< {
 
 	return (
 		<HelpCenterRequiredContext.Provider
-			value={ { ...value, canConnectToZendesk: isLoading ? false : canConnectToZendesk ?? false } }
+			value={ {
+				...value,
+				canConnectToZendesk: isLoading ? false : canConnectToZendesk ?? false,
+				isLoading,
+			} }
 		>
 			{ children }
 		</HelpCenterRequiredContext.Provider>

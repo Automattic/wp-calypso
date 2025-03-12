@@ -23,7 +23,12 @@ export function HelpCenterChat( {
 	const navigate = useNavigate();
 	const shouldUseWapuu = useShouldUseWapuu();
 	const preventOdieAccess = ! shouldUseWapuu && ! isUserEligibleForPaidSupport;
-	const { currentUser, site, canConnectToZendesk } = useHelpCenterContext();
+	const {
+		currentUser,
+		site,
+		canConnectToZendesk,
+		isLoading: isLoadingExternalProvider,
+	} = useHelpCenterContext();
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
 	const userFieldMessage = params.get( 'userFieldMessage' );
@@ -50,6 +55,7 @@ export function HelpCenterChat( {
 			userFieldMessage={ userFieldMessage }
 			userFieldFlowName={ userFieldFlowName }
 			isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
+			isLoadingExternalProvider={ isLoadingExternalProvider }
 			extraContactOptions={
 				<ExtraContactOptions isUserEligible={ isUserEligibleForPaidSupport } />
 			}
