@@ -696,7 +696,7 @@ const PlansFeaturesMain = ( {
 
 	const isMobile = useMobileBreakpoint();
 	const enablePlanTypeSelectorStickyBehavior = isMobile && showPlanTypeSelectorDropdown;
-	const stickyPlanTypeSelectorHeight = isMobile ? 62 : 48;
+	const stickyPlanTypeSelectorHeight = isMobile ? 54 : 48;
 	const comparisonGridStickyRowOffset = enablePlanTypeSelectorStickyBehavior
 		? stickyPlanTypeSelectorHeight + masterbarHeight
 		: masterbarHeight;

@@ -3,7 +3,7 @@
  */
 
 import page from '@automattic/calypso-router';
-import { showSelectedPost } from '../utils';
+import { getSafeImageUrlForReader, showSelectedPost } from '../utils';
 
 jest.mock( '@automattic/calypso-router', () => jest.fn() );
 
@@ -38,6 +38,18 @@ describe( 'reader utils', () => {
 				getState
 			);
 			expect( page ).toHaveBeenCalledWith( '/reader/feeds/1/posts/5#comments' );
+		} );
+	} );
+
+	describe( 'getSafeImageUrlForReader', () => {
+		test( 'returns the url as is if it is from a trusted host', () => {
+			const url = 'https://www.redditstatic.com/image.jpg';
+			expect( getSafeImageUrlForReader( url ) ).toEqual( url );
+		} );
+
+		test( 'returns the Photon url if it is not from a trusted host', () => {
+			const url = 'https://www.example.com/image.jpg';
+			expect( getSafeImageUrlForReader( url ) ).not.toEqual( url );
 		} );
 	} );
 } );
