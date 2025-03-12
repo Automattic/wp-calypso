@@ -1,5 +1,13 @@
 @import "@automattic/onboarding/styles/mixins";
 
+// TODO: replace it by the proper --studio-woocommerce-purple-x again once color-studio is upgraded to 4.1.0 across calypso.
+// See https://github.com/Automattic/wp-calypso/pull/99580
+$studio-woocommerce-purple-40-new: #873EFF;
+$studio-woocommerce-purple-50-new: #720EEC;
+$studio-woocommerce-purple-60-new: #6108CE;
+$studio-woocommerce-purple-70-new: #5007AA;
+$studio-woocommerce-purple-80-new: #3C087E;
+
 .button.plan-features-2023-grid__actions-button {
 	line-height: 20px;
 	border-radius: 4px;
@@ -51,24 +59,24 @@
 	}
 
 	&.is-business-plan {
-		background-color: var(--studio-woocommerce-purple-50);
+		background-color: $studio-woocommerce-purple-60-new;
 
 		&:focus {
-			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-woocommerce-purple-50);
+			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px $studio-woocommerce-purple-60-new;
 		}
 
 		&:hover {
-			background-color: var(--studio-woocommerce-purple-70);
+			background-color: $studio-woocommerce-purple-70-new;
 		}
 
 		+ .button.is-borderless {
 			background: transparent;
 			font-size: $font-body-small;
-			color: var(--studio-woocommerce-purple-50);
+			color: $studio-woocommerce-purple-60-new;
 			text-decoration: none;
 
 			&:focus {
-				box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-woocommerce-purple-50);
+				box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px $studio-woocommerce-purple-60-new;
 			}
 		}
 	}
@@ -101,14 +109,14 @@
 	}
 
 	&.is-ecommerce-plan {
-		background-color: var(--studio-woocommerce-purple-70);
+		background-color: $studio-woocommerce-purple-40-new;
 
 		&:focus {
-			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-woocommerce-purple-70);
+			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px $studio-woocommerce-purple-40-new;
 		}
 
 		&:hover {
-			background-color: var(--studio-woocommerce-purple-80);
+			background-color: $studio-woocommerce-purple-50-new;
 		}
 	}
 
