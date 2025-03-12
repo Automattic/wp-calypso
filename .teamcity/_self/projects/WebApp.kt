@@ -609,7 +609,7 @@ object CheckCodeStyleBranch : BuildType({
 					#
 					# where -n3 is the batch size and -P5 the number of parallel runs. However, we
 					# want to know which batch we are currently in -- a concept that I don't think
-					# xargs has.
+					# xargs has -- so that each ESLint run can write to a separate file.
 					#
 					# So we resort to a little bit of AWK magic to reshape our list of files into
 					# rows of BATCH_SIZE. Then, we use `nl` to prepend each row with an index.
@@ -638,6 +638,16 @@ object CheckCodeStyleBranch : BuildType({
 								--format checkstyle \
 								--output-file "${'$'}RESULTS_DIR/batch_${'$'}{BATCH_NUM}.xml" \
 								${'$'}BATCH_FILES
+
+							# xargs will return 123 if any run returns a non-zero value. Ensure we
+							# only catch relevant issues. ESLint's exit codes seem to be:
+							# - 0 for no errors
+							# - 1 for linting errors (let's ignore)
+							# - 2 for other errors (let's propagate)
+							status=${'$'}?
+							if [ ${'$'}status -gt 1 ]; then
+								exit ${'$'}status
+							fi
 						' yarn-batch # Arbitrary name to be used as each batch's progname
 				fi
 			"""
