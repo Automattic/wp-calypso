@@ -117,9 +117,7 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 					console.error( 'ProcessingStep failed:', e );
 					captureFlowException( e );
 					setSiteSetupError( e.error || e.code, e.message );
-					submit?.( {
-						processingResult: ProcessingResult.FAILURE,
-					} );
+					submit?.( {}, ProcessingResult.FAILURE );
 				}
 			} else {
 				setHasEmptyActionRun( true );
@@ -134,9 +132,7 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 			// Let's ensure the submit function is called only once,
 			// but only for the onboarding flow to mitigate risks.
 			isSubmittedRef.current = flow === 'site-setup' ? true : false;
-			submit?.( {
-				processingResult: ProcessingResult.NO_ACTION,
-			} );
+			submit?.( {}, ProcessingResult.NO_ACTION );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ hasEmptyActionRun ] );
@@ -154,11 +150,7 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 			}
 
 			if ( isNewSiteMigrationFlow( flow ) ) {
-				submit?.( {
-					...destinationState,
-					...props.data,
-					processingResult: ProcessingResult.SUCCESS,
-				} );
+				submit?.( { ...destinationState, ...props.data }, ProcessingResult.SUCCESS );
 				return;
 			}
 
@@ -174,10 +166,7 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 			isSubmittedRef.current = flow === 'site-setup' ? true : false;
 
 			// Default processing handler.
-			submit?.( {
-				...destinationState,
-				processingResult: ProcessingResult.SUCCESS,
-			} );
+			submit?.( destinationState, ProcessingResult.SUCCESS );
 		}
 		// A change in submit() doesn't cause this effect to rerun.
 		// eslint-disable-next-line react-hooks/exhaustive-deps

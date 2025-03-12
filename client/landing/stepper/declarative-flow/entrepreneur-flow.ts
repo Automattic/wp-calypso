@@ -70,7 +70,7 @@ const entrepreneurFlow: Flow = {
 			}
 		};
 
-		function submit( providedDependencies: ProvidedDependencies = {} ) {
+		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
 			switch ( currentStep ) {
 				case SEGMENTATION_SURVEY_SLUG: {
 					setIsMigrationFlow( !! providedDependencies.isMigrationFlow );
@@ -102,7 +102,7 @@ const entrepreneurFlow: Flow = {
 				}
 
 				case STEPS.PROCESSING.slug: {
-					const processingResult = providedDependencies.processingResult as ProcessingResult;
+					const processingResult = params[ 0 ] as ProcessingResult;
 
 					if ( processingResult === ProcessingResult.FAILURE ) {
 						return navigate( STEPS.ERROR.slug );
