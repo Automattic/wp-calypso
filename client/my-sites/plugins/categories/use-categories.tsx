@@ -88,7 +88,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	paid: {
 		menu: __( 'Premium plugins' ),
 		title: __( 'Must-have premium plugins' ),
-		description: __( 'Add the best-loved plugins on WordPress.com' ),
+		description: __( 'Take your site further with these premium plugins' ),
 		slug: 'paid',
 		tags: [],
 		preview: [],
