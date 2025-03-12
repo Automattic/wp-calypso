@@ -63,18 +63,34 @@ const recordNagView = () => {
 	recordTracksEvent( 'calypso_sites_dashboard_site_launch_nag_inview' );
 };
 
+const getChecklistSlug = ( site: SiteExcerptData ) => {
+	const intent = site.options?.site_intent;
+	const flow = site.options?.site_creation_flow;
+
+	if ( ! intent ) {
+		return 'legacy-site-setup';
+	}
+
+	const isHostedSite =
+		'host-site' === intent || 'new-hosted-site' === flow || 'import-hosted-site' === flow;
+
+	if ( isHostedSite && ! site?.is_wpcom_atomic ) {
+		return 'legacy-site-setup';
+	}
+
+	return intent;
+};
+
 export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 	const { __ } = useI18n();
 	const { ref } = useInView( {
 		onChange: ( inView ) => inView && recordNagView(),
 	} );
 
-	const checklistSlug = site?.options?.site_intent || 'legacy-site-setup';
-
 	const {
 		data: { checklist },
 		isLoading,
-	} = useLaunchpad( site.slug, checklistSlug, undefined, 'sites-dashboard' );
+	} = useLaunchpad( site.slug, getChecklistSlug( site ), undefined, 'sites-dashboard' );
 
 	if ( 'unlaunched' !== site.launch_status || ! checklist || isLoading ) {
 		return null;
