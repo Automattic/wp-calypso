@@ -150,11 +150,12 @@ export default function ContactDetailsContainer( {
 						section="contact"
 						taxInfo={ contactInfo }
 						onChange={ onChangeContactInfo }
+						showIsForBusinessUseCheckbox
 						handleIsForBusinessChange={ handleIsForBusinessChange }
+						isForBusinessValue={ vatDetails?.isForBusiness ?? false }
 						countriesList={ countriesList }
 						isDisabled={ isDisabled }
 						allowVat
-						isForBusiness={ vatDetails?.isForBusiness ?? false }
 					/>
 					{ /* For Jetpack and Akismet - we want to inform users that by continuing checkout process they create WordPress.com account */ }
 					{ ( isJetpackCheckout() || isAkismetCheckout() ) && isLoggedOutCart && (

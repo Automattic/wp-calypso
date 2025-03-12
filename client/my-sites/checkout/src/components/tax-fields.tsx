@@ -42,6 +42,30 @@ const FieldRow = styled( GridRow )`
 		margin-top: 0;
 	}
 `;
+type TaxFieldsPropsBase = {
+	section: string;
+	taxInfo: ManagedContactDetails;
+	countriesList: CountryListItem[];
+	onChange: ( taxInfo: ManagedContactDetails ) => void;
+	allowVat?: boolean;
+	isDisabled?: boolean;
+};
+
+// Conditional type: If `showForBusinessUseCheckbox` is true, require `isForBusiness` and `handleIsForBusinessChange`.
+// Otherwise, make them optional.
+type TaxFieldsProps = TaxFieldsPropsBase &
+	(
+		| {
+				showIsForBusinessUseCheckbox: true;
+				isForBusinessValue: boolean | undefined;
+				handleIsForBusinessChange: ( newValue: boolean ) => void;
+		  }
+		| {
+				showIsForBusinessUseCheckbox?: false;
+				isForBusinessValue?: boolean | undefined;
+				handleIsForBusinessChange?: ( newValue: boolean ) => void;
+		  }
+	);
 
 export default function TaxFields( {
 	section,
@@ -49,19 +73,11 @@ export default function TaxFields( {
 	countriesList,
 	onChange,
 	handleIsForBusinessChange,
+	isForBusinessValue,
+	showIsForBusinessUseCheckbox = false,
 	allowVat,
-	isForBusiness,
 	isDisabled,
-}: {
-	section: string;
-	taxInfo: ManagedContactDetails;
-	countriesList: CountryListItem[];
-	onChange: ( taxInfo: ManagedContactDetails ) => void;
-	handleIsForBusinessChange: ( newValue: boolean ) => void;
-	allowVat?: boolean;
-	isForBusiness?: boolean;
-	isDisabled?: boolean;
-} ) {
+}: TaxFieldsProps ) {
 	const translate = useTranslate();
 	const { postalCode, countryCode, city, state, organization, address1 } = taxInfo;
 	const arePostalCodesSupported =
@@ -260,11 +276,13 @@ export default function TaxFields( {
 			{ isVatSupported && (
 				<VatForm section={ section } isDisabled={ isDisabled } countryCode={ countryCode?.value } />
 			) }
-			<IsForBusinessCheckbox
-				taxInfo={ taxInfo }
-				isForBusiness={ isForBusiness ?? false }
-				handleOnChange={ handleIsForBusinessChange }
-			/>
+			{ showIsForBusinessUseCheckbox && handleIsForBusinessChange && (
+				<IsForBusinessCheckbox
+					taxInfo={ taxInfo }
+					isForBusiness={ isForBusinessValue ?? false }
+					handleOnChange={ handleIsForBusinessChange }
+				/>
+			) }
 		</>
 	);
 }
