@@ -17,6 +17,8 @@ const aiSiteBuilder: Flow = {
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PROCESSING,
 			STEPS.LAUNCH_BIG_SKY,
+			STEPS.DOMAINS,
+			STEPS.UNIFIED_PLANS,
 		] );
 	},
 	useStepNavigation( currentStep, navigate ) {
@@ -59,6 +61,23 @@ const aiSiteBuilder: Flow = {
 						true
 					);
 				}
+				case 'domains': {
+					// eslint-disable-next-line no-console
+					console.log( 'DOMAAAINZ STEP', providedDependencies );
+					// TODO: Somehow store the chosen domain.
+					return navigate( 'plans' );
+				}
+
+				case 'plans': {
+					// eslint-disable-next-line no-console
+					console.log( 'PLAAANZ STEP', providedDependencies );
+					// TODO: Somehow put the chosen plan in the cart.
+					const siteSlug = new URLSearchParams( window.location.search ).get( 'siteSlug' );
+					// eslint-disable-next-line no-console
+					console.log( 'SITE SLUG', siteSlug );
+					window.location.replace( `/checkout/${ encodeURIComponent( siteSlug || '' ) }` );
+				}
+
 				default:
 					return;
 			}

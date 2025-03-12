@@ -267,7 +267,7 @@ export class RenderDomainsStep extends Component {
 				} );
 			}
 		} else {
-			await this.submitWithDomain( { signupDomainOrigin, position } );
+			await this.submitWithDomain( { signupDomainOrigin, position, suggestion } );
 		}
 	};
 
@@ -391,9 +391,17 @@ export class RenderDomainsStep extends Component {
 		}
 	};
 
-	submitWithDomain = ( { googleAppsCartItem, shouldHideFreePlan = false, signupDomainOrigin } ) => {
+	submitWithDomain = ( {
+		googleAppsCartItem,
+		shouldHideFreePlan = false,
+		signupDomainOrigin,
+		suggestion,
+	} ) => {
 		const { step } = this.props;
-		const { suggestion } = step;
+
+		if ( step.suggestion ) {
+			suggestion = step.suggestion;
+		}
 
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
 		const useThemeHeadstartItem = shouldUseThemeAnnotation

@@ -337,9 +337,26 @@ class RegisterDomainStep extends Component {
 		return strippedHostname ?? hostname;
 	}
 
+	getInitialQueryInAIFlow() {
+		if ( this.props.flowName !== 'ai-site-builder' ) {
+			return;
+		}
+
+		// TODO: Maybe reading from meta or url would be useful too.
+		if ( ! this.props.selectedSite || ! this.props.selectedSite.name ) {
+			return;
+		}
+
+		return this.props.selectedSite.name;
+	}
+
 	componentDidMount() {
 		const storedQuery = globalThis?.sessionStorage?.getItem( SESSION_STORAGE_QUERY_KEY );
-		const query = this.state.lastQuery || storedQuery || this.getInitialQueryInLaunchFlow();
+		const query =
+			this.state.lastQuery ||
+			storedQuery ||
+			this.getInitialQueryInAIFlow() ||
+			this.getInitialQueryInLaunchFlow();
 
 		if ( query && ! this.state.searchResults && ! this.state.subdomainSearchResults ) {
 			this.onSearch( query );
