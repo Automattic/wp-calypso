@@ -22,7 +22,11 @@ const AddNewSiteButton: React.FC< Props > = ( {
 	const mainButtonLabel = mainButtonLabelText || translate( 'Add sites' );
 
 	return (
-		<Button variant="primary" className="sites-add-new-site__button" onClick={ toggleMenu }>
+		<Button
+			variant={ showMainButtonLabel ? 'primary' : 'secondary' }
+			className="sites-add-new-site__button"
+			onClick={ toggleMenu }
+		>
 			<>
 				{ showMainButtonLabel ? mainButtonLabel : null }
 				<Gridicon
