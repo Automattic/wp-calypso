@@ -34,6 +34,10 @@ const meta: Meta = {
 					alignItems: 'flex-start',
 					gap: 16,
 				} }
+				onSubmit={ ( e ) => {
+					e.preventDefault();
+					alert( 'Form submitted!' );
+				} }
 			>
 				<div
 					style={ {
@@ -60,48 +64,6 @@ export const Default: StoryObj = {
 	render: function Template() {
 		return (
 			<>
-				<ControlWithError
-					render={
-						<SelectControl
-							required
-							__nextHasNoMarginBottom
-							__next40pxDefaultSize
-							label="Select"
-							help="Option 1 is not allowed."
-							options={ [
-								{ value: '', label: 'Select an option' },
-								{ value: '1', label: 'Option 1 (not allowed)' },
-								{ value: '2', label: 'Option 2' },
-							] }
-						/>
-					}
-					onReportCustomValidity={ ( value ) => {
-						if ( value === '1' ) {
-							return 'Option 1 is not allowed.';
-						}
-					} }
-				/>
-				<ControlWithError
-					render={
-						<CustomSelectControl
-							// TODO: Required isn't passed down correctly.
-							required
-							__next40pxDefaultSize
-							label="Custom Select"
-							options={ [
-								{ key: '', name: 'Select an option' },
-								{ key: 'a', name: 'Option A (not allowed)' },
-								{ key: 'b', name: 'Option B' },
-							] }
-						/>
-					}
-					// TODO: Ref is not forwarded.
-					onReportCustomValidity={ ( value ) => {
-						if ( value === 'a' ) {
-							return 'Option A is not allowed.';
-						}
-					} }
-				/>
 				<ControlWithError
 					render={
 						<ComboboxControl
@@ -357,9 +319,109 @@ export const Radio: StoryObj = {
 	},
 };
 
+export const Select: StoryObj = {
+	render: function Template() {
+		const valueRef = useRef< string >();
+		const validityTargetRef = useRef< HTMLSelectElement >( null );
+
+		return (
+			<ControlWithError
+				render={
+					<SelectControl
+						required
+						__nextHasNoMarginBottom
+						__next40pxDefaultSize
+						label="Select"
+						help="Don't select Option 1."
+						options={ [
+							{ value: '', label: 'Select an option' },
+							{ value: '1', label: 'Option 1 (not allowed)' },
+							{ value: '2', label: 'Option 2' },
+						] }
+						onChange={ ( value ) => {
+							valueRef.current = value;
+						} }
+						ref={ validityTargetRef }
+					/>
+				}
+				onReportCustomValidity={ () => {
+					if ( valueRef.current === '1' ) {
+						return 'Option 1 is not allowed.';
+					}
+				} }
+				getValidityTarget={ () => validityTargetRef.current }
+			/>
+		);
+	},
+};
+
+// TODO: Add error styles.
+export const CustomSelect: StoryObj = {
+	render: function Template() {
+		const [ value, setValue ] =
+			useState< React.ComponentProps< typeof CustomSelectControl >[ 'value' ] >();
+		const valueRef = useRef< React.ComponentProps< typeof CustomSelectControl >[ 'value' ] >();
+		const validityTargetRef = useRef< HTMLSelectElement >( null );
+
+		valueRef.current = value;
+
+		return (
+			<div style={ { position: 'relative' } }>
+				<ControlWithError
+					render={
+						<CustomSelectControl
+							// TODO: Required isn't passed down correctly.
+							// Needs to be set on delegate element.
+							required
+							__next40pxDefaultSize
+							label="Custom Select"
+							options={ [
+								{ key: '', name: 'Select an option' },
+								{ key: 'a', name: 'Option A (not allowed)' },
+								{ key: 'b', name: 'Option B' },
+							] }
+							value={ value }
+							onChange={ setValue }
+						/>
+					}
+					onReportCustomValidity={ () => {
+						if ( valueRef.current?.selectedItem.key === 'a' ) {
+							return 'Option A is not allowed.';
+						}
+					} }
+					getValidityTarget={ () => validityTargetRef.current }
+				/>
+				<select
+					style={ {
+						position: 'absolute',
+						top: 0,
+						height: '100%',
+						width: '100%',
+						opacity: 0,
+						pointerEvents: 'none',
+					} }
+					ref={ validityTargetRef }
+					required
+					tabIndex={ -1 }
+					value={ value ? 'hasvalue' : '' }
+					onChange={ () => {} } // Prevent React warning.
+					onFocus={ ( e ) => {
+						e.target.previousElementSibling
+							?.querySelector< HTMLButtonElement >( '[role="combobox"]' )
+							?.focus();
+					} }
+				>
+					<option value="">No selection</option>
+					<option value="hasvalue">Has selection</option>
+				</select>
+			</div>
+		);
+	},
+};
+
 export const ToggleGroup: StoryObj = {
 	render: function Template() {
-		const customValidityTargetRef = useRef< HTMLInputElement >( null );
+		const validityTargetRef = useRef< HTMLInputElement >( null );
 		const valueRef = useRef< string | number | undefined >( '1' );
 
 		return (
@@ -386,7 +448,7 @@ export const ToggleGroup: StoryObj = {
 							return 'Option 1 is not allowed.';
 						}
 					} }
-					getValidityTarget={ () => customValidityTargetRef.current }
+					getValidityTarget={ () => validityTargetRef.current }
 				/>
 				<input
 					style={ {
@@ -398,7 +460,7 @@ export const ToggleGroup: StoryObj = {
 						pointerEvents: 'none',
 					} }
 					type="radio"
-					ref={ customValidityTargetRef }
+					ref={ validityTargetRef }
 					required
 					checked={ valueRef.current != null }
 					tabIndex={ -1 }

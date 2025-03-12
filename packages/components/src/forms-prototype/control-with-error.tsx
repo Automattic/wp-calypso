@@ -68,7 +68,7 @@ function UnforwardedControlWithError< C extends React.ReactElement >(
 		}
 	};
 
-	const onChange = ( ...args ) => {
+	const onChange = ( ...args: unknown[] ) => {
 		render.props.onChange?.( ...args );
 
 		// Only validate incrementally if the value is already marked as invalid.
