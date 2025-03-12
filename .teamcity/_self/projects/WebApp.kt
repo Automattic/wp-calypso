@@ -629,7 +629,7 @@ object CheckCodeStyleBranch : BuildType({
 					MAX_PARALLEL_BATCHES=15 # Number of concurrent ESLint processes
 
 					_find_files_to_lint \
-						| awk -v"n=${'$'}BATCH_SIZE" '{printf "%s%s", $0, (NR%n?"\t":"\n")}' \
+						| awk -v"n=${'$'}BATCH_SIZE" '{printf "%%s%%s", $0, (NR%%n?"\t":"\n")}' \
 						| nl \
 						| xargs -L1 -P"${'$'}MAX_PARALLEL_BATCHES" bash -c '
 							BATCH_NUM="${'$'}1"; shift
