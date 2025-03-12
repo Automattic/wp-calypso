@@ -21,12 +21,6 @@
 		@include break-medium() {
 			display: block;
 		}
-
-		@include break-xhuge() {
-			width: 15%;
-			height: 100%;
-			background: linear-gradient( to left, transparent, rgba( $header-background-color, .8 ), $header-background-color );
-		}
 	}
 
 	&::after {
@@ -42,12 +36,6 @@
 
 		@include break-medium() {
 			display: block;
-		}
-
-		@include break-xhuge() {
-			width: 15%;
-			height: 100%;
-			background: linear-gradient( to right, transparent, rgba( $header-background-color, .8 ), $header-background-color );
 		}
 	}
 
