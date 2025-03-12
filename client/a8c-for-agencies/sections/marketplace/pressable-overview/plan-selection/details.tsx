@@ -111,6 +111,7 @@ export default function PlanSelectionDetails( {
 
 				{ ! isRegularOwnership && ! isReferMode && (
 					<SimpleList
+						applyCoreStyles
 						items={ [
 							info?.install
 								? translate(

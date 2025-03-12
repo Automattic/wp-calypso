@@ -13,7 +13,7 @@
 	li {
 		display: flex;
 		flex-direction: row;
-		@include body-large;
+		@include a4a-font-body-lg($line-height: 1.625);
 	}
 
 	&.is-core-styles {
