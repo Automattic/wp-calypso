@@ -40,18 +40,18 @@
 .following__view-toggle {
 	display: flex;
 	gap: 8px;
-	
+
 	.components-button {
 		height: 36px;
 		min-width: 36px;
 		padding: 6px;
 		color: var(--color-text);
-		
+
 		&.is-pressed {
 			background: var(--color-text);
 			color: var(--color-surface);
 		}
-		
+
 		&:hover {
 			background: var(--color-text);
 			color: var(--color-surface);
@@ -75,7 +75,7 @@
 
 .following-stream__quick-post-card.card {
 
-	.foldable-card__action:focus {
+	.accessible-focus & .foldable-card__action:focus {
 		outline: none;
 		border-color: var(--color-primary);
 		box-shadow: 0 0 0 2px var(--color-primary-light);
