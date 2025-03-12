@@ -4,6 +4,7 @@ import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, FormEvent, useState } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
+import { useAddBlogStickerMutation } from 'calypso/blocks/blog-stickers/use-add-blog-sticker-mutation';
 import Loading from 'calypso/components/loading';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -30,6 +31,7 @@ const LaunchBigSky: Step = function () {
 	);
 	const hasStaticHomepage = site?.options?.show_on_front === 'page' && site?.options?.page_on_front;
 	const assemblerThemeActive = site?.options?.theme_slug === 'pub/assembler';
+	const { addBlogSticker } = useAddBlogStickerMutation();
 
 	const deletePage = async ( siteId: string, pageId: number ): Promise< boolean > => {
 		try {
@@ -61,6 +63,9 @@ const LaunchBigSky: Step = function () {
 		const pendingActions = [
 			resolveSelect( SITE_STORE ).getSite( selectedSiteId ), // To get the URL.
 		];
+
+		// add the big-sky-free-trial sticker to the site
+		addBlogSticker( selectedSiteId, 'big-sky-free-trial' );
 
 		// Set the Assembler theme on the site.
 		if ( ! assemblerThemeActive ) {
