@@ -8,7 +8,7 @@ import {
 } from '@automattic/verbum-block-editor';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import { stripHTML } from 'calypso/lib/formatting';
@@ -51,7 +51,11 @@ function QuickPost( {
 	const translate = useTranslate();
 	const locale = useLocale();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
-	const [ postContent, setPostContent ] = useState( '' );
+	const STORAGE_KEY = 'reader_quick_post_content';
+	const [ postContent, setPostContent ] = useState( () => {
+		// Use localStorage to save content between sessions.
+		return localStorage.getItem( STORAGE_KEY ) || '';
+	} );
 	const [ editorKey, setEditorKey ] = useState( 0 );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const selectedSiteId = useSelector( getSelectedSiteId );
@@ -61,7 +65,15 @@ function QuickPost( {
 	const hasLoaded = useSelector( hasLoadedSites );
 	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
 
+	useEffect( () => {
+		if ( postContent ) {
+			localStorage.setItem( STORAGE_KEY, postContent );
+		}
+	}, [ postContent ] );
+
 	const clearEditor = () => {
+		localStorage.removeItem( STORAGE_KEY );
+		setPostContent( '' );
 		setEditorKey( ( key ) => key + 1 );
 	};
 
@@ -163,7 +175,7 @@ function QuickPost( {
 				<div className="verbum-editor-wrapper" ref={ editorRef }>
 					<Editor
 						key={ editorKey }
-						initialContent=""
+						initialContent={ postContent }
 						onChange={ setPostContent }
 						isRTL={ isLocaleRtl( locale ) ?? false }
 						isDarkMode={ false }
