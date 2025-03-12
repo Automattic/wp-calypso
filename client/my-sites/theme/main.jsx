@@ -748,6 +748,7 @@ class ThemeSheet extends Component {
 						},
 					}
 				) }
+				disableHref
 			/>
 		);
 	};
