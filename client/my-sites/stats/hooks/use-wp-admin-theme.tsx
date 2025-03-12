@@ -1,8 +1,7 @@
 import config from '@automattic/calypso-config';
+import { useMemo } from 'react';
 import { useSelector } from 'calypso/state';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { useMemo } from 'react';
 
 export default function useWPAdminTheme( { siteId }: { siteId: number | null } ) {
 	const isSiteJetpack = useSelector( ( state ) =>
@@ -20,7 +19,7 @@ export default function useWPAdminTheme( { siteId }: { siteId: number | null } )
 			return 'is-jetpack';
 		}
 		// For simple sites, we read the admin color from the body class, and convert it to Calypso theme class.
-		for ( const className of document?.body.classList ) {
+		for ( const className of document.body.classList ) {
 			if ( className.startsWith( 'admin-color-' ) ) {
 				return `is-${ className.replace( 'admin-color-', '' ) }`;
 			}
