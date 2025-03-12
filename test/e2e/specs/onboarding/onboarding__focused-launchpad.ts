@@ -143,7 +143,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 		} );
 
 		it( 'Enter blog title', async function () {
-			await editorPage.enterTitle( 'my first post' );
+			await editorPage.enterTitle( DataHelper.getRandomPhrase() );
 		} );
 
 		it( 'Publish post', async function () {
