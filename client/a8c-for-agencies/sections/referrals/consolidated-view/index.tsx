@@ -29,6 +29,7 @@ export default function ConsolidatedViews( { referrals, totalPayouts }: Consolid
 		<ConsolidatedStatsGroup className="consolidated-view">
 			{ totalPayouts !== undefined && (
 				<ConsolidatedStatsCard
+					applyCoreStyles
 					value={ formatCurrency( totalPayouts, 'USD' ) }
 					footerText={ translate( 'All time referral payouts' ) }
 					popoverTitle={ translate( 'Total payouts' ) }
