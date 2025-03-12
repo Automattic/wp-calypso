@@ -247,12 +247,11 @@ export class RenderDomainsStep extends Component {
 			suggestion?.isSubDomainSuggestion
 		) {
 			if ( this.state.wpcomSubdomainSelected ) {
-				this.freeDomainRemoveClickHandler();
-			} else {
-				this.setState( { wpcomSubdomainSelected: suggestion } );
-				this.props.saveSignupStep( stepData );
+				await this.freeDomainRemoveClickHandler();
 			}
 
+			this.setState( { wpcomSubdomainSelected: suggestion } );
+			await this.props.saveSignupStep( stepData );
 			return;
 		}
 
