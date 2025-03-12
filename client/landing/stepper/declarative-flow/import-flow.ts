@@ -289,7 +289,8 @@ const importFlow: Flow = {
 						return navigate( `sitePicker?from=${ fromParam }` );
 					}
 
-					return navigate( `import?siteSlug=${ siteSlugParam }` );
+					// Ensure we override from and option, as we end up in a loop if we don't.
+					return navigate( `import?siteSlug=${ siteSlugParam }&option=&from` );
 				case 'importerWix':
 				case 'importReady':
 				case 'importReadyNot':
