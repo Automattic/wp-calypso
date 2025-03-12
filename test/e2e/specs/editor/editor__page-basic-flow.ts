@@ -80,6 +80,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	it( 'Open setting sidebar', async function () {
+		editorPage = new EditorPage( page );
 		await editorPage.openSettings();
 	} );
 
