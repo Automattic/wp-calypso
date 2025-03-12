@@ -109,6 +109,9 @@ export default function SitesWithWooPayments() {
 					window.open( url, '_blank' );
 					dispatch( recordTracksEvent( 'calypso_a4a_woopayments_visit_wp_admin' ) );
 				},
+				isEligible( item: SitesWithWooPaymentsState ) {
+					return item.state !== 'disconnected';
+				},
 			},
 		],
 		[ translate, dispatch ]

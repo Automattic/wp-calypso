@@ -1,15 +1,18 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
 .team-list-get-started .hosting-dashboard-layout__body-wrapper {
 	max-width: 700px;
 }
 
 .team-list-get-started__heading {
-	@include a4a-font-heading-xl;
+	@include heading-x-large;
 	margin-block-start: 16px;
 	margin-block-end: 8px;
 }
 
 .team-list-get-started__subtitle {
-	@include a4a-font-body-lg;
+	@include body-large;
 	margin-block-end: 32px;
 }
 

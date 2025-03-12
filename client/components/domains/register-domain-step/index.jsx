@@ -1568,6 +1568,7 @@ class RegisterDomainStep extends Component {
 
 	onAddDomain = async ( suggestion, position, previousState ) => {
 		const domain = get( suggestion, 'domain_name' );
+		const rootVendor = get( suggestion, 'vendor' );
 		const { premiumDomains } = this.state;
 		const { includeOwnedDomainInSuggestions } = this.props;
 		const {
@@ -1604,7 +1605,8 @@ class RegisterDomainStep extends Component {
 						domain,
 						status,
 						this.props.analyticsSection,
-						this.props.flowName
+						this.props.flowName,
+						rootVendor
 					);
 
 					const skipAvailabilityErrors =

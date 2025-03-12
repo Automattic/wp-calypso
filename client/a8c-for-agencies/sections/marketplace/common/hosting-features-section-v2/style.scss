@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .hosting-features-section-v2 {
 	overflow: hidden;
@@ -63,5 +64,5 @@
 }
 
 .hosting-features-section-v2__card-title {
-	@include a4a-font-heading-lg;
+	@include heading-large;
 }

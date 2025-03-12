@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .migrations-hosting-features {
 	overflow: hidden;
@@ -60,5 +61,5 @@
 }
 
 .migrations-hosting-features__card-title {
-	@include a4a-font-heading-lg;
+	@include heading-large;
 }

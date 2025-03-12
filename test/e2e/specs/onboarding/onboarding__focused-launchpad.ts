@@ -114,7 +114,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 		} );
 
 		it( 'Once at the /wp-admin settings page, update site name', async function () {
-			await page.fill( 'input[name="blogname"]', 'my first site' );
+			await page.fill( 'input[name="blogname"]', DataHelper.getRandomPhrase() );
 			const saveChangesButton = await page.getByRole( 'button', { name: 'Save Changes' } );
 			await saveChangesButton.click();
 
