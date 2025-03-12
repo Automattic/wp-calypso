@@ -28,10 +28,25 @@ import TailoredFlowPreCheckoutScreen from './tailored-flow-precheckout-screen';
 import type { StepProps } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
+import type { SiteIntent } from '@automattic/data-stores/src/onboard';
 
 interface ProcessingStepProps
 	extends StepProps< {
-		destination: string;
+		submits:
+			| {
+					destination: string;
+					processingResult: ProcessingResult;
+			  }
+			| {
+					processingResult: ProcessingResult.FAILURE | ProcessingResult.NO_ACTION;
+			  }
+			| {
+					processingResult: ProcessingResult.SUCCESS;
+					path?: string;
+					intent?: SiteIntent;
+					previousStep?: string;
+					nextStep?: string;
+			  };
 	} > {
 	title?: string;
 	subtitle?: string;
