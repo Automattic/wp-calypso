@@ -73,13 +73,7 @@ export function ControlWithError< C extends React.ReactElement >( {
 		}
 	};
 
-	const label = render.props.required ? (
-		<>
-			{ render.props.label } <span aria-hidden="true">(Required)</span>
-		</>
-	) : (
-		render.props.label
-	);
+	const label = render.props.required ? `${ render.props.label } (Required)` : render.props.label;
 
 	return (
 		<div className="a8c-use-validation">
