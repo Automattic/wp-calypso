@@ -1,11 +1,18 @@
 /* eslint-disable no-nested-ternary */
 import { WordPressLogo, WordPressWordmark } from '@automattic/components';
+import { Onboard, OnboardSelect } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { select } from '@wordpress/data';
 import { chevronLeft } from '@wordpress/icons';
 import clsx from 'clsx';
 import { ComponentProps, ReactNode } from 'react';
 import { Heading } from './Heading';
+import {
+	StepContainerV2ContextType,
+	useStepContainerV2Context,
+	StepContainerV2Provider,
+} from './StepContainerV2Context';
 
 import './style.scss';
 
@@ -50,6 +57,29 @@ interface RenderStepProps {
 	isSmallScreen: boolean;
 }
 
+const decorateButtonWithTracks = (
+	{ onClick, ...props }: ComponentProps< typeof Button >,
+	{
+		tracksEventName,
+		stepContext,
+	}: { tracksEventName: string; stepContext: StepContainerV2ContextType }
+): ComponentProps< typeof Button > => {
+	const onClickHandler = (
+		event: React.MouseEvent< HTMLAnchorElement, MouseEvent > &
+			React.MouseEvent< HTMLButtonElement, MouseEvent >
+	) => {
+		onClick?.( event );
+
+		stepContext.recordTracksEvent?.( tracksEventName, {
+			flow: stepContext.flowName,
+			step: stepContext.stepName,
+			intent: ( select( Onboard.register() ) as OnboardSelect ).getIntent(),
+		} );
+	};
+
+	return { ...props, onClick: onClickHandler };
+};
+
 const normalizeButtonProps = < T extends ComponentProps< typeof Button > >(
 	button: ButtonProps | undefined,
 	standardProps: T
@@ -84,6 +114,8 @@ export const StepContainerV2 = ( {
 	isSmallScreen: externallyProvidedIsSmallScreen,
 	render,
 }: StepContainerV2Props ) => {
+	const stepContext = useStepContainerV2Context();
+
 	const _isSmallScreen = useViewportMatch( 'small', '<' );
 	const isSmallScreen = externallyProvidedIsSmallScreen ?? _isSmallScreen;
 
@@ -95,18 +127,34 @@ export const StepContainerV2 = ( {
 		icon: chevronLeft,
 	} );
 
+	const backButtonElement = backButtonProps && (
+		<SecondaryButton
+			{ ...decorateButtonWithTracks( backButtonProps, {
+				tracksEventName: 'calypso_signup_previous_step_button_click',
+				stepContext,
+			} ) }
+		/>
+	);
+
 	const skipButtonProps = normalizeButtonProps( skipButton, {
 		label: 'Skip',
 		className: 'step-container-v2__skip-button',
 	} );
+
+	const skipButtonElement = skipButtonProps && (
+		<SecondaryButton
+			{ ...decorateButtonWithTracks( skipButtonProps, {
+				tracksEventName: 'calypso_signup_skip_step',
+				stepContext,
+			} ) }
+		/>
+	);
 
 	const nextButtonProps = normalizeButtonProps( nextButton, {
 		label: 'Next',
 		className: 'step-container-v2__next-button',
 	} );
 
-	const backButtonElement = backButtonProps && <SecondaryButton { ...backButtonProps } />;
-	const skipButtonElement = skipButtonProps && <SecondaryButton { ...skipButtonProps } />;
 	const nextButtonElement = nextButtonProps && <PrimaryButton { ...nextButtonProps } />;
 
 	const backButtonAtTheBottom = backButton && bottomBar.backButton;
@@ -168,3 +216,5 @@ export const StepContainerV2 = ( {
 		</div>
 	);
 };
+
+export { StepContainerV2Provider };

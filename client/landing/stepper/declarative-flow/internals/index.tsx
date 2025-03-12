@@ -1,3 +1,4 @@
+import { StepContainerV2Provider } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { lazy, useEffect } from 'react';
@@ -7,6 +8,7 @@ import { Route, Routes } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -134,6 +136,12 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 			return null;
 		}
 
+		const stepContainerV2Context = {
+			flowName: flow.name,
+			stepName: step.slug,
+			recordTracksEvent,
+		};
+
 		// The `nextStep` is available only when logged-out users go to the step that requires auth
 		// and are redirected to the user step.
 		const postAuthStepSlug = stepData?.nextStep ?? '';
@@ -156,23 +164,25 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 			} );
 
 			return (
-				<StepComponent
-					navigation={ {
-						submit() {
-							navigate( postAuthStepSlug, undefined, true );
-						},
-						...( previousAuthStepSlug && {
-							goBack() {
-								navigate( previousAuthStepSlug, undefined, true );
+				<StepContainerV2Provider value={ stepContainerV2Context }>
+					<StepComponent
+						navigation={ {
+							submit() {
+								navigate( postAuthStepSlug, undefined, true );
 							},
-						} ),
-					} }
-					flow={ flow.name }
-					variantSlug={ flow.variantSlug }
-					stepName="user"
-					redirectTo={ postAuthStepPath }
-					signupUrl={ signupUrl }
-				/>
+							...( previousAuthStepSlug && {
+								goBack() {
+									navigate( previousAuthStepSlug, undefined, true );
+								},
+							} ),
+						} }
+						flow={ flow.name }
+						variantSlug={ flow.variantSlug }
+						stepName="user"
+						redirectTo={ postAuthStepPath }
+						signupUrl={ signupUrl }
+					/>
+				</StepContainerV2Provider>
 			);
 		}
 
@@ -184,13 +194,15 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 		}
 
 		return (
-			<StepComponent
-				navigation={ stepNavigation }
-				flow={ flow.name }
-				variantSlug={ flow.variantSlug }
-				stepName={ step.slug }
-				data={ stepData }
-			/>
+			<StepContainerV2Provider value={ stepContainerV2Context }>
+				<StepComponent
+					navigation={ stepNavigation }
+					flow={ flow.name }
+					variantSlug={ flow.variantSlug }
+					stepName={ step.slug }
+					data={ stepData }
+				/>
+			</StepContainerV2Provider>
 		);
 	};
 
