@@ -24,7 +24,7 @@ const DIFMStartingPoint: Step = function ( { navigation, flow } ) {
 	const isHelpCenterLinkEnabled = flags?.includes( 'signup/help-center-link' );
 
 	const shouldRenderHelpCenterLink = useShouldRenderHelpCenterButton( {
-		flowName: flow,
+		flowName: 'do-it-for-me',
 		enabledGeos: [ 'US' ],
 	} );
 
