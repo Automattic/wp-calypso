@@ -1056,7 +1056,7 @@ __metadata:
     rollup-plugin-dts: "npm:^5.2.0"
     rollup-plugin-license: "npm:^3.0.1"
     terser-webpack-plugin: "npm:^5.3.11"
-    ts-loader: "npm:^9.4.2"
+    ts-loader: "npm:^9.5.2"
     ts-node: "npm:^10.9.2"
     tslib: "npm:^2.4.1"
     typescript: "npm:^5.5.4"
@@ -33869,9 +33869,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-loader@npm:^9.4.2":
-  version: 9.5.1
-  resolution: "ts-loader@npm:9.5.1"
+"ts-loader@npm:^9.5.2":
+  version: 9.5.2
+  resolution: "ts-loader@npm:9.5.2"
   dependencies:
     chalk: "npm:^4.1.0"
     enhanced-resolve: "npm:^5.0.0"
@@ -33881,7 +33881,7 @@ __metadata:
   peerDependencies:
     typescript: "*"
     webpack: ^5.0.0
-  checksum: 7dc1e3e5d3d032b6ef27836032f02c57077dfbcdf5817cbbc16b7b8609e7ed1d0ec157a03eaac07960161d8ad4a9e030c4d6722fe33540cf6ee75156c7f9c33d
+  checksum: d4f4e67f1365a8c4a929d26148611b6a82a9241bd988863386c9cc0c034eec8b14562206e09540fae38154595e0b3b9520b701b5c83c0e5d743c4016cd91d9f1
   languageName: node
   linkType: hard
 
