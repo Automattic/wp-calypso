@@ -334,6 +334,7 @@ export const ToggleGroup: StoryObj = {
 					required
 					checked={ valueRef.current != null }
 					tabIndex={ -1 }
+					// TODO: Make this unique.
 					name="foo"
 					onFocus={ ( e ) => {
 						e.target.previousElementSibling

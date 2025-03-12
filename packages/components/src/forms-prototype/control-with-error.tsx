@@ -1,3 +1,4 @@
+import { speak } from '@wordpress/a11y';
 import { Icon } from '@wordpress/components';
 import { caution } from '@wordpress/icons';
 import { cloneElement, useRef, useState } from 'react';
@@ -37,7 +38,13 @@ export function ControlWithError< C extends React.ReactElement >( {
 		const validityTarget = onSetCustomValidityTarget( ref.current );
 		validityTarget?.setCustomValidity?.( message ?? '' );
 
-		setErrorMessage( validityTarget?.validationMessage ?? '' );
+		const newErrorMessage = validityTarget?.validationMessage ?? '';
+
+		setErrorMessage( newErrorMessage );
+
+		if ( newErrorMessage ) {
+			speak( newErrorMessage );
+		}
 	};
 
 	const onBlur = ( ...args ) => {
