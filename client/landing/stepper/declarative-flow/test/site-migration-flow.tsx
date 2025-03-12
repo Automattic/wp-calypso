@@ -635,9 +635,6 @@ describe( 'Site Migration Flow', () => {
 			it( 'redirects to site overview when the migration has started', () => {
 				runNavigation( {
 					from: STEPS.SITE_MIGRATION_INSTRUCTIONS,
-					dependencies: {
-						destination: '/overview/example.wordpress.com?ref=site-migration',
-					},
 					query: {
 						siteSlug: 'example.wordpress.com',
 						siteId: 123,
