@@ -22,7 +22,7 @@ interface Props {
 	siteSlug: string | null;
 	title?: string;
 	subTitle?: string;
-	submit?: ( dependencies: Record< string, unknown > ) => void;
+	submit?: ( dependencies: { platform: ImporterPlatform; url: string } ) => void;
 	getFinalImporterUrl: (
 		siteSlug: string,
 		fromSite: string,

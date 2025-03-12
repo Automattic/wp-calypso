@@ -8,8 +8,10 @@ import { getFinalImporterUrl } from '../import/helper';
 
 interface ImportListProps
 	extends StepProps< {
-		platform: ImporterPlatform;
-		url: string;
+		submits: {
+			platform: ImporterPlatform;
+			url: string;
+		};
 	} > {
 	title?: string;
 	subTitle?: string;
