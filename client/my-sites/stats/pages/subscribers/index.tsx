@@ -84,7 +84,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	const isSimple = useSelector( isSimpleSite );
 	const hasNoSubscriberOtherThanAdmin =
 		! subscribersTotals?.total ||
-		( subscribersTotals?.total === 1 && subscribersTotals?.is_owner_subscribing );
+		( subscribersTotals?.total === 1 && subscribersTotals?.is_owner_subscribed );
 	const showLaunchpad = ! isLoading && hasNoSubscriberOtherThanAdmin;
 
 	const emptyComponent = isSimple ? (
