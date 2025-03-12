@@ -74,7 +74,7 @@ export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 	const {
 		data: { checklist },
 		isLoading,
-	} = useLaunchpad( site.ID, checklistSlug, undefined, 'sites-dashboard' );
+	} = useLaunchpad( site.slug, checklistSlug, undefined, 'sites-dashboard' );
 
 	if ( 'unlaunched' !== site.launch_status || ! checklist || isLoading ) {
 		return null;
