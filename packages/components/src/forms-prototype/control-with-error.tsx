@@ -2,27 +2,42 @@ import { Icon } from '@wordpress/components';
 import { caution } from '@wordpress/icons';
 import { cloneElement, useRef, useState } from 'react';
 
+/**
+ * HTML elements that support the Constraint Validation API.
+ * @see https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Form_validation
+ */
+type ValidityTarget =
+	| HTMLButtonElement
+	| HTMLFieldSetElement
+	| HTMLInputElement
+	| HTMLSelectElement
+	| HTMLTextAreaElement;
+
 export function ControlWithError< C extends React.ReactElement >( {
 	onReportCustomValidity,
+	onSetCustomValidityTarget = ( refElement ) => refElement,
 	render,
 	...props
 }: {
 	onReportCustomValidity?: ( value: string ) => string | void;
+	onSetCustomValidityTarget?: ( refElement: HTMLElement ) => ValidityTarget | null;
 	render: C;
 } ) {
 	const [ errorMessage, setErrorMessage ] = useState< string | undefined >();
 	const [ isTouched, setIsTouched ] = useState( false );
-	const ref = useRef< HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement >( null );
+	const ref = useRef( null );
 
 	const validate = () => {
 		if ( ! ref.current ) {
 			return;
 		}
 
+		// TODO: Fix this
 		const message = onReportCustomValidity?.( ref.current.value );
-		ref.current.setCustomValidity?.( message ?? '' );
+		const validityTarget = onSetCustomValidityTarget( ref.current );
+		validityTarget?.setCustomValidity?.( message ?? '' );
 
-		setErrorMessage( ref.current.validationMessage );
+		setErrorMessage( validityTarget?.validationMessage ?? '' );
 	};
 
 	const onBlur = ( ...args ) => {
@@ -43,12 +58,12 @@ export function ControlWithError< C extends React.ReactElement >( {
 	};
 
 	const onChange = ( ...args ) => {
+		render.props.onChange?.( ...args );
+
 		// Only validate incrementally if the value is already marked as invalid.
 		if ( isTouched ) {
 			validate();
 		}
-
-		render.props.onChange?.( ...args );
 	};
 
 	const label = render.props.required ? (

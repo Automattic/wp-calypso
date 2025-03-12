@@ -16,7 +16,7 @@ import {
 	RadioControl,
 	RangeControl,
 } from '@wordpress/components';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { ControlWithError } from './control-with-error';
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -289,28 +289,59 @@ export const Password: StoryObj = {
 };
 
 export const ToggleGroup: StoryObj = {
-	render: () => (
-		<ControlWithError
-			render={
-				// TODO: Use of `required` renders an invalid label in HTML.
-				<ToggleGroupControl
-					__nextHasNoMarginBottom
-					label="Toggle Group"
-					isBlock
-					__next40pxDefaultSize
+	render: function Template() {
+		const customValidityTargetRef = useRef< HTMLInputElement >( null );
+		const valueRef = useRef< string | number | undefined >( '1' );
+
+		return (
+			<div className="a8c-use-validation__toggle-group-wrapper">
+				<ControlWithError
+					render={
+						// TODO: Use of `required` renders an invalid label in HTML.
+						<ToggleGroupControl
+							__nextHasNoMarginBottom
+							label="Toggle Group"
+							isBlock
+							__next40pxDefaultSize
+							required
+							onChange={ ( value ) => {
+								valueRef.current = value;
+							} }
+							value="1"
+						>
+							<ToggleGroupControlOption value="1" label="Option 1" />
+							<ToggleGroupControlOption value="2" label="Option 2" />
+						</ToggleGroupControl>
+					}
+					onReportCustomValidity={ () => {
+						if ( valueRef.current === '1' ) {
+							return 'Option 1 is not allowed.';
+						}
+					} }
+					onSetCustomValidityTarget={ () => customValidityTargetRef.current }
+				/>
+				<input
+					style={ {
+						position: 'absolute',
+						top: 0,
+						height: '100%',
+						width: '100%',
+						opacity: 0,
+						pointerEvents: 'none',
+					} }
+					type="radio"
+					ref={ customValidityTargetRef }
 					required
-					value="1"
-				>
-					<ToggleGroupControlOption value="1" label="Option 1" />
-					<ToggleGroupControlOption value="2" label="Option 2" />
-				</ToggleGroupControl>
-			}
-			// TODO: Needs custom handling
-			onReportCustomValidity={ ( value ) => {
-				if ( value === '1' ) {
-					return 'Option 1 is not allowed.';
-				}
-			} }
-		/>
-	),
+					checked={ valueRef.current != null }
+					tabIndex={ -1 }
+					name="foo"
+					onFocus={ ( e ) => {
+						e.target.previousElementSibling
+							?.querySelector< HTMLButtonElement | HTMLInputElement >( '[role="radio"]' )
+							?.focus();
+					} }
+				/>
+			</div>
+		);
+	},
 };
