@@ -26,10 +26,10 @@ import { STEPS } from './internals/steps';
 import { redirect } from './internals/steps-repository/import/util';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import {
-	AssertConditionResult,
+	type AssertConditionResult,
 	AssertConditionState,
-	FlowV1,
-	ProvidedDependencies,
+	type FlowV1,
+	type ProvidedDependencies,
 } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
