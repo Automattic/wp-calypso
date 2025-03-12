@@ -59,11 +59,11 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		// Insert a random block to make the page dirty so it can be published and follow-up tests can be run.
 		// Temporary solution until we update tests to equivalent core functionality.
 		await editorPage.waitUntilLoaded();
-		const editorCanvas = await editorPage.getEditorParent();
-		if ( await editorCanvas.getByRole( 'button', { name: 'Close Block Inserter' } ).isVisible() ) {
-			await editorCanvas.getByRole( 'button', { name: 'Close Block Inserter' } ).click();
+		const editorParent = await editorPage.getEditorParent();
+		if ( await editorParent.getByRole( 'button', { name: 'Close Block Inserter' } ).isVisible() ) {
+			await editorParent.getByRole( 'button', { name: 'Close Block Inserter' } ).click();
 		}
-		await editorCanvas.getByRole( 'button', { name: 'Block Inserter' } ).first().click();
+		await editorParent.getByRole( 'button', { name: 'Block Inserter' } ).first().click();
 		await page.keyboard.press( 'Tab' );
 		await page.keyboard.press( 'Tab' );
 		await page.keyboard.press( 'Enter' );
