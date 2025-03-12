@@ -60,12 +60,11 @@ const SiteMigrationUpgradePlan: FC< Props > = ( {
 	}
 	const migrateFrom = queryParams.get( 'from' );
 
-	const goToMigrationAssistanceCheckout = ( planSlug: PlanSlug, userAcceptedDeal = false ) => {
+	const goToCheckout = ( planSlug: PlanSlug ) => {
 		const plan = getPlan( planSlug );
 		navigation?.submit?.( {
 			goToCheckout: true,
 			plan: plan?.getPathSlug ? plan.getPathSlug() : '',
-			userAcceptedDeal,
 		} );
 	};
 
@@ -81,10 +80,7 @@ const SiteMigrationUpgradePlan: FC< Props > = ( {
 			subTitleText=""
 			isBusy={ false }
 			hideTitleAndSubTitle
-			onCtaClick={ ( planSlug: PlanSlug ) => {
-				const userAcceptedDeal = false;
-				goToMigrationAssistanceCheckout( planSlug, userAcceptedDeal );
-			} }
+			onCtaClick={ goToCheckout }
 			onFreeTrialClick={ () => {
 				navigation.submit?.( {
 					goToCheckout: true,

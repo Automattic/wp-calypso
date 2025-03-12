@@ -369,10 +369,7 @@ const siteMigration: Flow = {
 					if ( providedDependencies?.goToCheckout ) {
 						let redirectAfterCheckout = STEPS.SITE_MIGRATION_INSTRUCTIONS.slug;
 
-						if (
-							providedDependencies?.userAcceptedDeal ||
-							urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME
-						) {
+						if ( urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
 							redirectAfterCheckout = STEPS.SITE_MIGRATION_CREDENTIALS.slug;
 						}
 
