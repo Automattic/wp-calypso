@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { safeImageUrl, getUrlParts } from '@automattic/calypso-url';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
@@ -93,4 +94,20 @@ export function getStreamType( streamKey ) {
 	const indexOfColon = streamKey.indexOf( ':' );
 	const streamType = indexOfColon === -1 ? streamKey : streamKey.substring( 0, indexOfColon );
 	return streamType;
+}
+
+/**
+ * Wrapper around `safeImageUrl` of '@automattic/calypso-url' to be used in the reader.
+ * There are some places in reader where we need to show images from trusted hosts without running them through Photon.
+ */
+export function getSafeImageUrlForReader( url ) {
+	const parsedUrl = getUrlParts( url );
+	// Hosts that are trusted to serve images.
+	const TRUSTED_HOSTS = [ 'www.redditstatic.com' ];
+
+	if ( TRUSTED_HOSTS.includes( parsedUrl.hostname ) ) {
+		return url;
+	}
+
+	return safeImageUrl( url ) ?? '';
 }

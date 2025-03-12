@@ -54,7 +54,7 @@ import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-sit
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { useIsThemeAllowedOnSite } from 'calypso/state/themes/hooks/use-is-theme-allowed-on-site';
-import { getTheme } from 'calypso/state/themes/selectors';
+import { getTheme, getThemeDemoUrl } from 'calypso/state/themes/selectors';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import { useActivateDesign } from '../../../../hooks/use-activate-design';
 import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
@@ -331,6 +331,15 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	// It should be removed when this property is ready on useQueryThemes
 	useQueryTheme( 'wpcom', selectedDesignThemeId );
 	const theme = useSelector( ( state ) => getTheme( state, 'wpcom', selectedDesignThemeId ) );
+
+	const selectedDesignSlug = selectedDesign?.slug || '';
+
+	// Get theme URL for the design preview.
+	const themeDemoUrl = useSelector(
+		( state ) =>
+			getThemeDemoUrl( state, selectedDesignSlug, siteId + '' ) +
+			'?demo=true&iframe=true&theme_preview=true'
+	);
 	const screenshot = theme?.screenshots?.[ 0 ] ?? theme?.screenshot;
 	const fullLengthScreenshot = screenshot?.replace( /\?.*/, '' );
 
@@ -778,7 +787,11 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				<AsyncLoad
 					require="@automattic/design-preview"
 					placeholder={ null }
-					previewUrl={ previewUrl }
+					previewUrl={ themeDemoUrl || previewUrl }
+					siteInfo={ {
+						title: shouldCustomizeText ? site?.name : '',
+						tagline: shouldCustomizeText ? site?.description : '',
+					} }
 					splitDefaultVariation={
 						( isGlobalStylesOnPersonal &&
 							selectedDesign?.design_tier === THEME_TIER_FREE &&
