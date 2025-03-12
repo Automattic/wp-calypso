@@ -28,6 +28,7 @@ import {
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
+import userAgent from 'calypso/lib/user-agent';
 import wpcom from 'calypso/lib/wp';
 import {
 	recordTracksEventWithClientId as recordTracksEvent,
@@ -242,13 +243,17 @@ class MagicLogin extends Component {
 		const { isJetpackLogin, locale, showCheckYourEmail, translate, isWCCOM, query } = this.props;
 
 		const isA4A = query?.redirect_to?.includes( 'agencies.automattic.com/client' ) ?? false;
+		const { isiPad, isiPod, isiPhone, isAndroid } = userAgent;
+		const isMobile = isiPad || isiPod || isiPhone || isAndroid;
+
+		const hideAppPromo = isA4A || ! isMobile;
 
 		if ( isWCCOM ) {
 			return null;
 		}
 
 		if ( showCheckYourEmail ) {
-			if ( isA4A ) {
+			if ( hideAppPromo ) {
 				return null;
 			}
 			return (
@@ -288,7 +293,7 @@ class MagicLogin extends Component {
 						{ linkBack }
 					</a>
 				</div>
-				{ ! isA4A && (
+				{ ! hideAppPromo && (
 					<AppPromo
 						title={ translate( 'Stay logged in with the Jetpack Mobile App' ) }
 						campaign="calypso-login-link"

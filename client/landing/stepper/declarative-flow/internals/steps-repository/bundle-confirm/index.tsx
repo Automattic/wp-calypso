@@ -284,7 +284,7 @@ const BundleConfirm: Step< { checkoutUrl: string } > = function BundleConfirm( {
 								}
 
 								const providedDependencies = {
-									checkoutUrl: siteUpgrading.checkoutUrl,
+									checkoutUrl: siteUpgrading.required ? siteUpgrading.checkoutUrl : '',
 								};
 
 								submit?.( providedDependencies );

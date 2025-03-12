@@ -10,7 +10,6 @@ import SingleListView, { SHORT_LIST_LENGTH } from '../plugins-browser/single-lis
 import usePlugins from '../use-plugins';
 import InPageCTASection from './in-page-cta-section';
 import UpgradeNudge from './upgrade-nudge';
-import './style.scss';
 
 /**
  * Module variables

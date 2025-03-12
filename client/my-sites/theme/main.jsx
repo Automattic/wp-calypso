@@ -912,44 +912,6 @@ class ThemeSheet extends Component {
 		return defaultOption.label;
 	};
 
-	renderRetired = () => {
-		const { translate, locale, isLoggedIn } = this.props;
-		return (
-			<div className="theme__sheet-content">
-				<Card className="theme__retired-theme-message">
-					<Gridicon icon="cross-circle" size={ 48 } />
-					<div className="theme__retired-theme-message-details">
-						<div className="theme__retired-theme-message-details-title">
-							{ this.props.translate( 'This theme is retired' ) }
-							<InlineSupportLink supportContext="themes-retired" showText={ false } />
-						</div>
-						<div>
-							{ this.props.translate(
-								'We invite you to try out a newer theme; start by browsing our WordPress theme directory.'
-							) }
-						</div>
-					</div>
-					<Button primary href={ localizeThemesPath( '/themes/', locale, ! isLoggedIn ) }>
-						{ translate( 'See all themes' ) }
-					</Button>
-				</Card>
-
-				{ this.isRemoved() && (
-					<Card>
-						<p>
-							{ this.props.translate(
-								'This theme has been renamed to reflect that support for it is now provided directly by WordPress.com. The theme will continue to work as before.'
-							) }
-						</p>
-					</Card>
-				) }
-				<div className="theme__sheet-footer-line">
-					<Gridicon icon="my-sites" />
-				</div>
-			</div>
-		);
-	};
-
 	renderButton = () => {
 		const { getUrl, key } = this.props.defaultOption;
 		const label = this.getDefaultOptionLabel();
@@ -1140,7 +1102,6 @@ class ThemeSheet extends Component {
 		const {
 			themeId,
 			siteId,
-			retired,
 			translate,
 			isLoggedIn,
 			isThemeActivationSyncStarted,
@@ -1256,10 +1217,7 @@ class ThemeSheet extends Component {
 						{ this.renderHeader() }
 						{ this.renderReviews() }
 					</div>
-					<div className="theme__sheet-column-left">
-						{ ! retired && this.renderSectionContent( section ) }
-						{ retired && this.renderRetired() }
-					</div>
+					<div className="theme__sheet-column-left">{ this.renderSectionContent( section ) }</div>
 					{ ! isRemoved && (
 						<div className="theme__sheet-column-right">
 							{ this.isWebPreviewAvailable() ? this.renderWebPreview() : this.renderScreenshot() }

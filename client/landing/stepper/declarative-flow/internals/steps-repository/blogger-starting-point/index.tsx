@@ -25,9 +25,7 @@ const StartingPointStep: Step< { startingPoint: string } > = function StartingPo
 
 	const submitIntent = ( startingPoint: string ) => {
 		const providedDependencies = { startingPoint };
-		recordTracksEvent( 'calypso_signup_starting_point_select', {
-			starting_point: startingPoint,
-		} );
+		recordTracksEvent( 'calypso_signup_starting_point_select', { starting_point: startingPoint } );
 		submit?.( providedDependencies );
 	};
 

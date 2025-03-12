@@ -1,7 +1,7 @@
 import path from 'path';
 import { Dialog, Gridicon, Spinner, ExternalLink } from '@automattic/components';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -120,6 +120,12 @@ export class EditGravatar extends Component {
 	};
 
 	renderImageEditor() {
+		const doneButtonText = i18n.fixMe( {
+			text: 'Upload photo',
+			newCopy: i18n.translate( 'Upload photo' ),
+			oldCopy: i18n.translate( 'Change My Photo' ),
+		} );
+
 		if ( this.state.isEditingImage ) {
 			return (
 				<Dialog additionalClassNames="edit-gravatar-modal" isVisible>
@@ -128,7 +134,7 @@ export class EditGravatar extends Component {
 						media={ { src: this.state.image } }
 						onDone={ this.onImageEditorDone }
 						onCancel={ this.hideImageEditor }
-						doneButtonText={ this.props.translate( 'Change My Photo' ) }
+						doneButtonText={ doneButtonText }
 					/>
 				</Dialog>
 			);

@@ -43,7 +43,7 @@ const importClick = () => {
 		action: 'import',
 	} );
 	page(
-		'/setup/hosted-site-migration/site-migration-identify?source=sites-dashboard&ref=new-site-popover&action=import'
+		'/setup/hosted-site-migration/create-site?source=sites-dashboard&ref=new-site-popover&action=import'
 	);
 };
 

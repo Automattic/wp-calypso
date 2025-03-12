@@ -1,5 +1,5 @@
 import { external } from '@wordpress/icons';
-import { useTranslate, numberFormatCompact } from 'i18n-calypso';
+import { useTranslate, numberFormatCompact, formatCurrency } from 'i18n-calypso';
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import useProductAndPlans from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-product-and-plans';
@@ -245,7 +245,18 @@ export default function PressablePlanSection( {
 
 				<span className="pressable-plan-section__details-footnote">
 					{ translate(
-						"*If you exceed your plan's storage or traffic limits, you will be charged $0.50 per GB and $8 per 10K visits per month."
+						"*If you exceed your plan's storage or traffic limits, you will be charged %(storageCharge)s per GB and %(trafficCharge)s per %(visits)s visits per month.",
+						{
+							args: {
+								storageCharge: formatCurrency( 0.5, 'USD', {
+									stripZeros: true,
+								} ),
+								trafficCharge: formatCurrency( 8, 'USD', {
+									stripZeros: true,
+								} ),
+								visits: numberFormatCompact( 10000 ),
+							},
+						}
 					) }
 				</span>
 			</HostingPlanSection.Details>

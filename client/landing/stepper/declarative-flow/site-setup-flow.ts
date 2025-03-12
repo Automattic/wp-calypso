@@ -273,7 +273,7 @@ const siteSetupFlow: FlowV1 = {
 
 		useRedirectDesignSetupOldSlug( currentStep, navigate );
 
-		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
+		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
 				case 'options': {
 					if ( intent === 'sell' ) {
@@ -292,7 +292,7 @@ const siteSetupFlow: FlowV1 = {
 				}
 
 				case 'processing': {
-					const processingResult = params[ 0 ] as ProcessingResult;
+					const processingResult = providedDependencies.processingResult as ProcessingResult;
 
 					if ( processingResult === ProcessingResult.FAILURE ) {
 						return navigate( 'error' );
@@ -327,7 +327,7 @@ const siteSetupFlow: FlowV1 = {
 				}
 
 				case 'bloggerStartingPoint': {
-					const intent = params[ 0 ];
+					const intent = providedDependencies.startingPoint as string;
 					switch ( intent ) {
 						case 'firstPost': {
 							return exitFlow( `/post/${ siteSlug }` );
@@ -384,7 +384,7 @@ const siteSetupFlow: FlowV1 = {
 				}
 
 				case 'intent': {
-					const submittedIntent = params[ 0 ];
+					const submittedIntent = providedDependencies.intent as string;
 					switch ( submittedIntent ) {
 						case 'wpadmin': {
 							return exitFlow( `https://wordpress.com/home/${ siteId ?? siteSlug }` );

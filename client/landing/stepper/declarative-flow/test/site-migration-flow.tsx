@@ -131,6 +131,27 @@ describe( 'Site Migration Flow', () => {
 					step: STEPS.PROCESSING,
 				} );
 			} );
+
+			it( 'redirects to PROCESSING and skips migration if the action is import', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_CREATION_STEP,
+					dependencies: {
+						siteCreated: true,
+					},
+					query: {
+						action: 'import',
+						from: 'https://site-to-be-migrated.com',
+					},
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.PROCESSING,
+					query: {
+						skipMigration: true,
+						from: 'https://site-to-be-migrated.com',
+					},
+				} );
+			} );
 		} );
 
 		describe( 'PROCESSING', () => {
@@ -153,6 +174,30 @@ describe( 'Site Migration Flow', () => {
 						siteId: 123,
 						siteSlug: 'example.wordpress.com',
 						from: 'https://site-to-be-migrated.com',
+					},
+				} );
+			} );
+
+			it( 'redirects to HOW_TO_MIGRATE step if there is a from parameter and the action is migrate', () => {
+				const destination = runNavigation( {
+					from: STEPS.PROCESSING,
+					dependencies: {
+						siteCreated: true,
+					},
+					query: {
+						from: 'https://site-to-be-migrated.com',
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+						action: 'migrate',
+					},
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
+					query: {
+						sessionId: '123',
+						siteSlug: 'example.wordpress.com',
+						siteId: 123,
 					},
 				} );
 			} );
@@ -388,6 +433,31 @@ describe( 'Site Migration Flow', () => {
 				expect( destination ).toMatchDestination( {
 					step: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 					query: {
+						siteSlug: 'example.wordpress.com',
+						siteId: 123,
+					},
+				} );
+			} );
+
+			it( 'redirects to HOW_TO_MIGRATE step if a site is selected and the query action is migrate', () => {
+				const destination = runNavigation( {
+					from: STEPS.PICK_SITE,
+					query: {
+						action: 'migrate',
+					},
+					dependencies: {
+						action: 'select-site',
+						site: {
+							ID: 123,
+							slug: 'example.wordpress.com',
+						},
+					},
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
+					query: {
+						sessionId: '123',
 						siteSlug: 'example.wordpress.com',
 						siteId: 123,
 					},
