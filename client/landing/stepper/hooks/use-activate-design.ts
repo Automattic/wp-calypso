@@ -56,10 +56,15 @@ export const useActivateDesign = () => {
 				}
 			}
 
-			const activeTheme = await setDesignOnSite( site?.ID, design, {
-				enableThemeSetup: ! isJetpackOrAtomic,
-				...designOptions,
-			} );
+			const activeTheme = await setDesignOnSite(
+				site?.ID,
+				design,
+				{
+					enableThemeSetup: ! isJetpackOrAtomic,
+					...designOptions,
+				},
+				isJetpackOrAtomic === false
+			);
 
 			await reduxDispatch( setActiveTheme( site?.ID || -1, activeTheme ) );
 		},

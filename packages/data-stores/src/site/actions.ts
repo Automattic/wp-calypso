@@ -395,10 +395,21 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} );
 	}
 
+	/**
+	 * Set the design on the site.
+	 * @param siteSlug The site slug.
+	 * @param selectedDesign The selected design.
+	 * @param options The options.
+	 * @param shouldResetGlobalStyles Whether to prevent resetting global styles.
+	 * This is needed to prevent resetting global styles when a theme was recently installed generating an fatal error.
+	 * @returns The activated theme.
+	 * @yields Yields effects for theme activation and global styles reset, including API calls and Redux actions.
+	 */
 	function* setDesignOnSite(
 		siteSlug: string,
 		selectedDesign: Design,
-		options: DesignOptions = {}
+		options: DesignOptions = {},
+		shouldResetGlobalStyles = true
 	) {
 		const themeSlug =
 			selectedDesign.slug ||
@@ -415,7 +426,10 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} );
 		const activatedThemeId = activatedTheme.stylesheet ?? activatedTheme.id;
 
-		if ( styleVariation?.slug === DEFAULT_GLOBAL_STYLES_VARIATION_SLUG ) {
+		if (
+			shouldResetGlobalStyles &&
+			styleVariation?.slug === DEFAULT_GLOBAL_STYLES_VARIATION_SLUG
+		) {
 			yield* resetGlobalStyles( siteSlug, activatedThemeId, activatedTheme );
 		}
 		// @todo Always use the global styles for consistency
