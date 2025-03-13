@@ -80,7 +80,7 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 			let error;
 			if ( httpError instanceof Error ) {
 				const errorKey = httpError.message.includes( 'document is not focused' )
-					? errorMessages.NotFocusedError
+					? 'NotFocusedError'
 					: httpError.name;
 				const message = errorMessages[ errorKey ] ?? errorMessages.default;
 				error = { code: httpError.name, message, field: 'global' };
