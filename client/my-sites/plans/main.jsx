@@ -437,10 +437,7 @@ class PlansComponent extends Component {
 
 		return (
 			<div>
-				{ isUntangled && (
-					<FeatureBreadcrumb siteId={ selectedSite.ID } title={ translate( 'Plan' ) } />
-				) }
-				{ ! isJetpackNotAtomic && <ModernizedLayout /> }
+				{ ! isUntangled && ! isJetpackNotAtomic && <ModernizedLayout /> }
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<PageViewTracker path="/plans/:site" title="Plans" />
@@ -458,7 +455,10 @@ class PlansComponent extends Component {
 				) }
 				{ canAccessPlans && (
 					<div>
-						{ ! isDomainAndPlanPackageFlow && (
+						{ isUntangled && (
+							<FeatureBreadcrumb siteId={ selectedSite.ID } title={ translate( 'Plan' ) } />
+						) }
+						{ ! isUntangled && ! isDomainAndPlanPackageFlow && (
 							<PlansHeader
 								domainFromHomeUpsellFlow={ domainFromHomeUpsellFlow }
 								subHeaderText={ subHeaderText }
