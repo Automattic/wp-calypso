@@ -5,7 +5,7 @@
 import page from '@automattic/calypso-router';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import { UserProfile } from '../index';
+import { UserProfile, UserProfileProps } from '../index';
 
 /**
  * Mock the router to simulate navigation and current path
@@ -72,7 +72,7 @@ describe( 'UserProfile', () => {
 	const mockRequestUser = jest.fn().mockResolvedValue( undefined );
 	const mockHandleBack = jest.fn();
 
-	const defaultProps = {
+	const defaultProps: UserProfileProps = {
 		userLogin: 'testuser',
 		userId: '',
 		path: '/reader/users/testuser',
