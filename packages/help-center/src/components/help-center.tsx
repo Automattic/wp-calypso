@@ -53,7 +53,7 @@ const HelpCenter: React.FC< Container > = ( {
 
 	useActionHooks();
 
-	const openingCoordinates = useOpeningCoordinates( isHelpCenterShown, isMinimized );
+	const openingCoordinates = useOpeningCoordinates( isMinimized );
 
 	useEffect( () => {
 		const classes = [ 'help-center' ];
