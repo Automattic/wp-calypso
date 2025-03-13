@@ -1,11 +1,9 @@
 /**
  * @jest-environment jsdom
  */
+import { expect } from '@jest/globals';
 import { renderHook } from '@testing-library/react';
-import {
-	useSitesListFilterDeleted,
-	SitesFilterDeletedOptions,
-} from '../src/use-sites-list-filter-deleted';
+import { useFilterDeletedSites, SitesFilterDeletedOptions } from '../src/use-filter-deleted-sites';
 
 // Mock the MinimumSite type for testing
 interface MockSite {
@@ -15,7 +13,7 @@ interface MockSite {
 	is_deleted: boolean;
 }
 
-describe( 'useSitesListFilterDeleted', () => {
+describe( 'useFilterDeletedSites', () => {
 	// Sample test data
 	const testSites: MockSite[] = [
 		{ id: 1, name: 'Site 1', status: 'active', is_deleted: false },
@@ -25,12 +23,20 @@ describe( 'useSitesListFilterDeleted', () => {
 		{ id: 5, name: 'Another Site', status: 'active', is_deleted: false },
 	];
 
+	test( 'returns an empty array when sites list is empty', () => {
+		const options: SitesFilterDeletedOptions = {
+			shouldApplyFilter: true,
+		};
+		const { result } = renderHook( () => useFilterDeletedSites( [], options ) );
+		expect( result.current ).toEqual( [] );
+	} );
+
 	test( 'filters out deleted sites', () => {
 		const options: SitesFilterDeletedOptions = {
 			shouldApplyFilter: true,
 		};
 
-		const { result } = renderHook( () => useSitesListFilterDeleted( testSites, options ) );
+		const { result } = renderHook( () => useFilterDeletedSites( testSites, options ) );
 
 		const filteredSites = result.current;
 		expect( filteredSites ).toHaveLength( 4 );
@@ -42,7 +48,7 @@ describe( 'useSitesListFilterDeleted', () => {
 		const options: SitesFilterDeletedOptions = {
 			shouldApplyFilter: false,
 		};
-		const { result } = renderHook( () => useSitesListFilterDeleted( testSites, options ) );
+		const { result } = renderHook( () => useFilterDeletedSites( testSites, options ) );
 
 		const filteredSites = result.current;
 		expect( filteredSites ).toHaveLength( 5 );
@@ -51,7 +57,7 @@ describe( 'useSitesListFilterDeleted', () => {
 
 	test( 'recalculates when dependencies change', () => {
 		const { result, rerender } = renderHook(
-			( props ) => useSitesListFilterDeleted( props.sites, props.options ),
+			( props ) => useFilterDeletedSites( props.sites, props.options ),
 			{
 				initialProps: {
 					sites: testSites,

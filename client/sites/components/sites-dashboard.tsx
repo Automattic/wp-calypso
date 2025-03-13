@@ -3,7 +3,7 @@ import pagejs from '@automattic/calypso-router';
 import {
 	type SiteExcerptData,
 	SitesSortKey,
-	useSitesListFilterDeleted,
+	useFilterDeletedSites,
 	useSitesListFiltering,
 	useSitesListGrouping,
 	useSitesListSorting,
@@ -288,7 +288,7 @@ const SitesDashboard = ( {
 	} );
 
 	// Remove deleted sites from default view
-	const filteredStatusGroup = useSitesListFilterDeleted( currentStatusGroup, {
+	const filteredStatusGroup = useFilterDeletedSites( currentStatusGroup, {
 		shouldApplyFilter:
 			! search && ( ! statusSlug || statusSlug === 'all' ) && ! isRestoringAccount(),
 	} );

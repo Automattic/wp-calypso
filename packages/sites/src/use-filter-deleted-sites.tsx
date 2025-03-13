@@ -7,7 +7,7 @@ export interface SitesFilterDeletedOptions {
 	shouldApplyFilter: boolean;
 }
 
-export function useSitesListFilterDeleted< T extends SiteForFiltering >(
+export function useFilterDeletedSites< T extends SiteForFiltering >(
 	sites: T[],
 	{ shouldApplyFilter = true }: SitesFilterDeletedOptions
 ) {
