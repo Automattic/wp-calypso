@@ -29,6 +29,7 @@ export default function ConsolidatedViews( { referrals, totalPayouts }: Consolid
 		<ConsolidatedStatsGroup className="consolidated-view">
 			{ totalPayouts !== undefined && (
 				<ConsolidatedStatsCard
+					applyCoreStyles
 					value={ formatCurrency( totalPayouts, 'USD' ) }
 					footerText={ translate( 'All time referral payouts' ) }
 					popoverTitle={ translate( 'Total payouts' ) }
@@ -45,6 +46,7 @@ export default function ConsolidatedViews( { referrals, totalPayouts }: Consolid
 				/>
 			) }
 			<ConsolidatedStatsCard
+				applyCoreStyles
 				value={ formatCurrency( expectedCommission, 'USD' ) }
 				footerText={ translate( 'Next estimated payout amount' ) }
 				popoverTitle={ translate( 'Estimated amount' ) }
@@ -68,6 +70,7 @@ export default function ConsolidatedViews( { referrals, totalPayouts }: Consolid
 				isLoading={ isFetching }
 			/>
 			<ConsolidatedStatsCard
+				applyCoreStyles
 				value={ nextPayoutDate + '*' }
 				footerText={ translate( 'Next estimated payout date' ) }
 				popoverTitle={ translate( 'Estimated date' ) }
@@ -84,6 +87,7 @@ export default function ConsolidatedViews( { referrals, totalPayouts }: Consolid
 				) }
 			/>
 			<ConsolidatedStatsCard
+				applyCoreStyles
 				value={ pendingOrders }
 				footerText={ translate( 'Pending referral orders' ) }
 				popoverTitle={ translate( 'Pending orders' ) }

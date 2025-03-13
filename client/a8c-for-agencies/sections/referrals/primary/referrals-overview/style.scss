@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 $data-view-border-color: #f1f1f1;
 
@@ -11,12 +12,12 @@ $data-view-border-color: #f1f1f1;
 .referrals-overview__button-popover {
 	.a4a-popover__content {
 		.a4a-popover__title {
-			@include a4a-font-heading-md;
+			@include heading-medium;
 			color: var(--studio-gray-80);
 		}
 
 		.referrals-overview__button-popover-description {
-			@include a4a-font-body-md;
+			@include body-small;
 		}
 	}
 }

@@ -6,7 +6,7 @@ import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
 import { wpcomRequest } from '../wpcom-request-controls';
 import { isE2ETest } from '.';
-import type { APIFetchOptions, HelpCenterOptions } from './types';
+import type { APIFetchOptions, HelpCenterOptions, HelpCenterShowOptions } from './types';
 import type { SupportInteraction } from '@automattic/odie-client/src/types';
 
 export const receiveHasSeenWhatsNewModal = ( value: boolean | undefined ) =>
@@ -107,6 +107,12 @@ export const setShowMessagingWidget = ( show: boolean ) =>
 		show,
 	} ) as const;
 
+export const setMessage = ( message: string ) =>
+	( {
+		type: 'HELP_CENTER_SET_MESSAGE',
+		message,
+	} ) as const;
+
 export const setAllowPremiumSupport = ( allow: boolean ) =>
 	( {
 		type: 'HELP_CENTER_SET_ALLOW_PREMIUM_SUPPORT',
@@ -121,7 +127,7 @@ export const setHelpCenterOptions = ( options: HelpCenterOptions ) => ( {
 export const setShowHelpCenter = function* (
 	show: boolean,
 	allowPremiumSupport = false,
-	options = { hideBackButton: false }
+	options: HelpCenterShowOptions = { hideBackButton: false, searchTerm: '' }
 ) {
 	if ( ! isE2ETest() ) {
 		try {
@@ -153,7 +159,9 @@ export const setShowHelpCenter = function* (
 		yield setShowMessagingWidget( false );
 	}
 
+	yield setMessage( options.searchTerm );
 	yield setIsMinimized( false );
+
 	if ( allowPremiumSupport ) {
 		yield setAllowPremiumSupport( true );
 	}
@@ -172,12 +180,6 @@ export const setSubject = ( subject: string ) =>
 	( {
 		type: 'HELP_CENTER_SET_SUBJECT',
 		subject,
-	} ) as const;
-
-export const setMessage = ( message: string ) =>
-	( {
-		type: 'HELP_CENTER_SET_MESSAGE',
-		message,
 	} ) as const;
 
 export const setUserDeclaredSiteUrl = ( url: string ) =>

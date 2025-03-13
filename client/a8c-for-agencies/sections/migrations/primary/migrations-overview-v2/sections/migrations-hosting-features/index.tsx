@@ -24,7 +24,11 @@ function FeatureCard( {
 				<h2 className="migrations-hosting-features__card-title">{ title }</h2>
 			</div>
 
-			<SimpleList className="migrations-hosting-features__card-list" items={ items } />
+			<SimpleList
+				applyCoreStyles
+				className="migrations-hosting-features__card-list"
+				items={ items }
+			/>
 		</Card>
 	);
 }

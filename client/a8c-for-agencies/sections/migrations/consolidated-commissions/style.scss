@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
 .migrations-commissions {
 	.consolidated-commissions {
 		display: flex;
@@ -11,14 +14,13 @@
 			padding: 24px;
 
 			.consolidated-commissions__value {
-				font-size: rem(24px);
+				@include heading-x-large;
 				color: var(--color-accent-100);
-				font-weight: 700;
 				margin-block-end: 8px;
 			}
 			.consolidated-commissions__label {
+				@include body-medium;
 				color: var(--color-accent);
-				font-size: rem(12px);
 				text-wrap: nowrap;
 			}
 		}

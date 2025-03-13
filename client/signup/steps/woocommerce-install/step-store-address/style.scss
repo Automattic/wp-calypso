@@ -25,11 +25,6 @@ body.is-section-signup .is-woocommerce-install .signup__step.is-store-address {
 			width: min-content;
 		}
 
-		.components-combobox-control__reset.components-button {
-			// Height of 18 ensures combobox input matches height of text controls.
-			height: 18px;
-		}
-
 		.form-input-validation.is-error {
 			margin-bottom: $grid-unit-30;
 			padding-bottom: 0;
