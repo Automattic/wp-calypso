@@ -172,7 +172,7 @@ const onboarding: Flow = {
 		 */
 		const getPostCheckoutDestination = (
 			providedDependencies: ProvidedDependencies
-		): [ string, string | null ] => {
+		): [ string, string ] => {
 			if ( createWithBigSky && isBigSkyBeforePlansExperiment && isGoalsAtFrontExperiment ) {
 				const destination = addQueryArgs(
 					withLocale( '/setup/site-setup/launch-big-sky', locale ),
@@ -189,10 +189,6 @@ const onboarding: Flow = {
 						isBigSkyBeforePlansFlow: true,
 					} ),
 				];
-			}
-
-			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
-				return [ `/home/${ providedDependencies.siteSlug }`, null ];
 			}
 
 			const destination = addQueryArgs( withLocale( '/setup/site-setup', locale ), {
@@ -384,7 +380,7 @@ const onboarding: Flow = {
 									}
 								),
 								signup: 1,
-								checkoutBackUrl: pathToUrl( backDestination ?? '' ),
+								checkoutBackUrl: pathToUrl( backDestination ),
 								coupon,
 								...( createWithBigSky && isBigSkyBeforePlansExperiment && isGoalsAtFrontExperiment
 									? { [ 'big-sky-checkout' ]: 1 }

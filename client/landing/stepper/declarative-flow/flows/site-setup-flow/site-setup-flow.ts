@@ -694,7 +694,9 @@ const siteSetupFlow: FlowV1 = {
 		const dispatch = reduxDispatch();
 
 		const skippedCheckout = useQuery().get( 'skippedCheckout' );
+
 		const activateDesign = useActivateDesign();
+
 		const isPendingActionSet = useRef( false );
 
 		useEffect( () => {
@@ -712,6 +714,7 @@ const siteSetupFlow: FlowV1 = {
 				if ( ! selectedDesign ) {
 					return;
 				}
+
 				try {
 					await activateDesign( selectedDesign, {
 						styleVariation: selectedStyleVariation,
