@@ -25,8 +25,7 @@
 			text-underline-offset: unset;
 		}
 
-		.wp-login__main.is-vip-auth &,
-		.wp-login__main.is-crowdsignal-auth & {
+		.wp-login__main.is-generic-oauth & {
 			background: var(--color-text-inverted);
 		}
 
@@ -37,8 +36,7 @@
 				background: var(--color-text-inverted);
 			}
 
-			.wp-login__main.is-vip-auth &,
-			.wp-login__main.is-crowdsignal-auth & {
+			.wp-login__main.is-generic-oauth & {
 				background: var(--color-text-inverted);
 			}
 		}

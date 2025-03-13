@@ -23,7 +23,8 @@ import {
 	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
 	isGravPoweredOAuth2Client,
-	isVIPOAuth2Client,
+	isBlazeProOAuth2Client,
+	isWooOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -576,12 +577,11 @@ export class Login extends Component {
 			locale,
 			translate,
 			isFromMigrationPlugin,
+			isGenericOauth,
 			isGravPoweredClient,
 			isWoo,
 			isBlazePro,
-			isVIPOAuth,
 			isWhiteLogin,
-			isCrowdsignalOAuth,
 		} = this.props;
 		const canonicalUrl = localizeUrl( 'https://wordpress.com/log-in', locale );
 		const isSocialFirst =
@@ -598,8 +598,7 @@ export class Login extends Component {
 					className={ clsx( 'wp-login__main', {
 						'is-wpcom-migration': isFromMigrationPlugin,
 						'is-social-first': isSocialFirst,
-						'is-vip-auth': isVIPOAuth,
-						'is-crowdsignal-auth': isCrowdsignalOAuth,
+						'is-generic-oauth': isGenericOauth,
 					} ) }
 				>
 					{ this.renderI18nSuggestions() }
@@ -653,8 +652,13 @@ export default connect(
 			isWCCOM: getIsWCCOM( state ),
 			isWoo: getIsWoo( state ),
 			isBlazePro: getIsBlazePro( state ),
-			isVIPOAuth: isVIPOAuth2Client( oauth2Client ),
-			isCrowdsignalOAuth: isCrowdsignalOAuth2Client( oauth2Client ),
+			// This applies to all oauth screens except for A4A, Blaze Pro, Jetpack, Woo.
+			isGenericOauth:
+				oauth2Client &&
+				! isA4AOAuth2Client( oauth2Client ) &&
+				! isBlazeProOAuth2Client( oauth2Client ) &&
+				! isJetpackCloudOAuth2Client( oauth2Client ) &&
+				! isWooOAuth2Client( oauth2Client ),
 			currentRoute,
 			currentQuery,
 			redirectTo: getRedirectToOriginal( state ),
