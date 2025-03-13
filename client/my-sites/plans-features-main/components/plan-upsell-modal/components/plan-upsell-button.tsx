@@ -29,15 +29,15 @@ function PlanUpsellButton( {
 			} }
 		>
 			{ ! hidePrice
-				? translate( 'Get %(planTitle)s - %(planPrice)s/month', {
-						comment: 'Eg: Get Personal $4/month',
+				? translate( 'Upgrade to %(planTitle)s–%(planPrice)s/month', {
+						comment: 'Eg: Upgrade to Personal–$4/month',
 						args: {
 							planTitle: planUpsellInfo.title,
 							planPrice: planUpsellInfo.formattedPriceMonthly,
 						},
 				  } )
-				: translate( 'Get %(planTitle)s', {
-						comment: 'Eg: Get Personal',
+				: translate( 'Upgrade to %(planTitle)s', {
+						comment: 'Eg: Upgrade to Personal',
 						args: {
 							planTitle: planUpsellInfo.title,
 						},

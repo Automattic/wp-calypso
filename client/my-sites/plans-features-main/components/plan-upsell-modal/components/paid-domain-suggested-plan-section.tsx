@@ -26,9 +26,9 @@ export default function PaidDomainSuggestedPlanSection( props: {
 	const { paidDomainName, onPlanSelected, isBusy } = props;
 
 	const previousCopy = translate( 'Free for one year. Includes Premium themes.' );
-	const updatedCopy = translate( 'Free for one year, includes Premium themes' );
+	const updatedCopy = translate( 'Free for one year, plus premium features' );
 	const hasTranslationForUpdatedCopy = hasEnTranslation(
-		'Free for one year, includes Premium themes'
+		'Free for one year, plus premium features'
 	);
 
 	return (
@@ -36,7 +36,7 @@ export default function PaidDomainSuggestedPlanSection( props: {
 			{ paidDomainName && (
 				<DomainName>
 					<div>{ paidDomainName }</div>
-					<FreeDomainText>{ translate( 'Free for one year' ) }</FreeDomainText>
+					<FreeDomainText>{ translate( 'Free domain for one year' ) }</FreeDomainText>
 				</DomainName>
 			) }
 			<PlanUpsellButton

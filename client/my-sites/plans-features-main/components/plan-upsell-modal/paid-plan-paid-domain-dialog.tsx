@@ -32,19 +32,20 @@ export function PaidPlanPaidDomainDialog( {
 
 	function handleFreeDomainClick() {
 		setIsBusy( true );
+		// should this be `onFreePlanSelected(true)` ?
 		onFreePlanSelected();
 	}
-
-	const upsellDescription = translate(
-		"Custom domains are only available with a paid plan. Choose annual billing and receive the domain's first year free."
-	);
 
 	return (
 		<DialogContainer>
 			<Heading id="plan-upsell-modal-title" shrinkMobileFont>
-				{ translate( 'A paid plan is required for your domain.' ) }
+				{ translate( 'Paid plan required' ) }
 			</Heading>
-			<SubHeading id="plan-upsell-modal-description">{ upsellDescription }</SubHeading>
+			<SubHeading id="plan-upsell-modal-description">
+				{ translate(
+					'To use a personalized domain for your site, you’ll need a paid plan. Choose annual billing and get the domain free for a year.'
+				) }
+			</SubHeading>
 			<ButtonContainer>
 				<RowWithBorder>
 					<PaidDomainSuggestedPlanSection
