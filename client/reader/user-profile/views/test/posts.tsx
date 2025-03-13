@@ -4,6 +4,7 @@
 
 import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { UserData } from 'calypso/lib/user/user';
 import UserPosts from '../posts';
 
 // Mock the Stream component
@@ -44,7 +45,7 @@ jest.mock( 'calypso/components/empty-content', () => ( {
 } ) );
 
 describe( 'UserPosts', () => {
-	const defaultUser = {
+	const defaultUser: UserData = {
 		ID: 123,
 		user_login: 'testuser',
 		display_name: 'Test User',

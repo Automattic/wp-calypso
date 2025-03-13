@@ -4,6 +4,8 @@
 
 import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { UserData } from 'calypso/lib/user/user';
+import { List } from 'calypso/reader/list-manage/types';
 import { UserLists } from '../lists';
 
 // Mock the EmptyContent component
@@ -18,7 +20,7 @@ jest.mock( 'calypso/components/empty-content', () => ( {
 } ) );
 
 describe( 'UserLists', () => {
-	const defaultUser = {
+	const defaultUser: UserData = {
 		ID: 123,
 		user_login: 'testuser',
 		display_name: 'Test User',
@@ -85,13 +87,13 @@ describe( 'UserLists', () => {
 	 * 3. Each list links to the correct URL
 	 */
 	test( 'should render lists when user has lists', () => {
-		const mockLists = [
+		const mockLists: List[] = [
 			{
 				ID: 1,
 				title: 'Test List 1',
 				description: 'This is test list 1',
 				slug: 'test-list-1',
-				owner: defaultUser.user_login,
+				owner: 'testuser',
 				is_public: true,
 				is_owner: true,
 			},
@@ -100,7 +102,7 @@ describe( 'UserLists', () => {
 				title: 'Test List 2',
 				description: 'This is test list 2',
 				slug: 'test-list-2',
-				owner: defaultUser.user_login,
+				owner: 'testuser',
 				is_public: true,
 				is_owner: true,
 			},

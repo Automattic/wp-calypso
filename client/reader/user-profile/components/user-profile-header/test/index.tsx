@@ -4,6 +4,7 @@
 
 import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { UserData } from 'calypso/lib/user/user';
 import UserProfileHeader from '../index';
 
 // Mock external icon
@@ -47,7 +48,7 @@ jest.mock( 'calypso/components/section-nav/item', () => ( {
 } ) );
 
 describe( 'UserProfileHeader', () => {
-	const defaultUser = {
+	const defaultUser: UserData = {
 		ID: 123,
 		user_login: 'testuser',
 		display_name: 'Test User',
@@ -96,7 +97,7 @@ describe( 'UserProfileHeader', () => {
 		render( <UserProfileHeader user={ defaultUser } /> );
 
 		// Check if display name is rendered
-		const displayNameEl = screen.getByText( defaultUser.display_name );
+		const displayNameEl = screen.getByText( defaultUser.display_name ?? '' );
 		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( displayNameEl ).toBeInTheDocument();
 
@@ -204,7 +205,7 @@ describe( 'UserProfileHeader', () => {
 		const readMoreLink = screen.getByText( 'Read More' );
 		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( readMoreLink ).toBeInTheDocument();
-		expect( readMoreLink.getAttribute( 'href' ) ).toBe( userWithLongBio.profile_URL );
+		expect( readMoreLink.getAttribute( 'href' ) ).toBe( userWithLongBio.profile_URL ?? '' );
 
 		// External icon should be displayed
 		// @ts-expect-error -- jest-dom matchers are available globally
