@@ -25,7 +25,7 @@
 	}
 
 	.upsell-nudge {
-		margin-top: 16px;
+		margin-top: 32px;
 
 		@include breakpoint-deprecated( "<660px" ) {
 			margin: 16px;
