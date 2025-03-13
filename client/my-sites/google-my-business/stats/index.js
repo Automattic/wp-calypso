@@ -13,13 +13,13 @@ import QueryKeyringConnections from 'calypso/components/data/query-keyring-conne
 import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
 import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import GoogleMyBusinessLocation from 'calypso/my-sites/google-my-business/location';
 import GoogleMyBusinessStatsChart from 'calypso/my-sites/google-my-business/stats/chart';
+import Main from 'calypso/my-sites/stats/components/stats-main';
 import { enhanceWithSiteType, recordTracksEvent } from 'calypso/state/analytics/actions';
 import getGoogleMyBusinessConnectedLocation from 'calypso/state/selectors/get-google-my-business-connected-location';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';

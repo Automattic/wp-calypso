@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .agency-tier-download-badge__button {
 	display: flex;
@@ -34,15 +35,15 @@
 		flex-direction: column;
 
 		.agency-tier-download-badges-modal__title {
-			@include a4a-font-heading-xl;
+			@include heading-x-large;
 		}
 
 		.agency-tier-download-badges-modal__description {
-			@include a4a-font-body-md;
+			@include body-medium;
 		}
 
 		.agency-tier-download-badges-modal__list-heading {
-			@include a4a-font-heading-md($font-weight: 700);
+			@include heading-medium;
 		}
 
 		.agency-tier-download-badges-modal__list {
@@ -52,7 +53,7 @@
 			gap: 4px;
 
 			a.components-button {
-				@include a4a-font-body-lg;
+				@include body-large;
 				display: flex;
 				justify-content: flex-start;
 				gap: 8px;

@@ -1,10 +1,13 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
 .pressable-usage-section {
 	border-block-end: 1px solid var( --color-neutral-5 );
 	padding-block: 32px;
 
 
 	.page-section__header-title {
-		@include a4a-font-heading-lg;
+		@include heading-x-large;
 		text-align: center;
 	}
 }
@@ -18,7 +21,7 @@
 }
 
 .pressable-usage-card__heading {
-	@include a4a-font-heading-xl;
+	@include heading-x-large;
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
@@ -26,7 +29,7 @@
 	align-items: center;
 
 	.badge.badge--info {
-		@include a4a-font-body-sm;
+		@include body-small;
 		background-color: var( --color-neutral-0 );
 	}
 }

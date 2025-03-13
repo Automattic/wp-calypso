@@ -133,7 +133,7 @@ export const OdieSendMessageButton = () => {
 		}
 
 		try {
-			trackEvent( 'chat_message_action_send' );
+			trackEvent( 'chat_message_action_send', { message_length: messageString?.length } );
 
 			const message = {
 				content: messageString,

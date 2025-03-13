@@ -230,7 +230,7 @@ $button-border: 4px;
 		display: flex;
 		flex-direction: column;
 	}
-	
+
 	.theme__sheet-main-info-title {
 		@include onboarding-font-recoleta;
 		display: flex;
@@ -239,13 +239,13 @@ $button-border: 4px;
 		line-height: 1.2;
 		margin: 0;
 	}
-	
+
 	.theme__sheet-main-info-type {
 		align-self: flex-start;
 		margin: 0;
 		margin-bottom: 8px;
 	}
-	
+
 	.theme__sheet-main-info-tag {
 		color: var(--color-neutral-60);
 		font-size: $font-body;
@@ -776,46 +776,6 @@ $button-border: 4px;
 	small {
 		display: block;
 		color: var(--color-neutral-light);
-	}
-}
-
-.theme__retired-theme-message {
-	display: flex;
-	align-items: center;
-	margin-bottom: 40px;
-
-	@include breakpoint-deprecated( "<960px" ) {
-		flex-wrap: wrap;
-	}
-
-	.gridicon {
-		color: var(--color-neutral-10);
-		flex: 0 0 auto;
-	}
-
-	.button {
-		flex: 0 0 auto;
-
-		@include breakpoint-deprecated( "<960px" ) {
-			flex: 1 1 100%;
-			margin-top: 20px;
-			text-align: center;
-		}
-	}
-}
-
-.theme__retired-theme-message-details {
-	flex: 1 1 20px;
-	padding: 0 20px;
-
-	.theme__retired-theme-message-details-title {
-		font-size: $font-title-small;
-	}
-
-	.inline-support-link .gridicon {
-		height: 18px;
-		width: 18px;
-		color: inherit;
 	}
 }
 

@@ -78,7 +78,7 @@
 		"karma-typescript": "^5.5.4",
 		"prettier": "^3.4.2",
 		"rimraf": "^3.0.2",
-		"rollup": "^3.3.0",
+		"rollup": "^3.29.5",
 		"rollup-plugin-dts": "^5.3.1",
 		"rollup-plugin-license": "^3.0.1",
 		"terser-webpack-plugin": "^5.3.11",

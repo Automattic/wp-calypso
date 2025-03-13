@@ -16,9 +16,16 @@
 
 		.sites-dropdown__wrapper {
 			border-color: var( --color-border-subtle );
-			border-style: solid;
 			border-radius: 6px;
-			border-width: 1px;
+		}
+
+		.site-selector {
+			border-color: var( --color-border-subtle );
+			border-radius: 0 0 6px 6px;
+		}
+
+		.sites-dropdown.is-open .sites-dropdown__wrapper {
+			border-radius: 6px 6px 0 0;
 		}
 	}
 

@@ -237,7 +237,8 @@ export class RenderDomainsStep extends Component {
 			this.getAnalyticsSection(),
 			position,
 			suggestion?.is_premium,
-			this.props.flowName
+			this.props.flowName,
+			suggestion?.vendor
 		);
 
 		await this.props.saveSignupStep( stepData );
