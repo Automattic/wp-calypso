@@ -13,7 +13,7 @@ export const StagingSiteLoadingBarCardContent = ( { isReverting, isOwner }: Card
 		if ( isReverting ) {
 			return (
 				<>
-					<ProgressBar key="delete-loading-bar" className="staging-site-card__loading-bar" />
+					<ProgressBar className="staging-site-card__loading-bar" />
 					<p>{ translate( 'We are deleting your staging site.' ) }</p>
 				</>
 			);
