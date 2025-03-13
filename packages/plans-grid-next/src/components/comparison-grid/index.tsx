@@ -46,6 +46,7 @@ import type {
 	PlanActionOverrides,
 	TransformedFeatureObject,
 	PlanTypeSelectorProps,
+	GridSize,
 } from '../../types';
 import type {
 	FeatureObject,
@@ -1104,7 +1105,7 @@ const ComparisonGrid = ( {
 	);
 };
 
-const GRID_BREAKPOINTS = new Map( [
+const GRID_BREAKPOINTS = new Map< GridSize, number >( [
 	[ 'small', 0 ],
 	[ 'smedium', 686 ],
 	[ 'medium', 835 ], // enough to fit Enterpreneur plan. was 686
