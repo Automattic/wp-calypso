@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 @mixin loading-effect {
 	animation: loading-fade 1.6s ease-in-out infinite;
@@ -63,7 +64,7 @@
 .checkout__main-title {
 	margin-block-end: 64px;
 	margin-block-start: 32px;
-	@include a4a-font-heading-xxl;
+	@include heading-x-large;
 
 	@include breakpoint-deprecated( ">960px" ) {
 		margin-block-start: 0;
@@ -123,23 +124,23 @@
 	}
 
 	.checkout__summary-pricing-discounted {
-		@include a4a-font-heading-lg;
+		@include heading-large;
 		color: var(--color-neutral-80);
 
 		@include break-xlarge {
-			@include a4a-font-heading-xl;
+			@include heading-x-large;
 			color: var(--color-black);
 		}
 	}
 
 	.checkout__summary-pricing-original {
-		@include a4a-font-body-lg;
+		@include body-large;
 		text-decoration: line-through;
 		margin-inline-start: 8px;
 	}
 
 	.checkout__summary-pricing-interval {
-		@include a4a-font-body-sm;
+		@include body-small;
 		color: var(--color-neutral-60);
 		line-height: 2;
 	}
@@ -153,12 +154,12 @@
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
-	@include a4a-font-heading-md;
+	@include heading-medium;
 }
 
 
 .checkout__summary-notice {
-	@include a4a-font-body-sm;
+	@include body-small;
 	margin-block-end: 16px;
 	color: var(--color-neutral-50);
 
@@ -243,7 +244,7 @@
 	}
 
 	.product-info__label {
-		@include a4a-font-heading-md;
+		@include heading-medium;
 	}
 
 	.product-info__count {
@@ -255,13 +256,13 @@
 	}
 
 	.product-info__description {
-		@include a4a-font-body-lg;
+		@include body-large;
 		margin-block: 4px 0;
 		color: var(--color-neutral-70);
 	}
 
 	.product-info__site-url {
-		@include a4a-font-body-md;
+		@include body-medium;
 		margin-block: 4px 0;
 		color: var(--color-neutral-40);
 	}
@@ -354,12 +355,12 @@
 		width: 100%;
 
 		.a4a-popover__title {
-			@include a4a-font-heading-md;
+			@include heading-medium;
 			color: var(--studio-gray-80);
 		}
 
 		.checkout__button-popover-description {
-			@include a4a-font-body-md;
+			@include body-medium;
 		}
 	}
 }
@@ -373,5 +374,5 @@
 
 .product-info__pressable-limit-warning {
 	margin-block-start: 8px;
-	@include a4a-font-body-sm;
+	@include body-small;
 }

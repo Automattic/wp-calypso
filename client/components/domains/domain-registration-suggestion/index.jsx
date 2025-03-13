@@ -98,6 +98,7 @@ class DomainRegistrationSuggestion extends Component {
 				railcar: this.props.railcarId,
 				ui_position: this.props.uiPosition,
 				fetch_algo: `${ this.props.fetchAlgo }/${ this.props.suggestion.vendor }`,
+				root_vendor: this.props.suggestion.vendor,
 				rec_result: `${ this.props.suggestion.domain_name }${ resultSuffix }`,
 				fetch_query: this.props.query,
 				domain_type: this.props.suggestion.is_premium ? 'premium' : 'standard',
@@ -118,6 +119,8 @@ class DomainRegistrationSuggestion extends Component {
 			this.props.recordTracksEvent( 'calypso_traintracks_interact', {
 				railcar: railcarId,
 				action: 'domain_added_to_cart',
+				domain: suggestion.domain_name,
+				root_vendor: suggestion.vendor,
 			} );
 		}
 
