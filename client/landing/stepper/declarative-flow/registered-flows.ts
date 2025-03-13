@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	START_WRITING_FLOW,
 	CONNECT_DOMAIN_FLOW,
@@ -17,7 +18,6 @@ import {
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	EXAMPLE_FLOW,
 } from '@automattic/onboarding';
-import config from 'calypso/server/config';
 import { AI_SITE_BUILDER_FLOW } from './ai-site-builder';
 import type { Flow } from '../declarative-flow/internals/types';
 
