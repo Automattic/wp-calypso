@@ -101,7 +101,7 @@ export const getConversationsFromSupportInteractions = (
 ) => {
 	return conversations.filter( ( conversation ) =>
 		supportInteractions.some(
-			( interaction ) => interaction.uuid === conversation.metadata?.supportInteractionId
+			( interaction ) => interaction.uuid === conversation.metadata.supportInteractionId
 		)
 	);
 };
