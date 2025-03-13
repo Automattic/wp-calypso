@@ -11,8 +11,65 @@
 	margin: 0 auto;
 }
 
-.theme-preview {
-	display: grid;
-	grid-template-columns: 3fr 9fr;
+.design-picker {
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+
+	.design-picker__nav-area {
+		height: 64px;
+	}
+
+	.design-picker__nav-area,
+	.design-picker__themes {
+		background: #fa8072;
+	}
+}
+
+.domains {
+	display: flex;
+	flex-direction: column;
 	gap: 3rem;
+
+	.domains__summary,
+	.domains__list {
+		background: #fa8072;
+	}
+
+	&.large-viewport {
+		flex-direction: row;
+		gap: 4rem;
+
+		.domains__list {
+			flex: 1;
+		}
+
+		.domains__summary {
+			width: 297px;
+		}
+	}
+}
+
+.theme-preview {
+	display: flex;
+	flex-direction: column;
+	gap: 3rem;
+
+	.theme-preview__details,
+	.theme-preview__preview {
+		background: #fa8072;
+	}
+
+	&.large-viewport {
+		flex-direction: row;
+
+		.theme-preview__details {
+			flex: 1;
+			max-width: 404px;
+		}
+
+		.theme-preview__preview {
+			flex: 1;
+		}
+	}
 }

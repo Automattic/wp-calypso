@@ -78,6 +78,7 @@ export const User = () => {
 export const Domains = () => {
 	return (
 		<StepContainerV2
+			className="domains"
 			backButton={ () => {} }
 			heading={ {
 				text: 'Choose a domain',
@@ -85,10 +86,10 @@ export const Domains = () => {
 			} }
 			render={ () => {
 				return (
-					<div>
-						<div>Domains list</div>
-						<div>Domains summary</div>
-					</div>
+					<>
+						<div className="domains__list">Domains list</div>
+						<div className="domains__summary">Domains summary</div>
+					</>
 				);
 			} }
 		/>
@@ -105,11 +106,12 @@ export const DesignPickerWide = () => {
 			width="wide"
 			backButton={ () => {} }
 			skipButton={ () => {} }
+			className="design-picker"
 			render={ () => (
-				<div>
-					<div>Nav area</div>
-					<div>Themes</div>
-				</div>
+				<>
+					<div className="design-picker__nav-area">Nav area</div>
+					<div className="design-picker__themes">Themes</div>
+				</>
 			) }
 		/>
 	);
@@ -140,32 +142,19 @@ export const ThemePreviewFullWidth = () => {
 				label: 'Continue',
 				onClick: () => {},
 			} }
+			className="theme-preview"
 			render={ ( { heading, nextButton } ) => {
-				if ( isSmallScreen ) {
-					return (
-						<div>
-							<div>
-								<Badge style={ { marginBottom: '8px' } }>Premium</Badge>
-								{ heading }
-							</div>
-							<div style={ { marginTop: '3rem' } }>
-								<span>Theme preview</span>
-							</div>
-						</div>
-					);
-				}
-
 				return (
-					<div className="theme-preview">
-						<div>
-							<Badge style={ { marginBottom: '1rem' } }>Premium</Badge>
+					<>
+						<div className="theme-preview__details">
+							<Badge style={ { marginBottom: isSmallScreen ? '0.5rem' : '1rem' } }>Premium</Badge>
 							{ heading }
-							<div style={ { marginTop: '3rem' } }>{ nextButton }</div>
+							{ nextButton && <div style={ { marginTop: '3rem' } }>{ nextButton }</div> }
 						</div>
-						<div>
+						<div className="theme-preview__preview">
 							<span>Theme preview</span>
 						</div>
-					</div>
+					</>
 				);
 			} }
 		/>
