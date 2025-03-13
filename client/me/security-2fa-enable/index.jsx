@@ -40,8 +40,9 @@ class Security2faEnable extends Component {
 		smsRequestsAllowed: true,
 		smsRequestPerformed: false,
 		submittingCode: false,
-		timeCode: false,
+		setupCode: false,
 		verificationCode: '',
+		setupCopied: false,
 	};
 
 	codeRequestTimer = false;
@@ -62,7 +63,7 @@ class Security2faEnable extends Component {
 
 			this.setState( {
 				otpAuthUri: data.otpauth_uri,
-				timeCode: data.time_code,
+				setupCode: data.time_code,
 			} );
 		} );
 
@@ -206,12 +207,12 @@ class Security2faEnable extends Component {
 		);
 	};
 
-	renderTimeCode = () => {
+	renderSetupCode = () => {
 		return (
-			<div className="security-2fa-enable__time-code-block">
-				<p className="security-2fa-enable__time-instruction">
+			<div className="security-2fa-enable__setup-code-block">
+				<p className="security-2fa-enable__setup-instruction">
 					{ this.props.translate(
-						'Enter this time code into your mobile app. {{toggleMethodLink}}Prefer to scan the code?{{/toggleMethodLink}}',
+						'Enter this setup code into your mobile app. {{toggleMethodLink}}Prefer to scan the code?{{/toggleMethodLink}}',
 						{
 							components: {
 								toggleMethodLink: this.getToggleLink(),
@@ -219,27 +220,27 @@ class Security2faEnable extends Component {
 						}
 					) }
 				</p>
-				<div className="security-2fa-enable__time-code-container">
-					<code className="security-2fa-enable__time-code">{ this.state.timeCode }</code>
+				<div className="security-2fa-enable__setup-code-container">
+					<code className="security-2fa-enable__setup-code">{ this.state.setupCode }</code>
 
 					<ClipboardButton
-						text={ this.state.timeCode }
+						text={ this.state.setupCode }
 						className="security-2fa-enable__clipboard-button"
 						borderless
 						compact
 						onCopy={ () => {
-							gaRecordEvent( 'Me', 'Copied 2FA Time Code' );
+							gaRecordEvent( 'Me', 'Copied 2FA Setup Code' );
 
-							this.setState( { timeCopied: true } );
+							this.setState( { setupCopied: true } );
 							setTimeout( () => {
-								this.setState( { timeCopied: false } );
+								this.setState( { setupCopied: false } );
 							}, 2000 );
 						} }
 					>
 						<Gridicon icon="clipboard" />
 					</ClipboardButton>
 
-					{ this.state.timeCopied && (
+					{ this.state.setupCopied && (
 						<span className="security-2fa-enable__copied-text">
 							{ this.props.translate( 'Copied!' ) }
 						</span>
@@ -256,7 +257,7 @@ class Security2faEnable extends Component {
 
 		return (
 			<div className="security-2fa-enable__code-block">
-				{ 'scan' === this.state.method ? this.renderQRCode() : this.renderTimeCode() }
+				{ 'scan' === this.state.method ? this.renderQRCode() : this.renderSetupCode() }
 			</div>
 		);
 	};
