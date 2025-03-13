@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	applyTestFiltersToPlansList,
 	PRODUCT_1GB_SPACE,
@@ -117,12 +118,12 @@ function useDowngradeHandler( {
 	const translate = useTranslate();
 
 	return useCallback(
-		async ( planSlug: PlanSlug ) => {
+		( planSlug: PlanSlug ) => {
 			// A downgrade to the free plan is essentially cancelling the current plan.
 			if ( isFreePlan( planSlug ) && siteSlug && currentPlan?.purchaseId ) {
 				page( getCancelPurchaseUrlFor( siteSlug, currentPlan?.purchaseId ) );
 				return;
-			} else if ( siteSlug && currentPlan?.purchaseId ) {
+			} else if ( isEnabled( 'plans/downgrade-modal' ) && siteSlug && currentPlan?.purchaseId ) {
 				// Dispatch action to open the downgrade modal with the target plan slug
 				dispatch( openDowngradeModal( planSlug ) );
 				return;
@@ -248,7 +249,8 @@ function useGenerateActionCallback( {
 					current_plan: sitePlanSlug,
 					downgrading_to: planSlug,
 				} );
-				return await handleDowngradeClick( planSlug );
+				handleDowngradeClick( planSlug );
+				return;
 			}
 
 			/* 4. Handle plan upgrade and plan upgrade tracks events */

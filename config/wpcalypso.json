@@ -120,6 +120,7 @@
 		"onboarding/user-on-stepper-hosting": true,
 		"p2/p2-plus": true,
 		"p2-enabled": false,
+		"plans/downgrade-modal": true,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,

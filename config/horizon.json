@@ -88,6 +88,7 @@
 		"onboarding/create-course": false,
 		"p2/p2-plus": true,
 		"p2-enabled": false,
+		"plans/downgrade-modal": false,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
