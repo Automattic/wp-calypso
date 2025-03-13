@@ -1,0 +1,8 @@
+$step-container: '.step-container-v2';
+
+@mixin large-viewport {
+	#{$step-container}.large-viewport & {
+		@content;
+	}
+}
+

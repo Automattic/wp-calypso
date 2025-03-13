@@ -1,0 +1,86 @@
+import { Badge } from '@automattic/components';
+import { Button } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
+import { chevronLeft } from '@wordpress/icons';
+import { Heading, StickyBottomBar, TopBar, BackButton, NextButton } from '../..';
+import { withStepContainerV2ContextDecorator } from '../../helpers/withStepContainerV2ContextDecorator';
+import { FullWidthStepLayout } from './FullWidthStepLayout';
+import type { Meta } from '@storybook/react';
+
+import './style.stories.scss';
+
+const meta: Meta< typeof FullWidthStepLayout > = {
+	title: 'Onboarding/StepWireframes/FullWidthStepLayout',
+	component: FullWidthStepLayout,
+	decorators: [ withStepContainerV2ContextDecorator ],
+};
+
+export default meta;
+
+export const ThemePreview = () => {
+	const isLargeViewport = useViewportMatch( 'large', '>=' );
+
+	const backButton = <BackButton label="Back" />;
+
+	return (
+		<FullWidthStepLayout
+			className="theme-preview"
+			topBar={ <TopBar backButton={ backButton } /> }
+			isLargeViewport={ isLargeViewport }
+		>
+			<div className="theme-preview__info">
+				<div className="theme-preview__description">
+					<Badge>Free</Badge>
+					<Heading
+						size="small"
+						text="Dropp"
+						align="left"
+						subText="Dropp is a blogging theme that appeals to the sneakerhead. Its urban styles with bold typography and vibrant accent color make it ideal to the streetwear enthusiasts looking to express themselves."
+					/>
+				</div>
+			</div>
+			<div className="theme-preview__preview" />
+		</FullWidthStepLayout>
+	);
+};
+
+const FontsBar = () => {
+	return (
+		<div style={ { padding: 16, height: '106px', borderBottom: '1px solid gray' } }>Fonts</div>
+	);
+};
+
+export const ThemePreviewFonts = () => {
+	const isLargeViewport = useViewportMatch( 'large', '>=' );
+
+	const backButton = <BackButton label="Back" />;
+	const nextButton = <NextButton label="Save fonts" />;
+
+	return (
+		<FullWidthStepLayout
+			className="theme-preview"
+			isLargeViewport={ isLargeViewport }
+			topBar={ isLargeViewport ? <TopBar backButton={ backButton } /> : <FontsBar /> }
+			stickyBottomBar={ <StickyBottomBar leftButton={ backButton } rightButton={ nextButton } /> }
+		>
+			{ isLargeViewport && (
+				<div className="theme-preview__info">
+					<div className="theme-preview__description">
+						<Heading
+							size="small"
+							text={
+								<div className="theme-preview__fonts">
+									<Button icon={ chevronLeft } /> Fonts
+								</div>
+							}
+							align="left"
+							subText="Elevate your design with expertly curated font pairings."
+						/>
+					</div>
+					{ nextButton }
+				</div>
+			) }
+			<div className="theme-preview__preview" />
+		</FullWidthStepLayout>
+	);
+};
