@@ -1,8 +1,7 @@
 import config from '@automattic/calypso-config';
-// `index` is a must have for the import path as we are replacing `calypso/components/formatted-header` in webpack config.
 import CalypsoFormattedHeader, {
 	Props as FormattedHeaderProps,
-} from 'calypso/components/formatted-header/index';
+} from 'calypso/components/formatted-header';
 import JetpackHeader from 'calypso/components/jetpack/jetpack-header';
 import { useSelector } from 'calypso/state';
 import { isSimpleSite } from 'calypso/state/sites/selectors';

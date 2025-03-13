@@ -110,6 +110,7 @@ module.exports = {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
 		conditionNames: [ 'calypso:src', 'import', 'module', 'require' ],
+		alias: {},
 	},
 	node: false,
 	plugins: [
@@ -187,7 +188,15 @@ module.exports = {
 		),
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/formatted-header$/,
-			path.resolve( __dirname, 'src/components/formatted-header' )
+			( resource ) => {
+				// Only replace for the navigation-header context
+				if ( resource.context.includes( 'components/navigation-header' ) ) {
+					resource.request = resource.request.replace(
+						/^calypso\/components\/formatted-header$/,
+						path.resolve( __dirname, 'src/components/odyssey-formatted-header' )
+					);
+				}
+			}
 		),
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/data\/query-site-purchases$/,
