@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import * as React from 'react';
@@ -209,7 +208,7 @@ export default function RadioButton( {
 			isFocused={ isFocused }
 			checked={ checked }
 			hidden={ hidden }
-			className={ clsx( { 'is-checked': checked } ) }
+			className={ checked ? 'is-checked' : '' }
 		>
 			<Radio
 				type="radio"
