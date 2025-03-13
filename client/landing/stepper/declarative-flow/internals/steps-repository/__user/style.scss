@@ -1,6 +1,11 @@
-@import "calypso/signup/style";
+@import "@automattic/onboarding/styles/mixins";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+
+$gray-100: #101517;
+$gray-60: #50575e;
+$gray-50: #646970;
+$breakpoint-mobile: 660px;
 
 .step-route.user {
 	display: flex;
@@ -12,9 +17,27 @@
 
 	.locale-suggestions {
 		margin: 0 auto;
+
 		@include break-medium {
 			width: 100%;
 		}
+	}
+
+	.formatted-header__title {
+		@include onboarding-font-recoleta;
+		color: $gray-100;
+		margin-top: 0;
+		font-size: 2.25rem;
+
+		@include break-xlarge {
+			font-size: 2.75rem;
+		}
+	}
+
+	.formatted-header__subtitle {
+		color: $gray-60;
+		font-size: 1rem;
+		margin-bottom: 0;
 	}
 
 	a.step-wrapper__navigation-link {

@@ -369,10 +369,7 @@ const siteMigration: Flow = {
 					if ( providedDependencies?.goToCheckout ) {
 						let redirectAfterCheckout: string = STEPS.SITE_MIGRATION_INSTRUCTIONS.slug;
 
-						if (
-							providedDependencies?.userAcceptedDeal ||
-							urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME
-						) {
+						if ( urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
 							redirectAfterCheckout = STEPS.SITE_MIGRATION_CREDENTIALS.slug;
 						}
 
@@ -385,7 +382,6 @@ const siteMigration: Flow = {
 							`/setup/${ flowPath }/${ redirectAfterCheckout }`
 						);
 
-						urlQueryParams.delete( 'showModal' );
 						goToCheckout( {
 							flowName: flowPath,
 							stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
@@ -611,6 +607,15 @@ const siteMigration: Flow = {
 						return exitFlow( addQueryArgs( { ref: 'site-migration' }, `/import/${ siteSlug }` ) );
 					}
 
+					if ( entryPoint === 'wp-admin' ) {
+						if ( null !== siteAdminUrl ) {
+							window.location.replace( `${ siteAdminUrl }import.php` );
+							return;
+						}
+						// Unexpected behavior probably caused by the user tinkering with the URL. Redirect to /start.
+						return exitFlow( '/start' );
+					}
+
 					return navigate(
 						addQueryArgs( { siteSlug, siteId }, STEPS.SITE_MIGRATION_IDENTIFY.slug )
 					);
@@ -627,10 +632,6 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
-					if ( urlQueryParams.has( 'showModal' ) ) {
-						urlQueryParams.delete( 'showModal' );
-					}
-
 					return navigate( `${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?${ urlQueryParams }` );
 				}
 
