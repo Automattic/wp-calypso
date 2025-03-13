@@ -20,7 +20,8 @@ import './styles.scss';
 
 const SiteIntent = Onboard.SiteIntent;
 
-const LaunchBigSky: Step = function () {
+const LaunchBigSky: Step = function ( props ) {
+	const { flow } = props;
 	const { __ } = useI18n();
 	const [ isError, setError ] = useState( false );
 	const [ progress, setProgress ] = useState( 0 );
@@ -28,7 +29,7 @@ const LaunchBigSky: Step = function () {
 	const urlQueryParams = useQuery();
 	const referrer = urlQueryParams.get( 'referrer' );
 	const translate = useTranslate();
-	const { isEligible, isLoading } = useIsBigSkyEligible();
+	const { isEligible, isLoading } = useIsBigSkyEligible( flow );
 	const { setDesignOnSite, setStaticHomepageOnSite, setGoalsOnSite, setIntentOnSite } =
 		useDispatch( SITE_STORE );
 	const goals = useSelect(
