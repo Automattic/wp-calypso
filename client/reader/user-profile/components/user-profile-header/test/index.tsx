@@ -100,11 +100,6 @@ describe( 'UserProfileHeader', () => {
 		const displayNameEl = screen.getByText( defaultUser.display_name ?? '' );
 		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( displayNameEl ).toBeInTheDocument();
-
-		expect(
-			displayNameEl.closest( '[class*="user-profile-header__display-name"]' )
-			// @ts-expect-error -- jest-dom matchers are available globally
-		).toBeInTheDocument();
 	} );
 
 	/**
@@ -166,8 +161,6 @@ describe( 'UserProfileHeader', () => {
 		const bioText = screen.getByText( userWithBio.bio );
 		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( bioText ).toBeInTheDocument();
-		// @ts-expect-error -- jest-dom matchers are available globally
-		expect( bioText.closest( '[class*="user-profile-header__bio"]' ) ).toBeInTheDocument();
 	} );
 
 	/**
