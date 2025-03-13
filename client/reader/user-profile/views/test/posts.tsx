@@ -52,13 +52,6 @@ describe( 'UserPosts', () => {
 		avatar_URL: 'https://example.com/avatar.jpg',
 	};
 
-	/**
-	 * Test: Stream component rendering
-	 *
-	 * Verifies that:
-	 * 1. The Stream component is rendered with the correct props
-	 * 2. The stream key is properly formatted with the user ID
-	 */
 	test( 'should render Stream component with correct props', () => {
 		render( <UserPosts user={ defaultUser } /> );
 
@@ -96,13 +89,6 @@ describe( 'UserPosts', () => {
 		expect( propsContainer.querySelector( '[data-prop="showBack"]' ) ).toHaveTextContent( 'false' );
 	} );
 
-	/**
-	 * Test: Empty content rendering
-	 *
-	 * Verifies that:
-	 * 1. The empty content function is provided to Stream
-	 * 2. When invoked, it renders the empty state correctly
-	 */
 	test( 'should provide empty content function that renders correctly', () => {
 		render( <UserPosts user={ defaultUser } /> );
 

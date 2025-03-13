@@ -7,19 +7,11 @@ import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { UserProfile, UserProfileProps } from '../index';
 
-/**
- * Mock the router to simulate navigation and current path
- * This allows testing the component's behavior when paths change
- */
 jest.mock( '@automattic/calypso-router', () => ( {
 	replace: jest.fn(),
 	current: '/reader/users/testuser',
 } ) );
 
-/**
- * Mock the child components to isolate testing to just the UserProfile component
- * Each mock returns a simple div with a data-testid to verify rendering
- */
 jest.mock( 'calypso/reader/user-profile/components/user-profile-header', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="user-profile-header">User Profile Header</div>,
@@ -35,10 +27,6 @@ jest.mock( 'calypso/reader/user-profile/views/lists', () => ( {
 	default: () => <div data-testid="user-lists">User Lists</div>,
 } ) );
 
-/**
- * Mock the back button to test click handling
- * Includes onClick handler to test interaction
- */
 jest.mock( 'calypso/components/back-button', () => ( {
 	__esModule: true,
 	default: ( { onClick } ) => (
@@ -48,10 +36,6 @@ jest.mock( 'calypso/components/back-button', () => ( {
 	),
 } ) );
 
-/**
- * Mock the empty content component to test error state
- * Preserves props to verify correct error message display
- */
 jest.mock( 'calypso/components/empty-content', () => ( {
 	__esModule: true,
 	default: ( { title, line, action } ) => (
@@ -64,11 +48,6 @@ jest.mock( 'calypso/components/empty-content', () => ( {
 } ) );
 
 describe( 'UserProfile', () => {
-	/**
-	 * Set up mock functions and default props for all tests
-	 * - mockRequestUser: Simulates API call to fetch user data
-	 * - mockHandleBack: Simulates the back button click handler
-	 */
 	const mockRequestUser = jest.fn().mockResolvedValue( undefined );
 	const mockHandleBack = jest.fn();
 
@@ -88,13 +67,6 @@ describe( 'UserProfile', () => {
 		jest.clearAllMocks();
 	} );
 
-	/**
-	 * Test: Empty state when user is not found
-	 *
-	 * Verifies that:
-	 * 1. The empty content component is displayed when no user data is available
-	 * 2. The requestUser function is called with the correct username
-	 */
 	test( 'should render empty content when user is not found', () => {
 		render( <UserProfile { ...defaultProps } /> );
 
@@ -103,13 +75,6 @@ describe( 'UserProfile', () => {
 		expect( mockRequestUser ).toHaveBeenCalledWith( 'testuser' );
 	} );
 
-	/**
-	 * Test: User profile display
-	 *
-	 * Verifies that:
-	 * 1. The user profile header is rendered when user data is available
-	 * 2. The posts view is displayed (default view for the profile)
-	 */
 	test( 'should render user profile when user is available', () => {
 		const user = {
 			ID: 123,
@@ -126,14 +91,6 @@ describe( 'UserProfile', () => {
 		expect( screen.getByTestId( 'user-posts' ) ).toBeInTheDocument();
 	} );
 
-	/**
-	 * Test: Lists view rendering
-	 *
-	 * Verifies that:
-	 * 1. The user profile header is rendered
-	 * 2. The lists view is displayed when the path includes "/lists"
-	 * This tests the component's routing logic
-	 */
 	test( 'should render lists view when path includes /lists', () => {
 		const user = {
 			ID: 123,
@@ -150,13 +107,6 @@ describe( 'UserProfile', () => {
 		expect( screen.getByTestId( 'user-lists' ) ).toBeInTheDocument();
 	} );
 
-	/**
-	 * Test: Back button functionality
-	 *
-	 * Verifies that:
-	 * 1. The back button is displayed when showBack prop is true
-	 * 2. The handleBack callback is triggered when the back button is clicked
-	 */
 	test( 'should show back button when showBack is true', () => {
 		const user = {
 			ID: 123,
@@ -176,13 +126,6 @@ describe( 'UserProfile', () => {
 		expect( mockHandleBack ).toHaveBeenCalled();
 	} );
 
-	/**
-	 * Test: Loading state
-	 *
-	 * Verifies that:
-	 * 1. No content is displayed when the isLoading prop is true
-	 * 2. Neither empty content nor profile components are rendered during loading
-	 */
 	test( 'should not show content when isLoading is true', () => {
 		render( <UserProfile { ...defaultProps } isLoading /> );
 
@@ -192,13 +135,6 @@ describe( 'UserProfile', () => {
 		expect( screen.queryByTestId( 'user-profile-header' ) ).not.toBeInTheDocument();
 	} );
 
-	/**
-	 * Test: Page replacement for user ID paths
-	 *
-	 * Verifies that:
-	 * 1. When path starts with '/reader/users/id/' and user data is available
-	 * 2. The page is redirected to the username-based URL
-	 */
 	test( 'should redirect from user ID path to user login path when user is loaded', () => {
 		const user = {
 			ID: 123,
@@ -213,13 +149,6 @@ describe( 'UserProfile', () => {
 		expect( page.replace ).toHaveBeenCalledWith( '/reader/users/testuser' );
 	} );
 
-	/**
-	 * Test: Multiple API calls
-	 *
-	 * Verifies that:
-	 * 1. When both userLogin and userId are provided
-	 * 2. The requestUser function is called for both
-	 */
 	test( 'should request user data with both login and ID when provided', () => {
 		render( <UserProfile { ...defaultProps } userLogin="testuser" userId="123" /> );
 

@@ -57,13 +57,6 @@ describe( 'UserProfileHeader', () => {
 		bio: undefined,
 	};
 
-	/**
-	 * Test: Avatar rendering
-	 *
-	 * Verifies that:
-	 * 1. The avatar component is rendered with correct props
-	 * 2. The correct user data is passed to the avatar component
-	 */
 	test( 'should render the avatar with correct user information', () => {
 		render( <UserProfileHeader user={ defaultUser } /> );
 
@@ -87,12 +80,6 @@ describe( 'UserProfileHeader', () => {
 		expect( mobileAvatar ).toBeInTheDocument();
 	} );
 
-	/**
-	 * Test: Display name rendering
-	 *
-	 * Verifies that:
-	 * 1. The user's display name is shown in the header
-	 */
 	test( 'should render the user display name', () => {
 		render( <UserProfileHeader user={ defaultUser } /> );
 
@@ -102,12 +89,6 @@ describe( 'UserProfileHeader', () => {
 		expect( displayNameEl ).toBeInTheDocument();
 	} );
 
-	/**
-	 * Test: Navigation rendering
-	 *
-	 * Verifies that:
-	 * 1. The navigation tabs are rendered with Posts and Lists options
-	 */
 	test( 'should render navigation tabs with Posts and Lists options', () => {
 		render( <UserProfileHeader user={ defaultUser } /> );
 
@@ -127,12 +108,6 @@ describe( 'UserProfileHeader', () => {
 		expect( navTexts ).toContain( 'Lists' );
 	} );
 
-	/**
-	 * Test: Bio not rendered when not provided
-	 *
-	 * Verifies that:
-	 * 1. Bio section is not rendered when user has no bio
-	 */
 	test( 'should not render bio section when user has no bio', () => {
 		render( <UserProfileHeader user={ defaultUser } /> );
 
@@ -142,13 +117,6 @@ describe( 'UserProfileHeader', () => {
 		expect( bioSection ).not.toBeInTheDocument();
 	} );
 
-	/**
-	 * Test: Bio rendering
-	 *
-	 * Verifies that:
-	 * 1. Bio section is rendered when user has a bio
-	 * 2. The bio text is displayed correctly
-	 */
 	test( 'should render bio section when user has a bio', () => {
 		const userWithBio = {
 			...defaultUser,
@@ -163,12 +131,6 @@ describe( 'UserProfileHeader', () => {
 		expect( bioText ).toBeInTheDocument();
 	} );
 
-	/**
-	 * Test: Bio with profile URL
-	 *
-	 * Verifies that:
-	 * 1. Read More link is displayed when bio is long and profile URL exists
-	 */
 	test( 'should render Read More link for long bio with profile URL', () => {
 		// Create a long bio that will likely be clamped
 		const longBio =

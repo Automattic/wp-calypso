@@ -29,13 +29,6 @@ describe( 'UserLists', () => {
 
 	const mockRequestUserLists = jest.fn();
 
-	/**
-	 * Test: Empty state when user has no lists
-	 *
-	 * Verifies that:
-	 * 1. Empty content component is displayed when no lists are available
-	 * 2. The requestUserLists function is called with the username
-	 */
 	test( 'should render empty content when user has no lists', () => {
 		render(
 			<UserLists
@@ -62,12 +55,6 @@ describe( 'UserLists', () => {
 		expect( mockRequestUserLists ).toHaveBeenCalledWith( defaultUser.user_login );
 	} );
 
-	/**
-	 * Test: Loading state
-	 *
-	 * Verifies that:
-	 * 1. The component renders nothing when in loading state
-	 */
 	test( 'should render nothing when in loading state', () => {
 		const { container } = render(
 			<UserLists user={ defaultUser } requestUserLists={ mockRequestUserLists } isLoading />
@@ -78,14 +65,6 @@ describe( 'UserLists', () => {
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
-	/**
-	 * Test: Lists rendering
-	 *
-	 * Verifies that:
-	 * 1. Lists are rendered when user has lists
-	 * 2. Each list shows proper title and description
-	 * 3. Each list links to the correct URL
-	 */
 	test( 'should render lists when user has lists', () => {
 		const mockLists: List[] = [
 			{
