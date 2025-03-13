@@ -122,7 +122,6 @@ const SiteMigrationApplicationPasswordsAuthorization: Step = function ( { naviga
 				goBack={ navigation?.goBack }
 				goNext={ navigation?.submit }
 				hideSkip
-				isFullLayout
 				notice={ notice }
 				formattedHeader={ formattedHeader }
 				stepContent={
