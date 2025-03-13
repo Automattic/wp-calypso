@@ -1,4 +1,4 @@
-import { addPlanToCart, addProductsToCart } from '@automattic/onboarding';
+import { addPlanToCart, addProductsToCart, AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -11,8 +11,6 @@ import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { STEPS } from './internals/steps';
 import { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
-
-export const AI_SITE_BUILDER_FLOW = 'ai-site-builder';
 
 const aiSiteBuilder: Flow = {
 	name: AI_SITE_BUILDER_FLOW,
