@@ -8,6 +8,7 @@ import { PageBodyPlaceholder } from 'calypso/a8c-for-agencies/components/page-pl
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import useFetchAllLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-all-licenses';
 import useFetchSitesWithPlugins from 'calypso/a8c-for-agencies/data/sites/use-fetch-sites-with-plugins';
+import { useFetchTestConnections } from 'calypso/a8c-for-agencies/sections/sites/hooks/use-fetch-test-connection';
 import {
 	LicenseFilter,
 	LicenseSortField,
@@ -22,7 +23,9 @@ import AddWooPaymentsToSite from '../../add-woopayments-to-site';
 import { WooPaymentsProvider } from '../../context';
 import WooPaymentsDashboardContent from '../../dashboard-content';
 import useFetchWooPaymentsData from '../../hooks/use-fetch-woopayments-data';
+import MissingPaymentSettingsNotice from '../../missing-payment-settings-notice';
 import WooPaymentsDashboardEmptyState from './empty-state';
+import type { Site } from '../../../sites/types';
 import type { SitesWithWooPaymentsState, SitesWithWooPaymentsPlugins } from '../../types';
 import type { License } from 'calypso/state/partner-portal/types';
 
@@ -62,6 +65,16 @@ const WooPaymentsDashboard = () => {
 		[ 'woocommerce-payments/woocommerce-payments' ]
 	);
 
+	const testConnections = useFetchTestConnections(
+		true,
+		licensesWithWooPayments?.items.map( ( license: License ) => {
+			return {
+				blog_id: license.blogId,
+				is_connection_healthy: true,
+			} as Site;
+		} ) || []
+	);
+
 	const isLoading = isLoadingLicensesWithWooPayments || isLoadingSitesWithPlugins;
 	const showEmptyState = ! isLoading && ! sitesWithPluginsStates.length;
 
@@ -99,10 +112,22 @@ const WooPaymentsDashboard = () => {
 			return;
 		}
 
-		const states = licensesWithWooPayments.items.map( createInitialSiteState ).sort( sortByState );
+		const states = licensesWithWooPayments.items.map( createInitialSiteState );
 
 		setSitesWithPluginsStates( states );
 	}, [ sitesWithPlugins, licensesWithWooPayments, createInitialSiteState ] );
+
+	const sitesWithPluginsStatesSorted = useMemo( () => {
+		return sitesWithPluginsStates
+			.map( ( site ) => {
+				const connection = testConnections.find( ( connection ) => connection.ID === site.blogId );
+				return {
+					...site,
+					state: connection?.connected === false ? 'disconnected' : site.state,
+				};
+			} )
+			.sort( sortByState );
+	}, [ sitesWithPluginsStates, testConnections ] );
 
 	const content = useMemo( () => {
 		if ( isLoading ) {
@@ -126,10 +151,11 @@ const WooPaymentsDashboard = () => {
 				value={ {
 					woopaymentsData,
 					isLoadingWooPaymentsData,
-					sitesWithPluginsStates,
+					sitesWithPluginsStates: sitesWithPluginsStatesSorted,
 				} }
 			>
 				<LayoutTop>
+					{ !! sitesWithPluginsStates.length && <MissingPaymentSettingsNotice /> }
 					<LayoutHeader>
 						<Title>{ title }</Title>
 						<Actions>

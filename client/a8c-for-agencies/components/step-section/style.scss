@@ -1,6 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-
+@import "@wordpress/base-styles/variables";
 .step-section {
 	.step-section__header {
 		display: flex;
@@ -31,6 +31,12 @@
 			text-wrap: pretty;
 		}
 	}
+
+	&.is-core-styles {
+		.step-section__step-heading {
+			@include heading-large;
+		}
+	}
 }
 
 .referrals-layout--automated,
@@ -39,3 +45,4 @@
 		font-size: rem(16px);
 	}
 }
+

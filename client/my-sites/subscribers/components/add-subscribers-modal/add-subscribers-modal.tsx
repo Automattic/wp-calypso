@@ -7,7 +7,7 @@ import { AddSubscriberForm, UploadSubscribersForm } from '@automattic/subscriber
 import { useHasStaleImportJobs } from '@automattic/subscriber/src/hooks/use-has-stale-import-jobs';
 import { useInProgressState } from '@automattic/subscriber/src/hooks/use-in-progress-state';
 import { Modal, __experimentalVStack as VStack } from '@wordpress/components';
-import { useState } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { copy, upload, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { LoadingBar } from 'calypso/components/loading-bar';
@@ -27,10 +27,12 @@ const AddSubscribersModal = ( {
 	isVisible,
 	onClose,
 	addSubscribersCallback,
+	initialMethod = '',
 }: {
 	isVisible: boolean;
 	onClose: () => void;
 	addSubscribersCallback: () => void;
+	initialMethod?: string;
 } ) => {
 	const site = useSelector( getSelectedSite );
 	const translate = useTranslate();
@@ -42,6 +44,11 @@ const AddSubscribersModal = ( {
 	// There is also a separate `importers/substack` flag but that refers to a separate Substack content importer.
 	// This flag refers to Substack free/paid subscriber + content importer.
 	const isSubstackSubscriberImporterEnabled = isEnabled( 'importers/newsletter' );
+
+	// Update addingMethod when initialMethod changes
+	useEffect( () => {
+		setAddingMethod( initialMethod );
+	}, [ initialMethod ] );
 
 	const modalTitle = translate( 'Add subscribers to %s', {
 		args: [ site?.title || '' ],

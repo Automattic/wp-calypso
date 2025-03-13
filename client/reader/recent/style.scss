@@ -32,7 +32,7 @@ body.is-reader-full-post {
 		box-shadow: 0 0 17.4px 0 rgba( 0, 0, 0, 0.05 );
 	}
 
-	&__list-column {
+	.recent-feed__list-column {
 		$feed-list-header-height: 70px;
 		$feed-list-actions-height: 65px;
 		$feed-list-footer-height: 57px;
@@ -58,7 +58,7 @@ body.is-reader-full-post {
 			max-width: 320px;
 		}
 
-		&-header {
+		.recent-feed__list-column-header {
 			padding: 16px $recent-feed-spacing;
 			border-bottom: 1px solid var( --studio-gray-0 );
 
@@ -66,7 +66,7 @@ body.is-reader-full-post {
 				align-items: center;
 			}
 
-			header {
+			header.navigation-header {
 				margin: 0;
 				padding: 0;
 

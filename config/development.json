@@ -130,7 +130,7 @@
 		"migration-flow/introductory-offer": true,
 		"network-connection": true,
 		"oauth": false,
-		"onboarding/create-course": true,
+		"onboarding/create-course": false,
 		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,
 		"onboarding/import-from-medium": true,
@@ -202,7 +202,6 @@
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
-		"untangling/hosting-menu": false,
 		"user-management-revamp": true,
 		"wpcom-user-bootstrap": false,
 		"yolo/command-palette": true

@@ -40,16 +40,12 @@ function flowStepComponent( flowStep: StepperStep | undefined ) {
 		return null;
 	}
 
-	if ( 'asyncComponent' in flowStep ) {
-		let lazyComponent = lazyCache.get( flowStep.asyncComponent );
-		if ( ! lazyComponent ) {
-			lazyComponent = lazy( flowStep.asyncComponent );
-			lazyCache.set( flowStep.asyncComponent, lazyComponent );
-		}
-		return lazyComponent;
+	let lazyComponent = lazyCache.get( flowStep.asyncComponent );
+	if ( ! lazyComponent ) {
+		lazyComponent = lazy( flowStep.asyncComponent );
+		lazyCache.set( flowStep.asyncComponent, lazyComponent );
 	}
-
-	return flowStep.component;
+	return lazyComponent;
 }
 
 /**

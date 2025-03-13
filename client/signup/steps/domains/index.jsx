@@ -237,7 +237,8 @@ export class RenderDomainsStep extends Component {
 			this.getAnalyticsSection(),
 			position,
 			suggestion?.is_premium,
-			this.props.flowName
+			this.props.flowName,
+			suggestion?.vendor
 		);
 
 		await this.props.saveSignupStep( stepData );
@@ -1174,11 +1175,11 @@ export class RenderDomainsStep extends Component {
 			shouldUseMultipleDomainsInCart( flowName ) &&
 			! [ 'use-your-domain' ].includes( stepSectionName )
 		) {
-			return translate( 'Find and claim one or more domain names' );
+			return translate( 'Find and claim one or more domain names.' );
 		}
 
 		if ( ! stepSectionName ) {
-			return translate( 'Enter some descriptive keywords to get started' );
+			return translate( 'Enter some descriptive keywords to get started.' );
 		}
 
 		return 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName

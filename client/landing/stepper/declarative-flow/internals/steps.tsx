@@ -11,6 +11,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/business-info' ),
 	},
 
+	AUTOMATED_COPY_SITE: {
+		slug: 'automated-copy',
+		asyncComponent: () => import( './steps-repository/automated-copy-site' ),
+	},
+
 	CELEBRATION: {
 		slug: 'celebration-step',
 		asyncComponent: () => import( './steps-repository/celebration-step' ),
@@ -187,6 +192,12 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/processing-step' ),
 	},
 
+	/** Temporary step until we allow passing props to steps */
+	PROCESSING_COPY_SITE_FLOW: {
+		slug: 'processing-copy',
+		asyncComponent: () => import( './steps-repository/processing-step-copy-site-flow' ),
+	},
+
 	SITE_CREATION_STEP: {
 		slug: 'create-site',
 		asyncComponent: () => import( './steps-repository/create-site' ),
@@ -299,19 +310,9 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-how-to-migrate' ),
 	},
 
-	SITE_MIGRATION_SOURCE_URL: {
-		slug: 'site-migration-source-url',
-		asyncComponent: () => import( './steps-repository/site-migration-source-url' ),
-	},
-
 	SITE_MIGRATION_UPGRADE_PLAN: {
 		slug: 'site-migration-upgrade-plan',
 		asyncComponent: () => import( './steps-repository/site-migration-upgrade-plan' ),
-	},
-
-	SITE_MIGRATION_PLUGIN_INSTALL: {
-		slug: 'site-migration-plugin-install',
-		asyncComponent: () => import( './steps-repository/site-migration-plugin-install' ),
 	},
 
 	SITE_MIGRATION_ALREADY_WPCOM: {

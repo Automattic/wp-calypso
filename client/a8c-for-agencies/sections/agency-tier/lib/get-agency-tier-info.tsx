@@ -1,3 +1,4 @@
+import { formatCurrency } from 'i18n-calypso';
 import AgencyPartnerBackground from 'calypso/assets/images/a8c-for-agencies/agency-tier/agency-partner-background.svg';
 import AgencyPartnerLogo from 'calypso/assets/images/a8c-for-agencies/agency-tier/agency-partner-logo-small.svg';
 import EmergingPartnerBackground from 'calypso/assets/images/a8c-for-agencies/agency-tier/emerging-partner-background.svg';
@@ -48,7 +49,14 @@ const getAgencyTierInfo = (
 				),
 				subtitle: translate(
 					'Your next tier milestone is when your influenced revenue exceeds %(amount)s',
-					{ args: { amount: '$1,200' }, comment: 'Amount of revenue' }
+					{
+						args: {
+							amount: formatCurrency( 1200, 'USD', {
+								stripZeros: true,
+							} ),
+						},
+						comment: 'Amount of revenue',
+					}
 				),
 				description: translate(
 					'Progress towards the Agency Partner Tier and access extra benefits with additional purchases and referrals.'
@@ -84,7 +92,11 @@ const getAgencyTierInfo = (
 				subtitle: translate(
 					'Your next tier milestone is when your influenced revenue exceeds %(amount)s',
 					{
-						args: { amount: '$5,000' },
+						args: {
+							amount: formatCurrency( 5000, 'USD', {
+								stripZeros: true,
+							} ),
+						},
 						comment: 'Amount of revenue',
 					}
 				),
@@ -96,7 +108,14 @@ const getAgencyTierInfo = (
 				celebrationModal: {
 					title: translate( "Congrats! You've reached the Agency Partner tier!" ),
 					description: translate(
-						"You've reached at least $1,200 in influenced revenue and have unlocked these additional benefits:"
+						"You've reached at least %(amount)s in influenced revenue and have unlocked these additional benefits:",
+						{
+							args: {
+								amount: formatCurrency( 1200, 'USD', {
+									stripZeros: true,
+								} ),
+							},
+						}
 					),
 					benefits: [
 						translate( 'Eligibility for inclusion in our agency directories.' ),

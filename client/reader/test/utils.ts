@@ -52,4 +52,16 @@ describe( 'reader utils', () => {
 			expect( getSafeImageUrlForReader( url ) ).not.toEqual( url );
 		} );
 	} );
+
+	describe( 'getSafeImageUrlForReader', () => {
+		test( 'returns the url as is if it is from a trusted host', () => {
+			const url = 'https://www.redditstatic.com/image.jpg';
+			expect( getSafeImageUrlForReader( url ) ).toEqual( url );
+		} );
+
+		test( 'returns the Photon url if it is not from a trusted host', () => {
+			const url = 'https://www.example.com/image.jpg';
+			expect( getSafeImageUrlForReader( url ) ).not.toEqual( url );
+		} );
+	} );
 } );

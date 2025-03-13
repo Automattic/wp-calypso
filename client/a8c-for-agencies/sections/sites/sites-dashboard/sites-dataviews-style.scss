@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .sites-dataviews__site {
 	display: flex;
@@ -55,13 +56,13 @@
 	margin-inline-start: 32px;
 
 	li {
-		@include a4a-font-body-sm($font-weight: 500);
+		@include body-small;
 		text-align: start;
 	}
 }
 
 .sites-dataviews__site-error-popover-content {
-	@include a4a-font-body-sm($font-weight: 500);
+	@include body-small;
 	margin: 16px;
 }
 

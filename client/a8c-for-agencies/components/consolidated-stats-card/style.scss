@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .consolidated-stats-group {
 	display: flex;
@@ -52,9 +53,10 @@
 		align-items: flex-start;
 
 		.consolidated-stats-card__info-mobile {
+			@include body-small;
+
 			margin: 0;
 			padding: 0;
-			font-size: rem(12px);
 			color: var(--color-neutral-50);
 			text-decoration: underline;
 			display: flex;
@@ -107,3 +109,21 @@
 		outline: none;
 	}
 }
+
+// Core styles
+
+.consolidated-stats-card.is-core-styles {
+	.consolidated-stats-card__value {
+		@include heading-x-large;
+	}
+
+	.consolidated-stats-card__label {
+		@include body-medium;
+	}
+}
+
+.consolidated-stats-card__popover-content.is-core-styles {
+	@include body-medium;
+}
+
+// End of core styles

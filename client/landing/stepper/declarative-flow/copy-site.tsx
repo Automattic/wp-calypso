@@ -1,7 +1,6 @@
 import { COPY_SITE_FLOW } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
-import { translate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
@@ -12,16 +11,12 @@ import {
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
 import { useSiteCopy } from '../hooks/use-site-copy';
-import AutomatedCopySite from './internals/steps-repository/automated-copy-site';
-import CreateSite from './internals/steps-repository/create-site';
-import DomainsStep from './internals/steps-repository/domains';
-import ProcessingStep from './internals/steps-repository/processing-step';
+import { STEPS } from './internals/steps';
 import {
 	AssertConditionResult,
 	AssertConditionState,
 	Flow,
 	ProvidedDependencies,
-	StepProps,
 } from './internals/types';
 import type { SiteSelect } from '@automattic/data-stores';
 
@@ -69,25 +64,13 @@ function useIsValidSite() {
 	};
 }
 
-function ProcessingCopy( props: StepProps ) {
-	return (
-		<ProcessingStep
-			{ ...props }
-			title={ translate( 'We’re copying your site' ) }
-			subtitle={ translate(
-				'Feel free to close this window. We’ll email you when your new site is ready.'
-			) }
-		/>
-	);
-}
-
 const COPY_SITE_STEPS = [
-	{ slug: 'domains', component: DomainsStep },
-	{ slug: 'create-site', component: CreateSite },
-	{ slug: 'processing', component: ProcessingStep },
-	{ slug: 'automated-copy', component: AutomatedCopySite },
-	{ slug: 'processing-copy', component: ProcessingCopy },
-	{ slug: 'resuming', component: ProcessingStep }, // Needs siteSlug param
+	STEPS.DOMAINS,
+	STEPS.SITE_CREATION_STEP,
+	STEPS.PROCESSING,
+	STEPS.AUTOMATED_COPY_SITE,
+	STEPS.PROCESSING_COPY_SITE_FLOW,
+	{ ...STEPS.PROCESSING, slug: 'resuming' },
 ];
 
 const copySite: Flow = {

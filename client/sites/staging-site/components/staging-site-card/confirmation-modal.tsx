@@ -24,6 +24,7 @@ type ConfirmationModalButtonProps = {
 	children: React.ReactNode;
 	modalTitle: string;
 	modalMessage?: string;
+	modalSize?: 'small' | 'medium' | 'large' | 'fill';
 	extraModalContent?: React.ReactNode;
 	confirmLabel: string;
 	cancelLabel: string;
@@ -44,6 +45,7 @@ export function ConfirmationModal( {
 	children,
 	modalTitle,
 	modalMessage,
+	modalSize,
 	extraModalContent,
 	confirmLabel,
 	cancelLabel,
@@ -68,7 +70,11 @@ export function ConfirmationModal( {
 				{ children }
 			</Button>
 			{ isOpen && (
-				<Modal title={ modalTitle } onRequestClose={ closeModal }>
+				<Modal
+					title={ modalTitle }
+					onRequestClose={ closeModal }
+					{ ...( modalSize && { size: modalSize } ) }
+				>
 					{ modalMessage && <p>{ modalMessage }</p> }
 					{ extraModalContent }
 					<ActionButtons>
@@ -77,6 +83,7 @@ export function ConfirmationModal( {
 								onCancel?.();
 								closeModal();
 							} }
+							borderless
 						>
 							{ cancelLabel }
 						</Button>

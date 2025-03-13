@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
@@ -17,15 +16,15 @@ import { showSitesPage } from '../sites-dashboard';
 import { SiteStatus } from '../sites-dataviews/sites-site-status';
 import {
 	FEATURE_TO_ROUTE_MAP,
-	DOTCOM_HOSTING_CONFIG,
-	DOTCOM_OVERVIEW,
-	DOTCOM_MONITORING,
-	DOTCOM_SITE_PERFORMANCE,
-	DOTCOM_LOGS_PHP,
-	DOTCOM_LOGS_WEB,
-	DOTCOM_GITHUB_DEPLOYMENTS,
-	DOTCOM_HOSTING_FEATURES,
-	DOTCOM_STAGING_SITE,
+	HOSTING_CONFIG,
+	OVERVIEW,
+	MONITORING,
+	PERFORMANCE,
+	LOGS_PHP,
+	LOGS_WEB,
+	DEPLOYMENTS,
+	HOSTING_FEATURES,
+	STAGING_SITE,
 	SETTINGS_SITE,
 	SETTINGS_ADMINISTRATION_RESET_SITE,
 	SETTINGS_ADMINISTRATION_TRANSFER_SITE,
@@ -72,8 +71,8 @@ const DotcomPreviewPane = ( {
 		const siteFeatures = [
 			{
 				label: __( 'Overview' ),
-				enabled: ! config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ DOTCOM_OVERVIEW ],
+				enabled: true,
+				featureIds: [ OVERVIEW ],
 			},
 			{
 				label: (
@@ -82,34 +81,33 @@ const DotcomPreviewPane = ( {
 						<HostingFeaturesIcon />
 					</span>
 				),
-				enabled:
-					( isSimpleSite || isPlanExpired ) && ! config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ DOTCOM_HOSTING_FEATURES ],
+				enabled: isSimpleSite || isPlanExpired,
+				featureIds: [ HOSTING_FEATURES ],
 			},
 			{
 				label: __( 'Deployments' ),
-				enabled: isActiveAtomicSite && ! config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ DOTCOM_GITHUB_DEPLOYMENTS ],
+				enabled: isActiveAtomicSite,
+				featureIds: [ DEPLOYMENTS ],
 			},
 			{
 				label: __( 'Monitoring' ),
-				enabled: isActiveAtomicSite && ! config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ DOTCOM_MONITORING ],
+				enabled: isActiveAtomicSite,
+				featureIds: [ MONITORING ],
 			},
 			{
 				label: __( 'Performance' ),
 				enabled: isActiveAtomicSite,
-				featureIds: [ DOTCOM_SITE_PERFORMANCE ],
+				featureIds: [ PERFORMANCE ],
 			},
 			{
 				label: __( 'Logs' ),
-				enabled: isActiveAtomicSite && ! config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ DOTCOM_LOGS_PHP, DOTCOM_LOGS_WEB ],
+				enabled: isActiveAtomicSite,
+				featureIds: [ LOGS_PHP, LOGS_WEB ],
 			},
 			{
 				label: __( 'Staging Site' ),
-				enabled: isActiveAtomicSite && ! config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ DOTCOM_STAGING_SITE ],
+				enabled: isActiveAtomicSite,
+				featureIds: [ STAGING_SITE ],
 			},
 			{
 				label: __( 'Settings' ),
@@ -130,7 +128,7 @@ const DotcomPreviewPane = ( {
 					? __( 'Server Settings' )
 					: __( 'Server Config' ),
 				enabled: ! isRemoveDuplicateViewsExperimentEnabled && isActiveAtomicSite,
-				featureIds: [ DOTCOM_HOSTING_CONFIG ],
+				featureIds: [ HOSTING_CONFIG ],
 			},
 		];
 
