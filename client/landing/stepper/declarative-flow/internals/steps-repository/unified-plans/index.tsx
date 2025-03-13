@@ -128,7 +128,7 @@ export default function PlansStepAdaptor( props: StepProps ) {
 	const plansIntent = getPlansIntent( props.flow, isWordCampPromo );
 
 	const hidePlanProps =
-		createWithBigSky && isGoalFirstExperiment
+		( createWithBigSky && isGoalFirstExperiment ) || props.flow === 'ai-site-builder'
 			? getHidePlanPropsBasedOnCreateWithBigSky()
 			: getHidePlanPropsBasedOnThemeType( selectedThemeType || '' );
 
