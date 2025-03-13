@@ -8,8 +8,6 @@ dynamically fetch site information.
 ## Usage
 
 ```tsx
-import { SiteHub } from '@automattic/site-admin';
-
 export default function Example() {
 	return (
 		<SiteHub
@@ -30,7 +28,6 @@ or integrating with accessibility tools.
 
 ```tsx
 import { useRef, useEffect } from 'react';
-import { SiteHub } from './SiteHub';
 
 export default function Example() {
 	const buttonRef = useRef< HTMLButtonElement >( null );
