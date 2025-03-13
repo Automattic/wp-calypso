@@ -8,7 +8,6 @@ import { useLayoutEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import useWPAdminTheme from 'calypso/my-sites/stats/hooks/use-wp-admin-theme';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { FunctionComponent, ReactNode } from 'react';
 
 // We cannot use any of the Calypso state selectors here, as the RootChild component doesn't have Redux context.
@@ -16,7 +15,7 @@ const RootChild: FunctionComponent< { children: ReactNode } > = ( { children } )
 	const [ containerEl, setContainerEl ] = useState< HTMLDivElement | null >( null );
 
 	const state = config( 'intial_state' );
-	const siteId = getSelectedSiteId( state );
+	const siteId = config( 'blog_id' ) as number;
 	const isSiteJetpack = isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: true } );
 	const customTheme = useWPAdminTheme( isSiteJetpack );
 
