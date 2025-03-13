@@ -7,6 +7,32 @@
 	display: flex;
 	flex-direction: column;
 
+	&__content-wrapper {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 3rem;
+		padding-block: 2rem 1rem;
+		padding-inline: 1rem;
+
+		@include step-large-viewport {
+			padding-inline: 3rem;
+		}
+
+		&.vertical-align-center {
+			@include step-large-viewport {
+				position: absolute;
+				inset: 0;
+				width: 100%;
+				height: 100%;
+				padding-block: 1rem;
+				box-sizing: border-box;
+				justify-content: center;
+			}
+		}
+	}
+
 	&__content {
 		width: 100%;
 		box-sizing: border-box;
@@ -19,25 +45,6 @@
 
 		&.full {
 			max-width: 100%;
-		}
-
-		padding-block: 2rem 1rem;
-		padding-inline: 1rem;
-
-		@include large-viewport {
-			padding-inline: 3rem;
-		}
-
-		&.vertical-align-center {
-			@include large-viewport {
-				position: absolute;
-				inset: 0;
-				width: 100%;
-				height: 100%;
-				padding-block: 1rem;
-				box-sizing: border-box;
-				justify-content: center;
-			}
 		}
 	}
 }

@@ -8,3 +8,4 @@ export { TopBar } from './components/TopBar/TopBar';
 export { StickyBottomBar } from './components/StickyBottomBar/StickyBottomBar';
 
 export { FullWidthStepLayout } from './wireframes/FullWidthStepLayout/FullWidthStepLayout';
+export { SixColumnsCenteredStepLayout } from './wireframes/SixColumnsCenteredStepLayout/SixColumnsCenteredStepLayout';

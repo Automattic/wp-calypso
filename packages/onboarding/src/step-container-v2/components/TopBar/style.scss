@@ -8,7 +8,7 @@
 	align-items: center;
 	padding: 1rem;
 
-	@include large-viewport {
+	@include step-large-viewport {
 		padding-inline: 1.5rem;
 	}
 
@@ -27,7 +27,7 @@
 
 		margin-inline: 0.5rem;
 
-		@include large-viewport {
+		@include step-large-viewport {
 			margin-left: 1rem;
 		}
 	}

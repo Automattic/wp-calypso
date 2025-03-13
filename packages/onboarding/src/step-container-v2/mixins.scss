@@ -1,6 +1,12 @@
 $step-container: '.step-container-v2';
 
-@mixin large-viewport {
+@mixin step-medium-viewport {
+	#{$step-container}.medium-viewport & {
+		@content;
+	}
+}
+
+@mixin step-large-viewport {
 	#{$step-container}.large-viewport & {
 		@content;
 	}

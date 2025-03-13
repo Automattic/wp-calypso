@@ -18,7 +18,7 @@ export const normalizeButtonProps = < T extends ComponentProps< typeof Button > 
 	return {
 		...standardProps,
 		...button,
-		children: button.label,
+		children: button.label ?? standardProps.label,
 		className: clsx( standardProps.className, button.className ),
 	};
 };

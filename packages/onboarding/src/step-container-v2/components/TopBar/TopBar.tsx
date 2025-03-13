@@ -1,5 +1,4 @@
 import { WordPressLogo, WordPressWordmark } from '@automattic/components';
-import clsx from 'clsx';
 import { ReactNode } from 'react';
 import { useStepContainerV2InternalContext } from '../../contexts/StepContainerV2InternalContext';
 
@@ -11,11 +10,11 @@ interface TopBarProps {
 }
 
 export const TopBar = ( { backButton, skipButton }: TopBarProps ) => {
-	const { isLargeViewport } = useStepContainerV2InternalContext();
+	const { isMediumViewport } = useStepContainerV2InternalContext();
 
 	return (
-		<div className={ clsx( 'step-container-v2__top-bar', { 'large-viewport': isLargeViewport } ) }>
-			{ isLargeViewport ? (
+		<div className="step-container-v2__top-bar">
+			{ isMediumViewport ? (
 				<WordPressWordmark
 					size={ { width: 134, height: 18 } }
 					className="step-container-v2__top-bar-wordpress-logo"

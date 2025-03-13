@@ -2,6 +2,8 @@ import { Button } from '@wordpress/components';
 import { normalizeButtonProps } from '../../../helpers/normalizeButtonProps';
 import { ButtonProps } from '../../../types';
 
+import './style.scss';
+
 export const NextButton = ( originalProps: ButtonProps ) => {
 	const nextButtonProps = normalizeButtonProps( originalProps, {
 		label: 'Next',

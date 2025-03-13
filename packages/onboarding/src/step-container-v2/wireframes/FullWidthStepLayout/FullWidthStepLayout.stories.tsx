@@ -27,20 +27,23 @@ export const ThemePreview = () => {
 			className="theme-preview"
 			topBar={ <TopBar backButton={ backButton } /> }
 			isLargeViewport={ isLargeViewport }
-		>
-			<div className="theme-preview__info">
-				<div className="theme-preview__description">
-					<Badge>Free</Badge>
-					<Heading
-						size="small"
-						text="Dropp"
-						align="left"
-						subText="Dropp is a blogging theme that appeals to the sneakerhead. Its urban styles with bold typography and vibrant accent color make it ideal to the streetwear enthusiasts looking to express themselves."
-					/>
-				</div>
-			</div>
-			<div className="theme-preview__preview" />
-		</FullWidthStepLayout>
+			render={ () => (
+				<>
+					<div className="theme-preview__info">
+						<div className="theme-preview__description">
+							<Badge>Free</Badge>
+							<Heading
+								size="small"
+								text="Dropp"
+								align="left"
+								subText="Dropp is a blogging theme that appeals to the sneakerhead. Its urban styles with bold typography and vibrant accent color make it ideal to the streetwear enthusiasts looking to express themselves."
+							/>
+						</div>
+					</div>
+					<div className="theme-preview__preview" />
+				</>
+			) }
+		/>
 	);
 };
 
@@ -62,25 +65,28 @@ export const ThemePreviewFonts = () => {
 			isLargeViewport={ isLargeViewport }
 			topBar={ isLargeViewport ? <TopBar backButton={ backButton } /> : <FontsBar /> }
 			stickyBottomBar={ <StickyBottomBar leftButton={ backButton } rightButton={ nextButton } /> }
-		>
-			{ isLargeViewport && (
-				<div className="theme-preview__info">
-					<div className="theme-preview__description">
-						<Heading
-							size="small"
-							text={
-								<div className="theme-preview__fonts">
-									<Button icon={ chevronLeft } /> Fonts
-								</div>
-							}
-							align="left"
-							subText="Elevate your design with expertly curated font pairings."
-						/>
-					</div>
-					{ nextButton }
-				</div>
+			render={ () => (
+				<>
+					{ isLargeViewport && (
+						<div className="theme-preview__info">
+							<div className="theme-preview__description">
+								<Heading
+									size="small"
+									text={
+										<div className="theme-preview__fonts">
+											<Button icon={ chevronLeft } /> Fonts
+										</div>
+									}
+									align="left"
+									subText="Elevate your design with expertly curated font pairings."
+								/>
+							</div>
+							{ nextButton }
+						</div>
+					) }
+					<div className="theme-preview__preview" />
+				</>
 			) }
-			<div className="theme-preview__preview" />
-		</FullWidthStepLayout>
+		/>
 	);
 };

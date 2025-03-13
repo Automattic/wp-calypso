@@ -5,7 +5,7 @@
 .step-container-v2__heading {
 	width: 100%;
 
-	@include large-viewport {
+	@include step-medium-viewport {
 		text-align: center;
 	}
 
@@ -17,7 +17,7 @@
 		text-wrap: balance;
 
 		&:not(.small) {
-			@include large-viewport {
+			@include step-large-viewport {
 				font-size: 2.75rem;
 				line-height: 1.15;
 			}
@@ -31,7 +31,7 @@
 		line-height: 1.5;
 		text-wrap: balance;
 
-		@include large-viewport {
+		@include step-large-viewport {
 			font-size: 1rem;
 		}
 	}

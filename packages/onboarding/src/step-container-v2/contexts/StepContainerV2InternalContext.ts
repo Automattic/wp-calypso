@@ -1,6 +1,7 @@
 import { createContext, useContext } from 'react';
 
 export interface StepContainerV2InternalContextType {
+	isMediumViewport: boolean;
 	isLargeViewport: boolean;
 }
 

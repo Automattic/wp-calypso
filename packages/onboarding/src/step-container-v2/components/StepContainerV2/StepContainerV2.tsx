@@ -1,7 +1,10 @@
 import { useViewportMatch } from '@wordpress/compose';
 import clsx from 'clsx';
 import { ReactNode } from 'react';
-import { StepContainerV2InternalProvider } from '../../contexts/StepContainerV2InternalContext';
+import {
+	StepContainerV2InternalProvider,
+	StepContainerV2InternalContextType,
+} from '../../contexts/StepContainerV2InternalContext';
 
 import './style.scss';
 
@@ -12,8 +15,9 @@ interface StepContainerV2Props {
 	stickyBottomBar?: ReactNode;
 	width?: 'standard' | 'wide' | 'full';
 	verticalAlign?: 'top' | 'center';
+	isMediumViewport?: boolean;
 	isLargeViewport?: boolean;
-	children: ReactNode;
+	render: ( context: StepContainerV2InternalContextType ) => ReactNode;
 }
 
 export const StepContainerV2 = ( {
@@ -23,29 +27,43 @@ export const StepContainerV2 = ( {
 	stickyBottomBar,
 	width = 'standard',
 	verticalAlign = 'top',
+	isMediumViewport: externalIsMediumViewport,
 	isLargeViewport: externalIsLargeViewport,
-	children,
+	render,
 }: StepContainerV2Props ) => {
-	const internalIsLargeViewport = useViewportMatch( 'medium', '>=' );
+	const internalIsMediumViewport = useViewportMatch( 'small', '>=' );
+	const isMediumViewport = externalIsMediumViewport ?? internalIsMediumViewport;
 
+	const internalIsLargeViewport = useViewportMatch( 'medium', '>=' );
 	const isLargeViewport = externalIsLargeViewport ?? internalIsLargeViewport;
 
+	const stepContainerContextValue = { isMediumViewport, isLargeViewport };
+
 	return (
-		<StepContainerV2InternalProvider value={ { isLargeViewport } }>
-			<div className={ clsx( 'step-container-v2', { 'large-viewport': isLargeViewport } ) }>
+		<StepContainerV2InternalProvider value={ stepContainerContextValue }>
+			<div
+				className={ clsx( 'step-container-v2', {
+					'medium-viewport': isMediumViewport,
+					'large-viewport': isLargeViewport,
+				} ) }
+			>
 				{ topBar }
-				{ heading }
 				<div
-					className={ clsx( 'step-container-v2__content', className, {
-						'large-viewport': isLargeViewport,
-						wide: width === 'wide',
-						full: width === 'full',
+					className={ clsx( 'step-container-v2__content-wrapper', {
 						'vertical-align-center': verticalAlign === 'center',
 					} ) }
 				>
-					{ children }
+					{ heading }
+					<div
+						className={ clsx( 'step-container-v2__content', className, {
+							wide: width === 'wide',
+							full: width === 'full',
+						} ) }
+					>
+						{ render( stepContainerContextValue ) }
+					</div>
 				</div>
-				{ ! isLargeViewport && stickyBottomBar }
+				{ ! isMediumViewport && stickyBottomBar }
 			</div>
 		</StepContainerV2InternalProvider>
 	);
