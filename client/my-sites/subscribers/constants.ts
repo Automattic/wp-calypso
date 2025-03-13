@@ -17,4 +17,10 @@ export enum SubscribersFilterBy {
 	BlockedSubscriber = 'blocked_subscriber',
 }
 
+export enum SubscribersStatus {
+	Subscribed = 'Subscribed',
+	NotConfirmed = 'Not confirmed',
+	NotSubscribed = 'Not subscribed',
+	NotSending = 'Not sending',
+}
 export const DEFAULT_PER_PAGE = 10;

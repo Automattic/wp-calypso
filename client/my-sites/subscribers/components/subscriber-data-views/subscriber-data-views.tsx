@@ -9,7 +9,7 @@ import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/se
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
-import { SubscribersFilterBy, SubscribersSortBy } from '../../constants';
+import { SubscribersFilterBy, SubscribersSortBy, SubscribersStatus } from '../../constants';
 import { useSubscriptionPlans, useUnsubscribeModal } from '../../hooks';
 import {
 	useSubscribersQuery,
@@ -241,9 +241,12 @@ const SubscriberDataViews = ( {
 				id: 'subscription_status',
 				label: translate( 'Email subscription' ),
 				getValue: ( { item }: { item: Subscriber } ) => item.subscription_status,
-				render: ( { item }: { item: Subscriber } ) => {
-					return <div>{ item.subscription_status }</div>;
-				},
+				render: ( { item }: { item: Subscriber } ) => (
+					<div>
+						{ SubscribersStatus[ item.subscription_status as keyof typeof SubscribersStatus ] ??
+							item.subscription_status }
+					</div>
+				),
 				elements: [
 					{ label: translate( 'Subscribed' ), value: SubscribersFilterBy.EmailSubscriber },
 					{
