@@ -23,7 +23,6 @@ interface UserListsProps {
 	isLoading?: boolean;
 }
 
-// Added export keyword to make the component available for testing
 export const UserLists = ( {
 	user,
 	requestUserLists,
