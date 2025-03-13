@@ -6,6 +6,7 @@ import { useEffect, useState } from '@wordpress/element';
 import {
 	getConversationsFromSupportInteractions,
 	getZendeskConversations,
+	updateConversationStatuses,
 } from '../components/utils';
 import { HELP_CENTER_STORE } from '../stores';
 import type { SupportInteraction, ZendeskConversation } from '@automattic/odie-client';
@@ -59,25 +60,10 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 				allSupportInteractions
 			);
 
-			const conversationsWithUpdatedStatuses = filteredConversations.map( ( conversation ) => {
-				const supportInteraction = allSupportInteractions.find(
-					( interaction ) => interaction.uuid === conversation.metadata.supportInteractionId
-				);
-
-				if ( ! supportInteraction ) {
-					return conversation;
-				}
-
-				const updatedConversation = {
-					...conversation,
-					metadata: {
-						...conversation.metadata,
-						status: supportInteraction.status,
-					},
-				};
-
-				return updatedConversation;
-			} );
+			const conversationsWithUpdatedStatuses = updateConversationStatuses(
+				filteredConversations,
+				allSupportInteractions
+			);
 
 			setConversations( conversationsWithUpdatedStatuses );
 			setSupportInteractions( allSupportInteractions );

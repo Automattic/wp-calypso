@@ -123,3 +123,28 @@ export const matchSupportInteractionId = (
 		return foundMatch;
 	}
 };
+
+export const updateConversationStatuses = (
+	conversations: ZendeskConversation[],
+	allSupportInteractions: SupportInteraction[]
+) => {
+	return conversations.map( ( conversation ) => {
+		const supportInteraction = allSupportInteractions.find(
+			( interaction ) => interaction.uuid === conversation.metadata.supportInteractionId
+		);
+
+		if ( ! supportInteraction ) {
+			return conversation;
+		}
+
+		const updatedConversation = {
+			...conversation,
+			metadata: {
+				...conversation.metadata,
+				status: supportInteraction.status,
+			},
+		};
+
+		return updatedConversation;
+	} );
+};
