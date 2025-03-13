@@ -86,7 +86,7 @@ const JetpackEmptyListView = () => {
 			</h2>
 			<p className="jetpack-empty-list-view__description">
 				{ i18n.fixMe( {
-					text: translate( 'No subscribers yet? Turn your site visitors into subscribers.' ),
+					text: 'No subscribers yet? {{howToTurnVisitorsLink}}Turn your site visitors into subscribers.{{/howToTurnVisitorsLink}}',
 					newCopy: translate(
 						'No subscribers yet? {{howToTurnVisitorsLink}}Turn your site visitors into subscribers.{{/howToTurnVisitorsLink}}',
 						{

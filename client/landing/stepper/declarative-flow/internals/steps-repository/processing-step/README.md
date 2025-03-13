@@ -16,7 +16,7 @@ It works together with `ONBOARD_STORE` and some of its state:
 3. Configure your flow in a way that the `processing` step is called after submitting the main step, something like:
 
 ```
-function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
+function submit( providedDependencies: ProvidedDependencies = {} ) {
 ...
 	switch ( currentStep ) {
 		case 'myMainStep':

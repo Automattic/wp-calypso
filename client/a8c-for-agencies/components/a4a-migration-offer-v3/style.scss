@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .a4a-migration-offer-v3 {
 	display: flex;
@@ -39,10 +40,10 @@
 	flex-direction: row;
 	justify-content: space-between;
 
-	@include a4a-font-heading-md($font-weight: 400);
+	@include heading-large;
 
 	@include break-medium {
-		@include a4a-font-heading-lg($font-weight: 400);
+		@include heading-x-large;
 		margin-block-start: 10px;
 		margin-block-end: 8px;
 	}

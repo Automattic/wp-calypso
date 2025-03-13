@@ -9,6 +9,7 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ImporterMainPlatform } from 'calypso/lib/importer/types';
 import { navigate as calypsoLibNavigate } from 'calypso/lib/navigate';
 import { addQueryArgs } from 'calypso/lib/route';
+import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getInitialQueryArguments } from 'calypso/state/selectors/get-initial-query-arguments';
@@ -264,6 +265,10 @@ const siteSetupFlow: FlowV1 = {
 
 			// Clean-up the store so that if onboard for new site will be launched it will be launched with no preselected values
 			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction', 'skipIntent', 'skipGoals' ] );
+
+			// After finishing the site setup flow, we can safely clean the signup destination cookie.
+			// This will prevent undesired redirects to the /site-setup from the Plans page after the onboarding flow is finished.
+			clearSignupDestinationCookie();
 		};
 
 		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
@@ -273,7 +278,7 @@ const siteSetupFlow: FlowV1 = {
 
 		useRedirectDesignSetupOldSlug( currentStep, navigate );
 
-		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
+		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
 				case 'options': {
 					if ( intent === 'sell' ) {
@@ -292,7 +297,7 @@ const siteSetupFlow: FlowV1 = {
 				}
 
 				case 'processing': {
-					const processingResult = params[ 0 ] as ProcessingResult;
+					const processingResult = providedDependencies.processingResult as ProcessingResult;
 
 					if ( processingResult === ProcessingResult.FAILURE ) {
 						return navigate( 'error' );
@@ -327,7 +332,7 @@ const siteSetupFlow: FlowV1 = {
 				}
 
 				case 'bloggerStartingPoint': {
-					const intent = params[ 0 ];
+					const intent = providedDependencies.startingPoint as string;
 					switch ( intent ) {
 						case 'firstPost': {
 							return exitFlow( `/post/${ siteSlug }` );
@@ -384,7 +389,7 @@ const siteSetupFlow: FlowV1 = {
 				}
 
 				case 'intent': {
-					const submittedIntent = params[ 0 ];
+					const submittedIntent = providedDependencies.intent as string;
 					switch ( submittedIntent ) {
 						case 'wpadmin': {
 							return exitFlow( `https://wordpress.com/home/${ siteId ?? siteSlug }` );
@@ -430,15 +435,9 @@ const siteSetupFlow: FlowV1 = {
 
 					if (
 						depUrl.startsWith( 'http' ) ||
-						[
-							'blogroll',
-							'ghost',
-							'tumblr',
-							'livejournal',
-							'movabletype',
-							'xanga',
-							'substack',
-						].indexOf( providedDependencies?.platform as ImporterMainPlatform ) !== -1
+						[ 'ghost', 'tumblr', 'livejournal', 'movabletype', 'xanga', 'substack' ].indexOf(
+							providedDependencies?.platform as ImporterMainPlatform
+						) !== -1
 					) {
 						return exitFlow( providedDependencies?.url as string );
 					}

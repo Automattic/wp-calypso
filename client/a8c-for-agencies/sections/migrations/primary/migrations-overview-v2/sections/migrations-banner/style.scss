@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .migrations-banner {
 	padding: 24px 32px;
@@ -27,7 +28,7 @@
 }
 
 .migrations-banner__title {
-	@include a4a-font-heading-lg;
+	@include heading-large;
 	display: flex;
 	flex-direction: row;
 	gap: 16px;

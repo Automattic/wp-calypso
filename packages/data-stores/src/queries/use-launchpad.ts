@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
+import * as oauthToken from '@automattic/oauth-token';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
@@ -78,12 +79,13 @@ export const fetchLaunchpad = (
 			updated_write_tasklist: 'true',
 		} ),
 	};
-
+	const token = oauthToken.getToken();
 	return canAccessWpcomApis()
 		? wpcomRequest( {
 				path: addQueryArgs( `/sites/${ slug }/launchpad`, queryArgs ),
 				apiNamespace: 'wpcom/v2',
 				method: 'GET',
+				token: typeof token === 'string' ? token : undefined,
 		  } )
 		: apiFetch( {
 				global: true,
@@ -162,13 +164,14 @@ export const updateLaunchpadSettings = (
 	settings: LaunchpadUpdateSettings = {}
 ) => {
 	const slug = siteSlug ? encodeURIComponent( siteSlug ) : null;
-
+	const token = oauthToken.getToken();
 	return canAccessWpcomApis()
 		? wpcomRequest( {
 				path: `/sites/${ slug }/launchpad`,
 				apiNamespace: 'wpcom/v2',
 				method: 'PUT',
 				body: settings,
+				token: typeof token === 'string' ? token : undefined,
 		  } )
 		: apiFetch( {
 				global: true,

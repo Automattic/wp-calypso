@@ -1,4 +1,4 @@
-import { useTranslate, numberFormat } from 'i18n-calypso';
+import { useTranslate, numberFormatCompact, formatCurrency } from 'i18n-calypso';
 import wpcomIcon from 'calypso/assets/images/icons/wordpress-logo.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import { useLicenseLightboxData } from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox/hooks/use-license-lightbox-data';
@@ -37,7 +37,7 @@ export default function ProductInfo( {
 			{
 				args: {
 					install: presablePlan.install,
-					visits: numberFormat( presablePlan.visits ),
+					visits: numberFormatCompact( presablePlan.visits ),
 					storage: presablePlan.storage,
 				},
 				count: presablePlan.install,
@@ -119,7 +119,18 @@ export default function ProductInfo( {
 					product.family_slug === 'pressable-hosting' && ! isAutomatedReferrals && (
 						<div className="product-info__pressable-limit-warning">
 							{ translate(
-								"*If you exceed your plan's storage or traffic limits, you will be charged $0.50 per GB and $8 per 10K visits per month."
+								"*If you exceed your plan's storage or traffic limits, you will be charged %(storageCharge)s per GB and %(trafficCharge)s per %(visits)s visits per month.",
+								{
+									args: {
+										storageCharge: formatCurrency( 0.5, 'USD', {
+											stripZeros: true,
+										} ),
+										trafficCharge: formatCurrency( 8, 'USD', {
+											stripZeros: true,
+										} ),
+										visits: numberFormatCompact( 10000 ),
+									},
+								}
 							) }
 						</div>
 					)

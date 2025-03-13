@@ -5,6 +5,7 @@ The Calendar component provides a date picker interface that allows users to sel
 ## Usage
 
 ```jsx
+// eslint-disable-next-line import/named
 import { Calendar } from '@automattic/components';
 import { useState } from '@wordpress/element';
 
