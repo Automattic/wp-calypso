@@ -1,5 +1,6 @@
 import { PLAN_100_YEARS, isValidFeatureKey } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { isPlansPageUntangled } from 'calypso/lib/plans/untangling-plans-experiment';
 import { productSelect } from 'calypso/my-sites/plans/jetpack-plans/controller';
 import setJetpackPlansHeader from 'calypso/my-sites/plans/jetpack-plans/plans-header';
 import { PLAN } from 'calypso/sites/components/site-preview-pane/constants';
@@ -62,8 +63,7 @@ export function plans( context, next ) {
 		/>
 	);
 
-	const isUntangled = true;
-	if ( isUntangled ) {
+	if ( isPlansPageUntangled( context.store.getState() ) ) {
 		siteDashboard( PLAN )( context, next );
 	} else {
 		next();

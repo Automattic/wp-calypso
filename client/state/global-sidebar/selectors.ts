@@ -1,3 +1,4 @@
+import { isPlansPageUntangled } from 'calypso/lib/plans/untangling-plans-experiment';
 import isScheduledUpdatesMultisiteRoute, {
 	isScheduledUpdatesMultisiteCreateRoute,
 	isScheduledUpdatesMultisiteEditRoute,
@@ -8,10 +9,7 @@ import type { AppState } from 'calypso/types';
 // Calypso routes for which we show the Site Dashboard.
 // Calypso routes not listed here will be shown in nav unification instead.
 // See: pfsHM7-Dn-p2.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getSiteDashboardRoutes( state: AppState ) {
-	const isPlanUntangled = true;
-
 	return [
 		'/overview/',
 		'/hosting-config/',
@@ -22,7 +20,7 @@ function getSiteDashboardRoutes( state: AppState ) {
 		'/hosting-features/',
 		'/staging-site/',
 		'/sites/settings',
-		...( isPlanUntangled ? [ '/plans' ] : [] ),
+		...( isPlansPageUntangled( state ) ? [ '/plans' ] : [] ),
 
 		// Domain Management
 		'/domains/manage/all/overview',
