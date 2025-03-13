@@ -42,10 +42,9 @@ const aiSiteBuilder: Flow = {
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const { siteSlug: siteSlugFromSiteData } = useSiteData();
-		const { domainCartItem, planCartItem } = useSelect(
+		const { domainCartItem } = useSelect(
 			( select: ( arg: string ) => OnboardSelect ) => ( {
 				domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
-				planCartItem: select( ONBOARD_STORE ).getPlanCartItem(),
 			} ),
 			[]
 		);
@@ -92,25 +91,35 @@ const aiSiteBuilder: Flow = {
 					// eslint-disable-next-line no-console
 					console.log( 'DOMAAAINZ STEP', providedDependencies, siteSlugFromSiteData );
 					// TODO: Somehow store the chosen domain.
-					return navigate( 'plans' );
+					return navigate( 'plans', {
+						hideFreePlan: true,
+						hidePersonalPlan: true,
+					} );
 				}
 
 				case 'plans': {
+					const { cartItems } = providedDependencies;
 					// eslint-disable-next-line no-console
-					console.log( 'PLAAANZ STEP', {
-						dependencies: providedDependencies,
-						slug: siteSlugFromSiteData,
-						plan: planCartItem,
-						domain: domainCartItem,
-					} );
-					// TODO: Somehow planCartItem is null here.
-					if ( planCartItem && siteSlugFromSiteData ) {
+					console.log(
+						'PLAAANZ STEP',
+						JSON.stringify(
+							{
+								dependencies: providedDependencies,
+								slug: siteSlugFromSiteData,
+								domain: domainCartItem,
+							},
+							null,
+							2
+						)
+					);
+
+					if ( cartItems && cartItems[ 0 ] && siteSlugFromSiteData ) {
 						const addToCart = await addPlanToCart(
 							siteSlugFromSiteData,
 							AI_SITE_BUILDER_FLOW,
 							true,
 							'assembler',
-							planCartItem
+							cartItems[ 0 ]
 						);
 						// eslint-disable-next-line no-console
 						console.log( 'ADD TO CART', addToCart );
