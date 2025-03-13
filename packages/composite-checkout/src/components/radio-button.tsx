@@ -27,7 +27,6 @@ const RadioButtonWrapper = styled.div<
 		border-bottom: ${ ( props ) => '1px solid ' + getBorderColor( props ) };
 		box-sizing: border-box;
 		border-radius: ${ ( props ) => ( props.checked ? '3px' : 0 ) };
-
 		.rtl & {
 			right: 0;
 			left: auto;
@@ -36,6 +35,7 @@ const RadioButtonWrapper = styled.div<
 
 	:hover::before {
 		border: 3px solid ${ ( props ) => props.theme.colors.highlight };
+		border-radius: 3px;
 	}
 
 	.payment-logos {
@@ -203,7 +203,6 @@ export default function RadioButton( {
 	...otherProps
 }: RadioButtonProps ) {
 	const [ isFocused, changeFocus ] = useState( false );
-
 	return (
 		<RadioButtonWrapper
 			disabled={ disabled }
@@ -262,28 +261,36 @@ RadioButton.propTypes = {
 	ariaLabel: PropTypes.string,
 };
 
-function handleWrapperDisabled( { disabled }: { disabled?: boolean } ) {
+function handleWrapperDisabled( { disabled, checked }: { disabled?: boolean; checked?: boolean } ) {
 	if ( ! disabled ) {
 		return null;
 	}
 
-	return `
-		:hover:not( :first-child )::before {
-			border: 1px solid lightgray;
-			border-radius: 3px;
-		}
-
-		:hover:first-child::before,
-		:hover:last-child::before {
-			border: 1px solid lightgray;
-		}
-
+	const styles = `
 		svg,
 		:hover svg {
 			filter: grayscale( 100% );
 			opacity: 50%;
 		}
+		:hover::before {
+			border-width: 1px;
+		}
 	`;
+
+	if ( ! checked ) {
+		return (
+			styles +
+			`
+			:hover::before {
+				border: none;
+				border-bottom: 1px solid lightgray;
+				border-radius: 0;
+			}
+		`
+		);
+	}
+
+	return styles;
 }
 
 function handleLabelDisabled( { disabled }: { disabled?: boolean } ) {

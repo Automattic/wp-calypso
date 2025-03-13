@@ -23,7 +23,7 @@ const debug = debugFactory( 'composite-checkout:checkout-payment-methods' );
 
 const CheckoutPaymentMethodsWrapper = styled.div`
 	padding-top: 4px;
-	> div > div[disabled]:has( + div[disabled]:hover )::before,
+	> div > div:not( [disabled] ):has( + div:hover )::before,
 	> div > div[disabled]:has( + div.is-checked[disabled] )::before {
 		border-bottom: none;
 	}
