@@ -74,6 +74,13 @@ export class SitesDropdown extends PureComponent {
 
 	handleKeyDown = ( event ) => {
 		if ( event.key === 'Enter' || event.keyCode === 13 ) {
+			// Without this event.preventDefault, this keydown event will
+			// somehow trigger the site selector to navigate to /me/?
+			// though it's unclear why. This seems related to the
+			// fact that pressing Enter while focused on a blank search input
+			// on the /me/account page will also cause navigation to happen.
+			// We can remove this once we find out how to prevent that
+			// erroneous navigation from happening with the search input.
 			if ( ! this.state.open ) {
 				event.preventDefault();
 			}
