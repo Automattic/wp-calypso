@@ -22,7 +22,6 @@ function UnforwardedControlWithError< C extends React.ReactElement >(
 		onReportCustomValidity,
 		getValidityTarget,
 		render,
-		...props
 	}: {
 		/**
 		 * A function that returns a custom validity message when applicable.
