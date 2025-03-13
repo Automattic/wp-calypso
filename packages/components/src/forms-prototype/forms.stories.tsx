@@ -181,8 +181,8 @@ export const Number: StoryObj = {
 						__next40pxDefaultSize
 						label="Number"
 						help="Odd numbers are not allowed."
-						// TODO: When form is submitted when value is undefined, it will automatically
-						// set a clamped value (as defined by `min` attribute, so 0 by default).
+						// TODO: Upstream limitation - When form is submitted when value is undefined, it will
+						// automatically set a clamped value (as defined by `min` attribute, so 0 by default).
 						onChange={ ( value ) => {
 							valueRef.current = value ?? '';
 						} }
@@ -214,7 +214,7 @@ export const Checkbox: StoryObj = {
 						__nextHasNoMarginBottom
 						required
 						label="Checkbox"
-						// TODO: CheckboxControl doesn't support uncontrolled mode, visually.
+						// TODO: Upstream limitation - CheckboxControl doesn't support uncontrolled mode, visually.
 						checked={ checkboxControlChecked }
 						onChange={ ( value ) => {
 							setCheckboxControlChecked( value );
@@ -243,7 +243,7 @@ export const Toggle: StoryObj = {
 		const valueRef = useRef< boolean >();
 		const validityTargetRef = useRef< HTMLInputElement >( null );
 
-		// TODO: The `required` attribute is not passed down to the input,
+		// TODO: Upstream limitation - The `required` attribute is not passed down to the input,
 		// so we need to set it manually.
 		useEffect( () => {
 			const required = true; // TODO: Make this changeable by the consumer.
@@ -260,7 +260,7 @@ export const Toggle: StoryObj = {
 					<ToggleControl
 						__nextHasNoMarginBottom
 						label="Toggle"
-						// TODO: FormToggle (and thus ToggleControl) doesn't support uncontrolled mode, visually.
+						// TODO: Upstream limitation - FormToggle (and thus ToggleControl) doesn't support uncontrolled mode, visually.
 						checked={ checked }
 						onChange={ ( value ) => {
 							setChecked( value );
@@ -368,7 +368,7 @@ export const CustomSelect: StoryObj = {
 				<ControlWithError
 					render={
 						<CustomSelectControl
-							// TODO: Required isn't passed down correctly.
+							// TODO: Upstream limitation - Required isn't passed down correctly.
 							// Needs to be set on delegate element.
 							required
 							__next40pxDefaultSize
@@ -439,6 +439,8 @@ export const ToggleGroup: StoryObj = {
 							onChange={ ( value ) => {
 								valueRef.current = value;
 							} }
+							// TODO: Upstream limitation - In uncontrolled mode, starting from an undefined value then
+							// setting a value has a visual bug.
 							value="1"
 						>
 							<ToggleGroupControlOption value="1" label="Option 1" />
@@ -486,7 +488,7 @@ export const Combobox: StoryObj = {
 		const valueRef = useRef< React.ComponentProps< typeof ComboboxControl >[ 'value' ] >();
 		const validityTargetRef = useRef< HTMLInputElement >( null );
 
-		// TODO: The `required` attribute is not passed down to the input,
+		// TODO: Upstream limitation - The `required` attribute is not passed down to the input,
 		// so we need to set it manually.
 		useEffect( () => {
 			const required = true; // TODO: Make this changeable by the consumer.
@@ -505,7 +507,6 @@ export const Combobox: StoryObj = {
 						<ComboboxControl
 							__nextHasNoMarginBottom
 							__next40pxDefaultSize
-							// TODO: Rest props are not passed down.
 							required
 							label="Combobox"
 							help="Option A is not allowed."
