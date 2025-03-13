@@ -1,8 +1,9 @@
 import clsx from 'clsx';
+import { ReactNode } from 'react';
 
 interface HeadingProps {
-	text: string;
-	subText?: string;
+	text: ReactNode;
+	subText?: ReactNode;
 	align?: 'left';
 	size?: 'small';
 }
