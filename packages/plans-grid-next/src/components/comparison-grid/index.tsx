@@ -937,8 +937,11 @@ const ComparisonGrid = ( {
 	const [ visiblePlans, setVisiblePlans ] = useState< PlanSlug[] >( [] );
 
 	const displayedGridPlans = useMemo( () => {
-		return sortPlans( gridPlans, currentSitePlanSlug );
-	}, [ gridPlans, currentSitePlanSlug ] );
+		const breakpointsToSort: GridSize[] = [ 'small', 'smedium' ];
+		return gridSize && breakpointsToSort.includes( gridSize )
+			? sortPlans( gridPlans, currentSitePlanSlug )
+			: gridPlans;
+	}, [ gridSize, gridPlans, currentSitePlanSlug ] );
 
 	useEffect( () => {
 		setVisiblePlans( () => {
