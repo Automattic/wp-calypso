@@ -14,6 +14,7 @@ export enum SubscribersFilterBy {
 	ReaderSubscriber = 'reader_subscriber',
 	UnconfirmedSubscriber = 'unconfirmed_subscriber',
 	EmailSubscriber = 'email_subscriber',
+	BlockedSubscriber = 'blocked_subscriber',
 }
 
 export const DEFAULT_PER_PAGE = 10;

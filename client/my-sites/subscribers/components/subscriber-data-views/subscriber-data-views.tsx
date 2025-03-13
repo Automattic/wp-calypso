@@ -251,6 +251,7 @@ const SubscriberDataViews = ( {
 						value: SubscribersFilterBy.UnconfirmedSubscriber,
 					},
 					{ label: translate( 'Not subscribed' ), value: SubscribersFilterBy.ReaderSubscriber },
+					{ label: translate( 'Not sending' ), value: SubscribersFilterBy.BlockedSubscriber },
 				],
 				filterBy: {
 					operators: [ 'is' as Operator ],
