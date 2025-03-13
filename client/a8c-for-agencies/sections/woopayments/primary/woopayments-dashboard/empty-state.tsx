@@ -13,16 +13,66 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import AddWooPaymentsToSite from '../../add-woopayments-to-site';
 
+type Item =
+	| string
+	| number
+	| {
+			props?: {
+				children?: Item | Item[];
+				href?: string;
+			};
+	  };
+
+function extractStrings( item: Item, result: string = '' ): string {
+	if ( typeof item === 'string' || typeof item === 'number' ) {
+		result += item;
+	} else if ( item?.props ) {
+		if ( Array.isArray( item.props.children ) ) {
+			for ( const child of item.props.children ) {
+				result = extractStrings( child, result );
+			}
+		} else if ( item.props.children ) {
+			result = extractStrings( item.props.children, result );
+		}
+
+		if ( item.props.href ) {
+			result += `: ${ item.props.href }`;
+		}
+	}
+	return result;
+}
 const WooPaymentsDashboardEmptyState = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const listItems1 = [
 		translate(
-			'WooPayments is available in 38 countries and accepts payments in 135+ currencies, no other extensions needed.'
+			'WooPayments is available in {{a}}38 countries{{/a}} and accepts payments in 135+ currencies, no other extensions needed.',
+			{
+				components: {
+					a: (
+						<a
+							href="https://woocommerce.com/document/woopayments/compatibility/countries/#supported-countries"
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+				},
+			}
 		),
 		translate(
-			'Get started for free. Pay-as-you-go fees per transaction. There are no monthly fees, either. Learn more about our fees.'
+			'Get started for free. Pay-as-you-go fees per transaction. There are no monthly fees, either. {{a}}Learn more about WooPayments fees{{/a}}.',
+			{
+				components: {
+					a: (
+						<a
+							href="https://woocommerce.com/document/woopayments/fees-and-debits/fees"
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+				},
+			}
 		),
 		translate(
 			'Multi-Currency support is built-in. Accept payments in 135+ currencies using WooPayments.'
@@ -162,7 +212,7 @@ const WooPaymentsDashboardEmptyState = () => {
 						<span>{ translate( 'Benefits to share with your client' ) }</span>
 						<CopyToClipboardButton
 							textToCopy={ [ ...listItems1, ...listItems2 ]
-								.map( ( item ) => `• ${ item }` )
+								.map( ( item ) => `• ${ extractStrings( item ) }` )
 								.join( '\n' ) }
 							onClick={ () => {
 								dispatch(
