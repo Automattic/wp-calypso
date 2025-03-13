@@ -1,46 +1,193 @@
 # @automattic/site-admin
 
-`@automattic/site-admin` is a reusable UI package designed to provide the necessary resources for implementing a modern administrative interface within the WordPress admin. It offers structured components, a routing system, and layout utilities inspired by the Site Editor while maintaining flexibility and independence from Core.
+`@automattic/site-admin` is a reusable UI package designed to streamline the creation of modern administrative interfaces within the WordPress admin. It provides structured components, a routing system, and layout utilities inspired by the Site Editor (Gutenberg core), ensuring flexibility and independence from Core.
 
-This package prioritizes consistency with wp-admin, ensuring a seamless and scalable admin experience with minimal external dependencies.
+This package prioritizes consistency with `wp-admin`, delivering a seamless and scalable admin experience with minimal external dependencies.
 
 ## Installation
 
-```cli
+```sh
 npm install @automattic/site-admin
 ```
 
 or
 
-```
+```sh
 yarn add @automattic/site-admin
 ```
 
 ## Designed for Versatility
 
-While primarily built for WordPress-based projects, this package is designed to be flexible enough to support other administrative applications.
+While primarily built for WordPress-based projects, `@automattic/site-admin` is designed to be flexible enough for other applications. 
 
-By providing a self-contained framework, @automattic/site-admin enables the development of custom dashboards and interfaces, even in environments that do not rely on traditional WordPress plugin architecture.
+By providing a self-contained framework, it enables the development of custom dashboards and interfaces, even in environments that do not rely on the traditional WordPress plugin architecture.
 
 ## Scope and Development Principles
 
 ### Independence from Gutenberg Core
 
-This package is a standalone solution without strict alignment to Gutenberg Core’s source code. While some components may be adapted for efficiency, the goal is not to fork or replicate Core but to provide a well-structured and optimized implementation that meets specific admin UI needs.
+This package is a standalone solution, not tightly coupled to Gutenberg Core's source code. While some components are adapted for efficiency, the objective is not to fork or replicate Core but to offer a well-structured and optimized implementation for specific admin UI needs.
 
-That said, we recognize the value of aligning with Core’s guidelines. Ensuring compatibility with Gutenberg-friendly technologies and coding standards improves maintainability and keeps the door open for potential future contributions to WordPress Core.
+That said, aligning with Core's guidelines ensures compatibility, maintainability, and potential future contributions to WordPress Core. 
 
-While this package is currently developed independently, we acknowledge that some of its implementations—or even the entire package—could eventually be moved upstream to Core if it benefits the broader WordPress ecosystem.
-
-Finally, even if this migration never happens, adhering to Core’s best practices remains a strategic choice that enhances productivity and long-term integration possibilities.
+While developed independently, parts of this package—or even the entire package—could eventually be integrated into Core if beneficial to the broader WordPress ecosystem. Regardless of whether this migration occurs, adhering to Core's best practices enhances productivity and ensures long-term integration possibilities.
 
 ### Consistency in Design and Behavior
 
-Maintaining visual and functional consistency with the WordPress admin experience is a priority.
-The package should be a reliable foundation for administrative applications, ensuring a familiar and cohesive experience across different projects.
+Maintaining a visually and functionally consistent experience with the WordPress admin is a priority. 
+
+The package is designed as a reliable foundation for administrative applications, ensuring a cohesive and intuitive experience across different projects.
 
 ### Minimal External Dependencies
 
-- Relies solely on WordPress dependencies whenever possible.
-- Avoids integrating with external frameworks unless strictly necessary due to Core limitations.
-- While included in this Calypso monorepo for hosting and centralization, it is not tightly coupled with its libraries.
+- Leverages WordPress dependencies whenever possible.
+- Avoids integrating external frameworks unless absolutely necessary due to Core limitations.
+- Hosted within the Calypso monorepo for centralization but remains independent of its libraries.
+
+## Getting Started: Building Your Admin UI
+
+This section provides a basic guide to creating a complete admin interface using the components provided by this package.
+
+The following example demonstrates how navigation is structured within the sidebar.
+It includes a sidebar layout, individual navigation items, and a routing context to manage navigation state dynamically.
+
+## 1. Navigation System
+
+### 1.1 The `RouterProvider` Component
+
+At the core of the navigation system is the `RouterProvider` component,
+which establishes a routing context to manage navigation state
+throughout your application.
+
+```tsx
+<RouterProvider routes={ [your-routes-here] }>
+  { /* Your application content */ }
+</RouterProvider>
+```
+
+The `routes` property is an array of route definitions that map paths to handlers. The optional `pathArg` property defines the URL query parameter that stores the current path (defaults to `p` if not specified).
+
+## 2. The App Sidebar
+
+### 2.1 Defining Routes
+
+Before creating navigation elements, we need to define the routes that our application will use. Each route must have a unique name, a path, and optionally areas and width configurations.
+
+```tsx
+// Define our application routes
+const appRoutes = [
+  {
+    name: 'reports',
+    path: '/reports',
+    areas: {
+      content: <ReportsScreen />
+    },
+    widths: {
+      content: 100
+    }
+  },
+  {
+    name: 'settings',
+    path: '/settings',
+    areas: {
+      content: <SettingsScreen />
+    },
+  },
+  {
+    name: 'archive',
+    path: '/archive',
+    areas: {
+      content: <ArchiveScreen />
+    },
+  }
+];
+```
+
+### 2.2 Defining Sidebar Content
+
+The `SidebarContent` component renders navigation items within the sidebar. Each item corresponds to a specific route, and the `useLocation` hook determines whether it is active.
+
+```tsx
+const SidebarContent = () => {
+    const { path } = useLocation();
+
+    return (
+        <ItemGroup>
+            <SidebarNavigationItem
+                icon={ navigation }
+                key="sidebar-item-reports"
+                to="/reports"
+                uid="reports"
+                aria-current={ path === '/reports' }
+            >
+                { __( 'Reports' ) }
+            </SidebarNavigationItem>
+
+            <SidebarNavigationItem
+                icon={ settings }
+                key="sidebar-item-settings"
+                to="/settings"
+                uid="settings"
+                aria-current={ path === '/settings' }
+            >
+                { __( 'Settings' ) }
+            </SidebarNavigationItem>
+
+            <SidebarNavigationItem
+                icon={ archive }
+                key="sidebar-item-archive"
+                to="/archive"
+                uid="archive"
+                aria-current={ path === '/archive' }
+            >
+                { __( 'Archive' ) }
+            </SidebarNavigationItem>
+        </ItemGroup>
+    );
+};
+```
+
+### 2.3 Integrating the Navigation System
+
+Once the routes and navigation elements are defined, we integrate them
+into the `RouterProvider` and `SidebarNavigationScreen`.
+The `RouterProvider` manages the navigation state and provides
+the necessary context for the navigation elements to work correctly.
+
+```tsx
+<SidebarContent>
+    <RouterProvider routes={ appRoutes } pathArg="page">
+        <SidebarNavigationScreen
+            isRoot
+            title={ __( 'Home' ) }
+            content={ <SidebarContent /> }
+        />
+        
+        {/* The main content will be rendered according to the active route */}
+        <div className="site-admin-main-content">
+            {/* Here we can use a component that displays content based on the current route */}
+            <MainContent />
+        </div>
+    </RouterProvider>
+</SidebarContent>
+```
+
+### 2.4 Component to Display Active Route Content
+
+To complete our navigation system, we can create a component that displays
+the content corresponding to the active route:
+
+```tsx
+const MainContent = () => {
+    // Get information about the current route
+    const match = useLocation();
+    
+    // If there's no match, show a message or redirect
+    if ( ! match ) {
+        return <h1>404</h1>;
+    }
+    
+    // Render the content area defined in the route
+    return <>{ match.areas.content }</>;
+};
+```

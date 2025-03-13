@@ -92,8 +92,8 @@ export const getFeedUrl = ( { feed, site, post }: GetFeedUrlArgs = {} ) => {
  * Given a feed, site, or post: return the site icon. return false if one could not be found.
  */
 export function getPostIcon( post: Partial< ReaderPost > ): string | undefined {
-	if ( typeof post?.site_icon === 'object' ) {
-		return post.site_icon?.img;
+	if ( typeof post?.site_icon === 'object' && post?.site_icon?.img ) {
+		return post.site_icon.img;
 	}
 
 	if ( typeof post?.site_icon === 'string' ) {
