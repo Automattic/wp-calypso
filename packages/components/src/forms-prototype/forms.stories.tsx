@@ -272,7 +272,7 @@ export const Checkbox: StoryObj = {
 					}
 				} }
 				getValidityTarget={ () =>
-					validityTargetRef.current?.querySelector( 'input[type="checkbox"]' )
+					validityTargetRef.current?.querySelector< HTMLInputElement >( 'input[type="checkbox"]' )
 				}
 			/>
 		);
@@ -355,7 +355,9 @@ export const Radio: StoryObj = {
 						return 'Option B is not allowed.';
 					}
 				} }
-				getValidityTarget={ () => ref.current?.querySelector( 'input[type="radio"]' ) }
+				getValidityTarget={ () =>
+					ref.current?.querySelector< HTMLInputElement >( 'input[type="radio"]' )
+				}
 			/>
 		);
 	},
@@ -570,7 +572,7 @@ export const Combobox: StoryObj = {
 						}
 					} }
 					getValidityTarget={ () =>
-						validityTargetRef.current?.querySelector( 'input[role="combobox"]' )
+						validityTargetRef.current?.querySelector< HTMLInputElement >( 'input[role="combobox"]' )
 					}
 				/>
 			</>

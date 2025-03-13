@@ -5,10 +5,13 @@ import { cloneElement, forwardRef, useState } from 'react';
 
 /**
  * HTML elements that support the Constraint Validation API.
+ *
+ * Here, we exclude HTMLButtonElement because although it does technically support the API,
+ * normal buttons are actually exempted from any validation.
  * @see https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Form_validation
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLButtonElement/willValidate
  */
 type ValidityTarget =
-	| HTMLButtonElement
 	| HTMLFieldSetElement
 	| HTMLInputElement
 	| HTMLSelectElement
