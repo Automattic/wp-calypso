@@ -99,7 +99,7 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 				<Title>{ translate( 'Let’s find your site' ) }</Title>
 				<SubTitle>
 					{ translate(
-						"Drop your current site address below to get started. In the next step, we'll measure your site's performance and confirm its eligibility for migration."
+						"Drop your current site address below to get started. In the next step, we'll confirm your site's eligibility for migration."
 					) }
 				</SubTitle>
 			</div>
