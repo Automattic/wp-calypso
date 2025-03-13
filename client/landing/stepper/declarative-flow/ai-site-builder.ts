@@ -9,8 +9,16 @@ import { useDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { STEPS } from './internals/steps';
-import { Flow, ProvidedDependencies } from './internals/types';
+import { Flow } from './internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+
+interface ProvidedDependencies {
+	siteSlug?: string;
+	siteId?: string;
+	domainItem?: MinimalRequestCartProduct;
+	cartItems?: MinimalRequestCartProduct[]; // Ensure cartItems is an array
+}
 
 const aiSiteBuilder: Flow = {
 	name: AI_SITE_BUILDER_FLOW,

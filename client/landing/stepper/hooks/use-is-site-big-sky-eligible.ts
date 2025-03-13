@@ -22,7 +22,7 @@ const invalidGoals = [
 	SiteGoal.SellDigital,
 ];
 
-export function useIsBigSkyEligible( flowName: string ) {
+export function useIsBigSkyEligible( flowName?: string ) {
 	const { isOwner } = useIsSiteOwner();
 	const site = useSite();
 	const product_slug = site?.plan?.product_slug || '';
