@@ -29,121 +29,123 @@ type Props = {
 	queryParams: QueryParams;
 };
 
-export const DomainsDataViews = ({
+export const DomainsDataViews = ( {
 	domains,
 	isLoading,
 	sidebarMode,
 	selectedDomainName,
 	queryParams,
-}: Props) => {
+}: Props ) => {
 	const translate = useTranslate();
 	const { isDesktop, getSiteSlug, selectedFeature } = useDomainsDataViewsContext();
 
 	useBulkActionNotice();
 
-	const [view, setView] = useState(() => initializeViewState(isDesktop, queryParams, sidebarMode));
+	const [ view, setView ] = useState( () =>
+		initializeViewState( isDesktop, queryParams, sidebarMode )
+	);
 	const fields = useFields();
-	const actions = useActions(view.type);
-	const { data: domainsToDisplay, paginationInfo } = useMemo(() => {
-		return filterSortAndPaginate(domains || [], view, fields);
-	}, [domains, view, fields]);
+	const actions = useActions( view.type );
+	const { data: domainsToDisplay, paginationInfo } = useMemo( () => {
+		return filterSortAndPaginate( domains || [], view, fields );
+	}, [ domains, view, fields ] );
 
-	const [selectedIds, setSelectedIds] = useState<string[]>([]);
+	const [ selectedIds, setSelectedIds ] = useState< string[] >( [] );
 	const selectedDomain = domainsToDisplay
-		.filter((d: PartialDomainData) => d.domain === selectedDomainName)
+		.filter( ( d: PartialDomainData ) => d.domain === selectedDomainName )
 		.pop();
 
-	useEffect(() => {
-		const fieldsForBreakpoint = getFieldsByBreakpoint(isDesktop, sidebarMode);
-		const sortedFieldsForBreakpoint = [...fieldsForBreakpoint].sort().toString();
-		const sortedExistingFields = [...(view?.fields ?? [])].sort().toString();
+	useEffect( () => {
+		const fieldsForBreakpoint = getFieldsByBreakpoint( isDesktop, sidebarMode );
+		const sortedFieldsForBreakpoint = [ ...fieldsForBreakpoint ].sort().toString();
+		const sortedExistingFields = [ ...( view?.fields ?? [] ) ].sort().toString();
 		// Compare the content of the arrays, not its referrences that will always be different.
 		// sort() sorts the array in place, so we need to clone them first.
-		if (sortedExistingFields !== sortedFieldsForBreakpoint) {
-			setView((prevState) => ({ ...prevState, fields: fieldsForBreakpoint }));
+		if ( sortedExistingFields !== sortedFieldsForBreakpoint ) {
+			setView( ( prevState ) => ( { ...prevState, fields: fieldsForBreakpoint } ) );
 		}
-	}, [isDesktop, sidebarMode, view, setView]);
+	}, [ isDesktop, sidebarMode, view, setView ] );
 
-	useEffect(() => {
+	useEffect( () => {
 		// Replace the "Cancel" tooltip with "Clear selection"
 		const replaceTooltip = () => {
 			const cancelButton = document.querySelector(
 				'button[aria-label="Cancel"]'
 			) as HTMLButtonElement | null;
-			if (!cancelButton) {
+			if ( ! cancelButton ) {
 				return;
 			}
 
 			// Setup our custom tooltip
-			cancelButton.removeAttribute('aria-describedby');
-			cancelButton.setAttribute('data-custom-tooltip', 'Clear selection');
+			cancelButton.removeAttribute( 'aria-describedby' );
+			cancelButton.setAttribute( 'data-custom-tooltip', 'Clear selection' );
 
 			// Remove any @wordpress/dataviews tooltips containing "Cancel"
-			document.querySelectorAll('.components-tooltip').forEach((tooltip: Element) => {
-				if (tooltip.textContent?.includes('Cancel')) {
+			document.querySelectorAll( '.components-tooltip' ).forEach( ( tooltip: Element ) => {
+				if ( tooltip.textContent?.includes( 'Cancel' ) ) {
 					tooltip.remove();
 				}
-			});
+			} );
 
 			// Match @wordpress/dataviews behavior: skip delay when other tooltips are visible
-			const otherTooltipsVisible = document.querySelectorAll('.components-tooltip').length > 0;
-			cancelButton.toggleAttribute('data-tooltip-active', otherTooltipsVisible);
+			const otherTooltipsVisible = document.querySelectorAll( '.components-tooltip' ).length > 0;
+			cancelButton.toggleAttribute( 'data-tooltip-active', otherTooltipsVisible );
 		};
 
 		// Initial setup
 		replaceTooltip();
 
 		// Watch for DOM changes that might affect tooltips
-		const observer = new MutationObserver((mutations: MutationRecord[]) => {
+		const observer = new MutationObserver( ( mutations: MutationRecord[] ) => {
 			const hasRelevantChanges = mutations.some(
-				(mutation) =>
+				( mutation ) =>
 					mutation.addedNodes.length > 0 ||
-					(mutation.target instanceof Element &&
-						mutation.target.classList?.contains('components-tooltip'))
+					( mutation.target instanceof Element &&
+						mutation.target.classList?.contains( 'components-tooltip' ) )
 			);
 
-			if (hasRelevantChanges) {
+			if ( hasRelevantChanges ) {
 				replaceTooltip();
 			}
-		});
+		} );
 
-		observer.observe(document.body, { childList: true, subtree: true });
+		observer.observe( document.body, { childList: true, subtree: true } );
 
 		// Add direct event listeners to detect hovering between tooltips more quickly
-		const handleMouseOver = (event: MouseEvent) => {
-			if (event.target instanceof Element) {
+		const handleMouseOver = ( event: MouseEvent ) => {
+			if ( event.target instanceof Element ) {
 				// When hovering any button or tooltip, immediately mark our tooltip for instant display
 				const cancelButton = document.querySelector(
 					'button[data-custom-tooltip]'
 				) as HTMLButtonElement | null;
 				if (
 					cancelButton &&
-					(event.target.tagName === 'BUTTON' ||
-						event.target.closest('button') ||
-						event.target.classList.contains('components-tooltip'))
+					( event.target.tagName === 'BUTTON' ||
+						event.target.closest( 'button' ) ||
+						event.target.classList.contains( 'components-tooltip' ) )
 				) {
-					cancelButton.setAttribute('data-tooltip-active', 'true');
+					cancelButton.setAttribute( 'data-tooltip-active', 'true' );
 					// Reset after a delay to allow standard behavior to resume
-					setTimeout(() => {
-						const tooltipsVisible = document.querySelectorAll('.components-tooltip').length > 0;
-						if (!tooltipsVisible) {
-							cancelButton.removeAttribute('data-tooltip-active');
+					setTimeout( () => {
+						const tooltipsVisible = document.querySelectorAll( '.components-tooltip' ).length > 0;
+						if ( ! tooltipsVisible ) {
+							cancelButton.removeAttribute( 'data-tooltip-active' );
 						}
-					}, 1000);
+					}, 1000 );
 				}
 			}
 		};
 
-		document.addEventListener('mouseover', handleMouseOver);
+		document.addEventListener( 'mouseover', handleMouseOver );
 
 		return () => {
 			observer.disconnect();
-			document.removeEventListener('mouseover', handleMouseOver);
+			document.removeEventListener( 'mouseover', handleMouseOver );
 		};
-	}, [selectedIds]);
+	}, [ selectedIds ] );
 
 	// Update URL with view control params on change.
-	useEffect(() => {
+	useEffect( () => {
 		const queryParams = {
 			search: view.search?.trim(),
 			page: view.page && view.page > 1 ? view.page : undefined,
@@ -153,62 +155,65 @@ export const DomainsDataViews = ({
 				view.sort?.direction === DEFAULT_SORT_DIRECTION ? undefined : view.sort?.direction,
 		};
 
-		window.setTimeout(() => {
-			const url = buildPathWithQueryParams(queryParams);
-			navigate(url, false, false);
-		});
-	}, [view.search, view.page, view.perPage, view.sort?.field, view.sort?.direction]);
+		window.setTimeout( () => {
+			const url = buildPathWithQueryParams( queryParams );
+			navigate( url, false, false );
+		} );
+	}, [ view.search, view.page, view.perPage, view.sort?.field, view.sort?.direction ] );
 
-	useEffect(() => {
-		setView((previousView) => ({
+	useEffect( () => {
+		setView( ( previousView ) => ( {
 			...previousView,
 			page: queryParams.page,
-		}));
-	}, [queryParams.page]);
+		} ) );
+	}, [ queryParams.page ] );
 
 	const layout = sidebarMode ? { list: {} } : { table: {} };
 
-	const onClickDomain = (item: PartialDomainData) => {
-		const siteSlug = getSiteSlug(item);
-		const domainManagementLink = !item.wpcom_domain
-			? addQueryArgs(queryParams, getDomainManagementLink(item, siteSlug, true, selectedFeature))
+	const onClickDomain = ( item: PartialDomainData ) => {
+		const siteSlug = getSiteSlug( item );
+		const domainManagementLink = ! item.wpcom_domain
+			? addQueryArgs(
+					queryParams,
+					getDomainManagementLink( item, siteSlug, true, selectedFeature )
+			  )
 			: '';
 
-		if (!domainManagementLink) {
+		if ( ! domainManagementLink ) {
 			return;
 		}
 
-		navigate(domainManagementLink);
+		navigate( domainManagementLink );
 	};
 
-	const onChangeSelection = (items: string[]) => {
-		setSelectedIds(items);
-		if (view.type === 'list') {
-			const selectedItem = domains?.find((d) => getDomainId(d) === items[0]);
-			if (selectedItem) {
-				onClickDomain(selectedItem);
+	const onChangeSelection = ( items: string[] ) => {
+		setSelectedIds( items );
+		if ( view.type === 'list' ) {
+			const selectedItem = domains?.find( ( d ) => getDomainId( d ) === items[ 0 ] );
+			if ( selectedItem ) {
+				onClickDomain( selectedItem );
 			}
 		}
 	};
 
 	return (
 		<>
-			<div className={clsx('domains-dataviews', { 'domains-dataviews-list': sidebarMode })}>
+			<div className={ clsx( 'domains-dataviews', { 'domains-dataviews-list': sidebarMode } ) }>
 				<DataViews
-					data={domainsToDisplay}
-					fields={fields}
-					onChangeView={(newView) => setView(() => newView)}
-					onClickItem={onClickDomain}
-					view={view}
-					actions={actions}
+					data={ domainsToDisplay }
+					fields={ fields }
+					onChangeView={ ( newView ) => setView( () => newView ) }
+					onClickItem={ onClickDomain }
+					view={ view }
+					actions={ actions }
 					search
-					searchLabel={translate('Search by domain…')}
-					paginationInfo={paginationInfo}
-					getItemId={getDomainId}
-					selection={selectedDomain ? [getDomainId(selectedDomain)] : selectedIds}
-					onChangeSelection={onChangeSelection}
-					isLoading={isLoading}
-					defaultLayouts={layout}
+					searchLabel={ translate( 'Search by domain…' ) }
+					paginationInfo={ paginationInfo }
+					getItemId={ getDomainId }
+					selection={ selectedDomain ? [ getDomainId( selectedDomain ) ] : selectedIds }
+					onChangeSelection={ onChangeSelection }
+					isLoading={ isLoading }
+					defaultLayouts={ layout }
 				/>
 			</div>
 		</>
