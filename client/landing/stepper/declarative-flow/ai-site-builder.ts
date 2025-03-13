@@ -53,7 +53,7 @@ const aiSiteBuilder: Flow = {
 				// The create-site step will start creating a site and will add the promise of that operation to pendingAction field in the store.
 				case 'create-site': {
 					// Go to the processing step and pass `true` to remove it from history. So clicking back will not go back to the create-site step.
-					return navigate( 'processing?isFreeTrial=true', undefined, true );
+					return navigate( 'processing', undefined, true );
 				}
 				// The processing step will wait the aforementioned promise to be resolved and then will submit to you whatever the promise resolves to.
 				// Which will be the created site { "siteId": "242341575", "siteSlug": "something.wordpress.com", "goToCheckout": false, "siteCreated": true }
