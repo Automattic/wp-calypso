@@ -41,7 +41,7 @@ export default function ( props ) {
 				<ConversationTitle title={ props.title } />
 				<NavigationHeader
 					title={ translate( 'Conversations' ) }
-					subtitle={ translate( 'Monitor all of your ongoing discussions.' ) }
+					subtitle={ translate( 'Check in on your comments.' ) }
 					className="conversations__header"
 				/>
 			</Stream>

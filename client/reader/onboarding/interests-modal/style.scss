@@ -1,13 +1,18 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-.interests-modal {
-	&__content {
-		padding: 24px;
+$actions-height: 64px;
 
-		@media ( max-width: $break-medium ) {
-			padding: 0;
-		}
+.interests-modal {
+	max-height: 90%;
+
+	&__content {
+		// Since the actions container is positioned absolutely,
+		// this padding bottom ensures that the content wrapper will properly
+		// detect overflowing content and start showing scrollbars at the right
+		// moment. Without this padding, the content would render under the actions
+		// bar without causing the wrapper to show a scrollbar.
+		padding-bottom: $actions-height;
 	}
 
 	&__title {
@@ -23,11 +28,7 @@
 
 	&__subtitle {
 		text-align: center;
-	}
-
-	&__category {
-		max-width: 1200px;
-		margin: 0 auto 32px auto;
+		margin: 0;
 	}
 
 	&__section-header {
@@ -48,15 +49,20 @@
 		}
 	}
 
-	.components-modal__header {
-		.components-button {
-			&.is-link {
-				margin-right: auto;
-			}
+	&__footer {
+		height: $actions-height;
+		position: absolute;
+		bottom: 0;
+		width: 100%;
+		background-color: #fff;
+		margin-left: -32px; // $grid-unit-40
+		margin-right: -32px;
+		padding-left: 32px;
+		padding-right: 32px;
+		border-top: 1px solid #ddd; //$gray-300;
 
-			&.is-primary {
-				margin-left: 16px;
-			}
+		.interests-modal__footer-actions {
+			height: 100%;
 		}
 	}
 }

@@ -26,7 +26,7 @@ class LikedStream extends Component {
 					<DocumentHead title={ documentTitle } />
 					<NavigationHeader
 						title={ translate( 'Likes' ) }
-						subtitle={ translate( 'Rediscover content that you liked.' ) }
+						subtitle={ translate( 'Revisit the posts and comments you liked.' ) }
 						className="liked-stream-header"
 					/>
 				</Stream>

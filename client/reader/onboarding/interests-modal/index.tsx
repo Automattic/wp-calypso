@@ -1,6 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { SelectCardCheckbox } from '@automattic/onboarding';
-import { Modal, Button } from '@wordpress/components';
+import {
+	Modal,
+	Button,
+	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch, useStore } from 'react-redux';
@@ -185,33 +190,28 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 		},
 	];
 
-	const headerActions = (
-		<>
-			<Button onClick={ onClose } variant="link">
-				{ __( 'Cancel' ) }
-			</Button>
-			<Button onClick={ handleContinue } variant="primary" disabled={ isContinueDisabled }>
-				{ __( 'Continue' ) }
-			</Button>
-		</>
-	);
-
 	return (
 		isOpen && (
 			<Modal
 				onRequestClose={ onClose }
-				isFullScreen
-				headerActions={ headerActions }
-				isDismissible={ false }
+				size="large"
 				className="interests-modal"
+				overlayClassName="interests-modal__overlay"
 			>
-				<div className="interests-modal__content">
-					<h2 className="interests-modal__title">{ __( 'What topics interest you?' ) }</h2>
-					<p className="interests-modal__subtitle">
-						{ __( 'Follow at least 3 topics to personalize your Reader feed.' ) }
-					</p>
+				<VStack spacing={ 8 } className="interests-modal__content">
+					<VStack spacing={ 0 }>
+						<h2 className="interests-modal__title">{ __( 'What topics interest you?' ) }</h2>
+						<p className="interests-modal__subtitle">
+							{ __(
+								'​​Stay up-to-date with your favorite blogs and discover new voices—all from one place.'
+							) }
+						</p>
+						<p className="interests-modal__subtitle">
+							{ __( 'Follow at least 3 topics to personalize your feed.' ) }
+						</p>
+					</VStack>
 					{ categories.map( ( category ) => (
-						<div key={ category.name } className="interests-modal__category">
+						<div key={ category.name }>
 							<h3 className="interests-modal__section-header">{ category.name }</h3>
 							<div className="interests-modal__topics-list">
 								{ category.topics.map( ( topic ) => (
@@ -230,7 +230,23 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 							</div>
 						</div>
 					) ) }
-				</div>
+					<div className="interests-modal__footer">
+						<HStack justify="right" className="interests-modal__footer-actions">
+							<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
+								{ __( 'Cancel' ) }
+							</Button>
+							<Button
+								__next40pxDefaultSize
+								onClick={ handleContinue }
+								variant="primary"
+								disabled={ isContinueDisabled }
+								accessibleWhenDisabled
+							>
+								{ __( 'Continue' ) }
+							</Button>
+						</HStack>
+					</div>
+				</VStack>
 			</Modal>
 		)
 	);
