@@ -33,7 +33,7 @@ import { getTheme, getThemeType } from 'calypso/state/themes/selectors';
 import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
 import UnifiedPlansStep from './unified-plans-step';
 import { getIntervalType } from './util';
-import type { ProvidedDependencies, StepProps } from '../../types';
+import type { ProvidedDependencies, Step } from '../../types';
 import type { PlansIntent } from '@automattic/plans-grid-next';
 
 import './style.scss';
@@ -58,7 +58,10 @@ function getPlansIntent( flowName: string | null, isWordCampPromo?: boolean ): P
 	}
 }
 
-export default function PlansStepAdaptor( props: StepProps ) {
+const PlansStepAdaptor: Step< {
+	// TODO: work on more specific types
+	submits: Record< string, unknown >;
+} > = ( props ) => {
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
 
@@ -218,4 +221,6 @@ export default function PlansStepAdaptor( props: StepProps ) {
 			useStepperWrapper
 		/>
 	);
-}
+};
+
+export default PlansStepAdaptor;
