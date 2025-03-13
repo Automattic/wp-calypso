@@ -1,4 +1,4 @@
-import { speak } from '@wordpress/a11y';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { navigate } from 'calypso/lib/navigate';
@@ -19,6 +19,7 @@ const useUnsubscribeModal = (
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const recordRemoveModal = useRecordRemoveModal();
 	const { mutate } = useSubscriberRemoveMutation( siteId, subscriberQueryParams, detailsView );
+	const translate = useTranslate();
 
 	const onSetUnsubscribers = ( subscribers: Subscriber[] ) => {
 		setCurrentSubscribers( subscribers );
