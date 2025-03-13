@@ -29,7 +29,8 @@ body.is-section-reader {
 				}
 			}
 
-			+ .navigation-header {
+			+ .navigation-header,
+			+ .tag-stream__header {
 				@media (max-width: 1300px) {
 					padding-top: 12px;
 				}
