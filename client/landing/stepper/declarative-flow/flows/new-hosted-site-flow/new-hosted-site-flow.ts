@@ -118,6 +118,7 @@ const hosting: Flow = {
 
 				case 'processing': {
 					const hasStudioSyncSiteId = queryParams.studioSiteId;
+					const hasPartnerBundle = queryParams.partnerBundle;
 					const siteId = providedDependencies.siteId || getSignupCompleteSiteID();
 					const destinationParams: Record< string, string > = {
 						siteId,
@@ -126,6 +127,10 @@ const hosting: Flow = {
 						destinationParams[ 'redirect_to' ] = addQueryArgs( `/home/${ siteId }`, {
 							studioSiteId: queryParams.studioSiteId,
 						} );
+					} else if ( hasPartnerBundle ) {
+						destinationParams[ 'redirect_to' ] = addQueryArgs(
+							`https://${ siteId }/wp-admin/admin.php?page=wc-admin`
+						);
 					}
 					// Purchasing Business or Commerce plans will trigger an atomic transfer, so go to stepper flow where we wait for it to complete.
 					const destination = addQueryArgs( '/setup/transferring-hosted-site', destinationParams );
