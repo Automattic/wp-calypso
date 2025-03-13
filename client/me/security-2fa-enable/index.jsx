@@ -1,10 +1,11 @@
-import { FormLabel } from '@automattic/components';
+import { FormLabel, Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { QRCodeSVG } from 'qrcode.react';
 import { Component } from 'react';
+import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormButton from 'calypso/components/forms/form-button';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
@@ -218,7 +219,32 @@ class Security2faEnable extends Component {
 						}
 					) }
 				</p>
-				<p className="security-2fa-enable__time-code">{ this.state.timeCode }</p>
+				<div className="security-2fa-enable__time-code-container">
+					<code className="security-2fa-enable__time-code">{ this.state.timeCode }</code>
+
+					<ClipboardButton
+						text={ this.state.timeCode }
+						className="security-2fa-enable__clipboard-button"
+						borderless
+						compact
+						onCopy={ () => {
+							gaRecordEvent( 'Me', 'Copied 2FA Time Code' );
+
+							this.setState( { timeCopied: true } );
+							setTimeout( () => {
+								this.setState( { timeCopied: false } );
+							}, 2000 );
+						} }
+					>
+						<Gridicon icon="clipboard" />
+					</ClipboardButton>
+
+					{ this.state.timeCopied && (
+						<span className="security-2fa-enable__copied-text">
+							{ this.props.translate( 'Copied!' ) }
+						</span>
+					) }
+				</div>
 			</div>
 		);
 	};
