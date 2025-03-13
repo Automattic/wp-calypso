@@ -1205,7 +1205,7 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.2.0"
-    "@types/react": "npm:^18.2.6"
+    "@types/react": "npm:^18.3.18"
     "@wordpress/compose": "npm:^7.19.0"
     "@wordpress/i18n": "npm:^5.19.0"
     react: "npm:^18.3.1"
@@ -1223,7 +1223,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     react-dom: "npm:^18.3.1"
   peerDependencies:
-    "@types/react": ">=16.14.23"
+    "@types/react": ">=16.14.62"
     react: ">=16.2.0"
   peerDependenciesMeta:
     "@types/react":
@@ -1513,7 +1513,7 @@ __metadata:
     "@automattic/zendesk-client": "workspace:^"
     "@tanstack/react-query": "npm:^5.15.5"
     "@types/autosize": "npm:^4.0.3"
-    "@types/react": "npm:^18.2.6"
+    "@types/react": "npm:^18.3.18"
     "@types/smooch": "npm:^5.3.7"
     "@wordpress/api-fetch": "npm:7.19.0"
     "@wordpress/data": "npm:^10.19.0"
@@ -2105,8 +2105,8 @@ __metadata:
     node-fetch: "npm:^2.7.0"
     npm-run-all: "npm:^4.1.5"
     postcss: "npm:^8.5.3"
-    react: "npm:^18.2.0"
-    react-dom: "npm:^18.2.0"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
     redux: "npm:^5.0.1"
     webpack: "npm:^5.97.1"
     webpack-bundle-analyzer: "npm:^4.10.2"
@@ -8944,7 +8944,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^18.2.6":
+"@types/react-dom@npm:^18.3.5":
   version: 18.3.5
   resolution: "@types/react-dom@npm:18.3.5"
   peerDependencies:
@@ -9001,13 +9001,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^18.2.6":
-  version: 18.3.12
-  resolution: "@types/react@npm:18.3.12"
+"@types/react@npm:^18.3.18":
+  version: 18.3.18
+  resolution: "@types/react@npm:18.3.18"
   dependencies:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
-  checksum: 8bae8d9a41619804561574792e29112b413044eb0d53746dde2b9720c1f9a59f71c895bbd7987cd8ce9500b00786e53bc032dced38cddf42910458e145675290
+  checksum: 8fb2b00672072135d0858dc9db07873ea107cc238b6228aaa2a9afd1ef7a64a7074078250db38afbeb19064be8ea6af5eac32d404efdd5f45e093cc4829d87f8
   languageName: node
   linkType: hard
 
@@ -13754,7 +13754,7 @@ __metadata:
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.2.0"
     "@testing-library/user-event": "npm:^14.6.1"
-    "@types/react": "npm:^18.2.14"
+    "@types/react": "npm:^18.3.18"
     "@types/redux-mock-store": "npm:1.5.0"
     "@wordpress/a11y": "npm:^4.19.0"
     "@wordpress/api-fetch": "npm:^7.19.0"
@@ -21271,7 +21271,7 @@ __metadata:
     "@tannin/sprintf": "npm:^1.1.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@types/jest": "npm:^29.5.14"
-    "@types/react": "npm:^18.2.6"
+    "@types/react": "npm:^18.3.18"
     "@wordpress/compose": "npm:^7.19.0"
     debug: "npm:^4.3.3"
     events: "npm:^3.0.0"
@@ -21282,7 +21282,7 @@ __metadata:
     react-test-renderer: "npm:^18.3.1"
     tannin: "npm:^1.1.1"
     typescript: "npm:^5.5.4"
-    use-subscription: "npm:1.6.0"
+    use-subscription: "npm:1.10.0"
   peerDependencies:
     react: ^18.3.1
   languageName: unknown
@@ -29106,7 +29106,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:18.3.1, react-dom@npm:^18.2.0, react-dom@npm:^18.3.0, react-dom@npm:^18.3.1":
+"react-dom@npm:18.3.1, react-dom@npm:^18.3.0, react-dom@npm:^18.3.1":
   version: 18.3.1
   resolution: "react-dom@npm:18.3.1"
   dependencies:
@@ -29331,6 +29331,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-refresh@npm:^0.16.0":
+  version: 0.16.0
+  resolution: "react-refresh@npm:0.16.0"
+  checksum: 122525dbd7a44140757f46b8b93df6a349126e64b270809a8f082809662be5837a97310e56df2cfc7dac98b8adfaaafa570ec579c8b269c374e6928394307c68
+  languageName: node
+  linkType: hard
+
 "react-remove-scroll-bar@npm:^2.3.3":
   version: 2.3.4
   resolution: "react-remove-scroll-bar@npm:2.3.4"
@@ -29490,7 +29497,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:18.3.1, react@npm:^18.0, react@npm:^18.2.0, react@npm:^18.3.0, react@npm:^18.3.1":
+"react@npm:18.3.1, react@npm:^18.0, react@npm:^18.3.0, react@npm:^18.3.1":
   version: 18.3.1
   resolution: "react@npm:18.3.1"
   dependencies:
@@ -34939,12 +34946,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"use-subscription@npm:1.6.0":
-  version: 1.6.0
-  resolution: "use-subscription@npm:1.6.0"
+"use-subscription@npm:1.10.0":
+  version: 1.10.0
+  resolution: "use-subscription@npm:1.10.0"
+  dependencies:
+    use-sync-external-store: "npm:^1.4.0"
   peerDependencies:
-    react: ^18.0.0
-  checksum: 0721b8cbe5f7c4abb32c999c795b9f64c217d4a4dca0a072664a93f20cbce361441307e43e5b4310a3b9113cc47a430483ce068cd61a00cc62f98cd532466da4
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 2c1138dd57a472372ab9667199cc83948105ad20a9d6f4a5b3fab422fac63e11a790f4c90fe78f97dce860b0b9d67b3ae3e46071c79d91b21ed8d16d9bcbc644
   languageName: node
   linkType: hard
 
@@ -35916,7 +35925,7 @@ __metadata:
     "@types/node": "npm:^22.7.5"
     "@types/page": "npm:^1.11.5"
     "@types/qs": "npm:^6.9.7"
-    "@types/react": "npm:^18.2.6"
+    "@types/react": "npm:^18.3.18"
     "@types/react-modal": "npm:^3.13.1"
     "@types/react-router-dom": "npm:^5.3.3"
     "@types/react-transition-group": "npm:^4.4.4"
@@ -36012,7 +36021,7 @@ __metadata:
     react-hook-form: "npm:^7.52.2"
     react-intersection-observer: "npm:^9.4.3"
     react-modal: "npm:^3.16.1"
-    react-refresh: "npm:^0.14.0"
+    react-refresh: "npm:^0.16.0"
     readline-sync: "npm:^1.4.10"
     recursive-copy: "npm:^2.0.14"
     redux: "npm:^5.0.1"
