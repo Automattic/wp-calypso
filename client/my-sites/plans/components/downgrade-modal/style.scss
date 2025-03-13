@@ -98,3 +98,18 @@
 	0% { transform: rotate(0deg); }
 	100% { transform: rotate(360deg); }
 }
+
+.downgrade-modal__atomic-warning {
+	ul {
+		margin-left: 20px;
+		margin-bottom: 0;
+	}
+
+	li {
+		margin-bottom: 8px;
+	}
+
+	p {
+		margin-bottom: 12px;
+	}
+}

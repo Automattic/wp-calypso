@@ -1,9 +1,11 @@
-import { getPlan } from '@automattic/calypso-products';
+import { getPlan, PLAN_BUSINESS, PLAN_ECOMMERCE } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { Plans } from '@automattic/data-stores';
 import { Modal, Button } from '@wordpress/components';
 import { useCallback, useMemo, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
+import Notice from 'calypso/components/notice';
+import { hasAmountAvailableToRefund } from 'calypso/lib/purchases';
 import { cancelAndRefundPurchaseAsync } from 'calypso/lib/purchases/actions';
 import getPlanFeatures from 'calypso/my-sites/checkout/src/lib/get-plan-features';
 import { useSelector, useDispatch } from 'calypso/state';
@@ -13,7 +15,9 @@ import {
 	isDowngradeModalOpen,
 } from 'calypso/state/downgrade-modal/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { getPurchases } from 'calypso/state/purchases/selectors';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
+import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -24,8 +28,28 @@ const DowngradeModal = () => {
 	const isVisible = useSelector( isDowngradeModalOpen );
 	const toPlanSlug = useSelector( getDowngradeModalToPlanSlug );
 	const siteId = useSelector( getSelectedSiteId );
+	const site = useSelector( ( state ) => getSite( state, siteId ) );
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
 	const [ isDowngrading, setIsDowngrading ] = useState( false );
+
+	// Check if the site is atomic and if the target plan is not a Business or Commerce plan
+	const isAtomicSite = site?.options?.is_wpcom_atomic;
+	const isTargetPlanNonAtomic = toPlanSlug !== PLAN_BUSINESS && toPlanSlug !== PLAN_ECOMMERCE;
+	const shouldShowAtomicWarning = isAtomicSite && isTargetPlanNonAtomic;
+
+	// Get all purchases to find the current plan purchase
+	const allPurchases = useSelector( getPurchases );
+
+	// Find the purchase that corresponds to the current plan
+	const currentPlanPurchase = useMemo( () => {
+		if ( ! currentPlan?.productSlug || ! siteId || ! allPurchases?.length ) {
+			return null;
+		}
+
+		return allPurchases.find(
+			( purchase ) => purchase.siteId === siteId && purchase.productSlug === currentPlan.productSlug
+		);
+	}, [ allPurchases, currentPlan?.productSlug, siteId ] );
 
 	const handleClose = useCallback( () => {
 		if ( isDowngrading ) {
@@ -111,10 +135,73 @@ const DowngradeModal = () => {
 
 	return (
 		<Modal title={ modalTitle } onRequestClose={ handleClose } overlayClassName="downgrade-modal">
+			{ currentPlanPurchase && hasAmountAvailableToRefund( currentPlanPurchase ) && (
+				<Notice
+					className="downgrade-modal__notice"
+					icon={ <Gridicon icon="info" /> }
+					isCompact
+					theme="light"
+					status="is-info"
+					showDismiss={ false }
+				>
+					<span className="downgrade-modal__notice-text">
+						{ translate(
+							'You will receive a refund for the price difference between your current plan and the downgraded plan.'
+						) }
+					</span>
+				</Notice>
+			) }
+
+			{ shouldShowAtomicWarning && (
+				<Notice
+					className="downgrade-modal__notice"
+					icon={ <Gridicon icon="notice-outline" /> }
+					isCompact={ false }
+					theme="light"
+					status="is-warning"
+					showDismiss={ false }
+				>
+					<div className="downgrade-modal__atomic-warning">
+						<p>
+							<strong>
+								{ translate(
+									'Your site is currently on a plan that supports plugins, third-party themes, and other advanced features. Downgrading from this plan means:'
+								) }
+							</strong>
+						</p>
+						<ul>
+							<li>
+								{ translate(
+									'Your site will lose any plugins or third-party themes installed and features unavailable on the lower-level plan.'
+								) }
+							</li>
+							<li>
+								{ translate(
+									'Your site will retain the content of your pages, posts, and media, but any content added through plugins will be lost.'
+								) }
+							</li>
+							<li>
+								{ translate(
+									"Your site will revert to how it looked before you activated the plan's features."
+								) }
+							</li>
+							<li>
+								{ translate(
+									'The site will be private, so you can check it before making it public on the new plan.'
+								) }
+							</li>
+							<li>
+								{ translate( 'Please contact support so we can help you with the downgrade.' ) }
+							</li>
+						</ul>
+					</div>
+				</Notice>
+			) }
+
 			<div className="downgrade-modal__info">
 				<p>
 					{ translate(
-						'When you downgrade, you can use WordPress.com %(currentPlanName)s until the end of your subscription, after which it will automatically switch to %(targetPlanName)s.',
+						'When you downgrade, your site will be immediately switched from %(currentPlanName)s to %(targetPlanName)s.',
 						{
 							args: {
 								currentPlanName,
@@ -125,9 +212,7 @@ const DowngradeModal = () => {
 				</p>
 				<p>
 					<strong>
-						{ translate(
-							"Your current plan remains active until it expires, after which you'll lose access to the benefits below."
-						) }
+						{ translate( 'You will lose access to the following benefits right away.' ) }
 					</strong>
 				</p>
 			</div>
