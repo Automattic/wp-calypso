@@ -53,11 +53,9 @@ describe( 'UserPosts', () => {
 
 		// Stream component should be rendered
 		const streamComponent = screen.getByTestId( 'reader-stream' );
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( streamComponent ).toBeInTheDocument();
 
 		// Stream key should include user ID
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( streamComponent ).toHaveAttribute( 'data-stream-key', `user:${ defaultUser.ID }` );
 
 		// Class name should indicate user profile
@@ -65,15 +63,12 @@ describe( 'UserPosts', () => {
 
 		// Props should be correctly set
 		const propsContainer = screen.getByTestId( 'stream-props' );
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( propsContainer.querySelector( '[data-prop="showFollowButton"]' ) ).toHaveTextContent(
 			'false'
 		);
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( propsContainer.querySelector( '[data-prop="showSiteNameOnCards"]' ) ).toHaveTextContent(
 			'true'
 		);
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( propsContainer.querySelector( '[data-prop="sidebarTabTitle"]' ) ).toHaveTextContent(
 			'Related'
 		);
@@ -81,7 +76,6 @@ describe( 'UserPosts', () => {
 		expect( propsContainer.querySelector( '[data-prop="useCompactCards"]' ) ).toHaveTextContent(
 			'true'
 		);
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( propsContainer.querySelector( '[data-prop="showBack"]' ) ).toHaveTextContent( 'false' );
 	} );
 
@@ -90,25 +84,21 @@ describe( 'UserPosts', () => {
 
 		// Empty content should be present
 		const emptyContent = screen.getByTestId( 'empty-content' );
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( emptyContent ).toBeInTheDocument();
 
 		// Empty content component should render inside
 		expect(
 			emptyContent.querySelector( '[data-testid="empty-content-component"]' )
-			// @ts-expect-error -- jest-dom matchers are available globally
 		).toBeInTheDocument();
 
 		// Icon should be present
 		expect(
 			emptyContent.querySelector( '[data-testid="empty-content-icon"]' )
-			// @ts-expect-error -- jest-dom matchers are available globally
 		).toBeInTheDocument();
 
 		// "No posts yet" message should be displayed
-		expect(
-			emptyContent.querySelector( '[data-testid="empty-content-line"]' )
-			// @ts-expect-error -- jest-dom matchers are available globally
-		).toHaveTextContent( 'No posts yet.' );
+		expect( emptyContent.querySelector( '[data-testid="empty-content-line"]' ) ).toHaveTextContent(
+			'No posts yet.'
+		);
 	} );
 } );

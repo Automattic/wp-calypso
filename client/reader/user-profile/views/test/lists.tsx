@@ -36,15 +36,12 @@ describe( 'UserLists', () => {
 		);
 
 		// Empty content should be displayed
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( screen.getByTestId( 'empty-content' ) ).toBeInTheDocument();
 
 		// Icon should be displayed
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( screen.getByTestId( 'empty-content-icon' ) ).toBeInTheDocument();
 
 		// "No lists yet" message should be displayed
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( screen.getByTestId( 'empty-content-line' ) ).toHaveTextContent( 'No lists yet.' );
 
 		// Request function should be called with the username
@@ -57,7 +54,6 @@ describe( 'UserLists', () => {
 		);
 
 		// Container should be empty
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
@@ -93,24 +89,18 @@ describe( 'UserLists', () => {
 		);
 
 		const listsContainer = document.querySelector( '.user-profile__lists-body' );
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( listsContainer ).toBeInTheDocument();
 
 		// List titles should be displayed
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( screen.getByText( 'Test List 1' ) ).toBeInTheDocument();
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( screen.getByText( 'Test List 2' ) ).toBeInTheDocument();
 
 		// List descriptions should be displayed
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( screen.getByText( 'This is test list 1' ) ).toBeInTheDocument();
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( screen.getByText( 'This is test list 2' ) ).toBeInTheDocument();
 
 		// Links should be correct
 		const links = Array.from( document.querySelectorAll( 'a.user-profile__lists-body-link' ) );
-		// @ts-expect-error -- jest matchers are available globally
 		expect( links ).toHaveLength( 2 );
 		expect( links[ 0 ].getAttribute( 'href' ) ).toBe(
 			`/reader/list/${ defaultUser.user_login }/test-list-1`

@@ -46,22 +46,18 @@ describe( 'UserProfileHeader', () => {
 		render( <UserProfileHeader user={ defaultUser } /> );
 
 		const avatars = screen.getAllByTestId( 'reader-avatar' );
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( avatars[ 0 ] ).toBeInTheDocument();
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( avatars[ 0 ] ).toHaveAttribute( 'data-author-id', defaultUser.ID.toString() );
 
 		// Test that desktop and mobile versions are properly rendered
 		const desktopAvatar = document.querySelector(
 			'.user-profile-header__avatar-desktop [data-testid="reader-avatar"]'
 		);
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( desktopAvatar ).toBeInTheDocument();
 
 		const mobileAvatar = document.querySelector(
 			'.user-profile-header__avatar-mobile [data-testid="reader-avatar"]'
 		);
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( mobileAvatar ).toBeInTheDocument();
 	} );
 
@@ -78,9 +74,7 @@ describe( 'UserProfileHeader', () => {
 		render( <UserProfileHeader user={ defaultUser } /> );
 
 		// Check if navigation section is rendered
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( screen.getByTestId( 'section-nav' ) ).toBeInTheDocument();
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( screen.getByTestId( 'nav-tabs' ) ).toBeInTheDocument();
 
 		// Check for navigation items
@@ -98,7 +92,6 @@ describe( 'UserProfileHeader', () => {
 
 		// Bio section should not be present
 		const bioSection = document.querySelector( '.user-profile-header__bio' );
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( bioSection ).not.toBeInTheDocument();
 	} );
 
@@ -112,7 +105,6 @@ describe( 'UserProfileHeader', () => {
 
 		// Bio section should be present
 		const bioText = screen.getByText( userWithBio.bio );
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( bioText ).toBeInTheDocument();
 	} );
 
@@ -143,12 +135,10 @@ describe( 'UserProfileHeader', () => {
 
 		// "Read More" link should be present for long bio
 		const readMoreLink = screen.getByText( 'Read More' );
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( readMoreLink ).toBeInTheDocument();
 		expect( readMoreLink.getAttribute( 'href' ) ).toBe( userWithLongBio.profile_URL ?? '' );
 
 		// External icon should be displayed
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( screen.getByTestId( 'icon' ) ).toBeInTheDocument();
 	} );
 } );

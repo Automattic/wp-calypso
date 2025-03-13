@@ -61,7 +61,6 @@ describe( 'UserProfile', () => {
 	test( 'should render empty content when user is not found', () => {
 		render( <UserProfile { ...defaultProps } /> );
 
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( screen.getByTestId( 'empty-content' ) ).toBeInTheDocument();
 		expect( mockRequestUser ).toHaveBeenCalledWith( 'testuser' );
 	} );
@@ -76,9 +75,7 @@ describe( 'UserProfile', () => {
 
 		render( <UserProfile { ...defaultProps } user={ user } /> );
 
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( screen.getByTestId( 'user-profile-header' ) ).toBeInTheDocument();
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( screen.getByTestId( 'user-posts' ) ).toBeInTheDocument();
 	} );
 
@@ -92,9 +89,7 @@ describe( 'UserProfile', () => {
 
 		render( <UserProfile { ...defaultProps } user={ user } path="/reader/users/testuser/lists" /> );
 
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( screen.getByTestId( 'user-profile-header' ) ).toBeInTheDocument();
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( screen.getByTestId( 'user-lists' ) ).toBeInTheDocument();
 	} );
 
@@ -109,7 +104,6 @@ describe( 'UserProfile', () => {
 		render( <UserProfile { ...defaultProps } user={ user } showBack /> );
 
 		const backButton = screen.getByTestId( 'back-button' );
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( backButton ).toBeInTheDocument();
 
 		// Simulate clicking the back button
@@ -120,9 +114,7 @@ describe( 'UserProfile', () => {
 	test( 'should not show content when isLoading is true', () => {
 		render( <UserProfile { ...defaultProps } isLoading /> );
 
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( screen.queryByTestId( 'empty-content' ) ).not.toBeInTheDocument();
-		// @ts-expect-error -- jest-dom matchers are available globally
 		expect( screen.queryByTestId( 'user-profile-header' ) ).not.toBeInTheDocument();
 	} );
 
