@@ -255,7 +255,7 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 					<div className="checkout__main">
 						<h1 className="checkout__main-title">{ title }</h1>
 
-						{ isClient && isDoNotMatchReferralClientEmail && (
+						{ isClient && !! checkoutItems?.length && isDoNotMatchReferralClientEmail && (
 							<LayoutBanner level="error" hideCloseButton>
 								{ translate(
 									'This referral is not intended for your account. Please make sure you sign in using {{b}}%(referralEmail)s{{/b}}.',

@@ -79,10 +79,12 @@ export const SubscribersHeader = ( {
 	const [ showSubscriberModal, setShowSubscriberModal ] = useState< SubscriberModalType >(
 		SubscriberModalType.NONE
 	);
+	const [ initialMethod, setInitialMethod ] = useState( '' );
 	const closeSubscriberModal = () => {
 		setShowSubscriberModal( SubscriberModalType.NONE );
+		setInitialMethod( '' );
 
-		if ( window.location.hash === '#add-subscribers' ) {
+		if ( window.location.hash.startsWith( '#add-subscribers' ) ) {
 			// Doing this instead of window.location.hash = '' because window.location.hash keeps the # symbol
 			// Also this makes the back button show the modal again, which is neat
 			history.pushState( '', document.title, window.location.pathname + window.location.search );
@@ -91,8 +93,15 @@ export const SubscribersHeader = ( {
 
 	useEffect( () => {
 		const handleHashChange = () => {
-			if ( window.location.hash === '#add-subscribers' ) {
+			const hash = window.location.hash;
+			if ( hash.startsWith( '#add-subscribers' ) ) {
+				const method = new URLSearchParams( hash.replace( '#add-subscribers', '' ) ).get(
+					'method'
+				);
 				setShowSubscriberModal( SubscriberModalType.ADD );
+				if ( method ) {
+					setInitialMethod( method );
+				}
 			}
 		};
 
@@ -144,6 +153,7 @@ export const SubscribersHeader = ( {
 						closeSubscriberModal();
 						addSubscribersCallback();
 					} }
+					initialMethod={ initialMethod }
 				/>
 			) }
 			{ siteId && (

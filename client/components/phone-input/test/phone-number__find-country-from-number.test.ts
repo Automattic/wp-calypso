@@ -38,7 +38,7 @@ describe( 'Phone Number: findCountyFromNumber', () => {
 		{ number: '+493033239999', expected: 'DE' },
 		{ number: '+61215369851', expected: 'AU' },
 		{ number: '+81775991010', expected: 'JP' },
-	] )( `Returns a country as soon as possible from $number`, function ( { number, expected } ) {
+	] )( 'Returns a country as soon as possible from $number', function ( { number, expected } ) {
 		const result = findCountryFromNumber( number ).isoCode;
 		expect( result ).toEqual( expected );
 	} );
@@ -53,7 +53,7 @@ describe( 'Phone Number: findCountyFromNumber', () => {
 		{ number: '+551204', fallback: 'US', expected: 'BR' },
 		{ number: '+551204', expected: 'BR' },
 	] )(
-		`Fallback to $fallback if prefix matches - else returns a country as soon as possible from "$number"`,
+		'Fallback to $fallback if prefix matches - else returns a country as soon as possible from "$number"',
 		function ( { number, fallback, expected } ) {
 			const result = findCountryFromNumber( number, fallback ).isoCode;
 			expect( result ).toEqual( expected );

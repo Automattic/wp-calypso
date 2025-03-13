@@ -28,7 +28,7 @@ export default function TagsPage( { trendingTags, alphabeticTags }: Props ) {
 				<NavigationHeader
 					title={ translate( 'All the Tags' ) }
 					subtitle={ translate(
-						`For every one of your interests, there's a tag on WordPress.com.`
+						"For every one of your interests, there's a tag on WordPress.com."
 					) }
 				/>
 			) }

@@ -131,7 +131,7 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 
 	const openFixAllThreatsDialog = React.useCallback( () => {
 		dispatch(
-			recordTracksEvent( `calypso_jetpack_scan_allthreats_open`, {
+			recordTracksEvent( 'calypso_jetpack_scan_allthreats_open', {
 				site_id: site.ID,
 			} )
 		);

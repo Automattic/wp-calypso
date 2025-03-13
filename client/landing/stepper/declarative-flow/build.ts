@@ -13,13 +13,14 @@ import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
 import { useLaunchpadDecider } from './internals/hooks/use-launchpad-decider';
-import LaunchPad from './internals/steps-repository/launchpad';
-import Processing from './internals/steps-repository/processing-step';
+import { STEPS } from './internals/steps';
 import { Flow, ProvidedDependencies } from './internals/types';
 
 function useGoalsAtFrontExperimentQueryParam() {
 	return Boolean( useSelector( getInitialQueryArguments )?.[ 'goals-at-front-experiment' ] );
 }
+
+const steps = [ STEPS.LAUNCHPAD, STEPS.PROCESSING ];
 
 const build: Flow = {
 	name: BUILD_FLOW,
@@ -28,10 +29,7 @@ const build: Flow = {
 	},
 	isSignupFlow: false,
 	useSteps() {
-		return [
-			{ slug: 'launchpad', component: LaunchPad },
-			{ slug: 'processing', component: Processing },
-		];
+		return steps;
 	},
 	useTracksEventProps() {
 		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();

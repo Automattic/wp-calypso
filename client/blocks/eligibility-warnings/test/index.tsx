@@ -169,7 +169,7 @@ describe( '<EligibilityWarnings>', () => {
 		);
 	} );
 
-	it( `disables the "Continue" button if holds can't be handled automatically`, async () => {
+	it( 'disables the "Continue" button if holds can\'t be handled automatically', async () => {
 		const state = createState( {
 			holds: [ 'NON_ADMIN_USER', 'SITE_PRIVATE' ],
 		} );

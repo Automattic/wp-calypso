@@ -22,7 +22,7 @@ export const requestBillingTransactions = ( transactionType?: BillingTransaction
 		} );
 
 		return wp.req
-			.get( `/me/billing-history` + ( transactionType ? `/${ transactionType }` : '' ), {
+			.get( '/me/billing-history' + ( transactionType ? `/${ transactionType }` : '' ), {
 				apiVersion: '1.3',
 			} )
 			.then(

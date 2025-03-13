@@ -1,14 +1,13 @@
-export const DOTCOM_OVERVIEW = 'dotcom-hosting';
-export const DOTCOM_MONITORING = 'dotcom-site-monitoring';
-export const DOTCOM_LOGS_PHP = 'dotcom-site-logs-php';
-export const DOTCOM_LOGS_WEB = 'dotcom-site-logs-web';
-export const DOTCOM_GITHUB_DEPLOYMENTS = 'dotcom-github-deployments';
-export const DOTCOM_HOSTING_CONFIG = 'dotcom-hosting-config';
-export const DOTCOM_HOSTING_FEATURES = 'dotcom-hosting-features';
-export const DOTCOM_STAGING_SITE = 'dotcom-staging-site';
-export const DOTCOM_SITE_PERFORMANCE = 'dotcom-site-performance';
+export const OVERVIEW = 'overview';
+export const MONITORING = 'monitoring';
+export const LOGS_PHP = 'logs-php';
+export const LOGS_WEB = 'logs-web';
+export const DEPLOYMENTS = 'deployments';
+export const HOSTING_CONFIG = 'hosting-config';
+export const HOSTING_FEATURES = 'hosting-features';
+export const STAGING_SITE = 'staging-site';
+export const PERFORMANCE = 'performance';
 export const SETTINGS_SITE = 'settings-site';
-export const SETTINGS_ADMINISTRATION = 'settings-administration';
 export const SETTINGS_ADMINISTRATION_RESET_SITE = 'settings-administration-reset-site';
 export const SETTINGS_ADMINISTRATION_TRANSFER_SITE = 'settings-administration-transfer-site';
 export const SETTINGS_ADMINISTRATION_DELETE_SITE = 'settings-administration-delete-site';
@@ -18,15 +17,15 @@ export const SETTINGS_DATABASE = 'settings-database';
 export const SETTINGS_PERFORMANCE = 'settings-performance';
 
 export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
-	[ DOTCOM_OVERVIEW ]: 'overview/:site',
-	[ DOTCOM_MONITORING ]: 'site-monitoring/:site',
-	[ DOTCOM_LOGS_PHP ]: 'site-logs/:site/php',
-	[ DOTCOM_LOGS_WEB ]: 'site-logs/:site/web',
-	[ DOTCOM_GITHUB_DEPLOYMENTS ]: 'github-deployments/:site',
-	[ DOTCOM_HOSTING_CONFIG ]: 'hosting-config/:site',
-	[ DOTCOM_HOSTING_FEATURES ]: 'hosting-features/:site',
-	[ DOTCOM_STAGING_SITE ]: 'staging-site/:site',
-	[ DOTCOM_SITE_PERFORMANCE ]: 'sites/performance/:site',
+	[ OVERVIEW ]: 'overview/:site',
+	[ MONITORING ]: 'site-monitoring/:site',
+	[ LOGS_PHP ]: 'site-logs/:site/php',
+	[ LOGS_WEB ]: 'site-logs/:site/web',
+	[ DEPLOYMENTS ]: 'github-deployments/:site',
+	[ HOSTING_CONFIG ]: 'hosting-config/:site',
+	[ HOSTING_FEATURES ]: 'hosting-features/:site',
+	[ STAGING_SITE ]: 'staging-site/:site',
+	[ PERFORMANCE ]: 'sites/performance/:site',
 	[ SETTINGS_SITE ]: 'sites/settings/site/:site',
 	[ SETTINGS_ADMINISTRATION_RESET_SITE ]: 'sites/settings/site/:site/reset-site',
 	[ SETTINGS_ADMINISTRATION_TRANSFER_SITE ]: 'sites/settings/site/:site/transfer-site',

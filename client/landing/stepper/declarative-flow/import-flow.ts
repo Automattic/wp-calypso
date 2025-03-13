@@ -261,7 +261,7 @@ const importFlow: Flow = {
 							return navigate( 'createSite' );
 
 						default:
-							return navigate( `migrationHandler` );
+							return navigate( 'migrationHandler' );
 					}
 				}
 			}

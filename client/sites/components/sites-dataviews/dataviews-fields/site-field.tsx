@@ -1,4 +1,4 @@
-import { ListTile, Button } from '@automattic/components';
+import { ListTile } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
@@ -27,11 +27,14 @@ import type { SiteExcerptData } from '@automattic/sites';
 
 type Props = {
 	site: SiteExcerptData;
-	openSitePreviewPane?: (
-		site: SiteExcerptData,
-		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher',
-		openInNewTab?: boolean
-	) => void;
+	sitePreviewPane: {
+		open: (
+			site: SiteExcerptData,
+			source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher',
+			openInNewTab?: boolean
+		) => void;
+		getUrl: ( site: SiteExcerptData ) => string;
+	};
 };
 
 const SiteListTile = styled( ListTile )`
@@ -60,7 +63,49 @@ const ListTileTitle = styled.div`
 	align-items: center;
 `;
 
-const SiteField = ( { site, openSitePreviewPane }: Props ) => {
+/**
+ * Renders an anchor element that can trigger analytics calls
+ * or client-side router navigation via the `onNavigate` prop.
+ */
+const Link = ( {
+	disabled,
+	href,
+	onNavigate,
+	...props
+}: {
+	/** Accessibly disable the link. Use sparingly. */
+	disabled?: boolean;
+	/** Called when the user wants to navigate to the link. */
+	onNavigate?: ( shouldOpenNewTab: boolean, event: React.MouseEvent ) => void;
+} & Omit< React.ComponentProps< 'a' >, 'aria-disabled' | 'role' | 'onClick' | 'onAuxClick' > ) => {
+	const handleClick = ( event: React.MouseEvent ) => {
+		if ( ! onNavigate || disabled ) {
+			return;
+		}
+
+		event.preventDefault();
+
+		// Ignore if not left or middle click
+		if ( event.button > 1 ) {
+			return;
+		}
+
+		const openInNewTab = event.ctrlKey || event.metaKey || event.button === /* middle click */ 1;
+		onNavigate( openInNewTab, event );
+	};
+	return (
+		<a
+			href={ disabled ? undefined : href }
+			{ ...props }
+			aria-disabled={ disabled ? true : undefined }
+			role={ disabled ? 'link' : undefined }
+			onClick={ handleClick }
+			onAuxClick={ handleClick }
+		/>
+	);
+};
+
+const SiteField = ( { site, sitePreviewPane }: Props ) => {
 	const { __ } = useI18n();
 
 	let siteUrl = site.URL;
@@ -77,32 +122,18 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 
 	const isAdmin = useSelector( ( state ) => canCurrentUser( state, site.ID, 'manage_options' ) );
 
-	const onSiteClick = ( event: React.MouseEvent ) => {
-		event.preventDefault();
+	// TODO: Consolidate with `isActionEligible` logic in actions.tsx
+	const shouldOpenSitePreviewPane =
+		isAdmin &&
+		! isP2Site &&
+		! isNotAtomicJetpack( site ) &&
+		! isDisconnectedJetpackAndNotAtomic( site );
 
-		// Ignore if not left or middle click
-		if ( event.button > 1 ) {
-			return;
-		}
-
-		let openInNewTab = false;
-		if ( event.ctrlKey || event.metaKey ) {
-			openInNewTab = true;
-		}
-		// Support middle click to open in new tab
-		if ( event.button === 1 ) {
-			openInNewTab = true;
-		}
-
-		if (
-			isAdmin &&
-			! isP2Site &&
-			! isNotAtomicJetpack( site ) &&
-			! isDisconnectedJetpackAndNotAtomic( site )
-		) {
-			openSitePreviewPane && openSitePreviewPane( site, 'site_field', openInNewTab );
+	const onSiteClick = ( shouldOpenNewTab: boolean ) => {
+		if ( shouldOpenSitePreviewPane ) {
+			sitePreviewPane.open( site, 'site_field', shouldOpenNewTab );
 		} else {
-			navigate( adminUrl, openInNewTab );
+			navigate( adminUrl, shouldOpenNewTab );
 		}
 	};
 
@@ -110,12 +141,12 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	const siteTitle = isMigrationPending ? translate( 'Incoming Migration' ) : site.title;
 
 	return (
-		<Button
+		// TODO: Consolidate behavior with `SiteIcon` link
+		<Link
 			className="sites-dataviews__site"
-			onClick={ onSiteClick }
-			onAuxClick={ onSiteClick }
-			borderless
 			disabled={ site.is_deleted }
+			href={ shouldOpenSitePreviewPane ? sitePreviewPane.getUrl( site ) : adminUrl }
+			onNavigate={ onSiteClick }
 		>
 			<SiteListTile
 				contentClassName={ clsx(
@@ -145,7 +176,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 					</div>
 				}
 			/>
-		</Button>
+		</Link>
 	);
 };
 

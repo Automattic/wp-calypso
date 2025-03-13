@@ -1,5 +1,36 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+.migrations-hosting-features {
+	overflow: hidden;
+
+	.a4a-carousel__navigation {
+		display: none;
+
+		@include break-large {
+			display: flex;
+		}
+	}
+
+	.a4a-carousel-wrapper.is-with-navigation {
+		@include break-large {
+			margin-block-start: -32px;
+		}
+	}
+
+	.a4a-carousel__content {
+		width: 100%;
+
+		@include break-large {
+			width: max-content;
+		}
+	}
+
+	.a4a-carousel__navigation-button {
+		border: 1px solid var(--color-neutral-50);
+	}
+}
 
 .migrations-hosting-features__cards {
 	display: grid;
@@ -30,5 +61,5 @@
 }
 
 .migrations-hosting-features__card-title {
-	@include a4a-font-heading-lg;
+	@include heading-large;
 }

@@ -58,15 +58,17 @@ const updateDesign: Flow = {
 
 		useRedirectDesignSetupOldSlug( currentStep, navigate );
 
-		function submit( providedDependencies: ProvidedDependencies = {}, ...results: string[] ) {
+		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
-				case 'processing':
+				case 'processing': {
 					initializeLaunchpadState( {
 						siteId,
 						siteSlug: ( providedDependencies?.siteSlug ?? siteSlug ) as string,
 					} );
 
-					if ( results.some( ( result ) => result === ProcessingResult.FAILURE ) ) {
+					const processingResult = providedDependencies.processingResult as ProcessingResult;
+
+					if ( processingResult === ProcessingResult.FAILURE ) {
 						return navigate( 'error' );
 					}
 
@@ -81,7 +83,7 @@ const updateDesign: Flow = {
 							siteSlug: siteSlug as string,
 						} )
 					);
-
+				}
 				case 'design-setup':
 					if ( providedDependencies?.goToCheckout ) {
 						const destination = `/setup/${ flowToReturnTo }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;

@@ -8,6 +8,7 @@ interface StepSectionProps {
 	stepCount?: number;
 	children: React.ReactNode;
 	className?: string;
+	applyCoreStyles?: boolean;
 }
 
 export default function StepSection( {
@@ -15,9 +16,10 @@ export default function StepSection( {
 	heading,
 	children,
 	className,
+	applyCoreStyles = false,
 }: StepSectionProps ) {
 	return (
-		<div className={ clsx( 'step-section', className ) }>
+		<div className={ clsx( 'step-section', className, { 'is-core-styles': applyCoreStyles } ) }>
 			<div className="step-section__header">
 				{ !! stepCount && <div className="step-section__step-count">{ stepCount }</div> }
 				<div className="step-section__step-heading">{ heading }</div>

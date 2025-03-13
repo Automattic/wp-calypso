@@ -18,7 +18,7 @@ const formData = {
 	name: `${ DataHelper.getRandomPhrase() }`,
 	// Making the email unique to each run allows us to filter down to one in the inbox later.
 	email: `test${ DataHelper.getTimestamp() + DataHelper.getRandomInteger( 0, 100 ) }@example.com`,
-	phone: `(877) 273-3049`,
+	phone: '(877) 273-3049',
 	hearAboutUsOption: 'Search Engine',
 	otherDetails: 'Test submission details',
 };

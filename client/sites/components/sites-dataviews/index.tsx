@@ -27,11 +27,7 @@ type Props = {
 	dataViewsState: View;
 	setDataViewsState: ( callback: ( prevState: View ) => View ) => void;
 	selectedItem: SiteExcerptData | null | undefined;
-	openSitePreviewPane: (
-		site: SiteExcerptData,
-		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher'
-	) => void;
-};
+} & Pick< React.ComponentProps< typeof SiteField >, 'sitePreviewPane' >;
 
 export function useSiteStatusGroups() {
 	const { __ } = useI18n();
@@ -57,7 +53,7 @@ const DotcomSitesDataViews = ( {
 	dataViewsState,
 	setDataViewsState,
 	selectedItem,
-	openSitePreviewPane,
+	sitePreviewPane,
 }: Props ) => {
 	const { __ } = useI18n();
 	const userId = useSelector( getCurrentUserId );
@@ -79,10 +75,10 @@ const DotcomSitesDataViews = ( {
 			}
 			const site = sites.find( ( s ) => s.ID === Number( selectedSiteIds[ 0 ] ) );
 			if ( site && ! site.is_deleted ) {
-				openSitePreviewPane( site, 'list_row_click' );
+				sitePreviewPane.open( site, 'list_row_click' );
 			}
 		},
-		[ dataViewsState.type, openSitePreviewPane, sites ]
+		[ dataViewsState.type, sitePreviewPane, sites ]
 	);
 	const getSelection = useCallback(
 		() => ( selectedItem ? [ selectedItem.ID.toString() ] : undefined ),
@@ -103,7 +99,7 @@ const DotcomSitesDataViews = ( {
 					return (
 						<SiteIcon
 							site={ item }
-							openSitePreviewPane={ openSitePreviewPane }
+							openSitePreviewPane={ sitePreviewPane.open }
 							viewType={ dataViewsState.type }
 						/>
 					);
@@ -117,7 +113,7 @@ const DotcomSitesDataViews = ( {
 				label: __( 'Site' ),
 				getValue: ( { item }: { item: SiteExcerptData } ) => item.title,
 				render: ( { item }: { item: SiteExcerptData } ) => {
-					return <SiteField site={ item } openSitePreviewPane={ openSitePreviewPane } />;
+					return <SiteField site={ item } sitePreviewPane={ sitePreviewPane } />;
 				},
 				enableHiding: false,
 				enableSorting: true,
@@ -198,7 +194,7 @@ const DotcomSitesDataViews = ( {
 	}, [
 		__,
 		siteStatusGroups,
-		openSitePreviewPane,
+		sitePreviewPane,
 		dataViewsState.type,
 		userId,
 		isAutomattician,
@@ -206,7 +202,7 @@ const DotcomSitesDataViews = ( {
 	] );
 
 	const actions = useActions( {
-		openSitePreviewPane,
+		openSitePreviewPane: sitePreviewPane.open,
 		viewType: dataViewsState.type,
 	} );
 

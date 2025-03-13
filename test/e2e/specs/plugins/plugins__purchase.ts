@@ -56,7 +56,7 @@ describe( 'Plugins: Add multiple to cart', function () {
 			await pluginsPage.clickInstallPlugin();
 		} );
 
-		it.each( [ 'WordPress.com', pluginName ] )( `%s is added to cart`, async function ( target ) {
+		it.each( [ 'WordPress.com', pluginName ] )( '%s is added to cart', async function ( target ) {
 			cartCheckoutPage = new CartCheckoutPage( page );
 			await cartCheckoutPage.validateCartItem( target );
 		} );

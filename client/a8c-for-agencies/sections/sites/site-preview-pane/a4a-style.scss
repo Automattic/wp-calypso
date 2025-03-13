@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
 .hosting-dashboard-item-view {
 
 	.hosting-dashboard-item-view__navigation {
@@ -35,7 +38,7 @@
 
 		.backup__header-title,
 		.activity-log-v2__header-title {
-			@include a4a-font-heading-lg;
+			@include heading-large;
 		}
 
 		.backup-getting-started {
@@ -57,7 +60,7 @@
 		}
 
 		.expanded-card__header {
-			@include a4a-font-heading-lg;
+			@include heading-large;
 		}
 
 		.site-expanded-content__card-content-score {

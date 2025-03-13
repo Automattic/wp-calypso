@@ -260,6 +260,7 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 							} }
 							options={ countriesAsOptions }
 							className={ errors[ 'store_country' ] ? 'is-error' : '' }
+							__next40pxDefaultSize
 						/>
 						<ControlError error={ errors[ 'store_country' ] || '' } />
 					</FormFieldset>

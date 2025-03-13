@@ -16,7 +16,7 @@ const mockedConfig: Config = {
 	fetchExperimentAssignment: mockedFetchExperimentAssignment,
 	getAnonId: mockedGetAnonId,
 	logError: async () => {
-		throw new Error( `The tested file should throw and not log.` );
+		throw new Error( 'The tested file should throw and not log.' );
 	},
 	isDevelopmentMode: false,
 };
@@ -184,7 +184,7 @@ describe( 'fetchExperimentAssignment', () => {
 				validExperimentAssignment.experimentName + '_different_name'
 			)
 		).rejects.toThrow(
-			`Newly fetched ExperimentAssignment's experiment name does not match request.`
+			"Newly fetched ExperimentAssignment's experiment name does not match request."
 		);
 	} );
 
@@ -194,7 +194,7 @@ describe( 'fetchExperimentAssignment', () => {
 		mockFetchExperimentAssignmentToMatchExperimentAssignment( validExperimentAssignment );
 		await expect(
 			Requests.fetchExperimentAssignment( mockedConfig, validExperimentAssignment.experimentName )
-		).rejects.toThrow( `Newly fetched experiment isn't alive.` );
+		).rejects.toThrow( "Newly fetched experiment isn't alive." );
 	} );
 } );
 

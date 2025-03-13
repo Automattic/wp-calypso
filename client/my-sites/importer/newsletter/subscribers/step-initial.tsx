@@ -43,9 +43,9 @@ export default function StepInitial( {
 			<h2>{ translate( 'Step 1: Export your subscribers from Substack' ) }</h2>
 			<p>
 				{ i18n.fixMe( {
-					text: `Generate a CSV of your Substack subscribers. In Substack, go to Subscribers, click Export under "All subscribers," then upload the CSV in the next step. On the free plan, you can import up to 100 subscribers.`,
+					text: 'Generate a CSV of your Substack subscribers. In Substack, go to Subscribers, click Export under "All subscribers," then upload the CSV in the next step. On the free plan, you can import up to 100 subscribers.',
 					newCopy: translate(
-						`Generate a CSV of your Substack subscribers. In Substack, go to {{strong}}Subscribers{{/strong}}, click {{strong}}Export{{/strong}} under "All subscribers," then upload the CSV in the next step. On the free plan, {{supportLink}}you can import up to 100 subscribers.{{/supportLink}}`,
+						'Generate a CSV of your Substack subscribers. In Substack, go to {{strong}}Subscribers{{/strong}}, click {{strong}}Export{{/strong}} under "All subscribers," then upload the CSV in the next step. On the free plan, {{supportLink}}you can import up to 100 subscribers.{{/supportLink}}',
 						{
 							components: {
 								strong: <strong />,
@@ -64,7 +64,7 @@ export default function StepInitial( {
 					),
 					oldCopy: createInterpolateElement(
 						translate(
-							`Generate a CSV file of all your Substack subscribers. On Substack, go to the <strong>Subscribers</strong> tab and click the <strong>Export</strong> button you’ll find on top of the table. Then, upload the downloaded CSV in the next step.`
+							'Generate a CSV file of all your Substack subscribers. On Substack, go to the <strong>Subscribers</strong> tab and click the <strong>Export</strong> button you’ll find on top of the table. Then, upload the downloaded CSV in the next step.'
 						),
 						{
 							strong: <strong />,

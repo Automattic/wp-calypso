@@ -26,7 +26,7 @@ export const useCreateWorkflow = (
 	options: UseMutationOptions< MutationResponse, MutationError, MutationVariables > = {}
 ) => {
 	const queryClient = useQueryClient();
-	const path = `/hosting/github/workflows`;
+	const path = '/hosting/github/workflows';
 	const mutation = useMutation( {
 		mutationFn: async ( {
 			repositoryId,
