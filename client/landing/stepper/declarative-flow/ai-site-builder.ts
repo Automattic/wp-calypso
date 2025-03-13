@@ -1,7 +1,17 @@
+import { addPlanToCart } from '@automattic/onboarding';
+import { useSelect } from '@wordpress/data';
+import { useEffect } from 'react';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import wpcom from 'calypso/lib/wp';
+import { useDispatch } from 'calypso/state';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { STEPS } from './internals/steps';
 import { Flow, ProvidedDependencies } from './internals/types';
+import type { OnboardSelect } from '@automattic/data-stores';
+
 export const AI_SITE_BUILDER_FLOW = 'ai-site-builder';
 
 const aiSiteBuilder: Flow = {
@@ -11,17 +21,34 @@ const aiSiteBuilder: Flow = {
 	 */
 	isSignupFlow: true,
 	__experimentalUseBuiltinAuth: true,
+	useSideEffect() {
+		const dispatch = useDispatch();
+		const siteId = useQuery().get( 'siteId' );
+		useEffect( () => {
+			if ( siteId ) {
+				dispatch( setSelectedSiteId( parseInt( siteId ) ) );
+			}
+		}, [ siteId ] );
+	},
 	initialize() {
 		// stepsWithRequiredLogin will take care of redirecting to the login step if the user is not logged in.
 		return stepsWithRequiredLogin( [
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PROCESSING,
 			STEPS.LAUNCH_BIG_SKY,
-			STEPS.DOMAINS,
+			STEPS.UNIFIED_DOMAINS,
 			STEPS.UNIFIED_PLANS,
 		] );
 	},
 	useStepNavigation( currentStep, navigate ) {
+		const { siteSlug: siteSlugFromSiteData } = useSiteData();
+		const { domainCartItem, planCartItem } = useSelect(
+			( select: ( arg: string ) => OnboardSelect ) => ( {
+				domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
+				planCartItem: select( ONBOARD_STORE ).getPlanCartItem(),
+			} ),
+			[]
+		);
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
 				// The create-site step will start creating a site and will add the promise of that operation to pendingAction field in the store.
@@ -63,19 +90,35 @@ const aiSiteBuilder: Flow = {
 				}
 				case 'domains': {
 					// eslint-disable-next-line no-console
-					console.log( 'DOMAAAINZ STEP', providedDependencies );
+					console.log( 'DOMAAAINZ STEP', providedDependencies, siteSlugFromSiteData );
 					// TODO: Somehow store the chosen domain.
 					return navigate( 'plans' );
 				}
 
 				case 'plans': {
 					// eslint-disable-next-line no-console
-					console.log( 'PLAAANZ STEP', providedDependencies );
-					// TODO: Somehow put the chosen plan in the cart.
-					const siteSlug = new URLSearchParams( window.location.search ).get( 'siteSlug' );
+					console.log( 'PLAAANZ STEP', {
+						dependencies: providedDependencies,
+						slug: siteSlugFromSiteData,
+						plan: planCartItem,
+						domain: domainCartItem,
+					} );
+					// TODO: Somehow planCartItem is null here.
+					if ( planCartItem && siteSlugFromSiteData ) {
+						const addToCart = await addPlanToCart(
+							siteSlugFromSiteData,
+							AI_SITE_BUILDER_FLOW,
+							true,
+							'assembler',
+							planCartItem
+						);
+						// eslint-disable-next-line no-console
+						console.log( 'ADD TO CART', addToCart );
+					}
 					// eslint-disable-next-line no-console
-					console.log( 'SITE SLUG', siteSlug );
-					window.location.replace( `/checkout/${ encodeURIComponent( siteSlug || '' ) }` );
+					window.location.replace(
+						`/checkout/${ encodeURIComponent( siteSlugFromSiteData || '' ) }`
+					);
 				}
 
 				default:
