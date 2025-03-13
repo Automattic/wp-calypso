@@ -19,10 +19,15 @@ type ValidityTarget =
 
 function UnforwardedControlWithError< C extends React.ReactElement >(
 	{
+		required,
 		onReportCustomValidity,
 		getValidityTarget,
 		render,
 	}: {
+		/**
+		 * Whether the control is required.
+		 */
+		required?: boolean;
 		/**
 		 * A function that returns a custom validity message when applicable.
 		 *
@@ -88,14 +93,12 @@ function UnforwardedControlWithError< C extends React.ReactElement >(
 		}
 	};
 
-	const label = render.props.required ? `${ render.props.label } (Required)` : render.props.label;
-
 	return (
 		<div className="a8c-use-validation" ref={ forwardedRef } onBlur={ onBlur }>
 			{ cloneElement( render, {
-				...props,
-				label,
+				label: required ? `${ render.props.label } (Required)` : render.props.label,
 				onChange,
+				required,
 			} ) }
 			{ errorMessage && (
 				<p className="a8c-use-validation__error">

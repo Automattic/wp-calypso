@@ -71,6 +71,7 @@ export const Input: StoryObj = {
 
 		return (
 			<ControlWithError
+				required
 				render={
 					<InputControl
 						__next40pxDefaultSize
@@ -79,7 +80,6 @@ export const Input: StoryObj = {
 						onChange={ ( value ) => {
 							valueRef.current = value ?? '';
 						} }
-						required
 						ref={ validityTargetRef }
 					/>
 				}
@@ -100,8 +100,10 @@ export const Password: StoryObj = {
 		const valueRef = useRef< string >( '' );
 		const validityTargetRef = useRef< HTMLInputElement >( null );
 		const [ visible, setVisible ] = useState( false );
+
 		return (
 			<ControlWithError
+				required
 				render={
 					<InputControl
 						type={ visible ? 'text' : 'password' }
@@ -122,7 +124,6 @@ export const Password: StoryObj = {
 						onChange={ ( value ) => {
 							valueRef.current = value ?? '';
 						} }
-						required
 						ref={ validityTargetRef }
 					/>
 				}
@@ -152,12 +153,12 @@ export const Text: StoryObj = {
 
 		return (
 			<ControlWithError
+				required
 				render={
 					<TextControl
 						__next40pxDefaultSize
 						__nextHasNoMarginBottom
 						label="Text"
-						required
 						value={ value }
 						onChange={ ( value ) => {
 							setValue( value );
@@ -186,11 +187,11 @@ export const Textarea: StoryObj = {
 
 		return (
 			<ControlWithError
+				required
 				render={
 					<TextareaControl
 						__nextHasNoMarginBottom
 						label="Textarea"
-						required
 						help="The word 'error' will trigger an error."
 						value={ value }
 						onChange={ ( value ) => {
@@ -218,6 +219,7 @@ export const Number: StoryObj = {
 
 		return (
 			<ControlWithError
+				required
 				render={
 					<NumberControl
 						__next40pxDefaultSize
@@ -228,7 +230,6 @@ export const Number: StoryObj = {
 						onChange={ ( value ) => {
 							valueRef.current = value ?? '';
 						} }
-						required
 						ref={ validityTargetRef }
 					/>
 				}
@@ -251,10 +252,10 @@ export const Checkbox: StoryObj = {
 
 		return (
 			<ControlWithError
+				required
 				render={
 					<CheckboxControl
 						__nextHasNoMarginBottom
-						required
 						label="Checkbox"
 						// TODO: Upstream limitation - CheckboxControl doesn't support uncontrolled mode, visually.
 						checked={ checkboxControlChecked }
@@ -298,6 +299,7 @@ export const Toggle: StoryObj = {
 		// TODO: Should we customize the default `missingValue` message? It says to "check this box".
 		return (
 			<ControlWithError
+				required
 				render={
 					<ToggleControl
 						__nextHasNoMarginBottom
@@ -308,7 +310,6 @@ export const Toggle: StoryObj = {
 							setChecked( value );
 							valueRef.current = value;
 						} }
-						required
 						ref={ validityTargetRef }
 						help="This toggle may neither be enabled nor disabled."
 					/>
@@ -333,10 +334,10 @@ export const Radio: StoryObj = {
 
 		return (
 			<ControlWithError
+				required
 				render={
 					<RadioControl
 						label="Radio"
-						required
 						help="Option B is not allowed."
 						selected={ radioControlChecked }
 						onChange={ ( value ) => {
@@ -370,9 +371,9 @@ export const Select: StoryObj = {
 
 		return (
 			<ControlWithError
+				required
 				render={
 					<SelectControl
-						required
 						__nextHasNoMarginBottom
 						__next40pxDefaultSize
 						label="Select"
@@ -409,12 +410,9 @@ export const CustomSelect: StoryObj = {
 		return (
 			<div className="a8c-use-validation__wrapper-with-error-delegate">
 				<ControlWithError
+					required
 					render={
 						<CustomSelectControl
-							// TODO: Upstream limitation - Required isn't passed down correctly.
-							// Needs to be set on delegate element.
-							// @ts-expect-error - TODO: Move `required` to ControlWithError.
-							required
 							__next40pxDefaultSize
 							label="Custom Select"
 							options={ [
@@ -446,6 +444,8 @@ export const CustomSelect: StoryObj = {
 						pointerEvents: 'none',
 					} }
 					ref={ validityTargetRef }
+					// TODO: Upstream limitation - Required isn't passed down correctly.
+					// Needs to be set on delegate element.
 					required
 					tabIndex={ -1 }
 					// TODO: This doesn't prevent a missing value error once the control is touched.
@@ -473,13 +473,13 @@ export const ToggleGroup: StoryObj = {
 		return (
 			<div className="a8c-use-validation__wrapper-with-error-delegate">
 				<ControlWithError
+					required
 					render={
 						<ToggleGroupControl
 							__nextHasNoMarginBottom
 							label="Toggle Group"
 							isBlock
 							__next40pxDefaultSize
-							required
 							onChange={ ( value ) => {
 								valueRef.current = value;
 							} }
@@ -547,13 +547,12 @@ export const Combobox: StoryObj = {
 		return (
 			<>
 				<ControlWithError
+					required
 					render={
 						<ComboboxControl
 							__nextHasNoMarginBottom
 							__next40pxDefaultSize
 							// TODO: Upstream limitation - `required` is not in the TS types.
-							// @ts-expect-error - TODO: Move `required` to ControlWithError.
-							required
 							label="Combobox"
 							help="Option A is not allowed."
 							options={ [
@@ -586,9 +585,9 @@ export const Range: StoryObj = {
 		const validityTargetRef = useRef< HTMLInputElement >( null );
 		return (
 			<ControlWithError
+				required
 				render={
 					<RangeControl
-						required
 						label="Range"
 						help="Odd numbers are not allowed."
 						min={ 0 }
