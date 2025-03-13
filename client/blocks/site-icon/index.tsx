@@ -47,6 +47,7 @@ export function SiteIcon( {
 	title = '',
 	onClick = () => {},
 }: SiteIconProps ) {
+	iconUrl = iconUrl?.replace( /\/$/, '' ); // Remove trailing slash from URL as it may lead to 404 errors when adding size parameters.
 	const iconSrc = resizeImageUrl( iconUrl, imgSize, null );
 
 	const classes = clsx( 'site-icon', {

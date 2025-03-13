@@ -113,6 +113,10 @@ export function domainManagementRoot() {
 	return '/domains/manage';
 }
 
+export function domainManagementSelectSite( siteName = '' ) {
+	return '/domains/manage/select-site/' + siteName;
+}
+
 /**
  * @param {string|undefined} siteName
  * @param {string|undefined} relativeTo

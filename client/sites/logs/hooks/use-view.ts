@@ -95,7 +95,8 @@ const useView = ( { logType, query }: { logType: LogType; query: LogQueryParams 
 						maxWidth: '150px',
 					},
 					name: {
-						maxWidth: '150px',
+						maxWidth: '200px',
+						minWidth: '75px',
 					},
 					message: {
 						maxWidth: '30vw',

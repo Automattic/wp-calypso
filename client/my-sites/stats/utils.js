@@ -63,9 +63,7 @@ export const appendQueryStringForRedirection = ( pathname, query = {} ) => {
 
 /**
  * Parse a date string into a Date object in the timezone of browser.
- *
  * @param {string|number} dateString YYYY-MM-DD format or a timestamp
- *
  * @returns {Date} A Date object in the timezone of the browser.
  */
 export const parseLocalDate = ( dateString ) => {

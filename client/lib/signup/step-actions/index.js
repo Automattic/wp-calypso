@@ -349,9 +349,12 @@ function addDIFMLiteProductToCart( callback, dependencies, step, reduxStore ) {
 	if ( step.lastKnownFlow === 'do-it-for-me-store' ) {
 		dependencies.isStoreFlow = true;
 	}
+
+	const selectedSiteId = siteId || getSiteId( reduxStore.getState(), siteSlug );
+
 	const extra = buildDIFMCartExtrasObject(
 		dependencies,
-		siteId,
+		selectedSiteId,
 		`step-actions-flow-${ step.lastKnownFlow || '' }`
 	);
 	const cartItem = {

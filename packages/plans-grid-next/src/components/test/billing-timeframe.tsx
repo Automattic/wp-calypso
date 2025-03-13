@@ -49,7 +49,7 @@ describe( 'BillingTimeframe', () => {
 		jest.clearAllMocks();
 	} );
 
-	test( `should show savings with yearly when plan is monthly`, () => {
+	test( 'should show savings with yearly when plan is monthly', () => {
 		const planMonthlyPricing = {
 			currencyCode: 'USD',
 			originalPrice: { full: 120, monthly: 10 },
@@ -309,7 +309,7 @@ describe( 'BillingTimeframe', () => {
 		expect( getByText( /Refundable within 7 days. No questions asked./ ) ).toBeInTheDocument();
 	} );
 
-	test( `refund period can't be shown for free plan`, () => {
+	test( "refund period can't be shown for free plan", () => {
 		const pricing = {
 			currencyCode: 'USD',
 			originalPrice: { full: 0, monthly: 0 },

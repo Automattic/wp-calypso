@@ -26,7 +26,7 @@ if ( envVariables.ATOMIC_VARIATION !== 'private' ) {
 	);
 	blockFlows.push(
 		new RelatedPostsFlow( {
-			headline: `Related Posts from this user`,
+			headline: 'Related Posts from this user',
 		} )
 	);
 }

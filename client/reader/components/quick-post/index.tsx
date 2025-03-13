@@ -105,7 +105,7 @@ function QuickPost( {
 						// Actual API response will update the stream with the real post data
 						dispatch(
 							receiveNewPost( {
-								streamKey: `following`,
+								streamKey: 'following',
 								postData,
 							} )
 						);

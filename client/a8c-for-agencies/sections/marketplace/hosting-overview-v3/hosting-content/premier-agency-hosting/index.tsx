@@ -1,5 +1,5 @@
 import { JetpackLogo } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, formatCurrency } from 'i18n-calypso';
 import { useContext } from 'react';
 import { BackgroundType10 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
 import useFetchLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-licenses';
@@ -87,7 +87,12 @@ export default function PremierAgencyHosting( { onAddToCart }: Props ) {
 				heading={ translate( 'Jetpack Complete included' ) }
 				subheading={ translate( "Supercharge your clients' sites" ) }
 				description={ translate(
-					'Every Pressable site comes with a free Jetpack Complete license — an $899/year/site value.'
+					'Every Pressable site comes with a free Jetpack Complete license — an %(amount)s/year/site value.',
+					{
+						args: {
+							amount: formatCurrency( 899, 'USD' ),
+						},
+					}
 				) }
 				items={ [
 					translate( 'VaultPress Backup w/ 1TB storage' ),

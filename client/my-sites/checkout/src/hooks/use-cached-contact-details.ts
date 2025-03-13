@@ -11,11 +11,15 @@ import type {
 const debug = debugFactory( 'calypso:user-cached-contact-details' );
 
 async function fetchCachedContactDetails(): Promise< PossiblyCompleteDomainContactDetails > {
-	const rawData: RawCachedDomainContactDetails = await wpcom.req.get(
-		'/me/domain-contact-information'
-	);
-	debug( 'fetched cached contact details', rawData );
-	return convertSnakeCaseContactDetailsToCamelCase( rawData );
+	try {
+		const rawData: RawCachedDomainContactDetails = await wpcom.req.get(
+			'/me/domain-contact-information'
+		);
+		debug( 'fetched cached contact details', rawData );
+		return convertSnakeCaseContactDetailsToCamelCase( rawData );
+	} catch ( error ) {
+		return Promise.reject( new Error( 'Error fetching cached contact details' ) );
+	}
 }
 
 async function setCachedContactDetails( rawData: DomainContactValidationRequest ): Promise< void > {
@@ -72,11 +76,10 @@ function convertSnakeCaseContactDetailsExtraToCamelCase(
 
 const cachedContactDetailsQueryKey = [ 'user-cached-contact-details' ];
 
-export function useCachedContactDetails( {
-	isLoggedOut,
-}: {
-	isLoggedOut?: boolean;
-} ): PossiblyCompleteDomainContactDetails | null {
+export function useCachedContactDetails( { isLoggedOut }: { isLoggedOut?: boolean } ): {
+	contactDetails: PossiblyCompleteDomainContactDetails | null;
+	isError: boolean;
+} {
 	const result = useQuery( {
 		queryKey: cachedContactDetailsQueryKey,
 		queryFn: fetchCachedContactDetails,
@@ -86,7 +89,11 @@ export function useCachedContactDetails( {
 		},
 		refetchOnWindowFocus: false,
 	} );
-	return result.data ?? null;
+
+	return {
+		contactDetails: result.data ?? null,
+		isError: result.isError,
+	};
 }
 
 export function useUpdateCachedContactDetails(): (

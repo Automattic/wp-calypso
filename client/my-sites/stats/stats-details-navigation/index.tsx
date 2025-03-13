@@ -31,7 +31,7 @@ function StatsDetailsNavigation( { postId, period, statType, givenSiteId }: prop
 				const selected = selectedTab === item;
 				const pathParam = [ 'opens', 'clicks' ].includes( item )
 					? `email/${ item }/${ period }`
-					: `post`;
+					: 'post';
 				const attr = {
 					path: `/stats/${ pathParam }/${ postId }/${ givenSiteId }`,
 					selected,

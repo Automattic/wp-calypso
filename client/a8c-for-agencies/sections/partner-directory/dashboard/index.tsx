@@ -262,7 +262,7 @@ const PartnerDirectoryDashboard = () => {
 							href={ brandMeta.urlProfile }
 							target="_blank"
 						>
-							{ translate( `Your agency's profile` ) }
+							{ translate( "Your agency's profile" ) }
 							<Icon icon={ external } size={ 18 } />
 						</Button>
 					</>
@@ -319,11 +319,11 @@ const PartnerDirectoryDashboard = () => {
 					} ) }
 				<StepSection
 					className="partner-directory-dashboard__edit-section"
-					heading={ translate( `Edit your agency's information` ) }
+					heading={ translate( "Edit your agency's information" ) }
 				>
 					<div className="partner-directory-dashboard__subtitle">
 						{ translate(
-							`Expand to more Automattic directories by adding products or updating your agency's profile.`
+							"Expand to more Automattic directories by adding products or updating your agency's profile."
 						) }
 					</div>
 					<div>
@@ -351,7 +351,7 @@ const PartnerDirectoryDashboard = () => {
 	return (
 		<>
 			<div className="partner-directory-dashboard__heading">
-				{ translate( `Boost your agency’s visibility across Automattic listings.` ) }
+				{ translate( 'Boost your agency’s visibility across Automattic listings.' ) }
 			</div>
 
 			<div className="partner-directory-dashboard__subtitle">
@@ -391,7 +391,7 @@ const PartnerDirectoryDashboard = () => {
 							</div>
 						) : (
 							translate(
-								`Pick your agency's specialties and choose your directories. We'll review your application.`
+								"Pick your agency's specialties and choose your directories. We'll review your application."
 							)
 						)
 					}
@@ -414,7 +414,7 @@ const PartnerDirectoryDashboard = () => {
 					icon={ currentApplicationStep > 1 ? check : undefined }
 					heading={ translate( 'Finish adding details to your public profile' ) }
 					description={ translate(
-						`When approved, add details to your agency's public profile for clients to see.`
+						"When approved, add details to your agency's public profile for clients to see."
 					) }
 					buttonProps={ {
 						children: isValidFormData ? translate( 'Edit profile' ) : translate( 'Finish profile' ),

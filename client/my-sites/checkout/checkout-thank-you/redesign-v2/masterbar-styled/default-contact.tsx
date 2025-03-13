@@ -72,11 +72,13 @@ export function DefaultMasterbarContact() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 
-	const { hasPremiumSupport, userFieldMessage, userFieldFlowName } = useProductsWithPremiumSupport(
-		responseCart.products,
-		'checkout'
-	);
-
+	const {
+		hasPremiumSupport,
+		userFieldMessage,
+		userFieldFlowName,
+		helpCenterButtonCopy,
+		helpCenterButtonLink,
+	} = useProductsWithPremiumSupport( responseCart.products, 'checkout' );
 	const helpCenterOptions = useProductsCustomOptions( responseCart.products );
 
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
@@ -113,10 +115,10 @@ export function DefaultMasterbarContact() {
 
 	return (
 		<ContactContainer>
-			<label>{ translate( 'Need extra help?' ) }</label>
+			<label>{ helpCenterButtonCopy ?? translate( 'Need extra help?' ) }</label>
 			<Button className="thank-you-help-center" variant="link" onClick={ toggleHelpCenter }>
 				<Gridicon icon="help-outline" />
-				<span>{ translate( 'Visit Help Center' ) }</span>
+				<span>{ helpCenterButtonLink ?? translate( 'Visit Help Center' ) }</span>
 			</Button>
 		</ContactContainer>
 	);

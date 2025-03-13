@@ -1,6 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-
+@import "@wordpress/base-styles/variables";
 .step-section-item {
 	margin-block-end: 16px;
 	border-radius: 4px;
@@ -46,6 +46,16 @@
 				width: auto;
 				height: inherit;
 			}
+		}
+	}
+
+	&.is-core-styles {
+		.step-section-item__heading {
+			@include heading-medium;
+		}
+
+		.step-section-item__description {
+			@include body-medium;
 		}
 	}
 }

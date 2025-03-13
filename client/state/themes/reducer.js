@@ -37,9 +37,6 @@ import {
 	THEMES_REQUEST_FAILURE,
 	THEME_PREVIEW_OPTIONS,
 	THEME_PREVIEW_STATE,
-	THEME_ACTIVATION_MODAL_SHOW,
-	THEME_ACTIVATION_MODAL_ACCEPT,
-	THEME_ACTIVATION_MODAL_DISMISS,
 	THEME_SHOW_ATOMIC_TRANSFER_DIALOG,
 	THEME_ACCEPT_ATOMIC_TRANSFER_DIALOG,
 	THEME_DISMISS_ATOMIC_TRANSFER_DIALOG,
@@ -459,35 +456,6 @@ export const themePreviewVisibility = ( state = null, action ) => {
 	return state;
 };
 
-export const themeActivationModal = ( state = null, action ) => {
-	switch ( action.type ) {
-		case THEME_ACTIVATION_MODAL_SHOW: {
-			return {
-				themeId: action.themeId,
-				show: true,
-				accepted: false,
-			};
-		}
-
-		case THEME_ACTIVATION_MODAL_ACCEPT: {
-			return {
-				themeId: action.themeId,
-				show: false,
-				accepted: true,
-			};
-		}
-
-		case THEME_ACTIVATE:
-		case THEME_ACTIVATE_SUCCESS:
-		case THEME_ACTIVATE_FAILURE:
-		case THEME_ACTIVATION_MODAL_DISMISS: {
-			return null;
-		}
-	}
-
-	return state;
-};
-
 export const themeFilters = withSchemaValidation( themeFiltersSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
 		case THEME_FILTERS_ADD: {
@@ -718,7 +686,6 @@ const combinedReducer = combineReducers( {
 	themeFilterRequestError,
 	recommendedThemes,
 	trendingThemes,
-	themeActivationModal,
 	themesUpdate,
 	upsellCardDisplayed,
 	isLoadingCart,

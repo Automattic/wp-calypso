@@ -76,7 +76,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'account',
-			steps: [ userSocialStep, 'set-reader-landing' ],
+			steps: [ userSocialStep ],
 			destination: getRedirectDestination,
 			description: 'Create an account without a blog.',
 			lastModified: '2025-02-18',
@@ -334,7 +334,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'reader',
-			steps: [ userSocialStep, 'set-reader-landing' ],
+			steps: [ userSocialStep ],
 			destination: '/reader',
 			description: 'Signup for an account and land on Reader.',
 			lastModified: '2025-02-18',
@@ -430,7 +430,7 @@ export function generateFlows( {
 				return translate( 'Questions?' );
 			},
 			get helpCenterButtonLink() {
-				return translate( 'Contact our site building team' );
+				return translate( 'Contact our site-building team' );
 			},
 			providesDependenciesInQuery: [ 'coupon', 'back_to' ],
 			optionalDependenciesInQuery: [ 'coupon', 'back_to' ],
@@ -457,7 +457,7 @@ export function generateFlows( {
 				return translate( 'Questions?' );
 			},
 			get helpCenterButtonLink() {
-				return translate( 'Contact our site building team' );
+				return translate( 'Contact our site-building team' );
 			},
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
@@ -472,11 +472,12 @@ export function generateFlows( {
 			optionalDependenciesInQuery: [ 'siteSlug', 'back_to' ],
 			lastModified: '2025-03-04',
 			enabledHelpCenterGeos: [ 'US' ],
+			hideProgressIndicator: true,
 			get helpCenterButtonCopy() {
 				return translate( 'Questions?' );
 			},
 			get helpCenterButtonLink() {
-				return translate( 'Contact our site building team' );
+				return translate( 'Contact our site-building team' );
 			},
 		},
 

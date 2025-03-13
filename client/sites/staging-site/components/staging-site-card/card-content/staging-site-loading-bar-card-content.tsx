@@ -1,10 +1,6 @@
-import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { LoadingBar } from 'calypso/components/loading-bar';
-
-const StyledLoadingBar = styled( LoadingBar )( {
-	marginBottom: '1em',
-} );
+import { ProgressBar } from 'calypso/components/progress-bar';
+import './style.scss';
 
 type CardContentProps = {
 	isReverting: boolean;
@@ -22,7 +18,11 @@ export const StagingSiteLoadingBarCardContent = ( {
 		if ( isReverting ) {
 			return (
 				<>
-					<StyledLoadingBar key="delete-loading-bar" progress={ progress } />
+					<ProgressBar
+						key="delete-loading-bar"
+						progress={ progress }
+						className="staging-site-card__loading-bar"
+					/>
 					<p>{ translate( 'We are deleting your staging site.' ) }</p>
 				</>
 			);
@@ -35,7 +35,11 @@ export const StagingSiteLoadingBarCardContent = ( {
 			  );
 		return (
 			<div data-testid="transferring-staging-content">
-				<StyledLoadingBar progress={ progress } />
+				<ProgressBar
+					progress={ progress }
+					delta={ 0.01 }
+					className="staging-site-card__loading-bar"
+				/>
 				<p>{ message }</p>
 			</div>
 		);

@@ -1190,16 +1190,13 @@ const WPCheckoutCompletedWrapper = styled.div`
 	justify-content: center;
 	justify-items: center;
 	min-height: 100vh;
-
 	& > * {
 		box-sizing: border-box;
 		width: 100%;
-
 		@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 			min-height: 100vh;
 		}
 	}
-
 	& *:focus {
 		outline: ${ ( props ) => props.theme.colors.outline } solid 2px;
 	}
@@ -1233,7 +1230,6 @@ const WPCheckoutMainContent = styled.div`
 const WPCheckoutCompletedMainContent = styled.div`
 	margin-top: 60px;
 	min-height: 100vh;
-
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding: 0 24px;
 		max-width: 648px;

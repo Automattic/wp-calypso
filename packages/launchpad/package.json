@@ -55,12 +55,12 @@
 		"@storybook/cli": "^7.6.20",
 		"@storybook/react": "^7.6.20",
 		"msw": "^2.1.7",
-		"msw-storybook-addon": "2.0.2",
-		"postcss": "^8.5.1",
+		"msw-storybook-addon": "2.0.4",
+		"postcss": "^8.5.3",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"redux": "^5.0.1",
-		"typescript": "^5.3.3",
+		"typescript": "^5.5.4",
 		"webpack": "^5.97.1"
 	},
 	"peerDependencies": {

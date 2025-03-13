@@ -44,12 +44,6 @@ export function generateSteps( {
 	submitWebsiteContent = noop,
 } = {} ) {
 	return {
-		'set-reader-landing': {
-			stepName: 'set-reader-landing',
-			props: {
-				nonInteractive: true,
-			},
-		},
 		'domains-launch': {
 			stepName: 'domains-launch',
 			apiRequestFunction: addDomainToCart,

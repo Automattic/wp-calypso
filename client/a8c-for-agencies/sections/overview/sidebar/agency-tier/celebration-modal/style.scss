@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
 $video-pink: #f5baff;
 $video-blue: #002d3e;
 $video-green: #0e5837;
@@ -121,13 +124,13 @@ $announcement-blue: #032836;
 }
 
 .agency-tier-celebration-modal__title {
-	@include a4a-font-heading-xl;
+	@include heading-x-large;
 	text-wrap: balance;
 }
 
 .agency-tier-celebration-modal__description,
 .agency-tier-celebration-modal__extra-description {
-	@include a4a-font-body-md;
+	@include body-medium;
 }
 
 .agency-tier-celebration-modal__benefits {
@@ -137,7 +140,7 @@ $announcement-blue: #032836;
 	list-style-image: url(calypso/assets/images/a8c-for-agencies/agency-tier/check-icon.svg);
 
 	li {
-		@include a4a-font-body-md;
+		@include body-medium;
 		padding-inline-start: 8px;
 		margin-inline-start: 4px;
 	}

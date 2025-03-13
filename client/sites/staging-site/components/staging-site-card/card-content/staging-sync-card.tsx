@@ -328,6 +328,7 @@ const ProductionToStagingSync = ( {
 				modalMessage={ translate(
 					'Synchronizing your staging site will replace the contents of the staging site with those of your production site.'
 				) }
+				modalSize="medium"
 				confirmLabel={ translate( 'Synchronize' ) }
 				cancelLabel={ translate( 'Cancel' ) }
 			>
