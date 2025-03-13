@@ -22,14 +22,17 @@ export function useProductsWithPremiumSupport( products: ResponseCartProduct[], 
 
 	for ( const product of products ) {
 		if ( isDIFMProduct( product ) ) {
+			const hasPremiumSupport =
+				supportStatus?.availability.is_difm_chat_open && geoData?.country_short === 'US';
 			return {
 				userFieldMessage: getUserFieldMessage( DIFM_FLOW, url ),
 				userFieldFlowName:
 					FLOWS_ZENDESK_FLOWNAME[ DIFM_FLOW as keyof typeof FLOWS_ZENDESK_FLOWNAME ],
-				hasPremiumSupport:
-					supportStatus?.availability.is_difm_chat_open && geoData?.country_short === 'US',
-				helpCenterButtonCopy: __( 'Questions?', __i18n_text_domain__ ),
-				helpCenterButtonLink: __( 'Contact our site-building team', __i18n_text_domain__ ),
+				hasPremiumSupport,
+				helpCenterButtonCopy: hasPremiumSupport ? __( 'Questions?', __i18n_text_domain__ ) : null,
+				helpCenterButtonLink: hasPremiumSupport
+					? __( 'Contact our site-building team', __i18n_text_domain__ )
+					: null,
 			};
 		}
 		if ( product?.product_slug === PLAN_100_YEARS ) {
