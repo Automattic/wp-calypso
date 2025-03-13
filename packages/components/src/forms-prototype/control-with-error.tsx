@@ -45,21 +45,21 @@ function UnforwardedControlWithError< C extends React.ReactElement >(
 	};
 
 	const onBlur = ( event: React.FocusEvent< HTMLDivElement > ) => {
-		// Only consider the blur event if focus has fully left the wrapping div.
-		if ( event.relatedTarget && event.currentTarget.contains( event.relatedTarget ) ) {
-			return;
+		// Only consider "blurred from the component" if focus has fully left the wrapping div.
+		// This prevents unnecessary blurs from components with multiple focusable elements.
+		if ( ! event.relatedTarget || ! event.currentTarget.contains( event.relatedTarget ) ) {
+			setIsTouched( true );
+			validate();
 		}
-
-		setIsTouched( true );
-
-		validate();
 
 		// Workaround for setCustomValidity() forcing an immediate re-render,
 		// which can reset the text field value in uncontrolled mode.
 		const validityTarget = getValidityTarget?.();
 		if (
 			validityTarget instanceof HTMLInputElement &&
-			[ 'text', 'number' ].includes( validityTarget.type )
+			[ 'text', 'number', 'password', 'email', 'tel', 'search', 'url' ].includes(
+				validityTarget.type
+			)
 		) {
 			const correctValue = validityTarget.value;
 			setTimeout( () => {

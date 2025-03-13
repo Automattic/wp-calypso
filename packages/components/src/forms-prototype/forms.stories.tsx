@@ -94,7 +94,6 @@ export const Input: StoryObj = {
 	},
 };
 
-// TODO: Value can be wiped out on blur.
 export const Password: StoryObj = {
 	name: 'InputControl (Password)',
 	render: function Template() {
