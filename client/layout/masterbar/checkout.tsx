@@ -55,11 +55,16 @@ const CheckoutMasterbar = ( {
 	const { responseCart, replaceProductsInCart } = useShoppingCart( cartKey );
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 
-	const closeAndLeave = ( options?: { userHasClearedCart?: boolean } ) => {
+	const closeAndLeave = ( options?: {
+		userHasClearedCart?: boolean;
+		closedWithoutConfirmation?: boolean;
+	} ) => {
 		const userHasClearedCart = options?.userHasClearedCart ?? false;
-		recordTracksEvent( 'calypso_masterbar_checkout_close_modal_submitted', {
-			user_has_cleared_cart: userHasClearedCart,
-		} );
+		if ( ! options?.closedWithoutConfirmation ) {
+			recordTracksEvent( 'calypso_masterbar_checkout_close_modal_submitted', {
+				user_has_cleared_cart: userHasClearedCart,
+			} );
+		}
 		leaveCheckout( {
 			siteSlug,
 			forceCheckoutBackUrl,
@@ -75,7 +80,9 @@ const CheckoutMasterbar = ( {
 			setIsModalVisible( true );
 			return;
 		}
-		closeAndLeave();
+		closeAndLeave( {
+			closedWithoutConfirmation: true,
+		} );
 	};
 
 	const modalTitleText = translate( 'You are about to leave checkout with items in your cart' );
