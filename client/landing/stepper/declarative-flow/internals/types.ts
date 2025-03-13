@@ -4,6 +4,12 @@ import { STEPPER_TRACKS_EVENTS } from '../../constants';
 
 /**
  * This is the return type of useStepNavigation hook
+ * @template StepSubmittedTypes - The types of the step submitted data.
+ * @example
+ * navigation.submit({
+ *   siteSlug: 'example.wordpress.com',
+ *   siteTitle: 'Example Site',
+ * });
  */
 export type NavigationControls<
 	StepSubmittedTypes extends Record< string, unknown > | undefined = undefined,
@@ -34,7 +40,8 @@ export type NavigationControls<
 	goToStep?: ( step: string ) => void;
 
 	/**
-	 * Submits the answers provided in the flow
+	 * Submits the answers provided in the flow. If it's complaining about the type, it means you haven't typed the step correctly.
+	 * @see {@link client/landing/stepper/declarative-flow/internals/steps-repository/DEVELOPMENT/making-a-new-step.md}
 	 */
 	submit?: (
 		providedDependencies?: StepSubmittedTypes extends undefined ? never : StepSubmittedTypes
@@ -249,12 +256,23 @@ export type FlowV2 = {
 
 export type Flow = FlowV1 | FlowV2;
 
+/**
+ * This is a helper type to intersect A and B only if B is not never. Intersecting with never results in never which is not what we want.
+ */
 type ConditionalIntersection< TA, TB > = [ TB ] extends [ never ] ? TA : TA & TB;
 
-export type StepProps< StepSubmittedTypes extends StepPropTypes | never = never > =
+/**
+ * This is the type of the props passed to the step.
+ * @template StepDataShape - The types of the step submitted data.
+ * @example
+ * const step = ( props: StepProps< { submits: { siteSlug: string } } > ) => {
+ *   return <div>{ props.navigation.submit( { siteSlug: 'example.wordpress.com' } ) }</div>;
+ * };
+ */
+export type StepProps< StepDataShape extends StepPropTypes | never = never > =
 	ConditionalIntersection<
 		{
-			navigation: NavigationControls< StepSubmittedTypes[ 'submits' ] >;
+			navigation: NavigationControls< StepDataShape[ 'submits' ] >;
 			stepName: string;
 			flow: string;
 			/**
@@ -269,18 +287,42 @@ export type StepProps< StepSubmittedTypes extends StepPropTypes | never = never 
 			redirectTo?: string;
 			signupUrl?: string;
 		},
-		StepSubmittedTypes[ 'accepts' ]
+		StepDataShape[ 'accepts' ]
 	>;
 
+/**
+ * This is the type of the step submitted and accepted props.
+ * @example
+ * const step: Step< { submits: { newUserName: string }, accepts: { userName: string } } > ) => {
+ *   return (
+ *     <div>
+ *       <h1>Hi {userName}!</h1>
+ *       <input onChange={ value => props.navigation.submit( { newUserName: value } ) } />
+ *     </div>
+ */
 type StepPropTypes = {
 	readonly submits?: Record< string, unknown >;
 	readonly accepts?: Record< string, unknown >;
 };
 
+/**
+ * This is the type of the step component.
+ * @template ConfiguredStepPropTypes - The types of the step submitted and accepted props.
+ * @example
+ * const step: Step< { submits: { newUserName: string }, accepts: { userName: string } } > ) => {
+ *   return (
+ *     <div>
+ *       <h1>Hi {userName}!</h1>
+ *       <input onChange={ value => props.navigation.submit( { newUserName: value } ) } />
+ *     </div>
+ *   );
+ * };
+ */
 export type Step< ConfiguredStepPropTypes extends StepPropTypes = never > = React.FC<
 	StepProps< ConfiguredStepPropTypes >
 >;
 
+// TODO: get rid of these. Every type should be specific.
 export type ProvidedDependencies = Record< string, unknown >;
 
 export enum AssertConditionState {
