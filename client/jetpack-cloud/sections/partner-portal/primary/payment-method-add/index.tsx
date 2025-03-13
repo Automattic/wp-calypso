@@ -168,7 +168,7 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 		// If this is a site creation flow, we will need to resume on the creation of site.
 		if ( isSiteCreationFlow ) {
 			issueLicenses( [ { slug: product, quantity: 1 } ] );
-			page( `/dashboard?provisioning=true` );
+			page( '/dashboard?provisioning=true' );
 			return;
 		}
 

@@ -20,7 +20,6 @@ async function tryPreload( step?: StepperStep, followingStep?: StepperStep ) {
 
 /**
  * Preload the next step in the flow, if it's an async component.
- *
  * @param siteSlugOrId The site slug or ID.
  * @param selectedSite The selected site.
  * @param currentStepRoute The current step route.

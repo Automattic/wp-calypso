@@ -50,7 +50,7 @@ const write: Flow = {
 						);
 					}
 
-					return navigate( `launchpad` );
+					return navigate( 'launchpad' );
 				case 'launchpad': {
 					return navigate( 'processing' );
 				}

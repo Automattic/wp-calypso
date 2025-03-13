@@ -64,7 +64,7 @@ describe( 'Transferring hosted site flow submit redirects', () => {
 
 			await waitFor( () => {
 				expect( getFlowLocation() ).toEqual( {
-					path: `/setup/hosted-site-migration`,
+					path: '/setup/hosted-site-migration',
 					state: null,
 				} );
 			} );

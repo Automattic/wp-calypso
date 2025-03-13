@@ -23,7 +23,7 @@ export default function () {
 		clientRender
 	);
 
-	page( `/purchases/licenses/*`, '/purchases/licenses' ); // Redirect invalid license list filters back to the main portal page.
+	page( '/purchases/licenses/*', '/purchases/licenses' ); // Redirect invalid license list filters back to the main portal page.
 
 	// Billing
 	page( '/purchases/billing', requireAccessContext, billingContext, makeLayout, clientRender );

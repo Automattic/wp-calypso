@@ -136,7 +136,7 @@ class JetpackConnectSiteUrlInput extends Component {
 
 		return (
 			<div>
-				<FormLabel htmlFor="siteUrl">{ translate( 'Site Address' ) }</FormLabel>
+				<FormLabel htmlFor="siteUrl">{ translate( 'Site address' ) }</FormLabel>
 				<div className="jetpack-connect__site-address-container">
 					<Gridicon size={ 24 } icon="globe" />
 					{ ! isSearch && (

@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .hosting-testimonials {
 	display: grid;
@@ -30,7 +31,7 @@
 }
 
 .hosting-testimonials__item-message {
-	@include a4a-font-body-lg;
+	@include body-large;
 	margin: 0;
 }
 
@@ -53,15 +54,15 @@
 }
 
 .hosting-testimonials__item-profile-name {
-	@include a4a-font-heading-md;
+	@include heading-medium;
 }
 
 .hosting-testimonials__item-profile-title {
-	@include a4a-font-body-lg;
+	@include body-large;
 }
 
 .hosting-testimonials__item-profile-link {
-	@include a4a-font-body-lg;
+	@include body-large;
 
 	a {
 		color: var(--color-text);

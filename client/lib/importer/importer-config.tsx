@@ -314,18 +314,6 @@ function getConfig( {
 		weight: 0,
 	};
 
-	importerConfig.blogroll = {
-		engine: 'blogroll',
-		key: 'importer-type-blogroll',
-		type: 'url',
-		priority: 'secondary',
-		title: 'Blogroll',
-		icon: 'blogroll',
-		description: '',
-		uploadDescription: '',
-		weight: 0,
-	};
-
 	importerConfig.livejournal = {
 		engine: 'livejournal',
 		key: 'importer-type-livejournal',

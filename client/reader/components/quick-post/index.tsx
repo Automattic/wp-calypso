@@ -105,7 +105,7 @@ function QuickPost( {
 						// Actual API response will update the stream with the real post data
 						dispatch(
 							receiveNewPost( {
-								streamKey: `following`,
+								streamKey: 'following',
 								postData,
 							} )
 						);
@@ -167,6 +167,11 @@ function QuickPost( {
 						onChange={ setPostContent }
 						isRTL={ isLocaleRtl( locale ) ?? false }
 						isDarkMode={ false }
+						customStyles={ `
+							div.is-root-container.block-editor-block-list__layout {
+								padding-bottom: 20px;
+							}
+						` }
 					/>
 				</div>
 			</div>

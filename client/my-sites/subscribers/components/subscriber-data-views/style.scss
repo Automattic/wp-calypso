@@ -48,7 +48,7 @@ body.is-section-subscribers,
                 padding: 0;
             }
 
-            button {
+            button:not(.jetpack-empty-list-view__cta-link) {
                 cursor: pointer;
                 max-width: 100%;
                 border: none;

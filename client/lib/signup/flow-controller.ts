@@ -197,7 +197,7 @@ export default class SignupFlowController {
 		const hasStepThatProvidesSiteSlug = ( flowName: string ) => {
 			let foundStepThatProvidesSiteSlug = false;
 			const userLoggedIn = isUserLoggedIn( this._reduxStore.getState() );
-			forEach( pick( steps, flows.getFlow( flowName, userLoggedIn ).steps ), ( step ) => {
+			forEach( pick( steps, flows.getFlow( flowName, userLoggedIn )?.steps ), ( step ) => {
 				if ( ( step.providesDependencies || [] ).indexOf( 'siteSlug' ) > -1 ) {
 					foundStepThatProvidesSiteSlug = true;
 					return false;

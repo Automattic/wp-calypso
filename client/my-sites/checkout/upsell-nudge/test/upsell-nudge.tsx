@@ -348,7 +348,7 @@ describe( 'UpsellNudge', () => {
 		await user.click( await screen.findByText( 'Add Professional Email' ) );
 		expect( screen.findByText( mockProducts.wp_titan_mail_monthly.product_name ) ).toNeverAppear();
 		await waitFor( () => {
-			expect( page ).toHaveBeenCalledWith( `/checkout/example.com` );
+			expect( page ).toHaveBeenCalledWith( '/checkout/example.com' );
 		} );
 
 		expect(

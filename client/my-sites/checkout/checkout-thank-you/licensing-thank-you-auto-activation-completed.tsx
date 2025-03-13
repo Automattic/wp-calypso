@@ -42,7 +42,7 @@ const LicensingActivationThankYouCompleted: FC< Props > = ( {
 
 	const title = useMemo( () => {
 		return subscriptionTransferSucceeded
-			? translate( `Your %(productName)s is active! %(celebrationEmoji)s`, {
+			? translate( 'Your %(productName)s is active! %(celebrationEmoji)s', {
 					args: {
 						productName: hasProductInfo ? ( productName as string ) : 'subscription',
 						celebrationEmoji: String.fromCodePoint( 0x1f389 ) /* Celebration emoji 🎉 */,

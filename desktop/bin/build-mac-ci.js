@@ -7,15 +7,8 @@ const yaml = require( 'js-yaml' );
 
 const PROJECT_DIR = path.join( __dirname, '..' );
 const BUILD_DIR = path.join( PROJECT_DIR, 'release' );
-// Set this value to an empty string ('') in conjunction with `isReleaseBuild`
-// below to force a full-artifact build on macOS.
 const ELECTRON_BUILDER_ARGS = process.env.ELECTRON_BUILDER_ARGS || '';
-
-const circleTag = process.env.CIRCLE_TAG;
-// Set this value to true in conjunction with `ELECTRON_BUILDER_ARGS` above
-// to force a full-artifact build on macOS.
-const isReleaseBuild =
-	process.platform === 'darwin' && !! circleTag && circleTag.startsWith( 'desktop-v' );
+const isReleaseBuild = process.env.RELEASE_BUILD === 'true';
 
 // Build Apple Silicon binaries only unless tagged for release.
 const arches = isReleaseBuild ? [ 'x64', 'arm64' ] : [ 'arm64' ];

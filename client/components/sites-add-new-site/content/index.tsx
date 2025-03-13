@@ -43,7 +43,7 @@ const importClick = () => {
 		action: 'import',
 	} );
 	page(
-		'/setup/hosted-site-migration/site-migration-identify?source=sites-dashboard&ref=new-site-popover&action=import'
+		'/setup/hosted-site-migration/create-site?source=sites-dashboard&ref=new-site-popover&action=import'
 	);
 };
 
@@ -73,7 +73,7 @@ export const Content = () => {
 					icon={ <JetpackLogo /> }
 					heading={ translate( 'Via the Jetpack plugin' ) }
 					description={ preventWidows(
-						translate( 'Install the Jetpack plugin on an existing site' )
+						translate( 'Install the Jetpack plugin on an existing site.' )
 					) }
 					buttonProps={ {
 						onClick: jetpackClick,

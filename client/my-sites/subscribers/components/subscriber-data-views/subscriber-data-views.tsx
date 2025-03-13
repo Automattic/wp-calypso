@@ -24,7 +24,7 @@ import {
 	useRecordSubscriberSort,
 } from '../../tracks';
 import { Subscriber } from '../../types';
-import { EmptyListView } from '../empty-list-view';
+import { JetpackEmptyListView } from '../jetpack-empty-list-view';
 import { SubscriberDetails } from '../subscriber-details';
 import { SubscriberLaunchpad } from '../subscriber-launchpad';
 import SubscriberTotals from '../subscriber-totals';
@@ -163,7 +163,7 @@ const SubscriberDataViews = ( {
 		total: 0,
 	};
 
-	const EmptyComponent = isSimple || isAtomic ? SubscriberLaunchpad : EmptyListView;
+	const EmptyComponent = isSimple || isAtomic ? SubscriberLaunchpad : JetpackEmptyListView;
 	const shouldShowLaunchpad =
 		! isLoading && ! searchTerm && ( ! grandTotal || ( grandTotal === 1 && isOwnerSubscribed ) );
 

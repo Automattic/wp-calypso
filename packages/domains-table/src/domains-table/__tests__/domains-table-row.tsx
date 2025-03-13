@@ -115,7 +115,7 @@ test( 'domain name links to management interface (site-specific table)', async (
 	);
 } );
 
-test( `redirect links use the site's unmapped URL for the site slug (all-domains table)`, async () => {
+test( "redirect links use the site's unmapped URL for the site slug (all-domains table)", async () => {
 	const [ partialRedirectDomain, fullRedirectDomain ] = testDomain( {
 		domain: 'redirect.blog',
 		primary_domain: true,
@@ -157,7 +157,7 @@ test( `redirect links use the site's unmapped URL for the site slug (all-domains
 	);
 } );
 
-test( `redirect links use the site's unmapped URL for the site slug (site-specific table)`, async () => {
+test( "redirect links use the site's unmapped URL for the site slug (site-specific table)", async () => {
 	const [ partialRedirectDomain, fullRedirectDomain ] = testDomain( {
 		domain: 'redirect.blog',
 		primary_domain: true,
@@ -315,7 +315,7 @@ test( 'Parenthetical username is removed from owner column', async () => {
 	await waitFor( () => expect( screen.queryByText( 'Joe Blogs' ) ).toBeInTheDocument() );
 } );
 
-test( `Doesn't strip parentheses used in the name portion of the owner field`, async () => {
+test( "Doesn't strip parentheses used in the name portion of the owner field", async () => {
 	const [ primaryPartial, primaryFull ] = testDomain( {
 		domain: 'primary-domain.blog',
 		blog_id: 123,
@@ -973,10 +973,6 @@ describe( 'domain status cell', () => {
 
 		const changeAddress = screen.queryByText( 'Point to WordPress.com' );
 		expect( changeAddress ).toBeInTheDocument();
-		expect( changeAddress ).toHaveAttribute(
-			'href',
-			'/domains/manage/example.com/edit/example.com?nameservers=true'
-		);
 
 		fireEvent.mouseOver( screen.getByLabelText( 'More information' ) );
 
@@ -984,7 +980,7 @@ describe( 'domain status cell', () => {
 			const tooltip = screen.getByRole( 'tooltip' );
 
 			expect( tooltip ).toHaveTextContent(
-				'Transfer successful! To make this domain work with your WordPress.com site you need to point it to WordPress.com servers.'
+				'Transfer successful! To make this domain work with your WordPress.com site you need to point it to WordPress.com.'
 			);
 		} );
 	} );

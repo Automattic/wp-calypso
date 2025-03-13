@@ -36,7 +36,7 @@ export function useRestoreSitesBanner() {
 				>
 					<div>
 						{ translate(
-							`{{restoreSiteLink}}Restore sites{{/restoreSiteLink}} from the action menu. You'll also need to {{invitePeopleLink}}invite any users{{/invitePeopleLink}} that previously had access to your sites.`,
+							"{{restoreSiteLink}}Restore sites{{/restoreSiteLink}} from the action menu. You'll also need to {{invitePeopleLink}}invite any users{{/invitePeopleLink}} that previously had access to your sites.",
 							{
 								components: {
 									restoreSiteLink: (

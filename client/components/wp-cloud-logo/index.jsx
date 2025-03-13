@@ -13,9 +13,7 @@ function WPCloudLogo( { className = 'wpcloud-logo', size = 72 } ) {
 			viewBox="0 0 181 34"
 			className={ className }
 		>
-			<style type="text/css">
-				{ `.st0{fill-rule:evenodd;clip-rule:evenodd;fill:rgb(247,43,0);}` }
-			</style>
+			<style type="text/css">{ `.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#000;}` }</style>
 			<g>
 				<path
 					className="st0"

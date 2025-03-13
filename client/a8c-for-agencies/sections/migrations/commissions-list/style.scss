@@ -1,7 +1,10 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
 .migrations-commissions-list-mobile-view {
 	padding: 16px;
 }
 
 .migrations-commissions-list-mobile-view__column {
-	@include a4a-font-body-md;
+	@include body-medium;
 }

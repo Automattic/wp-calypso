@@ -37,7 +37,7 @@ const DateControl = ( {
 			localizedStartDate.isSame( moment(), 'year' )
 		) {
 			return `${ localizedStartDate.format( 'MMM D' ) } - ${ localizedEndDate.format(
-				`MMM D, YYYY`
+				'MMM D, YYYY'
 			) }`;
 		}
 

@@ -42,23 +42,6 @@ export type NavigationControls = {
 	exitFlow?: ( to: string ) => void;
 };
 
-export type DeprecatedStepperStep = {
-	/**
-	 * The step slug is what appears as part of the pathname. Eg the intro in /setup/link-in-bio/intro
-	 */
-	slug: string;
-	/**
-	 * Does the step require a logged-in user?
-	 */
-	requiresLoggedInUser?: boolean;
-	/**
-	 * @deprecated Use asyncComponent instead. The component that will be rendered for this step. This variation is deprecated and will be removed in the future. Please use async loaded steps instead
-	 *
-	 * It should look like this: component: () => import( './internals/steps-repository/newsletter-setup' )
-	 */
-	component: React.FC< StepProps >;
-};
-
 export type AsyncStepperStep = {
 	/**
 	 * The step slug is what appears as part of the pathname. Eg the intro in /setup/link-in-bio/intro
@@ -83,7 +66,7 @@ export interface AsyncUserStep extends AsyncStepperStep {
 	slug: 'user';
 }
 
-export type StepperStep = DeprecatedStepperStep | AsyncStepperStep | AsyncUserStep;
+export type StepperStep = AsyncStepperStep | AsyncUserStep;
 
 /**
  * Navigates to a step in the current flow. Preserves the current query params.

@@ -7,8 +7,8 @@ import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
-import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_FEATURE_PAGE_INSIGHTS, STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import StatsModuleComments from 'calypso/my-sites/stats/features/modules/stats-comments';
 import StatShares from 'calypso/my-sites/stats/features/modules/stats-shares';
@@ -57,13 +57,16 @@ function StatsInsights() {
 	// Necessary to properly configure the fixed navigation headers.
 	sessionStorage.setItem( 'jp-stats-last-tab', 'insights' );
 
+	const isWPAdmin = config.isEnabled( 'is_odyssey' );
+	const insightsPageClasses = clsx( 'stats', { 'is-odyssey-stats': isWPAdmin } );
+
 	// TODO: should be refactored into separate components
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Main fullWidthLayout>
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<PageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
-			<div className="stats">
+			<div className={ insightsPageClasses }>
 				<NavigationHeader
 					className="stats__section-header modernized-header"
 					title={ STATS_PRODUCT_NAME }

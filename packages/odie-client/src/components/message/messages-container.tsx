@@ -1,6 +1,9 @@
+import { HelpCenterSelect } from '@automattic/data-stores';
 import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { getShortDateString } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 import { useEffect, useRef, useState } from 'react';
 import { NavigationType, useNavigationType, useSearchParams } from 'react-router-dom';
 import { ThumbsDown } from '../../assets/thumbs-down';
@@ -64,6 +67,15 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
 	const scrollParentRef = useRef< HTMLElement | null >( null );
 
+	const { currentSupportInteraction } = useSelect( ( select ) => {
+		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		return {
+			currentSupportInteraction: helpCenterSelect.getCurrentSupportInteraction(),
+		};
+	}, [] );
+
+	const chatHasEnded = [ 'solved', 'closed' ].includes( currentSupportInteraction?.status || '' );
+
 	useZendeskMessageListener();
 	useAutoScroll( messagesContainerRef, shouldEnableAutoScroll );
 	useHelpCenterChatScroll( chat?.supportInteractionId, scrollParentRef, ! shouldEnableAutoScroll );
@@ -83,13 +95,21 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	}, [ messagesContainerRef ] );
 	useUpdateDocumentTitle();
 
+	// prevent zd transfer for non-eligible users
+	useEffect( () => {
+		if ( isForwardingToZendesk && ! isUserEligibleForPaidSupport ) {
+			searchParams.delete( 'provider' );
+			setChatMessagesLoaded( true );
+		}
+	}, [ isForwardingToZendesk, isUserEligibleForPaidSupport, setChatMessagesLoaded ] );
+
 	useEffect( () => {
 		if ( isForwardingToZendesk || hasForwardedToZendesk ) {
 			return;
 		}
 
 		( chat?.status === 'loaded' || chat?.status === 'closed' ) && setChatMessagesLoaded( true );
-	}, [ chat, isForwardingToZendesk, hasForwardedToZendesk ] );
+	}, [ chat?.status, isForwardingToZendesk, hasForwardedToZendesk ] );
 
 	/**
 	 * Handle the case where we are forwarding to Zendesk.
@@ -113,6 +133,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 					createZendeskConversation( {
 						avoidTransfer: true,
 						interactionId: interaction?.uuid,
+						section: searchParams.get( 'section' ),
 						createdFrom: 'direct_url',
 					} ).then( () => {
 						setChatMessagesLoaded( true );
@@ -161,7 +182,10 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 							const nextMessage = chat.messages[ index + 1 ];
 							const displayChatWithSupportLabel =
 								! nextMessage?.context?.flags?.show_contact_support_msg &&
-								message.context?.flags?.show_contact_support_msg;
+								message.context?.flags?.show_contact_support_msg &&
+								! chatHasEnded;
+
+							const displayChatWithSupportEndedLabel = ! nextMessage && chatHasEnded;
 
 							return (
 								<ChatMessage
@@ -173,6 +197,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 										chat.messages[ index + 1 ]?.role
 									) }
 									displayChatWithSupportLabel={ displayChatWithSupportLabel }
+									displayChatWithSupportEndedLabel={ displayChatWithSupportEndedLabel }
 								/>
 							);
 						} ) }

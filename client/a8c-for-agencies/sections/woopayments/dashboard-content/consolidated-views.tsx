@@ -10,8 +10,8 @@ const WooPaymentsConsolidatedViews = () => {
 	const translate = useTranslate();
 
 	const { woopaymentsData, isLoadingWooPaymentsData } = useWooPaymentsContext();
-	const totalCommission = woopaymentsData?.total?.payout ?? 0;
-	const expectedCommission = woopaymentsData?.estimated?.payout ?? 0;
+	const totalCommission = woopaymentsData?.data?.total?.payout ?? 0;
+	const expectedCommission = woopaymentsData?.data?.estimated?.payout ?? 0;
 
 	const { nextPayoutActivityWindow, nextPayoutDate } = useGetPayoutData();
 
@@ -21,6 +21,7 @@ const WooPaymentsConsolidatedViews = () => {
 	return (
 		<ConsolidatedStatsGroup className="consolidated-view">
 			<ConsolidatedStatsCard
+				applyCoreStyles
 				value={ formatCurrency( totalCommission, 'USD' ) }
 				footerText={ translate( 'Total WooPayments commissions paid' ) }
 				popoverTitle={ translate( 'Total WooPayments commissions paid' ) }
@@ -37,6 +38,7 @@ const WooPaymentsConsolidatedViews = () => {
 				isLoading={ isLoadingWooPaymentsData }
 			/>
 			<ConsolidatedStatsCard
+				applyCoreStyles
 				value={ formatCurrency( expectedCommission, 'USD' ) }
 				footerText={ translate( 'Next estimated payout amount' ) }
 				popoverTitle={ translate( 'Estimated amount' ) }
@@ -60,6 +62,7 @@ const WooPaymentsConsolidatedViews = () => {
 				isLoading={ isLoadingWooPaymentsData }
 			/>
 			<ConsolidatedStatsCard
+				applyCoreStyles
 				value={ nextPayoutDate + '*' }
 				footerText={ translate( 'Next estimated payout date' ) }
 				popoverTitle={ translate( 'Estimated date' ) }

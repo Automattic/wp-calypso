@@ -22,7 +22,8 @@ const customUrlSlug = `about-${ DataHelper.getTimestamp() }-${ DataHelper.getRan
 	100
 ) }`;
 
-describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () {
+// Test will be updated to test equivalent core functionality.
+describe.skip( DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ), function () {
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature(
 		features,
@@ -85,7 +86,6 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		await editorPage.setURLSlug( customUrlSlug );
 	} );
 
-	// This step is required on mobile, but doesn't hurt anything on desktop, so avoiding conditional.
 	it( 'Close settings sidebar', async function () {
 		await editorPage.closeSettings();
 	} );

@@ -62,12 +62,18 @@ export function userLists( ctx: Context, next: () => void ): void {
 
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
+	function goBack() {
+		page.back( context.lastRoute );
+	}
+
 	context.primary = (
 		<AsyncLoad
 			require="calypso/reader/user-profile"
 			key={ 'user-lists-' + userLogin }
 			userLogin={ userLogin }
 			path={ context.path }
+			showBack={ shouldShowBackButton( context ) }
+			handleBack={ goBack }
 		/>
 	);
 
