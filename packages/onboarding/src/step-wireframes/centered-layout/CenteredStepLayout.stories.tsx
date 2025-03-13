@@ -1,4 +1,5 @@
 import SelectCardCheckbox from '../../select-card-checkbox';
+import { withStepContainerV2ContextDecorator } from '../../step-container-v2/index.stories';
 import { CenteredStepLayout } from './CenteredStepLayout';
 import type { Meta } from '@storybook/react';
 
@@ -7,6 +8,7 @@ import './style.stories.scss';
 const meta: Meta< typeof CenteredStepLayout > = {
 	title: 'Onboarding/StepWireframes/CenteredStepLayout',
 	component: CenteredStepLayout,
+	decorators: [ withStepContainerV2ContextDecorator ],
 };
 
 export default meta;

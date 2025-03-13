@@ -1,4 +1,5 @@
 import { Button } from '@wordpress/components';
+import { withStepContainerV2ContextDecorator } from '../../step-container-v2/index.stories';
 import { HorizontalStepLayout } from './HorizontalStepLayout';
 import type { Meta } from '@storybook/react';
 
@@ -7,6 +8,7 @@ import './style.stories.scss';
 const meta: Meta< typeof HorizontalStepLayout > = {
 	title: 'Onboarding/StepWireframes/HorizontalStepLayout',
 	component: HorizontalStepLayout,
+	decorators: [ withStepContainerV2ContextDecorator ],
 };
 
 export default meta;

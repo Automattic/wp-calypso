@@ -1,14 +1,26 @@
 import { Badge } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { StepContainerV2 } from './index';
+import { StepContainerV2, StepContainerV2Provider } from './index';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import './style.stories.scss';
 
+export const withStepContainerV2ContextDecorator = ( Story: React.ComponentType ) => {
+	return (
+		<StepContainerV2Provider
+			value={ { flowName: 'flowName', stepName: 'stepName', recordTracksEvent: () => {} } }
+		>
+			<Story />
+		</StepContainerV2Provider>
+	);
+};
+
 const meta: Meta< typeof StepContainerV2 > = {
 	title: 'Onboarding/StepContainerV2',
 	component: StepContainerV2,
+	decorators: [ withStepContainerV2ContextDecorator ],
+	excludeStories: [ 'withStepContainerV2ContextDecorator' ],
 };
 
 type Story = StoryObj< typeof meta >;
