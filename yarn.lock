@@ -1052,7 +1052,7 @@ __metadata:
     karma-typescript: "npm:^5.5.4"
     prettier: "npm:^3.4.2"
     rimraf: "npm:^3.0.2"
-    rollup: "npm:^3.3.0"
+    rollup: "npm:^3.29.5"
     rollup-plugin-dts: "npm:^5.3.1"
     rollup-plugin-license: "npm:^3.0.1"
     terser-webpack-plugin: "npm:^5.3.11"
@@ -31176,7 +31176,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup@npm:^3.3.0":
+"rollup@npm:^3.29.5":
   version: 3.29.5
   resolution: "rollup@npm:3.29.5"
   dependencies:
