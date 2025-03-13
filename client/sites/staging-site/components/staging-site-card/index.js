@@ -59,8 +59,6 @@ export const StagingSiteCard = ( {
 	const { __ } = useI18n();
 	const queryClient = useQueryClient();
 	const [ syncError, setSyncError ] = useState( null );
-	// eslint-disable-next-line no-unused-vars
-	const [ _, setIsErrorValidQuota ] = useState( false );
 
 	const isSyncInProgress = useSelector( ( state ) => getIsSyncingInProgress( state, siteId ) );
 
@@ -133,22 +131,12 @@ export const StagingSiteCard = ( {
 		}
 	);
 
-	const {
-		data: lock,
-		isError: isErrorLockQuery,
-		isLoading: isLoadingLockQuery,
-	} = useGetLockQuery( siteId, {
+	const { data: lock, isLoading: isLoadingLockQuery } = useGetLockQuery( siteId, {
 		enabled: ! disabled,
 		refetchInterval: () => {
 			return isLoadingAddStagingSite ? 5000 : 0;
 		},
 	} );
-
-	useEffect( () => {
-		if ( isErrorLockQuery ) {
-			setIsErrorValidQuota( true );
-		}
-	}, [ isErrorLockQuery, siteId ] );
 
 	const hasCompletedInitialLoading =
 		! isLoadingStagingSites && ! isLoadingQuotaValidation && ! isLoadingLockQuery;
