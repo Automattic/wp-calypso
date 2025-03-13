@@ -1,4 +1,4 @@
-import { addPlanToCart } from '@automattic/onboarding';
+import { addPlanToCart, addProductsToCart } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -91,10 +91,14 @@ const aiSiteBuilder: Flow = {
 					// eslint-disable-next-line no-console
 					console.log( 'DOMAAAINZ STEP', providedDependencies, siteSlugFromSiteData );
 					// TODO: Somehow store the chosen domain.
-					return navigate( 'plans', {
-						hideFreePlan: true,
-						hidePersonalPlan: true,
-					} );
+					if ( providedDependencies.domainItem && siteSlugFromSiteData ) {
+						const addToCart = await addProductsToCart( siteSlugFromSiteData, AI_SITE_BUILDER_FLOW, [
+							providedDependencies.domainItem,
+						] );
+						// eslint-disable-next-line no-console
+						console.log( 'ADD TO CART', addToCart );
+					}
+					return navigate( 'plans' );
 				}
 
 				case 'plans': {
@@ -124,6 +128,7 @@ const aiSiteBuilder: Flow = {
 						// eslint-disable-next-line no-console
 						console.log( 'ADD TO CART', addToCart );
 					}
+
 					// eslint-disable-next-line no-console
 					window.location.replace(
 						`/checkout/${ encodeURIComponent( siteSlugFromSiteData || '' ) }`
