@@ -408,7 +408,6 @@ const PlansFeaturesMain = ( {
 		isEligibleForTermSavingsPriceDisplay: enableTermSavingsPriceDisplay,
 		isLoading: isLoadingemphasizeLongerTermSavingsExperiment,
 	} = useEligibilityForTermSavingsPriceDisplay( {
-		flowName: flowName,
 		selectedPlan,
 		hiddenPlans,
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,

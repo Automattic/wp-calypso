@@ -74,7 +74,6 @@ const useIsAnyGridPlanDiscounted = ( {
 };
 
 const useEligibilityForTermSavingsPriceDisplay = ( {
-	flowName,
 	hiddenPlans,
 	intent,
 	isSubdomainNotGenerated,
@@ -85,7 +84,6 @@ const useEligibilityForTermSavingsPriceDisplay = ( {
 	siteId,
 	isInSignup,
 }: {
-	flowName?: string | null;
 	hiddenPlans?: HiddenPlans;
 	intent?: PlansIntent;
 	isSubdomainNotGenerated?: boolean;
@@ -110,7 +108,7 @@ const useEligibilityForTermSavingsPriceDisplay = ( {
 	const [ isLoading, experimentAssignment ] = useExperiment(
 		'calypso_plans_page_emphasize_longer_term_savings_v2',
 		{
-			isEligible: isInSignup && !! flowName && ! isAnyGridPlanDiscounted,
+			isEligible: isInSignup && ! isAnyGridPlanDiscounted,
 		}
 	);
 
