@@ -97,6 +97,7 @@ export class LocaleSuggestions extends Component {
 		return (
 			<div className="locale-suggestions">
 				<Notice
+					className="locale-suggestions__notice"
 					icon="globe"
 					showDismiss
 					onDismissClick={ this.dismiss }
