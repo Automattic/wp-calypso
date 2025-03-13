@@ -61,7 +61,7 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 			}
 
 			const errorMessages = {
-				'NotAllowedError:1': translate(
+				NotFocusedError: translate(
 					'It seems the page is not active for authentication. Please click anywhere on the page and try again while keeping the window open.'
 				),
 				NotAllowedError: translate(
@@ -79,12 +79,11 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 
 			let error;
 			if ( httpError instanceof Error ) {
-				const field = 'global';
-				const errorKey = `${ httpError.name }${
-					httpError.message.includes( 'document is not focused' ) ? ':1' : ''
-				}`;
+				const errorKey = httpError.message.includes( 'document is not focused' )
+					? errorMessages.NotFocusedError
+					: httpError.name;
 				const message = errorMessages[ errorKey ] ?? errorMessages.default;
-				error = { code: httpError.name, message, field };
+				error = { code: httpError.name, message, field: 'global' };
 			} else {
 				error = getErrorFromHTTPError( httpError );
 			}
