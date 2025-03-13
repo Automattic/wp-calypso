@@ -298,7 +298,7 @@
 		"nock": "^13.5.6",
 		"node-fetch": "^2.7.0",
 		"npm-run-all": "^4.1.5",
-		"postcss": "^8.5.1",
+		"postcss": "^8.5.3",
 		"postcss-cli": "^9.0.1",
 		"postcss-custom-properties": "^11.0.0",
 		"prettier": "npm:wp-prettier@3.0.3",
