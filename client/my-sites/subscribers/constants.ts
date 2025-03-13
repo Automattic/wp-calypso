@@ -1,3 +1,5 @@
+import { translate } from 'i18n-calypso';
+
 export enum SubscribersSortBy {
 	Name = 'name',
 	DateSubscribed = 'date_subscribed',
@@ -17,10 +19,11 @@ export enum SubscribersFilterBy {
 	BlockedSubscriber = 'blocked_subscriber',
 }
 
-export enum SubscribersStatus {
-	Subscribed = 'Subscribed',
-	NotConfirmed = 'Not confirmed',
-	NotSubscribed = 'Not subscribed',
-	NotSending = 'Not sending',
-}
+export const SubscribersStatus = {
+	Subscribed: translate( 'Subscribed' ),
+	NotConfirmed: translate( 'Not confirmed' ),
+	NotSubscribed: translate( 'Not subscribed' ),
+	NotSending: translate( 'Not sending' ),
+} as const;
+
 export const DEFAULT_PER_PAGE = 10;
