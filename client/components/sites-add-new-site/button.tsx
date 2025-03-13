@@ -9,6 +9,7 @@ interface Props extends PropsWithChildren {
 	mainButtonLabelText?: string;
 	isMenuVisible: boolean;
 	toggleMenu: () => void;
+	isPrimary?: boolean;
 }
 
 const AddNewSiteButton: React.FC< Props > = ( {
@@ -16,6 +17,7 @@ const AddNewSiteButton: React.FC< Props > = ( {
 	mainButtonLabelText,
 	isMenuVisible,
 	toggleMenu,
+	isPrimary = true,
 	children,
 } ) => {
 	const translate = useTranslate();
@@ -23,7 +25,7 @@ const AddNewSiteButton: React.FC< Props > = ( {
 
 	return (
 		<Button
-			variant={ showMainButtonLabel ? 'primary' : 'secondary' }
+			variant={ isPrimary ? 'primary' : 'secondary' }
 			className="sites-add-new-site__button"
 			onClick={ toggleMenu }
 		>
