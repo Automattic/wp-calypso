@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { Step } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
@@ -63,8 +62,6 @@ const GoalsStep: StepType = ( { navigation, flow } ) => {
 
 	const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 	const [ , isIntentNewsletterGoalEnabled ] = useGoalsFirstCumulativeExperience();
-	// Use the experiment flag instead of the feature flag to ensure the experiment is running
-	const isIntentCreateCourseGoalEnabled = config.isEnabled( 'onboarding/create-course' );
 
 	useEffect( () => {
 		resetIntent();
@@ -117,10 +114,7 @@ const GoalsStep: StepType = ( { navigation, flow } ) => {
 	const getStepSubmissionHandler =
 		( action: string, eventProps: Record< string, unknown > = {} ) =>
 		() => {
-			const intent = goalsToIntent( goals, {
-				isIntentNewsletterGoalEnabled,
-				isIntentCreateCourseGoalEnabled,
-			} );
+			const intent = goalsToIntent( goals, isIntentNewsletterGoalEnabled );
 			setIntent( intent );
 
 			recordGoalsSelectTracksEvent( goals, intent );

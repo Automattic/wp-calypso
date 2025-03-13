@@ -41,42 +41,30 @@ describe( 'Test onboard utils', () => {
 		{
 			goals: [ SiteGoal.Write, SiteGoal.Newsletter ],
 			expectedIntent: SiteIntent.Write,
-			featureFlags: {
-				isIntentNewsletterGoalEnabled: false,
-			},
+			isIntentNewsletterGoalsEnabled: false,
 		},
 		{
 			goals: [ SiteGoal.Write, SiteGoal.Newsletter ],
 			expectedIntent: SiteIntent.NewsletterGoal,
-			featureFlags: {
-				isIntentNewsletterGoalEnabled: true,
-			},
+			isIntentNewsletterGoalsEnabled: true,
 		},
 		{
 			goals: [ SiteGoal.Sell, SiteGoal.Newsletter ],
 			expectedIntent: SiteIntent.Sell,
-			featureFlags: {
-				isIntentNewsletterGoalEnabled: false,
-			},
-		},
-		{
-			goals: [ SiteGoal.Sell, SiteGoal.Courses ],
-			expectedIntent: SiteIntent.CreateCourseGoal,
-			featureFlags: {
-				isIntentCreateCourseGoalEnabled: true,
-			},
+			isIntentNewsletterGoalsEnabled: false,
 		},
 		{
 			goals: [ SiteGoal.Sell, SiteGoal.Newsletter ],
 			expectedIntent: SiteIntent.NewsletterGoal,
-			featureFlags: {
-				isIntentNewsletterGoalEnabled: true,
-			},
+			isIntentNewsletterGoalsEnabled: true,
 		},
 	] )(
 		'Should map the $goals to $expectedIntent intent ($featureFlags)',
-		( { goals, expectedIntent, featureFlags } ) => {
-			expect( goalsToIntent( goals, featureFlags ) ).toBe( expectedIntent );
+		( { goals, expectedIntent, featureFlags = {}, isIntentNewsletterGoalsEnabled = false } ) => {
+			( config.isEnabled as jest.Mock ).mockImplementation( ( flag ) =>
+				Boolean( featureFlags[ flag ] )
+			);
+			expect( goalsToIntent( goals, isIntentNewsletterGoalsEnabled ) ).toBe( expectedIntent );
 		}
 	);
 } );
