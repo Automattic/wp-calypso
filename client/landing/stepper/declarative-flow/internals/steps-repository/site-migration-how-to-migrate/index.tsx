@@ -2,7 +2,7 @@ import { PLAN_BUSINESS, getPlan, isWpComBusinessPlan } from '@automattic/calypso
 import { NextButton, StepContainer } from '@automattic/onboarding';
 import { Icon, copy, globe, lockOutline, scheduled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { FC, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useMigrationCancellation } from 'calypso/data/site-migration/landing/use-migration-cancellation';
@@ -11,15 +11,19 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePresalesChat } from 'calypso/lib/presales-chat';
 import { DIYOption } from './diy-option';
-import type { StepProps } from '../../types';
+import type { Step } from '../../types';
 import './style.scss';
 
-interface Props extends StepProps {
-	headerText?: string;
-	subHeaderText?: string;
-}
-
-const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
+const SiteMigrationHowToMigrate: Step< {
+	accepts: {
+		headerText?: string;
+		subHeaderText?: string;
+	};
+	submits: {
+		how: string;
+		destination: string;
+	};
+} > = ( props ) => {
 	const { navigation, headerText, stepName, subHeaderText } = props;
 	const translate = useTranslate();
 	const site = useSite();

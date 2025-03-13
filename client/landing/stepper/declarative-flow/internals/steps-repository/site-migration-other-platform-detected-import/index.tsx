@@ -21,7 +21,12 @@ export const Scanning = () => {
 	);
 };
 
-const SiteMigrationOtherPlatform: Step = function ( { navigation } ) {
+const SiteMigrationOtherPlatform: Step< {
+	submits: {
+		action: 'import' | string;
+		platform?: ImporterPlatform | null;
+	};
+} > = function ( { navigation } ) {
 	const translate = useTranslate();
 	const [ query ] = useSearchParams();
 	const from = query.get( 'from' ) as string;

@@ -6,7 +6,7 @@ import { STEPPER_TRACKS_EVENTS } from '../../constants';
  * This is the return type of useStepNavigation hook
  */
 export type NavigationControls<
-	StepSubmittedTypes extends Record< string, unknown > | never = never,
+	StepSubmittedTypes extends Record< string, unknown > | undefined = undefined,
 > = {
 	/**
 	 * Call this function if you want to go to the previous step.
@@ -36,7 +36,9 @@ export type NavigationControls<
 	/**
 	 * Submits the answers provided in the flow
 	 */
-	submit?: ( providedDependencies?: StepSubmittedTypes[ 'submits' ] ) => void;
+	submit?: (
+		providedDependencies?: StepSubmittedTypes extends undefined ? never : StepSubmittedTypes
+	) => void;
 
 	/**
 	 * Exits the flow and continue to the given path
@@ -58,7 +60,7 @@ export type AsyncStepperStep = {
 	 *
 	 * It should look like this: component: () => import( './internals/steps-repository/newsletter-setup' )
 	 */
-	asyncComponent: () => Promise< { default: React.FC< StepProps > } >;
+	asyncComponent: () => Promise< { default: React.FC< any > } >;
 };
 
 export interface AsyncUserStep extends AsyncStepperStep {
@@ -93,7 +95,7 @@ export type UseStepsHook = () => readonly StepperStep[];
 export type UseStepNavigationHook< FlowSteps extends StepperStep[] > = (
 	currentStepSlug: FlowSteps[ number ][ 'slug' ],
 	navigate: Navigate< FlowSteps >
-) => NavigationControls;
+) => NavigationControls< any >;
 
 export type UseAssertConditionsHook< FlowSteps extends readonly StepperStep[] > = (
 	navigate?: Navigate< FlowSteps >
@@ -247,32 +249,37 @@ export type FlowV2 = {
 
 export type Flow = FlowV1 | FlowV2;
 
-export type StepProps<
-	StepSubmittedTypes extends { submits: Record< string, unknown > } = {
-		submits: Record< string, unknown >;
-	},
-> = {
-	navigation: NavigationControls< StepSubmittedTypes >;
-	stepName: string;
-	flow: string;
-	/**
-	 * If this is a step of a flow that extends another, pass the variantSlug of the variant flow, it can come handy.
-	 */
-	variantSlug?: string;
-	data?: StepperInternal.State[ 'stepData' ];
-	children?: React.ReactNode;
-	/**
-	 * These two prop are used internally by the Stepper to redirect the user from the user step.
-	 */
-	redirectTo?: string;
-	signupUrl?: string;
+type ConditionalIntersection< TA, TB > = [ TB ] extends [ never ] ? TA : TA & TB;
+
+export type StepProps< StepSubmittedTypes extends StepPropTypes | never = never > =
+	ConditionalIntersection<
+		{
+			navigation: NavigationControls< StepSubmittedTypes[ 'submits' ] >;
+			stepName: string;
+			flow: string;
+			/**
+			 * If this is a step of a flow that extends another, pass the variantSlug of the variant flow, it can come handy.
+			 */
+			variantSlug?: string;
+			data?: StepperInternal.State[ 'stepData' ];
+			children?: React.ReactNode;
+			/**
+			 * These two prop are used internally by the Stepper to redirect the user from the user step.
+			 */
+			redirectTo?: string;
+			signupUrl?: string;
+		},
+		StepSubmittedTypes[ 'accepts' ]
+	>;
+
+type StepPropTypes = {
+	readonly submits?: Record< string, unknown >;
+	readonly accepts?: Record< string, unknown >;
 };
 
-export type Step<
-	StepSubmittedTypes extends { submits: Record< string, unknown > } = {
-		submits: Record< string, unknown >;
-	},
-> = React.FC< StepProps< StepSubmittedTypes > >;
+export type Step< ConfiguredStepPropTypes extends StepPropTypes = never > = React.FC<
+	StepProps< ConfiguredStepPropTypes >
+>;
 
 export type ProvidedDependencies = Record< string, unknown >;
 

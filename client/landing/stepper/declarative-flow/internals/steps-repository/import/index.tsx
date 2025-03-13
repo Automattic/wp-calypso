@@ -70,7 +70,12 @@ export const ImportWrapper: Step< {
 	);
 };
 
-const ImportStep: Step = function ImportStep( props ) {
+const ImportStep: Step< {
+	submits: {
+		platform: ImporterPlatform;
+		url: string;
+	};
+} > = function ImportStep( props ) {
 	const { navigation } = props;
 	const siteSlug = useSiteSlug();
 	const fromUrl = useQuery().get( 'from' ) || '';

@@ -161,8 +161,8 @@ async function main() {
 	// The `onboarding` flow is the only flow that uses in-stepper auth so far, so all the auth logic catering V1 can be deleted.
 	if ( 'initialize' in flow && flowSteps ) {
 		// Cache the flow steps for later internal usage. We need to cache them because we promise to call `initialize` only once.
-		flowSteps = injectUserStepInSteps( flowSteps );
-		flow.__flowSteps = flowSteps;
+		flowSteps = injectUserStepInSteps( flowSteps ) as typeof flowSteps;
+		//flow.__flowSteps = flowSteps;
 		enhanceFlowWithUtilityFunctions( flow );
 	} else if ( 'useSteps' in flow ) {
 		// V1 flows have to be enhanced by changing their `useSteps` hook.

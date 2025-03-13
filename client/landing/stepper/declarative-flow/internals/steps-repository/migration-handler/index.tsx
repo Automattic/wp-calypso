@@ -18,13 +18,15 @@ import type { MigrationStatus, UserSelect } from '@automattic/data-stores';
 import './styles.scss';
 
 const MigrationHandler: Step< {
-	isFromMigrationPlugin: boolean;
-	status: MigrationStatus;
-	targetBlogId: number | undefined;
-	isAdminOnTarget: boolean | undefined;
-	isTargetBlogUpgraded: boolean | undefined;
-	targetBlogSlug: string | undefined;
-	userHasSite: boolean;
+	submits: {
+		isFromMigrationPlugin: boolean;
+		status: MigrationStatus;
+		targetBlogId: number | undefined;
+		isAdminOnTarget: boolean | undefined;
+		isTargetBlogUpgraded: boolean | undefined;
+		targetBlogSlug: string | undefined;
+		userHasSite: boolean;
+	};
 } > = function MigrationHandler( { navigation } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();

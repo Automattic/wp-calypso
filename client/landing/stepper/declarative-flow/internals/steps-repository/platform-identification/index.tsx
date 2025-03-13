@@ -1,8 +1,19 @@
 import { useTranslate } from 'i18n-calypso';
 import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { ImporterPlatform } from 'calypso/lib/importer/types';
 import ImportList from '../import-list';
 
-const PlatformIdentificationStep: Step = ( props ) => {
+const PlatformIdentificationStep: Step< {
+	submits: {
+		platform: ImporterPlatform;
+		url: string;
+	};
+	accepts: {
+		title?: string;
+		subTitle?: string;
+		skipTracking?: boolean;
+	};
+} > = ( props ) => {
 	const translate = useTranslate();
 
 	return (

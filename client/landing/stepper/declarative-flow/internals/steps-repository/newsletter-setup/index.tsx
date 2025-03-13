@@ -13,9 +13,11 @@ import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
 
 const NewsletterSetup: Step< {
-	siteTitle: string;
-	tagline: string;
-	paidSubscribers: boolean;
+	submits: {
+		siteTitle: string;
+		tagline: string;
+		paidSubscribers: boolean;
+	};
 } > = ( { navigation } ) => {
 	const { submit } = navigation;
 	const translate = useTranslate();

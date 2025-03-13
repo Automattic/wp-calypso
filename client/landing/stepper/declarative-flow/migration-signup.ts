@@ -56,9 +56,9 @@ const migrationSignup: Flow = {
 			}
 
 			if (
-				[ STEPS.SITE_CREATION_STEP.slug, STEPS.PROCESSING.slug, STEPS.ERROR.slug ].includes(
-					currentStep
-				)
+				currentStep === STEPS.SITE_CREATION_STEP.slug ||
+				currentStep === STEPS.PROCESSING.slug ||
+				currentStep === STEPS.ERROR.slug
 			) {
 				return;
 			}

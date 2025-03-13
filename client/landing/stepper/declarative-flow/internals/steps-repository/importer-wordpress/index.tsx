@@ -5,17 +5,18 @@ import { useStepNavigator } from 'calypso/landing/stepper/declarative-flow/inter
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { withImporterWrapper } from '../importer';
-import type { StepProps } from '../../types';
-import type { FC, ReactElement } from 'react';
+import type { Step } from '../../types';
+import type { ReactElement } from 'react';
 import './style.scss';
 
 const Importer = withImporterWrapper( WordpressImporter );
 
-interface Props extends StepProps {
-	customizedActionButtons?: ReactElement;
-}
-
-const ImporterWordpress: FC< Props > = function ( props ) {
+const ImporterWordpress: Step< {
+	submits: { type?: 'redirect'; url?: string; action?: 'verify-email' };
+	accepts: {
+		customizedActionButtons?: ReactElement;
+	};
+} > = function ( props ) {
 	const queryParams = useQuery();
 	const site = useSite();
 	const migrateFrom = queryParams.get( 'from' );
