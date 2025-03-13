@@ -2,20 +2,35 @@
 @use '@automattic/typography';
 
 .a8c-use-validation {
+	// For components based on InputBase
 	&:has(:is(input, select):user-invalid) .components-input-control__backdrop {
 		--wp-components-color-accent: #{colors.$alert-red};
 		border-color: #{colors.$alert-red};
 	}
-	&:is(textarea, input[type="text"]):user-invalid {
+
+	// For TextControl, TextareaControl
+	:is(textarea, input[type="text"]):user-invalid {
 		--wp-admin-theme-color: #{colors.$alert-red};
 		--wp-components-color-accent: #{colors.$alert-red};
 		border-color: #{colors.$alert-red};
 	}
+
+	// For ComboboxControl
+	.components-combobox-control__suggestions-container:has(input:user-invalid):not(:has([aria-expanded="true"])) {
+		border-color: #{colors.$alert-red};
+	}
 }
 
-.a8c-use-validation__toggle-group-wrapper {
+.a8c-use-validation__wrapper-with-error-delegate {
 	position: relative;
 
+	// For CustomSelectControl
+	&:has(select:user-invalid) .components-input-control__backdrop {
+		--wp-components-color-accent: #{colors.$alert-red};
+		border-color: #{colors.$alert-red};
+	}
+
+	// For ToggleGroupControl
 	&:has(input[type="radio"]:user-invalid) {
 		--wp-components-color-accent: #{colors.$alert-red};
 	}

@@ -144,7 +144,6 @@ export const Password: StoryObj = {
 	},
 };
 
-// TODO: Add error styles.
 export const Text: StoryObj = {
 	name: 'TextControl',
 	render: function Template() {
@@ -180,7 +179,6 @@ export const Text: StoryObj = {
 	},
 };
 
-// TODO: Add error styles.
 export const Textarea: StoryObj = {
 	render: function Template() {
 		const [ value, setValue ] = useState< string >( '' );
@@ -377,7 +375,7 @@ export const Select: StoryObj = {
 						__nextHasNoMarginBottom
 						__next40pxDefaultSize
 						label="Select"
-						help="Don't select Option 1."
+						help="Selecting option 1 will trigger an error."
 						options={ [
 							{ value: '', label: 'Select an option' },
 							{ value: '1', label: 'Option 1 (not allowed)' },
@@ -400,7 +398,6 @@ export const Select: StoryObj = {
 	},
 };
 
-// TODO: Add error styles.
 export const CustomSelect: StoryObj = {
 	render: function Template() {
 		const [ value, setValue ] =
@@ -409,7 +406,7 @@ export const CustomSelect: StoryObj = {
 		const validityTargetRef = useRef< HTMLSelectElement >( null );
 
 		return (
-			<div style={ { position: 'relative' } }>
+			<div className="a8c-use-validation__wrapper-with-error-delegate">
 				<ControlWithError
 					render={
 						<CustomSelectControl
@@ -472,7 +469,7 @@ export const ToggleGroup: StoryObj = {
 		const valueRef = useRef< string | number | undefined >( '1' );
 
 		return (
-			<div className="a8c-use-validation__toggle-group-wrapper">
+			<div className="a8c-use-validation__wrapper-with-error-delegate">
 				<ControlWithError
 					render={
 						<ToggleGroupControl
@@ -484,6 +481,7 @@ export const ToggleGroup: StoryObj = {
 							onChange={ ( value ) => {
 								valueRef.current = value;
 							} }
+							help="Selecting option 2 will trigger an error."
 							// TODO: Upstream limitation - In uncontrolled mode, starting from an undefined value then
 							// setting a value has a visual bug.
 							value="1"
@@ -493,8 +491,8 @@ export const ToggleGroup: StoryObj = {
 						</ToggleGroupControl>
 					}
 					onReportCustomValidity={ () => {
-						if ( valueRef.current === '1' ) {
-							return 'Option 1 is not allowed.';
+						if ( valueRef.current === '2' ) {
+							return 'Option 2 is not allowed.';
 						}
 					} }
 					getValidityTarget={ () => validityTargetRef.current }
@@ -527,7 +525,6 @@ export const ToggleGroup: StoryObj = {
 	},
 };
 
-// TODO: Add error styles.
 export const Combobox: StoryObj = {
 	render: function Template() {
 		const valueRef = useRef< React.ComponentProps< typeof ComboboxControl >[ 'value' ] >();
