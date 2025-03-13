@@ -68,8 +68,8 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 
 	// Reader feed item fields to show in the UI.
 	const description = isWpcomFeed ? site?.description : feed?.description;
-	const displayUrl = isWpcomFeed ? getSiteUrl( { feed, site } ) : subscribeUrl;
-	const filteredDisplayUrl = filterURLForDisplay( displayUrl );
+	const displayUrl = isWpcomFeed && site ? getSiteUrl( { feed, site } ) : subscribeUrl;
+	const filteredDisplayUrl = filterURLForDisplay( displayUrl ?? '' );
 	const feedUrl = isWpcomFeed ? getFeedUrl( feed?.feed_ID ) : subscribeUrl;
 	const hasSubscribed = ( isWpcomFeed ? site?.is_following : feed?.is_following ) || isSubscribed;
 	const iconUrl = isWpcomFeed ? site?.icon?.img ?? site?.icon?.ico : feed?.image;
@@ -77,9 +77,10 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 		source === SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST && railcar;
 	const subscribeDisabled =
 		( isWpcomFeed ? site?.is_following : feed?.is_following ) || isSubscribing || isSubscribed;
-	const title = isWpcomFeed
-		? getSiteName( { feed, site } )
-		: feed?.name ?? filterURLForDisplay( subscribeUrl );
+	const title =
+		isWpcomFeed && site
+			? getSiteName( { feed, site } )
+			: feed?.name ?? filterURLForDisplay( subscribeUrl );
 
 	function onSubscribeClick(): void {
 		if ( ! isEmailVerified ) {
