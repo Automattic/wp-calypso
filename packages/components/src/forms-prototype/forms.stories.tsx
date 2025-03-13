@@ -412,6 +412,7 @@ export const CustomSelect: StoryObj = {
 						<CustomSelectControl
 							// TODO: Upstream limitation - Required isn't passed down correctly.
 							// Needs to be set on delegate element.
+							// @ts-expect-error - TODO: Move `required` to ControlWithError.
 							required
 							__next40pxDefaultSize
 							label="Custom Select"
@@ -549,6 +550,8 @@ export const Combobox: StoryObj = {
 						<ComboboxControl
 							__nextHasNoMarginBottom
 							__next40pxDefaultSize
+							// TODO: Upstream limitation - `required` is not in the TS types.
+							// @ts-expect-error - TODO: Move `required` to ControlWithError.
 							required
 							label="Combobox"
 							help="Option A is not allowed."
