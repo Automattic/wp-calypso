@@ -6,7 +6,7 @@
 
 .downgrade-modal {
 	.components-modal__frame {
-		width: 560px;
+		width: 650px;
 
 		@media (max-width: $break-small) {
 			width: auto;
@@ -73,6 +73,24 @@
 				margin-right: 8px;
 				flex-shrink: 0;
 			}
+		}
+	}
+
+	.downgrade-modal__lossless-import {
+		margin-bottom: 24px;
+		padding: 16px;
+		background-color: var(--studio-gray-0);
+		border-radius: 4px;
+		font-size: $font-body-small;
+
+		.components-checkbox-control__input-container {
+			margin-right: 12px;
+		}
+
+		.components-base-control__help {
+			margin-top: 4px;
+			margin-left: 24px;
+			color: var(--studio-gray-60);
 		}
 	}
 

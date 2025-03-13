@@ -1,7 +1,7 @@
 import { getPlan, PLAN_BUSINESS, PLAN_ECOMMERCE } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { Plans } from '@automattic/data-stores';
-import { Modal, Button } from '@wordpress/components';
+import { Modal, Button, CheckboxControl } from '@wordpress/components';
 import { useCallback, useMemo, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
@@ -31,6 +31,7 @@ const DowngradeModal = () => {
 	const site = useSelector( ( state ) => getSite( state, siteId ) );
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
 	const [ isDowngrading, setIsDowngrading ] = useState( false );
+	const [ enableLosslessImport, setEnableLosslessImport ] = useState( false );
 
 	// Check if the site is atomic and if the target plan is not a Business or Commerce plan
 	const isAtomicSite = site?.options?.is_wpcom_atomic;
@@ -70,6 +71,7 @@ const DowngradeModal = () => {
 				product_id: currentPlan.productId,
 				type: 'downgrade',
 				to_product_id: getPlan( toPlanSlug )?.getProductId(),
+				lossless_revert: shouldShowAtomicWarning ? enableLosslessImport : undefined,
 			} );
 
 			// Show success notification
@@ -90,7 +92,17 @@ const DowngradeModal = () => {
 			setIsDowngrading( false );
 			handleClose();
 		}
-	}, [ currentPlan, toPlanSlug, siteId, dispatch, translate, handleClose, isDowngrading ] );
+	}, [
+		currentPlan,
+		toPlanSlug,
+		siteId,
+		dispatch,
+		translate,
+		handleClose,
+		isDowngrading,
+		shouldShowAtomicWarning,
+		enableLosslessImport,
+	] );
 
 	// Get features that will be lost when downgrading
 	const lostFeatures = useMemo( () => {
@@ -152,52 +164,6 @@ const DowngradeModal = () => {
 				</Notice>
 			) }
 
-			{ shouldShowAtomicWarning && (
-				<Notice
-					className="downgrade-modal__notice"
-					icon={ <Gridicon icon="notice-outline" /> }
-					isCompact={ false }
-					theme="light"
-					status="is-warning"
-					showDismiss={ false }
-				>
-					<div className="downgrade-modal__atomic-warning">
-						<p>
-							<strong>
-								{ translate(
-									'Your site is currently on a plan that supports plugins, third-party themes, and other advanced features. Downgrading from this plan means:'
-								) }
-							</strong>
-						</p>
-						<ul>
-							<li>
-								{ translate(
-									'Your site will lose any plugins or third-party themes installed and features unavailable on the lower-level plan.'
-								) }
-							</li>
-							<li>
-								{ translate(
-									'Your site will retain the content of your pages, posts, and media, but any content added through plugins will be lost.'
-								) }
-							</li>
-							<li>
-								{ translate(
-									"Your site will revert to how it looked before you activated the plan's features."
-								) }
-							</li>
-							<li>
-								{ translate(
-									'The site will be private, so you can check it before making it public on the new plan.'
-								) }
-							</li>
-							<li>
-								{ translate( 'Please contact support so we can help you with the downgrade.' ) }
-							</li>
-						</ul>
-					</div>
-				</Notice>
-			) }
-
 			<div className="downgrade-modal__info">
 				<p>
 					{ translate(
@@ -228,6 +194,59 @@ const DowngradeModal = () => {
 						) ) }
 					</ul>
 				</div>
+			) }
+
+			{ shouldShowAtomicWarning && (
+				<>
+					<Notice
+						className="downgrade-modal__notice"
+						icon={ <Gridicon icon="notice-outline" /> }
+						isCompact={ false }
+						theme="light"
+						status="is-warning"
+						showDismiss={ false }
+					>
+						<div className="downgrade-modal__atomic-warning">
+							<p>
+								<strong>
+									{ translate(
+										'Your site is currently on a plan that supports plugins, third-party themes, and other advanced features. Downgrading from this plan means:'
+									) }
+								</strong>
+							</p>
+							<ul>
+								<li>
+									{ translate(
+										'Your site will lose any plugins or third-party themes installed and features unavailable on the lower-level plan.'
+									) }
+								</li>
+								<li>
+									{ translate(
+										"Your site will revert to how it looked before you activated the plan's features."
+									) }
+								</li>
+								<li>
+									{ translate(
+										'The site will be private, so you can check it before making it public on the new plan.'
+									) }
+								</li>
+								<li>
+									{ translate( 'Please contact support so we can help you with the downgrade.' ) }
+								</li>
+							</ul>
+						</div>
+					</Notice>
+					<div className="downgrade-modal__lossless-import">
+						<CheckboxControl
+							label={ translate( 'Attempt to recover my posts, pages, and media after downgrade' ) }
+							help={ translate(
+								'Your posts, pages, and media added after upgrading will be automatically imported to your downgraded site. You will receive an email when complete.'
+							) }
+							checked={ enableLosslessImport }
+							onChange={ setEnableLosslessImport }
+						/>
+					</div>
+				</>
 			) }
 
 			<div className="downgrade-modal__actions">
