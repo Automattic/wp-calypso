@@ -49,7 +49,7 @@ export default function GetStarted() {
 			</LayoutTop>
 			<LayoutBody>
 				<div className="team-list-get-started__heading">
-					{ translate( `Invite team members to help manage your clients' sites.` ) }
+					{ translate( "Invite team members to help manage your clients' sites." ) }
 				</div>
 
 				<div className="team-list-get-started__subtitle">
@@ -58,15 +58,16 @@ export default function GetStarted() {
 					) }
 				</div>
 
-				<StepSection heading={ translate( 'How do I start?' ) }>
+				<StepSection applyCoreStyles heading={ translate( 'How do I start?' ) }>
 					<StepSectionItem
+						applyCoreStyles
 						isNewLayout
 						stepNumber={ 1 }
 						heading={ translate( 'Invite a team member' ) }
 						description={
 							<>
 								{ translate(
-									`Team members get almost the same permissions as admins, but they can't do things like:`
+									"Team members get almost the same permissions as admins, but they can't do things like:"
 								) }
 
 								<ul className="team-list-get-started__excluded-operation-list">
@@ -87,7 +88,7 @@ export default function GetStarted() {
 					/>
 				</StepSection>
 
-				<StepSection heading={ translate( 'Learn more about team members' ) }>
+				<StepSection applyCoreStyles heading={ translate( 'Learn more about team members' ) }>
 					<Button
 						className="team-list-get-started__learn-more-button"
 						variant="link"

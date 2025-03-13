@@ -29,7 +29,19 @@ interface DomainsTableRowProps {
 
 export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 	const { __ } = useI18n();
-
+	const {
+		context,
+		canSelectAnyDomains,
+		domainsTableColumns,
+		isCompact,
+		currentlySelectedDomainName,
+		selectedFeature,
+		isHostingOverview,
+		hasConnectableSites,
+		sidebarMode,
+		onPointToWpcom,
+		isPointingToWpcom,
+	} = useDomainsTable();
 	const {
 		ref,
 		site,
@@ -49,18 +61,13 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		pendingUpdates,
 		sslStatus,
 		hasWpcomManagedSslCert,
-	} = useDomainRow( domain );
-	const {
-		context,
-		canSelectAnyDomains,
-		domainsTableColumns,
-		isCompact,
-		currentlySelectedDomainName,
-		selectedFeature,
-		isHostingOverview,
-		hasConnectableSites,
-		sidebarMode,
-	} = useDomainsTable();
+	} = useDomainRow(
+		domain,
+		() => {
+			onPointToWpcom?.( domain.domain );
+		},
+		isPointingToWpcom
+	);
 
 	const renderSiteCell = () => {
 		if ( site && currentDomainData ) {

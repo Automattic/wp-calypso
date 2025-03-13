@@ -5,7 +5,7 @@ import { Button } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
-import { ReactElement } from 'react';
+import { useEffect, ReactElement } from 'react';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import NavigationHeader from 'calypso/components/navigation-header';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -79,9 +79,39 @@ export const SubscribersHeader = ( {
 	const [ showSubscriberModal, setShowSubscriberModal ] = useState< SubscriberModalType >(
 		SubscriberModalType.NONE
 	);
+	const [ initialMethod, setInitialMethod ] = useState( '' );
 	const closeSubscriberModal = () => {
 		setShowSubscriberModal( SubscriberModalType.NONE );
+		setInitialMethod( '' );
+
+		if ( window.location.hash.startsWith( '#add-subscribers' ) ) {
+			// Doing this instead of window.location.hash = '' because window.location.hash keeps the # symbol
+			// Also this makes the back button show the modal again, which is neat
+			history.pushState( '', document.title, window.location.pathname + window.location.search );
+		}
 	};
+
+	useEffect( () => {
+		const handleHashChange = () => {
+			const hash = window.location.hash;
+			if ( hash.startsWith( '#add-subscribers' ) ) {
+				const method = new URLSearchParams( hash.replace( '#add-subscribers', '' ) ).get(
+					'method'
+				);
+				setShowSubscriberModal( SubscriberModalType.ADD );
+				if ( method ) {
+					setInitialMethod( method );
+				}
+			}
+		};
+
+		window.addEventListener( 'hashchange', handleHashChange );
+		handleHashChange();
+
+		return () => {
+			window.removeEventListener( 'hashchange', handleHashChange );
+		};
+	}, [] );
 
 	return (
 		<>
@@ -123,6 +153,7 @@ export const SubscribersHeader = ( {
 						closeSubscriberModal();
 						addSubscribersCallback();
 					} }
+					initialMethod={ initialMethod }
 				/>
 			) }
 			{ siteId && (

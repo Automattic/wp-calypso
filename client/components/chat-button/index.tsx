@@ -1,15 +1,14 @@
-import { Button, Gridicon, Spinner } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
 import { useChatStatus } from '@automattic/help-center/src/hooks';
 import {
 	useCanConnectToZendeskMessaging,
 	useZendeskMessagingAvailability,
-	useOpenZendeskMessaging,
 } from '@automattic/zendesk-client';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import type { MessagingGroup, ZendeskConfigName } from '@automattic/zendesk-client';
+import type { MessagingGroup } from '@automattic/zendesk-client';
 import type { FC } from 'react';
 
 type ChatIntent = 'SUPPORT' | 'PRESALES' | 'PRECANCELLATION';
@@ -42,19 +41,6 @@ function getMessagingGroupForIntent( chatIntent: ChatIntent ): MessagingGroup {
 			return 'wpcom_messaging';
 	}
 }
-
-function getConfigNameForIntent( chatIntent: ChatIntent ): ZendeskConfigName {
-	switch ( chatIntent ) {
-		case 'PRESALES':
-			return 'zendesk_presales_chat_key';
-
-		case 'PRECANCELLATION':
-		case 'SUPPORT':
-		default:
-			return 'zendesk_support_chat_key';
-	}
-}
-
 const ChatButton: FC< Props > = ( {
 	borderless = true,
 	chatIntent = 'SUPPORT',
@@ -62,7 +48,6 @@ const ChatButton: FC< Props > = ( {
 	className = '',
 	initialMessage,
 	onClick,
-	onError,
 	siteId = null,
 	primary = false,
 	siteUrl,
@@ -77,7 +62,7 @@ const ChatButton: FC< Props > = ( {
 		messagingGroup,
 		isEligibleForChat
 	);
-	const { setShowHelpCenter, setNavigateToRoute, resetStore } =
+	const { setShowHelpCenter, setNavigateToRoute, setNewMessagingChat } =
 		useDataStoreDispatch( HELP_CENTER_STORE );
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
 
@@ -109,34 +94,10 @@ const ChatButton: FC< Props > = ( {
 		return false;
 	}
 
-	const configName = getConfigNameForIntent( chatIntent );
-	const { isOpeningZendeskWidget, openZendeskWidget } = useOpenZendeskMessaging(
-		section,
-		shouldShowChatButton(),
-		configName
-	);
-
 	const handleClick = () => {
-		if ( canConnectToZendesk ) {
-			if ( chatIntent === 'PRECANCELLATION' ) {
-				onClick?.();
-				setShowHelpCenter( true );
-				setNavigateToRoute(
-					`/odie?provider=zendesk&userFieldMessage=${ initialMessage }&siteUrl=${ siteUrl }&siteId=${ siteId }`
-				);
-			} else {
-				openZendeskWidget( {
-					message: initialMessage,
-					siteUrl,
-					siteId,
-					onError,
-					onSuccess: () => {
-						onClick?.();
-						resetStore();
-						setShowHelpCenter( false );
-					},
-				} );
-			}
+		if ( canConnectToZendesk && initialMessage ) {
+			onClick?.();
+			setNewMessagingChat( { initialMessage, section, siteUrl, siteId } );
 		} else {
 			setNavigateToRoute( '/contact-form?mode=CHAT' );
 			setShowHelpCenter( true );
@@ -151,10 +112,6 @@ const ChatButton: FC< Props > = ( {
 	}
 
 	function getChildren() {
-		if ( isOpeningZendeskWidget ) {
-			return <Spinner />;
-		}
-
 		return children || <Gridicon icon="chat" />;
 	}
 

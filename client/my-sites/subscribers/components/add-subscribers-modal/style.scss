@@ -64,6 +64,12 @@
 
 		.add-subscribers-modal__notice-text {
 			margin-right: 6px;
+
+			+ a.notice__action {
+				margin: 0;
+				padding: 0;
+				cursor: pointer;
+			}
 		}
 	}
 

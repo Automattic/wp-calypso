@@ -42,7 +42,7 @@ describe( 'Migration Signup Flow', () => {
 
 			runUseStepNavigationSubmit( {
 				currentStep: STEPS.SITE_CREATION_STEP.slug,
-				currentURL: `/setup/create-site`,
+				currentURL: '/setup/create-site',
 			} );
 
 			expect( getFlowLocation() ).toEqual( {

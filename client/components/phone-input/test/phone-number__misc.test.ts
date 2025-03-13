@@ -40,7 +40,7 @@ describe( 'indexOfLongestCommonSuffix', function () {
 		{ array1: [ 'a', 'b', 'c' ], array2: [ 'b', 'c' ], expected: [ 1, 0 ] },
 		{ array1: [ 'x', 'y', 'z' ], array2: [ 'a', 'b', 'c', 'd' ], expected: [ 3, 4 ] },
 	] )(
-		`Correct index for longest suffix is found for inputs $array1, $array2`,
+		'Correct index for longest suffix is found for inputs $array1, $array2',
 		function ( { array1, array2, expected } ) {
 			const result = indexOfLongestCommonSuffix( array1, array2 );
 			expect( result ).toStrictEqual( expected );
@@ -53,7 +53,7 @@ describe( 'indexOfStrictSubsequenceEnd', function () {
 		{ array1: [ 'a', 'b' ], array2: [ 'a', 'b', 'c' ], expected: 2 },
 		{ array1: [ 'a', 'b' ], array2: [ 'a', 'd', 'b', 'c' ], expected: 3 },
 	] )(
-		`Correct index for subsequence is found for inputs $array1, $array2`,
+		'Correct index for subsequence is found for inputs $array1, $array2',
 		function ( { array1, array2, expected } ) {
 			const result = indexOfStrictSubsequenceEnd( array1, array2 )[ 0 ];
 			expect( result ).toStrictEqual( expected );
@@ -122,7 +122,7 @@ describe( 'getUpdatedCursorPosition', function () {
 		{ oldvalue: '(802) 222-2222', newvalue: '6', position: 14, expected: 1 },
 		{ oldvalue: '+1 802 222-2222', newvalue: '6', position: 15, expected: 1 },
 	] )(
-		`Returns correct cursor position for inputs $oldvalue, $newvalue`,
+		'Returns correct cursor position for inputs $oldvalue, $newvalue',
 		function ( { oldvalue, newvalue, position, expected } ) {
 			const result = getUpdatedCursorPosition( oldvalue, newvalue, position );
 			expect( result ).toEqual( expected );

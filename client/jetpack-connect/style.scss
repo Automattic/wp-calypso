@@ -139,6 +139,12 @@ $colophon-height: 50px;
 
 	.formatted-header {
 		text-align: center;
+
+		.formatted-header__title {
+			// To avoid wrapping of "self-hosted" in the title due
+			// to the behavior of text-wrap:balance with hyphens.
+			text-wrap: pretty;
+		}
 	}
 }
 

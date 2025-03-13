@@ -47,7 +47,7 @@
 	.select-goals__alternative-flows-container {
 		display: grid;
 		width: 100%;
-		grid-template-columns: max-content;
+		grid-template-columns: 1fr;
 		gap: 20px 8px;
 		padding-bottom: 60px + 48px; // height of sticky footer
 
@@ -66,15 +66,20 @@
 	.components-button.select-goals__link.is-link { // extra specificity to override default link styles
 		color: var(--color-neutral-100);
 		font-size: $font-body-small;
+		justify-content: flex-start;
+		width: fit-content;
 	}
 
 	.select-goals__dashboard-button.select-goals__link { // extra specificity to override default link styles
-		margin-left: auto;
+		margin-left: 0;
 		margin-right: auto;
 		gap: 8px;
+		display: flex;
+		justify-content: flex-start;
 
 		@include break-small {
 			grid-column: span 3;
+			margin-left: auto;
 		}
 	}
 

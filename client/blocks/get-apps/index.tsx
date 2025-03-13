@@ -21,16 +21,16 @@ export const GetApps = () => {
 		<>
 			<NavigationHeader title={ translate( 'Apps' ) } />
 			<div className="get-apps__wrapper">
-				<h2 className="get-apps__section-title">{ translate( 'Mobile' ) }</h2>
-				<div className="get-apps__section">
-					<MobileDownloadCard />
-				</div>
 				<h2 className="get-apps__section-title">{ translate( 'Desktop' ) }</h2>
 				<div className="get-apps__section">
 					{ ! isDesktopEnv &&
 						desktopApps.map( ( appConfig ) => (
 							<DesktopDownloadCard key={ appConfig.id } appConfig={ appConfig } />
 						) ) }
+				</div>
+				<h2 className="get-apps__section-title">{ translate( 'Mobile' ) }</h2>
+				<div className="get-apps__section">
+					<MobileDownloadCard />
 				</div>
 			</div>
 		</>

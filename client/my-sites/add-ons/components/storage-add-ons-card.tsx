@@ -248,6 +248,7 @@ export default function StorageAddOnCard( { siteId, actionPrimary }: Props ) {
 								__next40pxDefaultSize
 								hideLabelFromVision
 								options={ selectControlOptions || [] }
+								// @ts-expect-error ts complains about selectedOption possibly being null
 								value={ selectedOption }
 								onChange={ handleOnChange }
 								label=""

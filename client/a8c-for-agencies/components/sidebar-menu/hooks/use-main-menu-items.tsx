@@ -15,6 +15,7 @@ import {
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { isPathAllowed } from 'calypso/a8c-for-agencies/lib/permission';
+import wooPaymentsIcon from 'calypso/assets/images/a8c-for-agencies/woopayments/woo-sidebar-icon.svg';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -44,35 +45,21 @@ const useMainMenuItems = ( path: string ) => {
 	const agency = useSelector( getActiveAgency );
 
 	const menuItems = useMemo( () => {
-		const isAutomatedReferralsEnabled = config.isEnabled( 'a4a-automated-referrals' );
-
 		let referralItems = [] as any[];
 
 		if ( isSectionNameEnabled( 'a8c-for-agencies-referrals' ) ) {
-			referralItems = isAutomatedReferralsEnabled
-				? [
-						{
-							icon: reusableBlock,
-							path: A4A_REFERRALS_LINK,
-							link: A4A_REFERRALS_DASHBOARD,
-							title: translate( 'Referrals' ),
-							trackEventProps: {
-								menu_item: 'Automattic for Agencies / Referrals',
-							},
-							withChevron: true,
-						},
-				  ]
-				: [
-						{
-							icon: reusableBlock,
-							path: '/',
-							link: A4A_REFERRALS_LINK,
-							title: translate( 'Referrals' ),
-							trackEventProps: {
-								menu_item: 'Automattic for Agencies / Referrals',
-							},
-						},
-				  ];
+			referralItems = [
+				{
+					icon: reusableBlock,
+					path: A4A_REFERRALS_LINK,
+					link: A4A_REFERRALS_DASHBOARD,
+					title: translate( 'Referrals' ),
+					trackEventProps: {
+						menu_item: 'Automattic for Agencies / Referrals',
+					},
+					withChevron: true,
+				},
+			];
 		}
 
 		const migrationMenuItem = isSectionNameEnabled( 'a8c-for-agencies-migrations' )
@@ -130,6 +117,19 @@ const useMainMenuItems = ( path: string ) => {
 			},
 			...referralItems,
 			migrationMenuItem,
+			...( isSectionNameEnabled( 'a8c-for-agencies-woopayments' )
+				? [
+						{
+							icon: <img src={ wooPaymentsIcon } alt="WooPayments" />,
+							path: '/',
+							link: A4A_WOOPAYMENTS_LINK,
+							title: translate( 'WooPayments' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / WooPayments',
+							},
+						},
+				  ]
+				: [] ),
 			...( isSectionNameEnabled( 'a8c-for-agencies-plugins' )
 				? [
 						{
@@ -192,19 +192,6 @@ const useMainMenuItems = ( path: string ) => {
 							title: translate( 'Agency Tier' ),
 							trackEventProps: {
 								menu_item: 'Automattic for Agencies / Agency Tier',
-							},
-						},
-				  ]
-				: [] ),
-			...( isSectionNameEnabled( 'a8c-for-agencies-woopayments' )
-				? [
-						{
-							icon: currencyDollar,
-							path: '/',
-							link: A4A_WOOPAYMENTS_LINK,
-							title: translate( 'WooPayments' ),
-							trackEventProps: {
-								menu_item: 'Automattic for Agencies / WooPayments',
 							},
 						},
 				  ]

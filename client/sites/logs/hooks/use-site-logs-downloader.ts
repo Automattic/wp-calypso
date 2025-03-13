@@ -193,7 +193,11 @@ export const useSiteLogsDownloader = ( {
 							downloadErrorNotice( translate( 'No logs available for this time range' ) );
 							isError = true;
 						} else {
-							logs = [ Object.keys( newLogData[ 0 ] ).join( ',' ) + '\n' ];
+							logs = [
+								Object.keys( newLogData[ 0 ] )
+									.filter( ( key ) => key !== 'atomic_site_id' )
+									.join( ',' ) + '\n',
+							];
 							totalLogs = get( response, 'data.total_results', 1 );
 						}
 					}
@@ -201,7 +205,10 @@ export const useSiteLogsDownloader = ( {
 					logs = [
 						...logs,
 						...map( newLogData, ( entry ) => {
-							return Object.values( entry ).join( ',' ) + '\n';
+							const cleanedEntry = Object.fromEntries(
+								Object.entries( entry ).filter( ( [ key ] ) => key !== 'atomic_site_id' )
+							);
+							return Object.values( cleanedEntry ).join( ',' ) + '\n';
 						} ),
 					];
 

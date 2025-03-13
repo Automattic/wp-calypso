@@ -19,7 +19,7 @@ const Hooray: React.FunctionComponent< Props > = ( {
 	return (
 		<div
 			className={ clsx(
-				`onboarding-hooray`,
+				'onboarding-hooray',
 				{ 'onboarding-hooray__animate': animate },
 				className
 			) }

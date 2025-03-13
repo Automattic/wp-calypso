@@ -120,6 +120,6 @@ describe( 'validateExperimentAssignment', () => {
 				...validFallbackExperimentAssignment,
 				experimentName: null,
 			} );
-		} ).toThrowErrorMatchingInlineSnapshot( `"Invalid ExperimentAssignment"` );
+		} ).toThrowErrorMatchingInlineSnapshot( '"Invalid ExperimentAssignment"' );
 	} );
 } );

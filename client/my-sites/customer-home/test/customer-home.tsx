@@ -76,10 +76,22 @@ describe( 'CustomerHome', () => {
 		expect( screen.queryByTestId( 'launchpad-first' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'should show HomeContent for unlaunched site with no intent created by onboarding flow, and launchpad is unskipped', async () => {
+		const testSite = makeTestSite( {
+			launch_status: 'unlaunched',
+			options: { launchpad_screen: false, site_intent: '', site_creation_flow: 'onboarding' },
+		} );
+
+		renderWithProvider( <CustomerHome site={ testSite } /> );
+
+		await waitFor( () => expect( screen.getByTestId( 'home-content' ) ).toBeInTheDocument() );
+		expect( screen.queryByTestId( 'launchpad-first' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'should show Launchpad when site is unlaunched, created by onboarding flow, and launchpad is unskipped', async () => {
 		const testSite = makeTestSite( {
 			launch_status: 'unlaunched',
-			options: { site_creation_flow: 'onboarding', launchpad_screen: false },
+			options: { site_creation_flow: 'onboarding', launchpad_screen: false, site_intent: 'sell' },
 		} );
 
 		renderWithProvider( <CustomerHome site={ testSite } /> );
