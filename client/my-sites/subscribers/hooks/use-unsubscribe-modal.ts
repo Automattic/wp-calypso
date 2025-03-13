@@ -1,3 +1,4 @@
+import { speak } from '@wordpress/a11y';
 import { useEffect, useState } from 'react';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { navigate } from 'calypso/lib/navigate';
