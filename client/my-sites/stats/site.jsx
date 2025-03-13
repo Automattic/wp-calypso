@@ -586,6 +586,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 							period={ period }
 							date={ date }
 							query={ query }
+							queryParams={ context.query }
 							statsType="statsTopPosts"
 							showQueryDate
 							isShort
