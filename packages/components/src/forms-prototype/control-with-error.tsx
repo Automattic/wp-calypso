@@ -24,7 +24,16 @@ function UnforwardedControlWithError< C extends React.ReactElement >(
 		render,
 		...props
 	}: {
+		/**
+		 * A function that returns a custom validity message when applicable.
+		 *
+		 * This message will be applied to the element returned by `getValidityTarget`.
+		 * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLObjectElement/setCustomValidity
+		 */
 		onReportCustomValidity?: () => string | void;
+		/**
+		 * A function that returns the actual element on which the validity data should be applied.
+		 */
 		getValidityTarget: () => ValidityTarget | null | undefined;
 		render: C;
 	},
