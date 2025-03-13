@@ -3,6 +3,7 @@ import {
 	CheckboxControl,
 	/* eslint-disable wpcalypso/no-unsafe-wp-apis */
 	__experimentalInputControl as InputControl,
+	__experimentalInputControlSuffixWrapper as InputControlSuffixWrapper,
 	__experimentalNumberControl as NumberControl,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
@@ -16,6 +17,7 @@ import {
 	RadioControl,
 	RangeControl,
 } from '@wordpress/components';
+import { seen, unseen } from '@wordpress/icons';
 import React, { useEffect, useRef, useState } from 'react';
 import { ControlWithError } from './control-with-error';
 import type { Meta, StoryObj } from '@storybook/react';
@@ -61,8 +63,8 @@ const meta: Meta = {
 };
 export default meta;
 
-export const Password: StoryObj = {
-	name: 'Input (Password)',
+export const Input: StoryObj = {
+	name: 'InputControl',
 	render: function Template() {
 		const valueRef = useRef< string >( '' );
 		const validityTargetRef = useRef< HTMLInputElement >( null );
@@ -71,6 +73,49 @@ export const Password: StoryObj = {
 			<ControlWithError
 				render={
 					<InputControl
+						__next40pxDefaultSize
+						label="Input"
+						help="The word 'error' will trigger an error."
+						onChange={ ( value ) => {
+							valueRef.current = value ?? '';
+						} }
+						required
+						ref={ validityTargetRef }
+					/>
+				}
+				onReportCustomValidity={ () => {
+					if ( valueRef.current.toLowerCase() === 'error' ) {
+						return 'The word "error" is not allowed.';
+					}
+				} }
+				getValidityTarget={ () => validityTargetRef.current }
+			/>
+		);
+	},
+};
+
+// TODO: Value can be wiped out on blur.
+export const Password: StoryObj = {
+	name: 'InputControl (Password)',
+	render: function Template() {
+		const valueRef = useRef< string >( '' );
+		const validityTargetRef = useRef< HTMLInputElement >( null );
+		const [ visible, setVisible ] = useState( false );
+		return (
+			<ControlWithError
+				render={
+					<InputControl
+						type={ visible ? 'text' : 'password' }
+						suffix={
+							<InputControlSuffixWrapper variant="control">
+								<Button
+									size="small"
+									icon={ visible ? unseen : seen }
+									onClick={ () => setVisible( ( value ) => ! value ) }
+									label={ visible ? 'Hide password' : 'Show password' }
+								/>
+							</InputControlSuffixWrapper>
+						}
 						__next40pxDefaultSize
 						label="Password"
 						help="Minimum 8 characters, include a number, capital letter, and symbol (!@£$%^&*#)."
