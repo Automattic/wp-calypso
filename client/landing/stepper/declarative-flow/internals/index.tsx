@@ -1,4 +1,4 @@
-import { StepContainerV2Provider } from '@automattic/onboarding';
+import { Step } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { lazy, useEffect } from 'react';
@@ -164,7 +164,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 			} );
 
 			return (
-				<StepContainerV2Provider value={ stepContainerV2Context }>
+				<Step.StepContainerV2Provider value={ stepContainerV2Context }>
 					<StepComponent
 						navigation={ {
 							submit() {
@@ -182,7 +182,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 						redirectTo={ postAuthStepPath }
 						signupUrl={ signupUrl }
 					/>
-				</StepContainerV2Provider>
+				</Step.StepContainerV2Provider>
 			);
 		}
 
@@ -194,7 +194,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 		}
 
 		return (
-			<StepContainerV2Provider value={ stepContainerV2Context }>
+			<Step.StepContainerV2Provider value={ stepContainerV2Context }>
 				<StepComponent
 					navigation={ stepNavigation }
 					flow={ flow.name }
@@ -202,7 +202,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 					stepName={ step.slug }
 					data={ stepData }
 				/>
-			</StepContainerV2Provider>
+			</Step.StepContainerV2Provider>
 		);
 	};
 

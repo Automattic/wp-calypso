@@ -7,5 +7,5 @@ export { Heading } from './components/Heading/Heading';
 export { TopBar } from './components/TopBar/TopBar';
 export { StickyBottomBar } from './components/StickyBottomBar/StickyBottomBar';
 
-export { FullWidthStepLayout } from './wireframes/FullWidthStepLayout/FullWidthStepLayout';
-export { SixColumnsCenteredStepLayout } from './wireframes/SixColumnsCenteredStepLayout/SixColumnsCenteredStepLayout';
+export { FullWidthLayout } from './wireframes/FullWidthLayout/FullWidthLayout';
+export { SixColumnsCenteredLayout } from './wireframes/SixColumnsCenteredLayout/SixColumnsCenteredLayout';

@@ -4,11 +4,14 @@ import { StepContainerV2 } from '../../components/StepContainerV2/StepContainerV
 
 import './style.scss';
 
-export const SixColumnsCenteredStepLayout = ( props: ComponentProps< typeof StepContainerV2 > ) => {
+export const SixColumnsCenteredLayout = ( props: ComponentProps< typeof StepContainerV2 > ) => {
 	return (
 		<StepContainerV2
 			{ ...props }
-			className={ clsx( 'step-container-v2--six-columns-centered-step-layout', props.className ) }
+			className={ clsx(
+				'step-container-v2__content--six-columns-centered-layout',
+				props.className
+			) }
 		/>
 	);
 };

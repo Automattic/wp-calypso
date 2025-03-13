@@ -4,14 +4,14 @@ import { useViewportMatch } from '@wordpress/compose';
 import { chevronLeft } from '@wordpress/icons';
 import { Heading, StickyBottomBar, TopBar, BackButton, NextButton } from '../..';
 import { withStepContainerV2ContextDecorator } from '../../helpers/withStepContainerV2ContextDecorator';
-import { FullWidthStepLayout } from './FullWidthStepLayout';
+import { FullWidthLayout } from './FullWidthLayout';
 import type { Meta } from '@storybook/react';
 
 import './style.stories.scss';
 
-const meta: Meta< typeof FullWidthStepLayout > = {
-	title: 'Onboarding/StepWireframes/FullWidthStepLayout',
-	component: FullWidthStepLayout,
+const meta: Meta< typeof FullWidthLayout > = {
+	title: 'Onboarding/StepWireframes/FullWidthLayout',
+	component: FullWidthLayout,
 	decorators: [ withStepContainerV2ContextDecorator ],
 };
 
@@ -23,7 +23,7 @@ export const ThemePreview = () => {
 	const backButton = <BackButton label="Back" />;
 
 	return (
-		<FullWidthStepLayout
+		<FullWidthLayout
 			className="theme-preview"
 			topBar={ <TopBar backButton={ backButton } /> }
 			isLargeViewport={ isLargeViewport }
@@ -60,7 +60,7 @@ export const ThemePreviewFonts = () => {
 	const nextButton = <NextButton label="Save fonts" />;
 
 	return (
-		<FullWidthStepLayout
+		<FullWidthLayout
 			className="theme-preview"
 			isLargeViewport={ isLargeViewport }
 			topBar={ isLargeViewport ? <TopBar backButton={ backButton } /> : <FontsBar /> }

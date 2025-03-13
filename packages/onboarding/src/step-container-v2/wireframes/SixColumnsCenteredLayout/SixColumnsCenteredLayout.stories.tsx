@@ -1,14 +1,14 @@
 import { Heading, TopBar, BackButton, NextButton, StickyBottomBar } from '../..';
 import SelectCardCheckbox from '../../../select-card-checkbox';
 import { withStepContainerV2ContextDecorator } from '../../helpers/withStepContainerV2ContextDecorator';
-import { SixColumnsCenteredStepLayout } from './SixColumnsCenteredStepLayout';
+import { SixColumnsCenteredLayout } from './SixColumnsCenteredLayout';
 import type { Meta } from '@storybook/react';
 
 import './style.stories.scss';
 
-const meta: Meta< typeof SixColumnsCenteredStepLayout > = {
-	title: 'Onboarding/StepWireframes/SixColumnsCenteredStepLayout',
-	component: SixColumnsCenteredStepLayout,
+const meta: Meta< typeof SixColumnsCenteredLayout > = {
+	title: 'Onboarding/StepWireframes/SixColumnsCenteredLayout',
+	component: SixColumnsCenteredLayout,
 	decorators: [ withStepContainerV2ContextDecorator ],
 };
 
@@ -78,7 +78,7 @@ export const GoalsStep = () => {
 	const nextButton = <NextButton />;
 
 	return (
-		<SixColumnsCenteredStepLayout
+		<SixColumnsCenteredLayout
 			className="goals"
 			topBar={ <TopBar backButton={ backButton } /> }
 			heading={
