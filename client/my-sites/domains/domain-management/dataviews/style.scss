@@ -47,6 +47,47 @@ body.is-section-domains.is-bulk-all-domains-page {
 			margin-top: 0;
 			overflow: hidden;
 			padding-bottom: 0;
+			
+			button[data-custom-tooltip] {
+				position: relative;
+				
+				&::after {
+				  content: attr(data-custom-tooltip);
+				  position: absolute;
+				  bottom: calc(100% + 4px);
+				  left: 50%;
+				  transform: translateX(-50%);
+				  background: #1e1e1e;
+				  color: #fff;
+				  font-family: $sans;
+				  font-size: 0.75rem;
+				  line-height: 1.4;
+				  padding: 4px 8px;
+				  border-radius: 2px;
+				  white-space: nowrap;
+				  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+				  pointer-events: none;
+				  opacity: 0;
+				  z-index: 1000;
+				  transition: opacity 0.1s;
+				  transition-delay: 0.6s;
+				}
+				
+				/* Skip delay when other tooltips are already visible (matching @wordpress/dataviews behavior) */
+				&[data-tooltip-active="true"]::after {
+				  transition-delay: 0s !important;
+				  transition-duration: 0.05s;
+				}
+				
+				&:hover::after {
+				  opacity: 1;
+				}
+				
+				&:not(:hover)::after {
+				  transition-delay: 0s;
+				  opacity: 0;
+				}
+			  }
 
 			.domains-dataviews__domain-name-button {
 				width: 100%;
