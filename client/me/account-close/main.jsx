@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
@@ -163,11 +164,20 @@ class AccountSettingsClose extends Component {
 									) }
 								</p>
 								<p className="account-close__body-copy">
-									{ translate( 'To close this account now, {{a}}contact our support team{{/a}}.', {
-										components: {
-											a: <ActionPanelLink href="/help/contact" />,
-										},
-									} ) }
+									{ translate(
+										'You can find more information about the account closure process {{a}}here{{/a}}.',
+										{
+											components: {
+												a: (
+													<a
+														target="_blank"
+														rel="noreferrer"
+														href={ localizeUrl( 'https://wordpress.com/support/close-account/' ) }
+													/>
+												),
+											},
+										}
+									) }
 								</p>
 							</Fragment>
 						) }
@@ -209,12 +219,18 @@ class AccountSettingsClose extends Component {
 								</p>
 								<p className="account-close__body-copy">
 									{ translate(
-										'If you have any questions at all about what happens when you delete an account, ' +
-											'please {{a}}contact someone from our support team{{/a}} first. ' +
-											"They'll explain the ramifications and help you explore alternatives. ",
+										'If you have any questions at all about what happens when you delete an account ' +
+											'please {{a}}visit this page{{/a}} first. ' +
+											'It explains the ramifications and help you explore alternatives. ',
 										{
 											components: {
-												a: <ActionPanelLink href="/help/contact" />,
+												a: (
+													<a
+														target="_blank"
+														rel="noreferrer"
+														href={ localizeUrl( 'https://wordpress.com/support/close-account/' ) }
+													/>
+												),
 											},
 										}
 									) }
