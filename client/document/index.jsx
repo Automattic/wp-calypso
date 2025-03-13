@@ -111,7 +111,6 @@ class Document extends Component {
 		// To customize the page title and favicon for Gravatar-related login pages.
 		if ( sectionName === 'login' && typeof query?.redirect_to === 'string' ) {
 			const searchParams = new URLSearchParams( query.redirect_to.split( '?' )[ 1 ] );
-
 			// To cover the case where the `client_id` is not provided, e.g. /log-in/link/use
 			const oauth2Client = initialClientsData[ searchParams.get( 'client_id' ) ] || {};
 
@@ -120,15 +119,15 @@ class Document extends Component {
 					headTitle = oauth2Client.title;
 					headFaviconUrl = oauth2Client.favicon;
 					break;
-				case isWooOAuth2Client( oauth2Client ):
-					isWCCOM = true;
-					headTitle = oauth2Client.title;
-					headFaviconUrl = oauth2Client.favicon;
-					break;
 				case query?.gravatar_flow:
 					// Use Gravatar's favicon + title for the Gravatar-related OAuth2 clients in SSR.
 					headTitle = gravatarClientData.title;
 					headFaviconUrl = gravatarClientData.favicon;
+					break;
+				case isWooOAuth2Client( oauth2Client ):
+					isWCCOM = true;
+					headTitle = oauth2Client.title;
+					headFaviconUrl = oauth2Client.favicon;
 					break;
 			}
 		}
