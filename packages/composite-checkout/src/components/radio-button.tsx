@@ -208,7 +208,7 @@ export default function RadioButton( {
 			isFocused={ isFocused }
 			checked={ checked }
 			hidden={ hidden }
-			className={ checked ? 'is-checked' : '' }
+			className={ `${ checked ? 'is-checked' : '' }` }
 		>
 			<Radio
 				type="radio"
