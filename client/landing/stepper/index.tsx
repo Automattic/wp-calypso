@@ -162,7 +162,7 @@ async function main() {
 	if ( 'initialize' in flow && flowSteps ) {
 		// Cache the flow steps for later internal usage. We need to cache them because we promise to call `initialize` only once.
 		flowSteps = injectUserStepInSteps( flowSteps ) as typeof flowSteps;
-		//flow.__flowSteps = flowSteps;
+		flow.__flowSteps = flowSteps;
 		enhanceFlowWithUtilityFunctions( flow );
 	} else if ( 'useSteps' in flow ) {
 		// V1 flows have to be enhanced by changing their `useSteps` hook.
