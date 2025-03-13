@@ -1,7 +1,7 @@
 import { StepperInternal } from '@automattic/data-stores';
 import React from 'react';
 import { STEPPER_TRACKS_EVENTS } from '../../constants';
-import type { PRIVATE_STEPS, STEPS } from './steps';
+
 /**
  * This is the return type of useStepNavigation hook
  */
@@ -44,12 +44,31 @@ export type NavigationControls<
 	exitFlow?: ( to: string ) => void;
 };
 
-export type AsyncStepperStep = ( typeof STEPS )[ keyof typeof STEPS ];
-export type AsyncUserStep = ( typeof PRIVATE_STEPS )[ keyof typeof PRIVATE_STEPS ];
-
-export type StepperStep = ( AsyncStepperStep | AsyncUserStep ) & {
+export type AsyncStepperStep = {
+	/**
+	 * The step slug is what appears as part of the pathname. Eg the intro in /setup/link-in-bio/intro
+	 */
+	slug: Exclude< string, 'user' >;
+	/**
+	 * Does the step require a logged-in user?
+	 */
 	requiresLoggedInUser?: boolean;
+	/**
+	 * The Async loaded component that will be rendered for this step
+	 *
+	 * It should look like this: component: () => import( './internals/steps-repository/newsletter-setup' )
+	 */
+	asyncComponent: () => Promise< { default: React.FC< StepProps > } >;
 };
+
+export interface AsyncUserStep extends AsyncStepperStep {
+	/**
+	 * The step slug is what appears as part of the pathname. Eg the intro in /setup/link-in-bio/intro
+	 */
+	slug: 'user';
+}
+
+export type StepperStep = AsyncStepperStep | AsyncUserStep;
 
 /**
  * Navigates to a step in the current flow. Preserves the current query params.
