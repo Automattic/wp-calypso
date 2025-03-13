@@ -53,7 +53,18 @@
 	}
 
 	.progress-bar {
+		text-align: left;
 		width: 80%;
+
+		& > div {
+			background-color: var(--color-accent-50);
+		}
+
+		&.is-complete {
+			& > div {
+				background-color: var(--color-success);
+			}
+		}
 	}
 }
 

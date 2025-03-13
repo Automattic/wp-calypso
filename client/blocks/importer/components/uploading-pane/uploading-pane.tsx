@@ -1,4 +1,4 @@
-import { ProgressBar } from '@automattic/components';
+import { ProgressBar } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { truncate } from 'lodash';
@@ -27,7 +27,7 @@ export class UploadingPane extends UploadingPaneBase {
 		// Override base component only where we are uploading something
 		if ( importerState === appStates.UPLOAD_PROCESSING || importerState === appStates.UPLOADING ) {
 			const uploadPercent = percentComplete;
-			const progressClasses = clsx( {
+			const progressClasses = clsx( 'progress-bar', {
 				'is-complete': uploadPercent > 95,
 			} );
 			const uploaderPrompt =
@@ -41,13 +41,7 @@ export class UploadingPane extends UploadingPaneBase {
 			return (
 				<div>
 					<p>{ uploaderPrompt }</p>
-					<ProgressBar
-						compact
-						className={ progressClasses }
-						value={ uploadPercent }
-						total={ 100 }
-						isPulsing={ false }
-					/>
+					<ProgressBar className={ progressClasses } value={ uploadPercent } />
 				</div>
 			);
 		}
