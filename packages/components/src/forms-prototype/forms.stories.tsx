@@ -61,54 +61,6 @@ const meta: Meta = {
 };
 export default meta;
 
-export const Default: StoryObj = {
-	render: function Template() {
-		return (
-			<>
-				<ControlWithError
-					render={
-						<ComboboxControl
-							__nextHasNoMarginBottom
-							__next40pxDefaultSize
-							// TODO: Rest props are not passed down.
-							required
-							label="Combobox"
-							help="Option A is not allowed."
-							options={ [
-								{ value: 'a', label: 'Option A (not allowed)' },
-								{ value: 'b', label: 'Option B' },
-							] }
-						/>
-					}
-					// TODO: onBlur is not passed down.
-					onReportCustomValidity={ ( value ) => {
-						if ( value === 'a' ) {
-							return 'Option A is not allowed.';
-						}
-					} }
-				/>
-				<ControlWithError
-					render={
-						<RangeControl
-							// TODO: Use of `required` renders an invalid label in HTML.
-							required
-							label="Range"
-							help="Odd numbers are not allowed."
-							min={ 0 }
-							max={ 20 }
-						/>
-					}
-					onReportCustomValidity={ ( value ) => {
-						if ( value && parseInt( value, 10 ) % 2 !== 0 ) {
-							return 'Choose an even number.';
-						}
-					} }
-				/>
-			</>
-		);
-	},
-};
-
 export const Password: StoryObj = {
 	name: 'Input (Password)',
 	render: function Template() {
@@ -524,6 +476,89 @@ export const ToggleGroup: StoryObj = {
 					} }
 				/>
 			</div>
+		);
+	},
+};
+
+// TODO: Add error styles.
+export const Combobox: StoryObj = {
+	render: function Template() {
+		const valueRef = useRef< React.ComponentProps< typeof ComboboxControl >[ 'value' ] >();
+		const validityTargetRef = useRef< HTMLInputElement >( null );
+
+		// TODO: The `required` attribute is not passed down to the input,
+		// so we need to set it manually.
+		useEffect( () => {
+			const required = true; // TODO: Make this changeable by the consumer.
+			const input =
+				validityTargetRef.current?.querySelector< HTMLInputElement >( 'input[role="combobox"]' );
+
+			if ( input ) {
+				input.required = required;
+			}
+		}, [] );
+
+		return (
+			<>
+				<ControlWithError
+					render={
+						<ComboboxControl
+							__nextHasNoMarginBottom
+							__next40pxDefaultSize
+							// TODO: Rest props are not passed down.
+							required
+							label="Combobox"
+							help="Option A is not allowed."
+							options={ [
+								{ value: 'a', label: 'Option A (not allowed)' },
+								{ value: 'b', label: 'Option B' },
+							] }
+							onChange={ ( value ) => {
+								valueRef.current = value;
+							} }
+						/>
+					}
+					ref={ validityTargetRef }
+					onReportCustomValidity={ () => {
+						if ( valueRef.current === 'a' ) {
+							return 'Option A is not allowed.';
+						}
+					} }
+					getValidityTarget={ () =>
+						validityTargetRef.current?.querySelector( 'input[role="combobox"]' )
+					}
+				/>
+			</>
+		);
+	},
+};
+
+export const Range: StoryObj = {
+	render: function Template() {
+		const valueRef = useRef< number | undefined >();
+		const validityTargetRef = useRef< HTMLInputElement >( null );
+		return (
+			<ControlWithError
+				render={
+					<RangeControl
+						required
+						label="Range"
+						help="Odd numbers are not allowed."
+						min={ 0 }
+						max={ 20 }
+						onChange={ ( value ) => {
+							valueRef.current = value;
+						} }
+						ref={ validityTargetRef }
+					/>
+				}
+				onReportCustomValidity={ () => {
+					if ( valueRef.current && valueRef.current % 2 !== 0 ) {
+						return 'Choose an even number.';
+					}
+				} }
+				getValidityTarget={ () => validityTargetRef.current }
+			/>
 		);
 	},
 };
