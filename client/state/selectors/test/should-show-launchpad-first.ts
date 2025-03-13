@@ -4,6 +4,7 @@
 import { useLaunchpad } from '@automattic/data-stores';
 import { useShouldShowLaunchpadFirst } from 'calypso/landing/stepper/hooks/use-should-show-launchpad-first';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
+import { isMigrationInProgress } from 'calypso/sites-dashboard/utils';
 import { shouldShowLaunchpadFirst } from '../should-show-launchpad-first';
 import type { SiteDetails } from '@automattic/data-stores';
 
@@ -16,11 +17,33 @@ jest.mock( 'calypso/lib/explat', () => ( {
 	loadExperimentAssignment: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/sites-dashboard/utils', () => ( {
+	isMigrationInProgress: jest.fn(),
+} ) );
+
 beforeEach( () => {
 	jest.clearAllMocks();
 } );
 
 describe( 'shouldShowLaunchpadFirst', () => {
+	beforeEach( () => {
+		( isMigrationInProgress as jest.Mock ).mockReturnValue( false );
+	} );
+
+	it( 'should return false when site is in migration', async () => {
+		( isMigrationInProgress as jest.Mock ).mockReturnValue( true );
+		( loadExperimentAssignment as jest.Mock ).mockResolvedValue( {
+			variationName: 'treatment_cumulative',
+		} );
+		const site = {
+			options: {
+				site_creation_flow: 'onboarding',
+				site_intent: 'sell',
+			},
+		} as SiteDetails;
+
+		expect( await shouldShowLaunchpadFirst( site ) ).toBe( false );
+	} );
 	it( 'should return true when site was created via onboarding flow, has an intent, and assigned to experiment', async () => {
 		( loadExperimentAssignment as jest.Mock ).mockResolvedValue( {
 			variationName: 'treatment_cumulative',
