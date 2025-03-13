@@ -17,6 +17,7 @@ import {
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	EXAMPLE_FLOW,
 } from '@automattic/onboarding';
+import config from 'calypso/server/config';
 import { AI_SITE_BUILDER_FLOW } from './ai-site-builder';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -98,9 +99,15 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		),
 	[ EXAMPLE_FLOW ]: () =>
 		import( /* webpackChunkName: "example-flow" */ '../declarative-flow/example' ),
-
-	[ AI_SITE_BUILDER_FLOW ]: () => import( './ai-site-builder' ),
 };
+
+const aiSiteBuilderFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
+	'calypso/ai-site-builder-flow'
+)
+	? {
+			[ AI_SITE_BUILDER_FLOW ]: () => import( './ai-site-builder' ),
+	  }
+	: {};
 
 const hostedSiteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = {
 	[ HOSTED_SITE_MIGRATION_FLOW ]: () =>
@@ -122,4 +129,5 @@ export default {
 	...availableFlows,
 	...hostedSiteMigrationFlow,
 	...hundredYearDomainFlow,
+	...aiSiteBuilderFlows,
 };
