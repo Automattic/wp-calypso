@@ -61,7 +61,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 
 			const conversationsWithUpdatedStatuses = filteredConversations.map( ( conversation ) => {
 				const supportInteraction = allSupportInteractions.find(
-					( interaction ) => interaction.uuid === conversation.metadata?.supportInteractionId
+					( interaction ) => interaction.uuid === conversation.metadata.supportInteractionId
 				);
 
 				if ( ! supportInteraction ) {
@@ -72,7 +72,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 					...conversation,
 					metadata: {
 						...conversation.metadata,
-						...( supportInteraction?.status && { status: supportInteraction.status } ),
+						status: supportInteraction.status,
 					},
 				};
 
