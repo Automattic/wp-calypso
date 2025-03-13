@@ -22,7 +22,6 @@
 		display: flex;
 		align-items: center;
 		padding: 1rem;
-		max-height: 50px;
 
 		#{$step-container}.large-viewport & {
 			padding-inline: 1.5rem;
@@ -33,13 +32,20 @@
 			height: 1rem;
 			background-color: var(--color-border-subtle);
 
-			margin-left: 1rem;
-			margin-right: 0.5rem;
+			margin-inline: 0.5rem;
 
 			#{$step-container}.large-viewport & {
-				margin-left: 1.5rem;
-				margin-right: 1rem;
+				margin-left: 1rem;
+				margin-right: 0.5rem;
 			}
+		}
+
+		&-left-button,
+		&-right-button,
+		#{$step-container}__back-button,
+		#{$step-container}__skip-button,
+		#{$step-container}__wordpress-logo {
+			height: 24px;
 		}
 
 		&-right-button {
@@ -49,6 +55,7 @@
 		#{$step-container}__wordpress-logo {
 			color: var(--color-text);
 			fill: currentColor;
+			margin-right: 0.5rem;
 		}
 	}
 

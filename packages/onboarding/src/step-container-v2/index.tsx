@@ -43,14 +43,6 @@ const PrimaryButton = ( { label, ...props }: ComponentProps< typeof Button > ) =
 	);
 };
 
-const SecondaryButton = ( { label, ...props }: ComponentProps< typeof Button > ) => {
-	return (
-		<Button __next40pxDefaultSize variant="link" { ...props }>
-			{ label }
-		</Button>
-	);
-};
-
 interface RenderStepProps {
 	heading?: ReactNode;
 	nextButton?: ReactNode;
@@ -92,12 +84,14 @@ const normalizeButtonProps = < T extends ComponentProps< typeof Button > >(
 		return {
 			...standardProps,
 			onClick: button,
+			children: standardProps.label,
 		};
 	}
 
 	return {
 		...standardProps,
 		...button,
+		children: button.label,
 		className: clsx( standardProps.className, button.className ),
 	};
 };
@@ -128,7 +122,7 @@ export const StepContainerV2 = ( {
 	} );
 
 	const backButtonElement = backButtonProps && (
-		<SecondaryButton
+		<Button
 			{ ...decorateButtonWithTracks( backButtonProps, {
 				tracksEventName: 'calypso_signup_previous_step_button_click',
 				stepContext,
@@ -142,7 +136,8 @@ export const StepContainerV2 = ( {
 	} );
 
 	const skipButtonElement = skipButtonProps && (
-		<SecondaryButton
+		<Button
+			variant="link"
 			{ ...decorateButtonWithTracks( skipButtonProps, {
 				tracksEventName: 'calypso_signup_skip_step',
 				stepContext,
