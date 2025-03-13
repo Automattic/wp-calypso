@@ -757,6 +757,15 @@ $custom-border-corner-size: 16px;
 	&.next-chat-message-same-sender {
 		padding-bottom: 8px;
 	}
+
+	&.message-feedback-submit {
+		margin-left: 62px;
+		align-items: start !important;
+
+		a {
+			gap: 8px;
+		}
+	}
 }
 
 .odie-chatbox-thinking-icon {
