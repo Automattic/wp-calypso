@@ -8,16 +8,12 @@ import { UserData } from 'calypso/lib/user/user';
 import { List } from 'calypso/reader/list-manage/types';
 import { UserLists } from '../lists';
 
-// Mock the EmptyContent component
-jest.mock( 'calypso/components/empty-content', () => ( {
-	__esModule: true,
-	default: ( { icon, line } ) => (
-		<div data-testid="empty-content">
-			{ icon && <div data-testid="empty-content-icon">{ icon }</div> }
-			{ line && <p data-testid="empty-content-line">{ line }</p> }
-		</div>
-	),
-} ) );
+jest.mock( 'calypso/components/empty-content', () => ( { icon, line } ) => (
+	<div data-testid="empty-content">
+		{ icon && <div data-testid="empty-content-icon">{ icon }</div> }
+		{ line && <p data-testid="empty-content-line">{ line }</p> }
+	</div>
+) );
 
 describe( 'UserLists', () => {
 	const defaultUser: UserData = {

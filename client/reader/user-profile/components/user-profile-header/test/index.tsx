@@ -7,45 +7,30 @@ import React from 'react';
 import { UserData } from 'calypso/lib/user/user';
 import UserProfileHeader from '../index';
 
-// Mock external icon
 jest.mock( '@wordpress/icons', () => ( {
 	external: 'mock-external-icon',
 	Icon: ( { icon } ) => <span data-testid="icon">{ icon }</span>,
 } ) );
 
-// Mock ReaderAvatar component
-jest.mock( 'calypso/blocks/reader-avatar', () => ( {
-	__esModule: true,
-	default: ( { author, iconSize } ) => (
-		<div data-testid="reader-avatar" data-author-id={ author.ID } data-icon-size={ iconSize }>
-			{ author.avatar_URL && (
-				<img src={ author.avatar_URL } alt="avatar" data-testid="avatar-img" />
-			) }
-		</div>
-	),
-} ) );
+jest.mock( 'calypso/blocks/reader-avatar', () => ( { author, iconSize } ) => (
+	<div data-testid="reader-avatar" data-author-id={ author.ID } data-icon-size={ iconSize }>
+		{ author.avatar_URL && <img src={ author.avatar_URL } alt="avatar" data-testid="avatar-img" /> }
+	</div>
+) );
 
-// Mock SectionNav components
-jest.mock( 'calypso/components/section-nav', () => ( {
-	__esModule: true,
-	default: ( { children } ) => <div data-testid="section-nav">{ children }</div>,
-} ) );
+jest.mock( 'calypso/components/section-nav', () => ( { children } ) => (
+	<div data-testid="section-nav">{ children }</div>
+) );
 
-// Mock SectionNav/Tabs component
-jest.mock( 'calypso/components/section-nav/tabs', () => ( {
-	__esModule: true,
-	default: ( { children } ) => <div data-testid="nav-tabs">{ children }</div>,
-} ) );
+jest.mock( 'calypso/components/section-nav/tabs', () => ( { children } ) => (
+	<div data-testid="nav-tabs">{ children }</div>
+) );
 
-// Mock SectionNav/Item component
-jest.mock( 'calypso/components/section-nav/item', () => ( {
-	__esModule: true,
-	default: ( { children, path, selected } ) => (
-		<a href={ path } data-testid="nav-item" data-selected={ selected ? 'true' : 'false' }>
-			{ children }
-		</a>
-	),
-} ) );
+jest.mock( 'calypso/components/section-nav/item', () => ( { children, path, selected } ) => (
+	<a href={ path } data-testid="nav-item" data-selected={ selected ? 'true' : 'false' }>
+		{ children }
+	</a>
+) );
 
 describe( 'UserProfileHeader', () => {
 	const defaultUser: UserData = {

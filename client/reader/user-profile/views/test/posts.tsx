@@ -7,42 +7,38 @@ import React from 'react';
 import { UserData } from 'calypso/lib/user/user';
 import UserPosts from '../posts';
 
-// Mock the Stream component
-jest.mock( 'calypso/reader/stream', () => ( {
-	__esModule: true,
-	default: ( {
-		streamKey,
-		className,
-		emptyContent,
-		showFollowButton,
-		showSiteNameOnCards,
-		sidebarTabTitle,
-		useCompactCards,
-		showBack,
-	} ) => (
-		<div data-testid="reader-stream" data-stream-key={ streamKey } className={ className }>
-			<div data-testid="stream-props">
-				<span data-prop="showFollowButton">{ String( showFollowButton ) }</span>
-				<span data-prop="showSiteNameOnCards">{ String( showSiteNameOnCards ) }</span>
-				<span data-prop="sidebarTabTitle">{ sidebarTabTitle }</span>
-				<span data-prop="useCompactCards">{ String( useCompactCards ) }</span>
-				<span data-prop="showBack">{ String( showBack ) }</span>
+jest.mock(
+	'calypso/reader/stream',
+	() =>
+		( {
+			streamKey,
+			className,
+			emptyContent,
+			showFollowButton,
+			showSiteNameOnCards,
+			sidebarTabTitle,
+			useCompactCards,
+			showBack,
+		} ) => (
+			<div data-testid="reader-stream" data-stream-key={ streamKey } className={ className }>
+				<div data-testid="stream-props">
+					<span data-prop="showFollowButton">{ String( showFollowButton ) }</span>
+					<span data-prop="showSiteNameOnCards">{ String( showSiteNameOnCards ) }</span>
+					<span data-prop="sidebarTabTitle">{ sidebarTabTitle }</span>
+					<span data-prop="useCompactCards">{ String( useCompactCards ) }</span>
+					<span data-prop="showBack">{ String( showBack ) }</span>
+				</div>
+				{ emptyContent && <div data-testid="empty-content">{ emptyContent() }</div> }
 			</div>
-			{ emptyContent && <div data-testid="empty-content">{ emptyContent() }</div> }
-		</div>
-	),
-} ) );
+		)
+);
 
-// Mock the EmptyContent component that might be used in Stream
-jest.mock( 'calypso/components/empty-content', () => ( {
-	__esModule: true,
-	default: ( { icon, line } ) => (
-		<div data-testid="empty-content-component">
-			{ icon && <div data-testid="empty-content-icon">{ icon }</div> }
-			{ line && <p data-testid="empty-content-line">{ line }</p> }
-		</div>
-	),
-} ) );
+jest.mock( 'calypso/components/empty-content', () => ( { icon, line } ) => (
+	<div data-testid="empty-content-component">
+		{ icon && <div data-testid="empty-content-icon">{ icon }</div> }
+		{ line && <p data-testid="empty-content-line">{ line }</p> }
+	</div>
+) );
 
 describe( 'UserPosts', () => {
 	const defaultUser: UserData = {

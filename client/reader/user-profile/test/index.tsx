@@ -12,40 +12,31 @@ jest.mock( '@automattic/calypso-router', () => ( {
 	current: '/reader/users/testuser',
 } ) );
 
-jest.mock( 'calypso/reader/user-profile/components/user-profile-header', () => ( {
-	__esModule: true,
-	default: () => <div data-testid="user-profile-header">User Profile Header</div>,
-} ) );
+jest.mock( 'calypso/reader/user-profile/components/user-profile-header', () => () => (
+	<div data-testid="user-profile-header">User Profile Header</div>
+) );
 
-jest.mock( 'calypso/reader/user-profile/views/posts', () => ( {
-	__esModule: true,
-	default: () => <div data-testid="user-posts">User Posts</div>,
-} ) );
+jest.mock( 'calypso/reader/user-profile/views/posts', () => () => (
+	<div data-testid="user-posts">User Posts</div>
+) );
 
-jest.mock( 'calypso/reader/user-profile/views/lists', () => ( {
-	__esModule: true,
-	default: () => <div data-testid="user-lists">User Lists</div>,
-} ) );
+jest.mock( 'calypso/reader/user-profile/views/lists', () => () => (
+	<div data-testid="user-lists">User Lists</div>
+) );
 
-jest.mock( 'calypso/components/back-button', () => ( {
-	__esModule: true,
-	default: ( { onClick } ) => (
-		<button data-testid="back-button" onClick={ onClick }>
-			Back
-		</button>
-	),
-} ) );
+jest.mock( 'calypso/components/back-button', () => ( { onClick } ) => (
+	<button data-testid="back-button" onClick={ onClick }>
+		Back
+	</button>
+) );
 
-jest.mock( 'calypso/components/empty-content', () => ( {
-	__esModule: true,
-	default: ( { title, line, action } ) => (
-		<div data-testid="empty-content">
-			<h2>{ title }</h2>
-			<p>{ line }</p>
-			<button>{ action }</button>
-		</div>
-	),
-} ) );
+jest.mock( 'calypso/components/empty-content', () => ( { title, line, action } ) => (
+	<div data-testid="empty-content">
+		<h2>{ title }</h2>
+		<p>{ line }</p>
+		<button>{ action }</button>
+	</div>
+) );
 
 describe( 'UserProfile', () => {
 	const mockRequestUser = jest.fn().mockResolvedValue( undefined );
