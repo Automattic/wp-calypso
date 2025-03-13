@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Popover } from '@automattic/components';
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { useQueryClient } from '@tanstack/react-query';
@@ -13,13 +14,14 @@ import { __, sprintf } from '@wordpress/i18n';
 import { copy, share, check } from '@wordpress/icons';
 import { useState, useRef, useMemo, useCallback } from 'react';
 import { SocialLogo } from 'social-logos';
+import type { Task } from '../../types';
 import type { SiteDetails } from '@automattic/data-stores';
-
 import './style.scss';
 
 interface ShareSiteModalProps {
 	setModalIsOpen: ( isOpen: boolean ) => void;
 	site: SiteDetails | null;
+	task: Task | null;
 }
 
 interface BaseShareLink {
@@ -134,25 +136,33 @@ const getShareData = ( site: SiteDetails | null ) => {
 		url: site?.URL || '',
 	};
 };
-const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
+const ShareSiteModal = ( { setModalIsOpen, site, task }: ShareSiteModalProps ) => {
 	const queryClient = useQueryClient();
 	const shareData = getShareData( site );
 
-	const trackShareClick = useCallback( async () => {
-		if ( shareData.title ) {
-			await updateLaunchpadSettings( shareData.title, {
-				checklist_statuses: { share_site: true },
+	const trackShareClick = useCallback(
+		async ( eventType: string ) => {
+			recordTracksEvent( 'calypso_subscribers_share_site', {
+				type: eventType,
+				context: task?.id ? `launchpad-task-${ task.id }` : null,
+				site_url: shareData.url,
 			} );
-		}
-		queryClient.invalidateQueries( { queryKey: [ 'launchpad' ] } );
-	}, [ shareData, queryClient ] );
+			if ( shareData.title ) {
+				await updateLaunchpadSettings( shareData.title, {
+					checklist_statuses: { share_site: true },
+				} );
+			}
+			queryClient.invalidateQueries( { queryKey: [ 'launchpad' ] } );
+		},
+		[ shareData, queryClient, task?.id ]
+	);
 
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const clipboardTextEl = useRef( null );
 	const copyHandler = () => {
 		navigator.clipboard.writeText( shareData.url );
 		setClipboardCopied( true );
-		trackShareClick();
+		trackShareClick( 'copy' );
 		setTimeout( () => setClipboardCopied( false ), 3000 );
 	};
 
@@ -161,13 +171,14 @@ const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 		if ( ! canUseWebShare ) {
 			return;
 		}
-		trackShareClick();
+		trackShareClick( 'web-share' );
 		await navigator.share( shareData );
 	}, [ canUseWebShare, shareData, trackShareClick ] );
 
 	const socialLinkClickHandler = ( event: React.MouseEvent< HTMLAnchorElement > ) => {
 		event.preventDefault();
-		trackShareClick();
+		const eventType = event.currentTarget.dataset.eventType as string;
+		trackShareClick( eventType );
 		window.open( event.currentTarget.href, '_blank' );
 	};
 
@@ -234,6 +245,7 @@ const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 										rel="noopener noreferrer"
 										target="_blank"
 										onClick={ socialLinkClickHandler }
+										data-event-type={ link.icon }
 									>
 										<SocialLogo
 											className="share-site-modal__modal-icon"
