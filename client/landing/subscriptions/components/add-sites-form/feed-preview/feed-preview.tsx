@@ -1,5 +1,6 @@
 import './feed-preview.styles.scss';
 import { Reader } from '@automattic/data-stores';
+import { Spinner } from '@wordpress/components';
 import { useState, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDebounce } from 'use-debounce';
@@ -18,58 +19,94 @@ interface GetFeedResponse {
 interface FeedPreviewProps {
 	url: string;
 	source: string;
+	onChangeFeedPreview?: ( hasPreview: boolean ) => void;
 }
 
 export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | null {
-	const { url, source } = props;
+	const { url, source, onChangeFeedPreview } = props;
 	const dispatch = useDispatch();
 	const [ debouncedUrl ] = useDebounce( url, 700 );
 	const [ feed, setFeed ] = useState< Reader.FeedItem >();
+	const [ loading, setLoading ] = useState( false );
 
 	/**
 	 * Fetch the feed for the given URL.
 	 */
 	useEffect( (): void => {
-		setFeed( undefined ); // Reset feed before each request.
+		setLoading( true );
 
 		wpcom.req
 			.get( '/read/feed', { url: debouncedUrl } )
 			.then( ( response: GetFeedResponse ): void => {
+				setLoading( false );
+
 				const feed = response?.feeds?.[ 0 ];
 				if ( ! feed ) {
 					return;
 				}
 
 				setFeed( feed );
+				onChangeFeedPreview?.( true );
+			} )
+			.catch( ( err: Error ): void => {
+				setFeed( undefined );
+				onChangeFeedPreview?.( false );
+
+				throw err;
+			} )
+			.finally( (): void => {
+				setLoading( false );
 			} );
-	}, [ dispatch, debouncedUrl ] );
+	}, [ dispatch, debouncedUrl, onChangeFeedPreview ] );
 
-	const memoizedFeedStream = useMemo(
-		() =>
-			feed?.feed_ID ? (
-				<Stream
-					className="no-padding"
-					streamKey={ `feed:${ feed?.feed_ID }` }
-					useCompactCards
-					showFollowButton={ false }
-					trackScrollPage={ () => {} }
-					suppressSiteNameLink
-				/>
-			) : null,
-		[ feed?.feed_ID ]
-	);
+	const memoizedFeedPreview = useMemo( (): JSX.Element => {
+		if ( ! feed?.feed_ID ) {
+			return <p>Preview of the feed is not yet available.</p>;
+		}
 
-	if ( ! feed ) {
-		return null;
-	}
+		return (
+			<Stream
+				className="no-padding"
+				streamKey={ `feed:${ feed?.feed_ID }` }
+				useCompactCards
+				showFollowButton={ false }
+				trackScrollPage={ () => {} }
+				suppressSiteNameLink
+			/>
+		);
+	}, [ feed?.feed_ID ] );
+
+	const FeedPreviewContent = (): JSX.Element | null => {
+		if ( loading ) {
+			return (
+				<div className="feed-preview__loader">
+					<Spinner /> <p>Loading feed...</p>
+				</div>
+			);
+		}
+
+		if ( ! feed ) {
+			return (
+				<div className="feed-preview__empty">
+					<p>No feed is available at this url.</p>
+				</div>
+			);
+		}
+
+		return (
+			<>
+				<ul className="feed-preview__site">
+					<ReaderFeedItem feed={ feed } source={ source } />
+				</ul>
+
+				<div className="feed-preview__stream">{ memoizedFeedPreview }</div>
+			</>
+		);
+	};
 
 	return (
 		<div className="feed-preview">
-			<ul className="feed-preview__site">
-				<ReaderFeedItem feed={ feed } source={ source } />
-			</ul>
-
-			<div className="feed-preview__stream">{ memoizedFeedStream }</div>
+			<FeedPreviewContent />
 		</div>
 	);
 }

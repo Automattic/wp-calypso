@@ -1,4 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import Notice from 'calypso/components/notice';
 import { AddSitesForm } from 'calypso/landing/subscriptions/components/add-sites-form';
 import { SiteSubscriptionsList } from 'calypso/landing/subscriptions/components/site-subscriptions-list';
@@ -16,6 +17,11 @@ const DiscoverAddNew = () => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const needsEmailVerification = isLoggedIn && ! isEmailVerified;
+	const [ hasFeedPreview, setHasFeedPreview ] = useState< boolean >( false );
+
+	function onChangeFeedPreview( hasPreview: boolean ): void {
+		setHasFeedPreview( hasPreview );
+	}
 
 	return (
 		<div className="discover-add-new">
@@ -37,9 +43,9 @@ const DiscoverAddNew = () => {
 					<h2 className="discover-add-new__form-title">
 						{ translate( 'Add new sites, newsletters, and RSS feeds to your reading list.' ) }
 					</h2>
-					<AddSitesForm source="discover-add-new" />
+					<AddSitesForm source="discover-add-new" onChangeFeedPreview={ onChangeFeedPreview } />
 				</div>
-				{ isLoggedIn && (
+				{ isLoggedIn && ! hasFeedPreview && (
 					<div
 						className={ `discover-add-new__subscriptions${
 							needsEmailVerification ? ' is-disabled' : ''

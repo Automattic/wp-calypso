@@ -15,10 +15,11 @@ import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import './styles.scss';
 
 type AddSitesFormProps = {
-	onAddFinished?: () => void;
 	placeholder?: string;
 	buttonText?: string;
 	source: string;
+	onAddFinished?: () => void;
+	onChangeFeedPreview?: ( hasPreview: boolean ) => void;
 };
 
 type SubscriptionError = {
@@ -27,10 +28,11 @@ type SubscriptionError = {
 };
 
 const AddSitesForm = ( {
-	onAddFinished = () => {},
 	placeholder,
 	buttonText,
 	source,
+	onAddFinished = () => {},
+	onChangeFeedPreview = () => {},
 }: AddSitesFormProps ) => {
 	const translate = useTranslate();
 	const [ inputValue, setInputValue ] = useState( '' );
@@ -169,7 +171,11 @@ const AddSitesForm = ( {
 			</form>
 
 			{ isValidInput && isAutomattician ? (
-				<FeedPreview url={ inputValue } source={ source } />
+				<FeedPreview
+					url={ inputValue }
+					source={ source }
+					onChangeFeedPreview={ onChangeFeedPreview }
+				/>
 			) : null }
 
 			<ReaderJoinConversationDialog
