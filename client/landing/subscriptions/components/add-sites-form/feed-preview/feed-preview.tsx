@@ -26,7 +26,7 @@ interface FeedPreviewProps {
 export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | null {
 	const { url, source, onChangeFeedPreview, onSubscribeToggle } = props;
 	const dispatch = useDispatch();
-	const [ debouncedUrl ] = useDebounce( url, 700 );
+	const [ debouncedUrl ] = useDebounce( url, 1000 );
 	const [ feed, setFeed ] = useState< Reader.FeedItem >();
 	const [ loading, setLoading ] = useState( false );
 
@@ -73,6 +73,7 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 				showFollowButton={ false }
 				trackScrollPage={ () => {} }
 				suppressSiteNameLink
+				showBack={ false }
 			/>
 		);
 	}, [ feed?.feed_ID ] );
