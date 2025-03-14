@@ -82,7 +82,6 @@ const useEligibilityForTermSavingsPriceDisplay = ( {
 	displayedIntervals,
 	coupon,
 	siteId,
-	isInSignup,
 }: {
 	hiddenPlans?: HiddenPlans;
 	intent?: PlansIntent;
@@ -92,7 +91,6 @@ const useEligibilityForTermSavingsPriceDisplay = ( {
 	displayedIntervals: UrlFriendlyTermType[];
 	coupon?: string;
 	siteId?: number | null;
-	isInSignup?: boolean;
 } ) => {
 	const isAnyGridPlanDiscounted = useIsAnyGridPlanDiscounted( {
 		hiddenPlans,
@@ -108,7 +106,7 @@ const useEligibilityForTermSavingsPriceDisplay = ( {
 	const [ isLoading, experimentAssignment ] = useExperiment(
 		'calypso_plans_page_emphasize_longer_term_savings_v2',
 		{
-			isEligible: isInSignup && ! isAnyGridPlanDiscounted,
+			isEligible: ! isAnyGridPlanDiscounted,
 		}
 	);
 
