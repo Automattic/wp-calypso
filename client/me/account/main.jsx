@@ -34,6 +34,7 @@ import AccountEmailField from 'calypso/me/account/account-email-field';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
+	isCurrentUserEmailVerified,
 	getCurrentUserDate,
 	getCurrentUserDisplayName,
 	getCurrentUserName,
@@ -889,7 +890,17 @@ class Account extends Component {
 							{ renderUsernameForm ? (
 								this.renderUsernameValidation()
 							) : (
-								<FormSettingExplanation>{ this.renderJoinDate() }</FormSettingExplanation>
+								<FormSettingExplanation>
+									{ ! this.props.isEmailVerified ? (
+										<span>
+											{ translate(
+												'Username can be changed once your email address is verified.'
+											) }
+										</span>
+									) : (
+										this.renderJoinDate()
+									) }
+								</FormSettingExplanation>
 							) }
 						</FormFieldset>
 
@@ -992,6 +1003,7 @@ export default compose(
 			userSettings: getUserSettings( state ),
 			unsavedUserSettings: getUnsavedUserSettings( state ),
 			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
+			isEmailVerified: isCurrentUserEmailVerified( state ),
 		} ),
 		{
 			clearUnsavedUserSettings,
