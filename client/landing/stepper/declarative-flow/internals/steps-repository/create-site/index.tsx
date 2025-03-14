@@ -1,5 +1,6 @@
 import { Site } from '@automattic/data-stores';
 import {
+	AI_SITE_BUILDER_FLOW,
 	ENTREPRENEUR_FLOW,
 	StepContainer,
 	addPlanToCart,
@@ -132,7 +133,8 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		isStartWritingFlow( flow ) ||
 		isNewHostedSiteCreationFlow( flow ) ||
 		isReadymadeFlow( flow ) ||
-		wooFlows.includes( flow || '' )
+		wooFlows.includes( flow || '' ) ||
+		flow === AI_SITE_BUILDER_FLOW
 	) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
 	}
