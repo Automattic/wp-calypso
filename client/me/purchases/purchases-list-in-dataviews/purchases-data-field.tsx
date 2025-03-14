@@ -1,6 +1,7 @@
 import { isJetpackPlan, isJetpackProduct } from '@automattic/calypso-products';
 import { Purchases } from '@automattic/data-stores';
 import { Fields, Operator } from '@wordpress/dataviews';
+import SiteIcon from 'calyso/blocks/site-icon';
 import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -38,6 +39,23 @@ export const purchasesDataFields = [
 	{
 		id: 'site',
 		label: 'Site',
+		type: 'text',
+		enableGlobalSearch: true,
+		enableSorting: true,
+		enableHiding: false,
+		// Filter by site ID
+		getValue: ( { item }: { item: Purchase } ) => {
+			return item.siteId;
+		},
+		// Render the site icon
+		render: ( { item }: { item: Purchase } ) => {
+			const site = { siteId: item.siteId };
+			return <SiteIcon site={ site } size={ 36 } />;
+		},
+	},
+	{
+		id: 'purchase-item-site',
+		label: 'Purchase Item',
 		type: 'text',
 		enableGlobalSearch: true,
 		enableSorting: true,
