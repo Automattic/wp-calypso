@@ -173,7 +173,6 @@ describe(
 						.getByRole( 'option' )
 						.first();
 
-					//await wait( 300000 ); // Wait for the block patterns to load
 					const pageTemplateToSelect = ( await firstPattern.getAttribute( 'aria-label' ) ) ?? '';
 					await editorPage.selectTemplate( pageTemplateToSelect, { timeout: 15 * 1000 } );
 				} );

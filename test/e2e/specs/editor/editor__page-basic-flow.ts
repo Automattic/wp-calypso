@@ -76,7 +76,6 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ), function () 
 				.first()
 				.textContent() ) || '';
 
-		//await wait( 300000 ); // Wait for the block patterns to load
 		pageTemplateToSelect = ( await firstPattern.getAttribute( 'aria-label' ) ) ?? '';
 		await editorPage.selectTemplate( pageTemplateToSelect, { timeout: 15 * 1000 } );
 	} );
