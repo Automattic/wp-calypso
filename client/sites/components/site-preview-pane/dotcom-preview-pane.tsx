@@ -33,6 +33,7 @@ import {
 	SETTINGS_SFTP_SSH,
 	SETTINGS_DATABASE,
 	SETTINGS_PERFORMANCE,
+	PLAN,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
 import SiteEnvironmentSwitcher from './site-environment-switcher';
@@ -130,9 +131,14 @@ const DotcomPreviewPane = ( {
 				enabled: ! isRemoveDuplicateViewsExperimentEnabled && isActiveAtomicSite,
 				featureIds: [ HOSTING_CONFIG ],
 			},
+			{
+				enabled: true,
+				visible: false,
+				featureIds: [ PLAN ],
+			},
 		];
 
-		return siteFeatures.map( ( { label, enabled, featureIds } ) => {
+		return siteFeatures.map( ( { label, enabled, visible, featureIds } ) => {
 			const selected = enabled && featureIds.includes( selectedSiteFeature );
 			const defaultFeatureId = featureIds[ 0 ] as string;
 			const defaultRoute = `/${ FEATURE_TO_ROUTE_MAP[ defaultFeatureId ].replace(
@@ -145,7 +151,7 @@ const DotcomPreviewPane = ( {
 				tab: {
 					label,
 					href: defaultRoute,
-					visible: enabled,
+					visible: enabled && visible !== false,
 					selected,
 					onTabClick: () => {
 						if ( enabled && ! selected ) {

@@ -5,8 +5,8 @@ import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
-import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import StatsModuleEmails from 'calypso/my-sites/stats/features/modules/stats-emails';
 import statsStrings from 'calypso/my-sites/stats/stats-strings';
@@ -84,14 +84,8 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	const isSimple = useSelector( isSimpleSite );
 	const hasNoSubscriberOtherThanAdmin =
 		! subscribersTotals?.total ||
-		( subscribersTotals?.total === 1 && subscribersTotals?.is_owner_subscribing );
+		( subscribersTotals?.total === 1 && subscribersTotals?.is_owner_subscribed );
 	const showLaunchpad = ! isLoading && hasNoSubscriberOtherThanAdmin;
-
-	const emptyComponent = isSimple ? (
-		<SubscriberLaunchpad launchpadContext="subscriber-stats" />
-	) : (
-		<EmptyListView />
-	);
 
 	// Track the last viewed tab.
 	// Necessary to properly configure the fixed navigation headers.
@@ -103,6 +97,13 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 
 	const isWPAdmin = config.isEnabled( 'is_odyssey' );
 	const subscribersPageClasses = clsx( 'stats', { 'is-odyssey-stats': isWPAdmin } );
+
+	const emptyComponent =
+		isSimple && ! isWPAdmin ? (
+			<SubscriberLaunchpad launchpadContext="subscriber-stats" />
+		) : (
+			<EmptyListView />
+		);
 
 	return (
 		<Main fullWidthLayout>

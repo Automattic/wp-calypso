@@ -99,7 +99,7 @@ export default function CommissionOverview( {
 					</>
 				) }
 				<div className="commission-overview__section-container">
-					<StepSection heading={ translate( 'How much can I earn?' ) }>
+					<StepSection applyCoreStyles heading={ translate( 'How much can I earn?' ) }>
 						<FoldableCard
 							header={
 								<>
@@ -181,7 +181,10 @@ export default function CommissionOverview( {
 						</FoldableCard>
 					</StepSection>
 
-					<StepSection heading={ translate( 'Eligibility requirements and terms of use?' ) }>
+					<StepSection
+						applyCoreStyles
+						heading={ translate( 'Eligibility requirements and terms of use?' ) }
+					>
 						<FoldableCard
 							header={ translate( 'Active referrals' ) }
 							expanded

@@ -17,12 +17,14 @@ export const MessageContent = ( {
 	messageHeader,
 	isNextMessageFromSameSender,
 	displayChatWithSupportLabel,
+	displayChatWithSupportEndedLabel,
 }: {
 	message: Message;
 	messageHeader: React.ReactNode;
 	isDisliked?: boolean;
 	isNextMessageFromSameSender?: boolean;
 	displayChatWithSupportLabel?: boolean;
+	displayChatWithSupportEndedLabel?: boolean;
 } ) => {
 	const { __ } = useI18n();
 	const { experimentVariationName } = useOdieAssistantContext();
@@ -106,7 +108,14 @@ export const MessageContent = ( {
 						message.type === 'dislike-feedback' && <DislikeFeedbackMessage /> }
 				</div>
 			</div>
-			{ displayChatWithSupportLabel && <ChatWithSupportLabel /> }
+			{ displayChatWithSupportLabel && (
+				<ChatWithSupportLabel
+					labelText={ __( 'Chatting with support now', __i18n_text_domain__ ) }
+				/>
+			) }
+			{ displayChatWithSupportEndedLabel && (
+				<ChatWithSupportLabel labelText={ __( 'Chat with support ended', __i18n_text_domain__ ) } />
+			) }
 		</>
 	);
 };

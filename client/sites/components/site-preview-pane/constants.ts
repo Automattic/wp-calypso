@@ -15,6 +15,7 @@ export const SETTINGS_SERVER = 'settings-server';
 export const SETTINGS_SFTP_SSH = 'settings-sftp-ssh';
 export const SETTINGS_DATABASE = 'settings-database';
 export const SETTINGS_PERFORMANCE = 'settings-performance';
+export const PLAN = 'plan';
 
 export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
 	[ OVERVIEW ]: 'overview/:site',
@@ -34,4 +35,5 @@ export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
 	[ SETTINGS_SFTP_SSH ]: 'sites/settings/sftp-ssh/:site',
 	[ SETTINGS_DATABASE ]: 'sites/settings/database/:site',
 	[ SETTINGS_PERFORMANCE ]: 'sites/settings/performance/:site',
+	[ PLAN ]: 'plans/:site',
 };
