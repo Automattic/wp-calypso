@@ -32,8 +32,8 @@ function getConfigName( keyType: KeyType ): ZendeskConfigName {
 		case 'jpAgency':
 			return 'zendesk_presales_chat_key_jp_agency_dashboard';
 		case 'jpCheckout':
-		case 'jpGeneral':
 			return 'zendesk_presales_chat_key_jp_checkout';
+		case 'jpGeneral':
 		case 'wpcom':
 		default:
 			return 'zendesk_presales_chat_key';

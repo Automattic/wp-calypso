@@ -51,13 +51,11 @@ export function useLoadZendeskMessaging(
 			setMessagingScriptLoaded( true );
 		}
 
-		if ( zendeskKey ) {
-			loadScript(
-				'https://static.zdassets.com/ekr/snippet.js?key=' + encodeURIComponent( zendeskKey ),
-				setUpMessagingEventHandlers,
-				{ id: ZENDESK_SCRIPT_ID }
-			);
-		}
+		loadScript(
+			'https://static.zdassets.com/ekr/snippet.js?key=' + encodeURIComponent( zendeskKey ),
+			setUpMessagingEventHandlers,
+			{ id: ZENDESK_SCRIPT_ID }
+		);
 	}, [ setMessagingScriptLoaded, enabled, zendeskKey, isMessagingScriptLoaded ] );
 
 	if (
