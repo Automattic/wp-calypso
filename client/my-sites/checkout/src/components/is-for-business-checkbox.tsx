@@ -73,8 +73,7 @@ export function IsForBusinessCheckbox( {
 						components: {
 							link: (
 								<InlineSupportLink
-									id="checkout-is-business-checkbox"
-									supportContext="tax-exempt-customers"
+									supportContext="business-tax-rates-in-ohio-and-connecticut"
 									showIcon={ false }
 								/>
 							),
