@@ -129,6 +129,14 @@ $blueberry-color: #3858e9;
 		}
 	}
 
+	&.is-loading {
+		display: flex;
+		justify-content: center;
+
+		.wpcom__loading-ellipsis {
+			margin-top: 5vh;
+		}
+	}
 }
 
 .hosting-overview__domain-to-plan-credit-notice {

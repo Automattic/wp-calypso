@@ -1,9 +1,12 @@
 import { useTranslate } from 'i18n-calypso';
-import { FC } from 'react';
+import { type FC, useEffect, useState } from 'react';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { isNotAtomicJetpack, isMigrationInProgress } from 'calypso/sites-dashboard/utils';
-import { useSelector } from 'calypso/state';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { useDispatch, useSelector } from 'calypso/state';
+import { requestSite } from 'calypso/state/sites/actions';
+import { isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ActiveDomainsCard from './active-domains-card';
 import MigrationOverview from './migration-overview';
 import PlanCard from './plan-card';
@@ -16,7 +19,51 @@ import './style.scss';
 
 const HostingOverview: FC = () => {
 	const site = useSelector( getSelectedSite );
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const isRequestingSelectedSite = useSelector(
+		( state ) => !! selectedSiteId && isRequestingSite( state, selectedSiteId )
+	);
+	const isRequestingAllSites = useSelector( isRequestingSites );
+	const [ siteRequested, setSiteRequested ] = useState( false );
+	const [ wasAllSitesPending, setWasAllSitesPending ] = useState( false );
+
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		if ( siteRequested || ! selectedSiteId ) {
+			return;
+		}
+
+		const urlParams = new URLSearchParams( globalThis.location?.search ?? '' );
+		if ( urlParams.get( 'refresh' ) !== 'true' ) {
+			return;
+		}
+
+		// If we're already fetching the site or all sites, no need to force a refresh.
+		if ( isRequestingSelectedSite || isRequestingAllSites ) {
+			setSiteRequested( true );
+			if ( isRequestingAllSites ) {
+				setWasAllSitesPending( true );
+			}
+			return;
+		}
+
+		dispatch( requestSite( selectedSiteId ) );
+		setSiteRequested( true );
+	}, [ dispatch, isRequestingSelectedSite, isRequestingAllSites, selectedSiteId, siteRequested ] );
+
+	if (
+		selectedSiteId &&
+		siteRequested &&
+		( isRequestingSelectedSite || ( wasAllSitesPending && isRequestingAllSites ) )
+	) {
+		return (
+			<div className="hosting-overview is-loading">
+				<LoadingEllipsis />
+			</div>
+		);
+	}
 
 	if ( site ) {
 		if ( isMigrationInProgress( site ) ) {
