@@ -1,10 +1,12 @@
 import page from '@automattic/calypso-router';
-import { Badge, Button, FoldableCard, Gridicon } from '@automattic/components';
+import { Button, FoldableCard, Gridicon } from '@automattic/components';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import { A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
+import CoreBadge from 'calypso/components/core/badge';
 import { getActiveAgency, isAgencyOwner } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 
@@ -39,14 +41,14 @@ const PressableOffering = () => {
 	const header = (
 		<div className="a4a-offering-item__title-container">
 			<img className="pressable-icon" src={ pressableIcon } alt="Pressable" />
-			<div className="a4a-overview-pressable-offering-header-title">
-				<h3 className="a4a-offering-item__title">
-					{ translate( 'Pressable' ) }
+			<h3 className="a4a-offering-item__title">
+				<HStack spacing={ 3 }>
+					<span>{ translate( 'Pressable' ) }</span>
 					{ isPressableRegular && (
-						<Badge type="success">{ translate( "You're signed up!" ) }</Badge>
+						<CoreBadge intent="success">{ translate( "You're signed up!" ) }</CoreBadge>
 					) }
-				</h3>
-			</div>
+				</HStack>
+			</h3>
 		</div>
 	);
 
