@@ -5,21 +5,11 @@
 	}
 }
 
-/* @wordpress/components Button overrides */
-.components-button.is-primary {
+/* color overrides */
+.color-scheme {
 	--wp-components-color-accent: var(--color-accent);
 	--wp-components-color-accent-inverted: var(--color-text-inverted);
 	--wp-components-color-accent-darker-10: var(--color-accent-60);
-	--wp-components-color-accent-darker-20: var(--color-accent-60);
-}
-
-.components-button.is-secondary {
-	--wp-components-color-accent: var(--color-accent);
-	--wp-components-color-accent-darker-20: var(--color-accent-60);
-}
-
-.components-button.is-tertiary {
-	--wp-components-color-accent: var(--color-accent);
 	--wp-components-color-accent-darker-20: var(--color-accent-60);
 }
 
