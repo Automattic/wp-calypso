@@ -5,7 +5,13 @@
 import page from '@automattic/calypso-router';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { Provider } from 'react-redux';
+import { legacy_createStore as createStore } from 'redux';
 import { UserProfile, UserProfileProps } from '../index';
+
+// Create a simple Redux store mock to provide context for connected components
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const store = createStore( ( state: any = {} ) => state );
 
 jest.mock( '@automattic/calypso-router', () => ( {
 	replace: jest.fn(),
@@ -58,8 +64,12 @@ describe( 'UserProfile', () => {
 		jest.clearAllMocks();
 	} );
 
+	const renderWithProvider = ( ui ) => {
+		return render( <Provider store={ store }>{ ui }</Provider> );
+	};
+
 	test( 'should render empty content when user is not found', () => {
-		render( <UserProfile { ...defaultProps } /> );
+		renderWithProvider( <UserProfile { ...defaultProps } /> );
 
 		expect( screen.getByTestId( 'empty-content' ) ).toBeInTheDocument();
 		expect( mockRequestUser ).toHaveBeenCalledWith( 'testuser' );
@@ -73,7 +83,7 @@ describe( 'UserProfile', () => {
 			avatar_URL: 'https://example.com/avatar.jpg',
 		};
 
-		render( <UserProfile { ...defaultProps } user={ user } /> );
+		renderWithProvider( <UserProfile { ...defaultProps } user={ user } /> );
 
 		expect( screen.getByTestId( 'user-profile-header' ) ).toBeInTheDocument();
 		expect( screen.getByTestId( 'user-posts' ) ).toBeInTheDocument();
@@ -87,7 +97,9 @@ describe( 'UserProfile', () => {
 			avatar_URL: 'https://example.com/avatar.jpg',
 		};
 
-		render( <UserProfile { ...defaultProps } user={ user } path="/reader/users/testuser/lists" /> );
+		renderWithProvider(
+			<UserProfile { ...defaultProps } user={ user } path="/reader/users/testuser/lists" />
+		);
 
 		expect( screen.getByTestId( 'user-profile-header' ) ).toBeInTheDocument();
 		expect( screen.getByTestId( 'user-lists' ) ).toBeInTheDocument();
@@ -101,7 +113,7 @@ describe( 'UserProfile', () => {
 			avatar_URL: 'https://example.com/avatar.jpg',
 		};
 
-		render( <UserProfile { ...defaultProps } user={ user } showBack /> );
+		renderWithProvider( <UserProfile { ...defaultProps } user={ user } showBack /> );
 
 		const backButton = screen.getByTestId( 'back-button' );
 		expect( backButton ).toBeInTheDocument();
@@ -112,7 +124,7 @@ describe( 'UserProfile', () => {
 	} );
 
 	test( 'should not show content when isLoading is true', () => {
-		render( <UserProfile { ...defaultProps } isLoading /> );
+		renderWithProvider( <UserProfile { ...defaultProps } isLoading /> );
 
 		expect( screen.queryByTestId( 'empty-content' ) ).not.toBeInTheDocument();
 		expect( screen.queryByTestId( 'user-profile-header' ) ).not.toBeInTheDocument();
@@ -126,14 +138,16 @@ describe( 'UserProfile', () => {
 			avatar_URL: 'https://example.com/avatar.jpg',
 		};
 
-		render( <UserProfile { ...defaultProps } user={ user } path="/reader/users/id/123" /> );
+		renderWithProvider(
+			<UserProfile { ...defaultProps } user={ user } path="/reader/users/id/123" />
+		);
 
 		// Verify the redirect was called with the correct path
 		expect( page.replace ).toHaveBeenCalledWith( '/reader/users/testuser' );
 	} );
 
 	test( 'should request user data with both login and ID when provided', () => {
-		render( <UserProfile { ...defaultProps } userLogin="testuser" userId="123" /> );
+		renderWithProvider( <UserProfile { ...defaultProps } userLogin="testuser" userId="123" /> );
 
 		// Verify both API calls were made
 		expect( mockRequestUser ).toHaveBeenCalledWith( 'testuser' );
