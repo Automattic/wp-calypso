@@ -38,6 +38,7 @@ const SiteIntent = Onboard.SiteIntent;
 
 type ExitFlowOptions = {
 	skipLaunchpad?: boolean;
+	replaceHistory?: boolean;
 };
 
 function isLaunchpadIntent( intent: string ) {
@@ -179,70 +180,69 @@ const siteSetupFlow: FlowV1 = {
 		};
 
 		const exitFlow = ( to: string, options: ExitFlowOptions = {} ) => {
-			setPendingAction( () => {
-				/**
-				 * This implementation seems very hacky.
-				 * The new Promise returned is never resolved or rejected.
-				 *
-				 * If we were to resolve the promise when all pending actions complete,
-				 * I found out this results in setIntentOnSite and setGoalsOnSite being called multiple times
-				 * because the exitFlow itself is called more than once on actual flow exits.
-				 */
-				return new Promise( () => {
-					if ( ! siteSlug ) {
-						return;
-					}
-					const siteId = site?.ID;
-					const siteIntent = getIntent();
+			function getPendingActions() {
+				if ( ! siteSlug ) {
+					return { pendingActions: [], redirectionUrl: to };
+				}
+				const siteId = site?.ID;
+				const siteIntent = getIntent();
 
-					const settings = {
-						site_intent: siteIntent,
-						...( goals.length && { site_goals: goals } ),
-						launchpad_screen: undefined as string | undefined,
-					};
+				const settings = {
+					site_intent: siteIntent,
+					...( goals.length && { site_goals: goals } ),
+					launchpad_screen: undefined as string | undefined,
+				};
 
-					const formData: string[][] = [];
-					const pendingActions = [];
+				const formData: string[][] = [];
+				const pendingActions = [];
 
-					if ( siteIntent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
-						pendingActions.push(
-							setDesignOnSite( siteSlug, WRITE_INTENT_DEFAULT_DESIGN, { enableThemeSetup: true } )
-						);
-					}
+				if ( siteIntent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
+					pendingActions.push(
+						setDesignOnSite( siteSlug, WRITE_INTENT_DEFAULT_DESIGN, { enableThemeSetup: true } )
+					);
+				}
 
-					// Update Launchpad option based on site intent
-					if ( typeof siteId === 'number' ) {
-						settings.launchpad_screen = getLaunchpadScreenValue(
-							siteIntent,
-							options.skipLaunchpad ?? false
-						);
-					}
+				// Update Launchpad option based on site intent
+				if ( typeof siteId === 'number' ) {
+					settings.launchpad_screen = getLaunchpadScreenValue(
+						siteIntent,
+						options.skipLaunchpad ?? false
+					);
+				}
 
-					let redirectionUrl = to;
+				let redirectionUrl = to;
 
-					// Forcing cache invalidation to retrieve latest launchpad_screen option value
-					if ( isLaunchpadIntent( siteIntent ) ) {
-						redirectionUrl = addQueryArgs(
-							{
-								showLaunchpad: true,
-								...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
-								...( skippedCheckout && { skippedCheckout: 1 } ),
-							},
-							to
-						);
-					}
+				// Forcing cache invalidation to retrieve latest launchpad_screen option value
+				if ( isLaunchpadIntent( siteIntent ) ) {
+					redirectionUrl = addQueryArgs(
+						{
+							showLaunchpad: true,
+							...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
+							...( skippedCheckout && { skippedCheckout: 1 } ),
+						},
+						to
+					);
+				}
 
+				if (
+					settings.launchpad_screen !== site?.options?.launchpad_screen ||
+					settings.site_intent !== site?.options?.site_intent ||
+					( settings.site_goals?.length ?? 0 ) !== site?.options?.site_goals?.length
+				) {
+					// Only update the settings if they have changed
 					formData.push( [ 'settings', JSON.stringify( settings ) ] );
+				}
 
-					const enableFeaturesForGoals = getEnableFeaturesForGoals();
+				const enableFeaturesForGoals = getEnableFeaturesForGoals();
 
-					if ( enableFeaturesForGoals ) {
-						formData.push( [
-							'enable_features_for_goals',
-							JSON.stringify( enableFeaturesForGoals ),
-						] );
-					}
+				if ( enableFeaturesForGoals ) {
+					formData.push( [
+						'enable_features_for_goals',
+						JSON.stringify( enableFeaturesForGoals ),
+					] );
+				}
 
+				if ( formData.length > 0 ) {
 					pendingActions.push(
 						wpcomRequest( {
 							path: `/sites/${ siteId }/onboarding-customization`,
@@ -251,16 +251,38 @@ const siteSetupFlow: FlowV1 = {
 							formData,
 						} )
 					);
+				}
 
-					Promise.all( pendingActions )
-						// Refetch the site to get the latest data, including the new intent.
-						.then( () => dispatch( requestSite( siteSlug ) ) )
-						.then( () => window.location.assign( redirectionUrl ) );
+				// Refetch the site to get the latest data, including the new intent.
+				dispatch( requestSite( siteSlug ) );
+				return { pendingActions, redirectionUrl };
+			}
+
+			// Determine the pending actions and the redirection URL early to avoid going to the processing step unless needed.
+			const { pendingActions, redirectionUrl } = getPendingActions();
+			if ( pendingActions.length > 0 ) {
+				setPendingAction( () => {
+					/**
+					 * This implementation seems very hacky.
+					 * The new Promise returned is never resolved or rejected.
+					 *
+					 * If we were to resolve the promise when all pending actions complete,
+					 * I found out this results in setIntentOnSite and setGoalsOnSite being called multiple times
+					 * because the exitFlow itself is called more than once on actual flow exits.
+					 */
+					Promise.all( pendingActions ).then( () =>
+						options.replaceHistory
+							? window.location.replace( redirectionUrl )
+							: window.location.assign( redirectionUrl )
+					);
 				} );
-			} );
 
-			navigate( 'processing' );
-
+				navigate( 'processing' );
+			} else {
+				options.replaceHistory
+					? window.location.replace( redirectionUrl )
+					: window.location.assign( redirectionUrl );
+			}
 			// Clean-up the store so that if onboard for new site will be launched it will be launched with no preselected values
 			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction', 'skipIntent', 'skipGoals' ] );
 
@@ -305,7 +327,7 @@ const siteSetupFlow: FlowV1 = {
 					if ( intent === 'sell' && storeType === 'power' ) {
 						dispatch( recordTracksEvent( 'calypso_woocommerce_dashboard_redirect' ) );
 
-						return exitFlow( `${ adminUrl }admin.php?page=wc-admin` );
+						return exitFlow( `${ adminUrl }admin.php?page=wc-admin`, { replaceHistory: true } );
 					}
 
 					// Check current theme: Does it have a plugin bundled?
@@ -317,16 +339,18 @@ const siteSetupFlow: FlowV1 = {
 						isPluginBundleEligible &&
 						siteSlug
 					) {
-						return exitFlow( `/setup/plugin-bundle/?siteSlug=${ siteSlug }` );
+						return exitFlow( `/setup/plugin-bundle/?siteSlug=${ siteSlug }`, {
+							replaceHistory: true,
+						} );
 					}
 
 					if ( isLaunchpadIntent( intent ) ) {
 						initializeLaunchpadState( { siteId, siteSlug } );
 						const url = getPostFlowUrl( { flow: intent, siteId, siteSlug } );
-						return exitFlow( url );
+						return exitFlow( url, { replaceHistory: true } );
 					}
 
-					return exitFlow( `/home/${ siteId ?? siteSlug }` );
+					return exitFlow( `/home/${ siteId ?? siteSlug }`, { replaceHistory: true } );
 				}
 
 				case 'bloggerStartingPoint': {
