@@ -5,8 +5,7 @@ import { zendeskMessageConverter } from '../../utils';
 import ChatWithSupportLabel from '../chat-with-support';
 import DislikeFeedbackMessage from './dislike-feedback-message';
 import ErrorMessage from './error-message';
-import { FeedbackMessage } from './feedback-message';
-import { FeedbackSubmit } from './feedback-submit';
+import { FeedbackContent } from './feedback-content';
 import { IntroductionMessage } from './introduction-message';
 import { UserMessage } from './user-message';
 import type { ZendeskMessage, Message } from '../../types';
@@ -83,8 +82,10 @@ export const MessageContent = ( {
 						/>
 					) }
 					{ message.type === 'introduction' && <IntroductionMessage content={ message.content } /> }
-					{ isFeedbackMessage && <FeedbackMessage content={ message.content } /> }
-					{ isFeedbackMessage && <FeedbackSubmit meta={ message?.meta } /> }
+					{ isFeedbackMessage && (
+						<FeedbackContent content={ message.content } meta={ message?.meta } />
+					) }
+
 					{ ! stopConflatingNegativeRatingWithContactSupport &&
 						message.type === 'dislike-feedback' && <DislikeFeedbackMessage /> }
 				</div>
