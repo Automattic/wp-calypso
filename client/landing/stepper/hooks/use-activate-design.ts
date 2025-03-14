@@ -63,6 +63,7 @@ export const useActivateDesign = () => {
 				enableThemeSetup: ! isJetpackOrAtomic,
 				...designOptions,
 				// Prevent resetting global styles when a theme was recently installed generating an fatal error.
+				// See https://github.com/Automattic/wp-calypso/issues/101342.
 				styleVariation:
 					isNewlyInstalledTheme &&
 					designOptions.styleVariation?.slug === DEFAULT_GLOBAL_STYLES_VARIATION_SLUG
