@@ -55,14 +55,17 @@ const isWPCOM = ( siteInfo?: UrlData ) => {
 };
 
 const removeEndingSlash = ( url: string ) => {
-	if ( ! globalThis.URL.canParse( url ) ) {
-		return url;
+	try {
+		const urlObject = new globalThis.URL( url );
+		if ( urlObject.pathname === '/' && url.endsWith( '/' ) ) {
+			return url.slice( 0, -1 );
+		}
+	} catch {
+		if ( url.endsWith( '/' ) ) {
+			return url.slice( 0, -1 );
+		}
 	}
-	// Only remove the trailing slash if it's the only value in the path.
-	const urlObject = new globalThis.URL( url );
-	if ( urlObject.pathname === '/' && url.endsWith( '/' ) ) {
-		return url.slice( 0, -1 );
-	}
+
 	return url;
 };
 
