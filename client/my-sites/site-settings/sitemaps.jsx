@@ -45,7 +45,13 @@ class Sitemaps extends Component {
 	}
 
 	renderSitemapLink( sitemapUrl ) {
-		const url = new URL( sitemapUrl );
+		let url;
+		try {
+			url = new URL( sitemapUrl );
+		} catch ( error ) {
+			return null;
+		}
+
 		url.protocol = 'https:';
 		const secureSitemap = url.toString();
 
