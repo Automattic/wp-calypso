@@ -94,6 +94,7 @@ $modal-content-padding: 32px;
 .stats-utm-builder__help {
 	flex: 1 0 45%;
 	padding: 0 0 0 $stats-utm-builder-help-padding;
+	max-width: 35em;
 
 	@media (max-width: $break-small) {
 		padding: $stats-utm-builder-vertical-spacing 0 0 0;
