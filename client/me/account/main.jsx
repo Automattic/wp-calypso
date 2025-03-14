@@ -939,7 +939,7 @@ class Account extends Component {
 						{ this.props.canDisplayCommunityTranslator && (
 							<FormFieldset className="account__settings-admin-home">
 								<FormLabel id="account__default_landing_page">
-									{ translate( 'Community Translator' ) }
+									{ translate( 'Community translator' ) }
 								</FormLabel>
 								<ToggleUseCommunityTranslator />
 							</FormFieldset>
@@ -947,7 +947,7 @@ class Account extends Component {
 
 						<FormFieldset className="account__settings-admin-home">
 							<FormLabel id="account__default_landing_page">
-								{ translate( 'Default Landing Page' ) }
+								{ translate( 'Default landing page' ) }
 							</FormLabel>
 							<ToggleLandingPageSettings />
 							<FormSettingExplanation>

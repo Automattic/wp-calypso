@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 $iframe-background-color: #f7f7f7;
 
@@ -41,7 +42,7 @@ $iframe-background-color: #f7f7f7;
 }
 
 .bank-details__status {
-	@include a4a-font-label-button;
+	@include body-large;
 	color: var(--color-accent-80);
 
 	.badge {

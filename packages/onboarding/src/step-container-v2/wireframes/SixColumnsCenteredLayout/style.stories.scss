@@ -1,0 +1,12 @@
+@import '../../../../styles/mixins';
+
+.goals__list {
+	display: grid;
+	width: 100%;
+	gap: 1rem;
+
+	@include step-medium-viewport {
+		width: auto;
+		grid-template-columns: repeat(2, 1fr);
+	}
+}

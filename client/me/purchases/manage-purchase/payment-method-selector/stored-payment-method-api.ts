@@ -9,6 +9,7 @@ export async function saveCreditCard( {
 	token,
 	stripeConfiguration,
 	useForAllSubscriptions,
+	useForBusiness,
 	eventSource,
 	postalCode,
 	countryCode,
@@ -21,6 +22,7 @@ export async function saveCreditCard( {
 	token: string;
 	stripeConfiguration: StripeConfiguration;
 	useForAllSubscriptions: boolean;
+	useForBusiness?: boolean | undefined;
 	eventSource?: string;
 	postalCode?: string;
 	countryCode: string;
@@ -34,6 +36,7 @@ export async function saveCreditCard( {
 		cardToken: token,
 		stripeConfiguration,
 		useForAllSubscriptions,
+		useForBusiness,
 		eventSource,
 		postalCode,
 		countryCode,
@@ -148,6 +151,7 @@ function getParamsForApi( {
 	stripeConfiguration,
 	purchase,
 	useForAllSubscriptions,
+	useForBusiness,
 	eventSource,
 	postalCode,
 	countryCode,
@@ -161,6 +165,7 @@ function getParamsForApi( {
 	stripeConfiguration: StripeConfiguration;
 	purchase?: Purchase | undefined;
 	useForAllSubscriptions?: boolean;
+	useForBusiness?: boolean;
 	eventSource?: string;
 	postalCode: string | undefined;
 	countryCode: string;
@@ -183,6 +188,7 @@ function getParamsForApi( {
 		tax_city: city,
 		tax_organization: organization,
 		tax_address: address,
+		tax_is_for_business: useForBusiness ?? '',
 		...( setupKey ? { setup_key: setupKey } : {} ),
 	};
 }

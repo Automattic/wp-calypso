@@ -34,9 +34,11 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { isPlansPageUntangled } from 'calypso/lib/plans/untangling-plans-experiment';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import { FeatureBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-feature-breadcrumb';
 import { useSelector } from 'calypso/state';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -364,6 +366,7 @@ class PlansComponent extends Component {
 			selectedSite,
 			translate,
 			canAccessPlans,
+			isUntangled,
 			currentPlan,
 			domainAndPlanPackage,
 			isDomainAndPlanPackageFlow,
@@ -430,11 +433,11 @@ class PlansComponent extends Component {
 
 		// Hide for WooExpress plans and Entrepreneur trials that are not WooExpress trials
 		const isEntrepreneurTrial = isEcommerceTrial && ! purchase?.isWooExpressTrial;
-		const showPlansNavigation = ! ( isWooExpressPlan || isEntrepreneurTrial );
+		const showPlansNavigation = ! isUntangled && ! ( isWooExpressPlan || isEntrepreneurTrial );
 
 		return (
 			<div>
-				{ ! isJetpackNotAtomic && <ModernizedLayout /> }
+				{ ! isUntangled && ! isJetpackNotAtomic && <ModernizedLayout /> }
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<PageViewTracker path="/plans/:site" title="Plans" />
@@ -452,7 +455,10 @@ class PlansComponent extends Component {
 				) }
 				{ canAccessPlans && (
 					<div>
-						{ ! isDomainAndPlanPackageFlow && (
+						{ isUntangled && (
+							<FeatureBreadcrumb siteId={ selectedSite.ID } title={ translate( 'Plan' ) } />
+						) }
+						{ ! isUntangled && ! isDomainAndPlanPackageFlow && (
 							<PlansHeader
 								domainFromHomeUpsellFlow={ domainFromHomeUpsellFlow }
 								subHeaderText={ subHeaderText }
@@ -516,6 +522,7 @@ const ConnectedPlans = connect(
 			purchase: currentPlan ? getByPurchaseId( state, currentPlan.purchaseId ) : null,
 			selectedSite: getSelectedSite( state ),
 			canAccessPlans: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
+			isUntangled: isPlansPageUntangled( state ),
 			isWPForTeamsSite: isSiteWPForTeams( state, selectedSiteId ),
 			isSiteEligibleForMonthlyPlan: isEligibleForWpComMonthlyPlan( state, selectedSiteId ),
 			isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
