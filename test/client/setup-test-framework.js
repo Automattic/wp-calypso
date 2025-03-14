@@ -1,5 +1,20 @@
 import '@testing-library/jest-dom';
+// eslint-disable-next-line import/order
+const { Request, Response } = require( 'node-fetch' );
+const { ReadableStream, TransformStream } = require( 'stream/web' );
+// eslint-disable-next-line import/order
 const { TextEncoder, TextDecoder } = require( 'util' );
+
+// Define Response for nock 14
+global.Request = Request;
+global.Response = Response;
+global.ReadableStream = ReadableStream;
+global.TransformStream = TransformStream;
+
+// Define TextEncoder for ReactDOMServer
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
+
 const nock = require( 'nock' );
 
 // Disables all network requests for all tests.
@@ -17,10 +32,6 @@ afterAll( () => {
 	nock.restore();
 	nock.cleanAll();
 } );
-
-// Define TextEncoder for ReactDOMServer
-global.TextEncoder = TextEncoder;
-global.TextDecoder = TextDecoder;
 
 // This is used by @wordpress/components in https://github.com/WordPress/gutenberg/blob/trunk/packages/components/src/ui/utils/space.ts#L33
 // JSDOM or CSSDOM don't provide an implementation for it, so for now we have to mock it.
