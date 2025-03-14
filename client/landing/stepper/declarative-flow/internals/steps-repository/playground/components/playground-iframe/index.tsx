@@ -24,6 +24,7 @@ export function PlaygroundIframe( {
 		initializeWordPressPlayground( iframeRef.current ).then( ( playgroundClient ) => {
 			setPlaygroundClient( playgroundClient );
 		} );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
 	return (

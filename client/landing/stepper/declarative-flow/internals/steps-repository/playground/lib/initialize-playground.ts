@@ -22,7 +22,7 @@ export async function initializeWordPressPlayground(
 	const url = new URL( window.location.href );
 	let playgroundId = url.searchParams.get( 'playground' );
 	if ( ! playgroundId ) {
-		playgroundId = Math.floor( Math.random() * 1000000 ).toString();
+		playgroundId = crypto.randomUUID();
 		url.searchParams.set( 'playground', playgroundId );
 		window.history.replaceState( {}, '', url.toString() );
 	} else {
@@ -65,7 +65,7 @@ export async function initializeWordPressPlayground(
 		window.history.replaceState( {}, '', window.location.pathname + window.location.search );
 
 		await client.isReady();
-		return await client;
+		return client;
 	} catch ( error ) {
 		// console.error( 'Error initializing WordPress Playground:', error );
 		logToLogstash( {
