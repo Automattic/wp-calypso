@@ -9,13 +9,25 @@ import { Provider } from 'react-redux';
 import { legacy_createStore as createStore } from 'redux';
 import { UserProfile, UserProfileProps } from '../index';
 
-// Create a simple Redux store mock to provide context for connected components
+// Create a Redux store with initial state where user is logged in
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const store = createStore( ( state: any = {} ) => state );
+const initialState: any = {
+	currentUser: { id: 123 }, // This makes isUserLoggedIn return true
+};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const store = createStore( ( state: any = initialState ) => state );
 
 jest.mock( '@automattic/calypso-router', () => ( {
 	replace: jest.fn(),
 	current: '/reader/users/testuser',
+	lastRoute: '/reader', // This makes userHasHistory return true
+} ) );
+
+// Mock shouldShowBackButton to ensure it returns true for our test
+jest.mock( 'calypso/reader/controller-helper', () => ( {
+	...jest.requireActual( 'calypso/reader/controller-helper' ),
+	shouldShowBackButton: () => true,
+	userHasHistory: () => true,
 } ) );
 
 jest.mock( 'calypso/reader/user-profile/components/user-profile-header', () => () => (
