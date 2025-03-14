@@ -50,14 +50,10 @@ describe( 'UserProfileHeader', () => {
 		expect( avatars[ 0 ] ).toHaveAttribute( 'data-author-id', defaultUser.ID.toString() );
 
 		// Test that desktop and mobile versions are properly rendered
-		const desktopAvatar = document.querySelector(
-			'.user-profile-header__avatar-desktop [data-testid="reader-avatar"]'
-		);
+		const desktopAvatar = screen.getByTestId( 'desktop-avatar' );
 		expect( desktopAvatar ).toBeInTheDocument();
 
-		const mobileAvatar = document.querySelector(
-			'.user-profile-header__avatar-mobile [data-testid="reader-avatar"]'
-		);
+		const mobileAvatar = screen.getByTestId( 'mobile-avatar' );
 		expect( mobileAvatar ).toBeInTheDocument();
 	} );
 

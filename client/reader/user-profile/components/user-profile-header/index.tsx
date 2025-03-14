@@ -64,12 +64,18 @@ const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
 	return (
 		<div className="user-profile-header">
 			<header className="user-profile-header__main">
-				<div className="user-profile-header__avatar user-profile-header__avatar-desktop">
+				<div
+					className="user-profile-header__avatar user-profile-header__avatar-desktop"
+					data-testid="desktop-avatar"
+				>
 					{ avatarElement }
 				</div>
 				<div className="user-profile-header__details">
 					<div className="user-profile-header__display-name">
-						<div className="user-profile-header__avatar user-profile-header__avatar-mobile">
+						<div
+							className="user-profile-header__avatar user-profile-header__avatar-mobile"
+							data-testid="mobile-avatar"
+						>
 							{ avatarElement }
 						</div>
 						{ user.display_name }
