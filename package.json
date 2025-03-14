@@ -311,7 +311,7 @@
 		"source-map": "^0.7.4",
 		"stackframe": "^1.1.1",
 		"stacktrace-gps": "^3.0.3",
-		"stylelint": "^16.13.2",
+		"stylelint": "^16.15.0",
 		"tslib": "^2.3.0",
 		"typescript": "5.5.4",
 		"webpack": "^5.97.1",
