@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Modal, Button, VisuallyHidden } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { link } from '@wordpress/icons';
@@ -63,6 +64,9 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger, initialData }
 		</Button>
 	);
 
+	const isWPAdmin = config.isEnabled( 'is_odyssey' );
+	const utmBuilderClasses = clsx( 'stats-utm-builder__overlay', { 'is-odyssey-stats': isWPAdmin } );
+
 	return (
 		<>
 			{ triggerNode }
@@ -70,7 +74,7 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger, initialData }
 				<Modal
 					title={ translate( 'URL Builder' ) }
 					onRequestClose={ closeModal }
-					overlayClassName="stats-utm-builder__overlay"
+					overlayClassName={ utmBuilderClasses }
 					bodyOpenClassName="stats-utm-builder__body-modal-open"
 				>
 					<div className={ clsx( modalClassName, 'stats-utm-builder-modal' ) }>
