@@ -22,8 +22,9 @@ const customUrlSlug = `about-${ DataHelper.getTimestamp() }-${ DataHelper.getRan
 	100
 ) }`;
 
-// Test will be updated to test equivalent core functionality.
-describe.skip( DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ), function () {
+const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
+
+describe( DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ), function () {
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature(
 		features,
@@ -41,6 +42,7 @@ describe.skip( DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ), functio
 	let pagesPage: PagesPage;
 	let publishedUrl: URL;
 	let pageTemplateToSelect: string;
+	let pageTemplateFirstTextContent: string;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
@@ -63,19 +65,28 @@ describe.skip( DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ), functio
 
 		const editorParent = await editorPage.getEditorParent();
 
-		pageTemplateToSelect =
-			( await editorParent
-				.getByRole( 'listbox', { name: 'Block patterns' } )
-				.or( editorParent.getByRole( 'listbox', { name: 'Block patterns' } ) )
-				.getByRole( 'option' )
+		const inserterSelector = await editorParent.getByRole( 'listbox', { name: 'All' } );
+		const modalSelector = await editorParent.getByRole( 'listbox', { name: 'Block patterns' } );
+
+		const firstPattern = await inserterSelector.or( modalSelector ).getByRole( 'option' ).first();
+
+		pageTemplateFirstTextContent =
+			( await firstPattern
+				.frameLocator( 'iframe' )
+				.locator( '.is-root-container' )
+				.locator( 'p, h1, h2, h3, h4, h5, h6, blockquote, ul, ol' )
 				.first()
-				.getAttribute( 'aria-label' ) ) ?? '';
+				.textContent() ) || '';
+
+		//await wait( 300000 ); // Wait for the block patterns to load
+		pageTemplateToSelect = ( await firstPattern.getAttribute( 'aria-label' ) ) ?? '';
 		await editorPage.selectTemplate( pageTemplateToSelect, { timeout: 15 * 1000 } );
 	} );
 
 	it( 'Template content loads into editor', async function () {
+		//await wait( 30000 ); // Wait for the template to load
 		const editorCanvas = await editorPage.getEditorCanvas();
-		await editorCanvas.locator( `h1.wp-block:text-is('${ pageTemplateToSelect }')` ).waitFor();
+		expect( await editorCanvas.textContent() ).toContain( pageTemplateFirstTextContent );
 	} );
 
 	it( 'Open setting sidebar', async function () {
@@ -101,6 +112,6 @@ describe.skip( DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ), functio
 	it( 'Published page contains template content', async function () {
 		// Not a typo, it's the POM page class for a WordPress page. :)
 		const publishedPagePage = new PublishedPostPage( page );
-		await publishedPagePage.validateTextInPost( pageTemplateToSelect );
+		await publishedPagePage.validateTextInPost( pageTemplateFirstTextContent );
 	} );
 } );

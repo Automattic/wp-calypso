@@ -161,15 +161,21 @@ describe(
 
 			describe( 'From adding a page template', function () {
 				it( 'Add a page template', async function () {
-					const editor = await editorPage.getEditorParent();
-					const pageTemplateToSelect =
-						( await editor
-							.getByRole( 'listbox', { name: 'Block patterns' } )
-							.or( editor.getByRole( 'listbox', { name: 'All' } ) )
-							.getByRole( 'option' )
-							.first()
-							.getAttribute( 'aria-label' ) ) ?? '';
-					await editorPage.selectTemplate( pageTemplateToSelect );
+					const editorParent = await editorPage.getEditorParent();
+
+					const inserterSelector = await editorParent.getByRole( 'listbox', { name: 'All' } );
+					const modalSelector = await editorParent.getByRole( 'listbox', {
+						name: 'Block patterns',
+					} );
+
+					const firstPattern = await inserterSelector
+						.or( modalSelector )
+						.getByRole( 'option' )
+						.first();
+
+					//await wait( 300000 ); // Wait for the block patterns to load
+					const pageTemplateToSelect = ( await firstPattern.getAttribute( 'aria-label' ) ) ?? '';
+					await editorPage.selectTemplate( pageTemplateToSelect, { timeout: 15 * 1000 } );
 				} );
 
 				it( '"wpcom_block_inserted" event fires with "from_template_selector" set to true', async function () {

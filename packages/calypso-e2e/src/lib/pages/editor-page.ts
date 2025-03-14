@@ -214,10 +214,13 @@ export class EditorPage {
 		label: string,
 		{ timeout = envVariables.TIMEOUT }: { timeout?: number } = {}
 	) {
-		const editor = await this.getEditorCanvas();
-		return await editor
-			.getByRole( 'listbox', { name: 'Block patterns' } )
-			.or( editor.getByRole( 'listbox', { name: 'All' } ) )
+		const editor = await this.getEditorParent();
+		const inserterSelector = await editor.getByRole( 'listbox', { name: 'All' } );
+		const modalSelector = await editor.getByRole( 'listbox', {
+			name: 'Block patterns',
+		} );
+		return await inserterSelector
+			.or( modalSelector )
 			.getByRole( 'option', { name: label, exact: true } )
 			.first()
 			.click( { timeout: timeout } );
