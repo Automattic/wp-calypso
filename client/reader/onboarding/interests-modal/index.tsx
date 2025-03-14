@@ -192,12 +192,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 
 	return (
 		isOpen && (
-			<Modal
-				onRequestClose={ onClose }
-				size="large"
-				className="interests-modal"
-				overlayClassName="interests-modal__overlay"
-			>
+			<Modal onRequestClose={ onClose } size="large" className="interests-modal">
 				<VStack spacing={ 8 } className="interests-modal__content">
 					<VStack spacing={ 0 }>
 						<h2 className="interests-modal__title">{ __( 'What topics interest you?' ) }</h2>
