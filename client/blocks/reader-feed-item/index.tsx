@@ -101,46 +101,42 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 
 		const noticeOptions: NoticeOptions = { duration: 5000 };
 		if ( feed?.subscription_id ) {
-			onUnsubscribe(
-				{
-					subscriptionId: feed?.subscription_id,
-					blog_id: blogId ?? undefined,
-					url: subscribeUrl,
+			onUnsubscribe( {
+				subscriptionId: feed?.subscription_id,
+				blog_id: blogId ?? undefined,
+				url: subscribeUrl,
+				onSuccess: () => {
+					dispatch(
+						successNotice(
+							translate( 'Success! You are unsubscribed to %s.', {
+								args: filteredDisplayUrl,
+							} ),
+							noticeOptions
+						)
+					);
+					refetchFeed();
+
+					onSubscribeToggle?.( false );
+					recordSiteUnsubscribed( { blog_id: blogId, url: subscribeUrl, source } );
+
+					if ( railcar ) {
+						// reader: action: site_followed, railcar, ui_algo, ui_position, fetch_algo, fetch_position, fetch_lang, rec_blog_id, (incorrect: only railcar & action accepted)
+						// subscriptions: action: recommended_search_item_site_subscribed, railcar
+						recordTrainTracksInteract( {
+							railcarId: railcar.railcar,
+							action: 'recommended_search_item_site_unsubscribed',
+						} );
+					}
 				},
-				{
-					onSuccess: () => {
-						dispatch(
-							successNotice(
-								translate( 'Success! You are unsubscribed to %s.', {
-									args: filteredDisplayUrl,
-								} ),
-								noticeOptions
-							)
-						);
-						refetchFeed();
-
-						onSubscribeToggle?.( false );
-						recordSiteUnsubscribed( { blog_id: blogId, url: subscribeUrl, source } );
-
-						if ( railcar ) {
-							// reader: action: site_followed, railcar, ui_algo, ui_position, fetch_algo, fetch_position, fetch_lang, rec_blog_id, (incorrect: only railcar & action accepted)
-							// subscriptions: action: recommended_search_item_site_subscribed, railcar
-							recordTrainTracksInteract( {
-								railcarId: railcar.railcar,
-								action: 'recommended_search_item_site_unsubscribed',
-							} );
-						}
-					},
-					onError: () => {
-						dispatch(
-							errorNotice(
-								translate( 'Sorry, we had a problem unsubscribing. Please try again.' ),
-								noticeOptions
-							)
-						);
-					},
-				}
-			);
+				onError: () => {
+					dispatch(
+						errorNotice(
+							translate( 'Sorry, we had a problem unsubscribing. Please try again.' ),
+							noticeOptions
+						)
+					);
+				},
+			} );
 		} else {
 			onSubscribe( {
 				blog_id: blogId ?? undefined,
