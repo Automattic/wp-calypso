@@ -148,7 +148,8 @@ export default function CheckoutMain( {
 	const isSiteless =
 		sitelessCheckoutType === 'jetpack' ||
 		sitelessCheckoutType === 'akismet' ||
-		sitelessCheckoutType === 'marketplace';
+		sitelessCheckoutType === 'marketplace' ||
+		sitelessCheckoutType === 'a4a';
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const { razorpayConfiguration, isRazorpayLoading, razorpayLoadingError } = useRazorpay();
 	const createUserAndSiteBeforeTransaction =
