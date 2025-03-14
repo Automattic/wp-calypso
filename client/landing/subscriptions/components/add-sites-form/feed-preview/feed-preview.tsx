@@ -20,10 +20,11 @@ interface FeedPreviewProps {
 	url: string;
 	source: string;
 	onChangeFeedPreview?: ( hasPreview: boolean ) => void;
+	onSubscribeToggle?: ( subscribed: boolean ) => void;
 }
 
 export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | null {
-	const { url, source, onChangeFeedPreview } = props;
+	const { url, source, onChangeFeedPreview, onSubscribeToggle } = props;
 	const dispatch = useDispatch();
 	const [ debouncedUrl ] = useDebounce( url, 700 );
 	const [ feed, setFeed ] = useState< Reader.FeedItem >();
@@ -96,7 +97,7 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 		return (
 			<>
 				<ul className="feed-preview__site">
-					<ReaderFeedItem feed={ feed } source={ source } />
+					<ReaderFeedItem feed={ feed } source={ source } onSubscribeToggle={ onSubscribeToggle } />
 				</ul>
 
 				<div className="feed-preview__stream">{ memoizedFeedPreview }</div>

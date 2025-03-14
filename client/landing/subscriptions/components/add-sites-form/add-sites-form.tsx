@@ -137,6 +137,15 @@ const AddSitesForm = ( {
 		]
 	);
 
+	function onSubscribeToggle(): void {
+		// Reset fields on subscription or unsubscription.
+		setInputValue( '' );
+		setIsValidInput( false );
+
+		// Set the feed preview to false.
+		onChangeFeedPreview( false );
+	}
+
 	return (
 		<>
 			<form onSubmit={ onSubmit } className="subscriptions-add-sites__form--container">
@@ -175,6 +184,7 @@ const AddSitesForm = ( {
 					url={ inputValue }
 					source={ source }
 					onChangeFeedPreview={ onChangeFeedPreview }
+					onSubscribeToggle={ onSubscribeToggle }
 				/>
 			) : null }
 

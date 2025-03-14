@@ -29,6 +29,7 @@ import './style.scss';
 interface ReaderFeedItemProps {
 	feed: Reader.FeedItem;
 	source: string; // Indicates where the feed item is rendered.
+	onSubscribeToggle?: ( subscribed: boolean ) => void;
 }
 
 /**
@@ -43,6 +44,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 			railcar,
 		},
 		source,
+		onSubscribeToggle,
 	} = props;
 	const isWpcomFeed = !! blogId;
 	const translate = useTranslate();
@@ -84,7 +86,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 		? getSiteName( { feed, site } )
 		: feed?.name ?? filterURLForDisplay( subscribeUrl );
 
-	function onSubscribeToggle(): void {
+	function onClickSubscribeToggle(): void {
 		if ( ! isEmailVerified ) {
 			dispatch(
 				errorNotice( translate( 'Please verify your email before subscribing.' ), {
@@ -109,7 +111,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 					onSuccess: () => {
 						dispatch(
 							successNotice(
-								translate( 'Success! You are now unsubscribed to %s.', {
+								translate( 'Success! You are unsubscribed to %s.', {
 									args: filteredDisplayUrl,
 								} ),
 								noticeOptions
@@ -117,6 +119,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 						);
 						refetchFeed();
 
+						onSubscribeToggle?.( false );
 						recordSiteUnsubscribed( { blog_id: blogId, url: subscribeUrl, source } );
 
 						if ( railcar ) {
@@ -146,11 +149,12 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 				onSuccess: () => {
 					dispatch(
 						successNotice(
-							translate( 'Success! You are now subscribed to %s.', { args: filteredDisplayUrl } ),
+							translate( 'Success! You are subscribed to %s.', { args: filteredDisplayUrl } ),
 							noticeOptions
 						)
 					);
 
+					onSubscribeToggle?.( true );
 					recordSiteSubscribed( { blog_id: blogId, url: subscribeUrl, source } );
 
 					if ( railcar ) {
@@ -217,7 +221,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 		<Button
 			variant="primary"
 			isBusy={ isSubscribing || isUnsubscribing }
-			onClick={ onSubscribeToggle }
+			onClick={ onClickSubscribeToggle }
 			__next40pxDefaultSize
 		>
 			{ feed?.subscription_id ? translate( 'Unsubscribe' ) : translate( 'Subscribe' ) }
