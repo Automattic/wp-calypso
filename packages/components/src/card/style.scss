@@ -13,6 +13,10 @@
 	// Card class name is too generic. Which results and this component randomly getting borders.
 	border: none;
 
+	a {
+		text-decoration: none;
+	}
+
 	@include a8c-clear-fix;
 
 	@include break-mobile {
