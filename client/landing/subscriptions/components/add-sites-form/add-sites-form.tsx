@@ -7,7 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversation/dialog';
-import FeedPreview from 'calypso/landing/subscriptions/components/feed-preview/feed-preview';
+import FeedPreview from 'calypso/landing/subscriptions/components/add-sites-form/feed-preview/feed-preview';
 import { isValidUrl } from 'calypso/landing/subscriptions/helpers';
 import { useAddSitesModalNotices } from 'calypso/landing/subscriptions/hooks';
 import { useRecordSiteSubscribed } from 'calypso/landing/subscriptions/tracks';
@@ -168,7 +168,9 @@ const AddSitesForm = ( {
 				</Button>
 			</form>
 
-			{ isValidInput && isAutomattician ? <FeedPreview url={ inputValue } /> : null }
+			{ isValidInput && isAutomattician ? (
+				<FeedPreview url={ inputValue } source={ source } />
+			) : null }
 
 			<ReaderJoinConversationDialog
 				isVisible={ showLoginDialog }
