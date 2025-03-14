@@ -1,7 +1,12 @@
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Spinner } from '@automattic/components';
-import { isWithThemeFlow, isHostingSignupFlow, isOnboardingFlow } from '@automattic/onboarding';
+import {
+	isWithThemeFlow,
+	isHostingSignupFlow,
+	isOnboardingFlow,
+	StepContainer,
+} from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import clsx from 'clsx';
@@ -1398,8 +1403,9 @@ export class RenderDomainsStep extends Component {
 
 		if ( useStepperWrapper ) {
 			return (
-				<AsyncLoad
-					require="@automattic/onboarding/src/step-container"
+				// This is biased towards Stepper. It will always load Stepper's StepContainer but only load /start's StepWrapper if /start is used.
+				// This is because Stepper's domains page is much more likely (90%+ of the time) to be used than /start's plans page.
+				<StepContainer
 					hideBack={ hideBack }
 					flowName={ flowName }
 					stepName={ stepName }
