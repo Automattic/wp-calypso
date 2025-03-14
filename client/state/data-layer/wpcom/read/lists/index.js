@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
+import { isEnabled } from 'calypso/server/config';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
@@ -149,6 +150,11 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 						method: 'GET',
 						path: '/read/lists',
 						apiVersion: '1.2',
+						query: {
+							create_recommended_blogs_list: isEnabled( 'reader/recommended-blogs-list' )
+								? 'true'
+								: undefined,
+						},
 					},
 					action
 				),
