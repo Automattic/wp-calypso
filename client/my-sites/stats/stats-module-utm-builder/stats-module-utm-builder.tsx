@@ -107,37 +107,25 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger, initialData }
 
 							<section id="stats-utm-builder-help-section-campaign-name">
 								<pre className="stats-utm-builder__help-section-parameter">utm_campaign</pre>
-								<p>
-									{ translate(
-										'Use utm_campaign to identify a specific product promotion or strategic campaign.'
-									) }
-								</p>
+								<p>{ translate( 'Name your campaign' ) }</p>
 								<p className="stats-utm-builder__help-section-parameter-example">
-									{ translate( 'Example: promotion, sale' ) }
+									{ translate( 'Example: christmas, flash-sale' ) }
 								</p>
 							</section>
 
 							<section id="stats-utm-builder-help-section-campaign-source">
 								<pre className="stats-utm-builder__help-section-parameter">utm_source</pre>
-								<p>
-									{ translate(
-										'Use utm_source to identify a search engine, newsletter name or other source.'
-									) }
-								</p>
+								<p>{ translate( 'Define where traffic originates' ) }</p>
 								<p className="stats-utm-builder__help-section-parameter-example">
-									{ translate( 'Example: newsletter, X, Google' ) }
+									{ translate( 'Example: newsletter, facebook, google' ) }
 								</p>
 							</section>
 
 							<section id="stats-utm-builder-help-section-campaign-medium">
 								<pre className="stats-utm-builder__help-section-parameter">utm_medium</pre>
-								<p>
-									{ translate(
-										'Use utm_medium to identify a medium such as email or cost-per-click.'
-									) }
-								</p>
+								<p>{ translate( 'Define the channel type' ) }</p>
 								<p className="stats-utm-builder__help-section-parameter-example">
-									{ translate( 'Example: cpc, banner, email' ) }
+									{ translate( 'Example: email, social, cpc' ) }
 								</p>
 							</section>
 
