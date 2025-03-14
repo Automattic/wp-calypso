@@ -89,6 +89,7 @@ const CheckoutMasterbar = ( {
 	return (
 		<Masterbar
 			className={ clsx( 'masterbar--is-checkout', {
+				'masterbar--is-wpcom': checkoutType === 'wpcom',
 				'masterbar--is-jetpack': checkoutType === 'jetpack',
 				'masterbar--is-akismet': checkoutType === 'akismet',
 			} ) }
@@ -104,7 +105,11 @@ const CheckoutMasterbar = ( {
 					/>
 				) }
 				{ checkoutType === 'wpcom' && (
-					<WordPressWordmark className="masterbar__wpcom-wordmark" color="#2c3338" />
+					<WordPressWordmark
+						size={ { width: 125, height: 'auto' } }
+						className="masterbar__wpcom-wordmark"
+						color="#2c3338"
+					/>
 				) }
 				{ checkoutType === 'jetpack' && (
 					<JetpackLogo className="masterbar__jetpack-wordmark" full />

@@ -16,7 +16,6 @@ export const TopBar = ( { backButton, skipButton }: TopBarProps ) => {
 		<div className="step-container-v2__top-bar">
 			{ isMediumViewport ? (
 				<WordPressWordmark
-					size={ { width: 134, height: 18 } }
 					className="step-container-v2__top-bar-wordpress-logo"
 					color="currentColor"
 				/>

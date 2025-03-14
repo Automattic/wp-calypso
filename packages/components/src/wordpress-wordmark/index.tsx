@@ -1,20 +1,20 @@
 interface WatermarkProps {
 	className?: string;
-	size?: { width: number; height: number };
+	size?: { width?: number | 'auto'; height?: number | 'auto' };
 	color?: string;
 }
 
 const WordPressWordmark: React.FunctionComponent< WatermarkProps > = ( {
 	className = 'wpcom-wordmark',
-	size = { width: 150, height: 25 },
+	size,
 	color = '#fff',
 } ) => {
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
-			width={ size.width }
-			height={ size.height }
-			viewBox={ `0 0 ${ size.width } ${ size.height }` }
+			width={ size?.width ?? 134 }
+			height={ size?.height ?? 18 }
+			viewBox="0 0 134 18"
 			className={ className }
 		>
 			<path
