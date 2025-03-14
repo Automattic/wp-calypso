@@ -198,7 +198,7 @@ const GoalsStep: StepType = ( { navigation, flow } ) => {
 
 	const getStep = () => {
 		if ( shouldUseStepContainerV2( flow ) ) {
-			const nextButton = <Step.NextButton label={ translate( 'Next' ) } onClick={ handleNext } />;
+			const nextButton = <Step.NextButton onClick={ handleNext } />;
 
 			return (
 				<Step.SixColumnsCenteredLayout
