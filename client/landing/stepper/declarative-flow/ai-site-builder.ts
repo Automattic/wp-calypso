@@ -99,11 +99,12 @@ const aiSiteBuilder: Flow = {
 					console.log( 'DOMAAAINZ STEP', providedDependencies, siteSlugFromSiteData );
 					// TODO: Somehow store the chosen domain.
 					if ( providedDependencies.domainItem && siteSlugFromSiteData ) {
-						const addToCart = await addProductsToCart( siteSlugFromSiteData, AI_SITE_BUILDER_FLOW, [
+						addProductsToCart( siteSlugFromSiteData, AI_SITE_BUILDER_FLOW, [
 							providedDependencies.domainItem,
-						] );
-						// eslint-disable-next-line no-console
-						console.log( 'ADD TO CART', addToCart );
+						] ).then( ( res ) => {
+							// eslint-disable-next-line no-console
+							console.log( 'ADD TO CART', res );
+						} );
 					}
 					return navigate( 'plans' );
 				}
