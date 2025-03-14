@@ -18,7 +18,6 @@
 }
 
 .select-goals {
-	width: 100%;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -72,13 +71,13 @@
 	}
 
 	.select-goals__dashboard-button.select-goals__link { // extra specificity to override default link styles
-		margin-left: 0;
-		margin-right: auto;
 		gap: 8px;
 		display: flex;
 		justify-content: flex-start;
 
 		@include break-small {
+			margin-left: 0;
+			margin-right: auto;
 			grid-column: span 3;
 			margin-left: auto;
 		}
@@ -94,5 +93,16 @@
 		@include break-small {
 			display: block;
 		}
+	}
+}
+
+.step-container-v2--goals {
+	.select-goals,
+	.select-goals__cards-container {
+		width: 100%;
+	}
+
+	.select-goals__alternative-flows-container {
+		padding-bottom: 0;
 	}
 }
