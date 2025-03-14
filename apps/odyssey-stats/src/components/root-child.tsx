@@ -10,7 +10,7 @@ import useWPAdminTheme from 'calypso/my-sites/stats/hooks/use-wp-admin-theme';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import type { FunctionComponent, ReactNode } from 'react';
 
-// We cannot use any of the Calypso state selectors here, as the RootChild component doesn't have Redux context.
+// We cannot use any of the Calypso state selectors here, as the RootChild component is used in Odyssey Widget, where there is no Redux context.
 const RootChild: FunctionComponent< { children: ReactNode } > = ( { children } ) => {
 	const [ containerEl, setContainerEl ] = useState< HTMLDivElement | null >( null );
 
