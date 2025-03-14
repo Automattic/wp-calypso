@@ -343,11 +343,7 @@ class RegisterDomainStep extends Component {
 		}
 
 		// TODO: Maybe reading from meta or url would be useful too.
-		if ( ! this.props.selectedSite || ! this.props.selectedSite.name ) {
-			return;
-		}
-
-		return this.props.selectedSite.name;
+		return this.props.selectedSite?.name || undefined;
 	}
 
 	componentDidMount() {
