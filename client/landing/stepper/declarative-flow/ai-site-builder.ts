@@ -138,7 +138,7 @@ const aiSiteBuilder: Flow = {
 					}
 
 					// eslint-disable-next-line no-console
-					window.location.replace(
+					window.location.assign(
 						`/checkout/${ encodeURIComponent( siteSlugFromSiteData || '' ) }`
 					);
 				}
