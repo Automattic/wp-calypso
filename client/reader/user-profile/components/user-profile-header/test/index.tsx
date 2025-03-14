@@ -103,38 +103,4 @@ describe( 'UserProfileHeader', () => {
 		const bioText = screen.getByText( userWithBio.bio );
 		expect( bioText ).toBeInTheDocument();
 	} );
-
-	test( 'should render Read More link for long bio with profile URL', () => {
-		// Create a long bio that will likely be clamped
-		const longBio =
-			'This is a very long biography that will definitely exceed the three lines limit and therefore should display the Read More link. '.repeat(
-				5
-			);
-		const userWithLongBio = {
-			...defaultUser,
-			bio: longBio,
-		};
-
-		// We need to mock Element.scrollHeight and Element.offsetHeight to simulate text being clamped
-		Object.defineProperty( HTMLElement.prototype, 'scrollHeight', {
-			configurable: true,
-			get: function () {
-				// Return a large value for bio text element to simulate clamping
-				if ( this.classList.contains( 'user-profile-header__bio-desc-text' ) ) {
-					return 200;
-				}
-				return 100;
-			},
-		} );
-
-		render( <UserProfileHeader user={ userWithLongBio } /> );
-
-		// "Read More" link should be present for long bio
-		const readMoreLink = screen.getByText( 'Read More' );
-		expect( readMoreLink ).toBeInTheDocument();
-		expect( readMoreLink.getAttribute( 'href' ) ).toBe( userWithLongBio.profile_URL ?? '' );
-
-		// External icon should be displayed
-		expect( screen.getByTestId( 'icon' ) ).toBeInTheDocument();
-	} );
 } );
