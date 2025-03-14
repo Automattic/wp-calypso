@@ -138,22 +138,22 @@ const UtmBuilder: React.FC< UtmBuilderProps > = ( { initialData } ) => {
 
 	const fromLabels: formLabelsType = {
 		url: {
-			label: translate( 'Site or post URL' ),
+			label: translate( 'Destination URL' ),
 			placeholder: '',
 			describedBy: 'stats-utm-builder-help-section-url',
 		},
 		utm_source: {
-			label: translate( 'UTM source' ),
+			label: translate( 'UTM Source' ),
 			placeholder: translate( 'e.g. newsletter' ),
 			describedBy: 'stats-utm-builder-help-section-campaign-source',
 		},
 		utm_medium: {
-			label: translate( 'UTM medium' ),
+			label: translate( 'UTM Medium' ),
 			placeholder: translate( 'e.g. email, social' ),
 			describedBy: 'stats-utm-builder-help-section-campaign-medium',
 		},
 		utm_campaign: {
-			label: translate( 'UTM campaign' ),
+			label: translate( 'UTM Campaign' ),
 			placeholder: translate( 'e.g. promotion' ),
 			describedBy: 'stats-utm-builder-help-section-campaign-name',
 		},
