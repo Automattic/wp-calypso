@@ -140,6 +140,12 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger, initialData }
 									{ translate( 'Example: cpc, banner, email' ) }
 								</p>
 							</section>
+
+							<p>
+								{ translate(
+									'Use your generated URLs in social posts, emails, or ads. Jetpack Stats will track UTM codes, giving you accurate insights into your traffic.'
+								) }
+							</p>
 						</div>
 					</div>
 				</Modal>
