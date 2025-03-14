@@ -5,29 +5,11 @@
 import page from '@automattic/calypso-router';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import { Provider } from 'react-redux';
-import { legacy_createStore as createStore } from 'redux';
 import { UserProfile, UserProfileProps } from '../index';
-
-// Create a Redux store with initial state where user is logged in
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const initialState: any = {
-	currentUser: { id: 123 }, // This makes isUserLoggedIn return true
-};
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const store = createStore( ( state: any = initialState ) => state );
 
 jest.mock( '@automattic/calypso-router', () => ( {
 	replace: jest.fn(),
 	current: '/reader/users/testuser',
-	lastRoute: '/reader', // This makes userHasHistory return true
-} ) );
-
-// Mock shouldShowBackButton to ensure it returns true for our test
-jest.mock( 'calypso/reader/controller-helper', () => ( {
-	...jest.requireActual( 'calypso/reader/controller-helper' ),
-	shouldShowBackButton: () => true,
-	userHasHistory: () => true,
 } ) );
 
 jest.mock( 'calypso/reader/user-profile/components/user-profile-header', () => () => (
@@ -42,10 +24,8 @@ jest.mock( 'calypso/reader/user-profile/views/lists', () => () => (
 	<div data-testid="user-lists">User Lists</div>
 ) );
 
-jest.mock( 'calypso/components/back-button', () => ( { onClick } ) => (
-	<button data-testid="back-button" onClick={ onClick }>
-		Back
-	</button>
+jest.mock( 'calypso/reader/components/back-button', () => () => (
+	<button data-testid="back-button">Back</button>
 ) );
 
 jest.mock( 'calypso/components/empty-content', () => ( { title, line, action } ) => (
@@ -58,7 +38,6 @@ jest.mock( 'calypso/components/empty-content', () => ( { title, line, action } )
 
 describe( 'UserProfile', () => {
 	const mockRequestUser = jest.fn().mockResolvedValue( undefined );
-	const mockHandleBack = jest.fn();
 
 	const defaultProps: UserProfileProps = {
 		userLogin: 'testuser',
@@ -67,8 +46,6 @@ describe( 'UserProfile', () => {
 		requestUser: mockRequestUser,
 		user: undefined,
 		isLoading: false,
-		showBack: false,
-		handleBack: mockHandleBack,
 	};
 
 	beforeEach( () => {
@@ -76,12 +53,8 @@ describe( 'UserProfile', () => {
 		jest.clearAllMocks();
 	} );
 
-	const renderWithProvider = ( ui ) => {
-		return render( <Provider store={ store }>{ ui }</Provider> );
-	};
-
 	test( 'should render empty content when user is not found', () => {
-		renderWithProvider( <UserProfile { ...defaultProps } /> );
+		render( <UserProfile { ...defaultProps } /> );
 
 		expect( screen.getByTestId( 'empty-content' ) ).toBeInTheDocument();
 		expect( mockRequestUser ).toHaveBeenCalledWith( 'testuser' );
@@ -95,7 +68,7 @@ describe( 'UserProfile', () => {
 			avatar_URL: 'https://example.com/avatar.jpg',
 		};
 
-		renderWithProvider( <UserProfile { ...defaultProps } user={ user } /> );
+		render( <UserProfile { ...defaultProps } user={ user } /> );
 
 		expect( screen.getByTestId( 'user-profile-header' ) ).toBeInTheDocument();
 		expect( screen.getByTestId( 'user-posts' ) ).toBeInTheDocument();
@@ -109,34 +82,14 @@ describe( 'UserProfile', () => {
 			avatar_URL: 'https://example.com/avatar.jpg',
 		};
 
-		renderWithProvider(
-			<UserProfile { ...defaultProps } user={ user } path="/reader/users/testuser/lists" />
-		);
+		render( <UserProfile { ...defaultProps } user={ user } path="/reader/users/testuser/lists" /> );
 
 		expect( screen.getByTestId( 'user-profile-header' ) ).toBeInTheDocument();
 		expect( screen.getByTestId( 'user-lists' ) ).toBeInTheDocument();
 	} );
 
-	test( 'should show back button when showBack is true', () => {
-		const user = {
-			ID: 123,
-			user_login: 'testuser',
-			display_name: 'Test User',
-			avatar_URL: 'https://example.com/avatar.jpg',
-		};
-
-		renderWithProvider( <UserProfile { ...defaultProps } user={ user } showBack /> );
-
-		const backButton = screen.getByTestId( 'back-button' );
-		expect( backButton ).toBeInTheDocument();
-
-		// Simulate clicking the back button
-		backButton.click();
-		expect( mockHandleBack ).toHaveBeenCalled();
-	} );
-
 	test( 'should not show content when isLoading is true', () => {
-		renderWithProvider( <UserProfile { ...defaultProps } isLoading /> );
+		render( <UserProfile { ...defaultProps } isLoading /> );
 
 		expect( screen.queryByTestId( 'empty-content' ) ).not.toBeInTheDocument();
 		expect( screen.queryByTestId( 'user-profile-header' ) ).not.toBeInTheDocument();
@@ -150,16 +103,14 @@ describe( 'UserProfile', () => {
 			avatar_URL: 'https://example.com/avatar.jpg',
 		};
 
-		renderWithProvider(
-			<UserProfile { ...defaultProps } user={ user } path="/reader/users/id/123" />
-		);
+		render( <UserProfile { ...defaultProps } user={ user } path="/reader/users/id/123" /> );
 
 		// Verify the redirect was called with the correct path
 		expect( page.replace ).toHaveBeenCalledWith( '/reader/users/testuser' );
 	} );
 
 	test( 'should request user data with both login and ID when provided', () => {
-		renderWithProvider( <UserProfile { ...defaultProps } userLogin="testuser" userId="123" /> );
+		render( <UserProfile { ...defaultProps } userLogin="testuser" userId="123" /> );
 
 		// Verify both API calls were made
 		expect( mockRequestUser ).toHaveBeenCalledWith( 'testuser' );
