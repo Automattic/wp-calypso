@@ -18,7 +18,6 @@ import WPiFrameResize from 'calypso/blocks/reader-full-post/wp-iframe-resize';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import AutoDirection from 'calypso/components/auto-direction';
-import BackButton from 'calypso/components/back-button';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPostLikes from 'calypso/components/data/query-post-likes';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
@@ -30,6 +29,7 @@ import {
 	RelatedPostsFromOtherSites,
 } from 'calypso/components/related-posts';
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
+import ReaderBackButton from 'calypso/reader/components/back-button';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
@@ -69,6 +69,7 @@ import {
 	setViewingFullPostKey,
 	unsetViewingFullPostKey,
 } from 'calypso/state/reader/viewing/actions';
+import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
@@ -78,7 +79,6 @@ import ReaderFullPostHeader from './header';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
 import ScrollTracker from './scroll-tracker';
 import ReaderFullPostUnavailable from './unavailable';
-
 import './style.scss';
 
 const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
@@ -86,7 +86,7 @@ const inputTags = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
 export class FullPostView extends Component {
 	static propTypes = {
 		post: PropTypes.object,
-		onClose: PropTypes.func.isRequired,
+		onClose: PropTypes.func,
 		referralPost: PropTypes.object,
 		referralStream: PropTypes.string,
 		isWPForTeamsItem: PropTypes.bool,
@@ -378,6 +378,9 @@ export class FullPostView extends Component {
 
 	handleBack = ( event ) => {
 		event.preventDefault();
+		recordAction( 'full_post_close' );
+		recordGaEvent( 'Closed Full Post Dialog' );
+		recordTrackForPost( 'calypso_reader_article_closed', this.props.post );
 		this.props.onClose && this.props.onClose();
 	};
 
@@ -604,7 +607,13 @@ export class FullPostView extends Component {
 		} = this.props;
 
 		if ( post.is_error ) {
-			return <ReaderFullPostUnavailable post={ post } onBackClick={ this.handleBack } />;
+			return (
+				<ReaderFullPostUnavailable
+					post={ post }
+					onBackClick={ this.handleBack }
+					layout={ this.props.layout }
+				/>
+			);
 		}
 
 		const isDefaultLayout = this.props.layout !== 'recent';
@@ -654,8 +663,10 @@ export class FullPostView extends Component {
 					) }
 					{ referral && ! referralPost && <QueryReaderPost postKey={ referral } /> }
 					{ ! post || ( isLoading && <QueryReaderPost postKey={ postKey } /> ) }
-					<BackButton
-						onClick={ this.handleBack }
+					<ReaderBackButton
+						handleBack={ this.handleBack }
+						preventRouteChange={ this.props.layout === 'recent' }
+						forceShow={ this.props.layout === 'recent' }
 						aria-label={ translate( 'Return to the list of posts.' ) }
 					/>
 					<div className="reader-full-post__visit-site-container">
@@ -869,6 +880,7 @@ export default connect(
 			liked: isLikedPost( state, siteId, post.ID ),
 			postKey,
 			currentPath,
+			referralStream: getPreviousPath( state ),
 		};
 
 		if ( ! isExternal && siteId ) {

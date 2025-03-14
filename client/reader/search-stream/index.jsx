@@ -6,12 +6,12 @@ import { trim, flatMap } from 'lodash';
 import PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import BackButton from 'calypso/components/back-button';
 import DocumentHead from 'calypso/components/data/document-head';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SearchInput from 'calypso/components/search';
 import { addQueryArgs } from 'calypso/lib/url';
 import withDimensions from 'calypso/lib/with-dimensions';
+import ReaderBackButton from 'calypso/reader/components/back-button';
 import BlankSuggestions from 'calypso/reader/components/reader-blank-suggestions';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { READER_SEARCH_POPULAR_SITES } from 'calypso/reader/follow-sources';
@@ -108,18 +108,12 @@ class SearchStream extends React.Component {
 		this.props.recordReaderTracksEvent( 'calypso_reader_search_tags_page_link_clicked' );
 	};
 
-	handleBack = () => {
-		if ( typeof window !== 'undefined' ) {
-			window.history.back();
-		}
-	};
-
 	handleFixedAreaMounted = ( ref ) => ( this.fixedAreaRef = ref );
 
 	handleSearchTypeSelection = ( searchType ) => updateQueryArg( { show: searchType } );
 
 	render() {
-		const { query, translate, searchType, suggestions, isLoggedIn, showBack } = this.props;
+		const { query, translate, searchType, suggestions, isLoggedIn } = this.props;
 		const sortOrder = this.props.sort;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		const segmentedControlClass = wideDisplay
@@ -172,7 +166,7 @@ class SearchStream extends React.Component {
 			<div>
 				<DocumentHead title={ documentTitle } />
 				<div className="search-stream__fixed-area" ref={ this.handleFixedAreaMounted }>
-					{ showBack && <BackButton onClick={ this.handleBack } /> }
+					<ReaderBackButton />
 					<NavigationHeader
 						title={ translate( 'Search' ) }
 						subtitle={ translate( 'Search for specific topics, authors, or blogs.' ) }
