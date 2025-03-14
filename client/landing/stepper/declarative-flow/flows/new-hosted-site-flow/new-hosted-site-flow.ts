@@ -11,6 +11,7 @@ import {
 	setSignupCompleteFlowName,
 	getSignupCompleteSiteID,
 	setSignupCompleteSiteID,
+	getSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
 import { useDispatch as reduxUseDispatch, useSelector } from 'calypso/state';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
@@ -120,6 +121,7 @@ const hosting: Flow = {
 					const hasStudioSyncSiteId = queryParams.studioSiteId;
 					const hasPartnerBundle = queryParams.partnerBundle;
 					const siteId = providedDependencies.siteId || getSignupCompleteSiteID();
+					const siteSlug = providedDependencies.siteSlug || getSignupCompleteSlug();
 					const destinationParams: Record< string, string > = {
 						siteId,
 					};
@@ -128,8 +130,9 @@ const hosting: Flow = {
 							studioSiteId: queryParams.studioSiteId,
 						} );
 					} else if ( hasPartnerBundle ) {
+						// For partners, we'll redirect to the WooCommerce admin page
 						destinationParams[ 'redirect_to' ] = addQueryArgs(
-							`https://${ siteId }/wp-admin/admin.php?page=wc-admin`
+							`https://${ siteSlug }/wp-admin/admin.php?page=wc-admin`
 						);
 					}
 					// Purchasing Business or Commerce plans will trigger an atomic transfer, so go to stepper flow where we wait for it to complete.
