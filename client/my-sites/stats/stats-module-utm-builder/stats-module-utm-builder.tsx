@@ -106,7 +106,6 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger, initialData }
 							</VisuallyHidden>
 
 							<section id="stats-utm-builder-help-section-campaign-name">
-								<h3 className="stats-utm-builder__label">{ translate( 'Campaign Name' ) }</h3>
 								<pre className="stats-utm-builder__help-section-parameter">utm_campaign</pre>
 								<p>
 									{ translate(
@@ -119,7 +118,6 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger, initialData }
 							</section>
 
 							<section id="stats-utm-builder-help-section-campaign-source">
-								<h3 className="stats-utm-builder__label">{ translate( 'Campaign Source' ) }</h3>
 								<pre className="stats-utm-builder__help-section-parameter">utm_source</pre>
 								<p>
 									{ translate(
@@ -132,7 +130,6 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger, initialData }
 							</section>
 
 							<section id="stats-utm-builder-help-section-campaign-medium">
-								<h3 className="stats-utm-builder__label">{ translate( 'Campaign Medium' ) }</h3>
 								<pre className="stats-utm-builder__help-section-parameter">utm_medium</pre>
 								<p>
 									{ translate(
