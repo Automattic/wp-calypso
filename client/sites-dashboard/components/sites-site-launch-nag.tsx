@@ -71,6 +71,10 @@ const getChecklistSlug = ( site: SiteExcerptData ) => {
 		return 'legacy-site-setup';
 	}
 
+	if ( intent === 'assembler-first' ) {
+		return 'legacy-site-setup';
+	}
+
 	const isHostedSite =
 		'host-site' === intent || 'new-hosted-site' === flow || 'import-hosted-site' === flow;
 
@@ -88,11 +92,11 @@ export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 	} );
 
 	const {
-		data: { checklist },
+		data: { checklist, is_dismissed },
 		isLoading,
 	} = useLaunchpad( site.slug, getChecklistSlug( site ), undefined, 'sites-dashboard' );
 
-	if ( 'unlaunched' !== site.launch_status || ! checklist || isLoading ) {
+	if ( ! checklist || isLoading || is_dismissed ) {
 		return null;
 	}
 
@@ -107,6 +111,10 @@ export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 
 		numberOfSteps = numberOfSteps - ( launchSiteTask ? 1 : 0 );
 		completedSteps = completedSteps - ( isLaunchSiteTaskComplete ? 1 : 0 );
+	}
+
+	if ( completedSteps === numberOfSteps ) {
+		return null;
 	}
 
 	const link = getDashboardUrl( site.slug );
