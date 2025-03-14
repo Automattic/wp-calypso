@@ -72,7 +72,7 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger, initialData }
 			{ triggerNode }
 			{ isOpen && (
 				<Modal
-					title={ translate( 'URL Builder' ) }
+					title={ translate( 'Generate URL' ) }
 					onRequestClose={ closeModal }
 					overlayClassName={ utmBuilderClasses }
 					bodyOpenClassName="stats-utm-builder__body-modal-open"
