@@ -22,8 +22,6 @@ const customUrlSlug = `about-${ DataHelper.getTimestamp() }-${ DataHelper.getRan
 	100
 ) }`;
 
-const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
-
 describe( DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ), function () {
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature(
