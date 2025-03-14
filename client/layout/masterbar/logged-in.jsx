@@ -20,7 +20,6 @@ import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
-import isJetpackConnectionUnhealthy from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-unhealthy';
 import { savePreference } from 'calypso/state/preferences/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
@@ -40,7 +39,6 @@ import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/laun
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
 import { isTrialExpired } from 'calypso/state/sites/plans/selectors/trials/trials-expiration';
 import {
-	getUpdatesBySiteId,
 	getSiteSlug,
 	isJetpackSite,
 	getSitePlanSlug,
@@ -417,8 +415,6 @@ class MasterbarLoggedIn extends Component {
 			isSiteP2,
 			isP2Hub,
 			isAtomicAndEditingToolkitDeactivated,
-			siteIsConnected,
-			siteUpdates,
 		} = this.props;
 
 		if ( ! site ) {
@@ -489,13 +485,6 @@ class MasterbarLoggedIn extends Component {
 			badges.push( translate( 'Domain' ) );
 		}
 
-		// Site updates/errors indicators
-		if ( siteUpdates && ! siteIsConnected === false && siteUpdates.total > 0 ) {
-			badges.push( translate( 'Updates' ) );
-		} else if ( siteIsConnected === false ) {
-			badges.push( translate( 'Connection Error' ) );
-		}
-
 		return badges.length > 0
 			? badges.map( ( badge ) => <CoreBadge key={ badge }>{ badge }</CoreBadge> )
 			: null;
@@ -512,6 +501,7 @@ class MasterbarLoggedIn extends Component {
 			siteHomeUrl,
 			domainOnlySite,
 			sitePlanName,
+			site,
 		} = this.props;
 
 		// Only display when a site is selected and is not domain-only site.
@@ -545,12 +535,14 @@ class MasterbarLoggedIn extends Component {
 									<div className="masterbar__info-badges">{ siteBadges }</div>
 								</div>
 							) }
-							<div className="masterbar__site-info">
-								<span className="masterbar__site-info-label">{ translate( 'Plan' ) }</span>
-								<div className="masterbar__info-badges">
-									<CoreBadge>{ sitePlanName }</CoreBadge>
+							{ ! site?.is_wpcom_staging_site && (
+								<div className="masterbar__site-info">
+									<span className="masterbar__site-info-label">{ translate( 'Plan' ) }</span>
+									<div className="masterbar__info-badges">
+										<CoreBadge>{ sitePlanName }</CoreBadge>
+									</div>
 								</div>
-							</div>
+							) }
 						</div>
 					),
 				},
@@ -953,8 +945,6 @@ export default connect(
 			isAtomicAndEditingToolkitDeactivated:
 				isAtomicSite( state, siteId ) &&
 				getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
-			siteIsConnected: site && ! isJetpackConnectionUnhealthy( state, site.ID ),
-			siteUpdates: site && getUpdatesBySiteId( state, site.ID ),
 		};
 	},
 	{
