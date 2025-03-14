@@ -1,13 +1,14 @@
-import { ProgressBar } from '@automattic/components';
 import styled from '@emotion/styled';
+import { ProgressBar } from '@wordpress/components';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
+import './style.scss';
 
 const Container = styled.div`
-	text-align: center;
-`;
-const StyledProgressBar = styled( ProgressBar )`
-	margin: 20px 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 20px;
 `;
 
 const Title = styled.h1`
@@ -102,11 +103,7 @@ export default function MarketplaceProgressBar( {
 	return (
 		<Container>
 			<Title className="progressbar__title wp-brand-font">{ stepValue }</Title>
-			<StyledProgressBar
-				value={ simulatedProgressPercentage }
-				color="var( --studio-wordpress-blue )"
-				compact
-			/>
+			<ProgressBar value={ simulatedProgressPercentage } className="progressbar__bar" />
 			{ steps.length > 1 && <div>{ stepIndication }</div> }
 		</Container>
 	);

@@ -1,0 +1,5 @@
+.progressbar__bar {
+    & > :first-child {
+        background-color: var( --studio-wordpress-blue );
+    }
+}
