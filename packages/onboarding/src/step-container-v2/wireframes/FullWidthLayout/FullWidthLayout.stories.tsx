@@ -18,6 +18,7 @@ const meta: Meta< typeof FullWidthLayout > = {
 export default meta;
 
 export const ThemePreview = () => {
+	const isMediumViewport = useViewportMatch( 'small', '>=' );
 	const isLargeViewport = useViewportMatch( 'large', '>=' );
 
 	const backButton = <BackButton label="Back" />;
@@ -26,6 +27,7 @@ export const ThemePreview = () => {
 		<FullWidthLayout
 			className="theme-preview"
 			topBar={ <TopBar backButton={ backButton } /> }
+			isMediumViewport={ isMediumViewport }
 			isLargeViewport={ isLargeViewport }
 			render={ () => (
 				<>
@@ -54,7 +56,7 @@ const FontsBar = () => {
 };
 
 export const ThemePreviewFonts = () => {
-	const isLargeViewport = useViewportMatch( 'large', '>=' );
+	const isMediumViewport = useViewportMatch( 'large', '>=' );
 
 	const backButton = <BackButton label="Back" />;
 	const nextButton = <NextButton label="Save fonts" />;
@@ -62,12 +64,13 @@ export const ThemePreviewFonts = () => {
 	return (
 		<FullWidthLayout
 			className="theme-preview"
-			isLargeViewport={ isLargeViewport }
-			topBar={ isLargeViewport ? <TopBar backButton={ backButton } /> : <FontsBar /> }
+			isMediumViewport={ isMediumViewport }
+			topBar={ isMediumViewport ? <TopBar backButton={ backButton } /> : <FontsBar /> }
 			stickyBottomBar={ <StickyBottomBar leftButton={ backButton } rightButton={ nextButton } /> }
+			hasContentPadding={ isMediumViewport }
 			render={ () => (
 				<>
-					{ isLargeViewport && (
+					{ isMediumViewport && (
 						<div className="theme-preview__info">
 							<div className="theme-preview__description">
 								<Heading

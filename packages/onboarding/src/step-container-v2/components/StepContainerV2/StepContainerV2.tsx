@@ -17,6 +17,7 @@ interface StepContainerV2Props {
 	verticalAlign?: 'top' | 'center';
 	isMediumViewport?: boolean;
 	isLargeViewport?: boolean;
+	hasContentPadding?: boolean;
 	render: ( context: StepContainerV2InternalContextType ) => ReactNode;
 }
 
@@ -29,6 +30,7 @@ export const StepContainerV2 = ( {
 	verticalAlign = 'top',
 	isMediumViewport: externalIsMediumViewport,
 	isLargeViewport: externalIsLargeViewport,
+	hasContentPadding = true,
 	render,
 }: StepContainerV2Props ) => {
 	const internalIsMediumViewport = useViewportMatch( 'small', '>=' );
@@ -51,6 +53,7 @@ export const StepContainerV2 = ( {
 				<div
 					className={ clsx( 'step-container-v2__content-wrapper', {
 						'vertical-align-center': verticalAlign === 'center',
+						padding: hasContentPadding,
 					} ) }
 				>
 					{ heading }

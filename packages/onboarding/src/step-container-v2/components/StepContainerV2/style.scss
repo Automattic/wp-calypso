@@ -1,4 +1,4 @@
-@import '../../mixins';
+@import '../../../../styles/mixins';
 
 .step-container-v2 {
 	width: 100vw;
@@ -13,11 +13,14 @@
 		flex-direction: column;
 		align-items: center;
 		gap: 3rem;
-		padding-block: 2rem 1rem;
-		padding-inline: 1rem;
 
-		@include step-large-viewport {
-			padding-inline: 3rem;
+		&.padding {
+			padding-block: 2rem 1rem;
+			padding-inline: 1rem;
+
+			@include step-large-viewport {
+				padding-inline: 3rem;
+			}
 		}
 
 		&.vertical-align-center {

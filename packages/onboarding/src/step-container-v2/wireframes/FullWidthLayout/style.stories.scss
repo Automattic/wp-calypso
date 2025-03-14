@@ -1,13 +1,15 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+@import '../../../../styles/mixins';
+
 .theme-preview {
 	display: flex;
 	flex-direction: column;
 	gap: 3rem;
 	flex: 1;
 
-	@include break-small {
+	@include step-large-viewport {
 		flex-direction: row;
 	}
 
@@ -19,13 +21,16 @@
 
 	&__description {
 		width: 100%;
-		max-width: 297px;
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
 
 		.badge {
 			align-self: flex-start;
+		}
+
+		@include step-large-viewport {
+			max-width: 297px;
 		}
 	}
 
