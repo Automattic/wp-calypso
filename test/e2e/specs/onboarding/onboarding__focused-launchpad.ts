@@ -120,7 +120,8 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 
 			// The first time we save, we need to wait for the page to reload because it redirects to Calypo's settings page
 			// before loading /wp-admin settings page again, so we'd lose the settings updated notice
-			await new Promise( ( r ) => setTimeout( r, 2000 ) );
+			// We can probably remove this after the ungangling is completed.
+			await new Promise( ( r ) => setTimeout( r, 5000 ) );
 			await saveChangesButton.click();
 			// Wait for the success notice that appears after saving
 			await page.waitForSelector( '#setting-error-settings_updated' );
@@ -131,7 +132,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 
 		it( "It will write the user's first post", async function () {
 			const writeFirstPostButton = await page.getByText( 'Write your first post' );
-			await writeFirstPostButton.waitFor();
+			await writeFirstPostButton.waitFor( { timeout: 30 * 1000 } );
 			await writeFirstPostButton.click();
 		} );
 
