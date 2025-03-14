@@ -112,19 +112,6 @@
 
 }
 
-.gravatar {
-	filter: brightness(1);
-	border-radius: 50%;
-	outline-offset: 0;
-	transition: outline-color 0.3s ease, outline-offset 0.3s ease, filter 0.3s ease;
-	outline: 3px dotted transparent;
-}
-
-.is-uploading .gravatar{
-	outline-offset: 4px;
-	outline-color: var(--color-accent-60);
-}
-
 .edit-gravatar__image-container:hover, .is-uploading .edit-gravatar__image-container {
 	.gravatar{
 		filter: brightness(0.7);
