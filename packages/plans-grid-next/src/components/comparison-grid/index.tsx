@@ -29,7 +29,6 @@ import useHighlightAdjacencyMatrix from '../../hooks/use-highlight-adjacency-mat
 import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
 import filterUnusedFeaturesObject from '../../lib/filter-unused-features-object';
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
-import { sortPlans } from '../../lib/sort-plan-properties';
 import PlanTypeSelector from '../plan-type-selector';
 import { Plans2023Tooltip } from '../plans-2023-tooltip';
 import PopularBadge from '../popular-badge';
@@ -936,16 +935,10 @@ const ComparisonGrid = ( {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const [ visiblePlans, setVisiblePlans ] = useState< PlanSlug[] >( [] );
 
-	const displayedGridPlans = useMemo( () => {
-		const breakpointsToSort: GridSize[] = [ 'small', 'smedium' ];
-		return gridSize && breakpointsToSort.includes( gridSize )
-			? sortPlans( gridPlans, currentSitePlanSlug )
-			: gridPlans;
-	}, [ gridSize, gridPlans, currentSitePlanSlug ] );
-
 	useEffect( () => {
 		setVisiblePlans( () => {
-			let visibleLength = displayedGridPlans.length;
+			let visibleLength = gridPlans.length;
+
 			switch ( gridSize ) {
 				case 'large':
 					visibleLength = 4;
@@ -959,14 +952,21 @@ const ComparisonGrid = ( {
 					break;
 			}
 
-			return displayedGridPlans.slice( 0, visibleLength ).map( ( { planSlug } ) => planSlug );
+			const planSlugs = gridPlans.slice( 0, visibleLength ).map( ( { planSlug } ) => planSlug );
+
+			// We always want the current plan to be visible, so move it to the first position if it would otherwise be hidden.
+			if ( currentSitePlanSlug && ! planSlugs.includes( currentSitePlanSlug as PlanSlug ) ) {
+				return [ currentSitePlanSlug as PlanSlug, ...planSlugs ].slice( 0, visibleLength );
+			}
+
+			return planSlugs;
 		} );
-	}, [ gridSize, displayedGridPlans, gridPlansIndex ] );
+	}, [ gridSize, gridPlansIndex, currentSitePlanSlug, gridPlans ] );
 
 	const visibleGridPlans = useMemo(
 		() =>
 			visiblePlans.reduce( ( acc, planSlug ) => {
-				const gridPlan = displayedGridPlans.find(
+				const gridPlan = gridPlans.find(
 					( gridPlan ) => getPlanClass( gridPlan.planSlug ) === getPlanClass( planSlug )
 				);
 
@@ -976,7 +976,7 @@ const ComparisonGrid = ( {
 
 				return acc;
 			}, [] as GridPlan[] ),
-		[ visiblePlans, displayedGridPlans ]
+		[ visiblePlans, gridPlans ]
 	);
 
 	const onPlanChange = useCallback(
@@ -1048,7 +1048,7 @@ const ComparisonGrid = ( {
 				>
 					{ ( isStuck: boolean ) => (
 						<ComparisonGridHeader
-							displayedGridPlans={ displayedGridPlans }
+							displayedGridPlans={ gridPlans }
 							visibleGridPlans={ visibleGridPlans }
 							isInSignup={ isInSignup }
 							onPlanChange={ onPlanChange }
@@ -1077,7 +1077,7 @@ const ComparisonGrid = ( {
 					/>
 				) ) }
 				<ComparisonGridHeader
-					displayedGridPlans={ displayedGridPlans }
+					displayedGridPlans={ gridPlans }
 					visibleGridPlans={ visibleGridPlans }
 					isInSignup={ isInSignup }
 					isFooter
