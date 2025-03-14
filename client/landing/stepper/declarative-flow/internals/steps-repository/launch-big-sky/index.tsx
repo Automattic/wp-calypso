@@ -8,7 +8,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, FormEvent, useState } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
-import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
@@ -26,8 +25,6 @@ const LaunchBigSky: Step = function ( props ) {
 	const [ isError, setError ] = useState( false );
 	const [ progress, setProgress ] = useState( 0 );
 	const { siteSlug, siteId, site } = useSiteData();
-	const urlQueryParams = useQuery();
-	const referrer = urlQueryParams.get( 'referrer' );
 	const translate = useTranslate();
 	const { isEligible, isLoading } = useIsBigSkyEligible( flow );
 	const { setDesignOnSite, setStaticHomepageOnSite, setGoalsOnSite, setIntentOnSite } =
@@ -108,9 +105,7 @@ const LaunchBigSky: Step = function ( props ) {
 				setProgress( 75 );
 
 				window.location.replace(
-					`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${
-						referrer || 'design-choices'
-					}`
+					`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${ flow }`
 				);
 			} catch ( error ) {
 				// eslint-disable-next-line no-console

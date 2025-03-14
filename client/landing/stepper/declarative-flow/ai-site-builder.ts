@@ -54,6 +54,7 @@ const aiSiteBuilder: Flow = {
 			} ),
 			[]
 		);
+		const queryParams = useQuery();
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
 				// The create-site step will start creating a site and will add the promise of that operation to pendingAction field in the store.
@@ -80,15 +81,15 @@ const aiSiteBuilder: Flow = {
 					}
 
 					// get the prompt from the get url
-					const prompt = new URLSearchParams( window.location.search ).get( 'prompt' );
+					const prompt = queryParams.get( 'prompt' );
 					let promptParam = '';
 
 					if ( prompt ) {
-						promptParam = `&prompt=${ prompt }`;
+						promptParam = `&prompt=${ encodeURIComponent( prompt ) }`;
 					}
 
 					return navigate(
-						`launch-big-sky?siteId=${ siteId }&siteSlug=${ siteSlug }&referrer=ai-site-builder${ promptParam }`,
+						`launch-big-sky?siteId=${ siteId }&siteSlug=${ siteSlug }${ promptParam }`,
 						undefined,
 						true
 					);
