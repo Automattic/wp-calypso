@@ -80,12 +80,7 @@ const SiteStream = ( props ) => {
 					comment: '%s is the section name. For example: "My Likes"',
 				} ) }
 			/>
-			<ReaderFeedHeader
-				site={ site }
-				feed={ feed }
-				showBack={ false }
-				streamKey={ props.streamKey }
-			/>
+			<ReaderFeedHeader site={ site } feed={ feed } streamKey={ props.streamKey } />
 			{ siteId && <QueryPostCounts siteId={ siteId } type="post" /> }
 			{ ! site && <QueryReaderSite siteId={ siteId } /> }
 			{ ! feed && site && site.feed_ID && <QueryReaderFeed feedId={ site.feed_ID } /> }

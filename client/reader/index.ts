@@ -20,7 +20,6 @@ import {
 	readFollowingP2,
 	redirectLoggedOutToDiscover,
 	sidebar,
-	updateLastRoute,
 	blogDiscoveryByFeedId,
 	siteSubscriptionsManager,
 	siteSubscription,
@@ -55,7 +54,6 @@ export default async function (): Promise< void > {
 		page(
 			[ '/reader', '/reader/recent/:feed_id' ],
 			redirectLoggedOutToDiscover,
-			updateLastRoute,
 			sidebar,
 			setSelectedSiteIdByOrigin,
 			following,
@@ -68,7 +66,6 @@ export default async function (): Promise< void > {
 			'/reader/feeds/:feed_id',
 			blogDiscoveryByFeedId,
 			redirectLoggedOutToSignup,
-			updateLastRoute,
 			sidebar,
 			feedDiscovery,
 			feedListing,
@@ -80,7 +77,6 @@ export default async function (): Promise< void > {
 		page(
 			'/reader/blogs/:blog_id',
 			redirectLoggedOutToSignup,
-			updateLastRoute,
 			sidebar,
 			blogListing,
 			makeLayout,
@@ -92,7 +88,6 @@ export default async function (): Promise< void > {
 			getUserProfileBasePath(),
 			blogDiscoveryByFeedId,
 			redirectLoggedOutToSignup,
-			updateLastRoute,
 			sidebar,
 			userPosts,
 			makeLayout,
@@ -103,7 +98,6 @@ export default async function (): Promise< void > {
 			'/reader/users/id/:user_id',
 			blogDiscoveryByFeedId,
 			redirectLoggedOutToSignup,
-			updateLastRoute,
 			sidebar,
 			userPosts,
 			makeLayout,
@@ -114,7 +108,6 @@ export default async function (): Promise< void > {
 			getUserProfileBasePath( 'lists' ),
 			blogDiscoveryByFeedId,
 			redirectLoggedOutToSignup,
-			updateLastRoute,
 			sidebar,
 			userLists,
 			makeLayout,
@@ -128,7 +121,6 @@ export default async function (): Promise< void > {
 	page(
 		'/reader/a8c',
 		redirectLoggedOut,
-		updateLastRoute,
 		sidebar,
 		forceTeamA8C,
 		readA8C,
@@ -137,21 +129,12 @@ export default async function (): Promise< void > {
 	);
 
 	// new P2 Posts
-	page(
-		'/reader/p2',
-		redirectLoggedOut,
-		updateLastRoute,
-		sidebar,
-		readFollowingP2,
-		makeLayout,
-		clientRender
-	);
+	page( '/reader/p2', redirectLoggedOut, sidebar, readFollowingP2, makeLayout, clientRender );
 
 	// Sites subscription management
 	page(
 		'/reader/subscriptions',
 		redirectLoggedOut,
-		updateLastRoute,
 		sidebar,
 		siteSubscriptionsManager,
 		makeLayout,
@@ -160,7 +143,6 @@ export default async function (): Promise< void > {
 	page(
 		'/reader/subscriptions/comments',
 		redirectLoggedOut,
-		updateLastRoute,
 		sidebar,
 		commentSubscriptionsManager,
 		makeLayout,
@@ -169,7 +151,6 @@ export default async function (): Promise< void > {
 	page(
 		'/reader/subscriptions/pending',
 		redirectLoggedOut,
-		updateLastRoute,
 		sidebar,
 		pendingSubscriptionsManager,
 		makeLayout,
@@ -178,7 +159,6 @@ export default async function (): Promise< void > {
 	page(
 		'/reader/subscriptions/:subscription_id',
 		redirectLoggedOut,
-		updateLastRoute,
 		sidebar,
 		siteSubscription,
 		makeLayout,
@@ -187,7 +167,6 @@ export default async function (): Promise< void > {
 	page(
 		'/reader/site/subscription/:blog_id',
 		redirectLoggedOut,
-		updateLastRoute,
 		sidebar,
 		siteSubscription,
 		makeLayout,

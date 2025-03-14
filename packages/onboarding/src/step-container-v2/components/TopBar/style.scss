@@ -1,0 +1,44 @@
+@import '../../../../styles/mixins';
+
+.step-container-v2__top-bar {
+	z-index: 1;
+	box-sizing: border-box;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	padding: 1rem;
+
+	@include step-large-viewport {
+		padding-inline: 1.5rem;
+	}
+
+	&-left-button,
+	&-right-button,
+	&-wordpress-logo,
+	.step-container-v2__back-button,
+	.step-container-v2__skip-button {
+		height: 24px;
+	}
+
+	&-divider {
+		width: 1px;
+		height: 1rem;
+		background-color: var(--color-border-subtle);
+
+		margin-inline: 0.5rem;
+
+		@include step-large-viewport {
+			margin-left: 1rem;
+		}
+	}
+
+	&-right-button {
+		margin-left: auto;
+	}
+
+	&-wordpress-logo {
+		color: var(--color-text);
+		margin: 0;
+		margin-right: 0.5rem;
+	}
+}

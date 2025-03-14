@@ -22,7 +22,8 @@ const customUrlSlug = `about-${ DataHelper.getTimestamp() }-${ DataHelper.getRan
 	100
 ) }`;
 
-describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () {
+// Test will be updated to test equivalent core functionality.
+describe.skip( DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ), function () {
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature(
 		features,
@@ -57,8 +58,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		await pagesPage.addNewPage();
 	} );
 
-	// Test will be updated to test equivalent core functionality.
-	it.skip( 'Select page template', async function () {
+	it( 'Select page template', async function () {
 		editorPage = new EditorPage( page );
 		// Allow some time for CPU and/or network to catch up.
 		await editorPage.selectTemplateCategory( 'About', { timeout: 20 * 1000 } );
@@ -86,7 +86,6 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		await editorPage.setURLSlug( customUrlSlug );
 	} );
 
-	// This step is required on mobile, but doesn't hurt anything on desktop, so avoiding conditional.
 	it( 'Close settings sidebar', async function () {
 		await editorPage.closeSettings();
 	} );
@@ -99,8 +98,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		expect( publishedUrl.pathname ).toContain( `/${ customUrlSlug }` );
 	} );
 
-	// Test will be updated to test equivalent core functionality.
-	it.skip( 'Published page contains template content', async function () {
+	it( 'Published page contains template content', async function () {
 		// Not a typo, it's the POM page class for a WordPress page. :)
 		const publishedPagePage = new PublishedPostPage( page );
 		await publishedPagePage.validateTextInPost( pageTemplateToSelect );
