@@ -101,8 +101,12 @@ $modal-content-padding: 32px;
 		position: relative;
 	}
 
-	section + section {
-		padding-top: 12px;
+	section {
+		margin-bottom: 24px;
+	}
+
+	section p {
+		margin-bottom: 0;
 	}
 }
 
