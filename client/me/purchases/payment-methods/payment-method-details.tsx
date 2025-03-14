@@ -7,7 +7,7 @@ import {
 	getPaymentMethodImageURL,
 	PaymentMethodSummary,
 } from 'calypso/lib/checkout/payment-methods';
-
+import BusinessCardBadge from 'calypso/my-sites/checkout/src/components/business-card-badge';
 import 'calypso/me/purchases/payment-methods/style.scss';
 
 interface Props {
@@ -63,7 +63,7 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 						} ) }
 					</span>
 				) }
-
+				<BusinessCardBadge />
 				{ isExpired && (
 					<span
 						className={ clsx( 'payment-method-details__expiration-notice', {
