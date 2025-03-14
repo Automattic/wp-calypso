@@ -15,11 +15,10 @@
 		gap: 3rem;
 
 		&.padding {
-			padding-block: 2rem 1rem;
-			padding-inline: 1rem;
+			padding: 2rem 1rem;
 
 			@include step-large-viewport {
-				padding-inline: 3rem;
+				padding: 3rem;
 			}
 		}
 
