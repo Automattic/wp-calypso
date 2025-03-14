@@ -1,7 +1,7 @@
 import { Step } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { lazy, useEffect } from 'react';
+import React, { lazy, useEffect, useMemo } from 'react';
 import Modal from 'react-modal';
 import { createPath, generatePath, useParams } from 'react-router';
 import { Route, Routes } from 'react-router-dom';
@@ -121,6 +121,15 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 		state: AssertConditionState.SUCCESS,
 	};
 
+	const stepContainerV2Context = useMemo(
+		() => ( {
+			flowName: flow.name,
+			stepName: currentStepRoute,
+			recordTracksEvent,
+		} ),
+		[ flow.name, currentStepRoute ]
+	);
+
 	const renderStep = ( step: StepperStep ) => {
 		switch ( assertCondition.state ) {
 			case AssertConditionState.CHECKING:
@@ -135,12 +144,6 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 		if ( ! StepComponent ) {
 			return null;
 		}
-
-		const stepContainerV2Context = {
-			flowName: flow.name,
-			stepName: step.slug,
-			recordTracksEvent,
-		};
 
 		// The `nextStep` is available only when logged-out users go to the step that requires auth
 		// and are redirected to the user step.
@@ -164,25 +167,23 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 			} );
 
 			return (
-				<Step.StepContainerV2Provider value={ stepContainerV2Context }>
-					<StepComponent
-						navigation={ {
-							submit() {
-								navigate( postAuthStepSlug, undefined, true );
+				<StepComponent
+					navigation={ {
+						submit() {
+							navigate( postAuthStepSlug, undefined, true );
+						},
+						...( previousAuthStepSlug && {
+							goBack() {
+								navigate( previousAuthStepSlug, undefined, true );
 							},
-							...( previousAuthStepSlug && {
-								goBack() {
-									navigate( previousAuthStepSlug, undefined, true );
-								},
-							} ),
-						} }
-						flow={ flow.name }
-						variantSlug={ flow.variantSlug }
-						stepName="user"
-						redirectTo={ postAuthStepPath }
-						signupUrl={ signupUrl }
-					/>
-				</Step.StepContainerV2Provider>
+						} ),
+					} }
+					flow={ flow.name }
+					variantSlug={ flow.variantSlug }
+					stepName="user"
+					redirectTo={ postAuthStepPath }
+					signupUrl={ signupUrl }
+				/>
 			);
 		}
 
@@ -194,15 +195,13 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 		}
 
 		return (
-			<Step.StepContainerV2Provider value={ stepContainerV2Context }>
-				<StepComponent
-					navigation={ stepNavigation }
-					flow={ flow.name }
-					variantSlug={ flow.variantSlug }
-					stepName={ step.slug }
-					data={ stepData }
-				/>
-			</Step.StepContainerV2Provider>
+			<StepComponent
+				navigation={ stepNavigation }
+				flow={ flow.name }
+				variantSlug={ flow.variantSlug }
+				stepName={ step.slug }
+				data={ stepData }
+			/>
 		);
 	};
 
@@ -216,31 +215,33 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 		<Boot fallback={ <Loading className="wpcom-loading__boot" /> }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
 
-			<Routes>
-				{ flowSteps.map( ( step ) => (
+			<Step.StepContainerV2Provider value={ stepContainerV2Context }>
+				<Routes>
+					{ flowSteps.map( ( step ) => (
+						<Route
+							key={ step.slug }
+							path={ `/${ flow.variantSlug ?? flow.name }/${ step.slug }/:lang?` }
+							element={
+								<StepRoute
+									key={ step.slug }
+									step={ step }
+									flow={ flow }
+									renderStep={ renderStep }
+									navigate={ navigate }
+								/>
+							}
+						/>
+					) ) }
 					<Route
-						key={ step.slug }
-						path={ `/${ flow.variantSlug ?? flow.name }/${ step.slug }/:lang?` }
+						path="/:flow/:lang?"
 						element={
-							<StepRoute
-								key={ step.slug }
-								step={ step }
-								flow={ flow }
-								renderStep={ renderStep }
-								navigate={ navigate }
+							<RedirectToStep
+								slug={ flow.__experimentalUseBuiltinAuth ? firstStepSlug : stepPaths[ 0 ] }
 							/>
 						}
 					/>
-				) ) }
-				<Route
-					path="/:flow/:lang?"
-					element={
-						<RedirectToStep
-							slug={ flow.__experimentalUseBuiltinAuth ? firstStepSlug : stepPaths[ 0 ] }
-						/>
-					}
-				/>
-			</Routes>
+				</Routes>
+			</Step.StepContainerV2Provider>
 		</Boot>
 	);
 };

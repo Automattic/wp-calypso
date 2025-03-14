@@ -1,6 +1,6 @@
 import { useViewportMatch } from '@wordpress/compose';
 import clsx from 'clsx';
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 import {
 	StepContainerV2InternalProvider,
 	StepContainerV2InternalContextType,
@@ -39,7 +39,10 @@ export const StepContainerV2 = ( {
 	const internalIsLargeViewport = useViewportMatch( 'medium', '>=' );
 	const isLargeViewport = externalIsLargeViewport ?? internalIsLargeViewport;
 
-	const stepContainerContextValue = { isMediumViewport, isLargeViewport };
+	const stepContainerContextValue = useMemo(
+		() => ( { isMediumViewport, isLargeViewport } ),
+		[ isMediumViewport, isLargeViewport ]
+	);
 
 	return (
 		<StepContainerV2InternalProvider value={ stepContainerContextValue }>
