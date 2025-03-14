@@ -48,4 +48,13 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	// New v2 route for WP.com-based checkout implementation
+	page(
+		'/client/checkout/v2',
+		requireClientAccessContext,
+		controller.clientCheckoutV2Context,
+		makeLayout,
+		clientRender
+	);
 }
