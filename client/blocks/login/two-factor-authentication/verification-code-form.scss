@@ -1,11 +1,24 @@
 .two-factor-authentication__small-print {
 	clear: both;
-	font-size: $font-body-extra-small;
-	padding: 1em 0;
+	padding: 2em 0 0 0;
+	text-wrap: pretty;
 }
 
-.two-factor-authentication__verification-code-form .button {
-	width: 100%;
+.two-factor-authentication__verification-code-form {
+	.button {
+		width: 100%;
+	}
+
+	.form-label {
+		text-transform: uppercase;
+		font-size: $font-body-extra-small;
+		margin-bottom: 12px;
+	}
+
+	.verification-code-form__help-text {
+		margin-top: 16px;
+		min-height: 50px;
+	}
 }
 
 .woo .two-factor-authentication__verification-code-form-wrapper {
@@ -99,4 +112,15 @@
 
 .security-key-form__add-wait-for-key-heading {
 	font-weight: 600;
+}
+
+div.two-factor-auth-enabled:not(.woo) {
+	.login__form-header {
+		width: 352px;
+		margin: 0 auto;
+		padding: 0 24px;
+		text-align: left !important;
+		line-height: 40px !important;
+		text-wrap: pretty;
+	}
 }
