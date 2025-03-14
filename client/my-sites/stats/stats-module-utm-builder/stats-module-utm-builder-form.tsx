@@ -113,6 +113,7 @@ const InputField: React.FC< InputFieldProps > = ( {
 				placeholder={ placeholder }
 				aria-describedby={ ariaDescribedBy }
 				aria-labelledby={ `${ id }-label` }
+				autocomplete="off"
 			/>
 		</div>
 	);
