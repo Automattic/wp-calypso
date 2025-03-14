@@ -106,7 +106,7 @@ const CheckoutMasterbar = ( {
 				) }
 				{ checkoutType === 'wpcom' && (
 					<WordPressWordmark
-						size={ { width: 125, height: 'auto' } }
+						size={ { width: 122, height: 'auto' } }
 						className="masterbar__wpcom-wordmark"
 						color="#2c3338"
 					/>
