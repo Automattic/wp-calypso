@@ -86,14 +86,15 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger, initialData }
 						</div>
 						<div className="stats-utm-builder__help">
 							<div className="stats-utm-builder__help-bg"></div>
-							<div className="stats-utm-builder__label">
+							<h2 className="stats-utm-builder__label">
 								{ translate( 'Why should I use this?' ) }
-							</div>
-							<div className="stats-utm-builder__description">
+							</h2>
+							<p className="stats-utm-builder__description">
 								{ translate(
 									'UTM codes help track where your traffic comes from. Adding them to your URLs gives you insights into what works and where to optimize.'
 								) }
-							</div>
+							</p>
+
 							<VisuallyHidden>
 								<section id="stats-utm-builder-help-section-url">
 									<div className="stats-utm-builder__label">{ translate( 'URL' ) }</div>
@@ -103,41 +104,44 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger, initialData }
 									</div>
 								</section>
 							</VisuallyHidden>
+
 							<section id="stats-utm-builder-help-section-campaign-name">
-								<div className="stats-utm-builder__label">{ translate( 'Campaign Name' ) }</div>
-								<div className="stats-utm-builder__help-section-parameter">utm_campaign</div>
-								<div>
+								<h3 className="stats-utm-builder__label">{ translate( 'Campaign Name' ) }</h3>
+								<pre className="stats-utm-builder__help-section-parameter">utm_campaign</pre>
+								<p>
 									{ translate(
 										'Use utm_campaign to identify a specific product promotion or strategic campaign.'
 									) }
-								</div>
-								<div className="stats-utm-builder__help-section-parameter-example">
+								</p>
+								<p className="stats-utm-builder__help-section-parameter-example">
 									{ translate( 'Example: promotion, sale' ) }
-								</div>
+								</p>
 							</section>
+
 							<section id="stats-utm-builder-help-section-campaign-source">
-								<div className="stats-utm-builder__label">{ translate( 'Campaign Source' ) }</div>
-								<div className="stats-utm-builder__help-section-parameter">utm_source</div>
-								<div>
+								<h3 className="stats-utm-builder__label">{ translate( 'Campaign Source' ) }</h3>
+								<pre className="stats-utm-builder__help-section-parameter">utm_source</pre>
+								<p>
 									{ translate(
 										'Use utm_source to identify a search engine, newsletter name or other source.'
 									) }
-								</div>
-								<div className="stats-utm-builder__help-section-parameter-example">
+								</p>
+								<p className="stats-utm-builder__help-section-parameter-example">
 									{ translate( 'Example: newsletter, X, Google' ) }
-								</div>
+								</p>
 							</section>
+
 							<section id="stats-utm-builder-help-section-campaign-medium">
-								<div className="stats-utm-builder__label">{ translate( 'Campaign Medium' ) }</div>
-								<div className="stats-utm-builder__help-section-parameter">utm_medium</div>
-								<div>
+								<h3 className="stats-utm-builder__label">{ translate( 'Campaign Medium' ) }</h3>
+								<pre className="stats-utm-builder__help-section-parameter">utm_medium</pre>
+								<p>
 									{ translate(
 										'Use utm_medium to identify a medium such as email or cost-per-click.'
 									) }
-								</div>
-								<div className="stats-utm-builder__help-section-parameter-example">
+								</p>
+								<p className="stats-utm-builder__help-section-parameter-example">
 									{ translate( 'Example: cpc, banner, email' ) }
-								</div>
+								</p>
 							</section>
 						</div>
 					</div>
