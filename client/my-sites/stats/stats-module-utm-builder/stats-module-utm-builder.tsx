@@ -86,8 +86,13 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger, initialData }
 						</div>
 						<div className="stats-utm-builder__help">
 							<div className="stats-utm-builder__help-bg"></div>
+							<div className="stats-utm-builder__label">
+								{ translate( 'Why should I use this?' ) }
+							</div>
 							<div className="stats-utm-builder__description">
-								{ translate( 'Parameter descriptions and examples.' ) }
+								{ translate(
+									'UTM codes help track where your traffic comes from. Adding them to your URLs gives you insights into what works and where to optimize.'
+								) }
 							</div>
 							<VisuallyHidden>
 								<section id="stats-utm-builder-help-section-url">
