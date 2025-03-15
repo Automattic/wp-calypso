@@ -1425,7 +1425,6 @@ $breakpoint-mobile: 660px;
 			line-height: 27px;
 			letter-spacing: -0.025px;
 			color: var(--studio-gray-60);
-			-webkit-font-smoothing: initial;
 			text-align: center;
 
 			a {
@@ -1532,12 +1531,12 @@ $breakpoint-mobile: 660px;
 			}
 
 			.login__lost-password-link {
-				color: var(--woo-purple-50);
+				color: var(--woo-purple-40);
 				text-align: center;
-				font-weight: 500;
+				font-weight: 400;
 				line-height: 20px;
 				margin-block-start: 24px;
-				text-decoration: none;
+				text-decoration: underline;
 			}
 		}
 
@@ -2246,8 +2245,8 @@ $breakpoint-mobile: 660px;
 	}
 }
 
-.woo.is-woo-com-oauth.feature-flag-woocommerce-rebrand-2-0,
-.layout.is-jetpack-woo-dna-flow.feature-flag-woocommerce-rebrand-2-0 {
+.woo.is-woo-com-oauth,
+.layout.is-jetpack-woo-dna-flow {
 	--woo-purple-0: #F2EDFF;
 	--woo-purple-40: #873EFF;
 	--woo-purple-50: #720EEC;
