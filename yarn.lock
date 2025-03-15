@@ -9130,10 +9130,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/store@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "@types/store@npm:2.0.2"
-  checksum: d40224bd8bf728b86b9bd3a2413d29484712b6ec22b690c08350f9a2c1b57295861e96169307f7096c1cbba5316afc2165a41f9122493d3e312382f28722182d
+"@types/store@npm:^2.0.5":
+  version: 2.0.5
+  resolution: "@types/store@npm:2.0.5"
+  checksum: 5d5f2ba08a4eed97ac5269f672f1a012bf5f7a3c0458357070aa2d0f893e6090d8eec774fe3f4636f5a94df28d0f42f9fcd8873dc2d3110ed8f57cfdac491439
   languageName: node
   linkType: hard
 
@@ -35917,7 +35917,7 @@ __metadata:
     "@types/react-modal": "npm:^3.13.1"
     "@types/react-router-dom": "npm:^5.3.3"
     "@types/react-transition-group": "npm:^4.4.4"
-    "@types/store": "npm:^2.0.2"
+    "@types/store": "npm:^2.0.5"
     "@types/superagent": "npm:^4.1.24"
     "@types/uuid": "npm:^9.0.7"
     "@types/validator": "npm:^13.7.1"
