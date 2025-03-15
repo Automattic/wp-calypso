@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import './style.scss';
 
 type BackButtonProps = {
-	onClick?: () => void;
+	onClick?: ( event?: React.MouseEvent< HTMLButtonElement > ) => void;
 };
 
 const BackButton = ( props: BackButtonProps ) => {

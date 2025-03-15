@@ -1,5 +1,5 @@
+import { ProgressBar } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { ProgressBar } from 'calypso/components/progress-bar';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -36,7 +36,7 @@ export const StagingSiteSyncLoadingBarCardContent = ( {
 
 	return (
 		<div data-testid="syncing-site-content">
-			<ProgressBar progress={ progress } className="staging-site-card__loading-bar" />
+			<ProgressBar value={ progress * 100 } className="staging-site-card__loading-bar" />
 			<p>{ message }</p>
 		</div>
 	);

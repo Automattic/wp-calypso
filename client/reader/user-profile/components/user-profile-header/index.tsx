@@ -64,12 +64,18 @@ const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
 	return (
 		<div className="user-profile-header">
 			<header className="user-profile-header__main">
-				<div className="user-profile-header__avatar user-profile-header__avatar-desktop">
+				<div
+					className="user-profile-header__avatar user-profile-header__avatar-desktop"
+					data-testid="desktop-avatar"
+				>
 					{ avatarElement }
 				</div>
 				<div className="user-profile-header__details">
 					<div className="user-profile-header__display-name">
-						<div className="user-profile-header__avatar user-profile-header__avatar-mobile">
+						<div
+							className="user-profile-header__avatar user-profile-header__avatar-mobile"
+							data-testid="mobile-avatar"
+						>
 							{ avatarElement }
 						</div>
 						{ user.display_name }
@@ -82,7 +88,7 @@ const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
 								</span>
 								{ isClamped && user.profile_URL && (
 									<>
-										<div className="user-profile-header__bio-desc-fader"></div>
+										<span className="user-profile-header__bio-desc-fader"></span>
 										<a className="user-profile-header__bio-desc-link" href={ user.profile_URL }>
 											{ translate( 'Read More' ) }{ ' ' }
 											<Icon width={ 18 } height={ 18 } icon={ external } />

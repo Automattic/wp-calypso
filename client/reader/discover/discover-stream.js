@@ -2,10 +2,10 @@ import page from '@automattic/calypso-router';
 import { addLocaleToPathLocaleInFront, useLocale } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import BackButton from 'calypso/components/back-button';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { addQueryArgs } from 'calypso/lib/url';
 import withDimensions from 'calypso/lib/with-dimensions';
+import ReaderBackButton from 'calypso/reader/components/back-button';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import DiscoverAddNew from 'calypso/reader/discover/components/add-new';
 import DiscoverNavigation from 'calypso/reader/discover/components/navigation';
@@ -15,7 +15,6 @@ import Stream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
-import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import {
 	getDiscoverStreamTags,
 	DEFAULT_TAB,
@@ -74,7 +73,6 @@ const DiscoverStream = ( props ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const selectedTab = props.selectedTab || DEFAULT_TAB;
 	const selectedTag = props.query?.selectedTag;
-	const previousRoute = useSelector( getPreviousRoute );
 
 	// If the selected tab is tags and no selectedTag is provided, redirect to the tags tab with dailyprompt selected.
 	if ( selectedTab === 'tags' && ! selectedTag ) {
@@ -112,7 +110,7 @@ const DiscoverStream = ( props ) => {
 	const HeaderAndNavigation = () => {
 		return (
 			<>
-				{ props.showBack && <BackButton onClick={ () => page.back( previousRoute ) } /> }
+				<ReaderBackButton />
 				<DiscoverHeader selectedTab={ effectiveTabSelection } width={ props.width } />
 				<DiscoverNavigation selectedTab={ selectedTab } />
 

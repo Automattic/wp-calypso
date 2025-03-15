@@ -1,0 +1,55 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+
+.a8c-site-admin-sidebar-navigation-screen__main {
+	// Ensure the sidebar is always at least as tall as the viewport.
+	// This allows the footer section to be sticky at the bottom of the viewport.
+	flex-grow: 1;
+	margin-bottom: $grid-unit-20;
+	&.has-footer {
+		margin-bottom: 0;
+	}
+
+	.a8c-site-admin-sidebar-navigation-screen__title {
+		flex-grow: 1;
+		overflow-wrap: break-word;
+	
+		line-height: $font-line-height-x-large;
+		color: $gray-200;
+	}
+}
+
+.a8c-site-admin-sidebar-navigation-screen__content {
+	padding: 0 $grid-unit-20;
+}
+
+.a8c-site-admin-sidebar-navigation-screen__title-icon {
+	position: sticky;
+	top: 0;
+	padding-top: $grid-unit-60;
+	margin-bottom: $grid-unit-10;
+	padding-bottom: $grid-unit-10;
+	z-index: 1; // Hardcode the value for now. @see https://github.com/WordPress/gutenberg/blob/14a989d57583e65c365cb26cc757032a78c71a84/packages/base-styles/_z-index.scss#L198
+}
+
+
+.a8c-site-admin-sidebar-navigation-screen__actions {
+	display: flex;
+	flex-shrink: 0;
+}
+
+.a8c-site-admin-sidebar-navigation-screen__footer {
+	position: sticky;
+	bottom: 0;
+	background-color: $gray-900;
+	gap: 0;
+	padding: $grid-unit-10 $grid-unit-20;
+	margin: $grid-unit-20 0 0;
+	border-top: 1px solid $gray-800;
+
+	.a8c-site-admin-sidebar-navigation-screen-details-footer {
+		margin-left: -$grid-unit-20;
+		margin-right: -$grid-unit-20;
+	}
+}

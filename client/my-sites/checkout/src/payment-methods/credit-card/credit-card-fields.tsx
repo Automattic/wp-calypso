@@ -54,6 +54,7 @@ export default function CreditCardFields( {
 			( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).useForAllSubscriptions(),
 		[]
 	);
+
 	const getField = ( key: string ) => fields[ key ] || {};
 	const getFieldValue = ( key: string ) => getField( key ).value ?? '';
 	const getErrorMessagesForField = ( key: string ) => {
@@ -66,6 +67,7 @@ export default function CreditCardFields( {
 		setCardDataError,
 		setCardDataComplete,
 		setUseForAllSubscriptions,
+		setForBusinessUse,
 	} = useDispatch( 'wpcom-credit-card' );
 	const reduxDispatch = useReduxDispatch();
 
@@ -185,6 +187,7 @@ export default function CreditCardFields( {
 						<ContactFields
 							getFieldValue={ getFieldValue }
 							setFieldValue={ setFieldValue }
+							setForBusinessUse={ setForBusinessUse }
 							getErrorMessagesForField={ getErrorMessagesForField }
 							shouldUseEbanx={ shouldUseEbanx }
 							shouldShowTaxFields={ shouldShowTaxFields }

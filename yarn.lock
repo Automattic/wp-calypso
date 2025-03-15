@@ -219,7 +219,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/load-script": "workspace:^"
-    cookie: "npm:^0.7.0"
+    cookie: "npm:^0.7.2"
     debug: "npm:^4.3.3"
     hash.js: "npm:^1.1.7"
     tslib: "npm:^2.3.0"
@@ -234,7 +234,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    chokidar: "npm:^3.5.2"
+    chokidar: "npm:^3.6.0"
     html-webpack-plugin: "npm:^5.6.3"
     npm-run-all: "npm:^4.1.5"
     tree-kill: "npm:^1.2.2"
@@ -286,7 +286,7 @@ __metadata:
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.19.0"
     autoprefixer: "npm:^10.2.5"
     babel-loader: "npm:^8.2.3"
-    browserslist: "npm:^4.8.2"
+    browserslist: "npm:^4.24.4"
     css-loader: "npm:^6.11.0"
     css-minimizer-webpack-plugin: "npm:^3.4.1"
     duplicate-package-checker-webpack-plugin: "npm:^3.0.0"
@@ -337,9 +337,9 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/create-calypso-config": "workspace:^"
-    "@types/cookie": "npm:^0.4.1"
+    "@types/cookie": "npm:^0.6.0"
     "@types/node": "npm:^22.7.5"
-    cookie: "npm:^0.7.0"
+    cookie: "npm:^0.7.2"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.5.4"
   languageName: unknown
@@ -401,7 +401,7 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@babel/core": "npm:^7.26.9"
-    babel-jest: "npm:^29.6.1"
+    babel-jest: "npm:^29.7.0"
     enhanced-resolve: "npm:^5.8.3"
     jest: "npm:^29.7.0"
     jest-config: "npm:^29.7.0"
@@ -520,6 +520,7 @@ __metadata:
     "@storybook/addon-actions": "npm:^7.6.20"
     "@storybook/addon-controls": "npm:^7.6.20"
     "@storybook/addon-docs": "npm:^7.6.20"
+    "@storybook/addon-themes": "npm:7.6.20"
     "@storybook/addon-toolbars": "npm:^7.6.20"
     "@storybook/addon-viewport": "npm:^7.6.20"
     "@storybook/react-webpack5": "npm:^7.6.20"
@@ -653,7 +654,7 @@ __metadata:
     "@wordpress/react-i18n": "npm:^4.19.0"
     "@wordpress/url": "npm:^4.19.0"
     clsx: "npm:^2.1.1"
-    cmdk: "npm:^0.2.0"
+    cmdk: "npm:^0.2.1"
     typescript: "npm:^5.5.4"
     utility-types: "npm:^3.10.0"
   peerDependencies:
@@ -758,7 +759,7 @@ __metadata:
   resolution: "@automattic/create-calypso-config@workspace:packages/create-calypso-config"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    cookie: "npm:^0.7.0"
+    cookie: "npm:^0.7.2"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.5.4"
   languageName: unknown
@@ -1050,7 +1051,7 @@ __metadata:
     karma-spec-reporter: "npm:^0.0.36"
     karma-summary-reporter: "npm:^3.1.1"
     karma-typescript: "npm:^5.5.4"
-    prettier: "npm:^3.4.2"
+    prettier: "npm:^3.5.3"
     rimraf: "npm:^3.0.2"
     rollup: "npm:^3.29.5"
     rollup-plugin-dts: "npm:^5.3.1"
@@ -1105,7 +1106,7 @@ __metadata:
     "@wordpress/keycodes": "npm:^4.19.0"
     "@wordpress/private-apis": "npm:^1.19.0"
     clsx: "npm:^2.1.1"
-    deepmerge: "npm:^4.3.0"
+    deepmerge: "npm:^4.3.1"
     i18n-calypso: "workspace:^"
     is-plain-object: "npm:^5.0.0"
     react: "npm:^18.3.1"
@@ -1237,7 +1238,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@types/allure-js-commons": "npm:^0.0.1"
+    "@types/allure-js-commons": "npm:^0.0.4"
     "@types/node": "npm:^22.7.5"
     allure-js-commons: "npm:2.0.0-beta.9"
     typescript: "npm:^5.5.4"
@@ -1498,7 +1499,7 @@ __metadata:
   resolution: "@automattic/oauth-token@workspace:packages/oauth-token"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    cookie: "npm:^0.7.0"
+    cookie: "npm:^0.7.2"
     store: "npm:^2.0.12"
   languageName: unknown
   linkType: soft
@@ -1559,7 +1560,7 @@ __metadata:
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.19.0"
     "@wordpress/icons": "npm:^10.19.0"
     autoprefixer: "npm:^10.2.5"
-    babel-jest: "npm:^29.6.1"
+    babel-jest: "npm:^29.7.0"
     calypso: "workspace:^"
     clsx: "npm:^2.1.1"
     debug: "npm:^4.3.4"
@@ -1590,11 +1591,15 @@ __metadata:
   resolution: "@automattic/onboarding@workspace:packages/onboarding"
   dependencies:
     "@automattic/calypso-config": "workspace:^"
+    "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@automattic/viewport": "workspace:^"
+    "@storybook/addon-a11y": "npm:^7.6.19"
+    "@storybook/cli": "npm:^7.6.19"
+    "@storybook/react": "npm:^7.6.19"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/react": "npm:^16.2.0"
     "@wordpress/base-styles": "npm:^5.19.0"
@@ -1618,37 +1623,6 @@ __metadata:
   peerDependencies:
     "@wordpress/i18n": ^5.19.0
     react: ^18.3.1
-  languageName: unknown
-  linkType: soft
-
-"@automattic/page-pattern-modal@workspace:packages/page-pattern-modal":
-  version: 0.0.0-use.local
-  resolution: "@automattic/page-pattern-modal@workspace:packages/page-pattern-modal"
-  dependencies:
-    "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/color-studio": "npm:^4.1.0"
-    "@automattic/typography": "npm:1.0.0"
-    "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/react": "npm:^16.2.0"
-    "@wordpress/base-styles": "npm:5.19.0"
-    "@wordpress/block-editor": "npm:^14.14.0"
-    "@wordpress/blocks": "npm:^14.8.0"
-    "@wordpress/components": "npm:^29.5.0"
-    "@wordpress/compose": "npm:^7.19.0"
-    "@wordpress/element": "npm:^6.19.0"
-    "@wordpress/i18n": "npm:^5.19.0"
-    clsx: "npm:^2.1.1"
-    debug: "npm:^4.3.3"
-    jest: "npm:^29.7.0"
-    lodash: "npm:^4.17.21"
-    react: "npm:^18.3.1"
-    react-dom: "npm:^18.3.1"
-    resize-observer-polyfill: "npm:1.5.1"
-    typescript: "npm:^5.5.4"
-  peerDependencies:
-    "@wordpress/data": ^10.19.0
-    react: ^18.3.1
-    redux: ^5.0.1
   languageName: unknown
   linkType: soft
 
@@ -1816,16 +1790,21 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@storybook/addon-actions": "npm:^7.6.20"
     "@storybook/cli": "npm:^7.6.20"
     "@storybook/react": "npm:^7.6.20"
     "@wordpress/base-styles": "npm:^5.19.0"
+    "@wordpress/components": "npm:^29.5.0"
+    "@wordpress/compose": "npm:^7.19.0"
     "@wordpress/core-data": "npm:^7.19.0"
+    "@wordpress/dom": "npm:^4.19.0"
+    "@wordpress/element": "npm:^6.19.0"
     "@wordpress/i18n": "npm:^5.19.0"
     "@wordpress/icons": "npm:^10.19.0"
+    "@wordpress/url": "npm:^4.19.0"
     clsx: "npm:^2.1.1"
     copyfiles: "npm:^2.4.1"
     postcss: "npm:^8.5.3"
+    route-recognizer: "npm:^0.3.4"
     typescript: "npm:^5.5.4"
     webpack: "npm:^5.97.1"
   peerDependencies:
@@ -1941,7 +1920,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/typography@npm:1.0.0, @automattic/typography@workspace:^, @automattic/typography@workspace:packages/typography":
+"@automattic/typography@workspace:^, @automattic/typography@workspace:packages/typography":
   version: 0.0.0-use.local
   resolution: "@automattic/typography@workspace:packages/typography"
   dependencies:
@@ -5151,12 +5130,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@keyv/serialize@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "@keyv/serialize@npm:1.0.2"
+"@keyv/serialize@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "@keyv/serialize@npm:1.0.3"
   dependencies:
     buffer: "npm:^6.0.3"
-  checksum: 31c5cb0938d22ce890314befc4d00c248c4c9be9664885978d6449b1787993dbc91999041076d53437888bb5f4280233276fbc4c72f97955d111d7a6ccd4cd67
+  checksum: 24a257870b0548cfe430680c2ae1641751e6a6ec90c573eaf51bfe956839b6cfa462b4d2827157363b6d620872d32d69fa2f37210a864ba488f8ec7158436398
   languageName: node
   linkType: hard
 
@@ -6807,7 +6786,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-a11y@npm:^7.6.20":
+"@storybook/addon-a11y@npm:^7.6.19, @storybook/addon-a11y@npm:^7.6.20":
   version: 7.6.20
   resolution: "@storybook/addon-a11y@npm:7.6.20"
   dependencies:
@@ -6878,6 +6857,15 @@ __metadata:
   dependencies:
     "@storybook/global": "npm:^5.0.0"
   checksum: 4705c6956aef9a02c061968120bec412a8d324e4a25ca19f6f9bd29964bc32fead8c9e36b4135b22ec247d37adfd818bec0ed9c510d7959349b6a71444c7c33e
+  languageName: node
+  linkType: hard
+
+"@storybook/addon-themes@npm:7.6.20":
+  version: 7.6.20
+  resolution: "@storybook/addon-themes@npm:7.6.20"
+  dependencies:
+    ts-dedent: "npm:^2.0.0"
+  checksum: d0ec71bc9484ec8d3a30ae88fce42671e9c469793f4d185eb0f3f798e4b5ee4839ec8885702021b7a7feae709296c844a7fc2c5b8d26f54fa856f7aa77ca08d8
   languageName: node
   linkType: hard
 
@@ -7018,7 +7006,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/cli@npm:^7.6.20":
+"@storybook/cli@npm:^7.6.19, @storybook/cli@npm:^7.6.20":
   version: 7.6.20
   resolution: "@storybook/cli@npm:7.6.20"
   dependencies:
@@ -7475,7 +7463,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/react@npm:7.6.20, @storybook/react@npm:^7.6.20":
+"@storybook/react@npm:7.6.20, @storybook/react@npm:^7.6.19, @storybook/react@npm:^7.6.20":
   version: 7.6.20
   resolution: "@storybook/react@npm:7.6.20"
   dependencies:
@@ -8024,10 +8012,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/allure-js-commons@npm:^0.0.1":
-  version: 0.0.1
-  resolution: "@types/allure-js-commons@npm:0.0.1"
-  checksum: 5f405c9cf7b4432e74a2085c21fa98cdc6eb20d1b059cfb0d4a735f8cb5144e9862a29f6a910c1f01b4183e9875211be9fb670ef2b6ee009cff409b8dff424ea
+"@types/allure-js-commons@npm:^0.0.4":
+  version: 0.0.4
+  resolution: "@types/allure-js-commons@npm:0.0.4"
+  checksum: 15dff45b80c80640459a76849970da6f8872f0ce88c900f835baf42322b4b07cad6d1e44ce05269c6d90161b924b62ecfed691db1e823966e367b049d280279d
   languageName: node
   linkType: hard
 
@@ -8724,10 +8712,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:^4.14.167, @types/lodash@npm:^4.14.172, @types/lodash@npm:^4.14.199":
-  version: 4.17.15
-  resolution: "@types/lodash@npm:4.17.15"
-  checksum: 2eb2dc6d231f5fb4603d176c08c8d7af688f574d09af47466a179cd7812d9f64144ba74bb32ca014570ffdc544eedc51b7a5657212bad083b6eecbd72223f9bb
+"@types/lodash@npm:^4.14.167, @types/lodash@npm:^4.14.172, @types/lodash@npm:^4.17.16":
+  version: 4.17.16
+  resolution: "@types/lodash@npm:4.17.16"
+  checksum: cf017901b8ab1d7aabc86d5189d9288f4f99f19a75caf020c0e2c77b8d4cead4db0d0b842d009b029339f92399f49f34377dd7c2721053388f251778b4c23534
   languageName: node
   linkType: hard
 
@@ -8885,10 +8873,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/page@npm:^1.11.5":
-  version: 1.11.5
-  resolution: "@types/page@npm:1.11.5"
-  checksum: 3155317a1759363d408aa7fc22210147dcbf85fc053142fe84d33a2bba3a0072aa51b8215b1d0fa34b1679ec3a86cb3e76e2204e86ef625cce9aa674440a4e84
+"@types/page@npm:^1.11.9":
+  version: 1.11.9
+  resolution: "@types/page@npm:1.11.9"
+  checksum: a6cdc095036281fff47a727b0b346d52f25ad2bf79460851cd903c99c30e6a04cc499db82fcfa74740ab813d4a6c1772fccdc17b360fbce912549504635bc893
   languageName: node
   linkType: hard
 
@@ -9059,10 +9047,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/seed-random@npm:^2.2.1":
-  version: 2.2.1
-  resolution: "@types/seed-random@npm:2.2.1"
-  checksum: 4efc78a6c2786b3c7d84c85ebef9b6d14a9e861d1852893b835eea8fb838fd602244b2a79cef6da6feedaefc89ecac7a3728746471e3f33265e5ccef533a21ab
+"@types/seed-random@npm:^2.2.4":
+  version: 2.2.4
+  resolution: "@types/seed-random@npm:2.2.4"
+  checksum: 99b32d9207b0ef81d349f425b32cbd3af840808596bb5ea04cb3a72d6fac3147ebd6216ceb3e734d3504e6c36a53a9dc9eb1d8d79d4995ccf3003c852eae4651
   languageName: node
   linkType: hard
 
@@ -9142,10 +9130,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/store@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "@types/store@npm:2.0.2"
-  checksum: d40224bd8bf728b86b9bd3a2413d29484712b6ec22b690c08350f9a2c1b57295861e96169307f7096c1cbba5316afc2165a41f9122493d3e312382f28722182d
+"@types/store@npm:^2.0.5":
+  version: 2.0.5
+  resolution: "@types/store@npm:2.0.5"
+  checksum: 5d5f2ba08a4eed97ac5269f672f1a012bf5f7a3c0458357070aa2d0f893e6090d8eec774fe3f4636f5a94df28d0f42f9fcd8873dc2d3110ed8f57cfdac491439
   languageName: node
   linkType: hard
 
@@ -9224,10 +9212,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/uuid@npm:^9.0.1, @types/uuid@npm:^9.0.7":
-  version: 9.0.7
-  resolution: "@types/uuid@npm:9.0.7"
-  checksum: b329ebd4f9d1d8e08d4f2cc211be4922d70d1149f73d5772630e4a3acfb5170c6d37b3d7a39a0412f1a56e86e8a844c7f297c798b082f90380608bf766688787
+"@types/uuid@npm:^9.0.1, @types/uuid@npm:^9.0.8":
+  version: 9.0.8
+  resolution: "@types/uuid@npm:9.0.8"
+  checksum: b411b93054cb1d4361919579ef3508a1f12bf15b5fdd97337d3d351bece6c921b52b6daeef89b62340fd73fd60da407878432a1af777f40648cbe53a01723489
   languageName: node
   linkType: hard
 
@@ -13048,7 +13036,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"body-parser@npm:1.20.3, body-parser@npm:^1.19.0":
+"body-parser@npm:1.20.3, body-parser@npm:^1.19.0, body-parser@npm:^1.20.3":
   version: 1.20.3
   resolution: "body-parser@npm:1.20.3"
   dependencies:
@@ -13287,7 +13275,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browserslist@npm:^4.0.0, browserslist@npm:^4.12.0, browserslist@npm:^4.16.0, browserslist@npm:^4.16.3, browserslist@npm:^4.16.6, browserslist@npm:^4.21.10, browserslist@npm:^4.24.0, browserslist@npm:^4.24.4, browserslist@npm:^4.8.2":
+"browserslist@npm:^4.0.0, browserslist@npm:^4.12.0, browserslist@npm:^4.16.0, browserslist@npm:^4.16.3, browserslist@npm:^4.16.6, browserslist@npm:^4.21.10, browserslist@npm:^4.24.0, browserslist@npm:^4.24.4":
   version: 4.24.4
   resolution: "browserslist@npm:4.24.4"
   dependencies:
@@ -13601,13 +13589,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cacheable@npm:^1.8.8":
-  version: 1.8.8
-  resolution: "cacheable@npm:1.8.8"
+"cacheable@npm:^1.8.9":
+  version: 1.8.9
+  resolution: "cacheable@npm:1.8.9"
   dependencies:
-    hookified: "npm:^1.7.0"
-    keyv: "npm:^5.2.3"
-  checksum: 24e0f93782015be75b1ec9fe3fb151b2921f61c282091b873f78a0efeb141e95a21d8aa5f4c6bd99a8acb0b485deb5801aa32b4ecf4b666efa7446739368588b
+    hookified: "npm:^1.7.1"
+    keyv: "npm:^5.3.1"
+  checksum: 355ed0b9a312542176bf98b8d0582f8882163b7831baea3fdc6ba78d7a698e15abc3818ec049b79ad969de0f50771148bb99a616c5632c809ef7fc40f266397d
   languageName: node
   linkType: hard
 
@@ -13778,22 +13766,22 @@ __metadata:
     "@wordpress/warning": "npm:^3.19.0"
     autoprefixer: "npm:^10.2.5"
     autosize: "npm:^4.0.4"
-    body-parser: "npm:^1.19.0"
+    body-parser: "npm:^1.20.3"
     browser-filesaver: "npm:^1.1.1"
     browserslist-useragent: "npm:^3.0.3"
     bunyan: "npm:^1.8.15"
     chalk: "npm:^4.1.2"
     chrono-node: "npm:^2.3.5"
     circular-dependency-plugin: "npm:^5.2.2"
-    clipboard: "npm:^2.0.6"
+    clipboard: "npm:^2.0.11"
     clsx: "npm:^2.1.1"
-    cmdk: "npm:^0.2.0"
+    cmdk: "npm:^0.2.1"
     component-closest: "npm:^1.0.1"
     component-event: "npm:^0.2.1"
     component-file-picker: "npm:^0.2.1"
     component-query: "npm:^0.0.3"
-    cookie: "npm:^0.7.0"
-    cookie-parser: "npm:^1.4.6"
+    cookie: "npm:^0.7.2"
+    cookie-parser: "npm:^1.4.7"
     core-js-bundle: "npm:^3.6.4"
     cpf_cnpj: "npm:^0.2.0"
     creditcards: "npm:^3.1.0"
@@ -13805,7 +13793,7 @@ __metadata:
     d3-shape: "npm:^1.3.7"
     debug: "npm:^4.3.3"
     deep-freeze: "npm:^0.0.1"
-    deepmerge: "npm:^4.3.0"
+    deepmerge: "npm:^4.3.1"
     diff: "npm:^4.0.2"
     dom-helpers: "npm:^5.1.3"
     dompurify: "npm:^3.2.4"
@@ -14261,7 +14249,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chokidar@npm:>=3.0.0 <4.0.0, chokidar@npm:^3.3.0, chokidar@npm:^3.3.1, chokidar@npm:^3.5.1, chokidar@npm:^3.5.2, chokidar@npm:^3.5.3, chokidar@npm:^3.6.0":
+"chokidar@npm:>=3.0.0 <4.0.0, chokidar@npm:^3.3.0, chokidar@npm:^3.3.1, chokidar@npm:^3.5.1, chokidar@npm:^3.5.3, chokidar@npm:^3.6.0":
   version: 3.6.0
   resolution: "chokidar@npm:3.6.0"
   dependencies:
@@ -14486,7 +14474,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clipboard@npm:^2.0.11, clipboard@npm:^2.0.6":
+"clipboard@npm:^2.0.11":
   version: 2.0.11
   resolution: "clipboard@npm:2.0.11"
   dependencies:
@@ -14582,16 +14570,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cmdk@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "cmdk@npm:0.2.0"
+"cmdk@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "cmdk@npm:0.2.1"
   dependencies:
     "@radix-ui/react-dialog": "npm:1.0.0"
-    command-score: "npm:0.1.2"
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: bd706c78fc933562acc5723bb4663bad68b34f4e065405de16d400a76ed4c36633de63ac3b6458e8aa93aba10ca5116563d1fc00b9fb298f6876175e190c3479
+  checksum: 8cc3f256a5e40f7ac535dd6b3eabfeff2ff817d694dd569047efafb8620fff9575d0612ed023886e98e8f8595947458fee562389b19be2eb2f3c4835117cac7c
   languageName: node
   linkType: hard
 
@@ -14785,13 +14772,6 @@ __metadata:
   version: 2.0.3
   resolution: "comma-separated-tokens@npm:2.0.3"
   checksum: 91f90f1aae320f1755d6957ef0b864fe4f54737f3313bd95e0802686ee2ca38bff1dd381964d00ae5db42912dd1f4ae5c2709644e82706ffc6f6842a813cdd67
-  languageName: node
-  linkType: hard
-
-"command-score@npm:0.1.2":
-  version: 0.1.2
-  resolution: "command-score@npm:0.1.2"
-  checksum: 0fe355e311f339c217befade6337e734c8e199eaf8442cf65233461134b6bac8a53c85c2c1c929f1b1b8c6125772a50d55991a27ea486cdd846e8c083c852706
   languageName: node
   linkType: hard
 
@@ -15161,13 +15141,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookie-parser@npm:^1.4.6":
-  version: 1.4.6
-  resolution: "cookie-parser@npm:1.4.6"
+"cookie-parser@npm:^1.4.7":
+  version: 1.4.7
+  resolution: "cookie-parser@npm:1.4.7"
   dependencies:
-    cookie: "npm:0.4.1"
+    cookie: "npm:0.7.2"
     cookie-signature: "npm:1.0.6"
-  checksum: 9c2ade5459290802cd472a2d2a6e46fbd7de3e8514e02bfed5edfde892d77733c7f89d9d2015f752a9087680429b416972d7aba748bf6824e21eb680c8556383
+  checksum: 46bef553de409031b69a6074ce512d131a98e4fa12612669f1a9c3dd98d56897a31db86a3f4338d4a3a895c6f8d5cfd6fa4d99cdf588e0e8eda655efc3f384dc
   languageName: node
   linkType: hard
 
@@ -15178,13 +15158,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookie@npm:0.4.1":
-  version: 0.4.1
-  resolution: "cookie@npm:0.4.1"
-  checksum: 4d7bc798df3d0f34035977949cd6b7d05bbab47d7dcb868667f460b578a550cd20dec923832b8a3a107ef35aba091a3975e14f79efacf6e39282dc0fed6db4a1
-  languageName: node
-  linkType: hard
-
 "cookie@npm:0.6.0":
   version: 0.6.0
   resolution: "cookie@npm:0.6.0"
@@ -15192,17 +15165,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cookie@npm:0.7.2, cookie@npm:^0.7.2":
+  version: 0.7.2
+  resolution: "cookie@npm:0.7.2"
+  checksum: 9596e8ccdbf1a3a88ae02cf5ee80c1c50959423e1022e4e60b91dd87c622af1da309253d8abdb258fb5e3eacb4f08e579dc58b4897b8087574eee0fd35dfa5d2
+  languageName: node
+  linkType: hard
+
 "cookie@npm:^0.5.0":
   version: 0.5.0
   resolution: "cookie@npm:0.5.0"
   checksum: c01ca3ef8d7b8187bae434434582288681273b5a9ed27521d4d7f9f7928fe0c920df0decd9f9d3bbd2d14ac432b8c8cf42b98b3bdd5bfe0e6edddeebebe8b61d
-  languageName: node
-  linkType: hard
-
-"cookie@npm:^0.7.0":
-  version: 0.7.2
-  resolution: "cookie@npm:0.7.2"
-  checksum: 9596e8ccdbf1a3a88ae02cf5ee80c1c50959423e1022e4e60b91dd87c622af1da309253d8abdb258fb5e3eacb4f08e579dc58b4897b8087574eee0fd35dfa5d2
   languageName: node
   linkType: hard
 
@@ -16450,7 +16423,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"deepmerge@npm:^4.2.2, deepmerge@npm:^4.3.0":
+"deepmerge@npm:^4.2.2, deepmerge@npm:^4.3.0, deepmerge@npm:^4.3.1":
   version: 4.3.1
   resolution: "deepmerge@npm:4.3.1"
   checksum: e53481aaf1aa2c4082b5342be6b6d8ad9dfe387bc92ce197a66dea08bd4265904a087e75e464f14d1347cf2ac8afe1e4c16b266e0561cc5df29382d3c5f80044
@@ -19174,12 +19147,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"file-entry-cache@npm:^10.0.5":
-  version: 10.0.6
-  resolution: "file-entry-cache@npm:10.0.6"
+"file-entry-cache@npm:^10.0.6":
+  version: 10.0.7
+  resolution: "file-entry-cache@npm:10.0.7"
   dependencies:
-    flat-cache: "npm:^6.1.6"
-  checksum: 4e7226a5dbe7b5130c848c5fd3a352bb16e4ddb1de10cb4b3ea8375f6ab6085ed10da4db2db8119c61fc7e56fc59a40eeb837a4ae1a3a7c8357a17e69004f113
+    flat-cache: "npm:^6.1.7"
+  checksum: b56ea1b6f3f0faf7954667c1991d8ff50901c53cd37c775b72d18d6fa5641bbf0e2cddb84b9d10f900a6ad3d1432f1525405a966b113d7512d9d8f820f1bb7a4
   languageName: node
   linkType: hard
 
@@ -19419,14 +19392,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"flat-cache@npm:^6.1.6":
-  version: 6.1.6
-  resolution: "flat-cache@npm:6.1.6"
+"flat-cache@npm:^6.1.7":
+  version: 6.1.7
+  resolution: "flat-cache@npm:6.1.7"
   dependencies:
-    cacheable: "npm:^1.8.8"
-    flatted: "npm:^3.3.2"
-    hookified: "npm:^1.7.0"
-  checksum: 2aeba555b61d32d7f0803e6b6b3ba959610cdc0e5b591ed0f80a3ad70c4e80e81afb6853c495cafdcbc3a02386d76a1522babcf04e50c4a1e81df2decfd02e9f
+    cacheable: "npm:^1.8.9"
+    flatted: "npm:^3.3.3"
+    hookified: "npm:^1.7.1"
+  checksum: 37bf101b35483e2df3f2fbee46e549d8e6ebd932fb4969a800dc595a13bd239b7dfe804a8f565518b39bec78d827344afa21d66849f1f12ca8f13901411f2b9d
   languageName: node
   linkType: hard
 
@@ -19437,10 +19410,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"flatted@npm:^3.1.0, flatted@npm:^3.2.7, flatted@npm:^3.3.2":
-  version: 3.3.2
-  resolution: "flatted@npm:3.3.2"
-  checksum: 24cc735e74d593b6c767fe04f2ef369abe15b62f6906158079b9874bdb3ee5ae7110bb75042e70cd3f99d409d766f357caf78d5ecee9780206f5fdc5edbad334
+"flatted@npm:^3.1.0, flatted@npm:^3.2.7, flatted@npm:^3.3.3":
+  version: 3.3.3
+  resolution: "flatted@npm:3.3.3"
+  checksum: e957a1c6b0254aa15b8cce8533e24165abd98fadc98575db082b786b5da1b7d72062b81bfdcd1da2f4d46b6ed93bec2434e62333e9b4261d79ef2e75a10dd538
   languageName: node
   linkType: hard
 
@@ -20841,10 +20814,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hookified@npm:^1.7.0":
-  version: 1.7.0
-  resolution: "hookified@npm:1.7.0"
-  checksum: 039424cbeb8cc55cd9bd6b17e9fb48c5d619899f49d560abf39a4cd3ae3d9197e434732218641ebaec22ff0a0b195fdb96fc4c42df12477f464bfe63a35a4b66
+"hookified@npm:^1.7.1":
+  version: 1.8.1
+  resolution: "hookified@npm:1.8.1"
+  checksum: f3ed2ec2e522946cbf9c673f05ff5ead266bb6fd8ff2c2beb8bea0ea786658131fdb72f3aa2c2c154451f08316a3c266ecb74522647c35c25c3e9c16d9584d55
   languageName: node
   linkType: hard
 
@@ -23819,12 +23792,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"keyv@npm:^5.2.3":
-  version: 5.2.3
-  resolution: "keyv@npm:5.2.3"
+"keyv@npm:^5.3.1":
+  version: 5.3.1
+  resolution: "keyv@npm:5.3.1"
   dependencies:
-    "@keyv/serialize": "npm:^1.0.2"
-  checksum: 76b87dd2c21a4c1c5c05e9ff3b85670beab98f153429aaa9aee544b72b65411a7d80d96c29f3fef3e9dcebb672c8268e7209d6f80beb5da939b4e019722948b4
+    "@keyv/serialize": "npm:^1.0.3"
+  checksum: d5ffe3d2d547a50a5e1189d5acbc0480821c22c025082851a8eeb26667d789f3f7b7ee7beb933660d98c239f7e7c403c652a511693670a78a73f06cd411e04fa
   languageName: node
   linkType: hard
 
@@ -27677,7 +27650,7 @@ __metadata:
   resolution: "photon@workspace:packages/photon"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@types/seed-random": "npm:^2.2.1"
+    "@types/seed-random": "npm:^2.2.4"
     crc32: "npm:^0.2.2"
     debug: "npm:^4.3.3"
     seed-random: "npm:^2.2.0"
@@ -28395,13 +28368,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-selector-parser@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "postcss-selector-parser@npm:7.0.0"
+"postcss-selector-parser@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "postcss-selector-parser@npm:7.1.0"
   dependencies:
     cssesc: "npm:^3.0.0"
     util-deprecate: "npm:^1.0.2"
-  checksum: e96e096afcce70bf5c97789f5ea09d7415ae5eb701d82b05b5e8532885d31363b484fcb1ca9488c9a331f30508d9e5bb6c3109eb2eb5067ef3d3919f9928cd9d
+  checksum: 0fef257cfd1c0fe93c18a3f8a6e739b4438b527054fd77e9a62730a89b2d0ded1b59314a7e4aaa55bc256204f40830fecd2eb50f20f8cb7ab3a10b52aa06c8aa
   languageName: node
   linkType: hard
 
@@ -28481,7 +28454,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.2.4, postcss@npm:^8.3.11, postcss@npm:^8.3.5, postcss@npm:^8.4.21, postcss@npm:^8.4.33, postcss@npm:^8.5.1, postcss@npm:^8.5.3":
+"postcss@npm:^8.2.4, postcss@npm:^8.3.11, postcss@npm:^8.3.5, postcss@npm:^8.4.21, postcss@npm:^8.4.33, postcss@npm:^8.5.3":
   version: 8.5.3
   resolution: "postcss@npm:8.5.3"
   dependencies:
@@ -28538,12 +28511,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.4.2":
-  version: 3.4.2
-  resolution: "prettier@npm:3.4.2"
+"prettier@npm:^3.5.3":
+  version: 3.5.3
+  resolution: "prettier@npm:3.5.3"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 99e076a26ed0aba4ebc043880d0f08bbb8c59a4c6641cdee6cdadf2205bdd87aa1d7823f50c3aea41e015e99878d37c58d7b5f0e663bba0ef047f94e36b96446
+  checksum: 3880cb90b9dc0635819ab52ff571518c35bd7f15a6e80a2054c05dbc8a3aa6e74f135519e91197de63705bcb38388ded7e7230e2178432a1468005406238b877
   languageName: node
   linkType: hard
 
@@ -30856,7 +30829,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"resize-observer-polyfill@npm:1.5.1, resize-observer-polyfill@npm:^1.5.1":
+"resize-observer-polyfill@npm:^1.5.1":
   version: 1.5.1
   resolution: "resize-observer-polyfill@npm:1.5.1"
   checksum: 5e882475067f0b97dc07e0f37c3e335ac5bc3520d463f777cec7e894bb273eddbfecb857ae668e6fb6881fd6f6bb7148246967172139302da50fa12ea3a15d95
@@ -32975,9 +32948,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stylelint@npm:^16.13.2, stylelint@npm:^16.8.2":
-  version: 16.14.1
-  resolution: "stylelint@npm:16.14.1"
+"stylelint@npm:^16.15.0, stylelint@npm:^16.8.2":
+  version: 16.15.0
+  resolution: "stylelint@npm:16.15.0"
   dependencies:
     "@csstools/css-parser-algorithms": "npm:^3.0.4"
     "@csstools/css-tokenizer": "npm:^3.0.3"
@@ -32992,7 +32965,7 @@ __metadata:
     debug: "npm:^4.3.7"
     fast-glob: "npm:^3.3.3"
     fastest-levenshtein: "npm:^1.0.16"
-    file-entry-cache: "npm:^10.0.5"
+    file-entry-cache: "npm:^10.0.6"
     global-modules: "npm:^2.0.0"
     globby: "npm:^11.1.0"
     globjoin: "npm:^0.1.4"
@@ -33006,20 +32979,20 @@ __metadata:
     micromatch: "npm:^4.0.8"
     normalize-path: "npm:^3.0.0"
     picocolors: "npm:^1.1.1"
-    postcss: "npm:^8.5.1"
+    postcss: "npm:^8.5.3"
     postcss-resolve-nested-selector: "npm:^0.1.6"
     postcss-safe-parser: "npm:^7.0.1"
-    postcss-selector-parser: "npm:^7.0.0"
+    postcss-selector-parser: "npm:^7.1.0"
     postcss-value-parser: "npm:^4.2.0"
     resolve-from: "npm:^5.0.0"
     string-width: "npm:^4.2.3"
-    supports-hyperlinks: "npm:^3.1.0"
+    supports-hyperlinks: "npm:^3.2.0"
     svg-tags: "npm:^1.0.0"
     table: "npm:^6.9.0"
     write-file-atomic: "npm:^5.0.1"
   bin:
     stylelint: bin/stylelint.mjs
-  checksum: cce94374dc721d491d955f548ee81ba835d4955fa37d58a11323454f9f3721e5644fa89a04c14f85bdfa12790bdd043a41be2001a99cb0bfe23b38eb933199d7
+  checksum: 32dee221fe8980e08adcdc7c48ddab51eac263784b0cc2f4eb9c029e3589ad6ce7dae710ec2aadb57bdbfecec579326c75918686f1563576715cbd3095c5dd12
   languageName: node
   linkType: hard
 
@@ -33136,13 +33109,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"supports-hyperlinks@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "supports-hyperlinks@npm:3.1.0"
+"supports-hyperlinks@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "supports-hyperlinks@npm:3.2.0"
   dependencies:
     has-flag: "npm:^4.0.0"
     supports-color: "npm:^7.0.0"
-  checksum: 78cc3e17eb27e6846fa355a8ebf343befe36272899cd409e45317a06c1997e95c23ff99d91080a517bd8c96508d4fa456e6ceb338c02ba5d7544277dbec0f10f
+  checksum: bca527f38d4c45bc95d6a24225944675746c515ddb91e2456d00ae0b5c537658e9dd8155b996b191941b0c19036195a098251304b9082bbe00cd1781f3cd838e
   languageName: node
   linkType: hard
 
@@ -35914,24 +35887,24 @@ __metadata:
     "@tanstack/eslint-plugin-query": "npm:^5.14.6"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@types/chroma-js": "npm:^2.4.5"
-    "@types/cookie": "npm:^0.4.1"
+    "@types/cookie": "npm:^0.6.0"
     "@types/debug": "npm:^4.1.7"
     "@types/eslint": "npm:^9.6.1"
     "@types/fast-json-stable-stringify": "npm:^2.0.0"
     "@types/ga-gtag": "npm:^1.2.0"
     "@types/gtag.js": "npm:^0.0.20"
     "@types/jest": "npm:^29.5.14"
-    "@types/lodash": "npm:^4.14.199"
+    "@types/lodash": "npm:^4.17.16"
     "@types/node": "npm:^22.7.5"
-    "@types/page": "npm:^1.11.5"
+    "@types/page": "npm:^1.11.9"
     "@types/qs": "npm:^6.9.7"
     "@types/react": "npm:^18.3.18"
     "@types/react-modal": "npm:^3.13.1"
     "@types/react-router-dom": "npm:^5.3.3"
     "@types/react-transition-group": "npm:^4.4.4"
-    "@types/store": "npm:^2.0.2"
+    "@types/store": "npm:^2.0.5"
     "@types/superagent": "npm:^4.1.24"
-    "@types/uuid": "npm:^9.0.7"
+    "@types/uuid": "npm:^9.0.8"
     "@types/validator": "npm:^13.7.1"
     "@types/webpack-env": "npm:^1.18.8"
     "@types/wordpress__block-editor": "npm:^11.5.8"
@@ -35958,14 +35931,14 @@ __metadata:
     "@wordpress/url": "npm:^4.19.0"
     animate.css: "npm:^4.1.1"
     babel-loader: "npm:^8.2.3"
-    browserslist: "npm:^4.16.0"
+    browserslist: "npm:^4.24.4"
     bunyan: "npm:^1.8.15"
     calypso: "workspace:^"
     calypso-codemods: "workspace:^"
     chalk: "npm:^4.1.2"
     check-node-version: "npm:^4.0.2"
     chroma-js: "npm:^2.6.0"
-    cmdk: "npm:^0.2.0"
+    cmdk: "npm:^0.2.1"
     config: "npm:^3.3.6"
     css-loader: "npm:^6.11.0"
     d3-time-format: "npm:^4.1.0"
@@ -36032,7 +36005,7 @@ __metadata:
     source-map: "npm:^0.7.4"
     stackframe: "npm:^1.1.1"
     stacktrace-gps: "npm:^3.0.3"
-    stylelint: "npm:^16.13.2"
+    stylelint: "npm:^16.15.0"
     swiper: "npm:^10.1.0"
     tslib: "npm:^2.3.0"
     typescript: "npm:5.5.4"

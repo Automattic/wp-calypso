@@ -268,7 +268,7 @@ export class RenderDomainsStep extends Component {
 				} );
 			}
 		} else {
-			await this.submitWithDomain( { signupDomainOrigin, position } );
+			await this.submitWithDomain( { signupDomainOrigin, position, suggestion } );
 		}
 	};
 
@@ -392,9 +392,17 @@ export class RenderDomainsStep extends Component {
 		}
 	};
 
-	submitWithDomain = ( { googleAppsCartItem, shouldHideFreePlan = false, signupDomainOrigin } ) => {
+	submitWithDomain = ( {
+		googleAppsCartItem,
+		shouldHideFreePlan = false,
+		signupDomainOrigin,
+		suggestion,
+	} ) => {
 		const { step } = this.props;
-		const { suggestion } = step;
+
+		if ( step.suggestion ) {
+			suggestion = step.suggestion;
+		}
 
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
 		const useThemeHeadstartItem = shouldUseThemeAnnotation
@@ -1182,7 +1190,11 @@ export class RenderDomainsStep extends Component {
 			return translate( 'Enter some descriptive keywords to get started.' );
 		}
 
-		return 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName
+		if ( 'use-your-domain' === stepSectionName ) {
+			return '';
+		}
+
+		return 'transfer' === stepSectionName || 'mapping' === stepSectionName
 			? translate( 'Use a domain you already own with your new WordPress.com site.' )
 			: translate( "Enter your site's name or some keywords that describe it to get started." );
 	}

@@ -1,3 +1,4 @@
+import { Item as BreadcrumbItem } from 'calypso/components/breadcrumb';
 import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { useSelector } from 'calypso/state';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
@@ -6,7 +7,9 @@ export function useBreadcrumbs() {
 	const breadcrumbs = useSelector( getBreadcrumbs );
 	const isRemoveDuplicateViewsExperimentEnabled = useRemoveDuplicateViewsExperimentEnabled();
 
-	const shouldShowBreadcrumbs = isRemoveDuplicateViewsExperimentEnabled && breadcrumbs.length >= 3;
+	const shouldShowBreadcrumbs =
+		isRemoveDuplicateViewsExperimentEnabled &&
+		breadcrumbs.some( ( item: BreadcrumbItem ) => item.id === 'feature' );
 
 	return {
 		// In sites dashboard, the components are rendered from the innermost level,
