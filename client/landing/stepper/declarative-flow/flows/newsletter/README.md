@@ -1,4 +1,3 @@
-
 # newsletter flow
 
 ## Testing instructions

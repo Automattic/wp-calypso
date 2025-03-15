@@ -1,4 +1,3 @@
-
 # migration-signup flow
 
 ## Testing instructions

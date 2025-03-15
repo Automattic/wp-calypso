@@ -1,4 +1,3 @@
-
 # hundred-year-domain-transfer flow
 
 ## Testing instructions

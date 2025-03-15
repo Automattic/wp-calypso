@@ -1,4 +1,3 @@
-
 # domain-user-transfer flow
 
 ## Testing instructions
