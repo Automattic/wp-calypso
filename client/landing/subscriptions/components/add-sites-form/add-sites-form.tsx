@@ -31,8 +31,8 @@ const AddSitesForm = ( {
 	placeholder,
 	buttonText,
 	source,
-	onAddFinished = () => {},
-	onChangeFeedPreview = () => {},
+	onAddFinished,
+	onChangeFeedPreview,
 }: AddSitesFormProps ) => {
 	const translate = useTranslate();
 	const [ inputValue, setInputValue ] = useState( '' );
@@ -110,14 +110,13 @@ const AddSitesForm = ( {
 								setInputValue( '' );
 								setIsValidInput( false );
 							}
-							onAddFinished();
 						},
 						onError: ( error: SubscriptionError ) => {
 							showErrorNotice( inputValue, error );
-							onAddFinished();
 						},
 						onSettled: (): void => {
 							setIsSubmitting( false );
+							onAddFinished?.();
 						},
 					}
 				);
@@ -143,7 +142,7 @@ const AddSitesForm = ( {
 		setIsValidInput( false );
 
 		// Set the feed preview to false.
-		onChangeFeedPreview( false );
+		onChangeFeedPreview?.( false );
 	}
 
 	return (
