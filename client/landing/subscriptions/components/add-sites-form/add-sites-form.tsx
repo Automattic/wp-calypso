@@ -14,12 +14,12 @@ import { useRecordSiteSubscribed } from 'calypso/landing/subscriptions/tracks';
 import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import './styles.scss';
 
-type AddSitesFormProps = {
+export type AddSitesFormProps = {
 	placeholder?: string;
 	buttonText?: string;
 	source: string;
-	onAddFinished?: () => void;
 	onChangeFeedPreview?: ( hasPreview: boolean ) => void;
+	onChangeSubscribe?: ( subscribed: boolean ) => void;
 };
 
 type SubscriptionError = {
@@ -31,8 +31,8 @@ const AddSitesForm = ( {
 	placeholder,
 	buttonText,
 	source,
-	onAddFinished,
 	onChangeFeedPreview,
+	onChangeSubscribe,
 }: AddSitesFormProps ) => {
 	const translate = useTranslate();
 	const [ inputValue, setInputValue ] = useState( '' );
@@ -105,18 +105,16 @@ const AddSitesForm = ( {
 								}
 
 								showSuccessNotice( inputValue );
-
-								// Reset fields.
-								setInputValue( '' );
-								setIsValidInput( false );
+								resetForm();
+								onChangeSubscribe?.( true );
 							}
 						},
 						onError: ( error: SubscriptionError ) => {
 							showErrorNotice( inputValue, error );
+							onChangeSubscribe?.( false );
 						},
 						onSettled: (): void => {
 							setIsSubmitting( false );
-							onAddFinished?.();
 						},
 					}
 				);
@@ -126,7 +124,7 @@ const AddSitesForm = ( {
 			inputValue,
 			isValidInput,
 			isLoggedIn,
-			onAddFinished,
+			onChangeSubscribe,
 			recordSiteSubscribed,
 			showErrorNotice,
 			showSuccessNotice,
@@ -136,13 +134,14 @@ const AddSitesForm = ( {
 		]
 	);
 
-	function onSubscribeToggle(): void {
-		// Reset fields on subscription or unsubscription.
+	function onSubscribeToggle( subscribed: boolean ): void {
+		resetForm();
+		onChangeSubscribe?.( subscribed );
+	}
+
+	function resetForm(): void {
 		setInputValue( '' );
 		setIsValidInput( false );
-
-		// Set the feed preview to false.
-		onChangeFeedPreview?.( false );
 	}
 
 	return (

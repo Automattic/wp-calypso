@@ -9,7 +9,7 @@ import {
 	SubscriptionManagerContextProvider,
 	SubscriptionsPortal,
 } from '../../subscription-manager-context';
-import AddSitesForm from '../add-sites-form';
+import AddSitesForm, { AddSitesFormProps } from '../add-sites-form';
 
 const renderWithContextProvider = ( component: React.ReactNode ) => {
 	return renderWithProvider(
@@ -20,8 +20,8 @@ const renderWithContextProvider = ( component: React.ReactNode ) => {
 };
 
 describe( 'AddSitesForm', () => {
-	const mockProps = {
-		onAddFinished: jest.fn(),
+	const mockProps: AddSitesFormProps = {
+		onChangeSubscribe: jest.fn(),
 		source: 'test-source',
 	};
 
