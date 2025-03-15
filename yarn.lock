@@ -324,7 +324,7 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/color-studio": "npm:^4.1.0"
-    "@types/node": "npm:^22.10.10"
+    "@types/node": "npm:^22.13.10"
     postcss: "npm:^8.5.3"
     postcss-custom-properties: "npm:^11.0.0"
     sass: "npm:1.54.0"
@@ -338,7 +338,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/create-calypso-config": "workspace:^"
     "@types/cookie": "npm:^0.4.1"
-    "@types/node": "npm:^22.10.10"
+    "@types/node": "npm:^22.13.10"
     cookie: "npm:^0.7.0"
     tslib: "npm:^2.3.0"
     typescript: "npm:^5.6.2"
@@ -370,7 +370,7 @@ __metadata:
     "@jest/types": "npm:^29.6.3"
     "@playwright/browser-chromium": "npm:1.48.2"
     "@playwright/browser-firefox": "npm:1.48.2"
-    "@types/node": "npm:^22.10.10"
+    "@types/node": "npm:^22.13.10"
     "@types/node-fetch": "npm:^2.6.12"
     "@types/totp-generator": "npm:^0.0.3"
     "@wordpress/i18n": "npm:^5.19.0"
@@ -1034,7 +1034,7 @@ __metadata:
     "@types/karma": "npm:^6.3.9"
     "@types/karma-spec-reporter": "npm:^0.0.6"
     "@types/karma-summary-reporter": "npm:^3.1.3"
-    "@types/node": "npm:^22.10.10"
+    "@types/node": "npm:^22.13.10"
     "@types/ua-parser-js": "npm:^0.7.36"
     "@typescript-eslint/eslint-plugin": "npm:^5.62.0"
     "@typescript-eslint/parser": "npm:^5.62.0"
@@ -1239,7 +1239,7 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@types/allure-js-commons": "npm:^0.0.1"
-    "@types/node": "npm:^22.10.10"
+    "@types/node": "npm:^22.13.10"
     allure-js-commons: "npm:2.0.0-beta.9"
     typescript: "npm:^5.6.2"
   languageName: unknown
@@ -8823,7 +8823,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:>=10.0.0, @types/node@npm:^22.10.10":
+"@types/node@npm:*, @types/node@npm:>=10.0.0, @types/node@npm:^22.13.10":
   version: 22.13.10
   resolution: "@types/node@npm:22.13.10"
   dependencies:
@@ -35910,7 +35910,7 @@ __metadata:
     "@types/gtag.js": "npm:^0.0.20"
     "@types/jest": "npm:^29.5.14"
     "@types/lodash": "npm:^4.14.199"
-    "@types/node": "npm:^22.10.10"
+    "@types/node": "npm:^22.13.10"
     "@types/page": "npm:^1.11.5"
     "@types/qs": "npm:^6.9.7"
     "@types/react": "npm:^18.3.18"
