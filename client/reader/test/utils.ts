@@ -1,24 +1,22 @@
-/**
- * @jest-environment jsdom
- */
-
 import page from '@automattic/calypso-router';
+import { AppState } from 'calypso/types';
 import { getSafeImageUrlForReader, showSelectedPost } from '../utils';
 
 jest.mock( '@automattic/calypso-router', () => jest.fn() );
 
 describe( 'reader utils', () => {
 	const dispatch = jest.fn();
-	const getState = () => ( {
-		reader: {
-			posts: {
-				items: {},
+	const getState = () =>
+		( {
+			reader: {
+				posts: {
+					items: {},
+				},
 			},
-		},
-	} );
+		} ) as AppState;
 
 	beforeEach( () => {
-		page.mockReset();
+		jest.resetAllMocks();
 	} );
 
 	describe( '#showSelectedPost', () => {
@@ -37,7 +35,9 @@ describe( 'reader utils', () => {
 				dispatch,
 				getState
 			);
-			expect( page ).toHaveBeenCalledWith( '/reader/feeds/1/posts/5#comments' );
+			expect( page as ( url: string ) => void ).toHaveBeenCalledWith(
+				'/reader/feeds/1/posts/5#comments'
+			); //
 		} );
 	} );
 

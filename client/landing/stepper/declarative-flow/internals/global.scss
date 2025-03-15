@@ -238,8 +238,8 @@ button {
 
 .is-section-stepper {
 	.search-filters__popover {
-		--color-accent: #117ac9 !important;
-		--color-accent-60: #0e64a5 !important;
+		--color-accent: var(--studio-blue-50) !important;
+		--color-accent-60: var(--studio-blue-60) !important;
 	}
 }
 

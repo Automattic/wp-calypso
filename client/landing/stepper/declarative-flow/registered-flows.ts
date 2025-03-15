@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	START_WRITING_FLOW,
 	CONNECT_DOMAIN_FLOW,
@@ -16,6 +17,7 @@ import {
 	ONBOARDING_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	EXAMPLE_FLOW,
+	AI_SITE_BUILDER_FLOW,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -99,6 +101,14 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		import( /* webpackChunkName: "example-flow" */ '../declarative-flow/example' ),
 };
 
+const aiSiteBuilderFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
+	'calypso/ai-site-builder-flow'
+)
+	? {
+			[ AI_SITE_BUILDER_FLOW ]: () => import( './ai-site-builder' ),
+	  }
+	: {};
+
 const hostedSiteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = {
 	[ HOSTED_SITE_MIGRATION_FLOW ]: () =>
 		import(
@@ -119,4 +129,5 @@ export default {
 	...availableFlows,
 	...hostedSiteMigrationFlow,
 	...hundredYearDomainFlow,
+	...aiSiteBuilderFlows,
 };
