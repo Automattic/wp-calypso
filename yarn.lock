@@ -15030,12 +15030,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"config@npm:^3.3.6":
-  version: 3.3.6
-  resolution: "config@npm:3.3.6"
+"config@npm:^3.3.12":
+  version: 3.3.12
+  resolution: "config@npm:3.3.12"
   dependencies:
-    json5: "npm:^2.1.1"
-  checksum: 436bac634b5e298c298250fecb22a9972170cdf7ead633323780a1bdcf9501be9e8ac0a88dce51fbbf6b1e7716073ad2ee736d6600a6fd1b1fa0a08d4e3a39c5
+    json5: "npm:^2.2.3"
+  checksum: 496b3ef740754527cbc59d11df234f5be5b5f44511d14ca7fa6117fda0959ccd4cc6d8da2d94cb0dfcdf77d9d7aaaa34558d6dcce0a7860a3a8cf8a54c77b237
   languageName: node
   linkType: hard
 
@@ -23505,7 +23505,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json5@npm:^2.1.1, json5@npm:^2.1.2, json5@npm:^2.2.0, json5@npm:^2.2.3":
+"json5@npm:^2.1.2, json5@npm:^2.2.0, json5@npm:^2.2.3":
   version: 2.2.3
   resolution: "json5@npm:2.2.3"
   bin:
@@ -35946,7 +35946,7 @@ __metadata:
     check-node-version: "npm:^4.0.2"
     chroma-js: "npm:^2.6.0"
     cmdk: "npm:^0.2.1"
-    config: "npm:^3.3.6"
+    config: "npm:^3.3.12"
     css-loader: "npm:^6.11.0"
     d3-time-format: "npm:^4.1.0"
     debug: "npm:^4.3.3"

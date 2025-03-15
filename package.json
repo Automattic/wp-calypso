@@ -207,7 +207,7 @@
 		"calypso": "workspace:^",
 		"calypso-codemods": "workspace:^",
 		"cmdk": "^0.2.1",
-		"config": "^3.3.6",
+		"config": "^3.3.12",
 		"d3-time-format": "^4.1.0",
 		"debug": "^4.3.3",
 		"enhanced-resolve": "5.9.3",
