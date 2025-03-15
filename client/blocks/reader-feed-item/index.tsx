@@ -225,7 +225,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 			onClick={ onSubscribeToggle }
 			__next40pxDefaultSize
 		>
-			{ hasSubscribed ? translate( 'Subscribed' ) : translate( 'Subscribe' ) }
+			{ hasSubscribed ? translate( 'Unsubscribe' ) : translate( 'Subscribe' ) }
 		</Button>
 	);
 
