@@ -48,6 +48,7 @@ const AddSitesForm = ( {
 		if ( url.length === 0 ) {
 			setIsValidInput( false );
 			setInputFieldError( null );
+			onChangeFeedPreview?.( false );
 			return;
 		}
 
@@ -56,6 +57,7 @@ const AddSitesForm = ( {
 			setIsValidInput( true );
 		} else {
 			setIsValidInput( false );
+			onChangeFeedPreview?.( false );
 			if ( showError ) {
 				setInputFieldError( translate( 'Please enter a valid URL' ) );
 			}
