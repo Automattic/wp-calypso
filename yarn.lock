@@ -13773,7 +13773,7 @@ __metadata:
     chalk: "npm:^4.1.2"
     chrono-node: "npm:^2.3.5"
     circular-dependency-plugin: "npm:^5.2.2"
-    clipboard: "npm:^2.0.6"
+    clipboard: "npm:^2.0.11"
     clsx: "npm:^2.1.1"
     cmdk: "npm:^0.2.0"
     component-closest: "npm:^1.0.1"
@@ -14474,7 +14474,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clipboard@npm:^2.0.11, clipboard@npm:^2.0.6":
+"clipboard@npm:^2.0.11":
   version: 2.0.11
   resolution: "clipboard@npm:2.0.11"
   dependencies:
