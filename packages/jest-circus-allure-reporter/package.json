@@ -21,7 +21,7 @@
 	],
 	"license": "GPL-2.0-or-later",
 	"dependencies": {
-		"@types/allure-js-commons": "^0.0.1",
+		"@types/allure-js-commons": "^0.0.4",
 		"allure-js-commons": "2.0.0-beta.9"
 	},
 	"devDependencies": {

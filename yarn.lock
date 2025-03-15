@@ -1238,7 +1238,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@types/allure-js-commons": "npm:^0.0.1"
+    "@types/allure-js-commons": "npm:^0.0.4"
     "@types/node": "npm:^22.7.5"
     allure-js-commons: "npm:2.0.0-beta.9"
     typescript: "npm:^5.5.4"
@@ -8012,10 +8012,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/allure-js-commons@npm:^0.0.1":
-  version: 0.0.1
-  resolution: "@types/allure-js-commons@npm:0.0.1"
-  checksum: 5f405c9cf7b4432e74a2085c21fa98cdc6eb20d1b059cfb0d4a735f8cb5144e9862a29f6a910c1f01b4183e9875211be9fb670ef2b6ee009cff409b8dff424ea
+"@types/allure-js-commons@npm:^0.0.4":
+  version: 0.0.4
+  resolution: "@types/allure-js-commons@npm:0.0.4"
+  checksum: 15dff45b80c80640459a76849970da6f8872f0ce88c900f835baf42322b4b07cad6d1e44ce05269c6d90161b924b62ecfed691db1e823966e367b049d280279d
   languageName: node
   linkType: hard
 
