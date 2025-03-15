@@ -9047,10 +9047,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/seed-random@npm:^2.2.1":
-  version: 2.2.1
-  resolution: "@types/seed-random@npm:2.2.1"
-  checksum: 4efc78a6c2786b3c7d84c85ebef9b6d14a9e861d1852893b835eea8fb838fd602244b2a79cef6da6feedaefc89ecac7a3728746471e3f33265e5ccef533a21ab
+"@types/seed-random@npm:^2.2.4":
+  version: 2.2.4
+  resolution: "@types/seed-random@npm:2.2.4"
+  checksum: 99b32d9207b0ef81d349f425b32cbd3af840808596bb5ea04cb3a72d6fac3147ebd6216ceb3e734d3504e6c36a53a9dc9eb1d8d79d4995ccf3003c852eae4651
   languageName: node
   linkType: hard
 
@@ -27665,7 +27665,7 @@ __metadata:
   resolution: "photon@workspace:packages/photon"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@types/seed-random": "npm:^2.2.1"
+    "@types/seed-random": "npm:^2.2.4"
     crc32: "npm:^0.2.2"
     debug: "npm:^4.3.3"
     seed-random: "npm:^2.2.0"
