@@ -22,7 +22,7 @@
 		"@playwright/browser-chromium": "1.48.2",
 		"@playwright/browser-firefox": "1.48.2",
 		"@types/totp-generator": "^0.0.3",
-		"form-data": "^4.0.0",
+		"form-data": "^4.0.2",
 		"jest-docblock": "^29.7.0",
 		"mailosaur": "^8.4.0",
 		"nock": "^13.5.6",
