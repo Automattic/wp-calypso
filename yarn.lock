@@ -13036,7 +13036,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"body-parser@npm:1.20.3, body-parser@npm:^1.19.0":
+"body-parser@npm:1.20.3, body-parser@npm:^1.19.0, body-parser@npm:^1.20.3":
   version: 1.20.3
   resolution: "body-parser@npm:1.20.3"
   dependencies:
@@ -13766,7 +13766,7 @@ __metadata:
     "@wordpress/warning": "npm:^3.19.0"
     autoprefixer: "npm:^10.2.5"
     autosize: "npm:^4.0.4"
-    body-parser: "npm:^1.19.0"
+    body-parser: "npm:^1.20.3"
     browser-filesaver: "npm:^1.1.1"
     browserslist-useragent: "npm:^3.0.3"
     bunyan: "npm:^1.8.15"
