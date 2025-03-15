@@ -5,7 +5,14 @@ import { trendingUp } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import {
+	STATS_FEATURE_DOWNLOAD_CSV,
+	STATS_FEATURE_UTM_STATS,
+} from 'calypso/my-sites/stats/constants';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
+import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
+import DownloadCsv from 'calypso/my-sites/stats/stats-download-csv';
+import DownloadCsvUpsell from 'calypso/my-sites/stats/stats-download-csv-upsell';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -19,7 +26,6 @@ import UTMBuilder from '../../../stats-module-utm-builder/';
 import { StatsEmptyActionUTMBuilder } from '../shared';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import UTMDropdown from './stats-module-utm-dropdown';
-import UTMExportButton from './utm-export-button';
 
 import '../../../stats-module/style.scss';
 import '../../../stats-list/style.scss';
@@ -31,27 +37,6 @@ const OPTION_KEYS = {
 	MEDIUM: 'utm_medium',
 	CAMPAIGN: 'utm_campaign',
 };
-
-function generateFileNameForDownload( siteSlug, period ) {
-	// Build a filename for the CSV export button.
-	// The "format('L')" method can return strings that are not safe for the file system.
-	// While the "saveAs" function handles this, we do it here for correctness.
-	// We prefer '-' for word boundries, and '_' within words/dates.
-	// This allows text editing shortcuts to work properly.
-	//
-	// example output: jetpack.com-utm-day-03_20_2024-03_20_2024.csv
-	//
-	const newFileName =
-		[
-			siteSlug,
-			'utm',
-			period.period,
-			period.startOf.format( 'L' ),
-			period.endOf.format( 'L' ),
-		].join( '-' ) + '.csv';
-
-	return newFileName.replace( /\//g, '_' );
-}
 
 const StatsModuleUTM = ( {
 	path,
@@ -124,11 +109,6 @@ const StatsModuleUTM = ( {
 		}
 	};
 
-	const showFooterWithDownloads = summary === true;
-	const fileNameForExport = showFooterWithDownloads
-		? generateFileNameForDownload( siteSlug, period )
-		: '';
-
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
@@ -150,6 +130,21 @@ const StatsModuleUTM = ( {
 				}
 			) }
 		</StatsInfoArea>
+	);
+
+	const gateDownloads = useShouldGateStats( STATS_FEATURE_DOWNLOAD_CSV );
+	const downloadCsvElement = gateDownloads ? (
+		<DownloadCsvUpsell siteId={ siteId } borderless />
+	) : (
+		<DownloadCsv
+			statType={ STATS_FEATURE_UTM_STATS }
+			data={ data }
+			query={ query }
+			path={ path }
+			borderless
+			period={ period }
+			skipQuery
+		/>
 	);
 
 	return (
@@ -209,6 +204,7 @@ const StatsModuleUTM = ( {
 									titleNodes={ titleNodes }
 									emptyMessage={ <div>{ moduleStrings.empty }</div> }
 									metricLabel={ metricLabel }
+									downloadCsv={ summary ? downloadCsvElement : undefined }
 									showMore={
 										displaySummaryLink && ! summary
 											? {
@@ -241,11 +237,6 @@ const StatsModuleUTM = ( {
 										</div>
 									}
 								/>
-								{ showFooterWithDownloads && (
-									<div className="stats-module__footer-actions stats-module__footer-actions--summary">
-										<UTMExportButton data={ data } fileName={ fileNameForExport } />
-									</div>
-								) }
 							</>
 						) }
 				</>
@@ -291,11 +282,6 @@ const StatsModuleUTM = ( {
 							</div>
 						}
 					/>
-					{ showFooterWithDownloads && (
-						<div className="stats-module__footer-actions stats-module__footer-actions--summary">
-							<UTMExportButton data={ data } fileName={ fileNameForExport } />
-						</div>
-					) }
 				</>
 			) }
 		</>

@@ -82,7 +82,10 @@ const StatsCard = ( props: StatsCardProps ) => {
 			className={ `${ BASE_CLASS_NAME }-header ${ headerClassName } ${ BASE_CLASS_NAME }-header--split` }
 		>
 			<div className={ `${ BASE_CLASS_NAME }-header--main` }>
-				{ ! heroElement && titleNode }
+				<div className={ `${ BASE_CLASS_NAME }-header--main__left` }>
+					{ ! heroElement && titleNode }
+					{ downloadCsv }
+				</div>
 				{ toggleControl }
 			</div>
 			{ ! isEmpty && (
