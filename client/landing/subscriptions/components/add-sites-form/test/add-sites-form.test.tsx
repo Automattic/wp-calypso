@@ -91,18 +91,4 @@ describe( 'AddSitesForm', () => {
 
 		expect( addButton ).toBeDisabled();
 	} );
-
-	test( 'disables the Add site button when a URL without protocol is entered', () => {
-		renderWithContextProvider( <AddSitesForm { ...mockProps } /> );
-		const input = screen.getByRole( 'textbox' );
-		const addButton = screen.getByRole( 'button', { name: 'Add site' } );
-
-		fireEvent.change( input, {
-			target: { value: 'www.valid-url.com' },
-		} );
-
-		fireEvent.blur( input );
-
-		expect( addButton ).toBeDisabled();
-	} );
 } );

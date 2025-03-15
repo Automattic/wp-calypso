@@ -13,10 +13,9 @@ import FeaturedAsset from './featured-asset';
 
 /**
  * Rather than create complex logic to create context or pass props
- * to see if the user is on thediscover page, let's check the pathname
- * @returns {boolean}
+ * to see if the user is on the Discover page, let's check the pathname
  */
-const getIsDiscoverPage = () => {
+const shouldShowFollowButton = () => {
 	const path = window.location.pathname.split( '/' );
 	if ( ! path.length ) {
 		return false;
@@ -27,7 +26,7 @@ const getIsDiscoverPage = () => {
 		return false;
 	}
 
-	// Do not show if the user is on the add new or reddit tab.
+	// Do not show for feed previews available on the "Add New" and "Reddit" tab.
 	if ( [ ADD_NEW_TAB, REDDIT_TAB ].includes( path[ 2 ] ) ) {
 		return false;
 	}
@@ -48,7 +47,6 @@ const CompactPost = ( props ) => {
 		openSuggestedFollows,
 	} = props;
 
-	const isDiscoverPage = getIsDiscoverPage();
 	const translate = useTranslate();
 
 	const isSmallScreen = useBreakpoint( '<660px' );
@@ -66,7 +64,7 @@ const CompactPost = ( props ) => {
 
 	const postOptions = (
 		<div className="reader-post-card__post-options">
-			{ isDiscoverPage && (
+			{ shouldShowFollowButton() && (
 				<ReaderFollowButton
 					tagName="div"
 					siteUrl={ post.feed_URL || post.site_URL }
