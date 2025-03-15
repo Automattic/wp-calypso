@@ -5,7 +5,7 @@ import { check, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { isValidUrl } from '../../helpers';
+import { isValidUrl, parseUrl } from 'calypso/lib/importer/url-validation';
 import { useAddSitesModalNotices } from '../../hooks';
 import { useRecordSiteSubscribed } from '../../tracks';
 import './styles.scss';
@@ -69,7 +69,7 @@ const AddSitesForm = ( {
 		if ( isValidInput ) {
 			setIsSubmitting( true );
 			subscribe(
-				{ url: inputValue },
+				{ url: parseUrl( inputValue ).toString() },
 				{
 					onSuccess: ( data ) => {
 						if ( data?.info === 'already_subscribed' ) {
