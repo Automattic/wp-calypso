@@ -4,7 +4,7 @@ import { Button, TextControl } from '@wordpress/components';
 import { check, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { isValidUrl } from '../../helpers';
 import { useAddSitesModalNotices } from '../../hooks';
 import { useRecordSiteSubscribed } from '../../tracks';
@@ -39,88 +39,69 @@ const AddSitesForm = ( {
 	const { mutate: subscribe, isPending: subscribing } =
 		SubscriptionManager.useSiteSubscribeMutation();
 
-	const validateInputValue = useCallback(
-		( url: string, showError = false ) => {
-			// If the input is empty, we don't want to show an error message
-			if ( url.length === 0 ) {
-				setIsValidInput( false );
-				setInputFieldError( null );
-				return;
+	const validateInputValue = ( url: string, showError = false ) => {
+		// If the input is empty, we don't want to show an error message
+		if ( url.length === 0 ) {
+			setIsValidInput( false );
+			setInputFieldError( null );
+			return;
+		}
+
+		if ( isValidUrl( url ) ) {
+			setInputFieldError( null );
+			setIsValidInput( true );
+		} else {
+			setIsValidInput( false );
+			if ( showError ) {
+				setInputFieldError( translate( 'Please enter a valid URL' ) );
 			}
+		}
+	};
 
-			if ( isValidUrl( url ) ) {
-				setInputFieldError( null );
-				setIsValidInput( true );
-			} else {
-				setIsValidInput( false );
-				if ( showError ) {
-					setInputFieldError( translate( 'Please enter a valid URL' ) );
-				}
-			}
-		},
-		[ translate ]
-	);
+	const onTextFieldChange = ( value: string ) => {
+		setInputValue( value );
+		validateInputValue( value );
+	};
 
-	const onTextFieldChange = useCallback(
-		( value: string ) => {
-			setInputValue( value );
-			validateInputValue( value );
-		},
-		[ validateInputValue ]
-	);
+	const onSubmit = ( e: React.FormEvent ) => {
+		e.preventDefault();
 
-	const onSubmit = useCallback(
-		( e: React.FormEvent ) => {
-			e.preventDefault();
-
-			if ( isValidInput ) {
-				setIsSubmitting( true );
-				subscribe(
-					{ url: inputValue },
-					{
-						onSuccess: ( data ) => {
-							if ( data?.info === 'already_subscribed' ) {
-								showWarningNotice( inputValue );
-							} else {
-								if ( data?.subscription?.blog_ID ) {
-									recordSiteSubscribed( {
-										blog_id: data?.subscription?.blog_ID,
-										url: inputValue,
-										source,
-									} );
-								}
-
-								showSuccessNotice( inputValue );
-
-								// Reset fields.
-								setInputValue( '' );
-								setIsValidInput( false );
+		if ( isValidInput ) {
+			setIsSubmitting( true );
+			subscribe(
+				{ url: inputValue },
+				{
+					onSuccess: ( data ) => {
+						if ( data?.info === 'already_subscribed' ) {
+							showWarningNotice( inputValue );
+						} else {
+							if ( data?.subscription?.blog_ID ) {
+								recordSiteSubscribed( {
+									blog_id: data?.subscription?.blog_ID,
+									url: inputValue,
+									source,
+								} );
 							}
-							onAddFinished();
-						},
-						onError: ( error: SubscriptionError ) => {
-							showErrorNotice( inputValue, error );
-							onAddFinished();
-						},
-						onSettled: (): void => {
-							setIsSubmitting( false );
-						},
-					}
-				);
-			}
-		},
-		[
-			inputValue,
-			isValidInput,
-			onAddFinished,
-			recordSiteSubscribed,
-			showErrorNotice,
-			showSuccessNotice,
-			showWarningNotice,
-			subscribe,
-			source,
-		]
-	);
+
+							showSuccessNotice( inputValue );
+
+							// Reset fields.
+							setInputValue( '' );
+							setIsValidInput( false );
+						}
+						onAddFinished();
+					},
+					onError: ( error: SubscriptionError ) => {
+						showErrorNotice( inputValue, error );
+						onAddFinished();
+					},
+					onSettled: (): void => {
+						setIsSubmitting( false );
+					},
+				}
+			);
+		}
+	};
 
 	return (
 		<>
