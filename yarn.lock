@@ -18651,7 +18651,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"events@npm:^3.0.0, events@npm:^3.2.0, events@npm:^3.3.0":
+"events@npm:^3.2.0, events@npm:^3.3.0":
   version: 3.3.0
   resolution: "events@npm:3.3.0"
   checksum: d6b6f2adbccbcda74ddbab52ed07db727ef52e31a61ed26db9feb7dc62af7fc8e060defa65e5f8af9449b86b52cc1a1f6a79f2eafcf4e62add2b7a1fa4a432f6
@@ -21254,7 +21254,7 @@ __metadata:
     "@types/react": "npm:^18.3.18"
     "@wordpress/compose": "npm:^7.19.0"
     debug: "npm:^4.3.3"
-    events: "npm:^3.0.0"
+    events: "npm:^3.3.0"
     hash.js: "npm:^1.1.5"
     lru: "npm:^3.1.0"
     react: "npm:^18.3.1"
