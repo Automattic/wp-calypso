@@ -6,7 +6,6 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
-import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversation/dialog';
 import FeedPreview from 'calypso/landing/subscriptions/components/add-sites-form/feed-preview/feed-preview';
 import { useAddSitesModalNotices } from 'calypso/landing/subscriptions/hooks';
 import { useRecordSiteSubscribed } from 'calypso/landing/subscriptions/tracks';
@@ -39,10 +38,8 @@ const AddSitesForm = ( {
 	const [ isSubmitting, setIsSubmitting ] = useState< boolean >( false );
 	const [ inputFieldError, setInputFieldError ] = useState< string | null >( null );
 	const [ isValidInput, setIsValidInput ] = useState( false );
-	const [ showLoginDialog, setShowLoginDialog ] = useState( false );
 	const { showErrorNotice, showWarningNotice, showSuccessNotice } = useAddSitesModalNotices();
 	const recordSiteSubscribed = useRecordSiteSubscribed();
-	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 	const isAutomattician = useSelector( isA8cTeamMember );
 
 	const { mutate: subscribe, isPending: subscribing } =
@@ -82,11 +79,6 @@ const AddSitesForm = ( {
 		( e: React.FormEvent ) => {
 			e.preventDefault();
 
-			if ( ! isLoggedIn ) {
-				setShowLoginDialog( true );
-				return;
-			}
-
 			if ( isValidInput ) {
 				setIsSubmitting( true );
 				subscribe(
@@ -123,7 +115,6 @@ const AddSitesForm = ( {
 		[
 			inputValue,
 			isValidInput,
-			isLoggedIn,
 			onChangeSubscribe,
 			recordSiteSubscribed,
 			showErrorNotice,
@@ -184,16 +175,6 @@ const AddSitesForm = ( {
 					onSubscribeToggle={ onSubscribeToggle }
 				/>
 			) : null }
-
-			<ReaderJoinConversationDialog
-				isVisible={ showLoginDialog }
-				onClose={ () => setShowLoginDialog( false ) }
-				onLoginSuccess={ () => window.location.reload() }
-				loggedInAction={ {
-					type: 'subscribe',
-					url: inputValue,
-				} }
-			/>
 		</>
 	);
 };
