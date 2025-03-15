@@ -1106,7 +1106,7 @@ __metadata:
     "@wordpress/keycodes": "npm:^4.19.0"
     "@wordpress/private-apis": "npm:^1.19.0"
     clsx: "npm:^2.1.1"
-    deepmerge: "npm:^4.3.0"
+    deepmerge: "npm:^4.3.1"
     i18n-calypso: "workspace:^"
     is-plain-object: "npm:^5.0.0"
     react: "npm:^18.3.1"
@@ -13793,7 +13793,7 @@ __metadata:
     d3-shape: "npm:^1.3.7"
     debug: "npm:^4.3.3"
     deep-freeze: "npm:^0.0.1"
-    deepmerge: "npm:^4.3.0"
+    deepmerge: "npm:^4.3.1"
     diff: "npm:^4.0.2"
     dom-helpers: "npm:^5.1.3"
     dompurify: "npm:^3.2.4"
@@ -16430,7 +16430,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"deepmerge@npm:^4.2.2, deepmerge@npm:^4.3.0":
+"deepmerge@npm:^4.2.2, deepmerge@npm:^4.3.0, deepmerge@npm:^4.3.1":
   version: 4.3.1
   resolution: "deepmerge@npm:4.3.1"
   checksum: e53481aaf1aa2c4082b5342be6b6d8ad9dfe387bc92ce197a66dea08bd4265904a087e75e464f14d1347cf2ac8afe1e4c16b266e0561cc5df29382d3c5f80044
