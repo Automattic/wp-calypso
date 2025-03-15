@@ -77,4 +77,9 @@
 			border-top-width: 0;
 		}
 	}
+
+	.verbum-editor-wrapper .editor__main,
+	.verbum-editor-wrapper .editor__main iframe {
+		min-height: 80px;
+	}
 }

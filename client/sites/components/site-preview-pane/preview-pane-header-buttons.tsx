@@ -10,19 +10,15 @@ import type { ItemData } from 'calypso/layout/hosting-dashboard/item-view/types'
 type Props = {
 	focusRef: React.RefObject< HTMLButtonElement >;
 	itemData: ItemData;
-	closeSitePreviewPane?: () => void;
 };
 
-const PreviewPaneHeaderButtons = ( { focusRef, closeSitePreviewPane, itemData }: Props ) => {
+const PreviewPaneHeaderButtons = ( { focusRef, itemData }: Props ) => {
 	const adminButtonRef = useRef< HTMLButtonElement | null >( null );
 	const { adminLabel, adminUrl } = useSiteAdminInterfaceData( itemData.blogId );
 	const { __ } = useI18n();
 
 	return (
 		<>
-			<Button onClick={ closeSitePreviewPane } className="item-view__close-button">
-				{ __( 'Close' ) }
-			</Button>
 			<Button
 				primary
 				className="item-preview__admin-button"

@@ -22,11 +22,13 @@
 .sites-add-new-site__popover-content {
 	display: flex;
 	flex-direction: column;
-	padding: 28px 32px;
-	gap: 32px;
+	padding: 1em;
+	gap: 1em;
 
 	@include break-large {
 		flex-direction: row;
+		padding: 28px 32px;
+		gap: 32px;
 	}
 
 	.sites-add-new-site__popover-column {
@@ -41,11 +43,15 @@
 	color: var(--color-neutral-40);
 	font-size: rem(12px);
 	font-weight: 500;
+	padding: 0 1em;
+
+	@include break-large {
+		padding: 0;
+	}
 }
 
 
 .components-button.sites-add-new-site__popover-button {
-	padding: 8px;
 	white-space: unset;
 	text-align: unset;
 	margin-block: 0;
@@ -53,6 +59,7 @@
 	border-radius: 4px;
 	height: auto;
 	color: var(--color-text-black);
+	padding: 1em;
 
 	&:hover {
 		color: var(--color-text-black);
@@ -65,6 +72,7 @@
 	}
 
 	@include break-large {
+		padding: 8px;
 		display: flex;
 		gap: 8px;
 		align-items: unset;

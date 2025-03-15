@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import config from '@automattic/calypso-config';
 import { PLAN_100_YEARS } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
 import React from 'react';
@@ -37,12 +36,6 @@ jest.mock( 'calypso/components/data/query-products-list', () => {
 	};
 } );
 
-jest.mock( '@automattic/calypso-config', () => {
-	const config = () => {};
-	config.isEnabled = jest.fn().mockReturnValue( false );
-	return config;
-} );
-
 jest.mock(
 	'calypso/my-sites/plans-features-main/hooks/use-domain-to-plan-credits-applicable',
 	() => ( {
@@ -65,11 +58,7 @@ describe( 'EmptyDomainsListCard', () => {
 			).toBeInTheDocument();
 		} );
 
-		it( 'displays empty if feature flag is enabled and site has domain-to-plan credit', () => {
-			config.isEnabled.mockImplementation( ( flag: unknown ): boolean => {
-				return flag === 'domain-to-plan-credit';
-			} );
-
+		it( 'displays empty if site has domain-to-plan credit', () => {
 			useDomainToPlanCreditsApplicable.mockImplementationOnce( () => 1 );
 
 			const { container } = renderWithProvider(

@@ -27,6 +27,11 @@ $font-sf-pro-display: "SF Pro Display", $sans;
 	font-family: $font-sf-pro-display;
 }
 
+// App Promo card
+.is-odyssey-stats .app-promo-card__title {
+	font-family: $font-sf-pro-display;
+}
+
 // Module container
 @include breakpoint-deprecated( ">960px" ) {
 	.stats__module-column {

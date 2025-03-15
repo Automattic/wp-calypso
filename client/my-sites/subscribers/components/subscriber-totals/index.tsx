@@ -1,5 +1,5 @@
 import { Spinner } from '@wordpress/components';
-import { translate } from 'i18n-calypso';
+import { translate, numberFormat } from 'i18n-calypso';
 import { SubscribersFilterBy } from '../../constants';
 import './style.scss';
 
@@ -19,35 +19,54 @@ const getFilterLabel = ( filters: SubscribersFilterBy[], count: number ): string
 	switch ( filterKey ) {
 		// Single filter cases.
 		case SubscribersFilterBy.Paid:
-			return count === 1 ? translate( 'paid subscriber' ) : translate( 'paid subscribers' );
+			return translate( 'paid subscriber', 'paid subscribers', {
+				count,
+				args: { count },
+			} ) as string;
 		case SubscribersFilterBy.Free:
-			return count === 1 ? translate( 'free subscriber' ) : translate( 'free subscribers' );
+			return translate( 'free subscriber', 'free subscribers', {
+				count,
+				args: { count },
+			} ) as string;
 		case SubscribersFilterBy.EmailSubscriber:
-			return count === 1 ? translate( 'email subscriber' ) : translate( 'email subscribers' );
+			return translate( 'email subscriber', 'email subscribers', {
+				count,
+				args: { count },
+			} ) as string;
 		case SubscribersFilterBy.ReaderSubscriber:
-			return count === 1 ? translate( 'reader subscriber' ) : translate( 'reader subscribers' );
+			return translate( 'reader subscriber', 'reader subscribers', {
+				count,
+				args: { count },
+			} ) as string;
 
 		// Two filter combinations.
 		case SubscribersFilterBy.EmailSubscriber + ',' + SubscribersFilterBy.Paid:
-			return count === 1
-				? translate( 'paid email subscriber' )
-				: translate( 'paid email subscribers' );
+			return translate( 'paid email subscriber', 'paid email subscribers', {
+				count,
+				args: { count },
+			} ) as string;
 		case SubscribersFilterBy.Paid + ',' + SubscribersFilterBy.ReaderSubscriber:
-			return count === 1
-				? translate( 'paid reader subscriber' )
-				: translate( 'paid reader subscribers' );
+			return translate( 'paid reader subscriber', 'paid reader subscribers', {
+				count,
+				args: { count },
+			} ) as string;
 		case SubscribersFilterBy.EmailSubscriber + ',' + SubscribersFilterBy.Free:
-			return count === 1
-				? translate( 'free email subscriber' )
-				: translate( 'free email subscribers' );
+			return translate( 'free email subscriber', 'free email subscribers', {
+				count,
+				args: { count },
+			} ) as string;
 		case SubscribersFilterBy.Free + ',' + SubscribersFilterBy.ReaderSubscriber:
-			return count === 1
-				? translate( 'free reader subscriber' )
-				: translate( 'free reader subscribers' );
+			return translate( 'free reader subscriber', 'free reader subscribers', {
+				count,
+				args: { count },
+			} ) as string;
 
 		// Default case.
 		default:
-			return count === 1 ? translate( 'subscriber' ) : translate( 'subscribers' );
+			return translate( 'subscriber', 'subscribers', {
+				count,
+				args: { count },
+			} ) as string;
 	}
 };
 
@@ -75,29 +94,37 @@ const SubscriberTotals: React.FC< SubscriberTotalsProps > = ( {
 				<>
 					<span className="subscriber-totals__filtered-count">
 						{ searchTerm
-							? translate( '%(count)d matching result', '%(count)d matching results', {
-									count: filteredCount,
-									args: { count: filteredCount },
-							  } )
-							: translate( '%(count)d %(filterLabel)s', {
-									args: {
+							? translate(
+									'%(matchingSubscriberCount)s matching result',
+									'%(matchingSubscriberCount)s matching results',
+									{
 										count: filteredCount,
+										args: { matchingSubscriberCount: numberFormat( filteredCount ) },
+									}
+							  )
+							: translate( '%(filteredSubscriberCount)s %(filterLabel)s', {
+									args: {
+										filteredSubscriberCount: numberFormat( filteredCount ),
 										filterLabel,
 									},
 							  } ) }
 					</span>
 					<span className="subscriber-totals__total">
-						{ translate( 'out of %(total)d total subscribers', {
-							args: { total: totalSubscribers },
+						{ translate( 'out of %(totalSubscriberCount)s total subscribers', {
+							args: { totalSubscriberCount: numberFormat( totalSubscribers ) },
 						} ) }
 					</span>
 				</>
 			) : (
 				<span className="subscriber-totals__total-count">
-					{ translate( '%(count)d total subscriber', '%(count)d total subscribers', {
-						count: totalSubscribers,
-						args: { count: totalSubscribers },
-					} ) }
+					{ translate(
+						'%(subscriberCount)s total subscriber',
+						'%(subscriberCount)s total subscribers',
+						{
+							count: totalSubscribers,
+							args: { subscriberCount: numberFormat( totalSubscribers ) },
+						}
+					) }
 				</span>
 			) }
 		</div>

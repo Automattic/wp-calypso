@@ -54,15 +54,19 @@ const isWPCOM = ( siteInfo?: UrlData ) => {
 	return !! siteInfo?.platform_data?.is_wpcom;
 };
 
-const getFormDefaultValues = ( fromUrl: string ): CredentialsFormData => {
-	return {
-		from_url: fromUrl,
-		username: '',
-		password: '',
-		backupFileLocation: '',
-		notes: '',
-		migrationType: 'credentials',
-	};
+const removeEndingSlash = ( url: string ) => {
+	try {
+		const urlObject = new globalThis.URL( url );
+		if ( urlObject.pathname === '/' && url.endsWith( '/' ) ) {
+			return url.slice( 0, -1 );
+		}
+	} catch {
+		if ( url.endsWith( '/' ) ) {
+			return url.slice( 0, -1 );
+		}
+	}
+
+	return url;
 };
 
 export const useCredentialsForm = (
@@ -70,7 +74,7 @@ export const useCredentialsForm = (
 ) => {
 	const isApplicationPasswordEnabled = isEnabled( 'automated-migration/application-password' );
 	const siteSlug = useSiteSlugParam();
-	const importSiteQueryParam = useQuery().get( 'from' ) || '';
+	const fromUrl = useQuery().get( 'from' ) || '';
 	const [ siteInfo, setSiteInfo ] = useState< UrlData | undefined >( undefined );
 	const [ isBusy, setIsBusy ] = useState( false );
 	const siteId = parseInt( useSiteIdParam() ?? '' );
@@ -96,7 +100,14 @@ export const useCredentialsForm = (
 		mode: 'onSubmit',
 		reValidateMode: 'onSubmit',
 		disabled: isBusy,
-		defaultValues: getFormDefaultValues( importSiteQueryParam ),
+		defaultValues: {
+			from_url: removeEndingSlash( fromUrl ),
+			username: '',
+			password: '',
+			backupFileLocation: '',
+			notes: '',
+			migrationType: 'credentials',
+		},
 		errors: serverSideError,
 	} );
 

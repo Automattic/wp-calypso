@@ -2,6 +2,7 @@ import { isBlogger, isFreeWordPressComDomain } from '@automattic/calypso-product
 import page from '@automattic/calypso-router';
 import { Button, CompactCard, ResponsiveToolbarGroup } from '@automattic/components';
 import {
+	AI_SITE_BUILDER_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
 	isHundredYearDomainFlow,
@@ -337,9 +338,22 @@ class RegisterDomainStep extends Component {
 		return strippedHostname ?? hostname;
 	}
 
+	getInitialQueryFromSiteName() {
+		return this.props.selectedSite?.name || undefined;
+	}
+
 	componentDidMount() {
 		const storedQuery = globalThis?.sessionStorage?.getItem( SESSION_STORAGE_QUERY_KEY );
-		const query = this.state.lastQuery || storedQuery || this.getInitialQueryInLaunchFlow();
+		let query = this.state.lastQuery || storedQuery;
+
+		// Flow specific query fallbacks.
+		if ( ! query && this.props.flowName === AI_SITE_BUILDER_FLOW ) {
+			query = this.getInitialQueryFromSiteName();
+		}
+
+		if ( ! query && this.props.isInLaunchFlow ) {
+			query = this.getInitialQueryInLaunchFlow();
+		}
 
 		if ( query && ! this.state.searchResults && ! this.state.subdomainSearchResults ) {
 			this.onSearch( query );

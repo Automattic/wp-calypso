@@ -352,7 +352,11 @@ export default function CheckoutMain( {
 		paymentMethods: storedCards,
 		isLoading: isLoadingStoredCards,
 		error: storedCardsError,
-	} = useStoredPaymentMethods( { isLoggedOut: isLoggedOutCart, type: 'card' } );
+	} = useStoredPaymentMethods( {
+		isLoggedOut: isLoggedOutCart,
+		type: 'card',
+		isForBusiness: responseCart ? responseCart?.tax?.location?.is_for_business : null,
+	} );
 
 	useActOnceOnStrings( [ storedCardsError ].filter( isValueTruthy ), ( messages ) => {
 		messages.forEach( ( message ) => {
