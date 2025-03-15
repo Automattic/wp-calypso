@@ -10,7 +10,7 @@ import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversatio
 import FeedPreview from 'calypso/landing/subscriptions/components/add-sites-form/feed-preview/feed-preview';
 import { useAddSitesModalNotices } from 'calypso/landing/subscriptions/hooks';
 import { useRecordSiteSubscribed } from 'calypso/landing/subscriptions/tracks';
-import { isValidUrl } from 'calypso/lib/importer/url-validation';
+import { isValidUrl, parseUrl } from 'calypso/lib/importer/url-validation';
 import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import './styles.scss';
 
@@ -90,7 +90,7 @@ const AddSitesForm = ( {
 			if ( isValidInput ) {
 				setIsSubmitting( true );
 				subscribe(
-					{ url: inputValue },
+					{ url: parseUrl( inputValue ).toString() },
 					{
 						onSuccess: ( data ) => {
 							if ( data?.info === 'already_subscribed' ) {
@@ -156,7 +156,6 @@ const AddSitesForm = ( {
 						disabled={ subscribing }
 						placeholder={ placeholder || translate( 'https://www.site.com' ) }
 						value={ inputValue }
-						type="url"
 						onChange={ onTextFieldChange }
 						help={ isValidInput ? <Icon icon={ check } data-testid="check-icon" /> : undefined }
 						onBlur={ () => validateInputValue( inputValue, true ) }
