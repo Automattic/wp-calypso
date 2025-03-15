@@ -5,7 +5,6 @@ import { check, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
-import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversation/dialog';
 import { isValidUrl } from '../../helpers';
 import { useAddSitesModalNotices } from '../../hooks';
 import { useRecordSiteSubscribed } from '../../tracks';
@@ -34,10 +33,8 @@ const AddSitesForm = ( {
 	const [ isSubmitting, setIsSubmitting ] = useState< boolean >( false );
 	const [ inputFieldError, setInputFieldError ] = useState< string | null >( null );
 	const [ isValidInput, setIsValidInput ] = useState( false );
-	const [ showLoginDialog, setShowLoginDialog ] = useState( false );
 	const { showErrorNotice, showWarningNotice, showSuccessNotice } = useAddSitesModalNotices();
 	const recordSiteSubscribed = useRecordSiteSubscribed();
-	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 
 	const { mutate: subscribe, isPending: subscribing } =
 		SubscriptionManager.useSiteSubscribeMutation();
@@ -75,11 +72,6 @@ const AddSitesForm = ( {
 	const onSubmit = useCallback(
 		( e: React.FormEvent ) => {
 			e.preventDefault();
-
-			if ( ! isLoggedIn ) {
-				setShowLoginDialog( true );
-				return;
-			}
 
 			if ( isValidInput ) {
 				setIsSubmitting( true );
@@ -120,7 +112,6 @@ const AddSitesForm = ( {
 		[
 			inputValue,
 			isValidInput,
-			isLoggedIn,
 			onAddFinished,
 			recordSiteSubscribed,
 			showErrorNotice,
@@ -163,16 +154,6 @@ const AddSitesForm = ( {
 					{ buttonText || translate( 'Add site' ) }
 				</Button>
 			</form>
-
-			<ReaderJoinConversationDialog
-				isVisible={ showLoginDialog }
-				onClose={ () => setShowLoginDialog( false ) }
-				onLoginSuccess={ () => window.location.reload() }
-				loggedInAction={ {
-					type: 'subscribe',
-					url: inputValue,
-				} }
-			/>
 		</>
 	);
 };
