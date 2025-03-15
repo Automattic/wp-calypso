@@ -60,25 +60,7 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 			} );
 	}, [ dispatch, debouncedUrl, onChangeFeedPreview ] );
 
-	const memoizedFeedPreview = useMemo( (): JSX.Element => {
-		if ( ! feed?.feed_ID ) {
-			return <p>Preview of the feed is not yet available.</p>;
-		}
-
-		return (
-			<Stream
-				className="no-padding"
-				streamKey={ `feed:${ feed?.feed_ID }` }
-				useCompactCards
-				showFollowButton={ false }
-				trackScrollPage={ () => {} }
-				suppressSiteNameLink
-				showBack={ false }
-			/>
-		);
-	}, [ feed?.feed_ID ] );
-
-	const FeedPreviewContent = (): JSX.Element | null => {
+	const memoizedFeedPreviewContent = useMemo( (): JSX.Element => {
 		if ( loading ) {
 			return (
 				<div className="feed-preview__loader">
@@ -95,20 +77,34 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 			);
 		}
 
+		if ( ! feed?.feed_ID ) {
+			return (
+				<div className="feed-preview__empty">
+					<p>Preview of the feed is not yet available.</p>
+				</div>
+			);
+		}
+
 		return (
 			<>
 				<ul className="feed-preview__site">
 					<ReaderFeedItem feed={ feed } source={ source } onSubscribeToggle={ onSubscribeToggle } />
 				</ul>
 
-				<div className="feed-preview__stream">{ memoizedFeedPreview }</div>
+				<div className="feed-preview__stream">
+					<Stream
+						className="no-padding"
+						streamKey={ `feed:${ feed?.feed_ID }` }
+						useCompactCards
+						showFollowButton={ false }
+						trackScrollPage={ () => {} }
+						suppressSiteNameLink
+						showBack={ false }
+					/>
+				</div>
 			</>
 		);
-	};
+	}, [ feed, loading, source, onSubscribeToggle ] );
 
-	return (
-		<div className="feed-preview">
-			<FeedPreviewContent />
-		</div>
-	);
+	return <div className="feed-preview">{ memoizedFeedPreviewContent }</div>;
 }
