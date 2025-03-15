@@ -112,8 +112,8 @@ export default function ( router: typeof clientRouter ) {
 		...middleware
 	);
 
-	router( `/patterns/:category?`, ...middleware );
-	router( `/patterns/:type(layouts)/:category?`, ...middleware );
+	router( '/patterns/:category?', ...middleware );
+	router( '/patterns/:type(layouts)/:category?', ...middleware );
 
 	router(
 		'/patterns/:type(site-layouts)/:slug',

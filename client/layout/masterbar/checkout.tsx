@@ -7,6 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import AkismetLogo from 'calypso/components/akismet-logo';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { DefaultMasterbarContact } from 'calypso/my-sites/checkout/checkout-thank-you/redesign-v2/masterbar-styled/default-contact';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/src/hooks/use-valid-checkout-back-url';
@@ -54,21 +55,34 @@ const CheckoutMasterbar = ( {
 	const { responseCart, replaceProductsInCart } = useShoppingCart( cartKey );
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 
-	const closeAndLeave = ( options?: { userHasClearedCart?: boolean } ) =>
+	const closeAndLeave = ( options?: {
+		userHasClearedCart?: boolean;
+		closedWithoutConfirmation?: boolean;
+	} ) => {
+		const userHasClearedCart = options?.userHasClearedCart ?? false;
+		if ( ! options?.closedWithoutConfirmation ) {
+			recordTracksEvent( 'calypso_masterbar_checkout_close_modal_submitted', {
+				user_has_cleared_cart: userHasClearedCart,
+			} );
+		}
 		leaveCheckout( {
 			siteSlug,
 			forceCheckoutBackUrl,
 			previousPath,
 			tracksEvent: 'calypso_masterbar_close_clicked',
-			userHasClearedCart: options?.userHasClearedCart ?? false,
+			userHasClearedCart: userHasClearedCart,
 		} );
+	};
 
 	const clickClose = () => {
 		if ( shouldClearCartWhenLeaving && responseCart.products.length > 0 ) {
+			recordTracksEvent( 'calypso_masterbar_checkout_close_modal_displayed' );
 			setIsModalVisible( true );
 			return;
 		}
-		closeAndLeave();
+		closeAndLeave( {
+			closedWithoutConfirmation: true,
+		} );
 	};
 
 	const modalTitleText = translate( 'You are about to leave checkout with items in your cart' );
@@ -89,6 +103,7 @@ const CheckoutMasterbar = ( {
 	return (
 		<Masterbar
 			className={ clsx( 'masterbar--is-checkout', {
+				'masterbar--is-wpcom': checkoutType === 'wpcom',
 				'masterbar--is-jetpack': checkoutType === 'jetpack',
 				'masterbar--is-akismet': checkoutType === 'akismet',
 			} ) }
@@ -104,7 +119,11 @@ const CheckoutMasterbar = ( {
 					/>
 				) }
 				{ checkoutType === 'wpcom' && (
-					<WordPressWordmark className="masterbar__wpcom-wordmark" color="#2c3338" />
+					<WordPressWordmark
+						size={ { width: 122, height: 'auto' } }
+						className="masterbar__wpcom-wordmark"
+						color="#2c3338"
+					/>
 				) }
 				{ checkoutType === 'jetpack' && (
 					<JetpackLogo className="masterbar__jetpack-wordmark" full />

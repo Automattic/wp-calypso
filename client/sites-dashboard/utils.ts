@@ -15,14 +15,6 @@ export const getDashboardUrl = ( slug: string ) => {
 	return `/home/${ slug }`;
 };
 
-export const getSettingsUrl = ( slug: string ) => {
-	return `/settings/general/${ slug }`;
-};
-
-export const getSiteMonitoringUrl = ( slug: string ) => {
-	return `/site-monitoring/${ slug }`;
-};
-
 export const getPluginsUrl = ( slug: string ) => {
 	return `/plugins/${ slug }`;
 };

@@ -1,8 +1,9 @@
 @import "../../assets/stylesheets/shared/mixins/breakpoints";
 
 .sites-dropdown {
+	position: relative;
+
 	&.is-open {
-		height: 69px;
 		.gridicons-chevron-down {
 			transform: rotate(180deg);
 		}
@@ -24,10 +25,9 @@
 	border-width: 1px;
 	border-radius: 2px;
 	margin: 0;
-	overflow: hidden;
 	position: relative;
 	width: 300px;
-	transition: all 0.2s ease-in;
+	transition: border-color 0.2s ease-in;
 	z-index: 1;
 
 	@include breakpoint-deprecated( "<660px" ) {
@@ -36,7 +36,10 @@
 
 	.has-multiple-sites &:hover {
 		border-color: var(--color-neutral-20);
-		box-shadow: 0 1px var(--color-neutral-20);
+
+		.site-selector {
+			border-color: var(--color-neutral-20);
+		}
 	}
 }
 
@@ -44,17 +47,19 @@
 	position: relative;
 	z-index: z-index("root", ".sites-dropdown.is-open .sites-dropdown__wrapper");
 	margin: 0;
+	border-radius: 2px 2px 0 0;
 }
 
 .sites-dropdown__selected {
 	display: flex;
+	border-bottom: 1px solid transparent;
 
 	.has-multiple-sites & {
 		cursor: pointer;
 	}
 
 	.is-open & {
-		border-bottom: 1px solid var(--color-neutral-0);
+		border-bottom-color: var(--color-neutral-0);
 	}
 
 	&:hover {
@@ -65,10 +70,29 @@
 	}
 }
 
+.accessible-focus .sites-dropdown__selected:focus svg.gridicons-chevron-down {
+	box-sizing: border-box;
+	border: 2px solid var(--color-primary);
+	border-radius: 2px;
+}
+
 .sites-dropdown .site-selector {
 	padding: 0;
-	position: static;
+	position: absolute;
 	overflow-y: auto;
+	width: 100%;
+	left: -1px;
+	overflow-x: hidden;
+	background: var( --color-surface );
+	border: 1px solid var( --color-neutral-10 );
+	border-top: none;
+	border-radius: 0 0 2px 2px;
+	transition: border-color 0.2s ease-in;
+	box-sizing: initial;
+
+	.search-component {
+		box-sizing: border-box;
+	}
 }
 
 .sites-dropdown .site-selector__sites {

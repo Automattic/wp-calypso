@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
 .a4a-form {
 	display: flex;
 	flex-direction: column;
@@ -20,9 +23,9 @@
 }
 
 .a4a-form__heading-title {
-	@include a4a-font-heading-xl;
+	@include heading-x-large;
 }
 
 .a4a-form__heading-description {
-	@include a4a-font-body-lg;
+	@include body-large;
 }

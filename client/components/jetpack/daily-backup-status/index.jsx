@@ -7,6 +7,7 @@ import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
 import BackupWarnings from 'calypso/components/jetpack/backup-warnings/backup-warnings';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { Interval, EVERY_SECOND } from 'calypso/lib/interval';
 import {
 	isSuccessfulDailyBackup,
@@ -19,7 +20,7 @@ import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import {
 	getInProgressBackupForSite,
 	getRewindStorageUsageLevel,
-	getFinishedBackupForSiteById,
+	getBackupStatusById,
 } from 'calypso/state/rewind/selectors';
 import { StorageUsageLevels } from 'calypso/state/rewind/storage/types';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -84,12 +85,13 @@ const DailyBackupStatus = ( {
 		}
 	}, [ backupCurrentlyInProgress ] );
 
-	// Using the id from backupPreviouslyInProgress get the backup if it finished successfully.
-	const backupFinishedSuccessfully = useSelector( ( state ) => {
-		if ( backupPreviouslyInProgress.current ) {
-			return getFinishedBackupForSiteById( state, siteId, backupPreviouslyInProgress.current.id );
+	// Get the backup status for the backup that was in progress
+	const activeBackupStatus = useSelector( ( state ) => {
+		if ( ! backupPreviouslyInProgress.current ) {
+			return null;
 		}
-		return null;
+
+		return getBackupStatusById( state, siteId, backupPreviouslyInProgress.current.id );
 	} );
 
 	// The backup "period" property is represented by
@@ -113,7 +115,7 @@ const DailyBackupStatus = ( {
 		}
 
 		// Manages the interval for fetching Activity Log based on backup completion.
-		if ( backupFinishedSuccessfully && refetch ) {
+		if ( activeBackupStatus && activeBackupStatus.isFinished && refetch ) {
 			activityLogIntervalRef.current = setInterval( refetch, 5000 ); // Let's refetch every 5 seconds.
 		} else {
 			clearActivityLogInterval();
@@ -121,7 +123,7 @@ const DailyBackupStatus = ( {
 
 		// Ensures interval cleanup on component unmount or before effect reruns.
 		return () => clearActivityLogInterval();
-	}, [ backup, backupFinishedSuccessfully, clearActivityLogInterval, lastBackup, refetch ] );
+	}, [ backup, activeBackupStatus, clearActivityLogInterval, lastBackup, refetch ] );
 
 	// If we're looking at today and a backup is in progress,
 	// start tracking and showing progress
@@ -139,25 +141,49 @@ const DailyBackupStatus = ( {
 		);
 	}
 
-	// If we were previously tracking an active backup that's now
-	// completed (or otherwise not running), show that it just
-	// finished.
-	//
-	// NOTE: In the future it would be nice to switch back to the "success"
-	// state and show up-to-date details immediately after a backup finishes,
-	// but unfortunately there's a lag between the time a backup completes
-	// and when it becomes visible through the Activity Log API.
+	// Handle the case where a backup was previously in progress but is no longer running.
+	// We check the backup's status and show appropriate UI for each state:
+	// - If we know it finished successfully, show the success UI
+	// - If we know it failed, show the failure UI
+	// - Otherwise, show a "Finalizing backup..." message to avoid false failure states
 	if ( selectedDate.isSame( today, 'day' ) && backupPreviouslyInProgress.current ) {
-		if ( backupFinishedSuccessfully ) {
-			return (
-				<BackupJustCompleted
-					justCompletedBackupDate={ inProgressDate }
+		// If we have backup status information
+		if ( activeBackupStatus ) {
+			// If the backup finished successfully
+			if ( activeBackupStatus.isFinished ) {
+				return (
+					<BackupJustCompleted
+						justCompletedBackupDate={ inProgressDate }
+						lastBackupDate={ lastBackupDate }
+					/>
+				);
+			}
+
+			// If the backup explicitly failed
+			if ( activeBackupStatus.hasFailed ) {
+				return (
+					<BackupFailed
+						backup={ { activityTs: Date.now() } }
+						status={ activeBackupStatus.status }
+					/>
+				);
+			}
+		}
+
+		// Fallback: If we don't have definitive status information yet,
+		// show "Backup in progress" and continue polling for updates.
+		// This prevents showing a false failure message during state transitions.
+		return (
+			<>
+				<TrackComponentView eventName="calypso_jetpack_backup_in_progress_unknown_state" />
+				<Interval onTick={ refreshBackupProgress } period={ EVERY_SECOND } />
+				<BackupInProgress
+					percent={ 99 }
+					inProgressDate={ inProgressDate }
 					lastBackupDate={ lastBackupDate }
 				/>
-			);
-		}
-		// There was a backup in progress, but it failed.
-		return <BackupFailed backup={ { activityTs: Date.now() } } />;
+			</>
+		);
 	}
 
 	if ( backup ) {

@@ -32,7 +32,7 @@ export function useThemeDesignsQuery(
 				number: 50,
 				tier,
 				filter,
-				apiVersion: '1.2',
+				apiNamespace: 'wpcom/v2',
 			} ),
 		// Our theme offering doesn't change that often, we don't need to
 		// re-fetch until the next page refresh.

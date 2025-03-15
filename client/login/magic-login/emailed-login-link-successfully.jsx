@@ -58,7 +58,7 @@ class EmailedLoginLinkSuccessfully extends Component {
 			: translate( 'We just emailed you a link.' );
 
 		return (
-			<div>
+			<div className="magic-login__form">
 				<RedirectWhenLoggedIn
 					redirectTo="/help"
 					replaceCurrentLocation
@@ -71,11 +71,10 @@ class EmailedLoginLinkSuccessfully extends Component {
 					<div className="magic-login__form-text">
 						<p>{ preventWidows( successMessage ) }</p>
 					</div>
+					<div className="magic-login__emails-list">
+						<MagicLoginEmailWrapper emailAddress={ emailAddress } />
+					</div>
 				</Card>
-				<div className="magic-login__emails-list">
-					<MagicLoginEmailWrapper emailAddress={ emailAddress } />
-				</div>
-
 				<div className="magic-login__footer">
 					<p>
 						{ translate(

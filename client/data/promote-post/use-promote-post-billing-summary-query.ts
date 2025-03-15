@@ -20,7 +20,7 @@ const useBillingSummaryQuery = ( queryOptions = {} ) => {
 					debt: string;
 					paymentsBlocked: boolean;
 					payment_links: OrderInfo[];
-				} >( selectedSiteId, `/user/billing-summary` );
+				} >( selectedSiteId, '/user/billing-summary' );
 				return {
 					debt: debt ? parseFloat( debt ).toFixed( 2 ) : undefined,
 					paymentsBlocked: paymentsBlocked ? paymentsBlocked : false,

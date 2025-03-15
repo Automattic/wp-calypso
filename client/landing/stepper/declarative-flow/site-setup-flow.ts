@@ -3,12 +3,12 @@ import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
-import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ImporterMainPlatform } from 'calypso/lib/importer/types';
 import { navigate as calypsoLibNavigate } from 'calypso/lib/navigate';
 import { addQueryArgs } from 'calypso/lib/route';
+import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getInitialQueryArguments } from 'calypso/state/selectors/get-initial-query-arguments';
@@ -27,10 +27,10 @@ import { STEPS } from './internals/steps';
 import { redirect } from './internals/steps-repository/import/util';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import {
-	AssertConditionResult,
+	type AssertConditionResult,
 	AssertConditionState,
-	FlowV1,
-	ProvidedDependencies,
+	type FlowV1,
+	type ProvidedDependencies,
 } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
@@ -107,7 +107,6 @@ const siteSetupFlow: FlowV1 = {
 		);
 
 		const { site, siteSlug, siteId } = useSiteData();
-		const isSitePlanCompatible = site && isTargetSitePlanCompatible( site );
 		const currentThemeId = useSelector( ( state ) => getActiveTheme( state, site?.ID || -1 ) );
 		const currentTheme = useSelector( ( state ) =>
 			getCanonicalTheme( state, site?.ID || -1, currentThemeId )
@@ -264,6 +263,10 @@ const siteSetupFlow: FlowV1 = {
 
 			// Clean-up the store so that if onboard for new site will be launched it will be launched with no preselected values
 			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction', 'skipIntent', 'skipGoals' ] );
+
+			// After finishing the site setup flow, we can safely clean the signup destination cookie.
+			// This will prevent undesired redirects to the /site-setup from the Plans page after the onboarding flow is finished.
+			clearSignupDestinationCookie();
 		};
 
 		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
@@ -273,7 +276,7 @@ const siteSetupFlow: FlowV1 = {
 
 		useRedirectDesignSetupOldSlug( currentStep, navigate );
 
-		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
+		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
 				case 'options': {
 					if ( intent === 'sell' ) {
@@ -292,7 +295,7 @@ const siteSetupFlow: FlowV1 = {
 				}
 
 				case 'processing': {
-					const processingResult = params[ 0 ] as ProcessingResult;
+					const processingResult = providedDependencies.processingResult as ProcessingResult;
 
 					if ( processingResult === ProcessingResult.FAILURE ) {
 						return navigate( 'error' );
@@ -327,7 +330,7 @@ const siteSetupFlow: FlowV1 = {
 				}
 
 				case 'bloggerStartingPoint': {
-					const intent = params[ 0 ];
+					const intent = providedDependencies.startingPoint as string;
 					switch ( intent ) {
 						case 'firstPost': {
 							return exitFlow( `/post/${ siteSlug }` );
@@ -384,7 +387,7 @@ const siteSetupFlow: FlowV1 = {
 				}
 
 				case 'intent': {
-					const submittedIntent = params[ 0 ];
+					const submittedIntent = providedDependencies.intent as string;
 					switch ( submittedIntent ) {
 						case 'wpadmin': {
 							return exitFlow( `https://wordpress.com/home/${ siteId ?? siteSlug }` );
@@ -430,15 +433,9 @@ const siteSetupFlow: FlowV1 = {
 
 					if (
 						depUrl.startsWith( 'http' ) ||
-						[
-							'blogroll',
-							'ghost',
-							'tumblr',
-							'livejournal',
-							'movabletype',
-							'xanga',
-							'substack',
-						].indexOf( providedDependencies?.platform as ImporterMainPlatform ) !== -1
+						[ 'ghost', 'tumblr', 'livejournal', 'movabletype', 'xanga', 'substack' ].indexOf(
+							providedDependencies?.platform as ImporterMainPlatform
+						) !== -1
 					) {
 						return exitFlow( providedDependencies?.url as string );
 					}
@@ -560,19 +557,8 @@ const siteSetupFlow: FlowV1 = {
 						return navigate( `importList?siteSlug=${ siteSlug }` );
 					}
 
-					if ( urlQueryParams.has( 'showModal' ) ) {
-						// remove the siteSlug in case they want to change the destination site
-						urlQueryParams.delete( 'siteSlug' );
-						urlQueryParams.delete( 'showModal' );
-						return navigate( `import?siteSlug=${ siteSlug }` );
-					}
-
-					if ( ! isSitePlanCompatible ) {
-						urlQueryParams.set( 'showModal', 'true' );
-						return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
-					}
-
-					return navigate( `import?siteSlug=${ siteSlug }` );
+					// Ensure we override from and option, as we end up in a loop if we don't.
+					return navigate( `import?siteSlug=${ siteSlug }&option=&from` );
 				case 'importerWix':
 				case 'importReady':
 				case 'importReadyNot':

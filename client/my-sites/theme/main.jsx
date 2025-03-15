@@ -9,6 +9,7 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Card, Gridicon } from '@automattic/components';
+import { Onboard } from '@automattic/data-stores';
 import {
 	DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,
 	ThemePreview as ThemeWebPreview,
@@ -49,10 +50,10 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { ReviewsSummary } from 'calypso/my-sites/marketplace/components/reviews-summary';
-import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { localizeThemesPath, shouldSelectSite } from 'calypso/my-sites/themes/helpers';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
+import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
@@ -101,6 +102,7 @@ import {
 	isActivatingTheme as getIsActivatingTheme,
 	isInstallingTheme as getIsInstallingTheme,
 	hasActivatedTheme as getHasActivatedTheme,
+	getActiveTheme,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
@@ -113,6 +115,8 @@ import ThemeNotFoundError from './theme-not-found-error';
 import ThemeStyleVariations from './theme-style-variations';
 
 import './style.scss';
+
+const SiteIntent = Onboard.SiteIntent;
 
 class ThemeSheet extends Component {
 	static displayName = 'ThemeSheet';
@@ -541,18 +545,39 @@ class ThemeSheet extends Component {
 			iframeToken.concat( '-', getTracksAnonymousUserId() ?? siteSlug );
 		}
 
+		if ( ! this.shouldRenderPreviewButton() ) {
+			return (
+				<div className="theme__sheet-web-preview">
+					<ThemeWebPreview
+						url={ url }
+						inlineCss={ baseStyleVariationInlineCss + selectedStyleVariationInlineCss }
+						iframeScaleRatio={ 0.5 }
+						iframeToken={ iframeToken }
+						isShowFrameBorder={ false }
+						isShowDeviceSwitcher={ false }
+						isFitHeight
+					/>
+				</div>
+			);
+		}
+
 		return (
-			<div className="theme__sheet-web-preview">
-				{ this.shouldRenderPreviewButton() && (
-					<Button
-						className="theme__sheet-preview-demo-site"
-						onClick={ ( e ) => {
-							this.previewAction( e, 'link', 'preview' );
-						} }
-					>
-						{ translate( 'Preview demo site' ) }
-					</Button>
-				) }
+			<div
+				className="theme__sheet-web-preview is-clickable"
+				role="button"
+				tabIndex="0"
+				onClick={ ( e ) => {
+					this.previewAction( e, 'link', 'preview' );
+				} }
+				onKeyDown={ ( e ) => {
+					if ( e.key === 'Enter' ) {
+						this.previewAction( e, 'link', 'preview' );
+					}
+				} }
+			>
+				<Button className="theme__sheet-preview-demo-site">
+					{ translate( 'Preview demo site' ) }
+				</Button>
 				<ThemeWebPreview
 					url={ url }
 					inlineCss={ baseStyleVariationInlineCss + selectedStyleVariationInlineCss }
@@ -723,6 +748,32 @@ class ThemeSheet extends Component {
 		return <div>{ this.props.description }</div>;
 	};
 
+	renderNotice = () => {
+		const { activeThemeId, themeId, name, siteIntent, translate } = this.props;
+		const isAIAssembler = siteIntent === SiteIntent.AIAssembler && activeThemeId === 'assembler';
+		if ( ! isAIAssembler || themeId === 'assembler' ) {
+			return null;
+		}
+
+		return (
+			<Banner
+				icon="notice"
+				title={ translate( 'AI Website Builder' ) }
+				description={ translate(
+					'{{strong}}%(newThemeName)s{{/strong}} is currently not compatible with our AI Website Builder. Changing to this theme means you can no longer use our AI Website Builder on this site.',
+					{
+						args: { newThemeName: name },
+						components: {
+							br: <br />,
+							strong: <strong />,
+						},
+					}
+				) }
+				disableHref
+			/>
+		);
+	};
+
 	renderStagingPaidThemeNotice = () => {
 		if ( ! this.shouldRenderForStaging() ) {
 			return null;
@@ -889,44 +940,6 @@ class ThemeSheet extends Component {
 			return translate( 'Activate' );
 		}
 		return defaultOption.label;
-	};
-
-	renderRetired = () => {
-		const { translate, locale, isLoggedIn } = this.props;
-		return (
-			<div className="theme__sheet-content">
-				<Card className="theme__retired-theme-message">
-					<Gridicon icon="cross-circle" size={ 48 } />
-					<div className="theme__retired-theme-message-details">
-						<div className="theme__retired-theme-message-details-title">
-							{ this.props.translate( 'This theme is retired' ) }
-							<InlineSupportLink supportContext="themes-retired" showText={ false } />
-						</div>
-						<div>
-							{ this.props.translate(
-								'We invite you to try out a newer theme; start by browsing our WordPress theme directory.'
-							) }
-						</div>
-					</div>
-					<Button primary href={ localizeThemesPath( '/themes/', locale, ! isLoggedIn ) }>
-						{ translate( 'See all themes' ) }
-					</Button>
-				</Card>
-
-				{ this.isRemoved() && (
-					<Card>
-						<p>
-							{ this.props.translate(
-								'This theme has been renamed to reflect that support for it is now provided directly by WordPress.com. The theme will continue to work as before.'
-							) }
-						</p>
-					</Card>
-				) }
-				<div className="theme__sheet-footer-line">
-					<Gridicon icon="my-sites" />
-				</div>
-			</div>
-		);
 	};
 
 	renderButton = () => {
@@ -1119,7 +1132,6 @@ class ThemeSheet extends Component {
 		const {
 			themeId,
 			siteId,
-			retired,
 			translate,
 			isLoggedIn,
 			isThemeActivationSyncStarted,
@@ -1220,11 +1232,6 @@ class ThemeSheet extends Component {
 						}
 					} }
 				/>
-				<ActivationModal
-					source="details"
-					siteIntent={ this.props.siteIntent }
-					showSuccessNotice={ ! this.isThemeSelectedTask }
-				/>
 				<NavigationHeader
 					navigationItems={ navigationItems }
 					compactBreadcrumb={ ! this.state.isWide }
@@ -1232,13 +1239,11 @@ class ThemeSheet extends Component {
 				<div className={ columnsClassName }>
 					<div className="theme__sheet-column-header">
 						{ this.renderStagingPaidThemeNotice() }
+						{ this.renderNotice() }
 						{ this.renderHeader() }
 						{ this.renderReviews() }
 					</div>
-					<div className="theme__sheet-column-left">
-						{ ! retired && this.renderSectionContent( section ) }
-						{ retired && this.renderRetired() }
-					</div>
+					<div className="theme__sheet-column-left">{ this.renderSectionContent( section ) }</div>
 					{ ! isRemoved && (
 						<div className="theme__sheet-column-right">
 							{ this.isWebPreviewAvailable() ? this.renderWebPreview() : this.renderScreenshot() }
@@ -1312,6 +1317,7 @@ const ThemeSheetWithOptions = ( props ) => {
 	let defaultOption;
 	let secondaryOption = 'tryandcustomize';
 	const needsJetpackPlanUpgrade = isStandaloneJetpack && isPremium && ! isThemePurchased;
+	const activeThemeId = useSelector( ( state ) => getActiveTheme( state, siteId ) );
 	const siteIntent = useSiteOption( 'site_intent' );
 
 	if ( ! showTryAndCustomize ) {
@@ -1363,6 +1369,7 @@ const ThemeSheetWithOptions = ( props ) => {
 			defaultOption={ defaultOption }
 			secondaryOption={ secondaryOption }
 			source="showcase-sheet"
+			activeThemeId={ activeThemeId }
 			siteIntent={ siteIntent }
 		/>
 	);

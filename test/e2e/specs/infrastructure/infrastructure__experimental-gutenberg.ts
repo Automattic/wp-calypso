@@ -63,7 +63,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), fun
 	it( 'Experimental data is available', async function () {
 		const editorParent = await editorPage.getEditorParent();
 		const blockPatterns = await editorParent.evaluate(
-			`Array.isArray( window.wp.data.select( 'core/editor' ).getEditorSettings().__experimentalBlockPatterns )`
+			"Array.isArray( window.wp.data.select( 'core/editor' ).getEditorSettings().__experimentalBlockPatterns )"
 		);
 		// If this test fails, please contact #team-ganon to update premium pattern highlighting.
 		expect( blockPatterns ).toStrictEqual( true );

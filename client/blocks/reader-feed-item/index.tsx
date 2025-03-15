@@ -72,7 +72,8 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 	const recordSiteUnsubscribed = useRecordSiteUnsubscribed();
 
 	// Fetch feed and site data.
-	const { data: feed, isLoading: isFeedLoading } = Reader.useReadFeedQuery( feedId );
+	const queryFeed: boolean = ! isWpcomFeed; // No need to query feed data for WPCOM feeds.
+	const { data: feed, isLoading: isFeedLoading } = Reader.useReadFeedQuery( queryFeed, feedId );
 	const { data: site, isLoading: isSiteLoading } = Reader.useReadFeedSiteQuery( Number( blogId ) );
 
 	if ( isFeedLoading || ( isWpcomFeed && isSiteLoading ) ) {
@@ -81,16 +82,17 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 
 	// Reader feed item fields to show in the UI.
 	const description = isWpcomFeed ? site?.description : feed?.description;
-	const displayUrl = isWpcomFeed ? getSiteUrl( { feed, site } ) : subscribeUrl;
-	const filteredDisplayUrl = filterURLForDisplay( displayUrl );
+	const displayUrl = isWpcomFeed && site ? getSiteUrl( { feed, site } ) : subscribeUrl;
+	const filteredDisplayUrl = filterURLForDisplay( displayUrl ?? '' );
 	const feedUrl = isWpcomFeed ? getFeedUrl( feed?.feed_ID ) : subscribeUrl;
 	const hasSubscribed = feedSubscription?.ID ?? false;
 	const iconUrl = isWpcomFeed ? site?.icon?.img ?? site?.icon?.ico : feed?.image;
 	const shouldTrackRecommendedSearch =
 		source === SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST && railcar;
-	const title = isWpcomFeed
-		? getSiteName( { feed, site } )
-		: feed?.name ?? filterURLForDisplay( subscribeUrl );
+	const title =
+		isWpcomFeed && site
+			? getSiteName( { feed, site } )
+			: feed?.name ?? filterURLForDisplay( subscribeUrl );
 
 	function onSubscribeToggle(): void {
 		if ( ! isEmailVerified ) {

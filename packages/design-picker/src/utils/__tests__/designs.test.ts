@@ -55,7 +55,7 @@ describe( 'Design Picker designs utils', () => {
 			};
 
 			expect( getDesignPreviewUrl( design, options ) ).toEqual(
-				`https://public-api.wordpress.com/wpcom/v2/block-previews/site?stylesheet=pub%2Fzoologist&pattern_ids=12%2C34&language=id&viewport_height=700&site_title=Design%20Title`
+				'https://public-api.wordpress.com/wpcom/v2/block-previews/site?stylesheet=pub%2Fzoologist&pattern_ids=12%2C34&language=id&viewport_height=700&site_title=Design%20Title'
 			);
 		} );
 

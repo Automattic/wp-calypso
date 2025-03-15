@@ -119,7 +119,7 @@ export const FullScreenLaunchpad = ( {
 	return (
 		<div data-testid="launchpad-first" className="is-launchpad-first" css={ { width: '100%' } }>
 			<div
-				className={ clsx( `customer-home-launchpad customer-home__card is-small-hero`, {
+				className={ clsx( 'customer-home-launchpad customer-home__card is-small-hero', {
 					'all-tasks-completed': isAllTasksCompleted,
 				} ) }
 			>

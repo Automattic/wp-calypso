@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .migrations-hosting-options__container {
 	display: grid;
@@ -37,16 +38,16 @@
 }
 
 .migrations-hosting-options-card__title {
-	@include a4a-font-heading-xl;
+	@include heading-x-large;
 }
 
 .migrations-hosting-options-card__description {
-	@include a4a-font-body-lg;
+	@include body-large;
 	margin: 0;
 }
 
 .migrations-hosting-options-card__footnote {
-	@include a4a-font-body-lg($font-weight: 500);
+	@include body-large;
 	font-style: italic;
 	margin-block-end: 8px;
 }
@@ -67,7 +68,7 @@
 }
 
 .migrations-hosting-options__footnote {
-	@include a4a-font-body-lg;
+	@include body-large;
 
 	a,
 	a:hover,

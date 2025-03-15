@@ -125,6 +125,14 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 
 		setMainChatState( ( prevChat ) => {
 			if ( ! prevChat.supportInteractionId ) {
+				if ( ! odieId && ! conversationId ) {
+					return {
+						...emptyChat,
+						supportInteractionId: currentSupportInteraction!.uuid,
+						status: 'loaded',
+					};
+				}
+
 				return {
 					...prevChat,
 					supportInteractionId: currentSupportInteraction!.uuid,
@@ -142,7 +150,7 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 
 			return { ...prevChat };
 		} );
-	}, [ currentSupportInteraction?.uuid ] );
+	}, [ currentSupportInteraction?.uuid, odieId, conversationId ] );
 
 	return { mainChatState, setMainChatState };
 };

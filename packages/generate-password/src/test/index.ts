@@ -14,7 +14,7 @@ describe( 'generatePassword', () => {
 		},
 	} );
 
-	describe( `.length`, () => {
+	describe( '.length', () => {
 		test( 'should use default length of 24', () => {
 			expect( generatePassword() ).toHaveLength( 24 );
 		} );

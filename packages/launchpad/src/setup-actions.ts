@@ -138,7 +138,7 @@ export const setUpActionsForTasks = ( {
 					action = () => {
 						window.open(
 							localizeUrl(
-								`https://wordpress.com/support/domains/connect-existing-domain/#step-2-connect-your-domain`
+								'https://wordpress.com/support/domains/connect-existing-domain/#step-2-connect-your-domain'
 							),
 							'_blank'
 						);

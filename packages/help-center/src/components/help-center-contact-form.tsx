@@ -191,7 +191,7 @@ export const HelpCenterContactForm = () => {
 					post_id: result.post_id,
 					blog_id: result.blog_id,
 				};
-				recordTracksEvent( `calypso_inlinehelp_article_no_postid_redirect`, tracksData );
+				recordTracksEvent( 'calypso_inlinehelp_article_no_postid_redirect', tracksData );
 				window.open( result.link, '_blank' );
 				return;
 			}

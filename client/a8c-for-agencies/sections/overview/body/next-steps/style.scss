@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
 .next-steps {
 
 	&__header {
@@ -7,14 +10,14 @@
 		margin-bottom: 16px;
 
 		h2 {
-			@include a4a-font-heading-md;
+			@include heading-large;
 			color: var(--color-neutral-100);
 		}
 		.circular__progress-bar {
 			margin-right: 8px;
 
 			.circular__progress-bar-text {
-				@include a4a-font-label-button($font-size: rem(10px));
+				@include heading-small;
 				color: var(--color-neutral-100);
 			}
 
@@ -26,7 +29,7 @@
 
 	p,
 	button {
-		@include a4a-font-body-md;
+		@include body-medium;
 		color: var(--color-neutral-80);
 	}
 
@@ -42,7 +45,7 @@
 	.checklist-item__task {
 
 		.checklist-item__text {
-			@include a4a-font-body-md;
+			@include body-medium;
 			color: var(--color-neutral-80);
 		}
 

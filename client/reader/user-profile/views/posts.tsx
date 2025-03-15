@@ -17,6 +17,7 @@ const UserPosts = ( { user }: UserPostsProps ): JSX.Element => {
 			className="is-user-profile"
 			listName={ translate( 'User Posts' ) }
 			showFollowButton={ false }
+			showBack={ false }
 			showSiteNameOnCards
 			sidebarTabTitle={ translate( 'Related' ) }
 			useCompactCards
@@ -29,7 +30,6 @@ const UserPosts = ( { user }: UserPostsProps ): JSX.Element => {
 					line={ translate( 'No posts yet.' ) }
 				/>
 			) }
-			showBack={ false }
 		/>
 	);
 };

@@ -42,7 +42,7 @@ import {
 	CALYPSO_ONBOARDING_TOURS_EVENT_NAMES,
 	useOnboardingTours,
 } from '../onboarding-tours';
-import { DOTCOM_OVERVIEW, FEATURE_TO_ROUTE_MAP } from './site-preview-pane/constants';
+import { OVERVIEW, FEATURE_TO_ROUTE_MAP } from './site-preview-pane/constants';
 import DotcomPreviewPane from './site-preview-pane/dotcom-preview-pane';
 import SitesDashboardBannersManager from './sites-dashboard-banners-manager';
 import SitesDashboardHeader from './sites-dashboard-header';
@@ -126,7 +126,7 @@ const SitesDashboard = ( {
 		status,
 		siteType = DEFAULT_SITE_TYPE,
 	},
-	initialSiteFeature = DOTCOM_OVERVIEW,
+	initialSiteFeature = OVERVIEW,
 	selectedSiteFeaturePreview = undefined,
 	isOnlyLayoutView = undefined,
 }: SitesDashboardProps ) => {
@@ -349,25 +349,27 @@ const SitesDashboard = ( {
 		}
 	};
 
-	const openSitePreviewPane = (
-		site: SiteExcerptData,
-		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher',
-		openInNewTab?: boolean
-	) => {
-		recordTracksEvent( 'calypso_sites_dashboard_open_site_preview_pane', {
-			site_id: site.ID,
-			source,
-		} );
-		showSitesPage(
-			`/${ FEATURE_TO_ROUTE_MAP[ initialSiteFeature ].replace( ':site', site.slug ) }`,
-			openInNewTab
-		);
+	const sitePreviewPane = {
+		getUrl: ( site: SiteExcerptData ) => {
+			return `/${ FEATURE_TO_ROUTE_MAP[ initialSiteFeature ].replace( ':site', site.slug ) }`;
+		},
+		open: (
+			site: SiteExcerptData,
+			source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher',
+			openInNewTab?: boolean
+		) => {
+			recordTracksEvent( 'calypso_sites_dashboard_open_site_preview_pane', {
+				site_id: site.ID,
+				source,
+			} );
+			showSitesPage( sitePreviewPane.getUrl( site ), openInNewTab );
+		},
 	};
 
 	const changeSitePreviewPane = ( siteId: number ) => {
 		const targetSite = allSites.find( ( site ) => site.ID === siteId );
 		if ( targetSite ) {
-			openSitePreviewPane( targetSite, 'environment_switcher' );
+			sitePreviewPane.open( targetSite, 'environment_switcher' );
 		}
 	};
 
@@ -424,7 +426,7 @@ const SitesDashboard = ( {
 						dataViewsState={ dataViewsState }
 						setDataViewsState={ setDataViewsState }
 						selectedItem={ selectedSite }
-						openSitePreviewPane={ openSitePreviewPane }
+						sitePreviewPane={ sitePreviewPane }
 					/>
 				</LayoutColumn>
 			) }
