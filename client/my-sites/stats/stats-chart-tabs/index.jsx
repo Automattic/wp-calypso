@@ -197,6 +197,15 @@ class StatModuleChartTabs extends Component {
 			gmtOffset
 		);
 
+		const emptyState = (
+			<StatsEmptyState
+				headingText={ selectedPeriod === 'hour' ? translate( 'No hourly data available' ) : null }
+				infoText={
+					selectedPeriod === 'hour' ? translate( 'Try selecting a different time frame.' ) : null
+				}
+			/>
+		);
+
 		/* pass bars count as `key` to disable transitions between tabs with different column count */
 		return (
 			<div className={ clsx( ...classes ) } ref={ chartContainerRef }>
@@ -213,37 +222,26 @@ class StatModuleChartTabs extends Component {
 					chartType={ chartType }
 					onChartTypeChange={ this.handleChartTypeChange }
 				/>
-
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
-
-				{ chartType === 'bar' || chartData.length === 0 ? (
-					<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 35 }>
-						<StatsEmptyState
-							headingText={
-								selectedPeriod === 'hour' ? translate( 'No hourly data available' ) : null
-							}
-							infoText={
-								selectedPeriod === 'hour'
-									? translate( 'Try selecting a different time frame.' )
-									: null
-							}
-						/>
+				{ chartType === 'bar' || lineChartData.length === 0 ? (
+					<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 20 }>
+						{ emptyState }
 					</Chart>
 				) : (
 					<AsyncLoad
 						require="calypso/my-sites/stats/components/line-chart"
 						className="stats-chart-tabs__line-chart"
 						chartData={ lineChartData }
-						height={ 200 }
+						height={ 224 }
 						moment={ moment }
 						onClick={ this.props.barClick }
 						formatTimeTick={ this.formatLineChartTimeTick }
 						placeholder={
 							<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
 						}
+						emptyState={ emptyState }
 					/>
 				) }
-
 				<StatTabs
 					data={ this.props.counts }
 					previousData={ countsComp }

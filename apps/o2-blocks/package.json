@@ -48,7 +48,7 @@
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@wordpress/readable-js-assets-webpack-plugin": "^3.19.0",
-		"postcss": "^8.5.1",
+		"postcss": "^8.5.3",
 		"webpack": "^5.97.1"
 	}
 }

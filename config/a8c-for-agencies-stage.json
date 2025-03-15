@@ -58,7 +58,8 @@
 		"a8c-for-agencies-migrations": true,
 		"a8c-for-agencies-client": true,
 		"a8c-for-agencies-team": true,
-		"a8c-for-agencies-agency-tier": true
+		"a8c-for-agencies-agency-tier": true,
+		"a8c-for-agencies-woopayments": true
 	},
 	"site_filter": [],
 	"theme": "a8c-for-agencies",

@@ -333,6 +333,8 @@ import {
 	FEATURE_STATS_BASIC_20250206,
 	FEATURE_STATS_ADVANCED_20250206,
 	FEATURE_SUPPORT,
+	FEATURE_SUPPORT_FROM_EXPERTS,
+	FEATURE_AI_ASSISTANT,
 } from './constants';
 import type { FeatureList } from './types';
 
@@ -1600,7 +1602,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_ADD_MULTIPLE_PAGES_NEWSLETTER ]: {
 		getSlug: () => FEATURE_ADD_MULTIPLE_PAGES_NEWSLETTER,
-		getTitle: () => i18n.translate( `Add multiple pages to your Newsletter's website` ),
+		getTitle: () => i18n.translate( "Add multiple pages to your Newsletter's website" ),
 	},
 	[ FEATURE_AD_FREE_EXPERIENCE ]: {
 		getSlug: () => FEATURE_AD_FREE_EXPERIENCE,
@@ -2295,8 +2297,17 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_DONATIONS_AND_TIPS_JP ]: {
 		getSlug: () => FEATURE_DONATIONS_AND_TIPS_JP,
 		getTitle: () => i18n.translate( 'Donations and tips' ),
+		/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
 		getDescription: () =>
-			i18n.translate( 'Allow your audience to support your work easily with donations and tips.' ),
+			i18n.fixMe( {
+				text: 'Allow your audience to support your work easily with charitable donations and tips.',
+				newCopy: i18n.translate(
+					'Allow your audience to support your work easily with charitable donations and tips.'
+				),
+				oldCopy: i18n.translate(
+					'Allow your audience to support your work easily with donations and tips.'
+				),
+			} ),
 	},
 	[ FEATURE_PAYPAL_JP ]: {
 		getSlug: () => FEATURE_PAYPAL_JP,
@@ -2440,6 +2451,23 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_SUPPORT,
 		getTitle: () => i18n.translate( 'Support' ),
 	},
+	[ FEATURE_SUPPORT_FROM_EXPERTS ]: {
+		getSlug: () => FEATURE_SUPPORT_FROM_EXPERTS,
+		getTitle: () =>
+			/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
+			i18n.fixMe( {
+				text: 'Support from our expert\u00A0team',
+				newCopy: i18n.translate( 'Support from our expert\u00A0team' ),
+				oldCopy: i18n.translate( 'Fast support from our expert\u00A0team' ),
+			} ),
+		/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
+		getDescription: () =>
+			i18n.fixMe( {
+				text: 'Get support from our expert, friendly Happiness team',
+				newCopy: i18n.translate( 'Get support from our expert, friendly Happiness team' ),
+				oldCopy: i18n.translate( 'Prompt support from our expert, friendly Happiness team' ),
+			} ),
+	},
 	[ FEATURE_FAST_SUPPORT_FROM_EXPERTS ]: {
 		getSlug: () => FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		getTitle: () => i18n.translate( 'Fast support from our expert\u00A0team' ),
@@ -2472,6 +2500,12 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Premium stats' ),
 		getDescription: () =>
 			i18n.translate( 'Unlock all stats, including UTM tracking and device insights.' ),
+	},
+	[ FEATURE_AI_ASSISTANT ]: {
+		getSlug: () => FEATURE_AI_ASSISTANT,
+		getTitle: () => i18n.translate( 'AI Assistant' ),
+		getDescription: () =>
+			i18n.translate( 'Enhance your content creation with AI-powered writing, images and more.' ),
 	},
 	/* END: 2023 Pricing Grid Features */
 

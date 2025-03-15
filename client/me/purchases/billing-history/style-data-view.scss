@@ -1,20 +1,30 @@
 #billing-history {
+    padding: 8px 0 0;
 
     .dataviews-wrapper {
         width: 100%;
-        margin-bottom: 1rem;
-        padding: 0 1rem;
+        margin-bottom: 0;
+        padding: 0;
 
         .dataviews-loading {
             display: flex;
             align-items: end;
             justify-content: center;
-            padding-top: 48px;
+            padding-top: 36px;
 
             .components-spinner {
                 width: 32px;
                 height: 32px;
             }
+        }
+
+        .dataviews-no-results {
+            padding: 36px;
+
+            p {
+                margin: 0;
+            }
+
         }
 
         .dataviews-view-table {
@@ -59,6 +69,7 @@
 				button {
 					padding: 0;
 					text-transform: uppercase;
+                    margin-left: 0;
 				}
             }
 
@@ -81,6 +92,16 @@
                     color: var(--color-text-subtle);
                     margin-top: 0.25rem;
                 }
+            }
+
+            th:first-child,
+            td:first-child {
+                padding-left: 24px;
+            }
+
+            th:last-child,
+            td:last-child {
+                padding-right: 24px;
             }
 			
 			.dataviews-view-table__actions-column {
@@ -162,13 +183,15 @@
     }
 
     .dataviews__view-actions {
-        margin-top: 1em;
-		padding-left: 0;
-		padding-right: 0;
+        margin-top: 0;
+		padding-left: 24px;
+		padding-right: 24px;
     }
 
 	.dataviews-filters__container {
 		padding: 0;
+		padding-left: 24px;
+		padding-right: 24px;
 	}
 
     .section-nav {
@@ -177,6 +200,10 @@
 
     .section-nav-group {
         border-bottom: 1px solid var(--color-neutral-5);
+    }
+
+    .dataviews-footer {
+        padding: 12px;
     }
 
     .card.billing-history__receipts {

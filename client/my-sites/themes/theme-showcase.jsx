@@ -21,7 +21,6 @@ import ThemeSiteSelectorModal from 'calypso/components/theme-site-selector-modal
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
 import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
 import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
@@ -752,7 +751,6 @@ class ThemeShowcase extends Component {
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 					<QueryProductsList />
-					<ActivationModal source="list" />
 					<EligibilityWarningModal />
 					<ThemePreview />
 				</div>

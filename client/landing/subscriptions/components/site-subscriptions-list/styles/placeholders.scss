@@ -11,6 +11,10 @@
 	overflow: hidden;
 	padding-right: 10px;
 
+	&:visited {
+		color: $studio-gray-100;
+	}
+
 	&:hover {
 		text-decoration: underline;
 	}
@@ -24,6 +28,10 @@
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	overflow: hidden;
+
+	&:visited {
+		color: $studio-gray-40;
+	}
 
 	&:hover {
 		text-decoration: underline;

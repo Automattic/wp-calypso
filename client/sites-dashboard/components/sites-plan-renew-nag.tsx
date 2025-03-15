@@ -85,7 +85,7 @@ export const PlanRenewNag = ( {
 					<PlanRenewNoticeExpireText>
 						{ sprintf(
 							/* translators: %s - the plan's product name */
-							__( '%s - Expired' ),
+							__( '%s-Expired' ),
 							plan.product_name_short
 						) }
 					</PlanRenewNoticeExpireText>

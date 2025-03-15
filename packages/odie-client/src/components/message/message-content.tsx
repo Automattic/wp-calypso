@@ -17,12 +17,14 @@ export const MessageContent = ( {
 	messageHeader,
 	isNextMessageFromSameSender,
 	displayChatWithSupportLabel,
+	displayChatWithSupportEndedLabel,
 }: {
 	message: Message;
 	messageHeader: React.ReactNode;
 	isDisliked?: boolean;
 	isNextMessageFromSameSender?: boolean;
 	displayChatWithSupportLabel?: boolean;
+	displayChatWithSupportEndedLabel?: boolean;
 } ) => {
 	const { __ } = useI18n();
 	const { experimentVariationName } = useOdieAssistantContext();
@@ -30,7 +32,7 @@ export const MessageContent = ( {
 		'odie-chatbox-message',
 		`odie-chatbox-message-${ message.role }`,
 		`odie-chatbox-message-${ message.type ?? 'message' }`,
-		message?.context?.flags?.show_ai_avatar === false && `odie-chatbox-message-no-avatar`
+		message?.context?.flags?.show_ai_avatar === false && 'odie-chatbox-message-no-avatar'
 	);
 	const containerClasses = clsx(
 		'odie-chatbox-message-sources-container',
@@ -106,7 +108,14 @@ export const MessageContent = ( {
 						message.type === 'dislike-feedback' && <DislikeFeedbackMessage /> }
 				</div>
 			</div>
-			{ displayChatWithSupportLabel && <ChatWithSupportLabel /> }
+			{ displayChatWithSupportLabel && (
+				<ChatWithSupportLabel
+					labelText={ __( 'Chatting with support now', __i18n_text_domain__ ) }
+				/>
+			) }
+			{ displayChatWithSupportEndedLabel && (
+				<ChatWithSupportLabel labelText={ __( 'Chat with support ended', __i18n_text_domain__ ) } />
+			) }
 		</>
 	);
 };

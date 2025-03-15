@@ -140,7 +140,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 	} );
 
 	describe( 'Validate published post', function () {
-		it( `Image with reserved characters in filename is visible`, async function () {
+		it( 'Image with reserved characters in filename is visible', async function () {
 			await Promise.any( [
 				// WP < 6.6
 				ImageBlock.validatePublishedContent( page, [
@@ -155,16 +155,16 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 			await ImageBlock.validatePublishedContent( page, [ testFiles.image.filename ] );
 		} );
 
-		it( `Audio block is visible`, async function () {
+		it( 'Audio block is visible', async function () {
 			await AudioBlock.validatePublishedContent( page );
 		} );
 
-		it( `File block is visible`, async function () {
+		it( 'File block is visible', async function () {
 			await FileBlock.validatePublishedContent( page, [ testFiles.audio.filename ] );
 		} );
 
 		// Skipped above.
-		it.skip( `VideoPress block is visible`, async function () {
+		it.skip( 'VideoPress block is visible', async function () {
 			await VideoPressBlock.validatePublishedContent( page );
 		} );
 	} );

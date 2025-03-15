@@ -82,7 +82,6 @@ import CheckoutNextSteps from './checkout-next-steps';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import { GoogleDomainsCopy } from './google-transfers-copy';
-import { IsForBusinessCheckbox } from './is-for-business-checkbox';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
 import BeforeSubmitCheckoutHeader from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
@@ -995,7 +994,7 @@ function CheckoutTermsAndCheckboxes( {
 	return (
 		<CheckoutTermsAndCheckboxesWrapper>
 			<BeforeSubmitCheckoutHeader />
-			<IsForBusinessCheckbox />
+
 			{ hasMarketplaceProduct && (
 				<AcceptTermsOfServiceCheckbox
 					isAccepted={ is3PDAccountConsentAccepted }
@@ -1190,16 +1189,13 @@ const WPCheckoutCompletedWrapper = styled.div`
 	justify-content: center;
 	justify-items: center;
 	min-height: 100vh;
-
 	& > * {
 		box-sizing: border-box;
 		width: 100%;
-
 		@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 			min-height: 100vh;
 		}
 	}
-
 	& *:focus {
 		outline: ${ ( props ) => props.theme.colors.outline } solid 2px;
 	}
@@ -1233,7 +1229,6 @@ const WPCheckoutMainContent = styled.div`
 const WPCheckoutCompletedMainContent = styled.div`
 	margin-top: 60px;
 	min-height: 100vh;
-
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding: 0 24px;
 		max-width: 648px;

@@ -5,15 +5,15 @@ import type { LanguageSlug } from '@automattic/languages';
 
 const selectors = {
 	// Close account
-	closeAccountLink: `p:text("Close your account permanently")`,
-	closeAccountButton: `button:text("Close account")`,
+	closeAccountLink: 'p:text("Close your account permanently")',
+	closeAccountButton: 'button:text("Close account")',
 	deletedItemsSidebar: 'text=These items will be deleted',
 
 	// Modal
-	modalContinueButton: `button:text("Continue")`,
-	usernameSpan: `span.account-close__confirm-dialog-target-username`,
-	usernameConfirmationInput: `input[id="confirmAccountCloseInput"]`,
-	modalCloseAccountButton: `button:text("Close your account")`,
+	modalContinueButton: 'button:text("Continue")',
+	usernameSpan: 'span.account-close__confirm-dialog-target-username',
+	usernameConfirmationInput: 'input[id="confirmAccountCloseInput"]',
+	modalCloseAccountButton: 'button:text("Close your account")',
 
 	// UI Language
 	uiLanguageButton: 'button.language-picker',

@@ -254,7 +254,7 @@ export class ReaderSidebar extends Component {
 						label="A8C Conversations"
 						onNavigate={ this.handleReaderSidebarA8cConversationsClicked }
 						link="/reader/conversations/a8c"
-						customIcon={ <ReaderA8cConversationsIcon size={ 24 } viewBox="-5 0 24 24" /> }
+						customIcon={ <ReaderA8cConversationsIcon size={ 24 } viewBox="-5 -2 24 24" /> }
 					/>
 				) }
 
@@ -285,10 +285,7 @@ export class ReaderSidebar extends Component {
 		const props = {
 			path: this.props.path,
 			onClick: this.handleClick,
-			requireBackLink: false,
 			siteTitle: i18n.translate( 'Reader' ),
-			backLinkHref: this.props.returnPath || '/sites',
-			onClose: this.props.onClose && ( () => this.props.onClose() ),
 		};
 		return (
 			<GlobalSidebar { ...props }>

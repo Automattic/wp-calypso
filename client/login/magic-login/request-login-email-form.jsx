@@ -139,7 +139,7 @@ class RequestLoginEmailForm extends Component {
 
 		if ( siteName ) {
 			return translate(
-				'We’ll send you an email with a login link that will log you in right away to %(siteName)s.',
+				'We’ll send you an email with a link that will log you in right away to %(siteName)s.',
 				{
 					args: {
 						siteName,
@@ -148,9 +148,7 @@ class RequestLoginEmailForm extends Component {
 			);
 		}
 
-		return translate(
-			'We’ll send you an email with a login link that will log you in right away.'
-		);
+		return translate( 'We’ll send you an email with a link that will log you in right away.' );
 	}
 
 	render() {

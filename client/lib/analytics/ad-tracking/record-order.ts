@@ -604,7 +604,7 @@ function recordOrderInAkismetGTM(
 
 		window.dataLayer.push( purchaseEventMeta );
 
-		debug( `recordOrderInAkismetGTM: Record Akismet GTM purchase`, purchaseEventMeta );
+		debug( 'recordOrderInAkismetGTM: Record Akismet GTM purchase', purchaseEventMeta );
 	}
 }
 
@@ -643,7 +643,7 @@ function recordOrderInJetpackGTM(
 
 		window.dataLayer.push( purchaseEventMeta );
 
-		debug( `recordOrderInJetpackGTM: Record Jetpack GTM purchase`, purchaseEventMeta );
+		debug( 'recordOrderInJetpackGTM: Record Jetpack GTM purchase', purchaseEventMeta );
 	}
 }
 
@@ -669,7 +669,7 @@ function recordOrderInParsely( wpcomJetpackCartInfo: WpcomJetpackCartInfo ): voi
 			window.PARSELY && window.PARSELY.conversions.trackPurchase( cartContents );
 		} )
 		.then( () => {
-			debug( `recordOrderInParsely: Record Parsely purchase`, cartContents );
+			debug( 'recordOrderInParsely: Record Parsely purchase', cartContents );
 		} )
 		.catch( ( error ) => {
 			debug( 'recordOrderInParsely: Error loading Parsely', error );
@@ -750,7 +750,7 @@ function recordOrderInWooGTM(
 
 			window.dataLayer.push( purchaseEventMeta );
 
-			debug( `recordOrderInWooGTM: Record Woo GTM purchase`, purchaseEventMeta );
+			debug( 'recordOrderInWooGTM: Record Woo GTM purchase', purchaseEventMeta );
 		} )
 		.catch( ( error ) => {
 			debug( 'recordOrderInWooGTM: Error loading GTM container', error );

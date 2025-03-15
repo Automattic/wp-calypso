@@ -28,7 +28,7 @@ jest.mock( 'react-router-dom', () => ( {
 	...( jest.requireActual( 'react-router-dom' ) as object ),
 	useLocation: jest.fn().mockImplementation( () => ( {
 		pathname: '/setup/import-focused/migrationHandler',
-		search: `?from=self-hosted.site`,
+		search: '?from=self-hosted.site',
 		hash: '',
 		state: undefined,
 	} ) ),

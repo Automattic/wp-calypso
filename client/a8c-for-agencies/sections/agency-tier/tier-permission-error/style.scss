@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .agency-tier-permission-error__layout {
 	.hosting-dashboard-layout__container {
@@ -69,11 +70,11 @@
 	}
 
 	.agency-tier-permission-error__content-heading {
-		@include a4a-font-heading-xl;
+		@include heading-x-large;
 	}
 
 	.agency-tier-permission-error__content-description {
-		@include a4a-font-body-md;
+		@include body-medium;
 	}
 
 	a.components-button {

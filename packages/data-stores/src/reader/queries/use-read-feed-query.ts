@@ -28,7 +28,7 @@ export type ReadFeedResponse = {
 	subscription_id?: number; // Only present if the user is subscribed to the feed.
 };
 
-const useReadFeedQuery = ( feedId?: number | string ) => {
+const useReadFeedQuery = ( enabled: boolean, feedId?: number | string ) => {
 	return useQuery( {
 		queryKey: [ 'read', 'feeds', Number( feedId ) ],
 		queryFn: async () => {
@@ -38,7 +38,7 @@ const useReadFeedQuery = ( feedId?: number | string ) => {
 				method: 'GET',
 			} );
 		},
-		enabled: isValidId( feedId ),
+		enabled: enabled && isValidId( feedId ),
 	} );
 };
 

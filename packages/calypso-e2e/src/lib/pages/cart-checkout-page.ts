@@ -8,14 +8,14 @@ const selectors = {
 	modalContinueButton: '.checkout-modal__content button:text("Continue")',
 
 	// Banner
-	dismissBanner: `button[aria-label="Dismiss"]`,
+	dismissBanner: 'button[aria-label="Dismiss"]',
 
 	// Cart item
 	cartItem: ( itemName: string ) =>
 		`[data-testid="review-order-step--visible"] .checkout-line-item >> text=${ itemName.trim() }`,
 	removeCartItemButton: ( itemName: string ) =>
 		`[data-testid="review-order-step--visible"] button[aria-label*="Remove ${ itemName.trim() } from cart"]`,
-	cartItems: `[data-testid="review-order-step--visible"] .checkout-line-item`,
+	cartItems: '[data-testid="review-order-step--visible"] .checkout-line-item',
 
 	// Order Summary
 	editOrderButton: 'button[aria-label="Edit your order"]',
@@ -25,9 +25,9 @@ const selectors = {
 	saveOrderButton: 'button[aria-label="Save your order"]',
 
 	// Registrar information
-	firstNameInput: `input[aria-describedby="validation-field-first-name"]`,
-	lastNameInput: `input[aria-describedby="validation-field-last-name"]`,
-	phoneInput: `input[name="phone"]`,
+	firstNameInput: 'input[aria-describedby="validation-field-first-name"]',
+	lastNameInput: 'input[aria-describedby="validation-field-last-name"]',
+	phoneInput: 'input[name="phone"]',
 	phoneSelect: 'select.phone-input__country-select',
 	countrySelect: 'select[aria-describedby="country-selector-description"]',
 	addressInput: 'input[aria-describedby="validation-field-address-1"]',
@@ -38,8 +38,8 @@ const selectors = {
 		'button[aria-label="Continue with the entered contact details"]',
 
 	// Tax information
-	countryCode: `select[aria-labelledby="country-selector-label"]`,
-	postalCode: `input[id="contact-postal-code"]`,
+	countryCode: 'select[aria-labelledby="country-selector-label"]',
+	postalCode: 'input[id="contact-postal-code"]',
 	submitBillingInformationButton:
 		'[data-testid="contact-form--visible"] button.checkout-button.is-status-primary',
 
@@ -48,7 +48,7 @@ const selectors = {
 		`label[for*="existingCard"]:has-text("${ cardHolderName }")`,
 
 	// Payment field
-	cardholderName: `input[id="cardholder-name"]`,
+	cardholderName: 'input[id="cardholder-name"]',
 	cardNumberFrame: 'iframe[title="Secure card number input frame"]',
 	cardNumberInput: 'input[data-elements-stable-field-name="cardNumber"]',
 	cardExpiryFrame: 'iframe[title="Secure expiration date input frame"]',
@@ -57,16 +57,16 @@ const selectors = {
 	cardCVVInput: 'input[data-elements-stable-field-name="cardCvc"]',
 
 	// Checkout elements
-	couponCodeInputButton: `button:text("Have a coupon?"):visible`,
-	couponCodeInput: `input[id="order-review-coupon"]`,
-	couponCodeApplyButton: `button:text("Apply")`,
+	couponCodeInputButton: 'button:text("Have a coupon?"):visible',
+	couponCodeInput: 'input[id="order-review-coupon"]',
+	couponCodeApplyButton: 'button:text("Apply")',
 	disabledButton: 'button[disabled]:has-text("Processing")',
-	paymentButton: `.checkout-submit-button button`,
+	paymentButton: '.checkout-submit-button button',
 	totalAmount:
 		envVariables.VIEWPORT_NAME === 'mobile'
 			? '.wp-checkout__total-price'
 			: '.wp-checkout-order-summary__total-price',
-	purchaseButton: `.checkout-submit-button button:has-text("Pay")`,
+	purchaseButton: '.checkout-submit-button button:has-text("Pay")',
 	thirdPartyDeveloperCheckboxLabel:
 		'You agree that an account may be created on a third party developer’s site related to the products you have purchased.',
 
@@ -292,7 +292,7 @@ export class CartCheckoutPage {
 	async enterPaymentDetails( paymentDetails: PaymentDetails ): Promise< void > {
 		// Click on the Credit or debit card input in order
 		// to expand the fields.
-		const cardInputLocator = this.page.locator( `span:has-text("Credit or debit card")` );
+		const cardInputLocator = this.page.locator( 'span:has-text("Credit or debit card")' );
 		await cardInputLocator.click();
 
 		// Begin filling in the card details from

@@ -5,13 +5,14 @@ import { SiteExcerptData } from '@automattic/sites';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
-import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/url';
+import { useSelector } from 'calypso/state';
+import { getSiteAdminUrl, getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { HOW_TO_MIGRATE_OPTIONS } from '../constants';
 import { useIsSiteAdmin } from '../hooks/use-is-site-admin';
 import { useSiteData } from '../hooks/use-site-data';
@@ -57,7 +58,6 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_STARTED,
 			STEPS.ERROR,
 			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
-			STEPS.SITE_MIGRATION_SOURCE_URL,
 			STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS,
 			STEPS.SITE_MIGRATION_CREDENTIALS,
 			STEPS.SITE_MIGRATION_ALREADY_WPCOM,
@@ -110,14 +110,13 @@ const siteMigration: Flow = {
 		const siteSlugParam = useSiteSlugParam();
 		const urlQueryParams = useQuery();
 		const fromQueryParam = urlQueryParams.get( 'from' );
+		const actionQueryParam = urlQueryParams.get( 'action' );
 		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
-		const { data: urlData, isLoading: isLoadingFromData } = useAnalyzeUrlQuery(
-			fromQueryParam || '',
-			true
-		);
 
-		const isFromSiteWordPress = ! isLoadingFromData && urlData?.platform === 'wordpress';
 		const { get, sessionId } = useFlowState();
+
+		const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
+		const siteWooCommerceUrl = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) );
 
 		const exitFlow = ( to: string ) => {
 			return window.location.assign( addQueryArgs( { sessionId }, to ) );
@@ -208,6 +207,16 @@ const siteMigration: Flow = {
 						case 'select-site': {
 							const { ID: newSiteId, slug: newSiteSlug } =
 								providedDependencies.site as SiteExcerptData;
+
+							// If the action is migrate, navigate to the DIY/DIFM selector screen.
+							if ( 'migrate' === actionQueryParam ) {
+								return navigate(
+									addQueryArgs(
+										{ siteId: newSiteId, siteSlug: newSiteSlug, from: fromQueryParam },
+										STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug
+									)
+								);
+							}
 							return navigate(
 								addQueryArgs(
 									{ siteId: newSiteId, siteSlug: newSiteSlug, from: fromQueryParam },
@@ -223,7 +232,12 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_CREATION_STEP.slug: {
-					return navigate( addQueryArgs( { from: fromQueryParam }, STEPS.PROCESSING.slug ) );
+					const queryArgs = {
+						from: fromQueryParam,
+						skipMigration: 'import' === actionQueryParam ? true : undefined,
+					};
+
+					return navigate( addQueryArgs( queryArgs, STEPS.PROCESSING.slug ) );
 				}
 
 				case STEPS.PROCESSING.slug: {
@@ -244,6 +258,17 @@ const siteMigration: Flow = {
 								)
 							);
 						}
+
+						// If the action is migrate, navigate to the DIY/DIFM selector screen.
+						if ( 'migrate' === actionQueryParam ) {
+							return navigate(
+								addQueryArgs(
+									{ siteId, siteSlug, from: fromQueryParam },
+									STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug
+								)
+							);
+						}
+
 						return navigate(
 							addQueryArgs(
 								{ siteId, siteSlug, from: fromQueryParam },
@@ -274,7 +299,7 @@ const siteMigration: Flow = {
 									option: 'content',
 									backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }`,
 								},
-								`/setup/site-setup/importerWordpress`
+								'/setup/site-setup/importerWordpress'
 							)
 						);
 					}
@@ -344,10 +369,7 @@ const siteMigration: Flow = {
 					if ( providedDependencies?.goToCheckout ) {
 						let redirectAfterCheckout = STEPS.SITE_MIGRATION_INSTRUCTIONS.slug;
 
-						if (
-							providedDependencies?.userAcceptedDeal ||
-							urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME
-						) {
+						if ( urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
 							redirectAfterCheckout = STEPS.SITE_MIGRATION_CREDENTIALS.slug;
 						}
 
@@ -360,7 +382,6 @@ const siteMigration: Flow = {
 							`/setup/${ flowPath }/${ redirectAfterCheckout }`
 						);
 
-						urlQueryParams.delete( 'showModal' );
 						goToCheckout( {
 							flowName: flowPath,
 							stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
@@ -392,22 +413,6 @@ const siteMigration: Flow = {
 							STEPS.SITE_MIGRATION_STARTED.slug
 						)
 					);
-				}
-
-				//TODO: Remove this step, it is not used anywhere.
-				case STEPS.SITE_MIGRATION_SOURCE_URL.slug: {
-					const { from } = providedDependencies as {
-						from: string;
-					};
-					const nextStepUrl = addQueryArgs(
-						{ from, siteSlug, siteId },
-						STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
-					);
-					// Navigate to the assisted migration step.
-					return navigate( nextStepUrl, {
-						siteId,
-						siteSlug,
-					} );
 				}
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {
@@ -602,6 +607,15 @@ const siteMigration: Flow = {
 						return exitFlow( addQueryArgs( { ref: 'site-migration' }, `/import/${ siteSlug }` ) );
 					}
 
+					if ( entryPoint === 'wp-admin' ) {
+						if ( null !== siteAdminUrl ) {
+							window.location.replace( `${ siteAdminUrl }import.php` );
+							return;
+						}
+						// Unexpected behavior probably caused by the user tinkering with the URL. Redirect to /start.
+						return exitFlow( '/start' );
+					}
+
 					return navigate(
 						addQueryArgs( { siteSlug, siteId }, STEPS.SITE_MIGRATION_IDENTIFY.slug )
 					);
@@ -618,25 +632,22 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
-					if ( urlQueryParams.has( 'showModal' ) || ! isFromSiteWordPress ) {
-						urlQueryParams.delete( 'showModal' );
-						return navigate( `${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?${ urlQueryParams }` );
-					}
-
-					// If the user selected the "Do it for me" option, we should take them back to the how to migrate step skipping
-					// the modal.
-					if ( urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
-						return navigate( `${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?${ urlQueryParams }` );
-					}
-
-					if ( isFromSiteWordPress ) {
-						urlQueryParams.set( 'showModal', 'true' );
-					}
-
-					return navigate( `site-migration-upgrade-plan?${ urlQueryParams.toString() }` );
+					return navigate( `${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?${ urlQueryParams }` );
 				}
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {
+					if ( entryPoint === 'entrepreneur-signup' ) {
+						// Note that the main entrepreneur flow takes users into the customize your store (CYS) UI,
+						// but that's a bit abrupt for users who've gone through this secondary flow.
+						if ( siteWooCommerceUrl ) {
+							return exitFlow( siteWooCommerceUrl );
+						} else if ( siteAdminUrl ) {
+							return exitFlow( siteAdminUrl );
+						}
+
+						return exitFlow( `/home/${ siteId }` );
+					}
+
 					return navigate( `${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?${ urlQueryParams }` );
 				}
 

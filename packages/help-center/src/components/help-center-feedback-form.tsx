@@ -26,7 +26,7 @@ const HelpCenterFeedbackForm = ( { postId }: { postId: number } ) => {
 		setStartedFeedback( true );
 		setAnswerValue( value );
 
-		recordTracksEvent( `calypso_inlinehelp_article_feedback_click`, {
+		recordTracksEvent( 'calypso_inlinehelp_article_feedback_click', {
 			did_the_article_help: value === 1 ? 'yes' : 'no',
 			post_id: postId,
 		} );
