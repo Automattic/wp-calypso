@@ -59,7 +59,8 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 	const recordSearchSiteSubscribed = useRecordSearchSiteSubscribed();
 
 	// Fetch feed and site data.
-	const { data: feed, isLoading: isFeedLoading } = Reader.useReadFeedQuery( feedId );
+	const queryFeed: boolean = ! isWpcomFeed; // No need to query feed data for WPCOM feeds.
+	const { data: feed, isLoading: isFeedLoading } = Reader.useReadFeedQuery( queryFeed, feedId );
 	const { data: site, isLoading: isSiteLoading } = Reader.useReadFeedSiteQuery( Number( blogId ) );
 
 	if ( isFeedLoading || ( isWpcomFeed && isSiteLoading ) ) {
