@@ -64,7 +64,7 @@
 		"@size-limit/file": "^8.2.6",
 		"@wordpress/dependency-extraction-webpack-plugin": "^6.19.0",
 		"autoprefixer": "^10.2.5",
-		"babel-jest": "^29.6.1",
+		"babel-jest": "^29.7.0",
 		"gettext-parser": "^6.0.0",
 		"html-webpack-plugin": "^5.6.3",
 		"jest": "^29.7.0",

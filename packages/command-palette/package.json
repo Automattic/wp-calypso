@@ -54,7 +54,7 @@
 		"@wordpress/react-i18n": "^4.19.0",
 		"@wordpress/url": "^4.19.0",
 		"clsx": "^2.1.1",
-		"cmdk": "^0.2.0",
+		"cmdk": "^0.2.1",
 		"utility-types": "^3.10.0"
 	},
 	"peerDependencies": {
