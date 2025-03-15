@@ -175,7 +175,7 @@
 		"@types/jest": "^29.5.14",
 		"@types/lodash": "^4.14.199",
 		"@types/node": "^22.7.5",
-		"@types/page": "^1.11.5",
+		"@types/page": "^1.11.9",
 		"@types/qs": "^6.9.7",
 		"@types/react": "^18.3.18",
 		"@types/react-modal": "^3.13.1",

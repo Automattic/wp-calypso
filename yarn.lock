@@ -8873,10 +8873,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/page@npm:^1.11.5":
-  version: 1.11.5
-  resolution: "@types/page@npm:1.11.5"
-  checksum: 3155317a1759363d408aa7fc22210147dcbf85fc053142fe84d33a2bba3a0072aa51b8215b1d0fa34b1679ec3a86cb3e76e2204e86ef625cce9aa674440a4e84
+"@types/page@npm:^1.11.9":
+  version: 1.11.9
+  resolution: "@types/page@npm:1.11.9"
+  checksum: a6cdc095036281fff47a727b0b346d52f25ad2bf79460851cd903c99c30e6a04cc499db82fcfa74740ab813d4a6c1772fccdc17b360fbce912549504635bc893
   languageName: node
   linkType: hard
 
@@ -35911,7 +35911,7 @@ __metadata:
     "@types/jest": "npm:^29.5.14"
     "@types/lodash": "npm:^4.14.199"
     "@types/node": "npm:^22.7.5"
-    "@types/page": "npm:^1.11.5"
+    "@types/page": "npm:^1.11.9"
     "@types/qs": "npm:^6.9.7"
     "@types/react": "npm:^18.3.18"
     "@types/react-modal": "npm:^3.13.1"
