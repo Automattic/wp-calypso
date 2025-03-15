@@ -206,7 +206,7 @@
 		"browserslist": "^4.16.0",
 		"calypso": "workspace:^",
 		"calypso-codemods": "workspace:^",
-		"cmdk": "^0.2.0",
+		"cmdk": "^0.2.1",
 		"config": "^3.3.6",
 		"d3-time-format": "^4.1.0",
 		"debug": "^4.3.3",

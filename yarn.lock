@@ -654,7 +654,7 @@ __metadata:
     "@wordpress/react-i18n": "npm:^4.19.0"
     "@wordpress/url": "npm:^4.19.0"
     clsx: "npm:^2.1.1"
-    cmdk: "npm:^0.2.0"
+    cmdk: "npm:^0.2.1"
     typescript: "npm:^5.5.4"
     utility-types: "npm:^3.10.0"
   peerDependencies:
@@ -13775,7 +13775,7 @@ __metadata:
     circular-dependency-plugin: "npm:^5.2.2"
     clipboard: "npm:^2.0.6"
     clsx: "npm:^2.1.1"
-    cmdk: "npm:^0.2.0"
+    cmdk: "npm:^0.2.1"
     component-closest: "npm:^1.0.1"
     component-event: "npm:^0.2.1"
     component-file-picker: "npm:^0.2.1"
@@ -14570,16 +14570,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cmdk@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "cmdk@npm:0.2.0"
+"cmdk@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "cmdk@npm:0.2.1"
   dependencies:
     "@radix-ui/react-dialog": "npm:1.0.0"
-    command-score: "npm:0.1.2"
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: bd706c78fc933562acc5723bb4663bad68b34f4e065405de16d400a76ed4c36633de63ac3b6458e8aa93aba10ca5116563d1fc00b9fb298f6876175e190c3479
+  checksum: 8cc3f256a5e40f7ac535dd6b3eabfeff2ff817d694dd569047efafb8620fff9575d0612ed023886e98e8f8595947458fee562389b19be2eb2f3c4835117cac7c
   languageName: node
   linkType: hard
 
@@ -14773,13 +14772,6 @@ __metadata:
   version: 2.0.3
   resolution: "comma-separated-tokens@npm:2.0.3"
   checksum: 91f90f1aae320f1755d6957ef0b864fe4f54737f3313bd95e0802686ee2ca38bff1dd381964d00ae5db42912dd1f4ae5c2709644e82706ffc6f6842a813cdd67
-  languageName: node
-  linkType: hard
-
-"command-score@npm:0.1.2":
-  version: 0.1.2
-  resolution: "command-score@npm:0.1.2"
-  checksum: 0fe355e311f339c217befade6337e734c8e199eaf8442cf65233461134b6bac8a53c85c2c1c929f1b1b8c6125772a50d55991a27ea486cdd846e8c083c852706
   languageName: node
   linkType: hard
 
@@ -35953,7 +35945,7 @@ __metadata:
     chalk: "npm:^4.1.2"
     check-node-version: "npm:^4.0.2"
     chroma-js: "npm:^2.6.0"
-    cmdk: "npm:^0.2.0"
+    cmdk: "npm:^0.2.1"
     config: "npm:^3.3.6"
     css-loader: "npm:^6.11.0"
     d3-time-format: "npm:^4.1.0"

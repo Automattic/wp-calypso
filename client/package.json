@@ -117,7 +117,7 @@
 		"circular-dependency-plugin": "^5.2.2",
 		"clipboard": "^2.0.6",
 		"clsx": "^2.1.1",
-		"cmdk": "^0.2.0",
+		"cmdk": "^0.2.1",
 		"component-closest": "^1.0.1",
 		"component-file-picker": "^0.2.1",
 		"cookie": "^0.7.0",
