@@ -8,9 +8,9 @@ import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversation/dialog';
 import FeedPreview from 'calypso/landing/subscriptions/components/add-sites-form/feed-preview/feed-preview';
-import { isValidUrl } from 'calypso/landing/subscriptions/helpers';
 import { useAddSitesModalNotices } from 'calypso/landing/subscriptions/hooks';
 import { useRecordSiteSubscribed } from 'calypso/landing/subscriptions/tracks';
+import { isValidUrl } from 'calypso/lib/importer/url-validation';
 import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import './styles.scss';
 
