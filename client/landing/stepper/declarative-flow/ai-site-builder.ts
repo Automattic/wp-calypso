@@ -162,10 +162,10 @@ const aiSiteBuilder: Flow = {
 					window.location.assign(
 						addQueryArgs( `/checkout/${ encodeURIComponent( siteSlugFromSiteData || '' ) }`, {
 							redirect_to: addQueryArgs( checkoutRedirectUrl, {
-								'ai-step': 'checkout_success',
+								checkout: 'success',
 							} ),
 							checkoutBackUrl: addQueryArgs( checkoutRedirectUrl, {
-								'ai-step': 'checkout_cancel',
+								checkout: 'cancel',
 							} ),
 							signup: 1,
 							'big-sky-checkout': 1,
