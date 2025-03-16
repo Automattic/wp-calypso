@@ -83,7 +83,7 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 				</ul>
 
 				{
-					// Show stream if preview is available otherwise show a message.
+					// Show stream if preview is available otherwise show a message. Commonly preview is not available for new feeds.
 					feed?.feed_ID ? (
 						<div className="feed-preview__stream">
 							<Stream
