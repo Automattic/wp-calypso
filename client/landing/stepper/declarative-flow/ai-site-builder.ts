@@ -2,6 +2,7 @@ import { Onboard } from '@automattic/data-stores';
 import { getAssemblerDesign } from '@automattic/design-picker';
 import { addPlanToCart, addProductsToCart, AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
 import { resolveSelect, useDispatch as useWpDataDispatch } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -64,7 +65,7 @@ const aiSiteBuilder: Flow = {
 		] );
 	},
 	useStepNavigation( currentStep, navigate ) {
-		const { siteSlug: siteSlugFromSiteData } = useSiteData();
+		const { siteSlug: siteSlugFromSiteData, siteId: siteIdFromSiteData } = useSiteData();
 		const { setDesignOnSite, setStaticHomepageOnSite, setIntentOnSite } =
 			useWpDataDispatch( SITE_STORE );
 
@@ -156,8 +157,19 @@ const aiSiteBuilder: Flow = {
 						);
 					}
 
+					const site = await resolveSelect( SITE_STORE ).getSite( siteIdFromSiteData );
+					const checkoutRedirectUrl = `${ site.URL }/wp-admin/site-editor.php?canvas=edit&p=%2F`;
 					window.location.assign(
-						`/checkout/${ encodeURIComponent( siteSlugFromSiteData || '' ) }`
+						addQueryArgs( `/checkout/${ encodeURIComponent( siteSlugFromSiteData || '' ) }`, {
+							redirect_to: addQueryArgs( checkoutRedirectUrl, {
+								'ai-step': 'checkout_success',
+							} ),
+							checkoutBackUrl: addQueryArgs( checkoutRedirectUrl, {
+								'ai-step': 'checkout_cancel',
+							} ),
+							signup: 1,
+							'big-sky-checkout': 1,
+						} )
 					);
 				}
 
