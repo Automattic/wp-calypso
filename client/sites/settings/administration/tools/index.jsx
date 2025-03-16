@@ -112,9 +112,9 @@ class SiteTools extends Component {
 			? translate( 'Transfer site' )
 			: translate( 'Transfer your site' );
 		const startSiteTransferText = fixMe( {
-			text: 'Transfer your site, plan and purchases to a new or existing site member.',
+			text: 'Transfer your site, plan, and purchases to a new or existing site member.',
 			newCopy: translate(
-				'Transfer your site, plan and purchases to a new or existing site member.'
+				'Transfer your site, plan, and purchases to a new or existing site member.'
 			),
 			oldCopy: translate( 'Transfer your site, plan and purchases.' ),
 		} );
