@@ -79,7 +79,7 @@ button {
 .newsletter-setup,
 .newsletter-goals,
 .plans,
-.domains,
+.domains:not(:has(.step-container-v2)),
 .patterns,
 .anchor-fm,
 .subscribers,

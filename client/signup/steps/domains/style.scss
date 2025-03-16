@@ -250,7 +250,7 @@ body.is-section-stepper .domains__step-content,
 }
 
 .onboarding {
-	&.domains {
+	&.domains:not(:has(.step-container-v2)) {
 		&.step-route {
 			padding: 60px 12px 0 12px;
 
