@@ -3,12 +3,12 @@ import clsx from 'clsx';
 import { ReactNode, useMemo } from 'react';
 import {
 	StepContainerV2InternalProvider,
-	StepContainerV2InternalContextType,
+	type StepContainerV2InternalContextType,
 } from '../../contexts/StepContainerV2InternalContext';
 
 import './style.scss';
 
-interface StepContainerV2Props {
+export interface StepContainerV2Props {
 	className?: string;
 	topBar?: ReactNode;
 	heading?: ReactNode;

@@ -1,0 +1,21 @@
+@import '../../../../styles/mixins';
+
+.step-container-v2__content--three-columns-on-right-layout {
+	display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4rem;
+
+    @include step-large-viewport {
+      flex-direction: row;
+      align-items: flex-start;
+    }
+}
+
+.three-columns-on-right-layout__main {
+  flex:2
+}
+
+.three-columns-on-right-layout__right {
+  flex: 1
+}

@@ -9,3 +9,22 @@ export const withStepContainerV2ContextDecorator = ( Story: React.ComponentType 
 		</StepContainerV2Provider>
 	);
 };
+
+export function WireframePlaceholder( {
+	height,
+	children,
+}: {
+	height?: number;
+	children?: React.ReactNode;
+} ) {
+	const style = {
+		background: '#ff80ff',
+		borderRadius: 10,
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		...( height && { height } ),
+	};
+
+	return <div style={ style }>{ children }</div>;
+}

@@ -9,3 +9,4 @@ export { StickyBottomBar } from './components/StickyBottomBar/StickyBottomBar';
 
 export { FullWidthLayout } from './wireframes/FullWidthLayout/FullWidthLayout';
 export { SixColumnsCenteredLayout } from './wireframes/SixColumnsCenteredLayout/SixColumnsCenteredLayout';
+export { ThreeColumnsOnRightLayout } from './wireframes/ThreeColumnsOnRightLayout/ThreeColumnsOnRightLayout';
