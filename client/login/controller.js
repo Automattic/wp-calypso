@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
+import { loadScript } from '@automattic/load-script';
 import wpcomRequest from 'wpcom-proxy-request';
 import {
 	isGravPoweredOAuth2Client,
@@ -21,6 +22,21 @@ import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 import HandleEmailedLinkFormJetpackConnect from './magic-login/handle-emailed-link-form-jetpack-connect';
 import QrCodeLoginPage from './qr-code-login-page';
 import WPLogin from './wp-login';
+
+// Utility function to generate an authorization nonce
+// Uses a promise to ensure we only request one nonce even if
+// multiple authentication flows are triggered in parallel
+let noncePromise = null;
+const getAuthorizationNonce = () => {
+	if ( ! noncePromise ) {
+		noncePromise = wpcomRequest( {
+			path: '/generate-authorization-nonce',
+			apiNamespace: 'wpcom/v2',
+			method: 'GET',
+		} );
+	}
+	return noncePromise;
+};
 
 const enhanceContextWithLogin = ( context ) => {
 	const {
@@ -219,42 +235,44 @@ export function googleAuth( context, next ) {
 		return `https://${ host + loginPath( { socialService: 'google' } ) }`;
 	};
 
-	// First, fetch a nonce for security (same as the social button implementation)
 	const fetchNonceAndRedirect = async () => {
 		try {
 			// Get the redirect URI
 			const redirectUri = getRedirectUri();
 
-			// Fetch authorization nonce from the WordPress.com API
-			const response = await wpcomRequest( {
-				path: '/generate-authorization-nonce',
-				apiNamespace: 'wpcom/v2',
-				method: 'GET',
-			} );
-
+			// Fetch authorization nonce using the shared utility function
+			// Google social button uses this for security, so we need it here too
+			const response = await getAuthorizationNonce();
 			const state = response.nonce;
 
-			// Create the state object with the redirect URL and Jetpack flag
+			// Create state object with necessary data
 			const stateObject = {
 				redirect_to: query?.redirect_to || '/',
 				is_jetpack: true,
 				locale: context.params.lang,
+				wpcomNonce: state,
 			};
 
-			// Build the authorization URL using the oauth2/authorize endpoint
-			const redirectUrl = `https://public-api.wordpress.com/oauth2/authorize?client_id=${ config(
-				'google_oauth_client_id'
-			) }&redirect_uri=${ encodeURIComponent(
-				redirectUri
-			) }&response_type=code&scope=openid%20profile%20email&state=${ encodeURIComponent(
-				JSON.stringify( {
-					...stateObject,
-					wpcomNonce: state, // Include the nonce for secure validation
-				} )
-			) }`;
+			// Initialize Google sign-in client
+			if ( ! window?.google?.accounts?.oauth2 ) {
+				await loadScript( 'https://accounts.google.com/gsi/client' );
+				if ( ! window?.google?.accounts?.oauth2 ) {
+					throw new Error( 'Failed to load Google Identity Services API' );
+				}
+			}
 
-			// Redirect to Google's OAuth URL
-			window.location.href = redirectUrl;
+			// Initialize Google OAuth client - similar to GoogleSocialButton
+			const googleOAuth = window.google.accounts.oauth2;
+			googleOAuth
+				.initCodeClient( {
+					client_id: config( 'google_oauth_client_id' ),
+					scope: 'openid profile email',
+					ux_mode: 'redirect',
+					redirect_uri: redirectUri,
+					state: JSON.stringify( stateObject ),
+					callback: () => {}, // Not used in redirect mode
+				} )
+				.requestCode();
 		} catch ( error ) {
 			// If there's an error, display the login page with an error message
 			if ( process.env.NODE_ENV !== 'production' ) {
@@ -294,58 +312,142 @@ export function appleAuth( context, next ) {
 		return `https://${ host + loginPath( { socialService: 'apple' } ) }`;
 	};
 
-	// First, fetch a nonce for security
-	const fetchNonceAndRedirect = async () => {
+	// Check if this is a redirect back from Apple with authentication data
+	const handleSocialResponseFromRedirect = () => {
+		// Apple puts the authentication data in the URL fragment (after the #)
+		const hash = window.location.hash;
+		if ( ! hash || hash.length <= 1 ) {
+			return false;
+		}
+
+		// Parse the URL fragment into key-value pairs
+		const fragmentParams = {};
+		const fragmentString = hash.substring( 1 ); // remove the # character
+		const pairs = fragmentString.split( '&' );
+		for ( const pair of pairs ) {
+			const [ key, value ] = pair.split( '=' );
+			if ( key && value ) {
+				fragmentParams[ key ] = decodeURIComponent( value );
+			}
+		}
+
+		// Extract the relevant data from the fragment
+		const { client_id, id_token, state: stateString, user_email, user_name } = fragmentParams;
+
+		// Skip if we don't have client_id or if it's not from Apple
+		if ( ! client_id || client_id !== config( 'apple_oauth_client_id' ) ) {
+			return false;
+		}
+
+		// Validate the state against our stored state for CSRF protection
+		const storedOauth2State = window.sessionStorage.getItem( 'siwa_state' );
+		window.sessionStorage.removeItem( 'siwa_state' );
+
+		if ( ! stateString || ! storedOauth2State ) {
+			return false;
+		}
+
+		// Apple may return the state either as a direct value or as part of a JSON object
+		// We need to handle both cases
+		let redirectTo = '/';
+		let isStateValid = false;
+
+		// First, try direct comparison (if state is just the oauth2State value)
+		if ( stateString === storedOauth2State ) {
+			isStateValid = true;
+		} else {
+			// Try to parse as JSON if it's not a direct match
+			try {
+				const stateData = JSON.parse( stateString );
+				// Check if the JSON contains our oauth2State
+				if ( stateData.oauth2State === storedOauth2State ) {
+					isStateValid = true;
+					// If we successfully parsed JSON, we can extract the redirect_to
+					redirectTo = stateData.redirect_to || '/';
+				}
+			} catch ( e ) {
+				// Not a valid JSON, and not a direct match - state validation fails
+				isStateValid = false;
+			}
+		}
+
+		// If state validation failed, abort
+		if ( ! isStateValid ) {
+			return false;
+		}
+
+		// Create an authentication token query string with the Apple response data
+		const authParams = new URLSearchParams();
+		authParams.append( 'service', 'apple' );
+		if ( id_token ) {
+			authParams.append( 'id_token', id_token );
+		}
+		if ( user_email ) {
+			authParams.append( 'user_email', user_email );
+		}
+		if ( user_name ) {
+			authParams.append( 'user_name', user_name );
+		}
+
+		// Redirect to the destination URL with the auth token
+		const redirectUrl = redirectTo.includes( '?' )
+			? `${ redirectTo }&${ authParams.toString() }`
+			: `${ redirectTo }?${ authParams.toString() }`;
+
+		page.redirect( redirectUrl );
+		return true;
+	};
+
+	// If we have a response from Apple, handle it
+	if ( handleSocialResponseFromRedirect() ) {
+		return;
+	}
+
+	// If no response, initialize Apple auth
+	const initializeAppleAuth = async () => {
 		try {
 			// Get the redirect URI
 			const redirectUri = getRedirectUri();
 
-			// Fetch authorization nonce from the WordPress.com API
-			const response = await wpcomRequest( {
-				path: '/generate-authorization-nonce',
-				apiNamespace: 'wpcom/v2',
-				method: 'GET',
-			} );
+			// Generate a random oauth2State value like AppleLoginButton does
+			// We don't need to call the nonce endpoint as Apple implementation
+			// creates a random state locally
+			const oauth2State = String( Math.floor( Math.random() * 10e9 ) );
+			// Store state in session storage like AppleLoginButton does
+			window.sessionStorage.setItem( 'siwa_state', oauth2State );
 
-			const state = response.nonce;
-
-			// Create the state object with the redirect URL and Jetpack flag
-			const stateObject = {
+			// Create the state object with relevant data
+			const stateData = {
 				redirect_to: query?.redirect_to || '/',
 				is_jetpack: true,
 				locale: context.params.lang,
+				originalUrlPath: window.location.pathname,
+				queryString: window.location.search || null,
 			};
 
-			// Apple uses a different approach - initializing the Apple JS SDK
-			const initializeAppleAuth = () => {
-				// Load Apple's auth script
-				const appleClientUrl =
-					'https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js';
+			// Use the same approach as AppleLoginButton - load the Apple JS SDK
+			const appleClientUrl =
+				'https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js';
 
-				// Create a script element and append to document
-				const script = document.createElement( 'script' );
-				script.src = appleClientUrl;
-				script.async = true;
-				script.onload = () => {
-					// Initialize Apple's auth system
-					window.AppleID.auth.init( {
-						clientId: config( 'apple_oauth_client_id' ),
-						scope: 'name email',
-						redirectURI: redirectUri,
-						state: JSON.stringify( {
-							...stateObject,
-							wpcomNonce: state,
-						} ),
-					} );
+			await loadScript( appleClientUrl );
 
-					// Trigger the sign-in
-					window.AppleID.auth.signIn();
-				};
-				document.head.appendChild( script );
-			};
+			if ( ! window.AppleID ) {
+				throw new Error( 'Failed to load Apple Sign In SDK' );
+			}
 
-			// Start the Apple auth flow
-			initializeAppleAuth();
+			// Initialize Apple auth - same as in AppleLoginButton
+			window.AppleID.auth.init( {
+				clientId: config( 'apple_oauth_client_id' ),
+				scope: 'name email',
+				redirectURI: redirectUri,
+				state: JSON.stringify( {
+					oauth2State,
+					...stateData,
+				} ),
+			} );
+
+			// Trigger sign in
+			window.AppleID.auth.signIn();
 		} catch ( error ) {
 			// If there's an error, display the login page with an error message
 			if ( process.env.NODE_ENV !== 'production' ) {
@@ -368,7 +470,7 @@ export function appleAuth( context, next ) {
 		}
 	};
 
-	fetchNonceAndRedirect();
+	initializeAppleAuth();
 }
 
 export function githubAuth( context, next ) {
@@ -385,34 +487,30 @@ export function githubAuth( context, next ) {
 		return `https://${ host + loginPath( { socialService: 'github' } ) }`;
 	};
 
-	// Fetch nonce and then redirect
-	const fetchNonceAndRedirect = async () => {
+	// Helper to strip query string - same as in GitHubLoginButton
+	const stripQueryString = ( url ) => {
+		const urlParts = url.split( '?' );
+		return urlParts[ 0 ];
+	};
+
+	// Initialize GitHub auth - matching GitHubLoginButton implementation
+	const initializeGithubAuth = async () => {
 		try {
 			// Get the redirect URI
 			const redirectUri = getRedirectUri();
 
-			// Fetch authorization nonce
-			const response = await wpcomRequest( {
-				path: '/generate-authorization-nonce',
-				apiNamespace: 'wpcom/v2',
-				method: 'GET',
-			} );
-
-			const state = response.nonce;
-
 			// Create the state object with redirect info
+			// GitHub button implementation doesn't use a separate nonce
+			// but embeds state information directly
 			const stateObject = {
 				redirect_to: query?.redirect_to || '/',
 				is_jetpack: true,
 				locale: context.params.lang,
-				wpcomNonce: state,
 			};
 
-			// GitHub uses a different endpoint
+			// Set up scope - same as in GitHubLoginButton
 			const scope = encodeURIComponent( 'read:user,user:email' );
-			const stripQueryString = ( url ) => url.split( '?' )[ 0 ];
-
-			// Build the GitHub authorization URL
+			// Build the authorization URL - same endpoint as GitHubLoginButton uses
 			const redirectUrl = `https://public-api.wordpress.com/wpcom/v2/hosting/github/app-authorize?redirect_uri=${ stripQueryString(
 				redirectUri
 			) }&scope=${ scope }&ux_mode=redirect&state=${ encodeURIComponent(
@@ -422,7 +520,7 @@ export function githubAuth( context, next ) {
 			// Redirect to GitHub's auth URL
 			window.location.href = redirectUrl;
 		} catch ( error ) {
-			// If there's an error, display the login page with an error message
+			// Handle errors consistently with the social button implementation
 			if ( process.env.NODE_ENV !== 'production' ) {
 				// eslint-disable-next-line no-console
 				console.error( 'Error initiating GitHub login:', error );
@@ -443,7 +541,7 @@ export function githubAuth( context, next ) {
 		}
 	};
 
-	fetchNonceAndRedirect();
+	initializeGithubAuth();
 }
 
 function getHandleEmailedLinkFormComponent( flow ) {
