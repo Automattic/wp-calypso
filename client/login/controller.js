@@ -1,11 +1,13 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
+import wpcomRequest from 'wpcom-proxy-request';
 import {
 	isGravPoweredOAuth2Client,
 	isWooOAuth2Client,
 	isPartnerPortalOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
+import { login as loginPath } from 'calypso/lib/paths';
 import { DesktopLoginStart, DesktopLoginFinalize } from 'calypso/login/desktop-login';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
@@ -201,6 +203,247 @@ export function qrCodeLogin( context, next ) {
 	context.primary = <QrCodeLoginPage locale={ context.params.lang } redirectTo={ redirect_to } />;
 
 	next();
+}
+
+export function googleAuth( context, next ) {
+	const { query, isServerSide } = context;
+
+	if ( isServerSide ) {
+		next();
+		return;
+	}
+
+	// Function to get the redirect URI for Google auth
+	const getRedirectUri = () => {
+		const host = typeof window !== 'undefined' && window.location.host;
+		return `https://${ host + loginPath( { socialService: 'google' } ) }`;
+	};
+
+	// First, fetch a nonce for security (same as the social button implementation)
+	const fetchNonceAndRedirect = async () => {
+		try {
+			// Get the redirect URI
+			const redirectUri = getRedirectUri();
+
+			// Fetch authorization nonce from the WordPress.com API
+			const response = await wpcomRequest( {
+				path: '/generate-authorization-nonce',
+				apiNamespace: 'wpcom/v2',
+				method: 'GET',
+			} );
+
+			const state = response.nonce;
+
+			// Create the state object with the redirect URL and Jetpack flag
+			const stateObject = {
+				redirect_to: query?.redirect_to || '/',
+				is_jetpack: true,
+				locale: context.params.lang,
+			};
+
+			// Build the authorization URL using the oauth2/authorize endpoint
+			const redirectUrl = `https://public-api.wordpress.com/oauth2/authorize?client_id=${ config(
+				'google_oauth_client_id'
+			) }&redirect_uri=${ encodeURIComponent(
+				redirectUri
+			) }&response_type=code&scope=openid%20profile%20email&state=${ encodeURIComponent(
+				JSON.stringify( {
+					...stateObject,
+					wpcomNonce: state, // Include the nonce for secure validation
+				} )
+			) }`;
+
+			// Redirect to Google's OAuth URL
+			window.location.href = redirectUrl;
+		} catch ( error ) {
+			// If there's an error, display the login page with an error message
+			if ( process.env.NODE_ENV !== 'production' ) {
+				// eslint-disable-next-line no-console
+				console.error( 'Error initiating Google login:', error );
+			}
+
+			context.store.dispatch( {
+				type: 'NOTICE_CREATE',
+				notice: {
+					status: 'is-error',
+					text: 'Error initiating Google login. Please try again.',
+				},
+			} );
+
+			context.primary = (
+				<WPLogin isJetpack path={ context.path } query={ query } locale={ context.params.lang } />
+			);
+			next();
+		}
+	};
+
+	fetchNonceAndRedirect();
+}
+
+export function appleAuth( context, next ) {
+	const { query, isServerSide } = context;
+
+	if ( isServerSide ) {
+		next();
+		return;
+	}
+
+	// Function to get the redirect URI for Apple auth
+	const getRedirectUri = () => {
+		const host = typeof window !== 'undefined' && window.location.host;
+		return `https://${ host + loginPath( { socialService: 'apple' } ) }`;
+	};
+
+	// First, fetch a nonce for security
+	const fetchNonceAndRedirect = async () => {
+		try {
+			// Get the redirect URI
+			const redirectUri = getRedirectUri();
+
+			// Fetch authorization nonce from the WordPress.com API
+			const response = await wpcomRequest( {
+				path: '/generate-authorization-nonce',
+				apiNamespace: 'wpcom/v2',
+				method: 'GET',
+			} );
+
+			const state = response.nonce;
+
+			// Create the state object with the redirect URL and Jetpack flag
+			const stateObject = {
+				redirect_to: query?.redirect_to || '/',
+				is_jetpack: true,
+				locale: context.params.lang,
+			};
+
+			// Apple uses a different approach - initializing the Apple JS SDK
+			const initializeAppleAuth = () => {
+				// Load Apple's auth script
+				const appleClientUrl =
+					'https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js';
+
+				// Create a script element and append to document
+				const script = document.createElement( 'script' );
+				script.src = appleClientUrl;
+				script.async = true;
+				script.onload = () => {
+					// Initialize Apple's auth system
+					window.AppleID.auth.init( {
+						clientId: config( 'apple_oauth_client_id' ),
+						scope: 'name email',
+						redirectURI: redirectUri,
+						state: JSON.stringify( {
+							...stateObject,
+							wpcomNonce: state,
+						} ),
+					} );
+
+					// Trigger the sign-in
+					window.AppleID.auth.signIn();
+				};
+				document.head.appendChild( script );
+			};
+
+			// Start the Apple auth flow
+			initializeAppleAuth();
+		} catch ( error ) {
+			// If there's an error, display the login page with an error message
+			if ( process.env.NODE_ENV !== 'production' ) {
+				// eslint-disable-next-line no-console
+				console.error( 'Error initiating Apple login:', error );
+			}
+
+			context.store.dispatch( {
+				type: 'NOTICE_CREATE',
+				notice: {
+					status: 'is-error',
+					text: 'Error initiating Apple login. Please try again.',
+				},
+			} );
+
+			context.primary = (
+				<WPLogin isJetpack path={ context.path } query={ query } locale={ context.params.lang } />
+			);
+			next();
+		}
+	};
+
+	fetchNonceAndRedirect();
+}
+
+export function githubAuth( context, next ) {
+	const { query, isServerSide } = context;
+
+	if ( isServerSide ) {
+		next();
+		return;
+	}
+
+	// Function to get the redirect URI for GitHub auth
+	const getRedirectUri = () => {
+		const host = typeof window !== 'undefined' && window.location.host;
+		return `https://${ host + loginPath( { socialService: 'github' } ) }`;
+	};
+
+	// Fetch nonce and then redirect
+	const fetchNonceAndRedirect = async () => {
+		try {
+			// Get the redirect URI
+			const redirectUri = getRedirectUri();
+
+			// Fetch authorization nonce
+			const response = await wpcomRequest( {
+				path: '/generate-authorization-nonce',
+				apiNamespace: 'wpcom/v2',
+				method: 'GET',
+			} );
+
+			const state = response.nonce;
+
+			// Create the state object with redirect info
+			const stateObject = {
+				redirect_to: query?.redirect_to || '/',
+				is_jetpack: true,
+				locale: context.params.lang,
+				wpcomNonce: state,
+			};
+
+			// GitHub uses a different endpoint
+			const scope = encodeURIComponent( 'read:user,user:email' );
+			const stripQueryString = ( url ) => url.split( '?' )[ 0 ];
+
+			// Build the GitHub authorization URL
+			const redirectUrl = `https://public-api.wordpress.com/wpcom/v2/hosting/github/app-authorize?redirect_uri=${ stripQueryString(
+				redirectUri
+			) }&scope=${ scope }&ux_mode=redirect&state=${ encodeURIComponent(
+				JSON.stringify( stateObject )
+			) }`;
+
+			// Redirect to GitHub's auth URL
+			window.location.href = redirectUrl;
+		} catch ( error ) {
+			// If there's an error, display the login page with an error message
+			if ( process.env.NODE_ENV !== 'production' ) {
+				// eslint-disable-next-line no-console
+				console.error( 'Error initiating GitHub login:', error );
+			}
+
+			context.store.dispatch( {
+				type: 'NOTICE_CREATE',
+				notice: {
+					status: 'is-error',
+					text: 'Error initiating GitHub login. Please try again.',
+				},
+			} );
+
+			context.primary = (
+				<WPLogin isJetpack path={ context.path } query={ query } locale={ context.params.lang } />
+			);
+			next();
+		}
+	};
+
+	fetchNonceAndRedirect();
 }
 
 function getHandleEmailedLinkFormComponent( flow ) {
