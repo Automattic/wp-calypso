@@ -7,20 +7,18 @@ import {
 	SubscriptionsPortal,
 } from 'calypso/landing/subscriptions/components/subscription-manager-context';
 import { useSelector } from 'calypso/state';
-import { isUserLoggedIn, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 
 import './style.scss';
 
 const DiscoverAddNew = () => {
 	const translate = useTranslate();
-	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
-	const needsEmailVerification = isLoggedIn && ! isEmailVerified;
 
 	return (
 		<div className="discover-add-new">
 			<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
-				{ needsEmailVerification && (
+				{ ! isEmailVerified && (
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
@@ -31,26 +29,20 @@ const DiscoverAddNew = () => {
 						</a>
 					</Notice>
 				) }
-				<div
-					className={ `discover-add-new__form${ needsEmailVerification ? ' is-disabled' : '' }` }
-				>
+				<div className={ `discover-add-new__form${ isEmailVerified ? '' : ' is-disabled' }` }>
 					<h2 className="discover-add-new__form-title">
 						{ translate( 'Add new sites, newsletters, and RSS feeds to your reading list.' ) }
 					</h2>
 					<AddSitesForm source="discover-add-new" />
 				</div>
-				{ isLoggedIn && (
-					<div
-						className={ `discover-add-new__subscriptions${
-							needsEmailVerification ? ' is-disabled' : ''
-						}` }
-					>
-						<h2 className="discover-add-new__subscriptions-title">
-							{ translate( 'Your subscriptions' ) }
-						</h2>
-						<SiteSubscriptionsList />
-					</div>
-				) }
+				<div
+					className={ `discover-add-new__subscriptions${ isEmailVerified ? '' : ' is-disabled' }` }
+				>
+					<h2 className="discover-add-new__subscriptions-title">
+						{ translate( 'Your subscriptions' ) }
+					</h2>
+					<SiteSubscriptionsList />
+				</div>
 			</SubscriptionManagerContextProvider>
 		</div>
 	);
