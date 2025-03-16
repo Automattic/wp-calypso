@@ -76,32 +76,32 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 				</div>
 			);
 		}
-
-		if ( ! feed?.feed_ID ) {
-			return (
-				<div className="feed-preview__empty">
-					<p>Preview of the feed is not yet available.</p>
-				</div>
-			);
-		}
-
 		return (
 			<>
 				<ul className="feed-preview__site">
 					<ReaderFeedItem feed={ feed } source={ source } onSubscribeToggle={ onSubscribeToggle } />
 				</ul>
 
-				<div className="feed-preview__stream">
-					<Stream
-						className="no-padding"
-						streamKey={ `feed:${ feed?.feed_ID }` }
-						showFollowButton={ false }
-						showBack={ false }
-						trackScrollPage={ () => {} }
-						useCompactCards
-						suppressSiteNameLink
-					/>
-				</div>
+				{
+					// Show stream if preview is available otherwise show a message.
+					feed?.feed_ID ? (
+						<div className="feed-preview__stream">
+							<Stream
+								className="no-padding"
+								streamKey={ `feed:${ feed?.feed_ID }` }
+								showFollowButton={ false }
+								showBack={ false }
+								trackScrollPage={ () => {} }
+								useCompactCards
+								suppressSiteNameLink
+							/>
+						</div>
+					) : (
+						<div className="feed-preview__empty">
+							<p>Preview of the feed is not yet available.</p>
+						</div>
+					)
+				}
 			</>
 		);
 	}, [ feed, loading, source, onSubscribeToggle ] );

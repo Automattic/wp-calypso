@@ -19,10 +19,6 @@ const DiscoverAddNew = () => {
 	const needsEmailVerification = isLoggedIn && ! isEmailVerified;
 	const [ hasFeedPreview, setHasFeedPreview ] = useState< boolean >( false );
 
-	function onChangeFeedPreview( hasPreview: boolean ): void {
-		setHasFeedPreview( hasPreview );
-	}
-
 	return (
 		<div className="discover-add-new">
 			<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
@@ -43,7 +39,11 @@ const DiscoverAddNew = () => {
 					<h2 className="discover-add-new__form-title">
 						{ translate( 'Add new sites, newsletters, and RSS feeds to your reading list.' ) }
 					</h2>
-					<AddSitesForm source="discover-add-new" onChangeFeedPreview={ onChangeFeedPreview } />
+					<AddSitesForm
+						source="discover-add-new"
+						onChangeFeedPreview={ ( hasPreview: boolean ): void => setHasFeedPreview( hasPreview ) }
+						onChangeSubscribe={ (): void => setHasFeedPreview( false ) }
+					/>
 				</div>
 				{ isLoggedIn && ! hasFeedPreview && (
 					<div
