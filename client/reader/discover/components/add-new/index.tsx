@@ -15,12 +15,11 @@ const DiscoverAddNew = () => {
 	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
-	const needsEmailVerification = isLoggedIn && ! isEmailVerified;
 
 	return (
 		<div className="discover-add-new">
 			<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
-				{ needsEmailVerification && (
+				{ ! isEmailVerified && (
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
@@ -31,9 +30,7 @@ const DiscoverAddNew = () => {
 						</a>
 					</Notice>
 				) }
-				<div
-					className={ `discover-add-new__form${ needsEmailVerification ? ' is-disabled' : '' }` }
-				>
+				<div className={ `discover-add-new__form${ isEmailVerified ? '' : ' is-disabled' }` }>
 					<h2 className="discover-add-new__form-title">
 						{ translate( 'Add new sites, newsletters, and RSS feeds to your reading list.' ) }
 					</h2>
@@ -42,7 +39,7 @@ const DiscoverAddNew = () => {
 				{ isLoggedIn && (
 					<div
 						className={ `discover-add-new__subscriptions${
-							needsEmailVerification ? ' is-disabled' : ''
+							isEmailVerified ? '' : ' is-disabled'
 						}` }
 					>
 						<h2 className="discover-add-new__subscriptions-title">
