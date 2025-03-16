@@ -110,7 +110,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 				onSuccess: () => {
 					dispatch(
 						successNotice(
-							translate( 'Success! You are unsubscribed to %s.', {
+							translate( 'Success! You are now unsubscribed to %s.', {
 								args: filteredDisplayUrl,
 							} ),
 							noticeOptions
@@ -147,7 +147,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 				onSuccess: () => {
 					dispatch(
 						successNotice(
-							translate( 'Success! You are subscribed to %s.', { args: filteredDisplayUrl } ),
+							translate( 'Success! You are now subscribed to %s.', { args: filteredDisplayUrl } ),
 							noticeOptions
 						)
 					);

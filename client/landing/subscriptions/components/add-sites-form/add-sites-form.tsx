@@ -15,6 +15,7 @@ import './styles.scss';
 
 export type AddSitesFormProps = {
 	placeholder?: string;
+	buttonText?: string;
 	source: string;
 	onChangeFeedPreview?: ( hasPreview: boolean ) => void;
 	onChangeSubscribe?: ( subscribed: boolean ) => void;
@@ -27,6 +28,7 @@ type SubscriptionError = {
 
 const AddSitesForm = ( {
 	placeholder,
+	buttonText,
 	source,
 	onChangeFeedPreview,
 	onChangeSubscribe,
@@ -90,8 +92,7 @@ const AddSitesForm = ( {
 							}
 
 							showSuccessNotice( inputValue );
-							resetForm();
-							onChangeSubscribe?.( true );
+							onSubscribeToggle( true );
 						}
 					},
 					onError: ( error: SubscriptionError ) => {
@@ -107,13 +108,11 @@ const AddSitesForm = ( {
 	};
 
 	function onSubscribeToggle( subscribed: boolean ): void {
-		resetForm();
-		onChangeSubscribe?.( subscribed );
-	}
-
-	function resetForm(): void {
+		// Reset form.
 		setInputValue( '' );
 		setIsValidInput( false );
+
+		onChangeSubscribe?.( subscribed );
 	}
 
 	return (
@@ -144,7 +143,7 @@ const AddSitesForm = ( {
 					type="submit"
 					__next40pxDefaultSize
 				>
-					{ translate( 'Add site' ) }
+					{ buttonText || translate( 'Add site' ) }
 				</Button>
 			</form>
 

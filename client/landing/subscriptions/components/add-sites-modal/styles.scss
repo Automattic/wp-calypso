@@ -1,9 +1,13 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .add-sites-modal {
 	.components-modal__content {
-		min-width: 650px;
+		@include break-medium {
+			min-width: 650px;
+		}
 	}
 
 	.add-sites-modal__subtitle {
