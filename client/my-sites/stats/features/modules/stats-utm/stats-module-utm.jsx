@@ -152,6 +152,18 @@ const StatsModuleUTM = ( {
 		</StatsInfoArea>
 	);
 
+	// DRY: Same code is used twice below.
+	const renderExportButton = () => {
+		if ( ! showFooterWithDownloads ) {
+			return null;
+		}
+		return (
+			<div className="stats-module__footer-actions stats-module__footer-actions--summary">
+				<UTMExportButton data={ data } fileName={ fileNameForExport } />
+			</div>
+		);
+	};
+
 	return (
 		<>
 			{ isNewEmptyStateEnabled && (
@@ -241,11 +253,7 @@ const StatsModuleUTM = ( {
 										</div>
 									}
 								/>
-								{ showFooterWithDownloads && (
-									<div className="stats-module__footer-actions stats-module__footer-actions--summary">
-										<UTMExportButton data={ data } fileName={ fileNameForExport } />
-									</div>
-								) }
+								{ renderExportButton() }
 							</>
 						) }
 				</>
@@ -291,11 +299,7 @@ const StatsModuleUTM = ( {
 							</div>
 						}
 					/>
-					{ showFooterWithDownloads && (
-						<div className="stats-module__footer-actions stats-module__footer-actions--summary">
-							<UTMExportButton data={ data } fileName={ fileNameForExport } />
-						</div>
-					) }
+					{ renderExportButton() }
 				</>
 			) }
 		</>
