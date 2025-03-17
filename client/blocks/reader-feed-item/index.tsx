@@ -216,6 +216,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 		<Button
 			variant="primary"
 			isBusy={ isSubscribing || isUnsubscribing }
+			disabled={ isSubscribing || isUnsubscribing }
 			onClick={ onSubscribeToggle }
 			__next40pxDefaultSize
 		>
