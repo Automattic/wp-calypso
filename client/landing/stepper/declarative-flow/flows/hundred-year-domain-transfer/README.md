@@ -6,7 +6,6 @@ Please improve the instructions on how to test this flow.
 
 1. Go to /setup/hundred-year-domain-transfer.
 
-
 ## Owned by
 
 @rafaelgallani (Tentative - automatically generated from the last committer)
