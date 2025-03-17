@@ -2,7 +2,109 @@
 @import "@wordpress/base-styles/mixins";
 @import "../mixins";
 
+// Import CRM downloads styles
+@import "~calypso/components/crm-downloads/style";
+
 .download-products-form {
+	// Partner portal specific overrides for the license key component
+	.manage-purchase__license-clipboard-container {
+		padding: 1.5rem;
+		margin: 1.5rem 0;
+	}
+	
+	.manage-purchase__license-key-heading {
+		font-size: 1rem;
+		margin: 0 0 1rem 0;
+		font-weight: 600;
+		padding-bottom: 0.75rem;
+		border-bottom: 1px solid var(--color-border-subtle);
+	}
+	
+	.manage-purchase__license-clipboard-link {
+		top: 1.5rem;
+		right: 1.5rem;
+	}
+	
+	.manage-purchase__license-key-row {
+		margin: 0;
+	}
+	
+	.license-key-section {
+		margin: 1.5rem 0;
+		padding: 1.5rem;
+		background: var(--color-surface);
+		border: 1px solid var(--color-border-subtle);
+		border-radius: 4px;
+		transition: all 0.15s ease-in-out;
+
+		h5 {
+			margin: 0 0 0.75rem;
+			font-size: 1rem;
+			font-weight: 600;
+			color: var(--color-text);
+		}
+
+		.license-key-description {
+			margin: 0 0 1.25rem;
+			font-size: 0.875rem;
+			color: var(--color-text-subtle);
+			line-height: 1.5;
+			max-width: 800px;
+		}
+
+		.license-key {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			padding: 0.75rem;
+			background: var(--color-neutral-0);
+			border-radius: 4px;
+			border: 1px solid var(--color-border-subtle);
+
+			code {
+				font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+				font-size: 0.875rem;
+				letter-spacing: 0.5px;
+				color: var(--color-text);
+				flex: 1;
+				user-select: all;
+			}
+
+			.clipboard-button {
+				padding: 0.5rem;
+				margin: 0;
+				background: none;
+				border: none;
+				cursor: pointer;
+				color: var(--color-neutral-50);
+				transition: all 0.15s ease-in-out;
+
+				&:hover {
+					color: var(--color-primary);
+					background: var(--color-neutral-0);
+				}
+
+				.gridicon {
+					display: block;
+				}
+			}
+		}
+	}
+
+	// Extensions table styles are now handled by the shared CrmDownloadsContent component
+// See: /client/components/crm-downloads/style.scss
+
+	@keyframes pulse {
+		0% {
+			opacity: 1;
+		}
+		50% {
+			opacity: 0.4;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
 
 	p {
 		font-size: 1rem;
