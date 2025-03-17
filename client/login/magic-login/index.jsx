@@ -142,7 +142,7 @@ class MagicLogin extends Component {
 				from: query?.gravatar_from,
 				is_gravatar_flow: isGravatarFlow,
 				is_gravatar_flow_with_email: !! ( isGravatarFlow && query?.email_address ),
-				is_start_view: true,
+				is_initial_view: true,
 			} );
 		}
 	}
@@ -191,7 +191,7 @@ class MagicLogin extends Component {
 					from: query?.gravatar_from,
 					is_gravatar_flow: isGravatarFlow,
 					is_gravatar_flow_with_email: !! ( isGravatarFlow && query?.email_address ),
-					is_start_view: false,
+					is_initial_view: false,
 				} );
 			}
 
