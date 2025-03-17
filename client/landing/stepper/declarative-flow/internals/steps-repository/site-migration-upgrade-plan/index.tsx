@@ -124,7 +124,7 @@ const SiteMigrationUpgradePlan: FC< Props > = ( {
 		  );
 	showVariants &&
 		( subHeaderText = translate(
-			'A %(planName)s plan is needed for Migrations. Pick one of the following options to tap into our lightning-fast infrastructure. Your site will be faster, smoother, and ready for anything.',
+			'A %(planName)s plan is needed for Migrations. Choose an option below to access our lightning-fast infrastructure for a faster, more reliable site.',
 			{
 				args: {
 					planName,

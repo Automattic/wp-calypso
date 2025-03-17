@@ -1,19 +1,7 @@
 import { APIProductFamilyProduct } from '../../../../state/partner-portal/types';
 import { Referral } from '../types';
+import { getProductCommissionPercentage } from './commissions';
 import { getNextPayoutDateActivityWindow } from './get-next-payout-date';
-
-export const getProductCommissionPercentage = ( slug?: string ) => {
-	if ( ! slug ) {
-		return 0;
-	}
-	if ( [ 'wpcom-hosting', 'pressable-hosting' ].includes( slug ) ) {
-		return 0.2;
-	}
-	if ( slug.startsWith( 'jetpack-' ) || slug.startsWith( 'woocommerce-' ) ) {
-		return 0.5;
-	}
-	return 0;
-};
 
 export const getDailyPrice = ( product: APIProductFamilyProduct, quantity: number ) => {
 	// If quantity is not 1 than we search corresponding bundle

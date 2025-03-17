@@ -1,5 +1,5 @@
 import { addQueryArgs } from '@wordpress/url';
-import { localize } from 'i18n-calypso';
+import { localize, fixMe } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
@@ -111,7 +111,13 @@ class SiteTools extends Component {
 		const startSiteTransferTitle = isUntangled
 			? translate( 'Transfer site' )
 			: translate( 'Transfer your site' );
-		const startSiteTransferText = translate( 'Transfer your site, plan and purchases.' );
+		const startSiteTransferText = fixMe( {
+			text: 'Transfer your site, plan, and purchases to a new or existing site member.',
+			newCopy: translate(
+				'Transfer your site, plan, and purchases to a new or existing site member.'
+			),
+			oldCopy: translate( 'Transfer your site, plan and purchases.' ),
+		} );
 
 		return (
 			<>
