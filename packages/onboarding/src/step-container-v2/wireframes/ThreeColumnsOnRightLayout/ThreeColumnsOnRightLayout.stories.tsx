@@ -28,7 +28,7 @@ export const Vanilla = () => (
 			/>
 		}
 		stickyBottomBar={ <StickyBottomBar rightButton={ <NextButton /> } /> }
-		renderMain={ () => <WireframePlaceholder height={ 616 }>Main</WireframePlaceholder> }
-		renderRight={ () => <WireframePlaceholder height={ 616 }>Right</WireframePlaceholder> }
+		mainContent={ <WireframePlaceholder height={ 616 }>Main</WireframePlaceholder> }
+		rightContent={ <WireframePlaceholder height={ 616 }>Right</WireframePlaceholder> }
 	/>
 );

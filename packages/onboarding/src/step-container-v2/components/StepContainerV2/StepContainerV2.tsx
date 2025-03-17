@@ -8,6 +8,10 @@ import {
 
 import './style.scss';
 
+export type StepContainerV2ContentProp =
+	| ( ( context: StepContainerV2InternalContextType ) => ReactNode )
+	| ReactNode;
+
 export interface StepContainerV2Props {
 	className?: string;
 	topBar?: ReactNode;
@@ -18,7 +22,7 @@ export interface StepContainerV2Props {
 	isMediumViewport?: boolean;
 	isLargeViewport?: boolean;
 	hasContentPadding?: boolean;
-	render: ( context: StepContainerV2InternalContextType ) => ReactNode;
+	content: StepContainerV2ContentProp;
 }
 
 export const StepContainerV2 = ( {
@@ -31,7 +35,7 @@ export const StepContainerV2 = ( {
 	isMediumViewport: externalIsMediumViewport,
 	isLargeViewport: externalIsLargeViewport,
 	hasContentPadding = true,
-	render,
+	content,
 }: StepContainerV2Props ) => {
 	const internalIsMediumViewport = useViewportMatch( 'small', '>=' );
 	const isMediumViewport = externalIsMediumViewport ?? internalIsMediumViewport;
@@ -66,7 +70,7 @@ export const StepContainerV2 = ( {
 							full: width === 'full',
 						} ) }
 					>
-						{ render( stepContainerContextValue ) }
+						{ typeof content === 'function' ? content( stepContainerContextValue ) : content }
 					</div>
 				</div>
 				{ ! isMediumViewport && stickyBottomBar }

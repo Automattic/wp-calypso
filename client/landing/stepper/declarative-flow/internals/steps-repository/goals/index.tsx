@@ -206,7 +206,7 @@ const GoalsStep: StepType = ( { navigation, flow } ) => {
 					topBar={ <Step.TopBar skipButton={ <Step.SkipButton onClick={ handleSkip } /> } /> }
 					heading={ <Step.Heading text={ whatAreYourGoalsText } subText={ subHeaderText } /> }
 					stickyBottomBar={ <Step.StickyBottomBar rightButton={ nextButton } /> }
-					render={ ( { isMediumViewport } ) => getStepContent( isMediumViewport && nextButton ) }
+					content={ ( { isMediumViewport } ) => getStepContent( isMediumViewport && nextButton ) }
 				/>
 			);
 		}

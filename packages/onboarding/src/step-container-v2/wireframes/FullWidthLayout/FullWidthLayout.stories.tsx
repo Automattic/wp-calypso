@@ -30,7 +30,7 @@ export const ThemePreview = () => {
 			topBar={ <TopBar backButton={ backButton } /> }
 			isMediumViewport={ isMediumViewport }
 			isLargeViewport={ isLargeViewport }
-			render={ () => (
+			content={
 				<>
 					<div className="theme-preview__info">
 						<div className="theme-preview__description">
@@ -45,7 +45,7 @@ export const ThemePreview = () => {
 					</div>
 					<WireframePlaceholder className="theme-preview__preview">Preview</WireframePlaceholder>
 				</>
-			) }
+			}
 		/>
 	);
 };
@@ -69,7 +69,7 @@ export const ThemePreviewFonts = () => {
 			topBar={ isMediumViewport ? <TopBar backButton={ backButton } /> : <FontsBar /> }
 			stickyBottomBar={ <StickyBottomBar leftButton={ backButton } rightButton={ nextButton } /> }
 			hasContentPadding={ isMediumViewport }
-			render={ () => (
+			content={
 				<>
 					{ isMediumViewport && (
 						<div className="theme-preview__info">
@@ -90,7 +90,7 @@ export const ThemePreviewFonts = () => {
 					) }
 					<WireframePlaceholder className="theme-preview__preview">Preview</WireframePlaceholder>
 				</>
-			) }
+			}
 		/>
 	);
 };

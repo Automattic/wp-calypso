@@ -94,7 +94,7 @@ export const Vanilla = () => {
 				/>
 			}
 			stickyBottomBar={ <StickyBottomBar rightButton={ nextButton } /> }
-			render={ () => <WireframePlaceholder height={ 370 }>Main</WireframePlaceholder> }
+			content={ <WireframePlaceholder height={ 370 }>Main</WireframePlaceholder> }
 		/>
 	);
 };
@@ -114,7 +114,7 @@ export const GoalsStep = () => {
 				/>
 			}
 			stickyBottomBar={ <StickyBottomBar rightButton={ nextButton } /> }
-			render={ ( { isMediumViewport } ) => (
+			content={ ( { isMediumViewport } ) => (
 				<>
 					<div className="goals__list">
 						{ goals.map( ( goal ) => (
