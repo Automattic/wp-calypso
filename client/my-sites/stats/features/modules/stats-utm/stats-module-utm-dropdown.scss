@@ -65,7 +65,7 @@ $stats-utm-border: 1px solid var(--gray-gray-5, #dcdcde);
 		flex: 1; // take full width
 	}
 
-	&.is-grouped + &.is-not-grouped {
+	&.is-not-grouped + &.is-grouped {
 		margin-top: 2px;
 
 		&::before {
