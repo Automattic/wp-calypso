@@ -9,12 +9,8 @@ import { hasAmountAvailableToRefund } from 'calypso/lib/purchases';
 import { cancelAndRefundPurchaseAsync } from 'calypso/lib/purchases/actions';
 import getPlanFeatures from 'calypso/my-sites/checkout/src/lib/get-plan-features';
 import { useSelector, useDispatch } from 'calypso/state';
-import { closeDowngradeModal } from 'calypso/state/downgrade-modal/actions';
-import {
-	getDowngradeModalToPlanSlug,
-	isDowngradeModalOpen,
-} from 'calypso/state/downgrade-modal/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { fetchSitePurchases } from 'calypso/state/purchases/actions';
 import { getPurchases } from 'calypso/state/purchases/selectors';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -22,11 +18,15 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-const DowngradeModal = () => {
+interface DowngradeModalProps {
+	isVisible: boolean;
+	toPlanSlug: string | null;
+	onClose: () => void;
+}
+
+const DowngradeModal = ( { isVisible, toPlanSlug, onClose }: DowngradeModalProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const isVisible = useSelector( isDowngradeModalOpen );
-	const toPlanSlug = useSelector( getDowngradeModalToPlanSlug );
 	const siteId = useSelector( getSelectedSiteId );
 	const site = useSelector( ( state ) => getSite( state, siteId ) );
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
@@ -56,8 +56,8 @@ const DowngradeModal = () => {
 		if ( isDowngrading ) {
 			return;
 		}
-		dispatch( closeDowngradeModal() );
-	}, [ dispatch, isDowngrading ] );
+		onClose();
+	}, [ onClose, isDowngrading ] );
 
 	const handleDowngrade = useCallback( async () => {
 		if ( ! currentPlan?.purchaseId || ! currentPlan?.productId || ! toPlanSlug || isDowngrading ) {
@@ -77,9 +77,10 @@ const DowngradeModal = () => {
 			// Show success notification
 			dispatch( successNotice( response.message, { duration: 5000 } ) );
 
-			// Refresh site plans to update the UI with the new plan
+			// Refresh site plans and purchases to update the UI with the new plan
 			if ( siteId ) {
 				dispatch( refreshSitePlans( siteId ) );
+				dispatch( fetchSitePurchases( siteId ) );
 			}
 		} catch ( error: unknown ) {
 			if ( error instanceof Error ) {

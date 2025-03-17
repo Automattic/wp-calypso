@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	applyTestFiltersToPlansList,
 	PRODUCT_1GB_SPACE,
@@ -19,7 +18,6 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import { getCancelPurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { useSelector, useDispatch as useReduxDispatch } from 'calypso/state';
-import { openDowngradeModal } from 'calypso/state/downgrade-modal/actions';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
@@ -122,10 +120,6 @@ function useDowngradeHandler( {
 			// A downgrade to the free plan is essentially cancelling the current plan.
 			if ( isFreePlan( planSlug ) && siteSlug && currentPlan?.purchaseId ) {
 				page( getCancelPurchaseUrlFor( siteSlug, currentPlan?.purchaseId ) );
-				return;
-			} else if ( isEnabled( 'plans/downgrade-modal' ) && siteSlug && currentPlan?.purchaseId ) {
-				// Dispatch action to open the downgrade modal with the target plan slug
-				dispatch( openDowngradeModal( planSlug ) );
 				return;
 			}
 

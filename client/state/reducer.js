@@ -8,7 +8,6 @@
 import { combineReducers } from 'calypso/state/utils';
 import currentUser from './current-user/reducer'; // eslint-disable-line no-restricted-imports
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
-import downgradeModal from './downgrade-modal/reducer'; // eslint-disable-line no-restricted-imports
 import sites from './sites/reducer'; // eslint-disable-line no-restricted-imports
 
 // Legacy reducers
@@ -17,7 +16,6 @@ import sites from './sites/reducer'; // eslint-disable-line no-restricted-import
 const reducers = {
 	currentUser,
 	dataRequests,
-	downgradeModal,
 	sites,
 };
 
