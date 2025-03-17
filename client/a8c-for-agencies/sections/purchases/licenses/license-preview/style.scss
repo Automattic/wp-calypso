@@ -40,7 +40,7 @@
 
 	&,
 	&:visited {
-		@include a4a-font-body-md($font-weight: 500);
+		@include heading-medium;
 		display: flex;
 		flex-direction: row;
 		gap: 4px;
@@ -221,7 +221,7 @@ button.button.is-borderless.license-bundle-dropdown__button {
 
 .license-preview__migration-content {
 	min-width: 200px;
-	@include a4a-font-body-md;
+	@include body-medium;
 
 	@include break-mobile {
 		min-width: 300px;
