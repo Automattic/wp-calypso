@@ -60,7 +60,7 @@ body.is-section-plans {
 		}
 	}
 
-	.layout:not(.has-no-sidebar):not(.has-no-masterbar) .layout__content {
+	.layout:not(.has-no-sidebar):not(.has-no-masterbar):not(.is-global-sidebar-visible) .layout__content {
 		@media (min-width: $break-small) {
 			padding-top: 79px !important;
 		}

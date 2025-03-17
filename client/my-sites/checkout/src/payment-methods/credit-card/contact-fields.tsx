@@ -10,12 +10,14 @@ import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 export default function ContactFields( {
 	getFieldValue,
 	setFieldValue,
+	setForBusinessUse,
 	getErrorMessagesForField,
 	shouldUseEbanx,
 	shouldShowTaxFields,
 }: {
 	getFieldValue: ( key: string ) => string;
 	setFieldValue: ( key: string, value: string ) => void;
+	setForBusinessUse: ( newValue: boolean ) => void;
 	getErrorMessagesForField: ( key: string ) => string[];
 	shouldUseEbanx?: boolean;
 	shouldShowTaxFields?: boolean;
@@ -27,6 +29,10 @@ export default function ContactFields( {
 		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getFields(),
 		[]
 	);
+	const isForBusiness: boolean | undefined = useSelect(
+		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).useForBusiness(),
+		[]
+	);
 	const onChangeContactInfo = ( newInfo: ManagedContactDetails ) => {
 		setFieldValue( 'countryCode', newInfo.countryCode?.value ?? '' );
 		setFieldValue( 'postalCode', newInfo.postalCode?.value ?? '' );
@@ -34,6 +40,10 @@ export default function ContactFields( {
 		setFieldValue( 'city', newInfo.city?.value ?? '' );
 		setFieldValue( 'organization', newInfo.organization?.value ?? '' );
 		setFieldValue( 'address1', newInfo.address1?.value ?? '' );
+	};
+
+	const handleIsForBusinessChange = ( newValue: boolean ): void => {
+		setForBusinessUse( newValue );
 	};
 
 	return (
@@ -53,6 +63,9 @@ export default function ContactFields( {
 					section="update-to-new-card"
 					taxInfo={ fields }
 					onChange={ onChangeContactInfo }
+					allowIsForBusinessUseCheckbox
+					handleIsForBusinessChange={ handleIsForBusinessChange }
+					isForBusinessValue={ isForBusiness }
 					countriesList={ countriesList }
 					isDisabled={ isDisabled }
 				/>

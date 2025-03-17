@@ -29,8 +29,8 @@ body.is-section-reader {
 				}
 			}
 
-			+ .has-back-button .navigation-header,
-			+ .navigation-header {
+			+ .navigation-header,
+			+ .tag-stream__header {
 				@media (max-width: 1300px) {
 					padding-top: 12px;
 				}
@@ -48,7 +48,7 @@ body.is-section-reader {
 			@media (max-width: $break-small) {
 				padding: 0 16px;
 			}
-	
+
 			&::after {
 				content: "";
 				display: block;
@@ -174,22 +174,6 @@ body.is-section-reader {
 	.reader__post-title-link,
 	.reader__post-title-link:hover {
 		color: var(--color-neutral-70);
-	}
-}
-
-// Back button in Reader FeedHeader
-.is-reader-page .is-site-stream .reader-feed-header.has-back-button .reader-feed-header__follow {
-
-	@include breakpoint-deprecated( "<660px" ) {
-		right: 0;
-	}
-
-	// Drops Follow count in FeedHeader if Back button exists
-	.reader-feed-header__follow-count {
-
-		@include breakpoint-deprecated( "<960px" ) {
-			display: none;
-		}
 	}
 }
 

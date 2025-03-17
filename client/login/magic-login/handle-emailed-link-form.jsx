@@ -8,6 +8,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
@@ -283,8 +284,13 @@ class HandleEmailedLinkForm extends Component {
 			);
 		}
 
+		const showLoadingLogo = isFetching || transition || this.state.isRedirecting;
 		// transition is a GET parameter for when the user is transitioning from email user to WPCom user
-		if ( isFetching || transition || this.state.isRedirecting ) {
+		if ( showLoadingLogo ) {
+			if ( isWCCOM ) {
+				return <WooCommerceLogo size={ 72 } className="wpcom-site__logo" />;
+			}
+
 			return <WordPressLogo size={ 72 } className="wpcom-site__logo" />;
 		}
 

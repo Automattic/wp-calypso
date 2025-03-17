@@ -1,12 +1,8 @@
 import config from '@automattic/calypso-config';
 import { useMemo } from 'react';
-import { useSelector } from 'calypso/state';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 
-export default function useWPAdminTheme( siteId: number | null ) {
-	const isSiteJetpack = useSelector( ( state ) =>
-		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: true } )
-	);
+// We cannot use any of the Calypso state selectors here, as this hook is used in the RootChild component, where there is no Redux context.
+export default function useWPAdminTheme( isSiteJetpack: boolean | null ) {
 	const isWPAdmin = config.isEnabled( 'is_odyssey' );
 
 	const customTheme = useMemo( () => {
