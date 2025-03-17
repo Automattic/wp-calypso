@@ -13,6 +13,7 @@
 		padding: 1.25rem;
 		background-color: var(--color-surface, #fff);
 		position: relative;
+		border: 1px solid var(--color-border-subtle, #dcdcde);
 	}
 	
 	// Specific styling for agencies version
@@ -145,6 +146,13 @@
 			&:first-child {
 				padding-top: 0;
 			}
+		}
+	}
+	
+	.extensions-table tr {
+		@media (max-width: 600px) {
+			display: block;
+			border-bottom: 1px solid var(--color-border-subtle, #dcdcde);
 		}
 	}
 
