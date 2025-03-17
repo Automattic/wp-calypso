@@ -242,7 +242,7 @@ export function acceptInvite( invite, emailVerificationSecret ) {
 				await dispatch( fetchCurrentUser() );
 			}
 
-			const acceptedNoticeResult = acceptedNotice( invite, true );
+			const acceptedNoticeResult = acceptedNotice( invite );
 
 			if ( ! invite.site.is_vip && ! invite.site.is_wpforteams_site ) {
 				dispatch( successNotice( acceptedNoticeResult[ 0 ], acceptedNoticeResult[ 1 ] ) );
