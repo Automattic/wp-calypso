@@ -941,7 +941,7 @@ body.is-mobile-app-view {
 	min-width: 260px;
 	margin: 6px -6px -6px;
 	padding: 12px;
-	background-color: var(--color-global-masterbar-site-info-background, var(--studio-gray-90));
+	background-color: var(--color-global-masterbar-site-info-background, $gray-900);
 	color: var(--color-masterbar-submenu-text);
 	display: flex;
 	flex-direction: column;
@@ -964,8 +964,8 @@ body.is-mobile-app-view {
 		gap: 4px;
 
 		.components-badge:where(.is-default) {
-			background-color: var(--color-global-masterbar-site-info-badge-background, var(--studio-gray-70));
-			color: var(--color-global-masterbar-site-info-badge-color);
+			background-color: var(--color-global-masterbar-site-info-badge-background, $gray-800);
+			color: var(--color-global-masterbar-site-info-badge-color, $white);
 		}
 	}
 }
