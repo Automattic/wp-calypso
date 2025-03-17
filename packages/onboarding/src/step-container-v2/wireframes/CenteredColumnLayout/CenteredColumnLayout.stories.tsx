@@ -34,8 +34,9 @@ export const FourColumnsCenteredLayout = () => {
 				/>
 			}
 			stickyBottomBar={ <StickyBottomBar rightButton={ nextButton } /> }
-			content={ <WireframePlaceholder height={ 370 }>Content</WireframePlaceholder> }
-		/>
+		>
+			<WireframePlaceholder height={ 370 }>Content</WireframePlaceholder>
+		</CenteredColumnLayout>
 	);
 };
 
@@ -60,7 +61,8 @@ export const SixColumnsCenteredLayout = () => {
 				/>
 			}
 			stickyBottomBar={ <StickyBottomBar rightButton={ nextButton } /> }
-			content={ <WireframePlaceholder height={ 500 }>Content</WireframePlaceholder> }
-		/>
+		>
+			<WireframePlaceholder height={ 500 }>Content</WireframePlaceholder>
+		</CenteredColumnLayout>
 	);
 };

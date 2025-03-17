@@ -30,9 +30,10 @@ export const ThreeColumnsOnRightLayout = () => (
 			/>
 		}
 		stickyBottomBar={ <StickyBottomBar rightButton={ <NextButton /> } /> }
-		mainContent={ <WireframePlaceholder height={ 616 }>Main</WireframePlaceholder> }
-		rightContent={ <WireframePlaceholder height={ 616 }>Sidebar</WireframePlaceholder> }
-	/>
+	>
+		<WireframePlaceholder height={ 616 }>Main</WireframePlaceholder>
+		<WireframePlaceholder height={ 616 }>Sidebar</WireframePlaceholder>
+	</TwoColumnLayout>
 );
 
 export const EqualTwoColumnLayout = () => (
@@ -52,7 +53,41 @@ export const EqualTwoColumnLayout = () => (
 			/>
 		}
 		stickyBottomBar={ <StickyBottomBar rightButton={ <NextButton /> } /> }
-		mainContent={ <WireframePlaceholder height={ 616 }>Content 1</WireframePlaceholder> }
-		rightContent={ <WireframePlaceholder height={ 616 }>Content 2</WireframePlaceholder> }
-	/>
+	>
+		<WireframePlaceholder height={ 616 }>Content 1</WireframePlaceholder>
+		<WireframePlaceholder height={ 616 }>Content 2</WireframePlaceholder>
+	</TwoColumnLayout>
+);
+
+export const WithRenderProp = () => (
+	<TwoColumnLayout
+		firstColumnWidth={ 1 }
+		secondColumnWidth={ 1 }
+		topBar={ <TopBar backButton={ <BackButton /> } /> }
+		heading={
+			<Heading
+				text="Columns Rendered with Render Prop"
+				subText={ createInterpolateElement(
+					'An example of the <code>TwoColumnLayout</code> wireframe layout.',
+					{
+						code: <code />,
+					}
+				) }
+			/>
+		}
+		stickyBottomBar={ <StickyBottomBar rightButton={ <NextButton /> } /> }
+	>
+		{ ( { isMediumViewport, isLargeViewport } ) => (
+			<>
+				<WireframePlaceholder height={ 616 }>
+					<div>Content 1</div>
+					<pre>is medium viewport: { isMediumViewport.toString() }</pre>
+				</WireframePlaceholder>
+				<WireframePlaceholder height={ 616 }>
+					<div>Content 1</div>
+					<pre>is large viewport: { isLargeViewport.toString() }</pre>
+				</WireframePlaceholder>
+			</>
+		) }
+	</TwoColumnLayout>
 );

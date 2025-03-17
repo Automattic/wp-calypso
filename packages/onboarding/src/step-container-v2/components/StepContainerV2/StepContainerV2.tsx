@@ -22,7 +22,7 @@ export interface StepContainerV2Props {
 	isMediumViewport?: boolean;
 	isLargeViewport?: boolean;
 	hasContentPadding?: boolean;
-	content: StepContainerV2ContentProp;
+	children?: StepContainerV2ContentProp;
 }
 
 export const StepContainerV2 = ( {
@@ -35,7 +35,7 @@ export const StepContainerV2 = ( {
 	isMediumViewport: externalIsMediumViewport,
 	isLargeViewport: externalIsLargeViewport,
 	hasContentPadding = true,
-	content,
+	children,
 }: StepContainerV2Props ) => {
 	const internalIsMediumViewport = useViewportMatch( 'small', '>=' );
 	const isMediumViewport = externalIsMediumViewport ?? internalIsMediumViewport;
@@ -70,7 +70,7 @@ export const StepContainerV2 = ( {
 							full: width === 'full',
 						} ) }
 					>
-						{ typeof content === 'function' ? content( stepContainerContextValue ) : content }
+						{ typeof children === 'function' ? children( stepContainerContextValue ) : children }
 					</div>
 				</div>
 				{ ! isMediumViewport && stickyBottomBar }

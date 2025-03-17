@@ -11,6 +11,7 @@ export function WireframePlaceholder( {
 		background: '#ff80ff',
 		borderRadius: 10,
 		display: 'flex',
+		flexDirection: 'column',
 		alignItems: 'center',
 		justifyContent: 'center',
 		...( height && { height } ),

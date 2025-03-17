@@ -207,8 +207,9 @@ const GoalsStep: StepType = ( { navigation, flow } ) => {
 					topBar={ <Step.TopBar skipButton={ <Step.SkipButton onClick={ handleSkip } /> } /> }
 					heading={ <Step.Heading text={ whatAreYourGoalsText } subText={ subHeaderText } /> }
 					stickyBottomBar={ <Step.StickyBottomBar rightButton={ nextButton } /> }
-					content={ ( { isMediumViewport } ) => getStepContent( isMediumViewport && nextButton ) }
-				/>
+				>
+					{ ( { isMediumViewport } ) => getStepContent( isMediumViewport && nextButton ) }
+				</Step.CenteredColumnLayout>
 			);
 		}
 
