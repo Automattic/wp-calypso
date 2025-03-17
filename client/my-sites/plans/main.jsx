@@ -39,6 +39,7 @@ import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { FeatureBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-feature-breadcrumb';
+import CurrentPlanPanel from 'calypso/sites/plan/components/current-plan-panel';
 import { useSelector } from 'calypso/state';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -49,6 +50,7 @@ import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-f
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -234,7 +236,6 @@ class PlansComponent extends Component {
 	renderPlaceholder = () => {
 		return (
 			<div>
-				<DocumentHead title={ this.props.translate( 'Plans', { textOnly: true } ) } />
 				<Main wideLayout>
 					<div id="plans" className="plans plans__has-sidebar" />
 				</Main>
@@ -243,7 +244,7 @@ class PlansComponent extends Component {
 	};
 
 	renderPlansMain() {
-		const { selectedSite, isWPForTeamsSite, currentPlanIntervalType } = this.props;
+		const { selectedSite, isUntangled, isWPForTeamsSite, currentPlanIntervalType } = this.props;
 
 		if ( isEnabled( 'p2/p2-plus' ) && isWPForTeamsSite ) {
 			return (
@@ -281,6 +282,7 @@ class PlansComponent extends Component {
 				discountEndDate={ this.props.discountEndDate }
 				siteId={ selectedSite?.ID }
 				plansWithScroll={ false }
+				hideSpotlightPlan={ isUntangled }
 				hidePlansFeatureComparison={ this.props.isDomainAndPlanPackageFlow }
 				showLegacyStorageFeature={ this.props.siteHasLegacyStorage }
 				intent={ plansIntent }
@@ -362,6 +364,19 @@ class PlansComponent extends Component {
 	}
 
 	render() {
+		const { isUntangled, selectedSite, translate } = this.props;
+		return (
+			<>
+				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
+				{ isUntangled && (
+					<FeatureBreadcrumb siteId={ selectedSite.ID } title={ translate( 'Plan' ) } />
+				) }
+				{ this.renderContent() }
+			</>
+		);
+	}
+
+	renderContent() {
 		const {
 			selectedSite,
 			translate,
@@ -439,7 +454,6 @@ class PlansComponent extends Component {
 			<div>
 				{ ! isUntangled && ! isJetpackNotAtomic && <ModernizedLayout /> }
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
-				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<PageViewTracker path="/plans/:site" title="Plans" />
 				{ /** QueryProducts added to ensure currency-code state gets populated for usages of getCurrentUserCurrencyCode */ }
 				<QueryProducts />
@@ -455,9 +469,7 @@ class PlansComponent extends Component {
 				) }
 				{ canAccessPlans && (
 					<div>
-						{ isUntangled && (
-							<FeatureBreadcrumb siteId={ selectedSite.ID } title={ translate( 'Plan' ) } />
-						) }
+						{ isUntangled && <CurrentPlanPanel /> }
 						{ ! isUntangled && ! isDomainAndPlanPackageFlow && (
 							<PlansHeader
 								domainFromHomeUpsellFlow={ domainFromHomeUpsellFlow }
@@ -548,6 +560,10 @@ export default function PlansWrapper( props ) {
 	const { intervalType: intervalTypeFromProps } = props;
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const currentPlan = Plans.useCurrentPlan( { siteId: selectedSiteId } );
+
+	// Initialize Global Styles.
+	useSiteGlobalStylesOnPersonal();
+
 	/**
 	 * For WP.com plans page, if intervalType is not explicitly specified in the URL,
 	 * we want to show plans of the same term as plan that is currently active

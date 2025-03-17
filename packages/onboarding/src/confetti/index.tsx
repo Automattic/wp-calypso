@@ -62,7 +62,7 @@ const Index: React.FunctionComponent< { className?: string } > = ( { className }
 			height="15"
 			rx="2.386"
 			transform="rotate(-32 97 2.53)"
-			fill="#117AC9"
+			fill="var(--studio-blue-50)"
 		/>
 		<Rect
 			x="323.638"

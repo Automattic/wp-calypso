@@ -73,8 +73,8 @@ const EducationFooterContainer = styled.div`
 `;
 
 const MarketplaceContainer = styled.div< { isloggedIn: boolean } >`
-	--color-accent: #117ac9;
-	--color-accent-60: #0e64a5;
+	--color-accent: var( --studio-blue-50 );
+	--color-accent-60: var( --studio-blue-60 );
 	margin-bottom: -32px;
 
 	.marketplace-cta {

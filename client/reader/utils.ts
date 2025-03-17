@@ -1,23 +1,23 @@
 import page from '@automattic/calypso-router';
 import { safeImageUrl, getUrlParts } from '@automattic/calypso-url';
+import { Dispatch } from 'redux';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+import { AppState } from 'calypso/types';
 
-export function isSpecialClick( event ) {
-	return event.button > 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
+interface ShowSelectedPostArgs {
+	postKey?: {
+		blogId?: number;
+		postId: number;
+		feedId?: number;
+		isRecommendationBlock?: boolean;
+	};
+	comments?: boolean;
 }
 
-export function isPostNotFound( post ) {
-	if ( post === undefined ) {
-		return false;
-	}
-
-	return post.statusCode === 404;
-}
-
-export function showSelectedPost( { postKey, comments } ) {
-	return ( dispatch, getState ) => {
+export function showSelectedPost( { postKey, comments }: ShowSelectedPostArgs ) {
+	return ( _dispatch: Dispatch, getState: () => AppState ): Window | null | void => {
 		if ( ! postKey ) {
 			return;
 		}
@@ -36,7 +36,7 @@ export function showSelectedPost( { postKey, comments } ) {
 		}
 
 		if ( isXPost( post ) ) {
-			return showFullXPost( XPostHelper.getXPostMetadata( post ) );
+			return showFullXPost( XPostHelper.getXPostMetadata( post ) as ShowFullXPostArgs );
 		}
 
 		// normal
@@ -60,7 +60,15 @@ export function showSelectedPost( { postKey, comments } ) {
 	};
 }
 
-export function showFullXPost( xMetadata ) {
+interface ShowFullXPostArgs {
+	blogId: number;
+	postId: number;
+	postURL: string;
+	siteURL: string;
+	commentURL: string;
+}
+
+export function showFullXPost( xMetadata: ShowFullXPostArgs ): void {
 	if ( xMetadata.blogId && xMetadata.postId ) {
 		const mappedPost = {
 			site_ID: xMetadata.blogId,
@@ -75,7 +83,21 @@ export function showFullXPost( xMetadata ) {
 	}
 }
 
-export function showFullPost( { post, comments } ) {
+interface ShowFullPostArgs {
+	post: {
+		feed_ID?: number;
+		feed_item_ID?: number;
+		ID?: number;
+		site_ID?: number;
+		referral?: {
+			blogId: number;
+			postId: number;
+		};
+	};
+	comments?: boolean;
+}
+
+export function showFullPost( { post, comments }: ShowFullPostArgs ) {
 	const hashtag = comments ? '#comments' : '';
 	let query = '';
 	if ( post.referral ) {
@@ -90,7 +112,7 @@ export function showFullPost( { post, comments } ) {
 	}
 }
 
-export function getStreamType( streamKey ) {
+export function getStreamType( streamKey: string ): string {
 	const indexOfColon = streamKey.indexOf( ':' );
 	const streamType = indexOfColon === -1 ? streamKey : streamKey.substring( 0, indexOfColon );
 	return streamType;
@@ -98,9 +120,9 @@ export function getStreamType( streamKey ) {
 
 /**
  * Wrapper around `safeImageUrl` of '@automattic/calypso-url' to be used in the reader.
- * There are some places in reader where we need to show images from trusted hosts without running them through Photon.
+ * There are some places in the reader where we need to show images from trusted hosts without running them through Photon.
  */
-export function getSafeImageUrlForReader( url ) {
+export function getSafeImageUrlForReader( url: string ): string {
 	const parsedUrl = getUrlParts( url );
 	// Hosts that are trusted to serve images.
 	const TRUSTED_HOSTS = [ 'www.redditstatic.com' ];

@@ -16,6 +16,15 @@
 	padding: 36px 24px;
 	box-shadow: none;
 
+	& &__page-heading {
+		.formatted-header__title {
+			font-size: 2.25rem;
+			@include break-xlarge {
+				font-size: 2.75rem;
+			}
+		}
+	}
+
 	& &__domain-illustration {
 		margin-bottom: 36px;
 	}

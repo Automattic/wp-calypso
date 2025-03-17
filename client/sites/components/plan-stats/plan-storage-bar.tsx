@@ -30,9 +30,9 @@ const PlanStorageBar: FC< PropsWithChildren< Props > > = ( { children, mediaStor
 
 	return (
 		<>
-			<div className="hosting-overview__plan-storage-title-wrapper">
-				<div className="hosting-overview__plan-storage-title">{ translate( 'Storage' ) }</div>
-				<span className="hosting-overview__plan-storage-value">
+			<div className="plan-storage-title-wrapper">
+				<div className="plan-storage-title">{ translate( 'Storage' ) }</div>
+				<span className="plan-storage-value">
 					{ translate( 'Using %(usedStorage)s of %(maxStorage)s', {
 						args: {
 							usedStorage: used,

@@ -45,15 +45,25 @@ class Sitemaps extends Component {
 	}
 
 	renderSitemapLink( sitemapUrl ) {
+		let url;
+		try {
+			url = new URL( sitemapUrl );
+		} catch ( error ) {
+			return null;
+		}
+
+		url.protocol = 'https:';
+		const secureSitemap = url.toString();
+
 		return (
-			<div key={ sitemapUrl }>
+			<div key={ secureSitemap }>
 				<ExternalLink
-					href={ sitemapUrl }
+					href={ secureSitemap }
 					icon
 					target="_blank"
 					style={ { overflowWrap: 'anywhere' } }
 				>
-					{ sitemapUrl }
+					{ secureSitemap }
 				</ExternalLink>
 			</div>
 		);
