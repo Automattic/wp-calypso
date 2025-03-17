@@ -76,13 +76,12 @@ const UnsubscribeModal = ( { subscribers, onCancel, onConfirm }: UnsubscribeModa
 		} ),
 		// eslint-disable-next-line wpcalypso/i18n-mismatched-placeholders
 		text: translate(
-			'To remove %s from your list, you’ll need to cancel their paid subscription first.',
+			'To remove %(displayName)s from your list, you’ll need to cancel their paid subscription first.',
 			'Some subscribers have paid subscriptions. To remove them from your list, you’ll need to cancel their paid subscription first.',
 			{
 				count: subscribers.length,
 				args: {
 					displayName: subscriber?.display_name || '',
-					numberOfSubscribers: subscribers.length,
 				},
 			}
 		),
