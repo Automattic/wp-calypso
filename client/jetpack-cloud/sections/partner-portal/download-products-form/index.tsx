@@ -33,13 +33,32 @@ export default function DownloadProductsForm() {
 	const jetpackKeys =
 		licenseKeys && licenseKeys.split( ',' ).filter( ( key ) => ! isWooCommerceProduct( key ) );
 
-	// Only show the first valid Jetpack Complete or CRM license key
-	const validKeys =
-		jetpackKeys &&
-		jetpackKeys.filter(
-			( key ) => key.startsWith( 'jetpack_complete' ) || key.startsWith( 'jetpack_crm' )
-		);
-	const validCompleteKey = validKeys?.length ? validKeys[ 0 ] : null;
+	// Find CRM or Complete license keys
+	const crmKeys = jetpackKeys?.filter(
+		( key ) => key.startsWith( 'jetpack_complete' ) || key.startsWith( 'jetpack_crm' )
+	);
+	// Use the first valid CRM or Complete key
+	const validCrmKey = crmKeys?.length ? crmKeys[ 0 ] : null;
+
+	// Filter out CRM keys from regular Jetpack keys display
+	const regularJetpackKeys = jetpackKeys?.filter(
+		( key ) => ! key.startsWith( 'jetpack_complete' ) && ! key.startsWith( 'jetpack_crm' )
+	);
+
+	const jetpackProducts =
+		regularJetpackKeys &&
+		regularJetpackKeys.map( ( licenseKey: string ) => {
+			const productSlug = getProductSlugFromLicenseKey( licenseKey );
+			const product =
+				allProducts && allProducts.find( ( product ) => product.slug === productSlug );
+
+			return (
+				<li key={ licenseKey }>
+					<h5>{ product && product.name }</h5>
+					<pre>{ licenseKey }</pre>
+				</li>
+			);
+		} );
 
 	const wooProducts =
 		wooKeys &&
@@ -95,23 +114,24 @@ export default function DownloadProductsForm() {
 				</div>
 			</div>
 			<div className="download-products-form__bottom">
-				{ !! wooProducts.length && (
+				{ !! jetpackProducts.length && (
+					<div className="download-products-form__action-items">
+						<h4>{ translate( 'No more action is required for these products:' ) }</h4>
+						<ul>{ jetpackProducts }</ul>
+					</div>
+				) }
+				{ validCrmKey && (
+					<div className="download-products-form__action-items">
+						<h4>{ translate( 'Your license includes access to Jetpack CRM' ) }</h4>
+						<CrmDownloadsContent licenseKey={ validCrmKey } />
+					</div>
+				) }
+				{ !! wooProducts?.length && (
 					<div className="download-products-form__action-items">
 						<h4>{ translate( 'These extensions need to be downloaded and installed:' ) }</h4>
 						<ul>{ wooProducts }</ul>
 					</div>
 				) }
-				{ !! licenseKeys &&
-					licenseKeys
-						.split( ',' )
-						.some(
-							( key ) => key.startsWith( 'jetpack_complete' ) || key.startsWith( 'jetpack_crm' )
-						) && (
-						<div className="download-products-form__action-items">
-							<h4>{ translate( 'Your license includes access to Jetpack CRM' ) }</h4>
-							<CrmDownloadsContent licenseKey={ validCompleteKey || '' } />
-						</div>
-					) }
 			</div>
 		</div>
 	);
