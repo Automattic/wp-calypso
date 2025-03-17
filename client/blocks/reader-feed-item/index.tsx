@@ -77,7 +77,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 	const filteredDisplayUrl = filterURLForDisplay( displayUrl ?? '' );
 	const feedUrl = isWpcomFeed ? getFeedUrl( feed?.feed_ID ) : subscribeUrl;
 	const iconUrl = isWpcomFeed ? site?.icon?.img ?? site?.icon?.ico : feed?.image;
-	const isSubscribed = feed?.subscription_id ?? false;
+	const subscriptionId = feed?.subscription_id;
 	const shouldTrackRecommendedSearch =
 		source === SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST && railcar;
 	const title =
@@ -99,10 +99,10 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 		}
 
 		const noticeOptions: NoticeOptions = { duration: 5000 };
-		if ( isSubscribed ) {
+		if ( subscriptionId ) {
 			onUnsubscribe(
 				{
-					subscriptionId: feed?.subscription_id,
+					subscriptionId: subscriptionId,
 					blog_id: blogId ?? undefined,
 					url: subscribeUrl,
 				},
@@ -220,7 +220,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 			onClick={ onSubscribeToggle }
 			__next40pxDefaultSize
 		>
-			{ isSubscribed ? translate( 'Unsubscribe' ) : translate( 'Subscribe' ) }
+			{ subscriptionId ? translate( 'Unsubscribe' ) : translate( 'Subscribe' ) }
 		</Button>
 	);
 
