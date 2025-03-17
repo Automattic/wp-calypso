@@ -69,7 +69,7 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 		}
 
 		if ( ! data ) {
-			return <LoadingPlaceholder className="hosting-overview__plan-bandwidth-placeholder" />;
+			return <LoadingPlaceholder className="plan-bandwidth-placeholder" />;
 		}
 
 		const valueInBytes = data.data.periods.reduce(
@@ -136,9 +136,9 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 	};
 
 	return (
-		<div className="hosting-overview__plan-bandwidth">
-			<div className="hosting-overview__plan-bandwidth-title-wrapper">
-				<div className="hosting-overview__plan-bandwidth-title">
+		<div className="plan-bandwidth">
+			<div className="plan-bandwidth-title-wrapper">
+				<div className="plan-bandwidth-title">
 					{ translate( 'Bandwidth', {
 						comment: 'The title of the bandwidth section of site stats',
 					} ) }
@@ -147,7 +147,7 @@ export function PlanBandwidth( { siteId }: PlanBandwidthProps ) {
 					{ translate( 'Unlimited', { comment: 'An indicator that bandwidth is unlimited' } ) }
 				</div>
 			</div>
-			<div className="hosting-overview__plan-bandwidth-content">{ getBandwidthContent() }</div>
+			<div className="plan-bandwidth-content">{ getBandwidthContent() }</div>
 			{ getBandwidthFooterLink() }
 		</div>
 	);

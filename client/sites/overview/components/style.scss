@@ -137,7 +137,7 @@ $blueberry-color: #3858e9;
 
 .hosting-overview__navigation-header {
 	grid-column: 1 / -1;
-	
+
 	&.navigation-header {
 		margin-bottom: 16px;
 	}
@@ -215,18 +215,14 @@ $blueberry-color: #3858e9;
 }
 
 .hosting-overview__plan-card-header,
-.hosting-overview .hosting-overview__plan-price-wrapper,
-.hosting-overview__plan-price-loading-placeholder {
+.hosting-overview .plan-price-wrapper,
+.hosting-overview .plan-price-loading-placeholder {
 	display: flex;
 	margin-bottom: 8px;
 }
 
-.hosting-overview .hosting-overview__plan-price {
+.hosting-overview .plan-price {
 	display: flex;
-	align-items: center;
-}
-
-.hosting-overview__plan-price-wrapper {
 	align-items: center;
 }
 
@@ -241,22 +237,22 @@ $blueberry-color: #3858e9;
 }
 
 .hosting-overview__plan-card-title,
-.hosting-overview__plan-price,
-.hosting-overview__plan-price .plan-price__currency-symbol,
-.hosting-overview__plan-price .plan-price__integer,
-.hosting-overview__plan-price .plan-price__fraction,
-.hosting-overview__plan-price-term {
+.hosting-overview .plan-price,
+.hosting-overview .plan-price .plan-price__currency-symbol,
+.hosting-overview .plan-price .plan-price__integer,
+.hosting-overview .plan-price .plan-price__fraction,
+.hosting-overview .plan-price-term {
 	color: var(--studio-gray-100);
 	font-family: "SF Pro", $sans;
 	font-size: rem(28px); //typography-exception
 	line-height: 32px;
 }
 
-.hosting-overview__plan-price .plan-price__integer {
+.hosting-overview .plan-price .plan-price__integer {
 	margin-right: 0;
 }
 
-.hosting-overview__plan-price .plan-price__fraction {
+.hosting-overview .plan-price .plan-price__fraction {
 	font-weight: 400;
 }
 
@@ -267,135 +263,34 @@ $blueberry-color: #3858e9;
 		line-height: 26px;
 	}
 
-	.hosting-overview__plan-price,
-	.hosting-overview__plan-price .plan-price__currency-symbol,
-	.hosting-overview__plan-price .plan-price__integer,
-	.hosting-overview__plan-price .plan-price__fraction,
-	.hosting-overview__plan-price-term {
+	.hosting-overview .plan-price,
+	.hosting-overview .plan-price .plan-price__currency-symbol,
+	.hosting-overview .plan-price .plan-price__integer,
+	.hosting-overview .plan-price .plan-price__fraction,
+	.hosting-overview .plan-price-term {
 		font-size: rem(18px); //typography-exception
 		line-height: 26px;
 	}
 
 }
 
-.hosting-overview__plan-info {
-	color: var(--studio-gray-80);
-	font-family: "SF Pro Text", $sans;
-	font-size: $font-body-extra-small;
-	line-height: 16px;
-	margin-bottom: 4px;
-
-	&.is-expired {
-		color: #ea303f;
-	}
-}
-
-.hosting-overview__plan-info-loading-placeholder {
+.hosting-overview .plan-price-info {
 	margin-bottom: 4px;
 }
 
-.hosting-overview__plan-cta {
-	margin-top: 8px;
-}
-
-.hosting-overview__site-metrics {
-	color: var(--studio-gray-80, #2c3338);
-	font-family: "SF Pro Text", $sans;
-	font-size: $font-body-extra-small;
-	line-height: 16px;
-	margin-top: 30px;
-
-	.plan-storage__bar .progress-bar__progress {
-		background-color: $blueberry-color;
-	}
-
-	.plan-storage__bar.is-alert .progress-bar__progress {
-		background-color: var(--studio-red-30);
-	}
-}
-
-.hosting-overview__site-metrics-footer {
-	display: flex;
-	justify-content: space-between;
-	gap: $grid-unit-10;
-	margin-top: 8px;
-}
-
-@media (max-width: $break-mobile) {
-	.hosting-overview__site-metrics-footer {
-		flex-direction: column;
-	}
-}
-
-.hosting-overview__plan-storage,
-.hosting-overview__plan-bandwidth,
-.hosting-overview__plan-site-visits {
-	display: flex;
-	flex-direction: column;
-	border-radius: 4px;
-	border: 1px solid var(--studio-gray-0);
-	background: var(--studio-gray-0);
-	padding: $grid-unit-20;
-}
-
-.hosting-overview__plan-storage {
-	gap: $grid-unit-15;
-}
-
-.hosting-overview__plan-bandwidth,
-.hosting-overview__plan-site-visits {
-	flex: 1;
-	gap: $grid-unit-10;
-}
-
-.hosting-overview__plan-storage-title-wrapper,
-.hosting-overview__plan-bandwidth-title-wrapper,
-.hosting-overview__plan-site-visits-title-wrapper {
-	display: flex;
-	justify-content: space-between;
-	gap: $grid-unit-10;
-}
-
-.hosting-overview__plan-storage-title,
-.hosting-overview__plan-bandwidth-title,
-.hosting-overview__plan-site-visits-title {
-	text-transform: uppercase;
-}
-
-.hosting-overview__plan-storage-footer {
-	color: var(--color-link);
-
-	a:hover {
-		color: var(--color-link-dark);
-	}
-}
-
-.hosting-overview__plan-storage-value,
-.hosting-overview__plan-bandwidth-content,
-.hosting-overview__plan-site-visits-content {
-	font-weight: 700;
-}
-
-.hosting-overview__plan-bandwidth-placeholder,
-.hosting-overview__plan-site-visits-placeholder {
-	height: 1em;
-	max-width: calc(100% - $grid-unit-30);
+.hosting-overview .plan-price-info-loading-placeholder {
+	margin-bottom: 4px;
 }
 
 @media (max-width: $break-xlarge) {
-	.hosting-overview .hosting-overview__plan-price-wrapper,
-	.hosting-overview__plan-price-loading-placeholder {
+	.hosting-overview .plan-price-wrapper,
+	.hosting-overview .plan-price-loading-placeholder {
 		margin-bottom: 4px;
 	}
 
-	.hosting-overview__plan-info,
-	.hosting-overview__plan-info-loading-placeholder {
+	.hosting-overview .plan-price-info,
+	.hosting-overview .plan-price-info-loading-placeholder {
 		margin-bottom: 2px;
-	}
-
-	.hosting-overview__plan-storage {
-		gap: 16px;
-		margin-top: 16px;
 	}
 }
 

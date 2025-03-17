@@ -124,7 +124,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 							)
 						);
 
-						if ( railcar ) {
+						if ( shouldTrackRecommendedSearch ) {
 							// reader: action: site_followed, railcar, ui_algo, ui_position, fetch_algo, fetch_position, fetch_lang, rec_blog_id, (incorrect: only railcar & action accepted)
 							// subscriptions: action: recommended_search_item_site_subscribed, railcar
 							recordTrainTracksInteract( {

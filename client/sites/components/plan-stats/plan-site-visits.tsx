@@ -5,7 +5,6 @@ import moment from 'moment';
 import { useCallback, useLayoutEffect, useState } from 'react'; // eslint-disable-line no-unused-vars -- used in the jsdoc types
 import { untrailingslashit } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
-import './style.scss';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
@@ -99,7 +98,7 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 
 	const getSiteVisitsContent = () => {
 		if ( visitsResponse === 'loading' ) {
-			return <LoadingPlaceholder className="hosting-overview__plan-site-visits-placeholder" />;
+			return <LoadingPlaceholder className="plan-site-visits-placeholder" />;
 		}
 
 		if ( visitsResponse === 'error' ) {
@@ -205,18 +204,18 @@ export function PlanSiteVisits( { siteId }: PlanSiteVisitsProps ) {
 	};
 
 	return (
-		<div className="hosting-overview__plan-site-visits">
-			<div className="hosting-overview__plan-site-visits-title-wrapper">
-				<div className="hosting-overview__plan-site-visits-title">
+		<div className="plan-site-visits">
+			<div className="plan-site-visits-title-wrapper">
+				<div className="plan-site-visits-title">
 					{ translate( 'Visits', {
 						comment: 'The title of the site visits section of site stats',
 					} ) }
 				</div>
-				<div className="hosting-overview__site-metrics-unlimited">
+				<div className="site-metrics-unlimited">
 					{ translate( 'Unlimited', { comment: 'An indicator that bandwidth is unlimited' } ) }
 				</div>
 			</div>
-			<div className="hosting-overview__plan-site-visits-content">{ getSiteVisitsContent() }</div>
+			<div className="plan-site-visits-content">{ getSiteVisitsContent() }</div>
 			{ getSiteVisitsCTA() }
 		</div>
 	);

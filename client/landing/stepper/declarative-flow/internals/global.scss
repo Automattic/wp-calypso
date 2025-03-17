@@ -69,7 +69,7 @@ button {
  * Site Setup
  */
 .new-hosted-site,
-.site-setup,
+.site-setup:not(:has(.step-container-v2)),
 .onboarding.goals,
 .onboarding.design-setup,
 .onboarding.design-choices,
