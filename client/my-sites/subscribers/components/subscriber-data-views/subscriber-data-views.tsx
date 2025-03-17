@@ -2,6 +2,7 @@ import { Gravatar, TimeSince } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews, type View, type Action, Operator } from '@wordpress/dataviews';
 import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
+import { trash } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { useSubscribedNewsletterCategories } from 'calypso/data/newsletter-categories';
 import { useSelector } from 'calypso/state';
@@ -114,10 +115,10 @@ const SubscriberDataViews = ( {
 	} );
 
 	const {
-		currentSubscriber,
-		onClickUnsubscribe: handleUnsubscribe,
+		currentSubscribers,
+		onSetUnsubscribers: handleUnsubscribe,
 		onConfirmModal,
-		resetSubscriber,
+		resetSubscribers,
 	} = useUnsubscribeModal(
 		siteId ?? null,
 		{
@@ -294,8 +295,10 @@ const SubscriberDataViews = ( {
 			{
 				id: 'remove',
 				label: translate( 'Remove' ),
-				callback: ( items: Subscriber[] ) => handleUnsubscribe( items[ 0 ] ),
+				callback: handleUnsubscribe,
 				isPrimary: false,
+				supportsBulk: true,
+				icon: trash,
 			},
 		];
 
@@ -449,11 +452,14 @@ const SubscriberDataViews = ( {
 							fields={ fields }
 							view={ currentView }
 							onClickItem={ handleSubscriberSelection }
+							isItemClickable={ () => true }
 							onChangeView={ handleViewChange }
 							selection={
 								selectedSubscriber ? [ selectedSubscriber.subscription_id.toString() ] : undefined
 							}
-							onChangeSelection={ handleSubscriberSelection }
+							onChangeSelection={
+								currentView.type === 'list' ? handleSubscriberSelection : undefined
+							}
 							isLoading={ isLoading }
 							paginationInfo={ paginationInfo }
 							getItemId={ ( item: Subscriber ) => item.subscription_id.toString() }
@@ -476,15 +482,15 @@ const SubscriberDataViews = ( {
 							siteId={ siteId }
 							subscriptionId={ selectedSubscriber.subscription_id }
 							onClose={ () => setSelectedSubscriber( null ) }
-							onUnsubscribe={ handleUnsubscribe }
+							onUnsubscribe={ ( subscriber ) => handleUnsubscribe( [ subscriber ] ) }
 							newsletterCategoriesEnabled={ subscribedNewsletterCategoriesData?.enabled }
 							newsletterCategories={ subscribedNewsletterCategoriesData?.newsletterCategories }
 						/>
 					</section>
 				) }
 			<UnsubscribeModal
-				subscriber={ currentSubscriber }
-				onCancel={ resetSubscriber }
+				subscribers={ currentSubscribers }
+				onCancel={ resetSubscribers }
 				onConfirm={ onConfirmModal }
 			/>
 		</div>

@@ -248,12 +248,11 @@ export class RenderDomainsStep extends Component {
 			suggestion?.isSubDomainSuggestion
 		) {
 			if ( this.state.wpcomSubdomainSelected ) {
-				this.freeDomainRemoveClickHandler();
-			} else {
-				this.setState( { wpcomSubdomainSelected: suggestion } );
-				this.props.saveSignupStep( stepData );
+				await this.freeDomainRemoveClickHandler();
 			}
-
+			this.setState( { wpcomSubdomainSelected: suggestion }, () => {
+				this.props.saveSignupStep( stepData );
+			} );
 			return;
 		}
 
@@ -915,12 +914,15 @@ export class RenderDomainsStep extends Component {
 	};
 
 	freeDomainRemoveClickHandler = () => {
-		this.setState( { wpcomSubdomainSelected: false } );
-		this.props.saveSignupStep( {
-			stepName: this.props.stepName,
-			suggestion: {
-				domain_name: false,
-			},
+		return new Promise( ( resolve ) => {
+			this.setState( { wpcomSubdomainSelected: false } );
+			this.props.saveSignupStep( {
+				stepName: this.props.stepName,
+				suggestion: {
+					domain_name: false,
+				},
+			} );
+			resolve();
 		} );
 	};
 
