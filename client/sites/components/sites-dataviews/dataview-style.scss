@@ -46,3 +46,11 @@
 		}
 	}
 }
+
+.wpcom-site .sites-dataviews .is-hovered .dataviews-view-list__item-actions {
+	box-shadow: -10px 0 10px 10px var( --color-neutral-0 );
+}
+
+.wpcom-site .sites-dataviews .is-selected .dataviews-view-list__item-actions {
+	box-shadow: -10px 0 10px 10px #f6fafc;
+}
