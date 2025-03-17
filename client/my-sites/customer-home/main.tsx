@@ -5,10 +5,10 @@ import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { shouldShowLaunchpadFirst } from 'calypso/state/selectors/should-show-launchpad-first';
 import CelebrateLaunchModal from './components/celebrate-launch-modal';
 import { FullScreenLaunchpad } from './components/full-screen-launchpad';
 import HomeContent from './components/home-content';
+import { useShouldShowLaunchpadFirst } from './components/use-should-show-launchpad-first';
 import type { SiteDetails } from '@automattic/data-stores';
 
 export default function CustomerHome( { site }: { site: SiteDetails } ) {
@@ -28,13 +28,15 @@ export default function CustomerHome( { site }: { site: SiteDetails } ) {
 		retry: false,
 	} );
 
+	const shouldShowLaunchpad = useShouldShowLaunchpadFirst( site );
+
 	return (
 		<Main wideLayout>
 			<PageViewTracker path="/home/:site" title={ translate( 'My Home' ) } />
 			<DocumentHead title={ translate( 'My Home' ) } />
 			{ site.options && (
 				<>
-					{ shouldShowLaunchpadFirst( site ) && ! isFullLaunchpadDismissed ? (
+					{ shouldShowLaunchpad && ! isFullLaunchpadDismissed ? (
 						<FullScreenLaunchpad
 							onClose={ () => setIsFullLaunchpadDismissed( true ) }
 							onSiteLaunch={ () => {
