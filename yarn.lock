@@ -1597,9 +1597,9 @@ __metadata:
     "@automattic/data-stores": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@automattic/viewport": "workspace:^"
-    "@storybook/addon-a11y": "npm:^7.6.19"
-    "@storybook/cli": "npm:^7.6.19"
-    "@storybook/react": "npm:^7.6.19"
+    "@storybook/addon-a11y": "npm:^7.6.20"
+    "@storybook/cli": "npm:^7.6.20"
+    "@storybook/react": "npm:^7.6.20"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/react": "npm:^16.2.0"
     "@wordpress/base-styles": "npm:^5.20.0"
@@ -6786,7 +6786,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-a11y@npm:^7.6.19, @storybook/addon-a11y@npm:^7.6.20":
+"@storybook/addon-a11y@npm:^7.6.20":
   version: 7.6.20
   resolution: "@storybook/addon-a11y@npm:7.6.20"
   dependencies:
@@ -7006,7 +7006,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/cli@npm:^7.6.19, @storybook/cli@npm:^7.6.20":
+"@storybook/cli@npm:^7.6.20":
   version: 7.6.20
   resolution: "@storybook/cli@npm:7.6.20"
   dependencies:
@@ -7463,7 +7463,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/react@npm:7.6.20, @storybook/react@npm:^7.6.19, @storybook/react@npm:^7.6.20":
+"@storybook/react@npm:7.6.20, @storybook/react@npm:^7.6.20":
   version: 7.6.20
   resolution: "@storybook/react@npm:7.6.20"
   dependencies:
