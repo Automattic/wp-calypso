@@ -13,17 +13,17 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
-import { useCreateSite } from '../hooks/use-create-site-hook';
-import { useExitFlow } from '../hooks/use-exit-flow';
-import { useSiteIdParam } from '../hooks/use-site-id-param';
-import { useSiteSlug } from '../hooks/use-site-slug';
-import { ONBOARD_STORE, SITE_STORE } from '../stores';
-import { getQuery } from '../utils/get-query';
-import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
-import { useFlowState } from './internals/state-manager/store';
-import { STEPS } from './internals/steps';
-import { ProvidedDependencies } from './internals/types';
-import type { Flow } from './internals/types';
+import { useCreateSite } from '../../../hooks/use-create-site-hook';
+import { useExitFlow } from '../../../hooks/use-exit-flow';
+import { useSiteIdParam } from '../../../hooks/use-site-id-param';
+import { useSiteSlug } from '../../../hooks/use-site-slug';
+import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
+import { getQuery } from '../../../utils/get-query';
+import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
+import { useFlowState } from '../../internals/state-manager/store';
+import { STEPS } from '../../internals/steps';
+import { ProvidedDependencies } from '../../internals/types';
+import type { Flow } from '../../internals/types';
 
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 
