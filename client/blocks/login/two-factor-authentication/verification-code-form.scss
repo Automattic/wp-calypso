@@ -96,6 +96,13 @@
 			max-width: 404px;
 		}
 	}
+
+	.two-factor-authentication__small-print {
+		a {
+			color: var(--woo-purple-40);
+			font-size: inherit;
+		}
+	}
 }
 
 .security-key-form__add-wait-for-key {
