@@ -72,7 +72,7 @@ const StatsModuleUTM = ( {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const translate = useTranslate();
 
-	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.SOURCE_MEDIUM );
+	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.CAMPAIGN );
 
 	const optionLabels = {
 		[ OPTION_KEYS.SOURCE_MEDIUM ]: {
