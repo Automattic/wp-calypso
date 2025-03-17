@@ -45,12 +45,13 @@ export const useSendOdieMessage = () => {
 		setChatStatus,
 		setExperimentVariationName,
 		isUserEligibleForPaidSupport,
+		canConnectToZendesk,
 	} = useOdieAssistantContext();
 
 	const addMessage = ( message: Message | Message[], props?: Partial< Chat > ) => {
 		if ( ! Array.isArray( message ) ) {
 			const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support ?? false;
-			if ( isRequestingHumanSupport && isUserEligibleForPaidSupport ) {
+			if ( isRequestingHumanSupport && canConnectToZendesk && isUserEligibleForPaidSupport ) {
 				newConversation( { createdFrom: 'automatic_escalation' } );
 				return;
 			}
