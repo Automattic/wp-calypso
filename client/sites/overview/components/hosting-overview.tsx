@@ -17,12 +17,9 @@ import './style.scss';
 const HostingOverview: FC = () => {
 	const site = useSelector( getSelectedSite );
 	const translate = useTranslate();
-	const queryParams = new URLSearchParams( window.location.search );
-	const ref = queryParams.get( 'ref' );
-	const showMigrationOverview = ref === 'site-migration';
 
 	if ( site ) {
-		if ( isMigrationInProgress( site ) || showMigrationOverview ) {
+		if ( isMigrationInProgress( site ) ) {
 			return <MigrationOverview site={ site } />;
 		}
 	}
