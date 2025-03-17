@@ -123,7 +123,11 @@ export const GoalsStep = () => {
 							</SelectCardCheckbox>
 						) ) }
 					</div>
-					{ isMediumViewport && <div style={ { marginTop: '3rem' } }>{ nextButton }</div> }
+					{ isMediumViewport && (
+						<div style={ { marginLeft: 'auto', marginRight: 'auto', marginTop: '1.5rem' } }>
+							{ nextButton }
+						</div>
+					) }
 				</>
 			) }
 		/>

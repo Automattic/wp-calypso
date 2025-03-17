@@ -3,7 +3,7 @@
 .goals__list {
 	display: grid;
 	width: 100%;
-	gap: 1rem;
+	gap: 12px;
 
 	@include step-medium-viewport {
 		width: auto;
