@@ -92,10 +92,18 @@ export const parseLocalDate = ( dateString ) => {
 };
 
 /**
- * Process the start date and original period to determine the chart range parameters.
+ * The chart range parameters include the chart start date, chart end date, and chart period.
+ * @typedef {Object} ChartRangeParams
+ * @property {string} chartStart The start date of the chart range.
+ * @property {string} chartEnd The end date of the chart range.
+ * @property {string} chartPeriod The period of the chart range.
+ */
+
+/**
+ * Process the start date and from period to determine the target chart range parameters.
  * @param {string} startDate The start date of the chart range.
- * @param {string} fromPeriod The original period of the chart.
- * @returns {Object} The chart range parameters including the start date, end date, and period.
+ * @param {string} fromPeriod The period of the chart where the action comes from.
+ * @returns {ChartRangeParams} The chart range parameters for navigating the chart.
  */
 export const getChartRangeParams = ( startDate, fromPeriod ) => {
 	const chartStart = startDate;
@@ -103,6 +111,7 @@ export const getChartRangeParams = ( startDate, fromPeriod ) => {
 		.endOf( fromPeriod === 'week' ? 'isoWeek' : fromPeriod )
 		.format( DATE_FORMAT );
 
+	// Do not go beyond the current date.
 	if ( moment().isBefore( chartEnd ) ) {
 		chartEnd = moment().format( DATE_FORMAT );
 	}
