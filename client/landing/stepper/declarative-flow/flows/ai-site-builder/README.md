@@ -5,7 +5,6 @@
 Please improve the instructions on how to test this flow.
 
 1. Go to /setup/ai-site-builder.
-2.
 
 ## Owned by
 
