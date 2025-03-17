@@ -25,6 +25,7 @@ export type ReadFeedResponse = {
 	subscribe_URL: string;
 	subscribers_count: number;
 	unseen_count: number;
+	subscription_id?: number; // Only present if the user is subscribed to the feed.
 };
 
 const useReadFeedQuery = ( enabled: boolean, feedId?: number | string ) => {
