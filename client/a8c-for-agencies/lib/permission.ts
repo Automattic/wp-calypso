@@ -108,6 +108,7 @@ const MEMBER_ACCESSIBLE_DYNAMIC_PATHS: Record< string, string[] > = {
 	team: [ 'a4a_read_users' ],
 	marketplace: [ 'a4a_read_marketplace' ],
 	licenses: [ 'a4a_jetpack_licensing' ],
+	'crm-downloads': [ 'a4a_jetpack_licensing' ],
 	plugins: [ 'a4a_read_managed_sites' ],
 	referrals: [ 'a4a_read_referrals' ],
 };
@@ -116,6 +117,7 @@ const DYNAMIC_PATH_PATTERNS: Record< string, RegExp > = {
 	'sites-overview': /^\/sites\/overview\/[^/]+(\/.*)?$/,
 	marketplace: /^\/marketplace\/[^/]+\/[^/]+(\/.*)?$/,
 	licenses: /^\/purchases\/licenses(\/.*)?$/,
+	'crm-downloads': /^\/purchases\/crm-downloads\/a8c-for-agencies\/[^/]+(\/.*)?$/,
 	team: /^\/team(\/.*)?$/,
 	plugins: /^\/plugins(\/.*)?$/,
 	referrals: /^\/referrals(\/.*)?$/,
