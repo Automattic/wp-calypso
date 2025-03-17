@@ -39,7 +39,7 @@ import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { FeatureBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-feature-breadcrumb';
-import CurrentPlan from 'calypso/sites/plan/components/current-plan';
+import CurrentPlanPanel from 'calypso/sites/plan/components/current-plan-panel';
 import { useSelector } from 'calypso/state';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -468,7 +468,7 @@ class PlansComponent extends Component {
 				) }
 				{ canAccessPlans && (
 					<div>
-						{ isUntangled && <CurrentPlan /> }
+						{ isUntangled && <CurrentPlanPanel /> }
 						{ ! isUntangled && ! isDomainAndPlanPackageFlow && (
 							<PlansHeader
 								domainFromHomeUpsellFlow={ domainFromHomeUpsellFlow }

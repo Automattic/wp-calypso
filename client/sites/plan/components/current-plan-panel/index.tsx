@@ -6,7 +6,7 @@ import { getSelectedPurchase, getSelectedSite } from 'calypso/state/ui/selectors
 
 import './style.scss';
 
-export default function CurrentPlan() {
+export default function CurrentPlanPanel() {
 	const site = useSelector( getSelectedSite );
 	const planDetails = site?.plan;
 	const isFreePlan = planDetails?.is_free;
@@ -21,7 +21,7 @@ export default function CurrentPlan() {
 	}
 
 	return (
-		<div className="current-plan">
+		<div className="current-plan-panel">
 			<h3>{ planName }</h3>
 			{ ! isFreePlan && <PlanPricing /> }
 			<PlanStats />
