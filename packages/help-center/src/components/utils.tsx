@@ -3,6 +3,15 @@ import Smooch from 'smooch';
 import type { ContactOption } from '../types';
 import type { ZendeskConversation, SupportInteraction } from '@automattic/odie-client';
 
+const hasMatchingInteraction = (
+	supportInteractions: SupportInteraction[],
+	conversation: ZendeskConversation
+) => {
+	return supportInteractions.some(
+		( interaction ) => interaction.uuid === conversation.metadata.supportInteractionId
+	);
+};
+
 export const generateContactOnClickEvent = (
 	contactOption: ContactOption,
 	contactOptionEventName?: string,
@@ -100,9 +109,7 @@ export const getConversationsFromSupportInteractions = (
 	supportInteractions: SupportInteraction[]
 ) => {
 	return conversations.filter( ( conversation ) =>
-		supportInteractions.some(
-			( interaction ) => interaction.uuid === conversation.metadata.supportInteractionId
-		)
+		hasMatchingInteraction( supportInteractions, conversation )
 	);
 };
 
