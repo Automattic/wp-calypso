@@ -4,6 +4,7 @@ import autosize from 'autosize';
 import React, { KeyboardEvent } from 'react';
 
 export const ResizableTextarea: React.FC< {
+	cantTransferToZendesk?: boolean;
 	className: string;
 	inputRef: React.RefObject< HTMLTextAreaElement >;
 	keyUpHandle: () => void;
@@ -12,6 +13,7 @@ export const ResizableTextarea: React.FC< {
 	setSubmitDisabled: ( shouldBeDisabled: boolean ) => void;
 	shouldDisableInputField: boolean;
 } > = ( {
+	cantTransferToZendesk = true,
 	className,
 	sendMessageHandler,
 	inputRef,
@@ -84,10 +86,14 @@ export const ResizableTextarea: React.FC< {
 			className={ className }
 			onKeyUp={ onKeyUp }
 			onPaste={ onPasteHandle }
-			placeholder={ textAreaPlaceholder }
+			placeholder={
+				cantTransferToZendesk
+					? __( 'Oops, something went wrong', __i18n_text_domain__ )
+					: textAreaPlaceholder
+			}
 			onKeyDown={ onKeyDown }
 			style={ { transition: 'none' } }
-			disabled={ shouldDisableInputField }
+			disabled={ shouldDisableInputField || cantTransferToZendesk }
 		/>
 	);
 };

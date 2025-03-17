@@ -3,6 +3,7 @@ import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import {
 	useAttachFileToConversation,
 	useAuthenticateZendeskMessaging,
+	useCanConnectToZendeskMessaging,
 } from '@automattic/zendesk-client';
 import { DropZone, Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
@@ -46,6 +47,11 @@ export const OdieSendMessageButton = () => {
 	const inputRef = useRef< HTMLTextAreaElement >( null );
 	const attachmentButtonRef = useRef< HTMLElement >( null );
 	const { trackEvent, chat, addMessage, isUserEligibleForPaidSupport } = useOdieAssistantContext();
+	const { data: canConnectToZendeskMessaging } = useCanConnectToZendeskMessaging();
+	const cantTransferToZendesk =
+		( chat.messages?.[ chat.messages.length - 1 ]?.context?.flags?.forward_to_human_support &&
+			! canConnectToZendeskMessaging ) ??
+		false;
 	const sendMessage = useSendChatMessage();
 	const isChatBusy = chat.status === 'loading' || chat.status === 'sending';
 	const [ isMessageSizeValid, setIsMessageSizeValid ] = useState( true );
@@ -190,6 +196,7 @@ export const OdieSendMessageButton = () => {
 				>
 					<ResizableTextarea
 						shouldDisableInputField={ isChatBusy || isAttachingFile }
+						cantTransferToZendesk={ cantTransferToZendesk }
 						sendMessageHandler={ sendMessageHandler }
 						className="odie-send-message-input"
 						inputRef={ inputRef }
