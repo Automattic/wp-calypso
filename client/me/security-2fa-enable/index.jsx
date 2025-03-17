@@ -1,10 +1,12 @@
-import { FormLabel, Gridicon } from '@automattic/components';
+import { FormLabel, Tooltip } from '@automattic/components';
+import { Icon } from '@wordpress/components';
+import { copySmall } from '@wordpress/icons';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { QRCodeSVG } from 'qrcode.react';
-import { Component } from 'react';
+import { Component, createRef } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormButton from 'calypso/components/forms/form-button';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -46,6 +48,7 @@ class Security2faEnable extends Component {
 	};
 
 	codeRequestTimer = false;
+	clipboardButtonRef = createRef();
 
 	componentDidMount() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
@@ -208,6 +211,8 @@ class Security2faEnable extends Component {
 	};
 
 	renderOneTimeCode = () => {
+		const { oneTimeCopied } = this.state;
+
 		return (
 			<div className="security-2fa-enable__one-time-code-block">
 				<p className="security-2fa-enable__one-time-instruction">
@@ -228,23 +233,23 @@ class Security2faEnable extends Component {
 						className="security-2fa-enable__clipboard-button"
 						borderless
 						compact
+						ref={ this.clipboardButtonRef }
 						onCopy={ () => {
 							gaRecordEvent( 'Me', 'Copied 2FA One-Time Code' );
-
 							this.setState( { oneTimeCopied: true } );
-							setTimeout( () => {
-								this.setState( { oneTimeCopied: false } );
-							}, 2000 );
 						} }
+						onMouseLeave={ () => this.setState( { oneTimeCopied: false } ) }
 					>
-						<Gridicon icon="clipboard" />
+						<Icon icon={ copySmall } size={ 18 } />
 					</ClipboardButton>
 
-					{ this.state.oneTimeCopied && (
-						<span className="security-2fa-enable__copied-text">
-							{ this.props.translate( 'Copied!' ) }
-						</span>
-					) }
+					<Tooltip
+						context={ this.clipboardButtonRef.current }
+						isVisible={ oneTimeCopied }
+						position="top"
+					>
+						{ this.props.translate( 'Copied to clipboard!' ) }
+					</Tooltip>
 				</div>
 			</div>
 		);

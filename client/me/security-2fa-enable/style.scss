@@ -22,6 +22,7 @@
 	display: flex;
 	align-items: center;
 	margin: 6px 0;
+	position: relative;
 }
 
 .security-2fa-enable__one-time-code {
@@ -30,17 +31,12 @@
 	margin-right: 8px;
 }
 
-.security-2fa-enable__copied-text {
-	color: var(--color-success);
-	margin-left: 8px;
-	font-size: $font-body-small;
-	font-weight: 500;
-	animation: fade-in 0.3s ease-in-out;
-}
-
-@keyframes fade-in {
-	from { opacity: 0; }
-	to { opacity: 1; }
+.security-2fa-enable__clipboard-button {
+	color: var(--color-text-subtle);
+	
+	&:hover {
+		color: var(--color-primary);
+	}
 }
 
 .security-2fa-enable__toggle {
