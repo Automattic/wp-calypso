@@ -8,5 +8,6 @@ export { TopBar } from './components/TopBar/TopBar';
 export { StickyBottomBar } from './components/StickyBottomBar/StickyBottomBar';
 
 export { FullWidthLayout } from './wireframes/FullWidthLayout/FullWidthLayout';
+export { FourColumnsCenteredLayout } from './wireframes/FourColumnsCenteredLayout/FourColumnsCenteredLayout';
 export { SixColumnsCenteredLayout } from './wireframes/SixColumnsCenteredLayout/SixColumnsCenteredLayout';
 export { ThreeColumnsOnRightLayout } from './wireframes/ThreeColumnsOnRightLayout/ThreeColumnsOnRightLayout';
