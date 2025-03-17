@@ -402,7 +402,9 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
-					return exitFlow( addQueryArgs( { ref: 'site-migration' }, `/overview/${ siteSlug }` ) );
+					return exitFlow(
+						addQueryArgs( { ref: 'site-migration', refresh: 'true' }, `/overview/${ siteSlug }` )
+					);
 				}
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {
