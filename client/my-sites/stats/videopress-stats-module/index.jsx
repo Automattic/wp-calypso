@@ -1,12 +1,11 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Card } from '@automattic/components';
+import { StatsCard } from '@automattic/components';
 import clsx from 'clsx';
 import { numberFormat, localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import SectionHeader from 'calypso/components/section-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
@@ -94,7 +93,6 @@ class VideoPressStatsModule extends Component {
 			path,
 			data,
 			moduleStrings,
-			requesting,
 			statType,
 			query,
 			period,
@@ -125,11 +123,6 @@ class VideoPressStatsModule extends Component {
 			className
 		);
 
-		const summaryLink = this.getHref();
-		const headerClass = clsx( 'stats-module__header', {
-			'is-refreshing': requesting && ! isLoading,
-		} );
-
 		const editVideo = ( postId ) => {
 			const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 			if ( ! isOdysseyStats ) {
@@ -158,24 +151,27 @@ class VideoPressStatsModule extends Component {
 			...completeVideoStats,
 		];
 
+		const moduleLabel = this.getModuleLabel();
+
 		return (
 			<div>
-				<SectionHeader
-					className={ headerClass }
-					label={ this.getModuleLabel() }
-					href={ ! summary ? summaryLink : null }
+				<StatsCard
+					className={ cardClasses }
+					title={ summary ? moduleStrings.title : moduleLabel }
+					header={ summary ? moduleLabel : null }
+					downloadCsv={
+						summary && (
+							<DownloadCsv
+								statType={ statType }
+								data={ csvData }
+								query={ query }
+								path={ path }
+								period={ period }
+							/>
+						)
+					}
+					isEmpty={ noData }
 				>
-					{ summary && (
-						<DownloadCsv
-							statType={ statType }
-							data={ csvData }
-							query={ query }
-							path={ path }
-							period={ period }
-						/>
-					) }
-				</SectionHeader>
-				<Card compact className={ cardClasses }>
 					<div className="videopress-stats-module__grid">
 						<div className="videopress-stats-module__header-row-wrapper">
 							<div className="videopress-stats-module__grid-header">{ translate( 'Title' ) }</div>
@@ -255,7 +251,7 @@ class VideoPressStatsModule extends Component {
 					{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
 					{ hasError && <ErrorPanel /> }
 					<StatsModulePlaceholder isLoading={ isLoading } />
-				</Card>
+				</StatsCard>
 			</div>
 		);
 	}
