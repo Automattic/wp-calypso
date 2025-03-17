@@ -5,6 +5,9 @@
 $blueberry-color: #3858e9;
 
 .plan-stats {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
 	color: var(--studio-gray-80, #2c3338);
 	font-family: "SF Pro Text", $sans;
 	font-size: $font-body-extra-small;
@@ -31,12 +34,14 @@ $blueberry-color: #3858e9;
 	}
 
 	.plan-storage {
+		flex: 3 1 auto;
 		gap: $grid-unit-15;
 	}
 
 	.plan-bandwidth,
 	.plan-site-visits {
 		flex: 1;
+		min-width: 150px;
 		gap: $grid-unit-10;
 	}
 
@@ -55,6 +60,8 @@ $blueberry-color: #3858e9;
 	}
 
 	.plan-storage-footer {
+		display: flex;
+		flex-wrap: wrap;
 		color: var(--color-link);
 
 		a:hover {
@@ -76,15 +83,11 @@ $blueberry-color: #3858e9;
 
 	.plan-stats__footer {
 		display: flex;
+		flex: 1 1 auto;
+		flex-wrap: wrap;
 		justify-content: space-between;
 		gap: $grid-unit-10;
 		margin-top: 8px;
-	}
-
-	@media (max-width: $break-mobile) {
-		.plan-stats__footer {
-			flex-direction: column;
-		}
 	}
 
 	@media (max-width: $break-xlarge) {
