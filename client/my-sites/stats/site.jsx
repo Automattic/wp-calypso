@@ -35,6 +35,7 @@ import {
 	STATS_PRODUCT_NAME,
 } from 'calypso/my-sites/stats/constants';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
+import { getChartRangeParams } from 'calypso/my-sites/stats/utils';
 import {
 	recordGoogleEvent,
 	recordTracksEvent,
@@ -263,11 +264,9 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		// Mark the drilled-down period page should use the go-back action.
 		sessionStorage.setItem( 'jetpack_stats_date_range_is_drilling_down', 1 );
 
-		let chartStart = periodStartDate;
-		let chartEnd = moment( chartStart )
-			.endOf( currentPeriod === 'week' ? 'isoWeek' : currentPeriod )
-			.format( DATE_FORMAT );
+		const chartRangeParams = getChartRangeParams( periodStartDate, currentPeriod );
 
+		let { chartStart, chartEnd } = chartRangeParams;
 		// Limit navigation within the currently selected range.
 		const currentChartStart = context.query?.chartStart;
 		const currentChartEnd = context.query?.chartEnd;
@@ -278,15 +277,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 			chartEnd = currentChartEnd;
 		}
 
-		// Determine the target period for the navigation.
-		let targetPeriod = 'day';
-		if ( currentPeriod === 'day' ) {
-			targetPeriod = 'hour';
-		} else if ( currentPeriod === 'year' ) {
-			targetPeriod = 'month';
-		}
-
-		const path = `/stats/${ targetPeriod }/${ slug }`;
+		const path = `/stats/${ chartRangeParams.chartPeriod }/${ slug }`;
 		const url = getPathWithUpdatedQueryString( { chartStart, chartEnd }, path );
 
 		return url;

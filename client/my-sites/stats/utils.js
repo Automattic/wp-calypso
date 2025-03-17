@@ -2,7 +2,9 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
+import moment from 'moment';
 import { parse as parseQs, stringify as stringifyQs } from 'qs';
+import { DATE_FORMAT } from 'calypso/my-sites/stats/constants';
 
 /**
  * Update query for current page or passed in URL
@@ -87,4 +89,34 @@ export const parseLocalDate = ( dateString ) => {
 	date.setMinutes( date.getMinutes() + date.getTimezoneOffset() );
 
 	return date;
+};
+
+/**
+ * Process the start date and original period to determine the chart range parameters.
+ * @param {string} startDate The start date of the chart range.
+ * @param {string} fromPeriod The original period of the chart.
+ * @returns {Object} The chart range parameters including the start date, end date, and period.
+ */
+export const getChartRangeParams = ( startDate, fromPeriod ) => {
+	const chartStart = startDate;
+	let chartEnd = moment( chartStart )
+		.endOf( fromPeriod === 'week' ? 'isoWeek' : fromPeriod )
+		.format( DATE_FORMAT );
+
+	if ( moment().isBefore( chartEnd ) ) {
+		chartEnd = moment().format( DATE_FORMAT );
+	}
+
+	let chartPeriod = 'day';
+	if ( fromPeriod === 'day' ) {
+		chartPeriod = 'hour';
+	} else if ( fromPeriod === 'year' ) {
+		chartPeriod = 'month';
+	}
+
+	return {
+		chartStart,
+		chartEnd,
+		chartPeriod,
+	};
 };
