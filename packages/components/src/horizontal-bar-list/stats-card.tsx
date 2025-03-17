@@ -86,7 +86,7 @@ const StatsCard = ( props: StatsCardProps ) => {
 					{ ! heroElement && titleNode }
 					{ downloadCsv }
 				</div>
-				{ toggleControl }
+				<div className={ `${ BASE_CLASS_NAME }-header--main__right` }>{ toggleControl }</div>
 			</div>
 			{ ! isEmpty && (
 				<div className={ `${ BASE_CLASS_NAME }--column-header` }>
