@@ -137,7 +137,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 								{ item.label }
 							</a>
 						) }
-						{ ! item.onClick && ! item.url && item.label }
+						{ ! item.onClick && ! item.url && <div>{ item.label }</div> }
 					</li>
 				) )
 			)
