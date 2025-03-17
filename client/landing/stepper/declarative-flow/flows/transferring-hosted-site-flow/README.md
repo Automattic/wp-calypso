@@ -5,7 +5,7 @@
 Please improve the instructions on how to test this flow.
 
 1. Go to /setup/transferring-hosted-site-flow.
-2.
+
 
 ## Owned by
 

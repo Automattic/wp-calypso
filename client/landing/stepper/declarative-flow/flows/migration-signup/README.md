@@ -5,7 +5,7 @@
 Please improve the instructions on how to test this flow.
 
 1. Go to /setup/migration-signup.
-2.
+
 
 ## Owned by
 
