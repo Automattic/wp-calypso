@@ -36,6 +36,7 @@
 
 	&.is-card-link {
 		padding-right: 48px;
+		text-decoration: none;
 		&:not(a) {
 			color: var(--color-primary);
 			font-size: 100%;

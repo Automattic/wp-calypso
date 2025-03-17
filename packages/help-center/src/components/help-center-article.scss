@@ -54,10 +54,6 @@
 				border-color: inherit;
 			}
 
-			a:not(.help-center-article-content__header-title-link) {
-				text-decoration: none;
-			}
-
 			a[name="toc"] span {
 				color: var(--color-neutral-80);
 				font-size: $font-body;

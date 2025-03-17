@@ -124,6 +124,7 @@
 		margin: $padding-outside $padding-outside 0;
 		display: block;
 		color: var(--color-text);
+		text-decoration: none; // TODO: Should this be a tertiary button component instead?
 
 		&:visited {
 			color: $font-color;
