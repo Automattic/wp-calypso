@@ -1,5 +1,5 @@
-import { Card, Gridicon } from '@automattic/components';
-import { Button, ExternalLink } from '@wordpress/components';
+import { Card, Gridicon, Button } from '@automattic/components';
+import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
@@ -277,7 +277,7 @@ export function CrmDownloadsContent( { licenseKey }: CrmDownloadsProps ) {
 									</td>
 									<td>
 										<Button
-											variant="primary"
+											primary
 											disabled={
 												loadingExtensions.includes( extension.slug ) || isLoadingExtensions
 											}
@@ -329,7 +329,7 @@ export function CrmDownloadsError( { onReturnClick }: CrmDownloadsErrorProps ) {
 						'Please try again later or contact support.'
 				) }
 			</p>
-			<Button href="/me/purchases" variant="primary" onClick={ onReturnClick }>
+			<Button href="/me/purchases" primary onClick={ onReturnClick }>
 				{ translate( 'Return to Purchases' ) }
 			</Button>
 		</div>
