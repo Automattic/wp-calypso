@@ -144,7 +144,8 @@ export type MessageType =
 	| 'help-link'
 	| 'file'
 	| 'image'
-	| 'introduction';
+	| 'introduction'
+	| 'cant_transfer';
 
 export type Message = {
 	content: string;

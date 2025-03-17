@@ -52,8 +52,14 @@ interface ChatMessagesProps {
 }
 
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
-	const { chat, botNameSlug, experimentVariationName, isChatLoaded, isUserEligibleForPaidSupport } =
-		useOdieAssistantContext();
+	const {
+		addMessage,
+		chat,
+		botNameSlug,
+		experimentVariationName,
+		isChatLoaded,
+		isUserEligibleForPaidSupport,
+	} = useOdieAssistantContext();
 	const createZendeskConversation = useCreateZendeskConversation();
 	const resetSupportInteraction = useResetSupportInteraction();
 	const [ searchParams, setSearchParams ] = useSearchParams();
@@ -130,14 +136,22 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 
 			resetSupportInteraction().then( ( interaction ) => {
 				if ( isChatLoaded ) {
-					createZendeskConversation( {
-						avoidTransfer: true,
-						interactionId: interaction?.uuid,
-						section: searchParams.get( 'section' ),
-						createdFrom: 'direct_url',
-					} ).then( () => {
-						setChatMessagesLoaded( true );
-					} );
+					if ( createZendeskConversation ) {
+						createZendeskConversation( {
+							avoidTransfer: true,
+							interactionId: interaction?.uuid,
+							section: searchParams.get( 'section' ),
+							createdFrom: 'direct_url',
+						} ).then( () => {
+							setChatMessagesLoaded( true );
+						} );
+					} else {
+						addMessage( {
+							content: '',
+							role: 'bot',
+							type: 'cant_transfer',
+						} );
+					}
 				}
 			} );
 		}

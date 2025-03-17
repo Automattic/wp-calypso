@@ -7,6 +7,7 @@ import ChatWithSupportLabel from '../chat-with-support';
 import CustomALink from './custom-a-link';
 import DislikeFeedbackMessage from './dislike-feedback-message';
 import ErrorMessage from './error-message';
+import { NewThirdPartyCookiesNotice } from './get-support';
 import { uriTransformer } from './uri-transformer';
 import { UserMessage } from './user-message';
 import type { ZendeskMessage, Message } from '../../types';
@@ -70,6 +71,7 @@ export const MessageContent = ( {
 				<div className={ messageClasses }>
 					{ message?.context?.flags?.show_ai_avatar !== false && messageHeader }
 					{ message.type === 'error' && <ErrorMessage message={ message } /> }
+					{ message.type === 'cant_transfer' && <NewThirdPartyCookiesNotice /> }
 					{ ( [ 'message', 'image', 'image-placeholder', 'file', 'text' ].includes(
 						message.type
 					) ||

@@ -37,7 +37,7 @@ export function useCanConnectToZendeskMessaging( enabled = true ) {
 	}, [ query.isSuccess, queryClient ] );
 
 	useEffect( () => {
-		if ( ! query.data && query.status !== 'pending' ) {
+		if ( query.status === 'error' ) {
 			recordTracksEvent( 'calypso_helpcenter_zendesk_config_error', {
 				status: query.status,
 				status_text: query.error?.message,

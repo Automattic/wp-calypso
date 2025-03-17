@@ -51,8 +51,10 @@ export const useSendOdieMessage = () => {
 		if ( ! Array.isArray( message ) ) {
 			const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support ?? false;
 			if ( isRequestingHumanSupport && isUserEligibleForPaidSupport ) {
-				newConversation( { createdFrom: 'automatic_escalation' } );
-				return;
+				if ( newConversation ) {
+					newConversation( { createdFrom: 'automatic_escalation' } );
+					return;
+				}
 			}
 		}
 

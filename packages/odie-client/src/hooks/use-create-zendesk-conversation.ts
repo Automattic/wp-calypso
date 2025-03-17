@@ -8,17 +8,19 @@ import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
 import { setHelpCenterZendeskConversationStarted } from '../utils';
 
-export const useCreateZendeskConversation = (): ( ( {
-	avoidTransfer,
-	interactionId,
-	section,
-	createdFrom,
-}: {
-	avoidTransfer?: boolean;
-	interactionId?: string;
-	section?: string | null;
-	createdFrom?: string;
-} ) => Promise< void > ) => {
+export const useCreateZendeskConversation = ():
+	| ( ( {
+			avoidTransfer,
+			interactionId,
+			section,
+			createdFrom,
+	  }: {
+			avoidTransfer?: boolean;
+			interactionId?: string;
+			section?: string | null;
+			createdFrom?: string;
+	  } ) => Promise< void > )
+	| null => {
 	const {
 		selectedSiteId,
 		selectedSiteURL,
@@ -39,6 +41,10 @@ export const useCreateZendeskConversation = (): ( ( {
 		useUpdateZendeskUserFields();
 	const { addEventToInteraction } = useManageSupportInteraction();
 	const chatId = chat.odieId;
+
+	if ( typeof Smooch.createConversation !== 'function' ) {
+		return null;
+	}
 
 	const createConversation = async ( {
 		avoidTransfer = false,
