@@ -42,7 +42,7 @@ const SiteMigrationImportOrMigrate: Step< {
 			{
 				label: translate( 'Migrate site' ),
 				description: migrateOptionDescription,
-				value: 'migrate',
+				value: 'migrate' as const,
 				badge: {
 					type: 'info-blue' as BadgeType,
 					text: isUpgradeRequired ? upgradeRequiredLabel : translate( 'Included with your plan' ),
@@ -52,7 +52,7 @@ const SiteMigrationImportOrMigrate: Step< {
 			{
 				label: translate( 'Import content only' ),
 				description: translate( 'Import just posts, pages, comments and media.' ),
-				value: 'import',
+				value: 'import' as const,
 			},
 		];
 	}, [ isUpgradeRequired, translate ] );
