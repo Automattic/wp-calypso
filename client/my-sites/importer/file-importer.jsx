@@ -106,7 +106,11 @@ class FileImporter extends PureComponent {
 			cardProps.href = overrideDestination
 				.replace( '%SITE_SLUG%', site.slug )
 				.replace( '%SITE_ID%', site.ID );
-			cardProps.onClick = this.handleClick.bind( this, false );
+
+			cardProps.onClick = ( e ) => {
+				e.stopPropagation();
+				this.handleClick.apply( this, [ false ] );
+			};
 		}
 
 		return (

@@ -22,11 +22,12 @@ export type ReadFeedResponse = {
 	name: string;
 	next_refresh_time: string | null;
 	organization_id: number;
+	subscribe_URL: string;
 	subscribers_count: number;
 	unseen_count: number;
 };
 
-const useReadFeedQuery = ( feedId?: number | string ) => {
+const useReadFeedQuery = ( enabled: boolean, feedId?: number | string ) => {
 	return useQuery( {
 		queryKey: [ 'read', 'feeds', Number( feedId ) ],
 		queryFn: async () => {
@@ -36,7 +37,7 @@ const useReadFeedQuery = ( feedId?: number | string ) => {
 				method: 'GET',
 			} );
 		},
-		enabled: isValidId( feedId ),
+		enabled: enabled && isValidId( feedId ),
 	} );
 };
 

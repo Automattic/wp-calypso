@@ -3,7 +3,6 @@ import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
-import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ImporterMainPlatform } from 'calypso/lib/importer/types';
@@ -28,10 +27,10 @@ import { STEPS } from './internals/steps';
 import { redirect } from './internals/steps-repository/import/util';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import {
-	AssertConditionResult,
+	type AssertConditionResult,
 	AssertConditionState,
-	FlowV1,
-	ProvidedDependencies,
+	type FlowV1,
+	type ProvidedDependencies,
 } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
@@ -108,7 +107,6 @@ const siteSetupFlow: FlowV1 = {
 		);
 
 		const { site, siteSlug, siteId } = useSiteData();
-		const isSitePlanCompatible = site && isTargetSitePlanCompatible( site );
 		const currentThemeId = useSelector( ( state ) => getActiveTheme( state, site?.ID || -1 ) );
 		const currentTheme = useSelector( ( state ) =>
 			getCanonicalTheme( state, site?.ID || -1, currentThemeId )
@@ -559,19 +557,8 @@ const siteSetupFlow: FlowV1 = {
 						return navigate( `importList?siteSlug=${ siteSlug }` );
 					}
 
-					if ( urlQueryParams.has( 'showModal' ) ) {
-						// remove the siteSlug in case they want to change the destination site
-						urlQueryParams.delete( 'siteSlug' );
-						urlQueryParams.delete( 'showModal' );
-						return navigate( `import?siteSlug=${ siteSlug }` );
-					}
-
-					if ( ! isSitePlanCompatible ) {
-						urlQueryParams.set( 'showModal', 'true' );
-						return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
-					}
-
-					return navigate( `import?siteSlug=${ siteSlug }` );
+					// Ensure we override from and option, as we end up in a loop if we don't.
+					return navigate( `import?siteSlug=${ siteSlug }&option=&from` );
 				case 'importerWix':
 				case 'importReady':
 				case 'importReadyNot':

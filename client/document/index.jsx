@@ -21,7 +21,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
-import { isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { isGravPoweredOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
 import { initialClientsData, gravatarClientData } from 'calypso/state/oauth2-clients/reducer';
 import { isBilmurEnabled, getBilmurUrl } from './utils/bilmur';
@@ -102,12 +102,11 @@ class Document extends Component {
 
 		const theme = config( 'theme' );
 
-		const LoadingLogo = chooseLoadingLogo( this.props, app?.isWpMobileApp, app?.isWcMobileApp );
-
 		const isRTL = isLocaleRtl( lang );
 
 		let headTitle = head.title;
 		let headFaviconUrl;
+		let isWCCOM = false;
 
 		// To customize the page title and favicon for Gravatar-related login pages.
 		if ( sectionName === 'login' && typeof query?.redirect_to === 'string' ) {
@@ -115,18 +114,32 @@ class Document extends Component {
 			// To cover the case where the `client_id` is not provided, e.g. /log-in/link/use
 			const oauth2Client = initialClientsData[ searchParams.get( 'client_id' ) ] || {};
 
-			if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
-				headTitle = oauth2Client.title;
-				headFaviconUrl = oauth2Client.favicon;
-			} else if ( query?.gravatar_flow ) {
-				// Use Gravatar's favicon + title for the Gravatar-related OAuth2 clients in SSR.
-				headTitle = gravatarClientData.title;
-				headFaviconUrl = gravatarClientData.favicon;
+			switch ( true ) {
+				case isGravPoweredOAuth2Client( oauth2Client ):
+					headTitle = oauth2Client.title;
+					headFaviconUrl = oauth2Client.favicon;
+					break;
+				case query?.gravatar_flow:
+					// Use Gravatar's favicon + title for the Gravatar-related OAuth2 clients in SSR.
+					headTitle = gravatarClientData.title;
+					headFaviconUrl = gravatarClientData.favicon;
+					break;
+				case isWooOAuth2Client( oauth2Client ):
+					isWCCOM = true;
+					headTitle = oauth2Client.title;
+					headFaviconUrl = oauth2Client.favicon;
+					break;
 			}
 		}
 
 		const shouldNotShowLoadingLogo =
 			sectionName === 'checkout' || sectionName === 'stepper' || sectionName === 'signup';
+
+		const LoadingLogo = chooseLoadingLogo( this.props, {
+			isWpMobileApp: app?.isWpMobileApp,
+			isWcMobileApp: app?.isWcMobileApp,
+			isWCCOM,
+		} );
 
 		return (
 			<html
@@ -292,12 +305,12 @@ class Document extends Component {
 	}
 }
 
-function chooseLoadingLogo( { useLoadingEllipsis }, isWpMobileApp, isWcMobileApp ) {
+function chooseLoadingLogo( { useLoadingEllipsis }, { isWpMobileApp, isWcMobileApp, isWCCOM } ) {
 	if ( useLoadingEllipsis ) {
 		return LoadingEllipsis;
 	}
 
-	if ( isWcMobileApp ) {
+	if ( isWcMobileApp || isWCCOM ) {
 		return WooCommerceLogo;
 	}
 
