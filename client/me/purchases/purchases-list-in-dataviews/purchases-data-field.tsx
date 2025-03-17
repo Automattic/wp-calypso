@@ -44,7 +44,7 @@ export const purchasesDataFields = [
 		filterBy: {
 			operators: [ 'is' as Operator ],
 		},
-		getValue: ( { item }: { item: Purchase } ) => {
+		getValue: ( { item }: { item: Purchases.Purchase } ) => {
 			return item.siteId;
 		},
 		render: ( { item }: { item: Purchases.Purchase } ) => {
@@ -81,4 +81,4 @@ export const purchasesDataFields = [
 	// 	label: 'Domain',
 	// 	enableHiding: true,
 	// },
-] as Object[];
+] as Object[]; // Need to decide on a better type for this. Maybe DataViews has one built in?
