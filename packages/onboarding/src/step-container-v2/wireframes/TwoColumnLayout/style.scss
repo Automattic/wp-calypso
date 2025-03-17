@@ -1,6 +1,6 @@
 @import '../../../../styles/mixins';
 
-.step-container-v2__content--three-columns-on-right-layout {
+.step-container-v2__content--two-column-layout {
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
@@ -12,10 +12,10 @@
 	}
 }
 
-.three-columns-on-right-layout__main {
+.two-column-layout__main {
 	flex:2
 }
 
-.three-columns-on-right-layout__right {
+.two-column-layout__right {
 	flex: 1
 }
