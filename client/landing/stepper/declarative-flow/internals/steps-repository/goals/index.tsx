@@ -201,7 +201,8 @@ const GoalsStep: StepType = ( { navigation, flow } ) => {
 			const nextButton = <Step.NextButton onClick={ handleNext } />;
 
 			return (
-				<Step.SixColumnsCenteredLayout
+				<Step.CenteredColumnLayout
+					columnWidth={ 6 }
 					className="step-container-v2--goals"
 					topBar={ <Step.TopBar skipButton={ <Step.SkipButton onClick={ handleSkip } /> } /> }
 					heading={ <Step.Heading text={ whatAreYourGoalsText } subText={ subHeaderText } /> }
