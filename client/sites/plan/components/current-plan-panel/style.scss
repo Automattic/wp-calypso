@@ -1,0 +1,16 @@
+@import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/variables";
+
+.current-plan-panel {
+	h3 {
+		color: #1e1e1e;
+		font-family: "SF Pro", $sans;
+		font-size: rem(20px); //typography-exception
+		line-height: 24px;
+	}
+
+	hr {
+		margin-top: 32px;
+	}
+}

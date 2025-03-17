@@ -1,8 +1,8 @@
 import { Gravatar, TimeSince } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { Tooltip } from '@wordpress/components';
 import { DataViews, type View, type Action, Operator } from '@wordpress/dataviews';
 import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
+import { trash } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { useSubscribedNewsletterCategories } from 'calypso/data/newsletter-categories';
 import { useSelector } from 'calypso/state';
@@ -10,7 +10,7 @@ import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/se
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
-import { SubscribersFilterBy, SubscribersSortBy } from '../../constants';
+import { SubscribersFilterBy, SubscribersSortBy, SubscribersStatus } from '../../constants';
 import { useSubscriptionPlans, useUnsubscribeModal } from '../../hooks';
 import {
 	useSubscribersQuery,
@@ -59,13 +59,13 @@ const defaultView: View = {
 	mediaField: 'media',
 	showTitle: true,
 	showMedia: true,
-	fields: [ 'plan', 'is_email_subscriber', 'date_subscribed' ],
+	fields: [ 'plan', 'subscription_status', 'date_subscribed' ],
 	layout: {
 		styles: {
 			media: { width: '60px' },
 			name: { width: '55%', minWidth: '195px' },
 			plan: { width: '15%' },
-			is_email_subscriber: { width: '15%' },
+			subscription_status: { width: '15%' },
 			date_subscribed: { width: '15%' },
 		},
 	},
@@ -115,10 +115,10 @@ const SubscriberDataViews = ( {
 	} );
 
 	const {
-		currentSubscriber,
-		onClickUnsubscribe: handleUnsubscribe,
+		currentSubscribers,
+		onSetUnsubscribers: handleUnsubscribe,
 		onConfirmModal,
-		resetSubscriber,
+		resetSubscribers,
 	} = useUnsubscribeModal(
 		siteId ?? null,
 		{
@@ -239,24 +239,23 @@ const SubscriberDataViews = ( {
 				enableSorting: true,
 			},
 			{
-				id: 'is_email_subscriber',
-				label: translate( 'Email subscriber' ),
-				getValue: ( { item }: { item: Subscriber } ) => ( item.is_email_subscriber ? 'yes' : 'no' ),
-				render: ( { item }: { item: Subscriber } ) => {
-					const noTooltip = (
-						<Tooltip text={ translate( 'Reader only subscriber' ) }>
-							<span className="subscriber-data-views__tooltip-text">{ translate( 'No' ) }</span>
-						</Tooltip>
-					);
-
-					return <div>{ item.is_email_subscriber ? translate( 'Yes' ) : noTooltip }</div>;
-				},
+				id: 'subscription_status',
+				label: translate( 'Email subscription' ),
+				getValue: ( { item }: { item: Subscriber } ) => item.subscription_status,
+				render: ( { item }: { item: Subscriber } ) => (
+					<div>
+						{ SubscribersStatus[ item.subscription_status as keyof typeof SubscribersStatus ] ??
+							item.subscription_status }
+					</div>
+				),
 				elements: [
-					{ label: translate( 'True' ), value: SubscribersFilterBy.EmailSubscriber },
+					{ label: SubscribersStatus.Subscribed, value: SubscribersFilterBy.EmailSubscriber },
 					{
-						label: translate( 'False' ),
-						value: SubscribersFilterBy.ReaderSubscriber,
+						label: SubscribersStatus.NotConfirmed,
+						value: SubscribersFilterBy.UnconfirmedSubscriber,
 					},
+					{ label: SubscribersStatus.NotSubscribed, value: SubscribersFilterBy.ReaderSubscriber },
+					{ label: SubscribersStatus.NotSending, value: SubscribersFilterBy.BlockedSubscriber },
 				],
 				filterBy: {
 					operators: [ 'is' as Operator ],
@@ -296,8 +295,10 @@ const SubscriberDataViews = ( {
 			{
 				id: 'remove',
 				label: translate( 'Remove' ),
-				callback: ( items: Subscriber[] ) => handleUnsubscribe( items[ 0 ] ),
+				callback: handleUnsubscribe,
 				isPrimary: false,
+				supportsBulk: true,
+				icon: trash,
 			},
 		];
 
@@ -451,11 +452,14 @@ const SubscriberDataViews = ( {
 							fields={ fields }
 							view={ currentView }
 							onClickItem={ handleSubscriberSelection }
+							isItemClickable={ () => true }
 							onChangeView={ handleViewChange }
 							selection={
 								selectedSubscriber ? [ selectedSubscriber.subscription_id.toString() ] : undefined
 							}
-							onChangeSelection={ handleSubscriberSelection }
+							onChangeSelection={
+								currentView.type === 'list' ? handleSubscriberSelection : undefined
+							}
 							isLoading={ isLoading }
 							paginationInfo={ paginationInfo }
 							getItemId={ ( item: Subscriber ) => item.subscription_id.toString() }
@@ -478,15 +482,15 @@ const SubscriberDataViews = ( {
 							siteId={ siteId }
 							subscriptionId={ selectedSubscriber.subscription_id }
 							onClose={ () => setSelectedSubscriber( null ) }
-							onUnsubscribe={ handleUnsubscribe }
+							onUnsubscribe={ ( subscriber ) => handleUnsubscribe( [ subscriber ] ) }
 							newsletterCategoriesEnabled={ subscribedNewsletterCategoriesData?.enabled }
 							newsletterCategories={ subscribedNewsletterCategoriesData?.newsletterCategories }
 						/>
 					</section>
 				) }
 			<UnsubscribeModal
-				subscriber={ currentSubscriber }
-				onCancel={ resetSubscriber }
+				subscribers={ currentSubscribers }
+				onCancel={ resetSubscribers }
 				onConfirm={ onConfirmModal }
 			/>
 		</div>

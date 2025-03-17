@@ -136,6 +136,7 @@
 		"reader": true,
 		"reader/full-errors": true,
 		"reader/quick-post": true,
+		"reader/recommended-blogs-list": false,
 		"readymade-templates/showcase": true,
 		"redirect-fallback-browsers": true,
 		"rum-tracking/logstash": true,
