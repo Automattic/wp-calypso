@@ -5,6 +5,7 @@ import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import Chart from 'calypso/components/chart';
 import Legend from 'calypso/components/chart/legend';
 import { rectIsEqual, rectIsZero, NullableDOMRect } from 'calypso/lib/track-element-size';
+import { DATE_FORMAT } from 'calypso/my-sites/stats/constants';
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import StatsEmptyState from 'calypso/my-sites/stats/stats-empty-state';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
@@ -53,7 +54,19 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 	const { isLoading, data } = useVisitsQuery( siteId, period, quantity, queryDate );
 
 	const barClick = ( bar: { data: BarData } ) => {
-		window.location.href = `${ statsBaseUrl }/stats/${ period }/${ siteId }?startDate=${ bar.data.period }`;
+		const chartStart = bar.data.period;
+		const chartEnd = moment( chartStart )
+			.endOf( period === 'week' ? 'isoWeek' : period )
+			.format( DATE_FORMAT );
+
+		let targetPeriod = 'day';
+		if ( period === 'day' ) {
+			targetPeriod = 'hour';
+		} else if ( period === 'year' ) {
+			targetPeriod = 'month';
+		}
+
+		window.location.href = `${ statsBaseUrl }/stats/${ targetPeriod }/${ siteId }?chartStart=${ chartStart }&chartEnd=${ chartEnd }`;
 	};
 
 	const chartData = buildChartData(
