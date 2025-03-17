@@ -58,6 +58,7 @@ function ClientCheckoutContent() {
 			return createRequestCartProduct( {
 				product_id: product.product_id,
 				product_slug: product.slug,
+				extra: { isA4ASitelessCheckout: true },
 			} );
 		} );
 
