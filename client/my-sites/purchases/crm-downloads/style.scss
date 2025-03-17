@@ -1,13 +1,6 @@
 // Import the base component styles
 @import '~calypso/components/crm-downloads/style';
 
-// Main container styles - minimal since we're using wideLayout on the Main component
-.crm-downloads {
-	padding: 16px;
-	
-	// Any my-sites specific overrides can go here
-}
-
 // Error state styling
 .crm-downloads-error {
 	padding: 32px 24px;
