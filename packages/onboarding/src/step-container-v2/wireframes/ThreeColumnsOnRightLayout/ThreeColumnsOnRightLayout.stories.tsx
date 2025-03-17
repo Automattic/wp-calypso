@@ -1,9 +1,7 @@
 import { createInterpolateElement } from '@wordpress/element';
 import { Heading, TopBar, BackButton, NextButton, StickyBottomBar } from '../..';
-import {
-	withStepContainerV2ContextDecorator,
-	WireframePlaceholder,
-} from '../../helpers/withStepContainerV2ContextDecorator';
+import { WireframePlaceholder } from '../../helpers/wireframe-placeholder';
+import { withStepContainerV2ContextDecorator } from '../../helpers/withStepContainerV2ContextDecorator';
 import { ThreeColumnsOnRightLayout } from './ThreeColumnsOnRightLayout';
 import type { Meta } from '@storybook/react';
 

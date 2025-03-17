@@ -3,6 +3,7 @@ import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { chevronLeft } from '@wordpress/icons';
 import { Heading, StickyBottomBar, TopBar, BackButton, NextButton } from '../..';
+import { WireframePlaceholder } from '../../helpers/wireframe-placeholder';
 import { withStepContainerV2ContextDecorator } from '../../helpers/withStepContainerV2ContextDecorator';
 import { FullWidthLayout } from './FullWidthLayout';
 import type { Meta } from '@storybook/react';
@@ -42,7 +43,7 @@ export const ThemePreview = () => {
 							/>
 						</div>
 					</div>
-					<div className="theme-preview__preview" />
+					<WireframePlaceholder className="theme-preview__preview">Preview</WireframePlaceholder>
 				</>
 			) }
 		/>
@@ -87,7 +88,7 @@ export const ThemePreviewFonts = () => {
 							{ nextButton }
 						</div>
 					) }
-					<div className="theme-preview__preview" />
+					<WireframePlaceholder className="theme-preview__preview">Preview</WireframePlaceholder>
 				</>
 			) }
 		/>

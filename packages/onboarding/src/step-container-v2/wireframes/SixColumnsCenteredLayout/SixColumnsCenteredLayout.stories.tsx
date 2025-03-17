@@ -1,5 +1,7 @@
+import { createInterpolateElement } from '@wordpress/element';
 import { Heading, TopBar, BackButton, NextButton, StickyBottomBar } from '../..';
 import SelectCardCheckbox from '../../../select-card-checkbox';
+import { WireframePlaceholder } from '../../helpers/wireframe-placeholder';
 import { withStepContainerV2ContextDecorator } from '../../helpers/withStepContainerV2ContextDecorator';
 import { SixColumnsCenteredLayout } from './SixColumnsCenteredLayout';
 import type { Meta } from '@storybook/react';
@@ -72,6 +74,30 @@ const goals = [
 		title: 'Announce events',
 	},
 ];
+
+export const Vanilla = () => {
+	const backButton = <BackButton />;
+	const nextButton = <NextButton />;
+
+	return (
+		<SixColumnsCenteredLayout
+			topBar={ <TopBar backButton={ backButton } /> }
+			heading={
+				<Heading
+					text="Centered Layout"
+					subText={ createInterpolateElement(
+						'An example of the <code>SixColumnsCenteredLayout</code> wireframe layout.',
+						{
+							code: <code />,
+						}
+					) }
+				/>
+			}
+			stickyBottomBar={ <StickyBottomBar rightButton={ nextButton } /> }
+			render={ () => <WireframePlaceholder height={ 370 }>Main</WireframePlaceholder> }
+		/>
+	);
+};
 
 export const GoalsStep = () => {
 	const backButton = <BackButton />;
