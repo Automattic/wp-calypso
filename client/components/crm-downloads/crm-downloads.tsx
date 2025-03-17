@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { useDispatch } from 'calypso/state';
 import { infoNotice, errorNotice } from 'calypso/state/notices/actions';
+import { getExtensionDescription } from './extension-descriptions';
 import './style.scss';
 
 interface Extension {
@@ -52,8 +53,17 @@ const fetchExtensions = async (): Promise< Extension[] > => {
 		);
 	}
 
+	// Apply translatable descriptions to the extensions
+	const extensionsWithTranslatedDescriptions = data.extensions.map( ( extension: Extension ) => ( {
+		...extension,
+		// Use the translatable description if available, otherwise use the original
+		description: getExtensionDescription( extension.slug ) || extension.description,
+	} ) );
+
 	// Sort extensions alphabetically
-	return data.extensions.sort( ( a: Extension, b: Extension ) => a.name.localeCompare( b.name ) );
+	return extensionsWithTranslatedDescriptions.sort( ( a: Extension, b: Extension ) =>
+		a.name.localeCompare( b.name )
+	);
 };
 
 interface CrmDownloadsProps {
@@ -255,9 +265,6 @@ export function CrmDownloadsContent( { licenseKey }: CrmDownloadsProps ) {
 									<td>
 										<strong>{ extension.name }</strong>
 										<div className="extensions-table__version">v{ extension.version }</div>
-										{ extension.description && (
-											<div className="extensions-table__description">{ extension.description }</div>
-										) }
 										{ extension.kbUrl && (
 											<a
 												href={ extension.kbUrl }
@@ -267,6 +274,9 @@ export function CrmDownloadsContent( { licenseKey }: CrmDownloadsProps ) {
 											>
 												{ translate( 'Documentation' ) }
 											</a>
+										) }
+										{ extension.description && (
+											<div className="extensions-table__description">{ extension.description }</div>
 										) }
 									</td>
 									<td>
