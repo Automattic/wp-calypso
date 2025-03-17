@@ -1,16 +1,17 @@
+import { Onboard } from '@automattic/data-stores';
+import { getAssemblerDesign } from '@automattic/design-picker';
 import { addPlanToCart, addProductsToCart, AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
-import { useSelect } from '@wordpress/data';
+import { resolveSelect, useDispatch as useWpDataDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
+import wpcomRequest from 'wpcom-proxy-request';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import wpcom from 'calypso/lib/wp';
+import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { useDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { STEPS } from './internals/steps';
 import { Flow } from './internals/types';
-import type { OnboardSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 interface ProvidedDependencies {
@@ -19,6 +20,23 @@ interface ProvidedDependencies {
 	domainItem?: MinimalRequestCartProduct;
 	cartItems?: MinimalRequestCartProduct[]; // Ensure cartItems is an array
 }
+
+const SiteIntent = Onboard.SiteIntent;
+const deletePage = async ( siteId: string, pageId: number ): Promise< boolean > => {
+	try {
+		await wpcomRequest( {
+			path: '/sites/' + siteId + '/pages/' + pageId,
+			method: 'DELETE',
+			apiNamespace: 'wp/v2',
+		} );
+		return true;
+	} catch ( error ) {
+		// fail silently here, just log an error and return false, Big Sky will still launch
+		// eslint-disable-next-line no-console
+		console.error( `Failed to delete page ${ pageId } for site ${ siteId }:`, error );
+		return false;
+	}
+};
 
 const aiSiteBuilder: Flow = {
 	name: AI_SITE_BUILDER_FLOW,
@@ -41,19 +59,15 @@ const aiSiteBuilder: Flow = {
 		return stepsWithRequiredLogin( [
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PROCESSING,
-			STEPS.LAUNCH_BIG_SKY,
 			STEPS.UNIFIED_DOMAINS,
 			STEPS.UNIFIED_PLANS,
 		] );
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const { siteSlug: siteSlugFromSiteData } = useSiteData();
-		const { domainCartItem } = useSelect(
-			( select: ( arg: string ) => OnboardSelect ) => ( {
-				domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
-			} ),
-			[]
-		);
+		const { setDesignOnSite, setStaticHomepageOnSite, setIntentOnSite } =
+			useWpDataDispatch( SITE_STORE );
+
 		const queryParams = useQuery();
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
@@ -67,37 +81,57 @@ const aiSiteBuilder: Flow = {
 				case 'processing': {
 					const { siteSlug, siteId } = providedDependencies;
 
-					try {
-						await wpcom.req.post( {
-							apiNamespace: 'wpcom/v2',
-							path: `/sites/${ siteId }/send-email-continue-site-build`,
-							body: {
-								continue_url: `https://${ siteSlug }/wp-admin/site-editor.php?canvas=edit`,
-							},
-						} );
-					} catch ( error ) {
+					if ( ! siteId || ! siteSlug ) {
 						// eslint-disable-next-line no-console
-						console.error( 'Failed to send continue build email:', error );
+						console.error( 'No siteId or siteSlug', providedDependencies );
+						return;
 					}
-
 					// get the prompt from the get url
 					const prompt = queryParams.get( 'prompt' );
 					let promptParam = '';
+
+					const pendingActions = [
+						resolveSelect( SITE_STORE ).getSite( siteId ), // To get the URL.
+					];
+
+					// Create a new home page if one is not set yet.
+					pendingActions.push(
+						wpcomRequest( {
+							path: '/sites/' + siteId + '/pages',
+							method: 'POST',
+							apiNamespace: 'wp/v2',
+							body: {
+								title: 'Home',
+								status: 'publish',
+								content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
+							},
+						} )
+					);
+
+					pendingActions.push(
+						setDesignOnSite( siteSlug, getAssemblerDesign(), { enableThemeSetup: true } )
+					);
+					pendingActions.push( setIntentOnSite( siteSlug, SiteIntent.AIAssembler ) );
+
+					// Delete the existing boilerplate about page, always has a page ID of 1
+					pendingActions.push( deletePage( siteId || '', 1 ) );
+					const results = await Promise.all( pendingActions );
+					const siteURL = results[ 0 ].URL;
+
+					const homePagePostId = results[ 1 ].id;
+					await setStaticHomepageOnSite( siteId, homePagePostId );
 
 					if ( prompt ) {
 						promptParam = `&prompt=${ encodeURIComponent( prompt ) }`;
 					}
 
-					return navigate(
-						`launch-big-sky?siteId=${ siteId }&siteSlug=${ siteSlug }${ promptParam }`,
-						undefined,
-						true
+					window.location.replace(
+						`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }`
 					);
+
+					return;
 				}
 				case 'domains': {
-					// eslint-disable-next-line no-console
-					console.log( 'DOMAAAINZ STEP', providedDependencies, siteSlugFromSiteData );
-					// TODO: Somehow store the chosen domain.
 					if ( providedDependencies.domainItem && siteSlugFromSiteData ) {
 						addProductsToCart( siteSlugFromSiteData, AI_SITE_BUILDER_FLOW, [
 							providedDependencies.domainItem,
@@ -111,33 +145,17 @@ const aiSiteBuilder: Flow = {
 
 				case 'plans': {
 					const { cartItems } = providedDependencies;
-					// eslint-disable-next-line no-console
-					console.log(
-						'PLAAANZ STEP',
-						JSON.stringify(
-							{
-								dependencies: providedDependencies,
-								slug: siteSlugFromSiteData,
-								domain: domainCartItem,
-							},
-							null,
-							2
-						)
-					);
 
 					if ( cartItems && cartItems[ 0 ] && siteSlugFromSiteData ) {
-						const addToCart = await addPlanToCart(
+						await addPlanToCart(
 							siteSlugFromSiteData,
 							AI_SITE_BUILDER_FLOW,
 							true,
 							'assembler',
 							cartItems[ 0 ]
 						);
-						// eslint-disable-next-line no-console
-						console.log( 'ADD TO CART', addToCart );
 					}
 
-					// eslint-disable-next-line no-console
 					window.location.assign(
 						`/checkout/${ encodeURIComponent( siteSlugFromSiteData || '' ) }`
 					);

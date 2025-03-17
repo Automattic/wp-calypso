@@ -127,6 +127,7 @@ export interface PlansFeaturesMainProps {
 	>;
 	planTypeSelector?: 'interval';
 	discountEndDate?: Date;
+	hideSpotlightPlan?: boolean;
 	hidePlansFeatureComparison?: boolean;
 	coupon?: string;
 
@@ -208,6 +209,7 @@ const PlansFeaturesMain = ( {
 	customerType = 'personal',
 	planTypeSelector = 'interval',
 	intervalType = 'yearly',
+	hideSpotlightPlan = false,
 	hidePlansFeatureComparison = false,
 	hideUnavailableFeatures = false,
 	isInSignup = false,
@@ -838,6 +840,7 @@ const PlansFeaturesMain = ( {
 										coupon={ coupon }
 										currentSitePlanSlug={ sitePlanSlug }
 										generatedWPComSubdomain={ resolvedSubdomainName }
+										hideSpotlightPlan={ hideSpotlightPlan }
 										gridPlanForSpotlight={ gridPlanForSpotlight }
 										gridPlans={ gridPlansForFeaturesGrid }
 										hideUnavailableFeatures={ hideUnavailableFeatures }

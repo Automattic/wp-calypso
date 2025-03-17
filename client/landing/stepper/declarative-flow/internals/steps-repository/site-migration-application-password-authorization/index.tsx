@@ -98,7 +98,7 @@ const SiteMigrationApplicationPasswordsAuthorization: Step< {
 
 	// translators: %(sourceDomain)s is the source domain that is being migrated.
 	const subHeaderText = translate(
-		"We're ready to migrate {{strong}}%(sourceDomain)s{{/strong}} to WordPress.com. To make sure everything goes smoothly, we need you to authorize us for access in your WordPress admin.",
+		"We're ready to migrate {{strong}}%(sourceDomain)s{{/strong}} to WordPress.com. To ensure a smooth process, we need you to authorize us in your WordPress.com admin.",
 		{
 			args: {
 				sourceDomain,
@@ -127,7 +127,6 @@ const SiteMigrationApplicationPasswordsAuthorization: Step< {
 				goBack={ navigation?.goBack }
 				goNext={ navigation?.submit }
 				hideSkip
-				isFullLayout
 				notice={ notice }
 				formattedHeader={ formattedHeader }
 				stepContent={
