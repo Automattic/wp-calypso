@@ -1,15 +1,29 @@
 import i18n from 'i18n-calypso';
-import { get } from 'lodash';
 import { logmeinUrl } from 'calypso/lib/logmein';
 
-export function acceptedNotice( invite, displayOnNextPage = true ) {
+type InviteType = {
+	site: {
+		URL: string;
+		title: string;
+		is_wpforteams_site: boolean;
+		ID: string;
+		domain: string;
+		admin_url: string;
+		is_vip: boolean;
+	};
+	role: string;
+};
+
+export function acceptedNotice( invite: InviteType, displayOnNextPage = true ) {
+	const siteUrl = invite?.site?.URL ?? '';
+	const siteTitle = invite?.site?.title ?? '';
 	const site = (
-		<a href={ get( invite, 'site.URL' ) } className="invites__notice-site-link">
-			{ get( invite, 'site.title' ) }
+		<a href={ siteUrl } className="invites__notice-site-link">
+			{ siteTitle }
 		</a>
 	);
 
-	switch ( get( invite, 'role' ) ) {
+	switch ( invite?.role ) {
 		case 'follower':
 			return [
 				i18n.translate( 'You are now following {{site/}}', {
@@ -17,7 +31,7 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 				} ),
 				{
 					button: i18n.translate( 'Visit Site' ),
-					href: get( invite, 'site.URL' ),
+					href: siteUrl,
 					displayOnNextPage,
 				},
 			];
@@ -29,7 +43,7 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 				} ),
 				{
 					button: i18n.translate( 'Visit Site' ),
-					href: get( invite, 'site.URL' ),
+					href: siteUrl,
 					displayOnNextPage,
 				},
 			];
@@ -46,7 +60,7 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 						{ i18n.translate(
 							'This is your site dashboard where you will be able to manage all aspects of %(site)s',
 							{
-								args: { site: get( invite, 'site.title' ) },
+								args: { site: siteTitle },
 							}
 						) }
 					</p>
@@ -124,7 +138,7 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 					</h3>
 					<p className="invites__intro">
 						{ i18n.translate(
-							'This is your site dashboard where you can write and manage your own posts.'
+							'This is your sites dashboard where you can write and manage your own posts.'
 						) }
 					</p>
 				</div>,
@@ -148,17 +162,18 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 	}
 }
 
-export function getRedirectAfterAccept( invite ) {
+export function getRedirectAfterAccept( invite: InviteType ) {
 	if ( invite.site.is_wpforteams_site ) {
 		return `https://${ invite.site.domain }`;
 	}
 
 	const readerPath = '/reader';
 	const postsListPath = '/posts/' + invite.site.ID;
-	const myHomePath = '/home/' + invite.site.domain;
-	const getDestinationUrl = ( redirect ) => {
+	const mySitesPath = '/sites';
+	const getDestinationUrl = ( redirect: string ) => {
 		const remoteLoginHost = `https://${ invite.site.domain }`;
-		const remoteLoginBackUrl = ( destinationPath ) => `https://wordpress.com${ destinationPath }`;
+		const remoteLoginBackUrl = ( destinationPath: string ) =>
+			`https://wordpress.com${ destinationPath }`;
 		const destination = logmeinUrl( remoteLoginHost, remoteLoginBackUrl( redirect ) );
 		const isMissingLogmein = destination === remoteLoginHost;
 		return isMissingLogmein ? redirect : destination;
@@ -181,6 +196,6 @@ export function getRedirectAfterAccept( invite ) {
 			return getDestinationUrl( readerPath );
 
 		default:
-			return getDestinationUrl( myHomePath );
+			return getDestinationUrl( mySitesPath );
 	}
 }
