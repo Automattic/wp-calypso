@@ -16,8 +16,9 @@ Please improve the instructions on how to test this flow.
 8. If you pick the free plan, you'll be redirected to the site-setup flow.
 
 ## Owned by
+
 @vertex-team (@alshakero)
 
 ## Context
-[Please link to a P2 discussion or document that contains more context about this flow.]
 
+[Please link to a P2 discussion or document that contains more context about this flow.]
