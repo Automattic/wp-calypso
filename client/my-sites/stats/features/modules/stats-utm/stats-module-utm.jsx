@@ -177,6 +177,21 @@ const StatsModuleUTM = ( {
 		</div>
 	);
 
+	const showMoreConfig =
+		displaySummaryLink && ! summary
+			? {
+					url: getHref(),
+					label:
+						data.length >= 10
+							? translate( 'View all', {
+									context: 'Stats: Button link to show more detailed stats information',
+							  } )
+							: translate( 'View details', {
+									context: 'Stats: Button label to see the detailed content of a panel',
+							  } ),
+			  }
+			: undefined;
+
 	return (
 		<>
 			{ isNewEmptyStateEnabled && (
@@ -234,23 +249,7 @@ const StatsModuleUTM = ( {
 									titleNodes={ titleNodes }
 									emptyMessage={ <div>{ moduleStrings.empty }</div> }
 									metricLabel={ metricLabel }
-									showMore={
-										displaySummaryLink && ! summary
-											? {
-													url: getHref(),
-													label:
-														data.length >= 10
-															? translate( 'View all', {
-																	context:
-																		'Stats: Button link to show more detailed stats information',
-															  } )
-															: translate( 'View details', {
-																	context:
-																		'Stats: Button label to see the detailed content of a panel',
-															  } ),
-											  }
-											: undefined
-									}
+									showMore={ showMoreConfig }
 									error={ hasError && <ErrorPanel /> }
 									splitHeader
 									mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
@@ -271,21 +270,7 @@ const StatsModuleUTM = ( {
 						title={ moduleStrings?.title }
 						emptyMessage={ <div>{ moduleStrings.empty }</div> }
 						metricLabel={ metricLabel }
-						showMore={
-							displaySummaryLink && ! summary
-								? {
-										url: getHref(),
-										label:
-											data.length >= 10
-												? translate( 'View all', {
-														context: 'Stats: Button link to show more detailed stats information',
-												  } )
-												: translate( 'View details', {
-														context: 'Stats: Button label to see the detailed content of a panel',
-												  } ),
-								  }
-								: undefined
-						}
+						showMore={ showMoreConfig }
 						error={ hasError && <ErrorPanel /> }
 						loader={ showLoader && <StatsModulePlaceholder isLoading={ showLoader } /> }
 						splitHeader
