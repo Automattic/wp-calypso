@@ -435,6 +435,7 @@ const SubscriberDataViews = ( {
 					selectedSiteId={ siteId || undefined }
 					disableCta={ isUnverified || isStaging }
 					hideSubtitle={ !! selectedSubscriber }
+					hideAddButtonLabel={ isMobile || !! selectedSubscriber }
 				/>
 				{ shouldShowLaunchpad ? (
 					<EmptyComponent />
