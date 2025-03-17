@@ -4,6 +4,7 @@ import {
 	isFreePlan,
 	PLAN_FREE,
 	isWpcomEnterpriseGridPlan,
+	isWpComPlan,
 } from '@automattic/calypso-products';
 import { AddOns, WpcomPlansUI } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
@@ -141,6 +142,15 @@ const ActionButton = ( {
 			( storageAddOns && ! canPurchaseStorageAddOns && nonDefaultStorageOptionSelected ) ) &&
 		isP2FreePlan( planSlug ) &&
 		current
+	) {
+		return null;
+	}
+
+	if (
+		isWpComPlan( planSlug ) &&
+		! availableForPurchase &&
+		! current &&
+		! isWpcomEnterpriseGridPlan( planSlug )
 	) {
 		return null;
 	}
