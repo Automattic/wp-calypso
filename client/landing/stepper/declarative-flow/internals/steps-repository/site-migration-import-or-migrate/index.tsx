@@ -30,7 +30,7 @@ const SiteMigrationImportOrMigrate: Step< {
 	const isUpgradeRequired = ! siteCanInstallPlugins;
 
 	const options = useMemo( () => {
-		const upgradeRequiredLabel = translate( 'Available on %(planName)s with 50% off', {
+		const upgradeRequiredLabel = translate( 'Available on %(planName)s', {
 			args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
 		} );
 
