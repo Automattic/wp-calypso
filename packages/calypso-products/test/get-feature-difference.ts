@@ -26,6 +26,7 @@ import {
 	FEATURE_INVENTORY,
 	FEATURE_CUSTOM_MARKETING_AUTOMATION,
 	getPlan,
+	FEATURE_SUPPORT_FROM_EXPERTS,
 } from '../src';
 
 describe( 'getFeatureDifference function related tests', () => {
@@ -36,7 +37,7 @@ describe( 'getFeatureDifference function related tests', () => {
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_AD_FREE_EXPERIENCE,
 			WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
-			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+			FEATURE_SUPPORT_FROM_EXPERTS,
 			FEATURE_STATS_BASIC_20250206,
 		] );
 	} );
@@ -46,6 +47,7 @@ describe( 'getFeatureDifference function related tests', () => {
 			getFeatureDifference( PLAN_PERSONAL, PLAN_PREMIUM, 'get2023PricingGridSignupWpcomFeatures' )
 		).toEqual( [
 			WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
+			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			FEATURE_STYLE_CUSTOMIZATION,
 			FEATURE_CONNECT_ANALYTICS,
 			FEATURE_UPLOAD_VIDEO,
