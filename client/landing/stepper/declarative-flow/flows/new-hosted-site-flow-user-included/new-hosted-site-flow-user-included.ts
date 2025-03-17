@@ -19,7 +19,7 @@ import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login
 import { Flow, ProvidedDependencies } from '../../internals/types';
 import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import './internals/new-hosted-site-flow.scss';
+import './new-hosted-site-flow-user-included.scss';
 
 const hosting: Flow = {
 	name: NEW_HOSTED_SITE_FLOW_USER_INCLUDED,
