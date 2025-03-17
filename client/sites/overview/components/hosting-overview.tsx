@@ -1,6 +1,6 @@
+import { ProgressBar } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { type FC, useEffect, useState } from 'react';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { isNotAtomicJetpack, isMigrationInProgress } from 'calypso/sites-dashboard/utils';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -60,7 +60,7 @@ const HostingOverview: FC = () => {
 	) {
 		return (
 			<div className="hosting-overview is-loading">
-				<LoadingEllipsis />
+				<ProgressBar className="hosting-overview__progress-bar" />
 			</div>
 		);
 	}
