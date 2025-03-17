@@ -13,6 +13,7 @@
 		padding: 1.25rem;
 		background-color: var(--color-surface, #fff);
 		position: relative;
+		border: 1px solid var(--color-border-subtle, #dcdcde);
 	}
 
 	.manage-purchase__license-clipboard .button{
@@ -42,7 +43,12 @@
 		@media (max-width: 30rem) {
 			position: static;
 			display: block;
-			margin: -0.5rem 0 1rem 0;
+			margin: -0.5rem 0 0.5rem 0; // Reduced bottom margin
+		}
+		
+		// Fix external link component margins
+		&.components-external-link {
+			margin-bottom: 0;
 		}
 	}
 
@@ -51,6 +57,8 @@
 		display: flex;
 		align-items: center;
 		margin: 0;
+		max-width: 100%;
+		overflow-x: hidden;
 	}
 
 	// License key and clipboard icon container
@@ -61,6 +69,8 @@
 		padding: 0.75rem 1rem;
 		border: 1px solid var(--color-border-subtle, #dcdcde);
 		flex: 1;
+		max-width: 100%;
+		overflow-x: hidden;
 	}
 
 	// License key code styling
@@ -68,10 +78,16 @@
 		flex: 1;
 		font-family: monospace;
 		font-size: 0.875rem;
-		overflow-x: auto;
+		overflow: hidden; // Changed from overflow-x: auto to prevent scrolling
 		white-space: nowrap;
 		padding: 0.25rem 0;
 		color: var(--color-text, #3c434a);
+		min-width: 0; // Important for flexbox to allow text truncation
+		text-overflow: ellipsis;
+		
+		@media (max-width: 480px) {
+			font-size: 0.75rem; // Smaller font on mobile
+		}
 	}
 
 	// Clipboard icon button
@@ -103,39 +119,97 @@
 		width: 100%;
 		border-collapse: collapse;
 	}
+	
+	.extensions-table tr {
+		@media (max-width: 600px) {
+			display: block;
+			border-bottom: 1px solid var(--color-border-subtle, #dcdcde);
+		}
+	}
 
 	.extensions-table th {
 		text-align: left;
 		padding: 0.75rem;
 		border-bottom: 1px solid var(--color-border-subtle, #dcdcde);
+		
+		// Hide the empty header cell on mobile
+		&:empty {
+			@media (max-width: 600px) {
+				display: none;
+			}
+		}
 	}
 
 	.extensions-table td {
 		padding: 0.75rem;
 		border-bottom: 1px solid var(--color-border-subtle, #dcdcde);
 		vertical-align: middle;
+		
+		@media (max-width: 600px) {
+			display: block;
+			width: 100%;
+			padding: 0.5rem 0.75rem;
+			border: none;
+			
+			&:first-child {
+				padding-bottom: 0;
+				position: relative; // For absolute positioning of documentation link
+			}
+			
+			&:last-child {
+				padding-top: 0.5rem;
+				padding-bottom: 1rem;
+			}
+		}
 	}
 
 	.extensions-table td:last-child {
 		text-align: right;
 		width: 9.375rem;
+		
+		@media (max-width: 600px) {
+			text-align: center;
+			width: 100%;
+			
+			.button {
+				width: 75%;
+				justify-content: center;
+			}
+		}
 	}
 
 	.extensions-table__version {
 		color: var(--color-text-subtle, #646970);
 		font-size: 0.75rem;
 		margin: 0.25rem 0;
+		
+		@media (max-width: 600px) {
+			display: inline-block;
+			margin: 0 0 0 0.5rem;
+			vertical-align: middle;
+		}
 	}
 
 	.extensions-table__description {
 		margin: 0.5rem 0;
 		font-size: 0.875rem;
+		
+		@media (max-width: 600px) {
+			margin-bottom: 0.25rem;
+		}
 	}
 
 	.extensions-table__learn-more {
 		font-size: 0.75rem;
 		display: inline-block;
 		margin-top: 0.5rem;
+		
+		@media (max-width: 600px) {
+			position: absolute;
+			top: 0.75rem;
+			right: 0.75rem;
+			margin-top: 0;
+		}
 	}
 
 	.extensions-table__loading {
