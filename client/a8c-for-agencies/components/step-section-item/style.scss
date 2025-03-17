@@ -1,6 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
+
 .step-section-item {
 	margin-block-end: 16px;
 	border-radius: 4px;
@@ -22,7 +23,7 @@
 	}
 
 	.step-section-item__heading {
-		@include heading-medium;
+		@include heading-large;
 	}
 
 	.step-section-item__description {
@@ -134,8 +135,7 @@
 .step-section-item__step-number {
 	display: none;
 	color: var(--color-accent);
-	font-size: rem(12px);
-	font-weight: 600;
+	@include heading-small;
 	text-align: center;
 	min-width: 20px;
 	height: 20px;
