@@ -884,6 +884,7 @@ export interface ResponseCartProductExtra {
 	isJetpackCheckout?: boolean;
 	isAkismetSitelessCheckout?: boolean;
 	isMarketplaceSitelessCheckout?: boolean;
+	isA4aSitelessCheckout?: boolean;
 
 	/**
 	 * Marketplace properties
@@ -931,6 +932,7 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	isAkismetSitelessCheckout?: boolean;
 	isJetpackCheckout?: boolean;
 	isMarketplaceSitelessCheckout?: boolean;
+	isA4ASitelessCheckout?: boolean;
 	intentId?: number;
 
 	/**
