@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
@@ -60,8 +61,22 @@ export default function LicenseDetailsActions( {
 		dispatch( recordTracksEvent( 'calypso_partner_portal_license_details_download' ) );
 	}, [ dispatch, downloadUrl.mutate ] );
 
+	const viewExtensions = useCallback( () => {
+		try {
+			dispatch( recordTracksEvent( 'calypso_partner_portal_license_details_view_extensions' ) );
+			page( `/partner-portal/download-products?products=${ licenseKey }` );
+		} catch ( error ) {
+			dispatch( errorNotice( translate( 'Failed to open download page. Please try again.' ) ) );
+		}
+	}, [ dispatch, licenseKey, translate ] );
+
 	return (
 		<div className="license-details__actions">
+			{ licenseKey.startsWith( 'jetpack_complete_' ) && (
+				<Button compact onClick={ viewExtensions }>
+					{ translate( 'Download CRM Extensions' ) }
+				</Button>
+			) }
 			{ hasDownloads &&
 				licenseState === LicenseState.Attached &&
 				licenseType === LicenseType.Partner && (

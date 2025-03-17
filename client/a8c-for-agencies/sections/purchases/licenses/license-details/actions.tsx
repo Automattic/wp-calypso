@@ -59,6 +59,8 @@ export default function LicenseDetailsActions( {
 	const [ revokeDialog, setRevokeDialog ] = useState( false );
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
 	const isWPCOMHostingLicense = isWPCOMHostingProduct( licenseKey );
+	const isCRMLicense =
+		licenseKey.startsWith( 'jetpack_complete' ) || licenseKey.startsWith( 'jetpack_crm' );
 	const pressableManageUrl = 'https://my.pressable.com/agency/auth';
 
 	const debugUrl = siteUrl ? `https://jptools.wordpress.com/debug/?url=${ siteUrl }` : null;
@@ -106,6 +108,22 @@ export default function LicenseDetailsActions( {
 						{ translate( 'Download' ) }
 					</Button>
 				) }
+
+			{ isCRMLicense && licenseState === LicenseState.Attached && (
+				<Button
+					compact
+					href={ `/purchases/crm-downloads/a8c-for-agencies/${ licenseKey }` }
+					onClick={ () => {
+						dispatch(
+							recordTracksEvent( 'calypso_a4a_license_details_crm_downloads_click', {
+								license_key: licenseKey,
+							} )
+						);
+					} }
+				>
+					{ translate( 'CRM Extensions' ) }
+				</Button>
+			) }
 
 			{ ! isPressableLicense && licenseState === LicenseState.Attached && siteUrl && (
 				<Button compact href={ siteUrl } target="_blank" rel="noopener noreferrer">
