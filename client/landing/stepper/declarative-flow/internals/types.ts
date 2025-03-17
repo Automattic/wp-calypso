@@ -12,7 +12,7 @@ import { STEPPER_TRACKS_EVENTS } from '../../constants';
  * });
  */
 export type NavigationControls<
-	StepSubmittedTypes extends Record< string, unknown > | undefined = undefined,
+	StepSubmittedTypes extends unknown | undefined | never | Record< string, unknown > = undefined,
 > = {
 	/**
 	 * Call this function if you want to go to the previous step.
@@ -44,7 +44,9 @@ export type NavigationControls<
 	 * @see {@link client/landing/stepper/declarative-flow/internals/steps-repository/DEVELOPMENT/making-a-new-step.md}
 	 */
 	submit?: (
-		providedDependencies?: StepSubmittedTypes extends undefined ? never : StepSubmittedTypes
+		providedDependencies?: StepSubmittedTypes extends Record< string, unknown >
+			? StepSubmittedTypes
+			: never
 	) => void;
 
 	/**
@@ -318,9 +320,15 @@ type StepPropTypes = {
  *   );
  * };
  */
-export type Step< ConfiguredStepPropTypes extends StepPropTypes = never > = React.FC<
-	StepProps< ConfiguredStepPropTypes >
->;
+export type Step<
+	ConfiguredStepPropTypes extends StepPropTypes = {
+		submits: never;
+		accepts: never;
+	},
+> = keyof ConfiguredStepPropTypes extends keyof StepPropTypes
+	? React.FC< StepProps< ConfiguredStepPropTypes > >
+	: // Only allow `accept` and `submits` config props.
+	  never;
 
 // TODO: get rid of these. Every type should be specific.
 export type ProvidedDependencies = Record< string, unknown >;

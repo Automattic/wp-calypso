@@ -78,7 +78,7 @@ const usePreparationEventsAndLogs = ( {
 
 const SiteMigrationInstructions: Step< {
 	submits: {
-		destination: 'migration-started' | string;
+		destination: 'migration-started';
 	};
 } > = function ( { navigation, flow } ) {
 	const site = useSite();

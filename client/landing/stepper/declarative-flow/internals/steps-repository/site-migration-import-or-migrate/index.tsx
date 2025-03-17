@@ -18,7 +18,7 @@ import './style.scss';
 
 const SiteMigrationImportOrMigrate: Step< {
 	submits: {
-		destination: 'migrate' | 'import' | 'upgrade' | string;
+		destination: 'migrate' | 'import' | 'upgrade';
 	};
 } > = function ( { navigation } ) {
 	const translate = useTranslate();
@@ -62,7 +62,7 @@ const SiteMigrationImportOrMigrate: Step< {
 	const shouldDisplayHostIdentificationMessage =
 		! hostingProviderDetails.is_unknown && ! hostingProviderDetails.is_a8c;
 
-	const handleClick = ( destination: string ) => {
+	const handleClick = ( destination: 'migrate' | 'import' | 'upgrade' ) => {
 		if ( destination === 'migrate' && ! siteCanInstallPlugins ) {
 			return navigation.submit?.( { destination: 'upgrade' } );
 		}

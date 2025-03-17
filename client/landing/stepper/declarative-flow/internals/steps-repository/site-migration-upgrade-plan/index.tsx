@@ -29,6 +29,12 @@ const SiteMigrationUpgradePlan: Step< {
 		headerText?: string;
 		customizedActionButtons?: React.ReactElement;
 	};
+	submits: {
+		goToCheckout?: boolean;
+		plan?: string;
+		sendIntentWhenCreatingTrial?: boolean;
+		verifyEmail?: boolean;
+	};
 } > = ( { navigation, data, customizedActionButtons, flow, ...props } ) => {
 	const showVariants = SITE_MIGRATION_FLOW === flow;
 	const { onSkip, skipLabelText, skipPosition } = props;
