@@ -1,28 +1,19 @@
 import deepFreeze from 'deep-freeze';
 import {
-	BILLING_RECEIPT_EMAIL_SEND,
-	BILLING_RECEIPT_EMAIL_SEND_FAILURE,
-	BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
 	BILLING_TRANSACTIONS_RECEIVE,
 	BILLING_TRANSACTIONS_REQUEST,
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import reducer, { requesting, items, sendingReceiptEmail } from '../reducer';
+import reducer, { requesting, items } from '../reducer';
 
 describe( 'reducer', () => {
 	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	test( 'should include expected keys in return value', () => {
 		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
-			expect.arrayContaining( [
-				'requesting',
-				'items',
-				'sendingReceiptEmail',
-				'individualTransactions',
-				'ui',
-			] )
+			expect.arrayContaining( [ 'requesting', 'items', 'individualTransactions' ] )
 		);
 	} );
 
@@ -132,54 +123,6 @@ describe( 'reducer', () => {
 			const state = deserialize( items, deepFreeze( { example: 'test' } ) );
 
 			expect( state ).toEqual( {} );
-		} );
-	} );
-
-	describe( '#sendingReceiptEmail()', () => {
-		const currentState = {
-			87654321: false,
-		};
-
-		test( 'should default to an empty object', () => {
-			const state = sendingReceiptEmail( undefined, {} );
-
-			expect( state ).toEqual( {} );
-		} );
-
-		test( 'should set sendingReceiptEmail of that receipt to true value if a request is initiated', () => {
-			const state = sendingReceiptEmail( currentState, {
-				type: BILLING_RECEIPT_EMAIL_SEND,
-				receiptId: 12345678,
-			} );
-
-			expect( state ).toEqual( {
-				12345678: true,
-				...state,
-			} );
-		} );
-
-		test( 'should set sendingReceiptEmail of that receipt to false if request finishes successfully', () => {
-			const state = sendingReceiptEmail( currentState, {
-				type: BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
-				receiptId: 12345678,
-			} );
-
-			expect( state ).toEqual( {
-				12345678: false,
-				...state,
-			} );
-		} );
-
-		test( 'should set sendingReceiptEmail of that receipt to false if request finishes unsuccessfully', () => {
-			const state = sendingReceiptEmail( currentState, {
-				type: BILLING_RECEIPT_EMAIL_SEND_FAILURE,
-				receiptId: 12345678,
-			} );
-
-			expect( state ).toEqual( {
-				12345678: false,
-				...state,
-			} );
 		} );
 	} );
 } );
