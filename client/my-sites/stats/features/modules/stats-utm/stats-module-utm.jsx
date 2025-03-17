@@ -75,15 +75,9 @@ const StatsModuleUTM = ( {
 	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.CAMPAIGN );
 
 	const optionLabels = {
-		[ OPTION_KEYS.SOURCE_MEDIUM ]: {
-			selectLabel: translate( 'Source / Medium' ),
-			headerLabel: translate( 'Posts by Source / Medium' ),
-			isGrouped: true, // display in a group on top of the dropdown
-		},
-		[ OPTION_KEYS.CAMPAIGN_SOURCE_MEDIUM ]: {
-			selectLabel: translate( 'Campaign / Source / Medium' ),
-			headerLabel: translate( 'Posts by Campaign / Source / Medium' ),
-			isGrouped: true,
+		[ OPTION_KEYS.CAMPAIGN ]: {
+			selectLabel: translate( 'Campaign' ),
+			headerLabel: translate( 'Posts by Campaign' ),
 		},
 		[ OPTION_KEYS.SOURCE ]: {
 			selectLabel: translate( 'Source' ),
@@ -93,9 +87,15 @@ const StatsModuleUTM = ( {
 			selectLabel: translate( 'Medium' ),
 			headerLabel: translate( 'Posts by Medium' ),
 		},
-		[ OPTION_KEYS.CAMPAIGN ]: {
-			selectLabel: translate( 'Campaign' ),
-			headerLabel: translate( 'Posts by Campaign' ),
+		[ OPTION_KEYS.SOURCE_MEDIUM ]: {
+			selectLabel: translate( 'Source / Medium' ),
+			headerLabel: translate( 'Posts by Source / Medium' ),
+			isGrouped: true, // display in a group on top of the dropdown
+		},
+		[ OPTION_KEYS.CAMPAIGN_SOURCE_MEDIUM ]: {
+			selectLabel: translate( 'Campaign / Source / Medium' ),
+			headerLabel: translate( 'Posts by Campaign / Source / Medium' ),
+			isGrouped: true,
 		},
 	};
 
