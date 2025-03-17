@@ -138,9 +138,7 @@ class ReaderShare extends Component {
 					onTouchStart={ preloadEditor }
 					ref={ this.shareButton }
 					data-tooltip={
-						this.props.isReblogSelection
-							? translate( 'Repost with your thoughts' )
-							: translate( 'Share' )
+						this.props.isReblogSelection ? translate( 'Repost with your thoughts' ) : undefined
 					}
 				>
 					{ ! this.props.isReblogSelection ? (

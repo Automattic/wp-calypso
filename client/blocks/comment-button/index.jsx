@@ -23,7 +23,8 @@ function CommentButton( {
 	return (
 		<TagName
 			className="comment-button tooltip"
-			data-tooltip={ translate( 'Comment' ) }
+			// Show a tooltip only when we are showing the number of existing comments.
+			data-tooltip={ commentCount > 0 ? translate( 'Comment' ) : undefined }
 			onClick={ onClick }
 			href={ 'a' === TagName ? href : undefined }
 			target={ 'a' === TagName ? target : undefined }
