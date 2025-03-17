@@ -25,6 +25,7 @@ import {
 	FEATURE_UNLIMITED_PRODUCTS_SERVICES,
 	FEATURE_INVENTORY,
 	FEATURE_CUSTOM_MARKETING_AUTOMATION,
+	getPlan,
 } from '../src';
 
 describe( 'getFeatureDifference function related tests', () => {
@@ -74,5 +75,43 @@ describe( 'getFeatureDifference function related tests', () => {
 				FEATURE_CUSTOM_MARKETING_AUTOMATION,
 			]
 		);
+	} );
+
+	it( 'If no feature difference should return emtpty array', () => {
+		expect( getFeatureDifference( PLAN_BUSINESS, PLAN_BUSINESS, 'getCheckoutFeatures' ) ).toEqual(
+			[]
+		);
+	} );
+
+	it( 'Returns empty array when feature bundle selector does not exist', () => {
+		expect(
+			getFeatureDifference( PLAN_PREMIUM, PLAN_BUSINESS, 'nonExistentSelector' as any )
+		).toEqual( [] );
+	} );
+
+	it( 'Handles case when feature bundle selector returns a function instead of array', () => {
+		const mockPlan = getPlan( PLAN_BUSINESS );
+		jest
+			.spyOn( mockPlan as any, 'getCheckoutFeatures' )
+			.mockImplementation( () => [ FEATURE_PRIORITY_24_7_SUPPORT, FEATURE_UPLOAD_PLUGINS ] );
+
+		expect( getFeatureDifference( PLAN_PREMIUM, PLAN_BUSINESS, 'getCheckoutFeatures' ) ).toEqual( [
+			FEATURE_PRIORITY_24_7_SUPPORT,
+			FEATURE_UPLOAD_PLUGINS,
+		] );
+	} );
+
+	it( 'Difference should not contain features from smaller plan', () => {
+		const mockFeatureSelector = 'get2023PricingGridSignupWpcomFeatures';
+
+		const difference = getFeatureDifference( PLAN_PERSONAL, PLAN_PREMIUM, mockFeatureSelector );
+
+		const planPersonalFeatures = getPlan( PLAN_PERSONAL )?.[
+			mockFeatureSelector
+		]?.() as unknown as Array< string >;
+
+		planPersonalFeatures.forEach( ( f ) => {
+			expect( difference ).not.toContain( f );
+		} );
 	} );
 } );
