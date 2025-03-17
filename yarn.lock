@@ -13804,7 +13804,7 @@ __metadata:
     express: "npm:^4.21.0"
     express-async-handler: "npm:^1.1.4"
     express-useragent: "npm:^1.0.15"
-    fake-indexeddb: "npm:^3.1.7"
+    fake-indexeddb: "npm:^3.1.8"
     fast-json-stable-stringify: "npm:^2.1.0"
     filesize: "npm:^6.0.1"
     flag-icon-css: "npm:^3.4.5"
@@ -18938,12 +18938,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fake-indexeddb@npm:^3.1.7":
-  version: 3.1.7
-  resolution: "fake-indexeddb@npm:3.1.7"
+"fake-indexeddb@npm:^3.1.8":
+  version: 3.1.8
+  resolution: "fake-indexeddb@npm:3.1.8"
   dependencies:
     realistic-structured-clone: "npm:^2.0.1"
-  checksum: ac81c4118cd8da37897460edf3be51c672121e35cb7a1320ffbb8616fd3980aba1ca51aea22f4a815272730d706e90086362333438fa98a918321482e421c32b
+  checksum: 1e5d0979af132270fddd4d3ebd6a4e68992606e2f9a16f83bdaf9080003251e161370e0b73a74d8cf3c77b81f401c1b5d1013fc7e852be8849327231a56639ff
   languageName: node
   linkType: hard
 
