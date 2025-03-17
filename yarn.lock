@@ -2135,7 +2135,7 @@ __metadata:
     "@babel/preset-typescript": "npm:^7.26.0"
     commander: "npm:^5.1.0"
     gettext-parser: "npm:^4.0.3"
-    glob: "npm:^7.1.6"
+    glob: "npm:^7.2.3"
     i18n-calypso: "workspace:^"
     jest: "npm:^29.7.0"
     lodash.mergewith: "npm:^4.6.2"
@@ -20123,7 +20123,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:^7.0.3, glob@npm:^7.0.5, glob@npm:^7.1.3, glob@npm:^7.1.4, glob@npm:^7.1.6, glob@npm:^7.1.7, glob@npm:^7.2.0":
+"glob@npm:^7.0.3, glob@npm:^7.0.5, glob@npm:^7.1.3, glob@npm:^7.1.4, glob@npm:^7.1.6, glob@npm:^7.1.7, glob@npm:^7.2.0, glob@npm:^7.2.3":
   version: 7.2.3
   resolution: "glob@npm:7.2.3"
   dependencies:
@@ -20501,7 +20501,7 @@ __metadata:
     "@wordpress/readable-js-assets-webpack-plugin": "npm:^3.19.0"
     clsx: "npm:^2.1.1"
     copy-webpack-plugin: "npm:^10.2.4"
-    glob: "npm:^7.1.6"
+    glob: "npm:^7.2.3"
     i18n-calypso: "workspace:^"
     postcss: "npm:^8.5.3"
     react: "npm:^18.3.1"
@@ -35963,7 +35963,7 @@ __metadata:
     eslint-plugin-you-dont-need-lodash-underscore: "npm:^6.14.0"
     fsevents: "npm:^2.3.3"
     gettext-parser: "npm:^4.0.3"
-    glob: "npm:^7.1.6"
+    glob: "npm:^7.2.3"
     globby: "npm:^10.0.2"
     http-proxy-middleware: "npm:^3.0.0"
     husky: "npm:^7.0.4"
