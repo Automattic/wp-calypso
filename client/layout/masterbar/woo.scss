@@ -1894,6 +1894,9 @@ $breakpoint-mobile: 660px;
 				.security-key-form__add-wait-for-key {
 					margin-bottom: 48px;
 
+					p {
+						max-width: 515px;
+					}
 					p:first-child {
 						margin-bottom: 12px;
 					}
@@ -1911,7 +1914,7 @@ $breakpoint-mobile: 660px;
 			}
 
 			.two-factor-authentication__small-print {
-				max-width: $max-width;
+				max-width: 350px;
 				color: $gray-50;
 				text-align: center;
 				font-style: normal;
