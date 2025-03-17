@@ -168,12 +168,14 @@
 		width: 9.375rem;
 		
 		@media (max-width: 600px) {
-			text-align: center;
+			text-align: left;
 			width: 100%;
+			padding-top: 0.75rem;
 			
 			.button {
 				width: 75%;
 				justify-content: center;
+				display: block;
 			}
 		}
 	}
@@ -205,10 +207,10 @@
 		margin-top: 0.5rem;
 		
 		@media (max-width: 600px) {
-			position: absolute;
-			top: 0.75rem;
-			right: 0.75rem;
-			margin-top: 0;
+			position: static;
+			display: inline-block;
+			margin: 0;
+			vertical-align: middle;
 		}
 	}
 
