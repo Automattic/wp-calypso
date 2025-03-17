@@ -124,6 +124,10 @@ export function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditC
 		isAutoRenewEnabled: parseInt( purchase.auto_renew ?? '' ) === 1,
 	};
 
+	if ( purchase.purchaser_id ) {
+		object.purchaserId = purchase.purchaser_id;
+	}
+
 	if ( isCreditCardPurchase( purchase ) ) {
 		object.payment.creditCard = {
 			id: Number( purchase.payment_card_id ),

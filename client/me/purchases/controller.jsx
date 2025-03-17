@@ -21,7 +21,7 @@ import {
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import { logStashLoadErrorEvent } from 'calypso/my-sites/checkout/src/lib/analytics';
-import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { getCurrentUser, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
 import ManagePurchase from './manage-purchase';
@@ -117,10 +117,13 @@ export function confirmCancelDomain( context, next ) {
 }
 
 export function list( context, next ) {
+	const state = context.store.getState();
+	const currentUser = getCurrentUser( state );
+	const userId = currentUser?.ID;
 	const ListWrapper = localize( () => {
 		return (
 			<PurchasesWrapper>
-				<PurchasesList noticeType={ context.params.noticeType } />
+				<PurchasesList userId={ userId } noticeType={ context.params.noticeType } />
 			</PurchasesWrapper>
 		);
 	} );
