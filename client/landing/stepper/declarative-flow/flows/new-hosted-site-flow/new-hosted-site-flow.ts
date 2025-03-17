@@ -22,7 +22,7 @@ import { STEPS } from '../../internals/steps';
 import { Flow, ProvidedDependencies } from '../../internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import './internals/new-hosted-site-flow.scss';
+import './new-hosted-site-flow.scss';
 
 function useShowDomainStep(): boolean {
 	const query = useQuery();
