@@ -4,94 +4,93 @@
  * across all implementations (CRM downloads, my-sites, partner portal)
  */
 
-// License key container styles
-.manage-purchase__license-clipboard-container {
-	display: block;
-	margin: 1rem 0;
-	padding: 1.25rem;
-	background-color: var(--color-surface, #fff);
-	position: relative;
-}
-
-.manage-purchase__license-clipboard .button{
-	min-width: 18px;
-}
-
-// License key heading
-.manage-purchase__license-key-heading {
-	font-size: 1rem;
-	font-weight: 600;
-	margin: 0 0 1rem 0;
-	color: var(--color-text, #1e1e1e);
-	line-height: 1.4;
-	display: block;
-	border-bottom: 1px solid var(--color-border-subtle, #dcdcde);
-	padding-bottom: 0.75rem;
-}
-
-// How to activate link
-.manage-purchase__license-clipboard-link {
-	position: absolute;
-	top: 1.25rem;
-	right: 1.25rem;
-	color: var(--color-link, #0675c4);
-	font-size: 0.875rem;
-	
-	@media (max-width: 30rem) {
-		position: static;
-		display: block;
-		margin: -0.5rem 0 1rem 0;
-	}
-}
-
-// License key row layout
-.manage-purchase__license-key-row {
-	display: flex;
-	align-items: center;
-	margin: 0;
-}
-
-// License key and clipboard icon container
-.manage-purchase__license-clipboard {
-	display: flex;
-	align-items: center;
-	background-color: var(--color-neutral-0, #f6f7f7);
-	padding: 0.75rem 1rem;
-	border: 1px solid var(--color-border-subtle, #dcdcde);
-	flex: 1;
-}
-
-// License key code styling
-.manage-purchase__license-clipboard-code {
-	flex: 1;
-	font-family: monospace;
-	font-size: 0.875rem;
-	overflow-x: auto;
-	white-space: nowrap;
-	padding: 0.25rem 0;
-	color: var(--color-text, #3c434a);
-}
-
-// Clipboard icon button
-.manage-purchase__license-clipboard-icon {
-	color: var(--color-text-subtle, #646970);
-	transition: color 0.2s ease;
-	margin-left: 0.5rem;
-	background: transparent;
-	border: none;
-	padding: 0.25rem;
-	
-	&:hover {
-		color: var(--color-accent, #2271b1);
-	}
-	
-	.gridicon {
-		display: block;
-	}
-}
-
 // Specific styles for the crm-downloads component
 .crm-downloads {
+	// License key container styles
+	.manage-purchase__license-clipboard-container {
+		display: block;
+		margin: 1rem 0;
+		padding: 1.25rem;
+		background-color: var(--color-surface, #fff);
+		position: relative;
+	}
+
+	.manage-purchase__license-clipboard .button{
+		min-width: 18px;
+	}
+
+	// License key heading
+	.manage-purchase__license-key-heading {
+		font-size: 1rem;
+		font-weight: 600;
+		margin: 0 0 1rem 0;
+		color: var(--color-text, #1e1e1e);
+		line-height: 1.4;
+		display: block;
+		border-bottom: 1px solid var(--color-border-subtle, #dcdcde);
+		padding-bottom: 0.75rem;
+	}
+
+	// How to activate link
+	.manage-purchase__license-clipboard-link {
+		position: absolute;
+		top: 1.25rem;
+		right: 1.25rem;
+		color: var(--color-link, #0675c4);
+		font-size: 0.875rem;
+		
+		@media (max-width: 30rem) {
+			position: static;
+			display: block;
+			margin: -0.5rem 0 1rem 0;
+		}
+	}
+
+	// License key row layout
+	.manage-purchase__license-key-row {
+		display: flex;
+		align-items: center;
+		margin: 0;
+	}
+
+	// License key and clipboard icon container
+	.manage-purchase__license-clipboard {
+		display: flex;
+		align-items: center;
+		background-color: var(--color-neutral-0, #f6f7f7);
+		padding: 0.75rem 1rem;
+		border: 1px solid var(--color-border-subtle, #dcdcde);
+		flex: 1;
+	}
+
+	// License key code styling
+	.manage-purchase__license-clipboard-code {
+		flex: 1;
+		font-family: monospace;
+		font-size: 0.875rem;
+		overflow-x: auto;
+		white-space: nowrap;
+		padding: 0.25rem 0;
+		color: var(--color-text, #3c434a);
+	}
+
+	// Clipboard icon button
+	.manage-purchase__license-clipboard-icon {
+		color: var(--color-text-subtle, #646970);
+		transition: color 0.2s ease;
+		margin-left: 0.5rem;
+		background: transparent;
+		border: none;
+		padding: 0.25rem;
+		
+		&:hover {
+			color: var(--color-accent, #2271b1);
+		}
+		
+		.gridicon {
+			display: block;
+		}
+	}
 
 	.extensions-table {
 		margin-top: 1rem;
