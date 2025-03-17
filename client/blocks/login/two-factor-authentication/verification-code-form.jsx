@@ -1,4 +1,5 @@
 import { Card, FormInputValidation, FormLabel } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { defer } from 'lodash';
 import PropTypes from 'prop-types';
@@ -121,7 +122,11 @@ class VerificationCodeForm extends Component {
 				<div className="two-factor-authentication__small-print">
 					{ translate( 'Can’t access your backup codes? {{link}}Contact support{{/link}}.', {
 						components: {
-							link: <ActionPanelLink href="/support/account-recovery/" />,
+							link: (
+								<ActionPanelLink
+									href={ localizeUrl( 'https://wordpress.com/support/account-recovery/' ) }
+								/>
+							),
 						},
 					} ) }
 				</div>
