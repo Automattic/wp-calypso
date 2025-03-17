@@ -51,7 +51,7 @@
 		"canvas-confetti": "^1.6.0",
 		"clsx": "^2.1.1",
 		"colord": "2.9.3",
-		"debug": "^4.3.4",
+		"debug": "^4.4.0",
 		"gridicons": "^3.4.2",
 		"i18n-calypso": "workspace:^",
 		"lodash": "^4.17.21",
