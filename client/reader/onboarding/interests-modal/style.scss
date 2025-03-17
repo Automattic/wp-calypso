@@ -4,8 +4,6 @@
 $actions-height: 64px;
 
 .interests-modal {
-	max-height: 90%;
-
 	&__content {
 		// Since the actions container is positioned absolutely,
 		// this padding bottom ensures that the content wrapper will properly
@@ -46,23 +44,6 @@ $actions-height: 64px;
 
 		@include break-large {
 			grid-template-columns: repeat( 3, 1fr );
-		}
-	}
-
-	&__footer {
-		height: $actions-height;
-		position: absolute;
-		bottom: 0;
-		width: 100%;
-		background-color: #fff;
-		margin-left: -32px; // $grid-unit-40
-		margin-right: -32px;
-		padding-left: 32px;
-		padding-right: 32px;
-		border-top: 1px solid #ddd; //$gray-300;
-
-		.interests-modal__footer-actions {
-			height: 100%;
 		}
 	}
 }

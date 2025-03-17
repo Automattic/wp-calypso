@@ -50,7 +50,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 		}
 	}, [ followedTagsFromState, processingTags ] );
 
-	const isContinueDisabled = followedTags.length < 3;
+	const isContinueDisabled = followedTags.length < 4;
 
 	const handleTopicChange = ( checked: boolean, tag: string ) => {
 		// If the tag is already being processed, do nothing.
@@ -192,7 +192,7 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 
 	return (
 		isOpen && (
-			<Modal onRequestClose={ onClose } size="large" className="interests-modal">
+			<Modal onRequestClose={ onClose } size="fill" className="interests-modal">
 				<VStack spacing={ 8 } className="interests-modal__content">
 					<VStack spacing={ 0 }>
 						<h2 className="interests-modal__title">{ __( 'What topics interest you?' ) }</h2>
@@ -225,8 +225,8 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 							</div>
 						</div>
 					) ) }
-					<div className="interests-modal__footer">
-						<HStack justify="right" className="interests-modal__footer-actions">
+					<div className="reader-onboarding-modal__footer">
+						<HStack justify="right" className="reader-onboarding-modal__footer-actions">
 							<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
 								{ __( 'Cancel' ) }
 							</Button>
