@@ -20672,7 +20672,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hash.js@npm:^1.0.0, hash.js@npm:^1.0.3, hash.js@npm:^1.1.5, hash.js@npm:^1.1.7":
+"hash.js@npm:^1.0.0, hash.js@npm:^1.0.3, hash.js@npm:^1.1.7":
   version: 1.1.7
   resolution: "hash.js@npm:1.1.7"
   dependencies:
@@ -21249,7 +21249,7 @@ __metadata:
     "@wordpress/compose": "npm:^7.19.0"
     debug: "npm:^4.3.3"
     events: "npm:^3.3.0"
-    hash.js: "npm:^1.1.5"
+    hash.js: "npm:^1.1.7"
     lru: "npm:^3.1.0"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
