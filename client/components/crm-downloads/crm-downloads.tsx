@@ -249,12 +249,6 @@ export function CrmDownloadsContent( { licenseKey }: CrmDownloadsProps ) {
 				{ isLoadingExtensions && <LoadingSkeleton /> }
 				{ ! isLoadingExtensions && extensions.length > 0 && (
 					<table>
-						<thead>
-							<tr>
-								<th>{ translate( 'Extension' ) }</th>
-								<th></th>
-							</tr>
-						</thead>
 						<tbody>
 							{ extensions.map( ( extension ) => (
 								<tr key={ extension.slug }>
