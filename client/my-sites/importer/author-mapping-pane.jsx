@@ -3,10 +3,12 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import useUsersQuery from 'calypso/data/users/use-users-query';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
 import AuthorMapping from './author-mapping-item';
 
 import './author-mapping-pane.scss';
@@ -42,17 +44,17 @@ class AuthorMappingPane extends PureComponent {
 		);
 	};
 
-	getMappingDescription = ( numSourceUsers, numTargetUsers, targetTitle, sourceType ) => {
+	getMappingDescription = ( numSourceUsers, numTargetUsers, siteDomain, sourceType ) => {
 		if ( numTargetUsers === 1 && numSourceUsers === 1 ) {
 			return this.props.translate(
-				'There is one author on your %(sourceType)s site. ' +
-					"Because you're the only author on your new site, " +
+				'There is one author on your original %(sourceType)s site. ' +
+					"Because you're the only author on this site (%(siteDomain)s), " +
 					'all imported content will be assigned to you. ' +
 					'Click {{em}}Import{{/em}} to proceed.',
 				{
 					args: {
 						sourceType: sourceType,
-						destinationSiteTitle: targetTitle,
+						siteDomain: siteDomain,
 					},
 					components: {
 						em: <em />,
@@ -61,14 +63,14 @@ class AuthorMappingPane extends PureComponent {
 			);
 		} else if ( numTargetUsers === 1 && numSourceUsers > 1 ) {
 			return this.props.translate(
-				'There are multiple authors on your %(sourceType)s site. ' +
-					"Because you're the only author on your new site, " +
+				'There are multiple authors on your original %(sourceType)s site. ' +
+					"Because you're the only author on this site (%(siteDomain)s), " +
 					'all imported content will be assigned to you. ' +
 					'Click {{em}}Import{{/em}} to proceed.',
 				{
 					args: {
 						sourceType: sourceType,
-						destinationSiteTitle: targetTitle,
+						siteDomain: siteDomain,
 					},
 					components: {
 						em: <em />,
@@ -79,11 +81,10 @@ class AuthorMappingPane extends PureComponent {
 			return this.props.translate(
 				'There are multiple authors on your site. ' +
 					'Please reassign the authors of the imported items to an existing ' +
-					'user on your new site, then click {{em}}Import{{/em}}.',
+					'user on this site, then click {{em}}Import{{/em}}.',
 				{
 					args: {
 						sourceType: 'WordPress',
-						destinationSiteTitle: targetTitle,
 					},
 					components: {
 						em: <em />,
@@ -92,13 +93,13 @@ class AuthorMappingPane extends PureComponent {
 			);
 		} else if ( numTargetUsers > 1 && numSourceUsers > 1 ) {
 			return this.props.translate(
-				'There are multiple authors on your %(sourceType)s site. ' +
+				'There are multiple authors on your original %(sourceType)s site. ' +
 					'Please reassign the authors of the imported items to an existing ' +
-					'user on your new site, then click {{em}}Import{{/em}}.',
+					'user on this site (%(siteDomain)s), then click {{em}}Import{{/em}}.',
 				{
 					args: {
 						sourceType: 'WordPress',
-						destinationSiteTitle: targetTitle,
+						siteDomain: siteDomain,
 					},
 					components: {
 						em: <em />,
@@ -115,7 +116,6 @@ class AuthorMappingPane extends PureComponent {
 	render() {
 		const {
 			sourceAuthors,
-			targetTitle,
 			onMap,
 			onStartImport,
 			siteId,
@@ -124,6 +124,7 @@ class AuthorMappingPane extends PureComponent {
 			site,
 			totalUsers,
 			translate,
+			siteDomain,
 		} = this.props;
 
 		const hasSingleAuthor = totalUsers === 1;
@@ -131,7 +132,7 @@ class AuthorMappingPane extends PureComponent {
 		const mappingDescription = this.getMappingDescription(
 			sourceAuthors.length,
 			totalUsers,
-			targetTitle,
+			siteDomain,
 			sourceType
 		);
 
@@ -139,10 +140,12 @@ class AuthorMappingPane extends PureComponent {
 			<div className="importer__mapping-pane">
 				<div className="importer__mapping-description">{ mappingDescription }</div>
 				<div className="importer__mapping-header">
-					<span className="importer__mapping-source-title">
-						{ translate( 'Original Site Users' ) }
+					<span className="importer__mapping-source-title">{ translate( 'Original Site' ) }</span>
+					<span className="importer__mapping-target-title">
+						{ translate( 'This Site (%(siteDomain)s)', {
+							args: { siteDomain },
+						} ) }
 					</span>
-					<span className="importer__mapping-target-title">{ translate( 'New Site Users' ) }</span>
 				</div>
 				{ sourceAuthors.map( ( author ) => {
 					return (
@@ -180,4 +183,6 @@ const withTotalUsers = createHigherOrderComponent(
 	'withTotalUsers'
 );
 
-export default localize( withTotalUsers( AuthorMappingPane ) );
+export default connect( ( state, ownProps ) => ( {
+	siteDomain: getSiteDomain( state, ownProps.siteId ),
+} ) )( localize( withTotalUsers( AuthorMappingPane ) ) );
