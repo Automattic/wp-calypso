@@ -162,6 +162,7 @@ class VerifyEmailDialog extends Component {
 		return (
 			<Modal
 				className="email-verification-dialog__confirmation-dialog is-narrow"
+				role="dialog"
 				isVisible
 				label="Email Verification Dialog"
 				onRequestClose={ this.props.onClose }
