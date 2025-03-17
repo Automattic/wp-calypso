@@ -89,6 +89,8 @@ const WooPaymentsDashboard = () => {
 	useEffect( () => {
 		if ( isInProgress ) {
 			setIsWooPaymentsDataLoading( true );
+		} else {
+			setIsWooPaymentsDataLoading( false );
 		}
 	}, [ isInProgress, sitesWithPluginsStates ] );
 

@@ -13,7 +13,7 @@ import { requestUser } from 'calypso/state/reader/users/actions';
 import getReaderUser from 'calypso/state/selectors/get-reader-user';
 import './style.scss';
 
-interface UserProfileProps {
+export interface UserProfileProps {
 	userLogin: string;
 	userId: string;
 	user: UserData | undefined;

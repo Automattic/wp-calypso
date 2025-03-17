@@ -1,5 +1,5 @@
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
-import { hasCheckoutVersion, ManagedContactDetails, styled } from '@automattic/wpcom-checkout';
+import { ManagedContactDetails, styled } from '@automattic/wpcom-checkout';
 import { CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -60,7 +60,7 @@ export function IsForBusinessCheckbox( {
 	const isDisabled = formStatus !== FormStatus.READY;
 
 	// Hide checkbox if not eligible
-	if ( ! isUnitedStateWithBusinessOption || ! hasCheckoutVersion( 'business-use-tax' ) ) {
+	if ( ! isUnitedStateWithBusinessOption ) {
 		return null;
 	}
 
@@ -73,8 +73,7 @@ export function IsForBusinessCheckbox( {
 						components: {
 							link: (
 								<InlineSupportLink
-									id="checkout-is-business-checkbox"
-									supportContext="tax-exempt-customers"
+									supportContext="business-tax-rates-in-ohio-and-connecticut"
 									showIcon={ false }
 								/>
 							),
