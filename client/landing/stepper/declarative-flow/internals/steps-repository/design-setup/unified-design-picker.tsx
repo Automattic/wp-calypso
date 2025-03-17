@@ -146,6 +146,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	);
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const isComingFromTheUpgradeScreen = queryParams.get( 'continue' ) === '1';
+	const isComingFromSuccessfulImport = queryParams.get( 'comingFromSuccessfulImport' ) === '1';
 
 	const isPremiumThemeAvailable = Boolean(
 		useSelect(
@@ -907,19 +908,28 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		</>
 	);
 
+	const getGoBackHandler = () => {
+		if ( isComingFromSuccessfulImport ) {
+			return undefined;
+		}
+		return intent === 'update-design' ? submit : handleBackClick;
+	};
+
 	return (
 		<StepContainer
 			stepName={ STEP_NAME }
 			className="unified-design-picker__has-categories"
 			skipButtonAlign="top"
 			hideFormattedHeader
-			hideSkip={ ! isGoalsAtFrontExperiment }
-			skipLabelText={ translate( 'Skip setup' ) }
+			hideSkip={ ! isGoalsAtFrontExperiment && ! isComingFromSuccessfulImport }
+			skipLabelText={
+				isComingFromSuccessfulImport ? translate( 'Skip to dashboard' ) : translate( 'Skip setup' )
+			}
 			backLabelText={ translate( 'Back' ) }
 			stepContent={ stepContent }
 			recordTracksEvent={ recordStepContainerTracksEvent }
 			goNext={ handleSubmit }
-			goBack={ intent === 'update-design' ? submit : handleBackClick }
+			goBack={ getGoBackHandler() }
 		/>
 	);
 };
