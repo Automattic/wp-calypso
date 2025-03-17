@@ -4,7 +4,7 @@ import { withState } from '@wordpress/compose';
 interface StateProps {
 	category: number;
 	order: 'asc' | 'desc';
-	orderBy: 'date' | 'title';
+	orderBy: 'date' | 'title' | 'menu_order';
 	numberOfItems: number;
 }
 

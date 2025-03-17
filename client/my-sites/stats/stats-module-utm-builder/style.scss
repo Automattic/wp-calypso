@@ -27,6 +27,7 @@ $modal-content-padding: 32px;
 		h1.components-modal__header-heading {
 			font-size: 32px; // stylelint-disable-line declaration-property-unit-allowed-list
 			line-height: 39px;
+			font-weight: 400;
 		}
 	}
 }
@@ -94,14 +95,19 @@ $modal-content-padding: 32px;
 .stats-utm-builder__help {
 	flex: 1 0 45%;
 	padding: 0 0 0 $stats-utm-builder-help-padding;
+	max-width: 35em;
 
 	@media (max-width: $break-small) {
 		padding: $stats-utm-builder-vertical-spacing 0 0 0;
 		position: relative;
 	}
 
-	section + section {
-		padding-top: 12px;
+	section {
+		margin-bottom: 24px;
+	}
+
+	section p {
+		margin-bottom: 0;
 	}
 }
 
@@ -146,6 +152,7 @@ $modal-content-padding: 32px;
 
 .stats-utm-builder__help-section-parameter-example {
 	font-style: italic;
+	color: $studio-gray-40;
 }
 
 .stats-utm-builder__trigger {

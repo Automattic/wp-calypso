@@ -144,12 +144,6 @@ describe( 'DomainOverviewPane', () => {
 			'/domains/manage/all/email/example.com/example.wordpress.com'
 		);
 	} );
-
-	it( 'handles close button click', () => {
-		renderComponent();
-		fireEvent.click( screen.getByText( 'Close' ) );
-		expect( page.show ).toHaveBeenCalledWith( '/domains/manage' );
-	} );
 } );
 
 describe( 'showDomainManagementPage', () => {

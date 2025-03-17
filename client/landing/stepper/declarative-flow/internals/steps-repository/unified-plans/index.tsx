@@ -6,6 +6,7 @@ import {
 	useStarterDesignBySlug,
 } from '@automattic/data-stores';
 import {
+	AI_SITE_BUILDER_FLOW,
 	EXAMPLE_FLOW,
 	isOnboardingFlow,
 	NEW_HOSTED_SITE_FLOW,
@@ -127,10 +128,19 @@ export default function PlansStepAdaptor( props: StepProps ) {
 	const isWordCampPromo = new URLSearchParams( location.search ).has( 'utm_source', 'wordcamp' );
 	const plansIntent = getPlansIntent( props.flow, isWordCampPromo );
 
-	const hidePlanProps =
-		createWithBigSky && isGoalFirstExperiment
-			? getHidePlanPropsBasedOnCreateWithBigSky()
-			: getHidePlanPropsBasedOnThemeType( selectedThemeType || '' );
+	let hidePlanProps;
+	if ( createWithBigSky && isGoalFirstExperiment ) {
+		hidePlanProps = getHidePlanPropsBasedOnCreateWithBigSky();
+	} else if ( props.flow === AI_SITE_BUILDER_FLOW ) {
+		hidePlanProps = {
+			hideFreePlan: true,
+			hidePersonalPlan: true,
+			hideEcommercePlan: true,
+			hideEnterprisePlan: true,
+		};
+	} else {
+		hidePlanProps = getHidePlanPropsBasedOnThemeType( selectedThemeType || '' );
+	}
 
 	/**
 	 * The plans step has a quirk where it calls `submitSignupStep` then synchronously calls `goToNextStep` after it.

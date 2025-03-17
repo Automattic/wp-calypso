@@ -1,4 +1,5 @@
 import { getThemeIdFromStylesheet } from '@automattic/data-stores';
+import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '@automattic/global-styles';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useCallback } from 'react';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
@@ -46,9 +47,11 @@ export const useActivateDesign = () => {
 			}
 
 			// Try to install the theme on Jetpack sites.
+			let isNewlyInstalledTheme = false;
 			if ( isJetpackOrAtomic ) {
 				try {
 					await installTheme( site?.ID, themeId );
+					isNewlyInstalledTheme = true;
 				} catch ( error: any ) {
 					if ( error.error !== 'theme_already_installed' ) {
 						throw error;
@@ -59,6 +62,13 @@ export const useActivateDesign = () => {
 			const activeTheme = await setDesignOnSite( site?.ID, design, {
 				enableThemeSetup: ! isJetpackOrAtomic,
 				...designOptions,
+				// Prevent resetting global styles when a theme was recently installed generating an fatal error.
+				// See https://github.com/Automattic/wp-calypso/issues/101342.
+				styleVariation:
+					isNewlyInstalledTheme &&
+					designOptions.styleVariation?.slug === DEFAULT_GLOBAL_STYLES_VARIATION_SLUG
+						? undefined
+						: designOptions.styleVariation,
 			} );
 
 			await reduxDispatch( setActiveTheme( site?.ID || -1, activeTheme ) );

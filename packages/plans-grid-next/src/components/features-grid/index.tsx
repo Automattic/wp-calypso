@@ -299,6 +299,7 @@ const TabletView = ( {
 const FeaturesGrid = ( {
 	currentSitePlanSlug,
 	generatedWPComSubdomain,
+	hideSpotlightPlan,
 	gridPlanForSpotlight,
 	gridPlans,
 	gridSize,
@@ -316,6 +317,7 @@ const FeaturesGrid = ( {
 }: FeaturesGridProps ) => {
 	const spotlightPlanProps = {
 		currentSitePlanSlug,
+		hideSpotlightPlan,
 		gridPlanForSpotlight,
 		isInSignup,
 		onStorageAddOnClick,
@@ -336,7 +338,7 @@ const FeaturesGrid = ( {
 
 	return (
 		<div className="plans-grid-next-features-grid">
-			{ 'small' !== gridSize && <SpotlightPlan { ...spotlightPlanProps } /> }
+			{ 'small' !== gridSize && ! hideSpotlightPlan && <SpotlightPlan { ...spotlightPlanProps } /> }
 			<div className="plan-features">
 				<div className="plan-features-2023-grid__content">
 					<div>
