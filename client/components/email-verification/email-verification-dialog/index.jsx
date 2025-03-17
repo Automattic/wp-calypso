@@ -165,6 +165,7 @@ class VerifyEmailDialog extends Component {
 				role="dialog"
 				isVisible
 				label="Email Verification Dialog"
+				aria-labelledby="Email Verification Dialog"
 				onRequestClose={ this.props.onClose }
 				title={ strings.confirmHeading }
 			>
