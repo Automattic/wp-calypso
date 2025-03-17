@@ -129,13 +129,19 @@ class MagicLogin extends Component {
 	};
 
 	componentDidMount() {
+		const { oauth2Client, query } = this.props;
+
 		this.props.recordPageView( '/log-in/link', 'Login > Link' );
 
-		if ( isGravPoweredOAuth2Client( this.props.oauth2Client ) ) {
+		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
+			const isGravatarFlow = isGravatarFlowOAuth2Client( oauth2Client );
+
 			this.props.recordTracksEvent( 'calypso_gravatar_powered_magic_login_email_form', {
-				client_id: this.props.oauth2Client.id,
-				client_name: this.props.oauth2Client.title,
-				from: this.props.query?.gravatar_from,
+				client_id: oauth2Client.id,
+				client_name: oauth2Client.title,
+				from: query?.gravatar_from,
+				is_gravatar_flow: isGravatarFlow,
+				is_gravatar_flow_with_email: !! ( isGravatarFlow && query?.email_address ),
 				is_start_view: true,
 			} );
 		}
@@ -152,6 +158,7 @@ class MagicLogin extends Component {
 			twoFactorEnabled,
 			twoFactorNotificationSent,
 			redirectToSanitized,
+			query,
 		} = this.props;
 		const { showSecondaryEmailOptions, showEmailCodeVerification } = this.state;
 
@@ -174,11 +181,16 @@ class MagicLogin extends Component {
 
 			if (
 				( prevProps.showCheckYourEmail && ! showCheckYourEmail ) ||
+				( prevState.showEmailCodeVerification && ! showEmailCodeVerification ) ||
 				( prevState.showSecondaryEmailOptions && ! showSecondaryEmailOptions )
 			) {
+				const isGravatarFlow = isGravatarFlowOAuth2Client( oauth2Client );
+
 				this.props.recordTracksEvent( 'calypso_gravatar_powered_magic_login_email_form', {
 					...eventOptions,
-					from: this.props.query?.gravatar_from,
+					from: query?.gravatar_from,
+					is_gravatar_flow: isGravatarFlow,
+					is_gravatar_flow_with_email: !! ( isGravatarFlow && query?.email_address ),
 					is_start_view: false,
 				} );
 			}
