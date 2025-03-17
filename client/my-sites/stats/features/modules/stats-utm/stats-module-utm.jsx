@@ -152,7 +152,8 @@ const StatsModuleUTM = ( {
 		</StatsInfoArea>
 	);
 
-	// DRY: Same code is used twice below.
+	// DRY: Some inline functions to reduce duplication.
+	// Could be inlined if/when the render logic is simplified.
 	const renderExportButton = () => {
 		if ( ! showFooterWithDownloads ) {
 			return null;
@@ -163,6 +164,18 @@ const StatsModuleUTM = ( {
 			</div>
 		);
 	};
+
+	const utmControls = (
+		<div className="stats-module__extended-toggle">
+			<UTMBuilder />
+			<UTMDropdown
+				buttonLabel={ optionLabels[ selectedOption ].selectLabel }
+				onSelect={ setSelectedOption }
+				selectOptions={ optionLabels }
+				selected={ selectedOption }
+			/>
+		</div>
+	);
 
 	return (
 		<>
@@ -241,17 +254,7 @@ const StatsModuleUTM = ( {
 									error={ hasError && <ErrorPanel /> }
 									splitHeader
 									mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
-									toggleControl={
-										<div className="stats-module__extended-toggle">
-											<UTMBuilder />
-											<UTMDropdown
-												buttonLabel={ optionLabels[ selectedOption ].selectLabel }
-												onSelect={ setSelectedOption }
-												selectOptions={ optionLabels }
-												selected={ selectedOption }
-											/>
-										</div>
-									}
+									toggleControl={ utmControls }
 								/>
 								{ renderExportButton() }
 							</>
@@ -287,17 +290,7 @@ const StatsModuleUTM = ( {
 						loader={ showLoader && <StatsModulePlaceholder isLoading={ showLoader } /> }
 						splitHeader
 						mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
-						toggleControl={
-							<div className="stats-module__extended-toggle">
-								<UTMBuilder />
-								<UTMDropdown
-									buttonLabel={ optionLabels[ selectedOption ].selectLabel }
-									onSelect={ setSelectedOption }
-									selectOptions={ optionLabels }
-									selected={ selectedOption }
-								/>
-							</div>
-						}
+						toggleControl={ utmControls }
 					/>
 					{ renderExportButton() }
 				</>
