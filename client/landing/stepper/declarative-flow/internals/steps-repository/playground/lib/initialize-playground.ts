@@ -15,6 +15,20 @@ const DEFAULT_BLUEPRINT: Blueprint = {
 	login: true,
 };
 
+function getBlueprintFromUrl(): Blueprint {
+	try {
+		const blueprint = JSON.parse( decodeURIComponent( window.location.hash.slice( 1 ) ) );
+		return {
+			...DEFAULT_BLUEPRINT,
+			...blueprint,
+			steps: [ ...( DEFAULT_BLUEPRINT.steps || [] ), ...( blueprint.steps || [] ) ],
+		};
+	} catch ( error ) {
+		// If the blueprint is invalid or missing, use the default one
+		return DEFAULT_BLUEPRINT;
+	}
+}
+
 export async function initializeWordPressPlayground(
 	iframe: HTMLIFrameElement
 ): Promise< PlaygroundClient > {
@@ -32,20 +46,7 @@ export async function initializeWordPressPlayground(
 	}
 
 	try {
-		// get blueprint json from the hash
-		let blueprint: Blueprint | null = null;
-		try {
-			blueprint = JSON.parse( decodeURIComponent( window.location.hash.slice( 1 ) ) );
-			blueprint = {
-				...DEFAULT_BLUEPRINT,
-				...blueprint,
-			};
-			blueprint.steps = [ ...( DEFAULT_BLUEPRINT.steps || [] ), ...( blueprint.steps || [] ) ];
-		} catch ( error ) {
-			// If the blueprint is invalid, use the default one
-			blueprint = DEFAULT_BLUEPRINT;
-		}
-
+		const blueprint = getBlueprintFromUrl();
 		const mountDescriptor: MountDescriptor = {
 			device: {
 				type: 'opfs',
