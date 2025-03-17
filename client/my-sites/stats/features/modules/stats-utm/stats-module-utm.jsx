@@ -192,6 +192,21 @@ const StatsModuleUTM = ( {
 			  }
 			: undefined;
 
+	const commonStatsListCardProps = {
+		className: clsx( className, 'stats-module__card', path ),
+		moduleType: path,
+		data,
+		useShortLabel,
+		title: moduleStrings?.title,
+		emptyMessage: <div>{ moduleStrings.empty }</div>,
+		metricLabel,
+		showMore: showMoreConfig,
+		error: hasError && <ErrorPanel />,
+		splitHeader: true,
+		mainItemLabel: optionLabels[ selectedOption ]?.headerLabel,
+		toggleControl: utmControls,
+	};
+
 	return (
 		<>
 			{ isNewEmptyStateEnabled && (
@@ -240,21 +255,7 @@ const StatsModuleUTM = ( {
 					{ ! showLoader &&
 						!! data?.length && ( // show when new empty state is disabled or data is available
 							<>
-								<StatsListCard
-									className={ clsx( className, 'stats-module__card', path ) }
-									moduleType={ path }
-									data={ data }
-									useShortLabel={ useShortLabel }
-									title={ moduleStrings?.title }
-									titleNodes={ titleNodes }
-									emptyMessage={ <div>{ moduleStrings.empty }</div> }
-									metricLabel={ metricLabel }
-									showMore={ showMoreConfig }
-									error={ hasError && <ErrorPanel /> }
-									splitHeader
-									mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
-									toggleControl={ utmControls }
-								/>
+								<StatsListCard { ...commonStatsListCardProps } titleNodes={ titleNodes } />
 								{ renderExportButton() }
 							</>
 						) }
@@ -263,19 +264,8 @@ const StatsModuleUTM = ( {
 			{ ! isNewEmptyStateEnabled && (
 				<>
 					<StatsListCard
-						className={ clsx( className, 'stats-module__card', path ) }
-						moduleType={ path }
-						data={ data }
-						useShortLabel={ useShortLabel }
-						title={ moduleStrings?.title }
-						emptyMessage={ <div>{ moduleStrings.empty }</div> }
-						metricLabel={ metricLabel }
-						showMore={ showMoreConfig }
-						error={ hasError && <ErrorPanel /> }
+						{ ...commonStatsListCardProps }
 						loader={ showLoader && <StatsModulePlaceholder isLoading={ showLoader } /> }
-						splitHeader
-						mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
-						toggleControl={ utmControls }
 					/>
 					{ renderExportButton() }
 				</>
