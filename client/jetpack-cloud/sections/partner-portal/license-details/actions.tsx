@@ -13,7 +13,6 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { isJetpackCrmProduct } from '../lib';
 
 interface Props {
 	licenseKey: string;
@@ -39,7 +38,6 @@ export default function LicenseDetailsActions( {
 	const [ revokeDialog, setRevokeDialog ] = useState( false );
 	const debugUrl = siteUrl ? `https://jptools.wordpress.com/debug/?url=${ siteUrl }` : null;
 	const downloadUrl = useLicenseDownloadUrlMutation( licenseKey );
-	const isValidCrmKey = isJetpackCrmProduct( licenseKey );
 
 	const openRevokeDialog = useCallback( () => {
 		setRevokeDialog( true );
@@ -63,9 +61,9 @@ export default function LicenseDetailsActions( {
 		dispatch( recordTracksEvent( 'calypso_partner_portal_license_details_download' ) );
 	}, [ dispatch, downloadUrl.mutate ] );
 
-	const viewJetpackCRMExtensions = useCallback( () => {
+	const viewExtensions = useCallback( () => {
 		try {
-			dispatch( recordTracksEvent( 'calypso_partner_portal_license_details_view_crm_extensions' ) );
+			dispatch( recordTracksEvent( 'calypso_partner_portal_license_details_view_extensions' ) );
 			page( `/partner-portal/download-products?products=${ licenseKey }` );
 		} catch ( error ) {
 			dispatch( errorNotice( translate( 'Failed to open download page. Please try again.' ) ) );
@@ -74,8 +72,8 @@ export default function LicenseDetailsActions( {
 
 	return (
 		<div className="license-details__actions">
-			{ isValidCrmKey && (
-				<Button compact onClick={ viewJetpackCRMExtensions }>
+			{ licenseKey.startsWith( 'jetpack_complete_' ) && (
+				<Button compact onClick={ viewExtensions }>
 					{ translate( 'Download CRM Extensions' ) }
 				</Button>
 			) }

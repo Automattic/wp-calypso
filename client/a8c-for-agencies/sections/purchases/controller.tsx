@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { type Callback } from '@automattic/calypso-router';
 import PageViewTracker from 'calypso/a8c-for-agencies/components/a4a-page-view-tracker';
 import PurchasesSidebar from 'calypso/a8c-for-agencies/components/sidebar-menu/purchases';
+import DocumentHead from 'calypso/components/data/document-head';
 import {
 	publicToInternalLicenseFilter,
 	publicToInternalLicenseSortField,
@@ -13,6 +14,7 @@ import {
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import BillingDashboard from './billing/billing-dashboard';
+import CrmDownloads from './crm-downloads';
 import InvoicesOverview from './invoices/invoices-overview';
 import LicensesOverview from './licenses/licenses-overview';
 import PaymentMethodAdd from './payment-methods/payment-method-add';
@@ -95,6 +97,18 @@ export const paymentMethodsAddContext: Callback = ( context, next ) => {
 		<>
 			<PageViewTracker title="Purchases > Payment Methods > Add" path={ context.path } />
 			<PaymentMethodAdd />
+		</>
+	);
+
+	next();
+};
+
+export const crmDownloadsContext: Callback = ( context, next ) => {
+	context.secondary = <PurchasesSidebar path="/purchases/licenses" />;
+	context.primary = (
+		<>
+			<DocumentHead title="CRM Downloads" />
+			<CrmDownloads licenseKey={ context.params.licenseKey } />
 		</>
 	);
 

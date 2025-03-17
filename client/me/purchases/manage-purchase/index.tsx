@@ -49,7 +49,6 @@ import {
 	ProductIcon,
 	Gridicon,
 	PlanPrice,
-	MaterialIcon,
 } from '@automattic/components';
 import { Plans, type SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -82,7 +81,6 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import reinstallPlugins from 'calypso/data/marketplace/reinstall-plugins-api';
-import { isJetpackCrmProduct } from 'calypso/jetpack-cloud/sections/partner-portal/lib';
 import HundredYearPlanLogo from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/hundred-year-plan-step-wrapper/hundred-year-plan-logo';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSelectedDomain, resolveDomainStatus } from 'calypso/lib/domains';
@@ -156,7 +154,7 @@ import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { CalypsoDispatch, IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
-import { cancelPurchase, downgradePurchase, managePurchase, purchasesRoot } from '../paths';
+import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
 import PurchaseSiteHeader from '../purchases-site/header';
 import RemovePurchase from '../remove-purchase';
 import {
@@ -694,9 +692,12 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		// Only show for Jetpack CRM Products
+		// Only show for products with slugs starting with jetpack_complete or jetpack_crm
 		const productSlug = purchase.productSlug || '';
-		if ( ! isJetpackCrmProduct( productSlug ) ) {
+		if (
+			! productSlug.startsWith( 'jetpack_complete' ) &&
+			! productSlug.startsWith( 'jetpack_crm' )
+		) {
 			return null;
 		}
 
@@ -946,7 +947,7 @@ class ManagePurchase extends Component<
 		}
 		const { id } = purchase;
 
-		if ( ! canAutoRenewBeTurnedOff( purchase ) ) {
+		if ( ! canAutoRenewBeTurnedOff( purchase ) || ! isPlan( purchase ) ) {
 			return null;
 		}
 
@@ -1002,10 +1003,7 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		const link = ( this.props.getDowngradeUrlFor ?? downgradePurchase )(
-			this.props.siteSlug,
-			purchase.id
-		);
+		const link = this.props.getDowngradeUrlFor?.( this.props.siteSlug, purchase.id );
 
 		return (
 			<CompactCard href={ link }>
@@ -1442,14 +1440,12 @@ class ManagePurchase extends Component<
 						{ this.renderEditPaymentMethodNavItem() }
 						{ this.renderCrmDownloadsNavItem() }
 						{ this.renderReinstall() }
-						<div className="manage-purchase__downgrade-products">
-							{ config.isEnabled( 'plans/self-service-downgrade' ) && ! isPersonal( purchase )
-								? this.renderDowngradeNavItem()
-								: null }
-							{ this.renderCancelPurchaseNavItem() }
-							{ this.renderRemovePurchaseNavItem() }
-							{ this.renderCancelSurvey() }
-						</div>
+						{ this.renderCancelPurchaseNavItem() }
+						{ config.isEnabled( 'plans/self-service-downgrade' ) && ! isPersonal( purchase )
+							? this.renderDowngradeNavItem()
+							: null }
+						{ this.renderCancelSurvey() }
+						{ this.renderRemovePurchaseNavItem() }
 					</>
 				) }
 			</Fragment>
@@ -1519,10 +1515,7 @@ class ManagePurchase extends Component<
 					<QueryCanonicalTheme siteId={ siteId } themeId={ purchase?.meta ?? '' } />
 				) }
 
-				<HeaderCake
-					backText={ translate( 'Purchases' ) }
-					backHref={ this.props.purchaseListUrl ?? purchasesRoot }
-				>
+				<HeaderCake backHref={ this.props.purchaseListUrl ?? purchasesRoot }>
 					{ this.props.cardTitle || titles.managePurchase }
 				</HeaderCake>
 				{ showExpiryNotice ? (
