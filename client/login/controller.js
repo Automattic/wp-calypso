@@ -274,11 +274,8 @@ export function googleAuth( context, next ) {
 				} )
 				.requestCode();
 		} catch ( error ) {
-			// If there's an error, display the login page with an error message
-			if ( process.env.NODE_ENV !== 'production' ) {
-				// eslint-disable-next-line no-console
-				console.error( 'Error initiating Google login:', error );
-			}
+			// eslint-disable-next-line no-console
+			console.error( 'Error initiating Google login:', error );
 
 			context.store.dispatch( {
 				type: 'NOTICE_CREATE',
@@ -320,19 +317,16 @@ export function appleAuth( context, next ) {
 			return false;
 		}
 
-		// Parse the URL fragment into key-value pairs
-		const fragmentParams = {};
+		// Use URLSearchParams for secure parsing instead of direct object property assignment
 		const fragmentString = hash.substring( 1 ); // remove the # character
-		const pairs = fragmentString.split( '&' );
-		for ( const pair of pairs ) {
-			const [ key, value ] = pair.split( '=' );
-			if ( key && value ) {
-				fragmentParams[ key ] = decodeURIComponent( value );
-			}
-		}
+		const params = new URLSearchParams( fragmentString );
 
-		// Extract the relevant data from the fragment
-		const { client_id, id_token, state: stateString, user_email, user_name } = fragmentParams;
+		// Safely extract values using get() instead of direct property access
+		const client_id = params.get( 'client_id' );
+		const id_token = params.get( 'id_token' );
+		const stateString = params.get( 'state' );
+		const user_email = params.get( 'user_email' );
+		const user_name = params.get( 'user_name' );
 
 		// Skip if we don't have client_id or if it's not from Apple
 		if ( ! client_id || client_id !== config( 'apple_oauth_client_id' ) ) {
@@ -449,11 +443,8 @@ export function appleAuth( context, next ) {
 			// Trigger sign in
 			window.AppleID.auth.signIn();
 		} catch ( error ) {
-			// If there's an error, display the login page with an error message
-			if ( process.env.NODE_ENV !== 'production' ) {
-				// eslint-disable-next-line no-console
-				console.error( 'Error initiating Apple login:', error );
-			}
+			// eslint-disable-next-line no-console
+			console.error( 'Error initiating Apple login:', error );
 
 			context.store.dispatch( {
 				type: 'NOTICE_CREATE',
@@ -520,11 +511,8 @@ export function githubAuth( context, next ) {
 			// Redirect to GitHub's auth URL
 			window.location.href = redirectUrl;
 		} catch ( error ) {
-			// Handle errors consistently with the social button implementation
-			if ( process.env.NODE_ENV !== 'production' ) {
-				// eslint-disable-next-line no-console
-				console.error( 'Error initiating GitHub login:', error );
-			}
+			// eslint-disable-next-line no-console
+			console.error( 'Error initiating GitHub login:', error );
 
 			context.store.dispatch( {
 				type: 'NOTICE_CREATE',
