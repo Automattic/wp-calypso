@@ -70,6 +70,28 @@ interface CrmDownloadsProps {
 	licenseKey: string;
 }
 
+// Function to validate license key format
+const isValidLicenseKey = ( key: string ): boolean => {
+	return key.startsWith( 'jetpack_complete_' ) || key.startsWith( 'jetpack_crm_' );
+};
+
+// Error component for invalid license key
+const InvalidLicenseError = () => {
+	const translate = useTranslate();
+	return (
+		<div className="crm-downloads-error">
+			<Gridicon icon="notice" size={ 48 } />
+			<h2>{ translate( 'Invalid License Key' ) }</h2>
+			<p>
+				{ translate(
+					'This page is only available for Jetpack Complete or Jetpack CRM license keys. ' +
+						'Please check your license key and try again.'
+				) }
+			</p>
+		</div>
+	);
+};
+
 export function CrmDownloadsContent( { licenseKey }: CrmDownloadsProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -77,9 +99,16 @@ export function CrmDownloadsContent( { licenseKey }: CrmDownloadsProps ) {
 	const [ loadingExtensions, setLoadingExtensions ] = useState< string[] >( [] );
 	const [ isLoadingExtensions, setIsLoadingExtensions ] = useState( true );
 	const [ extensions, setExtensions ] = useState< Extension[] >( [] );
+	const [ isValidKey, setIsValidKey ] = useState< boolean >( isValidLicenseKey( licenseKey ) );
 
 	// Function to load extensions
 	const loadExtensions = async () => {
+		// Skip loading if license key is invalid
+		if ( ! isValidKey ) {
+			setIsLoadingExtensions( false );
+			return;
+		}
+
 		setIsLoadingExtensions( true );
 		try {
 			const fetchedExtensions = await fetchExtensions();
@@ -107,9 +136,16 @@ export function CrmDownloadsContent( { licenseKey }: CrmDownloadsProps ) {
 		}
 	};
 
-	// Load extensions on component mount
+	// Check license key validity and load extensions on component mount or when license key changes
 	useEffect( () => {
-		loadExtensions();
+		const valid = isValidLicenseKey( licenseKey );
+		setIsValidKey( valid );
+
+		if ( valid ) {
+			loadExtensions();
+		} else {
+			setIsLoadingExtensions( false );
+		}
 	}, [ licenseKey ] );
 
 	// Function to handle extension download
@@ -225,101 +261,109 @@ export function CrmDownloadsContent( { licenseKey }: CrmDownloadsProps ) {
 
 	return (
 		<div className="crm-downloads">
-			<Card className="manage-purchase__license-clipboard-container">
-				<h3 className="manage-purchase__license-key-heading">{ translate( 'License Key' ) }</h3>
-				<ExternalLink
-					className="manage-purchase__license-clipboard-link"
-					href="https://kb.jetpackcrm.com/knowledge-base/how-to-activate-your-license-key/"
-				>
-					{ translate( 'How to activate' ) }
-				</ExternalLink>
-				<div className="manage-purchase__license-key-row">
-					<div className="manage-purchase__license-clipboard">
-						<code className="manage-purchase__license-clipboard-code">{ licenseKey }</code>
-						<ClipboardButton
-							text={ licenseKey }
-							className="manage-purchase__license-clipboard-icon"
-							borderless
-							compact
-							onCopy={ () => {
-								dispatch(
-									infoNotice( translate( 'License key copied to clipboard' ), {
-										duration: 3000,
-										showDismiss: false,
-									} )
-								);
-							} }
+			{ ! isValidKey ? (
+				<InvalidLicenseError />
+			) : (
+				<>
+					<Card className="manage-purchase__license-clipboard-container">
+						<h3 className="manage-purchase__license-key-heading">{ translate( 'License Key' ) }</h3>
+						<ExternalLink
+							className="manage-purchase__license-clipboard-link"
+							href="https://kb.jetpackcrm.com/knowledge-base/how-to-activate-your-license-key/"
 						>
-							<Gridicon icon="clipboard" />
-						</ClipboardButton>
+							{ translate( 'How to activate' ) }
+						</ExternalLink>
+						<div className="manage-purchase__license-key-row">
+							<div className="manage-purchase__license-clipboard">
+								<code className="manage-purchase__license-clipboard-code">{ licenseKey }</code>
+								<ClipboardButton
+									text={ licenseKey }
+									className="manage-purchase__license-clipboard-icon"
+									borderless
+									compact
+									onCopy={ () => {
+										dispatch(
+											infoNotice( translate( 'License key copied to clipboard' ), {
+												duration: 3000,
+												showDismiss: false,
+											} )
+										);
+									} }
+								>
+									<Gridicon icon="clipboard" />
+								</ClipboardButton>
+							</div>
+						</div>
+					</Card>
+					<div className="extensions-table">
+						{ isLoadingExtensions && <LoadingSkeleton /> }
+						{ ! isLoadingExtensions && extensions.length > 0 && (
+							<table>
+								<tbody>
+									{ extensions.map( ( extension ) => (
+										<tr key={ extension.slug }>
+											<td>
+												<div className="extensions-table__title-row">
+													<strong>{ extension.name }</strong>
+													<div className="extensions-table__version">v{ extension.version }</div>
+												</div>
+												{ extension.kbUrl && (
+													<a
+														href={ extension.kbUrl }
+														target="_blank"
+														rel="noopener noreferrer"
+														className="extensions-table__learn-more"
+													>
+														{ translate( 'Documentation' ) }
+													</a>
+												) }
+												{ extension.description && (
+													<div className="extensions-table__description">
+														{ extension.description }
+													</div>
+												) }
+											</td>
+											<td>
+												<Button
+													primary
+													disabled={
+														loadingExtensions.includes( extension.slug ) || isLoadingExtensions
+													}
+													busy={ loadingExtensions.includes( extension.slug ) }
+													onClick={ () => handleDownload( extension.slug, extension ) }
+												>
+													{ loadingExtensions.includes( extension.slug )
+														? translate( 'Downloading…' )
+														: translate( 'Download' ) }
+												</Button>
+											</td>
+										</tr>
+									) ) }
+								</tbody>
+							</table>
+						) }
+						{ ! isLoadingExtensions && extensions.length === 0 && (
+							<div className="extensions-table__error">
+								<Gridicon icon="notice" size={ 36 } />
+								<p>
+									{ translate(
+										'Could not connect to download server. Please check your connection and try again.'
+									) }
+								</p>
+								<Button onClick={ () => loadExtensions() } disabled={ isLoadingExtensions }>
+									{ isLoadingExtensions ? translate( 'Retrying…' ) : translate( 'Try Again' ) }
+								</Button>
+							</div>
+						) }
 					</div>
-				</div>
-			</Card>
-			<div className="extensions-table">
-				{ isLoadingExtensions && <LoadingSkeleton /> }
-				{ ! isLoadingExtensions && extensions.length > 0 && (
-					<table>
-						<tbody>
-							{ extensions.map( ( extension ) => (
-								<tr key={ extension.slug }>
-									<td>
-										<div className="extensions-table__title-row">
-											<strong>{ extension.name }</strong>
-											<div className="extensions-table__version">v{ extension.version }</div>
-										</div>
-										{ extension.kbUrl && (
-											<a
-												href={ extension.kbUrl }
-												target="_blank"
-												rel="noopener noreferrer"
-												className="extensions-table__learn-more"
-											>
-												{ translate( 'Documentation' ) }
-											</a>
-										) }
-										{ extension.description && (
-											<div className="extensions-table__description">{ extension.description }</div>
-										) }
-									</td>
-									<td>
-										<Button
-											primary
-											disabled={
-												loadingExtensions.includes( extension.slug ) || isLoadingExtensions
-											}
-											busy={ loadingExtensions.includes( extension.slug ) }
-											onClick={ () => handleDownload( extension.slug, extension ) }
-										>
-											{ loadingExtensions.includes( extension.slug )
-												? translate( 'Downloading…' )
-												: translate( 'Download' ) }
-										</Button>
-									</td>
-								</tr>
-							) ) }
-						</tbody>
-					</table>
-				) }
-				{ ! isLoadingExtensions && extensions.length === 0 && (
-					<div className="extensions-table__error">
-						<Gridicon icon="notice" size={ 36 } />
-						<p>
-							{ translate(
-								'Could not connect to download server. Please check your connection and try again.'
-							) }
-						</p>
-						<Button onClick={ () => loadExtensions() } disabled={ isLoadingExtensions }>
-							{ isLoadingExtensions ? translate( 'Retrying…' ) : translate( 'Try Again' ) }
-						</Button>
-					</div>
-				) }
-			</div>
+				</>
+			) }
 		</div>
 	);
 }
 
 interface CrmDownloadsErrorProps {
-	onReturnClick: () => void;
+	onReturnClick?: () => void;
 }
 
 export function CrmDownloadsError( { onReturnClick }: CrmDownloadsErrorProps ) {

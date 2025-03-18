@@ -284,21 +284,34 @@
 	}
 }
 
+// Error message styles
 .crm-downloads-error {
 	text-align: center;
-	padding: 3rem 1.5rem;
+	padding: 3rem 1rem;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	gap: 1rem;
+	background-color: var(--color-surface, #fff);
+	border-radius: 2px;
+	box-shadow: 0 0 0 1px rgba(200, 215, 225, 0.5), 0 1px 2px var(--color-neutral-0, #f6f7f7);
+	margin: 1rem 0;
+	
+	.gridicon {
+		margin-bottom: 1rem;
+		color: var(--color-error-50, #d63638);
+	}
 	
 	h2 {
-		margin-top: 1rem;
-		font-size: 1.5rem;
+		margin: 1rem 0;
+		font-size: 1.25rem;
 	}
 	
 	p {
+		margin-bottom: 1.5rem;
+		color: var(--color-text-subtle, #646970);
 		max-width: 31.25rem;
-		margin: 0 auto;
+		margin-left: auto;
+		margin-right: auto;
 	}
 }
