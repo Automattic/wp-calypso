@@ -28,6 +28,11 @@ const WooPaymentsDashboardEmptyState = () => {
 							href="https://woocommerce.com/document/woopayments/compatibility/countries/#supported-countries"
 							target="_blank"
 							rel="noopener noreferrer"
+							onClick={ () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_woopayments_benefits_countries_link_click' )
+								);
+							} }
 						/>
 					),
 				},
@@ -42,6 +47,9 @@ const WooPaymentsDashboardEmptyState = () => {
 							href="https://woocommerce.com/document/woopayments/fees-and-debits/fees"
 							target="_blank"
 							rel="noopener noreferrer"
+							onClick={ () => {
+								dispatch( recordTracksEvent( 'calypso_a4a_woopayments_benefits_fees_link_click' ) );
+							} }
 						/>
 					),
 				},
@@ -59,6 +67,11 @@ const WooPaymentsDashboardEmptyState = () => {
 							href="https://woocommerce.com/woopay-businesses"
 							target="_blank"
 							rel="noopener noreferrer"
+							onClick={ () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_woopayments_benefits_wooPay_link_click' )
+								);
+							} }
 						/>
 					),
 					applePay: (
@@ -66,6 +79,11 @@ const WooPaymentsDashboardEmptyState = () => {
 							href="https://woocommerce.com/document/woopayments/payment-methods/apple-pay"
 							target="_blank"
 							rel="noopener noreferrer"
+							onClick={ () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_woopayments_benefits_applePay_link_click' )
+								);
+							} }
 						/>
 					),
 					googlePay: (
@@ -73,6 +91,11 @@ const WooPaymentsDashboardEmptyState = () => {
 							href="https://woocommerce.com/document/woopayments/payment-methods/google-pay"
 							target="_blank"
 							rel="noopener noreferrer"
+							onClick={ () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_woopayments_benefits_googlePay_link_click' )
+								);
+							} }
 						/>
 					),
 					iDeal: (
@@ -80,6 +103,11 @@ const WooPaymentsDashboardEmptyState = () => {
 							href="https://woocommerce.com/woocommerce-payments-ideal"
 							target="_blank"
 							rel="noopener noreferrer"
+							onClick={ () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_woopayments_benefits_iDeal_link_click' )
+								);
+							} }
 						/>
 					),
 					p24: (
@@ -87,6 +115,9 @@ const WooPaymentsDashboardEmptyState = () => {
 							href="https://woocommerce.com/woopayments-p24"
 							target="_blank"
 							rel="noopener noreferrer"
+							onClick={ () => {
+								dispatch( recordTracksEvent( 'calypso_a4a_woopayments_benefits_p24_link_click' ) );
+							} }
 						/>
 					),
 					eps: (
@@ -94,6 +125,9 @@ const WooPaymentsDashboardEmptyState = () => {
 							href="https://woocommerce.com/woocommerce-payments-eps"
 							target="_blank"
 							rel="noopener noreferrer"
+							onClick={ () => {
+								dispatch( recordTracksEvent( 'calypso_a4a_woopayments_benefits_eps_link_click' ) );
+							} }
 						/>
 					),
 					bancontact: (
@@ -101,6 +135,11 @@ const WooPaymentsDashboardEmptyState = () => {
 							href="https://woocommerce.com/woocommerce-payments-bancontact"
 							target="_blank"
 							rel="noopener noreferrer"
+							onClick={ () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_woopayments_benefits_bancontact_link_click' )
+								);
+							} }
 						/>
 					),
 				},
@@ -115,6 +154,11 @@ const WooPaymentsDashboardEmptyState = () => {
 							href="https://woocommerce.com/terms-conditions/woopayments-promotion"
 							target="_blank"
 							rel="noopener noreferrer"
+							onClick={ () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_woopayments_benefits_discount_link_click' )
+								);
+							} }
 						/>
 					),
 				},
@@ -132,6 +176,9 @@ const WooPaymentsDashboardEmptyState = () => {
 							href="https://woocommerce.com/buy-now-pay-later"
 							target="_blank"
 							rel="noopener noreferrer"
+							onClick={ () => {
+								dispatch( recordTracksEvent( 'calypso_a4a_woopayments_benefits_bnpl_link_click' ) );
+							} }
 						/>
 					),
 				},
