@@ -3,11 +3,6 @@
 @import "calypso/assets/stylesheets/p2-extends";
 @import "@automattic/color-studio/dist/color-variables";
 
-// Define the login container width.
-:root {
-	--login-container-width: 352px;
-}
-
 $breakpoint-mobile: 782px; //Mobile size.
 
 .layout:not(.is-jetpack-woo-dna-flow):not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow) {
