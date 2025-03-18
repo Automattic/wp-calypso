@@ -15,7 +15,7 @@ export function WireframePlaceholder( {
 		alignItems: 'center',
 		justifyContent: 'center',
 		...( height && { height } ),
-	};
+	} as const;
 
 	return (
 		<div className={ className } style={ style }>
