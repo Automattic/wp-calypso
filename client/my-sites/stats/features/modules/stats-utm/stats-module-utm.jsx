@@ -5,14 +5,7 @@ import { trendingUp } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import {
-	STATS_FEATURE_DOWNLOAD_CSV,
-	STATS_FEATURE_UTM_STATS,
-} from 'calypso/my-sites/stats/constants';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
-import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
-import DownloadCsv from 'calypso/my-sites/stats/stats-download-csv';
-import DownloadCsvUpsell from 'calypso/my-sites/stats/stats-download-csv-upsell';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -26,6 +19,7 @@ import UTMBuilder from '../../../stats-module-utm-builder/';
 import { StatsEmptyActionUTMBuilder } from '../shared';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import UTMDropdown from './stats-module-utm-dropdown';
+import UTMExportButton from './utm-export-button';
 
 import '../../../stats-module/style.scss';
 import '../../../stats-list/style.scss';
@@ -132,21 +126,6 @@ const StatsModuleUTM = ( {
 		</StatsInfoArea>
 	);
 
-	const gateDownloads = useShouldGateStats( STATS_FEATURE_DOWNLOAD_CSV );
-	const downloadCsvElement = gateDownloads ? (
-		<DownloadCsvUpsell siteId={ siteId } borderless />
-	) : (
-		<DownloadCsv
-			statType={ STATS_FEATURE_UTM_STATS }
-			data={ data }
-			query={ query }
-			path={ path }
-			borderless
-			period={ period }
-			skipQuery
-		/>
-	);
-
 	return (
 		<>
 			{ isNewEmptyStateEnabled && (
@@ -204,7 +183,7 @@ const StatsModuleUTM = ( {
 									titleNodes={ titleNodes }
 									emptyMessage={ <div>{ moduleStrings.empty }</div> }
 									metricLabel={ metricLabel }
-									downloadCsv={ summary ? downloadCsvElement : undefined }
+									downloadCsv={ <UTMExportButton data={ data } path={ path } period={ period } /> }
 									showMore={
 										displaySummaryLink && ! summary
 											? {
