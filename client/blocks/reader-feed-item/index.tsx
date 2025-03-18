@@ -100,7 +100,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 			return;
 		}
 
-		const noticeOptions: NoticeOptions = { duration: 5000 };
+		const noticeOptions: NoticeOptions = { duration: 2000 };
 		if ( subscriptionId ) {
 			onUnsubscribe(
 				{

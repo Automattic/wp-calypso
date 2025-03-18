@@ -1,17 +1,18 @@
+import './style.scss';
 import { recordTrainTracksRender } from '@automattic/calypso-analytics';
 import { Reader } from '@automattic/data-stores';
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack, Spinner } from '@wordpress/components';
 import { useMemo } from 'react';
 import ReaderFeedItem from 'calypso/blocks/reader-feed-item';
 import { SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST } from 'calypso/landing/subscriptions/tracks';
-import './style.scss';
 
 interface ReaderUnsubscribedFeedsSearchListProps {
+	isLoading: boolean;
 	feedItems?: Reader.FeedItem[];
 }
 
 const ReaderUnsubscribedFeedsSearchList = ( props: ReaderUnsubscribedFeedsSearchListProps ) => {
-	const { feedItems } = props;
+	const { feedItems, isLoading } = props;
 
 	const feedItemComponents = useMemo( () => {
 		if ( ! feedItems?.length ) {
@@ -44,8 +45,12 @@ const ReaderUnsubscribedFeedsSearchList = ( props: ReaderUnsubscribedFeedsSearch
 		} );
 	}, [ feedItems ] );
 
-	if ( ! feedItemComponents?.length ) {
-		return null;
+	if ( isLoading ) {
+		return (
+			<div className="reader-unsubscribed-feeds-search-list-loader">
+				<Spinner />
+			</div>
+		);
 	}
 
 	return (

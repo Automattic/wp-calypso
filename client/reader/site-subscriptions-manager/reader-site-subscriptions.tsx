@@ -78,12 +78,10 @@ const ReaderSiteSubscriptions = () => {
 		}
 	}, [ searchTerm, recordSearchPerformed, recordSearchByUrlPerformed ] );
 
-	// This check ensures that `UnsubscribedFeedsSearchList` renders only when the search results are ready else there is flickering of the list.
-	const shouldShowUnsubcribedFeedsList =
-		hasSomeUnsubscribedSearchResults &&
-		! isFetching && // Do not show the list if the site subscriptions are still fetching.
-		! searchQueryResult?.isFetching && // Do not show the list if unsubscribed feeds are still fetching.
-		! isUnsubscribing; // Do not show the list if the user is unsubscribing from the table.
+	const shouldShowUnsubcribedFeedsListLoader =
+		isFetching || // If site subscriptions are still fetching.
+		( searchQueryResult?.isFetching ?? false ) || // If unsubscribed feeds are still fetching.
+		isUnsubscribing; // If user is unsubscribing from the table.
 
 	return (
 		<>
@@ -97,8 +95,11 @@ const ReaderSiteSubscriptions = () => {
 				</div>
 			) }
 
-			{ shouldShowUnsubcribedFeedsList && (
-				<UnsubscribedFeedsSearchList feedItems={ filteredUnsubscribedFeedItems } />
+			{ hasSomeUnsubscribedSearchResults && (
+				<UnsubscribedFeedsSearchList
+					feedItems={ filteredUnsubscribedFeedItems }
+					isLoading={ shouldShowUnsubcribedFeedsListLoader }
+				/>
 			) }
 		</>
 	);
