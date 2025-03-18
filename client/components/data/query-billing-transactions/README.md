@@ -24,4 +24,4 @@ export default function MyBillingTransactions( { billingTransactions } ) {
 
 ## Props
 
-- `transactionType?: 'past': Optionally limit the type of billing transactions returned.
+- `transactionType?: 'past' | 'upcoming'`: Optionally limit the type of billing transactions returned.

@@ -195,7 +195,8 @@ export type ReceiptId = string;
 export type SendingReceiptEmailRecord = Record< ReceiptId, boolean >;
 
 export type BillingTransactionsTypePast = 'past';
-export type BillingTransactionsType = BillingTransactionsTypePast;
+export type BillingTransactionsTypeUpcoming = 'upcoming';
+export type BillingTransactionsType = BillingTransactionsTypePast | BillingTransactionsTypeUpcoming;
 
 export interface BillingTransactionsStateItems {
 	past?: BillingTransaction[];
