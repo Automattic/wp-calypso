@@ -1,6 +1,6 @@
 # CoreBadge Component
 
-A wrapper component around WordPress's private `Badge` component from `@wordpress/components`.
+A wrapper component around WordPress's private [`Badge` component](https://wordpress.github.io/gutenberg/?path=/docs/components-badge--docs) from `@wordpress/components`.
 
 ## Usage
 

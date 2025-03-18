@@ -17,10 +17,19 @@ body.is-section-subscribers,
                  $padding-standard
                  calc(var(--sidebar-width-max) + #{$padding-standard});
 
-            // This is a Jetpack Cloud breakpoint.
-            @media( max-width: 660px ) {
-                padding-left: 0;
-                padding-right: 0;
+            // Full width rules when sidebar is collapsed
+            &:where(body.is-section-subscribers *) {
+                @media( max-width: $break-medium ) {
+                    padding-left: 0;
+                    padding-right: 0;
+                }
+            }
+
+            &:where(.theme-jetpack-cloud.is-group-jetpack-cloud.is-section-jetpack-subscribers *) {
+                @media( max-width: 660px ) {
+                    padding-left: 0;
+                    padding-right: 0;
+                }
             }
         }
     }

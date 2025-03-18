@@ -3,12 +3,16 @@ import clsx from 'clsx';
 import { ReactNode, useMemo } from 'react';
 import {
 	StepContainerV2InternalProvider,
-	StepContainerV2InternalContextType,
+	type StepContainerV2InternalContextType,
 } from '../../contexts/StepContainerV2InternalContext';
 
 import './style.scss';
 
-interface StepContainerV2Props {
+export type StepContainerV2ContentProp =
+	| ( ( context: StepContainerV2InternalContextType ) => ReactNode )
+	| ReactNode;
+
+export interface StepContainerV2Props {
 	className?: string;
 	topBar?: ReactNode;
 	heading?: ReactNode;
@@ -18,7 +22,7 @@ interface StepContainerV2Props {
 	isMediumViewport?: boolean;
 	isLargeViewport?: boolean;
 	hasContentPadding?: boolean;
-	render: ( context: StepContainerV2InternalContextType ) => ReactNode;
+	children?: StepContainerV2ContentProp;
 }
 
 export const StepContainerV2 = ( {
@@ -31,7 +35,7 @@ export const StepContainerV2 = ( {
 	isMediumViewport: externalIsMediumViewport,
 	isLargeViewport: externalIsLargeViewport,
 	hasContentPadding = true,
-	render,
+	children,
 }: StepContainerV2Props ) => {
 	const internalIsMediumViewport = useViewportMatch( 'small', '>=' );
 	const isMediumViewport = externalIsMediumViewport ?? internalIsMediumViewport;
@@ -66,7 +70,7 @@ export const StepContainerV2 = ( {
 							full: width === 'full',
 						} ) }
 					>
-						{ render( stepContainerContextValue ) }
+						{ typeof children === 'function' ? children( stepContainerContextValue ) : children }
 					</div>
 				</div>
 				{ ! isMediumViewport && stickyBottomBar }

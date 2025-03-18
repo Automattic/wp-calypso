@@ -2,7 +2,9 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
+import moment from 'moment';
 import { parse as parseQs, stringify as stringifyQs } from 'qs';
+import { DATE_FORMAT } from 'calypso/my-sites/stats/constants';
 
 /**
  * Update query for current page or passed in URL
@@ -87,4 +89,43 @@ export const parseLocalDate = ( dateString ) => {
 	date.setMinutes( date.getMinutes() + date.getTimezoneOffset() );
 
 	return date;
+};
+
+/**
+ * The chart range parameters include the chart start date, chart end date, and chart period.
+ * @typedef {Object} ChartRangeParams
+ * @property {string} chartStart The start date of the chart range.
+ * @property {string} chartEnd The end date of the chart range.
+ * @property {string} chartPeriod The period of the chart range.
+ */
+
+/**
+ * Process the start date and from period to determine the target chart range parameters.
+ * @param {string} startDate The start date of the chart range.
+ * @param {string} fromPeriod The period of the chart where the action comes from.
+ * @returns {ChartRangeParams} The chart range parameters for navigating the chart.
+ */
+export const getChartRangeParams = ( startDate, fromPeriod ) => {
+	const chartStart = startDate;
+	let chartEnd = moment( chartStart )
+		.endOf( fromPeriod === 'week' ? 'isoWeek' : fromPeriod )
+		.format( DATE_FORMAT );
+
+	// Do not go beyond the current date.
+	if ( moment().isBefore( chartEnd ) ) {
+		chartEnd = moment().format( DATE_FORMAT );
+	}
+
+	let chartPeriod = 'day';
+	if ( fromPeriod === 'day' ) {
+		chartPeriod = 'hour';
+	} else if ( fromPeriod === 'year' ) {
+		chartPeriod = 'month';
+	}
+
+	return {
+		chartStart,
+		chartEnd,
+		chartPeriod,
+	};
 };

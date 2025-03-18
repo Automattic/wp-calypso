@@ -34,7 +34,7 @@
 		"@babel/preset-typescript": "^7.26.0",
 		"commander": "^5.1.0",
 		"gettext-parser": "^4.0.3",
-		"glob": "^7.1.6",
+		"glob": "^7.2.3",
 		"lodash.mergewith": "^4.6.2"
 	},
 	"devDependencies": {

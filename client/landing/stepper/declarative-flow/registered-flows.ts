@@ -23,105 +23,123 @@ import type { Flow } from '../declarative-flow/internals/types';
 
 const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	'site-setup': () =>
-		import( /* webpackChunkName: "site-setup-flow" */ '../declarative-flow/site-setup-flow' ),
+		import( /* webpackChunkName: "site-setup-flow" */ './flows/site-setup-flow/site-setup-flow' ),
 
 	'copy-site': () =>
-		import( /* webpackChunkName: "copy-site-flow" */ '../declarative-flow/copy-site' ),
+		import( /* webpackChunkName: "copy-site-flow" */ './flows/copy-site/copy-site' ),
 
 	newsletter: () =>
-		import( /* webpackChunkName: "newsletter-flow" */ '../declarative-flow/newsletter' ),
+		import( /* webpackChunkName: "newsletter-flow" */ './flows/newsletter/newsletter' ),
 
 	[ IMPORT_FOCUSED_FLOW ]: () =>
-		import( /* webpackChunkName: "import-flow" */ '../declarative-flow/import-flow' ),
+		import( /* webpackChunkName: "import-flow" */ './flows/import-flow/import-flow' ),
 
 	[ ENTREPRENEUR_FLOW ]: () =>
-		import( /* webpackChunkName: "entrepreneur-flow" */ '../declarative-flow/entrepreneur-flow' ),
+		import(
+			/* webpackChunkName: "entrepreneur-flow" */ './flows/entrepreneur-flow/entrepreneur-flow'
+		),
 
 	'readymade-template': () =>
-		import( /* webpackChunkName: "readymade-template-flow" */ './readymade-template' ),
+		import(
+			/* webpackChunkName: "readymade-template-flow" */ './flows/readymade-template/readymade-template'
+		),
 
 	'update-design': () =>
-		import( /* webpackChunkName: "update-design-flow" */ '../declarative-flow/update-design' ),
+		import( /* webpackChunkName: "update-design-flow" */ './flows/update-design/update-design' ),
 
 	'update-options': () =>
-		import( /* webpackChunkName: "update-options-flow" */ '../declarative-flow/update-options' ),
+		import( /* webpackChunkName: "update-options-flow" */ './flows/update-options/update-options' ),
 
 	'domain-upsell': () =>
-		import( /* webpackChunkName: "update-design-flow" */ '../declarative-flow/domain-upsell' ),
+		import( /* webpackChunkName: "update-design-flow" */ './flows/domain-upsell/domain-upsell' ),
 
-	build: () => import( /* webpackChunkName: "build-flow" */ '../declarative-flow/build' ),
-	write: () => import( /* webpackChunkName: "write-flow" */ '../declarative-flow/write' ),
+	build: () => import( /* webpackChunkName: "build-flow" */ './flows/build/build' ),
+
+	write: () => import( /* webpackChunkName: "write-flow" */ './flows/write/write' ),
 
 	[ START_WRITING_FLOW ]: () =>
-		import( /* webpackChunkName: "start-writing-flow" */ './start-writing' ),
+		import( /* webpackChunkName: "start-writing-flow" */ './flows/start-writing/start-writing' ),
 
 	[ CONNECT_DOMAIN_FLOW ]: () =>
-		import( /* webpackChunkName: "connect-domain" */ '../declarative-flow/connect-domain' ),
+		import( /* webpackChunkName: "connect-domain" */ './flows/connect-domain/connect-domain' ),
 
 	[ NEW_HOSTED_SITE_FLOW ]: () =>
-		import( /* webpackChunkName: "new-hosted-site-flow" */ './new-hosted-site-flow' ),
+		import(
+			/* webpackChunkName: "new-hosted-site-flow" */ './flows/new-hosted-site-flow/new-hosted-site-flow'
+		),
 
 	[ NEW_HOSTED_SITE_FLOW_USER_INCLUDED ]: () =>
 		import(
-			/* webpackChunkName: "new-hosted-site-flow-user-included" */ './new-hosted-site-flow-user-included'
+			/* webpackChunkName: "new-hosted-site-flow-user-included" */ './flows/new-hosted-site-flow-user-included/new-hosted-site-flow-user-included'
 		),
 
 	[ TRANSFERRING_HOSTED_SITE_FLOW ]: () =>
 		import(
-			/* webpackChunkName: "transferring-hosted-site-flow" */ './transferring-hosted-site-flow'
+			/* webpackChunkName: "transferring-hosted-site-flow" */ './flows/transferring-hosted-site-flow/transferring-hosted-site-flow'
 		),
 
 	[ DOMAIN_TRANSFER ]: () =>
-		import( /* webpackChunkName: "domain-transfer" */ './domain-transfer' ),
+		import( /* webpackChunkName: "domain-transfer" */ './flows/domain-transfer/domain-transfer' ),
 
 	[ GOOGLE_TRANSFER ]: () =>
-		import( /* webpackChunkName: "google-transfer" */ './google-transfer' ),
+		import( /* webpackChunkName: "google-transfer" */ './flows/google-transfer/google-transfer' ),
 
-	[ ONBOARDING_FLOW ]: () => import( /* webpackChunkName: "onboarding-flow" */ './onboarding' ),
+	[ ONBOARDING_FLOW ]: () =>
+		import( /* webpackChunkName: "onboarding-flow" */ './flows/onboarding/onboarding' ),
 
 	[ 'plugin-bundle' ]: () =>
-		import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' ),
+		import(
+			/* webpackChunkName: "plugin-bundle-flow" */ './flows/plugin-bundle-flow/plugin-bundle-flow'
+		),
 
 	[ 'hundred-year-plan' ]: () =>
-		import( /* webpackChunkName: "hundred-year-plan" */ './hundred-year-plan' ),
+		import( /* webpackChunkName: "hundred-year-plan" */ './flows/reblogging/reblogging' ),
 
 	'domain-user-transfer': () =>
-		import( /* webpackChunkName: "domain-user-transfer-flow" */ './domain-user-transfer' ),
+		import(
+			/* webpackChunkName: "domain-user-transfer-flow" */ './flows/domain-user-transfer/domain-user-transfer'
+		),
 
 	[ REBLOGGING_FLOW ]: () =>
-		import( /* webpackChunkName: "reblogging-flow" */ '../declarative-flow/reblogging' ),
+		import(
+			/* webpackChunkName: "reblogging-flow" */ './flows/site-migration-flow/site-migration-flow'
+		),
 
 	[ MIGRATION_SIGNUP_FLOW ]: () =>
-		import( /* webpackChunkName: "migration-signup" */ '../declarative-flow/migration-signup' ),
+		import(
+			/* webpackChunkName: "migration-signup" */ './flows/migration-signup/migration-signup'
+		),
 	[ SITE_MIGRATION_FLOW ]: () =>
 		import(
-			/* webpackChunkName: "site-migration-flow" */ '../declarative-flow/site-migration-flow'
+			/* webpackChunkName: "site-migration-flow" */ './flows/site-migration-flow/site-migration-flow'
 		),
 	[ EXAMPLE_FLOW ]: () =>
-		import( /* webpackChunkName: "example-flow" */ '../declarative-flow/example' ),
+		import( /* webpackChunkName: "example-flow" */ './flows/00-example-flow/example' ),
 };
 
 const aiSiteBuilderFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
 	'calypso/ai-site-builder-flow'
 )
 	? {
-			[ AI_SITE_BUILDER_FLOW ]: () => import( './ai-site-builder' ),
+			[ AI_SITE_BUILDER_FLOW ]: () => import( './flows/ai-site-builder/ai-site-builder' ),
 	  }
 	: {};
 
 const hostedSiteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = {
 	[ HOSTED_SITE_MIGRATION_FLOW ]: () =>
 		import(
-			/* webpackChunkName: "hosted-site-migration-flow" */ '../declarative-flow/hosted-site-migration-flow'
+			/* webpackChunkName: "hosted-site-migration-flow" */ './flows/hosted-site-migration-flow/hosted-site-migration-flow'
 		),
 };
 
 const hundredYearDomainFlow: Record< string, () => Promise< { default: Flow } > > = {
 	[ HUNDRED_YEAR_DOMAIN_FLOW ]: () =>
-		import( /* webpackChunkName: "hundred-year-domain" */ './hundred-year-domain' ),
+		import(
+			/* webpackChunkName: "hundred-year-domain" */ './flows/hundred-year-domain/hundred-year-domain'
+		),
 	[ HUNDRED_YEAR_DOMAIN_TRANSFER ]: () =>
 		import(
-			/* webpackChunkName: "hundred-year-domain-transfer" */ './hundred-year-domain-transfer'
+			/* webpackChunkName: "hundred-year-domain-transfer" */ './flows/hundred-year-domain-transfer/hundred-year-domain-transfer'
 		),
 };
 

@@ -32,7 +32,7 @@
 	"dependencies": {
 		"@automattic/load-script": "workspace:^",
 		"cookie": "^0.7.2",
-		"debug": "^4.3.3",
+		"debug": "^4.4.0",
 		"hash.js": "^1.1.7",
 		"tslib": "^2.3.0",
 		"uuid": "^9.0.1"

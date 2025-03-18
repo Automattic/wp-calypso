@@ -11,13 +11,6 @@
 		color: var(--color-text-inverted);
 	}
 
-	&.is-narrow-view {
-		.page-section-columns__content {
-			grid-template-columns: 1fr;
-			gap: 4px;
-		}
-	}
-
 	@include breakpoint-deprecated( ">660px" ) {
 		padding-inline: 64px;
 	}
@@ -38,8 +31,13 @@
 	@include heading-x-large;
 	margin-block-end: 32px;
 	display: flex;
-	align-items: center;
 	gap: 8px;
+	flex-direction: column;
+
+	@include break-large {
+		flex-direction: row;
+		align-items: center;
+	}
 }
 
 
@@ -47,8 +45,12 @@
 	background-repeat: no-repeat;
 	background-position: top right;
 	display: grid;
-	grid-template-columns: 1fr 1fr;
+	grid-template-columns: 1fr;
 	gap: 32px;
+
+	@include break-large {
+		grid-template-columns: 1fr 1fr;
+	}
 }
 
 .page-section-column {
@@ -71,11 +73,15 @@
 
 	button, a {
 		&.components-button {
-			width: fit-content;
 			white-space: normal;
 			min-height: 40px;
 			height: auto;
 			text-align: center;
+			width: 100%;
+
+			@include break-large {
+				width: fit-content;
+			}
 		}
 	}
 }

@@ -2,7 +2,8 @@ import { Gravatar, TimeSince } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews, type View, type Action, Operator } from '@wordpress/dataviews';
 import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
-import { translate } from 'i18n-calypso';
+import { trash } from '@wordpress/icons';
+import { translate, fixMe } from 'i18n-calypso';
 import { useSubscribedNewsletterCategories } from 'calypso/data/newsletter-categories';
 import { useSelector } from 'calypso/state';
 import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/settings/selectors';
@@ -29,7 +30,6 @@ import { SubscriberLaunchpad } from '../subscriber-launchpad';
 import SubscriberTotals from '../subscriber-totals';
 import { SubscribersHeader } from '../subscribers-header';
 import { UnsubscribeModal } from '../unsubscribe-modal';
-
 import './style.scss';
 
 type SubscriberDataViewsProps = {
@@ -114,10 +114,10 @@ const SubscriberDataViews = ( {
 	} );
 
 	const {
-		currentSubscriber,
-		onClickUnsubscribe: handleUnsubscribe,
+		currentSubscribers,
+		onSetUnsubscribers: handleUnsubscribe,
 		onConfirmModal,
-		resetSubscriber,
+		resetSubscribers,
 	} = useUnsubscribeModal(
 		siteId ?? null,
 		{
@@ -223,7 +223,11 @@ const SubscriberDataViews = ( {
 			},
 			{
 				id: 'plan',
-				label: translate( 'Plan' ),
+				label: fixMe( {
+					text: 'Subscription Type',
+					newCopy: translate( 'Subscription Type' ),
+					oldCopy: translate( 'Plan' ),
+				} ) as string,
 				getValue: ( { item }: { item: Subscriber } ) =>
 					item.plans?.length ? SubscribersFilterBy.Paid : SubscribersFilterBy.Free,
 				render: ( { item }: { item: Subscriber } ) => <SubscriptionTypeCell subscriber={ item } />,
@@ -249,11 +253,11 @@ const SubscriberDataViews = ( {
 				),
 				elements: [
 					{ label: SubscribersStatus.Subscribed, value: SubscribersFilterBy.EmailSubscriber },
+					{ label: SubscribersStatus.NotSubscribed, value: SubscribersFilterBy.ReaderSubscriber },
 					{
 						label: SubscribersStatus.NotConfirmed,
 						value: SubscribersFilterBy.UnconfirmedSubscriber,
 					},
-					{ label: SubscribersStatus.NotSubscribed, value: SubscribersFilterBy.ReaderSubscriber },
 					{ label: SubscribersStatus.NotSending, value: SubscribersFilterBy.BlockedSubscriber },
 				],
 				filterBy: {
@@ -294,8 +298,10 @@ const SubscriberDataViews = ( {
 			{
 				id: 'remove',
 				label: translate( 'Remove' ),
-				callback: ( items: Subscriber[] ) => handleUnsubscribe( items[ 0 ] ),
+				callback: handleUnsubscribe,
 				isPrimary: false,
+				supportsBulk: true,
+				icon: trash,
 			},
 		];
 
@@ -449,11 +455,14 @@ const SubscriberDataViews = ( {
 							fields={ fields }
 							view={ currentView }
 							onClickItem={ handleSubscriberSelection }
+							isItemClickable={ () => true }
 							onChangeView={ handleViewChange }
 							selection={
 								selectedSubscriber ? [ selectedSubscriber.subscription_id.toString() ] : undefined
 							}
-							onChangeSelection={ handleSubscriberSelection }
+							onChangeSelection={
+								currentView.type === 'list' ? handleSubscriberSelection : undefined
+							}
 							isLoading={ isLoading }
 							paginationInfo={ paginationInfo }
 							getItemId={ ( item: Subscriber ) => item.subscription_id.toString() }
@@ -476,15 +485,15 @@ const SubscriberDataViews = ( {
 							siteId={ siteId }
 							subscriptionId={ selectedSubscriber.subscription_id }
 							onClose={ () => setSelectedSubscriber( null ) }
-							onUnsubscribe={ handleUnsubscribe }
+							onUnsubscribe={ ( subscriber ) => handleUnsubscribe( [ subscriber ] ) }
 							newsletterCategoriesEnabled={ subscribedNewsletterCategoriesData?.enabled }
 							newsletterCategories={ subscribedNewsletterCategoriesData?.newsletterCategories }
 						/>
 					</section>
 				) }
 			<UnsubscribeModal
-				subscriber={ currentSubscriber }
-				onCancel={ resetSubscriber }
+				subscribers={ currentSubscribers }
+				onCancel={ resetSubscribers }
 				onConfirm={ onConfirmModal }
 			/>
 		</div>
