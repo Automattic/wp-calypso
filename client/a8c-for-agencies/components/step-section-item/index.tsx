@@ -2,6 +2,7 @@ import { Button, Badge } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import React from 'react';
+import { preventWidows } from 'calypso/lib/formatting';
 import StatusBadge from './status-badge';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -63,7 +64,7 @@ export default function StepSectionItem( {
 				<div className="step-section-item__heading">
 					{ heading } { isNewLayout && statusContent }
 				</div>
-				<div className="step-section-item__description">{ description }</div>
+				<div className="step-section-item__description">{ preventWidows( description ) }</div>
 				{ ! isNewLayout && buttonContent }
 			</div>
 			{ isNewLayout ? buttonContent : statusContent }

@@ -19,6 +19,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { protectForm } from 'calypso/lib/protect-form';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import DomainUpsell from 'calypso/me/domain-upsell';
+import EmailVerificationBanner from 'calypso/me/email-verification-banner';
 import withFormBase from 'calypso/me/form-base/with-form-base';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
@@ -73,7 +74,7 @@ class Profile extends Component {
 						}
 					) }
 				/>
-
+				<EmailVerificationBanner />
 				<SectionHeader label={ this.props.translate( 'Profile' ) } />
 				<Card className="profile__settings">
 					<EditGravatar />

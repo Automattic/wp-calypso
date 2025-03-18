@@ -1,6 +1,6 @@
-import { useBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
 import CopyToClipboardButton from 'calypso/a8c-for-agencies/components/copy-to-clipboard-button';
 import PageSectionColumns from 'calypso/a8c-for-agencies/components/page-section-columns';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
@@ -16,8 +16,6 @@ import AddWooPaymentsToSite from '../../add-woopayments-to-site';
 const WooPaymentsDashboardEmptyState = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-
-	const isNarrowView = useBreakpoint( '<960px' );
 
 	const listItems1 = [
 		translate(
@@ -59,18 +57,16 @@ const WooPaymentsDashboardEmptyState = () => {
 							</div>
 							<div className="woopayments-dashboard-empty-state__description">
 								{ translate(
-									"Accept credit/debit cards and local payment options with no setup or monthly fees. Earn revenue share on transactions from your clients' sites within Automattic for Agencies."
+									"Accept credit/debit cards and local payment options with no setup or monthly fees. Earn revenue share of 5 basis points on transactions from your clients' sites within Automattic for Agencies."
 								) }
 							</div>
 						</div>
 						<AddWooPaymentsToSite />
 					</div>
 				</PageSectionColumns.Column>
-				{ ! isNarrowView && (
-					<PageSectionColumns.Column alignCenter>
-						<img src={ ccImage } alt="WooPayments" />
-					</PageSectionColumns.Column>
-				) }
+				<PageSectionColumns.Column alignCenter>
+					<img src={ ccImage } alt="WooPayments" />
+				</PageSectionColumns.Column>
 			</PageSectionColumns>
 
 			<PageSectionColumns
@@ -128,15 +124,13 @@ const WooPaymentsDashboardEmptyState = () => {
 						</div>
 						<Button
 							__next40pxDefaultSize
-							href="/marketplace/products?show_license_modal=woocommerce-woopayments"
+							href={ CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT }
 							className="woopayments-dashboard-empty-state__button"
 							onClick={ () => {
-								dispatch(
-									recordTracksEvent( 'calypso_a4a_woopayments_view_details_button_click' )
-								);
+								dispatch( recordTracksEvent( 'calypso_a4a_woopayments_contact_us_button_click' ) );
 							} }
 						>
-							{ translate( 'View details and start earning ↗' ) }
+							{ translate( 'Have questions? Contact us' ) }
 						</Button>
 					</>
 				</PageSectionColumns.Column>
@@ -157,11 +151,9 @@ const WooPaymentsDashboardEmptyState = () => {
 						</div>
 					</div>
 				</PageSectionColumns.Column>
-				{ ! isNarrowView && (
-					<PageSectionColumns.Column alignCenter>
-						<img src={ cartImage } alt="WooPayments" />
-					</PageSectionColumns.Column>
-				) }
+				<PageSectionColumns.Column alignCenter>
+					<img src={ cartImage } alt="WooPayments" />
+				</PageSectionColumns.Column>
 			</PageSectionColumns>
 
 			<PageSectionColumns
@@ -218,11 +210,9 @@ const WooPaymentsDashboardEmptyState = () => {
 						</Button>
 					</>
 				</PageSectionColumns.Column>
-				{ ! isNarrowView && (
-					<PageSectionColumns.Column alignCenter>
-						<img src={ demoImage } alt="WooPayments" />
-					</PageSectionColumns.Column>
-				) }
+				<PageSectionColumns.Column alignCenter>
+					<img src={ demoImage } alt="WooPayments" />
+				</PageSectionColumns.Column>
 			</PageSectionColumns>
 		</div>
 	);

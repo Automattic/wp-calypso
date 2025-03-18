@@ -1,4 +1,3 @@
-import { useBreakpoint } from '@automattic/viewport-react';
 import { Button } from '@wordpress/components';
 import { copy, check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -12,7 +11,6 @@ const CopyToClipboardButton = ( {
 	onClick?: () => void;
 } ) => {
 	const translate = useTranslate();
-	const isNarrowView = useBreakpoint( '<960px' );
 
 	const [ copyStatus, setCopyStatus ] = useState( '' );
 
@@ -41,8 +39,7 @@ const CopyToClipboardButton = ( {
 				variant="tertiary"
 				onClick={ copyToClipboard }
 			>
-				{ ! isNarrowView &&
-					( copyStatus === 'success' ? translate( 'Copied' ) : translate( 'Copy to clipboard' ) ) }
+				{ copyStatus === 'success' ? translate( 'Copied' ) : translate( 'Copy to clipboard' ) }
 			</Button>
 		</>
 	);

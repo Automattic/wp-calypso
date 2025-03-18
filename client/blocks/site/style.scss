@@ -217,6 +217,13 @@
 		background: var(--p2-color-link);
 		color: var(--p2-color-white);
 	}
+
+	&.site__badge-private,
+	&.site__badge-coming-soon {
+		background-color: transparent;
+		color: var(--color-neutral-60);
+		border: solid 1px color-mix( in srgb, currentColor 50%, transparent );
+	}
 }
 
 .current-site .site:hover .site__badge,
@@ -228,6 +235,13 @@
 	&.is-p2-workspace {
 		background: var(--p2-color-link-dark);
 		color: var(--p2-color-white);
+	}
+
+	&.site__badge-private,
+	&.site__badge-coming-soon {
+		background-color: transparent;
+		color: var(--color-sidebar-text);
+		border: solid 1px color-mix( in srgb, currentColor 50%, transparent );
 	}
 }
 
@@ -245,6 +259,13 @@
 		&.is-p2-workspace {
 			background: var(--p2-color-link);
 			color: var(--p2-color-white);
+		}
+
+		&.site__badge-private,
+		&.site__badge-coming-soon {
+			background-color: transparent;
+			color: var(--color-sidebar-text);
+			border: solid 1px color-mix( in srgb, currentColor 50%, transparent );
 		}
 	}
 }

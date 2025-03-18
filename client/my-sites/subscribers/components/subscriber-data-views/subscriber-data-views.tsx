@@ -3,7 +3,7 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews, type View, type Action, Operator } from '@wordpress/dataviews';
 import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
 import { trash } from '@wordpress/icons';
-import { translate } from 'i18n-calypso';
+import { translate, fixMe } from 'i18n-calypso';
 import { useSubscribedNewsletterCategories } from 'calypso/data/newsletter-categories';
 import { useSelector } from 'calypso/state';
 import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/settings/selectors';
@@ -30,7 +30,6 @@ import { SubscriberLaunchpad } from '../subscriber-launchpad';
 import SubscriberTotals from '../subscriber-totals';
 import { SubscribersHeader } from '../subscribers-header';
 import { UnsubscribeModal } from '../unsubscribe-modal';
-
 import './style.scss';
 
 type SubscriberDataViewsProps = {
@@ -224,7 +223,11 @@ const SubscriberDataViews = ( {
 			},
 			{
 				id: 'plan',
-				label: translate( 'Plan' ),
+				label: fixMe( {
+					text: 'Subscription Type',
+					newCopy: translate( 'Subscription Type' ),
+					oldCopy: translate( 'Plan' ),
+				} ) as string,
 				getValue: ( { item }: { item: Subscriber } ) =>
 					item.plans?.length ? SubscribersFilterBy.Paid : SubscribersFilterBy.Free,
 				render: ( { item }: { item: Subscriber } ) => <SubscriptionTypeCell subscriber={ item } />,
@@ -250,11 +253,11 @@ const SubscriberDataViews = ( {
 				),
 				elements: [
 					{ label: SubscribersStatus.Subscribed, value: SubscribersFilterBy.EmailSubscriber },
+					{ label: SubscribersStatus.NotSubscribed, value: SubscribersFilterBy.ReaderSubscriber },
 					{
 						label: SubscribersStatus.NotConfirmed,
 						value: SubscribersFilterBy.UnconfirmedSubscriber,
 					},
-					{ label: SubscribersStatus.NotSubscribed, value: SubscribersFilterBy.ReaderSubscriber },
 					{ label: SubscribersStatus.NotSending, value: SubscribersFilterBy.BlockedSubscriber },
 				],
 				filterBy: {
