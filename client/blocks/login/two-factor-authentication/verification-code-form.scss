@@ -120,12 +120,14 @@
 	font-weight: 600;
 }
 
-div.two-factor-auth-enabled:not(.woo) {
-	.login__form-header {
-		width: var(--login-container-width);
-		margin: 0 auto;
-		padding: 0 24px;
-		text-align: left !important;
-		line-height: 40px !important;
+.layout.is-white-login {
+	.wp-login__main.is-social-first {
+		.login__form-header {
+			width: var(--login-container-width);
+			margin: 0 auto;
+			padding: 0 24px;
+			text-align: left;
+			line-height: 40px;
+		}
 	}
 }
