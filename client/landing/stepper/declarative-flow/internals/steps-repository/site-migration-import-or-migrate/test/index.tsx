@@ -125,7 +125,7 @@ describe( 'Site Migration Import or Migrate Step', () => {
 	it( 'shows the upgrade required badge when the site can not install plugins', () => {
 		render();
 
-		expect( screen.getByText( /Available on Business with 50% off/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /50% off Business/ ) ).toBeInTheDocument();
 	} );
 
 	it( 'shows the included with your plan badge when the site can install plugins', () => {
