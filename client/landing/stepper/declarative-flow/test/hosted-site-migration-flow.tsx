@@ -9,7 +9,7 @@ import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-tri
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
 import { HOW_TO_MIGRATE_OPTIONS } from '../../constants';
 import { goToCheckout } from '../../utils/checkout';
-import hostedSiteMigrationFlow from '../flows/hosted-site-migration-flow/hosted-site-migration-flow';
+import hostedSiteMigrationFlow from '../hosted-site-migration-flow';
 import { STEPS } from '../internals/steps';
 import { getAssertionConditionResult, getFlowLocation, renderFlow } from './helpers';
 // we need to save the original object for later to not affect tests from other files

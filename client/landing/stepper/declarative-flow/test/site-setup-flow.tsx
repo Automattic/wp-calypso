@@ -2,8 +2,8 @@
  * @jest-environment jsdom
  */
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
-import siteSetupFlow from '../flows/site-setup-flow/site-setup-flow';
 import { STEPS } from '../internals/steps';
+import siteSetupFlow from '../site-setup-flow';
 import { getFlowLocation, renderFlow } from './helpers';
 // we need to save the original object for later to not affect tests from other files
 const originalLocation = window.location;

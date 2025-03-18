@@ -6,8 +6,8 @@ import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selector
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
 import { goToCheckout } from '../../utils/checkout';
-import migrationSignupFlow from '../flows/migration-signup/migration-signup';
 import { STEPS } from '../internals/steps';
+import migrationSignupFlow from '../migration-signup';
 import { getFlowLocation, renderFlow } from './helpers';
 // we need to save the original object for later to not affect tests from other files
 const originalLocation = window.location;

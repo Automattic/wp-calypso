@@ -11,8 +11,8 @@ import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin'
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import { HOW_TO_MIGRATE_OPTIONS } from '../../constants';
 import { goToCheckout } from '../../utils/checkout';
-import siteMigrationFlow from '../flows/site-migration-flow/site-migration-flow';
 import { STEPS } from '../internals/steps';
+import siteMigrationFlow from '../site-migration-flow';
 import { getAssertionConditionResult, renderFlow, runFlowNavigation } from './helpers';
 // we need to save the original object for later to not affect tests from other files
 const originalLocation = window.location;
