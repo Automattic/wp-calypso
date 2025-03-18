@@ -8,7 +8,7 @@
 	align-items: center;
 	padding: 1rem;
 
-	@include step-large-viewport {
+	@include step-medium-viewport {
 		padding-inline: 1.5rem;
 	}
 
@@ -25,10 +25,10 @@
 		height: 1rem;
 		background-color: var(--color-border-subtle);
 
-		margin-inline: 0.5rem;
+		margin-inline: 1rem 0.5rem;
 
-		@include step-large-viewport {
-			margin-left: 1rem;
+		@include step-medium-viewport {
+			margin-inline: 1.5rem 0.75rem;
 		}
 	}
 
