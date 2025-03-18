@@ -11,7 +11,6 @@ import {
 	SITE_MIGRATION_FLOW,
 	MIGRATION_SIGNUP_FLOW,
 	ENTREPRENEUR_FLOW,
-	IMPORT_FOCUSED_FLOW,
 	HOSTED_SITE_MIGRATION_FLOW,
 	NEW_HOSTED_SITE_FLOW_USER_INCLUDED,
 	ONBOARDING_FLOW,
@@ -30,9 +29,6 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	newsletter: () =>
 		import( /* webpackChunkName: "newsletter-flow" */ './flows/newsletter/newsletter' ),
-
-	[ IMPORT_FOCUSED_FLOW ]: () =>
-		import( /* webpackChunkName: "import-flow" */ './flows/import-flow/import-flow' ),
 
 	[ ENTREPRENEUR_FLOW ]: () =>
 		import(
