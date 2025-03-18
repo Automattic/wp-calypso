@@ -1,4 +1,10 @@
-import { getPlan, PLAN_BUSINESS, PLAN_ECOMMERCE } from '@automattic/calypso-products';
+import {
+	getFeatureDifference,
+	getPlan,
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+	getFeatureByKey,
+} from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { Plans } from '@automattic/data-stores';
 import { Modal, Button, CheckboxControl } from '@wordpress/components';
@@ -8,7 +14,6 @@ import Notice from 'calypso/components/notice';
 import { useExperiment } from 'calypso/lib/explat';
 import { hasAmountAvailableToRefund } from 'calypso/lib/purchases';
 import { cancelAndRefundPurchaseAsync } from 'calypso/lib/purchases/actions';
-import getPlanFeatures from 'calypso/my-sites/checkout/src/lib/get-plan-features';
 import { useSelector, useDispatch } from 'calypso/state';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { fetchSitePurchases } from 'calypso/state/purchases/actions';
@@ -109,34 +114,17 @@ const DowngradeModal = ( { isVisible, toPlanSlug, onClose }: DowngradeModalProps
 	] );
 
 	// Get features that will be lost when downgrading
-	const lostFeatures = useMemo( () => {
-		if ( ! currentPlan?.productSlug || ! toPlanSlug ) {
-			return [];
-		}
+	const lostFeatureSlugs = getFeatureDifference(
+		toPlanSlug || '',
+		currentPlan?.planSlug || '',
+		'getCheckoutFeatures'
+	);
 
-		// Get features for current plan
-		const currentPlanFeatures = getPlanFeatures(
-			{ product_slug: currentPlan.productSlug } as any,
-			translate,
-			false,
-			false,
-			false,
-			true
-		);
-
-		// Get features for target plan
-		const targetPlanFeatures = getPlanFeatures(
-			{ product_slug: toPlanSlug } as any,
-			translate,
-			false,
-			false,
-			false,
-			true
-		);
-
-		// Find features that are in current plan but not in target plan
-		return currentPlanFeatures.filter( ( feature ) => ! targetPlanFeatures.includes( feature ) );
-	}, [ currentPlan?.productSlug, toPlanSlug, translate ] );
+	// Convert feature slugs to human-readable titles
+	const lostFeatures = lostFeatureSlugs.map( ( featureSlug ) => {
+		const feature = getFeatureByKey( featureSlug );
+		return feature?.getTitle ? feature.getTitle() : featureSlug;
+	} );
 
 	if ( ! isVisible ) {
 		return null;
