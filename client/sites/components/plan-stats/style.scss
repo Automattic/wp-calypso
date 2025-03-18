@@ -14,12 +14,19 @@ $blueberry-color: #3858e9;
 	line-height: 16px;
 	margin-top: 30px;
 
-	.plan-storage__bar .progress-bar__progress {
-		background-color: $blueberry-color;
-	}
+	.plan-storage__bar {
+		width: 100%;
+		background: color-mix(in srgb, $blueberry-color 8%, transparent);
 
-	.plan-storage__bar.is-alert .progress-bar__progress {
-		background-color: var(--studio-red-30);
+		> div[class*="-Indicator"] {
+			background: $blueberry-color;
+		}
+
+		&.is-alert {
+			> div[class*="-Indicator"] {
+				background-color: var(--studio-red-30);
+			}
+		}
 	}
 
 	.plan-storage,
@@ -29,7 +36,7 @@ $blueberry-color: #3858e9;
 		flex-direction: column;
 		border-radius: 4px;
 		border: 1px solid var(--studio-gray-0);
-		background: var(--studio-gray-0);
+		background: color-mix(in srgb, $blueberry-color 4%, transparent);
 		padding: $grid-unit-20;
 	}
 
@@ -56,6 +63,8 @@ $blueberry-color: #3858e9;
 	.plan-storage-title,
 	.plan-bandwidth-title,
 	.plan-site-visits-title {
+		font-size: rem(11px);
+		font-weight: 500;
 		text-transform: uppercase;
 	}
 
@@ -67,12 +76,6 @@ $blueberry-color: #3858e9;
 		a:hover {
 			color: var(--color-link-dark);
 		}
-	}
-
-	.plan-storage-value,
-	.plan-bandwidth-content,
-	.plan-site-visits-content {
-		font-weight: 700;
 	}
 
 	.plan-bandwidth-placeholder,
