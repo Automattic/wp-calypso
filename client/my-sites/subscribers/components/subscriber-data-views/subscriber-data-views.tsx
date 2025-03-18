@@ -3,7 +3,7 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews, type View, type Action, Operator } from '@wordpress/dataviews';
 import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
 import { trash } from '@wordpress/icons';
-import { translate, i18n } from 'i18n-calypso';
+import { translate, fixMe } from 'i18n-calypso';
 import { useSubscribedNewsletterCategories } from 'calypso/data/newsletter-categories';
 import { useSelector } from 'calypso/state';
 import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/settings/selectors';
@@ -223,10 +223,10 @@ const SubscriberDataViews = ( {
 			},
 			{
 				id: 'plan',
-				label: i18n.fixMe( {
+				label: fixMe( {
 					text: 'Subscription Type',
-					newCopy: i18n.translate( 'Subscription Type' ),
-					oldCopy: i18n.translate( 'Plan' ),
+					newCopy: translate( 'Subscription Type' ),
+					oldCopy: translate( 'Plan' ),
 				} ), //id is still plan because WPCOM expects 'plan' for filtering, sorting etc.
 				getValue: ( { item }: { item: Subscriber } ) =>
 					item.plans?.length ? SubscribersFilterBy.Paid : SubscribersFilterBy.Free,
