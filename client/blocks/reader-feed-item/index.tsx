@@ -103,7 +103,9 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 			onSuccess: () => {
 				dispatch(
 					successNotice(
-						translate( 'Success! You are now subscribed to %s.', { args: filteredDisplayUrl } ),
+						translate( 'Success! You are now subscribed to "%s".', {
+							args: title ?? filteredDisplayUrl,
+						} ),
 						{ duration: 5000 }
 					)
 				);
@@ -170,7 +172,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 
 	const SubscribeButton = (): JSX.Element => (
 		<Button
-			variant="primary"
+			variant={ subscribeDisabled ? 'secondary' : 'primary' }
 			disabled={ subscribeDisabled }
 			isBusy={ isSubscribing }
 			onClick={ onSubscribeClick }
