@@ -95,7 +95,7 @@ const SiteMigrationHowToMigrate: FC< Props > = ( props ) => {
 					}
 			  )
 			: translate(
-					'Save yourself the headache of migrating. Our expert team takes care of everything without interrupting your current site. Plus you get 50% off our annual %(planName)s plan.',
+					'Skip the migration hassle. Our team handles everything without disrupting your current site, plus you get 50% off our annual %(planName)s plan.',
 					{
 						args: {
 							planName,
