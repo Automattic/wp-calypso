@@ -311,11 +311,14 @@ export function googleAuth( context, next ) {
 				redirect_uri: getRedirectUri(),
 				client_id: config( 'wpcom_signup_id' ),
 				client_secret: config( 'wpcom_signup_key' ),
-				state: stateParam,
+				state: stateObject,
 			} );
 
 			const { access_token, id_token } = response.body.data;
-			const redirectTo = stateObject.redirect_to || '/';
+
+			const redirectUrl = new URL( stateObject.redirect_to, window.location.origin );
+			const redirectTo =
+				redirectUrl.origin === window.location.origin ? stateObject.redirect_to : '/';
 
 			// Try to connect Google account to existing WordPress.com account
 			try {
