@@ -223,7 +223,7 @@ const SubscriberDataViews = ( {
 				enableSorting: true,
 			},
 			{
-				id: 'plan',
+				id: 'subscription_type',
 				label: translate( 'Subscription Type' ),
 				getValue: ( { item }: { item: Subscriber } ) =>
 					item.plans?.length ? SubscribersFilterBy.Paid : SubscribersFilterBy.Free,
