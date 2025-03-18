@@ -24,14 +24,21 @@ interface FeedPreviewProps {
 
 export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | null {
 	const { url, source, onChangeFeedPreview, onSubscribeToggle } = props;
-	const [ debouncedUrl ] = useDebounce( url, 1000 );
+	const [ debouncedUrl ] = useDebounce( url, 500 );
 	const [ feed, setFeed ] = useState< Reader.FeedItem >();
 	const [ loading, setLoading ] = useState( false );
+	const shouldHideContent = ! url || ! debouncedUrl;
 
 	/**
 	 * Fetch the feed for the given URL.
 	 */
 	useEffect( (): void => {
+		if ( shouldHideContent ) {
+			setFeed( undefined );
+			onChangeFeedPreview?.( false );
+			return;
+		}
+
 		setLoading( true );
 
 		wpcom.req
@@ -56,7 +63,7 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 			.finally( (): void => {
 				setLoading( false );
 			} );
-	}, [ debouncedUrl, onChangeFeedPreview ] );
+	}, [ debouncedUrl, onChangeFeedPreview, shouldHideContent ] );
 
 	const memoizedFeedPreviewContent = useMemo( (): JSX.Element => {
 		if ( loading ) {
@@ -103,6 +110,10 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 			</>
 		);
 	}, [ feed, loading, source, onSubscribeToggle ] );
+
+	if ( shouldHideContent ) {
+		return null;
+	}
 
 	return <div className="feed-preview">{ memoizedFeedPreviewContent }</div>;
 }

@@ -147,9 +147,9 @@ const AddSitesForm = ( {
 				</Button>
 			</form>
 
-			{ isValidInput && isAutomattician ? (
+			{ isAutomattician ? (
 				<FeedPreview
-					url={ inputValue }
+					url={ isValidInput ? inputValue : '' }
 					source={ source }
 					onChangeFeedPreview={ onChangeFeedPreview }
 					onSubscribeToggle={ onSubscribeToggle }
