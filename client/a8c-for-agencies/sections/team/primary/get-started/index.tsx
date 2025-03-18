@@ -58,9 +58,8 @@ export default function GetStarted() {
 					) }
 				</div>
 
-				<StepSection applyCoreStyles heading={ translate( 'How do I start?' ) }>
+				<StepSection heading={ translate( 'How do I start?' ) }>
 					<StepSectionItem
-						applyCoreStyles
 						isNewLayout
 						stepNumber={ 1 }
 						heading={ translate( 'Invite a team member' ) }
@@ -88,7 +87,7 @@ export default function GetStarted() {
 					/>
 				</StepSection>
 
-				<StepSection applyCoreStyles heading={ translate( 'Learn more about team members' ) }>
+				<StepSection heading={ translate( 'Learn more about team members' ) }>
 					<Button
 						className="team-list-get-started__learn-more-button"
 						variant="link"
