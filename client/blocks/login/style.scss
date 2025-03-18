@@ -1,8 +1,12 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "calypso/assets/stylesheets/p2-extends";
-
 @import "@automattic/color-studio/dist/color-variables";
+
+// Define the login container width.
+:root {
+	--login-container-width: 352px;
+}
 
 $breakpoint-mobile: 782px; //Mobile size.
 

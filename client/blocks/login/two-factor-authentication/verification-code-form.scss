@@ -122,7 +122,7 @@
 
 div.two-factor-auth-enabled:not(.woo) {
 	.login__form-header {
-		width: 352px;
+		width: var(--login-container-width);
 		margin: 0 auto;
 		padding: 0 24px;
 		text-align: left !important;
