@@ -12,6 +12,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { PropsWithChildren, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { isPlansPageUntangled } from 'calypso/lib/plans/untangling-plans-experiment';
 import { useStorageLimitOverride } from 'calypso/lib/plans/use-storage-limit-override';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -29,6 +30,7 @@ export function useDisplayUpgradeLink( siteId: number | null ) {
 	const canUserUpgrade = useSelector( ( state ) =>
 		canCurrentUser( state, siteId, 'manage_options' )
 	);
+	const isUntangled = useSelector( isPlansPageUntangled );
 
 	const planHasTopStorageSpace =
 		isBusinessPlan( sitePlanSlug ) ||
@@ -36,7 +38,7 @@ export function useDisplayUpgradeLink( siteId: number | null ) {
 		isProPlan( sitePlanSlug ) ||
 		isWooExpressMediumPlan( sitePlanSlug );
 
-	return canUserUpgrade && ! planHasTopStorageSpace && ! isStagingSite;
+	return canUserUpgrade && ! planHasTopStorageSpace && ! isStagingSite && ! isUntangled;
 }
 
 type StorageBarProps = PropsWithChildren< any >;

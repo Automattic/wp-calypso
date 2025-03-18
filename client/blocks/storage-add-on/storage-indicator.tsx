@@ -8,7 +8,7 @@ type Props = {
 	siteId: number;
 };
 
-const StorageIndicator: React.FC< Props > = ( {
+const StorageAddOnIndicator: React.FC< Props > = ( {
 	siteId,
 	mediaStorage,
 	selectedStorageAddOnSlug,
@@ -56,4 +56,4 @@ const StorageIndicator: React.FC< Props > = ( {
 	);
 };
 
-export default StorageIndicator;
+export default StorageAddOnIndicator;

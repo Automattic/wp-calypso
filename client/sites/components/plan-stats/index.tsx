@@ -4,7 +4,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PlanStorage, { useDisplayUpgradeLink } from 'calypso/blocks/plan-storage';
-import AddStorageModal from 'calypso/blocks/storage-add-on/modal';
+import StorageAddOnModal from 'calypso/blocks/storage-add-on/modal';
+import { isPlansPageUntangled } from 'calypso/lib/plans/untangling-plans-experiment';
 import { isPartnerPurchase } from 'calypso/lib/purchases';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
@@ -17,7 +18,7 @@ import './style.scss';
 
 type NeedMoreStorageProps = {
 	noLink?: boolean;
-	onClick: () => void;
+	onClick: ( e: React.MouseEvent< HTMLButtonElement > ) => void;
 };
 
 function NeedMoreStorage( { noLink = false, onClick }: NeedMoreStorageProps ) {
@@ -25,6 +26,7 @@ function NeedMoreStorage( { noLink = false, onClick }: NeedMoreStorageProps ) {
 	const site = useSelector( getSelectedSite );
 	const dispatch = useDispatch();
 	const text = translate( 'Need more storage?' );
+	const isUntangled = useSelector( isPlansPageUntangled );
 
 	if ( noLink ) {
 		return text;
@@ -35,8 +37,10 @@ function NeedMoreStorage( { noLink = false, onClick }: NeedMoreStorageProps ) {
 			plain
 			href={ `/add-ons/${ site?.slug }` }
 			onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
-				e.preventDefault();
-				onClick();
+				if ( isUntangled ) {
+					e.preventDefault();
+					onClick( e );
+				}
 				dispatch( recordTracksEvent( 'calypso_hosting_overview_need_more_storage_click' ) );
 			} }
 		>
@@ -59,6 +63,7 @@ export default function PlanStats() {
 	const footerWrapperIsLink = useDisplayUpgradeLink( site?.ID ?? null );
 	const availableStorageAddOns = AddOns.useAvailableStorageAddOns( { siteId: site?.ID } );
 
+	const isUntangled = useSelector( isPlansPageUntangled );
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	if ( isLoading ) {
@@ -87,7 +92,9 @@ export default function PlanStats() {
 					</div>
 				) }
 			</div>
-			<AddStorageModal isOpen={ isOpen } setIsOpen={ setIsOpen } siteId={ site?.ID } />
+			{ isUntangled && (
+				<StorageAddOnModal isOpen={ isOpen } setIsOpen={ setIsOpen } siteId={ site?.ID } />
+			) }
 		</>
 	);
 }

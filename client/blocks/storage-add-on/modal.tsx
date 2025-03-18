@@ -7,15 +7,15 @@ import { useEffect, useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useStorageLimitOverride } from 'calypso/lib/plans/use-storage-limit-override';
 import { StorageAddOnDropdown } from './dropdown';
-import StorageIndicator from './storage-indicator';
+import StorageAddOnIndicator from './storage-indicator';
 
-type AddStorageModalProps = {
+type StorageAddOnModalProps = {
 	isOpen: boolean;
 	siteId: number;
 	setIsOpen: ( isOpen: boolean ) => void;
 };
 
-const AddStorageModal: React.FC< AddStorageModalProps > = ( { isOpen, siteId, setIsOpen } ) => {
+const StorageAddOnModal: React.FC< StorageAddOnModalProps > = ( { isOpen, siteId, setIsOpen } ) => {
 	const translate = useTranslate();
 	const { data: mediaStorage } = Site.useSiteMediaStorage( { siteIdOrSlug: siteId } );
 
@@ -71,7 +71,7 @@ const AddStorageModal: React.FC< AddStorageModalProps > = ( { isOpen, siteId, se
 				siteId={ siteId }
 			/>
 			<h2>{ translate( 'New storage capacity' ) }</h2>
-			<StorageIndicator
+			<StorageAddOnIndicator
 				mediaStorage={ mediaStorage }
 				selectedStorageAddOnSlug={ selectedStorageAddOnSlug }
 				siteId={ siteId }
@@ -80,4 +80,4 @@ const AddStorageModal: React.FC< AddStorageModalProps > = ( { isOpen, siteId, se
 	) : null;
 };
 
-export default AddStorageModal;
+export default StorageAddOnModal;
