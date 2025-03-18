@@ -37,19 +37,21 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 const render = ( ui: React.ReactElement ) => renderWithProvider( ui );
 
 describe( 'MigrationOverview', () => {
-	const getStartMigrationLink = () => {
+	const getStartDIYMigrationLink = () => {
+		return screen.queryByRole( 'link', { name: 'Complete your migration' } );
+	};
+
+	const getStartDIFMMigrationLink = () => {
 		return screen.queryByRole( 'link', { name: 'Start your migration' } );
 	};
 
 	describe( 'DIY pending migration', () => {
-		it( 'shows the migrating pending instructions', () => {
+		it( 'shows the migration pending instructions', () => {
 			const site = buildMigrationSite( { status: 'pending', how: 'diy' } );
 
 			const { getByText } = render( <MigrationOverview site={ site } /> );
 
-			expect(
-				getByText( /Start your migration today and get ready for unmatched WordPress hosting./ )
-			).toBeVisible();
+			expect( getByText( /Complete your migration in the/ ) ).toBeVisible();
 		} );
 
 		it( 'shows a link to the instructions page', () => {
@@ -61,7 +63,7 @@ describe( 'MigrationOverview', () => {
 
 			render( <MigrationOverview site={ site } /> );
 
-			const link = getStartMigrationLink();
+			const link = getStartDIYMigrationLink();
 
 			expect( link ).toHaveAttribute(
 				'href',
@@ -90,7 +92,7 @@ describe( 'MigrationOverview', () => {
 
 			render( <MigrationOverview site={ site } /> );
 
-			const link = getStartMigrationLink();
+			const link = getStartDIFMMigrationLink();
 
 			expect( link ).toHaveAttribute(
 				'href',
@@ -113,7 +115,7 @@ describe( 'MigrationOverview', () => {
 
 			render( <MigrationOverview site={ site } /> );
 
-			expect( getStartMigrationLink() ).not.toBeInTheDocument();
+			expect( getStartDIYMigrationLink() ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -136,7 +138,7 @@ describe( 'MigrationOverview', () => {
 
 			render( <MigrationOverview site={ site } /> );
 
-			expect( getStartMigrationLink() ).not.toBeInTheDocument();
+			expect( getStartDIFMMigrationLink() ).not.toBeInTheDocument();
 		} );
 	} );
 } );
