@@ -69,7 +69,7 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 		if ( loading ) {
 			return (
 				<div className="feed-preview__loader">
-					<Spinner /> <p>Loading feed...</p>
+					<Spinner /> <p>Loading feed preview...</p>
 				</div>
 			);
 		}
