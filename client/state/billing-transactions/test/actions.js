@@ -4,8 +4,9 @@ import {
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import useNock from 'calypso/test-helpers/use-nock';
-import { requestBillingTransactions } from '../actions';
+import { requestBillingTransactions, sendBillingReceiptEmail } from '../actions';
 
 describe( 'actions', () => {
 	let spy;
@@ -92,6 +93,62 @@ describe( 'actions', () => {
 						error: expect.objectContaining( {
 							message,
 						} ),
+					} );
+				} );
+			} );
+		} );
+	} );
+
+	describe( '#sendBillingReceiptEmail()', () => {
+		const receiptId = 12345678;
+
+		describe( 'success', () => {
+			useNock( ( nock ) => {
+				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
+					.get( '/rest/v1.1/me/billing-history/receipt/' + receiptId + '/email' )
+					.reply( 200, { success: true } );
+			} );
+
+			test( 'should dispatch send success action when request completes', () => {
+				const { notice, type } = successNotice( 'Your receipt was sent by email successfully.' );
+				return sendBillingReceiptEmail( receiptId )( spy ).then( () => {
+					expect( spy ).toHaveBeenCalledWith( {
+						notice: {
+							...notice,
+							noticeId: expect.any( String ),
+						},
+						type,
+					} );
+				} );
+			} );
+		} );
+
+		describe( 'failure', () => {
+			const message =
+				'An active access token must be used to query information about the current user.';
+
+			useNock( ( nock ) => {
+				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
+					.get( '/rest/v1.1/me/billing-history/receipt/' + receiptId + '/email' )
+					.reply( 403, {
+						error: 'authorization_required',
+						message,
+					} );
+			} );
+
+			test( 'should dispatch send failure action when request fails', () => {
+				const { notice, type } = errorNotice(
+					'There was a problem sending your receipt. Please try again later or contact support.'
+				);
+				return sendBillingReceiptEmail( receiptId )( spy ).then( () => {
+					expect( spy ).toHaveBeenCalledWith( {
+						notice: {
+							...notice,
+							noticeId: expect.any( String ),
+						},
+						type,
 					} );
 				} );
 			} );
