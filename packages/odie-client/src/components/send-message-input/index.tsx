@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import {
@@ -9,6 +10,7 @@ import { useSelect } from '@wordpress/data';
 import { useCallback, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
+import { MicIcon } from '../../assets/mic-icon';
 import { SendMessageIcon } from '../../assets/send-message-icon';
 import { ODIE_WRONG_FILE_TYPE_MESSAGE } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
@@ -19,6 +21,7 @@ import { AttachmentButton } from './attachment-button';
 import { ResizableTextarea } from './resizable-textarea';
 
 import './style.scss';
+const featureFlagEnabled = config.isEnabled( 'help-center-speech-to-text' );
 
 const getFileType = ( file: File ) => {
 	if ( file.type.startsWith( 'image/' ) ) {
@@ -208,6 +211,11 @@ export const OdieSendMessageButton = () => {
 					<button type="submit" className={ buttonClasses } disabled={ submitDisabled }>
 						<SendMessageIcon />
 					</button>
+					{ featureFlagEnabled && (
+						<button className={ buttonClasses }>
+							<MicIcon />
+						</button>
+					) }
 				</form>
 			</div>
 			{ showAttachmentButton && (

@@ -69,6 +69,7 @@
 		"help": true,
 		"help/gpt-response": true,
 		"home/layout-dev": true,
+		"help-center-speech-to-text": false,
 
 		"hosting-server-settings-enhancements": true,
 		"hosting/datacenter-picker": true,
