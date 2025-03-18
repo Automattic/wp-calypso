@@ -1,19 +1,7 @@
-import styled from '@emotion/styled';
-import { ProgressBar } from '@wordpress/components';
-import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { TranslateResult } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import './style.scss';
-
-const Container = styled.div`
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 20px;
-`;
-
-const Title = styled.h1`
-	font-size: 2rem;
-`;
+import Loading from 'calypso/components/loading';
 
 const ACCELERATED_REFRESH_INTERVAL = 750;
 const ACCELERATED_INCREMENT = 5;
@@ -29,7 +17,6 @@ export default function MarketplaceProgressBar( {
 	additionalSteps?: TranslateResult[];
 	additionalStepsTimeout?: number;
 } ) {
-	const translate = useTranslate();
 	const [ stepValue, setStepValue ] = useState( steps[ currentStep ] );
 	const [ additionalStepsTimeoutId, setAdditionalStepsTimeoutId ] = useState< NodeJS.Timeout >();
 	const [ currentAdditionalSteps, setCurrentAdditionalSteps ] = useState< TranslateResult[] >( [] );
@@ -95,16 +82,11 @@ export default function MarketplaceProgressBar( {
 		};
 	}, [ additionalSteps, currentStep ] );
 
-	/* translators: %(currentStep)s  Is the current step number, given that steps are set of counting numbers representing each step starting from 1, %(stepCount)s  Is the total number of steps, Eg: Step 1 of 3  */
-	const stepIndication = translate( 'Step %(currentStep)s of %(stepCount)s', {
-		args: { currentStep: currentStep + 1, stepCount: steps.length },
-	} );
-
 	return (
-		<Container>
-			<Title className="progressbar__title wp-brand-font">{ stepValue }</Title>
-			<ProgressBar value={ simulatedProgressPercentage } className="progressbar__bar" />
-			{ steps.length > 1 && <div>{ stepIndication }</div> }
-		</Container>
+		<Loading
+			title={ stepValue }
+			progress={ simulatedProgressPercentage }
+			className="marketplace__loading"
+		/>
 	);
 }
