@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { CompactCard } from '@automattic/components';
+import { CompactCard, Card } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { LocalizeProps, localize } from 'i18n-calypso';
@@ -47,6 +47,7 @@ import { purchasesDataFields } from './purchases-data-field';
 import { purchasesDataView } from './purchases-data-view'; // This is the temporary data
 import PurchasesListHeader from './purchases-list-header';
 import { testoctorPurchases } from './tests/testoctor-flat-data'; // This is the temporary data
+import './style.scss';
 
 const useDataViewPurchasesList = config.isEnabled( 'purchases/purchase-list-dataview' );
 
@@ -116,15 +117,17 @@ class PurchasesListDataView extends Component<
 		if ( purchases && purchases.length ) {
 			if ( useDataViewPurchasesList ) {
 				content = (
-					<DataViews
-						data={ purchases }
-						fields={ purchasesDataFields }
-						view={ purchasesDataView }
-						onChangeView={ onChangeView }
-						defaultLayouts={ { table: {} } }
-						actions={ undefined }
-						paginationInfo={ { totalItems: 100, totalPages: 10 } }
-					/>
+					<Card id="purchases-list" className="section-content" tagName="section">
+						<DataViews
+							data={ purchases }
+							fields={ purchasesDataFields }
+							view={ purchasesDataView }
+							onChangeView={ onChangeView }
+							defaultLayouts={ { table: {} } }
+							actions={ undefined }
+							paginationInfo={ { totalItems: 100, totalPages: 10 } }
+						/>
+					</Card>
 				);
 			} else {
 				content = (
