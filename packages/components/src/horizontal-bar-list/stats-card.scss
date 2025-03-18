@@ -214,7 +214,8 @@
 	padding-top: 2px; // for focus ring for Jetpack
 }
 
-.stats-card, .stats-card-skeleton {
+.list-locations.stats-card, .list-locations.stats-card-skeleton,
+.list-utm.stats-card, .list-utm.stats-card-skeleton {
 	.stats-card-header.stats-card-header--split .stats-card-header--main__left {
 		display: flex;
 		justify-content: space-between;
@@ -249,7 +250,8 @@
 }
 
 .stats-summary-view {
-	.stats-card, .stats-card-skeleton {
+	.list-locations.stats-card, .list-locations.stats-card-skeleton,
+	.list-utm.stats-card, .list-utm.stats-card-skeleton {
 		.stats-card-header.stats-card-header--split .stats-card-header--main__left .stats-download-csv {
 			display: inherit;
 		}
@@ -257,7 +259,8 @@
 }
 
 @include break-large {
-	.stats-card, .stats-card-skeleton {
+	.list-locations.stats-card, .list-locations.stats-card-skeleton,
+	.list-utm.stats-card, .list-utm.stats-card-skeleton {
 		.stats-card-header.stats-card-header--split .stats-card-header--main {
 			gap: 10px;
 		}
