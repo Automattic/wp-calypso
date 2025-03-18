@@ -16,7 +16,6 @@ import { ExternalLink } from '@wordpress/components';
 import { Icon, warning as warningIcon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { formatCurrency, localize, useTranslate } from 'i18n-calypso';
-import { get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
@@ -63,23 +62,31 @@ import type { LocalizeProps } from 'i18n-calypso';
 
 const eventProperties = ( warning: string ) => ( { warning, position: 'purchase-list' } );
 
+interface PurchaseItemPropsPlaceholder {
+	isPlaceholder: true;
+}
+
 interface PurchaseItemProps {
 	getManagePurchaseUrlFor: ( targetSiteSlug: string, targetPurchaseId: string | number ) => string;
 	purchase: Purchases.Purchase;
 	site?: SiteDetails | null | undefined;
-	name: string;
 	slug?: string;
 	showSite?: boolean;
 	isPlaceholder?: boolean;
 	isJetpack?: boolean;
 	isDisconnectedSite?: boolean;
 	isBackupMethodAvailable?: boolean;
+}
+
+interface PurchaseItemPropsConnected {
 	translate: LocalizeProps[ 'translate' ];
 	moment: ReturnType< typeof useLocalizedMoment >;
 	iconUrl: string | undefined;
 }
 
-class PurchaseItem extends Component< PurchaseItemProps > {
+class PurchaseItem extends Component<
+	PurchaseItemPropsPlaceholder | ( PurchaseItemProps & PurchaseItemPropsConnected )
+> {
 	trackImpression( warning: string ) {
 		return (
 			<TrackComponentView
@@ -90,7 +97,10 @@ class PurchaseItem extends Component< PurchaseItemProps > {
 	}
 
 	getStatus() {
-		const { purchase, translate, moment, name, isJetpack, isDisconnectedSite } = this.props;
+		if ( this.props.isPlaceholder ) {
+			return null;
+		}
+		const { purchase, translate, moment, isJetpack, isDisconnectedSite } = this.props;
 		const expiry = moment( purchase.expiryDate );
 		// @todo: There isn't currently a way to get the taxName based on the
 		// country. The country is not included in the purchase information
@@ -164,9 +174,6 @@ class PurchaseItem extends Component< PurchaseItemProps > {
 					{ translate(
 						'You no longer have access to this site and its purchases. {{button}}Contact support{{/button}}',
 						{
-							args: {
-								site: name,
-							},
 							components: {
 								button: (
 									<button
@@ -397,6 +404,9 @@ class PurchaseItem extends Component< PurchaseItemProps > {
 	}
 
 	getPurchaseType() {
+		if ( this.props.isPlaceholder ) {
+			return null;
+		}
 		const { purchase, site, translate, slug, showSite, isDisconnectedSite } = this.props;
 		if ( isTemporarySitePurchase( purchase ) ) {
 			return null;
@@ -538,6 +548,9 @@ class PurchaseItem extends Component< PurchaseItemProps > {
 	}
 
 	getPaymentMethod() {
+		if ( this.props.isPlaceholder ) {
+			return null;
+		}
 		const { purchase, translate } = this.props;
 
 		if ( isIncludedWithPlan( purchase ) ) {
@@ -617,6 +630,9 @@ class PurchaseItem extends Component< PurchaseItemProps > {
 	}
 
 	getSiteIcon = () => {
+		if ( this.props.isPlaceholder ) {
+			return null;
+		}
 		const { site, isDisconnectedSite, purchase, iconUrl } = this.props;
 
 		if ( isAkismetTemporarySitePurchase( purchase ) ) {
@@ -653,6 +669,9 @@ class PurchaseItem extends Component< PurchaseItemProps > {
 	};
 
 	renderPurchaseItemContent = () => {
+		if ( this.props.isPlaceholder ) {
+			return null;
+		}
 		const { purchase, showSite, isBackupMethodAvailable } = this.props;
 
 		return (
@@ -682,20 +701,7 @@ class PurchaseItem extends Component< PurchaseItemProps > {
 	};
 
 	render() {
-		const {
-			isPlaceholder,
-			isDisconnectedSite,
-			getManagePurchaseUrlFor,
-			purchase,
-			slug,
-			isJetpack,
-		} = this.props;
-
-		const classes = clsx( 'purchase-item', {
-			'purchase-item--disconnected': isDisconnectedSite,
-		} );
-
-		if ( isPlaceholder ) {
+		if ( this.props.isPlaceholder ) {
 			return (
 				<>
 					<CompactCard className="purchase-item__placeholder-wrapper purchases-list-header" />
@@ -706,10 +712,16 @@ class PurchaseItem extends Component< PurchaseItemProps > {
 			);
 		}
 
+		const { isDisconnectedSite, getManagePurchaseUrlFor, purchase, slug, isJetpack } = this.props;
+
+		const classes = clsx( 'purchase-item', {
+			'purchase-item--disconnected': isDisconnectedSite,
+		} );
+
 		let onClick;
 		let href;
 
-		if ( ! isPlaceholder && getManagePurchaseUrlFor && slug ) {
+		if ( getManagePurchaseUrlFor && slug ) {
 			// A "disconnected" Jetpack site's purchases may be managed.
 			// A "disconnected" WordPress.com site may *NOT* be managed (the user has been removed), unless it is a
 			// WPCOM generated temporary site, which is created during the siteless checkout flow. (currently Jetpack & Akismet can have siteless purchases).
@@ -751,17 +763,22 @@ function BackupPaymentMethodNotice() {
 	);
 }
 
-export default connect( ( state: AppState, ownProps: PurchaseItemProps ) => {
-	const { site } = ownProps;
-	const stateSite = getSite( state, get( site, 'ID' ) );
+export default connect(
+	( state: AppState, ownProps: PurchaseItemPropsPlaceholder | PurchaseItemProps ) => {
+		if ( ownProps.isPlaceholder ) {
+			return {};
+		}
 
-	if ( ! stateSite ) {
+		const stateSite = getSite( state, ownProps.site?.ID );
+
+		if ( ! stateSite ) {
+			return {
+				iconUrl: ownProps.site?.icon?.img,
+			};
+		}
+
 		return {
-			iconUrl: site?.icon?.img,
+			iconUrl: getSiteIconUrl( state, stateSite.ID ),
 		};
 	}
-
-	return {
-		iconUrl: getSiteIconUrl( state, stateSite.ID ),
-	};
-} )( localize( withLocalizedMoment( PurchaseItem ) ) );
+)( localize( withLocalizedMoment( PurchaseItem ) ) );
