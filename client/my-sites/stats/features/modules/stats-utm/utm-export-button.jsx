@@ -23,6 +23,8 @@ function UTMExportButton( { data, path, period } ) {
 	// Child items include their parent's label as context.
 	const prepareDataForDownload = ( flatData ) => {
 		return flatData.map( ( row ) => {
+			// Label should include parent context if present.
+			// ie: "parent label > child label" -- including surrounding quotes.
 			let label = row?.context ? `${ row.context } > ${ row.label }` : row.label;
 			label = label.replace( /"/g, '""' ); // Escape double quotes
 			return [ `"${ label }"`, `${ row.value }` ];
