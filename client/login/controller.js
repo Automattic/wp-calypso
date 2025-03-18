@@ -285,24 +285,15 @@ export function googleAuth( context, next ) {
 				throw new Error( 'Missing state parameter' );
 			}
 
-			// Safely parse the state parameter with proper error handling
-			let stateObject;
-			try {
-				stateObject = JSON.parse( stateParam );
-			} catch ( parseError ) {
-				throw new Error( 'Invalid state parameter format' );
-			}
+			const stateObject = JSON.parse( stateParam );
 
-			// Perform thorough validation of the state object
-			if (
-				! stateObject ||
-				typeof stateObject !== 'object' ||
-				! stateObject.wpcomNonce ||
-				typeof stateObject.wpcomNonce !== 'string' ||
-				stateObject.wpcomNonce.length === 0
-			) {
-				throw new Error( 'Invalid state parameter structure' );
-			}
+			const state = {
+				redirect_to: stateObject.redirect_to || '/',
+				is_jetpack: stateObject.is_jetpack || true,
+				locale: stateObject.locale || getLocaleSlug(),
+				wpcomNonce: stateObject.wpcomNonce || '',
+				queryParams: stateObject.queryParams || {},
+			};
 
 			// Exchange auth code for tokens
 			const response = await postLoginRequest( 'exchange-social-auth-code', {
@@ -311,14 +302,10 @@ export function googleAuth( context, next ) {
 				redirect_uri: getRedirectUri(),
 				client_id: config( 'wpcom_signup_id' ),
 				client_secret: config( 'wpcom_signup_key' ),
-				state: stateObject,
+				state,
 			} );
 
 			const { access_token, id_token } = response.body.data;
-
-			const redirectUrl = new URL( stateObject.redirect_to, window.location.origin );
-			const redirectTo =
-				redirectUrl.origin === window.location.origin ? stateObject.redirect_to : '/';
 
 			// Try to connect Google account to existing WordPress.com account
 			try {
@@ -331,7 +318,7 @@ export function googleAuth( context, next ) {
 					service: 'google',
 					access_token,
 					id_token,
-					redirect_to: redirectTo,
+					redirect_to: state.redirect_to,
 					client_id: config( 'wpcom_signup_id' ),
 					client_secret: config( 'wpcom_signup_key' ),
 				} );
@@ -343,7 +330,7 @@ export function googleAuth( context, next ) {
 				}
 
 				// Otherwise use default redirect with auth params
-				redirectWithAuthParams( access_token, id_token, redirectTo );
+				redirectWithAuthParams( access_token, id_token, state.redirect_to );
 				return true;
 			} catch ( connectError ) {
 				// If connection fails, try creating a new account
@@ -360,7 +347,7 @@ export function googleAuth( context, next ) {
 					} );
 
 					// Redirect with auth params after successful account creation
-					redirectWithAuthParams( access_token, id_token, redirectTo );
+					redirectWithAuthParams( access_token, id_token, state.redirect_to );
 					return true;
 				} catch ( createError ) {
 					// If both connection and creation fail, show warning and redirect
@@ -373,7 +360,7 @@ export function googleAuth( context, next ) {
 					} );
 
 					// Still redirect with the tokens we have
-					redirectWithAuthParams( access_token, id_token, redirectTo );
+					redirectWithAuthParams( access_token, id_token, state.redirect_to );
 					return true;
 				}
 			}
