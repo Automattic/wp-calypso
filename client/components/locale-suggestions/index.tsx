@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getLanguage, addLocaleToPath } from '@automattic/i18n-utils';
 import { createInterpolateElement, useCallback, useEffect, useState } from '@wordpress/element';
-import { getLocaleSlug, translate } from 'i18n-calypso';
+import { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryLocaleSuggestions from 'calypso/components/data/query-locale-suggestions';
 import Notice from 'calypso/components/notice';
@@ -21,6 +21,7 @@ interface LocaleSuggestionsProps {
 }
 
 const LocaleSuggestions = ( { locale: localeFromProps, path }: LocaleSuggestionsProps ) => {
+	const translate = useTranslate();
 	const [ dismissed, setDismissed ] = useState( false );
 	const dispatch = useDispatch();
 	const localeSuggestions = useSelector( getLocaleSuggestions ) as LocaleSuggestion[] | null;
