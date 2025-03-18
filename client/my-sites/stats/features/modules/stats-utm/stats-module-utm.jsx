@@ -228,6 +228,7 @@ const StatsModuleUTM = ( {
 						title={ moduleStrings?.title }
 						emptyMessage={ <div>{ moduleStrings.empty }</div> }
 						metricLabel={ metricLabel }
+						downloadCsv={ <UTMExportButton data={ data } path={ path } period={ period } /> }
 						showMore={
 							displaySummaryLink && ! summary
 								? {
