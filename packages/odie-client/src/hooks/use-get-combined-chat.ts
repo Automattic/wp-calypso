@@ -39,7 +39,6 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 	);
 
 	const [ mainChatState, setMainChatState ] = useState< Chat >( emptyChat );
-	const [ isEnabled, setIsEnabled ] = useState( true );
 	const chatStatus = mainChatState?.status;
 	const getZendeskConversation = useGetZendeskConversation();
 	const { data: odieChat, isFetching: isOdieChatLoading } = useOdieChat( Number( odieId ) );
@@ -48,11 +47,7 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 	const canFetchConversation = conversationId && canConnectToZendesk;
 
 	useEffect( () => {
-		if ( isOdieChatLoading || ! isEnabled ) {
-			return;
-		}
-		if ( chatStatus === 'loaded' ) {
-			setIsEnabled( false );
+		if ( isOdieChatLoading || chatStatus !== 'loading' ) {
 			return;
 		}
 
@@ -103,8 +98,6 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 			}
 		}
 	}, [
-		isEnabled,
-		setIsEnabled,
 		isOdieChatLoading,
 		chatStatus,
 		isChatLoaded,
@@ -118,37 +111,27 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 		trackEvent,
 	] );
 
+	// This effect sets the initial loading state when interaction is set, so that the chat is loaded
 	useEffect( () => {
 		if ( ! currentSupportInteraction?.uuid ) {
 			return;
 		}
 
 		setMainChatState( ( prevChat ) => {
-			if ( ! prevChat.supportInteractionId ) {
-				if ( ! odieId && ! conversationId ) {
-					return {
-						...emptyChat,
-						supportInteractionId: currentSupportInteraction!.uuid,
-						status: 'loaded',
-					};
-				}
-
+			if ( odieId || conversationId ) {
 				return {
 					...prevChat,
 					supportInteractionId: currentSupportInteraction!.uuid,
 					status: 'loading',
 				};
 			}
-			const isSameInteraction = prevChat.supportInteractionId === currentSupportInteraction!.uuid;
-			if ( ! isSameInteraction ) {
-				return {
-					...emptyChat,
-					supportInteractionId: currentSupportInteraction!.uuid,
-					status: 'loaded',
-				};
-			}
 
-			return { ...prevChat };
+			// empty chat nothing to load
+			return {
+				...emptyChat,
+				supportInteractionId: currentSupportInteraction!.uuid,
+				status: 'loaded',
+			};
 		} );
 	}, [ currentSupportInteraction?.uuid, odieId, conversationId ] );
 
