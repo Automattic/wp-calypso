@@ -13,8 +13,11 @@
 	// Card class name is too generic. Which results and this component randomly getting borders.
 	border: none;
 
-	a {
+	 a {
 		text-decoration: none;
+	}
+	p a {
+		text-decoration: underline;
 	}
 
 	@include a8c-clear-fix;
