@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import Notice from 'calypso/components/notice';
 import { AddSitesForm } from 'calypso/landing/subscriptions/components/add-sites-form';
 import { SiteSubscriptionsList } from 'calypso/landing/subscriptions/components/site-subscriptions-list';
@@ -16,6 +16,14 @@ const DiscoverAddNew = () => {
 	const translate = useTranslate();
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const [ hasFeedPreview, setHasFeedPreview ] = useState< boolean >( false );
+
+	const onChangeFeedPreview = useCallback( ( hasPreview: boolean ): void => {
+		setHasFeedPreview( hasPreview );
+	}, [] );
+
+	const onSubscribeToggle = useCallback( (): void => {
+		setHasFeedPreview( false );
+	}, [] );
 
 	return (
 		<div className="discover-add-new">
@@ -37,8 +45,8 @@ const DiscoverAddNew = () => {
 					</h2>
 					<AddSitesForm
 						source="discover-add-new"
-						onChangeFeedPreview={ ( hasPreview: boolean ): void => setHasFeedPreview( hasPreview ) }
-						onChangeSubscribe={ (): void => setHasFeedPreview( false ) }
+						onChangeFeedPreview={ onChangeFeedPreview }
+						onChangeSubscribe={ onSubscribeToggle }
 					/>
 				</div>
 				{ ! hasFeedPreview && (

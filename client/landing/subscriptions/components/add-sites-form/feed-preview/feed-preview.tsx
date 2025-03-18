@@ -2,7 +2,6 @@ import './feed-preview.styles.scss';
 import { Reader } from '@automattic/data-stores';
 import { Spinner } from '@wordpress/components';
 import { useState, useEffect, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
 import { useDebounce } from 'use-debounce';
 import ReaderFeedItem from 'calypso/blocks/reader-feed-item';
 import wpcom from 'calypso/lib/wp';
@@ -25,7 +24,6 @@ interface FeedPreviewProps {
 
 export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | null {
 	const { url, source, onChangeFeedPreview, onSubscribeToggle } = props;
-	const dispatch = useDispatch();
 	const [ debouncedUrl ] = useDebounce( url, 1000 );
 	const [ feed, setFeed ] = useState< Reader.FeedItem >();
 	const [ loading, setLoading ] = useState( false );
@@ -58,7 +56,7 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 			.finally( (): void => {
 				setLoading( false );
 			} );
-	}, [ dispatch, debouncedUrl, onChangeFeedPreview ] );
+	}, [ debouncedUrl, onChangeFeedPreview ] );
 
 	const memoizedFeedPreviewContent = useMemo( (): JSX.Element => {
 		if ( loading ) {
