@@ -12,12 +12,12 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useSiteCopy } from '../../../hooks/use-site-copy';
 import { STEPS } from '../../internals/steps';
-import type {
-	AssertConditionResult,
+import {
 	AssertConditionState,
-	Flow,
-	ProvidedDependencies,
-	StepperStep,
+	type AssertConditionResult,
+	type Flow,
+	type ProvidedDependencies,
+	type StepperStep,
 } from '../../internals/types';
 import type { SiteSelect } from '@automattic/data-stores';
 
