@@ -136,8 +136,8 @@ export const updateConversationStatuses = (
 	allSupportInteractions: SupportInteraction[]
 ) => {
 	return conversations.map( ( conversation ) => {
-		const supportInteraction = allSupportInteractions.find(
-			( interaction ) => interaction.uuid === conversation.metadata.supportInteractionId
+		const supportInteraction = allSupportInteractions.find( ( interaction ) =>
+			isMatchingInteraction( interaction, conversation.metadata.supportInteractionId )
 		);
 
 		if ( ! supportInteraction ) {
@@ -162,25 +162,10 @@ export const filterAndUpdateConversationsWithStatus = (
 ) => {
 	const filteredConversations = filterConversations( conversations, supportInteractions );
 
-	const conversationWithUpdatedStatuses = filteredConversations.map( ( conversation ) => {
-		const supportInteraction = supportInteractions.find(
-			( interaction ) => interaction.uuid === conversation.metadata.supportInteractionId
-		);
-
-		if ( ! supportInteraction ) {
-			return conversation;
-		}
-
-		const updatedConversation = {
-			...conversation,
-			metadata: {
-				...conversation.metadata,
-				status: supportInteraction.status,
-			},
-		};
-
-		return updatedConversation;
-	} );
+	const conversationWithUpdatedStatuses = updateConversationStatuses(
+		filteredConversations,
+		supportInteractions
+	);
 
 	return conversationWithUpdatedStatuses;
 };
