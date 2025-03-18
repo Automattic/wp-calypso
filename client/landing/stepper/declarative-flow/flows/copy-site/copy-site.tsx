@@ -12,7 +12,7 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useSiteCopy } from '../../../hooks/use-site-copy';
 import { STEPS } from '../../internals/steps';
-import {
+import type {
 	AssertConditionResult,
 	AssertConditionState,
 	Flow,
