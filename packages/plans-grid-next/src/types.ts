@@ -51,7 +51,7 @@ export interface GridPlan {
  * Grid Component Types:
  ***********************/
 
-export type GridSize = 'small' | 'medium' | 'large';
+export type GridSize = 'small' | 'smedium' | 'medium' | 'large' | 'xlarge';
 
 export type PlansIntent =
 	| 'plans-affiliate'
@@ -116,13 +116,14 @@ export interface CommonGridProps {
 	// only used for comparison grid
 	planTypeSelectorProps?: PlanTypeSelectorProps;
 	gridContainerRef?: React.MutableRefObject< HTMLDivElement | null >;
-	gridSize?: string;
+	gridSize?: GridSize;
 }
 
 export interface FeaturesGridProps extends CommonGridProps {
 	gridPlans: GridPlan[];
 	currentPlanManageHref?: string;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
+	hideSpotlightPlan?: boolean;
 	gridPlanForSpotlight?: GridPlan;
 	isCustomDomainAllowedOnFreePlan: boolean; // indicate when a custom domain is allowed to be used with the Free plan.
 	paidDomainName?: string;

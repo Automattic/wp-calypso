@@ -3,15 +3,19 @@ import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { loadScript } from '@automattic/load-script';
 import wpcomRequest from 'wpcom-proxy-request';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import {
 	isGravPoweredOAuth2Client,
 	isWooOAuth2Client,
 	isPartnerPortalOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login as loginPath } from 'calypso/lib/paths';
+import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
+import wpcom from 'calypso/lib/wp';
 import { DesktopLoginStart, DesktopLoginFinalize } from 'calypso/login/desktop-login';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { postLoginRequest } from 'calypso/state/login/utils';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
