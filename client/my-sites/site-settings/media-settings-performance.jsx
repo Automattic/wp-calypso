@@ -61,12 +61,12 @@ class MediaSettingsPerformance extends Component {
 					label={ translate( 'Enable fast, ad-free video hosting' ) }
 					disabled={ isRequestingOrSaving }
 				/>
-				{ this.props.isVideoPressActive && this.renderVideoStorageAddOnIndicator() }
+				{ this.props.isVideoPressActive && this.renderVideoStorageIndicator() }
 			</FormFieldset>
 		);
 	}
 
-	renderVideoStorageAddOnIndicator() {
+	renderVideoStorageIndicator() {
 		const {
 			hasVideoPress,
 			mediaStorageLimit,
