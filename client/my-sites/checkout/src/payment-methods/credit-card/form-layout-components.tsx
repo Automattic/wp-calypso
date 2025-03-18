@@ -83,7 +83,7 @@ export const CreditCardFieldsWrapper = styled.div< { isLoaded?: boolean } >`
 	input[type='tel'],
 	input[type='number'],
 	input[type='search'] {
-		border-radius: 3px;
+		border-radius: 2px;
 	}
 `;
 
