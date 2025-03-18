@@ -46,7 +46,7 @@
 		"@wordpress/rich-text": "^7.20.0",
 		"@wordpress/router": "^1.20.0",
 		"@wordpress/url": "^4.20.0",
-		"debug": "^4.3.3",
+		"debug": "^4.4.0",
 		"lodash": "^4.17.21",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",

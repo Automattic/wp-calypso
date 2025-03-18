@@ -48,7 +48,7 @@
 		"@wordpress/i18n": "^5.20.0",
 		"@wordpress/primitives": "^4.20.0",
 		"@wordpress/url": "^4.20.0",
-		"debug": "^4.3.3",
+		"debug": "^4.4.0",
 		"fast-json-stable-stringify": "^2.1.0",
 		"i18n-calypso": "workspace:^",
 		"qs": "^6.9.1",
