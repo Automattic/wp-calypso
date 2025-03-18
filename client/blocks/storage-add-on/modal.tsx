@@ -3,7 +3,7 @@ import { Site, StorageAddOnSlug, AddOns } from '@automattic/data-stores';
 // eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 import { __experimentalConfirmDialog as ConfirmDialog } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useStorageLimitOverride } from 'calypso/lib/plans/use-storage-limit-override';
 import { StorageAddOnDropdown } from './dropdown';
@@ -36,17 +36,11 @@ const StorageAddOnModal: React.FC< StorageAddOnModalProps > = ( { isOpen, siteId
 		recordTracksEvent( 'calypso_storage_add_on_modal_action_cancel_click' );
 	};
 
-	useEffect( () => {
-		if ( isOpen ) {
-			recordTracksEvent( 'calypso_storage_add_on_modal_open' );
-		}
-	}, [ isOpen ] );
-
 	const maxStorageBytesOverride = useStorageLimitOverride( {
 		currentStorageBytes: mediaStorage?.maxStorageBytes,
 		siteId,
 	} );
-	if ( mediaStorage ) {
+	if ( mediaStorage && maxStorageBytesOverride ) {
 		mediaStorage.maxStorageBytes = maxStorageBytesOverride;
 	}
 

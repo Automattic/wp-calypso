@@ -14,14 +14,14 @@ export function useStorageLimitOverride( {
 }: {
 	currentStorageBytes?: number;
 	siteId: number | null;
-} ): number {
+} ): number | undefined {
 	const legacySiteWithHigherLimits = useSelector( ( state ) =>
 		isLegacySiteWithHigherLimits( state, siteId )
 	);
 	const sitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
 
 	if ( ! currentStorageBytes ) {
-		return 0;
+		return currentStorageBytes;
 	}
 
 	if ( ! sitePlanSlug ) {
@@ -38,14 +38,17 @@ export function useStorageLimitOverride( {
 		! legacySiteWithHigherLimits &&
 		currentStorageBytes === 3072 * 1024 * 1024
 	) {
+		// 1GB
 		return 1024 * 1024 * 1024;
 	}
 
 	if ( sitePlanSlug === PLAN_WPCOM_PRO ) {
+		// 50GB
 		return 50 * 1024 * 1024 * 1024;
 	}
 
 	if ( sitePlanSlug === PLAN_WPCOM_STARTER ) {
+		// 6GB
 		return 6 * 1024 * 1024 * 1024;
 	}
 

@@ -87,7 +87,7 @@ export default function PlanStorage( {
 		currentStorageBytes: mediaStorage?.maxStorageBytes,
 		siteId,
 	} );
-	if ( mediaStorage ) {
+	if ( mediaStorage && maxStorageBytesOverride ) {
 		mediaStorage.maxStorageBytes = maxStorageBytesOverride;
 	}
 
