@@ -234,7 +234,7 @@ export function googleAuth( context, next ) {
 	}
 
 	// Helper to get the redirect URI for Google OAuth
-	const getRedirectUri = () => `${ window.location.host }${ window.location.pathname }`;
+	const getRedirectUri = () => `https://${ window.location.host }${ window.location.pathname }`;
 
 	// Helper to create authentication parameters and redirect
 	const redirectWithAuthParams = ( accessToken, idToken, redirectTo = '/' ) => {
@@ -265,7 +265,7 @@ export function googleAuth( context, next ) {
 	const handleSocialResponseFromRedirect = async () => {
 		const urlParams = new URLSearchParams( window.location.search );
 		const code = urlParams.get( 'code' );
-		const stateParam = urlParams.get( 'state' );
+		const stateString = urlParams.get( 'state' );
 		const error = urlParams.get( 'error' );
 
 		// Not a redirect from Google if no code or error present
@@ -280,20 +280,33 @@ export function googleAuth( context, next ) {
 		}
 
 		try {
-			// Validate state parameter with improved security
-			if ( ! stateParam ) {
+			const storedNonce = window.sessionStorage.getItem( 'google_oauth_nonce' );
+			window.sessionStorage.removeItem( 'google_oauth_nonce' );
+
+			if ( ! storedNonce || ! stateString ) {
 				throw new Error( 'Missing state parameter' );
 			}
 
-			const stateObject = JSON.parse( stateParam );
+			let state;
 
-			const state = {
-				redirect_to: stateObject.redirect_to || '/',
-				is_jetpack: stateObject.is_jetpack || true,
-				locale: stateObject.locale || getLocaleSlug(),
-				wpcomNonce: stateObject.wpcomNonce || '',
-				queryParams: stateObject.queryParams || {},
-			};
+			try {
+				const stateData = JSON.parse( stateString );
+
+				if ( stateData.wpcomNonce !== storedNonce ) {
+					throw new Error();
+				}
+
+				state = {
+					redirect_to: stateData.redirect_to || '/',
+					is_jetpack: stateData.is_jetpack || true,
+					locale: stateData.locale || getLocaleSlug(),
+					wpcomNonce: stateData.wpcomNonce || '',
+					queryParams: stateData.queryParams || {},
+				};
+			} catch {
+				// Not a valid JSON, and not a direct match - state validation fails
+				throw new Error( 'Invalid state parameter' );
+			}
 
 			// Exchange auth code for tokens
 			const response = await postLoginRequest( 'exchange-social-auth-code', {
@@ -384,6 +397,9 @@ export function googleAuth( context, next ) {
 				wpcomNonce: nonce,
 				queryParams: { ...query },
 			};
+
+			// Store nonce in sessionStorage for validation on callback
+			window.sessionStorage.setItem( 'google_oauth_nonce', nonce );
 
 			// Load Google Identity Services API if not already loaded
 			if ( ! window?.google?.accounts?.oauth2 ) {
