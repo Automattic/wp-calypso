@@ -32,7 +32,7 @@ export const LabelText = styled.span`
 	color: ${ ( props ) => props.theme.colors.textColor };
 `;
 
-export const StripeFieldWrapper = styled.span< { hasError?: boolean } >`
+export const StripeFieldWrapper = styled.span< { hasError?: boolean; isDisabled?: boolean } >`
 	position: relative;
 	display: block;
 
@@ -56,6 +56,9 @@ export const StripeFieldWrapper = styled.span< { hasError?: boolean } >`
 	.StripeElement--focus.StripeElement--invalid {
 		outline: ${ ( props ) => props.theme.colors.error } solid 2px;
 	}
+
+	background: ${ ( props ) => props.isDisabled && props.theme.colors.disabledField };
+	cursor: ${ ( props ) => props.isDisabled && 'default' };
 `;
 
 export const StripeErrorMessage = styled.span`

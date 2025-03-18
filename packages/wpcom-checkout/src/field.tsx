@@ -131,6 +131,7 @@ const Input = styled.input< {
 
 	:disabled {
 		background: ${ ( props ) => props.theme.colors.disabledField };
+		color: var( --studio-gray-20 );
 	}
 `;
 
