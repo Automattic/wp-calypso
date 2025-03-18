@@ -1,8 +1,13 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/onboarding/styles/mixins";
 
 .import-or-migrate {
 	max-width: 502px;
+
+	.step-container__content {
+		@include onboarding-block-margin;
+	}
 
 	.onboarding-title {
 		font-size: 2.75rem;
@@ -23,6 +28,8 @@
 		flex-direction: column;
 
 		@include break-mobile {
+			margin-left: 1em;
+			margin-right: 1em;
 			padding-bottom: revert;
 		}
 

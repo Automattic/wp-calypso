@@ -1,7 +1,10 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/breakpoints";
+@import "@automattic/onboarding/styles/mixins";
 
 .step-route.site-migration-instructions {
+	@include onboarding-block-margin;
+
 	.step-container {
 		padding: 0 0 60px;
 
