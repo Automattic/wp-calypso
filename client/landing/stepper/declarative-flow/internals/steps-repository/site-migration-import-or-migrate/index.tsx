@@ -30,12 +30,12 @@ const SiteMigrationImportOrMigrate: Step< {
 	const isUpgradeRequired = ! siteCanInstallPlugins;
 
 	const options = useMemo( () => {
-		const upgradeRequiredLabel = translate( '50% off %(planName)s', {
+		const upgradeRequiredLabel = translate( 'Available on %(planName)s with 50% off', {
 			args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
 		} );
 
 		const migrateOptionDescription = translate(
-			"For WordPress sites. Move all your site's content, themes, plugins, and users to WordPress.com."
+			"Best for WordPress sites. Seamlessly move all your site's content, themes, plugins, users, and customizations to WordPress.com."
 		);
 
 		return [
