@@ -1,6 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getLanguage, addLocaleToPath } from '@automattic/i18n-utils';
-import { createInterpolateElement, useCallback, useEffect, useState } from '@wordpress/element';
+import {
+	createInterpolateElement,
+	useCallback,
+	useEffect,
+	useState,
+	useMemo,
+} from '@wordpress/element';
 import { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryLocaleSuggestions from 'calypso/components/data/query-locale-suggestions';
@@ -20,43 +26,61 @@ interface LocaleSuggestionsProps {
 	path: string;
 }
 
-const LocaleSuggestions = ( { locale: localeFromProps, path }: LocaleSuggestionsProps ) => {
-	const translate = useTranslate();
-	const [ dismissed, setDismissed ] = useState( false );
-	const dispatch = useDispatch();
+/**
+ * React hook that detects the user's preferred locale from browser settings
+ * Returns undefined if no supported locale is found
+ */
+const useBrowserLocale = (): string | undefined => {
+	return useMemo( () => {
+		if ( typeof navigator === 'object' && 'languages' in navigator ) {
+			for ( const langSlug of navigator.languages ) {
+				const language = getLanguage( langSlug.toLowerCase() );
+				if ( language ) {
+					return language.langSlug;
+				}
+			}
+		}
+
+		return undefined;
+	}, [] );
+};
+
+/**
+ * React hook that returns the user's other locales from the locale suggestions
+ * Returns an empty array if no other locales are found
+ */
+const useUsersOtherLocales = () => {
 	const localeSuggestions = useSelector( getLocaleSuggestions ) as LocaleSuggestion[] | null;
+	const currentLocaleSlug = getLocaleSlug() ?? '';
+
+	return useMemo(
+		() =>
+			localeSuggestions?.filter( ( locale ) => ! currentLocaleSlug.startsWith( locale.locale ) ) ??
+			[],
+		[ localeSuggestions, currentLocaleSlug ]
+	);
+};
+
+/**
+ * React hook that returns the translated string for locale suggestions
+ * Returns null if there are no other locales to suggest
+ */
+const useTranslatedString = ( {
+	path,
+	onLocaleSuggestionClick,
+}: {
+	path: string;
+	onLocaleSuggestionClick: (
+		event: React.MouseEvent< HTMLAnchorElement >,
+		localeSlug: string
+	) => void;
+} ) => {
+	const translate = useTranslate();
+	const usersOtherLocales = useUsersOtherLocales();
 
 	const getPathWithLocale = useCallback(
 		( localeSlug: string ) => addLocaleToPath( path, localeSlug ),
 		[ path ]
-	);
-
-	const recordLocaleSuggestionClick = useCallback(
-		( localeSlug: string ) => {
-			recordTracksEvent( 'calypso_locale_suggestion_click', {
-				sourceLocale: getLocaleSlug(),
-				targetLocale: localeSlug,
-				path,
-			} );
-		},
-		[ path ]
-	);
-
-	const handleLocaleSuggestionClick = useCallback(
-		( event: React.MouseEvent< HTMLAnchorElement >, localeSlug: string ) => {
-			recordLocaleSuggestionClick( localeSlug );
-
-			const localeData = getLanguage( localeSlug );
-			const currentLocaleData = getLanguage( getLocaleSlug() ?? undefined );
-
-			if ( localeData?.rtl !== currentLocaleData?.rtl ) {
-				event.preventDefault();
-				window.location.assign( getPathWithLocale( localeSlug ) );
-			}
-
-			setDismissed( true );
-		},
-		[ getPathWithLocale, recordLocaleSuggestionClick ]
 	);
 
 	const createLinkElement = useCallback(
@@ -64,34 +88,33 @@ const LocaleSuggestions = ( { locale: localeFromProps, path }: LocaleSuggestions
 			<a
 				key={ localeItem.locale }
 				href={ getPathWithLocale( localeItem.locale ) }
-				onClick={ ( event ) => handleLocaleSuggestionClick( event, localeItem.locale ) }
+				onClick={ ( event ) => onLocaleSuggestionClick( event, localeItem.locale ) }
 				className="locale-suggestions__locale-link"
 			/>
 		),
-		[ getPathWithLocale, handleLocaleSuggestionClick ]
+		[ getPathWithLocale, onLocaleSuggestionClick ]
 	);
 
-	const usersOtherLocales =
-		localeSuggestions?.filter(
-			( locale ) => ! ( getLocaleSlug() ?? '' ).startsWith( locale.locale )
-		) ?? [];
+	return useMemo( () => {
+		if ( 0 === usersOtherLocales.length ) {
+			return null;
+		}
 
-	let translatedString;
-	if ( 0 === usersOtherLocales.length ) {
-		translatedString = null;
-	} else if ( 1 === usersOtherLocales.length ) {
-		const locale = usersOtherLocales[ 0 ];
-		translatedString = createInterpolateElement(
-			translate( 'Also available in %(language)s', {
-				args: { language: `<link>${ locale.name }</link>` },
-				comment:
-					'language is a single translated name e.g. in Greek for Greek, in French for French',
-			} ) as string,
-			{
-				link: createLinkElement( locale ),
-			}
-		);
-	} else {
+		if ( 1 === usersOtherLocales.length ) {
+			const locale = usersOtherLocales[ 0 ];
+
+			return createInterpolateElement(
+				translate( 'Also available in %(language)s', {
+					args: { language: `<link>${ locale.name }</link>` },
+					comment:
+						'language is a single translated name e.g. in Greek for Greek, in French for French',
+				} ) as string,
+				{
+					link: createLinkElement( locale ),
+				}
+			);
+		}
+
 		// An object of link elements for interpolation
 		const links = Object.fromEntries(
 			usersOtherLocales.map( ( locale, index ) => [
@@ -105,7 +128,7 @@ const LocaleSuggestions = ( { locale: localeFromProps, path }: LocaleSuggestions
 			( locale, index ) => `<link${ index }>${ locale.name }</link${ index }>`
 		);
 
-		translatedString = createInterpolateElement(
+		return createInterpolateElement(
 			translate( 'Also available in %(allButLastLanguage)s and %(lastLanguage)s', {
 				args: {
 					allButLastLanguage: languages.slice( 0, -1 ).join( ', ' ),
@@ -116,23 +139,43 @@ const LocaleSuggestions = ( { locale: localeFromProps, path }: LocaleSuggestions
 			} ) as string,
 			links
 		);
-	}
+	}, [ usersOtherLocales, translate, createLinkElement ] );
+};
+
+const LocaleSuggestions = ( { locale: localeFromProps, path }: LocaleSuggestionsProps ) => {
+	const [ dismissed, setDismissed ] = useState( false );
+	const dispatch = useDispatch();
+	const browserLocale = useBrowserLocale();
+
+	const handleLocaleSuggestionClick = useCallback(
+		( event: React.MouseEvent< HTMLAnchorElement >, localeSlug: string ) => {
+			recordTracksEvent( 'calypso_locale_suggestion_click', {
+				sourceLocale: getLocaleSlug(),
+				targetLocale: localeSlug,
+				path,
+			} );
+
+			const localeData = getLanguage( localeSlug );
+			const currentLocaleData = getLanguage( getLocaleSlug() ?? undefined );
+
+			if ( localeData?.rtl !== currentLocaleData?.rtl ) {
+				event.preventDefault();
+				window.location.assign( addLocaleToPath( path, localeSlug ) );
+			}
+
+			setDismissed( true );
+		},
+		[ path ]
+	);
+
+	const translatedString = useTranslatedString( {
+		path,
+		onLocaleSuggestionClick: handleLocaleSuggestionClick,
+	} );
 
 	useEffect( () => {
-		let locale = localeFromProps;
-
-		if ( ! locale && typeof navigator === 'object' && 'languages' in navigator ) {
-			for ( const langSlug of navigator.languages ) {
-				const language = getLanguage( langSlug.toLowerCase() );
-				if ( language ) {
-					locale = language.langSlug;
-					break;
-				}
-			}
-		}
-
-		dispatch( setLocale( locale ?? '' ) );
-	}, [ localeFromProps, dispatch ] );
+		dispatch( setLocale( localeFromProps ?? browserLocale ?? '' ) );
+	}, [ localeFromProps, browserLocale, dispatch ] );
 
 	if ( dismissed ) {
 		return null;
