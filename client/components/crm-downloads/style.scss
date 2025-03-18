@@ -13,7 +13,11 @@
 		padding: 1.25rem;
 		background-color: var(--color-surface, #fff);
 		position: relative;
-		border: 1px solid var(--color-border-subtle, #dcdcde);
+	}
+	
+	// Specific styling for agencies version
+	.crm-downloads-agencies & .manage-purchase__license-clipboard-container {
+		margin-top: 0;
 	}
 	
 	// Specific styling for agencies version
@@ -153,6 +157,11 @@
 		@media (max-width: 600px) {
 			display: block;
 			border-bottom: 1px solid var(--color-border-subtle, #dcdcde);
+			padding: 0;
+			
+			&:first-child {
+				padding-top: 0;
+			}
 		}
 	}
 
