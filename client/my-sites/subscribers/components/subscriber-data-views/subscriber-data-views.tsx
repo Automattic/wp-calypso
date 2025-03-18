@@ -227,7 +227,7 @@ const SubscriberDataViews = ( {
 					text: 'Subscription Type',
 					newCopy: translate( 'Subscription Type' ),
 					oldCopy: translate( 'Plan' ),
-				} ), //id is still plan because WPCOM expects 'plan' for filtering, sorting etc.
+				} ) as string,
 				getValue: ( { item }: { item: Subscriber } ) =>
 					item.plans?.length ? SubscribersFilterBy.Paid : SubscribersFilterBy.Free,
 				render: ( { item }: { item: Subscriber } ) => <SubscriptionTypeCell subscriber={ item } />,
