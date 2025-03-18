@@ -104,7 +104,7 @@ const useEligibilityForTermSavingsPriceDisplay = ( {
 	} );
 
 	const [ isLoading, experimentAssignment ] = useExperiment(
-		'calypso_plans_page_emphasize_longer_term_savings_v2',
+		'wpcom_plans_page_emphasize_longer_term_savings',
 		{
 			isEligible: ! isAnyGridPlanDiscounted,
 		}
