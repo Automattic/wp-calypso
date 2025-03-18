@@ -1,14 +1,14 @@
 import React from 'react';
 import { ReadyStep } from 'calypso/blocks/import/ready';
-import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { useSelector } from 'calypso/state';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { ImportWrapper } from '../import';
 import { BASE_ROUTE } from '../import/config';
 import { getFinalImporterUrl } from '../import/helper';
+import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import type { ImporterPlatform } from 'calypso/lib/importer/types';
 
 const ImportReady: Step< { submits: { platform: ImporterPlatform; url: string } } > =
 	function ImportStep( props ) {

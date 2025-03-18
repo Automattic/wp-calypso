@@ -1,9 +1,9 @@
 import ListStep from 'calypso/blocks/import/list';
-import { type Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
-import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { ImportWrapper } from '../import';
 import { getFinalImporterUrl } from '../import/helper';
+import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import type { ImporterPlatform } from 'calypso/lib/importer/types';
 
 const ImportList: Step< {
 	submits: {

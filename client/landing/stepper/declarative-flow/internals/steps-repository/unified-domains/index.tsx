@@ -1,7 +1,7 @@
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import { DomainSuggestion } from '@automattic/data-stores';
 import { useStepPersistedState } from '@automattic/onboarding';
-import { withShoppingCart, ResponseCartProduct } from '@automattic/shopping-cart';
+import { withShoppingCart, type ResponseCartProduct } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import { connect } from 'react-redux';
@@ -31,8 +31,8 @@ import { removeStep } from 'calypso/state/signup/progress/actions';
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
-import { ProvidedDependencies, Step } from '../../types';
 import { useIsManagedSiteFlowProps } from './use-is-managed-site-flow';
+import type { ProvidedDependencies, Step } from '../../types';
 
 type DomainStepSubmittedTypes = {
 	stepName?: 'domains';

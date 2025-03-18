@@ -1,6 +1,6 @@
 import { useDispatch } from '@wordpress/data';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { Navigate, StepperStep } from '../declarative-flow/internals/types';
+import type { Navigate, StepperStep } from '../declarative-flow/internals/types';
 
 type UseExitFlowParams =
 	| { processing: true; navigate: Navigate< StepperStep[] > }

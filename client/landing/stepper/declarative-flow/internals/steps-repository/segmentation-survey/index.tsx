@@ -3,8 +3,8 @@ import Main from 'calypso/components/main';
 import SegmentationSurvey from 'calypso/components/segmentation-survey';
 import useSegmentationSurveyTracksEvents from 'calypso/components/segmentation-survey/hooks/use-segmentation-survey-tracks-events';
 import { useHash } from 'calypso/landing/stepper/hooks/use-hash';
+import type { Step } from '../../types';
 import './style.scss';
-import { Step } from '../../types';
 
 export const ENTREPRENEUR_TRIAL_SURVEY_KEY = 'entrepreneur-trial';
 const WHAT_WOULD_YOU_LIKE_TO_DO_QUESTION_KEY = 'what-would-you-like-to-do';

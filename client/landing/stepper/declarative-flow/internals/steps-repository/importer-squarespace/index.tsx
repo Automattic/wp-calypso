@@ -1,6 +1,6 @@
 import SquarespaceImporter from 'calypso/blocks/importer/squarespace';
-import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { withImporterWrapper } from '../importer';
+import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import './style.scss';
 
 const Importer = withImporterWrapper( SquarespaceImporter );

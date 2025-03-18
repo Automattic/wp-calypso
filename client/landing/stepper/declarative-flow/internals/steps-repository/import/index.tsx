@@ -11,8 +11,8 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { BASE_ROUTE } from './config';
 import { generateStepPath } from './helper';
 import type { Step } from '../../types';
-import './style.scss';
 import type { ImporterPlatform } from 'calypso/lib/importer/types';
+import './style.scss';
 
 export const ImportWrapper: Step< {
 	submits: {

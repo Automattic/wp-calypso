@@ -23,7 +23,7 @@ export const Scanning = () => {
 
 const SiteMigrationOtherPlatform: Step< {
 	submits: {
-		action: 'import' | string;
+		action: 'import' | 'skip';
 		platform?: ImporterPlatform | null;
 	};
 } > = function ( { navigation } ) {

@@ -9,11 +9,11 @@ import { MigrationStatus } from 'calypso/data/site-migration/landing/types';
 import { useUpdateMigrationStatus } from 'calypso/data/site-migration/landing/use-update-migration-status';
 import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { CredentialsForm } from './components/credentials-form';
 import { NeedHelpLink } from './components/need-help-link';
 import { ApplicationPasswordsInfo } from './types';
 import type { Step } from '../../types';
+import type { ImporterPlatform } from 'calypso/lib/importer/types';
 import './style.scss';
 
 const getAction = ( siteInfo?: UrlData, applicationPasswordsInfo?: ApplicationPasswordsInfo ) => {
