@@ -318,10 +318,24 @@ class PostComment extends PureComponent {
 		} else if ( commentAuthor.site_ID ) {
 			commentAuthorUrl = getStreamUrl( null, commentAuthor.site_ID );
 		} else {
-			commentAuthorUrl = commentAuthor?.URL;
+			const urlToCheck = commentAuthor?.URL;
+			if ( urlToCheck && this.isValidUrl( urlToCheck ) ) {
+				commentAuthorUrl = urlToCheck;
+			}
 		}
 
 		return { comment, commentAuthor, commentAuthorUrl, commentAuthorName };
+	};
+
+	isValidUrl = ( url ) => {
+		try {
+			// URL constructor throws an error if the URL is invalid.
+			const urlObject = new URL( url );
+			// Only allow http or https URLs.
+			return urlObject.protocol === 'http:' || urlObject.protocol === 'https:';
+		} catch ( e ) {
+			return false;
+		}
 	};
 
 	renderAuthorTag = ( { authorName, authorUrl, commentId, className } ) => {
