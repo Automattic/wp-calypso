@@ -6,7 +6,8 @@ import {
 	loadBlocksWithCustomizations,
 	loadTextFormatting,
 } from '@automattic/verbum-block-editor';
-import { Button } from '@wordpress/components';
+import { Button, Icon } from '@wordpress/components';
+import { external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
@@ -148,6 +149,10 @@ function QuickPost( {
 		return translate( 'Post' );
 	};
 
+	const handleFullEditorClick = () => {
+		recordReaderTracksEvent( 'calypso_reader_quick_post_full_editor_opened' );
+	};
+
 	if ( ! hasLoaded ) {
 		return (
 			<div className="quick-post-input quick-post-input--loading">
@@ -171,6 +176,18 @@ function QuickPost( {
 						onSiteSelect={ handleSiteSelect }
 						isPlaceholder={ ! hasLoaded }
 					/>
+					<div>
+						<a
+							href={ selectedSiteId ? `/post/${ selectedSiteId }?type=post` : '/post' }
+							className="quick-post-input__open-full-editor-link"
+							target="_blank"
+							rel="noreferrer"
+							onClick={ handleFullEditorClick }
+						>
+							{ translate( 'Open Full Editor' ) }
+							<Icon icon={ external } />
+						</a>
+					</div>
 				</div>
 				<div className="verbum-editor-wrapper" ref={ editorRef }>
 					<Editor

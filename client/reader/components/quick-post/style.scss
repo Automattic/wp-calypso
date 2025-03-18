@@ -13,6 +13,9 @@
 
 	&__site-select-wrapper {
 		margin-bottom: 16px;
+		display: flex;
+		justify-content: space-between;
+		align-items: end;
 
 		.sites-dropdown__wrapper {
 			border-color: var( --color-border-subtle );
@@ -27,6 +30,12 @@
 		.sites-dropdown.is-open .sites-dropdown__wrapper {
 			border-radius: 6px 6px 0 0;
 		}
+	}
+
+	&__open-full-editor-link {
+		display: flex;
+		align-items: center;
+		gap: 4px;
 	}
 
 	&__actions {
