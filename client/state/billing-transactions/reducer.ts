@@ -21,7 +21,7 @@ export const items = withSchemaValidation(
 		switch ( action.type ) {
 			case BILLING_TRANSACTIONS_RECEIVE: {
 				const { past, upcoming } = action;
-				const update: BillingTransactionsStateItems = {};
+				const update: BillingTransactionsStateItems = { ...state };
 				if ( past ) {
 					update.past = past;
 				}

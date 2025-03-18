@@ -107,6 +107,47 @@ describe( 'reducer', () => {
 			expect( state ).toEqual( billingTransactions );
 		} );
 
+		test( 'should keep previous billing transactions if query filtered', () => {
+			const prevState = {
+				past: [
+					{
+						id: '11223344',
+						amount: '$3.43',
+						desc: 'test',
+					},
+				],
+				upcoming: [
+					{
+						id: '88776655',
+						amount: '$1.11',
+						product: 'example',
+					},
+				],
+			};
+
+			// Keep previous upcoming transactions if only updating past transactions
+			const stateWithUpdatedPast = items( deepFreeze( prevState ), {
+				type: BILLING_TRANSACTIONS_RECEIVE,
+				past: billingTransactions.past,
+			} );
+
+			expect( stateWithUpdatedPast ).toEqual( {
+				upcoming: prevState.upcoming,
+				past: billingTransactions.past,
+			} );
+
+			// Keep previous past transactions if only updating upcoming transactions
+			const stateWIthUpdatedUpcoming = items( deepFreeze( prevState ), {
+				type: BILLING_TRANSACTIONS_RECEIVE,
+				upcoming: billingTransactions.upcoming,
+			} );
+
+			expect( stateWIthUpdatedUpcoming ).toEqual( {
+				past: prevState.past,
+				upcoming: billingTransactions.upcoming,
+			} );
+		} );
+
 		test( 'should persist state', () => {
 			const state = serialize( items, deepFreeze( billingTransactions ) );
 
