@@ -1016,8 +1016,8 @@ class MagicLogin extends Component {
 			emailAddress: query?.email_address,
 		} );
 		let headerText = isFromGravatarSignup
-			? translate( 'Create your Profile' )
-			: translate( 'Edit your Profile' );
+			? translate( 'Create your Gravatar' )
+			: translate( 'Edit your Gravatar' );
 		headerText = isWPJobManager ? translate( 'Sign in with your email' ) : headerText;
 		let subHeader = '';
 
