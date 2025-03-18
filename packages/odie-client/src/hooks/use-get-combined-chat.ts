@@ -119,6 +119,14 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 
 		setMainChatState( ( prevChat ) => {
 			if ( odieId || conversationId ) {
+				// when we have the same support interaction we don't need to load the messages
+				if ( prevChat?.supportInteractionId === currentSupportInteraction!.uuid ) {
+					return {
+						...prevChat,
+						status: 'loaded',
+					};
+				}
+
 				return {
 					...prevChat,
 					supportInteractionId: currentSupportInteraction!.uuid,
