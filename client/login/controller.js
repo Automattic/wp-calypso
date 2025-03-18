@@ -280,10 +280,28 @@ export function googleAuth( context, next ) {
 		}
 
 		try {
-			// Validate state parameter
-			const stateObject = stateParam ? JSON.parse( stateParam ) : null;
-			if ( ! stateObject || ! stateObject.wpcomNonce ) {
-				throw new Error( 'Invalid state parameter' );
+			// Validate state parameter with improved security
+			if ( ! stateParam ) {
+				throw new Error( 'Missing state parameter' );
+			}
+
+			// Safely parse the state parameter with proper error handling
+			let stateObject;
+			try {
+				stateObject = JSON.parse( stateParam );
+			} catch ( parseError ) {
+				throw new Error( 'Invalid state parameter format' );
+			}
+
+			// Perform thorough validation of the state object
+			if (
+				! stateObject ||
+				typeof stateObject !== 'object' ||
+				! stateObject.wpcomNonce ||
+				typeof stateObject.wpcomNonce !== 'string' ||
+				stateObject.wpcomNonce.length === 0
+			) {
+				throw new Error( 'Invalid state parameter structure' );
 			}
 
 			// Exchange auth code for tokens
