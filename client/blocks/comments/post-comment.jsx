@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon, TimeSince } from '@automattic/components';
+import { isURL, getProtocol } from '@wordpress/url';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, some, flatMap } from 'lodash';
@@ -319,23 +320,15 @@ class PostComment extends PureComponent {
 			commentAuthorUrl = getStreamUrl( null, commentAuthor.site_ID );
 		} else {
 			const urlToCheck = commentAuthor?.URL;
-			if ( urlToCheck && this.isValidUrl( urlToCheck ) ) {
-				commentAuthorUrl = urlToCheck;
+			if ( urlToCheck && isURL( urlToCheck ) ) {
+				const protocol = getProtocol( urlToCheck );
+				if ( protocol === 'http:' || protocol === 'https:' ) {
+					commentAuthorUrl = urlToCheck;
+				}
 			}
 		}
 
 		return { comment, commentAuthor, commentAuthorUrl, commentAuthorName };
-	};
-
-	isValidUrl = ( url ) => {
-		try {
-			// URL constructor throws an error if the URL is invalid.
-			const urlObject = new URL( url );
-			// Only allow http or https URLs.
-			return urlObject.protocol === 'http:' || urlObject.protocol === 'https:';
-		} catch ( e ) {
-			return false;
-		}
 	};
 
 	renderAuthorTag = ( { authorName, authorUrl, commentId, className } ) => {
