@@ -4,6 +4,7 @@ import { CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT } from 'calypso/a8c-for-agencies
 import CopyToClipboardButton from 'calypso/a8c-for-agencies/components/copy-to-clipboard-button';
 import PageSectionColumns from 'calypso/a8c-for-agencies/components/page-section-columns';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
+import { extractStrings } from 'calypso/a8c-for-agencies/lib/translation';
 import backgroundImage1 from 'calypso/assets/images/a8c-for-agencies/woopayments/background-image-1.svg';
 import cartImage from 'calypso/assets/images/a8c-for-agencies/woopayments/cart.png';
 import ccImage from 'calypso/assets/images/a8c-for-agencies/woopayments/cc-image.png';
@@ -13,34 +14,6 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import AddWooPaymentsToSite from '../../add-woopayments-to-site';
 
-type Item =
-	| string
-	| number
-	| {
-			props?: {
-				children?: Item | Item[];
-				href?: string;
-			};
-	  };
-
-function extractStrings( item: Item, result: string = '' ): string {
-	if ( typeof item === 'string' || typeof item === 'number' ) {
-		result += item;
-	} else if ( item?.props ) {
-		if ( Array.isArray( item.props.children ) ) {
-			for ( const child of item.props.children ) {
-				result = extractStrings( child, result );
-			}
-		} else if ( item.props.children ) {
-			result = extractStrings( item.props.children, result );
-		}
-
-		if ( item.props.href ) {
-			result += `: ${ item.props.href }`;
-		}
-	}
-	return result;
-}
 const WooPaymentsDashboardEmptyState = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -78,13 +51,91 @@ const WooPaymentsDashboardEmptyState = () => {
 			'Multi-Currency support is built-in. Accept payments in 135+ currencies using WooPayments.'
 		),
 		translate(
-			'Increase conversions by enabling payment methods including WooPay, Apple Pay®, Google Pay, iDeal, P24, EPS, and Bancontact.'
+			'Increase conversions by enabling payment methods including {{wooPay}}WooPay{{/wooPay}}, {{applePay}}Apple Pay®{{/applePay}}, {{googlePay}}Google Pay{{/googlePay}}, {{iDeal}}iDeal{{/iDeal}}, {{p24}}P24{{/p24}}, {{eps}}EPS{{/eps}}, and {{bancontact}}Bancontact{{/bancontact}}.',
+			{
+				components: {
+					wooPay: (
+						<a
+							href="https://woocommerce.com/woopay-businesses"
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+					applePay: (
+						<a
+							href="https://woocommerce.com/document/woopayments/payment-methods/apple-pay"
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+					googlePay: (
+						<a
+							href="https://woocommerce.com/document/woopayments/payment-methods/google-pay"
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+					iDeal: (
+						<a
+							href="https://woocommerce.com/woocommerce-payments-ideal"
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+					p24: (
+						<a
+							href="https://woocommerce.com/woopayments-p24"
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+					eps: (
+						<a
+							href="https://woocommerce.com/woocommerce-payments-eps"
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+					bancontact: (
+						<a
+							href="https://woocommerce.com/woocommerce-payments-bancontact"
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+				},
+			}
+		),
+		translate(
+			'You may be eligible to earn up to {{a}}20% discount on Payment Processing Fees{{/a}}.',
+			{
+				components: {
+					a: (
+						<a
+							href="https://woocommerce.com/terms-conditions/woopayments-promotion"
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+				},
+			}
 		),
 	];
 
 	const listItems2 = [
 		translate(
-			'Enable buy now, pay later (BNPL) in one click. Sell more and reach new customers with top BNPL options built into your dashboard (not available in all geographies).'
+			'Enable buy now, pay later (BNPL) in one click. Sell more and reach new customers with {{a}}top BNPL options{{/a}} built into your dashboard (not available in all geographies).',
+			{
+				components: {
+					a: (
+						<a
+							href="https://woocommerce.com/buy-now-pay-later"
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+				},
+			}
 		),
 		translate(
 			"Simplify your workflow. No more logging into third-party payment processor sites - manage everything from the comfort of your store's dashboard."
@@ -227,10 +278,18 @@ const WooPaymentsDashboardEmptyState = () => {
 				} }
 			>
 				<PageSectionColumns.Column>
-					<SimpleList applyCoreStyles items={ listItems1 } />
+					<SimpleList
+						className="woopayments-dashboard-empty-state__list"
+						applyCoreStyles
+						items={ listItems1 }
+					/>
 				</PageSectionColumns.Column>
 				<PageSectionColumns.Column>
-					<SimpleList applyCoreStyles items={ listItems2 } />
+					<SimpleList
+						className="woopayments-dashboard-empty-state__list"
+						applyCoreStyles
+						items={ listItems2 }
+					/>
 				</PageSectionColumns.Column>
 			</PageSectionColumns>
 
