@@ -1,4 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import config from '@automattic/calypso-config';
 import {
 	isPersonal,
 	isPremium,
@@ -110,6 +111,7 @@ import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features
 import {
 	getCancelPurchaseUrlFor,
 	getAddNewPaymentMethodUrlFor,
+	getDowngradeUrlFor,
 } from 'calypso/my-sites/purchases/paths';
 import { useSelector } from 'calypso/state';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
@@ -175,6 +177,7 @@ export interface ManagePurchaseProps {
 	cardTitle?: string;
 	getAddNewPaymentMethodUrlFor?: typeof getAddNewPaymentMethodUrlFor;
 	getCancelPurchaseUrlFor?: typeof getCancelPurchaseUrlFor;
+	getDowngradeUrlFor?: typeof getDowngradeUrlFor;
 	getChangePaymentMethodUrlFor?: GetChangePaymentMethodUrlFor;
 	getManagePurchaseUrlFor?: GetManagePurchaseUrlFor;
 	isSiteLevel?: boolean;
@@ -902,7 +905,7 @@ class ManagePurchase extends Component<
 		}
 		const { id } = purchase;
 
-		if ( ! canAutoRenewBeTurnedOff( purchase ) ) {
+		if ( ! canAutoRenewBeTurnedOff( purchase ) || ! isPlan( purchase ) ) {
 			return null;
 		}
 
@@ -944,6 +947,26 @@ class ManagePurchase extends Component<
 				<MaterialIcon icon="delete" className="card__icon" />
 				{ getCancelPurchaseNavText( purchase, translate ) }
 				{ this.renderRefundText() }
+			</CompactCard>
+		);
+	}
+
+	renderDowngradeNavItem() {
+		const { purchase, translate } = this.props;
+		if ( ! purchase ) {
+			return null;
+		}
+
+		if ( ! isPlan( purchase ) ) {
+			return null;
+		}
+
+		const link = this.props.getDowngradeUrlFor?.( this.props.siteSlug, purchase.id );
+
+		return (
+			<CompactCard href={ link } className="remove-purchase__card">
+				<MaterialIcon icon="arrow_down" className="card__icon" />
+				{ translate( 'Downgrade plan' ) }
 			</CompactCard>
 		);
 	}
@@ -1375,6 +1398,9 @@ class ManagePurchase extends Component<
 						{ this.renderEditPaymentMethodNavItem() }
 						{ this.renderReinstall() }
 						{ this.renderCancelPurchaseNavItem() }
+						{ config.isEnabled( 'plans/self-service-downgrade' )
+							? this.renderDowngradeNavItem()
+							: this.renderCancelPurchaseNavItem() }
 						{ this.renderCancelSurvey() }
 						{ this.renderRemovePurchaseNavItem() }
 					</>

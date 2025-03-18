@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { Downgrade } from 'calypso/me/purchases/downgrade';
 import { BillingHistory, ReceiptView } from 'calypso/my-sites/purchases/billing-history';
 import {
 	Purchases,
@@ -40,6 +41,16 @@ export const purchaseDetails = ( context, next ) => {
 export const purchaseCancel = ( context, next ) => {
 	context.primary = (
 		<PurchaseCancel
+			siteSlug={ context.params.site }
+			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+		/>
+	);
+	next();
+};
+
+export const planDowngrade = ( context, next ) => {
+	context.primary = (
+		<Downgrade
 			siteSlug={ context.params.site }
 			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 		/>

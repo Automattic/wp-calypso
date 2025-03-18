@@ -1,0 +1,189 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.is-section-me.is-global-sidebar-visible .purchases__downgrade.main {
+	height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
+}
+
+.downgrade__wrapper-card {
+	padding: 32px;
+	padding-top: 12px;
+
+	.purchases__downgrade & {
+		box-shadow: none;
+		padding: 0;
+	}
+}
+
+.downgrade__back .header-cake__back,
+.confirm-downgrade-domain__back .header-cake__back {
+	padding: 24px 0;
+	text-align: left;
+}
+
+.downgrade__right .purchases-site__header.card {
+	background: var(--studio-gray-0);
+	border-radius: 2px;
+
+	.site .site__content {
+		padding: 24px 18px;
+
+		@include break-mobile {
+			padding: 12px;
+		}
+	}
+}
+
+.downgrade__support-link {
+	color: var(--color-text-subtle);
+	font-size: $font-body-small;
+	margin-top: 12px;
+
+	.is-link {
+		font-size: $font-body-small;
+		text-decoration: none;
+	}
+}
+
+.downgrade__inner-wrapper {
+	display: flex;
+	flex-direction: column-reverse;
+	margin-bottom: 24px;
+
+	@include break-large {
+		display: grid;
+		grid-template-columns: 7fr 3fr;
+		gap: 32px;
+	}
+}
+
+.confirm-downgrade-domain__formatted-header.formatted-header,
+.downgrade__formatted-header.formatted-header {
+	margin: 16px 0;
+}
+
+.downgrade__features {
+	ul.downgrade__features-list {
+		list-style: none;
+		margin: 1.5em;
+		margin-bottom: 0;
+
+		@include break-mobile {
+			column-count: 2;
+			column-gap: 20px;
+		}
+
+		li {
+			list-style: none;
+			display: flex;
+			margin-bottom: 12px;
+			font-size: $font-body-small;
+
+			span {
+				margin: auto 0;
+				flex: 1;
+			}
+
+			.gridicon {
+				color: var(--color-error-40);
+			}
+		}
+	}
+}
+
+.downgrade__features-link {
+	text-align: right;
+
+	a {
+		color: var(--color-text-subtle);
+		font-size: $font-body-small;
+		text-decoration: underline;
+	}
+}
+
+.downgrade__warning-string {
+	color: var(--color-error);
+	font-weight: 600;
+}
+
+.downgrade__confirm-buttons {
+	display: flex;
+	margin-top: 24px;
+
+	.form-button {
+		margin-right: 8px;
+	}
+}
+
+// Reuse the same styles as the cancel purchase component for consistency
+.downgrade__purchase-name {
+	font-size: $font-body;
+	font-weight: 600;
+}
+
+.downgrade__product-information .product-link,
+.downgrade__refund-information,
+.downgrade__plan-description {
+	font-size: $font-body-small;
+}
+
+.downgrade__footer {
+	align-items: center;
+	display: flex;
+	justify-content: space-between;
+	gap: 8px;
+
+	.downgrade__footer-text {
+		flex-grow: 1;
+	}
+
+	.downgrade__button-wrapper {
+		flex-shrink: 0;
+	}
+
+	&::after {
+		display: none;
+	}
+}
+
+.downgrade__footer-text p {
+	font-size: $font-body-small;
+	margin: 0;
+
+	&.downgrade__refund-amount {
+		color: var(--color-success);
+	}
+
+	&.downgrade__expiration-text {
+		color: var(--color-error);
+	}
+}
+
+.downgrade__button {
+	@include breakpoint-deprecated( "<660px" ) {
+		width: 100%;
+	}
+}
+
+.purchases__downgrade .downgrade__inner-wrapper.card {
+	box-shadow: none;
+}
+
+// Loading placeholder styles (reusing from cancel-purchase)
+.downgrade-loading-placeholder__header {
+	height: 36px;
+	margin-bottom: 15px;
+	width: 70%;
+}
+
+.downgrade-loading-placeholder__reason {
+	height: 12px;
+	margin-bottom: 5px;
+	width: 60%;
+}
+
+.downgrade-loading-placeholder__subheader {
+	height: 24px;
+	margin-bottom: 10px;
+	width: 50%;
+}

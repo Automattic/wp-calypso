@@ -45,11 +45,11 @@ import {
 } from 'calypso/state/purchases/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
+import CancelPurchaseSupportLink from '../cancel-purchase-support-link/support-link';
 import CancelPurchaseButton from './button';
 import CancelPurchaseDomainOptions from './domain-options';
 import CancelPurchaseFeatureList from './feature-list';
 import CancelPurchaseRefundInformation from './refund-information';
-import CancelPurchaseSupportLink from './support-link';
 
 import './style.scss';
 
