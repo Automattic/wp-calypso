@@ -22,11 +22,10 @@ export default function PurchasesSite(
 				siteId?: number;
 		  }
 		| {
-				getManagePurchaseUrlFor?: ( slug: string, purchaseId: number ) => string;
+				getManagePurchaseUrlFor?: ( slug: string, purchaseId: string | number ) => string;
 				isPlaceholder?: false;
 				siteId: number;
 				purchases: Purchase[];
-				name: string | undefined;
 				slug: string;
 				cards: StoredPaymentMethod[];
 				showSite?: boolean;
@@ -41,7 +40,6 @@ export default function PurchasesSite(
 		getManagePurchaseUrlFor = managePurchase,
 		siteId,
 		purchases,
-		name,
 		slug,
 		cards,
 		showSite = false,
@@ -74,7 +72,6 @@ export default function PurchasesSite(
 						isJetpack={ isJetpackPlan( purchase ) || isJetpackProduct( purchase ) }
 						site={ site }
 						showSite={ showSite }
-						name={ name }
 						isBackupMethodAvailable={ isBackupMethodAvailable }
 					/>
 				);

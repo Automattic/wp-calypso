@@ -64,7 +64,6 @@ function SubscriptionsContent( {
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 					key={ selectedSite.ID }
 					siteId={ selectedSite.ID }
-					name={ selectedSite.name }
 					slug={ selectedSite.slug }
 					purchases={ purchases }
 					cards={ cards }
