@@ -62,14 +62,6 @@ export function acceptedNotice(
 							components: { site },
 						} ) }
 					</h3>
-					<p className="invites__intro">
-						{ i18n.translate(
-							'This is your site dashboard where you will be able to manage all aspects of %(site)s',
-							{
-								args: { site: siteTitle },
-							}
-						) }
-					</p>
 					<p>
 						{ i18n.translate(
 							'Not sure where to start? Head on over to {{a}}Learn WordPress{{/a}}.',
@@ -90,12 +82,6 @@ export function acceptedNotice(
 							components: { site },
 						} ) }
 					</h3>
-					<p className="invites__intro">
-						{ i18n.translate(
-							'This is your site dashboard where you can publish and manage your ' +
-								'own posts and the posts of others, as well as upload media.'
-						) }
-					</p>
 					<p>
 						{ i18n.translate(
 							'Not sure where to start? Head on over to {{a}}Learn WordPress{{/a}}.',
@@ -116,12 +102,6 @@ export function acceptedNotice(
 							components: { site },
 						} ) }
 					</h3>
-					<p className="invites__intro">
-						{ i18n.translate(
-							'This is your site dashboard where you can publish and ' +
-								'edit your own posts as well as upload media.'
-						) }
-					</p>
 					<p>
 						{ i18n.translate(
 							'Not sure where to start? Head on over to {{a}}Learn WordPress{{/a}}.',
@@ -142,11 +122,6 @@ export function acceptedNotice(
 							components: { site },
 						} ) }
 					</h3>
-					<p className="invites__intro">
-						{ i18n.translate(
-							'This is your sites dashboard where you can write and manage your own posts.'
-						) }
-					</p>
 				</div>,
 				{ displayOnNextPage, isPersistent },
 			];
