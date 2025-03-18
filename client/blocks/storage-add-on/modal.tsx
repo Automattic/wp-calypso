@@ -50,7 +50,7 @@ const StorageAddOnModal: React.FC< StorageAddOnModalProps > = ( { isOpen, siteId
 
 	return isOpen ? (
 		<ConfirmDialog
-			title="Add more storage"
+			title={ translate( 'Add more storage' ) }
 			onRequestClose={ onClose }
 			cancelButtonText={ translate( 'Cancel' ) }
 			confirmButtonText={ translate( 'Buy storage' ) }
@@ -58,7 +58,7 @@ const StorageAddOnModal: React.FC< StorageAddOnModalProps > = ( { isOpen, siteId
 			onConfirm={ onBuyStorage }
 		>
 			<p>{ translate( 'Make more space for high-quality photos, videos, and other media.' ) }</p>
-			<h2>{ translate( 'Storage Add-ON' ) }</h2>
+			<h2>{ translate( 'Storage add-on' ) }</h2>
 			<StorageAddOnDropdown
 				selectedStorageAddOnSlug={ selectedStorageAddOnSlug }
 				setSelectedStorageAddOnSlug={ setSelectedStorageAddOnSlug }

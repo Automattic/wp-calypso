@@ -1,5 +1,6 @@
 import { SiteMediaStorage, AddOns, StorageAddOnSlug } from '@automattic/data-stores';
 import filesize from 'filesize';
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 
 type Props = {
@@ -13,6 +14,7 @@ const StorageAddOnIndicator: React.FC< Props > = ( {
 	mediaStorage,
 	selectedStorageAddOnSlug,
 } ) => {
+	const translate = useTranslate();
 	const { maxStorageBytes, storageUsedBytes, maxStorageBytesFromAddOns } = mediaStorage;
 	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
 	const selectedStorageAddOn = storageAddOns?.find(
@@ -36,21 +38,21 @@ const StorageAddOnIndicator: React.FC< Props > = ( {
 		<div className="storage-indicator">
 			<div>
 				<div>{ newMaxStorage }</div>
-				<div>{ usedStorage } used</div>
+				<div>{ translate( '%(usedStorage)s used', { args: { usedStorage } } ) }</div>
 			</div>
 			<div className="storage-indicator__bar">
 				<div
 					className="storage-indicator__bar-existing"
-					style={ { width: `${ planStorageRatio * 100 }%` } }
+					style={ { width: `${ planStorageRatio * 100 }%`, backgroundColor: 'blue' } }
 				/>
 				<div
 					className="storage-indicator__bar-add-on"
-					style={ { width: `${ ( 1 - planStorageRatio ) * 100 }%` } }
+					style={ { width: `${ ( 1 - planStorageRatio ) * 100 }%`, backgroundColor: 'green' } }
 				/>
 			</div>
 			<div>
-				<div>{ planStorage } plan storage</div>
-				<div>{ addOnStorage } add-on storage</div>
+				<div>{ translate( '%(planStorage)s plan storage', { args: { planStorage } } ) }</div>
+				<div>{ translate( '%(addOnStorage)s add-on storage', { args: { addOnStorage } } ) }</div>
 			</div>
 		</div>
 	);
