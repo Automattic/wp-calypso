@@ -3,12 +3,21 @@ import Smooch from 'smooch';
 import type { ContactOption } from '../types';
 import type { ZendeskConversation, SupportInteraction } from '@automattic/odie-client';
 
-const hasMatchingInteraction = (
-	supportInteractions: SupportInteraction[],
-	conversation: ZendeskConversation
-) => {
-	return supportInteractions.some(
-		( interaction ) => interaction.uuid === conversation.metadata.supportInteractionId
+const isMatchingInteraction = (
+	supportInteraction: SupportInteraction,
+	supportInteractionId: string
+): boolean => {
+	return supportInteraction.uuid === supportInteractionId;
+};
+
+const filterConversations = (
+	conversations: ZendeskConversation[],
+	supportInteractions: SupportInteraction[]
+): ZendeskConversation[] => {
+	return conversations.filter( ( conversation ) =>
+		supportInteractions.some( ( interaction ) =>
+			isMatchingInteraction( interaction, conversation.metadata.supportInteractionId )
+		)
 	);
 };
 
@@ -151,9 +160,7 @@ export const filterAndUpdateConversationsWithStatus = (
 	conversations: ZendeskConversation[],
 	supportInteractions: SupportInteraction[]
 ) => {
-	const filteredConversations = conversations.filter( ( conversation ) =>
-		hasMatchingInteraction( supportInteractions, conversation )
-	);
+	const filteredConversations = filterConversations( conversations, supportInteractions );
 
 	const conversationWithUpdatedStatuses = filteredConversations.map( ( conversation ) => {
 		const supportInteraction = supportInteractions.find(
