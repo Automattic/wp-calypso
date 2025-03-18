@@ -44,7 +44,16 @@ class SecurityCheckupTwoFactorAuthentication extends Component {
 		} else {
 			icon = getOKIcon();
 
-			if ( hasTwoStepSmsEnabled ) {
+			if ( hasTwoStepEnhancedSecurity ) {
+				description = translate(
+					'You have two-step authentication {{strong}}enabled{{/strong}} using security keys.',
+					{
+						components: {
+							strong: <strong />,
+						},
+					}
+				);
+			} else if ( hasTwoStepSmsEnabled ) {
 				const options = {
 					args: {
 						phoneNumber: twoStepSmsPhoneNumber,
@@ -54,22 +63,15 @@ class SecurityCheckupTwoFactorAuthentication extends Component {
 					},
 				};
 
-				if ( hasTwoStepSecurityKeyEnabled ) {
-					description = translate(
-						'You have two-step authentication {{strong}}enabled{{/strong}} using SMS messages to {{strong}}%(phoneNumber)s{{/strong}}, and security keys have been configured.',
-						options
-					);
-				} else if ( hasTwoStepEnhancedSecurity ) {
-					description = translate(
-						'You have two-step authentication {{strong}}enabled{{/strong}} using security keys.',
-						options
-					);
-				} else {
-					description = translate(
-						'You have two-step authentication {{strong}}enabled{{/strong}} using SMS messages to {{strong}}%(phoneNumber)s{{/strong}}.',
-						options
-					);
-				}
+				description = hasTwoStepSecurityKeyEnabled
+					? translate(
+							'You have two-step authentication {{strong}}enabled{{/strong}} using SMS messages to {{strong}}%(phoneNumber)s{{/strong}}, and security keys have been configured.',
+							options
+					  )
+					: translate(
+							'You have two-step authentication {{strong}}enabled{{/strong}} using SMS messages to {{strong}}%(phoneNumber)s{{/strong}}.',
+							options
+					  );
 			} else if ( hasTwoStepEnabled ) {
 				const options = {
 					components: {
@@ -77,22 +79,15 @@ class SecurityCheckupTwoFactorAuthentication extends Component {
 					},
 				};
 
-				if ( hasTwoStepSecurityKeyEnabled ) {
-					description = translate(
-						'You have two-step authentication {{strong}}enabled{{/strong}} using an app, and security keys have been configured.',
-						options
-					);
-				} else if ( hasTwoStepEnhancedSecurity ) {
-					description = translate(
-						'You have two-step authentication {{strong}}enabled{{/strong}} using security keys.',
-						options
-					);
-				} else {
-					description = translate(
-						'You have two-step authentication {{strong}}enabled{{/strong}} using an app.',
-						options
-					);
-				}
+				description = hasTwoStepSecurityKeyEnabled
+					? translate(
+							'You have two-step authentication {{strong}}enabled{{/strong}} using an app, and security keys have been configured.',
+							options
+					  )
+					: translate(
+							'You have two-step authentication {{strong}}enabled{{/strong}} using an app.',
+							options
+					  );
 			}
 		}
 
