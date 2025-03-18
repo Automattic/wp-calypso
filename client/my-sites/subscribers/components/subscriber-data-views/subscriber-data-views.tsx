@@ -343,20 +343,24 @@ const SubscriberDataViews = ( {
 				id: 'gift',
 				label: translate( 'Gift a subscription' ),
 				callback: ( items: Subscriber[] ) => {
-					if ( items[ 0 ] ) {
-						if ( ! items[ 0 ].user_id ) {
-							dispatch(
-								errorNotice(
-									translate(
-										'This subscriber needs to create a WordPress.com account before they can receive a gift subscription.'
-									),
-									{ duration: 10000 }
-								)
-							);
-							return;
-						}
-						onGiftSubscription( items[ 0 ] );
+					const subscriber = items[ 0 ];
+					if ( ! subscriber ) {
+						return;
 					}
+
+					if ( ! subscriber.user_id ) {
+						dispatch(
+							errorNotice(
+								translate(
+									'This subscriber needs to create a WordPress.com account before they can receive a gift subscription.'
+								),
+								{ duration: 10000 }
+							)
+						);
+						return;
+					}
+
+					onGiftSubscription( subscriber );
 				},
 				isPrimary: false,
 			} );
