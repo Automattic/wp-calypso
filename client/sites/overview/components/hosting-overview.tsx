@@ -59,7 +59,7 @@ const HostingOverview: FC = () => {
 		( isRequestingSelectedSite || ( wasAllSitesPending && isRequestingAllSites ) )
 	) {
 		return (
-			<div className="hosting-overview is-loading">
+			<div className="hosting-overview is-loading" data-testid="hosting-overview-loading">
 				<ProgressBar className="hosting-overview__progress-bar" />
 			</div>
 		);
