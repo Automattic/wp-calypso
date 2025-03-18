@@ -95,3 +95,14 @@
 		}
 	}
 }
+
+.step-container-v2--goals {
+	.select-goals,
+	.select-goals__cards-container {
+		width: 100%;
+	}
+
+	.select-goals__alternative-flows-container {
+		padding-bottom: 0;
+	}
+}

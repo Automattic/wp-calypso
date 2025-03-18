@@ -1,5 +1,4 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { MigrationStatus } from '@automattic/data-stores';
 import { StepContainer } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -8,7 +7,6 @@ import { useEffect, useState } from 'react';
 import NotAuthorized from 'calypso/blocks/importer/components/not-authorized';
 import NotFound from 'calypso/blocks/importer/components/not-found';
 import { getImporterTypeForEngine } from 'calypso/blocks/importer/util';
-import { retrieveMigrationStatus } from 'calypso/blocks/importer/wordpress/utils';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySites from 'calypso/components/data/query-sites';
 import Loading from 'calypso/components/loading';
@@ -76,11 +74,6 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const fromSite = currentSearchParams.get( 'from' ) || '';
 		const fromSiteData = useSelector( getUrlData );
 		const stepNavigator = useStepNavigator( flow, navigation, siteId, siteSlug, fromSite );
-		const migrationStatus = retrieveMigrationStatus();
-		const isMigrationInProgress =
-			migrationStatus === MigrationStatus.BACKING_UP ||
-			migrationStatus === MigrationStatus.BACKING_UP_QUEUED ||
-			migrationStatus === MigrationStatus.RESTORING;
 		const currentPath = window.location.pathname + window.location.search;
 
 		useSaveHostingFlowPathStep( flow, currentPath );
@@ -200,6 +193,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 			);
 		};
 
+		const importJob = getImportJob( importer );
 		return (
 			<>
 				<QuerySites siteId={ siteId } />
@@ -217,8 +211,15 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 					) }
 					stepName="importer-step"
 					customizedActionButtons={ customizedActionButtons }
-					hideSkip
-					hideBack={ isMigrationInProgress }
+					hideSkip={ importJob?.importerState !== appStates.IMPORT_SUCCESS }
+					skipLabelText={ __( 'Skip to dashboard' ) }
+					onSkip={ () => {
+						recordTracksEvent( 'calypso_site_importer_skip_to_dashboard', {
+							from: 'success-step',
+						} );
+						stepNavigator?.goToDashboardPage?.();
+					} }
+					hideBack={ importJob?.importerState === appStates.IMPORT_SUCCESS }
 					hideFormattedHeader
 					goBack={ onGoBack }
 					isWideLayout

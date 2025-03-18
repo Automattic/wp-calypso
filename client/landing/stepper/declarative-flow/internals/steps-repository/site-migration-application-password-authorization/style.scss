@@ -2,6 +2,24 @@
 @import "@wordpress/base-styles/mixins";
 
 .site-migration-application-password-authorization {
+	.step-container__header {
+		margin-left: auto;
+		margin-right: auto;
+		margin-bottom: 1rem;
+		padding-left: 1rem;
+		padding-right: 1rem;
+
+		@media ( min-width: 720px ) {
+			.formatted-header__subtitle {
+				max-width: 616px;
+				padding-left: 0;
+				padding-right: 0;
+				margin-left: auto;
+				margin-right: auto;
+			}
+		}
+	}
+
 	.site-migration-application-password-authorization__authorization {
 		display: flex;
 		flex-direction: column;

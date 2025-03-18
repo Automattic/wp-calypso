@@ -25,6 +25,36 @@ export default function ListForm( { isCreateForm, isSubmissionDisabled, list = {
 	const [ formList, updateFormList ] = useState(
 		isCreateForm ? INITIAL_CREATE_FORM_STATE : { ...INITIAL_UPDATE_FORM_STATE, ...list }
 	);
+
+	// If list.is_public is 2 this list is permanent - render minimal form with no edit options
+	if ( list.is_public === 2 ) {
+		return (
+			<Card>
+				<FormFieldset>
+					<FormLabel htmlFor="list-name">{ translate( 'Name' ) }</FormLabel>
+					<FormTextInput
+						data-key="title"
+						id="list-name"
+						name="list-name"
+						disabled
+						value={ formList.title }
+					/>
+				</FormFieldset>
+
+				<FormFieldset>
+					<FormLabel htmlFor="list-slug">{ translate( 'Slug' ) }</FormLabel>
+					<FormTextInput
+						data-key="slug"
+						id="list-slug"
+						name="list-slug"
+						disabled
+						value={ formList.slug }
+					/>
+				</FormFieldset>
+			</Card>
+		);
+	}
+
 	const onChange = ( event ) => {
 		const update = { [ event.target.dataset.key ]: event.target.value };
 		if ( 'is_public' in update ) {

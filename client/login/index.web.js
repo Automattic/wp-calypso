@@ -20,6 +20,9 @@ import {
 	redirectLostPassword,
 	desktopLogin,
 	desktopLoginFinalize,
+	googleAuth,
+	appleAuth,
+	githubAuth,
 } from './controller';
 import redirectLoggedIn from './redirect-logged-in';
 import { setShouldServerSideRenderLogin, ssrSetupLocaleLogin, setMetaTags } from './ssr';
@@ -116,6 +119,36 @@ export default ( router ) => {
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 		qrCodeLogin,
+		makeLoggedOutLayout
+	);
+
+	router(
+		[ `/log-in/jetpack/google/${ lang }` ],
+		redirectLoggedIn,
+		setLocaleMiddleware(),
+		setMetaTags,
+		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
+		googleAuth,
+		makeLoggedOutLayout
+	);
+
+	router(
+		[ `/log-in/jetpack/apple/${ lang }` ],
+		redirectLoggedIn,
+		setLocaleMiddleware(),
+		setMetaTags,
+		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
+		appleAuth,
+		makeLoggedOutLayout
+	);
+
+	router(
+		[ `/log-in/jetpack/github/${ lang }` ],
+		redirectLoggedIn,
+		setLocaleMiddleware(),
+		setMetaTags,
+		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
+		githubAuth,
 		makeLoggedOutLayout
 	);
 

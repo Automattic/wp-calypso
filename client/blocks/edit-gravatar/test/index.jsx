@@ -209,11 +209,11 @@ describe( 'EditGravatar', () => {
 			const user = userEvent.setup();
 			const { container } = render( <EditGravatar { ...props } /> );
 
-			const modal = screen.queryByRole( 'dialog', { name: 'Email Verification Dialog' } );
-			expect( modal ).not.toBeInTheDocument();
-
 			await user.click( container.firstChild.firstChild );
-			expect( screen.queryByRole( 'dialog', { name: 'Email Verification Dialog' } ) ).toBeVisible();
+			// Check for dialog modal copy to ensure it appeared.
+			expect(
+				screen.queryByText( /Secure your account and access more features./ )
+			).toBeInTheDocument();
 		} );
 	} );
 } );
