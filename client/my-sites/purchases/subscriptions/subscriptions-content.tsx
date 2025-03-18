@@ -36,7 +36,7 @@ function SubscriptionsContent( {
 	selectedSite: undefined | null | SiteDetails;
 	purchases: Purchase[];
 } ) {
-	const getManagePurchaseUrlFor = ( siteSlug: string, purchaseId: number ) =>
+	const getManagePurchaseUrlFor = ( siteSlug: string, purchaseId: string | number ) =>
 		`/purchases/subscriptions/${ siteSlug }/${ purchaseId }`;
 	const { paymentMethods: cards } = useStoredPaymentMethods( { type: 'card' } );
 
