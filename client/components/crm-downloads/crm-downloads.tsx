@@ -263,8 +263,10 @@ export function CrmDownloadsContent( { licenseKey }: CrmDownloadsProps ) {
 							{ extensions.map( ( extension ) => (
 								<tr key={ extension.slug }>
 									<td>
-										<strong>{ extension.name }</strong>
-										<div className="extensions-table__version">v{ extension.version }</div>
+										<div className="extensions-table__title-row">
+											<strong>{ extension.name }</strong>
+											<div className="extensions-table__version">v{ extension.version }</div>
+										</div>
 										{ extension.kbUrl && (
 											<a
 												href={ extension.kbUrl }

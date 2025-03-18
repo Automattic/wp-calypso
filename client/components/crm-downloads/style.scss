@@ -13,7 +13,11 @@
 		padding: 1.25rem;
 		background-color: var(--color-surface, #fff);
 		position: relative;
-		border: 1px solid var(--color-border-subtle, #dcdcde);
+	}
+	
+	// Specific styling for agencies version
+	.crm-downloads-agencies & .manage-purchase__license-clipboard-container {
+		margin-top: 0;
 	}
 
 	.manage-purchase__license-clipboard .button{
@@ -113,17 +117,34 @@
 		background-color: var(--color-surface, #fff);
 		border: 1px solid var(--color-border-subtle, #dcdcde);
 		padding: 1.25rem;
+		
+		@media (max-width: 600px) {
+			padding: 1rem 1.25rem 1.5rem;
+		}
 	}
 
 	.extensions-table table {
 		width: 100%;
 		border-collapse: collapse;
+		margin-top: 0;
+	}
+	
+	.extensions-table tbody {
+		@media (max-width: 600px) {
+			display: block;
+			padding-top: 0;
+		}
 	}
 	
 	.extensions-table tr {
 		@media (max-width: 600px) {
 			display: block;
 			border-bottom: 1px solid var(--color-border-subtle, #dcdcde);
+			padding: 0;
+			
+			&:first-child {
+				padding-top: 0;
+			}
 		}
 	}
 
@@ -148,17 +169,18 @@
 		@media (max-width: 600px) {
 			display: block;
 			width: 100%;
-			padding: 0.5rem 0.75rem;
+			padding: 0.75rem 0;
 			border: none;
 			
 			&:first-child {
 				padding-bottom: 0;
+				padding-top: 0.5rem;
 				position: relative; // For absolute positioning of documentation link
 			}
 			
 			&:last-child {
-				padding-top: 0.5rem;
-				padding-bottom: 1rem;
+				padding-top: 0.75rem;
+				padding-bottom: 1.5rem;
 			}
 		}
 	}
@@ -171,23 +193,38 @@
 			text-align: left;
 			width: 100%;
 			padding-top: 0.75rem;
+			padding-bottom: 1.5rem;
 			
 			.button {
-				width: 75%;
+				width: 100%;
 				justify-content: center;
 				display: block;
 			}
 		}
 	}
 
+	.extensions-table__title-row {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		margin-bottom: 0.25rem;
+		
+		@media (max-width: 600px) {
+			margin-bottom: 0.25rem;
+		}
+		
+		strong {
+			margin-right: 0.5rem;
+		}
+	}
+
 	.extensions-table__version {
 		color: var(--color-text-subtle, #646970);
 		font-size: 0.75rem;
-		margin: 0.25rem 0;
+		margin: 0;
 		
 		@media (max-width: 600px) {
 			display: inline-block;
-			margin: 0 0 0 0.5rem;
 			vertical-align: middle;
 		}
 	}
@@ -197,7 +234,8 @@
 		font-size: 0.875rem;
 		
 		@media (max-width: 600px) {
-			margin-bottom: 0.25rem;
+			margin: 0.5rem 0 0.5rem;
+			line-height: 1.4;
 		}
 	}
 
@@ -208,9 +246,8 @@
 		
 		@media (max-width: 600px) {
 			position: static;
-			display: inline-block;
-			margin: 0;
-			vertical-align: middle;
+			display: block;
+			margin: 0.25rem 0 0.5rem;
 		}
 	}
 
