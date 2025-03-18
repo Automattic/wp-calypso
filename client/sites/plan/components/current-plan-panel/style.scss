@@ -54,5 +54,12 @@
 				min-width: 200px;
 			}
 		}
+
+		@media (max-width: 400px) {
+			.plan-storage,
+			.plan-stats__footer > div {
+				min-width: unset;
+			}
+		}
 	}
 }

@@ -18,12 +18,12 @@ $blueberry-color: #3858e9;
 		width: 100%;
 		background: color-mix(in srgb, $blueberry-color 8%, transparent);
 
-		> div[class*="-Indicator"] {
+		> div {
 			background: $blueberry-color;
 		}
 
 		&.is-alert {
-			> div[class*="-Indicator"] {
+			> div {
 				background-color: var(--studio-red-30);
 			}
 		}
