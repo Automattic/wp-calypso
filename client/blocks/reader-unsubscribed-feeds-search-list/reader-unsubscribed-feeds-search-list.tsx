@@ -6,8 +6,12 @@ import ReaderFeedItem from 'calypso/blocks/reader-feed-item';
 import { SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST } from 'calypso/landing/subscriptions/tracks';
 import './style.scss';
 
-const ReaderUnsubscribedFeedsSearchList = () => {
-	const { feedItems } = Reader.useUnsubscribedFeedsSearch() ?? {};
+interface ReaderUnsubscribedFeedsSearchListProps {
+	feedItems?: Reader.FeedItem[];
+}
+
+const ReaderUnsubscribedFeedsSearchList = ( props: ReaderUnsubscribedFeedsSearchListProps ) => {
+	const { feedItems } = props;
 
 	const feedItemComponents = useMemo( () => {
 		if ( ! feedItems?.length ) {
@@ -34,6 +38,7 @@ const ReaderUnsubscribedFeedsSearchList = () => {
 					key={ `${ feed.blog_ID }-${ feed.feed_ID }` }
 					feed={ feed }
 					source={ SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST }
+					shouldHideOnSubscribedState
 				/>
 			);
 		} );

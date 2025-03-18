@@ -28,6 +28,7 @@ import './style.scss';
 interface ReaderFeedItemProps {
 	feed: Reader.FeedItem;
 	source: string; // Indicates where the feed item is rendered.
+	shouldHideOnSubscribedState?: boolean; // This prop is used to hide the component quickly instead of waiting for API response.
 }
 
 /**
@@ -42,6 +43,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 			railcar,
 		},
 		source,
+		shouldHideOnSubscribedState,
 	} = props;
 	const isWpcomFeed = !! blogId;
 	const translate = useTranslate();
@@ -223,6 +225,10 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 			{ subscriptionId ? translate( 'Unsubscribe' ) : translate( 'Subscribe' ) }
 		</Button>
 	);
+
+	if ( subscriptionId && shouldHideOnSubscribedState ) {
+		return null;
+	}
 
 	return (
 		<HStack as="li" className="reader-feed-item" alignment="center" spacing={ 8 }>

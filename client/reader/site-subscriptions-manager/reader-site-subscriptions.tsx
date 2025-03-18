@@ -38,11 +38,28 @@ const setUrlQuery = ( key: string, value: string ) => {
 const ReaderSiteSubscriptions = () => {
 	const translate = useTranslate();
 	const { searchTerm } = SubscriptionManager.useSiteSubscriptionsQueryProps();
-	const siteSubscriptionsQuery = SubscriptionManager.useSiteSubscriptionsQuery();
+	const siteSubscriptionsQuery = SubscriptionManager.useSiteSubscriptionsQuery() ?? {};
+	const {
+		data: { subscriptions },
+		isFetching,
+	} = siteSubscriptionsQuery;
 	const unsubscribedFeedsSearch = Reader.useUnsubscribedFeedsSearch();
+	const { feedItems: unsubscribedFeedItems, searchQueryResult } = unsubscribedFeedsSearch ?? {};
+	const { isPending: isUnsubscribing } = SubscriptionManager.useSiteUnsubscribeMutation();
+
+	// To avoid showing duplicate feed items between subscribed and unsubscribed feeds.
+	const filteredUnsubscribedFeedItems = unsubscribedFeedItems?.filter(
+		( feedItem: Reader.FeedItem ): boolean => {
+			const isDuplicate = subscriptions.find(
+				( subscription ) => ! subscription.isDeleted && subscription.feed_ID === feedItem.feed_ID
+			);
+
+			return ! isDuplicate;
+		}
+	);
 
 	const hasSomeSubscriptions = siteSubscriptionsQuery.data.subscriptions.length > 0;
-	const hasSomeUnsubscribedSearchResults = ( unsubscribedFeedsSearch?.feedItems.length ?? 0 ) > 0;
+	const hasSomeUnsubscribedSearchResults = ( filteredUnsubscribedFeedItems?.length ?? 0 ) > 0;
 
 	const recordSearchPerformed = useRecordSearchPerformed();
 	const recordSearchByUrlPerformed = useRecordSearchByUrlPerformed();
@@ -61,6 +78,13 @@ const ReaderSiteSubscriptions = () => {
 		}
 	}, [ searchTerm, recordSearchPerformed, recordSearchByUrlPerformed ] );
 
+	// This check ensures that `UnsubscribedFeedsSearchList` renders only when the search results are ready else there is flickering of the list.
+	const shouldShowUnsubcribedFeedsList =
+		hasSomeUnsubscribedSearchResults &&
+		! isFetching && // Do not show the list if the site subscriptions are still fetching.
+		! searchQueryResult?.isFetching && // Do not show the list if unsubscribed feeds are still fetching.
+		! isUnsubscribing; // Do not show the list if the user is unsubscribing from the table.
+
 	return (
 		<>
 			<SiteSubscriptionsListActionsBar />
@@ -72,7 +96,10 @@ const ReaderSiteSubscriptions = () => {
 					{ translate( 'Here are some other sites that match your search.' ) }
 				</div>
 			) }
-			<UnsubscribedFeedsSearchList />
+
+			{ shouldShowUnsubcribedFeedsList && (
+				<UnsubscribedFeedsSearchList feedItems={ filteredUnsubscribedFeedItems } />
+			) }
 		</>
 	);
 };
