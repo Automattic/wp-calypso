@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { safeImageUrl, getUrlParts } from '@automattic/calypso-url';
+import { addQueryArgs, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { Dispatch } from 'redux';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -132,4 +133,23 @@ export function getSafeImageUrlForReader( url: string ): string {
 	}
 
 	return safeImageUrl( url ) ?? '';
+}
+
+export const SEARCH_QUERY_PARAM: string = 's';
+
+export function getUrlQuerySearchTerm(): string {
+	const queryArgs = getQueryArgs( window.location.href );
+	return ( queryArgs[ SEARCH_QUERY_PARAM ] as string ) ?? '';
+}
+
+export function setUrlQuery( key: string, value: string ): void {
+	const path = window.location.pathname + window.location.search;
+	const nextPath = ! value
+		? removeQueryArgs( path, key )
+		: addQueryArgs( path, { [ key ]: value } );
+
+	// Only trigger a page show when path has changed.
+	if ( nextPath !== path ) {
+		page.replace( nextPath );
+	}
 }
