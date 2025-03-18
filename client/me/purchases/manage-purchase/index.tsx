@@ -49,11 +49,20 @@ import {
 	ProductIcon,
 	Gridicon,
 	PlanPrice,
-	MaterialIcon,
 } from '@automattic/components';
 import { Plans, type SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_CANCEL, SUPPORT_ROOT } from '@automattic/urls';
+import {
+	column,
+	download,
+	Icon,
+	payment,
+	reusableBlock,
+	tool,
+	trash,
+	upload,
+} from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, LocalizeProps, useTranslate } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
@@ -454,7 +463,7 @@ class ManagePurchase extends Component<
 
 		return (
 			<CompactCard tagName="button" displayAsLink onClick={ onClick }>
-				<MaterialIcon icon="autorenew" className="card__icon" />
+				<Icon icon={ reusableBlock } className="card__icon" />
 				{ content }
 			</CompactCard>
 		);
@@ -580,16 +589,16 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		let iconName;
+		let icon;
 		let buttonText;
 
 		if ( isExpired( purchase ) ) {
-			iconName = 'view_carousel';
+			icon = column;
 			buttonText = isUpgradeablePlan
 				? translate( 'Pick another plan' )
 				: translate( 'Pick another product' );
 		} else {
-			iconName = 'upload';
+			icon = upload;
 			buttonText = isUpgradeablePlan ? translate( 'Upgrade plan' ) : translate( 'Upgrade product' );
 		}
 
@@ -602,7 +611,7 @@ class ManagePurchase extends Component<
 				href={ upgradeUrl }
 				onClick={ this.handleUpgradeClick }
 			>
-				<MaterialIcon icon={ iconName } className="card__icon" />
+				<Icon icon={ icon } className="card__icon" />
 				{ buttonText }
 			</CompactCard>
 		);
@@ -667,7 +676,7 @@ class ManagePurchase extends Component<
 
 			return (
 				<CompactCard href={ path } onClick={ this.handleEditPaymentMethodNavItem }>
-					<MaterialIcon icon="credit_card" className="card__icon" />
+					<Icon icon={ payment } className="card__icon" />
 					{ addPaymentMethodLinkText( { purchase, translate } ) }
 				</CompactCard>
 			);
@@ -739,7 +748,7 @@ class ManagePurchase extends Component<
 				linkIcon="chevron-right"
 				skipRemovePlanSurvey={ isPlanPurchase && hasCompletedCancelPurchaseSurvey }
 			>
-				<MaterialIcon icon="delete" className="card__icon" />
+				<Icon icon={ trash } className="card__icon" />
 				{ text }
 				{ this.renderRefundText() }
 			</RemovePurchase>
@@ -884,7 +893,7 @@ class ManagePurchase extends Component<
 					</>
 				) : (
 					<>
-						<MaterialIcon icon="build" className="card__icon" />
+						<Icon icon={ tool } className="card__icon" />
 						{ translate( 'Reinstall' ) }
 					</>
 				) }
@@ -944,7 +953,7 @@ class ManagePurchase extends Component<
 
 		return (
 			<CompactCard href={ link } className="remove-purchase__card" onClick={ onClick }>
-				<MaterialIcon icon="delete" className="card__icon" />
+				<Icon icon={ trash } className="card__icon" />
 				{ getCancelPurchaseNavText( purchase, translate ) }
 				{ this.renderRefundText() }
 			</CompactCard>
@@ -964,8 +973,8 @@ class ManagePurchase extends Component<
 		const link = this.props.getDowngradeUrlFor?.( this.props.siteSlug, purchase.id );
 
 		return (
-			<CompactCard href={ link } className="remove-purchase__card">
-				<MaterialIcon icon="arrow_down" className="card__icon" />
+			<CompactCard href={ link }>
+				<Icon icon={ download } className="card__icon" />
 				{ translate( 'Downgrade plan' ) }
 			</CompactCard>
 		);
@@ -1400,7 +1409,7 @@ class ManagePurchase extends Component<
 						{ this.renderCancelPurchaseNavItem() }
 						{ config.isEnabled( 'plans/self-service-downgrade' )
 							? this.renderDowngradeNavItem()
-							: this.renderCancelPurchaseNavItem() }
+							: null }
 						{ this.renderCancelSurvey() }
 						{ this.renderRemovePurchaseNavItem() }
 					</>
