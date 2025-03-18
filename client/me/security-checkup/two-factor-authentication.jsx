@@ -65,7 +65,7 @@ class SecurityCheckupTwoFactorAuthentication extends Component {
 
 				description = hasTwoStepSecurityKeyEnabled
 					? translate(
-							'You have two-step authentication {{strong}}enabled{{/strong}} using SMS messages to {{strong}}%(phoneNumber)s{{/strong}}, and security keys have been configured.',
+							'You have two-step authentication {{strong}}enabled{{/strong}} using SMS messages to {{strong}}%(phoneNumber)s{{/strong}}, and security keys have been registered.',
 							options
 					  )
 					: translate(
@@ -81,7 +81,7 @@ class SecurityCheckupTwoFactorAuthentication extends Component {
 
 				description = hasTwoStepSecurityKeyEnabled
 					? translate(
-							'You have two-step authentication {{strong}}enabled{{/strong}} using an app, and security keys have been configured.',
+							'You have two-step authentication {{strong}}enabled{{/strong}} using an app, and security keys have been registered.',
 							options
 					  )
 					: translate(
