@@ -14,7 +14,11 @@ type InviteType = {
 	role: string;
 };
 
-export function acceptedNotice( invite: InviteType, displayOnNextPage = true ) {
+export function acceptedNotice(
+	invite: InviteType,
+	displayOnNextPage = true,
+	isPersistent = false
+) {
 	const siteUrl = invite?.site?.URL ?? '';
 	const siteTitle = invite?.site?.title ?? '';
 	const site = (
@@ -33,6 +37,7 @@ export function acceptedNotice( invite: InviteType, displayOnNextPage = true ) {
 					button: i18n.translate( 'Visit Site' ),
 					href: siteUrl,
 					displayOnNextPage,
+					isPersistent,
 				},
 			];
 
@@ -45,6 +50,7 @@ export function acceptedNotice( invite: InviteType, displayOnNextPage = true ) {
 					button: i18n.translate( 'Visit Site' ),
 					href: siteUrl,
 					displayOnNextPage,
+					isPersistent,
 				},
 			];
 
@@ -73,7 +79,7 @@ export function acceptedNotice( invite: InviteType, displayOnNextPage = true ) {
 						) }
 					</p>
 				</div>,
-				{ displayOnNextPage },
+				{ displayOnNextPage, isPersistent },
 			];
 
 		case 'editor':
@@ -99,7 +105,7 @@ export function acceptedNotice( invite: InviteType, displayOnNextPage = true ) {
 						) }
 					</p>
 				</div>,
-				{ displayOnNextPage },
+				{ displayOnNextPage, isPersistent },
 			];
 
 		case 'author':
@@ -125,7 +131,7 @@ export function acceptedNotice( invite: InviteType, displayOnNextPage = true ) {
 						) }
 					</p>
 				</div>,
-				{ displayOnNextPage },
+				{ displayOnNextPage, isPersistent },
 			];
 
 		case 'contributor':
@@ -142,7 +148,7 @@ export function acceptedNotice( invite: InviteType, displayOnNextPage = true ) {
 						) }
 					</p>
 				</div>,
-				{ displayOnNextPage },
+				{ displayOnNextPage, isPersistent },
 			];
 
 		case 'subscriber':
@@ -150,14 +156,14 @@ export function acceptedNotice( invite: InviteType, displayOnNextPage = true ) {
 				i18n.translate( "You're now a Subscriber of: {{site/}}", {
 					components: { site },
 				} ),
-				{ displayOnNextPage },
+				{ displayOnNextPage, isPersistent },
 			];
 		default:
 			return [
 				i18n.translate( "You're now a new member of: {{site/}}", {
 					components: { site },
 				} ),
-				{ displayOnNextPage },
+				{ displayOnNextPage, isPersistent },
 			];
 	}
 }
