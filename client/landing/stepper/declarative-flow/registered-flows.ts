@@ -53,11 +53,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	'domain-upsell': () =>
 		import( /* webpackChunkName: "update-design-flow" */ './flows/domain-upsell/domain-upsell' ),
 
-	build: () =>
-		import(
-			/* webpackChunkName: "build-flow" ./flows/start-writing/start-writingld/build' ),
-	write: () => import( /* webpackChunkName: "write-flow" */ './flows/write/write'
-		),
+	build: () => import( /* webpackChunkName: "build-flow" */ './flows/build/build' ),
+
+	write: () => import( /* webpackChunkName: "write-flow" */ './flows/write/write' ),
 
 	[ START_WRITING_FLOW ]: () =>
 		import( /* webpackChunkName: "start-writing-flow" */ './flows/start-writing/start-writing' ),
