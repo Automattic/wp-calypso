@@ -46,6 +46,7 @@ class AuthorMappingPane extends PureComponent {
 
 	getMappingDescription = ( numSourceUsers, numTargetUsers, siteDomain, sourceType ) => {
 		if ( numTargetUsers === 1 && numSourceUsers === 1 ) {
+			// translators: Import is a call to action button.
 			return this.props.translate(
 				'There is one author on your original %(sourceType)s site. ' +
 					"Because you're the only author on this site (%(siteDomain)s), " +
@@ -62,6 +63,7 @@ class AuthorMappingPane extends PureComponent {
 				}
 			);
 		} else if ( numTargetUsers === 1 && numSourceUsers > 1 ) {
+			// translators: Import is a call to action button.
 			return this.props.translate(
 				'There are multiple authors on your original %(sourceType)s site. ' +
 					"Because you're the only author on this site (%(siteDomain)s), " +
@@ -78,6 +80,7 @@ class AuthorMappingPane extends PureComponent {
 				}
 			);
 		} else if ( numTargetUsers > 1 && numSourceUsers === 1 ) {
+			// translators: Import is a call to action button.
 			return this.props.translate(
 				'There are multiple authors on your site. ' +
 					'Please reassign the authors of the imported items to an existing ' +
@@ -92,6 +95,7 @@ class AuthorMappingPane extends PureComponent {
 				}
 			);
 		} else if ( numTargetUsers > 1 && numSourceUsers > 1 ) {
+			// translators: Import is a call to action button.
 			return this.props.translate(
 				'There are multiple authors on your original %(sourceType)s site. ' +
 					'Please reassign the authors of the imported items to an existing ' +
@@ -160,7 +164,10 @@ class AuthorMappingPane extends PureComponent {
 				} ) }
 				<ImporterActionButtonContainer>
 					<ImporterActionButton primary disabled={ ! canStartImport } onClick={ onStartImport }>
-						{ this.props.translate( 'Import' ) }
+						{ this.props.translate( 'Import', {
+							context:
+								'The user is told that authors are automatically mapped or they need to map them manually and then click Import.',
+						} ) }
 					</ImporterActionButton>
 					<ImporterCloseButton importerStatus={ importerStatus } site={ site } isEnabled />
 				</ImporterActionButtonContainer>
