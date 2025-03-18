@@ -104,15 +104,6 @@ export const getClientId = ( conversations: ZendeskConversation[] ): string =>
 		.flatMap( ( conversation ) => conversation.messages )
 		.find( ( message ) => message.source?.type === 'web' && message.source?.id )?.source?.id || '';
 
-export const getConversationsFromSupportInteractions = (
-	conversations: ZendeskConversation[],
-	supportInteractions: SupportInteraction[]
-) => {
-	return conversations.filter( ( conversation ) =>
-		hasMatchingInteraction( supportInteractions, conversation )
-	);
-};
-
 export const matchSupportInteractionId = (
 	getConversations: () => ZendeskConversation[],
 	isChatLoaded: boolean,
@@ -154,4 +145,35 @@ export const updateConversationStatuses = (
 
 		return updatedConversation;
 	} );
+};
+
+export const filterAndUpdateConversationsWithStatus = (
+	conversations: ZendeskConversation[],
+	supportInteractions: SupportInteraction[]
+) => {
+	const filteredConversations = conversations.filter( ( conversation ) =>
+		hasMatchingInteraction( supportInteractions, conversation )
+	);
+
+	const conversationWithUpdatedStatuses = filteredConversations.map( ( conversation ) => {
+		const supportInteraction = supportInteractions.find(
+			( interaction ) => interaction.uuid === conversation.metadata.supportInteractionId
+		);
+
+		if ( ! supportInteraction ) {
+			return conversation;
+		}
+
+		const updatedConversation = {
+			...conversation,
+			metadata: {
+				...conversation.metadata,
+				status: supportInteraction.status,
+			},
+		};
+
+		return updatedConversation;
+	} );
+
+	return conversationWithUpdatedStatuses;
 };

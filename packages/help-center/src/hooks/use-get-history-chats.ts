@@ -4,9 +4,8 @@ import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-
 import { useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
 import {
-	getConversationsFromSupportInteractions,
+	filterAndUpdateConversationsWithStatus,
 	getZendeskConversations,
-	updateConversationStatuses,
 } from '../components/utils';
 import { HELP_CENTER_STORE } from '../stores';
 import type { SupportInteraction, ZendeskConversation } from '@automattic/odie-client';
@@ -55,13 +54,8 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 				...( supportInteractionsSolved || [] ),
 			];
 
-			const filteredConversations = getConversationsFromSupportInteractions(
+			const conversationsWithUpdatedStatuses = filterAndUpdateConversationsWithStatus(
 				allConversations,
-				allSupportInteractions
-			);
-
-			const conversationsWithUpdatedStatuses = updateConversationStatuses(
-				filteredConversations,
 				allSupportInteractions
 			);
 

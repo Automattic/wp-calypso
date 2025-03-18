@@ -9,11 +9,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect, useState } from 'react';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
-import {
-	getConversationsFromSupportInteractions,
-	getZendeskConversations,
-	updateConversationStatuses,
-} from './utils';
+import { filterAndUpdateConversationsWithStatus, getZendeskConversations } from './utils';
 import type {
 	SupportInteraction,
 	ZendeskConversation,
@@ -67,13 +63,8 @@ const HelpCenterRecentConversations: React.FC = () => {
 				...( supportInteractionsOpen || [] ),
 			];
 
-			const filteredConversations = getConversationsFromSupportInteractions(
+			const conversationsWithUpdatedStatuses = filterAndUpdateConversationsWithStatus(
 				allConversations,
-				supportInteractions
-			);
-
-			const conversationsWithUpdatedStatuses = updateConversationStatuses(
-				filteredConversations,
 				supportInteractions
 			);
 
