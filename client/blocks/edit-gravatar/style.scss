@@ -92,7 +92,6 @@
 	width: 100%;
 	height: 100%;
 
-	// transform: translate(180%, 180%);
 	text-align: center;
 	display: flex;
 	align-items: center;
@@ -112,14 +111,23 @@
 
 }
 
+.gravatar {
+	transition: filter 0.3s ease;
+}
+
 .edit-gravatar__image-container:hover, .is-uploading .edit-gravatar__image-container {
 	.gravatar{
 		filter: brightness(0.7);
 	}
+
+	.edit-gravatar__label-container-icon {
+		background-color: var(--color-accent-70);
+
+	}
 }
 
 .edit-gravatar__image-container .edit-gravatar__label-container-icon {
-	background-color: var(--color-accent-70);
+	background-color: var(--color-accent-60);
 	border-color: #fff;
 }
 
