@@ -35,9 +35,9 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"dependencies": {
-		"@types/seed-random": "^2.2.1",
+		"@types/seed-random": "^2.2.4",
 		"crc32": "^0.2.2",
-		"debug": "^4.3.3",
+		"debug": "^4.4.0",
 		"seed-random": "^2.2.0",
 		"tslib": "^2.3.0"
 	},

@@ -9,6 +9,7 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Card, Gridicon } from '@automattic/components';
+import { Onboard } from '@automattic/data-stores';
 import {
 	DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,
 	ThemePreview as ThemeWebPreview,
@@ -49,10 +50,10 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { ReviewsSummary } from 'calypso/my-sites/marketplace/components/reviews-summary';
-import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { localizeThemesPath, shouldSelectSite } from 'calypso/my-sites/themes/helpers';
 import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
+import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
@@ -101,6 +102,7 @@ import {
 	isActivatingTheme as getIsActivatingTheme,
 	isInstallingTheme as getIsInstallingTheme,
 	hasActivatedTheme as getHasActivatedTheme,
+	getActiveTheme,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
@@ -113,6 +115,8 @@ import ThemeNotFoundError from './theme-not-found-error';
 import ThemeStyleVariations from './theme-style-variations';
 
 import './style.scss';
+
+const SiteIntent = Onboard.SiteIntent;
 
 class ThemeSheet extends Component {
 	static displayName = 'ThemeSheet';
@@ -744,6 +748,32 @@ class ThemeSheet extends Component {
 		return <div>{ this.props.description }</div>;
 	};
 
+	renderNotice = () => {
+		const { activeThemeId, themeId, name, siteIntent, translate } = this.props;
+		const isAIAssembler = siteIntent === SiteIntent.AIAssembler && activeThemeId === 'assembler';
+		if ( ! isAIAssembler || themeId === 'assembler' ) {
+			return null;
+		}
+
+		return (
+			<Banner
+				icon="notice"
+				title={ translate( 'AI Website Builder' ) }
+				description={ translate(
+					'{{strong}}%(newThemeName)s{{/strong}} is currently not compatible with our AI Website Builder. Changing to this theme means you can no longer use our AI Website Builder on this site.',
+					{
+						args: { newThemeName: name },
+						components: {
+							br: <br />,
+							strong: <strong />,
+						},
+					}
+				) }
+				disableHref
+			/>
+		);
+	};
+
 	renderStagingPaidThemeNotice = () => {
 		if ( ! this.shouldRenderForStaging() ) {
 			return null;
@@ -1202,11 +1232,6 @@ class ThemeSheet extends Component {
 						}
 					} }
 				/>
-				<ActivationModal
-					source="details"
-					siteIntent={ this.props.siteIntent }
-					showSuccessNotice={ ! this.isThemeSelectedTask }
-				/>
 				<NavigationHeader
 					navigationItems={ navigationItems }
 					compactBreadcrumb={ ! this.state.isWide }
@@ -1214,6 +1239,7 @@ class ThemeSheet extends Component {
 				<div className={ columnsClassName }>
 					<div className="theme__sheet-column-header">
 						{ this.renderStagingPaidThemeNotice() }
+						{ this.renderNotice() }
 						{ this.renderHeader() }
 						{ this.renderReviews() }
 					</div>
@@ -1291,6 +1317,7 @@ const ThemeSheetWithOptions = ( props ) => {
 	let defaultOption;
 	let secondaryOption = 'tryandcustomize';
 	const needsJetpackPlanUpgrade = isStandaloneJetpack && isPremium && ! isThemePurchased;
+	const activeThemeId = useSelector( ( state ) => getActiveTheme( state, siteId ) );
 	const siteIntent = useSiteOption( 'site_intent' );
 
 	if ( ! showTryAndCustomize ) {
@@ -1342,6 +1369,7 @@ const ThemeSheetWithOptions = ( props ) => {
 			defaultOption={ defaultOption }
 			secondaryOption={ secondaryOption }
 			source="showcase-sheet"
+			activeThemeId={ activeThemeId }
 			siteIntent={ siteIntent }
 		/>
 	);

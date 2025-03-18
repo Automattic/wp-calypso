@@ -133,11 +133,11 @@
 
 	&.extended {
 		@include break-large {
-			width: calc(50% - 9px); // 2 column grid with 18px gutter
+			width: calc((100% - 18px) / 2); // 2 column grid with 18px gutter
 		}
 
 		@include break-wide {
-			width: calc(33% - 10px); // 3 column grid with 20px gutter
+			width: calc((100% - 36px) / 3); // 3 column grid with 18px gutter
 		}
 	}
 
@@ -167,7 +167,7 @@
 	padding: 24px;
 	box-sizing: border-box;
 	border: 1px solid var(--studio-gray-5);
-	border-radius: 5px; /* stylelint-disable-line scales/radii */
+	border-radius: 4px;
 
 	&:focus,
 	&:hover {

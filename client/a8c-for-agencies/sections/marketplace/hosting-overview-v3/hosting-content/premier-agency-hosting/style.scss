@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .premier-agency-hosting ul.hosting-additional-features {
 	.gridicon {
@@ -56,7 +57,7 @@
 	justify-content: center;
 
 	.pressable-overview-plan-selection__filter-label {
-		@include a4a-font-heading-md($font-size: rem(14px));
+		@include heading-medium;
 		margin: 0;
 
 	}
@@ -114,6 +115,6 @@
 }
 
 .pressable-plan-section__details-footnote {
-	@include a4a-font-body-sm;
+	@include body-small;
 	color: var(--color-neutral-80);
 }

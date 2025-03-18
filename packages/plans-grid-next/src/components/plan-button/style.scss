@@ -51,10 +51,10 @@
 	}
 
 	&.is-business-plan {
-		background-color: var(--studio-woocommerce-purple-50);
+		background-color: var(--studio-woocommerce-purple-60);
 
 		&:focus {
-			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-woocommerce-purple-50);
+			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-woocommerce-purple-60);
 		}
 
 		&:hover {
@@ -64,11 +64,11 @@
 		+ .button.is-borderless {
 			background: transparent;
 			font-size: $font-body-small;
-			color: var(--studio-woocommerce-purple-50);
+			color: var(--studio-woocommerce-purple-60);
 			text-decoration: none;
 
 			&:focus {
-				box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-woocommerce-purple-50);
+				box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-woocommerce-purple-60);
 			}
 		}
 	}
@@ -101,14 +101,14 @@
 	}
 
 	&.is-ecommerce-plan {
-		background-color: var(--studio-woocommerce-purple-70);
+		background-color: var(--studio-woocommerce-purple-40);
 
 		&:focus {
-			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-woocommerce-purple-70);
+			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-woocommerce-purple-40);
 		}
 
 		&:hover {
-			background-color: var(--studio-woocommerce-purple-80);
+			background-color: var(--studio-woocommerce-purple-50);
 		}
 	}
 

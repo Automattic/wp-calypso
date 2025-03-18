@@ -16,7 +16,6 @@ import {
 	getPlanFeaturesGroupedForComparisonGrid,
 	getWooExpressFeaturesGroupedForFeaturesGrid,
 	getSimplifiedPlanFeaturesGroupedForFeaturesGrid,
-	isWpcomEnterpriseGridPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
@@ -54,7 +53,6 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
-import { useExperiment } from 'calypso/lib/explat';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
 import { shouldForceDefaultPlansBasedOnIntent } from 'calypso/my-sites/plans-features-main/components/utils/utils';
@@ -129,6 +127,7 @@ export interface PlansFeaturesMainProps {
 	>;
 	planTypeSelector?: 'interval';
 	discountEndDate?: Date;
+	hideSpotlightPlan?: boolean;
 	hidePlansFeatureComparison?: boolean;
 	coupon?: string;
 
@@ -210,6 +209,7 @@ const PlansFeaturesMain = ( {
 	customerType = 'personal',
 	planTypeSelector = 'interval',
 	intervalType = 'yearly',
+	hideSpotlightPlan = false,
 	hidePlansFeatureComparison = false,
 	hideUnavailableFeatures = false,
 	isInSignup = false,
@@ -360,19 +360,6 @@ const PlansFeaturesMain = ( {
 		intent && [ 'plans-newsletter', 'plans-blog-onboarding' ].includes( intent )
 	);
 
-	const [ isLoadingHideLowerTierPlansExperiment, hideLowerTierPlansExperimentAssignment ] =
-		useExperiment( 'calypso_pricing_grid_hide_lower_tier_plans', {
-			/**
-			 * Eligible for the experiment only if the user is on the /plans page and
-			 * the user is on a paid plan.
-			 */
-			isEligible:
-				! isInSignup &&
-				intent === 'plans-default-wpcom' &&
-				currentPlan &&
-				! isFreePlan( currentPlan.planSlug ),
-		} );
-
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
 	// TODO: We should move the modal logic into a data store
@@ -481,20 +468,14 @@ const PlansFeaturesMain = ( {
 	// when `deemphasizeFreePlan` is enabled, the Free plan will be presented as a CTA link instead of a plan card in the features grid.
 	const gridPlansForFeaturesGrid = useMemo(
 		() =>
-			gridPlansForFeaturesGridRaw?.filter( ( { planSlug, availableForPurchase, current } ) => {
+			gridPlansForFeaturesGridRaw?.filter( ( { planSlug } ) => {
 				if ( deemphasizeFreePlan ) {
 					return planSlug !== PLAN_FREE;
 				}
-				if ( 'treatment' === hideLowerTierPlansExperimentAssignment?.variationName ) {
-					return current || availableForPurchase || isWpcomEnterpriseGridPlan( planSlug );
-				}
+
 				return true;
 			} ) ?? null, // optional chaining can result in `undefined`; we don't want to introduce it here.
-		[
-			gridPlansForFeaturesGridRaw,
-			deemphasizeFreePlan,
-			hideLowerTierPlansExperimentAssignment?.variationName,
-		]
+		[ gridPlansForFeaturesGridRaw, deemphasizeFreePlan ]
 	);
 
 	// In some cases, the free plan is not an option at all. Make sure not to offer it in the subheader.
@@ -688,8 +669,7 @@ const PlansFeaturesMain = ( {
 			! defaultWpcomPlansIntent || // this may be unnecessary, but just in case
 			! gridPlansForFeaturesGrid ||
 			! gridPlansForComparisonGrid ||
-			longerPlanTermDefaultExperiment.isLoadingExperiment ||
-			isLoadingHideLowerTierPlansExperiment
+			longerPlanTermDefaultExperiment.isLoadingExperiment
 	);
 
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
@@ -860,12 +840,8 @@ const PlansFeaturesMain = ( {
 										coupon={ coupon }
 										currentSitePlanSlug={ sitePlanSlug }
 										generatedWPComSubdomain={ resolvedSubdomainName }
-										gridPlanForSpotlight={
-											gridPlansForFeaturesGrid.length >= 4 ||
-											hideLowerTierPlansExperimentAssignment?.variationName !== 'treatment'
-												? gridPlanForSpotlight
-												: undefined
-										}
+										hideSpotlightPlan={ hideSpotlightPlan }
+										gridPlanForSpotlight={ gridPlanForSpotlight }
 										gridPlans={ gridPlansForFeaturesGrid }
 										hideUnavailableFeatures={ hideUnavailableFeatures }
 										intent={ intent }

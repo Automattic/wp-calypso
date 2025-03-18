@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_100_YEARS, domainProductSlugs, isFreePlan } from '@automattic/calypso-products';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import clsx from 'clsx';
@@ -46,11 +45,7 @@ function EmptyDomainsListCard( { selectedSite, hasDomainCredit, isCompact, hasNo
 		return null;
 	}
 
-	if (
-		isEnabled( 'domain-to-plan-credit' ) &&
-		domainToPlanCreditsApplicable !== null &&
-		domainToPlanCreditsApplicable > 0
-	) {
+	if ( domainToPlanCreditsApplicable !== null && domainToPlanCreditsApplicable > 0 ) {
 		return null;
 	}
 

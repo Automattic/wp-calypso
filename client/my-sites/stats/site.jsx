@@ -23,10 +23,10 @@ import { useShortcuts } from 'calypso/components/date-range/use-shortcuts';
 import EmptyContent from 'calypso/components/empty-content';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
-import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import StickyPanel from 'calypso/components/sticky-panel';
 import memoizeLast from 'calypso/lib/memoize-last';
+import Main from 'calypso/my-sites/stats/components/stats-main';
 import {
 	DATE_FORMAT,
 	STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
@@ -35,6 +35,7 @@ import {
 	STATS_PRODUCT_NAME,
 } from 'calypso/my-sites/stats/constants';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
+import { getChartRangeParams } from 'calypso/my-sites/stats/utils';
 import {
 	recordGoogleEvent,
 	recordTracksEvent,
@@ -263,11 +264,9 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		// Mark the drilled-down period page should use the go-back action.
 		sessionStorage.setItem( 'jetpack_stats_date_range_is_drilling_down', 1 );
 
-		let chartStart = periodStartDate;
-		let chartEnd = moment( chartStart )
-			.endOf( currentPeriod === 'week' ? 'isoWeek' : currentPeriod )
-			.format( DATE_FORMAT );
+		const chartRangeParams = getChartRangeParams( periodStartDate, currentPeriod );
 
+		let { chartStart, chartEnd } = chartRangeParams;
 		// Limit navigation within the currently selected range.
 		const currentChartStart = context.query?.chartStart;
 		const currentChartEnd = context.query?.chartEnd;
@@ -278,15 +277,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 			chartEnd = currentChartEnd;
 		}
 
-		// Determine the target period for the navigation.
-		let targetPeriod = 'day';
-		if ( currentPeriod === 'day' ) {
-			targetPeriod = 'hour';
-		} else if ( currentPeriod === 'year' ) {
-			targetPeriod = 'month';
-		}
-
-		const path = `/stats/${ targetPeriod }/${ slug }`;
+		const path = `/stats/${ chartRangeParams.chartPeriod }/${ slug }`;
 		const url = getPathWithUpdatedQueryString( { chartStart, chartEnd }, path );
 
 		return url;
@@ -586,6 +577,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 							period={ period }
 							date={ date }
 							query={ query }
+							queryParams={ context.query }
 							statsType="statsTopPosts"
 							showQueryDate
 							isShort

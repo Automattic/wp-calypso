@@ -46,10 +46,10 @@ const transferringHostedSite: Flow = {
 			return `/home/${ siteId }`;
 		};
 
-		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
+		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
 				case 'processing': {
-					const processingResult = params[ 0 ] as ProcessingResult;
+					const processingResult = providedDependencies.processingResult as ProcessingResult;
 
 					if ( processingResult === ProcessingResult.FAILURE ) {
 						return navigate( 'error' );

@@ -15,6 +15,7 @@ import Notice from 'calypso/components/notice';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
+import { isThrottledError, getThrottledErrorMessage } from 'calypso/lib/signup/is-throttled-error';
 import wpcom from 'calypso/lib/wp';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -142,13 +143,19 @@ class PasswordlessSignupForm extends Component {
 		this.submitTracksEvent( false, { action_message: error.message, error_code: error.error } );
 
 		if ( ! isExistingAccountError( error.error ) ) {
-			this.setState( {
-				errorMessages: [
-					this.props.translate(
-						'Sorry, something went wrong when trying to create your account. Please try again.'
-					),
-				],
-			} );
+			if ( isThrottledError( error.error ) ) {
+				this.setState( {
+					errorMessages: [ getThrottledErrorMessage( this.props.translate ) ],
+				} );
+			} else {
+				this.setState( {
+					errorMessages: [
+						this.props.translate(
+							'Sorry, something went wrong when trying to create your account. Please try again.'
+						),
+					],
+				} );
+			}
 		}
 
 		this.setState( {

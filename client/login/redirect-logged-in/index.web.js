@@ -30,6 +30,23 @@ function isExternalUrl( url ) {
 	return true;
 }
 
+/**
+ * For internal urls check when parsed the origin
+ * @param {string} url URL to check
+ * @returns {boolean}
+ */
+function isUnsafeInternalUrl( url ) {
+	if ( ! url.startsWith( '/' ) ) {
+		return false;
+	}
+
+	try {
+		return new URL( url, window.location.origin ).origin !== window.location.origin;
+	} catch ( e ) {
+		return true;
+	}
+}
+
 export default function redirectLoggedIn( context, next ) {
 	const userLoggedIn = isUserLoggedIn( context.store.getState() );
 
@@ -37,7 +54,7 @@ export default function redirectLoggedIn( context, next ) {
 		// force full page reload to avoid SSR hydration issues.
 		// Redirect parameters should have higher priority.
 		let url = context?.query?.redirect_to;
-		if ( ! url || isExternalUrl( url ) ) {
+		if ( ! url || isUnsafeInternalUrl( url ) || isExternalUrl( url ) ) {
 			url = '/';
 		}
 		window.location = url;

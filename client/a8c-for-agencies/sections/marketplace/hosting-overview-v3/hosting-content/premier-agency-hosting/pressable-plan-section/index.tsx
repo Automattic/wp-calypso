@@ -164,6 +164,7 @@ export default function PressablePlanSection( {
 
 				{ isCustomPlan ? (
 					<SimpleList
+						applyCoreStyles
 						items={ [
 							translate( 'Custom WordPress installs' ),
 							translate( '{{b}}%(count)s{{/b}} visits per month*', {
