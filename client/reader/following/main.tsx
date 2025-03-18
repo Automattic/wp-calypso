@@ -11,7 +11,8 @@ import QuickPost from 'calypso/reader/components/quick-post';
 import ReaderOnboarding from 'calypso/reader/onboarding';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import ReaderStream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { selectSidebarRecentSite } from 'calypso/state/reader-ui/sidebar/actions';
 import Recent from '../recent';
 import { useSiteSubscriptions } from './use-site-subscriptions';
@@ -23,6 +24,8 @@ function FollowingStream( { ...props } ) {
 	const { currentView } = useFollowingView();
 	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
 	const dispatch = useDispatch();
+	const currentUser = useSelector( getCurrentUser );
+	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
 
 	// Set the selected feed based on route param.
 	useEffect( () => {
@@ -65,7 +68,7 @@ function FollowingStream( { ...props } ) {
 					>
 						<ViewToggle />
 					</NavigationHeader>
-					{ config.isEnabled( 'reader/quick-post' ) && (
+					{ config.isEnabled( 'reader/quick-post' ) && hasSites && (
 						<FoldableCard
 							header={ translate( 'Write a quick post' ) }
 							clickableHeader
