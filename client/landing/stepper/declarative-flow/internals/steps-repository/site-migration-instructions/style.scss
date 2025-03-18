@@ -12,6 +12,14 @@
 			padding: 0;
 		}
 	}
+
+	@media ( max-width: $break-small ) {
+		.launchpad-container__sidebar,
+		.launchpad-container__main-content {
+			padding-left: 0;
+			padding-right: 0;
+		}
+	}
 }
 
 .site-migration-instructions__steps {
