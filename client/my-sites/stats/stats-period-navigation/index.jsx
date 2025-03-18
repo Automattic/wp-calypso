@@ -241,10 +241,7 @@ class StatsPeriodNavigation extends PureComponent {
 		const chartEnd = navigationEnd.format( 'YYYY-MM-DD' );
 
 		const path = `/stats/${ period }/${ slug }`;
-		const url = getPathWithUpdatedQueryString(
-			{ chartStart, chartEnd, navigation: 'arrow' },
-			path
-		);
+		const url = getPathWithUpdatedQueryString( { chartStart, chartEnd }, path );
 
 		page( url );
 	};

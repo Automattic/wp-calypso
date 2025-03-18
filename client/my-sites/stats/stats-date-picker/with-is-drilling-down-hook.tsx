@@ -2,10 +2,6 @@ import { useMemo } from 'react';
 
 interface WithIsDrillingDownHookProps {
 	period: string;
-	queryParams: {
-		// Used to refresh isDrillingDown when navigating by clicking arrows.
-		navigation?: string;
-	};
 	isDrillingDown: string | null;
 }
 
@@ -20,7 +16,7 @@ function withIsDrillingDownHook( Component: React.ComponentType< WithIsDrillingD
 	return function WrappedComponent( props: WithIsDrillingDownHookProps ) {
 		const isDrillingDown = useMemo( () => {
 			return sessionStorage.getItem( 'jetpack_stats_date_range_is_drilling_down' );
-		}, [ props.period, props.queryParams.navigation ] ); // eslint-disable-line react-hooks/exhaustive-deps
+		}, [ props.period ] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 		return <Component { ...props } isDrillingDown={ isDrillingDown } />;
 	};
