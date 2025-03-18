@@ -115,12 +115,11 @@ $woocommerce-purple-50: #720EEC;
 	display: block;
 	justify-content: center;
 	text-align: center;
-	font-size: 1rem;
+	@include body-large;
 
 	@include breakpoint-deprecated( ">660px" ) {
 		padding: 7px 12px;
-		font-size: 0.75rem;
-		font-weight: 600;
+		@include heading-medium;
 		height: 2rem;
 	}
 }
@@ -224,8 +223,7 @@ $woocommerce-purple-50: #720EEC;
 	}
 
 	.form-label {
-		font-size: 1rem;
-		line-height: 1.2;
+		@include body-large;
 		margin: 0;
 	}
 
