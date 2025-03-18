@@ -4,7 +4,7 @@
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
 import { useEntrepreneurAdminDestination } from 'calypso/landing/stepper/hooks/use-entrepreneur-admin-destination';
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
-import entrepreneurFlow from '../entrepreneur-flow';
+import entrepreneurFlow from '../flows/entrepreneur-flow/entrepreneur-flow';
 import { STEPS } from '../internals/steps';
 import { getFlowLocation, renderFlow } from './helpers';
 
