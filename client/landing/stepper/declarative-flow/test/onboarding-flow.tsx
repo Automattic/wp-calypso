@@ -3,7 +3,6 @@
  */
 import { SiteIntent } from '@automattic/data-stores/src/onboard/constants';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
-import { addQueryArgs } from '@wordpress/url';
 import onboarding from '../flows/onboarding/onboarding';
 import { STEPS } from '../internals/steps';
 import { getFlowLocation, renderFlow } from './helpers';
