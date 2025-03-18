@@ -51,14 +51,15 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 		if ( isOdieChatLoading || ! isEnabled ) {
 			return;
 		}
+
 		if ( chatStatus === 'loaded' ) {
 			setIsEnabled( false );
 			return;
 		}
 
-		if ( odieId && odieChat && ! canFetchConversation ) {
+		if ( ! canFetchConversation ) {
 			setMainChatState( {
-				...odieChat,
+				...( odieChat ? odieChat : emptyChat ),
 				conversationId: null,
 				supportInteractionId: currentSupportInteraction!.uuid,
 				provider: 'odie',
