@@ -3,6 +3,7 @@ import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
+import { useIsValidWooPartner } from 'calypso/landing/stepper/hooks/use-is-valid-woo-partner';
 import { recordFreeHostingTrialStarted } from 'calypso/lib/analytics/ad-tracking/ad-track-trial-start';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
@@ -60,6 +61,7 @@ const hosting: Flow = {
 		const plan = queryParams.plan;
 		const flowName = this.name;
 		const showDomainStep = useShowDomainStep();
+		const isWooPartner = useIsValidWooPartner();
 
 		const goBack = () => {
 			if ( _currentStepSlug === 'plans' ) {
@@ -119,7 +121,6 @@ const hosting: Flow = {
 
 				case 'processing': {
 					const hasStudioSyncSiteId = queryParams.studioSiteId;
-					const hasPartnerBundle = queryParams.partnerBundle;
 					const siteId = providedDependencies.siteId || getSignupCompleteSiteID();
 					const siteSlug = providedDependencies.siteSlug || getSignupCompleteSlug();
 					const destinationParams: Record< string, string > = {
@@ -129,11 +130,11 @@ const hosting: Flow = {
 						destinationParams[ 'redirect_to' ] = addQueryArgs( `/home/${ siteId }`, {
 							studioSiteId: queryParams.studioSiteId,
 						} );
-					} else if ( hasPartnerBundle ) {
+					} else if ( isWooPartner ) {
 						// For partners, we'll redirect to the WooCommerce admin page
-						destinationParams[ 'redirect_to' ] = addQueryArgs(
-							`https://${ siteSlug }/wp-admin/admin.php?page=wc-admin`
-						);
+						destinationParams[
+							'redirect_to'
+						] = `https://${ siteSlug }/wp-admin/admin.php?page=wc-admin`;
 					}
 					// Purchasing Business or Commerce plans will trigger an atomic transfer, so go to stepper flow where we wait for it to complete.
 					const destination = addQueryArgs( '/setup/transferring-hosted-site', destinationParams );
