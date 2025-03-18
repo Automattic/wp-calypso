@@ -80,8 +80,20 @@ fieldset.account__settings-admin-home {
 	}
 }
 
-main.account .navigation-header {
-	@media (min-width:  $break-small ) {
-		padding-bottom: 0;
+main.account {
+	.email-verification-banner {
+		margin-bottom: 16px;
+		margin-top: 0;
+
+		@media (min-width: $break-small) {
+			margin-top: 24px;
+			margin-bottom: 24px;
+		}
+	}
+
+	&:has(.email-verification-banner) .navigation-header {
+		@media (min-width: $break-small) {
+			padding-bottom: 0;
+		}
 	}
 }
