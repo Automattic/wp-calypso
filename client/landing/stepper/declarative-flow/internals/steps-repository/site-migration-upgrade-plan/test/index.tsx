@@ -8,7 +8,7 @@ import {
 	PlanSlug,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
-import { MIGRATION_SIGNUP_FLOW } from '@automattic/onboarding';
+import { HOSTED_SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -156,7 +156,7 @@ describe( 'SiteMigrationUpgradePlan', () => {
 
 	it( 'selects annual plan as default', async () => {
 		const navigation = { submit: jest.fn() };
-		render( { navigation, flow: MIGRATION_SIGNUP_FLOW } );
+		render( { navigation, flow: HOSTED_SITE_MIGRATION_FLOW } );
 
 		await waitFor( async () => {
 			await userEvent.click( screen.getByRole( 'button', { name: /Upgrade and migrate/ } ) );
@@ -173,7 +173,7 @@ describe( 'SiteMigrationUpgradePlan', () => {
 		mockUseSelectedPlanUpgradeQuery( 'business-monthly' );
 
 		const navigation = { submit: jest.fn() };
-		render( { navigation, flow: MIGRATION_SIGNUP_FLOW } );
+		render( { navigation, flow: HOSTED_SITE_MIGRATION_FLOW } );
 
 		await waitFor( async () => {
 			await userEvent.click( screen.getByRole( 'button', { name: /Pay monthly/ } ) );
@@ -188,7 +188,7 @@ describe( 'SiteMigrationUpgradePlan', () => {
 
 	it( 'selects annual plan', async () => {
 		const navigation = { submit: jest.fn() };
-		render( { navigation, flow: MIGRATION_SIGNUP_FLOW } );
+		render( { navigation, flow: HOSTED_SITE_MIGRATION_FLOW } );
 
 		await waitFor( async () => {
 			await userEvent.click( screen.getByRole( 'button', { name: /Pay annually/ } ) );
@@ -205,7 +205,7 @@ describe( 'SiteMigrationUpgradePlan', () => {
 		mockTrialEligibilityAPI( API_RESPONSE_EMAIL_VERIFIED );
 
 		const navigation = { submit: jest.fn() };
-		render( { navigation, flow: MIGRATION_SIGNUP_FLOW } );
+		render( { navigation, flow: HOSTED_SITE_MIGRATION_FLOW } );
 
 		await waitFor( async () => {
 			await userEvent.click( screen.getByRole( 'button', { name: /Try 7 days for free/ } ) );
@@ -224,7 +224,7 @@ describe( 'SiteMigrationUpgradePlan', () => {
 
 		render( {
 			data: { hideFreeMigrationTrialForNonVerifiedEmail: true },
-			flow: MIGRATION_SIGNUP_FLOW,
+			flow: HOSTED_SITE_MIGRATION_FLOW,
 		} );
 
 		await waitFor( () => {

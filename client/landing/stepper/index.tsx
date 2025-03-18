@@ -6,7 +6,6 @@ import config from '@automattic/calypso-config';
 import { UserActions, User as UserStore } from '@automattic/data-stores';
 import {
 	HOSTED_SITE_MIGRATION_FLOW,
-	MIGRATION_SIGNUP_FLOW,
 	SITE_MIGRATION_FLOW,
 	ONBOARDING_FLOW,
 } from '@automattic/onboarding';
@@ -69,11 +68,7 @@ const getSiteIdFromURL = () => {
 	return siteId ? Number( siteId ) : null;
 };
 
-const HOTJAR_ENABLED_FLOWS = [
-	SITE_MIGRATION_FLOW,
-	HOSTED_SITE_MIGRATION_FLOW,
-	MIGRATION_SIGNUP_FLOW,
-];
+const HOTJAR_ENABLED_FLOWS = [ SITE_MIGRATION_FLOW, HOSTED_SITE_MIGRATION_FLOW ];
 
 const initializeHotJar = ( flowName: string ) => {
 	if ( HOTJAR_ENABLED_FLOWS.includes( flowName ) ) {
