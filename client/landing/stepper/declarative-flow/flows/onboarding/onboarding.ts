@@ -283,7 +283,6 @@ const onboarding: Flow = {
 						const currentQueryArgs = getQueryArgs( window.location.href );
 						currentQueryArgs.step = 'domain-input';
 
-						setRedirectedToUseMyDomain( true );
 						let useMyDomainURL = addQueryArgs( '/use-my-domain', currentQueryArgs );
 
 						const lastQueryParam = ( providedDependencies?.domainForm as { lastQuery?: string } )
@@ -302,7 +301,6 @@ const onboarding: Flow = {
 						return navigate( useMyDomainURL );
 					}
 
-					setRedirectedToUseMyDomain( false );
 					return navigate( 'plans' );
 				case 'use-my-domain':
 					setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
@@ -330,7 +328,6 @@ const onboarding: Flow = {
 						providedDependencies: useMyDomainTracksEventProps,
 					} );
 
-					setUseMyDomainQueryParams( getQueryArgs( window.location.href ) );
 					return navigate( 'plans' );
 				case 'plans': {
 					const cartItems = providedDependencies.cartItems as Array< typeof planCartItem >;
