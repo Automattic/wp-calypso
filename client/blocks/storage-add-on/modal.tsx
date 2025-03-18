@@ -1,7 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Site, StorageAddOnSlug, AddOns } from '@automattic/data-stores';
-// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
-import { __experimentalConfirmDialog as ConfirmDialog } from '@wordpress/components';
+import { Modal, __experimentalVStack as VStack, Flex, Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -49,28 +48,35 @@ const StorageAddOnModal: React.FC< StorageAddOnModalProps > = ( { isOpen, siteId
 	}
 
 	return isOpen ? (
-		<ConfirmDialog
-			title={ translate( 'Add more storage' ) }
-			onRequestClose={ onClose }
-			cancelButtonText={ translate( 'Cancel' ) }
-			confirmButtonText={ translate( 'Buy storage' ) }
-			onCancel={ onClose }
-			onConfirm={ onBuyStorage }
-		>
-			<p>{ translate( 'Make more space for high-quality photos, videos, and other media.' ) }</p>
-			<h2>{ translate( 'Storage add-on' ) }</h2>
-			<StorageAddOnDropdown
-				selectedStorageAddOnSlug={ selectedStorageAddOnSlug }
-				setSelectedStorageAddOnSlug={ setSelectedStorageAddOnSlug }
-				siteId={ siteId }
-			/>
-			<h2>{ translate( 'New storage capacity' ) }</h2>
-			<StorageAddOnIndicator
-				mediaStorage={ mediaStorage }
-				selectedStorageAddOnSlug={ selectedStorageAddOnSlug }
-				siteId={ siteId }
-			/>
-		</ConfirmDialog>
+		<Modal title={ translate( 'Add more storage' ) } onRequestClose={ onClose }>
+			<VStack spacing={ 8 }>
+				<div>
+					<p>
+						{ translate( 'Make more space for high-quality photos, videos, and other media.' ) }
+					</p>
+					<h2>{ translate( 'Storage add-on' ) }</h2>
+					<StorageAddOnDropdown
+						selectedStorageAddOnSlug={ selectedStorageAddOnSlug }
+						setSelectedStorageAddOnSlug={ setSelectedStorageAddOnSlug }
+						siteId={ siteId }
+					/>
+					<h2>{ translate( 'New storage capacity' ) }</h2>
+					<StorageAddOnIndicator
+						mediaStorage={ mediaStorage }
+						selectedStorageAddOnSlug={ selectedStorageAddOnSlug }
+						siteId={ siteId }
+					/>
+				</div>
+				<Flex direction="row" justify="flex-end">
+					<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
+						{ translate( 'Cancel' ) }
+					</Button>
+					<Button __next40pxDefaultSize variant="primary" onClick={ onBuyStorage }>
+						{ translate( 'Buy storage' ) }
+					</Button>
+				</Flex>
+			</VStack>
+		</Modal>
 	) : null;
 };
 
