@@ -121,7 +121,10 @@ const StatsCard = ( props: StatsCardProps ) => {
 				[ `${ BASE_CLASS_NAME }__hasoverlay` ]: !! overlay,
 			} ) }
 		>
-			<div className={ `${ BASE_CLASS_NAME }__content` }>
+			<div
+				className={ `${ BASE_CLASS_NAME }__content` }
+				{ ...( overlay && { 'aria-hidden': true, inert: '' } ) }
+			>
 				{ !! heroElement && (
 					<div className={ `${ BASE_CLASS_NAME }--hero` }>
 						{ splitHeader && <div className={ `${ BASE_CLASS_NAME }-header` }>{ titleNode }</div> }

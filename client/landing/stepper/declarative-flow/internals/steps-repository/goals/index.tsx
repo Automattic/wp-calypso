@@ -201,13 +201,15 @@ const GoalsStep: StepType = ( { navigation, flow } ) => {
 			const nextButton = <Step.NextButton onClick={ handleNext } />;
 
 			return (
-				<Step.SixColumnsCenteredLayout
+				<Step.CenteredColumnLayout
+					columnWidth={ 6 }
 					className="step-container-v2--goals"
 					topBar={ <Step.TopBar skipButton={ <Step.SkipButton onClick={ handleSkip } /> } /> }
 					heading={ <Step.Heading text={ whatAreYourGoalsText } subText={ subHeaderText } /> }
 					stickyBottomBar={ <Step.StickyBottomBar rightButton={ nextButton } /> }
-					render={ ( { isMediumViewport } ) => getStepContent( isMediumViewport && nextButton ) }
-				/>
+				>
+					{ ( { isMediumViewport } ) => getStepContent( isMediumViewport && nextButton ) }
+				</Step.CenteredColumnLayout>
 			);
 		}
 
