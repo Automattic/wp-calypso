@@ -2,6 +2,7 @@ import { Button, Gridicon, FormLabel, SelectDropdown } from '@automattic/compone
 import { Title, SubTitle } from '@automattic/onboarding';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import { useEffect } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import {
 	getImportersAsImporterOption,
@@ -38,6 +39,7 @@ export default function ListStep( props: Props ) {
 	const { siteSlug, submit, getFinalImporterUrl, onNavBack } = props;
 	const backToFlow = urlQueryParams.get( 'backToFlow' );
 	const fromSite = urlQueryParams.get( 'from' );
+	const platform = urlQueryParams.get( 'platform' );
 	const title = props.title || __( 'Import content from another platform or file' );
 	const subTitle = props.subTitle || __( "Select the platform you're coming from" );
 
@@ -59,6 +61,17 @@ export default function ListStep( props: Props ) {
 		);
 		submit?.( { platform, url: importerUrl } );
 	};
+
+	useEffect( () => {
+		if ( platform ) {
+			const foundPlatform = [ ...primaryListOptions, ...secondaryListOptions ].find(
+				( x ) => x.value === platform
+			);
+			if ( foundPlatform ) {
+				onImporterSelect( foundPlatform.value );
+			}
+		}
+	}, [ platform, submit, onImporterSelect, primaryListOptions, secondaryListOptions ] );
 
 	return (
 		<>

@@ -121,6 +121,7 @@ const siteMigration: FlowV2 = {
 		const urlQueryParams = useQuery();
 		const fromQueryParam = urlQueryParams.get( 'from' );
 		const actionQueryParam = urlQueryParams.get( 'action' );
+		const platformQueryParam = urlQueryParams.get( 'platform' );
 		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
 
 		const { get, sessionId } = useFlowState();
@@ -259,6 +260,7 @@ const siteMigration: FlowV2 = {
 										origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
 										backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
 										...( fromQueryParam && { from: fromQueryParam } ),
+										...( platformQueryParam && { platform: platformQueryParam } ),
 									},
 									'/setup/site-setup/importList'
 								)
