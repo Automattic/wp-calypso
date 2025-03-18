@@ -5,6 +5,7 @@ import { Modal, Button, CheckboxControl } from '@wordpress/components';
 import { useCallback, useMemo, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
+import { useExperiment } from 'calypso/lib/explat';
 import { hasAmountAvailableToRefund } from 'calypso/lib/purchases';
 import { cancelAndRefundPurchaseAsync } from 'calypso/lib/purchases/actions';
 import getPlanFeatures from 'calypso/my-sites/checkout/src/lib/get-plan-features';
@@ -32,6 +33,8 @@ const DowngradeModal = ( { isVisible, toPlanSlug, onClose }: DowngradeModalProps
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
 	const [ isDowngrading, setIsDowngrading ] = useState( false );
 	const [ enableLosslessImport, setEnableLosslessImport ] = useState( false );
+	const [ , experimentAssignment ] = useExperiment( 'wpcom_business_10_01' );
+	const shouldShowLosslessImportOption = experimentAssignment?.variationName === 'treatment';
 
 	// Check if the site is atomic and if the target plan is not a Business or Commerce plan
 	const isAtomicSite = site?.options?.is_wpcom_atomic;
@@ -237,16 +240,21 @@ const DowngradeModal = ( { isVisible, toPlanSlug, onClose }: DowngradeModalProps
 							</ul>
 						</div>
 					</Notice>
-					<div className="downgrade-modal__lossless-import">
-						<CheckboxControl
-							label={ translate( 'Attempt to recover my posts, pages, and media after downgrade' ) }
-							help={ translate(
-								'Your posts, pages, and media added after upgrading will be automatically imported to your downgraded site. You will receive an email when complete.'
-							) }
-							checked={ enableLosslessImport }
-							onChange={ setEnableLosslessImport }
-						/>
-					</div>
+
+					{ shouldShowLosslessImportOption && (
+						<div className="downgrade-modal__lossless-import">
+							<CheckboxControl
+								label={ translate(
+									'Attempt to recover my posts, pages, and media after downgrade'
+								) }
+								help={ translate(
+									'Your posts, pages, and media added after upgrading will be automatically imported to your downgraded site. You will receive an email when complete.'
+								) }
+								checked={ enableLosslessImport }
+								onChange={ setEnableLosslessImport }
+							/>
+						</div>
+					) }
 				</>
 			) }
 
