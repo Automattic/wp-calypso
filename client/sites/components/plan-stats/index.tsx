@@ -1,15 +1,14 @@
 import { Button, LoadingPlaceholder } from '@automattic/components';
-import { AddOns } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PlanStorage, { useDisplayUpgradeLink } from 'calypso/blocks/plan-storage';
 import StorageAddOnModal from 'calypso/blocks/storage-add-on/modal';
 import { isPlansPageUntangled } from 'calypso/lib/plans/untangling-plans-experiment';
-import { isPartnerPurchase } from 'calypso/lib/purchases';
+import { useStorageAddOnAvailable } from 'calypso/lib/plans/use-storage-add-on-available';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { getSelectedPurchase, getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedPurchase } from 'calypso/state/ui/selectors';
 import { PlanBandwidth } from './plan-bandwidth';
 import { PlanSiteVisits } from './plan-site-visits';
 import PlanStorageBar from './plan-storage-bar';
@@ -54,14 +53,13 @@ export default function PlanStats() {
 	const planDetails = site?.plan;
 	const planData = useSelector( ( state ) => getCurrentPlan( state, site?.ID ) );
 	const isFreePlan = planDetails?.is_free;
-	const planPurchase = useSelector( getSelectedPurchase );
-	const isAgencyPurchase = planPurchase && isPartnerPurchase( planPurchase );
 
+	const planPurchase = useSelector( getSelectedPurchase );
 	const planPurchaseLoading = ! isFreePlan && planPurchase === null;
 	const isLoading = ! planDetails || ! planData || planPurchaseLoading;
 
 	const footerWrapperIsLink = useDisplayUpgradeLink( site?.ID ?? null );
-	const availableStorageAddOns = AddOns.useAvailableStorageAddOns( { siteId: site?.ID } );
+	const isStorageAddOnAvailable = useStorageAddOnAvailable( site?.ID );
 
 	const isUntangled = useSelector( isPlansPageUntangled );
 	const [ isOpen, setIsOpen ] = useState( false );
@@ -78,7 +76,7 @@ export default function PlanStats() {
 					siteId={ site?.ID }
 					storageBarComponent={ PlanStorageBar }
 				>
-					{ availableStorageAddOns.length && ! isAgencyPurchase ? (
+					{ isStorageAddOnAvailable ? (
 						<div className="plan-storage-footer">
 							<NeedMoreStorage noLink={ footerWrapperIsLink } onClick={ () => setIsOpen( true ) } />
 						</div>
