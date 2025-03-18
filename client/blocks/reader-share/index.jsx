@@ -112,7 +112,7 @@ class ReaderShare extends Component {
 			'reader-share__button': true,
 			'ignore-click': true,
 			'is-active': this.state.showingMenu,
-			tooltip: true,
+			tooltip: this.props.isReblogSelection,
 		} );
 
 		const popoverProps = {
