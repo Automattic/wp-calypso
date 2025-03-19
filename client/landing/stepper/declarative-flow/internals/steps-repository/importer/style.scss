@@ -11,6 +11,7 @@
 	}
 
 	.import__onboarding-page {
+		@include onboarding-block-margin;
 		.onboarding-progress {
 			min-width: auto;
 			margin: auto;
