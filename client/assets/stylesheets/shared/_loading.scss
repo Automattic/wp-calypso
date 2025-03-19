@@ -43,6 +43,13 @@
 	}
 }
 
+.is-section-sites-dashboard,
+.is-section-overview {
+	.wpcom-loading__boot {
+		transform: translateX(calc(var(--sidebar-width-max) * -0.5));
+	}
+}
+
 .wpcom__loading-ellipsis {
 	display: inline-block;
 	position: relative;

@@ -133,7 +133,11 @@ class Document extends Component {
 		}
 
 		const shouldNotShowLoadingLogo =
-			sectionName === 'checkout' || sectionName === 'stepper' || sectionName === 'signup';
+			sectionName === 'checkout' ||
+			sectionName === 'stepper' ||
+			sectionName === 'signup' ||
+			sectionName === 'sites-dashboard' ||
+			sectionName === 'overview';
 
 		const LoadingLogo = chooseLoadingLogo( this.props, {
 			isWpMobileApp: app?.isWpMobileApp,
