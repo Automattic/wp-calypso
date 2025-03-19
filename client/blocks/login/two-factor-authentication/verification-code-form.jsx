@@ -120,7 +120,7 @@ class VerificationCodeForm extends Component {
 			labelText = translate( 'Backup code' );
 			smallPrint = (
 				<div className="two-factor-authentication__small-print">
-					{ translate( 'Can’t access your backup codes? {{link}}Contact support{{/link}}.', {
+					{ translate( 'Can’t access your backup codes? {{link}}Contact\u00A0support{{/link}}', {
 						components: {
 							link: (
 								<ActionPanelLink
@@ -160,13 +160,13 @@ class VerificationCodeForm extends Component {
 						{ requestError && requestError.field === 'twoStepCode' && (
 							<FormInputValidation isError text={ requestError.message } />
 						) }
+
+						{ smallPrint }
 					</FormFieldset>
 
 					<FormButton primary disabled={ this.state.isDisabled }>
 						{ buttonText }
 					</FormButton>
-
-					{ smallPrint }
 				</Card>
 
 				<TwoFactorActions

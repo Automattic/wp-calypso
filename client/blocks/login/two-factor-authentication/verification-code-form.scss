@@ -1,8 +1,16 @@
+@import "@automattic/color-studio/dist/color-variables";
 @import "two-factor-content";
 
 .two-factor-authentication__small-print {
 	clear: both;
-	padding: 2em 0 0 0;
+	font-size: $font-body-small;
+	padding-top: 8px;
+	color: $studio-gray-40;
+
+	a {
+		color: $studio-gray-40;
+		text-decoration: underline;
+	}
 }
 
 .two-factor-authentication__verification-code-form {
@@ -101,7 +109,6 @@
 	.two-factor-authentication__small-print {
 		a {
 			color: var(--woo-purple-40);
-			font-size: inherit;
 		}
 	}
 }
