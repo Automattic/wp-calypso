@@ -16,7 +16,7 @@ const selectors = {
 	deleteConfirmBanner: ':text("Successfully deleted")',
 
 	// Header
-	addPeopleButton: 'a:text("Add a team member")',
+	addPeopleButton: 'a:text("Add a user")',
 	invitePeopleButton: '.people-list-section-header__add-button',
 
 	// Invites

@@ -105,10 +105,7 @@ function SubscribersTeam( props: Props ) {
 						case 'team':
 							return (
 								<>
-									<PageViewTracker
-										path="/people/team/:site"
-										title="People > Team Members / Invites"
-									/>
+									<PageViewTracker path="/people/team/:site" title="People > Users / Invites" />
 
 									<TeamInvites singleInviteView />
 									<TeamMembers

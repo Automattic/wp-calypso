@@ -172,7 +172,7 @@ function renderTeamMembers( context, next ) {
 	const TeamMembersTitle = () => {
 		const translate = useTranslate();
 
-		return <DocumentHead title={ translate( 'Team Members', { textOnly: true } ) } />;
+		return <DocumentHead title={ translate( 'Users', { textOnly: true } ) } />;
 	};
 
 	context.primary = (
