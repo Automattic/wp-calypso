@@ -12,7 +12,11 @@ import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedPurchase, getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 
-export default function PlanPricing() {
+type PlanPricingProps = {
+	inline?: boolean;
+};
+
+export default function PlanPricing( { inline }: PlanPricingProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const moment = useLocalizedMoment();
@@ -58,37 +62,51 @@ export default function PlanPricing() {
 			  } );
 	};
 
-	return (
-		<>
-			{ isLoading ? (
-				<LoadingPlaceholder
-					className="plan-price-loading-placeholder"
-					width="100px"
-					height="32px"
-				/>
-			) : (
-				<div className="plan-price-wrapper">
-					<PlanPrice
-						currencyCode={ pricing?.currencyCode }
-						isSmallestUnit
-						rawPrice={ pricing?.originalPrice.monthly }
-					/>
-					<span className="plan-price-term">
-						{ translate( '/mo', {
-							comment: '/mo is short for per month, referring to the monthly price of a site plan',
-						} ) }
-					</span>
-				</div>
-			) }
-			{ isLoading ? (
+	const renderPrice = () => {
+		const price = (
+			<PlanPrice
+				currencyCode={ pricing?.currencyCode }
+				isSmallestUnit
+				rawPrice={ pricing?.originalPrice.monthly }
+				omitHeading={ inline }
+				className={ clsx( { 'plan-price--inline': inline } ) }
+			/>
+		);
+
+		if ( inline ) {
+			return isLoading ? (
 				<LoadingPlaceholder
 					className="plan-price-info-loading-placeholder"
 					width="200px"
 					height="16px"
 				/>
 			) : (
+				<div className="plan-price-info">
+					{ price } { getBillingDetails() }
+				</div>
+			);
+		}
+
+		return isLoading ? (
+			<LoadingPlaceholder className="plan-price-loading-placeholder" width="100px" height="48px" />
+		) : (
+			<>
+				<div className="plan-price-wrapper">
+					{ price }
+					<span className="plan-price-term">
+						{ translate( '/mo', {
+							comment: '/mo is short for per month, referring to the monthly price of a site plan',
+						} ) }
+					</span>
+				</div>
 				<div className="plan-price-info">{ getBillingDetails() }</div>
-			) }
+			</>
+		);
+	};
+
+	return (
+		<>
+			{ renderPrice() }
 			{ isLoading ? (
 				<LoadingPlaceholder
 					className="plan-price-info-loading-placeholder"

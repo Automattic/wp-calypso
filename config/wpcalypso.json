@@ -104,7 +104,6 @@
 		"migration-flow/experiment": false,
 		"migration-flow/introductory-offer": true,
 		"network-connection": true,
-		"onboarding/enable-write-goal-features": true,
 		"onboarding/create-course": false,
 		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,

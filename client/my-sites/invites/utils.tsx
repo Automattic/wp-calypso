@@ -1,15 +1,33 @@
 import i18n from 'i18n-calypso';
-import { get } from 'lodash';
 import { logmeinUrl } from 'calypso/lib/logmein';
 
-export function acceptedNotice( invite, displayOnNextPage = true ) {
+type InviteType = {
+	site: {
+		URL: string;
+		title: string;
+		is_wpforteams_site: boolean;
+		ID: string;
+		domain: string;
+		admin_url: string;
+		is_vip: boolean;
+	};
+	role: string;
+};
+
+export function acceptedNotice(
+	invite: InviteType,
+	displayOnNextPage = true,
+	isPersistent = false
+) {
+	const siteUrl = invite?.site?.URL ?? '';
+	const siteTitle = invite?.site?.title ?? '';
 	const site = (
-		<a href={ get( invite, 'site.URL' ) } className="invites__notice-site-link">
-			{ get( invite, 'site.title' ) }
+		<a href={ siteUrl } className="invites__notice-site-link">
+			{ siteTitle }
 		</a>
 	);
 
-	switch ( get( invite, 'role' ) ) {
+	switch ( invite?.role ) {
 		case 'follower':
 			return [
 				i18n.translate( 'You are now following {{site/}}', {
@@ -17,8 +35,9 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 				} ),
 				{
 					button: i18n.translate( 'Visit Site' ),
-					href: get( invite, 'site.URL' ),
+					href: siteUrl,
 					displayOnNextPage,
+					isPersistent,
 				},
 			];
 
@@ -29,8 +48,9 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 				} ),
 				{
 					button: i18n.translate( 'Visit Site' ),
-					href: get( invite, 'site.URL' ),
+					href: siteUrl,
 					displayOnNextPage,
+					isPersistent,
 				},
 			];
 
@@ -42,14 +62,6 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 							components: { site },
 						} ) }
 					</h3>
-					<p className="invites__intro">
-						{ i18n.translate(
-							'This is your site dashboard where you will be able to manage all aspects of %(site)s',
-							{
-								args: { site: get( invite, 'site.title' ) },
-							}
-						) }
-					</p>
 					<p>
 						{ i18n.translate(
 							'Not sure where to start? Head on over to {{a}}Learn WordPress{{/a}}.',
@@ -59,7 +71,7 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 						) }
 					</p>
 				</div>,
-				{ displayOnNextPage },
+				{ displayOnNextPage, isPersistent },
 			];
 
 		case 'editor':
@@ -70,12 +82,6 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 							components: { site },
 						} ) }
 					</h3>
-					<p className="invites__intro">
-						{ i18n.translate(
-							'This is your site dashboard where you can publish and manage your ' +
-								'own posts and the posts of others, as well as upload media.'
-						) }
-					</p>
 					<p>
 						{ i18n.translate(
 							'Not sure where to start? Head on over to {{a}}Learn WordPress{{/a}}.',
@@ -85,7 +91,7 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 						) }
 					</p>
 				</div>,
-				{ displayOnNextPage },
+				{ displayOnNextPage, isPersistent },
 			];
 
 		case 'author':
@@ -96,12 +102,6 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 							components: { site },
 						} ) }
 					</h3>
-					<p className="invites__intro">
-						{ i18n.translate(
-							'This is your site dashboard where you can publish and ' +
-								'edit your own posts as well as upload media.'
-						) }
-					</p>
 					<p>
 						{ i18n.translate(
 							'Not sure where to start? Head on over to {{a}}Learn WordPress{{/a}}.',
@@ -111,7 +111,7 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 						) }
 					</p>
 				</div>,
-				{ displayOnNextPage },
+				{ displayOnNextPage, isPersistent },
 			];
 
 		case 'contributor':
@@ -122,13 +122,8 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 							components: { site },
 						} ) }
 					</h3>
-					<p className="invites__intro">
-						{ i18n.translate(
-							'This is your site dashboard where you can write and manage your own posts.'
-						) }
-					</p>
 				</div>,
-				{ displayOnNextPage },
+				{ displayOnNextPage, isPersistent },
 			];
 
 		case 'subscriber':
@@ -136,29 +131,30 @@ export function acceptedNotice( invite, displayOnNextPage = true ) {
 				i18n.translate( "You're now a Subscriber of: {{site/}}", {
 					components: { site },
 				} ),
-				{ displayOnNextPage },
+				{ displayOnNextPage, isPersistent },
 			];
 		default:
 			return [
 				i18n.translate( "You're now a new member of: {{site/}}", {
 					components: { site },
 				} ),
-				{ displayOnNextPage },
+				{ displayOnNextPage, isPersistent },
 			];
 	}
 }
 
-export function getRedirectAfterAccept( invite ) {
+export function getRedirectAfterAccept( invite: InviteType ) {
 	if ( invite.site.is_wpforteams_site ) {
 		return `https://${ invite.site.domain }`;
 	}
 
 	const readerPath = '/reader';
 	const postsListPath = '/posts/' + invite.site.ID;
-	const myHomePath = '/home/' + invite.site.domain;
-	const getDestinationUrl = ( redirect ) => {
+	const mySitesPath = '/sites';
+	const getDestinationUrl = ( redirect: string ) => {
 		const remoteLoginHost = `https://${ invite.site.domain }`;
-		const remoteLoginBackUrl = ( destinationPath ) => `https://wordpress.com${ destinationPath }`;
+		const remoteLoginBackUrl = ( destinationPath: string ) =>
+			`https://wordpress.com${ destinationPath }`;
 		const destination = logmeinUrl( remoteLoginHost, remoteLoginBackUrl( redirect ) );
 		const isMissingLogmein = destination === remoteLoginHost;
 		return isMissingLogmein ? redirect : destination;
@@ -181,6 +177,6 @@ export function getRedirectAfterAccept( invite ) {
 			return getDestinationUrl( readerPath );
 
 		default:
-			return getDestinationUrl( myHomePath );
+			return getDestinationUrl( mySitesPath );
 	}
 }

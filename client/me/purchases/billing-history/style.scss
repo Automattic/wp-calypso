@@ -125,11 +125,6 @@ textarea.billing-history__billing-details-editable {
 	}
 }
 
-.billing-history__resend {
-	padding: 0;
-	margin-left: 0;
-}
-
 .billing-history__receipt {
 	padding: 30px 40px;
 
@@ -236,19 +231,6 @@ li.billing-history__receipt-item-discount--different-term {
 
 .billing-history__receipt-card.card.is-compact {
 	padding: 16px 0;
-}
-
-.billing-history__receipts.card .card.is-compact:nth-of-type(2) {
-	padding-left: 0;
-	padding-right: 0;
-}
-
-.billing-history__receipts.card .pagination__list-item.pagination__arrow.is-left {
-	padding-left: 8px;
-}
-
-.billing-history__receipts.card .pagination__list-item.pagination__arrow.is-right {
-	padding-right: 8px;
 }
 
 .billing-history__receipt-card.is-placeholder {

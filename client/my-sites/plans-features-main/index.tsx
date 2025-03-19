@@ -79,6 +79,7 @@ import useGenerateActionHook from './hooks/use-generate-action-hook';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
+import useSelectedFeature from './hooks/use-selected-feature';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
 import type {
 	PlansIntent,
@@ -755,6 +756,12 @@ const PlansFeaturesMain = ( {
 		</div>
 	);
 
+	const selectedFeatureData = useSelectedFeature( {
+		gridPlans: gridPlansForFeaturesGrid,
+		selectedPlan,
+		selectedFeature,
+	} );
+
 	return (
 		<>
 			<div className={ clsx( 'plans-features-main', 'is-pricing-grid-2023-plans-features-main' ) }>
@@ -808,6 +815,7 @@ const PlansFeaturesMain = ( {
 				<PlansPageSubheader
 					siteSlug={ siteSlug }
 					isDisplayingPlansNeededForFeature={ isDisplayingPlansNeededForFeature }
+					selectedFeature={ selectedFeatureData }
 					offeringFreePlan={ offeringFreePlan }
 					deemphasizeFreePlan={ deemphasizeFreePlan }
 					onFreePlanCTAClick={ onFreePlanCTAClick }

@@ -1,5 +1,5 @@
-import { ProgressBar } from '@automattic/components';
 import { SiteMediaStorage } from '@automattic/data-stores';
+import { ProgressBar } from '@wordpress/components';
 import clsx from 'clsx';
 import filesize from 'filesize';
 import { useTranslate } from 'i18n-calypso';
@@ -44,10 +44,7 @@ const PlanStorageBar: FC< PropsWithChildren< Props > > = ( { children, mediaStor
 				</span>
 			</div>
 
-			<div className={ classes }>
-				<div className="plan-storage__bar-used" style={ { width: `${ usagePercent }%` } } />
-				<ProgressBar value={ usagePercent } total={ 100 } compact={ false } />
-			</div>
+			<ProgressBar className={ classes } value={ usagePercent } />
 
 			{ children }
 		</>

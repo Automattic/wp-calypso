@@ -16,7 +16,7 @@ export const useAutoScroll = (
 		}
 
 		const messageCount = chat.messages.length;
-		if ( messageCount < 1 || chat.status === 'loading' ) {
+		if ( messageCount < 1 || [ 'loading', 'sending' ].includes( chat.status ) ) {
 			return;
 		}
 
