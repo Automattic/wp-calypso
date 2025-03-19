@@ -41,4 +41,16 @@
 	&__right-column {
 		height: 562px;
 	}
+
+	&__faq-expander {
+		--wp-components-color-accent: var(--color-neutral-60);
+		--wp-components-color-accent-darker-20: var(--color-neutral-80);
+
+		width: 100%;
+		justify-content: center !important;
+
+		@include break-small {
+			max-width: 404px;
+		}
+	}
 }

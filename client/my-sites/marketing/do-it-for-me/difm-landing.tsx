@@ -141,7 +141,11 @@ export default function DIFMLanding( {
 					/>
 				</ImageSection>
 			</Wrapper>
-			<DIFMFAQ isStoreFlow={ isStoreFlow } siteId={ siteId ?? undefined } ctaSection={ ctas } />
+			<DIFMFAQ
+				isStoreFlow={ isStoreFlow }
+				siteId={ siteId ?? undefined }
+				ctaSection={ <CTASectionWrapper>{ ctas }</CTASectionWrapper> }
+			/>
 		</>
 	);
 }

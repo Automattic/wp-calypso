@@ -3,6 +3,7 @@ import { Gridicon } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
+import { RefObject } from '@wordpress/element';
 import { numberFormat, useTranslate } from 'i18n-calypso';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
@@ -17,8 +18,8 @@ const FAQHeader = styled.h1`
 `;
 
 const FAQSection = styled.div`
-	display: flex;
-	flex-direction: column;
+	max-width: 615px;
+	margin: 0 auto;
 `;
 
 const FAQExpander = styled( Button )`
@@ -38,12 +39,13 @@ const FAQExpander = styled( Button )`
 `;
 
 const FoldableFAQ = styled( FoldableFAQComponent )`
-	border: 1px solid #e9e9ea;
-	padding: 0;
-	border-radius: 4px;
-	margin-bottom: 24px;
+	border: 1px solid var( --color-border-subtle );
+	padding: 0 !important;
+	width: 100%;
+	border-radius: 2px;
+	margin-bottom: 16px;
 	.foldable-faq__question {
-		padding: 24px 16px 24px 24px;
+		padding: 24px;
 		flex-direction: row-reverse;
 		width: 100%;
 		svg {
@@ -53,15 +55,26 @@ const FoldableFAQ = styled( FoldableFAQComponent )`
 		}
 		.foldable-faq__question-text {
 			padding-inline-start: 0;
-			font-size: 1.125rem;
+			font-size: 1rem;
+			line-height: 1.5;
 		}
 	}
 	&.is-expanded {
 		border: 2px solid var( --studio-wordpress-blue-50 );
+
+		.foldable-faq__question {
+			padding-bottom: 16px;
+		}
+
 		.foldable-faq__answer {
-			margin: 0 16px 24px 0;
-			ul {
-				margin: 0 0 0 16px;
+			margin: 0 24px;
+			padding: 0;
+			font-size: 0.875rem;
+			line-height: 1.5;
+			color: var( --studio-gray-60 );
+
+			p {
+				margin-bottom: 1.5em;
 			}
 		}
 	}
@@ -70,7 +83,6 @@ const FoldableFAQ = styled( FoldableFAQComponent )`
 		outline: 3px solid transparent;
 	}
 	.foldable-faq__answer {
-		padding: 0 16px 0 24px;
 		border: 0;
 	}
 `;
@@ -80,16 +92,44 @@ const CTASection = styled.div`
 	gap: 16px;
 	align-items: center;
 	justify-content: center;
+	margin-top: 48px;
+	margin-bottom: 32px;
 `;
+
+interface FAQExpanderProps {
+	ref: RefObject< HTMLButtonElement >;
+	onClick: () => void;
+	isFAQSectionOpen: boolean;
+	children: ReactNode;
+}
+
+const defaultRenderFAQExpander = ( {
+	ref,
+	onClick,
+	isFAQSectionOpen,
+	children,
+}: FAQExpanderProps ) => {
+	return (
+		<FAQExpander
+			ref={ ref }
+			onClick={ onClick }
+			icon={ <Gridicon icon={ isFAQSectionOpen ? 'chevron-up' : 'chevron-down' } /> }
+		>
+			{ children }
+		</FAQExpander>
+	);
+};
 
 export const DIFMFAQ = ( {
 	isStoreFlow,
 	siteId,
 	ctaSection,
+	renderExpanderButton = defaultRenderFAQExpander,
 }: {
 	isStoreFlow: boolean;
 	siteId?: number;
 	ctaSection?: ReactNode;
+	renderExpanderButton?: typeof defaultRenderFAQExpander;
 } ) => {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
@@ -185,15 +225,17 @@ export const DIFMFAQ = ( {
 
 	return (
 		<FAQSection>
-			<FAQExpander
-				ref={ faqHeader }
-				onClick={ onFAQButtonClick }
-				icon={ <Gridicon icon={ isFAQSectionOpen ? 'chevron-up' : 'chevron-down' } /> }
-			>
-				{ isFAQSectionOpen
-					? translate( 'Hide Frequently Asked Questions' )
-					: translate( 'Show Frequently Asked Questions' ) }
-			</FAQExpander>
+			<div css={ { textAlign: 'center' } }>
+				{ renderExpanderButton( {
+					ref: faqHeader,
+					onClick: onFAQButtonClick,
+					isFAQSectionOpen,
+					children: isFAQSectionOpen
+						? translate( 'Hide Frequently Asked Questions' )
+						: translate( 'Show Frequently Asked Questions' ),
+				} ) }
+			</div>
+
 			{ isFAQSectionOpen && (
 				<>
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
@@ -400,9 +442,11 @@ export const DIFMFAQ = ( {
 										}
 									) }
 								</p>
-								<Button variant="primary" href="/start/do-it-for-me-store">
-									{ translate( 'Get started' ) }
-								</Button>
+								<p>
+									<Button variant="primary" href="/start/do-it-for-me-store">
+										{ translate( 'Get started' ) }
+									</Button>
+								</p>
 							</>
 						</FoldableFAQ>
 					) }

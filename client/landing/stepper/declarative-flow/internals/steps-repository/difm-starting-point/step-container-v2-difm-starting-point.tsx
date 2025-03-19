@@ -1,5 +1,7 @@
 import { Step } from '@automattic/onboarding';
+import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { chevronDown, chevronUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
@@ -49,7 +51,28 @@ export const StepContainerV2DIFMStartingPoint = ( {
 			topBar={ topBar }
 			stickyBottomBar={ stickyBottomBar }
 			isMediumViewport={ isMediumViewport }
-			footer={ <DIFMFAQ isStoreFlow={ false } siteId={ siteId } ctaSection={ ctas } /> }
+			footer={
+				<DIFMFAQ
+					isStoreFlow={ false }
+					siteId={ siteId }
+					ctaSection={ ctas }
+					renderExpanderButton={ ( { ref, onClick, isFAQSectionOpen, children } ) => {
+						return (
+							<Button
+								className="step-container-v2--difm-starting-point__faq-expander"
+								variant="secondary"
+								ref={ ref }
+								onClick={ onClick }
+								icon={ isFAQSectionOpen ? chevronUp : chevronDown }
+								iconPosition="right"
+								iconSize={ 18 }
+							>
+								{ children }
+							</Button>
+						);
+					} }
+				/>
+			}
 		>
 			<div className="step-container-v2--difm-starting-point__left-column">
 				<Step.Heading text={ headerText } subText={ subHeaderText } align="left" />
