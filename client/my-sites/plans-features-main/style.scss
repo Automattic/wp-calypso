@@ -161,8 +161,13 @@ body.is-section-signup {
 	 */
 	.is-sticky-plan-type-selector & {
 		.is-section-plans & {
-			margin-left: -15px;
 			width: 100vw;
+		}
+		.is-section-plans #plans & {
+			margin-left: -15px;
+		}
+		.is-section-plans #site-plans & {
+			margin-left: -24px;
 		}
 	}
 }
@@ -175,6 +180,12 @@ body.is-section-plans .layout__content .main {
 		padding: 0;
 		.is-2023-pricing-grid .plans-wrapper {
 			margin: 0;
+		}
+	}
+}
+body.is-section-plans .layout__content #plans .main {
+	@include plan-type-selector-custom-mobile-breakpoint {
+		.is-2023-pricing-grid .plans-wrapper {
 			padding: 17px;
 		}
 	}

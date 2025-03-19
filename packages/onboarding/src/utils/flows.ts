@@ -8,7 +8,6 @@ export const CONNECT_DOMAIN_FLOW = 'connect-domain';
 export const ENTREPRENEUR_FLOW = 'entrepreneur';
 export const FREE_FLOW = 'free';
 export const SITE_MIGRATION_FLOW = 'site-migration';
-export const MIGRATION_SIGNUP_FLOW = 'migration-signup';
 export const HOSTED_SITE_MIGRATION_FLOW = 'hosted-site-migration';
 export const COPY_SITE_FLOW = 'copy-site';
 export const BUILD_FLOW = 'build';
@@ -77,10 +76,6 @@ export const isEntrepreneurFlow = ( flowName: string | null ) => {
 
 export const isNewSiteMigrationFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ SITE_MIGRATION_FLOW ].includes( flowName ) );
-};
-
-export const isMigrationSignupFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ MIGRATION_SIGNUP_FLOW ].includes( flowName ) );
 };
 
 export const isHostedSiteMigrationFlow = ( flowName: string | null ) => {
