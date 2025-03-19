@@ -82,6 +82,16 @@ const getChecklistSlug = ( site: SiteExcerptData ) => {
 		return 'legacy-site-setup';
 	}
 
+	if ( site.launch_status === 'launched' ) {
+		if ( intent === 'build' ) {
+			return 'intent-build';
+		}
+
+		if ( intent === 'write' ) {
+			return 'intent-write';
+		}
+	}
+
 	return intent;
 };
 
