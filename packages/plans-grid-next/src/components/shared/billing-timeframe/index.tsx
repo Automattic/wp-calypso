@@ -82,7 +82,7 @@ const BillingTimeframe = ( { showRefundPeriod, planSlug }: Props ) => {
 
 		return (
 			<div className="plans-grid-next__billing-timeframe-vip-price">
-				{ translate( 'Starts at {{b}}%(price)s{{/b}} yearly', {
+				{ translate( 'Starts at {{b}}%(price)s{{/b}} annually', {
 					args: { price },
 					components: { b: <b /> },
 					comment: 'Translators: the price is in US dollars for all users (US$25,000)',
