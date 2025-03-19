@@ -4,6 +4,7 @@ import { CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT } from 'calypso/a8c-for-agencies
 import CopyToClipboardButton from 'calypso/a8c-for-agencies/components/copy-to-clipboard-button';
 import PageSectionColumns from 'calypso/a8c-for-agencies/components/page-section-columns';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
+import { extractStrings } from 'calypso/a8c-for-agencies/lib/translation';
 import backgroundImage1 from 'calypso/assets/images/a8c-for-agencies/woopayments/background-image-1.svg';
 import cartImage from 'calypso/assets/images/a8c-for-agencies/woopayments/cart.png';
 import ccImage from 'calypso/assets/images/a8c-for-agencies/woopayments/cc-image.png';
@@ -19,22 +20,169 @@ const WooPaymentsDashboardEmptyState = () => {
 
 	const listItems1 = [
 		translate(
-			'WooPayments is available in 38 countries and accepts payments in 135+ currencies, no other extensions needed.'
+			'WooPayments is available in {{a}}38 countries{{/a}} and accepts payments in 135+ currencies, no other extensions needed.',
+			{
+				components: {
+					a: (
+						<a
+							href="https://woocommerce.com/document/woopayments/compatibility/countries/#supported-countries"
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={ () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_woopayments_benefits_countries_link_click' )
+								);
+							} }
+						/>
+					),
+				},
+			}
 		),
 		translate(
-			'Get started for free. Pay-as-you-go fees per transaction. There are no monthly fees, either. Learn more about our fees.'
+			'Get started for free. Pay-as-you-go fees per transaction. There are no monthly fees, either. {{a}}Learn more about WooPayments fees{{/a}}.',
+			{
+				components: {
+					a: (
+						<a
+							href="https://woocommerce.com/document/woopayments/fees-and-debits/fees"
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={ () => {
+								dispatch( recordTracksEvent( 'calypso_a4a_woopayments_benefits_fees_link_click' ) );
+							} }
+						/>
+					),
+				},
+			}
 		),
 		translate(
 			'Multi-Currency support is built-in. Accept payments in 135+ currencies using WooPayments.'
 		),
 		translate(
-			'Increase conversions by enabling payment methods including WooPay, Apple Pay®, Google Pay, iDeal, P24, EPS, and Bancontact.'
+			'Increase conversions by enabling payment methods including {{wooPay}}WooPay{{/wooPay}}, {{applePay}}Apple Pay®{{/applePay}}, {{googlePay}}Google Pay{{/googlePay}}, {{iDeal}}iDeal{{/iDeal}}, {{p24}}P24{{/p24}}, {{eps}}EPS{{/eps}}, and {{bancontact}}Bancontact{{/bancontact}}.',
+			{
+				components: {
+					wooPay: (
+						<a
+							href="https://woocommerce.com/woopay-businesses"
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={ () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_woopayments_benefits_wooPay_link_click' )
+								);
+							} }
+						/>
+					),
+					applePay: (
+						<a
+							href="https://woocommerce.com/document/woopayments/payment-methods/apple-pay"
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={ () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_woopayments_benefits_applePay_link_click' )
+								);
+							} }
+						/>
+					),
+					googlePay: (
+						<a
+							href="https://woocommerce.com/document/woopayments/payment-methods/google-pay"
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={ () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_woopayments_benefits_googlePay_link_click' )
+								);
+							} }
+						/>
+					),
+					iDeal: (
+						<a
+							href="https://woocommerce.com/woocommerce-payments-ideal"
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={ () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_woopayments_benefits_iDeal_link_click' )
+								);
+							} }
+						/>
+					),
+					p24: (
+						<a
+							href="https://woocommerce.com/woopayments-p24"
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={ () => {
+								dispatch( recordTracksEvent( 'calypso_a4a_woopayments_benefits_p24_link_click' ) );
+							} }
+						/>
+					),
+					eps: (
+						<a
+							href="https://woocommerce.com/woocommerce-payments-eps"
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={ () => {
+								dispatch( recordTracksEvent( 'calypso_a4a_woopayments_benefits_eps_link_click' ) );
+							} }
+						/>
+					),
+					bancontact: (
+						<a
+							href="https://woocommerce.com/woocommerce-payments-bancontact"
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={ () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_woopayments_benefits_bancontact_link_click' )
+								);
+							} }
+						/>
+					),
+				},
+			}
+		),
+		translate(
+			'You may be eligible to earn up to {{a}}20% discount on Payment Processing Fees{{/a}}.',
+			{
+				components: {
+					a: (
+						<a
+							href="https://woocommerce.com/terms-conditions/woopayments-promotion"
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={ () => {
+								dispatch(
+									recordTracksEvent( 'calypso_a4a_woopayments_benefits_discount_link_click' )
+								);
+							} }
+						/>
+					),
+				},
+			}
 		),
 	];
 
 	const listItems2 = [
 		translate(
-			'Enable buy now, pay later (BNPL) in one click. Sell more and reach new customers with top BNPL options built into your dashboard (not available in all geographies).'
+			'Enable buy now, pay later (BNPL) in one click. Sell more and reach new customers with {{a}}top BNPL options{{/a}} built into your dashboard (not available in all geographies).',
+			{
+				components: {
+					a: (
+						<a
+							href="https://woocommerce.com/buy-now-pay-later"
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={ () => {
+								dispatch( recordTracksEvent( 'calypso_a4a_woopayments_benefits_bnpl_link_click' ) );
+							} }
+						/>
+					),
+				},
+			}
 		),
 		translate(
 			"Simplify your workflow. No more logging into third-party payment processor sites - manage everything from the comfort of your store's dashboard."
@@ -162,7 +310,7 @@ const WooPaymentsDashboardEmptyState = () => {
 						<span>{ translate( 'Benefits to share with your client' ) }</span>
 						<CopyToClipboardButton
 							textToCopy={ [ ...listItems1, ...listItems2 ]
-								.map( ( item ) => `• ${ item }` )
+								.map( ( item ) => `• ${ extractStrings( item ) }` )
 								.join( '\n' ) }
 							onClick={ () => {
 								dispatch(
@@ -177,10 +325,18 @@ const WooPaymentsDashboardEmptyState = () => {
 				} }
 			>
 				<PageSectionColumns.Column>
-					<SimpleList applyCoreStyles items={ listItems1 } />
+					<SimpleList
+						className="woopayments-dashboard-empty-state__list"
+						applyCoreStyles
+						items={ listItems1 }
+					/>
 				</PageSectionColumns.Column>
 				<PageSectionColumns.Column>
-					<SimpleList applyCoreStyles items={ listItems2 } />
+					<SimpleList
+						className="woopayments-dashboard-empty-state__list"
+						applyCoreStyles
+						items={ listItems2 }
+					/>
 				</PageSectionColumns.Column>
 			</PageSectionColumns>
 
