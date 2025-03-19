@@ -1,20 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
-@import "@automattic/onboarding/styles/mixins";
 $blueberry-color: #3858e9;
 
-.step-container.site-migration-credentials {
-	@include onboarding-block-margin;
-
-	@media ( max-width: $break-small ) {
-		.formatted-header__title {
-			padding: 0;
-		}
-
-		.formatted-header__subtitle {
-			padding: 0;
-		}
-	}
-
+.site-migration-credentials {
 	#site-migration-credentials-header {
 		.formatted-header__subtitle {
 			text-align: center;
