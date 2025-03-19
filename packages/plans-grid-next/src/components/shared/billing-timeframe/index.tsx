@@ -95,11 +95,6 @@ const BillingTimeframe = ( { showRefundPeriod, planSlug }: Props ) => {
 						comment: 'Translators: the price is in US dollars for all users (US$25,000)',
 					} ),
 				} ) }
-				{ translate( 'Starts at {{b}}%(price)s{{/b}} annually', {
-					args: { price },
-					components: { b: <b /> },
-					comment: 'Translators: the price is in US dollars for all users (US$25,000)',
-				} ) }
 			</div>
 		);
 	}
