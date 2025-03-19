@@ -48,6 +48,7 @@ import {
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CelebrateLaunchModal from '../celebrate-launch-modal';
+import { FullScreenLaunchpad } from '../full-screen-launchpad';
 
 import './style.scss';
 
@@ -144,6 +145,20 @@ const HomeContent = ( {
 			<EmptyContent
 				title={ preventWidows( title ) }
 				illustration="/calypso/images/illustrations/error.svg"
+			/>
+		);
+	}
+
+	if ( layout?.view_name === 'VIEW_FOCUSED_LAUNCHPAD' ) {
+		return (
+			<FullScreenLaunchpad
+				onClose={ () => {
+					// The standard logic we use for dismissing views. Exercise for reader ...
+				} }
+				onSiteLaunch={ () => {
+					// The standard logic we use for dismissing views. Exercise for reader ...
+					setCelebrateLaunchModalIsOpen( true );
+				} }
 			/>
 		);
 	}
