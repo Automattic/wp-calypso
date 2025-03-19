@@ -44,69 +44,52 @@ class AuthorMappingPane extends PureComponent {
 		);
 	};
 
-	getMappingDescription = ( numSourceUsers, numTargetUsers, siteDomain, sourceType ) => {
+	getMappingDescription = ( numSourceUsers, numTargetUsers, siteDomain ) => {
 		if ( numTargetUsers === 1 && numSourceUsers === 1 ) {
-			// translators: Import is a call to action button.
 			return this.props.translate(
-				'There is one author on your original %(sourceType)s site. ' +
-					"Because you're the only author on this site (%(siteDomain)s), " +
-					'all imported content will be assigned to you. ' +
-					'Click {{em}}Import{{/em}} to proceed.',
+				"Your file is ready to be imported into {{strong}}%(siteDomain)s{{/strong}}. We'll assign you as the author of all imported content.",
 				{
 					args: {
-						sourceType: sourceType,
 						siteDomain: siteDomain,
 					},
 					components: {
-						em: <em />,
+						strong: <strong />,
 					},
 				}
 			);
 		} else if ( numTargetUsers === 1 && numSourceUsers > 1 ) {
-			// translators: Import is a call to action button.
 			return this.props.translate(
-				'There are multiple authors on your original %(sourceType)s site. ' +
-					"Because you're the only author on this site (%(siteDomain)s), " +
-					'all imported content will be assigned to you. ' +
-					'Click {{em}}Import{{/em}} to proceed.',
+				"Your file is ready to be imported into {{strong}}%(siteDomain)s{{/strong}}. As you're the only author on the new site, we'll assign all imported content to you.",
 				{
 					args: {
-						sourceType: sourceType,
 						siteDomain: siteDomain,
 					},
 					components: {
-						em: <em />,
+						strong: <strong />,
 					},
 				}
 			);
 		} else if ( numTargetUsers > 1 && numSourceUsers === 1 ) {
-			// translators: Import is a call to action button.
 			return this.props.translate(
-				'There are multiple authors on your site. ' +
-					'Please reassign the authors of the imported items to an existing ' +
-					'user on this site, then click {{em}}Import{{/em}}.',
+				"Your file is ready to be imported into {{strong}}%(siteDomain)s{{/strong}}. Please reassign content from your original site's author to a user on this site.",
 				{
 					args: {
-						sourceType: 'WordPress',
+						siteDomain: siteDomain,
 					},
 					components: {
-						em: <em />,
+						strong: <strong />,
 					},
 				}
 			);
 		} else if ( numTargetUsers > 1 && numSourceUsers > 1 ) {
-			// translators: Import is a call to action button.
 			return this.props.translate(
-				'There are multiple authors on your original %(sourceType)s site. ' +
-					'Please reassign the authors of the imported items to an existing ' +
-					'user on this site (%(siteDomain)s), then click {{em}}Import{{/em}}.',
+				"Your file is ready to be imported into {{strong}}%(siteDomain)s{{/strong}}. Please reassign content from your original site's authors to users on this site.",
 				{
 					args: {
-						sourceType: 'WordPress',
 						siteDomain: siteDomain,
 					},
 					components: {
-						em: <em />,
+						strong: <strong />,
 					},
 				}
 			);
@@ -123,7 +106,6 @@ class AuthorMappingPane extends PureComponent {
 			onMap,
 			onStartImport,
 			siteId,
-			sourceType,
 			importerStatus,
 			site,
 			totalUsers,
@@ -136,8 +118,7 @@ class AuthorMappingPane extends PureComponent {
 		const mappingDescription = this.getMappingDescription(
 			sourceAuthors.length,
 			totalUsers,
-			siteDomain,
-			sourceType
+			siteDomain
 		);
 
 		return (
@@ -145,11 +126,7 @@ class AuthorMappingPane extends PureComponent {
 				<div className="importer__mapping-description">{ mappingDescription }</div>
 				<div className="importer__mapping-header">
 					<span className="importer__mapping-source-title">{ translate( 'Original site' ) }</span>
-					<span className="importer__mapping-target-title">
-						{ translate( 'This site', {
-							args: { siteDomain },
-						} ) }
-					</span>
+					<span className="importer__mapping-target-title">{ translate( 'This site' ) }</span>
 				</div>
 				{ sourceAuthors.map( ( author ) => {
 					return (
@@ -164,10 +141,7 @@ class AuthorMappingPane extends PureComponent {
 				} ) }
 				<ImporterActionButtonContainer>
 					<ImporterActionButton primary disabled={ ! canStartImport } onClick={ onStartImport }>
-						{ this.props.translate( 'Import', {
-							context:
-								'The user is told that authors are automatically mapped or they need to map them manually and then click Import.',
-						} ) }
+						{ this.props.translate( 'Import' ) }
 					</ImporterActionButton>
 					<ImporterCloseButton importerStatus={ importerStatus } site={ site } isEnabled />
 				</ImporterActionButtonContainer>
