@@ -22,6 +22,7 @@ import { successNotice } from 'calypso/state/notices/actions';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { receiveNewPost } from 'calypso/state/reader/streams/actions';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getMostRecentlySelectedSiteId, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -51,7 +52,6 @@ function QuickPost( {
 	receivePosts: ( posts: PostItem[] ) => Promise< void >;
 	successNotice: ( message: string, options: object ) => void;
 } ) {
-	const state = useSelector( ( state ) => state );
 	const translate = useTranslate();
 	const locale = useLocale();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
@@ -62,10 +62,12 @@ function QuickPost( {
 	} );
 	const [ editorKey, setEditorKey ] = useState( 0 );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
-	const selectedSiteId = useSelector( getSelectedSiteId );
 	const editorRef = useRef< HTMLDivElement >( null );
 	const dispatch = useDispatch();
 	const currentUser = useSelector( getCurrentUser );
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const mostRecentlySelectedSiteId = useSelector( getMostRecentlySelectedSiteId );
+	const primarySiteId = useSelector( getPrimarySiteId );
 	const hasLoaded = useSelector( hasLoadedSites );
 	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
 	const [ isMenuVisible, setIsMenuVisible ] = useState( false );
@@ -77,31 +79,23 @@ function QuickPost( {
 		}
 	}, [ postContent ] );
 
-	// Set initial selected site if none is selected
-	useEffect( () => {
-		if ( ! selectedSiteId ) {
-			const siteId = getMostRecentlySelectedSiteId( state ) || currentUser?.primary_blog;
-			if ( siteId ) {
-				dispatch( setSelectedSiteId( siteId ) );
-			}
-		}
-	}, [ selectedSiteId, dispatch, state, currentUser ] );
-
 	const clearEditor = () => {
 		localStorage.removeItem( STORAGE_KEY );
 		setPostContent( '' );
 		setEditorKey( ( key ) => key + 1 );
 	};
 
+	const siteId = selectedSiteId || mostRecentlySelectedSiteId || primarySiteId;
+
 	const handleSubmit = () => {
-		if ( ! postContent.trim() || ! selectedSiteId || isSubmitting ) {
+		if ( ! postContent.trim() || ! siteId || isSubmitting ) {
 			return;
 		}
 
 		setIsSubmitting( true );
 
 		wpcom
-			.site( selectedSiteId )
+			.site( siteId )
 			.post()
 			.add( {
 				title:
@@ -190,7 +184,7 @@ function QuickPost( {
 			<div className="quick-post-input__fields">
 				<div className="quick-post-input__site-select-wrapper">
 					<SitesDropdown
-						selectedSiteId={ selectedSiteId || undefined }
+						selectedSiteId={ siteId || undefined }
 						onSiteSelect={ handleSiteSelect }
 						isPlaceholder={ ! hasLoaded }
 					/>
@@ -210,7 +204,7 @@ function QuickPost( {
 							className="quick-post-input__popover"
 						>
 							<PopoverMenuItem
-								href={ selectedSiteId ? `/post/${ selectedSiteId }?type=post` : '/post' }
+								href={ siteId ? `/post/${ siteId }?type=post` : '/post' }
 								target="_blank"
 								rel="noreferrer"
 								onClick={ handleFullEditorClick }
