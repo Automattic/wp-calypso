@@ -1,5 +1,4 @@
 import { Button } from '@wordpress/components';
-import { external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useDispatch } from 'calypso/state';
@@ -33,15 +32,8 @@ export default function WooCustomFooter( { productSlug }: Props ) {
 	}
 
 	return (
-		<Button
-			variant="secondary"
-			href={ url }
-			target="_blank"
-			icon={ external }
-			iconPosition="right"
-			onCanPlay={ onViewWooPayments }
-		>
-			{ translate( 'View all details on WooCommerce.com' ) }
+		<Button variant="secondary" href={ url } target="_blank" onCanPlay={ onViewWooPayments }>
+			{ translate( 'View all details on WooCommerce.com ↗' ) }
 		</Button>
 	);
 }
