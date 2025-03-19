@@ -51,23 +51,19 @@ export const StepContainerV2DIFMStartingPoint = ( {
 			isMediumViewport={ isMediumViewport }
 			footer={ <DIFMFAQ isStoreFlow={ false } siteId={ siteId } ctaSection={ ctas } /> }
 		>
-			{ () => (
-				<>
-					<div className="step-container-v2--difm-starting-point__left-column">
-						<Step.Heading text={ headerText } subText={ subHeaderText } align="left" />
-						<DIFMServiceDescription isStoreFlow={ false } />
-						{ ctas && <div className="step-container-v2--difm-starting-point__ctas">{ ctas }</div> }
-					</div>
-					{ isExtraLargeViewport && (
-						<div style={ { height: '562px' } }>
-							<AsyncLoad
-								require="calypso/my-sites/marketing/do-it-for-me/site-build-showcase"
-								placeholder={ <LoadingEllipsis /> }
-								isStoreFlow={ false }
-							/>
-						</div>
-					) }
-				</>
+			<div className="step-container-v2--difm-starting-point__left-column">
+				<Step.Heading text={ headerText } subText={ subHeaderText } align="left" />
+				<DIFMServiceDescription isStoreFlow={ false } />
+				{ ctas && <div className="step-container-v2--difm-starting-point__ctas">{ ctas }</div> }
+			</div>
+			{ isExtraLargeViewport && (
+				<div className="step-container-v2--difm-starting-point__right-column">
+					<AsyncLoad
+						require="calypso/my-sites/marketing/do-it-for-me/site-build-showcase"
+						placeholder={ <LoadingEllipsis /> }
+						isStoreFlow={ false }
+					/>
+				</div>
 			) }
 		</Step.TwoColumnLayout>
 	);
