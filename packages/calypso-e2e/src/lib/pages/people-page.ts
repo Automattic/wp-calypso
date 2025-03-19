@@ -2,7 +2,7 @@ import { Page } from 'playwright';
 import { clickNavTab, reloadAndRetry } from '../../element-helper';
 import { NoticeComponent } from '../components';
 
-export type PeoplePageTabs = 'Team' | 'Followers' | 'Email Followers' | 'Invites';
+export type PeoplePageTabs = 'Users' | 'Followers' | 'Email Followers' | 'Invites';
 
 const selectors = {
 	// Navigation tabs
