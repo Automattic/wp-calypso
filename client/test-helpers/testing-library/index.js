@@ -37,37 +37,27 @@ export const renderWithProvider = (
 
 export const statefulRenderWithProvider = (
 	ui,
-	{ initialState, store = null, additionalActions = [], reducers, ...renderOptions } = {}
+	{ initialState, additionalActions = [], reducers, ...renderOptions } = {}
 ) => {
-	const queryClient = new QueryClient();
+	let reducer = initialReducer;
 
-	if ( ! store ) {
-		let reducer = initialReducer;
-
-		if ( typeof reducers === 'object' ) {
-			for ( const key in reducers ) {
-				reducer = reducer.addReducer( [ key ], reducers[ key ] );
-			}
-		}
-
-		store = createReduxStore( initialState, reducer );
-
-		setStore( store );
-
-		if ( additionalActions && additionalActions.length > 0 ) {
-			additionalActions.forEach( ( action ) => {
-				store.dispatch( action );
-			} );
+	if ( typeof reducers === 'object' ) {
+		for ( const key in reducers ) {
+			reducer = reducer.addReducer( [ key ], reducers[ key ] );
 		}
 	}
 
-	const Wrapper = ( { children } ) => (
-		<QueryClientProvider client={ queryClient }>
-			<Provider store={ store }>{ children }</Provider>
-		</QueryClientProvider>
-	);
+	const store = createReduxStore( initialState, reducer );
 
-	return rtlRender( ui, { wrapper: Wrapper, ...renderOptions } );
+	setStore( store );
+
+	if ( additionalActions && additionalActions.length > 0 ) {
+		additionalActions.forEach( ( action ) => {
+			store.dispatch( action );
+		} );
+	}
+
+	return renderWithProvider( ui, { store, ...renderOptions } );
 };
 
 export const renderHookWithProvider = ( hookContainer, options = {} ) => {
