@@ -10,10 +10,10 @@ import HostingOverview from '../hosting-overview';
 
 describe( 'HostingOverview', () => {
 	it( 'should trigger errors due to limited state tree population', async () => {
-		renderWithProvider( <HostingOverview /> );
+		expect( () => renderWithProvider( <HostingOverview /> ) ).toThrow();
 	} );
 
 	it( 'should work using the stateful provider', async () => {
-		statefulRenderWithProvider( <HostingOverview /> );
+		expect( () => statefulRenderWithProvider( <HostingOverview /> ) ).not.toThrow();
 	} );
 } );
