@@ -24,9 +24,13 @@
 
 	.dataviews-view-table td div.dataviews-view-table__cell-content-wrapper div.card.purchase-item {
 		margin: 0px;
-		padding: 16px 48px 16px 24px;
 		width: 100%;
 		box-shadow: none;
+		padding: 16px 5px;
+
+		@media (min-width: 961px) {
+			padding: 16px 48px 16px 24px;
+		}
 	}
 
 	.dataviews-view-table .purchases-list-header.card {
@@ -58,6 +62,11 @@
 		height: 40px;
 
 		@include placeholder;
+	}
+
+	.dataviews-title-field .purchase-item__wrapper {
+		white-space: break-spaces;
+		justify-content: flex-start;
 	}
 
 	.dataviews-view-table .purchase-item__site,
@@ -123,7 +132,51 @@
 
 	.dataviews-title-field a.purchase-item__link {
 		display: unset;
+		white-space: break-spaces;
+		word-wrap: break-word;
 	} 
+
+	.dataviews-title-field .purchase-item__site {
+		max-width: 52px;
+		white-space: break-spaces;
+		margin-right: unset;
+
+		@media (min-width: 961px) {
+			margin-right: 16px;
+		}
+	}
+
+	.dataviews-title-field .purchase-item__information {
+		max-width: 250px;
+		white-space: break-spaces;
+		margin-right: unset;
+
+		@media (min-width: 961px) {
+			max-width: 462px;
+			margin-right: 16px;
+		}
+	}
+
+	.dataviews-title-field .purchase-item__status {
+		max-width: 300px;
+		white-space: break-spaces;
+		margin-right: unset;
+
+
+		@media (min-width: 961px) {
+			max-width: 300px;
+			margin-right: 16px;
+
+		}
+	}
+
+	.dataviews-title-field .purchase-item__payment-method {
+		white-space: break-spaces;
+
+		@media (min-width: 961px) {
+			max-width: 200px;
+		}
+	}
 
 	.dataviews-view-table .purchase-item__link,
 	.dataviews-view-table a.purchase-item__link {
