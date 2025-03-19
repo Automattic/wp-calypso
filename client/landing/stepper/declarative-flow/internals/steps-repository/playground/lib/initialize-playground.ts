@@ -15,7 +15,35 @@ const DEFAULT_BLUEPRINT: Blueprint = {
 	login: true,
 };
 
+const PREDEFINED_BLUEPRINTS: Record< string, Blueprint > = {
+	woocommerce: {
+		...DEFAULT_BLUEPRINT,
+		steps: [
+			{
+				step: 'installPlugin',
+				pluginData: {
+					resource: 'wordpress.org/plugins',
+					slug: 'woocommerce',
+				},
+				options: {
+					activate: true,
+				},
+			},
+		],
+	},
+	// Add more predefined blueprints here as needed
+};
+
 function getBlueprintFromUrl(): Blueprint {
+	const url = new URL( window.location.href );
+	const predefinedBlueprintName = url.searchParams.get( 'blueprint' );
+
+	// If a predefined blueprint is specified and exists, use it
+	if ( predefinedBlueprintName && predefinedBlueprintName in PREDEFINED_BLUEPRINTS ) {
+		return PREDEFINED_BLUEPRINTS[ predefinedBlueprintName ];
+	}
+
+	// Otherwise, try to get blueprint from hash
 	try {
 		const blueprint = JSON.parse( decodeURIComponent( window.location.hash.slice( 1 ) ) );
 		return {
