@@ -32,7 +32,7 @@ export default function WooCustomFooter( { productSlug }: Props ) {
 	}
 
 	return (
-		<Button variant="secondary" href={ url } target="_blank" onCanPlay={ onViewWooPayments }>
+		<Button variant="secondary" href={ url } target="_blank" onClick={ onViewWooPayments }>
 			{ translate( 'View all details on WooCommerce.com ↗' ) }
 		</Button>
 	);
