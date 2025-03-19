@@ -7,6 +7,7 @@ import {
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { fixMe } from 'i18n-calypso';
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch, useStore } from 'react-redux';
 import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding/constants';
@@ -202,7 +203,11 @@ const InterestsModal: React.FC< InterestsModalProps > = ( { isOpen, onClose, onC
 							) }
 						</p>
 						<p className="interests-modal__subtitle">
-							{ __( 'Follow at least 3 topics to personalize your feed.' ) }
+							{ fixMe( {
+								text: 'Follow at least 3 topics to personalize your feed.',
+								newCopy: __( 'Follow at least 3 topics to personalize your feed.' ),
+								oldCopy: __( 'Follow at least 3 topics to personalize your Reader feed.' ),
+							} ) }
 						</p>
 					</VStack>
 					{ categories.map( ( category ) => (
