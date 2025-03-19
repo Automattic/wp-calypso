@@ -192,13 +192,7 @@ export function PurchaseDowngrade( {
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logPurchasesError }
 			>
-				<Downgrade
-					purchaseId={ purchaseId }
-					siteSlug={ siteSlug }
-					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-					getConfirmCancelDomainUrlFor={ getConfirmCancelDomainUrlFor }
-					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
-				/>
+				<Downgrade purchaseId={ purchaseId } siteSlug={ siteSlug } />
 			</CheckoutErrorBoundary>
 		</Main>
 	);

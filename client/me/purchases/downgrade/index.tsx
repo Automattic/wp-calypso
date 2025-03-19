@@ -13,12 +13,11 @@ import { Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import FormattedHeader from 'calypso/components/formatted-header';
 import FormButton from 'calypso/components/forms/form-button';
-import HeaderCakeBack from 'calypso/components/header-cake/back';
-import { getName } from 'calypso/lib/purchases';
+import HeaderCake from 'calypso/components/header-cake';
 import { Purchase } from 'calypso/lib/purchases/types';
 import PurchaseSiteHeader from 'calypso/me/purchases/purchases-site/header';
+import titles from 'calypso/me/purchases/titles';
 import { isDataLoading } from 'calypso/me/purchases/utils';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { useSelector } from 'calypso/state';
@@ -27,24 +26,19 @@ import {
 	hasLoadedUserPurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
-import CancelPurchaseSupportLink from '../cancel-purchase-support-link/support-link';
-import DowngradeLoadingPlaceholder from './loading-placeholder';
+import SupportLink from '../cancel-purchase-support-link/support-link';
+import DowngradeLoadingPlaceholder from './downgrade-placeholder';
 
 import './style.scss';
 
 interface DowngradeProps {
 	siteSlug: string;
 	purchaseId: number;
-	onKeep: () => void;
-	onDowngrade: () => void;
 }
 
 const DowngradeFeatureList: React.FC< { features: FeatureObject[]; purchase: Purchase } > = ( {
 	features,
-	purchase,
 } ) => {
-	const translate = useTranslate();
-
 	if ( ! features.length ) {
 		return null;
 	}
@@ -63,15 +57,6 @@ const DowngradeFeatureList: React.FC< { features: FeatureObject[]; purchase: Pur
 					</li>
 				) ) }
 			</ul>
-			<p className="cancel-purchase__features-link">
-				<a href={ '/plans/my-plan/' + purchase.domain }>
-					{ translate( 'View all features', {
-						args: {
-							productName: getName( purchase ),
-						},
-					} ) }
-				</a>
-			</p>
 		</div>
 	);
 };
@@ -84,7 +69,7 @@ const downgradePath: Record< any, any > = {
 };
 
 export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
-	const { siteSlug, purchaseId, onKeep, onDowngrade } = props;
+	const { siteSlug, purchaseId } = props;
 	const translate = useTranslate();
 	const purchase = useSelector( ( state ) => getByPurchaseId( state, purchaseId ) );
 	const hasLoadedSites = useSelector( ( state ) => ! isRequestingSites( state ) );
@@ -97,7 +82,7 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 	const featureSlugs = getFeatureDifference(
 		downgradePath[ purchase?.productSlug ?? '' ],
 		purchase?.productSlug ?? '',
-		'get2023PricingGridSignupWpcomFeatures'
+		'getCheckoutFeatures'
 	);
 	const features = featureSlugs.map( ( slug ) => getFeatureByKey( slug ) );
 
@@ -106,60 +91,56 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 		! purchase
 	) {
 		return (
-			<div>
+			<>
 				<QueryUserPurchases />
-				<DowngradeLoadingPlaceholder />
-			</div>
+				<DowngradeLoadingPlaceholder siteId={ siteId! } name={ siteName! } purchase={ purchase! } />
+			</>
 		);
 	}
-
+	const purchaseRoot = getManagePurchaseUrlFor( siteSlug, purchaseId );
 	return (
-		<Card className="downgrade__wrapper-card">
-			<div className="downgrade__back">
-				<div className="cancel-purchase__back">
-					<HeaderCakeBack
-						icon="chevron-left"
-						href={ getManagePurchaseUrlFor( siteSlug, purchaseId ) }
-					/>
-				</div>
-			</div>
+		<>
+			<HeaderCake backHref={ purchaseRoot }>
+				{ titles.downgradeSubscription( currentPlan?.getTitle() ) }
+			</HeaderCake>
+			<PurchaseSiteHeader siteId={ siteId } name={ siteName } purchase={ purchase } />
+			<Card className="downgrade__wrapper-card">
+				<div className="downgrade__inner-wrapper">
+					<div className="downgrade__content">
+						<div>
+							<strong>
+								{ translate(
+									'We will change the plan immediately and pro-rate the remaining value from %(currentPlan)s to %(targetPlan)s.',
+									{
+										args: {
+											currentPlan: currentPlan?.getTitle(),
+											targetPlan: targetPlan?.getTitle(),
+										},
+									}
+								) }
+							</strong>
+						</div>
 
-			<FormattedHeader
-				className="downgrade__formatted-header"
-				brandFont
-				headerText={ translate( 'Downgrade your %(currentPlan)s subscription', {
-					args: { currentPlan: currentPlan?.getTitle() ?? '' },
-				} ) }
-				align="left"
-			/>
-
-			<div className="downgrade__inner-wrapper">
-				<div className="downgrade__left">
-					<p>
-						{ translate(
-							'We will change the plan immediately and pro-rate the remaining value from %(currentPlan)s to %(targetPlan)s.',
-							{
-								args: { currentPlan: currentPlan?.getTitle(), targetPlan: targetPlan?.getTitle() },
-							}
-						) }
-					</p>
-
-					<p>
-						{ translate(
-							'These features will no longer be available on your site when your plan changes:'
-						) }
-					</p>
-
+						<div>
+							{ translate(
+								'These features will no longer be available on your site when your plan changes:'
+							) }
+						</div>
+					</div>
 					<DowngradeFeatureList features={ features } purchase={ purchase } />
 
 					<div className="downgrade__confirm-buttons">
-						<FormButton primary onClick={ onDowngrade }>
+						<FormButton
+							primary
+							onClick={ () => {
+								alert( 'Downgrade not implemented' );
+							} }
+						>
 							{ translate( 'Downgrade to %(targetPlan)s', {
 								args: { targetPlan: targetPlan?.getTitle() },
 							} ) }
 						</FormButton>
 						<FormButton
-							onClick={ onKeep }
 							isPrimary={ false }
 							href={ getManagePurchaseUrlFor( siteSlug, purchaseId ) }
 						>
@@ -168,13 +149,9 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 							} ) }
 						</FormButton>
 					</div>
+					<SupportLink usage="downgrade" purchase={ purchase } />
 				</div>
-
-				<div className="downgrade__right">
-					<PurchaseSiteHeader siteId={ siteId } name={ siteName } purchase={ purchase } />
-					<CancelPurchaseSupportLink purchase={ purchase } />
-				</div>
-			</div>
-		</Card>
+			</Card>
+		</>
 	);
 };

@@ -8,6 +8,8 @@ const titles = {
 	changePaymentMethod: i18n.translate( 'Change Payment Method' ),
 	addCardDetails: i18n.translate( 'Add Credit Card' ),
 	managePurchase: i18n.translate( 'Purchase Settings' ),
+	downgradeSubscription: ( planTitle ) =>
+		i18n.translate( 'Downgrade your %(plan)s subscription', { args: { plan: planTitle } } ),
 	sectionTitle: i18n.translate( 'Purchases' ),
 	myPlan: i18n.translate( 'My Plan' ),
 	activeUpgrades: i18n.translate( 'Active Upgrades' ),

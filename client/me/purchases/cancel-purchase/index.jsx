@@ -45,7 +45,7 @@ import {
 } from 'calypso/state/purchases/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
-import CancelPurchaseSupportLink from '../cancel-purchase-support-link/support-link';
+import SupportLink from '../cancel-purchase-support-link/support-link';
 import CancelPurchaseButton from './button';
 import CancelPurchaseDomainOptions from './domain-options';
 import CancelPurchaseFeatureList from './feature-list';
@@ -400,7 +400,7 @@ class CancelPurchase extends Component {
 
 					<div className="cancel-purchase__right">
 						<PurchaseSiteHeader siteId={ siteId } name={ siteName } purchase={ purchase } />
-						<CancelPurchaseSupportLink purchase={ purchase } />
+						<SupportLink usage="cancel-purchase" purchase={ purchase } />
 					</div>
 				</div>
 			</Card>

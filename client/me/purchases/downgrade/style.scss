@@ -1,14 +1,10 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.is-section-me.is-global-sidebar-visible .purchases__downgrade.main {
-	height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
-}
-
 .downgrade__wrapper-card {
-	padding: 32px;
-	padding-top: 12px;
-
+	.downgrade__content{
+		margin-bottom: 18px
+	}
 	.purchases__downgrade & {
 		box-shadow: none;
 		padding: 0;
@@ -21,39 +17,14 @@
 	text-align: left;
 }
 
-.downgrade__right .purchases-site__header.card {
-	background: var(--studio-gray-0);
-	border-radius: 2px;
-
-	.site .site__content {
-		padding: 24px 18px;
-
-		@include break-mobile {
-			padding: 12px;
-		}
-	}
-}
-
 .downgrade__support-link {
 	color: var(--color-text-subtle);
 	font-size: $font-body-small;
-	margin-top: 12px;
+	margin: 10px 0  0 0;
 
 	.is-link {
 		font-size: $font-body-small;
 		text-decoration: none;
-	}
-}
-
-.downgrade__inner-wrapper {
-	display: flex;
-	flex-direction: column-reverse;
-	margin-bottom: 24px;
-
-	@include break-large {
-		display: grid;
-		grid-template-columns: 7fr 3fr;
-		gap: 32px;
 	}
 }
 
@@ -65,13 +36,7 @@
 .downgrade__features {
 	ul.downgrade__features-list {
 		list-style: none;
-		margin: 1.5em;
-		margin-bottom: 0;
-
-		@include break-mobile {
-			column-count: 2;
-			column-gap: 20px;
-		}
+		margin:0;
 
 		li {
 			list-style: none;
@@ -167,23 +132,56 @@
 
 .purchases__downgrade .downgrade__inner-wrapper.card {
 	box-shadow: none;
+
 }
 
-// Loading placeholder styles (reusing from cancel-purchase)
-.downgrade-loading-placeholder__header {
-	height: 36px;
-	margin-bottom: 15px;
-	width: 70%;
-}
+.downgrade-placeholder {
+	.downgrade__plan-icon,
+	.downgrade__title,
+	.downgrade__subtitle,
+	.downgrade__description,
+	.downgrade__feature,
+	.downgrade__settings-link,
+	.downgrade__confirm-buttons div{
+		@include placeholder( --color-neutral-10 );
+		display: block;
+	}
 
-.downgrade-loading-placeholder__reason {
-	height: 12px;
-	margin-bottom: 5px;
-	width: 60%;
-}
+	.downgrade__plan-icon {
+		height: 56px;
+		border-radius: 50%;
+	}
 
-.downgrade-loading-placeholder__subheader {
-	height: 24px;
-	margin-bottom: 10px;
-	width: 50%;
+	.downgrade__header {
+		border-bottom: 2px solid var(--color-neutral-0);
+	}
+
+	.downgrade__subtitle{
+		margin-bottom: 3px;
+		width: 70%;
+	}
+
+	.downgrade__title {
+		margin-bottom: 1px;
+		margin-left: 0;
+		width: 70%;
+	}
+
+	.downgrade__settings-link {
+		height: 300px;
+	}
+
+	.downgrade__feature {
+		width: 40%;
+		margin-bottom: 5px;
+	}
+
+	.downgrade__confirm-buttons{
+		display: flex;
+		gap: 12px;
+		div {
+			width: 20%;
+			height: 50px;
+		}
+	}
 }

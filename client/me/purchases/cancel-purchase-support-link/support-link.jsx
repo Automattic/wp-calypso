@@ -14,7 +14,7 @@ import { isRefundable, maybeWithinRefundPeriod } from 'calypso/lib/purchases';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-const CancelPurchaseSupportLink = ( { purchase } ) => {
+const SupportLink = ( { purchase, usage } ) => {
 	const translate = useTranslate();
 	const { siteId, siteUrl } = purchase;
 	const { setShowHelpCenter, setNavigateToRoute, setNewMessagingChat } =
@@ -33,7 +33,8 @@ const CancelPurchaseSupportLink = ( { purchase } ) => {
 	const getHelp = useCallback( () => {
 		if ( isMessagingAvailable && canConnectToZendeskMessaging ) {
 			setNewMessagingChat( {
-				initialMessage: 'Purchase cancellation flow',
+				initialMessage:
+					usage === 'cancel-purchase' ? 'Purchase cancellation flow' : 'Plan downgrade flow',
 				siteUrl: siteUrl,
 				siteId: siteId,
 			} );
@@ -51,12 +52,14 @@ const CancelPurchaseSupportLink = ( { purchase } ) => {
 	] );
 
 	const onClick = () => {
-		recordTracksEvent( 'calypso_cancellation_help_button_click' );
+		if ( usage === 'cancel-purchase' ) {
+			recordTracksEvent( 'calypso_cancellation_help_button_click' );
+		}
 		getHelp();
 	};
 
 	return (
-		<p className="cancel-purchase__support-link">
+		<p className={ `${ usage }__support-link` }>
 			<span>
 				{ ! isRefundable( purchase ) && maybeWithinRefundPeriod( purchase )
 					? translate( 'Have a question or seeking a refund?' )
@@ -73,4 +76,4 @@ const CancelPurchaseSupportLink = ( { purchase } ) => {
 	);
 };
 
-export default CancelPurchaseSupportLink;
+export default SupportLink;
