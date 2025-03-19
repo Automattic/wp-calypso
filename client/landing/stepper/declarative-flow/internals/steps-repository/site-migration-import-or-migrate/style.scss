@@ -3,10 +3,17 @@
 @import "@automattic/onboarding/styles/mixins";
 
 .import-or-migrate {
+	@include onboarding-block-margin;
 	max-width: 502px;
 
-	.step-container__content {
-		@include onboarding-block-margin;
+	@media ( max-width: $break-small ) {
+		.formatted-header__title {
+			padding: 0;
+		}
+
+		.formatted-header__subtitle {
+			padding: 0;
+		}
 	}
 
 	.onboarding-title {
