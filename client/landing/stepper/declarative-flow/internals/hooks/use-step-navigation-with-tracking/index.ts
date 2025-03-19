@@ -17,12 +17,14 @@ import type { Flow, Navigate, ProvidedDependencies, StepperStep } from '../../ty
 
 interface Params< FlowSteps extends StepperStep[] > {
 	flow: Flow;
+	stepSlugs: string[];
 	currentStepRoute: string;
 	navigate: Navigate< FlowSteps >;
 }
 
 export const useStepNavigationWithTracking = ( {
 	flow,
+	stepSlugs,
 	currentStepRoute,
 	navigate,
 }: Params< StepperStep[] > ) => {
@@ -40,7 +42,11 @@ export const useStepNavigationWithTracking = ( {
 		[]
 	);
 
-	const previousStep = stepData?.previousStep;
+	/**
+	 * If the previous step is defined in the store, and the current step is not the first step, we can go back.
+	 * We need to make sure we're not at the first step because `previousStep` is persisted and can be a step from another flow or another run of the current flow.
+	 */
+	const canUserGoBack = stepData?.previousStep && currentStepRoute !== stepSlugs[ 0 ];
 
 	const tracksEventPropsFromFlow = flow.useTracksEventProps?.();
 
@@ -104,7 +110,7 @@ export const useStepNavigationWithTracking = ( {
 			 * If the flow doesn't define a `goBack` handler, and `previousStep` is defined, we can just go history.back() and we'll remain in the flow.
 			 * But if `previousStep` is not defined, and the flow doesn't define a `goBack` handler, we should return undefined so the StepContainer doesn't render a back button.
 			 */
-			...( previousStep && {
+			...( canUserGoBack && {
 				goBack: () => {
 					handleRecordStepNavigation( {
 						event: STEPPER_TRACKS_EVENT_STEP_NAV_GO_BACK,
