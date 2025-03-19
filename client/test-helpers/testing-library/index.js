@@ -4,7 +4,9 @@ import { Fragment } from 'react';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
+import { createReduxStore } from 'calypso/state';
 import initialReducer from 'calypso/state/reducer';
+import { setStore } from 'calypso/state/redux-store';
 
 export const renderWithProvider = (
 	ui,
@@ -22,6 +24,41 @@ export const renderWithProvider = (
 		}
 
 		store = createStore( reducer, initialState, applyMiddleware( thunkMiddleware ) );
+	}
+
+	const Wrapper = ( { children } ) => (
+		<QueryClientProvider client={ queryClient }>
+			<Provider store={ store }>{ children }</Provider>
+		</QueryClientProvider>
+	);
+
+	return rtlRender( ui, { wrapper: Wrapper, ...renderOptions } );
+};
+
+export const statefulRenderWithProvider = (
+	ui,
+	{ initialState, store = null, additionalActions = [], reducers, ...renderOptions } = {}
+) => {
+	const queryClient = new QueryClient();
+
+	if ( ! store ) {
+		let reducer = initialReducer;
+
+		if ( typeof reducers === 'object' ) {
+			for ( const key in reducers ) {
+				reducer = reducer.addReducer( [ key ], reducers[ key ] );
+			}
+		}
+
+		store = createReduxStore( initialState, reducer );
+
+		setStore( store );
+
+		if ( additionalActions && additionalActions.length > 0 ) {
+			additionalActions.forEach( ( action ) => {
+				store.dispatch( action );
+			} );
+		}
 	}
 
 	const Wrapper = ( { children } ) => (
