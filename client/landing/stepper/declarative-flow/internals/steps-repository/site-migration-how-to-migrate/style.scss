@@ -4,8 +4,12 @@
 
 .how-to-migrate {
 	@include onboarding-block-margin;
-
 	max-width: 620px;
+
+	@media ( min-width: $break-medium ) {
+		margin-left: auto;
+		margin-right: auto;
+	}
 
 	@media ( max-width: $break-small ) {
 		.step-container__header {
