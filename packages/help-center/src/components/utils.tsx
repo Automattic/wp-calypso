@@ -21,6 +21,31 @@ const filterConversations = (
 	);
 };
 
+const updateConversationStatuses = (
+	conversations: ZendeskConversation[],
+	allSupportInteractions: SupportInteraction[]
+) => {
+	return conversations.map( ( conversation ) => {
+		const supportInteraction = allSupportInteractions.find( ( interaction ) =>
+			isMatchingInteraction( interaction, conversation.metadata.supportInteractionId )
+		);
+
+		if ( ! supportInteraction ) {
+			return conversation;
+		}
+
+		const updatedConversation = {
+			...conversation,
+			metadata: {
+				...conversation.metadata,
+				status: supportInteraction.status,
+			},
+		};
+
+		return updatedConversation;
+	} );
+};
+
 export const generateContactOnClickEvent = (
 	contactOption: ContactOption,
 	contactOptionEventName?: string,
@@ -129,31 +154,6 @@ export const matchSupportInteractionId = (
 
 		return foundMatch;
 	}
-};
-
-export const updateConversationStatuses = (
-	conversations: ZendeskConversation[],
-	allSupportInteractions: SupportInteraction[]
-) => {
-	return conversations.map( ( conversation ) => {
-		const supportInteraction = allSupportInteractions.find( ( interaction ) =>
-			isMatchingInteraction( interaction, conversation.metadata.supportInteractionId )
-		);
-
-		if ( ! supportInteraction ) {
-			return conversation;
-		}
-
-		const updatedConversation = {
-			...conversation,
-			metadata: {
-				...conversation.metadata,
-				status: supportInteraction.status,
-			},
-		};
-
-		return updatedConversation;
-	} );
 };
 
 export const filterAndUpdateConversationsWithStatus = (
