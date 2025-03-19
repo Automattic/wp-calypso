@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN } from '@automattic/urls';
 import { useQueryClient } from '@tanstack/react-query';
@@ -81,6 +82,8 @@ const HomeContent = ( {
 		retry: false,
 	} );
 
+	const [ showFocusedLaunchpad, setShowFocusedLaunchpad ] = useState( false );
+
 	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
 	const customDomains = siteDomains?.filter( ( domain ) => ! domain.isWPCOMDomain );
 	const customDomain = customDomains?.length ? customDomains[ 0 ] : undefined;
@@ -124,6 +127,14 @@ const HomeContent = ( {
 	}, [ emailDnsDiagnostics ] );
 
 	useEffect( () => {
+		if ( layout?.view_name === 'VIEW_FOCUSED_LAUNCHPAD' ) {
+			setShowFocusedLaunchpad( true );
+		} else {
+			setShowFocusedLaunchpad( false );
+		}
+	}, [ layout ] );
+
+	useEffect( () => {
 		const studioSiteId = getQueryArgs().studioSiteId;
 		if ( ! studioSiteId ) {
 			return;
@@ -149,15 +160,17 @@ const HomeContent = ( {
 		);
 	}
 
-	if ( layout?.view_name === 'VIEW_FOCUSED_LAUNCHPAD' ) {
+	if ( showFocusedLaunchpad ) {
 		return (
 			<FullScreenLaunchpad
-				onClose={ () => {
-					// The standard logic we use for dismissing views. Exercise for reader ...
+				onClose={ async () => {
+					setShowFocusedLaunchpad( false );
+					await updateLaunchpadSettings( siteId, { launchpad_screen: 'skipped' } );
+					queryClient.invalidateQueries( { queryKey: getCacheKey( siteId ) } );
 				} }
 				onSiteLaunch={ () => {
-					// The standard logic we use for dismissing views. Exercise for reader ...
 					setCelebrateLaunchModalIsOpen( true );
+					setShowFocusedLaunchpad( false );
 				} }
 			/>
 		);
