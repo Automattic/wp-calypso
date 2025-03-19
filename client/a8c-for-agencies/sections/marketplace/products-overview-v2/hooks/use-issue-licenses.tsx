@@ -34,7 +34,7 @@ type UseIssueLicensesOptions = {
 const useIssueLicenses = ( options: UseIssueLicensesOptions = {} ) => {
 	const { paymentMethodRequired } = usePaymentMethod();
 
-	const { mutateAsync, isIdle } = useIssueLicenseMutation( {
+	const { mutateAsync, isIdle, isPending } = useIssueLicenseMutation( {
 		onError: options.onError ?? NO_OP,
 		retry: ( errorCount, error ) => {
 			// There's a slight delay before the license creation API is made
@@ -71,6 +71,7 @@ const useIssueLicenses = ( options: UseIssueLicensesOptions = {} ) => {
 	return {
 		isReady: isIdle,
 		issueLicenses,
+		isPending,
 	};
 };
 

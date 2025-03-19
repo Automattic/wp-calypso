@@ -283,6 +283,12 @@
 		}
 	}
 
+	&:has(.hosting-dashboard-item-view__navigation.is-hidden) {
+		.hosting-dashboard-item-view__content {
+			padding-top: 15px;
+		}
+	}
+
 	.is-staging-site {
 		position: relative;
 
