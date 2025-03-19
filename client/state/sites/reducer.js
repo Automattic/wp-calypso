@@ -63,7 +63,7 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 		}
 
 		case SITE_RESET: {
-			return [];
+			return omit( state, action.siteId );
 		}
 		case SITE_RECEIVE:
 		case SITES_RECEIVE: {

@@ -404,7 +404,7 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
-					calypsoDispatch( resetSites() );
+					calypsoDispatch( resetSites( siteId ) );
 
 					return exitFlow(
 						addQueryArgs( { ref: 'site-migration-testing' }, `/overview/${ siteSlug }` )

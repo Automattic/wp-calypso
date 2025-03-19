@@ -2,6 +2,7 @@ import { captureException } from '@automattic/calypso-sentry';
 import { CircularProgressBar } from '@automattic/components';
 import { LaunchpadContainer } from '@automattic/launchpad';
 import { StepContainer } from '@automattic/onboarding';
+import { Button } from '@wordpress/components';
 import { useCallback, useEffect } from 'react';
 import { MigrationStatus } from 'calypso/data/site-migration/landing/types';
 import { useUpdateMigrationStatus } from 'calypso/data/site-migration/landing/use-update-migration-status';
@@ -82,7 +83,8 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 	const queryParams = useQuery();
 	const fromUrl = queryParams.get( 'from' ) ?? '';
 
-	const { mutate: updateMigrationStatus } = useUpdateMigrationStatus( siteId );
+	const { mutate: updateMigrationStatus, mutateAsync: updateMigrationStatusAsync } =
+		useUpdateMigrationStatus( siteId );
 
 	useEffect( () => {
 		if ( siteId ) {
@@ -98,6 +100,8 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 			deleteMigrationSticker( siteId );
 		}
 	}, [ deleteMigrationSticker, siteId ] );
+
+	// const { mutate: updateMigrationStatus } = useUpdateMigrationStatus( siteId );
 
 	// Site preparation.
 	const {
@@ -184,6 +188,15 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 		</LaunchpadContainer>
 	) : (
 		<div className="site-migration-instructions__container-without-preview">
+			<Button
+				variant="primary"
+				onClick={ async () => {
+					await updateMigrationStatusAsync( { status: MigrationStatus.STARTED_DIFM } );
+					navigation.submit?.( { destination: 'migration-started' } );
+				} }
+			>
+				Skip step
+			</Button>
 			{ migrationInstructions }
 		</div>
 	);
