@@ -4,7 +4,7 @@ import useShouldRenderHelpCenterButton from './use-should-render-help-center-but
 import type { FC } from 'react';
 
 interface HelpCenterStepButtonProps {
-	flowName?: string;
+	flowName: string;
 	enabledGeos?: string[];
 	helpCenterButtonCopy?: string;
 	helpCenterButtonLink?: string;
@@ -18,7 +18,7 @@ const HelpCenterStepButton: FC< HelpCenterStepButtonProps > = ( {
 } ) => {
 	const translate = useTranslate();
 
-	const shouldRenderHelpCenterButton = useShouldRenderHelpCenterButton( { enabledGeos } );
+	const shouldRenderHelpCenterButton = useShouldRenderHelpCenterButton( { flowName, enabledGeos } );
 
 	if ( ! shouldRenderHelpCenterButton ) {
 		return null;

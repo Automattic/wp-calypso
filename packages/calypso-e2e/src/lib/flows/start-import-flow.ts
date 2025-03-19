@@ -244,17 +244,6 @@ export class StartImportFlow {
 	}
 
 	/**
-	 * Import focused flow, go to first import step
-	 */
-	async startImportFocused( step: string, siteSlug: string, from: string ): Promise< void > {
-		const route = `/setup/import-focused/${ step }`;
-
-		await this.page.goto(
-			DataHelper.getCalypsoURL( route, { siteSlug, from, skipStoringTempTargetSite: 'true' } )
-		);
-	}
-
-	/**
 	 * Start the building.
 	 */
 	async startBuilding(): Promise< void > {

@@ -49,6 +49,11 @@ $woocommerce-purple-50: #720EEC;
 	}
 }
 
+.woopayments-dashboard-empty-state__list a {
+	text-decoration: underline;
+	color: var(--color-text);
+}
+
 a.components-button.woopayments-dashboard-empty-state__button {
 	&,
 	&:hover,

@@ -98,9 +98,7 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 			<div className="import__heading import__heading-center">
 				<Title>{ translate( 'Let’s find your site' ) }</Title>
 				<SubTitle>
-					{ translate(
-						"Drop your current site address below to get started. In the next step, we'll measure your site's performance and confirm its eligibility for migration."
-					) }
+					{ translate( 'Enter your current site address below to get started.' ) }
 				</SubTitle>
 			</div>
 			<div className="import__capture-container">

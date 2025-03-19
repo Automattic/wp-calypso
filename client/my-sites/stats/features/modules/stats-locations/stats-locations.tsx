@@ -257,12 +257,13 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 	const showUpsell = shouldGate || showJetpackUpgradePrompt;
 
 	const locationData = showUpsell ? sampleLocations : data;
-	const locationCsvData = locationData.map( ( item ) => [
-		typeof item.label === 'string' ? `"${ item.label.replace( /"/g, '""' ) }"` : item.label,
-		item.value,
-	] );
-
 	const hasLocationData = Array.isArray( locationData ) && locationData.length > 0;
+	const locationCsvData = hasLocationData
+		? locationData.map( ( item ) => [
+				typeof item.label === 'string' ? `"${ item.label.replace( /"/g, '""' ) }"` : item.label,
+				item.value,
+		  ] )
+		: [];
 
 	const downloadCsvElement = shouldGateDownloads ? (
 		<DownloadCsvUpsell

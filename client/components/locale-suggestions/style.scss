@@ -1,6 +1,9 @@
 .locale-suggestions {
 	margin: 20px auto 0;
 	max-width: 500px;
+	display: flex;
+	justify-content: center;
+
 }
 
 .locale-suggestions__list-item {
@@ -11,6 +14,30 @@
 	}
 }
 
-.locale-suggestions__locale-link {
-	margin: 0 5px;
+.locale-suggestions__notice {
+	&.notice.is-compact.is-light.is-info {
+		margin: 20px auto;
+
+		a.locale-suggestions__locale-link {
+			margin: 0 5px;
+			font-size: inherit;
+			text-underline-offset: unset;
+		}
+
+		.wp-login__main.is-generic-oauth & {
+			background: var(--color-text-inverted);
+		}
+
+		.notice__icon-wrapper {
+			color: var(--color-neutral-20);
+
+			.notice__icon-wrapper-drop {
+				background: var(--color-text-inverted);
+			}
+
+			.wp-login__main.is-generic-oauth & {
+				background: var(--color-text-inverted);
+			}
+		}
+	}
 }

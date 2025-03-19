@@ -7,7 +7,6 @@ import {
 	addProductsToCart,
 	createSiteWithCart,
 	isCopySiteFlow,
-	isImportFocusedFlow,
 	isMigrationSignupFlow,
 	isEntrepreneurFlow,
 	isNewHostedSiteCreationFlow,
@@ -22,8 +21,6 @@ import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
 import useAddEcommerceTrialMutation from 'calypso/data/ecommerce/use-add-ecommerce-trial-mutation';
-import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/use-add-temp-site-mutation';
-import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -106,7 +103,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 
 	// when it's empty, the default WordPress theme will be used.
 	let theme = '';
-	if ( isImportFocusedFlow( flow ) || isCopySiteFlow( flow ) ) {
+	if ( isCopySiteFlow( flow ) ) {
 		theme = DEFAULT_SITE_MIGRATION_THEME;
 	} else if ( isEntrepreneurFlow( flow ) ) {
 		theme = DEFAULT_ENTREPRENEUR_FLOW;
@@ -129,7 +126,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	if (
 		isOnboardingFlow( flow ) ||
 		isCopySiteFlow( flow ) ||
-		isImportFocusedFlow( flow ) ||
 		isStartWritingFlow( flow ) ||
 		isNewHostedSiteCreationFlow( flow ) ||
 		isReadymadeFlow( flow ) ||
@@ -146,11 +142,8 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	const isManageSiteFlow = Boolean(
 		wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow
 	);
-	const { addTempSiteToSourceOption } = useAddTempSiteToSourceOptionMutation();
 	const urlQueryParams = useQuery();
-	const sourceSiteSlug = urlQueryParams.get( 'from' ) || '';
 	const skipMigration = urlQueryParams.get( 'skipMigration' ) || '';
-	const { data: sourceMigrationStatus } = useSourceMigrationStatusQuery( sourceSiteSlug );
 	const useThemeHeadstart =
 		! isStartWritingFlow( flow ) &&
 		! isNewHostedSiteCreationFlow( flow ) &&
@@ -222,11 +215,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 
 		if ( domainCartItems?.length && site?.siteSlug ) {
 			await addProductsToCart( site.siteSlug, flow, productCartItems );
-		}
-
-		if ( isImportFocusedFlow( flow ) && site?.siteSlug && sourceMigrationStatus?.source_blog_id ) {
-			// Store temporary target blog id to source site option
-			addTempSiteToSourceOption( site.siteId, sourceMigrationStatus?.source_blog_id );
 		}
 
 		return {
