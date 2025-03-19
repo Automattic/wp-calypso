@@ -69,9 +69,7 @@ export class JetpackConnectNotices extends Component {
 		const noticeValues = {
 			icon: 'notice',
 			status: 'is-error',
-			text: translate(
-				'The URL you entered appears to be invalid. Please enter a valid WordPress site address.'
-			),
+			text: translate( "Please make sure you're using a valid site address." ),
 			showDismiss: false,
 		};
 
@@ -110,9 +108,7 @@ export class JetpackConnectNotices extends Component {
 
 			case NOT_WORDPRESS:
 				noticeValues.icon = 'block';
-				noticeValues.text = translate(
-					"Looks like your site isn't using WordPress. Please make sure you're using the right URL."
-				);
+				noticeValues.text = translate( 'Please make sure your site is using WordPress.' );
 				return noticeValues;
 
 			case NOT_ACTIVE_JETPACK:
@@ -122,7 +118,7 @@ export class JetpackConnectNotices extends Component {
 			case OUTDATED_JETPACK:
 				noticeValues.icon = 'block';
 				noticeValues.text = translate(
-					'Your Jetpack plugin is outdated. Please update Jetpack to the latest version before connecting.'
+					'Please update to the latest version of Jetpack before connecting.'
 				);
 				return noticeValues;
 
@@ -171,7 +167,7 @@ export class JetpackConnectNotices extends Component {
 
 			case SECRET_EXPIRED:
 				noticeValues.text = translate(
-					'The connection request has expired. Please refresh the page and try connecting again.'
+					'Your connection request expired. Please refresh and try again.'
 				);
 				noticeValues.status = 'is-error';
 				noticeValues.icon = 'notice';
@@ -222,14 +218,12 @@ export class JetpackConnectNotices extends Component {
 
 			case XMLRPC_ERROR:
 				noticeValues.text = translate(
-					'We had trouble connecting to your site. Please check that your site is accessible and try again.'
+					"We're having trouble connecting to your site. Please check if it's accessible and try again."
 				);
 				return noticeValues;
 
 			case INVALID_CREDENTIALS:
-				noticeValues.text = translate(
-					'The credentials you entered were invalid. Please double-check your username and password and try again.'
-				);
+				noticeValues.text = translate( 'Please check your username and password and try again.' );
 				noticeValues.status = 'is-error';
 				noticeValues.icon = 'notice';
 				return noticeValues;
