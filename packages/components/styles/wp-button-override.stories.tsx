@@ -1,8 +1,9 @@
 import { Button } from '@wordpress/components';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import './index.scss';
+import './wp-button-override.scss';
 
+// TODO: Investigate why displayName becomes `UnforwardedButton` when imported.
 Button.displayName = 'Button';
 
 /**
@@ -29,6 +30,9 @@ export const Default: Story = {
 /**
  * The secondary button styles can be overridden to the A8C styles by adding the
  * `.a8c-components-wp-button` class.
+ *
+ * To load these styles, import the `@automattic/components/styles/wp-button-override.scss` file
+ * somewhere in your project.
  */
 export const Secondary: Story = {
 	args: {
