@@ -1,17 +1,18 @@
+import './styles.scss';
 import { FormInputValidation } from '@automattic/components';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { Button, TextControl } from '@wordpress/components';
 import { check, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import FeedPreview from 'calypso/landing/subscriptions/components/add-sites-form/feed-preview/feed-preview';
 import { useAddSitesModalNotices } from 'calypso/landing/subscriptions/hooks';
 import { useRecordSiteSubscribed } from 'calypso/landing/subscriptions/tracks';
 import { isValidUrl, parseUrl } from 'calypso/lib/importer/url-validation';
+import { getUrlQuerySearchTerm, setUrlQuery, SEARCH_QUERY_PARAM } from 'calypso/reader/utils';
 import { isA8cTeamMember } from 'calypso/state/teams/selectors';
-import './styles.scss';
 
 export type AddSitesFormProps = {
 	placeholder?: string;
@@ -35,6 +36,7 @@ const AddSitesForm = ( {
 }: AddSitesFormProps ) => {
 	const translate = useTranslate();
 	const [ inputValue, setInputValue ] = useState( '' );
+	const [ searchTerm, setSearchTerm ] = useState( getUrlQuerySearchTerm() );
 	const [ isSubmitting, setIsSubmitting ] = useState< boolean >( false );
 	const [ inputFieldError, setInputFieldError ] = useState< string | null >( null );
 	const [ isValidInput, setIsValidInput ] = useState( false );
@@ -45,7 +47,13 @@ const AddSitesForm = ( {
 	const { mutate: subscribe, isPending: subscribing } =
 		SubscriptionManager.useSiteSubscribeMutation();
 
-	const validateInputValue = ( url: string, showError = false ) => {
+	// Triggers the onBlur event when the component mounts to validate the initial value.
+	useEffect( () => ( searchTerm ? onTextFieldChange( searchTerm ) : undefined ), [] ); // eslint-disable-line react-hooks/exhaustive-deps
+
+	// Update url query when search term changes.
+	useEffect( () => setUrlQuery( SEARCH_QUERY_PARAM, searchTerm ), [ searchTerm ] );
+
+	function validateInputValue( url: string, showError = false ): void {
 		// If the input is empty, we don't want to show an error message
 		if ( url.length === 0 ) {
 			setIsValidInput( false );
@@ -64,12 +72,13 @@ const AddSitesForm = ( {
 				setInputFieldError( translate( 'Please enter a valid URL' ) );
 			}
 		}
-	};
+	}
 
-	const onTextFieldChange = ( value: string ) => {
+	function onTextFieldChange( value: string ): void {
+		setSearchTerm( value );
 		setInputValue( value );
 		validateInputValue( value );
-	};
+	}
 
 	const onSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
