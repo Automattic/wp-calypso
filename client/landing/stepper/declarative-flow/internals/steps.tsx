@@ -1,5 +1,3 @@
-import { StepperStep } from './types';
-
 export const STEPS = {
 	BLOGGER_STARTING_POINT: {
 		slug: 'bloggerStartingPoint',
@@ -390,7 +388,7 @@ export const STEPS = {
 		slug: 'setup-blog',
 		asyncComponent: () => import( './steps-repository/setup-blog' ),
 	},
-} satisfies Record< string, StepperStep >;
+} as const;
 
 /**
  * Define steps that are only used by the Stepper framework. Any flow should avoid include these steps as much as possible.
@@ -401,4 +399,4 @@ export const PRIVATE_STEPS = {
 		asyncComponent: () =>
 			import( /* webpackChunkName: "stepper-user-step" */ './steps-repository/__user' ),
 	},
-} satisfies Record< string, StepperStep >;
+} as const;

@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { useSelector } from 'calypso/state';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSiteTitle } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import UpsellCard from './upsell-card';
 import {
@@ -59,6 +60,7 @@ function getVisibleUpsells( siteSlug: string | null, siteFeatures: string[] ): P
 export default function JetpackUpsellSection() {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteTitle = useSelector( ( state ) => getSiteTitle( state, siteId ) );
 
 	// New check for active site features.
 	const siteFeatures = useSiteFeatures( siteId );
@@ -74,7 +76,7 @@ export default function JetpackUpsellSection() {
 
 	return (
 		<div className="jetpack-upsell-section">
-			<UpsellCard siteSlug={ siteSlug } upsells={ upsells } />
+			<UpsellCard siteTitle={ siteTitle } upsells={ upsells } />
 		</div>
 	);
 }

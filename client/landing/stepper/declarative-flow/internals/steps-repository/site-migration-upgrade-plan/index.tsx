@@ -9,7 +9,6 @@ import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { SITE_MIGRATION_FLOW, StepContainer } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { type FC } from 'react';
 import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -18,26 +17,25 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import type { StepProps } from '../../types';
+import type { Step } from '../../types';
+
 import './style.scss';
 
-type StepContainerProps = React.ComponentProps< typeof StepContainer >;
-
-interface Props extends StepProps {
-	skipLabelText?: StepContainerProps[ 'skipLabelText' ];
-	onSkip?: StepContainerProps[ 'goNext' ];
-	skipPosition?: StepContainerProps[ 'skipButtonAlign' ];
-	headerText?: string;
-	customizedActionButtons?: StepContainerProps[ 'customizedActionButtons' ];
-}
-
-const SiteMigrationUpgradePlan: FC< Props > = ( {
-	navigation,
-	data,
-	customizedActionButtons,
-	flow,
-	...props
-} ) => {
+const SiteMigrationUpgradePlan: Step< {
+	accepts: {
+		skipLabelText?: string;
+		onSkip?: () => void;
+		skipPosition?: 'top' | 'bottom';
+		headerText?: string;
+		customizedActionButtons?: React.ReactElement;
+	};
+	submits: {
+		goToCheckout?: boolean;
+		plan?: string;
+		sendIntentWhenCreatingTrial?: boolean;
+		verifyEmail?: boolean;
+	};
+} > = ( { navigation, data, customizedActionButtons, flow, ...props } ) => {
 	const showVariants = SITE_MIGRATION_FLOW === flow;
 	const { onSkip, skipLabelText, skipPosition } = props;
 	const siteItem = useSite();

@@ -31,13 +31,13 @@ import {
 	saveSignupStep as saveSignupStepAction,
 	submitSignupStep as submitSignupStepAction,
 } from 'calypso/state/signup/progress/actions';
-import { StepState } from 'calypso/state/signup/progress/schema';
 import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import { getIntervalType } from './util';
-import './unified-plans-step-styles.scss';
 import type { SiteDetails } from '@automattic/data-stores';
+import type { StepState } from 'calypso/state/signup/progress/schema';
+import './unified-plans-step-styles.scss';
 
 export interface UnifiedPlansStepProps {
 	hideFreePlan?: boolean;

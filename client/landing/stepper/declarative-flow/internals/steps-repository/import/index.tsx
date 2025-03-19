@@ -9,9 +9,15 @@ import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { generateStepPath } from './helper';
 import type { Step } from '../../types';
+import type { ImporterPlatform } from 'calypso/lib/importer/types';
 import './style.scss';
 
-export const ImportWrapper: Step = function ( props ) {
+export const ImportWrapper: Step< {
+	submits: {
+		platform: ImporterPlatform;
+		url: string;
+	};
+} > = function ( props ) {
 	const { __ } = useI18n();
 	const { navigation, children, stepName } = props;
 	const [ , setMigrationConfirmed ] = useMigrationConfirmation();
@@ -45,7 +51,12 @@ export const ImportWrapper: Step = function ( props ) {
 	);
 };
 
-const ImportStep: Step = function ImportStep( props ) {
+const ImportStep: Step< {
+	submits: {
+		platform: ImporterPlatform;
+		url: string;
+	};
+} > = function ImportStep( props ) {
 	const { navigation } = props;
 	const siteSlug = useSiteSlug();
 	const fromUrl = useQuery().get( 'from' ) || '';

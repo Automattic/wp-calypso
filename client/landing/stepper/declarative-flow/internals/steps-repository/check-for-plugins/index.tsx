@@ -7,7 +7,9 @@ import { useSitePluginSlug } from 'calypso/landing/stepper/hooks/use-site-plugin
 import type { Step, PluginsResponse } from '../../types';
 import './styles.scss';
 
-const CheckForPlugins: Step = function CheckForPlugins( { navigation } ) {
+const CheckForPlugins: Step< { submits: { hasPlugins: boolean } } > = function CheckForPlugins( {
+	navigation,
+} ) {
 	const { submit } = navigation;
 	const site = useSite();
 	const pluginSlug = useSitePluginSlug();

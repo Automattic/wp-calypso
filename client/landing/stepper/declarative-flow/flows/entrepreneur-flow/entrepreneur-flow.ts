@@ -15,7 +15,7 @@ import { USER_STORE, ONBOARD_STORE } from '../../../stores';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { ENTREPRENEUR_TRIAL_SURVEY_KEY } from '../../internals/steps-repository/segmentation-survey';
-import type { Flow, ProvidedDependencies } from '../../internals/types';
+import type { Flow, ProvidedDependencies, StepperStep } from '../../internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 const SEGMENTATION_SURVEY_SLUG = 'start';
 
@@ -28,14 +28,17 @@ const entrepreneurFlow: Flow = {
 		return [
 			// Replacing the `segmentation-survey` slug with `start` as having the
 			// word `survey` in the address bar might discourage users from continuing.
-			{ ...STEPS.SEGMENTATION_SURVEY, ...{ slug: SEGMENTATION_SURVEY_SLUG } },
+			{
+				...STEPS.SEGMENTATION_SURVEY,
+				...{ slug: SEGMENTATION_SURVEY_SLUG as StepperStep[ 'slug' ] },
+			},
 			STEPS.TRIAL_ACKNOWLEDGE,
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PROCESSING,
 			STEPS.WAIT_FOR_ATOMIC,
 			STEPS.WAIT_FOR_PLUGIN_INSTALL,
 			STEPS.ERROR,
-		];
+		] as const;
 	},
 
 	useStepNavigation( currentStep, navigate ) {
