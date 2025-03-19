@@ -27,15 +27,15 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 	const [ debouncedUrl ] = useDebounce( url, 500 );
 	const [ feed, setFeed ] = useState< Reader.FeedItem >();
 	const [ loading, setLoading ] = useState( false );
-	const shouldHideContent = ! url || ! debouncedUrl;
 
 	/**
 	 * Fetch the feed for the given URL.
 	 */
 	useEffect( (): void => {
-		if ( shouldHideContent ) {
-			setFeed( undefined );
-			onChangeFeedPreview?.( false );
+		setFeed( undefined );
+		onChangeFeedPreview?.( false );
+
+		if ( ! debouncedUrl ) {
 			return;
 		}
 
@@ -52,7 +52,7 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 				}
 
 				setFeed( feed );
-				onChangeFeedPreview?.( true );
+				onChangeFeedPreview?.( !! feed?.feed_ID );
 			} )
 			.catch( ( err: Error ): void => {
 				setFeed( undefined );
@@ -63,7 +63,7 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 			.finally( (): void => {
 				setLoading( false );
 			} );
-	}, [ debouncedUrl, onChangeFeedPreview, shouldHideContent ] );
+	}, [ debouncedUrl, onChangeFeedPreview ] );
 
 	const memoizedFeedPreviewContent = useMemo( (): JSX.Element => {
 		if ( loading ) {
@@ -111,7 +111,7 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 		);
 	}, [ feed, loading, source, onSubscribeToggle ] );
 
-	if ( shouldHideContent ) {
+	if ( ! url ) {
 		return null;
 	}
 
