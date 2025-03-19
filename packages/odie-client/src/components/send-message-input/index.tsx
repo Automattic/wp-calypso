@@ -10,7 +10,6 @@ import { useSelect } from '@wordpress/data';
 import { useCallback, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { MicIcon } from '../../assets/mic-icon';
 import { SendMessageIcon } from '../../assets/send-message-icon';
 import { ODIE_WRONG_FILE_TYPE_MESSAGE } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
@@ -19,6 +18,7 @@ import { Message } from '../../types';
 import { zendeskMessageConverter } from '../../utils';
 import { AttachmentButton } from './attachment-button';
 import { ResizableTextarea } from './resizable-textarea';
+import { SpeechToText } from './speech-to-text';
 
 import './style.scss';
 const featureFlagEnabled = config.isEnabled( 'help-center-speech-to-text' );
@@ -53,6 +53,7 @@ export const OdieSendMessageButton = () => {
 	const isChatBusy = chat.status === 'loading' || chat.status === 'sending';
 	const [ isMessageSizeValid, setIsMessageSizeValid ] = useState( true );
 	const [ submitDisabled, setSubmitDisabled ] = useState( true );
+	const [ transcription, setTranscription ] = useState( '' );
 
 	const { data: authData } = useAuthenticateZendeskMessaging(
 		isUserEligibleForPaidSupport,
@@ -117,6 +118,10 @@ export const OdieSendMessageButton = () => {
 		// Only triggered when the message is empty
 		// used to remove validation message.
 		setIsMessageSizeValid( true );
+	}, [] );
+
+	const onKeyDown = useCallback( ( text: string ) => {
+		setTranscription( text );
 	}, [] );
 
 	const sendMessageHandler = useCallback( async () => {
@@ -198,7 +203,9 @@ export const OdieSendMessageButton = () => {
 						inputRef={ inputRef }
 						setSubmitDisabled={ setSubmitDisabled }
 						keyUpHandle={ onKeyUp }
+						keyDownHandle={ onKeyDown }
 						onPasteHandle={ onPaste }
+						text={ transcription }
 					/>
 					{ isChatBusy && <Spinner className="odie-send-message-input-spinner" /> }
 					{ showAttachmentButton && (
@@ -212,9 +219,13 @@ export const OdieSendMessageButton = () => {
 						<SendMessageIcon />
 					</button>
 					{ featureFlagEnabled && (
-						<button className={ buttonClasses }>
-							<MicIcon />
-						</button>
+						<SpeechToText
+							shouldDisableInputField={ false }
+							onReceiveText={ ( text: string ) => {
+								setSubmitDisabled( false );
+								setTranscription( text.replace( /^"(.*)"$/, '$1' ) );
+							} }
+						/>
 					) }
 				</form>
 			</div>

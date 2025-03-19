@@ -7,18 +7,22 @@ export const ResizableTextarea: React.FC< {
 	className: string;
 	inputRef: React.RefObject< HTMLTextAreaElement >;
 	keyUpHandle: () => void;
+	keyDownHandle: ( text: string ) => void;
 	sendMessageHandler: () => Promise< void >;
 	onPasteHandle: ( event: React.ClipboardEvent ) => void;
 	setSubmitDisabled: ( shouldBeDisabled: boolean ) => void;
 	shouldDisableInputField: boolean;
+	text: string;
 } > = ( {
 	className,
 	sendMessageHandler,
 	inputRef,
 	keyUpHandle,
+	keyDownHandle,
 	setSubmitDisabled,
 	shouldDisableInputField = false,
 	onPasteHandle,
+	text,
 } ) => {
 	const textAreaPlaceholder = shouldDisableInputField
 		? __( 'Just a moment…', __i18n_text_domain__ )
@@ -45,6 +49,7 @@ export const ResizableTextarea: React.FC< {
 
 	const onKeyDown = useCallback(
 		async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
+			keyDownHandle( inputRef.current?.value || '' );
 			// Prevent line break when user sends a message
 			if ( event.key === 'Enter' && ! event.shiftKey && inputRef.current?.value.trim() !== '' ) {
 				event.preventDefault();
@@ -55,16 +60,17 @@ export const ResizableTextarea: React.FC< {
 				event.preventDefault();
 			}
 		},
-		[ inputRef ]
+		[ inputRef, keyDownHandle ]
 	);
 
 	useEffect( () => {
 		// Set's back the textarea height after sending messages, it is needed for long messages.
 		if ( inputRef.current ) {
+			inputRef.current.value = text;
 			inputRef.current.style.height = 'auto';
 			autosize.update( inputRef.current );
 		}
-	}, [ sendMessageHandler, inputRef ] );
+	}, [ text, inputRef ] );
 
 	useEffect( () => {
 		if ( inputRef.current ) {
