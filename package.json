@@ -174,7 +174,7 @@
 		"@types/fast-json-stable-stringify": "^2.0.0",
 		"@types/jest": "^29.5.14",
 		"@types/lodash": "^4.17.16",
-		"@types/node": "^22.10.10",
+		"@types/node": "^22.13.10",
 		"@types/page": "^1.11.9",
 		"@types/qs": "^6.9.7",
 		"@types/react": "^18.3.18",
