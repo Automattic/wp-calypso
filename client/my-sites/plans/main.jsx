@@ -494,7 +494,7 @@ class PlansComponent extends Component {
 								</div>
 							</>
 						) }
-						<div id={ isUntangled ? 'plan' : 'plans' } className="plans plans__has-sidebar">
+						<div id={ isUntangled ? 'site-plans' : 'plans' } className="plans plans__has-sidebar">
 							{ showPlansNavigation && <PlansNavigation path={ this.props.context.path } /> }
 							<Main fullWidthLayout={ ! isWooExpressTrial } wideLayout={ isWooExpressTrial }>
 								{ ! isDomainAndPlanPackageFlow && domainAndPlanPackage && (
