@@ -61,7 +61,7 @@ const DowngradeFeatureList: React.FC< { features: FeatureObject[]; purchase: Pur
 	);
 };
 
-const downgradePath: Record< any, any > = {
+const downgradePath: Record< string, string > = {
 	[ PLAN_PERSONAL ]: PLAN_FREE,
 	[ PLAN_PREMIUM ]: PLAN_PERSONAL,
 	[ PLAN_BUSINESS ]: PLAN_PREMIUM,
@@ -113,8 +113,8 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 									'We will change the plan immediately and pro-rate the remaining value from %(currentPlan)s to %(targetPlan)s.',
 									{
 										args: {
-											currentPlan: currentPlan?.getTitle(),
-											targetPlan: targetPlan?.getTitle(),
+											currentPlan: currentPlan?.getTitle() ?? '',
+											targetPlan: targetPlan?.getTitle() ?? '',
 										},
 									}
 								) }
@@ -137,7 +137,7 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 							} }
 						>
 							{ translate( 'Downgrade to %(targetPlan)s', {
-								args: { targetPlan: targetPlan?.getTitle() },
+								args: { targetPlan: targetPlan?.getTitle() ?? '' },
 							} ) }
 						</FormButton>
 						<FormButton
@@ -145,7 +145,7 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 							href={ getManagePurchaseUrlFor( siteSlug, purchaseId ) }
 						>
 							{ translate( 'Keep %(currentPlan)s', {
-								args: { currentPlan: currentPlan?.getTitle() },
+								args: { currentPlan: currentPlan?.getTitle() ?? '' },
 							} ) }
 						</FormButton>
 					</div>
