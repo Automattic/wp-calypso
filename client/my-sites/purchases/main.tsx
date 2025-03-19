@@ -183,7 +183,7 @@ export function PurchaseDowngrade( {
 
 	return (
 		<Main wideLayout className="purchases">
-			<DocumentHead title={ titles.cancelPurchase } />
+			<DocumentHead title={ titles.downgradeSubscription() } />
 			{ ! isJetpackCloud() && (
 				<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
 			) }
