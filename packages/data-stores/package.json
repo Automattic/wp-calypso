@@ -74,7 +74,7 @@
 		"jest-fetch-mock": "^3.0.3",
 		"nock": "^13.5.6",
 		"node-fetch": "^2.7.0",
-		"typescript": "^5.6.1-rc",
+		"typescript": "^5.6.0-beta",
 		"wait-for-expect": "^3.0.2"
 	}
 }

@@ -52,7 +52,7 @@
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@types/smooch": "^5.3.7",
-		"typescript": "^5.6.1-rc"
+		"typescript": "^5.6.0-beta"
 	},
 	"peerDependencies": {
 		"@automattic/calypso-router": "workspace:^",

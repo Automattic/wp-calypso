@@ -28,7 +28,7 @@
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@types/node": "^22.10.10",
-		"typescript": "^5.6.1-rc"
+		"typescript": "^5.6.0-beta"
 	},
 	"scripts": {
 		"clean": "yarn build --clean && rm -rf dist",
