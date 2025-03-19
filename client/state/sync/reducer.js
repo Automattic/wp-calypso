@@ -142,9 +142,8 @@ export const progress = withPersistence( ( state = 0, action ) => {
 				case SiteSyncStatus.RESTORE:
 					return SiteSyncStatusProgress.RESTORE;
 				case SiteSyncStatus.COMPLETED:
-					return SiteSyncStatusProgress.COMPLETED;
 				case SiteSyncStatus.ALLOW_RETRY:
-					return SiteSyncStatusProgress.ALLOW_RETRY;
+					return SiteSyncStatusProgress.COMPLETED;
 				case SiteSyncStatus.FAILED:
 					return SiteSyncStatusProgress.FAILED;
 				default:

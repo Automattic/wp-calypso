@@ -13,5 +13,4 @@ export enum SiteSyncStatusProgress {
 	RESTORE = 0.6,
 	COMPLETED = 1,
 	FAILED = 0,
-	ALLOW_RETRY = 0.1,
 }
