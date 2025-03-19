@@ -3,8 +3,8 @@
  */
 
 import { renderHook } from '@testing-library/react';
-import { usePagination } from '../../use-pagination.ts';
-import { generateTransactions } from '../test-fixtures/billing-transactions';
+import { generateTransactions } from '../billing-history/test-fixtures/billing-transactions.ts';
+import { usePagination } from '../use-pagination.ts';
 
 describe( 'usePagination', () => {
 	test( 'returns all transactions when there are fewer than perPage', () => {
