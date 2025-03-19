@@ -85,7 +85,7 @@ function QuickPost( {
 		setEditorKey( ( key ) => key + 1 );
 	};
 
-	const siteId = selectedSiteId || mostRecentlySelectedSiteId || primarySiteId;
+	const siteId = selectedSiteId || mostRecentlySelectedSiteId || primarySiteId || undefined;
 
 	const handleSubmit = () => {
 		if ( ! postContent.trim() || ! siteId || isSubmitting ) {
@@ -184,7 +184,7 @@ function QuickPost( {
 			<div className="quick-post-input__fields">
 				<div className="quick-post-input__site-select-wrapper">
 					<SitesDropdown
-						selectedSiteId={ siteId || undefined }
+						selectedSiteId={ siteId }
 						onSiteSelect={ handleSiteSelect }
 						isPlaceholder={ ! hasLoaded }
 					/>
