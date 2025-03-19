@@ -24,7 +24,7 @@ import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { receiveNewPost } from 'calypso/state/reader/streams/actions';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getMostRecentlySelectedSiteId, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -51,6 +51,7 @@ function QuickPost( {
 	receivePosts: ( posts: PostItem[] ) => Promise< void >;
 	successNotice: ( message: string, options: object ) => void;
 } ) {
+	const state = useSelector( ( state ) => state );
 	const translate = useTranslate();
 	const locale = useLocale();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
@@ -78,10 +79,13 @@ function QuickPost( {
 
 	// Set initial selected site if none is selected
 	useEffect( () => {
-		if ( ! selectedSiteId && currentUser?.primary_blog ) {
-			dispatch( setSelectedSiteId( currentUser.primary_blog ) );
+		if ( ! selectedSiteId ) {
+			const siteId = getMostRecentlySelectedSiteId( state ) || currentUser?.primary_blog;
+			if ( siteId ) {
+				dispatch( setSelectedSiteId( siteId ) );
+			}
 		}
-	} );
+	}, [ selectedSiteId, dispatch, state, currentUser ] );
 
 	const clearEditor = () => {
 		localStorage.removeItem( STORAGE_KEY );
