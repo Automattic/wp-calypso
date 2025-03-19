@@ -1,0 +1,40 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.step-container-v2 .step-container-v2--difm-starting-point {
+	.help-center-step-button {
+		font-size: 0.875rem;
+		line-height: 1;
+		height: 24px;
+		display: flex;
+		align-items: center;
+		gap: 4px;
+
+		label {
+			display: none;
+
+			@include break-small {
+				display: inline;
+			}
+		}
+
+		&__button {
+			--wp-components-color-accent: var(--color-neutral-100);
+			font-size: inherit;
+			line-height: inherit;
+			font-weight: 500;
+		}
+	}
+
+	&__ctas {
+		display: flex;
+		gap: 16px;
+		align-items: center;
+	}
+
+	&__left-column {
+		display: flex;
+		flex-direction: column;
+		gap: 32px;
+	}
+}
