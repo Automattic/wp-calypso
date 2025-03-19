@@ -1,7 +1,7 @@
 import { TranslateResult } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import './style.scss';
 import Loading from 'calypso/components/loading';
+import './style.scss';
 
 const ACCELERATED_REFRESH_INTERVAL = 750;
 const ACCELERATED_INCREMENT = 5;
