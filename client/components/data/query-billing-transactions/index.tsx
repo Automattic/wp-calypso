@@ -1,35 +1,25 @@
-import React, { useEffect } from 'react';
-import { connect, ConnectedProps } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'calypso/state';
 import { requestBillingTransactions } from 'calypso/state/billing-transactions/actions';
-import { BillingTransactionsType } from 'calypso/state/billing-transactions/types';
 import isRequestingBillingTransactions from 'calypso/state/selectors/is-requesting-billing-transactions';
-import { IAppState } from 'calypso/state/types';
+import type { BillingTransactionsType } from 'calypso/state/billing-transactions/types';
 
-export type QueryBillingTransactionsProps = ConnectedProps< typeof connector > & {
+type QueryBillingTransactionsProps = {
 	transactionType?: BillingTransactionsType;
 };
 
-const QueryBillingTransactions: React.FunctionComponent< QueryBillingTransactionsProps > = ( {
-	requestingBillingTransactions,
-	requestBillingTransactions,
+export default function QueryBillingTransactions( {
 	transactionType,
-} ) => {
+}: QueryBillingTransactionsProps ) {
+	const dispatch = useDispatch();
 	useEffect( () => {
-		if ( requestingBillingTransactions ) {
-			return;
-		}
-
-		requestBillingTransactions( transactionType );
-	}, [] );
+		dispatch( ( d, getState ) => {
+			if ( isRequestingBillingTransactions( getState() ) ) {
+				return;
+			}
+			d( requestBillingTransactions( transactionType ) );
+		} );
+	}, [ dispatch, transactionType ] );
 
 	return null;
-};
-
-const connector = connect(
-	( state: IAppState ) => ( {
-		requestingBillingTransactions: isRequestingBillingTransactions( state ),
-	} ),
-	{ requestBillingTransactions }
-);
-
-export default connector( QueryBillingTransactions );
+}
