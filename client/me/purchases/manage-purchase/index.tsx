@@ -1407,7 +1407,7 @@ class ManagePurchase extends Component<
 						{ this.renderEditPaymentMethodNavItem() }
 						{ this.renderReinstall() }
 						{ this.renderCancelPurchaseNavItem() }
-						{ config.isEnabled( 'plans/self-service-downgrade' )
+						{ config.isEnabled( 'plans/self-service-downgrade' ) && ! isPersonal( purchase )
 							? this.renderDowngradeNavItem()
 							: null }
 						{ this.renderCancelSurvey() }
