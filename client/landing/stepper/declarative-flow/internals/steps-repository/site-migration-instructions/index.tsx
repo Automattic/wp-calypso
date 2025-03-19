@@ -3,7 +3,7 @@ import { CircularProgressBar } from '@automattic/components';
 import { LaunchpadContainer } from '@automattic/launchpad';
 import { StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { MigrationStatus } from 'calypso/data/site-migration/landing/types';
 import { useUpdateMigrationStatus } from 'calypso/data/site-migration/landing/use-update-migration-status';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
@@ -12,6 +12,8 @@ import { usePrepareSiteForMigration } from 'calypso/landing/stepper/hooks/use-pr
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useDispatch } from 'calypso/state';
+import { resetSite } from 'calypso/state/sites/actions';
 import { HostingBadge } from './hosting-badge';
 import { MigrationInstructions } from './migration-instructions';
 import { ProvisionStatus } from './provision-status';
@@ -82,6 +84,7 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 	const siteId = site?.ID ?? 0;
 	const queryParams = useQuery();
 	const fromUrl = queryParams.get( 'from' ) ?? '';
+	const dispatch = useDispatch();
 
 	const { mutate: updateMigrationStatus, mutateAsync: updateMigrationStatusAsync } =
 		useUpdateMigrationStatus( siteId );
@@ -100,8 +103,6 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 			deleteMigrationSticker( siteId );
 		}
 	}, [ deleteMigrationSticker, siteId ] );
-
-	// const { mutate: updateMigrationStatus } = useUpdateMigrationStatus( siteId );
 
 	// Site preparation.
 	const {
@@ -123,22 +124,22 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 		siteId,
 	} );
 
-	// const preventUnload = useCallback(
-	// 	( event: BeforeUnloadEvent ) => {
-	// 		if ( ! preparationCompleted ) {
-	// 			event.returnValue = true; // Safari iOS https://caniuse.com/mdn-api_window_beforeunload_event_preventdefault_activation
-	// 			event.preventDefault(); // Modern browsers
-	// 		}
-	// 	},
-	// 	[ preparationCompleted ]
-	// );
+	const preventUnload = useCallback(
+		( event: BeforeUnloadEvent ) => {
+			if ( ! preparationCompleted ) {
+				event.returnValue = true; // Safari iOS https://caniuse.com/mdn-api_window_beforeunload_event_preventdefault_activation
+				event.preventDefault(); // Modern browsers
+			}
+		},
+		[ preparationCompleted ]
+	);
 
-	// useEffect( () => {
-	// 	window.addEventListener( 'beforeunload', preventUnload );
-	// 	return () => {
-	// 		window.removeEventListener( 'beforeunload', preventUnload );
-	// 	};
-	// }, [ preparationCompleted, preventUnload ] );
+	useEffect( () => {
+		window.addEventListener( 'beforeunload', preventUnload );
+		return () => {
+			window.removeEventListener( 'beforeunload', preventUnload );
+		};
+	}, [ preparationCompleted, preventUnload ] );
 
 	// Hosting details.
 	const { data: hostingDetails } = useHostingProviderUrlDetails( fromUrl );
@@ -146,6 +147,7 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 
 	// Steps.
 	const onCompleteSteps = () => {
+		dispatch( resetSite( siteId ) );
 		navigation.submit?.( { destination: 'migration-started' } );
 	};
 
