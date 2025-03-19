@@ -68,7 +68,7 @@ export function receiveSites( sites ) {
 	};
 }
 
-export function resetSites( siteId ) {
+export function resetSite( siteId ) {
 	return {
 		type: SITE_RESET,
 		siteId,

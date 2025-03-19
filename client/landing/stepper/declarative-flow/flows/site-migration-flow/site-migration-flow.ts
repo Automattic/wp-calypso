@@ -12,7 +12,7 @@ import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step
 import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector, useDispatch as useCalypsoDispatch } from 'calypso/state';
-import { resetSites } from 'calypso/state/sites/actions';
+import { resetSite } from 'calypso/state/sites/actions';
 import { getSiteAdminUrl, getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { HOW_TO_MIGRATE_OPTIONS } from '../../../constants';
 import { useIsSiteAdmin } from '../../../hooks/use-is-site-admin';
@@ -404,7 +404,7 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
-					calypsoDispatch( resetSites( siteId ) );
+					calypsoDispatch( resetSite( siteId ) );
 
 					return exitFlow(
 						addQueryArgs( { ref: 'site-migration-testing' }, `/overview/${ siteSlug }` )
