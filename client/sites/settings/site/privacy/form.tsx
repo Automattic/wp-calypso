@@ -40,6 +40,7 @@ const SiteSettingPrivacyForm = ( {
 	siteIsJetpack,
 	updateFields,
 	isAtomicAndEditingToolkitDeactivated,
+	isComingSoon,
 	isRequestingSettings,
 	isSavingSettings,
 	isUnlaunchedSite,
@@ -71,7 +72,7 @@ const SiteSettingPrivacyForm = ( {
 		( blogPublic === 0 && ! wpcomPublicComingSoon ) ||
 		blogPublic === 1;
 
-	const showPreviewLink = isAnyComingSoonEnabled && hasSitePreviewLink;
+	const showPreviewLink = isComingSoon && hasSitePreviewLink;
 	const shouldShowPremiumStylesNotice = globalStylesInUse && shouldLimitGlobalStyles;
 
 	const discourageSearchChecked =
