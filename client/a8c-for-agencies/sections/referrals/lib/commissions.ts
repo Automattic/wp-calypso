@@ -1,8 +1,23 @@
 import type { Referral } from '../types';
 import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
+export const isProductEligibleForCommission = ( slug: string ) => {
+	const thirdPartyProducts = [
+		'woocommerce-constellation',
+		'woocommerce-dynamic-pricing',
+		'woocommerce-rental-products',
+		'woocommerce-smart-coupons',
+		'woocommerce-variation-swatches-and-photos',
+	];
+
+	if ( thirdPartyProducts.includes( slug ) ) {
+		return false;
+	}
+	return true;
+};
+
 export const getProductCommissionPercentage = ( slug?: string ) => {
-	if ( ! slug ) {
+	if ( ! slug || ! isProductEligibleForCommission( slug ) ) {
 		return 0;
 	}
 	if ( [ 'wpcom-hosting', 'pressable-hosting' ].includes( slug ) ) {

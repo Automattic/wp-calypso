@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
 .payment-method-form {
 	display: flex;
 	flex-direction: column;
@@ -5,9 +8,7 @@
 }
 
 .payment-method-form__title {
-	font-size: rem(20px);
-	line-height: 1.2;
-	font-weight: 500;
+	@include heading-x-large;
 }
 
 .payment-method-form__footer {
@@ -31,15 +32,13 @@
 
 .payment-method-form__notice,
 .payment-method-form .credit-card-fields__input-field :is(label, .credit-card-fields__label-text) {
-	font-size: rem(14px);
-	line-height: 1.4;
-	font-weight: 500;
+	@include heading-medium;
 }
 
 .payment-method-form__notice {
 	color: var(--color-neutral-50);
-	font-weight: 400;
 	margin-block-start: 24px;
+	@include body-medium;
 	display: flex;
 	gap: 8px;
 }
