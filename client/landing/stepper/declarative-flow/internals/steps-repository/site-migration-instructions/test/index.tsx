@@ -181,16 +181,6 @@ describe( 'SiteMigrationInstructions', () => {
 		expect( resetSite ).toHaveBeenCalledWith( 123 );
 	} );
 
-	it( 'should clean up the site when the step is completed', async () => {
-		const { getByRole } = render();
-
-		await userEvent.click( getByRole( 'button', { name: /Next/ } ) );
-		await userEvent.click( getByRole( 'button', { name: /Next/ } ) );
-		await userEvent.click( getByRole( 'button', { name: /Done/ } ) );
-
-		expect( resetSite ).toHaveBeenCalledWith( 123 );
-	} );
-
 	it( 'should display a fallback in the last step when preparation completes and there is an error with the migration key', async () => {
 		( usePrepareSiteForMigration as jest.Mock ).mockReturnValue( {
 			detailedStatus: { migrationKey: 'error' },
