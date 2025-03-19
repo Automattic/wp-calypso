@@ -3,7 +3,7 @@ import { CircularProgressBar } from '@automattic/components';
 import { LaunchpadContainer } from '@automattic/launchpad';
 import { StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { MigrationStatus } from 'calypso/data/site-migration/landing/types';
 import { useUpdateMigrationStatus } from 'calypso/data/site-migration/landing/use-update-migration-status';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
@@ -123,22 +123,22 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 		siteId,
 	} );
 
-	const preventUnload = useCallback(
-		( event: BeforeUnloadEvent ) => {
-			if ( ! preparationCompleted ) {
-				event.returnValue = true; // Safari iOS https://caniuse.com/mdn-api_window_beforeunload_event_preventdefault_activation
-				event.preventDefault(); // Modern browsers
-			}
-		},
-		[ preparationCompleted ]
-	);
+	// const preventUnload = useCallback(
+	// 	( event: BeforeUnloadEvent ) => {
+	// 		if ( ! preparationCompleted ) {
+	// 			event.returnValue = true; // Safari iOS https://caniuse.com/mdn-api_window_beforeunload_event_preventdefault_activation
+	// 			event.preventDefault(); // Modern browsers
+	// 		}
+	// 	},
+	// 	[ preparationCompleted ]
+	// );
 
-	useEffect( () => {
-		window.addEventListener( 'beforeunload', preventUnload );
-		return () => {
-			window.removeEventListener( 'beforeunload', preventUnload );
-		};
-	}, [ preparationCompleted, preventUnload ] );
+	// useEffect( () => {
+	// 	window.addEventListener( 'beforeunload', preventUnload );
+	// 	return () => {
+	// 		window.removeEventListener( 'beforeunload', preventUnload );
+	// 	};
+	// }, [ preparationCompleted, preventUnload ] );
 
 	// Hosting details.
 	const { data: hostingDetails } = useHostingProviderUrlDetails( fromUrl );
