@@ -24,6 +24,7 @@ const useAssignLicensesToSite = (
 ): {
 	assignLicensesToSite: ( licenseKeys: string[] ) => Promise< PurchasedProductsInfo >;
 	isReady: boolean;
+	isPending: boolean;
 } => {
 	const products = useProductsQuery();
 	const assignLicense = useAssignLicenseMutation( {
@@ -31,6 +32,7 @@ const useAssignLicensesToSite = (
 	} );
 
 	const isReady = assignLicense.isIdle;
+	const isPending = assignLicense.isPending;
 	const assignLicensesToSite = useCallback(
 		async ( licenseKeys: string[] ): Promise< PurchasedProductsInfo > => {
 			// Only proceed if the mutation is in a fresh/ready state
@@ -90,7 +92,7 @@ const useAssignLicensesToSite = (
 					await assignLicense
 						.mutateAsync( { licenseKey: key, selectedSite: selectedSiteId } )
 						.then( () => ( { key, name, status: 'fulfilled' } ) as ProductInfo )
-						.catch( () => ( { key, name, status: 'rejected' } ) as ProductInfo )
+						.catch( ( error ) => ( { key, name, status: 'rejected', error } ) as ProductInfo )
 				);
 			}
 
@@ -102,7 +104,7 @@ const useAssignLicensesToSite = (
 		[ selectedSite, assignLicense, products ]
 	);
 
-	return { assignLicensesToSite, isReady };
+	return { assignLicensesToSite, isReady, isPending };
 };
 
 export default useAssignLicensesToSite;
