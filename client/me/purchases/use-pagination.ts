@@ -1,8 +1,7 @@
 import { useMemo } from 'react';
-import type { BillingTransaction } from 'calypso/state/billing-transactions/types';
 
-interface PaginationResult {
-	paginatedItems: BillingTransaction[];
+interface PaginationResult< PaginationItem > {
+	paginatedItems: PaginationItem[];
 	totalPages: number;
 	totalItems: number;
 	currentPage: number;
@@ -10,11 +9,11 @@ interface PaginationResult {
 	hasPreviousPage: boolean;
 }
 
-function calculatePagination(
-	items: BillingTransaction[],
+function calculatePagination< PaginationItem >(
+	items: PaginationItem[],
 	page: number,
 	perPage: number
-): PaginationResult {
+): PaginationResult< PaginationItem > {
 	const startIndex = ( page - 1 ) * perPage;
 	const paginatedItems = items.slice( startIndex, startIndex + perPage );
 	const totalItems = items.length;
@@ -30,10 +29,10 @@ function calculatePagination(
 	};
 }
 
-export function usePagination(
-	items: BillingTransaction[],
+export function usePagination< PaginationItem >(
+	items: PaginationItem[],
 	page: number,
 	perPage: number
-): PaginationResult {
+): PaginationResult< PaginationItem > {
 	return useMemo( () => calculatePagination( items, page, perPage ), [ items, page, perPage ] );
 }
