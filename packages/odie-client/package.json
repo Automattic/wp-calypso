@@ -53,6 +53,6 @@
 		"@types/autosize": "^4.0.3",
 		"@types/react": "^18.3.18",
 		"@types/smooch": "^5.3.7",
-		"typescript": "^5.5.4"
+		"typescript": "^5.6.2"
 	}
 }
