@@ -4,23 +4,38 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getWooProductUrl } from '../lib/get-woo-product-url';
 
-export default function WooPaymentsCustomFooter() {
+type Props = {
+	productSlug: string;
+};
+
+export default function WooCustomFooter( { productSlug }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const url = getWooProductUrl( productSlug );
 
 	const onViewWooPayments = useCallback( () => {
 		dispatch(
 			recordTracksEvent(
-				'calypso_marketplace_products_overview_view_full_woopayments_details_click'
+				'calypso_marketplace_products_overview_view_full_wooproduct_details_click',
+				{
+					product_slug: productSlug,
+					url: url,
+				}
 			)
 		);
-	}, [ dispatch ] );
+	}, [ dispatch, productSlug, url ] );
+
+	if ( ! url ) {
+		return null;
+	}
 
 	return (
 		<Button
 			variant="secondary"
-			href="https://woocommerce.com/es/products/woopayments/"
+			href={ url }
 			target="_blank"
 			icon={ external }
 			iconPosition="right"

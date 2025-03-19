@@ -6,8 +6,8 @@ import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/licen
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getVendorInfo } from '../lib/get-vendor-info';
+import WooCustomFooter from '../product-card/woo-custom-footer';
 import WooPaymentsCustomDescription from '../product-card/woopayments-custom-description';
-import WooPaymentsCustomFooter from '../product-card/woopayments-custom-footer';
 import WooPaymentsRevenueShareNotice from '../product-card/woopayments-revenue-share-notice';
 import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
@@ -105,8 +105,8 @@ function withProductLightbox< T >(
 		}, [ currentProduct.slug ] );
 
 		const customFooter = useMemo( () => {
-			if ( currentProduct.slug === 'woocommerce-woopayments' ) {
-				return <WooPaymentsCustomFooter />;
+			if ( currentProduct.slug.startsWith( 'woocommerce-' ) ) {
+				return <WooCustomFooter productSlug={ currentProduct.slug } />;
 			}
 
 			return undefined;
