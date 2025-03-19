@@ -2,14 +2,13 @@
  * @jest-environment jsdom
  */
 import { MigrationStatus } from '@automattic/data-stores';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, waitFor } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 import React from 'react';
-import { Provider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
 import { SITE_REQUEST, SITES_REQUEST, SELECTED_SITE_SET } from 'calypso/state/action-types';
 import { setStore } from 'calypso/state/redux-store';
 import * as siteActions from 'calypso/state/sites/actions';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import HostingOverview from '../hosting-overview';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { UnknownAction } from 'redux';
@@ -33,12 +32,7 @@ const localRenderWithProvider = (
 		store.dispatch( action );
 	} );
 
-	const queryClient = new QueryClient();
-	return render(
-		<QueryClientProvider client={ queryClient }>
-			<Provider store={ store }>{ element }</Provider>
-		</QueryClientProvider>
-	);
+	return renderWithProvider( element, { store } );
 };
 
 const mockSiteId = 123;
