@@ -46,6 +46,7 @@ const Reddit = () => {
 					<AddSitesForm
 						placeholder={ translate( 'Search by Reddit URL' ) }
 						buttonText={ translate( 'Add Feed' ) }
+						pathname="/discover/reddit"
 						source="discover-reddit"
 						onChangeFeedPreview={ onChangeFeedPreview }
 						onChangeSubscribe={ onSubscribeToggle }

@@ -44,6 +44,7 @@ const DiscoverAddNew = () => {
 						{ translate( 'Add new sites, newsletters, and RSS feeds to your reading list.' ) }
 					</h2>
 					<AddSitesForm
+						pathname="/discover/add-new"
 						source="discover-add-new"
 						onChangeFeedPreview={ onChangeFeedPreview }
 						onChangeSubscribe={ onSubscribeToggle }

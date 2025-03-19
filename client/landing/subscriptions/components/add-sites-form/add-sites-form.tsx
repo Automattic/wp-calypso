@@ -17,6 +17,7 @@ import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 export type AddSitesFormProps = {
 	placeholder?: string;
 	buttonText?: string;
+	pathname?: string; // Used to prevent search query changes on other pages.
 	source: string;
 	onChangeFeedPreview?: ( hasPreview: boolean ) => void;
 	onChangeSubscribe?: ( subscribed: boolean ) => void;
@@ -30,13 +31,14 @@ type SubscriptionError = {
 const AddSitesForm = ( {
 	placeholder,
 	buttonText,
+	pathname,
 	source,
 	onChangeFeedPreview,
 	onChangeSubscribe,
 }: AddSitesFormProps ) => {
 	const translate = useTranslate();
 	const [ inputValue, setInputValue ] = useState( '' );
-	const [ searchTerm, setSearchTerm ] = useState( getUrlQuerySearchTerm() );
+	const [ searchTerm, setSearchTerm ] = useState( getUrlQuerySearchTerm( pathname ) );
 	const [ isSubmitting, setIsSubmitting ] = useState< boolean >( false );
 	const [ inputFieldError, setInputFieldError ] = useState< string | null >( null );
 	const [ isValidInput, setIsValidInput ] = useState( false );
@@ -51,7 +53,10 @@ const AddSitesForm = ( {
 	useEffect( () => ( searchTerm ? onTextFieldChange( searchTerm ) : undefined ), [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	// Update url query when search term changes.
-	useEffect( () => setUrlQuery( SEARCH_QUERY_PARAM, searchTerm ), [ searchTerm ] );
+	useEffect(
+		() => setUrlQuery( SEARCH_QUERY_PARAM, searchTerm, pathname ),
+		[ searchTerm, pathname ]
+	);
 
 	function validateInputValue( url: string, showError = false ): void {
 		// If the input is empty, we don't want to show an error message
