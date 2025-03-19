@@ -10,7 +10,12 @@ import type { SiteId } from 'calypso/types';
 
 import './styles.scss';
 
-const SitePicker: Step = function SitePicker( { navigation, flow } ) {
+const SitePicker: Step< {
+	submits: {
+		siteSlug: string;
+		siteId: SiteId;
+	};
+} > = function SitePicker( { navigation, flow } ) {
 	const translate = useTranslate();
 	const { submit, goBack } = navigation;
 

@@ -7,9 +7,12 @@ import {
 	loadTextFormatting,
 } from '@automattic/verbum-block-editor';
 import { Button } from '@wordpress/components';
+import { moreVertical } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
+import PopoverMenu from 'calypso/components/popover-menu';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import { stripHTML } from 'calypso/lib/formatting';
 import wpcom from 'calypso/lib/wp';
@@ -64,6 +67,8 @@ function QuickPost( {
 	const currentUser = useSelector( getCurrentUser );
 	const hasLoaded = useSelector( hasLoadedSites );
 	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
+	const [ isMenuVisible, setIsMenuVisible ] = useState( false );
+	const popoverButtonRef = useRef< HTMLButtonElement >( null );
 
 	useEffect( () => {
 		if ( postContent ) {
@@ -148,6 +153,13 @@ function QuickPost( {
 		return translate( 'Post' );
 	};
 
+	const handleFullEditorClick = () => {
+		recordReaderTracksEvent( 'calypso_reader_quick_post_full_editor_opened' );
+	};
+
+	const toggleMenu = () => setIsMenuVisible( ! isMenuVisible );
+	const closeMenu = () => setIsMenuVisible( false );
+
 	if ( ! hasLoaded ) {
 		return (
 			<div className="quick-post-input quick-post-input--loading">
@@ -171,6 +183,31 @@ function QuickPost( {
 						onSiteSelect={ handleSiteSelect }
 						isPlaceholder={ ! hasLoaded }
 					/>
+					<div className="quick-post-input__actions-menu">
+						<Button
+							ref={ popoverButtonRef }
+							icon={ moreVertical }
+							onClick={ toggleMenu }
+							aria-expanded={ isMenuVisible }
+							className="quick-post-input__actions-toggle"
+						/>
+						<PopoverMenu
+							context={ popoverButtonRef.current }
+							isVisible={ isMenuVisible }
+							onClose={ closeMenu }
+							position="bottom"
+							className="quick-post-input__popover"
+						>
+							<PopoverMenuItem
+								href={ selectedSiteId ? `/post/${ selectedSiteId }?type=post` : '/post' }
+								target="_blank"
+								rel="noreferrer"
+								onClick={ handleFullEditorClick }
+							>
+								{ translate( 'Open Full Editor' ) }
+							</PopoverMenuItem>
+						</PopoverMenu>
+					</div>
 				</div>
 				<div className="verbum-editor-wrapper" ref={ editorRef }>
 					<Editor

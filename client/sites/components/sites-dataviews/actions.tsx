@@ -7,6 +7,7 @@ import {
 	SiteExcerptData,
 } from '@automattic/sites';
 import { useQueryClient } from '@tanstack/react-query';
+import { sprintf } from '@wordpress/i18n';
 import { drawerLeft, external, wordpress } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -27,7 +28,7 @@ import {
 } from 'calypso/sites-dashboard/utils';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
 import type { Action } from '@wordpress/dataviews';
 
@@ -361,6 +362,16 @@ export function useActions( {
 				icon: wordpress,
 				callback: ( sites ) => {
 					const site = sites[ 0 ];
+					if ( site?.is_wpcom_atomic ) {
+						const message = sprintf(
+							/* translators: siteTitle is the website's title. */
+							__( 'Logging you into %(siteTitle)s' ),
+							{
+								siteTitle: site.title,
+							}
+						);
+						dispatch( infoNotice( message ) );
+					}
 					window.location.href = site.options?.admin_url ?? '';
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_wpadmin_click' ) );
 				},

@@ -1,9 +1,9 @@
-import { Gridicon } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
-import { Button } from '@wordpress/components';
+import { Button, Icon } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
+import { plus } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { useEffect, ReactElement } from 'react';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
@@ -17,8 +17,6 @@ import { AddSubscribersModal } from '../add-subscribers-modal';
 import { MigrateSubscribersModal } from '../migrate-subscribers-modal';
 import { SubscribersHeaderPopover } from '../subscribers-header-popover';
 
-import './style.scss';
-
 enum SubscriberModalType {
 	NONE = 'none',
 	ADD = 'add',
@@ -29,6 +27,7 @@ type SubscribersHeaderProps = {
 	selectedSiteId: number | undefined;
 	disableCta: boolean;
 	hideSubtitle?: boolean;
+	hideAddButtonLabel?: boolean;
 };
 
 const HELP_CENTER_STORE = HelpCenter.register();
@@ -37,6 +36,7 @@ export const SubscribersHeader = ( {
 	selectedSiteId,
 	disableCta,
 	hideSubtitle,
+	hideAddButtonLabel = false,
 }: SubscribersHeaderProps ): ReactElement => {
 	const localizeUrl = useLocalizeUrl();
 	const { setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
@@ -131,13 +131,12 @@ export const SubscribersHeader = ( {
 			>
 				<Button
 					variant="primary"
-					className="button add-subscribers-button"
 					disabled={ disableCta }
 					onClick={ () => setShowSubscriberModal( SubscriberModalType.ADD ) }
-				>
-					<Gridicon icon="plus" size={ 24 } />
-					<span className="add-subscribers-button-text">{ translate( 'Add subscribers' ) }</span>
-				</Button>
+					size="compact"
+					icon={ <Icon icon={ plus } size={ 18 } /> }
+					{ ...{ [ hideAddButtonLabel ? 'label' : 'text' ]: translate( 'Add subscribers' ) } }
+				/>
 				<SubscribersHeaderPopover
 					siteId={ selectedSiteId }
 					openMigrateSubscribersModal={ () =>

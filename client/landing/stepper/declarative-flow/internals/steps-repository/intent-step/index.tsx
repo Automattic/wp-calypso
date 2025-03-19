@@ -14,7 +14,7 @@ import type { Step } from '../../types';
 /**
  * The intent capture step
  */
-const IntentStep: Step = function IntentStep( { navigation } ) {
+const IntentStep: Step< { submits: { intent: string } } > = function IntentStep( { navigation } ) {
 	const { goBack, goNext, submit } = navigation;
 	const translate = useTranslate();
 	const headerText = translate( 'Where will you start?' );

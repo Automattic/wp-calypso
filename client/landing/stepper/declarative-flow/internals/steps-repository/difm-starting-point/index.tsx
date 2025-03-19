@@ -1,4 +1,4 @@
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, DIFM_FLOW } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -12,7 +12,9 @@ import type { Step } from '../../types';
 import type { AppState } from 'calypso/types';
 
 const STEP_NAME = 'difmStartingPoint';
-const DIFMStartingPoint: Step = function ( { navigation, flow } ) {
+const DIFMStartingPoint: Step< {
+	submits: { newOrExistingSiteChoice: 'existing-site' | 'new-site' };
+} > = function ( { flow, navigation } ) {
 	const { goNext, goBack, submit } = navigation;
 	const translate = useTranslate();
 	const existingSiteCount = useSelector( ( state: AppState ) => getCurrentUserSiteCount( state ) );
@@ -23,9 +25,12 @@ const DIFMStartingPoint: Step = function ( { navigation, flow } ) {
 	const flags = queryParams.get( 'flags' )?.split( ',' );
 	const isHelpCenterLinkEnabled = flags?.includes( 'signup/help-center-link' );
 
-	const shouldRenderHelpCenterLink = useShouldRenderHelpCenterButton( { enabledGeos: [ 'US' ] } );
+	const shouldRenderHelpCenterLink = useShouldRenderHelpCenterButton( {
+		flowName: DIFM_FLOW,
+		enabledGeos: [ 'US' ],
+	} );
 
-	const onSubmit = ( value: string ) => {
+	const onSubmit = ( value: 'existing-site' | 'new-site' ) => {
 		submit?.( {
 			newOrExistingSiteChoice: value,
 		} );

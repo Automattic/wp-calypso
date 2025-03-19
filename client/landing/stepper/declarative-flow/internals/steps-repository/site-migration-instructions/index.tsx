@@ -76,7 +76,11 @@ const usePreparationEventsAndLogs = ( {
 	}, [ flow, preparationError, siteId ] );
 };
 
-const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
+const SiteMigrationInstructions: Step< {
+	submits: {
+		destination: 'migration-started';
+	};
+} > = function ( { navigation, flow } ) {
 	const site = useSite();
 	const siteId = site?.ID ?? 0;
 	const queryParams = useQuery();

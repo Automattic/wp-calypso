@@ -63,17 +63,15 @@
 }
 
 @media screen and (max-width: $break-large) {
-	body:not(.is-sidebar-collapsed) {
-		.jetpack-empty-list-view .jetpack-empty-list-view__cta-link {
-			width: 100%;
-		}
+	.jetpack-empty-list-view .jetpack-empty-list-view__cta-link {
+		width: 95%;
 	}
 }
 
 @media screen and (max-width: $break-medium) {
 	.jetpack-empty-list-view {
-		margin-top: 64px;
-		padding: 32px;
+		margin-top: 0;
+		padding: 32px 48px;
 
 		.jetpack-empty-list-view__cta-link {
 			width: 100%;

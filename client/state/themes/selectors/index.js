@@ -33,7 +33,6 @@ export { getThemeForAtomicTransferDialog } from 'calypso/state/themes/selectors/
 export { getThemeForumUrl } from 'calypso/state/themes/selectors/get-theme-forum-url';
 export { getThemeHelpUrl } from 'calypso/state/themes/selectors/get-theme-help-url';
 export { getThemePreviewThemeOptions } from 'calypso/state/themes/selectors/get-theme-preview-theme-options';
-export { getThemePurchaseUrl } from 'calypso/state/themes/selectors/get-theme-purchase-url';
 export { getThemeRequestErrors } from 'calypso/state/themes/selectors/get-theme-request-errors';
 export { getThemesForQuery } from 'calypso/state/themes/selectors/get-themes-for-query';
 export { getThemesForQueryIgnoringPage } from 'calypso/state/themes/selectors/get-themes-for-query-ignoring-page';

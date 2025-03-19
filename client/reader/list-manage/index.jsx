@@ -170,12 +170,14 @@ function ReaderListEdit( props ) {
 								>
 									{ translate( 'Export' ) }
 								</NavItem>
-								<NavItem
-									selected={ selectedSection === 'delete' }
-									path={ `/reader/list/${ props.owner }/${ props.slug }/delete` }
-								>
-									{ translate( 'Delete' ) }
-								</NavItem>
+								{ ! list?.is_immutable && (
+									<NavItem
+										selected={ selectedSection === 'delete' }
+										path={ `/reader/list/${ props.owner }/${ props.slug }/delete` }
+									>
+										{ translate( 'Delete' ) }
+									</NavItem>
+								) }
 							</NavTabs>
 						</SectionNav>
 						{ selectedSection === 'details' && <Details { ...sectionProps } /> }
