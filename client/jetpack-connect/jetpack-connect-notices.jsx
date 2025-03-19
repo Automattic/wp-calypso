@@ -111,7 +111,7 @@ export class JetpackConnectNotices extends Component {
 			case NOT_WORDPRESS:
 				noticeValues.icon = 'block';
 				noticeValues.text = translate(
-					"The site doesn't appear to be running WordPress. Please verify you're using the correct URL."
+					"Looks like your site isn't using WordPress. Please make sure you're using the right URL."
 				);
 				return noticeValues;
 
