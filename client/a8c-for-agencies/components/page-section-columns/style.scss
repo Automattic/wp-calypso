@@ -38,6 +38,10 @@
 		flex-direction: row;
 		align-items: center;
 	}
+
+	button.components-button.is-tertiary {
+		color: var(--color-text);
+	}
 }
 
 
