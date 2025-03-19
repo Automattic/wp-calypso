@@ -391,7 +391,7 @@ export class CheckoutThankYou extends Component<
 					'calypstore',
 					true
 				);
-				page.redirect( '/themes/' + this.props.selectedSite?.slug ?? '' );
+				page.redirect( '/themes/' + ( this.props.selectedSite?.slug ?? '' ) );
 			} );
 		}
 	};
