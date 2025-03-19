@@ -14,6 +14,13 @@ Button.displayName = 'Button';
 const meta: Meta< typeof Button > = {
 	title: 'packages/components/WP Overrides/Button',
 	component: Button,
+	decorators: [
+		( Story ) => (
+			<div style={ { fontFamily: 'sans-serif' } }>
+				<Story />
+			</div>
+		),
+	],
 };
 
 export default meta;
