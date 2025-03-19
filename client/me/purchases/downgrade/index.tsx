@@ -20,22 +20,27 @@ import {
 	getFeatureByKey,
 	FeatureObject,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useState } from 'react';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import FormButton from 'calypso/components/forms/form-button';
 import HeaderCake from 'calypso/components/header-cake';
+import { cancelAndRefundPurchaseAsync } from 'calypso/lib/purchases/actions';
 import { Purchase } from 'calypso/lib/purchases/types';
 import PurchaseSiteHeader from 'calypso/me/purchases/purchases-site/header';
 import titles from 'calypso/me/purchases/titles';
 import { isDataLoading } from 'calypso/me/purchases/utils';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { clearPurchases } from 'calypso/state/purchases/actions';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
+import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import SupportLink from '../cancel-purchase-support-link/support-link';
 import DowngradeLoadingPlaceholder from './downgrade-placeholder';
@@ -97,8 +102,10 @@ const downgradePath: Record< string, string > = {
 export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 	const { siteSlug, purchaseId } = props;
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const purchase = useSelector( ( state ) => getByPurchaseId( state, purchaseId ) );
 	const hasLoadedSites = useSelector( ( state ) => ! isRequestingSites( state ) );
+	const [ isDowngrading, setIsDowngrading ] = useState( false );
 	const loadedFromServer = useSelector( hasLoadedUserPurchasesFromServer );
 	const { ID: siteId, name: siteName } =
 		useSelector( ( state ) => getSite( state, siteSlug ) ) ?? {};
@@ -124,6 +131,47 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 		);
 	}
 	const purchaseRoot = getManagePurchaseUrlFor( siteSlug, purchaseId );
+
+	const handleDowngrade = async () => {
+		if (
+			! purchaseId ||
+			! currentPlan?.getProductId() ||
+			! targetPlan?.getStoreSlug() ||
+			isDowngrading
+		) {
+			return;
+		}
+
+		setIsDowngrading( true );
+
+		try {
+			const response = await cancelAndRefundPurchaseAsync( purchaseId, {
+				product_id: currentPlan.getProductId(),
+				type: 'downgrade',
+				to_product_id: targetPlan.getProductId(),
+			} );
+
+			// Refresh site plans and purchases first to ensure UI consistency
+			if ( siteId ) {
+				await Promise.all( [
+					dispatch( refreshSitePlans( siteId ) ),
+					dispatch( clearPurchases() ),
+				] );
+				page.redirect( purchaseRoot );
+			}
+
+			// Show success notification after data is refreshed
+			dispatch( successNotice( response.message, { duration: 5000 } ) );
+		} catch ( error: unknown ) {
+			if ( error instanceof Error ) {
+				dispatch( errorNotice( error.message, { duration: 5000 } ) );
+			} else {
+				dispatch( errorNotice( translate( 'An unknown error occurred' ), { duration: 5000 } ) );
+			}
+		} finally {
+			setIsDowngrading( false );
+		}
+	};
 	return (
 		<>
 			<HeaderCake backHref={ purchaseRoot }>
@@ -158,9 +206,9 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 					<div className="downgrade__confirm-buttons">
 						<FormButton
 							primary
-							onClick={ () => {
-								alert( 'Downgrade not implemented' );
-							} }
+							onClick={ handleDowngrade }
+							isSubmitting={ isDowngrading }
+							disabled={ isDowngrading }
 						>
 							{ translate( 'Downgrade to %(targetPlan)s', {
 								args: { targetPlan: targetPlan?.getTitle() ?? '' },
