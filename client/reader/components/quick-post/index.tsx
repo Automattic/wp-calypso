@@ -76,6 +76,13 @@ function QuickPost( {
 		}
 	}, [ postContent ] );
 
+	// Set initial selected site if none is selected
+	useEffect( () => {
+		if ( ! selectedSiteId && currentUser?.primary_blog ) {
+			dispatch( setSelectedSiteId( currentUser.primary_blog ) );
+		}
+	} );
+
 	const clearEditor = () => {
 		localStorage.removeItem( STORAGE_KEY );
 		setPostContent( '' );
