@@ -3,7 +3,7 @@
  */
 
 import { renderHook } from '@testing-library/react';
-import { usePagination } from '../hooks/use-pagination';
+import { usePagination } from '../../use-pagination.ts';
 import { generateTransactions } from '../test-fixtures/billing-transactions';
 
 describe( 'usePagination', () => {
