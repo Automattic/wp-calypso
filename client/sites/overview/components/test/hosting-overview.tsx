@@ -6,20 +6,32 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, waitFor } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
+import { createReduxStore } from 'calypso/state';
+import { SITE_REQUEST, SITES_REQUEST, SELECTED_SITE_SET } from 'calypso/state/action-types';
+import { setStore } from 'calypso/state/redux-store';
 import * as siteActions from 'calypso/state/sites/actions';
 import HostingOverview from '../hosting-overview';
 import type { SiteDetails } from '@automattic/data-stores';
+import type { UnknownAction } from 'redux';
+
 // Store original location so we can restore it after all tests.
 const originalLocation = window.location;
 
-// Mock the QuerySitePlans component to return null as it dispatches
-// a non-object thunk action that isn't handled by the mocked Redux store.
-jest.mock( 'calypso/components/data/query-site-plans', () => jest.fn( () => null ) );
+type LocalRenderWithProviderOptions = {
+	initialState?: Record< string, unknown >;
+	additionalActions?: UnknownAction[];
+};
+const localRenderWithProvider = (
+	element,
+	{ initialState, additionalActions = [] }: LocalRenderWithProviderOptions
+) => {
+	const store = createReduxStore( initialState ?? {} );
 
-const localRenderWithProvider = ( element, { initialState } ) => {
-	const mockStore = configureStore();
-	const store = mockStore( initialState );
+	setStore( store );
+
+	additionalActions.forEach( ( action ) => {
+		store.dispatch( action );
+	} );
 
 	const queryClient = new QueryClient();
 	return render(
@@ -97,9 +109,6 @@ const mockCalypsoState = {
 		capabilities: {},
 		flags: [],
 	},
-	purchases: {
-		isFetchingSitePurchases: true,
-	},
 	sites: {
 		items: {
 			[ mockSiteId ]: buildMockSite( {} ),
@@ -115,13 +124,19 @@ const mockCalypsoState = {
 		requesting: {},
 		requestingAll: false,
 	},
-	ui: {
-		selectedSiteId: mockSiteId,
-	},
 };
 
-const mockRequestSiteAction = {
-	type: 'SITE_REQUEST',
+const mockRequestSiteAction: UnknownAction = {
+	type: SITE_REQUEST,
+	siteId: mockSiteId,
+};
+
+const mockRequestSitesAction: UnknownAction = {
+	type: SITES_REQUEST,
+};
+
+const mockSetSelectedSiteIdAction: UnknownAction = {
+	type: SELECTED_SITE_SET,
 	siteId: mockSiteId,
 };
 
@@ -145,55 +160,57 @@ describe( 'HostingOverview', () => {
 			window.location.search = '';
 		} );
 
-		it( 'should load the page and not request site details', () => {
-			requestSiteSpy = jest.spyOn( siteActions, 'requestSite' );
+		it( 'should load the page and not request site details', async () => {
+			const requestSiteSpy = jest.spyOn( siteActions, 'requestSite' );
 
-			const { getByTestId, getByText } = localRenderWithProvider( <HostingOverview />, {
+			const { getByText, queryByTestId } = localRenderWithProvider( <HostingOverview />, {
 				initialState: mockCalypsoState,
+				additionalActions: [ mockSetSelectedSiteIdAction ],
 			} );
 
 			expect( requestSiteSpy ).not.toHaveBeenCalled();
 
-			waitFor( () => {
+			await waitFor( () => {
+				// NavigationHeader
+				expect( getByText( 'Overview' ) ).toBeVisible();
 				// SiteBackupCard
 				expect( getByText( 'Site backup' ) ).toBeVisible();
 				// QuickActionsCard
 				expect( getByText( 'Command Palette' ) ).toBeVisible();
-				// ActiveDomainsCard
-				expect( getByText( 'Active domains' ) ).toBeVisible();
 				// SupportCard
 				expect( getByText( 'Need some help?' ) ).toBeVisible();
 
-				expect( getByTestId( 'hosting-overview-loading' ) ).not.toBeVisible();
+				expect( queryByTestId( 'hosting-overview-loading' ) ).not.toBeInTheDocument();
 			} );
 		} );
 
-		it( 'should not request the site details when refresh is present', () => {
+		it( 'should not request the site details when refresh is present', async () => {
 			window.location.search = '?refresh';
 
-			requestSiteSpy = jest.spyOn( siteActions, 'requestSite' );
+			const requestSiteSpy = jest.spyOn( siteActions, 'requestSite' );
 
-			const { getByTestId, getByText } = localRenderWithProvider( <HostingOverview />, {
+			const { getByText, queryByTestId } = localRenderWithProvider( <HostingOverview />, {
 				initialState: mockCalypsoState,
+				additionalActions: [ mockSetSelectedSiteIdAction ],
 			} );
 
 			expect( requestSiteSpy ).not.toHaveBeenCalled();
 
-			waitFor( () => {
+			await waitFor( () => {
+				// NavigationHeader
+				expect( getByText( 'Overview' ) ).toBeVisible();
 				// SiteBackupCard
 				expect( getByText( 'Site backup' ) ).toBeVisible();
 				// QuickActionsCard
 				expect( getByText( 'Command Palette' ) ).toBeVisible();
-				// ActiveDomainsCard
-				expect( getByText( 'Active domains' ) ).toBeVisible();
 				// SupportCard
 				expect( getByText( 'Need some help?' ) ).toBeVisible();
 
-				expect( getByTestId( 'hosting-overview-loading' ) ).not.toBeVisible();
+				expect( queryByTestId( 'hosting-overview-loading' ) ).not.toBeInTheDocument();
 			} );
 		} );
 
-		it( 'should load the page when the current site details are being requested', () => {
+		it( 'should load the page when the current site details are being requested', async () => {
 			const initialState = {
 				...mockCalypsoState,
 				sites: {
@@ -203,30 +220,32 @@ describe( 'HostingOverview', () => {
 					},
 				},
 			};
+			const additionalActions = [ mockSetSelectedSiteIdAction, mockRequestSiteAction ];
 
-			requestSiteSpy = jest.spyOn( siteActions, 'requestSite' );
+			const requestSiteSpy = jest.spyOn( siteActions, 'requestSite' );
 
-			const { getByTestId, getByText } = localRenderWithProvider( <HostingOverview />, {
+			const { getByText, queryByTestId } = localRenderWithProvider( <HostingOverview />, {
 				initialState,
+				additionalActions,
 			} );
 
 			expect( requestSiteSpy ).not.toHaveBeenCalled();
 
-			waitFor( () => {
+			await waitFor( () => {
+				// NavigationHeader
+				expect( getByText( 'Overview' ) ).toBeVisible();
 				// SiteBackupCard
 				expect( getByText( 'Site backup' ) ).toBeVisible();
 				// QuickActionsCard
 				expect( getByText( 'Command Palette' ) ).toBeVisible();
-				// ActiveDomainsCard
-				expect( getByText( 'Active domains' ) ).toBeVisible();
 				// SupportCard
 				expect( getByText( 'Need some help?' ) ).toBeVisible();
 
-				expect( getByTestId( 'hosting-overview-loading' ) ).not.toBeVisible();
+				expect( queryByTestId( 'hosting-overview-loading' ) ).not.toBeInTheDocument();
 			} );
 		} );
 
-		it( 'should load the page when all site details are being requested', () => {
+		it( 'should load the page when all site details are being requested', async () => {
 			const initialState = {
 				...mockCalypsoState,
 				sites: {
@@ -234,26 +253,28 @@ describe( 'HostingOverview', () => {
 					requestingAll: true,
 				},
 			};
+			const additionalActions = [ mockRequestSitesAction ];
 
-			requestSiteSpy = jest.spyOn( siteActions, 'requestSite' );
+			const requestSiteSpy = jest.spyOn( siteActions, 'requestSite' );
 
-			const { getByTestId, getByText } = localRenderWithProvider( <HostingOverview />, {
+			const { getByText, queryByTestId } = localRenderWithProvider( <HostingOverview />, {
 				initialState,
+				additionalActions,
 			} );
 
 			expect( requestSiteSpy ).not.toHaveBeenCalled();
 
-			waitFor( () => {
+			await waitFor( () => {
+				// NavigationHeader
+				expect( getByText( 'Overview' ) ).toBeVisible();
 				// SiteBackupCard
 				expect( getByText( 'Site backup' ) ).toBeVisible();
 				// QuickActionsCard
 				expect( getByText( 'Command Palette' ) ).toBeVisible();
-				// ActiveDomainsCard
-				expect( getByText( 'Active domains' ) ).toBeVisible();
 				// SupportCard
 				expect( getByText( 'Need some help?' ) ).toBeVisible();
 
-				expect( getByTestId( 'hosting-overview-loading' ) ).not.toBeVisible();
+				expect( queryByTestId( 'hosting-overview-loading' ) ).not.toBeInTheDocument();
 			} );
 		} );
 	} );
@@ -263,53 +284,44 @@ describe( 'HostingOverview', () => {
 			window.location.search = '?refresh=true';
 		} );
 
-		it( 'should request the site details when no site data is being requested', () => {
-			requestSiteSpy = jest.spyOn( siteActions, 'requestSite' );
+		it( 'should request the site details when no site data is being requested', async () => {
+			const requestSiteSpy = jest.spyOn( siteActions, 'requestSite' );
 			requestSiteSpy.mockImplementation( () => {
 				return mockRequestSiteAction;
 			} );
 
-			const { getByTestId } = localRenderWithProvider( <HostingOverview />, {
+			const { getByTestId } = localRenderWithProvider( <HostingOverview debug />, {
 				initialState: mockCalypsoState,
+				additionalActions: [ mockSetSelectedSiteIdAction ],
 			} );
 
-			expect( requestSiteSpy ).toHaveBeenCalled();
-			waitFor( () => {
+			await waitFor( () => {
+				expect( requestSiteSpy ).toHaveBeenCalled();
 				expect( getByTestId( 'hosting-overview-loading' ) ).toBeVisible();
 			} );
 		} );
 
 		it( 'should not request the site details when the current site is being requested', () => {
-			const initialState = {
-				...mockCalypsoState,
-				sites: {
-					...mockCalypsoState.sites,
-					requesting: {
-						[ mockSiteId ]: true,
-					},
-				},
-			};
+			const requestSiteSpy = jest.spyOn( siteActions, 'requestSite' );
+			const additionalActions = [ mockSetSelectedSiteIdAction, mockRequestSiteAction ];
 
-			requestSiteSpy = jest.spyOn( siteActions, 'requestSite' );
-
-			const { getByTestId } = localRenderWithProvider( <HostingOverview />, { initialState } );
+			const { getByTestId } = localRenderWithProvider( <HostingOverview />, {
+				initialState: mockCalypsoState,
+				additionalActions,
+			} );
 
 			expect( requestSiteSpy ).not.toHaveBeenCalled();
 			expect( getByTestId( 'hosting-overview-loading' ) ).toBeVisible();
 		} );
 
 		it( 'should not request the site details when all sites are being requested', () => {
-			const initialState = {
-				...mockCalypsoState,
-				sites: {
-					...mockCalypsoState.sites,
-					requestingAll: true,
-				},
-			};
+			const requestSiteSpy = jest.spyOn( siteActions, 'requestSite' );
+			const additionalActions = [ mockSetSelectedSiteIdAction, mockRequestSitesAction ];
 
-			requestSiteSpy = jest.spyOn( siteActions, 'requestSite' );
-
-			const { getByTestId } = localRenderWithProvider( <HostingOverview />, { initialState } );
+			const { getByTestId } = localRenderWithProvider( <HostingOverview />, {
+				initialState: mockCalypsoState,
+				additionalActions,
+			} );
 
 			expect( requestSiteSpy ).not.toHaveBeenCalled();
 			expect( getByTestId( 'hosting-overview-loading' ) ).toBeVisible();
