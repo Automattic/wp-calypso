@@ -38,7 +38,7 @@ const siteMigration: Flow = {
 		useEffect( () => {
 			resetOnboardStore();
 			setIntent( Onboard.SiteIntent.SiteMigration );
-		}, [] );
+		}, [ resetOnboardStore, setIntent ] );
 		const { set, get } = useFlowState();
 		const urlQueryParams = useQuery();
 		const ref = urlQueryParams.get( 'ref' );
