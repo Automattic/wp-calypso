@@ -110,7 +110,7 @@ export const MessageContent = ( {
 			</div>
 			{ displayChatWithSupportLabel && (
 				<ChatWithSupportLabel
-					labelText={ __( 'Chatting with support now', __i18n_text_domain__ ) }
+					labelText={ __( 'Chat with support started', __i18n_text_domain__ ) }
 				/>
 			) }
 			{ displayChatWithSupportEndedLabel && (

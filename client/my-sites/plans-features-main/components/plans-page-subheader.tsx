@@ -3,8 +3,10 @@ import { OnboardSelect } from '@automattic/data-stores';
 import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
+import { ReactNode } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { SelectedFeatureData } from '../hooks/use-selected-feature';
 
 const Subheader = styled.p`
 	margin: -32px 0 40px 0;
@@ -23,14 +25,36 @@ const Subheader = styled.p`
 	}
 `;
 
-const SecondaryFormattedHeader = ( { siteSlug }: { siteSlug?: string | null } ) => {
+const SecondaryFormattedHeader = ( {
+	siteSlug,
+	selectedFeature,
+}: {
+	siteSlug?: string | null;
+	selectedFeature: SelectedFeatureData | null;
+} ) => {
 	const translate = useTranslate();
-	const headerText = translate( 'Upgrade your plan to access this feature and more' );
-	const subHeaderText = (
+	let headerText: ReactNode = translate( 'Upgrade your plan to access this feature and more' );
+	let subHeaderText: ReactNode = (
 		<Button className="plans-features-main__view-all-plans is-link" href={ `/plans/${ siteSlug }` }>
 			{ translate( 'View all plans' ) }
 		</Button>
 	);
+	if ( selectedFeature?.description ) {
+		headerText = selectedFeature.description;
+		subHeaderText = translate(
+			'Upgrade your plan to access this feature and more. Or {{button}}view all plans{{/button}}.',
+			{
+				components: {
+					button: (
+						<Button
+							className="plans-features-main__view-all-plans is-link"
+							href={ `/plans/${ siteSlug }` }
+						/>
+					),
+				},
+			}
+		);
+	}
 
 	return (
 		<FormattedHeader
@@ -106,6 +130,7 @@ const PlansPageSubheader = ( {
 	showPlanBenefits,
 	offeringFreePlan,
 	onFreePlanCTAClick,
+	selectedFeature,
 }: {
 	siteSlug?: string | null;
 	isDisplayingPlansNeededForFeature: boolean;
@@ -113,6 +138,7 @@ const PlansPageSubheader = ( {
 	offeringFreePlan?: boolean;
 	showPlanBenefits?: boolean;
 	onFreePlanCTAClick: () => void;
+	selectedFeature: SelectedFeatureData | null;
 } ) => {
 	const translate = useTranslate();
 
@@ -149,7 +175,9 @@ const PlansPageSubheader = ( {
 			) : (
 				showPlanBenefits && <PlanBenefitHeader />
 			) }
-			{ isDisplayingPlansNeededForFeature && <SecondaryFormattedHeader siteSlug={ siteSlug } /> }
+			{ isDisplayingPlansNeededForFeature && (
+				<SecondaryFormattedHeader siteSlug={ siteSlug } selectedFeature={ selectedFeature } />
+			) }
 		</>
 	);
 };

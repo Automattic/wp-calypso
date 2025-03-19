@@ -6,7 +6,6 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { type ReactNode, useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { useGoalsFirstCumulativeExperience } from 'calypso/data/experiment/use-goals-first-cumulative-experience';
 import { useGoalsFirstExperiment } from 'calypso/landing/stepper/declarative-flow/helpers/use-goals-first-experiment';
 import { isGoalsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -48,11 +47,18 @@ const refGoals: Record< string, Onboard.SiteGoal[] > = {
 /**
  * The goals capture step
  */
-const GoalsStep: StepType = ( { navigation, flow } ) => {
+const GoalsStep: StepType< {
+	submits: {
+		intent: Onboard.SiteIntent;
+		skip?: true;
+		action?: 'dashboard';
+		shouldSkipSubmitTracking?: true;
+	};
+} > = ( { navigation, flow } ) => {
 	const translate = useTranslate();
 	const whatAreYourGoalsText = translate( 'What would you like to do?' );
 	const subHeaderText = translate(
-		'Pick one or more goals and we’ll tailor the setup experience for you.'
+		"Pick one or more goals and we'll tailor the setup experience for you."
 	);
 
 	const goals = useSelect(
@@ -63,7 +69,6 @@ const GoalsStep: StepType = ( { navigation, flow } ) => {
 	const refParameter = getQueryArgs()?.ref as string;
 
 	const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
-	const [ , isIntentNewsletterGoalEnabled ] = useGoalsFirstCumulativeExperience();
 	const isIntentCreateCourseGoalEnabled = useCreateCourseGoalFeature();
 
 	useEffect( () => {
@@ -114,20 +119,17 @@ const GoalsStep: StepType = ( { navigation, flow } ) => {
 		} );
 	};
 
-	const getStepSubmissionHandler =
-		( action: string, eventProps: Record< string, unknown > = {} ) =>
-		() => {
-			const intent = goalsToIntent( goals, {
-				isIntentNewsletterGoalEnabled,
-				isIntentCreateCourseGoalEnabled,
-			} );
-			setIntent( intent );
+	const getStepSubmissionHandler = ( action: string ) => () => {
+		const intent = goalsToIntent( goals, {
+			isIntentCreateCourseGoalEnabled,
+		} );
+		setIntent( intent );
 
-			recordGoalsSelectTracksEvent( goals, intent );
-			recordNavigationSelectTracksEvent( intent, action );
+		recordGoalsSelectTracksEvent( goals, intent );
+		recordNavigationSelectTracksEvent( intent, action );
 
-			navigation.submit?.( { intent, ...eventProps } );
-		};
+		navigation.submit?.( { intent } );
+	};
 
 	const handleSkip = getStepSubmissionHandler( 'skip' );
 	const handleNext = getStepSubmissionHandler( 'next' );
@@ -201,13 +203,15 @@ const GoalsStep: StepType = ( { navigation, flow } ) => {
 			const nextButton = <Step.NextButton onClick={ handleNext } />;
 
 			return (
-				<Step.SixColumnsCenteredLayout
+				<Step.CenteredColumnLayout
+					columnWidth={ 6 }
 					className="step-container-v2--goals"
 					topBar={ <Step.TopBar skipButton={ <Step.SkipButton onClick={ handleSkip } /> } /> }
 					heading={ <Step.Heading text={ whatAreYourGoalsText } subText={ subHeaderText } /> }
 					stickyBottomBar={ <Step.StickyBottomBar rightButton={ nextButton } /> }
-					render={ ( { isMediumViewport } ) => getStepContent( isMediumViewport && nextButton ) }
-				/>
+				>
+					{ ( { isMediumViewport } ) => getStepContent( isMediumViewport && nextButton ) }
+				</Step.CenteredColumnLayout>
 			);
 		}
 

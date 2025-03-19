@@ -79,6 +79,7 @@ import useGenerateActionHook from './hooks/use-generate-action-hook';
 import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
+import useSelectedFeature from './hooks/use-selected-feature';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
 import type {
 	PlansIntent,
@@ -101,6 +102,7 @@ const PlanComparisonHeader = styled.h1`
 export interface PlansFeaturesMainProps {
 	siteId?: number | null;
 	intent?: PlansIntent | null;
+	isInSiteDashboard?: boolean;
 	isInSignup?: boolean;
 	isCustomDomainAllowedOnFreePlan?: boolean;
 	plansWithScroll?: boolean;
@@ -127,7 +129,6 @@ export interface PlansFeaturesMainProps {
 	>;
 	planTypeSelector?: 'interval';
 	discountEndDate?: Date;
-	hideSpotlightPlan?: boolean;
 	hidePlansFeatureComparison?: boolean;
 	coupon?: string;
 
@@ -209,9 +210,9 @@ const PlansFeaturesMain = ( {
 	customerType = 'personal',
 	planTypeSelector = 'interval',
 	intervalType = 'yearly',
-	hideSpotlightPlan = false,
 	hidePlansFeatureComparison = false,
 	hideUnavailableFeatures = false,
+	isInSiteDashboard = false,
 	isInSignup = false,
 	isCustomDomainAllowedOnFreePlan = false,
 	isStepperUpgradeFlow = false,
@@ -593,10 +594,15 @@ const PlansFeaturesMain = ( {
 	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
 
 	/**
-	 * Calculates the height of the masterbar if it exists, and passes it to the component as an offset
+	 * Calculates the height of the masterbar if it overlaps, and passes it to the component as an offset
 	 * for the sticky CTA bar.
 	 */
 	useLayoutEffect( () => {
+		if ( isInSiteDashboard ) {
+			// The masterbar does not overlap with the site dashboard's scrollable content.
+			return;
+		}
+
 		const masterbarElement = document.querySelector< HTMLDivElement >( 'header.masterbar' );
 
 		if ( ! masterbarElement ) {
@@ -755,6 +761,12 @@ const PlansFeaturesMain = ( {
 		</div>
 	);
 
+	const selectedFeatureData = useSelectedFeature( {
+		gridPlans: gridPlansForFeaturesGrid,
+		selectedPlan,
+		selectedFeature,
+	} );
+
 	return (
 		<>
 			<div className={ clsx( 'plans-features-main', 'is-pricing-grid-2023-plans-features-main' ) }>
@@ -808,6 +820,7 @@ const PlansFeaturesMain = ( {
 				<PlansPageSubheader
 					siteSlug={ siteSlug }
 					isDisplayingPlansNeededForFeature={ isDisplayingPlansNeededForFeature }
+					selectedFeature={ selectedFeatureData }
 					offeringFreePlan={ offeringFreePlan }
 					deemphasizeFreePlan={ deemphasizeFreePlan }
 					onFreePlanCTAClick={ onFreePlanCTAClick }
@@ -840,7 +853,7 @@ const PlansFeaturesMain = ( {
 										coupon={ coupon }
 										currentSitePlanSlug={ sitePlanSlug }
 										generatedWPComSubdomain={ resolvedSubdomainName }
-										hideSpotlightPlan={ hideSpotlightPlan }
+										hideSpotlightPlan={ isInSiteDashboard }
 										gridPlanForSpotlight={ gridPlanForSpotlight }
 										gridPlans={ gridPlansForFeaturesGrid }
 										hideUnavailableFeatures={ hideUnavailableFeatures }

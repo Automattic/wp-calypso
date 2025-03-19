@@ -1,6 +1,7 @@
 @import '../../../../styles/mixins';
 
 .step-container-v2 {
+	width: 100%;
 	min-height: 100vh;
 	margin: 0;
 	display: flex;
@@ -16,13 +17,13 @@
 		&.padding {
 			padding: 2rem 1rem;
 
-			@include step-large-viewport {
+			@include step-medium-viewport {
 				padding: 2rem 3rem;
 			}
 		}
 
 		&.vertical-align-center {
-			@include step-large-viewport {
+			@include step-medium-viewport {
 				position: absolute;
 				inset: 0;
 				width: 100%;

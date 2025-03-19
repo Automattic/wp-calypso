@@ -3,6 +3,7 @@ import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { chevronLeft } from '@wordpress/icons';
 import { Heading, StickyBottomBar, TopBar, BackButton, NextButton } from '../..';
+import { WireframePlaceholder } from '../../helpers/wireframe-placeholder';
 import { withStepContainerV2ContextDecorator } from '../../helpers/withStepContainerV2ContextDecorator';
 import { FullWidthLayout } from './FullWidthLayout';
 import type { Meta } from '@storybook/react';
@@ -29,23 +30,20 @@ export const ThemePreview = () => {
 			topBar={ <TopBar backButton={ backButton } /> }
 			isMediumViewport={ isMediumViewport }
 			isLargeViewport={ isLargeViewport }
-			render={ () => (
-				<>
-					<div className="theme-preview__info">
-						<div className="theme-preview__description">
-							<Badge>Free</Badge>
-							<Heading
-								size="small"
-								text="Dropp"
-								align="left"
-								subText="Dropp is a blogging theme that appeals to the sneakerhead. Its urban styles with bold typography and vibrant accent color make it ideal to the streetwear enthusiasts looking to express themselves."
-							/>
-						</div>
-					</div>
-					<div className="theme-preview__preview" />
-				</>
-			) }
-		/>
+		>
+			<div className="theme-preview__info">
+				<div className="theme-preview__description">
+					<Badge>Free</Badge>
+					<Heading
+						size="small"
+						text="Dropp"
+						align="left"
+						subText="Dropp is a blogging theme that appeals to the sneakerhead. Its urban styles with bold typography and vibrant accent color make it ideal to the streetwear enthusiasts looking to express themselves."
+					/>
+				</div>
+			</div>
+			<WireframePlaceholder className="theme-preview__preview">Preview</WireframePlaceholder>
+		</FullWidthLayout>
 	);
 };
 
@@ -68,28 +66,25 @@ export const ThemePreviewFonts = () => {
 			topBar={ isMediumViewport ? <TopBar backButton={ backButton } /> : <FontsBar /> }
 			stickyBottomBar={ <StickyBottomBar leftButton={ backButton } rightButton={ nextButton } /> }
 			hasContentPadding={ isMediumViewport }
-			render={ () => (
-				<>
-					{ isMediumViewport && (
-						<div className="theme-preview__info">
-							<div className="theme-preview__description">
-								<Heading
-									size="small"
-									text={
-										<div className="theme-preview__fonts">
-											<Button icon={ chevronLeft } /> Fonts
-										</div>
-									}
-									align="left"
-									subText="Elevate your design with expertly curated font pairings."
-								/>
-							</div>
-							{ nextButton }
-						</div>
-					) }
-					<div className="theme-preview__preview" />
-				</>
+		>
+			{ isMediumViewport && (
+				<div className="theme-preview__info">
+					<div className="theme-preview__description">
+						<Heading
+							size="small"
+							text={
+								<div className="theme-preview__fonts">
+									<Button icon={ chevronLeft } /> Fonts
+								</div>
+							}
+							align="left"
+							subText="Elevate your design with expertly curated font pairings."
+						/>
+					</div>
+					{ nextButton }
+				</div>
 			) }
-		/>
+			<WireframePlaceholder className="theme-preview__preview">Preview</WireframePlaceholder>
+		</FullWidthLayout>
 	);
 };

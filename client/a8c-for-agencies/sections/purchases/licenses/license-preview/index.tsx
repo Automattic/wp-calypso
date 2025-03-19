@@ -399,6 +399,7 @@ export default function LicensePreview( {
 						licenseType={ licenseType }
 						isChildLicense={ isChildLicense }
 						referral={ referral }
+						isDevSite={ isDevelopmentSite }
 					/>
 				) ) }
 		</div>

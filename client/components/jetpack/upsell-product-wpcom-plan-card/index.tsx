@@ -58,7 +58,7 @@ export const UpsellProductWpcomPlanCard: React.FC< UpsellProductWpcomPlanCardPro
 	const secondaryCtaURL: string = `https://wordpress.com/plans/${ selectedSiteSlug }`;
 	const isFetchingPrices: boolean = ! siteProduct;
 	const originalPrice: number = siteProduct?.cost_smallest_unit ?? 0;
-	const displayPrice: number = siteProduct?.cost / 12 ?? 0;
+	const displayPrice: number = ( siteProduct?.cost ?? 0 ) / 12;
 
 	const ctaButtonLabel = translate( 'Get %(productName)s plan', {
 		args: {

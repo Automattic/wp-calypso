@@ -82,7 +82,6 @@ interface ConsolidatedStatsCardProps {
 	popoverTitle?: string;
 	popoverContent: React.ReactNode;
 	isLoading?: boolean;
-	applyCoreStyles?: boolean;
 }
 
 export function ConsolidatedStatsCard( {
@@ -91,27 +90,16 @@ export function ConsolidatedStatsCard( {
 	popoverTitle,
 	popoverContent,
 	isLoading = false,
-	applyCoreStyles = false,
 }: ConsolidatedStatsCardProps ) {
 	const cardRef = useRef< HTMLDivElement | null >( null );
 
 	return (
-		<Card
-			compact
-			ref={ cardRef }
-			className={ clsx( 'consolidated-stats-card', { 'is-core-styles': applyCoreStyles } ) }
-		>
+		<Card compact ref={ cardRef } className="consolidated-stats-card">
 			<div className="consolidated-stats-card__value">
 				{ isLoading ? <TextPlaceholder /> : value }
 			</div>
 			<CardInfo title={ popoverTitle } wrapperRef={ cardRef } footerText={ footerText }>
-				<div
-					className={ clsx( 'consolidated-stats-card__popover-content', {
-						'is-core-styles': applyCoreStyles,
-					} ) }
-				>
-					{ popoverContent }
-				</div>
+				<div className="consolidated-stats-card__popover-content">{ popoverContent }</div>
 			</CardInfo>
 		</Card>
 	);

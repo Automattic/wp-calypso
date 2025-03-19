@@ -1,8 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
-import { StepProps } from '../../types';
 import ProcessingStep from '../processing-step';
 
-export default function ProcessingStepCopySiteFlow( props: StepProps ) {
+const ProcessingStepCopySiteFlow: typeof ProcessingStep = ( props ) => {
 	const translate = useTranslate();
 	return (
 		<ProcessingStep
@@ -13,4 +12,6 @@ export default function ProcessingStepCopySiteFlow( props: StepProps ) {
 			) }
 		/>
 	);
-}
+};
+
+export default ProcessingStepCopySiteFlow;

@@ -26,7 +26,9 @@ export const useStepNavigationWithTracking = ( {
 	currentStepRoute,
 	navigate,
 }: Params< StepperStep[] > ) => {
-	const stepNavigation = flow.useStepNavigation( currentStepRoute, navigate );
+	// We don't know the type of the return value of useStepNavigation, because we don't know which flow is this.
+	// So we cast it to any.
+	const stepNavigation: any = flow.useStepNavigation( currentStepRoute, navigate );
 	const { intent, goals } = useSelect( ( select ) => {
 		const onboardStore = select( ONBOARD_STORE ) as OnboardSelect;
 		return {
@@ -69,14 +71,15 @@ export const useStepNavigationWithTracking = ( {
 	return useMemo(
 		() => ( {
 			...( stepNavigation.submit && {
-				submit: ( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) => {
+				// TODO: remove = {}, there is no need to default to {}.
+				submit: ( providedDependencies: ProvidedDependencies = {} ) => {
 					if ( ! providedDependencies?.shouldSkipSubmitTracking ) {
 						handleRecordStepNavigation( {
 							event: STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
 							providedDependencies,
 						} );
 					}
-					stepNavigation.submit?.( providedDependencies, ...params );
+					stepNavigation.submit?.( providedDependencies );
 				},
 			} ),
 			...( stepNavigation.exitFlow && {

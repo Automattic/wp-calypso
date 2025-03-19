@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/variables";
+
 .plan-price-wrapper {
 	display: flex;
 	align-items: center;
@@ -5,6 +7,15 @@
 
 .plan-price-loading-placeholder {
 	display: flex;
+}
+
+.plan-price--inline {
+	font-size: inherit;
+
+	.plan-price__currency-symbol {
+		font-size: inherit;
+		vertical-align: initial;
+	}
 }
 
 .plan-price-info {

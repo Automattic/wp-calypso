@@ -202,13 +202,17 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 							);
 						} ) }
 						<JumpToRecent containerReference={ messagesContainerRef } />
-						{ chat.provider === 'odie' && <ViewMostRecentOpenConversationNotice /> }
-						{ chat.status === 'dislike' && ! removeDislikeStatus && <DislikeThumb /> }
-						{ availableStatusWithFeedback.includes( chat.status ) && (
-							<div className="odie-chatbox__action-message">
-								{ chat.status === 'sending' && <ThinkingPlaceholder /> }
-								{ chat.status === 'dislike' && <DislikeFeedbackMessage /> }
-							</div>
+						{ chat.provider === 'odie' && (
+							<>
+								<ViewMostRecentOpenConversationNotice />
+								{ chat.status === 'dislike' && ! removeDislikeStatus && <DislikeThumb /> }
+								{ availableStatusWithFeedback.includes( chat.status ) && (
+									<div className="odie-chatbox__action-message">
+										{ chat.status === 'sending' && <ThinkingPlaceholder /> }
+										{ chat.status === 'dislike' && <DislikeFeedbackMessage /> }
+									</div>
+								) }
+							</>
 						) }
 					</>
 				) }
