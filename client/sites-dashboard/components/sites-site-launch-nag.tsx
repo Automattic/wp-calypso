@@ -92,7 +92,7 @@ export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 	} );
 
 	const {
-		data: { checklist, is_dismissed },
+		data: { checklist, is_dismissed, launchpad_screen },
 		isLoading,
 	} = useLaunchpad( site.slug, getChecklistSlug( site ), undefined, 'sites-dashboard' );
 
@@ -103,7 +103,7 @@ export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 	let numberOfSteps = checklist.length || 0;
 	let completedSteps = ( checklist.filter( ( task ) => task.completed ) || [] ).length;
 
-	if ( shouldShowLaunchpadFirst( site ) ) {
+	if ( shouldShowLaunchpadFirst( site ) && launchpad_screen !== 'skipped' ) {
 		// The focused launchpad on My Home doesn't include the launch site task in the count.
 		// In which case, we want this donut to match the one on the focused launchpad.
 		const launchSiteTask = checklist?.find( ( task ) => task.isLaunchTask );
