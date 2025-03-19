@@ -18,7 +18,6 @@ interface StepSectionItemProps {
 	statusProps?: React.ComponentProps< typeof Badge > & { tooltip?: string };
 	className?: string;
 	iconClassName?: string;
-	isNewLayout?: boolean;
 	stepNumber?: number;
 	children?: React.ReactNode;
 }
@@ -31,21 +30,10 @@ export default function StepSectionItem( {
 	statusProps,
 	className,
 	iconClassName,
-	isNewLayout = false,
 	stepNumber,
 	children,
 }: StepSectionItemProps ) {
 	const status = <StatusBadge statusProps={ statusProps } />;
-
-	const buttonContent = buttonProps && (
-		<div className="step-section-item__button">
-			<Button { ...buttonProps } />
-		</div>
-	);
-
-	const statusContent = statusProps && (
-		<div className="step-section-item__status is-large-screen">{ status }</div>
-	);
 
 	return (
 		<div className={ clsx( 'step-section-item', className ) }>
@@ -60,12 +48,18 @@ export default function StepSectionItem( {
 					<div className="step-section-item__status is-small-screen">{ status }</div>
 				) }
 				<div className="step-section-item__heading">
-					{ heading } { isNewLayout && statusContent }
+					{ heading }
+					{ statusProps && (
+						<div className="step-section-item__status is-large-screen">{ status }</div>
+					) }
 				</div>
 				<div className="step-section-item__description">{ preventWidows( description ) }</div>
-				{ ! isNewLayout && buttonContent }
 			</div>
-			{ isNewLayout ? buttonContent : statusContent }
+			{ buttonProps && (
+				<div className="step-section-item__button">
+					<Button { ...buttonProps } />
+				</div>
+			) }
 			{ children }
 		</div>
 	);
