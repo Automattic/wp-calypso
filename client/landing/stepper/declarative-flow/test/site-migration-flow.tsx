@@ -646,7 +646,6 @@ describe( 'Site Migration Flow', () => {
 					path: '/overview/example.wordpress.com',
 					query: {
 						ref: 'site-migration',
-						refresh: 'true',
 					},
 				} );
 			} );
