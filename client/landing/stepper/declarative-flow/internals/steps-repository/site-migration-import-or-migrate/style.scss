@@ -6,7 +6,7 @@
 	@include onboarding-block-margin;
 	max-width: 502px;
 
-	@media ( min-width: $break-medium ) {
+	@media ( min-width: $break-mobile ) {
 		margin-left: auto;
 		margin-right: auto;
 	}
