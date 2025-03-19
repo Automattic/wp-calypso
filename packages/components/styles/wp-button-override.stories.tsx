@@ -1,7 +1,9 @@
 import { Button } from '@wordpress/components';
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import './wp-button-override.scss';
+// Not using a relative path here to ensure that the build is working.
+import '@automattic/components/styles/wp-button-override.scss';
 
 // TODO: Investigate why displayName becomes `UnforwardedButton` when imported.
 Button.displayName = 'Button';

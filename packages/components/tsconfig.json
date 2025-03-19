@@ -5,9 +5,9 @@
 		"checkJs": false,
 		"outDir": "dist/esm",
 		"declarationDir": "dist/types",
-		"rootDir": "."
+		"rootDir": "src"
 	},
-	"include": [ "src", "styles" ],
+	"include": [ "src" ],
 	"exclude": [ "**/docs/*", "**/test/*" ],
 	"references": [
 		{ "path": "../calypso-analytics" },
