@@ -70,7 +70,10 @@ export type FeatureObject = {
 	getTitle: ( params?: { domainName?: string } ) => TranslateResult;
 	getAlternativeTitle?: () => TranslateResult;
 	getHeader?: () => TranslateResult;
-	getDescription?: ( params?: { domainName?: string } ) => TranslateResult;
+	getDescription?: ( params?: {
+		domainName?: string;
+		suggestedDomainName?: string;
+	} ) => TranslateResult;
 	getStoreSlug?: () => string;
 	getCompareTitle?: () => TranslateResult;
 	getCompareSubtitle?: () => TranslateResult;

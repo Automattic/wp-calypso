@@ -658,11 +658,23 @@ const FEATURES_LIST: FeatureList = {
 			} );
 		},
 		getAlternativeTitle: () => i18n.translate( 'Free custom domain' ),
-		getDescription: ( { domainName = undefined } = {} ) => {
+		getDescription: ( { domainName = undefined, suggestedDomainName = undefined } = {} ) => {
 			if ( domainName ) {
 				return i18n.translate( 'Your domain (%s) is included with this plan.', {
 					args: domainName,
 				} );
+			}
+
+			if ( suggestedDomainName ) {
+				return i18n.translate(
+					'A custom domain like {{i}}%s{{/i}} is available and free for the first year.',
+					{
+						args: suggestedDomainName,
+						components: {
+							i: <i />,
+						},
+					}
+				);
 			}
 
 			return i18n.translate(

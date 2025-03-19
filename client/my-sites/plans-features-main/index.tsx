@@ -16,10 +16,17 @@ import {
 	getPlanFeaturesGroupedForComparisonGrid,
 	getWooExpressFeaturesGroupedForFeaturesGrid,
 	getSimplifiedPlanFeaturesGroupedForFeaturesGrid,
+	FEATURE_CUSTOM_DOMAIN,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, Spinner } from '@automattic/components';
-import { WpcomPlansUI, AddOns, Plans, OnboardSelect } from '@automattic/data-stores';
+import {
+	WpcomPlansUI,
+	AddOns,
+	Plans,
+	OnboardSelect,
+	DomainSuggestions,
+} from '@automattic/data-stores';
 import { isAnyHostingFlow } from '@automattic/onboarding';
 import {
 	FeaturesGrid,
@@ -131,7 +138,7 @@ export interface PlansFeaturesMainProps {
 	hideSpotlightPlan?: boolean;
 	hidePlansFeatureComparison?: boolean;
 	coupon?: string;
-
+	locale?: string;
 	/**
 	 * @deprecated use intent mechanism instead
 	 */
@@ -225,6 +232,7 @@ const PlansFeaturesMain = ( {
 	coupon,
 	onPlanIntervalUpdate,
 	selectedThemeType,
+	locale = 'en',
 }: PlansFeaturesMainProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	// TODO: Remove temporary eslint disable
@@ -247,6 +255,22 @@ const PlansFeaturesMain = ( {
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
 	const getPlanTypeDestination = usePlanTypeDestinationCallback();
+
+	// If the selected feature is the custom domain feature, fetch a domain suggestion.
+	const { data: wordPressSubdomainSuggestions } = DomainSuggestions.useGetDomainSuggestions(
+		/*
+		 * Only make the request if the selected feature is the custom domain feature.
+		 * See packages/data-stores/src/domain-suggestions/queries.ts.
+		 */
+		selectedFeature === FEATURE_CUSTOM_DOMAIN ? siteSlug : undefined,
+		{
+			quantity: 1,
+			include_wordpressdotcom: false,
+			include_dotblogsubdomain: false,
+			locale,
+			tlds: [ 'com' ],
+		}
+	);
 
 	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment( flowName );
 
@@ -760,6 +784,7 @@ const PlansFeaturesMain = ( {
 		gridPlans: gridPlansForFeaturesGrid,
 		selectedPlan,
 		selectedFeature,
+		suggestedDomainName: wordPressSubdomainSuggestions?.[ 0 ]?.domain_name,
 	} );
 
 	return (

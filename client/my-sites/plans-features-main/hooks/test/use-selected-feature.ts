@@ -8,7 +8,8 @@ import useSelectedFeature from '../use-selected-feature';
 const mockFeature = {
 	getSlug: () => 'feature-1',
 	getTitle: () => 'Feature 1',
-	getDescription: () => 'Description 1',
+	getDescription: ( { suggestedDomainName }: { suggestedDomainName?: string } ) =>
+		suggestedDomainName ? `Description for ${ suggestedDomainName }` : 'Description 1',
 	availableForCurrentPlan: true,
 	availableOnlyForAnnualPlans: false,
 };
@@ -108,5 +109,21 @@ describe( 'useSelectedFeature', () => {
 			} )
 		);
 		expect( result.current ).toBeNull();
+	} );
+
+	it( 'passes suggestedDomainName to getDescription', () => {
+		const { result } = renderHook( () =>
+			useSelectedFeature( {
+				gridPlans: mockGridPlans,
+				selectedFeature: 'feature-1',
+				selectedPlan: 'plan-1',
+				suggestedDomainName: 'example.com',
+			} )
+		);
+		expect( result.current ).toEqual( {
+			slug: 'feature-1',
+			title: 'Feature 1',
+			description: 'Description for example.com',
+		} );
 	} );
 } );

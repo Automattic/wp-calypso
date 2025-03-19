@@ -5,6 +5,7 @@ interface Params {
 	gridPlans: GridPlan[] | null;
 	selectedFeature?: string;
 	selectedPlan?: string;
+	suggestedDomainName?: string;
 }
 
 export type SelectedFeatureData = {
@@ -17,6 +18,7 @@ const useSelectedFeature = ( {
 	selectedFeature,
 	selectedPlan,
 	gridPlans,
+	suggestedDomainName,
 }: Params ): SelectedFeatureData | null => {
 	const selectedFeatureData = useMemo( () => {
 		if ( ! selectedPlan || ! selectedFeature ) {
@@ -52,7 +54,7 @@ const useSelectedFeature = ( {
 		return {
 			slug: selectedFeature as string,
 			title: selectedFeatureData.getTitle(),
-			description: selectedFeatureData.getDescription(),
+			description: selectedFeatureData.getDescription( { suggestedDomainName } ),
 		};
 	}
 

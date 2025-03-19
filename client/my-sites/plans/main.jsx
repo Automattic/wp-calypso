@@ -159,6 +159,7 @@ class PlansComponent extends Component {
 		domainAndPlanPackage: PropTypes.bool,
 		intervalType: PropTypes.string,
 		customerType: PropTypes.string,
+		locale: PropTypes.string,
 		selectedFeature: PropTypes.string,
 		redirectTo: PropTypes.string,
 		selectedSite: PropTypes.object,
@@ -244,7 +245,8 @@ class PlansComponent extends Component {
 	};
 
 	renderPlansMain() {
-		const { selectedSite, isUntangled, isWPForTeamsSite, currentPlanIntervalType } = this.props;
+		const { selectedSite, isUntangled, isWPForTeamsSite, currentPlanIntervalType, locale } =
+			this.props;
 
 		if ( isEnabled( 'p2/p2-plus' ) && isWPForTeamsSite ) {
 			return (
@@ -288,6 +290,7 @@ class PlansComponent extends Component {
 				intent={ plansIntent }
 				isSpotlightOnCurrentPlan={ ! this.props.isDomainAndPlanPackageFlow }
 				showPlanTypeSelectorDropdown={ isEnabled( 'onboarding/interval-dropdown' ) }
+				locale={ locale }
 			/>
 		);
 	}
