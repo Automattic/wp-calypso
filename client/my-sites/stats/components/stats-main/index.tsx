@@ -5,7 +5,7 @@ import { useSelector } from 'calypso/state';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-export default function StatsMain( { children, ...props }: MainProps ) {
+export default function StatsMain( { children, className, ...props }: MainProps ) {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const isSiteJetpack = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: true } )
@@ -13,7 +13,7 @@ export default function StatsMain( { children, ...props }: MainProps ) {
 	const customTheme = useWPAdminTheme( isSiteJetpack );
 
 	return (
-		<Main { ...props } className={ clsx( 'stats-main', 'color-scheme', customTheme ) }>
+		<Main { ...props } className={ clsx( 'stats-main', 'color-scheme', customTheme, className ) }>
 			{ children }
 		</Main>
 	);
