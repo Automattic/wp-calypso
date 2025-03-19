@@ -19,7 +19,7 @@ $container-padding-large: 48px;
 			padding-inline-start: $container-padding-large;
 			padding-inline-end: $container-padding-large;
 		}
-		
+
 		.step-container__content {
 			margin-top: 32px;
 		}
@@ -651,5 +651,11 @@ $container-padding-large: 48px;
 				display: none;
 			}
 		}
+	}
+}
+.step-container-v2--design-picker {
+	.design-picker.design-picker__unified {
+		margin-top: 0;
+		padding-bottom: 0;
 	}
 }

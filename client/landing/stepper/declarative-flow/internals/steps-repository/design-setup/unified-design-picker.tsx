@@ -22,7 +22,7 @@ import {
 	getThemeIdFromDesign,
 } from '@automattic/design-picker';
 import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
-import { StepContainer, ONBOARDING_FLOW, isSiteSetupFlow } from '@automattic/onboarding';
+import { StepContainer, ONBOARDING_FLOW, isSiteSetupFlow, Step } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -63,6 +63,7 @@ import { useQuery } from '../../../../hooks/use-query';
 import { useSiteData } from '../../../../hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { goToCheckout } from '../../../../utils/checkout';
+import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
 import {
 	getDesignEventProps,
@@ -77,7 +78,7 @@ import { EligibilityWarningsModal } from './eligibility-warnings-modal';
 import useIsUpdatedBadgeDesign from './hooks/use-is-updated-badge-design';
 import useRecipe from './hooks/use-recipe';
 import useTrackFilters from './hooks/use-track-filters';
-import type { Step } from '../../types';
+import type { Step as StepType } from '../../types';
 import type { OnboardSelect, SiteSelect, GlobalStyles } from '@automattic/data-stores';
 import type { Design, StyleVariation } from '@automattic/design-picker';
 import type { GlobalStylesObject } from '@automattic/global-styles';
@@ -88,7 +89,7 @@ const SiteIntent = Onboard.SiteIntent;
 const EMPTY_ARRAY: Design[] = [];
 const EMPTY_OBJECT = {};
 
-const UnifiedDesignPickerStep: Step< {
+const UnifiedDesignPickerStep: StepType< {
 	submits: {
 		selectedDesign?: Design;
 		eventProps: {
@@ -865,18 +866,12 @@ const UnifiedDesignPickerStep: Step< {
 		);
 	}
 
-	const heading = (
-		<FormattedHeader
-			id="step-header"
-			headerText={
-				hasEnTranslation( 'Pick a theme' )
-					? translate( 'Pick a theme' )
-					: translate( 'Pick a design' )
-			}
-			subHeaderText={ translate(
-				'One of these homepage options could be great to start with. You can always change later.'
-			) }
-		/>
+	const headerText = hasEnTranslation( 'Pick a theme' )
+		? translate( 'Pick a theme' )
+		: translate( 'Pick a design' );
+
+	const subHeaderText = translate(
+		'One of these homepage options could be great to start with. You can always change later.'
 	);
 
 	function onDesignWithAI() {
@@ -890,6 +885,8 @@ const UnifiedDesignPickerStep: Step< {
 		education: 'course',
 	};
 
+	const isUsingStepContainerV2 = shouldUseStepContainerV2( flow );
+
 	const stepContent = (
 		<>
 			<UnifiedDesignPicker
@@ -900,7 +897,15 @@ const UnifiedDesignPickerStep: Step< {
 				onPreview={ previewDesign }
 				onChangeVariation={ onChangeVariation }
 				onViewAllDesigns={ trackAllDesignsView }
-				heading={ heading }
+				heading={
+					! isUsingStepContainerV2 ? (
+						<FormattedHeader
+							id="step-header"
+							headerText={ headerText }
+							subHeaderText={ subHeaderText }
+						/>
+					) : undefined
+				}
 				categorization={ categorization }
 				isPremiumThemeAvailable={ isPremiumThemeAvailable }
 				shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
@@ -925,8 +930,40 @@ const UnifiedDesignPickerStep: Step< {
 		if ( isComingFromSuccessfulImport ) {
 			return undefined;
 		}
-		return intent === 'update-design' ? submit : handleBackClick;
+		return intent === 'update-design'
+			? () =>
+					submit?.( {
+						eventProps: commonFilterProperties,
+					} )
+			: () => handleBackClick();
 	};
+
+	const backButton = getGoBackHandler();
+	const hideSkip = ! isGoalsAtFrontExperiment && ! isComingFromSuccessfulImport;
+	const skipLabelText = isComingFromSuccessfulImport
+		? translate( 'Skip to dashboard' )
+		: translate( 'Skip setup' );
+
+	if ( isUsingStepContainerV2 ) {
+		return (
+			<Step.WideLayout
+				className="step-container-v2--design-picker"
+				topBar={
+					<Step.TopBar
+						backButton={ backButton ? <Step.BackButton onClick={ backButton } /> : undefined }
+						skipButton={
+							hideSkip ? undefined : (
+								<Step.SkipButton onClick={ () => handleSubmit() } label={ skipLabelText } />
+							)
+						}
+					/>
+				}
+				heading={ <Step.Heading text={ headerText } subText={ subHeaderText } /> }
+			>
+				{ stepContent }
+			</Step.WideLayout>
+		);
+	}
 
 	return (
 		<StepContainer
@@ -934,15 +971,13 @@ const UnifiedDesignPickerStep: Step< {
 			className="unified-design-picker__has-categories"
 			skipButtonAlign="top"
 			hideFormattedHeader
-			hideSkip={ ! isGoalsAtFrontExperiment && ! isComingFromSuccessfulImport }
-			skipLabelText={
-				isComingFromSuccessfulImport ? translate( 'Skip to dashboard' ) : translate( 'Skip setup' )
-			}
+			hideSkip={ hideSkip }
+			skipLabelText={ skipLabelText }
 			backLabelText={ translate( 'Back' ) }
 			stepContent={ stepContent }
 			recordTracksEvent={ recordStepContainerTracksEvent }
 			goNext={ handleSubmit }
-			goBack={ getGoBackHandler() }
+			goBack={ backButton }
 		/>
 	);
 };
