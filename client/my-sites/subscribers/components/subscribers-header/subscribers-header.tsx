@@ -43,7 +43,7 @@ export const SubscribersHeader = ( {
 	const siteId = useSelector( getSelectedSiteId ) ?? null;
 	const isWPCOMSite = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
 	const supportUrl = ! isWPCOMSite
-		? ' https://jetpack.com/support/newsletter/customize-the-newsletter-experience/#manage-subscribers'
+		? 'https://jetpack.com/support/newsletter/customize-the-newsletter-experience/#manage-subscribers'
 		: 'https://wordpress.com/support/subscribers/ ';
 
 	const openHelpCenter = () => {
