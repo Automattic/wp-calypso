@@ -2,7 +2,6 @@ import { WPCOM_FEATURES_SITE_PREVIEW_LINKS } from '@automattic/calypso-products'
 import { FormLabel } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadio from 'calypso/components/forms/form-radio';
@@ -50,7 +49,6 @@ const SiteSettingPrivacyForm = ( {
 }: SiteSettingPrivacyFormProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const defaultFields = useMemo( () => fields, [ isSavingSettings ] ); // Keep the default value of the fields.
 	const selectedSite = useSelector( getSelectedSite );
 	const siteId = useSelector( getSelectedSiteId ) || -1;
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -76,16 +74,6 @@ const SiteSettingPrivacyForm = ( {
 
 	const showPreviewLink = isComingSoon && hasSitePreviewLink;
 	const shouldShowPremiumStylesNotice = globalStylesInUse && shouldLimitGlobalStyles;
-
-	const showPublicDetails =
-		( ( 1 === Number( defaultFields.wpcom_public_coming_soon ) &&
-			0 === Number( defaultFields.blog_public ) &&
-			isComingSoonDisabled ) ||
-			( 0 === Number( defaultFields.blog_public ) &&
-				0 === Number( defaultFields.wpcom_public_coming_soon ) ) ||
-			1 === Number( defaultFields.blog_public ) ) &&
-		isPublicChecked &&
-		! isSavingSettings;
 
 	const discourageSearchChecked =
 		( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
@@ -199,7 +187,7 @@ const SiteSettingPrivacyForm = ( {
 					</>
 				) }
 
-				{ showPublicDetails && ! isWpcomStagingSite && (
+				{ isPublicChecked && ! isWpcomStagingSite && (
 					<>
 						<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">
 							<FormInputCheckbox
