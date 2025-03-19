@@ -144,9 +144,9 @@ class AuthorMappingPane extends PureComponent {
 			<div className="importer__mapping-pane">
 				<div className="importer__mapping-description">{ mappingDescription }</div>
 				<div className="importer__mapping-header">
-					<span className="importer__mapping-source-title">{ translate( 'Original Site' ) }</span>
+					<span className="importer__mapping-source-title">{ translate( 'Original site' ) }</span>
 					<span className="importer__mapping-target-title">
-						{ translate( 'This Site (%(siteDomain)s)', {
+						{ translate( 'This site', {
 							args: { siteDomain },
 						} ) }
 					</span>
