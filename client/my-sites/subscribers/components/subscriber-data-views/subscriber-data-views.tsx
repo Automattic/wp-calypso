@@ -139,19 +139,34 @@ const SubscriberDataViews = ( {
 		}
 	);
 
-	// Fetch subscriber details for URL subscriber ID only
+	// Fetch subscriber details.
 	const { data: subscriberDetails, isLoading: isLoadingDetails } = useSubscriberDetailsQuery(
 		siteId ?? null,
 		subscriberId ? parseInt( subscriberId, 10 ) : undefined,
-		undefined
+		selectedSubscriber?.user_id
 	);
 
-	// Set initial subscriber from URL if provided
+	// Single effect to handle all subscriber selection scenarios
 	useEffect( () => {
-		if ( subscriberDetails && subscriberId ) {
-			setSelectedSubscriber( subscriberDetails );
+		// If URL changes or we get new subscriber details, update the selection
+		if ( subscriberId ) {
+			// If we have details and they match the current URL
+			if ( subscriberDetails && subscriberDetails.subscription_id.toString() === subscriberId ) {
+				setSelectedSubscriber( subscriberDetails );
+			}
+			// If we don't have matching details yet, try to find in current list
+			else {
+				const subscriberFromList = subscribersQueryResult?.subscribers.find(
+					( s ) => s.subscription_id.toString() === subscriberId
+				);
+				if ( subscriberFromList ) {
+					setSelectedSubscriber( subscriberFromList );
+				}
+			}
+		} else if ( ! subscriberId && selectedSubscriber ) {
+			setSelectedSubscriber( null );
 		}
-	}, [ subscriberDetails, subscriberId ] );
+	}, [ subscriberId, subscriberDetails, subscribersQueryResult?.subscribers ] );
 
 	const { data: subscribedNewsletterCategoriesData, isLoading: isLoadingNewsletterCategories } =
 		useSubscribedNewsletterCategories( {
@@ -194,7 +209,6 @@ const SubscriberDataViews = ( {
 						subscription_id: subscriber.subscription_id,
 						user_id: subscriber.user_id,
 					} );
-					setSelectedSubscriber( subscriber );
 					page.show( `/subscribers/${ siteSlug }/${ subscriber.subscription_id }` );
 				}
 			} else {
@@ -203,7 +217,6 @@ const SubscriberDataViews = ( {
 					subscription_id: input.subscription_id,
 					user_id: input.user_id,
 				} );
-				setSelectedSubscriber( input );
 				page.show( `/subscribers/${ siteSlug }/${ input.subscription_id }` );
 			}
 		},
@@ -518,7 +531,6 @@ const SubscriberDataViews = ( {
 							siteId={ siteId }
 							subscriptionId={ selectedSubscriber.subscription_id }
 							onClose={ () => {
-								setSelectedSubscriber( null );
 								page.show( `/subscribers/${ siteSlug }` );
 							} }
 							onUnsubscribe={ ( subscriber ) => handleUnsubscribe( [ subscriber ] ) }
