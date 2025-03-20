@@ -603,7 +603,6 @@ const navigateToSite =
 		}
 
 		function getCompleteSiteURL( base ) {
-			// debugger;
 			// Record original URL type. The original URL should be a path-absolute URL, e.g. `/posts`.
 			const urlType = determineUrlType( base );
 
