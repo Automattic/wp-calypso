@@ -4,10 +4,13 @@
 @import '@wordpress/base-styles/variables';
 
 .a8c-components-wp-button {
-	&.is-secondary:not([aria-pressed="true"]) {
-		color: theme.$components-color-foreground;
+	&.is-secondary:not(:disabled, [aria-disabled="true"], [aria-pressed="true"]) {
 		box-shadow: inset 0 0 0 $border-width theme.$components-color-gray-300;
-		
+
+		&:not(.is-destructive) {
+			color: theme.$components-color-foreground;
+		}
+			
 		&:hover:not(:disabled, [aria-disabled="true"], :focus) {
 			color: theme.$components-color-accent;
 			box-shadow: inset 0 0 0 $border-width theme.$components-color-gray-300;
