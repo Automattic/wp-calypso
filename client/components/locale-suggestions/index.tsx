@@ -7,12 +7,13 @@ import {
 	useState,
 	useMemo,
 } from '@wordpress/element';
-import { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { getLocaleSlug } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryLocaleSuggestions from 'calypso/components/data/query-locale-suggestions';
 import Notice from 'calypso/components/notice';
 import getLocaleSuggestions from 'calypso/state/selectors/get-locale-suggestions';
 import { setLocale } from 'calypso/state/ui/language/actions';
+import { useCustomTranslate } from './use-custom-translate';
 
 import './style.scss';
 
@@ -75,8 +76,9 @@ const useTranslatedString = ( {
 		localeSlug: string
 	) => void;
 } ) => {
-	const translate = useTranslate();
 	const usersOtherLocales = useUsersOtherLocales();
+	const firstLocale = usersOtherLocales[ 0 ]?.locale;
+	const translate = useCustomTranslate( firstLocale );
 
 	const getPathWithLocale = useCallback(
 		( localeSlug: string ) => addLocaleToPath( path, localeSlug ),
@@ -96,7 +98,7 @@ const useTranslatedString = ( {
 	);
 
 	return useMemo( () => {
-		if ( 0 === usersOtherLocales.length ) {
+		if ( ! translate || 0 === usersOtherLocales.length ) {
 			return null;
 		}
 
@@ -115,17 +117,17 @@ const useTranslatedString = ( {
 			);
 		}
 
+		// A list of translated language names marked for interpolation
+		const languages = usersOtherLocales.map(
+			( locale, index ) => `<link${ index }>${ locale.name }</link${ index }>`
+		);
+
 		// An object of link elements for interpolation
 		const links = Object.fromEntries(
 			usersOtherLocales.map( ( locale, index ) => [
 				`link${ index }`,
 				createLinkElement( locale ),
 			] )
-		);
-
-		// A list of translated language names marked for interpolation
-		const languages = usersOtherLocales.map(
-			( locale, index ) => `<link${ index }>${ locale.name }</link${ index }>`
 		);
 
 		return createInterpolateElement(

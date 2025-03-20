@@ -32,8 +32,9 @@ function dedupedGet( url ) {
  */
 export function getLanguageFilePathUrl() {
 	const protocol = typeof window === 'undefined' ? 'https://' : '//'; // use a protocol-relative path in the browser
-
 	return `${ protocol }widgets.wp.com/languages/calypso/`;
+	// // Always use HTTPS for widgets.wp.com to avoid CSP issues
+	// return 'https://widgets.wp.com/languages/calypso/';
 }
 
 /**
@@ -123,7 +124,6 @@ export function getLanguageFile( targetLocaleSlug ) {
  * @param {string} options.hash Build hash string that will be used as cache buster.
  * @returns {string} A language manifest file URL.
  */
-
 export function getLanguageManifestFileUrl( { localeSlug, fileType = 'json', hash = null } = {} ) {
 	if ( ! [ 'js', 'json' ].includes( fileType ) ) {
 		fileType = 'json';
@@ -244,7 +244,7 @@ export function getTranslationChunkFile( chunkId, localeSlug ) {
  * or loaded asynchronously with dynamic imports.
  * @returns {Array} Chunk ids
  */
-function getInstalledChunks() {
+export function getInstalledChunks() {
 	const installedChunksFromContext = window.installedChunks ?? [];
 	const installedChunksAsync = window?.__requireChunkCallback__?.getInstalledChunks?.() ?? [];
 	const installedChunksSet = new Set(
