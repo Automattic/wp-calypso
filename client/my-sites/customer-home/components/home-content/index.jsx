@@ -159,8 +159,8 @@ const HomeContent = ( {
 			<FullScreenLaunchpad
 				onClose={ async () => {
 					setFocusedLaunchpadDismissed( true );
-					skipCurrentView( null, true );
 					await updateLaunchpadSettings( siteId, { launchpad_screen: 'skipped' } );
+					skipCurrentView( null, true );
 				} }
 				onSiteLaunch={ () => {
 					setCelebrateLaunchModalIsOpen( true );
