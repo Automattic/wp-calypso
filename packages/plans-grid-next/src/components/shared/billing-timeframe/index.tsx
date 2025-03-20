@@ -78,7 +78,7 @@ const BillingTimeframe = ( { showRefundPeriod, planSlug }: Props ) => {
 	}
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
-		const price = formatCurrency( 25000, 'USD' );
+		const price = formatCurrency( 25000, 'USD', { stripZeros: true } );
 
 		return (
 			<div className="plans-grid-next__billing-timeframe-vip-price">
