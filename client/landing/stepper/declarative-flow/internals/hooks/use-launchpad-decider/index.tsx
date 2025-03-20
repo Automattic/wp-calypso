@@ -5,9 +5,9 @@ import type { Navigate, StepperStep } from '../../types';
 
 export const LAUNCHPAD_EXPERIMENT_NAME = 'calypso_onboarding_launchpad_removal_test_2024_08';
 
-interface Props {
+interface Props< T > {
 	exitFlow: ( path: string ) => void;
-	navigate: Navigate< StepperStep[] >;
+	navigate: T;
 }
 
 interface PostFlowUrlProps {
@@ -21,7 +21,10 @@ interface SiteProps {
 	siteSlug: string | null;
 }
 
-export const useLaunchpadDecider = ( { exitFlow, navigate }: Props ) => {
+export const useLaunchpadDecider = < T extends Navigate< any > = Navigate< StepperStep[] > >( {
+	exitFlow,
+	navigate,
+}: Props< T > ) => {
 	// placeholder field for the experiment assignment
 	const showCustomerHome = false;
 	const sessionId = getSessionId();
