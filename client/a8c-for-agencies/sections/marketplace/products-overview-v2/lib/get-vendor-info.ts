@@ -21,6 +21,14 @@ const VENDOR_INFO_MAP: Record< string, VendorInfo > = {
 		vendorName: 'Jetpack',
 		vendorUrl: 'https://jetpack.com/',
 	},
+	pressable: {
+		vendorName: 'Pressable',
+		vendorUrl: 'https://pressable.com/',
+	},
+	wpcom: {
+		vendorName: 'WordPress.com',
+		vendorUrl: 'https://wordpress.com/',
+	},
 };
 
 const THIRD_PARTY_PRODUCT_MAP: Record< string, string > = {
@@ -44,6 +52,14 @@ export const getVendorInfo = ( productSlug: string ) => {
 
 	if ( productSlug.startsWith( 'jetpack-' ) ) {
 		return VENDOR_INFO_MAP[ 'jetpack' ];
+	}
+
+	if ( productSlug.startsWith( 'wpcom-' ) ) {
+		return VENDOR_INFO_MAP[ 'wpcom' ];
+	}
+
+	if ( productSlug.startsWith( 'pressable-' ) ) {
+		return VENDOR_INFO_MAP[ 'pressable' ];
 	}
 
 	return null;
