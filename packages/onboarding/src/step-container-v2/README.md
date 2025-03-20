@@ -17,16 +17,20 @@ Here's an example:
 ```jsx
 import { Step } from '@automattic/onboarding';
 
-const nextButton = <Step.NextButton onClick={ navigation.submit } />
+const MyStep = () => {
+	const nextButton = <Step.NextButton onClick={ navigation.submit } />;
 
-<Step.StepContainerV2
-	topBar={ <Step.TopBar /> }
-	heading={ <Step.Heading text="Heading" /> }
-	stickyBottomBar={ <Step.StickyBottomBar rightButton={ nextButton } /> }
->
-	<p>Here comes the content of the step.</p>
-	{ nextButton }
-</Step.StepContainerV2>
+	return (
+		<Step.StepContainerV2
+			topBar={ <Step.TopBar /> }
+			heading={ <Step.Heading text="Heading" /> }
+			stickyBottomBar={ <Step.StickyBottomBar rightButton={ nextButton } /> }
+		>
+			<p>Here comes the content of the step.</p>
+			{ nextButton }
+		</Step.StepContainerV2>
+	);
+};
 ```
 
 In the example above, the top bar won't have a skip nor a back button. There's a `stickyBottomBar` that will render the Next button on mobile. Although it's possible, this particular step won't render a footer.
@@ -43,7 +47,7 @@ Aside from the stories (run `yarn storybook`), you can follow the examples from 
 
 Please do NOT override the `Step.*` components with CSS as this creates inconsistencies between steps and becomes a maintenance nightmare. Ideally, you should not need to do this as the steps are designed to be composed, and the wireframes are approved by the designers.
 
-#### What are wireframes?
+### What are wireframes?
 
 Wireframes are layout dispositions that were approved by the designers. They are exported from this package and can be used in the steps.
 
