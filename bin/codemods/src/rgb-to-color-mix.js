@@ -29,7 +29,9 @@ function replaceRgbVars( scssContent ) {
 	return scssContent.replace(
 		/rgba\s*\(\s*var\s*\(\s*(--[\w-]+?)(?:--rgb|-rgb)\s*\)\s*,\s*([\d.]+)(%?)\s*\)/g,
 		( match, varName, alpha, isPercent ) => {
-			const alphaValue = isPercent ? parseFloat( alpha ) : parseFloat( alpha ) * 100;
+			const alphaValue = isPercent
+				? parseFloat( alpha )
+				: Number( ( parseFloat( alpha ) * 100 ).toPrecision( 10 ) );
 			return `color-mix(in srgb, var(${ varName }) ${ alphaValue }%, transparent)`;
 		}
 	);
