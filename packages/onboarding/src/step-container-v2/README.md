@@ -10,7 +10,9 @@ This is a compilation of everything we've learned with `StepContainer`. Just lik
 
 The new version focuses on modularity and composition instead of overrides through props and CSS. We've observed that the previous version accepted a variety of props that modified how a component looks. Most of the times these properties had to play nicely with each other, which increased complexity.
 
-This version, however, provides several "slots" that allow the developer to declare _which_ parts of the step will be rendered, instead of imperatively specifying _what_ to render.
+This version, however, provides several "slots" that allow the developer to declare _which_ parts of the step will be rendered, instead of imperatively specifying _what_ to render. `topBar`, `heading`, `stickyBottomBar`, and `footer` are example of slots.
+
+It also provides the elements to be used within these slots, such as `TopBar`, `Heading`, `StickyBottomBar`, and `Footer`, as well as their internal elements, such as buttons like `NextButton`, `SkipButton`, and `BackButton`.
 
 Here's an example:
 
@@ -26,14 +28,18 @@ const MyStep = () => {
 			heading={ <Step.Heading text="Heading" /> }
 			stickyBottomBar={ <Step.StickyBottomBar rightButton={ nextButton } /> }
 		>
-			<p>Here comes the content of the step.</p>
-			{ nextButton }
+			{ ( { isMediumViewport } ) => (
+				<>
+					<p>Here comes the content of the step.</p>
+					{ isMediumViewport && nextButton }
+				</>
+			) }
 		</Step.StepContainerV2>
 	);
 };
 ```
 
-In the example above, the top bar won't have a skip nor a back button. There's a `stickyBottomBar` that will render the Next button on mobile. Although it's possible, this particular step won't render a footer.
+In the example above, the top bar won't have a skip nor a back button. There's a `stickyBottomBar` that will render the Next button on mobile, and the same button will also be rendered within the step's content, but only on medium and larger screens. Although it's possible, this particular step won't render a footer.
 
 It reduces the complexity of layouting by delegating the rendering responsibility to the components within the slots. A good example of what we mean here is the `headerImageUrl` prop of `StepContainer`, which should exist if `isHorizontalLayout` is `true`, but there is no explanation of that in the code, and it's not obvious to the developer reading code introduced by others.
 
@@ -49,7 +55,9 @@ Please do NOT override the `Step.*` components with CSS as this creates inconsis
 
 ### What are wireframes?
 
-Wireframes are layout dispositions that were approved by the designers. They are exported from this package and can be used in the steps.
+Wireframes are layout arrangements that have been approved by the Dotcom designers. They are exported from this package and can be used in the steps.
+
+Here are the wireframes specs: W9xI27S6Swvw5Ku21EbZvn-fi-9588_16523.
 
 ## How to extend it
 
