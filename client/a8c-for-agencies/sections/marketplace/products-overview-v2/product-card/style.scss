@@ -8,6 +8,8 @@ $woocommerce-purple-50: #720EEC;
 	display: flex;
 	justify-content: stretch;
 	min-height: 270px;
+	height: 100%;
+
 	&.disabled {
 		opacity: 0.5;
 

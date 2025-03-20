@@ -267,6 +267,11 @@ export default function ProductListing( {
 					suggestedProduct={ suggestedProduct }
 					quantity={ productDoNotHaveSupportedBundles ? 1 : quantity }
 					withCustomCard={ withCustomCard }
+					tooltip={
+						productDoNotHaveSupportedBundles
+							? translate( 'This product does not support the volume discount.' )
+							: undefined
+					}
 				/>
 			);
 		} );
