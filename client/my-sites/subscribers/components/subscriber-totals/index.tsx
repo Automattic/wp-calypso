@@ -86,36 +86,13 @@ const SubscriberTotals: React.FC< SubscriberTotalsProps > = ( {
 	}
 
 	const isFiltered = ! filters.includes( SubscribersFilterBy.All ) || !! searchTerm;
+	const isFilteredByUnconfirmed = filters.includes( SubscribersFilterBy.UnconfirmedSubscriber );
 	const filterLabel = getFilterLabel( filters, filteredCount );
 
-	return (
-		<div className="subscriber-totals">
-			{ isFiltered ? (
-				<>
-					<span className="subscriber-totals__filtered-count">
-						{ searchTerm
-							? translate(
-									'%(matchingSubscriberCount)s matching result',
-									'%(matchingSubscriberCount)s matching results',
-									{
-										count: filteredCount,
-										args: { matchingSubscriberCount: numberFormat( filteredCount ) },
-									}
-							  )
-							: translate( '%(filteredSubscriberCount)s %(filterLabel)s', {
-									args: {
-										filteredSubscriberCount: numberFormat( filteredCount ),
-										filterLabel,
-									},
-							  } ) }
-					</span>
-					<span className="subscriber-totals__total">
-						{ translate( 'out of %(totalSubscriberCount)s total subscribers', {
-							args: { totalSubscriberCount: numberFormat( totalSubscribers ) },
-						} ) }
-					</span>
-				</>
-			) : (
+	// Handle unfiltered case. This is the default case where we show the total subscribers count.
+	if ( ! isFiltered ) {
+		return (
+			<div className="subscriber-totals">
 				<span className="subscriber-totals__total-count">
 					{ translate(
 						'%(subscriberCount)s total subscriber',
@@ -126,7 +103,49 @@ const SubscriberTotals: React.FC< SubscriberTotalsProps > = ( {
 						}
 					) }
 				</span>
-			) }
+			</div>
+		);
+	}
+
+	// Handle unconfirmed subscribers case. This is a special case where we don't want to show the total subscribers count since unconfirmed subscribers are not part of the total.
+	if ( isFilteredByUnconfirmed ) {
+		return (
+			<div className="subscriber-totals">
+				<span className="subscriber-totals__total-count">
+					{ translate( '%(count)d unconfirmed subscriber', '%(count)d unconfirmed subscribers', {
+						count: filteredCount,
+						args: { count: filteredCount },
+					} ) }
+				</span>
+			</div>
+		);
+	}
+
+	// Handle filtered case. This is the case where we show the filtered subscribers count.
+	return (
+		<div className="subscriber-totals">
+			<span className="subscriber-totals__filtered-count">
+				{ searchTerm
+					? translate(
+							'%(matchingSubscriberCount)s matching result',
+							'%(matchingSubscriberCount)s matching results',
+							{
+								count: filteredCount,
+								args: { matchingSubscriberCount: numberFormat( filteredCount ) },
+							}
+					  )
+					: translate( '%(filteredSubscriberCount)s %(filterLabel)s', {
+							args: {
+								filteredSubscriberCount: numberFormat( filteredCount ),
+								filterLabel,
+							},
+					  } ) }
+			</span>
+			<span className="subscriber-totals__total">
+				{ translate( 'out of %(totalSubscriberCount)s total subscribers', {
+					args: { totalSubscriberCount: numberFormat( totalSubscribers ) },
+				} ) }
+			</span>
 		</div>
 	);
 };

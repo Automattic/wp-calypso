@@ -104,6 +104,7 @@ export interface CommonGridProps {
 	siteId?: number | null;
 	isInSignup: boolean;
 	isInAdmin: boolean;
+	isInSiteDashboard: boolean;
 	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	currentSitePlanSlug?: string | null;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206

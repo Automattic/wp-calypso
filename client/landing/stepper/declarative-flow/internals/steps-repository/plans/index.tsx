@@ -6,23 +6,25 @@ import {
 } from '@automattic/onboarding';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PlansWrapper from './plans-wrapper';
-import type { ProvidedDependencies, Step } from '../../types';
+import type { Step } from '../../types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 /**
  * @deprecated Use `unified-plans` instead. This step is deprecated and will be removed in the future.
  */
-const plans: Step = function Plans( { navigation, flow } ) {
+const plans: Step< {
+	submits: {
+		plan: MinimalRequestCartProduct | null;
+		goToCheckout: boolean;
+	};
+} > = function Plans( { navigation, flow } ) {
 	const { goBack, submit } = navigation;
 
 	const handleSubmit = ( plan: MinimalRequestCartProduct | null ) => {
-		const providedDependencies: ProvidedDependencies = {
+		const providedDependencies = {
 			plan,
+			goToCheckout: isDomainUpsellFlow( flow ) || isStartWritingFlow( flow ),
 		};
-
-		if ( isDomainUpsellFlow( flow ) || isStartWritingFlow( flow ) ) {
-			providedDependencies.goToCheckout = true;
-		}
 
 		submit?.( providedDependencies );
 	};

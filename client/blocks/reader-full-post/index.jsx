@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { Gridicon, EmbedContainer, ExternalLink } from '@automattic/components';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
@@ -70,6 +71,7 @@ import {
 	unsetViewingFullPostKey,
 } from 'calypso/state/reader/viewing/actions';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
@@ -382,6 +384,11 @@ export class FullPostView extends Component {
 		recordGaEvent( 'Closed Full Post Dialog' );
 		recordTrackForPost( 'calypso_reader_article_closed', this.props.post );
 		this.props.onClose && this.props.onClose();
+		// In recent view the back button appears at smaller viewports to go back to the list of
+		// posts (handled with onClose prop) and should not change route.
+		if ( this.props.layout !== 'recent' ) {
+			page.back( this.props.previousRoute );
+		}
 	};
 
 	handleCommentClick = () => {
@@ -665,7 +672,10 @@ export class FullPostView extends Component {
 					{ ! post || ( isLoading && <QueryReaderPost postKey={ postKey } /> ) }
 					<ReaderBackButton
 						handleBack={ this.handleBack }
-						preventRouteChange={ this.props.layout === 'recent' }
+						// We will always prevent the back button here from triggering a route
+						// change. Since we support 'esc' keyboard shortcut to close full post, we
+						// need to trigger that logic from here in handleBack.
+						preventRouteChange
 						forceShow={ this.props.layout === 'recent' }
 						aria-label={ translate( 'Return to the list of posts.' ) }
 					/>
@@ -881,6 +891,7 @@ export default connect(
 			postKey,
 			currentPath,
 			referralStream: getPreviousPath( state ),
+			previousRoute: getPreviousRoute( state ),
 		};
 
 		if ( ! isExternal && siteId ) {

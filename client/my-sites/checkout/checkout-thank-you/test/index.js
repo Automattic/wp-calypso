@@ -17,6 +17,12 @@ jest.mock( '@automattic/calypso-products', () => ( {
 	isDIFMProduct: jest.fn( () => false ),
 } ) );
 
+jest.unmock( '@automattic/help-center/src/hooks' );
+jest.mock( '@automattic/help-center/src/hooks', () => ( {
+	...jest.requireActual( '@automattic/help-center/src/hooks' ),
+	useProductsWithPremiumSupport: jest.fn( () => false ),
+} ) );
+
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: () => null,
 } ) );

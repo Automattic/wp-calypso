@@ -62,7 +62,7 @@ export default function productTooltip(
 			components: {
 				strong: createElement( 'strong' ),
 				p: createElement( 'p' ),
-				Info: createElement( ExternalLink, {
+				Info: createElement( ExternalLink as any, {
 					icon: true,
 					href: 'https://jetpack.com/upgrade/search/',
 				} ),

@@ -8,13 +8,14 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
-import type { StepProps } from '../../types';
-interface SiteLaunchStepProps extends StepProps {
-	title?: string;
-	subtitle?: string;
-}
+import type { Step } from '../../types';
 
-const SiteLaunchStep: React.FC< SiteLaunchStepProps > = function ( props ) {
+const SiteLaunchStep: Step< {
+	accepts: {
+		title?: string;
+		subtitle?: string;
+	};
+} > = function ( props ) {
 	const { submit } = props.navigation;
 
 	const { __ } = useI18n();

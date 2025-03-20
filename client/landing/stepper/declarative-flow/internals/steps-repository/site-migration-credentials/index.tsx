@@ -13,6 +13,7 @@ import { CredentialsForm } from './components/credentials-form';
 import { NeedHelpLink } from './components/need-help-link';
 import { ApplicationPasswordsInfo } from './types';
 import type { Step } from '../../types';
+import type { ImporterPlatform } from 'calypso/lib/importer/types';
 import './style.scss';
 
 const getAction = ( siteInfo?: UrlData, applicationPasswordsInfo?: ApplicationPasswordsInfo ) => {
@@ -39,7 +40,20 @@ const getAction = ( siteInfo?: UrlData, applicationPasswordsInfo?: ApplicationPa
 	return 'submit';
 };
 
-const SiteMigrationCredentials: Step = function ( { navigation } ) {
+const SiteMigrationCredentials: Step< {
+	submits: {
+		action:
+			| 'submit'
+			| 'application-passwords-approval'
+			| 'credentials-required'
+			| 'already-wpcom'
+			| 'site-is-not-using-wordpress'
+			| 'skip';
+		from?: string;
+		platform?: ImporterPlatform;
+		authorizationUrl?: string;
+	};
+} > = function ( { navigation } ) {
 	const translate = useTranslate();
 	const siteId = parseInt( useSiteIdParam() ?? '' );
 

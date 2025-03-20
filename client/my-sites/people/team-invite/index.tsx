@@ -54,7 +54,7 @@ function TeamInvite( props: Props ) {
 			<Main>
 				<PageViewTracker path="/people/new/:site" title="People > Invite People" />
 				<HeaderCake onClick={ goBack }>
-					{ translate( 'Add team members to %(sitename)s', {
+					{ translate( 'Add users to %(sitename)s', {
 						args: { sitename: site.name ?? translate( 'this site' ) },
 					} ) }
 				</HeaderCake>
@@ -73,7 +73,7 @@ function TeamInvite( props: Props ) {
 			{ siteId && isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 
 			<HeaderCake onClick={ goBack }>
-				{ translate( 'Add team members to %(sitename)s', {
+				{ translate( 'Add users to %(sitename)s', {
 					args: { sitename: site.name ?? translate( 'this site' ) },
 				} ) }
 			</HeaderCake>

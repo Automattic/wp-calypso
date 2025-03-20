@@ -1,5 +1,6 @@
-import { BadgeType, Button } from '@automattic/components';
-import { Icon, external, check } from '@wordpress/icons';
+import { BadgeType } from '@automattic/components';
+import { Button, ExternalLink } from '@wordpress/components';
+import { check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -214,25 +215,13 @@ const PartnerDirectoryDashboard = () => {
 			className="partner-directory-dashboard__learn-more-section"
 			heading={ translate( 'Learn more about the program' ) }
 		>
-			<Button
-				className="a8c-blue-link"
-				borderless
-				target="_blank"
-				href="https://agencieshelp.automattic.com/knowledge-base/agency-directory-listings"
-			>
+			<ExternalLink href="https://agencieshelp.automattic.com/knowledge-base/agency-directory-listings">
 				{ translate( 'How does the approval process work?' ) }
-				<Icon icon={ external } size={ 18 } />
-			</Button>
+			</ExternalLink>
 			<br />
-			<Button
-				className="a8c-blue-link"
-				borderless
-				target="_blank"
-				href="https://agencieshelp.automattic.com/knowledge-base/agency-directory-listings/#profile-content"
-			>
+			<ExternalLink href="https://agencieshelp.automattic.com/knowledge-base/agency-directory-listings/#profile-content">
 				{ translate( 'What can I put on my public profile?' ) }
-				<Icon icon={ external } size={ 18 } />
-			</Button>
+			</ExternalLink>
 		</StepSection>
 	);
 
@@ -249,22 +238,15 @@ const PartnerDirectoryDashboard = () => {
 				// Application approved and visible in the directory
 				return (
 					<>
-						<Button className="a8c-blue-link" borderless href={ brandMeta.url } target="_blank">
+						<ExternalLink href={ brandMeta.url }>
 							{ translate( '%(brand)s Partner Directory', {
 								args: { brand: brandMeta.brand },
 							} ) }
-							<Icon icon={ external } size={ 18 } />
-						</Button>
+						</ExternalLink>
 						<br />
-						<Button
-							className="a8c-blue-link"
-							borderless
-							href={ brandMeta.urlProfile }
-							target="_blank"
-						>
+						<ExternalLink href={ brandMeta.urlProfile }>
 							{ translate( "Your agency's profile" ) }
-							<Icon icon={ external } size={ 18 } />
-						</Button>
+						</ExternalLink>
 					</>
 				);
 			}
@@ -326,18 +308,18 @@ const PartnerDirectoryDashboard = () => {
 							"Expand to more Automattic directories by adding products or updating your agency's profile."
 						) }
 					</div>
-					<div>
+					<div className="partner-directory-dashboard__button-container">
 						<Button
 							onClick={ onEditExpertiseClick }
 							href={ `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG }` }
-							compact
+							variant="secondary"
 						>
 							{ translate( 'Edit expertise' ) }
 						</Button>
 						<Button
 							onClick={ onEditProfileClick }
 							href={ `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG }` }
-							compact
+							variant="secondary"
 						>
 							{ translate( 'Edit profile' ) }
 						</Button>

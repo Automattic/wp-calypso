@@ -1,10 +1,13 @@
-import { FormLabel } from '@automattic/components';
+import { FormLabel, Tooltip } from '@automattic/components';
+import { Icon } from '@wordpress/components';
+import { copySmall } from '@wordpress/icons';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { QRCodeSVG } from 'qrcode.react';
-import { Component } from 'react';
+import { Component, createRef } from 'react';
+import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormButton from 'calypso/components/forms/form-button';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
@@ -39,11 +42,13 @@ class Security2faEnable extends Component {
 		smsRequestsAllowed: true,
 		smsRequestPerformed: false,
 		submittingCode: false,
-		timeCode: false,
+		oneTimeCode: false,
 		verificationCode: '',
+		oneTimeCopied: false,
 	};
 
 	codeRequestTimer = false;
+	clipboardButtonRef = createRef();
 
 	componentDidMount() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
@@ -61,7 +66,7 @@ class Security2faEnable extends Component {
 
 			this.setState( {
 				otpAuthUri: data.otpauth_uri,
-				timeCode: data.time_code,
+				oneTimeCode: data.time_code,
 			} );
 		} );
 
@@ -205,12 +210,14 @@ class Security2faEnable extends Component {
 		);
 	};
 
-	renderTimeCode = () => {
+	renderOneTimeCode = () => {
+		const { oneTimeCopied } = this.state;
+
 		return (
-			<div className="security-2fa-enable__time-code-block">
-				<p className="security-2fa-enable__time-instruction">
+			<div className="security-2fa-enable__one-time-code-block">
+				<p className="security-2fa-enable__one-time-instruction">
 					{ this.props.translate(
-						'Enter this time code into your mobile app. {{toggleMethodLink}}Prefer to scan the code?{{/toggleMethodLink}}',
+						'Enter this one-time code into your mobile app. {{toggleMethodLink}}Prefer to scan the code?{{/toggleMethodLink}}',
 						{
 							components: {
 								toggleMethodLink: this.getToggleLink(),
@@ -218,7 +225,32 @@ class Security2faEnable extends Component {
 						}
 					) }
 				</p>
-				<p className="security-2fa-enable__time-code">{ this.state.timeCode }</p>
+				<div className="security-2fa-enable__one-time-code-container">
+					<code className="security-2fa-enable__one-time-code">{ this.state.oneTimeCode }</code>
+
+					<ClipboardButton
+						text={ this.state.oneTimeCode }
+						className="security-2fa-enable__clipboard-button"
+						borderless
+						compact
+						ref={ this.clipboardButtonRef }
+						onCopy={ () => {
+							gaRecordEvent( 'Me', 'Copied 2FA One-Time Code' );
+							this.setState( { oneTimeCopied: true } );
+						} }
+						onMouseLeave={ () => this.setState( { oneTimeCopied: false } ) }
+					>
+						<Icon icon={ copySmall } size={ 18 } />
+					</ClipboardButton>
+
+					<Tooltip
+						context={ this.clipboardButtonRef.current }
+						isVisible={ oneTimeCopied }
+						position="top"
+					>
+						{ this.props.translate( 'Copied to clipboard!' ) }
+					</Tooltip>
+				</div>
 			</div>
 		);
 	};
@@ -230,7 +262,7 @@ class Security2faEnable extends Component {
 
 		return (
 			<div className="security-2fa-enable__code-block">
-				{ 'scan' === this.state.method ? this.renderQRCode() : this.renderTimeCode() }
+				{ 'scan' === this.state.method ? this.renderQRCode() : this.renderOneTimeCode() }
 			</div>
 		);
 	};

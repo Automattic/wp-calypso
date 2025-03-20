@@ -1,28 +1,19 @@
 import deepFreeze from 'deep-freeze';
 import {
-	BILLING_RECEIPT_EMAIL_SEND,
-	BILLING_RECEIPT_EMAIL_SEND_FAILURE,
-	BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
 	BILLING_TRANSACTIONS_RECEIVE,
 	BILLING_TRANSACTIONS_REQUEST,
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import reducer, { requesting, items, sendingReceiptEmail } from '../reducer';
+import reducer, { requesting, items } from '../reducer';
 
 describe( 'reducer', () => {
 	jest.spyOn( console, 'warn' ).mockImplementation();
 
 	test( 'should include expected keys in return value', () => {
 		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
-			expect.arrayContaining( [
-				'requesting',
-				'items',
-				'sendingReceiptEmail',
-				'individualTransactions',
-				'ui',
-			] )
+			expect.arrayContaining( [ 'requesting', 'items', 'individualTransactions' ] )
 		);
 	} );
 
@@ -116,6 +107,47 @@ describe( 'reducer', () => {
 			expect( state ).toEqual( billingTransactions );
 		} );
 
+		test( 'should keep previous billing transactions if query filtered', () => {
+			const prevState = {
+				past: [
+					{
+						id: '11223344',
+						amount: '$3.43',
+						desc: 'test',
+					},
+				],
+				upcoming: [
+					{
+						id: '88776655',
+						amount: '$1.11',
+						product: 'example',
+					},
+				],
+			};
+
+			// Keep previous upcoming transactions if only updating past transactions
+			const stateWithUpdatedPast = items( deepFreeze( prevState ), {
+				type: BILLING_TRANSACTIONS_RECEIVE,
+				past: billingTransactions.past,
+			} );
+
+			expect( stateWithUpdatedPast ).toEqual( {
+				upcoming: prevState.upcoming,
+				past: billingTransactions.past,
+			} );
+
+			// Keep previous past transactions if only updating upcoming transactions
+			const stateWIthUpdatedUpcoming = items( deepFreeze( prevState ), {
+				type: BILLING_TRANSACTIONS_RECEIVE,
+				upcoming: billingTransactions.upcoming,
+			} );
+
+			expect( stateWIthUpdatedUpcoming ).toEqual( {
+				past: prevState.past,
+				upcoming: billingTransactions.upcoming,
+			} );
+		} );
+
 		test( 'should persist state', () => {
 			const state = serialize( items, deepFreeze( billingTransactions ) );
 
@@ -132,54 +164,6 @@ describe( 'reducer', () => {
 			const state = deserialize( items, deepFreeze( { example: 'test' } ) );
 
 			expect( state ).toEqual( {} );
-		} );
-	} );
-
-	describe( '#sendingReceiptEmail()', () => {
-		const currentState = {
-			87654321: false,
-		};
-
-		test( 'should default to an empty object', () => {
-			const state = sendingReceiptEmail( undefined, {} );
-
-			expect( state ).toEqual( {} );
-		} );
-
-		test( 'should set sendingReceiptEmail of that receipt to true value if a request is initiated', () => {
-			const state = sendingReceiptEmail( currentState, {
-				type: BILLING_RECEIPT_EMAIL_SEND,
-				receiptId: 12345678,
-			} );
-
-			expect( state ).toEqual( {
-				12345678: true,
-				...state,
-			} );
-		} );
-
-		test( 'should set sendingReceiptEmail of that receipt to false if request finishes successfully', () => {
-			const state = sendingReceiptEmail( currentState, {
-				type: BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
-				receiptId: 12345678,
-			} );
-
-			expect( state ).toEqual( {
-				12345678: false,
-				...state,
-			} );
-		} );
-
-		test( 'should set sendingReceiptEmail of that receipt to false if request finishes unsuccessfully', () => {
-			const state = sendingReceiptEmail( currentState, {
-				type: BILLING_RECEIPT_EMAIL_SEND_FAILURE,
-				receiptId: 12345678,
-			} );
-
-			expect( state ).toEqual( {
-				12345678: false,
-				...state,
-			} );
 		} );
 	} );
 } );

@@ -1,6 +1,7 @@
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
+import { DomainSuggestion } from '@automattic/data-stores';
 import { useStepPersistedState } from '@automattic/onboarding';
-import { withShoppingCart } from '@automattic/shopping-cart';
+import { withShoppingCart, type ResponseCartProduct } from '@automattic/shopping-cart';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import { connect } from 'react-redux';
@@ -30,8 +31,20 @@ import { removeStep } from 'calypso/state/signup/progress/actions';
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
-import { ProvidedDependencies, StepProps } from '../../types';
 import { useIsManagedSiteFlowProps } from './use-is-managed-site-flow';
+import type { ProvidedDependencies, Step } from '../../types';
+
+type DomainStepSubmittedTypes = {
+	stepName?: 'domains';
+	suggestion?: DomainSuggestion;
+	shouldHideFreePlan?: boolean;
+	signupDomainOrigin?: string;
+	siteUrl?: string;
+	lastDomainSearched?: string;
+	domainCart?: ResponseCartProduct[] | object;
+	shouldSkipSubmitTracking?: boolean;
+	domainItem?: DomainSuggestion;
+};
 
 const RenderDomainsStepConnect = connect(
 	( state, { flow, step }: { flow: string; step: ProvidedDependencies } ) => {
@@ -86,7 +99,7 @@ const RenderDomainsStepConnect = connect(
  */
 let mostRecentState: ProvidedDependencies = {};
 
-export default function DomainsStep( props: StepProps ) {
+const DomainsStep: Step< { submits: DomainStepSubmittedTypes } > = ( props ) => {
 	const [ stepState, setStepState ] =
 		useStepPersistedState< ProvidedDependencies >( 'domains-step' );
 	const managedSiteFlowProps = useIsManagedSiteFlowProps();
@@ -118,4 +131,6 @@ export default function DomainsStep( props: StepProps ) {
 			/>
 		</CalypsoShoppingCartProvider>
 	);
-}
+};
+
+export default DomainsStep;

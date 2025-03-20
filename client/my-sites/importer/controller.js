@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { camelCase } from 'lodash';
 import { BrowserRouter } from 'react-router-dom';
 import CaptureScreen from 'calypso/blocks/import/capture';
 import ImporterList from 'calypso/blocks/import/list';
@@ -11,7 +10,7 @@ import SectionImport from 'calypso/my-sites/importer/section-import';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import 'calypso/blocks/import/style/base.scss';
 
-const onboardingFlowRoute = `/setup/import-focused`;
+const onboardingFlowRoute = '/setup/site-setup';
 
 export function importSite( context, next ) {
 	const state = context.store.getState();
@@ -44,14 +43,6 @@ export function importSite( context, next ) {
 				<BrowserRouter>
 					<div className="import__onboarding-page">
 						<CaptureScreen
-							goToStep={ ( stepName, stepSectionName, params ) => {
-								const route = [ 'import', stepName, stepSectionName ].join( '_' );
-								const importerPath = `${ onboardingFlowRoute }/${ camelCase(
-									route
-								) }?siteSlug=${ siteSlug }&from=${ encodeURIComponent( params?.fromUrl || '' ) }`;
-
-								page( importerPath );
-							} }
 							onValidFormSubmit={ ( { url } ) => {
 								const importerPath = `${ onboardingFlowRoute }/import?siteSlug=${ siteSlug }&from=${ encodeURIComponent(
 									url || ''

@@ -1,7 +1,4 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-
-@import '../../../../styles/mixins';
+@import '../../mixins';
 
 .theme-preview {
 	display: flex;
@@ -36,7 +33,6 @@
 
 	&__preview {
 		flex: 1;
-		background: #fa8072;
 	}
 
 	&__fonts {
