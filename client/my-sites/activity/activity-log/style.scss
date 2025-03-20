@@ -78,7 +78,7 @@
 	bottom: 0;
 	left: 0;
 	background: linear-gradient(to bottom, rgba(243, 246, 248, 0.1), #f3f6f8);
-	z-index: 179;
+	z-index: z-index("root", ".main");
 	height: 15%;
 	pointer-events: none;
 }
