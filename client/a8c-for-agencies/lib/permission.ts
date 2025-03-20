@@ -48,6 +48,7 @@ import {
 	A4A_WOOPAYMENTS_DASHBOARD_LINK,
 	A4A_WOOPAYMENTS_PAYMENT_SETTINGS_LINK,
 	A4A_WOOPAYMENTS_SITE_SETUP_LINK,
+	A4A_WOOPAYMENTS_OVERVIEW_LINK,
 } from '../components/sidebar-menu/lib/constants';
 import type { Agency } from 'calypso/state/a8c-for-agencies/types';
 
@@ -102,6 +103,7 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_WOOPAYMENTS_DASHBOARD_LINK ]: [ 'a4a_read_referrals' ],
 	[ A4A_WOOPAYMENTS_PAYMENT_SETTINGS_LINK ]: [ 'a4a_read_referrals' ],
 	[ A4A_WOOPAYMENTS_SITE_SETUP_LINK ]: [ 'a4a_read_referrals' ],
+	[ A4A_WOOPAYMENTS_OVERVIEW_LINK ]: [ 'a4a_read_referrals' ],
 };
 
 const MEMBER_ACCESSIBLE_DYNAMIC_PATHS: Record< string, string[] > = {

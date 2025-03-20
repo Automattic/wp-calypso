@@ -20,6 +20,7 @@ interface StepSectionItemProps {
 	iconClassName?: string;
 	isNewLayout?: boolean;
 	stepNumber?: number;
+	children?: React.ReactNode;
 }
 
 export default function StepSectionItem( {
@@ -32,6 +33,7 @@ export default function StepSectionItem( {
 	iconClassName,
 	isNewLayout = false,
 	stepNumber,
+	children,
 }: StepSectionItemProps ) {
 	const status = <StatusBadge statusProps={ statusProps } />;
 
@@ -64,6 +66,7 @@ export default function StepSectionItem( {
 				{ ! isNewLayout && buttonContent }
 			</div>
 			{ isNewLayout ? buttonContent : statusContent }
+			{ children }
 		</div>
 	);
 }

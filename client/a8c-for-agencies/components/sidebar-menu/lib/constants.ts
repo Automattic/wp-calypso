@@ -54,6 +54,7 @@ export const A4A_WOOPAYMENTS_LINK = '/woopayments';
 export const A4A_WOOPAYMENTS_DASHBOARD_LINK = `${ A4A_WOOPAYMENTS_LINK }/dashboard`;
 export const A4A_WOOPAYMENTS_PAYMENT_SETTINGS_LINK = `${ A4A_WOOPAYMENTS_LINK }/payment-settings`;
 export const A4A_WOOPAYMENTS_SITE_SETUP_LINK = `${ A4A_WOOPAYMENTS_LINK }/site-setup`;
+export const A4A_WOOPAYMENTS_OVERVIEW_LINK = `${ A4A_WOOPAYMENTS_LINK }/overview`;
 
 // Client
 export const A4A_CLIENT_LANDING_LINK = '/client/landing';
