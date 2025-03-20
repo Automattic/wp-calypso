@@ -218,13 +218,14 @@
             white-space: normal;
             word-break: break-word;
             flex: 1 1 auto;
+            padding: 0.45rem;
         }
 
         @media (min-width: 370px) and (max-width: 900px) {
             & > div:not(.dataviews__search) {
                 flex-direction: column;
                 align-items: flex-end;
-                flex: 0 0 32px;
+                flex: 0 0 2rem;
                 flex-wrap: nowrap;
             }
 
