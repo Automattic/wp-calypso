@@ -7,7 +7,7 @@ import { ReaderFollowState } from './types';
 
 export default function isFollowing(
 	state: AppState,
-	{ feedUrl, feedId, blogId }: { feedUrl: string; feedId: number; blogId: number }
+	{ feedUrl, feedId, blogId }: { feedUrl?: string; feedId?: number; blogId?: number }
 ): boolean {
 	let follow;
 	const follows: ReaderFollowState = state.reader.follows;
