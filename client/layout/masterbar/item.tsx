@@ -259,11 +259,18 @@ type MenuItemProps< R > = {
 	url?: string;
 	innerRef?: R;
 	as?: React.ComponentType;
+	variant?: string;
 } & React.HTMLAttributes< HTMLElement >;
 
 function MenuItem< R >( { url, innerRef, as: Component, ...props }: MenuItemProps< R > ) {
 	if ( Component ) {
-		return <Component ref={ innerRef } { ...props } { ...( url ? { url } : {} ) } />;
+		return (
+			<Component
+				{ ...props }
+				{ ...( innerRef ? { ref: innerRef } : {} ) }
+				{ ...( url ? { url } : {} ) }
+			/>
+		);
 	}
 
 	return url ? (
