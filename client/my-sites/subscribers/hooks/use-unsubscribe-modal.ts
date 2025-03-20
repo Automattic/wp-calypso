@@ -48,19 +48,19 @@ const useUnsubscribeModal = (
 					// Show success notice.
 					dispatch(
 						successNotice(
-							translate(
-								'%s has been removed from your subscribers list.',
-								'%d subscribers have been removed from your list.',
-								{
-									count: subscribers.length,
-									args:
-										subscribers.length === 1
-											? [ subscribers[ 0 ].display_name ]
-											: [ numberFormat( subscribers.length ) ],
-									comment:
-										'First %s is subscriber name, second %d is the number of subscribers removed',
-								}
-							),
+							subscribers.length === 1
+								? translate( 'Subscriber %(name)s has been removed from your subscribers list.', {
+										args: {
+											name: subscribers[ 0 ].display_name,
+										},
+										comment: 'Shows when a single subscriber is removed, using their name',
+								  } )
+								: translate( '%(count)d subscribers have been removed from your list.', {
+										args: {
+											count: numberFormat( subscribers.length ),
+										},
+										comment: 'Shows when multiple subscribers are removed, using the count',
+								  } ),
 							{ duration: 5000 }
 						)
 					);
