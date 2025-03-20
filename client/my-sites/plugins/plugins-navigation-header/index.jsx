@@ -172,7 +172,7 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 			className="plugins-navigation-header"
 			compactBreadcrumb={ isMobile }
 			ref={ navigationHeaderRef }
-			title={ translate( 'Plugins {{wbr}}{{/wbr}}Marketplace', {
+			title={ translate( 'Plugins {{wbr}}{{/wbr}}marketplace', {
 				components: { wbr: <wbr /> },
 			} ) }
 			loggedIn={ isLoggedIn }

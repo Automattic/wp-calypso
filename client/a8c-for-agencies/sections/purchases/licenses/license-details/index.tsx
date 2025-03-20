@@ -20,6 +20,7 @@ interface Props {
 	licenseType: LicenseType;
 	isChildLicense?: boolean;
 	referral?: ReferralAPIResponse | null;
+	isDevSite?: boolean;
 }
 
 const DETAILS_DATE_FORMAT = 'YYYY-MM-DD h:mm:ss A';
@@ -31,6 +32,7 @@ export default function LicenseDetails( {
 	licenseType,
 	isChildLicense,
 	referral,
+	isDevSite,
 }: Props ) {
 	const licenseKey = license.licenseKey;
 	const product = license.product;
@@ -128,6 +130,7 @@ export default function LicenseDetails( {
 				hasDownloads={ hasDownloads }
 				isChildLicense={ isChildLicense }
 				isClientLicense={ !! referral }
+				isDevSite={ isDevSite }
 			/>
 		</Card>
 	);

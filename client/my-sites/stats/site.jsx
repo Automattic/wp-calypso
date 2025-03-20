@@ -17,7 +17,6 @@ import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
-import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
 import { useShortcuts } from 'calypso/components/date-range/use-shortcuts';
 import EmptyContent from 'calypso/components/empty-content';
@@ -35,6 +34,7 @@ import {
 	STATS_PRODUCT_NAME,
 } from 'calypso/my-sites/stats/constants';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
+import { getChartRangeParams } from 'calypso/my-sites/stats/utils';
 import {
 	recordGoogleEvent,
 	recordTracksEvent,
@@ -51,7 +51,6 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
-import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import StatsModuleAuthors from './features/modules/stats-authors';
 import StatsModuleClicks from './features/modules/stats-clicks';
@@ -82,7 +81,6 @@ import StatsPeriodNavigation from './stats-period-navigation';
 import StatsPlanUsage from './stats-plan-usage';
 import statsStrings from './stats-strings';
 import StatsUpsell from './stats-upsell/traffic-upsell';
-import StatsUpsellModal from './stats-upsell-modal';
 import { appendQueryStringForRedirection, getPathWithUpdatedQueryString } from './utils';
 
 // Sync hidable modules with StatsNavigation.
@@ -195,10 +193,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		[ hasVideoPress, moduleToggles ]
 	);
 
-	const upsellModalView = useSelector(
-		( state ) => config.isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId )
-	);
-
 	const {
 		supportsPlanUsage,
 		supportsUTMStats: supportsUTMStatsFeature,
@@ -263,11 +257,9 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		// Mark the drilled-down period page should use the go-back action.
 		sessionStorage.setItem( 'jetpack_stats_date_range_is_drilling_down', 1 );
 
-		let chartStart = periodStartDate;
-		let chartEnd = moment( chartStart )
-			.endOf( currentPeriod === 'week' ? 'isoWeek' : currentPeriod )
-			.format( DATE_FORMAT );
+		const chartRangeParams = getChartRangeParams( periodStartDate, currentPeriod );
 
+		let { chartStart, chartEnd } = chartRangeParams;
 		// Limit navigation within the currently selected range.
 		const currentChartStart = context.query?.chartStart;
 		const currentChartEnd = context.query?.chartEnd;
@@ -278,15 +270,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 			chartEnd = currentChartEnd;
 		}
 
-		// Determine the target period for the navigation.
-		let targetPeriod = 'day';
-		if ( currentPeriod === 'day' ) {
-			targetPeriod = 'hour';
-		} else if ( currentPeriod === 'year' ) {
-			targetPeriod = 'month';
-		}
-
-		const path = `/stats/${ targetPeriod }/${ slug }`;
+		const path = `/stats/${ chartRangeParams.chartPeriod }/${ slug }`;
 		const url = getPathWithUpdatedQueryString( { chartStart, chartEnd }, path );
 
 		return url;
@@ -586,6 +570,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 							period={ period }
 							date={ date }
 							query={ query }
+							queryParams={ context.query }
 							statsType="statsTopPosts"
 							showQueryDate
 							isShort
@@ -771,7 +756,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 			{ supportUserFeedback && <StatsFeedbackPresentor siteId={ siteId } /> }
 			<JetpackColophon />
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
-			{ upsellModalView && <StatsUpsellModal siteId={ siteId } /> }
 		</div>
 	);
 }
@@ -870,9 +854,6 @@ const StatsSite = ( props ) => {
 
 	return (
 		<Main fullWidthLayout ariaLabel={ STATS_PRODUCT_NAME }>
-			{ config.isEnabled( 'stats/paid-wpcom-v2' ) && ! isOdysseyStats && (
-				<QuerySiteFeatures siteIds={ [ siteId ] } />
-			) }
 			{ /* Odyssey: Google Business Profile pages are currently unsupported. */ }
 			{ ! isOdysseyStats && (
 				<>

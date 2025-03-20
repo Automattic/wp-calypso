@@ -13,6 +13,9 @@
 
 	&__site-select-wrapper {
 		margin-bottom: 16px;
+		display: flex;
+		justify-content: space-between;
+		align-items: end;
 
 		.sites-dropdown__wrapper {
 			border-color: var( --color-border-subtle );

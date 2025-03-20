@@ -1,10 +1,13 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
 .a4a-tos-modal {
 	width: 80%;
 	max-width: 800px;
 }
 
 .a4a-tos-modal-list {
-    @include a4a-font-body-md;
+    @include body-medium;
     color: var(--color-neutral-50);
     margin-block: 16px;
     line-height: 1.6;

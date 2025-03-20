@@ -242,8 +242,10 @@ export function acceptInvite( invite, emailVerificationSecret ) {
 				await dispatch( fetchCurrentUser() );
 			}
 
+			const acceptedNoticeResult = acceptedNotice( invite, true, true );
+
 			if ( ! invite.site.is_vip && ! invite.site.is_wpforteams_site ) {
-				dispatch( successNotice( ...acceptedNotice( invite ) ) );
+				dispatch( successNotice( acceptedNoticeResult[ 0 ], acceptedNoticeResult[ 1 ] ) );
 			}
 
 			recordTracksEvent( 'calypso_invite_accepted', {

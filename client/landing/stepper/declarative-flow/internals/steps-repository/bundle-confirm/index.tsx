@@ -59,7 +59,9 @@ const TRANSFERRING_NOT_BLOCKERS = [
 	eligibilityHoldsConstants.TRANSFER_ALREADY_EXISTS, // Already Atomic sites are handled in the install flow.
 ];
 
-const BundleConfirm: Step = function BundleConfirm( { navigation } ) {
+const BundleConfirm: Step< { submits: { checkoutUrl: string } } > = function BundleConfirm( {
+	navigation,
+} ) {
 	const { goBack, submit } = navigation;
 	const { __ } = useI18n();
 	const site = useSite();
@@ -285,7 +287,7 @@ const BundleConfirm: Step = function BundleConfirm( { navigation } ) {
 
 	const headerText = __( 'One final step' );
 	const subHeaderText = __(
-		'We’ve highlighted a few important details you should review before we create your store.'
+		"We've highlighted a few important details you should review before we create your store."
 	);
 
 	return (

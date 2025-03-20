@@ -1,6 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-
+@import "@wordpress/base-styles/variables";
 
 .license-details {
 	margin: 0;
@@ -23,7 +23,7 @@
 
 	.license-details__list-item,
 	.license-details__list-item-small {
-		font-size: 1rem;
+		@include body-large;
 
 		&--wide {
 			@include break-xlarge() {
@@ -45,7 +45,7 @@
 	.license-details__license-key {
 		flex: 0 1 auto;
 		padding: 6px;
-		font-size: 0.875rem;
+		@include body-medium;
 		background: var(--color-neutral-0);
 		color: var(--color-neutral-70);
 		overflow: hidden;
@@ -66,7 +66,7 @@
 
 	.license-details__label {
 		margin-block-end: 8px;
-		font-size: 1rem;
+		@include body-large;
 		font-weight: bold;
 	}
 
@@ -104,7 +104,7 @@
 			display: none;
 		}
 	}
-	
+
 	.pressable-usage-details__card {
 		margin: 24px 0 8px;
 	}
@@ -120,13 +120,11 @@
 
 .license-details__actions .button.is-compact {
 	padding: 8px 14px;
-	font-size: 1rem;
-	font-weight: 500;
-	line-height: 1.375;
+	@include heading-large;
 
 	@include break-large {
 		padding: 7px;
-		font-size: 0.75rem;
+		@include body-medium;
 		line-height: 1;
 	}
 }

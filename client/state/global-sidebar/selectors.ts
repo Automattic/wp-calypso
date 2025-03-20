@@ -1,3 +1,4 @@
+import { isPlansPageUntangled } from 'calypso/lib/plans/untangling-plans-experiment';
 import isScheduledUpdatesMultisiteRoute, {
 	isScheduledUpdatesMultisiteCreateRoute,
 	isScheduledUpdatesMultisiteEditRoute,
@@ -8,36 +9,47 @@ import type { AppState } from 'calypso/types';
 // Calypso routes for which we show the Site Dashboard.
 // Calypso routes not listed here will be shown in nav unification instead.
 // See: pfsHM7-Dn-p2.
-const SITE_DASHBOARD_ROUTES = [
-	'/overview/',
-	'/hosting-config/',
-	'/github-deployments/',
-	'/site-monitoring/',
-	'/sites/performance/',
-	'/site-logs/',
-	'/hosting-features/',
-	'/staging-site/',
-	'/sites/settings',
+function getSiteDashboardRoutes( state: AppState ) {
+	return [
+		'/overview/',
+		'/hosting-config/',
+		'/github-deployments/',
+		'/site-monitoring/',
+		'/sites/performance/',
+		'/site-logs/',
+		'/hosting-features/',
+		'/staging-site/',
+		'/sites/settings',
+		...( isPlansPageUntangled( state ) ? [ '/plans' ] : [] ),
 
-	// Domain Management
-	'/domains/manage/all/overview',
-	'/domains/manage/all/email',
-	'/domains/manage/all/contact-info',
+		// Domain Management
+		'/domains/manage/all/overview',
+		'/domains/manage/all/email',
+		'/domains/manage/all/contact-info',
 
-	// Bulk Plugins management
-	'/plugins/manage/sites',
-];
+		// Bulk Plugins management
+		'/plugins/manage/sites',
+	];
+}
 
 function isInRoute( state: AppState, routes: string[] ) {
 	return routes.some( ( route ) => state.route.path?.current?.startsWith( route ) );
 }
 
 function shouldShowSitesDashboard( state: AppState ) {
-	return isInRoute( state, [ '/sites', '/p2s', '/setup', '/start', ...SITE_DASHBOARD_ROUTES ] );
+	return isInRoute( state, [
+		'/sites',
+		'/p2s',
+		'/setup',
+		'/start',
+		...getSiteDashboardRoutes( state ),
+	] );
 }
 
 export function shouldShowSiteDashboard( state: AppState, siteId: number | null ) {
-	return !! siteId && isInRoute( state, [ '/setup', '/start', ...SITE_DASHBOARD_ROUTES ] );
+	return (
+		!! siteId && isInRoute( state, [ '/setup', '/start', ...getSiteDashboardRoutes( state ) ] )
+	);
 }
 
 export const getShouldShowGlobalSidebar = (

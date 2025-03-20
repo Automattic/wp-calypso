@@ -92,7 +92,15 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 		useState< ResponseDomain | null >( null );
 
 	const onPointToWpcom = async ( domain: string ) => {
+		if ( ! domain ) {
+			return;
+		}
 		setIsPointingToWpcom( true );
+		dispatch(
+			recordTracksEvent( 'calypso_domain_management_point_to_wpcom', {
+				domain,
+			} )
+		);
 		try {
 			await wpcomRequest( {
 				path: '/domains/point-to-wpcom',
@@ -189,11 +197,6 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 					visible={ showPointToWpcomModal }
 					onClose={ ( accepted: boolean ) => {
 						setShowPointToWpcomModal( false );
-						dispatch(
-							recordTracksEvent( 'calypso_domain_management_point_to_wpcom', {
-								accepted,
-							} )
-						);
 						if ( accepted ) {
 							onPointToWpcom( domainToPointToWpcom ?? '' );
 						}

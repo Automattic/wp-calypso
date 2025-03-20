@@ -10,6 +10,7 @@ import { appStates } from 'calypso/state/imports/constants';
 import ErrorPane from './error-pane';
 import ImporterHeader from './importer-header';
 import ImportingPane from './importing-pane';
+import SuccessPanel from './success-panel';
 import UploadingPane from './uploading-pane';
 
 import './file-importer.scss';
@@ -18,12 +19,7 @@ import './file-importer.scss';
  * Module variables
  */
 const compactStates = [ appStates.DISABLED, appStates.INACTIVE ];
-const importingStates = [
-	appStates.IMPORT_FAILURE,
-	appStates.IMPORT_SUCCESS,
-	appStates.IMPORTING,
-	appStates.MAP_AUTHORS,
-];
+const importingStates = [ appStates.IMPORT_FAILURE, appStates.IMPORTING, appStates.MAP_AUTHORS ];
 const uploadingStates = [
 	appStates.UPLOAD_PROCESSING,
 	appStates.READY_FOR_UPLOAD,
@@ -106,17 +102,26 @@ class FileImporter extends PureComponent {
 			cardProps.href = overrideDestination
 				.replace( '%SITE_SLUG%', site.slug )
 				.replace( '%SITE_ID%', site.ID );
-			cardProps.onClick = this.handleClick.bind( this, false );
+
+			cardProps.onClick = ( e ) => {
+				e.stopPropagation();
+				this.handleClick.apply( this, [ false ] );
+			};
 		}
+
+		const isImportSuccess = importerStatus.importerState === appStates.IMPORT_SUCCESS;
+		const showheader = ! isImportSuccess;
 
 		return (
 			<Card className={ cardClasses } { ...( showStart ? cardProps : undefined ) }>
-				<ImporterHeader
-					importerStatus={ importerStatus }
-					icon={ icon }
-					title={ title }
-					description={ description }
-				/>
+				{ showheader && (
+					<ImporterHeader
+						importerStatus={ importerStatus }
+						icon={ icon }
+						title={ title }
+						description={ description }
+					/>
+				) }
 				{ errorData && (
 					<ErrorPane
 						type={ errorData.type }
@@ -143,6 +148,7 @@ class FileImporter extends PureComponent {
 						hideActionButtons={ hideActionButtons }
 					/>
 				) }
+				{ isImportSuccess && <SuccessPanel site={ site } importerStatus={ importerStatus } /> }
 			</Card>
 		);
 	}

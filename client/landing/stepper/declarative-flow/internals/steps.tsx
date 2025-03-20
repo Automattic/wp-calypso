@@ -1,5 +1,3 @@
-import { StepperStep } from './types';
-
 export const STEPS = {
 	BLOGGER_STARTING_POINT: {
 		slug: 'bloggerStartingPoint',
@@ -64,11 +62,6 @@ export const STEPS = {
 	},
 
 	ERROR: { slug: 'error', asyncComponent: () => import( './steps-repository/error-step' ) },
-
-	MIGRATION_ERROR: {
-		slug: 'error',
-		asyncComponent: () => import( './steps-repository/migration-error' ),
-	},
 
 	NEWSLETTER_SETUP: {
 		slug: 'newsletterSetup',
@@ -175,10 +168,6 @@ export const STEPS = {
 	},
 
 	LAUNCHPAD: { slug: 'launchpad', asyncComponent: () => import( './steps-repository/launchpad' ) },
-	MIGRATION_HANDLER: {
-		slug: 'migrationHandler',
-		asyncComponent: () => import( './steps-repository/migration-handler' ),
-	},
 
 	OPTIONS: {
 		slug: 'options',
@@ -399,7 +388,7 @@ export const STEPS = {
 		slug: 'setup-blog',
 		asyncComponent: () => import( './steps-repository/setup-blog' ),
 	},
-} satisfies Record< string, StepperStep >;
+} as const;
 
 /**
  * Define steps that are only used by the Stepper framework. Any flow should avoid include these steps as much as possible.
@@ -410,4 +399,4 @@ export const PRIVATE_STEPS = {
 		asyncComponent: () =>
 			import( /* webpackChunkName: "stepper-user-step" */ './steps-repository/__user' ),
 	},
-} satisfies Record< string, StepperStep >;
+} as const;

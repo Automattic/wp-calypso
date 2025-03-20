@@ -21,7 +21,6 @@ import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
-import useLongerPlanTermDefaultExperiment from 'calypso/my-sites/plans-features-main/hooks/experiments/use-longer-plan-term-default-experiment';
 import { getStepUrl } from 'calypso/signup/utils';
 import { getDomainFromUrl } from 'calypso/site-profiler/utils/get-valid-url';
 import { useDispatch as reduxUseDispatch, useSelector } from 'calypso/state';
@@ -31,12 +30,13 @@ import {
 	saveSignupStep as saveSignupStepAction,
 	submitSignupStep as submitSignupStepAction,
 } from 'calypso/state/signup/progress/actions';
-import { StepState } from 'calypso/state/signup/progress/schema';
+import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import { getIntervalType } from './util';
-import './unified-plans-step-styles.scss';
 import type { SiteDetails } from '@automattic/data-stores';
+import type { StepState } from 'calypso/state/signup/progress/schema';
+import './unified-plans-step-styles.scss';
 
 export interface UnifiedPlansStepProps {
 	hideFreePlan?: boolean;
@@ -210,11 +210,12 @@ function UnifiedPlansStep( {
 }: UnifiedPlansStepProps ) {
 	const [ isDesktop, setIsDesktop ] = useState< boolean | undefined >( isDesktopViewport() );
 	const dispatch = reduxUseDispatch();
-	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment( flowName );
 	const translate = useTranslate();
 	const initializedSitesBackUrl = useSelector( ( state ) =>
 		getCurrentUserSiteCount( state ) ? '/sites/' : null
 	);
+
+	useSiteGlobalStylesOnPersonal();
 
 	const customerType =
 		customerTypeFromProps ??
@@ -430,14 +431,7 @@ function UnifiedPlansStep( {
 		}
 	}
 
-	const intervalTypeValue =
-		intervalType ||
-		getIntervalType(
-			path,
-			flowName === ONBOARDING_FLOW && longerPlanTermDefaultExperiment?.term
-				? longerPlanTermDefaultExperiment.term
-				: undefined
-		);
+	const intervalTypeValue = intervalType || getIntervalType( path );
 
 	let paidDomainName = domainItem?.meta;
 

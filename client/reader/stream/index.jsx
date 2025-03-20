@@ -8,7 +8,6 @@ import * as React from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import AppPromo from 'calypso/blocks/app-promo';
-import BackButton from 'calypso/components/back-button';
 import InfiniteList from 'calypso/components/infinite-list';
 import ListEnd from 'calypso/components/list-end';
 import SectionNav from 'calypso/components/section-nav';
@@ -17,6 +16,7 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import { Interval, EVERY_MINUTE } from 'calypso/lib/interval';
 import scrollTo from 'calypso/lib/scroll-to';
 import withDimensions from 'calypso/lib/with-dimensions';
+import ReaderBackButton from 'calypso/reader/components/back-button';
 import { isEditorIframeFocused } from 'calypso/reader/components/quick-post/utils';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
@@ -621,12 +621,6 @@ class ReaderStream extends Component {
 		return this.getScrollContainer( node.parentNode );
 	};
 
-	handleBack = () => {
-		if ( typeof window !== 'undefined' ) {
-			window.history.back();
-		}
-	};
-
 	render() {
 		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey, selectedPostKey } =
 			this.props;
@@ -746,7 +740,7 @@ class ReaderStream extends Component {
 				<div ref={ this.overlayRef } className="stream__init-overlay" />
 				{ shouldPoll && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
 				<UpdateNotice streamKey={ streamKey } onClick={ this.showUpdates } />
-				{ this.props.showBack && <BackButton onClick={ this.handleBack } /> }
+				{ this.props.showBack && <ReaderBackButton /> }
 				{ this.props.children }
 				{ showingStream && items.length ? this.props.intro?.() : null }
 				{ body }
