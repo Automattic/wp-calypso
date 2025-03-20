@@ -6,6 +6,7 @@ import { numberFormat, localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import InfoPopover from 'calypso/components/info-popover';
 import SectionHeader from 'calypso/components/section-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -152,18 +153,29 @@ class VideoPressStatsModule extends Component {
 			<div>
 				{ summary && (
 					<div className="stats-module__date-picker-header">
-						<DatePicker
-							period={ period.period }
-							date={ period.startOf }
-							path={ path }
-							query={ query }
-							summary
-						/>
+						<h3>
+							<DatePicker
+								period={ period.period }
+								date={ period.startOf }
+								path={ path }
+								query={ query }
+								summary
+							/>
+						</h3>
 					</div>
 				) }
 				<SectionHeader
 					className={ headerClass }
-					label={ moduleStrings.title }
+					label={
+						<div className="stats-card-header__title" role="heading" aria-level="4">
+							<div>{ moduleStrings.title }</div>
+							<div className="stats-card-header__title-nodes">
+								<InfoPopover className="stats-info-area__popover" iconSize={ 24 } position="top">
+									{ translate( 'View detailed statistics about your videos.' ) }
+								</InfoPopover>
+							</div>
+						</div>
+					}
 					href={ ! summary ? summaryLink : null }
 				>
 					{ summary && (
