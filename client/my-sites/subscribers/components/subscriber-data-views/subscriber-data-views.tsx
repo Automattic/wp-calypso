@@ -139,11 +139,19 @@ const SubscriberDataViews = ( {
 		}
 	);
 
-	const { data: subscriber, isLoading: isLoadingDetails } = useSubscriberDetailsQuery(
+	// Fetch subscriber details for URL subscriber ID only
+	const { data: subscriberDetails, isLoading: isLoadingDetails } = useSubscriberDetailsQuery(
 		siteId ?? null,
-		selectedSubscriber?.subscription_id,
-		selectedSubscriber?.user_id
+		subscriberId ? parseInt( subscriberId, 10 ) : undefined,
+		undefined
 	);
+
+	// Set initial subscriber from URL if provided
+	useEffect( () => {
+		if ( subscriberDetails && subscriberId ) {
+			setSelectedSubscriber( subscriberDetails );
+		}
+	}, [ subscriberDetails, subscriberId ] );
 
 	const { data: subscribedNewsletterCategoriesData, isLoading: isLoadingNewsletterCategories } =
 		useSubscribedNewsletterCategories( {
@@ -176,7 +184,7 @@ const SubscriberDataViews = ( {
 			if ( Array.isArray( input ) ) {
 				if ( input.length === 0 ) {
 					setSelectedSubscriber( null );
-					page.replace( `/subscribers/${ siteSlug }` );
+					page.show( `/subscribers/${ siteSlug }` );
 					return;
 				}
 				const subscriber = subscribers.find( ( s ) => s.subscription_id.toString() === input[ 0 ] );
@@ -426,20 +434,6 @@ const SubscriberDataViews = ( {
 		setFilters( filterValues.length ? filterValues : [ SubscribersFilterBy.All ] );
 	}, [ currentView.search, currentView.filters ] );
 
-	// Fetch initial subscriber if ID is provided
-	const { data: initialSubscriber } = useSubscriberDetailsQuery(
-		siteId ?? null,
-		subscriberId ? parseInt( subscriberId, 10 ) : undefined,
-		undefined
-	);
-
-	// Update selected subscriber when initialSubscriber changes
-	useEffect( () => {
-		if ( initialSubscriber ) {
-			setSelectedSubscriber( initialSubscriber );
-		}
-	}, [ initialSubscriber ] );
-
 	// Handle browser back/forward navigation
 	useEffect( () => {
 		const handleRouteChange = () => {
@@ -517,10 +511,10 @@ const SubscriberDataViews = ( {
 				siteId &&
 				! isLoadingNewsletterCategories &&
 				! isLoadingDetails &&
-				subscriber && (
+				subscriberDetails && (
 					<section className="subscriber-data-views__details">
 						<SubscriberDetails
-							subscriber={ subscriber }
+							subscriber={ subscriberDetails }
 							siteId={ siteId }
 							subscriptionId={ selectedSubscriber.subscription_id }
 							onClose={ () => {
