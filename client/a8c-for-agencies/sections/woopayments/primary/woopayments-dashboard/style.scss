@@ -49,9 +49,16 @@ $woocommerce-purple-50: #720EEC;
 	}
 }
 
-.woopayments-dashboard-empty-state__list a {
+.woopayments-dashboard-empty-state__list a,
+.woopayments-dashboard-empty-state__demo-link {
 	text-decoration: underline;
 	color: var(--color-text);
+
+	&:hover,
+	&:focus,
+	&:focus-visible {
+		color: var(--color-text);
+	}
 }
 
 a.components-button.woopayments-dashboard-empty-state__button {
@@ -85,5 +92,24 @@ a.components-button.woopayments-dashboard-empty-state__button {
 
 	svg {
 		margin: 0
+	}
+}
+
+.woopayments-dashboard-empty-state__buttons {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	a.components-button {
+		width: 100%;
+		text-wrap: balance;
+	}
+
+	@include break-wide {
+		flex-direction: row;
+
+		a.components-button {
+			width: auto;
+		}
 	}
 }

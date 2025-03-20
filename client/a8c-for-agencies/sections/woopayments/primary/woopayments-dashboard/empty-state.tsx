@@ -339,23 +339,58 @@ const WooPaymentsDashboardEmptyState = () => {
 					<>
 						<div className="woopayments-dashboard-empty-state__description">
 							{ translate(
-								"Explore all of WooPayments' benefits, browse the technical documentation, and try the demo to see it in action."
+								"Explore all of WooPayments' benefits, browse the technical documentation, and {{a}}try the demo{{/a}} ↗ to see it in action.",
+								{
+									components: {
+										a: (
+											<a
+												className="woopayments-dashboard-empty-state__demo-link"
+												href="https://woocommerce.com/products/woopayments"
+												target="_blank"
+												rel="noopener noreferrer"
+												onClick={ () => {
+													dispatch(
+														recordTracksEvent( 'calypso_a4a_woopayments_try_demo_button_click' )
+													);
+												} }
+											/>
+										),
+									},
+								}
 							) }
 						</div>
-						<Button
-							__next40pxDefaultSize
-							variant="secondary"
-							href="https://woocommerce.com/products/woopayments/"
-							target="_blank"
-							rel="noopener noreferrer"
-							onClick={ () => {
-								dispatch(
-									recordTracksEvent( 'calypso_a4a_woopayments_explore_woocommerce_button_click' )
-								);
-							} }
-						>
-							{ translate( 'Explore WooPayments on WooCommerce.com ↗' ) }
-						</Button>
+						<div className="woopayments-dashboard-empty-state__buttons">
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								href={ CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT }
+								onClick={ () => {
+									dispatch(
+										recordTracksEvent(
+											'calypso_a4a_woopayments_contact_us_to_learn_more_button_click'
+										)
+									);
+								} }
+							>
+								{ translate( 'Contact us to learn more' ) }
+							</Button>
+							<Button
+								__next40pxDefaultSize
+								variant="secondary"
+								href="https://woocommerce.com/products/woopayments"
+								target="_blank"
+								rel="noopener noreferrer"
+								onClick={ () => {
+									dispatch(
+										recordTracksEvent(
+											'calypso_a4a_woopayments_explore_on_woocommerce_button_click'
+										)
+									);
+								} }
+							>
+								{ translate( 'Explore on WooCommerce.com ↗' ) }
+							</Button>
+						</div>
 					</>
 				</PageSectionColumns.Column>
 				<PageSectionColumns.Column alignCenter>
