@@ -17,7 +17,7 @@ const { glob } = require( 'glob' );
 
 function replaceRgbVars( scssContent ) {
 	return scssContent.replace(
-		/rgba\(\s*var\((--[\w-]+)-rgb\)\s*,\s*([\d.]+)\s*\)/g,
+		/rgba\s*\(\s*var\s*\(\s*(--[\w-]+)-rgb\s*\)\s*,\s*([\d.]+)\s*\)/g,
 		( match, varName, alpha ) => {
 			const baseVar = varName.replace( /-rgb$/, '' );
 			return `color-mix(in srgb, var(${ baseVar }) ${ parseFloat( alpha ) * 100 }%, transparent)`;
