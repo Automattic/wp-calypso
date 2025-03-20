@@ -349,6 +349,12 @@ body.is-section-signup {
 				flex-direction: column;
 				display: flex;
 			}
+
+			&.is-sticky {
+				position: sticky;
+				top: 0;
+				align-self: flex-start;
+			}
 		}
 
 		.register-domain-step .domains__domain-side-content-container {

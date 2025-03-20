@@ -8,7 +8,13 @@ import { useDispatch } from 'calypso/state';
 import { requestSite } from 'calypso/state/sites/actions';
 import { Step } from '../../types';
 
-const SiteMigrationAssignTrialPlanStep: Step = ( { navigation } ) => {
+const SiteMigrationAssignTrialPlanStep: Step< {
+	submits:
+		| {
+				error?: true;
+		  }
+		| never;
+} > = ( { navigation } ) => {
 	const { submit } = navigation;
 	const site = useSite();
 	const [ isAddingTrial, setIsAddingTrial ] = useState( false );

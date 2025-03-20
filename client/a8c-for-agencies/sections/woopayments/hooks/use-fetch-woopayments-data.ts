@@ -14,8 +14,8 @@ export default function useFetchWooPaymentsData( autoRefresh: boolean, isEnabled
 				path: `/agency/${ agencyId }/woocommerce/woopayments`,
 			} ),
 		enabled: !! agencyId && isEnabled,
-		refetchOnWindowFocus: false,
+		refetchOnWindowFocus: true,
 		staleTime: 0,
-		refetchInterval: autoRefresh ? 1000 * 60 : undefined,
+		refetchInterval: autoRefresh ? 1000 * 10 : undefined,
 	} );
 }

@@ -112,8 +112,8 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 					onSuccess: () => {
 						dispatch(
 							successNotice(
-								translate( 'Success! You are now unsubscribed to %s.', {
-									args: filteredDisplayUrl,
+								translate( 'Success! You are now subscribed to "%s".', {
+									args: title ?? filteredDisplayUrl,
 								} ),
 								noticeOptions
 							)
@@ -216,7 +216,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 
 	const SubscribeButton = (): JSX.Element => (
 		<Button
-			variant="primary"
+			variant={ subscriptionId ? 'secondary' : 'primary' }
 			isBusy={ isSubscribing || isUnsubscribing }
 			disabled={ isSubscribing || isUnsubscribing }
 			onClick={ onSubscribeToggle }

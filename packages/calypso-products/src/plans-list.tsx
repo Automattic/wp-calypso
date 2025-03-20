@@ -836,17 +836,12 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			: baseFeatures;
 	},
 	getStorageFeature: () => FEATURE_6GB_STORAGE,
-	/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
 	getPlanComparisonFeatureLabels: () => {
 		const baseFeatures = {
 			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'Dozens of premium themes' ),
 			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( '%d shares per month', { args: [ 30 ] } ),
 			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '8%' ),
-			[ FEATURE_SUPPORT ]: i18n.fixMe( {
-				text: 'Support from our expert\u00A0team',
-				newCopy: i18n.translate( 'Support from our expert\u00A0team' ),
-				oldCopy: i18n.translate( 'Fast support from our expert\u00A0team' ),
-			} ),
+			[ FEATURE_SUPPORT ]: i18n.translate( 'Support from our expert\u00A0team' ),
 		};
 
 		return isStatsFeatureTranslated()

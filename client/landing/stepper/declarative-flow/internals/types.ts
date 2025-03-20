@@ -4,8 +4,16 @@ import { STEPPER_TRACKS_EVENTS } from '../../constants';
 
 /**
  * This is the return type of useStepNavigation hook
+ * @template StepSubmittedTypes - The types of the step submitted data.
+ * @example
+ * navigation.submit({
+ *   siteSlug: 'example.wordpress.com',
+ *   siteTitle: 'Example Site',
+ * });
  */
-export type NavigationControls = {
+export type NavigationControls<
+	StepSubmittedTypes extends unknown | undefined | never | Record< string, unknown > = undefined,
+> = {
 	/**
 	 * Call this function if you want to go to the previous step.
 	 *
@@ -32,9 +40,14 @@ export type NavigationControls = {
 	goToStep?: ( step: string ) => void;
 
 	/**
-	 * Submits the answers provided in the flow
+	 * Submits the answers provided in the flow. If it's complaining about the type, it means you haven't typed the step correctly.
+	 * @see {@link client/landing/stepper/declarative-flow/internals/steps-repository/DEVELOPMENT/making-a-new-step.md}
 	 */
-	submit?: ( providedDependencies?: ProvidedDependencies, ...params: string[] ) => void;
+	submit?: (
+		providedDependencies?: StepSubmittedTypes extends Record< string, unknown >
+			? StepSubmittedTypes
+			: never
+	) => void;
 
 	/**
 	 * Exits the flow and continue to the given path
@@ -56,7 +69,7 @@ export type AsyncStepperStep = {
 	 *
 	 * It should look like this: component: () => import( './internals/steps-repository/newsletter-setup' )
 	 */
-	asyncComponent: () => Promise< { default: React.FC< StepProps > } >;
+	asyncComponent: () => Promise< { default: React.FC< any > } >;
 };
 
 export interface AsyncUserStep extends AsyncStepperStep {
@@ -86,12 +99,12 @@ export type Navigate< FlowSteps extends readonly StepperStep[] > = (
 /**
  * This is the return type of useSteps hook
  */
-export type UseStepsHook = () => StepperStep[];
+export type UseStepsHook = () => readonly StepperStep[];
 
 export type UseStepNavigationHook< FlowSteps extends StepperStep[] > = (
 	currentStepSlug: FlowSteps[ number ][ 'slug' ],
 	navigate: Navigate< FlowSteps >
-) => NavigationControls;
+) => NavigationControls< any >;
 
 export type UseAssertConditionsHook< FlowSteps extends readonly StepperStep[] > = (
 	navigate?: Navigate< FlowSteps >
@@ -245,25 +258,79 @@ export type FlowV2 = {
 
 export type Flow = FlowV1 | FlowV2;
 
-export type StepProps = {
-	navigation: NavigationControls;
-	stepName: string;
-	flow: string;
-	/**
-	 * If this is a step of a flow that extends another, pass the variantSlug of the variant flow, it can come handy.
-	 */
-	variantSlug?: string;
-	data?: StepperInternal.State[ 'stepData' ];
-	children?: React.ReactNode;
-	/**
-	 * These two prop are used internally by the Stepper to redirect the user from the user step.
-	 */
-	redirectTo?: string;
-	signupUrl?: string;
+/**
+ * This is a helper type to intersect A and B only if B is not never. Intersecting with never results in never which is not what we want.
+ */
+type ConditionalIntersection< TA, TB > = [ TB ] extends [ never ] ? TA : TA & TB;
+
+/**
+ * This is the type of the props passed to the step.
+ * @template StepDataShape - The types of the step submitted data.
+ * @example
+ * const step = ( props: StepProps< { submits: { siteSlug: string } } > ) => {
+ *   return <div>{ props.navigation.submit( { siteSlug: 'example.wordpress.com' } ) }</div>;
+ * };
+ */
+export type StepProps< StepDataShape extends StepPropTypes | never = never > =
+	ConditionalIntersection<
+		{
+			navigation: NavigationControls< StepDataShape[ 'submits' ] >;
+			stepName: string;
+			flow: string;
+			/**
+			 * If this is a step of a flow that extends another, pass the variantSlug of the variant flow, it can come handy.
+			 */
+			variantSlug?: string;
+			data?: StepperInternal.State[ 'stepData' ];
+			children?: React.ReactNode;
+			/**
+			 * These two prop are used internally by the Stepper to redirect the user from the user step.
+			 */
+			redirectTo?: string;
+			signupUrl?: string;
+		},
+		StepDataShape[ 'accepts' ]
+	>;
+
+/**
+ * This is the type of the step submitted and accepted props.
+ * @example
+ * const step: Step< { submits: { newUserName: string }, accepts: { userName: string } } > ) => {
+ *   return (
+ *     <div>
+ *       <h1>Hi {userName}!</h1>
+ *       <input onChange={ value => props.navigation.submit( { newUserName: value } ) } />
+ *     </div>
+ */
+type StepPropTypes = {
+	readonly submits?: Record< string, unknown >;
+	readonly accepts?: Record< string, unknown >;
 };
 
-export type Step = React.FC< StepProps >;
+/**
+ * This is the type of the step component.
+ * @template ConfiguredStepPropTypes - The types of the step submitted and accepted props.
+ * @example
+ * const step: Step< { submits: { newUserName: string }, accepts: { userName: string } } > ) => {
+ *   return (
+ *     <div>
+ *       <h1>Hi {userName}!</h1>
+ *       <input onChange={ value => props.navigation.submit( { newUserName: value } ) } />
+ *     </div>
+ *   );
+ * };
+ */
+export type Step<
+	ConfiguredStepPropTypes extends StepPropTypes = {
+		submits: never;
+		accepts: never;
+	},
+> = keyof ConfiguredStepPropTypes extends keyof StepPropTypes
+	? React.FC< StepProps< ConfiguredStepPropTypes > >
+	: // Only allow `accept` and `submits` config props.
+	  never;
 
+// TODO: get rid of these. Every type should be specific.
 export type ProvidedDependencies = Record< string, unknown >;
 
 export enum AssertConditionState {

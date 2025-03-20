@@ -3,35 +3,41 @@ import clsx from 'clsx';
 import { ReactNode, useMemo } from 'react';
 import {
 	StepContainerV2InternalProvider,
-	StepContainerV2InternalContextType,
+	type StepContainerV2InternalContextType,
 } from '../../contexts/StepContainerV2InternalContext';
 
 import './style.scss';
 
-interface StepContainerV2Props {
+export type StepContainerV2ContentProp =
+	| ( ( context: StepContainerV2InternalContextType ) => ReactNode )
+	| ReactNode;
+
+export interface StepContainerV2Props {
 	className?: string;
 	topBar?: ReactNode;
 	heading?: ReactNode;
+	footer?: ReactNode;
 	stickyBottomBar?: ReactNode;
 	width?: 'standard' | 'wide' | 'full';
 	verticalAlign?: 'top' | 'center';
 	isMediumViewport?: boolean;
 	isLargeViewport?: boolean;
 	hasContentPadding?: boolean;
-	render: ( context: StepContainerV2InternalContextType ) => ReactNode;
+	children?: StepContainerV2ContentProp;
 }
 
 export const StepContainerV2 = ( {
 	className,
 	topBar,
 	heading,
+	footer,
 	stickyBottomBar,
 	width = 'standard',
 	verticalAlign = 'top',
 	isMediumViewport: externalIsMediumViewport,
 	isLargeViewport: externalIsLargeViewport,
 	hasContentPadding = true,
-	render,
+	children,
 }: StepContainerV2Props ) => {
 	const internalIsMediumViewport = useViewportMatch( 'small', '>=' );
 	const isMediumViewport = externalIsMediumViewport ?? internalIsMediumViewport;
@@ -66,8 +72,18 @@ export const StepContainerV2 = ( {
 							full: width === 'full',
 						} ) }
 					>
-						{ render( stepContainerContextValue ) }
+						{ typeof children === 'function' ? children( stepContainerContextValue ) : children }
 					</div>
+					{ footer && (
+						<div
+							className={ clsx( 'step-container-v2__footer', {
+								wide: width === 'wide',
+								full: width === 'full',
+							} ) }
+						>
+							{ footer }
+						</div>
+					) }
 				</div>
 				{ ! isMediumViewport && stickyBottomBar }
 			</div>

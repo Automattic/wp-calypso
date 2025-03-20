@@ -27,9 +27,27 @@ import HundredYearPlanFlowProcessingScreen from './hundred-year-plan-flow-proces
 import TailoredFlowPreCheckoutScreen from './tailored-flow-precheckout-screen';
 import type { StepProps } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
+import type { SiteIntent } from '@automattic/data-stores/src/onboard';
 import './style.scss';
 
-interface ProcessingStepProps extends StepProps {
+interface ProcessingStepProps
+	extends StepProps< {
+		submits:
+			| {
+					destination: string;
+					processingResult?: ProcessingResult;
+			  }
+			| {
+					processingResult?: ProcessingResult.FAILURE | ProcessingResult.NO_ACTION;
+			  }
+			| {
+					processingResult?: ProcessingResult.SUCCESS;
+					path?: string;
+					intent?: SiteIntent;
+					previousStep?: string;
+					nextStep?: string;
+			  };
+	} > {
 	title?: string;
 	subtitle?: string;
 }

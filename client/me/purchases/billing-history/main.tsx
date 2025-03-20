@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { CompactCard, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -72,10 +71,7 @@ function BillingHistory() {
 			<QueryBillingTransactions transactionType="past" />
 			<PurchasesNavigation section="billingHistory" />
 			<BillingHistoryContent siteId={ null } getReceiptUrlFor={ billingHistoryReceipt } />
-
-			{ config.isEnabled( 'me/vat-details' ) && (
-				<CompactCard href={ vatDetailsPath }>{ vatText }</CompactCard>
-			) }
+			<CompactCard href={ vatDetailsPath }>{ vatText }</CompactCard>
 		</Main>
 	);
 }

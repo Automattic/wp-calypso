@@ -270,6 +270,7 @@ class PlansComponent extends Component {
 
 		return (
 			<PlansFeaturesMain
+				isInSiteDashboard={ isUntangled }
 				redirectToAddDomainFlow={ this.props.redirectToAddDomainFlow }
 				hidePlanTypeSelector={ hidePlanTypeSelector }
 				hideFreePlan={ hideFreePlan }
@@ -282,7 +283,6 @@ class PlansComponent extends Component {
 				discountEndDate={ this.props.discountEndDate }
 				siteId={ selectedSite?.ID }
 				plansWithScroll={ false }
-				hideSpotlightPlan={ isUntangled }
 				hidePlansFeatureComparison={ this.props.isDomainAndPlanPackageFlow }
 				showLegacyStorageFeature={ this.props.siteHasLegacyStorage }
 				intent={ plansIntent }
@@ -494,7 +494,7 @@ class PlansComponent extends Component {
 								</div>
 							</>
 						) }
-						<div id="plans" className="plans plans__has-sidebar">
+						<div id={ isUntangled ? 'site-plans' : 'plans' } className="plans plans__has-sidebar">
 							{ showPlansNavigation && <PlansNavigation path={ this.props.context.path } /> }
 							<Main fullWidthLayout={ ! isWooExpressTrial } wideLayout={ isWooExpressTrial }>
 								{ ! isDomainAndPlanPackageFlow && domainAndPlanPackage && (

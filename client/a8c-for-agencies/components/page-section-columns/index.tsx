@@ -39,7 +39,6 @@ const PageSectionColumns = ( { heading, children, background }: PageSectionColum
 		<div
 			className={ clsx( 'page-section-columns', {
 				'is-dark-background': background?.isDarkBackground,
-				'is-narrow-view': isNarrowView,
 			} ) }
 			style={ {
 				backgroundColor: background?.color,

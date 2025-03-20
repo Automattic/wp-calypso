@@ -77,7 +77,7 @@ import { EligibilityWarningsModal } from './eligibility-warnings-modal';
 import useIsUpdatedBadgeDesign from './hooks/use-is-updated-badge-design';
 import useRecipe from './hooks/use-recipe';
 import useTrackFilters from './hooks/use-track-filters';
-import type { Step, ProvidedDependencies } from '../../types';
+import type { Step } from '../../types';
 import type { OnboardSelect, SiteSelect, GlobalStyles } from '@automattic/data-stores';
 import type { Design, StyleVariation } from '@automattic/design-picker';
 import type { GlobalStylesObject } from '@automattic/global-styles';
@@ -88,7 +88,17 @@ const SiteIntent = Onboard.SiteIntent;
 const EMPTY_ARRAY: Design[] = [];
 const EMPTY_OBJECT = {};
 
-const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
+const UnifiedDesignPickerStep: Step< {
+	submits: {
+		selectedDesign?: Design;
+		eventProps: {
+			is_filter_included_with_plan_enabled: boolean;
+			is_big_sky_eligible: boolean;
+			preselected_filters: string;
+			selected_filters: string;
+		};
+	};
+} > = ( { navigation, flow, stepName } ) => {
 	// imageOptimizationExperimentAssignment, exerimentAssignment
 	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
 		'calypso_design_picker_image_optimization_202406'
@@ -146,6 +156,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	);
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const isComingFromTheUpgradeScreen = queryParams.get( 'continue' ) === '1';
+	const isComingFromSuccessfulImport = queryParams.get( 'comingFromSuccessfulImport' ) === '1';
 
 	const isPremiumThemeAvailable = Boolean(
 		useSelect(
@@ -525,7 +536,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	}
 
 	const handleSubmit = useCallback(
-		( providedDependencies?: ProvidedDependencies, optionalProps?: object ) => {
+		(
+			providedDependencies?: { selectedDesign?: Design; selectedSiteCategory?: string },
+			optionalProps?: object
+		) => {
 			const _selectedDesign = providedDependencies?.selectedDesign as Design;
 			recordSelectedDesign( {
 				...commonFilterProperties,
@@ -907,19 +921,28 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		</>
 	);
 
+	const getGoBackHandler = () => {
+		if ( isComingFromSuccessfulImport ) {
+			return undefined;
+		}
+		return intent === 'update-design' ? submit : handleBackClick;
+	};
+
 	return (
 		<StepContainer
 			stepName={ STEP_NAME }
 			className="unified-design-picker__has-categories"
 			skipButtonAlign="top"
 			hideFormattedHeader
-			hideSkip={ ! isGoalsAtFrontExperiment }
-			skipLabelText={ translate( 'Skip setup' ) }
+			hideSkip={ ! isGoalsAtFrontExperiment && ! isComingFromSuccessfulImport }
+			skipLabelText={
+				isComingFromSuccessfulImport ? translate( 'Skip to dashboard' ) : translate( 'Skip setup' )
+			}
 			backLabelText={ translate( 'Back' ) }
 			stepContent={ stepContent }
 			recordTracksEvent={ recordStepContainerTracksEvent }
 			goNext={ handleSubmit }
-			goBack={ intent === 'update-design' ? submit : handleBackClick }
+			goBack={ getGoBackHandler() }
 		/>
 	);
 };

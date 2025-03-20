@@ -51,7 +51,7 @@ export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: P
 				) }
 			</div>
 
-			<StepSection applyCoreStyles heading={ translate( 'How to fix this:' ) }>
+			<StepSection heading={ translate( 'How to fix this:' ) }>
 				<StepSectionItem
 					isNewLayout
 					stepNumber={ 1 }
@@ -100,7 +100,7 @@ export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: P
 				/>
 			</StepSection>
 
-			<StepSection applyCoreStyles heading={ translate( 'Learn more about Agency membership' ) }>
+			<StepSection heading={ translate( 'Learn more about Agency membership' ) }>
 				<Button
 					className="team-accept-invite__learn-more-button"
 					variant="link"
