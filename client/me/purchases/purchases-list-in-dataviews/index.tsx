@@ -1,23 +1,19 @@
 import config from '@automattic/calypso-config';
-import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { CompactCard, Card } from '@automattic/components';
-import { SiteDetails } from '@automattic/data-stores';
+import { Card } from '@automattic/components';
+import { Purchases, SiteDetails } from '@automattic/data-stores';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { LocalizeProps, localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { DataViews } from 'calypso/components/dataviews';
-import EmptyContent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getPurchasesBySite, getSubscriptionsBySite } from 'calypso/lib/purchases';
 import { MembershipSubscription, Purchase } from 'calypso/lib/purchases/types';
 import { PurchaseListConciergeBanner } from 'calypso/me/purchases/purchases-list/purchase-list-concierge-banner';
@@ -46,7 +42,6 @@ import PurchasesSite from '../purchases-site';
 import { purchasesDataFields } from './purchases-data-field';
 import { purchasesDataView } from './purchases-data-view'; // This is the temporary data
 import PurchasesListHeader from './purchases-list-header';
-import { testoctorPurchases } from './tests/testoctor-flat-data'; // This is the temporary data
 import './style.scss';
 
 const useDataViewPurchasesList = config.isEnabled( 'purchases/purchase-list-dataview' );
@@ -103,7 +98,6 @@ class PurchasesListDataView extends Component<
 
 	render() {
 		const { purchases, sites, translate, subscriptions } = this.props;
-		const commonEventProps = { context: 'me' };
 		let content;
 
 		if ( this.isDataLoading() ) {
