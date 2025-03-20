@@ -51,7 +51,7 @@ export interface GridPlan {
  * Grid Component Types:
  ***********************/
 
-export type GridSize = 'small' | 'smedium' | 'medium' | 'large' | 'xlarge';
+export type GridSize = 'small' | 'medium' | 'large';
 
 export type PlansIntent =
 	| 'plans-affiliate'
@@ -116,7 +116,7 @@ export interface CommonGridProps {
 	// only used for comparison grid
 	planTypeSelectorProps?: PlanTypeSelectorProps;
 	gridContainerRef?: React.MutableRefObject< HTMLDivElement | null >;
-	gridSize?: GridSize;
+	gridSize?: string;
 }
 
 export interface FeaturesGridProps extends CommonGridProps {
