@@ -182,33 +182,70 @@
         }
     }
 
+    // TODO - This is temporary shim to handle moving the vat-details into the dataviews header.
+    // We can remove this once the page header is implemented
+    // as discussed in https://github.com/Automattic/wp-calypso/issues/100552#issuecomment-2706930102
     .dataviews__view-actions {
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
-        margin-top: 1em;
-		padding-inline: 1.5rem;
+        padding-inline: 1.5rem;
         row-gap: 0.5rem;
 
         & .dataviews__search {
             display: flex;
-            flex: 0 1 auto;
+            flex: 1 1 auto;
             gap: 0.5rem;
+            min-width: 0; // Prevents flex from forcing unnecessary width
 
             & .dataviews-search input {
                 font-size: 0.875rem;
             }
         }
 
-        & .dataviews__tax-details-notice {
-            text-decoration: none;
-            order: -1;
+        // Second div containing the cog icon and tax details notice
+        & > div:not(.dataviews__search) {
+            display: flex;
+            flex-direction: row-reverse;
+            align-items: center;
+            gap: 1rem;
+            min-width: 0; // Prevents flex from forcing unnecessary width
+            width: auto;
         }
 
-        @media (max-width: 900px) {
-            & > * {
-                display: flex;
+        & .dataviews__tax-details-notice {
+            text-decoration: none;
+            white-space: normal;
+            word-break: break-word;
+            flex: 1 1 auto;
+        }
+
+        @media (min-width: 370px) and (max-width: 900px) {
+            & > div:not(.dataviews__search) {
+                flex-direction: column;
+                align-items: flex-end;
+                flex: 0 0 32px;
+                flex-wrap: nowrap;
+            }
+
+            & .dataviews__tax-details-notice {
+                white-space: nowrap;
+                text-align: start;
+                width: auto; // Only takes necessary space
+            }
+        }
+
+        // Handle fringe alignment issues on very small devices
+        @media (max-width: 369px) {
+            & > div {
                 justify-content: space-between;
+
+                & > .components-button.is-compact.has-icon:not(.has-text) {
+                    min-width: 32px;
+                }
+            }
+
+            & > div:not(.dataviews__search) {
                 width: 100%;
             }
         }
