@@ -213,7 +213,6 @@ export default function LayoutBodyContent( {
 					<>
 						{ ! isAutomatedReferral && <MigrationOffer /> }
 						<StepSection
-							applyCoreStyles
 							heading={
 								isAutomatedReferral
 									? translate( 'How do I start?' )
@@ -221,7 +220,6 @@ export default function LayoutBodyContent( {
 							}
 						>
 							<StepSectionItem
-								applyCoreStyles
 								isNewLayout={ isAutomatedReferral }
 								icon={ tipaltiLogo }
 								heading={
@@ -268,7 +266,6 @@ export default function LayoutBodyContent( {
 							/>
 							{ isAutomatedReferral ? (
 								<StepSectionItem
-									applyCoreStyles
 									iconClassName="referrals-overview__opacity-70-percent"
 									isNewLayout
 									icon={ reusableBlock }
@@ -285,7 +282,6 @@ export default function LayoutBodyContent( {
 								/>
 							) : (
 								<StepSectionItem
-									applyCoreStyles
 									iconClassName="referrals-overview__opacity-70-percent"
 									icon={ plugins }
 									heading={ translate( 'Verify your relationship with your clients' ) }
@@ -301,7 +297,6 @@ export default function LayoutBodyContent( {
 								/>
 							) }
 							<StepSectionItem
-								applyCoreStyles
 								isNewLayout={ isAutomatedReferral }
 								className="referrals-overview__step-section-woo-payments"
 								icon={ <WooLogo /> }
@@ -343,7 +338,6 @@ export default function LayoutBodyContent( {
 						</StepSection>
 						{ isAutomatedReferral && (
 							<StepSection
-								applyCoreStyles
 								className="referrals-overview__step-section-learn-more"
 								heading={ translate( 'Find out more' ) }
 							>

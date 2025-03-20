@@ -18,7 +18,7 @@ const AddWooPaymentsToSiteModal = ( { onClose }: { onClose: () => void } ) => {
 
 	const [ selectedSite, setSelectedSite ] = useState< WooPaymentsSiteItem | null >( null );
 
-	const { issueAndAssignLicenses, isReady: isIssueAndAssignReady } = useIssueAndAssignLicenses(
+	const { issueAndAssignLicenses, isLoading } = useIssueAndAssignLicenses(
 		selectedSite ? { ID: selectedSite.rawSite.blog_id, domain: selectedSite.site } : null,
 		{
 			redirectTo: addQueryArgs( A4A_WOOPAYMENTS_SITE_SETUP_LINK, {
@@ -66,8 +66,8 @@ const AddWooPaymentsToSiteModal = ( { onClose }: { onClose: () => void } ) => {
 				<Button
 					variant="primary"
 					onClick={ handleAddSite }
-					disabled={ ! selectedSite || ! isIssueAndAssignReady }
-					isBusy={ ! isIssueAndAssignReady }
+					disabled={ ! selectedSite || isLoading }
+					isBusy={ isLoading }
 				>
 					{ translate( 'Add WooPayments to selected site' ) }
 				</Button>

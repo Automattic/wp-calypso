@@ -31,7 +31,6 @@ import type {
 	FeaturesGridExternalProps,
 	FeaturesGridProps,
 	GridPlan,
-	GridSize,
 	PlanActionOverrides,
 } from '../../types';
 
@@ -395,7 +394,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 
 	const gridBreakpoints = useMemo(
 		() =>
-			new Map< GridSize, number >( [
+			new Map( [
 				[ 'small', 0 ],
 				[ 'medium', 740 ],
 				[ 'large', isInAdmin ? 1180 : 1320 ], // 1320 to fit Enterpreneur plan, 1180 to work in admin

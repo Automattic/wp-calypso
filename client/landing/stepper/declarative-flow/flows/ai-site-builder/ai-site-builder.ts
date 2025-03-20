@@ -2,6 +2,7 @@ import { Onboard } from '@automattic/data-stores';
 import { getAssemblerDesign } from '@automattic/design-picker';
 import { addPlanToCart, addProductsToCart, AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
 import { resolveSelect, useDispatch as useWpDataDispatch } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -19,6 +20,8 @@ interface ProvidedDependencies {
 	siteId?: string;
 	domainItem?: MinimalRequestCartProduct;
 	cartItems?: MinimalRequestCartProduct[]; // Ensure cartItems is an array
+	siteCreated?: boolean;
+	isLaunched?: boolean;
 }
 
 const SiteIntent = Onboard.SiteIntent;
@@ -61,10 +64,12 @@ const aiSiteBuilder: Flow = {
 			STEPS.PROCESSING,
 			STEPS.UNIFIED_DOMAINS,
 			STEPS.UNIFIED_PLANS,
+			STEPS.SITE_LAUNCH,
+			STEPS.PROCESSING,
 		] );
 	},
 	useStepNavigation( currentStep, navigate ) {
-		const { siteSlug: siteSlugFromSiteData } = useSiteData();
+		const { siteSlug: siteSlugFromSiteData, siteId: siteIdFromSiteData } = useSiteData();
 		const { setDesignOnSite, setStaticHomepageOnSite, setIntentOnSite } =
 			useWpDataDispatch( SITE_STORE );
 
@@ -79,55 +84,60 @@ const aiSiteBuilder: Flow = {
 				// The processing step will wait the aforementioned promise to be resolved and then will submit to you whatever the promise resolves to.
 				// Which will be the created site { "siteId": "242341575", "siteSlug": "something.wordpress.com", "goToCheckout": false, "siteCreated": true }
 				case 'processing': {
-					const { siteSlug, siteId } = providedDependencies;
+					if ( providedDependencies.siteCreated ) {
+						const { siteSlug, siteId } = providedDependencies;
+						// We are setting up big sky now.
+						if ( ! siteId || ! siteSlug ) {
+							// eslint-disable-next-line no-console
+							console.error( 'No siteId or siteSlug', providedDependencies );
+							return;
+						}
+						// get the prompt from the get url
+						const prompt = queryParams.get( 'prompt' );
+						let promptParam = '';
 
-					if ( ! siteId || ! siteSlug ) {
-						// eslint-disable-next-line no-console
-						console.error( 'No siteId or siteSlug', providedDependencies );
-						return;
+						const pendingActions = [
+							resolveSelect( SITE_STORE ).getSite( siteId ), // To get the URL.
+						];
+
+						// Create a new home page if one is not set yet.
+						pendingActions.push(
+							wpcomRequest( {
+								path: '/sites/' + siteId + '/pages',
+								method: 'POST',
+								apiNamespace: 'wp/v2',
+								body: {
+									title: 'Home',
+									status: 'publish',
+									content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
+								},
+							} )
+						);
+
+						pendingActions.push(
+							setDesignOnSite( siteSlug, getAssemblerDesign(), { enableThemeSetup: true } )
+						);
+						pendingActions.push( setIntentOnSite( siteSlug, SiteIntent.AIAssembler ) );
+
+						// Delete the existing boilerplate about page, always has a page ID of 1
+						pendingActions.push( deletePage( siteId || '', 1 ) );
+						const results = await Promise.all( pendingActions );
+						const siteURL = results[ 0 ].URL;
+
+						const homePagePostId = results[ 1 ].id;
+						await setStaticHomepageOnSite( siteId, homePagePostId );
+
+						if ( prompt ) {
+							promptParam = `&prompt=${ encodeURIComponent( prompt ) }`;
+						}
+
+						window.location.replace(
+							`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }`
+						);
+					} else if ( providedDependencies.isLaunched ) {
+						const site = await resolveSelect( SITE_STORE ).getSite( providedDependencies.siteSlug );
+						window.location.replace( site.URL );
 					}
-					// get the prompt from the get url
-					const prompt = queryParams.get( 'prompt' );
-					let promptParam = '';
-
-					const pendingActions = [
-						resolveSelect( SITE_STORE ).getSite( siteId ), // To get the URL.
-					];
-
-					// Create a new home page if one is not set yet.
-					pendingActions.push(
-						wpcomRequest( {
-							path: '/sites/' + siteId + '/pages',
-							method: 'POST',
-							apiNamespace: 'wp/v2',
-							body: {
-								title: 'Home',
-								status: 'publish',
-								content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
-							},
-						} )
-					);
-
-					pendingActions.push(
-						setDesignOnSite( siteSlug, getAssemblerDesign(), { enableThemeSetup: true } )
-					);
-					pendingActions.push( setIntentOnSite( siteSlug, SiteIntent.AIAssembler ) );
-
-					// Delete the existing boilerplate about page, always has a page ID of 1
-					pendingActions.push( deletePage( siteId || '', 1 ) );
-					const results = await Promise.all( pendingActions );
-					const siteURL = results[ 0 ].URL;
-
-					const homePagePostId = results[ 1 ].id;
-					await setStaticHomepageOnSite( siteId, homePagePostId );
-
-					if ( prompt ) {
-						promptParam = `&prompt=${ encodeURIComponent( prompt ) }`;
-					}
-
-					window.location.replace(
-						`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }`
-					);
 
 					return;
 				}
@@ -156,9 +166,30 @@ const aiSiteBuilder: Flow = {
 						);
 					}
 
+					const site = await resolveSelect( SITE_STORE ).getSite( siteIdFromSiteData );
+					const bigSkyUrl = `${ site.URL }/wp-admin/site-editor.php?canvas=edit&p=%2F`;
+					const siteLaunchUrl = addQueryArgs( '/setup/ai-site-builder/site-launch', {
+						siteId: siteIdFromSiteData,
+					} );
 					window.location.assign(
-						`/checkout/${ encodeURIComponent( siteSlugFromSiteData || '' ) }`
+						addQueryArgs( `/checkout/${ encodeURIComponent( siteSlugFromSiteData || '' ) }`, {
+							redirect_to:
+								queryParams.get( 'redirect' ) === 'site-launch'
+									? siteLaunchUrl
+									: addQueryArgs( bigSkyUrl, {
+											checkout: 'success',
+									  } ),
+							checkoutBackUrl: addQueryArgs( bigSkyUrl, {
+								checkout: 'cancel',
+							} ),
+							signup: 1,
+							'big-sky-checkout': 1,
+						} )
 					);
+				}
+
+				case 'site-launch': {
+					navigate( 'processing', undefined, true );
 				}
 
 				default:

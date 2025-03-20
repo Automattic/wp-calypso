@@ -50,7 +50,19 @@ interface Props {
 }
 
 export function withImporterWrapper( Importer: ImporterCompType ) {
-	const ImporterWrapper = ( props: Props & StepProps ) => {
+	const ImporterWrapper = (
+		props: Props &
+			StepProps< {
+				submits:
+					| {
+							type: 'redirect';
+							url: string;
+					  }
+					| {
+							action: 'verify-email';
+					  };
+			} >
+	) => {
 		const { __ } = useI18n();
 		const dispatch = useDispatch();
 		const { importer, customizedActionButtons, navigation, flow } = props;

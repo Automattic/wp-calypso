@@ -12,11 +12,10 @@ import {
 	usePlansFromTypes,
 	usePlanTypesWithIntent,
 } from '@automattic/plans-grid-next';
-import useLongerPlanTermDefaultExperiment from './experiments/use-longer-plan-term-default-experiment';
+import { useExperiment } from 'calypso/lib/explat';
 import useCheckPlanAvailabilityForPurchase from './use-check-plan-availability-for-purchase';
 
-const useEligibilityForTermSavingsPriceDisplay = ( {
-	flowName,
+const useIsAnyGridPlanDiscounted = ( {
 	hiddenPlans,
 	intent,
 	isSubdomainNotGenerated,
@@ -25,9 +24,7 @@ const useEligibilityForTermSavingsPriceDisplay = ( {
 	displayedIntervals,
 	coupon,
 	siteId,
-	isInSignup,
 }: {
-	flowName?: string | null;
 	hiddenPlans?: HiddenPlans;
 	intent?: PlansIntent;
 	isSubdomainNotGenerated?: boolean;
@@ -36,9 +33,7 @@ const useEligibilityForTermSavingsPriceDisplay = ( {
 	displayedIntervals: UrlFriendlyTermType[];
 	coupon?: string;
 	siteId?: number | null;
-	isInSignup?: boolean;
 } ) => {
-	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment( flowName );
 	const availablePlanSlugs = usePlansFromTypes( {
 		planTypes: usePlanTypesWithIntent( {
 			intent,
@@ -75,11 +70,50 @@ const useEligibilityForTermSavingsPriceDisplay = ( {
 		false
 	);
 
-	if ( isAnyGridPlanDiscounted ) {
-		return false;
-	}
+	return isAnyGridPlanDiscounted;
+};
 
-	return longerPlanTermDefaultExperiment.isEligibleForTermSavings && isInSignup;
+const useEligibilityForTermSavingsPriceDisplay = ( {
+	hiddenPlans,
+	intent,
+	isSubdomainNotGenerated,
+	selectedPlan,
+	term,
+	displayedIntervals,
+	coupon,
+	siteId,
+}: {
+	hiddenPlans?: HiddenPlans;
+	intent?: PlansIntent;
+	isSubdomainNotGenerated?: boolean;
+	selectedPlan?: PlanSlug;
+	term: ( typeof TERMS_LIST )[ number ];
+	displayedIntervals: UrlFriendlyTermType[];
+	coupon?: string;
+	siteId?: number | null;
+} ) => {
+	const isAnyGridPlanDiscounted = useIsAnyGridPlanDiscounted( {
+		hiddenPlans,
+		intent,
+		isSubdomainNotGenerated,
+		selectedPlan,
+		term,
+		displayedIntervals,
+		coupon,
+		siteId,
+	} );
+
+	const [ isLoading, experimentAssignment ] = useExperiment(
+		'wpcom_plans_page_emphasize_longer_term_savings',
+		{
+			isEligible: ! isAnyGridPlanDiscounted,
+		}
+	);
+
+	return {
+		isEligibleForTermSavingsPriceDisplay: experimentAssignment?.variationName === 'treatment',
+		isLoading,
+	};
 };
 
 export default useEligibilityForTermSavingsPriceDisplay;

@@ -14,7 +14,12 @@ import useStoreApplicationPassword from './hooks/use-store-application-password'
 import type { Step } from '../../types';
 import './style.scss';
 
-const SiteMigrationApplicationPasswordsAuthorization: Step = function ( { navigation } ) {
+const SiteMigrationApplicationPasswordsAuthorization: Step< {
+	submits: {
+		action: 'migration-started' | 'fallback-credentials' | 'authorization' | 'contact-me';
+		authorizationUrl?: string;
+	};
+} > = function ( { navigation } ) {
 	const translate = useTranslate();
 	const siteSlug = useSiteSlugParam();
 

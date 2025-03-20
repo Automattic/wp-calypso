@@ -205,6 +205,7 @@ const useSubscriberRemoveMutation = (
 			for ( const subscriber of subscribers ) {
 				// Invalidate all subscriber queries to ensure consistency
 				queryClient.invalidateQueries( { queryKey: [ 'subscribers', siteId ] } );
+				queryClient.invalidateQueries( { queryKey: [ 'subscribers', 'count', siteId ] } );
 
 				if ( invalidateDetailsCache ) {
 					const detailsCacheKey = getSubscriberDetailsCacheKey(

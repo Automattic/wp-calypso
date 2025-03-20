@@ -16,6 +16,7 @@ export interface StepContainerV2Props {
 	className?: string;
 	topBar?: ReactNode;
 	heading?: ReactNode;
+	footer?: ReactNode;
 	stickyBottomBar?: ReactNode;
 	width?: 'standard' | 'wide' | 'full';
 	verticalAlign?: 'top' | 'center';
@@ -29,6 +30,7 @@ export const StepContainerV2 = ( {
 	className,
 	topBar,
 	heading,
+	footer,
 	stickyBottomBar,
 	width = 'standard',
 	verticalAlign = 'top',
@@ -72,6 +74,16 @@ export const StepContainerV2 = ( {
 					>
 						{ typeof children === 'function' ? children( stepContainerContextValue ) : children }
 					</div>
+					{ footer && (
+						<div
+							className={ clsx( 'step-container-v2__footer', {
+								wide: width === 'wide',
+								full: width === 'full',
+							} ) }
+						>
+							{ footer }
+						</div>
+					) }
 				</div>
 				{ ! isMediumViewport && stickyBottomBar }
 			</div>

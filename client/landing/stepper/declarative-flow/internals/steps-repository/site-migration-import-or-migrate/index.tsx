@@ -16,7 +16,11 @@ import FlowCard from '../components/flow-card';
 import type { Step } from '../../types';
 import './style.scss';
 
-const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
+const SiteMigrationImportOrMigrate: Step< {
+	submits: {
+		destination: 'migrate' | 'import' | 'upgrade';
+	};
+} > = function ( { navigation } ) {
 	const translate = useTranslate();
 	const site = useSite();
 	const importSiteQueryParam = getQueryArg( window.location.href, 'from' )?.toString() || '';
@@ -38,7 +42,7 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 			{
 				label: translate( 'Migrate site' ),
 				description: migrateOptionDescription,
-				value: 'migrate',
+				value: 'migrate' as const,
 				badge: {
 					type: 'info-blue' as BadgeType,
 					text: isUpgradeRequired ? upgradeRequiredLabel : translate( 'Included with your plan' ),
@@ -48,7 +52,7 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 			{
 				label: translate( 'Import content only' ),
 				description: translate( 'Import just posts, pages, comments and media.' ),
-				value: 'import',
+				value: 'import' as const,
 			},
 		];
 	}, [ isUpgradeRequired, translate ] );
@@ -58,7 +62,7 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 	const shouldDisplayHostIdentificationMessage =
 		! hostingProviderDetails.is_unknown && ! hostingProviderDetails.is_a8c;
 
-	const handleClick = ( destination: string ) => {
+	const handleClick = ( destination: 'migrate' | 'import' | 'upgrade' ) => {
 		if ( destination === 'migrate' && ! siteCanInstallPlugins ) {
 			return navigation.submit?.( { destination: 'upgrade' } );
 		}

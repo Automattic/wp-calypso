@@ -78,7 +78,6 @@
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-personal-premium": false,
 		"me/account-close": true,
-		"me/vat-details": true,
 		"migration-flow/experiment": false,
 		"migration-flow/introductory-offer": true,
 		"onboarding/create-course": false,

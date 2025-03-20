@@ -32,9 +32,9 @@ import './global.scss';
 
 const lazyCache = new WeakMap<
 	() => Promise< {
-		default: React.ComponentType< StepProps >;
+		default: React.ComponentType< StepProps< any > >;
 	} >,
-	React.ComponentType< StepProps >
+	React.ComponentType< StepProps< any > >
 >();
 
 function flowStepComponent( flowStep: StepperStep | undefined ) {

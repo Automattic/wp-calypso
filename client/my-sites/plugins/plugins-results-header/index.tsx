@@ -50,7 +50,7 @@ export default function PluginsResultsHeader( {
 								} );
 							} }
 						>
-							{ __( 'Browse All' ) }
+							{ __( 'Browse all' ) }
 						</a>
 					) }
 					{ resultCount && <span className="plugins-results-header__action">{ resultCount }</span> }

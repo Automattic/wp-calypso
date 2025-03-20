@@ -13,10 +13,11 @@ import {
 import { useSiteCopy } from '../../../hooks/use-site-copy';
 import { STEPS } from '../../internals/steps';
 import {
-	AssertConditionResult,
 	AssertConditionState,
-	Flow,
-	ProvidedDependencies,
+	type AssertConditionResult,
+	type Flow,
+	type ProvidedDependencies,
+	type StepperStep,
 } from '../../internals/types';
 import type { SiteSelect } from '@automattic/data-stores';
 
@@ -70,8 +71,8 @@ const COPY_SITE_STEPS = [
 	STEPS.PROCESSING,
 	STEPS.AUTOMATED_COPY_SITE,
 	STEPS.PROCESSING_COPY_SITE_FLOW,
-	{ ...STEPS.PROCESSING, slug: 'resuming' },
-];
+	{ ...STEPS.PROCESSING, slug: 'resuming' as StepperStep[ 'slug' ] },
+] as const;
 
 const copySite: Flow = {
 	name: COPY_SITE_FLOW,
@@ -101,7 +102,7 @@ const copySite: Flow = {
 					return navigate( 'processing' );
 				}
 
-				case 'resuming':
+				case 'resuming' as StepperStep[ 'slug' ]:
 				case 'processing': {
 					const siteSlug = providedDependencies?.siteSlug || urlQueryParams.get( 'siteSlug' );
 					const destination = addQueryArgs( `/setup/${ this.name }/automated-copy`, {
@@ -140,7 +141,7 @@ const copySite: Flow = {
 			return;
 		};
 
-		const goToStep = ( step: string ) => {
+		const goToStep = ( step: StepperStep[ 'slug' ] ) => {
 			navigate( step );
 		};
 

@@ -249,9 +249,5 @@ export function getOptionInfo( {
 
 	connectContent.primary = ! transferContent?.primary;
 
-	if ( transferContent?.primary ) {
-		return [ transferContent, connectContent ];
-	}
-
-	return [ { ...connectContent, primary: true }, transferContent ];
+	return [ transferContent, connectContent ];
 }
