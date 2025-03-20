@@ -23,6 +23,7 @@ import {
 } from '@automattic/design-picker';
 import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer, ONBOARDING_FLOW, isSiteSetupFlow, Step } from '@automattic/onboarding';
+import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -704,6 +705,9 @@ const UnifiedDesignPickerStep: StepType< {
 		return shouldUnlockGlobalStyles ? unlockPremiumGlobalStyles : () => pickDesign();
 	}
 
+	const isUsingStepContainerV2 = shouldUseStepContainerV2( flow );
+	const isDesktopVersion = useViewportMatch( 'large', '>=' );
+
 	function getPrimaryActionButton() {
 		const action = getPrimaryActionButtonAction();
 		const text =
@@ -711,11 +715,15 @@ const UnifiedDesignPickerStep: StepType< {
 				? translate( 'Unlock theme' )
 				: translate( 'Continue' );
 
-		return (
-			<Button className="navigation-link" primary borderless={ false } onClick={ action }>
-				{ text }
-			</Button>
-		);
+		if ( ! isUsingStepContainerV2 ) {
+			return (
+				<Button className="navigation-link" primary borderless={ false } onClick={ action }>
+					{ text }
+				</Button>
+			);
+		}
+
+		return <Step.NextButton label={ text } onClick={ action } />;
 	}
 
 	useEffect( () => {
@@ -753,12 +761,20 @@ const UnifiedDesignPickerStep: StepType< {
 			site_tagline: shouldCustomizeText ? siteDescription : undefined,
 		} );
 
-		const actionButtons = (
-			<>
-				<div className="action-buttons__title">{ headerDesignTitle }</div>
-				<div>{ getPrimaryActionButton() }</div>
-			</>
-		);
+		const getActionButtons = () => {
+			if ( ! isUsingStepContainerV2 ) {
+				return (
+					<>
+						<div className="action-buttons__title">{ headerDesignTitle }</div>
+						<div>{ getPrimaryActionButton() }</div>
+					</>
+				);
+			}
+
+			return getPrimaryActionButton();
+		};
+
+		const actionButtons = getActionButtons();
 
 		const stepContent = (
 			<>
@@ -850,6 +866,43 @@ const UnifiedDesignPickerStep: StepType< {
 			</>
 		);
 
+		if ( isUsingStepContainerV2 ) {
+			// TODO: Create a new wireframe for the design preview. It should be named "FixedColumnOnTheLeftLayout"
+			return (
+				<Step.FullWidthLayout
+					isMediumViewport={ isDesktopVersion }
+					className="step-container-v2--design-picker-preview"
+					topBar={
+						isDesktopVersion ? (
+							<Step.TopBar
+								backButton={
+									shouldHideActionButtons ? undefined : (
+										<Step.BackButton onClick={ handleBackClick } />
+									)
+								}
+								skipButton={
+									! isGoalsAtFrontExperiment ? undefined : (
+										<Step.SkipButton
+											onClick={ () => handleSubmit() }
+											label={ translate( 'Skip setup' ) }
+										/>
+									)
+								}
+							/>
+						) : undefined
+					}
+					stickyBottomBar={
+						<Step.StickyBottomBar
+							leftButton={ <Step.BackButton onClick={ handleBackClick } /> }
+							rightButton={ actionButtons }
+						/>
+					}
+				>
+					{ stepContent }
+				</Step.FullWidthLayout>
+			);
+		}
+
 		return (
 			<StepContainer
 				stepName={ STEP_NAME }
@@ -884,8 +937,6 @@ const UnifiedDesignPickerStep: StepType< {
 	const priorityThemes: Record< string, string > = {
 		education: 'course',
 	};
-
-	const isUsingStepContainerV2 = shouldUseStepContainerV2( flow );
 
 	const stepContent = (
 		<>

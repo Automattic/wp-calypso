@@ -1,7 +1,7 @@
 @import '../../mixins';
 
 .step-container-v2__top-bar {
-	z-index: 1;
+	height: var(--step-container-v2-top-bar-height);
 	box-sizing: border-box;
 	width: 100%;
 	display: flex;
