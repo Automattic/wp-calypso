@@ -75,7 +75,7 @@ body.is-mobile-app-view {
 
 			.masterbar__item-content {
 				font-weight: 600;
-				color: $masterbar-color-secondary;
+				color: #1D4065;
 			}
 		}
 		.masterbar__item-wrapper:last-child:hover .masterbar__item {
@@ -83,7 +83,7 @@ body.is-mobile-app-view {
 			text-decoration: none;
 		}
 		.masterbar__item-wrapper:last-child:hover .masterbar__item-content {
-			color: $masterbar-color-secondary;
+			color: #1D4065;
 		}
 		@media only screen and (max-width: 781px) {
 			padding-top: 0;
