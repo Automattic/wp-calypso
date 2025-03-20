@@ -5,6 +5,7 @@ const { glob } = require( 'glob' );
  * RGB to color-mix
  *
  * Maps rgba() to color-mix(), e.g. `rgba(var(--color-primary-rgb), 0.04)` is replaced with `color-mix(in srgb, var(--color-primary) 4%, transparent)`.
+ * Maps rgba() to var(), e.g. `rgba(var(--color-primary-rgb))` is replaced with `var(--color-primary)`.
  *
  * ## Usage
  *
@@ -16,6 +17,15 @@ const { glob } = require( 'glob' );
  */
 
 function replaceRgbVars( scssContent ) {
+	// First replace simple rgb() cases
+	scssContent = scssContent.replace(
+		/rgba\s*\(\s*var\s*\(\s*(--[\w-]+)-rgb\s*\)\s*\)/g,
+		( match, varName ) => {
+			return `var(${ varName })`;
+		}
+	);
+
+	// Then handle rgba() cases as before
 	return scssContent.replace(
 		/rgba\s*\(\s*var\s*\(\s*(--[\w-]+)-rgb\s*\)\s*,\s*([\d.]+)\s*\)/g,
 		( match, varName, alpha ) => {
