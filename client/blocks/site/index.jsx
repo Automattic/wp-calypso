@@ -17,6 +17,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
 import {
 	getSite,
@@ -112,22 +113,34 @@ class Site extends Component {
 	};
 
 	renderSiteDomain = () => {
-		const { site, homeLink, translate } = this.props;
+		const { site, homeLink, translate, customDomains, isLoadingDomains } = this.props;
+
+		if ( isLoadingDomains ) {
+			return <div className="site__domain is-loading" />;
+		}
+
+		const siteDomain = customDomains.length > 0 ? customDomains[ 0 ].domain : site.domain;
 
 		return (
 			<div className="site__domain">
 				{ isJetpackCloud() &&
 					homeLink &&
 					translate( 'View %(domain)s', {
-						args: { domain: site.domain },
+						args: { domain: siteDomain },
 					} ) }
-				{ ( ! isJetpackCloud() || ! homeLink ) && site.domain }
+				{ ( ! isJetpackCloud() || ! homeLink ) && siteDomain }
 			</div>
 		);
 	};
 
 	renderDomainAndInlineBadges = () => {
-		const { site, homeLink, translate } = this.props;
+		const { site, homeLink, translate, customDomains, isLoadingDomains } = this.props;
+
+		if ( isLoadingDomains ) {
+			return <div className="site__domain is-loading" />;
+		}
+
+		const siteDomain = customDomains.length > 0 ? customDomains[ 0 ].domain : site.domain;
 
 		return (
 			<div className="site__domain-and-badges">
@@ -135,9 +148,9 @@ class Site extends Component {
 					{ isJetpackCloud() &&
 						homeLink &&
 						translate( 'View %(domain)s', {
-							args: { domain: site.domain },
+							args: { domain: siteDomain },
 						} ) }
-					{ ( ! isJetpackCloud() || ! homeLink ) && site.domain }
+					{ ( ! isJetpackCloud() || ! homeLink ) && siteDomain }
 				</div>
 				{ this.renderSiteBadges() }
 			</div>
@@ -301,10 +314,14 @@ class Site extends Component {
 function mapStateToProps( state, ownProps ) {
 	const siteId = ownProps.siteId || ownProps.site?.ID;
 	const site = siteId ? getSite( state, siteId ) : ownProps.site;
-
+	const siteDomains = getDomainsBySiteId( state, siteId );
+	const customDomains = siteDomains.filter( ( domain ) => ! domain.isWPCOMDomain );
+	const isLoadingDomains = ! hasLoadedSiteDomains( state, siteId );
 	return {
 		siteId,
 		site,
+		customDomains,
+		isLoadingDomains,
 		isPreviewable: isSitePreviewable( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
