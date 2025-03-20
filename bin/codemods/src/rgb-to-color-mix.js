@@ -37,7 +37,9 @@ function replaceRgbVars( scssContent ) {
 }
 
 function processScssFiles( rootDir ) {
-	const scssFiles = glob.sync( `${ rootDir }/**/*.scss` );
+	const scssFiles = glob.sync( `${ rootDir }/**/*.scss`, {
+		ignore: [ '**/node_modules/**' ],
+	} );
 
 	console.log( `Processing ${ rootDir }/**/*.scss, found`, scssFiles.length, 'files' );
 
