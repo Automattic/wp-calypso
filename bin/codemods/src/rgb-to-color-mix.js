@@ -17,9 +17,9 @@ const { glob } = require( 'glob' );
  */
 
 function replaceRgbVars( scssContent ) {
-	// First replace simple rgb() cases
+	// First replace simple rgb() cases (no alpha value)
 	scssContent = scssContent.replace(
-		/rgba\s*\(\s*var\s*\(\s*(--[\w-]+)-rgb\s*\)\s*\)/g,
+		/rgba\s*\(\s*var\s*\(\s*(--[\w-]+?)(?:--rgb|-rgb)\s*\)\s*\)/g,
 		( match, varName ) => {
 			return `var(${ varName })`;
 		}
@@ -27,11 +27,10 @@ function replaceRgbVars( scssContent ) {
 
 	// Handle rgba() cases with both decimal and percentage alpha values
 	return scssContent.replace(
-		/rgba\s*\(\s*var\s*\(\s*(--[\w-]+)-rgb\s*\)\s*,\s*([\d.]+)(%?)\s*\)/g,
+		/rgba\s*\(\s*var\s*\(\s*(--[\w-]+?)(?:--rgb|-rgb)\s*\)\s*,\s*([\d.]+)(%?)\s*\)/g,
 		( match, varName, alpha, isPercent ) => {
-			const baseVar = varName.replace( /-rgb$/, '' );
 			const alphaValue = isPercent ? parseFloat( alpha ) : parseFloat( alpha ) * 100;
-			return `color-mix(in srgb, var(${ baseVar }) ${ alphaValue }%, transparent)`;
+			return `color-mix(in srgb, var(${ varName }) ${ alphaValue }%, transparent)`;
 		}
 	);
 }
