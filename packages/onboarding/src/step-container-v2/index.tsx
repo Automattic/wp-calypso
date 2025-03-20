@@ -1,3 +1,9 @@
+/**
+ * NEVER export StepContainerV2 directly.
+ *
+ * Export only components and wireframes.
+ */
+
 export { StepContainerV2Provider } from './contexts/StepContainerV2Context';
 
 export { BackButton } from './components/buttons/BackButton/BackButton';
