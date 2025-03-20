@@ -24,6 +24,17 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 
 	const webpackConfig = getBaseWebpackConfig( env, argv );
 
+	webpackConfig.module.rules.forEach( ( rule ) => {
+		if ( rule.use && Array.isArray( rule.use ) ) {
+			rule.use = [
+				{
+					loader: path.resolve( __dirname, 'magic-comment-loader.js' ),
+				},
+				...rule.use,
+			];
+		}
+	} );
+
 	return {
 		...webpackConfig,
 		mode: isDevelopment ? 'development' : 'production',
@@ -62,7 +73,7 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 				output: path.resolve( './dist/chunks-map.json' ),
 			} ),
 			new DependencyExtractionWebpackPlugin( {
-				injectPolyfill: true,
+				// injectPolyfill: true,
 				outputFilename: '[name].asset.json',
 				outputFormat: 'json',
 				requestToExternal( request ) {
