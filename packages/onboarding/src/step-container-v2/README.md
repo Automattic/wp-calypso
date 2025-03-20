@@ -50,7 +50,7 @@ Wireframes are layout dispositions that were approved by the designers. They are
 ## How to extend it
 
 - Try to keep the components as generic as possible, and without adding overrides to components coming from `@wordpress/components` unless explicitly approved by the designers.
-- If only one step uses something, it probably means it shouldn't belong to `StepContainerV2`. Try using some of the slots, or add a new one.
+- If the step has a unique UI element that does not exist in other steps, it probably does not belong in `StepContainerV2`. Try using some of the slots, or add a new one.
 - Do not add `is*` props to `StepContainerV2` as we want to stick to composition.
 - Do not export `StepContainerV2` directly. We're defining several wireframes that were approved by the designers, and these are the components you should be using in the steps.
 
