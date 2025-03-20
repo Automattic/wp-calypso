@@ -1,4 +1,5 @@
 import { useLayoutEffect, useState } from '@wordpress/element';
+import { GridSize } from '../types';
 
 interface Props {
 	containerRef: React.MutableRefObject< HTMLDivElement | null >;
@@ -8,7 +9,7 @@ interface Props {
 	 * but they could be used in the future in a containment context.
 	 * The keys are the labels, the values are the minimum widths.
 	 */
-	containerBreakpoints: Map< string, number >;
+	containerBreakpoints: Map< GridSize, number >;
 }
 
 /**
@@ -16,7 +17,7 @@ interface Props {
  * and the breakpoints passed through as props.
  */
 export default function useGridSize( { containerRef, containerBreakpoints }: Props ) {
-	const [ gridSize, setGridSize ] = useState< string | null >( null );
+	const [ gridSize, setGridSize ] = useState< GridSize | null >( null );
 
 	useLayoutEffect( () => {
 		if ( ! containerRef.current ) {

@@ -24,12 +24,12 @@ import {
 import { useInView } from 'react-intersection-observer';
 import { plansGridMediumLarge } from '../../css-mixins';
 import PlansGridContextProvider, { usePlansGridContext } from '../../grid-context';
+import { useCurrentPlanTermMatchesSelectedTerm } from '../../hooks/use-current-plan-term-matches-selected-term';
 import useGridSize from '../../hooks/use-grid-size';
 import useHighlightAdjacencyMatrix from '../../hooks/use-highlight-adjacency-matrix';
 import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
 import filterUnusedFeaturesObject from '../../lib/filter-unused-features-object';
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
-import { sortPlans } from '../../lib/sort-plan-properties';
 import PlanTypeSelector from '../plan-type-selector';
 import { Plans2023Tooltip } from '../plans-2023-tooltip';
 import PopularBadge from '../popular-badge';
@@ -46,6 +46,8 @@ import type {
 	PlanActionOverrides,
 	TransformedFeatureObject,
 	PlanTypeSelectorProps,
+	GridSize,
+	SupportedUrlFriendlyTermType,
 } from '../../types';
 import type {
 	FeatureObject,
@@ -930,39 +932,64 @@ const ComparisonGrid = ( {
 	showRefundPeriod,
 	planTypeSelectorProps,
 	gridSize,
+	siteId,
 }: ComparisonGridProps ) => {
-	const { gridPlans, gridPlansIndex, featureGroupMap } = usePlansGridContext();
+	const { gridPlans, gridPlansIndex, featureGroupMap, helpers } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const [ visiblePlans, setVisiblePlans ] = useState< PlanSlug[] >( [] );
 
-	const displayedGridPlans = useMemo( () => {
-		return sortPlans( gridPlans, currentSitePlanSlug );
-	}, [ gridPlans, currentSitePlanSlug ] );
+	const currentPlanTermMatchesSelectedTerm = useCurrentPlanTermMatchesSelectedTerm( {
+		currentSitePlanSlug,
+		intervalType: intervalType as SupportedUrlFriendlyTermType,
+		siteId,
+		useCheckPlanAvailabilityForPurchase: helpers?.useCheckPlanAvailabilityForPurchase,
+	} );
 
 	useEffect( () => {
-		setVisiblePlans( () => {
-			let visibleLength = displayedGridPlans.length;
-			switch ( gridSize ) {
-				case 'large':
-					visibleLength = 4;
-					break;
-				case 'medium':
-					visibleLength = 3;
-					break;
-				case 'smedium':
-				case 'small':
-					visibleLength = 2;
-					break;
-			}
+		let numPlansToDisplay = gridPlans.length;
 
-			return displayedGridPlans.slice( 0, visibleLength ).map( ( { planSlug } ) => planSlug );
-		} );
-	}, [ gridSize, displayedGridPlans, gridPlansIndex ] );
+		switch ( gridSize ) {
+			case 'large':
+				numPlansToDisplay = 4;
+				break;
+			case 'medium':
+				numPlansToDisplay = 3;
+				break;
+			case 'smedium':
+			case 'small':
+				numPlansToDisplay = 2;
+				break;
+		}
+
+		let visiblePlanSlugs = gridPlans
+			.slice( 0, numPlansToDisplay )
+			.map( ( { planSlug } ) => planSlug );
+
+		const isCurrentPlanVisible =
+			!! currentSitePlanSlug && visiblePlanSlugs.includes( currentSitePlanSlug );
+
+		// Plans should be sorted by least to most expensive, unless a current
+		// plan exists and it would not be visible due to the number of plans to
+		// display. In that case, the current plan is placed at the start of the
+		// grid, and the last plan is removed to maintain the same number of
+		// visible plans.
+		if ( currentSitePlanSlug && ! isCurrentPlanVisible && currentPlanTermMatchesSelectedTerm ) {
+			visiblePlanSlugs = [ currentSitePlanSlug, ...visiblePlanSlugs ].slice( 0, numPlansToDisplay );
+		}
+
+		setVisiblePlans( visiblePlanSlugs );
+	}, [
+		gridSize,
+		gridPlansIndex,
+		currentSitePlanSlug,
+		gridPlans,
+		currentPlanTermMatchesSelectedTerm,
+	] );
 
 	const visibleGridPlans = useMemo(
 		() =>
 			visiblePlans.reduce( ( acc, planSlug ) => {
-				const gridPlan = displayedGridPlans.find(
+				const gridPlan = gridPlans.find(
 					( gridPlan ) => getPlanClass( gridPlan.planSlug ) === getPlanClass( planSlug )
 				);
 
@@ -972,7 +999,7 @@ const ComparisonGrid = ( {
 
 				return acc;
 			}, [] as GridPlan[] ),
-		[ visiblePlans, displayedGridPlans ]
+		[ visiblePlans, gridPlans ]
 	);
 
 	const onPlanChange = useCallback(
@@ -1044,7 +1071,7 @@ const ComparisonGrid = ( {
 				>
 					{ ( isStuck: boolean ) => (
 						<ComparisonGridHeader
-							displayedGridPlans={ displayedGridPlans }
+							displayedGridPlans={ gridPlans }
 							visibleGridPlans={ visibleGridPlans }
 							isInSignup={ isInSignup }
 							onPlanChange={ onPlanChange }
@@ -1073,7 +1100,7 @@ const ComparisonGrid = ( {
 					/>
 				) ) }
 				<ComparisonGridHeader
-					displayedGridPlans={ displayedGridPlans }
+					displayedGridPlans={ gridPlans }
 					visibleGridPlans={ visibleGridPlans }
 					isInSignup={ isInSignup }
 					isFooter
@@ -1138,7 +1165,7 @@ const WrappedComparisonGrid = ( {
 	const gridBreakpoints = useMemo( () => {
 		// we want to fit up to the Commerce plan in this breakpoint
 		const xlargeBreakpoint = isInSiteDashboard ? 1114 : 1180;
-		return new Map( [
+		return new Map< GridSize, number >( [
 			[ 'small', 0 ],
 			[ 'smedium', 686 ],
 			[ 'medium', 835 ],
