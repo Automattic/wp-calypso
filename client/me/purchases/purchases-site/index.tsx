@@ -11,7 +11,7 @@ import { getSite } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
 import PurchaseItem from '../purchase-item';
 import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase, GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
 
 import './style.scss';
 
@@ -22,7 +22,7 @@ export default function PurchasesSite(
 				siteId?: number;
 		  }
 		| {
-				getManagePurchaseUrlFor?: ( slug: string, purchaseId: string | number ) => string;
+				getManagePurchaseUrlFor?: GetManagePurchaseUrlFor;
 				isPlaceholder?: false;
 				siteId: number;
 				purchases: Purchase[];
