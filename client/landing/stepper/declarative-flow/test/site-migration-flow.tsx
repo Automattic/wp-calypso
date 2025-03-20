@@ -199,8 +199,6 @@ describe( 'Site Migration Flow', () => {
 				expect( destination ).toMatchDestination( {
 					step: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
 					query: {
-						sessionId: '123',
-						siteSlug: 'example.wordpress.com',
 						siteId: 123,
 					},
 				} );
@@ -465,7 +463,6 @@ describe( 'Site Migration Flow', () => {
 				expect( destination ).toMatchDestination( {
 					step: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
 					query: {
-						sessionId: '123',
 						siteSlug: 'example.wordpress.com',
 						siteId: 123,
 					},
