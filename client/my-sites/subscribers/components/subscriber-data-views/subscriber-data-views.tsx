@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { Gravatar, TimeSince } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews, type View, type Action, Operator } from '@wordpress/dataviews';
@@ -10,6 +11,7 @@ import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/se
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SubscribersFilterBy, SubscribersSortBy, SubscribersStatus } from '../../constants';
 import { useSubscriptionPlans, useUnsubscribeModal } from '../../hooks';
 import {
@@ -36,6 +38,7 @@ type SubscriberDataViewsProps = {
 	siteId: number | null;
 	isUnverified: boolean;
 	onGiftSubscription: ( subscriber: Subscriber ) => void;
+	subscriberId?: string;
 };
 
 const SubscriptionTypeCell = ( { subscriber }: { subscriber: Subscriber } ) => {
@@ -74,12 +77,14 @@ const SubscriberDataViews = ( {
 	siteId,
 	onGiftSubscription,
 	isUnverified,
+	subscriberId,
 }: SubscriberDataViewsProps ) => {
 	const isMobile = useBreakpoint( '<660px' );
 	const recordSubscriberClicked = useRecordSubscriberClicked();
 	const recordSubscriberSearch = useRecordSubscriberSearch();
 	const recordSubscriberFilter = useRecordSubscriberFilter();
 	const recordSubscriberSort = useRecordSubscriberSort();
+	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ filters, setFilters ] = useState< SubscribersFilterBy[] >( [ SubscribersFilterBy.All ] );
@@ -171,6 +176,7 @@ const SubscriberDataViews = ( {
 			if ( Array.isArray( input ) ) {
 				if ( input.length === 0 ) {
 					setSelectedSubscriber( null );
+					page.replace( `/subscribers/${ siteSlug }` );
 					return;
 				}
 				const subscriber = subscribers.find( ( s ) => s.subscription_id.toString() === input[ 0 ] );
@@ -181,6 +187,7 @@ const SubscriberDataViews = ( {
 						user_id: subscriber.user_id,
 					} );
 					setSelectedSubscriber( subscriber );
+					page.show( `/subscribers/${ siteSlug }/${ subscriber.subscription_id }` );
 				}
 			} else {
 				recordSubscriberClicked( 'row', {
@@ -189,9 +196,10 @@ const SubscriberDataViews = ( {
 					user_id: input.user_id,
 				} );
 				setSelectedSubscriber( input );
+				page.show( `/subscribers/${ siteSlug }/${ input.subscription_id }` );
 			}
 		},
-		[ subscribers, recordSubscriberClicked, siteId ]
+		[ subscribers, recordSubscriberClicked, siteId, siteSlug ]
 	);
 
 	const fields = useMemo(
@@ -418,6 +426,36 @@ const SubscriberDataViews = ( {
 		setFilters( filterValues.length ? filterValues : [ SubscribersFilterBy.All ] );
 	}, [ currentView.search, currentView.filters ] );
 
+	// Fetch initial subscriber if ID is provided
+	const { data: initialSubscriber } = useSubscriberDetailsQuery(
+		siteId ?? null,
+		subscriberId ? parseInt( subscriberId, 10 ) : undefined,
+		undefined
+	);
+
+	// Update selected subscriber when initialSubscriber changes
+	useEffect( () => {
+		if ( initialSubscriber ) {
+			setSelectedSubscriber( initialSubscriber );
+		}
+	}, [ initialSubscriber ] );
+
+	// Handle browser back/forward navigation
+	useEffect( () => {
+		const handleRouteChange = () => {
+			const pathParts = window.location.pathname.split( '/' );
+			const lastPart = pathParts[ pathParts.length - 1 ];
+
+			// If we're back at the main subscribers page (no subscriber ID in URL)
+			if ( lastPart === siteSlug ) {
+				setSelectedSubscriber( null );
+			}
+		};
+
+		window.addEventListener( 'popstate', handleRouteChange );
+		return () => window.removeEventListener( 'popstate', handleRouteChange );
+	}, [ siteSlug ] );
+
 	// Memoize the data and pagination info.
 	const { data, paginationInfo } = useMemo( () => {
 		return {
@@ -485,7 +523,10 @@ const SubscriberDataViews = ( {
 							subscriber={ subscriber }
 							siteId={ siteId }
 							subscriptionId={ selectedSubscriber.subscription_id }
-							onClose={ () => setSelectedSubscriber( null ) }
+							onClose={ () => {
+								setSelectedSubscriber( null );
+								page.show( `/subscribers/${ siteSlug }` );
+							} }
 							onUnsubscribe={ ( subscriber ) => handleUnsubscribe( [ subscriber ] ) }
 							newsletterCategoriesEnabled={ subscribedNewsletterCategoriesData?.enabled }
 							newsletterCategories={ subscribedNewsletterCategoriesData?.newsletterCategories }

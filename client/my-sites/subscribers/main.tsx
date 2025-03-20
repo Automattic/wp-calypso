@@ -16,6 +16,8 @@ import { Subscriber } from './types';
 const SubscribersPage = () => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) ?? null;
+	const subscriberId = window.location.pathname.split( '/' ).pop();
+	const isSubscriberIdValid = subscriberId && /^\d+$/.test( subscriberId );
 
 	const initiallyLoadedWithTaskCompletionHash = useRef(
 		window.location.hash === '#building-your-audience-task'
@@ -56,6 +58,7 @@ const SubscribersPage = () => {
 						siteId={ siteId }
 						isUnverified={ isUnverified }
 						onGiftSubscription={ onGiftSubscription }
+						subscriberId={ isSubscriberIdValid ? subscriberId : undefined }
 					/>
 
 					{ giftUserId !== 0 && (
