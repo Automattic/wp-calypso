@@ -517,7 +517,7 @@ export default function buildFallbackResponse( {
 					slug: 'tools-export',
 					title: translate( 'Export' ),
 					type: 'submenu-item',
-					url: `/export/${ siteDomain }`,
+					url: `https://${ siteDomain }/wp-admin/export.php`,
 				},
 				{
 					parent: 'tools.php',
