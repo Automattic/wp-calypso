@@ -68,6 +68,18 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Page Flow' ), function () 
 
 		const firstPattern = await inserterSelector.or( modalSelector ).getByRole( 'option' ).first();
 
+		const allPatternsCategoryMobile = editorParent
+			.locator( '.block-editor-inserter__mobile-tab-navigation' )
+			.getByRole( 'list' )
+			.getByRole( 'listitem' )
+			.first();
+
+		// On mobile patterns are not visible by default, so we need to click on the first category.
+		// Clicking is optional e.g: on desktop clicking is not needed.
+		try {
+			await allPatternsCategoryMobile.click( { timeout: 3000 } );
+		} catch ( e ) {}
+
 		pageTemplateFirstTextContent =
 			( await firstPattern
 				.frameLocator( 'iframe' )
