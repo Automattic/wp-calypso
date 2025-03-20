@@ -16,6 +16,7 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-domain-diagnostics-query';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
+import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -77,6 +78,7 @@ const HomeContent = ( {
 	const isP2 = site?.options?.is_wpforteams_site;
 
 	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
+	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
 
 	const { data: allDomains = [], isSuccess } = useGetDomainsQuery( site?.ID ?? null, {
 		retry: false,
@@ -157,8 +159,8 @@ const HomeContent = ( {
 			<FullScreenLaunchpad
 				onClose={ async () => {
 					setFocusedLaunchpadDismissed( true );
+					skipCurrentView( null, true );
 					await updateLaunchpadSettings( siteId, { launchpad_screen: 'skipped' } );
-					queryClient.invalidateQueries( { queryKey: getCacheKey( siteId ) } );
 				} }
 				onSiteLaunch={ () => {
 					setCelebrateLaunchModalIsOpen( true );
