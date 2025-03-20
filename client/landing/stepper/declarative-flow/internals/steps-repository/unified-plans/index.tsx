@@ -31,6 +31,7 @@ import { useSelector, useDispatch as useReduxDispatch } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { setActiveTheme } from 'calypso/state/themes/actions';
 import { getTheme, getThemeType } from 'calypso/state/themes/selectors';
+import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
 import UnifiedPlansStep from './unified-plans-step';
 import { getIntervalType } from './util';
@@ -229,6 +230,7 @@ const PlansStepAdaptor: Step< {
 				isExtraWideLayout: false,
 			} }
 			useStepperWrapper
+			useStepContainerV2={ shouldUseStepContainerV2( props.flow ) }
 		/>
 	);
 };
