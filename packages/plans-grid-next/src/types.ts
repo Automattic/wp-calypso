@@ -51,7 +51,7 @@ export interface GridPlan {
  * Grid Component Types:
  ***********************/
 
-export type GridSize = 'small' | 'smedium' | 'medium' | 'large' | 'xlarge';
+export type GridSize = 'small' | 'medium' | 'large';
 
 export type PlansIntent =
 	| 'plans-affiliate'
@@ -104,6 +104,7 @@ export interface CommonGridProps {
 	siteId?: number | null;
 	isInSignup: boolean;
 	isInAdmin: boolean;
+	isInSiteDashboard: boolean;
 	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	currentSitePlanSlug?: string | null;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
@@ -116,14 +117,13 @@ export interface CommonGridProps {
 	// only used for comparison grid
 	planTypeSelectorProps?: PlanTypeSelectorProps;
 	gridContainerRef?: React.MutableRefObject< HTMLDivElement | null >;
-	gridSize?: GridSize;
+	gridSize?: string;
 }
 
 export interface FeaturesGridProps extends CommonGridProps {
 	gridPlans: GridPlan[];
 	currentPlanManageHref?: string;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
-	hideSpotlightPlan?: boolean;
 	gridPlanForSpotlight?: GridPlan;
 	isCustomDomainAllowedOnFreePlan: boolean; // indicate when a custom domain is allowed to be used with the Free plan.
 	paidDomainName?: string;

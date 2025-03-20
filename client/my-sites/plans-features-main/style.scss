@@ -44,6 +44,10 @@ $plan-features-header-banner-height: 20px;
 		padding: 0 0 10px;
 		overflow-x: visible;
 	}
+
+	#site-plans & .plans-wrapper {
+		margin: 0;
+	}
 }
 
 .plans-features-main__comparison-grid-container {

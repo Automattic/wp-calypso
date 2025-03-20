@@ -16,8 +16,6 @@ import { ExternalLink } from '@wordpress/components';
 import { Icon, warning as warningIcon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { formatCurrency, localize, useTranslate } from 'i18n-calypso';
-import { get } from 'lodash';
-import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
@@ -26,7 +24,7 @@ import payPalImage from 'calypso/assets/images/upgrades/paypal-full.svg';
 import upiImage from 'calypso/assets/images/upgrades/upi.svg';
 import SiteIcon from 'calypso/blocks/site-icon';
 import InfoPopover from 'calypso/components/info-popover';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { withLocalizedMoment, useLocalizedMoment } from 'calypso/components/localized-moment';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getPaymentMethodImageURL } from 'calypso/lib/checkout/payment-methods';
 import {
@@ -57,12 +55,40 @@ import {
 	isMarketplaceTemporarySitePurchase,
 } from '../utils';
 import OwnerInfo from './owner-info';
+import type { Purchases, SiteDetails } from '@automattic/data-stores';
 import 'calypso/me/purchases/style.scss';
+import type { GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
+import type { AppState } from 'calypso/types';
+import type { LocalizeProps } from 'i18n-calypso';
 
-const eventProperties = ( warning ) => ( { warning, position: 'purchase-list' } );
+const eventProperties = ( warning: string ) => ( { warning, position: 'purchase-list' } );
 
-class PurchaseItem extends Component {
-	trackImpression( warning ) {
+interface PurchaseItemPropsPlaceholder {
+	isPlaceholder: true;
+}
+
+interface PurchaseItemProps {
+	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
+	purchase: Purchases.Purchase;
+	site?: SiteDetails | null | undefined;
+	slug?: string;
+	showSite?: boolean;
+	isPlaceholder?: boolean;
+	isJetpack?: boolean;
+	isDisconnectedSite?: boolean;
+	isBackupMethodAvailable?: boolean;
+}
+
+interface PurchaseItemPropsConnected {
+	translate: LocalizeProps[ 'translate' ];
+	moment: ReturnType< typeof useLocalizedMoment >;
+	iconUrl: string | undefined;
+}
+
+class PurchaseItem extends Component<
+	PurchaseItemPropsPlaceholder | ( PurchaseItemProps & PurchaseItemPropsConnected )
+> {
+	trackImpression( warning: string ) {
 		return (
 			<TrackComponentView
 				eventName="calypso_subscription_warning_impression"
@@ -72,7 +98,10 @@ class PurchaseItem extends Component {
 	}
 
 	getStatus() {
-		const { purchase, translate, moment, name, isJetpack, isDisconnectedSite } = this.props;
+		if ( this.props.isPlaceholder ) {
+			return null;
+		}
+		const { purchase, translate, moment, isJetpack, isDisconnectedSite } = this.props;
 		const expiry = moment( purchase.expiryDate );
 		// @todo: There isn't currently a way to get the taxName based on the
 		// country. The country is not included in the purchase information
@@ -96,11 +125,14 @@ class PurchaseItem extends Component {
 		} );
 
 		if ( purchase && isPartnerPurchase( purchase ) ) {
-			return translate( 'Managed by %(partnerName)s', {
-				args: {
-					partnerName: getPartnerName( purchase ),
-				},
-			} );
+			const partnerName = getPartnerName( purchase );
+			if ( partnerName ) {
+				return translate( 'Managed by %(partnerName)s', {
+					args: {
+						partnerName,
+					},
+				} );
+			}
 		}
 
 		if (
@@ -143,9 +175,6 @@ class PurchaseItem extends Component {
 					{ translate(
 						'You no longer have access to this site and its purchases. {{button}}Contact support{{/button}}',
 						{
-							args: {
-								site: name,
-							},
 							components: {
 								button: (
 									<button
@@ -165,7 +194,7 @@ class PurchaseItem extends Component {
 			);
 		}
 
-		if ( purchase.isInAppPurchase ) {
+		if ( purchase.isInAppPurchase && purchase.iapPurchaseManagementLink ) {
 			return translate(
 				'This product is an in-app purchase. You can manage it from within {{managePurchase}}the app store{{/managePurchase}}.',
 				{
@@ -376,6 +405,9 @@ class PurchaseItem extends Component {
 	}
 
 	getPurchaseType() {
+		if ( this.props.isPlaceholder ) {
+			return null;
+		}
 		const { purchase, site, translate, slug, showSite, isDisconnectedSite } = this.props;
 		if ( isTemporarySitePurchase( purchase ) ) {
 			return null;
@@ -383,7 +415,7 @@ class PurchaseItem extends Component {
 
 		const productType = purchaseType( purchase );
 		if ( showSite && site ) {
-			if ( productType && site.name ) {
+			if ( productType && site.name && slug ) {
 				// translators: The string contains the product name, the name of the site, and the URL for the site e.g. Premium plan for Block Store (blockstore.com)
 				return translate(
 					'%(purchaseType)s for {{button}}%(siteName)s{{/button}} ({{link}}%(siteDomain)s{{/link}})',
@@ -403,6 +435,7 @@ class PurchaseItem extends Component {
 										page( getPurchaseListUrlFor( slug ) );
 									} }
 									title={ translate( 'View subscriptions for %(siteName)s', {
+										textOnly: true,
 										args: {
 											siteName: site.name,
 										},
@@ -416,6 +449,7 @@ class PurchaseItem extends Component {
 									target="_blank"
 									rel="noreferrer"
 									title={ translate( 'View %(siteName)s', {
+										textOnly: true,
 										args: {
 											siteName: site.name,
 										},
@@ -427,7 +461,7 @@ class PurchaseItem extends Component {
 				);
 			}
 
-			if ( productType ) {
+			if ( productType && slug ) {
 				// translators: The string contains the product name, and the URL of the site e.g. Premium plan for blockstore.com
 				return translate( '%(purchaseType)s for {{button}}%(siteDomain)s{{/button}}', {
 					args: {
@@ -444,6 +478,7 @@ class PurchaseItem extends Component {
 									page( getPurchaseListUrlFor( slug ) );
 								} }
 								title={ translate( 'View subscriptions for %(siteDomain)s', {
+									textOnly: true,
 									args: {
 										siteDomain: site.domain,
 									},
@@ -454,47 +489,55 @@ class PurchaseItem extends Component {
 				} );
 			}
 
-			// translators: The string contains the name of the site, and the URL of the site e.g. for Block Store (blockstore.com)
-			return translate( 'for {{button}}%(siteName)s{{/button}} ({{link}}%(siteDomain)s{{/link}})', {
-				args: {
-					siteName: site.name,
-					siteDomain: site.domain,
-				},
-				components: {
-					button: (
-						<button
-							className="purchase-item__link"
-							onClick={ ( event ) => {
-								event.stopPropagation();
-								event.preventDefault();
-								page( getPurchaseListUrlFor( slug ) );
-							} }
-							title={ translate( 'View subscriptions for %(siteName)s', {
-								args: {
-									siteName: site.name,
-								},
-							} ) }
-						/>
-					),
-					link: (
-						<a
-							className="purchase-item__link"
-							href={ 'https://' + site.domain }
-							target="_blank"
-							rel="noreferrer"
-							title={ translate( 'View %(siteName)s', {
-								args: {
-									siteName: site.name,
-								},
-							} ) }
-						/>
-					),
-				},
-			} );
+			if ( site.name && slug ) {
+				// translators: The string contains the name of the site, and the URL of the site e.g. for Block Store (blockstore.com)
+				return translate(
+					'for {{button}}%(siteName)s{{/button}} ({{link}}%(siteDomain)s{{/link}})',
+					{
+						args: {
+							siteName: site.name,
+							siteDomain: site.domain,
+						},
+						components: {
+							button: (
+								<button
+									className="purchase-item__link"
+									onClick={ ( event ) => {
+										event.stopPropagation();
+										event.preventDefault();
+										page( getPurchaseListUrlFor( slug ) );
+									} }
+									title={ translate( 'View subscriptions for %(siteName)s', {
+										textOnly: true,
+										args: {
+											siteName: site.name,
+										},
+									} ) }
+								/>
+							),
+							link: (
+								<a
+									className="purchase-item__link"
+									href={ 'https://' + site.domain }
+									target="_blank"
+									rel="noreferrer"
+									title={ translate( 'View %(siteName)s', {
+										textOnly: true,
+										args: {
+											siteName: site.name,
+										},
+									} ) }
+								/>
+							),
+						},
+					}
+				);
+			}
 		}
 
-		if ( isDisconnectedSite ) {
+		if ( isDisconnectedSite && productType ) {
 			return translate( '%(purchaseType)s for %(site)s', {
+				textOnly: true,
 				args: {
 					purchaseType: productType,
 					site: purchase.domain,
@@ -506,6 +549,9 @@ class PurchaseItem extends Component {
 	}
 
 	getPaymentMethod() {
+		if ( this.props.isPlaceholder ) {
+			return null;
+		}
 		const { purchase, translate } = this.props;
 
 		if ( isIncludedWithPlan( purchase ) ) {
@@ -549,7 +595,7 @@ class PurchaseItem extends Component {
 		}
 
 		if ( isRenewing( purchase ) ) {
-			if ( purchase.payment.type === 'credit_card' ) {
+			if ( purchase.payment.type === 'credit_card' && purchase.payment.creditCard ) {
 				const paymentMethodType = purchase.payment.creditCard.displayBrand
 					? purchase.payment.creditCard.displayBrand
 					: purchase.payment.creditCard.type || purchase.payment.paymentPartner || '';
@@ -585,6 +631,9 @@ class PurchaseItem extends Component {
 	}
 
 	getSiteIcon = () => {
+		if ( this.props.isPlaceholder ) {
+			return null;
+		}
 		const { site, isDisconnectedSite, purchase, iconUrl } = this.props;
 
 		if ( isAkismetTemporarySitePurchase( purchase ) ) {
@@ -617,10 +666,13 @@ class PurchaseItem extends Component {
 			);
 		}
 
-		return <SiteIcon site={ site } size={ 36 } />;
+		return <SiteIcon site={ site ?? undefined } size={ 36 } />;
 	};
 
 	renderPurchaseItemContent = () => {
+		if ( this.props.isPlaceholder ) {
+			return null;
+		}
 		const { purchase, showSite, isBackupMethodAvailable } = this.props;
 
 		return (
@@ -650,20 +702,7 @@ class PurchaseItem extends Component {
 	};
 
 	render() {
-		const {
-			isPlaceholder,
-			isDisconnectedSite,
-			getManagePurchaseUrlFor,
-			purchase,
-			slug,
-			isJetpack,
-		} = this.props;
-
-		const classes = clsx( 'purchase-item', {
-			'purchase-item--disconnected': isDisconnectedSite,
-		} );
-
-		if ( isPlaceholder ) {
+		if ( this.props.isPlaceholder ) {
 			return (
 				<>
 					<CompactCard className="purchase-item__placeholder-wrapper purchases-list-header" />
@@ -674,10 +713,16 @@ class PurchaseItem extends Component {
 			);
 		}
 
+		const { isDisconnectedSite, getManagePurchaseUrlFor, purchase, slug, isJetpack } = this.props;
+
+		const classes = clsx( 'purchase-item', {
+			'purchase-item--disconnected': isDisconnectedSite,
+		} );
+
 		let onClick;
 		let href;
 
-		if ( ! isPlaceholder && getManagePurchaseUrlFor ) {
+		if ( getManagePurchaseUrlFor && slug ) {
 			// A "disconnected" Jetpack site's purchases may be managed.
 			// A "disconnected" WordPress.com site may *NOT* be managed (the user has been removed), unless it is a
 			// WPCOM generated temporary site, which is created during the siteless checkout flow. (currently Jetpack & Akismet can have siteless purchases).
@@ -719,27 +764,22 @@ function BackupPaymentMethodNotice() {
 	);
 }
 
-PurchaseItem.propTypes = {
-	getManagePurchaseUrlFor: PropTypes.func,
-	isDisconnectedSite: PropTypes.bool,
-	isJetpack: PropTypes.bool,
-	isPlaceholder: PropTypes.bool,
-	purchase: PropTypes.object,
-	showSite: PropTypes.bool,
-	slug: PropTypes.string,
-	isBackupMethodAvailable: PropTypes.bool,
-};
+export default connect(
+	( state: AppState, ownProps: PurchaseItemPropsPlaceholder | PurchaseItemProps ) => {
+		if ( ownProps.isPlaceholder ) {
+			return {};
+		}
 
-export default connect( ( state, { site } ) => {
-	const stateSite = getSite( state, get( site, 'ID' ) );
+		const stateSite = getSite( state, ownProps.site?.ID );
 
-	if ( ! stateSite ) {
+		if ( ! stateSite ) {
+			return {
+				iconUrl: ownProps.site?.icon?.img,
+			};
+		}
+
 		return {
-			iconUrl: site?.icon?.img,
+			iconUrl: getSiteIconUrl( state, stateSite.ID ),
 		};
 	}
-
-	return {
-		iconUrl: getSiteIconUrl( state, stateSite.ID ),
-	};
-} )( localize( withLocalizedMoment( PurchaseItem ) ) );
+)( localize( withLocalizedMoment( PurchaseItem ) ) );

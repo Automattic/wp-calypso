@@ -113,7 +113,6 @@ class PurchasesList extends Component<
 						<PurchasesSite
 							key={ site.id }
 							siteId={ site.id }
-							name={ site.name }
 							slug={ site.slug }
 							purchases={ site.purchases }
 							showSite

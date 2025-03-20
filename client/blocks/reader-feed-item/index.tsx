@@ -22,11 +22,13 @@ import { getSiteName, getSiteUrl } from 'calypso/reader/get-helpers';
 import { getFeedUrl } from 'calypso/reader/route';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { NoticeOptions } from 'calypso/state/notices/types';
 import './style.scss';
 
 interface ReaderFeedItemProps {
 	feed: Reader.FeedItem;
 	source: string; // Indicates where the feed item is rendered.
+	shouldHideOnSubscribedState?: boolean; // To not render anything if the feed is in subscribed state.
 }
 
 /**
@@ -41,16 +43,16 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 			railcar,
 		},
 		source,
+		shouldHideOnSubscribedState,
 	} = props;
 	const isWpcomFeed = !! blogId;
 	const translate = useTranslate();
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const dispatch = useDispatch();
-	const {
-		isPending: isSubscribing,
-		isSuccess: isSubscribed,
-		mutate: onSubscribe,
-	} = SubscriptionManager.useSiteSubscribeMutation();
+	const { isPending: isSubscribing, mutate: onSubscribe } =
+		SubscriptionManager.useSiteSubscribeMutation();
+	const { isPending: isUnsubscribing, mutate: onUnsubscribe } =
+		SubscriptionManager.useSiteUnsubscribeMutation();
 
 	// Hook for tracking.
 	const recordSiteIconClicked = useRecordSiteIconClicked();
@@ -60,7 +62,11 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 
 	// Fetch feed and site data.
 	const queryFeed: boolean = ! isWpcomFeed; // No need to query feed data for WPCOM feeds.
-	const { data: feed, isLoading: isFeedLoading } = Reader.useReadFeedQuery( queryFeed, feedId );
+	const {
+		data: feed,
+		isLoading: isFeedLoading,
+		refetch: refetchFeed, // For cache invalidation and manually refetching the feed data.
+	} = Reader.useReadFeedQuery( queryFeed, feedId );
 	const { data: site, isLoading: isSiteLoading } = Reader.useReadFeedSiteQuery( Number( blogId ) );
 
 	if ( isFeedLoading || ( isWpcomFeed && isSiteLoading ) ) {
@@ -72,18 +78,16 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 	const displayUrl = isWpcomFeed && site ? getSiteUrl( { feed, site } ) : subscribeUrl;
 	const filteredDisplayUrl = filterURLForDisplay( displayUrl ?? '' );
 	const feedUrl = isWpcomFeed ? getFeedUrl( feed?.feed_ID ) : subscribeUrl;
-	const hasSubscribed = ( isWpcomFeed ? site?.is_following : feed?.is_following ) || isSubscribed;
+	const subscriptionId = feed?.subscription_id;
 	const iconUrl = isWpcomFeed ? site?.icon?.img ?? site?.icon?.ico : feed?.image;
 	const shouldTrackRecommendedSearch =
 		source === SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST && railcar;
-	const subscribeDisabled =
-		( isWpcomFeed ? site?.is_following : feed?.is_following ) || isSubscribing || isSubscribed;
 	const title =
 		isWpcomFeed && site
 			? getSiteName( { feed, site } )
 			: feed?.name ?? filterURLForDisplay( subscribeUrl );
 
-	function onSubscribeClick(): void {
+	function onSubscribeToggle(): void {
 		if ( ! isEmailVerified ) {
 			dispatch(
 				errorNotice( translate( 'Please verify your email before subscribing.' ), {
@@ -96,37 +100,79 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 			return;
 		}
 
-		onSubscribe( {
-			blog_id: blogId ?? undefined,
-			feed_id: feedId,
-			url: subscribeUrl,
-			onSuccess: () => {
-				dispatch(
-					successNotice(
-						translate( 'Success! You are now subscribed to %s.', { args: filteredDisplayUrl } ),
-						{ duration: 5000 }
-					)
-				);
+		const noticeOptions: NoticeOptions = { duration: 2000 };
+		if ( subscriptionId ) {
+			onUnsubscribe(
+				{
+					subscriptionId: subscriptionId,
+					blog_id: blogId ?? undefined,
+					url: subscribeUrl,
+				},
+				{
+					onSuccess: () => {
+						dispatch(
+							successNotice(
+								translate( 'Success! You are now subscribed to "%s".', {
+									args: title ?? filteredDisplayUrl,
+								} ),
+								noticeOptions
+							)
+						);
+						refetchFeed();
 
-				recordSearchSiteSubscribed( { blog_id: blogId, url: subscribeUrl, source } );
-
-				if ( shouldTrackRecommendedSearch ) {
-					// reader: action: site_followed, railcar, ui_algo, ui_position, fetch_algo, fetch_position, fetch_lang, rec_blog_id, (incorrect: only railcar & action accepted)
-					// subscriptions: action: recommended_search_item_site_subscribed, railcar
-					recordTrainTracksInteract( {
-						railcarId: railcar.railcar,
-						action: 'recommended_search_item_site_subscribed',
-					} );
+						if ( shouldTrackRecommendedSearch ) {
+							// reader: action: site_followed, railcar, ui_algo, ui_position, fetch_algo, fetch_position, fetch_lang, rec_blog_id, (incorrect: only railcar & action accepted)
+							// subscriptions: action: recommended_search_item_site_subscribed, railcar
+							recordTrainTracksInteract( {
+								railcarId: railcar.railcar,
+								action: 'recommended_search_item_site_unsubscribed',
+							} );
+						}
+					},
+					onError: () => {
+						dispatch(
+							errorNotice(
+								translate( 'Sorry, we had a problem unsubscribing. Please try again.' ),
+								noticeOptions
+							)
+						);
+					},
 				}
-			},
-			onError: () => {
-				dispatch(
-					errorNotice( translate( 'Sorry, we had a problem subscribing. Please try again.' ), {
-						duration: 5000,
-					} )
-				);
-			},
-		} );
+			);
+		} else {
+			onSubscribe( {
+				blog_id: blogId ?? undefined,
+				feed_id: feedId,
+				url: subscribeUrl,
+				onSuccess: () => {
+					dispatch(
+						successNotice(
+							translate( 'Success! You are now subscribed to %s.', { args: filteredDisplayUrl } ),
+							noticeOptions
+						)
+					);
+
+					recordSearchSiteSubscribed( { blog_id: blogId, url: subscribeUrl, source } );
+
+					if ( railcar ) {
+						// reader: action: site_followed, railcar, ui_algo, ui_position, fetch_algo, fetch_position, fetch_lang, rec_blog_id, (incorrect: only railcar & action accepted)
+						// subscriptions: action: recommended_search_item_site_subscribed, railcar
+						recordTrainTracksInteract( {
+							railcarId: railcar.railcar,
+							action: 'recommended_search_item_site_subscribed',
+						} );
+					}
+				},
+				onError: () => {
+					dispatch(
+						errorNotice(
+							translate( 'Sorry, we had a problem subscribing. Please try again.' ),
+							noticeOptions
+						)
+					);
+				},
+			} );
+		}
 	}
 
 	function onTitleClick(): void {
@@ -170,15 +216,19 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 
 	const SubscribeButton = (): JSX.Element => (
 		<Button
-			variant="primary"
-			disabled={ subscribeDisabled }
-			isBusy={ isSubscribing }
-			onClick={ onSubscribeClick }
+			variant={ subscriptionId ? 'secondary' : 'primary' }
+			isBusy={ isSubscribing || isUnsubscribing }
+			disabled={ isSubscribing || isUnsubscribing }
+			onClick={ onSubscribeToggle }
 			__next40pxDefaultSize
 		>
-			{ hasSubscribed ? translate( 'Subscribed' ) : translate( 'Subscribe' ) }
+			{ subscriptionId ? translate( 'Unsubscribe' ) : translate( 'Subscribe' ) }
 		</Button>
 	);
+
+	if ( subscriptionId && shouldHideOnSubscribedState ) {
+		return null;
+	}
 
 	return (
 		<HStack as="li" className="reader-feed-item" alignment="center" spacing={ 8 }>

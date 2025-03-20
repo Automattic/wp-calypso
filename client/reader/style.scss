@@ -5,7 +5,6 @@ body.is-section-reader {
 	div.layout.is-global-sidebar-visible {
 		.main {
 			padding: 24px;
-			border-block-end: 1px solid var(--studio-gray-0);
 
 			@media (max-width: $break-small) {
 				padding: 24px 0;
