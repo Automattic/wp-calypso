@@ -396,7 +396,6 @@
  * Context: All Domain Management
  */
 .wpcom-site .hosting-dashboard-layout.sites-dashboard .hosting-dashboard-item-view__content .context-all-domain-management,
-.is-section-email,
 /* For Domain and Email related pages under site context. */
 .context-all-domain-management {
 	&.main {
@@ -463,6 +462,10 @@
 				.components-button.is-link {
 					text-decoration: none;
 				}
+			}
+
+			.vertical-nav {
+				margin-top: 0;
 			}
 
 			&-item.card.is-compact {

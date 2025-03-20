@@ -51,30 +51,32 @@ const MailboxListHeader = ( {
 
 	return (
 		<div className="email-plan-mailboxes-list__mailbox-list">
-			<SectionHeader
-				isPlaceholder={ isPlaceholder }
-				label={
-					<>
-						{ !! showIcon && domain && <HeaderIcon /> }
-						{ getListHeaderTextForAccountType() }
-					</>
-				}
-			>
-				{ addMailboxPath && (
-					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-					// @ts-expect-error
-					<Button href={ addMailboxPath } variant="link" disabled={ !! disableActions }>
-						{ translate( 'Add mailbox' ) }
-					</Button>
-				) }
-				{ showContextMenu && (
-					<ContextMenu
-						domain={ domain }
-						className="email-plan-mailboxes-list__mailbox-context-menu"
-					/>
-				) }
-			</SectionHeader>
-			{ children }
+			<div className="vertical-nav">
+				<SectionHeader
+					isPlaceholder={ isPlaceholder }
+					label={
+						<>
+							{ !! showIcon && domain && <HeaderIcon /> }
+							{ getListHeaderTextForAccountType() }
+						</>
+					}
+				>
+					{ addMailboxPath && (
+						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+						// @ts-expect-error
+						<Button href={ addMailboxPath } variant="link" disabled={ !! disableActions }>
+							{ translate( 'Add mailbox' ) }
+						</Button>
+					) }
+					{ showContextMenu && (
+						<ContextMenu
+							domain={ domain }
+							className="email-plan-mailboxes-list__mailbox-context-menu"
+						/>
+					) }
+				</SectionHeader>
+				{ children }
+			</div>
 		</div>
 	);
 };
