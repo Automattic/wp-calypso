@@ -104,6 +104,11 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 		[]
 	);
 
+	const stepSlugDerivedFromState = flow.useAlternateStep?.( {
+		currentStepRoute,
+		steps: flowSteps,
+	} );
+
 	flow.useSideEffect?.( currentStepRoute, navigate );
 
 	useSyncRoute();
@@ -217,6 +222,11 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 		<Loading className="wpcom-loading__boot" />
 	);
 
+	let stepSlugToRedirectTo = flow.__experimentalUseBuiltinAuth ? firstStepSlug : stepPaths[ 0 ];
+	if ( isLoggedIn && stepSlugDerivedFromState ) {
+		stepSlugToRedirectTo = stepSlugDerivedFromState;
+	}
+
 	return (
 		<Boot fallback={ fallback }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
@@ -243,9 +253,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 						element={
 							<>
 								{ fallback }
-								<RedirectToStep
-									slug={ flow.__experimentalUseBuiltinAuth ? firstStepSlug : stepPaths[ 0 ] }
-								/>
+								<RedirectToStep slug={ stepSlugToRedirectTo } />
 							</>
 						}
 					/>

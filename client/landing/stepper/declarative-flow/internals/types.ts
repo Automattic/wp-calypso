@@ -130,6 +130,14 @@ export type UseTracksEventPropsHook = () => {
 	>;
 };
 
+type UseAlternateStepHook = ( {
+	currentStepRoute,
+	steps,
+}: {
+	currentStepRoute: string;
+	steps: readonly StepperStep[];
+} ) => StepperStep[ 'slug' ] | undefined;
+
 /**
  * @deprecated Use FlowV2 instead.
  */
@@ -179,6 +187,8 @@ export type FlowV1 = {
 	 */
 	useSideEffect?: UseSideEffectHook< ReturnType< FlowV1[ 'useSteps' ] > >;
 	useTracksEventProps?: UseTracksEventPropsHook;
+
+	useAlternateStep?: UseAlternateStepHook;
 };
 
 export type FlowV2 = {
@@ -245,6 +255,8 @@ export type FlowV2 = {
 	 * @deprecated Avoid this. Assert your conditions in `initialize` instead unless you're 100% sure you need this.
 	 */
 	useAssertConditions?: UseAssertConditionsHook< ReturnType< FlowV1[ 'useSteps' ] > >;
+
+	useAlternateStep?: UseAlternateStepHook;
 };
 
 export type Flow = FlowV1 | FlowV2;

@@ -5,7 +5,7 @@ import wpcomRequest from 'wpcom-proxy-request';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { ImporterMainPlatform } from 'calypso/lib/importer/types';
+import { getImporterEngines } from 'calypso/lib/importer/importer-config';
 import { navigate as calypsoLibNavigate } from 'calypso/lib/navigate';
 import { addQueryArgs } from 'calypso/lib/route';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
@@ -34,6 +34,7 @@ import {
 	type ProvidedDependencies,
 } from '../../internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
+import type { ImporterMainPlatform, ImporterPlatform } from 'calypso/lib/importer/types';
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -90,6 +91,35 @@ const siteSetupFlow: Flow = {
 		}
 
 		return steps;
+	},
+	useAlternateStep( { currentStepRoute, steps } ) {
+		const urlQueryParams = useQuery();
+		const intent = urlQueryParams.get( 'intent' );
+		const importPlatform = urlQueryParams.get( 'importPlatform' );
+
+		if ( currentStepRoute !== '' || intent !== 'import' || ! importPlatform ) {
+			return undefined;
+		}
+
+		if ( ! importPlatform ) {
+			if ( steps.includes( STEPS.IMPORT_LIST ) ) {
+				return STEPS.IMPORT_LIST.slug;
+			}
+			return undefined;
+		}
+
+		const productImporters = getImporterEngines();
+		if ( ! productImporters.includes( importPlatform as ImporterPlatform ) ) {
+			return undefined;
+		}
+
+		const expectedStepSlug =
+			'importer' + importPlatform.charAt( 0 ).toUpperCase() + importPlatform.substring( 1 );
+		if ( steps.find( ( step ) => step.slug === expectedStepSlug ) ) {
+			return expectedStepSlug;
+		}
+
+		return undefined;
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
