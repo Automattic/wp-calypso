@@ -300,11 +300,6 @@ li.billing-history__receipt-item-discount--different-term {
 
 
 #purchases {
-	@media (max-width: 600px) {
-		.navigation-header {
-			padding: 1rem 0;
-		}
-	}
 	.navigation-header__main {
 		align-items: center;
 		flex-wrap: wrap;
