@@ -21,13 +21,8 @@ export default function getSite(
 		return null;
 	}
 
-	let rawSite;
+	const rawSite = getRawSite( state, siteIdOrSlug ) || getSiteBySlug( state, siteIdOrSlug );
 
-	if ( 'number' === typeof siteIdOrSlug ) {
-		rawSite = getRawSite( state, siteIdOrSlug );
-	} else {
-		rawSite = getSiteBySlug( state, siteIdOrSlug );
-	}
 	if ( ! rawSite ) {
 		return null;
 	}
