@@ -80,10 +80,15 @@ class PurchasesList extends Component<
 		 * linked with the user (they can't be, since they don't have any).
 		 */
 		const affectedSites = sites
-			.filter(
-				( site ) =>
-					( ! site?.plan.is_free || site?.products.length > 0 ) && site.capabilities.manage_options
-			)
+			.filter( ( site ) => {
+				if ( ! site?.plan?.is_free ) {
+					return site.capabilities.manage_options;
+				}
+				if ( site?.products && site?.products?.length > 0 ) {
+					return site.capabilities.manage_options;
+				}
+				return false;
+			} )
 			.map( ( site ) => site.slug );
 
 		if ( ! affectedSites.length ) {
