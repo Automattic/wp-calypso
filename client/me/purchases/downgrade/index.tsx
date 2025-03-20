@@ -185,7 +185,7 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 						<div>
 							<strong>
 								{ translate(
-									'We will change the plan immediately and pro-rate the remaining value from %(currentPlan)s to %(targetPlan)s.',
+									'We will change the plan immediately from %(currentPlan)s to %(targetPlan)s.',
 									{
 										args: {
 											currentPlan: currentPlan?.getTitle() ?? '',
