@@ -1,69 +1,42 @@
 import { localize } from 'i18n-calypso';
-import { Fragment } from 'react';
+import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
-import NavigationHeader from 'calypso/components/navigation-header';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
-import ExporterContainer from 'calypso/my-sites/exporter/container';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => {
-	let sectionContent;
+const SectionExport = ( { canUserExport, site, translate } ) => {
+	useEffect( () => {
+		// Auto-redirect to wp-admin if the user has permission and site data is loaded
+		if ( canUserExport && site && site.options?.admin_url ) {
+			window.location.href = `${ site.options.admin_url }export.php`;
+		}
+	}, [ canUserExport, site ] );
 
 	if ( ! canUserExport ) {
-		sectionContent = (
-			<EmptyContent
-				illustration="/calypso/images/illustrations/illustration-404.svg"
-				title={ translate( 'You are not authorized to view this page' ) }
-			/>
-		);
-	} else if ( isJetpack ) {
-		sectionContent = (
-			<EmptyContent
-				illustration="/calypso/images/illustrations/illustration-jetpack.svg"
-				title={ translate( 'Want to export your site?' ) }
-				line={ translate( "Visit your site's wp-admin for all your import and export needs." ) }
-				action={ translate( 'Export %(siteTitle)s', { args: { siteTitle: site.title } } ) }
-				actionURL={ site.options?.admin_url + 'export.php' }
-				actionTarget="_blank"
-			/>
-		);
-	} else {
-		sectionContent = (
-			<Fragment>
-				<NavigationHeader
-					navigationItems={ [] }
-					title={ translate( 'Export Content' ) }
-					subtitle={ translate(
-						'Back up or move your content to another site or platform. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-						{
-							components: {
-								learnMoreLink: <InlineSupportLink supportContext="export" showIcon={ false } />,
-							},
-						}
-					) }
+		return (
+			<Main>
+				<ScreenOptionsTab wpAdminPath="export.php" />
+				<DocumentHead title={ translate( 'Export' ) } />
+				<EmptyContent
+					illustration="/calypso/images/illustrations/illustration-404.svg"
+					title={ translate( 'You are not authorized to view this page' ) }
 				/>
-				<ExporterContainer />
-			</Fragment>
+			</Main>
 		);
 	}
 
+	// This will briefly show while redirecting
 	return (
 		<Main>
 			<ScreenOptionsTab wpAdminPath="export.php" />
 			<DocumentHead title={ translate( 'Export' ) } />
-			{ sectionContent }
+			<div></div>
 		</Main>
 	);
 };
@@ -73,9 +46,7 @@ export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
-		isJetpack: isJetpackSite( state, siteId ),
 		site,
-		siteSlug: getSelectedSiteSlug( state ),
 		canUserExport: canCurrentUser( state, siteId, 'manage_options' ),
 	};
 } )( localize( SectionExport ) );
