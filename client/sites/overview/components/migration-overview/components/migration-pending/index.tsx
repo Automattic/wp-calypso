@@ -1,24 +1,26 @@
-import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { LoadingPlaceholder } from '@automattic/components';
 import { Button, ClipboardButton } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import ConfirmModal from 'calypso/components/confirm-modal';
 import { HostingHeroButton } from 'calypso/components/hosting-hero';
 import Notice from 'calypso/components/notice';
+import { useSiteMigrationKey } from 'calypso/landing/stepper/hooks/use-site-migration-key';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { addQueryArgs } from 'calypso/lib/url';
 import { getMigrationType } from 'calypso/sites-dashboard/utils';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { getSiteOption } from 'calypso/state/sites/selectors';
 import Cards from '../cards';
 import { Container, Header } from '../layout';
 import useCancelMigration from './use-cancel-migration';
 import type { SiteDetails } from '@automattic/data-stores';
-import { successNotice, errorNotice } from 'calypso/state/notices/actions';
-import { useSiteMigrationKey } from 'calypso/landing/stepper/hooks/use-site-migration-key';
-import { getStatusForPlugin } from 'calypso/state/plugins/installed/selectors';
-import { PLUGIN_INSTALLATION_COMPLETED } from 'calypso/state/plugins/installed/status/constants';
 
-const getContinueMigrationUrl = ( site: SiteDetails ): string | null => {
+const getContinueMigrationUrl = (
+	site: SiteDetails,
+	migrationSourceSiteDomain?: string
+): string | null => {
 	const migrationType = getMigrationType( site );
 
 	const baseQueryArgs = {
@@ -28,6 +30,15 @@ const getContinueMigrationUrl = ( site: SiteDetails ): string | null => {
 	};
 
 	if ( migrationType === 'diy' ) {
+		if ( migrationSourceSiteDomain ) {
+			return addQueryArgs(
+				{
+					page: 'wpcom-migration',
+				},
+				migrationSourceSiteDomain + '/wp-admin/admin.php'
+			);
+		}
+
 		return addQueryArgs(
 			baseQueryArgs,
 			'/setup/hosted-site-migration/site-migration-instructions'
@@ -39,28 +50,23 @@ const getContinueMigrationUrl = ( site: SiteDetails ): string | null => {
 
 export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 	const translate = useTranslate();
-	const migrationType = getMigrationType( site );
-	const continueMigrationUrl = getContinueMigrationUrl( site );
-	const [ copied, setCopied ] = useState( false );
 	const dispatch = useDispatch();
-
-	// Check the wpcom-migration plugin status.
-	const pluginStatus = useSelector( ( state ) =>
-		getStatusForPlugin( state, site.ID, 'wpcom-migration' )
+	const migrationType = getMigrationType( site );
+	const migrationSourceSiteDomain = useSelector( ( state ) =>
+		getSiteOption( state, site.ID, 'migration_source_site_domain' )
 	);
+	const continueMigrationUrl = getContinueMigrationUrl( site, migrationSourceSiteDomain as string );
+	const [ copied, setCopied ] = useState( false );
 
-	console.log( 'pluginStatus', pluginStatus );
 	// Fetch the migration key.
 	const {
 		data: { migrationKey } = {},
 		error: migrationKeyError,
 		status: migrationKeyStatus,
 	} = useSiteMigrationKey( site.ID, {
-		enabled: PLUGIN_INSTALLATION_COMPLETED === pluginStatus,
+		enabled: true,
 		retry: 5,
 	} );
-
-	console.log( 'migrationKey', migrationKey );
 
 	useEffect( () => {
 		if ( ! copied ) {
@@ -109,6 +115,7 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 
 	const copyMigrationKey = () => {
 		if ( ! copied ) {
+			setCopied( true );
 			recordTracksEvent( 'calypso_migration_hosting_overview_key_copy_clicked', {
 				siteId: site.ID,
 				siteSlug: site.slug,
@@ -118,22 +125,20 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 		}
 
 		if ( migrationKey && ! migrationKeyError && ! copied ) {
-			setCopied( true );
+			recordTracksEvent( 'calypso_migration_hosting_overview_key_copy_success' );
 			dispatch(
 				successNotice( translate( 'Migration key copied to clipboard' ), {
-					duration: 2000,
+					duration: 3000,
 				} )
 			);
 		} else {
 			recordTracksEvent( 'calypso_migration_hosting_overview_key_copy_error', {
-				siteId: site.ID,
-				siteSlug: site.slug,
 				status: migrationKeyStatus,
 				error: migrationKeyError,
 			} );
 			dispatch(
 				errorNotice( translate( 'Failed to copy migration key' ), {
-					duration: 2000,
+					duration: 3000,
 				} )
 			);
 		}
@@ -187,9 +192,7 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 										onCopy={ copyMigrationKey }
 										text={ migrationKey }
 									>
-										{ copied
-											? translate( 'Copied migration key!' )
-											: translate( 'Copy migration key' ) }
+										{ translate( 'Copy migration key' ) }
 									</ClipboardButton>
 									{ ' • ' }
 								</>
