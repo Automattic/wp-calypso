@@ -50,7 +50,11 @@ const ReaderSiteSubscriptions = () => {
 	const filteredUnsubscribedFeedItems = unsubscribedFeedItems?.filter(
 		( feedItem: Reader.FeedItem ): boolean => {
 			const isDuplicate = subscriptions.find(
-				( subscription ) => ! subscription.isDeleted && subscription.feed_ID === feedItem.feed_ID
+				( subscription ): boolean =>
+					! subscription.isDeleted &&
+					// For match either compare feed_ID or URL.
+					( subscription.feed_ID === feedItem.feed_ID ||
+						subscription.URL === feedItem.subscribe_URL )
 			);
 
 			return ! isDuplicate;
