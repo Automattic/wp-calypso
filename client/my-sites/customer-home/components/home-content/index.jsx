@@ -82,7 +82,7 @@ const HomeContent = ( {
 		retry: false,
 	} );
 
-	const [ showFocusedLaunchpad, setShowFocusedLaunchpad ] = useState( false );
+	const [ focusedLaunchpadDismissed, setFocusedLaunchpadDismissed ] = useState( false );
 
 	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
 	const customDomains = siteDomains?.filter( ( domain ) => ! domain.isWPCOMDomain );
@@ -127,14 +127,6 @@ const HomeContent = ( {
 	}, [ emailDnsDiagnostics ] );
 
 	useEffect( () => {
-		if ( layout?.view_name === 'VIEW_FOCUSED_LAUNCHPAD' ) {
-			setShowFocusedLaunchpad( true );
-		} else {
-			setShowFocusedLaunchpad( false );
-		}
-	}, [ layout ] );
-
-	useEffect( () => {
 		const studioSiteId = getQueryArgs().studioSiteId;
 		if ( ! studioSiteId ) {
 			return;
@@ -160,17 +152,17 @@ const HomeContent = ( {
 		);
 	}
 
-	if ( showFocusedLaunchpad ) {
+	if ( layout?.view_name === 'VIEW_FOCUSED_LAUNCHPAD' && ! focusedLaunchpadDismissed ) {
 		return (
 			<FullScreenLaunchpad
 				onClose={ async () => {
-					setShowFocusedLaunchpad( false );
+					setFocusedLaunchpadDismissed( true );
 					await updateLaunchpadSettings( siteId, { launchpad_screen: 'skipped' } );
 					queryClient.invalidateQueries( { queryKey: getCacheKey( siteId ) } );
 				} }
 				onSiteLaunch={ () => {
 					setCelebrateLaunchModalIsOpen( true );
-					setShowFocusedLaunchpad( false );
+					setFocusedLaunchpadDismissed( true );
 				} }
 			/>
 		);
