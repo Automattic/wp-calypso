@@ -272,6 +272,7 @@ export default function ProductListing( {
 							? translate( 'This product does not support the volume discount.' )
 							: undefined
 					}
+					tooltipPosition="bottom"
 				/>
 			);
 		} );
