@@ -22,10 +22,10 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card, Gridicon } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import FormButton from 'calypso/components/forms/form-button';
 import HeaderCake from 'calypso/components/header-cake';
 import { cancelAndRefundPurchaseAsync } from 'calypso/lib/purchases/actions';
 import { Purchase } from 'calypso/lib/purchases/types';
@@ -150,18 +150,19 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 				type: 'downgrade',
 				to_product_id: targetPlan.getProductId(),
 			} );
+			await Promise.all( [
+				dispatch( refreshSitePlans( siteId! ) ),
+				dispatch( clearPurchases() ),
+			] );
 
-			// Refresh site plans and purchases first to ensure UI consistency
-			if ( siteId ) {
-				await Promise.all( [
-					dispatch( refreshSitePlans( siteId ) ),
-					dispatch( clearPurchases() ),
-				] );
-				page.redirect( purchaseRoot );
-			}
+			dispatch( successNotice( response.message, { duration: 5000 } ) );
+
+			// Wait for the notice to be displayed
+			await new Promise( ( resolve ) => setTimeout( resolve, 1000 ) );
+
+			page.redirect( purchaseRoot );
 
 			// Show success notification after data is refreshed
-			dispatch( successNotice( response.message, { duration: 5000 } ) );
 		} catch ( error: unknown ) {
 			if ( error instanceof Error ) {
 				dispatch( errorNotice( error.message, { duration: 5000 } ) );
@@ -204,24 +205,20 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 					<DowngradeFeatureList features={ features } purchase={ purchase } />
 
 					<div className="downgrade__confirm-buttons">
-						<FormButton
-							primary
-							onClick={ handleDowngrade }
-							isSubmitting={ isDowngrading }
-							disabled={ isDowngrading }
-						>
+						<Button variant="secondary" isBusy={ isDowngrading } onClick={ handleDowngrade }>
 							{ translate( 'Downgrade to %(targetPlan)s', {
 								args: { targetPlan: targetPlan?.getTitle() ?? '' },
 							} ) }
-						</FormButton>
-						<FormButton
-							isPrimary={ false }
+						</Button>
+						<Button
+							variant="primary"
+							disabled={ isDowngrading }
 							href={ getManagePurchaseUrlFor( siteSlug, purchaseId ) }
 						>
 							{ translate( 'Keep %(currentPlan)s', {
 								args: { currentPlan: currentPlan?.getTitle() ?? '' },
 							} ) }
-						</FormButton>
+						</Button>
 					</div>
 					<SupportLink usage="downgrade" purchase={ purchase } />
 				</div>

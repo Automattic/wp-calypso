@@ -1,15 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-@keyframes loading-button-animation {
-	from {
-		background-position: 100% 0;
-	}
-	to {
-		background-position: -100% 0;
-	}
-}
-
 .downgrade__wrapper-card {
 	.downgrade__content{
 		margin-bottom: 18px
@@ -84,24 +75,8 @@
 	display: flex;
 	margin-top: 24px;
 
-	.form-button {
-		margin-right: 8px;
-
-		&[disabled] {
-			animation: loading-button-animation 1.6s infinite linear;
-			background-color: var( --color-neutral-10 );
-			background-image: linear-gradient(
-				-45deg,
-				var( --color-neutral-10 ) 28%,
-				var( --color-neutral-0 ) 28%,
-				var( --color-neutral-0 ) 72%,
-				var( --color-neutral-10 ) 72%
-			);
-			background-size: 50% 100%;
-			background-repeat: repeat-x;
-			border-color: var( --color-neutral-5 );
-			pointer-events: none;
-		}
+	button {
+		margin-right: 18px;
 	}
 }
 
