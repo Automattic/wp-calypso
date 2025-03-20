@@ -68,6 +68,10 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 		);
 	}
 
+	const copyMigrationKey = () => {
+		console.log( 'copyMigrationKey' );
+	};
+
 	return (
 		<Container>
 			<ConfirmModal
@@ -98,6 +102,15 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 								? translate( 'Complete your migration' )
 								: translate( 'Start your migration' ) }
 						</HostingHeroButton>
+						{ 'diy' === migrationType && (
+							<Button
+								variant="link"
+								className="migration-pending__copy-key-button"
+								onClick={ copyMigrationKey }
+							>
+								{ translate( 'Copy migration key' ) }
+							</Button>
+						) }
 						<Button
 							variant="link"
 							className="migration-pending__cancel-button"
