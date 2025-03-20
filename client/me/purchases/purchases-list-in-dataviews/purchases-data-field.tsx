@@ -1,6 +1,6 @@
 import { isJetpackPlan, isJetpackProduct } from '@automattic/calypso-products';
 import { Purchases } from '@automattic/data-stores';
-import { Operator } from '@wordpress/dataviews';
+import { Fields, Operator } from '@wordpress/dataviews';
 import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -39,7 +39,6 @@ export const purchasesDataFields = [
 		id: 'site',
 		label: 'Site',
 		type: 'text',
-		width: '100%',
 		enableGlobalSearch: true,
 		enableSorting: true,
 		enableHiding: false,
@@ -53,34 +52,4 @@ export const purchasesDataFields = [
 			return <PurchaseItemRow purchase={ item } />;
 		},
 	},
-	// {
-	// 	id: 'purchases',
-	// 	label: 'Product',
-	// 	enableHiding: true,
-	// },
-	// {
-	// 	id: 'status',
-	// 	label: 'Status',
-	// 	enableHiding: true,
-	// },
-	// {
-	// 	id: 'payment-method',
-	// 	label: 'Payment method',
-	// 	enableHiding: true,
-	// },
-	// {
-	// 	id: 'blog_id',
-	// 	label: 'Blog ID',
-	// 	enableHiding: false,
-	// },
-	// {
-	// 	id: 'product_id',
-	// 	label: 'Product ID',
-	// 	enableHiding: true,
-	// },
-	// {
-	// 	id: 'domain',
-	// 	label: 'Domain',
-	// 	enableHiding: true,
-	// },
-] as Object[]; // Need to decide on a better type for this. Maybe DataViews has one built in?
+] as Fields< Purchases.Purchase >;
