@@ -1,3 +1,23 @@
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/components/src/styles/typography";
+
+.stats-module__date-picker-header {
+	margin: 32px 0 16px;
+	font-family: $brand-serif;
+	font-size: $font-title-medium;
+	line-height: 1.5;
+
+	@media (max-width: $break-medium) {
+		margin: 24px 0 16px;
+		padding: 0 16px;
+	}
+
+	@media (max-width: $break-mobile) {
+		margin: 16px 0;
+	}
+}
+
 .videopress-stats-module__grid {
 	display: grid;
 	grid-template-columns: 50% auto auto auto auto;
@@ -58,8 +78,4 @@
 	&:hover div {
 		background-color: var(--color-neutral-0);
 	}
-}
-
-.stats-module__date-picker-header {
-	margin-bottom: 16px;
 }
