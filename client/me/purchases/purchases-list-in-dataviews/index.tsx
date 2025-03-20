@@ -108,6 +108,10 @@ class PurchasesListDataView extends Component<
 			alert( 'You clicked something!!' );
 		};
 
+		const getItemId = ( item: Purchases.Purchase ) => {
+			return item.id.toString();
+		};
+
 		if ( purchases && purchases.length ) {
 			if ( useDataViewPurchasesList ) {
 				content = (
@@ -119,6 +123,7 @@ class PurchasesListDataView extends Component<
 							onChangeView={ onChangeView }
 							defaultLayouts={ { table: {} } }
 							actions={ undefined }
+							getItemId={ getItemId }
 							paginationInfo={ { totalItems: 100, totalPages: 10 } }
 						/>
 					</Card>
