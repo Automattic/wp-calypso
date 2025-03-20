@@ -103,7 +103,7 @@
 		
 		.section-header__label {
 			font-family: $font-sf-pro-display;
-			font-size: $font-body;
+			font-size: $font-title-small;
 			line-height: 40px;
 			font-weight: 500;
 			color: var(--color-text);
@@ -113,7 +113,7 @@
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			font-size: $font-body;
+			font-size: $font-title-small;
 			font-weight: 500;
 			color: var(--color-text);
 
