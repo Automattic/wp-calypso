@@ -1,11 +1,12 @@
 import { default as apiFetchPromise } from '@wordpress/api-fetch';
-import { apiFetch } from '@wordpress/data-controls';
+import { apiFetch, select } from '@wordpress/data-controls';
 import { addQueryArgs } from '@wordpress/url';
 import { default as wpcomRequestPromise, canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
 import { wpcomRequest } from '../wpcom-request-controls';
-import { isE2ETest } from '.';
+import { STORE_KEY } from './constants';
+import { isE2ETest, State } from '.';
 import type { APIFetchOptions, HelpCenterOptions, HelpCenterShowOptions } from './types';
 import type { SupportInteraction } from '@automattic/odie-client/src/types';
 
@@ -128,7 +129,18 @@ export const setShowHelpCenter = function* (
 	show: boolean,
 	allowPremiumSupport = false,
 	options: HelpCenterShowOptions = { hideBackButton: false, searchTerm: '' }
-) {
+): Generator< unknown, { type: 'HELP_CENTER_SET_SHOW'; show: boolean }, unknown > {
+	const { isMinimized }: State = ( yield select( STORE_KEY, 'getState' ) ) as State;
+
+	if ( ! show && isMinimized ) {
+		yield setIsMinimized( false );
+
+		return {
+			type: 'HELP_CENTER_SET_SHOW',
+			show: true,
+		} as const;
+	}
+
 	if ( ! isE2ETest() ) {
 		try {
 			if ( canAccessWpcomApis() ) {
@@ -160,7 +172,6 @@ export const setShowHelpCenter = function* (
 	}
 
 	yield setMessage( options.searchTerm );
-	yield setIsMinimized( false );
 
 	if ( allowPremiumSupport ) {
 		yield setAllowPremiumSupport( true );
