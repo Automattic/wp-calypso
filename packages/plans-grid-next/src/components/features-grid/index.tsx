@@ -403,9 +403,13 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		} else {
 			largeBreakpoint = 1320;
 		}
+
+		// we want to fit 3 plans per row in this breakpoint
+		const mediumBreakpoint = isInSiteDashboard ? 667 : 741;
+
 		return new Map( [
 			[ 'small', 0 ],
-			[ 'medium', 741 ],
+			[ 'medium', mediumBreakpoint ],
 			[ 'large', largeBreakpoint ],
 		] );
 	}, [ isInAdmin, isInSiteDashboard ] );
