@@ -5,6 +5,9 @@ import clsx from 'clsx';
 import { useSelector } from 'calypso/state';
 import { isFormDisabled } from 'calypso/state/login/selectors';
 
+import '@automattic/components/styles/wp-button-override.scss';
+import './style.scss';
+
 type UsernameOrEmailButtonProps = {
 	onClick: () => void;
 };
@@ -15,7 +18,9 @@ const UsernameOrEmailButton = ( { onClick }: UsernameOrEmailButtonProps ) => {
 
 	return (
 		<Button
-			className={ clsx( 'social-buttons__button', { disabled: isDisabled } ) }
+			className={ clsx( 'a8c-components-wp-button social-buttons__button', {
+				disabled: isDisabled,
+			} ) }
 			onClick={ onClick }
 			disabled={ isDisabled }
 			variant="secondary"

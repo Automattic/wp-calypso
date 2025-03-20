@@ -14,6 +14,8 @@ import { getErrorFromHTTPError, postLoginRequest } from 'calypso/state/login/uti
 import { errorNotice } from 'calypso/state/notices/actions';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import { getUxMode, getRedirectUri } from './utils';
+
+import '@automattic/components/styles/wp-button-override.scss';
 import './style.scss';
 
 const noop = () => {};
@@ -196,7 +198,9 @@ class GoogleSocialButton extends Component {
 					customButton
 				) : (
 					<Button
-						className={ clsx( 'social-buttons__button google', { disabled: isDisabled } ) }
+						className={ clsx( 'a8c-components-wp-button social-buttons__button google', {
+							disabled: isDisabled,
+						} ) }
 						onClick={ this.handleClick }
 						data-social-service="google"
 						disabled={ isDisabled }

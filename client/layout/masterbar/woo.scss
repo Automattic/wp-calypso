@@ -1563,14 +1563,15 @@ $breakpoint-mobile: 660px;
 
 					height: 48px;
 					padding: 8px 16px;
-					align-self: stretch;
 					border-radius: 8px; // stylelint-disable-line scales/radii
-					box-shadow: inset 0 0 0 2px var(--wp-components-color-accent), 0 0 0 currentColor;
-					width: 100%;
 					margin: 0;
 
-					&:hover:not(:focus) {
-						box-shadow: inset 0 0 0 2px var(--wp-components-color-accent-darker-20), 0 0 0 currentColor;
+					&:not(:focus) {
+						box-shadow: inset 0 0 0 2px $gray-300, 0 0 0 currentColor;
+					}
+
+					&:focus {
+						box-shadow: 0 0 0 currentColor inset, 0 0 0 2px var(--wp-components-color-accent);
 					}
 
 					> span {

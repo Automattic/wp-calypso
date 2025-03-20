@@ -7,6 +7,9 @@ import { useSelector, useDispatch } from 'calypso/state';
 import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import { isFormDisabled } from 'calypso/state/login/selectors';
 
+import '@automattic/components/styles/wp-button-override.scss';
+import './style.scss';
+
 type MagicLoginButtonProps = {
 	loginUrl: string;
 };
@@ -26,7 +29,7 @@ const MagicLoginButton = ( { loginUrl }: MagicLoginButtonProps ) => {
 
 	return (
 		<Button
-			className={ clsx( 'social-buttons__button magic-login-link', {
+			className={ clsx( 'a8c-components-wp-button social-buttons__button magic-login-link', {
 				disabled: isDisabled,
 			} ) }
 			href={ loginUrl }

@@ -10,6 +10,8 @@ import { connect } from 'react-redux';
 import AppleIcon from 'calypso/components/social-icons/apple';
 import { isFormDisabled } from 'calypso/state/login/selectors';
 import { getUxMode, getRedirectUri } from './utils';
+
+import '@automattic/components/styles/wp-button-override.scss';
 import './style.scss';
 
 const appleClientUrl =
@@ -148,7 +150,9 @@ class AppleLoginButton extends Component {
 					customButton
 				) : (
 					<Button
-						className={ clsx( 'social-buttons__button apple', { disabled: isDisabled } ) }
+						className={ clsx( 'a8c-components-wp-button social-buttons__button apple', {
+							disabled: isDisabled,
+						} ) }
 						data-social-service="apple"
 						onClick={ this.handleClick }
 						variant="secondary"

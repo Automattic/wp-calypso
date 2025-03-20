@@ -19,6 +19,8 @@ import { getErrorFromHTTPError, postLoginRequest } from 'calypso/state/login/uti
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getRedirectUri } from './utils';
 import type { AppState } from 'calypso/types';
+
+import '@automattic/components/styles/wp-button-override.scss';
 import './style.scss';
 
 type GithubLoginButtonProps = {
@@ -176,7 +178,9 @@ const GitHubLoginButton = ( {
 				customButton
 			) : (
 				<Button
-					className={ clsx( 'social-buttons__button github', { disabled: isDisabled } ) }
+					className={ clsx( 'a8c-components-wp-button social-buttons__button github', {
+						disabled: isDisabled,
+					} ) }
 					data-social-service="github"
 					{ ...eventHandlers }
 					variant="secondary"

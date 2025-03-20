@@ -1,10 +1,6 @@
 /*rtl:ignore*/
 
 .social-buttons__button {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 100%;
 	padding-inline: 18px;
 	font-size: $font-body-small;
 
@@ -13,6 +9,7 @@
 		border: 0;
 		border-radius: 0;
 		margin-right: auto;
+		fill: inherit;
 
 		&.disabled {
 			display: none;

@@ -2,7 +2,9 @@
 @import "@automattic/onboarding/styles/mixins";
 @import "@automattic/typography/styles/fonts";
 @import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/colors";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 $image-height: 47px;
 
@@ -814,11 +816,10 @@ $image-height: 47px;
 
 		box-shadow: none;
 		padding: unset;
-		border-radius: unset;
 		height: auto;
 
 		> svg {
-			border: 1px solid var(--studio-gray-10);
+			box-shadow: inset 0 0 0 $border-width $gray-300;
 			border-radius: 50%;
 			margin: 0;
 			width: 20px;
@@ -833,6 +834,7 @@ $image-height: 47px;
 
 		&:hover {
 			background: unset;
+			box-shadow: none;
 
 			> svg {
 				/* Matches hover state of .components-button */
@@ -844,7 +846,6 @@ $image-height: 47px;
 			box-shadow: none;
 
 			> svg {
-				border-color: transparent;
 				/* Matches focus state of .components-button */
 				box-shadow: 0 0 0 currentColor inset, 0 0 0 var(--wp-admin-border-width-focus) var(--wp-components-color-accent);
 			}
