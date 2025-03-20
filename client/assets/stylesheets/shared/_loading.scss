@@ -1,18 +1,23 @@
 .wpcom-site__logo {
-	fill: var(--color-neutral-10);
 	color: var(--color-neutral-10);
+	fill: currentColor;
 	position: fixed;
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
+	animation: wpcom__loading-pulse 1.6s ease-in-out infinite;
 
 	path {
-		fill: var(--color-neutral-10);
+		fill: currentColor;
 	}
 
 	@include breakpoint-deprecated( ">960px" ) {
 		width: 100px;
 		height: 100px;
+	}
+
+	&--blue {
+		color: var(--studio-blue-50);
 	}
 }
 
@@ -40,13 +45,6 @@
 .is-section-signup {
 	.wpcom-loading__boot {
 		margin: calc( 32vh + 12px ) auto 0;
-	}
-}
-
-.is-section-sites-dashboard,
-.is-section-overview {
-	.wpcom-loading__boot {
-		transform: translateX(calc(var(--sidebar-width-max) * -0.5));
 	}
 }
 
@@ -110,5 +108,17 @@
 	}
 	100% {
 		transform: scale(0);
+	}
+}
+
+@keyframes wpcom__loading-pulse {
+	0% {
+		opacity: 0.5;
+	}
+	50% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0.5;
 	}
 }

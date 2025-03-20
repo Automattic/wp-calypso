@@ -133,11 +133,7 @@ class Document extends Component {
 		}
 
 		const shouldNotShowLoadingLogo =
-			sectionName === 'checkout' ||
-			sectionName === 'stepper' ||
-			sectionName === 'signup' ||
-			sectionName === 'sites-dashboard' ||
-			sectionName === 'overview';
+			sectionName === 'checkout' || sectionName === 'stepper' || sectionName === 'signup';
 
 		const LoadingLogo = chooseLoadingLogo( this.props, {
 			isWpMobileApp: app?.isWpMobileApp,
@@ -202,7 +198,7 @@ class Document extends Component {
 									{ shouldNotShowLoadingLogo ? (
 										<Loading className="wpcom-loading__boot" />
 									) : (
-										<LoadingLogo size={ 72 } className="wpcom-site__logo" />
+										<LoadingLogo size={ 72 } className="wpcom-site__logo wpcom-site__logo--blue" />
 									) }
 								</div>
 							</div>
