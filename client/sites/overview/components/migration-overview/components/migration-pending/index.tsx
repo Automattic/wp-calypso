@@ -1,6 +1,9 @@
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { LoadingPlaceholder } from '@automattic/components';
-import { Button } from '@wordpress/components';
+import { Button, ClipboardButton } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import ConfirmModal from 'calypso/components/confirm-modal';
 import { HostingHeroButton } from 'calypso/components/hosting-hero';
 import Notice from 'calypso/components/notice';
@@ -10,6 +13,10 @@ import Cards from '../cards';
 import { Container, Header } from '../layout';
 import useCancelMigration from './use-cancel-migration';
 import type { SiteDetails } from '@automattic/data-stores';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { useSiteMigrationKey } from 'calypso/landing/stepper/hooks/use-site-migration-key';
+import { getStatusForPlugin } from 'calypso/state/plugins/installed/selectors';
+import { PLUGIN_INSTALLATION_COMPLETED } from 'calypso/state/plugins/installed/status/constants';
 
 const getContinueMigrationUrl = ( site: SiteDetails ): string | null => {
 	const migrationType = getMigrationType( site );
@@ -34,6 +41,38 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 	const translate = useTranslate();
 	const migrationType = getMigrationType( site );
 	const continueMigrationUrl = getContinueMigrationUrl( site );
+	const [ copied, setCopied ] = useState( false );
+	const dispatch = useDispatch();
+
+	// Check the wpcom-migration plugin status.
+	const pluginStatus = useSelector( ( state ) =>
+		getStatusForPlugin( state, site.ID, 'wpcom-migration' )
+	);
+
+	console.log( 'pluginStatus', pluginStatus );
+	// Fetch the migration key.
+	const {
+		data: { migrationKey } = {},
+		error: migrationKeyError,
+		status: migrationKeyStatus,
+	} = useSiteMigrationKey( site.ID, {
+		enabled: PLUGIN_INSTALLATION_COMPLETED === pluginStatus,
+		retry: 5,
+	} );
+
+	console.log( 'migrationKey', migrationKey );
+
+	useEffect( () => {
+		if ( ! copied ) {
+			return;
+		}
+
+		const timerId = setTimeout( () => {
+			setCopied( () => false );
+		}, 2000 );
+
+		return () => clearTimeout( timerId );
+	}, [ copied ] );
 
 	const title = translate( 'Your WordPress site is ready to be migrated' );
 	const subTitle =
@@ -69,7 +108,35 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 	}
 
 	const copyMigrationKey = () => {
-		console.log( 'copyMigrationKey' );
+		if ( ! copied ) {
+			recordTracksEvent( 'calypso_migration_hosting_overview_key_copy_clicked', {
+				siteId: site.ID,
+				siteSlug: site.slug,
+				status: migrationKeyStatus,
+				error: migrationKeyError,
+			} );
+		}
+
+		if ( migrationKey && ! migrationKeyError && ! copied ) {
+			setCopied( true );
+			dispatch(
+				successNotice( translate( 'Migration key copied to clipboard' ), {
+					duration: 2000,
+				} )
+			);
+		} else {
+			recordTracksEvent( 'calypso_migration_hosting_overview_key_copy_error', {
+				siteId: site.ID,
+				siteSlug: site.slug,
+				status: migrationKeyStatus,
+				error: migrationKeyError,
+			} );
+			dispatch(
+				errorNotice( translate( 'Failed to copy migration key' ), {
+					duration: 2000,
+				} )
+			);
+		}
 	};
 
 	return (
@@ -102,22 +169,39 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 								? translate( 'Complete your migration' )
 								: translate( 'Start your migration' ) }
 						</HostingHeroButton>
-						{ 'diy' === migrationType && (
+						<div className="migration-pending__secondary-buttons">
+							{ 'diy' === migrationType && migrationKey && (
+								<>
+									<ClipboardButton
+										style={ {
+											cursor: copied ? 'default' : 'pointer',
+											pointerEvents: 'auto',
+											textDecoration: 'underline',
+											margin: 0,
+											padding: 0,
+											boxShadow: 'none',
+											opacity: copied ? 0.5 : 1,
+											outline: 'none',
+										} }
+										className="migration-pending__copy-key-button"
+										onCopy={ copyMigrationKey }
+										text={ migrationKey }
+									>
+										{ copied
+											? translate( 'Copied migration key!' )
+											: translate( 'Copy migration key' ) }
+									</ClipboardButton>
+									{ ' • ' }
+								</>
+							) }
 							<Button
 								variant="link"
-								className="migration-pending__copy-key-button"
-								onClick={ copyMigrationKey }
+								className="migration-pending__cancel-button"
+								onClick={ openCancellationModal }
 							>
-								{ translate( 'Copy migration key' ) }
+								{ translate( 'Cancel migration' ) }
 							</Button>
-						) }
-						<Button
-							variant="link"
-							className="migration-pending__cancel-button"
-							onClick={ openCancellationModal }
-						>
-							{ translate( 'Cancel migration' ) }
-						</Button>
+						</div>
 					</div>
 				) }
 			</Header>

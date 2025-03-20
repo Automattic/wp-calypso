@@ -18,8 +18,17 @@
 		margin: 0 auto;
 	}
 
+	.migration-pending__secondary-buttons {
+		display: flex;
+		flex-direction: row;
+		gap: 0.5rem;
+		width: fit-content;
+		align-items: center;
+		margin: 0 auto;
+	}
 
-	.migration-pending__cancel-button {
+	.migration-pending__cancel-button,
+	.migration-pending__copy-key-button {
 		color: var(--studio-gray-80);
 	}
 
