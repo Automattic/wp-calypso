@@ -4,6 +4,7 @@ import { Operator } from '@wordpress/dataviews';
 import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
+import { managePurchase } from '../paths';
 import PurchaseItem from '../purchase-item';
 
 function PurchaseItemRow( props: { purchase: Purchases.Purchase } ) {
@@ -19,6 +20,7 @@ function PurchaseItemRow( props: { purchase: Purchases.Purchase } ) {
 
 	return (
 		<PurchaseItem
+			getManagePurchaseUrlFor={ managePurchase }
 			key={ purchase.id }
 			slug={ purchase.siteName }
 			isDisconnectedSite={ ! site }
