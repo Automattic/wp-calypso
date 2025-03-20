@@ -449,6 +449,7 @@ const PlansFeaturesMain = ( {
 		eligibleForFreeHostingTrial,
 		hasRedeemedDomainCredit: currentPlan?.hasRedeemedDomainCredit,
 		hiddenPlans,
+		hideCurrentPlan: isInSiteDashboard,
 		intent,
 		isDisplayingPlansNeededForFeature,
 		isInSignup,
@@ -851,7 +852,6 @@ const PlansFeaturesMain = ( {
 										coupon={ coupon }
 										currentSitePlanSlug={ sitePlanSlug }
 										generatedWPComSubdomain={ resolvedSubdomainName }
-										hideSpotlightPlan={ isInSiteDashboard }
 										gridPlanForSpotlight={ gridPlanForSpotlight }
 										gridPlans={ gridPlansForFeaturesGrid }
 										hideUnavailableFeatures={ hideUnavailableFeatures }
