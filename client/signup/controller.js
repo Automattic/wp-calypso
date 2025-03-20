@@ -192,7 +192,9 @@ export default {
 
 		store.set( 'signup-locale', localeFromParams );
 
-		if ( isOnboardingFlow( flowName ) ) {
+		// @alshakero: the `context.params.flowName !== 'user'` is a terrible hack to prevent people landing at /start/user from being redirected to the onboarding flow.
+		// There is some login else where setting the `flowName` value to `onboarding`, which trigger a redirect breaking the lgocin flow at /start/iser
+		if ( isOnboardingFlow( flowName ) && context.params.flowName !== 'user' ) {
 			setReferrerPolicy();
 			let url =
 				getStepUrl(
