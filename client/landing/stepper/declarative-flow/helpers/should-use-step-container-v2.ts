@@ -1,7 +1,7 @@
 import configApi from '@automattic/calypso-config';
-import { SITE_SETUP_FLOW } from '@automattic/onboarding';
+import { SITE_SETUP_FLOW, ONBOARDING_FLOW } from '@automattic/onboarding';
 
-const FLOWS_USING_STEP_CONTAINER_V2 = [ SITE_SETUP_FLOW ];
+const FLOWS_USING_STEP_CONTAINER_V2 = [ SITE_SETUP_FLOW, ONBOARDING_FLOW ];
 
 export const shouldUseStepContainerV2 = ( flow: string ) => {
 	return (

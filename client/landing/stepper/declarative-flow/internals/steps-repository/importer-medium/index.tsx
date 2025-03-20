@@ -5,7 +5,7 @@ import './style.scss';
 
 const Importer = withImporterWrapper( MediumImporter );
 
-const ImporterMedium: Step = function ( props ) {
+const ImporterMedium: Step< { submits: Record< string, unknown > } > = function ( props ) {
 	return <Importer importer="medium" { ...props } />;
 };
 

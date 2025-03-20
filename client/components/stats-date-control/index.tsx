@@ -123,6 +123,7 @@ const StatsDateControl = ( {
 		const queryParamsObject = qs.parse( queryParams );
 		removeOutOfRangeStartDate( queryParamsObject, startDate, endDate );
 		delete queryParamsObject.shortcut;
+		delete queryParamsObject.navigation;
 
 		const dateRangeParams = Object.assign( {}, queryParamsObject, {
 			chartStart: startDate,

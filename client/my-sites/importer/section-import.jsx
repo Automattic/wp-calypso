@@ -298,10 +298,16 @@ class SectionImport extends Component {
 					comment:
 						'This text appears above a list of service icons (e.g. Wix, Squarespace) asking the user to choose one.',
 			  } );
+		const isImportSuccess = this.props.siteImports.some(
+			( importItem ) => importItem.importerState === appStates.IMPORT_SUCCESS
+		);
+		const skipHeader = isSpecificImporter && isImportSuccess;
 		return (
 			<>
 				<Interval onTick={ this.updateFromAPI } period={ EVERY_FIVE_SECONDS } />
-				<SectionHeader label={ sectionHeaderLabel } className="importer__section-header" />
+				{ ! skipHeader && (
+					<SectionHeader label={ sectionHeaderLabel } className="importer__section-header" />
+				) }
 				{ this.renderImporters() }
 			</>
 		);

@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { isBusinessPlan, isPremiumPlan } from '@automattic/calypso-products';
 import { Onboard } from '@automattic/data-stores';
+import { AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import userAgent from 'calypso/lib/user-agent';
 import { useBigSkyBeforePlans } from '../declarative-flow/helpers/use-bigsky-before-plans-experiment';
@@ -21,7 +22,7 @@ const invalidGoals = [
 	SiteGoal.SellDigital,
 ];
 
-export function useIsBigSkyEligible() {
+export function useIsBigSkyEligible( flowName?: string ) {
 	const { isOwner } = useIsSiteOwner();
 	const site = useSite();
 	const product_slug = site?.plan?.product_slug || '';
@@ -37,6 +38,10 @@ export function useIsBigSkyEligible() {
 
 	if ( isLoadingBigsky ) {
 		return { isLoading: true, isEligible: null };
+	}
+
+	if ( flowName === AI_SITE_BUILDER_FLOW ) {
+		return { isLoading: false, isEligible: true };
 	}
 
 	if ( isBigSkyBeforePlansExperiment ) {

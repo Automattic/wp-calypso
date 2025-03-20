@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { SET_UP_EMAIL_AUTHENTICATION_FOR_YOUR_DOMAIN } from '@automattic/urls';
 import { useQueryClient } from '@tanstack/react-query';
@@ -15,6 +16,7 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-domain-diagnostics-query';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
+import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -48,6 +50,7 @@ import {
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CelebrateLaunchModal from '../celebrate-launch-modal';
+import { FullScreenLaunchpad } from '../full-screen-launchpad';
 
 import './style.scss';
 
@@ -75,10 +78,13 @@ const HomeContent = ( {
 	const isP2 = site?.options?.is_wpforteams_site;
 
 	const { data: layout, isLoading, error: homeLayoutError } = useHomeLayoutQuery( siteId );
+	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
 
 	const { data: allDomains = [], isSuccess } = useGetDomainsQuery( site?.ID ?? null, {
 		retry: false,
 	} );
+
+	const [ focusedLaunchpadDismissed, setFocusedLaunchpadDismissed ] = useState( false );
 
 	const siteDomains = useSelector( ( state ) => getDomainsBySiteId( state, siteId ) );
 	const customDomains = siteDomains?.filter( ( domain ) => ! domain.isWPCOMDomain );
@@ -144,6 +150,22 @@ const HomeContent = ( {
 			<EmptyContent
 				title={ preventWidows( title ) }
 				illustration="/calypso/images/illustrations/error.svg"
+			/>
+		);
+	}
+
+	if ( layout?.view_name === 'VIEW_FOCUSED_LAUNCHPAD' && ! focusedLaunchpadDismissed ) {
+		return (
+			<FullScreenLaunchpad
+				onClose={ async () => {
+					setFocusedLaunchpadDismissed( true );
+					skipCurrentView( null, true );
+					await updateLaunchpadSettings( siteId, { launchpad_screen: 'skipped' } );
+				} }
+				onSiteLaunch={ () => {
+					setCelebrateLaunchModalIsOpen( true );
+					setFocusedLaunchpadDismissed( true );
+				} }
 			/>
 		);
 	}

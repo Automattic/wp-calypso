@@ -1104,14 +1104,6 @@ const ComparisonGrid = ( {
 	);
 };
 
-const GRID_BREAKPOINTS = new Map( [
-	[ 'small', 0 ],
-	[ 'smedium', 686 ],
-	[ 'medium', 835 ], // enough to fit Enterpreneur plan. was 686
-	[ 'large', 1005 ], // enough to fit Enterpreneur plan. was 870
-	[ 'xlarge', 1180 ],
-] );
-
 // TODO
 // Now that everything under is functional component, we can deprecate this wrapper and only keep ComparisonGrid instead.
 // More details can be found in https://github.com/Automattic/wp-calypso/issues/87047
@@ -1124,6 +1116,7 @@ const WrappedComparisonGrid = ( {
 	recordTracksEvent,
 	allFeaturesList,
 	intervalType,
+	isInSiteDashboard,
 	isInSignup,
 	currentSitePlanSlug,
 	selectedPlan,
@@ -1142,10 +1135,22 @@ const WrappedComparisonGrid = ( {
 }: ComparisonGridExternalProps ) => {
 	const gridContainerRef = useRef< HTMLDivElement >( null );
 
+	const gridBreakpoints = useMemo( () => {
+		// we want to fit up to the Commerce plan in this breakpoint
+		const xlargeBreakpoint = isInSiteDashboard ? 1114 : 1180;
+		return new Map( [
+			[ 'small', 0 ],
+			[ 'smedium', 686 ],
+			[ 'medium', 835 ],
+			[ 'large', 1005 ],
+			[ 'xlarge', xlargeBreakpoint ],
+		] );
+	}, [ isInSiteDashboard ] );
+
 	// TODO: this will be deprecated along side removing the wrapper component
 	const gridSize = useGridSize( {
 		containerRef: gridContainerRef,
-		containerBreakpoints: GRID_BREAKPOINTS,
+		containerBreakpoints: gridBreakpoints,
 	} );
 
 	const classNames = clsx( 'plans-grid-next', className, {
@@ -1176,6 +1181,7 @@ const WrappedComparisonGrid = ( {
 			>
 				<ComparisonGrid
 					intervalType={ intervalType }
+					isInSiteDashboard={ isInSiteDashboard }
 					isInSignup={ isInSignup }
 					currentSitePlanSlug={ currentSitePlanSlug }
 					siteId={ siteId }

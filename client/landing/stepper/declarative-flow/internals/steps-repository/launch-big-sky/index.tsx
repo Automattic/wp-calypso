@@ -8,24 +8,27 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, FormEvent, useState } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { useSiteData } from '../../../../hooks/use-site-data';
-import '../processing-step/style.scss';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
+import '../processing-step/style.scss';
 import './styles.scss';
 
 const SiteIntent = Onboard.SiteIntent;
 
-const LaunchBigSky: Step = function () {
+const LaunchBigSky: Step = function ( props ) {
+	const { flow } = props;
 	const { __ } = useI18n();
 	const [ isError, setError ] = useState( false );
 	const [ progress, setProgress ] = useState( 0 );
 	const { siteSlug, siteId, site } = useSiteData();
 	const translate = useTranslate();
-	const { isEligible, isLoading } = useIsBigSkyEligible();
+	const urlQuery = useQuery();
+	const { isEligible, isLoading } = useIsBigSkyEligible( flow );
 	const { setDesignOnSite, setStaticHomepageOnSite, setGoalsOnSite, setIntentOnSite } =
 		useDispatch( SITE_STORE );
 	const goals = useSelect(
@@ -103,8 +106,15 @@ const LaunchBigSky: Step = function () {
 				}
 				setProgress( 75 );
 
+				const prompt = urlQuery.get( 'prompt' );
+				let promptParam = '';
+
+				if ( prompt ) {
+					promptParam = `&prompt=${ encodeURIComponent( prompt ) }`;
+				}
+
 				window.location.replace(
-					`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=design-choices`
+					`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${ flow }${ promptParam }`
 				);
 			} catch ( error ) {
 				// eslint-disable-next-line no-console

@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { WordPressLogo, JetpackLogo } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
 import { download, reusableBlock, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -56,6 +56,7 @@ const offerClick = () => {
 
 export const Content = () => {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	return (
 		<>
 			<Column heading={ translate( 'Add a new site' ) }>
@@ -85,7 +86,9 @@ export const Content = () => {
 					icon={ <Icon icon={ reusableBlock } size={ 18 } /> }
 					heading="Migrate"
 					description={ preventWidows(
-						translate( 'Bring your theme, plugins, and content to WordPress.com.' )
+						hasEnTranslation( 'Bring your entire WordPress site to WordPress.com.' )
+							? translate( 'Bring your entire WordPress site to WordPress.com.' )
+							: translate( 'Bring your theme, plugins, and content to WordPress.com.' )
 					) }
 					buttonProps={ {
 						onClick: migrateClick,
@@ -95,7 +98,9 @@ export const Content = () => {
 					icon={ <Icon icon={ download } size={ 18 } /> }
 					heading="Import"
 					description={ preventWidows(
-						translate( 'Use a backup file to import your content into a new site.' )
+						hasEnTranslation( 'Use a backup to only import content from other platforms.' )
+							? translate( 'Use a backup to only import content from other platforms.' )
+							: translate( 'Use a backup file to import your content into a new site.' )
 					) }
 					buttonProps={ {
 						onClick: importClick,

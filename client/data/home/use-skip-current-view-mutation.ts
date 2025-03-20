@@ -9,6 +9,10 @@ export type ReminderDuration = '1d' | '1w' | null;
 interface Variables {
 	reminder: ReminderDuration;
 	card?: string;
+
+	// The layout data is totally removed while the view is skipped.
+	// This means the useHomeLayoutQuery will start returning `isLoading`
+	resetWhileSkipping?: boolean;
 }
 
 type Result< TData, TError > = UseMutationResult< TData, TError, Variables > & {
@@ -21,7 +25,7 @@ function useSkipCurrentViewMutation< TData, TError >( siteId: number ): Result< 
 	const query = useHomeLayoutQueryParams();
 
 	const mutation = useMutation< TData, TError, Variables >( {
-		mutationFn: async ( { reminder, card } ) => {
+		mutationFn: async ( { reminder, card, resetWhileSkipping } ) => {
 			const data = await queryClient.fetchQuery( {
 				queryKey: getCacheKey( siteId ),
 				queryFn: () => fetchHomeLayout( siteId, query ),
@@ -31,6 +35,10 @@ function useSkipCurrentViewMutation< TData, TError >( siteId: number ): Result< 
 			const view_name = ( data as any ).view_name;
 			const multipleCardViews = [ 'VIEW_POST_LAUNCH', 'VIEW_SITE_SETUP' ];
 			const isSingleCardView = multipleCardViews.indexOf( view_name ) === -1;
+
+			if ( resetWhileSkipping ) {
+				queryClient.removeQueries( { queryKey: getCacheKey( siteId ) } );
+			}
 
 			return await wp.req.post(
 				{
@@ -55,7 +63,8 @@ function useSkipCurrentViewMutation< TData, TError >( siteId: number ): Result< 
 	const { mutate } = mutation;
 
 	const skipCurrentView = useCallback(
-		( reminder: ReminderDuration ) => mutate( { reminder } ),
+		( reminder: ReminderDuration, resetWhileSkipping?: boolean ) =>
+			mutate( { reminder, resetWhileSkipping } ),
 		[ mutate ]
 	);
 

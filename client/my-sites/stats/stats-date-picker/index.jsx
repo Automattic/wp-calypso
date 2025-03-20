@@ -24,6 +24,7 @@ class StatsDatePicker extends Component {
 		period: PropTypes.string.isRequired,
 		summary: PropTypes.bool,
 		query: PropTypes.object,
+		queryParams: PropTypes.object,
 		statType: PropTypes.string,
 		isActivity: PropTypes.bool,
 		showQueryDate: PropTypes.bool,
