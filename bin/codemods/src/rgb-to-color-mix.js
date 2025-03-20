@@ -25,12 +25,13 @@ function replaceRgbVars( scssContent ) {
 		}
 	);
 
-	// Then handle rgba() cases as before
+	// Handle rgba() cases with both decimal and percentage alpha values
 	return scssContent.replace(
-		/rgba\s*\(\s*var\s*\(\s*(--[\w-]+)-rgb\s*\)\s*,\s*([\d.]+)\s*\)/g,
-		( match, varName, alpha ) => {
+		/rgba\s*\(\s*var\s*\(\s*(--[\w-]+)-rgb\s*\)\s*,\s*([\d.]+)(%?)\s*\)/g,
+		( match, varName, alpha, isPercent ) => {
 			const baseVar = varName.replace( /-rgb$/, '' );
-			return `color-mix(in srgb, var(${ baseVar }) ${ parseFloat( alpha ) * 100 }%, transparent)`;
+			const alphaValue = isPercent ? parseFloat( alpha ) : parseFloat( alpha ) * 100;
+			return `color-mix(in srgb, var(${ baseVar }) ${ alphaValue }%, transparent)`;
 		}
 	);
 }
