@@ -37,7 +37,7 @@
 .videopress-stats-module__grid {
 	display: grid;
 	grid-template-columns: 50% auto auto auto auto;
-	padding: 0.5em 0;
+	padding: 0 0 0.5em;
 	line-height: 40px;
 	font-size: 0.875rem;
 
@@ -95,6 +95,11 @@
 			background-color: var(--color-neutral-0);
 		}
 	}
+
+	.videopress-stats-module__header-row-wrapper {
+		display: contents;
+		padding-bottom: 12px;
+	}
 }
 
 .card.is-compact {
@@ -108,7 +113,7 @@
 .section-header {
 	&.stats-module__header {
 		margin: 0;
-		padding: 24px 24px;
+		padding: 24px 24px 12px;
 		border-bottom: none;
 		box-shadow: none;
 		
