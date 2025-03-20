@@ -39,6 +39,9 @@ const ReaderUnsubscribedFeedsSearchList = ( props: ReaderUnsubscribedFeedsSearch
 					key={ `${ feed.blog_ID }-${ feed.feed_ID }` }
 					feed={ feed }
 					source={ SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST }
+					// To avoid showing the "Subscribed" state in the search list.
+					// API of this component returns the feed as subscribed before we get filtered data from parent so for a
+					// brief time we show "Subscribed" state which quickly goes away so better to not show it at all.
 					shouldHideOnSubscribedState
 				/>
 			);

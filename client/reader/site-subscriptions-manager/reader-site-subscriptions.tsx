@@ -38,13 +38,12 @@ const setUrlQuery = ( key: string, value: string ) => {
 const ReaderSiteSubscriptions = () => {
 	const translate = useTranslate();
 	const { searchTerm } = SubscriptionManager.useSiteSubscriptionsQueryProps();
-	const siteSubscriptionsQuery = SubscriptionManager.useSiteSubscriptionsQuery() ?? {};
 	const {
 		data: { subscriptions },
 		isFetching,
-	} = siteSubscriptionsQuery;
-	const unsubscribedFeedsSearch = Reader.useUnsubscribedFeedsSearch();
-	const { feedItems: unsubscribedFeedItems, searchQueryResult } = unsubscribedFeedsSearch ?? {};
+	} = SubscriptionManager.useSiteSubscriptionsQuery() ?? {};
+	const { feedItems: unsubscribedFeedItems, searchQueryResult } =
+		Reader.useUnsubscribedFeedsSearch() ?? {};
 	const { isPending: isUnsubscribing } = SubscriptionManager.useSiteUnsubscribeMutation();
 
 	// To avoid showing duplicate feed items between subscribed and unsubscribed feeds.
@@ -58,7 +57,7 @@ const ReaderSiteSubscriptions = () => {
 		}
 	);
 
-	const hasSomeSubscriptions = siteSubscriptionsQuery.data.subscriptions.length > 0;
+	const hasSomeSubscriptions = subscriptions.length > 0;
 	const hasSomeUnsubscribedSearchResults = ( filteredUnsubscribedFeedItems?.length ?? 0 ) > 0;
 
 	const recordSearchPerformed = useRecordSearchPerformed();
@@ -81,7 +80,7 @@ const ReaderSiteSubscriptions = () => {
 	const shouldShowUnsubcribedFeedsListLoader =
 		isFetching || // If site subscriptions are still fetching.
 		( searchQueryResult?.isFetching ?? false ) || // If unsubscribed feeds are still fetching.
-		isUnsubscribing; // If user is unsubscribing from the table.
+		isUnsubscribing; // If user is unsubscribing from subscriptions table.
 
 	return (
 		<>

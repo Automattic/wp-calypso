@@ -28,7 +28,7 @@ import './style.scss';
 interface ReaderFeedItemProps {
 	feed: Reader.FeedItem;
 	source: string; // Indicates where the feed item is rendered.
-	shouldHideOnSubscribedState?: boolean; // This prop is used to hide the component quickly instead of waiting for API response.
+	shouldHideOnSubscribedState?: boolean; // To not render anything if the feed is in subscribed state.
 }
 
 /**
@@ -47,8 +47,8 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 	} = props;
 	const isWpcomFeed = !! blogId;
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
+	const dispatch = useDispatch();
 	const { isPending: isSubscribing, mutate: onSubscribe } =
 		SubscriptionManager.useSiteSubscribeMutation();
 	const { isPending: isUnsubscribing, mutate: onUnsubscribe } =
@@ -78,8 +78,8 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 	const displayUrl = isWpcomFeed && site ? getSiteUrl( { feed, site } ) : subscribeUrl;
 	const filteredDisplayUrl = filterURLForDisplay( displayUrl ?? '' );
 	const feedUrl = isWpcomFeed ? getFeedUrl( feed?.feed_ID ) : subscribeUrl;
-	const iconUrl = isWpcomFeed ? site?.icon?.img ?? site?.icon?.ico : feed?.image;
 	const subscriptionId = feed?.subscription_id;
+	const iconUrl = isWpcomFeed ? site?.icon?.img ?? site?.icon?.ico : feed?.image;
 	const shouldTrackRecommendedSearch =
 		source === SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST && railcar;
 	const title =
