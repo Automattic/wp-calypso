@@ -160,7 +160,7 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 			// Wait for the notice to be displayed
 			await new Promise( ( resolve ) => setTimeout( resolve, 1000 ) );
 
-			page.redirect( purchaseRoot );
+			page( purchaseRoot );
 
 			// Show success notification after data is refreshed
 		} catch ( error: unknown ) {
@@ -205,15 +205,15 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 					<DowngradeFeatureList features={ features } purchase={ purchase } />
 
 					<div className="downgrade__confirm-buttons">
-						<Button variant="secondary" isBusy={ isDowngrading } onClick={ handleDowngrade }>
+						<Button variant="primary" isBusy={ isDowngrading } onClick={ handleDowngrade }>
 							{ translate( 'Downgrade to %(targetPlan)s', {
 								args: { targetPlan: targetPlan?.getTitle() ?? '' },
 							} ) }
 						</Button>
 						<Button
-							variant="primary"
+							variant="secondary"
 							disabled={ isDowngrading }
-							href={ getManagePurchaseUrlFor( siteSlug, purchaseId ) }
+							onClick={ () => page( getManagePurchaseUrlFor( siteSlug, purchaseId ) ) }
 						>
 							{ translate( 'Keep %(currentPlan)s', {
 								args: { currentPlan: currentPlan?.getTitle() ?? '' },
