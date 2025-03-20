@@ -1,4 +1,5 @@
-import { CompactCard, Card } from '@automattic/components';
+import { Card } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryBillingTransactions from 'calypso/components/data/query-billing-transactions';
@@ -67,11 +68,18 @@ function BillingHistory() {
 						},
 					}
 				) }
-			/>
+			>
+				<Button
+					className="billing-history__tax-details-notice"
+					variant="secondary"
+					href={ vatDetailsPath }
+				>
+					{ vatText }
+				</Button>
+			</NavigationHeader>
 			<QueryBillingTransactions transactionType="past" />
 			<PurchasesNavigation section="billingHistory" />
 			<BillingHistoryContent siteId={ null } getReceiptUrlFor={ billingHistoryReceipt } />
-			<CompactCard href={ vatDetailsPath }>{ vatText }</CompactCard>
 		</Main>
 	);
 }
