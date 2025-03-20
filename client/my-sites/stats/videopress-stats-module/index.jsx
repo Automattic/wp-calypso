@@ -59,16 +59,6 @@ class VideoPressStatsModule extends Component {
 		}
 	}
 
-	getModuleLabel() {
-		if ( ! this.props.summary ) {
-			return this.props.moduleStrings.title;
-		}
-		const { period, startOf } = this.props.period;
-		const { path, query } = this.props;
-
-		return <DatePicker period={ period } date={ startOf } path={ path } query={ query } summary />;
-	}
-
 	getHref() {
 		const { summary, period, path, siteSlug } = this.props;
 
@@ -160,9 +150,20 @@ class VideoPressStatsModule extends Component {
 
 		return (
 			<div>
+				{ summary && (
+					<div className="stats-module__date-picker-header">
+						<DatePicker
+							period={ period.period }
+							date={ period.startOf }
+							path={ path }
+							query={ query }
+							summary
+						/>
+					</div>
+				) }
 				<SectionHeader
 					className={ headerClass }
-					label={ this.getModuleLabel() }
+					label={ moduleStrings.title }
 					href={ ! summary ? summaryLink : null }
 				>
 					{ summary && (
