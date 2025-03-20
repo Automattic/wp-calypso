@@ -164,31 +164,31 @@ class VideoPressStatsModule extends Component {
 						</h3>
 					</div>
 				) }
-				<SectionHeader
-					className={ headerClass }
-					label={
-						<div className="stats-card-header__title" role="heading" aria-level="4">
-							<div>{ moduleStrings.title }</div>
-							<div className="stats-card-header__title-nodes">
-								<InfoPopover className="stats-info-area__popover" iconSize={ 24 } position="top">
-									{ translate( 'View detailed statistics about your videos.' ) }
-								</InfoPopover>
-							</div>
-						</div>
-					}
-					href={ ! summary ? summaryLink : null }
-				>
-					{ summary && (
-						<DownloadCsv
-							statType={ statType }
-							data={ csvData }
-							query={ query }
-							path={ path }
-							period={ period }
-						/>
-					) }
-				</SectionHeader>
 				<Card compact className={ cardClasses }>
+					<SectionHeader
+						className={ headerClass }
+						label={
+							<div className="stats-card-header__title" role="heading" aria-level="4">
+								<div>{ moduleStrings.title }</div>
+								<div className="stats-card-header__title-nodes">
+									<InfoPopover className="stats-info-area__popover" iconSize={ 24 } position="top">
+										{ translate( 'View detailed statistics about your videos.' ) }
+									</InfoPopover>
+								</div>
+							</div>
+						}
+						href={ ! summary ? summaryLink : null }
+					>
+						{ summary && (
+							<DownloadCsv
+								statType={ statType }
+								data={ csvData }
+								query={ query }
+								path={ path }
+								period={ period }
+							/>
+						) }
+					</SectionHeader>
 					<div className="videopress-stats-module__grid">
 						<div className="videopress-stats-module__header-row-wrapper">
 							<div className="videopress-stats-module__grid-header">{ translate( 'Title' ) }</div>
