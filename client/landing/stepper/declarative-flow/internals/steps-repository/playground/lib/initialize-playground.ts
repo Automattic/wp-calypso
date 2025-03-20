@@ -61,12 +61,10 @@ export async function initializeWordPressPlayground(
 	iframe: HTMLIFrameElement
 ): Promise< PlaygroundClient > {
 	let isWordPressInstalled = false;
-	let firstRun = false;
 
 	const url = new URL( window.location.href );
 	let playgroundId = url.searchParams.get( 'playground' );
 	if ( ! playgroundId ) {
-		firstRun = true;
 		playgroundId = crypto.randomUUID();
 		url.searchParams.set( 'playground', playgroundId );
 		window.history.replaceState( {}, '', url.toString() );
@@ -76,7 +74,6 @@ export async function initializeWordPressPlayground(
 	}
 
 	try {
-		const blueprint = getBlueprintFromUrl();
 		const mountDescriptor: MountDescriptor = {
 			device: {
 				type: 'opfs',
@@ -89,7 +86,7 @@ export async function initializeWordPressPlayground(
 		const client = await startPlaygroundWeb( {
 			iframe,
 			remoteUrl: 'https://playground.wordpress.net/remote.html',
-			blueprint: firstRun ? blueprint : DEFAULT_BLUEPRINT,
+			blueprint: ! isWordPressInstalled ? getBlueprintFromUrl() : DEFAULT_BLUEPRINT,
 			shouldInstallWordPress: ! isWordPressInstalled,
 			mounts: [ mountDescriptor ],
 		} );
