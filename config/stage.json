@@ -170,10 +170,7 @@
 		"use-translation-chunks": true,
 		"user-management-revamp": true,
 		"wpcom-user-bootstrap": true,
-		"yolo/command-palette": true,
-		"oauth": true,
-		"onboarding/checklist/tasks": true,
-		"pages/domain-connect": true
+		"yolo/command-palette": true
 	},
 	"siftscience_key": "e00e878351",
 	"oauth_client_id": "39911",
