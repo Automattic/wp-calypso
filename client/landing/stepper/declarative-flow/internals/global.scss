@@ -71,7 +71,7 @@ button {
 .site-setup:not(:has(.step-container-v2)),
 .onboarding.goals,
 .onboarding.design-setup,
-.onboarding.design-choices,
+.onboarding.design-choices:not(:has(.step-container-v2)),
 .onboarding.difm-starting-point,
 .site-migration,
 .migration,
