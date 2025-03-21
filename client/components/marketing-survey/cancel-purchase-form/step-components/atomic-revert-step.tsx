@@ -115,17 +115,17 @@ export function AtomicRevertStep( props: Props ) {
 				}
 				label={
 					isPlanPurchase && ! isRemovePlan && ! isDowngradePlan
-						? translate(
+						? ( translate(
 								'Any themes/plugins you have installed on the site will be removed on %(purchaseRenewalDate)s, along with their data.',
 								{
 									args: {
 										purchaseRenewalDate: moment( purchase.expiryDate ).format( 'LL' ),
 									},
 								}
-						  )
-						: translate(
+						  ) as string )
+						: ( translate(
 								'Any themes/plugins you have installed on the site will be removed, along with their data.'
-						  )
+						  ) as string )
 				}
 				checked={ atomicRevertCheckOne }
 				onChange={ onClickCheckOne }
