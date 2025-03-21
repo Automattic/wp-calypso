@@ -20,6 +20,7 @@ import {
 	getFeatureByKey,
 	FeatureObject,
 	WPComPlan,
+	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card, Gridicon } from '@automattic/components';
@@ -182,7 +183,7 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 	};
 
 	const checkAtomicAndDowngrade = () => {
-		if ( isAtomicSite ) {
+		if ( isAtomicSite && ! targetPlan?.getIncludedFeatures?.().includes( WPCOM_FEATURES_ATOMIC ) ) {
 			setIsAtomicWarningVisible( true );
 		} else {
 			handleDowngrade();
@@ -228,11 +229,13 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 							</strong>
 						</div>
 
-						<div>
-							{ translate(
-								'These features will no longer be available on your site when your plan changes:'
-							) }
-						</div>
+						{ features.length > 0 && (
+							<div>
+								{ translate(
+									'These features will no longer be available on your site when your plan changes:'
+								) }
+							</div>
+						) }
 					</div>
 					<DowngradeFeatureList features={ features } purchase={ purchase } />
 
