@@ -32,9 +32,8 @@ interface SiteData {
 
 interface SiteHubProps {
 	isTransparent: boolean;
-
-	navigationBackLabel: string;
-	navigationBackLink: string; // core picks this prop (dashboardLink) from site-admin store.
+	exitLabel: string;
+	exitLink: string;
 }
 
 /**
@@ -52,8 +51,8 @@ export const SiteHub = memo(
 		(
 			{
 				isTransparent,
-				navigationBackLink = '/',
-				navigationBackLabel = __( 'Go to the Dashboard', 'a8c-site-admin' ),
+				exitLink = '/',
+				exitLabel = __( 'Go to the Dashboard', 'a8c-site-admin' ),
 			}: SiteHubProps,
 			ref
 		): JSX.Element => {
@@ -86,8 +85,8 @@ export const SiteHub = memo(
 								className="site-admin-layout__view-mode-toggle"
 								__next40pxDefaultSize
 								ref={ ref }
-								href={ navigationBackLink }
-								label={ navigationBackLabel }
+								href={ exitLink }
+								label={ exitLabel }
 							>
 								<SiteIcon className="site-admin-layout__view-mode-toggle-icon" />
 							</Button>

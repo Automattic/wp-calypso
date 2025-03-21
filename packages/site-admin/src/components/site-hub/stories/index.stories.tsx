@@ -32,8 +32,8 @@ export const Default: Story = {
 			<RouterProvider routes={ [] } pathArg="page">
 				<SiteHub
 					isTransparent
-					navigationBackLabel={ __( 'Go to the Dashboard', 'a8c-site-admin' ) }
-					navigationBackLink="/"
+					exitLabel={ __( 'Go to the Dashboard', 'a8c-site-admin' ) }
+					exitLink="/"
 				/>
 			</RouterProvider>
 		);
@@ -53,8 +53,8 @@ export const FocusButtonOnMount: Story = {
 			<RouterProvider routes={ [] } pathArg="page">
 				<SiteHub
 					isTransparent
-					navigationBackLabel={ __( 'Go to the Dashboard', 'a8c-site-admin' ) }
-					navigationBackLink="/"
+					exitLabel={ __( 'Go to the Dashboard', 'a8c-site-admin' ) }
+					exitLink="/"
 					ref={ buttonRef }
 				/>
 			</RouterProvider>

@@ -11,9 +11,9 @@ dynamically fetch site information.
 export default function Example() {
 	return (
 		<SiteHub
-			isTransparent={false}
-			navigationBackLabel="Back to Dashboard"
-			navigationBackLink="/dashboard"
+			isTransparent={ false }
+			exitLabel="Back to Dashboard"
+			exitLink="/dashboard"
 		/>
 	);
 }
@@ -42,8 +42,8 @@ export default function Example() {
 		<SiteHub
 			ref={ buttonRef }
 			isTransparent={ false }
-			navigationBackLabel="Back"
-			navigationBackLink="/"
+			exitLabel="Back"
+			exitLink="/"
 		/>;
 	);
 }
