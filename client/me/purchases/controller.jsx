@@ -101,7 +101,6 @@ export function downgradePurchase( context, next ) {
 					<Downgrade
 						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 						siteSlug={ context.params.site }
-						getManagePurchaseUrlFor={ managePurchaseUrl }
 					/>
 				</Main>
 			</PurchasesWrapper>

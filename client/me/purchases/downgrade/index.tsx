@@ -29,10 +29,10 @@ import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import { cancelAndRefundPurchaseAsync } from 'calypso/lib/purchases/actions';
 import { Purchase } from 'calypso/lib/purchases/types';
+import { managePurchase } from 'calypso/me/purchases/paths';
 import PurchaseSiteHeader from 'calypso/me/purchases/purchases-site/header';
 import titles from 'calypso/me/purchases/titles';
 import { isDataLoading } from 'calypso/me/purchases/utils';
-import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
@@ -101,7 +101,7 @@ const downgradePath: Record< string, string > = {
 };
 
 export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
-	const { siteSlug, purchaseId } = props;
+	const { siteSlug, purchaseId, getManagePurchaseUrlFor = managePurchase } = props;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const purchase = useSelector( ( state ) => getByPurchaseId( state, purchaseId ) );
@@ -131,7 +131,7 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 			</>
 		);
 	}
-	const purchaseRoot = props.getManagePurchaseUrlFor( siteSlug, purchaseId );
+	const purchaseRoot = getManagePurchaseUrlFor( siteSlug, purchaseId );
 
 	const handleDowngrade = async () => {
 		if (
