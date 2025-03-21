@@ -20,7 +20,10 @@ import {
 	getFeatureByKey,
 	FeatureObject,
 	WPComPlan,
+<<<<<<< HEAD
 	WPCOM_FEATURES_ATOMIC,
+=======
+>>>>>>> 153550c986b (Self Service Downgrade: Add atomic warning for downgrades)
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card, Gridicon } from '@automattic/components';
@@ -188,7 +191,11 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 	};
 
 	const checkAtomicAndDowngrade = () => {
+<<<<<<< HEAD
 		if ( isAtomicSiteDowngrade ) {
+=======
+		if ( isAtomicSite ) {
+>>>>>>> 153550c986b (Self Service Downgrade: Add atomic warning for downgrades)
 			setIsAtomicWarningVisible( true );
 		} else {
 			handleDowngrade();
