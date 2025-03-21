@@ -197,10 +197,8 @@ const DesignChoicesStep: StepType< { submits: { destination: string } } > = ( {
 		return (
 			<>
 				<DocumentHead title={ documentHeaderText } />
-				<Step.TwoColumnLayout
-					firstColumnWidth={ 0 }
-					secondColumnWidth={ 0 }
-					width="standard"
+				<Step.CenteredColumnLayout
+					columnWidth={ 8 }
 					className={ clsx( 'design-choices__body', {
 						'is-goals-first': isGoalsFirstVariation,
 					} ) }
@@ -214,7 +212,7 @@ const DesignChoicesStep: StepType< { submits: { destination: string } } > = ( {
 					heading={ <Step.Heading text={ documentHeaderText } subText={ subHeaderText } /> }
 				>
 					{ stepContent }
-				</Step.TwoColumnLayout>
+				</Step.CenteredColumnLayout>
 			</>
 		);
 	}

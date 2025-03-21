@@ -11,6 +11,14 @@
 	}
 }
 
+.step-container-v2 {
+	.design-choices__body {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+	}
+}
+
 .design-choice__image-container {
 	flex-direction: column;
 
