@@ -49,13 +49,7 @@ const AddSitesForm = ( {
 		SubscriptionManager.useSiteSubscribeMutation();
 
 	// Triggers the text change when component mounts to validate the initial value.
-	useEffect( () => {
-		const searchTerm = getUrlQuerySearchTerm( pathname );
-
-		if ( searchTerm ) {
-			onTextFieldChange( searchTerm );
-		}
-	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
+	useEffect( () => onTextFieldChange( getUrlQuerySearchTerm( pathname ) ), [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	function validateInputValue( url: string, showError = false ): void {
 		// If the input is empty, we don't want to show an error message
