@@ -41,8 +41,9 @@ export function AtomicWarning( {
 		<div className="atomic-warning__wrapper">
 			<BlankCanvas className="atomic-warning">
 				<BlankCanvas.Header onBackClick={ closeDialog }>
-					Downgrade plan:
-					{ siteSlug && <span className="cancel-purchase-form__site-slug">{ siteSlug }</span> }
+					{ siteSlug && (
+						<span className="cancel-purchase-form__site-slug">Downgrade plan: { siteSlug }</span>
+					) }
 				</BlankCanvas.Header>
 				<BlankCanvas.Content>
 					<AtomicRevertStep
