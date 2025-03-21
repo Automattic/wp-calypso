@@ -42,14 +42,7 @@ export const TwoColumnLayout = ( props: TwoColumnLayoutProps ) => {
 						return null;
 					}
 
-					return (
-						<div
-							className={ `two-column-layout__column--${ index }` }
-							style={ { flex: getChildFlexGrow( index ) } }
-						>
-							{ child }
-						</div>
-					);
+					return <div style={ { flex: getChildFlexGrow( index ) } }>{ child }</div>;
 				} );
 			} }
 		</StepContainerV2>
