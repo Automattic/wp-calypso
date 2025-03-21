@@ -1,0 +1,9 @@
+.custom-icon-styles {
+	width: 130px;
+	
+	& > img {
+		background-color: transparent;
+		aspect-ratio: 1 / 1;
+		object-fit: contain;
+	}
+}
