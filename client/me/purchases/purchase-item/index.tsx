@@ -57,6 +57,7 @@ import {
 import OwnerInfo from './owner-info';
 import type { Purchases, SiteDetails } from '@automattic/data-stores';
 import 'calypso/me/purchases/style.scss';
+import type { Site } from 'calypso/blocks/site-icon';
 import type { GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
 import type { AppState } from 'calypso/types';
 import type { LocalizeProps } from 'i18n-calypso';
@@ -102,7 +103,7 @@ export function PurchaseItemSiteIcon( {
 	iconUrl,
 }: {
 	purchase: Purchases.Purchase;
-	site?: SiteDetails | null | undefined;
+	site?: Site | null | undefined;
 	isDisconnectedSite?: boolean;
 	iconUrl?: string | null;
 } ) {
