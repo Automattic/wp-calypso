@@ -13,10 +13,13 @@ import { SubscriberDataViews } from 'calypso/my-sites/subscribers/components/sub
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { Subscriber } from './types';
 
-const SubscribersPage = () => {
+type Props = {
+	subscriberId?: string;
+};
+
+const SubscribersPage = ( { subscriberId }: Props ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) ?? null;
-	const subscriberId = window.location.pathname.split( '/' ).pop();
 	const isSubscriberIdValid = subscriberId && /^\d+$/.test( subscriberId );
 
 	const initiallyLoadedWithTaskCompletionHash = useRef(

@@ -166,6 +166,8 @@ const SubscriberDataViews = ( {
 		} else if ( ! subscriberId && selectedSubscriber ) {
 			setSelectedSubscriber( null );
 		}
+		// We don't need to re-run this effect when selectedSubscriber changes.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ subscriberId, subscriberDetails, subscribersQueryResult?.subscribers ] );
 
 	const { data: subscribedNewsletterCategoriesData, isLoading: isLoadingNewsletterCategories } =
@@ -446,22 +448,6 @@ const SubscriberDataViews = ( {
 				.map( ( filter ) => filter.value ) as SubscribersFilterBy[] ) ?? [];
 		setFilters( filterValues.length ? filterValues : [ SubscribersFilterBy.All ] );
 	}, [ currentView.search, currentView.filters ] );
-
-	// Handle browser back/forward navigation
-	useEffect( () => {
-		const handleRouteChange = () => {
-			const pathParts = window.location.pathname.split( '/' );
-			const lastPart = pathParts[ pathParts.length - 1 ];
-
-			// If we're back at the main subscribers page (no subscriber ID in URL)
-			if ( lastPart === siteSlug ) {
-				setSelectedSubscriber( null );
-			}
-		};
-
-		window.addEventListener( 'popstate', handleRouteChange );
-		return () => window.removeEventListener( 'popstate', handleRouteChange );
-	}, [ siteSlug ] );
 
 	// Memoize the data and pagination info.
 	const { data, paginationInfo } = useMemo( () => {
