@@ -11,6 +11,7 @@ import {
 import {
 	isPressableHostingProduct,
 	isWPCOMHostingProduct,
+	isValidJetpackCRMLicense,
 } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import {
 	LicenseRole,
@@ -59,8 +60,7 @@ export default function LicenseDetailsActions( {
 	const [ revokeDialog, setRevokeDialog ] = useState( false );
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
 	const isWPCOMHostingLicense = isWPCOMHostingProduct( licenseKey );
-	const isCRMLicense =
-		licenseKey.startsWith( 'jetpack_complete' ) || licenseKey.startsWith( 'jetpack_crm' );
+	const isCRMLicense = isValidJetpackCRMLicense( licenseKey );
 	const pressableManageUrl = 'https://my.pressable.com/agency/auth';
 
 	const debugUrl = siteUrl ? `https://jptools.wordpress.com/debug/?url=${ siteUrl }` : null;
