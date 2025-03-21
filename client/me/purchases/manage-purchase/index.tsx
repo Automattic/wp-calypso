@@ -49,6 +49,7 @@ import {
 	ProductIcon,
 	Gridicon,
 	PlanPrice,
+	MaterialIcon,
 } from '@automattic/components';
 import { Plans, type SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
