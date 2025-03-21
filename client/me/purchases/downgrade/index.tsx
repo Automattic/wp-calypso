@@ -109,7 +109,7 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 	const [ isDowngrading, setIsDowngrading ] = useState( false );
 	const loadedFromServer = useSelector( hasLoadedUserPurchasesFromServer );
 	const { ID: siteId, name: siteName } =
-		useSelector( ( state ) => getSite( state, siteSlug ) ) ?? {};
+		useSelector( ( state ) => getSite( state, purchase?.siteId ) ) ?? {};
 
 	const targetPlan = getPlan( downgradePath[ purchase?.productSlug ?? '' ] );
 	const currentPlan = getPlan( purchase?.productSlug ?? '' );
