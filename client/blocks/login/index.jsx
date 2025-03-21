@@ -365,6 +365,7 @@ class Login extends Component {
 			twoStepNonce,
 			wccomFrom,
 			isWooJPC,
+			twoFactorAuthType,
 		} = this.props;
 
 		let headerText = translate( 'Log in to your account' );
@@ -374,6 +375,18 @@ class Login extends Component {
 
 		if ( isSocialFirst ) {
 			headerText = translate( 'Log in to WordPress.com' );
+		}
+
+		if ( 'authenticator' === twoFactorAuthType ) {
+			headerText = translate( 'Continue with an authentication code' );
+		}
+
+		if ( 'push' === twoFactorAuthType ) {
+			headerText = translate( 'Continue with the Jetpack app' );
+		}
+
+		if ( 'backup' === twoFactorAuthType ) {
+			headerText = translate( 'Continue with a backup code' );
 		}
 
 		if ( isManualRenewalImmediateLoginAttempt ) {

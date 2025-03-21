@@ -36,8 +36,7 @@
 
 .consolidated-stats-card__value {
 	color: var(--color-accent-100);
-	font-size: rem(24px);
-	font-weight: 700;
+	@include heading-x-large;
 	margin-block-end: 8px;
 }
 
@@ -81,7 +80,7 @@
 
 .consolidated-stats-card__label {
 	color: var(--color-accent);
-	font-size: rem(12px);
+	@include body-medium;
 	text-wrap: balance;
 }
 
@@ -94,7 +93,7 @@
 
 .consolidated-stats-card__popover-content {
 	min-width: 200px;
-	@include a4a-font-body-md;
+	@include body-medium;
 
 	@include break-mobile {
 		min-width: 300px;
@@ -109,21 +108,3 @@
 		outline: none;
 	}
 }
-
-// Core styles
-
-.consolidated-stats-card.is-core-styles {
-	.consolidated-stats-card__value {
-		@include heading-x-large;
-	}
-
-	.consolidated-stats-card__label {
-		@include body-medium;
-	}
-}
-
-.consolidated-stats-card__popover-content.is-core-styles {
-	@include body-medium;
-}
-
-// End of core styles

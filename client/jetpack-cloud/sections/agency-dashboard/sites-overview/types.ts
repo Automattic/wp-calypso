@@ -296,7 +296,12 @@ export type AgencyDashboardFilter = {
 	isNotMultisite?: boolean;
 };
 
-export type ProductInfo = { name: string; key: string; status: 'rejected' | 'fulfilled' };
+export type ProductInfo = {
+	name: string;
+	key: string;
+	status: 'rejected' | 'fulfilled';
+	error?: APIError;
+};
 
 export type PurchasedProductsInfo = {
 	selectedSite: string;

@@ -170,7 +170,7 @@ function ReaderListEdit( props ) {
 								>
 									{ translate( 'Export' ) }
 								</NavItem>
-								{ list.is_public !== 2 && (
+								{ ! list?.is_immutable && (
 									<NavItem
 										selected={ selectedSection === 'delete' }
 										path={ `/reader/list/${ props.owner }/${ props.slug }/delete` }

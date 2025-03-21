@@ -130,10 +130,14 @@ export const useCredentialsForm = (
 					bypassVerification: canBypassVerification,
 				};
 				await requestAutomatedMigration( payload );
-				recordTracksEvent( 'calypso_site_migration_automated_request_success' );
+				recordTracksEvent( 'calypso_site_migration_automated_request_success', {
+					migration_type: data.migrationType,
+				} );
 				onSubmit( siteInfoResult );
 			} catch ( error ) {
-				recordTracksEvent( 'calypso_site_migration_automated_request_error' );
+				recordTracksEvent( 'calypso_site_migration_automated_request_error', {
+					migration_type: data.migrationType,
+				} );
 			}
 		},
 		[ canBypassVerification, onSubmit, requestAutomatedMigration ]

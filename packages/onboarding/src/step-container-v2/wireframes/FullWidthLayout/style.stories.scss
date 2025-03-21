@@ -1,7 +1,4 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-
-@import '../../../../styles/mixins';
+@import '../../mixins';
 
 .theme-preview {
 	display: flex;

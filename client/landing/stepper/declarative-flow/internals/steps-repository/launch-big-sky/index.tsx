@@ -13,9 +13,9 @@ import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { useSiteData } from '../../../../hooks/use-site-data';
-import '../processing-step/style.scss';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
+import '../processing-step/style.scss';
 import './styles.scss';
 
 const SiteIntent = Onboard.SiteIntent;

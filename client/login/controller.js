@@ -3,15 +3,18 @@ import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { loadScript } from '@automattic/load-script';
 import wpcomRequest from 'wpcom-proxy-request';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import {
 	isGravPoweredOAuth2Client,
 	isWooOAuth2Client,
 	isPartnerPortalOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
-import { login as loginPath } from 'calypso/lib/paths';
+import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
+import wpcom from 'calypso/lib/wp';
 import { DesktopLoginStart, DesktopLoginFinalize } from 'calypso/login/desktop-login';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { postLoginRequest } from 'calypso/state/login/utils';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -224,36 +227,181 @@ export function qrCodeLogin( context, next ) {
 export function googleAuth( context, next ) {
 	const { query, isServerSide } = context;
 
+	// Skip processing on server-side render
 	if ( isServerSide ) {
 		next();
 		return;
 	}
 
-	// Function to get the redirect URI for Google auth
-	const getRedirectUri = () => {
-		const host = typeof window !== 'undefined' && window.location.host;
-		return `https://${ host + loginPath( { socialService: 'google' } ) }`;
+	// Helper to get the redirect URI for Google OAuth
+	const getRedirectUri = () => `https://${ window.location.host }${ window.location.pathname }`;
+
+	// Helper to create authentication parameters and redirect
+	const redirectWithAuthParams = ( accessToken, idToken, redirectTo = '/' ) => {
+		const authParams = new URLSearchParams();
+		authParams.append( 'service', 'google' );
+		authParams.append( 'access_token', accessToken );
+		authParams.append( 'id_token', idToken );
+
+		const redirectUrl = redirectTo.includes( '?' )
+			? `${ redirectTo }&${ authParams.toString() }`
+			: `${ redirectTo }?${ authParams.toString() }`;
+
+		page.redirect( redirectUrl );
 	};
 
-	const fetchNonceAndRedirect = async () => {
+	// Display an error notice to the user
+	const showErrorNotice = ( message ) => {
+		context.store.dispatch( {
+			type: 'NOTICE_CREATE',
+			notice: {
+				status: 'is-error',
+				text: message,
+			},
+		} );
+	};
+
+	// Process the response from Google OAuth redirect
+	const handleSocialResponseFromRedirect = async () => {
+		const urlParams = new URLSearchParams( window.location.search );
+		const code = urlParams.get( 'code' );
+		const stateString = urlParams.get( 'state' );
+		const error = urlParams.get( 'error' );
+
+		// Not a redirect from Google if no code or error present
+		if ( ! code && ! error ) {
+			return false;
+		}
+
+		// Handle error from Google
+		if ( error ) {
+			showErrorNotice( `Error during Google authentication: ${ error }` );
+			return true;
+		}
+
 		try {
-			// Get the redirect URI
-			const redirectUri = getRedirectUri();
+			const storedNonce = window.sessionStorage.getItem( 'google_oauth_nonce' );
+			window.sessionStorage.removeItem( 'google_oauth_nonce' );
 
-			// Fetch authorization nonce using the shared utility function
-			// Google social button uses this for security, so we need it here too
-			const response = await getAuthorizationNonce();
-			const state = response.nonce;
+			if ( ! storedNonce || ! stateString ) {
+				throw new Error( 'Missing state parameter' );
+			}
 
-			// Create state object with necessary data
+			let state;
+
+			try {
+				const stateData = JSON.parse( stateString );
+
+				if ( stateData.wpcomNonce !== storedNonce ) {
+					throw new Error();
+				}
+
+				state = {
+					redirect_to: stateData.redirect_to || '/',
+					is_jetpack: stateData.is_jetpack || true,
+					locale: stateData.locale || getLocaleSlug(),
+					wpcomNonce: stateData.wpcomNonce || '',
+					queryParams: stateData.queryParams || {},
+				};
+			} catch {
+				// Not a valid JSON, and not a direct match - state validation fails
+				throw new Error( 'Invalid state parameter' );
+			}
+
+			// Exchange auth code for tokens
+			const response = await postLoginRequest( 'exchange-social-auth-code', {
+				service: 'google',
+				auth_code: code,
+				redirect_uri: getRedirectUri(),
+				client_id: config( 'wpcom_signup_id' ),
+				client_secret: config( 'wpcom_signup_key' ),
+				state,
+			} );
+
+			const { access_token, id_token } = response.body.data;
+
+			// Try to connect Google account to existing WordPress.com account
+			try {
+				// Prepare WPCOM API for authentication
+				require( 'wpcom-proxy-request' ).reloadProxy();
+				wpcom.req.post( { metaAPI: { accessAllUsersBlogs: true } } );
+
+				// Attempt to connect social account
+				const wpcomResponse = await wpcom.req.post( '/me/social-login/connect', {
+					service: 'google',
+					access_token,
+					id_token,
+					redirect_to: state.redirect_to,
+					client_id: config( 'wpcom_signup_id' ),
+					client_secret: config( 'wpcom_signup_key' ),
+				} );
+
+				// Use API-provided redirect if available
+				if ( wpcomResponse.redirect_to ) {
+					page.redirect( wpcomResponse.redirect_to );
+					return true;
+				}
+
+				// Otherwise use default redirect with auth params
+				redirectWithAuthParams( access_token, id_token, state.redirect_to );
+				return true;
+			} catch ( connectError ) {
+				// If connection fails, try creating a new account
+				try {
+					await wpcom.req.post( '/users/social/new', {
+						service: 'google',
+						access_token,
+						id_token,
+						signup_flow_name: 'google-auth-signup',
+						locale: getLocaleSlug(),
+						client_id: config( 'wpcom_signup_id' ),
+						client_secret: config( 'wpcom_signup_key' ),
+						tos: JSON.stringify( getToSAcceptancePayload() ),
+					} );
+
+					// Redirect with auth params after successful account creation
+					redirectWithAuthParams( access_token, id_token, state.redirect_to );
+					return true;
+				} catch ( createError ) {
+					// If both connection and creation fail, show warning and redirect
+					context.store.dispatch( {
+						type: 'NOTICE_CREATE',
+						notice: {
+							status: 'is-warning',
+							text: 'Could not complete Google login. Falling back to standard flow.',
+						},
+					} );
+
+					// Still redirect with the tokens we have
+					redirectWithAuthParams( access_token, id_token, state.redirect_to );
+					return true;
+				}
+			}
+		} catch ( authError ) {
+			showErrorNotice( 'Error during Google authentication. Please try again.' );
+			return true;
+		}
+	};
+
+	// Initiate Google OAuth flow
+	const initiateGoogleAuth = async () => {
+		try {
+			// Get authorization nonce for security
+			const { nonce } = await getAuthorizationNonce();
+
+			// Create state object with relevant data
 			const stateObject = {
 				redirect_to: query?.redirect_to || '/',
 				is_jetpack: true,
 				locale: context.params.lang,
-				wpcomNonce: state,
+				wpcomNonce: nonce,
+				queryParams: { ...query },
 			};
 
-			// Initialize Google sign-in client
+			// Store nonce in sessionStorage for validation on callback
+			window.sessionStorage.setItem( 'google_oauth_nonce', nonce );
+
+			// Load Google Identity Services API if not already loaded
 			if ( ! window?.google?.accounts?.oauth2 ) {
 				await loadScript( 'https://accounts.google.com/gsi/client' );
 				if ( ! window?.google?.accounts?.oauth2 ) {
@@ -261,30 +409,23 @@ export function googleAuth( context, next ) {
 				}
 			}
 
-			// Initialize Google OAuth client - similar to GoogleSocialButton
-			const googleOAuth = window.google.accounts.oauth2;
-			googleOAuth
+			// Initialize and request authorization code
+			window.google.accounts.oauth2
 				.initCodeClient( {
 					client_id: config( 'google_oauth_client_id' ),
 					scope: 'openid profile email',
 					ux_mode: 'redirect',
-					redirect_uri: redirectUri,
+					redirect_uri: getRedirectUri(),
 					state: JSON.stringify( stateObject ),
-					callback: () => {}, // Not used in redirect mode
+					callback: () => {},
 				} )
 				.requestCode();
 		} catch ( error ) {
-			// eslint-disable-next-line no-console
+			/* eslint-disable-next-line no-console */
 			console.error( 'Error initiating Google login:', error );
+			showErrorNotice( 'Error initiating Google login. Please try again.' );
 
-			context.store.dispatch( {
-				type: 'NOTICE_CREATE',
-				notice: {
-					status: 'is-error',
-					text: 'Error initiating Google login. Please try again.',
-				},
-			} );
-
+			// Fall back to regular login form
 			context.primary = (
 				<WPLogin isJetpack path={ context.path } query={ query } locale={ context.params.lang } />
 			);
@@ -292,244 +433,12 @@ export function googleAuth( context, next ) {
 		}
 	};
 
-	fetchNonceAndRedirect();
-}
-
-export function appleAuth( context, next ) {
-	const { query, isServerSide } = context;
-
-	if ( isServerSide ) {
-		next();
-		return;
-	}
-
-	// Function to get the redirect URI for Apple auth
-	const getRedirectUri = () => {
-		const host = typeof window !== 'undefined' && window.location.host;
-		return `https://${ host + loginPath( { socialService: 'apple' } ) }`;
-	};
-
-	// Check if this is a redirect back from Apple with authentication data
-	const handleSocialResponseFromRedirect = () => {
-		// Apple puts the authentication data in the URL fragment (after the #)
-		const hash = window.location.hash;
-		if ( ! hash || hash.length <= 1 ) {
-			return false;
+	// First check if we're handling a redirect response, otherwise initiate auth
+	handleSocialResponseFromRedirect().then( ( isRedirect ) => {
+		if ( ! isRedirect ) {
+			initiateGoogleAuth();
 		}
-
-		// Use URLSearchParams for secure parsing instead of direct object property assignment
-		const fragmentString = hash.substring( 1 ); // remove the # character
-		const params = new URLSearchParams( fragmentString );
-
-		// Safely extract values using get() instead of direct property access
-		const client_id = params.get( 'client_id' );
-		const id_token = params.get( 'id_token' );
-		const stateString = params.get( 'state' );
-		const user_email = params.get( 'user_email' );
-		const user_name = params.get( 'user_name' );
-
-		// Skip if we don't have client_id or if it's not from Apple
-		if ( ! client_id || client_id !== config( 'apple_oauth_client_id' ) ) {
-			return false;
-		}
-
-		// Validate the state against our stored state for CSRF protection
-		const storedOauth2State = window.sessionStorage.getItem( 'siwa_state' );
-		window.sessionStorage.removeItem( 'siwa_state' );
-
-		if ( ! stateString || ! storedOauth2State ) {
-			return false;
-		}
-
-		// Apple may return the state either as a direct value or as part of a JSON object
-		// We need to handle both cases
-		let redirectTo = '/';
-		let isStateValid = false;
-
-		// First, try direct comparison (if state is just the oauth2State value)
-		if ( stateString === storedOauth2State ) {
-			isStateValid = true;
-		} else {
-			// Try to parse as JSON if it's not a direct match
-			try {
-				const stateData = JSON.parse( stateString );
-				// Check if the JSON contains our oauth2State
-				if ( stateData.oauth2State === storedOauth2State ) {
-					isStateValid = true;
-					// If we successfully parsed JSON, we can extract the redirect_to
-					redirectTo = stateData.redirect_to || '/';
-				}
-			} catch ( e ) {
-				// Not a valid JSON, and not a direct match - state validation fails
-				isStateValid = false;
-			}
-		}
-
-		// If state validation failed, abort
-		if ( ! isStateValid ) {
-			return false;
-		}
-
-		// Create an authentication token query string with the Apple response data
-		const authParams = new URLSearchParams();
-		authParams.append( 'service', 'apple' );
-		if ( id_token ) {
-			authParams.append( 'id_token', id_token );
-		}
-		if ( user_email ) {
-			authParams.append( 'user_email', user_email );
-		}
-		if ( user_name ) {
-			authParams.append( 'user_name', user_name );
-		}
-
-		// Redirect to the destination URL with the auth token
-		const redirectUrl = redirectTo.includes( '?' )
-			? `${ redirectTo }&${ authParams.toString() }`
-			: `${ redirectTo }?${ authParams.toString() }`;
-
-		page.redirect( redirectUrl );
-		return true;
-	};
-
-	// If we have a response from Apple, handle it
-	if ( handleSocialResponseFromRedirect() ) {
-		return;
-	}
-
-	// If no response, initialize Apple auth
-	const initializeAppleAuth = async () => {
-		try {
-			// Get the redirect URI
-			const redirectUri = getRedirectUri();
-
-			// Generate a random oauth2State value like AppleLoginButton does
-			// We don't need to call the nonce endpoint as Apple implementation
-			// creates a random state locally
-			const oauth2State = String( Math.floor( Math.random() * 10e9 ) );
-			// Store state in session storage like AppleLoginButton does
-			window.sessionStorage.setItem( 'siwa_state', oauth2State );
-
-			// Create the state object with relevant data
-			const stateData = {
-				redirect_to: query?.redirect_to || '/',
-				is_jetpack: true,
-				locale: context.params.lang,
-				originalUrlPath: window.location.pathname,
-				queryString: window.location.search || null,
-			};
-
-			// Use the same approach as AppleLoginButton - load the Apple JS SDK
-			const appleClientUrl =
-				'https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js';
-
-			await loadScript( appleClientUrl );
-
-			if ( ! window.AppleID ) {
-				throw new Error( 'Failed to load Apple Sign In SDK' );
-			}
-
-			// Initialize Apple auth - same as in AppleLoginButton
-			window.AppleID.auth.init( {
-				clientId: config( 'apple_oauth_client_id' ),
-				scope: 'name email',
-				redirectURI: redirectUri,
-				state: JSON.stringify( {
-					oauth2State,
-					...stateData,
-				} ),
-			} );
-
-			// Trigger sign in
-			window.AppleID.auth.signIn();
-		} catch ( error ) {
-			// eslint-disable-next-line no-console
-			console.error( 'Error initiating Apple login:', error );
-
-			context.store.dispatch( {
-				type: 'NOTICE_CREATE',
-				notice: {
-					status: 'is-error',
-					text: 'Error initiating Apple login. Please try again.',
-				},
-			} );
-
-			context.primary = (
-				<WPLogin isJetpack path={ context.path } query={ query } locale={ context.params.lang } />
-			);
-			next();
-		}
-	};
-
-	initializeAppleAuth();
-}
-
-export function githubAuth( context, next ) {
-	const { query, isServerSide } = context;
-
-	if ( isServerSide ) {
-		next();
-		return;
-	}
-
-	// Function to get the redirect URI for GitHub auth
-	const getRedirectUri = () => {
-		const host = typeof window !== 'undefined' && window.location.host;
-		return `https://${ host + loginPath( { socialService: 'github' } ) }`;
-	};
-
-	// Helper to strip query string - same as in GitHubLoginButton
-	const stripQueryString = ( url ) => {
-		const urlParts = url.split( '?' );
-		return urlParts[ 0 ];
-	};
-
-	// Initialize GitHub auth - matching GitHubLoginButton implementation
-	const initializeGithubAuth = async () => {
-		try {
-			// Get the redirect URI
-			const redirectUri = getRedirectUri();
-
-			// Create the state object with redirect info
-			// GitHub button implementation doesn't use a separate nonce
-			// but embeds state information directly
-			const stateObject = {
-				redirect_to: query?.redirect_to || '/',
-				is_jetpack: true,
-				locale: context.params.lang,
-			};
-
-			// Set up scope - same as in GitHubLoginButton
-			const scope = encodeURIComponent( 'read:user,user:email' );
-			// Build the authorization URL - same endpoint as GitHubLoginButton uses
-			const redirectUrl = `https://public-api.wordpress.com/wpcom/v2/hosting/github/app-authorize?redirect_uri=${ stripQueryString(
-				redirectUri
-			) }&scope=${ scope }&ux_mode=redirect&state=${ encodeURIComponent(
-				JSON.stringify( stateObject )
-			) }`;
-
-			// Redirect to GitHub's auth URL
-			window.location.href = redirectUrl;
-		} catch ( error ) {
-			// eslint-disable-next-line no-console
-			console.error( 'Error initiating GitHub login:', error );
-
-			context.store.dispatch( {
-				type: 'NOTICE_CREATE',
-				notice: {
-					status: 'is-error',
-					text: 'Error initiating GitHub login. Please try again.',
-				},
-			} );
-
-			context.primary = (
-				<WPLogin isJetpack path={ context.path } query={ query } locale={ context.params.lang } />
-			);
-			next();
-		}
-	};
-
-	initializeGithubAuth();
+	} );
 }
 
 function getHandleEmailedLinkFormComponent( flow ) {

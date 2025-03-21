@@ -17,6 +17,7 @@ import {
 	receiptView,
 	paymentMethods,
 	addPaymentMethod,
+	planDowngrade,
 } from './controller';
 
 const commonHandlers = [ siteSelection, navigation, stagingSiteNotSupportedRedirect ];
@@ -42,6 +43,14 @@ export default ( router ) => {
 		'/purchases/subscriptions/:site/:purchaseId/cancel',
 		...commonHandlers,
 		purchaseCancel,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/purchases/subscriptions/:site/:purchaseId/downgrade',
+		...commonHandlers,
+		planDowngrade,
 		makeLayout,
 		clientRender
 	);

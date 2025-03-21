@@ -959,7 +959,11 @@ export class RenderDomainsStep extends Component {
 		const hasSearchedDomains = Array.isArray( this.props.step?.domainForm?.searchResults );
 
 		return (
-			<div className="domains__domain-side-content-container">
+			<div
+				className={ clsx( 'domains__domain-side-content-container', {
+					'is-sticky': !! useYourDomain,
+				} ) }
+			>
 				{ domainsInCart.length > 0 || this.state.wpcomSubdomainSelected ? (
 					<DomainsMiniCart
 						domainsInCart={ domainsInCart }

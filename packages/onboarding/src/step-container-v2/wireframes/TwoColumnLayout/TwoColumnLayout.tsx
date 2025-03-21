@@ -38,6 +38,10 @@ export const TwoColumnLayout = ( props: TwoColumnLayoutProps ) => {
 				}
 
 				return Children.map( childElements, ( child, index ) => {
+					if ( ! isValidElement( child ) ) {
+						return null;
+					}
+
 					return (
 						<div
 							className={ `two-column-layout__column--${ index }` }

@@ -54,32 +54,33 @@ export default function PlanStats() {
 	const footerWrapperIsLink = useDisplayUpgradeLink( site?.ID ?? null );
 	const availableStorageAddOns = AddOns.useAvailableStorageAddOns( { siteId: site?.ID } );
 
-	if ( isLoading ) {
-		return <LoadingPlaceholder width="100px" height="16px" />;
-	}
 	return (
-		<>
-			<div className="plan-stats">
-				<PlanStorage
-					className="plan-storage"
-					hideWhenNoStorage
-					siteId={ site?.ID }
-					storageBarComponent={ PlanStorageBar }
-				>
-					{ availableStorageAddOns.length && ! isAgencyPurchase ? (
-						<div className="plan-storage-footer">
-							<NeedMoreStorage noLink={ footerWrapperIsLink } />
-						</div>
-					) : null }
-				</PlanStorage>
+		<div className="plan-stats">
+			{ isLoading ? (
+				<LoadingPlaceholder width="400px" height="100px" />
+			) : (
+				<>
+					<PlanStorage
+						className="plan-storage"
+						hideWhenNoStorage
+						siteId={ site?.ID }
+						storageBarComponent={ PlanStorageBar }
+					>
+						{ availableStorageAddOns.length && ! isAgencyPurchase ? (
+							<div className="plan-storage-footer">
+								<NeedMoreStorage noLink={ footerWrapperIsLink } />
+							</div>
+						) : null }
+					</PlanStorage>
 
-				{ site && (
-					<div className="plan-stats__footer">
-						<PlanBandwidth siteId={ site.ID } />
-						<PlanSiteVisits siteId={ site.ID } />
-					</div>
-				) }
-			</div>
-		</>
+					{ site && (
+						<div className="plan-stats__footer">
+							<PlanBandwidth siteId={ site.ID } />
+							<PlanSiteVisits siteId={ site.ID } />
+						</div>
+					) }
+				</>
+			) }
+		</div>
 	);
 }

@@ -1,11 +1,17 @@
 import React from 'react';
 import { ReadyNotStep } from 'calypso/blocks/import/ready';
-import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ImportWrapper } from '../import';
 import { generateStepPath } from '../import/helper';
+import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import type { ImporterPlatform } from 'calypso/lib/importer/types';
 
-const ImportReadyNot: Step = function ImportStep( props ) {
+const ImportReadyNot: Step< {
+	submits: {
+		platform: ImporterPlatform;
+		url: string;
+	};
+} > = function ImportStep( props ) {
 	const { navigation } = props;
 
 	return (

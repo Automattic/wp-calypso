@@ -172,6 +172,11 @@
 	@include breakpoint-deprecated( ">800px" ) {
 		max-width: 55%;
 	}
+
+	&.has-badges {
+		display: flex;
+    	align-items: center;
+	}
 }
 
 .domain-registration-suggestion__title-wrapper {

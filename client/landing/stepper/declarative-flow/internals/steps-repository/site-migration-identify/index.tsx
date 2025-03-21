@@ -124,7 +124,13 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 
 export type SiteMigrationIdentifyAction = 'continue' | 'skip_platform_identification';
 
-const SiteMigrationIdentify: Step = function ( { navigation, variantSlug, flow } ) {
+const SiteMigrationIdentify: Step< {
+	submits: {
+		action: SiteMigrationIdentifyAction;
+		platform?: string;
+		from?: string;
+	};
+} > = function ( { navigation, variantSlug, flow } ) {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
 	const { createScreenshots } = useSitePreviewMShotImageHandler();
