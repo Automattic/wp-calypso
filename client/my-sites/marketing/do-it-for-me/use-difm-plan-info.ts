@@ -45,7 +45,7 @@ export const useDIFMPlanInfo = ( {
 	useQueryProductsList( {
 		type: 'partial',
 		productSlugList: [ PLAN_PREMIUM, WPCOM_DIFM_LITE, PLAN_BUSINESS ],
-		currency: currencyCode,
+		currency: currencyCode ?? undefined,
 		persist: true,
 	} );
 

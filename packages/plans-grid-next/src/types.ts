@@ -104,6 +104,7 @@ export interface CommonGridProps {
 	siteId?: number | null;
 	isInSignup: boolean;
 	isInAdmin: boolean;
+	isInSiteDashboard: boolean;
 	onStorageAddOnClick?: ( addOnSlug: AddOns.StorageAddOnSlug ) => void;
 	currentSitePlanSlug?: string | null;
 	hideUnavailableFeatures?: boolean; // used to hide features that are not available, instead of strike-through as explained in #76206
@@ -123,7 +124,6 @@ export interface FeaturesGridProps extends CommonGridProps {
 	gridPlans: GridPlan[];
 	currentPlanManageHref?: string;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
-	hideSpotlightPlan?: boolean;
 	gridPlanForSpotlight?: GridPlan;
 	isCustomDomainAllowedOnFreePlan: boolean; // indicate when a custom domain is allowed to be used with the Free plan.
 	paidDomainName?: string;

@@ -12,6 +12,8 @@ import { usePrepareSiteForMigration } from 'calypso/landing/stepper/hooks/use-pr
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useDispatch } from 'calypso/state';
+import { resetSite } from 'calypso/state/sites/actions';
 import { HostingBadge } from './hosting-badge';
 import { MigrationInstructions } from './migration-instructions';
 import { ProvisionStatus } from './provision-status';
@@ -86,6 +88,7 @@ const SiteMigrationInstructions: Step< {
 	const siteId = site?.ID ?? 0;
 	const queryParams = useQuery();
 	const fromUrl = queryParams.get( 'from' ) ?? '';
+	const dispatch = useDispatch();
 
 	const { mutate: updateMigrationStatus } = useUpdateMigrationStatus( siteId );
 
@@ -147,6 +150,7 @@ const SiteMigrationInstructions: Step< {
 
 	// Steps.
 	const onCompleteSteps = () => {
+		dispatch( resetSite( siteId ) );
 		navigation.submit?.( { destination: 'migration-started' } );
 	};
 

@@ -127,13 +127,30 @@ class MagicLogin extends Component {
 	};
 
 	componentDidMount() {
+		const { userEmail, oauth2Client, query } = this.props;
+
 		this.props.recordPageView( '/log-in/link', 'Login > Link' );
 
-		if ( isGravPoweredOAuth2Client( this.props.oauth2Client ) ) {
+		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
 			this.props.recordTracksEvent( 'calypso_gravatar_powered_magic_login_email_form', {
 				client_id: this.props.oauth2Client.id,
 				client_name: this.props.oauth2Client.title,
 			} );
+		}
+
+		// If the auto_trigger query parameter is set to true, automatically trigger the email send.
+		if ( query?.auto_trigger !== undefined ) {
+			if ( userEmail && emailValidator.validate( userEmail ) ) {
+				if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
+					this.handleGravPoweredEmailSubmit( userEmail );
+				} else {
+					this.props.sendEmailLogin( userEmail, {
+						redirectTo: query?.redirect_to,
+						requestLoginEmailFormFlow: true,
+						createAccount: true,
+					} );
+				}
+			}
 		}
 	}
 

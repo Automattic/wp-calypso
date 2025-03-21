@@ -12,6 +12,12 @@
 
 	.import__onboarding-page {
 		@include onboarding-block-margin;
+
+		@media ( min-width: $break-medium ) {
+			margin-left: auto;
+			margin-right: auto;
+		}
+
 		.onboarding-progress {
 			min-width: auto;
 			margin: auto;

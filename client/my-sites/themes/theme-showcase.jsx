@@ -152,15 +152,21 @@ class ThemeShowcase extends Component {
 		return {
 			MYTHEMES: {
 				key: STATIC_FILTERS.MYTHEMES,
-				text: translate( 'My Themes' ),
+				get text() {
+					return translate( 'My Themes' );
+				},
 			},
 			RECOMMENDED: {
 				key: STATIC_FILTERS.RECOMMENDED,
-				text: translate( 'Recommended' ),
+				get text() {
+					return translate( 'Recommended' );
+				},
 			},
 			ALL: {
 				key: STATIC_FILTERS.ALL,
-				text: translate( 'All' ),
+				get text() {
+					return translate( 'All' );
+				},
 			},
 		};
 	}
@@ -222,7 +228,15 @@ class ThemeShowcase extends Component {
 			];
 		}, [] );
 
-		return [ { value: 'all', label: translate( 'All' ) }, ...tiers ];
+		return [
+			{
+				value: 'all',
+				get label() {
+					return translate( 'All' );
+				},
+			},
+			...tiers,
+		];
 	};
 
 	findTabFilter = ( tabFilters, filterKey ) =>

@@ -15,9 +15,7 @@ import {
 	EditorWelcomeTourComponent,
 	EditorWelcomeGuideComponent,
 	EditorBlockToolbarComponent,
-	EditorTemplateModalComponent,
 	EditorPopoverMenuComponent,
-	TemplateCategory,
 	BlockToolbarButtonIdentifier,
 	CookieBannerComponent,
 	EditorToolbarSettingsButton,
@@ -60,7 +58,6 @@ export class EditorPage {
 	private editorWelcomeTourComponent: EditorWelcomeTourComponent;
 	private editorWelcomeGuideComponent: EditorWelcomeGuideComponent;
 	private editorBlockToolbarComponent: EditorBlockToolbarComponent;
-	private editorTemplateModalComponent: EditorTemplateModalComponent;
 	private editorPopoverMenuComponent: EditorPopoverMenuComponent;
 	private cookieBannerComponent: CookieBannerComponent;
 
@@ -90,7 +87,6 @@ export class EditorPage {
 			page,
 			this.editor
 		);
-		this.editorTemplateModalComponent = new EditorTemplateModalComponent( page, this.editor );
 		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent( page, this.editor );
 		this.cookieBannerComponent = new CookieBannerComponent( page, this.editor );
 	}
@@ -208,27 +204,6 @@ export class EditorPage {
 	//#region Basic Entry
 
 	/**
-	 * Selects blank template from the template modal.
-	 */
-	async selectBlankPageTemplate() {
-		return await this.editorTemplateModalComponent.selectBlankPage();
-	}
-
-	/**
-	 * Select a template category from the sidebar of options.
-	 *
-	 * @param {TemplateCategory} category Name of the category to select.
-	 * @param param1 Keyed object parameter.
-	 * @param {number} param1.timeout Timeout to apply.
-	 */
-	async selectTemplateCategory(
-		category: TemplateCategory,
-		{ timeout = envVariables.TIMEOUT }: { timeout?: number } = {}
-	) {
-		return await this.editorTemplateModalComponent.selectTemplateCategory( category, timeout );
-	}
-
-	/**
 	 * Select a template from the grid of options.
 	 *
 	 * @param {string} label Label for the template (the string underneath the preview).
@@ -239,7 +214,16 @@ export class EditorPage {
 		label: string,
 		{ timeout = envVariables.TIMEOUT }: { timeout?: number } = {}
 	) {
-		return await this.editorTemplateModalComponent.selectTemplate( label, timeout );
+		const editor = await this.getEditorParent();
+		const inserterSelector = await editor.getByRole( 'listbox', { name: 'All' } );
+		const modalSelector = await editor.getByRole( 'listbox', {
+			name: 'Block patterns',
+		} );
+		return await inserterSelector
+			.or( modalSelector )
+			.getByRole( 'option', { name: label, exact: true } )
+			.first()
+			.click( { timeout: timeout } );
 	}
 
 	/**

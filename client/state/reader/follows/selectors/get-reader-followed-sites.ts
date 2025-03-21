@@ -1,8 +1,10 @@
+import 'calypso/state/reader/init';
 import { createSelector } from '@automattic/state-utils';
 import { NO_ORG_ID } from 'calypso/state/reader/organizations/constants';
-import 'calypso/state/reader/init';
+import { AppState } from 'calypso/types';
+import { ReaderFollowItem, ReaderFollowState } from './types';
 
-export const sorter = ( a, b ) => {
+export const sorter = ( a: ReaderFollowItem, b: ReaderFollowItem ): number => {
 	const updatedA =
 		typeof a.last_updated === 'number' && ! isNaN( a.last_updated ) ? a.last_updated : 0;
 	const updatedB =
@@ -30,8 +32,10 @@ export const sorter = ( a, b ) => {
  * Get sites by organization id
  */
 const getReaderFollowedSites = createSelector(
-	( state ) => {
-		return Object.values( state.reader.follows.items )
+	( state: AppState ) => {
+		const follows: ReaderFollowState = state.reader.follows;
+
+		return Object.values( follows.items )
 			.filter( ( blog ) => blog.organization_id === NO_ORG_ID )
 			.sort( sorter );
 	},

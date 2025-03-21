@@ -55,7 +55,6 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
 			STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN,
 			STEPS.SITE_MIGRATION_INSTRUCTIONS,
-			STEPS.SITE_MIGRATION_STARTED,
 			STEPS.ERROR,
 			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
 			STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS,
@@ -99,7 +98,7 @@ const siteMigration: Flow = {
 		return { state: AssertConditionState.SUCCESS };
 	},
 
-	useStepNavigation( currentStep, _navigate ) {
+	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
 		const { siteId } = useSiteData();
 		const variantSlug = this.variantSlug;
@@ -120,10 +119,6 @@ const siteMigration: Flow = {
 
 		const exitFlow = ( to: string ) => {
 			return window.location.assign( addQueryArgs( { sessionId }, to ) );
-		};
-
-		const navigate = ( to: string, state?: Parameters< typeof _navigate >[ 1 ] ) => {
-			return _navigate( addQueryArgs( { sessionId }, to ), state );
 		};
 
 		// Call triggerGuidesForStep for the current step
@@ -416,17 +411,7 @@ const siteMigration: Flow = {
 							)
 						);
 					}
-
-					return navigate(
-						addQueryArgs(
-							{
-								siteId,
-								siteSlug,
-								from: fromQueryParam,
-							},
-							STEPS.SITE_MIGRATION_STARTED.slug
-						)
-					);
+					return exitFlow( addQueryArgs( { ref: 'site-migration' }, `/overview/${ siteSlug }` ) );
 				}
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {

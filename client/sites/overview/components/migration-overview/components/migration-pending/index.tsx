@@ -32,12 +32,21 @@ const getContinueMigrationUrl = ( site: SiteDetails ): string | null => {
 
 export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 	const translate = useTranslate();
+	const migrationType = getMigrationType( site );
 	const continueMigrationUrl = getContinueMigrationUrl( site );
 
 	const title = translate( 'Your WordPress site is ready to be migrated' );
-	const subTitle = translate(
-		'Start your migration today and get ready for unmatched WordPress hosting.'
-	);
+	const subTitle =
+		'diy' === migrationType
+			? translate(
+					'Complete your migration in the {{strong}}Migrate to WordPress.com{{/strong}} plugin and get ready for unmatched WordPress hosting.',
+					{
+						components: {
+							strong: <strong />,
+						},
+					}
+			  )
+			: translate( 'Start your migration today and get ready for unmatched WordPress hosting.' );
 
 	const {
 		isModalVisible: isCancellationModalVisible,
@@ -85,7 +94,9 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 				{ continueMigrationUrl && (
 					<div className="migration-pending__buttons">
 						<HostingHeroButton href={ continueMigrationUrl }>
-							{ translate( 'Start your migration' ) }
+							{ 'diy' === migrationType
+								? translate( 'Complete your migration' )
+								: translate( 'Start your migration' ) }
 						</HostingHeroButton>
 						<Button
 							variant="link"
