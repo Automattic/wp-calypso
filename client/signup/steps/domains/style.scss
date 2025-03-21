@@ -363,7 +363,7 @@ body.is-section-signup {
 			}
 
 			@include break-large {
-				display: none;
+				display: none !important;
 			}
 		}
 
