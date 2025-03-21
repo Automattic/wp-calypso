@@ -96,7 +96,7 @@ export function cancelPurchase( context, next ) {
 export function downgradePurchase( context, next ) {
 	const DowngradePurchaseWrapper = localize( () => {
 		return (
-			<PurchasesWrapper title={ titles.cancelPurchase }>
+			<PurchasesWrapper title={ titles.downgradeSubscription() }>
 				<Main wideLayout className="purchases__cancel">
 					<Downgrade
 						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
