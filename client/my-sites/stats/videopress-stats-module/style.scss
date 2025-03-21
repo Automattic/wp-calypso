@@ -63,10 +63,6 @@
 			cursor: pointer;
 			display: block;
 			width: 100%;
-			
-			&:hover {
-				text-decoration: underline;
-			}
 		}
 	}
 
@@ -96,10 +92,9 @@
 				cursor: pointer;
 				position: relative;
 				z-index: 1;
-
-				&:hover {
-					text-decoration: underline;
-				}
+				color: var(--color-text);
+				font-size: $font-body-small;
+				font-weight: 500;
 			}
 
 			&::before {
@@ -109,9 +104,9 @@
 				top: 0;
 				height: 100%;
 				width: var(--bar-fill-percentage, 0%);
-				background-color: rgba(var(--color-primary-rgb), 8%);
+				background-color: rgba(var(--color-primary-rgb), 15%);
 				border-radius: 2px;
-				transition: width 0.2s ease-out;
+				transition: background-color 0.2s ease-out;
 				z-index: 0;
 			}
 		}
@@ -126,8 +121,15 @@
 
 	.videopress-stats-module__row-wrapper {
 		&:hover {
+			background-color: var(--theme-highlight-color);
+
 			.videopress-stats-module__bar::before {
-				background-color: rgba(var(--color-primary-rgb), 12%);
+				background-color: rgba(var(--color-primary-rgb), 15%);
+			}
+
+			.videopress-stats-module__grid-metric span,
+			.videopress-stats-module__bar span {
+				color: var(--color-text-inverted);
 			}
 		}
 	}
