@@ -49,8 +49,8 @@ const AddSitesForm = ( {
 	const { mutate: subscribe, isPending: subscribing } =
 		SubscriptionManager.useSiteSubscribeMutation();
 
-	// Triggers the onBlur event when the component mounts to validate the initial value.
-	useEffect( () => ( searchTerm ? onTextFieldChange( searchTerm ) : undefined ), [] ); // eslint-disable-line react-hooks/exhaustive-deps
+	// Triggers the text change when component mounts to validate the initial value.
+	useEffect( () => searchTerm && onTextFieldChange( searchTerm ), [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	// Update url query when search term changes.
 	useEffect(
