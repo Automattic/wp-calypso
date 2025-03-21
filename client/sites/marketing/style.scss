@@ -611,7 +611,7 @@
 	padding: 20px 24px;
 	background: var(--color-surface);
 	box-shadow:
-		0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5),
+		0 0 0 1px color-mix(in srgb, var(--color-neutral-10) 50%, transparent),
 		0 1px 2px var(--color-neutral-0);
 }
 
@@ -753,7 +753,7 @@
 	cursor: pointer;
 	border: 1px solid var(--color-neutral-10);
 	border-radius: 2px;
-	box-shadow: 0 0 8px rgba(var(--color-neutral-70-rgb), 0.04);
+	box-shadow: 0 0 8px color-mix(in srgb, var(--color-neutral-70) 4%, transparent);
 	background-color: var(--color-surface);
 	color: var(--color-primary);
 
@@ -1035,7 +1035,7 @@
 	background: var(--color-surface);
 	border: 1px solid var(--color-neutral-10);
 	border-radius: 2px;
-	box-shadow: 0 0 8px rgba(var(--color-neutral-70-rgb), 0.04);
+	box-shadow: 0 0 8px color-mix(in srgb, var(--color-neutral-70) 4%, transparent);
 
 	&::before {
 		content: "";

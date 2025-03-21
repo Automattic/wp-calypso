@@ -24,10 +24,10 @@
 	right: 0;
 	bottom: 0;
 	left: 0;
-	background-color: rgba(var(--color-surface-rgb), 0.75);
+	background-color: color-mix(in srgb, var(--color-surface) 75%, transparent);
 }
 
 .site-icon__img {
-	background: rgba(var(--color-surface-rgb), 0);
+	background: color-mix(in srgb, var(--color-surface) 0%, transparent);
 	position: relative;
 }

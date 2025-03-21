@@ -8,7 +8,7 @@ $selected-color: var(--color-primary);
 $img-size: 24px;
 $img-border-radius: 50%;
 $border-radius: 3px;
-$box-shadow: 0 5px 6px rgba(var(--color-neutral-10-rgb), 0.5);
+$box-shadow: 0 5px 6px color-mix(in srgb, var(--color-neutral-10) 50%, transparent);
 
 .wpnc__suggestions {
 	position: relative;
@@ -55,7 +55,7 @@ $box-shadow: 0 5px 6px rgba(var(--color-neutral-10-rgb), 0.5);
 
 	strong {
 		font-weight: 400;
-		background: rgba(var(--color-primary-light-rgb), 0.25);
+		background: color-mix(in srgb, var(--color-primary-light) 25%, transparent);
 	}
 
 	.wpnc__username {
@@ -83,7 +83,7 @@ $box-shadow: 0 5px 6px rgba(var(--color-neutral-10-rgb), 0.5);
 		strong,
 		.username strong {
 			color: var(--color-text-inverted);
-			background: rgba(var(--color-primary-light-rgb), 0.45);
+			background: color-mix(in srgb, var(--color-primary-light) 45%, transparent);
 		}
 
 		small {

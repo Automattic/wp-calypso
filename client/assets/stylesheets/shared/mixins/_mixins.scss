@@ -19,7 +19,7 @@
 // Copied _extends rules that are used in @media
 //======================================================
 @mixin mobile-link-element {
-	-webkit-tap-highlight-color: rgba(var(--color-surface-rgb), 0.4); // Until we capture ontouch events in JS this is better than :active
+	-webkit-tap-highlight-color: color-mix(in srgb, var(--color-surface) 40%, transparent); // Until we capture ontouch events in JS this is better than :active
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;

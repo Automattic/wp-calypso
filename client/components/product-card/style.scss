@@ -212,7 +212,7 @@
 
 	&.is-selected {
 		// Matches the feature highlight on the plans tables
-		background-color: rgba(var(--color-primary-rgb), 0.1);
+		background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
 		border-color: var(--color-primary);
 	}
 

@@ -8,7 +8,7 @@
 	background-size: cover;
 	border-radius: 2px;
 	box-shadow:
-		0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5),
+		0 0 0 1px color-mix(in srgb, var(--color-neutral-10) 50%, transparent),
 		0 1px 2px var(--color-neutral-0);
 	transition: all 100ms ease-in-out;
 	overflow: hidden;

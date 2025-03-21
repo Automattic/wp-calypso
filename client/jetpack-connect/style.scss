@@ -337,7 +337,7 @@ $colophon-height: 50px;
 	margin: 0;
 	line-height: 0;
 	box-shadow:
-		0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5),
+		0 0 0 1px color-mix(in srgb, var(--color-neutral-10) 50%, transparent),
 		0 1px 2px var(--color-neutral-0);
 }
 
@@ -1413,7 +1413,7 @@ $colophon-height: 50px;
 	.jetpack-connect__authorize-form {
 		.jetpack-connect__site.card {
 			.site-icon {
-				background-color: rgba(var(--wp-admin-theme-color--rgb), 0.15);
+				background-color: color-mix(in srgb, var(--wp-admin-theme-color) 15%, transparent);
 
 				svg {
 					fill: var(--wp-admin-theme-color);

@@ -4,7 +4,7 @@
 	width: 100%;
 	top: 0;
 	left: 0;
-	background: rgba(var(--studio-black-rgb), 0.6);
+	background: color-mix(in srgb, var(--studio-black) 60%, transparent);
 	touch-action: none;
 
 	/* Needed for banner to appear in front of notifications panel. */

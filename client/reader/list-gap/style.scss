@@ -26,7 +26,7 @@
 	}
 
 	&::before {
-		background: linear-gradient(-135deg, var(--color-neutral-0) 8px, rgba(var(--color-neutral-0-rgb), 0) 0) 0 8px, linear-gradient(135deg, var(--color-neutral-0) 8px, rgba(var(--color-neutral-0-rgb), 0) 0) 0 8px;
+		background: linear-gradient(-135deg, var(--color-neutral-0) 8px, color-mix(in srgb, var(--color-neutral-0) 0%, transparent) 0) 0 8px, linear-gradient(135deg, var(--color-neutral-0) 8px, color-mix(in srgb, var(--color-neutral-0) 0%, transparent) 0) 0 8px;
 		background-position: top left;
 		background-repeat: repeat-x;
 		background-size: 16px 16px;
@@ -35,7 +35,7 @@
 	}
 
 	&::after {
-		background: linear-gradient(-135deg, var(--color-surface) 8px, rgba(var(--color-surface-rgb), 0) 0) 0 8px, linear-gradient(135deg, var(--color-surface) 8px, rgba(var(--color-surface-rgb), 0) 0) 0 8px;
+		background: linear-gradient(-135deg, var(--color-surface) 8px, color-mix(in srgb, var(--color-surface) 0%, transparent) 0) 0 8px, linear-gradient(135deg, var(--color-surface) 8px, color-mix(in srgb, var(--color-surface) 0%, transparent) 0) 0 8px;
 		background-position: top left;
 		background-repeat: repeat-x;
 		background-size: 16px 16px;
@@ -52,6 +52,6 @@
 	z-index: z-index("root", ".reader-list-gap__button");
 
 	&:hover {
-		color: rgba(var(--color-surface-rgb), 0.8);
+		color: color-mix(in srgb, var(--color-surface) 80%, transparent);
 	}
 }

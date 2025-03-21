@@ -14,7 +14,7 @@
 .pages__page-list-header {
 	background: var(--color-neutral-0);
 	box-shadow:
-		0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5),
+		0 0 0 1px color-mix(in srgb, var(--color-neutral-10) 50%, transparent),
 		0 1px 2px var(--color-neutral-0);
 	color: var(--color-neutral-light);
 	font-size: $font-body-extra-small;
@@ -83,7 +83,7 @@
 	left: 0;
 	height: 100%;
 	box-shadow:
-		0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5),
+		0 0 0 1px color-mix(in srgb, var(--color-neutral-10) 50%, transparent),
 		0 1px 2px var(--color-neutral-0);
 
 	&.is-indented {
@@ -182,7 +182,7 @@
 	top: 0;
 	bottom: 0;
 	z-index: z-index("root", ".page__shadow-notice-cover");
-	background-color: rgba(var(--color-neutral-0-rgb), 0.8);
+	background-color: color-mix(in srgb, var(--color-neutral-0) 80%, transparent);
 	display: flex;
 	align-items: center;
 	overflow: hidden;

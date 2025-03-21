@@ -10,7 +10,7 @@
 	right: 0;
 	padding: 6px;
 	color: var(--color-text-inverted);
-	background: rgba(var(--color-neutral-70-rgb), 0.8);
+	background: color-mix(in srgb, var(--color-neutral-70) 80%, transparent);
 	text-align: center;
 	z-index: z-index("root", ".wpcom-site__global-noscript");
 }

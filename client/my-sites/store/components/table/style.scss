@@ -79,7 +79,7 @@
 			overflow: hidden;
 
 			&::after {
-				background-image: linear-gradient(to right, rgba(var(--color-surface-rgb), 0) 0%, var(--color-surface) 90%);
+				background-image: linear-gradient(to right, color-mix(in srgb, var(--color-surface) 0%, transparent) 0%, var(--color-surface) 90%);
 				position: absolute;
 				z-index: 1;
 				right: 0;
@@ -104,7 +104,7 @@
 				position: absolute;
 				right: -12px;
 				top: 0;
-				background: radial-gradient(ellipse at center, rgba(var(--color-neutral-70-rgb), 0.125) 0%, rgba(var(--color-surface-rgb), 0) 75%, rgba(var(--color-surface-rgb), 0) 90%);
+				background: radial-gradient(ellipse at center, color-mix(in srgb, var(--color-neutral-70) 12.5%, transparent) 0%, color-mix(in srgb, var(--color-surface) 0%, transparent) 75%, color-mix(in srgb, var(--color-surface) 0%, transparent) 90%);
 			}
 
 			@include breakpoint-deprecated( ">660px" ) {

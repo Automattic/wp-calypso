@@ -33,7 +33,7 @@
 		&:hover,
 		&:focus {
 			color: var(--color-primary);
-			background: rgba(var(--color-primary-light-rgb), 1);
+			background: color-mix(in srgb, var(--color-primary-light) 100%, transparent);
 
 			.reader-export-button__label {
 				color: var(--color-text-inverted);

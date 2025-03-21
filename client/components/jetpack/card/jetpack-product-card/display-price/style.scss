@@ -125,7 +125,7 @@
 	}
 
 	&__get-started {
-		background-color: rgba(var(--studio-jetpack-green-10-rgb), 0.2);
+		background-color: color-mix(in srgb, var(--studio-jetpack-green-10) 20%, transparent);
 	}
 
 	&__from {
