@@ -10,6 +10,7 @@ interface AsyncDomainStepWrapperProps {
 	goBack: () => void;
 	mainContent: React.ReactNode;
 	rightContent: React.ReactNode;
+	className: string;
 }
 
 export default function AsyncDomainStepWrapper( props: AsyncDomainStepWrapperProps ) {
@@ -23,6 +24,7 @@ export default function AsyncDomainStepWrapper( props: AsyncDomainStepWrapperPro
 		goBack,
 		mainContent,
 		rightContent,
+		className,
 	} = props;
 
 	const backButton = (
@@ -40,6 +42,7 @@ export default function AsyncDomainStepWrapper( props: AsyncDomainStepWrapperPro
 			secondColumnWidth={ 3 }
 			topBar={ <Step.TopBar backButton={ ! hideBack && backButton } /> }
 			heading={ <Step.Heading text={ headerText } subText={ subHeaderText } /> }
+			className={ className }
 		>
 			{ mainContent }
 			{ rightContent }

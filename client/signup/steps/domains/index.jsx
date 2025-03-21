@@ -1416,6 +1416,7 @@ export class RenderDomainsStep extends Component {
 				return (
 					<AsyncLoad
 						require="./async-domain-step-wrapper"
+						className="domains__step-content domains__step-content-domain-step"
 						hideBack={ hideBack }
 						backUrl={ backUrl }
 						isExternalBackUrl={ isExternalBackUrl }

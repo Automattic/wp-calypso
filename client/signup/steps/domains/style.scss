@@ -389,23 +389,8 @@ body.is-section-signup {
 			padding: 20px 0;
 			margin: 0;
 
-			@include break-small {
-				width: 80%;
-				margin: 0 auto;
-			}
-
-			@include break-medium {
-				width: 290px;
-				margin: 0 20px;
-			}
-
 			@include break-large {
-				margin: 0 0 0 40px;
 				padding: 40px 0;
-			}
-
-			@include break-huge {
-				margin: 0 0 0 60px;
 			}
 
 			&.fade-out {
@@ -504,5 +489,31 @@ body.is-section-signup {
 			padding: 0;
 		}
 
+	}
+
+	// In StepContainerV2 the wireframe is responsible for the column
+	// padding. If we're not using this then we need our own column spacing.
+	&:not(:has(.step-container-v2)) {
+		.domains__step-content {
+			.domains__domain-side-content {
+				@include break-small {
+					width: 80%;
+					margin: 0 auto;
+				}
+
+				@include break-medium {
+					width: 290px;
+					margin: 0 20px;
+				}
+
+				@include break-large {
+					margin: 0 0 0 40px;
+				}
+
+				@include break-huge {
+					margin: 0 0 0 60px;
+				}
+			}
+		}
 	}
 }
