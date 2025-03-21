@@ -7,6 +7,7 @@ import { useMarketplaceThemeProducts } from '../../../../hooks/use-marketplace-t
 import { useSiteData } from '../../../../hooks/use-site-data';
 import { useSiteTransferStatusQuery } from '../../../../hooks/use-site-transfer/query';
 import { useWaitForAtomic } from '../../../../hooks/use-wait-for-atomic';
+import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import type { Step } from '../../types';
 import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
 
@@ -23,7 +24,7 @@ const usePluginByGoal = () => {
 	return null;
 };
 
-const PostCheckoutOnboarding: Step = ( { navigation } ) => {
+const PostCheckoutOnboarding: Step = ( { flow, navigation } ) => {
 	const { submit } = navigation;
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { site, siteSlug } = useSiteData();
@@ -142,7 +143,12 @@ const PostCheckoutOnboarding: Step = ( { navigation } ) => {
 		hasPluginByGoal,
 	] );
 
-	return <Loading className="wpcom-loading__boot" />;
+	return (
+		<Loading
+			className="wpcom-loading__boot"
+			useStepContainerV2={ shouldUseStepContainerV2( flow ) }
+		/>
+	);
 };
 
 export default PostCheckoutOnboarding;

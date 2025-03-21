@@ -33,6 +33,7 @@ import {
 import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
+import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './styles.scss';
@@ -224,27 +225,26 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
-	const getCurrentMessage = () => {
-		return __( 'Creating your site' );
-	};
+	const title = __( 'Creating your site' );
 
-	const getSubTitle = () => {
-		return null;
-	};
-
-	const subTitle = getSubTitle();
+	if ( shouldUseStepContainerV2( flow ) ) {
+		return (
+			<>
+				<DocumentHead title={ title } />
+				<Loading title={ title } progress={ progress } useStepContainerV2 />
+			</>
+		);
+	}
 
 	return (
 		<>
-			<DocumentHead title={ getCurrentMessage() } />
+			<DocumentHead title={ title } />
 			<StepContainer
 				shouldHideNavButtons
 				hideFormattedHeader
 				stepName="create-site"
 				recordTracksEvent={ recordTracksEvent }
-				stepContent={
-					<Loading title={ getCurrentMessage() } subtitle={ subTitle } progress={ progress } />
-				}
+				stepContent={ <Loading title={ title } progress={ progress } /> }
 				showFooterWooCommercePowered={ false }
 			/>
 		</>

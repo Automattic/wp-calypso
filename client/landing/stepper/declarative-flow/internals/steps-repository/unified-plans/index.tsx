@@ -193,8 +193,10 @@ const PlansStepAdaptor: Step< {
 	};
 	useQueryTheme( 'wpcom', selectedDesign?.slug );
 
+	const isUsingStepContainerV2 = shouldUseStepContainerV2( props.flow );
+
 	if ( isLoadingSelectedTheme ) {
-		return <Loading />;
+		return <Loading useStepContainerV2={ isUsingStepContainerV2 } />;
 	}
 
 	return (
@@ -230,7 +232,7 @@ const PlansStepAdaptor: Step< {
 				isExtraWideLayout: false,
 			} }
 			useStepperWrapper
-			useStepContainerV2={ shouldUseStepContainerV2( props.flow ) }
+			useStepContainerV2={ isUsingStepContainerV2 }
 		/>
 	);
 };

@@ -21,6 +21,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useInterval } from 'calypso/lib/interval';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import useCaptureFlowException from '../../../../hooks/use-capture-flow-exception';
+import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { ProcessingResult } from './constants';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
 import HundredYearPlanFlowProcessingScreen from './hundred-year-plan-flow-processing-screen';
@@ -218,6 +219,15 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 		props.variantSlug === HUNDRED_YEAR_DOMAIN_TRANSFER
 	) {
 		return <HundredYearPlanFlowProcessingScreen />;
+	}
+
+	if ( shouldUseStepContainerV2( flow ) ) {
+		return (
+			<>
+				<DocumentHead title={ __( 'Processing' ) } />
+				<Loading title={ getCurrentMessage() } progress={ progress } useStepContainerV2 />
+			</>
+		);
 	}
 
 	return (

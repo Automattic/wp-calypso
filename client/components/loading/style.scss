@@ -2,6 +2,15 @@
 @import "@wordpress/base-styles/mixins";
 @import "@automattic/onboarding/styles/mixins";
 
+.step-container-v2--loading {
+	display: flex;
+	justify-content: center;
+
+	&__progress-bar {
+		--wp-components-color-foreground: var(--color-accent, #3858e9);
+	}
+}
+
 .wpcom__loading {
 	--wp-components-color-foreground: #3858e9;
 	padding: 1em;

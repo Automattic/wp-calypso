@@ -731,7 +731,7 @@ const UnifiedDesignPickerStep: StepType< {
 	const isLoading = isSiteLoading || isDesignsLoading;
 
 	if ( isLoading || isComingFromTheUpgradeScreen ) {
-		return <Loading />;
+		return <Loading useStepContainerV2={ isUsingStepContainerV2 } />;
 	}
 
 	if ( selectedDesign && isPreviewingDesign ) {
