@@ -63,24 +63,16 @@ const blogOnboardingHighlightedFeatures = ( flowName: string, plan: IncompleteWP
 
 const senseiHighlightedFeatures = ( plan: IncompleteWPcomPlan ) =>
 	plan.getSenseiHighlightedFeatures;
+
 const getHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
-	// Try each feature accessor in priority order and return the first non-empty result
-	const newsletterFeatures = newsletterHighlightedFeatures( flowName, plan );
-	if ( typeof newsletterFeatures === 'function' ) {
-		return newsletterFeatures();
-	}
-
-	const blogFeatures = blogOnboardingHighlightedFeatures( flowName, plan );
-	if ( typeof blogFeatures === 'function' ) {
-		return blogFeatures();
-	}
-
-	const senseiFeatures = senseiHighlightedFeatures( plan );
-	if ( typeof senseiFeatures === 'function' ) {
-		return senseiFeatures();
-	}
-
-	return [];
+	const accessor = [
+		newsletterHighlightedFeatures( flowName, plan ),
+		blogOnboardingHighlightedFeatures( flowName, plan ),
+		senseiHighlightedFeatures( plan ),
+	].find( ( accessor ) => {
+		return accessor instanceof Function;
+	} );
+	return ( accessor && accessor() ) || [];
 };
 
 export default function getFlowPlanFeatures(
