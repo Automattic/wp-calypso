@@ -19,6 +19,7 @@ import {
 	getPlan,
 	getFeatureByKey,
 	FeatureObject,
+	WPComPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card, Gridicon } from '@automattic/components';
@@ -40,9 +41,11 @@ import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import SupportLink from '../cancel-purchase-support-link/support-link';
+import { AtomicWarning } from './atomic-warning';
 import DowngradeLoadingPlaceholder from './downgrade-placeholder';
 
 import './style.scss';
@@ -102,14 +105,17 @@ const downgradePath: Record< string, string > = {
 
 export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 	const { siteSlug, purchaseId, getManagePurchaseUrlFor = managePurchase } = props;
+	const [ isAtomicWarningVisible, setIsAtomicWarningVisible ] = useState( false );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const purchase = useSelector( ( state ) => getByPurchaseId( state, purchaseId ) );
+
 	const hasLoadedSites = useSelector( ( state ) => ! isRequestingSites( state ) );
 	const [ isDowngrading, setIsDowngrading ] = useState( false );
 	const loadedFromServer = useSelector( hasLoadedUserPurchasesFromServer );
-	const { ID: siteId, name: siteName } =
-		useSelector( ( state ) => getSite( state, purchase?.siteId ) ) ?? {};
+	const site = useSelector( ( state ) => getSite( state, siteSlug ) ) ?? ( {} as any );
+	const { ID: siteId, name: siteName } = site;
+	const isAtomicSite = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 
 	const targetPlan = getPlan( downgradePath[ purchase?.productSlug ?? '' ] );
 	const currentPlan = getPlan( purchase?.productSlug ?? '' );
@@ -174,6 +180,31 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 			setIsDowngrading( false );
 		}
 	};
+
+	const checkAtomicAndDowngrade = () => {
+		if ( isAtomicSite ) {
+			setIsAtomicWarningVisible( true );
+		} else {
+			handleDowngrade();
+		}
+	};
+
+	if ( isAtomicWarningVisible ) {
+		return (
+			<AtomicWarning
+				purchaseRoot={ purchaseRoot }
+				currentPlan={ currentPlan as WPComPlan }
+				purchase={ purchase }
+				site={ site }
+				closeDialog={ () => setIsAtomicWarningVisible( false ) }
+				handleDowngrade={ handleDowngrade }
+				targetPlanName={ targetPlan?.getTitle() ?? '' }
+				isDowngrading={ isDowngrading }
+				siteSlug={ siteSlug }
+			/>
+		);
+	}
+
 	return (
 		<>
 			<HeaderCake backHref={ purchaseRoot }>
@@ -206,7 +237,7 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 					<DowngradeFeatureList features={ features } purchase={ purchase } />
 
 					<div className="downgrade__confirm-buttons">
-						<Button variant="primary" isBusy={ isDowngrading } onClick={ handleDowngrade }>
+						<Button variant="primary" isBusy={ isDowngrading } onClick={ checkAtomicAndDowngrade }>
 							{ translate( 'Downgrade to %(targetPlan)s', {
 								args: { targetPlan: targetPlan?.getTitle() ?? '' },
 							} ) }
