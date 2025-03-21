@@ -65,7 +65,9 @@ describe( 'Site', () => {
 	describe( 'Domain rendering', () => {
 		it( 'renders site domain when no custom domains are present', () => {
 			renderComponent();
-			expect( screen.getByText( defaultSite.domain ) ).toBeInTheDocument();
+			expect(
+				screen.getByText( defaultSite.domain, { selector: 'div.site__domain' } )
+			).toBeInTheDocument();
 		} );
 
 		it( 'renders custom domain when present', () => {
@@ -99,7 +101,9 @@ describe( 'Site', () => {
 			} );
 
 			renderComponent( {}, store );
-			expect( screen.getByText( customDomain ) ).toBeInTheDocument();
+			expect(
+				screen.getByText( customDomain, { selector: 'div.site__domain' } )
+			).toBeInTheDocument();
 		} );
 	} );
 } );
