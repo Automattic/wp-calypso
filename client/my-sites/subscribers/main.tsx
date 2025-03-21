@@ -13,10 +13,26 @@ import { SubscriberDataViews } from 'calypso/my-sites/subscribers/components/sub
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { Subscriber } from './types';
 
+/**
+ * Props for the SubscribersPage component
+ */
 type Props = {
+	/**
+	 * The ID of the subscriber to display details for.
+	 * When provided and valid, shows the subscriber details view.
+	 * Should be a numeric string matching the subscriber's subscription_id.
+	 */
 	subscriberId?: string;
 };
 
+/**
+ * Renders the subscribers management page.
+ * Handles both the subscribers list view and individual subscriber details view.
+ * The view is determined by the presence of a valid subscriberId in the URL.
+ *
+ * @param {Props} props - Component properties
+ * @param {string} [props.subscriberId] - Optional subscriber ID from URL parameters
+ */
 const SubscribersPage = ( { subscriberId }: Props ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) ?? null;
