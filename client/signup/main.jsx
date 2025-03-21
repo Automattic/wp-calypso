@@ -105,22 +105,6 @@ function dependenciesContainCartItem( dependencies ) {
 	);
 }
 
-function addLoadingScreenClassNamesToBody() {
-	if ( ! document ) {
-		return;
-	}
-
-	document.body.classList.add( 'has-loading-screen-signup' );
-}
-
-function removeLoadingScreenClassNamesFromBody() {
-	if ( ! document ) {
-		return;
-	}
-
-	document.body.classList.remove( 'has-loading-screen-signup' );
-}
-
 function showProgressIndicator( flowName ) {
 	const flow = flows.getFlow( flowName );
 	return ! flow.hideProgressIndicator;
@@ -441,14 +425,10 @@ class Signup extends Component {
 			);
 
 			this.setState( { shouldShowLoadingScreen: true } );
-
-			addLoadingScreenClassNamesToBody();
 		}
 
 		if ( hasInvalidSteps ) {
 			this.setState( { shouldShowLoadingScreen: false } );
-
-			removeLoadingScreenClassNamesFromBody();
 		}
 	};
 
