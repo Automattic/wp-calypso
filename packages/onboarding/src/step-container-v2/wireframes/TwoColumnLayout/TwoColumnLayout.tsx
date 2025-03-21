@@ -37,13 +37,13 @@ export const TwoColumnLayout = ( props: TwoColumnLayoutProps ) => {
 					childElements = childElements.props.children;
 				}
 
-				return Children.map( childElements, ( child, index ) => {
-					if ( ! isValidElement( child ) ) {
-						return null;
-					}
-
-					return <div style={ { flex: getChildFlexGrow( index ) } }>{ child }</div>;
-				} );
+				return Children.toArray( childElements )
+					.filter( isValidElement )
+					.map( ( child, index ) => (
+						<div style={ { flex: getChildFlexGrow( index ) } } key={ index }>
+							{ child }
+						</div>
+					) );
 			} }
 		</StepContainerV2>
 	);
