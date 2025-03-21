@@ -131,7 +131,8 @@ export const useWaitForAtomic = ( {
 			const requestedSite = await reduxDispatch< SiteDetails >( requestSite( siteId ) );
 			if (
 				requestedSite?.options?.is_wpcom_atomic &&
-				requestedSite?.capabilities?.manage_options
+				requestedSite?.capabilities?.manage_options &&
+				requestedSite?.options?.woocommerce_is_active
 			) {
 				break;
 			}
