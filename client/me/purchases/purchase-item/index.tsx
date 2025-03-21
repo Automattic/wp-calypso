@@ -95,6 +95,50 @@ function TrackImpression( props: { warning: string } ) {
 	);
 }
 
+export function PurchaseItemSiteIcon( {
+	site,
+	isDisconnectedSite,
+	purchase,
+	iconUrl,
+}: {
+	purchase: Purchases.Purchase;
+	site?: SiteDetails | null | undefined;
+	isDisconnectedSite?: boolean;
+	iconUrl?: string | null;
+} ) {
+	if ( isAkismetTemporarySitePurchase( purchase ) ) {
+		return (
+			<div className="purchase-item__static-icon">
+				<img src={ akismetIcon } alt="Akismet icon" />
+			</div>
+		);
+	}
+
+	if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+		return <SiteIcon size={ 36 } />;
+	}
+
+	if ( isDisconnectedSite ) {
+		return (
+			<div className="purchase-item__disconnected-icon">
+				<Gridicon icon="block" size={ Math.round( 36 / 1.8 ) } />
+			</div>
+		);
+	}
+
+	const isJetpackPurchase = isJetpackProduct( purchase ) || isJetpackPlan( purchase );
+
+	if ( ! iconUrl && isJetpackPurchase ) {
+		return (
+			<div className="purchase-item__static-icon">
+				<img src={ jetpackIcon } alt="Jetpack icon" />;
+			</div>
+		);
+	}
+
+	return <SiteIcon site={ site ?? undefined } size={ 36 } />;
+}
+
 class PurchaseItem extends Component<
 	PurchaseItemPropsPlaceholder | ( PurchaseItemProps & PurchaseItemPropsConnected )
 > {
@@ -631,55 +675,24 @@ class PurchaseItem extends Component<
 		}
 	}
 
-	getSiteIcon = () => {
-		if ( this.props.isPlaceholder ) {
-			return null;
-		}
-		const { site, isDisconnectedSite, purchase, iconUrl } = this.props;
-
-		if ( isAkismetTemporarySitePurchase( purchase ) ) {
-			return (
-				<div className="purchase-item__static-icon">
-					<img src={ akismetIcon } alt="Akismet icon" />
-				</div>
-			);
-		}
-
-		if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
-			return <SiteIcon size={ 36 } />;
-		}
-
-		if ( isDisconnectedSite ) {
-			return (
-				<div className="purchase-item__disconnected-icon">
-					<Gridicon icon="block" size={ Math.round( 36 / 1.8 ) } />
-				</div>
-			);
-		}
-
-		const isJetpackPurchase = isJetpackProduct( purchase ) || isJetpackPlan( purchase );
-
-		if ( ! iconUrl && isJetpackPurchase ) {
-			return (
-				<div className="purchase-item__static-icon">
-					<img src={ jetpackIcon } alt="Jetpack icon" />;
-				</div>
-			);
-		}
-
-		return <SiteIcon site={ site ?? undefined } size={ 36 } />;
-	};
-
 	renderPurchaseItemContent = () => {
 		if ( this.props.isPlaceholder ) {
 			return null;
 		}
-		const { purchase, showSite, isBackupMethodAvailable } = this.props;
+		const { purchase, showSite, isBackupMethodAvailable, site, isDisconnectedSite, iconUrl } =
+			this.props;
 
 		return (
 			<div className="purchase-item__wrapper purchases-layout__wrapper">
 				{ showSite && (
-					<div className="purchase-item__site purchases-layout__site">{ this.getSiteIcon() }</div>
+					<div className="purchase-item__site purchases-layout__site">
+						<PurchaseItemSiteIcon
+							site={ site }
+							purchase={ purchase }
+							isDisconnectedSite={ isDisconnectedSite }
+							iconUrl={ iconUrl }
+						/>
+					</div>
 				) }
 
 				<div className="purchase-item__information purchases-layout__information">
