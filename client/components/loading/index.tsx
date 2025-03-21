@@ -1,6 +1,6 @@
-import { Step } from '@automattic/onboarding';
 import { ProgressBar } from '@wordpress/components';
 import clsx from 'clsx';
+import AsyncLoad from 'calypso/components/async-load';
 import './style.scss';
 
 interface LoadingProps {
@@ -20,14 +20,12 @@ const Loading: React.FC< LoadingProps > = ( {
 } ) => {
 	if ( useStepContainerV2 ) {
 		return (
-			<Step.FullWidthLayout
-				topBar={ <Step.TopBar /> }
-				heading={ <Step.Heading text={ title } size="small" align="center" /> }
-				verticalAlign="center"
-				className="step-container-v2--loading"
-			>
-				<ProgressBar className="step-container-v2--loading__progress-bar" value={ progress } />
-			</Step.FullWidthLayout>
+			<AsyncLoad
+				require="./step-container-v2-loading"
+				placeholder={ null }
+				title={ title }
+				progress={ progress }
+			/>
 		);
 	}
 

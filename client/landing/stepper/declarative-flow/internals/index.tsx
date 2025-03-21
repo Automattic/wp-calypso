@@ -17,6 +17,7 @@ import { useSaveQueryParams } from '../../hooks/use-save-query-params';
 import { useSiteData } from '../../hooks/use-site-data';
 import useSyncRoute from '../../hooks/use-sync-route';
 import { useStartStepperPerformanceTracking } from '../../utils/performance-tracking';
+import { shouldUseStepContainerV2 } from '../helpers/should-use-step-container-v2';
 import { StepRoute } from './components';
 import { Boot } from './components/boot';
 import { RedirectToStep } from './components/redirect-to-step';
@@ -127,7 +128,12 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 	const renderStep = ( step: StepperStep ) => {
 		switch ( assertCondition.state ) {
 			case AssertConditionState.CHECKING:
-				return <Loading className="wpcom-loading__boot" />;
+				return (
+					<Loading
+						className="wpcom-loading__boot"
+						useStepContainerV2={ shouldUseStepContainerV2( flow.name ) }
+					/>
+				);
 			case AssertConditionState.FAILURE:
 				console.error( assertCondition.message ); // eslint-disable-line no-console
 				return null;
@@ -206,7 +212,14 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 	useSignUpStartTracking( { flow } );
 
 	return (
-		<Boot fallback={ <Loading className="wpcom-loading__boot" /> }>
+		<Boot
+			fallback={
+				<Loading
+					className="wpcom-loading__boot"
+					useStepContainerV2={ shouldUseStepContainerV2( flow.name ) }
+				/>
+			}
+		>
 			<DocumentHead title={ getDocumentHeadTitle() } />
 
 			<Step.StepContainerV2Provider value={ stepContainerV2Context }>

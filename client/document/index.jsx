@@ -20,6 +20,8 @@ import Loading from 'calypso/components/loading';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import WordPressLogo from 'calypso/components/wordpress-logo';
+import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
+import { getFlowFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { isGravPoweredOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
@@ -196,7 +198,10 @@ class Document extends Component {
 							>
 								<div className="layout__content">
 									{ shouldNotShowLoadingLogo ? (
-										<Loading className="wpcom-loading__boot" />
+										<Loading
+											className="wpcom-loading__boot"
+											useStepContainerV2={ shouldUseStepContainerV2( getFlowFromURL() ) }
+										/>
 									) : (
 										<LoadingLogo size={ 72 } className="wpcom-site__logo" />
 									) }
