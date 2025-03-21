@@ -895,7 +895,11 @@ const UnifiedDesignPickerStep: StepType< {
 						<Step.StickyBottomBar
 							leftButton={ <Step.BackButton onClick={ handleBackClick } /> }
 							rightButton={ actionButtons }
-						/>
+						>
+							<div className="step-container-v2--design-picker-preview__header-design-title">
+								{ headerDesignTitle }
+							</div>
+						</Step.StickyBottomBar>
 					}
 				>
 					{ stepContent }

@@ -673,6 +673,24 @@ $container-padding-large: 48px;
 		display: flex;
 		flex: 1;
 
+		&__header-design-title {
+			.design-picker-design-title__container {
+				align-items: normal;
+			}
+
+			.design-picker-design-title__design-title {
+				font-size: 0.875rem;
+				font-weight: 500;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+
+			.theme-tier-badge {
+				flex-shrink: 0;
+			}
+		}
+
 		.design-preview.design-preview--is-fullscreen {
 			padding-bottom: var(--step-container-v2-sticky-bottom-bar-height);
 			z-index: 0;
