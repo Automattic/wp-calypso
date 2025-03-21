@@ -8,6 +8,7 @@ import WooProductDownload from 'calypso/jetpack-cloud/sections/partner-portal/do
 import {
 	getProductSlugFromLicenseKey,
 	isWooCommerceProduct,
+	isJetpackCrmProduct,
 } from 'calypso/jetpack-cloud/sections/partner-portal/lib';
 import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
 import { useSelector } from 'calypso/state';
@@ -33,21 +34,12 @@ export default function DownloadProductsForm() {
 	const jetpackKeys =
 		licenseKeys && licenseKeys.split( ',' ).filter( ( key ) => ! isWooCommerceProduct( key ) );
 
-	// Find CRM or Complete license keys
-	const crmKeys = jetpackKeys?.filter(
-		( key ) => key.startsWith( 'jetpack_complete' ) || key.startsWith( 'jetpack_crm' )
-	);
-	// Use the first valid CRM or Complete key
-	const validCrmKey = crmKeys?.length ? crmKeys[ 0 ] : null;
-
-	// Filter out CRM keys from regular Jetpack keys display
-	const regularJetpackKeys = jetpackKeys?.filter(
-		( key ) => ! key.startsWith( 'jetpack_complete' ) && ! key.startsWith( 'jetpack_crm' )
-	);
+	const crmKey =
+		licenseKeys && licenseKeys.split( ',' ).find( ( key ) => isJetpackCrmProduct( key ) );
 
 	const jetpackProducts =
-		regularJetpackKeys &&
-		regularJetpackKeys.map( ( licenseKey: string ) => {
+		jetpackKeys &&
+		jetpackKeys.map( ( licenseKey: string ) => {
 			const productSlug = getProductSlugFromLicenseKey( licenseKey );
 			const product =
 				allProducts && allProducts.find( ( product ) => product.slug === productSlug );
@@ -120,10 +112,10 @@ export default function DownloadProductsForm() {
 						<ul>{ jetpackProducts }</ul>
 					</div>
 				) }
-				{ validCrmKey && (
+				{ crmKey && (
 					<div className="download-products-form__action-items">
 						<h4>{ translate( 'Your license includes access to Jetpack CRM' ) }</h4>
-						<CrmDownloadsContent licenseKey={ validCrmKey } />
+						<CrmDownloadsContent licenseKey={ crmKey } />
 					</div>
 				) }
 				{ !! wooProducts?.length && (
