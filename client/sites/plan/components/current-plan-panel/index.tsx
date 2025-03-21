@@ -37,13 +37,13 @@ export default function CurrentPlanPanel() {
 		);
 	};
 
-	const renderManagePlanButton = () => {
+	const renderManageBillingButton = () => {
 		if ( ! site || ! isOwner ) {
 			return null;
 		}
 		return (
 			<Button variant="secondary" href={ getMyPurchaseUrlFor( site.slug, planPurchaseId ?? 0 ) }>
-				{ translate( 'Manage plan' ) }
+				{ translate( 'Manage billing' ) }
 			</Button>
 		);
 	};
@@ -67,7 +67,7 @@ export default function CurrentPlanPanel() {
 				<div className="manage-buttons">
 					{ ! isLoading && (
 						<>
-							{ renderManagePlanButton() }
+							{ renderManageBillingButton() }
 							{ renderManageAddOnsButton() }
 						</>
 					) }
