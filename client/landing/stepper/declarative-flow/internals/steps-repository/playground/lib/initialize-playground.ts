@@ -3,6 +3,7 @@ import { Blueprint } from '@wp-playground/blueprints';
 import { MountDescriptor, PlaygroundClient, startPlaygroundWeb } from '@wp-playground/client';
 import { logToLogstash } from 'calypso/lib/logstash';
 
+const OPFS_PATH_PREFIX = '/wpcom-onboarding';
 const DEFAULT_BLUEPRINT: Blueprint = {
 	preferredVersions: {
 		php: '8.3',
@@ -13,6 +14,48 @@ const DEFAULT_BLUEPRINT: Blueprint = {
 	},
 	login: true,
 };
+
+const PREDEFINED_BLUEPRINTS: Record< string, Blueprint > = {
+	woocommerce: {
+		...DEFAULT_BLUEPRINT,
+		steps: [
+			{
+				step: 'installPlugin',
+				pluginData: {
+					resource: 'wordpress.org/plugins',
+					slug: 'woocommerce',
+				},
+				options: {
+					activate: true,
+				},
+			},
+		],
+	},
+	// Add more predefined blueprints here as needed
+};
+
+function getBlueprintFromUrl(): Blueprint {
+	const url = new URL( window.location.href );
+	const predefinedBlueprintName = url.searchParams.get( 'blueprint' );
+
+	// If a predefined blueprint is specified and exists, use it
+	if ( predefinedBlueprintName && predefinedBlueprintName in PREDEFINED_BLUEPRINTS ) {
+		return PREDEFINED_BLUEPRINTS[ predefinedBlueprintName ];
+	}
+
+	// Otherwise, try to get blueprint from hash
+	try {
+		const blueprint = JSON.parse( decodeURIComponent( window.location.hash.slice( 1 ) ) );
+		return {
+			...DEFAULT_BLUEPRINT,
+			...blueprint,
+			steps: [ ...( DEFAULT_BLUEPRINT.steps || [] ), ...( blueprint.steps || [] ) ],
+		};
+	} catch ( error ) {
+		// If the blueprint is invalid or missing, use the default one
+		return DEFAULT_BLUEPRINT;
+	}
+}
 
 export async function initializeWordPressPlayground(
 	iframe: HTMLIFrameElement
@@ -31,24 +74,10 @@ export async function initializeWordPressPlayground(
 	}
 
 	try {
-		// get blueprint json from the hash
-		let blueprint: Blueprint | null = null;
-		try {
-			blueprint = JSON.parse( decodeURIComponent( window.location.hash.slice( 1 ) ) );
-			blueprint = {
-				...DEFAULT_BLUEPRINT,
-				...blueprint,
-			};
-			blueprint.steps = [ ...( DEFAULT_BLUEPRINT.steps || [] ), ...( blueprint.steps || [] ) ];
-		} catch ( error ) {
-			// If the blueprint is invalid, use the default one
-			blueprint = DEFAULT_BLUEPRINT;
-		}
-
 		const mountDescriptor: MountDescriptor = {
 			device: {
 				type: 'opfs',
-				path: `/sites/${ playgroundId }/`,
+				path: `${ OPFS_PATH_PREFIX }/${ playgroundId }/`,
 			},
 			mountpoint: '/wordpress',
 			initialSyncDirection: 'opfs-to-memfs',
@@ -57,7 +86,7 @@ export async function initializeWordPressPlayground(
 		const client = await startPlaygroundWeb( {
 			iframe,
 			remoteUrl: 'https://playground.wordpress.net/remote.html',
-			blueprint,
+			blueprint: ! isWordPressInstalled ? getBlueprintFromUrl() : DEFAULT_BLUEPRINT,
 			shouldInstallWordPress: ! isWordPressInstalled,
 			mounts: [ mountDescriptor ],
 		} );
