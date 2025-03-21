@@ -15,3 +15,22 @@
 		margin: 5px 5px 5px 10px;
 	}
 }
+
+$actions-height: 64px;
+
+.reader-onboarding-modal__footer {
+	height: $actions-height;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	background-color: #fff;
+	margin-left: -32px; // $grid-unit-40
+	margin-right: -32px;
+	padding-left: 32px;
+	padding-right: 32px;
+	border-top: 1px solid #ddd; //$gray-300;
+
+	.reader-onboarding-modal__footer-actions {
+		height: 100%;
+	}
+}

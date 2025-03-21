@@ -29,6 +29,7 @@ import './style.scss';
 interface ReaderFeedItemProps {
 	feed: Reader.FeedItem;
 	source: string; // Indicates where the feed item is rendered.
+	shouldHideOnSubscribedState?: boolean; // To not render anything if the feed is in subscribed state.
 	onSubscribeToggle?: ( subscribed: boolean ) => void;
 }
 
@@ -44,12 +45,13 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 			railcar,
 		},
 		source,
+		shouldHideOnSubscribedState,
 		onSubscribeToggle,
 	} = props;
 	const isWpcomFeed = !! blogId;
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
+	const dispatch = useDispatch();
 	const { isPending: isSubscribing, mutate: onSubscribe } =
 		SubscriptionManager.useSiteSubscribeMutation();
 	const { isPending: isUnsubscribing, mutate: onUnsubscribe } =
@@ -80,6 +82,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 	const displayUrl = isWpcomFeed && site ? getSiteUrl( { feed, site } ) : subscribeUrl;
 	const filteredDisplayUrl = filterURLForDisplay( displayUrl ?? '' );
 	const feedUrl = isWpcomFeed ? getFeedUrl( feed?.feed_ID ) : subscribeUrl;
+	const subscriptionId = feed?.subscription_id;
 	const iconUrl = isWpcomFeed ? site?.icon?.img ?? site?.icon?.ico : feed?.image;
 	const shouldTrackRecommendedSearch =
 		source === SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST && railcar;
@@ -110,18 +113,18 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 				onSuccess: () => {
 					dispatch(
 						successNotice(
-							translate( 'Success! You are now unsubscribed to %s.', {
-								args: filteredDisplayUrl,
+							translate( 'Success! You are now subscribed to "%s".', {
+								args: title ?? filteredDisplayUrl,
 							} ),
 							noticeOptions
 						)
 					);
+
+					recordSiteUnsubscribed( { blog_id: blogId, url: subscribeUrl, source } );
+					onSubscribeToggle?.( false );
 					refetchFeed();
 
-					onSubscribeToggle?.( false );
-					recordSiteUnsubscribed( { blog_id: blogId, url: subscribeUrl, source } );
-
-					if ( railcar ) {
+					if ( shouldTrackRecommendedSearch ) {
 						// reader: action: site_followed, railcar, ui_algo, ui_position, fetch_algo, fetch_position, fetch_lang, rec_blog_id, (incorrect: only railcar & action accepted)
 						// subscriptions: action: recommended_search_item_site_subscribed, railcar
 						recordTrainTracksInteract( {
@@ -217,14 +220,19 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 
 	const SubscribeButton = (): JSX.Element => (
 		<Button
-			variant="primary"
+			variant={ subscriptionId ? 'secondary' : 'primary' }
 			isBusy={ isSubscribing || isUnsubscribing }
+			disabled={ isSubscribing || isUnsubscribing }
 			onClick={ onClickSubscribeToggle }
 			__next40pxDefaultSize
 		>
-			{ feed?.subscription_id ? translate( 'Unsubscribe' ) : translate( 'Subscribe' ) }
+			{ subscriptionId ? translate( 'Unsubscribe' ) : translate( 'Subscribe' ) }
 		</Button>
 	);
+
+	if ( subscriptionId && shouldHideOnSubscribedState ) {
+		return null;
+	}
 
 	return (
 		<HStack as="li" className="reader-feed-item" alignment="center" spacing={ 8 }>

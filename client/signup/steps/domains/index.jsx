@@ -248,12 +248,11 @@ export class RenderDomainsStep extends Component {
 			suggestion?.isSubDomainSuggestion
 		) {
 			if ( this.state.wpcomSubdomainSelected ) {
-				this.freeDomainRemoveClickHandler();
-			} else {
-				this.setState( { wpcomSubdomainSelected: suggestion } );
-				this.props.saveSignupStep( stepData );
+				await this.freeDomainRemoveClickHandler();
 			}
-
+			this.setState( { wpcomSubdomainSelected: suggestion }, () => {
+				this.props.saveSignupStep( stepData );
+			} );
 			return;
 		}
 
@@ -915,12 +914,15 @@ export class RenderDomainsStep extends Component {
 	};
 
 	freeDomainRemoveClickHandler = () => {
-		this.setState( { wpcomSubdomainSelected: false } );
-		this.props.saveSignupStep( {
-			stepName: this.props.stepName,
-			suggestion: {
-				domain_name: false,
-			},
+		return new Promise( ( resolve ) => {
+			this.setState( { wpcomSubdomainSelected: false } );
+			this.props.saveSignupStep( {
+				stepName: this.props.stepName,
+				suggestion: {
+					domain_name: false,
+				},
+			} );
+			resolve();
 		} );
 	};
 
@@ -957,7 +959,11 @@ export class RenderDomainsStep extends Component {
 		const hasSearchedDomains = Array.isArray( this.props.step?.domainForm?.searchResults );
 
 		return (
-			<div className="domains__domain-side-content-container">
+			<div
+				className={ clsx( 'domains__domain-side-content-container', {
+					'is-sticky': !! useYourDomain,
+				} ) }
+			>
 				{ domainsInCart.length > 0 || this.state.wpcomSubdomainSelected ? (
 					<DomainsMiniCart
 						domainsInCart={ domainsInCart }

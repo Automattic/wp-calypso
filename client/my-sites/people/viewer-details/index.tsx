@@ -7,7 +7,6 @@ import EmptyContent from 'calypso/components/empty-content';
 import HeaderCake from 'calypso/components/header-cake';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
-import NavigationHeader from 'calypso/components/navigation-header';
 import useRemoveViewer from 'calypso/data/viewers/use-remove-viewer-mutation';
 import useViewerQuery from 'calypso/data/viewers/use-viewer-query';
 import accept from 'calypso/lib/accept';
@@ -116,12 +115,6 @@ export default function ViewerDetails( props: Props ) {
 		<Main className="people-member-details">
 			<PageViewTracker path="/people/viewers/:site/:id" title="People > User Details" />
 			{ site?.ID && <QuerySiteInvites siteId={ site?.ID } /> }
-
-			<NavigationHeader
-				navigationItems={ [] }
-				title={ translate( 'Users' ) }
-				subtitle={ translate( 'People who have subscribed to your site and team members.' ) }
-			/>
 
 			<HeaderCake isCompact onClick={ onBackClick }>
 				{ translate( 'User Details' ) }

@@ -46,14 +46,6 @@
 				opacity: 0.3; // Same as disabled button's opacity.
 			}
 		}
-
-		.form-text-input-with-action__button {
-			color: var(--color-sidebar-submenu-text);
-
-			&:disabled {
-				color: var(--color-sidebar-submenu-text);
-			}
-		}
 	}
 
 	.reader-sidebar-tags__all-tags-link {

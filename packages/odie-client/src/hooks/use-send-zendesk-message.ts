@@ -23,7 +23,7 @@ export const useSendZendeskMessage = () => {
 
 	const conversationId = currentConversationId || chat.conversationId;
 	return async ( message: Message ) => {
-		setChatStatus( 'loading' );
+		setChatStatus( 'sending' );
 
 		if ( ! conversationId ) {
 			// Start a new conversation if it doesn't exist

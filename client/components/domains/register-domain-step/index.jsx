@@ -1730,7 +1730,6 @@ class RegisterDomainStep extends Component {
 				onSkip={ this.props.onSkip }
 				showSkipButton={ this.props.showSkipButton }
 				hideMatchReasons={ this.props.isOnboarding }
-				showDomainTransferSuggestion={ this.props.isOnboarding }
 				domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 				useProvidedProductsList={ this.props.useProvidedProductsList }
 				isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }

@@ -47,6 +47,7 @@ const defaultProps = {
 	hideUnavailableFeatures: false,
 	intervalType: 'yearly',
 	isInAdmin: false,
+	isInSiteDashboard: false,
 	isInSignup: true,
 	onStorageAddOnClick: () => {},
 	planActionOverrides: undefined,

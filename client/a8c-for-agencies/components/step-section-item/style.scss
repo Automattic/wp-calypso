@@ -22,14 +22,12 @@
 	}
 
 	.step-section-item__heading {
-		font-size: rem(16px);
-		font-weight: 500;
+		@include heading-medium;
 	}
 
 	.step-section-item__description {
 		margin-block-start: 4px;
-		font-size: rem(14px);
-		line-height: 1.7;
+		@include body-medium;
 		color: var(--color-accent);
 	}
 
@@ -46,16 +44,6 @@
 				width: auto;
 				height: inherit;
 			}
-		}
-	}
-
-	&.is-core-styles {
-		.step-section-item__heading {
-			@include heading-medium;
-		}
-
-		.step-section-item__description {
-			@include body-medium;
 		}
 	}
 }

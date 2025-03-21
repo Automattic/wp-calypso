@@ -26,10 +26,16 @@ export const THEME_COLLECTIONS = {
 			search: '',
 			tier: 'marketplace',
 		},
-		title: translate( 'Partner Themes' ),
-		fullTitle: translate( 'Partner Themes' ),
+		get title() {
+			return translate( 'Partner Themes' );
+		},
+		get fullTitle() {
+			return translate( 'Partner Themes' );
+		},
 		collectionSlug: 'partner-themes',
-		description: translate( 'Professional themes designed and developed by our partners.' ),
+		get description() {
+			return translate( 'Professional themes designed and developed by our partners.' );
+		},
 		seeAllLink: '/themes/marketplace',
 	},
 	partner: {
@@ -41,10 +47,16 @@ export const THEME_COLLECTIONS = {
 			search: '',
 			tier: 'partner',
 		},
-		title: translate( 'Partner Themes' ),
-		fullTitle: translate( 'Partner Themes' ),
+		get title() {
+			return translate( 'Partner Themes' );
+		},
+		get fullTitle() {
+			return translate( 'Partner Themes' );
+		},
 		collectionSlug: 'partner-themes',
-		description: translate( 'Professional themes designed and developed by our partners.' ),
+		get description() {
+			return translate( 'Professional themes designed and developed by our partners.' );
+		},
 		seeAllLink: '/themes/partner',
 	},
 };
