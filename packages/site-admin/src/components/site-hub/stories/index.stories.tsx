@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import { action } from '@storybook/addon-actions';
+import { useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
@@ -32,6 +34,28 @@ export const Default: Story = {
 					isTransparent
 					navigationBackLabel={ __( 'Go to the Dashboard', 'a8c-site-admin' ) }
 					navigationBackLink="/"
+				/>
+			</RouterProvider>
+		);
+	},
+};
+
+export const FocusButtonOnMount: Story = {
+	render: function Template() {
+		const buttonRef = useRef< HTMLButtonElement >( null );
+
+		useEffect( () => {
+			buttonRef.current?.focus();
+			action( 'Focus button' )( 'Focus on button' );
+		}, [] );
+
+		return (
+			<RouterProvider routes={ [] } pathArg="page">
+				<SiteHub
+					isTransparent
+					navigationBackLabel={ __( 'Go to the Dashboard', 'a8c-site-admin' ) }
+					navigationBackLink="/"
+					ref={ buttonRef }
 				/>
 			</RouterProvider>
 		);
