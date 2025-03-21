@@ -13,6 +13,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { isJetpackCrmProduct } from '../lib';
 
 interface Props {
 	licenseKey: string;
@@ -38,6 +39,7 @@ export default function LicenseDetailsActions( {
 	const [ revokeDialog, setRevokeDialog ] = useState( false );
 	const debugUrl = siteUrl ? `https://jptools.wordpress.com/debug/?url=${ siteUrl }` : null;
 	const downloadUrl = useLicenseDownloadUrlMutation( licenseKey );
+	const isValidCrmKey = isJetpackCrmProduct( licenseKey );
 
 	const openRevokeDialog = useCallback( () => {
 		setRevokeDialog( true );
@@ -72,7 +74,7 @@ export default function LicenseDetailsActions( {
 
 	return (
 		<div className="license-details__actions">
-			{ licenseKey.startsWith( 'jetpack_complete_' ) && (
+			{ isValidCrmKey && (
 				<Button compact onClick={ viewExtensions }>
 					{ translate( 'Download CRM Extensions' ) }
 				</Button>
