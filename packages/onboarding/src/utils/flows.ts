@@ -141,3 +141,7 @@ export const isDIFMFlow = ( flowName: string | null ) => {
 		flowName && [ DIFM_FLOW, DIFM_FLOW_STORE, WEBSITE_DESIGN_SERVICES ].includes( flowName )
 	);
 };
+
+export const isAIBuilderFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ AI_SITE_BUILDER_FLOW ].includes( flowName ) );
+};

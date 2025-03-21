@@ -2,7 +2,7 @@ import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Spinner } from '@automattic/components';
 import { isWithThemeFlow, isHostingSignupFlow, isOnboardingFlow } from '@automattic/onboarding';
-import { isTailoredSignupFlow } from '@automattic/onboarding/src';
+import { isAIBuilderFlow, isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -1379,6 +1379,9 @@ export class RenderDomainsStep extends Component {
 		} else if ( isOnboardingFlow( flowName ) && !! goBack ) {
 			backUrl = null;
 			backLabelText = translate( 'Back' );
+		} else if ( isAIBuilderFlow( flowName ) ) {
+			backUrl = `${ siteUrl }/wp-admin/site-editor.php?canvas=edit&referrer=${ flowName }&p=%2F&ai-step=edit`;
+			backLabelText = translate( 'Keep Editing' );
 		} else {
 			backUrl = getStepUrl( flowName, stepName, null, this.getLocale() );
 
