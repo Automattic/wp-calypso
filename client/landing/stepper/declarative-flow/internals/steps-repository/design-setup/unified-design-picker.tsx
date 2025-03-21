@@ -45,7 +45,6 @@ import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query'
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useExperiment } from 'calypso/lib/explat';
-import { navigate } from 'calypso/lib/navigate';
 import { urlToSlug } from 'calypso/lib/url';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
@@ -69,7 +68,6 @@ import {
 	getDesignEventProps,
 	recordPreviewedDesign,
 	recordSelectedDesign,
-	getVirtualDesignProps,
 } from '../../analytics/record-design';
 import { getCategorizationOptions } from './categories';
 import { STEP_NAME } from './constants';
@@ -267,13 +265,6 @@ const UnifiedDesignPickerStep: StepType< {
 			'calypso_signup_design_preview_style_variation_preview_click',
 			getEventPropsByDesign( design, { styleVariation } )
 		);
-	}
-
-	function onChangeVariation( design: Design, styleVariation?: StyleVariation ) {
-		recordTracksEvent( 'calypso_signup_design_picker_style_variation_button_click', {
-			...getEventPropsByDesign( design, { styleVariation } ),
-			...getVirtualDesignProps( design ),
-		} );
 	}
 
 	function trackAllDesignsView() {
@@ -874,11 +865,6 @@ const UnifiedDesignPickerStep: StepType< {
 		'One of these homepage options could be great to start with. You can always change later.'
 	);
 
-	function onDesignWithAI() {
-		recordTracksEvent( 'calypso_design_picker_big_sky_button_click', commonFilterProperties );
-		navigate( `/setup/site-setup/launch-big-sky?siteSlug=${ siteSlug }&siteId=${ site?.ID }` );
-	}
-
 	// Use this to prioritize themes in certain categories.
 	// The specified theme will be shown first in the list.
 	const priorityThemes: Record< string, string > = {
@@ -893,9 +879,7 @@ const UnifiedDesignPickerStep: StepType< {
 				designs={ designs }
 				priorityThemes={ priorityThemes }
 				locale={ locale }
-				onDesignWithAI={ onDesignWithAI }
 				onPreview={ previewDesign }
-				onChangeVariation={ onChangeVariation }
 				onViewAllDesigns={ trackAllDesignsView }
 				heading={
 					! isUsingStepContainerV2 ? (
@@ -908,7 +892,6 @@ const UnifiedDesignPickerStep: StepType< {
 				}
 				categorization={ categorization }
 				isPremiumThemeAvailable={ isPremiumThemeAvailable }
-				shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 				// TODO: Update the ThemeCard component once the new design is rolled out completely
 				// to avoid passing the getBadge and getOptionsMenu prop conditionally down the component tree.
 				getBadge={ isUpdatedBadgeDesign ? undefined : getBadge }

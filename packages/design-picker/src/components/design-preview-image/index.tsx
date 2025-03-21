@@ -2,7 +2,7 @@ import { MShotsImage } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
 import photon from 'photon';
 import { getDesignPreviewUrl, getMShotOptions } from '../../utils';
-import type { Design, StyleVariation } from '../../types';
+import type { Design } from '../../types';
 import type { FC } from 'react';
 
 const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name__${ slug }`;
@@ -11,14 +11,12 @@ interface DesignPreviewImageProps {
 	design: Design;
 	imageOptimizationExperiment?: boolean;
 	locale?: string;
-	styleVariation?: StyleVariation;
 	oldHighResImageLoading?: boolean; // Temporary for A/B test.
 }
 
 const DesignPreviewImage: FC< DesignPreviewImageProps > = ( {
 	design,
 	locale,
-	styleVariation,
 	oldHighResImageLoading,
 } ) => {
 	const isMobile = useViewportMatch( 'small', '<' );
@@ -54,7 +52,6 @@ const DesignPreviewImage: FC< DesignPreviewImageProps > = ( {
 		<MShotsImage
 			url={ getDesignPreviewUrl( design, {
 				use_screenshot_overrides: true,
-				style_variation: styleVariation,
 				...( locale && { language: locale } ),
 			} ) }
 			aria-labelledby={ makeOptionId( design ) }
