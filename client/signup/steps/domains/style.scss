@@ -84,7 +84,7 @@ body.is-section-stepper .domains__step-content,
 		bottom: 0;
 		left: 0;
 		z-index: 99;
-		padding-bottom: 6px !important;
+		padding-bottom: 0 !important;
 		box-shadow: 0 -3px 10px 0 rgba(0, 0, 0, 0.12);
 
 		.foldable-card__main {
@@ -341,14 +341,6 @@ body.is-section-signup {
 
 		.domains__domain-side-content-container {
 			flex-direction: column;
-			margin-top: 40px;
-			display: none;
-
-			@include break-large {
-				margin-top: 0;
-				flex-direction: column;
-				display: flex;
-			}
 
 			&.is-sticky {
 				position: sticky;
@@ -406,6 +398,10 @@ body.is-section-signup {
 
 		.domains__domain-side-content:last-of-type {
 			border-bottom: none;
+		}
+
+		.domains__domain-cart-foldable-card .domains__domain-side-content {
+			padding: 0;
 		}
 
 		.register-domain-step {
@@ -512,6 +508,16 @@ body.is-section-signup {
 
 				@include break-huge {
 					margin: 0 0 0 60px;
+				}
+			}
+
+			.domains__domain-side-content-container {
+				display: none;
+				margin-top: 40px;
+
+				@include break-large {
+					display: flex;
+					margin-top: 0;
 				}
 			}
 		}

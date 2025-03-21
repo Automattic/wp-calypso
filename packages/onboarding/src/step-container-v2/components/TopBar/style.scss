@@ -25,7 +25,7 @@
 		height: 1rem;
 		background-color: var(--color-border-subtle);
 
-		margin-inline: 1rem 0.5rem;
+		margin-inline: 1rem 0;
 
 		@include step-medium-viewport {
 			margin-inline: 1.5rem 0.75rem;
@@ -39,6 +39,9 @@
 	&-wordpress-logo {
 		color: var(--color-text);
 		margin: 0;
-		margin-right: 0.5rem;
+
+		@include step-medium-viewport {
+			margin-right: 0.5rem;
+		}
 	}
 }
