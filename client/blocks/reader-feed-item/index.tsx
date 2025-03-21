@@ -66,11 +66,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 
 	// Fetch feed and site data.
 	const queryFeed: boolean = ! isWpcomFeed; // No need to query feed data for WPCOM feeds.
-	const {
-		data: feed,
-		isLoading: isFeedLoading,
-		refetch: refetchFeed, // For cache invalidation and manually refetching the feed data.
-	} = Reader.useReadFeedQuery( queryFeed, feedId );
+	const { data: feed, isLoading: isFeedLoading } = Reader.useReadFeedQuery( queryFeed, feedId );
 	const { data: site, isLoading: isSiteLoading } = Reader.useReadFeedSiteQuery( Number( blogId ) );
 
 	if ( isFeedLoading || ( isWpcomFeed && isSiteLoading ) ) {
@@ -122,7 +118,6 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 
 					recordSiteUnsubscribed( { blog_id: blogId, url: subscribeUrl, source } );
 					onChangeSubscribe?.( false );
-					refetchFeed();
 
 					if ( shouldTrackRecommendedSearch ) {
 						// reader: action: site_followed, railcar, ui_algo, ui_position, fetch_algo, fetch_position, fetch_lang, rec_blog_id, (incorrect: only railcar & action accepted)
