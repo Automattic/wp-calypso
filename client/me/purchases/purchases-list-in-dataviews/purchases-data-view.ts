@@ -5,7 +5,7 @@ export const purchasesDataView = {
 	page: 1,
 	perPage: 5,
 	sort: {
-		field: 'product_id',
+		field: 'site',
 		direction: 'desc',
 	},
 	titleField: 'site',
