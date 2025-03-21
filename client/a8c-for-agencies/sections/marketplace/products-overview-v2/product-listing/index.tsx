@@ -2,7 +2,7 @@ import { JetpackLogo } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useEffect, useMemo, useRef } from 'react';
-import WooLogoRebrand2 from 'calypso/assets/images/icons/Woo_logo_color.svg';
+import WooLogoColor from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { parseQueryStringProducts } from 'calypso/jetpack-cloud/sections/partner-portal/lib/querystring-products';
 import {
@@ -270,7 +270,7 @@ export default function ProductListing( {
 
 			{ wooExtensions.length > 0 && (
 				<ProductListingSection
-					icon={ <img width={ 45 } src={ WooLogoRebrand2 } alt="WooCommerce" /> }
+					icon={ <img width={ 45 } src={ WooLogoColor } alt="WooCommerce" /> }
 					title={ translate( 'WooCommerce Extensions' ) }
 					description={ translate(
 						"Explore the tools and integrations you need to grow your client's Woo store."

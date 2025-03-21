@@ -18,7 +18,7 @@ export default function A4AModal( {
 	children: React.ReactNode;
 	extraActions?: React.ReactNode;
 	title: string;
-	subtile: string;
+	subtile: React.ReactNode;
 	className?: string;
 	showCloseButton?: boolean;
 } ) {

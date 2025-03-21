@@ -1001,7 +1001,7 @@ $breakpoint-mobile: 660px;
 		&.feature-flag-woocommerce-core-profiler-passwordless-auth {
 			.login form,
 			.signup-form {
-				max-width: 327px;
+				max-width: 515px;
 				margin: 48px auto;
 			}
 		}
@@ -1090,15 +1090,6 @@ $breakpoint-mobile: 660px;
 				p strong {
 					color: $gray-700;
 					font-weight: 400;
-				}
-
-				p:nth-child(2) {
-					@media screen and (min-width: 660px) {
-						// css to allow for this element to exceed parent's width
-						width: 152%; // 152% * 405px gets us to 615px which is the design spec
-						position: relative;
-						left: -26%; // shift position back by half of that so that it remains centered
-					}
 				}
 			}
 
@@ -1425,7 +1416,6 @@ $breakpoint-mobile: 660px;
 			line-height: 27px;
 			letter-spacing: -0.025px;
 			color: var(--studio-gray-60);
-			-webkit-font-smoothing: initial;
 			text-align: center;
 
 			a {
@@ -1532,12 +1522,12 @@ $breakpoint-mobile: 660px;
 			}
 
 			.login__lost-password-link {
-				color: var(--woo-purple-50);
+				color: var(--woo-purple-40);
 				text-align: center;
-				font-weight: 500;
+				font-weight: 400;
 				line-height: 20px;
 				margin-block-start: 24px;
-				text-decoration: none;
+				text-decoration: underline;
 			}
 		}
 
@@ -1820,11 +1810,8 @@ $breakpoint-mobile: 660px;
 				}
 
 				a {
-					text-decoration: none;
-					color: var(--woo-purple-50);
 					font-size: rem(14px);
 					font-style: normal;
-					font-weight: 500;
 					line-height: 20px;
 				}
 			}
@@ -1894,6 +1881,9 @@ $breakpoint-mobile: 660px;
 				.security-key-form__add-wait-for-key {
 					margin-bottom: 48px;
 
+					p {
+						max-width: 515px;
+					}
 					p:first-child {
 						margin-bottom: 12px;
 					}
@@ -1911,7 +1901,7 @@ $breakpoint-mobile: 660px;
 			}
 
 			.two-factor-authentication__small-print {
-				max-width: $max-width;
+				max-width: 350px;
 				color: $gray-50;
 				text-align: center;
 				font-style: normal;
@@ -2126,6 +2116,7 @@ $breakpoint-mobile: 660px;
 			.login__lost-password-link {
 				font-weight: inherit;
 				font-size: rem(13px);
+				text-decoration: none;
 			}
 		}
 
@@ -2246,8 +2237,8 @@ $breakpoint-mobile: 660px;
 	}
 }
 
-.woo.is-woo-com-oauth.feature-flag-woocommerce-rebrand-2-0,
-.layout.is-jetpack-woo-dna-flow.feature-flag-woocommerce-rebrand-2-0 {
+.woo.is-woo-com-oauth,
+.layout.is-jetpack-woo-dna-flow {
 	--woo-purple-0: #F2EDFF;
 	--woo-purple-40: #873EFF;
 	--woo-purple-50: #720EEC;

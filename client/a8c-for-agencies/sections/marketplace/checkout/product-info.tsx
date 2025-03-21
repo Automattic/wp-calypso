@@ -17,6 +17,8 @@ export default function ProductInfo( {
 
 	const { title, product: productInfo } = useLicenseLightboxData( product );
 
+	const isWooCommerceProduct = product.slug.startsWith( 'woocommerce-' );
+
 	let productIcon =
 		productInfo?.productSlug && getProductIcon( { productSlug: productInfo?.productSlug } );
 	let productTitle = title;
@@ -103,9 +105,13 @@ export default function ProductInfo( {
 
 	return (
 		<div className="product-info">
-			<div className="product-info__icon">
-				<img src={ productIcon } alt={ title } />
-			</div>
+			{ isWooCommerceProduct ? (
+				<img className="product-info__icon" src={ productIcon } alt={ title } />
+			) : (
+				<div className="product-info__icon">
+					<img src={ productIcon } alt={ title } />
+				</div>
+			) }
 			<div className="product-info__text-content">
 				<div className="product-info__header">
 					<label htmlFor={ productTitle } className="product-info__label">

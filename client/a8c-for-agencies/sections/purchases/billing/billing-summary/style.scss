@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .billing-summary {
 	display: flex;
@@ -62,8 +63,7 @@
 .billing-summary__label {
 	display: block;
 	margin-block-end: 8px;
-	font-size: 1.25rem;
-	line-height: 28px;
+	@include body-x-large;
 	color: var(--color-neutral-80);
 
 	@include break-wide() {
@@ -73,14 +73,12 @@
 
 .billing-summary__value {
 	display: block;
-	font-weight: 700;
-	font-size: 1.75rem;
-	line-height: 36px;
+	@include heading-2x-large;
 
 	@media (min-width: 661px) and (max-width: 781px) {
 		// Accounts for unbreakable long cost numbers breaking the layout due to the sidebar taking up
 		// a lot of the available space.
-		font-size: 1.25rem;
+		@include heading-x-large;
 	}
 }
 
@@ -97,7 +95,7 @@
 		box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
 
 		p {
-			font-size: 1rem;
+			@include body-large;
 			margin: 0;
 		}
 	}

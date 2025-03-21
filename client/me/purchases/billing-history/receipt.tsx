@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, Card, FormLabel } from '@automattic/components';
 import { IntroductoryOfferTerms } from '@automattic/shopping-cart';
@@ -201,7 +200,7 @@ export function ReceiptBody( {
 					) : (
 						<EmptyReceiptDetails />
 					) }
-					{ config.isEnabled( 'me/vat-details' ) && <VatDetails transaction={ transaction } /> }
+					<VatDetails transaction={ transaction } />
 				</ul>
 				<ReceiptLineItems transaction={ transaction } />
 
@@ -709,14 +708,6 @@ export function ReceiptPlaceholder() {
 function ReceiptLabels( { hideDetailsLabelOnPrint }: { hideDetailsLabelOnPrint?: boolean } ) {
 	const translate = useTranslate();
 
-	let labelContent = translate(
-		'Use this field to add your billing information (eg. VAT number, business address) before printing.'
-	);
-	if ( config.isEnabled( 'me/vat-details' ) ) {
-		labelContent = translate(
-			'Use this field to add your billing information (eg. business address) before printing.'
-		);
-	}
 	return (
 		<div>
 			<FormLabel
@@ -729,7 +720,9 @@ function ReceiptLabels( { hideDetailsLabelOnPrint }: { hideDetailsLabelOnPrint?:
 				className="billing-history__billing-details-description"
 				id="billing-history__billing-details-description"
 			>
-				{ labelContent }
+				{ translate(
+					'Use this field to add your billing information (eg. business address) before printing.'
+				) }
 			</div>
 		</div>
 	);

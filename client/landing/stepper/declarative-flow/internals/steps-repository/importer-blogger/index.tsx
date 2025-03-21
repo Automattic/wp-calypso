@@ -5,7 +5,7 @@ import './style.scss';
 
 const Importer = withImporterWrapper( BloggerImporter );
 
-const ImporterBlogger: Step = function ( props ) {
+const ImporterBlogger: Step< { submits: Record< string, unknown > } > = function ( props ) {
 	return <Importer importer="blogger" { ...props } />;
 };
 

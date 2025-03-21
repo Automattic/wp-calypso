@@ -26,7 +26,11 @@ import './style.scss';
 /**
  * The design choices step
  */
-const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
+const DesignChoicesStep: Step< { submits: { destination: string } } > = ( {
+	navigation,
+	flow,
+	stepName,
+} ) => {
 	const [ , isBigSkyBeforePlansExperiment ] = useBigSkyBeforePlans(); // If the experiment hasn't loaded yet, then it must mean we're ineligible anyway
 	const isGoalsFirstVariation = isOnboardingFlow( flow ) && isBigSkyBeforePlansExperiment;
 

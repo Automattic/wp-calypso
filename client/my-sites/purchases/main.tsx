@@ -11,6 +11,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import CancelPurchase from 'calypso/me/purchases/cancel-purchase';
 import ConfirmCancelDomain from 'calypso/me/purchases/confirm-cancel-domain';
+import { Downgrade } from 'calypso/me/purchases/downgrade';
 import ManagePurchase from 'calypso/me/purchases/manage-purchase';
 import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
 import { PurchaseListConciergeBanner } from 'calypso/me/purchases/purchases-list/purchase-list-concierge-banner';
@@ -25,6 +26,7 @@ import { logStashLoadErrorEvent } from '../checkout/src/lib/analytics';
 import {
 	getPurchaseListUrlFor,
 	getCancelPurchaseUrlFor,
+	getDowngradeUrlFor,
 	getConfirmCancelDomainUrlFor,
 	getManagePurchaseUrlFor,
 	getAddNewPaymentMethodUrlFor,
@@ -126,6 +128,7 @@ export function PurchaseDetails( {
 					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
 					redirectTo={ isJetpackCloud() ? `https://cloud.jetpack.com${ redirectTo }` : redirectTo }
 					getCancelPurchaseUrlFor={ getCancelPurchaseUrlFor }
+					getDowngradeUrlFor={ getDowngradeUrlFor }
 					getAddNewPaymentMethodUrlFor={ getAddNewPaymentMethodUrlFor }
 					getChangePaymentMethodUrlFor={ getChangeOrAddPaymentMethodUrlFor }
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
@@ -163,6 +166,33 @@ export function PurchaseCancel( {
 					getConfirmCancelDomainUrlFor={ getConfirmCancelDomainUrlFor }
 					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
 				/>
+			</CheckoutErrorBoundary>
+		</Main>
+	);
+}
+
+export function PurchaseDowngrade( {
+	purchaseId,
+	siteSlug,
+}: {
+	purchaseId: number;
+	siteSlug: string;
+} ) {
+	const translate = useTranslate();
+	const logPurchasesError = useLogPurchasesError( 'site level purchase cancel load error' );
+
+	return (
+		<Main wideLayout className="purchases">
+			<DocumentHead title={ titles.downgradeSubscription() } />
+			{ ! isJetpackCloud() && (
+				<NavigationHeader navigationItems={ [] } title={ titles.sectionTitle } />
+			) }
+
+			<CheckoutErrorBoundary
+				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
+				onError={ logPurchasesError }
+			>
+				<Downgrade purchaseId={ purchaseId } siteSlug={ siteSlug } />
 			</CheckoutErrorBoundary>
 		</Main>
 	);

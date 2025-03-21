@@ -38,11 +38,31 @@ const setUrlQuery = ( key: string, value: string ) => {
 const ReaderSiteSubscriptions = () => {
 	const translate = useTranslate();
 	const { searchTerm } = SubscriptionManager.useSiteSubscriptionsQueryProps();
-	const siteSubscriptionsQuery = SubscriptionManager.useSiteSubscriptionsQuery();
-	const unsubscribedFeedsSearch = Reader.useUnsubscribedFeedsSearch();
+	const {
+		data: { subscriptions },
+		isFetching,
+	} = SubscriptionManager.useSiteSubscriptionsQuery() ?? {};
+	const { feedItems: unsubscribedFeedItems, searchQueryResult } =
+		Reader.useUnsubscribedFeedsSearch() ?? {};
+	const { isPending: isUnsubscribing } = SubscriptionManager.useSiteUnsubscribeMutation();
 
-	const hasSomeSubscriptions = siteSubscriptionsQuery.data.subscriptions.length > 0;
-	const hasSomeUnsubscribedSearchResults = ( unsubscribedFeedsSearch?.feedItems.length ?? 0 ) > 0;
+	// To avoid showing duplicate feed items between subscribed and unsubscribed feeds.
+	const filteredUnsubscribedFeedItems = unsubscribedFeedItems?.filter(
+		( feedItem: Reader.FeedItem ): boolean => {
+			const isDuplicate = subscriptions.find(
+				( subscription ): boolean =>
+					! subscription.isDeleted &&
+					// For match either compare feed_ID or URL.
+					( subscription.feed_ID === feedItem.feed_ID ||
+						subscription.URL === feedItem.subscribe_URL )
+			);
+
+			return ! isDuplicate;
+		}
+	);
+
+	const hasSomeSubscriptions = subscriptions.length > 0;
+	const hasSomeUnsubscribedSearchResults = ( filteredUnsubscribedFeedItems?.length ?? 0 ) > 0;
 
 	const recordSearchPerformed = useRecordSearchPerformed();
 	const recordSearchByUrlPerformed = useRecordSearchByUrlPerformed();
@@ -61,6 +81,11 @@ const ReaderSiteSubscriptions = () => {
 		}
 	}, [ searchTerm, recordSearchPerformed, recordSearchByUrlPerformed ] );
 
+	const shouldShowUnsubcribedFeedsListLoader =
+		isFetching || // If site subscriptions are still fetching.
+		( searchQueryResult?.isFetching ?? false ) || // If unsubscribed feeds are still fetching.
+		isUnsubscribing; // If user is unsubscribing from subscriptions table.
+
 	return (
 		<>
 			<SiteSubscriptionsListActionsBar />
@@ -72,7 +97,13 @@ const ReaderSiteSubscriptions = () => {
 					{ translate( 'Here are some other sites that match your search.' ) }
 				</div>
 			) }
-			<UnsubscribedFeedsSearchList />
+
+			{ hasSomeUnsubscribedSearchResults && (
+				<UnsubscribedFeedsSearchList
+					feedItems={ filteredUnsubscribedFeedItems }
+					isLoading={ shouldShowUnsubcribedFeedsListLoader }
+				/>
+			) }
 		</>
 	);
 };

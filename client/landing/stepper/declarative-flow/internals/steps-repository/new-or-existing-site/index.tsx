@@ -85,51 +85,52 @@ const useIntentsForFlow = ( flowName: string ): NewOrExistingSiteIntent[] => {
 	}
 };
 
-const NewOrExistingSiteStep: Step = function NewOrExistingSiteStep( { navigation, flow } ) {
-	const { submit } = navigation;
-	const translate = useTranslate();
+const NewOrExistingSiteStep: Step< { submits: { newExistingSiteChoice: ChoiceType } } > =
+	function NewOrExistingSiteStep( { navigation, flow } ) {
+		const { submit } = navigation;
+		const translate = useTranslate();
 
-	const intents = useIntentsForFlow( flow );
+		const intents = useIntentsForFlow( flow );
 
-	const newOrExistingSiteSelected = ( value: ChoiceType ) => {
-		submit?.( { newExistingSiteChoice: value } );
-	};
+		const newOrExistingSiteSelected = ( value: ChoiceType ) => {
+			submit?.( { newExistingSiteChoice: value } );
+		};
 
-	const getHeaderText = () => {
-		if ( isStartWritingFlow( flow ) ) {
-			return translate( 'New or existing site' );
-		}
-		switch ( flow ) {
-			case HUNDRED_YEAR_PLAN_FLOW:
-			case HUNDRED_YEAR_DOMAIN_FLOW:
-				return translate( 'Start your legacy' );
-			default:
-				return null;
-		}
-	};
-
-	const Container = [ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( flow )
-		? HundredYearPlanStepWrapper
-		: StepContainer;
-
-	return (
-		<Container
-			stepContent={
-				<IntentScreen
-					intents={ intents }
-					onSelect={ newOrExistingSiteSelected }
-					preventWidows={ preventWidows }
-					intentsAlt={ [] }
-				/>
+		const getHeaderText = () => {
+			if ( isStartWritingFlow( flow ) ) {
+				return translate( 'New or existing site' );
 			}
-			formattedHeader={ <FormattedHeader brandFont headerText={ getHeaderText() } /> }
-			justifyStepContent="center"
-			stepName="new-or-existing-site"
-			flowName={ flow }
-			recordTracksEvent={ recordTracksEvent }
-			hideBack={ isStartWritingFlow( flow ) }
-		/>
-	);
-};
+			switch ( flow ) {
+				case HUNDRED_YEAR_PLAN_FLOW:
+				case HUNDRED_YEAR_DOMAIN_FLOW:
+					return translate( 'Start your legacy' );
+				default:
+					return null;
+			}
+		};
+
+		const Container = [ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( flow )
+			? HundredYearPlanStepWrapper
+			: StepContainer;
+
+		return (
+			<Container
+				stepContent={
+					<IntentScreen
+						intents={ intents }
+						onSelect={ newOrExistingSiteSelected }
+						preventWidows={ preventWidows }
+						intentsAlt={ [] }
+					/>
+				}
+				formattedHeader={ <FormattedHeader brandFont headerText={ getHeaderText() } /> }
+				justifyStepContent="center"
+				stepName="new-or-existing-site"
+				flowName={ flow }
+				recordTracksEvent={ recordTracksEvent }
+				hideBack={ isStartWritingFlow( flow ) }
+			/>
+		);
+	};
 
 export default NewOrExistingSiteStep;

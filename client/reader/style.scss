@@ -4,8 +4,6 @@
 body.is-section-reader {
 	div.layout.is-global-sidebar-visible {
 		.main {
-			border-block-end: 1px solid var(--studio-gray-0);
-
 			&:not(.no-padding) {
 				padding: 24px;
 

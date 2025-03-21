@@ -5,11 +5,11 @@ import { Product } from './available-upsells';
 import './style.scss';
 
 type UpsellCardProps = {
-	siteSlug?: string | null;
+	siteTitle?: string | null;
 	upsells: Product[];
 };
 
-export function UpsellCard( { siteSlug, upsells }: UpsellCardProps ) {
+export function UpsellCard( { siteTitle, upsells }: UpsellCardProps ) {
 	const translate = useTranslate();
 	const haveUpsells = upsells.length > 0;
 
@@ -18,9 +18,9 @@ export function UpsellCard( { siteSlug, upsells }: UpsellCardProps ) {
 			<h2 className="jetpack-upsell-card__title">
 				<span className="jetpack-upsell-card__title--long">
 					{ translate(
-						'Enhance %(siteSlug)s with Jetpack Security, Performance, and Growth tools',
+						'Enhance %(siteTitle)s with Jetpack Security, Performance, and Growth tools',
 						{
-							args: { siteSlug: siteSlug ?? 'your site' },
+							args: { siteTitle: siteTitle ?? 'your site' },
 						}
 					) }
 				</span>

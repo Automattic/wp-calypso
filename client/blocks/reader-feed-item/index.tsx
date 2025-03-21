@@ -9,7 +9,6 @@ import {
 import { rss } from '@wordpress/icons';
 import { filterURLForDisplay } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import {
@@ -25,13 +24,12 @@ import { getFeedUrl } from 'calypso/reader/route';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { NoticeOptions } from 'calypso/state/notices/types';
-import { requestFollows } from 'calypso/state/reader/follows/actions';
-import getFeedSubscriptionById from 'calypso/state/reader/follows/selectors/get-reader-follow-for-feed';
 import './style.scss';
 
 interface ReaderFeedItemProps {
 	feed: Reader.FeedItem;
 	source: string; // Indicates where the feed item is rendered.
+	shouldHideOnSubscribedState?: boolean; // To not render anything if the feed is in subscribed state.
 }
 
 /**
@@ -46,23 +44,16 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 			railcar,
 		},
 		source,
+		shouldHideOnSubscribedState,
 	} = props;
 	const isWpcomFeed = !! blogId;
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
+	const dispatch = useDispatch();
 	const { isPending: isSubscribing, mutate: onSubscribe } =
 		SubscriptionManager.useSiteSubscribeMutation();
 	const { isPending: isUnsubscribing, mutate: onUnsubscribe } =
 		SubscriptionManager.useSiteUnsubscribeMutation();
-
-	// Get feed subscription data. This is used to determine if the user is already subscribed to the feed.
-	useEffect( (): void => {
-		dispatch( requestFollows() ); // Update feed subscriptions.
-	} );
-	const feedSubscription = useSelector( ( state ) =>
-		getFeedSubscriptionById( state, Number( feedId ) )
-	);
 
 	// Hook for tracking.
 	const recordSiteIconClicked = useRecordSiteIconClicked();
@@ -73,7 +64,11 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 
 	// Fetch feed and site data.
 	const queryFeed: boolean = ! isWpcomFeed; // No need to query feed data for WPCOM feeds.
-	const { data: feed, isLoading: isFeedLoading } = Reader.useReadFeedQuery( queryFeed, feedId );
+	const {
+		data: feed,
+		isLoading: isFeedLoading,
+		refetch: refetchFeed, // For cache invalidation and manually refetching the feed data.
+	} = Reader.useReadFeedQuery( queryFeed, feedId );
 	const { data: site, isLoading: isSiteLoading } = Reader.useReadFeedSiteQuery( Number( blogId ) );
 
 	if ( isFeedLoading || ( isWpcomFeed && isSiteLoading ) ) {
@@ -85,7 +80,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 	const displayUrl = isWpcomFeed && site ? getSiteUrl( { feed, site } ) : subscribeUrl;
 	const filteredDisplayUrl = filterURLForDisplay( displayUrl ?? '' );
 	const feedUrl = isWpcomFeed ? getFeedUrl( feed?.feed_ID ) : subscribeUrl;
-	const hasSubscribed = feedSubscription?.ID ?? false;
+	const subscriptionId = feed?.subscription_id;
 	const iconUrl = isWpcomFeed ? site?.icon?.img ?? site?.icon?.ico : feed?.image;
 	const shouldTrackRecommendedSearch =
 		source === SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST && railcar;
@@ -107,11 +102,11 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 			return;
 		}
 
-		const noticeOptions: NoticeOptions = { duration: 5000 };
-		if ( feedSubscription?.ID ) {
+		const noticeOptions: NoticeOptions = { duration: 2000 };
+		if ( subscriptionId ) {
 			onUnsubscribe(
 				{
-					subscriptionId: feedSubscription.ID,
+					subscriptionId: subscriptionId,
 					blog_id: blogId ?? undefined,
 					url: subscribeUrl,
 				},
@@ -119,16 +114,17 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 					onSuccess: () => {
 						dispatch(
 							successNotice(
-								translate( 'Success! You are now unsubscribed to %s.', {
-									args: filteredDisplayUrl,
+								translate( 'Success! You are now subscribed to "%s".', {
+									args: title ?? filteredDisplayUrl,
 								} ),
 								noticeOptions
 							)
 						);
 
 						recordSiteUnsubscribed( { blog_id: blogId, url: subscribeUrl, source } );
+						refetchFeed();
 
-						if ( railcar ) {
+						if ( shouldTrackRecommendedSearch ) {
 							// reader: action: site_followed, railcar, ui_algo, ui_position, fetch_algo, fetch_position, fetch_lang, rec_blog_id, (incorrect: only railcar & action accepted)
 							// subscriptions: action: recommended_search_item_site_subscribed, railcar
 							recordTrainTracksInteract( {
@@ -224,14 +220,19 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 
 	const SubscribeButton = (): JSX.Element => (
 		<Button
-			variant="primary"
+			variant={ subscriptionId ? 'secondary' : 'primary' }
 			isBusy={ isSubscribing || isUnsubscribing }
+			disabled={ isSubscribing || isUnsubscribing }
 			onClick={ onSubscribeToggle }
 			__next40pxDefaultSize
 		>
-			{ hasSubscribed ? translate( 'Unsubscribe' ) : translate( 'Subscribe' ) }
+			{ subscriptionId ? translate( 'Unsubscribe' ) : translate( 'Subscribe' ) }
 		</Button>
 	);
+
+	if ( subscriptionId && shouldHideOnSubscribedState ) {
+		return null;
+	}
 
 	return (
 		<HStack as="li" className="reader-feed-item" alignment="center" spacing={ 8 }>

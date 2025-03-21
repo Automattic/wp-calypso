@@ -142,4 +142,8 @@
 		cursor: pointer;
 		color: var(--studio-gray-80);
 	}
+
+	.button.is-link {
+		line-height: inherit;
+	}
 }

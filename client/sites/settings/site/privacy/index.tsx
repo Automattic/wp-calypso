@@ -69,13 +69,13 @@ const PrivacyForm = ( {
 				onButtonClick={ handleSubmitForm }
 				showButton
 				title={ translate(
-					'Privacy {{infoPopover}} Control who can view your site. {{a}}Learn more{{/a}}. {{/infoPopover}}',
+					'Site Visibility {{infoPopover}} Control who can view your site. {{a}}Learn more{{/a}}. {{/infoPopover}}',
 					{
 						components: {
 							a: <InlineSupportLink showIcon={ false } supportContext="privacy" />,
 							infoPopover: <InfoPopover position="bottom right" />,
 						},
-						comment: 'Privacy Settings header',
+						comment: 'Site Visibility Settings header',
 					}
 				) }
 			/>
@@ -112,7 +112,7 @@ const PrivacyForm = ( {
 	}
 	return (
 		<PanelCard className="settings-site__privacy">
-			<PanelCardHeading>{ translate( 'Privacy' ) }</PanelCardHeading>
+			<PanelCardHeading>{ translate( 'Site Visibility' ) }</PanelCardHeading>
 			<PanelCardDescription>
 				{ translate( 'Control who can view your site. {{a}}Learn more{{/a}}', {
 					components: {

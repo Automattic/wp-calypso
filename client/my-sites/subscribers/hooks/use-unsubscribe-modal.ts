@@ -14,48 +14,52 @@ const useUnsubscribeModal = (
 	detailsView = false,
 	onSuccess?: () => void
 ) => {
-	const [ currentSubscriber, setCurrentSubscriber ] = useState< Subscriber >();
+	const [ currentSubscribers, setCurrentSubscribers ] = useState< Subscriber[] >();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const recordRemoveModal = useRecordRemoveModal();
 	const { mutate } = useSubscriberRemoveMutation( siteId, subscriberQueryParams, detailsView );
 
-	const onClickUnsubscribe = ( subscriber: Subscriber ) => {
-		setCurrentSubscriber( subscriber );
+	const onSetUnsubscribers = ( subscribers: Subscriber[] ) => {
+		setCurrentSubscribers( subscribers );
 	};
 
-	const resetSubscriber = () => {
-		setCurrentSubscriber( undefined );
+	const resetSubscribers = () => {
+		setCurrentSubscribers( undefined );
 	};
 
-	const onConfirmModal = ( action: UnsubscribeActionType, subscriber?: Subscriber ) => {
+	const onConfirmModal = ( action: UnsubscribeActionType, subscribers?: Subscriber[] ) => {
 		if ( action === UnsubscribeActionType.Manage ) {
 			recordRemoveModal( true, 'manage_button_clicked' );
 			const link = isJetpackCloud()
 				? `/monetize/supporters/${ selectedSiteSlug }`
 				: `/earn/supporters/${ selectedSiteSlug }`;
 			navigate( link ?? '' );
-		} else if ( action === UnsubscribeActionType.Unsubscribe && subscriber ) {
-			mutate( subscriber, {
+		} else if (
+			action === UnsubscribeActionType.Unsubscribe &&
+			subscribers &&
+			subscribers.length
+		) {
+			mutate( subscribers, {
 				onSuccess: () => {
-					resetSubscriber();
+					resetSubscribers();
 					onSuccess?.();
 				},
 			} );
 		}
 
-		resetSubscriber();
+		resetSubscribers();
 	};
 
 	// Reset current subscriber on unmount
 	useEffect( () => {
-		return resetSubscriber;
+		return resetSubscribers;
 	}, [] );
 
 	return {
-		currentSubscriber,
-		onClickUnsubscribe,
+		currentSubscribers,
+		onSetUnsubscribers,
 		onConfirmModal,
-		resetSubscriber,
+		resetSubscribers,
 	};
 };
 

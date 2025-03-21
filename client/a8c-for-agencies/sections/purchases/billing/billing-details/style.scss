@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .billing-details__row {
 	display: grid;
@@ -9,7 +10,7 @@
 		"subtotal unassigned";
 	align-items: center;
 	grid-gap: 24px;
-	font-size: 1.25rem;
+	@include body-x-large;
 
 	> :nth-child(even) {
 		text-align: right;
@@ -34,8 +35,7 @@
 	display: none;
 
 	* {
-		font-weight: 400;
-		font-size: 0.875rem;
+		@include body-medium;
 		color: var(--color-accent-70);
 	}
 
@@ -70,23 +70,23 @@
 
 .billing-details__cost-label {
 	margin-block-end: 8px;
-	font-size: 1rem;
+	@include body-large;
 }
 
 .billing-details__cost-amount {
 	margin-block-end: 8px;
-	font-size: 1.25rem;
+	@include body-x-large;
 
 	@media (min-width: 661px) and (max-width: 781px) {
 		// Accounts for unbreakable long cost numbers breaking the layout due to the sidebar taking up
 		// a lot of the available space.
-		font-size: 1rem;
+		@include body-large;
 	}
 }
 
 .billing-details__line-item-meta {
 	display: block;
-	font-size: 0.875rem;
+	@include body-medium;
 	color: var(--color-neutral-70);
 
 	&--is-mobile {

@@ -20,7 +20,13 @@ import type { Step } from '../../types';
 
 import './style.scss';
 
-const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
+const UseMyDomain: Step< {
+	submits: {
+		mode: 'transfer' | 'connect';
+		domain: string;
+		shouldSkipSubmitTracking?: boolean;
+	};
+} > = function UseMyDomain( { navigation, flow } ) {
 	const { setHideFreePlan, setDomainCartItem } = useDispatch( ONBOARD_STORE );
 	const { goNext, goBack, submit } = navigation;
 	const getDefaultStepContent = () => <h1>Choose a domain step</h1>;
@@ -72,7 +78,7 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 		return inputMode.domainInput;
 	};
 
-	const handleOnNext = ( { mode, domain }: { mode: string; domain: string } ) => {
+	const handleOnNext = ( { mode, domain }: { mode: 'transfer' | 'connect'; domain: string } ) => {
 		submit?.( { mode, domain, shouldSkipSubmitTracking: true } );
 	};
 
