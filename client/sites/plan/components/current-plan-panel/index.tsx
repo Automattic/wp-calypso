@@ -87,7 +87,7 @@ export default function CurrentPlanPanel() {
 						) : (
 							<>
 								<h3>{ planName }</h3>
-								<CoreBadge>{ translate( 'Current plan' ) }</CoreBadge>
+								{ ! isA4APlan && <CoreBadge>{ translate( 'Current plan' ) }</CoreBadge> }
 							</>
 						) }
 					</div>
