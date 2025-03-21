@@ -50,6 +50,7 @@ import './style.scss';
 interface DowngradeProps {
 	siteSlug: string;
 	purchaseId: number;
+	getManagePurchaseUrlFor: ( siteSlug: string, purchaseId: number ) => string;
 }
 
 const DowngradeFeatureList: React.FC< { features: FeatureObject[]; purchase: Purchase } > = ( {
@@ -130,7 +131,7 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 			</>
 		);
 	}
-	const purchaseRoot = getManagePurchaseUrlFor( siteSlug, purchaseId );
+	const purchaseRoot = props.getManagePurchaseUrlFor( siteSlug, purchaseId );
 
 	const handleDowngrade = async () => {
 		if (
