@@ -282,22 +282,6 @@
 		@include plans-grid-medium-large {
 			margin: 7px 0 10px;
 		}
-
-		.plans-grid-next__billing-timeframe-vip-price {
-			font-size: $font-body;
-			line-height: 24px;
-			font-weight: 400;
-
-			@include plans-grid-medium-large {
-				font-size: $font-body-small;
-				line-height: 20px;
-			}
-
-			@include plans-grid-large {
-				font-size: $font-body-extra-small;
-				line-height: 16px;
-			}
-		}
 	}
 
 	.plans-grid-next-action-button {

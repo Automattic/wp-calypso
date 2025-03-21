@@ -443,18 +443,6 @@
 		@include plans-grid-medium-large {
 			padding-bottom: 0;
 		}
-
-		.plans-grid-next__billing-timeframe-vip-price {
-			@include plans-grid-medium-large {
-				font-size: $font-body-small;
-				line-height: 20px;
-			}
-
-			@include plans-grid-large {
-				font-size: $font-body-extra-small;
-				line-height: 16px;
-			}
-		}
 	}
 
 	&.popular-plan-parent-class {
@@ -503,12 +491,6 @@
 			font-weight: 400;
 			font-size: $font-body-extra-small;
 			padding: 0 19px 24px 20px;
-
-			.plans-grid-next__billing-timeframe-vip-price {
-				font-size: $font-body;
-				line-height: 24px;
-				font-weight: 400;
-			}
 		}
 
 		&.popular-plan-parent-class {
