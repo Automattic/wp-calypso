@@ -53,7 +53,7 @@ export const SiteHub = memo(
 			{
 				isTransparent,
 				navigationBackLink = '/',
-				navigationBackLabel = __( 'Go to the Dashboard' ),
+				navigationBackLabel = __( 'Go to the Dashboard', 'a8c-site-admin' ),
 			}: SiteHubProps,
 			ref
 		): JSX.Element => {
@@ -100,7 +100,7 @@ export const SiteHub = memo(
 									<VisuallyHidden as="span">
 										{
 											/* translators: accessibility text */
-											__( '(opens in a new tab)' )
+											__( '(opens in a new tab)', 'a8c-site-admin' )
 										}
 									</VisuallyHidden>
 								</Button>
@@ -112,7 +112,7 @@ export const SiteHub = memo(
 									className="site-admin-site-hub__toggle-command-center"
 									icon={ search }
 									onClick={ () => openCommandCenter() }
-									label={ __( 'Open command palette' ) }
+									label={ __( 'Open command palette', 'a8c-site-admin' ) }
 									shortcut={ displayShortcut.primary( 'k' ) }
 								/>
 							</HStack>

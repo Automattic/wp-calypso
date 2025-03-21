@@ -72,7 +72,7 @@ export const Default: Story = {
 			<RouterProvider routes={ [] } pathArg="page">
 				<SiteHub
 					isTransparent
-					navigationBackLabel={ __( 'Go to the Dashboard' ) }
+					navigationBackLabel={ __( 'Go to the Dashboard', 'a8c-site-admin' ) }
 					navigationBackLink="/"
 				/>
 				<SidebarContent { ...args }>
