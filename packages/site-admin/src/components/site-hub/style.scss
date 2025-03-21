@@ -106,7 +106,8 @@
 	align-items: center;
 	justify-content: center;
 	background: $gray-900;
-	border-radius: 0;
+	border-radius: 4;
+	transform: scale(0.5333) translateX(-4px); // Offset to position the icon 12px from viewport edge
 
 	&:hover,
 	&:active {

@@ -88,10 +88,6 @@ export const SiteHub = memo(
 								href={ navigationBackLink }
 								label={ navigationBackLabel }
 								className="site-admin-layout__view-mode-toggle"
-								style={ {
-									transform: 'scale(0.5333) translateX(-4px)', // Offset to position the icon 12px from viewport edge
-									borderRadius: 4,
-								} }
 							>
 								<SiteIcon className="site-admin-layout__view-mode-toggle-icon" />
 							</Button>
