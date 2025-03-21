@@ -11,6 +11,8 @@ import {
 } from '../../subscription-manager-context';
 import AddSitesForm, { AddSitesFormProps } from '../add-sites-form';
 
+jest.mock( '@automattic/calypso-router' );
+
 const renderWithContextProvider = ( component: React.ReactNode ) => {
 	return renderWithProvider(
 		<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Subscriptions }>
