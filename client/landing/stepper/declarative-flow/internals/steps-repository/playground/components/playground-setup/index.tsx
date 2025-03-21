@@ -11,7 +11,12 @@ import { PlaygroundIframe } from '../playground-iframe';
 import type { Step } from '../../../../types';
 import './style.scss';
 
-export const PlaygroundSetupStep: Step = ( props ) => {
+export const PlaygroundSetupStep: Step< {
+	submits: {
+		siteSlug?: string;
+		siteId: number;
+	};
+} > = ( props ) => {
 	const { submit } = props.navigation;
 	const isPlaygroundEligible = useIsPlaygroundEligible();
 	if ( ! isPlaygroundEligible ) {
