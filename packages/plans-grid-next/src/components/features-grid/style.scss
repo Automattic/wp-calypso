@@ -222,6 +222,7 @@
 		line-height: 16px;
 		padding-bottom: 8px;
 		min-height: 50px;
+		text-wrap: balance;
 	}
 }
 
@@ -349,6 +350,7 @@
 		font-weight: 400;
 		line-height: 20px;
 		overflow-wrap: break-word;
+		text-wrap: balance;
 		margin: 0;
 		flex: 1 0 0;
 		width: 100%;
