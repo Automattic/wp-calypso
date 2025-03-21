@@ -112,7 +112,7 @@ const Input = styled.input< {
 		${ ( props ) => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor ) };
 	line-height: 1.5;
 	font-size: 14px;
-	padding: 7px;
+	padding: 7px 14px;
 
 	::-webkit-inner-spin-button,
 	::-webkit-outer-spin-button {
