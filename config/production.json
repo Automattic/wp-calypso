@@ -23,6 +23,7 @@
 		"100-year-plan/vip": true,
 		"ad-tracking": true,
 		"a4a-dev-sites": true,
+		"calypso/ai-site-builder-flow": true,
 		"akismet/checkout-quantity-dropdown": true,
 		"automated-migration/application-password": true,
 		"calypso/ai-blogging-prompts": false,
