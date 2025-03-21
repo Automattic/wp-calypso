@@ -30,7 +30,7 @@ interface ReaderFeedItemProps {
 	feed: Reader.FeedItem;
 	source: string; // Indicates where the feed item is rendered.
 	shouldHideOnSubscribedState?: boolean; // To not render anything if the feed is in subscribed state.
-	onSubscribeToggle?: ( subscribed: boolean ) => void;
+	onChangeSubscribe?: ( subscribed: boolean ) => void;
 }
 
 /**
@@ -46,7 +46,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 		},
 		source,
 		shouldHideOnSubscribedState,
-		onSubscribeToggle,
+		onChangeSubscribe,
 	} = props;
 	const isWpcomFeed = !! blogId;
 	const translate = useTranslate();
@@ -91,7 +91,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 			? getSiteName( { feed, site } )
 			: feed?.name ?? filterURLForDisplay( subscribeUrl );
 
-	function onClickSubscribeToggle(): void {
+	function onSubscribeToggle(): void {
 		if ( ! isEmailVerified ) {
 			dispatch(
 				errorNotice( translate( 'Please verify your email before subscribing.' ), {
@@ -105,15 +105,15 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 		}
 
 		const noticeOptions: NoticeOptions = { duration: 5000 };
-		if ( feed?.subscription_id ) {
+		if ( subscriptionId ) {
 			onUnsubscribe( {
-				subscriptionId: feed?.subscription_id,
+				subscriptionId: subscriptionId,
 				blog_id: blogId ?? undefined,
 				url: subscribeUrl,
 				onSuccess: () => {
 					dispatch(
 						successNotice(
-							translate( 'Success! You are now subscribed to "%s".', {
+							translate( 'Success! You are now unsubscribed to "%s".', {
 								args: title ?? filteredDisplayUrl,
 							} ),
 							noticeOptions
@@ -121,7 +121,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 					);
 
 					recordSiteUnsubscribed( { blog_id: blogId, url: subscribeUrl, source } );
-					onSubscribeToggle?.( false );
+					onChangeSubscribe?.( false );
 					refetchFeed();
 
 					if ( shouldTrackRecommendedSearch ) {
@@ -155,7 +155,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 						)
 					);
 
-					onSubscribeToggle?.( true );
+					onChangeSubscribe?.( true );
 					recordSiteSubscribed( { blog_id: blogId, url: subscribeUrl, source } );
 
 					if ( railcar ) {
@@ -223,7 +223,7 @@ export default function ReaderFeedItem( props: ReaderFeedItemProps ): JSX.Elemen
 			variant={ subscriptionId ? 'secondary' : 'primary' }
 			isBusy={ isSubscribing || isUnsubscribing }
 			disabled={ isSubscribing || isUnsubscribing }
-			onClick={ onClickSubscribeToggle }
+			onClick={ onSubscribeToggle }
 			__next40pxDefaultSize
 		>
 			{ subscriptionId ? translate( 'Unsubscribe' ) : translate( 'Subscribe' ) }

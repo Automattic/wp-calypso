@@ -149,10 +149,10 @@ const AddSitesForm = ( {
 
 			{ isAutomattician ? (
 				<FeedPreview
-					url={ isValidInput ? inputValue : '' }
+					url={ isValidInput ? inputValue : '' } // Passing empty state to make sure that debounce works correctly else it was firing events 2 times.
 					source={ source }
 					onChangeFeedPreview={ onChangeFeedPreview }
-					onSubscribeToggle={ onSubscribeToggle }
+					onChangeSubscribe={ onSubscribeToggle }
 				/>
 			) : null }
 		</>

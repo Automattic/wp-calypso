@@ -19,11 +19,11 @@ interface FeedPreviewProps {
 	url: string;
 	source: string;
 	onChangeFeedPreview?: ( hasPreview: boolean ) => void;
-	onSubscribeToggle?: ( subscribed: boolean ) => void;
+	onChangeSubscribe?: ( subscribed: boolean ) => void;
 }
 
 export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | null {
-	const { url, source, onChangeFeedPreview, onSubscribeToggle } = props;
+	const { url, source, onChangeFeedPreview, onChangeSubscribe } = props;
 	const [ debouncedUrl ] = useDebounce( url, 500 );
 	const [ feed, setFeed ] = useState< Reader.FeedItem >();
 	const [ loading, setLoading ] = useState( false );
@@ -32,8 +32,7 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 	 * Fetch the feed for the given URL.
 	 */
 	useEffect( (): void => {
-		setFeed( undefined );
-		onChangeFeedPreview?.( false );
+		onToggleFeedPreview( undefined ); // Adding this before debouncedUrl check to clear the feed preview when the url is empty and no API call is made.
 
 		if ( ! debouncedUrl ) {
 			return;
@@ -44,25 +43,26 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 		wpcom.req
 			.get( '/read/feed', { url: debouncedUrl } )
 			.then( ( response: GetFeedResponse ): void => {
-				setLoading( false );
-
 				const feed = response?.feeds?.[ 0 ];
 				if ( ! feed ) {
 					return;
 				}
 
-				setFeed( feed );
-				onChangeFeedPreview?.( !! feed?.feed_ID );
+				onToggleFeedPreview( feed );
 			} )
 			.catch( ( err: Error ): void => {
-				setFeed( undefined );
-				onChangeFeedPreview?.( false );
+				onToggleFeedPreview( undefined );
 
 				throw err;
 			} )
 			.finally( (): void => {
 				setLoading( false );
 			} );
+
+		function onToggleFeedPreview( feed?: Reader.FeedItem ): void {
+			setFeed( feed );
+			onChangeFeedPreview?.( !! feed?.feed_ID );
+		}
 	}, [ debouncedUrl, onChangeFeedPreview ] );
 
 	const memoizedFeedPreviewContent = useMemo( (): JSX.Element => {
@@ -84,7 +84,7 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 		return (
 			<>
 				<ul className="feed-preview__site">
-					<ReaderFeedItem feed={ feed } source={ source } onSubscribeToggle={ onSubscribeToggle } />
+					<ReaderFeedItem feed={ feed } source={ source } onChangeSubscribe={ onChangeSubscribe } />
 				</ul>
 
 				{
@@ -109,7 +109,7 @@ export default function FeedPreview( props: FeedPreviewProps ): JSX.Element | nu
 				}
 			</>
 		);
-	}, [ feed, loading, source, onSubscribeToggle ] );
+	}, [ feed, loading, source, onChangeSubscribe ] );
 
 	if ( ! url ) {
 		return null;

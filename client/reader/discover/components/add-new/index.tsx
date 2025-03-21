@@ -22,7 +22,7 @@ const DiscoverAddNew = () => {
 	}, [] );
 
 	const onSubscribeToggle = useCallback( (): void => {
-		setHasFeedPreview( false );
+		setHasFeedPreview( false ); // Close the feed preview when the subscription is toggled.
 	}, [] );
 
 	return (
