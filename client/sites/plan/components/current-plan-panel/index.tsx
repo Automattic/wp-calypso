@@ -3,9 +3,11 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import CoreBadge from 'calypso/components/core/badge';
+import { isPartnerPurchase, purchaseType } from 'calypso/lib/purchases';
 import { getMyPurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import PlanPricing from 'calypso/sites/components/plan-pricing';
 import PlanStats from 'calypso/sites/components/plan-stats';
+import { isA4AUser } from 'calypso/state/partner-portal/partner/selectors';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import { getSelectedPurchase, getSelectedSite } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
@@ -21,15 +23,42 @@ export default function CurrentPlanPanel() {
 	const planPurchaseId = useSelector( ( state: AppState ) =>
 		getCurrentPlanPurchaseId( state, site?.ID ?? 0 )
 	);
+	const isA4APlan = planPurchase && isPartnerPurchase( planPurchase );
 
-	const planName = planDetails?.product_name_short ?? '';
+	const planName = isA4APlan ? purchaseType( planPurchase ) : planDetails?.product_name_short ?? '';
 	const planPurchaseLoading = ! isFreePlan && planPurchase === null;
 
 	const isOwner = planDetails?.user_is_owner;
+	const isA4AOwner = useSelector( isA4AUser );
 
 	const isLoading = ! planDetails || planPurchaseLoading;
 
+	const renderPricing = () => {
+		if ( isFreePlan ) {
+			return null;
+		}
+		if ( isA4APlan ) {
+			return (
+				<p className="plan-price-info">
+					{ translate( 'This site is managed through {{a}}Automattic for Agencies{{/a}}.', {
+						components: {
+							a: isA4AOwner ? (
+								<a href={ `https://agencies.automattic.com/sites/overview/${ site?.slug }` }></a>
+							) : (
+								<strong></strong>
+							),
+						},
+					} ) }
+				</p>
+			);
+		}
+		return <PlanPricing inline />;
+	};
+
 	const renderManageAddOnsButton = () => {
+		if ( isA4APlan ) {
+			return null;
+		}
 		return (
 			<Button variant="tertiary" href={ `/add-ons/${ site?.slug }` }>
 				{ translate( 'Manage add-ons' ) }
@@ -38,7 +67,7 @@ export default function CurrentPlanPanel() {
 	};
 
 	const renderManageBillingButton = () => {
-		if ( ! site || ! isOwner ) {
+		if ( ! site || ! isOwner || isA4APlan ) {
 			return null;
 		}
 		return (
@@ -62,7 +91,7 @@ export default function CurrentPlanPanel() {
 							</>
 						) }
 					</div>
-					{ ! isFreePlan && <PlanPricing inline /> }
+					{ renderPricing() }
 				</div>
 				<div className="manage-buttons">
 					{ ! isLoading && (
@@ -75,7 +104,7 @@ export default function CurrentPlanPanel() {
 			</div>
 
 			<PlanStats />
-			<hr />
+			{ ! isA4APlan && <hr /> }
 		</div>
 	);
 }
