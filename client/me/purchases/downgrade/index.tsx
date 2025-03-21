@@ -173,7 +173,7 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 			const finalSiteSlug = isAtomicSiteDowngrade
 				? siteSlug.replace( 'wpcomstaging', 'wordpress' )
 				: siteSlug;
-			page( getPurchaseListUrlFor( finalSiteSlug ) );
+			window.location.href = getPurchaseListUrlFor( finalSiteSlug );
 
 			// Show success notification after data is refreshed
 		} catch ( error: unknown ) {
