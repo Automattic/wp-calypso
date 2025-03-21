@@ -1,5 +1,7 @@
+import './style.scss';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import { AddSitesForm } from 'calypso/landing/subscriptions/components/add-sites-form';
 import {
@@ -9,11 +11,11 @@ import {
 import ReaderRedditIcon from 'calypso/reader/components/icons/reddit-icon';
 import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
-
-import './style.scss';
+import { requestFollows } from 'calypso/state/reader/follows/actions';
 
 const Reddit = () => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const [ hasFeedPreview, setHasFeedPreview ] = useState< boolean >( false );
 
@@ -23,7 +25,8 @@ const Reddit = () => {
 
 	const onSubscribeToggle = useCallback( (): void => {
 		setHasFeedPreview( false ); // Close the feed preview when the subscription is toggled.
-	}, [] );
+		dispatch( requestFollows() ); // In other places we show subscriptions table due to which list get refreshed automatically. Here we need to refresh the list manually.
+	}, [ dispatch ] );
 
 	return (
 		<div className="discover-reddit">
