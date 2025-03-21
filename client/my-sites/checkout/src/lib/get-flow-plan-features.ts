@@ -72,6 +72,7 @@ const getHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) =
 	].find( ( accessor ) => {
 		return accessor instanceof Function;
 	} );
+
 	return ( accessor && accessor() ) || [];
 };
 
