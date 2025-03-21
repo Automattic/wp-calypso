@@ -83,11 +83,11 @@ export const SiteHub = memo(
 							} ) }
 						>
 							<Button
+								className="site-admin-layout__view-mode-toggle"
 								__next40pxDefaultSize
 								ref={ ref }
 								href={ navigationBackLink }
 								label={ navigationBackLabel }
-								className="site-admin-layout__view-mode-toggle"
 							>
 								<SiteIcon className="site-admin-layout__view-mode-toggle-icon" />
 							</Button>
@@ -95,7 +95,13 @@ export const SiteHub = memo(
 
 						<HStack>
 							<div className="site-admin-site-hub__title">
-								<Button __next40pxDefaultSize variant="link" href={ homeUrl } target="_blank">
+								<Button
+									className="site-admin-site-hub__title-button"
+									__next40pxDefaultSize
+									variant="link"
+									href={ homeUrl }
+									target="_blank"
+								>
 									{ decodeEntities( siteTitle ) }
 									<VisuallyHidden as="span">
 										{
