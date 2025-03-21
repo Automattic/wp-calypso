@@ -1,4 +1,15 @@
-.use-my-domain {
+.step-route.use-my-domain {
+	.start-writing .register-domain-step {
+		box-shadow: none;
+		background: none;
+	}
+
+	.domain-transfer-or-connect__content {
+		box-shadow: none;
+	}
+}
+
+.step-route.use-my-domain:not(:has(.step-container-v2)) {
 	padding: 36px 0;
 
 	#choose-a-domain-writer-header {
@@ -9,11 +20,6 @@
 		button {
 			margin-left: 5px;
 		}
-	}
-
-	.start-writing .register-domain-step {
-		box-shadow: none;
-		background: none;
 	}
 
 	.start-writing .register-domain-step__next-page-button {
@@ -27,4 +33,8 @@
 		}
 	}
 
+}
+
+.use-my-domain:has(.step-container-v2) {
+	padding: 0;
 }

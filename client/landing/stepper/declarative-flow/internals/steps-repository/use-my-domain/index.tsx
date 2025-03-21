@@ -4,23 +4,28 @@ import {
 	ONBOARDING_FLOW,
 	StepContainer,
 	isStartWritingFlow,
+	Step,
 } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { getQueryArg } from '@wordpress/url';
 import { useLocation } from 'react-router';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
+import {
+	useMyDomainInputMode as inputMode,
+	UseMyDomainInputMode,
+} from 'calypso/components/domains/connect-domain-step/constants';
 import UseMyDomainComponent from 'calypso/components/domains/use-my-domain';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainMapping, domainTransfer } from 'calypso/lib/cart-values/cart-items';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import type { Step } from '../../types';
+import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
+import type { Step as StepType } from '../../types';
 
 import './style.scss';
 
-const UseMyDomain: Step< {
+const UseMyDomain: StepType< {
 	submits: {
 		mode: 'transfer' | 'connect';
 		domain: string;
@@ -32,7 +37,9 @@ const UseMyDomain: Step< {
 	const getDefaultStepContent = () => <h1>Choose a domain step</h1>;
 	const location = useLocation();
 
-	const [ useMyDomainMode, setUseMyDomainMode ] = useState( '' );
+	const [ useMyDomainMode, setUseMyDomainMode ] = useState< UseMyDomainInputMode >(
+		inputMode.domainInput
+	);
 
 	const handleGoBack = () => {
 		if ( String( getQueryArg( window.location.search, 'step' ) ?? '' ) === 'transfer-or-connect' ) {
@@ -114,12 +121,34 @@ const UseMyDomain: Step< {
 		}
 	};
 
+	const shouldHideButtons = isStartWritingFlow( flow );
+
+	if ( shouldUseStepContainerV2( flow ) ) {
+		return (
+			<>
+				<QueryProductsList />
+				<Step.CenteredColumnLayout
+					topBar={
+						<Step.TopBar
+							backButton={
+								shouldHideButtons ? undefined : <Step.BackButton onClick={ handleGoBack } />
+							}
+						/>
+					}
+					columnWidth={ useMyDomainMode === 'domain-input' ? 4 : 8 }
+				>
+					{ getStepContent() }
+				</Step.CenteredColumnLayout>
+			</>
+		);
+	}
+
 	return (
 		<>
 			<QueryProductsList />
 			<StepContainer
 				stepName="useMyDomain"
-				shouldHideNavButtons={ isStartWritingFlow( flow ) }
+				shouldHideNavButtons={ shouldHideButtons }
 				goBack={ handleGoBack }
 				goNext={ goNext }
 				isHorizontalLayout={ false }
