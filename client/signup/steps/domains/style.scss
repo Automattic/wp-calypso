@@ -522,4 +522,19 @@ body.is-section-signup {
 			}
 		}
 	}
+
+	&:has(.step-container-v2) {
+		.register-domain-step__search-card {
+			margin: 0;
+		}
+
+		.register-domain-step__domain-side-content-container-domain-explanation-image {
+			max-width: 100%;
+			margin-bottom: 0;
+		}
+
+		.register-domain-step__example-prompt {
+			margin: 0;
+		}
+	}
 }
