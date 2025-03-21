@@ -1090,7 +1090,7 @@ export class RenderDomainsStep extends Component {
 					this.props.forceHideFreeDomainExplainerAndStrikeoutUi
 				}
 				isOnboarding
-				sideContent={ this.getSideContent() }
+				sideContent={ ! shouldUseStepContainerV2( this.props.flowName ) && this.getSideContent() }
 				isInLaunchFlow={ 'launch-site' === this.props.flowName }
 				promptText={
 					this.isHostingFlow()
