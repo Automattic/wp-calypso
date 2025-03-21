@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .step-container.design-choices {
 	.step-container__header {
 		margin-top: 96px;
@@ -14,8 +17,16 @@
 .step-container-v2 {
 	.design-choices__body {
 		display: flex;
-		flex-direction: row;
+		flex-direction: column;
 		align-items: center;
+	}
+
+	@include break-medium {
+		.design-choices__body {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+		}
 	}
 }
 
