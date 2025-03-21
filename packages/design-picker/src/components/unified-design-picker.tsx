@@ -125,7 +125,6 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 	isActive,
 } ) => {
 	const trackingDivRef = useTrackDesignView( { category, design, isPremiumThemeAvailable } );
-
 	const conditionalProps = isActive ? {} : { onImageClick: () => onPreview( design ) };
 
 	return (
@@ -142,7 +141,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 			}
 			optionsMenu={ getOptionsMenu && getOptionsMenu( design.slug, false ) }
 			badge={ getBadge && getBadge( design.slug, false ) }
-			isActive={ isActive && ! isLocked }
+			isActive={ isActive }
 			{ ...conditionalProps }
 		/>
 	);
