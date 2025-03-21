@@ -44,7 +44,7 @@ export default function Example() {
 			isTransparent={ false }
 			exitLabel="Back"
 			exitLink="/"
-		/>;
+		/>
 	);
 }
 ```
