@@ -1,4 +1,4 @@
-# @automattic/site-admin 0.0.1
+## 0.0.1
 
 Initial release of the site-admin package providing a framework for building modern WordPress admin interfaces.
 
@@ -21,8 +21,6 @@ Initial release of the site-admin package providing a framework for building mod
 - `useLocation`: Hook for accessing current route location
 - `useMatch`: Hook for route matching functionality
 
-
 ## Next
 
 - `SiteHub`: Site navigation and context switcher
-
