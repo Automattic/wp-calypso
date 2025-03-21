@@ -17,7 +17,11 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
+import {
+	getDomainsBySiteId,
+	hasLoadedSiteDomains,
+	isRequestingSiteDomains,
+} from 'calypso/state/sites/domains/selectors';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
 import {
 	getSite,
@@ -316,7 +320,8 @@ function mapStateToProps( state, ownProps ) {
 	const site = siteId ? getSite( state, siteId ) : ownProps.site;
 	const siteDomains = getDomainsBySiteId( state, siteId );
 	const customDomains = siteDomains.filter( ( domain ) => ! domain.isWPCOMDomain );
-	const isLoadingDomains = ! hasLoadedSiteDomains( state, siteId );
+	const isLoadingDomains =
+		! hasLoadedSiteDomains( state, siteId ) && isRequestingSiteDomains( state, siteId );
 	return {
 		siteId,
 		site,
