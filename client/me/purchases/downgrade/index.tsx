@@ -35,6 +35,7 @@ import { managePurchase } from 'calypso/me/purchases/paths';
 import PurchaseSiteHeader from 'calypso/me/purchases/purchases-site/header';
 import titles from 'calypso/me/purchases/titles';
 import { isDataLoading } from 'calypso/me/purchases/utils';
+import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
@@ -117,7 +118,6 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 	const site = useSelector( ( state ) => getSite( state, siteSlug ) ) ?? ( {} as any );
 	const { ID: siteId, name: siteName } = site;
 	const isAtomicSite = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
-
 	const targetPlan = getPlan( downgradePath[ purchase?.productSlug ?? '' ] );
 	const currentPlan = getPlan( purchase?.productSlug ?? '' );
 	const featureSlugs = getFeatureDifference(
@@ -126,6 +126,8 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 		'getCheckoutFeatures'
 	);
 	const features = featureSlugs.map( ( slug ) => getFeatureByKey( slug ) );
+	const isAtomicSiteDowngrade =
+		isAtomicSite && ! targetPlan?.getIncludedFeatures?.().includes( WPCOM_FEATURES_ATOMIC );
 
 	if (
 		isDataLoading( { hasLoadedSites, hasLoadedUserPurchasesFromServer: loadedFromServer } ) ||
@@ -168,7 +170,10 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 			// Wait for the notice to be displayed
 			await new Promise( ( resolve ) => setTimeout( resolve, 1000 ) );
 
-			page( purchaseRoot );
+			const finalSiteSlug = isAtomicSiteDowngrade
+				? siteSlug.replace( 'wpcomstaging', 'wordpress' )
+				: siteSlug;
+			page( getPurchaseListUrlFor( finalSiteSlug ) );
 
 			// Show success notification after data is refreshed
 		} catch ( error: unknown ) {
@@ -183,7 +188,7 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 	};
 
 	const checkAtomicAndDowngrade = () => {
-		if ( isAtomicSite && ! targetPlan?.getIncludedFeatures?.().includes( WPCOM_FEATURES_ATOMIC ) ) {
+		if ( isAtomicSiteDowngrade ) {
 			setIsAtomicWarningVisible( true );
 		} else {
 			handleDowngrade();
