@@ -43,7 +43,7 @@
 		font-weight: 500;
 		color: var(--studio-gray-100);
 		line-height: 20px;
-		padding: 12px;
+		padding: 0 12px;
 		display: flex;
 		align-items: center;
 		white-space: nowrap;
@@ -141,6 +141,8 @@
 
 .card.is-compact {
 	padding: 0;
+	border-radius: 4px;
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
 	
 	.videopress-stats-module__grid {
 		margin: 0;
@@ -182,6 +184,7 @@
 
 		.stats-download-csv {
 			color: var(--color-link);
+			padding-right: 0;
 
 			&:hover {
 				color: var(--color-link-dark);
