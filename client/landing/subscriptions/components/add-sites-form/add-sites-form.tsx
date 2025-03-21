@@ -38,7 +38,6 @@ const AddSitesForm = ( {
 }: AddSitesFormProps ) => {
 	const translate = useTranslate();
 	const [ inputValue, setInputValue ] = useState( '' );
-	const [ searchTerm, setSearchTerm ] = useState( getUrlQuerySearchTerm( pathname ) );
 	const [ isSubmitting, setIsSubmitting ] = useState< boolean >( false );
 	const [ inputFieldError, setInputFieldError ] = useState< string | null >( null );
 	const [ isValidInput, setIsValidInput ] = useState( false );
@@ -50,13 +49,13 @@ const AddSitesForm = ( {
 		SubscriptionManager.useSiteSubscribeMutation();
 
 	// Triggers the text change when component mounts to validate the initial value.
-	useEffect( () => searchTerm && onTextFieldChange( searchTerm ), [] ); // eslint-disable-line react-hooks/exhaustive-deps
+	useEffect( () => {
+		const searchTerm = getUrlQuerySearchTerm( pathname );
 
-	// Update url query when search term changes.
-	useEffect(
-		() => setUrlQuery( SEARCH_QUERY_PARAM, searchTerm, pathname ),
-		[ searchTerm, pathname ]
-	);
+		if ( searchTerm ) {
+			onTextFieldChange( searchTerm );
+		}
+	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	function validateInputValue( url: string, showError = false ): void {
 		// If the input is empty, we don't want to show an error message
@@ -80,7 +79,7 @@ const AddSitesForm = ( {
 	}
 
 	function onTextFieldChange( value: string ): void {
-		setSearchTerm( value );
+		setUrlQuery( SEARCH_QUERY_PARAM, value, pathname ); // Update url query when search term changes.
 		setInputValue( value );
 		validateInputValue( value );
 	}
