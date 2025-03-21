@@ -1,0 +1,19 @@
+/**
+ * CRM Downloads Styles for Agencies
+ * These styles are specific to the agencies version of the CRM downloads page
+ */
+
+.crm-downloads-agencies {
+	// Adjust the spacing for the license key container
+	.manage-purchase__license-clipboard-container {
+		margin-top: 0.5rem;
+	}
+
+	.hosting-dashboard-layout__viewport{
+		display: none;
+	}
+
+	.manage-purchase__license-key-row{
+		margin-top: 0.5rem;
+	}
+}
