@@ -221,7 +221,6 @@ const siteSetupFlow: FlowV1 = {
 					if ( isLaunchpadIntent( siteIntent ) ) {
 						redirectionUrl = addQueryArgs(
 							{
-								showLaunchpad: true,
 								...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
 								...( skippedCheckout && { skippedCheckout: 1 } ),
 							},
@@ -266,7 +265,7 @@ const siteSetupFlow: FlowV1 = {
 			clearSignupDestinationCookie();
 		};
 
-		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
+		const { getPostFlowUrl } = useLaunchpadDecider( {
 			exitFlow,
 			navigate,
 		} );
@@ -318,7 +317,6 @@ const siteSetupFlow: FlowV1 = {
 					}
 
 					if ( isLaunchpadIntent( intent ) ) {
-						initializeLaunchpadState( { siteId, siteSlug } );
 						const url = getPostFlowUrl( { flow: intent, siteId, siteSlug } );
 						return exitFlow( url );
 					}
