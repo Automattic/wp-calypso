@@ -8,7 +8,6 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createContext, useState, useContext } from 'react';
-import { useMakeStepActive } from '../src/components/checkout-steps';
 import {
 	CheckoutProvider,
 	CheckoutStep,
@@ -21,6 +20,7 @@ import {
 	useSetStepComplete,
 	useTogglePaymentMethod,
 	makeErrorResponse,
+	useMakeStepActive,
 } from '../src/public-api';
 import { PaymentProcessorFunction, PaymentProcessorResponseType } from '../src/types';
 import { DefaultCheckoutSteps } from './utils/default-checkout-steps';
