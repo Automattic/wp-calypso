@@ -11621,7 +11621,7 @@ __metadata:
     electron-store: "npm:^8.1.0"
     electron-updater: "npm:^4.2.5"
     jest: "npm:^29.7.0"
-    js-yaml: "npm:^4.0.0"
+    js-yaml: "npm:^4.1.0"
     lodash: "npm:^4.17.21"
     make-dir: "npm:^3.1.0"
     playwright: "npm:1.48.2"
