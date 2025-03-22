@@ -340,6 +340,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/vat-gst-other-taxes/#business-tax-rates-in-ohio-and-connecticut',
 		post_id: 234670,
 	},
+	'setting-up-a-business-card': {
+		link: 'https://wordpress.com/support/vat-gst-other-taxes/#setting-up-a-business-card',
+		post_id: 234670,
+	},
 	team: {
 		link: 'https://wordpress.com/support/user-roles/',
 		post_id: 1221,
