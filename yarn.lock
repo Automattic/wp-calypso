@@ -428,7 +428,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    plop: "npm:^3.1.1"
+    plop: "npm:^3.1.2"
   bin:
     generate-calypso-package: cli.js
   languageName: unknown
@@ -26480,9 +26480,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-plop@npm:^0.31.0":
-  version: 0.31.0
-  resolution: "node-plop@npm:0.31.0"
+"node-plop@npm:^0.31.1":
+  version: 0.31.1
+  resolution: "node-plop@npm:0.31.1"
   dependencies:
     "@types/inquirer": "npm:^8.2.1"
     change-case: "npm:^4.1.2"
@@ -26497,7 +26497,7 @@ __metadata:
     resolve: "npm:^1.20.0"
     title-case: "npm:^3.0.3"
     upper-case: "npm:^2.0.2"
-  checksum: 7b2d49dfbc4509ede8a36c70dc054dec212153419334c899431fb63a42540ff66d1bda2a72e2a764ca3d3045faed944da64fe2ed226ba157c26decc53c39b87e
+  checksum: 4092f2ef5398aff07a4f5d0f0cd2d1e2b059951ce9afadff5b818dac148a02ac660877eadc7a2ca9a5bc7c6bb8046827c780d8ba13d47a0f822e4f2833af42d4
   languageName: node
   linkType: hard
 
@@ -27812,21 +27812,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"plop@npm:^3.1.1":
-  version: 3.1.1
-  resolution: "plop@npm:3.1.1"
+"plop@npm:^3.1.2":
+  version: 3.1.2
+  resolution: "plop@npm:3.1.2"
   dependencies:
     "@types/liftoff": "npm:^4.0.0"
     chalk: "npm:^5.0.1"
     interpret: "npm:^2.2.0"
     liftoff: "npm:^4.0.0"
     minimist: "npm:^1.2.6"
-    node-plop: "npm:^0.31.0"
+    node-plop: "npm:^0.31.1"
     ora: "npm:^6.0.1"
     v8flags: "npm:^4.0.0"
   bin:
     plop: bin/plop.js
-  checksum: 6e231d763a2b7c49012fde9a53c2595fd8f4d6e55fec709813b3cbaa12088fb40b906c0a09c7af5910a99640ed4e89fab355bf789881d7b969ec796b5705b411
+  checksum: 063ebe51e7c6f2679ca2b4bbb32d6615c331f5bc2943b52848380b2e990302846d6285a90ae495c2b0635e314dcd1b1f9a5620532b087123a3a774903b4fa2a7
   languageName: node
   linkType: hard
 
