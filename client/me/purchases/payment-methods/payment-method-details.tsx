@@ -20,6 +20,7 @@ interface Props {
 	paymentPartner?: string;
 	selected?: boolean;
 	isExpired?: boolean;
+	isForBusiness?: boolean;
 	razorpayVpa?: string;
 }
 
@@ -32,6 +33,7 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 	email,
 	paymentPartner,
 	isExpired,
+	isForBusiness,
 	razorpayVpa,
 } ) => {
 	const translate = useTranslate();
@@ -63,7 +65,7 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 						} ) }
 					</span>
 				) }
-				<BusinessCardBadge />
+				{ isForBusiness && <BusinessCardBadge /> }
 				{ isExpired && (
 					<span
 						className={ clsx( 'payment-method-details__expiration-notice', {

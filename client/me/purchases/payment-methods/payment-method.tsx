@@ -29,6 +29,7 @@ export default function PaymentMethod( { paymentMethod }: { paymentMethod: Store
 					name={ paymentMethod.name }
 					expiry={ paymentMethod.expiry }
 					isExpired={ paymentMethod.is_expired }
+					isForBusiness={ paymentMethod.tax_location?.is_for_business }
 					razorpayVpa={ 'razorpay_vpa' in paymentMethod ? paymentMethod.razorpay_vpa : undefined }
 				/>
 				{ isCreditCard( paymentMethod ) && <PaymentMethodBackupToggle card={ paymentMethod } /> }
