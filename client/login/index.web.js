@@ -21,6 +21,8 @@ import {
 	desktopLogin,
 	desktopLoginFinalize,
 	googleAuth,
+	jetpackAppleAuth,
+	jetpackAppleAuthCallback,
 } from './controller';
 import redirectLoggedIn from './redirect-logged-in';
 import { setShouldServerSideRenderLogin, ssrSetupLocaleLogin, setMetaTags } from './ssr';
@@ -127,6 +129,26 @@ export default ( router ) => {
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 		googleAuth,
+		makeLoggedOutLayout
+	);
+
+	router(
+		`/log-in/jetpack/apple/${ lang }`,
+		redirectLoggedIn,
+		setLocaleMiddleware(),
+		setMetaTags,
+		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
+		jetpackAppleAuth,
+		makeLoggedOutLayout
+	);
+
+	router(
+		`/log-in/jetpack/apple/callback/${ lang }`,
+		redirectLoggedIn,
+		setLocaleMiddleware(),
+		setMetaTags,
+		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
+		jetpackAppleAuthCallback,
 		makeLoggedOutLayout
 	);
 

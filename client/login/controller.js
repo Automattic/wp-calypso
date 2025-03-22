@@ -9,15 +9,18 @@ import {
 	isWooOAuth2Client,
 	isPartnerPortalOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
+import { login as loginPath } from 'calypso/lib/paths';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import wpcom from 'calypso/lib/wp';
 import { DesktopLoginStart, DesktopLoginFinalize } from 'calypso/login/desktop-login';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { loginSocialUser, rebootAfterLogin } from 'calypso/state/login/actions';
 import { postLoginRequest } from 'calypso/state/login/utils';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import { setRoute } from 'calypso/state/route/actions';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import MagicLogin from './magic-login';
@@ -439,6 +442,155 @@ export function googleAuth( context, next ) {
 			initiateGoogleAuth();
 		}
 	} );
+}
+
+export async function jetpackAppleAuth( context, next ) {
+	const { query } = context;
+	const redirectUri = `https://${
+		config.isEnabled( 'oauth' ) ? window.location.host : 'wordpress.com'
+	}${ loginPath( { socialService: 'apple' } ) }`;
+
+	try {
+		// Get authorization nonce for security
+		let nonce;
+		if ( config.isEnabled( 'oauth' ) ) {
+			// Use the API to get a real nonce in production
+			const response = await wpcomRequest( {
+				path: '/generate-authorization-nonce',
+				apiNamespace: 'wpcom/v2',
+				method: 'GET',
+			} );
+			nonce = response.nonce;
+		} else {
+			// In dev environment, use a random string as nonce
+			nonce = Math.random().toString( 36 ).substring( 2, 15 );
+		}
+
+		// Create state object with relevant data
+		const stateObject = {
+			is_jetpack: true,
+			oauth2State: nonce,
+			// Allow just redirect_to to be passed in the query params
+			queryString: `redirect_to=${ query?.redirect_to || '/' }`,
+		};
+
+		// Store nonce in sessionStorage for validation on callback
+		window.sessionStorage.setItem( 'siwa_state', nonce );
+
+		// Load Apple client if not already loaded
+		const appleClientUrl =
+			'https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js';
+
+		if ( ! window.AppleID ) {
+			await loadScript( appleClientUrl );
+			if ( ! window.AppleID ) {
+				throw new Error( 'Failed to load Apple Authentication Services API' );
+			}
+		}
+
+		// Initialize Apple auth
+		window.AppleID.auth.init( {
+			clientId: config( 'apple_oauth_client_id' ),
+			scope: 'name email',
+			redirectURI: redirectUri,
+			state: JSON.stringify( stateObject ),
+		} );
+
+		// Trigger the sign-in
+		window.AppleID.auth.signIn();
+	} catch ( error ) {
+		/* eslint-disable-next-line no-console */
+		console.error( 'Error initiating Apple login:', error );
+		context.store.dispatch( {
+			type: 'NOTICE_CREATE',
+			notice: {
+				status: 'is-error',
+				text: 'Error initiating Apple login. Please try again.',
+			},
+		} );
+
+		// Fall back to regular login form
+		context.primary = (
+			<WPLogin isJetpack path={ context.path } query={ query } locale={ context.params.lang } />
+		);
+		next();
+	}
+}
+
+export async function jetpackAppleAuthCallback( context, next ) {
+	const { redirect_to } = context.query;
+
+	// Remove id_token from the address bar and push social connect args into the state instead (let's follow original flow; see login())
+	if ( context.hash && context.hash.client_id ) {
+		page.replace( context.path, context.hash );
+
+		return;
+	}
+
+	const previousHash = context.state || {};
+	const { user_email, user_name, id_token, state } = previousHash;
+
+	// Not a redirect from Apple if no token or error present
+	if ( ! id_token ) {
+		return next();
+	}
+
+	try {
+		const storedNonce = window.sessionStorage.getItem( 'siwa_state' );
+		window.sessionStorage.removeItem( 'siwa_state' );
+
+		if ( ! storedNonce || ! state ) {
+			throw new Error( 'Missing state parameter' );
+		}
+
+		if ( state !== storedNonce ) {
+			throw new Error();
+		}
+
+		try {
+			// The account is created by the server side endpoint - we just need to log in the user
+			await context.store.dispatch(
+				loginSocialUser(
+					{
+						service: 'apple',
+						id_token,
+						user_name,
+						user_email,
+					},
+					redirect_to
+				)
+			);
+			const url = new URL( redirect_to );
+			context.store.dispatch(
+				setRoute( url.pathname, Object.fromEntries( url.searchParams.entries() ) )
+			);
+
+			await context.store.dispatch( rebootAfterLogin() );
+			return;
+		} catch ( createError ) {
+			// If both connection and creation fail, show warning and redirect
+			context.store.dispatch( {
+				type: 'NOTICE_CREATE',
+				notice: {
+					status: 'is-warning',
+					text: 'Could not complete Apple login. Falling back to standard flow.',
+				},
+			} );
+
+			page.redirect( redirect_to );
+			return;
+		}
+	} catch {
+		context.store.dispatch( {
+			type: 'NOTICE_CREATE',
+			notice: {
+				status: 'is-error',
+				text: 'Error during Apple authentication. Please try again.',
+			},
+		} );
+	}
+
+	return next();
 }
 
 function getHandleEmailedLinkFormComponent( flow ) {
