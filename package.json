@@ -214,7 +214,7 @@
 		"http-proxy-middleware": "^3.0.3",
 		"i18n-calypso": "workspace:^",
 		"i18n-calypso-cli": "workspace:^",
-		"jsdom": "^20.0.1",
+		"jsdom": "^20.0.3",
 		"lodash": "^4.17.21",
 		"lottie-web": "^5.9.6",
 		"moment": "^2.26.0",
