@@ -59,7 +59,7 @@ const startWriting: Flow = {
 			}
 		}, [ siteSlug, setIntentOnSite, isSiteLaunched ] );
 
-		const { getPostFlowUrl, postFlowNavigator, initializeLaunchpadState } = useLaunchpadDecider( {
+		const { getPostFlowUrl, postFlowNavigator } = useLaunchpadDecider( {
 			exitFlow,
 			navigate,
 		} );
@@ -114,11 +114,6 @@ const startWriting: Flow = {
 								launchpad_screen: 'full',
 							} ),
 						] );
-
-						initializeLaunchpadState( {
-							siteId: providedDependencies?.siteId as number,
-							siteSlug: providedDependencies?.siteSlug as string,
-						} );
 
 						const siteOrigin = window.location.origin;
 

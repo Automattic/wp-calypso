@@ -65,7 +65,7 @@ const newsletter: Flow = {
 		const { exitFlow } = useExitFlow();
 		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
 
-		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
+		const { getPostFlowUrl } = useLaunchpadDecider( {
 			exitFlow,
 			navigate,
 		} );
@@ -123,11 +123,6 @@ const newsletter: Flow = {
 							) }?redirect_to=${ encodeURIComponent( launchpadUrl ) }&signup=1`
 						);
 					}
-
-					initializeLaunchpadState( {
-						siteId: providedDependencies?.siteId as number,
-						siteSlug: providedDependencies?.siteSlug as string,
-					} );
 
 					return window.location.assign(
 						getPostFlowUrl( {
