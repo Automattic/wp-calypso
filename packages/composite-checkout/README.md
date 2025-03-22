@@ -288,6 +288,10 @@ A React Hook that returns all the payment processor functions in a Record.
 
 A React Hook that will return the `onClick` function passed to each [payment method's submitButton component](#payment-methods). The hook requires a payment processor ID. Call the returned function with data for the payment processor and it will begin the transaction.
 
+### useMakeStepActive
+
+A React Hook that will return a function to set a step to be the active step. Only works within a step. The returned function looks like `( stepId: string ) => Promise< boolean >;`. Calling this function is similar to pressing the "Edit" button on the specified step. Note that this is risky! It will make the previous active step inactive, but **will not complete** that step, so if the previous step has any `isCompleteCallback` behavior, that behavior will not be triggered. It will also ignore the `canEditStep` prop of `CheckoutStep`.
+
 ### useSetStepComplete
 
 A React Hook that will return a function to set a step to "complete". Only works within a step but it does not have to be the targeted step. The returned function looks like `( stepId: string ) => Promise< boolean >;`. Calling this function is similar to pressing the "Continue" button on the specified step; it will call the `isCompleteCallback` prop of the step and only succeed if the callback succeeds. In addition, all previous incomplete steps will be marked as complete in the same way, and the process will fail and stop at the first step whose `isCompleteCallback` fails. The resolved Promise will return true if all the requested steps were completed and false if any of them failed.
