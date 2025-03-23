@@ -4,16 +4,13 @@
 import { useLink } from '../../hooks';
 import { type NavigationOptions } from '../../types';
 
-export function Link( {
-	to,
-	options,
-	children,
-	...props
-}: {
+type LinkProps = React.ComponentPropsWithoutRef< 'a' > & {
 	to: string;
 	options?: NavigationOptions;
 	children: React.ReactNode;
-} ) {
+};
+
+export function Link( { to, options, children, ...props }: LinkProps ) {
 	const { href, onClick } = useLink( to, options );
 
 	return (
