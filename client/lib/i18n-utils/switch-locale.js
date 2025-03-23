@@ -207,12 +207,11 @@ export function getTranslationChunkFileUrl( {
  * @param   {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
  * @returns {boolean}           Whether the chunk translations are preloaded
  */
-function getIsTranslationChunkPreloaded( chunkId, localeSlug ) {
+export function getIsTranslationChunkPreloaded( chunkId, localeSlug ) {
 	if ( typeof window !== 'undefined' ) {
 		return (
 			window.i18nLanguageManifest?.locale?.[ '' ]?.localeSlug === localeSlug &&
-			window.i18nTranslationChunks &&
-			chunkId in window.i18nTranslationChunks
+			window.i18nTranslationChunks?.[ localeSlug ]?.[ chunkId ]
 		);
 	}
 	return false;
@@ -226,7 +225,7 @@ function getIsTranslationChunkPreloaded( chunkId, localeSlug ) {
  */
 export function getTranslationChunkFile( chunkId, localeSlug ) {
 	if ( getIsTranslationChunkPreloaded( chunkId, localeSlug ) ) {
-		return Promise.resolve( window.i18nTranslationChunks[ chunkId ] );
+		return Promise.resolve( window.i18nTranslationChunks[ localeSlug ][ chunkId ] );
 	}
 
 	const url = getTranslationChunkFileUrl( {
@@ -297,6 +296,14 @@ function addRequireChunkTranslationsHandler( localeSlug = i18n.getLocaleSlug(), 
 			.then( ( translations ) => {
 				addTranslations( translations, userTranslations );
 				loadedTranslationChunks[ chunkId ] = true;
+				// Cache the translations
+				if ( ! window.i18nTranslationChunks ) {
+					window.i18nTranslationChunks = {};
+				}
+				if ( ! window.i18nTranslationChunks[ localeSlug ] ) {
+					window.i18nTranslationChunks[ localeSlug ] = {};
+				}
+				window.i18nTranslationChunks[ localeSlug ][ chunkId ] = translations;
 			} )
 			.catch( ( cause ) => {
 				const error = new Error(
@@ -383,7 +390,8 @@ export default async function switchLocale( localeSlug ) {
 
 			// Add preloaded translation chunks
 			const preloadedTranslations = preloadedTranslatedInstalledChunks.reduce(
-				( acc, chunkId ) => Object.assign( acc, window.i18nTranslationChunks?.[ chunkId ] ),
+				( acc, chunkId ) =>
+					Object.assign( acc, window.i18nTranslationChunks?.[ localeSlug ]?.[ chunkId ] ),
 				{}
 			);
 			addTranslations( preloadedTranslations );

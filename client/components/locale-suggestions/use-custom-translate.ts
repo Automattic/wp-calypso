@@ -9,7 +9,14 @@ import {
 	getLanguageManifestFile,
 	getTranslationChunkFile,
 	getInstalledChunks,
+	getIsTranslationChunkPreloaded,
 } from 'calypso/lib/i18n-utils/switch-locale';
+
+declare global {
+	interface Window {
+		i18nTranslationChunks?: Record< string, Record< string, Record< string, string > > >;
+	}
+}
 
 const debug = debugFactory( 'calypso:locale-suggestions:use-custom-translate' );
 
@@ -37,12 +44,36 @@ const loadTranslations = async ( customI18n: I18N, localeSlug: string ): Promise
 				( chunkId ) => manifest.translatedChunks?.includes( chunkId )
 			);
 
+			// First add any preloaded translations
+			const preloadedChunks = translatedInstalledChunks.filter( ( chunkId ) =>
+				getIsTranslationChunkPreloaded( chunkId, localeSlug )
+			);
+
+			preloadedChunks.forEach( ( chunkId ) => {
+				if ( window.i18nTranslationChunks?.[ localeSlug ]?.[ chunkId ] ) {
+					customI18n.addTranslations( window.i18nTranslationChunks[ localeSlug ][ chunkId ] );
+				}
+			} );
+
+			// Then fetch only non-preloaded chunks
+			const chunksToFetch = translatedInstalledChunks.filter(
+				( chunkId ) => ! getIsTranslationChunkPreloaded( chunkId, localeSlug )
+			);
+
 			await Promise.all(
-				translatedInstalledChunks.map( async ( chunkId ) => {
+				chunksToFetch.map( async ( chunkId ) => {
 					try {
 						const translations = await getTranslationChunkFile( chunkId, localeSlug );
 						if ( translations ) {
 							customI18n.addTranslations( translations );
+							// Cache the translations for future use
+							if ( ! window.i18nTranslationChunks ) {
+								window.i18nTranslationChunks = {};
+							}
+							if ( ! window.i18nTranslationChunks[ localeSlug ] ) {
+								window.i18nTranslationChunks[ localeSlug ] = {};
+							}
+							window.i18nTranslationChunks[ localeSlug ][ chunkId ] = translations;
 						}
 					} catch ( error ) {
 						debug( 'Failed to load translation chunk:', error );
