@@ -16,7 +16,7 @@ const meta: Meta< typeof Link > = {
 	decorators: [
 		function WithRouterProvider( Story ) {
 			return (
-				<RouterProvider routes={ [] }>
+				<RouterProvider routes={ [] } pathArg="p">
 					<Story />
 				</RouterProvider>
 			);
@@ -32,6 +32,7 @@ export const Default: Story = {
 	args: {
 		to: '/home',
 		children: 'Homepage',
+		className: 'story-link',
 	},
 };
 
@@ -71,7 +72,7 @@ export const PassCustomState: Story = {
 
 		return (
 			<VStack>
-				<Link { ...args } options={ { state } } />
+				<Link { ...args } options={ { state } } className="story-link" />
 
 				{ newLuckyNumber && (
 					<div>

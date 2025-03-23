@@ -1,9 +1,10 @@
-.custom-icon-styles {
-	width: 130px;
-	
-	& > img {
-		background-color: transparent;
-		aspect-ratio: 1 / 1;
-		object-fit: contain;
+.story-link {
+	color: #4e4;
+	&:hover {
+		color: #8f8;
 	}
+}
+
+strong {
+	color: #9acd32;
 }
