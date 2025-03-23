@@ -78,7 +78,7 @@ export default function PaymentMethodBackupToggle( { card }: { card: StoredPayme
 				checked={ isBackup }
 				onChange={ toggleIsBackup }
 				label={
-					translate( 'Use as backup.{{supportLink /}}', {
+					translate( 'Use as backup{{supportLink /}}', {
 						components: {
 							supportLink: (
 								<InlineSupportLink
