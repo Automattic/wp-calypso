@@ -36,7 +36,7 @@
 	width: fit-content;
 
 	@media screen and (max-width: 450px) {
-		grid-template-columns: minmax(150px, 40%) repeat(4, minmax(80px, 1fr));
+		grid-template-columns: 40% auto auto auto auto;
 	}
 
 	.videopress-stats-module__grid-header {
