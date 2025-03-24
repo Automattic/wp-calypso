@@ -2,11 +2,9 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Button } from '@wordpress/components';
 import { Icon, formatListNumbered, external, institution } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { NewReleases } from '../icons';
 
 import './help-center-more-resources.scss';
 
@@ -69,18 +67,6 @@ export const HelpCenterMoreResources = () => {
 							<span>{ __( 'Courses', __i18n_text_domain__ ) }</span>
 							<Icon icon={ external } size={ 20 } />
 						</a>
-					</div>
-				</li>
-				<li className="help-center-more-resources__resource-item help-center-link__item">
-					<div className="help-center-more-resources__resource-cell help-center-link__cell">
-						<Button
-							variant="link"
-							className="help-center-more-resources__new-releases"
-							href="https://wordpress.com/blog/category/product-features/"
-						>
-							<Icon icon={ <NewReleases /> } size={ 24 } />
-							<span>{ __( "What's New", __i18n_text_domain__ ) }</span>
-						</Button>
 					</div>
 				</li>
 			</ul>
