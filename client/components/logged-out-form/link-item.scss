@@ -7,8 +7,7 @@
 	cursor: pointer;
 	text-decoration: underline;
 
-	.is-p2-invite.invite-accept &,
-	.is-p2-signup .signup__step.is-user & {
+	.is-p2-invite.invite-accept & {
 		padding: 0;
 		width: fit-content;
 		margin-left: auto;
