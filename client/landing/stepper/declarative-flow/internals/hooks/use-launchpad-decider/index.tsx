@@ -1,4 +1,3 @@
-import { OnboardSelect } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -6,6 +5,7 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { getSessionId } from 'calypso/landing/stepper/utils/use-session-id';
 import { shouldShowLaunchpadFirst } from 'calypso/state/selectors/should-show-launchpad-first';
 import type { Navigate, StepperStep } from '../../types';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 interface Props {
 	exitFlow: ( path: string ) => void;
@@ -28,7 +28,9 @@ export const useLaunchpadDecider = ( { exitFlow, navigate }: Props ) => {
 	const intent = getIntent();
 	const site = useSite();
 	// site intent is not set until we exit site setup flow so we set it here with onboarding store
-	// as it is used in shouldShowLaunchpadFirst
+	// as it is used in shouldShowLaunchpadFirst. Note that we are not setting the site intent
+	// here to be saved server-side, we are only setting client-side so that we can use it in
+	// shouldShowLaunchpadFirst.
 	if ( site && site.options && site.options.site_intent === '' ) {
 		site.options.site_intent = intent;
 	}
@@ -45,7 +47,6 @@ export const useLaunchpadDecider = ( { exitFlow, navigate }: Props ) => {
 				siteSlug,
 				siteId,
 				sessionId,
-				showLaunchpad: true,
 			} );
 		},
 		postFlowNavigator: ( { siteId, siteSlug }: SiteProps ) => {

@@ -95,11 +95,6 @@ const Launchpad: Step = ( { navigation, flow } ) => {
 		return null;
 	}
 
-	// if ( shouldShowLaunchpadFirst( site ) ) {
-	// 	window.location.replace( `/home/${ siteSlug }` );
-	// 	return null;
-	// }
-
 	return (
 		<>
 			<DocumentHead title={ almostReadyToLaunchText } />
