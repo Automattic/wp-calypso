@@ -1042,52 +1042,6 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 	} );
 }
 
-export function createWpForTeamsSite( callback, dependencies, stepData, reduxStore ) {
-	const { site, siteTitle } = stepData;
-
-	// The new p2 theme for WP for Teams project.
-	// More info: https://wp.me/p9lV3a-1dM-p2
-	const themeSlugWithRepo = 'pub/p2020';
-
-	const locale = getLocaleSlug();
-
-	const data = {
-		blog_name: site,
-		blog_title: siteTitle,
-		public: -1, // wp for teams sites are not supposed to be public
-		options: {
-			theme: themeSlugWithRepo,
-			timezone_string: guessTimezone(),
-			is_wpforteams_site: true,
-			p2_initialize_as_hub: true,
-			...( stepData.campaign && { p2_signup_campaign: stepData.campaign } ),
-		},
-		validate: false,
-		locale,
-		lang_id: getLanguage( locale ).value,
-		client_id: config( 'wpcom_signup_id' ),
-		client_secret: config( 'wpcom_signup_key' ),
-	};
-
-	wpcom.req.post( '/sites/new', data, function ( errors, response ) {
-		let providedDependencies;
-		let siteSlug;
-
-		if ( response && response.blog_details ) {
-			const parsedBlogURL = getUrlParts( response.blog_details.url );
-			siteSlug = parsedBlogURL.hostname;
-
-			providedDependencies = { siteSlug };
-		}
-
-		if ( isUserLoggedIn( reduxStore.getState() ) && isEmpty( errors ) ) {
-			fetchSitesAndUser( siteSlug, () => callback( undefined, providedDependencies ), reduxStore );
-		} else {
-			callback( isEmpty( errors ) ? undefined : [ errors ], providedDependencies );
-		}
-	} );
-}
-
 function recordExcludeStepEvent( step, value ) {
 	recordTracksEvent( 'calypso_signup_actions_exclude_step', {
 		step,
