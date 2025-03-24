@@ -6,9 +6,8 @@ import {
 	isHostingSignupFlow,
 	isOnboardingFlow,
 	StepContainer,
-	isTailoredSignupFlow,
 } from '@automattic/onboarding';
-import { isAIBuilderFlow } from '@automattic/onboarding/src';
+import { isAIBuilderFlow, isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
