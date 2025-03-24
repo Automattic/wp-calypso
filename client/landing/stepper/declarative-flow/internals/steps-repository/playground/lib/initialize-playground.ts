@@ -18,12 +18,65 @@ const DEFAULT_BLUEPRINT: Blueprint = {
 const PREDEFINED_BLUEPRINTS: Record< string, Blueprint > = {
 	woocommerce: {
 		...DEFAULT_BLUEPRINT,
+		landingPage: '/shop',
 		steps: [
 			{
 				step: 'installPlugin',
 				pluginData: {
 					resource: 'wordpress.org/plugins',
 					slug: 'woocommerce',
+				},
+				options: {
+					activate: true,
+				},
+			},
+			{
+				step: 'importWxr',
+				file: {
+					resource: 'url',
+					url: 'https://raw.githubusercontent.com/wordpress/blueprints/trunk/blueprints/woo-shipping/sample_products.xml',
+				},
+			},
+		],
+	},
+	2024: {
+		...DEFAULT_BLUEPRINT,
+		steps: [
+			{
+				step: 'installTheme',
+				themeData: {
+					resource: 'wordpress.org/themes',
+					slug: 'twentytwentyfour',
+				},
+				options: {
+					activate: true,
+				},
+			},
+		],
+	},
+	2023: {
+		...DEFAULT_BLUEPRINT,
+		steps: [
+			{
+				step: 'installTheme',
+				themeData: {
+					resource: 'wordpress.org/themes',
+					slug: 'twentytwentythree',
+				},
+				options: {
+					activate: true,
+				},
+			},
+		],
+	},
+	design1: {
+		...DEFAULT_BLUEPRINT,
+		steps: [
+			{
+				step: 'installTheme',
+				themeData: {
+					resource: 'wordpress.org/themes',
+					slug: 'variations',
 				},
 				options: {
 					activate: true,
