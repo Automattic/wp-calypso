@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .step-route.use-my-domain {
 	.start-writing .register-domain-step {
 		box-shadow: none;
@@ -45,16 +48,35 @@
 		}
 
 		.option-content {
-			padding: 24px 0;
+			padding: 48px 0;
 			margin: 0;
+			gap: 24px;
+
+			@include break-small {
+				gap: 48px;
+			}
 
 			&:first-child {
 				padding-top: 0;
 			}
 
+			.option-content__illustration {
+				display: none;
+
+				@include break-small {
+					display: block;
+				}
+			}
+
 			.option-content__main {
 				max-width: unset;
-				margin: 0 48px;
+				margin: 0;
+			}
+
+			.option-content__action:empty {
+				// Ensure the action container doesn't participate in the flex
+				// layout when there's no button.
+				display: none;
 			}
 		}
 	}
