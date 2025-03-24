@@ -66,22 +66,19 @@ export const doFetchJITM = ( action ) =>
 	http(
 		{
 			method: 'GET',
-			path: `/jetpack-blogs/${ action.siteId }/rest-api/`,
+			apiNamespace: 'wpcom/v3',
+			path: `/sites/${ action.siteId }/jitm`,
 			query: {
-				path: '/jetpack/v4/jitm',
-				query: JSON.stringify( {
-					message_path: action.messagePath,
-					query: action.searchQuery,
-				} ),
-				http_envelope: 1,
+				message_path: action.messagePath,
+				query: action.searchQuery,
 				locale: action.locale,
 			},
 		},
 		{ ...action }
 	);
+
 /**
- * Dismisses a jitm on the jetpack site, it returns nothing useful and will return no useful error, so we'll
- * fail and succeed silently.
+ * Dismisses a jitm
  * @param {Object} action The dismissal action
  * @returns {Object} The HTTP fetch action
  */
@@ -89,15 +86,11 @@ export const doDismissJITM = ( action ) =>
 	http(
 		{
 			method: 'POST',
-			path: `/jetpack-blogs/${ action.siteId }/rest-api/`,
-			query: {
-				path: '/jetpack/v4/jitm',
-				body: JSON.stringify( {
-					feature_class: action.featureClass,
-					id: action.id,
-				} ),
-				http_envelope: 1,
-				json: false,
+			apiNamespace: 'wpcom/v3',
+			path: `/sites/${ action.siteId }/jitm`,
+			body: {
+				feature_class: action.featureClass,
+				id: action.id,
 			},
 		},
 		action
