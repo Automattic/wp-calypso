@@ -137,7 +137,7 @@ const SubscriberDataViews = ( {
 		},
 		false,
 		() => {
-			setSelectedSubscriber( null );
+			page.show( `/subscribers/${ siteSlug }` );
 		}
 	);
 
