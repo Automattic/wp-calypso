@@ -3,6 +3,7 @@
  */
 import { screen } from '@testing-library/react';
 import React from 'react';
+import { useSiteMigrationKey } from 'calypso/landing/stepper/hooks/use-site-migration-key';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import MigrationOverview from '..';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -34,9 +35,17 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSite: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/landing/stepper/hooks/use-site-migration-key', () => ( {
+	useSiteMigrationKey: jest.fn(),
+} ) );
+
 const render = ( ui: React.ReactElement ) => renderWithProvider( ui );
 
 describe( 'MigrationOverview', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+
 	const getStartDIYMigrationLink = () => {
 		return screen.queryByRole( 'link', { name: 'Complete your migration' } );
 	};
@@ -49,7 +58,15 @@ describe( 'MigrationOverview', () => {
 		it( 'shows the migration pending instructions', () => {
 			const site = buildMigrationSite( { status: 'pending', how: 'diy' } );
 
-			const { getByText } = render( <MigrationOverview site={ site } /> );
+			jest.mocked( useSiteMigrationKey ).mockReturnValue( {
+				data: { migrationKey: '123' },
+				isLoading: false,
+				isError: false,
+				error: null,
+				status: 'success',
+			} );
+
+			const { getByText } = renderWithProvider( <MigrationOverview site={ site } /> );
 
 			expect( getByText( /Complete your migration in the/ ) ).toBeVisible();
 		} );
@@ -61,7 +78,15 @@ describe( 'MigrationOverview', () => {
 				canInstallPlugins: true,
 			} );
 
-			render( <MigrationOverview site={ site } /> );
+			jest.mocked( useSiteMigrationKey ).mockReturnValue( {
+				data: { migrationKey: '123' },
+				isLoading: false,
+				isError: false,
+				error: null,
+				status: 'success',
+			} );
+
+			renderWithProvider( <MigrationOverview site={ site } /> );
 
 			const link = getStartDIYMigrationLink();
 
@@ -69,6 +94,26 @@ describe( 'MigrationOverview', () => {
 				'href',
 				'/setup/hosted-site-migration/site-migration-instructions?siteId=123&siteSlug=example.com&ref=hosting-migration-overview'
 			);
+		} );
+
+		it( 'shows a link to copy the migration key if we have a migration key', () => {
+			const site = buildMigrationSite( {
+				status: 'pending',
+				how: 'diy',
+				canInstallPlugins: true,
+			} );
+
+			jest.mocked( useSiteMigrationKey ).mockReturnValue( {
+				data: { migrationKey: '123' },
+				isLoading: false,
+				isError: false,
+				error: null,
+				status: 'success',
+			} );
+
+			const { getByText } = renderWithProvider( <MigrationOverview site={ site } /> );
+
+			expect( getByText( /Copy migration key/ ) ).toBeVisible();
 		} );
 	} );
 
