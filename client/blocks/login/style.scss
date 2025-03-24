@@ -353,10 +353,6 @@ $breakpoint-mobile: 782px; //Mobile size.
 	display: flex;
 	flex-direction: column;
 
-	a {
-		@extend %p2-link;
-	}
-
 	&.is-section-login {
 		padding-bottom: 0;
 		min-height: auto;
@@ -414,16 +410,7 @@ $breakpoint-mobile: 782px; //Mobile size.
 	}
 
 	.form-text-input {
-		@extend %p2-form-input-text;
 		margin-bottom: 0;
-	}
-
-	.form-input-validation {
-		@extend %p2-form-input-validation;
-	}
-
-	.form-password-input {
-		@extend %p2-form-input-password;
 	}
 
 	.login__form-header {
@@ -466,8 +453,6 @@ $breakpoint-mobile: 782px; //Mobile size.
 	}
 
 	.login button {
-		@extend %p2-form-button;
-
 		&.login__form-change-username {
 			background: none;
 			color: var(--p2-color-link);
@@ -501,7 +486,6 @@ $breakpoint-mobile: 782px; //Mobile size.
 		margin-bottom: 2em;
 
 		a {
-			@extend %p2-link;
 			border-bottom: 1px solid currentColor;
 			font-size: var(--p2-font-size-form-xs);
 			font-weight: 400;
