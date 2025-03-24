@@ -54,6 +54,7 @@ $woocommerce-purple-50: #720EEC;
 	text-decoration: underline;
 	color: var(--color-text);
 
+	&:active,
 	&:hover,
 	&:focus,
 	&:focus-visible {

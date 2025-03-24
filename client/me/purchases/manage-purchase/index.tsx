@@ -914,7 +914,7 @@ class ManagePurchase extends Component<
 		}
 		const { id } = purchase;
 
-		if ( ! canAutoRenewBeTurnedOff( purchase ) || ! isPlan( purchase ) ) {
+		if ( ! canAutoRenewBeTurnedOff( purchase ) ) {
 			return null;
 		}
 

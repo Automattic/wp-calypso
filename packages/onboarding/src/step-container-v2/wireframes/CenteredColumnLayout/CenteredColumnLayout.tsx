@@ -7,7 +7,7 @@ import {
 import './style.scss';
 
 interface CenteredColumnLayoutProps extends StepContainerV2Props {
-	columnWidth: 4 | 6 | 8;
+	columnWidth: 4 | 6 | 8 | 10;
 }
 
 export const CenteredColumnLayout = ( props: CenteredColumnLayoutProps ) => {
