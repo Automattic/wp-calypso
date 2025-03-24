@@ -33,6 +33,7 @@ describe( 'streams', () => {
 					method: 'GET',
 					path: '/read/following',
 					apiVersion: '1.2',
+					query,
 					onSuccess: action,
 					onFailure: action,
 				} )
@@ -67,6 +68,7 @@ describe( 'streams', () => {
 						method: 'GET',
 						path: '/read/following',
 						apiVersion: '1.2',
+						query,
 					},
 				},
 				{
