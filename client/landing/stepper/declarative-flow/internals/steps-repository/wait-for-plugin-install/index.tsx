@@ -105,12 +105,13 @@ const WaitForPluginInstall: Step = function WaitForAtomic( { navigation, data } 
 			}
 
 			// Add potential pending actions from other steps.
-			let pendingActions = {};
+			let redirectTo = null;
 			if ( typeof pendingActionsPromise === 'function' ) {
-				pendingActions = await pendingActionsPromise();
+				const pendingActions = await pendingActionsPromise();
+				redirectTo = pendingActions?.redirectTo;
 			}
 
-			return { ...pendingActions, pluginsInstalled: true, siteSlug, siteId };
+			return { redirectTo, pluginsInstalled: true, siteSlug, siteId };
 		} );
 
 		submit?.();
