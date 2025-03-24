@@ -81,7 +81,7 @@ const BillingTimeframe = ( { showRefundPeriod, planSlug }: Props ) => {
 		const price = formatCurrency( 25000, 'USD', { stripZeros: true } );
 
 		return (
-			<div className="plans-grid-next__billing-timeframe-vip-price">
+			<div>
 				{ fixMe( {
 					text: 'Starts at {{b}}%(price)s{{/b}} annually',
 					newCopy: translate( 'Starts at {{b}}%(price)s{{/b}} annually', {

@@ -30,14 +30,11 @@ $iframe-background-color: #f7f7f7;
 
 .bank-details__heading {
 	padding-block: 8px;
-	font-size: rem(24px);
-	font-weight: 600;
-	line-height: 1.3;
+	@include heading-x-large;
 }
 
 .bank-details__subheading {
-	font-size: rem(16px);
-	line-height: 1.5;
+	@include body-large;
 	color: var(--color-neutral-60);
 }
 

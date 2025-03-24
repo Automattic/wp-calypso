@@ -84,7 +84,7 @@ body.is-section-stepper .domains__step-content,
 		bottom: 0;
 		left: 0;
 		z-index: 99;
-		padding-bottom: 6px !important;
+		padding-bottom: 0 !important;
 		box-shadow: 0 -3px 10px 0 rgba(0, 0, 0, 0.12);
 
 		.foldable-card__main {
@@ -250,7 +250,7 @@ body.is-section-stepper .domains__step-content,
 }
 
 .onboarding {
-	&.domains {
+	&.domains:not(:has(.step-container-v2)) {
 		&.step-route {
 			padding: 60px 12px 0 12px;
 
@@ -341,14 +341,6 @@ body.is-section-signup {
 
 		.domains__domain-side-content-container {
 			flex-direction: column;
-			margin-top: 40px;
-			display: none;
-
-			@include break-large {
-				margin-top: 0;
-				flex-direction: column;
-				display: flex;
-			}
 
 			&.is-sticky {
 				position: sticky;
@@ -371,7 +363,7 @@ body.is-section-signup {
 			}
 
 			@include break-large {
-				display: none;
+				display: none !important;
 			}
 		}
 
@@ -389,23 +381,8 @@ body.is-section-signup {
 			padding: 20px 0;
 			margin: 0;
 
-			@include break-small {
-				width: 80%;
-				margin: 0 auto;
-			}
-
-			@include break-medium {
-				width: 290px;
-				margin: 0 20px;
-			}
-
 			@include break-large {
-				margin: 0 0 0 40px;
 				padding: 40px 0;
-			}
-
-			@include break-huge {
-				margin: 0 0 0 60px;
 			}
 
 			&.fade-out {
@@ -421,6 +398,10 @@ body.is-section-signup {
 
 		.domains__domain-side-content:last-of-type {
 			border-bottom: none;
+		}
+
+		.domains__domain-cart-foldable-card .domains__domain-side-content {
+			padding: 0;
 		}
 
 		.register-domain-step {
@@ -504,5 +485,56 @@ body.is-section-signup {
 			padding: 0;
 		}
 
+	}
+
+	// In StepContainerV2 the wireframe is responsible for the column
+	// padding. If we're not using this then we need our own column spacing.
+	&:not(:has(.step-container-v2)) {
+		.domains__step-content {
+			.domains__domain-side-content {
+				@include break-small {
+					width: 80%;
+					margin: 0 auto;
+				}
+
+				@include break-medium {
+					width: 290px;
+					margin: 0 20px;
+				}
+
+				@include break-large {
+					margin: 0 0 0 40px;
+				}
+
+				@include break-huge {
+					margin: 0 0 0 60px;
+				}
+			}
+
+			.domains__domain-side-content-container {
+				display: none;
+				margin-top: 40px;
+
+				@include break-large {
+					display: flex;
+					margin-top: 0;
+				}
+			}
+		}
+	}
+
+	&:has(.step-container-v2) {
+		.register-domain-step__search-card {
+			margin: 0;
+		}
+
+		.register-domain-step__domain-side-content-container-domain-explanation-image {
+			max-width: 100%;
+			margin-bottom: 0;
+		}
+
+		.register-domain-step__example-prompt {
+			margin: 0;
+		}
 	}
 }

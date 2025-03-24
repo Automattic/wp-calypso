@@ -178,7 +178,7 @@
 		"photon": "workspace:^",
 		"phpunserialize": "^1.1.0",
 		"postcss": "^8.5.3",
-		"prismjs": "^1.26.0",
+		"prismjs": "^1.30.0",
 		"prop-types": "^15.7.2",
 		"qrcode.react": "^3.1.0",
 		"qs": "^6.9.1",

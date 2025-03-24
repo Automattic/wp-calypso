@@ -2,7 +2,7 @@ import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Spinner } from '@automattic/components';
 import { isWithThemeFlow, isHostingSignupFlow, isOnboardingFlow } from '@automattic/onboarding';
-import { isTailoredSignupFlow } from '@automattic/onboarding/src';
+import { isAIBuilderFlow, isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -20,6 +20,7 @@ import SideExplainer from 'calypso/components/domains/side-explainer';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
+import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
 	domainRegistration,
@@ -1089,7 +1090,7 @@ export class RenderDomainsStep extends Component {
 					this.props.forceHideFreeDomainExplainerAndStrikeoutUi
 				}
 				isOnboarding
-				sideContent={ this.getSideContent() }
+				sideContent={ ! shouldUseStepContainerV2( this.props.flowName ) && this.getSideContent() }
 				isInLaunchFlow={ 'launch-site' === this.props.flowName }
 				promptText={
 					this.isHostingFlow()
@@ -1230,7 +1231,7 @@ export class RenderDomainsStep extends Component {
 		return this.props.isDomainOnly ? 'domain-first' : 'signup';
 	}
 
-	renderContent() {
+	getContentColumns() {
 		let content;
 		let sideContent;
 
@@ -1256,6 +1257,12 @@ export class RenderDomainsStep extends Component {
 				</div>
 			);
 		}
+
+		return [ content, sideContent ];
+	}
+
+	renderContent() {
+		const [ content, sideContent ] = this.getContentColumns();
 
 		return (
 			<div className="domains__step-content domains__step-content-domain-step">
@@ -1372,6 +1379,9 @@ export class RenderDomainsStep extends Component {
 		} else if ( isOnboardingFlow( flowName ) && !! goBack ) {
 			backUrl = null;
 			backLabelText = translate( 'Back' );
+		} else if ( isAIBuilderFlow( flowName ) ) {
+			backUrl = `${ siteUrl }/wp-admin/site-editor.php?canvas=edit&referrer=${ flowName }&p=%2F&ai-step=edit`;
+			backLabelText = translate( 'Keep Editing' );
 		} else {
 			backUrl = getStepUrl( flowName, stepName, null, this.getLocale() );
 
@@ -1403,6 +1413,31 @@ export class RenderDomainsStep extends Component {
 		const fallbackSubHeaderText = this.getSubHeaderText();
 
 		if ( useStepperWrapper ) {
+			if ( shouldUseStepContainerV2( flowName ) ) {
+				const [ content, sideContent ] = this.getContentColumns();
+
+				return (
+					<AsyncLoad
+						require="./async-domain-step-wrapper"
+						className="domains__step-content domains__step-content-domain-step"
+						hideBack={ hideBack }
+						backUrl={ backUrl }
+						isExternalBackUrl={ isExternalBackUrl }
+						mainContent={
+							<>
+								<QueryProductsList type="domains" />
+								{ content }
+							</>
+						}
+						rightContent={ sideContent }
+						headerText={ headerText }
+						subHeaderText={ fallbackSubHeaderText }
+						backLabelText={ backLabelText }
+						goBack={ goBack }
+					/>
+				);
+			}
+
 			return (
 				<AsyncLoad
 					require="@automattic/onboarding/src/step-container"

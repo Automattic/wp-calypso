@@ -3,6 +3,10 @@ import { check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo } from 'react';
+import {
+	withTooltip,
+	WithTooltipProps,
+} from 'calypso/a8c-for-agencies/components/hoc/with-tooltip';
 import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
 import { useProductDescription } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import getProductShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-short-title';
@@ -21,6 +25,7 @@ import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types
 import './style.scss';
 
 type Props = WithProductLightboxProps &
+	WithTooltipProps &
 	ProductLightboxActivatorProps & {
 		suggestedProduct?: string | null;
 		hideDiscount?: boolean;
@@ -216,4 +221,4 @@ function ProductCard( props: Props ) {
 	);
 }
 
-export default withProductLightbox( ProductCard );
+export default withProductLightbox( withTooltip( ProductCard ) );
