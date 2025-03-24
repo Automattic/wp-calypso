@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { Blueprint } from '@wp-playground/blueprints';
 import { MountDescriptor, PlaygroundClient, startPlaygroundWeb } from '@wp-playground/client';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { resolveBlueprintFromURL } from './resolve-blueprint-from-url';
 
 const OPFS_PATH_PREFIX = '/wpcom-onboarding';
 const DEFAULT_BLUEPRINT: Blueprint = {
@@ -34,7 +35,7 @@ const PREDEFINED_BLUEPRINTS: Record< string, Blueprint > = {
 	// Add more predefined blueprints here as needed
 };
 
-function getBlueprintFromUrl(): Blueprint {
+async function getBlueprintFromUrl(): Blueprint {
 	const url = new URL( window.location.href );
 	const predefinedBlueprintName = url.searchParams.get( 'blueprint' );
 
@@ -43,18 +44,13 @@ function getBlueprintFromUrl(): Blueprint {
 		return PREDEFINED_BLUEPRINTS[ predefinedBlueprintName ];
 	}
 
-	// Otherwise, try to get blueprint from hash
-	try {
-		const blueprint = JSON.parse( decodeURIComponent( window.location.hash.slice( 1 ) ) );
-		return {
-			...DEFAULT_BLUEPRINT,
-			...blueprint,
-			steps: [ ...( DEFAULT_BLUEPRINT.steps || [] ), ...( blueprint.steps || [] ) ],
-		};
-	} catch ( error ) {
-		// If the blueprint is invalid or missing, use the default one
-		return DEFAULT_BLUEPRINT;
-	}
+	const blueprint = await resolveBlueprintFromURL( url );
+
+	return {
+		...DEFAULT_BLUEPRINT,
+		...blueprint,
+		steps: [ ...( DEFAULT_BLUEPRINT.steps || [] ), ...( blueprint.steps || [] ) ],
+	};
 }
 
 export async function initializeWordPressPlayground(
@@ -86,7 +82,7 @@ export async function initializeWordPressPlayground(
 		const client = await startPlaygroundWeb( {
 			iframe,
 			remoteUrl: 'https://playground.wordpress.net/remote.html',
-			blueprint: ! isWordPressInstalled ? getBlueprintFromUrl() : DEFAULT_BLUEPRINT,
+			blueprint: ! isWordPressInstalled ? await getBlueprintFromUrl() : DEFAULT_BLUEPRINT,
 			shouldInstallWordPress: ! isWordPressInstalled,
 			mounts: [ mountDescriptor ],
 		} );
