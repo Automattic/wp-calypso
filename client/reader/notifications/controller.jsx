@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -50,7 +51,11 @@ export function notifications( context, next ) {
 							"Didn't expect to see this page? {{learnMoreLink}}Learn about 3rd party cookies.{{/learnMoreLink}}",
 							{
 								components: {
-									learnMoreLink: <a href="/notifications" />,
+									learnMoreLink: (
+										<a
+											href={ localizeUrl( 'https://wordpress.com/support/third-party-cookies/' ) }
+										/>
+									),
 								},
 							}
 						) }
