@@ -216,6 +216,9 @@ const useSubscriberRemoveMutation = (
 			}
 		},
 		onSuccess: ( data, subscribers ) => {
+			// Invalidate all subscriber queries to trigger a refresh
+			queryClient.invalidateQueries( { queryKey: [ 'subscribers', siteId ] } );
+
 			for ( const subscriber of subscribers ) {
 				recordSubscriberRemoved( {
 					site_id: siteId,
