@@ -57,15 +57,13 @@ class DeleteSite extends Component {
 			return null;
 		}
 
-		const warningText = () => {
-			return translate( 'Before deleting your site, consider exporting its content as a backup' );
-		};
-
 		return (
 			<ExportNotice
 				siteSlug={ this.props.siteSlug }
 				siteId={ siteId }
-				warningText={ warningText() }
+				warningText={ translate(
+					'Before deleting your site, consider exporting its content as a backup'
+				) }
 			/>
 		);
 	}
