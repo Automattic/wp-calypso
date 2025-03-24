@@ -10,8 +10,6 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import HeaderCakeBack from 'calypso/components/header-cake/back';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
 import { Panel, PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import withP2HubP2Count from 'calypso/data/p2/with-p2-hub-p2-count';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -29,6 +27,7 @@ import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-a
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { FeatureBreadcrumb } from '../../../../hooks/breadcrumbs/use-set-feature-breadcrumb';
+import ExportNotice from '../export-notice';
 import DeleteSiteWarnings from './delete-site-warnings';
 
 import './style.scss';
@@ -52,8 +51,7 @@ class DeleteSite extends Component {
 	};
 
 	renderNotice() {
-		const exportLink = '/export/' + this.props.siteSlug;
-		const { siteDomain } = this.props;
+		const { siteDomain, siteId } = this.props;
 
 		if ( ! siteDomain ) {
 			return null;
@@ -64,11 +62,11 @@ class DeleteSite extends Component {
 		};
 
 		return (
-			<Notice status="is-warning" showDismiss={ false } text={ warningText() }>
-				<NoticeAction onClick={ this._checkSiteLoaded } href={ exportLink }>
-					{ translate( 'Export content' ) }
-				</NoticeAction>
-			</Notice>
+			<ExportNotice
+				siteSlug={ this.props.siteSlug }
+				siteId={ siteId }
+				warningText={ warningText() }
+			/>
 		);
 	}
 
@@ -195,13 +193,6 @@ class DeleteSite extends Component {
 		this.props.getRemoveDuplicateViewsExperimentAssignment();
 	}
 
-	_checkSiteLoaded = ( event ) => {
-		const { siteId } = this.props;
-		if ( ! siteId ) {
-			event.preventDefault();
-		}
-	};
-
 	onConfirmDomainChange = ( event ) => {
 		this.setState( {
 			confirmDomain: event.target.value,
@@ -248,8 +239,8 @@ class DeleteSite extends Component {
 							{ isUntangled && (
 								<PanelCardHeading>{ translate( 'Confirm site deletion' ) }</PanelCardHeading>
 							) }
-							{ this.renderNotice() }
 							{ this.renderBody() }
+							{ this.renderNotice() }
 						</>
 						{ this.renderDeleteSiteCTA() }
 					</PanelCard>
