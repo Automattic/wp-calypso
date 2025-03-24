@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { followConversation, muteConversation } from 'calypso/state/reader/conversations/actions';
 import { isFollowingReaderConversation } from 'calypso/state/reader/conversations/selectors';
-import { removeItemFromStream } from 'calypso/state/reader/streams/actions';
 import ConversationFollowButton from './button';
 
 import './style.scss';
@@ -80,6 +79,5 @@ export default connect(
 		followConversation,
 		muteConversation,
 		recordReaderTracksEvent,
-		removeItemFromStream,
 	}
 )( ConversationFollowButtonContainer );
