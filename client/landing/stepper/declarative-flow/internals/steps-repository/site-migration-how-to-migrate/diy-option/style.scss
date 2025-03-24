@@ -4,6 +4,9 @@
 	text-decoration: underline;
 }
 
-.step-container-v2 .how-to-migrate__experiment-diy {
-	font-size: 0.875rem;
+.site-migration {
+	.step-container-v2__heading {
+		max-width: 620px;
+		margin: 0 auto;
+	}
 }

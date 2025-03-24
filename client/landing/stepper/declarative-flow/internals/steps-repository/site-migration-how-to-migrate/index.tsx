@@ -147,7 +147,12 @@ const SiteMigrationHowToMigrate: StepType< {
 					topBar={
 						<Step.TopBar
 							backButton={ <Step.BackButton onClick={ goBack } /> }
-							skipButton={ <DIYOption onClick={ handleClick } /> }
+							skipButton={
+								<Step.SkipButton
+									onClick={ () => handleClick( HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF ) }
+									label={ translate( "I'll do it myself" ) }
+								/>
+							}
 						/>
 					}
 					heading={
