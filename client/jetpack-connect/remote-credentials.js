@@ -21,7 +21,6 @@ import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import { addQueryArgs } from 'calypso/lib/route';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getConnectingSite } from 'calypso/state/jetpack-connect/selectors';
@@ -129,13 +128,13 @@ export class OrgCredentialsForm extends Component {
 	getHeaderText() {
 		const { translate } = this.props;
 
-		return translate( 'Add your self-hosted WordPress credentials (wp-admin)' );
+		return translate( "Let's connect your site" );
 	}
 
 	getSubHeaderText() {
 		const { translate } = this.props;
 		const subheader = translate(
-			'Your login credentials are used for the purpose of securely auto-installing Jetpack and will not be stored.'
+			"Add your self-hosted site login details below and we'll get Jetpack installed for you. Your details are not stored."
 		);
 		return <span>{ subheader }</span>;
 	}
@@ -202,9 +201,6 @@ export class OrgCredentialsForm extends Component {
 					</div>{ ' ' }
 					{ removedProtocolURL }
 				</div>
-				<div className="jetpack-connect__wordpress-logo">
-					<WordPressLogo size="72" />
-				</div>
 				<FormLabel htmlFor="username">{ translate( 'WordPress username or email' ) }</FormLabel>
 				<div className="jetpack-connect__site-address-container">
 					<Gridicon size={ 24 } icon="user" />
@@ -244,12 +240,6 @@ export class OrgCredentialsForm extends Component {
 							/>
 						) }
 					</div>
-				</div>
-				<div className="jetpack-connect__note">
-					{ translate(
-						'Note: WordPress credentials are not the same as WordPress.com credentials. ' +
-							'Be sure to enter the username and password for your self-hosted WordPress site.'
-					) }
 				</div>
 			</Fragment>
 		);
