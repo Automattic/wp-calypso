@@ -3,11 +3,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import {
-	getPaymentMethodImageURL,
-	PaymentMethodSummary,
-} from 'calypso/lib/checkout/payment-methods';
-import BusinessCardBadge from 'calypso/my-sites/checkout/src/components/business-card-badge';
+import { PaymentMethodSummary } from 'calypso/lib/checkout/payment-methods';
 import 'calypso/me/purchases/payment-methods/style.scss';
 
 interface Props {
@@ -33,7 +29,6 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 	email,
 	paymentPartner,
 	isExpired,
-	isForBusiness,
 	razorpayVpa,
 } ) => {
 	const translate = useTranslate();
@@ -47,18 +42,12 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 
 	return (
 		<div className="payment-method-details">
-			<img
-				src={ getPaymentMethodImageURL( type ) }
-				className="payment-method-details__image"
-				alt=""
-			/>
 			<div className="payment-method-details__details">
 				{ razorpayVpa && <span className="payment-method-details__vpa">{ razorpayVpa }</span> }
 				<span className="payment-method-details__name">{ name }</span>
 				<span className="payment-method-details__number">
 					<PaymentMethodSummary type={ type } digits={ lastDigits } email={ email } />
 				</span>
-
 				{ displayExpirationDate && (
 					<span className="payment-method-details__expiration-date">
 						{ translate( 'Expires %(date)s', {
@@ -67,7 +56,6 @@ const PaymentMethodDetails: FunctionComponent< Props > = ( {
 						} ) }
 					</span>
 				) }
-				{ isForBusiness && <BusinessCardBadge /> }
 				{ isExpired && (
 					<span
 						className={ clsx( 'payment-method-details__expiration-notice', {
