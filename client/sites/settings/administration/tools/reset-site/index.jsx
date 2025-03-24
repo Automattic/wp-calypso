@@ -184,16 +184,6 @@ function SiteResetCard( {
 
 	const content = contentInfo();
 
-	const renderNotice = () => {
-		const warningText = translate(
-			'Before resetting your site, consider exporting its content as a backup'
-		);
-
-		return (
-			<ExportNotice siteSlug={ selectedSiteSlug } siteId={ siteId } warningText={ warningText } />
-		);
-	};
-
 	const renderBody = () => {
 		if ( resetComplete ) {
 			const message = createInterpolateElement(
@@ -257,7 +247,15 @@ function SiteResetCard( {
 						</>
 					) }
 					<hr />
-					{ ! isAtomic && renderNotice() }
+					{ ! isAtomic && (
+						<ExportNotice
+							siteSlug={ selectedSiteSlug }
+							siteId={ siteId }
+							warningText={ translate(
+								'Before resetting your site, consider exporting its content as a backup'
+							) }
+						/>
+					) }
 					<FormLabel htmlFor="confirmResetInput" className="reset-site__confirm-label">
 						{ createInterpolateElement(
 							sprintf(
