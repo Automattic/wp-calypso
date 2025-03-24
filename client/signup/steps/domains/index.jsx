@@ -1151,7 +1151,6 @@ export class RenderDomainsStep extends Component {
 					initialMode={ queryObject.step ?? inputMode.domainInput }
 					onNextStep={ this.setCurrentFlowStep }
 					isSignupStep
-					showHeader={ false }
 					onTransfer={ this.handleAddTransfer }
 					onConnect={ this.onUseMyDomainConnect }
 					onSkip={ () => this.handleSkip( undefined, false ) }

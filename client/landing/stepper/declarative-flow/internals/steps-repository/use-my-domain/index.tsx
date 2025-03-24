@@ -7,7 +7,9 @@ import {
 	Step,
 } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
-import { useState } from '@wordpress/element';
+import { createInterpolateElement, useState } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg } from '@wordpress/url';
 import { useLocation } from 'react-router';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -32,6 +34,7 @@ const UseMyDomain: StepType< {
 		shouldSkipSubmitTracking?: boolean;
 	};
 } > = function UseMyDomain( { navigation, flow } ) {
+	const { __ } = useI18n();
 	const { setHideFreePlan, setDomainCartItem } = useDispatch( ONBOARD_STORE );
 	const { goNext, goBack, submit } = navigation;
 	const getDefaultStepContent = () => <h1>Choose a domain step</h1>;
@@ -97,7 +100,6 @@ const UseMyDomain: StepType< {
 					initialQuery={ getInitialQuery() }
 					initialMode={ getInitialMode() }
 					isSignupStep
-					showHeader={ false }
 					onTransfer={ handleOnTransfer }
 					onConnect={ ( { domain } ) => handleOnConnect( domain ) }
 					useMyDomainMode={ useMyDomainMode }
@@ -106,6 +108,7 @@ const UseMyDomain: StepType< {
 					isStepper
 					stepLocation={ location }
 					registerNowAction={ handleGoBack }
+					hideHeader={ shouldUseStepContainerV2( flow ) }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -124,6 +127,30 @@ const UseMyDomain: StepType< {
 	const shouldHideButtons = isStartWritingFlow( flow );
 
 	if ( shouldUseStepContainerV2( flow ) ) {
+		const [ columnWidth, headingText, subHeadingText ] =
+			useMyDomainMode === 'domain-input'
+				? [
+						4 as const,
+						__( 'Use a domain I own' ),
+						__( 'Enter the domain you would like to use.' ),
+				  ]
+				: [
+						8 as const,
+						createInterpolateElement(
+							sprintf(
+								/* translators: %(domainName)s - the name of the domain the user will add to their site */
+								__( 'Use a domain I own: <span>%(domainName)s</span>' ),
+								{
+									domainName: getInitialQuery(),
+								}
+							),
+							{
+								span: <span />,
+							}
+						),
+						undefined,
+				  ];
+
 		return (
 			<>
 				<QueryProductsList />
@@ -135,7 +162,8 @@ const UseMyDomain: StepType< {
 							}
 						/>
 					}
-					columnWidth={ useMyDomainMode === 'domain-input' ? 4 : 8 }
+					columnWidth={ columnWidth }
+					heading={ <Step.Heading text={ headingText } subText={ subHeadingText } /> }
 				>
 					{ getStepContent() }
 				</Step.CenteredColumnLayout>
