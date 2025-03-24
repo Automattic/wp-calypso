@@ -45,7 +45,9 @@ const useUnsubscribeModal = (
 		) {
 			mutate( subscribers, {
 				onSuccess: () => {
-					// Show success notice.
+					resetSubscribers();
+					onSuccess?.();
+					// Show success notice after navigation
 					dispatch(
 						successNotice(
 							subscribers.length === 1
@@ -66,11 +68,9 @@ const useUnsubscribeModal = (
 											comment: 'Shows when multiple subscribers are removed, using the count',
 										}
 								  ),
-							{ duration: 5000 }
+							{ duration: 5000, displayOnNextPage: true }
 						)
 					);
-					resetSubscribers();
-					onSuccess?.();
 				},
 			} );
 		}
