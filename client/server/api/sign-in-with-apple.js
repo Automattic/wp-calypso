@@ -59,8 +59,7 @@ function redirectToCalypso( request, response, next ) {
 	}
 
 	const state = JSON.parse( request.body.state );
-	const originalUrlPath = state.originalUrlPath ?? request.originalUrl.split( '#' )[ 0 ];
-	let pathname = new URL( originalUrlPath ).pathname;
+	let originalUrlPath = state.originalUrlPath ?? request.originalUrl.split( '#' )[ 0 ];
 	const hashString = qs.stringify( {
 		...request.user_openid_data,
 		client_id: config( 'apple_oauth_client_id' ),
@@ -68,12 +67,10 @@ function redirectToCalypso( request, response, next ) {
 	} );
 
 	if ( state.is_jetpack ) {
-		pathname = pathname.replace( 'log-in', 'log-in/jetpack' );
+		originalUrlPath = originalUrlPath.replace( 'log-in', 'log-in/jetpack' );
 	}
 
-	response.redirect(
-		pathname + ( state.queryString ? '?' + state.queryString : '' ) + '#' + hashString
-	);
+	response.redirect( originalUrlPath + '?' + state.queryString + '#' + hashString );
 }
 
 export default function ( app ) {
