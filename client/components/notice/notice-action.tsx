@@ -7,7 +7,7 @@ import './style.scss';
 interface NoticeActionProps {
 	'aria-label'?: string;
 	href?: string | null;
-	onClick?: ( event: React.MouseEvent< HTMLAnchorElement > ) => void;
+	onClick?: () => void;
 	external?: boolean;
 	icon?: string;
 	children?: React.ReactNode;
