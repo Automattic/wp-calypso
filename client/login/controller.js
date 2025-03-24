@@ -265,9 +265,7 @@ export async function jetpackGoogleAuth( context, next ) {
 				callback: () => {},
 			} )
 			.requestCode();
-	} catch ( error ) {
-		/* eslint-disable-next-line no-console */
-		console.error( 'Error initiating Google login:', error );
+	} catch {
 		context.store.dispatch( {
 			type: 'NOTICE_CREATE',
 			notice: {
