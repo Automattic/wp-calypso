@@ -120,10 +120,18 @@ const useSubscriberRemoveMutation = (
 		onMutate: async ( subscribers ) => {
 			// Cancel any outgoing refetches
 			await queryClient.cancelQueries( { queryKey: [ 'subscribers', siteId ] } );
+			await queryClient.cancelQueries( { queryKey: [ 'subscribers', 'count', siteId ] } );
 
 			// Get the current page data
 			const previousData =
 				queryClient.getQueryData< SubscriberEndpointResponse >( currentPageCacheKey );
+
+			// Get the current count data
+			const previousCountData = queryClient.getQueryData< { email_subscribers: number } >( [
+				'subscribers',
+				'count',
+				siteId,
+			] );
 
 			if ( previousData ) {
 				// Update the current page data
@@ -134,8 +142,8 @@ const useSubscriberRemoveMutation = (
 							( subscriber ) => s.subscription_id === subscriber.subscription_id
 						);
 					} ),
-					total: previousData.total - 1,
-					pages: Math.ceil( ( previousData.total - 1 ) / previousData.per_page ),
+					total: previousData.total - subscribers.length,
+					pages: Math.ceil( ( previousData.total - subscribers.length ) / previousData.per_page ),
 				};
 
 				// Update the current page cache
@@ -156,6 +164,15 @@ const useSubscriberRemoveMutation = (
 				}
 			}
 
+			// Update the count cache if it exists
+			if ( previousCountData ) {
+				const updatedCountData = {
+					...previousCountData,
+					email_subscribers: previousCountData.email_subscribers - subscribers.length,
+				};
+				queryClient.setQueryData( [ 'subscribers', 'count', siteId ], updatedCountData );
+			}
+
 			// Handle subscriber details cache if needed
 			let previousDetailsData;
 			if ( invalidateDetailsCache ) {
@@ -173,6 +190,7 @@ const useSubscriberRemoveMutation = (
 
 			return {
 				previousData,
+				previousCountData,
 				previousDetailsData,
 			};
 		},
@@ -180,6 +198,11 @@ const useSubscriberRemoveMutation = (
 			// If the mutation fails, revert the optimistic update
 			if ( context?.previousData ) {
 				queryClient.setQueryData( currentPageCacheKey, context.previousData );
+			}
+
+			// Revert the count data if it exists
+			if ( context?.previousCountData ) {
+				queryClient.setQueryData( [ 'subscribers', 'count', siteId ], context.previousCountData );
 			}
 
 			if ( context?.previousDetailsData ) {
@@ -202,12 +225,15 @@ const useSubscriberRemoveMutation = (
 			}
 		},
 		onSettled: ( data, error, subscribers ) => {
-			for ( const subscriber of subscribers ) {
-				// Invalidate all subscriber queries to ensure consistency
+			if ( error ) {
+				// On error, invalidate and refetch everything to ensure consistency
 				queryClient.invalidateQueries( { queryKey: [ 'subscribers', siteId ] } );
 				queryClient.invalidateQueries( { queryKey: [ 'subscribers', 'count', siteId ] } );
+			}
 
-				if ( invalidateDetailsCache ) {
+			// Always handle subscriber details cache if requested, regardless of success/error
+			if ( invalidateDetailsCache ) {
+				for ( const subscriber of subscribers ) {
 					const detailsCacheKey = getSubscriberDetailsCacheKey(
 						siteId,
 						subscriber.subscription_id,
