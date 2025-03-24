@@ -126,13 +126,9 @@ const UseMyDomain: StepType< {
 	const shouldHideButtons = isStartWritingFlow( flow );
 
 	if ( shouldUseStepContainerV2( flow ) ) {
-		const [ columnWidth, headingText, subHeadingText ] =
+		const [ columnWidth, headingText ] =
 			useMyDomainMode === 'domain-input'
-				? [
-						4 as const,
-						__( 'Use a domain I own' ),
-						__( 'Enter the domain you would like to use.' ),
-				  ]
+				? [ 4 as const, __( 'Use a domain I own' ) ]
 				: [
 						10 as const,
 						<>
@@ -140,7 +136,6 @@ const UseMyDomain: StepType< {
 							<br />
 							{ getInitialQuery() }
 						</>,
-						undefined,
 				  ];
 
 		return (
@@ -155,7 +150,7 @@ const UseMyDomain: StepType< {
 						/>
 					}
 					columnWidth={ columnWidth }
-					heading={ <Step.Heading text={ headingText } subText={ subHeadingText } /> }
+					heading={ <Step.Heading text={ headingText } /> }
 				>
 					{ getStepContent() }
 				</Step.CenteredColumnLayout>
