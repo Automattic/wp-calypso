@@ -17,7 +17,6 @@ jest.mock( '@wordpress/warning', () => () => {} );
 
 describe( 'streams', () => {
 	const action = deepfreeze( requestPageAction( { streamKey: 'following', page: 2 } ) );
-	const ISO_DATE_MATCHER = expect.stringMatching( /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/ );
 
 	describe( 'requestPage', () => {
 		const query = {
@@ -34,10 +33,6 @@ describe( 'streams', () => {
 					method: 'GET',
 					path: '/read/following',
 					apiVersion: '1.2',
-					query: {
-						...query,
-						after: ISO_DATE_MATCHER,
-					},
 					onSuccess: action,
 					onFailure: action,
 				} )
@@ -72,10 +67,6 @@ describe( 'streams', () => {
 						method: 'GET',
 						path: '/read/following',
 						apiVersion: '1.2',
-						query: {
-							...query,
-							after: ISO_DATE_MATCHER,
-						},
 					},
 				},
 				{
