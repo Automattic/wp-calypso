@@ -115,7 +115,7 @@ const GlobalStylesVariations = ( {
 
 	const variationDescription = needsUpgrade
 		? translate(
-				'Unlock style variations and tons of other features with the %(planName)s plan, or try them out now for free.',
+				'Preview our style variations for free or pick your own fonts and colors with the %(planName)s plan later on.',
 				{ args: { planName: getPlan( upgradeToPlan )?.getTitle() ?? '' } }
 		  )
 		: translate( 'You can change your style at any time.' );
