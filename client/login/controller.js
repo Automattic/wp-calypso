@@ -498,9 +498,7 @@ export async function jetpackAppleAuth( context, next ) {
 
 		// Trigger the sign-in
 		window.AppleID.auth.signIn();
-	} catch ( error ) {
-		/* eslint-disable-next-line no-console */
-		console.error( 'Error initiating Apple login:', error );
+	} catch {
 		context.store.dispatch( {
 			type: 'NOTICE_CREATE',
 			notice: {
