@@ -145,6 +145,7 @@ export const isDIFMFlow = ( flowName: string | null ) => {
 
 export const isAIBuilderFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ AI_SITE_BUILDER_FLOW ].includes( flowName ) );
+};
 
 export const isPlaygroundFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ PLAYGROUND_FLOW ].includes( flowName ) );
