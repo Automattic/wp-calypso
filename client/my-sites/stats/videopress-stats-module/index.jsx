@@ -78,6 +78,31 @@ class VideoPressStatsModule extends Component {
 		}
 	}
 
+	getMaxValue( data, field ) {
+		if ( ! data || ! data.length ) {
+			return 0;
+		}
+		return Math.max( ...data.map( ( item ) => item[ field ] || 0 ) );
+	}
+
+	renderTitleCell( title, views, maxViews, onClick, onKeyUp ) {
+		const fillPercentage = maxViews > 0 ? ( views / maxViews ) * 100 : 0;
+		return (
+			<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-link">
+				<div className="videopress-stats-module__bar-wrapper">
+					<div
+						className="videopress-stats-module__bar"
+						style={ { '--bar-fill-percentage': `${ fillPercentage }%` } }
+					>
+						<span onClick={ onClick } onKeyUp={ onKeyUp } tabIndex="0" role="button">
+							{ title }
+						</span>
+					</div>
+				</div>
+			</div>
+		);
+	}
+
 	render() {
 		const {
 			className,
@@ -149,6 +174,9 @@ class VideoPressStatsModule extends Component {
 			...completeVideoStats,
 		];
 
+		// Calculate max views only
+		const maxViews = this.getMaxValue( completeVideoStats, 'views' );
+
 		return (
 			<div>
 				{ summary && (
@@ -210,16 +238,13 @@ class VideoPressStatsModule extends Component {
 								key={ 'videopress-stats-row-' + index }
 								className="videopress-stats-module__row-wrapper"
 							>
-								<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-link">
-									<span
-										onClick={ () => editVideo( row.post_id ) }
-										onKeyUp={ () => editVideo( row.post_id ) }
-										tabIndex="0"
-										role="button"
-									>
-										{ row.title }
-									</span>
-								</div>
+								{ this.renderTitleCell(
+									row.title,
+									row.views,
+									maxViews,
+									() => editVideo( row.post_id ),
+									() => editVideo( row.post_id )
+								) }
 								<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric">
 									<span
 										onClick={ () => showStat( 'impressions', row ) }

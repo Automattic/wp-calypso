@@ -3,7 +3,7 @@ import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purch
 import { useSelector } from 'calypso/state';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteTitle } from 'calypso/state/sites/selectors';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import UpsellCard from './upsell-card';
 import {
 	getAvailableUpsells,
@@ -32,14 +32,16 @@ function useSiteFeatures( siteId: number | null ) {
 	return activeFeatures;
 }
 
-function checkoutUrlForUpsell( siteSlug: string, upsell: Product ) {
+function checkoutUrlForUpsell( siteId: number, upsell: Product ) {
 	// TODO: Change URL to point at plugin installation within wp-admin.
 	// ie: /wp-admin/update.php?action=install-plugin&plugin=plugin-name&_wpnonce=valid-nonce
-	return CHECKOUT_URL_PREFIX + buildCheckoutURL( siteSlug, upsell.checkoutSlug, QUERY_VALUES );
+	return (
+		CHECKOUT_URL_PREFIX + buildCheckoutURL( siteId.toString(), upsell.checkoutSlug, QUERY_VALUES )
+	);
 }
 
-function getVisibleUpsells( siteSlug: string | null, siteFeatures: string[] ): Product[] {
-	if ( ! siteSlug ) {
+function getVisibleUpsells( siteId: number | null, siteFeatures: string[] ): Product[] {
+	if ( ! siteId ) {
 		return [];
 	}
 
@@ -51,7 +53,7 @@ function getVisibleUpsells( siteSlug: string | null, siteFeatures: string[] ): P
 
 	// Add the checkout URL to the results.
 	const finalUpsells = filteredUpsells.map( ( upsell ) => {
-		return { ...upsell, checkoutUrl: checkoutUrlForUpsell( siteSlug, upsell ) };
+		return { ...upsell, checkoutUrl: checkoutUrlForUpsell( siteId, upsell ) };
 	} );
 
 	return finalUpsells;
@@ -59,7 +61,6 @@ function getVisibleUpsells( siteSlug: string | null, siteFeatures: string[] ): P
 
 export default function JetpackUpsellSection() {
 	const siteId = useSelector( getSelectedSiteId );
-	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteTitle = useSelector( ( state ) => getSiteTitle( state, siteId ) );
 
 	// New check for active site features.
@@ -72,7 +73,7 @@ export default function JetpackUpsellSection() {
 
 	// TODO: Memoize derived data setup.
 	// Initial tests show the component rendering multiple times per page load.
-	const upsells = getVisibleUpsells( siteSlug, siteFeatures );
+	const upsells = getVisibleUpsells( siteId, siteFeatures );
 
 	return (
 		<div className="jetpack-upsell-section">
