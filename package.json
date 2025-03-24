@@ -165,7 +165,6 @@
 		"@automattic/urls": "workspace:^",
 		"@automattic/verbum-block-editor": "workspace:^",
 		"@automattic/viewport": "workspace:^",
-		"@automattic/whats-new": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
 		"@automattic/wpcom-template-parts": "workspace:^",
 		"@automattic/zendesk-client": "workspace:^",
