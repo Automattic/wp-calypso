@@ -59,7 +59,7 @@ export const Content = () => {
 	const hasEnTranslation = useHasEnTranslation();
 	return (
 		<>
-			<Column heading={ translate( 'Add a new site' ) }>
+			<Column heading={ translate( 'Add new site' ) }>
 				<MenuItem
 					icon={ <WordPressLogo /> }
 					heading={ translate( 'WordPress.com' ) }
@@ -81,10 +81,10 @@ export const Content = () => {
 					} }
 				/>
 			</Column>
-			<Column heading={ translate( 'Migrate & Import' ) }>
+			<Column heading={ translate( 'Migrate and Import' ) }>
 				<MenuItem
 					icon={ <Icon icon={ reusableBlock } size={ 18 } /> }
-					heading="Migrate"
+					heading={ translate( 'Migrate' ) }
 					description={ preventWidows(
 						hasEnTranslation( 'Bring your entire WordPress site to WordPress.com.' )
 							? translate( 'Bring your entire WordPress site to WordPress.com.' )
@@ -96,7 +96,7 @@ export const Content = () => {
 				/>
 				<MenuItem
 					icon={ <Icon icon={ download } size={ 18 } /> }
-					heading="Import"
+					heading={ translate( 'Import' ) }
 					description={ preventWidows(
 						hasEnTranslation( 'Use a backup to only import content from other platforms.' )
 							? translate( 'Use a backup to only import content from other platforms.' )
