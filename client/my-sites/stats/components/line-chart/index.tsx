@@ -71,6 +71,20 @@ function StatsLineChart( {
 		[ chartData ]
 	);
 
+	const yNumTicks = useMemo( () => {
+		const uniqueValues = [
+			...new Set( chartData.flatMap( ( series ) => series.data.map( ( d ) => d.value ) ) ),
+		];
+
+		const maxTicks = uniqueValues.length > 5 ? 5 : uniqueValues.length;
+
+		if ( fixedDomain ) {
+			return maxTicks;
+		}
+
+		return maxTicks - 1;
+	}, [ chartData, fixedDomain ] );
+
 	const yScaleType = useMemo( () => {
 		if ( chartData.length <= 1 ) {
 			return 'linear';
@@ -192,7 +206,7 @@ function StatsLineChart( {
 								y: {
 									orientation: 'right',
 									tickFormat: formatValue,
-									numTicks: maxValue > 4 ? 4 : 1,
+									numTicks: yNumTicks,
 								},
 							},
 						} }
