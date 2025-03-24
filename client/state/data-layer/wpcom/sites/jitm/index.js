@@ -78,6 +78,8 @@ export const doFetchJITM = ( action ) =>
 	);
 
 /**
+ * Dismisses a JITM. It returns nothing useful and will return no useful error, so we'll
+ * fail and succeed silently.
  * Dismisses a jitm
  * @param {Object} action The dismissal action
  * @returns {Object} The HTTP fetch action
