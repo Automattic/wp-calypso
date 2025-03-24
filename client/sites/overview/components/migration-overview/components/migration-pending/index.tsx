@@ -2,7 +2,7 @@ import { LoadingPlaceholder } from '@automattic/components';
 import { Button, ClipboardButton } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import ConfirmModal from 'calypso/components/confirm-modal';
 import { HostingHeroButton } from 'calypso/components/hosting-hero';
 import Notice from 'calypso/components/notice';
@@ -10,7 +10,6 @@ import { useSiteMigrationKey } from 'calypso/landing/stepper/hooks/use-site-migr
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { addQueryArgs } from 'calypso/lib/url';
 import { getMigrationType } from 'calypso/sites-dashboard/utils';
-import { successNotice } from 'calypso/state/notices/actions';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import Cards from '../cards';
 import { Container, Header } from '../layout';
@@ -50,13 +49,13 @@ const getContinueMigrationUrl = (
 
 export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 	const migrationType = getMigrationType( site );
 	const migrationSourceSiteDomain = useSelector( ( state ) =>
 		getSiteOption( state, site.ID, 'migration_source_site_domain' )
 	);
 	const continueMigrationUrl = getContinueMigrationUrl( site, migrationSourceSiteDomain as string );
-	const [ copied, setCopied ] = useState( false );
+	const [ migrationKeyCopied, setMigrationKeyCopied ] = useState( false );
+	const [ showMigrationKeyCopiedNotice, setShowMigrationKeyCopiedNotice ] = useState( false );
 
 	// Fetch the migration key.
 	const {
@@ -69,16 +68,16 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 	} );
 
 	useEffect( () => {
-		if ( ! copied ) {
+		if ( ! migrationKeyCopied ) {
 			return;
 		}
 
 		const timerId = setTimeout( () => {
-			setCopied( () => false );
-		}, 2000 );
+			setMigrationKeyCopied( () => false );
+		}, 3000 );
 
 		return () => clearTimeout( timerId );
-	}, [ copied ] );
+	}, [ migrationKeyCopied ] );
 
 	useEffect( () => {
 		if ( migrationKeyStatus === 'error' ) {
@@ -123,15 +122,9 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 	}
 
 	const copyMigrationKey = () => {
-		if ( ! copied ) {
-			setCopied( true );
-			recordTracksEvent( 'calypso_migration_hosting_overview_key_copy_clicked' );
-			dispatch(
-				successNotice( translate( 'Migration key copied to clipboard' ), {
-					duration: 3000,
-				} )
-			);
-		}
+		setMigrationKeyCopied( true );
+		setShowMigrationKeyCopiedNotice( true );
+		recordTracksEvent( 'calypso_migration_hosting_overview_key_copy_click' );
 	};
 
 	return (
@@ -156,6 +149,18 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 				</Notice>
 			) }
 
+			{ showMigrationKeyCopiedNotice && (
+				<Notice
+					status="is-success"
+					onDismissClick={ () => {
+						setShowMigrationKeyCopiedNotice( false );
+						recordTracksEvent( 'calypso_migration_hosting_overview_key_copy_dismiss_click' );
+					} }
+				>
+					{ translate( 'Migration key copied successfully' ) }
+				</Notice>
+			) }
+
 			<Header title={ title } subTitle={ subTitle }>
 				{ continueMigrationUrl && (
 					<div className="migration-pending__buttons">
@@ -169,7 +174,7 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 								<>
 									<ClipboardButton
 										style={ {
-											cursor: copied ? 'default' : 'pointer',
+											cursor: migrationKeyCopied ? 'default' : 'pointer',
 											textDecoration: 'underline',
 											margin: 0,
 											padding: 0,

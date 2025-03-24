@@ -1,7 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { useSiteMigrationKey } from 'calypso/landing/stepper/hooks/use-site-migration-key';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -114,6 +115,31 @@ describe( 'MigrationOverview', () => {
 			const { getByText } = renderWithProvider( <MigrationOverview site={ site } /> );
 
 			expect( getByText( /Copy migration key/ ) ).toBeVisible();
+		} );
+
+		it( 'shows a success notice if the migration key is copied', async () => {
+			const site = buildMigrationSite( {
+				status: 'pending',
+				how: 'diy',
+				canInstallPlugins: true,
+			} );
+
+			jest.mocked( useSiteMigrationKey ).mockReturnValue( {
+				data: { migrationKey: '123' },
+				isLoading: false,
+				isError: false,
+				error: null,
+				status: 'success',
+			} );
+
+			renderWithProvider( <MigrationOverview site={ site } /> );
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Copy migration key' } ) );
+
+			await waitFor( () => {
+				const notice = screen.getByText( 'Migration key copied successfully' );
+				expect( notice ).toBeInTheDocument();
+			} );
 		} );
 	} );
 
