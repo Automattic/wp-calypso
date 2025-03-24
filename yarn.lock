@@ -13819,7 +13819,7 @@ __metadata:
     ignore-loader: "npm:^0.1.2"
     immutability-helper: "npm:^3.0.1"
     inherits: "npm:^2.0.4"
-    is-my-json-valid: "npm:^2.20.5"
+    is-my-json-valid: "npm:^2.20.6"
     jest: "npm:^29.7.0"
     jest-fetch-mock: "npm:^3.0.3"
     jest-mock-process: "npm:^2.0.0"
@@ -22124,16 +22124,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-my-json-valid@npm:^2.20.5":
-  version: 2.20.5
-  resolution: "is-my-json-valid@npm:2.20.5"
+"is-my-json-valid@npm:^2.20.6":
+  version: 2.20.6
+  resolution: "is-my-json-valid@npm:2.20.6"
   dependencies:
     generate-function: "npm:^2.0.0"
     generate-object-property: "npm:^1.1.0"
     is-my-ip-valid: "npm:^1.0.0"
-    jsonpointer: "npm:^4.0.0"
+    jsonpointer: "npm:^5.0.0"
     xtend: "npm:^4.0.0"
-  checksum: 704a4793bd4cac608cc42b0beb2b23fe201f30a046e42f6b2425d21038f73e6c71a64224b13c80ad909668e9336f07625fb8b4ddf20091267176db757f246c3e
+  checksum: 1f74c24db02b3ee9dc7042f828b4fb204566350d72b01ca1efa8a61e8c41fab8ef664dfeb1158c11de29a3ca87ac2645b9829e50116205919a1da91b7039d041
   languageName: node
   linkType: hard
 
@@ -23554,10 +23554,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsonpointer@npm:^4.0.0":
-  version: 4.0.1
-  resolution: "jsonpointer@npm:4.0.1"
-  checksum: 0c17772d0e5c4911f5773bada4d74b46535ebe8a5a9327c92452a2442df951334e58f7aeea8db6c04d43ffd325245eab323abde8c9e9c393a9b1826cd5e57468
+"jsonpointer@npm:^5.0.0":
+  version: 5.0.1
+  resolution: "jsonpointer@npm:5.0.1"
+  checksum: 89929e58b400fcb96928c0504fcf4fc3f919d81e9543ceb055df125538470ee25290bb4984251e172e6ef8fcc55761eb998c118da763a82051ad89d4cb073fe7
   languageName: node
   linkType: hard
 
