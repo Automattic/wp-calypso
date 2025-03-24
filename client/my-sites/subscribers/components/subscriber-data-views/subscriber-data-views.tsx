@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { Gravatar, TimeSince } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews, type View, type Action, Operator } from '@wordpress/dataviews';
@@ -10,6 +11,7 @@ import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/se
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SubscribersFilterBy, SubscribersSortBy, SubscribersStatus } from '../../constants';
 import { useSubscriptionPlans, useUnsubscribeModal } from '../../hooks';
 import {
@@ -36,6 +38,7 @@ type SubscriberDataViewsProps = {
 	siteId: number | null;
 	isUnverified: boolean;
 	onGiftSubscription: ( subscriber: Subscriber ) => void;
+	subscriberId?: string;
 };
 
 const SubscriptionTypeCell = ( { subscriber }: { subscriber: Subscriber } ) => {
@@ -74,12 +77,14 @@ const SubscriberDataViews = ( {
 	siteId,
 	onGiftSubscription,
 	isUnverified,
+	subscriberId,
 }: SubscriberDataViewsProps ) => {
 	const isMobile = useBreakpoint( '<660px' );
 	const recordSubscriberClicked = useRecordSubscriberClicked();
 	const recordSubscriberSearch = useRecordSubscriberSearch();
 	const recordSubscriberFilter = useRecordSubscriberFilter();
 	const recordSubscriberSort = useRecordSubscriberSort();
+	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ filters, setFilters ] = useState< SubscribersFilterBy[] >( [ SubscribersFilterBy.All ] );
@@ -134,11 +139,36 @@ const SubscriberDataViews = ( {
 		}
 	);
 
-	const { data: subscriber, isLoading: isLoadingDetails } = useSubscriberDetailsQuery(
+	// Fetch subscriber details.
+	const { data: subscriberDetails, isLoading: isLoadingDetails } = useSubscriberDetailsQuery(
 		siteId ?? null,
-		selectedSubscriber?.subscription_id,
+		subscriberId ? parseInt( subscriberId, 10 ) : undefined,
 		selectedSubscriber?.user_id
 	);
+
+	// Single effect to handle all subscriber selection scenarios
+	useEffect( () => {
+		// If URL changes or we get new subscriber details, update the selection
+		if ( subscriberId ) {
+			// If we have details and they match the current URL
+			if ( subscriberDetails && subscriberDetails.subscription_id.toString() === subscriberId ) {
+				setSelectedSubscriber( subscriberDetails );
+			}
+			// If we don't have matching details yet, try to find in current list
+			else {
+				const subscriberFromList = subscribersQueryResult?.subscribers.find(
+					( s ) => s.subscription_id.toString() === subscriberId
+				);
+				if ( subscriberFromList ) {
+					setSelectedSubscriber( subscriberFromList );
+				}
+			}
+		} else if ( ! subscriberId && selectedSubscriber ) {
+			setSelectedSubscriber( null );
+		}
+		// We don't need to re-run this effect when selectedSubscriber changes.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ subscriberId, subscriberDetails, subscribersQueryResult?.subscribers ] );
 
 	const { data: subscribedNewsletterCategoriesData, isLoading: isLoadingNewsletterCategories } =
 		useSubscribedNewsletterCategories( {
@@ -171,6 +201,7 @@ const SubscriberDataViews = ( {
 			if ( Array.isArray( input ) ) {
 				if ( input.length === 0 ) {
 					setSelectedSubscriber( null );
+					page.show( `/subscribers/${ siteSlug }` );
 					return;
 				}
 				const subscriber = subscribers.find( ( s ) => s.subscription_id.toString() === input[ 0 ] );
@@ -180,7 +211,7 @@ const SubscriberDataViews = ( {
 						subscription_id: subscriber.subscription_id,
 						user_id: subscriber.user_id,
 					} );
-					setSelectedSubscriber( subscriber );
+					page.show( `/subscribers/${ siteSlug }/${ subscriber.subscription_id }` );
 				}
 			} else {
 				recordSubscriberClicked( 'row', {
@@ -188,10 +219,10 @@ const SubscriberDataViews = ( {
 					subscription_id: input.subscription_id,
 					user_id: input.user_id,
 				} );
-				setSelectedSubscriber( input );
+				page.show( `/subscribers/${ siteSlug }/${ input.subscription_id }` );
 			}
 		},
-		[ subscribers, recordSubscriberClicked, siteId ]
+		[ subscribers, recordSubscriberClicked, siteId, siteSlug ]
 	);
 
 	const fields = useMemo(
@@ -479,13 +510,15 @@ const SubscriberDataViews = ( {
 				siteId &&
 				! isLoadingNewsletterCategories &&
 				! isLoadingDetails &&
-				subscriber && (
+				subscriberDetails && (
 					<section className="subscriber-data-views__details">
 						<SubscriberDetails
-							subscriber={ subscriber }
+							subscriber={ subscriberDetails }
 							siteId={ siteId }
 							subscriptionId={ selectedSubscriber.subscription_id }
-							onClose={ () => setSelectedSubscriber( null ) }
+							onClose={ () => {
+								page.show( `/subscribers/${ siteSlug }` );
+							} }
 							onUnsubscribe={ ( subscriber ) => handleUnsubscribe( [ subscriber ] ) }
 							newsletterCategoriesEnabled={ subscribedNewsletterCategoriesData?.enabled }
 							newsletterCategories={ subscribedNewsletterCategoriesData?.newsletterCategories }

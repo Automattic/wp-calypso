@@ -66,3 +66,30 @@ export const SixColumnsCenteredLayout = () => {
 		</CenteredColumnLayout>
 	);
 };
+
+export const EightColumnsCenteredLayout = () => {
+	const backButton = <BackButton />;
+	const nextButton = <NextButton />;
+	const skipButton = <SkipButton />;
+
+	return (
+		<CenteredColumnLayout
+			columnWidth={ 8 }
+			topBar={ <TopBar backButton={ backButton } skipButton={ skipButton } /> }
+			heading={
+				<Heading
+					text="Eight Columns Centered Layout"
+					subText={ createInterpolateElement(
+						'An example of the <code>CenteredColumnLayout</code> wireframe layout.',
+						{
+							code: <code />,
+						}
+					) }
+				/>
+			}
+			stickyBottomBar={ <StickyBottomBar rightButton={ nextButton } /> }
+		>
+			<WireframePlaceholder height={ 500 }>Content</WireframePlaceholder>
+		</CenteredColumnLayout>
+	);
+};

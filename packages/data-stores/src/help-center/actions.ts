@@ -159,7 +159,7 @@ export const setShowHelpCenter = function* (
 		yield setShowMessagingWidget( false );
 	}
 
-	yield setMessage( options.searchTerm );
+	yield setMessage( options?.searchTerm || '' );
 	yield setIsMinimized( false );
 
 	if ( allowPremiumSupport ) {

@@ -67,7 +67,6 @@
 
 .migrations-overview-v2__popover-column-heading {
 	color: var(--color-accent-40);
-	font-size: rem(12px);
-	font-weight: 500;
+	@include heading-small;
 	margin-block-end: 8px;
 }
