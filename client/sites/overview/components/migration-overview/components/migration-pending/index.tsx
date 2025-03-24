@@ -10,7 +10,7 @@ import { useSiteMigrationKey } from 'calypso/landing/stepper/hooks/use-site-migr
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { addQueryArgs } from 'calypso/lib/url';
 import { getMigrationType } from 'calypso/sites-dashboard/utils';
-import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import Cards from '../cards';
 import { Container, Header } from '../layout';
@@ -80,6 +80,15 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 		return () => clearTimeout( timerId );
 	}, [ copied ] );
 
+	useEffect( () => {
+		if ( migrationKeyStatus === 'error' ) {
+			recordTracksEvent( 'calypso_migration_hosting_overview_key_copy_error', {
+				migration_key_status: migrationKeyStatus,
+				migration_key_error: migrationKeyError,
+			} );
+		}
+	}, [ migrationKeyStatus ] );
+
 	const title = translate( 'Your WordPress site is ready to be migrated' );
 	const subTitle =
 		'diy' === migrationType
@@ -116,28 +125,9 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 	const copyMigrationKey = () => {
 		if ( ! copied ) {
 			setCopied( true );
-			recordTracksEvent( 'calypso_migration_hosting_overview_key_copy_clicked', {
-				siteId: site.ID,
-				siteSlug: site.slug,
-				status: migrationKeyStatus,
-				error: migrationKeyError,
-			} );
-		}
-
-		if ( migrationKey && ! migrationKeyError && ! copied ) {
-			recordTracksEvent( 'calypso_migration_hosting_overview_key_copy_success' );
+			recordTracksEvent( 'calypso_migration_hosting_overview_key_copy_clicked' );
 			dispatch(
 				successNotice( translate( 'Migration key copied to clipboard' ), {
-					duration: 3000,
-				} )
-			);
-		} else {
-			recordTracksEvent( 'calypso_migration_hosting_overview_key_copy_error', {
-				status: migrationKeyStatus,
-				error: migrationKeyError,
-			} );
-			dispatch(
-				errorNotice( translate( 'Failed to copy migration key' ), {
 					duration: 3000,
 				} )
 			);
