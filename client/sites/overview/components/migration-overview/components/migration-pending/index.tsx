@@ -170,12 +170,10 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 									<ClipboardButton
 										style={ {
 											cursor: copied ? 'default' : 'pointer',
-											pointerEvents: 'auto',
 											textDecoration: 'underline',
 											margin: 0,
 											padding: 0,
 											boxShadow: 'none',
-											opacity: copied ? 0.5 : 1,
 											outline: 'none',
 										} }
 										className="migration-pending__copy-key-button"
