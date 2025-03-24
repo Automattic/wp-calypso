@@ -72,7 +72,6 @@ export const fetchLaunchpad = (
 	const launchpadContextEncoded = launchpadContext ? encodeURIComponent( launchpadContext ) : null;
 	const queryArgs = {
 		_locale: 'user',
-		updated_write_tasklist: 'true',
 		...( checklistSlug && { checklist_slug: checklistSlugEncoded } ),
 		...( launchpadContext && { launchpad_context: launchpadContextEncoded } ),
 	};

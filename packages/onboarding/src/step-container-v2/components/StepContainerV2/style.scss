@@ -1,6 +1,10 @@
-@import '../../../../styles/mixins';
+@import '../../mixins';
 
 .step-container-v2 {
+	--step-container-v2-top-bar-height: 56px;
+	--step-container-v2-sticky-bottom-bar-height: 72px;
+
+	width: 100%;
 	min-height: 100vh;
 	margin: 0;
 	display: flex;
@@ -16,13 +20,13 @@
 		&.padding {
 			padding: 2rem 1rem;
 
-			@include step-large-viewport {
+			@include step-medium-viewport {
 				padding: 2rem 3rem;
 			}
 		}
 
 		&.vertical-align-center {
-			@include step-large-viewport {
+			@include step-medium-viewport {
 				position: absolute;
 				inset: 0;
 				width: 100%;
@@ -34,7 +38,7 @@
 		}
 	}
 
-	&__content {
+	&__content, &__footer {
 		width: 100%;
 		box-sizing: border-box;
 

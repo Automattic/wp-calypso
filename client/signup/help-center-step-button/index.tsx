@@ -25,9 +25,9 @@ const HelpCenterStepButton: FC< HelpCenterStepButtonProps > = ( {
 	}
 
 	return (
-		<div className="step-wrapper__help-center-button-container">
+		<div className="help-center-step-button">
 			<label>{ helpCenterButtonCopy ?? translate( 'Need extra help?' ) }</label>{ ' ' }
-			<HelpCenterInlineButton flowName={ flowName } className="step-wrapper__help-center-button">
+			<HelpCenterInlineButton flowName={ flowName } className="help-center-step-button__button">
 				{ helpCenterButtonLink ?? translate( 'Visit Help Center' ) }
 			</HelpCenterInlineButton>
 		</div>

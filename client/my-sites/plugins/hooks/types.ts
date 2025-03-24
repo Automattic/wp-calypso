@@ -15,7 +15,7 @@ export type PluginActionName = ( typeof PluginActions )[ keyof typeof PluginActi
 export type Site = {
 	ID: number;
 	title: string;
-	canUpdateFiles?: boolean;
+	canUpdateFiles?: boolean | null;
 };
 
 export type Plugin = {

@@ -24,6 +24,7 @@ import { logStashLoadErrorEvent } from 'calypso/my-sites/checkout/src/lib/analyt
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
+import { Downgrade } from './downgrade';
 import ManagePurchase from './manage-purchase';
 import { ManagePurchaseByOwnership } from './manage-purchase/manage-purchase-by-ownership';
 import PurchasesList from './purchases-list';
@@ -89,6 +90,24 @@ export function cancelPurchase( context, next ) {
 	} );
 
 	context.primary = <CancelPurchaseWrapper />;
+	next();
+}
+
+export function downgradePurchase( context, next ) {
+	const DowngradePurchaseWrapper = localize( () => {
+		return (
+			<PurchasesWrapper title={ titles.downgradeSubscription() }>
+				<Main wideLayout className="purchases__cancel">
+					<Downgrade
+						purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+						siteSlug={ context.params.site }
+					/>
+				</Main>
+			</PurchasesWrapper>
+		);
+	} );
+
+	context.primary = <DowngradePurchaseWrapper />;
 	next();
 }
 

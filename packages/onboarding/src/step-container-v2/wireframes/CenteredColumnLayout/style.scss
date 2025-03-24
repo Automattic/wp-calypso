@@ -1,10 +1,4 @@
-@import '../../../../styles/mixins';
-
-.step-container-v2__content--centered-column-layout {
-	display: flex;
-	flex-direction: column;
-	align-items: stretch;
-}
+@import '../../mixins';
 
 .step-container-v2__content--centered-column-layout-4 {
 	@include step-medium-viewport {
@@ -17,3 +11,12 @@
 		max-width: 615px;
 	}
 }
+
+.step-container-v2__content--centered-column-layout-8 {
+	@include step-medium-viewport {
+		max-width: 826px;
+	}
+}
+
+// There is no 10 column wide class, the standard step container width is already 10 wide
+// .step-container-v2__content--centered-column-layout-10 {}

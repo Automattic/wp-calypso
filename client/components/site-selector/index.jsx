@@ -524,9 +524,13 @@ const navigateToSite =
 		const state = getState();
 		const site = getSite( state, siteId );
 
+		const currentSection = state.route?.path?.current?.split( '/' )?.[ 1 ];
+
 		// We will need to open a new tab if we have wpcomSiteBasePath prop and current site is an Atomic site.
 		if ( site?.is_wpcom_atomic && wpcomSiteBasePath ) {
 			window.open( getCompleteSiteURL( wpcomSiteBasePath ) );
+		} else if ( currentSection && siteId !== ALL_SITES ) {
+			page( `/${ currentSection }/${ site.slug }` );
 		} else {
 			const pathname = getPathnameForSite();
 			if ( pathname ) {

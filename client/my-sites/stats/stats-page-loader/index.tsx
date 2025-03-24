@@ -21,18 +21,23 @@ type AsyncLoadProps = {
 	children: ReactNode;
 };
 
-const enableJetpackStatsModule = ( siteId: number, path: string | null ) =>
-	withAnalytics(
-		recordTracksEvent( 'calypso_jetpack_module_toggle', {
-			module: 'stats',
-			path,
-			toggled: 'on',
-		} ),
-		activateModule( siteId, 'stats' )
-	);
-
 const EnableStatsModuleNotice = ( { siteId, path }: { siteId: number; path: string | null } ) => {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
+
+	const handleEnableStats = () => {
+		dispatch(
+			withAnalytics(
+				recordTracksEvent( 'calypso_jetpack_module_toggle', {
+					module: 'stats',
+					path,
+					toggled: 'on',
+				} ),
+				activateModule( siteId, 'stats' )
+			)
+		);
+	};
+
 	return (
 		<EmptyContent
 			illustration={ illustration404 }
@@ -46,7 +51,7 @@ const EnableStatsModuleNotice = ( { siteId, path }: { siteId: number; path: stri
 				</p>
 			}
 			action={ translate( 'Enable %(product)s', { args: { product: STATS_PRODUCT_NAME } } ) }
-			actionCallback={ () => enableJetpackStatsModule( siteId, path ) }
+			actionCallback={ handleEnableStats }
 		/>
 	);
 };
@@ -80,7 +85,7 @@ export default function StatsPageLoader( { children }: AsyncLoadProps ) {
 		canCurrentUser( state, siteId, 'view_stats' )
 	);
 	const jetpackModuleActive = useSelector( ( state ) =>
-		isJetpackModuleActive( state as object, siteId, 'stats' )
+		isJetpackModuleActive( state as object, siteId, 'stats', true )
 	);
 	const path = useSelector( ( state ) => getCurrentRouteParameterized( state as object, siteId ) );
 

@@ -877,7 +877,7 @@ export function isAgencyPartnerType( partnerType: string ) {
 	return [ 'agency', 'a4a_agency' ].includes( partnerType );
 }
 
-export function purchaseType( purchase: Purchase ) {
+export function purchaseType( purchase: Purchase ): string | null {
 	if ( isThemePurchase( purchase ) ) {
 		return i18n.translate( 'Premium Theme' );
 	}
@@ -916,6 +916,7 @@ export function purchaseType( purchase: Purchase ) {
 
 	if ( isGSuiteOrGoogleWorkspace( purchase ) ) {
 		return i18n.translate( 'Mailboxes and Productivity Tools at %(domain)s', {
+			textOnly: true,
 			args: {
 				domain: purchase.meta as string,
 			},
@@ -924,6 +925,7 @@ export function purchaseType( purchase: Purchase ) {
 
 	if ( isTitanMail( purchase ) ) {
 		return i18n.translate( 'Mailboxes at %(domain)s', {
+			textOnly: true,
 			args: {
 				domain: purchase.meta as string,
 			},

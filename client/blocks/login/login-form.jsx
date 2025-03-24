@@ -807,6 +807,8 @@ export class LoginForm extends Component {
 		);
 		const isFromGravatar3rdPartyApp =
 			isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === '3rd-party';
+		const isFromGravatarQuickEditor =
+			isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === 'quick-editor';
 		const isGravatarFlowWithEmail = !! (
 			isGravatarFlowOAuth2Client( oauth2Client ) && currentQuery?.email_address
 		);
@@ -876,13 +878,21 @@ export class LoginForm extends Component {
 			! isFromAutomatticForAgenciesReferralClient &&
 			! isCoreProfilerLostPasswordFlow &&
 			! isFromGravatar3rdPartyApp &&
+			! isFromGravatarQuickEditor &&
 			! isGravatarFlowWithEmail;
 
 		const shouldDisableEmailInput =
 			isFormDisabled ||
 			this.isPasswordView() ||
 			isFromGravatar3rdPartyApp ||
+			isFromGravatarQuickEditor ||
 			isGravatarFlowWithEmail;
+
+		const shouldShowCreateAccountErrMsg =
+			requestError?.code === 'unknown_user' &&
+			! isFromGravatar3rdPartyApp &&
+			! isFromGravatarQuickEditor &&
+			! isGravatarFlowWithEmail;
 
 		const shouldRenderForgotPasswordLink = ! isPasswordHidden && isWoo;
 
@@ -977,7 +987,7 @@ export class LoginForm extends Component {
 
 								{ requestError && requestError.field === 'usernameOrEmail' && (
 									<FormInputValidation isError text={ requestError.message }>
-										{ 'unknown_user' === requestError.code &&
+										{ shouldShowCreateAccountErrMsg &&
 											this.props.translate(
 												' Would you like to {{newAccountLink}}create a new account{{/newAccountLink}}?',
 												{

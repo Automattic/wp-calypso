@@ -5,6 +5,7 @@ import { resolveSelect, useDispatch as useWpDataDispatch } from '@wordpress/data
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
+import { useAddBlogStickerMutation } from 'calypso/blocks/blog-stickers/use-add-blog-sticker-mutation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
@@ -73,6 +74,8 @@ const aiSiteBuilder: Flow = {
 		const { setDesignOnSite, setStaticHomepageOnSite, setIntentOnSite } =
 			useWpDataDispatch( SITE_STORE );
 
+		const { addBlogSticker } = useAddBlogStickerMutation();
+
 		const queryParams = useQuery();
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
@@ -95,6 +98,8 @@ const aiSiteBuilder: Flow = {
 						// get the prompt from the get url
 						const prompt = queryParams.get( 'prompt' );
 						let promptParam = '';
+
+						addBlogSticker( siteId, 'big-sky-free-trial' );
 
 						const pendingActions = [
 							resolveSelect( SITE_STORE ).getSite( siteId ), // To get the URL.
