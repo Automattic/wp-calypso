@@ -1,5 +1,9 @@
-.how-to-migrate__experiment-diy {
+.how-to-migrate__experiment-diy:not(.step-container-v2 *) {
 	color: var(--studio-gray-90);
 	font-weight: 500;
 	text-decoration: underline;
+}
+
+.step-container-v2 .how-to-migrate__experiment-diy {
+	font-size: 0.875rem;
 }
