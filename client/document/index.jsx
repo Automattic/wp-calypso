@@ -68,6 +68,7 @@ class Document extends Component {
 			target,
 			user,
 			useTranslationChunks,
+			isStepContainerV2,
 		} = this.props;
 
 		const installedChunks = entrypoint.js
@@ -196,7 +197,12 @@ class Document extends Component {
 							>
 								<div className="layout__content">
 									{ shouldNotShowLoadingLogo ? (
-										<Loading className="wpcom-loading__boot" />
+										<Loading
+											className={ clsx(
+												'wpcom-loading__boot',
+												isStepContainerV2 && 'wpcom-loading__boot--step-container-v2'
+											) }
+										/>
 									) : (
 										<LoadingLogo size={ 72 } className="wpcom-site__logo" />
 									) }

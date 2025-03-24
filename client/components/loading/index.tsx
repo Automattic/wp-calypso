@@ -33,7 +33,7 @@ const Loading: React.FC< LoadingProps > = ( {
 
 	return (
 		<div className={ clsx( 'wpcom__loading', className ) }>
-			<h1 className="wpcom__loading-title">{ title }</h1>
+			{ title && <h1 className="wpcom__loading-title">{ title }</h1> }
 			<ProgressBar value={ progress } className="wpcom__loading-progress-bar" />
 			{ subtitle && <p className="wpcom__loading-subtitle">{ subtitle }</p> }
 		</div>

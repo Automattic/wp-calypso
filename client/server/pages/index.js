@@ -20,7 +20,9 @@ import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
+import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
+import { getFlowFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import { SUBSCRIPTIONS_SECTION_DEFINITION } from 'calypso/landing/subscriptions/section';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { shouldSeeCookieBanner } from 'calypso/lib/analytics/utils';
@@ -198,6 +200,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 			request.query.hasOwnProperty( 'useTranslationChunks' ),
 		useLoadingEllipsis: !! request.query.loading_ellipsis,
 		showGdprBanner,
+		isStepContainerV2: shouldUseStepContainerV2( getFlowFromURL( request.url, request.query ) ),
 	} );
 
 	context.app = {
