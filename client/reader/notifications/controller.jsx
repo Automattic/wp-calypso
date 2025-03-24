@@ -1,4 +1,4 @@
-import { useTranslate } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import { sectionify } from 'calypso/lib/route';
@@ -29,7 +29,6 @@ export function notifications( context, next ) {
 	);
 
 	const NotificationTitle = () => {
-		const translate = useTranslate();
 		return (
 			<DocumentHead
 				title={ translate( '%s ‹ Reader', {
@@ -44,14 +43,28 @@ export function notifications( context, next ) {
 	context.primary = (
 		<>
 			<NotificationTitle />
-			<div className="reader-notifications__panel">
-				<AsyncLoad
-					require="calypso/notifications"
-					isShowing
-					checkToggle={ () => {} }
-					placeholder={ null }
-					isGlobalSidebarVisible={ shouldShowGlobalSidebar }
-				/>
+			<div className="reader-notifications__page">
+				<div className="reader-notifications__page-notice">
+					<p>
+						{ translate(
+							"Didn't expect to see this page? {{learnMoreLink}}Learn about 3rd party cookies.{{/learnMoreLink}}",
+							{
+								components: {
+									learnMoreLink: <a href="/notifications" />,
+								},
+							}
+						) }
+					</p>
+				</div>
+				<div className="reader-notifications__page-panel">
+					<AsyncLoad
+						require="calypso/notifications"
+						isShowing
+						checkToggle={ () => {} }
+						placeholder={ null }
+						isGlobalSidebarVisible={ shouldShowGlobalSidebar }
+					/>
+				</div>
 			</div>
 		</>
 	);

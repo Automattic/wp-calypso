@@ -163,50 +163,72 @@ html.touch #wpnc-panel {
 	-webkit-overflow-scrolling: touch;
 }
 
-div.reader-notifications__panel {
-	#wpnc-panel.wpnc__main {
-		min-width: 410px;
 
-		&.wpnt-open {
-			position: fixed;
-			top: var(--masterbar-height);
-			right: auto;
-			left: var(--sidebar-width-max);
-			bottom: 0;
+body.is-section-reader div.layout.is-global-sidebar-visible .layout__primary div.reader-notifications__page {
+	display: flex;
+	flex-flow: column wrap;
+	gap: 16px;
+	justify-content: space-between;
 
-			@media only screen and (max-width: 783px) {
-				left: 0;
-			}
-			@media only screen and (min-width: 783px) {
-				top: calc(var(--masterbar-height) + 20px);
-				height: calc(100vh - var(--masterbar-height) - 36px);
-				border-bottom-left-radius: 8px; /* stylelint-disable-line scales/radii */
-			}
-			@media only screen and (min-width: 601px) and (max-width: 783px) {
-				top: calc(var(--masterbar-height) + 24px);
-				height: calc(100vh - 50px - var(--masterbar-height));
-				left: 24px;
-				border-top-left-radius: 8px; /* stylelint-disable-line scales/radii */
-				border-bottom-left-radius: 8px; /* stylelint-disable-line scales/radii */
-			}
-		}
-		.wpnc__list-view {
-			border: none;
-			border-right: 1px solid var(--color-neutral-0);
+	@media (min-width: 1207px) {
+		flex-flow: row wrap;
+	}
 
-			.wpnc__note:focus,
-			.wpnc__selected-note {
-				box-shadow: inset -4px 0 0 var(--color-primary);
-			}
+	.reader-notifications__page-notice {
+		display: flex;
+		flex: 0 1 auto;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+		margin-top: 10px;
+		padding: 0 10px;
+		height: auto;
+
+		@media (min-width: 1207px) {
+			flex: 1 0 auto;
+			margin-top: 0;
+			height: 100%;
 		}
 
-		&.wpnc__note-list {
-			right: auto;
-			left: 0;
+		p {
+			margin: 0;
+		}
+	}
+
+	.reader-notifications__page-panel {
+		height: auto;
+		flex: 1 0 auto;
+
+		@media (min-width: 1207px) {
+			flex: 0 1 auto;
 		}
 
-		.wpnc__single-view {
-			min-width: 410px;
+		#wpnc-panel.wpnc__main {
+			position: relative;
+			height: 100%;
+			top: 0;
+
+			.wpnc__list-view {
+				border: none;
+				border-right: 1px solid var(--color-neutral-0);
+
+				.wpnc__note:focus,
+				.wpnc__selected-note {
+					box-shadow: inset -4px 0 0 var(--color-primary);
+				}
+			}
+
+			.wpnc__note-list {
+				width: auto;
+
+				@media (min-width: 1207px) {
+					width: 400px;
+				}
+			}
+
+			.wpnc__single-view {
+				min-width: 410px;
+			}
 		}
 	}
 
