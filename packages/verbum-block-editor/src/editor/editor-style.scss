@@ -26,6 +26,11 @@
 			top: 32px;
 		}
 
+		.editor__header-toolbar {
+			display: flex;
+			align-items: center;
+		}
+
 		.editor__header-wrapper {
 			display: flex;
 			overflow: hidden;

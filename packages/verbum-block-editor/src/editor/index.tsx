@@ -9,7 +9,7 @@ import {
 } from '@wordpress/block-editor';
 import { getCompatibilityStyles } from '@wordpress/block-editor/build-module/components/iframe/get-compatibility-styles';
 import { createBlock, serialize, type BlockInstance } from '@wordpress/blocks';
-import { Popover, SlotFillProvider, KeyboardShortcuts } from '@wordpress/components';
+import { Popover, SlotFillProvider, KeyboardShortcuts, Button } from '@wordpress/components';
 import { useStateWithHistory, useResizeObserver } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import React, { useState, useEffect, useCallback } from '@wordpress/element';
@@ -126,6 +126,8 @@ export const Editor: FC< EditorProps > = ( {
 					<div className={ clsx( 'editor__header', { 'is-editing': isEditing } ) }>
 						<div className="editor__header-wrapper">
 							<div className="editor__header-toolbar">
+								<Button>Undo</Button>
+								<Button>Redo</Button>
 								<BlockToolbar hideDragHandle />
 							</div>
 							{ /* @ts-expect-error - Slot type missing */ }
