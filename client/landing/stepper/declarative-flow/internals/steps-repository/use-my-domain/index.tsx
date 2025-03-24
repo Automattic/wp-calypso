@@ -7,8 +7,7 @@ import {
 	Step,
 } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
-import { createInterpolateElement, useState } from '@wordpress/element';
-import { sprintf } from '@wordpress/i18n';
+import { useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg } from '@wordpress/url';
 import { useLocation } from 'react-router';
@@ -135,19 +134,12 @@ const UseMyDomain: StepType< {
 						__( 'Enter the domain you would like to use.' ),
 				  ]
 				: [
-						8 as const,
-						createInterpolateElement(
-							sprintf(
-								/* translators: %(domainName)s - the name of the domain the user will add to their site */
-								__( 'Use a domain I own: <span>%(domainName)s</span>' ),
-								{
-									domainName: getInitialQuery(),
-								}
-							),
-							{
-								span: <span />,
-							}
-						),
+						10 as const,
+						<>
+							{ __( 'Use a domain I own' ) }
+							<br />
+							{ getInitialQuery() }
+						</>,
 						undefined,
 				  ];
 
