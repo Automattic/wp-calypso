@@ -27,10 +27,8 @@ export const useLaunchpadDecider = ( { exitFlow, navigate }: Props ) => {
 	const { getIntent } = useSelect( ( select ) => select( ONBOARD_STORE ) as OnboardSelect, [] );
 	const intent = getIntent();
 	const site = useSite();
-	// site intent is not set until we exit site setup flow so we set it here with onboarding store
-	// as it is used in shouldShowLaunchpadFirst. Note that we are not setting the site intent
-	// here to be saved server-side, we are only setting client-side so that we can use it in
-	// shouldShowLaunchpadFirst.
+	// The site_intent option is not set until we exit site setup flow so we set the client value with data from the onboarding store
+	// as it is used in shouldShowLaunchpadFirst.
 	if ( site && site.options && site.options.site_intent === '' ) {
 		site.options.site_intent = intent;
 	}
