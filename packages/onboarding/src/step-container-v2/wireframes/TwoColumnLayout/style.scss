@@ -4,18 +4,11 @@
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
-	gap: 4rem;
+	gap: 3rem;
 
 	@include step-large-viewport {
+		gap: 4rem;
 		flex-direction: row;
 		align-items: flex-start;
 	}
-}
-
-.two-column-layout__column--0 {
-	// flex:2
-}
-
-.two-column-layout__column--1 {
-	// flex: 1
 }

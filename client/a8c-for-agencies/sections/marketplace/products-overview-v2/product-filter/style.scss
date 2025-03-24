@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .product-filter {
 	max-height: 33px;
@@ -47,7 +48,7 @@
 .product-filter-button {
 	white-space: nowrap;
 	max-height: 36px;
-	font-size: rem(13px);
+	@include body-small;
 	cursor: pointer;
 	color: var(--color-primary-60);
 	fill: var(--color-primary-60);

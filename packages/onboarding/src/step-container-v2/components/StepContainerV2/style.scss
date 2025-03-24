@@ -1,6 +1,9 @@
 @import '../../mixins';
 
 .step-container-v2 {
+	--step-container-v2-top-bar-height: 56px;
+	--step-container-v2-sticky-bottom-bar-height: 72px;
+
 	width: 100%;
 	min-height: 100vh;
 	margin: 0;

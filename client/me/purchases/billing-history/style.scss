@@ -296,3 +296,13 @@ li.billing-history__receipt-item-discount--different-term {
 		font-family: $sans;
 	}
 }
+
+
+
+#purchases {
+	.navigation-header__main {
+		align-items: center;
+		flex-wrap: wrap;
+		gap: .65rem;
+	}
+}

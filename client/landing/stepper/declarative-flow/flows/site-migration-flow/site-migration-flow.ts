@@ -34,10 +34,11 @@ const siteMigration: Flow = {
 	__experimentalUseSessions: true,
 
 	useSideEffect() {
-		const { setIntent } = useDispatch( ONBOARD_STORE );
+		const { setIntent, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 		useEffect( () => {
+			resetOnboardStore();
 			setIntent( Onboard.SiteIntent.SiteMigration );
-		}, [] );
+		}, [ resetOnboardStore, setIntent ] );
 		const { set, get } = useFlowState();
 		const urlQueryParams = useQuery();
 		const ref = urlQueryParams.get( 'ref' );
