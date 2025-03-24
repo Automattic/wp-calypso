@@ -21,11 +21,6 @@ describe( 'ExportNotice', () => {
 		expect( screen.getByText( 'This is a warning.' ) ).toBeInTheDocument();
 	} );
 
-	it( 'renders the export button with the correct text', () => {
-		render( <ExportNotice { ...defaultProps } /> );
-		expect( screen.getByText( 'Export content' ) ).toBeInTheDocument();
-	} );
-
 	it( 'has the correct href for the export link', () => {
 		render( <ExportNotice { ...defaultProps } /> );
 		const link = screen.getByRole( 'link', { name: 'Export content' } );
