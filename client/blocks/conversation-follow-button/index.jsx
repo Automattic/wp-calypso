@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { followConversation, muteConversation } from 'calypso/state/reader/conversations/actions';
 import { isFollowingReaderConversation } from 'calypso/state/reader/conversations/selectors';
+import { removeItemFromStream } from 'calypso/state/reader/streams/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import ConversationFollowButton from './button';
 
 import './style.scss';
@@ -29,7 +31,7 @@ class ConversationFollowButtonContainer extends Component {
 	};
 
 	handleFollowToggle = ( isRequestingFollow ) => {
-		const { siteId, postId, post, followSource } = this.props;
+		const { siteId, postId, post, followSource, currentRoute } = this.props;
 
 		const tracksProperties = {
 			follow_source: followSource,
@@ -49,6 +51,23 @@ class ConversationFollowButtonContainer extends Component {
 				{ post }
 			);
 			this.props.muteConversation( { siteId, postId } );
+
+			// If we're in the conversations stream, remove this post from the stream
+			if ( currentRoute.startsWith( '/reader/conversations' ) ) {
+				const postKey = {
+					blogId: siteId,
+					postId: postId,
+				};
+
+				const streamKey = currentRoute.startsWith( '/reader/conversations/a8c' )
+					? 'conversations-a8c'
+					: 'conversations';
+
+				this.props.removeItemFromStream( {
+					streamKey,
+					postKey,
+				} );
+			}
 		}
 
 		this.props.onFollowToggle( isRequestingFollow );
@@ -74,10 +93,12 @@ export default connect(
 			siteId: ownProps.siteId,
 			postId: ownProps.postId,
 		} ),
+		currentRoute: getCurrentRoute( state ),
 	} ),
 	{
 		followConversation,
 		muteConversation,
 		recordReaderTracksEvent,
+		removeItemFromStream,
 	}
 )( ConversationFollowButtonContainer );
