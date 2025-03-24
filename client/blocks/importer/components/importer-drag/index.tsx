@@ -4,6 +4,7 @@ import { includes } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 import { UrlData } from 'calypso/blocks/import/types';
+import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { ImporterConfig } from 'calypso/lib/importer/importer-config';
 import ErrorPane from 'calypso/my-sites/importer/error-pane';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -39,18 +40,22 @@ interface Props {
 	site: SiteDetails | null | undefined;
 	urlData?: UrlData | null;
 	startImport: ( siteId: number, type: string ) => void;
+	flow?: string;
 }
 const ImporterDrag: React.FunctionComponent< Props > = ( props ) => {
-	const { importerStatus, importerData, site, urlData /*, startImport*/ } = props;
+	const { importerStatus, importerData, site, flow, urlData /*, startImport*/ } = props;
 	const { errorData, importerState } = importerStatus;
 	const isEnabled = appStates.DISABLED !== importerState;
+	const isUsingStepContainerV2 = shouldUseStepContainerV2( flow );
 
 	return (
 		<div className={ clsx( 'importer-drag', `importer-drag-${ importerData?.engine }` ) }>
-			<div className="import__heading import__heading-center">
-				<Title>{ importerData?.title }</Title>
-				<SubTitle>{ importerData?.description }</SubTitle>
-			</div>
+			{ ! isUsingStepContainerV2 && (
+				<div className="import__heading import__heading-center">
+					<Title>{ importerData?.title }</Title>
+					<SubTitle>{ importerData?.description }</SubTitle>
+				</div>
+			) }
 			{ errorData && (
 				<ErrorPane
 					type={ errorData.type }

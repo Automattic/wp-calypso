@@ -1,7 +1,22 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.import__import-content-only {
+.import__import-content-only:not(.step-container-v2 *) {
 	max-width: 700px;
 	margin: auto;
+}
+
+.step-container-v2 {
+	.import__error-message {
+		min-height: 0;
+
+		h1 {
+			display: none;
+		}
+	}
+
+	.import-layout__center {
+		text-align: center;
+		margin-top: 3rem;
+	}
 }

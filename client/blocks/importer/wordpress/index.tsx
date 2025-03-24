@@ -31,6 +31,7 @@ interface Props {
 	fromSite: string;
 	showConfirmDialog?: boolean;
 	stepNavigator?: StepNavigator;
+	flow?: string;
 }
 
 export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => {
@@ -51,6 +52,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 		siteId,
 		stepNavigator,
 		showConfirmDialog,
+		flow,
 	} = props;
 	const siteItem = useSelector( ( state ) => getSite( state, siteId ) );
 	const fromSiteSlug = fromSite ? convertToFriendlyWebsiteName( fromSite ) : '';
@@ -195,6 +197,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 							siteSlug={ siteSlug }
 							siteAnalyzedData={ fromSiteAnalyzedData }
 							stepNavigator={ stepNavigator }
+							flow={ flow }
 						/>
 					);
 				}

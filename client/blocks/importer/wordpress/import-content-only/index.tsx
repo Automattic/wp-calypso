@@ -8,6 +8,8 @@ import { UrlData } from 'calypso/blocks/import/types';
 import { getImporterTypeForEngine, isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
 import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
 import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
+import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
+import ErrorPane from 'calypso/my-sites/importer/error-pane';
 import { useDispatch } from 'calypso/state';
 import { startImport, resetImport, startImporting } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
@@ -35,6 +37,7 @@ interface Props {
 	siteSlug: string;
 	siteAnalyzedData: UrlData | null;
 	stepNavigator?: StepNavigator;
+	flow?: string;
 }
 
 const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
@@ -45,9 +48,11 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 	 ↓ Fields
 	 */
 	const [ renderState, setRenderState ] = useState< RenderState >( 'idle' );
-	const { job, importer, siteItem, siteSlug, siteAnalyzedData, stepNavigator } = props;
+	const { job, importer, siteItem, siteSlug, siteAnalyzedData, stepNavigator, flow } = props;
 	const isSiteCompatible = siteItem && isTargetSitePlanCompatible( siteItem );
 	const planName = getPlan( PLAN_BUSINESS )?.getTitle() || '';
+	const errorData = job?.errorData;
+	const isUsingStepContainerV2 = shouldUseStepContainerV2( flow ?? '' );
 
 	/**
 	 ↓ Callbacks
@@ -153,12 +158,23 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 			{ renderState === 'progress' && <ProgressScreen job={ job } /> }
 
 			{ renderState === 'error' && (
-				<ErrorMessage
-					onPrimaryBtnClick={ onTryAgainClick }
-					onSecondaryBtnClick={
-						stepNavigator?.flow === 'site-setup' ? onBackToGoalsClick : undefined
-					}
-				/>
+				<>
+					{ isUsingStepContainerV2 && errorData && (
+						<ErrorPane
+							type={ errorData.type }
+							description={ errorData.description }
+							siteSlug={ siteSlug }
+							code={ errorData.code }
+							importerEngine={ importer }
+						/>
+					) }
+					<ErrorMessage
+						onPrimaryBtnClick={ onTryAgainClick }
+						onSecondaryBtnClick={
+							stepNavigator?.flow === 'site-setup' ? onBackToGoalsClick : undefined
+						}
+					/>
+				</>
 			) }
 
 			{ renderState === 'upgrade-plan' && (
@@ -196,6 +212,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 					urlData={ siteAnalyzedData }
 					importerData={ getImportDragConfig( importer, stepNavigator?.supportLinkModal ) }
 					importerStatus={ job }
+					flow={ flow }
 				/>
 			) }
 
