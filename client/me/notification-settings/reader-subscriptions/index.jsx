@@ -85,11 +85,11 @@ class NotificationSubscriptions extends Component {
 						onSubmit={ this.props.submitForm }
 					>
 						<FormSectionHeading>
-							{ this.props.translate( 'Subscriptions delivery' ) }
+							{ this.props.translate( 'Email subscriptions' ) }
 						</FormSectionHeading>
 						<p>
 							{ this.props.translate(
-								'{{readerLink}}Use the Reader{{/readerLink}} to adjust delivery settings for your existing subscriptions.',
+								'{{readerLink}}Visit the Reader{{/readerLink}} to adjust individual site subscriptions.',
 								{
 									components: {
 										readerLink: (

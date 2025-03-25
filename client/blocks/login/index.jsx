@@ -365,6 +365,7 @@ class Login extends Component {
 			twoStepNonce,
 			wccomFrom,
 			isWooJPC,
+			twoFactorAuthType,
 		} = this.props;
 
 		let headerText = translate( 'Log in to your account' );
@@ -374,6 +375,18 @@ class Login extends Component {
 
 		if ( isSocialFirst ) {
 			headerText = translate( 'Log in to WordPress.com' );
+		}
+
+		if ( 'authenticator' === twoFactorAuthType ) {
+			headerText = translate( 'Continue with an authentication code' );
+		}
+
+		if ( 'push' === twoFactorAuthType ) {
+			headerText = translate( 'Continue with the Jetpack app' );
+		}
+
+		if ( 'backup' === twoFactorAuthType ) {
+			headerText = translate( 'Continue with a backup code' );
 		}
 
 		if ( isManualRenewalImmediateLoginAttempt ) {
@@ -562,13 +575,16 @@ class Login extends Component {
 				if ( isGravPoweredLoginPage ) {
 					const isFromGravatar3rdPartyApp =
 						isGravatarOAuth2Client( oauth2Client ) && currentQuery?.gravatar_from === '3rd-party';
+					const isFromGravatarQuickEditor =
+						isGravatarOAuth2Client( oauth2Client ) &&
+						currentQuery?.gravatar_from === 'quick-editor';
 					const isGravatarFlowWithEmail = !! (
 						isGravatarFlowOAuth2Client( oauth2Client ) && currentQuery?.email_address
 					);
 
 					postHeader = (
 						<p className="login__header-subtitle">
-							{ isFromGravatar3rdPartyApp || isGravatarFlowWithEmail
+							{ isFromGravatar3rdPartyApp || isFromGravatarQuickEditor || isGravatarFlowWithEmail
 								? translate( 'Please log in with your email and password.' )
 								: translate(
 										'If you prefer logging in with a password, or a social media account, choose below:'

@@ -17,6 +17,7 @@ import {
 	SITE_PLUGIN_UPDATED,
 	SITE_FRONT_PAGE_UPDATE,
 	SITE_MIGRATION_STATUS_UPDATE,
+	SITE_RESET,
 } from 'calypso/state/action-types';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -64,6 +65,13 @@ export function receiveSites( sites ) {
 	return {
 		type: SITES_RECEIVE,
 		sites,
+	};
+}
+
+export function resetSite( siteId ) {
+	return {
+		type: SITE_RESET,
+		siteId,
 	};
 }
 

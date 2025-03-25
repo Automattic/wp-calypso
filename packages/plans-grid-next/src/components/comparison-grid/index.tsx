@@ -29,6 +29,7 @@ import useHighlightAdjacencyMatrix from '../../hooks/use-highlight-adjacency-mat
 import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
 import filterUnusedFeaturesObject from '../../lib/filter-unused-features-object';
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
+import { sortPlans } from '../../lib/sort-plan-properties';
 import PlanTypeSelector from '../plan-type-selector';
 import { Plans2023Tooltip } from '../plans-2023-tooltip';
 import PopularBadge from '../popular-badge';
@@ -45,7 +46,6 @@ import type {
 	PlanActionOverrides,
 	TransformedFeatureObject,
 	PlanTypeSelectorProps,
-	GridSize,
 } from '../../types';
 import type {
 	FeatureObject,
@@ -935,10 +935,13 @@ const ComparisonGrid = ( {
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const [ visiblePlans, setVisiblePlans ] = useState< PlanSlug[] >( [] );
 
+	const displayedGridPlans = useMemo( () => {
+		return sortPlans( gridPlans, currentSitePlanSlug );
+	}, [ gridPlans, currentSitePlanSlug ] );
+
 	useEffect( () => {
 		setVisiblePlans( () => {
-			let visibleLength = gridPlans.length;
-
+			let visibleLength = displayedGridPlans.length;
 			switch ( gridSize ) {
 				case 'large':
 					visibleLength = 4;
@@ -952,21 +955,14 @@ const ComparisonGrid = ( {
 					break;
 			}
 
-			const planSlugs = gridPlans.slice( 0, visibleLength ).map( ( { planSlug } ) => planSlug );
-
-			// We always want the current plan to be visible, so move it to the first position if it would otherwise be hidden.
-			if ( currentSitePlanSlug && ! planSlugs.includes( currentSitePlanSlug as PlanSlug ) ) {
-				return [ currentSitePlanSlug as PlanSlug, ...planSlugs ].slice( 0, visibleLength );
-			}
-
-			return planSlugs;
+			return displayedGridPlans.slice( 0, visibleLength ).map( ( { planSlug } ) => planSlug );
 		} );
-	}, [ gridSize, gridPlansIndex, currentSitePlanSlug, gridPlans ] );
+	}, [ gridSize, displayedGridPlans, gridPlansIndex ] );
 
 	const visibleGridPlans = useMemo(
 		() =>
 			visiblePlans.reduce( ( acc, planSlug ) => {
-				const gridPlan = gridPlans.find(
+				const gridPlan = displayedGridPlans.find(
 					( gridPlan ) => getPlanClass( gridPlan.planSlug ) === getPlanClass( planSlug )
 				);
 
@@ -976,7 +972,7 @@ const ComparisonGrid = ( {
 
 				return acc;
 			}, [] as GridPlan[] ),
-		[ visiblePlans, gridPlans ]
+		[ visiblePlans, displayedGridPlans ]
 	);
 
 	const onPlanChange = useCallback(
@@ -1048,7 +1044,7 @@ const ComparisonGrid = ( {
 				>
 					{ ( isStuck: boolean ) => (
 						<ComparisonGridHeader
-							displayedGridPlans={ gridPlans }
+							displayedGridPlans={ displayedGridPlans }
 							visibleGridPlans={ visibleGridPlans }
 							isInSignup={ isInSignup }
 							onPlanChange={ onPlanChange }
@@ -1077,7 +1073,7 @@ const ComparisonGrid = ( {
 					/>
 				) ) }
 				<ComparisonGridHeader
-					displayedGridPlans={ gridPlans }
+					displayedGridPlans={ displayedGridPlans }
 					visibleGridPlans={ visibleGridPlans }
 					isInSignup={ isInSignup }
 					isFooter
@@ -1108,14 +1104,6 @@ const ComparisonGrid = ( {
 	);
 };
 
-const GRID_BREAKPOINTS = new Map< GridSize, number >( [
-	[ 'small', 0 ],
-	[ 'smedium', 686 ],
-	[ 'medium', 835 ], // enough to fit Enterpreneur plan. was 686
-	[ 'large', 1005 ], // enough to fit Enterpreneur plan. was 870
-	[ 'xlarge', 1180 ],
-] );
-
 // TODO
 // Now that everything under is functional component, we can deprecate this wrapper and only keep ComparisonGrid instead.
 // More details can be found in https://github.com/Automattic/wp-calypso/issues/87047
@@ -1128,6 +1116,7 @@ const WrappedComparisonGrid = ( {
 	recordTracksEvent,
 	allFeaturesList,
 	intervalType,
+	isInSiteDashboard,
 	isInSignup,
 	currentSitePlanSlug,
 	selectedPlan,
@@ -1146,10 +1135,22 @@ const WrappedComparisonGrid = ( {
 }: ComparisonGridExternalProps ) => {
 	const gridContainerRef = useRef< HTMLDivElement >( null );
 
+	const gridBreakpoints = useMemo( () => {
+		// we want to fit up to the Commerce plan in this breakpoint
+		const xlargeBreakpoint = isInSiteDashboard ? 1114 : 1180;
+		return new Map( [
+			[ 'small', 0 ],
+			[ 'smedium', 686 ],
+			[ 'medium', 835 ],
+			[ 'large', 1005 ],
+			[ 'xlarge', xlargeBreakpoint ],
+		] );
+	}, [ isInSiteDashboard ] );
+
 	// TODO: this will be deprecated along side removing the wrapper component
 	const gridSize = useGridSize( {
 		containerRef: gridContainerRef,
-		containerBreakpoints: GRID_BREAKPOINTS,
+		containerBreakpoints: gridBreakpoints,
 	} );
 
 	const classNames = clsx( 'plans-grid-next', className, {
@@ -1180,6 +1181,7 @@ const WrappedComparisonGrid = ( {
 			>
 				<ComparisonGrid
 					intervalType={ intervalType }
+					isInSiteDashboard={ isInSiteDashboard }
 					isInSignup={ isInSignup }
 					currentSitePlanSlug={ currentSitePlanSlug }
 					siteId={ siteId }

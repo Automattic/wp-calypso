@@ -286,7 +286,7 @@ class PlansComponent extends Component {
 				hidePlansFeatureComparison={ this.props.isDomainAndPlanPackageFlow }
 				showLegacyStorageFeature={ this.props.siteHasLegacyStorage }
 				intent={ plansIntent }
-				isSpotlightOnCurrentPlan={ ! this.props.isDomainAndPlanPackageFlow }
+				isSpotlightOnCurrentPlan={ ! isUntangled && ! this.props.isDomainAndPlanPackageFlow }
 				showPlanTypeSelectorDropdown={ isEnabled( 'onboarding/interval-dropdown' ) }
 			/>
 		);
