@@ -76,6 +76,7 @@ const SiteSettings = ( {
 					value={ notifyMeOfNewPosts }
 					onChange={ onNotifyMeOfNewPostsChange }
 					isDisabled={ updatingNotifyMeOfNewPosts }
+					showJetpackAppHint
 				/>
 			) }
 		</div>
