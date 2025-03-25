@@ -552,6 +552,119 @@ export async function jetpackAppleAuthCallback( context, next ) {
 	return next();
 }
 
+export async function jetpackGitHubAuth( context, next ) {
+	const { query } = context;
+	const redirectUri = `${ window.location.origin }/log-in/jetpack/github/callback`;
+	try {
+		// Store redirect_to in sessionStorage for use on callback
+		window.sessionStorage.setItem( 'github_redirect_to', query?.redirect_to || '/' );
+
+		// Redirect to GitHub authorization URL
+		const scope = 'read:user,user:email';
+		const params = new URLSearchParams( {
+			redirect_uri: redirectUri,
+			scope,
+			ux_mode: 'redirect',
+			redirect_to: query?.redirect_to || '/',
+		} );
+		window.location.href = `https://public-api.wordpress.com/wpcom/v2/hosting/github/app-authorize?${ params.toString() }`;
+	} catch {
+		context.store.dispatch( {
+			type: 'NOTICE_CREATE',
+			notice: {
+				status: 'is-error',
+				text: 'Error during GitHub authentication. Please try again.',
+			},
+		} );
+	}
+
+	// Fall back to regular login form
+	context.primary = (
+		<WPLogin isJetpack path={ context.path } query={ query } locale={ context.params.lang } />
+	);
+	next();
+}
+
+export async function jetpackGitHubAuthCallback( context, next ) {
+	const { query } = context;
+
+	const code = query.code;
+	const service = query.service;
+
+	// Not a redirect from GitHub if no code or error present
+	if ( ! code || service !== 'github' ) {
+		return next();
+	}
+
+	const redirect_to = window.sessionStorage.getItem( 'github_redirect_to' ) ?? '/';
+	window.sessionStorage.removeItem( 'github_redirect_to' );
+
+	try {
+		// GitHub supports localhost auth; and we allowlist the jetpack callback path
+		const redirectUri = `${ window.location.origin }/log-in/jetpack/github/callback`;
+
+		// Exchange auth code for tokens
+		const response = await postLoginRequest( 'exchange-social-auth-code', {
+			service: 'github',
+			auth_code: code,
+			redirect_uri: redirectUri,
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_key' ),
+		} );
+
+		const { access_token } = response.body.data;
+
+		// Try to create a new WordPress.com account (if it doesn't exist) - then, log in the user
+		try {
+			try {
+				await wpcom.req.post( '/users/social/new', {
+					service: 'github',
+					access_token,
+					signup_flow_name: 'github-auth-signup',
+					locale: getLocaleSlug(),
+					client_id: config( 'wpcom_signup_id' ),
+					client_secret: config( 'wpcom_signup_key' ),
+					tos: JSON.stringify( getToSAcceptancePayload() ),
+				} );
+			} catch {
+				// Silently fail; when id_token is not present, the endpoint fails when the user already exists
+			}
+
+			await context.store.dispatch(
+				loginSocialUser(
+					{
+						service: 'github',
+						access_token,
+					},
+					redirect_to
+				)
+			);
+			const url = new URL( redirect_to );
+			context.store.dispatch(
+				setRoute( url.pathname, Object.fromEntries( url.searchParams.entries() ) )
+			);
+
+			await context.store.dispatch( rebootAfterLogin() );
+			return;
+		} catch {
+			// If both connection and creation fail, show warning and redirect back to login page
+			page.redirect( '/log-in/jetpack?' + new URLSearchParams( { redirect_to } ).toString() );
+			return;
+		}
+	} catch {
+		context.store.dispatch( {
+			type: 'NOTICE_CREATE',
+			notice: {
+				status: 'is-error',
+				text: 'Error during GitHub authentication. Please try again.',
+			},
+		} );
+
+		page.redirect( '/log-in/jetpack?' + new URLSearchParams( { redirect_to } ).toString() );
+		return;
+	}
+}
+
 function getHandleEmailedLinkFormComponent( flow ) {
 	if ( flow === 'jetpack' && config.isEnabled( 'jetpack/magic-link-signup' ) ) {
 		return HandleEmailedLinkFormJetpackConnect;
