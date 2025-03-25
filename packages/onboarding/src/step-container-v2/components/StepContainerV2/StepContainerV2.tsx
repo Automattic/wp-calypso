@@ -58,7 +58,7 @@ export const StepContainerV2 = ( {
 					'large-viewport': isLargeViewport,
 				} ) }
 			>
-				{ topBar }
+				{ topBar && <div className="step-container-v2__top-bar-wrapper">{ topBar }</div> }
 				<div
 					className={ clsx( 'step-container-v2__content-wrapper', {
 						'vertical-align-center': verticalAlign === 'center',

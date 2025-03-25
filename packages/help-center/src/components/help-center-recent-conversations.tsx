@@ -9,7 +9,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect, useState } from 'react';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
-import { getConversationsFromSupportInteractions, getZendeskConversations } from './utils';
+import { filterAndUpdateConversationsWithStatus, getZendeskConversations } from './utils';
 import type {
 	SupportInteraction,
 	ZendeskConversation,
@@ -62,15 +62,16 @@ const HelpCenterRecentConversations: React.FC = () => {
 				...( supportInteractionsResolved || [] ),
 				...( supportInteractionsOpen || [] ),
 			];
-			const conversations = getConversationsFromSupportInteractions(
+
+			const conversationsWithUpdatedStatuses = filterAndUpdateConversationsWithStatus(
 				allConversations,
 				supportInteractions
 			);
 
-			const lastUnreadConversation = conversations.find(
+			const lastUnreadConversation = conversationsWithUpdatedStatuses.find(
 				( conversation ) => conversation.participants[ 0 ]?.unreadCount > 0
 			);
-			const lastConversation = lastUnreadConversation || conversations[ 0 ];
+			const lastConversation = lastUnreadConversation || conversationsWithUpdatedStatuses[ 0 ];
 			const lastMessage = lastConversation?.messages[ lastConversation?.messages.length - 1 ];
 			const lastSupportInteraction = supportInteractions.find(
 				( interaction ) => interaction.uuid === lastConversation?.metadata.supportInteractionId
@@ -80,12 +81,19 @@ const HelpCenterRecentConversations: React.FC = () => {
 			setLastConversation( lastConversation );
 			setLastMessage( lastMessage );
 
-			const { unreadConversations, unreadMessages } = getUnreadNotifications( conversations );
+			const { unreadConversations, unreadMessages } = getUnreadNotifications(
+				conversationsWithUpdatedStatuses
+			);
 			setUnreadConversationsCount( unreadConversations );
 			setUnreadMessagesCount( unreadMessages );
-			setConversations( conversations );
+			setConversations( conversationsWithUpdatedStatuses );
 		}
-	}, [ isChatLoaded, supportInteractionsResolved, supportInteractionsOpen ] );
+	}, [
+		isChatLoaded,
+		supportInteractionsResolved,
+		supportInteractionsOpen,
+		getUnreadNotifications,
+	] );
 
 	if ( ! conversations.length ) {
 		return null;

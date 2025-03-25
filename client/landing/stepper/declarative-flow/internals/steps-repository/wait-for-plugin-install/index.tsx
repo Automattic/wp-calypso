@@ -24,6 +24,11 @@ const WaitForPluginInstall: Step = function WaitForAtomic( { navigation, data } 
 		[]
 	);
 
+	const pendingActionsPromise = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPendingAction(),
+		[]
+	);
+
 	const siteId = data?.siteId;
 	const siteSlug = data?.siteSlug;
 
@@ -99,7 +104,14 @@ const WaitForPluginInstall: Step = function WaitForAtomic( { navigation, data } 
 				backoffTime *= 2;
 			}
 
-			return { pluginsInstalled: true, siteSlug, siteId };
+			// Add potential pending actions from other steps.
+			let redirectTo = null;
+			if ( typeof pendingActionsPromise === 'function' ) {
+				const pendingActions = await pendingActionsPromise();
+				redirectTo = pendingActions?.redirectTo;
+			}
+
+			return { redirectTo, pluginsInstalled: true, siteSlug, siteId };
 		} );
 
 		submit?.();

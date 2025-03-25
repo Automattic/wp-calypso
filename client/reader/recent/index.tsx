@@ -275,7 +275,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				{ ! ( selectedItem && getPostFromItem( selectedItem ) ) && isLoading && (
 					<RecentPostSkeleton />
 				) }
-				{ ! isLoading && data?.items.length === 0 && <FollowingEmptyContent /> }
+				{ ! isLoading && data?.items.length === 0 && <FollowingEmptyContent view="recent" /> }
 				{ data?.items.length > 0 && selectedItem && getPostFromItem( selectedItem ) && (
 					<>
 						<AsyncLoad

@@ -250,7 +250,7 @@ body.is-section-stepper .domains__step-content,
 }
 
 .onboarding {
-	&.domains:not(:has(.step-container-v2)) {
+	&.domains {
 		&.step-route {
 			padding: 60px 12px 0 12px;
 
@@ -315,6 +315,12 @@ body.is-section-signup {
 		}
 	}
 
+	.featured-domain-suggestions {
+		@include break-mobile {
+			border-top: none;
+		}
+	}
+
 	.domains__step-content {
 		display: flex;
 
@@ -341,6 +347,14 @@ body.is-section-signup {
 
 		.domains__domain-side-content-container {
 			flex-direction: column;
+			margin-top: 40px;
+			display: none;
+
+			@include break-large {
+				margin-top: 0;
+				flex-direction: column;
+				display: flex;
+			}
 
 			&.is-sticky {
 				position: sticky;
@@ -363,7 +377,7 @@ body.is-section-signup {
 			}
 
 			@include break-large {
-				display: none !important;
+				display: none;
 			}
 		}
 
@@ -381,8 +395,23 @@ body.is-section-signup {
 			padding: 20px 0;
 			margin: 0;
 
+			@include break-small {
+				width: 80%;
+				margin: 0 auto;
+			}
+
+			@include break-medium {
+				width: 290px;
+				margin: 0 20px;
+			}
+
 			@include break-large {
+				margin: 0 0 0 40px;
 				padding: 40px 0;
+			}
+
+			@include break-huge {
+				margin: 0 0 0 60px;
 			}
 
 			&.fade-out {
@@ -484,57 +513,46 @@ body.is-section-signup {
 		@include break-mobile {
 			padding: 0;
 		}
+	}
+}
 
+.step-route.onboarding.domains:has(.step-container-v2) {
+	padding: 0;
+
+	.register-domain-step__search-card {
+		margin: 0;
 	}
 
-	// In StepContainerV2 the wireframe is responsible for the column
-	// padding. If we're not using this then we need our own column spacing.
-	&:not(:has(.step-container-v2)) {
-		.domains__step-content {
-			.domains__domain-side-content {
-				@include break-small {
-					width: 80%;
-					margin: 0 auto;
-				}
+	.featured-domain-suggestions,
+	.domain-suggestion {
+		margin-inline: 0;
+	}
 
-				@include break-medium {
-					width: 290px;
-					margin: 0 20px;
-				}
+	.register-domain-step__domain-side-content-container-domain-explanation-image {
+		max-width: 100%;
+		margin-bottom: 0;
+	}
 
-				@include break-large {
-					margin: 0 0 0 40px;
-				}
+	.register-domain-step__example-prompt {
+		margin: 0;
+	}
 
-				@include break-huge {
-					margin: 0 0 0 60px;
-				}
-			}
+	.domains__domain-side-content-container {
+		display: flex;
+		margin-top: 0;
+	}
 
-			.domains__domain-side-content-container {
-				display: none;
-				margin-top: 40px;
+	.domains__domain-side-content {
+		margin: 0;
+		flex: 1;
+		width: 100%;
 
-				@include break-large {
-					display: flex;
-					margin-top: 0;
-				}
-			}
+		@include break-medium {
+			max-width: 290px;
 		}
 	}
 
-	&:has(.step-container-v2) {
-		.register-domain-step__search-card {
-			margin: 0;
-		}
-
-		.register-domain-step__domain-side-content-container-domain-explanation-image {
-			max-width: 100%;
-			margin-bottom: 0;
-		}
-
-		.register-domain-step__example-prompt {
-			margin: 0;
-		}
+	.domains__domain-side-content.fade-out {
+		display: none;
 	}
 }

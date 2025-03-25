@@ -90,7 +90,7 @@ button {
 .free,
 .setup-blog,
 .celebration-step,
-.use-my-domain,
+.use-my-domain:not(:has(.step-container-v2)),
 .domain-transfer,
 .update-design,
 .update-options,

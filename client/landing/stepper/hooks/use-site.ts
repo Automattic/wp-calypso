@@ -14,7 +14,7 @@ export function useSite( siteFragment?: number | string ) {
 	const siteSlug = useSiteSlugParam();
 	const siteIdParam = useSiteIdParam();
 	const createdSiteID = useFlowState().get( 'site' )?.siteId;
-	const siteIdOrSlug = siteFragment ?? siteIdParam ?? siteSlug ?? createdSiteID;
+	const siteIdOrSlug = siteFragment || siteIdParam || siteSlug || createdSiteID;
 
 	const site = useSelect(
 		( select ) => {

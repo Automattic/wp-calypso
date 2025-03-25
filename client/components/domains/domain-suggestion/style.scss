@@ -339,7 +339,7 @@
 
 body.is-section-stepper:not(:has(.step-container-v2)),
 body.is-section-signup:not(:has(.step-container-v2)) {
-	svg {
+	svg:not(.jetpack-logo) {
 		padding-top: 0;
 		margin-right: 0;
 	}
