@@ -200,7 +200,7 @@ const GoalsStep: StepType< {
 
 	const getStep = () => {
 		if ( shouldUseStepContainerV2( flow ) ) {
-			const nextButton = <Step.NextButton onClick={ handleNext } />;
+			const nextButton = <Step.PrimaryButton onClick={ handleNext } />;
 
 			return (
 				<Step.CenteredColumnLayout
