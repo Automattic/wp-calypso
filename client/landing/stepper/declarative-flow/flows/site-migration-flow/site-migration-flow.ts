@@ -422,7 +422,7 @@ const siteMigration: Flow = {
 					if ( action === 'skip' ) {
 						return exitFlow(
 							addQueryArgs(
-								{ ref: 'site-migration', iteId, from: from || fromQueryParam, siteSlug },
+								{ ref: 'site-migration', siteId, from: from || fromQueryParam, siteSlug },
 								`/overview/${ siteSlug }`
 							)
 						);
