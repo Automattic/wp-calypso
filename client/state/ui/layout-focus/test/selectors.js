@@ -7,7 +7,7 @@ describe( 'selectors', () => {
 		state = {
 			ui: {
 				layoutFocus: {
-					current: 'sites',
+					current: 'content',
 					next: 'preview',
 				},
 			},
@@ -16,7 +16,7 @@ describe( 'selectors', () => {
 
 	describe( 'getCurrentLayoutFocus', () => {
 		test( 'returns the current layout focus area', () => {
-			expect( getCurrentLayoutFocus( state ) ).toEqual( 'sites' );
+			expect( getCurrentLayoutFocus( state ) ).toEqual( 'content' );
 		} );
 	} );
 } );

@@ -175,7 +175,7 @@ function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {
 	);
 }
 
-function SidebarOverflowDelay( { layoutFocus } ) {
+function SidebarOverflowDelay() {
 	const setSidebarOverflowClass = ( overflow ) => {
 		const classList = document.querySelector( 'body' ).classList;
 		if ( overflow ) {
@@ -186,20 +186,16 @@ function SidebarOverflowDelay( { layoutFocus } ) {
 	};
 
 	useEffect( () => {
-		if ( layoutFocus !== 'sites' ) {
-			// The sidebar menu uses a flyout design that requires the overflowing content
-			// to be visible. However, `overflow` isn't an animatable CSS property, so we
-			// need to set it after the sliding transition finishes. We wait for 150ms (the
-			// CSS transition time) + a grace period of 350ms (since the sidebar menu is
-			// rendered asynchronously).
-			// @see https://github.com/Automattic/wp-calypso/issues/47019
-			setTimeout( () => {
-				setSidebarOverflowClass( true );
-			}, 500 );
-		} else {
-			setSidebarOverflowClass( false );
-		}
-	}, [ layoutFocus ] );
+		// The sidebar menu uses a flyout design that requires the overflowing content
+		// to be visible. However, `overflow` isn't an animatable CSS property, so we
+		// need to set it after the sliding transition finishes. We wait for 150ms (the
+		// CSS transition time) + a grace period of 350ms (since the sidebar menu is
+		// rendered asynchronously).
+		// @see https://github.com/Automattic/wp-calypso/issues/47019
+		setTimeout( () => {
+			setSidebarOverflowClass( true );
+		}, 500 );
+	}, [] );
 
 	return null;
 }
@@ -346,10 +342,8 @@ class Layout extends Component {
 					loadHelpCenter={ loadHelpCenter }
 					currentRoute={ this.props.currentRoute }
 				/>
-				{ ! shouldDisableSidebarScrollSynchronizer && (
-					<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
-				) }
-				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
+				{ ! shouldDisableSidebarScrollSynchronizer && <SidebarScrollSynchronizer /> }
+				<SidebarOverflowDelay />
 				<BodySectionCssClass
 					layoutFocus={ this.props.currentLayoutFocus }
 					group={ this.props.sectionGroup }
