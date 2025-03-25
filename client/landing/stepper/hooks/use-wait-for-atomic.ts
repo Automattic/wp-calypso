@@ -126,13 +126,12 @@ export const useWaitForAtomic = ( {
 		}
 	};
 
-	const waitForLatestSiteData = async ( includeWooCommerce = false ) => {
+	const waitForLatestSiteData = async () => {
 		while ( true ) {
 			const requestedSite = await reduxDispatch< SiteDetails >( requestSite( siteId ) );
 			if (
 				requestedSite?.options?.is_wpcom_atomic &&
-				requestedSite?.capabilities?.manage_options &&
-				( ! includeWooCommerce || requestedSite?.options?.woocommerce_is_active )
+				requestedSite?.capabilities?.manage_options
 			) {
 				break;
 			}

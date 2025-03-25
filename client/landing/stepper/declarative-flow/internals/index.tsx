@@ -22,20 +22,13 @@ import { Boot } from './components/boot';
 import { RedirectToStep } from './components/redirect-to-step';
 import { useFlowAnalytics } from './hooks/use-flow-analytics';
 import { useFlowNavigation } from './hooks/use-flow-navigation';
-import { usePreloadSteps } from './hooks/use-preload-steps';
+import { usePreloadSteps, lazyCache } from './hooks/use-preload-steps';
 import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
 import { useStepNavigationWithTracking } from './hooks/use-step-navigation-with-tracking';
 import { PRIVATE_STEPS } from './steps';
-import { AssertConditionState, type Flow, type StepperStep, type StepProps } from './types';
+import { AssertConditionState, type Flow, type StepperStep } from './types';
 import type { StepperInternalSelect } from '@automattic/data-stores';
 import './global.scss';
-
-const lazyCache = new WeakMap<
-	() => Promise< {
-		default: React.ComponentType< StepProps< any > >;
-	} >,
-	React.ComponentType< StepProps< any > >
->();
 
 function flowStepComponent( flowStep: StepperStep | undefined ) {
 	if ( ! flowStep ) {
