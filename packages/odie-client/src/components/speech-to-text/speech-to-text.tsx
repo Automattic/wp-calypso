@@ -1,5 +1,5 @@
 import { useCallback, useState, useRef } from '@wordpress/element';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { MicrophoneIcon } from '../../assets/microphone-icon';
 import { StopRecordingIcon } from '../../assets/stop-recording-audio-icon';
 import { useRequestTranscription } from '../../data/use-request-transcription';
@@ -62,6 +62,21 @@ export const SpeechToText: React.FC< {
 			setMicrophonePermissionDenied( true );
 		}
 	};
+
+	useEffect( () => {
+		if ( navigator.permissions ) {
+			navigator.permissions
+				.query( { name: 'microphone' } )
+				.then( function ( permissionStatus ) {
+					if ( permissionStatus.state === 'denied' ) {
+						setMicrophonePermissionDenied( true );
+					}
+				} )
+				.catch( function () {
+					setMicrophonePermissionDenied( true );
+				} );
+		}
+	}, [] );
 
 	return (
 		<>
