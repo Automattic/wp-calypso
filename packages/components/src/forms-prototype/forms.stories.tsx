@@ -36,7 +36,6 @@ const meta: Meta = {
 					gap: 16,
 				} }
 				onSubmit={ ( e ) => {
-					// TODO: Add example for how to check all custom validity on submit.
 					e.preventDefault();
 					alert( 'Form submitted!' );
 				} }
