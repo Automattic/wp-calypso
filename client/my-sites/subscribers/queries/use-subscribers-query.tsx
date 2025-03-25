@@ -15,6 +15,7 @@ type SubscriberQueryParams = {
 	filters?: SubscribersFilterBy[];
 	timestamp?: number;
 	limitData?: boolean;
+	use_new_helper?: boolean;
 };
 
 const useSubscribersQuery = ( {
@@ -25,6 +26,7 @@ const useSubscribersQuery = ( {
 	sortTerm = SubscribersSortBy.DateSubscribed,
 	sortOrder,
 	filters = [],
+	use_new_helper = true,
 }: SubscriberQueryParams ) => {
 	const query = useQuery< SubscriberEndpointResponse >( {
 		queryKey: getSubscribersCacheKey( {
@@ -35,11 +37,13 @@ const useSubscribersQuery = ( {
 			sortTerm,
 			filters,
 			sortOrder,
+			use_new_helper,
 		} ),
 		queryFn: () => {
 			const params = new URLSearchParams( {
 				per_page: perPage.toString(),
 				page: page.toString(),
+				use_new_helper: use_new_helper.toString(),
 				...( search && { search } ),
 				...( sortTerm && { sort: sortTerm } ),
 				...( sortOrder && { sort_order: sortOrder } ),
