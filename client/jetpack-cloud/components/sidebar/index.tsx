@@ -88,7 +88,7 @@ const JetpackCloudSidebar = ( {
 
 	return (
 		<Sidebar className={ clsx( 'jetpack-cloud-sidebar', className ) }>
-			<SidebarHeader forceAllSitesView={ isJetpackManage } />
+			<SidebarHeader />
 
 			<SidebarMain>
 				<SidebarNavigator initialPath={ path }>
