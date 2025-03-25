@@ -5,7 +5,6 @@ import { useTranslate } from 'i18n-calypso';
 type NotifyMeOfNewPostsToggleProps = {
 	className?: string;
 	isDisabled?: boolean;
-	showHint?: boolean;
 	showJetpackAppHint?: boolean;
 	toggleId?: string;
 	value: boolean;
@@ -15,7 +14,6 @@ type NotifyMeOfNewPostsToggleProps = {
 const NotifyMeOfNewPostsToggle = ( {
 	className = '',
 	isDisabled = false,
-	showHint = false,
 	showJetpackAppHint = false,
 	value,
 	onChange,
@@ -30,11 +28,9 @@ const NotifyMeOfNewPostsToggle = ( {
 				checked={ value }
 				disabled={ isDisabled }
 			/>
-			{ showHint && (
-				<p className="notify-new-posts-toggle__hint">
-					{ translate( 'Receive web and mobile notifications for new posts from this site.' ) }
-				</p>
-			) }
+			<p className="notify-new-posts-toggle__hint">
+				{ translate( 'Receive web and mobile notifications for new posts from this site.' ) }
+			</p>
 			{ showJetpackAppHint && value && (
 				<div className="setting-item__app-hint">
 					<JetpackLogo size={ 20 } />

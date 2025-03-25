@@ -191,11 +191,7 @@ class ReaderSiteNotificationSettings extends Component {
 							isEmailBlocked
 								? translate(
 										'You currently have email delivery turned off. Visit your {{a}}Notification Settings{{/a}} to turn it back on.',
-										{
-											components: {
-												a: <a href="/me/notifications/subscriptions" />,
-											},
-										}
+										{ components: { a: <a href="/me/notifications/subscriptions" /> } }
 								  )
 								: null
 						}
@@ -230,7 +226,6 @@ class ReaderSiteNotificationSettings extends Component {
 						className="reader-site-notification-settings__popout-toggle"
 						value={ sendNewPostsByNotification }
 						onChange={ this.toggleNewPostNotification }
-						showHint
 					/>
 
 					{ subscriptionId && (
