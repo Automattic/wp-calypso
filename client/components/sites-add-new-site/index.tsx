@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Dropdown } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { PropsWithChildren } from 'react';
+import type { PropsWithChildren } from 'react';
 import AddNewSiteButton from './button';
 import { AsyncContent } from './content/async';
 import './style.scss';
