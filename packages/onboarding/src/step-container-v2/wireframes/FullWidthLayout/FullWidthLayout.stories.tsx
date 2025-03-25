@@ -2,7 +2,7 @@ import { Badge } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { chevronLeft } from '@wordpress/icons';
-import { Heading, StickyBottomBar, TopBar, BackButton, NextButton } from '../..';
+import { Heading, StickyBottomBar, TopBar, BackButton, PrimaryButton } from '../..';
 import { WireframePlaceholder } from '../../helpers/wireframe-placeholder';
 import { withStepContainerV2ContextDecorator } from '../../helpers/withStepContainerV2ContextDecorator';
 import { FullWidthLayout } from './FullWidthLayout';
@@ -27,7 +27,7 @@ export const ThemePreview = () => {
 	return (
 		<FullWidthLayout
 			className="theme-preview"
-			topBar={ <TopBar backButton={ backButton } /> }
+			topBar={ <TopBar leftButton={ backButton } /> }
 			isMediumViewport={ isMediumViewport }
 			isLargeViewport={ isLargeViewport }
 		>
@@ -57,13 +57,13 @@ export const ThemePreviewFonts = () => {
 	const isMediumViewport = useViewportMatch( 'large', '>=' );
 
 	const backButton = <BackButton label="Back" />;
-	const nextButton = <NextButton label="Save fonts" />;
+	const nextButton = <PrimaryButton label="Save fonts" />;
 
 	return (
 		<FullWidthLayout
 			className="theme-preview"
 			isMediumViewport={ isMediumViewport }
-			topBar={ isMediumViewport ? <TopBar backButton={ backButton } /> : <FontsBar /> }
+			topBar={ isMediumViewport ? <TopBar leftButton={ backButton } /> : <FontsBar /> }
 			stickyBottomBar={ <StickyBottomBar leftButton={ backButton } rightButton={ nextButton } /> }
 			hasContentPadding={ isMediumViewport }
 		>

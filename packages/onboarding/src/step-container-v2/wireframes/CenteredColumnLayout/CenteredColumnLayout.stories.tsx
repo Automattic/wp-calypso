@@ -1,5 +1,5 @@
 import { createInterpolateElement } from '@wordpress/element';
-import { Heading, TopBar, BackButton, NextButton, StickyBottomBar, SkipButton } from '../..';
+import { Heading, TopBar, BackButton, PrimaryButton, StickyBottomBar, SkipButton } from '../..';
 import { WireframePlaceholder } from '../../helpers/wireframe-placeholder';
 import { withStepContainerV2ContextDecorator } from '../../helpers/withStepContainerV2ContextDecorator';
 import { CenteredColumnLayout } from './CenteredColumnLayout';
@@ -15,13 +15,13 @@ export default meta;
 
 export const FourColumnsCenteredLayout = () => {
 	const backButton = <BackButton />;
-	const nextButton = <NextButton />;
+	const nextButton = <PrimaryButton />;
 	const skipButton = <SkipButton />;
 
 	return (
 		<CenteredColumnLayout
 			columnWidth={ 4 }
-			topBar={ <TopBar backButton={ backButton } skipButton={ skipButton } /> }
+			topBar={ <TopBar leftButton={ backButton } rightButton={ skipButton } /> }
 			heading={
 				<Heading
 					text="Four Columns Centered Layout"
@@ -42,13 +42,13 @@ export const FourColumnsCenteredLayout = () => {
 
 export const SixColumnsCenteredLayout = () => {
 	const backButton = <BackButton />;
-	const nextButton = <NextButton />;
+	const nextButton = <PrimaryButton />;
 	const skipButton = <SkipButton />;
 
 	return (
 		<CenteredColumnLayout
 			columnWidth={ 6 }
-			topBar={ <TopBar backButton={ backButton } skipButton={ skipButton } /> }
+			topBar={ <TopBar leftButton={ backButton } rightButton={ skipButton } /> }
 			heading={
 				<Heading
 					text="Six Columns Centered Layout"
@@ -69,13 +69,13 @@ export const SixColumnsCenteredLayout = () => {
 
 export const EightColumnsCenteredLayout = () => {
 	const backButton = <BackButton />;
-	const nextButton = <NextButton />;
+	const nextButton = <PrimaryButton />;
 	const skipButton = <SkipButton />;
 
 	return (
 		<CenteredColumnLayout
 			columnWidth={ 8 }
-			topBar={ <TopBar backButton={ backButton } skipButton={ skipButton } /> }
+			topBar={ <TopBar leftButton={ backButton } rightButton={ skipButton } /> }
 			heading={
 				<Heading
 					text="Eight Columns Centered Layout"
