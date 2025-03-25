@@ -123,6 +123,7 @@ function UseYourDomainStep( {
 }: UseYourDomainStepProps ) {
 	const cartKey = useCartKey();
 	const { responseCart: cart } = useShoppingCart( cartKey );
+
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
