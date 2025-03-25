@@ -4,6 +4,7 @@ import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useState, useMemo, useEffect, useRef } from 'react';
+import { useIsPlaygroundEligible } from 'calypso/landing/stepper/hooks/use-is-playground-eligible';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
 import {
@@ -102,6 +103,7 @@ const onboarding: Flow = {
 	useSteps() {
 		// We have already checked the value has loaded in useAssertConditions
 		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
+		const isPlaygroundEligible = useIsPlaygroundEligible();
 
 		const steps = stepsWithRequiredLogin( [
 			STEPS.UNIFIED_DOMAINS,
@@ -122,14 +124,16 @@ const onboarding: Flow = {
 			);
 		}
 
-		// TODO: Add an experiment to test the playground step
-		steps.push( STEPS.PLAYGROUND );
+		if ( isPlaygroundEligible ) {
+			steps.push( STEPS.PLAYGROUND );
+		}
 
 		return steps;
 	},
 
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
+		const isPlaygroundEligible = useIsPlaygroundEligible();
 		const {
 			setDomain,
 			setDomainCartItem,
@@ -172,7 +176,8 @@ const onboarding: Flow = {
 		 * Returns [destination, backDestination] for the post-checkout destination.
 		 */
 		const getPostCheckoutDestination = (
-			providedDependencies: ProvidedDependencies
+			providedDependencies: ProvidedDependencies,
+			isPlaygroundEligible: boolean
 		): [ string, string | null ] => {
 			if ( createWithBigSky && isBigSkyBeforePlansExperiment && isGoalsAtFrontExperiment ) {
 				const destination = addQueryArgs(
@@ -196,7 +201,9 @@ const onboarding: Flow = {
 				return [ `/home/${ providedDependencies.siteSlug }`, null ];
 			}
 
-			const playgroundId = getQueryArg( window.location.href, 'playground' );
+			const playgroundId = isPlaygroundEligible
+				? getQueryArg( window.location.href, 'playground' )
+				: null;
 			if ( playgroundId && providedDependencies.siteSlug ) {
 				return [
 					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
@@ -373,8 +380,10 @@ const onboarding: Flow = {
 				case 'post-checkout-onboarding':
 					return navigate( 'processing' );
 				case 'processing': {
-					const [ destination, backDestination ] =
-						getPostCheckoutDestination( providedDependencies );
+					const [ destination, backDestination ] = getPostCheckoutDestination(
+						providedDependencies,
+						isPlaygroundEligible
+					);
 
 					persistSignupDestination( destination );
 					setSignupCompleteFlowName( flowName );
