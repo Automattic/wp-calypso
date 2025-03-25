@@ -1,6 +1,7 @@
 import { SiteIntent } from '@automattic/data-stores/src/onboard';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
+import FallbackHeader from 'calypso/components/fallback-header';
 import Loading from 'calypso/components/loading';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { useMarketplaceThemeProducts } from '../../../../hooks/use-marketplace-theme-products';
@@ -140,9 +141,20 @@ const PostCheckoutOnboarding: Step = ( { navigation } ) => {
 		isMarketplaceThemeSubscribed,
 		isExternallyManagedThemeAvailable,
 		hasPluginByGoal,
+		setPendingAction,
+		submit,
+		hasExternalTheme,
+		waitForAtomic,
+		waitForInitiateTransfer,
+		pluginByGoal,
 	] );
 
-	return <Loading className="wpcom-loading__boot" />;
+	return (
+		<div className="fallback-signup-header">
+			<FallbackHeader />
+			<Loading className="wpcom-loading__boot" title="Hello from post checkout" />
+		</div>
+	);
 };
 
 export default PostCheckoutOnboarding;

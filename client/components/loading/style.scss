@@ -8,9 +8,7 @@
 	max-width: 540px;
 	margin: 32vh auto 0;
 
-	&.wpcom-loading__boot {
-		margin-top: calc(32vh + 60px);
-	}
+
 
 	.wpcom__loading-title {
 		@include onboarding-font-recoleta;

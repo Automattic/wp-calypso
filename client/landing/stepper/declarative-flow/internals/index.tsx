@@ -6,6 +6,7 @@ import Modal from 'react-modal';
 import { createPath, generatePath, useParams } from 'react-router';
 import { Route, Routes } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
+import FallbackHeader from 'calypso/components/fallback-header';
 import Loading from 'calypso/components/loading';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -121,6 +122,15 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 		state: AssertConditionState.SUCCESS,
 	};
 
+	const FallBackLoading = () => {
+		return (
+			<div className="fallback-signup-header">
+				<FallbackHeader />
+				<Loading title="Sprinkling some magic" />
+			</div>
+		);
+	};
+
 	const stepContainerV2Context = useMemo(
 		() => ( {
 			flowName: flow.name,
@@ -133,7 +143,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 	const renderStep = ( step: StepperStep ) => {
 		switch ( assertCondition.state ) {
 			case AssertConditionState.CHECKING:
-				return <Loading className="wpcom-loading__boot" />;
+				return <FallBackLoading />;
 			case AssertConditionState.FAILURE:
 				console.error( assertCondition.message ); // eslint-disable-line no-console
 				return null;
@@ -212,7 +222,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 	useSignUpStartTracking( { flow } );
 
 	return (
-		<Boot fallback={ <Loading className="wpcom-loading__boot" /> }>
+		<Boot fallback={ <FallBackLoading /> }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
 
 			<Step.StepContainerV2Provider value={ stepContainerV2Context }>

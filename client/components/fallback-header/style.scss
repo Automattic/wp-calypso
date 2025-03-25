@@ -1,0 +1,27 @@
+.fallback-signup-header {
+    padding-top: 60px !important;
+}
+
+.fallback-signup {
+    position: absolute;
+    margin-top: 8px;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    inset-inline-end: 0;
+    z-index: -1;
+    color: var(--color-text-inverted);
+
+    .wordpress-logo {
+        inset-inline-start: 24px;
+        inset-block-start: 20px;
+        position: absolute;        
+        fill: var(--color-text);
+        transform-origin: 0 0;
+        height: 180px;
+        width: 180px;
+        display: block;
+        transition: transform 0.8s cubic-bezier(0.075, 0.82, 0.165, 1);
+        transform: scale(0.13333);
+    }
+}
+

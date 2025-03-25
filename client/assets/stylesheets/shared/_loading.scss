@@ -22,9 +22,6 @@
 	max-width: 540px;
 	margin: 32vh auto 0;
 
-	&.wpcom-loading__boot {
-		margin: calc( 32vh + 60px ) auto 0;
-	}
 
 	.wpcom__loading-title {
 		height: 40px;
@@ -37,11 +34,6 @@
 	}
 }
 
-.is-section-signup {
-	.wpcom-loading__boot {
-		margin: calc( 32vh + 12px ) auto 0;
-	}
-}
 
 .wpcom__loading-ellipsis {
 	display: inline-block;

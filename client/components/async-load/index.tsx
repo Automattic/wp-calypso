@@ -1,8 +1,14 @@
 import { lazy, useMemo, Suspense, type ComponentType, type ReactNode } from 'react';
-
+import FallbackHeader from 'calypso/components/fallback-header';
+import Loading from '../loading';
 import './style.scss';
 
-const DEFAULT_PLACEHOLDER = <div className="async-load__placeholder" />;
+const DEFAULT_PLACEHOLDER = (
+	<div className="fallback-signup-header">
+		<FallbackHeader />
+		<Loading title="Turning on the lights" />
+	</div>
+);
 
 type AsyncLoadProps = {
 	placeholder?: ReactNode;
