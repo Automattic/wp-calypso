@@ -257,12 +257,7 @@ body.is-mobile-app-view {
 			color: var(--color-sidebar-text);
 		}
 
-		.all-sites {
-			border-color: var(--color-sidebar-border);
-		}
-
-		.site,
-		.all-sites {
+		.site {
 			.site__title,
 			.site__domain {
 				&::after {
@@ -276,11 +271,6 @@ body.is-mobile-app-view {
 			transform: translateX(-100%);
 			height: auto;
 		}
-	}
-
-	.all-sites .count {
-		color: var(--color-sidebar-text);
-		border-color: var(--color-sidebar-text);
 	}
 
 	.app-promo {

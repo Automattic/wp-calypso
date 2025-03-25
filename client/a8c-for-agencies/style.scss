@@ -425,16 +425,6 @@
 			border-top: initial;
 		}
 
-		.all-sites {
-			border-bottom: initial;
-
-			// Remove the long-content fade if All Sites is selected
-			.all-sites__title::after {
-				display: none;
-			}
-		}
-
-		.all-sites,
 		.site {
 			margin: 4px 4px 0 4px;
 

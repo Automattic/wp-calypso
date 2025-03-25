@@ -17,7 +17,6 @@ const noop = () => {};
 export class SitesDropdown extends PureComponent {
 	static propTypes = {
 		selectedSiteId: PropTypes.number,
-		showAllSites: PropTypes.bool,
 		onClose: PropTypes.func,
 		onSiteSelect: PropTypes.func,
 		filter: PropTypes.func,
@@ -29,7 +28,6 @@ export class SitesDropdown extends PureComponent {
 	};
 
 	static defaultProps = {
-		showAllSites: false,
 		onClose: noop,
 		onSiteSelect: noop,
 		isPlaceholder: false,

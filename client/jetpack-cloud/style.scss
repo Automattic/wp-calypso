@@ -59,16 +59,6 @@
 			border-top: initial;
 		}
 
-		.all-sites {
-			border-bottom: initial;
-
-			// Remove the long-content fade if All Sites is selected
-			.all-sites__title::after {
-				display: none;
-			}
-		}
-
-		.all-sites,
 		.site {
 			--color-sidebar-menu-selected-background: #e3f0e4;
 

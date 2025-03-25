@@ -9,13 +9,10 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
-import AllSites from 'calypso/blocks/all-sites';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
-import allSitesMenu from 'calypso/my-sites/sidebar/static-data/all-sites-menu';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
 import { canAnySiteHavePlugins } from 'calypso/state/selectors/can-any-site-have-plugins';
 import getSites from 'calypso/state/selectors/get-sites';
 import getVisibleSites from 'calypso/state/selectors/get-visible-sites';
@@ -28,7 +25,6 @@ import { getUserSiteCountForPlatform, getUserVisibleSiteCountForPlatform } from 
 
 import './style.scss';
 
-const ALL_SITES = 'ALL_SITES';
 const noop = () => {};
 const debug = debugFactory( 'calypso:site-selector' );
 
@@ -38,7 +34,6 @@ export class SiteSelector extends Component {
 		sites: PropTypes.array,
 		siteBasePath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		wpcomSiteBasePath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
-		showAllSites: PropTypes.bool,
 		indicator: PropTypes.bool,
 		autoFocus: PropTypes.bool,
 		onClose: PropTypes.func,
@@ -50,7 +45,6 @@ export class SiteSelector extends Component {
 		searchPlaceholder: PropTypes.string,
 		selectedSite: PropTypes.object,
 		visibleSites: PropTypes.arrayOf( PropTypes.object ),
-		allSitesPath: PropTypes.string,
 		navigateToSite: PropTypes.func.isRequired,
 		showHiddenSites: PropTypes.bool,
 		maxResults: PropTypes.number,
@@ -60,7 +54,6 @@ export class SiteSelector extends Component {
 
 	static defaultProps = {
 		sites: {},
-		showAllSites: false,
 		showHiddenSites: false,
 		siteBasePath: false,
 		wpcomSiteBasePath: false,
@@ -113,9 +106,7 @@ export class SiteSelector extends Component {
 		}
 
 		// Note: Update CSS selectors if the class names change.
-		const highlightedSiteElem = selectorElement.querySelector(
-			'.site.is-highlighted, .site-selector .all-sites.is-highlighted'
-		);
+		const highlightedSiteElem = selectorElement.querySelector( '.site.is-highlighted' );
 
 		if ( ! highlightedSiteElem ) {
 			return;
@@ -176,11 +167,7 @@ export class SiteSelector extends Component {
 				break;
 			case 'Enter':
 				if ( highlightedSiteId ) {
-					if ( highlightedSiteId === ALL_SITES ) {
-						this.onSiteSelect( event, ALL_SITES );
-					} else {
-						this.onSiteSelect( event, highlightedSiteId );
-					}
+					this.onSiteSelect( event, highlightedSiteId );
 				}
 				break;
 		}
@@ -195,16 +182,14 @@ export class SiteSelector extends Component {
 	};
 
 	onSiteSelect = ( event, siteId ) => {
-		if ( siteId !== ALL_SITES ) {
-			const visibleSites = this.visibleSites.filter( ( ID ) => ID !== ALL_SITES );
-			this.props.recordTracksEvent( 'calypso_switch_site_click_item', {
-				position: visibleSites.indexOf( siteId ) + 1,
-				list_item_count: visibleSites.length,
-				is_searching: this.state.searchTerm.length > 0,
-				sort_key: this.props.sitesSorting.sortKey,
-				sort_order: this.props.sitesSorting.sortOrder,
-			} );
-		}
+		const visibleSites = this.visibleSites;
+		this.props.recordTracksEvent( 'calypso_switch_site_click_item', {
+			position: visibleSites.indexOf( siteId ) + 1,
+			list_item_count: visibleSites.length,
+			is_searching: this.state.searchTerm.length > 0,
+			sort_key: this.props.sitesSorting.sortKey,
+			sort_order: this.props.sitesSorting.sortOrder,
+		} );
 
 		const selectedSite = this.props.sites.find( ( site ) => site.ID === siteId );
 		const handledByHost = this.props.onSiteSelect( siteId, selectedSite );
@@ -227,11 +212,6 @@ export class SiteSelector extends Component {
 		}
 	};
 
-	onAllSitesSelect = ( event, properties ) => {
-		this.props.recordTracksEvent( 'calypso_all_my_sites_click', properties );
-		this.onSiteSelect( event, ALL_SITES );
-	};
-
 	onManageSitesClick = () => {
 		this.props.recordTracksEvent( 'calypso_manage_sites_click' );
 	};
@@ -240,13 +220,6 @@ export class SiteSelector extends Component {
 		if ( this.lastMouseHover !== siteId ) {
 			debug( `${ siteId } hovered` );
 			this.lastMouseHover = siteId;
-		}
-	};
-
-	onAllSitesHover = () => {
-		if ( this.lastMouseHover !== ALL_SITES ) {
-			debug( 'ALL_SITES hovered' );
-			this.lastMouseHover = ALL_SITES;
 		}
 	};
 
@@ -272,7 +245,6 @@ export class SiteSelector extends Component {
 	isSelected = ( site ) => {
 		const selectedSite = this.props.selected || this.props.selectedSite;
 		return (
-			( site === ALL_SITES && selectedSite === null ) ||
 			selectedSite === site.ID ||
 			selectedSite === site.domain ||
 			selectedSite === site.slug ||
@@ -314,55 +286,6 @@ export class SiteSelector extends Component {
 		sites = sites.filter( ( site ) => ! site?.options?.is_domain_only );
 
 		return sites;
-	}
-
-	mapAllSitesPath = ( path ) => {
-		if ( path.includes( '/posts/my' ) ) {
-			return path.replace( '/posts/my', '/posts' );
-		}
-
-		return path;
-	};
-
-	renderAllSites() {
-		if ( ! this.props.showAllSites || this.state.searchTerm || ! this.props.allSitesPath ) {
-			return null;
-		}
-
-		const multiSiteContext = allSitesMenu( {
-			showManagePlugins: this.props.hasSiteWithPlugins,
-		} ).find( ( menuItem ) => menuItem.url === this.mapAllSitesPath( this.props.allSitesPath ) );
-
-		this.visibleSites.push( ALL_SITES );
-
-		const isHighlighted = this.isHighlighted( ALL_SITES );
-
-		return (
-			<AllSites
-				key="selector-all-sites"
-				onSelect={ ( event ) =>
-					this.onAllSitesSelect(
-						event,
-						multiSiteContext
-							? {
-									multi_site_context_slug: multiSiteContext.slug,
-							  }
-							: undefined
-					)
-				}
-				onMouseEnter={ this.onAllSitesHover }
-				isHighlighted={ isHighlighted }
-				isSelected={ this.isSelected( ALL_SITES ) }
-				title={ multiSiteContext && multiSiteContext.navigationLabel }
-				showCount={ ! multiSiteContext?.icon }
-				showIcon={ !! multiSiteContext?.icon }
-				icon={
-					multiSiteContext?.icon && (
-						<span className={ 'dashicons-before ' + multiSiteContext.icon } aria-hidden />
-					)
-				}
-			/>
-		);
 	}
 
 	renderSites( sites ) {
@@ -421,7 +344,6 @@ export class SiteSelector extends Component {
 					onKeyDown={ this.onKeyDown }
 				/>
 				<div className="site-selector__sites" ref={ this.setSiteSelectorRef }>
-					{ this.renderAllSites() }
 					{ this.renderSites( sites ) }
 					{ this.props.showListBottomAdornment &&
 						! this.props.showHiddenSites &&
@@ -457,7 +379,7 @@ export class SiteSelector extends Component {
 }
 
 const navigateToSite =
-	( siteId, { allSitesPath, allSitesSingleUser, siteBasePath, wpcomSiteBasePath } ) =>
+	( siteId, { siteBasePath, wpcomSiteBasePath } ) =>
 	( dispatch, getState ) => {
 		const state = getState();
 		const site = getSite( state, siteId );
@@ -467,7 +389,7 @@ const navigateToSite =
 		// We will need to open a new tab if we have wpcomSiteBasePath prop and current site is an Atomic site.
 		if ( site?.is_wpcom_atomic && wpcomSiteBasePath ) {
 			window.open( getCompleteSiteURL( wpcomSiteBasePath ) );
-		} else if ( currentSection && siteId !== ALL_SITES ) {
+		} else if ( currentSection ) {
 			page( `/${ currentSection }/${ site.slug }` );
 		} else {
 			const pathname = getPathnameForSite();
@@ -479,23 +401,7 @@ const navigateToSite =
 		function getPathnameForSite() {
 			debug( 'getPathnameForSite', siteId, site );
 
-			if ( siteId === ALL_SITES ) {
-				// default posts links to /posts/my when possible and /posts when not
-				const postsBase = allSitesSingleUser ? '/posts' : '/posts/my';
-				const path = allSitesPath.replace( /^\/posts\b(\/my)?/, postsBase );
-
-				// There is currently no "all sites" version of the insights page
-				if ( path.match( /^\/stats\/insights\/?/ ) ) {
-					return '/stats/day';
-				}
-
-				// Jetpack Cloud: default to /backups/ when in the details of a particular backup
-				if ( path.match( /^\/backup\/.*\/(download|restore|contents|granular-restore)/ ) ) {
-					return '/backup';
-				}
-
-				return path;
-			} else if ( siteBasePath ) {
+			if ( siteBasePath ) {
 				return getCompleteSiteURL( getSiteBasePath() );
 			}
 		}
@@ -575,7 +481,6 @@ const mapState = ( state ) => {
 		visibleSiteCount: getUserVisibleSiteCountForPlatform( user ),
 		selectedSite: getSelectedSite( state ),
 		visibleSites: getVisibleSites( state ),
-		allSitesSingleUser: areAllSitesSingleUser( state ),
 		hasAllSitesList: hasAllSitesList( state ),
 		hasSiteWithPlugins: canAnySiteHavePlugins( state ),
 	};

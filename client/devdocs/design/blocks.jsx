@@ -3,7 +3,6 @@ import PlanPrice from '@automattic/components/src/plan-price/docs/example';
 import clsx from 'clsx';
 import { trim } from 'lodash';
 import { Component, Fragment } from 'react';
-import AllSites from 'calypso/blocks/all-sites/docs/example';
 import AppPromo from 'calypso/blocks/app-promo/docs/example';
 import AuthorCompactProfile from 'calypso/blocks/author-compact-profile/docs/example';
 import AuthorSelector from 'calypso/blocks/author-selector/docs/example';
@@ -106,7 +105,6 @@ export default class AppComponents extends Component {
 					filter={ this.state.filter }
 					section="blocks"
 				>
-					<AllSites readmeFilePath="all-sites" />
 					<AuthorSelector readmeFilePath="author-selector" />
 					<AppPromo readmeFilePath="app-promo" />
 					<CalendarButton readmeFilePath="calendar-button" />

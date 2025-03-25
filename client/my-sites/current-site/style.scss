@@ -25,6 +25,8 @@
 
 .current-site .site {
 	transition: opacity 0.15s ease-in-out;
+	background: var(--color-sidebar-background);
+	border-bottom: 1px solid var(--color-sidebar-border);
 
 	.site__info {
 		animation: appear 0.3s ease-in-out;
@@ -33,14 +35,6 @@
 	.focus-sites & {
 		opacity: 0.2;
 		pointer-events: none;
-	}
-}
-
-.current-site {
-	.site,
-	.all-sites {
-		background: var(--color-sidebar-background);
-		border-bottom: 1px solid var(--color-sidebar-border);
 	}
 }
 
@@ -69,7 +63,6 @@
 	}
 }
 
-.sidebar .current-site .site,
-.sidebar .current-site .all-sites {
+.sidebar .current-site .site {
 	border-bottom: 0;
 }
