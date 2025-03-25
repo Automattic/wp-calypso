@@ -30,7 +30,6 @@ const AtomicSitesSelector = ( {
 				sitesBasePath={ A4A_SITES_LINK }
 				onSiteSelect={ onSiteSelect }
 				filter={ notManagedSitesFilter }
-				showHiddenSites={ false }
 				showListBottomAdornment={ false }
 				isPlaceholder={ isPlaceholder }
 			/>

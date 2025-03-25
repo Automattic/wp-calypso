@@ -13,7 +13,6 @@ import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { canAnySiteHavePlugins } from 'calypso/state/selectors/can-any-site-have-plugins';
 import getSites from 'calypso/state/selectors/get-sites';
 import getVisibleSites from 'calypso/state/selectors/get-visible-sites';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
@@ -40,21 +39,17 @@ export class SiteSelector extends Component {
 		selected: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
 		hideSelected: PropTypes.bool,
 		filter: PropTypes.func,
-		groups: PropTypes.bool,
 		onSiteSelect: PropTypes.func,
 		searchPlaceholder: PropTypes.string,
 		selectedSite: PropTypes.object,
 		visibleSites: PropTypes.arrayOf( PropTypes.object ),
 		navigateToSite: PropTypes.func.isRequired,
-		showHiddenSites: PropTypes.bool,
 		maxResults: PropTypes.number,
-		hasSiteWithPlugins: PropTypes.bool,
 		showListBottomAdornment: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		sites: {},
-		showHiddenSites: false,
 		siteBasePath: false,
 		wpcomSiteBasePath: false,
 		indicator: false,
@@ -62,7 +57,6 @@ export class SiteSelector extends Component {
 		selected: null,
 		onClose: noop,
 		onSiteSelect: noop,
-		groups: false,
 		autoFocus: false,
 		showListBottomAdornment: true,
 	};
@@ -259,17 +253,10 @@ export class SiteSelector extends Component {
 		);
 	};
 
-	shouldShowGroups() {
-		return this.props.groups;
-	}
-
 	setSiteSelectorRef = ( component ) => ( this.siteSelectorRef = component );
 
 	sitesToBeRendered() {
-		let sites =
-			this.state.searchTerm || this.props.showHiddenSites
-				? this.props.sites
-				: this.props.visibleSites;
+		let sites = this.state.searchTerm ? this.props.sites : this.props.visibleSites;
 
 		if ( this.props.filter ) {
 			sites = sites.filter( this.props.filter );
@@ -346,7 +333,6 @@ export class SiteSelector extends Component {
 				<div className="site-selector__sites" ref={ this.setSiteSelectorRef }>
 					{ this.renderSites( sites ) }
 					{ this.props.showListBottomAdornment &&
-						! this.props.showHiddenSites &&
 						hiddenSitesCount > 0 &&
 						! this.state.searchTerm && (
 							<span className="site-selector__list-bottom-adornment">
@@ -482,7 +468,6 @@ const mapState = ( state ) => {
 		selectedSite: getSelectedSite( state ),
 		visibleSites: getVisibleSites( state ),
 		hasAllSitesList: hasAllSitesList( state ),
-		hasSiteWithPlugins: canAnySiteHavePlugins( state ),
 	};
 };
 
