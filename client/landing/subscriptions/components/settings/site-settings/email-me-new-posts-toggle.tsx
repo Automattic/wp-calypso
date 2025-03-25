@@ -20,12 +20,7 @@ const EmailMeNewPostsToggle = ( {
 	const translate = useTranslate();
 
 	return (
-		<div
-			className={ clsx( className, {
-				'setting-item email-me-new-posts-toggle': ! className,
-				'is-enabled': value,
-			} ) }
-		>
+		<div className={ clsx( 'email-me-new-posts-toggle', className, { 'is-enabled': value } ) }>
 			<ToggleControl
 				label={ translate( 'Email me new posts' ) }
 				onChange={ () => onChange( ! value ) }

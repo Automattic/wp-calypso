@@ -49,6 +49,7 @@ const SiteSettings = ( {
 		<div className="settings site-settings">
 			{ isLoggedIn && (
 				<EmailMeNewPostsToggle
+					className="setting-item"
 					value={ emailMeNewPosts }
 					onChange={ onEmailMeNewPostsChange }
 					isDisabled={ updatingEmailMeNewPosts }
