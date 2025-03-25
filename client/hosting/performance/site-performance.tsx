@@ -5,7 +5,6 @@ import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import { useEffect, useMemo, useState } from 'react';
 import { useSiteSettings } from 'calypso/blocks/plugins-scheduled-updates/hooks/use-site-settings';
-import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import {
 	DeviceTabProvider,
@@ -26,6 +25,7 @@ import { MobileHeader } from './components/MobileHeader';
 import { PageSelector } from './components/PageSelector';
 import { PerformanceReport } from './components/PerformanceReport';
 import { PerformanceReportLoading } from './components/PerformanceReportLoading';
+import { PerformanceSubtitleWithLink } from './components/PerformanceSubtitleWithLink';
 import { ReportUnavailable } from './components/ReportUnavailable';
 import { DeviceTabControls } from './components/device-tab-control';
 import { ExpiredReportNotice } from './components/expired-report-notice/expired-report-notice';
@@ -241,45 +241,40 @@ const SitePerformanceContent = () => {
 	);
 
 	const subtitle =
-		! performanceReport.isLoading && performanceReport.performanceReport
-			? translate( 'Tested on {{span}}%(testedDate)s{{/span}}. {{button}}Test again{{/button}}', {
-					args: {
-						testedDate: moment( performanceReport.performanceReport.timestamp ).format(
-							'MMMM Do, YYYY h:mm:ss A'
-						),
-					},
-					components: {
-						button: (
-							<Button
-								css={ {
-									textDecoration: 'none !important',
-									':hover': {
-										textDecoration: 'underline !important',
-									},
-									fontSize: 'inherit',
-									whiteSpace: 'nowrap',
-								} }
-								variant="link"
-								onClick={ retestPage }
-							/>
-						),
-						span: (
-							<span
-								style={ {
-									fontVariantNumeric: 'tabular-nums',
-								} }
-							/>
-						),
-					},
-			  } )
-			: translate(
-					'Optimize your site for lightning-fast performance. {{link}}Learn more.{{/link}}',
-					{
-						components: {
-							link: <InlineSupportLink supportContext="site-performance" showIcon={ false } />,
-						},
-					}
-			  );
+		! performanceReport.isLoading && performanceReport.performanceReport ? (
+			translate( 'Tested on {{span}}%(testedDate)s{{/span}}. {{button}}Test again{{/button}}', {
+				args: {
+					testedDate: moment( performanceReport.performanceReport.timestamp ).format(
+						'MMMM Do, YYYY h:mm:ss A'
+					),
+				},
+				components: {
+					button: (
+						<Button
+							css={ {
+								textDecoration: 'none !important',
+								':hover': {
+									textDecoration: 'underline !important',
+								},
+								fontSize: 'inherit',
+								whiteSpace: 'nowrap',
+							} }
+							variant="link"
+							onClick={ retestPage }
+						/>
+					),
+					span: (
+						<span
+							style={ {
+								fontVariantNumeric: 'tabular-nums',
+							} }
+						/>
+					),
+				},
+			} )
+		) : (
+			<PerformanceSubtitleWithLink />
+		);
 
 	if ( ! isSiteAtomic ) {
 		return null;

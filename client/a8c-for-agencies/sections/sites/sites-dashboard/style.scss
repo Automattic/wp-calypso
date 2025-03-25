@@ -1016,6 +1016,22 @@
 	display: none;
 }
 
+.sites-dashboard .a4a-site-performance {
+	.notice-banner {
+		display: flex;
+	}
+
+	.site-performance-device-tab__controls:not(.disabled) .segmented-control__item.is-selected {
+		 .segmented-control__link {
+			color: var(--color-text-white);
+		}
+
+		+ .segmented-control__item .segmented-control__link {
+			border-left-color: var(--color-link);
+		}
+	}
+}
+
 .sites-dashboard.preview-hidden .notice-banner {
 	display: flex;
 	margin: 0 64px 24px !important;
