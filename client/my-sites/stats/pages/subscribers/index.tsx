@@ -111,7 +111,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 		useSelector( ( state ) => isJetpackModuleActive( state, siteId, 'subscriptions', true ) ) ??
 		false;
 
-	if ( ! isSubscriptionsModuleActive ) {
+	if ( ! isSimple && ! isSubscriptionsModuleActive ) {
 		page.redirect( `/stats/day/${ siteSlug }` );
 		return;
 	}

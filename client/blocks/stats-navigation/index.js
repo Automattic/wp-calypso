@@ -18,7 +18,11 @@ import isGoogleMyBusinessLocationConnectedSelector from 'calypso/state/selectors
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getJetpackStatsAdminVersion, getSiteOption } from 'calypso/state/sites/selectors';
+import {
+	getJetpackStatsAdminVersion,
+	getSiteOption,
+	isSimpleSite,
+} from 'calypso/state/sites/selectors';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import {
 	updateModuleToggles,
@@ -151,6 +155,7 @@ class StatsNavigation extends Component {
 			isWordAds,
 			siteId,
 			isSubscriptionsModuleActive,
+			isSimple,
 		} = this.props;
 
 		switch ( item ) {
@@ -172,7 +177,7 @@ class StatsNavigation extends Component {
 					return false;
 				}
 
-				return isSubscriptionsModuleActive;
+				return isSimple ? true : isSubscriptionsModuleActive;
 
 			case 'realtime':
 				if ( 'undefined' === typeof siteId ) {
@@ -322,6 +327,7 @@ export default connect(
 				getSiteOption( state, siteId, 'wordads' ) &&
 				canCurrentUser( state, siteId, 'manage_options' ),
 			hasVideoPress: siteHasFeature( state, siteId, 'videopress' ),
+			isSimple: isSimpleSite( state, siteId ),
 			isSubscriptionsModuleActive: isJetpackModuleActive( state, siteId, 'subscriptions', true ),
 			siteId,
 			pageModuleToggles: getModuleToggles( state, siteId, [ selectedItem ] ),
