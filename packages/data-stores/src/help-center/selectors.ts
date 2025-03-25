@@ -20,4 +20,3 @@ export const getOdieBotNameSlug = ( state: State ) => state.odieBotNameSlug;
 export const getCurrentSupportInteraction = ( state: State ) => state.currentSupportInteraction;
 export const getAllowPremiumSupport = ( state: State ) => state.allowPremiumSupport;
 export const getHelpCenterOptions = ( state: State ) => state.helpCenterOptions;
-export const getState = ( state: State ) => state;
