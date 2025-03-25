@@ -1,6 +1,6 @@
 import './style.scss';
 import { Reader } from '@automattic/data-stores';
-import { Button, ToggleControl } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { Icon, settings } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { find, get } from 'lodash';
@@ -11,6 +11,7 @@ import Settings from 'calypso/assets/images/icons/settings.svg';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import FormSelect from 'calypso/components/forms/form-select';
 import SVGIcon from 'calypso/components/svg-icon';
+import EmailMeNewCommentsToggle from 'calypso/landing/subscriptions/components/settings/site-settings/email-me-new-comments-toggle';
 import EmailMeNewPostsToggle from 'calypso/landing/subscriptions/components/settings/site-settings/email-me-new-posts-toggle';
 import NotifyMeOfNewPostsToggle from 'calypso/landing/subscriptions/components/settings/site-settings/notify-me-of-new-posts-toggle';
 import ReaderPopover from 'calypso/reader/components/reader-popover';
@@ -218,14 +219,11 @@ class ReaderSiteNotificationSettings extends Component {
 					) }
 
 					{ ! isEmailBlocked && (
-						<div className="reader-site-notification-settings__popout-toggle">
-							<ToggleControl
-								onChange={ this.toggleNewCommentEmail }
-								checked={ sendNewCommentsByEmail }
-								id="reader-site-notification-settings__email-comments"
-								label={ translate( 'Email me new comments' ) }
-							/>
-						</div>
+						<EmailMeNewCommentsToggle
+							className="reader-site-notification-settings__popout-toggle"
+							value={ sendNewCommentsByEmail }
+							onChange={ this.toggleNewCommentEmail }
+						/>
 					) }
 
 					<NotifyMeOfNewPostsToggle

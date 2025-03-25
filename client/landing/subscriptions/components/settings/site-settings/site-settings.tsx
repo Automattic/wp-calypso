@@ -63,9 +63,10 @@ const SiteSettings = ( {
 			) }
 			{ isLoggedIn && (
 				<EmailMeNewCommentsToggle
+					className="setting-item"
 					value={ emailMeNewComments }
 					onChange={ onEmailMeNewCommentsChange }
-					isUpdating={ updatingEmailMeNewComments }
+					isDisabled={ updatingEmailMeNewComments }
 				/>
 			) }
 			{ isLoggedIn && (
