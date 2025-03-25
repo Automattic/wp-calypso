@@ -661,7 +661,9 @@ export function CheckoutFormSubmit( {
 					onLoadError={ onSubmitButtonLoadError }
 				/>
 			) }
-			<SubmitFooterWrapper>{ submitButtonFooter || null }</SubmitFooterWrapper>
+			<SubmitFooterWrapper className="checkout-steps__submit-footer-wrapper">
+				{ submitButtonFooter || null }
+			</SubmitFooterWrapper>
 		</SubmitButtonWrapper>
 	);
 }

@@ -4,6 +4,13 @@
 	--step-container-v2-top-bar-height: 56px;
 	--step-container-v2-sticky-bottom-bar-height: 72px;
 
+	--step-container-v2-content-block-padding: 2rem;
+	--step-container-v2-content-inline-padding: 1rem;
+
+	&.medium-viewport {
+		--step-container-v2-content-inline-padding: 3rem;
+	}
+
 	width: 100%;
 	min-height: 100vh;
 	margin: 0;
@@ -24,11 +31,7 @@
 		gap: 3rem;
 
 		&.padding {
-			padding: 2rem 1rem;
-
-			@include step-medium-viewport {
-				padding: 2rem 3rem;
-			}
+			padding: var(--step-container-v2-content-block-padding) var(--step-container-v2-content-inline-padding);
 		}
 
 		&.vertical-align-center {
