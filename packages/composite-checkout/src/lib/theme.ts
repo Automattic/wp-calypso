@@ -54,6 +54,9 @@ export type Theme = {
 	fontSize: {
 		small: string;
 	};
+	borderRadius: {
+		small: string;
+	};
 };
 
 const theme: Theme = {
@@ -108,6 +111,9 @@ const theme: Theme = {
 	},
 	fontSize: {
 		small: '14px',
+	},
+	borderRadius: {
+		small: '2px',
 	},
 };
 

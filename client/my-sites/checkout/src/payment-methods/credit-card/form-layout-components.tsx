@@ -44,7 +44,7 @@ export const StripeFieldWrapper = styled.span< { hasError?: boolean; isDisabled?
 		border: 1px solid
 			${ ( props ) =>
 				props.hasError ? props.theme.colors.error : props.theme.colors.borderColor };
-		border-radius: 3px;
+		border-radius: ${ ( props ) => props.theme.borderRadius.small };
 		padding: 12px 14px;
 		line-height: 1.2;
 	}

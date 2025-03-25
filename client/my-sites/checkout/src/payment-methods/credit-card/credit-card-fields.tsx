@@ -120,7 +120,6 @@ export default function CreditCardFields( {
 			'::placeholder': {
 				color: theme.colors.placeHolderTextColor,
 			},
-			borderRadius: '2px',
 			':disabled': {
 				color: theme.colors.textColorDisabled,
 			},
