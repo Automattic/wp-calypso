@@ -53,7 +53,7 @@
 		"copyfiles": "^2.4.1",
 		"postcss": "^8.5.3",
 		"typescript": "^5.8.2",
-		"webpack": "^5.97.1"
+		"webpack": "^5.98.0"
 	},
 	"dependencies": {
 		"@wordpress/base-styles": "^5.20.0",
