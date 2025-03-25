@@ -9241,18 +9241,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/wordpress__block-editor@npm:^11.5.16":
-  version: 11.5.16
-  resolution: "@types/wordpress__block-editor@npm:11.5.16"
-  dependencies:
-    "@types/react": "npm:^18"
-    "@types/wordpress__blocks": "npm:*"
-    "@wordpress/components": "npm:^27.2.0"
-    "@wordpress/data": "npm:^9.13.0"
-    "@wordpress/element": "npm:^5.0.0"
-    "@wordpress/keycodes": "npm:^3.54.0"
-    react-autosize-textarea: "npm:^7.1.0"
-  checksum: fd149a732811f2c6deebb87ec6bdc14fbd68f824d5a33ad8df8754468f25d41960d4de759e548768c4d5a5145f4e1005c6c350cc40f0952db2f498aa65b5ff0d
+"@types/wordpress__block-editor@npm:noop-package@1.0.0":
+  version: 1.0.0
+  resolution: "noop-package@npm:1.0.0"
+  checksum: f53edc897025b1c2c6d084607ec6588718ff5fc92b1549e97f87453b0404fa15acc12f3b1c7b4fa144f376b73b3bd40e3fe8da4fa89a944dfeb33343afbcf5b4
   languageName: node
   linkType: hard
 
@@ -9263,7 +9255,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/wordpress__blocks@npm:*, @types/wordpress__blocks@npm:^12.5.17":
+"@types/wordpress__blocks@npm:^12.5.17":
   version: 12.5.17
   resolution: "@types/wordpress__blocks@npm:12.5.17"
   dependencies:
