@@ -15,6 +15,7 @@ import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notic
 import { shouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isGoogleMyBusinessLocationConnectedSelector from 'calypso/state/selectors/is-google-my-business-location-connected';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getJetpackStatsAdminVersion, getSiteOption } from 'calypso/state/sites/selectors';
@@ -144,7 +145,13 @@ class StatsNavigation extends Component {
 	};
 
 	isValidItem = ( item ) => {
-		const { isGoogleMyBusinessLocationConnected, isStore, isWordAds, siteId } = this.props;
+		const {
+			isGoogleMyBusinessLocationConnected,
+			isStore,
+			isWordAds,
+			siteId,
+			isSubscriptionsModuleActive,
+		} = this.props;
 
 		switch ( item ) {
 			case 'wordads':
@@ -161,7 +168,11 @@ class StatsNavigation extends Component {
 				return config.isEnabled( 'google-my-business' ) && isGoogleMyBusinessLocationConnected;
 
 			case 'subscribers':
-				return 'undefined' === typeof siteId ? false : true;
+				if ( 'undefined' === typeof siteId ) {
+					return false;
+				}
+
+				return isSubscriptionsModuleActive;
 
 			case 'realtime':
 				if ( 'undefined' === typeof siteId ) {
@@ -311,6 +322,7 @@ export default connect(
 				getSiteOption( state, siteId, 'wordads' ) &&
 				canCurrentUser( state, siteId, 'manage_options' ),
 			hasVideoPress: siteHasFeature( state, siteId, 'videopress' ),
+			isSubscriptionsModuleActive: isJetpackModuleActive( state, siteId, 'subscriptions', true ),
 			siteId,
 			pageModuleToggles: getModuleToggles( state, siteId, [ selectedItem ] ),
 			statsAdminVersion: getJetpackStatsAdminVersion( state, siteId ),
