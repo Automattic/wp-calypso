@@ -30,7 +30,7 @@ import {
 	getContactDetailsType,
 	ContactDetailsType,
 } from '@automattic/wpcom-checkout';
-import { keyframes } from '@emotion/react';
+import { css, keyframes } from '@emotion/react';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
@@ -621,7 +621,11 @@ export default function CheckoutMainContent( {
 			<WPCheckoutMainContent className="checkout-main-content">
 				<CheckoutOrderBanner />
 				{ isStepContainerV2 ? (
-					<Step.Heading text={ translate( 'Checkout' ) } align="left" />
+					<Step.Heading
+						text={ translate( 'Checkout' ) }
+						align="left"
+						size={ ! isMediumViewport ? 'small' : undefined }
+					/>
 				) : (
 					<WPCheckoutTitle>{ translate( 'Checkout' ) }</WPCheckoutTitle>
 				) }
@@ -824,73 +828,88 @@ export default function CheckoutMainContent( {
 			hasContentPadding={ false }
 			topBar={ <Step.TopBar /> }
 		>
-			<StepContainerV2CheckoutFixer>{ content }</StepContainerV2CheckoutFixer>
+			<StepContainerV2CheckoutFixer isMediumViewport={ isMediumViewport }>
+				{ content }
+			</StepContainerV2CheckoutFixer>
 		</Step.FullWidthLayout>
 	);
 }
 
-const StepContainerV2CheckoutFixer = styled.div`
+const StepContainerV2CheckoutFixer = styled.div< { isMediumViewport: boolean } >`
 	.checkout-wrapper {
 		margin-top: calc( var( --step-container-v2-top-bar-height ) * -1 );
 	}
 
-	.checkout-sidebar-content {
-		margin-top: var( --step-container-v2-top-bar-height );
-	}
+	${ ( props ) =>
+		! props.isMediumViewport &&
+		css`
+			.checkout-sidebar-content {
+				margin-top: var( --step-container-v2-top-bar-height );
+			}
 
-	.checkout__summary-button {
-		border-bottom: none;
-	}
+			.checkout__summary-button {
+				border-bottom: none;
+			}
 
-	.checkout__summary-body {
-		padding: var( --step-container-v2-content-block-padding )
-			var( --step-container-v2-content-inline-padding );
-		max-width: 100%;
-	}
+			.checkout__summary-body {
+				padding: var( --step-container-v2-content-block-padding )
+					var( --step-container-v2-content-inline-padding );
+				max-width: 100%;
+			}
 
-	.checkout__summary-features {
-		padding: 0;
-		width: 100%;
-	}
+			.checkout__summary-features {
+				padding: 0;
+				width: 100%;
+			}
 
-	.checkout__summary-title {
-		margin: 0;
-		padding: var( --step-container-v2-content-inline-padding );
-		max-width: 100%;
-	}
+			.checkout__summary-title {
+				margin: 0;
+				padding: var( --step-container-v2-content-inline-padding );
+				max-width: 100%;
+			}
 
-	.checkout-sidebar-plan-upsell {
-		margin: 0;
-		max-width: 100%;
-	}
+			.checkout-sidebar-plan-upsell {
+				margin: 0;
+				max-width: 100%;
+			}
 
-	.checkout-main-content {
-		margin-top: 0;
-		padding: var( --step-container-v2-content-block-padding )
-			var( --step-container-v2-content-inline-padding );
-		max-width: 100%;
-	}
+			.checkout-main-content {
+				margin-top: 0;
+				padding: var( --step-container-v2-content-block-padding )
+					var( --step-container-v2-content-inline-padding );
+				max-width: 100%;
+			}
 
-	.wp-checkout__review-order-step,
-	.checkout-contact-form-step,
-	.checkout__payment-method-step,
-	.checkout-terms-and-checkboxes,
-	.checkout-steps__step-content {
-		padding-inline: 0;
-	}
+			.wp-checkout__review-order-step,
+			.checkout-contact-form-step,
+			.checkout__payment-method-step,
+			.checkout-terms-and-checkboxes,
+			.checkout-steps__step-complete-content,
+			.checkout-steps__step-content {
+				padding-inline: 0;
+			}
 
-	.checkout-steps__submit-button-wrapper {
-		max-width: 100%;
-		padding-inline: var( --step-container-v2-content-inline-padding );
+			.checkout-steps__submit-button-wrapper {
+				max-width: 100%;
+				padding-inline: var( --step-container-v2-content-inline-padding );
 
-		@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-			padding-inline: 0;
-		}
-	}
+				@media ( ${ props.theme.breakpoints.tabletUp } ) {
+					padding-inline: 0;
+				}
+			}
 
-	.checkout-steps__submit-footer-wrapper {
-		min-height: auto;
-	}
+			.checkout-steps__submit-footer-wrapper {
+				min-height: auto;
+			}
+		` }
+
+	${ ( props ) =>
+		props.isMediumViewport &&
+		css`
+			.checkout__summary-area {
+				transform: translateY( -54px );
+			}
+		` }
 `;
 
 const CheckoutSummary = styled.div`
