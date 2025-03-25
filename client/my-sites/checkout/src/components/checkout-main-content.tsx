@@ -73,6 +73,7 @@ import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selector
 import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-details';
+import { useCheckoutHelpCenter } from '../hooks/use-checkout-help-center';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
@@ -499,6 +500,8 @@ export default function CheckoutMainContent( {
 	const isStepContainerV2 = shouldUseStepContainerV2( getSignupCompleteFlowName() );
 	const isMediumViewport = useViewportMatch( 'large', '>=' );
 
+	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter } = useCheckoutHelpCenter();
+
 	if ( ! checkoutActions ) {
 		return null;
 	}
@@ -877,7 +880,20 @@ export default function CheckoutMainContent( {
 			<Step.FullWidthLayout
 				isMediumViewport={ isMediumViewport }
 				hasContentPadding={ false }
-				topBar={ <Step.TopBar backButton={ <Step.BackButton onClick={ clickClose } /> } /> }
+				topBar={
+					<Step.TopBar
+						backButton={ <Step.BackButton onClick={ clickClose } /> }
+						skipButton={
+							<span className="checkout-skip-button">
+								<label>{ helpCenterButtonCopy ?? translate( 'Need extra help?' ) } </label>
+								<Step.SkipButton
+									onClick={ toggleHelpCenter }
+									label={ helpCenterButtonLink ?? translate( 'Visit Help Center' ) }
+								/>
+							</span>
+						}
+					/>
+				}
 			>
 				{ content }
 			</Step.FullWidthLayout>
@@ -898,6 +914,16 @@ export default function CheckoutMainContent( {
 const StepContainerV2CheckoutFixer = styled.div< { isMediumViewport: boolean } >`
 	.checkout-wrapper {
 		margin-top: calc( var( --step-container-v2-top-bar-height ) * -1 );
+	}
+
+	.checkout-skip-button {
+		label {
+			display: none;
+
+			@media ( ${ ( props ) => props.theme.breakpoints.bigPhoneUp } ) {
+				display: inline;
+			}
+		}
 	}
 
 	.step-container-v2__top-bar-wrapper {
