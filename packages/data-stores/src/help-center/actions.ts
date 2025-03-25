@@ -1,12 +1,19 @@
 import { default as apiFetchPromise } from '@wordpress/api-fetch';
+import { select } from '@wordpress/data';
 import { apiFetch } from '@wordpress/data-controls';
 import { addQueryArgs } from '@wordpress/url';
 import { default as wpcomRequestPromise, canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
 import { wpcomRequest } from '../wpcom-request-controls';
+import { STORE_KEY } from './constants';
 import { isE2ETest } from '.';
-import type { APIFetchOptions, HelpCenterOptions, HelpCenterShowOptions } from './types';
+import type {
+	APIFetchOptions,
+	HelpCenterOptions,
+	HelpCenterSelect,
+	HelpCenterShowOptions,
+} from './types';
 import type { SupportInteraction } from '@automattic/odie-client/src/types';
 
 export const receiveHasSeenWhatsNewModal = ( value: boolean | undefined ) =>
@@ -128,7 +135,18 @@ export const setShowHelpCenter = function* (
 	show: boolean,
 	allowPremiumSupport = false,
 	options: HelpCenterShowOptions = { hideBackButton: false, searchTerm: '' }
-) {
+): Generator< unknown, { type: 'HELP_CENTER_SET_SHOW'; show: boolean }, unknown > {
+	const isMinimized = ( select( STORE_KEY ) as HelpCenterSelect ).getIsMinimized();
+
+	if ( ! show && isMinimized ) {
+		yield setIsMinimized( false );
+
+		return {
+			type: 'HELP_CENTER_SET_SHOW',
+			show: true,
+		} as const;
+	}
+
 	if ( ! isE2ETest() ) {
 		try {
 			if ( canAccessWpcomApis() ) {

@@ -6,8 +6,9 @@ import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
 import { trash } from '@wordpress/icons';
 import { translate, fixMe } from 'i18n-calypso';
 import { useSubscribedNewsletterCategories } from 'calypso/data/newsletter-categories';
-import { useSelector } from 'calypso/state';
+import { useSelector, useDispatch } from 'calypso/state';
 import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/settings/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
@@ -79,6 +80,7 @@ const SubscriberDataViews = ( {
 	isUnverified,
 	subscriberId,
 }: SubscriberDataViewsProps ) => {
+	const dispatch = useDispatch();
 	const isMobile = useBreakpoint( '<660px' );
 	const recordSubscriberClicked = useRecordSubscriberClicked();
 	const recordSubscriberSearch = useRecordSubscriberSearch();
@@ -135,7 +137,7 @@ const SubscriberDataViews = ( {
 		},
 		false,
 		() => {
-			setSelectedSubscriber( null );
+			page.show( `/subscribers/${ siteSlug }` );
 		}
 	);
 
@@ -341,9 +343,24 @@ const SubscriberDataViews = ( {
 				id: 'gift',
 				label: translate( 'Gift a subscription' ),
 				callback: ( items: Subscriber[] ) => {
-					if ( items[ 0 ] && items[ 0 ].user_id ) {
-						onGiftSubscription( items[ 0 ] );
+					const subscriber = items[ 0 ];
+					if ( ! subscriber ) {
+						return;
 					}
+
+					if ( ! subscriber.user_id ) {
+						dispatch(
+							errorNotice(
+								translate(
+									'This subscriber needs to create a WordPress.com account before they can receive a gift subscription.'
+								),
+								{ duration: 10000 }
+							)
+						);
+						return;
+					}
+
+					onGiftSubscription( subscriber );
 				},
 				isPrimary: false,
 			} );
@@ -356,8 +373,7 @@ const SubscriberDataViews = ( {
 		handleUnsubscribe,
 		onGiftSubscription,
 		couponsAndGiftsEnabled,
-		recordSubscriberClicked,
-		siteId,
+		dispatch,
 	] );
 
 	const handleViewChange = useCallback(

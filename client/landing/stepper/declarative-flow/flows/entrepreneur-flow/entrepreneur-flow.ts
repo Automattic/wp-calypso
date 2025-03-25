@@ -189,9 +189,10 @@ const entrepreneurFlow: Flow = {
 		return { goBack, submit };
 	},
 
-	useSideEffect() {
+	useSideEffect( currentStepSlug ) {
 		const isLoggedIn = useSelector( isUserLoggedIn );
 
+		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
 		useEffect( () => {
 			// We need to store the anonymous user ID in localStorage because
 			// we need to pass it to the server on site creation, i.e. after the user signs up or logs in.
@@ -200,6 +201,13 @@ const entrepreneurFlow: Flow = {
 				anonIdCache.store( anonymousUserId );
 			}
 		}, [ isLoggedIn ] );
+
+		useEffect( () => {
+			// We only need to reset the store when the flow is mounted.
+			if ( ! currentStepSlug ) {
+				resetOnboardStore();
+			}
+		}, [ currentStepSlug, resetOnboardStore ] );
 	},
 };
 
