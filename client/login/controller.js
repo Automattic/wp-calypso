@@ -555,7 +555,7 @@ export async function jetpackAppleAuthCallback( context, next ) {
 export async function jetpackGitHubAuth( context, next ) {
 	const { query, isServerSide } = context;
 
-	// Do not continue if it's server side
+	// Don't run authentication if it's server side
 	if ( isServerSide ) {
 		return next();
 	}
