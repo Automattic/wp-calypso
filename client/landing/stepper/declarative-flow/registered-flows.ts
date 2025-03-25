@@ -16,7 +16,6 @@ import {
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	EXAMPLE_FLOW,
 	AI_SITE_BUILDER_FLOW,
-	PLAYGROUND_FLOW,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -107,9 +106,6 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		),
 	[ EXAMPLE_FLOW ]: () =>
 		import( /* webpackChunkName: "example-flow" */ './flows/00-example-flow/example' ),
-
-	[ PLAYGROUND_FLOW ]: () =>
-		import( /* webpackChunkName: "playground-flow" */ '../declarative-flow/playground' ),
 };
 
 const aiSiteBuilderFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
