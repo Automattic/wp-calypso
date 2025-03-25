@@ -23,6 +23,7 @@ export interface BillingTransaction {
 	cc_num: string;
 	cc_type: string;
 	cc_display_brand: string | null;
+	cc_is_for_business: boolean | null;
 	credit: string;
 	date: string;
 	desc: string;

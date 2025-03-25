@@ -23,6 +23,7 @@ import { PARTNER_PAYPAL_EXPRESS, PARTNER_PAYPAL_PPCP } from 'calypso/lib/checkou
 import { billingHistory, vatDetails as vatDetailsPath } from 'calypso/me/purchases/paths';
 import titles from 'calypso/me/purchases/titles';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
+import BusinessCardBadge from 'calypso/my-sites/checkout/src/components/business-card-badge';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import { useDispatch } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -51,7 +52,6 @@ import type {
 import type { IAppState } from 'calypso/state/types';
 import type { LocalizeProps } from 'i18n-calypso';
 import type { FormEvent } from 'react';
-
 import './style.scss';
 
 interface BillingReceiptProps {
@@ -254,6 +254,7 @@ function ReceiptPaymentMethod( { transaction }: { transaction: BillingTransactio
 		<li>
 			<strong>{ translate( 'Payment Method' ) }</strong>
 			<span>{ text }</span>
+			{ transaction.cc_is_for_business && <BusinessCardBadge /> }
 		</li>
 	);
 }

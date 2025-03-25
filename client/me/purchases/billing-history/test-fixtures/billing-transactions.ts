@@ -45,6 +45,7 @@ export const createBaseTransaction = (): BillingTransaction => ( {
 	cc_num: '',
 	cc_type: '',
 	cc_display_brand: null,
+	cc_is_for_business: false,
 	credit: '',
 	desc: '',
 	icon: '',
