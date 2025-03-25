@@ -214,7 +214,9 @@ class StepWrapper extends Component {
 		const queryParams = new URLSearchParams( window?.location.search );
 		const flags = queryParams.get( 'flags' )?.split( ',' );
 		const isHelpCenterLinkEnabled =
-			flags?.includes( 'signup/help-center-link' ) && flow?.enabledHelpCenterGeos;
+			flags?.includes( 'signup/help-center-link' ) &&
+			flow?.enabledHelpCenterGeos &&
+			this.props.userLoggedIn;
 
 		return (
 			<>
