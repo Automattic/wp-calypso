@@ -402,7 +402,7 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 				text: 'Error during Google authentication. Please try again.',
 			},
 		} );
-		redirectJetpackDirectAuthError( query );
+		redirectJetpackDirectAuthError( context );
 	}
 
 	return next();
@@ -469,7 +469,7 @@ export async function jetpackAppleAuth( context, next ) {
 				text: 'Error initiating Apple login. Please try again.',
 			},
 		} );
-		redirectJetpackDirectAuthError( query );
+		redirectJetpackDirectAuthError( context );
 	}
 
 	// Fall back to regular login form
