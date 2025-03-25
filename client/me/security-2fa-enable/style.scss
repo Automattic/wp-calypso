@@ -18,9 +18,25 @@
 	margin-top: 10px;
 }
 
-.security-2fa-enable__time-code {
+.security-2fa-enable__one-time-code-container {
+	display: flex;
+	align-items: center;
+	margin: 6px 0;
+	position: relative;
+}
+
+.security-2fa-enable__one-time-code {
 	font-weight: 600;
 	font-size: $font-body;
+	margin-right: 8px;
+}
+
+.security-2fa-enable__clipboard-button {
+	color: var(--color-text-subtle);
+	
+	&:hover {
+		color: var(--color-primary);
+	}
 }
 
 .security-2fa-enable__toggle {

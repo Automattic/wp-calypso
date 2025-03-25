@@ -26,7 +26,7 @@ import {
 } from './plugin-bundle-data';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
-const getNextStep = ( currentStep: string, steps: StepperStep[] ): string | undefined => {
+const getNextStep = ( currentStep: string, steps: readonly StepperStep[] ): string | undefined => {
 	const stepsIndex = steps.map( ( step ) => step.slug );
 	const currentStepIndex = stepsIndex.indexOf( currentStep );
 	const nextStep = stepsIndex[ currentStepIndex + 1 ];

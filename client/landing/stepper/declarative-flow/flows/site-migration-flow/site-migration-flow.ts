@@ -34,10 +34,11 @@ const siteMigration: Flow = {
 	__experimentalUseSessions: true,
 
 	useSideEffect() {
-		const { setIntent } = useDispatch( ONBOARD_STORE );
+		const { setIntent, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 		useEffect( () => {
+			resetOnboardStore();
 			setIntent( Onboard.SiteIntent.SiteMigration );
-		}, [] );
+		}, [ resetOnboardStore, setIntent ] );
 		const { set, get } = useFlowState();
 		const urlQueryParams = useQuery();
 		const ref = urlQueryParams.get( 'ref' );
@@ -55,7 +56,6 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
 			STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN,
 			STEPS.SITE_MIGRATION_INSTRUCTIONS,
-			STEPS.SITE_MIGRATION_STARTED,
 			STEPS.ERROR,
 			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
 			STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS,
@@ -99,7 +99,7 @@ const siteMigration: Flow = {
 		return { state: AssertConditionState.SUCCESS };
 	},
 
-	useStepNavigation( currentStep, _navigate ) {
+	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
 		const { siteId } = useSiteData();
 		const variantSlug = this.variantSlug;
@@ -120,10 +120,6 @@ const siteMigration: Flow = {
 
 		const exitFlow = ( to: string ) => {
 			return window.location.assign( addQueryArgs( { sessionId }, to ) );
-		};
-
-		const navigate = ( to: string, state?: Parameters< typeof _navigate >[ 1 ] ) => {
-			return _navigate( addQueryArgs( { sessionId }, to ), state );
 		};
 
 		// Call triggerGuidesForStep for the current step
@@ -367,7 +363,7 @@ const siteMigration: Flow = {
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
 					if ( providedDependencies?.goToCheckout ) {
-						let redirectAfterCheckout = STEPS.SITE_MIGRATION_INSTRUCTIONS.slug;
+						let redirectAfterCheckout: string = STEPS.SITE_MIGRATION_INSTRUCTIONS.slug;
 
 						if ( urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
 							redirectAfterCheckout = STEPS.SITE_MIGRATION_CREDENTIALS.slug;
@@ -403,16 +399,20 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
-					return navigate(
-						addQueryArgs(
-							{
-								siteId,
-								siteSlug,
-								from: fromQueryParam,
-							},
-							STEPS.SITE_MIGRATION_STARTED.slug
-						)
-					);
+					// User decided to ask for an assisted migration - try to collect credentials.
+					if ( providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
+						return navigate(
+							addQueryArgs(
+								{
+									siteId,
+									from: fromQueryParam,
+									siteSlug,
+								},
+								STEPS.SITE_MIGRATION_CREDENTIALS.slug
+							)
+						);
+					}
+					return exitFlow( addQueryArgs( { ref: 'site-migration' }, `/overview/${ siteSlug }` ) );
 				}
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {

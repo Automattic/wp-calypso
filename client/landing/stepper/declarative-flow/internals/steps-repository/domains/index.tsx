@@ -39,7 +39,16 @@ import type { Step } from '../../types';
 import type { DomainSuggestion } from '@automattic/data-stores';
 import './style.scss';
 
-const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
+const DomainsStep: Step< {
+	submits:
+		| {
+				freeDomain?: boolean;
+				domainName?: string;
+				productSlug?: string;
+				domainItem?: DomainSuggestion;
+		  }
+		| { deferDomainSelection: true };
+} > = function DomainsStep( { navigation, flow } ) {
 	const { setHideFreePlan, setDomainCartItem, setDomain } = useDispatch( ONBOARD_STORE );
 	const { __ } = useI18n();
 
@@ -306,12 +315,25 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		return ! isCopySiteFlow( flow );
 	};
 
-	const Container = [ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( flow )
-		? HundredYearPlanStepWrapper
-		: StepContainer;
-
+	if ( [ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( flow ) ) {
+		return (
+			<HundredYearPlanStepWrapper
+				stepName="domains"
+				flowName={ flow as string }
+				stepContent={ <div className="domains__content">{ renderContent() }</div> }
+				formattedHeader={
+					<FormattedHeader
+						id="domains-header"
+						align="center"
+						headerText={ getHeaderText() }
+						subHeaderText={ getSubHeaderText() }
+					/>
+				}
+			/>
+		);
+	}
 	return (
-		<Container
+		<StepContainer
 			stepName="domains"
 			isWideLayout
 			hideBack={ shouldHideBackButton() }

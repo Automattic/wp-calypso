@@ -9,7 +9,6 @@ import {
 	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	REBLOGGING_FLOW,
 	SITE_MIGRATION_FLOW,
-	MIGRATION_SIGNUP_FLOW,
 	ENTREPRENEUR_FLOW,
 	HOSTED_SITE_MIGRATION_FLOW,
 	NEW_HOSTED_SITE_FLOW_USER_INCLUDED,
@@ -89,7 +88,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		),
 
 	[ 'hundred-year-plan' ]: () =>
-		import( /* webpackChunkName: "hundred-year-plan" */ './flows/reblogging/reblogging' ),
+		import(
+			/* webpackChunkName: "hundred-year-plan" */ './flows/hundred-year-plan/hundred-year-plan'
+		),
 
 	'domain-user-transfer': () =>
 		import(
@@ -97,14 +98,8 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		),
 
 	[ REBLOGGING_FLOW ]: () =>
-		import(
-			/* webpackChunkName: "reblogging-flow" */ './flows/site-migration-flow/site-migration-flow'
-		),
+		import( /* webpackChunkName: "reblogging-flow" */ './flows/reblogging/reblogging' ),
 
-	[ MIGRATION_SIGNUP_FLOW ]: () =>
-		import(
-			/* webpackChunkName: "migration-signup" */ './flows/migration-signup/migration-signup'
-		),
 	[ SITE_MIGRATION_FLOW ]: () =>
 		import(
 			/* webpackChunkName: "site-migration-flow" */ './flows/site-migration-flow/site-migration-flow'

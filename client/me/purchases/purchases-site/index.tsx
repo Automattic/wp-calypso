@@ -11,7 +11,7 @@ import { getSite } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
 import PurchaseItem from '../purchase-item';
 import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase, GetManagePurchaseUrlFor } from 'calypso/lib/purchases/types';
 
 import './style.scss';
 
@@ -22,11 +22,10 @@ export default function PurchasesSite(
 				siteId?: number;
 		  }
 		| {
-				getManagePurchaseUrlFor?: ( slug: string, purchaseId: number ) => string;
+				getManagePurchaseUrlFor?: GetManagePurchaseUrlFor;
 				isPlaceholder?: false;
 				siteId: number;
 				purchases: Purchase[];
-				name: string | undefined;
 				slug: string;
 				cards: StoredPaymentMethod[];
 				showSite?: boolean;
@@ -41,7 +40,6 @@ export default function PurchasesSite(
 		getManagePurchaseUrlFor = managePurchase,
 		siteId,
 		purchases,
-		name,
 		slug,
 		cards,
 		showSite = false,
@@ -74,7 +72,6 @@ export default function PurchasesSite(
 						isJetpack={ isJetpackPlan( purchase ) || isJetpackProduct( purchase ) }
 						site={ site }
 						showSite={ showSite }
-						name={ name }
 						isBackupMethodAvailable={ isBackupMethodAvailable }
 					/>
 				);

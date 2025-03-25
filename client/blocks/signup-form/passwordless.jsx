@@ -320,6 +320,7 @@ class PasswordlessSignupForm extends Component {
 				>
 					{ submitButtonText }
 				</Button>
+				{ this.props.secondaryFooterButton }
 			</LoggedOutFormFooter>
 		);
 	}
@@ -330,6 +331,12 @@ class PasswordlessSignupForm extends Component {
 
 	render() {
 		const { errorMessages, isSubmitting } = this.state;
+
+		const terms = ! this.props.disableTosText && this.props.renderTerms?.();
+
+		const elements = this.props.secondaryFooterButton
+			? [ this.formFooter(), terms ]
+			: [ terms, this.formFooter() ];
 
 		return (
 			<div className="signup-form__passwordless-form-wrapper">
@@ -353,8 +360,7 @@ class PasswordlessSignupForm extends Component {
 						/>
 						{ this.props.children }
 					</ValidationFieldset>
-					{ ! this.props.disableTosText && this.props.renderTerms?.() }
-					{ this.formFooter() }
+					{ elements }
 				</LoggedOutForm>
 			</div>
 		);

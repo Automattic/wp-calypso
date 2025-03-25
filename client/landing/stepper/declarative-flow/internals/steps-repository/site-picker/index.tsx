@@ -21,7 +21,13 @@ import type { SiteExcerptData } from '@automattic/sites';
 
 import './styles.scss';
 
-const SitePickerStep: Step = function SitePickerStep( { navigation, flow } ) {
+const SitePickerStep: Step< {
+	submits: {
+		action: 'update-query' | 'create-site' | 'select-site';
+		queryParams?: Partial< SitesDashboardQueryParams >;
+		site?: SiteExcerptData;
+	};
+} > = function SitePickerStep( { navigation, flow } ) {
 	const { __ } = useI18n();
 	const urlQueryParams = useQuery();
 	const page = Number( urlQueryParams.get( 'page' ) ) || 1;

@@ -547,6 +547,10 @@ $image-height: 47px;
 		color: var(--studio-gray-50);
 	}
 
+	.two-factor-authentication__verification-code-form > p {
+		text-align: left;
+	}
+
 	.login__form .login__form-userdata label {
 		color: var(--studio-gray-60);
 	}
@@ -570,10 +574,15 @@ $image-height: 47px;
 	}
 
 	.two-factor-authentication__verification-code-form.card {
+		padding-top: 0;
 		padding-bottom: 0;
 
 		button.button {
-			margin-bottom: 16px;
+			margin: 0 0 4px;
+		}
+
+		button.button.is-primary {
+			font-size: $font-body-small;
 		}
 	}
 

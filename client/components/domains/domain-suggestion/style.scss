@@ -172,6 +172,11 @@
 	@include breakpoint-deprecated( ">800px" ) {
 		max-width: 55%;
 	}
+
+	&.has-badges {
+		display: flex;
+    	align-items: center;
+	}
 }
 
 .domain-registration-suggestion__title-wrapper {
@@ -332,13 +337,16 @@
 	max-width: 100%;
 }
 
-body.is-section-stepper,
-body.is-section-signup {
-	svg {
+body.is-section-stepper:not(:has(.step-container-v2)),
+body.is-section-signup:not(:has(.step-container-v2)) {
+	svg:not(.jetpack-logo) {
 		padding-top: 0;
 		margin-right: 0;
 	}
+}
 
+body.is-section-stepper,
+body.is-section-signup {
 	.domain-registration-suggestion__badges {
 		margin-left: 0;
 		margin-bottom: 4px;

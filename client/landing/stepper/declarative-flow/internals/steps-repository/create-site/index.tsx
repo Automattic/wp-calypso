@@ -7,13 +7,13 @@ import {
 	addProductsToCart,
 	createSiteWithCart,
 	isCopySiteFlow,
-	isMigrationSignupFlow,
 	isEntrepreneurFlow,
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
 	isReadymadeFlow,
 	isStartWritingFlow,
 	isOnboardingFlow,
+	isHostedSiteMigrationFlow,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -144,10 +144,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	);
 	const urlQueryParams = useQuery();
 	const skipMigration = urlQueryParams.get( 'skipMigration' ) || '';
-	const useThemeHeadstart =
-		! isStartWritingFlow( flow ) &&
-		! isNewHostedSiteCreationFlow( flow ) &&
-		! isMigrationSignupFlow( flow );
+	const useThemeHeadstart = ! isStartWritingFlow( flow ) && ! isNewHostedSiteCreationFlow( flow );
 	const shouldGoToCheckout = Boolean( planCartItem );
 
 	async function createSite() {
@@ -169,7 +166,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			};
 		}
 
-		const siteIntent = isMigrationSignupFlow( flow ) ? 'migration' : '';
+		const siteIntent = isHostedSiteMigrationFlow( flow ) ? 'migration' : '';
 
 		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
 		const site = await createSiteWithCart(

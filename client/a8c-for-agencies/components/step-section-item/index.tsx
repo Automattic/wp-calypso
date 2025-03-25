@@ -20,7 +20,6 @@ interface StepSectionItemProps {
 	iconClassName?: string;
 	isNewLayout?: boolean;
 	stepNumber?: number;
-	applyCoreStyles?: boolean;
 }
 
 export default function StepSectionItem( {
@@ -33,7 +32,6 @@ export default function StepSectionItem( {
 	iconClassName,
 	isNewLayout = false,
 	stepNumber,
-	applyCoreStyles = false,
 }: StepSectionItemProps ) {
 	const status = <StatusBadge statusProps={ statusProps } />;
 
@@ -48,9 +46,7 @@ export default function StepSectionItem( {
 	);
 
 	return (
-		<div
-			className={ clsx( 'step-section-item', className, { 'is-core-styles': applyCoreStyles } ) }
-		>
+		<div className={ clsx( 'step-section-item', className ) }>
 			{ icon && (
 				<div className={ clsx( 'step-section-item__icon', iconClassName ) }>
 					<Icon className="sidebar__menu-icon" icon={ icon } size={ ICON_SIZE } />

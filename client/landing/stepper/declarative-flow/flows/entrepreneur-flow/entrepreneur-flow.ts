@@ -15,7 +15,7 @@ import { USER_STORE, ONBOARD_STORE } from '../../../stores';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { ENTREPRENEUR_TRIAL_SURVEY_KEY } from '../../internals/steps-repository/segmentation-survey';
-import type { Flow, ProvidedDependencies } from '../../internals/types';
+import type { Flow, ProvidedDependencies, StepperStep } from '../../internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 const SEGMENTATION_SURVEY_SLUG = 'start';
 
@@ -28,14 +28,17 @@ const entrepreneurFlow: Flow = {
 		return [
 			// Replacing the `segmentation-survey` slug with `start` as having the
 			// word `survey` in the address bar might discourage users from continuing.
-			{ ...STEPS.SEGMENTATION_SURVEY, ...{ slug: SEGMENTATION_SURVEY_SLUG } },
+			{
+				...STEPS.SEGMENTATION_SURVEY,
+				...{ slug: SEGMENTATION_SURVEY_SLUG as StepperStep[ 'slug' ] },
+			},
 			STEPS.TRIAL_ACKNOWLEDGE,
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PROCESSING,
 			STEPS.WAIT_FOR_ATOMIC,
 			STEPS.WAIT_FOR_PLUGIN_INSTALL,
 			STEPS.ERROR,
-		];
+		] as const;
 	},
 
 	useStepNavigation( currentStep, navigate ) {
@@ -186,9 +189,10 @@ const entrepreneurFlow: Flow = {
 		return { goBack, submit };
 	},
 
-	useSideEffect() {
+	useSideEffect( currentStepSlug ) {
 		const isLoggedIn = useSelector( isUserLoggedIn );
 
+		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
 		useEffect( () => {
 			// We need to store the anonymous user ID in localStorage because
 			// we need to pass it to the server on site creation, i.e. after the user signs up or logs in.
@@ -197,6 +201,13 @@ const entrepreneurFlow: Flow = {
 				anonIdCache.store( anonymousUserId );
 			}
 		}, [ isLoggedIn ] );
+
+		useEffect( () => {
+			// We only need to reset the store when the flow is mounted.
+			if ( ! currentStepSlug ) {
+				resetOnboardStore();
+			}
+		}, [ currentStepSlug, resetOnboardStore ] );
 	},
 };
 
