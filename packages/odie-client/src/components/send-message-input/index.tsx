@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import {
@@ -6,7 +7,7 @@ import {
 } from '@automattic/zendesk-client';
 import { DropZone, Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { useCallback, useRef, useState } from '@wordpress/element';
+import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { SendMessageIcon } from '../../assets/send-message-icon';
@@ -15,10 +16,13 @@ import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../hooks';
 import { Message } from '../../types';
 import { zendeskMessageConverter } from '../../utils';
+import { SpeechToText } from '../speech-to-text/speech-to-text';
 import { AttachmentButton } from './attachment-button';
 import { ResizableTextarea } from './resizable-textarea';
 
 import './style.scss';
+
+const speechToTextFeatureFlagEnabled = config.isEnabled( 'help-center-speech-to-text' );
 
 const getFileType = ( file: File ) => {
 	if ( file.type.startsWith( 'image/' ) ) {
@@ -67,6 +71,7 @@ export const OdieSendMessageButton = () => {
 	const isChatBusy = chat.status === 'loading' || chat.status === 'sending';
 	const [ isMessageSizeValid, setIsMessageSizeValid ] = useState( true );
 	const [ submitDisabled, setSubmitDisabled ] = useState( true );
+	const [ transcription, setTranscription ] = useState< string >( '' );
 
 	const { data: authData } = useAuthenticateZendeskMessaging(
 		isUserEligibleForPaidSupport,
@@ -192,6 +197,16 @@ export const OdieSendMessageButton = () => {
 
 	const showAttachmentButton = chat.conversationId && inferredClientId;
 
+	useEffect( () => {
+		if ( transcription ) {
+			if ( inputRef.current!.value ) {
+				inputRef.current!.value += ' ';
+			}
+			inputRef.current!.value += transcription;
+			setTranscription( '' );
+		}
+	}, [ transcription ] );
+
 	return (
 		<>
 			{ ! isMessageSizeValid && (
@@ -228,6 +243,15 @@ export const OdieSendMessageButton = () => {
 					<button type="submit" className={ buttonClasses } disabled={ submitDisabled }>
 						<SendMessageIcon />
 					</button>
+					{ speechToTextFeatureFlagEnabled && (
+						<SpeechToText
+							shouldDisableInputField={ isChatBusy }
+							onReceiveTranscribedText={ ( text: string ) => {
+								setSubmitDisabled( false );
+								setTranscription( text.replace( /^"(.*)"$/, '$1' ) );
+							} }
+						/>
+					) }
 				</form>
 			</div>
 			{ showAttachmentButton && (
