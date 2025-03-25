@@ -32,8 +32,9 @@ export default function AsyncDomainStepWrapper( props: AsyncDomainStepWrapperPro
 			href={ backUrl }
 			rel={ isExternalBackUrl ? 'external' : '' }
 			onClick={ goBack }
-			label={ backLabelText }
-		/>
+		>
+			{ backLabelText }
+		</Step.BackButton>
 	);
 
 	return (

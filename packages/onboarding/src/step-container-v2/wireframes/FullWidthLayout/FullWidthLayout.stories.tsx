@@ -22,7 +22,7 @@ export const ThemePreview = () => {
 	const isMediumViewport = useViewportMatch( 'small', '>=' );
 	const isLargeViewport = useViewportMatch( 'large', '>=' );
 
-	const backButton = <BackButton label="Back" />;
+	const backButton = <BackButton>Back</BackButton>;
 
 	return (
 		<FullWidthLayout
@@ -56,8 +56,8 @@ const FontsBar = () => {
 export const ThemePreviewFonts = () => {
 	const isMediumViewport = useViewportMatch( 'large', '>=' );
 
-	const backButton = <BackButton label="Back" />;
-	const nextButton = <PrimaryButton label="Save fonts" />;
+	const backButton = <BackButton>Back</BackButton>;
+	const nextButton = <PrimaryButton>Save fonts</PrimaryButton>;
 
 	return (
 		<FullWidthLayout

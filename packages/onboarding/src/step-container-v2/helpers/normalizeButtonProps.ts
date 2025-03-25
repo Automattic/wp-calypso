@@ -11,14 +11,12 @@ export const normalizeButtonProps = < T extends ComponentProps< typeof Button > 
 		return {
 			...standardProps,
 			onClick: button.onClick,
-			children: standardProps.label,
 		};
 	}
 
 	return {
 		...standardProps,
 		...button,
-		children: button.label ?? standardProps.label,
 		className: clsx( standardProps.className, button.className ),
 	};
 };
