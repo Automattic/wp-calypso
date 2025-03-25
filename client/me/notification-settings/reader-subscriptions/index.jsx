@@ -1,4 +1,4 @@
-import { Card, FormLabel } from '@automattic/components';
+import { Card, FormLabel, Dialog } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
@@ -26,6 +26,10 @@ import { getReaderTeams } from 'calypso/state/teams/selectors';
 import SubscriptionManagementBackButton from '../subscription-management-back-button';
 
 class NotificationSubscriptions extends Component {
+	state = {
+		showConfirmModal: false,
+	};
+
 	handleClickEvent( action ) {
 		return () => this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
 	}
@@ -40,6 +44,32 @@ class NotificationSubscriptions extends Component {
 			this.props.recordGoogleEvent( 'Me', `Clicked ${ action } checkbox`, 'checked', +optionValue );
 		};
 	}
+
+	handleSubmit = ( event ) => {
+		event.preventDefault();
+		const isBlockingEmails = this.props.getSetting( 'subscription_delivery_email_blocked' );
+		const hasNewsletterSubscriptions = true; // You'll need to get this from props or state
+
+		if ( isBlockingEmails && hasNewsletterSubscriptions ) {
+			this.setState( { showConfirmModal: true } );
+			return;
+		}
+
+		this.props.submitForm( event );
+	};
+
+	handleModalCancel = () => {
+		// Create a synthetic event object that matches what updateSetting expects
+		const syntheticEvent = {
+			currentTarget: {
+				name: 'subscription_delivery_email_blocked',
+				value: false,
+			},
+		};
+
+		this.props.updateSetting( syntheticEvent );
+		this.setState( { showConfirmModal: false } );
+	};
 
 	getDeliveryHourLabel( hour ) {
 		return this.props.translate( '%(fromHour)s - %(toHour)s', {
@@ -82,7 +112,7 @@ class NotificationSubscriptions extends Component {
 					<form
 						id="notification-settings"
 						onChange={ this.props.markChanged }
-						onSubmit={ this.props.submitForm }
+						onSubmit={ this.handleSubmit }
 					>
 						<FormSectionHeading>
 							{ this.props.translate( 'Email subscriptions' ) }
@@ -266,6 +296,33 @@ class NotificationSubscriptions extends Component {
 						</FormButton>
 					</form>
 				</Card>
+
+				<Dialog
+					isVisible={ this.state.showConfirmModal }
+					onClose={ () => this.setState( { showConfirmModal: false } ) }
+					buttons={ [
+						{
+							action: 'cancel',
+							label: this.props.translate( 'Cancel' ),
+							onClick: () => this.handleModalCancel(),
+						},
+						{
+							action: 'confirm',
+							label: this.props.translate( 'Confirm' ),
+							onClick: () => {
+								this.setState( { showConfirmModal: false } );
+								this.props.submitForm();
+							},
+							isPrimary: true,
+						},
+					] }
+				>
+					<p>
+						{ this.props.translate(
+							"You have active newsletter subscriptions. Pausing emails means you won't receive any newsletter updates. Are you sure you want to continue?"
+						) }
+					</p>
+				</Dialog>
 			</Main>
 		);
 	}
