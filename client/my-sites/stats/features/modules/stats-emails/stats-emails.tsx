@@ -40,8 +40,8 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 	const statType = 'statsEmailsSummary';
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const supportUrl = isOdysseyStats
-		? localizeUrl( `${ JETPACK_SUPPORT_URL_SUBSCRIBERS }#emails-section` )
-		: localizeUrl( EMAILS_SUPPORT_URL );
+		? `${ JETPACK_SUPPORT_URL_SUBSCRIBERS }#emails-section`
+		: EMAILS_SUPPORT_URL;
 
 	const shouldGateStatsModule = useShouldGateStats( statType );
 

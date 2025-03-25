@@ -58,8 +58,8 @@ type HeaderToggleOptionType = {
 
 const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 const supportUrl = isOdysseyStats
-	? localizeUrl( `${ JETPACK_SUPPORT_URL_INSIGHTS }#comments` )
-	: localizeUrl( INSIGHTS_SUPPORT_URL );
+	? `${ JETPACK_SUPPORT_URL_INSIGHTS }#comments`
+	: INSIGHTS_SUPPORT_URL;
 
 const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => {
 	const translate = useTranslate();
@@ -131,7 +131,7 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a target="_blank" rel="noreferrer" href={ supportUrl } />,
+										link: <a target="_blank" rel="noreferrer" href={ localizeUrl( supportUrl ) } />,
 									},
 									context: 'Stats: Info box label when the Comments module is empty',
 								}
@@ -174,7 +174,7 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a target="_blank" rel="noreferrer" href={ supportUrl } />,
+										link: <a target="_blank" rel="noreferrer" href={ localizeUrl( supportUrl ) } />,
 									},
 									context: 'Stats: Info box label when the Comments module is empty',
 								}
