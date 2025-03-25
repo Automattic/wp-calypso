@@ -7,7 +7,7 @@ import { resolveBlueprintFromURL } from './resolve-blueprint-from-url';
 const OPFS_PATH_PREFIX = '/wpcom-onboarding';
 const DEFAULT_BLUEPRINT: Blueprint = {
 	preferredVersions: {
-		php: '8.3',
+		php: '8.3', // always overwritten, when blueprints constants are not used directly
 		wp: 'latest',
 	},
 	features: {
@@ -88,7 +88,7 @@ const PREDEFINED_BLUEPRINTS: Record< string, Blueprint > = {
 	// Add more predefined blueprints here as needed
 };
 
-async function getBlueprintFromUrl(): Blueprint {
+async function getBlueprintFromUrl( recommendedPhpVersion: string ): Blueprint {
 	const url = new URL( window.location.href );
 	const predefinedBlueprintName = url.searchParams.get( 'blueprint' );
 
@@ -103,11 +103,35 @@ async function getBlueprintFromUrl(): Blueprint {
 		...DEFAULT_BLUEPRINT,
 		...blueprint,
 		steps: [ ...( DEFAULT_BLUEPRINT.steps || [] ), ...( blueprint.steps || [] ) ],
+		preferredVersions: {
+			wp: 'latest',
+			php: recommendedPhpVersion,
+		},
 	};
 }
 
+function getDefaultBlueprint( recommendedPhpVersion: string ): Blueprint {
+	return {
+		...DEFAULT_BLUEPRINT,
+		preferredVersions: {
+			wp: 'latest',
+			php: recommendedPhpVersion,
+		},
+	};
+}
+
+async function getBlueprintForBoot(
+	isWordPressInstalled: boolean,
+	recommendedPhpVersion: string
+): Blueprint {
+	return ! isWordPressInstalled
+		? await getBlueprintFromUrl( recommendedPhpVersion )
+		: getDefaultBlueprint( recommendedPhpVersion );
+}
+
 export async function initializeWordPressPlayground(
-	iframe: HTMLIFrameElement
+	iframe: HTMLIFrameElement,
+	recommendedPhpVersion: string
 ): Promise< PlaygroundClient > {
 	let isWordPressInstalled = false;
 
@@ -135,7 +159,7 @@ export async function initializeWordPressPlayground(
 		const client = await startPlaygroundWeb( {
 			iframe,
 			remoteUrl: 'https://playground.wordpress.net/remote.html',
-			blueprint: ! isWordPressInstalled ? await getBlueprintFromUrl() : DEFAULT_BLUEPRINT,
+			blueprint: getBlueprintForBoot( isWordPressInstalled, recommendedPhpVersion ),
 			shouldInstallWordPress: ! isWordPressInstalled,
 			mounts: [ mountDescriptor ],
 		} );

@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { usePhpVersions } from 'calypso/data/php-versions/use-php-versions';
 import { initializeWordPressPlayground } from '../../lib/initialize-playground';
 import type { PlaygroundClient } from '@wp-playground/client';
 export function PlaygroundIframe( {
@@ -11,6 +12,7 @@ export function PlaygroundIframe( {
 	setPlaygroundClient: ( client: PlaygroundClient ) => void;
 } ) {
 	const iframeRef = useRef< HTMLIFrameElement >( null );
+	const recommendedPHPVersion = usePhpVersions().recommendedValue;
 
 	useEffect( () => {
 		if ( ! iframeRef.current ) {
@@ -21,9 +23,11 @@ export function PlaygroundIframe( {
 			return;
 		}
 
-		initializeWordPressPlayground( iframeRef.current ).then( ( playgroundClient ) => {
-			setPlaygroundClient( playgroundClient );
-		} );
+		initializeWordPressPlayground( iframeRef.current, recommendedPHPVersion ).then(
+			( playgroundClient ) => {
+				setPlaygroundClient( playgroundClient );
+			}
+		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
