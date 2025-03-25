@@ -213,7 +213,13 @@ export function qrCodeLogin( context, next ) {
 }
 
 export async function jetpackGoogleAuth( context, next ) {
-	const { query } = context;
+	const { query, isServerSide } = context;
+
+	// Do not continue if it's server side
+	if ( isServerSide ) {
+		return next();
+	}
+
 	const redirectUri = `https://${ window.location.host }${ loginPath( {
 		socialService: 'google',
 	} ) }`;
@@ -276,14 +282,14 @@ export async function jetpackGoogleAuth( context, next ) {
 }
 
 export async function jetpackGoogleAuthCallback( context, next ) {
-	const { query } = context;
+	const { query, isServerSide } = context;
 
 	const code = query.code;
 	const stateString = query.state;
 	const error = query.error;
 
-	// Not a redirect from Google if no code or error present
-	if ( ! code && ! error ) {
+	// Not a redirect from Google if no code or error present, or if it's server side
+	if ( ( ! code && ! error ) || isServerSide ) {
 		return next();
 	}
 
@@ -401,7 +407,13 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 }
 
 export async function jetpackAppleAuth( context, next ) {
-	const { query } = context;
+	const { query, isServerSide } = context;
+
+	// Do not continue if it's server side
+	if ( isServerSide ) {
+		return next();
+	}
+
 	const redirectUri = `https://${ window.location.host }${ loginPath( {
 		socialService: 'apple',
 	} ) }`;
