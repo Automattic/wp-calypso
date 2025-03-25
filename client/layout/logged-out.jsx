@@ -13,6 +13,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
+import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
@@ -33,6 +34,7 @@ import {
 import { createAccountUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getOnboardingUrl as getPatternLibraryOnboardingUrl } from 'calypso/my-sites/patterns/paths';
+import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getRedirectToOriginal, isTwoFactorEnabled } from 'calypso/state/login/selectors';
 import {
@@ -372,7 +374,8 @@ export default withCurrentRoute(
 				! ( currentSection || currentRoute ) ||
 				! masterbarIsVisible( state ) ||
 				noMasterbarForSection ||
-				noMasterbarForRoute;
+				noMasterbarForRoute ||
+				( sectionName === 'checkout' && shouldUseStepContainerV2( getSignupCompleteFlowName() ) );
 			const twoFactorEnabled = isTwoFactorEnabled( state );
 
 			const colorScheme = isWooJPC ? getColorSchemeFromCurrentQuery( currentQuery ) : null;

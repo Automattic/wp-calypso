@@ -20,6 +20,7 @@ import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
+import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import HtmlIsIframeClassname from 'calypso/layout/html-is-iframe-classname';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
@@ -31,6 +32,7 @@ import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
+import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { isOffline } from 'calypso/state/application/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
@@ -431,7 +433,8 @@ export default withCurrentRoute(
 			isWpMobileApp() ||
 			isWcMobileApp() ||
 			isJetpackCloud() ||
-			isA8CForAgencies();
+			isA8CForAgencies() ||
+			( sectionName === 'checkout' && shouldUseStepContainerV2( getSignupCompleteFlowName() ) );
 		const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 		const isJetpackWooDnaFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
