@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import userEvent from '@testing-library/user-event';

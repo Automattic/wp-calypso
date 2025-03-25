@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { render, fireEvent, getByText, getByTestId, queryByText } from '@testing-library/react';
 import '@testing-library/jest-dom';

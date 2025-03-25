@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from '@automattic/calypso-products';
 import { ResponseCart } from '@automattic/shopping-cart';

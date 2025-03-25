@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';

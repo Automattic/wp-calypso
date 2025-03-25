@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { PLAN_HOSTING_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { render } from '@testing-library/react';

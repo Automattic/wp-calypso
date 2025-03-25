@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { act, fireEvent, renderHook, render } from '@testing-library/react';
 import { useSteps } from '../use-steps';

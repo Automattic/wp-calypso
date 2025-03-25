@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { GridPlan } from '@automattic/plans-grid-next';
 import { renderHook } from '@testing-library/react';

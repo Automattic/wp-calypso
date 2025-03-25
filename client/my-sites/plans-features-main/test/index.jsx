@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 
 jest.mock( 'calypso/components/marketing-message', () => () => null );

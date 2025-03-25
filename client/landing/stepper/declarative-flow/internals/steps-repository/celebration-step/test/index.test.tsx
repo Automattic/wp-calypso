@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

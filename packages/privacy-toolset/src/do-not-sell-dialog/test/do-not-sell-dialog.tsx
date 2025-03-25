@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { render, fireEvent } from '@testing-library/react';
 import { unmountComponentAtNode } from 'react-dom';

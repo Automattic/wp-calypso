@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

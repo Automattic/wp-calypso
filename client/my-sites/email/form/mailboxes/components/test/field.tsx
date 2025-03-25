@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { fireEvent, render, renderHook, screen } from '@testing-library/react';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';

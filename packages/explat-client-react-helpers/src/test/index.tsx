@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 
 import { validExperimentAssignment } from '@automattic/explat-client/src/internal/test-common';

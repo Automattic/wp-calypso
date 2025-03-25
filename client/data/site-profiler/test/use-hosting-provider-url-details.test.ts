@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { renderHook } from '@testing-library/react';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';

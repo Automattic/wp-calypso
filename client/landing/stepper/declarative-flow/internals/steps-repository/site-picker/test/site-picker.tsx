@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import {
 	DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE,

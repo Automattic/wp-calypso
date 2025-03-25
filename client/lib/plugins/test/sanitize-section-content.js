@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { JSDOM } from 'jsdom';
 import fixtures from '../malformed-html-fixtures';

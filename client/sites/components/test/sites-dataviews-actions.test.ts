@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { SiteExcerptData } from '@automattic/sites';
 import { isActionEligible } from 'calypso/sites/components/sites-dataviews/actions';

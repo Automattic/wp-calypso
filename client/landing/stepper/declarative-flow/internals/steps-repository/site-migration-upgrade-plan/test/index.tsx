@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import {
 	PLAN_MIGRATION_TRIAL_MONTHLY,

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { RedirectOnboardingUserAfterPublishingPost } from '../redirect-onboarding-user-after-publishing-post';
 

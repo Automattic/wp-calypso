@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import config, { isEnabled } from '@automattic/calypso-config';
 import { screen, waitFor } from '@testing-library/react';

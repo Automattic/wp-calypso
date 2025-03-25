@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { shouldShowLaunchpadFirst } from '../should-show-launchpad-first';

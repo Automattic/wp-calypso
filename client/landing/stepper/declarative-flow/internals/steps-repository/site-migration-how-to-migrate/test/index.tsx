@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { screen } from '@testing-library/react';
 import { ComponentProps } from 'react';

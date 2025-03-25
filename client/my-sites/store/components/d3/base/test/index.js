@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { render, screen, waitFor } from '@testing-library/react';
 import D3Base from '../index';

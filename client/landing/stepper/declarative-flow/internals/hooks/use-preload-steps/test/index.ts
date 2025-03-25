@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { SiteDetails } from '@automattic/data-stores';
 import { renderHook } from '@testing-library/react';

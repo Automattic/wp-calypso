@@ -1,6 +1,6 @@
 /**
  * This is required to prevent "ReferenceError: window is not defined"
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 
 import {

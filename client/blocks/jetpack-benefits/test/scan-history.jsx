@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { render, screen } from '@testing-library/react';
 import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';

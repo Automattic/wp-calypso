@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { render, screen, act } from '@testing-library/react';
 import Modal from 'react-modal';

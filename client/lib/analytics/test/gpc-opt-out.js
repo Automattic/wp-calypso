@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { isRegionInCcpaZone } from '@automattic/calypso-analytics';
 import { mayWeTrackUserGpcInCcpaRegion } from '../utils';

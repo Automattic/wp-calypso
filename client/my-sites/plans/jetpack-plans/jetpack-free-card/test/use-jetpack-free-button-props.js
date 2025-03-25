@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),

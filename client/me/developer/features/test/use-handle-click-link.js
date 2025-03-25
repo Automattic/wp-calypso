@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { act, renderHook } from '@testing-library/react';
 import { useHandleClickLink } from '../use-handle-click-link';

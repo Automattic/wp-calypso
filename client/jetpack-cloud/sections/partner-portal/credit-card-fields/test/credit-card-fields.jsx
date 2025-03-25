@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { checkoutTheme } from '@automattic/composite-checkout';
 import { ThemeProvider } from '@emotion/react';

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';

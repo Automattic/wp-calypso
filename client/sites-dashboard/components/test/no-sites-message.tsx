@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { render, screen } from '@testing-library/react';
 import { NoSitesMessage } from '../no-sites-message';

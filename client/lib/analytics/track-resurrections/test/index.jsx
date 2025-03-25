@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import userSettings from 'calypso/state/user-settings/reducer';

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { screen } from '@testing-library/react';
 import invites from 'calypso/state/invites/reducer';

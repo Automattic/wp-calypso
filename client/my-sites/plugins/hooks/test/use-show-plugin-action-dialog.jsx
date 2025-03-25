@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { render, renderHook, cleanup } from '@testing-library/react';
 import { PluginActions } from '../types';

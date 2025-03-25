@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';

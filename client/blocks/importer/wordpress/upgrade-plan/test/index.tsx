@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { PLAN_MIGRATION_TRIAL_MONTHLY, PLAN_BUSINESS } from '@automattic/calypso-products';

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { safeImageUrl as safeImageUrlFake } from '@automattic/calypso-url';
 import { flow, trim } from 'lodash';

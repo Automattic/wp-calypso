@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { fireEvent, render } from '@testing-library/react';
 import FeaturedImage from '../featured-image';

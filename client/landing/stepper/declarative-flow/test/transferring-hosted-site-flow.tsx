@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { waitFor } from '@testing-library/react';
 import transferringHostedSite from '../flows/transferring-hosted-site-flow/transferring-hosted-site-flow';

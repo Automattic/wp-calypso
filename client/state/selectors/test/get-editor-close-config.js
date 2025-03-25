@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import getEditorCloseConfig from 'calypso/state/selectors/get-editor-close-config';
 import getPostTypeAllPostsUrl from 'calypso/state/selectors/get-post-type-all-posts-url';

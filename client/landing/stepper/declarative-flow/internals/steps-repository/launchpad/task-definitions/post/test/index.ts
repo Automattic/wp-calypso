@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { NEWSLETTER_FLOW, START_WRITING_FLOW } from '@automattic/onboarding';
 import { getFirstPostPublished } from '../';

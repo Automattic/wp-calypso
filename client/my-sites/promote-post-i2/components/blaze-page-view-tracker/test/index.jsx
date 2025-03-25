@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import config from '@automattic/calypso-config';
 import { render } from '@testing-library/react';

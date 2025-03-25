@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 
 import { JQUERY_URL, loadjQueryDependentScript, loadScript } from '../src';

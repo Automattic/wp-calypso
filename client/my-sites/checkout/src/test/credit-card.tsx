@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import { StripeHookProvider } from '@automattic/calypso-stripe';

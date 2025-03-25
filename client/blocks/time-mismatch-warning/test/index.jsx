@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { fireEvent, render, screen } from '@testing-library/react';
 import { useTranslate } from 'i18n-calypso';

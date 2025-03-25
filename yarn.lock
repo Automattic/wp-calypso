@@ -22899,6 +22899,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jest-fixed-jsdom@npm:^0.0.9":
+  version: 0.0.9
+  resolution: "jest-fixed-jsdom@npm:0.0.9"
+  peerDependencies:
+    jest-environment-jsdom: ">=28.0.0"
+  checksum: 908f798ccd963abc6d502f5546a13ce86c0381e32c2de2cb3efd3f47245e53223b7276555360645669181782dfd82dd69f76df41b52f4bb55e5ea4be5e2a8188
+  languageName: node
+  linkType: hard
+
 "jest-get-type@npm:^29.6.3":
   version: 29.6.3
   resolution: "jest-get-type@npm:29.6.3"
@@ -35987,6 +35996,7 @@ __metadata:
     jest: "npm:^29.7.0"
     jest-canvas-mock: "npm:^2.5.2"
     jest-environment-jsdom: "npm:^29.7.0"
+    jest-fixed-jsdom: "npm:^0.0.9"
     jest-teamcity: "npm:^1.12.0"
     jsdom: "npm:^20.0.1"
     loader-utils: "npm:^1.4.2"

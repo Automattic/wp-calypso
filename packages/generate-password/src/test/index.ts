@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 // eslint-disable-next-line import/no-nodejs-modules
 import { webcrypto } from 'node:crypto';

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { PLAN_FREE, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { screen, renderHook } from '@testing-library/react';

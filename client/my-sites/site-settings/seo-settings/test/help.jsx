@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';

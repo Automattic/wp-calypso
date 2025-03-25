@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { render } from '@testing-library/react';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';

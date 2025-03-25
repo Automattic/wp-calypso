@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { PRODUCT_JETPACK_SCAN } from '@automattic/calypso-products';
 import { FEATURE_TYPE_JETPACK_SCAN } from '@automattic/calypso-products/src/constants/features';

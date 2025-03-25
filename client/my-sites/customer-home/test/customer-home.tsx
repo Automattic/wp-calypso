@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';

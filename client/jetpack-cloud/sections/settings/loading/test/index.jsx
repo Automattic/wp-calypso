@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';

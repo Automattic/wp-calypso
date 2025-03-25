@@ -217,7 +217,7 @@ When stubbing DOM properties or methods in the global scope, make sure to includ
 
 ```javascript
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { myModuleFunctionThatOpensANewWindow } from '../my-module';
 

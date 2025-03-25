@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import config from '@automattic/calypso-config';
 import { Site } from '@automattic/data-stores';

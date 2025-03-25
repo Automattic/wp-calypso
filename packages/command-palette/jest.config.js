@@ -1,7 +1,7 @@
 module.exports = {
 	preset: '../../test/packages/jest-preset.js',
 	testMatch: [ '<rootDir>/test/**/*.{ts,tsx}' ],
-	testEnvironment: 'jsdom',
+	testEnvironment: 'jest-fixed-jsdom',
 	globals: { window: { navigator: { userAgent: 'jest' } } },
 	transformIgnorePatterns: [
 		'node_modules[\\/\\\\](?!.*\\.(?:gif|jpg|jpeg|png|svg|scss|sass|css)$)',

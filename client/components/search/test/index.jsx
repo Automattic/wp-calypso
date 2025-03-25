@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { createElement } from 'react';
 import TestUtils from 'react-dom/test-utils';

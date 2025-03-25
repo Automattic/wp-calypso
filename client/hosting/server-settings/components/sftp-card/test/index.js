@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 
 import { FEATURE_SFTP, FEATURE_SSH } from '@automattic/calypso-products';

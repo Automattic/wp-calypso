@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 
 import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';

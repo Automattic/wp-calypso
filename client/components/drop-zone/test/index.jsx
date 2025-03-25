@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { Component, createElement } from 'react';
 import ReactDom from 'react-dom';

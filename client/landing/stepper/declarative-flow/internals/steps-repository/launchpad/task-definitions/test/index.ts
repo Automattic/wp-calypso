@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { QueryClient } from '@tanstack/react-query';
 import { getEnhancedTasks } from '../';

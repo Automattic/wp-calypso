@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 
 import { getImporterEngines, getImportersAsImporterOption } from '../importer-config';

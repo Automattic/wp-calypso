@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 
 const EXAMPLE_SITE_SLUG = 'mysite.example';

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { renderHook, waitFor, act } from '@testing-library/react';
 import { useDeferredRender } from '../index';

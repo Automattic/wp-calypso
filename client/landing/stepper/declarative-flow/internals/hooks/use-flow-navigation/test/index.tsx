@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { StepperInternalSelect } from '@automattic/data-stores';
 import { act, screen } from '@testing-library/react';

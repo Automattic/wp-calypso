@@ -6,7 +6,7 @@ module.exports = {
 	rootDir: '../../client',
 	cacheDirectory: path.join( __dirname, '../../.cache/jest' ),
 	testPathIgnorePatterns: [ '<rootDir>/server/' ],
-
+	// testEnvironment: 'jest-fixed-jsdom',
 	moduleNameMapper: {
 		'^@automattic/calypso-config$': '<rootDir>/server/config/index.js',
 		'react-markdown': '<rootDir>/node_modules/react-markdown/react-markdown.min.js',

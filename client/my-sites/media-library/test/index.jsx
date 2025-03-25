@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import media from 'calypso/state/media/reducer';
 import { requestKeyringConnections as requestStub } from 'calypso/state/sharing/keyring/actions';

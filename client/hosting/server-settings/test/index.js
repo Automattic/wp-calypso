@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 jest.mock( 'calypso/components/data/document-head', () => 'document-head' );
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'page-view-tracker' );

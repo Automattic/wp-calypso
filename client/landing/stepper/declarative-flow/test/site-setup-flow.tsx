@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import siteSetupFlow from '../flows/site-setup-flow/site-setup-flow';

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';

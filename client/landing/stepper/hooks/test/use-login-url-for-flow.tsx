@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { addQueryArgs } from '@wordpress/url';
 import React from 'react';

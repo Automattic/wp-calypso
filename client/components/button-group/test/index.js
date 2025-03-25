@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { Button } from '@automattic/components';
 import { render, screen } from '@testing-library/react';

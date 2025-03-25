@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 
 import { FEATURE_WOOP, PLAN_FREE } from '@automattic/calypso-products';

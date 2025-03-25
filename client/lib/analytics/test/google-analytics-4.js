@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { TRACKING_IDS } from '../ad-tracking/constants';

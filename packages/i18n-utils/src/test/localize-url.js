@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 /* eslint-disable no-shadow -- shadowing localizeUrl makes tests readable */
 import { renderHook } from '@testing-library/react';

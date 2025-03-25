@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 
 import { withoutHttp, urlToSlug, urlToDomainAndPath } from '../http-utils';

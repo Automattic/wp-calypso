@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 jest.mock( 'calypso/sites/staging-site/components/staging-site-card', () => () => (
 	<div data-testid="staging-site-card">

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 
 import 'fake-indexeddb/auto'; // Polyfill indexedDB for this set of tests.

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { act, render, renderHook, waitFor } from '@testing-library/react';
 import { getLocaleData, subscribe } from '@wordpress/i18n';

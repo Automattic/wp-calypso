@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import flows from 'calypso/signup/config/flows';
 import mockedFlows from './fixtures/flows';

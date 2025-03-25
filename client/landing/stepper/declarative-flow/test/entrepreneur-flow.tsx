@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
 import { useEntrepreneurAdminDestination } from 'calypso/landing/stepper/hooks/use-entrepreneur-admin-destination';

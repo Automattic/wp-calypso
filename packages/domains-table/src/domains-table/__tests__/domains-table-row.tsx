@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { DomainData } from '@automattic/data-stores';
 import { fireEvent, screen, waitFor } from '@testing-library/react';

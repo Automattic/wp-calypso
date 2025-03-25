@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

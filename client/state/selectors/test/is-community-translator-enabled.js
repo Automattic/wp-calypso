@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 
 import canDisplayCommunityTranslator from 'calypso/state/selectors/can-display-community-translator';

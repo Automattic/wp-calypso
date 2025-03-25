@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 
 import { JETPACK_PRICING_PAGE } from '@automattic/urls';

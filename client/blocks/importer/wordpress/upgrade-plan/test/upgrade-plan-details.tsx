@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { PLAN_BUSINESS } from '@automattic/calypso-products';
 import { type PricingMetaForGridPlan } from '@automattic/data-stores';

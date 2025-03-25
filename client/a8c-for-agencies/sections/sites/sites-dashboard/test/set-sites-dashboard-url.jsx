@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { mockedSites } from '../../../../data/sites.ts';
 import { A4A_SITES_DASHBOARD_DEFAULT_CATEGORY } from '../../constants';

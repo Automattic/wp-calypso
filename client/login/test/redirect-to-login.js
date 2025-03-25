@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import redirectLoggedIn from 'calypso/login/redirect-logged-in/index.web';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { isEnabled } from '@automattic/calypso-config';
 import { renderHook } from '@testing-library/react';

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { renderHook } from '@testing-library/react';
 import defaultCalypsoI18n, { I18NContext } from 'i18n-calypso';

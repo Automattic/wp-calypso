@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import userEvent from '@testing-library/user-event';
 import preferences from 'calypso/state/preferences/reducer';

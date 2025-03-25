@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, renderHook, screen } from '@testing-library/react';

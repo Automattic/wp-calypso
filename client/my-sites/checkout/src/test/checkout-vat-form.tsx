@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { convertResponseCartToRequestCart } from '@automattic/shopping-cart';
 import { render, screen, waitFor } from '@testing-library/react';

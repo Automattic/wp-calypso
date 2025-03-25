@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { fireEvent, getByText, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

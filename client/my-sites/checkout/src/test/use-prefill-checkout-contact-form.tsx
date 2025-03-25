@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import { CheckoutProvider, CheckoutStep, CheckoutStepGroup } from '@automattic/composite-checkout';
 import {

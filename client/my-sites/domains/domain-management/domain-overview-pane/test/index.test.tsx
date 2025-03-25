@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment jest-fixed-jsdom
  */
 import page from '@automattic/calypso-router';
 import { render, screen, fireEvent } from '@testing-library/react';
