@@ -168,10 +168,10 @@ export function desktopLoginFinalize( context, next ) {
 export async function magicLogin( context, next ) {
 	const {
 		path,
-		query: { gravatar_flow, client_id, redirect_to },
+		query: { gravatar_flow, client_id, redirect_to, auto_trigger },
 	} = context;
 
-	if ( isUserLoggedIn( context.store.getState() ) ) {
+	if ( isUserLoggedIn( context.store.getState() ) && auto_trigger === undefined ) {
 		return login( context, next );
 	}
 
@@ -830,4 +830,10 @@ export function redirectLostPassword( context, next ) {
 	}
 
 	next();
+}
+
+export function redirectJetpackDirectAuthError( context ) {
+	const queryString = new URLSearchParams( context.query ).toString();
+	const redirectUrl = queryString ? `/log-in/jetpack/?${ queryString }` : '/log-in/jetpack/';
+	return context.redirect( 301, redirectUrl );
 }
