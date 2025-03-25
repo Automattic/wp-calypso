@@ -105,3 +105,21 @@ a.jetpack-cloud-sidebar__external-link {
 		right: 16px;
 	}
 }
+
+.jetpack-cloud-sidebar__all-sites {
+    display: flex;
+    flex: 1 0 auto;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.jetpack-cloud-sidebar__all-sites-icon {
+	margin-inline-end: 12px;
+}
+
+.jetpack-cloud-sidebar__all-sites-label {
+	font-size: .875rem;
+	font-weight: 500;
+	line-height: 1.3;
+	display: inline-flex;
+}

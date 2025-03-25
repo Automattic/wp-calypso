@@ -17,7 +17,6 @@ import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import UserFeedbackModalForm from '../user-feedback-modal-form';
 import SidebarHeader from './header';
-import JetpackCloudSiteSelector from './site-selector';
 
 import './style.scss';
 
@@ -88,7 +87,7 @@ const JetpackCloudSidebar = ( {
 
 	return (
 		<Sidebar className={ clsx( 'jetpack-cloud-sidebar', className ) }>
-			<SidebarHeader forceAllSitesView={ isJetpackManage } />
+			<SidebarHeader />
 
 			<SidebarMain>
 				<SidebarNavigator initialPath={ path }>
@@ -160,8 +159,6 @@ const JetpackCloudSidebar = ( {
 					) }
 				</ul>
 			</SidebarFooter>
-
-			<JetpackCloudSiteSelector />
 
 			<UserFeedbackModalForm show={ showUserFeedbackForm } onClose={ onCloseUserFeedbackForm } />
 		</Sidebar>

@@ -1,7 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
-import { Icon, chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -57,7 +56,6 @@ class Site extends Component {
 		homeLink: false,
 		// if homeLink is enabled
 		showHomeIcon: true,
-		showChevronDownIcon: false,
 		compact: false,
 
 		isP2Hub: false,
@@ -79,7 +77,6 @@ class Site extends Component {
 		siteId: PropTypes.number,
 		homeLink: PropTypes.bool,
 		showHomeIcon: PropTypes.bool,
-		showChevronDownIcon: PropTypes.bool,
 		compact: PropTypes.bool,
 		isP2Hub: PropTypes.bool,
 		isSiteP2: PropTypes.bool,
@@ -279,16 +276,7 @@ class Site extends Component {
 						size={ this.props.compact ? 24 : 32 }
 					/>
 					<div className="site__info">
-						{ ! this.props.showChevronDownIcon ? (
-							<div className="site__title">{ site.title }</div>
-						) : (
-							<div className="site__title-with-chevron-icon">
-								<span className="site__title">{ site.title }</span>
-								<span className="site__title-chevron-icon">
-									<Icon icon={ chevronDown } size={ 24 } />
-								</span>
-							</div>
-						) }
+						<div className="site__title">{ site.title }</div>
 						{ inlineBadges ? (
 							this.renderDomainAndInlineBadges()
 						) : (

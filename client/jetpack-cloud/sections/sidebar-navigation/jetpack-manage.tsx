@@ -98,13 +98,6 @@ const JetpackManageSidebar = ( { path }: { path: string } ) => {
 				preferenceName="jetpack-manage-sidebar-v2-dashboard-tour"
 				tours={ [
 					{
-						target: '.jetpack-cloud-sidebar__all-sites-icon',
-						title: translate( 'Switch Sites Easily' ),
-						description: translate(
-							'You can navigate through your individual site views from here.'
-						),
-					},
-					{
 						target: '.jetpack-cloud-sidebar__profile-dropdown-button-icon',
 						title: translate( 'Access Profile & Help Docs' ),
 						description: translate(

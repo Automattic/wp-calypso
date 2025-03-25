@@ -1,6 +1,5 @@
 import page from '@automattic/calypso-router';
 import { getUrlParts, getUrlFromParts, determineUrlType, format } from '@automattic/calypso-url';
-import { Button } from '@automattic/components';
 import Search from '@automattic/search';
 import clsx from 'clsx';
 import debugFactory from 'debug';
@@ -13,7 +12,6 @@ import { connect } from 'react-redux';
 import AllSites from 'calypso/blocks/all-sites';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
-import { addQueryArgs } from 'calypso/lib/url';
 import allSitesMenu from 'calypso/my-sites/sidebar/static-data/all-sites-menu';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -25,8 +23,6 @@ import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import { withSitesSortingPreference } from 'calypso/state/sites/hooks/with-sites-sorting';
 import { getSite, hasAllSitesList } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import JetpackAgencyAddSite from '../jetpack/add-new-site-button';
-import SiteSelectorAddSite from './add-site';
 import SitesList from './sites-list';
 import { getUserSiteCountForPlatform, getUserVisibleSiteCountForPlatform } from './utils';
 
@@ -39,11 +35,9 @@ const debug = debugFactory( 'calypso:site-selector' );
 export class SiteSelector extends Component {
 	static propTypes = {
 		isPlaceholder: PropTypes.bool,
-		isJetpackAgencyDashboard: PropTypes.bool,
 		sites: PropTypes.array,
 		siteBasePath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		wpcomSiteBasePath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
-		showAddNewSite: PropTypes.bool,
 		showAllSites: PropTypes.bool,
 		indicator: PropTypes.bool,
 		autoFocus: PropTypes.bool,
@@ -58,7 +52,6 @@ export class SiteSelector extends Component {
 		visibleSites: PropTypes.arrayOf( PropTypes.object ),
 		allSitesPath: PropTypes.string,
 		navigateToSite: PropTypes.func.isRequired,
-		showManageSitesButton: PropTypes.bool,
 		showHiddenSites: PropTypes.bool,
 		maxResults: PropTypes.number,
 		hasSiteWithPlugins: PropTypes.bool,
@@ -67,8 +60,6 @@ export class SiteSelector extends Component {
 
 	static defaultProps = {
 		sites: {},
-		showManageSitesButton: false,
-		showAddNewSite: false,
 		showAllSites: false,
 		showHiddenSites: false,
 		siteBasePath: false,
@@ -342,16 +333,6 @@ export class SiteSelector extends Component {
 			showManagePlugins: this.props.hasSiteWithPlugins,
 		} ).find( ( menuItem ) => menuItem.url === this.mapAllSitesPath( this.props.allSitesPath ) );
 
-		// Let's not display the all sites button if there is no multi-site context.
-		if ( this.props.showManageSitesButton && ! multiSiteContext ) {
-			return null;
-		}
-
-		// Let's not display the all sites button if we are already displaying a multi-site context page.
-		if ( this.props.showManageSitesButton && ! this.props.selectedSite ) {
-			return null;
-		}
-
 		this.visibleSites.push( ALL_SITES );
 
 		const isHighlighted = this.isHighlighted( ALL_SITES );
@@ -470,49 +451,6 @@ export class SiteSelector extends Component {
 							</span>
 						) }
 				</div>
-				{ ( this.props.showManageSitesButton || this.props.showAddNewSite ) && (
-					<div className="site-selector__actions">
-						{ this.props.showManageSitesButton && (
-							<Button
-								transparent
-								onClick={ this.onManageSitesClick }
-								href={ addQueryArgs(
-									{ search: this.state.searchTerm.length > 0 ? this.state.searchTerm : null },
-									'/sites'
-								) }
-							>
-								{ this.props.translate( 'Manage sites' ) }
-							</Button>
-						) }
-						{ this.props.showAddNewSite &&
-							( this.props.isJetpackAgencyDashboard ? (
-								<JetpackAgencyAddSite
-									onClickAddNewSite={ () =>
-										this.props.recordTracksEvent(
-											'calypso_jetpack_agency_dashboard_sidebar_add_new_site_click'
-										)
-									}
-									onClickWpcomMenuItem={ () =>
-										this.props.recordTracksEvent(
-											'calypso_jetpack_agency_dashboard_sidebar_create_wpcom_site_click'
-										)
-									}
-									onClickJetpackMenuItem={ () =>
-										this.props.recordTracksEvent(
-											'calypso_jetpack_agency_dashboard_sidebar_connect_jetpack_site_click'
-										)
-									}
-									onClickBluehostMenuItem={ () =>
-										this.props.recordTracksEvent(
-											'calypso_jetpack_agency_dashboard_sidebar_create_bluehost_site_click'
-										)
-									}
-								/>
-							) : (
-								<SiteSelectorAddSite />
-							) ) }
-					</div>
-				) }
 			</div>
 		);
 	}
