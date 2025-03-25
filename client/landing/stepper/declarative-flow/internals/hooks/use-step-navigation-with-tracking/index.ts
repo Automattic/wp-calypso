@@ -46,7 +46,8 @@ export const useStepNavigationWithTracking = ( {
 	 * If the previous step is defined in the store, and the current step is not the first step, we can go back.
 	 * We need to make sure we're not at the first step because `previousStep` is persisted and can be a step from another flow or another run of the current flow.
 	 */
-	const canUserGoBack = stepData?.previousStep && currentStepRoute !== stepSlugs[ 0 ];
+	const canUserGoBack =
+		stepData?.previousStep && currentStepRoute !== stepSlugs[ 0 ] && history.length > 1;
 
 	const tracksEventPropsFromFlow = flow.useTracksEventProps?.();
 
