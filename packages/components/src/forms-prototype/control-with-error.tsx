@@ -48,7 +48,7 @@ function UnforwardedControlWithError< C extends React.ReactElement >(
 
 	const validate = () => {
 		const message = onReportCustomValidity?.();
-		const validityTarget = getValidityTarget?.();
+		const validityTarget = getValidityTarget();
 		validityTarget?.setCustomValidity?.( message ?? '' );
 
 		const newErrorMessage = validityTarget?.validationMessage ?? '';
