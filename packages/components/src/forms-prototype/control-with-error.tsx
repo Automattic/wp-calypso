@@ -79,16 +79,16 @@ function UnforwardedControlWithError< C extends React.ReactElement >(
 	};
 
 	return (
-		<div className="a8c-use-validation" ref={ forwardedRef } onBlur={ onBlur }>
+		<div className="a8c-validated-control" ref={ forwardedRef } onBlur={ onBlur }>
 			{ cloneElement( render, {
 				label: required ? `${ render.props.label } (Required)` : render.props.label,
 				onChange,
 				required,
 			} ) }
 			{ errorMessage && (
-				<p className="a8c-use-validation__error">
+				<p className="a8c-validated-control__error">
 					<Icon
-						className="a8c-use-validation__error-icon"
+						className="a8c-validated-control__error-icon"
 						icon={ caution }
 						size={ 16 }
 						fill="currentColor"

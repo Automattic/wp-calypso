@@ -13,7 +13,7 @@ export const ValidatedCustomSelectControl = forwardRef<
 	const valueRef = useRef< Value >();
 
 	return (
-		<div className="a8c-use-validation__wrapper-with-error-delegate" ref={ forwardedRef }>
+		<div className="a8c-validated-control__wrapper-with-error-delegate" ref={ forwardedRef }>
 			<ControlWithError
 				required={ required }
 				render={

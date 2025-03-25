@@ -15,7 +15,7 @@ export const ValidatedToggleGroupControl = forwardRef<
 	const nameAttr = useId();
 
 	return (
-		<div className="a8c-use-validation__wrapper-with-error-delegate">
+		<div className="a8c-validated-control__wrapper-with-error-delegate">
 			<ControlWithError
 				required={ required }
 				render={

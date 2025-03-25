@@ -1,7 +1,7 @@
 @use '@wordpress/base-styles/colors';
 @use '@automattic/typography';
 
-.a8c-use-validation {
+.a8c-validated-control {
 	// For components based on InputBase
 	&:has(:is(input, select):user-invalid) .components-input-control__backdrop {
 		--wp-components-color-accent: #{colors.$alert-red};
@@ -21,7 +21,7 @@
 	}
 }
 
-.a8c-use-validation__wrapper-with-error-delegate {
+.a8c-validated-control__wrapper-with-error-delegate {
 	position: relative;
 
 	// For CustomSelectControl
@@ -36,7 +36,7 @@
 	}
 }
 
-.a8c-use-validation__error {
+.a8c-validated-control__error {
 	display: flex;
 	align-items: flex-start;
 	gap: 4px;
@@ -44,14 +44,14 @@
 	font-size: 0.75rem;
 	line-height: 16px; // matches the icon size
 	color: #{colors.$alert-red};
-	animation: a8c-use-validation__error-jump 0.2s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+	animation: a8c-validated-control__error-jump 0.2s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
 
-.a8c-use-validation__error-icon {
+.a8c-validated-control__error-icon {
 	flex-shrink: 0;
 }
 
-@keyframes a8c-use-validation__error-jump {
+@keyframes a8c-validated-control__error-jump {
 	0% {
 		transform: translateY(-4px);
 		opacity: 0;
