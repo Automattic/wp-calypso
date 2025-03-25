@@ -12,7 +12,6 @@ export default function useShouldRenderHelpCenterButton( {
 	const { data: geoData } = useGeoLocationQuery();
 	const { data: supportStatus } = useSupportStatus();
 
-	return true;
 	if ( isDIFMFlow( flowName ) ) {
 		if ( ! supportStatus?.availability.is_difm_chat_open ) {
 			return false;
