@@ -5,128 +5,140 @@ import { logToLogstash } from 'calypso/lib/logstash';
 import { resolveBlueprintFromURL } from './resolve-blueprint-from-url';
 
 const OPFS_PATH_PREFIX = '/wpcom-onboarding';
-const DEFAULT_BLUEPRINT: Blueprint = {
-	preferredVersions: {
-		php: '8.3', // always overwritten, when blueprints constants are not used directly
-		wp: 'latest',
-	},
-	features: {
-		networking: true,
-	},
-	login: true,
-};
 
-const PREDEFINED_BLUEPRINTS: Record< string, Blueprint > = {
-	woocommerce: {
-		...DEFAULT_BLUEPRINT,
-		landingPage: '/shop',
-		steps: [
-			{
-				step: 'installPlugin',
-				pluginData: {
-					resource: 'wordpress.org/plugins',
-					slug: 'woocommerce',
-				},
-				options: {
-					activate: true,
-				},
-			},
-			{
-				step: 'importWxr',
-				file: {
-					resource: 'url',
-					url: 'https://raw.githubusercontent.com/wordpress/blueprints/trunk/blueprints/woo-shipping/sample_products.xml',
-				},
-			},
-		],
-	},
-	2024: {
-		...DEFAULT_BLUEPRINT,
-		steps: [
-			{
-				step: 'installTheme',
-				themeData: {
-					resource: 'wordpress.org/themes',
-					slug: 'twentytwentyfour',
-				},
-				options: {
-					activate: true,
-				},
-			},
-		],
-	},
-	2023: {
-		...DEFAULT_BLUEPRINT,
-		steps: [
-			{
-				step: 'installTheme',
-				themeData: {
-					resource: 'wordpress.org/themes',
-					slug: 'twentytwentythree',
-				},
-				options: {
-					activate: true,
-				},
-			},
-		],
-	},
-	design1: {
-		...DEFAULT_BLUEPRINT,
-		steps: [
-			{
-				step: 'installTheme',
-				themeData: {
-					resource: 'wordpress.org/themes',
-					slug: 'variations',
-				},
-				options: {
-					activate: true,
-				},
-			},
-		],
-	},
-	// Add more predefined blueprints here as needed
-};
-
-async function getBlueprintFromUrl( recommendedPhpVersion: string ): Blueprint {
-	const url = new URL( window.location.href );
-	const predefinedBlueprintName = url.searchParams.get( 'blueprint' );
-
-	// If a predefined blueprint is specified and exists, use it
-	if ( predefinedBlueprintName && predefinedBlueprintName in PREDEFINED_BLUEPRINTS ) {
-		return PREDEFINED_BLUEPRINTS[ predefinedBlueprintName ];
-	}
-
-	const blueprint = await resolveBlueprintFromURL( url );
-
-	return {
-		...DEFAULT_BLUEPRINT,
-		...blueprint,
-		steps: [ ...( DEFAULT_BLUEPRINT.steps || [] ), ...( blueprint.steps || [] ) ],
+// Blueprint management is encapsulated in this closure
+const blueprintManager = ( () => {
+	const DEFAULT_BLUEPRINT: Blueprint = {
 		preferredVersions: {
+			php: '8.3',
 			wp: 'latest',
-			php: recommendedPhpVersion,
+		},
+		features: {
+			networking: true,
+		},
+		login: true,
+	};
+
+	const PREDEFINED_BLUEPRINTS: Record< string, Blueprint > = {
+		woocommerce: {
+			...DEFAULT_BLUEPRINT,
+			landingPage: '/shop',
+			steps: [
+				{
+					step: 'installPlugin',
+					pluginData: {
+						resource: 'wordpress.org/plugins',
+						slug: 'woocommerce',
+					},
+					options: {
+						activate: true,
+					},
+				},
+				{
+					step: 'importWxr',
+					file: {
+						resource: 'url',
+						url: 'https://raw.githubusercontent.com/wordpress/blueprints/trunk/blueprints/woo-shipping/sample_products.xml',
+					},
+				},
+			],
+		},
+		2024: {
+			...DEFAULT_BLUEPRINT,
+			steps: [
+				{
+					step: 'installTheme',
+					themeData: {
+						resource: 'wordpress.org/themes',
+						slug: 'twentytwentyfour',
+					},
+					options: {
+						activate: true,
+					},
+				},
+			],
+		},
+		2023: {
+			...DEFAULT_BLUEPRINT,
+			steps: [
+				{
+					step: 'installTheme',
+					themeData: {
+						resource: 'wordpress.org/themes',
+						slug: 'twentytwentythree',
+					},
+					options: {
+						activate: true,
+					},
+				},
+			],
+		},
+		design1: {
+			...DEFAULT_BLUEPRINT,
+			steps: [
+				{
+					step: 'installTheme',
+					themeData: {
+						resource: 'wordpress.org/themes',
+						slug: 'variations',
+					},
+					options: {
+						activate: true,
+					},
+				},
+			],
 		},
 	};
-}
 
-function getDefaultBlueprint( recommendedPhpVersion: string ): Blueprint {
 	return {
-		...DEFAULT_BLUEPRINT,
-		preferredVersions: {
-			wp: 'latest',
-			php: recommendedPhpVersion,
+		async getBlueprintFromUrl( recommendedPhpVersion: string ): Blueprint {
+			const url = new URL( window.location.href );
+			const predefinedBlueprintName = url.searchParams.get( 'blueprint' );
+
+			// If a predefined blueprint is specified and exists, use it
+			if ( predefinedBlueprintName && predefinedBlueprintName in PREDEFINED_BLUEPRINTS ) {
+				const blueprint = PREDEFINED_BLUEPRINTS[ predefinedBlueprintName ];
+				return {
+					...blueprint,
+					preferredVersions: {
+						...blueprint.preferredVersions,
+						php: recommendedPhpVersion,
+					},
+				};
+			}
+
+			const blueprint = await resolveBlueprintFromURL( url );
+
+			return {
+				...DEFAULT_BLUEPRINT,
+				...blueprint,
+				steps: [ ...( DEFAULT_BLUEPRINT.steps || [] ), ...( blueprint.steps || [] ) ],
+				preferredVersions: {
+					wp: 'latest',
+					php: recommendedPhpVersion,
+				},
+			};
+		},
+
+		getDefaultBlueprint( recommendedPhpVersion: string ): Blueprint {
+			return {
+				...DEFAULT_BLUEPRINT,
+				preferredVersions: {
+					wp: 'latest',
+					php: recommendedPhpVersion,
+				},
+			};
 		},
 	};
-}
+} )();
 
 async function getBlueprintForBoot(
 	isWordPressInstalled: boolean,
 	recommendedPhpVersion: string
-): Blueprint {
+): Promise< Blueprint > {
 	return ! isWordPressInstalled
-		? await getBlueprintFromUrl( recommendedPhpVersion )
-		: getDefaultBlueprint( recommendedPhpVersion );
+		? await blueprintManager.getBlueprintFromUrl( recommendedPhpVersion )
+		: blueprintManager.getDefaultBlueprint( recommendedPhpVersion );
 }
 
 export async function initializeWordPressPlayground(
@@ -159,7 +171,7 @@ export async function initializeWordPressPlayground(
 		const client = await startPlaygroundWeb( {
 			iframe,
 			remoteUrl: 'https://playground.wordpress.net/remote.html',
-			blueprint: getBlueprintForBoot( isWordPressInstalled, recommendedPhpVersion ),
+			blueprint: await getBlueprintForBoot( isWordPressInstalled, recommendedPhpVersion ),
 			shouldInstallWordPress: ! isWordPressInstalled,
 			mounts: [ mountDescriptor ],
 		} );
