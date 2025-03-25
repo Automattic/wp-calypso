@@ -9,12 +9,7 @@
 	margin: 0;
 	display: flex;
 	flex-direction: column;
-
-	&:has(.vertical-align-center) {
-		.step-container-v2__top-bar-wrapper {
-			z-index: 1;
-		}
-	}
+	position: relative;
 
 	&__content-wrapper {
 		flex: 1;
@@ -34,12 +29,10 @@
 		&.vertical-align-center {
 			@include step-medium-viewport {
 				position: absolute;
-				inset: 0;
+				top: 50%;
+				transform: translateY(-50%);
 				width: 100%;
-				height: 100%;
-				padding-block: 1rem;
 				box-sizing: border-box;
-				justify-content: center;
 			}
 		}
 	}
