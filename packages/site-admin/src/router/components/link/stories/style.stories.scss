@@ -1,10 +1,9 @@
+@import '@wordpress/base-styles/colors';
+
 .story-link {
-	color: #4e4;
-	&:hover {
-		color: #8f8;
-	}
+	color: $alert-green;
 }
 
 strong {
-	color: #9acd32;
+	color: $alert-red;
 }
