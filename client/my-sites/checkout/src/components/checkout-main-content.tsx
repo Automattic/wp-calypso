@@ -823,21 +823,26 @@ export default function CheckoutMainContent( {
 	}
 
 	return (
-		<Step.FullWidthLayout
-			isMediumViewport={ isMediumViewport }
-			hasContentPadding={ false }
-			topBar={ <Step.TopBar /> }
-		>
-			<StepContainerV2CheckoutFixer isMediumViewport={ isMediumViewport }>
+		<StepContainerV2CheckoutFixer isMediumViewport={ isMediumViewport }>
+			<Step.FullWidthLayout
+				isMediumViewport={ isMediumViewport }
+				hasContentPadding={ false }
+				topBar={ <Step.TopBar backButton={ <Step.BackButton /> } /> }
+			>
 				{ content }
-			</StepContainerV2CheckoutFixer>
-		</Step.FullWidthLayout>
+			</Step.FullWidthLayout>
+		</StepContainerV2CheckoutFixer>
 	);
 }
 
 const StepContainerV2CheckoutFixer = styled.div< { isMediumViewport: boolean } >`
 	.checkout-wrapper {
 		margin-top: calc( var( --step-container-v2-top-bar-height ) * -1 );
+	}
+
+	.step-container-v2__top-bar-wrapper {
+		position: relative;
+		z-index: 1;
 	}
 
 	${ ( props ) =>
