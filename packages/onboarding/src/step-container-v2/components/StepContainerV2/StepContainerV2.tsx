@@ -1,6 +1,6 @@
 import { useViewportMatch } from '@wordpress/compose';
 import clsx from 'clsx';
-import { ReactNode, useMemo, useRef } from 'react';
+import { ReactNode, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
 	StepContainerV2InternalProvider,
 	type StepContainerV2InternalContextType,
@@ -51,7 +51,35 @@ export const StepContainerV2 = ( {
 	);
 
 	const topBarRef = useRef< HTMLDivElement >( null );
+	const [ topBarHeight, setTopBarHeight ] = useState( 0 );
+
 	const stickyBottomBarRef = useRef< HTMLDivElement >( null );
+	const [ stickyBottomBarHeight, setStickyBottomBarHeight ] = useState( 0 );
+
+	useLayoutEffect( () => {
+		const observer = new ResizeObserver( ( entries ) => {
+			entries.forEach( ( entry ) => {
+				const element = entry.target;
+
+				if ( element === topBarRef.current ) {
+					setTopBarHeight( entry.contentRect.height );
+				} else if ( element === stickyBottomBarRef.current ) {
+					setStickyBottomBarHeight( entry.contentRect.height );
+				}
+			} );
+		} );
+
+		if ( topBarRef.current ) {
+			observer.observe( topBarRef.current );
+		}
+		if ( stickyBottomBarRef.current ) {
+			observer.observe( stickyBottomBarRef.current );
+		}
+
+		return () => {
+			observer.disconnect();
+		};
+	}, [] );
 
 	return (
 		<StepContainerV2InternalProvider value={ stepContainerContextValue }>
@@ -61,11 +89,9 @@ export const StepContainerV2 = ( {
 					'large-viewport': isLargeViewport,
 				} ) }
 				style={ {
-					// @ts-expect-error -- This is a valid CSS variable.
-					'--step-container-v2-top-bar-height': `${ topBarRef.current?.clientHeight ?? 0 }px`,
-					'--step-container-v2-sticky-bottom-bar-height': `${
-						stickyBottomBarRef.current?.clientHeight ?? 0
-					}px`,
+					// @ts-expect-error -- These are valid CSS variables.
+					'--step-container-v2-top-bar-height': `${ topBarHeight ?? 0 }px`,
+					'--step-container-v2-sticky-bottom-bar-height': `${ stickyBottomBarHeight ?? 0 }px`,
 				} }
 			>
 				{ topBar && <div ref={ topBarRef }>{ topBar }</div> }
