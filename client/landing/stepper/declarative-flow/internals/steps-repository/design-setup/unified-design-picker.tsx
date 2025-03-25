@@ -866,12 +866,12 @@ const UnifiedDesignPickerStep: StepType< {
 					topBar={
 						isDesktopVersion ? (
 							<Step.TopBar
-								backButton={
+								leftButton={
 									shouldHideActionButtons ? undefined : (
 										<Step.BackButton onClick={ handleBackClick } />
 									)
 								}
-								skipButton={
+								rightButton={
 									! isGoalsAtFrontExperiment ? undefined : (
 										<Step.SkipButton
 											onClick={ () => handleSubmit() }
@@ -988,8 +988,8 @@ const UnifiedDesignPickerStep: StepType< {
 				className="step-container-v2--design-picker"
 				topBar={
 					<Step.TopBar
-						backButton={ backButton ? <Step.BackButton onClick={ backButton } /> : undefined }
-						skipButton={
+						leftButton={ backButton ? <Step.BackButton onClick={ backButton } /> : undefined }
+						rightButton={
 							hideSkip ? undefined : (
 								<Step.SkipButton onClick={ () => handleSubmit() } label={ skipLabelText } />
 							)

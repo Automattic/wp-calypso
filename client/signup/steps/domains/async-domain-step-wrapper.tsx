@@ -40,7 +40,7 @@ export default function AsyncDomainStepWrapper( props: AsyncDomainStepWrapperPro
 		<Step.TwoColumnLayout
 			firstColumnWidth={ 7 }
 			secondColumnWidth={ 3 }
-			topBar={ <Step.TopBar backButton={ ! hideBack && backButton } /> }
+			topBar={ <Step.TopBar leftButton={ ! hideBack && backButton } /> }
 			heading={ <Step.Heading text={ headerText } subText={ subHeaderText } /> }
 			className={ className }
 		>

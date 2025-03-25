@@ -5,11 +5,11 @@ import { useStepContainerV2InternalContext } from '../../contexts/StepContainerV
 import './style.scss';
 
 interface TopBarProps {
-	backButton?: ReactNode;
-	skipButton?: ReactNode;
+	leftButton?: ReactNode;
+	rightButton?: ReactNode;
 }
 
-export const TopBar = ( { backButton, skipButton }: TopBarProps ) => {
+export const TopBar = ( { leftButton, rightButton }: TopBarProps ) => {
 	const { isMediumViewport } = useStepContainerV2InternalContext();
 
 	return (
@@ -23,14 +23,14 @@ export const TopBar = ( { backButton, skipButton }: TopBarProps ) => {
 				<WordPressLogo size={ 21 } className="step-container-v2__top-bar-wordpress-logo" />
 			) }
 
-			{ backButton && (
+			{ leftButton && (
 				<>
 					<div className="step-container-v2__top-bar-divider" />
-					<div className="step-container-v2__top-bar-left-button">{ backButton }</div>
+					<div className="step-container-v2__top-bar-left-button">{ leftButton }</div>
 				</>
 			) }
-			{ skipButton && (
-				<div className="step-container-v2__top-bar-right-button">{ skipButton }</div>
+			{ rightButton && (
+				<div className="step-container-v2__top-bar-right-button">{ rightButton }</div>
 			) }
 		</div>
 	);

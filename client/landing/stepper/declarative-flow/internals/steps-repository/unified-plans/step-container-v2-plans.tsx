@@ -22,7 +22,7 @@ const StepContainerV2Plans = ( {
 			className="step-container-v2--plans"
 			topBar={
 				<Step.TopBar
-					backButton={
+					leftButton={
 						goBack ? <Step.BackButton onClick={ goBack } label={ backLabelText } /> : undefined
 					}
 				/>
