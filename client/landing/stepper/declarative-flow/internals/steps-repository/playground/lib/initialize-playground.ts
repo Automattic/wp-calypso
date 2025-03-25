@@ -181,7 +181,6 @@ export async function initializeWordPressPlayground(
 		await client.isReady();
 		return client;
 	} catch ( error ) {
-		// console.error( 'Error initializing WordPress Playground:', error );
 		logToLogstash( {
 			feature: 'calypso_client',
 			tags: [ 'playground-setup' ],
