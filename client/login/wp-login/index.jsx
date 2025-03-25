@@ -127,29 +127,6 @@ export class Login extends Component {
 		this.setState( { usernameOrEmail } );
 	}
 
-	renderP2Logo() {
-		return (
-			<div className="wp-login__p2-logo">
-				<img src="/calypso/images/p2/logo.png" width="67" height="32" alt="P2 logo" />
-			</div>
-		);
-	}
-
-	renderP2PoweredBy() {
-		return (
-			<div className="wp-login__p2-powered-by">
-				<img
-					src="/calypso/images/p2/w-logo.png"
-					className="wp-login__p2-powered-by-logo"
-					alt="WP.com logo"
-				/>
-				<span className="wp-login__p2-powered-by-text">
-					{ this.props.translate( 'Powered by WordPress.com' ) }
-				</span>
-			</div>
-		);
-	}
-
 	renderI18nSuggestions() {
 		const { locale, path, isLoginView } = this.props;
 
