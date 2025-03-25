@@ -1,6 +1,6 @@
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Onboard, type SiteSelect, type UserSelect } from '@automattic/data-stores';
-import { isHostedSiteMigrationFlow } from '@automattic/onboarding';
+import { isHostedSiteMigrationFlow, SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { SiteExcerptData } from '@automattic/sites';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
@@ -26,10 +26,8 @@ import { AssertConditionState } from '../../internals/types';
 import { goToImporter } from '../../migration/helpers';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from '../../internals/types';
 
-const FLOW_NAME = 'site-migration';
-
 const siteMigration: Flow = {
-	name: FLOW_NAME,
+	name: SITE_MIGRATION_FLOW,
 	isSignupFlow: false,
 	__experimentalUseSessions: true,
 	__experimentalUseBuiltinAuth: true,
@@ -66,7 +64,7 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_SUPPORT_INSTRUCTIONS,
 		];
 
-		const hostedVariantSteps = isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME )
+		const hostedVariantSteps = isHostedSiteMigrationFlow( this.variantSlug ?? SITE_MIGRATION_FLOW )
 			? [ STEPS.PICK_SITE, STEPS.SITE_CREATION_STEP, STEPS.PROCESSING ]
 			: [];
 
@@ -80,7 +78,7 @@ const siteMigration: Flow = {
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
-		const flowPath = this.variantSlug ?? FLOW_NAME;
+		const flowPath = this.variantSlug ?? SITE_MIGRATION_FLOW;
 
 		useEffect( () => {
 			if ( isAdmin === false ) {
@@ -534,9 +532,9 @@ const siteMigration: Flow = {
 							platform: providedDependencies.platform as ImporterPlatform,
 							siteId: siteId!.toString(),
 							siteSlug,
-							backToFlow: `${ FLOW_NAME }/${ STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug }`,
+							backToFlow: `${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug }`,
 							from: fromQueryParam,
-							ref: FLOW_NAME,
+							ref: SITE_MIGRATION_FLOW,
 						} );
 					}
 
