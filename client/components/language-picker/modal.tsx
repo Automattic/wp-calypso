@@ -1,7 +1,7 @@
-import { Dialog, FormLabel, MaterialIcon } from '@automattic/components';
+import { FormLabel, MaterialIcon } from '@automattic/components';
 import { isDefaultLocale, isTranslatedIncompletely } from '@automattic/i18n-utils';
 import LanguagePicker, { createLanguageGroups } from '@automattic/language-picker';
-import { Button } from '@wordpress/components';
+import { Button, Modal } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
@@ -193,12 +193,7 @@ const LanguagePickerModal: React.FC< Props > = ( {
 	];
 
 	return (
-		<Dialog
-			isVisible
-			onClose={ onClose }
-			buttons={ buttons }
-			additionalClassNames="language-picker__dialog"
-		>
+		<Modal onRequestClose={ onClose } className="language-picker__dialog">
 			<QueryLanguageNames />
 			<LanguagePicker
 				headingTitle={ __( 'Select a language' ) }
@@ -208,7 +203,8 @@ const LanguagePickerModal: React.FC< Props > = ( {
 				selectedLanguage={ selectedLanguage }
 				localizedLanguageNames={ localizedLanguageNames }
 			/>
-		</Dialog>
+			{ buttons }
+		</Modal>
 	);
 };
 
