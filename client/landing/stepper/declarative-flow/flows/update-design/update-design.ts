@@ -51,7 +51,7 @@ const updateDesign: Flow = {
 			return navigate( 'processing' );
 		};
 
-		const { getPostFlowUrl } = useLaunchpadDecider( {
+		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
 			exitFlow,
 			navigate,
 		} );
@@ -61,6 +61,11 @@ const updateDesign: Flow = {
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
 				case 'processing': {
+					initializeLaunchpadState( {
+						siteId,
+						siteSlug: ( providedDependencies?.siteSlug ?? siteSlug ) as string,
+					} );
+
 					const processingResult = providedDependencies.processingResult as ProcessingResult;
 
 					if ( processingResult === ProcessingResult.FAILURE ) {

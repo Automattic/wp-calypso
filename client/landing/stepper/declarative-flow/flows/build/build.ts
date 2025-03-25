@@ -66,7 +66,7 @@ const build: Flow = {
 
 		triggerGuidesForStep( flowName, _currentStep );
 
-		const { postFlowNavigator } = useLaunchpadDecider( {
+		const { postFlowNavigator, initializeLaunchpadState } = useLaunchpadDecider( {
 			exitFlow,
 			navigate,
 		} );
@@ -82,6 +82,11 @@ const build: Flow = {
 							} )
 						);
 					}
+
+					initializeLaunchpadState( {
+						siteId,
+						siteSlug: ( providedDependencies?.siteSlug ?? siteSlug ) as string,
+					} );
 
 					return postFlowNavigator( { siteId, siteSlug } );
 				case 'launchpad': {

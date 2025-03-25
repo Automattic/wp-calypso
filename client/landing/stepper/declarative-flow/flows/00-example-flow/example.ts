@@ -79,7 +79,7 @@ const newsletter: Flow = {
 
 		const createSite = useCreateSite();
 
-		const { getPostFlowUrl } = useLaunchpadDecider( {
+		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
 			exitFlow,
 			navigate,
 		} );
@@ -131,6 +131,10 @@ const newsletter: Flow = {
 					const site = get( 'site' );
 					if ( site ) {
 						const { siteId, siteSlug } = site;
+						initializeLaunchpadState( {
+							siteId: siteId,
+							siteSlug: siteSlug,
+						} );
 
 						if ( providedDependencies?.goToHome ) {
 							return window.location.replace(

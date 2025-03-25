@@ -1,11 +1,9 @@
-import { useSelect } from '@wordpress/data';
+import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { addQueryArgs } from '@wordpress/url';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { getSessionId } from 'calypso/landing/stepper/utils/use-session-id';
-import { shouldShowLaunchpadFirst } from 'calypso/state/selectors/should-show-launchpad-first';
 import type { Navigate, StepperStep } from '../../types';
-import type { OnboardSelect } from '@automattic/data-stores';
+
+export const LAUNCHPAD_EXPERIMENT_NAME = 'calypso_onboarding_launchpad_removal_test_2024_08';
 
 interface Props {
 	exitFlow: ( path: string ) => void;
@@ -24,16 +22,19 @@ interface SiteProps {
 }
 
 export const useLaunchpadDecider = ( { exitFlow, navigate }: Props ) => {
-	const { getIntent } = useSelect( ( select ) => select( ONBOARD_STORE ) as OnboardSelect, [] );
-	const intent = getIntent();
-	const site = useSite();
-	// The site_intent option is not set until we exit site setup flow so we set the client value with data from the onboarding store
-	// as it is used in shouldShowLaunchpadFirst.
-	const showCustomerHome =
-		site &&
-		shouldShowLaunchpadFirst( { ...site, options: { ...site.options, site_intent: intent } } );
-
+	// placeholder field for the experiment assignment
+	const showCustomerHome = false;
 	const sessionId = getSessionId();
+	let launchpadStateOnSkip: null | 'skipped' = null;
+	if ( showCustomerHome ) {
+		launchpadStateOnSkip = 'skipped';
+	}
+
+	const setLaunchpadSkipState = ( siteIdOrSlug: string | number | null ) => {
+		if ( siteIdOrSlug && launchpadStateOnSkip ) {
+			updateLaunchpadSettings( siteIdOrSlug, { launchpad_screen: launchpadStateOnSkip } );
+		}
+	};
 
 	return {
 		getPostFlowUrl: ( { flow, siteId, siteSlug }: PostFlowUrlProps ) => {
@@ -41,19 +42,22 @@ export const useLaunchpadDecider = ( { exitFlow, navigate }: Props ) => {
 				return `/home/${ siteSlug || siteId }`;
 			}
 
-			return addQueryArgs( `/setup/${ flow }/launchpad`, {
-				siteSlug,
-				siteId,
-				sessionId,
-			} );
+			return addQueryArgs( `/setup/${ flow }/launchpad`, { siteSlug, siteId, sessionId } );
 		},
 		postFlowNavigator: ( { siteId, siteSlug }: SiteProps ) => {
 			if ( showCustomerHome ) {
+				setLaunchpadSkipState( siteId || siteSlug );
+
 				exitFlow( '/home/' + siteSlug );
 				return;
 			}
 
 			navigate( `launchpad?siteSlug=${ siteSlug }&siteId=${ siteId }` );
+		},
+		initializeLaunchpadState: ( { siteId, siteSlug }: SiteProps ) => {
+			if ( showCustomerHome ) {
+				setLaunchpadSkipState( siteId || siteSlug );
+			}
 		},
 	};
 };
