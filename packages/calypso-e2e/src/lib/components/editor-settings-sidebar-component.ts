@@ -30,7 +30,7 @@ const selectors = {
 		`${ panel } div[aria-label=Categories] label:text("${ categoryName }")`,
 
 	// Tag
-	tagInput: `${ panel } .components-form-token-field:has-text("Add New Tag") input`,
+	tagInput: `${ panel } .components-form-token-field:is(:has-text("Add New Tag"),:has-text("Add Tag")) input`,
 	addedTag: ( tag: string ) =>
 		`${ panel } .components-form-token-field__token-text:has-text("${ tag }")`,
 };
