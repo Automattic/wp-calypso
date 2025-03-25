@@ -251,11 +251,13 @@ const LayoutLoggedOut = ( {
 
 	return (
 		<div className={ clsx( 'layout', classes ) }>
-			<HelpCenterLoader
-				sectionName={ sectionName }
-				loadHelpCenter={ loadHelpCenter }
-				currentRoute={ currentRoute }
-			/>
+			{ loadHelpCenter && (
+				<HelpCenterLoader
+					sectionName={ sectionName }
+					loadHelpCenter={ loadHelpCenter }
+					currentRoute={ currentRoute }
+				/>
+			) }
 			{ 'development' === process.env.NODE_ENV && <SympathyDevWarning /> }
 			<BodySectionCssClass group={ sectionGroup } section={ sectionName } bodyClass={ bodyClass } />
 			<div className="layout__header-section">
