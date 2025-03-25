@@ -21,7 +21,6 @@ import {
 	usePaymentMethod,
 	useTransactionStatus,
 	TransactionStatus,
-	CheckoutModal,
 } from '@automattic/composite-checkout';
 import { Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
@@ -89,6 +88,7 @@ import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import { GoogleDomainsCopy } from './google-transfers-copy';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
+import { LeaveCheckoutModal, useCheckoutLeaveModal } from './leave-checkout-modal';
 import BeforeSubmitCheckoutHeader from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import WPCheckoutOrderReview, { CouponFieldArea } from './wp-checkout-order-review';
@@ -372,10 +372,8 @@ export default function CheckoutMainContent( {
 } ) {
 	const translate = useTranslate();
 	const cartKey = useCartKey();
-	const [ isModalVisible, setIsModalVisible ] = useState( false );
 	const {
 		responseCart,
-		replaceProductsInCart,
 		applyCoupon,
 		updateLocation,
 		replaceProductInCart,
@@ -383,6 +381,8 @@ export default function CheckoutMainContent( {
 		removeCoupon,
 		couponStatus,
 	} = useShoppingCart( cartKey );
+
+	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteUrl ?? '' } );
 
 	const searchParams = new URLSearchParams( window.location.search );
 	const isDIFMInCart = hasDIFMProduct( responseCart );
@@ -828,53 +828,6 @@ export default function CheckoutMainContent( {
 		return content;
 	}
 
-	const closeAndLeave = ( options?: {
-		userHasClearedCart?: boolean;
-		closedWithoutConfirmation?: boolean;
-	} ) => {
-		const userHasClearedCart = options?.userHasClearedCart ?? false;
-		if ( ! options?.closedWithoutConfirmation ) {
-			recordTracksEvent( 'calypso_masterbar_checkout_close_modal_submitted', {
-				user_has_cleared_cart: userHasClearedCart,
-			} );
-		}
-		leaveCheckout( {
-			siteSlug: siteUrl,
-			forceCheckoutBackUrl,
-			previousPath,
-			tracksEvent: 'calypso_masterbar_close_clicked',
-			userHasClearedCart: userHasClearedCart,
-		} );
-	};
-
-	const shouldClearCartWhenLeaving = ! window.location.pathname.startsWith(
-		'/checkout/failed-purchases'
-	);
-
-	const clickClose = () => {
-		if ( shouldClearCartWhenLeaving && responseCart.products.length > 0 ) {
-			recordTracksEvent( 'calypso_masterbar_checkout_close_modal_displayed' );
-			setIsModalVisible( true );
-			return;
-		}
-		closeAndLeave( {
-			closedWithoutConfirmation: true,
-		} );
-	};
-
-	const modalTitleText = translate( 'You are about to leave checkout with items in your cart' );
-	const modalBodyText = translate( 'You can leave the items in the cart or empty the cart.' );
-	/* translators: The label to a button that will exit checkout without removing items from the shopping cart. */
-	const modalPrimaryText = translate( 'Leave items' );
-	/* translators: The label to a button that will remove all items from the shopping cart. */
-	const modalSecondaryText = translate( 'Empty cart' );
-	const clearCartAndLeave = () => {
-		replaceProductsInCart( [] );
-		closeAndLeave( {
-			userHasClearedCart: true,
-		} );
-	};
-
 	return (
 		<StepContainerV2CheckoutFixer isMediumViewport={ isMediumViewport }>
 			<Step.FullWidthLayout
@@ -882,7 +835,7 @@ export default function CheckoutMainContent( {
 				hasContentPadding={ false }
 				topBar={
 					<Step.TopBar
-						backButton={ <Step.BackButton onClick={ clickClose } /> }
+						backButton={ <Step.BackButton onClick={ leaveModalProps.clickClose } /> }
 						skipButton={
 							<span className="checkout-skip-button">
 								<label>{ helpCenterButtonCopy ?? translate( 'Need extra help?' ) } </label>
@@ -897,16 +850,7 @@ export default function CheckoutMainContent( {
 			>
 				{ content }
 			</Step.FullWidthLayout>
-			<CheckoutModal
-				title={ modalTitleText }
-				copy={ modalBodyText }
-				closeModal={ () => setIsModalVisible( false ) }
-				isVisible={ isModalVisible }
-				primaryButtonCTA={ modalPrimaryText }
-				primaryAction={ closeAndLeave }
-				secondaryButtonCTA={ modalSecondaryText }
-				secondaryAction={ clearCartAndLeave }
-			/>
+			<LeaveCheckoutModal { ...leaveModalProps } />
 		</StepContainerV2CheckoutFixer>
 	);
 }
