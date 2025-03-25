@@ -1,6 +1,6 @@
 import { useViewportMatch } from '@wordpress/compose';
 import clsx from 'clsx';
-import { ReactNode, useMemo } from 'react';
+import { ReactNode, useMemo, useRef } from 'react';
 import {
 	StepContainerV2InternalProvider,
 	type StepContainerV2InternalContextType,
@@ -50,6 +50,9 @@ export const StepContainerV2 = ( {
 		[ isMediumViewport, isLargeViewport ]
 	);
 
+	const topBarRef = useRef< HTMLDivElement >( null );
+	const stickyBottomBarRef = useRef< HTMLDivElement >( null );
+
 	return (
 		<StepContainerV2InternalProvider value={ stepContainerContextValue }>
 			<div
@@ -57,8 +60,15 @@ export const StepContainerV2 = ( {
 					'medium-viewport': isMediumViewport,
 					'large-viewport': isLargeViewport,
 				} ) }
+				style={ {
+					// @ts-expect-error -- This is a valid CSS variable.
+					'--step-container-v2-top-bar-height': `${ topBarRef.current?.clientHeight ?? 0 }px`,
+					'--step-container-v2-sticky-bottom-bar-height': `${
+						stickyBottomBarRef.current?.clientHeight ?? 0
+					}px`,
+				} }
 			>
-				{ topBar && <div className="step-container-v2__top-bar-wrapper">{ topBar }</div> }
+				{ topBar && <div ref={ topBarRef }>{ topBar }</div> }
 				<div
 					className={ clsx( 'step-container-v2__content-wrapper', {
 						'vertical-align-center': verticalAlign === 'center',
@@ -85,7 +95,9 @@ export const StepContainerV2 = ( {
 						</div>
 					) }
 				</div>
-				{ ! isMediumViewport && stickyBottomBar }
+				{ ! isMediumViewport && stickyBottomBar && (
+					<div ref={ stickyBottomBarRef }>{ stickyBottomBar }</div>
+				) }
 			</div>
 		</StepContainerV2InternalProvider>
 	);
