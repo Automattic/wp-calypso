@@ -15,11 +15,10 @@ interface AtomicWarningProps {
 	purchase: Purchase;
 	site: any;
 	closeDialog: () => void;
-	handleDowngrade: () => void;
+	handleDowngrade: ( enableLosslessRevert: boolean ) => void;
 	targetPlanName: TranslateResult;
 	isDowngrading: boolean;
 	siteSlug: string;
-	shouldShowLosslessRevertOption: boolean;
 }
 
 export function AtomicWarning( {
@@ -30,7 +29,6 @@ export function AtomicWarning( {
 	targetPlanName,
 	isDowngrading,
 	siteSlug,
-	shouldShowLosslessRevertOption,
 }: AtomicWarningProps ) {
 	const [ atomicRevertCheckOne, setAtomicRevertCheckOne ] = useState( false );
 	const [ atomicRevertCheckTwo, setAtomicRevertCheckTwo ] = useState( false );
@@ -60,20 +58,16 @@ export function AtomicWarning( {
 						onClickCheckTwo={ () => setAtomicRevertCheckTwo( ! atomicRevertCheckTwo ) }
 						hasBackupsFeature={ hasBackupsFeature }
 					/>
-					{ shouldShowLosslessRevertOption && (
-						<div className="downgrade-modal__lossless-import">
-							<CheckboxControl
-								label={ translate(
-									'Attempt to recover my posts, pages, and media after downgrade'
-								) }
-								help={ translate(
-									'Your posts, pages, and media added after upgrading will be automatically imported to your downgraded site. You will receive an email when complete.'
-								) }
-								checked={ enableLosslessRevert }
-								onChange={ setEnableLosslessRevert }
-							/>
-						</div>
-					) }
+					<div className="downgrade-modal__lossless-import">
+						<CheckboxControl
+							label={ translate( 'Attempt to recover my posts, pages, and media after downgrade' ) }
+							help={ translate(
+								'Your posts, pages, and media added after upgrading will be automatically imported to your downgraded site. You will receive an email when complete.'
+							) }
+							checked={ enableLosslessRevert }
+							onChange={ setEnableLosslessRevert }
+						/>
+					</div>
 				</BlankCanvas.Content>
 				<BlankCanvas.Footer>
 					<Button

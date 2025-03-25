@@ -29,7 +29,6 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
-import { useExperiment } from 'calypso/lib/explat';
 import { cancelAndRefundPurchaseAsync } from 'calypso/lib/purchases/actions';
 import { Purchase } from 'calypso/lib/purchases/types';
 import { managePurchase } from 'calypso/me/purchases/paths';
@@ -130,17 +129,6 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 	const isAtomicSiteDowngrade =
 		isAtomicSite && ! targetPlan?.getIncludedFeatures?.().includes( WPCOM_FEATURES_ATOMIC );
 
-	const targetPlanSlug = targetPlan?.getStoreSlug();
-
-	const [ , experimentAssignment ] = useExperiment( 'calypso_lossless_revert' );
-	const shouldShowLosslessRevertOption =
-		experimentAssignment?.variationName === 'allow_lossless_revert';
-	// Check if the site is atomic and if the target plan is not a Business or Commerce plan
-
-	const isTargetPlanNonAtomic =
-		targetPlanSlug !== PLAN_BUSINESS && targetPlanSlug !== PLAN_ECOMMERCE;
-	const shouldShowAtomicWarning = isAtomicSite && isTargetPlanNonAtomic;
-
 	if (
 		isDataLoading( { hasLoadedSites, hasLoadedUserPurchasesFromServer: loadedFromServer } ) ||
 		! purchase
@@ -201,7 +189,7 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 	};
 
 	const checkAtomicAndDowngrade = () => {
-		if ( shouldShowAtomicWarning ) {
+		if ( isAtomicSiteDowngrade ) {
 			setIsAtomicWarningVisible( true );
 		} else {
 			handleDowngrade( false );
@@ -220,7 +208,6 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 				targetPlanName={ targetPlan?.getTitle() ?? '' }
 				isDowngrading={ isDowngrading }
 				siteSlug={ siteSlug }
-				shouldShowLosslessRevertOption={ shouldShowLosslessRevertOption }
 			/>
 		);
 	}
