@@ -127,62 +127,56 @@ export default ( router ) => {
 
 	router(
 		`/log-in/jetpack/google/${ lang }`,
-		redirectLoggedIn,
 		setLocaleMiddleware(),
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 		jetpackGoogleAuth,
-		makeLoggedOutLayout
+		redirectJetpackDirectAuthError
 	);
 
 	router(
 		`/log-in/jetpack/google/callback/${ lang }`,
-		redirectLoggedIn,
 		setLocaleMiddleware(),
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 		jetpackGoogleAuthCallback,
-		makeLoggedOutLayout
+		redirectJetpackDirectAuthError
 	);
 
 	router(
 		`/log-in/jetpack/apple/${ lang }`,
-		redirectLoggedIn,
 		setLocaleMiddleware(),
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 		jetpackAppleAuth,
-		makeLoggedOutLayout
+		redirectJetpackDirectAuthError
 	);
 
 	router(
 		`/log-in/jetpack/apple/callback/${ lang }`,
-		redirectLoggedIn,
 		setLocaleMiddleware(),
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 		jetpackAppleAuthCallback,
-		makeLoggedOutLayout
+		redirectJetpackDirectAuthError
 	);
 
 	router(
 		`/log-in/jetpack/github/${ lang }`,
-		redirectLoggedIn,
 		setLocaleMiddleware(),
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 		jetpackGitHubAuth,
-		makeLoggedOutLayout
+		redirectJetpackDirectAuthError
 	);
 
 	router(
 		`/log-in/jetpack/github/callback/${ lang }`,
-		redirectLoggedIn,
 		setLocaleMiddleware(),
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 		jetpackGitHubAuthCallback,
-		makeLoggedOutLayout
+		redirectJetpackDirectAuthError
 	);
 
 	router(
