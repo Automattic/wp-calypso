@@ -6,7 +6,6 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { type ReactNode, useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { useGoalsFirstExperiment } from 'calypso/landing/stepper/declarative-flow/helpers/use-goals-first-experiment';
 import { isGoalsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -68,7 +67,6 @@ const GoalsStep: StepType< {
 	const { setGoals, setIntent, resetIntent } = useDispatch( ONBOARD_STORE );
 	const refParameter = getQueryArgs()?.ref as string;
 
-	const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 	const isIntentCreateCourseGoalEnabled = useCreateCourseGoalFeature();
 
 	useEffect( () => {
@@ -165,7 +163,7 @@ const GoalsStep: StepType< {
 		if ( isValidRef && goals.length === 0 ) {
 			setGoals( refGoals[ refParameter ] );
 		}
-		// Delibirately not including all deps in the deps array
+		// Deliberately not including all deps in the deps array
 		// This hook is only meant to be executed when either refParameter, refGoals change in value
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ refParameter, refGoals ] );
@@ -182,16 +180,14 @@ const GoalsStep: StepType< {
 				<Button variant="link" onClick={ handleDIFMClick } className="select-goals__link">
 					{ translate( 'Let us build a custom site for you' ) }
 				</Button>
-				{ ! isGoalsAtFrontExperiment && (
-					<Button
-						variant="link"
-						onClick={ handleDashboardClick }
-						className="select-goals__link select-goals__dashboard-button"
-					>
-						<DashboardIcon />
-						{ translate( 'Skip to dashboard' ) }
-					</Button>
-				) }
+				<Button
+					variant="link"
+					onClick={ handleDashboardClick }
+					className="select-goals__link select-goals__dashboard-button"
+				>
+					<DashboardIcon />
+					{ translate( 'Skip to dashboard' ) }
+				</Button>
 			</div>
 		</div>
 	);
