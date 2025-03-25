@@ -214,7 +214,7 @@ export function qrCodeLogin( context, next ) {
 
 export async function jetpackGoogleAuth( context, next ) {
 	const { query } = context;
-	const redirectUri = `https://${ window.location.host }${ loginPath( {
+	const redirectUri = `https://${ window?.location?.host ?? 'wordpress.com' }${ loginPath( {
 		socialService: 'google',
 	} ) }`;
 
@@ -328,7 +328,7 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 			throw new Error( 'Invalid state parameter' );
 		}
 
-		const redirectUri = `https://${ window.location.host }${ loginPath( {
+		const redirectUri = `https://${ window?.location?.host ?? 'wordpress.com' }${ loginPath( {
 			socialService: 'google',
 		} ) }`;
 
@@ -402,7 +402,7 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 
 export async function jetpackAppleAuth( context, next ) {
 	const { query } = context;
-	const redirectUri = `https://${ window.location.host }${ loginPath( {
+	const redirectUri = `https://${ window?.location?.host ?? 'wordpress.com' }${ loginPath( {
 		socialService: 'apple',
 	} ) }`;
 
