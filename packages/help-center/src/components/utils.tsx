@@ -10,7 +10,7 @@ const isMatchingInteraction = (
 	return supportInteraction.uuid === supportInteractionId;
 };
 
-const filterConversations = (
+const filterConversationsBySupportInteractions = (
 	conversations: ZendeskConversation[],
 	supportInteractions: SupportInteraction[]
 ): ZendeskConversation[] => {
@@ -135,7 +135,10 @@ export const filterAndUpdateConversationsWithStatus = (
 	conversations: ZendeskConversation[],
 	supportInteractions: SupportInteraction[]
 ) => {
-	const filteredConversations = filterConversations( conversations, supportInteractions );
+	const filteredConversations = filterConversationsBySupportInteractions(
+		conversations,
+		supportInteractions
+	);
 
 	const conversationsWithUpdatedStatuses = filteredConversations.map( ( conversation ) => {
 		const supportInteraction = supportInteractions.find( ( interaction ) =>
