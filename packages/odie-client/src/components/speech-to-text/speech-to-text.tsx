@@ -68,7 +68,7 @@ export const SpeechToText: React.FC< {
 			{ ! isRecording ? (
 				<button
 					type="button"
-					className="odie-send-message-inner-button odie-send-message-inner-button__flag"
+					className="odie-send-message-inner-button odie-send-message-speech-to-text-button"
 					onClick={ startRecording }
 					disabled={ shouldDisableInputField || microphonePermissionDenied || isTranscribing }
 				>
@@ -77,7 +77,7 @@ export const SpeechToText: React.FC< {
 			) : (
 				<button
 					type="button"
-					className="odie-send-message-inner-button odie-send-message-inner-button__flag"
+					className="odie-send-message-inner-button odie-send-message-speech-to-text-button"
 					onClick={ stopRecording }
 					disabled={ shouldDisableInputField || microphonePermissionDenied || isTranscribing }
 				>

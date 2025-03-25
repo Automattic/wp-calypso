@@ -65,9 +65,10 @@ $blueberry-color: #3858e9;
 
 }
 
-.odie-send-message-inner-button__flag {
+.odie-send-message-inner-button__flag, .odie-send-message-speech-to-text-button {
 	background-color: $blueberry-color !important;
 }
+
 .odie-send-message-input-container .odie-send-message-inner-button {
 	background: none;
 	border: none;
