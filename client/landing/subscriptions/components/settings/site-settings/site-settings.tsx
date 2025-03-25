@@ -51,7 +51,7 @@ const SiteSettings = ( {
 				<EmailMeNewPostsToggle
 					value={ emailMeNewPosts }
 					onChange={ onEmailMeNewPostsChange }
-					isUpdating={ updatingEmailMeNewPosts }
+					isDisabled={ updatingEmailMeNewPosts }
 				/>
 			) }
 			{ emailMeNewPosts && (
@@ -73,7 +73,7 @@ const SiteSettings = ( {
 					className="setting-item setting-item__last"
 					value={ notifyMeOfNewPosts }
 					onChange={ onNotifyMeOfNewPostsChange }
-					isUpdating={ updatingNotifyMeOfNewPosts }
+					isDisabled={ updatingNotifyMeOfNewPosts }
 				/>
 			) }
 		</div>

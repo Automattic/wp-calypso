@@ -1,3 +1,4 @@
+import './style.scss';
 import { Reader } from '@automattic/data-stores';
 import { Button, ToggleControl } from '@wordpress/components';
 import { Icon, settings } from '@wordpress/icons';
@@ -10,6 +11,7 @@ import Settings from 'calypso/assets/images/icons/settings.svg';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import FormSelect from 'calypso/components/forms/form-select';
 import SVGIcon from 'calypso/components/svg-icon';
+import EmailMeNewPostsToggle from 'calypso/landing/subscriptions/components/settings/site-settings/email-me-new-posts-toggle';
 import NotifyMeOfNewPostsToggle from 'calypso/landing/subscriptions/components/settings/site-settings/notify-me-of-new-posts-toggle';
 import ReaderPopover from 'calypso/reader/components/reader-popover';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -24,8 +26,6 @@ import {
 } from 'calypso/state/reader/follows/actions';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
-
-import './style.scss';
 
 class ReaderSiteNotificationSettings extends Component {
 	static displayName = 'ReaderSiteNotificationSettings';
@@ -179,38 +179,28 @@ class ReaderSiteNotificationSettings extends Component {
 					position="bottom left"
 					className="reader-site-notification-settings__popout"
 				>
-					<div
+					<EmailMeNewPostsToggle
 						className={
 							isEmailBlocked
 								? 'reader-site-notification-settings__popout-instructions'
 								: 'reader-site-notification-settings__popout-toggle'
 						}
-					>
-						{ ! isEmailBlocked && (
-							<ToggleControl
-								onChange={ this.toggleNewPostEmail }
-								checked={ sendNewPostsByEmail }
-								id="reader-site-notification-settings__email-posts"
-								label={ translate( 'Email me new posts' ) }
-							/>
-						) }
-
-						{ isEmailBlocked && (
-							<div>
-								{ translate( 'Email me new posts' ) }
-								<p className="reader-site-notification-settings__popout-instructions-hint">
-									{ translate(
+						value={ sendNewPostsByEmail }
+						hintText={
+							isEmailBlocked
+								? translate(
 										'You currently have email delivery turned off. Visit your {{a}}Notification Settings{{/a}} to turn it back on.',
 										{
 											components: {
 												a: <a href="/me/notifications/subscriptions" />,
 											},
 										}
-									) }
-								</p>
-							</div>
-						) }
-					</div>
+								  )
+								: null
+						}
+						isDisabled={ isEmailBlocked }
+						onChange={ this.toggleNewPostEmail }
+					/>
 
 					{ ! isEmailBlocked && sendNewPostsByEmail && (
 						<div className="reader-site-notification-settings__popout-select">
