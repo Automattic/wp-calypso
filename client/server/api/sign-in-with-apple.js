@@ -71,7 +71,7 @@ function redirectToCalypso( request, response, next ) {
 	}
 
 	response.redirect(
-		originalUrlPath + '?' + encodeURIComponent( state.queryString ?? '' ) + '#' + hashString
+		`${ originalUrlPath }?${ encodeURIComponent( state.queryString ?? '' ) }#${ hashString }`
 	);
 }
 
