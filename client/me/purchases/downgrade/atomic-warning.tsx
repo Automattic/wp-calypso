@@ -1,5 +1,5 @@
 import { WPCOM_FEATURES_BACKUPS, WPComPlan } from '@automattic/calypso-products';
-import { Button } from '@wordpress/components';
+import { Button, CheckboxControl } from '@wordpress/components';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
@@ -19,6 +19,7 @@ interface AtomicWarningProps {
 	targetPlanName: TranslateResult;
 	isDowngrading: boolean;
 	siteSlug: string;
+	shouldShowLosslessRevertOption: boolean;
 }
 
 export function AtomicWarning( {
@@ -29,9 +30,11 @@ export function AtomicWarning( {
 	targetPlanName,
 	isDowngrading,
 	siteSlug,
+	shouldShowLosslessRevertOption,
 }: AtomicWarningProps ) {
 	const [ atomicRevertCheckOne, setAtomicRevertCheckOne ] = useState( false );
 	const [ atomicRevertCheckTwo, setAtomicRevertCheckTwo ] = useState( false );
+	const [ enableLosslessRevert, setEnableLosslessRevert ] = useState( false );
 	const hasBackupsFeature = useSelector( ( state ) =>
 		siteHasFeature( state, site.ID, WPCOM_FEATURES_BACKUPS )
 	);
@@ -57,12 +60,26 @@ export function AtomicWarning( {
 						onClickCheckTwo={ () => setAtomicRevertCheckTwo( ! atomicRevertCheckTwo ) }
 						hasBackupsFeature={ hasBackupsFeature }
 					/>
+					{ shouldShowLosslessRevertOption && (
+						<div className="downgrade-modal__lossless-import">
+							<CheckboxControl
+								label={ translate(
+									'Attempt to recover my posts, pages, and media after downgrade'
+								) }
+								help={ translate(
+									'Your posts, pages, and media added after upgrading will be automatically imported to your downgraded site. You will receive an email when complete.'
+								) }
+								checked={ enableLosslessRevert }
+								onChange={ setEnableLosslessRevert }
+							/>
+						</div>
+					) }
 				</BlankCanvas.Content>
 				<BlankCanvas.Footer>
 					<Button
 						isBusy={ isDowngrading }
 						variant="primary"
-						onClick={ handleDowngrade }
+						onClick={ () => handleDowngrade( enableLosslessRevert ) }
 						disabled={ ! atomicRevertCheckOne || ! atomicRevertCheckTwo }
 					>
 						{ translate( 'Downgrade to %(targetPlan)s', {

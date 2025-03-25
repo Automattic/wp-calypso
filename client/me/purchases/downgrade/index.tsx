@@ -20,19 +20,15 @@ import {
 	getFeatureByKey,
 	FeatureObject,
 	WPComPlan,
-<<<<<<< HEAD
 	WPCOM_FEATURES_ATOMIC,
-=======
->>>>>>> 153550c986b (Self Service Downgrade: Add atomic warning for downgrades)
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card, Gridicon } from '@automattic/components';
-import { Button, CheckboxControl } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
-import Notice from 'calypso/components/notice';
 import { useExperiment } from 'calypso/lib/explat';
 import { cancelAndRefundPurchaseAsync } from 'calypso/lib/purchases/actions';
 import { Purchase } from 'calypso/lib/purchases/types';
@@ -135,12 +131,12 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 		isAtomicSite && ! targetPlan?.getIncludedFeatures?.().includes( WPCOM_FEATURES_ATOMIC );
 
 	const targetPlanSlug = targetPlan?.getStoreSlug();
-	const [ enableLosslessRevert, setEnableLosslessRevert ] = useState( false );
+
 	const [ , experimentAssignment ] = useExperiment( 'calypso_lossless_revert' );
 	const shouldShowLosslessRevertOption =
 		experimentAssignment?.variationName === 'allow_lossless_revert';
 	// Check if the site is atomic and if the target plan is not a Business or Commerce plan
-	const isAtomicSite = siteOptions?.is_wpcom_atomic;
+
 	const isTargetPlanNonAtomic =
 		targetPlanSlug !== PLAN_BUSINESS && targetPlanSlug !== PLAN_ECOMMERCE;
 	const shouldShowAtomicWarning = isAtomicSite && isTargetPlanNonAtomic;
@@ -158,7 +154,7 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 	}
 	const purchaseRoot = getManagePurchaseUrlFor( siteSlug, purchaseId );
 
-	const handleDowngrade = async () => {
+	const handleDowngrade = async ( enableLosslessRevert: boolean ) => {
 		if (
 			! purchaseId ||
 			! currentPlan?.getProductId() ||
@@ -175,7 +171,7 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 				product_id: currentPlan.getProductId(),
 				type: 'downgrade',
 				to_product_id: targetPlan.getProductId(),
-				lossless_revert: shouldShowAtomicWarning ? enableLosslessRevert : undefined,
+				lossless_revert: enableLosslessRevert,
 			} );
 			await Promise.all( [
 				dispatch( refreshSitePlans( siteId! ) ),
@@ -205,10 +201,10 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 	};
 
 	const checkAtomicAndDowngrade = () => {
-		if ( isAtomicSiteDowngrade ) {
+		if ( shouldShowAtomicWarning ) {
 			setIsAtomicWarningVisible( true );
 		} else {
-			handleDowngrade();
+			handleDowngrade( false );
 		}
 	};
 
@@ -224,6 +220,7 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 				targetPlanName={ targetPlan?.getTitle() ?? '' }
 				isDowngrading={ isDowngrading }
 				siteSlug={ siteSlug }
+				shouldShowLosslessRevertOption={ shouldShowLosslessRevertOption }
 			/>
 		);
 	}
@@ -260,66 +257,6 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 						) }
 					</div>
 					<DowngradeFeatureList features={ features } purchase={ purchase } />
-
-					{ shouldShowAtomicWarning && (
-						<>
-							<Notice
-								className="downgrade-modal__notice"
-								icon={ <Gridicon icon="notice-outline" /> }
-								isCompact={ false }
-								theme="light"
-								status="is-warning"
-								showDismiss={ false }
-							>
-								<div className="downgrade-modal__atomic-warning">
-									<p>
-										<strong>
-											{ translate(
-												'Your site is currently on a plan that supports plugins, third-party themes, and other advanced features. Downgrading from this plan means:'
-											) }
-										</strong>
-									</p>
-									<ul>
-										<li>
-											{ translate(
-												'Your site will lose any plugins or third-party themes installed and features unavailable on the lower-level plan.'
-											) }
-										</li>
-										<li>
-											{ translate(
-												"Your site will revert to how it looked before you activated the plan's features."
-											) }
-										</li>
-										<li>
-											{ translate(
-												'The site will be private, so you can check it before making it public on the new plan.'
-											) }
-										</li>
-										<li>
-											{ translate(
-												'Please contact support so we can help you with the downgrade.'
-											) }
-										</li>
-									</ul>
-								</div>
-							</Notice>
-
-							{ shouldShowLosslessRevertOption && (
-								<div className="downgrade-modal__lossless-import">
-									<CheckboxControl
-										label={ translate(
-											'Attempt to recover my posts, pages, and media after downgrade'
-										) }
-										help={ translate(
-											'Your posts, pages, and media added after upgrading will be automatically imported to your downgraded site. You will receive an email when complete.'
-										) }
-										checked={ enableLosslessRevert }
-										onChange={ setEnableLosslessRevert }
-									/>
-								</div>
-							) }
-						</>
-					) }
 
 					<div className="downgrade__confirm-buttons">
 						<Button variant="primary" isBusy={ isDowngrading } onClick={ checkAtomicAndDowngrade }>
