@@ -38,8 +38,29 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 			page = await browser.newPage();
 
 			const features = envToFeatureKey( envVariables );
-			const accountName = getTestAccountByFeature( features );
-			testAccount = new TestAccount( accountName );
+
+			if ( envVariables.JETPACK_TARGET === 'wpcom-deployment' && envVariables.TEST_ON_ATOMIC ) {
+				testAccount = new TestAccount(
+					getTestAccountByFeature( features, [
+						{
+							siteType: 'atomic',
+							accountName: 'jetpackStagingUser',
+						},
+					] )
+				);
+			} else if ( envVariables.JETPACK_TARGET === 'wpcom-deployment' ) {
+				testAccount = new TestAccount(
+					getTestAccountByFeature( features, [
+						{
+							siteType: 'simple',
+							accountName: 'defaultUser',
+						},
+					] )
+				);
+			} else {
+				testAccount = new TestAccount( getTestAccountByFeature( features ) );
+			}
+
 			await testAccount.authenticate( page );
 
 			restAPIClient = new RestAPIClient( testAccount.credentials );
