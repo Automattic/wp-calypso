@@ -3,7 +3,7 @@ import config from '@automattic/calypso-config';
 import { UrlFriendlyTermType } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { FREE_THEME } from '@automattic/design-picker';
-import { isTailoredSignupFlow, ONBOARDING_FLOW } from '@automattic/onboarding';
+import { isTailoredSignupFlow, ONBOARDING_FLOW, StepContainer } from '@automattic/onboarding';
 import { PlansIntent } from '@automattic/plans-grid-next';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { isDesktop as isDesktopViewport, subscribeIsDesktop } from '@automattic/viewport';
@@ -515,8 +515,9 @@ function UnifiedPlansStep( {
 			<MarketingMessage path="signup/plans" />
 			<div className={ classes }>
 				{ useStepperWrapper && wrapperProps ? (
-					<AsyncLoad
-						require="@automattic/onboarding/src/step-container"
+					// This is biased towards Stepper. It will always load Stepper's StepContainer but only load /start's StepWrapper if /start is used.
+					// This is because Stepper's plans page is much more likely (90%+ of the time) to be used than /start's plans page.
+					<StepContainer
 						flowName={ flowName }
 						stepName={ stepName }
 						stepContent={ stepContent }

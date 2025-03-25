@@ -47,11 +47,7 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 	const canFetchConversation = conversationId && canConnectToZendesk;
 
 	useEffect( () => {
-		if ( ! currentSupportInteraction?.uuid ) {
-			return;
-		}
-
-		if ( isOdieChatLoading || chatStatus !== 'loading' ) {
+		if ( ! currentSupportInteraction || isOdieChatLoading || chatStatus !== 'loading' ) {
 			return;
 		}
 
@@ -59,7 +55,7 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 			setMainChatState( {
 				...( odieChat ? odieChat : emptyChat ),
 				conversationId: null,
-				supportInteractionId: currentSupportInteraction!.uuid,
+				supportInteractionId: currentSupportInteraction.uuid,
 				provider: 'odie',
 				status: 'loaded',
 			} );

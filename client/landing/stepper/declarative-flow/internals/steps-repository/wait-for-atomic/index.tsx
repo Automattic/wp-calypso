@@ -3,7 +3,6 @@ import config from '@automattic/calypso-config';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useIsValidWooPartner } from 'calypso/landing/stepper/hooks/use-is-valid-woo-partner';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
@@ -25,8 +24,6 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 	}
 
 	const { getIntent } = useSelect( ( select ) => select( ONBOARD_STORE ) as OnboardSelect, [] );
-
-	const includeWooCommerce = useIsValidWooPartner();
 
 	const handleTransferFailure = ( failureInfo: FailureInfo ) => {
 		recordTracksEvent( 'calypso_woocommerce_dashboard_snag_error', {
@@ -68,7 +65,7 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 			setProgress( 50 );
 			await waitForFeature();
 			setProgress( 75 );
-			await waitForLatestSiteData( includeWooCommerce );
+			await waitForLatestSiteData();
 			setProgress( 100 );
 
 			return {
@@ -83,7 +80,7 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 
 		// Only trigger when the siteId changes.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ siteId, includeWooCommerce ] );
+	}, [ siteId ] );
 
 	return null;
 };
