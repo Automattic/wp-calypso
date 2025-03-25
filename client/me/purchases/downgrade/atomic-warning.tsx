@@ -48,6 +48,7 @@ export function AtomicWarning( {
 				</BlankCanvas.Header>
 				<BlankCanvas.Content>
 					<AtomicRevertStep
+						action="downgrade-plan"
 						atomicTransfer={ atomicTransfer }
 						purchase={ purchase }
 						site={ site }

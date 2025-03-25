@@ -1,9 +1,12 @@
 import { isPlan } from '@automattic/calypso-products';
-import { CheckboxControl, Button as GutenbergButton } from '@wordpress/components';
+import { CheckboxControl, Button as GutenbergButton, ToggleControl } from '@wordpress/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InfoPopover from 'calypso/components/info-popover';
+
+import './atomic-revert-step.style.scss';
 
 export type Props = {
 	atomicTransfer: any;
@@ -18,6 +21,7 @@ export type Props = {
 	isDowngradePlan?: boolean;
 	enableLosslessRevert?: boolean;
 	setEnableLosslessRevert?: ( isChecked: boolean ) => void;
+	action: 'cancel-purchase' | 'downgrade-plan';
 };
 
 export function AtomicRevertStep( props: Props ) {
@@ -34,13 +38,14 @@ export function AtomicRevertStep( props: Props ) {
 		onClickCheckTwo,
 		isRemovePlan,
 		isDowngradePlan,
+		action = 'cancel-purchase',
 	} = props;
 	const translate = useTranslate();
 
 	const atomicTransferDate = moment( atomicTransfer.created_at ).format( 'LL' );
 	const isPlanPurchase = isPlan( purchase );
 	const createInfoPopover = (
-		<InfoPopover className="cancel-purchase-form__atomic-revert-more-info">
+		<InfoPopover className={ `${ action }-form__atomic-revert-more-info` }>
 			{ translate(
 				'On %(atomicTransferDate)s, we automatically moved your site to a platform that supports the usage of plugins, custom themes, and hosting features. If you deactivate your plan, we will move your site back to its original platform.',
 				{ args: { atomicTransferDate } }
@@ -100,8 +105,19 @@ export function AtomicRevertStep( props: Props ) {
 			}
 		);
 	}
+
+	const enabledClassName = `${ action }-form__atomic-revert-checkbox-enabled`;
+
+	const checkBox1ClassName = clsx( 'required-checkboxes', {
+		[ enabledClassName ]: !! atomicRevertCheckOne,
+	} );
+
+	const checkBox2ClassName = clsx( 'required-checkboxes', {
+		[ enabledClassName ]: !! atomicRevertCheckTwo,
+	} );
+
 	return (
-		<div className="cancel-purchase-form__atomic-revert">
+		<div className={ `${ action }-form__atomic-revert` }>
 			<FormattedHeader
 				brandFont
 				headerText={ translate( 'Proceed With Caution' ) }
@@ -114,9 +130,7 @@ export function AtomicRevertStep( props: Props ) {
 				) }
 			</p>
 			<CheckboxControl
-				className={
-					atomicRevertCheckOne ? 'cancel-purchase-form__atomic-revert-checkbox-enabled' : ''
-				}
+				className={ checkBox1ClassName }
 				label={
 					isPlanPurchase && ! isRemovePlan && ! isDowngradePlan
 						? ( translate(
@@ -135,9 +149,7 @@ export function AtomicRevertStep( props: Props ) {
 				onChange={ onClickCheckOne }
 			/>
 			<CheckboxControl
-				className={
-					atomicRevertCheckTwo ? 'cancel-purchase-form__atomic-revert-checkbox-enabled' : ''
-				}
+				className={ checkBox2ClassName }
 				label={
 					isPlanPurchase && ! isRemovePlan && ! isDowngradePlan
 						? ( translate(
@@ -156,7 +168,7 @@ export function AtomicRevertStep( props: Props ) {
 				onChange={ onClickCheckTwo }
 			/>
 			{ hasBackupsFeature && (
-				<div className="cancel-purchase-form__backups">
+				<div className={ `${ action }-form__backups` }>
 					<div>
 						<h4>{ translate( 'Would you like to download the backup of your site?' ) }</h4>
 						<p>
@@ -171,10 +183,10 @@ export function AtomicRevertStep( props: Props ) {
 				</div>
 			) }
 			{ isDowngradePlan && (
-				<div className="cancel-purchase-form__atomic-lossless-revert">
-					<CheckboxControl
+				<div className="downgrade-purchase-form__atomic-lossless-revert">
+					<ToggleControl
 						className={
-							enableLosslessRevert ? 'cancel-purchase-form__atomic-revert-checkbox-enabled' : ''
+							enableLosslessRevert ? `${ action }-form__atomic-revert-checkbox-enabled` : ''
 						}
 						label={ translate( 'Restore my posts, pages, and media.' ) }
 						help={ translate(
