@@ -43,6 +43,16 @@
 	}
 }
 
+.billing-history__payment-method {
+	display: flex;
+	flex-direction:column;
+
+	&-details {
+		display: flex;
+		gap: $font-body-extra-small;
+	}
+}
+
 .billing-history__billing-details div[contenteditable] {
 	min-height: 1.2em;
 }

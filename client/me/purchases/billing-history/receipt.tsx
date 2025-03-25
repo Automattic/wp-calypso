@@ -251,10 +251,12 @@ function ReceiptPaymentMethod( { transaction }: { transaction: BillingTransactio
 	}
 
 	return (
-		<li>
+		<li className="billing-history__payment-method">
 			<strong>{ translate( 'Payment Method' ) }</strong>
-			<span>{ text }</span>
-			{ transaction.cc_is_for_business && <BusinessCardBadge /> }
+			<div className="billing-history__payment-method-details">
+				<span>{ text }</span>
+				{ transaction.cc_is_for_business && <BusinessCardBadge /> }
+			</div>
 		</li>
 	);
 }
