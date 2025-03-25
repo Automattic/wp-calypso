@@ -8,6 +8,8 @@ import { MigrationStatus } from 'calypso/data/site-migration/landing/types';
 import { useUpdateMigrationStatus } from 'calypso/data/site-migration/landing/use-update-migration-status';
 import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useDispatch } from 'calypso/state';
+import { resetSite } from 'calypso/state/sites/actions';
 import { CredentialsForm } from './components/credentials-form';
 import { NeedHelpLink } from './components/need-help-link';
 import { ApplicationPasswordsInfo } from './types';
@@ -55,6 +57,7 @@ const SiteMigrationCredentials: Step< {
 } > = function ( { navigation } ) {
 	const translate = useTranslate();
 	const siteId = parseInt( useSiteIdParam() ?? '' );
+	const dispatch = useDispatch();
 
 	const { mutate: updateMigrationStatus } = useUpdateMigrationStatus( siteId );
 
@@ -63,6 +66,7 @@ const SiteMigrationCredentials: Step< {
 		applicationPasswordsInfo?: ApplicationPasswordsInfo
 	) => {
 		const action = getAction( siteInfo, applicationPasswordsInfo );
+		dispatch( resetSite( siteId ) );
 		return navigation.submit?.( {
 			action,
 			from: siteInfo?.url,
@@ -79,7 +83,7 @@ const SiteMigrationCredentials: Step< {
 
 	useEffect( () => {
 		if ( siteId ) {
-			updateMigrationStatus( { status: MigrationStatus.PENDING_DIFM } );
+			updateMigrationStatus( { status: MigrationStatus.STARTED_DIFM } );
 		}
 	}, [ siteId, updateMigrationStatus ] );
 
