@@ -215,7 +215,7 @@ export function qrCodeLogin( context, next ) {
 export async function jetpackGoogleAuth( context, next ) {
 	const { query, isServerSide } = context;
 
-	// Do not continue if it's server side
+	// Don't run authentication if it's server side
 	if ( isServerSide ) {
 		return next();
 	}
@@ -409,7 +409,7 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 export async function jetpackAppleAuth( context, next ) {
 	const { query, isServerSide } = context;
 
-	// Do not continue if it's server side
+	// Don't run authentication if it's server side
 	if ( isServerSide ) {
 		return next();
 	}
