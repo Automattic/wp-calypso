@@ -36,6 +36,15 @@
 	}
 }
 
+.a8c-validated-control__error-delegate {
+	position: absolute;
+	top: 0;
+	height: 100%;
+	width: 100%;
+	opacity: 0;
+	pointer-events: none;
+}
+
 .a8c-validated-control__error {
 	display: flex;
 	align-items: flex-start;

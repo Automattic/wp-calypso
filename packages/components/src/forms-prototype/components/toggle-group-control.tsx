@@ -38,14 +38,7 @@ export const ValidatedToggleGroupControl = forwardRef<
 				getValidityTarget={ () => validityTargetRef.current }
 			/>
 			<input
-				style={ {
-					position: 'absolute',
-					top: 0,
-					height: '100%',
-					width: '100%',
-					opacity: 0,
-					pointerEvents: 'none',
-				} }
+				className="a8c-validated-control__error-delegate"
 				type="radio"
 				ref={ validityTargetRef }
 				required={ required }

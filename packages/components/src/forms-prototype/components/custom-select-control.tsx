@@ -33,17 +33,8 @@ export const ValidatedCustomSelectControl = forwardRef<
 				} }
 				getValidityTarget={ () => validityTargetRef.current }
 			/>
-			{ /* TODO: Move delegate to separate file? */ }
 			<select
-				style={ {
-					// TODO: Move to stylesheet
-					position: 'absolute',
-					top: 0,
-					height: '100%',
-					width: '100%',
-					opacity: 0,
-					pointerEvents: 'none',
-				} }
+				className="a8c-validated-control__error-delegate"
 				ref={ validityTargetRef }
 				required={ required }
 				tabIndex={ -1 }
