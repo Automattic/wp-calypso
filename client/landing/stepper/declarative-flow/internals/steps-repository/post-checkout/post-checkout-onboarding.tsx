@@ -1,8 +1,8 @@
 import { SiteIntent } from '@automattic/data-stores/src/onboard';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
-import FallbackHeader from 'calypso/components/fallback-header';
-import Loading from 'calypso/components/loading';
+import FallbackContent from 'calypso/components/fallback-content';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { useMarketplaceThemeProducts } from '../../../../hooks/use-marketplace-theme-products';
 import { useSiteData } from '../../../../hooks/use-site-data';
@@ -28,6 +28,7 @@ const PostCheckoutOnboarding: Step = ( { navigation } ) => {
 	const { submit } = navigation;
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { site, siteSlug } = useSiteData();
+	const { __ } = useI18n();
 
 	const intent = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
@@ -148,12 +149,11 @@ const PostCheckoutOnboarding: Step = ( { navigation } ) => {
 		waitForInitiateTransfer,
 		pluginByGoal,
 	] );
-
+	const title = __( 'Laying the foundations' );
 	return (
-		<div className="fallback-signup-header">
-			<FallbackHeader />
-			<Loading className="wpcom-loading__boot" title="Hello from post checkout" />
-		</div>
+		<>
+			<FallbackContent title={ title } />
+		</>
 	);
 };
 

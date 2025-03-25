@@ -6,8 +6,7 @@ import Modal from 'react-modal';
 import { createPath, generatePath, useParams } from 'react-router';
 import { Route, Routes } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
-import FallbackHeader from 'calypso/components/fallback-header';
-import Loading from 'calypso/components/loading';
+import FallbackContent from 'calypso/components/fallback-content';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
@@ -115,13 +114,9 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 		state: AssertConditionState.SUCCESS,
 	};
 
-	const FallBackLoading = () => {
-		return (
-			<div className="fallback-signup-header">
-				<FallbackHeader />
-				<Loading title="Sprinkling some magic" />
-			</div>
-		);
+	const Placeholder = () => {
+		const title = __( 'Turning on the lights' );
+		return <FallbackContent title={ title } />;
 	};
 
 	const stepContainerV2Context = useMemo(
@@ -136,7 +131,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 	const renderStep = ( step: StepperStep ) => {
 		switch ( assertCondition.state ) {
 			case AssertConditionState.CHECKING:
-				return <FallBackLoading />;
+				return <Placeholder />;
 			case AssertConditionState.FAILURE:
 				console.error( assertCondition.message ); // eslint-disable-line no-console
 				return null;
@@ -215,7 +210,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 	useSignUpStartTracking( { flow } );
 
 	return (
-		<Boot fallback={ <FallBackLoading /> }>
+		<Boot fallback={ <Placeholder /> }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
 
 			<Step.StepContainerV2Provider value={ stepContainerV2Context }>

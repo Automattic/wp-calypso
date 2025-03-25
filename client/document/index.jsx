@@ -14,7 +14,7 @@ import EnvironmentBadge, {
 	ReactQueryDevtoolsHelper,
 	StoreSandboxHelper,
 } from 'calypso/components/environment-badge';
-import FallbackHeader from 'calypso/components/fallback-header';
+import FallbackContent from 'calypso/components/fallback-content';
 import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Loading from 'calypso/components/loading';
@@ -195,8 +195,8 @@ class Document extends Component {
 									'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
 								} ) }
 							>
-								<div className="fallback-signup-header">
-									<FallbackHeader />
+								<div>
+									<FallbackContent withLoading={ false } />
 									<div className="layout__content">
 										{ shouldNotShowLoadingLogo ? (
 											<Loading className="wpcom-loading__boot" title="Laying the foundations" />
