@@ -1,5 +1,5 @@
 import { WPCOM_FEATURES_BACKUPS, WPComPlan } from '@automattic/calypso-products';
-import { Button, CheckboxControl } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
@@ -57,17 +57,9 @@ export function AtomicWarning( {
 						atomicRevertCheckTwo={ atomicRevertCheckTwo }
 						onClickCheckTwo={ () => setAtomicRevertCheckTwo( ! atomicRevertCheckTwo ) }
 						hasBackupsFeature={ hasBackupsFeature }
+						enableLosslessRevert={ enableLosslessRevert }
+						setEnableLosslessRevert={ setEnableLosslessRevert }
 					/>
-					<div className="downgrade-modal__lossless-import">
-						<CheckboxControl
-							label={ translate( 'Attempt to recover my posts, pages, and media after downgrade' ) }
-							help={ translate(
-								'Your posts, pages, and media added after upgrading will be automatically imported to your downgraded site. You will receive an email when complete.'
-							) }
-							checked={ enableLosslessRevert }
-							onChange={ setEnableLosslessRevert }
-						/>
-					</div>
 				</BlankCanvas.Content>
 				<BlankCanvas.Footer>
 					<Button

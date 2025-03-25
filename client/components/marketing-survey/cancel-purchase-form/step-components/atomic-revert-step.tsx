@@ -16,6 +16,8 @@ export type Props = {
 	hasBackupsFeature: boolean;
 	isRemovePlan?: boolean;
 	isDowngradePlan?: boolean;
+	enableLosslessRevert?: boolean;
+	setEnableLosslessRevert?: ( isChecked: boolean ) => void;
 };
 
 export function AtomicRevertStep( props: Props ) {
@@ -25,6 +27,8 @@ export function AtomicRevertStep( props: Props ) {
 		site,
 		atomicRevertCheckOne,
 		atomicRevertCheckTwo,
+		enableLosslessRevert,
+		setEnableLosslessRevert,
 		hasBackupsFeature,
 		onClickCheckOne,
 		onClickCheckTwo,
@@ -164,6 +168,18 @@ export function AtomicRevertStep( props: Props ) {
 					<GutenbergButton variant="primary" href={ `/backup/${ site.slug }` }>
 						{ translate( 'Go to your backups' ) }
 					</GutenbergButton>
+				</div>
+			) }
+			{ isDowngradePlan && (
+				<div className="cancel-purchase-form__atomic-lossless-revert">
+					<CheckboxControl
+						label={ translate( 'Attempt to recover my posts, pages, and media after downgrade' ) }
+						help={ translate(
+							'Your posts, pages, and media added after upgrading will be automatically imported to your downgraded site. You will receive an email when complete.'
+						) }
+						checked={ enableLosslessRevert }
+						onChange={ setEnableLosslessRevert! }
+					/>
 				</div>
 			) }
 		</div>
