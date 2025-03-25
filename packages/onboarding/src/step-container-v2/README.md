@@ -12,7 +12,7 @@ The new version focuses on modularity and composition instead of overrides throu
 
 This version, however, provides several "slots" that allow the developer to declare _which_ parts of the step will be rendered, instead of imperatively specifying _what_ to render. `topBar`, `heading`, `stickyBottomBar`, and `footer` are example of slots.
 
-It also provides the elements to be used within these slots, such as `TopBar`, `Heading`, `StickyBottomBar`, and `Footer`, as well as their internal elements, such as buttons like `NextButton`, `SkipButton`, and `BackButton`.
+It also provides the elements to be used within these slots, such as `TopBar`, `Heading`, `StickyBottomBar`, and `Footer`, as well as their internal elements, such as buttons like `PrimaryButton`, `SkipButton`, and `BackButton`.
 
 Here's an example:
 
@@ -20,7 +20,7 @@ Here's an example:
 import { Step } from '@automattic/onboarding';
 
 const MyStep = () => {
-	const nextButton = <Step.NextButton onClick={ navigation.submit } />;
+	const nextButton = <Step.PrimaryButton onClick={ navigation.submit } />;
 
 	return (
 		<Step.StepContainerV2
@@ -177,7 +177,7 @@ Et voilà, we've created a new wireframe. Here's how to use it:
 	imageUrl={ imageUrl }
 >
 	<p>Here comes the content rendered in the right column of the step.</p>
-	<Step.NextButton onClick={ navigation.submit } />
+	<Step.PrimaryButton onClick={ navigation.submit } />
 </Step.HorizontalLayout>
 ```
 

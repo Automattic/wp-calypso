@@ -43,20 +43,19 @@ const DIFMStartingPoint: StepType< {
 
 	if ( shouldUseStepContainerV2( flow ) ) {
 		const primaryButton = showNewOrExistingSiteChoice ? (
-			<Step.NextButton
+			<Step.PrimaryButton
 				onClick={ () => onSubmit( 'existing-site' ) }
 				label={ translate( 'Use an existing site' ) }
 			/>
 		) : (
-			<Step.NextButton
+			<Step.PrimaryButton
 				onClick={ () => onSubmit( 'new-site' ) }
 				label={ translate( 'Get started' ) }
 			/>
 		);
 
 		const secondaryButton = showNewOrExistingSiteChoice ? (
-			<Step.NextButton
-				variant="secondary"
+			<Step.SecondaryButton
 				onClick={ () => onSubmit( 'new-site' ) }
 				label={ translate( 'Start a new site' ) }
 			/>

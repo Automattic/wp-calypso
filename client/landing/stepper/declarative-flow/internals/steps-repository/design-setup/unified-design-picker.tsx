@@ -712,7 +712,7 @@ const UnifiedDesignPickerStep: StepType< {
 			);
 		}
 
-		return <Step.NextButton label={ text } onClick={ action } />;
+		return <Step.PrimaryButton label={ text } onClick={ action } />;
 	}
 
 	useEffect( () => {

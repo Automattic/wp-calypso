@@ -7,7 +7,8 @@
 export { StepContainerV2Provider } from './contexts/StepContainerV2Context';
 
 export { BackButton } from './components/buttons/BackButton/BackButton';
-export { NextButton } from './components/buttons/NextButton/NextButton';
+export { PrimaryButton } from './components/buttons/PrimaryButton/PrimaryButton';
+export { SecondaryButton } from './components/buttons/SecondaryButton/SecondaryButton';
 export { SkipButton } from './components/buttons/SkipButton/SkipButton';
 export { LinkButton } from './components/buttons/LinkButton/LinkButton';
 export { Heading } from './components/Heading/Heading';

@@ -5,13 +5,13 @@ import { ButtonProps } from '../../../types';
 
 import './style.scss';
 
-export const NextButton = ( originalProps: ButtonProps ) => {
+export const PrimaryButton = ( originalProps: ButtonProps ) => {
 	const { __ } = useI18n();
 
-	const nextButtonProps = normalizeButtonProps( originalProps, {
+	const primaryButtonProps = normalizeButtonProps( originalProps, {
 		label: __( 'Next', __i18n_text_domain__ ),
-		className: 'step-container-v2__next-button',
+		className: 'step-container-v2__primary-button',
 	} );
 
-	return <Button __next40pxDefaultSize variant="primary" { ...nextButtonProps } />;
+	return <Button __next40pxDefaultSize variant="primary" { ...primaryButtonProps } />;
 };
