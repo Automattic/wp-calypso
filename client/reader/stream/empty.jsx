@@ -27,14 +27,19 @@ class FollowingEmptyContent extends Component {
 	};
 
 	render() {
-		const { selectedFeedId, translate } = this.props;
+		const { selectedFeedId, translate, view } = this.props;
 		const isFullSiteFeed = !! selectedFeedId;
+		const isRecentView = view === 'recent';
 
 		return (
 			<EmptyContent
 				className="stream__empty"
 				title={ translate( "You're all caught up." ) }
-				line={ translate( 'No new posts in the last 60 days.' ) }
+				line={
+					isRecentView
+						? translate( 'No new posts in the last 60 days.' )
+						: translate( 'No new posts.' )
+				}
 				action={
 					isFullSiteFeed
 						? translate( 'Visit the Full Site Feed' )

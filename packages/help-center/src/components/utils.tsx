@@ -3,6 +3,24 @@ import Smooch from 'smooch';
 import type { ContactOption } from '../types';
 import type { ZendeskConversation, SupportInteraction } from '@automattic/odie-client';
 
+const isMatchingInteraction = (
+	supportInteraction: SupportInteraction,
+	supportInteractionId: string
+): boolean => {
+	return supportInteraction.uuid === supportInteractionId;
+};
+
+const filterConversationsBySupportInteractions = (
+	conversations: ZendeskConversation[],
+	supportInteractions: SupportInteraction[]
+): ZendeskConversation[] => {
+	return conversations.filter( ( conversation ) =>
+		supportInteractions.some( ( interaction ) =>
+			isMatchingInteraction( interaction, conversation.metadata.supportInteractionId )
+		)
+	);
+};
+
 export const generateContactOnClickEvent = (
 	contactOption: ContactOption,
 	contactOptionEventName?: string,
@@ -95,25 +113,6 @@ export const getClientId = ( conversations: ZendeskConversation[] ): string =>
 		.flatMap( ( conversation ) => conversation.messages )
 		.find( ( message ) => message.source?.type === 'web' && message.source?.id )?.source?.id || '';
 
-export const getConversationsFromSupportInteractions = (
-	conversations: ZendeskConversation[],
-	supportInteractions: SupportInteraction[]
-) => {
-	return conversations.filter( ( conversation ) => {
-		const interaction = supportInteractions.find(
-			( interaction ) => interaction.uuid === conversation.metadata?.supportInteractionId
-		);
-
-		// If an interaction is found, update the conversation status
-		if ( interaction ) {
-			conversation.metadata.status = interaction.status;
-			return true;
-		}
-
-		return false;
-	} );
-};
-
 export const matchSupportInteractionId = (
 	getConversations: () => ZendeskConversation[],
 	isChatLoaded: boolean,
@@ -130,4 +129,36 @@ export const matchSupportInteractionId = (
 
 		return foundMatch;
 	}
+};
+
+export const filterAndUpdateConversationsWithStatus = (
+	conversations: ZendeskConversation[],
+	supportInteractions: SupportInteraction[]
+) => {
+	const filteredConversations = filterConversationsBySupportInteractions(
+		conversations,
+		supportInteractions
+	);
+
+	const conversationsWithUpdatedStatuses = filteredConversations.map( ( conversation ) => {
+		const supportInteraction = supportInteractions.find( ( interaction ) =>
+			isMatchingInteraction( interaction, conversation.metadata.supportInteractionId )
+		);
+
+		if ( ! supportInteraction ) {
+			return conversation;
+		}
+
+		const updatedConversation = {
+			...conversation,
+			metadata: {
+				...conversation.metadata,
+				status: supportInteraction.status,
+			},
+		};
+
+		return updatedConversation;
+	} );
+
+	return conversationsWithUpdatedStatuses;
 };

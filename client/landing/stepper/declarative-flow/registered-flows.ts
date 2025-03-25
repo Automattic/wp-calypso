@@ -88,7 +88,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		),
 
 	[ 'hundred-year-plan' ]: () =>
-		import( /* webpackChunkName: "hundred-year-plan" */ './flows/reblogging/reblogging' ),
+		import(
+			/* webpackChunkName: "hundred-year-plan" */ './flows/hundred-year-plan/hundred-year-plan'
+		),
 
 	'domain-user-transfer': () =>
 		import(
@@ -96,9 +98,7 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		),
 
 	[ REBLOGGING_FLOW ]: () =>
-		import(
-			/* webpackChunkName: "reblogging-flow" */ './flows/site-migration-flow/site-migration-flow'
-		),
+		import( /* webpackChunkName: "reblogging-flow" */ './flows/reblogging/reblogging' ),
 
 	[ SITE_MIGRATION_FLOW ]: () =>
 		import(

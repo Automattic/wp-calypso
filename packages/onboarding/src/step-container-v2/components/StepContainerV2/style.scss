@@ -10,6 +10,12 @@
 	display: flex;
 	flex-direction: column;
 
+	&:has(.vertical-align-center) {
+		.step-container-v2__top-bar-wrapper {
+			z-index: 1;
+		}
+	}
+
 	&__content-wrapper {
 		flex: 1;
 		display: flex;
