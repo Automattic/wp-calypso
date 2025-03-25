@@ -3,27 +3,39 @@ import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 
 type NotifyMeOfNewPostsToggleProps = {
+	className?: string;
+	isUpdating?: boolean;
+	showHint?: boolean;
+	showJetpackAppHint?: boolean;
+	toggleId?: string;
 	value: boolean;
-	isUpdating: boolean;
 	onChange: ( value: boolean ) => void;
 };
 
 const NotifyMeOfNewPostsToggle = ( {
-	value = false,
+	className = '',
 	isUpdating = false,
+	showHint = false,
+	showJetpackAppHint = false,
+	value,
 	onChange,
 }: NotifyMeOfNewPostsToggleProps ) => {
 	const translate = useTranslate();
 
 	return (
-		<div className="setting-item setting-item__last">
+		<div className={ className }>
 			<ToggleControl
-				label={ translate( 'Receive web and mobile notifications' ) }
+				label={ translate( 'Notify me of new posts' ) }
 				onChange={ () => onChange( ! value ) }
 				checked={ value }
 				disabled={ isUpdating }
 			/>
-			{ value && (
+			{ showHint && (
+				<p className="new-posts-notify-toggle__hint">
+					{ translate( 'Receive web and mobile notifications for new posts from this site.' ) }
+				</p>
+			) }
+			{ showJetpackAppHint && value && (
 				<div className="setting-item__app-hint">
 					<JetpackLogo size={ 20 } />
 					<p>

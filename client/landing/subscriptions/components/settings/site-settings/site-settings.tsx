@@ -70,6 +70,7 @@ const SiteSettings = ( {
 			) }
 			{ isLoggedIn && (
 				<NotifyMeOfNewPostsToggle
+					className="setting-item setting-item__last"
 					value={ notifyMeOfNewPosts }
 					onChange={ onNotifyMeOfNewPostsChange }
 					isUpdating={ updatingNotifyMeOfNewPosts }

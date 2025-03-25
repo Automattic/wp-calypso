@@ -10,6 +10,7 @@ import Settings from 'calypso/assets/images/icons/settings.svg';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import FormSelect from 'calypso/components/forms/form-select';
 import SVGIcon from 'calypso/components/svg-icon';
+import NotifyMeOfNewPostsToggle from 'calypso/landing/subscriptions/components/settings/site-settings/notify-me-of-new-posts-toggle';
 import ReaderPopover from 'calypso/reader/components/reader-popover';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -178,17 +179,6 @@ class ReaderSiteNotificationSettings extends Component {
 					position="bottom left"
 					className="reader-site-notification-settings__popout"
 				>
-					<div className="reader-site-notification-settings__popout-toggle">
-						<ToggleControl
-							onChange={ this.toggleNewPostNotification }
-							checked={ sendNewPostsByNotification }
-							id="reader-site-notification-settings__notifications"
-							label={ translate( 'Notify me of new posts' ) }
-						/>
-						<p className="reader-site-notification-settings__popout-hint">
-							{ translate( 'Receive web and mobile notifications for new posts from this site.' ) }
-						</p>
-					</div>
 					<div
 						className={
 							isEmailBlocked
@@ -247,6 +237,13 @@ class ReaderSiteNotificationSettings extends Component {
 							/>
 						</div>
 					) }
+
+					<NotifyMeOfNewPostsToggle
+						className="reader-site-notification-settings__popout-toggle"
+						value={ sendNewPostsByNotification }
+						onChange={ this.toggleNewPostNotification }
+						showHint
+					/>
 
 					{ subscriptionId && (
 						<Button
