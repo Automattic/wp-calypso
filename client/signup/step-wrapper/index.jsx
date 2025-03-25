@@ -216,7 +216,7 @@ class StepWrapper extends Component {
 		const isHelpCenterLinkEnabled =
 			flags?.includes( 'signup/help-center-link' ) &&
 			flow?.enabledHelpCenterGeos &&
-			this.props.stepName !== 'user-social';
+			this.props.userLoggedIn;
 
 		return (
 			<>
