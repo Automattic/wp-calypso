@@ -42,6 +42,13 @@ import './style.scss';
 
 const ANALYTICS_SECTION = 'domains';
 
+const PAGE_URL = '/use-your-domain';
+function extractBasePath( basePath: string ) {
+	return basePath.endsWith( PAGE_URL )
+		? basePath.substring( 0, basePath.length - PAGE_URL.length )
+		: basePath;
+}
+
 type OptionContentProps = {
 	image: string;
 	title: string;
@@ -201,10 +208,7 @@ function UseYourDomainStep( { basePath, goBack, initialQuery }: UseYourDomainSte
 			} )
 		);
 
-		const basePathForMapping = basePath.endsWith( '/use-your-domain' )
-			? basePath.substring( 0, basePath.length - 16 )
-			: basePath;
-
+		const basePathForMapping = extractBasePath( basePath );
 		let mapDomainStepURL = `${ basePathForMapping }/mapping`;
 		if ( selectedSite ) {
 			const query = stringify( { initialQuery: searchQuery.trim() } );
@@ -223,12 +227,8 @@ function UseYourDomainStep( { basePath, goBack, initialQuery }: UseYourDomainSte
 			} )
 		);
 
-		const basePathForTransfer = basePath.endsWith( '/use-your-domain' )
-			? basePath.substring( 0, basePath.length - 16 )
-			: basePath;
-
+		const basePathForTransfer = extractBasePath( basePath );
 		let transferDomainStepURL = `${ basePathForTransfer }/transfer`;
-
 		if ( selectedSite ) {
 			const query = stringify( {
 				initialQuery: searchQuery.trim(),
