@@ -13,13 +13,12 @@ describe( 'jitms', () => {
 				http(
 					{
 						method: 'GET',
-						path: `/jetpack-blogs/${ siteId }/rest-api/`,
+						apiNamespace: 'wpcom/v3',
+						path: `/sites/${ siteId }/jitm`,
 						query: {
-							path: '/jetpack/v4/jitm',
-							query: JSON.stringify( {
-								message_path: messagePath,
-							} ),
-							http_envelope: 1,
+							message_path: messagePath,
+							query: undefined,
+							locale: undefined,
 						},
 					},
 					action
@@ -39,15 +38,11 @@ describe( 'jitms', () => {
 				http(
 					{
 						method: 'POST',
-						path: `/jetpack-blogs/${ siteId }/rest-api/`,
-						query: {
-							path: '/jetpack/v4/jitm',
-							body: JSON.stringify( {
-								feature_class: featureClass,
-								id: messageId,
-							} ),
-							http_envelope: 1,
-							json: false,
+						apiNamespace: 'wpcom/v3',
+						path: `/sites/${ siteId }/jitm`,
+						body: {
+							feature_class: featureClass,
+							id: messageId,
 						},
 					},
 					action
