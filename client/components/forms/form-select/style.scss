@@ -1,3 +1,5 @@
+@import "../../../assets/stylesheets/shared/extends-forms";
+
 .form-select {
 	background:
 		var(--color-surface)
@@ -43,11 +45,14 @@
 		}
 	}
 
+	@extend %form-field-disabled;
+
 	&:disabled,
 	&:hover:disabled {
-		background:
-			url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE1IDYuNzUwMDFMOSAxMi43NUwzIDYuNzUwMDFMNC4wNjA1IDUuNjg5NTFMOSAxMC42MjlMMTMuOTM5NSA1LjY4OTUxTDE1IDYuNzUwMDFaIiBmaWxsPSIjQzNDNEM3Ii8+Cjwvc3ZnPgo=)
-			no-repeat right 10px center;
+		background-image:
+			url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE1IDYuNzUwMDFMOSAxMi43NUwzIDYuNzUwMDFMNC4wNjA1IDUuNjg5NTFMOSAxMC42MjlMMTMuOTM5NSA1LjY4OTUxTDE1IDYuNzUwMDFaIiBmaWxsPSIjQzNDNEM3Ii8+Cjwvc3ZnPgo=);
+		background-repeat: no-repeat;
+		background-position: right 10px center;
 	}
 
 	// A smaller variant that works well when presented inline with text
