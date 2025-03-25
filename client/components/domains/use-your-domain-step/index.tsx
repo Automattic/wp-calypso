@@ -40,6 +40,8 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
+const ANALYTICS_SECTION = 'domains';
+
 type OptionContentProps = {
 	image: string;
 	title: string;
@@ -47,7 +49,6 @@ type OptionContentProps = {
 	onClick: React.MouseEventHandler;
 	buttonText: string;
 	isPrimary: boolean;
-	isSubmitting: boolean;
 	learnMore: React.ReactNode;
 };
 
@@ -58,7 +59,6 @@ function UseYourDomainStepContent( {
 	onClick,
 	buttonText,
 	isPrimary,
-	isSubmitting,
 	learnMore,
 }: OptionContentProps ) {
 	return (
@@ -89,7 +89,6 @@ function UseYourDomainStepContent( {
 						className="use-your-domain-step__option-button"
 						primary={ isPrimary }
 						onClick={ onClick }
-						busy={ isSubmitting }
 					>
 						{ buttonText }
 					</Button>
@@ -101,26 +100,12 @@ function UseYourDomainStepContent( {
 }
 
 type UseYourDomainStepProps = {
-	analyticsSection?: string;
 	basePath: string;
 	goBack?: () => void;
 	initialQuery?: string;
-	isSignupStep?: boolean;
-	mapDomainUrl?: string;
-	transferDomainUrl?: string;
-	forcePrecheck?: boolean;
 };
 
-function UseYourDomainStep( {
-	analyticsSection = 'domains',
-	basePath,
-	goBack,
-	initialQuery,
-	isSignupStep,
-	mapDomainUrl,
-	transferDomainUrl,
-	forcePrecheck = false,
-}: UseYourDomainStepProps ) {
+function UseYourDomainStep( { basePath, goBack, initialQuery }: UseYourDomainStepProps ) {
 	const cartKey = useCartKey();
 	const { responseCart: cart } = useShoppingCart( cartKey );
 
@@ -128,7 +113,6 @@ function UseYourDomainStep( {
 	const dispatch = useDispatch();
 
 	const [ searchQuery ] = useState( initialQuery || '' );
-	const [ submittingWhois ] = useState( forcePrecheck );
 
 	const selectedSite = useSelector( getSelectedSite );
 	const productsList = useSelector( getProductsList );
@@ -141,8 +125,7 @@ function UseYourDomainStep( {
 	);
 
 	const domainsWithPlansOnlyButNoPlan =
-		domainsWithPlansOnly &&
-		( ( selectedSite?.plan && ! isPlan( selectedSite.plan ) ) || isSignupStep );
+		domainsWithPlansOnly && selectedSite?.plan && ! isPlan( selectedSite.plan );
 	const productSlug = getDomainProductSlug( searchQuery );
 	const domainProductSalePrice = getDomainTransferSalePrice(
 		productSlug,
@@ -214,24 +197,18 @@ function UseYourDomainStep( {
 
 		dispatch(
 			recordTracksEvent( 'calypso_use_your_domain_mapping_click', {
-				domain_name: analyticsSection,
+				domain_name: ANALYTICS_SECTION,
 			} )
 		);
 
-		let mapDomainStepURL;
+		const basePathForMapping = basePath.endsWith( '/use-your-domain' )
+			? basePath.substring( 0, basePath.length - 16 )
+			: basePath;
 
-		if ( mapDomainUrl ) {
-			mapDomainStepURL = mapDomainUrl;
-		} else {
-			const basePathForMapping = basePath.endsWith( '/use-your-domain' )
-				? basePath.substring( 0, basePath.length - 16 )
-				: basePath;
-
-			mapDomainStepURL = `${ basePathForMapping }/mapping`;
-			if ( selectedSite ) {
-				const query = stringify( { initialQuery: searchQuery.trim() } );
-				mapDomainStepURL += `/${ selectedSite.slug }?${ query }`;
-			}
+		let mapDomainStepURL = `${ basePathForMapping }/mapping`;
+		if ( selectedSite ) {
+			const query = stringify( { initialQuery: searchQuery.trim() } );
+			mapDomainStepURL += `/${ selectedSite.slug }?${ query }`;
 		}
 
 		page( mapDomainStepURL );
@@ -242,28 +219,22 @@ function UseYourDomainStep( {
 
 		dispatch(
 			recordTracksEvent( 'calypso_use_your_domain_transfer_click', {
-				domain_name: analyticsSection,
+				domain_name: ANALYTICS_SECTION,
 			} )
 		);
 
-		let transferDomainStepURL;
+		const basePathForTransfer = basePath.endsWith( '/use-your-domain' )
+			? basePath.substring( 0, basePath.length - 16 )
+			: basePath;
 
-		if ( transferDomainUrl ) {
-			transferDomainStepURL = transferDomainUrl;
-		} else {
-			const basePathForTransfer = basePath.endsWith( '/use-your-domain' )
-				? basePath.substring( 0, basePath.length - 16 )
-				: basePath;
+		let transferDomainStepURL = `${ basePathForTransfer }/transfer`;
 
-			transferDomainStepURL = `${ basePathForTransfer }/transfer`;
-
-			if ( selectedSite ) {
-				const query = stringify( {
-					initialQuery: searchQuery.trim(),
-					useStandardBack: true,
-				} );
-				transferDomainStepURL += `/${ selectedSite.slug }?${ query }`;
-			}
+		if ( selectedSite ) {
+			const query = stringify( {
+				initialQuery: searchQuery.trim(),
+				useStandardBack: true,
+			} );
+			transferDomainStepURL += `/${ selectedSite.slug }?${ query }`;
 		}
 
 		page( transferDomainStepURL );
@@ -271,9 +242,7 @@ function UseYourDomainStep( {
 
 	return (
 		<div className="use-your-domain-step">
-			{ ! isSignupStep && (
-				<HeaderCake onClick={ goBack }>{ translate( 'Use My Own Domain' ) }</HeaderCake>
-			) }
+			<HeaderCake onClick={ goBack }>{ translate( 'Use My Own Domain' ) }</HeaderCake>
 			<QueryProducts />
 			<div className="use-your-domain-step__content">
 				<UseYourDomainStepContent
@@ -292,7 +261,6 @@ function UseYourDomainStep( {
 					buttonText={ translate( 'Transfer to WordPress.com' ) }
 					onClick={ goToTransferDomainStep }
 					isPrimary
-					isSubmitting={ submittingWhois }
 					learnMore={ translate( '{{a}}Learn more about domain transfers{{/a}}', {
 						components: {
 							a: (
@@ -319,7 +287,6 @@ function UseYourDomainStep( {
 					buttonText={ translate( 'Map your domain' ) }
 					onClick={ goToMapDomainStep }
 					isPrimary={ false }
-					isSubmitting={ submittingWhois }
 					learnMore={ translate( '{{a}}Learn more about domain mapping{{/a}}', {
 						components: {
 							a: (
