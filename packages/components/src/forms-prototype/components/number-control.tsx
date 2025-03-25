@@ -1,0 +1,40 @@
+import { __experimentalNumberControl as NumberControl } from '@wordpress/components';
+import { useMergeRefs } from '@wordpress/compose';
+import React, { forwardRef, useRef } from 'react';
+import { ControlWithError } from '../control-with-error';
+import type { ValidatedControlProps } from './types';
+
+type Value = React.ComponentProps< typeof NumberControl >[ 'value' ];
+
+export const ValidatedNumberControl = forwardRef<
+	HTMLInputElement,
+	React.ComponentProps< typeof NumberControl > & ValidatedControlProps< Value >
+>( ( { required, onReportCustomValidity, onChange, ...restProps }, forwardedRef ) => {
+	const validityTargetRef = useRef< HTMLInputElement >( null );
+	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
+
+	const valueRef = useRef< Value >( restProps.value );
+
+	return (
+		<ControlWithError
+			required={ required }
+			render={
+				<NumberControl
+					__next40pxDefaultSize
+					ref={ mergedRefs }
+					// TODO: Upstream limitation - When form is submitted when value is undefined, it will
+					// automatically set a clamped value (as defined by `min` attribute, so 0 by default).
+					onChange={ ( value, ...args ) => {
+						valueRef.current = value;
+						onChange?.( value, ...args );
+					} }
+					{ ...restProps }
+				/>
+			}
+			onReportCustomValidity={ () => {
+				return onReportCustomValidity?.( valueRef.current );
+			} }
+			getValidityTarget={ () => validityTargetRef.current }
+		/>
+	);
+} );

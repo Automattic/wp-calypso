@@ -67,27 +67,12 @@ function UnforwardedControlWithError< C extends React.ReactElement >(
 			setIsTouched( true );
 			validate();
 		}
-
-		// Workaround for setCustomValidity() forcing an immediate re-render,
-		// which can reset the text field value in uncontrolled mode.
-		const validityTarget = getValidityTarget?.();
-		if (
-			validityTarget instanceof HTMLInputElement &&
-			[ 'text', 'number', 'password', 'email', 'tel', 'search', 'url' ].includes(
-				validityTarget.type
-			)
-		) {
-			const correctValue = validityTarget.value;
-			setTimeout( () => {
-				validityTarget.value = correctValue ?? '';
-			}, 0 );
-		}
 	};
 
 	const onChange = ( ...args: unknown[] ) => {
 		render.props.onChange?.( ...args );
 
-		// Only validate incrementally if the value is already marked as invalid.
+		// Only validate incrementally if the value has blurred at least once.
 		if ( isTouched ) {
 			validate();
 		}

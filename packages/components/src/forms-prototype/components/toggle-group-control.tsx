@@ -1,0 +1,65 @@
+import { __experimentalToggleGroupControl as ToggleGroupControl } from '@wordpress/components';
+import React, { forwardRef, useId, useRef } from 'react';
+import { ControlWithError } from '../control-with-error';
+import type { ValidatedControlProps } from './types';
+
+type Value = React.ComponentProps< typeof ToggleGroupControl >[ 'value' ];
+
+export const ValidatedToggleGroupControl = forwardRef<
+	HTMLInputElement,
+	React.ComponentProps< typeof ToggleGroupControl > & ValidatedControlProps< Value >
+>( ( { required, onReportCustomValidity, onChange, ...restProps }, forwardedRef ) => {
+	const validityTargetRef = useRef< HTMLInputElement >( null );
+	const valueRef = useRef< Value >();
+
+	const nameAttr = useId();
+
+	return (
+		<div className="a8c-use-validation__wrapper-with-error-delegate">
+			<ControlWithError
+				required={ required }
+				render={
+					<ToggleGroupControl
+						__nextHasNoMarginBottom
+						__next40pxDefaultSize
+						ref={ forwardedRef }
+						// TODO: Upstream limitation - In uncontrolled mode, starting from an undefined value then
+						// setting a value has a visual bug.
+						onChange={ ( value ) => {
+							valueRef.current = value;
+							onChange?.( value );
+						} }
+						{ ...restProps }
+					/>
+				}
+				onReportCustomValidity={ () => {
+					return onReportCustomValidity?.( valueRef.current );
+				} }
+				getValidityTarget={ () => validityTargetRef.current }
+			/>
+			<input
+				style={ {
+					position: 'absolute',
+					top: 0,
+					height: '100%',
+					width: '100%',
+					opacity: 0,
+					pointerEvents: 'none',
+				} }
+				type="radio"
+				ref={ validityTargetRef }
+				required={ required }
+				checked={ restProps.value != null }
+				tabIndex={ -1 }
+				// A name attribute is needed for the `required` behavior to work.
+				name={ nameAttr }
+				onChange={ () => {} }
+				onFocus={ ( e ) => {
+					e.target.previousElementSibling
+						?.querySelector< HTMLButtonElement | HTMLInputElement >( '[data-active-item="true"]' )
+						?.focus();
+				} }
+			/>
+		</div>
+	);
+} );
