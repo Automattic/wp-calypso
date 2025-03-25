@@ -14,7 +14,8 @@ import statsStrings from 'calypso/my-sites/stats/stats-strings';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
 import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
 import { useSelector } from 'calypso/state';
-import { getSiteSlug, isJetpackModuleActive, isSimpleSite } from 'calypso/state/sites/selectors';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { getSiteSlug, isSimpleSite } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useSubscribersTotalsQueries from '../../hooks/use-subscribers-totals-query';
@@ -107,11 +108,11 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 		);
 
 	// If the subscriptions module is inactive, redirect to the stats page.
-	const isSubscriptionsModuleActive =
-		useSelector( ( state ) => isJetpackModuleActive( state, siteId, 'subscriptions', true ) ) ??
-		false;
+	const moduleActive = useSelector( ( state ) =>
+		siteId ? isJetpackModuleActive( state, siteId, 'subscriptions', true ) : false
+	);
 
-	if ( ! isSimple && ! isSubscriptionsModuleActive ) {
+	if ( ! isSimple && ! moduleActive ) {
 		page.redirect( `/stats/day/${ siteSlug }` );
 		return;
 	}
