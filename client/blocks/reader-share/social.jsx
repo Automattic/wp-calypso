@@ -52,7 +52,7 @@ const actionMap = {
 		}
 	},
 	facebook( post ) {
-		const baseUrl = new URL( 'https://m.facebook.com/sharer.php' );
+		const baseUrl = new URL( 'https://www.facebook.com/sharer.php' );
 		const params = new URLSearchParams( {
 			u: post.URL,
 			app_id: config( 'facebook_api_key' ),
