@@ -78,7 +78,7 @@ class SideExplainer extends Component {
 				subtitle = translate(
 					'Select any annual paid plan and we’ll pay the first year’s domain registration fees for you.'
 				);
-				subtitle2 = translate( 'You can claim your custom domain name later when you’re ready.' );
+				// subtitle2 = translate( 'You can claim your custom domain name later when you're ready.' );
 				ctaText = translate( 'Check paid plans »' );
 				break;
 
@@ -114,20 +114,20 @@ class SideExplainer extends Component {
 				break;
 		}
 
-		return { title, subtitle, subtitle2, ctaText };
+		return { title, subtitle, subtitle2, ctaText, type };
 	}
 
 	render() {
-		const { title, subtitle, subtitle2, ctaText } = this.getStrings();
+		const { title, subtitle, subtitle2, ctaText, type } = this.getStrings();
 
 		return (
 			/* eslint-disable jsx-a11y/click-events-have-key-events */
 			<div className="side-explainer">
-				<div className="side-explainer__title">{ title }</div>
-				<div className="side-explainer__subtitle">
-					<div>{ subtitle }</div>
-					{ subtitle2 && <div className="side-explainer__subtitle-2">{ subtitle2 }</div> }
-				</div>
+				{ type === 'free-domain-explainer-check-paid-plans' ? (
+					<FreeDomainExplainer subtitle={ subtitle } subtitle2={ subtitle2 } title={ title } />
+				) : (
+					<DefaultExplainer subtitle={ subtitle } subtitle2={ subtitle2 } title={ title } />
+				) }
 				{ ctaText && (
 					<div className="side-explainer__cta">
 						<button
@@ -143,6 +143,31 @@ class SideExplainer extends Component {
 			/* eslint-enable jsx-a11y/click-events-have-key-events */
 		);
 	}
+}
+
+function FreeDomainExplainer( { subtitle, subtitle2, title } ) {
+	return (
+		<div className="side-explainer__content">
+			<div className="side-explainer__subtitle">
+				<div>{ subtitle }</div>
+				{ subtitle2 && <div className="side-explainer__subtitle-2">{ subtitle2 }</div> }
+			</div>
+			<div className="side-explainer__separator" />
+			<div className="side-explainer__title">{ title }</div>
+		</div>
+	);
+}
+
+function DefaultExplainer( { subtitle, subtitle2, title } ) {
+	return (
+		<>
+			<div className="side-explainer__title">{ title }</div>
+			<div className="side-explainer__subtitle">
+				<div>{ subtitle }</div>
+				{ subtitle2 && <div className="side-explainer__subtitle-2">{ subtitle2 }</div> }
+			</div>
+		</>
+	);
 }
 
 export default connect( ( state ) => {
