@@ -33,7 +33,7 @@ import { isSavingSiteSettings } from 'calypso/state/site-settings/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HoldList, { hasBlockingHold, HardBlockingNotice, getBlockingMessages } from './hold-list';
-import SupportBlock from './support-block';
+import SupportLink from './support-link';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
 import WarningList from './warning-list';
 import type { EligibilityData } from 'calypso/state/automated-transfer/selectors';
@@ -253,7 +253,7 @@ export const EligibilityWarnings = ( {
 
 			<CompactCard>
 				<div className="eligibility-warnings__confirm-buttons">
-					<SupportBlock
+					<SupportLink
 						useHelpCenter={ context === 'plugin-details' }
 						onCloseEligibilityDialog={ onClose }
 					/>

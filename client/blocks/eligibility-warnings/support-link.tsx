@@ -10,7 +10,7 @@ import type { HelpCenterSelect } from '@automattic/data-stores';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-const SupportBlock = ( {
+const SupportLink = ( {
 	onCloseEligibilityDialog,
 	translate,
 	useHelpCenter = false,
@@ -64,4 +64,4 @@ const SupportBlock = ( {
 	);
 };
 
-export default localize( SupportBlock );
+export default localize( SupportLink );
