@@ -354,7 +354,7 @@ function UnifiedPlansStep( {
 			return headerText;
 		}
 
-		return translate( 'There’s a plan for you' );
+		return translate( 'Choose your flavor of WordPress' );
 	};
 
 	const getSubheaderText = () => {
