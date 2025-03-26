@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { addLocaleToPathLocaleInFront, useLocale } from '@automattic/i18n-utils';
+import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -63,6 +64,40 @@ export const DiscoverHeader = ( props ) => {
 				'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
 			} ) }
 		/>
+	);
+};
+
+const ReaderDiscoverLoginPrompt = () => {
+	const translate = useTranslate();
+	return (
+		<div className="reader-discover-login-prompt">
+			<h2>{ translate( 'Join the conversation' ) }</h2>
+			<p>
+				{ translate(
+					'Sign in to discover more great content and subscribe to your favorite blogs.'
+				) }
+			</p>
+			<div className="reader-discover-login-prompt__buttons">
+				<Button
+					isPrimary
+					onClick={ () => {
+						window.location.href = '/start/reader?ref=reader-lp';
+					} }
+					className="reader-discover-login-prompt__signup-button"
+				>
+					{ translate( 'Create a new account' ) }
+				</Button>
+				<Button
+					isLink
+					onClick={ () => {
+						window.location.href = '/log-in?redirect_to=%2Fdiscover';
+					} }
+					className="reader-discover-login-prompt__login-button"
+				>
+					{ translate( 'Log in' ) }
+				</Button>
+			</div>
+		</div>
 	);
 };
 
@@ -144,9 +179,12 @@ const DiscoverStream = ( props ) => {
 	}
 
 	return (
-		<Stream { ...streamProps }>
-			<HeaderAndNavigation />
-		</Stream>
+		<>
+			<Stream { ...streamProps }>
+				<HeaderAndNavigation />
+			</Stream>
+			{ ! isLoggedIn && <ReaderDiscoverLoginPrompt /> }
+		</>
 	);
 };
 
