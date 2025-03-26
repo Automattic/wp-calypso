@@ -115,7 +115,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 	};
 
 	const Placeholder = () => {
-		const title = __( 'Turning on the lights' );
+		const title = __( 'Sprinkling some magic' );
 		return <FallbackContent title={ title } />;
 	};
 

@@ -2,6 +2,11 @@
     padding-top: 60px !important;
 }
 
+// This is necessary to make /start aligned
+.is-section-signup .fallback-signup-header {
+    padding-top: 0 !important;
+}
+
 .fallback-signup {
     position: absolute;
     margin-top: 8px;
