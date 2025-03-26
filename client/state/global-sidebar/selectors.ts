@@ -23,12 +23,16 @@ function getSiteDashboardRoutes( state: AppState ) {
 		...( isPlansPageUntangled( state ) ? [ '/plans' ] : [] ),
 
 		// Domain Management
+		'/domains/manage',
 		'/domains/manage/all/overview',
 		'/domains/manage/all/email',
 		'/domains/manage/all/contact-info',
 
 		// Bulk Plugins management
 		'/plugins/manage/sites',
+
+		// Themes
+		'/themes',
 	];
 }
 
