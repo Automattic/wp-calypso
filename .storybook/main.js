@@ -25,6 +25,4 @@ module.exports = {
 			</script>
 		`,
 	},
-
-	addons: [ '@storybook/addon-webpack5-compiler-babel' ],
 };
