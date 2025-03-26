@@ -10,7 +10,9 @@
 		box-shadow: none;
 		padding: 0;
 	}
+}
 
+.downgrade__wrapper-card, .atomic-warning {
 	// FIXME: This is a hack to override the default color of the destructive button
 	.components-button.is-destructive.is-destructive {
 		--wp-components-color-accent: #cc1818;
