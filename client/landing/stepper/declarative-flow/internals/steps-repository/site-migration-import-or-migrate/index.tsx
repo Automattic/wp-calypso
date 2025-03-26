@@ -1,7 +1,6 @@
 import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { BadgeType } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
-import { canInstallPlugins } from '@automattic/sites';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -26,8 +25,9 @@ const SiteMigrationImportOrMigrate: Step< {
 	const importSiteQueryParam = getQueryArg( window.location.href, 'from' )?.toString() || '';
 	const { deleteMigrationSticker } = useMigrationStickerMutation();
 	const { mutate: cancelMigration } = useMigrationCancellation( site?.ID );
-	const siteCanInstallPlugins = canInstallPlugins( site );
-	const isUpgradeRequired = ! siteCanInstallPlugins;
+	const isUpgradeRequired =
+		! site?.plan?.product_slug.startsWith( 'ecommerce' ) &&
+		! site?.plan?.product_slug.startsWith( 'business' );
 
 	const options = useMemo( () => {
 		const upgradeRequiredLabel = translate( '50% off %(planName)s', {
@@ -63,7 +63,7 @@ const SiteMigrationImportOrMigrate: Step< {
 		! hostingProviderDetails.is_unknown && ! hostingProviderDetails.is_a8c;
 
 	const handleClick = ( destination: 'migrate' | 'import' | 'upgrade' ) => {
-		if ( destination === 'migrate' && ! siteCanInstallPlugins ) {
+		if ( destination === 'migrate' && ! isUpgradeRequired ) {
 			return navigation.submit?.( { destination: 'upgrade' } );
 		}
 
