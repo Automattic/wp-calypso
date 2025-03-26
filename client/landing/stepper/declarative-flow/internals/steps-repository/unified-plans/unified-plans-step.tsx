@@ -33,6 +33,7 @@ import {
 import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
+import { StepContainerV2Plans } from './step-container-v2-plans';
 import { getIntervalType } from './util';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { StepState } from 'calypso/state/signup/progress/schema';
@@ -492,8 +493,7 @@ function UnifiedPlansStep( {
 		return (
 			<>
 				<MarketingMessage path="signup/plans" />
-				<AsyncLoad
-					require="./step-container-v2-plans"
+				<StepContainerV2Plans
 					headerText={ getHeaderText() }
 					subHeaderText={ fallbackSubHeaderText }
 					children={ stepContent }

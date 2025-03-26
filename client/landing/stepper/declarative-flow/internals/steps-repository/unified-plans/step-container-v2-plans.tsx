@@ -10,7 +10,7 @@ type StepContainerV2PlansProps = {
 	backLabelText?: string;
 };
 
-const StepContainerV2Plans = ( {
+export const StepContainerV2Plans = ( {
 	headerText,
 	subHeaderText,
 	children,
@@ -33,5 +33,3 @@ const StepContainerV2Plans = ( {
 		</Step.FullWidthLayout>
 	);
 };
-
-export default StepContainerV2Plans;
