@@ -112,7 +112,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 		siteId ? isJetpackModuleActive( state, siteId, 'subscriptions', true ) : false
 	);
 
-	if ( ! isSimple && ! isSubscriptionsModuleActive ) {
+	if ( ! isSimple && false === isSubscriptionsModuleActive ) {
 		page.redirect( `/stats/day/${ siteSlug }` );
 		return;
 	}

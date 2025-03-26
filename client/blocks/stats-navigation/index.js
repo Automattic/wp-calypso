@@ -177,7 +177,11 @@ class StatsNavigation extends Component {
 					return false;
 				}
 
-				return isSimple ? true : isSubscriptionsModuleActive;
+				if ( isSimple || false !== isSubscriptionsModuleActive ) {
+					return true;
+				}
+
+				return false;
 
 			case 'realtime':
 				if ( 'undefined' === typeof siteId ) {
