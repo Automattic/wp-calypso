@@ -28,7 +28,7 @@ const FLOW_NAME = 'site-migration';
 
 const siteMigration: Flow = {
 	name: FLOW_NAME,
-	isSignupFlow: true,
+	isSignupFlow: false,
 	__experimentalUseSessions: true,
 
 	useSideEffect() {
