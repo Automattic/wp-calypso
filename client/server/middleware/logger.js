@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import config from '@automattic/calypso-config';
 import uaParser from 'ua-parser-js';
 import isStaticRequest from 'calypso/server/lib/is-static-request';
