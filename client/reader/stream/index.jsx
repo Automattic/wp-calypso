@@ -89,6 +89,7 @@ class ReaderStream extends Component {
 		useCompactCards: PropTypes.bool,
 		fixedHeaderHeight: PropTypes.number,
 		selectedStreamName: PropTypes.string,
+		disableInfiniteScroll: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -104,6 +105,7 @@ class ReaderStream extends Component {
 		showBack: true,
 		suppressSiteNameLink: false,
 		useCompactCards: false,
+		disableInfiniteScroll: false,
 	};
 
 	state = {
@@ -482,6 +484,10 @@ class ReaderStream extends Component {
 	};
 
 	fetchNextPage = ( options, props = this.props ) => {
+		if ( this.props.disableInfiniteScroll && this.props.items.length > 0 ) {
+			return;
+		}
+
 		const { streamKey, stream, startDate, localeSlug, selectedFeedId } = props;
 		if ( options.triggeredByScroll ) {
 			const pageId = pagesByKey.get( streamKey ) || 0;
