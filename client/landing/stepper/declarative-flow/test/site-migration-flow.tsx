@@ -8,14 +8,31 @@ import nock from 'nock';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
+import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import { HOW_TO_MIGRATE_OPTIONS } from '../../constants';
+import { useSiteData } from '../../hooks/use-site-data';
 import { goToCheckout } from '../../utils/checkout';
 import siteMigrationFlow from '../flows/site-migration-flow/site-migration-flow';
 import { STEPS } from '../internals/steps';
 import { getAssertionConditionResult, renderFlow, runFlowNavigation } from './helpers';
+import type { SiteDetails } from '@automattic/data-stores/src/site/types';
 // we need to save the original object for later to not affect tests from other files
 const originalLocation = window.location;
+
+const mockSiteData = {
+	siteSlug: 'example.wordpress.com',
+	siteId: 123,
+	site: { ID: 123, canAutoupdateFiles: true } as unknown as SiteDetails,
+	siteSlugOrId: 'example.wordpress.com',
+} as unknown as ReturnType< typeof useSiteData >;
+
+const mockNoSiteData = {
+	siteSlug: '',
+	siteId: 0,
+	site: null,
+	siteSlugOrId: '',
+} as unknown as ReturnType< typeof useSiteData >;
 
 jest.mock( '../../utils/checkout' );
 jest.mock( '@automattic/data-stores/src/user/selectors' );
@@ -30,6 +47,14 @@ jest.mock( 'calypso/landing/stepper/declarative-flow/internals/state-manager/sto
 		set: jest.fn(),
 		sessionId: '123',
 	} ),
+} ) );
+
+jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
+	useSiteData: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/state/current-user/selectors', () => ( {
+	getCurrentUserSiteCount: jest.fn().mockReturnValue( 0 ),
 } ) );
 
 jest.mock( 'calypso/state/sites/selectors/get-site-option' );
@@ -64,25 +89,15 @@ describe( 'Site Migration Flow', () => {
 		nock( apiBaseUrl ).get( testSettingsEndpoint ).reply( 200, {} );
 		nock( apiBaseUrl ).post( testSettingsEndpoint ).reply( 200, {} );
 		nock( apiBaseUrl ).post( '/wpcom/v2/guides/trigger' ).reply( 200, {} );
+
+		jest.mocked( useSiteData ).mockReturnValue( mockSiteData );
 	} );
 
 	afterEach( () => {
-		// Restore the original implementation after each test
 		jest.restoreAllMocks();
 	} );
 
 	describe( 'useAssertConditions', () => {
-		it( 'redirects the user to home when there is no siteSlug and siteId', () => {
-			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
-
-			runUseAssertionCondition( {
-				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
-				currentURL: `/setup/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }?siteSlug=&siteId=`,
-			} );
-
-			expect( window.location.assign ).toHaveBeenCalledWith( '/' );
-		} );
-
 		it( 'redirects the user to the start page when the user is not a site admin', () => {
 			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
 			( useIsSiteAdmin as jest.Mock ).mockReturnValue( { isAdmin: false } );
@@ -224,8 +239,6 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'SITE_MIGRATION_IDENTIFY', () => {
-			beforeEach( () => jest.clearAllMocks() );
-
 			it( 'redirects to SITE_MIGRATION_IMPORT_OR_MIGRATE step when the platform is WordPress', async () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_IDENTIFY,
@@ -244,50 +257,6 @@ describe( 'Site Migration Flow', () => {
 						siteSlug: 'example.wordpress.com',
 						from: 'https://site-to-be-migrated.com',
 					},
-				} );
-			} );
-
-			it( 'redirects to import flow when it is not possible to identify the platform', async () => {
-				runNavigation( {
-					from: STEPS.SITE_MIGRATION_IDENTIFY,
-					dependencies: {
-						action: 'continue',
-						platform: 'unknown',
-						from: 'https://example-to-be-migrated.com',
-					},
-					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
-				} );
-
-				await waitFor( () => {
-					expect( window.location.assign ).toMatchURL( {
-						path: '/setup/site-setup/importList',
-						query: {
-							siteId: 123,
-							siteSlug: 'example.wordpress.com',
-							from: 'https://example-to-be-migrated.com',
-						},
-					} );
-				} );
-			} );
-
-			it( 'redirects to the import content flow when the user skips platform identification', async () => {
-				runNavigation( {
-					from: STEPS.SITE_MIGRATION_IDENTIFY,
-					dependencies: {
-						action: 'skip_platform_identification',
-					},
-					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
-				} );
-
-				await waitFor( () => {
-					expect( window.location.assign ).toMatchURL( {
-						path: '/setup/site-setup/importList',
-						query: {
-							siteSlug: 'example.wordpress.com',
-							origin: 'site-migration-identify',
-							backToFlow: '/site-migration/site-migration-identify',
-						},
-					} );
 				} );
 			} );
 
@@ -311,29 +280,36 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			it( 'redirects to IMPORT flow when the source site is not WordPress and there is a site already created (siteId or siteSlug)', () => {
-				runNavigation( {
+			it( 'redirects to SITE_CREATION_STEP when the flow has no site preloaded and the user has no wpcom sites', () => {
+				jest.mocked( useSiteData ).mockReturnValue( mockNoSiteData );
+				jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 0 );
+
+				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_IDENTIFY,
-					dependencies: {
-						platform: 'non-wordpress',
-						from: 'https://site-to-be-migrated.com',
-					},
-					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
 				} );
 
-				expect( window.location.assign ).toMatchURL( {
-					path: '/setup/site-setup/importList',
-					query: {
-						siteId: 123,
-						siteSlug: 'example.wordpress.com',
-						from: 'https://site-to-be-migrated.com',
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_CREATION_STEP,
+				} );
+			} );
+
+			it( 'redirects to PICK_SITE when the flow has no preloaded site and the platform is WordPress', () => {
+				jest.mocked( useSiteData ).mockReturnValue( mockNoSiteData );
+				jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 2 );
+
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_IDENTIFY,
+					dependencies: {
+						platform: 'wordpress',
 					},
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.PICK_SITE,
 				} );
 			} );
 
 			describe( 'back', () => {
-				beforeEach( () => jest.clearAllMocks() );
-
 				it( 'redirects back to SITE_MIGRATION_IDENTIFY step', () => {
 					runNavigationBack( {
 						from: STEPS.SITE_MIGRATION_IDENTIFY,
@@ -353,10 +329,6 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'SITE_MIGRATION_IMPORT_OR_MIGRATE', () => {
-			beforeEach( () => {
-				jest.clearAllMocks();
-			} );
-
 			it( 'redirects to SITE_MIGRATION_HOW_TO_MIGRATE step', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
@@ -405,6 +377,13 @@ describe( 'Site Migration Flow', () => {
 					sessionId: '123',
 				} );
 
+				jest.mocked( useSiteData ).mockReturnValue( {
+					siteSlug: 'example.wordpress.com',
+					siteId: 0,
+					site: null,
+					siteSlugOrId: '',
+				} );
+
 				runNavigation( {
 					from: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 					dependencies: {
@@ -412,12 +391,12 @@ describe( 'Site Migration Flow', () => {
 					},
 					query: {
 						ref: 'calypso-importer',
-						siteSlug: 'site-to-be-migrated.com',
+						siteSlug: 'example.wordpress.com',
 					},
 				} );
 
 				expect( window.location.assign ).toMatchURL( {
-					path: '/import/site-to-be-migrated.com',
+					path: '/import/example.wordpress.com',
 					query: {
 						engine: 'wordpress',
 						ref: 'site-migration',
@@ -539,6 +518,7 @@ describe( 'Site Migration Flow', () => {
 						siteSlug: 'example.wordpress.com',
 						siteId: 123,
 						from: 'https://site-to-be-migrated.com',
+						destination: 'upgrade',
 					},
 				} );
 			} );

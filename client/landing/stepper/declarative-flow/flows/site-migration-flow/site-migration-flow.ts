@@ -1,22 +1,22 @@
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Onboard, type UserSelect } from '@automattic/data-stores';
-import { isHostedSiteMigrationFlow } from '@automattic/onboarding';
 import { SiteExcerptData } from '@automattic/sites';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
+import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { getSiteAdminUrl, getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { HOW_TO_MIGRATE_OPTIONS } from '../../../constants';
 import { useIsSiteAdmin } from '../../../hooks/use-is-site-admin';
-import { useSiteData } from '../../../hooks/use-site-data';
 import { USER_STORE, ONBOARD_STORE } from '../../../stores';
 import { STEPS } from '../../internals/steps';
 import { type SiteMigrationIdentifyAction } from '../../internals/steps-repository/site-migration-identify';
@@ -28,7 +28,7 @@ const FLOW_NAME = 'site-migration';
 
 const siteMigration: Flow = {
 	name: FLOW_NAME,
-	isSignupFlow: false,
+	isSignupFlow: true,
 	__experimentalUseSessions: true,
 
 	useSideEffect() {
@@ -49,6 +49,9 @@ const siteMigration: Flow = {
 	useSteps() {
 		const baseSteps = [
 			STEPS.SITE_MIGRATION_IDENTIFY,
+			STEPS.PICK_SITE,
+			STEPS.SITE_CREATION_STEP,
+			STEPS.PROCESSING,
 			STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 			STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
@@ -64,46 +67,31 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_SUPPORT_INSTRUCTIONS,
 		];
 
-		const hostedVariantSteps = isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME )
-			? [ STEPS.PICK_SITE, STEPS.SITE_CREATION_STEP, STEPS.PROCESSING ]
-			: [];
-
-		return stepsWithRequiredLogin( [ ...baseSteps, ...hostedVariantSteps ] );
+		return stepsWithRequiredLogin( baseSteps );
 	},
 
 	useAssertConditions(): AssertConditionResult {
-		const { siteSlug, siteId } = useSiteData();
 		const { isAdmin } = useIsSiteAdmin();
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
 			[]
 		);
-		const flowPath = this.variantSlug ?? FLOW_NAME;
 
 		useEffect( () => {
-			if ( isAdmin === false ) {
+			if ( isAdmin === false && userIsLoggedIn ) {
 				window.location.assign( '/start' );
 			}
-		}, [ isAdmin ] );
+		}, [ isAdmin, userIsLoggedIn ] );
 
-		if ( userIsLoggedIn && ! siteSlug && ! siteId && ! isHostedSiteMigrationFlow( flowPath ) ) {
-			window.location.assign( '/' );
-			return {
-				state: AssertConditionState.FAILURE,
-				message: 'site-migration does not have the site slug or site id.',
-			};
-		}
 		return { state: AssertConditionState.SUCCESS };
 	},
 
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
-		const { siteId, siteSlug } = useSiteData();
+		const { site, siteId, siteSlug } = useSiteData();
 		const variantSlug = this.variantSlug;
 		const flowPath = variantSlug ?? flowName;
-		const siteCount =
-			useSelect( ( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(), [] )
-				?.site_count ?? 0;
+		const siteCount = useSelector( getCurrentUserSiteCount );
 		const urlQueryParams = useQuery();
 		const fromQueryParam = urlQueryParams.get( 'from' );
 		const actionQueryParam = urlQueryParams.get( 'action' );
@@ -111,7 +99,8 @@ const siteMigration: Flow = {
 
 		const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 		const siteWooCommerceUrl = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) );
-		const hasSite = siteId && siteSlug;
+		const hasPreloadedSite = !! site?.ID;
+		const userHasWpComSites = siteCount && siteCount > 1;
 
 		const exitFlow = ( to: string ) => {
 			return window.location.assign( addQueryArgs( { sessionId }, to ) );
@@ -132,45 +121,21 @@ const siteMigration: Flow = {
 					};
 
 					if ( action === 'skip_platform_identification' || platform !== 'wordpress' ) {
-						if ( isHostedSiteMigrationFlow( variantSlug ?? '' ) && ! hasSite ) {
-							return navigate(
-								addQueryArgs( { from, skipMigration: true }, STEPS.SITE_CREATION_STEP.slug )
-							);
-						}
-
-						return exitFlow(
-							addQueryArgs(
-								{
-									siteId,
-									siteSlug,
-									from,
-									origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
-									backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
-								},
-								'/setup/site-setup/importList'
-							)
+						return navigate(
+							addQueryArgs( { from, skipMigration: true }, STEPS.SITE_CREATION_STEP.slug )
 						);
 					}
 
-					if ( isHostedSiteMigrationFlow( variantSlug ?? '' ) ) {
-						if ( ! hasSite ) {
-							if ( siteCount > 0 ) {
-								return navigate( `sitePicker?from=${ encodeURIComponent( from ) }` );
-							}
+					if ( ! hasPreloadedSite && userHasWpComSites ) {
+						return navigate( addQueryArgs( { from }, STEPS.PICK_SITE.slug ) );
+					}
 
-							if ( from ) {
-								return navigate( addQueryArgs( { from }, STEPS.SITE_CREATION_STEP.slug ) );
-							}
-
-							return navigate( 'error' );
-						}
+					if ( ! hasPreloadedSite ) {
+						return navigate( addQueryArgs( { from }, STEPS.SITE_CREATION_STEP.slug ) );
 					}
 
 					return navigate(
-						addQueryArgs(
-							{ from: from, siteSlug, siteId },
-							STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug
-						)
+						addQueryArgs( { from, siteId, siteSlug }, STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug )
 					);
 				}
 
@@ -192,7 +157,6 @@ const siteMigration: Flow = {
 							const { ID: newSiteId, slug: newSiteSlug } =
 								providedDependencies.site as SiteExcerptData;
 
-							// If the action is migrate, navigate to the DIY/DIFM selector screen.
 							if ( 'migrate' === actionQueryParam ) {
 								return navigate(
 									addQueryArgs(
@@ -221,7 +185,7 @@ const siteMigration: Flow = {
 						skipMigration: 'import' === actionQueryParam ? true : undefined,
 					};
 
-					return navigate( addQueryArgs( queryArgs, STEPS.PROCESSING.slug ) );
+					return navigate( addQueryArgs( queryArgs, STEPS.PROCESSING.slug ), undefined, true );
 				}
 
 				case STEPS.PROCESSING.slug: {
