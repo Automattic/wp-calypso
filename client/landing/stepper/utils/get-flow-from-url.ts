@@ -1,7 +1,7 @@
 import { matchPath } from 'react-router';
 
 export const getFlowFromURL = (
-	pathname = window.location.pathname,
+	pathname = window.location.pathname ?? '',
 	search = window.location.search
 ) => {
 	const fromPath = matchPath( { path: '/setup/:flow/*' }, pathname )?.params?.flow;
