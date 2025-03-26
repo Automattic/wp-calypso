@@ -267,7 +267,7 @@ export class UserStep extends Component {
 
 		if ( 0 === positionInFlow ) {
 			if ( this.props.isSocialFirst ) {
-				subHeaderText = '';
+				subHeaderText = translate( 'Pick an option to start shaping your dream website with us.' );
 			} else {
 				const { queryObject } = this.props;
 				if ( queryObject?.variationName && isNewsletterFlow( queryObject.variationName ) ) {

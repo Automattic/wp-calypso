@@ -73,7 +73,7 @@ const UserStepComponent: StepType = function UserStep( {
 			);
 		}
 
-		return null;
+		return translate( 'Pick an option to start shaping your dream website with us.' );
 	};
 
 	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings
