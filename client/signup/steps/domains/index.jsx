@@ -973,7 +973,6 @@ export class RenderDomainsStep extends Component {
 				{ domainsInCart.length > 0 || this.state.wpcomSubdomainSelected ? (
 					<DomainsMiniCart
 						domainsInCart={ domainsInCart }
-						temporaryCart={ this.state.temporaryCart }
 						domainRemovalQueue={ this.state.domainRemovalQueue }
 						cartIsLoading={ cartIsLoading }
 						flowName={ flowName }

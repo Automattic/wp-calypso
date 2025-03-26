@@ -92,11 +92,6 @@ export const STEPS = {
 
 	IMPORT: { slug: 'import', asyncComponent: () => import( './steps-repository/import' ) },
 
-	IMPORT_LIGHT: {
-		slug: 'importLight',
-		asyncComponent: () => import( './steps-repository/import-light' ),
-	},
-
 	IMPORT_LIST: {
 		slug: 'importList',
 		asyncComponent: () => import( './steps-repository/import-list' ),
