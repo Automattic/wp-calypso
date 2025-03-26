@@ -148,7 +148,7 @@ class SideExplainer extends Component {
 function FreeDomainExplainer( { subtitle, subtitle2, title } ) {
 	return (
 		<div className="side-explainer__content">
-			<div className="side-explainer__subtitle">
+			<div className="side-explainer__subtitle-free-domain">
 				<div>{ subtitle }</div>
 				{ subtitle2 && <div className="side-explainer__subtitle-2">{ subtitle2 }</div> }
 			</div>
