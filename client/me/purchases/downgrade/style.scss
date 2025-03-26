@@ -9,6 +9,13 @@
 		box-shadow: none;
 		padding: 0;
 	}
+
+	// FIXME: This is a hack to override the default color of the destructive button
+	.components-button.is-destructive.is-destructive {
+		--wp-components-color-accent: #cc1818;
+		--wp-components-color-accent-darker-10: #9e1313;
+		--wp-components-color-accent-darker-20: #710d0d;
+	}
 }
 
 .downgrade__back .header-cake__back,
