@@ -12,9 +12,6 @@ jest.mock( 'calypso/server/lib/logger', () => ( {
 	getLogger: () => mockRootLogger,
 } ) );
 jest.mock( '@automattic/calypso-config', () => jest.fn() );
-jest.mock( 'crypto', () => ( {
-	randomUUID: jest.fn( () => '00000000-0000-0000-0000-000000000000' ),
-} ) );
 
 const fakeRequest = ( { method, url, ip, httpVersion, headers = {} } = {} ) => {
 	const req = new EventEmitter();
