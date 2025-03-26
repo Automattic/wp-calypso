@@ -126,9 +126,6 @@ describe( 'Site Migration Flow', () => {
 			it( 'redirects to PROCESSING', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_CREATION_STEP,
-					dependencies: {
-						siteCreated: true,
-					},
 				} );
 
 				expect( destination ).toMatchDestination( {
@@ -164,11 +161,11 @@ describe( 'Site Migration Flow', () => {
 					from: STEPS.PROCESSING,
 					dependencies: {
 						siteCreated: true,
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
 					},
 					query: {
 						from: 'https://site-to-be-migrated.com',
-						siteId: 123,
-						siteSlug: 'example.wordpress.com',
 					},
 				} );
 
@@ -187,11 +184,11 @@ describe( 'Site Migration Flow', () => {
 					from: STEPS.PROCESSING,
 					dependencies: {
 						siteCreated: true,
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
 					},
 					query: {
 						from: 'https://site-to-be-migrated.com',
-						siteId: 123,
-						siteSlug: 'example.wordpress.com',
 						action: 'migrate',
 					},
 				} );
@@ -209,8 +206,6 @@ describe( 'Site Migration Flow', () => {
 					from: STEPS.PROCESSING,
 					dependencies: {
 						siteCreated: true,
-					},
-					query: {
 						siteId: 123,
 						siteSlug: 'example.wordpress.com',
 					},
@@ -227,6 +222,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 		} );
+
 		describe( 'SITE_MIGRATION_IDENTIFY', () => {
 			beforeEach( () => jest.clearAllMocks() );
 
@@ -292,6 +288,46 @@ describe( 'Site Migration Flow', () => {
 							backToFlow: '/site-migration/site-migration-identify',
 						},
 					} );
+				} );
+			} );
+
+			it( 'redirects to IMPORT_OR_MIGRATE when the source site is WordPress and there is a site already created (siteId or siteSlug)', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_MIGRATION_IDENTIFY,
+					dependencies: {
+						platform: 'wordpress',
+						from: 'https://site-to-be-migrated.com',
+					},
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
+					query: {
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+						from: 'https://site-to-be-migrated.com',
+					},
+				} );
+			} );
+
+			it( 'redirects to IMPORT flow when the source site is not WordPress and there is a site already created (siteId or siteSlug)', () => {
+				runNavigation( {
+					from: STEPS.SITE_MIGRATION_IDENTIFY,
+					dependencies: {
+						platform: 'non-wordpress',
+						from: 'https://site-to-be-migrated.com',
+					},
+					query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+				} );
+
+				expect( window.location.assign ).toMatchURL( {
+					path: '/setup/site-setup/importList',
+					query: {
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+						from: 'https://site-to-be-migrated.com',
+					},
 				} );
 			} );
 
@@ -597,18 +633,19 @@ describe( 'Site Migration Flow', () => {
 					},
 					query: {
 						siteSlug: 'example.wordpress.com',
+						siteId: 123,
 						from: 'https://site-to-be-migrated.com',
 					},
 				} );
 
 				expect( goToCheckout ).toHaveBeenCalledWith( {
-					destination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_INSTRUCTIONS.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com`,
+					destination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_INSTRUCTIONS.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com&siteId=123`,
 					extraQueryParams: { hosting_intent: HOSTING_INTENT_MIGRATE },
 					flowName: 'site-migration',
 					from: 'https://site-to-be-migrated.com',
 					siteSlug: 'example.wordpress.com',
 					stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
-					cancelDestination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com`,
+					cancelDestination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }?siteSlug=example.wordpress.com&siteId=123&from=https%3A%2F%2Fsite-to-be-migrated.com`,
 					plan: PLAN_MIGRATION_TRIAL_MONTHLY,
 				} );
 			} );

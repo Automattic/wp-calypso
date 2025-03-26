@@ -1,5 +1,5 @@
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
-import { Onboard, type SiteSelect, type UserSelect } from '@automattic/data-stores';
+import { Onboard, type UserSelect } from '@automattic/data-stores';
 import { isHostedSiteMigrationFlow } from '@automattic/onboarding';
 import { SiteExcerptData } from '@automattic/sites';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { ImporterPlatform } from 'calypso/lib/importer/types';
@@ -16,11 +17,8 @@ import { getSiteAdminUrl, getSiteWooCommerceUrl } from 'calypso/state/sites/sele
 import { HOW_TO_MIGRATE_OPTIONS } from '../../../constants';
 import { useIsSiteAdmin } from '../../../hooks/use-is-site-admin';
 import { useSiteData } from '../../../hooks/use-site-data';
-import { useSiteSlugParam } from '../../../hooks/use-site-slug-param';
-import { USER_STORE, SITE_STORE, ONBOARD_STORE } from '../../../stores';
-import { goToCheckout } from '../../../utils/checkout';
+import { USER_STORE, ONBOARD_STORE } from '../../../stores';
 import { STEPS } from '../../internals/steps';
-import { getSiteIdParam } from '../../internals/steps-repository/import/util';
 import { type SiteMigrationIdentifyAction } from '../../internals/steps-repository/site-migration-identify';
 import { AssertConditionState } from '../../internals/types';
 import { goToImporter } from '../../migration/helpers';
@@ -95,28 +93,25 @@ const siteMigration: Flow = {
 				message: 'site-migration does not have the site slug or site id.',
 			};
 		}
-
 		return { state: AssertConditionState.SUCCESS };
 	},
 
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
-		const { siteId } = useSiteData();
+		const { siteId, siteSlug } = useSiteData();
 		const variantSlug = this.variantSlug;
 		const flowPath = variantSlug ?? flowName;
 		const siteCount =
 			useSelect( ( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(), [] )
 				?.site_count ?? 0;
-		const siteSlugParam = useSiteSlugParam();
 		const urlQueryParams = useQuery();
 		const fromQueryParam = urlQueryParams.get( 'from' );
 		const actionQueryParam = urlQueryParams.get( 'action' );
-		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
-
 		const { get, sessionId } = useFlowState();
 
 		const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 		const siteWooCommerceUrl = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) );
+		const hasSite = siteId && siteSlug;
 
 		const exitFlow = ( to: string ) => {
 			return window.location.assign( addQueryArgs( { sessionId }, to ) );
@@ -127,11 +122,7 @@ const siteMigration: Flow = {
 			triggerGuidesForStep( flowName, currentStep, siteId );
 		}, [ flowName, currentStep, siteId ] );
 
-		// TODO - We may need to add `...params: string[]` back once we start adding more steps.
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
-			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
-			const siteId = getSiteIdBySlug( siteSlug ) || getSiteIdParam( urlQueryParams );
-
 			switch ( currentStep ) {
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
 					const { from, platform, action } = providedDependencies as {
@@ -141,15 +132,12 @@ const siteMigration: Flow = {
 					};
 
 					if ( action === 'skip_platform_identification' || platform !== 'wordpress' ) {
-						if ( isHostedSiteMigrationFlow( variantSlug ?? '' ) ) {
-							// siteId/siteSlug wont be defined here if coming from a direct link/signup.
-							// We need to make sure there's a site to import into.
-							if ( ! siteSlugParam ) {
-								return navigate(
-									addQueryArgs( { from, skipMigration: true }, STEPS.SITE_CREATION_STEP.slug )
-								);
-							}
+						if ( isHostedSiteMigrationFlow( variantSlug ?? '' ) && ! hasSite ) {
+							return navigate(
+								addQueryArgs( { from, skipMigration: true }, STEPS.SITE_CREATION_STEP.slug )
+							);
 						}
+
 						return exitFlow(
 							addQueryArgs(
 								{
@@ -165,7 +153,7 @@ const siteMigration: Flow = {
 					}
 
 					if ( isHostedSiteMigrationFlow( variantSlug ?? '' ) ) {
-						if ( ! siteSlugParam ) {
+						if ( ! hasSite ) {
 							if ( siteCount > 0 ) {
 								return navigate( `sitePicker?from=${ encodeURIComponent( from ) }` );
 							}
@@ -237,6 +225,13 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.PROCESSING.slug: {
+					const { siteId, siteSlug } = providedDependencies as {
+						siteId: string;
+						siteSlug: string;
+						siteCreated: boolean;
+						skipMigration: boolean;
+					};
+
 					if ( providedDependencies?.siteCreated ) {
 						if ( ! fromQueryParam || providedDependencies?.skipMigration ) {
 							// If we get to this point without a fromQueryParam then we are coming from a direct
