@@ -111,10 +111,7 @@ const GoalsStep: StepType< {
 
 	const recordNavigationSelectTracksEvent = ( intent: Onboard.SiteIntent, action: string ) => {
 		recordTracksEvent( 'calypso_signup_intent_select', { intent } );
-		recordTracksEvent( 'calypso_signup_goals_nav_click', {
-			action,
-			is_goals_first: isGoalsAtFrontExperiment,
-		} );
+		recordTracksEvent( 'calypso_signup_goals_nav_click', { action } );
 	};
 
 	const getStepSubmissionHandler = ( action: string ) => () => {
