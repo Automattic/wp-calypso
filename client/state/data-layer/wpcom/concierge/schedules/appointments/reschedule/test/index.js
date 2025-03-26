@@ -5,11 +5,6 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { rescheduleConciergeAppointment } from '../';
 import toApi from '../to-api';
 
-// we are mocking crypto.randomUUID here, so that conciergeShiftsFetchError() will contain the expected id in the tests
-jest.mock( 'crypto', () => ( {
-	randomUUID: () => 'fake-uuid',
-} ) );
-
 describe( 'wpcom-api', () => {
 	describe( 'concierge', () => {
 		test( 'rescheduleConciergeAppointment()', () => {

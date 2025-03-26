@@ -5,11 +5,6 @@ import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-f
 import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchAppointmentDetails, onSuccess, onError } from '../';
 
-// we are mocking uuid.v4 here, so that conciergeShiftsFetchError() will contain the expected id in the tests
-jest.mock( 'crypto', () => ( {
-	randomUUID: () => 'fake-uuid',
-} ) );
-
 describe( 'wpcom-api', () => {
 	describe( 'concierge', () => {
 		test( 'fetchAppointmentDetails()', () => {

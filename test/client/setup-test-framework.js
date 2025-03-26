@@ -41,6 +41,9 @@ jest.mock( 'wpcom-proxy-request', () => ( {
 	canAccessWpcomApis: jest.fn(),
 } ) );
 
+// Mock crypto.randomUUID with its Node.js implementation
+global.crypto.randomUUID = () => 'fake-uuid';
+
 global.matchMedia = jest.fn( ( query ) => ( {
 	matches: false,
 	media: query,

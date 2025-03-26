@@ -6,11 +6,7 @@ import { map } from 'lodash';
 import { ValidationErrors as MediaValidationErrors } from '../constants';
 import * as MediaUtils from '../utils';
 
-jest.mock( 'crypto', () => ( {
-	randomUUID: () => 'someid',
-} ) );
-
-const UNIQUEID = 'media-someid';
+const UNIQUEID = 'media-fake-uuid';
 const DUMMY_FILENAME = 'test.jpg';
 const DUMMY_FILE_BLOB = {
 	fileContents: {

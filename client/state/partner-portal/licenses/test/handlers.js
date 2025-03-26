@@ -15,10 +15,6 @@ import {
 } from 'calypso/state/action-types';
 import * as handlers from 'calypso/state/partner-portal/licenses/handlers';
 
-jest.mock( 'crypto', () => ( {
-	randomUUID: () => 'noticeid',
-} ) );
-
 describe( 'handlers', () => {
 	describe( '#fetchLicensesHandler()', () => {
 		test( 'should return an http request action', () => {
@@ -212,7 +208,7 @@ describe( 'handlers', () => {
 				type: 'NOTICE_CREATE',
 				notice: {
 					showDismiss: true,
-					noticeId: 'noticeid',
+					noticeId: 'fake-uuid',
 					status: 'is-error',
 					text: translate( 'Failed to retrieve your licenses. Please try again later.' ),
 				},

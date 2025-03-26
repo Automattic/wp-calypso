@@ -9,10 +9,6 @@ import {
 	warningNotice,
 } from '../actions';
 
-jest.mock( 'crypto', () => ( {
-	randomUUID: () => 'someid',
-} ) );
-
 describe( 'actions', () => {
 	describe( 'removeNotice()', () => {
 		test( 'should return an action object', () => {
