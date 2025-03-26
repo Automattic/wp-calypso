@@ -138,9 +138,9 @@ function DomainTransferOrConnect( {
 				{ ! isFetching && (
 					<div className={ baseClassName + '__support-link' }>
 						{ createInterpolateElement(
-							__( "Not sure what's best for you? <button>We're happy to help!</button>" ),
+							__( "Not sure what's best for you? <a>We're happy to help!</a>" ),
 							{
-								button: createElement( 'button', {
+								a: createElement( 'button', {
 									onClick: () => setShowHelpCenter( true ),
 								} ),
 							}
