@@ -1,12 +1,17 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.import__import-content-only:not(.step-container-v2 *) {
+.import__import-content-only {
 	max-width: 700px;
 	margin: auto;
 }
 
-.step-container-v2 {
+.step-container-v2--import__onboarding-page {
+	.import__import-content-only {
+		max-width: 100%;
+		margin: auto 0;
+	}
+
 	.import__error-message {
 		min-height: 0;
 
@@ -18,5 +23,10 @@
 	.import-layout__center {
 		text-align: center;
 		margin-top: 3rem;
+		min-height: auto;
+	}
+
+	.wpcom__loading {
+		margin-top: 10vh;
 	}
 }

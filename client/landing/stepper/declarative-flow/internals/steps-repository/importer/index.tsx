@@ -219,6 +219,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 					<DocumentHead title={ __( 'Import your site content' ) } />
 					<Interval onTick={ fetchImporters } period={ EVERY_FIVE_SECONDS } />
 					<Step.CenteredColumnLayout
+						className="step-container-v2--import__onboarding-page"
 						columnWidth={ 6 }
 						topBar={
 							<Step.TopBar
