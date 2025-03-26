@@ -11,6 +11,7 @@ const useGridPlansForFeaturesGrid = ( {
 	hasRedeemedDomainCredit,
 	hiddenPlans,
 	hideCurrentPlan,
+	hidePlansUnavailableForPurchase,
 	intent,
 	isDisplayingPlansNeededForFeature,
 	isInSignup,
@@ -69,6 +70,9 @@ const useGridPlansForFeaturesGrid = ( {
 			if ( hideCurrentPlan && gridPlan.current ) {
 				return acc;
 			}
+			if ( hidePlansUnavailableForPurchase && ! gridPlan.availableForPurchase ) {
+				return acc;
+			}
 			return [
 				...acc,
 				{
@@ -77,7 +81,7 @@ const useGridPlansForFeaturesGrid = ( {
 				},
 			];
 		}, [] as GridPlan[] );
-	}, [ gridPlans, planFeaturesForFeaturesGrid, hideCurrentPlan ] );
+	}, [ gridPlans, planFeaturesForFeaturesGrid, hideCurrentPlan, hidePlansUnavailableForPurchase ] );
 };
 
 export default useGridPlansForFeaturesGrid;

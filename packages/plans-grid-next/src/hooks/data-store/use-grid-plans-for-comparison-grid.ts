@@ -16,6 +16,7 @@ const useGridPlansForComparisonGrid = ( {
 	eligibleForFreeHostingTrial,
 	hasRedeemedDomainCredit,
 	hiddenPlans,
+	hidePlansUnavailableForPurchase,
 	intent,
 	isDisplayingPlansNeededForFeature,
 	isSubdomainNotGenerated,
@@ -63,19 +64,25 @@ const useGridPlansForComparisonGrid = ( {
 		}
 
 		return gridPlans.reduce( ( acc, gridPlan ) => {
-			if ( gridPlan.isVisible && ! HIDDEN_PLANS.includes( gridPlan.planSlug ) ) {
-				return [
-					...acc,
-					{
-						...gridPlan,
-						features: planFeaturesForComparisonGrid[ gridPlan.planSlug ],
-					},
-				];
+			if ( ! gridPlan.isVisible || HIDDEN_PLANS.includes( gridPlan.planSlug ) ) {
+				return acc;
 			}
-
-			return acc;
+			if (
+				hidePlansUnavailableForPurchase &&
+				! gridPlan.availableForPurchase &&
+				! gridPlan.current
+			) {
+				return acc;
+			}
+			return [
+				...acc,
+				{
+					...gridPlan,
+					features: planFeaturesForComparisonGrid[ gridPlan.planSlug ],
+				},
+			];
 		}, [] as GridPlan[] );
-	}, [ gridPlans, planFeaturesForComparisonGrid ] );
+	}, [ gridPlans, planFeaturesForComparisonGrid, hidePlansUnavailableForPurchase ] );
 };
 
 export default useGridPlansForComparisonGrid;

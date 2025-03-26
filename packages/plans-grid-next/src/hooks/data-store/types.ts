@@ -11,6 +11,7 @@ export interface UseGridPlansParams {
 	hasRedeemedDomainCredit?: boolean;
 	hiddenPlans?: HiddenPlans;
 	hideCurrentPlan?: boolean;
+	hidePlansUnavailableForPurchase?: boolean;
 	intent?: PlansIntent;
 	isDisplayingPlansNeededForFeature?: boolean;
 	isInSignup?: boolean;
