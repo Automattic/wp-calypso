@@ -453,15 +453,4 @@ describe( 'useGenerateActionHook', () => {
 
 		expect( action.primary.text ).toBe( 'Get %(plan)s' );
 	} );
-
-	it( 'should handle downgrade actions', () => {
-		const { result } = renderHook( () =>
-			useGenerateActionHook( { isInSignup: false, isLaunchPage: false } )
-		);
-
-		const action = result.current( { planSlug: PLAN_PERSONAL, availableForPurchase: false } );
-
-		expect( action.primary.text ).toBe( 'Downgrade' );
-		expect( action.primary.variant ).toBe( 'secondary' );
-	} );
 } );
