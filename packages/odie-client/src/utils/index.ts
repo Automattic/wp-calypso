@@ -7,4 +7,9 @@ export {
 	getHelpCenterZendeskConversationStartedElapsedTime,
 } from './storage-utils';
 export { getOdieInitialMessage } from './get-odie-initial-message';
-export { interactionHasZendeskEvent, interactionHasEnded } from './support-interaction-utils';
+export {
+	interactionHasZendeskEvent,
+	interactionHasEnded,
+	getConversationIdFromInteraction,
+	getOdieIdFromInteraction,
+} from './support-interaction-utils';
