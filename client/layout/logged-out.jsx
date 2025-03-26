@@ -63,7 +63,6 @@ const LayoutLoggedOut = ( {
 	isWhiteLogin,
 	isPopup,
 	isJetpackWooDnaFlow,
-	isP2Login,
 	isGravatar,
 	isWPJobManager,
 	isGravPoweredClient,
@@ -148,7 +147,6 @@ const LayoutLoggedOut = ( {
 		'is-white-login': isWhiteLogin,
 		'is-popup': isPopup,
 		'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
-		'is-p2-login': isP2Login,
 		'is-gravatar': isGravatar,
 		'is-wp-job-manager': isWPJobManager,
 		'is-grav-powered-client': hasGravPoweredClientClass,
@@ -344,7 +342,6 @@ export default withCurrentRoute(
 			const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
 			const isInvitationURL = currentRoute.startsWith( '/accept-invite' );
 			const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
-			const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
 			const oauth2Client = getCurrentOAuth2Client( state );
 			const isGravatar = isGravatarOAuth2Client( oauth2Client );
 			const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
@@ -353,7 +350,6 @@ export default withCurrentRoute(
 			const isWPComLogin =
 				currentRoute.startsWith( '/log-in' ) &&
 				! isJetpackLogin &&
-				! isP2Login &&
 				Boolean( currentQuery?.client_id ) === false;
 			const isPartnerPortal = isPartnerPortalOAuth2Client( oauth2Client );
 			const isWhiteLogin = isWPComLogin || isGravatar || isGravPoweredClient || isPartnerPortal;
@@ -361,7 +357,6 @@ export default withCurrentRoute(
 				isJetpackLogin ||
 				( isWhiteLogin && ! isBlazePro ) ||
 				isJetpackWooDnaFlow ||
-				isP2Login ||
 				isInvitationURL;
 			const isPopup = '1' === currentQuery?.is_popup;
 			const noMasterbarForSection =
@@ -386,7 +381,6 @@ export default withCurrentRoute(
 				isWhiteLogin,
 				isPopup,
 				isJetpackWooDnaFlow,
-				isP2Login,
 				isGravatar,
 				isWPJobManager,
 				isGravPoweredClient,
