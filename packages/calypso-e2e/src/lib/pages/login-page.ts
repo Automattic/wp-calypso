@@ -3,7 +3,7 @@ import { getCalypsoURL } from '../../data-helper';
 
 const selectors = {
 	continue: 'button:text("Continue")',
-	loginWithAnotherAccount: 'button:text="Log in with another account"',
+	loginWithAnotherAccount: ':text("Log in with another account")',
 };
 
 /**
