@@ -11,6 +11,7 @@ import {
 	Step,
 } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
@@ -1341,6 +1342,8 @@ export class RenderDomainsStep extends Component {
 		const siteUrl = this.props.selectedSite?.URL;
 		const siteSlug = this.props.queryObject?.siteSlug;
 		const source = this.props.queryObject?.source;
+		const playgroundId = getQueryArg( window.location.href, 'playground' );
+
 		let backUrl;
 		let backLabelText;
 		let isExternalBackUrl = false;
@@ -1390,7 +1393,10 @@ export class RenderDomainsStep extends Component {
 		} else {
 			backUrl = getStepUrl( flowName, stepName, null, this.getLocale() );
 
-			if ( 'site' === source && siteUrl ) {
+			if ( playgroundId ) {
+				backUrl = `/setup/onboarding/playground?playground=${ playgroundId }`;
+				backLabelText = translate( 'Back' );
+			} else if ( 'site' === source && siteUrl ) {
 				backUrl = siteUrl;
 				backLabelText = translate( 'Back to My Site' );
 				isExternalBackUrl = true;
