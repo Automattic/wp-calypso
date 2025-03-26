@@ -1,5 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { OnboardSelect } from '@automattic/data-stores';
+import { isOnboardingFlow } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -129,6 +130,7 @@ const PlansPageSubheader = ( {
 	deemphasizeFreePlan,
 	showPlanBenefits,
 	offeringFreePlan,
+	flowName,
 	onFreePlanCTAClick,
 	selectedFeature,
 }: {
@@ -137,6 +139,7 @@ const PlansPageSubheader = ( {
 	deemphasizeFreePlan?: boolean;
 	offeringFreePlan?: boolean;
 	showPlanBenefits?: boolean;
+	flowName?: string | null;
 	onFreePlanCTAClick: () => void;
 	selectedFeature: SelectedFeatureData | null;
 } ) => {
@@ -146,6 +149,8 @@ const PlansPageSubheader = ( {
 		const { getCreateWithBigSky } = select( ONBOARD_STORE );
 		return getCreateWithBigSky();
 	}, [] );
+
+	const isOnboarding = isOnboardingFlow( flowName ?? null );
 
 	const renderSubheader = () => {
 		if ( createWithBigSky ) {
@@ -182,11 +187,15 @@ const PlansPageSubheader = ( {
 			return <PlanBenefitHeader />;
 		}
 
-		return (
-			<Subheader>
-				{ translate( 'Whatever site you’re building, there’s a plan to make it happen sooner.' ) }
-			</Subheader>
-		);
+		if ( isOnboarding ) {
+			return (
+				<Subheader>
+					{ translate( 'Whatever site you’re building, there’s a plan to make it happen sooner.' ) }
+				</Subheader>
+			);
+		}
+
+		return null;
 	};
 
 	return (

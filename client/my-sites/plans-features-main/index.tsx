@@ -821,6 +821,7 @@ const PlansFeaturesMain = ( {
 					isDisplayingPlansNeededForFeature={ isDisplayingPlansNeededForFeature }
 					selectedFeature={ selectedFeatureData }
 					offeringFreePlan={ offeringFreePlan }
+					flowName={ flowName }
 					deemphasizeFreePlan={ deemphasizeFreePlan }
 					onFreePlanCTAClick={ onFreePlanCTAClick }
 				/>
