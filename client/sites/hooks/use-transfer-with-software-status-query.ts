@@ -38,7 +38,12 @@ export const useTransferWithSoftwareStatus = (
 		} ),
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false,
-		retryDelay: 5000, // Poll every 5 seconds
+		refetchInterval: ( { state } ) => {
+			if ( state.data?.atomic_transfer_status === 'completed' ) {
+				return false;
+			}
+			return 5000;
+		},
 		retry: options?.retry ?? false,
 		enabled: !! siteId && !! atomicTransferId, // Only run when both values exist.
 	} );
