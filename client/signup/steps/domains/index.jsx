@@ -82,6 +82,7 @@ import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import DomainsMiniCart from './domains-mini-cart';
+import { StepContainerV2DomainsStep } from './step-container-v2-domains-step';
 import { getExternalBackUrl, shouldUseMultipleDomainsInCart } from './utils';
 import './style.scss';
 
@@ -1420,8 +1421,7 @@ export class RenderDomainsStep extends Component {
 				const [ content, sideContent ] = this.getContentColumns();
 
 				return (
-					<AsyncLoad
-						require="./async-domain-step-wrapper"
+					<StepContainerV2DomainsStep
 						className="domains__step-content domains__step-content-domain-step"
 						hideBack={ hideBack }
 						backUrl={ backUrl }

@@ -1,6 +1,6 @@
 import { Step } from '@automattic/onboarding';
 
-interface AsyncDomainStepWrapperProps {
+interface StepContainerV2DomainsStepProps {
 	hideBack: boolean;
 	backLabelText: string;
 	backUrl: string;
@@ -13,7 +13,7 @@ interface AsyncDomainStepWrapperProps {
 	className: string;
 }
 
-export default function AsyncDomainStepWrapper( props: AsyncDomainStepWrapperProps ) {
+export const StepContainerV2DomainsStep = ( props: StepContainerV2DomainsStepProps ) => {
 	const {
 		hideBack,
 		backLabelText,
@@ -48,4 +48,4 @@ export default function AsyncDomainStepWrapper( props: AsyncDomainStepWrapperPro
 			{ rightContent }
 		</Step.TwoColumnLayout>
 	);
-}
+};
