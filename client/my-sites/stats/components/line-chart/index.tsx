@@ -184,6 +184,7 @@ function StatsLineChart( {
 						withTooltips
 						withGradientFill
 						height={ height }
+						curveType="smooth"
 						// TODO: figure out the right type for onPointerDown
 						// eslint-disable-next-line @typescript-eslint/no-explicit-any
 						onPointerUp={ onPointerUp as any }
