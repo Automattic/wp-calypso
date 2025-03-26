@@ -139,10 +139,6 @@ const newsletter: Flow = {
 			}
 		}
 
-		const goBack = () => {
-			return;
-		};
-
 		const goNext = async () => {
 			switch ( _currentStep ) {
 				case 'launchpad':
@@ -161,7 +157,7 @@ const newsletter: Flow = {
 			navigate( step );
 		};
 
-		return { goNext, goBack, goToStep, submit };
+		return { goNext, goToStep, submit };
 	},
 };
 
