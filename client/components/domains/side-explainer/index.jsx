@@ -78,8 +78,8 @@ class SideExplainer extends Component {
 				subtitle = translate(
 					'Select any annual paid plan and we’ll pay the first year’s domain registration fees for you.'
 				);
-				// subtitle2 = translate( 'You can claim your custom domain name later when you're ready.' );
-				ctaText = translate( 'Check paid plans »' );
+
+				ctaText = translate( 'Check paid plans' );
 				break;
 
 			case 'free-domain-explainer-treatment-search':
