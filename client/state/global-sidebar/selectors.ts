@@ -23,17 +23,21 @@ function getSiteDashboardRoutes( state: AppState ) {
 		...( isPlansPageUntangled( state ) ? [ '/plans' ] : [] ),
 
 		// Domain Management
-		'/domains/manage',
 		'/domains/manage/all/overview',
 		'/domains/manage/all/email',
 		'/domains/manage/all/contact-info',
 
 		// Bulk Plugins management
 		'/plugins/manage/sites',
-
-		// Themes
-		'/themes',
 	];
+}
+
+/**
+ * There routes are used in both 'sites' and 'sites-dashboard' sections.
+ * @returns A list of routes.
+ */
+function tangledBasePaths() {
+	return [ '/domains/manage', '/themes' ];
 }
 
 function isInRoute( state: AppState, routes: string[] ) {
@@ -47,6 +51,7 @@ function shouldShowSitesDashboard( state: AppState ) {
 		'/setup',
 		'/start',
 		...getSiteDashboardRoutes( state ),
+		...tangledBasePaths(),
 	] );
 }
 

@@ -44,11 +44,6 @@ describe( 'Global Sidebar Selectors', () => {
 			expect( shouldShowSiteDashboard( state, 123 ) ).toBe( true );
 		} );
 
-		it( 'should return true for site dashboard routes with valid siteId', () => {
-			const state = createMockState( '/domains/manage' );
-			expect( shouldShowSiteDashboard( state, 123 ) ).toBe( true );
-		} );
-
 		it( 'should return false for non-dashboard routes', () => {
 			const state = createMockState( '/some-other-route' );
 			expect( shouldShowSiteDashboard( state, 123 ) ).toBe( false );
@@ -81,6 +76,16 @@ describe( 'Global Sidebar Selectors', () => {
 		it( 'should return true for sites section with no siteId', () => {
 			const state = createMockState( '/sites' );
 			expect( getShouldShowGlobalSidebar( state, null, 'sites' ) ).toBe( true );
+		} );
+
+		it( 'should return false for tangled routes in the sites section', () => {
+			const state = createMockState( '/domains/manage' );
+			expect( getShouldShowGlobalSidebar( state, 123, 'sites' ) ).toBe( false );
+		} );
+
+		it( 'should return true for tangled routes in the sites-dashboard section', () => {
+			const state = createMockState( '/domains/manage' );
+			expect( getShouldShowGlobalSidebar( state, 123, 'sites-dashboard' ) ).toBe( true );
 		} );
 
 		it( 'should handle scheduled updates multisite route', () => {
