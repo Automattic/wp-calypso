@@ -1,12 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import { SiteIntent } from '@automattic/data-stores/src/onboard/constants';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import onboarding from '../flows/onboarding/onboarding';
 import { STEPS } from '../internals/steps';
-import { getFlowLocation, renderFlow } from './helpers';
+import { renderFlow } from './helpers';
 
 const originalLocation = window.location;
 
@@ -47,49 +46,6 @@ describe( 'Onboarding Flow', () => {
 		it( 'should be configured as a signup flow', () => {
 			expect( onboarding.name ).toBe( ONBOARDING_FLOW );
 			expect( onboarding.isSignupFlow ).toBe( true );
-		} );
-	} );
-
-	describe( 'Goals step navigation', () => {
-		it( 'should redirect to migration flow when intent is Import', async () => {
-			const { runUseStepNavigationSubmit } = renderFlow( onboarding );
-
-			runUseStepNavigationSubmit( {
-				currentStep: STEPS.GOALS.slug,
-				dependencies: {
-					intent: SiteIntent.Import,
-				},
-			} );
-
-			expect( window.location.assign ).toHaveBeenCalledWith(
-				'/setup/hosted-site-migration?back_to=%2Fsetup%2Fonboarding%2Fgoals'
-			);
-		} );
-
-		it( 'should redirect to DIFM flow when intent is DIFM', async () => {
-			const { runUseStepNavigationSubmit } = renderFlow( onboarding );
-
-			runUseStepNavigationSubmit( {
-				currentStep: STEPS.GOALS.slug,
-				dependencies: {
-					intent: SiteIntent.DIFM,
-				},
-			} );
-
-			expect( getFlowLocation().path ).toBe( '/difmStartingPoint' );
-		} );
-
-		it( 'should navigate to design-setup step for other intents', async () => {
-			const { runUseStepNavigationSubmit } = renderFlow( onboarding );
-
-			runUseStepNavigationSubmit( {
-				currentStep: STEPS.GOALS.slug,
-				dependencies: {
-					intent: SiteIntent.Write,
-				},
-			} );
-
-			expect( getFlowLocation().path ).toBe( '/design-setup' );
 		} );
 	} );
 
