@@ -710,8 +710,6 @@ describe( 'Site Migration Flow', () => {
 					path: '/overview/example.wordpress.com',
 					query: {
 						ref: 'site-migration',
-						siteId: 123,
-						from: 'https://site-to-be-migrated.com',
 					},
 				} );
 			} );
@@ -731,9 +729,6 @@ describe( 'Site Migration Flow', () => {
 					path: '/overview/example.wordpress.com',
 					query: {
 						ref: 'site-migration',
-						siteId: 123,
-						from: 'https://site-to-be-migrated.com',
-						preventTicketCreation: true,
 					},
 				} );
 			} );
@@ -888,9 +883,6 @@ describe( 'Site Migration Flow', () => {
 					path: '/overview/example.wordpress.com',
 					query: {
 						ref: 'site-migration',
-						siteId: 123,
-						from: 'https://site-to-be-migrated.com',
-						preventTicketCreation: true,
 					},
 				} );
 			} );
@@ -909,9 +901,6 @@ describe( 'Site Migration Flow', () => {
 					path: '/overview/example.wordpress.com',
 					query: {
 						ref: 'site-migration',
-						siteId: 123,
-						from: 'https://site-to-be-migrated.com',
-						preventTicketCreation: true,
 					},
 				} );
 			} );
@@ -1034,9 +1023,6 @@ describe( 'Site Migration Flow', () => {
 					path: '/overview/example.wordpress.com',
 					query: {
 						ref: 'site-migration',
-						siteId: 123,
-						from: 'https://site-to-be-migrated.com',
-						preventTicketCreation: true,
 					},
 				} );
 			} );
@@ -1081,9 +1067,6 @@ describe( 'Site Migration Flow', () => {
 					path: '/overview/example.wordpress.com',
 					query: {
 						ref: 'site-migration',
-						siteId: 123,
-						from: 'http://oldsite.com',
-						preventTicketCreation: true,
 					},
 				} );
 			} );

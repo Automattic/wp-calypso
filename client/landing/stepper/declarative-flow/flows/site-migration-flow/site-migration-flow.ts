@@ -419,12 +419,7 @@ const siteMigration: Flow = {
 					};
 
 					if ( action === 'skip' ) {
-						return exitFlow(
-							addQueryArgs(
-								{ ref: 'site-migration', siteId, from: from || fromQueryParam, siteSlug },
-								`/overview/${ siteSlug }`
-							)
-						);
+						return exitFlow( addQueryArgs( { ref: 'site-migration' }, `/overview/${ siteSlug }` ) );
 					}
 
 					if ( action === 'already-wpcom' ) {
@@ -473,52 +468,19 @@ const siteMigration: Flow = {
 						);
 					}
 
-					return exitFlow(
-						addQueryArgs(
-							{
-								ref: 'site-migration',
-								siteId,
-								from: from || fromQueryParam,
-								siteSlug,
-								preventTicketCreation: true,
-							},
-							`/overview/${ siteSlug }`
-						)
-					);
+					return exitFlow( addQueryArgs( { ref: 'site-migration' }, `/overview/${ siteSlug }` ) );
 				}
 
 				case STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS.slug: {
-					const { action, from } = providedDependencies as {
+					const { action } = providedDependencies as {
 						action: 'skip' | 'submit';
 						from: string;
 					};
 
 					if ( action === 'skip' ) {
-						return exitFlow(
-							addQueryArgs(
-								{
-									ref: 'site-migration',
-									siteId,
-									from: from || fromQueryParam,
-									siteSlug,
-									preventTicketCreation: true,
-								},
-								`/overview/${ siteSlug }`
-							)
-						);
+						return exitFlow( addQueryArgs( { ref: 'site-migration' }, `/overview/${ siteSlug }` ) );
 					}
-					return exitFlow(
-						addQueryArgs(
-							{
-								ref: 'site-migration',
-								siteId,
-								from: from || fromQueryParam,
-								siteSlug,
-								preventTicketCreation: true,
-							},
-							`/overview/${ siteSlug }`
-						)
-					);
+					return exitFlow( addQueryArgs( { ref: 'site-migration' }, `/overview/${ siteSlug }` ) );
 				}
 
 				case STEPS.SITE_MIGRATION_ALREADY_WPCOM.slug: {
@@ -550,7 +512,7 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug: {
-					const { action, authorizationUrl, from } = providedDependencies as {
+					const { action, authorizationUrl } = providedDependencies as {
 						action: string;
 						from: string;
 						authorizationUrl: string;
@@ -578,18 +540,7 @@ const siteMigration: Flow = {
 					}
 
 					//TODO: Add a skip flag to track the user is having trouble to share the credentials.
-					return exitFlow(
-						addQueryArgs(
-							{
-								ref: 'site-migration',
-								siteId,
-								from: from || fromQueryParam,
-								siteSlug,
-								preventTicketCreation: true,
-							},
-							`/overview/${ siteSlug }`
-						)
-					);
+					return exitFlow( addQueryArgs( { ref: 'site-migration' }, `/overview/${ siteSlug }` ) );
 				}
 			}
 		}
