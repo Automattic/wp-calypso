@@ -7,6 +7,7 @@ import { createPath, generatePath, useParams } from 'react-router';
 import { Route, Routes } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
+import { StepContainerV2Loading } from 'calypso/components/step-container-v2-loading';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
@@ -128,11 +129,10 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 	const renderStep = ( step: StepperStep ) => {
 		switch ( assertCondition.state ) {
 			case AssertConditionState.CHECKING:
-				return (
-					<Loading
-						className="wpcom-loading__boot"
-						useStepContainerV2={ shouldUseStepContainerV2( flow.name ) }
-					/>
+				return shouldUseStepContainerV2( flow.name ) ? (
+					<StepContainerV2Loading />
+				) : (
+					<Loading className="wpcom-loading__boot" />
 				);
 			case AssertConditionState.FAILURE:
 				console.error( assertCondition.message ); // eslint-disable-line no-console
@@ -214,10 +214,11 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 	return (
 		<Boot
 			fallback={
-				<Loading
-					className="wpcom-loading__boot"
-					useStepContainerV2={ shouldUseStepContainerV2( flow.name ) }
-				/>
+				shouldUseStepContainerV2( flow.name ) ? (
+					<StepContainerV2Loading />
+				) : (
+					<Loading className="wpcom-loading__boot" />
+				)
 			}
 		>
 			<DocumentHead title={ getDocumentHeadTitle() } />

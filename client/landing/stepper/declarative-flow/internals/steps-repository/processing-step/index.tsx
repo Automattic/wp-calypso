@@ -13,6 +13,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
+import { StepContainerV2Loading } from 'calypso/components/step-container-v2-loading';
 import availableFlows from 'calypso/landing/stepper/declarative-flow/registered-flows';
 import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
@@ -225,7 +226,7 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 		return (
 			<>
 				<DocumentHead title={ __( 'Processing' ) } />
-				<Loading title={ getCurrentMessage() } progress={ progress } useStepContainerV2 />
+				<StepContainerV2Loading title={ getCurrentMessage() } progress={ progress } />
 			</>
 		);
 	}
