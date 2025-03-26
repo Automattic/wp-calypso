@@ -33,7 +33,7 @@ function getSiteDashboardRoutes( state: AppState ) {
 }
 
 /**
- * There routes are used in both 'sites' and 'sites-dashboard' sections.
+ * These routes are used in both 'sites' and 'sites-dashboard' sections.
  * @returns A list of routes.
  */
 function tangledBasePaths() {
