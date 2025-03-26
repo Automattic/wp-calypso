@@ -1030,6 +1030,10 @@
 			border-left-color: var(--color-link);
 		}
 	}
+
+	p {
+		font-size: rem(14px);
+	}
 }
 
 .sites-dashboard.preview-hidden .notice-banner {
