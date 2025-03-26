@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { addLocaleToPathLocaleInFront, useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
@@ -69,6 +70,17 @@ export const DiscoverHeader = ( props ) => {
 
 const ReaderDiscoverLoginPrompt = () => {
 	const translate = useTranslate();
+
+	const onCreateAccountClick = () => {
+		recordTracksEvent( 'calypso_reader_discover_bottom_signup_clicked' );
+		page( '/start/reader?ref=reader-lp' );
+	};
+
+	const onLoginClick = () => {
+		recordTracksEvent( 'calypso_reader_discover_bottom_login_clicked' );
+		page( '/log-in?redirect_to=%2Fdiscover' );
+	};
+
 	return (
 		<div className="reader-discover-login-prompt">
 			<h2>{ translate( 'Join the conversation' ) }</h2>
@@ -80,18 +92,14 @@ const ReaderDiscoverLoginPrompt = () => {
 			<div className="reader-discover-login-prompt__buttons">
 				<Button
 					isPrimary
-					onClick={ () => {
-						window.location.href = '/start/reader?ref=reader-lp';
-					} }
+					onClick={ onCreateAccountClick }
 					className="reader-discover-login-prompt__signup-button"
 				>
 					{ translate( 'Create a new account' ) }
 				</Button>
 				<Button
 					isLink
-					onClick={ () => {
-						window.location.href = '/log-in?redirect_to=%2Fdiscover';
-					} }
+					onClick={ onLoginClick }
 					className="reader-discover-login-prompt__login-button"
 				>
 					{ translate( 'Log in' ) }
