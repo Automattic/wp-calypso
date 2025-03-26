@@ -61,7 +61,7 @@ async function AppBoot() {
 	setStore( store as Store & WithAddReducer );
 	setupContextMiddleware( store, queryClient );
 
-	// Initialize site data using siteSelection middleware
+	// Initialize site data early in the app boot process.
 	await new Promise< void >( ( resolve ) => {
 		const mockContext = {
 			store,
