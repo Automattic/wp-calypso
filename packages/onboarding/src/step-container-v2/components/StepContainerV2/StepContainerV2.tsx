@@ -61,7 +61,7 @@ export const StepContainerV2 = ( {
 				{ topBar && <div className="step-container-v2__top-bar-wrapper">{ topBar }</div> }
 				<div
 					className={ clsx( 'step-container-v2__content-wrapper', {
-						'vertical-align-center': verticalAlign === 'center',
+						'vertical-align-center': isMediumViewport && verticalAlign === 'center',
 						padding: hasContentPadding,
 					} ) }
 				>

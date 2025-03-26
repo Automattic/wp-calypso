@@ -1,7 +1,6 @@
 import { OnboardSelect } from '@automattic/data-stores';
 import { isOnboardingFlow, Step, StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
-import { useViewportMatch } from '@wordpress/compose';
 import { select } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -120,8 +119,6 @@ const UserStepComponent: StepType = function UserStep( {
 		</>
 	);
 
-	const isSmallScreen = useViewportMatch( 'small', '<' );
-
 	if ( isStepContainerV2 ) {
 		const heading = (
 			// The locale suggestions are going to be reworked. Don't worry about it now.
@@ -143,7 +140,7 @@ const UserStepComponent: StepType = function UserStep( {
 		return (
 			<Step.CenteredColumnLayout
 				className="step-container-v2--user"
-				verticalAlign={ isSmallScreen ? undefined : 'center' }
+				verticalAlign="center"
 				columnWidth={ 4 }
 				heading={ heading }
 				topBar={ topBar }
