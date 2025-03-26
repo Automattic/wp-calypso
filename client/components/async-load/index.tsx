@@ -1,7 +1,8 @@
 import { lazy, useMemo, Suspense, type ComponentType, type ReactNode } from 'react';
+import FallbackContent from 'calypso/components/fallback-content';
 import './style.scss';
 
-const DEFAULT_PLACEHOLDER = <div className="async-load__placeholder" />;
+const DEFAULT_PLACEHOLDER = <FallbackContent />;
 
 type AsyncLoadProps = {
 	placeholder?: ReactNode;

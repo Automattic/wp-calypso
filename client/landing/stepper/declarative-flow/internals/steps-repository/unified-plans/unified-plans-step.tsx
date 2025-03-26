@@ -13,7 +13,6 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { parse as parseQs } from 'qs';
 import AsyncLoad from 'calypso/components/async-load';
-import FallbackContent from 'calypso/components/fallback-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
@@ -489,17 +488,11 @@ function UnifiedPlansStep( {
 		</div>
 	);
 
-	const Placeholder = () => {
-		const title = translate( 'Turning on the lights' );
-		return <FallbackContent title={ title } />;
-	};
-
 	if ( useStepContainerV2 && wrapperProps ) {
 		return (
 			<>
 				<MarketingMessage path="signup/plans" />
 				<AsyncLoad
-					placeholder={ <Placeholder /> }
 					require="./step-container-v2-plans"
 					headerText={ getHeaderText() }
 					subHeaderText={ fallbackSubHeaderText }

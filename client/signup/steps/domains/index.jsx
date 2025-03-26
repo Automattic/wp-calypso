@@ -23,7 +23,6 @@ import RegisterDomainStep from 'calypso/components/domains/register-domain-step'
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
 import SideExplainer from 'calypso/components/domains/side-explainer';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
-import FallbackContent from 'calypso/components/fallback-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
 import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
@@ -1417,18 +1416,12 @@ export class RenderDomainsStep extends Component {
 		const headerText = this.getHeaderText();
 		const fallbackSubHeaderText = this.getSubHeaderText();
 
-		const Placeholder = () => {
-			const title = translate( 'Turning on the lights' );
-			return <FallbackContent title={ title } />;
-		};
-
 		if ( useStepperWrapper ) {
 			if ( shouldUseStepContainerV2( flowName ) ) {
 				const [ content, sideContent ] = this.getContentColumns();
 
 				return (
 					<AsyncLoad
-						placeholder={ <Placeholder /> }
 						require="./async-domain-step-wrapper"
 						className="domains__step-content domains__step-content-domain-step"
 						hideBack={ hideBack }
