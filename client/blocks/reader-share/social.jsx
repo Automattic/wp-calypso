@@ -65,7 +65,8 @@ const actionMap = {
 		// This must be wide enough to accomodate facebook's login redirect screen, which
 		// unfortunately is not responsive to smaller viewports.
 		const width = 1000;
-		const height = 436;
+		// Facebook resizes to about 850px, so this prevents jumpyness after opening the window.
+		const height = 850;
 		const { left, top } = getWindowCenterPosition( width, height );
 
 		if ( viewportWidth > width ) {
