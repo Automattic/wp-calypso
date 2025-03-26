@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import { SitesAddNewSitePopover } from '../index';
 
@@ -45,7 +45,7 @@ describe( 'SitesAddNewSitePopover', () => {
 		);
 	} );
 
-	it( 'closes popover when clicking the button again', () => {
+	it( 'closes popover when clicking the button again', async () => {
 		render( <SitesAddNewSitePopover showCompact={ false } /> );
 		const button = screen.getByRole( 'button' );
 		fireEvent.click( button );
@@ -53,6 +53,8 @@ describe( 'SitesAddNewSitePopover', () => {
 
 		// Click button again
 		fireEvent.click( button );
-		expect( screen.queryByTestId( 'async-content' ) ).not.toBeInTheDocument();
+		await waitFor( () => {
+			expect( screen.queryByTestId( 'async-content' ) ).not.toBeInTheDocument();
+		} );
 	} );
 } );
