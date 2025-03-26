@@ -90,7 +90,7 @@ class SideExplainer extends Component {
 				subtitle2 = translate(
 					'Not ready to choose domain yet? Get your plan now and claim your domain later!'
 				);
-				ctaText = translate( 'Check paid plans »' );
+				ctaText = translate( 'Check paid plans' );
 				break;
 
 			case 'use-your-domain':
