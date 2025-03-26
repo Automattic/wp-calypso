@@ -176,7 +176,6 @@ const reducer = combineReducers( {
 	message,
 	userDeclaredSite,
 	userDeclaredSiteUrl,
-	hasSeenWhatsNewModal,
 	isMinimized,
 	isChatLoaded,
 	areSoundNotificationsEnabled,
