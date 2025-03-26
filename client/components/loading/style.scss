@@ -33,6 +33,10 @@
 		flex-direction: column;
 		height: 100vh;
 		justify-content: center;
+
+		.wpcom__loading-progress-bar {
+			margin: 0;
+		}
 	}
 
 	.wpcom__loading-title {
