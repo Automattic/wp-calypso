@@ -11,7 +11,7 @@ export function shouldLoadInlineHelp( sectionName: string, currentRoute: string 
 	}
 
 	const exemptedSections = [ 'jetpack-connect', 'devdocs', 'help', 'home' ];
-	const exemptedRoutes = [ '/log-in/jetpack' ];
+	const exemptedRoutes = [ '/log-in/jetpack', '/log-in' ];
 	const exemptedRoutesStartingWith = [
 		'/start/p2',
 		'/start/setup-site',
