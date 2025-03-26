@@ -1,13 +1,11 @@
 import { isPlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card, Button, Gridicon } from '@automattic/components';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import {
-	CALYPSO_HELP_WITH_HELP_CENTER,
-	INCOMING_DOMAIN_TRANSFER,
-	MAP_EXISTING_DOMAIN,
-} from '@automattic/urls';
+import { INCOMING_DOMAIN_TRANSFER, MAP_EXISTING_DOMAIN } from '@automattic/urls';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { formatCurrency, useTranslate } from 'i18n-calypso';
 import { stringify } from 'qs';
 import React, { useState } from 'react';
@@ -117,6 +115,7 @@ function UseYourDomainStep( { basePath, goBack, initialQuery }: UseYourDomainSte
 
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const [ searchQuery ] = useState( initialQuery || '' );
 
@@ -300,9 +299,7 @@ function UseYourDomainStep( { basePath, goBack, initialQuery }: UseYourDomainSte
 			<p className="use-your-domain-step__footer">
 				{ translate( "Not sure what works best for you? {{a}}We're happy to help!{{/a}}", {
 					components: {
-						a: (
-							<a href={ CALYPSO_HELP_WITH_HELP_CENTER } target="_blank" rel="noopener noreferrer" />
-						),
+						a: <button onClick={ () => setShowHelpCenter( true ) } />,
 					},
 				} ) }
 			</p>
