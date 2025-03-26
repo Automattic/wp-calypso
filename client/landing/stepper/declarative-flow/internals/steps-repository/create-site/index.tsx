@@ -79,12 +79,12 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			siteUrl: select( ONBOARD_STORE ).getSiteUrl(),
 			progress: select( ONBOARD_STORE ).getProgress(),
 			partnerBundle: select( ONBOARD_STORE ).getPartnerBundle(),
-			siteGoals: select( ONBOARD_STORE ).getGoals(),
 		} ),
 		[]
 	);
 
 	const { mutateAsync: addEcommerceTrial } = useAddEcommerceTrialMutation( partnerBundle );
+
 	/**
 	 * Support singular and multiple domain cart items.
 	 */

@@ -22,7 +22,7 @@ import {
 	getThemeIdFromDesign,
 } from '@automattic/design-picker';
 import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
-import { StepContainer, ONBOARDING_FLOW, isSiteSetupFlow, Step } from '@automattic/onboarding';
+import { StepContainer, isSiteSetupFlow, Step } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -65,7 +65,6 @@ import { useSiteData } from '../../../../hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { goToCheckout } from '../../../../utils/checkout';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
-import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
 import {
 	getDesignEventProps,
 	recordPreviewedDesign,
@@ -106,9 +105,6 @@ const UnifiedDesignPickerStep: StepType< {
 	);
 	const variantName = experimentAssignment?.variationName;
 	const oldHighResImageLoading = ! isLoadingExperiment && variantName === 'treatment';
-
-	const [ isGoalsAtFrontExperimentLoading, isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
-	const isSiteRequired = flow !== ONBOARDING_FLOW || ! isGoalsAtFrontExperiment;
 
 	const isUpdatedBadgeDesign = useIsUpdatedBadgeDesign();
 
@@ -373,15 +369,13 @@ const UnifiedDesignPickerStep: StepType< {
 	const isBundled = selectedDesign?.software_sets && selectedDesign.software_sets.length > 0;
 
 	const isLockedTheme =
-		// The exp moves the Design Picker step in front of the plan selection so people can unlock theme later.
-		! isGoalsAtFrontExperiment &&
-		( ! canSiteActivateTheme ||
-			( selectedDesign?.design_tier === THEME_TIER_PREMIUM &&
-				! isPremiumThemeAvailable &&
-				! didPurchaseSelectedTheme ) ||
-			( selectedDesign?.is_externally_managed &&
-				( ! isMarketplaceThemeSubscribed || ! isExternallyManagedThemeAvailable ) ) ||
-			( ! isPluginBundleEligible && isBundled ) );
+		! canSiteActivateTheme ||
+		( selectedDesign?.design_tier === THEME_TIER_PREMIUM &&
+			! isPremiumThemeAvailable &&
+			! didPurchaseSelectedTheme ) ||
+		( selectedDesign?.is_externally_managed &&
+			( ! isMarketplaceThemeSubscribed || ! isExternallyManagedThemeAvailable ) ) ||
+		( ! isPluginBundleEligible && isBundled );
 
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
 
@@ -595,14 +589,6 @@ const UnifiedDesignPickerStep: StepType< {
 					},
 					optionalProps
 				);
-			} else if ( ! isSiteRequired && ! siteSlugOrId && _selectedDesign ) {
-				handleSubmit(
-					{
-						selectedDesign: _selectedDesign,
-						selectedSiteCategory: categorization.selections?.join( ',' ),
-					},
-					optionalProps
-				);
 			}
 		},
 		[
@@ -612,7 +598,6 @@ const UnifiedDesignPickerStep: StepType< {
 			designs,
 			globalStyles,
 			handleSubmit,
-			isSiteRequired,
 			reduxDispatch,
 			selectedDesign,
 			selectedStyleVariation,
@@ -702,10 +687,7 @@ const UnifiedDesignPickerStep: StepType< {
 
 	function getPrimaryActionButton() {
 		const action = getPrimaryActionButtonAction();
-		const text =
-			action === upgradePlan && ! isGoalsAtFrontExperiment
-				? translate( 'Unlock theme' )
-				: translate( 'Continue' );
+		const text = action === upgradePlan ? translate( 'Unlock theme' ) : translate( 'Continue' );
 
 		if ( ! isUsingStepContainerV2 ) {
 			return (
@@ -727,9 +709,7 @@ const UnifiedDesignPickerStep: StepType< {
 	// ********** Main render logic
 
 	// Don't render until we've done fetching all the data needed for initial render.
-	const isSiteLoading = ! site && isSiteRequired;
-	const isDesignsLoading = isLoadingDesigns || isGoalsAtFrontExperimentLoading;
-	const isLoading = isSiteLoading || isDesignsLoading;
+	const isLoading = ! site || isLoadingDesigns;
 
 	if ( isLoading || isComingFromTheUpgradeScreen ) {
 		return isUsingStepContainerV2 ? <StepContainerV2Loading /> : <Loading />;
@@ -770,7 +750,7 @@ const UnifiedDesignPickerStep: StepType< {
 
 		const stepContent = (
 			<>
-				{ requiredPlanSlug && ! isGoalsAtFrontExperiment && (
+				{ requiredPlanSlug && (
 					<UpgradeModal
 						slug={ selectedDesign.slug }
 						isOpen={ showUpgradeModal }
@@ -872,14 +852,6 @@ const UnifiedDesignPickerStep: StepType< {
 										<Step.BackButton onClick={ handleBackClick } />
 									)
 								}
-								skipButton={
-									! isGoalsAtFrontExperiment ? undefined : (
-										<Step.SkipButton
-											onClick={ () => handleSubmit() }
-											label={ translate( 'Skip setup' ) }
-										/>
-									)
-								}
 							/>
 						) : undefined
 					}
@@ -903,7 +875,7 @@ const UnifiedDesignPickerStep: StepType< {
 			<StepContainer
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }
-				hideSkip={ ! isGoalsAtFrontExperiment }
+				hideSkip
 				skipLabelText={ translate( 'Skip setup' ) }
 				skipButtonAlign="top"
 				hideBack={ shouldHideActionButtons }
@@ -978,7 +950,7 @@ const UnifiedDesignPickerStep: StepType< {
 	};
 
 	const backButton = getGoBackHandler();
-	const hideSkip = ! isGoalsAtFrontExperiment && ! isComingFromSuccessfulImport;
+	const hideSkip = ! isComingFromSuccessfulImport;
 	const skipLabelText = isComingFromSuccessfulImport
 		? translate( 'Skip to dashboard' )
 		: translate( 'Skip setup' );
