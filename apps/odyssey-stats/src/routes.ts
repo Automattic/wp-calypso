@@ -30,7 +30,7 @@ import { getApiNamespace, getApiPath } from './lib/get-api';
 import { makeLayout, render as clientRender } from './page-middleware/layout';
 import 'calypso/my-sites/stats/style.scss';
 
-const siteSelection = ( context: Context, next: () => void ) => {
+export const siteSelection = ( context: Context, next: () => void ) => {
 	const siteId = config( 'blog_id' );
 	const dispatch = context.store.dispatch;
 	const state = context.store.getState();

@@ -4,7 +4,7 @@
 // `init-app-config` has to be the first import, because there could be packages reference it in their side effect.
 // eslint-disable-next-line import/order
 import './lib/init-app-config';
-import page from '@automattic/calypso-router';
+import page, { type Context } from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
 import '@automattic/calypso-polyfills';
 import { createStore, applyMiddleware, compose, Store, Middleware } from 'redux';
@@ -22,7 +22,7 @@ import config from './lib/config-api';
 import initSentry from './lib/init-sentry';
 import setLocale from './lib/set-locale';
 import { setupContextMiddleware } from './page-middleware/setup-context';
-import registerStatsPages from './routes';
+import registerStatsPages, { siteSelection } from './routes';
 
 import 'calypso/assets/stylesheets/style.scss';
 import './app.scss';
@@ -60,6 +60,28 @@ async function AppBoot() {
 
 	setStore( store as Store & WithAddReducer );
 	setupContextMiddleware( store, queryClient );
+
+	// Initialize site data using siteSelection middleware
+	await new Promise< void >( ( resolve ) => {
+		const mockContext = {
+			store,
+			query: {},
+			params: {},
+			path: '',
+			pathname: '',
+			title: '',
+			save: () => {},
+			pushState: () => {},
+			handled: false,
+			canonicalPath: '',
+			originalPath: '',
+			state: initialState,
+			querystring: '',
+			hash: '',
+		} as Context;
+
+		siteSelection( mockContext, resolve );
+	} );
 
 	if ( ! window.location?.hash ) {
 		// Redirect to the default stats page.
