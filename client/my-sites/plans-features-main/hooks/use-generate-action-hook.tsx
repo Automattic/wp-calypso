@@ -423,7 +423,13 @@ function getLoggedInPlansAction( {
 
 	// Downgrade action if the plan is not available for purchase
 	if ( ! availableForPurchase ) {
-		return createLoggedInPlansAction( translate( 'Downgrade', { context: 'verb' } ), 'secondary' );
+		return {
+			primary: {
+				callback: () => {},
+				text: '',
+				status: 'hidden',
+			},
+		};
 	}
 
 	/**

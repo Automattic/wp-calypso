@@ -154,7 +154,7 @@ export interface GridAction {
 		text: TranslateResult;
 		callback: () => Promise< void > | void;
 		// TODO: It's not clear if status is ever actually set to 'blocked'. Investigate and remove if not.
-		status?: 'disabled' | 'blocked' | 'enabled';
+		status?: 'disabled' | 'blocked' | 'enabled' | 'hidden';
 		variant?: 'primary' | 'secondary';
 	};
 	postButtonText?: TranslateResult;
