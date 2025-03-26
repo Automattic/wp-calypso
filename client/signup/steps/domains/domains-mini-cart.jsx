@@ -161,10 +161,12 @@ export class DomainsMiniCart extends Component {
 						} ) }
 					</div>
 					<div key="rowtotalprice" className="domains__domain-cart-total-price">
-						{ formatCurrency(
-							this.props.domainsInCart.reduce( ( total, item ) => total + item.cost, 0 ),
-							this.props.domainsInCart?.[ 0 ]?.currency ?? userCurrency
-						) }
+						{ this.props.domainsInCart.some( ( domain ) => domain.temporary )
+							? '...'
+							: formatCurrency(
+									this.props.domainsInCart.reduce( ( total, item ) => total + item.cost, 0 ),
+									this.props.domainsInCart?.[ 0 ]?.currency ?? userCurrency
+							  ) }
 					</div>
 				</div>
 				<Button

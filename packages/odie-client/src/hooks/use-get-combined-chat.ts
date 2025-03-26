@@ -47,7 +47,7 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 	const canFetchConversation = conversationId && canConnectToZendesk;
 
 	useEffect( () => {
-		if ( isOdieChatLoading || chatStatus !== 'loading' ) {
+		if ( ! currentSupportInteraction || isOdieChatLoading || chatStatus !== 'loading' ) {
 			return;
 		}
 
@@ -55,7 +55,7 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 			setMainChatState( {
 				...( odieChat ? odieChat : emptyChat ),
 				conversationId: null,
-				supportInteractionId: currentSupportInteraction!.uuid,
+				supportInteractionId: currentSupportInteraction.uuid,
 				provider: 'odie',
 				status: 'loaded',
 			} );
@@ -72,7 +72,7 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 							) ?? [];
 						setMainChatState( {
 							...( odieChat ? odieChat : {} ),
-							supportInteractionId: currentSupportInteraction!.uuid,
+							supportInteractionId: currentSupportInteraction.uuid,
 							conversationId: conversation.id,
 							messages: [
 								...( odieChat ? filteredOdieMessages : [] ),
@@ -80,7 +80,7 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 								...( conversation.messages as Message[] ),
 							],
 							provider: 'zendesk',
-							status: currentSupportInteraction?.status === 'closed' ? 'closed' : 'loaded',
+							status: currentSupportInteraction.status === 'closed' ? 'closed' : 'loaded',
 						} );
 					}
 				} );

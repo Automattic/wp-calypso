@@ -21,10 +21,10 @@ jest.mock( 'debug', () => () => jest.fn() );
 
 describe( 'usePreloadSteps', () => {
 	// Mock step components
-	const mockAsyncComponent1 = jest.fn().mockResolvedValue( null );
-	const mockAsyncComponent2 = jest.fn().mockResolvedValue( null );
-	const mockAsyncComponent3 = jest.fn().mockResolvedValue( null );
-	const mockUserAsyncComponent = jest.fn().mockResolvedValue( null );
+	const mockAsyncComponent1 = jest.fn().mockResolvedValue( { default: null } );
+	const mockAsyncComponent2 = jest.fn().mockResolvedValue( { default: null } );
+	const mockAsyncComponent3 = jest.fn().mockResolvedValue( { default: null } );
+	const mockUserAsyncComponent = jest.fn().mockResolvedValue( { default: null } );
 
 	// Mock flow steps
 	const mockFlowSteps = [

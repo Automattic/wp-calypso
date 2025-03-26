@@ -325,10 +325,14 @@ body.is-section-signup {
 		margin-bottom: 24px;
 
 		.social-buttons__button {
-			font-family: $inter;
-			font-size: rem(13px);
-			font-weight: 600;
-			line-height: 14px;
+			--color-accent: var(--color-orange);
+
+			> span {
+				font-family: $inter;
+				font-size: rem(13px);
+				font-weight: 600;
+			}
+
 		}
 	}
 
