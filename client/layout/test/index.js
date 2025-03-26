@@ -18,12 +18,6 @@ describe( 'index', () => {
 									items: {},
 									lastTimeShown: {},
 								},
-								purchases: {
-									hasLoadedUserPurchasesFromServer: false,
-								},
-								sites: {
-									items: {},
-								},
 							} ),
 							subscribe: () => {},
 						} }

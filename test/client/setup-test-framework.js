@@ -39,8 +39,6 @@ global.fetch = jest.fn( () =>
 jest.mock( 'wpcom-proxy-request', () => ( {
 	__esModule: true,
 	canAccessWpcomApis: jest.fn(),
-	reloadProxy: jest.fn(),
-	requestAllBlogsAccess: jest.fn(),
 } ) );
 
 global.matchMedia = jest.fn( ( query ) => ( {
