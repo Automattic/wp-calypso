@@ -9,8 +9,8 @@ import {
 	warningNotice,
 } from '../actions';
 
-jest.mock( 'uuid', () => ( {
-	v4: () => 'someid',
+jest.mock( 'crypto', () => ( {
+	randomUUID: () => 'someid',
 } ) );
 
 describe( 'actions', () => {

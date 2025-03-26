@@ -15,8 +15,8 @@ import {
 } from 'calypso/state/action-types';
 import * as handlers from 'calypso/state/partner-portal/licenses/handlers';
 
-jest.mock( 'uuid', () => ( {
-	v4: () => 'noticeid',
+jest.mock( 'crypto', () => ( {
+	randomUUID: () => 'noticeid',
 } ) );
 
 describe( 'handlers', () => {

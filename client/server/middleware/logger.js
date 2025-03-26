@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import uaParser from 'ua-parser-js';
-import { v4 as uuidv4 } from 'uuid';
 import isStaticRequest from 'calypso/server/lib/is-static-request';
 import { getLogger } from 'calypso/server/lib/logger';
 import { finalizePerfMarks } from 'calypso/server/lib/performance-mark';
@@ -62,7 +61,7 @@ export default () => {
 
 	return ( req, res, next ) => {
 		req.logger = logger.child( {
-			reqId: uuidv4(),
+			reqId: crypto.randomUUID(),
 			url: req.originalUrl,
 			appVersion: process.env.COMMIT_SHA,
 			env,

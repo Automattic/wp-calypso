@@ -29,8 +29,8 @@ jest.mock( 'calypso/blocks/image-editor', () => () => <div data-testid="image-ed
 jest.mock( '../detail', () => () => <div data-testid="media-modal-detail-base" /> );
 
 const mockV4 = jest.fn();
-jest.mock( 'uuid', () => ( {
-	v4: () => mockV4(),
+jest.mock( 'crypto', () => ( {
+	randomUUID: () => mockV4(),
 } ) );
 
 /**

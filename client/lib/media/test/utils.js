@@ -6,8 +6,8 @@ import { map } from 'lodash';
 import { ValidationErrors as MediaValidationErrors } from '../constants';
 import * as MediaUtils from '../utils';
 
-jest.mock( 'uuid', () => ( {
-	v4: () => 'someid',
+jest.mock( 'crypto', () => ( {
+	randomUUID: () => 'someid',
 } ) );
 
 const UNIQUEID = 'media-someid';
