@@ -112,7 +112,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 
 				const testAccount = new TestAccount( testAccountName );
 				siteId = testAccount.credentials.testSites?.primary?.id || 0;
-				siteSlug = testAccount.credentials.testSites?.primary?.url || '';
+				siteSlug = testAccount.getSiteURL( { protocol: false } );
 				socialConnectionsManager = new SocialConnectionsManager( page, siteId! );
 				await testAccount.authenticate( page );
 			} );
