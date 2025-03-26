@@ -15,43 +15,40 @@ import { apiCloseAccount } from '../shared';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'Login: Visit login while logged in' ), function () {
+describe( DataHelper.createSuiteTitle( 'Login: Visit login page while logged in' ), function () {
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'signupfree',
 	} );
 
 	let newUserDetails: NewUserResponse;
 	let page: Page;
+	let loginPage: LoginPage;
 
 	beforeAll( async function () {
 		page = await browser.newPage();
 	} );
 
-	describe( 'Register as new user', function () {
-		let loginPage: LoginPage;
+	it( 'Navigate to the Login page', async function () {
+		loginPage = new LoginPage( page );
+		await loginPage.visit();
+	} );
 
-		it( 'Navigate to the Login page', async function () {
-			loginPage = new LoginPage( page );
-			await loginPage.visit();
-		} );
+	it( 'Click on button to create a new account', async function () {
+		await loginPage.clickCreateNewAccount();
+	} );
 
-		it( 'Click on button to create a new account', async function () {
-			await loginPage.clickCreateNewAccount();
-		} );
+	it( 'Sign up as a new user', async function () {
+		const userSignupPage = new UserSignupPage( page );
+		newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
+	} );
 
-		it( 'Sign up as a new user', async function () {
-			const userSignupPage = new UserSignupPage( page );
-			newUserDetails = await userSignupPage.signupSocialFirstWithEmail( testUser.email );
-		} );
+	it( 'Go to login page', async function () {
+		loginPage = new LoginPage( page );
+		await loginPage.visit();
+	} );
 
-		it( 'Go to login page', async function () {
-			loginPage = new LoginPage( page );
-			await loginPage.visit();
-		} );
-
-		it( 'Make sure the "Continue" and "Login with another account" buttons are visible', async function () {
-			await loginPage.validateContinueAsYourself( testUser.username, testUser.email );
-		} );
+	it( 'Make sure the "Continue" and "Login with another account" buttons are visible', async function () {
+		await loginPage.validateContinueAsYourself( testUser.username, testUser.email );
 	} );
 
 	afterAll( async function () {
