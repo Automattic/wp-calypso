@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	type PlanSlug,
 	isFreePlan,
@@ -423,13 +424,16 @@ function getLoggedInPlansAction( {
 
 	// Downgrade action if the plan is not available for purchase
 	if ( ! availableForPurchase ) {
-		return {
-			primary: {
-				callback: () => {},
-				text: '',
-				status: 'hidden',
-			},
-		};
+		if ( isEnabled( 'plans/self-service-downgrade' ) ) {
+			return {
+				primary: {
+					callback: () => {},
+					text: '',
+					status: 'hidden',
+				},
+			};
+		}
+		return createLoggedInPlansAction( translate( 'Downgrade', { context: 'verb' } ), 'secondary' );
 	}
 
 	/**
