@@ -40,10 +40,6 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 	const { trackEvent } = useOdieAssistantContext();
 	const canFetchConversation = conversationId && canConnectToZendesk;
 
-	// console.log('conversationId', conversationId);
-	// console.log('odieChat', odieChat);
-	// console.log('mainChatState', mainChatState);
-
 	useEffect( () => {
 		if ( ! currentSupportInteraction || isOdieChatLoading || chatStatus !== 'loading' ) {
 			return;
