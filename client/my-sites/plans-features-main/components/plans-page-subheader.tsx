@@ -147,9 +147,9 @@ const PlansPageSubheader = ( {
 		return getCreateWithBigSky();
 	}, [] );
 
-	return (
-		<>
-			{ createWithBigSky && (
+	const renderSubheader = () => {
+		if ( createWithBigSky ) {
+			return (
 				<Subheader>
 					{ translate(
 						'Build your site quickly with our AI Website Builder or {{link}}start with a free plan{{/link}}.',
@@ -160,8 +160,11 @@ const PlansPageSubheader = ( {
 						}
 					) }
 				</Subheader>
-			) }
-			{ ! createWithBigSky && deemphasizeFreePlan && offeringFreePlan ? (
+			);
+		}
+
+		if ( ! createWithBigSky && deemphasizeFreePlan && offeringFreePlan ) {
+			return (
 				<Subheader>
 					{ translate(
 						'Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.',
@@ -172,9 +175,23 @@ const PlansPageSubheader = ( {
 						}
 					) }
 				</Subheader>
-			) : (
-				showPlanBenefits && <PlanBenefitHeader />
-			) }
+			);
+		}
+
+		if ( showPlanBenefits ) {
+			return <PlanBenefitHeader />;
+		}
+
+		return (
+			<Subheader>
+				{ translate( 'Whatever site you’re building, there’s a plan to make it happen sooner.' ) }
+			</Subheader>
+		);
+	};
+
+	return (
+		<>
+			{ renderSubheader() }
 			{ isDisplayingPlansNeededForFeature && (
 				<SecondaryFormattedHeader siteSlug={ siteSlug } selectedFeature={ selectedFeature } />
 			) }
