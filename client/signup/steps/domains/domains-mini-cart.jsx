@@ -101,6 +101,9 @@ export class DomainsMiniCart extends Component {
 						borderless
 						className="domains__domain-cart-remove"
 						onClick={ this.props.removeDomainClickHandler( domain ) }
+						aria-label={ translate( 'Remove %(domain)s from cart', {
+							args: { domain: domain.meta },
+						} ) }
 					>
 						{ translate( 'Remove' ) }
 					</Button>
@@ -114,13 +117,11 @@ export class DomainsMiniCart extends Component {
 
 		// Only deduct a removal domain if it's on removal queue and is at the temporarycart
 		// This avoids the case where a domain is removed from the temporarycart but is still on the removal queue
-		if ( this.props.temporaryCart?.length > 0 && this.props.domainRemovalQueue?.length > 0 ) {
-			this.props.domainRemovalQueue.forEach( ( item ) => {
-				if ( this.props.temporaryCart.some( ( domain ) => domain.meta === item.meta ) ) {
-					result--;
-				}
-			} );
-		}
+		this.props.domainRemovalQueue?.forEach( ( item ) => {
+			if ( this.props.domainsInCart.some( ( domain ) => domain.meta === item.meta ) ) {
+				result--;
+			}
+		} );
 
 		return result;
 	};
