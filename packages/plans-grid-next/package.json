@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/plans-grid-next",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "WordPress.com plans UI grid components and helpers.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
