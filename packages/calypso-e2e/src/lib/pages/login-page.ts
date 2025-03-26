@@ -192,9 +192,9 @@ export class LoginPage {
 	 */
 	async validateContinueAsYourself( username: string, email: string ) {
 		await this.page.waitForSelector( selectors.continue );
-		await this.page.locator( `text='${ username }'` ).waitFor();
-		await this.page.locator( `text='${ email }'` ).waitFor();
-		await this.page.locator( selectors.loginWithAnotherAccount ).waitFor();
+		await this.page.waitForSelector( `text='${ username }'` );
+		await this.page.waitForSelector( `text='${ email }'` );
+		await this.page.waitForSelector( selectors.loginWithAnotherAccount );
 
 		return true;
 	}
