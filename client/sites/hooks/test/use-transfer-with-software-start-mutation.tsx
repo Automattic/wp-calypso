@@ -53,7 +53,7 @@ describe( 'useRequestTransferWithSoftware', () => {
 
 	beforeEach( () => nock.cleanAll() );
 
-	it( 'should successfully request transfer with software and return the transfer_with_software_id', async () => {
+	it( 'should successfully request transfer with software and return the atomic_transfer_id', async () => {
 		nock( 'https://public-api.wordpress.com' )
 			.post( '/wpcom/v2/sites/' + SITE_ID + '/atomic/transfer-with-software', {
 				plugins: [ 'plugin-1', 'install' ],
@@ -64,7 +64,12 @@ describe( 'useRequestTransferWithSoftware', () => {
 				http_envelope: 1,
 			} )
 			.reply( 200, {
-				transfer_with_software_id: 456,
+				atomic_transfer_id: 456,
+				blog_id: SITE_ID,
+				atomic_transfer_status: 'pending',
+				plugins: { 'plugin-1': 'install' },
+				themes: { 'theme-1': 'activate' },
+				transfer_with_software_status: 'pending',
 			} );
 
 		const { result } = render();
@@ -75,7 +80,12 @@ describe( 'useRequestTransferWithSoftware', () => {
 			() => {
 				expect( result.current.isSuccess ).toBe( true );
 				expect( result.current.data ).toEqual( {
-					transfer_with_software_id: 456,
+					atomic_transfer_id: 456,
+					blog_id: SITE_ID,
+					atomic_transfer_status: 'pending',
+					plugins: { 'plugin-1': 'install' },
+					themes: { 'theme-1': 'activate' },
+					transfer_with_software_status: 'pending',
 				} );
 			},
 			{ timeout: 3000 }
