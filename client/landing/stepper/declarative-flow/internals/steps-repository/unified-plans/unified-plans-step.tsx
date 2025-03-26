@@ -3,7 +3,7 @@ import config from '@automattic/calypso-config';
 import { UrlFriendlyTermType } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { FREE_THEME } from '@automattic/design-picker';
-import { isTailoredSignupFlow, ONBOARDING_FLOW, StepContainer } from '@automattic/onboarding';
+import { isTailoredSignupFlow, ONBOARDING_FLOW, Step, StepContainer } from '@automattic/onboarding';
 import { PlansIntent } from '@automattic/plans-grid-next';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { isDesktop as isDesktopViewport, subscribeIsDesktop } from '@automattic/viewport';
@@ -33,7 +33,6 @@ import {
 import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
-import { StepContainerV2Plans } from './step-container-v2-plans';
 import { getIntervalType } from './util';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { StepState } from 'calypso/state/signup/progress/schema';
@@ -490,16 +489,24 @@ function UnifiedPlansStep( {
 	);
 
 	if ( useStepContainerV2 && wrapperProps ) {
+		const goBack = wrapperProps.hideBack ? undefined : wrapperProps.goBack;
+
 		return (
 			<>
 				<MarketingMessage path="signup/plans" />
-				<StepContainerV2Plans
-					headerText={ getHeaderText() }
-					subHeaderText={ fallbackSubHeaderText }
-					children={ stepContent }
-					goBack={ wrapperProps.hideBack ? undefined : wrapperProps.goBack }
-					backLabelText={ backLabelText }
-				/>
+				<Step.FullWidthLayout
+					className="step-container-v2--plans"
+					topBar={
+						<Step.TopBar
+							backButton={
+								goBack ? <Step.BackButton onClick={ goBack } label={ backLabelText } /> : undefined
+							}
+						/>
+					}
+					heading={ <Step.Heading text={ getHeaderText() } subText={ fallbackSubHeaderText } /> }
+				>
+					{ stepContent }
+				</Step.FullWidthLayout>
 			</>
 		);
 	}
