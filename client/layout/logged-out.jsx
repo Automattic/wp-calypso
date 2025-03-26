@@ -130,7 +130,7 @@ const LayoutLoggedOut = ( {
 		isLoggedIn &&
 		// we want to show only the Help center in my home and the help section (but not the FAB)
 		( [ 'home', 'help' ].includes( sectionName ) ||
-			currentRoute.startsWith( '/start/do-it-for-me/' ) ) &&
+			currentRoute?.startsWith( '/start/do-it-for-me/' ) ) &&
 		userAllowedToHelpCenter;
 
 	const classes = {
