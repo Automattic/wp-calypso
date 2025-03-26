@@ -149,8 +149,22 @@ export class DomainsMiniCart extends Component {
 		);
 	};
 
+	formatCartTotal = () => {
+		const isRemovingDomain = this.props.domainsInCart.some( ( domain ) =>
+			this.props.domainRemovalQueue.some( ( removalItem ) => removalItem.meta === domain.meta )
+		);
+
+		const hasTemporaryDomain = this.props.domainsInCart.some( ( domain ) => domain.temporary );
+
+		return isRemovingDomain || hasTemporaryDomain
+			? '...'
+			: formatCurrency(
+					this.props.domainsInCart.reduce( ( total, item ) => total + item.cost, 0 ),
+					this.props.domainsInCart[ 0 ]?.currency ?? this.props.userCurrency ?? 'USD'
+			  );
+	};
+
 	mobile = () => {
-		const userCurrency = this.props.userCurrency ?? 'USD';
 		const MobileHeader = (
 			<div className="domains__domain-cart-title">
 				<div className="domains__domain-cart-total">
@@ -161,12 +175,7 @@ export class DomainsMiniCart extends Component {
 						} ) }
 					</div>
 					<div key="rowtotalprice" className="domains__domain-cart-total-price">
-						{ this.props.domainsInCart.some( ( domain ) => domain.temporary )
-							? '...'
-							: formatCurrency(
-									this.props.domainsInCart.reduce( ( total, item ) => total + item.cost, 0 ),
-									this.props.domainsInCart?.[ 0 ]?.currency ?? userCurrency
-							  ) }
+						{ this.formatCartTotal() }
 					</div>
 				</div>
 				<Button
@@ -225,8 +234,6 @@ export class DomainsMiniCart extends Component {
 			return this.mobile();
 		}
 
-		const userCurrency = this.props.userCurrency ?? 'USD';
-
 		return (
 			<div className="domains__domain-side-content domains__domain-cart">
 				<div className="domains__domain-cart-title">{ translate( 'Your domains' ) }</div>
@@ -246,14 +253,7 @@ export class DomainsMiniCart extends Component {
 						} ) }
 					</div>
 					<div key="rowtotalprice" className="domains__domain-cart-total-price">
-						<strong>
-							{ this.props.domainsInCart.some( ( domain ) => domain.temporary )
-								? '...'
-								: formatCurrency(
-										this.props.domainsInCart.reduce( ( total, item ) => total + item.cost, 0 ),
-										this.props.domainsInCart?.[ 0 ]?.currency ?? userCurrency
-								  ) }
-						</strong>
+						<strong>{ this.formatCartTotal() }</strong>
 					</div>
 				</div>
 				<Button
