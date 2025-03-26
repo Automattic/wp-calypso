@@ -5,7 +5,7 @@ import {
 	getPlans,
 } from '@automattic/calypso-products';
 import { Gridicon, JetpackLogo } from '@automattic/components';
-import { AddOns } from '@automattic/data-stores';
+import { AddOns, Plans } from '@automattic/data-stores';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRef, useMemo } from '@wordpress/element';
@@ -24,7 +24,7 @@ import {
 import { useInView } from 'react-intersection-observer';
 import { plansGridMediumLarge } from '../../css-mixins';
 import PlansGridContextProvider, { usePlansGridContext } from '../../grid-context';
-import { useCurrentPlanTermMatchesSelectedTerm } from '../../hooks/use-current-plan-term-matches-selected-term';
+import usePlanBillingPeriod from '../../hooks/data-store/use-plan-billing-period';
 import useGridSize from '../../hooks/use-grid-size';
 import useHighlightAdjacencyMatrix from '../../hooks/use-highlight-adjacency-matrix';
 import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
@@ -47,7 +47,6 @@ import type {
 	TransformedFeatureObject,
 	PlanTypeSelectorProps,
 	GridSize,
-	SupportedUrlFriendlyTermType,
 } from '../../types';
 import type {
 	FeatureObject,
@@ -934,16 +933,11 @@ const ComparisonGrid = ( {
 	gridSize,
 	siteId,
 }: ComparisonGridProps ) => {
-	const { gridPlans, gridPlansIndex, featureGroupMap, helpers } = usePlansGridContext();
+	const { gridPlans, gridPlansIndex, featureGroupMap } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const [ visiblePlans, setVisiblePlans ] = useState< PlanSlug[] >( [] );
-
-	const currentPlanTermMatchesSelectedTerm = useCurrentPlanTermMatchesSelectedTerm( {
-		currentSitePlanSlug,
-		intervalType: intervalType as SupportedUrlFriendlyTermType,
-		siteId,
-		useCheckPlanAvailabilityForPurchase: helpers?.useCheckPlanAvailabilityForPurchase,
-	} );
+	const currentPlanTerm = Plans.useCurrentPlanTerm( { siteId } );
+	const selectedPlanTerm = usePlanBillingPeriod( { intervalType } );
 
 	useEffect( () => {
 		let numPlansToDisplay = gridPlans.length;
@@ -968,12 +962,17 @@ const ComparisonGrid = ( {
 		const isCurrentPlanVisible =
 			!! currentSitePlanSlug && visiblePlanSlugs.includes( currentSitePlanSlug );
 
-		// Plans should be sorted by least to most expensive, unless a current
-		// plan exists and it would not be visible due to the number of plans to
-		// display. In that case, the current plan is placed at the start of the
-		// grid, and the last plan is removed to maintain the same number of
-		// visible plans.
-		if ( currentSitePlanSlug && ! isCurrentPlanVisible && currentPlanTermMatchesSelectedTerm ) {
+		/**
+		 * Plans are sorted by least to most expensive unless:
+		 * - a current plan exists and
+		 * - the current plan's term matches the selected term and
+		 * - the current plan would not be displayed due to the number of plans that can be visible at once
+		 *
+		 * If those conditions are met:
+		 * - the current plan is placed at the start of the grid and
+		 * - the last plan is removed to maintain the expected number of visible plans
+		 */
+		if ( currentSitePlanSlug && ! isCurrentPlanVisible && currentPlanTerm === selectedPlanTerm ) {
 			visiblePlanSlugs = [ currentSitePlanSlug, ...visiblePlanSlugs ].slice( 0, numPlansToDisplay );
 		}
 
@@ -983,7 +982,9 @@ const ComparisonGrid = ( {
 		gridPlansIndex,
 		currentSitePlanSlug,
 		gridPlans,
-		currentPlanTermMatchesSelectedTerm,
+		currentPlanTerm,
+		selectedPlanTerm,
+		intervalType,
 	] );
 
 	const visibleGridPlans = useMemo(
