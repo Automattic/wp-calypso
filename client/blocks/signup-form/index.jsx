@@ -1044,7 +1044,7 @@ class SignupForm extends Component {
 
 		if ( isBlazePro ) {
 			return (
-				<div className="signup-form__p2-footer-link">
+				<div>
 					<LoggedOutFormLinks>
 						<span>{ this.props.translate( 'Already have an account?' ) }&nbsp;</span>
 						<LoggedOutFormLinkItem href={ this.getLoginLink() }>
