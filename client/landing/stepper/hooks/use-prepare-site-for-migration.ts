@@ -1,9 +1,9 @@
 import config from '@automattic/calypso-config';
 import { useEffect } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { usePluginAutoInstallation } from './use-plugin-auto-installation';
+import { useRequestTransferWithSoftware } from 'calypso/sites/hooks/use-transfer-with-software-start-mutation';
+import { useTransferWithSoftwareStatus } from 'calypso/sites/hooks/use-transfer-with-software-status-query';
 import { useSiteMigrationKey } from './use-site-migration-key';
-import { useSiteTransfer } from './use-site-transfer';
 
 type Status = 'idle' | 'pending' | 'success' | 'error';
 
@@ -69,45 +69,55 @@ type Options = {
  *  This hook manages the site transfer, plugin installation and migration key fetching.
  */
 export const usePrepareSiteForMigration = (
-	siteId?: number,
+	siteId: number,
 	from?: string,
 	options: Options = {}
 ) => {
-	const plugin = { name: 'wpcom-migration/wpcom_migration', slug: 'wpcom-migration' };
+	const transferMutation = useRequestTransferWithSoftware( {
+		siteId,
+		apiSettings: {
+			migration_source_site_domain: from,
+		},
+		plugins: [ 'wpcom-migration', 'activate' ],
+	} );
 
-	const siteTransferState = useSiteTransfer( siteId, {
+	// Trigger the mutation when the hook is first used
+	useEffect( () => {
+		transferMutation.mutate();
+	}, [ siteId, from ] ); // Dependencies that should trigger a new transfer
+
+	const transfer_id = transferMutation.data?.transfer_with_software_id;
+	const softwareTransferState = useTransferWithSoftwareStatus( siteId, transfer_id ?? 0, {
 		retry: options.retry ?? 0,
-		from,
 	} );
 
-	const pluginInstallationState = usePluginAutoInstallation( plugin, siteId, {
-		enabled: Boolean( siteTransferState.completed ),
-	} );
+	const softwareTransferCompleted =
+		'success' === softwareTransferState.data?.atomic_transfer_status &&
+		'success' === softwareTransferState.data?.transfer_with_software_status;
 
 	const {
 		data: { migrationKey } = {},
 		error: migrationKeyError,
 		status: migrationKeyStatus,
 	} = useSiteMigrationKey( siteId, {
-		enabled: Boolean( pluginInstallationState.completed ),
+		enabled: Boolean( softwareTransferCompleted ),
 		retry: options.retry ?? 0,
 	} );
 
-	const completed = siteTransferState.completed && pluginInstallationState.completed;
-	const error = siteTransferState.error || pluginInstallationState.error || migrationKeyError;
-	const criticalError = siteTransferState.error || pluginInstallationState.error;
+	const error = softwareTransferState.error || migrationKeyError;
+	const criticalError = softwareTransferState.error;
 
 	const detailedStatus = {
-		siteTransfer: siteTransferState.status,
-		pluginInstallation: pluginInstallationState.status,
-		migrationKey: ! pluginInstallationState.completed ? 'idle' : migrationKeyStatus,
+		siteTransfer: softwareTransferState.data?.atomic_transfer_status ?? 'idle',
+		pluginInstallation: softwareTransferState.data?.transfer_with_software_status ?? 'idle',
+		migrationKey: ! softwareTransferCompleted ? 'idle' : migrationKeyStatus,
 	};
 
-	useLogMigration( completed, siteTransferState.status, criticalError, siteId );
+	useLogMigration( softwareTransferCompleted, softwareTransferState.status, criticalError, siteId );
 
 	return {
 		detailedStatus,
-		completed,
+		softwareTransferCompleted,
 		error,
 		migrationKey: migrationKey ?? null,
 	};
