@@ -46,6 +46,7 @@ interface ExternalProps {
 	siteId?: number | null;
 	isEligible?: boolean;
 	backUrl?: string;
+	onClose: () => void;
 	onProceed: ( options: { geo_affinity?: string } ) => void;
 	standaloneProceed: boolean;
 	className?: string;
@@ -69,6 +70,7 @@ export const EligibilityWarnings = ( {
 	isEligible,
 	isMarketplace,
 	isPlaceholder,
+	onClose,
 	onProceed,
 	standaloneProceed,
 	recordUpgradeClick,
@@ -251,7 +253,10 @@ export const EligibilityWarnings = ( {
 
 			<CompactCard>
 				<div className="eligibility-warnings__confirm-buttons">
-					<SupportBlock useDialog={ context === 'plugin-details' } />
+					<SupportBlock
+						useHelpCenter={ context === 'plugin-details' }
+						onCloseEligibilityDialog={ onClose }
+					/>
 					<Button
 						primary
 						disabled={

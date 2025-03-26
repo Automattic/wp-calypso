@@ -161,6 +161,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 					currentContext="plugin-details"
 					isMarketplace={ isMarketplaceProduct }
 					standaloneProceed
+					onClose={ () => setShowEligibility( false ) }
 					onProceed={ () =>
 						onClickInstallPlugin( {
 							dispatch,
