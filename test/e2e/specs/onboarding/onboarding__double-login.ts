@@ -48,7 +48,7 @@ describe( DataHelper.createSuiteTitle( 'Login: Visit login while logged in' ), f
 			await loginPage.visit();
 		} );
 
-		it( 'Make sure the "Continue" or login with another account button is visible', async function () {
+		it( 'Make sure the "Continue" and "Login with another account" buttons are visible', async function () {
 			await loginPage.validateContinueAsYourself( testUser.username, testUser.email );
 		} );
 	} );
