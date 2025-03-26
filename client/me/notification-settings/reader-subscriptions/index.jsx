@@ -94,7 +94,7 @@ class NotificationSubscriptions extends Component {
 									components: {
 										readerLink: (
 											<a
-												href="/following/edit"
+												href="/reader/subscriptions"
 												onClick={ this.handleClickEvent( 'Edit Subscriptions in Reader Link' ) }
 											/>
 										),

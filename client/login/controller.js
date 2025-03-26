@@ -168,10 +168,10 @@ export function desktopLoginFinalize( context, next ) {
 export async function magicLogin( context, next ) {
 	const {
 		path,
-		query: { gravatar_flow, client_id, redirect_to },
+		query: { gravatar_flow, client_id, redirect_to, auto_trigger },
 	} = context;
 
-	if ( isUserLoggedIn( context.store.getState() ) ) {
+	if ( isUserLoggedIn( context.store.getState() ) && auto_trigger === undefined ) {
 		return login( context, next );
 	}
 
@@ -213,7 +213,13 @@ export function qrCodeLogin( context, next ) {
 }
 
 export async function jetpackGoogleAuth( context, next ) {
-	const { query } = context;
+	const { query, isServerSide } = context;
+
+	// Don't run authentication if it's server side
+	if ( isServerSide ) {
+		return next();
+	}
+
 	const redirectUri = `https://${ window.location.host }${ loginPath( {
 		socialService: 'google',
 	} ) }`;
@@ -266,24 +272,25 @@ export async function jetpackGoogleAuth( context, next ) {
 				text: 'Error initiating Google login. Please try again.',
 			},
 		} );
-
-		// Fall back to regular login form
-		context.primary = (
-			<WPLogin isJetpack path={ context.path } query={ query } locale={ context.params.lang } />
-		);
-		next();
+		redirectJetpackDirectAuthError( context );
 	}
+
+	// Fall back to regular login form
+	context.primary = (
+		<WPLogin isJetpack path={ context.path } query={ query } locale={ context.params.lang } />
+	);
+	next();
 }
 
 export async function jetpackGoogleAuthCallback( context, next ) {
-	const { query } = context;
+	const { query, isServerSide } = context;
 
 	const code = query.code;
 	const stateString = query.state;
 	const error = query.error;
 
-	// Not a redirect from Google if no code or error present
-	if ( ! code && ! error ) {
+	// Not a redirect from Google if no code or error present, or if it's server side
+	if ( ( ! code && ! error ) || isServerSide ) {
 		return next();
 	}
 
@@ -395,13 +402,20 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 				text: 'Error during Google authentication. Please try again.',
 			},
 		} );
+		redirectJetpackDirectAuthError( context );
 	}
 
 	return next();
 }
 
 export async function jetpackAppleAuth( context, next ) {
-	const { query } = context;
+	const { query, isServerSide } = context;
+
+	// Don't run authentication if it's server side
+	if ( isServerSide ) {
+		return next();
+	}
+
 	const redirectUri = `https://${ window.location.host }${ loginPath( {
 		socialService: 'apple',
 	} ) }`;
@@ -455,13 +469,14 @@ export async function jetpackAppleAuth( context, next ) {
 				text: 'Error initiating Apple login. Please try again.',
 			},
 		} );
-
-		// Fall back to regular login form
-		context.primary = (
-			<WPLogin isJetpack path={ context.path } query={ query } locale={ context.params.lang } />
-		);
-		next();
+		redirectJetpackDirectAuthError( context );
 	}
+
+	// Fall back to regular login form
+	context.primary = (
+		<WPLogin isJetpack path={ context.path } query={ query } locale={ context.params.lang } />
+	);
+	next();
 }
 
 export async function jetpackAppleAuthCallback( context, next ) {
@@ -535,9 +550,130 @@ export async function jetpackAppleAuthCallback( context, next ) {
 				text: 'Error during Apple authentication. Please try again.',
 			},
 		} );
+		redirectJetpackDirectAuthError( context );
 	}
 
 	return next();
+}
+
+export async function jetpackGitHubAuth( context, next ) {
+	const { query, isServerSide } = context;
+
+	// Don't run authentication if it's server side
+	if ( isServerSide ) {
+		return next();
+	}
+
+	const redirectUri = `https://${ window.location.host }/log-in/jetpack/github/callback`;
+	try {
+		// Store redirect_to in sessionStorage for use on callback
+		window.sessionStorage.setItem( 'github_redirect_to', query?.redirect_to || '/' );
+
+		// Redirect to GitHub authorization URL
+		const scope = 'read:user,user:email';
+		const params = new URLSearchParams( {
+			redirect_uri: redirectUri,
+			scope,
+			ux_mode: 'redirect',
+			redirect_to: query?.redirect_to || '/',
+		} );
+		window.location.href = `https://public-api.wordpress.com/wpcom/v2/hosting/github/app-authorize?${ params.toString() }`;
+	} catch {
+		context.store.dispatch( {
+			type: 'NOTICE_CREATE',
+			notice: {
+				status: 'is-error',
+				text: 'Error during GitHub authentication. Please try again.',
+			},
+		} );
+		redirectJetpackDirectAuthError( context );
+	}
+
+	// Fall back to regular login form
+	context.primary = (
+		<WPLogin isJetpack path={ context.path } query={ query } locale={ context.params.lang } />
+	);
+	next();
+}
+
+export async function jetpackGitHubAuthCallback( context, next ) {
+	const { query, isServerSide } = context;
+
+	const code = query.code;
+	const service = query.service;
+
+	// Not a redirect from GitHub if no code or error present
+	if ( ! code || service !== 'github' || isServerSide ) {
+		return next();
+	}
+
+	const redirect_to = window.sessionStorage.getItem( 'github_redirect_to' ) ?? '/';
+	window.sessionStorage.removeItem( 'github_redirect_to' );
+
+	try {
+		// GitHub supports localhost auth; and we allowlist the jetpack callback path
+		const redirectUri = `${ window.location.origin }/log-in/jetpack/github/callback`;
+
+		// Exchange auth code for tokens
+		const response = await postLoginRequest( 'exchange-social-auth-code', {
+			service: 'github',
+			auth_code: code,
+			redirect_uri: redirectUri,
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_key' ),
+		} );
+
+		const { access_token } = response.body.data;
+
+		// Try to create a new WordPress.com account (if it doesn't exist) - then, log in the user
+		try {
+			try {
+				await wpcom.req.post( '/users/social/new', {
+					service: 'github',
+					access_token,
+					signup_flow_name: 'github-auth-signup',
+					locale: getLocaleSlug(),
+					client_id: config( 'wpcom_signup_id' ),
+					client_secret: config( 'wpcom_signup_key' ),
+					tos: JSON.stringify( getToSAcceptancePayload() ),
+				} );
+			} catch {
+				// Silently fail; when id_token is not present, the endpoint fails when the user already exists
+			}
+
+			await context.store.dispatch(
+				loginSocialUser(
+					{
+						service: 'github',
+						access_token,
+					},
+					redirect_to
+				)
+			);
+			const url = new URL( redirect_to );
+			context.store.dispatch(
+				setRoute( url.pathname, Object.fromEntries( url.searchParams.entries() ) )
+			);
+
+			await context.store.dispatch( rebootAfterLogin() );
+			return;
+		} catch {
+			// If both connection and creation fail, show warning and redirect back to login page
+			redirectJetpackDirectAuthError( context, { redirect_to } );
+			return;
+		}
+	} catch {
+		context.store.dispatch( {
+			type: 'NOTICE_CREATE',
+			notice: {
+				status: 'is-error',
+				text: 'Error during GitHub authentication. Please try again.',
+			},
+		} );
+
+		redirectJetpackDirectAuthError( context, { redirect_to } );
+		return;
+	}
 }
 
 function getHandleEmailedLinkFormComponent( flow ) {
@@ -699,4 +835,10 @@ export function redirectLostPassword( context, next ) {
 	}
 
 	next();
+}
+
+function redirectJetpackDirectAuthError( context, query = {} ) {
+	const queryString = new URLSearchParams( Object.assign( {}, context.query, query ) ).toString();
+	const redirectUrl = queryString ? `/log-in/jetpack/?${ queryString }` : '/log-in/jetpack/';
+	return context.redirect( redirectUrl );
 }

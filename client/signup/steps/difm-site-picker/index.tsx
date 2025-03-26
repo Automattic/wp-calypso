@@ -104,6 +104,7 @@ export default function DIFMSitePickerStep( props: Props ) {
 		);
 
 		goToNextStep();
+		return true;
 	};
 
 	const filterSites = ( site: SiteDetails ) => {
