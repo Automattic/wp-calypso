@@ -9,7 +9,6 @@ import {
 	MAP_EXISTING_DOMAIN,
 } from '@automattic/urls';
 import { formatCurrency, useTranslate } from 'i18n-calypso';
-import { get, isEmpty } from 'lodash';
 import { stringify } from 'qs';
 import React, { useState } from 'react';
 import migratingHostImage from 'calypso/assets/images/illustrations/migrating-host-diy.svg';
@@ -75,10 +74,10 @@ function UseYourDomainStepContent( {
 					<div className="use-your-domain-step__option-illustration">
 						<img src={ image } alt="" />
 					</div>
-					<h3 className="use-your-domain-step__option-title">{ title }</h3>;
+					<h3 className="use-your-domain-step__option-title">{ title }</h3>
 					<div className="use-your-domain-step__option-reasons">
 						{ reasons.map( ( phrase, index ) => {
-							if ( isEmpty( phrase ) ) {
+							if ( ! phrase ) {
 								return;
 							}
 
@@ -149,13 +148,13 @@ function UseYourDomainStep( { basePath, goBack, initialQuery }: UseYourDomainSte
 
 	let transferSalePriceText = null;
 	if (
-		! isEmpty( domainProductSalePrice ) &&
+		domainProductSalePrice !== null &&
 		! isNextDomainFree( cart ) &&
 		! isDomainBundledWithPlan( cart, searchQuery ) &&
 		domainsWithPlansOnlyButNoPlan
 	) {
 		transferSalePriceText = translate( 'Sale price is %(cost)s', {
-			args: { cost: domainProductSalePrice! },
+			args: { cost: domainProductSalePrice },
 		} );
 	}
 
@@ -175,10 +174,10 @@ function UseYourDomainStep( { basePath, goBack, initialQuery }: UseYourDomainSte
 	}
 
 	let mappingPriceText;
-	const price = get( productsList, [ 'domain_map', 'cost' ], null );
 	if ( price ) {
 		// @ts-expect-error despite the TS error, formatCurrency works with a
 		// `null` currencyCode and uses a fallback currency.
+	const price = productsList?.domain_map?.cost;
 		mappingPriceText = formatCurrency( price, currencyCode );
 		mappingPriceText = translate(
 			'%(cost)s per year plus registration costs at your current provider',
