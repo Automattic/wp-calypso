@@ -52,7 +52,6 @@ import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import { refreshColorScheme, getColorSchemeFromCurrentQuery } from './color-scheme';
 import HelpCenterLoader from './help-center-loader';
-import { shouldLoadInlineHelp } from './utils';
 
 import './style.scss';
 
@@ -131,7 +130,7 @@ const LayoutLoggedOut = ( {
 		isLoggedIn &&
 		// we want to show only the Help center in my home and the help section (but not the FAB)
 		( [ 'home', 'help' ].includes( sectionName ) ||
-			shouldLoadInlineHelp( sectionName, currentRoute || '' ) ) &&
+			currentRoute.startsWith( '/start/do-it-for-me/' ) ) &&
 		userAllowedToHelpCenter;
 
 	const classes = {
