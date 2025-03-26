@@ -95,7 +95,7 @@ async function AppBoot() {
 	}
 
 	// Ensure locale files are loaded before rendering.
-	setLocale( localeSlug, isSimple ).then( () => {
+	setLocale( localeSlug, isSimple ?? false ).then( () => {
 		registerStatsPages( window.location.pathname + window.location.search );
 
 		// HACK: getPathWithUpdatedQueryString filters duplicate query parameters added by `page.js`.
