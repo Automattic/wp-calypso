@@ -57,7 +57,6 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
 			STEPS.SITE_MIGRATION_INSTRUCTIONS,
 			STEPS.ERROR,
-			//STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
 			STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS,
 			STEPS.SITE_MIGRATION_CREDENTIALS,
 			STEPS.SITE_MIGRATION_ALREADY_WPCOM,
@@ -426,14 +425,6 @@ const siteMigration: Flow = {
 								`/overview/${ siteSlug }`
 							)
 						);
-						/*
-						return navigate(
-							addQueryArgs(
-								{ siteId, from: from || fromQueryParam, siteSlug },
-								STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
-							)
-						);
-						*/
 					}
 
 					if ( action === 'already-wpcom' ) {
@@ -494,14 +485,6 @@ const siteMigration: Flow = {
 							`/overview/${ siteSlug }`
 						)
 					);
-					/*
-					return navigate(
-						addQueryArgs(
-							{ siteId, from: from || fromQueryParam, siteSlug, preventTicketCreation: true },
-							STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
-						)
-					);
-					*/
 				}
 
 				case STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS.slug: {
@@ -523,14 +506,6 @@ const siteMigration: Flow = {
 								`/overview/${ siteSlug }`
 							)
 						);
-						/*
-						return navigate(
-							addQueryArgs(
-								{ siteId, from: from || fromQueryParam, siteSlug, preventTicketCreation: true },
-								STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
-							)
-						);
-						*/
 					}
 					return exitFlow(
 						addQueryArgs(
@@ -544,34 +519,7 @@ const siteMigration: Flow = {
 							`/overview/${ siteSlug }`
 						)
 					);
-					/*
-					//TODO: Check if both conditions are needed.
-					return navigate(
-						addQueryArgs(
-							{ siteId, from: from || fromQueryParam, siteSlug, preventTicketCreation: true },
-							STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
-						)
-					);
-					*/
 				}
-
-				/*
-				// TODO: Do we need to handle this elsewhere?
-				case STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug: {
-					const { hasError } = providedDependencies as {
-						hasError?: 'ticket-creation';
-					};
-
-					if ( hasError === 'ticket-creation' ) {
-						return navigate(
-							addQueryArgs(
-								{ siteId, siteSlug, from: fromQueryParam, error: hasError },
-								STEPS.SITE_MIGRATION_CREDENTIALS.slug
-							)
-						);
-					}
-				}
-					*/
 
 				case STEPS.SITE_MIGRATION_ALREADY_WPCOM.slug: {
 					return navigate(
@@ -642,14 +590,6 @@ const siteMigration: Flow = {
 							`/overview/${ siteSlug }`
 						)
 					);
-					/*
-					return navigate(
-						addQueryArgs(
-							{ siteId, from: from || fromQueryParam, siteSlug, preventTicketCreation: true },
-							STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
-						)
-					);
-					*/
 				}
 			}
 		}
