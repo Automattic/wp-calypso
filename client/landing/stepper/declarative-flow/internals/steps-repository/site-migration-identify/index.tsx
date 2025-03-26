@@ -177,7 +177,7 @@ const SiteMigrationIdentify: StepType< {
 			<>
 				<DocumentHead title={ translate( 'Import your site content' ) } />
 				<Step.CenteredColumnLayout
-					columnWidth={ 6 }
+					columnWidth={ 4 }
 					topBar={
 						<Step.TopBar
 							backButton={
