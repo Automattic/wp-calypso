@@ -115,8 +115,7 @@ export class DomainsMiniCart extends Component {
 	domainCount = () => {
 		let result = this.props.domainsInCart.length + ( this.props.wpcomSubdomainSelected ? 1 : 0 );
 
-		// Only deduct a removal domain if it's on removal queue and is at the temporarycart
-		// This avoids the case where a domain is removed from the temporarycart but is still on the removal queue
+		// Deduct domains from the count that are on the removal queue
 		this.props.domainRemovalQueue?.forEach( ( item ) => {
 			if ( this.props.domainsInCart.some( ( domain ) => domain.meta === item.meta ) ) {
 				result--;
