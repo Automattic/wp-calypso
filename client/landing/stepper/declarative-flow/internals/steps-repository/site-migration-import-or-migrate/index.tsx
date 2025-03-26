@@ -107,7 +107,7 @@ const SiteMigrationImportOrMigrate: StepType< {
 			<>
 				<DocumentHead title={ pageTitle } />
 				<Step.CenteredColumnLayout
-					columnWidth={ 6 }
+					columnWidth={ 5 }
 					topBar={
 						<Step.TopBar backButton={ <Step.BackButton onClick={ navigation.goBack } /> } />
 					}
