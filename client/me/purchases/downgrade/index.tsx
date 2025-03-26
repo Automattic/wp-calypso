@@ -29,6 +29,7 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useState } from 'react';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
+import { hasAmountAvailableToRefund } from 'calypso/lib/purchases';
 import { cancelAndRefundPurchaseAsync } from 'calypso/lib/purchases/actions';
 import { Purchase } from 'calypso/lib/purchases/types';
 import { managePurchase } from 'calypso/me/purchases/paths';
@@ -196,6 +197,21 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 		}
 	};
 
+	const getDowngradeMessage = () => {
+		const planArgs = {
+			currentPlan: currentPlan?.getTitle() ?? '',
+			targetPlan: targetPlan?.getTitle() ?? '',
+		};
+		return ! hasAmountAvailableToRefund( purchase ) || ! purchase?.mostRecentRenewDate
+			? translate( 'We will change the plan immediately from %(currentPlan)s to %(targetPlan)s.', {
+					args: planArgs,
+			  } )
+			: translate(
+					'We will change the plan immediately and refund the remaining value from %(currentPlan)s to %(targetPlan)s.',
+					{ args: planArgs }
+			  );
+	};
+
 	if ( isAtomicWarningVisible ) {
 		return (
 			<AtomicWarning
@@ -222,17 +238,7 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 				<div className="downgrade__inner-wrapper">
 					<div className="downgrade__content">
 						<div>
-							<strong>
-								{ translate(
-									'We will change the plan immediately from %(currentPlan)s to %(targetPlan)s.',
-									{
-										args: {
-											currentPlan: currentPlan?.getTitle() ?? '',
-											targetPlan: targetPlan?.getTitle() ?? '',
-										},
-									}
-								) }
-							</strong>
+							<strong>{ getDowngradeMessage() }</strong>
 						</div>
 
 						{ features.length > 0 && (
