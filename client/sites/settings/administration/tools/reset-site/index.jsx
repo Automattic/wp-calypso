@@ -252,7 +252,7 @@ function SiteResetCard( {
 							siteSlug={ selectedSiteSlug }
 							siteId={ siteId }
 							warningText={ translate(
-								'Before resetting your site, consider exporting its content as a backup'
+								'Before resetting your site, consider exporting your content as a backup.'
 							) }
 						/>
 					) }
