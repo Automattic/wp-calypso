@@ -54,9 +54,15 @@ interface Props {
 	onSkip: () => void;
 	hideImporterListLink: boolean;
 	flowName: string;
+	setIsFetching: ( isFetching: boolean ) => void;
 }
 
-export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLink = false } ) => {
+export const Analyzer: FC< Props > = ( {
+	onComplete,
+	onSkip,
+	hideImporterListLink = false,
+	setIsFetching,
+} ) => {
 	const translate = useTranslate();
 	const [ siteURL, setSiteURL ] = useState< string >( '' );
 	const {
@@ -71,6 +77,10 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 			onComplete( siteInfo );
 		}
 	}, [ onComplete, siteInfo ] );
+
+	useEffect( () => {
+		setIsFetching( isFetching );
+	}, [ isFetching, setIsFetching ] );
 
 	if ( isFetching || ( isFetched && ! hasError ) ) {
 		return <ScanningStep />;
