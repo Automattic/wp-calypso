@@ -47,12 +47,10 @@ import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
-import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import { refreshColorScheme, getColorSchemeFromCurrentQuery } from './color-scheme';
-import HelpCenterLoader from './help-center-loader';
-import { shouldLoadInlineHelp } from './utils';
+
 import './style.scss';
 
 const LayoutLoggedOut = ( {
@@ -83,7 +81,6 @@ const LayoutLoggedOut = ( {
 	twoFactorEnabled,
 	/* eslint-disable no-shadow */
 	clearLastActionRequiresLogin,
-	userAllowedToHelpCenter,
 	colorScheme,
 } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
@@ -125,13 +122,6 @@ const LayoutLoggedOut = ( {
 		! isJetpackCloudOAuth2Client( oauth2Client ) &&
 		! isA4AOAuth2Client( oauth2Client ) &&
 		! isWooOAuth2Client( oauth2Client );
-
-	const loadHelpCenter =
-		isLoggedIn &&
-		// we want to show only the Help center in my home and the help section (but not the FAB)
-		( [ 'home', 'help' ].includes( sectionName ) ||
-			shouldLoadInlineHelp( sectionName, currentRoute || '' ) ) &&
-		userAllowedToHelpCenter;
 
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
@@ -251,13 +241,6 @@ const LayoutLoggedOut = ( {
 
 	return (
 		<div className={ clsx( 'layout', classes ) }>
-			{ loadHelpCenter && (
-				<HelpCenterLoader
-					sectionName={ sectionName }
-					loadHelpCenter={ loadHelpCenter }
-					currentRoute={ currentRoute }
-				/>
-			) }
 			{ 'development' === process.env.NODE_ENV && <SympathyDevWarning /> }
 			<BodySectionCssClass group={ sectionGroup } section={ sectionName } bodyClass={ bodyClass } />
 			<div className="layout__header-section">
@@ -397,7 +380,6 @@ export default withCurrentRoute(
 				isWooJPC,
 				isWoo: getIsWoo( state ),
 				isBlazePro: getIsBlazePro( state ),
-				userAllowedToHelpCenter: ! getIsOnboardingAffiliateFlow( state ),
 				twoFactorEnabled,
 				colorScheme,
 			};
