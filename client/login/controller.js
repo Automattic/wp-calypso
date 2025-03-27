@@ -17,6 +17,7 @@ import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { loginSocialUser, rebootAfterLogin } from 'calypso/state/login/actions';
 import { postLoginRequest } from 'calypso/state/login/utils';
+import { logoutUser } from 'calypso/state/logout/actions';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -225,6 +226,10 @@ export async function jetpackGoogleAuth( context, next ) {
 	} ) }`;
 
 	try {
+		if ( isUserLoggedIn( context.store.getState() ) ) {
+			await context.store.dispatch( logoutUser() );
+		}
+
 		// Get authorization nonce for security
 		const response = await wpcomRequest( {
 			path: '/generate-authorization-nonce',
@@ -420,6 +425,10 @@ export async function jetpackAppleAuth( context, next ) {
 	} ) }`;
 
 	try {
+		if ( isUserLoggedIn( context.store.getState() ) ) {
+			await context.store.dispatch( logoutUser() );
+		}
+
 		// Get authorization nonce for security
 		const response = await wpcomRequest( {
 			path: '/generate-authorization-nonce',
