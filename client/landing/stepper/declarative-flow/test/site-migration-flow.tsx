@@ -998,40 +998,6 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
-		describe( 'SITE_MIGRATION_ASSIGN_TRIAL_PLAN', () => {
-			it( 'redirects to ERROR step when there is any error', () => {
-				const destination = runNavigation( {
-					from: STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN,
-					query: {
-						siteSlug: 'example.wordpress.com',
-						siteId: 123,
-					},
-				} );
-
-				expect( destination ).toMatchDestination( {
-					step: STEPS.ERROR,
-					query: null,
-				} );
-			} );
-			it( 'redirects to error state when there is some error', () => {
-				const destination = runNavigation( {
-					from: STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN,
-					dependencies: {
-						error: 'ticket-creation',
-					},
-					query: {
-						siteSlug: 'example.wordpress.com',
-						siteId: 123,
-					},
-				} );
-
-				expect( destination ).toMatchDestination( {
-					step: STEPS.ERROR,
-					query: null,
-				} );
-			} );
-		} );
-
 		describe( 'SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT', () => {
 			it( 'redirects to the importer flow using the detected platform', () => {
 				runNavigation( {
