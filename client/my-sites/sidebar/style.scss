@@ -233,7 +233,11 @@ $font-size: rem(14px);
 			box-sizing: border-box;
 		}
 
-		.sidebar__expandable-arrow,
+		.sidebar__expandable-arrow {
+			height: initial;
+			width: initial;
+		}
+
 		.gridicons-external {
 			width: 20px;
 			height: 20px;
@@ -387,10 +391,6 @@ $font-size: rem(14px);
 					opacity: 1;
 				}
 			}
-		}
-
-		.sidebar__menu.is-togglable .sidebar__expandable-arrow {
-			margin-right: 10px;
 		}
 
 		.notice {
