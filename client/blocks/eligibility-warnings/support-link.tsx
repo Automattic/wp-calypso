@@ -14,7 +14,7 @@ import type { HelpCenterSelect } from '@automattic/data-stores';
 const HELP_CENTER_STORE = HelpCenter.register();
 
 const SupportLink = ( {
-	onShowHelpAssistant,
+	onShowHelpAssistant = () => {},
 	translate,
 	shouldUseHelpAssistant = false,
 }: {
@@ -33,9 +33,7 @@ const SupportLink = ( {
 		useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const handleShowHelpAssistant = () => {
-		if ( onShowHelpAssistant ) {
-			onShowHelpAssistant();
-		}
+		onShowHelpAssistant();
 
 		if ( ! show ) {
 			setNavigateToRoute( '/odie' );
