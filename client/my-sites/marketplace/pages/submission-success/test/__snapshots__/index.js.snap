@@ -3,11 +3,11 @@
 exports[`Marketplace SignupSuccess should render the page as expected 1`] = `
 <div>
   <header
-    class="masterbar css-fxxgge-MasterbarStyledBlock etx5n0d1"
+    class="masterbar css-10e139q-MasterbarStyledBlock etx5n0d1"
     id="header"
   >
     <svg
-      class="css-15itqzh-WordPressLogoStyled etx5n0d0"
+      class="css-1tj4oyq-WordPressLogoStyled etx5n0d0"
       height="72"
       viewBox="0 0 72 72"
       width="72"
