@@ -688,21 +688,44 @@ body.is-section-stepper .onboarding:not(.is-onboarding-2023-pricing-grid) .step-
 	}
 }
 
-h1.wp-brand-font {
-	/* text-align: center; */
-}
-
 @media (min-width: 600px) {
-	body.is-section-stepper.is-group-stepper .domains__step-content .register-domain-step__search-card, body.is-section-signup .domains__step-content .register-domain-step__search-card {
+	.step-route.onboarding.domains:has(.step-container-v2) .register-domain-step__search-card {
 		margin: 20px 20px 0 !important;
 	}
 
-	body.is-section-stepper .featured-domain-suggestions {
-		margin: 0 20px !important;
-		border-top: none;
+	body.is-section-stepper {
+
+		.featured-domain-suggestions,
+		.domain-suggestion {
+			margin-inline: 20px!important;
+
+			& {
+				@media (min-width: 960px) {
+					margin: 0 !important;
+				}
+			}
+		}
+
+		.featured-domain-suggestions {
+			margin: 0 20px !important;
+			border-top: none;
+
+			.featured-domain-suggestion {
+				margin: 0!important;
+				margin-bottom: 12px !important;
+			}
+
+			& {
+				@media (min-width: 960px) {
+					margin: 0 !important;
+				}
+			}
+		}
 	}
 }
 
-.domain-suggestion.card.is-compact {
-	
+@media (min-width: 960px) {
+	.step-route.onboarding.domains:has(.step-container-v2) .register-domain-step__search-card {
+		margin: 0 !important;
+	}
 }
