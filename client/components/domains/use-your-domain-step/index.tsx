@@ -183,7 +183,7 @@ function UseYourDomainStep( { basePath, goBack, initialQuery }: UseYourDomainSte
 		);
 	}
 	if (
-		isDomainMappingFree( selectedSite ?? undefined ) ||
+		isDomainMappingFree( selectedSite ) ||
 		isNextDomainFree( cart ) ||
 		isDomainBundledWithPlan( cart, searchQuery )
 	) {
