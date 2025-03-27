@@ -60,6 +60,16 @@ export function isWPCOMHostingProduct( keyOrSlug: string ) {
 	return keyOrSlug.startsWith( 'wpcom-hosting' );
 }
 
+/**
+ * Determine if current key/slug is a valid license for Jetpack CRM.
+ * @param {string} keyOrSlug - Product slug
+ * @returns {boolean} - True if valid license for Jetpack CRM, false if not
+ */
+export function isValidJetpackCRMLicense( keyOrSlug: string ) {
+	// This is not a typo: currently we are only accepting jetpack-complete licenses for Jetpack CRM.
+	return keyOrSlug.startsWith( 'jetpack-complete' );
+}
+
 /*
  * Get valid hosting section. If not valid, default to 'wpcom'
  * @param {string} section - Hosting section
