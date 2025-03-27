@@ -14,7 +14,7 @@ import {
 	useUpdateDocumentTitle,
 } from '../../hooks';
 import { useHelpCenterChatScroll } from '../../hooks/use-help-center-chat-scroll';
-import { getOdieInitialMessage, userProvidedEnoughInformation } from '../../utils';
+import { getOdieInitialMessage } from '../../utils';
 import { ViewMostRecentOpenConversationNotice } from '../odie-notice/view-most-recent-conversation-notice';
 import { DislikeFeedbackMessage } from './dislike-feedback-message';
 import { JumpToRecent } from './jump-to-recent';
@@ -146,11 +146,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		return currentMessage === nextMessage;
 	};
 
-	const removeDislikeStatus = ! userProvidedEnoughInformation( chat.messages );
-
-	const availableStatusWithFeedback = removeDislikeStatus
-		? [ 'sending', 'transfer' ]
-		: [ 'sending', 'dislike', 'transfer' ];
+	const availableStatusWithFeedback = [ 'sending', 'transfer' ];
 
 	return (
 		<>

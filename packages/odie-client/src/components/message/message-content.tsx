@@ -1,9 +1,7 @@
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { useOdieAssistantContext } from '../../context';
-import { userProvidedEnoughInformation, zendeskMessageConverter } from '../../utils';
+import { zendeskMessageConverter } from '../../utils';
 import ChatWithSupportLabel from '../chat-with-support';
-import DislikeFeedbackMessage from './dislike-feedback-message';
 import ErrorMessage from './error-message';
 import { FeedbackContent } from './feedback-content';
 import { IntroductionMessage } from './introduction-message';
@@ -26,7 +24,6 @@ export const MessageContent = ( {
 	displayChatWithSupportEndedLabel?: boolean;
 } ) => {
 	const { __ } = useI18n();
-	const { chat } = useOdieAssistantContext();
 	const messageClasses = clsx(
 		'odie-chatbox-message',
 		`odie-chatbox-message-${ message.role }`,
@@ -39,9 +36,6 @@ export const MessageContent = ( {
 		'odie-chatbox-message-sources-container',
 		( isNextMessageFromSameSender || isFeedbackMessage ) && 'next-chat-message-same-sender'
 	);
-
-	const messages = chat?.messages;
-	const stopConflatingNegativeRatingWithContactSupport = userProvidedEnoughInformation( messages );
 
 	const isMessageWithOnlyText =
 		message.context?.flags?.hide_disclaimer_content ||
@@ -85,9 +79,6 @@ export const MessageContent = ( {
 					{ isFeedbackMessage && (
 						<FeedbackContent content={ message.content } meta={ message?.meta } />
 					) }
-
-					{ ! stopConflatingNegativeRatingWithContactSupport &&
-						message.type === 'dislike-feedback' && <DislikeFeedbackMessage /> }
 				</div>
 			</div>
 
