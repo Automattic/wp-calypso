@@ -33,7 +33,7 @@ export function AtomicWarning( {
 }: AtomicWarningProps ) {
 	const [ atomicRevertCheckOne, setAtomicRevertCheckOne ] = useState( false );
 	const [ atomicRevertCheckTwo, setAtomicRevertCheckTwo ] = useState( false );
-	const [ enableLosslessRevert, setEnableLosslessRevert ] = useState( false );
+	const [ enableLosslessRevert, setEnableLosslessRevert ] = useState( true );
 	const hasBackupsFeature = useSelector( ( state ) =>
 		siteHasFeature( state, site.ID, WPCOM_FEATURES_BACKUPS )
 	);
