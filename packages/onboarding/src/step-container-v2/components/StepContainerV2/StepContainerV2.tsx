@@ -20,11 +20,10 @@ export interface StepContainerV2Props {
 	footer?: ReactNode;
 	stickyBottomBar?: ReactNode;
 	width?: 'standard' | 'wide' | 'full';
-	verticalAlign?: 'top' | 'center';
+	verticalAlign?: 'top' | 'center-on-small' | 'center';
 	isMediumViewport?: boolean;
 	isLargeViewport?: boolean;
 	hasContentPadding?: boolean;
-	forceVerticalAlignOnSmallViewport?: boolean;
 	children?: StepContainerV2ContentProp;
 }
 
@@ -36,7 +35,6 @@ export const StepContainerV2 = ( {
 	stickyBottomBar,
 	width = 'standard',
 	verticalAlign = 'top',
-	forceVerticalAlignOnSmallViewport = false,
 	isMediumViewport: externalIsMediumViewport,
 	isLargeViewport: externalIsLargeViewport,
 	hasContentPadding = true,
@@ -57,11 +55,12 @@ export const StepContainerV2 = ( {
 		<div className="step-container-v2">
 			{ topBar && <div className="step-container-v2__top-bar-wrapper">{ topBar }</div> }
 			<div
-				className={ clsx( 'step-container-v2__content-wrapper', {
-					'vertical-align-center':
-						( isMediumViewport || forceVerticalAlignOnSmallViewport ) && verticalAlign === 'center',
-					padding: hasContentPadding,
-				} ) }
+				className={ clsx(
+					'step-container-v2__content-wrapper',
+					verticalAlign !== 'top' &&
+						`step-container-v2__content-wrapper--aligned-${ verticalAlign }`,
+					hasContentPadding && 'step-container-v2__content-wrapper--padding'
+				) }
 			>
 				{ heading }
 				<div
