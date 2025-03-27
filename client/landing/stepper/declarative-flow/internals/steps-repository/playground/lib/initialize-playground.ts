@@ -1,95 +1,99 @@
 import config from '@automattic/calypso-config';
 import { Blueprint } from '@wp-playground/blueprints';
-import { MountDescriptor, PlaygroundClient, startPlaygroundWeb } from '@wp-playground/client';
+import {
+	type MountDescriptor,
+	type PlaygroundClient,
+	startPlaygroundWeb,
+} from '@wp-playground/client';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { resolveBlueprintFromURL } from './resolve-blueprint-from-url';
 
 const OPFS_PATH_PREFIX = '/wpcom-onboarding';
 
+const DEFAULT_BLUEPRINT: Blueprint = {
+	preferredVersions: {
+		php: '8.3',
+		wp: 'latest',
+	},
+	features: {
+		networking: true,
+	},
+	login: true,
+};
+
+const PREDEFINED_BLUEPRINTS: Record< string, Blueprint > = {
+	woocommerce: {
+		...DEFAULT_BLUEPRINT,
+		landingPage: '/shop',
+		steps: [
+			{
+				step: 'installPlugin',
+				pluginData: {
+					resource: 'wordpress.org/plugins',
+					slug: 'woocommerce',
+				},
+				options: {
+					activate: true,
+				},
+			},
+			{
+				step: 'importWxr',
+				file: {
+					resource: 'url',
+					url: 'https://raw.githubusercontent.com/wordpress/blueprints/trunk/blueprints/woo-shipping/sample_products.xml',
+				},
+			},
+		],
+	},
+	2024: {
+		...DEFAULT_BLUEPRINT,
+		steps: [
+			{
+				step: 'installTheme',
+				themeData: {
+					resource: 'wordpress.org/themes',
+					slug: 'twentytwentyfour',
+				},
+				options: {
+					activate: true,
+				},
+			},
+		],
+	},
+	2023: {
+		...DEFAULT_BLUEPRINT,
+		steps: [
+			{
+				step: 'installTheme',
+				themeData: {
+					resource: 'wordpress.org/themes',
+					slug: 'twentytwentythree',
+				},
+				options: {
+					activate: true,
+				},
+			},
+		],
+	},
+	design1: {
+		...DEFAULT_BLUEPRINT,
+		steps: [
+			{
+				step: 'installTheme',
+				themeData: {
+					resource: 'wordpress.org/themes',
+					slug: 'variations',
+				},
+				options: {
+					activate: true,
+				},
+			},
+		],
+	},
+};
+
 // Blueprint management is encapsulated in this closure
 const blueprintManager = ( () => {
-	const DEFAULT_BLUEPRINT: Blueprint = {
-		preferredVersions: {
-			php: '8.3',
-			wp: 'latest',
-		},
-		features: {
-			networking: true,
-		},
-		login: true,
-	};
-
-	const PREDEFINED_BLUEPRINTS: Record< string, Blueprint > = {
-		woocommerce: {
-			...DEFAULT_BLUEPRINT,
-			landingPage: '/shop',
-			steps: [
-				{
-					step: 'installPlugin',
-					pluginData: {
-						resource: 'wordpress.org/plugins',
-						slug: 'woocommerce',
-					},
-					options: {
-						activate: true,
-					},
-				},
-				{
-					step: 'importWxr',
-					file: {
-						resource: 'url',
-						url: 'https://raw.githubusercontent.com/wordpress/blueprints/trunk/blueprints/woo-shipping/sample_products.xml',
-					},
-				},
-			],
-		},
-		2024: {
-			...DEFAULT_BLUEPRINT,
-			steps: [
-				{
-					step: 'installTheme',
-					themeData: {
-						resource: 'wordpress.org/themes',
-						slug: 'twentytwentyfour',
-					},
-					options: {
-						activate: true,
-					},
-				},
-			],
-		},
-		2023: {
-			...DEFAULT_BLUEPRINT,
-			steps: [
-				{
-					step: 'installTheme',
-					themeData: {
-						resource: 'wordpress.org/themes',
-						slug: 'twentytwentythree',
-					},
-					options: {
-						activate: true,
-					},
-				},
-			],
-		},
-		design1: {
-			...DEFAULT_BLUEPRINT,
-			steps: [
-				{
-					step: 'installTheme',
-					themeData: {
-						resource: 'wordpress.org/themes',
-						slug: 'variations',
-					},
-					options: {
-						activate: true,
-					},
-				},
-			],
-		},
-	};
-
 	return {
 		async getBlueprintFromUrl( recommendedPhpVersion: string ): Blueprint {
 			const url = new URL( window.location.href );
