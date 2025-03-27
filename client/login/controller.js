@@ -277,13 +277,9 @@ export async function jetpackGoogleAuth( context, next ) {
 				text: 'Error initiating Google login. Please try again.',
 			},
 		} );
-		redirectJetpackDirectAuthError( context );
+		return redirectJetpackDirectAuthError( context, next );
 	}
 
-	// Fall back to regular login form
-	context.primary = (
-		<WPLogin isJetpack path={ context.path } query={ query } locale={ context.params.lang } />
-	);
 	next();
 }
 
@@ -308,7 +304,7 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 				text: `Error during Google authentication: ${ error }`,
 			},
 		} );
-		return next();
+		return redirectJetpackDirectAuthError( context, next );
 	}
 
 	try {
@@ -385,19 +381,18 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 			);
 
 			await context.store.dispatch( rebootAfterLogin() );
-			return;
+			return page.redirect( state.redirect_to );
 		} catch ( createError ) {
 			// If both connection and creation fail, show warning and redirect
 			context.store.dispatch( {
 				type: 'NOTICE_CREATE',
 				notice: {
 					status: 'is-warning',
-					text: 'Could not complete Google login. Falling back to standard flow.',
+					text: 'Could not complete Google login. Please try again.',
 				},
 			} );
 
-			page.redirect( state.redirect_to );
-			return;
+			return redirectJetpackDirectAuthError( context, next );
 		}
 	} catch {
 		context.store.dispatch( {
@@ -407,10 +402,9 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 				text: 'Error during Google authentication. Please try again.',
 			},
 		} );
-		redirectJetpackDirectAuthError( context );
-	}
 
-	return next();
+		return redirectJetpackDirectAuthError( context, next );
+	}
 }
 
 export async function jetpackAppleAuth( context, next ) {
@@ -478,13 +472,10 @@ export async function jetpackAppleAuth( context, next ) {
 				text: 'Error initiating Apple login. Please try again.',
 			},
 		} );
-		redirectJetpackDirectAuthError( context );
+
+		return redirectJetpackDirectAuthError( context, next );
 	}
 
-	// Fall back to regular login form
-	context.primary = (
-		<WPLogin isJetpack path={ context.path } query={ query } locale={ context.params.lang } />
-	);
 	next();
 }
 
@@ -537,7 +528,7 @@ export async function jetpackAppleAuthCallback( context, next ) {
 			);
 
 			await context.store.dispatch( rebootAfterLogin() );
-			return;
+			return page.redirect( redirect_to );
 		} catch ( createError ) {
 			// If both connection and creation fail, show warning and redirect
 			context.store.dispatch( {
@@ -548,8 +539,7 @@ export async function jetpackAppleAuthCallback( context, next ) {
 				},
 			} );
 
-			page.redirect( redirect_to );
-			return;
+			return redirectJetpackDirectAuthError( context, next );
 		}
 	} catch {
 		context.store.dispatch( {
@@ -559,10 +549,9 @@ export async function jetpackAppleAuthCallback( context, next ) {
 				text: 'Error during Apple authentication. Please try again.',
 			},
 		} );
-		redirectJetpackDirectAuthError( context );
-	}
 
-	return next();
+		return redirectJetpackDirectAuthError( context, next );
+	}
 }
 
 export async function jetpackGitHubAuth( context, next ) {
@@ -600,14 +589,9 @@ export async function jetpackGitHubAuth( context, next ) {
 				text: 'Error during GitHub authentication. Please try again.',
 			},
 		} );
-		redirectJetpackDirectAuthError( context );
-	}
 
-	// Fall back to regular login form
-	context.primary = (
-		<WPLogin isJetpack path={ context.path } query={ query } locale={ context.params.lang } />
-	);
-	next();
+		return redirectJetpackDirectAuthError( context, next );
+	}
 }
 
 export async function jetpackGitHubAuthCallback( context, next ) {
@@ -670,11 +654,10 @@ export async function jetpackGitHubAuthCallback( context, next ) {
 			);
 
 			await context.store.dispatch( rebootAfterLogin() );
-			return;
+			return page.redirect( redirect_to );
 		} catch {
 			// If both connection and creation fail, show warning and redirect back to login page
-			redirectJetpackDirectAuthError( context, { redirect_to } );
-			return;
+			return redirectJetpackDirectAuthError( context, next, { redirect_to } );
 		}
 	} catch {
 		context.store.dispatch( {
@@ -684,9 +667,7 @@ export async function jetpackGitHubAuthCallback( context, next ) {
 				text: 'Error during GitHub authentication. Please try again.',
 			},
 		} );
-
-		redirectJetpackDirectAuthError( context, { redirect_to } );
-		return;
+		return redirectJetpackDirectAuthError( context, next, { redirect_to } );
 	}
 }
 
@@ -851,8 +832,11 @@ export function redirectLostPassword( context, next ) {
 	next();
 }
 
-function redirectJetpackDirectAuthError( context, query = {} ) {
-	const queryString = new URLSearchParams( Object.assign( {}, context.query, query ) ).toString();
+export function redirectJetpackDirectAuthError( context, next, newQuery = {} ) {
+	const queryString = new URLSearchParams(
+		Object.assign( {}, context.query, newQuery )
+	).toString();
 	const redirectUrl = queryString ? `/log-in/jetpack/?${ queryString }` : '/log-in/jetpack/';
-	return context.redirect( redirectUrl );
+	window.history.replaceState( null, '', redirectUrl );
+	return next();
 }
