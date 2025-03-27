@@ -150,7 +150,7 @@ const PlansPageSubheader = ( {
 	return (
 		<>
 			{ createWithBigSky && (
-				<Subheader>
+				<Subheader className="plans-features-main__subheader">
 					{ translate(
 						'Build your site quickly with our AI Website Builder or {{link}}start with a free plan{{/link}}.',
 						{
@@ -162,7 +162,7 @@ const PlansPageSubheader = ( {
 				</Subheader>
 			) }
 			{ ! createWithBigSky && deemphasizeFreePlan && offeringFreePlan ? (
-				<Subheader>
+				<Subheader className="plans-features-main__subheader">
 					{ translate(
 						'Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.',
 						{
