@@ -14,7 +14,6 @@ export const StepContainerV2Loading = ( {
 			topBar={ <Step.TopBar /> }
 			heading={ title && <Step.Heading text={ title } size="small" align="center" /> }
 			verticalAlign="center"
-			forceVerticalAlignOnSmallViewport
 			className="step-container-v2--loading"
 		>
 			<ProgressBar className="step-container-v2--loading__progress-bar" value={ progress } />

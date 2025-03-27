@@ -83,7 +83,7 @@ export const HorizontalLayout = ( {
 }: ComponentProps< typeof StepContainerV2 > & { imageUrl?: string } ) => (
 	<StepContainerV2
 		{ ...props }
-		verticalAlign="center"
+		verticalAlign="center-on-small"
 		width="wide"
 		className={ clsx( 'step-container-v2__content--horizontal-layout', className ) }
 	>
