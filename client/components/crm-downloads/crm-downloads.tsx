@@ -3,10 +3,10 @@ import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
-import { isJetpackCrmProduct } from 'calypso/jetpack-cloud/sections/partner-portal/lib';
 import { useDispatch } from 'calypso/state';
 import { infoNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getExtensionDescription } from './extension-descriptions';
+import { isJetpackCrmProduct } from './is-jetpack-crm-product';
 
 import './style.scss';
 
