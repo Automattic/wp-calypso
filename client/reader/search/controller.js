@@ -88,6 +88,7 @@ const exported = {
 							onSortChange={ reportSortChange }
 							searchType={ show }
 							trendingTags={ context.params.trendingTags }
+							disableInfiniteScroll={ ! context.store.getState().currentUser.user }
 						/>
 					</div>
 				</div>

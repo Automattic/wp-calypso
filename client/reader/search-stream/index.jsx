@@ -45,6 +45,11 @@ class SearchStream extends React.Component {
 	static propTypes = {
 		query: PropTypes.string,
 		streamKey: PropTypes.string,
+		disableInfiniteScroll: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		disableInfiniteScroll: false,
 	};
 
 	state = {
