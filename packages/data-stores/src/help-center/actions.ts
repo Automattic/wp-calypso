@@ -222,7 +222,6 @@ export type HelpCenterAction =
 			| typeof setShowMessagingWidget
 			| typeof setSubject
 			| typeof resetStore
-			| typeof receiveHasSeenWhatsNewModal
 			| typeof setMessage
 			| typeof setUserDeclaredSite
 			| typeof setUserDeclaredSiteUrl
@@ -238,4 +237,4 @@ export type HelpCenterAction =
 			| typeof setAllowPremiumSupport
 			| typeof setHelpCenterOptions
 	  >
-	| GeneratorReturnType< typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal >;
+	| GeneratorReturnType< typeof setShowHelpCenter >;
