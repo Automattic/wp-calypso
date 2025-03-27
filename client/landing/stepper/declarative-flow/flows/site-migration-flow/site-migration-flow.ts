@@ -156,7 +156,7 @@ const siteMigration: Flow = {
 									siteId,
 									siteSlug,
 									from,
-									origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+									canMigrate: 1,
 									backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
 								},
 								'/setup/site-setup/importList'
@@ -246,7 +246,7 @@ const siteMigration: Flow = {
 									{
 										siteId,
 										siteSlug,
-										origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+										canMigrate: 1,
 										backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
 										...( fromQueryParam && { from: fromQueryParam } ),
 									},
@@ -352,7 +352,6 @@ const siteMigration: Flow = {
 					);
 				}
 
-				//TODO: Check if we can remove this step once there is no reference to it in the codebase.
 				case STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN.slug: {
 					if ( providedDependencies?.error ) {
 						return navigate( STEPS.ERROR.slug );

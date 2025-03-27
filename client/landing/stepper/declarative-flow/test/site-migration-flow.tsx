@@ -221,7 +221,7 @@ describe( 'Site Migration Flow', () => {
 					query: {
 						siteId: 123,
 						siteSlug: 'example.wordpress.com',
-						origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+						canMigrate: 1,
 						backToFlow: '/site-migration/site-migration-identify',
 					},
 				} );
@@ -288,7 +288,7 @@ describe( 'Site Migration Flow', () => {
 						path: '/setup/site-setup/importList',
 						query: {
 							siteSlug: 'example.wordpress.com',
-							origin: 'site-migration-identify',
+							canMigrate: 1,
 							backToFlow: '/site-migration/site-migration-identify',
 						},
 					} );

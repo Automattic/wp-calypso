@@ -19,7 +19,6 @@ import { useIsPluginBundleEligible } from '../../../hooks/use-is-plugin-bundle-e
 import { useSiteData } from '../../../hooks/use-site-data';
 import { useCanUserManageOptions } from '../../../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../../../stores';
-import { shouldRedirectToSiteMigration } from '../../helpers';
 import { useRedirectDesignSetupOldSlug } from '../../helpers/use-redirect-design-setup-old-slug';
 import { useLaunchpadDecider } from '../../internals/hooks/use-launchpad-decider';
 import { STEPS } from '../../internals/steps';
@@ -417,8 +416,12 @@ const siteSetupFlow: FlowV1 = {
 				case 'importReady': {
 					const depUrl = ( providedDependencies?.url as string ) || '';
 					const { platform } = providedDependencies as { platform: ImporterMainPlatform };
+					const showGoToImportOrMigrate =
+						urlQueryParams.has( 'canMigrate' ) &&
+						platform === 'wordpress' &&
+						currentStep === 'importList';
 
-					if ( shouldRedirectToSiteMigration( currentStep, platform, origin ) ) {
+					if ( showGoToImportOrMigrate ) {
 						return window.location.assign(
 							addQueryArgs(
 								{ siteSlug, siteId, from },
@@ -688,7 +691,6 @@ const siteSetupFlow: FlowV1 = {
 		);
 
 		const dispatch = reduxDispatch();
-
 		const skippedCheckout = useQuery().get( 'skippedCheckout' );
 		const activateDesign = useActivateDesign();
 		const isPendingActionSet = useRef( false );

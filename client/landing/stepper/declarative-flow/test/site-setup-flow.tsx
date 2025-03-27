@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { addQueryArgs } from '@wordpress/url';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import siteSetupFlow from '../flows/site-setup-flow/site-setup-flow';
 import { STEPS } from '../internals/steps';
@@ -29,12 +30,15 @@ describe( 'Site Setup Flow', () => {
 	} );
 
 	describe( 'when the current step is importListing', () => {
-		it( 'redirects the user to the site-migration-import-or-content step when the origin param is set as site-migration-identify', async () => {
+		it( 'redirects the user to the site-migration-import-or-content step when the canMigrate param is set', async () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteSetupFlow );
 
 			runUseStepNavigationSubmit( {
-				currentURL:
-					'/some-path?origin=site-migration-identify&siteSlug=example.wordpress.com&siteId=123',
+				currentURL: addQueryArgs( '/setup/importList', {
+					canMigrate: 1,
+					siteSlug: 'example.wordpress.com',
+					siteId: 123,
+				} ),
 				currentStep: STEPS.IMPORT_LIST.slug,
 				dependencies: {
 					platform: 'wordpress',
@@ -46,7 +50,7 @@ describe( 'Site Setup Flow', () => {
 			);
 		} );
 
-		it( 'continues the regular flow when the origin param is not available', async () => {
+		it( 'continues the regular flow when the next param is not available', async () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteSetupFlow );
 
 			runUseStepNavigationSubmit( {
@@ -64,12 +68,15 @@ describe( 'Site Setup Flow', () => {
 
 	//It is important because importReady and importListing are sharing the same logic
 	describe( 'when the current step is not importReady', () => {
-		it( 'ignores origin param', async () => {
+		it( 'doest not redirect to site-migration-flow when canMigrate param is set', async () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteSetupFlow );
 
 			runUseStepNavigationSubmit( {
-				currentURL:
-					'/some-path?origin=site-migration-identify&siteSlug=example.wordpress.com&siteId=123',
+				currentURL: addQueryArgs( '/setup/importList', {
+					canMigrate: 1,
+					siteSlug: 'example.wordpress.com',
+					siteId: 123,
+				} ),
 				currentStep: STEPS.IMPORT_READY.slug,
 				dependencies: {
 					platform: 'wordpress',
