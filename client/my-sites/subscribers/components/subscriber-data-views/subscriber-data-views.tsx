@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gravatar, TimeSince } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
@@ -56,16 +57,27 @@ const SubscriberName = ( { displayName, email }: { displayName: string; email: s
 	</div>
 );
 
+const useNewHelper = config.isEnabled( 'subscribers-helper-library' );
+
 const getSubscriptionId = ( subscriber: Subscriber ): number => {
-	return subscriber.wpcom_subscription_id || subscriber.email_subscription_id || 0;
+	if ( useNewHelper ) {
+		return subscriber.wpcom_subscription_id || subscriber.email_subscription_id || 0;
+	}
+	return subscriber.subscription_id || 0;
 };
 
 const getSubscriptionIdString = ( subscriber: Subscriber ): string => {
-	return String( subscriber.wpcom_subscription_id || subscriber.email_subscription_id || '' );
+	if ( useNewHelper ) {
+		return String( subscriber.wpcom_subscription_id || subscriber.email_subscription_id || '' );
+	}
+	return String( subscriber.subscription_id || '' );
 };
 
 const getSubscriptionDate = ( subscriber: Subscriber ): string => {
-	return subscriber.wpcom_date_subscribed || subscriber.email_date_subscribed || '';
+	if ( useNewHelper ) {
+		return subscriber.wpcom_date_subscribed || subscriber.email_date_subscribed || '';
+	}
+	return subscriber.date_subscribed || '';
 };
 
 const defaultView: View = {

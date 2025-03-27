@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { DEFAULT_PER_PAGE, SubscribersFilterBy, SubscribersSortBy } from '../constants';
@@ -26,8 +27,9 @@ const useSubscribersQuery = ( {
 	sortTerm = SubscribersSortBy.DateSubscribed,
 	sortOrder,
 	filters = [],
-	use_new_helper = true,
 }: SubscriberQueryParams ) => {
+	const use_new_helper = config.isEnabled( 'subscribers-helper-library' );
+
 	const query = useQuery< SubscriberEndpointResponse >( {
 		queryKey: getSubscribersCacheKey( {
 			siteId,
