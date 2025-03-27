@@ -63,9 +63,9 @@ export default function LicenseDetailsActions( {
 		dispatch( recordTracksEvent( 'calypso_partner_portal_license_details_download' ) );
 	}, [ dispatch, downloadUrl.mutate ] );
 
-	const viewExtensions = useCallback( () => {
+	const viewJetpackCRMExtensions = useCallback( () => {
 		try {
-			dispatch( recordTracksEvent( 'calypso_partner_portal_license_details_view_extensions' ) );
+			dispatch( recordTracksEvent( 'calypso_partner_portal_license_details_view_crm_extensions' ) );
 			page( `/partner-portal/download-products?products=${ licenseKey }` );
 		} catch ( error ) {
 			dispatch( errorNotice( translate( 'Failed to open download page. Please try again.' ) ) );
@@ -75,7 +75,7 @@ export default function LicenseDetailsActions( {
 	return (
 		<div className="license-details__actions">
 			{ isValidCrmKey && (
-				<Button compact onClick={ viewExtensions }>
+				<Button compact onClick={ viewJetpackCRMExtensions }>
 					{ translate( 'Download CRM Extensions' ) }
 				</Button>
 			) }

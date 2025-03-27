@@ -7,5 +7,10 @@
  * @returns boolean True if Jetpack CRM product, false if not
  */
 export default function isJetpackCrmProduct( keyOrSlug: string ) {
-	return keyOrSlug.startsWith( 'jetpack-complete' );
+	return (
+		keyOrSlug.startsWith( 'jetpack-complete' ) ||
+		keyOrSlug.startsWith( 'jetpack_complete' ) ||
+		keyOrSlug.startsWith( 'jetpack-crm' ) ||
+		keyOrSlug.startsWith( 'jetpack_crm' )
+	);
 }
