@@ -1,6 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/colors.native";
 
 .domains__step-section-wrapper {
 	margin: 0 auto;
@@ -555,4 +556,84 @@ body.is-section-signup {
 	.domains__domain-side-content.fade-out {
 		display: none;
 	}
+}
+
+.step-container-v2__content.step-container-v2__content--two-column-layout.domains__step-content.domains__step-content-domain-step {
+	gap: 0!important;
+}
+
+@media (min-width: 1440px) {
+	.domains__domain-side-content {
+		margin: 0 0 0 60px !important;
+	}
+}
+
+.step-container-v2__content-wrapper.padding {
+	padding: 0 12px;
+}
+
+.step-container-v2__content.step-container-v2__content--two-column-layout.domains__step-content.domains__step-content-domain-step {
+	max-width: 1280px;
+}
+
+
+.domains__step-content-domain-step>div:nth-child(1) {
+	flex: 1!important;
+}
+
+.domains__step-content-domain-step>div:nth-child(2) {
+	display: flex;
+	flex-basis: auto!important;
+	flex-direction: column;
+	flex-grow: 0 !important;
+	flex-shrink: 1 !important;
+	flex-wrap: nowrap;
+}
+
+.step-route.onboarding.domains:has(.step-container-v2) .domains__domain-side-content {
+	margin-left: 40px;
+}
+
+.step-container-v2__top-bar {}
+
+.step-container-v2__content-wrapper.padding {
+	gap: 0;
+}
+
+.step-container-v2__content-wrapper>.step-container-v2__heading {
+	margin-top: calc( 48px + 48px - var(--step-container-v2-top-bar-height) );
+	margin-bottom: 36px;
+}
+
+.step-container-v2__heading {
+	margin-top: 0px;
+}
+
+@media (min-width: 600px) {
+	.register-domain-step__example-prompt {
+		margin: 0 20px!important;
+	}
+}
+
+.step-route.onboarding.domains h1.wp-brand-font {
+	//font-size: 36px !important;
+}
+
+@media (min-width: 661px) {
+	.register-domain-step__search.register-domain-step__search-domain-step:not(.is-sticky) {
+		padding-top: 18px;
+	}
+}
+
+.register-domain-step__search.register-domain-step__search-domain-step {
+	padding-top: 18px!important;
+}
+
+h1.wp-brand-font {
+	letter-spacing: -0.4px !important;
+	line-height: 1.2em !important;
+}
+
+.step-route.onboarding.domains .step-container-v2__heading > p {
+	color: $gray-60;
 }

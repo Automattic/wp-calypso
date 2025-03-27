@@ -374,3 +374,8 @@ body.is-section-signup {
 	border-right: none;
 	border-left: none;
 }
+
+body {
+	text-rendering: optimizelegibility;
+	-webkit-font-smoothing: antialiased;
+}
