@@ -26,8 +26,10 @@ export type SubscriptionPlan = {
 
 export type Subscriber = {
 	user_id: number;
-	subscription_id: number;
-	date_subscribed: string;
+	email_subscription_id?: number;
+	wpcom_subscription_id?: number;
+	wpcom_date_subscribed?: string;
+	email_date_subscribed?: string;
 	subscription_status: string;
 	email_address: string;
 	avatar: string;

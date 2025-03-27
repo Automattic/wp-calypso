@@ -56,6 +56,18 @@ const SubscriberName = ( { displayName, email }: { displayName: string; email: s
 	</div>
 );
 
+const getSubscriptionId = ( subscriber: Subscriber ): number => {
+	return subscriber.wpcom_subscription_id || subscriber.email_subscription_id || 0;
+};
+
+const getSubscriptionIdString = ( subscriber: Subscriber ): string => {
+	return String( subscriber.wpcom_subscription_id || subscriber.email_subscription_id || '' );
+};
+
+const getSubscriptionDate = ( subscriber: Subscriber ): string => {
+	return subscriber.wpcom_date_subscribed || subscriber.email_date_subscribed || '';
+};
+
 const defaultView: View = {
 	type: 'table',
 	titleField: 'name',
@@ -153,13 +165,13 @@ const SubscriberDataViews = ( {
 		// If URL changes or we get new subscriber details, update the selection
 		if ( subscriberId ) {
 			// If we have details and they match the current URL
-			if ( subscriberDetails && subscriberDetails.subscription_id.toString() === subscriberId ) {
+			if ( subscriberDetails && subscriberId === getSubscriptionIdString( subscriberDetails ) ) {
 				setSelectedSubscriber( subscriberDetails );
 			}
 			// If we don't have matching details yet, try to find in current list
 			else {
 				const subscriberFromList = subscribersQueryResult?.subscribers.find(
-					( s ) => s.subscription_id.toString() === subscriberId
+					( s ) => subscriberId === getSubscriptionIdString( s )
 				);
 				if ( subscriberFromList ) {
 					setSelectedSubscriber( subscriberFromList );
@@ -175,7 +187,7 @@ const SubscriberDataViews = ( {
 	const { data: subscribedNewsletterCategoriesData, isLoading: isLoadingNewsletterCategories } =
 		useSubscribedNewsletterCategories( {
 			siteId: siteId as number,
-			subscriptionId: selectedSubscriber?.subscription_id,
+			subscriptionId: selectedSubscriber ? getSubscriptionId( selectedSubscriber ) : undefined,
 			userId: selectedSubscriber?.user_id,
 			enabled: !! selectedSubscriber,
 		} );
@@ -206,22 +218,22 @@ const SubscriberDataViews = ( {
 					page.show( `/subscribers/${ siteSlug }` );
 					return;
 				}
-				const subscriber = subscribers.find( ( s ) => s.subscription_id.toString() === input[ 0 ] );
+				const subscriber = subscribers.find( ( s ) => getSubscriptionIdString( s ) === input[ 0 ] );
 				if ( subscriber ) {
 					recordSubscriberClicked( 'list', {
 						site_id: siteId,
-						subscription_id: subscriber.subscription_id,
+						subscription_id: getSubscriptionId( subscriber ),
 						user_id: subscriber.user_id,
 					} );
-					page.show( `/subscribers/${ siteSlug }/${ subscriber.subscription_id }` );
+					page.show( `/subscribers/${ siteSlug }/${ getSubscriptionIdString( subscriber ) }` );
 				}
 			} else {
 				recordSubscriberClicked( 'row', {
 					site_id: siteId,
-					subscription_id: input.subscription_id,
+					subscription_id: getSubscriptionId( input ),
 					user_id: input.user_id,
 				} );
-				page.show( `/subscribers/${ siteSlug }/${ input.subscription_id }` );
+				page.show( `/subscribers/${ siteSlug }/${ getSubscriptionIdString( input ) }` );
 			}
 		},
 		[ subscribers, recordSubscriberClicked, siteId, siteSlug ]
@@ -311,8 +323,10 @@ const SubscriberDataViews = ( {
 			{
 				id: 'date_subscribed',
 				label: translate( 'Since' ),
-				getValue: ( { item }: { item: Subscriber } ) => item.date_subscribed,
-				render: ( { item }: { item: Subscriber } ) => <TimeSince date={ item.date_subscribed } />,
+				getValue: ( { item }: { item: Subscriber } ) => getSubscriptionDate( item ),
+				render: ( { item }: { item: Subscriber } ) => (
+					<TimeSince date={ getSubscriptionDate( item ) } />
+				),
 				enableHiding: false,
 				enableSorting: true,
 			},
@@ -515,14 +529,14 @@ const SubscriberDataViews = ( {
 							isItemClickable={ () => true }
 							onChangeView={ handleViewChange }
 							selection={
-								selectedSubscriber ? [ selectedSubscriber.subscription_id.toString() ] : undefined
+								selectedSubscriber ? [ getSubscriptionIdString( selectedSubscriber ) ] : undefined
 							}
 							onChangeSelection={
 								currentView.type === 'list' ? handleSubscriberSelection : undefined
 							}
 							isLoading={ isLoading }
 							paginationInfo={ paginationInfo }
-							getItemId={ ( item: Subscriber ) => item.subscription_id.toString() }
+							getItemId={ ( item: Subscriber ) => getSubscriptionIdString( item ) }
 							defaultLayouts={ selectedSubscriber ? { list: {} } : { table: {} } }
 							actions={ actions }
 							search
@@ -540,7 +554,7 @@ const SubscriberDataViews = ( {
 						<SubscriberDetails
 							subscriber={ subscriberDetails }
 							siteId={ siteId }
-							subscriptionId={ selectedSubscriber.subscription_id }
+							subscriptionId={ getSubscriptionId( selectedSubscriber ) }
 							onClose={ () => {
 								page.show( `/subscribers/${ siteSlug }` );
 							} }
