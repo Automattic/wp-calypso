@@ -200,7 +200,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 			request.query.hasOwnProperty( 'useTranslationChunks' ),
 		useLoadingEllipsis: !! request.query.loading_ellipsis,
 		showGdprBanner,
-		isStepContainerV2: shouldUseStepContainerV2( getFlowFromURL( request.url, request.query ) ),
+		isStepContainerV2: shouldUseStepContainerV2( getFlowFromURL( request.path, request.query ) ),
 	} );
 
 	context.app = {
