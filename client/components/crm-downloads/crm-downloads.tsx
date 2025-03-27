@@ -3,9 +3,11 @@ import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
+import { isJetpackCrmProduct } from 'calypso/jetpack-cloud/sections/partner-portal/lib';
 import { useDispatch } from 'calypso/state';
 import { infoNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getExtensionDescription } from './extension-descriptions';
+
 import './style.scss';
 
 interface Extension {
@@ -25,8 +27,10 @@ const LoadingSkeleton = () => (
 	</div>
 );
 
+const BASE_CRM_APP_URL = 'https://devapp.jetpackcrm.com';
+
 const fetchExtensions = async (): Promise< Extension[] > => {
-	const response = await fetch( 'https://devapp.jetpackcrm.com/api/extensions', {
+	const response = await fetch( `${ BASE_CRM_APP_URL }/api/extensions`, {
 		method: 'GET',
 		credentials: 'omit',
 		headers: {
@@ -70,11 +74,6 @@ interface CrmDownloadsProps {
 	licenseKey: string;
 }
 
-// Function to validate license key format
-const isValidLicenseKey = ( key: string ): boolean => {
-	return key.startsWith( 'jetpack_complete_' ) || key.startsWith( 'jetpack_crm_' );
-};
-
 // Error component for invalid license key
 const InvalidLicenseError = () => {
 	const translate = useTranslate();
@@ -99,7 +98,7 @@ export function CrmDownloadsContent( { licenseKey }: CrmDownloadsProps ) {
 	const [ loadingExtensions, setLoadingExtensions ] = useState< string[] >( [] );
 	const [ isLoadingExtensions, setIsLoadingExtensions ] = useState( true );
 	const [ extensions, setExtensions ] = useState< Extension[] >( [] );
-	const [ isValidKey, setIsValidKey ] = useState< boolean >( isValidLicenseKey( licenseKey ) );
+	const [ isValidKey, setIsValidKey ] = useState< boolean >( isJetpackCrmProduct( licenseKey ) );
 
 	// Function to load extensions
 	const loadExtensions = async () => {
@@ -138,7 +137,7 @@ export function CrmDownloadsContent( { licenseKey }: CrmDownloadsProps ) {
 
 	// Check license key validity and load extensions on component mount or when license key changes
 	useEffect( () => {
-		const valid = isValidLicenseKey( licenseKey );
+		const valid = isJetpackCrmProduct( licenseKey );
 		setIsValidKey( valid );
 
 		if ( valid ) {
@@ -154,26 +153,18 @@ export function CrmDownloadsContent( { licenseKey }: CrmDownloadsProps ) {
 		setLoadingExtensions( ( prev ) => [ ...prev, extensionSlug ] );
 
 		try {
-			// Make the API request to get the download URL
-			// Ensure license key has the required prefix
-			let formattedLicenseKey = licenseKey;
-			if ( ! formattedLicenseKey.startsWith( 'jetpack_complete_' ) ) {
-				formattedLicenseKey = `jetpack_complete_${ formattedLicenseKey }`;
-			}
-
 			const requestData = {
-				license_key: formattedLicenseKey,
+				license_key: licenseKey,
 				extension_slug: extensionSlug,
 			};
 
 			// API URL for downloads
-			const apiUrl = 'https://devapp.jetpackcrm.com/api/downloads/jetpack-complete';
+			const apiUrl = `${ BASE_CRM_APP_URL }/api/downloads/jetpack-complete`;
 
 			const response = await fetch( apiUrl, {
 				method: 'POST',
 				credentials: 'omit',
 				headers: {
-					'X-API-KEY': 'ask_mikestottuk_for_key',
 					'Content-Type': 'application/json',
 				},
 				body: JSON.stringify( requestData ),
