@@ -174,10 +174,8 @@ function UseYourDomainStep( { basePath, goBack, initialQuery }: UseYourDomainSte
 	}
 
 	let mappingPriceText;
-	if ( price ) {
-		// @ts-expect-error despite the TS error, formatCurrency works with a
-		// `null` currencyCode and uses a fallback currency.
 	const price = productsList?.domain_map?.cost;
+	if ( price && currencyCode ) {
 		mappingPriceText = formatCurrency( price, currencyCode );
 		mappingPriceText = translate(
 			'%(cost)s per year plus registration costs at your current provider',
