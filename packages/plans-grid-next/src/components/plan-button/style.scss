@@ -21,7 +21,7 @@
 			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-wordpress-blue-50);
 		}
 
-		&:hover:not([disabled]) {
+		&:hover {
 			background-color: var(--studio-wordpress-blue-60);
 		}
 
@@ -34,7 +34,7 @@
 			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-wordpress-blue-60);
 		}
 
-		&:hover:not([disabled]) {
+		&:hover {
 			background-color: var(--studio-wordpress-blue-70);
 		}
 	}
@@ -46,7 +46,7 @@
 			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-wordpress-blue-70);
 		}
 
-		&:hover:not([disabled]) {
+		&:hover {
 			background-color: var(--studio-wordpress-blue-80);
 		}
 	}
@@ -58,7 +58,7 @@
 			box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-woocommerce-purple-60);
 		}
 
-		&:hover:not([disabled]) {
+		&:hover {
 			background-color: var(--studio-woocommerce-purple-70);
 		}
 
