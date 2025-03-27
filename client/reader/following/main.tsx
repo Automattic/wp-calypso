@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { FoldableCard } from '@automattic/components';
 import clsx from 'clsx';
-import { translate } from 'i18n-calypso';
+import { fixMe, translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
@@ -61,7 +61,11 @@ function FollowingStream( { ...props } ) {
 					<BloganuaryHeader />
 					<NavigationHeader
 						title={ translate( 'Recent' ) }
-						subtitle={ translate( 'Latest from your subscriptions.' ) }
+						subtitle={ fixMe( {
+							text: 'Latest from your subscriptions.',
+							newCopy: translate( 'Latest from your subscriptions.' ),
+							oldCopy: translate( 'Fresh content from blogs you follow.' ),
+						} ) }
 						className={ clsx( 'following-stream-header', {
 							'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
 						} ) }
