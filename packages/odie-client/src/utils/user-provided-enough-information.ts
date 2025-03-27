@@ -14,7 +14,7 @@ export const userProvidedEnoughInformation = ( messages: Message[] ): boolean =>
 		].map( ( tag ) => tag.toLowerCase() )
 	);
 
-	// Extract inquiry_type from each message's context.question_tags and normalize to lowercase
+	// Extract category from each message's context.question_tags and normalize to lowercase
 	return messages.some( ( message ) => {
 		const category = message.context?.question_tags?.category?.toLowerCase();
 		return category && ! insufficientEnums.has( category );
