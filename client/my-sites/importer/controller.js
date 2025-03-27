@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { BrowserRouter } from 'react-router-dom';
-import CaptureScreen from 'calypso/blocks/import/capture';
 import ImporterList from 'calypso/blocks/import/list';
 import { getFinalImporterUrl } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/helper';
 import { decodeURIComponentIfValid } from 'calypso/lib/url';
@@ -37,37 +36,9 @@ export function importSite( context, next ) {
 		page.replace( path );
 	};
 
-	switch ( context.query?.flow ) {
-		case 'onboarding': {
-			context.primary = (
-				<BrowserRouter>
-					<div className="import__onboarding-page">
-						<CaptureScreen
-							onValidFormSubmit={ ( { url } ) => {
-								const importerPath = `${ onboardingFlowRoute }/import?siteSlug=${ siteSlug }&from=${ encodeURIComponent(
-									url || ''
-								) }&flow=onboarding`;
-
-								page( importerPath );
-							} }
-							onImportListClick={ () => {
-								page( `/import/list/${ siteSlug }` );
-							} }
-						/>
-					</div>
-				</BrowserRouter>
-			);
-			break;
-		}
-		default:
-			context.primary = (
-				<SectionImport
-					engine={ engine }
-					fromSite={ fromSite }
-					afterStartImport={ afterStartImport }
-				/>
-			);
-	}
+	context.primary = (
+		<SectionImport engine={ engine } fromSite={ fromSite } afterStartImport={ afterStartImport } />
+	);
 	next();
 }
 

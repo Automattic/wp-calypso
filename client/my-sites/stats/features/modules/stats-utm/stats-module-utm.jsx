@@ -10,7 +10,7 @@ import { useSelector } from 'calypso/state';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { JETPACK_SUPPORT_URL_TRAFFIC, SUPPORT_URL } from '../../../const';
+import { JETPACK_SUPPORT_URL_TRAFFIC, UTM_SUPPORT_URL } from '../../../const';
 import useUTMMetricsQuery from '../../../hooks/use-utm-metrics-query';
 import ErrorPanel from '../../../stats-error';
 import StatsListCard from '../../../stats-list/stats-list-card';
@@ -109,7 +109,7 @@ const StatsModuleUTM = ( {
 
 	const supportUrl = isSiteJetpackNotAtomic
 		? localizeUrl( `${ JETPACK_SUPPORT_URL_TRAFFIC }#harnessing-utm-stats-for-precision-tracking` )
-		: localizeUrl( `${ SUPPORT_URL }#utm` );
+		: UTM_SUPPORT_URL;
 
 	const titleNodes = (
 		<StatsInfoArea isNew>
