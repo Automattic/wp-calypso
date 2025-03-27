@@ -836,5 +836,6 @@ export function redirectJetpackDirectAuthError( context, next, newQuery = {} ) {
 	).toString();
 	const redirectUrl = queryString ? `/log-in/jetpack/?${ queryString }` : '/log-in/jetpack/';
 	window.history.replaceState( null, '', redirectUrl );
+	window.sessionStorage?.setItem( 'login_redirect_to', redirectUrl );
 	return next();
 }
