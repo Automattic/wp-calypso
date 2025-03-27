@@ -269,6 +269,7 @@ export async function jetpackGoogleAuth( context, next ) {
 				callback: () => {},
 			} )
 			.requestCode();
+		return;
 	} catch {
 		context.store.dispatch( {
 			type: 'NOTICE_CREATE',
@@ -279,8 +280,6 @@ export async function jetpackGoogleAuth( context, next ) {
 		} );
 		return redirectJetpackDirectAuthError( context, next );
 	}
-
-	next();
 }
 
 export async function jetpackGoogleAuthCallback( context, next ) {
@@ -464,6 +463,7 @@ export async function jetpackAppleAuth( context, next ) {
 
 		// Trigger the sign-in
 		window.AppleID.auth.signIn();
+		return;
 	} catch {
 		context.store.dispatch( {
 			type: 'NOTICE_CREATE',
@@ -475,8 +475,6 @@ export async function jetpackAppleAuth( context, next ) {
 
 		return redirectJetpackDirectAuthError( context, next );
 	}
-
-	next();
 }
 
 export async function jetpackAppleAuthCallback( context, next ) {
