@@ -123,7 +123,7 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 	const featureSlugs = getFeatureDifference(
 		downgradePath[ purchase?.productSlug ?? '' ],
 		purchase?.productSlug ?? '',
-		'getCheckoutFeatures'
+		'getCancellationFeatures'
 	);
 	const features = featureSlugs.map( ( slug ) => getFeatureByKey( slug ) );
 	const isAtomicSiteDowngrade =
