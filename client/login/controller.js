@@ -365,38 +365,27 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 				client_secret: config( 'wpcom_signup_key' ),
 				tos: JSON.stringify( getToSAcceptancePayload() ),
 			} );
-
-			await context.store.dispatch(
-				loginSocialUser(
-					{
-						service: 'google',
-						access_token,
-						id_token,
-					},
-					state.redirect_to
-				)
-			);
-			const url = new URL( state.redirect_to );
-			context.store.dispatch(
-				setRoute( url.pathname, Object.fromEntries( url.searchParams.entries() ) )
-			);
-
-			await context.store.dispatch( rebootAfterLogin() );
-			return page.redirect( state.redirect_to );
 		} catch ( createError ) {
-			// If both connection and creation fail, show warning and redirect
-			context.store.dispatch( {
-				type: 'NOTICE_CREATE',
-				notice: {
-					status: 'is-warning',
-					text: 'Could not complete Google login. Please try again.',
-				},
-			} );
-
-			return redirectJetpackDirectAuthError( context, next, {
-				redirect_to: state.redirect_to,
-			} );
+			// Silently fail
 		}
+
+		await context.store.dispatch(
+			loginSocialUser(
+				{
+					service: 'google',
+					access_token,
+					id_token,
+				},
+				state.redirect_to
+			)
+		);
+		const url = new URL( state.redirect_to );
+		context.store.dispatch(
+			setRoute( url.pathname, Object.fromEntries( url.searchParams.entries() ) )
+		);
+
+		await context.store.dispatch( rebootAfterLogin() );
+		return page.redirect( state.redirect_to );
 	} catch {
 		context.store.dispatch( {
 			type: 'NOTICE_CREATE',
