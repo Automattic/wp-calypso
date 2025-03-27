@@ -137,11 +137,10 @@ const ActionButton = ( {
 	);
 
 	if (
-		( ( isFreePlan( planSlug ) ||
+		( isFreePlan( planSlug ) ||
 			( storageAddOns && ! canPurchaseStorageAddOns && nonDefaultStorageOptionSelected ) ) &&
-			isP2FreePlan( planSlug ) &&
-			current ) ||
-		status === 'hidden'
+		isP2FreePlan( planSlug ) &&
+		current
 	) {
 		return null;
 	}
