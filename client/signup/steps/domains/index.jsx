@@ -11,6 +11,7 @@ import {
 	Step,
 } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import { DESKTOP_BREAKPOINT, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -187,6 +188,7 @@ export class RenderDomainsStep extends Component {
 			// This call is expensive, so we only do it if the mini-cart hasDomainRegistration.
 			this.props.shoppingCartManager.addProductsToCart( [ this.props.multiDomainDefaultPlan ] );
 		}
+		this.subscribeToViewPortChanges();
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -200,6 +202,17 @@ export class RenderDomainsStep extends Component {
 				this.props.shoppingCartManager.addProductsToCart( [ this.props.multiDomainDefaultPlan ] );
 			}
 		}
+	}
+
+	subscribeToViewPortChanges() {
+		this.unsubscribeToViewPortChanges = subscribeIsWithinBreakpoint(
+			DESKTOP_BREAKPOINT,
+			( isDesktopViewport ) => this.setState( { isDesktopViewport } )
+		);
+	}
+
+	componentWillUnmount() {
+		this.unsubscribeToViewPortChanges?.();
 	}
 
 	getLocale() {
@@ -1444,6 +1457,7 @@ export class RenderDomainsStep extends Component {
 
 			return (
 				<Step.TwoColumnLayout
+					isLargeViewport={ this.state.isDesktopViewport }
 					firstColumnWidth={ 7 }
 					secondColumnWidth={ 3 }
 					topBar={ <Step.TopBar backButton={ ! hideBack && backButton } /> }
