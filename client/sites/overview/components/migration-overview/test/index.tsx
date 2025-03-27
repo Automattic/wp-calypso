@@ -48,7 +48,7 @@ describe( 'MigrationOverview', () => {
 	} );
 
 	const getStartDIYMigrationLink = () => {
-		return screen.queryByRole( 'link', { name: 'Complete your migration' } );
+		return screen.queryByRole( 'link', { name: 'Complete migration' } );
 	};
 
 	const getStartDIFMMigrationLink = () => {
