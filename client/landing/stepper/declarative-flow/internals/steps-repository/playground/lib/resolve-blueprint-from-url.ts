@@ -1,4 +1,4 @@
-import { Blueprint } from '@wp-playground/client';
+import { Blueprint, StepDefinition } from '@wp-playground/client';
 
 /**
  * All code in this file is copied from @wp-playground/website package
@@ -20,7 +20,7 @@ export function decodeBase64ToString( base64: string ) {
 	return new TextDecoder().decode( decodeBase64ToUint8Array( base64 ) );
 }
 
-export function parseBlueprint( rawData: string ) {
+export function parseBlueprint( rawData: string ): Blueprint {
 	try {
 		try {
 			return JSON.parse( rawData );
@@ -46,7 +46,7 @@ export async function resolveBlueprintFromURL( url: URL ) {
 		const response = await fetch( url!, {
 			credentials: 'omit',
 		} );
-		blueprint = await response.json();
+		blueprint = ( await response.json() ) as Blueprint;
 	} else if ( fragment.length ) {
 		/*
 		 * Support passing blueprints in the URI fragment, e.g.:
@@ -87,7 +87,7 @@ export async function resolveBlueprintFromURL( url: URL ) {
 					progress: { weight: 2 },
 				},
 			],
-		};
+		} satisfies Blueprint;
 	}
 
 	/**
@@ -97,10 +97,11 @@ export async function resolveBlueprintFromURL( url: URL ) {
 
 	// PHP and WordPress versions
 	if ( ! blueprint.preferredVersions ) {
-		blueprint.preferredVersions = {} as any;
+		blueprint.preferredVersions = {};
 	}
+
 	blueprint.preferredVersions!.php =
-		( query.get( 'php' ) as any ) || blueprint.preferredVersions!.php || '8.0';
+		query.get( 'php' ) || blueprint.preferredVersions!.php || '8.0';
 	blueprint.preferredVersions!.wp =
 		query.get( 'wp' ) || blueprint.preferredVersions!.wp || 'latest';
 
@@ -120,7 +121,9 @@ export async function resolveBlueprintFromURL( url: URL ) {
 	// Language
 	if ( query.get( 'language' ) ) {
 		if (
-			! blueprint?.steps?.find( ( step ) => step && ( step as any ).step === 'setSiteLanguage' )
+			! blueprint?.steps?.find(
+				( step: StepDefinition ) => step && step.step === 'setSiteLanguage'
+			)
 		) {
 			blueprint.steps?.push( {
 				step: 'setSiteLanguage',
@@ -132,7 +135,9 @@ export async function resolveBlueprintFromURL( url: URL ) {
 	// Multisite
 	if ( query.get( 'multisite' ) === 'yes' ) {
 		if (
-			! blueprint?.steps?.find( ( step ) => step && ( step as any ).step === 'enableMultisite' )
+			! blueprint?.steps?.find(
+				( step: StepDefinition ) => step && step.step === 'enableMultisite'
+			)
 		) {
 			blueprint.steps?.push( {
 				step: 'enableMultisite',
