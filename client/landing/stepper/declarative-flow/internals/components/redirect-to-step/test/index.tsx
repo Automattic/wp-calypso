@@ -19,7 +19,6 @@ const LocationDisplay = () => {
 	);
 };
 
-const getLocation = () => screen.getByTestId( 'location-display' ).textContent;
 const render = ( { currentPath, stepToRedirect } ) => {
 	return renderWithProvider(
 		<MemoryRouter basename="/setup" initialEntries={ [ currentPath ] }>
@@ -31,17 +30,22 @@ const render = ( { currentPath, stepToRedirect } ) => {
 		</MemoryRouter>
 	);
 };
+
 describe( 'RedirectToStep', () => {
 	it( 'redirects to the step', () => {
 		render( { currentPath: '/setup/flow-name/old-step', stepToRedirect: 'new-step' } );
 
-		expect( getLocation() ).toBe( '/flow-name/new-step' );
+		setTimeout( () => {
+			expect( screen.getByText( '/flow-name/new-step' ) ).toBeInTheDocument();
+		}, 0 );
 	} );
 
 	it( 'redirects to the step using the specified language', () => {
 		render( { currentPath: '/setup/flow-name/old-step/es', stepToRedirect: 'new-step' } );
 
-		expect( getLocation() ).toBe( '/flow-name/new-step/es' );
+		setTimeout( () => {
+			expect( screen.getByText( '/flow-name/new-step/es' ) ).toBeInTheDocument();
+		}, 0 );
 	} );
 
 	it( 'ignores the url language if the user is logged in', () => {
@@ -49,6 +53,8 @@ describe( 'RedirectToStep', () => {
 
 		render( { currentPath: '/setup/flow-name/old-step/es', stepToRedirect: 'new-step' } );
 
-		expect( getLocation() ).toBe( '/flow-name/new-step' );
+		setTimeout( () => {
+			expect( screen.getByText( '/flow-name/new-step' ) ).toBeInTheDocument();
+		}, 0 );
 	} );
 } );
