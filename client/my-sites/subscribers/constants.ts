@@ -21,9 +21,9 @@ export enum SubscribersFilterBy {
 
 export const SubscribersStatus = {
 	Subscribed: translate( 'Subscribed' ),
-	NotConfirmed: translate( 'Not confirmed' ),
-	NotSubscribed: translate( 'Not subscribed' ),
-	NotSending: translate( 'Not sending' ),
+	[ 'Not confirmed' ]: translate( 'Not confirmed' ),
+	[ 'Not subscribed' ]: translate( 'Not subscribed' ),
+	[ 'Not sending' ]: translate( 'Not sending' ),
 } as const;
 
 export const DEFAULT_PER_PAGE = 10;
