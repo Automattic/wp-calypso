@@ -1640,6 +1640,7 @@ __metadata:
     "@automattic/data-stores": "workspace:^"
     "@automattic/onboarding": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
+    "@automattic/typography": "workspace:^"
     "@emotion/react": "npm:11.11.1"
     "@emotion/styled": "npm:^11.11.0"
     "@storybook/addon-actions": "npm:^7.6.20"
