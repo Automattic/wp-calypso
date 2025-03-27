@@ -1,14 +1,15 @@
-@import '../../mixins';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .step-container-v2__top-bar {
-	height: var(--step-container-v2-top-bar-height);
+	height: var( --step-container-v2-top-bar-height );
 	box-sizing: border-box;
 	width: 100%;
 	display: flex;
 	align-items: center;
 	padding: 1rem;
 
-	@include step-medium-viewport {
+	@include break-small {
 		padding-inline: 1.5rem;
 	}
 
@@ -20,31 +21,47 @@
 		height: 24px;
 	}
 
+	&-wordpress-logo {
+		color: var( --color-text );
+		margin: 0;
+
+		@include break-small {
+			margin-right: 0.5rem;
+		}
+
+		&--wordmark {
+			display: none;
+
+			@include break-small {
+				display: block;
+			}
+		}
+
+		&--logo {
+			display: block;
+
+			@include break-small {
+				display: none;
+			}
+		}
+	}
+
 	&-divider {
 		width: 1px;
 		height: 1rem;
-		background-color: var(--color-border-subtle);
+		background-color: var( --color-border-subtle );
 
 		margin-inline: 1rem 0;
 
-		@include step-medium-viewport {
+		@include break-small {
 			margin-inline: 1.5rem 0.75rem;
 		}
 	}
 
 	&-right-button {
 		margin-left: auto;
-		--wp-components-color-accent: var(--color-neutral-100);
+		--wp-components-color-accent: var( --color-neutral-100 );
 		font-size: 0.875rem;
 		line-height: 1;
-	}
-
-	&-wordpress-logo {
-		color: var(--color-text);
-		margin: 0;
-
-		@include step-medium-viewport {
-			margin-right: 0.5rem;
-		}
 	}
 }
