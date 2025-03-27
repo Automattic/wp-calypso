@@ -244,11 +244,17 @@ export class ReaderSidebar extends Component {
 						currentTag={ this.state.currentTag }
 					/>
 
-					<SidebarSeparator />
-
-					<li>
-						<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />
-					</li>
+					{ this.props.organizations && (
+						<>
+							<SidebarSeparator />
+							<li>
+								<ReaderSidebarOrganizations
+									organizations={ this.props.organizations }
+									path={ path }
+								/>
+							</li>
+						</>
+					) }
 
 					{ isAutomatticTeamMember( teams ) && (
 						<SidebarItem
@@ -261,6 +267,8 @@ export class ReaderSidebar extends Component {
 							customIcon={ <ReaderA8cConversationsIcon size={ 24 } viewBox="-2 -2 24 24" /> }
 						/>
 					) }
+
+					<SidebarSeparator />
 
 					<SidebarItem
 						className={ ReaderSidebarHelper.itemLinkClass( '/reader/notifications', path, {
