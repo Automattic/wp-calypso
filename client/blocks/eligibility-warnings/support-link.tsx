@@ -29,12 +29,14 @@ const SupportLink = ( {
 			isMinimized: store.getIsMinimized(),
 		};
 	}, [] );
-	const { setShowHelpCenter, setIsMinimized } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setShowHelpCenter, setIsMinimized, setNavigateToRoute } =
+		useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const handleOpenHelpCenter = () => {
 		onCloseEligibilityDialog();
 
 		if ( ! show ) {
+			setNavigateToRoute( '/odie' );
 			setShowHelpCenter( true );
 			recordTracksEvent( 'calypso_inlinehelp_show', {
 				force_site_id: true,
