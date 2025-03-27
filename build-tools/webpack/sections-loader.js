@@ -1,5 +1,3 @@
-const { getOptions } = require( 'loader-utils' );
-
 /*
  * This sections-loader has one responsibility: adding import statements for the section modules.
  *
@@ -64,7 +62,7 @@ function filterSectionsInDevelopment( sections, { forceAll, activeSections, enab
 }
 
 const loader = function () {
-	const options = getOptions( this ) || {};
+	const options = this.getOptions() || {};
 	const { onlyIsomorphic, forceAll, activeSections, enableByDefault } = options;
 	// look also at the legacy `forceRequire` option to allow smooth migration
 	const useRequire = options.useRequire || options.forceRequire;
