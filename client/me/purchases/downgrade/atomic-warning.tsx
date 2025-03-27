@@ -9,6 +9,7 @@ import { Purchase } from 'calypso/lib/purchases/types';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import type { CalypsoDispatch } from 'calypso/state/types';
 
 interface AtomicWarningProps {
 	purchaseRoot: string;
@@ -37,11 +38,11 @@ export function AtomicWarning( {
 	const hasBackupsFeature = useSelector( ( state ) =>
 		siteHasFeature( state, site.ID, WPCOM_FEATURES_BACKUPS )
 	);
-	const dispatch = useDispatch();
+	const dispatch = useDispatch< CalypsoDispatch >();
 
 	useEffect( () => {
 		if ( purchase?.siteId ) {
-			dispatch( fetchAtomicTransfer( purchase.siteId as any ) );
+			dispatch( fetchAtomicTransfer( purchase.siteId ) );
 		}
 	}, [ dispatch, purchase?.siteId ] );
 
