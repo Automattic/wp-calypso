@@ -236,7 +236,7 @@ export async function jetpackGoogleAuth( context, next ) {
 
 		// Create state object with relevant data
 		const stateObject = {
-			redirect_to: query?.redirect_to || '/',
+			redirect_to: query?.redirect_to || window.location.origin,
 			is_jetpack: true,
 			locale: context.params.lang,
 			wpcomNonce: nonce,
@@ -300,7 +300,7 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 		const stateData = JSON.parse( stateString || '{}' );
 
 		state = {
-			redirect_to: stateData.redirect_to || '/',
+			redirect_to: stateData.redirect_to || window.location.origin,
 			is_jetpack: stateData.is_jetpack || true,
 			locale: stateData.locale || getLocaleSlug(),
 			wpcomNonce: stateData.wpcomNonce || '',
@@ -440,7 +440,7 @@ export async function jetpackAppleAuth( context, next ) {
 			is_jetpack: true,
 			oauth2State: nonce,
 			// Allow just redirect_to to be passed in the query params
-			queryString: `redirect_to=${ query?.redirect_to || '/' }`,
+			queryString: `redirect_to=${ query?.redirect_to || window.location.origin }`,
 		};
 
 		// Store nonce in sessionStorage for validation on callback
@@ -568,10 +568,13 @@ export async function jetpackGitHubAuth( context, next ) {
 		return next();
 	}
 
-	const redirectUri = `https://${ window.location.host }/log-in/jetpack/github/callback`;
+	const redirectUri = `${ window.location.origin }/log-in/jetpack/github/callback`;
 	try {
 		// Store redirect_to in sessionStorage for use on callback
-		window.sessionStorage.setItem( 'github_redirect_to', query?.redirect_to || '/' );
+		window.sessionStorage.setItem(
+			'github_redirect_to',
+			query?.redirect_to || window.location.origin
+		);
 
 		// Redirect to GitHub authorization URL
 		const scope = 'read:user,user:email';
@@ -579,7 +582,6 @@ export async function jetpackGitHubAuth( context, next ) {
 			redirect_uri: redirectUri,
 			scope,
 			ux_mode: 'redirect',
-			redirect_to: query?.redirect_to || '/',
 		} );
 
 		if ( isUserLoggedIn( context.store.getState() ) ) {
@@ -615,14 +617,10 @@ export async function jetpackGitHubAuthCallback( context, next ) {
 	window.sessionStorage.removeItem( 'github_redirect_to' );
 
 	try {
-		// GitHub supports localhost auth; and we allowlist the jetpack callback path
-		const redirectUri = `${ window.location.origin }/log-in/jetpack/github/callback`;
-
 		// Exchange auth code for tokens
 		const response = await postLoginRequest( 'exchange-social-auth-code', {
 			service: 'github',
 			auth_code: code,
-			redirect_uri: redirectUri,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 		} );
