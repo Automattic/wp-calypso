@@ -25,11 +25,11 @@ import {
 import page from '@automattic/calypso-router';
 import { Card, Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
-import React, { useState } from 'react';
+import { useTranslate, formatCurrency } from 'i18n-calypso';
+import React, { useState, useMemo } from 'react';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
-import { hasAmountAvailableToRefund } from 'calypso/lib/purchases';
+import { hasAmountAvailableToRefund, isRefundable } from 'calypso/lib/purchases';
 import { cancelAndRefundPurchaseAsync } from 'calypso/lib/purchases/actions';
 import { Purchase } from 'calypso/lib/purchases/types';
 import { managePurchase } from 'calypso/me/purchases/paths';
@@ -130,6 +130,27 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 	const isAtomicSiteDowngrade =
 		isAtomicSite && ! targetPlan?.getIncludedFeatures?.().includes( WPCOM_FEATURES_ATOMIC );
 
+	const refundAmount = useMemo( () => {
+		if ( ! purchase ) {
+			return '0';
+		}
+
+		const { refundOptions, currencyCode } = purchase;
+		const defaultFormatter = new Intl.NumberFormat( 'en-US', {
+			style: 'currency',
+			currency: currencyCode,
+		} );
+		const precision = defaultFormatter.resolvedOptions().maximumFractionDigits;
+		const amount =
+			isRefundable( purchase ) &&
+			Array.isArray( refundOptions ) &&
+			refundOptions[ 0 ]?.refund_amount
+				? refundOptions[ 0 ].refund_amount
+				: 0;
+
+		return parseFloat( amount ).toFixed( precision );
+	}, [ purchase ] );
+
 	if (
 		isDataLoading( { hasLoadedSites, hasLoadedUserPurchasesFromServer: loadedFromServer } ) ||
 		! purchase
@@ -198,18 +219,25 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 	};
 
 	const getDowngradeMessage = () => {
-		const planArgs = {
+		const hasRefund = hasAmountAvailableToRefund( purchase ) && purchase?.mostRecentRenewDate;
+		const basePlanArgs = {
 			currentPlan: currentPlan?.getTitle() ?? '',
 			targetPlan: targetPlan?.getTitle() ?? '',
 		};
-		return ! hasAmountAvailableToRefund( purchase ) || ! purchase?.mostRecentRenewDate
-			? translate( 'We will change the plan immediately from %(currentPlan)s to %(targetPlan)s.', {
-					args: planArgs,
-			  } )
-			: translate(
-					'We will change the plan immediately and refund the remaining value from %(currentPlan)s to %(targetPlan)s.',
-					{ args: planArgs }
-			  );
+
+		return hasRefund
+			? translate(
+					'We will change the plan immediately and refund the remaining value of %(amount)s from %(currentPlan)s to %(targetPlan)s.',
+					{
+						args: {
+							...basePlanArgs,
+							amount: formatCurrency( parseFloat( refundAmount ), purchase.currencyCode ),
+						},
+					}
+			  )
+			: translate( 'We will change the plan immediately from %(currentPlan)s to %(targetPlan)s.', {
+					args: basePlanArgs,
+			  } );
 	};
 
 	if ( isAtomicWarningVisible ) {
