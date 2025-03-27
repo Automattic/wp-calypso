@@ -17,6 +17,7 @@ import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { loginSocialUser, rebootAfterLogin } from 'calypso/state/login/actions';
 import { postLoginRequest } from 'calypso/state/login/utils';
+import { logoutUser } from 'calypso/state/logout/actions';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -253,6 +254,10 @@ export async function jetpackGoogleAuth( context, next ) {
 			}
 		}
 
+		if ( isUserLoggedIn( context.store.getState() ) ) {
+			await context.store.dispatch( logoutUser() );
+		}
+
 		// Initialize and request authorization code
 		window.google.accounts.oauth2
 			.initCodeClient( {
@@ -451,6 +456,10 @@ export async function jetpackAppleAuth( context, next ) {
 			}
 		}
 
+		if ( isUserLoggedIn( context.store.getState() ) ) {
+			await context.store.dispatch( logoutUser() );
+		}
+
 		// Initialize Apple auth
 		window.AppleID.auth.init( {
 			clientId: config( 'apple_oauth_client_id' ),
@@ -577,6 +586,11 @@ export async function jetpackGitHubAuth( context, next ) {
 			ux_mode: 'redirect',
 			redirect_to: query?.redirect_to || '/',
 		} );
+
+		if ( isUserLoggedIn( context.store.getState() ) ) {
+			await context.store.dispatch( logoutUser() );
+		}
+
 		window.location.href = `https://public-api.wordpress.com/wpcom/v2/hosting/github/app-authorize?${ params.toString() }`;
 	} catch {
 		context.store.dispatch( {
