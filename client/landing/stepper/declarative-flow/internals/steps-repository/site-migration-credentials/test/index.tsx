@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import config, { isEnabled } from '@automattic/calypso-config';
 import { waitFor, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -42,55 +41,18 @@ const messages = {
 const { getByRole, getByLabelText, getByTestId, getByText, findByText } = screen;
 
 const continueButton = ( name = /Continue/ ) => getByRole( 'button', { name } );
-const siteAddressInput = () =>
-	getByLabelText(
-		isEnabled( 'automated-migration/application-password' )
-			? 'Current WordPress site address'
-			: 'Current site address'
-	);
-const usernameInput = () => getByLabelText( 'WordPress admin username' );
-const passwordInput = () => getByLabelText( 'Password' );
+const siteAddressInput = () => getByLabelText( 'Current WordPress site address' );
 const backupOption = () => getByRole( 'radio', { name: 'Backup file' } );
-const credentialsOption = () =>
-	isEnabled( 'automated-migration/application-password' )
-		? getByRole( 'radio', { name: 'WordPress site credentials' } )
-		: getByRole( 'radio', { name: 'WordPress credentials' } );
+const credentialsOption = () => getByRole( 'radio', { name: 'WordPress site credentials' } );
 const backupFileInput = () => getByLabelText( 'Backup file location' );
 //TODO: it requires a testid because there is no accessible name, it is an issue with the component
 const specialInstructionsInput = () => getByTestId( 'special-instructions-textarea' );
 const specialInstructionsButton = () => getByRole( 'button', { name: 'Special instructions' } );
 const skipButton = () => getByRole( 'button', { name: /Let us guide you/ } );
 
-const fillAllFields = async () => {
-	await userEvent.click( credentialsOption() );
-	await userEvent.type( siteAddressInput(), 'site-url.com' );
-	await userEvent.type( usernameInput(), 'username' );
-	await userEvent.type( passwordInput(), 'password' );
-};
-
 const fillAddressField = async () => {
 	await userEvent.click( credentialsOption() );
 	await userEvent.type( siteAddressInput(), 'site-url.com' );
-};
-
-const fillNoteField = async () => {
-	await userEvent.click( specialInstructionsButton() );
-	await userEvent.type( specialInstructionsInput(), 'notes' );
-};
-
-const requestPayload = {
-	path: '/sites/site-url.wordpress.com/automated-migration?_locale=en',
-	apiNamespace: 'wpcom/v2',
-	method: 'POST',
-	body: {
-		migration_type: 'credentials',
-		blog_url: 'site-url.wordpress.com',
-		bypass_verification: true,
-		notes: 'notes',
-		from_url: 'site-url.com',
-		username: 'username',
-		password: 'password',
-	},
 };
 
 const baseSiteInfo = {
@@ -118,19 +80,7 @@ const siteInfoUsingWPCOM = {
 		is_wpcom: true,
 	},
 };
-
-const isApplicationPasswordEnabled = isEnabled( 'automated-migration/application-password' );
-const restaureIsApplicationPasswordEnabled = () => {
-	if ( isApplicationPasswordEnabled ) {
-		config.enable( 'automated-migration/application-password' );
-	} else {
-		config.disable( 'automated-migration/application-password' );
-	}
-};
-
-//TODO: Temporary skip for the test to remove the feature flag cases, they are causing a long running test.
-/* eslint-disable jest/no-disabled-tests */
-describe.skip( 'SiteMigrationCredentials', () => {
+describe( 'SiteMigrationCredentials', () => {
 	beforeAll( () => nock.disableNetConnect() );
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -138,89 +88,7 @@ describe.skip( 'SiteMigrationCredentials', () => {
 	} );
 	afterEach( () => {
 		jest.clearAllMocks();
-		restaureIsApplicationPasswordEnabled();
 		( wp.req.get as jest.Mock ).mockResolvedValue( siteInfoUsingWordPress );
-	} );
-
-	it( 'creates an automated migration ticket', async () => {
-		config.disable( 'automated-migration/application-password' );
-		const submit = jest.fn();
-		render( { navigation: { submit } } );
-
-		await userEvent.click( credentialsOption() );
-		await userEvent.type( siteAddressInput(), 'site-url.com' );
-		await userEvent.type( usernameInput(), 'username' );
-		await userEvent.type( passwordInput(), 'password' );
-
-		await userEvent.click( specialInstructionsButton() );
-		await userEvent.type( specialInstructionsInput(), 'notes' );
-		await userEvent.click( continueButton() );
-
-		expect( wpcomRequest ).toHaveBeenCalledWith( {
-			path: '/sites/site-url.wordpress.com/automated-migration?_locale=en',
-			apiNamespace: 'wpcom/v2',
-			method: 'POST',
-			body: {
-				migration_type: 'credentials',
-				blog_url: 'site-url.wordpress.com',
-				bypass_verification: false,
-				notes: 'notes',
-				from_url: 'site-url.com',
-				username: 'username',
-				password: 'password',
-			},
-		} );
-
-		await waitFor( () => {
-			expect( submit ).toHaveBeenCalledWith( {
-				action: 'submit',
-				from: 'https://site-url.wordpress.com',
-				platform: 'wordpress',
-			} );
-		} );
-	} );
-
-	it( 'creates a credentials ticket when site info fetching throws error', async () => {
-		config.disable( 'automated-migration/application-password' );
-		const submit = jest.fn();
-		render( { navigation: { submit } } );
-
-		await userEvent.click( credentialsOption() );
-		await userEvent.type( siteAddressInput(), 'site-url.com' );
-		await userEvent.type( usernameInput(), 'username' );
-		await userEvent.type( passwordInput(), 'password' );
-
-		await userEvent.click( specialInstructionsButton() );
-		await userEvent.type( specialInstructionsInput(), 'notes' );
-
-		( wp.req.get as jest.Mock ).mockRejectedValue( {
-			code: 'rest_other_error',
-			message: 'Error message from backend',
-		} );
-
-		await userEvent.click( continueButton() );
-
-		expect( wpcomRequest ).toHaveBeenCalledWith( {
-			path: '/sites/site-url.wordpress.com/automated-migration?_locale=en',
-			apiNamespace: 'wpcom/v2',
-			method: 'POST',
-			body: {
-				migration_type: 'credentials',
-				blog_url: 'site-url.wordpress.com',
-				bypass_verification: false,
-				notes: 'notes',
-				from_url: 'site-url.com',
-				username: 'username',
-				password: 'password',
-			},
-		} );
-
-		await waitFor( () => {
-			expect( submit ).toHaveBeenCalledWith( {
-				action: 'submit',
-				platform: undefined,
-			} );
-		} );
 	} );
 
 	it( 'creates a credentials using backup file', async () => {
@@ -286,20 +154,6 @@ describe.skip( 'SiteMigrationCredentials', () => {
 		} );
 	} );
 
-	it( 'shows errors on the required fields when the user does not fill the fields when user select credentials option and application-password is disabled', async () => {
-		config.disable( 'automated-migration/application-password' );
-		render();
-
-		await userEvent.click( continueButton() );
-		await userEvent.click( credentialsOption() );
-
-		await waitFor( () => {
-			expect( getByText( messages.urlError ) ).toBeVisible();
-			expect( getByText( messages.usernameError ) ).toBeVisible();
-			expect( getByText( messages.passwordError ) ).toBeVisible();
-		} );
-	} );
-
 	it( 'shows errors on the required fields when the user does not fill the fields when user select backup option', async () => {
 		render();
 
@@ -318,33 +172,6 @@ describe.skip( 'SiteMigrationCredentials', () => {
 
 		await waitFor( () => {
 			expect( getByText( messages.noTLDError ) ).toBeVisible();
-		} );
-	} );
-
-	it( 'shows error messages by each field when the server returns "invalid param" by each field', async () => {
-		config.disable( 'automated-migration/application-password' );
-		const submit = jest.fn();
-		render( { navigation: { submit } } );
-
-		( wpcomRequest as jest.Mock ).mockRejectedValue( {
-			code: 'rest_invalid_param',
-			data: {
-				params: {
-					from_url: 'Invalid Param',
-					username: 'Invalid Param',
-					password: 'Invalid Param',
-					notes: 'Invalid Param',
-				},
-			},
-		} );
-
-		await fillAllFields();
-		await userEvent.click( continueButton() );
-		await waitFor( () => {
-			expect( getByText( /Enter a valid URL/ ) ).toBeVisible();
-			expect( getByText( /Enter a valid username/ ) ).toBeVisible();
-			expect( getByText( /Enter a valid password/ ) ).toBeVisible();
-			expect( submit ).not.toHaveBeenCalled();
 		} );
 	} );
 
@@ -371,44 +198,6 @@ describe.skip( 'SiteMigrationCredentials', () => {
 		} );
 	} );
 
-	it( 'shows an error message when the server returns a generic error', async () => {
-		config.disable( 'automated-migration/application-password' );
-		const submit = jest.fn();
-		render( { navigation: { submit } } );
-
-		( wpcomRequest as jest.Mock ).mockRejectedValue( {
-			code: 'rest_other_error',
-			message: 'Error message from backend',
-		} );
-
-		await fillAllFields();
-		await userEvent.click( continueButton() );
-
-		await waitFor( () => {
-			expect( getByText( /Error message from backend/ ) ).toBeVisible();
-		} );
-		expect( submit ).not.toHaveBeenCalled();
-	} );
-
-	it( 'shows an generic error when server doesn`t return error and shows normal Continue button', async () => {
-		config.disable( 'automated-migration/application-password' );
-		const submit = jest.fn();
-		render( { navigation: { submit } } );
-
-		( wpcomRequest as jest.Mock ).mockRejectedValue( {} );
-
-		await fillAllFields();
-		await userEvent.click( continueButton() );
-
-		await waitFor( () => {
-			expect( getByText( /An error occurred while saving credentials./ ) ).toBeVisible();
-		} );
-
-		await waitFor( () => {
-			expect( continueButton() ).toBeVisible();
-		} );
-	} );
-
 	it( 'shows a notice when URL contains error=ticket-creation', async () => {
 		const submit = jest.fn();
 		const initialEntry = '/site-migration-credentials?error=ticket-creation';
@@ -424,22 +213,6 @@ describe.skip( 'SiteMigrationCredentials', () => {
 		} );
 	} );
 
-	it( 'shows "Verifying credentials" on the Continue button during submission', async () => {
-		config.disable( 'automated-migration/application-password' );
-		const submit = jest.fn();
-		render( { navigation: { submit } } );
-		const pendingPromise = new Promise( () => {} );
-
-		( wpcomRequest as jest.Mock ).mockImplementation( () => pendingPromise );
-
-		await fillAllFields();
-		userEvent.click( continueButton() );
-
-		await waitFor( () => {
-			expect( continueButton( /Verifying credentials/ ) ).toBeVisible();
-		} );
-	} );
-
 	it( 'shows "Scanning site" on the Continue button during submission with application password', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
@@ -452,121 +225,6 @@ describe.skip( 'SiteMigrationCredentials', () => {
 
 		await waitFor( () => {
 			expect( continueButton( /Scanning site/ ) ).toBeVisible();
-		} );
-	} );
-
-	it( 'shows error message when inputed credentials fail to log in', async () => {
-		config.disable( 'automated-migration/application-password' );
-		const submit = jest.fn();
-		render( { navigation: { submit } } );
-
-		( wpcomRequest as jest.Mock ).mockRejectedValue( {
-			code: 'automated_migration_tools_login_and_get_cookies_test_failed',
-			data: {
-				response_code: 404,
-			},
-		} );
-
-		await fillAllFields();
-		await userEvent.click( continueButton() );
-
-		await waitFor( () => {
-			expect( getByText( 'Check your site address.' ) ).toBeVisible();
-		} );
-	} );
-
-	it.each( [
-		{
-			response_code: 404,
-			errorMessage: 'Check your site address.',
-		},
-		{
-			response_code: 401,
-			errorMessage: 'Check your username.',
-		},
-		{
-			response_code: 401,
-			errorMessage: 'Check your password.',
-		},
-	] )(
-		'shows error message for %p verification error',
-		async ( { response_code, errorMessage } ) => {
-			config.disable( 'automated-migration/application-password' );
-			const submit = jest.fn();
-			render( { navigation: { submit } } );
-
-			( wpcomRequest as jest.Mock ).mockRejectedValue( {
-				code: 'automated_migration_tools_login_and_get_cookies_test_failed',
-				data: {
-					response_code,
-				},
-			} );
-
-			await fillAllFields();
-			await userEvent.click( continueButton() );
-
-			await waitFor( () => {
-				expect( continueButton( /Continue anyways/ ) ).toBeVisible();
-				expect(
-					getByText(
-						'We could not verify your credentials. Can you double check your account information and try again?'
-					)
-				).toBeVisible();
-				expect( getByText( errorMessage ) ).toBeVisible();
-			} );
-		}
-	);
-
-	it( 'creates a credentials ticket even when the siteinfo request faces an error', async () => {
-		config.disable( 'automated-migration/application-password' );
-		const submit = jest.fn();
-		render( { navigation: { submit } } );
-		await fillAllFields();
-		await fillNoteField();
-
-		( wp.req.get as jest.Mock ).mockRejectedValue( {
-			code: 'rest_other_error',
-			message: 'Error message from backend',
-		} );
-
-		( wpcomRequest as jest.Mock ).mockResolvedValue( {
-			status: 200,
-			body: {},
-		} );
-
-		await userEvent.click( continueButton() );
-
-		expect( wpcomRequest ).toHaveBeenCalledWith( {
-			...requestPayload,
-			body: {
-				...requestPayload.body,
-				bypass_verification: false,
-			},
-		} );
-
-		await waitFor( () => {
-			expect( submit ).toHaveBeenCalledWith( { action: 'submit' } );
-		} );
-	} );
-
-	it( 'shows "Verifying credentials" on the Continue button during submission when fetching site info', async () => {
-		config.disable( 'automated-migration/application-password' );
-		const submit = jest.fn();
-		render( { navigation: { submit } } );
-		const pendingPromise = new Promise( () => {} );
-
-		( wpcomRequest as jest.Mock ).mockResolvedValue( {
-			status: 200,
-			body: {},
-		} );
-
-		( wp.req.get as jest.Mock ).mockImplementation( () => pendingPromise );
-
-		await fillAllFields();
-		await userEvent.click( continueButton() );
-
-		await waitFor( () => {
-			expect( continueButton( /Verifying credentials/ ) ).toBeVisible();
 		} );
 	} );
 
@@ -587,23 +245,6 @@ describe.skip( 'SiteMigrationCredentials', () => {
 
 		await waitFor( () => {
 			expect( continueButton( /Scanning site/ ) ).toBeVisible();
-		} );
-	} );
-
-	it( 'shows "Verifying credentials" on the Continue button during site info verification', async () => {
-		config.disable( 'automated-migration/application-password' );
-		const submit = jest.fn();
-		render( { navigation: { submit } } );
-		const pendingPromise = new Promise( () => {} );
-
-		await fillAllFields();
-
-		( wpcomRequest as jest.Mock ).mockImplementation( () => pendingPromise );
-
-		await userEvent.click( continueButton() );
-
-		await waitFor( () => {
-			expect( continueButton( /Verifying credentials/ ) ).toBeVisible();
 		} );
 	} );
 
