@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
 .partner-directory__dashboard {
 	.hosting-dashboard-layout__body-wrapper {
 		max-width: 700px;
@@ -15,16 +18,14 @@
 
 .partner-directory-dashboard__heading {
 	margin-block-start: 32px;
-	font-size: rem(24px);
+	@include heading-x-large;
 	margin-block-end: 8px;
-	font-weight: 600;
 }
 .partner-directory-dashboard__subtitle {
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
-	font-size: rem(14px);
-	font-weight: 400;
+	@include body-medium;
 	margin-block-end: 48px;
 	color: var(--color-neutral-50);
 }
@@ -113,7 +114,6 @@
 	}
 
 	.partner-directory-dashboard__popover-content-title {
-		font-size: rem(14px);
 		color: var(--color-accent-60);
 	}
 }
@@ -122,4 +122,10 @@
 	.components-popover__content {
 		padding: 16px;
 	}
+}
+
+.partner-directory-dashboard__button-container {
+	display: flex;
+	flex-direction: row;
+	gap: 8px;
 }

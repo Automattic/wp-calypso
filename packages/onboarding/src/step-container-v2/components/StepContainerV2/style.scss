@@ -1,10 +1,27 @@
-@import '../../../../styles/mixins';
+@import '../../mixins';
 
 .step-container-v2 {
+	--step-container-v2-top-bar-height: 56px;
+	--step-container-v2-sticky-bottom-bar-height: 72px;
+
+	--step-container-v2-content-block-padding: 2rem;
+	--step-container-v2-content-inline-padding: 1rem;
+
+	&.medium-viewport {
+		--step-container-v2-content-inline-padding: 3rem;
+	}
+
+	width: 100%;
 	min-height: 100vh;
 	margin: 0;
 	display: flex;
 	flex-direction: column;
+
+	&:has(.vertical-align-center) {
+		.step-container-v2__top-bar-wrapper {
+			z-index: 1;
+		}
+	}
 
 	&__content-wrapper {
 		flex: 1;
@@ -14,27 +31,21 @@
 		gap: 3rem;
 
 		&.padding {
-			padding: 2rem 1rem;
-
-			@include step-large-viewport {
-				padding: 3rem;
-			}
+			padding: var(--step-container-v2-content-block-padding) var(--step-container-v2-content-inline-padding);
 		}
 
 		&.vertical-align-center {
-			@include step-large-viewport {
-				position: absolute;
-				inset: 0;
-				width: 100%;
-				height: 100%;
-				padding-block: 1rem;
-				box-sizing: border-box;
-				justify-content: center;
-			}
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			padding-block: 1rem;
+			box-sizing: border-box;
+			justify-content: center;
 		}
 	}
 
-	&__content {
+	&__content, &__footer {
 		width: 100%;
 		box-sizing: border-box;
 

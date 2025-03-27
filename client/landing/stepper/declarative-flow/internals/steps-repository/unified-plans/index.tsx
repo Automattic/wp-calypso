@@ -6,6 +6,7 @@ import {
 	useStarterDesignBySlug,
 } from '@automattic/data-stores';
 import {
+	AI_SITE_BUILDER_FLOW,
 	EXAMPLE_FLOW,
 	isOnboardingFlow,
 	NEW_HOSTED_SITE_FLOW,
@@ -17,6 +18,7 @@ import { useDispatch, useSelect, useDispatch as useWPDispatch } from '@wordpress
 import { useState } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import Loading from 'calypso/components/loading';
+import { StepContainerV2Loading } from 'calypso/components/step-container-v2-loading';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
@@ -30,10 +32,11 @@ import { useSelector, useDispatch as useReduxDispatch } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { setActiveTheme } from 'calypso/state/themes/actions';
 import { getTheme, getThemeType } from 'calypso/state/themes/selectors';
+import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
 import UnifiedPlansStep from './unified-plans-step';
 import { getIntervalType } from './util';
-import type { ProvidedDependencies, StepProps } from '../../types';
+import type { ProvidedDependencies, Step } from '../../types';
 import type { PlansIntent } from '@automattic/plans-grid-next';
 
 import './style.scss';
@@ -58,7 +61,10 @@ function getPlansIntent( flowName: string | null, isWordCampPromo?: boolean ): P
 	}
 }
 
-export default function PlansStepAdaptor( props: StepProps ) {
+const PlansStepAdaptor: Step< {
+	// TODO: work on more specific types
+	submits: Record< string, unknown >;
+} > = ( props ) => {
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
 
@@ -127,10 +133,19 @@ export default function PlansStepAdaptor( props: StepProps ) {
 	const isWordCampPromo = new URLSearchParams( location.search ).has( 'utm_source', 'wordcamp' );
 	const plansIntent = getPlansIntent( props.flow, isWordCampPromo );
 
-	const hidePlanProps =
-		createWithBigSky && isGoalFirstExperiment
-			? getHidePlanPropsBasedOnCreateWithBigSky()
-			: getHidePlanPropsBasedOnThemeType( selectedThemeType || '' );
+	let hidePlanProps;
+	if ( createWithBigSky && isGoalFirstExperiment ) {
+		hidePlanProps = getHidePlanPropsBasedOnCreateWithBigSky();
+	} else if ( props.flow === AI_SITE_BUILDER_FLOW ) {
+		hidePlanProps = {
+			hideFreePlan: true,
+			hidePersonalPlan: true,
+			hideEcommercePlan: true,
+			hideEnterprisePlan: true,
+		};
+	} else {
+		hidePlanProps = getHidePlanPropsBasedOnThemeType( selectedThemeType || '' );
+	}
 
 	/**
 	 * The plans step has a quirk where it calls `submitSignupStep` then synchronously calls `goToNextStep` after it.
@@ -179,8 +194,10 @@ export default function PlansStepAdaptor( props: StepProps ) {
 	};
 	useQueryTheme( 'wpcom', selectedDesign?.slug );
 
+	const isUsingStepContainerV2 = shouldUseStepContainerV2( props.flow );
+
 	if ( isLoadingSelectedTheme ) {
-		return <Loading />;
+		return isUsingStepContainerV2 ? <StepContainerV2Loading /> : <Loading />;
 	}
 
 	return (
@@ -216,6 +233,9 @@ export default function PlansStepAdaptor( props: StepProps ) {
 				isExtraWideLayout: false,
 			} }
 			useStepperWrapper
+			useStepContainerV2={ isUsingStepContainerV2 }
 		/>
 	);
-}
+};
+
+export default PlansStepAdaptor;

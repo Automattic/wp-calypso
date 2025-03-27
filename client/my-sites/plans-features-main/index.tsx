@@ -28,6 +28,7 @@ import {
 	useGridPlansForFeaturesGrid,
 	useGridPlansForComparisonGrid,
 	useGridPlanForSpotlight,
+	usePlanBillingPeriod,
 } from '@automattic/plans-grid-next';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
@@ -70,15 +71,14 @@ import ComparisonGridToggle from './components/comparison-grid-toggle';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
 import PlansPageSubheader from './components/plans-page-subheader';
-import useLongerPlanTermDefaultExperiment from './hooks/experiments/use-longer-plan-term-default-experiment';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
 import useDefaultWpcomPlansIntent from './hooks/use-default-wpcom-plans-intent';
 import useEligibilityForTermSavingsPriceDisplay from './hooks/use-eligibility-for-term-savings-price-display';
 import useFilteredDisplayedIntervals from './hooks/use-filtered-displayed-intervals';
 import useGenerateActionHook from './hooks/use-generate-action-hook';
-import usePlanBillingPeriod from './hooks/use-plan-billing-period';
 import usePlanFromUpsells from './hooks/use-plan-from-upsells';
 import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
+import useSelectedFeature from './hooks/use-selected-feature';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
 import type {
 	PlansIntent,
@@ -101,6 +101,7 @@ const PlanComparisonHeader = styled.h1`
 export interface PlansFeaturesMainProps {
 	siteId?: number | null;
 	intent?: PlansIntent | null;
+	isInSiteDashboard?: boolean;
 	isInSignup?: boolean;
 	isCustomDomainAllowedOnFreePlan?: boolean;
 	plansWithScroll?: boolean;
@@ -210,6 +211,7 @@ const PlansFeaturesMain = ( {
 	intervalType = 'yearly',
 	hidePlansFeatureComparison = false,
 	hideUnavailableFeatures = false,
+	isInSiteDashboard = false,
 	isInSignup = false,
 	isCustomDomainAllowedOnFreePlan = false,
 	isStepperUpgradeFlow = false,
@@ -244,8 +246,6 @@ const PlansFeaturesMain = ( {
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
 	const getPlanTypeDestination = usePlanTypeDestinationCallback();
-
-	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment( flowName );
 
 	const { createWithBigSky } = useSelect(
 		( select ) => ( {
@@ -407,8 +407,10 @@ const PlansFeaturesMain = ( {
 		hideEnterprisePlan,
 	};
 
-	const enableTermSavingsPriceDisplay = useEligibilityForTermSavingsPriceDisplay( {
-		flowName: flowName,
+	const {
+		isEligibleForTermSavingsPriceDisplay: enableTermSavingsPriceDisplay,
+		isLoading: isLoadingemphasizeLongerTermSavingsExperiment,
+	} = useEligibilityForTermSavingsPriceDisplay( {
 		selectedPlan,
 		hiddenPlans,
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
@@ -417,7 +419,6 @@ const PlansFeaturesMain = ( {
 		displayedIntervals: filteredDisplayedIntervals,
 		coupon,
 		siteId,
-		isInSignup,
 	} );
 
 	// we need all the plans that are available to pick for comparison grid (these should extend into plans-ui data store selectors)
@@ -448,6 +449,7 @@ const PlansFeaturesMain = ( {
 		eligibleForFreeHostingTrial,
 		hasRedeemedDomainCredit: currentPlan?.hasRedeemedDomainCredit,
 		hiddenPlans,
+		hideCurrentPlan: isInSiteDashboard,
 		intent,
 		isDisplayingPlansNeededForFeature,
 		isInSignup,
@@ -591,10 +593,15 @@ const PlansFeaturesMain = ( {
 	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
 
 	/**
-	 * Calculates the height of the masterbar if it exists, and passes it to the component as an offset
+	 * Calculates the height of the masterbar if it overlaps, and passes it to the component as an offset
 	 * for the sticky CTA bar.
 	 */
 	useLayoutEffect( () => {
+		if ( isInSiteDashboard ) {
+			// The masterbar does not overlap with the site dashboard's scrollable content.
+			return;
+		}
+
 		const masterbarElement = document.querySelector< HTMLDivElement >( 'header.masterbar' );
 
 		if ( ! masterbarElement ) {
@@ -667,7 +674,7 @@ const PlansFeaturesMain = ( {
 			! defaultWpcomPlansIntent || // this may be unnecessary, but just in case
 			! gridPlansForFeaturesGrid ||
 			! gridPlansForComparisonGrid ||
-			longerPlanTermDefaultExperiment.isLoadingExperiment
+			isLoadingemphasizeLongerTermSavingsExperiment
 	);
 
 	const isPlansGridReady = ! isLoadingGridPlans && ! resolvedSubdomainName.isLoading;
@@ -753,6 +760,12 @@ const PlansFeaturesMain = ( {
 		</div>
 	);
 
+	const selectedFeatureData = useSelectedFeature( {
+		gridPlans: gridPlansForFeaturesGrid,
+		selectedPlan,
+		selectedFeature,
+	} );
+
 	return (
 		<>
 			<div className={ clsx( 'plans-features-main', 'is-pricing-grid-2023-plans-features-main' ) }>
@@ -806,6 +819,7 @@ const PlansFeaturesMain = ( {
 				<PlansPageSubheader
 					siteSlug={ siteSlug }
 					isDisplayingPlansNeededForFeature={ isDisplayingPlansNeededForFeature }
+					selectedFeature={ selectedFeatureData }
 					offeringFreePlan={ offeringFreePlan }
 					deemphasizeFreePlan={ deemphasizeFreePlan }
 					onFreePlanCTAClick={ onFreePlanCTAClick }
@@ -844,6 +858,7 @@ const PlansFeaturesMain = ( {
 										intent={ intent }
 										isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 										isInAdmin={ ! isInSignup }
+										isInSiteDashboard={ isInSiteDashboard }
 										isInSignup={ isInSignup }
 										onStorageAddOnClick={ handleStorageAddOnClick }
 										paidDomainName={ paidDomainName }
@@ -906,6 +921,7 @@ const PlansFeaturesMain = ( {
 													intent={ intent }
 													intervalType={ intervalType }
 													isInAdmin={ ! isInSignup }
+													isInSiteDashboard={ isInSiteDashboard }
 													isInSignup={ isInSignup }
 													onStorageAddOnClick={ handleStorageAddOnClick }
 													planTypeSelectorProps={

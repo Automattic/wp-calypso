@@ -1,3 +1,4 @@
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { Spinner } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -45,6 +46,8 @@ const sortByState = ( a: SitesWithWooPaymentsState, b: SitesWithWooPaymentsState
 const WooPaymentsDashboard = () => {
 	const translate = useTranslate();
 
+	const isDesktop = useDesktopBreakpoint();
+
 	const title = translate( 'WooPayments Commissions' );
 
 	const [ sitesWithPluginsStates, setSitesWithPluginsStates ] = useState<
@@ -89,12 +92,14 @@ const WooPaymentsDashboard = () => {
 	useEffect( () => {
 		if ( isInProgress ) {
 			setIsWooPaymentsDataLoading( true );
+		} else {
+			setIsWooPaymentsDataLoading( false );
 		}
 	}, [ isInProgress, sitesWithPluginsStates ] );
 
 	const createInitialSiteState = useCallback(
 		( license: License ) => {
-			const sitePlugin = sitesWithPlugins.find(
+			const sitePlugin = sitesWithPlugins?.find(
 				( site: SitesWithWooPaymentsPlugins ) => site.blog_id === license.blogId
 			);
 
@@ -108,7 +113,7 @@ const WooPaymentsDashboard = () => {
 	);
 
 	useEffect( () => {
-		if ( ! sitesWithPlugins?.length || ! licensesWithWooPayments?.items ) {
+		if ( ! licensesWithWooPayments?.items ) {
 			return;
 		}
 
@@ -120,7 +125,7 @@ const WooPaymentsDashboard = () => {
 	const sitesWithPluginsStatesSorted = useMemo( () => {
 		return sitesWithPluginsStates
 			.map( ( site ) => {
-				const connection = testConnections.find( ( connection ) => connection.ID === site.blogId );
+				const connection = testConnections?.find( ( connection ) => connection.ID === site.blogId );
 				return {
 					...site,
 					state: connection?.connected === false ? 'disconnected' : site.state,
@@ -143,7 +148,10 @@ const WooPaymentsDashboard = () => {
 
 	return (
 		<Layout
-			className={ clsx( 'woopayments-dashboard', { 'is-empty': showEmptyState } ) }
+			className={ clsx( 'woopayments-dashboard', {
+				'is-empty': showEmptyState,
+				'full-width-layout-with-table': ! showEmptyState && isDesktop && ! isLoading,
+			} ) }
 			title={ title }
 			wide
 		>

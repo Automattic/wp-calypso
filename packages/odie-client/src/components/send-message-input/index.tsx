@@ -41,11 +41,28 @@ const getPlaceholderAttachmentMessage = ( file: File ) => {
 	} );
 };
 
+const getTextAreaPlaceholder = (
+	shouldDisableInputField: boolean,
+	cantTransferToZendesk: boolean
+) => {
+	if ( cantTransferToZendesk ) {
+		return __( 'Oops, something went wrong', __i18n_text_domain__ );
+	}
+	return shouldDisableInputField
+		? __( 'Just a moment…', __i18n_text_domain__ )
+		: __( 'Type a message…', __i18n_text_domain__ );
+};
+
 export const OdieSendMessageButton = () => {
 	const divContainerRef = useRef< HTMLDivElement >( null );
 	const inputRef = useRef< HTMLTextAreaElement >( null );
 	const attachmentButtonRef = useRef< HTMLElement >( null );
-	const { trackEvent, chat, addMessage, isUserEligibleForPaidSupport } = useOdieAssistantContext();
+	const { trackEvent, chat, addMessage, isUserEligibleForPaidSupport, canConnectToZendesk } =
+		useOdieAssistantContext();
+	const cantTransferToZendesk =
+		( chat.messages?.[ chat.messages.length - 1 ]?.context?.flags?.forward_to_human_support &&
+			! canConnectToZendesk ) ??
+		false;
 	const sendMessage = useSendChatMessage();
 	const isChatBusy = chat.status === 'loading' || chat.status === 'sending';
 	const [ isMessageSizeValid, setIsMessageSizeValid ] = useState( true );
@@ -65,6 +82,8 @@ export const OdieSendMessageButton = () => {
 
 	const { isPending: isAttachingFile, mutateAsync: attachFileToConversation } =
 		useAttachFileToConversation();
+
+	const textAreaPlaceholder = getTextAreaPlaceholder( isChatBusy, cantTransferToZendesk );
 
 	const handleFileUpload = useCallback(
 		async ( file: File ) => {
@@ -189,13 +208,14 @@ export const OdieSendMessageButton = () => {
 					className="odie-send-message-input-container"
 				>
 					<ResizableTextarea
-						shouldDisableInputField={ isChatBusy || isAttachingFile }
+						shouldDisableInputField={ isChatBusy || isAttachingFile || cantTransferToZendesk }
 						sendMessageHandler={ sendMessageHandler }
 						className="odie-send-message-input"
 						inputRef={ inputRef }
 						setSubmitDisabled={ setSubmitDisabled }
 						keyUpHandle={ onKeyUp }
 						onPasteHandle={ onPaste }
+						placeholder={ textAreaPlaceholder }
 					/>
 					{ isChatBusy && <Spinner className="odie-send-message-input-spinner" /> }
 					{ showAttachmentButton && (

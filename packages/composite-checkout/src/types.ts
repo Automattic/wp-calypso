@@ -271,6 +271,8 @@ export type StepCompleteCallbackMap = Record< string, StepCompleteCallback >;
 
 export type SetStepComplete = ( stepId: string ) => Promise< boolean >;
 
+export type MakeStepActive = ( stepId: string ) => Promise< boolean >;
+
 export type CheckoutStepCompleteStatus = Record< string, boolean >;
 
 export interface CheckoutStepGroupStore {
@@ -291,6 +293,7 @@ export interface CheckoutStepGroupActions {
 	setActiveStepNumber: ( stepNumber: number ) => void;
 	setStepCompleteStatus: ( newStatus: CheckoutStepCompleteStatus ) => void;
 	setStepComplete: SetStepComplete;
+	makeStepActive: MakeStepActive;
 	getStepNumberFromId: ( stepId: string ) => number | undefined;
 	setStepCompleteCallback: (
 		stepNumber: number,

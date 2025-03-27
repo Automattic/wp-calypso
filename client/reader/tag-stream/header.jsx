@@ -22,7 +22,6 @@ class TagStreamHeader extends Component {
 		showFollow: PropTypes.bool,
 		following: PropTypes.bool,
 		onFollowToggle: PropTypes.func,
-		showBack: PropTypes.bool,
 		showSort: PropTypes.bool,
 		sort: PropTypes.string,
 	};
@@ -59,7 +58,6 @@ class TagStreamHeader extends Component {
 			showFollow,
 			following,
 			onFollowToggle,
-			showBack,
 			showSort,
 			translate,
 		} = this.props;
@@ -78,7 +76,6 @@ class TagStreamHeader extends Component {
 			'tag-stream__header': true,
 			'is-placeholder': isPlaceholder,
 			'has-description': isPromptTag || description,
-			'has-back-button': showBack,
 		} );
 
 		return (

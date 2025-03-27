@@ -17,6 +17,12 @@ jest.mock( '@automattic/calypso-products', () => ( {
 	isDIFMProduct: jest.fn( () => false ),
 } ) );
 
+jest.unmock( '@automattic/help-center/src/hooks' );
+jest.mock( '@automattic/help-center/src/hooks', () => ( {
+	...jest.requireActual( '@automattic/help-center/src/hooks' ),
+	useProductsWithPremiumSupport: jest.fn( () => false ),
+} ) );
+
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: () => null,
 } ) );
@@ -35,7 +41,6 @@ jest.mock( '../redesign-v2/pages/plan-only', () => () => (
 jest.mock( '../redesign-v2/pages/generic', () => () => (
 	<div data-testid="component--generic-thank-you" />
 ) );
-jest.mock( '@wordpress/api-fetch' );
 
 const translate = ( x ) => x;
 

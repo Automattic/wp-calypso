@@ -82,7 +82,7 @@
 	height: auto;
 	width: 100%;
 
-	&:hover:not(:disabled):not(.disabled) {
+	&:hover:not(.social-buttons__button):not(:disabled):not(.disabled) {
 		background-color: var(--p2-color-button-dark);
 		color: var(--p2-color-text);
 	}

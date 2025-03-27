@@ -10,7 +10,7 @@ import { useSelector } from 'calypso/state';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { JETPACK_SUPPORT_URL_TRAFFIC, SUPPORT_URL } from '../../../const';
+import { JETPACK_SUPPORT_URL_TRAFFIC, UTM_SUPPORT_URL } from '../../../const';
 import useUTMMetricsQuery from '../../../hooks/use-utm-metrics-query';
 import ErrorPanel from '../../../stats-error';
 import StatsListCard from '../../../stats-list/stats-list-card';
@@ -31,27 +31,6 @@ const OPTION_KEYS = {
 	MEDIUM: 'utm_medium',
 	CAMPAIGN: 'utm_campaign',
 };
-
-function generateFileNameForDownload( siteSlug, period ) {
-	// Build a filename for the CSV export button.
-	// The "format('L')" method can return strings that are not safe for the file system.
-	// While the "saveAs" function handles this, we do it here for correctness.
-	// We prefer '-' for word boundries, and '_' within words/dates.
-	// This allows text editing shortcuts to work properly.
-	//
-	// example output: jetpack.com-utm-day-03_20_2024-03_20_2024.csv
-	//
-	const newFileName =
-		[
-			siteSlug,
-			'utm',
-			period.period,
-			period.startOf.format( 'L' ),
-			period.endOf.format( 'L' ),
-		].join( '-' ) + '.csv';
-
-	return newFileName.replace( /\//g, '_' );
-}
 
 const StatsModuleUTM = ( {
 	path,
@@ -124,18 +103,13 @@ const StatsModuleUTM = ( {
 		}
 	};
 
-	const showFooterWithDownloads = summary === true;
-	const fileNameForExport = showFooterWithDownloads
-		? generateFileNameForDownload( siteSlug, period )
-		: '';
-
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
 
 	const supportUrl = isSiteJetpackNotAtomic
 		? localizeUrl( `${ JETPACK_SUPPORT_URL_TRAFFIC }#harnessing-utm-stats-for-precision-tracking` )
-		: localizeUrl( `${ SUPPORT_URL }#utm` );
+		: UTM_SUPPORT_URL;
 
 	const titleNodes = (
 		<StatsInfoArea isNew>
@@ -199,54 +173,48 @@ const StatsModuleUTM = ( {
 						) }
 					{ ! showLoader &&
 						!! data?.length && ( // show when new empty state is disabled or data is available
-							<>
-								<StatsListCard
-									className={ clsx( className, 'stats-module__card', path ) }
-									moduleType={ path }
-									data={ data }
-									useShortLabel={ useShortLabel }
-									title={ moduleStrings?.title }
-									titleNodes={ titleNodes }
-									emptyMessage={ <div>{ moduleStrings.empty }</div> }
-									metricLabel={ metricLabel }
-									showMore={
-										displaySummaryLink && ! summary
-											? {
-													url: getHref(),
-													label:
-														data.length >= 10
-															? translate( 'View all', {
-																	context:
-																		'Stats: Button link to show more detailed stats information',
-															  } )
-															: translate( 'View details', {
-																	context:
-																		'Stats: Button label to see the detailed content of a panel',
-															  } ),
-											  }
-											: undefined
-									}
-									error={ hasError && <ErrorPanel /> }
-									splitHeader
-									mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
-									toggleControl={
-										<div className="stats-module__extended-toggle">
-											<UTMBuilder />
-											<UTMDropdown
-												buttonLabel={ optionLabels[ selectedOption ].selectLabel }
-												onSelect={ setSelectedOption }
-												selectOptions={ optionLabels }
-												selected={ selectedOption }
-											/>
-										</div>
-									}
-								/>
-								{ showFooterWithDownloads && (
-									<div className="stats-module__footer-actions stats-module__footer-actions--summary">
-										<UTMExportButton data={ data } fileName={ fileNameForExport } />
+							<StatsListCard
+								className={ clsx( className, 'stats-module__card', path ) }
+								moduleType={ path }
+								data={ data }
+								useShortLabel={ useShortLabel }
+								title={ moduleStrings?.title }
+								titleNodes={ titleNodes }
+								emptyMessage={ <div>{ moduleStrings.empty }</div> }
+								metricLabel={ metricLabel }
+								downloadCsv={ <UTMExportButton data={ data } path={ path } period={ period } /> }
+								showMore={
+									displaySummaryLink && ! summary
+										? {
+												url: getHref(),
+												label:
+													data.length >= 10
+														? translate( 'View all', {
+																context:
+																	'Stats: Button link to show more detailed stats information',
+														  } )
+														: translate( 'View details', {
+																context:
+																	'Stats: Button label to see the detailed content of a panel',
+														  } ),
+										  }
+										: undefined
+								}
+								error={ hasError && <ErrorPanel /> }
+								splitHeader
+								mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
+								toggleControl={
+									<div className="stats-module__extended-toggle">
+										<UTMBuilder />
+										<UTMDropdown
+											buttonLabel={ optionLabels[ selectedOption ].selectLabel }
+											onSelect={ setSelectedOption }
+											selectOptions={ optionLabels }
+											selected={ selectedOption }
+										/>
 									</div>
-								) }
-							</>
+								}
+							/>
 						) }
 				</>
 			) }
@@ -260,6 +228,7 @@ const StatsModuleUTM = ( {
 						title={ moduleStrings?.title }
 						emptyMessage={ <div>{ moduleStrings.empty }</div> }
 						metricLabel={ metricLabel }
+						downloadCsv={ <UTMExportButton data={ data } path={ path } period={ period } /> }
 						showMore={
 							displaySummaryLink && ! summary
 								? {
@@ -291,11 +260,6 @@ const StatsModuleUTM = ( {
 							</div>
 						}
 					/>
-					{ showFooterWithDownloads && (
-						<div className="stats-module__footer-actions stats-module__footer-actions--summary">
-							<UTMExportButton data={ data } fileName={ fileNameForExport } />
-						</div>
-					) }
 				</>
 			) }
 		</>

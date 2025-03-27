@@ -22,7 +22,8 @@ import {
 	getThemeIdFromDesign,
 } from '@automattic/design-picker';
 import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
-import { StepContainer, ONBOARDING_FLOW, isSiteSetupFlow } from '@automattic/onboarding';
+import { StepContainer, ONBOARDING_FLOW, isSiteSetupFlow, Step } from '@automattic/onboarding';
+import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -34,6 +35,7 @@ import { useQueryThemes } from 'calypso/components/data/query-themes';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Loading from 'calypso/components/loading';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
+import { StepContainerV2Loading } from 'calypso/components/step-container-v2-loading';
 import {
 	THEME_TIERS,
 	THEME_TIER_PREMIUM,
@@ -45,7 +47,6 @@ import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query'
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useExperiment } from 'calypso/lib/explat';
-import { navigate } from 'calypso/lib/navigate';
 import { urlToSlug } from 'calypso/lib/url';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
@@ -63,12 +64,12 @@ import { useQuery } from '../../../../hooks/use-query';
 import { useSiteData } from '../../../../hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { goToCheckout } from '../../../../utils/checkout';
+import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
 import {
 	getDesignEventProps,
 	recordPreviewedDesign,
 	recordSelectedDesign,
-	getVirtualDesignProps,
 } from '../../analytics/record-design';
 import { getCategorizationOptions } from './categories';
 import { STEP_NAME } from './constants';
@@ -77,7 +78,7 @@ import { EligibilityWarningsModal } from './eligibility-warnings-modal';
 import useIsUpdatedBadgeDesign from './hooks/use-is-updated-badge-design';
 import useRecipe from './hooks/use-recipe';
 import useTrackFilters from './hooks/use-track-filters';
-import type { Step, ProvidedDependencies } from '../../types';
+import type { Step as StepType } from '../../types';
 import type { OnboardSelect, SiteSelect, GlobalStyles } from '@automattic/data-stores';
 import type { Design, StyleVariation } from '@automattic/design-picker';
 import type { GlobalStylesObject } from '@automattic/global-styles';
@@ -88,7 +89,17 @@ const SiteIntent = Onboard.SiteIntent;
 const EMPTY_ARRAY: Design[] = [];
 const EMPTY_OBJECT = {};
 
-const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
+const UnifiedDesignPickerStep: StepType< {
+	submits: {
+		selectedDesign?: Design;
+		eventProps: {
+			is_filter_included_with_plan_enabled: boolean;
+			is_big_sky_eligible: boolean;
+			preselected_filters: string;
+			selected_filters: string;
+		};
+	};
+} > = ( { navigation, flow, stepName } ) => {
 	// imageOptimizationExperimentAssignment, exerimentAssignment
 	const [ isLoadingExperiment, experimentAssignment ] = useExperiment(
 		'calypso_design_picker_image_optimization_202406'
@@ -146,6 +157,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	);
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const isComingFromTheUpgradeScreen = queryParams.get( 'continue' ) === '1';
+	const isComingFromSuccessfulImport = queryParams.get( 'comingFromSuccessfulImport' ) === '1';
 
 	const isPremiumThemeAvailable = Boolean(
 		useSelect(
@@ -255,13 +267,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			'calypso_signup_design_preview_style_variation_preview_click',
 			getEventPropsByDesign( design, { styleVariation } )
 		);
-	}
-
-	function onChangeVariation( design: Design, styleVariation?: StyleVariation ) {
-		recordTracksEvent( 'calypso_signup_design_picker_style_variation_button_click', {
-			...getEventPropsByDesign( design, { styleVariation } ),
-			...getVirtualDesignProps( design ),
-		} );
 	}
 
 	function trackAllDesignsView() {
@@ -525,7 +530,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	}
 
 	const handleSubmit = useCallback(
-		( providedDependencies?: ProvidedDependencies, optionalProps?: object ) => {
+		(
+			providedDependencies?: { selectedDesign?: Design; selectedSiteCategory?: string },
+			optionalProps?: object
+		) => {
 			const _selectedDesign = providedDependencies?.selectedDesign as Design;
 			recordSelectedDesign( {
 				...commonFilterProperties,
@@ -689,6 +697,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		return shouldUnlockGlobalStyles ? unlockPremiumGlobalStyles : () => pickDesign();
 	}
 
+	const isUsingStepContainerV2 = shouldUseStepContainerV2( flow );
+	const isDesktopVersion = useViewportMatch( 'large', '>=' );
+
 	function getPrimaryActionButton() {
 		const action = getPrimaryActionButtonAction();
 		const text =
@@ -696,11 +707,15 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				? translate( 'Unlock theme' )
 				: translate( 'Continue' );
 
-		return (
-			<Button className="navigation-link" primary borderless={ false } onClick={ action }>
-				{ text }
-			</Button>
-		);
+		if ( ! isUsingStepContainerV2 ) {
+			return (
+				<Button className="navigation-link" primary borderless={ false } onClick={ action }>
+					{ text }
+				</Button>
+			);
+		}
+
+		return <Step.NextButton label={ text } onClick={ action } />;
 	}
 
 	useEffect( () => {
@@ -717,7 +732,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const isLoading = isSiteLoading || isDesignsLoading;
 
 	if ( isLoading || isComingFromTheUpgradeScreen ) {
-		return <Loading />;
+		return isUsingStepContainerV2 ? <StepContainerV2Loading /> : <Loading />;
 	}
 
 	if ( selectedDesign && isPreviewingDesign ) {
@@ -738,12 +753,20 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			site_tagline: shouldCustomizeText ? siteDescription : undefined,
 		} );
 
-		const actionButtons = (
-			<>
-				<div className="action-buttons__title">{ headerDesignTitle }</div>
-				<div>{ getPrimaryActionButton() }</div>
-			</>
-		);
+		const getActionButtons = () => {
+			if ( ! isUsingStepContainerV2 ) {
+				return (
+					<>
+						<div className="action-buttons__title">{ headerDesignTitle }</div>
+						<div>{ getPrimaryActionButton() }</div>
+					</>
+				);
+			}
+
+			return getPrimaryActionButton();
+		};
+
+		const actionButtons = getActionButtons();
 
 		const stepContent = (
 			<>
@@ -835,6 +858,47 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			</>
 		);
 
+		if ( isUsingStepContainerV2 ) {
+			// TODO: Create a new wireframe for the design preview. It should be named "FixedColumnOnTheLeftLayout"
+			return (
+				<Step.FullWidthLayout
+					isMediumViewport={ isDesktopVersion }
+					className="step-container-v2--design-picker-preview"
+					topBar={
+						isDesktopVersion ? (
+							<Step.TopBar
+								backButton={
+									shouldHideActionButtons ? undefined : (
+										<Step.BackButton onClick={ handleBackClick } />
+									)
+								}
+								skipButton={
+									! isGoalsAtFrontExperiment ? undefined : (
+										<Step.SkipButton
+											onClick={ () => handleSubmit() }
+											label={ translate( 'Skip setup' ) }
+										/>
+									)
+								}
+							/>
+						) : undefined
+					}
+					stickyBottomBar={
+						<Step.StickyBottomBar
+							leftButton={ <Step.BackButton onClick={ handleBackClick } /> }
+							rightButton={ actionButtons }
+						>
+							<div className="step-container-v2--design-picker-preview__header-design-title">
+								{ headerDesignTitle }
+							</div>
+						</Step.StickyBottomBar>
+					}
+				>
+					{ stepContent }
+				</Step.FullWidthLayout>
+			);
+		}
+
 		return (
 			<StepContainer
 				stepName={ STEP_NAME }
@@ -851,24 +915,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		);
 	}
 
-	const heading = (
-		<FormattedHeader
-			id="step-header"
-			headerText={
-				hasEnTranslation( 'Pick a theme' )
-					? translate( 'Pick a theme' )
-					: translate( 'Pick a design' )
-			}
-			subHeaderText={ translate(
-				'One of these homepage options could be great to start with. You can always change later.'
-			) }
-		/>
-	);
+	const headerText = hasEnTranslation( 'Pick a theme' )
+		? translate( 'Pick a theme' )
+		: translate( 'Pick a design' );
 
-	function onDesignWithAI() {
-		recordTracksEvent( 'calypso_design_picker_big_sky_button_click', commonFilterProperties );
-		navigate( `/setup/site-setup/launch-big-sky?siteSlug=${ siteSlug }&siteId=${ site?.ID }` );
-	}
+	const subHeaderText = translate(
+		'One of these homepage options could be great to start with. You can always change later.'
+	);
 
 	// Use this to prioritize themes in certain categories.
 	// The specified theme will be shown first in the list.
@@ -882,14 +935,19 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				designs={ designs }
 				priorityThemes={ priorityThemes }
 				locale={ locale }
-				onDesignWithAI={ onDesignWithAI }
 				onPreview={ previewDesign }
-				onChangeVariation={ onChangeVariation }
 				onViewAllDesigns={ trackAllDesignsView }
-				heading={ heading }
+				heading={
+					! isUsingStepContainerV2 ? (
+						<FormattedHeader
+							id="step-header"
+							headerText={ headerText }
+							subHeaderText={ subHeaderText }
+						/>
+					) : undefined
+				}
 				categorization={ categorization }
 				isPremiumThemeAvailable={ isPremiumThemeAvailable }
-				shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 				// TODO: Update the ThemeCard component once the new design is rolled out completely
 				// to avoid passing the getBadge and getOptionsMenu prop conditionally down the component tree.
 				getBadge={ isUpdatedBadgeDesign ? undefined : getBadge }
@@ -907,19 +965,58 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		</>
 	);
 
+	const getGoBackHandler = () => {
+		if ( isComingFromSuccessfulImport ) {
+			return undefined;
+		}
+		return intent === 'update-design'
+			? () =>
+					submit?.( {
+						eventProps: commonFilterProperties,
+					} )
+			: () => handleBackClick();
+	};
+
+	const backButton = getGoBackHandler();
+	const hideSkip = ! isGoalsAtFrontExperiment && ! isComingFromSuccessfulImport;
+	const skipLabelText = isComingFromSuccessfulImport
+		? translate( 'Skip to dashboard' )
+		: translate( 'Skip setup' );
+
+	if ( isUsingStepContainerV2 ) {
+		return (
+			<Step.WideLayout
+				className="step-container-v2--design-picker"
+				topBar={
+					<Step.TopBar
+						backButton={ backButton ? <Step.BackButton onClick={ backButton } /> : undefined }
+						skipButton={
+							hideSkip ? undefined : (
+								<Step.SkipButton onClick={ () => handleSubmit() } label={ skipLabelText } />
+							)
+						}
+					/>
+				}
+				heading={ <Step.Heading text={ headerText } subText={ subHeaderText } /> }
+			>
+				{ stepContent }
+			</Step.WideLayout>
+		);
+	}
+
 	return (
 		<StepContainer
 			stepName={ STEP_NAME }
 			className="unified-design-picker__has-categories"
 			skipButtonAlign="top"
 			hideFormattedHeader
-			hideSkip={ ! isGoalsAtFrontExperiment }
-			skipLabelText={ translate( 'Skip setup' ) }
+			hideSkip={ hideSkip }
+			skipLabelText={ skipLabelText }
 			backLabelText={ translate( 'Back' ) }
 			stepContent={ stepContent }
 			recordTracksEvent={ recordStepContainerTracksEvent }
 			goNext={ handleSubmit }
-			goBack={ intent === 'update-design' ? submit : handleBackClick }
+			goBack={ backButton }
 		/>
 	);
 };

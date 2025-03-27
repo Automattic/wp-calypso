@@ -11,8 +11,8 @@ import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin'
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import { HOW_TO_MIGRATE_OPTIONS } from '../../constants';
 import { goToCheckout } from '../../utils/checkout';
+import siteMigrationFlow from '../flows/site-migration-flow/site-migration-flow';
 import { STEPS } from '../internals/steps';
-import siteMigrationFlow from '../site-migration-flow';
 import { getAssertionConditionResult, renderFlow, runFlowNavigation } from './helpers';
 // we need to save the original object for later to not affect tests from other files
 const originalLocation = window.location;
@@ -199,8 +199,6 @@ describe( 'Site Migration Flow', () => {
 				expect( destination ).toMatchDestination( {
 					step: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
 					query: {
-						sessionId: '123',
-						siteSlug: 'example.wordpress.com',
 						siteId: 123,
 					},
 				} );
@@ -313,6 +311,27 @@ describe( 'Site Migration Flow', () => {
 							siteSlug: 'example.wordpress.com',
 							siteId: 123,
 						},
+					} );
+				} );
+
+				it( 'redirects back to the importer list when the entry point is wp-admin-importers-list', () => {
+					jest.mocked( useFlowState ).mockReturnValue( {
+						get: jest.fn().mockReturnValue( { entryPoint: 'wp-admin-importers-list' } ),
+						set: jest.fn(),
+						sessionId: '123',
+					} );
+
+					runNavigationBack( {
+						from: STEPS.SITE_MIGRATION_IDENTIFY,
+						dependencies: {},
+						query: {
+							siteSlug: 'example.wordpress.com',
+							siteId: 123,
+						},
+					} );
+
+					expect( window.location.assign ).toMatchURL( {
+						path: 'https://example.wpcomstaging.com/wp-admin/import.php',
 					} );
 				} );
 			} );
@@ -465,7 +484,6 @@ describe( 'Site Migration Flow', () => {
 				expect( destination ).toMatchDestination( {
 					step: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
 					query: {
-						sessionId: '123',
 						siteSlug: 'example.wordpress.com',
 						siteId: 123,
 					},
@@ -632,11 +650,29 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'SITE_MIGRATION_INSTRUCTIONS', () => {
-			it( 'redirects to SITE_MIGRATION_STARTED step when the migration has started', () => {
+			it( 'redirects to site overview when the migration has started', () => {
+				runNavigation( {
+					from: STEPS.SITE_MIGRATION_INSTRUCTIONS,
+					query: {
+						siteSlug: 'example.wordpress.com',
+						siteId: 123,
+						from: 'https://site-to-be-migrated.com',
+					},
+				} );
+
+				expect( window.location.assign ).toMatchURL( {
+					path: '/overview/example.wordpress.com',
+					query: {
+						ref: 'site-migration',
+					},
+				} );
+			} );
+
+			it( 'redirects to SITE_MIGRATION_CREDENTIALS step when the user decides to ask for an assisted migration', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_INSTRUCTIONS,
 					dependencies: {
-						destination: 'migration-started',
+						how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
 					},
 					query: {
 						siteSlug: 'example.wordpress.com',
@@ -646,7 +682,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 
 				expect( destination ).toMatchDestination( {
-					step: STEPS.SITE_MIGRATION_STARTED,
+					step: STEPS.SITE_MIGRATION_CREDENTIALS,
 					query: {
 						siteSlug: 'example.wordpress.com',
 						siteId: 123,

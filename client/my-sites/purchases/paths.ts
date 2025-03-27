@@ -3,6 +3,11 @@ export const getManagePurchaseUrlFor = (
 	targetPurchaseId: string | number
 ): string => `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchaseId }`;
 
+export const getMyPurchaseUrlFor = (
+	targetSiteSlug: string,
+	targetPurchaseId: string | number
+): string => `/me/purchases/${ targetSiteSlug }/${ targetPurchaseId }`;
+
 export const getConfirmCancelDomainUrlFor = (
 	targetSiteSlug: string,
 	targetPurchaseId: string | number
@@ -13,6 +18,11 @@ export const getCancelPurchaseUrlFor = (
 	targetSiteSlug: string,
 	targetPurchaseId: string | number
 ): string => `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchaseId }/cancel`;
+
+export const getDowngradeUrlFor = (
+	targetSiteSlug: string,
+	targetPurchaseId: string | number
+): string => `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchaseId }/downgrade`;
 
 export const getPurchaseListUrlFor = ( targetSiteSlug: string ): string =>
 	`/purchases/subscriptions/${ targetSiteSlug }`;

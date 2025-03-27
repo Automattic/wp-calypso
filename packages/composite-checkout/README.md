@@ -147,6 +147,7 @@ This component's props are:
 - `isCompleteCallback: () => boolean | Promise<boolean>`. Used to determine if a step is complete for purposes of validation. Note that this is not called for the last step!
 - `editButtonAriaLabel?: string`. Used to fill in the `aria-label` attribute for the "Edit" button if one exists.
 - `nextStepButtonAriaLabel?: string`. Used to fill in the `aria-label` attribute for the "Continue" button if one exists.
+- `canEditStep?: boolean`. If false, the step will never show an "Edit" button. Defaults to true.
 - `editButtonText?: string`. Used in place of "Edit" on the edit step button.
 - `nextStepButtonText?: string`. Used in place of "Continue" on the next step button.
 - `validatingButtonText?: string`. Used in place of "Please wait…" on the next step button when `isCompleteCallback` returns an unresolved Promise.
@@ -287,6 +288,10 @@ A React Hook that returns all the payment processor functions in a Record.
 ### useProcessPayment
 
 A React Hook that will return the `onClick` function passed to each [payment method's submitButton component](#payment-methods). The hook requires a payment processor ID. Call the returned function with data for the payment processor and it will begin the transaction.
+
+### useMakeStepActive
+
+A React Hook that will return a function to set a step to be the active step. Only works within a step. The returned function looks like `( stepId: string ) => Promise< boolean >;`. Calling this function is similar to pressing the "Edit" button on the specified step. Note that this is risky! It will make the previous active step inactive, but **will not complete** that step, so if the previous step has any `isCompleteCallback` behavior, that behavior will not be triggered. It will also ignore the `canEditStep` prop of `CheckoutStep`.
 
 ### useSetStepComplete
 

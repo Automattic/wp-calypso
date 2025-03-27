@@ -29,8 +29,9 @@ const selectors = {
 	categoryCheckbox: ( categoryName: string ) =>
 		`${ panel } div[aria-label=Categories] label:text("${ categoryName }")`,
 
-	// Tag
-	tagInput: `${ panel } .components-form-token-field:has-text("Add New Tag") input`,
+	// Add tag.
+	// String was changed for WP 6.8, so we need both for a bit: https://core.trac.wordpress.org/changeset/59784
+	tagInput: `${ panel } .components-form-token-field:is(:has-text("Add New Tag"),:has-text("Add Tag")) input`,
 	addedTag: ( tag: string ) =>
 		`${ panel } .components-form-token-field__token-text:has-text("${ tag }")`,
 };

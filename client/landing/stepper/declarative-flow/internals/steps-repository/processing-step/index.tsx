@@ -13,6 +13,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
+import { StepContainerV2Loading } from 'calypso/components/step-container-v2-loading';
 import availableFlows from 'calypso/landing/stepper/declarative-flow/registered-flows';
 import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
@@ -21,15 +22,34 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useInterval } from 'calypso/lib/interval';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import useCaptureFlowException from '../../../../hooks/use-capture-flow-exception';
+import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { ProcessingResult } from './constants';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
 import HundredYearPlanFlowProcessingScreen from './hundred-year-plan-flow-processing-screen';
 import TailoredFlowPreCheckoutScreen from './tailored-flow-precheckout-screen';
 import type { StepProps } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
+import type { SiteIntent } from '@automattic/data-stores/src/onboard';
 import './style.scss';
 
-interface ProcessingStepProps extends StepProps {
+interface ProcessingStepProps
+	extends StepProps< {
+		submits:
+			| {
+					destination: string;
+					processingResult?: ProcessingResult;
+			  }
+			| {
+					processingResult?: ProcessingResult.FAILURE | ProcessingResult.NO_ACTION;
+			  }
+			| {
+					processingResult?: ProcessingResult.SUCCESS;
+					path?: string;
+					intent?: SiteIntent;
+					previousStep?: string;
+					nextStep?: string;
+			  };
+	} > {
 	title?: string;
 	subtitle?: string;
 }
@@ -200,6 +220,15 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 		props.variantSlug === HUNDRED_YEAR_DOMAIN_TRANSFER
 	) {
 		return <HundredYearPlanFlowProcessingScreen />;
+	}
+
+	if ( shouldUseStepContainerV2( flow ) ) {
+		return (
+			<>
+				<DocumentHead title={ __( 'Processing' ) } />
+				<StepContainerV2Loading title={ getCurrentMessage() } progress={ progress } />
+			</>
+		);
 	}
 
 	return (

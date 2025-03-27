@@ -120,12 +120,15 @@
 			width: 24px;
 			height: 24px;
 			max-width: fit-content;
+			color: currentColor;
 		}
 	}
 
 	.sites-add-new-site__popover-button-heading {
 		font-size: rem(14px);
 		font-weight: 600;
+		text-wrap: balance; /* Fallback for browsers that don't support pretty. */
+		text-wrap: pretty;
 	}
 
 	.sites-add-new-site__popover-button-description {
@@ -133,6 +136,8 @@
 		font-weight: 400;
 		color: var(--color-text-black);
 		padding-top: 4px;
+		text-wrap: balance; /* Fallback for browsers that don't support pretty. */
+		text-wrap: pretty;
 	}
 }
 

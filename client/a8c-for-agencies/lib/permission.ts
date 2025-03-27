@@ -110,6 +110,7 @@ const MEMBER_ACCESSIBLE_DYNAMIC_PATHS: Record< string, string[] > = {
 	marketplace: [ 'a4a_read_marketplace' ],
 	licenses: [ 'a4a_jetpack_licensing' ],
 	plugins: [ 'a4a_read_managed_sites' ],
+	referrals: [ 'a4a_read_referrals' ],
 };
 
 const DYNAMIC_PATH_PATTERNS: Record< string, RegExp > = {
@@ -118,6 +119,7 @@ const DYNAMIC_PATH_PATTERNS: Record< string, RegExp > = {
 	licenses: /^\/purchases\/licenses(\/.*)?$/,
 	team: /^\/team(\/.*)?$/,
 	plugins: /^\/plugins(\/.*)?$/,
+	referrals: /^\/referrals(\/.*)?$/,
 };
 
 export const isPathAllowed = ( pathname: string, agency: Agency | null ) => {
