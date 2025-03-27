@@ -30,14 +30,6 @@ export const PlaygroundSetupStep: Step< {
 	const siteSlug = getQueryArg( window.location.href, 'siteSlug' )?.toString();
 	const siteId = parseInt( getQueryArg( window.location.href, 'siteId' )?.toString() ?? '0' );
 
-	const shouldHideBackButton = () => {
-		return true;
-	};
-
-	const shouldHideSkip = () => {
-		return true;
-	};
-
 	const startImport = async ( client: PlaygroundClient ) => {
 		if ( ! client ) {
 			return;
@@ -70,11 +62,7 @@ export const PlaygroundSetupStep: Step< {
 	return (
 		<>
 			<DocumentHead title={ __( 'Playground Setup' ) } />
-			<StepWrapper
-				hideBack={ shouldHideBackButton() }
-				hideSkip={ shouldHideSkip() }
-				stepContent={ getStepContent() }
-			/>
+			<StepWrapper hideBack hideSkip stepContent={ getStepContent() } />
 		</>
 	);
 };

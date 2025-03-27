@@ -18,14 +18,6 @@ export const PlaygroundStep: Step = ( { navigation } ) => {
 	const playgroundClientRef = useRef< PlaygroundClient | null >( null );
 	const { __ } = useI18n();
 
-	const shouldHideBackButton = () => {
-		return true;
-	};
-
-	const shouldHideSkip = () => {
-		return true;
-	};
-
 	const setPlaygroundClient = ( client: PlaygroundClient ) => {
 		playgroundClientRef.current = client;
 	};
@@ -41,8 +33,8 @@ export const PlaygroundStep: Step = ( { navigation } ) => {
 		<>
 			<DocumentHead title={ __( 'Playground' ) } />
 			<StepWrapper
-				hideBack={ shouldHideBackButton() }
-				hideSkip={ shouldHideSkip() }
+				hideBack
+				hideSkip
 				customizedActionButtons={
 					<Button
 						variant="primary"
