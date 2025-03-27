@@ -394,7 +394,6 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 			} );
 
 			return redirectJetpackDirectAuthError( context, next, {
-				code: null,
 				redirect_to: state.redirect_to,
 			} );
 		}
@@ -408,7 +407,6 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 		} );
 
 		return redirectJetpackDirectAuthError( context, next, {
-			code: null,
 			redirect_to: state.redirect_to,
 		} );
 	}
