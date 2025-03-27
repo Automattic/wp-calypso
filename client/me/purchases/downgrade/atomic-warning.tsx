@@ -66,7 +66,6 @@ export function AtomicWarning( {
 					<Button
 						isBusy={ isDowngrading }
 						variant="primary"
-						isDestructive
 						onClick={ () => handleDowngrade( enableLosslessRevert ) }
 						disabled={ ! atomicRevertCheckOne || ! atomicRevertCheckTwo }
 					>

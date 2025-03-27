@@ -246,12 +246,7 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 					<DowngradeFeatureList features={ features } purchase={ purchase } />
 
 					<div className="downgrade__confirm-buttons">
-						<Button
-							variant="primary"
-							isDestructive
-							isBusy={ isDowngrading }
-							onClick={ checkAtomicAndDowngrade }
-						>
+						<Button variant="primary" isBusy={ isDowngrading } onClick={ checkAtomicAndDowngrade }>
 							{ translate( 'Downgrade to %(targetPlan)s', {
 								args: { targetPlan: targetPlan?.getTitle() ?? '' },
 							} ) }
