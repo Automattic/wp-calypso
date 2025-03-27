@@ -69,7 +69,11 @@ describe( 'MigrationOverview', () => {
 
 			const { getByText } = renderWithProvider( <MigrationOverview site={ site } /> );
 
-			expect( getByText( /Complete your migration in the/ ) ).toBeVisible();
+			expect(
+				getByText(
+					/Get ready for unmatched WordPress hosting. Use your migration key to complete your migration in the/
+				)
+			).toBeVisible();
 		} );
 
 		it( 'shows a link to the instructions page', () => {

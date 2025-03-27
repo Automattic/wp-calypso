@@ -90,10 +90,10 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 	const subTitle =
 		'diy' === migrationType
 			? translate(
-					'Complete your migration in the {{strong}}Migrate to WordPress.com{{/strong}} plugin and get ready for unmatched WordPress hosting.',
+					'Get ready for unmatched WordPress hosting. Use your migration key to complete your migration in the {{em}}Migrate to WordPress.com{{/em}} plugin.',
 					{
 						components: {
-							strong: <strong />,
+							em: <em />,
 						},
 					}
 			  )
