@@ -484,7 +484,7 @@ class ReaderStream extends Component {
 	};
 
 	fetchNextPage = ( options, props = this.props ) => {
-		if ( this.props.disableInfiniteScroll && this.props.items.length > 4 ) {
+		if ( this.props.disableInfiniteScroll && this.props.items.length > 10 ) {
 			return;
 		}
 
