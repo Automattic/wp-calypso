@@ -30,7 +30,7 @@
 
 	&:has( .step-container-v2__content-wrapper--aligned-center ),
 	&:has( .step-container-v2__content-wrapper--aligned-center-on-small ) {
-		.step-container-v2__top-bar-wrapper {
+		.step-container-v2__top-bar {
 			z-index: 1;
 		}
 	}
