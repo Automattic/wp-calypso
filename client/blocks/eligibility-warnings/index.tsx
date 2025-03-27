@@ -46,7 +46,7 @@ interface ExternalProps {
 	siteId?: number | null;
 	isEligible?: boolean;
 	backUrl?: string;
-	onClose?: () => void;
+	onDismiss?: () => void;
 	onProceed: ( options: { geo_affinity?: string } ) => void;
 	standaloneProceed: boolean;
 	className?: string;
@@ -70,7 +70,7 @@ export const EligibilityWarnings = ( {
 	isEligible,
 	isMarketplace,
 	isPlaceholder,
-	onClose,
+	onDismiss,
 	onProceed,
 	standaloneProceed,
 	recordUpgradeClick,
@@ -255,7 +255,7 @@ export const EligibilityWarnings = ( {
 				<div className="eligibility-warnings__confirm-buttons">
 					<SupportLink
 						shouldUseHelpAssistant={ context === 'plugin-details' }
-						onShowHelpAssistant={ onClose }
+						onShowHelpAssistant={ onDismiss }
 					/>
 					<Button
 						primary
