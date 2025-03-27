@@ -1,7 +1,7 @@
 import { zipWpContent, type PlaygroundClient } from '@wp-playground/client';
 import { uploadExportFile } from 'calypso/state/imports/actions';
 
-export async function getSiteZip( playground: PlaygroundClient ): Promise< File > {
+export async function getSiteZip( playground: PlaygroundClient ) {
 	const zipBytes = await zipWpContent( playground, {
 		selfContained: true,
 	} );
