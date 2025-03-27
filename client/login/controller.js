@@ -226,6 +226,10 @@ export async function jetpackGoogleAuth( context, next ) {
 	} ) }`;
 
 	try {
+		if ( isUserLoggedIn( context.store.getState() ) ) {
+			await context.store.dispatch( logoutUser() );
+		}
+
 		// Get authorization nonce for security
 		const response = await wpcomRequest( {
 			path: '/generate-authorization-nonce',
@@ -252,10 +256,6 @@ export async function jetpackGoogleAuth( context, next ) {
 			if ( ! window?.google?.accounts?.oauth2 ) {
 				throw new Error( 'Failed to load Google Identity Services API' );
 			}
-		}
-
-		if ( isUserLoggedIn( context.store.getState() ) ) {
-			await context.store.dispatch( logoutUser() );
 		}
 
 		// Initialize and request authorization code
@@ -425,6 +425,10 @@ export async function jetpackAppleAuth( context, next ) {
 	} ) }`;
 
 	try {
+		if ( isUserLoggedIn( context.store.getState() ) ) {
+			await context.store.dispatch( logoutUser() );
+		}
+
 		// Get authorization nonce for security
 		const response = await wpcomRequest( {
 			path: '/generate-authorization-nonce',
@@ -453,10 +457,6 @@ export async function jetpackAppleAuth( context, next ) {
 			if ( ! window.AppleID ) {
 				throw new Error( 'Failed to load Apple Authentication Services API' );
 			}
-		}
-
-		if ( isUserLoggedIn( context.store.getState() ) ) {
-			await context.store.dispatch( logoutUser() );
 		}
 
 		// Initialize Apple auth
