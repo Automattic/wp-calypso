@@ -9,7 +9,7 @@ export function isValidURL( url: string ) {
 	);
 }
 
-// Returns props for the support link
+// Returns props for the support link based on the current environment
 export function getSupportLinkProps() {
 	return {
 		showIcon: false,
