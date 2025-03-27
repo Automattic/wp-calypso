@@ -58,14 +58,13 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 	const [ showMigrationKeyCopiedNotice, setShowMigrationKeyCopiedNotice ] = useState( false );
 
 	// Fetch the migration key.
-	const {
-		data: { migrationKey } = {},
-		error: migrationKeyError,
-		status: migrationKeyStatus,
-	} = useSiteMigrationKey( site.ID, {
-		enabled: true,
-		retry: 5,
-	} );
+	const { data: { migrationKey } = {}, status: migrationKeyStatus } = useSiteMigrationKey(
+		site.ID,
+		{
+			enabled: true,
+			retry: 5,
+		}
+	);
 
 	useEffect( () => {
 		if ( ! migrationKeyCopied ) {
@@ -83,7 +82,6 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 		if ( migrationKeyStatus === 'error' ) {
 			recordTracksEvent( 'calypso_migration_hosting_overview_key_copy_error', {
 				migration_key_status: migrationKeyStatus,
-				migration_key_error: migrationKeyError,
 			} );
 		}
 	}, [ migrationKeyStatus ] );
@@ -164,40 +162,34 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 			<Header title={ title } subTitle={ subTitle }>
 				{ continueMigrationUrl && (
 					<div className="migration-pending__buttons">
-						<HostingHeroButton href={ continueMigrationUrl }>
-							{ 'diy' === migrationType
-								? translate( 'Complete your migration' )
-								: translate( 'Start your migration' ) }
-						</HostingHeroButton>
-						<div className="migration-pending__secondary-buttons">
+						<div className="migration-pending__primary-actions">
 							{ 'diy' === migrationType && migrationKey && (
 								<>
 									<ClipboardButton
 										style={ {
 											cursor: migrationKeyCopied ? 'default' : 'pointer',
-											textDecoration: 'underline',
-											margin: 0,
-											padding: 0,
-											boxShadow: 'none',
-											outline: 'none',
 										} }
-										className="migration-pending__copy-key-button"
+										className="migration-pending__copy-key-button components-button is-secondary hosting-hero-button"
 										onCopy={ copyMigrationKey }
 										text={ migrationKey }
 									>
 										{ translate( 'Copy migration key' ) }
 									</ClipboardButton>
-									{ ' • ' }
 								</>
 							) }
-							<Button
-								variant="link"
-								className="migration-pending__cancel-button"
-								onClick={ openCancellationModal }
-							>
-								{ translate( 'Cancel migration' ) }
-							</Button>
+							<HostingHeroButton href={ continueMigrationUrl }>
+								{ 'diy' === migrationType
+									? translate( 'Complete migration' )
+									: translate( 'Start your migration' ) }
+							</HostingHeroButton>
 						</div>
+						<Button
+							variant="link"
+							className="migration-pending__cancel-button"
+							onClick={ openCancellationModal }
+						>
+							{ translate( 'Cancel migration' ) }
+						</Button>
 					</div>
 				) }
 			</Header>
