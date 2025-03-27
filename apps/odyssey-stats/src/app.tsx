@@ -4,7 +4,7 @@
 // `init-app-config` has to be the first import, because there could be packages reference it in their side effect.
 // eslint-disable-next-line import/order
 import './lib/init-app-config';
-import page, { type Context } from '@automattic/calypso-router';
+import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
 import '@automattic/calypso-polyfills';
 import { createStore, applyMiddleware, compose, Store, Middleware } from 'redux';
@@ -20,9 +20,10 @@ import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { combineReducers, addReducerEnhancer } from 'calypso/state/utils';
 import config from './lib/config-api';
 import initSentry from './lib/init-sentry';
+import { initializeSiteData } from './lib/initialize-site-data';
 import setLocale from './lib/set-locale';
 import { setupContextMiddleware } from './page-middleware/setup-context';
-import registerStatsPages, { siteSelection } from './routes';
+import registerStatsPages from './routes';
 
 import 'calypso/assets/stylesheets/style.scss';
 import './app.scss';
@@ -62,26 +63,7 @@ async function AppBoot() {
 	setupContextMiddleware( store, queryClient );
 
 	// Initialize site data early in the app boot process.
-	await new Promise< void >( ( resolve ) => {
-		const mockContext = {
-			store,
-			query: {},
-			params: {},
-			path: '',
-			pathname: '',
-			title: '',
-			save: () => {},
-			pushState: () => {},
-			handled: false,
-			canonicalPath: '',
-			originalPath: '',
-			state: '',
-			querystring: '',
-			hash: '',
-		} as Context;
-
-		siteSelection( mockContext, resolve );
-	} );
+	await initializeSiteData( store );
 
 	if ( ! window.location?.hash ) {
 		// Redirect to the default stats page.
