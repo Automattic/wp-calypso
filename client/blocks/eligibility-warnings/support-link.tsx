@@ -14,12 +14,12 @@ import type { HelpCenterSelect } from '@automattic/data-stores';
 const HELP_CENTER_STORE = HelpCenter.register();
 
 const SupportLink = ( {
-	onCloseEligibilityDialog,
+	onShowHelpAssistant,
 	translate,
-	useHelpCenter = false,
+	shouldUseHelpAssistant = false,
 }: {
-	onCloseEligibilityDialog?: () => void;
-	useHelpCenter?: boolean;
+	onShowHelpAssistant?: () => void;
+	shouldUseHelpAssistant?: boolean;
 } & LocalizeProps ) => {
 	const sectionName = useSelector( getSectionName );
 	const { show, isMinimized } = useDateStoreSelect( ( select ) => {
@@ -32,9 +32,9 @@ const SupportLink = ( {
 	const { setShowHelpCenter, setIsMinimized, setNavigateToRoute } =
 		useDataStoreDispatch( HELP_CENTER_STORE );
 
-	const handleOpenHelpCenter = () => {
-		if ( onCloseEligibilityDialog ) {
-			onCloseEligibilityDialog();
+	const handleShowHelpAssistant = () => {
+		if ( onShowHelpAssistant ) {
+			onShowHelpAssistant();
 		}
 
 		if ( ! show ) {
@@ -54,11 +54,11 @@ const SupportLink = ( {
 
 	return (
 		<div className="support-block">
-			{ useHelpCenter ? (
+			{ shouldUseHelpAssistant ? (
 				<>
 					{ translate( '{{button}}Need help?{{/button}}', {
 						components: {
-							button: <Button variant="link" onClick={ handleOpenHelpCenter } />,
+							button: <Button variant="link" onClick={ handleShowHelpAssistant } />,
 						},
 					} ) }
 				</>
