@@ -14,6 +14,7 @@ import {
 	READER_UNSUBSCRIBE_TO_NEW_POST_NOTIFICATIONS,
 	READER_FOLLOW_COMPLETE,
 	READER_FOLLOWS_MARK_AS_STALE,
+	READER_FOLLOWS_REMOVE_FEED,
 } from 'calypso/state/reader/action-types';
 import { ReaderFollowItem } from './selectors/types';
 
@@ -67,6 +68,13 @@ export function requestFollowCompleted( feedUrl ) {
 export function unfollow( feedUrl ) {
 	return {
 		type: READER_UNFOLLOW,
+		payload: { feedUrl },
+	};
+}
+
+export function removeFeedFromFollows( feedUrl ) {
+	return {
+		type: READER_FOLLOWS_REMOVE_FEED,
 		payload: { feedUrl },
 	};
 }

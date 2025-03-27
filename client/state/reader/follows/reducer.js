@@ -19,6 +19,7 @@ import {
 	READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE,
 	READER_FOLLOW_COMPLETE,
 	READER_FOLLOWS_MARK_AS_STALE,
+	READER_FOLLOWS_REMOVE_FEED,
 } from 'calypso/state/reader/action-types';
 import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import { items as itemsSchema } from './schema';
@@ -183,6 +184,24 @@ const itemsReducer = ( state = {}, action ) => {
 					},
 				} ),
 			};
+		}
+		case READER_FOLLOWS_REMOVE_FEED: {
+			const urlKey = prepareComparableUrl( action.payload.feedUrl );
+			// If the feed doesn't exist in state, return state unchanged
+			if ( ! state[ urlKey ] ) {
+				// Check if there's an alternate URL format with '/feed' appended
+				if ( ! state[ urlKey + '/feed' ] ) {
+					return state;
+				}
+				// If we found the feed with '/feed' appended, remove it
+				const newState = { ...state };
+				delete newState[ urlKey + '/feed' ];
+				return newState;
+			}
+			// Remove the feed from state
+			const newState = { ...state };
+			delete newState[ urlKey ];
+			return newState;
 		}
 		case READER_FOLLOWS_RECEIVE: {
 			const follows = action.payload.follows;

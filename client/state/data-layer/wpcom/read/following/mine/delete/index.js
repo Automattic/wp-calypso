@@ -8,7 +8,7 @@ import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { READER_UNFOLLOW } from 'calypso/state/reader/action-types';
 import { getFeedByFeedUrl } from 'calypso/state/reader/feeds/selectors';
-import { follow } from 'calypso/state/reader/follows/actions';
+import { follow, removeFeedFromFollows } from 'calypso/state/reader/follows/actions';
 import { getSiteByFeedUrl } from 'calypso/state/reader/sites/selectors';
 import { removeFeedFromStream } from 'calypso/state/reader/streams/actions';
 
@@ -48,6 +48,16 @@ export const receiveUnfollow = ( action ) => ( dispatch ) => {
 				feedUrl,
 			} )
 		);
+
+		dispatch(
+			removeFeedFromStream( {
+				streamKey: 'recent',
+				feedUrl,
+			} )
+		);
+
+		// Also completely remove the feed from the follows list
+		dispatch( removeFeedFromFollows( feedUrl ) );
 	}
 
 	dispatch( bypassDataLayer( action ) );
