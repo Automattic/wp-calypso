@@ -11,6 +11,7 @@ export type FlowStateManifest = Partial< {
 	domains: DomainStepResult;
 	migration: {
 		entryPoint: string;
+		requiresSiteCreation: boolean;
 	};
 	plans: PlansStepResult;
 	newsletterSetup: {

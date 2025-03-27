@@ -2,7 +2,7 @@ import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Onboard, type UserSelect } from '@automattic/data-stores';
 import { SiteExcerptData } from '@automattic/sites';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -15,7 +15,11 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { getSiteAdminUrl, getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
-import { HOW_TO_MIGRATE_OPTIONS } from '../../../constants';
+import {
+	HOW_TO_MIGRATE_OPTIONS,
+	STEPPER_TRACKS_EVENT_SIGNUP_START,
+	STEPPER_TRACKS_EVENT_SIGNUP_STEP_START,
+} from '../../../constants';
 import { useIsSiteAdmin } from '../../../hooks/use-is-site-admin';
 import { USER_STORE, ONBOARD_STORE } from '../../../stores';
 import { STEPS } from '../../internals/steps';
@@ -28,7 +32,7 @@ const FLOW_NAME = 'site-migration';
 
 const siteMigration: Flow = {
 	name: FLOW_NAME,
-	isSignupFlow: false,
+	isSignupFlow: true,
 	__experimentalUseSessions: true,
 
 	useSideEffect() {
@@ -40,12 +44,19 @@ const siteMigration: Flow = {
 		const { set, get } = useFlowState();
 		const urlQueryParams = useQuery();
 		const ref = urlQueryParams.get( 'ref' );
+		const hasPreloadedSite =
+			!! urlQueryParams.get( 'siteId' ) || !! urlQueryParams.get( 'siteSlug' );
 
 		if ( ref && ! get( 'migration' )?.entryPoint ) {
 			set( 'migration', { entryPoint: ref } );
 		}
-	},
 
+		if ( get( 'migration' )?.requiresSiteCreation === undefined ) {
+			set( 'migration', {
+				requiresSiteCreation: ! hasPreloadedSite,
+			} );
+		}
+	},
 	useSteps() {
 		const baseSteps = [
 			STEPS.SITE_MIGRATION_IDENTIFY,
@@ -84,6 +95,24 @@ const siteMigration: Flow = {
 		}, [ isAdmin, userIsLoggedIn ] );
 
 		return { state: AssertConditionState.SUCCESS };
+	},
+	useTracksEventProps() {
+		const { get } = useFlowState();
+		const requiresSiteCreation = get( 'migration' )?.requiresSiteCreation ?? false;
+
+		return useMemo(
+			() => ( {
+				eventsProperties: {
+					[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: {
+						requires_site_creation: requiresSiteCreation.toString(),
+					},
+					[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ]: {
+						requires_site_creation: requiresSiteCreation.toString(),
+					},
+				},
+			} ),
+			[ requiresSiteCreation ]
+		);
 	},
 
 	useStepNavigation( currentStep, navigate ) {
