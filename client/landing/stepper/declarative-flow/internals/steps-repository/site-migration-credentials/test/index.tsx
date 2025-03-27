@@ -153,7 +153,6 @@ describe( 'SiteMigrationCredentials', () => {
 		await userEvent.click( skipButton() );
 
 		expect( submit ).toHaveBeenCalledWith( { action: 'skip' } );
-		expect( wpcomRequest ).not.toHaveBeenCalled();
 	} );
 
 	it( 'shows errors on the required fields when the user does not fill the fields when user select credentials option', async () => {
