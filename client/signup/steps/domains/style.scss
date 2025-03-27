@@ -600,11 +600,6 @@ body.is-section-signup {
 	gap: 0;
 }
 
-.step-container-v2__content-wrapper>.step-container-v2__heading {
-	margin-top: calc( 48px + 48px - var(--step-container-v2-top-bar-height) );
-	margin-bottom: 36px;
-}
-
 .step-container-v2__heading {
 	margin-top: 0px;
 }
@@ -636,6 +631,7 @@ h1.wp-brand-font {
 
 .step-route.onboarding.domains .step-container-v2__heading > p {
 	color: $gray-60;
+	font-size: 1rem;
 }
 
 body.is-section-stepper .featured-domain-suggestion.card .domain-product-price {
@@ -649,4 +645,64 @@ body.is-section-stepper .featured-domain-suggestion.card .domain-product-price {
 
 .domain-product-price.domain-product-single-price.domain-product-price__domain-step-signup-flow {
 	align-self: center;
+}
+
+.domain-product-price.domain-product-single-price.domain-product-price__domain-step-signup-flow {
+	align-self: center;
+}
+
+.domain-suggestion.card.is-compact {}
+
+@media (min-width: 1080px) {
+	body.is-section-stepper .formatted-header .formatted-header__title {
+		font-size: 2.75rem !important;
+	}
+}
+
+.step-container-v2__heading{}
+
+p {}
+
+body.is-section-stepper .onboarding:not(.is-onboarding-2023-pricing-grid) .step-container-v2__heading {
+	margin: calc( 48px + 24px - var(--step-container-v2-top-bar-height) ) 20px 24px 20px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	width: unset !important;
+	align-items: center;
+	flex-direction: column;
+
+	@media (min-width: 960px) {
+		& {
+			margin-top: calc( 48px + 48px - var(--step-container-v2-top-bar-height) );
+			margin-bottom: 36px;
+		}
+	}
+
+	&>h1 {
+		font-size: 2.25rem;
+
+		@media (min-width: 1080px) {
+			font-size: 2.75rem;
+		}
+	}
+}
+
+h1.wp-brand-font {
+	/* text-align: center; */
+}
+
+@media (min-width: 600px) {
+	body.is-section-stepper.is-group-stepper .domains__step-content .register-domain-step__search-card, body.is-section-signup .domains__step-content .register-domain-step__search-card {
+		margin: 20px 20px 0 !important;
+	}
+
+	body.is-section-stepper .featured-domain-suggestions {
+		margin: 0 20px !important;
+		border-top: none;
+	}
+}
+
+.domain-suggestion.card.is-compact {
+	
 }
