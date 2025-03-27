@@ -64,44 +64,48 @@ You can see how the state is preserved when navigating back and forth.`,
 	render: function Template( args ) {
 		useLocation();
 
-		// Pick the location state from the browser history singleton
-		const { luckyNumber, clicked } = ( browserHistory.location.state || {
+		// Pick the location state from the browser history state
+		const { init, history } = ( browserHistory.location.state || {
 			luckyNumber: 0,
-			clicked: false,
+			init: true,
+			history: [],
 		} ) as unknown as {
 			luckyNumber: number;
-			clicked: boolean;
+			init: boolean;
+			history: number[];
 		};
 
-		// The new lucky number is initially zero
-		let newLuckyNumber: number = 0;
+		let newLuckyNumber = 0;
 
 		/*
 		 * Create a new lucky number only when the user clicks on the link.
-		 * `clicked` is useful to detect if the user has clicked
-		 * on the `<Link />` instance.
-		 * It's defined into its options state object
 		 */
-		if ( clicked ) {
+		if ( ! init && browserHistory.action !== 'POP' ) {
 			newLuckyNumber = ( ( Math.random() * 100 ) | 0 ) + 1;
 		}
 
 		// Crate the state to pass to the `<Link />` instance
-		const state = { luckyNumber: newLuckyNumber, clicked: true };
+		const state = {
+			luckyNumber: newLuckyNumber,
+			init: false,
+			history: newLuckyNumber > 0 ? [ ...history, newLuckyNumber ] : history,
+		};
 
 		return (
 			<VStack>
 				<Link { ...args } options={ { state } } className="story-link" />
 
-				{ newLuckyNumber && (
+				{ ! init && (
 					<div>
-						Your lucky number is <strong>{ newLuckyNumber }.</strong>
+						<span>
+							Previous lucky numbers: <strong>[ { history.join( ', ' ) } ]</strong>
+						</span>
 					</div>
 				) }
 
-				{ luckyNumber && (
+				{ newLuckyNumber && (
 					<div>
-						Your previous lucky number was <strong>{ luckyNumber }.</strong>
+						Your lucky number is <strong>{ newLuckyNumber }</strong>
 					</div>
 				) }
 			</VStack>
