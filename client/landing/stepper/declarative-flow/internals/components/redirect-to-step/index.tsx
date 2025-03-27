@@ -1,5 +1,5 @@
-import { type FC } from 'react';
-import { generatePath, Navigate, useParams } from 'react-router';
+import { useLayoutEffect, type FC } from 'react';
+import { generatePath, useNavigate, useParams } from 'react-router';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { type StepperStep } from '../../types';
@@ -11,6 +11,7 @@ interface Props {
 export const RedirectToStep: FC< Props > = ( { slug } ) => {
 	const { flow, lang = null } = useParams();
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	const navigate = useNavigate();
 
 	const to = generatePath( '/:flow/:step/:lang?', {
 		flow: flow!,
@@ -18,5 +19,12 @@ export const RedirectToStep: FC< Props > = ( { slug } ) => {
 		lang: lang === 'en' || isLoggedIn ? null : lang,
 	} );
 
-	return <Navigate to={ `${ to }${ window.location.search }` } replace />;
+	const destination = `${ to }${ window.location.search }`;
+
+	// This needs to be a layout effect, otherwise an empty screen will be shown before the redirect.
+	useLayoutEffect( () => {
+		navigate( destination, { replace: true } );
+	}, [ destination, navigate ] );
+
+	return null;
 };
