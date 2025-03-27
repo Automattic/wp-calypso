@@ -6,16 +6,14 @@ import {
 import DocumentHead from 'calypso/components/data/document-head';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
-import useUserLicenseBySubscriptionQuery from 'calypso/data/jetpack-licensing/use-user-license-by-subscription-query';
+import { useSiteQuery } from 'calypso/data/sites/use-site-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import './style.scss';
 
 export function CrmDownloads( { purchaseId, siteSlug }: { purchaseId: number; siteSlug: string } ) {
 	const translate = useTranslate();
 
-	// Fetch the license key using the purchase ID
-	const { data, isError } = useUserLicenseBySubscriptionQuery( purchaseId );
-	const licenseKey = data?.licenseKey || '';
+	const { data, isError, isLoading } = useSiteQuery( siteSlug );
 
 	return (
 		<Main className="crm-downloads" wideLayout>
@@ -28,7 +26,7 @@ export function CrmDownloads( { purchaseId, siteSlug }: { purchaseId: number; si
 			{ isError ? (
 				<CrmDownloadsError onReturnClick={ () => ( window.location.href = '/me/purchases' ) } />
 			) : (
-				<CrmDownloadsContent licenseKey={ licenseKey } />
+				<CrmDownloadsContent isLoading={ isLoading } licenseKey={ data?.plan?.license_key || '' } />
 			) }
 		</Main>
 	);
