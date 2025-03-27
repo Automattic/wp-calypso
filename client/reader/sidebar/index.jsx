@@ -170,7 +170,7 @@ export class ReaderSidebar extends Component {
 			<>
 				<div className="sidebar-header">
 					<h3>{ translate( 'Reader' ) }</h3>
-					<p>{ translate( 'Stay current with your subscriptions.' ) }</p>
+					<p>{ translate( 'Keep up with your interests.' ) }</p>
 				</div>
 
 				<SidebarMenu>
@@ -187,8 +187,6 @@ export class ReaderSidebar extends Component {
 							'sidebar-streams__search': true,
 						} ) }
 					/>
-
-					<SidebarSeparator />
 
 					<li className="sidebar-streams__following">
 						<ReaderSidebarRecent
