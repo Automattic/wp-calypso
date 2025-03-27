@@ -25,6 +25,10 @@ export const isEditorIframeFocused = (): boolean => {
  * @returns {void}
  */
 export const focusEditor = (): void => {
+	if ( isEditorIframeFocused() ) {
+		return;
+	}
+
 	const attemptFocus = () => {
 		const editorIframe = getEditorIframe();
 		const editable = editorIframe?.contentDocument?.querySelector< HTMLElement >(
