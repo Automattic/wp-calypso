@@ -2049,34 +2049,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/whats-new@workspace:packages/whats-new":
-  version: 0.0.0-use.local
-  resolution: "@automattic/whats-new@workspace:packages/whats-new"
-  dependencies:
-    "@automattic/calypso-analytics": "workspace:^"
-    "@automattic/calypso-color-schemes": "workspace:^"
-    "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/components": "workspace:^"
-    "@automattic/i18n-utils": "workspace:^"
-    "@automattic/typography": "workspace:^"
-    "@tanstack/react-query": "npm:^5.15.5"
-    "@wordpress/components": "npm:^29.6.0"
-    "@wordpress/element": "npm:^6.20.0"
-    "@wordpress/i18n": "npm:^5.20.0"
-    "@wordpress/keycodes": "npm:^4.20.0"
-    "@wordpress/react-i18n": "npm:^4.20.0"
-    clsx: "npm:^2.1.1"
-    typescript: "npm:^5.8.2"
-    wpcom: "workspace:^"
-    wpcom-proxy-request: "workspace:^"
-  peerDependencies:
-    "@wordpress/data": ^10.20.0
-    react: ^18.3.1
-    react-dom: ^18.3.1
-    redux: ^5.0.1
-  languageName: unknown
-  linkType: soft
-
 "@automattic/wp-babel-makepot@workspace:^, @automattic/wp-babel-makepot@workspace:packages/wp-babel-makepot":
   version: 0.0.0-use.local
   resolution: "@automattic/wp-babel-makepot@workspace:packages/wp-babel-makepot"
