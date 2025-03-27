@@ -1481,7 +1481,10 @@ class ManagePurchase extends Component<
 					<QueryCanonicalTheme siteId={ siteId } themeId={ purchase?.meta ?? '' } />
 				) }
 
-				<HeaderCake backHref={ this.props.purchaseListUrl ?? purchasesRoot }>
+				<HeaderCake
+					backText={ translate( 'Purchases' ) }
+					backHref={ this.props.purchaseListUrl ?? purchasesRoot }
+				>
 					{ this.props.cardTitle || titles.managePurchase }
 				</HeaderCake>
 				{ showExpiryNotice ? (
