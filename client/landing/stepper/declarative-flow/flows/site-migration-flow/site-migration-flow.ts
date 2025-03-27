@@ -472,14 +472,6 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS.slug: {
-					const { action } = providedDependencies as {
-						action: 'skip' | 'submit';
-						from: string;
-					};
-
-					if ( action === 'skip' ) {
-						return exitFlow( addQueryArgs( { ref: 'site-migration' }, `/overview/${ siteSlug }` ) );
-					}
 					return exitFlow( addQueryArgs( { ref: 'site-migration' }, `/overview/${ siteSlug }` ) );
 				}
 
