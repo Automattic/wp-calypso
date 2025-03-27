@@ -531,7 +531,6 @@ const siteMigration: Flow = {
 						);
 					}
 
-					//TODO: Add a skip flag to track the user is having trouble to share the credentials.
 					return exitFlow( addQueryArgs( { ref: 'site-migration' }, `/overview/${ siteSlug }` ) );
 				}
 			}
