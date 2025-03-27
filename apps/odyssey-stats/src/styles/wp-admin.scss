@@ -14,41 +14,25 @@
 	}
 }
 
-// Since the component `Notice` styles affect the WP Admin notice styles,
-// we need to restore by overriding them except for `.wpcomsh-notice` on Atomic sites.
-.notice:not(.wpcomsh-notice) {
-	display: block;
-	width: auto;
-	background: var(--studio-white);
-	color: var(--color-text);
-	font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
-	margin-bottom: 2px;
+// Since the component `Notice` styles would affect the WP-Admin notice styles,
+// we need to restore them by overriding them with the original styles.
+// Copied from WordPress core `wp-admin/css/common.css`.
+#wpbody-content .wrap .notice {
+	display: inherit;
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-left-width: 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+    margin: 5px 15px 2px;
+    padding: 1px 12px;
+    color: inherit;
+    width: inherit;
+    line-height: inherit;
 
 	// Avoid overriding hidden notices.
 	&[aria-hidden="true"],
 	&.hidden {
 		display: none;
-	}
-
-	h2,
-	h3 {
-		color: var(--studio-gray-90);
-		font-size: 1.3em; /* stylelint-disable-line declaration-property-unit-allowed-list */
-		margin: 1em 0;
-		font-weight: 600;
-	}
-
-	p {
-		font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
-		line-height: 1.5;
-		margin: 0.5em 0;
-		padding: 2px;
-		color: var(--studio-gray-70);
-	}
-
-	code {
-		padding: 3px 5px 2px;
-		margin: 0 1px;
 	}
 }
 
