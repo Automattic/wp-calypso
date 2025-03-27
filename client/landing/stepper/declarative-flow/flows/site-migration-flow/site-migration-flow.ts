@@ -54,7 +54,6 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 			STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
-			STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN,
 			STEPS.SITE_MIGRATION_INSTRUCTIONS,
 			STEPS.ERROR,
 			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
@@ -350,15 +349,6 @@ const siteMigration: Flow = {
 							STEPS.SITE_MIGRATION_INSTRUCTIONS.slug
 						)
 					);
-				}
-
-				//TODO: Check if we can remove this step once there is no reference to it in the codebase.
-				case STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN.slug: {
-					if ( providedDependencies?.error ) {
-						return navigate( STEPS.ERROR.slug );
-					}
-
-					return navigate( addQueryArgs( { siteId, siteSlug }, STEPS.ERROR.slug ) );
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
