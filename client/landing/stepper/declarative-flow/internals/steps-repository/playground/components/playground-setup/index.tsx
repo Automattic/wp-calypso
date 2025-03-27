@@ -19,15 +19,15 @@ export const PlaygroundSetupStep: Step< {
 } > = ( props ) => {
 	const { submit } = props.navigation;
 	const isPlaygroundEligible = useIsPlaygroundEligible();
+	const { __ } = useI18n();
+	const playgroundClientRef = useRef< PlaygroundClient | null >( null );
+	const { siteId, siteSlug } = useSiteData();
+
 	if ( ! isPlaygroundEligible ) {
 		window.location.assign( '/start' );
 
 		return;
 	}
-
-	const { __ } = useI18n();
-	const playgroundClientRef = useRef< PlaygroundClient | null >( null );
-	const { siteId, siteSlug } = useSiteData();
 
 	const startImport = async ( client: PlaygroundClient ) => {
 		if ( ! client ) {

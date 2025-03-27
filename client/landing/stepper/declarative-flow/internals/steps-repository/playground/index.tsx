@@ -12,13 +12,14 @@ import './style.scss';
 export const PlaygroundStep: Step = ( { navigation } ) => {
 	const { submit } = navigation;
 	const isPlaygroundEligible = useIsPlaygroundEligible();
+	const playgroundClientRef = useRef< PlaygroundClient | null >( null );
+	const { __ } = useI18n();
+
 	if ( ! isPlaygroundEligible ) {
 		window.location.assign( '/start' );
 
 		return;
 	}
-	const playgroundClientRef = useRef< PlaygroundClient | null >( null );
-	const { __ } = useI18n();
 
 	const setPlaygroundClient = ( client: PlaygroundClient ) => {
 		playgroundClientRef.current = client;
