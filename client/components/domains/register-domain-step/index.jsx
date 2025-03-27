@@ -1280,6 +1280,7 @@ class RegisterDomainStep extends Component {
 				this.props.onDomainsAvailabilityChange( true );
 				const timeDiff = Date.now() - timestamp;
 				const analyticsResults = domainSuggestions.map( ( suggestion ) => suggestion.domain_name );
+				const rootVendor = domainSuggestions[ 0 ]?.vendor;
 
 				this.props.recordSearchResultsReceive(
 					domain,
@@ -1287,7 +1288,8 @@ class RegisterDomainStep extends Component {
 					timeDiff,
 					domainSuggestions.length,
 					this.props.analyticsSection,
-					this.props.flowName
+					this.props.flowName,
+					rootVendor
 				);
 
 				return domainSuggestions;
@@ -1418,7 +1420,8 @@ class RegisterDomainStep extends Component {
 			timeDiff,
 			subdomainSuggestions.length,
 			this.props.analyticsSection,
-			this.props.flowName
+			this.props.flowName,
+			vendor
 		);
 
 		// This part handles the other end of the condition handled by the line 282:

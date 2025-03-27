@@ -73,7 +73,8 @@ export const recordSearchResultsReceive = (
 	responseTimeInMs,
 	resultCount,
 	section,
-	flowName
+	flowName,
+	rootVendor = null
 ) =>
 	composeAnalytics(
 		recordGoogleEvent( 'Domain Search', 'Receive Results', 'Response Time', responseTimeInMs ),
@@ -84,6 +85,7 @@ export const recordSearchResultsReceive = (
 			result_count: resultCount,
 			section,
 			flow_name: flowName,
+			root_vendor: rootVendor,
 		} )
 	);
 
