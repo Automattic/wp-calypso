@@ -99,7 +99,7 @@ const SubscriberDetails = ( {
 					siteId={ siteId }
 					subscriptionId={ subscriptionId }
 					userId={ userId }
-					dateSubscribed={ new Date( date_subscribed ) }
+					dateSubscribed={ date_subscribed ? new Date( date_subscribed ) : new Date() }
 				/>
 			) }
 			<div className="subscriber-details__content">
@@ -111,11 +111,13 @@ const SubscriberDetails = ( {
 						<div className="subscriber-details__content-label">
 							{ translate( 'Subscription date' ) }
 						</div>
-						<TimeSince
-							className="subscriber-details__content-value"
-							date={ date_subscribed }
-							dateFormat="LL"
-						/>
+						{ date_subscribed && (
+							<TimeSince
+								className="subscriber-details__content-value"
+								date={ date_subscribed }
+								dateFormat="LL"
+							/>
+						) }
 					</div>
 					{ newsletterCategoriesEnabled && (
 						<div className="subscriber-details__content-column">
