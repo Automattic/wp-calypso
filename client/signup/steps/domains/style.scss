@@ -606,18 +606,22 @@ body.is-section-signup {
 	}
 }
 
-.step-route.onboarding.domains h1.wp-brand-font {
-	//font-size: 36px !important;
-}
-
 @media (min-width: 661px) {
-	.register-domain-step__search.register-domain-step__search-domain-step:not(.is-sticky) {
+	body.is-section-stepper .register-domain-step__search.register-domain-step__search-domain-step:not(.is-sticky) {
 		padding-top: 18px;
 	}
 }
 
-body.is-section-stepper .register-domain-step__search.register-domain-step__search-domain-step {
-	padding-top: 18px!important;
+@media (max-width: 600px) {
+	body.is-section-stepper .domains__step-content .register-domain-step__search-card {
+		margin: 20px 0 0!important;
+	}
+}
+
+@media (max-width: 661px) {
+	body.is-section-stepper .domains__step-content .register-domain-step__search-card {
+		margin: 20px 0 0;
+	}
 }
 
 h1.wp-brand-font {
