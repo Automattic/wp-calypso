@@ -729,3 +729,12 @@ body.is-section-stepper .onboarding:not(.is-onboarding-2023-pricing-grid) .step-
 		margin: 0 !important;
 	}
 }
+
+.domain-product-price {
+	@include breakpoint-deprecated( "<660px" ) {
+
+		&.domain-product-price__domain-step-signup-flow {
+			flex-direction: column !important;
+		}
+	}
+}
