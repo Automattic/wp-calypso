@@ -181,7 +181,7 @@ export class ReaderSidebar extends Component {
 					<SidebarItem
 						label={ translate( 'Search' ) }
 						onNavigate={ this.handleReaderSidebarSearchClicked }
-						customIcon={ <ReaderSearchIcon viewBox="-3 0 24 24" /> }
+						customIcon={ <ReaderSearchIcon viewBox="0 0 24 24" /> }
 						link="/reader/search"
 						className={ ReaderSidebarHelper.itemLinkClass( '/reader/search', path, {
 							'sidebar-streams__search': true,
@@ -202,14 +202,14 @@ export class ReaderSidebar extends Component {
 						} ) }
 						label={ translate( 'Discover' ) }
 						onNavigate={ this.handleReaderSidebarDiscoverClicked }
-						customIcon={ <ReaderDiscoverIcon viewBox="-3 0 24 24" /> }
+						customIcon={ <ReaderDiscoverIcon viewBox="0 0 24 24" /> }
 						link="/discover"
 					/>
 
 					<SidebarItem
 						label={ translate( 'Likes' ) }
 						onNavigate={ this.handleReaderSidebarLikeActivityClicked }
-						customIcon={ <ReaderLikesIcon viewBox="-3 0 24 24" /> }
+						customIcon={ <ReaderLikesIcon viewBox="0 0 24 24" /> }
 						link="/activities/likes"
 						className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', path, {
 							'sidebar-activity__likes': true,
@@ -222,7 +222,7 @@ export class ReaderSidebar extends Component {
 						} ) }
 						label={ translate( 'Conversations' ) }
 						onNavigate={ this.handleReaderSidebarConversationsClicked }
-						customIcon={ <ReaderConversationsIcon iconSize={ 24 } viewBox="-3 0 24 24" /> }
+						customIcon={ <ReaderConversationsIcon iconSize={ 24 } viewBox="0 0 24 24" /> }
 						link="/reader/conversations"
 					/>
 
@@ -258,7 +258,7 @@ export class ReaderSidebar extends Component {
 							label="A8C Conversations"
 							onNavigate={ this.handleReaderSidebarA8cConversationsClicked }
 							link="/reader/conversations/a8c"
-							customIcon={ <ReaderA8cConversationsIcon size={ 24 } viewBox="-5 -2 24 24" /> }
+							customIcon={ <ReaderA8cConversationsIcon size={ 24 } viewBox="-2 -2 24 24" /> }
 						/>
 					) }
 
@@ -268,7 +268,7 @@ export class ReaderSidebar extends Component {
 						} ) }
 						label={ translate( 'Notifications' ) }
 						onNavigate={ this.handleReaderSidebarNotificationsClicked }
-						customIcon={ <ReaderNotificationsIcon size={ 24 } viewBox="-5 -2 24 24" /> }
+						customIcon={ <ReaderNotificationsIcon size={ 24 } viewBox="-2 -2 24 24" /> }
 						link="/reader/notifications"
 					/>
 
@@ -278,7 +278,7 @@ export class ReaderSidebar extends Component {
 						} ) }
 						label={ translate( 'Manage Subscriptions' ) }
 						onNavigate={ this.handleReaderSidebarManageSubscriptionsClicked }
-						customIcon={ <ReaderManageSubscriptionsIcon size={ 24 } viewBox="-3 0 24 24" /> }
+						customIcon={ <ReaderManageSubscriptionsIcon size={ 24 } viewBox="0 0 24 24" /> }
 						link="/reader/subscriptions"
 					/>
 				</SidebarMenu>

@@ -6,7 +6,7 @@ interface ReaderIconProps {
 }
 
 export default function ReaderIcon( props: ReaderIconProps ): JSX.Element {
-	const { className, height = 24, viewBox = '0 0 24 24', width = 24 } = props;
+	const { className, height = 11, viewBox = '0 0 24 11', width = 24 } = props;
 
 	return (
 		<svg

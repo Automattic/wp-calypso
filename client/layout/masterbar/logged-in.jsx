@@ -628,14 +628,7 @@ class MasterbarLoggedIn extends Component {
 				tipTarget="reader"
 				className="masterbar__reader"
 				url="/reader"
-				icon={
-					<ReaderIcon
-						className="masterbar__menu-icon masterbar_svg-reader"
-						height={ 11 }
-						viewBox="0 0 24 11"
-						width={ 24 }
-					/>
-				}
+				icon={ <ReaderIcon className="masterbar__menu-icon masterbar_svg-reader" /> }
 				onClick={ this.clickReader }
 				isActive={ this.isActive( 'reader', true ) }
 				tooltip={ translate( 'Read the blogs and topics you follow' ) }
