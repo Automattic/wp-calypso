@@ -428,8 +428,8 @@ function getLoggedInPlansAction( {
 			return {
 				primary: {
 					callback: () => {},
-					text: '',
-					status: 'hidden',
+					text: translate( 'Requires downgrade' ),
+					status: 'disabled',
 				},
 			};
 		}
