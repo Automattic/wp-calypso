@@ -584,10 +584,6 @@ export async function jetpackGitHubAuth( context, next ) {
 			ux_mode: 'redirect',
 		} );
 
-		if ( isUserLoggedIn( context.store.getState() ) ) {
-			await context.store.dispatch( logoutUser() );
-		}
-
 		window.location.href = `https://public-api.wordpress.com/wpcom/v2/hosting/github/app-authorize?${ params.toString() }`;
 	} catch {
 		context.store.dispatch( {
