@@ -637,3 +637,16 @@ h1.wp-brand-font {
 .step-route.onboarding.domains .step-container-v2__heading > p {
 	color: $gray-60;
 }
+
+body.is-section-stepper .featured-domain-suggestion.card .domain-product-price {
+	align-items: flex-start;
+	margin-top: 12px;
+}
+
+.domain-suggestion__content.domain-suggestion__content-domain {
+	align-items: unset !important;
+}
+
+.domain-product-price.domain-product-single-price.domain-product-price__domain-step-signup-flow {
+	align-self: center;
+}
