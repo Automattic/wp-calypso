@@ -141,15 +141,14 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 			currency: currencyCode,
 		} );
 		const precision = defaultFormatter.resolvedOptions().maximumFractionDigits;
-		const amount =
-			isRefundable( purchase ) &&
-			Array.isArray( refundOptions ) &&
-			refundOptions[ 0 ]?.refund_amount
-				? refundOptions[ 0 ].refund_amount
-				: 0;
+		const matchingRefundOption =
+			isRefundable( purchase ) && Array.isArray( refundOptions )
+				? refundOptions.find( ( option ) => option.to_product_id === targetPlan?.getProductId() )
+				: null;
+		const refundAmount = matchingRefundOption?.refund_amount ?? 0;
 
-		return parseFloat( amount ).toFixed( precision );
-	}, [ purchase ] );
+		return parseFloat( refundAmount ).toFixed( precision );
+	}, [ purchase, targetPlan ] );
 
 	if (
 		isDataLoading( { hasLoadedSites, hasLoadedUserPurchasesFromServer: loadedFromServer } ) ||
