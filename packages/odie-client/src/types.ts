@@ -159,6 +159,7 @@ export type Message = {
 	type: MessageType;
 	directEscalationSupport?: boolean;
 	created_at?: string;
+	actions?: MessageAction[];
 };
 
 export type ChatStatus = 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer' | 'closed';
