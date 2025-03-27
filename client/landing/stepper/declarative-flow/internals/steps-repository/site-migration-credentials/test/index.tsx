@@ -56,21 +56,17 @@ const fillAddressField = async () => {
 };
 
 const baseSiteInfo = {
-	url: 'https://site-url.wordpress.com',
+	url: 'https://external-site-url.com',
 	platform: 'wordpress',
 	platform_data: {
 		is_wpcom: false,
 	},
 };
 
-const siteInfoUsingWordPress = {
-	...baseSiteInfo,
-	platform: 'wordpress',
-};
-
 const siteInfoUsingTumblr = {
 	...baseSiteInfo,
 	platform: 'tumblr',
+	url: 'https://site-url.tumblr.com',
 };
 
 const siteInfoUsingWPCOM = {
@@ -84,11 +80,27 @@ describe( 'SiteMigrationCredentials', () => {
 	beforeAll( () => nock.disableNetConnect() );
 	beforeEach( () => {
 		jest.clearAllMocks();
-		( wp.req.get as jest.Mock ).mockResolvedValue( siteInfoUsingWordPress );
+		( wp.req.get as jest.Mock ).mockResolvedValue( baseSiteInfo );
 	} );
-	afterEach( () => {
-		jest.clearAllMocks();
-		( wp.req.get as jest.Mock ).mockResolvedValue( siteInfoUsingWordPress );
+
+	it( 'starts the authorization flow when using application password', async () => {
+		jest.mocked( wp.req.post ).mockResolvedValue( {
+			application_passwords_enabled: true,
+			authorization_url: 'https://external-site-url.com/wp-admin/authorize-application.php',
+		} );
+
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+
+		await fillAddressField();
+		await userEvent.click( continueButton() );
+
+		expect( submit ).toHaveBeenCalledWith( {
+			action: 'application-passwords-approval',
+			platform: 'wordpress',
+			authorizationUrl: 'https://external-site-url.com/wp-admin/authorize-application.php',
+			from: 'https://external-site-url.com',
+		} );
 	} );
 
 	it( 'creates a credentials using backup file', async () => {
@@ -167,6 +179,7 @@ describe( 'SiteMigrationCredentials', () => {
 
 	it( 'shows error when user set invalid site address', async () => {
 		render();
+
 		await userEvent.type( siteAddressInput(), 'invalid-site-address' );
 		await userEvent.click( continueButton() );
 
@@ -177,7 +190,6 @@ describe( 'SiteMigrationCredentials', () => {
 
 	it( 'shows error message when there is an error on the with the backup file', async () => {
 		const submit = jest.fn();
-		render( { navigation: { submit } } );
 
 		( wpcomRequest as jest.Mock ).mockRejectedValue( {
 			code: 'rest_invalid_param',
@@ -188,6 +200,7 @@ describe( 'SiteMigrationCredentials', () => {
 			},
 		} );
 
+		render( { navigation: { submit } } );
 		await userEvent.click( backupOption() );
 		await userEvent.type( backupFileInput(), 'backup-file.zip' );
 		await userEvent.click( continueButton() );
@@ -215,11 +228,10 @@ describe( 'SiteMigrationCredentials', () => {
 
 	it( 'shows "Scanning site" on the Continue button during submission with application password', async () => {
 		const submit = jest.fn();
-		render( { navigation: { submit } } );
 		const pendingPromise = new Promise( () => {} );
-
 		( wpcomRequest as jest.Mock ).mockImplementation( () => pendingPromise );
 
+		render( { navigation: { submit } } );
 		await fillAddressField();
 		userEvent.click( continueButton() );
 
@@ -230,7 +242,7 @@ describe( 'SiteMigrationCredentials', () => {
 
 	it( 'shows "Scanning site" on the Continue button during submission when fetching site info with application password', async () => {
 		const submit = jest.fn();
-		render( { navigation: { submit } } );
+
 		const pendingPromise = new Promise( () => {} );
 
 		( wpcomRequest as jest.Mock ).mockResolvedValue( {
@@ -240,6 +252,7 @@ describe( 'SiteMigrationCredentials', () => {
 
 		( wp.req.get as jest.Mock ).mockImplementation( () => pendingPromise );
 
+		render( { navigation: { submit } } );
 		await fillAddressField();
 		await userEvent.click( continueButton() );
 
@@ -248,51 +261,33 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 	} );
 
-	it( 'submits credentials-required action when using password application and application_passwords_enabled is disabled', async () => {
+	it( 'submits credentials-required action when there is an error on to get the authorization path', async () => {
 		const submit = jest.fn();
-		render( { navigation: { submit } } );
-		await fillAddressField();
-		( wp.req.get as jest.Mock ).mockResolvedValueOnce( baseSiteInfo );
-		( wp.req.post as jest.Mock ).mockRejectedValueOnce( {
+		( wp.req.post as jest.Mock ).mockRejectedValue( {
 			code: 'failed_to_get_authorization_path',
 		} );
+
+		render( { navigation: { submit } } );
+		await fillAddressField();
 		await userEvent.click( continueButton() );
 
 		expect( submit ).toHaveBeenCalledWith( {
 			action: 'credentials-required',
-			from: 'https://site-url.wordpress.com',
+			from: 'https://external-site-url.com',
 			platform: 'wordpress',
-		} );
-	} );
-
-	it( 'submits application-passwords-approval action when using password application and application_passwords_enabled is enabled', async () => {
-		const submit = jest.fn();
-		render( { navigation: { submit } } );
-		await fillAddressField();
-		( wp.req.get as jest.Mock ).mockResolvedValueOnce( baseSiteInfo );
-		( wp.req.post as jest.Mock ).mockResolvedValueOnce( {
-			application_passwords_enabled: true,
-			authorization_url: 'https://site-url.wordpress.com/wp-admin/authorize-application.php',
-		} );
-		await userEvent.click( continueButton() );
-
-		expect( submit ).toHaveBeenCalledWith( {
-			action: 'application-passwords-approval',
-			from: 'https://site-url.wordpress.com',
-			platform: 'wordpress',
-			authorizationUrl: 'https://site-url.wordpress.com/wp-admin/authorize-application.php',
 		} );
 	} );
 
 	it( 'submits already-wpcom action when site is already WPCOM', async () => {
 		const submit = jest.fn();
-		render( { navigation: { submit } } );
-		await fillAddressField();
 		( wp.req.get as jest.Mock ).mockResolvedValue( siteInfoUsingWPCOM );
 		( wpcomRequest as jest.Mock ).mockResolvedValue( {
 			status: 200,
 			body: {},
 		} );
+
+		render( { navigation: { submit } } );
+		await fillAddressField();
 		await userEvent.click( continueButton() );
 
 		expect( wpcomRequest ).toHaveBeenCalledWith( {
@@ -314,14 +309,15 @@ describe( 'SiteMigrationCredentials', () => {
 
 	it( 'submits site-is-not-using-wordpress action when platform is not wordpress', async () => {
 		const submit = jest.fn();
+		( wp.req.get as jest.Mock ).mockResolvedValue( siteInfoUsingTumblr );
+
 		render( { navigation: { submit } } );
 		await fillAddressField();
-		( wp.req.get as jest.Mock ).mockResolvedValue( siteInfoUsingTumblr );
 		await userEvent.click( continueButton() );
 
 		expect( submit ).toHaveBeenCalledWith( {
 			action: 'site-is-not-using-wordpress',
-			from: 'https://site-url.wordpress.com',
+			from: 'https://site-url.tumblr.com',
 			platform: 'tumblr',
 		} );
 	} );
