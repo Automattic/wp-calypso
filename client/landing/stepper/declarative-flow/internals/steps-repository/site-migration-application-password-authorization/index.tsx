@@ -60,7 +60,7 @@ const SiteMigrationApplicationPasswordsAuthorization: Step< {
 
 	useEffect( () => {
 		if ( isStoreApplicationPasswordSuccess ) {
-			dispatch( resetSite( siteId ) );
+			siteId && dispatch( resetSite( siteId ) );
 			navigation?.submit?.( { action: 'migration-started' } );
 		}
 	}, [ isStoreApplicationPasswordSuccess, navigation, dispatch, siteId ] );

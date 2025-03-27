@@ -66,7 +66,7 @@ const SiteMigrationCredentials: Step< {
 		applicationPasswordsInfo?: ApplicationPasswordsInfo
 	) => {
 		const action = getAction( siteInfo, applicationPasswordsInfo );
-		dispatch( resetSite( siteId ) );
+		siteId && dispatch( resetSite( siteId ) );
 		return navigation.submit?.( {
 			action,
 			from: siteInfo?.url,
