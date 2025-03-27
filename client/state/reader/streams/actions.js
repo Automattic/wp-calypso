@@ -11,6 +11,7 @@ import {
 	READER_STREAMS_NEW_POST_RECEIVE,
 	READER_STREAMS_CLEAR,
 	READER_STREAMS_REMOVE_ITEM,
+	READER_STREAMS_REMOVE_FEED_FROM_STREAM,
 } from 'calypso/state/reader/action-types';
 import { getStream } from 'calypso/state/reader/streams/selectors';
 import 'calypso/state/data-layer/wpcom/read/streams';
@@ -122,6 +123,13 @@ export function removeItemFromStream( { streamKey, postKey } ) {
 	return {
 		type: READER_STREAMS_REMOVE_ITEM,
 		payload: { streamKey, postKey },
+	};
+}
+
+export function removeFeedFromStream( { streamKey, feedUrl } ) {
+	return {
+		type: READER_STREAMS_REMOVE_FEED_FROM_STREAM,
+		payload: { streamKey, feedUrl },
 	};
 }
 

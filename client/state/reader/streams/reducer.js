@@ -13,6 +13,7 @@ import {
 	READER_STREAMS_CLEAR,
 	READER_STREAMS_NEW_POST_RECEIVE,
 	READER_STREAMS_REMOVE_ITEM,
+	READER_STREAMS_REMOVE_FEED_FROM_STREAM,
 } from 'calypso/state/reader/action-types';
 import { keyedReducer, combineReducers } from 'calypso/state/utils';
 import { combineXPosts } from './utils';
@@ -148,6 +149,9 @@ export const items = ( state = [], action ) => {
 		case READER_STREAMS_REMOVE_ITEM: {
 			const postKey = action.payload.postKey;
 			return state.filter( ( item ) => ! keysAreEqual( item, postKey ) );
+		}
+		case READER_STREAMS_REMOVE_FEED_FROM_STREAM: {
+			return state.filter( ( item ) => item.feed_URL !== action.payload.feedUrl );
 		}
 		case READER_STREAMS_CLEAR:
 			return [];

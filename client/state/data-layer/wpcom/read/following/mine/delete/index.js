@@ -10,6 +10,7 @@ import { READER_UNFOLLOW } from 'calypso/state/reader/action-types';
 import { getFeedByFeedUrl } from 'calypso/state/reader/feeds/selectors';
 import { follow } from 'calypso/state/reader/follows/actions';
 import { getSiteByFeedUrl } from 'calypso/state/reader/sites/selectors';
+import { removeFeedFromStream } from 'calypso/state/reader/streams/actions';
 
 export const requestUnfollow = ( action ) =>
 	http( {
@@ -36,7 +37,21 @@ export const fromApi = ( data ) => {
 	return data.subscribed;
 };
 
-export const receiveUnfollow = ( action ) => bypassDataLayer( action );
+export const receiveUnfollow = ( action ) => ( dispatch ) => {
+	const feedUrl = action.payload.feedUrl;
+
+	// Remove all posts from this site in the following stream
+	if ( feedUrl ) {
+		dispatch(
+			removeFeedFromStream( {
+				streamKey: 'following',
+				feedUrl,
+			} )
+		);
+	}
+
+	dispatch( bypassDataLayer( action ) );
+};
 
 export const unfollowError = ( action ) => ( dispatch, getState ) => {
 	const feedUrl = action.payload.feedUrl;
