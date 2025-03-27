@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/data-stores",
-	"version": "3.1.1",
+	"version": "3.1.2",
 	"description": "Calypso Data Stores.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -35,6 +35,7 @@
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/calypso-products": "workspace:^",
+		"@automattic/global-styles": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/js-utils": "workspace:^",
 		"@automattic/load-script": "workspace:^",

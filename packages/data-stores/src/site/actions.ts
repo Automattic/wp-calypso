@@ -1,4 +1,4 @@
-import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '@automattic/global-styles/src/constants';
+import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '@automattic/global-styles';
 import { __ } from '@wordpress/i18n';
 import { SiteGoal } from '../onboard';
 import { wpcomRequest } from '../wpcom-request-controls';
