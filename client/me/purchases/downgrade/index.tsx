@@ -227,7 +227,7 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 
 		return hasRefund
 			? translate(
-					"When you downgrade from %(currentPlan)s to %(targetPlan)s, we'll immediately process a refund of %(amount)s to your original payment method.",
+					"When you downgrade from %(currentPlan)s to %(targetPlan)s, we'll process a refund of %(amount)s to your original payment method.",
 					{
 						args: {
 							...basePlanArgs,
