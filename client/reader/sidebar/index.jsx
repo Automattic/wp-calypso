@@ -167,117 +167,124 @@ export class ReaderSidebar extends Component {
 		const { path, translate, teams } = this.props;
 
 		return (
-			<SidebarMenu>
-				<QueryReaderLists />
-				<QueryReaderTeams />
-				<QueryReaderOrganizations />
+			<>
+				<div className="sidebar-header">
+					<h3>{ translate( 'Reader' ) }</h3>
+					<p>{ translate( 'Stay current with your subscriptions.' ) }</p>
+				</div>
 
-				<SidebarItem
-					label={ translate( 'Search' ) }
-					onNavigate={ this.handleReaderSidebarSearchClicked }
-					customIcon={ <ReaderSearchIcon viewBox="-3 0 24 24" /> }
-					link="/reader/search"
-					className={ ReaderSidebarHelper.itemLinkClass( '/reader/search', path, {
-						'sidebar-streams__search': true,
-					} ) }
-				/>
+				<SidebarMenu>
+					<QueryReaderLists />
+					<QueryReaderTeams />
+					<QueryReaderOrganizations />
 
-				<SidebarSeparator />
-
-				<li className="sidebar-streams__following">
-					<ReaderSidebarRecent
-						onClick={ this.props.toggleFollowingVisibility }
-						isOpen={ this.props.isFollowingOpen }
-						path={ path }
-					/>
-				</li>
-
-				<SidebarItem
-					className={ ReaderSidebarHelper.itemLinkClass( '/discover', path, {
-						'sidebar-streams__discover': true,
-					} ) }
-					label={ translate( 'Discover' ) }
-					onNavigate={ this.handleReaderSidebarDiscoverClicked }
-					customIcon={ <ReaderDiscoverIcon viewBox="-3 0 24 24" /> }
-					link="/discover"
-				/>
-
-				<SidebarItem
-					label={ translate( 'Likes' ) }
-					onNavigate={ this.handleReaderSidebarLikeActivityClicked }
-					customIcon={ <ReaderLikesIcon viewBox="-3 0 24 24" /> }
-					link="/activities/likes"
-					className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', path, {
-						'sidebar-activity__likes': true,
-					} ) }
-				/>
-
-				<SidebarItem
-					className={ ReaderSidebarHelper.itemLinkClass( '/reader/conversations', path, {
-						'sidebar-streams__conversations': true,
-					} ) }
-					label={ translate( 'Conversations' ) }
-					onNavigate={ this.handleReaderSidebarConversationsClicked }
-					customIcon={ <ReaderConversationsIcon iconSize={ 24 } viewBox="-3 0 24 24" /> }
-					link="/reader/conversations"
-				/>
-
-				<ReaderSidebarLists
-					lists={ this.props.subscribedLists }
-					path={ path }
-					isOpen={ this.props.isListsOpen }
-					onClick={ this.props.toggleListsVisibility }
-					currentListOwner={ this.state.currentListOwner }
-					currentListSlug={ this.state.currentListSlug }
-				/>
-
-				<ReaderSidebarTags
-					tags={ this.props.followedTags }
-					path={ path }
-					isOpen={ this.props.isTagsOpen }
-					onClick={ this.props.toggleTagsVisibility }
-					onFollowTag={ this.highlightNewTag }
-					currentTag={ this.state.currentTag }
-				/>
-
-				<SidebarSeparator />
-
-				<li>
-					<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />
-				</li>
-
-				{ isAutomatticTeamMember( teams ) && (
 					<SidebarItem
-						className={ ReaderSidebarHelper.itemLinkClass( '/reader/conversations/a8c', path, {
+						label={ translate( 'Search' ) }
+						onNavigate={ this.handleReaderSidebarSearchClicked }
+						customIcon={ <ReaderSearchIcon viewBox="-3 0 24 24" /> }
+						link="/reader/search"
+						className={ ReaderSidebarHelper.itemLinkClass( '/reader/search', path, {
+							'sidebar-streams__search': true,
+						} ) }
+					/>
+
+					<SidebarSeparator />
+
+					<li className="sidebar-streams__following">
+						<ReaderSidebarRecent
+							onClick={ this.props.toggleFollowingVisibility }
+							isOpen={ this.props.isFollowingOpen }
+							path={ path }
+						/>
+					</li>
+
+					<SidebarItem
+						className={ ReaderSidebarHelper.itemLinkClass( '/discover', path, {
+							'sidebar-streams__discover': true,
+						} ) }
+						label={ translate( 'Discover' ) }
+						onNavigate={ this.handleReaderSidebarDiscoverClicked }
+						customIcon={ <ReaderDiscoverIcon viewBox="-3 0 24 24" /> }
+						link="/discover"
+					/>
+
+					<SidebarItem
+						label={ translate( 'Likes' ) }
+						onNavigate={ this.handleReaderSidebarLikeActivityClicked }
+						customIcon={ <ReaderLikesIcon viewBox="-3 0 24 24" /> }
+						link="/activities/likes"
+						className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', path, {
+							'sidebar-activity__likes': true,
+						} ) }
+					/>
+
+					<SidebarItem
+						className={ ReaderSidebarHelper.itemLinkClass( '/reader/conversations', path, {
 							'sidebar-streams__conversations': true,
 						} ) }
-						label="A8C Conversations"
-						onNavigate={ this.handleReaderSidebarA8cConversationsClicked }
-						link="/reader/conversations/a8c"
-						customIcon={ <ReaderA8cConversationsIcon size={ 24 } viewBox="-5 -2 24 24" /> }
+						label={ translate( 'Conversations' ) }
+						onNavigate={ this.handleReaderSidebarConversationsClicked }
+						customIcon={ <ReaderConversationsIcon iconSize={ 24 } viewBox="-3 0 24 24" /> }
+						link="/reader/conversations"
 					/>
-				) }
 
-				<SidebarItem
-					className={ ReaderSidebarHelper.itemLinkClass( '/reader/notifications', path, {
-						'sidebar-streams__notifications': true,
-					} ) }
-					label={ translate( 'Notifications' ) }
-					onNavigate={ this.handleReaderSidebarNotificationsClicked }
-					customIcon={ <ReaderNotificationsIcon size={ 24 } viewBox="-5 -2 24 24" /> }
-					link="/reader/notifications"
-				/>
+					<ReaderSidebarLists
+						lists={ this.props.subscribedLists }
+						path={ path }
+						isOpen={ this.props.isListsOpen }
+						onClick={ this.props.toggleListsVisibility }
+						currentListOwner={ this.state.currentListOwner }
+						currentListSlug={ this.state.currentListSlug }
+					/>
 
-				<SidebarItem
-					className={ ReaderSidebarHelper.itemLinkClass( '/reader/subscriptions', path, {
-						'sidebar-streams__manage-subscriptions': true,
-					} ) }
-					label={ translate( 'Manage subscriptions' ) }
-					onNavigate={ this.handleReaderSidebarManageSubscriptionsClicked }
-					customIcon={ <ReaderManageSubscriptionsIcon size={ 24 } viewBox="-3 0 24 24" /> }
-					link="/reader/subscriptions"
-				/>
-			</SidebarMenu>
+					<ReaderSidebarTags
+						tags={ this.props.followedTags }
+						path={ path }
+						isOpen={ this.props.isTagsOpen }
+						onClick={ this.props.toggleTagsVisibility }
+						onFollowTag={ this.highlightNewTag }
+						currentTag={ this.state.currentTag }
+					/>
+
+					<SidebarSeparator />
+
+					<li>
+						<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />
+					</li>
+
+					{ isAutomatticTeamMember( teams ) && (
+						<SidebarItem
+							className={ ReaderSidebarHelper.itemLinkClass( '/reader/conversations/a8c', path, {
+								'sidebar-streams__conversations': true,
+							} ) }
+							label="A8C Conversations"
+							onNavigate={ this.handleReaderSidebarA8cConversationsClicked }
+							link="/reader/conversations/a8c"
+							customIcon={ <ReaderA8cConversationsIcon size={ 24 } viewBox="-5 -2 24 24" /> }
+						/>
+					) }
+
+					<SidebarItem
+						className={ ReaderSidebarHelper.itemLinkClass( '/reader/notifications', path, {
+							'sidebar-streams__notifications': true,
+						} ) }
+						label={ translate( 'Notifications' ) }
+						onNavigate={ this.handleReaderSidebarNotificationsClicked }
+						customIcon={ <ReaderNotificationsIcon size={ 24 } viewBox="-5 -2 24 24" /> }
+						link="/reader/notifications"
+					/>
+
+					<SidebarItem
+						className={ ReaderSidebarHelper.itemLinkClass( '/reader/subscriptions', path, {
+							'sidebar-streams__manage-subscriptions': true,
+						} ) }
+						label={ translate( 'Manage Subscriptions' ) }
+						onNavigate={ this.handleReaderSidebarManageSubscriptionsClicked }
+						customIcon={ <ReaderManageSubscriptionsIcon size={ 24 } viewBox="-3 0 24 24" /> }
+						link="/reader/subscriptions"
+					/>
+				</SidebarMenu>
+			</>
 		);
 	}
 
