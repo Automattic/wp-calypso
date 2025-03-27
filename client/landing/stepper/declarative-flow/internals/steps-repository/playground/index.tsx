@@ -14,6 +14,8 @@ export const PlaygroundStep: Step = ( { navigation } ) => {
 	const isPlaygroundEligible = useIsPlaygroundEligible();
 	if ( ! isPlaygroundEligible ) {
 		window.location.assign( '/start' );
+
+		return;
 	}
 	const playgroundClientRef = useRef< PlaygroundClient | null >( null );
 	const { __ } = useI18n();

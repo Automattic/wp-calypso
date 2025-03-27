@@ -21,6 +21,8 @@ export const PlaygroundSetupStep: Step< {
 	const isPlaygroundEligible = useIsPlaygroundEligible();
 	if ( ! isPlaygroundEligible ) {
 		window.location.assign( '/start' );
+
+		return;
 	}
 
 	const { __ } = useI18n();
