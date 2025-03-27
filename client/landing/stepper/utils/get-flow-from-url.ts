@@ -1,4 +1,7 @@
+import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { matchPath } from 'react-router';
+
+export const DEFAULT_FLOW = ONBOARDING_FLOW;
 
 export const getFlowFromURL = ( pathname?: string, search?: string ) => {
 	pathname ??= typeof window !== 'undefined' ? window.location.pathname ?? '' : '';
