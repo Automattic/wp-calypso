@@ -18,8 +18,8 @@ export const decorateButtonWithTracksEventRecording = (
 		onClick?.( event );
 
 		stepContext?.recordTracksEvent?.( tracksEventName, {
-			flow: stepContext.flowName,
-			step: stepContext.stepName,
+			flow: stepContext?.flowName,
+			step: stepContext?.stepName,
 			intent: ( select( Onboard.register() ) as OnboardSelect ).getIntent(),
 		} );
 	};

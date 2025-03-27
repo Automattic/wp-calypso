@@ -4,6 +4,7 @@
 
 .step-container-v2__heading {
 	width: 100%;
+	text-wrap: balance;
 
 	@include step-medium-viewport {
 		text-align: center;
@@ -38,5 +39,9 @@
 
 	&.left {
 		text-align: left !important;
+	}
+
+	&.center {
+		text-align: center !important;
 	}
 }

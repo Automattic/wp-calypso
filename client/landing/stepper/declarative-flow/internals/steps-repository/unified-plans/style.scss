@@ -1,4 +1,5 @@
 @import "@automattic/onboarding/styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
 
 .step-route.plans:not(:has(.step-container-v2)) {
 	padding: 60px 0 0;
@@ -22,6 +23,29 @@
 					line-height: 3rem;
 				}
 			}
+		}
+	}
+}
+
+.step-container-v2--plans {
+	.plans-wrapper {
+		margin: 0;
+		padding: 0;
+	}
+
+	// This is temporary until we make the plans step more consistent according to the designs.
+	@media(max-width: calc($break-small - 1px)) {
+		.plan-type-selector {
+			width: 100%;
+		}
+
+		.plan-features-2023-grid__mobile-view,
+		.plan-features-main__comparison-toggle {
+			max-width: 100%;
+		}
+
+		.plans-features-main__plan-type-selector-layout {
+			margin: 0;
 		}
 	}
 }

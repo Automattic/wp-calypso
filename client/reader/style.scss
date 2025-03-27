@@ -64,6 +64,15 @@ body.is-section-reader {
 			}
 		}
 
+		// For reader/search
+		main.search-stream {
+			.navigation-header {
+				&::after {
+					margin: 24px 0 0;
+				}
+			}
+		}
+
 		// For reader/a8c
 		.section-header {
 			@media (max-width: 1300px) {

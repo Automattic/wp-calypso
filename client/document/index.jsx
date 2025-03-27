@@ -18,6 +18,7 @@ import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Loading from 'calypso/components/loading';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import { StepContainerV2Loading } from 'calypso/components/step-container-v2-loading';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
@@ -68,6 +69,7 @@ class Document extends Component {
 			target,
 			user,
 			useTranslationChunks,
+			isStepContainerV2,
 		} = this.props;
 
 		const installedChunks = entrypoint.js
@@ -196,7 +198,13 @@ class Document extends Component {
 							>
 								<div className="layout__content">
 									{ shouldNotShowLoadingLogo ? (
-										<Loading className="wpcom-loading__boot" />
+										<>
+											{ isStepContainerV2 ? (
+												<StepContainerV2Loading />
+											) : (
+												<Loading className="wpcom-loading__boot" />
+											) }
+										</>
 									) : (
 										<LoadingLogo size={ 72 } className="wpcom-site__logo" />
 									) }

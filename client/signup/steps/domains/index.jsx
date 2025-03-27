@@ -6,8 +6,10 @@ import {
 	isHostingSignupFlow,
 	isOnboardingFlow,
 	StepContainer,
+	isAIBuilderFlow,
+	isTailoredSignupFlow,
+	Step,
 } from '@automattic/onboarding';
-import { isAIBuilderFlow, isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -1415,32 +1417,40 @@ export class RenderDomainsStep extends Component {
 		const headerText = this.getHeaderText();
 		const fallbackSubHeaderText = this.getSubHeaderText();
 
+		if ( shouldUseStepContainerV2( flowName ) ) {
+			const [ content, sideContent ] = this.getContentColumns();
+
+			const backButton = (
+				<Step.BackButton
+					href={ backUrl }
+					rel={ isExternalBackUrl ? 'external' : '' }
+					onClick={ goBack }
+					label={ backLabelText }
+				/>
+			);
+
+			const mainContent = (
+				<>
+					<QueryProductsList type="domains" />
+					{ content }
+				</>
+			);
+
+			return (
+				<Step.TwoColumnLayout
+					firstColumnWidth={ 7 }
+					secondColumnWidth={ 3 }
+					topBar={ <Step.TopBar backButton={ ! hideBack && backButton } /> }
+					heading={ <Step.Heading text={ headerText } subText={ fallbackSubHeaderText } /> }
+					className="domains__step-content domains__step-content-domain-step"
+				>
+					{ mainContent }
+					{ sideContent }
+				</Step.TwoColumnLayout>
+			);
+		}
+
 		if ( useStepperWrapper ) {
-			if ( shouldUseStepContainerV2( flowName ) ) {
-				const [ content, sideContent ] = this.getContentColumns();
-
-				return (
-					<AsyncLoad
-						require="./async-domain-step-wrapper"
-						className="domains__step-content domains__step-content-domain-step"
-						hideBack={ hideBack }
-						backUrl={ backUrl }
-						isExternalBackUrl={ isExternalBackUrl }
-						mainContent={
-							<>
-								<QueryProductsList type="domains" />
-								{ content }
-							</>
-						}
-						rightContent={ sideContent }
-						headerText={ headerText }
-						subHeaderText={ fallbackSubHeaderText }
-						backLabelText={ backLabelText }
-						goBack={ goBack }
-					/>
-				);
-			}
-
 			return (
 				// This is biased towards Stepper. It will always load Stepper's StepContainer but only load /start's StepWrapper if /start is used.
 				// This is because Stepper's domains page is much more likely (90%+ of the time) to be used than /start's plans page.

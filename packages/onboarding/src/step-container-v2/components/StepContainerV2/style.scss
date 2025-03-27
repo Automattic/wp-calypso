@@ -35,15 +35,13 @@
 		}
 
 		&.vertical-align-center {
-			@include step-medium-viewport {
-				position: absolute;
-				inset: 0;
-				width: 100%;
-				height: 100%;
-				padding-block: 1rem;
-				box-sizing: border-box;
-				justify-content: center;
-			}
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			padding-block: 1rem;
+			box-sizing: border-box;
+			justify-content: center;
 		}
 	}
 
