@@ -46,7 +46,7 @@ interface ExternalProps {
 	siteId?: number | null;
 	isEligible?: boolean;
 	backUrl?: string;
-	onClose: () => void;
+	onClose?: () => void;
 	onProceed: ( options: { geo_affinity?: string } ) => void;
 	standaloneProceed: boolean;
 	className?: string;

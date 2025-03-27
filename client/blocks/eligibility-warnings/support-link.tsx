@@ -18,7 +18,7 @@ const SupportLink = ( {
 	translate,
 	useHelpCenter = false,
 }: {
-	onCloseEligibilityDialog: () => void;
+	onCloseEligibilityDialog?: () => void;
 	useHelpCenter?: boolean;
 } & LocalizeProps ) => {
 	const sectionName = useSelector( getSectionName );
@@ -33,7 +33,9 @@ const SupportLink = ( {
 		useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const handleOpenHelpCenter = () => {
-		onCloseEligibilityDialog();
+		if ( onCloseEligibilityDialog ) {
+			onCloseEligibilityDialog();
+		}
 
 		if ( ! show ) {
 			setNavigateToRoute( '/odie' );
