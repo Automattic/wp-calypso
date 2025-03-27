@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import i18n, { translate } from 'i18n-calypso';
+import i18n, { translate, numberFormat } from 'i18n-calypso';
 import {
 	FEATURE_13GB_STORAGE,
 	FEATURE_200GB_STORAGE,
@@ -627,7 +627,9 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	getPlanComparisonFeatureLabels: () => {
 		const baseFeatures = {
 			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( '%d shares per month', { args: [ 30 ] } ),
-			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '10%' ),
+			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: numberFormat( 0.1, {
+				numberFormatOptions: { style: 'percent' },
+			} ),
 			[ FEATURE_AI_ASSISTANT ]: i18n.translate( 'Limited to 20 requests' ),
 		};
 
@@ -840,7 +842,9 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		const baseFeatures = {
 			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'Dozens of premium themes' ),
 			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( '%d shares per month', { args: [ 30 ] } ),
-			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '8%' ),
+			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: numberFormat( 0.08, {
+				numberFormatOptions: { style: 'percent' },
+			} ),
 			[ FEATURE_SUPPORT ]: i18n.translate( 'Support from our expert\u00A0team' ),
 		};
 
@@ -1062,8 +1066,12 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		const baseFeatures = {
 			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'All premium themes' ),
 			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( 'Unlimited shares' ),
-			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '0%' ),
-			[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: i18n.translate( '0%' ),
+			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: numberFormat( 0, {
+				numberFormatOptions: { style: 'percent' },
+			} ),
+			[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: numberFormat( 0, {
+				numberFormatOptions: { style: 'percent' },
+			} ),
 			[ FEATURE_SUPPORT ]: i18n.translate( 'Priority 24/7 support from our expert\u00A0team' ),
 		};
 
@@ -1428,7 +1436,9 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		const baseFeatures = {
 			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'All premium themes' ),
 			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( 'Unlimited shares' ),
-			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '4%' ),
+			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: numberFormat( 0.04, {
+				numberFormatOptions: { style: 'percent' },
+			} ),
 			[ FEATURE_SUPPORT ]: i18n.translate( 'Fast support from our expert\u00A0team' ),
 		};
 
@@ -1658,8 +1668,12 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			[ FEATURE_SHIPPING_INTEGRATIONS ]: i18n.translate( 'Available with paid plugins' ),
 			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( 'Unlimited shares' ),
 			[ FEATURE_STORE_DESIGN ]: i18n.translate( 'Available with plugins' ),
-			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '2%' ),
-			[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: i18n.translate( '0%' ),
+			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: numberFormat( 0.02, {
+				numberFormatOptions: { style: 'percent' },
+			} ),
+			[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: numberFormat( 0, {
+				numberFormatOptions: { style: 'percent' },
+			} ),
 			[ FEATURE_SUPPORT ]: i18n.translate( 'Priority 24/7 support from our expert team' ),
 		};
 

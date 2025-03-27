@@ -628,6 +628,10 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
+					if ( entryPoint === 'wp-admin-importers-list' ) {
+						return window.location.assign( `${ siteAdminUrl }import.php` );
+					}
+
 					return exitFlow( `/setup/site-setup/goals?${ urlQueryParams }` );
 				}
 

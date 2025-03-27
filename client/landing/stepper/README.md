@@ -46,18 +46,6 @@ There is a required `isSignupFlow` flag that _MUST be `true` for signup flows_ (
  */
 export type NavigationControls = {
 	/**
-	 * Call this function if you want to go to the previous step.
-	 */
-	goBack: () => void;
-	/**
-	 * Call this function if you want to go to the proceed down the flow.
-	 */
-	goNext: () => void;
-	/**
-	 * Call this function if you want to jump to a certain step.
-	 */
-	goToStep?: ( step: StepPath ) => void;
-	/**
 	 * Submits the answers provided in the flow
 	 */
 	submit?: ( providedDependencies?: ProvidedDependencies, ...params: string[] ) => void;

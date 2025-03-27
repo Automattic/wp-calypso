@@ -966,7 +966,7 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		if ( ! isPlan( purchase ) ) {
+		if ( ! ( isBusiness( purchase ) || isPremium( purchase ) || isEcommerce( purchase ) ) ) {
 			return null;
 		}
 
@@ -1486,7 +1486,10 @@ class ManagePurchase extends Component<
 					<QueryCanonicalTheme siteId={ siteId } themeId={ purchase?.meta ?? '' } />
 				) }
 
-				<HeaderCake backHref={ this.props.purchaseListUrl ?? purchasesRoot }>
+				<HeaderCake
+					backText={ translate( 'Purchases' ) }
+					backHref={ this.props.purchaseListUrl ?? purchasesRoot }
+				>
 					{ this.props.cardTitle || titles.managePurchase }
 				</HeaderCake>
 				{ showExpiryNotice ? (

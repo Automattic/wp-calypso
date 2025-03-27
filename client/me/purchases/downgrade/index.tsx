@@ -142,7 +142,7 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 	}
 	const purchaseRoot = getManagePurchaseUrlFor( siteSlug, purchaseId );
 
-	const handleDowngrade = async () => {
+	const handleDowngrade = async ( enableLosslessRevert: boolean ) => {
 		if (
 			! purchaseId ||
 			! currentPlan?.getProductId() ||
@@ -159,6 +159,7 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 				product_id: currentPlan.getProductId(),
 				type: 'downgrade',
 				to_product_id: targetPlan.getProductId(),
+				lossless_revert: enableLosslessRevert,
 			} );
 			await Promise.all( [
 				dispatch( refreshSitePlans( siteId! ) ),
@@ -191,7 +192,7 @@ export const Downgrade: React.FC< DowngradeProps > = ( props ) => {
 		if ( isAtomicSiteDowngrade ) {
 			setIsAtomicWarningVisible( true );
 		} else {
-			handleDowngrade();
+			handleDowngrade( false );
 		}
 	};
 

@@ -15,7 +15,7 @@
 		// Specificity increase to override Card background color loaded later in the cascade.
 		&.domain-transfer-or-connect__content {
 			background-color: transparent;
-		}	
+		}
 
 		.option-content {
 			+ .option-content {
@@ -205,6 +205,21 @@
 
 		@include break-mobile {
 			margin: 24px 0;
+		}
+
+		button {
+			color: var(--color-link);
+			cursor: pointer;
+
+			&:hover,
+			&:focus,
+			&:active {
+				color: var(--color-link-dark);
+			}
+
+			&:focus {
+				outline: thin dotted;
+			}
 		}
 	}
 }

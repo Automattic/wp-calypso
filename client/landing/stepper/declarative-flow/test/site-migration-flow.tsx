@@ -313,6 +313,27 @@ describe( 'Site Migration Flow', () => {
 						},
 					} );
 				} );
+
+				it( 'redirects back to the importer list when the entry point is wp-admin-importers-list', () => {
+					jest.mocked( useFlowState ).mockReturnValue( {
+						get: jest.fn().mockReturnValue( { entryPoint: 'wp-admin-importers-list' } ),
+						set: jest.fn(),
+						sessionId: '123',
+					} );
+
+					runNavigationBack( {
+						from: STEPS.SITE_MIGRATION_IDENTIFY,
+						dependencies: {},
+						query: {
+							siteSlug: 'example.wordpress.com',
+							siteId: 123,
+						},
+					} );
+
+					expect( window.location.assign ).toMatchURL( {
+						path: 'https://example.wpcomstaging.com/wp-admin/import.php',
+					} );
+				} );
 			} );
 		} );
 

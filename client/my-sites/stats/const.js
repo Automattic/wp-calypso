@@ -16,6 +16,43 @@ export const NEWSLETTER_SUPPORT_URL = 'https://wordpress.com/support/newsletter/
 export const INSIGHTS_SUPPORT_URL =
 	// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 	'https://wordpress.com/support/stats/learn-insights-about-your-website/';
+export const TOP_POSTS_SUPPORT_URL =
+	// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
+	'https://wordpress.com/support/stats/analyze-content-performance/#view-posts-pages-traffic';
+export const REFERRERS_SUPPORT_URL =
+	// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
+	'https://wordpress.com/support/stats/understand-traffic-sources/#identify-referrers';
+export const LOCATIONS_SUPPORT_URL =
+	// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
+	'https://wordpress.com/support/stats/audience-insights/#locations';
+export const UTM_SUPPORT_URL =
+	// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
+	'https://wordpress.com/support/stats/understand-traffic-sources/#use-utm-parameters';
+export const CLICKS_SUPPORT_URL =
+	// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
+	'https://wordpress.com/support/stats/analyze-content-performance/#analyze-clicks';
+export const AUTHORS_SUPPORT_URL =
+	// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
+	'https://wordpress.com/support/stats/analyze-content-performance/#check-author-performance';
+export const SEARCH_SUPPORT_URL =
+	// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
+	'https://wordpress.com/support/stats/analyze-content-performance/#analyze-search-terms';
+export const SEARCH_TERMS_SUPPORT_URL =
+	// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
+	'https://wordpress.com/support/stats/understand-traffic-sources/#analyze-search-terms';
+export const VIDEOS_SUPPORT_URL =
+	// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
+	'https://wordpress.com/support/stats/analyze-content-performance/#see-video-traffic';
+export const DOWNLOADS_SUPPORT_URL =
+	// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
+	'https://wordpress.com/support/stats/analyze-content-performance/#track-file-downloads';
+export const DEVICES_SUPPORT_URL =
+	// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
+	'https://wordpress.com/support/stats/audience-insights/#devices';
+export const EMAILS_SUPPORT_URL =
+	// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
+	'https://wordpress.com/support/stats/view-subscriber-stats/#email-opens-and-clicks';
+
 export const JETPACK_BLOG_ABOUT_COMMERCIAL_STATS_URL =
 	// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 	'https://jetpack.com/blog/updates-to-jetpack-stats-for-commercial-sites/';

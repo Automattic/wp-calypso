@@ -15,7 +15,7 @@ interface AtomicWarningProps {
 	purchase: Purchase;
 	site: any;
 	closeDialog: () => void;
-	handleDowngrade: () => void;
+	handleDowngrade: ( enableLosslessRevert: boolean ) => void;
 	targetPlanName: TranslateResult;
 	isDowngrading: boolean;
 	siteSlug: string;
@@ -32,6 +32,7 @@ export function AtomicWarning( {
 }: AtomicWarningProps ) {
 	const [ atomicRevertCheckOne, setAtomicRevertCheckOne ] = useState( false );
 	const [ atomicRevertCheckTwo, setAtomicRevertCheckTwo ] = useState( false );
+	const [ enableLosslessRevert, setEnableLosslessRevert ] = useState( false );
 	const hasBackupsFeature = useSelector( ( state ) =>
 		siteHasFeature( state, site.ID, WPCOM_FEATURES_BACKUPS )
 	);
@@ -47,6 +48,7 @@ export function AtomicWarning( {
 				</BlankCanvas.Header>
 				<BlankCanvas.Content>
 					<AtomicRevertStep
+						action="downgrade-plan"
 						atomicTransfer={ atomicTransfer }
 						purchase={ purchase }
 						site={ site }
@@ -56,13 +58,15 @@ export function AtomicWarning( {
 						atomicRevertCheckTwo={ atomicRevertCheckTwo }
 						onClickCheckTwo={ () => setAtomicRevertCheckTwo( ! atomicRevertCheckTwo ) }
 						hasBackupsFeature={ hasBackupsFeature }
+						enableLosslessRevert={ enableLosslessRevert }
+						setEnableLosslessRevert={ setEnableLosslessRevert }
 					/>
 				</BlankCanvas.Content>
 				<BlankCanvas.Footer>
 					<Button
 						isBusy={ isDowngrading }
 						variant="primary"
-						onClick={ handleDowngrade }
+						onClick={ () => handleDowngrade( enableLosslessRevert ) }
 						disabled={ ! atomicRevertCheckOne || ! atomicRevertCheckTwo }
 					>
 						{ translate( 'Downgrade to %(targetPlan)s', {

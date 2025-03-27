@@ -2,7 +2,9 @@
 @import "@automattic/onboarding/styles/mixins";
 @import "@automattic/typography/styles/fonts";
 @import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/colors";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 $image-height: 47px;
 
@@ -349,7 +351,7 @@ $image-height: 47px;
 		// input instances would come from `@wordpress/components` and the
 		// following overrides could be safely deleted.
 		input:not(.components-text-control__input),
-		button {
+		button:not(.social-buttons__button) {
 			/* Note: Same as `button.signup-form__submit, .signup-form__input.form-text-input` */
 			height: 44px;
 			border-radius: 4px;
@@ -363,6 +365,10 @@ $image-height: 47px;
 			}
 		}
 
+		.social-buttons__button {
+			border-radius: 4px;
+		}
+
 		.login__form-userdata input {
 			margin: 0 0 20px;
 		}
@@ -372,20 +378,12 @@ $image-height: 47px;
 			margin: 0 0 10px;
 		}
 
-		.login__form-userdata,
-		.auth-form__social-buttons {
-
-			button {
-				border: 0;
-				height: unset;
-				text-align: start;
-			}
-		}
-
 		.login__form-userdata {
 			button {
 				min-width: 194px;
 				height: unset;
+				border: 0;
+				text-align: start;
 			}
 		}
 	}
@@ -532,15 +530,6 @@ $image-height: 47px;
 		/* height of input - height of toggle */
 	}
 
-	.social-buttons__button {
-		text-align: left;
-		border: 0;
-		padding-bottom: 0;
-		padding-left: 0;
-		padding-right: 0;
-		box-shadow: none;
-	}
-
 	.two-factor-authentication__verification-code-form > p,
 	.login__form-terms,
 	.login__social-tos {
@@ -600,7 +589,7 @@ $image-height: 47px;
 
 		.login a,
 		.login__form-change-username {
-			color: #2404eb;
+			color: var(--color-wp-job-manager);
 		}
 
 		.login {
@@ -610,13 +599,17 @@ $image-height: 47px;
 		.form-button.is-primary {
 			&,
 			&:disabled {
-				background-color: #2404eb;
+				background-color: var(--color-wp-job-manager);
 			}
 
 			&:hover:not(&:disabled),
 			&:focus {
 				background-color: darken(#2404eb, 10%);
 			}
+		}
+
+		.social-buttons__button {
+			--color-accent: var(--color-wp-job-manager);
 		}
 	}
 
@@ -646,7 +639,7 @@ $image-height: 47px;
 		line-height: 1.5;
 
 		a:not(.notice.is-error a) {
-			color: #1d4fc4;
+			color: var(--color-gravatar);
 		}
 
 		button {
@@ -704,7 +697,7 @@ $image-height: 47px;
 	}
 
 	.login__form-change-username {
-		color: #1d4fc4;
+		color: var(--color-gravatar);
 	}
 
 	.login__form-password {
@@ -760,7 +753,7 @@ $image-height: 47px;
 
 		&,
 		&:disabled {
-			background-color: #1d4fc4;
+			background-color: var(--color-gravatar);
 		}
 
 		&:hover:not(&:disabled),
@@ -782,7 +775,7 @@ $image-height: 47px;
 		}
 
 		.button {
-			color: #1d4fc4;
+			color: var(--color-gravatar);
 			border: 1px solid #1d4fc44d;
 			box-shadow: none;
 
@@ -815,26 +808,47 @@ $image-height: 47px;
 		margin: 24px 0 0;
 		padding: 0;
 		width: fit-content;
-	}
-
-	.auth-form__social-buttons-container {
-		padding: 2px 0;
+		clip-path: unset;
 	}
 
 	.social-buttons__button {
-		display: flex;
-		align-items: center;
-		padding: 0;
+		--color-accent: var(--color-gravatar);
 
-		&:focus {
-			outline: dotted;
-		}
+		box-shadow: none;
+		padding: unset;
+		height: auto;
 
 		> svg {
-			border: 1px solid var(--studio-gray-10);
-			border-radius: 24px;
+			box-shadow: inset 0 0 0 $border-width $gray-300;
+			border-radius: 50%;
 			margin: 0;
+			width: 20px;
+			height: 20px;
+			margin-right: 12px;
 			padding: 12px;
+		}
+
+		> span {
+			margin-left: unset;
+		}
+
+		&:hover {
+			background: unset;
+			box-shadow: none;
+
+			> svg {
+				/* Matches hover state of .components-button */
+				background: color-mix(in srgb, var(--wp-components-color-accent) 4%, transparent);
+			}
+		}
+
+		&:focus {
+			box-shadow: none;
+
+			> svg {
+				/* Matches focus state of .components-button */
+				box-shadow: 0 0 0 currentColor inset, 0 0 0 var(--wp-admin-border-width-focus) var(--wp-components-color-accent);
+			}
 		}
 	}
 
@@ -869,7 +883,7 @@ $image-height: 47px;
 
 		a,
 		button {
-			color: #1d4fc4;
+			color: var(--color-gravatar);
 			font-weight: normal;
 			text-decoration: underline;
 			padding: 0;
