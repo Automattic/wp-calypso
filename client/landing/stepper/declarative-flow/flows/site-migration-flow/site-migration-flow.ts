@@ -506,7 +506,6 @@ const siteMigration: Flow = {
 				case STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug: {
 					const { action, authorizationUrl } = providedDependencies as {
 						action: string;
-						from: string;
 						authorizationUrl: string;
 					};
 
