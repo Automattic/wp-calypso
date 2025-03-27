@@ -41,11 +41,11 @@ export function AtomicWarning( {
 
 	useEffect( () => {
 		if ( purchase?.siteId ) {
-			dispatch( fetchAtomicTransfer( purchase.siteId ) );
+			dispatch( fetchAtomicTransfer( purchase.siteId as any ) );
 		}
 	}, [ dispatch, purchase?.siteId ] );
 
-	const atomicTransfer = useSelector( ( state ) => getAtomicTransfer( state, purchase.siteId ) );
+	const atomicTransfer = useSelector( ( state ) => getAtomicTransfer( state, purchase?.siteId ) );
 
 	const translate = useTranslate();
 	return (
