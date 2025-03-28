@@ -1,7 +1,7 @@
 import { Badge } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { chevronLeft } from '@wordpress/icons';
-import { Heading, StickyBottomBar, TopBar, BackButton, NextButton } from '../..';
+import { Heading, StickyBottomBar, TopBar, BackButton, PrimaryButton } from '../..';
 import { WireframePlaceholder } from '../../helpers/wireframe-placeholder';
 import { withStepContainerV2ContextDecorator } from '../../helpers/withStepContainerV2ContextDecorator';
 import { FullWidthLayout } from './FullWidthLayout';
@@ -46,7 +46,7 @@ const FontsBar = () => {
 
 export const ThemePreviewFonts = () => {
 	const backButton = <BackButton>Back</BackButton>;
-	const nextButton = <NextButton>Save fonts</NextButton>;
+	const nextButton = <PrimaryButton>Save fonts</PrimaryButton>;
 
 	return (
 		<FullWidthLayout

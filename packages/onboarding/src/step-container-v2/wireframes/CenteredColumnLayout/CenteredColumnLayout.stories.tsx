@@ -1,5 +1,5 @@
 import { createInterpolateElement } from '@wordpress/element';
-import { Heading, TopBar, BackButton, NextButton, StickyBottomBar, SkipButton } from '../..';
+import { Heading, TopBar, BackButton, PrimaryButton, StickyBottomBar, SkipButton } from '../..';
 import { WireframePlaceholder } from '../../helpers/wireframe-placeholder';
 import { withStepContainerV2ContextDecorator } from '../../helpers/withStepContainerV2ContextDecorator';
 import { CenteredColumnLayout } from './CenteredColumnLayout';
@@ -15,7 +15,7 @@ export default meta;
 
 export const FourColumnsCenteredLayout = () => {
 	const backButton = <BackButton />;
-	const nextButton = <NextButton />;
+	const nextButton = <PrimaryButton />;
 	const skipButton = <SkipButton />;
 
 	return (
@@ -42,7 +42,7 @@ export const FourColumnsCenteredLayout = () => {
 
 export const SixColumnsCenteredLayout = () => {
 	const backButton = <BackButton />;
-	const nextButton = <NextButton />;
+	const nextButton = <PrimaryButton />;
 	const skipButton = <SkipButton />;
 
 	return (
@@ -69,7 +69,7 @@ export const SixColumnsCenteredLayout = () => {
 
 export const EightColumnsCenteredLayout = () => {
 	const backButton = <BackButton />;
-	const nextButton = <NextButton />;
+	const nextButton = <PrimaryButton />;
 	const skipButton = <SkipButton />;
 
 	return (
