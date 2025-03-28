@@ -218,10 +218,10 @@ export function CrmDownloadsContent( { licenseKey, isLoading }: CrmDownloadsProp
 					</Card>
 					<div className="extensions-table">
 						{ isLoading || ( isLoadingExtensions && <LoadingSkeleton /> ) }
-						{ ! isLoadingExtensions && extensions.length > 0 && (
+						{ ! isLoadingExtensions && extensions && extensions.length > 0 && (
 							<table>
 								<tbody>
-									{ extensions.map( ( extension ) => (
+									{ ( extensions ? extensions : [] ).map( ( extension ) => (
 										<tr key={ extension.slug }>
 											<td>
 												<div className="extensions-table__title-row">
@@ -263,7 +263,7 @@ export function CrmDownloadsContent( { licenseKey, isLoading }: CrmDownloadsProp
 								</tbody>
 							</table>
 						) }
-						{ ! isLoadingExtensions && extensions.length === 0 && (
+						{ ! isLoadingExtensions && extensions && extensions.length === 0 && (
 							<div className="extensions-table__error">
 								<Gridicon icon="notice" size={ 36 } />
 								<p>
