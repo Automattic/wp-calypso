@@ -61,9 +61,15 @@ interface Props {
 	onSkip: () => void;
 	hideImporterListLink: boolean;
 	flowName: string;
+	onVisibilityChange: ( isVisible: boolean ) => void;
 }
 
-export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLink = false } ) => {
+export const Analyzer: FC< Props > = ( {
+	onComplete,
+	onSkip,
+	onVisibilityChange,
+	hideImporterListLink = false,
+} ) => {
 	const translate = useTranslate();
 	const [ siteURL, setSiteURL ] = useState< string >( '' );
 	const {
@@ -80,8 +86,11 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 	}, [ onComplete, siteInfo ] );
 
 	if ( isFetching || ( isFetched && ! hasError ) ) {
+		onVisibilityChange?.( false );
 		return <ScanningStep />;
 	}
+
+	onVisibilityChange?.( true );
 
 	const hostingDetailItems = {
 		'blazing-fast-speed': {
@@ -161,6 +170,8 @@ const SiteMigrationIdentify: StepType< {
 		return ( shouldHideBasedOnRef || shouldHideBasedOnVariant ) && ! shouldNotHideIfBackToIsSet;
 	};
 
+	const [ isVisible, setIsVisible ] = useState( false );
+
 	const stepContent = (
 		<Analyzer
 			onComplete={ ( { platform, url } ) => handleSubmit( 'continue', { platform, from: url } ) }
@@ -169,6 +180,9 @@ const SiteMigrationIdentify: StepType< {
 				handleSubmit( 'skip_platform_identification' );
 			} }
 			flowName={ flow }
+			onVisibilityChange={ ( isVisible ) => {
+				setIsVisible( isVisible );
+			} }
 		/>
 	);
 
@@ -188,10 +202,12 @@ const SiteMigrationIdentify: StepType< {
 						/>
 					}
 					heading={
-						<Step.Heading
-							text={ translate( 'Let’s find your site' ) }
-							subText={ translate( 'Enter your current site address below to get started.' ) }
-						/>
+						isVisible ? (
+							<Step.Heading
+								text={ translate( 'Let’s find your site' ) }
+								subText={ translate( 'Enter your current site address below to get started.' ) }
+							/>
+						) : undefined
 					}
 				>
 					{ stepContent }
@@ -216,12 +232,14 @@ const SiteMigrationIdentify: StepType< {
 				isFullLayout
 				stepContent={
 					<div className="import__capture-wrapper">
-						<div className="import__heading import__heading-center">
-							<Title>{ translate( 'Let’s find your site' ) }</Title>
-							<SubTitle>
-								{ translate( 'Enter your current site address below to get started.' ) }
-							</SubTitle>
-						</div>
+						{ isVisible && (
+							<div className="import__heading import__heading-center">
+								<Title>{ translate( 'Let’s find your site' ) }</Title>
+								<SubTitle>
+									{ translate( 'Enter your current site address below to get started.' ) }
+								</SubTitle>
+							</div>
+						) }
 						{ stepContent }
 					</div>
 				}
