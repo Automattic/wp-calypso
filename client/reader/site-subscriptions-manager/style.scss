@@ -2,7 +2,6 @@
 @import "@automattic/typography/styles/variables";
 @import "@automattic/color-studio/dist/color-variables";
 @import "client/landing/subscriptions/styles/search-component";
-@import "client/landing/subscriptions/components/site-subscriptions-list/styles/variables";
 
 @mixin hover-color {
 	&:hover,
@@ -108,10 +107,6 @@ body.is-section-reader .layout.is-section-reader .site-subscriptions-manager {
 		font-family: "SF Pro Text", $sans;
 		line-height: $font-title-small;
 		margin: 48px 0 16px;
-	}
-
-	.reader-unsubscribed-feeds-search-list {
-		border-block-start: 1px solid $site-subscriptions-list-row-divider-color;
 	}
 }
 

@@ -8,6 +8,7 @@ import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
 import withDimensions from 'calypso/lib/with-dimensions';
 import QuickPost from 'calypso/reader/components/quick-post';
+import { focusEditor } from 'calypso/reader/components/quick-post/utils';
 import ReaderOnboarding from 'calypso/reader/onboarding';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import ReaderStream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
@@ -81,6 +82,9 @@ function FollowingStream( { ...props } ) {
 							className="following-stream__quick-post-card"
 							smooth
 							contentExpandedStyle={ { maxHeight: '800px' } }
+							onOpen={ () => {
+								focusEditor();
+							} }
 						>
 							<QuickPost />
 						</FoldableCard>

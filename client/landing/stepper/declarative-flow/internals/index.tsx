@@ -211,16 +211,14 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 
 	useSignUpStartTracking( { flow } );
 
+	const fallback = shouldUseStepContainerV2( flow.name ) ? (
+		<StepContainerV2Loading />
+	) : (
+		<Loading className="wpcom-loading__boot" />
+	);
+
 	return (
-		<Boot
-			fallback={
-				shouldUseStepContainerV2( flow.name ) ? (
-					<StepContainerV2Loading />
-				) : (
-					<Loading className="wpcom-loading__boot" />
-				)
-			}
-		>
+		<Boot fallback={ fallback }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
 
 			<Step.StepContainerV2Provider value={ stepContainerV2Context }>
@@ -243,9 +241,12 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 					<Route
 						path="/:flow/:lang?"
 						element={
-							<RedirectToStep
-								slug={ flow.__experimentalUseBuiltinAuth ? firstStepSlug : stepPaths[ 0 ] }
-							/>
+							<>
+								{ fallback }
+								<RedirectToStep
+									slug={ flow.__experimentalUseBuiltinAuth ? firstStepSlug : stepPaths[ 0 ] }
+								/>
+							</>
 						}
 					/>
 				</Routes>

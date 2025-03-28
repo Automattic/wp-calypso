@@ -4,6 +4,7 @@ import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useState, useMemo, useEffect, useRef } from 'react';
+import { useIsPlaygroundEligible } from 'calypso/landing/stepper/hooks/use-is-playground-eligible';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
 import {
@@ -102,6 +103,7 @@ const onboarding: Flow = {
 	useSteps() {
 		// We have already checked the value has loaded in useAssertConditions
 		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
+		const isPlaygroundEligible = useIsPlaygroundEligible();
 
 		const steps = stepsWithRequiredLogin( [
 			STEPS.UNIFIED_DOMAINS,
@@ -122,11 +124,16 @@ const onboarding: Flow = {
 			);
 		}
 
+		if ( isPlaygroundEligible ) {
+			steps.push( STEPS.PLAYGROUND );
+		}
+
 		return steps;
 	},
 
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
+		const isPlaygroundEligible = useIsPlaygroundEligible();
 		const {
 			setDomain,
 			setDomainCartItem,
@@ -169,7 +176,8 @@ const onboarding: Flow = {
 		 * Returns [destination, backDestination] for the post-checkout destination.
 		 */
 		const getPostCheckoutDestination = (
-			providedDependencies: ProvidedDependencies
+			providedDependencies: ProvidedDependencies,
+			isPlaygroundEligible: boolean
 		): [ string, string | null ] => {
 			if ( createWithBigSky && isBigSkyBeforePlansExperiment && isGoalsAtFrontExperiment ) {
 				const destination = addQueryArgs(
@@ -191,6 +199,20 @@ const onboarding: Flow = {
 
 			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
 				return [ `/home/${ providedDependencies.siteSlug }`, null ];
+			}
+
+			const playgroundId = isPlaygroundEligible
+				? getQueryArg( window.location.href, 'playground' )
+				: null;
+			if ( playgroundId && providedDependencies.siteSlug ) {
+				return [
+					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
+						siteSlug: providedDependencies.siteSlug,
+						siteId: providedDependencies.siteId,
+						playground: playgroundId,
+					} ),
+					null,
+				];
 			}
 
 			const destination = addQueryArgs( withLocale( '/setup/site-setup', locale ), {
@@ -358,8 +380,10 @@ const onboarding: Flow = {
 				case 'post-checkout-onboarding':
 					return navigate( 'processing' );
 				case 'processing': {
-					const [ destination, backDestination ] =
-						getPostCheckoutDestination( providedDependencies );
+					const [ destination, backDestination ] = getPostCheckoutDestination(
+						providedDependencies,
+						isPlaygroundEligible
+					);
 
 					persistSignupDestination( destination );
 					setSignupCompleteFlowName( flowName );
@@ -368,16 +392,25 @@ const onboarding: Flow = {
 					if ( providedDependencies.goToCheckout ) {
 						const siteSlug = providedDependencies.siteSlug as string;
 
+						/**
+						 * If the user comes from the Playground onboarding flow,
+						 * redirect the user back to Playground to start the import.
+						 */
+						const playgroundId = getQueryArg( window.location.href, 'playground' );
+						const redirectTo: string = playgroundId
+							? addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
+									siteSlug,
+									siteId: providedDependencies.siteId,
+									playground: playgroundId,
+							  } )
+							: addQueryArgs( withLocale( '/setup/onboarding/post-checkout-onboarding', locale ), {
+									siteSlug,
+							  } );
+
 						// replace the location to delete processing step from history.
 						window.location.replace(
 							addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-								// Go to the post-checkout step to see whether to wait for the atomic transfer
-								redirect_to: addQueryArgs(
-									withLocale( '/setup/onboarding/post-checkout-onboarding', locale ),
-									{
-										siteSlug,
-									}
-								),
+								redirect_to: redirectTo,
 								signup: 1,
 								checkoutBackUrl: pathToUrl( backDestination ?? '' ),
 								coupon,
@@ -391,6 +424,8 @@ const onboarding: Flow = {
 						window.location.replace( destination );
 					}
 				}
+				case 'playground':
+					return navigate( 'domains' );
 				default:
 					return;
 			}

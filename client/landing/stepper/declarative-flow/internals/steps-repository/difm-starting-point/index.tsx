@@ -75,7 +75,7 @@ const DIFMStartingPoint: StepType< {
 										flowName={ DIFM_FLOW }
 										enabledGeos={ [ 'US' ] }
 										helpCenterButtonCopy={ translate( 'Questions?' ) }
-										helpCenterButtonLink={ translate( 'Contact our site building team' ) }
+										helpCenterButtonLink={ translate( 'Contact our site-building team' ) }
 									/>
 								) : (
 									<Step.SkipButton
@@ -114,7 +114,7 @@ const DIFMStartingPoint: StepType< {
 				customizedActionButtons={
 					shouldRenderHelpCenter ? (
 						<HelpCenterStepButton
-							flowName={ flow }
+							flowName={ DIFM_FLOW }
 							enabledGeos={ [ 'US' ] }
 							helpCenterButtonCopy={ translate( 'Questions?' ) }
 							helpCenterButtonLink={ translate( 'Contact our site building team' ) }
