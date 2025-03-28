@@ -79,7 +79,7 @@ class SideExplainer extends Component {
 					'Select any annual paid plan and we’ll pay the first year’s domain registration fees for you.'
 				);
 
-				ctaText = translate( 'Check paid plans' );
+				ctaText = translate( 'Choose domain later' );
 				break;
 
 			case 'free-domain-explainer-treatment-search':
@@ -90,7 +90,7 @@ class SideExplainer extends Component {
 				subtitle2 = translate(
 					'Not ready to choose domain yet? Get your plan now and claim your domain later!'
 				);
-				ctaText = translate( 'Check paid plans' );
+				ctaText = translate( 'Choose domain later' );
 				break;
 
 			case 'use-your-domain':
