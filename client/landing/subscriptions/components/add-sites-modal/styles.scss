@@ -1,9 +1,13 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .add-sites-modal {
 	.components-modal__content {
-		margin-top: 60px;
+		@include break-medium {
+			min-width: 650px;
+		}
 	}
 
 	.add-sites-modal__subtitle {
@@ -12,5 +16,39 @@
 		font-style: normal;
 		font-weight: 400;
 		line-height: 20px;
+		margin-bottom: 1em;
+	}
+
+	.reader-feed-item__site-preview-h-stack {
+		max-width: 200px;
+	}
+
+	.reader-feed-item__description {
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		white-space: normal;
+
+		@include breakpoint-deprecated( "<660px" ) {
+			display: none;
+		}
+	}
+
+	.feed-preview {
+		max-width: 586px;
+	}
+
+	.empty-content__title {
+		display: none;
+	}
+
+	.empty-content__line {
+		margin-bottom: 20px;
+	}
+
+	.list-end .gridicon {
+		position: static;
+		padding: 0;
+		background: none;
 	}
 }

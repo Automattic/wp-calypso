@@ -128,7 +128,7 @@ describe( 'MigrationOverview', () => {
 			expect( getByText( /We've received your migration request/ ) ).toBeVisible();
 			expect(
 				getByText(
-					/Our team has received your details. We will review your site to make sure we have everything we need. Here's what you can expect next:/
+					/We will review your site to make sure we have everything we need. Here's what you can expect next:/
 				)
 			).toBeVisible();
 		} );

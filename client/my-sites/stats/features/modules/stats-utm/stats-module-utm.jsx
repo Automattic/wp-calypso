@@ -51,21 +51,9 @@ const StatsModuleUTM = ( {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const translate = useTranslate();
 
-	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.CAMPAIGN );
+	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.SOURCE_MEDIUM );
 
 	const optionLabels = {
-		[ OPTION_KEYS.CAMPAIGN ]: {
-			selectLabel: translate( 'Campaign' ),
-			headerLabel: translate( 'Posts by Campaign' ),
-		},
-		[ OPTION_KEYS.SOURCE ]: {
-			selectLabel: translate( 'Source' ),
-			headerLabel: translate( 'Posts by Source' ),
-		},
-		[ OPTION_KEYS.MEDIUM ]: {
-			selectLabel: translate( 'Medium' ),
-			headerLabel: translate( 'Posts by Medium' ),
-		},
 		[ OPTION_KEYS.SOURCE_MEDIUM ]: {
 			selectLabel: translate( 'Source / Medium' ),
 			headerLabel: translate( 'Posts by Source / Medium' ),
@@ -75,6 +63,18 @@ const StatsModuleUTM = ( {
 			selectLabel: translate( 'Campaign / Source / Medium' ),
 			headerLabel: translate( 'Posts by Campaign / Source / Medium' ),
 			isGrouped: true,
+		},
+		[ OPTION_KEYS.SOURCE ]: {
+			selectLabel: translate( 'Source' ),
+			headerLabel: translate( 'Posts by Source' ),
+		},
+		[ OPTION_KEYS.MEDIUM ]: {
+			selectLabel: translate( 'Medium' ),
+			headerLabel: translate( 'Posts by Medium' ),
+		},
+		[ OPTION_KEYS.CAMPAIGN ]: {
+			selectLabel: translate( 'Campaign' ),
+			headerLabel: translate( 'Posts by Campaign' ),
 		},
 	};
 

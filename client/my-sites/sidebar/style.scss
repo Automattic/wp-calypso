@@ -233,7 +233,11 @@ $font-size: rem(14px);
 			box-sizing: border-box;
 		}
 
-		.sidebar__expandable-arrow,
+		.sidebar__expandable-arrow {
+			height: initial;
+			width: initial;
+		}
+
 		.gridicons-external {
 			width: 20px;
 			height: 20px;
@@ -389,10 +393,6 @@ $font-size: rem(14px);
 			}
 		}
 
-		.sidebar__menu.is-togglable .sidebar__expandable-arrow {
-			margin-right: 10px;
-		}
-
 		.notice {
 			/* stylelint-disable-next-line scales/font-weights */
 			font-weight: 300;
@@ -452,7 +452,7 @@ $font-size: rem(14px);
 			padding: 12px 10px;
 			margin: 0 12px;
 			border-radius: 4px;
-			max-height: 44px;
+			max-height: 40px;
 		}
 
 		.sidebar__expandable-content .sidebar__menu-link {

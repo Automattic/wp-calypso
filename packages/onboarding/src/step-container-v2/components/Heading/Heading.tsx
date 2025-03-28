@@ -6,23 +6,19 @@ import './style.scss';
 interface HeadingProps {
 	text: ReactNode;
 	subText?: ReactNode;
-	align?: 'left';
+	align?: 'left' | 'center';
 	size?: 'small';
-	textBalance?: 'balance';
+	maxWidth?: string;
 }
 
-export const Heading = ( {
-	text,
-	subText,
-	align,
-	size,
-	textBalance = 'balance',
-}: HeadingProps ) => {
+export const Heading = ( { text, subText, align, size, maxWidth }: HeadingProps ) => {
 	return (
 		<div
 			className={ clsx( 'step-container-v2__heading', {
 				left: align === 'left',
+				center: align === 'center',
 			} ) }
+			style={ maxWidth ? { maxWidth } : undefined }
 		>
 			<h1
 				className={ clsx( 'wp-brand-font', {
@@ -31,9 +27,7 @@ export const Heading = ( {
 			>
 				{ text }
 			</h1>
-			{ subText && (
-				<p className={ clsx( { 'text-balance': textBalance === 'balance' } ) }>{ subText }</p>
-			) }
+			{ subText && <p>{ subText }</p> }
 		</div>
 	);
 };

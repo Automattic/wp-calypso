@@ -1,6 +1,5 @@
 import { WordPressLogo, WordPressWordmark } from '@automattic/components';
 import { ReactNode } from 'react';
-import { useStepContainerV2InternalContext } from '../../contexts/StepContainerV2InternalContext';
 
 import './style.scss';
 
@@ -10,18 +9,16 @@ interface TopBarProps {
 }
 
 export const TopBar = ( { backButton, skipButton }: TopBarProps ) => {
-	const { isMediumViewport } = useStepContainerV2InternalContext();
-
 	return (
 		<div className="step-container-v2__top-bar">
-			{ isMediumViewport ? (
-				<WordPressWordmark
-					className="step-container-v2__top-bar-wordpress-logo"
-					color="currentColor"
-				/>
-			) : (
-				<WordPressLogo size={ 21 } className="step-container-v2__top-bar-wordpress-logo" />
-			) }
+			<WordPressWordmark
+				className="step-container-v2__top-bar-wordpress-logo step-container-v2__top-bar-wordpress-logo--wordmark"
+				color="currentColor"
+			/>
+			<WordPressLogo
+				size={ 21 }
+				className="step-container-v2__top-bar-wordpress-logo step-container-v2__top-bar-wordpress-logo--logo"
+			/>
 
 			{ backButton && (
 				<>

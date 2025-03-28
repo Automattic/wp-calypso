@@ -1,5 +1,5 @@
 import { PLAN_BUSINESS, getPlan, isWpComBusinessPlan } from '@automattic/calypso-products';
-import { NextButton, StepContainer } from '@automattic/onboarding';
+import { NextButton, Step, StepContainer } from '@automattic/onboarding';
 import { Icon, copy, globe, lockOutline, scheduled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
@@ -10,11 +10,12 @@ import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePresalesChat } from 'calypso/lib/presales-chat';
+import { shouldUseStepContainerV2MigrationFlow } from '../../../helpers/should-use-step-container-v2';
 import { DIYOption } from './diy-option';
-import type { Step } from '../../types';
+import type { Step as StepType } from '../../types';
 import './style.scss';
 
-const SiteMigrationHowToMigrate: Step< {
+const SiteMigrationHowToMigrate: StepType< {
 	accepts: {
 		headerText?: string;
 		subHeaderText?: string;
@@ -24,10 +25,11 @@ const SiteMigrationHowToMigrate: Step< {
 		destination: string;
 	};
 } > = ( props ) => {
-	const { navigation, headerText, stepName, subHeaderText } = props;
+	const { navigation, headerText, stepName, subHeaderText, flow } = props;
 	const translate = useTranslate();
 	const site = useSite();
 	const { mutate: cancelMigration } = useMigrationCancellation( site?.ID );
+	const isUsingStepContainerV2 = shouldUseStepContainerV2MigrationFlow( flow );
 
 	usePresalesChat( 'wpcom' );
 
@@ -134,6 +136,38 @@ const SiteMigrationHowToMigrate: Step< {
 			</div>
 		);
 	};
+
+	if ( isUsingStepContainerV2 ) {
+		return (
+			<>
+				<DocumentHead title={ translate( 'Let us migrate your site' ) } />
+				<Step.CenteredColumnLayout
+					className="how-to-migrate-v2"
+					columnWidth={ 6 }
+					topBar={
+						<Step.TopBar
+							backButton={ <Step.BackButton onClick={ goBack } /> }
+							skipButton={
+								<Step.SkipButton
+									onClick={ () => handleClick( HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF ) }
+									label={ translate( "I'll do it myself" ) }
+								/>
+							}
+						/>
+					}
+					heading={
+						<Step.Heading
+							text={ headerText ?? translate( 'Let us migrate your site' ) }
+							subText={ subHeaderText || renderSubHeaderText() }
+							maxWidth="615px"
+						/>
+					}
+				>
+					{ renderStepContent() }
+				</Step.CenteredColumnLayout>
+			</>
+		);
+	}
 
 	return (
 		<>
