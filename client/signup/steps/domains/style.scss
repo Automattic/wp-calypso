@@ -559,7 +559,7 @@ body.is-section-signup {
 }
 
 .step-container-v2__content.step-container-v2__content--two-column-layout.domains__step-content.domains__step-content-domain-step {
-	column-gap: 40px;
+	column-gap: 0px !important;
 }
 
 @media (min-width: 1440px) {
@@ -736,5 +736,11 @@ body.is-section-stepper .onboarding:not(.is-onboarding-2023-pricing-grid) .step-
 		&.domain-product-price__domain-step-signup-flow {
 			flex-direction: column !important;
 		}
+	}
+}
+
+.step-route.onboarding.domains:has(.step-container-v2) .domains__domain-side-content {
+	@include breakpoint-deprecated( ">960px" ) {
+		margin-left: 40px;
 	}
 }
