@@ -4,7 +4,6 @@
 
 // Multisite
 .foldable-card.card {
-
 	@include a8c-clear-fix;
 	position: relative;
 	transition: margin 0.15s linear;
@@ -26,7 +25,6 @@
 	}
 
 	&.has-border {
-
 		.foldable-card__summary,
 		.foldable-card__summary-expanded {
 			margin-right: 48px;
@@ -130,7 +128,6 @@ button:not(:disabled).foldable-card__action {
 
 .foldable-card__content {
 	display: none;
-	position: relative;
 }
 
 .foldable-card.is-smooth .foldable-card__content {

@@ -36,6 +36,7 @@ class FoldableCard extends Component {
 		smooth: PropTypes.bool,
 		contentExpandedStyle: PropTypes.object,
 		contentCollapsedStyle: PropTypes.object,
+		useInert: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -48,6 +49,7 @@ class FoldableCard extends Component {
 		expanded: false,
 		screenReaderText: false,
 		smooth: false,
+		useInert: true,
 	};
 
 	state = {
@@ -125,7 +127,7 @@ class FoldableCard extends Component {
 		const additionalStyle = this.state.expanded
 			? this.props.contentExpandedStyle
 			: this.props.contentCollapsedStyle;
-		const inertProps = this.state.expanded ? {} : { inert: '' };
+		const inertProps = this.state.expanded || ! this.props.useInert ? {} : { inert: '' };
 
 		return (
 			<div className="foldable-card__content" style={ additionalStyle } { ...inertProps }>
