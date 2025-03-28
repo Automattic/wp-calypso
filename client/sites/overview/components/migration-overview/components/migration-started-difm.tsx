@@ -1,3 +1,4 @@
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { globe, group, Icon, scheduled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
@@ -27,11 +28,18 @@ const MigrationStartedItem = ( { icon, text }: MigrationStartedItemProps ) => (
 
 export const MigrationStartedDIFM = () => {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const title = translate( "We've received your migration request" );
-	const subTitle = translate(
+	const subTitle = hasEnTranslation(
 		"We will review your site to make sure we have everything we need. Here's what you can expect next:"
-	) as string;
+	)
+		? translate(
+				"We will review your site to make sure we have everything we need. Here's what you can expect next:"
+		  )
+		: translate(
+				"Our team has received your details. We will review your site to make sure we have everything we need. Here's what you can expect next:"
+		  );
 
 	return (
 		<Container>
