@@ -42,15 +42,20 @@ export const Default: Story = {
 };
 
 type HistoryState = {
+	/**
+	 * The current lucky number.
+	 */
 	luckyNumber: number;
-	init: boolean;
-	history: number[];
+
+	/**
+	 * The previous lucky numbers from the history state.
+	 */
+	prevLuckyNumbers: number[];
 };
 
 const INITIAL_HISTORY_STATE: HistoryState = {
 	luckyNumber: 0,
-	init: true,
-	history: [],
+	prevLuckyNumbers: [],
 };
 
 /**
@@ -71,31 +76,34 @@ export const PassCustomState: Story = {
 		 */
 		useLocation();
 
-		// Pick the location state from the browser history state
-		const { init, history } =
+		/*
+		 * pick the previous lucky numbers from the history state
+		 * or initialize the state if it's the first render
+		 */
+		const { prevLuckyNumbers } =
 			( browserHistory.location.state as HistoryState ) || INITIAL_HISTORY_STATE;
 
-		let newLuckyNumber = 0;
+		let newLuckyNumber = 0; // zero is not a lucky number. This is not a roulette.
 
-		// Create a new lucky number only when the init flag is false.
-		if ( ! init && browserHistory.action !== 'POP' ) {
+		// Create a new lucky number only when the pushing a new state
+		if ( browserHistory.action !== 'POP' ) {
 			newLuckyNumber = ( ( Math.random() * 100 ) | 0 ) + 1;
 		}
 
-		// Crate the state to pass to the `<Link />` instance
+		// Create the state object to pass to the `<Link />` instance
 		const state = {
 			luckyNumber: newLuckyNumber,
-			init: false,
-			history: newLuckyNumber > 0 ? [ ...history, newLuckyNumber ] : history,
+			prevLuckyNumbers:
+				newLuckyNumber > 0 ? [ ...prevLuckyNumbers, newLuckyNumber ] : prevLuckyNumbers,
 		};
 
 		return (
 			<VStack>
 				<Link { ...args } options={ { state } } className="story-link" />
 
-				{ ! init && (
+				{ prevLuckyNumbers.length && (
 					<div>
-						Previous lucky numbers: <strong>[ { history.join( ', ' ) } ]</strong>
+						Previous lucky numbers: <strong>[ { prevLuckyNumbers.join( ', ' ) } ]</strong>
 					</div>
 				) }
 
