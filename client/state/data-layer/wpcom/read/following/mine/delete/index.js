@@ -12,18 +12,43 @@ import { follow, removeFeedFromFollows } from 'calypso/state/reader/follows/acti
 import { getSiteByFeedUrl } from 'calypso/state/reader/sites/selectors';
 import { removeFeedFromStream } from 'calypso/state/reader/streams/actions';
 
-export const requestUnfollow = ( action ) =>
-	http( {
-		method: 'POST',
-		path: '/read/following/mine/delete',
-		apiVersion: '1.1',
-		body: {
-			url: action.payload.feedUrl,
-			source: config( 'readerFollowingSource' ),
-		},
-		onSuccess: action,
-		onFailure: action,
-	} );
+export const requestUnfollow = ( action ) => ( dispatch ) => {
+	const feedUrl = action.payload.feedUrl;
+	dispatch(
+		http( {
+			method: 'POST',
+			path: '/read/following/mine/delete',
+			apiVersion: '1.1',
+			body: {
+				url: feedUrl,
+				source: config( 'readerFollowingSource' ),
+			},
+			onSuccess: action,
+			onFailure: action,
+		} )
+	);
+
+	// Remove all posts from this site in the following and recent streams, as well as the follows
+	// list. We do this now to improve user experience, as waiting for the response creates a lag
+	// making the interaction feel poor and jumpy.
+	if ( feedUrl ) {
+		dispatch(
+			removeFeedFromStream( {
+				streamKey: 'following',
+				feedUrl,
+			} )
+		);
+		dispatch(
+			removeFeedFromStream( {
+				streamKey: 'recent',
+				feedUrl,
+			} )
+		);
+		// We manually remove from the feed, as refetching the list at this point would introduce
+		// a race condition on its results.
+		dispatch( removeFeedFromFollows( feedUrl ) );
+	}
+};
 
 export const fromApi = ( data ) => {
 	if ( ! data ) {
@@ -37,31 +62,7 @@ export const fromApi = ( data ) => {
 	return data.subscribed;
 };
 
-export const receiveUnfollow = ( action ) => ( dispatch ) => {
-	const feedUrl = action.payload.feedUrl;
-
-	// Remove all posts from this site in the following stream
-	if ( feedUrl ) {
-		dispatch(
-			removeFeedFromStream( {
-				streamKey: 'following',
-				feedUrl,
-			} )
-		);
-
-		dispatch(
-			removeFeedFromStream( {
-				streamKey: 'recent',
-				feedUrl,
-			} )
-		);
-
-		// Also completely remove the feed from the follows list
-		dispatch( removeFeedFromFollows( feedUrl ) );
-	}
-
-	dispatch( bypassDataLayer( action ) );
-};
+export const receiveUnfollow = ( action ) => bypassDataLayer( action );
 
 export const unfollowError = ( action ) => ( dispatch, getState ) => {
 	const feedUrl = action.payload.feedUrl;
