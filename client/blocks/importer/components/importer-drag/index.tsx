@@ -4,7 +4,7 @@ import { includes } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 import { UrlData } from 'calypso/blocks/import/types';
-import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
+import { shouldUseStepContainerV2MigrationFlow } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { ImporterConfig } from 'calypso/lib/importer/importer-config';
 import ErrorPane from 'calypso/my-sites/importer/error-pane';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -46,7 +46,7 @@ const ImporterDrag: React.FunctionComponent< Props > = ( props ) => {
 	const { importerStatus, importerData, site, flow, urlData /*, startImport*/ } = props;
 	const { errorData, importerState } = importerStatus;
 	const isEnabled = appStates.DISABLED !== importerState;
-	const isUsingStepContainerV2 = shouldUseStepContainerV2( flow ?? '' );
+	const isUsingStepContainerV2 = shouldUseStepContainerV2MigrationFlow( flow ?? '' );
 
 	return (
 		<div className={ clsx( 'importer-drag', `importer-drag-${ importerData?.engine }` ) }>

@@ -35,7 +35,7 @@ import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { requestSites } from 'calypso/state/sites/actions';
 import { hasAllSitesList } from 'calypso/state/sites/selectors';
-import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
+import { shouldUseStepContainerV2MigrationFlow } from '../../../helpers/should-use-step-container-v2';
 import { StepProps } from '../../types';
 import { useAtomicTransferQueryParamUpdate } from './hooks/use-atomic-transfer-query-param-update';
 import { useInitialQueryRun } from './hooks/use-initial-query-run';
@@ -89,7 +89,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const fromSiteData = useSelector( getUrlData );
 		const stepNavigator = useStepNavigator( flow, navigation, siteId, siteSlug, fromSite );
 		const currentPath = window.location.pathname + window.location.search;
-		const isUsingStepContainerV2 = shouldUseStepContainerV2( flow ?? '' );
+		const isUsingStepContainerV2 = shouldUseStepContainerV2MigrationFlow( flow ?? '' );
 
 		useSaveHostingFlowPathStep( flow, currentPath );
 

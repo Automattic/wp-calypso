@@ -8,7 +8,7 @@ import { UrlData } from 'calypso/blocks/import/types';
 import { getImporterTypeForEngine, isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
 import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
 import { UpgradePlan } from 'calypso/blocks/importer/wordpress/upgrade-plan';
-import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
+import { shouldUseStepContainerV2MigrationFlow } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import ErrorPane from 'calypso/my-sites/importer/error-pane';
 import { useDispatch } from 'calypso/state';
 import { startImport, resetImport, startImporting } from 'calypso/state/imports/actions';
@@ -52,7 +52,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 	const isSiteCompatible = siteItem && isTargetSitePlanCompatible( siteItem );
 	const planName = getPlan( PLAN_BUSINESS )?.getTitle() || '';
 	const errorData = job?.errorData;
-	const isUsingStepContainerV2 = shouldUseStepContainerV2( flow ?? '' );
+	const isUsingStepContainerV2 = shouldUseStepContainerV2MigrationFlow( flow ?? '' );
 
 	/**
 	 ↓ Callbacks
