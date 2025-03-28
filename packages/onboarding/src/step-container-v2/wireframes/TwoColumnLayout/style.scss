@@ -1,0 +1,14 @@
+@import '../../mixins';
+
+.step-container-v2__content--two-column-layout {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 3rem;
+
+	@include step-large-viewport {
+		gap: 4rem;
+		flex-direction: row;
+		align-items: flex-start;
+	}
+}

@@ -187,8 +187,8 @@ const StyledFoldableCard = styled( FoldableCard )`
 
 const WordPressLogoWrapper = styled.div`
 	position: absolute;
-	top: 20px;
-	left: 0;
+	top: 16px;
+	left: 16px;
 `;
 
 function InfoColumnWrapper( {
@@ -248,7 +248,7 @@ function InfoColumn( {
 				isMobile={ isMobile }
 			>
 				<WordPressLogoWrapper>
-					<WordPressWordmark size={ { width: 200, height: 25 } } />
+					<WordPressWordmark />
 				</WordPressLogoWrapper>
 
 				{ ! isMobile && <HundredYearPlanLogo /> }

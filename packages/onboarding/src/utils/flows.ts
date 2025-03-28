@@ -5,17 +5,14 @@ export const NEW_HOSTED_SITE_FLOW = 'new-hosted-site';
 export const NEW_HOSTED_SITE_FLOW_USER_INCLUDED = 'new-hosted-site-user-included';
 export const TRANSFERRING_HOSTED_SITE_FLOW = 'transferring-hosted-site';
 export const CONNECT_DOMAIN_FLOW = 'connect-domain';
-export const IMPORT_FOCUSED_FLOW = 'import-focused';
 export const ENTREPRENEUR_FLOW = 'entrepreneur';
 export const FREE_FLOW = 'free';
 export const SITE_MIGRATION_FLOW = 'site-migration';
-export const MIGRATION_SIGNUP_FLOW = 'migration-signup';
 export const HOSTED_SITE_MIGRATION_FLOW = 'hosted-site-migration';
 export const COPY_SITE_FLOW = 'copy-site';
 export const BUILD_FLOW = 'build';
 export const WRITE_FLOW = 'write';
 export const START_WRITING_FLOW = 'start-writing';
-export const DESIGN_FIRST_FLOW = 'design-first';
 export const SITE_SETUP_FLOW = 'site-setup';
 export const WITH_THEME_FLOW = 'with-theme';
 
@@ -36,6 +33,7 @@ export const EXAMPLE_FLOW = 'example';
 export const DIFM_FLOW = 'do-it-for-me';
 export const DIFM_FLOW_STORE = 'do-it-for-me-store';
 export const WEBSITE_DESIGN_SERVICES = 'website-design-services';
+export const AI_SITE_BUILDER_FLOW = 'ai-site-builder';
 
 export const isNewsletterFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && NEWSLETTER_FLOW === flowName );
@@ -68,14 +66,6 @@ export const isAnyHostingFlow = ( flowName?: string | null ) => {
 	);
 };
 
-export const isAnyMigrationFlow = ( flowName?: string | null ) => {
-	return Boolean( flowName && [ IMPORT_FOCUSED_FLOW ].includes( flowName ) );
-};
-
-export const isImportFocusedFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ IMPORT_FOCUSED_FLOW ].includes( flowName ) );
-};
-
 export const isCopySiteFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ COPY_SITE_FLOW ].includes( flowName ) );
 };
@@ -86,10 +76,6 @@ export const isEntrepreneurFlow = ( flowName: string | null ) => {
 
 export const isNewSiteMigrationFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ SITE_MIGRATION_FLOW ].includes( flowName ) );
-};
-
-export const isMigrationSignupFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ MIGRATION_SIGNUP_FLOW ].includes( flowName ) );
 };
 
 export const isHostedSiteMigrationFlow = ( flowName: string | null ) => {
@@ -110,14 +96,6 @@ export const isUpdateDesignFlow = ( flowName: string | null ) => {
 
 export const isStartWritingFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ START_WRITING_FLOW ].includes( flowName ) );
-};
-
-export const isDesignFirstFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ DESIGN_FIRST_FLOW ].includes( flowName ) );
-};
-
-export const isBlogOnboardingFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ START_WRITING_FLOW, DESIGN_FIRST_FLOW ].includes( flowName ) );
 };
 
 export const isOnboardingFlow = ( flowName: string | null ) => {
@@ -162,4 +140,8 @@ export const isDIFMFlow = ( flowName: string | null ) => {
 	return Boolean(
 		flowName && [ DIFM_FLOW, DIFM_FLOW_STORE, WEBSITE_DESIGN_SERVICES ].includes( flowName )
 	);
+};
+
+export const isAIBuilderFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ AI_SITE_BUILDER_FLOW ].includes( flowName ) );
 };

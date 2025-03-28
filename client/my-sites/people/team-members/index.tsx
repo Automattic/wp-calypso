@@ -75,7 +75,7 @@ function TeamMembers( props: Props ) {
 			);
 		}
 
-		return translate( 'You have %(number)d team member', 'You have %(number)d team members', {
+		return translate( 'You have %(number)d user', 'You have %(number)d users', {
 			args: { number: membersTotal as number, searchTerm: search as string },
 			count: membersTotal as number,
 		} );
@@ -146,7 +146,7 @@ function TeamMembers( props: Props ) {
 						<PeopleListSectionHeader isPlaceholder={ isLoading } label={ getHeaderLabel() }>
 							{ showAddTeamMembersBtn && (
 								<Button compact primary href={ addTeamMemberLink }>
-									{ translate( 'Add a team member' ) }
+									{ translate( 'Add a user' ) }
 								</Button>
 							) }
 						</PeopleListSectionHeader>

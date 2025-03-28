@@ -1,66 +1,24 @@
-import { SiteDetails, Onboard } from '@automattic/data-stores';
-import { useEffect, useState } from 'react';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
+import { Onboard } from '@automattic/data-stores';
+import type { SiteExcerptData } from '@automattic/sites';
 
 const SiteIntent = Onboard.SiteIntent;
 
 /**
- * Determines if the launchpad should be shown first based on site createion flow
+ * Determines if the launchpad should be shown first based on site creation flow.
  * @param site Site object
  * @returns Whether launchpad should be shown first
  */
-export const shouldShowLaunchpadFirst = async ( site: SiteDetails ): Promise< boolean > => {
+export const shouldShowLaunchpadFirst = ( site: SiteExcerptData ): boolean => {
 	const wasSiteCreatedOnboardingFlow = site.options?.site_creation_flow === 'onboarding';
-	const createdAfterExperimentStart =
-		( site.options?.created_at ?? '' ) > '2025-02-03T10:22:45+00:00'; // If created_at is null then this expression is false
 	const isBigSkyIntent = site?.options?.site_intent === SiteIntent.AIAssembler;
+	const isMigrationIntent = site?.options?.site_intent === SiteIntent.SiteMigration;
+	// If we don't have a site intent, fall through to the next option.
+	const siteHasNoIntent =
+		site && site.options && ( site.options.site_intent === '' || ! site.options.site_intent );
 
-	if ( isBigSkyIntent || ! wasSiteCreatedOnboardingFlow || ! createdAfterExperimentStart ) {
+	if ( isBigSkyIntent || ! wasSiteCreatedOnboardingFlow || siteHasNoIntent || isMigrationIntent ) {
 		return false;
 	}
 
-	const assignment = await loadExperimentAssignment(
-		'calypso_signup_onboarding_goals_first_flow_holdout_v2_20250131'
-	);
-
-	return assignment?.variationName === 'treatment_cumulative';
-};
-
-export const useShouldShowLaunchpadFirst = ( site?: SiteDetails | null ): [ boolean, boolean ] => {
-	const [ state, setState ] = useState< boolean | 'loading' >( 'loading' );
-
-	useEffect( () => {
-		let cancel = false;
-
-		const getResponse = async () => {
-			if ( ! site ) {
-				return;
-			}
-
-			try {
-				setState( 'loading' );
-				const result = await shouldShowLaunchpadFirst( site );
-				if ( ! cancel ) {
-					setState( result );
-				}
-			} catch ( err ) {
-				if ( ! cancel ) {
-					setState( false );
-				}
-			}
-		};
-
-		getResponse();
-
-		return () => {
-			cancel = true;
-		};
-	}, [ site ] );
-
-	if ( ! site ) {
-		// If the site isn't available yet we'll assume we're still loading
-		return [ true, false ];
-	}
-
-	return [ state === 'loading', state === 'loading' ? false : state ];
+	return true;
 };

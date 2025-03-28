@@ -1,9 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getPlan, PLAN_PERSONAL, PLAN_BUSINESS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
+import { HelpCenter } from '@automattic/data-stores';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
-import { useOpenZendeskMessaging } from '@automattic/zendesk-client';
 import { Button } from '@wordpress/components';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate, numberFormat, formatCurrency } from 'i18n-calypso';
 import { useState } from 'react';
 import imgBuiltBy from 'calypso/assets/images/cancellation/built-by.png';
@@ -19,6 +20,7 @@ import type { UpsellType } from '../get-upsell-type';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
+const HELP_CENTER_STORE = HelpCenter.register();
 
 type UpsellProps = {
 	children?: React.ReactNode;
@@ -115,7 +117,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 	const couponCode = 'BIZWPC25';
 	const builtByURL = 'https://wordpress.com/website-design-service/?ref=wpcom-cancel-flow';
 	const { refundAmount } = props;
-	const { openZendeskWidget } = useOpenZendeskMessaging( 'pre-cancellation-upsell' );
+	const { setNewMessagingChat } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const businessPlanName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
 
 	switch ( upsell ) {
@@ -140,14 +142,16 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 							type: upsell,
 						} );
 						page( getLiveChatUrl( upsell, site, purchase ) );
-
-						openZendeskWidget( {
-							message:
-								"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
-								props.cancellationReason,
+						const initialMessage =
+							"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
+							props.cancellationReason;
+						setNewMessagingChat( {
+							initialMessage,
+							section: 'pre-cancellation-upsell',
 							siteUrl: site.URL,
 							siteId: site.ID,
 						} );
+
 						props.closeDialog();
 					} }
 					onDecline={ props.onDeclineUpsell }

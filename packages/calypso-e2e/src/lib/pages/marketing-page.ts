@@ -40,7 +40,7 @@ export class MarketingPage {
 	 * @param {string} tabSlug tab slug.
 	 */
 	async visitTab( siteSlug: string, tabSlug: string ) {
-		await this.page.goto( getCalypsoURL( `sites/marketing/${ tabSlug }/${ siteSlug }` ) );
+		await this.page.goto( getCalypsoURL( `marketing/${ tabSlug }/${ siteSlug }` ) );
 	}
 
 	/**

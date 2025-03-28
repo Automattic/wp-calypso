@@ -21,7 +21,7 @@ const selectors = {
 		`div.site-settings__child-settings:has(label:text("${ text }")) .components-form-toggle`,
 
 	// Media section
-	carouselBackgroundColorSelect: `select[id="carousel_background_color"]`,
+	carouselBackgroundColorSelect: 'select[id="carousel_background_color"]',
 };
 
 /**

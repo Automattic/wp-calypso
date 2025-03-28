@@ -1,10 +1,4 @@
-import {
-	FREE_THEME,
-	BUNDLED_THEME,
-	MARKETPLACE_THEME,
-	DOT_ORG_THEME,
-} from '@automattic/design-picker';
-import { DESIGN_FIRST_FLOW } from '@automattic/onboarding';
+import { BUNDLED_THEME, MARKETPLACE_THEME, DOT_ORG_THEME } from '@automattic/design-picker';
 import { addQueryArgs } from '@wordpress/url';
 import { getThemeType, isThemePremium } from 'calypso/state/themes/selectors';
 import 'calypso/state/themes/init';
@@ -21,7 +15,7 @@ export function getThemeSignupUrl( state, themeId, options = {} ) {
 		return null;
 	}
 
-	const { tabFilter, styleVariationSlug } = options;
+	const { styleVariationSlug } = options;
 	const themeType = getThemeType( state, themeId );
 
 	let themeTypeParam = themeType;
@@ -53,11 +47,6 @@ export function getThemeSignupUrl( state, themeId, options = {} ) {
 		style_variation: styleVariationSlug,
 		intervalType: themeTypeParam === MARKETPLACE_THEME ? 'monthly' : 'yearly',
 	};
-
-	// If the selected free theme belongs to the blog category, redirect users to the blog tailored flow
-	if ( themeTypeParam === FREE_THEME && tabFilter === 'blog' ) {
-		return addQueryArgs( `/setup/${ DESIGN_FIRST_FLOW }`, searchParams );
-	}
 
 	// Used to prefix the theme slug when creating `themeSlugWithRepo` which is then used in onboarding.
 	// Does it just mean "is paid", is it actually the dir prefix, or both?

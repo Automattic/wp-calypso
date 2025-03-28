@@ -99,7 +99,7 @@ export class UserSignupPage {
 		] );
 
 		if ( ! response ) {
-			throw new Error( `Failed to sign up as new user: no or unexpected API response.` );
+			throw new Error( 'Failed to sign up as new user: no or unexpected API response.' );
 		}
 
 		return await response.json();

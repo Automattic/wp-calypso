@@ -35,15 +35,15 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"dependencies": {
-		"@types/seed-random": "^2.2.1",
+		"@types/seed-random": "^2.2.4",
 		"crc32": "^0.2.2",
-		"debug": "^4.3.3",
+		"debug": "^4.4.0",
 		"seed-random": "^2.2.0",
 		"tslib": "^2.3.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^5.3.3"
+		"typescript": "^5.8.2"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",

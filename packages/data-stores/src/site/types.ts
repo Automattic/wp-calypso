@@ -158,10 +158,10 @@ export interface SiteDetails {
 	user_interactions?: string[];
 
 	// Jetpack computed properties
-	canAutoupdateFiles?: boolean;
-	canUpdateFiles?: boolean;
-	isMainNetworkSite?: boolean;
-	isSecondaryNetworkSite?: boolean;
+	canAutoupdateFiles?: boolean | null;
+	canUpdateFiles?: boolean | null;
+	isMainNetworkSite?: boolean | null;
+	isSecondaryNetworkSite?: boolean | null;
 
 	// Migration
 	site_migration?: SourceSiteMigrationBase;
@@ -353,7 +353,6 @@ export interface Domain {
 	expired: boolean;
 	auto_renewing: boolean;
 	pending_registration: boolean;
-	pending_registration_time: string;
 	has_registration: boolean;
 	points_to_wpcom: boolean;
 	privacy_available: boolean;
@@ -626,39 +625,6 @@ export interface SourceSiteMigrationBase {
 	recent_migration?: boolean;
 	failed_backup_source?: boolean;
 	migration_status?: string;
-}
-
-export interface SourceSiteMigrationDetails extends SourceSiteMigrationBase {
-	target_blog_id?: number;
-	site_migration_id: number;
-	percent: number;
-	created: string;
-	is_atomic: boolean;
-	// Statistics
-	backup_percent?: number;
-	backup_size?: number;
-	backup_started?: string;
-	site_size?: number;
-	restore_percent?: number;
-	restore_message?: string;
-	restore_failure?: string;
-	restore_started?: number;
-	comments_count?: number;
-	plugins_count?: number;
-	posts_count?: number;
-	tables_count?: number;
-	themes_count?: number;
-	uploads_count?: number;
-	real_percent?: number;
-	wp_version?: string;
-	// Source site details
-	is_target_blog_admin?: boolean;
-	is_target_blog_upgraded?: boolean;
-	target_blog_slug?: string;
-	// Steps details
-	step?: number;
-	step_name?: string;
-	total_steps?: number;
 }
 
 export interface Page {

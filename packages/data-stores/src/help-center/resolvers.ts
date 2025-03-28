@@ -14,7 +14,7 @@ export function* isHelpCenterShown() {
 			  } )
 			: yield apiFetch( {
 					global: true,
-					path: `/help-center/open-state`,
+					path: '/help-center/open-state',
 			  } as APIFetchOptions );
 
 		// We only want to auto-open, we don't want to auto-close (and potentially overrule the user's action).

@@ -37,13 +37,13 @@
 	"dependencies": {
 		"@stripe/react-stripe-js": "^2.1.0",
 		"@stripe/stripe-js": "^1.54.2",
-		"debug": "^4.3.3",
+		"debug": "^4.4.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^5.3.3"
+		"typescript": "^5.8.2"
 	},
 	"private": true
 }

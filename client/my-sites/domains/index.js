@@ -9,6 +9,7 @@ import {
 	stagingSiteNotSupportedRedirect,
 	noSite,
 } from 'calypso/my-sites/controller';
+import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 import emailController from '../email/controller';
 import domainsController from './controller';
 import domainManagementController from './domain-management/controller';
@@ -160,6 +161,26 @@ export default function () {
 		paths.domainManagementTransferToOtherSite,
 		domainManagementController.domainManagementTransferToOtherSite
 	);
+
+	// /domains/manage/select-site
+	// Allows the user to select a site to manage domains for.
+	// Workaround for not listing wordpress.com subdomains on the global /domains/manage.
+	// This is **not** a workaround for /domains/manage omitting to render a site selector.
+	// This and the below route will need to be removed if we ever add wordpress.com subdomains
+	// to the global domain management pages and remove site specific domain management.
+	// See https://github.com/Automattic/wp-calypso/issues/100339 for more details.
+	page( paths.domainManagementSelectSite(), siteSelection, sites, makeLayout, clientRender );
+
+	// /domains/manage/select-site/:site
+	// Redirects to the selected site to /domains/manage/:site
+	page( paths.domainManagementSelectSite( ':site' ), siteSelection, ( context ) => {
+		const state = context.store.getState();
+		const slug = getSelectedSiteSlug( state );
+		if ( slug ) {
+			return page.redirect( paths.domainManagementList( slug ) );
+		}
+		return page.redirect( paths.domainManagementRoot() );
+	} );
 
 	page(
 		paths.domainManagementRoot(),

@@ -35,6 +35,7 @@ import type {
 	CheckoutStepCompleteStatus,
 	CheckoutStepGroupStore,
 	StepChangedCallback,
+	MakeStepActive,
 } from '../types';
 import type { ReactNode, HTMLAttributes, PropsWithChildren, ReactElement } from 'react';
 
@@ -65,6 +66,7 @@ const CheckoutStepGroupContext = createContext< CheckoutStepGroupStore >( {
 		stepCompleteCallbackMap: {},
 	},
 	actions: {
+		makeStepActive: noop,
 		setStepComplete: noop,
 		setActiveStepNumber: noop,
 		setStepCompleteStatus: noop,
@@ -175,6 +177,16 @@ function createCheckoutStepGroupActions(
 		);
 	};
 
+	const makeStepActive = async ( stepId: string ) => {
+		debug( `attempting to set step active: '${ stepId }'` );
+		const stepNumber = getStepNumberFromId( stepId );
+		if ( ! stepNumber ) {
+			throw new Error( `Cannot find step with id '${ stepId }' when trying to set step active.` );
+		}
+		setActiveStepNumber( stepNumber );
+		return true;
+	};
+
 	const setStepComplete = async ( stepId: string ) => {
 		debug( `attempting to set step complete: '${ stepId }'` );
 		const stepNumber = getStepNumberFromId( stepId );
@@ -205,6 +217,7 @@ function createCheckoutStepGroupActions(
 		getStepCompleteCallback,
 		setTotalSteps,
 		setStepComplete,
+		makeStepActive,
 	};
 }
 
@@ -868,6 +881,11 @@ export function useIsStepComplete(): boolean {
 export function useSetStepComplete(): SetStepComplete {
 	const store = useContext( CheckoutStepGroupContext );
 	return store.actions.setStepComplete;
+}
+
+export function useMakeStepActive(): MakeStepActive {
+	const store = useContext( CheckoutStepGroupContext );
+	return store.actions.makeStepActive;
 }
 
 const StepTitle = styled.span< StepTitleProps & HTMLAttributes< HTMLSpanElement > >`

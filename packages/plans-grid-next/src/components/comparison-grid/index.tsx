@@ -936,11 +936,11 @@ const ComparisonGrid = ( {
 	const [ visiblePlans, setVisiblePlans ] = useState< PlanSlug[] >( [] );
 
 	const displayedGridPlans = useMemo( () => {
-		return sortPlans( gridPlans, currentSitePlanSlug, 'small' === gridSize );
-	}, [ gridPlans, currentSitePlanSlug, gridSize ] );
+		return sortPlans( gridPlans, currentSitePlanSlug );
+	}, [ gridPlans, currentSitePlanSlug ] );
 
 	useEffect( () => {
-		setVisiblePlans( ( prev ) => {
+		setVisiblePlans( () => {
 			let visibleLength = displayedGridPlans.length;
 			switch ( gridSize ) {
 				case 'large':
@@ -955,27 +955,7 @@ const ComparisonGrid = ( {
 					break;
 			}
 
-			// visible length changed, update with the current gridPlans
-			// - we don't care about previous order
-			if ( prev.length !== visibleLength ) {
-				return displayedGridPlans.slice( 0, visibleLength ).map( ( { planSlug } ) => planSlug );
-			}
-
-			// prev state out of sync with current gridPlans (e.g. gridPlans updated to a different term)
-			// - we care about previous order
-			const isPrevStale = prev.some( ( planSlug ) => ! gridPlansIndex[ planSlug ] );
-			if ( isPrevStale ) {
-				return prev.map( ( planSlug ) => {
-					const gridPlan = displayedGridPlans.find(
-						( gridPlan ) => getPlanClass( gridPlan.planSlug ) === getPlanClass( planSlug )
-					);
-
-					return gridPlan?.planSlug ?? planSlug;
-				} );
-			}
-
-			// nothing to update
-			return prev;
+			return displayedGridPlans.slice( 0, visibleLength ).map( ( { planSlug } ) => planSlug );
 		} );
 	}, [ gridSize, displayedGridPlans, gridPlansIndex ] );
 
@@ -1124,14 +1104,6 @@ const ComparisonGrid = ( {
 	);
 };
 
-const GRID_BREAKPOINTS = new Map( [
-	[ 'small', 0 ],
-	[ 'smedium', 686 ],
-	[ 'medium', 835 ], // enough to fit Enterpreneur plan. was 686
-	[ 'large', 1005 ], // enough to fit Enterpreneur plan. was 870
-	[ 'xlarge', 1180 ],
-] );
-
 // TODO
 // Now that everything under is functional component, we can deprecate this wrapper and only keep ComparisonGrid instead.
 // More details can be found in https://github.com/Automattic/wp-calypso/issues/87047
@@ -1144,6 +1116,7 @@ const WrappedComparisonGrid = ( {
 	recordTracksEvent,
 	allFeaturesList,
 	intervalType,
+	isInSiteDashboard,
 	isInSignup,
 	currentSitePlanSlug,
 	selectedPlan,
@@ -1162,10 +1135,22 @@ const WrappedComparisonGrid = ( {
 }: ComparisonGridExternalProps ) => {
 	const gridContainerRef = useRef< HTMLDivElement >( null );
 
+	const gridBreakpoints = useMemo( () => {
+		// we want to fit up to the Commerce plan in this breakpoint
+		const xlargeBreakpoint = isInSiteDashboard ? 1114 : 1180;
+		return new Map( [
+			[ 'small', 0 ],
+			[ 'smedium', 686 ],
+			[ 'medium', 835 ],
+			[ 'large', 1005 ],
+			[ 'xlarge', xlargeBreakpoint ],
+		] );
+	}, [ isInSiteDashboard ] );
+
 	// TODO: this will be deprecated along side removing the wrapper component
 	const gridSize = useGridSize( {
 		containerRef: gridContainerRef,
-		containerBreakpoints: GRID_BREAKPOINTS,
+		containerBreakpoints: gridBreakpoints,
 	} );
 
 	const classNames = clsx( 'plans-grid-next', className, {
@@ -1196,6 +1181,7 @@ const WrappedComparisonGrid = ( {
 			>
 				<ComparisonGrid
 					intervalType={ intervalType }
+					isInSiteDashboard={ isInSiteDashboard }
 					isInSignup={ isInSignup }
 					currentSitePlanSlug={ currentSitePlanSlug }
 					siteId={ siteId }

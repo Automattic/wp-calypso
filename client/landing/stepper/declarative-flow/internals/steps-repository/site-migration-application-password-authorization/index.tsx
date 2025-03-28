@@ -14,7 +14,12 @@ import useStoreApplicationPassword from './hooks/use-store-application-password'
 import type { Step } from '../../types';
 import './style.scss';
 
-const SiteMigrationApplicationPasswordsAuthorization: Step = function ( { navigation } ) {
+const SiteMigrationApplicationPasswordsAuthorization: Step< {
+	submits: {
+		action: 'migration-started' | 'fallback-credentials' | 'authorization' | 'contact-me';
+		authorizationUrl?: string;
+	};
+} > = function ( { navigation } ) {
 	const translate = useTranslate();
 	const siteSlug = useSiteSlugParam();
 
@@ -93,7 +98,7 @@ const SiteMigrationApplicationPasswordsAuthorization: Step = function ( { naviga
 
 	// translators: %(sourceDomain)s is the source domain that is being migrated.
 	const subHeaderText = translate(
-		"We're ready to migrate {{strong}}%(sourceDomain)s{{/strong}} to WordPress.com. To make sure everything goes smoothly, we need you to authorize us for access in your WordPress admin.",
+		"We're ready to migrate {{strong}}%(sourceDomain)s{{/strong}} to WordPress.com. To ensure a smooth process, we need you to authorize us in your WordPress.com admin.",
 		{
 			args: {
 				sourceDomain,
@@ -122,7 +127,6 @@ const SiteMigrationApplicationPasswordsAuthorization: Step = function ( { naviga
 				goBack={ navigation?.goBack }
 				goNext={ navigation?.submit }
 				hideSkip
-				isFullLayout
 				notice={ notice }
 				formattedHeader={ formattedHeader }
 				stepContent={

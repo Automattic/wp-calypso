@@ -6,6 +6,7 @@ import { numberFormat, localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import InfoPopover from 'calypso/components/info-popover';
 import SectionHeader from 'calypso/components/section-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -59,16 +60,6 @@ class VideoPressStatsModule extends Component {
 		}
 	}
 
-	getModuleLabel() {
-		if ( ! this.props.summary ) {
-			return this.props.moduleStrings.title;
-		}
-		const { period, startOf } = this.props.period;
-		const { path, query } = this.props;
-
-		return <DatePicker period={ period } date={ startOf } path={ path } query={ query } summary />;
-	}
-
 	getHref() {
 		const { summary, period, path, siteSlug } = this.props;
 
@@ -85,6 +76,31 @@ class VideoPressStatsModule extends Component {
 				period.startOf.format( 'YYYY-MM-DD' )
 			);
 		}
+	}
+
+	getMaxValue( data, field ) {
+		if ( ! data || ! data.length ) {
+			return 0;
+		}
+		return Math.max( ...data.map( ( item ) => item[ field ] || 0 ) );
+	}
+
+	renderTitleCell( title, views, maxViews, onClick, onKeyUp ) {
+		const fillPercentage = maxViews > 0 ? ( views / maxViews ) * 100 : 0;
+		return (
+			<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-link">
+				<div className="videopress-stats-module__bar-wrapper">
+					<div
+						className="videopress-stats-module__bar"
+						style={ { '--bar-fill-percentage': `${ fillPercentage }%` } }
+					>
+						<span onClick={ onClick } onKeyUp={ onKeyUp } tabIndex="0" role="button">
+							{ title }
+						</span>
+					</div>
+				</div>
+			</div>
+		);
 	}
 
 	render() {
@@ -158,24 +174,49 @@ class VideoPressStatsModule extends Component {
 			...completeVideoStats,
 		];
 
+		// Calculate max views only
+		const maxViews = this.getMaxValue( completeVideoStats, 'views' );
+
 		return (
 			<div>
-				<SectionHeader
-					className={ headerClass }
-					label={ this.getModuleLabel() }
-					href={ ! summary ? summaryLink : null }
-				>
-					{ summary && (
-						<DownloadCsv
-							statType={ statType }
-							data={ csvData }
-							query={ query }
-							path={ path }
-							period={ period }
-						/>
-					) }
-				</SectionHeader>
+				{ summary && (
+					<div className="stats-module__date-picker-header">
+						<h3>
+							<DatePicker
+								period={ period.period }
+								date={ period.startOf }
+								path={ path }
+								query={ query }
+								summary
+							/>
+						</h3>
+					</div>
+				) }
 				<Card compact className={ cardClasses }>
+					<SectionHeader
+						className={ headerClass }
+						label={
+							<div className="stats-card-header__title" role="heading" aria-level="4">
+								<div>{ moduleStrings.title }</div>
+								<div className="stats-card-header__title-nodes">
+									<InfoPopover className="stats-info-area__popover" iconSize={ 24 } position="top">
+										{ translate( 'View detailed statistics about your videos.' ) }
+									</InfoPopover>
+								</div>
+							</div>
+						}
+						href={ ! summary ? summaryLink : null }
+					>
+						{ summary && (
+							<DownloadCsv
+								statType={ statType }
+								data={ csvData }
+								query={ query }
+								path={ path }
+								period={ period }
+							/>
+						) }
+					</SectionHeader>
 					<div className="videopress-stats-module__grid">
 						<div className="videopress-stats-module__header-row-wrapper">
 							<div className="videopress-stats-module__grid-header">{ translate( 'Title' ) }</div>
@@ -197,16 +238,13 @@ class VideoPressStatsModule extends Component {
 								key={ 'videopress-stats-row-' + index }
 								className="videopress-stats-module__row-wrapper"
 							>
-								<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-link">
-									<span
-										onClick={ () => editVideo( row.post_id ) }
-										onKeyUp={ () => editVideo( row.post_id ) }
-										tabIndex="0"
-										role="button"
-									>
-										{ row.title }
-									</span>
-								</div>
+								{ this.renderTitleCell(
+									row.title,
+									row.views,
+									maxViews,
+									() => editVideo( row.post_id ),
+									() => editVideo( row.post_id )
+								) }
 								<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric">
 									<span
 										onClick={ () => showStat( 'impressions', row ) }

@@ -14,7 +14,7 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { SUPPORT_URL, JETPACK_SUPPORT_VIDEOPRESS_URL_STATS } from '../../../const';
+import { VIDEOS_SUPPORT_URL, JETPACK_SUPPORT_VIDEOPRESS_URL_STATS } from '../../../const';
 import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import { StatsEmptyActionVideo } from '../shared';
@@ -32,9 +32,7 @@ const StatsVideos: React.FC< StatsDefaultModuleProps > = ( {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsVideoPlays';
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const supportUrl = isOdysseyStats
-		? JETPACK_SUPPORT_VIDEOPRESS_URL_STATS
-		: `${ SUPPORT_URL }#videos`;
+	const supportUrl = isOdysseyStats ? JETPACK_SUPPORT_VIDEOPRESS_URL_STATS : VIDEOS_SUPPORT_URL;
 
 	const shouldGateStatsModule = useShouldGateStats( statType );
 

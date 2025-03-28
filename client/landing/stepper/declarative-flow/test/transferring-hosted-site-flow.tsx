@@ -2,19 +2,26 @@
  * @jest-environment jsdom
  */
 import { waitFor } from '@testing-library/react';
-import transferringHostedSite from '../transferring-hosted-site-flow';
+import transferringHostedSite from '../flows/transferring-hosted-site-flow/transferring-hosted-site-flow';
 import { getFlowLocation, renderFlow } from './helpers';
 
 // we need to save the original object for later to not affect tests from other files
 const originalLocation = window.location;
 let mockIsAdminInterfaceWPAdminMock = true;
 const mockSiteId = 123;
+const mockSite = {
+	ID: mockSiteId,
+	URL: 'https://mysite.com',
+	options: {
+		admin_url: 'https://mysite.com/wp-admin',
+	},
+};
 
 jest.mock( 'calypso/state/sites/selectors', () => ( {
 	isAdminInterfaceWPAdmin: jest.fn( () => mockIsAdminInterfaceWPAdminMock ),
 } ) );
-jest.mock( '../../hooks/use-site-id-param', () => ( {
-	useSiteIdParam: jest.fn( () => mockSiteId ),
+jest.mock( '../../hooks/use-site', () => ( {
+	useSite: jest.fn( () => mockSite ),
 } ) );
 
 jest.mock( '@wordpress/data', () => {
@@ -64,7 +71,7 @@ describe( 'Transferring hosted site flow submit redirects', () => {
 
 			await waitFor( () => {
 				expect( getFlowLocation() ).toEqual( {
-					path: `/setup/hosted-site-migration`,
+					path: '/setup/hosted-site-migration',
 					state: null,
 				} );
 			} );

@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
+import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import DomainEligibilityWarning from 'calypso/components/eligibility-warnings/domain-warning';
 import PlanWarning from 'calypso/components/eligibility-warnings/plan-warning';
 import EligibilityWarningsList from 'calypso/components/eligibility-warnings/warnings-list';
@@ -12,14 +13,15 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WarningCard from 'calypso/components/warning-card';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSitePluginSlug } from 'calypso/landing/stepper/hooks/use-site-plugin-slug';
-import { AUTOMATED_ELIGIBILITY_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { addQueryArgs } from 'calypso/lib/url';
+import { useSelector } from 'calypso/state';
 import { eligibilityHolds as eligibilityHoldsConstants } from 'calypso/state/automated-transfer/constants';
+import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import SupportCard from '../store-address/support-card';
 import type { Step } from '../../types';
 import type { SiteSelect } from '@automattic/data-stores';
-import type { TransferEligibilityError } from '@automattic/data-stores/src/automated-transfer-eligibility/types';
 import './style.scss';
 
 const ActionSection = styled.div`
@@ -57,7 +59,9 @@ const TRANSFERRING_NOT_BLOCKERS = [
 	eligibilityHoldsConstants.TRANSFER_ALREADY_EXISTS, // Already Atomic sites are handled in the install flow.
 ];
 
-const BundleConfirm: Step = function BundleConfirm( { navigation } ) {
+const BundleConfirm: Step< { submits: { checkoutUrl: string } } > = function BundleConfirm( {
+	navigation,
+} ) {
 	const { goBack, submit } = navigation;
 	const { __ } = useI18n();
 	const site = useSite();
@@ -77,34 +81,13 @@ const BundleConfirm: Step = function BundleConfirm( { navigation } ) {
 		requestLatestAtomicTransfer( siteId );
 	}, [ requestLatestAtomicTransfer, siteId ] );
 
-	const eligibilityHolds = useSelect(
-		( select ) =>
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore Until createRegistrySelector is typed correctly
-			select( AUTOMATED_ELIGIBILITY_STORE ).getEligibilityHolds( siteId ),
-		[ siteId ]
+	const { eligibilityHolds, eligibilityWarnings } = useSelector( ( state ) =>
+		getEligibility( state, siteId )
 	);
-	const eligibilityWarnings = useSelect(
-		( select ) =>
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore Until createRegistrySelector is typed correctly
-			select( AUTOMATED_ELIGIBILITY_STORE ).getEligibilityWarnings( siteId ),
-		[ siteId ]
-	);
-	const wpcomSubdomainWarning = useSelect(
-		( select ) =>
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore Until createRegistrySelector is typed correctly
-			select( AUTOMATED_ELIGIBILITY_STORE ).getWpcomSubdomainWarning( siteId ),
-		[ siteId ]
-	);
-	const warnings = useSelect(
-		( select ) =>
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore Until createRegistrySelector is typed correctly
-			select( AUTOMATED_ELIGIBILITY_STORE ).getNonSubdomainWarnings( siteId ),
-		[ siteId ]
-	);
+	const wpcomSubdomainWarning =
+		eligibilityWarnings?.find( ( { id } ) => id === 'wordpress_subdomain' ) ?? null;
+	const warnings =
+		eligibilityWarnings?.filter( ( { id } ) => id !== 'wordpress_subdomain' ) ?? null;
 	const latestAtomicTransfer = useSelect(
 		( select ) => ( select( SITE_STORE ) as SiteSelect ).getSiteLatestAtomicTransfer( siteId || 0 ),
 		[ siteId ]
@@ -132,7 +115,7 @@ const BundleConfirm: Step = function BundleConfirm( { navigation } ) {
 
 	// Filter the Woop transferring blockers.
 	const transferringBlockers = eligibilityHolds?.filter(
-		( hold: TransferEligibilityError ) => ! TRANSFERRING_NOT_BLOCKERS.includes( hold.code )
+		( hold ) => ! TRANSFERRING_NOT_BLOCKERS.includes( hold )
 	);
 
 	const isTransferStuck = latestAtomicTransfer?.is_stuck || false;
@@ -140,16 +123,10 @@ const BundleConfirm: Step = function BundleConfirm( { navigation } ) {
 
 	// Add blocked-transfer-hold when something is wrong in the transfer status.
 	if (
-		! transferringBlockers?.includes( {
-			code: eligibilityHoldsConstants.BLOCKED_ATOMIC_TRANSFER,
-			message: '',
-		} ) &&
+		! transferringBlockers?.includes( eligibilityHoldsConstants.BLOCKED_ATOMIC_TRANSFER ) &&
 		( isBlockByTransferStatus || isTransferStuck )
 	) {
-		transferringBlockers?.push( {
-			code: eligibilityHoldsConstants.BLOCKED_ATOMIC_TRANSFER,
-			message: '',
-		} );
+		transferringBlockers?.push( eligibilityHoldsConstants.BLOCKED_ATOMIC_TRANSFER );
 	}
 
 	const transferringDataIsAvailable =
@@ -255,6 +232,7 @@ const BundleConfirm: Step = function BundleConfirm( { navigation } ) {
 	function getContent() {
 		return (
 			<>
+				<QueryEligibility siteId={ siteId } />
 				<div className="bundle-confirm__info-section" />
 				<div className="bundle-confirm__instructions-container">
 					{ getWPComSubdomainWarningContent() }
@@ -284,12 +262,10 @@ const BundleConfirm: Step = function BundleConfirm( { navigation } ) {
 								}
 
 								const providedDependencies = {
-									checkoutUrl: siteUpgrading.checkoutUrl,
+									checkoutUrl: siteUpgrading.required ? siteUpgrading.checkoutUrl : '',
 								};
-								submit?.(
-									providedDependencies,
-									siteUpgrading.required ? siteUpgrading.checkoutUrl : ''
-								);
+
+								submit?.( providedDependencies );
 							} }
 						>
 							{ __( 'Confirm' ) }
@@ -303,6 +279,7 @@ const BundleConfirm: Step = function BundleConfirm( { navigation } ) {
 	if ( site === null || ! site.ID || ! isDataReady || isReadyToStart ) {
 		return (
 			<div className="bundle-confirm__loading-container">
+				<QueryEligibility siteId={ siteId } />
 				<LoadingEllipsis />
 			</div>
 		);
@@ -310,7 +287,7 @@ const BundleConfirm: Step = function BundleConfirm( { navigation } ) {
 
 	const headerText = __( 'One final step' );
 	const subHeaderText = __(
-		'We’ve highlighted a few important details you should review before we create your store. '
+		"We've highlighted a few important details you should review before we create your store."
 	);
 
 	return (

@@ -135,13 +135,17 @@
 		}
 		&.is-free-domain {
 			padding-left: 0;
-			margin-top: 12px;
 			display: flex;
 			flex-direction: column-reverse;
 			@include break-mobile {
 				flex-direction: column;
 			}
 		}
+	}
+
+	.domain-suggestion__price-container {
+		flex-grow: 1;
+		display: flex;
 	}
 
 	.domain-registration-suggestion__badges {
@@ -195,6 +199,7 @@
 }
 
 body.is-section-stepper .step-container .featured-domain-suggestion.card,
+body.is-section-stepper .step-container-v2 .featured-domain-suggestion.card,
 body.is-section-signup .step-wrapper .featured-domain-suggestion.card {
 	border: none;
 	border-radius: 0;

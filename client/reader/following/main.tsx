@@ -1,6 +1,8 @@
 import config from '@automattic/calypso-config';
+import { FoldableCard } from '@automattic/components';
 import clsx from 'clsx';
-import { translate } from 'i18n-calypso';
+import { translate, fixMe } from 'i18n-calypso';
+import { useEffect } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -9,6 +11,9 @@ import QuickPost from 'calypso/reader/components/quick-post';
 import ReaderOnboarding from 'calypso/reader/onboarding';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import ReaderStream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { selectSidebarRecentSite } from 'calypso/state/reader-ui/sidebar/actions';
 import Recent from '../recent';
 import { useSiteSubscriptions } from './use-site-subscriptions';
 import { useFollowingView } from './view-preference';
@@ -18,6 +23,15 @@ import './style.scss';
 function FollowingStream( { ...props } ) {
 	const { currentView } = useFollowingView();
 	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
+	const dispatch = useDispatch();
+	const currentUser = useSelector( getCurrentUser );
+	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
+
+	// Set the selected feed based on route param.
+	useEffect( () => {
+		// Note that 'null' specifically sets the all view.
+		dispatch( selectSidebarRecentSite( { feedId: Number( props.feedId ) || null } ) );
+	}, [ props.feedId, dispatch ] );
 
 	if ( ! isLoading && ! hasNonSelfSubscriptions ) {
 		return (
@@ -47,14 +61,30 @@ function FollowingStream( { ...props } ) {
 					<BloganuaryHeader />
 					<NavigationHeader
 						title={ translate( 'Recent' ) }
-						subtitle={ translate( "Stay current with the blogs you've subscribed to." ) }
+						subtitle={ fixMe( {
+							text: 'Fresh content from blogs you follow.',
+							newCopy: translate( 'Fresh content from blogs you follow.' ),
+							oldCopy: translate( "Stay current with the blogs you've subscribed to." ),
+						} ) }
 						className={ clsx( 'following-stream-header', {
 							'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
 						} ) }
 					>
 						<ViewToggle />
 					</NavigationHeader>
-					{ config.isEnabled( 'reader/quick-post' ) && <QuickPost /> }
+					{ config.isEnabled( 'reader/quick-post' ) && hasSites && (
+						<FoldableCard
+							header={ translate( 'Write a quick post' ) }
+							clickableHeader
+							compact
+							expanded={ false }
+							className="following-stream__quick-post-card"
+							smooth
+							contentExpandedStyle={ { maxHeight: '800px' } }
+						>
+							<QuickPost />
+						</FoldableCard>
+					) }
 					<ReaderOnboarding />
 				</ReaderStream>
 			) }

@@ -84,7 +84,7 @@ describe( '<SitePlan>', () => {
 		const { getByText, queryAllByRole } = render(
 			<SitePlan site={ expiredBusinessSite } userId={ otherAdminId } />
 		);
-		expect( getByText( 'Creator - Expired' ) ).toBeInTheDocument();
+		expect( getByText( 'Creator-Expired' ) ).toBeInTheDocument();
 		expect( queryAllByRole( 'link' ) ).toHaveLength( 0 );
 	} );
 
@@ -92,7 +92,7 @@ describe( '<SitePlan>', () => {
 		const { getByText, queryAllByRole, getByRole } = render(
 			<SitePlan site={ expiredBusinessSite } userId={ siteOwnerId } />
 		);
-		expect( getByText( 'Creator - Expired' ) ).toBeInTheDocument();
+		expect( getByText( 'Creator-Expired' ) ).toBeInTheDocument();
 		expect( queryAllByRole( 'link' ) ).toHaveLength( 1 );
 		expect( getByRole( 'link', { name: 'Renew plan' } ) ).toHaveAttribute(
 			'href',
@@ -112,7 +112,7 @@ describe( '<SitePlan>', () => {
 		const { container, queryAllByRole } = render(
 			<SitePlan site={ expiredTrialSite } userId={ otherAdminId } />
 		);
-		expect( container.textContent ).toBe( 'Creator Trial - Expired' );
+		expect( container.textContent ).toBe( 'Creator Trial-Expired' );
 		expect( queryAllByRole( 'link' ) ).toHaveLength( 0 );
 	} );
 
@@ -120,7 +120,7 @@ describe( '<SitePlan>', () => {
 		const { getByText, queryAllByRole, getByRole } = render(
 			<SitePlan site={ expiredTrialSite } userId={ siteOwnerId } />
 		);
-		expect( getByText( 'Creator Trial - Expired' ) ).toBeInTheDocument();
+		expect( getByText( 'Creator Trial-Expired' ) ).toBeInTheDocument();
 		expect( queryAllByRole( 'link' ) ).toHaveLength( 1 );
 		expect( getByRole( 'link', { name: 'Upgrade' } ) ).toHaveAttribute(
 			'href',

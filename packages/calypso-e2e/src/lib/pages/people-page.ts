@@ -2,7 +2,7 @@ import { Page } from 'playwright';
 import { clickNavTab, reloadAndRetry } from '../../element-helper';
 import { NoticeComponent } from '../components';
 
-export type PeoplePageTabs = 'Team' | 'Followers' | 'Email Followers' | 'Invites';
+export type PeoplePageTabs = 'Users' | 'Followers' | 'Email Followers' | 'Invites';
 
 const selectors = {
 	// Navigation tabs
@@ -12,11 +12,11 @@ const selectors = {
 	// Team people
 	teamUser: ( username: string ) => `.people-profile:has(:text("${ username }"))`,
 	deletedUserContentAction: ( action: 'reassign' | 'delete' ) => `input[value="${ action }"]`,
-	deleteUserButton: `button:text("Delete user")`,
+	deleteUserButton: 'button:text("Delete user")',
 	deleteConfirmBanner: ':text("Successfully deleted")',
 
 	// Header
-	addPeopleButton: 'a:text("Add a team member")',
+	addPeopleButton: 'a:text("Add a user")',
 	invitePeopleButton: '.people-list-section-header__add-button',
 
 	// Invites

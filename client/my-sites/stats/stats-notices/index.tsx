@@ -1,6 +1,8 @@
+import config from '@automattic/calypso-config';
 import { FEATURE_STATS_PAID } from '@automattic/calypso-products';
 import { useState, useEffect } from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { STATS_FEATURE_PAGE_TRAFFIC } from 'calypso/my-sites/stats/constants';
 import {
 	DEFAULT_NOTICES_VISIBILITY,
 	Notices,
@@ -8,6 +10,7 @@ import {
 	processConflictNotices,
 } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
+import { shouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { useSelector, useDispatch } from 'calypso/state';
 import { resetSiteState } from 'calypso/state/purchases/actions';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
@@ -106,6 +109,13 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		hasSiteProductJetpackStatsPWYWOnly( state, siteId )
 	);
 
+	// Determine if the site has the Dotcom upsell visible.
+	const hasWpcomUpsell = useSelector(
+		( state ) =>
+			config.isEnabled( 'stats/paid-wpcom-v3' ) &&
+			shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC )
+	);
+
 	// Show the paywall notice if the site has reached the monthly views limit
 	// and no commercial purchase.
 	const showPaywallNotice =
@@ -145,6 +155,7 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		showPaywallNotice,
 		isNearLimit,
 		isOverLimit,
+		hasWpcomUpsell,
 	};
 
 	const { isLoading, isError, data: serverNoticesVisibility } = useNoticesVisibilityQuery( siteId );

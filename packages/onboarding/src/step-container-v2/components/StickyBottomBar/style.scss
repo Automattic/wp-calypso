@@ -1,0 +1,26 @@
+.step-container-v2__sticky-bottom-bar {
+	position: sticky;
+	height: var(--step-container-v2-sticky-bottom-bar-height);
+	bottom: 0;
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	box-sizing: border-box;
+	align-items: center;
+	padding: 1rem;
+	box-shadow: var(--color-border-subtle) 0 1px 0 inset;
+	background-color: var(--color-surface);
+
+	&-left-button {
+		margin-right: auto;
+	}
+
+	&-content {
+		margin-inline: 2rem;
+		min-width: 0;
+	}
+
+	&-right-button {
+		margin-left: auto;
+	}
+}

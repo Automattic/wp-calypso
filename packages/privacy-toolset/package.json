@@ -50,9 +50,9 @@
 		"@testing-library/dom": "^10.4.0",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/react": "^16.2.0",
-		"postcss": "^8.5.1",
+		"postcss": "^8.5.3",
 		"require-from-string": "^2.0.2",
-		"typescript": "^5.3.3",
+		"typescript": "^5.8.2",
 		"webpack": "^5.97.1"
 	}
 }

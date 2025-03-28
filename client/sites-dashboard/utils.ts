@@ -15,14 +15,6 @@ export const getDashboardUrl = ( slug: string ) => {
 	return `/home/${ slug }`;
 };
 
-export const getSettingsUrl = ( slug: string ) => {
-	return `/settings/general/${ slug }`;
-};
-
-export const getSiteMonitoringUrl = ( slug: string ) => {
-	return `/site-monitoring/${ slug }`;
-};
-
 export const getPluginsUrl = ( slug: string ) => {
 	return `/plugins/${ slug }`;
 };
@@ -81,7 +73,10 @@ export const isMigrationInProgress = ( site: SiteExcerptData ): boolean => {
 		return false;
 	}
 
-	return ! migrationStatus.startsWith( 'migration-completed' );
+	return (
+		! migrationStatus.startsWith( 'migration-completed' ) &&
+		! migrationStatus.startsWith( 'migration-cancelled' )
+	);
 };
 
 export const getMigrationStatus = (

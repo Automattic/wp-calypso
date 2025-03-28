@@ -172,6 +172,11 @@
 	@include breakpoint-deprecated( ">800px" ) {
 		max-width: 55%;
 	}
+
+	&.has-badges {
+		display: flex;
+    	align-items: center;
+	}
 }
 
 .domain-registration-suggestion__title-wrapper {
@@ -226,11 +231,14 @@
 	word-break: normal;
 }
 
+.domain-suggestion__action-container {
+	height: 40px;
+}
+
 .domain-suggestion__price-container,
 .domain-suggestion__action-container {
 	flex: 0 0 auto;
 	width: 100%;
-	height: 40px;
 
 	@include break-mobile {
 		width: auto;
@@ -325,12 +333,17 @@
 	}
 }
 
+.domain-product-price {
+	max-width: 100%;
+}
 
 body.is-section-stepper,
 body.is-section-signup {
-	svg {
-		padding-top: 0;
-		margin-right: 0;
+	&:not(:has(.step-container-v2)) {
+		svg:not(.jetpack-logo, .social-buttons__button svg) {
+			padding-top: 0;
+			margin-right: 0;
+		}
 	}
 
 	.domain-registration-suggestion__badges {

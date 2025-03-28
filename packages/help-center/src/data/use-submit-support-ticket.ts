@@ -19,9 +19,8 @@ export function useSubmitTicketMutation() {
 		mutationFn: ( newTicket: Ticket ) =>
 			canAccessWpcomApis()
 				? wpcomRequest( {
-						path: 'help/ticket/new',
-						apiNamespace: 'wpcom/v2/',
-						apiVersion: '2',
+						path: '/help/ticket/new',
+						apiNamespace: 'wpcom/v2',
 						method: 'POST',
 						body: newTicket,
 				  } )

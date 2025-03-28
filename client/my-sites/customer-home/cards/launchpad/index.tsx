@@ -5,8 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { type FC } from 'react';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import { useLaunchpad } from './use-launchpad';
-import { useLaunchpadContext } from './utils';
+import { useMyHomeCardLaunchpad } from './use-my-home-card-launchpad';
 import './style.scss';
 
 interface CustomerHomeLaunchpadProps {
@@ -18,7 +17,7 @@ const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( {
 	checklistSlug,
 	onSiteLaunched,
 }: CustomerHomeLaunchpadProps ) => {
-	const launchpadContext = useLaunchpadContext();
+	const launchpadContext = 'customer-home';
 	const translate = useTranslate();
 
 	const {
@@ -31,7 +30,7 @@ const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( {
 		launchpadTitle,
 		temporaryDismiss,
 		permanentDismiss,
-	} = useLaunchpad( { checklistSlug, launchpadContext } );
+	} = useMyHomeCardLaunchpad( { checklistSlug, launchpadContext } );
 
 	// return nothing if the launchpad is dismissed
 	if ( isDismissed ) {

@@ -67,3 +67,4 @@ export const LAUNCHPAD_LEGACY_SITE_SETUP = 'home-launchpad-legacy-site-setup';
 export const LAUNCHPAD_POST_MIGRATION = 'home-launchpad-post-migration';
 export const NOTICE_HOME_LIMITED_TIME_OFFER_COUPON = 'home-limited-time-coupon';
 export const FEATURE_READER = 'home-feature-reader';
+export const FOCUSED_LAUNCHPAD = 'home-focused-launchpad';

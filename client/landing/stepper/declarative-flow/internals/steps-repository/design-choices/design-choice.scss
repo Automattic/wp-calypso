@@ -1,9 +1,21 @@
 @import "@automattic/typography/styles/fonts";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
 
 .design-choice {
 	display: flex;
 	flex-direction: column;
-	width: 380px;
+	width: 100%;
+	align-items: center;
+
+	@include break-small {
+		max-width: 380px;
+	}
+
+	@include break-medium {
+		align-self: stretch;
+	}
+
 	padding: 36px 36px 60px;
 	border-radius: 4px;
 	outline: var(--studio-gray-5) solid 1px;
@@ -31,7 +43,11 @@
 	.design-choice__image-container {
 		display: flex;
 		position: relative; // Allows the price badge to be positioned absolutely
-		width: 308px;
+
+		@include break-small {
+			max-width: 308px;
+		}
+
 		min-height: 226px;
 		transition: transform ease-in 0.15s;
 	}

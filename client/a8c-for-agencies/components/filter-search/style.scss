@@ -21,7 +21,7 @@
 	}
 
 	.search__input.form-text-input[type="search"] {
-		@include a4a-font-body-md;
+		@include body-medium;
 		color: var(--color-text);
 	}
 }

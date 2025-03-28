@@ -17,7 +17,6 @@ interface Props {
 	stylesheet: string;
 	isVirtual?: boolean;
 	isExternallyManaged?: boolean;
-	disableGlobalStyles?: boolean;
 	limitGlobalStyles?: boolean;
 	variations?: StyleVariation[];
 	splitDefaultVariation: boolean;
@@ -38,7 +37,6 @@ const useScreens = ( {
 	stylesheet,
 	isVirtual,
 	isExternallyManaged,
-	disableGlobalStyles,
 	limitGlobalStyles,
 	variations,
 	splitDefaultVariation,
@@ -152,7 +150,7 @@ const useScreens = ( {
 		]
 	);
 
-	if ( isExternallyManaged || disableGlobalStyles ) {
+	if ( isExternallyManaged ) {
 		return [];
 	}
 

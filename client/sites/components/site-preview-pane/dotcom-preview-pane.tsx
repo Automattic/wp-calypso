@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
@@ -6,9 +5,8 @@ import React, { useMemo } from 'react';
 import ItemView from 'calypso/layout/hosting-dashboard/item-view';
 import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { useSetTabBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-tab-breadcrumb';
-import HostingFeaturesIcon from 'calypso/sites/hosting-features/components/hosting-features-icon';
-import { areHostingFeaturesSupported } from 'calypso/sites/hosting-features/features';
-import { useStagingSite } from 'calypso/sites/tools/staging-site/hooks/use-staging-site';
+import HostingFeaturesIcon from 'calypso/sites/hosting/components/hosting-features-icon';
+import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
 import { getMigrationStatus } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
@@ -18,20 +16,15 @@ import { showSitesPage } from '../sites-dashboard';
 import { SiteStatus } from '../sites-dataviews/sites-site-status';
 import {
 	FEATURE_TO_ROUTE_MAP,
-	DOTCOM_HOSTING_CONFIG,
-	DOTCOM_OVERVIEW,
-	DOTCOM_MONITORING,
-	DOTCOM_SITE_PERFORMANCE,
-	DOTCOM_LOGS_PHP,
-	DOTCOM_LOGS_WEB,
-	DOTCOM_GITHUB_DEPLOYMENTS,
-	DOTCOM_HOSTING_FEATURES,
-	DOTCOM_STAGING_SITE,
+	HOSTING_CONFIG,
 	OVERVIEW,
-	MARKETING_TOOLS,
-	MARKETING_CONNECTIONS,
-	MARKETING_TRAFFIC,
-	MARKETING_SHARING,
+	MONITORING,
+	PERFORMANCE,
+	LOGS_PHP,
+	LOGS_WEB,
+	DEPLOYMENTS,
+	HOSTING_FEATURES,
+	STAGING_SITE,
 	SETTINGS_SITE,
 	SETTINGS_ADMINISTRATION_RESET_SITE,
 	SETTINGS_ADMINISTRATION_TRANSFER_SITE,
@@ -40,12 +33,7 @@ import {
 	SETTINGS_SFTP_SSH,
 	SETTINGS_DATABASE,
 	SETTINGS_PERFORMANCE,
-	TOOLS,
-	TOOLS_STAGING_SITE,
-	TOOLS_DEPLOYMENTS,
-	TOOLS_MONITORING,
-	TOOLS_LOGS_PHP,
-	TOOLS_LOGS_WEB,
+	PLAN,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
 import SiteEnvironmentSwitcher from './site-environment-switcher';
@@ -84,84 +72,43 @@ const DotcomPreviewPane = ( {
 		const siteFeatures = [
 			{
 				label: __( 'Overview' ),
-				enabled: ! config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ DOTCOM_OVERVIEW ],
-			},
-			{
-				label: __( 'Overview' ),
-				enabled: config.isEnabled( 'untangling/hosting-menu' ),
+				enabled: true,
 				featureIds: [ OVERVIEW ],
 			},
 			{
 				label: (
 					<span>
-						{ hasEnTranslation( 'Hosting Features' )
-							? __( 'Hosting Features' )
-							: __( 'Dev Tools' ) }
+						{ __( 'Hosting Features' ) }
 						<HostingFeaturesIcon />
 					</span>
 				),
-				enabled:
-					( isSimpleSite || isPlanExpired ) && ! config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ DOTCOM_HOSTING_FEATURES ],
+				enabled: isSimpleSite || isPlanExpired,
+				featureIds: [ HOSTING_FEATURES ],
 			},
 			{
 				label: __( 'Deployments' ),
-				enabled: isActiveAtomicSite && ! config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ DOTCOM_GITHUB_DEPLOYMENTS ],
+				enabled: isActiveAtomicSite,
+				featureIds: [ DEPLOYMENTS ],
 			},
 			{
 				label: __( 'Monitoring' ),
-				enabled: isActiveAtomicSite && ! config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ DOTCOM_MONITORING ],
+				enabled: isActiveAtomicSite,
+				featureIds: [ MONITORING ],
 			},
 			{
 				label: __( 'Performance' ),
 				enabled: isActiveAtomicSite,
-				featureIds: [ DOTCOM_SITE_PERFORMANCE ],
+				featureIds: [ PERFORMANCE ],
 			},
 			{
 				label: __( 'Logs' ),
-				enabled: isActiveAtomicSite && ! config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ DOTCOM_LOGS_PHP, DOTCOM_LOGS_WEB ],
+				enabled: isActiveAtomicSite,
+				featureIds: [ LOGS_PHP, LOGS_WEB ],
 			},
 			{
 				label: __( 'Staging Site' ),
-				enabled: isActiveAtomicSite && ! config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ DOTCOM_STAGING_SITE ],
-			},
-			{
-				label: __( 'Marketing' ),
-				enabled: config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [
-					MARKETING_TOOLS,
-					MARKETING_CONNECTIONS,
-					MARKETING_TRAFFIC,
-					MARKETING_SHARING,
-				],
-			},
-			{
-				label: __( 'Advanced Tools' ),
-				enabled:
-					areHostingFeaturesSupported( site ) && config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [
-					TOOLS_STAGING_SITE,
-					TOOLS_DEPLOYMENTS,
-					TOOLS_MONITORING,
-					TOOLS_LOGS_PHP,
-					TOOLS_LOGS_WEB,
-				],
-			},
-			{
-				label: (
-					<span>
-						{ __( 'Advanced Tools' ) }
-						<HostingFeaturesIcon />
-					</span>
-				),
-				enabled:
-					! areHostingFeaturesSupported( site ) && config.isEnabled( 'untangling/hosting-menu' ),
-				featureIds: [ TOOLS ],
+				enabled: isActiveAtomicSite,
+				featureIds: [ STAGING_SITE ],
 			},
 			{
 				label: __( 'Settings' ),
@@ -182,11 +129,16 @@ const DotcomPreviewPane = ( {
 					? __( 'Server Settings' )
 					: __( 'Server Config' ),
 				enabled: ! isRemoveDuplicateViewsExperimentEnabled && isActiveAtomicSite,
-				featureIds: [ DOTCOM_HOSTING_CONFIG ],
+				featureIds: [ HOSTING_CONFIG ],
+			},
+			{
+				enabled: true,
+				visible: false,
+				featureIds: [ PLAN ],
 			},
 		];
 
-		return siteFeatures.map( ( { label, enabled, featureIds } ) => {
+		return siteFeatures.map( ( { label, enabled, visible, featureIds } ) => {
 			const selected = enabled && featureIds.includes( selectedSiteFeature );
 			const defaultFeatureId = featureIds[ 0 ] as string;
 			const defaultRoute = `/${ FEATURE_TO_ROUTE_MAP[ defaultFeatureId ].replace(
@@ -199,7 +151,7 @@ const DotcomPreviewPane = ( {
 				tab: {
 					label,
 					href: defaultRoute,
-					visible: enabled,
+					visible: enabled && visible !== false,
 					selected,
 					onTabClick: () => {
 						if ( enabled && ! selected ) {

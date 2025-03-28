@@ -4,6 +4,8 @@ const ThemeTierBadgeContext = createContext( {
 	canGoToCheckout: true,
 	showUpgradeBadge: true,
 	themeId: '',
+	siteId: null,
+	siteSlug: null,
 } );
 
 export const useThemeTierBadgeContext = () => useContext( ThemeTierBadgeContext );
@@ -13,11 +15,15 @@ export function ThemeTierBadgeContextProvider( {
 	children,
 	showUpgradeBadge = true,
 	themeId,
+	siteId,
+	siteSlug,
 } ) {
 	const value = {
 		canGoToCheckout,
 		showUpgradeBadge,
 		themeId,
+		siteId,
+		siteSlug,
 	};
 
 	return (

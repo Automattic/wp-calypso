@@ -6,7 +6,6 @@ import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
@@ -16,7 +15,7 @@ import { urlToSlug } from 'calypso/lib/url';
 import { useSelector, useDispatch } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
-import { useShouldShowLaunchpadFirst } from 'calypso/state/selectors/should-show-launchpad-first';
+import { shouldShowLaunchpadFirst } from 'calypso/state/selectors/should-show-launchpad-first';
 import { useQuery } from '../../../../hooks/use-query';
 import StepContent from './step-content';
 import { areLaunchpadTasksCompleted } from './task-helper';
@@ -25,12 +24,7 @@ import type { SiteSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
-type LaunchpadProps = {
-	navigation: NavigationControls;
-	flow: string;
-};
-
-const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
+const Launchpad: Step = ( { navigation, flow } ) => {
 	const translate = useTranslate();
 	const almostReadyToLaunchText = translate( 'Almost ready to launch' );
 	const verifiedParam = useQuery().get( 'verified' );
@@ -92,11 +86,8 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 		}
 	}, [ verifiedParam, translate, dispatch ] );
 
-	const [ loadingShouldShowLaunchpadFirst, shouldShowLaunchpadFirst ] =
-		useShouldShowLaunchpadFirst( site );
-
 	// Avoid screen flickering when redirecting to other paths
-	if ( ! site?.options || loadingShouldShowLaunchpadFirst ) {
+	if ( ! site?.options ) {
 		return null;
 	}
 
@@ -105,7 +96,7 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 		return null;
 	}
 
-	if ( shouldShowLaunchpadFirst ) {
+	if ( shouldShowLaunchpadFirst( site ) ) {
 		window.location.replace( `/home/${ siteSlug }` );
 		return null;
 	}

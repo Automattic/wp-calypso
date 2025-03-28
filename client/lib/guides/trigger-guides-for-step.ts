@@ -15,9 +15,9 @@ export function triggerGuidesForStep( flowName: string, stepName?: string, siteI
 	previousRequests.add( key );
 	wpcom.req
 		.post(
-			'guides/trigger',
+			'/guides/trigger',
 			{
-				apiNamespace: 'wpcom/v2/',
+				apiNamespace: 'wpcom/v2',
 			},
 			{
 				flow: flowName,

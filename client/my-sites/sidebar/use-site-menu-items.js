@@ -1,7 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { useLocale } from '@automattic/i18n-utils';
-import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useCurrentRoute } from 'calypso/components/route';
 import domainOnlyFallbackMenu from 'calypso/my-sites/sidebar/static-data/domain-only-fallback-menu';
 import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
@@ -17,14 +15,12 @@ import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { requestAdminMenu } from '../../state/admin-menu/actions';
 import allSitesMenu from './static-data/all-sites-menu';
 import buildFallbackResponse from './static-data/fallback-menu';
 import globalSidebarMenu from './static-data/global-sidebar-menu';
 import jetpackMenu from './static-data/jetpack-fallback-menu';
 
 const useSiteMenuItems = () => {
-	const dispatch = useDispatch();
 	const currentRoute = useSelector( ( state ) => getCurrentRoute( state ) );
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteDomain = useSelector( ( state ) => getSiteDomain( state, selectedSiteId ) );
@@ -33,17 +29,11 @@ const useSiteMenuItems = () => {
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSiteId ) );
 	const isStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, selectedSiteId ) );
 	const isPlanExpired = useSelector( ( state ) => !! getSelectedSite( state )?.plan?.expired );
-	const locale = useLocale();
 	const isAllDomainsView = '/domains/manage' === currentRoute;
 	const { currentSection } = useCurrentRoute();
 	const shouldShowGlobalSidebar = useSelector( ( state ) => {
 		return getShouldShowGlobalSidebar( state, selectedSiteId, currentSection?.group );
 	} );
-	useEffect( () => {
-		if ( selectedSiteId && siteDomain ) {
-			dispatch( requestAdminMenu( selectedSiteId ) );
-		}
-	}, [ dispatch, selectedSiteId, siteDomain, locale ] );
 
 	/**
 	 * As a general rule we allow fallback data to remain as static as possible.

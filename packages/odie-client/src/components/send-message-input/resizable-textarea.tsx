@@ -1,5 +1,4 @@
 import { useCallback, useEffect } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
 import autosize from 'autosize';
 import React, { KeyboardEvent } from 'react';
 
@@ -8,8 +7,10 @@ export const ResizableTextarea: React.FC< {
 	inputRef: React.RefObject< HTMLTextAreaElement >;
 	keyUpHandle: () => void;
 	sendMessageHandler: () => Promise< void >;
+	onPasteHandle: ( event: React.ClipboardEvent ) => void;
 	setSubmitDisabled: ( shouldBeDisabled: boolean ) => void;
 	shouldDisableInputField: boolean;
+	placeholder?: string;
 } > = ( {
 	className,
 	sendMessageHandler,
@@ -17,11 +18,9 @@ export const ResizableTextarea: React.FC< {
 	keyUpHandle,
 	setSubmitDisabled,
 	shouldDisableInputField = false,
+	onPasteHandle,
+	placeholder,
 } ) => {
-	const textAreaPlaceholder = shouldDisableInputField
-		? __( 'Just a moment…', __i18n_text_domain__ )
-		: __( 'Type a message…', __i18n_text_domain__ );
-
 	const onKeyUp = useCallback(
 		async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
 			if ( inputRef.current?.value.trim() === '' ) {
@@ -81,7 +80,8 @@ export const ResizableTextarea: React.FC< {
 			rows={ 1 }
 			className={ className }
 			onKeyUp={ onKeyUp }
-			placeholder={ textAreaPlaceholder }
+			onPaste={ onPasteHandle }
+			placeholder={ placeholder }
 			onKeyDown={ onKeyDown }
 			style={ { transition: 'none' } }
 			disabled={ shouldDisableInputField }

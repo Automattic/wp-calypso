@@ -25,7 +25,7 @@ function useProducts(
 		queryKey: [ ...queryKeys.products(), product_slugs, locale ],
 		queryFn: async (): Promise< ProductsIndex > => {
 			const apiProducts: RawAPIProductsList = await wpcomRequest( {
-				path: `/products`,
+				path: '/products',
 				apiVersion: '1.1',
 				...( product_slugs
 					? { query: new URLSearchParams( { product_slugs, locale } ).toString() }

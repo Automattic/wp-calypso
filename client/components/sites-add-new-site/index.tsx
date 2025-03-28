@@ -26,6 +26,7 @@ export const SitesAddNewSitePopover = ( { showCompact }: Props ) => {
 			showMainButtonLabel={ ! showCompact }
 			mainButtonLabelText={ translate( 'Add new site' ) }
 			isMenuVisible={ isOpen }
+			isPrimary={ ! showCompact }
 			toggleMenu={ toggleMenu }
 		>
 			{ isOpen && (

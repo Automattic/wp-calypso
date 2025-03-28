@@ -184,6 +184,10 @@
 		}
 	}
 
+	.components-external-link {
+		color: var(--color-primary-50);
+	}
+
 	.components-button.is-destructive,
 	.button.is-scary {
 		color: var(--color-scary-50);
@@ -609,9 +613,30 @@ html {
 		}
 	}
 
+
+	&.search-enabled {
+		.dataviews__view-actions {
+			padding: 1px;
+		}
+	}
+
 	&.show-overflow-overlay {
 		overflow-y: auto;
 		margin-block: 24px;
+
+		&::-webkit-scrollbar {
+			width: 4px;
+		}
+
+		&::-webkit-scrollbar-track {
+			background: transparent;
+		}
+
+		&::-webkit-scrollbar-thumb {
+			background-color: rgba(155, 155, 155, 0.5);
+			border-radius: 4px;
+			border: transparent;
+		}
 
 		&::after {
 			content: "";

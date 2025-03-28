@@ -1,5 +1,3 @@
-import { StepperStep } from './types';
-
 export const STEPS = {
 	BLOGGER_STARTING_POINT: {
 		slug: 'bloggerStartingPoint',
@@ -9,6 +7,11 @@ export const STEPS = {
 	BUSINESS_INFO: {
 		slug: 'businessInfo',
 		asyncComponent: () => import( './steps-repository/business-info' ),
+	},
+
+	AUTOMATED_COPY_SITE: {
+		slug: 'automated-copy',
+		asyncComponent: () => import( './steps-repository/automated-copy-site' ),
 	},
 
 	CELEBRATION: {
@@ -60,11 +63,6 @@ export const STEPS = {
 
 	ERROR: { slug: 'error', asyncComponent: () => import( './steps-repository/error-step' ) },
 
-	MIGRATION_ERROR: {
-		slug: 'error',
-		asyncComponent: () => import( './steps-repository/migration-error' ),
-	},
-
 	NEWSLETTER_SETUP: {
 		slug: 'newsletterSetup',
 		asyncComponent: () => import( './steps-repository/newsletter-setup' ),
@@ -93,11 +91,6 @@ export const STEPS = {
 	},
 
 	IMPORT: { slug: 'import', asyncComponent: () => import( './steps-repository/import' ) },
-
-	IMPORT_LIGHT: {
-		slug: 'importLight',
-		asyncComponent: () => import( './steps-repository/import-light' ),
-	},
 
 	IMPORT_LIST: {
 		slug: 'importList',
@@ -170,10 +163,6 @@ export const STEPS = {
 	},
 
 	LAUNCHPAD: { slug: 'launchpad', asyncComponent: () => import( './steps-repository/launchpad' ) },
-	MIGRATION_HANDLER: {
-		slug: 'migrationHandler',
-		asyncComponent: () => import( './steps-repository/migration-handler' ),
-	},
 
 	OPTIONS: {
 		slug: 'options',
@@ -185,6 +174,12 @@ export const STEPS = {
 	PROCESSING: {
 		slug: 'processing',
 		asyncComponent: () => import( './steps-repository/processing-step' ),
+	},
+
+	/** Temporary step until we allow passing props to steps */
+	PROCESSING_COPY_SITE_FLOW: {
+		slug: 'processing-copy',
+		asyncComponent: () => import( './steps-repository/processing-step-copy-site-flow' ),
 	},
 
 	SITE_CREATION_STEP: {
@@ -299,19 +294,9 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-how-to-migrate' ),
 	},
 
-	SITE_MIGRATION_SOURCE_URL: {
-		slug: 'site-migration-source-url',
-		asyncComponent: () => import( './steps-repository/site-migration-source-url' ),
-	},
-
 	SITE_MIGRATION_UPGRADE_PLAN: {
 		slug: 'site-migration-upgrade-plan',
 		asyncComponent: () => import( './steps-repository/site-migration-upgrade-plan' ),
-	},
-
-	SITE_MIGRATION_PLUGIN_INSTALL: {
-		slug: 'site-migration-plugin-install',
-		asyncComponent: () => import( './steps-repository/site-migration-plugin-install' ),
 	},
 
 	SITE_MIGRATION_ALREADY_WPCOM: {
@@ -364,6 +349,16 @@ export const STEPS = {
 			),
 	},
 
+	GET_CURRENT_THEME_SOFTWARE_SETS: {
+		slug: 'getCurrentThemeSoftwareSets',
+		asyncComponent: () => import( './steps-repository/get-current-theme-software-sets' ),
+	},
+
+	CHECK_FOR_PLUGINS: {
+		slug: 'checkForPlugins',
+		asyncComponent: () => import( './steps-repository/check-for-plugins' ),
+	},
+
 	HUNDRED_YEAR_PLAN_DIY_OR_DIFM: {
 		slug: 'diy-or-difm',
 		asyncComponent: () => import( './steps-repository/hundred-year-plan-diy-or-difm' ),
@@ -388,7 +383,7 @@ export const STEPS = {
 		slug: 'setup-blog',
 		asyncComponent: () => import( './steps-repository/setup-blog' ),
 	},
-} satisfies Record< string, StepperStep >;
+} as const;
 
 /**
  * Define steps that are only used by the Stepper framework. Any flow should avoid include these steps as much as possible.
@@ -399,4 +394,4 @@ export const PRIVATE_STEPS = {
 		asyncComponent: () =>
 			import( /* webpackChunkName: "stepper-user-step" */ './steps-repository/__user' ),
 	},
-} satisfies Record< string, StepperStep >;
+} as const;

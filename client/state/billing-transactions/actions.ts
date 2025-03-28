@@ -1,9 +1,6 @@
 import { translate } from 'i18n-calypso';
 import wp from 'calypso/lib/wp';
 import {
-	BILLING_RECEIPT_EMAIL_SEND,
-	BILLING_RECEIPT_EMAIL_SEND_FAILURE,
-	BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
 	BILLING_TRANSACTIONS_RECEIVE,
 	BILLING_TRANSACTIONS_REQUEST,
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
@@ -22,7 +19,7 @@ export const requestBillingTransactions = ( transactionType?: BillingTransaction
 		} );
 
 		return wp.req
-			.get( `/me/billing-history` + ( transactionType ? `/${ transactionType }` : '' ), {
+			.get( '/me/billing-history' + ( transactionType ? `/${ transactionType }` : '' ), {
 				apiVersion: '1.3',
 			} )
 			.then(
@@ -54,26 +51,12 @@ export const requestBillingTransactions = ( transactionType?: BillingTransaction
 
 export const sendBillingReceiptEmail = ( receiptId: number | string ) => {
 	return ( dispatch: CalypsoDispatch ) => {
-		dispatch( {
-			type: BILLING_RECEIPT_EMAIL_SEND,
-			receiptId,
-		} );
-
 		return wp.req
 			.get( `/me/billing-history/receipt/${ receiptId }/email` )
 			.then( () => {
-				dispatch( {
-					type: BILLING_RECEIPT_EMAIL_SEND_SUCCESS,
-					receiptId,
-				} );
 				dispatch( successNotice( translate( 'Your receipt was sent by email successfully.' ) ) );
 			} )
-			.catch( ( error: Error ) => {
-				dispatch( {
-					type: BILLING_RECEIPT_EMAIL_SEND_FAILURE,
-					receiptId,
-					error,
-				} );
+			.catch( () => {
 				dispatch(
 					errorNotice(
 						translate(

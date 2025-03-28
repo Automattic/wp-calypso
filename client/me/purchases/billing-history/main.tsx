@@ -1,5 +1,5 @@
-import config from '@automattic/calypso-config';
-import { CompactCard, Card } from '@automattic/components';
+import { Card } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryBillingTransactions from 'calypso/components/data/query-billing-transactions';
@@ -8,7 +8,6 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import BillingHistoryList from 'calypso/me/purchases/billing-history/billing-history-list';
 import BillingHistoryListDataView from 'calypso/me/purchases/billing-history/billing-history-list-data-view';
 import { vatDetails as vatDetailsPath, billingHistoryReceipt } from 'calypso/me/purchases/paths';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
@@ -25,15 +24,9 @@ export function BillingHistoryContent( {
 	siteId: number | null;
 	getReceiptUrlFor: ( receiptId: string | number ) => string;
 } ) {
-	const useDataViewBillingHistoryList = config.isEnabled( 'purchases/billing-history-data-view' );
-
 	return (
 		<Card id="billing-history" className="section-content" tagName="section">
-			{ useDataViewBillingHistoryList ? (
-				<BillingHistoryListDataView siteId={ siteId } getReceiptUrlFor={ getReceiptUrlFor } />
-			) : (
-				<BillingHistoryList header siteId={ siteId } getReceiptUrlFor={ getReceiptUrlFor } />
-			) }
+			<BillingHistoryListDataView siteId={ siteId } getReceiptUrlFor={ getReceiptUrlFor } />
 		</Card>
 	);
 }
@@ -75,14 +68,18 @@ function BillingHistory() {
 						},
 					}
 				) }
-			/>
+			>
+				<Button
+					className="billing-history__tax-details-notice"
+					variant="secondary"
+					href={ vatDetailsPath }
+				>
+					{ vatText }
+				</Button>
+			</NavigationHeader>
 			<QueryBillingTransactions transactionType="past" />
 			<PurchasesNavigation section="billingHistory" />
 			<BillingHistoryContent siteId={ null } getReceiptUrlFor={ billingHistoryReceipt } />
-
-			{ config.isEnabled( 'me/vat-details' ) && (
-				<CompactCard href={ vatDetailsPath }>{ vatText }</CompactCard>
-			) }
 		</Main>
 	);
 }

@@ -1,12 +1,23 @@
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/breakpoints";
+@import "@automattic/onboarding/styles/mixins";
 
 .step-route.site-migration-instructions {
+	@include onboarding-block-margin;
+
 	.step-container {
 		padding: 0 0 60px;
 
 		@include break-large {
 			padding: 0;
+		}
+	}
+
+	@media ( max-width: $break-small ) {
+		.launchpad-container__sidebar,
+		.launchpad-container__main-content {
+			padding-left: 0;
+			padding-right: 0;
 		}
 	}
 }

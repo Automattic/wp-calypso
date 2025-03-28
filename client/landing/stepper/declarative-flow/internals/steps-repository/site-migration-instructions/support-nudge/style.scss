@@ -1,0 +1,8 @@
+.site-migration-instructions-support-nudge {
+	margin-inline-start: auto;
+
+	.site-migration-instructions-support-nudge__button {
+		/* Ensure we use the same font size as the other text in the nudge. */
+		font-size: inherit;
+	}
+}

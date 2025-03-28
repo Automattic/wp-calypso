@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import { UserData } from 'calypso/lib/user/user';
 import { List } from 'calypso/reader/list-manage/types';
-import UserProfileHeader from 'calypso/reader/user-profile/components/user-profile-header';
 import { requestUserLists } from 'calypso/state/reader/lists/actions';
 
 interface AppState {
@@ -24,7 +23,12 @@ interface UserListsProps {
 	isLoading?: boolean;
 }
 
-const UserLists = ( { user, requestUserLists, lists, isLoading }: UserListsProps ): JSX.Element => {
+export const UserLists = ( {
+	user,
+	requestUserLists,
+	lists,
+	isLoading,
+}: UserListsProps ): JSX.Element => {
 	const translate = useTranslate();
 	const [ hasRequested, setHasRequested ] = useState( false );
 	const userLogin = user.user_login;
@@ -43,7 +47,6 @@ const UserLists = ( { user, requestUserLists, lists, isLoading }: UserListsProps
 	if ( ! lists || lists.length === 0 ) {
 		return (
 			<div className="user-profile__lists">
-				<UserProfileHeader user={ user } />
 				<EmptyContent
 					illustration={ null }
 					icon={ <Icon icon={ formatListBullets } size={ 48 } /> }
@@ -56,7 +59,6 @@ const UserLists = ( { user, requestUserLists, lists, isLoading }: UserListsProps
 
 	return (
 		<div className="user-profile__lists">
-			<UserProfileHeader user={ user } />
 			<div className="user-profile__lists-body">
 				{ lists.map( ( list: List ) => (
 					<a

@@ -98,6 +98,7 @@ class DomainRegistrationSuggestion extends Component {
 				railcar: this.props.railcarId,
 				ui_position: this.props.uiPosition,
 				fetch_algo: `${ this.props.fetchAlgo }/${ this.props.suggestion.vendor }`,
+				root_vendor: this.props.suggestion.vendor,
 				rec_result: `${ this.props.suggestion.domain_name }${ resultSuffix }`,
 				fetch_query: this.props.query,
 				domain_type: this.props.suggestion.is_premium ? 'premium' : 'standard',
@@ -118,6 +119,8 @@ class DomainRegistrationSuggestion extends Component {
 			this.props.recordTracksEvent( 'calypso_traintracks_interact', {
 				railcar: railcarId,
 				action: 'domain_added_to_cart',
+				domain: suggestion.domain_name,
+				root_vendor: suggestion.vendor,
 			} );
 		}
 
@@ -262,7 +265,7 @@ class DomainRegistrationSuggestion extends Component {
 		};
 	}
 
-	renderDomain() {
+	renderDomain( hasBadges = false ) {
 		const {
 			showHstsNotice,
 			showDotGayNotice,
@@ -271,6 +274,9 @@ class DomainRegistrationSuggestion extends Component {
 
 		const { name, tld } = this.getDomainParts( domain );
 
+		const wrapperClassName = clsx( 'domain-registration-suggestion__title-info', {
+			'has-badges': hasBadges,
+		} );
 		const titleWrapperClassName = clsx( 'domain-registration-suggestion__title-wrapper', {
 			'domain-registration-suggestion__title-domain':
 				this.props.showStrikedOutPrice && ! this.props.isFeatured,
@@ -278,7 +284,7 @@ class DomainRegistrationSuggestion extends Component {
 		} );
 
 		return (
-			<div className="domain-registration-suggestion__title-info">
+			<div className={ wrapperClassName }>
 				<div className={ titleWrapperClassName }>
 					<h3 className="domain-registration-suggestion__title">
 						<div className="domain-registration-suggestion__domain-title">
@@ -434,6 +440,8 @@ class DomainRegistrationSuggestion extends Component {
 			'is-unavailable': isUnavailableDomain,
 		} );
 
+		const badges = this.renderBadges();
+
 		return (
 			<DomainSuggestion
 				extraClasses={ extraClasses }
@@ -450,8 +458,8 @@ class DomainRegistrationSuggestion extends Component {
 				showStrikedOutPrice={ showStrikedOutPrice }
 				hideMatchReasons={ hideMatchReasons }
 			>
-				{ this.renderBadges() }
-				{ this.renderDomain() }
+				{ badges }
+				{ this.renderDomain( !! badges ) }
 				{ ! hideMatchReasons && isFeatured && this.renderMatchReason() }
 			</DomainSuggestion>
 		);

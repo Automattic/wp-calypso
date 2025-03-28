@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 
@@ -28,7 +28,8 @@ const DateRangeFooter: FunctionComponent< Props > = ( {
 			<Button
 				className="date-range__cancel-btn"
 				onClick={ onCancelClick }
-				compact
+				variant="secondary"
+				size="compact"
 				aria-label={ cancelText }
 			>
 				{ cancelText }
@@ -36,8 +37,8 @@ const DateRangeFooter: FunctionComponent< Props > = ( {
 			<Button
 				className="date-range__apply-btn"
 				onClick={ onApplyClick }
-				primary
-				compact
+				variant="primary"
+				size="compact"
 				aria-label={ applyText }
 			>
 				{ applyText }

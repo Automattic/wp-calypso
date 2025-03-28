@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/format-currency",
-	"version": "2.0.0",
+	"version": "2.1.0",
 	"description": "JavaScript library for formatting currency.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
@@ -34,7 +34,7 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^5.3.3"
+		"typescript": "^5.8.2"
 	},
 	"files": [
 		"dist",

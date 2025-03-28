@@ -12,52 +12,55 @@ import type { Step } from '../../types';
 /**
  * The starting point step
  */
-const StartingPointStep: Step = function StartingPointStep( { navigation } ) {
-	const { goBack, submit } = navigation;
-	const translate = useTranslate();
-	const headerText = translate( 'Nice job! Now it’s{{br}}{{/br}} time to get creative.', {
-		components: { br: <br /> },
-	} );
-	const subHeaderText = translate( "Don't worry. You can come back to these steps!" );
-	const intents = useStartingPoints();
+const StartingPointStep: Step< { submits: { startingPoint: string } } > =
+	function StartingPointStep( { navigation } ) {
+		const { goBack, submit } = navigation;
+		const translate = useTranslate();
+		const headerText = translate( 'Nice job! Now it’s{{br}}{{/br}} time to get creative.', {
+			components: { br: <br /> },
+		} );
+		const subHeaderText = translate( "Don't worry. You can come back to these steps!" );
+		const intents = useStartingPoints();
 
-	const submitIntent = ( startingPoint: string ) => {
-		const providedDependencies = { startingPoint };
-		recordTracksEvent( 'calypso_signup_starting_point_select', { starting_point: startingPoint } );
-		submit?.( providedDependencies, startingPoint );
+		const submitIntent = ( startingPoint: string ) => {
+			const providedDependencies = { startingPoint };
+			recordTracksEvent( 'calypso_signup_starting_point_select', {
+				starting_point: startingPoint,
+			} );
+			submit?.( providedDependencies );
+		};
+
+		return (
+			<>
+				<DocumentHead title={ translate( 'Nice job! Now it’s time to get creative.' ) } />
+				<StepContainer
+					stepName="blogger-starting-point"
+					headerImageUrl={ startingPointImageUrl }
+					goBack={ goBack }
+					skipLabelText={ translate( 'Skip to dashboard' ) }
+					goNext={ () => submitIntent( 'skip-to-my-home' ) }
+					skipButtonAlign="top"
+					isHorizontalLayout
+					formattedHeader={
+						<FormattedHeader
+							id="intent-header"
+							headerText={ headerText }
+							subHeaderText={ subHeaderText }
+							align="left"
+						/>
+					}
+					stepContent={
+						<IntentScreen
+							intents={ intents }
+							intentsAlt={ [] }
+							onSelect={ submitIntent }
+							preventWidows={ preventWidows }
+						/>
+					}
+					recordTracksEvent={ recordTracksEvent }
+				/>
+			</>
+		);
 	};
-
-	return (
-		<>
-			<DocumentHead title={ translate( 'Nice job! Now it’s time to get creative.' ) } />
-			<StepContainer
-				stepName="blogger-starting-point"
-				headerImageUrl={ startingPointImageUrl }
-				goBack={ goBack }
-				skipLabelText={ translate( 'Skip to dashboard' ) }
-				goNext={ () => submitIntent( 'skip-to-my-home' ) }
-				skipButtonAlign="top"
-				isHorizontalLayout
-				formattedHeader={
-					<FormattedHeader
-						id="intent-header"
-						headerText={ headerText }
-						subHeaderText={ subHeaderText }
-						align="left"
-					/>
-				}
-				stepContent={
-					<IntentScreen
-						intents={ intents }
-						intentsAlt={ [] }
-						onSelect={ submitIntent }
-						preventWidows={ preventWidows }
-					/>
-				}
-				recordTracksEvent={ recordTracksEvent }
-			/>
-		</>
-	);
-};
 
 export default StartingPointStep;

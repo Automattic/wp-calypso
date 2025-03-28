@@ -16,6 +16,7 @@ import { StateSelect } from 'calypso/my-sites/domains/components/form';
 import { isValid } from '../types/wpcom-store-state';
 import CountrySelectMenu from './country-select-menu';
 import { LeftColumn, RightColumn } from './ie-fallback';
+import { IsForBusinessCheckbox } from './is-for-business-checkbox';
 import { VatForm } from './vat-form';
 import type {
 	CountryListItem,
@@ -41,22 +42,42 @@ const FieldRow = styled( GridRow )`
 		margin-top: 0;
 	}
 `;
-
-export default function TaxFields( {
-	section,
-	taxInfo,
-	countriesList,
-	onChange,
-	allowVat,
-	isDisabled,
-}: {
+type TaxFieldsPropsBase = {
 	section: string;
 	taxInfo: ManagedContactDetails;
 	countriesList: CountryListItem[];
 	onChange: ( taxInfo: ManagedContactDetails ) => void;
 	allowVat?: boolean;
 	isDisabled?: boolean;
-} ) {
+};
+
+// Conditional type: If `showForBusinessUseCheckbox` is true, require `isForBusiness` and `handleIsForBusinessChange`.
+// Otherwise, make them optional.
+type TaxFieldsProps = TaxFieldsPropsBase &
+	(
+		| {
+				allowIsForBusinessUseCheckbox: true;
+				isForBusinessValue: boolean | undefined;
+				handleIsForBusinessChange: ( newValue: boolean ) => void;
+		  }
+		| {
+				allowIsForBusinessUseCheckbox?: false;
+				isForBusinessValue?: boolean | undefined;
+				handleIsForBusinessChange?: ( newValue: boolean ) => void;
+		  }
+	);
+
+export default function TaxFields( {
+	section,
+	taxInfo,
+	countriesList,
+	onChange,
+	handleIsForBusinessChange,
+	isForBusinessValue,
+	allowIsForBusinessUseCheckbox = false,
+	allowVat,
+	isDisabled,
+}: TaxFieldsProps ) {
 	const translate = useTranslate();
 	const { postalCode, countryCode, city, state, organization, address1 } = taxInfo;
 	const arePostalCodesSupported =
@@ -68,7 +89,6 @@ export default function TaxFields( {
 			? getCountryTaxRequirements( countriesList, countryCode?.value )
 			: {};
 	const isVatSupported = config.isEnabled( 'checkout/vat-form' ) && allowVat;
-
 	const fields: ReactElement[] = [
 		<CountrySelectMenu
 			onChange={ ( event: ChangeEvent< HTMLSelectElement > ) => {
@@ -167,6 +187,7 @@ export default function TaxFields( {
 				countryCode={ countryCode?.value }
 				selectText={ STATE_SELECT_TEXT[ countryCode?.value ?? '' ] }
 				value={ state?.value }
+				disabled={ isDisabled }
 				onChange={ ( event: ChangeEvent< HTMLSelectElement > ) => {
 					onChange(
 						updateOnChangePayload(
@@ -255,6 +276,13 @@ export default function TaxFields( {
 				) ) }
 			{ isVatSupported && (
 				<VatForm section={ section } isDisabled={ isDisabled } countryCode={ countryCode?.value } />
+			) }
+			{ allowIsForBusinessUseCheckbox && handleIsForBusinessChange && (
+				<IsForBusinessCheckbox
+					taxInfo={ taxInfo }
+					isForBusiness={ isForBusinessValue ?? false }
+					handleOnChange={ handleIsForBusinessChange }
+				/>
 			) }
 		</>
 	);

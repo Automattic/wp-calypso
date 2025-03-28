@@ -32,7 +32,7 @@ const CommentSettings = ( {
 					<NotifyMeOfNewCommentsToggle
 						value={ notifyMeOfNewComments }
 						onChange={ onNotifyMeOfNewCommentsChange }
-						isUpdating={ updatingNotifyMeOfNewComments }
+						isDisabled={ updatingNotifyMeOfNewComments }
 					/>
 				</div>
 			) }

@@ -8,7 +8,6 @@ export type ImporterMainPlatform =
 	| ImporterPlatformOther;
 // List of supported importer platforms (others)
 export type ImporterPlatformOther =
-	| 'blogroll'
 	| 'ghost'
 	| 'livejournal'
 	| 'movabletype'

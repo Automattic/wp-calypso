@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gravatar, TimeSince } from '@automattic/components';
-import { getNumericDateString, useLocale } from '@automattic/i18n-utils';
+import { getNumericDateTimeString, useLocale } from '@automattic/i18n-utils';
 import { HumanAvatar } from '@automattic/odie-client/src/assets';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { chevronRight, Icon } from '@wordpress/icons';
@@ -28,6 +28,7 @@ export const HelpCenterSupportChatMessage = ( {
 	navigateTo = '',
 	supportInteraction,
 	sectionName,
+	conversationStatus,
 }: {
 	message: ZendeskMessage;
 	badgeCount?: number;
@@ -37,6 +38,7 @@ export const HelpCenterSupportChatMessage = ( {
 	altText?: string;
 	supportInteraction: SupportInteraction | undefined;
 	sectionName?: string;
+	conversationStatus?: string;
 } ) => {
 	const { __ } = useI18n();
 	const locale = useLocale();
@@ -72,6 +74,7 @@ export const HelpCenterSupportChatMessage = ( {
 			} }
 			className={ clsx( 'help-center-support-chat__conversation-container', {
 				'is-unread-message': isUnread,
+				[ `is-${ conversationStatus }` ]: conversationStatus,
 			} ) }
 		>
 			<div
@@ -108,7 +111,7 @@ export const HelpCenterSupportChatMessage = ( {
 						}
 					/>
 					<span>
-						<TimeSince date={ getNumericDateString( received * 1000, locale ) } />
+						<TimeSince date={ getNumericDateTimeString( received * 1000, locale ) } />
 					</span>
 				</div>
 			</div>

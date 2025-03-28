@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import HeaderCake from 'calypso/components/header-cake';
-import Main from 'calypso/components/main';
+import Main from 'calypso/my-sites/stats/components/stats-main';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

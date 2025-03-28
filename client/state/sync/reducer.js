@@ -127,35 +127,29 @@ export const progress = withPersistence( ( state = 0, action ) => {
 			if ( action.isSyncingInProgress === false ) {
 				return 0;
 			}
+			// Set initial progress to 5% when sync is initiated
+			if ( action.isSyncingInProgress === true && state === 0 ) {
+				return 0.05;
+			}
 		case REQUEST_STATUS:
 			return state;
 		case SET_STATUS: {
-			let newStatus = state + SiteSyncStatusProgress.DELTA;
-			newStatus = Math.min( newStatus, 1 );
-
 			switch ( action.status ) {
 				case SiteSyncStatus.PENDING:
-					newStatus = Math.max( newStatus, SiteSyncStatusProgress.PENDING );
-					break;
+					return SiteSyncStatusProgress.PENDING;
 				case SiteSyncStatus.BACKUP:
-					newStatus = Math.max( newStatus, SiteSyncStatusProgress.BACKUP );
-					break;
+					return SiteSyncStatusProgress.BACKUP;
 				case SiteSyncStatus.RESTORE:
-					newStatus = Math.max( newStatus, SiteSyncStatusProgress.RESTORE );
-					break;
+					return SiteSyncStatusProgress.RESTORE;
 				case SiteSyncStatus.COMPLETED:
-					newStatus = Math.max( newStatus, SiteSyncStatusProgress.COMPLETED );
-					break;
+					return SiteSyncStatusProgress.COMPLETED;
 				case SiteSyncStatus.ALLOW_RETRY:
-					newStatus = Math.max( newStatus, SiteSyncStatusProgress.ALLOW_RETRY );
-					break;
+					return SiteSyncStatusProgress.ALLOW_RETRY;
 				case SiteSyncStatus.FAILED:
-					newStatus = SiteSyncStatusProgress.FAILED;
-					break;
+					return SiteSyncStatusProgress.FAILED;
 				default:
-					return newStatus;
+					return state;
 			}
-			return newStatus;
 		}
 		case REQUEST_STATUS_FAILURE:
 			return 0;
