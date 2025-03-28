@@ -105,14 +105,10 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 		[]
 	);
 	const queryParams = useQuery();
-
-	let customInitialStepSlug;
-	if ( currentStepRoute === '' && flow.getCustomInitialStep ) {
-		customInitialStepSlug = flow.getCustomInitialStep( {
-			queryParams,
-			steps: flowSteps,
-		} );
-	}
+	const customInitialStepSlug = flow.getCustomInitialStep?.( {
+		queryParams,
+		steps: flowSteps,
+	} );
 
 	flow.useSideEffect?.( currentStepRoute, navigate );
 
