@@ -49,7 +49,10 @@ export const useStepNavigationWithTracking = ( {
 	 * We need to make sure we're not at the first step because `previousStep` is persisted and can be a step from another flow or another run of the current flow.
 	 */
 	const canUserGoBack =
-		stepData?.previousStep && currentStepRoute !== stepSlugs[ 0 ] && history.length > 1;
+		stepData?.previousStep &&
+		currentStepRoute !== stepSlugs[ 0 ] &&
+		history.length > 1 &&
+		stepData.previousStep !== currentStepRoute;
 
 	const tracksEventPropsFromFlow = flow.useTracksEventProps?.();
 
