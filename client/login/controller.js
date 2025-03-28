@@ -388,14 +388,6 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 		await context.store.dispatch( rebootAfterLogin() );
 		return page.redirect( state.redirect_to );
 	} catch {
-		context.store.dispatch( {
-			type: 'NOTICE_CREATE',
-			notice: {
-				status: 'is-error',
-				text: 'Error during Google authentication. Please try again.',
-			},
-		} );
-
 		return redirectJetpackDirectAuthError( context, next, {
 			redirect_to: state.redirect_to,
 		} );
@@ -822,11 +814,24 @@ export function redirectLostPassword( context, next ) {
 }
 
 export function redirectJetpackDirectAuthError( context, next, newQuery = {} ) {
-	const queryString = new URLSearchParams(
-		Object.assign( {}, context.query, newQuery )
-	).toString();
-	const redirectUrl = queryString ? `/log-in/jetpack/?${ queryString }` : '/log-in/jetpack/';
+	const queryParams = new URLSearchParams( Object.assign( {}, context.query, newQuery ) );
+
+	queryParams.set( 'allow_site_connection', '1' );
+
+	const redirectUrl = `/log-in/jetpack/?${ queryParams.toString() }`;
 	window.history.replaceState( null, '', redirectUrl );
-	window.sessionStorage?.setItem( 'login_redirect_to', redirectUrl );
+
+	try {
+		const redirectTo = new URL(
+			queryParams.get( 'redirect_to' ) || `${ window.location.origin }${ redirectUrl }`
+		);
+		window.sessionStorage?.setItem( 'login_redirect_to', redirectTo.toString() );
+		context.store.dispatch(
+			setRoute( redirectTo.pathname, Object.fromEntries( redirectTo.searchParams.entries() ) )
+		);
+	} catch {
+		// Silently fail
+	}
+
 	return next();
 }
