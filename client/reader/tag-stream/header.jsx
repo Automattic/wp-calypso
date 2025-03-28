@@ -1,5 +1,8 @@
 import page from '@automattic/calypso-router';
-import { SegmentedControl } from '@automattic/components';
+import {
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+} from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -26,7 +29,20 @@ class TagStreamHeader extends Component {
 		sort: PropTypes.string,
 	};
 
-	useRelevanceSort = () => {
+	onChangeSortPicker = ( value ) => {
+		switch ( value ) {
+			case 'date':
+				this.useRecentSort();
+				break;
+			case 'relevance':
+				this.usePopularSort();
+				break;
+			default:
+				this.useRecentSort();
+		}
+	};
+
+	usePopularSort = () => {
 		const sort = 'relevance';
 		recordAction( 'tag_page_clicked_relevance_sort' );
 		if ( this.props.recordReaderTracksEvent ) {
@@ -38,7 +54,7 @@ class TagStreamHeader extends Component {
 		updateQueryArg( { sort } );
 	};
 
-	useDateSort = () => {
+	useRecentSort = () => {
 		const sort = 'date';
 		recordAction( 'tag_page_clicked_date_sort' );
 		if ( this.props.recordReaderTracksEvent ) {
@@ -86,20 +102,16 @@ class TagStreamHeader extends Component {
 					<div className="tag-stream__header-controls">
 						<div className="tag-stream__header-sort-picker">
 							{ showSort && (
-								<SegmentedControl compact>
-									<SegmentedControl.Item
-										selected={ sortOrder !== 'relevance' }
-										onClick={ this.useDateSort }
-									>
-										{ translate( 'Recent' ) }
-									</SegmentedControl.Item>
-									<SegmentedControl.Item
-										selected={ sortOrder === 'relevance' }
-										onClick={ this.useRelevanceSort }
-									>
-										{ translate( 'Popular' ) }
-									</SegmentedControl.Item>
-								</SegmentedControl>
+								<ToggleGroupControl
+									hideLabelFromVision
+									isBlock
+									value={ sortOrder }
+									onChange={ this.onChangeSortPicker }
+									__nextHasNoMarginBottom
+								>
+									<ToggleGroupControlOption label={ translate( 'Recent' ) } value="date" />
+									<ToggleGroupControlOption label={ translate( 'Popular' ) } value="relevance" />
+								</ToggleGroupControl>
 							) }
 						</div>
 						<div className="tag-stream__header-follow">
