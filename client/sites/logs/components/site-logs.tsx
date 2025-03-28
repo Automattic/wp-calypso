@@ -287,6 +287,7 @@ export const SiteLogsDataViews = ( {
 					} }
 					value={ logType }
 					__nextHasNoMarginBottom
+					__next40pxDefaultSize
 				>
 					<ToggleGroupControlOption
 						className="site-logs-toolbar__toggle-option"
@@ -312,6 +313,7 @@ export const SiteLogsDataViews = ( {
 						closePopoverAndCommit();
 					} }
 					tooltip={ translate( 'Select a date range' ) }
+					use40pxDefaultSize
 				/>
 			</div>
 			<DataViews< PHPLog | ServerLog >

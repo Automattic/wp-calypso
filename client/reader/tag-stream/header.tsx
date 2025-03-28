@@ -94,6 +94,7 @@ export default function TagStreamHeader( props: TagStreamHeaderProps ): JSX.Elem
 								value={ sortOrder }
 								onChange={ onChangeSortPicker }
 								__nextHasNoMarginBottom
+								__next40pxDefaultSize
 							>
 								<ToggleGroupControlOption label={ translate( 'Recent' ) } value="date" />
 								<ToggleGroupControlOption label={ translate( 'Popular' ) } value="relevance" />
