@@ -1,15 +1,19 @@
 import { NOTICE_CREATE } from 'calypso/state/action-types';
 import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { follow, unfollow } from 'calypso/state/reader/follows/actions';
+import { follow, unfollow, removeFeedFromFollows } from 'calypso/state/reader/follows/actions';
+import { removeFeedFromStream } from 'calypso/state/reader/streams/actions';
 import { fromApi, requestUnfollow, unfollowError } from '../';
 
 describe( 'following/mine/delete', () => {
 	describe( 'requestUnfollow', () => {
 		test( 'should dispatch a http request', () => {
 			const action = unfollow( 'http://example.com' );
+			const dispatch = jest.fn();
 
-			expect( requestUnfollow( action ) ).toEqual(
+			requestUnfollow( action )( dispatch );
+
+			expect( dispatch ).toHaveBeenCalledWith(
 				http( {
 					method: 'POST',
 					path: '/read/following/mine/delete',
@@ -22,6 +26,27 @@ describe( 'following/mine/delete', () => {
 					onFailure: action,
 				} )
 			);
+		} );
+
+		test( 'should dispatch stream removal actions', () => {
+			const action = unfollow( 'http://example.com' );
+			const dispatch = jest.fn();
+
+			requestUnfollow( action )( dispatch );
+
+			expect( dispatch ).toHaveBeenCalledWith(
+				removeFeedFromStream( {
+					streamKey: 'following',
+					feedUrl: 'http://example.com',
+				} )
+			);
+			expect( dispatch ).toHaveBeenCalledWith(
+				removeFeedFromStream( {
+					streamKey: 'recent',
+					feedUrl: 'http://example.com',
+				} )
+			);
+			expect( dispatch ).toHaveBeenCalledWith( removeFeedFromFollows( 'http://example.com' ) );
 		} );
 	} );
 
