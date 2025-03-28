@@ -20,7 +20,7 @@ export enum SubscribersFilterBy {
 }
 
 export const SubscribersStatus = {
-	Subscribed: translate( 'Subscribed' ),
+	[ 'Subscribed' ]: translate( 'Subscribed' ),
 	[ 'Not confirmed' ]: translate( 'Not confirmed' ),
 	[ 'Not subscribed' ]: translate( 'Not subscribed' ),
 	[ 'Not sending' ]: translate( 'Not sending' ),

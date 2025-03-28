@@ -286,7 +286,7 @@ const SubscriberDataViews = ( {
 				),
 				elements: [
 					{
-						label: SubscribersStatus.Subscribed,
+						label: SubscribersStatus[ 'Subscribed' ],
 						value: SubscribersFilterBy.EmailSubscriber,
 					},
 					{
