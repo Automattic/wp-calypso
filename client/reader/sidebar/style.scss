@@ -12,10 +12,6 @@
 		}
 	}
 
-	li.sidebar-streams__search {
-		margin-top: 8px;
-	}
-
 	li.reader-sidebar-tags__list {
 		margin-bottom: 8px;
 	}
@@ -115,6 +111,8 @@ body.is-section-reader {
 
 .is-section-reader {
 	.sidebar-header {
+		display: flex;
+		justify-content: space-between;
 		margin: 0 12px 44px;
 		padding: 0 10px;
 
@@ -126,6 +124,15 @@ body.is-section-reader {
 		p {
 			color: var(--studio-gray-50);
 			font-size: $font-body-small;
+			margin: 0;
+		}
+
+		.reader-search-icon {
+			padding-inline: 0;
+			height: 30px;
+		}
+
+		.sidebar_svg-search {
 			margin: 0;
 		}
 	}

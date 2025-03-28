@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { Button } from '@wordpress/components';
 import closest from 'component-closest';
 import i18n, { localize } from 'i18n-calypso';
 import { defer, startsWith } from 'lodash';
@@ -173,19 +174,21 @@ export class ReaderSidebar extends Component {
 				<QueryReaderOrganizations />
 
 				<li className="sidebar-header">
-					<h3>{ translate( 'Reader' ) }</h3>
-					<p>{ translate( 'Keep up with your interests.' ) }</p>
-				</li>
+					<div>
+						<h3>{ translate( 'Reader' ) }</h3>
+						<p>{ translate( 'Keep up with your interests.' ) }</p>
+					</div>
 
-				<SidebarItem
-					label={ translate( 'Search' ) }
-					onNavigate={ this.handleReaderSidebarSearchClicked }
-					customIcon={ <ReaderSearchIcon viewBox="0 0 24 24" /> }
-					link="/reader/search"
-					className={ ReaderSidebarHelper.itemLinkClass( '/reader/search', path, {
-						'sidebar-streams__search': true,
-					} ) }
-				/>
+					<Button
+						className="reader-search-icon"
+						variant="tertiary"
+						href="/reader/search"
+						onClick={ this.handleReaderSidebarSearchClicked }
+						aria-label={ translate( 'Search' ) }
+					>
+						<ReaderSearchIcon viewBox="0 0 24 24" />
+					</Button>
+				</li>
 
 				<li className="sidebar-streams__following">
 					<ReaderSidebarRecent
