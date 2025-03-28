@@ -6,6 +6,7 @@ function noop(): void {}
 
 const defaultContext: PaymentMethodProviderContextInterface = {
 	allPaymentMethods: [],
+	paymentProcessors: {},
 	disabledPaymentMethodIds: [],
 	setDisabledPaymentMethodIds: noop,
 	paymentMethodId: null,
