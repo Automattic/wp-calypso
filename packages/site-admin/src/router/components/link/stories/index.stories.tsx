@@ -17,7 +17,7 @@ const meta: Meta< typeof Link > = {
 	decorators: [
 		function WithRouterProvider( Story ) {
 			return (
-				<RouterProvider routes={ [] } pathArg="p">
+				<RouterProvider>
 					<Story />
 				</RouterProvider>
 			);
