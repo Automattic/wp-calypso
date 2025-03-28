@@ -90,7 +90,7 @@ export default function TagStreamHeader( props: TagStreamHeaderProps ): JSX.Elem
 							<ToggleGroupControl
 								hideLabelFromVision
 								isBlock
-								label=""
+								label="Sort"
 								value={ sortOrder }
 								onChange={ onChangeSortPicker }
 								__nextHasNoMarginBottom
