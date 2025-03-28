@@ -29,36 +29,27 @@ export default meta;
 
 type Story = StoryObj< typeof Link >;
 
+/**
+ * The Link component enables navigation between routes in the application,<br />
+ * maintaining state and avoiding full page reloads.
+ */
 export const Default: Story = {
 	args: {
 		to: '/home',
 		children: 'Homepage',
 		className: 'story-link',
 	},
-	parameters: {
-		docs: {
-			description: {
-				story:
-					'The Link component enables navigation between routes in the application, maintaining state and avoiding full page reloads.',
-			},
-		},
-	},
 };
 
+/**
+ * This story shows how to pass custom state to the Link component using the options prop.<br />
+ * Each time the user clicks the link, a new _lucky number_ is generated and passed along.<br />
+ * You can see how the state is preserved when navigating back and forth.
+ */
 export const PassCustomState: Story = {
 	args: {
 		to: '/home',
 		children: 'Request lucky number!',
-	},
-
-	parameters: {
-		docs: {
-			description: {
-				story: `This story shows how to pass custom state to the Link component using the options prop.<br />
-Each time the user clicks the link, a new _lucky number_ is generated and passed along.<br />
-You can see how the state is preserved when navigating back and forth.`,
-			},
-		},
 	},
 
 	render: function Template( args ) {
