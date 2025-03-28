@@ -653,9 +653,71 @@ $container-padding-large: 48px;
 		}
 	}
 }
+
 .step-container-v2--design-picker {
 	.design-picker.design-picker__unified {
 		margin-top: 0;
 		padding-bottom: 0;
 	}
 }
+
+.step-container-v2:has(.step-container-v2--design-picker-preview) {
+	// TODO: Remove most of these customizations once we introduce the FixedColumnOnTheLeftLayout wireframe.
+	.step-container-v2__content-wrapper {
+		@include break-large {
+			padding-top: 0 !important;
+		}
+	}
+
+	.step-container-v2--design-picker-preview {
+		display: flex;
+		flex: 1;
+
+		&__header-design-title {
+			.design-picker-design-title__container {
+				align-items: normal;
+			}
+
+			.design-picker-design-title__design-title {
+				font-size: 0.875rem;
+				font-weight: 500;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+
+			.theme-tier-badge {
+				flex-shrink: 0;
+			}
+		}
+
+		.design-preview.design-preview--is-fullscreen {
+			padding-bottom: var(--step-container-v2-sticky-bottom-bar-height);
+			z-index: 0;
+		}
+
+		@include break-large {
+			.design-preview {
+				flex: 1;
+				height: auto;
+				gap: 48px;
+
+				.design-preview__sidebar {
+					padding-top: 24px;
+				}
+
+				.design-preview__site-preview {
+					transform: translateY(calc(var(--step-container-v2-top-bar-height) * -1));
+					height: calc(100% + var(--step-container-v2-top-bar-height)) !important;
+					margin-bottom: 0 !important;
+
+					.device-switcher__toolbar {
+						margin-block: 0;
+					}
+				}
+			}
+		}
+	}
+
+}
+

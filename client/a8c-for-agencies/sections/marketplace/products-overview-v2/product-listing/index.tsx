@@ -67,7 +67,6 @@ export default function ProductListing( {
 		suggestedProductSlugs,
 	} = useProductAndPlans( {
 		selectedSite,
-		selectedBundleSize: quantity,
 		selectedProductFilters: selectedFilters,
 		productSearchQuery,
 	} );
@@ -221,7 +220,34 @@ export default function ProductListing( {
 		withCustomCard: boolean = false
 	) => {
 		return products.map( ( productOption ) => {
-			const options = Array.isArray( productOption ) ? productOption : [ productOption ];
+			let options;
+
+			if ( Array.isArray( productOption ) ) {
+				options =
+					quantity === 1
+						? productOption
+						: productOption.filter(
+								( option ) =>
+									option.supported_bundles?.some(
+										( bundle: { quantity: number } ) => bundle.quantity === quantity
+									)
+						  );
+			} else {
+				options = [ productOption ];
+			}
+
+			if ( options.length === 0 ) {
+				return null;
+			}
+
+			const productDoNotHaveSupportedBundles =
+				! isSingleLicenseView &&
+				! options.some(
+					( option ) =>
+						option.supported_bundles?.some(
+							( bundle: { quantity: number } ) => bundle.quantity === quantity
+						)
+				);
 
 			return (
 				<ProductCard
@@ -232,14 +258,21 @@ export default function ProductListing( {
 					onVariantChange={ onClickVariantOption }
 					isSelected={ isSelected( options.map( ( { slug } ) => slug ) ) }
 					isDisabled={
+						productDoNotHaveSupportedBundles ||
 						! isReady ||
 						( isIncompatibleProduct( productOption, incompatibleProducts ) &&
 							! isSelected( options.map( ( { slug } ) => slug ) ) )
 					}
 					hideDiscount={ isSingleLicenseView }
 					suggestedProduct={ suggestedProduct }
-					quantity={ quantity }
+					quantity={ productDoNotHaveSupportedBundles ? 1 : quantity }
 					withCustomCard={ withCustomCard }
+					tooltip={
+						productDoNotHaveSupportedBundles
+							? translate( 'This product does not support the volume discount.' )
+							: undefined
+					}
+					tooltipPosition="bottom"
 				/>
 			);
 		} );

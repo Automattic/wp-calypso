@@ -75,6 +75,10 @@ const renderReaderSiteSubscription = (
 describe( 'ReaderSiteSubscription', () => {
 	// Tests that the component renders with default props and no errors
 	it( 'should render with default props and no errors', () => {
+		const date = Intl.DateTimeFormat( undefined, { dateStyle: 'medium' } ).format(
+			new Date( '2023-01-01' )
+		);
+
 		// Render the component
 		renderReaderSiteSubscription( mockSiteSubscriptionContext() );
 
@@ -82,9 +86,9 @@ describe( 'ReaderSiteSubscription', () => {
 		expect( screen.getByRole( 'button', { name: 'Back' } ) ).toBeInTheDocument();
 
 		// Assert that the site subscription details are rendered
-		expect( screen.getByRole( 'heading', { name: 'View feed' } ) ).toBeInTheDocument();
+		expect( screen.getAllByTitle( 'View feed' )[ 0 ] ).toBeInTheDocument();
 		expect( screen.getByText( /100 subscribers/i ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Jan 1, 2023' ) ).toBeInTheDocument();
+		expect( screen.getByText( date ) ).toBeInTheDocument();
 		expect( screen.getByAltText( 'Test Site' ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'link', { name: 'example.com' } ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Unsubscribe' } ) ).toBeEnabled();

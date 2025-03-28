@@ -34,6 +34,7 @@ import { useQueryThemes } from 'calypso/components/data/query-themes';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Loading from 'calypso/components/loading';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
+import { StepContainerV2Loading } from 'calypso/components/step-container-v2-loading';
 import {
 	THEME_TIERS,
 	THEME_TIER_PREMIUM,
@@ -45,7 +46,6 @@ import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query'
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useExperiment } from 'calypso/lib/explat';
-import { navigate } from 'calypso/lib/navigate';
 import { urlToSlug } from 'calypso/lib/url';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
@@ -69,7 +69,6 @@ import {
 	getDesignEventProps,
 	recordPreviewedDesign,
 	recordSelectedDesign,
-	getVirtualDesignProps,
 } from '../../analytics/record-design';
 import { getCategorizationOptions } from './categories';
 import { STEP_NAME } from './constants';
@@ -267,13 +266,6 @@ const UnifiedDesignPickerStep: StepType< {
 			'calypso_signup_design_preview_style_variation_preview_click',
 			getEventPropsByDesign( design, { styleVariation } )
 		);
-	}
-
-	function onChangeVariation( design: Design, styleVariation?: StyleVariation ) {
-		recordTracksEvent( 'calypso_signup_design_picker_style_variation_button_click', {
-			...getEventPropsByDesign( design, { styleVariation } ),
-			...getVirtualDesignProps( design ),
-		} );
 	}
 
 	function trackAllDesignsView() {
@@ -704,6 +696,8 @@ const UnifiedDesignPickerStep: StepType< {
 		return shouldUnlockGlobalStyles ? unlockPremiumGlobalStyles : () => pickDesign();
 	}
 
+	const isUsingStepContainerV2 = shouldUseStepContainerV2( flow );
+
 	function getPrimaryActionButton() {
 		const action = getPrimaryActionButtonAction();
 		const text =
@@ -711,11 +705,15 @@ const UnifiedDesignPickerStep: StepType< {
 				? translate( 'Unlock theme' )
 				: translate( 'Continue' );
 
-		return (
-			<Button className="navigation-link" primary borderless={ false } onClick={ action }>
-				{ text }
-			</Button>
-		);
+		if ( ! isUsingStepContainerV2 ) {
+			return (
+				<Button className="navigation-link" primary borderless={ false } onClick={ action }>
+					{ text }
+				</Button>
+			);
+		}
+
+		return <Step.NextButton label={ text } onClick={ action } />;
 	}
 
 	useEffect( () => {
@@ -732,7 +730,7 @@ const UnifiedDesignPickerStep: StepType< {
 	const isLoading = isSiteLoading || isDesignsLoading;
 
 	if ( isLoading || isComingFromTheUpgradeScreen ) {
-		return <Loading />;
+		return isUsingStepContainerV2 ? <StepContainerV2Loading /> : <Loading />;
 	}
 
 	if ( selectedDesign && isPreviewingDesign ) {
@@ -753,12 +751,20 @@ const UnifiedDesignPickerStep: StepType< {
 			site_tagline: shouldCustomizeText ? siteDescription : undefined,
 		} );
 
-		const actionButtons = (
-			<>
-				<div className="action-buttons__title">{ headerDesignTitle }</div>
-				<div>{ getPrimaryActionButton() }</div>
-			</>
-		);
+		const getActionButtons = () => {
+			if ( ! isUsingStepContainerV2 ) {
+				return (
+					<>
+						<div className="action-buttons__title">{ headerDesignTitle }</div>
+						<div>{ getPrimaryActionButton() }</div>
+					</>
+				);
+			}
+
+			return getPrimaryActionButton();
+		};
+
+		const actionButtons = getActionButtons();
 
 		const stepContent = (
 			<>
@@ -850,6 +856,56 @@ const UnifiedDesignPickerStep: StepType< {
 			</>
 		);
 
+		if ( isUsingStepContainerV2 ) {
+			// TODO: Create a new wireframe for the design preview. It should be named "FixedColumnOnTheLeftLayout"
+			return (
+				<Step.FullWidthLayout
+					className="step-container-v2--design-picker-preview"
+					topBar={ ( { isLargeViewport } ) => {
+						if ( ! isLargeViewport ) {
+							return null;
+						}
+
+						return (
+							<Step.TopBar
+								backButton={
+									shouldHideActionButtons ? undefined : (
+										<Step.BackButton onClick={ handleBackClick } />
+									)
+								}
+								skipButton={
+									! isGoalsAtFrontExperiment ? undefined : (
+										<Step.SkipButton
+											onClick={ () => handleSubmit() }
+											label={ translate( 'Skip setup' ) }
+										/>
+									)
+								}
+							/>
+						);
+					} }
+					stickyBottomBar={ ( { isLargeViewport } ) => {
+						if ( isLargeViewport ) {
+							return null;
+						}
+
+						return (
+							<Step.StickyBottomBar
+								leftButton={ <Step.BackButton onClick={ handleBackClick } /> }
+								rightButton={ actionButtons }
+							>
+								<div className="step-container-v2--design-picker-preview__header-design-title">
+									{ headerDesignTitle }
+								</div>
+							</Step.StickyBottomBar>
+						);
+					} }
+				>
+					{ stepContent }
+				</Step.FullWidthLayout>
+			);
+		}
+
 		return (
 			<StepContainer
 				stepName={ STEP_NAME }
@@ -874,18 +930,11 @@ const UnifiedDesignPickerStep: StepType< {
 		'One of these homepage options could be great to start with. You can always change later.'
 	);
 
-	function onDesignWithAI() {
-		recordTracksEvent( 'calypso_design_picker_big_sky_button_click', commonFilterProperties );
-		navigate( `/setup/site-setup/launch-big-sky?siteSlug=${ siteSlug }&siteId=${ site?.ID }` );
-	}
-
 	// Use this to prioritize themes in certain categories.
 	// The specified theme will be shown first in the list.
 	const priorityThemes: Record< string, string > = {
 		education: 'course',
 	};
-
-	const isUsingStepContainerV2 = shouldUseStepContainerV2( flow );
 
 	const stepContent = (
 		<>
@@ -893,9 +942,7 @@ const UnifiedDesignPickerStep: StepType< {
 				designs={ designs }
 				priorityThemes={ priorityThemes }
 				locale={ locale }
-				onDesignWithAI={ onDesignWithAI }
 				onPreview={ previewDesign }
-				onChangeVariation={ onChangeVariation }
 				onViewAllDesigns={ trackAllDesignsView }
 				heading={
 					! isUsingStepContainerV2 ? (
@@ -908,7 +955,6 @@ const UnifiedDesignPickerStep: StepType< {
 				}
 				categorization={ categorization }
 				isPremiumThemeAvailable={ isPremiumThemeAvailable }
-				shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 				// TODO: Update the ThemeCard component once the new design is rolled out completely
 				// to avoid passing the getBadge and getOptionsMenu prop conditionally down the component tree.
 				getBadge={ isUpdatedBadgeDesign ? undefined : getBadge }

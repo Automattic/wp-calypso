@@ -28,10 +28,10 @@ const MyStep = () => {
 			heading={ <Step.Heading text="Heading" /> }
 			stickyBottomBar={ <Step.StickyBottomBar rightButton={ nextButton } /> }
 		>
-			{ ( { isMediumViewport } ) => (
+			{ ( { isSmallViewport } ) => (
 				<>
 					<p>Here comes the content of the step.</p>
-					{ isMediumViewport && nextButton }
+					{ isSmallViewport && nextButton }
 				</>
 			) }
 		</Step.StepContainerV2>
@@ -83,7 +83,7 @@ export const HorizontalLayout = ( {
 }: ComponentProps< typeof StepContainerV2 > & { imageUrl?: string } ) => (
 	<StepContainerV2
 		{ ...props }
-		verticalAlign="center"
+		verticalAlign="center-on-small"
 		width="wide"
 		className={ clsx( 'step-container-v2__content--horizontal-layout', className ) }
 	>
@@ -111,7 +111,7 @@ Then, we need to add the styles for the new wireframe. Let's create a new file c
 	align-items: stretch;
 	gap: 3rem;
 
-	@include step-medium-viewport {
+	@include break-small {
 		flex-direction: row;
 		align-items: flex-start;
 	}
@@ -129,18 +129,18 @@ Then, we need to add the styles for the new wireframe. Let's create a new file c
 }
 ```
 
-> Notice that we're using the `@include step-medium-viewport` mixin to target the medium viewport and above. **This is a utility that is available in the `mixins` file and should remain internal to this package.** It reflects the value of the `isMediumViewport` prop passed to the `StepContainerV2` component. In some steps, like Theme Preview, the medium-sized screen is treated as mobile, so we need to style the wireframe accordingly.
+> Notice that we're using the `@include break-small` mixin to target the small viewport and above. The Gutenberg breakpoints are matched within StepContainerV2, so we can use them to create responsive styles for the wireframe.
 
 One implementation detail is that the `HorizontalLayout` wireframe does not render the illustration on mobile. `StepContainerV2` accepts a render prop that can be used to render the content of the step. This is useful to conditionally render content based on the viewports defined for the wireframe. We can then modify the previous example to render the illustration only on medium and larger screens.
 
 Let's modify the `children` of `HorizontalLayout` to reflect this new requirement:
 
 ```jsx
-( { isMediumViewport } ) => (
+( { isSmallViewport } ) => (
 	<>
 		<div className="step-container-v2__content--horizontal-layout-left">
 			{ heading }
-			{ isMediumViewport && imageUrl && (
+			{ isSmallViewport && imageUrl && (
 				<img
 					className="step-container-v2__content--horizontal-layout-image"
 					src={ imageUrl }

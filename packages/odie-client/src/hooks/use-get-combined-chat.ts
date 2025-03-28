@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ODIE_TRANSFER_MESSAGE } from '../constants';
 import { emptyChat, useOdieAssistantContext } from '../context';
 import { useGetZendeskConversation, useManageSupportInteraction, useOdieChat } from '../data';
+import { getConversationIdFromInteraction, getOdieIdFromInteraction } from '../utils';
 import type { Chat, Message } from '../types';
 
 /**
@@ -18,15 +19,8 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 			const currentSupportInteraction = store.getCurrentSupportInteraction();
 
-			// Get the current odie chat ID
-			const odieId =
-				currentSupportInteraction?.events.find( ( event ) => event.event_source === 'odie' )
-					?.event_external_id ?? null;
-
-			// Get the current Zendesk conversation ID
-			const conversationId =
-				currentSupportInteraction?.events.find( ( event ) => event.event_source === 'zendesk' )
-					?.event_external_id ?? null;
+			const odieId = getOdieIdFromInteraction( currentSupportInteraction );
+			const conversationId = getConversationIdFromInteraction( currentSupportInteraction );
 
 			return {
 				currentSupportInteraction,
@@ -47,7 +41,7 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 	const canFetchConversation = conversationId && canConnectToZendesk;
 
 	useEffect( () => {
-		if ( isOdieChatLoading || chatStatus !== 'loading' ) {
+		if ( ! currentSupportInteraction || isOdieChatLoading || chatStatus !== 'loading' ) {
 			return;
 		}
 
@@ -55,7 +49,7 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 			setMainChatState( {
 				...( odieChat ? odieChat : emptyChat ),
 				conversationId: null,
-				supportInteractionId: currentSupportInteraction!.uuid,
+				supportInteractionId: currentSupportInteraction.uuid,
 				provider: 'odie',
 				status: 'loaded',
 			} );
@@ -72,7 +66,7 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 							) ?? [];
 						setMainChatState( {
 							...( odieChat ? odieChat : {} ),
-							supportInteractionId: currentSupportInteraction!.uuid,
+							supportInteractionId: currentSupportInteraction.uuid,
 							conversationId: conversation.id,
 							messages: [
 								...( odieChat ? filteredOdieMessages : [] ),
@@ -80,7 +74,7 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 								...( conversation.messages as Message[] ),
 							],
 							provider: 'zendesk',
-							status: currentSupportInteraction?.status === 'closed' ? 'closed' : 'loaded',
+							status: currentSupportInteraction.status === 'closed' ? 'closed' : 'loaded',
 						} );
 					}
 				} );

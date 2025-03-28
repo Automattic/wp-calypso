@@ -458,6 +458,7 @@ $breakpoint-mobile: 782px; //Mobile size.
 		padding: 0;
 		box-shadow: none;
 		margin-bottom: 2em;
+		clip-path: unset;
 	}
 
 	.login__social-tos {
@@ -479,6 +480,10 @@ $breakpoint-mobile: 782px; //Mobile size.
 		&.login__form-change-username:hover:not(:disabled):not(.disabled) {
 			background: none;
 			color: var(--p2-color-link-dark);
+		}
+
+		&.social-buttons__button:not(:focus) {
+			box-shadow: none;
 		}
 	}
 
@@ -647,18 +652,5 @@ $breakpoint-mobile: 782px; //Mobile size.
 .is-gravatar {
 	.login__form-terms {
 		display: block;
-	}
-
-	.auth-form__social {
-		.auth-form__social-buttons-container {
-			width: unset;
-			.social-buttons__button {
-				> svg {
-					border: 1px solid var(--studio-gray-10);
-					border-radius: 24px; /* stylelint-disable-line scales/radii */
-					padding: 12px;
-				}
-			}
-		}
 	}
 }

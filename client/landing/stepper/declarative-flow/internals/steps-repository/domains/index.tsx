@@ -315,12 +315,25 @@ const DomainsStep: Step< {
 		return ! isCopySiteFlow( flow );
 	};
 
-	const Container = [ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( flow )
-		? HundredYearPlanStepWrapper
-		: StepContainer;
-
+	if ( [ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( flow ) ) {
+		return (
+			<HundredYearPlanStepWrapper
+				stepName="domains"
+				flowName={ flow as string }
+				stepContent={ <div className="domains__content">{ renderContent() }</div> }
+				formattedHeader={
+					<FormattedHeader
+						id="domains-header"
+						align="center"
+						headerText={ getHeaderText() }
+						subHeaderText={ getSubHeaderText() }
+					/>
+				}
+			/>
+		);
+	}
 	return (
-		<Container
+		<StepContainer
 			stepName="domains"
 			isWideLayout
 			hideBack={ shouldHideBackButton() }

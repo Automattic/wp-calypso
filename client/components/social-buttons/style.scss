@@ -1,19 +1,26 @@
 /*rtl:ignore*/
 
 .social-buttons__button {
-	width: 100%;
+	padding-inline: 18px;
+	font-size: $font-body-small;
 
-	svg {
+	> svg {
 		margin-top: -2px;
+		border: 0;
+		border-radius: 0;
+		margin-right: auto;
+		fill: inherit;
 
 		&.disabled {
 			display: none;
 		}
 	}
-}
 
-.social-buttons__service-name {
-	margin-left: 9px;
+	> span {
+		font-feature-settings: "clig" off, "liga" off;
+		margin-inline: -20px auto;
+		max-width: 240px;
+	}
 }
 
 .social-buttons__error {

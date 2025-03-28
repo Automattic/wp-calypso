@@ -1,0 +1,19 @@
+@import "calypso/signup/style";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@automattic/onboarding/styles/mixins";
+
+$header-height: 78px;
+
+.step-route.playground {
+    overflow-y: hidden;
+	padding-top: $header-height;
+	.step-wrapper__header {
+		display: none;
+	}
+}
+
+.playground__onboarding-iframe {
+	width: 100%;
+	height: 100vh;
+}

@@ -1,5 +1,7 @@
 .manage-purchase > button.card,
-.manage-purchase > a.card {
+.manage-purchase > a.card,
+.manage-purchase > div > a.card,
+.manage-purchase > div > button.card{
 	--icon-size: 16px;
 
 	padding-inline-start: calc(var(--icon-size) * 2.5);
@@ -503,4 +505,14 @@
 	color: var(--color-link);
 	text-decoration: underline;
 	line-height: inherit;
+}
+
+.manage-purchase__downgrade-products {
+	margin-top: 16px;
+	margin-bottom: 16px;
+	& > a.card,
+	& > button.card {
+		margin-top: 0;
+		margin-bottom: 0;
+	}
 }

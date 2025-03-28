@@ -2,6 +2,8 @@ import config from '@automattic/calypso-config';
 import { isEcommercePlan } from '@automattic/calypso-products/src';
 import page from '@automattic/calypso-router';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
+import { Button } from '@wordpress/components';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
@@ -525,7 +527,10 @@ class MasterbarLoggedIn extends Component {
 
 		return (
 			<Item
-				className="masterbar__item-launch-site"
+				as={ Button }
+				variant="primary"
+				// Keep the Launch button always in blueberry (default scheme: modern) like in wp-admin.
+				className={ clsx( 'masterbar__item-launch-site', 'color-scheme', 'is-global' ) }
 				icon={
 					<svg viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path

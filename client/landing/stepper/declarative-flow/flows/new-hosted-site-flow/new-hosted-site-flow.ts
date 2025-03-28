@@ -199,7 +199,7 @@ const hosting: Flow = {
 
 		useEffect(
 			() => {
-				if ( currentStepSlug === undefined ) {
+				if ( ! currentStepSlug ) {
 					resetOnboardStore();
 				}
 				dispatch( setSelectedSiteId( null ) );

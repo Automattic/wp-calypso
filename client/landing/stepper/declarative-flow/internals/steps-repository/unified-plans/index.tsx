@@ -18,6 +18,7 @@ import { useDispatch, useSelect, useDispatch as useWPDispatch } from '@wordpress
 import { useState } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import Loading from 'calypso/components/loading';
+import { StepContainerV2Loading } from 'calypso/components/step-container-v2-loading';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
@@ -31,6 +32,7 @@ import { useSelector, useDispatch as useReduxDispatch } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { setActiveTheme } from 'calypso/state/themes/actions';
 import { getTheme, getThemeType } from 'calypso/state/themes/selectors';
+import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
 import UnifiedPlansStep from './unified-plans-step';
 import { getIntervalType } from './util';
@@ -192,8 +194,10 @@ const PlansStepAdaptor: Step< {
 	};
 	useQueryTheme( 'wpcom', selectedDesign?.slug );
 
+	const isUsingStepContainerV2 = shouldUseStepContainerV2( props.flow );
+
 	if ( isLoadingSelectedTheme ) {
-		return <Loading />;
+		return isUsingStepContainerV2 ? <StepContainerV2Loading /> : <Loading />;
 	}
 
 	return (
@@ -229,6 +233,7 @@ const PlansStepAdaptor: Step< {
 				isExtraWideLayout: false,
 			} }
 			useStepperWrapper
+			useStepContainerV2={ isUsingStepContainerV2 }
 		/>
 	);
 };

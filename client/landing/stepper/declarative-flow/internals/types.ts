@@ -15,10 +15,11 @@ export type NavigationControls<
 	StepSubmittedTypes extends unknown | undefined | never | Record< string, unknown > = undefined,
 > = {
 	/**
-	 * Call this function if you want to go to the previous step.
+	 * @deprecated
+	 * YOU DON'T NEED THIS. Most flows don't need this since #101550.
+	 * Stepper now takes care of navigating the user back to the previous step based on their navigation history. It will handle non-linearity perfectly.
 	 *
-	 * Please don't change the type of this function to add parameters. Passing data should strictly happen through the `submit` function.
-	 * See why here: pdDR7T-KR-p2#steps-should-only-submit
+	 * If you define this method to behave in non-standard ways, its behavior will be at odds with the back button of the browser, which may create confusion.
 	 */
 	goBack?: () => void;
 
@@ -178,11 +179,6 @@ export type FlowV1 = {
 	 */
 	useSideEffect?: UseSideEffectHook< ReturnType< FlowV1[ 'useSteps' ] > >;
 	useTracksEventProps?: UseTracksEventPropsHook;
-	/**
-	 * Temporary hook to allow gradual migration of flows to the globalised/default event tracking.
-	 * IMPORTANT: This hook will be removed in the future.
-	 */
-	use__Temporary__ShouldTrackEvent?: ( event: keyof NavigationControls ) => boolean;
 };
 
 export type FlowV2 = {
@@ -245,11 +241,6 @@ export type FlowV2 = {
 	 */
 	useSideEffect?: UseSideEffectHook< StepperStep[] >;
 	useTracksEventProps?: UseTracksEventPropsHook;
-	/**
-	 * Temporary hook to allow gradual migration of flows to the globalised/default event tracking.
-	 * IMPORTANT: This hook will be removed in the future.
-	 */
-	use__Temporary__ShouldTrackEvent?: ( event: keyof NavigationControls ) => boolean;
 	/**
 	 * @deprecated Avoid this. Assert your conditions in `initialize` instead unless you're 100% sure you need this.
 	 */

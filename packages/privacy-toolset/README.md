@@ -46,4 +46,4 @@ in the root of the repository to get the required `devDependencies`.
 
 ### Using [Storybook](https://storybook.js.org/)
 
-`yarn workspace @automattic/privacy-toolset run storybook`
+`yarn workspace @automattic/privacy-toolset run storybook:start`

@@ -12,12 +12,7 @@ import {
 } from '../constants';
 import { useDesignTiers, useDesignPickerFilters } from '../hooks/use-design-picker-filters';
 import { useFilteredDesignsByGroup } from '../hooks/use-filtered-designs';
-import {
-	isDefaultGlobalStylesVariationSlug,
-	isFeatureCategory,
-	isLockedStyleVariation,
-	shuffleDesigns,
-} from '../utils';
+import { isFeatureCategory, shuffleDesigns } from '../utils';
 import DesignPickerCategoryFilter from './design-picker-category-filter';
 import DesignPreviewImage from './design-preview-image';
 import NoResults from './no-results';
@@ -111,8 +106,6 @@ interface DesignCardProps {
 	locale: string;
 	category?: string | null;
 	isPremiumThemeAvailable?: boolean;
-	shouldLimitGlobalStyles?: boolean;
-	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	getBadge?: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 	getOptionsMenu?: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
@@ -125,56 +118,30 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 	locale,
 	category,
 	isPremiumThemeAvailable,
-	shouldLimitGlobalStyles,
-	onChangeVariation,
 	onPreview,
 	getBadge,
 	getOptionsMenu,
 	oldHighResImageLoading,
 	isActive,
 } ) => {
-	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState< StyleVariation >();
-
-	const { style_variations = [] } = design;
 	const trackingDivRef = useTrackDesignView( { category, design, isPremiumThemeAvailable } );
-	const isDefaultVariation = isDefaultGlobalStylesVariationSlug( selectedStyleVariation?.slug );
-
-	const isLocked = isLockedStyleVariation( {
-		isPremiumTheme: design?.design_tier === 'premium',
-		styleVariationSlug: selectedStyleVariation?.slug,
-		shouldLimitGlobalStyles,
-	} );
-
-	const conditionalProps =
-		! isLocked && isActive
-			? {}
-			: { onImageClick: () => onPreview( design, selectedStyleVariation ) };
+	const conditionalProps = isActive ? {} : { onImageClick: () => onPreview( design ) };
 
 	return (
 		<ThemeCard
 			className="design-button-container"
 			ref={ trackingDivRef }
-			name={
-				isDefaultVariation ? design.title : `${ design.title } – ${ selectedStyleVariation?.title }`
-			}
+			name={ design.title }
 			image={
 				<DesignPreviewImage
 					design={ design }
 					locale={ locale }
-					styleVariation={ selectedStyleVariation }
 					oldHighResImageLoading={ oldHighResImageLoading }
 				/>
 			}
-			optionsMenu={ getOptionsMenu && getOptionsMenu( design.slug, isLocked ) }
-			badge={ getBadge && getBadge( design.slug, isLocked ) }
-			styleVariations={ style_variations }
-			selectedStyleVariation={ selectedStyleVariation }
-			onStyleVariationClick={ ( variation ) => {
-				onChangeVariation( design, variation );
-				setSelectedStyleVariation( variation );
-			} }
-			onStyleVariationMoreClick={ () => onPreview( design ) }
-			isActive={ isActive && ! isLocked }
+			optionsMenu={ getOptionsMenu && getOptionsMenu( design.slug, false ) }
+			badge={ getBadge && getBadge( design.slug, false ) }
+			isActive={ isActive }
 			{ ...conditionalProps }
 		/>
 	);
@@ -187,12 +154,10 @@ interface DesignCardGroup {
 	category?: string | null;
 	categoryName?: string;
 	isPremiumThemeAvailable?: boolean;
-	shouldLimitGlobalStyles?: boolean;
 	oldHighResImageLoading?: boolean; // Temporary for A/B test.
 	showActiveThemeBadge?: boolean;
 	siteActiveTheme?: string | null;
 	showNoResults?: boolean;
-	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	getBadge?: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 	getOptionsMenu?: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
@@ -205,12 +170,10 @@ const DesignCardGroup = ( {
 	categoryName,
 	locale,
 	isPremiumThemeAvailable,
-	shouldLimitGlobalStyles,
 	oldHighResImageLoading,
 	showActiveThemeBadge = false,
 	siteActiveTheme,
 	showNoResults,
-	onChangeVariation,
 	onPreview,
 	getBadge,
 	getOptionsMenu,
@@ -262,8 +225,6 @@ const DesignCardGroup = ( {
 						design={ design }
 						locale={ locale }
 						isPremiumThemeAvailable={ isPremiumThemeAvailable }
-						shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
-						onChangeVariation={ onChangeVariation }
 						onPreview={ onPreview }
 						getBadge={ getBadge }
 						getOptionsMenu={ getOptionsMenu }
@@ -335,13 +296,10 @@ const DesignPickerFilterGroup: React.FC< DesignPickerFilterGroupProps > = ( {
 
 interface DesignPickerProps {
 	locale: string;
-	onDesignWithAI?: () => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
-	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	designs: Design[];
 	categorization?: Categorization;
 	isPremiumThemeAvailable?: boolean;
-	shouldLimitGlobalStyles?: boolean;
 	getBadge?: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 	getOptionsMenu?: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 	oldHighResImageLoading?: boolean; // Temporary for A/B test
@@ -354,13 +312,10 @@ interface DesignPickerProps {
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
-	//onDesignWithAI,
 	onPreview,
-	onChangeVariation,
 	designs,
 	categorization,
 	isPremiumThemeAvailable,
-	shouldLimitGlobalStyles,
 	getBadge,
 	getOptionsMenu,
 	oldHighResImageLoading,
@@ -400,8 +355,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	const designCardProps = {
 		locale,
 		isPremiumThemeAvailable,
-		shouldLimitGlobalStyles,
-		onChangeVariation,
 		onPreview,
 		getBadge,
 		getOptionsMenu,
@@ -438,21 +391,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						/>
 					</DesignPickerFilterGroup>
 				) }
-				{ /* isBigSkyEligible && (
-					<DesignPickerFilterGroup>
-						<Button
-							className={ clsx(
-								'design-picker__design-your-own-button',
-								'design-picker__design-with-ai'
-							) }
-							onClick={ () => {
-								onDesignWithAI && onDesignWithAI();
-							} }
-						>
-							{ translate( 'Design with AI' ) }
-						</Button>
-					</DesignPickerFilterGroup>
-				) */ }
 			</div>
 
 			{ isMultiFilterEnabled && selectedCategoriesWithoutDesignTier.length > 1 && (
@@ -495,15 +433,12 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 
 export interface UnifiedDesignPickerProps {
 	locale: string;
-	onDesignWithAI?: () => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
-	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	onViewAllDesigns: () => void;
 	designs: Design[];
 	categorization?: Categorization;
 	heading?: React.ReactNode;
 	isPremiumThemeAvailable?: boolean;
-	shouldLimitGlobalStyles?: boolean;
 	getBadge?: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 	getOptionsMenu?: ( themeId: string, isLockedStyleVariation: boolean ) => React.ReactNode;
 	oldHighResImageLoading?: boolean; // Temporary for A/B test
@@ -516,15 +451,12 @@ export interface UnifiedDesignPickerProps {
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	locale,
-	onDesignWithAI,
 	onPreview,
-	onChangeVariation,
 	onViewAllDesigns,
 	designs,
 	heading,
 	categorization,
 	isPremiumThemeAvailable,
-	shouldLimitGlobalStyles,
 	getBadge,
 	getOptionsMenu,
 	oldHighResImageLoading,
@@ -546,13 +478,10 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 			<div className="unified-design-picker__designs">
 				<DesignPicker
 					locale={ locale }
-					onDesignWithAI={ onDesignWithAI }
 					onPreview={ onPreview }
-					onChangeVariation={ onChangeVariation }
 					designs={ designs }
 					categorization={ categorization }
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
-					shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 					getBadge={ getBadge }
 					getOptionsMenu={ getOptionsMenu }
 					oldHighResImageLoading={ oldHighResImageLoading }

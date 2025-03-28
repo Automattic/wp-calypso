@@ -29,7 +29,6 @@ $stats-utm-border: 1px solid var(--gray-gray-5, #dcdcde);
 
 .stats-utm-picker__popover-list {
 	padding: 8px 0;
-	border-left: $stats-utm-border;
 	box-sizing: border-box;
 	list-style: none;
 	margin: 0;
@@ -65,7 +64,7 @@ $stats-utm-border: 1px solid var(--gray-gray-5, #dcdcde);
 		flex: 1; // take full width
 	}
 
-	&.is-not-grouped + &.is-grouped {
+	&.is-grouped + &.is-not-grouped {
 		&::before {
 			content: "";
 			margin: 2px 0;

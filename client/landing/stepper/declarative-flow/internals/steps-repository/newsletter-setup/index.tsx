@@ -95,9 +95,9 @@ const NewsletterSetup: Step< {
 
 	return (
 		<StepContainer
+			goBack={ navigation.goBack }
 			stepName="newsletter-setup"
 			isWideLayout
-			hideBack
 			flowName="newsletter"
 			formattedHeader={
 				<FormattedHeader

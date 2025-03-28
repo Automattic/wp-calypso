@@ -154,7 +154,7 @@ import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { CalypsoDispatch, IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
-import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
+import { cancelPurchase, downgradePurchase, managePurchase, purchasesRoot } from '../paths';
 import PurchaseSiteHeader from '../purchases-site/header';
 import RemovePurchase from '../remove-purchase';
 import {
@@ -914,7 +914,7 @@ class ManagePurchase extends Component<
 		}
 		const { id } = purchase;
 
-		if ( ! canAutoRenewBeTurnedOff( purchase ) || ! isPlan( purchase ) ) {
+		if ( ! canAutoRenewBeTurnedOff( purchase ) ) {
 			return null;
 		}
 
@@ -966,16 +966,20 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		if ( ! isPlan( purchase ) ) {
+		if ( ! ( isBusiness( purchase ) || isPremium( purchase ) || isEcommerce( purchase ) ) ) {
 			return null;
 		}
 
-		const link = this.props.getDowngradeUrlFor?.( this.props.siteSlug, purchase.id );
+		const link = ( this.props.getDowngradeUrlFor ?? downgradePurchase )(
+			this.props.siteSlug,
+			purchase.id
+		);
 
 		return (
 			<CompactCard href={ link }>
 				<Icon icon={ download } className="card__icon" />
 				{ translate( 'Downgrade plan' ) }
+				{ this.renderRefundText() }
 			</CompactCard>
 		);
 	}
@@ -1406,12 +1410,14 @@ class ManagePurchase extends Component<
 						{ ! isJetpackTemporarySitePurchase( purchase ) && this.renderUpgradeNavItem() }
 						{ this.renderEditPaymentMethodNavItem() }
 						{ this.renderReinstall() }
-						{ this.renderCancelPurchaseNavItem() }
-						{ config.isEnabled( 'plans/self-service-downgrade' ) && ! isPersonal( purchase )
-							? this.renderDowngradeNavItem()
-							: null }
-						{ this.renderCancelSurvey() }
-						{ this.renderRemovePurchaseNavItem() }
+						<div className="manage-purchase__downgrade-products">
+							{ config.isEnabled( 'plans/self-service-downgrade' ) && ! isPersonal( purchase )
+								? this.renderDowngradeNavItem()
+								: null }
+							{ this.renderCancelPurchaseNavItem() }
+							{ this.renderRemovePurchaseNavItem() }
+							{ this.renderCancelSurvey() }
+						</div>
 					</>
 				) }
 			</Fragment>
@@ -1481,7 +1487,10 @@ class ManagePurchase extends Component<
 					<QueryCanonicalTheme siteId={ siteId } themeId={ purchase?.meta ?? '' } />
 				) }
 
-				<HeaderCake backHref={ this.props.purchaseListUrl ?? purchasesRoot }>
+				<HeaderCake
+					backText={ translate( 'Purchases' ) }
+					backHref={ this.props.purchaseListUrl ?? purchasesRoot }
+				>
 					{ this.props.cardTitle || titles.managePurchase }
 				</HeaderCake>
 				{ showExpiryNotice ? (

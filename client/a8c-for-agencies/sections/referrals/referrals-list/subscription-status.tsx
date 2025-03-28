@@ -67,6 +67,11 @@ export default function SubscriptionStatus( { item }: { item: Referral } ): Reac
 					status: translate( 'Canceled' ),
 					type: 'info',
 				};
+			case 'error':
+				return {
+					status: translate( 'Error' ),
+					type: 'error',
+				};
 			case 'archived':
 				return {
 					status: translate( 'Archived' ),
