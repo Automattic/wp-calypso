@@ -18,6 +18,8 @@ import {
 } from 'calypso/state/reader/feed-searches/selectors';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 
+const MIN_DESIRED_SITE_RESULTS = 10;
+
 class SiteResults extends Component {
 	static propTypes = {
 		query: PropTypes.string,
@@ -27,9 +29,18 @@ class SiteResults extends Component {
 		searchResults: PropTypes.array,
 		searchResultsCount: PropTypes.number,
 		width: PropTypes.number.isRequired,
+		disableInfiniteScroll: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		disableInfiniteScroll: false,
 	};
 
 	fetchNextPage = ( offset ) => {
+		if ( this.props.disableInfiniteScroll && offset > MIN_DESIRED_SITE_RESULTS ) {
+			return;
+		}
+
 		this.props.requestFeedSearch( {
 			query: this.props.query,
 			offset,
@@ -38,7 +49,12 @@ class SiteResults extends Component {
 		} );
 	};
 
-	hasNextPage = ( offset ) => offset < this.props.searchResultsCount;
+	hasNextPage = ( offset ) => {
+		if ( this.props.disableInfiniteScroll && offset > MIN_DESIRED_SITE_RESULTS ) {
+			return false;
+		}
+		return offset < this.props.searchResultsCount;
+	};
 
 	render() {
 		const { query, searchResults, width, sort } = this.props;

@@ -21,9 +21,11 @@ import { isEditorIframeFocused } from 'calypso/reader/components/quick-post/util
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
+import ReaderStreamLoginPrompt from 'calypso/reader/stream/login-prompt';
 import UpdateNotice from 'calypso/reader/update-notice';
 import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
 import XPostHelper from 'calypso/reader/xpost-helper';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { PER_FETCH, INITIAL_FETCH } from 'calypso/state/data-layer/wpcom/read/streams';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
@@ -90,6 +92,7 @@ class ReaderStream extends Component {
 		fixedHeaderHeight: PropTypes.number,
 		selectedStreamName: PropTypes.string,
 		disableInfiniteScroll: PropTypes.bool,
+		isLoggedIn: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -106,6 +109,7 @@ class ReaderStream extends Component {
 		suppressSiteNameLink: false,
 		useCompactCards: false,
 		disableInfiniteScroll: false,
+		isLoggedIn: false,
 	};
 
 	state = {
@@ -751,6 +755,11 @@ class ReaderStream extends Component {
 				{ showingStream && items.length ? this.props.intro?.() : null }
 				{ body }
 				{ showingStream && items.length && ! isRequesting ? <ListEnd /> : null }
+				{ this.props.disableInfiniteScroll &&
+					! this.props.isLoggedIn &&
+					this.props.items.length > 0 && (
+						<ReaderStreamLoginPrompt redirectPath={ window.location.pathname } />
+					) }
 			</TopLevel>
 		);
 	}
@@ -776,6 +785,7 @@ export default connect(
 		const streamKey = getStreamKey( state, tempStreamKey );
 		const stream = getStream( state, streamKey );
 		const selectedPost = getPostByKey( state, stream.selected );
+		const isLoggedIn = isUserLoggedIn( state );
 
 		let localeSlug = getCurrentLocaleSlug( state );
 		if ( isDefaultLocale( localeSlug ) ) {
@@ -802,6 +812,7 @@ export default connect(
 			organizations: getReaderOrganizations( state ),
 			primarySiteId: getPrimarySiteId( state ),
 			localeSlug,
+			isLoggedIn,
 		};
 	},
 	{

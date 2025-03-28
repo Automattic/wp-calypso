@@ -1,7 +1,5 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { addLocaleToPathLocaleInFront, useLocale } from '@automattic/i18n-utils';
-import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -65,47 +63,6 @@ export const DiscoverHeader = ( props ) => {
 				'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
 			} ) }
 		/>
-	);
-};
-
-const ReaderDiscoverLoginPrompt = () => {
-	const translate = useTranslate();
-
-	const onCreateAccountClick = () => {
-		recordTracksEvent( 'calypso_reader_discover_bottom_signup_clicked' );
-		page( '/start/reader?ref=reader-lp' );
-	};
-
-	const onLoginClick = () => {
-		recordTracksEvent( 'calypso_reader_discover_bottom_login_clicked' );
-		page( '/log-in?redirect_to=%2Fdiscover' );
-	};
-
-	return (
-		<div className="reader-discover-login-prompt">
-			<h2>{ translate( 'Join the conversation' ) }</h2>
-			<p>
-				{ translate(
-					'Sign in to discover more great content and subscribe to your favorite blogs.'
-				) }
-			</p>
-			<div className="reader-discover-login-prompt__buttons">
-				<Button
-					isPrimary
-					onClick={ onCreateAccountClick }
-					className="reader-discover-login-prompt__signup-button"
-				>
-					{ translate( 'Create a new account' ) }
-				</Button>
-				<Button
-					isLink
-					onClick={ onLoginClick }
-					className="reader-discover-login-prompt__login-button"
-				>
-					{ translate( 'Log in' ) }
-				</Button>
-			</div>
-		</div>
 	);
 };
 
@@ -187,12 +144,9 @@ const DiscoverStream = ( props ) => {
 	}
 
 	return (
-		<>
-			<Stream { ...streamProps }>
-				<HeaderAndNavigation />
-			</Stream>
-			{ ! isLoggedIn && <ReaderDiscoverLoginPrompt /> }
-		</>
+		<Stream { ...streamProps }>
+			<HeaderAndNavigation />
+		</Stream>
 	);
 };
 

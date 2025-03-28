@@ -1,0 +1,26 @@
+.reader-stream-login-prompt {
+	text-align: center;
+	max-width: 380px;
+	margin: 0 auto;
+
+	h2 {
+		color: var(--color-neutral-70);
+		font-size: 1.25rem;
+		font-weight: 600;
+		margin-bottom: 9px;
+	}
+
+	p {
+		font-size: 1rem;
+		margin-bottom: 16px;
+	}
+
+	.components-button {
+		display: block;
+		margin: 0 auto;
+	}
+
+	.reader-stream-login-prompt__signup-button {
+		margin-bottom: 16px;
+	}
+}
