@@ -7,6 +7,12 @@
 	text-align: center;
 }
 
+.layout:has(.qr-code-login-page) {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
 .qr-code-login-page__heading {
 	@include onboarding-heading-text-mobile;
 	margin-bottom: 16px;
