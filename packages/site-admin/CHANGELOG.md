@@ -11,11 +11,13 @@ Initial release of the site-admin package providing a framework for building mod
 - `SiteIcon`: Site icon display component
 
 ### Routing System
+
 - `RoutesContext`: Context provider for current matched route
 - `ConfigContext`: Context for router configuration and settings
 - `browserHistory`: Browser history instance for navigation state
 
 #### Router Hooks
+
 - `useHistory`: Hook for navigation and history management
 - `useLink`: Hook for handling link navigation
 - `useLocation`: Hook for accessing current route location
