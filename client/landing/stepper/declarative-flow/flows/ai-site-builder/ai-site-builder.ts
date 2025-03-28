@@ -137,7 +137,7 @@ const aiSiteBuilder: Flow = {
 						}
 
 						window.location.replace(
-							`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }`
+							`${ siteURL }/wp-admin/site-editor.php?p=%2Fpage%2F&canvas=edit&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }`
 						);
 					} else if ( providedDependencies.isLaunched ) {
 						const site = await resolveSelect( SITE_STORE ).getSite( providedDependencies.siteSlug );
