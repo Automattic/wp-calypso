@@ -45,7 +45,6 @@ import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ReaderSidebarHelper from './helper';
 import ReaderSidebarLists from './reader-sidebar-lists';
-import ReaderSidebarNudges from './reader-sidebar-nudges';
 import ReaderSidebarOrganizations from './reader-sidebar-organizations';
 import ReaderSidebarRecent from './reader-sidebar-recent';
 import ReaderSidebarTags from './reader-sidebar-tags';
@@ -298,21 +297,13 @@ export class ReaderSidebar extends Component {
 			onClick: this.handleClick,
 			siteTitle: i18n.translate( 'Reader' ),
 		};
-		return (
-			<GlobalSidebar { ...props }>
-				<ReaderSidebarNudges />
-				{ this.renderSidebarMenu() }
-			</GlobalSidebar>
-		);
+		return <GlobalSidebar { ...props }>{ this.renderSidebarMenu() }</GlobalSidebar>;
 	}
 
 	renderSidebar() {
 		return (
 			<Sidebar onClick={ this.handleClick }>
-				<SidebarRegion>
-					<ReaderSidebarNudges />
-					{ this.renderSidebarMenu() }
-				</SidebarRegion>
+				<SidebarRegion>{ this.renderSidebarMenu() }</SidebarRegion>
 				<SidebarFooter />
 			</Sidebar>
 		);
