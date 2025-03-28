@@ -12,7 +12,7 @@ import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-mig
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
+import { shouldUseStepContainerV2MigrationFlow } from '../../../helpers/should-use-step-container-v2';
 import FlowCard from '../components/flow-card';
 import type { Step as StepType } from '../../types';
 import './style.scss';
@@ -29,7 +29,7 @@ const SiteMigrationImportOrMigrate: StepType< {
 	const { mutate: cancelMigration } = useMigrationCancellation( site?.ID );
 	const siteCanInstallPlugins = canInstallPlugins( site );
 	const isUpgradeRequired = ! siteCanInstallPlugins;
-	const isUsingStepContainerV2 = shouldUseStepContainerV2( flow );
+	const isUsingStepContainerV2 = shouldUseStepContainerV2MigrationFlow( flow );
 
 	const options = useMemo( () => {
 		const upgradeRequiredLabel = translate( '50% off %(planName)s', {

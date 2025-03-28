@@ -8,7 +8,7 @@
 }
 
 .step-container-v2__content--centered-column-layout-5 {
-	@include step-medium-viewport {
+	@include break-small {
 		max-width: 509px;
 	}
 }

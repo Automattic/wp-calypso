@@ -9,3 +9,10 @@ export const shouldUseStepContainerV2 = ( flow: string ) => {
 		FLOWS_USING_STEP_CONTAINER_V2.includes( flow )
 	);
 };
+
+export const shouldUseStepContainerV2MigrationFlow = ( flow: string ) => {
+	return (
+		configApi.isEnabled( 'onboarding/step-container-v2-migration-flow' ) &&
+		FLOWS_USING_STEP_CONTAINER_V2.includes( flow )
+	);
+};

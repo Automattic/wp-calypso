@@ -10,7 +10,7 @@ import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePresalesChat } from 'calypso/lib/presales-chat';
-import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
+import { shouldUseStepContainerV2MigrationFlow } from '../../../helpers/should-use-step-container-v2';
 import { DIYOption } from './diy-option';
 import type { Step as StepType } from '../../types';
 import './style.scss';
@@ -29,7 +29,7 @@ const SiteMigrationHowToMigrate: StepType< {
 	const translate = useTranslate();
 	const site = useSite();
 	const { mutate: cancelMigration } = useMigrationCancellation( site?.ID );
-	const isUsingStepContainerV2 = shouldUseStepContainerV2( flow );
+	const isUsingStepContainerV2 = shouldUseStepContainerV2MigrationFlow( flow );
 
 	usePresalesChat( 'wpcom' );
 
