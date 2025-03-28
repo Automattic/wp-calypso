@@ -9,6 +9,7 @@ import { CheckoutProviderProps } from '../types';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import { FormAndTransactionProvider } from './form-and-transaction-provider';
 import { PaymentMethodProvider } from './payment-method-provider';
+import { PaymentProcessorProvider } from './payment-processor-provider';
 import type { CheckoutContextInterface } from '../types';
 
 const debug = debugFactory( 'composite-checkout:checkout-provider' );
@@ -42,10 +43,9 @@ export function CheckoutProvider( {
 	// Create a big blob of state to store in React Context for use by all this Provider's children.
 	const value: CheckoutContextInterface = useMemo(
 		() => ( {
-			paymentProcessors,
 			onPageLoadError,
 		} ),
-		[ paymentProcessors, onPageLoadError ]
+		[ onPageLoadError ]
 	);
 
 	const { __ } = useI18n();
@@ -73,7 +73,9 @@ export function CheckoutProvider( {
 						isValidating={ isValidating }
 						redirectToUrl={ redirectToUrl }
 					>
-						<CheckoutContext.Provider value={ value }>{ children }</CheckoutContext.Provider>
+						<PaymentProcessorProvider paymentProcessors={ paymentProcessors }>
+							<CheckoutContext.Provider value={ value }>{ children }</CheckoutContext.Provider>
+						</PaymentProcessorProvider>
 					</FormAndTransactionProvider>
 				</ThemeProvider>
 			</PaymentMethodProvider>

@@ -94,8 +94,11 @@ export interface PaymentMethodProviderContextInterface {
 	onPaymentMethodChanged?: PaymentMethodChangedCallback;
 }
 
-export interface CheckoutContextInterface {
+export interface PaymentProcessorProviderContextInterface {
 	paymentProcessors: PaymentProcessorProp;
+}
+
+export interface CheckoutContextInterface {
 	onPageLoadError?: CheckoutPageErrorCallback;
 }
 
