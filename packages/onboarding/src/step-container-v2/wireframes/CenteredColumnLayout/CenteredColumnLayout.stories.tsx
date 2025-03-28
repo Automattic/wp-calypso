@@ -21,7 +21,7 @@ export const FourColumnsCenteredLayout = () => {
 	return (
 		<CenteredColumnLayout
 			columnWidth={ 4 }
-			topBar={ <TopBar backButton={ backButton } skipButton={ skipButton } /> }
+			topBar={ <TopBar leftElement={ backButton } rightElement={ skipButton } /> }
 			heading={
 				<Heading
 					text="Four Columns Centered Layout"
@@ -48,7 +48,7 @@ export const SixColumnsCenteredLayout = () => {
 	return (
 		<CenteredColumnLayout
 			columnWidth={ 6 }
-			topBar={ <TopBar backButton={ backButton } skipButton={ skipButton } /> }
+			topBar={ <TopBar leftElement={ backButton } rightElement={ skipButton } /> }
 			heading={
 				<Heading
 					text="Six Columns Centered Layout"
@@ -75,7 +75,7 @@ export const EightColumnsCenteredLayout = () => {
 	return (
 		<CenteredColumnLayout
 			columnWidth={ 8 }
-			topBar={ <TopBar backButton={ backButton } skipButton={ skipButton } /> }
+			topBar={ <TopBar leftElement={ backButton } rightElement={ skipButton } /> }
 			heading={
 				<Heading
 					text="Eight Columns Centered Layout"

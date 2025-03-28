@@ -17,7 +17,7 @@ export const ThreeColumnsOnRightLayout = () => (
 	<TwoColumnLayout
 		firstColumnWidth={ 2 }
 		secondColumnWidth={ 1 }
-		topBar={ <TopBar backButton={ <BackButton /> } /> }
+		topBar={ <TopBar leftElement={ <BackButton /> } /> }
 		heading={
 			<Heading
 				text="Three Columns on the Right"
@@ -40,7 +40,7 @@ export const EqualTwoColumnLayout = () => (
 	<TwoColumnLayout
 		firstColumnWidth={ 1 }
 		secondColumnWidth={ 1 }
-		topBar={ <TopBar backButton={ <BackButton /> } /> }
+		topBar={ <TopBar leftElement={ <BackButton /> } /> }
 		heading={
 			<Heading
 				text="Two Equal Columns"
@@ -63,7 +63,7 @@ export const WithRenderProp = () => (
 	<TwoColumnLayout
 		firstColumnWidth={ 1 }
 		secondColumnWidth={ 1 }
-		topBar={ <TopBar backButton={ <BackButton /> } /> }
+		topBar={ <TopBar leftElement={ <BackButton /> } /> }
 		heading={
 			<Heading
 				text="Columns Rendered with Render Prop"

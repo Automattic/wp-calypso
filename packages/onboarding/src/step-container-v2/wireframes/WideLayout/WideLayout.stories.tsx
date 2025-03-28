@@ -15,7 +15,7 @@ export default meta;
 
 export const Default = () => (
 	<WideLayout
-		topBar={ <TopBar backButton={ <BackButton /> } /> }
+		topBar={ <TopBar leftElement={ <BackButton /> } /> }
 		heading={
 			<Heading
 				text="Wide layout"

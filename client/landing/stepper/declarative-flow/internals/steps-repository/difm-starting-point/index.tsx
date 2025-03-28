@@ -64,8 +64,8 @@ const DIFMStartingPoint: StepType< {
 				<StepContainerV2DIFMStartingPoint
 					topBar={
 						<Step.TopBar
-							backButton={ goBack ? <Step.BackButton onClick={ goBack } /> : undefined }
-							skipButton={
+							leftElement={ goBack ? <Step.BackButton onClick={ goBack } /> : undefined }
+							rightElement={
 								shouldRenderHelpCenter ? (
 									<HelpCenterStepButton
 										flowName={ DIFM_FLOW }

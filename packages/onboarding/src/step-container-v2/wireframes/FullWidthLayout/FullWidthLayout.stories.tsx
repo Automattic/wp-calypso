@@ -21,7 +21,7 @@ export const ThemePreview = () => {
 	const backButton = <BackButton label="Back" />;
 
 	return (
-		<FullWidthLayout className="theme-preview" topBar={ <TopBar backButton={ backButton } /> }>
+		<FullWidthLayout className="theme-preview" topBar={ <TopBar leftElement={ backButton } /> }>
 			<div className="theme-preview__info">
 				<div className="theme-preview__description">
 					<Badge>Free</Badge>
@@ -52,7 +52,7 @@ export const ThemePreviewFonts = () => {
 		<FullWidthLayout
 			className="theme-preview"
 			topBar={ ( { isLargeViewport } ) =>
-				isLargeViewport ? <TopBar backButton={ backButton } /> : <FontsBar />
+				isLargeViewport ? <TopBar leftElement={ backButton } /> : <FontsBar />
 			}
 			stickyBottomBar={ ( { isLargeViewport } ) => {
 				if ( isLargeViewport ) {

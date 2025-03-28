@@ -834,8 +834,8 @@ export default function CheckoutMainContent( {
 				hasContentPadding={ false }
 				topBar={
 					<Step.TopBar
-						backButton={ <Step.BackButton onClick={ leaveModalProps.clickClose } /> }
-						skipButton={
+						leftElement={ <Step.BackButton onClick={ leaveModalProps.clickClose } /> }
+						rightElement={
 							<span className="checkout-skip-button">
 								<label>{ helpCenterButtonCopy ?? translate( 'Need extra help?' ) } </label>
 								<Step.LinkButton onClick={ toggleHelpCenter }>
