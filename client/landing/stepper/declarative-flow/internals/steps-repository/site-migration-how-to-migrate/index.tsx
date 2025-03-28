@@ -159,7 +159,6 @@ const SiteMigrationHowToMigrate: StepType< {
 						<Step.Heading
 							text={ headerText ?? translate( 'Let us migrate your site' ) }
 							subText={ subHeaderText || renderSubHeaderText() }
-							maxWidth="615px"
 						/>
 					}
 				>
