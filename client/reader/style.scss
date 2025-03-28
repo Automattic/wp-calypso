@@ -4,10 +4,12 @@
 body.is-section-reader {
 	div.layout.is-global-sidebar-visible {
 		.main {
-			padding: 24px;
+			&:not(.no-padding) {
+				padding: 24px;
 
-			@media (max-width: $break-small) {
-				padding: 24px 0;
+				@media (max-width: $break-small) {
+					padding: 24px 0;
+				}
 			}
 		}
 
