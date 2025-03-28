@@ -61,7 +61,6 @@ export const ThemePreviewFonts = () => {
 
 				return <StickyBottomBar leftButton={ backButton } rightButton={ nextButton } />;
 			} }
-			hasContentPadding={ ( { isLargeViewport } ) => isLargeViewport }
 		>
 			{ ( { isLargeViewport } ) => {
 				return (
