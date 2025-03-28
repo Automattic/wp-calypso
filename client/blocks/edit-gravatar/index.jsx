@@ -218,6 +218,9 @@ export class EditGravatar extends Component {
 		// use imgSize = 400 for caching
 		// it's the popular value for large Gravatars in Calypso
 		const GRAVATAR_IMG_SIZE = 400;
+		const uploadButtonLabel = user.email_verified
+			? translate( 'Change profile photo' )
+			: translate( 'Verify your email to change profile photo' );
 
 		if ( this.props.isFetchingUserSettings ) {
 			return this.renderEditGravatarIsLoading();
@@ -237,8 +240,13 @@ export class EditGravatar extends Component {
 					{ 'is-uploading': isUploading }
 				) }
 			>
-				<div onClick={ this.handleUnverifiedUserClick }>
-					<FilePicker accept="image/*" onPick={ this.onReceiveFile }>
+				<FilePicker accept="image/*" onPick={ this.onReceiveFile }>
+					<button
+						type="button"
+						onClick={ this.handleUnverifiedUserClick }
+						className="edit-gravatar__image-button"
+						aria-label={ uploadButtonLabel }
+					>
 						<div
 							data-tip-target="edit-gravatar"
 							className={ clsx( 'edit-gravatar__image-container', {
@@ -274,8 +282,8 @@ export class EditGravatar extends Component {
 								</div>
 							</div>
 						</div>
-					</FilePicker>
-				</div>
+					</button>
+				</FilePicker>
 				{ this.state.showEmailVerificationNotice && (
 					<VerifyEmailDialog onClose={ this.closeVerifyEmailDialog } />
 				) }

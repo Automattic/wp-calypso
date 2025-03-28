@@ -1,30 +1,28 @@
 import { useViewportMatch } from '@wordpress/compose';
 import clsx from 'clsx';
-import { ReactNode, useMemo } from 'react';
-import {
-	StepContainerV2InternalProvider,
-	type StepContainerV2InternalContextType,
-} from '../../contexts/StepContainerV2InternalContext';
+import { ReactNode } from 'react';
 
 import './style.scss';
 
-export type StepContainerV2ContentProp =
-	| ( ( context: StepContainerV2InternalContextType ) => ReactNode )
-	| ReactNode;
+interface StepContainerV2InternalContextType {
+	isSmallViewport: boolean;
+	isLargeViewport: boolean;
+}
+
+export type ContentProp< T = ReactNode > =
+	| ( ( context: StepContainerV2InternalContextType ) => T )
+	| T;
 
 export interface StepContainerV2Props {
 	className?: string;
-	topBar?: ReactNode;
-	heading?: ReactNode;
-	footer?: ReactNode;
-	stickyBottomBar?: ReactNode;
+	topBar?: ContentProp;
+	heading?: ContentProp;
+	footer?: ContentProp;
+	stickyBottomBar?: ContentProp;
 	width?: 'standard' | 'wide' | 'full';
-	verticalAlign?: 'top' | 'center';
-	isMediumViewport?: boolean;
-	isLargeViewport?: boolean;
-	hasContentPadding?: boolean;
-	forceVerticalAlignOnSmallViewport?: boolean;
-	children?: StepContainerV2ContentProp;
+	verticalAlign?: 'top' | 'center-on-small' | 'center';
+	hasContentPadding?: ContentProp< boolean >;
+	children?: ContentProp;
 }
 
 export const StepContainerV2 = ( {
@@ -35,62 +33,64 @@ export const StepContainerV2 = ( {
 	stickyBottomBar,
 	width = 'standard',
 	verticalAlign = 'top',
-	forceVerticalAlignOnSmallViewport = false,
-	isMediumViewport: externalIsMediumViewport,
-	isLargeViewport: externalIsLargeViewport,
 	hasContentPadding = true,
 	children,
 }: StepContainerV2Props ) => {
-	const internalIsMediumViewport = useViewportMatch( 'small', '>=' );
-	const isMediumViewport = externalIsMediumViewport ?? internalIsMediumViewport;
+	const isSmallViewport = useViewportMatch( 'small', '>=' );
+	const isLargeViewport = useViewportMatch( 'large', '>=' );
 
-	const internalIsLargeViewport = useViewportMatch( 'medium', '>=' );
-	const isLargeViewport = externalIsLargeViewport ?? internalIsLargeViewport;
+	const stepContainerContextValue = { isSmallViewport, isLargeViewport };
 
-	const stepContainerContextValue = useMemo(
-		() => ( { isMediumViewport, isLargeViewport } ),
-		[ isMediumViewport, isLargeViewport ]
-	);
+	const topBarContent = typeof topBar === 'function' ? topBar( stepContainerContextValue ) : topBar;
+
+	const headingContent =
+		typeof heading === 'function' ? heading( stepContainerContextValue ) : heading;
+	const footerContent = typeof footer === 'function' ? footer( stepContainerContextValue ) : footer;
+
+	const content = typeof children === 'function' ? children( stepContainerContextValue ) : children;
+
+	const stickyBottomBarContent =
+		typeof stickyBottomBar === 'function'
+			? stickyBottomBar( stepContainerContextValue )
+			: ! isSmallViewport && stickyBottomBar;
+
+	const hasContentPaddingResult =
+		typeof hasContentPadding === 'function'
+			? hasContentPadding( stepContainerContextValue )
+			: hasContentPadding;
 
 	return (
-		<StepContainerV2InternalProvider value={ stepContainerContextValue }>
+		<div className="step-container-v2">
+			{ topBarContent }
 			<div
-				className={ clsx( 'step-container-v2', {
-					'medium-viewport': isMediumViewport,
-					'large-viewport': isLargeViewport,
-				} ) }
+				className={ clsx(
+					'step-container-v2__content-wrapper',
+					verticalAlign !== 'top' &&
+						`step-container-v2__content-wrapper--aligned-${ verticalAlign }`,
+					hasContentPaddingResult && 'step-container-v2__content-wrapper--padding'
+				) }
 			>
-				{ topBar && <div className="step-container-v2__top-bar-wrapper">{ topBar }</div> }
+				{ headingContent }
 				<div
-					className={ clsx( 'step-container-v2__content-wrapper', {
-						'vertical-align-center':
-							( isMediumViewport || forceVerticalAlignOnSmallViewport ) &&
-							verticalAlign === 'center',
-						padding: hasContentPadding,
+					className={ clsx( 'step-container-v2__content', className, {
+						wide: width === 'wide',
+						full: width === 'full',
 					} ) }
 				>
-					{ heading }
+					{ content }
+				</div>
+				{ footerContent && (
 					<div
-						className={ clsx( 'step-container-v2__content', className, {
+						className={ clsx( 'step-container-v2__footer', {
 							wide: width === 'wide',
 							full: width === 'full',
 						} ) }
 					>
-						{ typeof children === 'function' ? children( stepContainerContextValue ) : children }
+						{ footerContent }
 					</div>
-					{ footer && (
-						<div
-							className={ clsx( 'step-container-v2__footer', {
-								wide: width === 'wide',
-								full: width === 'full',
-							} ) }
-						>
-							{ footer }
-						</div>
-					) }
-				</div>
-				{ ! isMediumViewport && stickyBottomBar }
+				) }
 			</div>
-		</StepContainerV2InternalProvider>
+			{ stickyBottomBarContent }
+		</div>
 	);
 };

@@ -175,17 +175,6 @@
 					padding-inline: 48px;
 				}
 			}
-
-			@include break-huge {
-				max-width: 100%;
-
-				.bulk-domains-empty-state__main {
-					box-sizing: border-box;
-					max-width: 1400px;
-					margin: 0 auto;
-					padding-inline: 48px;
-				}
-			}
 		}
 	}
 

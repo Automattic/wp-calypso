@@ -10,7 +10,7 @@ type SubscribeParams = {
 	url?: string;
 	doNotInvalidateSiteSubscriptions?: boolean;
 	onSuccess?: () => void;
-	onError?: () => void;
+	onError?: ( e: Error ) => void;
 	subscriptionId?: number;
 	resubscribed?: boolean;
 };
@@ -144,7 +144,7 @@ const useSiteSubscribeMutation = () => {
 				);
 			}
 
-			params.onError?.();
+			params.onError?.( _error );
 		},
 		onSettled: ( _data, _error, params: SubscribeParams ) => {
 			if ( params.doNotInvalidateSiteSubscriptions !== true ) {
