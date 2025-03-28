@@ -9,12 +9,19 @@ import { getFlowLocation, renderFlow } from './helpers';
 const originalLocation = window.location;
 let mockIsAdminInterfaceWPAdminMock = true;
 const mockSiteId = 123;
+const mockSite = {
+	ID: mockSiteId,
+	URL: 'https://mysite.com',
+	options: {
+		admin_url: 'https://mysite.com/wp-admin',
+	},
+};
 
 jest.mock( 'calypso/state/sites/selectors', () => ( {
 	isAdminInterfaceWPAdmin: jest.fn( () => mockIsAdminInterfaceWPAdminMock ),
 } ) );
-jest.mock( '../../hooks/use-site-id-param', () => ( {
-	useSiteIdParam: jest.fn( () => mockSiteId ),
+jest.mock( '../../hooks/use-site', () => ( {
+	useSite: jest.fn( () => mockSite ),
 } ) );
 
 jest.mock( '@wordpress/data', () => {

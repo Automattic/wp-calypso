@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .pressable-usage-details__card {
 	display: flex;
@@ -9,12 +10,12 @@
 	margin: 0 auto;
 
 	.pressable-usage-details__empty-message {
-		font-size: 0.875rem;
+		@include body-medium;
 		margin-bottom: 16px;
 	}
 
 	.pressable-usage-details__title {
-		font-size: 1.5rem;
+		@include body-x-large;
 		margin-bottom: 10px;
 	}
 
@@ -61,7 +62,7 @@
 	}
 
 	.pressable-usage-details__info-label {
-		font-size: 0.875rem;
+		@include body-small;
 		text-transform: uppercase;
 	}
 
@@ -73,18 +74,16 @@
 	}
 
 	.pressable-usage-details__info-top-right {
-		font-size: 0.875rem;
+		@include body-medium;
 		color: var(--color-neutral-60);
 
 		&.storage {
-			font-weight: bold;
-			font-size: 1rem;
+			@include heading-large;
 		}
 	}
 
 	.pressable-usage-details__info-value {
-		font-size: 1rem;
-		font-weight: bold;
+		@include heading-large;
 		margin-top: 5px;
 	}
 }

@@ -14,7 +14,7 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { SUPPORT_URL, JETPACK_SUPPORT_URL_SUBSCRIBERS } from '../../../const';
+import { EMAILS_SUPPORT_URL, JETPACK_SUPPORT_URL_SUBSCRIBERS } from '../../../const';
 import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import { StatsEmptyActionEmail } from '../shared';
@@ -41,7 +41,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const supportUrl = isOdysseyStats
 		? `${ JETPACK_SUPPORT_URL_SUBSCRIBERS }#emails-section`
-		: `${ SUPPORT_URL }#emails`;
+		: EMAILS_SUPPORT_URL;
 
 	const shouldGateStatsModule = useShouldGateStats( statType );
 

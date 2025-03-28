@@ -196,7 +196,7 @@ export function ProductsOverviewV2( {
 			<div
 				className="products-overview-v2__action-panel-wrapper"
 				ref={ actionPanelRef }
-				style={ { top: actionPanelStickyTopOffset } }
+				style={ { top: actionPanelStickyTopOffset, zIndex: 20 } }
 			>
 				<ProductActionPanel
 					searchQuery={ productSearchQuery }

@@ -1,4 +1,5 @@
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .configure-your-site-modal-form {
 	max-width: 650px;
@@ -15,8 +16,7 @@
 		display: flex;
 		font-weight: 400;
 		color: var(--color-neutral-50);
-		font-size: rem(14px);
-		line-height: 1.5;
+		@include body-small;
 		align-items: center;
 
 
@@ -80,14 +80,13 @@
 	.configure-your-site-modal-form__site-name-validation-message {
 		display: flex;
 		align-items: center;
-		font-size: rem(14px);
-		line-height: 1.5;
+		@include body-small;
 		color: var(--color-error);
 		margin-top: 4px;
 
 		.configure-your-site-modal-form__site-name-suggestion {
 			text-decoration: underline;
-			font-weight: bold;
+			@include heading-small;
 			color: var(--color-error);
 			cursor: pointer;
 		}

@@ -120,7 +120,7 @@ const SidebarContent = () => {
                 uid="reports"
                 aria-current={ path === '/reports' }
             >
-                { __( 'Reports' ) }
+                { __( 'Reports', 'a8c-site-admin' ) }
             </SidebarNavigationItem>
 
             <SidebarNavigationItem
@@ -130,7 +130,7 @@ const SidebarContent = () => {
                 uid="settings"
                 aria-current={ path === '/settings' }
             >
-                { __( 'Settings' ) }
+                { __( 'Settings', 'a8c-site-admin' ) }
             </SidebarNavigationItem>
 
             <SidebarNavigationItem
@@ -140,7 +140,7 @@ const SidebarContent = () => {
                 uid="archive"
                 aria-current={ path === '/archive' }
             >
-                { __( 'Archive' ) }
+                { __( 'Archive', 'a8c-site-admin' ) }
             </SidebarNavigationItem>
         </ItemGroup>
     );
@@ -159,7 +159,7 @@ the necessary context for the navigation elements to work correctly.
     <RouterProvider routes={ appRoutes } pathArg="page">
         <SidebarNavigationScreen
             isRoot
-            title={ __( 'Home' ) }
+            title={ __( 'Home', 'a8c-site-admin' ) }
             content={ <SidebarContent /> }
         />
         

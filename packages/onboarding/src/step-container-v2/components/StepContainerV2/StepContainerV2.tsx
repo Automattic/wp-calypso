@@ -23,6 +23,7 @@ export interface StepContainerV2Props {
 	isMediumViewport?: boolean;
 	isLargeViewport?: boolean;
 	hasContentPadding?: boolean;
+	forceVerticalAlignOnSmallViewport?: boolean;
 	children?: StepContainerV2ContentProp;
 }
 
@@ -34,6 +35,7 @@ export const StepContainerV2 = ( {
 	stickyBottomBar,
 	width = 'standard',
 	verticalAlign = 'top',
+	forceVerticalAlignOnSmallViewport = false,
 	isMediumViewport: externalIsMediumViewport,
 	isLargeViewport: externalIsLargeViewport,
 	hasContentPadding = true,
@@ -58,10 +60,12 @@ export const StepContainerV2 = ( {
 					'large-viewport': isLargeViewport,
 				} ) }
 			>
-				{ topBar }
+				{ topBar && <div className="step-container-v2__top-bar-wrapper">{ topBar }</div> }
 				<div
 					className={ clsx( 'step-container-v2__content-wrapper', {
-						'vertical-align-center': verticalAlign === 'center',
+						'vertical-align-center':
+							( isMediumViewport || forceVerticalAlignOnSmallViewport ) &&
+							verticalAlign === 'center',
 						padding: hasContentPadding,
 					} ) }
 				>

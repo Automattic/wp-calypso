@@ -52,11 +52,12 @@
 		"@storybook/react": "^7.6.20",
 		"copyfiles": "^2.4.1",
 		"postcss": "^8.5.3",
-		"typescript": "^5.5.4",
+		"typescript": "^5.8.2",
 		"webpack": "^5.97.1"
 	},
 	"dependencies": {
 		"@wordpress/base-styles": "^5.20.0",
+		"@wordpress/commands": "^1.20.0",
 		"@wordpress/components": "^29.6.0",
 		"@wordpress/compose": "^7.20.0",
 		"@wordpress/core-data": "^7.20.0",

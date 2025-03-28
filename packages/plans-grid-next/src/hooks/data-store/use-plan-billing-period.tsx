@@ -4,23 +4,18 @@ import {
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
 	TERM_TRIENNIALLY,
-	UrlFriendlyTermType,
 } from '@automattic/calypso-products';
-import { EFFECTIVE_TERMS_LIST } from '@automattic/plans-grid-next';
-
-type SupportedIntervalTypes = Extract<
-	UrlFriendlyTermType,
-	'monthly' | 'yearly' | '2yearly' | '3yearly'
->;
+import { EFFECTIVE_TERMS_LIST } from '../../constants';
+import type { SupportedUrlFriendlyTermType } from '../../types';
 
 const usePlanBillingPeriod = ( {
 	intervalType,
 	defaultValue,
 }: {
-	intervalType: SupportedIntervalTypes;
+	intervalType: SupportedUrlFriendlyTermType;
 	defaultValue?: ( typeof TERMS_LIST )[ number ];
 } ) => {
-	const plans: Record< SupportedIntervalTypes, ( typeof EFFECTIVE_TERMS_LIST )[ number ] > = {
+	const plans: Record< SupportedUrlFriendlyTermType, ( typeof EFFECTIVE_TERMS_LIST )[ number ] > = {
 		monthly: TERM_MONTHLY,
 		yearly: TERM_ANNUALLY,
 		'2yearly': TERM_BIENNIALLY,

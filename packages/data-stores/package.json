@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/data-stores",
-	"version": "3.1.0",
+	"version": "3.1.1",
 	"description": "Calypso Data Stores.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -74,7 +74,7 @@
 		"jest-fetch-mock": "^3.0.3",
 		"nock": "^13.5.6",
 		"node-fetch": "^2.7.0",
-		"typescript": "^5.5.4",
+		"typescript": "^5.8.2",
 		"wait-for-expect": "^3.0.2"
 	}
 }

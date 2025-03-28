@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .partner-directory-onboarding-card {
 	.sticky-card__body {
@@ -37,8 +38,7 @@
 
 .partner-directory-onboarding-card__content-title,
 .partner-directory-onboarding-card__content-description {
-	font-size: rem(14px);
-	line-height: 1.4;
+	@include body-medium;
 }
 
 .partner-directory-onboarding-card__content-title {
