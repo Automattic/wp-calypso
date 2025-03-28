@@ -176,10 +176,10 @@ function UseYourDomainStep( { basePath, goBack, initialQuery }: UseYourDomainSte
 	let mappingPriceText;
 	const price = productsList?.domain_map?.cost;
 	if ( price && currencyCode ) {
-		mappingPriceText = formatCurrency( price, currencyCode );
+		const cost = formatCurrency( price, currencyCode );
 		mappingPriceText = translate(
 			'%(cost)s per year plus registration costs at your current provider',
-			{ args: { cost: mappingPriceText } }
+			{ args: { cost } }
 		);
 	}
 	if (
