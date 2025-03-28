@@ -106,9 +106,9 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 	);
 	const queryParams = useQuery();
 
-	let stepSlugDerivedFromState;
+	let customInitialStepSlug;
 	if ( currentStepRoute === '' && flow.getCustomInitialStep ) {
-		stepSlugDerivedFromState = flow.getCustomInitialStep( {
+		customInitialStepSlug = flow.getCustomInitialStep( {
 			queryParams,
 			steps: flowSteps,
 		} );
@@ -228,8 +228,8 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 	);
 
 	let stepSlugToRedirectTo = flow.__experimentalUseBuiltinAuth ? firstStepSlug : stepPaths[ 0 ];
-	if ( isLoggedIn && stepSlugDerivedFromState ) {
-		stepSlugToRedirectTo = stepSlugDerivedFromState;
+	if ( isLoggedIn && customInitialStepSlug ) {
+		stepSlugToRedirectTo = customInitialStepSlug;
 	}
 
 	return (
