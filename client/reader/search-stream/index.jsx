@@ -202,6 +202,7 @@ class SearchStream extends React.Component {
 								value={ sortOrder }
 								onChange={ this.onChangeSortPicker }
 								__nextHasNoMarginBottom
+								__next40pxDefaultSize
 							>
 								<ToggleGroupControlOption label={ TEXT_RELEVANCE_SORT } value="relevance" />
 								<ToggleGroupControlOption label={ TEXT_DATE_SORT } value="date" />

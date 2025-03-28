@@ -227,8 +227,8 @@
 .search-stream__sort-picker {
 	position: absolute;
 	z-index: z-index("root", ".search-stream__sort-picker");
-	bottom: 10px;
 	right: 16px;
+	top: 100px;
 	width: 170px;
 
 	@include break-small {
@@ -236,7 +236,7 @@
 	}
 
 	&.is-wide {
-		top: 32px;
+		top: 30px;
 		right: 45px;
 	}
 }
