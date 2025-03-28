@@ -4,7 +4,6 @@ import { dispatch, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useLaunchpadDecider } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-launchpad-decider';
-import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -19,8 +18,8 @@ import { getQuery } from '../../../utils/get-query';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { useFlowState } from '../../internals/state-manager/store';
 import { STEPS } from '../../internals/steps';
-import { ProvidedDependencies } from '../../internals/types';
-import type { FlowV2, SubmitFunction } from '../../internals/types';
+import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
+import type { FlowV2 } from '../../internals/types';
 
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 
@@ -70,12 +69,7 @@ const newsletter: FlowV2< typeof initialize > = {
 	__experimentalUseBuiltinAuth: true,
 	isSignupFlow: true,
 	initialize,
-	/**
-	 * This is the main hook that is used to navigate through the flow.
-	 * @param currentStepSlug - Thanks to the strongly typed flow, this slug won't be of type string, but of the union of the all slugs in the flow.
-	 * @param navigate - The navigate function. Will only allow navigation to the steps defined in the flow.
-	 */
-	useStepNavigation( currentStepSlug, navigate ) {
+	useHandleSubmit( { slug, providedDependencies }, navigate ) {
 		const flowName = this.name;
 		const siteSlug = useSiteSlug();
 		const { get, set } = useFlowState();
@@ -98,93 +92,88 @@ const newsletter: FlowV2< typeof initialize > = {
 			}
 		};
 
-		triggerGuidesForStep( flowName, currentStepSlug );
-
-		const submit: SubmitFunction< typeof newsletter, typeof currentStepSlug > = (
-			providedDependencies
-		) => {
-			const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
-
-			switch ( currentStepSlug ) {
-				case 'intro':
-					return navigate( 'newsletterSetup' );
-
-				case 'newsletterSetup':
-					set( 'newsletterSetup', providedDependencies );
-					return navigate( 'newsletterGoals' );
-
-				case 'newsletterGoals':
-					set( 'newsletterGoals', providedDependencies );
-					return navigate( 'domains' );
-
-				case 'domains':
-					set( 'domains', providedDependencies );
-					return navigate( 'plans' );
-
-				case 'plans':
-					set( 'plans', providedDependencies );
-					setPendingAction( () =>
-						createSite( {
-							theme: DEFAULT_NEWSLETTER_THEME,
-							siteIntent: Onboard.SiteIntent.Newsletter,
-						} ).then( ( siteCreationResult ) => {
-							// update site settings but return the siteCreationResult when done.
-							return saveSiteSettings( siteCreationResult.siteSlug, {
-								launchpad_screen: 'full',
-							} ).then( () => siteCreationResult );
-						} )
-					);
-					return navigate( 'processing' );
-				case 'processing': {
-					const site = get( 'site' );
-					if ( site ) {
-						const { siteId, siteSlug } = site;
-						initializeLaunchpadState( {
-							siteId: siteId,
-							siteSlug: siteSlug,
-						} );
-
-						if ( providedDependencies?.goToHome ) {
-							return window.location.replace(
-								addQueryArgs( `/home/${ siteId }`, {
-									celebrateLaunch: true,
-									launchpadComplete: true,
-								} )
-							);
-						}
-
-						if ( providedDependencies?.goToCheckout ) {
-							persistSignupDestination( launchpadUrl );
-							setSignupCompleteSlug( providedDependencies?.siteSlug );
-							setSignupCompleteFlowName( flowName );
-
-							// Replace the processing step with checkout step, so going back goes to Plans.
-							return window.location.replace(
-								`/checkout/${ encodeURIComponent( siteSlug ) }?redirect_to=${ encodeURIComponent(
-									launchpadUrl
-								) }&signup=1`
-							);
-						}
-
-						const postFlowUrl = getPostFlowUrl( {
-							flow: flowName,
-							siteId: siteId as number,
-							siteSlug: siteSlug as string,
-						} );
-
-						return window.location.replace( postFlowUrl );
-					}
-					// handle site creation error.
-					return navigate( 'error' );
-				}
-
-				case 'subscribers':
-					completeSubscribersTask();
-					return navigate( 'launchpad' );
+		switch ( slug ) {
+			case 'intro': {
+				return navigate( 'newsletterSetup' );
 			}
-		};
 
-		return { submit };
+			case 'newsletterSetup': {
+				set( 'newsletterSetup', providedDependencies );
+				return navigate( 'newsletterGoals' );
+			}
+
+			case 'newsletterGoals':
+				set( 'newsletterGoals', providedDependencies );
+				return navigate( 'domains' );
+
+			case 'domains':
+				set( 'domains', providedDependencies );
+				return navigate( 'plans' );
+
+			case 'plans':
+				set( 'plans', providedDependencies );
+				setPendingAction( () =>
+					createSite( {
+						theme: DEFAULT_NEWSLETTER_THEME,
+						siteIntent: Onboard.SiteIntent.Newsletter,
+					} ).then( ( siteCreationResult ) => {
+						set( 'site', siteCreationResult );
+						// update site settings but return the siteCreationResult when done.
+						return saveSiteSettings( siteCreationResult.siteSlug, {
+							launchpad_screen: 'full',
+						} ).then( () => siteCreationResult );
+					} )
+				);
+				return navigate( 'processing' );
+			case 'processing': {
+				const site = get( 'site' );
+				if ( providedDependencies?.processingResult === ProcessingResult.SUCCESS && site ) {
+					const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
+
+					const { siteId, siteSlug } = site;
+					initializeLaunchpadState( {
+						siteId: siteId,
+						siteSlug: siteSlug,
+					} );
+
+					if ( providedDependencies?.goToHome ) {
+						return window.location.replace(
+							addQueryArgs( `/home/${ siteId }`, {
+								celebrateLaunch: true,
+								launchpadComplete: true,
+							} )
+						);
+					}
+
+					if ( providedDependencies?.goToCheckout ) {
+						persistSignupDestination( launchpadUrl );
+						setSignupCompleteSlug( providedDependencies?.siteSlug );
+						setSignupCompleteFlowName( flowName );
+
+						// Replace the processing step with checkout step, so going back goes to Plans.
+						return window.location.replace(
+							`/checkout/${ encodeURIComponent( siteSlug ) }?redirect_to=${ encodeURIComponent(
+								launchpadUrl
+							) }&signup=1`
+						);
+					}
+
+					const postFlowUrl = getPostFlowUrl( {
+						flow: flowName,
+						siteId: siteId as number,
+						siteSlug: siteSlug as string,
+					} );
+
+					return window.location.replace( postFlowUrl );
+				}
+				// handle site creation error.
+				return navigate( 'error' );
+			}
+
+			case 'subscribers':
+				completeSubscribersTask();
+				return navigate( 'launchpad' );
+		}
 	},
 };
 

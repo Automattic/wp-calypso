@@ -44,7 +44,7 @@ export type NavigationControls<
 	 * Submits the answers provided in the flow. If it's complaining about the type, it means you haven't typed the step correctly.
 	 * @see {@link client/landing/stepper/declarative-flow/internals/steps-repository/DEVELOPMENT/making-a-new-step.md}
 	 */
-	submit?: (
+	submit: (
 		providedDependencies?: StepSubmittedTypes extends Record< string, unknown >
 			? StepSubmittedTypes
 			: never
@@ -59,7 +59,7 @@ export type NavigationControls<
 export type AsyncStepperStep = ( typeof STEPS )[ keyof typeof STEPS ];
 type AsyncUserStep = ( typeof PRIVATE_STEPS )[ keyof typeof PRIVATE_STEPS ];
 
-export type StepperStep = AsyncStepperStep & {
+export type StepperStep = ( AsyncStepperStep | AsyncUserStep ) & {
 	requiresLoggedInUser?: boolean;
 };
 
@@ -87,6 +87,21 @@ export type UseStepNavigationHook< FlowSteps extends readonly StepperStep[] > = 
 	currentStepSlug: FlowSteps[ number ][ 'slug' ],
 	navigate: Navigate< FlowSteps >
 ) => NavigationControls< any >;
+
+export type UseHandleSubmitHook< FlowSteps extends readonly StepperStep[] > = (
+	submitted: MapStepToItsSubmitData< FlowSteps[ number ] >,
+	navigate: Navigate< FlowSteps >
+) => void;
+
+type MapStepToItsSubmitData< T extends AsyncStepperStep > = {
+	[ K in T as K[ 'slug' ] ]: K & {
+		providedDependencies: Parameters<
+			Parameters<
+				Awaited< ReturnType< K[ 'asyncComponent' ] > >[ 'default' ]
+			>[ 0 ][ 'navigation' ][ 'submit' ]
+		>[ 0 ];
+	};
+}[ T[ 'slug' ] ];
 
 export type UseAssertConditionsHook< FlowSteps extends readonly StepperStep[] > = (
 	navigate?: Navigate< FlowSteps >
@@ -172,28 +187,6 @@ type DefaultFlowStepsConfig = () => readonly StepperStep[];
 export type FlowStepSlug< T extends DefaultFlowStepsConfig > =
 	T extends () => readonly StepperStep[] ? ReturnType< T >[ number ][ 'slug' ] : never;
 
-type FindStepBySlug< T extends StepperStep[], Slug > = T[ number ] extends infer U
-	? U extends { slug: infer S }
-		? S extends Slug
-			? U
-			: never
-		: never
-	: never;
-
-export type SubmitFunction<
-	Flow extends FlowV2,
-	StepSlug extends FlowStepSlug<
-		Flow[ 'initialize' ] extends DefaultFlowStepsConfig ? Flow[ 'initialize' ] : () => StepperStep[]
-	>,
-> = (
-	providedDependencies: FindStepBySlug<
-		ReturnType< Flow[ 'initialize' ] > extends StepperStep[]
-			? ReturnType< Flow[ 'initialize' ] >
-			: StepperStep[],
-		StepSlug
-	>
-) => void;
-
 export type FlowV2< FlowStepsInitialize extends DefaultFlowStepsConfig = DefaultFlowStepsConfig > =
 	{
 		/**
@@ -245,7 +238,7 @@ export type FlowV2< FlowStepsInitialize extends DefaultFlowStepsConfig = Default
 		 * Returning false will kill the app.
 		 */
 		initialize(): Promise< readonly StepperStep[] > | readonly StepperStep[] | false;
-		useStepNavigation: UseStepNavigationHook< ReturnType< FlowStepsInitialize > >;
+		useHandleSubmit: UseHandleSubmitHook< ReturnType< FlowStepsInitialize > >;
 		/**
 		 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
 		 */

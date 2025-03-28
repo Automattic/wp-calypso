@@ -34,19 +34,16 @@ interface ProcessingStepProps
 	extends StepProps< {
 		submits:
 			| {
-					destination: string;
-					processingResult?: ProcessingResult;
-			  }
-			| {
 					processingResult?: ProcessingResult.FAILURE | ProcessingResult.NO_ACTION;
 			  }
-			| {
+			| ( {
 					processingResult?: ProcessingResult.SUCCESS;
 					path?: string;
 					intent?: SiteIntent;
 					previousStep?: string;
 					nextStep?: string;
-			  };
+					// The processing step is impossible to type precisely because it submits whatever the pendingAction resolves to.
+			  } & Record< string, unknown > );
 	} > {
 	title?: string;
 	subtitle?: string;
