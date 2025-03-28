@@ -11,7 +11,7 @@ import {
 	Step,
 } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
-import { DESKTOP_BREAKPOINT, subscribeIsWithinBreakpoint } from '@automattic/viewport';
+import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
 import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -172,6 +172,7 @@ export class RenderDomainsStep extends Component {
 			checkDomainAvailabilityPromises: [],
 			removeDomainTimeout: 0,
 			addDomainTimeout: 0,
+			isDesktopViewport: false,
 		};
 	}
 
@@ -206,9 +207,12 @@ export class RenderDomainsStep extends Component {
 
 	subscribeToViewPortChanges() {
 		this.unsubscribeToViewPortChanges = subscribeIsWithinBreakpoint(
-			DESKTOP_BREAKPOINT,
+			'>=960px',
 			( isDesktopViewport ) => this.setState( { isDesktopViewport } )
 		);
+		if ( isWithinBreakpoint( '>=960px' ) ) {
+			this.setState( { isDesktopViewport: true } );
+		}
 	}
 
 	componentWillUnmount() {
