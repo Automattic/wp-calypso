@@ -203,7 +203,7 @@ const GoalsStep: StepType< {
 					heading={ <Step.Heading text={ whatAreYourGoalsText } subText={ subHeaderText } /> }
 					stickyBottomBar={ <Step.StickyBottomBar rightButton={ nextButton } /> }
 				>
-					{ ( { isMediumViewport } ) => getStepContent( isMediumViewport && nextButton ) }
+					{ ( { isSmallViewport } ) => getStepContent( isSmallViewport && nextButton ) }
 				</Step.CenteredColumnLayout>
 			);
 		}

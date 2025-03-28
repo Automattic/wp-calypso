@@ -1,19 +1,20 @@
-@import '../../mixins';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .step-container-v2__content--centered-column-layout-4 {
-	@include step-medium-viewport {
+	@include break-small {
 		max-width: 404px;
 	}
 }
 
 .step-container-v2__content--centered-column-layout-6 {
-	@include step-medium-viewport {
+	@include break-small {
 		max-width: 615px;
 	}
 }
 
 .step-container-v2__content--centered-column-layout-8 {
-	@include step-medium-viewport {
+	@include break-small {
 		max-width: 826px;
 	}
 }

@@ -41,7 +41,7 @@ const AddSitesButton = () => {
 			<AddSitesModal
 				showModal={ isAddSitesModalVisible }
 				onClose={ () => setIsAddSitesModalVisible( false ) }
-				onAddFinished={ () => setIsAddSitesModalVisible( false ) }
+				onChangeSubscribe={ () => setIsAddSitesModalVisible( false ) }
 			/>
 		</>
 	);

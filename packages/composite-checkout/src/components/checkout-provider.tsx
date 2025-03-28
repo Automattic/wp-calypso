@@ -1,14 +1,15 @@
 import { ThemeProvider } from '@emotion/react';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import CheckoutContext from '../lib/checkout-context';
 import defaultTheme from '../lib/theme';
 import { validateArg, validatePaymentMethods } from '../lib/validation';
 import { CheckoutProviderProps } from '../types';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 import { FormAndTransactionProvider } from './form-and-transaction-provider';
-import type { CheckoutContextInterface, PaymentMethod } from '../types';
+import { PaymentMethodProvider } from './payment-method-provider';
+import type { CheckoutContextInterface } from '../types';
 
 const debug = debugFactory( 'composite-checkout:checkout-provider' );
 
@@ -17,7 +18,6 @@ export function CheckoutProvider( {
 	onPaymentRedirect,
 	onPaymentError,
 	onPageLoadError,
-	onPaymentMethodChanged,
 	redirectToUrl,
 	theme,
 	paymentMethods,
@@ -39,57 +39,13 @@ export function CheckoutProvider( {
 		initiallySelectedPaymentMethodId,
 	};
 
-	// Keep track of enabled/disabled payment methods.
-	const [ disabledPaymentMethodIds, setDisabledPaymentMethodIds ] = useState< string[] >(
-		paymentMethods.filter( ( method ) => method.isInitiallyDisabled ).map( ( method ) => method.id )
-	);
-	const availablePaymentMethodIds = paymentMethods
-		.filter( ( method ) => ! disabledPaymentMethodIds.includes( method.id ) )
-		.map( ( method ) => method.id );
-
-	// Automatically select first payment method unless explicitly set or disabled.
-	if (
-		selectFirstAvailablePaymentMethod &&
-		! initiallySelectedPaymentMethodId &&
-		availablePaymentMethodIds.length > 0
-	) {
-		initiallySelectedPaymentMethodId = availablePaymentMethodIds[ 0 ];
-	}
-
-	// Keep track of selected payment method.
-	const [ paymentMethodId, setPaymentMethodId ] = useState< string | null >(
-		initiallySelectedPaymentMethodId
-	);
-
-	useDisablePaymentMethodsWhenListChanges( paymentMethods, setDisabledPaymentMethodIds );
-
-	// Reset the selected payment method if the list of payment methods changes.
-	useResetSelectedPaymentMethodWhenListChanges(
-		availablePaymentMethodIds,
-		initiallySelectedPaymentMethodId,
-		setPaymentMethodId
-	);
-
 	// Create a big blob of state to store in React Context for use by all this Provider's children.
 	const value: CheckoutContextInterface = useMemo(
 		() => ( {
-			allPaymentMethods: paymentMethods,
-			disabledPaymentMethodIds,
-			setDisabledPaymentMethodIds,
-			paymentMethodId,
-			setPaymentMethodId,
 			paymentProcessors,
 			onPageLoadError,
-			onPaymentMethodChanged,
 		} ),
-		[
-			paymentMethodId,
-			paymentMethods,
-			disabledPaymentMethodIds,
-			paymentProcessors,
-			onPageLoadError,
-			onPaymentMethodChanged,
-		]
+		[ paymentProcessors, onPageLoadError ]
 	);
 
 	const { __ } = useI18n();
@@ -103,18 +59,24 @@ export function CheckoutProvider( {
 	return (
 		<CheckoutErrorBoundary errorMessage={ errorMessage } onError={ onLoadError }>
 			<CheckoutProviderPropValidator propsToValidate={ propsToValidate } />
-			<ThemeProvider theme={ theme || defaultTheme }>
-				<FormAndTransactionProvider
-					onPaymentComplete={ onPaymentComplete }
-					onPaymentRedirect={ onPaymentRedirect }
-					onPaymentError={ onPaymentError }
-					isLoading={ isLoading }
-					isValidating={ isValidating }
-					redirectToUrl={ redirectToUrl }
-				>
-					<CheckoutContext.Provider value={ value }>{ children }</CheckoutContext.Provider>
-				</FormAndTransactionProvider>
-			</ThemeProvider>
+			<PaymentMethodProvider
+				paymentMethods={ paymentMethods }
+				selectFirstAvailablePaymentMethod={ selectFirstAvailablePaymentMethod }
+				initiallySelectedPaymentMethodId={ initiallySelectedPaymentMethodId }
+			>
+				<ThemeProvider theme={ theme || defaultTheme }>
+					<FormAndTransactionProvider
+						onPaymentComplete={ onPaymentComplete }
+						onPaymentRedirect={ onPaymentRedirect }
+						onPaymentError={ onPaymentError }
+						isLoading={ isLoading }
+						isValidating={ isValidating }
+						redirectToUrl={ redirectToUrl }
+					>
+						<CheckoutContext.Provider value={ value }>{ children }</CheckoutContext.Provider>
+					</FormAndTransactionProvider>
+				</ThemeProvider>
+			</PaymentMethodProvider>
 		</CheckoutErrorBoundary>
 	);
 }
@@ -138,62 +100,4 @@ function CheckoutProviderPropValidator( {
 		validatePaymentMethods( paymentMethods );
 	}, [ paymentMethods, paymentProcessors, propsToValidate ] );
 	return null;
-}
-
-function useDisablePaymentMethodsWhenListChanges(
-	paymentMethods: PaymentMethod[],
-	setDisabledPaymentMethodIds: ( setter: ( ids: string[] ) => string[] ) => void
-) {
-	const previousPaymentMethodIds = useRef< string[] >( [] );
-
-	const initiallyDisabledPaymentMethodIds = paymentMethods
-		.filter( ( method ) => method.isInitiallyDisabled )
-		.map( ( method ) => method.id );
-
-	const newInitiallyDisabledPaymentMethodIds = initiallyDisabledPaymentMethodIds.filter(
-		( id ) => ! previousPaymentMethodIds.current.includes( id )
-	);
-
-	const paymentMethodIdsHash = paymentMethods.map( ( method ) => method.id ).join( '-_-' );
-	const previousPaymentMethodIdsHash = useRef< string >();
-
-	useEffect( () => {
-		if ( previousPaymentMethodIdsHash.current !== paymentMethodIdsHash ) {
-			debug( 'paymentMethods changed; disabling any new isInitiallyDisabled payment methods' );
-
-			setDisabledPaymentMethodIds( ( currentlyDisabledIds: string[] ) => [
-				...currentlyDisabledIds,
-				...newInitiallyDisabledPaymentMethodIds,
-			] );
-			previousPaymentMethodIdsHash.current = paymentMethodIdsHash;
-			previousPaymentMethodIds.current = paymentMethods.map( ( method ) => method.id );
-		}
-	}, [
-		paymentMethodIdsHash,
-		setDisabledPaymentMethodIds,
-		paymentMethods,
-		newInitiallyDisabledPaymentMethodIds,
-	] );
-}
-
-// Reset the selected payment method if the list of payment methods changes.
-function useResetSelectedPaymentMethodWhenListChanges(
-	availablePaymentMethodIds: string[],
-	initiallySelectedPaymentMethodId: string | null,
-	setPaymentMethodId: ( id: string | null ) => void
-) {
-	const hashKey = availablePaymentMethodIds.join( '-_-' );
-	const previousKey = useRef< string >();
-
-	useEffect( () => {
-		if ( previousKey.current !== hashKey ) {
-			debug(
-				'paymentMethods changed; setting payment method to initial selection ',
-				initiallySelectedPaymentMethodId
-			);
-
-			previousKey.current = hashKey;
-			setPaymentMethodId( initiallySelectedPaymentMethodId );
-		}
-	}, [ hashKey, setPaymentMethodId, initiallySelectedPaymentMethodId ] );
 }
