@@ -8,8 +8,10 @@
 	flex: 1;
 	max-width: 1038px;
 
-	padding: var( --step-container-v2-content-block-padding )
-		var( --step-container-v2-content-inline-padding );
+	&.padding {
+		padding: var( --step-container-v2-content-block-padding )
+			var( --step-container-v2-content-inline-padding );
+	}
 
 	&.wide {
 		max-width: 1440px;
@@ -17,5 +19,12 @@
 
 	&.full {
 		max-width: 100%;
+	}
+
+	&.center-aligned {
+		justify-content: center;
+		padding-bottom: calc(
+			var( --step-container-v2-content-block-padding ) + var( --step-container-v2-top-bar-height )
+		);
 	}
 }

@@ -13,6 +13,7 @@ interface FullWidthLayoutProps {
 	children?: ContentProp;
 	footer?: ReactNode;
 	stickyBottomBar?: ContentProp;
+	hasContentPadding?: ContentProp< boolean >;
 }
 
 export const FullWidthLayout = ( {
@@ -22,16 +23,22 @@ export const FullWidthLayout = ( {
 	children,
 	footer,
 	stickyBottomBar,
+	hasContentPadding: hasContentPaddingProp = true,
 }: FullWidthLayoutProps ) => {
 	return (
 		<StepContainerV2>
 			{ ( context ) => {
 				const content = typeof children === 'function' ? children( context ) : children;
 
+				const hasContentPadding =
+					typeof hasContentPaddingProp === 'function'
+						? hasContentPaddingProp( context )
+						: hasContentPaddingProp;
+
 				return (
 					<>
 						<TopBarRenderer topBar={ topBar } />
-						<ContentWrapper width="full">
+						<ContentWrapper hasPadding={ hasContentPadding } width="full">
 							{ heading }
 							<Content className={ className }>{ content }</Content>
 							{ footer }

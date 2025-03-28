@@ -140,7 +140,7 @@ const UserStepComponent: StepType = function UserStep( {
 		return (
 			<Step.CenteredColumnLayout
 				className="step-container-v2--user"
-				verticalAlign="center-on-small"
+				verticalAlign="center"
 				columnWidth={ 4 }
 				heading={ heading }
 				topBar={ topBar }

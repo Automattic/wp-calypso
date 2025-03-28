@@ -2,9 +2,12 @@
 @import '@wordpress/base-styles/mixins';
 
 .step-container-v2__top-bar {
-	height: var( --step-container-v2-top-bar-height );
+	&,
+	&-wrapper {
+		width: 100%;
+	}
+
 	box-sizing: border-box;
-	width: 100%;
 	display: flex;
 	align-items: center;
 	padding: 1rem;

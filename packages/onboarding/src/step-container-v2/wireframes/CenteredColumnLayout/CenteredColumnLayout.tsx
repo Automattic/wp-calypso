@@ -17,6 +17,7 @@ interface CenteredColumnLayoutProps {
 	footer?: ReactNode;
 	stickyBottomBar?: ContentProp;
 	columnWidth: 4 | 5 | 6 | 8 | 10;
+	verticalAlign?: 'center';
 }
 
 export const CenteredColumnLayout = ( {
@@ -27,6 +28,7 @@ export const CenteredColumnLayout = ( {
 	children,
 	footer,
 	stickyBottomBar,
+	verticalAlign,
 }: CenteredColumnLayoutProps ) => {
 	return (
 		<StepContainerV2>
@@ -36,7 +38,7 @@ export const CenteredColumnLayout = ( {
 				return (
 					<>
 						<TopBarRenderer topBar={ topBar } />
-						<ContentWrapper>
+						<ContentWrapper centerAligned={ context.isSmallViewport && verticalAlign === 'center' }>
 							{ heading }
 							<Content
 								className={ clsx(
