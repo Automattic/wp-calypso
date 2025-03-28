@@ -103,11 +103,11 @@ class TagStream extends Component {
 		const tag = find( this.props.tags, { slug: this.props.encodedTagSlug } );
 		const titleText = titleCase( title.replace( /-/g, ' ' ) );
 
-		let imageSearchString = this.props.encodedTagSlug;
+		let encodedTagSlug = this.props.encodedTagSlug;
 
 		// If the tag contains emoji, convert to text equivalent
 		if ( this.state.emojiText && this.state.isEmojiTitle ) {
-			imageSearchString = this.state.emojiText.convert( title, {
+			encodedTagSlug = this.state.emojiText.convert( title, {
 				delimiter: '',
 			} );
 		}
@@ -120,7 +120,7 @@ class TagStream extends Component {
 					<ReaderBackButton />
 					<TagStreamHeader
 						title={ title }
-						imageSearchString={ imageSearchString }
+						encodedTagSlug={ encodedTagSlug }
 						// This shouldn not be necessary as user should not have been able to
 						// subscribe to an error tag. Nevertheless, we should give them a route to
 						// unfollow if that was the case.
@@ -137,13 +137,12 @@ class TagStream extends Component {
 			<TagStreamHeader
 				title={ titleText }
 				description={ this.props.description }
-				imageSearchString={ imageSearchString }
+				encodedTagSlug={ encodedTagSlug }
 				showFollow={ !! ( tag && tag.id ) }
 				following={ this.isSubscribed() }
 				onFollowToggle={ this.toggleFollowing }
 				showSort={ showSort }
 				sort={ this.props.sort }
-				recordReaderTracksEvent={ this.props.recordReaderTracksEvent }
 			/>
 		);
 		const sidebarProps = ! isReaderTagEmbedPage( window.location ) && {
