@@ -92,12 +92,11 @@ const siteSetupFlow: Flow = {
 
 		return steps;
 	},
-	useAlternateStep( { currentStepRoute, steps } ) {
-		const urlQueryParams = useQuery();
-		const intent = urlQueryParams.get( 'intent' );
-		const importPlatform = urlQueryParams.get( 'importPlatform' );
+	getAlternateInitialStep( { queryParams, steps } ) {
+		const intent = queryParams.get( 'intent' );
+		const importPlatform = queryParams.get( 'importPlatform' );
 
-		if ( currentStepRoute !== '' || intent !== 'import' || ! importPlatform ) {
+		if ( intent !== 'import' || ! importPlatform ) {
 			return undefined;
 		}
 

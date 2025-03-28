@@ -130,11 +130,11 @@ export type UseTracksEventPropsHook = () => {
 	>;
 };
 
-type UseAlternateStepHook = ( {
-	currentStepRoute,
+type GetAlternateInitialStep = ( {
+	queryParams,
 	steps,
 }: {
-	currentStepRoute: string;
+	queryParams: URLSearchParams;
 	steps: readonly StepperStep[];
 } ) => StepperStep[ 'slug' ] | undefined;
 
@@ -188,7 +188,7 @@ export type FlowV1 = {
 	useSideEffect?: UseSideEffectHook< ReturnType< FlowV1[ 'useSteps' ] > >;
 	useTracksEventProps?: UseTracksEventPropsHook;
 
-	useAlternateStep?: UseAlternateStepHook;
+	getAlternateInitialStep?: GetAlternateInitialStep;
 };
 
 export type FlowV2 = {
@@ -256,7 +256,7 @@ export type FlowV2 = {
 	 */
 	useAssertConditions?: UseAssertConditionsHook< ReturnType< FlowV1[ 'useSteps' ] > >;
 
-	useAlternateStep?: UseAlternateStepHook;
+	getAlternateInitialStep?: GetAlternateInitialStep;
 };
 
 export type Flow = FlowV1 | FlowV2;

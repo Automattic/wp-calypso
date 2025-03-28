@@ -7,6 +7,7 @@ import { createPath, generatePath, useParams } from 'react-router';
 import { Route, Routes } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
@@ -103,11 +104,15 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 		( select ) => ( select( STEPPER_INTERNAL_STORE ) as StepperInternalSelect ).getStepData(),
 		[]
 	);
+	const queryParams = useQuery();
 
-	const stepSlugDerivedFromState = flow.useAlternateStep?.( {
-		currentStepRoute,
-		steps: flowSteps,
-	} );
+	let stepSlugDerivedFromState;
+	if ( currentStepRoute === '' && flow.getAlternateInitialStep ) {
+		stepSlugDerivedFromState = flow.getAlternateInitialStep( {
+			queryParams,
+			steps: flowSteps,
+		} );
+	}
 
 	flow.useSideEffect?.( currentStepRoute, navigate );
 
