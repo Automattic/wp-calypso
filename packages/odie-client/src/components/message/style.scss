@@ -232,6 +232,22 @@ $blueberry-color: #3858e9;
 		font-size: 1rem;
 	}
 
+	&.odie-chatbox-message.odie-chatbox-message-business.odie-chatbox-message-conversation-feedback {
+		flex-wrap: wrap;
+		gap: 8px;
+		flex-direction: row;
+		.odie-introduction-message-content__conversation_feedback {
+			flex: 2;
+		}
+		.message-feedback-submit {
+			margin-left: 46px;
+			align-items: start ;
+	
+			a {
+				gap: 4px;
+			}
+		}
+	}
 }
 
 .odie-button-link {

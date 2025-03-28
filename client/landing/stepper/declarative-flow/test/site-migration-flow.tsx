@@ -313,6 +313,27 @@ describe( 'Site Migration Flow', () => {
 						},
 					} );
 				} );
+
+				it( 'redirects back to the importer list when the entry point is wp-admin-importers-list', () => {
+					jest.mocked( useFlowState ).mockReturnValue( {
+						get: jest.fn().mockReturnValue( { entryPoint: 'wp-admin-importers-list' } ),
+						set: jest.fn(),
+						sessionId: '123',
+					} );
+
+					runNavigationBack( {
+						from: STEPS.SITE_MIGRATION_IDENTIFY,
+						dependencies: {},
+						query: {
+							siteSlug: 'example.wordpress.com',
+							siteId: 123,
+						},
+					} );
+
+					expect( window.location.assign ).toMatchURL( {
+						path: 'https://example.wpcomstaging.com/wp-admin/import.php',
+					} );
+				} );
 			} );
 		} );
 
@@ -973,40 +994,6 @@ describe( 'Site Migration Flow', () => {
 						step: STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION,
 						query: { siteSlug: 'example.wordpress.com', siteId: 123 },
 					} );
-				} );
-			} );
-		} );
-
-		describe( 'SITE_MIGRATION_ASSIGN_TRIAL_PLAN', () => {
-			it( 'redirects to ERROR step when there is any error', () => {
-				const destination = runNavigation( {
-					from: STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN,
-					query: {
-						siteSlug: 'example.wordpress.com',
-						siteId: 123,
-					},
-				} );
-
-				expect( destination ).toMatchDestination( {
-					step: STEPS.ERROR,
-					query: null,
-				} );
-			} );
-			it( 'redirects to error state when there is some error', () => {
-				const destination = runNavigation( {
-					from: STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN,
-					dependencies: {
-						error: 'ticket-creation',
-					},
-					query: {
-						siteSlug: 'example.wordpress.com',
-						siteId: 123,
-					},
-				} );
-
-				expect( destination ).toMatchDestination( {
-					step: STEPS.ERROR,
-					query: null,
 				} );
 			} );
 		} );

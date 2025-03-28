@@ -127,6 +127,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/importer-medium' ),
 	},
 
+	IMPORTER_PLAYGROUND: {
+		slug: 'importerPlayground',
+		asyncComponent: () => import( './steps-repository/playground/components/playground-setup' ),
+	},
+
 	IMPORTER_SQUARESPACE: {
 		slug: 'importerSquarespace',
 		asyncComponent: () => import( './steps-repository/importer-squarespace' ),
@@ -235,11 +240,6 @@ export const STEPS = {
 	WAIT_FOR_PLUGIN_INSTALL: {
 		slug: 'waitForPluginInstall',
 		asyncComponent: () => import( './steps-repository/wait-for-plugin-install' ),
-	},
-
-	SITE_MIGRATION_ASSIGN_TRIAL_PLAN: {
-		slug: 'site-migration-assign-trial-plan',
-		asyncComponent: () => import( './steps-repository/site-migration-assign-trial-plan' ),
 	},
 
 	SITE_MIGRATION_INSTRUCTIONS: {
@@ -382,6 +382,11 @@ export const STEPS = {
 	SETUP_BLOG: {
 		slug: 'setup-blog',
 		asyncComponent: () => import( './steps-repository/setup-blog' ),
+	},
+
+	PLAYGROUND: {
+		slug: 'playground',
+		asyncComponent: () => import( './steps-repository/playground' ),
 	},
 } as const;
 

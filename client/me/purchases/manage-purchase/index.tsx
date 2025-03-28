@@ -966,7 +966,7 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		if ( ! isPlan( purchase ) ) {
+		if ( ! ( isBusiness( purchase ) || isPremium( purchase ) || isEcommerce( purchase ) ) ) {
 			return null;
 		}
 

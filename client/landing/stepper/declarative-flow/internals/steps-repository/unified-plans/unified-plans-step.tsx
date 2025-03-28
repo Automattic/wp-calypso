@@ -494,7 +494,7 @@ function UnifiedPlansStep( {
 		return (
 			<>
 				<MarketingMessage path="signup/plans" />
-				<Step.FullWidthLayout
+				<Step.WideLayout
 					className="step-container-v2--plans"
 					topBar={
 						<Step.TopBar
@@ -506,7 +506,7 @@ function UnifiedPlansStep( {
 					heading={ <Step.Heading text={ getHeaderText() } subText={ fallbackSubHeaderText } /> }
 				>
 					{ stepContent }
-				</Step.FullWidthLayout>
+				</Step.WideLayout>
 			</>
 		);
 	}
