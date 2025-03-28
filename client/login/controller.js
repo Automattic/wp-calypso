@@ -367,7 +367,7 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 				tos: JSON.stringify( getToSAcceptancePayload() ),
 			} );
 		} catch ( createError ) {
-			// Silently fail
+			// Silently fail: user already exists
 		}
 
 		await context.store.dispatch(
@@ -420,13 +420,8 @@ export async function jetpackAppleAuth( context, next ) {
 	} ) }`;
 
 	try {
-		// Get authorization nonce for security
-		const response = await wpcomRequest( {
-			path: '/generate-authorization-nonce',
-			apiNamespace: 'wpcom/v2',
-			method: 'GET',
-		} );
-		const nonce = response.nonce;
+		// Siwa nonce: see social-buttons/apple.js
+		const nonce = String( Math.floor( Math.random() * 10e9 ) );
 
 		// Create state object with relevant data
 		const stateObject = {
