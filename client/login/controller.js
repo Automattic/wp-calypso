@@ -544,11 +544,6 @@ export async function jetpackGitHubAuth( context, next ) {
 		return next();
 	}
 
-	if ( isUserLoggedIn( context.store.getState() ) ) {
-		// Log out the user and reload the page
-		return context.store.dispatch( redirectToLogout( window.location.href ) );
-	}
-
 	const redirectUri = `${ window.location.origin }/log-in/jetpack/github/callback`;
 	try {
 		// Store redirect_to in sessionStorage for use on callback
