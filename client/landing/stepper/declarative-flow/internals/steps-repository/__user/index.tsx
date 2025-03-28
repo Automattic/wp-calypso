@@ -133,7 +133,7 @@ const UserStepComponent: StepType = function UserStep( {
 				backButton={
 					navigation.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : undefined
 				}
-				skipButton={ <Step.SkipButton href={ loginLink } label={ translate( 'Log in' ) } /> }
+				skipButton={ <Step.LinkButton href={ loginLink } label={ translate( 'Log in' ) } /> }
 			/>
 		);
 
