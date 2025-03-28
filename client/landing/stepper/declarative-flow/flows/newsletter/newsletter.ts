@@ -6,6 +6,8 @@ import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useLaunchpadDecider } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-launchpad-decider';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { getStepFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import {
@@ -14,6 +16,7 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
+import { shouldShowLaunchpadFirst } from 'calypso/state/selectors/should-show-launchpad-first';
 import { useExitFlow } from '../../../hooks/use-exit-flow';
 import { useSiteIdParam } from '../../../hooks/use-site-id-param';
 import { useSiteSlug } from '../../../hooks/use-site-slug';
@@ -56,6 +59,22 @@ const newsletter: Flow = {
 			clearSignupDestinationCookie();
 			setIntent( Onboard.SiteIntent.Newsletter );
 		}, [] );
+	},
+	useTracksEventProps() {
+		const site = useSite();
+		const step = getStepFromURL();
+		if ( site && shouldShowLaunchpadFirst( site ) && step === 'launchpad' ) {
+			//prevent track events from firing until we're sure we won't redirect away from Launchpad
+			return {
+				isLoading: true,
+				eventsProperties: {},
+			};
+		}
+
+		return {
+			isLoading: false,
+			eventsProperties: {},
+		};
 	},
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
