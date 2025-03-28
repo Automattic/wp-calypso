@@ -813,14 +813,14 @@ export function redirectJetpackDirectAuthError( context, next, newQuery = {} ) {
 
 	queryParams.set( 'allow_site_connection', '1' );
 
-	const redirectUrl = `/log-in/jetpack/?${ queryParams.toString() }`;
-	window.history.replaceState( null, '', redirectUrl );
+	const fallbackUrl = `/log-in/jetpack/?${ queryParams.toString() }`;
+	window.history.replaceState( null, '', fallbackUrl );
 
 	try {
 		const redirectTo = new URL(
-			queryParams.get( 'redirect_to' ) || `${ window.location.origin }${ redirectUrl }`
+			queryParams.get( 'redirect_to' ) || window.sessionStorage.getItem( 'login_redirect_to' )
 		);
-		window.sessionStorage?.setItem( 'login_redirect_to', redirectTo.toString() );
+		window.sessionStorage.setItem( 'login_redirect_to', redirectTo.toString() );
 		context.store.dispatch(
 			setRoute( redirectTo.pathname, Object.fromEntries( redirectTo.searchParams.entries() ) )
 		);
