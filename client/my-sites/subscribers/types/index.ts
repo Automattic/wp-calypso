@@ -49,6 +49,10 @@ export type Subscriber = {
 	url?: string;
 };
 
+export type SubscriberDetails = Omit< Subscriber, 'date_subscribed' > & {
+	date_subscribed: string;
+};
+
 export type SubscriberQueryParams = {
 	page: number;
 	perPage?: number;
