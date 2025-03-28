@@ -70,7 +70,7 @@ const SiteMigrationCredentials: Step< {
 	const siteSlugParam = useSiteSlugParam();
 	const fromUrl = useQuery().get( 'from' ) || '';
 	const siteSlug = siteSlugParam ?? '';
-	const shouldPreventTicketCreation = useQuery().get( 'preventTicketCreation' ) === 'true';
+	const shouldPreventTicketCreationInSkip = useQuery().get( 'preventTicketCreation' ) === 'true';
 	const { sendTicket } = useSubmitMigrationTicket( {
 		onSuccess: () => {
 			recordTracksEvent( 'calypso_migration_credentials_ticket_submit_success', {
@@ -110,9 +110,9 @@ const SiteMigrationCredentials: Step< {
 		recordTracksEvent( 'wpcom_support_free_migration_request_click', {
 			path: window.location.pathname,
 			automated_migration: true,
-			prevent_ticket_creation: shouldPreventTicketCreation,
+			prevent_ticket_creation: shouldPreventTicketCreationInSkip,
 		} );
-		if ( ! shouldPreventTicketCreation ) {
+		if ( ! shouldPreventTicketCreationInSkip ) {
 			sendTicket( {
 				locale,
 				from_url: fromUrl,
