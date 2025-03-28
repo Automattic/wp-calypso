@@ -41,6 +41,18 @@ export const Default: Story = {
 	},
 };
 
+type HistoryState = {
+	luckyNumber: number;
+	init: boolean;
+	history: number[];
+};
+
+const INITIAL_HISTORY_STATE: HistoryState = {
+	luckyNumber: 0,
+	init: true,
+	history: [],
+};
+
 /**
  * This story shows how to pass custom state to the Link component using the options prop.<br />
  * Each time the user clicks the link, a new _lucky number_ is generated and passed along.<br />
@@ -60,15 +72,8 @@ export const PassCustomState: Story = {
 		useLocation();
 
 		// Pick the location state from the browser history state
-		const { init, history } = ( browserHistory.location.state || {
-			luckyNumber: 0,
-			init: true,
-			history: [],
-		} ) as unknown as {
-			luckyNumber: number;
-			init: boolean;
-			history: number[];
-		};
+		const { init, history } =
+			( browserHistory.location.state as HistoryState ) || INITIAL_HISTORY_STATE;
 
 		let newLuckyNumber = 0;
 
