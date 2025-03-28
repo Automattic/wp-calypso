@@ -2,8 +2,9 @@
 @import "@wordpress/base-styles/mixins";
 
 .downgrade__wrapper-card {
+	font-size: $font-body-small;
 	.downgrade__content{
-		margin-bottom: 18px
+		margin-bottom: 14px;
 	}
 	.purchases__downgrade & {
 		box-shadow: none;
@@ -19,11 +20,9 @@
 
 .downgrade__support-link {
 	color: var(--color-text-subtle);
-	font-size: $font-body-small;
-	margin: 10px 0  0 0;
+	margin: 14px 0  0 0;
 
 	.is-link {
-		font-size: $font-body-small;
 		text-decoration: none;
 	}
 }
@@ -34,15 +33,18 @@
 }
 
 .downgrade__features {
+	margin-bottom: 14px;
+
 	ul.downgrade__features-list {
 		list-style: none;
-		margin:0;
+		margin: 0;
+		line-height: 2;
 
 		li {
 			list-style: none;
 			display: flex;
-			margin-bottom: 12px;
-			font-size: $font-body-small;
+			align-items: center;
+			column-gap: 4px;
 
 			span {
 				margin: auto 0;
@@ -61,7 +63,6 @@
 
 	a {
 		color: var(--color-text-subtle);
-		font-size: $font-body-small;
 		text-decoration: underline;
 	}
 }
@@ -73,23 +74,15 @@
 
 .downgrade__confirm-buttons {
 	display: flex;
-	margin-top: 24px;
 
 	button {
-		margin-right: 18px;
+		margin-right: 8px;
 	}
 }
 
 // Reuse the same styles as the cancel purchase component for consistency
 .downgrade__purchase-name {
-	font-size: $font-body;
 	font-weight: 600;
-}
-
-.downgrade__product-information .product-link,
-.downgrade__refund-information,
-.downgrade__plan-description {
-	font-size: $font-body-small;
 }
 
 .downgrade__footer {
@@ -112,7 +105,6 @@
 }
 
 .downgrade__footer-text p {
-	font-size: $font-body-small;
 	margin: 0;
 
 	&.downgrade__refund-amount {

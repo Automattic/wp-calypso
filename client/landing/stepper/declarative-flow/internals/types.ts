@@ -15,11 +15,10 @@ export type NavigationControls<
 	StepSubmittedTypes extends unknown | undefined | never | Record< string, unknown > = undefined,
 > = {
 	/**
-	 * @deprecated
-	 * YOU DON'T NEED THIS. Most flows don't need this since #101550.
-	 * Stepper now takes care of navigating the user back to the previous step based on their navigation history. It will handle non-linearity perfectly.
+	 * Call this function if you want to go to the previous step.
 	 *
-	 * If you define this method to behave in non-standard ways, its behavior will be at odds with the back button of the browser, which may create confusion.
+	 * Please don't change the type of this function to add parameters. Passing data should strictly happen through the `submit` function.
+	 * See why here: pdDR7T-KR-p2#steps-should-only-submit
 	 */
 	goBack?: () => void;
 

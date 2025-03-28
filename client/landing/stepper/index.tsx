@@ -4,11 +4,7 @@ import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/current-user';
 import config from '@automattic/calypso-config';
 import { UserActions, User as UserStore } from '@automattic/data-stores';
-import {
-	HOSTED_SITE_MIGRATION_FLOW,
-	SITE_MIGRATION_FLOW,
-	ONBOARDING_FLOW,
-} from '@automattic/onboarding';
+import { HOSTED_SITE_MIGRATION_FLOW, SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { dispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
@@ -44,7 +40,7 @@ import { setupWpDataDebug } from './utils/devtools';
 import { enhanceFlowWithUtilityFunctions } from './utils/enhance-flow-with-utils';
 import { enhanceFlowWithAuth, injectUserStepInSteps } from './utils/enhanceFlowWithAuth';
 import redirectPathIfNecessary from './utils/flow-redirect-handler';
-import { getFlowFromURL } from './utils/get-flow-from-url';
+import { DEFAULT_FLOW, getFlowFromURL } from './utils/get-flow-from-url';
 import { startStepperPerformanceTracking } from './utils/performance-tracking';
 import { getSessionId } from './utils/use-session-id';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
@@ -60,8 +56,6 @@ function initializeCalypsoUserStore( reduxStore: any, user: CurrentUser ) {
 interface AppWindow extends Window {
 	BUILD_TARGET: string;
 }
-
-const DEFAULT_FLOW = ONBOARDING_FLOW;
 
 const getSiteIdFromURL = () => {
 	const siteId = new URLSearchParams( window.location.search ).get( 'siteId' );

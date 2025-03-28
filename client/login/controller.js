@@ -17,6 +17,7 @@ import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { loginSocialUser, rebootAfterLogin } from 'calypso/state/login/actions';
 import { postLoginRequest } from 'calypso/state/login/utils';
+import { logoutUser } from 'calypso/state/logout/actions';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -225,6 +226,10 @@ export async function jetpackGoogleAuth( context, next ) {
 	} ) }`;
 
 	try {
+		if ( isUserLoggedIn( context.store.getState() ) ) {
+			await context.store.dispatch( logoutUser() );
+		}
+
 		// Get authorization nonce for security
 		const response = await wpcomRequest( {
 			path: '/generate-authorization-nonce',
@@ -235,7 +240,7 @@ export async function jetpackGoogleAuth( context, next ) {
 
 		// Create state object with relevant data
 		const stateObject = {
-			redirect_to: query?.redirect_to || '/',
+			redirect_to: query?.redirect_to || window.location.origin,
 			is_jetpack: true,
 			locale: context.params.lang,
 			wpcomNonce: nonce,
@@ -264,6 +269,7 @@ export async function jetpackGoogleAuth( context, next ) {
 				callback: () => {},
 			} )
 			.requestCode();
+		return;
 	} catch {
 		context.store.dispatch( {
 			type: 'NOTICE_CREATE',
@@ -272,14 +278,8 @@ export async function jetpackGoogleAuth( context, next ) {
 				text: 'Error initiating Google login. Please try again.',
 			},
 		} );
-		redirectJetpackDirectAuthError( context );
+		return redirectJetpackDirectAuthError( context, next );
 	}
-
-	// Fall back to regular login form
-	context.primary = (
-		<WPLogin isJetpack path={ context.path } query={ query } locale={ context.params.lang } />
-	);
-	next();
 }
 
 export async function jetpackGoogleAuthCallback( context, next ) {
@@ -294,6 +294,22 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 		return next();
 	}
 
+	let state;
+
+	try {
+		const stateData = JSON.parse( stateString || '{}' );
+
+		state = {
+			redirect_to: stateData.redirect_to || window.location.origin,
+			is_jetpack: stateData.is_jetpack || true,
+			locale: stateData.locale || getLocaleSlug(),
+			wpcomNonce: stateData.wpcomNonce || '',
+			queryParams: stateData.queryParams || {},
+		};
+	} catch {
+		state = {}; // Fallback to empty state if JSON parsing fails
+	}
+
 	// Handle error from Google
 	if ( error ) {
 		context.store.dispatch( {
@@ -303,7 +319,10 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 				text: `Error during Google authentication: ${ error }`,
 			},
 		} );
-		return next();
+		return redirectJetpackDirectAuthError( context, next, {
+			code: null,
+			redirect_to: state.redirect_to,
+		} );
 	}
 
 	try {
@@ -314,24 +333,7 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 			throw new Error( 'Missing state parameter' );
 		}
 
-		let state;
-
-		try {
-			const stateData = JSON.parse( stateString );
-
-			if ( stateData.wpcomNonce !== storedNonce ) {
-				throw new Error();
-			}
-
-			state = {
-				redirect_to: stateData.redirect_to || '/',
-				is_jetpack: stateData.is_jetpack || true,
-				locale: stateData.locale || getLocaleSlug(),
-				wpcomNonce: stateData.wpcomNonce || '',
-				queryParams: stateData.queryParams || {},
-			};
-		} catch {
-			// Not a valid JSON, and not a direct match - state validation fails
+		if ( state.wpcomNonce !== storedNonce ) {
 			throw new Error( 'Invalid state parameter' );
 		}
 
@@ -380,19 +382,20 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 			);
 
 			await context.store.dispatch( rebootAfterLogin() );
-			return;
+			return page.redirect( state.redirect_to );
 		} catch ( createError ) {
 			// If both connection and creation fail, show warning and redirect
 			context.store.dispatch( {
 				type: 'NOTICE_CREATE',
 				notice: {
 					status: 'is-warning',
-					text: 'Could not complete Google login. Falling back to standard flow.',
+					text: 'Could not complete Google login. Please try again.',
 				},
 			} );
 
-			page.redirect( state.redirect_to );
-			return;
+			return redirectJetpackDirectAuthError( context, next, {
+				redirect_to: state.redirect_to,
+			} );
 		}
 	} catch {
 		context.store.dispatch( {
@@ -402,10 +405,11 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 				text: 'Error during Google authentication. Please try again.',
 			},
 		} );
-		redirectJetpackDirectAuthError( context );
-	}
 
-	return next();
+		return redirectJetpackDirectAuthError( context, next, {
+			redirect_to: state.redirect_to,
+		} );
+	}
 }
 
 export async function jetpackAppleAuth( context, next ) {
@@ -421,6 +425,10 @@ export async function jetpackAppleAuth( context, next ) {
 	} ) }`;
 
 	try {
+		if ( isUserLoggedIn( context.store.getState() ) ) {
+			await context.store.dispatch( logoutUser() );
+		}
+
 		// Get authorization nonce for security
 		const response = await wpcomRequest( {
 			path: '/generate-authorization-nonce',
@@ -434,7 +442,7 @@ export async function jetpackAppleAuth( context, next ) {
 			is_jetpack: true,
 			oauth2State: nonce,
 			// Allow just redirect_to to be passed in the query params
-			queryString: `redirect_to=${ query?.redirect_to || '/' }`,
+			queryString: `redirect_to=${ query?.redirect_to || window.location.origin }`,
 		};
 
 		// Store nonce in sessionStorage for validation on callback
@@ -461,6 +469,7 @@ export async function jetpackAppleAuth( context, next ) {
 
 		// Trigger the sign-in
 		window.AppleID.auth.signIn();
+		return;
 	} catch {
 		context.store.dispatch( {
 			type: 'NOTICE_CREATE',
@@ -469,14 +478,9 @@ export async function jetpackAppleAuth( context, next ) {
 				text: 'Error initiating Apple login. Please try again.',
 			},
 		} );
-		redirectJetpackDirectAuthError( context );
-	}
 
-	// Fall back to regular login form
-	context.primary = (
-		<WPLogin isJetpack path={ context.path } query={ query } locale={ context.params.lang } />
-	);
-	next();
+		return redirectJetpackDirectAuthError( context, next );
+	}
 }
 
 export async function jetpackAppleAuthCallback( context, next ) {
@@ -528,7 +532,7 @@ export async function jetpackAppleAuthCallback( context, next ) {
 			);
 
 			await context.store.dispatch( rebootAfterLogin() );
-			return;
+			return page.redirect( redirect_to );
 		} catch ( createError ) {
 			// If both connection and creation fail, show warning and redirect
 			context.store.dispatch( {
@@ -539,8 +543,7 @@ export async function jetpackAppleAuthCallback( context, next ) {
 				},
 			} );
 
-			page.redirect( redirect_to );
-			return;
+			return redirectJetpackDirectAuthError( context, next );
 		}
 	} catch {
 		context.store.dispatch( {
@@ -550,10 +553,9 @@ export async function jetpackAppleAuthCallback( context, next ) {
 				text: 'Error during Apple authentication. Please try again.',
 			},
 		} );
-		redirectJetpackDirectAuthError( context );
-	}
 
-	return next();
+		return redirectJetpackDirectAuthError( context, next );
+	}
 }
 
 export async function jetpackGitHubAuth( context, next ) {
@@ -564,10 +566,13 @@ export async function jetpackGitHubAuth( context, next ) {
 		return next();
 	}
 
-	const redirectUri = `https://${ window.location.host }/log-in/jetpack/github/callback`;
+	const redirectUri = `${ window.location.origin }/log-in/jetpack/github/callback`;
 	try {
 		// Store redirect_to in sessionStorage for use on callback
-		window.sessionStorage.setItem( 'github_redirect_to', query?.redirect_to || '/' );
+		window.sessionStorage.setItem(
+			'github_redirect_to',
+			query?.redirect_to || window.location.origin
+		);
 
 		// Redirect to GitHub authorization URL
 		const scope = 'read:user,user:email';
@@ -575,8 +580,8 @@ export async function jetpackGitHubAuth( context, next ) {
 			redirect_uri: redirectUri,
 			scope,
 			ux_mode: 'redirect',
-			redirect_to: query?.redirect_to || '/',
 		} );
+
 		window.location.href = `https://public-api.wordpress.com/wpcom/v2/hosting/github/app-authorize?${ params.toString() }`;
 	} catch {
 		context.store.dispatch( {
@@ -586,14 +591,9 @@ export async function jetpackGitHubAuth( context, next ) {
 				text: 'Error during GitHub authentication. Please try again.',
 			},
 		} );
-		redirectJetpackDirectAuthError( context );
-	}
 
-	// Fall back to regular login form
-	context.primary = (
-		<WPLogin isJetpack path={ context.path } query={ query } locale={ context.params.lang } />
-	);
-	next();
+		return redirectJetpackDirectAuthError( context, next );
+	}
 }
 
 export async function jetpackGitHubAuthCallback( context, next ) {
@@ -611,14 +611,10 @@ export async function jetpackGitHubAuthCallback( context, next ) {
 	window.sessionStorage.removeItem( 'github_redirect_to' );
 
 	try {
-		// GitHub supports localhost auth; and we allowlist the jetpack callback path
-		const redirectUri = `${ window.location.origin }/log-in/jetpack/github/callback`;
-
 		// Exchange auth code for tokens
 		const response = await postLoginRequest( 'exchange-social-auth-code', {
 			service: 'github',
 			auth_code: code,
-			redirect_uri: redirectUri,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 		} );
@@ -656,11 +652,10 @@ export async function jetpackGitHubAuthCallback( context, next ) {
 			);
 
 			await context.store.dispatch( rebootAfterLogin() );
-			return;
+			return page.redirect( redirect_to );
 		} catch {
 			// If both connection and creation fail, show warning and redirect back to login page
-			redirectJetpackDirectAuthError( context, { redirect_to } );
-			return;
+			return redirectJetpackDirectAuthError( context, next, { redirect_to } );
 		}
 	} catch {
 		context.store.dispatch( {
@@ -670,9 +665,7 @@ export async function jetpackGitHubAuthCallback( context, next ) {
 				text: 'Error during GitHub authentication. Please try again.',
 			},
 		} );
-
-		redirectJetpackDirectAuthError( context, { redirect_to } );
-		return;
+		return redirectJetpackDirectAuthError( context, next, { redirect_to } );
 	}
 }
 
@@ -837,8 +830,12 @@ export function redirectLostPassword( context, next ) {
 	next();
 }
 
-function redirectJetpackDirectAuthError( context, query = {} ) {
-	const queryString = new URLSearchParams( Object.assign( {}, context.query, query ) ).toString();
+export function redirectJetpackDirectAuthError( context, next, newQuery = {} ) {
+	const queryString = new URLSearchParams(
+		Object.assign( {}, context.query, newQuery )
+	).toString();
 	const redirectUrl = queryString ? `/log-in/jetpack/?${ queryString }` : '/log-in/jetpack/';
-	return context.redirect( redirectUrl );
+	window.history.replaceState( null, '', redirectUrl );
+	window.sessionStorage?.setItem( 'login_redirect_to', redirectUrl );
+	return next();
 }

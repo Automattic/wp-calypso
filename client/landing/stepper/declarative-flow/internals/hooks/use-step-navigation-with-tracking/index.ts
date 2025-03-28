@@ -1,4 +1,4 @@
-import { OnboardSelect, StepperInternalSelect } from '@automattic/data-stores';
+import { OnboardSelect } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { useCallback, useMemo } from '@wordpress/element';
 import {
@@ -8,7 +8,7 @@ import {
 	STEPPER_TRACKS_EVENT_STEP_NAV_GO_TO,
 	STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
 } from 'calypso/landing/stepper/constants';
-import { ONBOARD_STORE, STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import {
 	recordStepNavigation,
 	type RecordStepNavigationParams,
@@ -17,14 +17,12 @@ import type { Flow, Navigate, ProvidedDependencies, StepperStep } from '../../ty
 
 interface Params< FlowSteps extends StepperStep[] > {
 	flow: Flow;
-	stepSlugs: string[];
 	currentStepRoute: string;
 	navigate: Navigate< FlowSteps >;
 }
 
 export const useStepNavigationWithTracking = ( {
 	flow,
-	stepSlugs,
 	currentStepRoute,
 	navigate,
 }: Params< StepperStep[] > ) => {
@@ -38,18 +36,6 @@ export const useStepNavigationWithTracking = ( {
 			goals: onboardStore.getGoals(),
 		};
 	}, [] );
-
-	const stepData = useSelect(
-		( select ) => ( select( STEPPER_INTERNAL_STORE ) as StepperInternalSelect ).getStepData(),
-		[]
-	);
-
-	/**
-	 * If the previous step is defined in the store, and the current step is not the first step, we can go back.
-	 * We need to make sure we're not at the first step because `previousStep` is persisted and can be a step from another flow or another run of the current flow.
-	 */
-	const canUserGoBack =
-		stepData?.previousStep && currentStepRoute !== stepSlugs[ 0 ] && history.length > 1;
 
 	const tracksEventPropsFromFlow = flow.useTracksEventProps?.();
 
@@ -109,22 +95,6 @@ export const useStepNavigationWithTracking = ( {
 					stepNavigation.exitFlow?.( to );
 				},
 			} ),
-			/**
-			 * If the `previousStep` is defined in the store, it's a solid proxy to guess that we navigated at least once via Stepper's React Router.
-			 * If the flow doesn't define a `goBack` handler, and `previousStep` is defined, we can just go history.back() and we'll remain in the flow.
-			 * But if `previousStep` is not defined, and the flow doesn't define a `goBack` handler, we should return undefined so the StepContainer doesn't render a back button.
-			 */
-			...( canUserGoBack && {
-				goBack: () => {
-					handleRecordStepNavigation( {
-						event: STEPPER_TRACKS_EVENT_STEP_NAV_GO_BACK,
-					} );
-					history.back();
-				},
-			} ),
-			/**
-			 * If the flow defines a `goBack` handler, this will overwrite the one above. Flow is the ultimate authority on navigation.
-			 */
 			...( stepNavigation.goBack && {
 				goBack: () => {
 					handleRecordStepNavigation( {

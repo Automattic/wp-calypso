@@ -50,12 +50,12 @@ describe( 'EmailClient: get2FACodeFromMessage', function () {
 	test( 'One code in message', function () {
 		const emailClient = new EmailClient();
 
-		const code = emailClient.get2FACodeFromMessage( createBaseSMSMessage() );
+		const code = emailClient.get2FACodeFromMessage( createBaseSMSMessage() as Message );
 		expect( code ).toBe( '0123456' );
 	} );
 
 	test( 'Two codes in message', function () {
-		const message = createBaseSMSMessage();
+		const message = createBaseSMSMessage() as Message;
 
 		message.text?.codes?.push( {
 			value: '4567890',
@@ -68,7 +68,7 @@ describe( 'EmailClient: get2FACodeFromMessage', function () {
 	} );
 
 	test( 'No codes in message', function () {
-		const message = createBaseSMSMessage();
+		const message = createBaseSMSMessage() as Message;
 
 		message.text?.codes?.pop();
 
@@ -80,7 +80,7 @@ describe( 'EmailClient: get2FACodeFromMessage', function () {
 	} );
 
 	test( 'No text in message', function () {
-		const message = createBaseSMSMessage();
+		const message = createBaseSMSMessage() as Message;
 
 		delete message.text;
 
