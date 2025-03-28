@@ -279,8 +279,9 @@ describe( 'SiteMigrationCredentials', () => {
 
 		await userEvent.click( continueButton() );
 		await userEvent.click( credentialsOption() );
-
-		expect( getByText( messages.urlError ) ).toBeVisible();
+		await waitFor( () => {
+			expect( getByText( messages.urlError ) ).toBeVisible();
+		} );
 	} );
 
 	it( 'shows errors on the required fields when the user does not fill the fields when user select credentials option and application-password is disabled', async () => {
@@ -290,9 +291,11 @@ describe( 'SiteMigrationCredentials', () => {
 		await userEvent.click( continueButton() );
 		await userEvent.click( credentialsOption() );
 
-		expect( getByText( messages.urlError ) ).toBeVisible();
-		expect( getByText( messages.usernameError ) ).toBeVisible();
-		expect( getByText( messages.passwordError ) ).toBeVisible();
+		await waitFor( () => {
+			expect( getByText( messages.urlError ) ).toBeVisible();
+			expect( getByText( messages.usernameError ) ).toBeVisible();
+			expect( getByText( messages.passwordError ) ).toBeVisible();
+		} );
 	} );
 
 	it( 'shows errors on the required fields when the user does not fill the fields when user select backup option', async () => {
@@ -301,7 +304,9 @@ describe( 'SiteMigrationCredentials', () => {
 		await userEvent.click( backupOption() );
 		await userEvent.click( continueButton() );
 
-		expect( getByText( /Please enter a valid URL/ ) ).toBeVisible();
+		await waitFor( () => {
+			expect( getByText( /Please enter a valid URL/ ) ).toBeVisible();
+		} );
 	} );
 
 	it( 'shows error when user set invalid site address', async () => {
@@ -309,7 +314,9 @@ describe( 'SiteMigrationCredentials', () => {
 		await userEvent.type( siteAddressInput(), 'invalid-site-address' );
 		await userEvent.click( continueButton() );
 
-		expect( getByText( messages.noTLDError ) ).toBeVisible();
+		await waitFor( () => {
+			expect( getByText( messages.noTLDError ) ).toBeVisible();
+		} );
 	} );
 
 	it( 'shows error messages by each field when the server returns "invalid param" by each field', async () => {

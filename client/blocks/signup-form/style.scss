@@ -235,6 +235,8 @@ body.is-section-accept-invite {
 				display: block;
 				margin: 0 auto;
 				text-underline-offset: 5px;
+				position: relative;
+				top: 0;
 
 				&:hover {
 					color: var(--studio-blue-50, #0675c4);
