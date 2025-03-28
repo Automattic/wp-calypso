@@ -531,11 +531,6 @@ body.is-section-signup {
 			}
 		}
 
-		&__domain-side-content-container-domain-explanation-image {
-			max-width: 100%;
-			margin-bottom: 0;
-		}
-
 		&__example-prompt {
 			margin: 0;
 
@@ -577,7 +572,15 @@ body.is-section-signup {
 
 	.domains__domain-side-content-container {
 		display: flex;
-		margin-top: 0;
+		justify-content: center;
+		width: 80%;
+		align-items: center;
+		margin: 20px auto 0;
+
+		@media (min-width: ($break-large)) {
+			width: unset;
+			margin-top: 0;
+		}
 	}
 
 	.domains__domain-side-content {
@@ -618,7 +621,7 @@ body.is-section-signup {
 
 .step-container-v2 {
 	&__content.step-container-v2__content--two-column-layout.domains__step-content.domains__step-content-domain-step {
-		column-gap: 0;
+		gap: 0;
 		max-width: 1280px;
 	}
 
