@@ -34,7 +34,6 @@ import { useQueryThemes } from 'calypso/components/data/query-themes';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Loading from 'calypso/components/loading';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
-import { StepContainerV2Loading } from 'calypso/components/step-container-v2-loading';
 import {
 	THEME_TIERS,
 	THEME_TIER_PREMIUM,
@@ -730,7 +729,7 @@ const UnifiedDesignPickerStep: StepType< {
 	const isLoading = isSiteLoading || isDesignsLoading;
 
 	if ( isLoading || isComingFromTheUpgradeScreen ) {
-		return isUsingStepContainerV2 ? <StepContainerV2Loading /> : <Loading />;
+		return isUsingStepContainerV2 ? <Step.Loading /> : <Loading />;
 	}
 
 	if ( selectedDesign && isPreviewingDesign ) {
