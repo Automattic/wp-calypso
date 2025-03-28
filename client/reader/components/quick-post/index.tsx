@@ -143,10 +143,6 @@ function QuickPost( {
 			} );
 	};
 
-	const handleCancel = () => {
-		clearEditor();
-	};
-
 	const handleSiteSelect = ( siteId: number ) => {
 		dispatch( setSelectedSiteId( siteId ) );
 	};
@@ -230,13 +226,6 @@ function QuickPost( {
 				</div>
 			</div>
 			<div className="quick-post-input__actions">
-				<Button
-					onClick={ handleCancel }
-					disabled={ isDisabled }
-					className="quick-post-input__cancel"
-				>
-					{ translate( 'Cancel' ) }
-				</Button>
 				<Button
 					variant="primary"
 					onClick={ handleSubmit }
