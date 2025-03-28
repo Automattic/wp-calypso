@@ -61,14 +61,14 @@ const useNewHelper = config.isEnabled( 'subscribers-helper-library' );
 
 const getSubscriptionId = ( subscriber: Subscriber ): number => {
 	if ( useNewHelper ) {
-		return subscriber.wpcom_subscription_id || subscriber.email_subscription_id || 0;
+		return subscriber.email_subscription_id || subscriber.wpcom_subscription_id || 0;
 	}
 	return subscriber.subscription_id || 0;
 };
 
 const getSubscriptionIdString = ( subscriber: Subscriber ): string => {
 	if ( useNewHelper ) {
-		return String( subscriber.wpcom_subscription_id || subscriber.email_subscription_id || '' );
+		return String( subscriber.email_subscription_id || subscriber.wpcom_subscription_id || '' );
 	}
 	return String( subscriber.subscription_id || '' );
 };
@@ -168,8 +168,14 @@ const SubscriberDataViews = ( {
 	// Fetch subscriber details.
 	const { data: subscriberDetails, isLoading: isLoadingDetails } = useSubscriberDetailsQuery(
 		siteId ?? null,
-		subscriberId ? parseInt( subscriberId, 10 ) : undefined,
-		selectedSubscriber?.user_id
+		// Only pass subscriberId if it's a valid number
+		subscriberId && ! isNaN( parseInt( subscriberId, 10 ) )
+			? parseInt( subscriberId, 10 )
+			: undefined,
+		// Only pass user_id if it's a valid number (WordPress.com user)
+		typeof selectedSubscriber?.user_id === 'number' && ! isNaN( selectedSubscriber.user_id )
+			? selectedSubscriber.user_id
+			: undefined
 	);
 
 	// Single effect to handle all subscriber selection scenarios
