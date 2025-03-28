@@ -16,7 +16,7 @@ export const SkipButton = ( originalProps: ButtonProps ) => {
 	const stepContext = useStepContainerV2Context();
 
 	const skipButtonProps = normalizeButtonProps( originalProps, {
-		label: __( 'Skip', __i18n_text_domain__ ),
+		children: __( 'Skip', __i18n_text_domain__ ),
 	} );
 
 	return (

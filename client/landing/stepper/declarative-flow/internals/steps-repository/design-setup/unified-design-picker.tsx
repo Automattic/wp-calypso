@@ -712,7 +712,7 @@ const UnifiedDesignPickerStep: StepType< {
 			);
 		}
 
-		return <Step.PrimaryButton label={ text } onClick={ action } />;
+		return <Step.PrimaryButton onClick={ action }>{ text }</Step.PrimaryButton>;
 	}
 
 	useEffect( () => {
@@ -874,10 +874,9 @@ const UnifiedDesignPickerStep: StepType< {
 								}
 								skipButton={
 									! isGoalsAtFrontExperiment ? undefined : (
-										<Step.SkipButton
-											onClick={ () => handleSubmit() }
-											label={ translate( 'Skip setup' ) }
-										/>
+										<Step.SkipButton onClick={ () => handleSubmit() }>
+											{ translate( 'Skip setup' ) }
+										</Step.SkipButton>
 									)
 								}
 							/>
@@ -998,7 +997,9 @@ const UnifiedDesignPickerStep: StepType< {
 						backButton={ backButton ? <Step.BackButton onClick={ backButton } /> : undefined }
 						skipButton={
 							hideSkip ? undefined : (
-								<Step.SkipButton onClick={ () => handleSubmit() } label={ skipLabelText } />
+								<Step.SkipButton onClick={ () => handleSubmit() }>
+									{ skipLabelText }
+								</Step.SkipButton>
 							)
 						}
 					/>

@@ -45,8 +45,8 @@ const FontsBar = () => {
 };
 
 export const ThemePreviewFonts = () => {
-	const backButton = <BackButton label="Back" />;
-	const nextButton = <NextButton label="Save fonts" />;
+	const backButton = <BackButton>Back</BackButton>;
+	const nextButton = <NextButton>Save fonts</NextButton>;
 
 	return (
 		<FullWidthLayout

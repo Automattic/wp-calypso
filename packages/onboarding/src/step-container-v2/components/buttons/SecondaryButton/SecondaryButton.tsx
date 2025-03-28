@@ -9,7 +9,7 @@ export const SecondaryButton = ( originalProps: ButtonProps ) => {
 	const { __ } = useI18n();
 
 	const secondaryButtonProps = normalizeButtonProps( originalProps, {
-		label: __( 'Secondary', __i18n_text_domain__ ),
+		children: __( 'Secondary', __i18n_text_domain__ ),
 		className: 'step-container-v2__secondary-button',
 	} );
 

@@ -1431,8 +1431,9 @@ export class RenderDomainsStep extends Component {
 					href={ backUrl }
 					rel={ isExternalBackUrl ? 'external' : '' }
 					onClick={ goBack }
-					label={ backLabelText }
-				/>
+				>
+					{ backLabelText }
+				</Step.BackButton>
 			);
 
 			const mainContent = (

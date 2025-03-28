@@ -43,22 +43,19 @@ const DIFMStartingPoint: StepType< {
 
 	if ( shouldUseStepContainerV2( flow ) ) {
 		const primaryButton = showNewOrExistingSiteChoice ? (
-			<Step.PrimaryButton
-				onClick={ () => onSubmit( 'existing-site' ) }
-				label={ translate( 'Use an existing site' ) }
-			/>
+			<Step.PrimaryButton onClick={ () => onSubmit( 'existing-site' ) }>
+				{ translate( 'Use an existing site' ) }
+			</Step.PrimaryButton>
 		) : (
-			<Step.PrimaryButton
-				onClick={ () => onSubmit( 'new-site' ) }
-				label={ translate( 'Get started' ) }
-			/>
+			<Step.PrimaryButton onClick={ () => onSubmit( 'new-site' ) }>
+				{ translate( 'Get started' ) }
+			</Step.PrimaryButton>
 		);
 
 		const secondaryButton = showNewOrExistingSiteChoice ? (
-			<Step.SecondaryButton
-				onClick={ () => onSubmit( 'new-site' ) }
-				label={ translate( 'Start a new site' ) }
-			/>
+			<Step.SecondaryButton onClick={ () => onSubmit( 'new-site' ) }>
+				{ translate( 'Start a new site' ) }
+			</Step.SecondaryButton>
 		) : undefined;
 
 		return (
@@ -77,10 +74,9 @@ const DIFMStartingPoint: StepType< {
 										helpCenterButtonLink={ translate( 'Contact our site-building team' ) }
 									/>
 								) : (
-									<Step.SkipButton
-										onClick={ goNext }
-										label={ translate( 'No Thanks, I’ll Build It' ) }
-									/>
+									<Step.SkipButton onClick={ goNext }>
+										{ translate( 'No Thanks, I’ll Build It' ) }
+									</Step.SkipButton>
 								)
 							}
 						/>

@@ -838,10 +838,9 @@ export default function CheckoutMainContent( {
 						skipButton={
 							<span className="checkout-skip-button">
 								<label>{ helpCenterButtonCopy ?? translate( 'Need extra help?' ) } </label>
-								<Step.LinkButton
-									onClick={ toggleHelpCenter }
-									label={ helpCenterButtonLink ?? translate( 'Visit Help Center' ) }
-								/>
+								<Step.LinkButton onClick={ toggleHelpCenter }>
+									{ helpCenterButtonLink ?? translate( 'Visit Help Center' ) }
+								</Step.LinkButton>
 							</span>
 						}
 					/>

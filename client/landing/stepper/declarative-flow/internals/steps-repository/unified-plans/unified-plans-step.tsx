@@ -499,7 +499,9 @@ function UnifiedPlansStep( {
 					topBar={
 						<Step.TopBar
 							backButton={
-								goBack ? <Step.BackButton onClick={ goBack } label={ backLabelText } /> : undefined
+								goBack ? (
+									<Step.BackButton onClick={ goBack }>{ backLabelText }</Step.BackButton>
+								) : undefined
 							}
 						/>
 					}
