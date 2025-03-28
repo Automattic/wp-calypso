@@ -268,7 +268,8 @@ export const SiteLogsDataViews = ( {
 				<ToggleGroupControl
 					className="site-logs-toolbar__toggle"
 					hideLabelFromVision
-					label=""
+					isBlock
+					label="Filter"
 					onChange={ ( value ) => {
 						if ( value === LogType.PHP || value === LogType.WEB ) {
 							navigate( window.location.pathname.replace( /\/[^/]+$/, '/' + value ) );
