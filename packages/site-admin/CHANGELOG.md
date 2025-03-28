@@ -24,3 +24,4 @@ Initial release of the site-admin package providing a framework for building mod
 ## Next
 
 - `SiteHub`: Site navigation and context switcher
+- Add `history` package dependency
