@@ -7,3 +7,4 @@ export {
 	getHelpCenterZendeskConversationStartedElapsedTime,
 } from './storage-utils';
 export { getOdieInitialMessage } from './get-odie-initial-message';
+export { userProvidedEnoughInformation } from './user-provided-enough-information';

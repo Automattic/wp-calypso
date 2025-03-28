@@ -795,3 +795,9 @@ $custom-border-corner-size: 16px;
 .odie-send-message-input-spinner {
 	color: $blueberry-color !important;
 }
+
+.odie__transfer-chat {
+	width: calc(100% - 80px)!important;
+	margin-top: 16px;
+    margin-left: 46px;
+}
