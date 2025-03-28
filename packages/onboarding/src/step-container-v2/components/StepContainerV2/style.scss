@@ -1,4 +1,15 @@
-@import '../../mixins';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+@mixin vertically-centered-content {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	padding-block: 1rem;
+	box-sizing: border-box;
+	justify-content: center;
+}
 
 .step-container-v2 {
 	--step-container-v2-top-bar-height: 56px;
@@ -7,7 +18,7 @@
 	--step-container-v2-content-block-padding: 2rem;
 	--step-container-v2-content-inline-padding: 1rem;
 
-	&.medium-viewport {
+	@include break-small {
 		--step-container-v2-content-inline-padding: 3rem;
 	}
 
@@ -17,8 +28,9 @@
 	display: flex;
 	flex-direction: column;
 
-	&:has(.vertical-align-center) {
-		.step-container-v2__top-bar-wrapper {
+	&:has( .step-container-v2__content-wrapper--aligned-center ),
+	&:has( .step-container-v2__content-wrapper--aligned-center-on-small ) {
+		.step-container-v2__top-bar {
 			z-index: 1;
 		}
 	}
@@ -30,22 +42,24 @@
 		align-items: center;
 		gap: 3rem;
 
-		&.padding {
-			padding: var(--step-container-v2-content-block-padding) var(--step-container-v2-content-inline-padding);
+		&--padding {
+			padding: var( --step-container-v2-content-block-padding )
+				var( --step-container-v2-content-inline-padding );
 		}
 
-		&.vertical-align-center {
-			position: absolute;
-			inset: 0;
-			width: 100%;
-			height: 100%;
-			padding-block: 1rem;
-			box-sizing: border-box;
-			justify-content: center;
+		&--aligned-center {
+			@include vertically-centered-content;
+		}
+
+		&--aligned-center-on-small {
+			@include break-small {
+				@include vertically-centered-content;
+			}
 		}
 	}
 
-	&__content, &__footer {
+	&__content,
+	&__footer {
 		width: 100%;
 		box-sizing: border-box;
 
@@ -60,4 +74,3 @@
 		}
 	}
 }
-

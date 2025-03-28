@@ -77,11 +77,11 @@ export const WithRenderProp = () => (
 		}
 		stickyBottomBar={ <StickyBottomBar rightButton={ <NextButton /> } /> }
 	>
-		{ ( { isMediumViewport, isLargeViewport } ) => (
+		{ ( { isSmallViewport, isLargeViewport } ) => (
 			<>
 				<WireframePlaceholder height={ 616 }>
 					<div>Content 1</div>
-					<pre>is medium viewport: { isMediumViewport.toString() }</pre>
+					<pre>is small viewport: { isSmallViewport.toString() }</pre>
 				</WireframePlaceholder>
 				<WireframePlaceholder height={ 616 }>
 					<div>Content 1</div>

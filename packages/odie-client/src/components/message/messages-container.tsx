@@ -6,7 +6,6 @@ import { Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useRef, useState } from 'react';
 import { NavigationType, useNavigationType, useSearchParams } from 'react-router-dom';
-import { ThumbsDown } from '../../assets/thumbs-down';
 import { useOdieAssistantContext } from '../../context';
 import {
 	useAutoScroll,
@@ -22,14 +21,6 @@ import { JumpToRecent } from './jump-to-recent';
 import { ThinkingPlaceholder } from './thinking-placeholder';
 import ChatMessage from '.';
 import type { Chat, CurrentUser } from '../../types';
-
-const DislikeThumb = () => {
-	return (
-		<div className="chatbox-message__dislike-thumb">
-			<ThumbsDown />
-		</div>
-	);
-};
 
 const LoadingChatSpinner = () => {
 	return (
@@ -52,7 +43,7 @@ interface ChatMessagesProps {
 }
 
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
-	const { chat, botNameSlug, experimentVariationName, isChatLoaded, isUserEligibleForPaidSupport } =
+	const { chat, botNameSlug, isChatLoaded, isUserEligibleForPaidSupport } =
 		useOdieAssistantContext();
 	const createZendeskConversation = useCreateZendeskConversation();
 	const resetSupportInteraction = useResetSupportInteraction();
@@ -155,11 +146,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		return currentMessage === nextMessage;
 	};
 
-	const removeDislikeStatus = experimentVariationName === 'give_wapuu_a_chance';
-
-	const availableStatusWithFeedback = removeDislikeStatus
-		? [ 'sending', 'transfer' ]
-		: [ 'sending', 'dislike', 'transfer' ];
+	const availableStatusWithFeedback = [ 'sending', 'transfer' ];
 
 	return (
 		<>
@@ -205,7 +192,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 						{ chat.provider === 'odie' && (
 							<>
 								<ViewMostRecentOpenConversationNotice />
-								{ chat.status === 'dislike' && ! removeDislikeStatus && <DislikeThumb /> }
 								{ availableStatusWithFeedback.includes( chat.status ) && (
 									<div className="odie-chatbox__action-message">
 										{ chat.status === 'sending' && <ThinkingPlaceholder /> }
