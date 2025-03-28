@@ -5,12 +5,10 @@ import { check, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import FeedPreview from 'calypso/landing/subscriptions/components/add-sites-form/feed-preview/feed-preview';
 import { useAddSitesModalNotices } from 'calypso/landing/subscriptions/hooks';
 import { useRecordSiteSubscribed } from 'calypso/landing/subscriptions/tracks';
 import { isValidUrl, parseUrl } from 'calypso/lib/importer/url-validation';
-import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import './styles.scss';
 
 export type AddSitesFormProps = {
@@ -40,7 +38,6 @@ const AddSitesForm = ( {
 	const [ isValidInput, setIsValidInput ] = useState( false );
 	const { showErrorNotice, showWarningNotice, showSuccessNotice } = useAddSitesModalNotices();
 	const recordSiteSubscribed = useRecordSiteSubscribed();
-	const isAutomattician = useSelector( isA8cTeamMember );
 
 	const { mutate: subscribe, isPending: subscribing } =
 		SubscriptionManager.useSiteSubscribeMutation();
@@ -147,14 +144,12 @@ const AddSitesForm = ( {
 				</Button>
 			</form>
 
-			{ isAutomattician ? (
-				<FeedPreview
-					url={ isValidInput ? inputValue : '' } // Passing empty state to make sure that debounce works correctly else it was firing events 2 times.
-					source={ source }
-					onChangeFeedPreview={ onChangeFeedPreview }
-					onChangeSubscribe={ onSubscribeToggle }
-				/>
-			) : null }
+			<FeedPreview
+				url={ isValidInput ? inputValue : '' } // Passing empty state to make sure that debounce works correctly else it was firing events 2 times.
+				source={ source }
+				onChangeFeedPreview={ onChangeFeedPreview }
+				onChangeSubscribe={ onSubscribeToggle }
+			/>
 		</>
 	);
 };
