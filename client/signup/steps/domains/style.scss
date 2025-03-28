@@ -559,74 +559,54 @@ body.is-section-signup {
 }
 
 .step-container-v2__content.step-container-v2__content--two-column-layout.domains__step-content.domains__step-content-domain-step {
-	column-gap: 0px !important;
-}
-
-@media (min-width: 1440px) {
-	.domains__domain-side-content {
-		margin: 0 0 0 60px !important;
-	}
+	column-gap: 0;
+	max-width: 1280px;
 }
 
 .step-container-v2__content-wrapper.padding {
 	padding: 0 12px;
-}
-
-.step-container-v2__content.step-container-v2__content--two-column-layout.domains__step-content.domains__step-content-domain-step {
-	max-width: 1280px;
-}
-
-
-.domains__step-content-domain-step>div:nth-child(1) {
-	flex: 1!important;
-}
-
-.domains__step-content-domain-step>div:nth-child(2) {
-	display: flex;
-	flex-basis: auto!important;
-	flex-direction: column;
-	flex-grow: 0 !important;
-	flex-shrink: 1 !important;
-	flex-wrap: nowrap;
-}
-
-.step-container-v2__top-bar {}
-
-.step-container-v2__content-wrapper.padding {
 	gap: 0;
 }
 
 .step-container-v2__heading {
-	margin-top: 0px;
+	margin-top: 0;
 }
 
-@media (min-width: 600px) {
-	.register-domain-step__example-prompt {
-		margin: 0 20px!important;
+.domains__step-content-domain-step > div {
+	&:nth-child(1) {
+		flex: 1 !important;
+	}
+
+	&:nth-child(2) {
+		display: flex;
+		flex-basis: auto !important;
+		flex-direction: column;
+		flex-grow: 0 !important;
+		flex-shrink: 1 !important;
+		flex-wrap: nowrap;
 	}
 }
 
-@media (min-width: 661px) {
-	body.is-section-stepper .register-domain-step__search.register-domain-step__search-domain-step:not(.is-sticky) {
-		padding-top: 18px;
+.domains__domain-side-content {
+	@media (min-width: 1440px) {
+		margin: 0 0 0 60px;
 	}
 }
 
-@media (max-width: 600px) {
-	body.is-section-stepper .domains__step-content .register-domain-step__search-card {
-		margin: 20px 0 0!important;
+.step-route.onboarding.domains:has(.step-container-v2) .domains__domain-side-content-container>.domains__domain-side-content {
+	@include break-large {
+		margin-left: 40px;
+	}
+
+	@include break-huge {
+		margin-left: 60px;
 	}
 }
 
-@media (max-width: 661px) {
-	body.is-section-stepper .domains__step-content .register-domain-step__search-card {
-		margin: 20px 0 0;
-	}
-}
-
-h1.wp-brand-font {
-	letter-spacing: -0.4px !important;
-	line-height: 1.2em !important;
+.step-route.onboarding.domains:has(.step-container-v2) .step-container-v2__heading h1:not(.small) {
+	letter-spacing: -0.4px;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	line-height: 1.2em;
 }
 
 .step-route.onboarding.domains .step-container-v2__heading > p {
@@ -640,18 +620,12 @@ body.is-section-stepper .featured-domain-suggestion.card .domain-product-price {
 }
 
 .domain-suggestion__content.domain-suggestion__content-domain {
-	align-items: unset !important;
+	align-items: unset;
 }
 
 .domain-product-price.domain-product-single-price.domain-product-price__domain-step-signup-flow {
 	align-self: center;
 }
-
-.domain-product-price.domain-product-single-price.domain-product-price__domain-step-signup-flow {
-	align-self: center;
-}
-
-.domain-suggestion.card.is-compact {}
 
 @media (min-width: 1080px) {
 	body.is-section-stepper .formatted-header .formatted-header__title {
@@ -659,27 +633,21 @@ body.is-section-stepper .featured-domain-suggestion.card .domain-product-price {
 	}
 }
 
-.step-container-v2__heading{}
-
-p {}
-
 body.is-section-stepper .onboarding:not(.is-onboarding-2023-pricing-grid) .step-container-v2__heading {
-	margin: calc( 48px + 24px - var(--step-container-v2-top-bar-height) ) 20px 24px 20px;
+	margin: calc(48px + 24px - var(--step-container-v2-top-bar-height)) 20px 24px 20px;
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
-	width: unset !important;
+	width: unset;
 	align-items: center;
 	flex-direction: column;
 
 	@media (min-width: 960px) {
-		& {
-			margin-top: calc( 48px + 48px - var(--step-container-v2-top-bar-height) );
-			margin-bottom: 36px;
-		}
+		margin-top: calc(48px + 48px - var(--step-container-v2-top-bar-height));
+		margin-bottom: 36px;
 	}
 
-	&>h1 {
+	> h1 {
 		font-size: 2.25rem;
 
 		@media (min-width: 1080px) {
@@ -689,58 +657,63 @@ body.is-section-stepper .onboarding:not(.is-onboarding-2023-pricing-grid) .step-
 }
 
 @media (min-width: 600px) {
-	.step-route.onboarding.domains:has(.step-container-v2) .register-domain-step__search-card {
-		margin: 20px 20px 0 !important;
+	.register-domain-step__example-prompt {
+		margin: 0 20px;
 	}
 
-	body.is-section-stepper {
+	.step-route.onboarding.domains:has(.step-container-v2) .register-domain-step__search-card {
+		margin: 20px 20px 0;
+	}
 
+	body.is-section-stepper .step-route.onboarding.domains:has(.step-container-v2) {
 		.featured-domain-suggestions,
 		.domain-suggestion {
-			margin-inline: 20px!important;
+			margin-inline: 20px;
 
-			& {
-				@media (min-width: 960px) {
-					margin: 0 !important;
-				}
+			@media (min-width: 960px) {
+				margin: 0;
 			}
 		}
 
 		.featured-domain-suggestions {
-			margin: 0 20px !important;
+			margin: 0 20px;
 			border-top: none;
 
 			.featured-domain-suggestion {
-				margin: 0!important;
-				margin-bottom: 12px !important;
+				margin: 0;
+				margin-bottom: 12px;
 			}
 
-			& {
-				@media (min-width: 960px) {
-					margin: 0 !important;
-				}
+			@media (min-width: 960px) {
+				margin: 0;
 			}
 		}
 	}
 }
 
+@media (min-width: 661px) {
+	body.is-section-stepper .register-domain-step__search.register-domain-step__search-domain-step:not(.is-sticky) {
+		padding-top: 18px;
+	}
+}
+
+@media (max-width: 600px) {
+	.is-section-stepper .step-route.onboarding.domains:has(.step-container-v2) .domains__step-content .register-domain-step__search-card {
+
+		margin: 20px 0 0;
+	}
+}
+
 @media (min-width: 960px) {
-	.step-route.onboarding.domains:has(.step-container-v2) .register-domain-step__search-card {
-		margin: 0 !important;
+	.is-section-stepper .step-route.onboarding.domains:has(.step-container-v2) .domains__step-content .register-domain-step__search-card {
+		margin: 0;
 	}
 }
 
 .domain-product-price {
 	@include breakpoint-deprecated( "<660px" ) {
-
 		&.domain-product-price__domain-step-signup-flow {
-			flex-direction: column !important;
+			flex-direction: column;
 		}
-	}
-}
-
-.step-route.onboarding.domains:has(.step-container-v2) .domains__domain-side-content {
-	@include breakpoint-deprecated( ">960px" ) {
-		margin-left: 40px;
 	}
 }
