@@ -53,6 +53,10 @@ export const PassCustomState: Story = {
 	},
 
 	render: function Template( args ) {
+		/*
+		 * Force re-render on location changes to sync
+		 * with browserHistory.location.state
+		 */
 		useLocation();
 
 		// Pick the location state from the browser history state
