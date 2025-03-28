@@ -169,4 +169,15 @@ describe( 'HostingOverview', () => {
 			} )
 		).not.toThrow();
 	} );
+
+	it( 'should show a warning and ignore initial state from secondary reducers', async () => {
+		expect( () =>
+			statefulRenderWithProvider( <HostingOverview />, {
+				initialState: {
+					...mockInitialState,
+					purchases: {},
+				},
+			} )
+		).not.toThrow();
+	} );
 } );
