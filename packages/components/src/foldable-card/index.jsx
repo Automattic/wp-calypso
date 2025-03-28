@@ -49,7 +49,7 @@ class FoldableCard extends Component {
 		expanded: false,
 		screenReaderText: false,
 		smooth: false,
-		useInert: true,
+		useInert: false,
 	};
 
 	state = {
