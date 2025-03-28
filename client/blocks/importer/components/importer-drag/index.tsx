@@ -46,7 +46,7 @@ const ImporterDrag: React.FunctionComponent< Props > = ( props ) => {
 	const { importerStatus, importerData, site, flow, urlData /*, startImport*/ } = props;
 	const { errorData, importerState } = importerStatus;
 	const isEnabled = appStates.DISABLED !== importerState;
-	const isUsingStepContainerV2 = shouldUseStepContainerV2( flow );
+	const isUsingStepContainerV2 = shouldUseStepContainerV2( flow ?? '' );
 
 	return (
 		<div className={ clsx( 'importer-drag', `importer-drag-${ importerData?.engine }` ) }>
