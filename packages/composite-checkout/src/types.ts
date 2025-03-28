@@ -87,6 +87,7 @@ export type FormStatusManager = {
 
 export interface PaymentMethodProviderContextInterface {
 	allPaymentMethods: PaymentMethod[];
+	paymentProcessors: PaymentProcessorProp;
 	disabledPaymentMethodIds: string[];
 	setDisabledPaymentMethodIds: ( methods: string[] ) => void;
 	paymentMethodId: string | null | undefined;
@@ -95,7 +96,6 @@ export interface PaymentMethodProviderContextInterface {
 }
 
 export interface CheckoutContextInterface {
-	paymentProcessors: PaymentProcessorProp;
 	onPageLoadError?: CheckoutPageErrorCallback;
 }
 
