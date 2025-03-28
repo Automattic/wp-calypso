@@ -10,6 +10,7 @@
 .qr-code-login-page__heading {
 	@include onboarding-heading-text-mobile;
 	margin-bottom: 16px;
+	text-align: left !important;
 }
 
 .qr-code-login-page__footer {
