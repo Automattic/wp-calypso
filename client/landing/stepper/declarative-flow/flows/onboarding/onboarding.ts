@@ -428,6 +428,7 @@ const onboarding: Flow = {
 						// replace the location to delete processing step from history.
 						window.location.replace( destination );
 					}
+					return;
 				}
 				case 'playground':
 					return navigate( 'domains' );
