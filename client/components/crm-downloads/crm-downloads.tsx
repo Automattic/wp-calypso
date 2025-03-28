@@ -3,20 +3,14 @@ import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
+import useFetchJetpackCRMExtensionsQuery, {
+	Extension,
+} from 'calypso/data/jetpack-crm/use-fetch-jetpack-crm-extensions';
+import { isJetpackCrmProduct } from 'calypso/jetpack-cloud/sections/partner-portal/lib';
 import { useDispatch } from 'calypso/state';
 import { infoNotice, errorNotice } from 'calypso/state/notices/actions';
-import { getExtensionDescription } from './extension-descriptions';
-import { isJetpackCrmProduct } from './is-jetpack-crm-product';
 
 import './style.scss';
-
-interface Extension {
-	name: string;
-	description: string;
-	slug: string;
-	version: string;
-	kbUrl?: string;
-}
 
 // Loading skeleton component for the extensions table
 const LoadingSkeleton = () => (
@@ -27,51 +21,9 @@ const LoadingSkeleton = () => (
 	</div>
 );
 
-const BASE_CRM_APP_URL = 'https://devapp.jetpackcrm.com';
-
-const fetchExtensions = async (): Promise< Extension[] > => {
-	const response = await fetch( `${ BASE_CRM_APP_URL }/api/extensions`, {
-		method: 'GET',
-		credentials: 'omit',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-	} );
-
-	if ( ! response.ok ) {
-		switch ( response.status ) {
-			case 404:
-				throw new Error( 'Extensions not found' );
-			default:
-				throw new Error(
-					'Could not connect to download server. Please check your connection and try again.'
-				);
-		}
-	}
-
-	const data = await response.json();
-	if ( ! data.success || ! Array.isArray( data.extensions ) ) {
-		throw new Error(
-			data.message ||
-				'Could not connect to download server. Please check your connection and try again.'
-		);
-	}
-
-	// Apply translatable descriptions to the extensions
-	const extensionsWithTranslatedDescriptions = data.extensions.map( ( extension: Extension ) => ( {
-		...extension,
-		// Use the translatable description if available, otherwise use the original
-		description: getExtensionDescription( extension.slug ) || extension.description,
-	} ) );
-
-	// Sort extensions alphabetically
-	return extensionsWithTranslatedDescriptions.sort( ( a: Extension, b: Extension ) =>
-		a.name.localeCompare( b.name )
-	);
-};
-
 interface CrmDownloadsProps {
 	licenseKey: string;
+	isLoading?: boolean;
 }
 
 // Error component for invalid license key
@@ -91,61 +43,38 @@ const InvalidLicenseError = () => {
 	);
 };
 
-export function CrmDownloadsContent( { licenseKey }: CrmDownloadsProps ) {
+export function CrmDownloadsContent( { licenseKey, isLoading }: CrmDownloadsProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const [ loadingExtensions, setLoadingExtensions ] = useState< string[] >( [] );
-	const [ isLoadingExtensions, setIsLoadingExtensions ] = useState( true );
-	const [ extensions, setExtensions ] = useState< Extension[] >( [] );
-	const [ isValidKey, setIsValidKey ] = useState< boolean >( isJetpackCrmProduct( licenseKey ) );
+	const isValidKey = isJetpackCrmProduct( licenseKey );
+	const {
+		data: extensions,
+		error,
+		isLoading: isLoadingExtensions,
+		isError,
+	} = useFetchJetpackCRMExtensionsQuery( isValidKey );
 
-	// Function to load extensions
-	const loadExtensions = async () => {
-		// Skip loading if license key is invalid
-		if ( ! isValidKey ) {
-			setIsLoadingExtensions( false );
-			return;
-		}
-
-		setIsLoadingExtensions( true );
-		try {
-			const fetchedExtensions = await fetchExtensions();
-			setExtensions( fetchedExtensions );
-		} catch ( error ) {
-			if ( error instanceof Error ) {
-				dispatch(
-					errorNotice(
-						translate( 'Error: %(message)s', {
-							args: { message: error.message },
-						} )
-					)
-				);
-			} else {
-				dispatch(
-					errorNotice(
-						translate(
-							'Could not connect to download server. Please check your connection and try again.'
-						)
-					)
-				);
-			}
-		} finally {
-			setIsLoadingExtensions( false );
-		}
-	};
-
-	// Check license key validity and load extensions on component mount or when license key changes
-	useEffect( () => {
-		const valid = isJetpackCrmProduct( licenseKey );
-		setIsValidKey( valid );
-
-		if ( valid ) {
-			loadExtensions();
+	if ( isError ) {
+		if ( error instanceof Error ) {
+			dispatch(
+				errorNotice(
+					translate( 'Error: %(message)s', {
+						args: { message: error.message },
+					} )
+				)
+			);
 		} else {
-			setIsLoadingExtensions( false );
+			dispatch(
+				errorNotice(
+					translate(
+						'Could not connect to download server. Please check your connection and try again.'
+					)
+				)
+			);
 		}
-	}, [ licenseKey ] );
+	}
 
 	// Function to handle extension download
 	const handleDownload = async ( extensionSlug: string, extension?: Extension ) => {
@@ -252,7 +181,8 @@ export function CrmDownloadsContent( { licenseKey }: CrmDownloadsProps ) {
 
 	return (
 		<div className="crm-downloads">
-			{ ! isValidKey ? (
+			{ isLoading && ! isValidKey ? <LoadingSkeleton /> : null }
+			{ ! isLoading && ! isValidKey ? (
 				<InvalidLicenseError />
 			) : (
 				<>
@@ -287,7 +217,7 @@ export function CrmDownloadsContent( { licenseKey }: CrmDownloadsProps ) {
 						</div>
 					</Card>
 					<div className="extensions-table">
-						{ isLoadingExtensions && <LoadingSkeleton /> }
+						{ isLoading || ( isLoadingExtensions && <LoadingSkeleton /> ) }
 						{ ! isLoadingExtensions && extensions.length > 0 && (
 							<table>
 								<tbody>

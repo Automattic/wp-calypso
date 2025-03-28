@@ -15,7 +15,6 @@ export interface ExtensionDescription {
 
 /**
  * Get the translatable description for a CRM extension
- *
  * @param slug - The extension slug
  * @returns The translated description or undefined if not found
  */
