@@ -14,7 +14,11 @@ import {
 	useUpdateDocumentTitle,
 } from '../../hooks';
 import { useHelpCenterChatScroll } from '../../hooks/use-help-center-chat-scroll';
-import { getOdieInitialMessage } from '../../utils';
+import {
+	getOdieInitialMessage,
+	interactionHasZendeskEvent,
+	interactionHasEnded,
+} from '../../utils';
 import { ViewMostRecentOpenConversationNotice } from '../odie-notice/view-most-recent-conversation-notice';
 import { DislikeFeedbackMessage } from './dislike-feedback-message';
 import { JumpToRecent } from './jump-to-recent';
@@ -58,14 +62,16 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
 	const scrollParentRef = useRef< HTMLElement | null >( null );
 
-	const { currentSupportInteraction } = useSelect( ( select ) => {
+	const { alreadyHasActiveZendeskChat, chatHasEnded } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		const currentInteraction = helpCenterSelect.getCurrentSupportInteraction();
 		return {
-			currentSupportInteraction: helpCenterSelect.getCurrentSupportInteraction(),
+			alreadyHasActiveZendeskChat:
+				interactionHasZendeskEvent( currentInteraction ) &&
+				! interactionHasEnded( currentInteraction ),
+			chatHasEnded: interactionHasEnded( currentInteraction ),
 		};
 	}, [] );
-
-	const chatHasEnded = [ 'solved', 'closed' ].includes( currentSupportInteraction?.status || '' );
 
 	useZendeskMessageListener();
 	useAutoScroll( messagesContainerRef, shouldEnableAutoScroll );
@@ -119,18 +125,23 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			setSearchParams( searchParams );
 			setHasForwardedToZendesk( true );
 
-			resetSupportInteraction().then( ( interaction ) => {
-				if ( isChatLoaded ) {
-					createZendeskConversation( {
-						avoidTransfer: true,
-						interactionId: interaction?.uuid,
-						section: searchParams.get( 'section' ),
-						createdFrom: 'direct_url',
-					} ).then( () => {
-						setChatMessagesLoaded( true );
-					} );
-				}
-			} );
+			// when forwarding to zd avoid creating new chats
+			if ( alreadyHasActiveZendeskChat ) {
+				setChatMessagesLoaded( true );
+			} else {
+				resetSupportInteraction().then( ( interaction ) => {
+					if ( isChatLoaded ) {
+						createZendeskConversation( {
+							avoidTransfer: true,
+							interactionId: interaction?.uuid,
+							section: searchParams.get( 'section' ),
+							createdFrom: 'direct_url',
+						} ).then( () => {
+							setChatMessagesLoaded( true );
+						} );
+					}
+				} );
+			}
 		}
 	}, [
 		isForwardingToZendesk,
@@ -139,6 +150,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		chat?.conversationId,
 		resetSupportInteraction,
 		createZendeskConversation,
+		alreadyHasActiveZendeskChat,
 	] );
 
 	// Used to apply the correct styling on messages
