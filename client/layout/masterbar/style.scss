@@ -964,8 +964,8 @@ body.is-mobile-app-view {
 		gap: 4px;
 
 		.components-badge:where(.is-default) {
-			background-color: var(--color-global-masterbar-site-info-badge-background, $gray-900);
-			color: var(--color-global-masterbar-site-info-badge-color, $white);
+			background-color: var(--color-global-masterbar-site-info-badge-background, rgba(255, 255, 255, 0.1));
+			color: var(--color-global-masterbar-site-info-badge-color);
 		}
 	}
 }
