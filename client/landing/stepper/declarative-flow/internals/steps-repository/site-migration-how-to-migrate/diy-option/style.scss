@@ -1,12 +1,5 @@
-.how-to-migrate__experiment-diy:not(.step-container-v2 *) {
+.how-to-migrate__experiment-diy {
 	color: var(--studio-gray-90);
 	font-weight: 500;
 	text-decoration: underline;
-}
-
-.site-migration {
-	.step-container-v2__heading {
-		max-width: 620px;
-		margin: 0 auto;
-	}
 }
