@@ -1,12 +1,13 @@
 import { Card, Gridicon, Button } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import isJetpackCrmProduct from 'calypso/components/crm-downloads/is-jetpack-crm-product';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import useFetchJetpackCRMExtensionsQuery, {
 	Extension,
 } from 'calypso/data/jetpack-crm/use-fetch-jetpack-crm-extensions';
+import useHandleExtensionsDownloadMutation from 'calypso/data/jetpack-crm/use-handle-extensions-download-mutation';
 import { useDispatch } from 'calypso/state';
 import { infoNotice, errorNotice } from 'calypso/state/notices/actions';
 
@@ -48,12 +49,15 @@ export function CrmDownloadsContent( { licenseKey, isLoading }: CrmDownloadsProp
 	const dispatch = useDispatch();
 
 	const [ loadingExtensions, setLoadingExtensions ] = useState< string[] >( [] );
-	const isValidKey = isJetpackCrmProduct( licenseKey );
+	const isValidKey = isLoading || isJetpackCrmProduct( licenseKey );
+	const { mutateAsync: mutateExtensionDownload } =
+		useHandleExtensionsDownloadMutation( licenseKey );
 	const {
 		data: extensions,
 		error,
 		isLoading: isLoadingExtensions,
 		isError,
+		refetch: refetchExtensions,
 	} = useFetchJetpackCRMExtensionsQuery( isValidKey );
 
 	if ( isError ) {
@@ -76,207 +80,167 @@ export function CrmDownloadsContent( { licenseKey, isLoading }: CrmDownloadsProp
 		}
 	}
 
-	// Function to handle extension download
-	const handleDownload = async ( extensionSlug: string, extension?: Extension ) => {
-		// Add the extension to the loading state
-		setLoadingExtensions( ( prev ) => [ ...prev, extensionSlug ] );
+	const handleExtensionDownload = useCallback(
+		async ( extensionSlug: string, extension: Extension ) => {
+			setLoadingExtensions( [ ...loadingExtensions, extensionSlug ] );
+			// Mutate and download the extension
+			mutateExtensionDownload( extensionSlug, {
+				onError: ( error ) => {
+					if ( error instanceof Error ) {
+						dispatch(
+							errorNotice(
+								translate( 'Error: %(message)s', {
+									args: { message: error.message },
+								} )
+							)
+						);
+					} else {
+						dispatch(
+							errorNotice(
+								translate(
+									'Could not connect to download server. Please check your connection and try again.'
+								)
+							)
+						);
+					}
 
-		try {
-			const requestData = {
-				license_key: licenseKey,
-				extension_slug: extensionSlug,
-			};
-
-			// API URL for downloads
-			const apiUrl = `${ BASE_CRM_APP_URL }/api/downloads/jetpack-complete`;
-
-			const response = await fetch( apiUrl, {
-				method: 'POST',
-				credentials: 'omit',
-				headers: {
-					'Content-Type': 'application/json',
+					setLoadingExtensions( ( prev ) => prev.filter( ( slug ) => slug !== extensionSlug ) );
 				},
-				body: JSON.stringify( requestData ),
-			} );
-
-			if ( ! response.ok ) {
-				// Handle error based on status code
-				switch ( response.status ) {
-					case 400:
-						throw new Error( 'Missing required fields' );
-					case 401:
-						throw new Error( 'Invalid API key' );
-					case 403:
-						throw new Error(
-							'Invalid license key format. Must be a Jetpack Complete license key.'
+				onSuccess: ( data ) => {
+					// Start the download
+					window.location.href = data.download_url;
+					// Show a notice that the download has started
+					// If extension object is provided, use its name, otherwise try to find it in the extensions array
+					let extensionName = extension?.name;
+					if ( ! extensionName ) {
+						const foundExtension = ( extensions || [] ).find(
+							( ext ) => ext.slug === extensionSlug
 						);
-					case 404:
-						throw new Error( 'Extension not found' );
-					default:
-						throw new Error(
-							'Could not connect to download server. Please check your connection and try again.'
-						);
-				}
-			}
+						extensionName = foundExtension?.name || extensionSlug;
+					}
 
-			const data = await response.json();
-			if ( ! data.success ) {
-				// Use a default message if none is provided
-				if ( data.message ) {
 					dispatch(
-						errorNotice(
-							translate( 'Failed to download extension: %(message)s', {
-								args: { message: data.message },
+						infoNotice(
+							translate( 'Downloading %(name)s', {
+								args: { name: extensionName },
 							} )
 						)
 					);
-				} else {
-					dispatch( errorNotice( translate( 'Failed to download extension' ) ) );
-				}
-				return;
-			}
 
-			// Start the download
-			window.location.href = data.download_url;
+					setLoadingExtensions( ( prev ) => prev.filter( ( slug ) => slug !== extensionSlug ) );
+				},
+			} );
 
-			// Show a notice that the download has started
-			// If extension object is provided, use its name, otherwise try to find it in the extensions array
-			let extensionName = extension?.name;
-			if ( ! extensionName ) {
-				const foundExtension = extensions.find( ( ext ) => ext.slug === extensionSlug );
-				extensionName = foundExtension?.name || extensionSlug;
-			}
-
-			dispatch(
-				infoNotice(
-					translate( 'Downloading %(name)s', {
-						args: { name: extensionName },
-					} )
-				)
-			);
-		} catch ( error ) {
-			// Show error message to the user
-			if ( error instanceof Error ) {
-				dispatch(
-					errorNotice(
-						translate( 'Error: %(message)s', {
-							args: { message: error.message },
-						} )
-					)
-				);
-			} else {
-				dispatch(
-					errorNotice(
-						translate(
-							'Could not connect to download server. Please check your connection and try again.'
-						)
-					)
-				);
-			}
-		} finally {
 			// Remove the extension from the loading state
-			setLoadingExtensions( ( prev ) => prev.filter( ( slug ) => slug !== extensionSlug ) );
-		}
-	};
+		},
+		[ extensions, dispatch, translate, mutateExtensionDownload ]
+	);
 
 	return (
 		<div className="crm-downloads">
-			{ isLoading && ! isValidKey ? <LoadingSkeleton /> : null }
-			{ ! isLoading && ! isValidKey ? (
-				<InvalidLicenseError />
+			{ isLoading ? (
+				<LoadingSkeleton />
 			) : (
 				<>
-					<Card className="manage-purchase__license-clipboard-container">
-						<h3 className="manage-purchase__license-key-heading">{ translate( 'License Key' ) }</h3>
-						<ExternalLink
-							className="manage-purchase__license-clipboard-link"
-							href="https://kb.jetpackcrm.com/knowledge-base/how-to-activate-your-license-key/"
-						>
-							{ translate( 'How to activate' ) }
-						</ExternalLink>
-						<div className="manage-purchase__license-key-row">
-							<div className="manage-purchase__license-clipboard">
-								<code className="manage-purchase__license-clipboard-code">{ licenseKey }</code>
-								<ClipboardButton
-									text={ licenseKey }
-									className="manage-purchase__license-clipboard-icon"
-									borderless
-									compact
-									onCopy={ () => {
-										dispatch(
-											infoNotice( translate( 'License key copied to clipboard' ), {
-												duration: 3000,
-												showDismiss: false,
-											} )
-										);
-									} }
+					{ ! isValidKey ? (
+						<InvalidLicenseError />
+					) : (
+						<>
+							<Card className="manage-purchase__license-clipboard-container">
+								<h3 className="manage-purchase__license-key-heading">
+									{ translate( 'License Key' ) }
+								</h3>
+								<ExternalLink
+									className="manage-purchase__license-clipboard-link"
+									href="https://kb.jetpackcrm.com/knowledge-base/how-to-activate-your-license-key/"
 								>
-									<Gridicon icon="clipboard" />
-								</ClipboardButton>
+									{ translate( 'How to activate' ) }
+								</ExternalLink>
+								<div className="manage-purchase__license-key-row">
+									<div className="manage-purchase__license-clipboard">
+										<code className="manage-purchase__license-clipboard-code">{ licenseKey }</code>
+										<ClipboardButton
+											text={ licenseKey }
+											className="manage-purchase__license-clipboard-icon"
+											borderless
+											compact
+											onCopy={ () => {
+												dispatch(
+													infoNotice( translate( 'License key copied to clipboard' ), {
+														duration: 3000,
+														showDismiss: false,
+													} )
+												);
+											} }
+										>
+											<Gridicon icon="clipboard" />
+										</ClipboardButton>
+									</div>
+								</div>
+							</Card>
+							<div className="extensions-table">
+								{ isLoadingExtensions && <LoadingSkeleton /> }
+								{ ! isLoadingExtensions && extensions && extensions.length > 0 && (
+									<table>
+										<tbody>
+											{ ( extensions ? extensions : [] ).map( ( extension ) => (
+												<tr key={ extension.slug }>
+													<td>
+														<div className="extensions-table__title-row">
+															<strong>{ extension.name }</strong>
+															<div className="extensions-table__version">
+																v{ extension.version }
+															</div>
+														</div>
+														{ extension.kbUrl && (
+															<a
+																href={ extension.kbUrl }
+																target="_blank"
+																rel="noopener noreferrer"
+																className="extensions-table__learn-more"
+															>
+																{ translate( 'Documentation' ) }
+															</a>
+														) }
+														{ extension.description && (
+															<div className="extensions-table__description">
+																{ extension.description }
+															</div>
+														) }
+													</td>
+													<td>
+														<Button
+															primary
+															disabled={ loadingExtensions.includes( extension.slug ) }
+															busy={ loadingExtensions.includes( extension.slug ) }
+															onClick={ () => handleExtensionDownload( extension.slug, extension ) }
+														>
+															{ loadingExtensions.includes( extension.slug )
+																? translate( 'Downloading…' )
+																: translate( 'Download' ) }
+														</Button>
+													</td>
+												</tr>
+											) ) }
+										</tbody>
+									</table>
+								) }
+								{ ! isLoadingExtensions && extensions && extensions.length === 0 && (
+									<div className="extensions-table__error">
+										<Gridicon icon="notice" size={ 36 } />
+										<p>
+											{ translate(
+												'Could not connect to download server. Please check your connection and try again.'
+											) }
+										</p>
+										<Button onClick={ () => refetchExtensions() } disabled={ isLoadingExtensions }>
+											{ isLoadingExtensions ? translate( 'Retrying…' ) : translate( 'Try Again' ) }
+										</Button>
+									</div>
+								) }
 							</div>
-						</div>
-					</Card>
-					<div className="extensions-table">
-						{ isLoading || ( isLoadingExtensions && <LoadingSkeleton /> ) }
-						{ ! isLoadingExtensions && extensions && extensions.length > 0 && (
-							<table>
-								<tbody>
-									{ ( extensions ? extensions : [] ).map( ( extension ) => (
-										<tr key={ extension.slug }>
-											<td>
-												<div className="extensions-table__title-row">
-													<strong>{ extension.name }</strong>
-													<div className="extensions-table__version">v{ extension.version }</div>
-												</div>
-												{ extension.kbUrl && (
-													<a
-														href={ extension.kbUrl }
-														target="_blank"
-														rel="noopener noreferrer"
-														className="extensions-table__learn-more"
-													>
-														{ translate( 'Documentation' ) }
-													</a>
-												) }
-												{ extension.description && (
-													<div className="extensions-table__description">
-														{ extension.description }
-													</div>
-												) }
-											</td>
-											<td>
-												<Button
-													primary
-													disabled={
-														loadingExtensions.includes( extension.slug ) || isLoadingExtensions
-													}
-													busy={ loadingExtensions.includes( extension.slug ) }
-													onClick={ () => handleDownload( extension.slug, extension ) }
-												>
-													{ loadingExtensions.includes( extension.slug )
-														? translate( 'Downloading…' )
-														: translate( 'Download' ) }
-												</Button>
-											</td>
-										</tr>
-									) ) }
-								</tbody>
-							</table>
-						) }
-						{ ! isLoadingExtensions && extensions && extensions.length === 0 && (
-							<div className="extensions-table__error">
-								<Gridicon icon="notice" size={ 36 } />
-								<p>
-									{ translate(
-										'Could not connect to download server. Please check your connection and try again.'
-									) }
-								</p>
-								<Button onClick={ () => loadExtensions() } disabled={ isLoadingExtensions }>
-									{ isLoadingExtensions ? translate( 'Retrying…' ) : translate( 'Try Again' ) }
-								</Button>
-							</div>
-						) }
-					</div>
+						</>
+					) }
 				</>
 			) }
 		</div>
