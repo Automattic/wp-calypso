@@ -211,7 +211,11 @@ function QRCodeLogin( { redirectToAfterLoginUrl } ) {
 				),
 			},
 		} ),
-		translate( 'Tap the Me Tab.' ),
+		translate( 'Tap the {{strong}}Me{{/strong}} tab.', {
+			components: {
+				strong: <strong />,
+			},
+		} ),
 		translate( 'Tap the {{strong}}Scan Login Code{{/strong}} option.', {
 			components: {
 				strong: <strong />,
