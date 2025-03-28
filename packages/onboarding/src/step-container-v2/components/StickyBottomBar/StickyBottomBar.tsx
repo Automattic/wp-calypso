@@ -3,23 +3,39 @@ import { ReactNode } from 'react';
 import './style.scss';
 
 interface StickyBottomBarProps {
-	leftButton?: ReactNode;
-	rightButton?: ReactNode;
+	leftElement?: ReactNode;
+	centerElement?: ReactNode;
+	rightElement?: ReactNode;
 	children?: ReactNode;
 }
 
-export const StickyBottomBar = ( { leftButton, rightButton, children }: StickyBottomBarProps ) => {
-	return (
-		<div className="step-container-v2__sticky-bottom-bar">
-			{ leftButton && (
-				<div className="step-container-v2__sticky-bottom-bar-left-button">{ leftButton }</div>
-			) }
-			{ children && (
-				<div className="step-container-v2__sticky-bottom-bar-content">{ children }</div>
-			) }
-			{ rightButton && (
-				<div className="step-container-v2__sticky-bottom-bar-right-button">{ rightButton }</div>
-			) }
-		</div>
-	);
+export const StickyBottomBar = ( {
+	leftElement,
+	centerElement,
+	rightElement,
+	children,
+}: StickyBottomBarProps ) => {
+	const getContent = () => {
+		if ( children ) {
+			return children;
+		}
+
+		return (
+			<>
+				{ leftElement && (
+					<div className="step-container-v2__sticky-bottom-bar-left-element">{ leftElement }</div>
+				) }
+				{ centerElement && (
+					<div className="step-container-v2__sticky-bottom-bar-center-element">
+						{ centerElement }
+					</div>
+				) }
+				{ rightElement && (
+					<div className="step-container-v2__sticky-bottom-bar-right-element">{ rightElement }</div>
+				) }
+			</>
+		);
+	};
+
+	return <div className="step-container-v2__sticky-bottom-bar">{ getContent() }</div>;
 };

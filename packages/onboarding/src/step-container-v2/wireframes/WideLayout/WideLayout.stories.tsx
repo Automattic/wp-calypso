@@ -27,7 +27,7 @@ export const Default = () => (
 				) }
 			/>
 		}
-		stickyBottomBar={ <StickyBottomBar rightButton={ <PrimaryButton /> } /> }
+		stickyBottomBar={ <StickyBottomBar rightElement={ <PrimaryButton /> } /> }
 	>
 		<WireframePlaceholder height={ 616 }>Main</WireframePlaceholder>
 	</WideLayout>

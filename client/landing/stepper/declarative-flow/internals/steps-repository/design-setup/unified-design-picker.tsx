@@ -889,13 +889,14 @@ const UnifiedDesignPickerStep: StepType< {
 
 						return (
 							<Step.StickyBottomBar
-								leftButton={ <Step.BackButton onClick={ handleBackClick } /> }
-								rightButton={ actionButtons }
-							>
-								<div className="step-container-v2--design-picker-preview__header-design-title">
-									{ headerDesignTitle }
-								</div>
-							</Step.StickyBottomBar>
+								leftElement={ <Step.BackButton onClick={ handleBackClick } /> }
+								centerElement={
+									<div className="step-container-v2--design-picker-preview__header-design-title">
+										{ headerDesignTitle }
+									</div>
+								}
+								rightElement={ actionButtons }
+							/>
 						);
 					} }
 				>

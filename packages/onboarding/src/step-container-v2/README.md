@@ -26,7 +26,7 @@ const MyStep = () => {
 		<Step.StepContainerV2
 			topBar={ <Step.TopBar /> }
 			heading={ <Step.Heading text="Heading" /> }
-			stickyBottomBar={ <Step.StickyBottomBar rightButton={ nextButton } /> }
+			stickyBottomBar={ <Step.StickyBottomBar rightElement={ nextButton } /> }
 		>
 			{ ( { isSmallViewport } ) => (
 				<>

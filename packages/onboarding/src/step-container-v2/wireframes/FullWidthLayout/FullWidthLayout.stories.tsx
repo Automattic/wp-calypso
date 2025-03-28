@@ -59,7 +59,7 @@ export const ThemePreviewFonts = () => {
 					return null;
 				}
 
-				return <StickyBottomBar leftButton={ backButton } rightButton={ nextButton } />;
+				return <StickyBottomBar leftElement={ backButton } rightElement={ nextButton } />;
 			} }
 		>
 			{ ( { isLargeViewport } ) => {

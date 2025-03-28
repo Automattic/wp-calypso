@@ -82,7 +82,7 @@ const DIFMStartingPoint: StepType< {
 						/>
 					}
 					stickyBottomBar={
-						<Step.StickyBottomBar leftButton={ secondaryButton } rightButton={ primaryButton } />
+						<Step.StickyBottomBar leftElement={ secondaryButton } rightElement={ primaryButton } />
 					}
 					primaryButton={ primaryButton }
 					secondaryButton={ secondaryButton }

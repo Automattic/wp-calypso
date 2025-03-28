@@ -29,7 +29,7 @@ export const ThreeColumnsOnRightLayout = () => (
 				) }
 			/>
 		}
-		stickyBottomBar={ <StickyBottomBar rightButton={ <PrimaryButton /> } /> }
+		stickyBottomBar={ <StickyBottomBar rightElement={ <PrimaryButton /> } /> }
 	>
 		<WireframePlaceholder height={ 616 }>Main</WireframePlaceholder>
 		<WireframePlaceholder height={ 616 }>Sidebar</WireframePlaceholder>
@@ -52,7 +52,7 @@ export const EqualTwoColumnLayout = () => (
 				) }
 			/>
 		}
-		stickyBottomBar={ <StickyBottomBar rightButton={ <PrimaryButton /> } /> }
+		stickyBottomBar={ <StickyBottomBar rightElement={ <PrimaryButton /> } /> }
 	>
 		<WireframePlaceholder height={ 616 }>Content 1</WireframePlaceholder>
 		<WireframePlaceholder height={ 616 }>Content 2</WireframePlaceholder>
@@ -75,7 +75,7 @@ export const WithRenderProp = () => (
 				) }
 			/>
 		}
-		stickyBottomBar={ <StickyBottomBar rightButton={ <PrimaryButton /> } /> }
+		stickyBottomBar={ <StickyBottomBar rightElement={ <PrimaryButton /> } /> }
 	>
 		{ ( { isSmallViewport, isLargeViewport } ) => (
 			<>
