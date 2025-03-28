@@ -822,7 +822,7 @@ export function hasToUpgradeToPayForADomain(
 	return false;
 }
 
-export function isDomainMappingFree( selectedSite: undefined | SiteDetails | null ): boolean {
+export function isDomainMappingFree( selectedSite: SiteDetails | null | undefined ): boolean {
 	return Boolean(
 		selectedSite?.plan &&
 			isPlan( selectedSite.plan ) &&
