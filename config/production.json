@@ -120,7 +120,7 @@
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,
-		"plans/self-service-downgrade": false,
+		"plans/self-service-downgrade": true,
 		"plans/starter-plan": false,
 		"plans/updated-storage-labels": true,
 		"plans/upgradeable-storage": true,
