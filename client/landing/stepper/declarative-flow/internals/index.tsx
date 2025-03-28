@@ -107,8 +107,8 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 	const queryParams = useQuery();
 
 	let stepSlugDerivedFromState;
-	if ( currentStepRoute === '' && flow.getAlternateInitialStep ) {
-		stepSlugDerivedFromState = flow.getAlternateInitialStep( {
+	if ( currentStepRoute === '' && flow.getCustomInitialStep ) {
+		stepSlugDerivedFromState = flow.getCustomInitialStep( {
 			queryParams,
 			steps: flowSteps,
 		} );

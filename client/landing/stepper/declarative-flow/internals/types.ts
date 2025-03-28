@@ -130,7 +130,7 @@ export type UseTracksEventPropsHook = () => {
 	>;
 };
 
-type GetAlternateInitialStep = ( {
+type GetCustomInitialStep = ( {
 	queryParams,
 	steps,
 }: {
@@ -188,7 +188,7 @@ export type FlowV1 = {
 	useSideEffect?: UseSideEffectHook< ReturnType< FlowV1[ 'useSteps' ] > >;
 	useTracksEventProps?: UseTracksEventPropsHook;
 
-	getAlternateInitialStep?: GetAlternateInitialStep;
+	getCustomInitialStep?: GetCustomInitialStep;
 };
 
 export type FlowV2 = {
@@ -256,7 +256,7 @@ export type FlowV2 = {
 	 */
 	useAssertConditions?: UseAssertConditionsHook< ReturnType< FlowV1[ 'useSteps' ] > >;
 
-	getAlternateInitialStep?: GetAlternateInitialStep;
+	getCustomInitialStep?: GetCustomInitialStep;
 };
 
 export type Flow = FlowV1 | FlowV2;

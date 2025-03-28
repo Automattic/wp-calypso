@@ -92,7 +92,7 @@ const siteSetupFlow: Flow = {
 
 		return steps;
 	},
-	getAlternateInitialStep( { queryParams, steps } ) {
+	getCustomInitialStep( { queryParams, steps } ) {
 		const intent = queryParams.get( 'intent' );
 		const importPlatform = queryParams.get( 'importPlatform' );
 
