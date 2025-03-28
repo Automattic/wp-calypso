@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { FoldableCard } from '@automattic/components';
 import clsx from 'clsx';
-import { translate, fixMe } from 'i18n-calypso';
+import { fixMe, translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
@@ -63,9 +63,9 @@ function FollowingStream( { ...props } ) {
 					<NavigationHeader
 						title={ translate( 'Recent' ) }
 						subtitle={ fixMe( {
-							text: 'Fresh content from blogs you follow.',
-							newCopy: translate( 'Fresh content from blogs you follow.' ),
-							oldCopy: translate( "Stay current with the blogs you've subscribed to." ),
+							text: 'Latest from your subscriptions.',
+							newCopy: translate( 'Latest from your subscriptions.' ),
+							oldCopy: translate( 'Fresh content from blogs you follow.' ),
 						} ) }
 						className={ clsx( 'following-stream-header', {
 							'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
@@ -82,6 +82,7 @@ function FollowingStream( { ...props } ) {
 							className="following-stream__quick-post-card"
 							smooth
 							contentExpandedStyle={ { maxHeight: '800px' } }
+							useInert
 							onOpen={ () => {
 								focusEditor();
 							} }

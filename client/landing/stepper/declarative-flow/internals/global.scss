@@ -79,7 +79,7 @@ button {
 .onboarding.design-setup:not(:has(.step-container-v2)),
 .onboarding.design-choices:not(:has(.step-container-v2)),
 .onboarding.difm-starting-point:not(:has(.step-container-v2)),
-.site-migration,
+.site-migration:not(:has(.step-container-v2)),
 .migration,
 .plugin-bundle,
 .newsletter-setup,

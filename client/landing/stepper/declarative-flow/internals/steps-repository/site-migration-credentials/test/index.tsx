@@ -140,7 +140,7 @@ describe( 'SiteMigrationCredentials', () => {
 			expect( wp.req.post ).toHaveBeenCalledWith(
 				expect.objectContaining( {
 					path: '/sites/123/site-migration-status-sticker',
-					body: { status_sticker: MigrationStatus.PENDING_DIFM },
+					body: { status_sticker: MigrationStatus.STARTED_DIFM },
 				} )
 			);
 		} );
@@ -153,7 +153,6 @@ describe( 'SiteMigrationCredentials', () => {
 		await userEvent.click( skipButton() );
 
 		expect( submit ).toHaveBeenCalledWith( { action: 'skip' } );
-		expect( wpcomRequest ).not.toHaveBeenCalled();
 	} );
 
 	it( 'shows errors on the required fields when the user does not fill the fields when user select credentials option', async () => {

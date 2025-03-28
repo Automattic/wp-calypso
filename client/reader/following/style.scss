@@ -1,6 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 
 .is-section-reader .navigation-header.following-stream-header {
+
 	&.reader-dual-column {
 		max-width: 968px; // Max width of dual column reader stream.
 	}
@@ -10,7 +11,9 @@
 	margin-top: 0;
 
 	.section-nav-tabs__list {
+
 		.section-nav-tab__link {
+
 			&:hover {
 				background-color: transparent;
 			}
@@ -73,6 +76,7 @@
 	}
 }
 
+
 .following-stream__quick-post-card.card {
 
 	.accessible-focus & .foldable-card__action:focus {
@@ -82,7 +86,12 @@
 		border-radius: 2px;
 	}
 
+	.foldable-card__content {
+		position: relative;
+	}
+
 	&.is-expanded {
+
 		.foldable-card__content {
 			overflow: visible;
 		}

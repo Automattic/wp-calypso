@@ -692,56 +692,9 @@ describe( 'Site Migration Flow', () => {
 			} );
 		} );
 
-		describe( 'SITE_MIGRATION_ASSISTED_MIGRATION', () => {
-			it( 'redirects back to SITE_MIGRATION_CREDENTIALS step when failing to create the ticket', () => {
-				const destination = runNavigation( {
-					from: STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
-					dependencies: {
-						hasError: 'ticket-creation',
-					},
-					query: {
-						siteSlug: 'example.wordpress.com',
-						siteId: 123,
-						from: 'https://site-to-be-migrated.com',
-					},
-				} );
-
-				expect( destination ).toMatchDestination( {
-					step: STEPS.SITE_MIGRATION_CREDENTIALS,
-					query: {
-						siteSlug: 'example.wordpress.com',
-						siteId: 123,
-						from: 'https://site-to-be-migrated.com',
-						error: 'ticket-creation',
-					},
-				} );
-			} );
-		} );
-
 		describe( 'SITE_MIGRATION_CREDENTIALS', () => {
-			it( 'redirects the user to SITE_MIGRATION_ASSISTED_MIGRATION step when the user submits the credentials', () => {
-				const destination = runNavigation( {
-					from: STEPS.SITE_MIGRATION_CREDENTIALS,
-					dependencies: {},
-					query: {
-						siteSlug: 'example.wordpress.com',
-						siteId: 123,
-						from: 'https://site-to-be-migrated.com',
-					},
-				} );
-
-				expect( destination ).toMatchDestination( {
-					step: STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
-					query: {
-						siteSlug: 'example.wordpress.com',
-						siteId: 123,
-						from: 'https://site-to-be-migrated.com',
-					},
-				} );
-			} );
-
-			it( 'redirects to SITE_MIGRATION_ASSISTED_MIGRATION step when the user skips the form and enables ticket creation', () => {
-				const destination = runNavigation( {
+			it( 'redirects to site overview when the user skips', () => {
+				runNavigation( {
 					from: STEPS.SITE_MIGRATION_CREDENTIALS,
 					dependencies: {
 						action: 'skip',
@@ -753,22 +706,18 @@ describe( 'Site Migration Flow', () => {
 					},
 				} );
 
-				expect( destination ).toMatchDestination( {
-					step: STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
+				expect( window.location.assign ).toMatchURL( {
+					path: '/overview/example.wordpress.com',
 					query: {
-						siteSlug: 'example.wordpress.com',
-						siteId: 123,
-						from: 'https://site-to-be-migrated.com',
+						ref: 'site-migration',
 					},
 				} );
 			} );
 
-			it( 'redirects to SITE_MIGRATION_ASSISTED_MIGRATION step while skipping ticket creation', () => {
-				const destination = runNavigation( {
+			it( 'redirects to site overview when submitting credentials', () => {
+				runNavigation( {
 					from: STEPS.SITE_MIGRATION_CREDENTIALS,
-					dependencies: {
-						action: 'continue',
-					},
+					dependencies: {},
 					query: {
 						siteSlug: 'example.wordpress.com',
 						siteId: 123,
@@ -776,18 +725,15 @@ describe( 'Site Migration Flow', () => {
 					},
 				} );
 
-				expect( destination ).toMatchDestination( {
-					step: STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
+				expect( window.location.assign ).toMatchURL( {
+					path: '/overview/example.wordpress.com',
 					query: {
-						siteSlug: 'example.wordpress.com',
-						siteId: 123,
-						from: 'https://site-to-be-migrated.com',
-						preventTicketCreation: 'true',
+						ref: 'site-migration',
 					},
 				} );
 			} );
 
-			it( 'redirects to SITE_MIGRATION_ALREADY_WPCOM step when the user is already on WPCOM', () => {
+			it( 'redirects to SITE_MIGRATION_FALLBACK_CREDENTIALS when the user is already on WPCOM', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_CREDENTIALS,
 					dependencies: {
@@ -920,8 +866,8 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'SITE_MIGRATION_FALLBACK_CREDENTIALS', () => {
-			it( 'redirects to SITE_MIGRATION_ASSISTED_MIGRATION when the user skips the form and enables ticket creation', () => {
-				const destination = runNavigation( {
+			it( 'redirects to site overview when the user skips', () => {
+				runNavigation( {
 					from: STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS,
 					dependencies: {
 						action: 'skip',
@@ -933,19 +879,16 @@ describe( 'Site Migration Flow', () => {
 					},
 				} );
 
-				expect( destination ).toMatchDestination( {
-					step: STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
+				expect( window.location.assign ).toMatchURL( {
+					path: '/overview/example.wordpress.com',
 					query: {
-						siteSlug: 'example.wordpress.com',
-						siteId: 123,
-						from: 'https://site-to-be-migrated.com',
-						preventTicketCreation: 'true',
+						ref: 'site-migration',
 					},
 				} );
 			} );
 
-			it( 'redirects to SITE_MIGRATION_ASSISTED_MIGRATION while disabling ticket creation', () => {
-				const destination = runNavigation( {
+			it( 'redirects to site overview when submitting credentials', () => {
+				runNavigation( {
 					from: STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS,
 					query: {
 						siteSlug: 'example.wordpress.com',
@@ -954,13 +897,10 @@ describe( 'Site Migration Flow', () => {
 					},
 				} );
 
-				expect( destination ).toMatchDestination( {
-					step: STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
+				expect( window.location.assign ).toMatchURL( {
+					path: '/overview/example.wordpress.com',
 					query: {
-						siteSlug: 'example.wordpress.com',
-						siteId: 123,
-						from: 'https://site-to-be-migrated.com',
-						preventTicketCreation: 'true',
+						ref: 'site-migration',
 					},
 				} );
 			} );
@@ -1066,30 +1006,23 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION', () => {
-			it( 'redirects to the site authorization url when the user authorizes the application password', () => {
-				const currentURL = `https://calypso/setup/${ STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug }`;
-				window.location.href = currentURL;
-
+			it( 'redirects to site overview when the user skips', () => {
 				runNavigation( {
 					from: STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION,
+					dependencies: {
+						action: 'skip',
+					},
 					query: {
 						siteSlug: 'example.wordpress.com',
 						siteId: 123,
-						from: 'http://oldsite.com',
-					},
-					dependencies: {
-						action: 'authorization',
-						authorizationUrl:
-							'https://oldsite.com/wp-admin/authorize-application.php?app_name=Migrate+to+WordPress.com&app_id=c95b5f6a-b93f-4ece-96c2-a6660bfcb6d2',
+						from: 'https://site-to-be-migrated.com',
 					},
 				} );
 
 				expect( window.location.assign ).toMatchURL( {
-					path: 'https://oldsite.com/wp-admin/authorize-application.php',
+					path: '/overview/example.wordpress.com',
 					query: {
-						app_id: 'c95b5f6a-b93f-4ece-96c2-a6660bfcb6d2',
-						app_name: 'Migrate to WordPress.com',
-						success_url: currentURL,
+						ref: 'site-migration',
 					},
 				} );
 			} );
@@ -1117,8 +1050,8 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			it( 'redirects to SITE_MIGRATION_ASSISTED_MIGRATION when the user ask for help', () => {
-				const destination = runNavigation( {
+			it( 'redirects to the overview when the user ask for help', () => {
+				runNavigation( {
 					from: STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION,
 					dependencies: {
 						action: 'skip',
@@ -1130,12 +1063,10 @@ describe( 'Site Migration Flow', () => {
 					},
 				} );
 
-				expect( destination ).toMatchDestination( {
-					step: STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
+				expect( window.location.assign ).toMatchURL( {
+					path: '/overview/example.wordpress.com',
 					query: {
-						siteSlug: 'example.wordpress.com',
-						siteId: 123,
-						from: 'http://oldsite.com',
+						ref: 'site-migration',
 					},
 				} );
 			} );

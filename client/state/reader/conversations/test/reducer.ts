@@ -11,7 +11,7 @@ import { items } from '../reducer';
 describe( 'reducer', () => {
 	describe( '#items()', () => {
 		test( 'should default to an empty object', () => {
-			const state = items( undefined, {} );
+			const state = items( undefined, { type: '@@TEST/INIT' } );
 			expect( state ).toEqual( {} );
 		} );
 

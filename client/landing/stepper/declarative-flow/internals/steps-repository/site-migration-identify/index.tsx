@@ -1,4 +1,10 @@
-import { StepContainer, Title, SubTitle, HOSTED_SITE_MIGRATION_FLOW } from '@automattic/onboarding';
+import {
+	StepContainer,
+	Title,
+	SubTitle,
+	HOSTED_SITE_MIGRATION_FLOW,
+	Step,
+} from '@automattic/onboarding';
 import { Icon, next, published, shield } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { type FC, ReactElement, useEffect, useState, useCallback } from 'react';
@@ -9,8 +15,9 @@ import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-q
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { shouldUseStepContainerV2MigrationFlow } from '../../../helpers/should-use-step-container-v2';
 import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
-import type { Step } from '../../types';
+import type { Step as StepType } from '../../types';
 import type { UrlData } from 'calypso/blocks/import/types';
 
 import './style.scss';
@@ -54,9 +61,15 @@ interface Props {
 	onSkip: () => void;
 	hideImporterListLink: boolean;
 	flowName: string;
+	onVisibilityChange: ( isVisible: boolean ) => void;
 }
 
-export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLink = false } ) => {
+export const Analyzer: FC< Props > = ( {
+	onComplete,
+	onSkip,
+	onVisibilityChange,
+	hideImporterListLink = false,
+} ) => {
 	const translate = useTranslate();
 	const [ siteURL, setSiteURL ] = useState< string >( '' );
 	const {
@@ -73,8 +86,11 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 	}, [ onComplete, siteInfo ] );
 
 	if ( isFetching || ( isFetched && ! hasError ) ) {
+		onVisibilityChange?.( false );
 		return <ScanningStep />;
 	}
+
+	onVisibilityChange?.( true );
 
 	const hostingDetailItems = {
 		'blazing-fast-speed': {
@@ -94,13 +110,7 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 	};
 
 	return (
-		<div className="import__capture-wrapper">
-			<div className="import__heading import__heading-center">
-				<Title>{ translate( 'Let’s find your site' ) }</Title>
-				<SubTitle>
-					{ translate( 'Enter your current site address below to get started.' ) }
-				</SubTitle>
-			</div>
+		<>
 			<div className="import__capture-container">
 				<CaptureInput
 					onInputEnter={ setSiteURL }
@@ -118,13 +128,13 @@ export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLin
 				/>
 			</div>
 			<HostingDetailsWithIcons items={ Object.values( hostingDetailItems ) } />
-		</div>
+		</>
 	);
 };
 
 export type SiteMigrationIdentifyAction = 'continue' | 'skip_platform_identification';
 
-const SiteMigrationIdentify: Step< {
+const SiteMigrationIdentify: StepType< {
 	submits: {
 		action: SiteMigrationIdentifyAction;
 		platform?: string;
@@ -134,6 +144,7 @@ const SiteMigrationIdentify: Step< {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
 	const { createScreenshots } = useSitePreviewMShotImageHandler();
+	const isUsingStepContainerV2 = shouldUseStepContainerV2MigrationFlow( flow );
 
 	const handleSubmit = useCallback(
 		async ( action: SiteMigrationIdentifyAction, data?: { platform: string; from: string } ) => {
@@ -159,6 +170,52 @@ const SiteMigrationIdentify: Step< {
 		return ( shouldHideBasedOnRef || shouldHideBasedOnVariant ) && ! shouldNotHideIfBackToIsSet;
 	};
 
+	const [ isVisible, setIsVisible ] = useState( false );
+
+	const stepContent = (
+		<Analyzer
+			onComplete={ ( { platform, url } ) => handleSubmit( 'continue', { platform, from: url } ) }
+			hideImporterListLink={ urlQueryParams.get( 'hide_importer_link' ) === 'true' }
+			onSkip={ () => {
+				handleSubmit( 'skip_platform_identification' );
+			} }
+			flowName={ flow }
+			onVisibilityChange={ ( isVisible ) => {
+				setIsVisible( isVisible );
+			} }
+		/>
+	);
+
+	if ( isUsingStepContainerV2 ) {
+		return (
+			<>
+				<DocumentHead title={ translate( 'Import your site content' ) } />
+				<Step.CenteredColumnLayout
+					columnWidth={ 4 }
+					topBar={
+						<Step.TopBar
+							backButton={
+								shouldHideBackButton() ? undefined : (
+									<Step.BackButton onClick={ navigation.goBack } />
+								)
+							}
+						/>
+					}
+					heading={
+						isVisible ? (
+							<Step.Heading
+								text={ translate( 'Let’s find your site' ) }
+								subText={ translate( 'Enter your current site address below to get started.' ) }
+							/>
+						) : undefined
+					}
+				>
+					{ stepContent }
+				</Step.CenteredColumnLayout>
+			</>
+		);
+	}
+
 	return (
 		<>
 			<DocumentHead title={ translate( 'Import your site content' ) } />
@@ -174,16 +231,17 @@ const SiteMigrationIdentify: Step< {
 				goNext={ navigation?.submit }
 				isFullLayout
 				stepContent={
-					<Analyzer
-						onComplete={ ( { platform, url } ) =>
-							handleSubmit( 'continue', { platform, from: url } )
-						}
-						hideImporterListLink={ urlQueryParams.get( 'hide_importer_link' ) === 'true' }
-						onSkip={ () => {
-							handleSubmit( 'skip_platform_identification' );
-						} }
-						flowName={ flow }
-					/>
+					<div className="import__capture-wrapper">
+						{ isVisible && (
+							<div className="import__heading import__heading-center">
+								<Title>{ translate( 'Let’s find your site' ) }</Title>
+								<SubTitle>
+									{ translate( 'Enter your current site address below to get started.' ) }
+								</SubTitle>
+							</div>
+						) }
+						{ stepContent }
+					</div>
 				}
 				recordTracksEvent={ recordTracksEvent }
 			/>
