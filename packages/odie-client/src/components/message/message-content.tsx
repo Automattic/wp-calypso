@@ -5,7 +5,7 @@ import { zendeskMessageConverter } from '../../utils';
 import ChatWithSupportLabel from '../chat-with-support';
 import DislikeFeedbackMessage from './dislike-feedback-message';
 import ErrorMessage from './error-message';
-import { FeedbackContent } from './feedback-content';
+import { FeedbackThumbs } from './feedback-thumbs';
 import { IntroductionMessage } from './introduction-message';
 import { UserMessage } from './user-message';
 import type { ZendeskMessage, Message } from '../../types';
@@ -26,14 +26,15 @@ export const MessageContent = ( {
 	displayChatWithSupportEndedLabel?: boolean;
 } ) => {
 	const { experimentVariationName } = useOdieAssistantContext();
+	const isFeedbackMessage = message?.actions;
 	const messageClasses = clsx(
 		'odie-chatbox-message',
 		`odie-chatbox-message-${ message.role }`,
 		`odie-chatbox-message-${ message.type ?? 'message' }`,
+		isFeedbackMessage && 'odie-chatbox-message-conversation-feedback',
 		message?.context?.flags?.show_ai_avatar === false && 'odie-chatbox-message-no-avatar'
 	);
 	const { __ } = useI18n();
-	const isFeedbackMessage = message.type === 'conversation-feedback' && message?.meta?.feedbackUrl;
 
 	const containerClasses = clsx(
 		'odie-chatbox-message-sources-container',
@@ -82,9 +83,7 @@ export const MessageContent = ( {
 						/>
 					) }
 					{ message.type === 'introduction' && <IntroductionMessage content={ message.content } /> }
-					{ isFeedbackMessage && (
-						<FeedbackContent content={ message.content } meta={ message?.meta } />
-					) }
+					{ isFeedbackMessage && <FeedbackThumbs /> }
 
 					{ ! stopConflatingNegativeRatingWithContactSupport &&
 						message.type === 'dislike-feedback' && <DislikeFeedbackMessage /> }
