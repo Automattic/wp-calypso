@@ -1,12 +1,12 @@
 import { Card, Gridicon, Button } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import isJetpackCrmProduct from 'calypso/components/crm-downloads/is-jetpack-crm-product';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import useFetchJetpackCRMExtensionsQuery, {
 	Extension,
 } from 'calypso/data/jetpack-crm/use-fetch-jetpack-crm-extensions';
-import { isJetpackCrmProduct } from 'calypso/jetpack-cloud/sections/partner-portal/lib';
 import { useDispatch } from 'calypso/state';
 import { infoNotice, errorNotice } from 'calypso/state/notices/actions';
 

@@ -72,7 +72,7 @@ import { bindActionCreators } from 'redux';
 import { SupportedSlugs } from 'calypso/../packages/components/src/product-icon/config';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import AsyncLoad from 'calypso/components/async-load';
-import { isJetpackCrmProduct } from 'calypso/components/crm-downloads/is-jetpack-crm-product';
+import isJetpackCrmProduct from 'calypso/components/crm-downloads/is-jetpack-crm-product';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
