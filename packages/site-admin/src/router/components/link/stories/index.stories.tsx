@@ -68,9 +68,7 @@ export const PassCustomState: Story = {
 
 		let newLuckyNumber = 0;
 
-		/*
-		 * Create a new lucky number only when the user clicks on the link.
-		 */
+		// Create a new lucky number only when the init flag is false.
 		if ( ! init && browserHistory.action !== 'POP' ) {
 			newLuckyNumber = ( ( Math.random() * 100 ) | 0 ) + 1;
 		}
@@ -88,9 +86,7 @@ export const PassCustomState: Story = {
 
 				{ ! init && (
 					<div>
-						<span>
-							Previous lucky numbers: <strong>[ { history.join( ', ' ) } ]</strong>
-						</span>
+						Previous lucky numbers: <strong>[ { history.join( ', ' ) } ]</strong>
 					</div>
 				) }
 
