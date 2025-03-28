@@ -152,7 +152,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 
 		// The `nextStep` is available only when logged-out users go to the step that requires auth
 		// and are redirected to the user step.
-		const postAuthStepSlug = stepData?.nextStep ?? '';
+		const postAuthStepSlug = stepData?.nextStep ?? customInitialStepSlug ?? '';
 		if ( step.slug === PRIVATE_STEPS.USER.slug && postAuthStepSlug ) {
 			const flowSlug = flow.variantSlug ?? flow.name;
 			const previousAuthStepSlug = stepData?.previousStep;
@@ -223,10 +223,8 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 		<Loading className="wpcom-loading__boot" />
 	);
 
-	let stepSlugToRedirectTo = flow.__experimentalUseBuiltinAuth ? firstStepSlug : stepPaths[ 0 ];
-	if ( isLoggedIn && customInitialStepSlug ) {
-		stepSlugToRedirectTo = customInitialStepSlug;
-	}
+	const stepSlugToRedirectTo =
+		customInitialStepSlug ?? ( flow.__experimentalUseBuiltinAuth ? firstStepSlug : stepPaths[ 0 ] );
 
 	return (
 		<Boot fallback={ fallback }>
