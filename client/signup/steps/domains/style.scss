@@ -3,6 +3,12 @@
 @import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/colors.native";
 
+body {
+	.is-section-signup, .is-section-stepper {
+		text-rendering: optimizelegibility;
+		-webkit-font-smoothing: antialiased;
+	}
+}
 .domains__step-section-wrapper {
 	margin: 0 auto;
 	width: 100%;
