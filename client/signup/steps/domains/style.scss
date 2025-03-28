@@ -520,22 +520,59 @@ body.is-section-signup {
 .step-route.onboarding.domains:has(.step-container-v2) {
 	padding: 0;
 
-	.register-domain-step__search-card {
-		margin: 0;
+	.register-domain-step {
+		&__search-card {
+			@media (min-width: 600px) {
+				margin: 20px 20px 0;
+			}
+
+			@media (min-width: 960px) {
+				margin: 0;
+			}
+		}
+
+		&__domain-side-content-container-domain-explanation-image {
+			max-width: 100%;
+			margin-bottom: 0;
+		}
+
+		&__example-prompt {
+			margin: 0;
+
+			@media (min-width: 600px) {
+				margin: 0 20px;
+			}
+		}
 	}
 
 	.featured-domain-suggestions,
 	.domain-suggestion {
 		margin-inline: 0;
+
+		@media (min-width: 600px) {
+			margin-inline: 20px;
+
+			@media (min-width: 960px) {
+				margin: 0;
+			}
+		}
 	}
 
-	.register-domain-step__domain-side-content-container-domain-explanation-image {
-		max-width: 100%;
-		margin-bottom: 0;
-	}
+	.featured-domain-suggestions {
+		border-top: none;
 
-	.register-domain-step__example-prompt {
-		margin: 0;
+		@media (min-width: 600px) {
+			margin: 0 20px;
+
+			@media (min-width: 960px) {
+				margin: 0;
+			}
+		}
+
+		.featured-domain-suggestion {
+			margin: 0;
+			margin-bottom: 12px;
+		}
 	}
 
 	.domains__domain-side-content-container {
@@ -551,25 +588,48 @@ body.is-section-signup {
 		@include break-medium {
 			max-width: 290px;
 		}
+
+		@include break-large {
+			margin-left: 40px;
+		}
+
+		@include break-huge {
+			margin-left: 60px;
+		}
+
+		&.fade-out {
+			display: none;
+		}
 	}
 
-	.domains__domain-side-content.fade-out {
-		display: none;
+	.step-container-v2__heading {
+		h1:not(.small) {
+			letter-spacing: -0.4px;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			line-height: 1.2em;
+		}
+
+		> p {
+			color: $gray-60;
+			font-size: 1rem;
+		}
 	}
 }
 
-.step-container-v2__content.step-container-v2__content--two-column-layout.domains__step-content.domains__step-content-domain-step {
-	column-gap: 0;
-	max-width: 1280px;
-}
+.step-container-v2 {
+	&__content.step-container-v2__content--two-column-layout.domains__step-content.domains__step-content-domain-step {
+		column-gap: 0;
+		max-width: 1280px;
+	}
 
-.step-container-v2__content-wrapper.padding {
-	padding: 0 12px;
-	gap: 0;
-}
+	&__content-wrapper.padding {
+		padding: 0 12px;
+		gap: 0;
+	}
 
-.step-container-v2__heading {
-	margin-top: 0;
+	&__heading {
+		margin-top: 0;
+	}
 }
 
 .domains__step-content-domain-step > div {
@@ -587,133 +647,60 @@ body.is-section-signup {
 	}
 }
 
-.domains__domain-side-content {
-	@media (min-width: 1440px) {
-		margin: 0 0 0 60px;
-	}
-}
-
-.step-route.onboarding.domains:has(.step-container-v2) .domains__domain-side-content-container>.domains__domain-side-content {
-	@include break-large {
-		margin-left: 40px;
+.domain-product-price {
+	&.domain-product-single-price.domain-product-price__domain-step-signup-flow {
+		align-self: center;
 	}
 
-	@include break-huge {
-		margin-left: 60px;
+	@include breakpoint-deprecated( "<660px" ) {
+		&.domain-product-price__domain-step-signup-flow {
+			flex-direction: column;
+		}
 	}
-}
-
-.step-route.onboarding.domains:has(.step-container-v2) .step-container-v2__heading h1:not(.small) {
-	letter-spacing: -0.4px;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	line-height: 1.2em;
-}
-
-.step-route.onboarding.domains .step-container-v2__heading > p {
-	color: $gray-60;
-	font-size: 1rem;
-}
-
-body.is-section-stepper .featured-domain-suggestion.card .domain-product-price {
-	align-items: flex-start;
-	margin-top: 12px;
 }
 
 .domain-suggestion__content.domain-suggestion__content-domain {
 	align-items: unset;
 }
 
-.domain-product-price.domain-product-single-price.domain-product-price__domain-step-signup-flow {
-	align-self: center;
-}
-
-@media (min-width: 1080px) {
-	body.is-section-stepper .formatted-header .formatted-header__title {
-		font-size: 2.75rem !important;
-	}
-}
-
-body.is-section-stepper .onboarding:not(.is-onboarding-2023-pricing-grid) .step-container-v2__heading {
-	margin: calc(48px + 24px - var(--step-container-v2-top-bar-height)) 20px 24px 20px;
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
-	width: unset;
-	align-items: center;
-	flex-direction: column;
-
-	@media (min-width: 960px) {
-		margin-top: calc(48px + 48px - var(--step-container-v2-top-bar-height));
-		margin-bottom: 36px;
+body.is-section-stepper {
+	.featured-domain-suggestion.card .domain-product-price {
+		align-items: flex-start;
+		margin-top: 12px;
 	}
 
-	> h1 {
-		font-size: 2.25rem;
-
+	.formatted-header .formatted-header__title {
 		@media (min-width: 1080px) {
-			font-size: 2.75rem;
+			font-size: 2.75rem !important;
 		}
 	}
-}
 
-@media (min-width: 600px) {
-	.register-domain-step__example-prompt {
-		margin: 0 20px;
-	}
-
-	.step-route.onboarding.domains:has(.step-container-v2) .register-domain-step__search-card {
-		margin: 20px 20px 0;
-	}
-
-	body.is-section-stepper .step-route.onboarding.domains:has(.step-container-v2) {
-		.featured-domain-suggestions,
-		.domain-suggestion {
-			margin-inline: 20px;
-
-			@media (min-width: 960px) {
-				margin: 0;
-			}
-		}
-
-		.featured-domain-suggestions {
-			margin: 0 20px;
-			border-top: none;
-
-			.featured-domain-suggestion {
-				margin: 0;
-				margin-bottom: 12px;
-			}
-
-			@media (min-width: 960px) {
-				margin: 0;
-			}
+	.register-domain-step__search.register-domain-step__search-domain-step:not(.is-sticky) {
+		@media (min-width: 661px) {
+			padding-top: 18px;
 		}
 	}
-}
 
-@media (min-width: 661px) {
-	body.is-section-stepper .register-domain-step__search.register-domain-step__search-domain-step:not(.is-sticky) {
-		padding-top: 18px;
-	}
-}
+	.onboarding:not(.is-onboarding-2023-pricing-grid) .step-container-v2__heading {
+		margin: calc(48px + 24px - var(--step-container-v2-top-bar-height)) 20px 24px 20px;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		width: unset;
+		align-items: center;
+		flex-direction: column;
 
-@media (max-width: 600px) {
-	.is-section-stepper .step-route.onboarding.domains:has(.step-container-v2) .domains__step-content .register-domain-step__search-card {
+		@media (min-width: 960px) {
+			margin-top: calc(48px + 48px - var(--step-container-v2-top-bar-height));
+			margin-bottom: 36px;
+		}
 
-		margin: 20px 0 0;
-	}
-}
+		> h1 {
+			font-size: 2.25rem;
 
-@media (min-width: 960px) {
-	.is-section-stepper .step-route.onboarding.domains:has(.step-container-v2) .domains__step-content .register-domain-step__search-card {
-		margin: 0;
-	}
-}
-
-.domain-product-price {
-	@include breakpoint-deprecated( "<660px" ) {
-		&.domain-product-price__domain-step-signup-flow {
-			flex-direction: column;
+			@media (min-width: 1080px) {
+				font-size: 2.75rem;
+			}
 		}
 	}
 }
