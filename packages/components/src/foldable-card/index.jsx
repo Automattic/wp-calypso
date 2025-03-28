@@ -125,8 +125,10 @@ class FoldableCard extends Component {
 		const additionalStyle = this.state.expanded
 			? this.props.contentExpandedStyle
 			: this.props.contentCollapsedStyle;
+		const inertProps = this.state.expanded ? {} : { inert: '' };
+
 		return (
-			<div className="foldable-card__content" style={ additionalStyle }>
+			<div className="foldable-card__content" style={ additionalStyle } { ...inertProps }>
 				{ this.props.children }
 			</div>
 		);
