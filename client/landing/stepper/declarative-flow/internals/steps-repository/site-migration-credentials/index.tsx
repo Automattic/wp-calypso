@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -84,11 +83,9 @@ const SiteMigrationCredentials: Step< {
 		}
 	}, [ siteId, updateMigrationStatus ] );
 
-	const subHeaderText = isEnabled( 'automated-migration/application-password' )
-		? translate( 'Help us get started by providing some basic details about your current website.' )
-		: translate(
-				'Please share the following details to access your site and start your migration to WordPress.com.'
-		  );
+	const subHeaderText = translate(
+		'Help us get started by providing some basic details about your current website.'
+	);
 
 	return (
 		<>

@@ -1,6 +1,11 @@
 import { Locator, Page, Response } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 
+const selectors = {
+	continue: 'button:text("Continue")',
+	loginWithAnotherAccount: ':text("Log in with another account")',
+};
+
 /**
  * Represents the WPCOM login page.
  */
@@ -176,5 +181,21 @@ export class LoginPage {
 		await locator.click();
 
 		return locator;
+	}
+
+	/**
+	 * Validates the "Continue as yourself" UI when visiting the login page as a logged in user.
+	 *
+	 * @param username - The username of the account to continue as.
+	 * @param email - The email of the account to continue as.
+	 * @returns True if the message is valid, false otherwise.
+	 */
+	async validateContinueAsYourself( username: string, email: string ) {
+		await this.page.waitForSelector( selectors.continue );
+		await this.page.waitForSelector( `text='${ username }'` );
+		await this.page.waitForSelector( `text='${ email }'` );
+		await this.page.waitForSelector( selectors.loginWithAnotherAccount );
+
+		return true;
 	}
 }

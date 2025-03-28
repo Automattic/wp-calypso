@@ -156,6 +156,7 @@ class MagicLogin extends Component {
 						redirectTo: query?.redirect_to,
 						requestLoginEmailFormFlow: true,
 						createAccount: true,
+						flow: 'jetpack', // Auto trigger is Jetpack flow
 					} );
 				}
 			}

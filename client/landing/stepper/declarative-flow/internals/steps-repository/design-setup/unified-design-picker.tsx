@@ -23,7 +23,6 @@ import {
 } from '@automattic/design-picker';
 import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer, ONBOARDING_FLOW, isSiteSetupFlow, Step } from '@automattic/onboarding';
-import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -35,6 +34,7 @@ import { useQueryThemes } from 'calypso/components/data/query-themes';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Loading from 'calypso/components/loading';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
+import { StepContainerV2Loading } from 'calypso/components/step-container-v2-loading';
 import {
 	THEME_TIERS,
 	THEME_TIER_PREMIUM,
@@ -697,7 +697,6 @@ const UnifiedDesignPickerStep: StepType< {
 	}
 
 	const isUsingStepContainerV2 = shouldUseStepContainerV2( flow );
-	const isDesktopVersion = useViewportMatch( 'large', '>=' );
 
 	function getPrimaryActionButton() {
 		const action = getPrimaryActionButtonAction();
@@ -731,7 +730,7 @@ const UnifiedDesignPickerStep: StepType< {
 	const isLoading = isSiteLoading || isDesignsLoading;
 
 	if ( isLoading || isComingFromTheUpgradeScreen ) {
-		return <Loading />;
+		return isUsingStepContainerV2 ? <StepContainerV2Loading /> : <Loading />;
 	}
 
 	if ( selectedDesign && isPreviewingDesign ) {
@@ -861,10 +860,13 @@ const UnifiedDesignPickerStep: StepType< {
 			// TODO: Create a new wireframe for the design preview. It should be named "FixedColumnOnTheLeftLayout"
 			return (
 				<Step.FullWidthLayout
-					isMediumViewport={ isDesktopVersion }
 					className="step-container-v2--design-picker-preview"
-					topBar={
-						isDesktopVersion ? (
+					topBar={ ( { isLargeViewport } ) => {
+						if ( ! isLargeViewport ) {
+							return null;
+						}
+
+						return (
 							<Step.TopBar
 								backButton={
 									shouldHideActionButtons ? undefined : (
@@ -880,18 +882,24 @@ const UnifiedDesignPickerStep: StepType< {
 									)
 								}
 							/>
-						) : undefined
-					}
-					stickyBottomBar={
-						<Step.StickyBottomBar
-							leftButton={ <Step.BackButton onClick={ handleBackClick } /> }
-							rightButton={ actionButtons }
-						>
-							<div className="step-container-v2--design-picker-preview__header-design-title">
-								{ headerDesignTitle }
-							</div>
-						</Step.StickyBottomBar>
-					}
+						);
+					} }
+					stickyBottomBar={ ( { isLargeViewport } ) => {
+						if ( isLargeViewport ) {
+							return null;
+						}
+
+						return (
+							<Step.StickyBottomBar
+								leftButton={ <Step.BackButton onClick={ handleBackClick } /> }
+								rightButton={ actionButtons }
+							>
+								<div className="step-container-v2--design-picker-preview__header-design-title">
+									{ headerDesignTitle }
+								</div>
+							</Step.StickyBottomBar>
+						);
+					} }
 				>
 					{ stepContent }
 				</Step.FullWidthLayout>

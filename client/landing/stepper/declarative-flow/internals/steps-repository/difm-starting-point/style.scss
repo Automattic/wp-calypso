@@ -4,6 +4,7 @@
 .step-container-v2:has(.step-container-v2--difm-starting-point) {
 	.help-center-step-button {
 		font-size: 0.875rem;
+		font-weight: 500;
 		line-height: 1;
 		height: 24px;
 		display: flex;
@@ -21,8 +22,8 @@
 		&__button {
 			--wp-components-color-accent: var(--color-neutral-100);
 			font-size: inherit;
+			font-weight: inherit;
 			line-height: inherit;
-			font-weight: 500;
 		}
 	}
 

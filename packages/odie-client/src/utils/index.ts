@@ -13,3 +13,4 @@ export {
 	getConversationIdFromInteraction,
 	getOdieIdFromInteraction,
 } from './support-interaction-utils';
+export { userProvidedEnoughInformation } from './user-provided-enough-information';

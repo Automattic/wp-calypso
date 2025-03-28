@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/data-stores",
-	"version": "3.1.0",
+	"version": "3.1.1",
 	"description": "Calypso Data Stores.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",

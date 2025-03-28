@@ -111,6 +111,10 @@
 
 }
 
+.edit-gravatar__image-button:focus .edit-gravatar__label-container-icon {
+	box-shadow: 0 0 0 2px var(--color-accent-light);
+}
+
 .gravatar {
 	transition: filter 0.3s ease;
 }

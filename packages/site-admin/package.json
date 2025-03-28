@@ -14,7 +14,7 @@
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets && copyfiles package.json dist/",
 		"prepack": "yarn run clean && yarn run build",
-		"storybook": "sb dev -p 57862"
+		"storybook:start": "storybook dev -p 57862"
 	},
 	"files": [
 		"dist",
@@ -48,10 +48,9 @@
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@storybook/cli": "^7.6.20",
-		"@storybook/react": "^7.6.20",
 		"copyfiles": "^2.4.1",
 		"postcss": "^8.5.3",
+		"storybook": "^8.6.9",
 		"typescript": "^5.8.2",
 		"webpack": "^5.97.1"
 	},

@@ -48,9 +48,6 @@
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@storybook/addon-actions": "^7.6.20",
-		"@storybook/cli": "^7.6.20",
-		"@storybook/react": "^7.6.20",
 		"@testing-library/dom": "^10.4.0",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/react": "^16.2.0",
@@ -59,6 +56,7 @@
 		"@wordpress/is-shallow-equal": "^5.20.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
+		"storybook": "^8.6.9",
 		"typescript": "^5.8.2",
 		"webpack": "^5.97.1"
 	},
@@ -66,6 +64,6 @@
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
 		"prepack": "yarn run clean && yarn run build",
-		"storybook": "sb dev"
+		"storybook:start": "storybook dev"
 	}
 }

@@ -32,6 +32,7 @@ const siteMigration: Flow = {
 	name: FLOW_NAME,
 	isSignupFlow: false,
 	__experimentalUseSessions: true,
+	__experimentalUseBuiltinAuth: true,
 
 	useSideEffect() {
 		const { setIntent, resetOnboardStore } = useDispatch( ONBOARD_STORE );
@@ -54,7 +55,6 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 			STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
 			STEPS.SITE_MIGRATION_UPGRADE_PLAN,
-			STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN,
 			STEPS.SITE_MIGRATION_INSTRUCTIONS,
 			STEPS.ERROR,
 			STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
@@ -352,15 +352,6 @@ const siteMigration: Flow = {
 					);
 				}
 
-				//TODO: Check if we can remove this step once there is no reference to it in the codebase.
-				case STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN.slug: {
-					if ( providedDependencies?.error ) {
-						return navigate( STEPS.ERROR.slug );
-					}
-
-					return navigate( addQueryArgs( { siteId, siteSlug }, STEPS.ERROR.slug ) );
-				}
-
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
 					if ( providedDependencies?.goToCheckout ) {
 						let redirectAfterCheckout: string = STEPS.SITE_MIGRATION_INSTRUCTIONS.slug;
@@ -628,6 +619,10 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
+					if ( entryPoint === 'wp-admin-importers-list' ) {
+						return window.location.assign( `${ siteAdminUrl }import.php` );
+					}
+
 					return exitFlow( `/setup/site-setup/goals?${ urlQueryParams }` );
 				}
 
