@@ -20,6 +20,7 @@ import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import withFormBase from 'calypso/me/form-base/with-form-base';
 import Navigation from 'calypso/me/notification-settings/navigation';
 import ReauthRequired from 'calypso/me/reauth-required';
+import { useSiteSubscriptions } from 'calypso/reader/following/use-site-subscriptions';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
@@ -48,9 +49,9 @@ class NotificationSubscriptions extends Component {
 	handleSubmit = ( event ) => {
 		event.preventDefault();
 		const isBlockingEmails = this.props.getSetting( 'subscription_delivery_email_blocked' );
-		const hasNewsletterSubscriptions = true; // You'll need to get this from props or state
+		const { hasSubscriptions } = this.props;
 
-		if ( isBlockingEmails && hasNewsletterSubscriptions ) {
+		if ( isBlockingEmails && hasSubscriptions ) {
 			this.setState( { showConfirmModal: true } );
 			return;
 		}
@@ -311,7 +312,11 @@ class NotificationSubscriptions extends Component {
 							label: this.props.translate( 'Confirm' ),
 							onClick: () => {
 								this.setState( { showConfirmModal: false } );
-								this.props.submitForm();
+								// Create a synthetic event object
+								const syntheticEvent = {
+									preventDefault: () => {},
+								};
+								this.props.submitForm( syntheticEvent );
 							},
 							isPrimary: true,
 						},
@@ -336,10 +341,15 @@ const mapDispatchToProps = {
 	recordGoogleEvent,
 };
 
+const NotificationSubscriptionsWithHooks = ( props ) => {
+	const { hasNonSelfSubscriptions } = useSiteSubscriptions();
+	return <NotificationSubscriptions hasSubscriptions={ hasNonSelfSubscriptions } { ...props } />;
+};
+
 export default compose(
 	connect( mapStateToProps, mapDispatchToProps ),
 	localize,
 	protectForm,
 	withLocalizedMoment,
 	withFormBase
-)( NotificationSubscriptions );
+)( NotificationSubscriptionsWithHooks );
