@@ -817,12 +817,8 @@ export function redirectJetpackDirectAuthError( context, next, newQuery = {} ) {
 	window.history.replaceState( null, '', fallbackUrl );
 
 	try {
-		const redirectTo = new URL(
-			queryParams.get( 'redirect_to' ) ||
-				window.sessionStorage.getItem( 'login_redirect_to' ) ||
-				`${ window.location.origin }${ fallbackUrl }`
-		);
-		window.sessionStorage.setItem( 'login_redirect_to', redirectTo.toString() );
+		const redirectTo = new URL( `${ window.location.origin }${ fallbackUrl }` ); // it needs to be /log-in...?redirect_to=... for SET_ROUTE action
+		window.sessionStorage.setItem( 'login_redirect_to', queryParams.get( 'redirect_to' ) ); // here we get specific value
 		context.store.dispatch(
 			setRoute( redirectTo.pathname, Object.fromEntries( redirectTo.searchParams.entries() ) )
 		);
