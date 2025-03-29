@@ -1180,7 +1180,7 @@ __metadata:
     clsx: "npm:^2.1.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-draggable: "npm:^4.4.4"
+    react-draggable: "npm:^4.4.6"
     smooch: "npm:5.6.0"
     typescript: "npm:^5.8.2"
   peerDependencies:
@@ -28916,16 +28916,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-draggable@npm:^4.4.4":
-  version: 4.4.4
-  resolution: "react-draggable@npm:4.4.4"
+"react-draggable@npm:^4.4.6":
+  version: 4.4.6
+  resolution: "react-draggable@npm:4.4.6"
   dependencies:
     clsx: "npm:^1.1.1"
-    prop-types: "npm:^15.6.0"
+    prop-types: "npm:^15.8.1"
   peerDependencies:
     react: ">= 16.3.0"
     react-dom: ">= 16.3.0"
-  checksum: 04399a3d1fde392b2adeb30be619adf0344cd59bd17e93e2e165da617a2c2c6db68903614b3a98bb5d98299dff36bf776346afcbd59b954a89b2ead4de70da99
+  checksum: 1e8cf47414a8554caa68447e5f27749bc40e1eabb4806e2dadcb39ab081d263f517d6aaec5231677e6b425603037c7e3386d1549898f9ffcc98a86cabafb2b9a
   languageName: node
   linkType: hard
 
