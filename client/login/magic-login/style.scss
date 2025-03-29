@@ -24,6 +24,19 @@
 	}
 }
 
+.layout.is-jetpack-login {
+	.magic-login {
+		&__loading-ellipsis--jetpack {
+			left: 50%;
+			transform: translateX(-50%);
+
+			div {
+				background: var(--studio-jetpack-green-40, #069e08 );
+			}
+		}
+	}	
+}
+
 .layout.is-wpcom-magic-login {
 	display: flex;
 	align-items: center;
