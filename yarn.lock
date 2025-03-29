@@ -13637,7 +13637,7 @@ __metadata:
     store: "npm:^2.0.12"
     storybook: "npm:^8.6.9"
     stream-browserify: "npm:^3.0.0"
-    striptags: "npm:^3.1.1"
+    striptags: "npm:^3.2.0"
     superagent: "npm:^3.8.3"
     supertest: "npm:^7.0.0"
     textarea-caret: "npm:^3.1.0"
@@ -32693,7 +32693,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"striptags@npm:^3.1.1":
+"striptags@npm:^3.2.0":
   version: 3.2.0
   resolution: "striptags@npm:3.2.0"
   checksum: 72c8eea03c04ca8522511caf44ffd2bde4b5f36cbeb5d43140906c0a7ee19e98b3341bf96370ccb643e55972587eafac772d4a3f7f526d3045c2cf36270511e6

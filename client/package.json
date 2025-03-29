@@ -200,7 +200,7 @@
 		"social-logos": "^3.1.16",
 		"source-map-support": "^0.5.19",
 		"store": "^2.0.12",
-		"striptags": "^3.1.1",
+		"striptags": "^3.2.0",
 		"superagent": "^3.8.3",
 		"supertest": "^7.0.0",
 		"textarea-caret": "^3.1.0",
