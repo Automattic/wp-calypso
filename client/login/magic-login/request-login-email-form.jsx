@@ -70,7 +70,6 @@ class RequestLoginEmailForm extends Component {
 	state = {
 		usernameOrEmail: this.props.userEmail || '',
 		site: {},
-		isLoadingSite: !! this.props.blogId,
 	};
 
 	usernameOrEmailRef = createRef();
@@ -80,8 +79,7 @@ class RequestLoginEmailForm extends Component {
 		if ( blogId ) {
 			wpcom.req
 				.get( `/sites/${ this.props.blogId }` )
-				.then( ( result ) => this.setState( { site: result, isLoadingSite: false } ) )
-				.catch( () => this.setState( { isLoadingSite: false } ) );
+				.then( ( result ) => this.setState( { site: result } ) );
 		}
 	}
 
