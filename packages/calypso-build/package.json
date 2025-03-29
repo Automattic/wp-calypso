@@ -56,7 +56,7 @@
 		"recursive-copy": "^2.0.14",
 		"sass": "1.54.0",
 		"sass-loader": "^13.3.3",
-		"semver": "^7.3.2",
+		"semver": "^7.7.1",
 		"stream-browserify": "^3.0.0",
 		"terser-webpack-plugin": "^5.3.11",
 		"thread-loader": "^3.0.4",
