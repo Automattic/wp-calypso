@@ -13633,7 +13633,7 @@ __metadata:
     redux-thunk: "npm:^3.1.0"
     regenerator-runtime: "npm:^0.13.9"
     social-logos: "npm:^3.1.16"
-    source-map-support: "npm:^0.5.19"
+    source-map-support: "npm:^0.5.21"
     store: "npm:^2.0.12"
     storybook: "npm:^8.6.9"
     stream-browserify: "npm:^3.0.0"
@@ -31995,7 +31995,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"source-map-support@npm:^0.5.16, source-map-support@npm:^0.5.19, source-map-support@npm:~0.5.20":
+"source-map-support@npm:^0.5.16, source-map-support@npm:^0.5.19, source-map-support@npm:^0.5.21, source-map-support@npm:~0.5.20":
   version: 0.5.21
   resolution: "source-map-support@npm:0.5.21"
   dependencies:
