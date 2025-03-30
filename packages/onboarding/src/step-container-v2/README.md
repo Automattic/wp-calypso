@@ -25,7 +25,6 @@ const MyStep = () => {
 	return (
 		<Step.CenteredColumnLayout
 			columnWidth={ 4 }
-			heading={ heading }
 			topBar={ <Step.TopBar /> }
 			heading={ <Step.Heading text="Heading" /> }
 			stickyBottomBar={ <Step.StickyBottomBar rightElement={ nextButton } /> }
@@ -59,7 +58,7 @@ Please do NOT override the `Step.*` components with CSS as this creates inconsis
 
 Wireframes are layout arrangements that have been approved by the Dotcom designers. They are exported from this package and can be used in the steps.
 
-Here are the wireframes specs: https://www.figma.com/design/QFAYPvq4xYUZC5AFkrfJFM/Dotcom-Onboarding-(Open)?node-id=1-31&p=f&t=CX7AmXyb9CTsFGAI-0.
+Here are the wireframes specs: <https://www.figma.com/design/QFAYPvq4xYUZC5AFkrfJFM/Dotcom-Onboarding-(Open)?node-id=1-31&p=f&t=CX7AmXyb9CTsFGAI-0>.
 
 ## How to extend it
 
