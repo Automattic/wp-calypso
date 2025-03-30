@@ -195,7 +195,8 @@ function createCheckoutStepGroupActions(
 		// If we are going forward in steps, we must try to complete each step
 		// starting at the active one and ending before the new one, stopping at
 		// any step that is not complete.
-		for ( let step = state.activeStepNumber; step < stepNumber; step++ ) {
+		const activeStep = state.activeStepNumber > 0 ? state.activeStepNumber : 1;
+		for ( let step = activeStep; step < stepNumber; step++ ) {
 			const didStepComplete = await getStepCompleteCallback( step )();
 			debug(
 				`attempting to set step complete: '${ stepId }'; step ${ step } result was ${ didStepComplete }`
