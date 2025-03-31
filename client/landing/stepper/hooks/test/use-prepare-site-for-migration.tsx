@@ -52,9 +52,8 @@ describe( 'usePrepareSiteForMigration', () => {
 
 		expect( result.current ).toEqual( {
 			detailedStatus: {
-				siteTransfer: 'idle',
-				pluginInstallation: 'idle',
-				migrationKey: 'idle',
+				siteTransferStatus: 'idle',
+				migrationKeyStatus: 'idle',
 			},
 			softwareTransferCompleted: false,
 			error: null,
@@ -88,9 +87,8 @@ describe( 'usePrepareSiteForMigration', () => {
 			() => {
 				expect( result.current ).toEqual( {
 					detailedStatus: {
-						siteTransfer: 'success',
-						pluginInstallation: 'success',
-						migrationKey: 'success',
+						siteTransferStatus: 'success',
+						migrationKeyStatus: 'success',
 					},
 					softwareTransferCompleted: true,
 					error: null,
@@ -112,7 +110,6 @@ describe( 'usePrepareSiteForMigration', () => {
 			.get( `/wpcom/v2/sites/${ SITE_ID }/transfer-with-software/456?http_envelope=1` )
 			.reply( 200, {
 				atomic_transfer_status: 'error',
-				transfer_with_software_status: 'error',
 				error: 'Transfer failed',
 			} );
 
@@ -122,9 +119,8 @@ describe( 'usePrepareSiteForMigration', () => {
 			() => {
 				expect( result.current ).toEqual( {
 					detailedStatus: {
-						siteTransfer: 'error',
-						pluginInstallation: 'error',
-						migrationKey: 'idle',
+						siteTransferStatus: 'error',
+						migrationKeyStatus: 'idle',
 					},
 					softwareTransferCompleted: false,
 					error: expect.any( Error ),
