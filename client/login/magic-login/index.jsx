@@ -350,7 +350,7 @@ class MagicLogin extends Component {
 	}
 
 	renderGutenboardingLogo() {
-		if ( this.props.isWCCOM ) {
+		if ( this.props.isWCCOM || this.props.isJetpackLogin ) {
 			return null;
 		}
 
@@ -1349,7 +1349,11 @@ class MagicLogin extends Component {
 		};
 
 		return (
-			<Main className="magic-login magic-login__request-link is-white-login">
+			<Main
+				className={ clsx( 'magic-login magic-login__request-link is-white-login', {
+					'magic-login--jetpack': this.props.isJetpackLogin,
+				} ) }
+			>
 				{ this.props.isJetpackLogin && ! this.props.isFromAutomatticForAgenciesPlugin && (
 					<JetpackHeader />
 				) }

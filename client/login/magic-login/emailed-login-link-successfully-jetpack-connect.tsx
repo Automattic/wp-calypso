@@ -30,23 +30,45 @@ const EmailedLoginLinkSuccessfullyJetpackConnect: FC< Props > = ( { emailAddress
 				waitForEmailAddress={ emailAddress }
 			/>
 
-			<h1 className="magic-login__form-header">{ translate( 'Check your email!' ) }</h1>
+			<h1 className="magic-login__form-header">{ translate( 'Check your inbox' ) }</h1>
 
 			<p>
 				{ emailAddress
-					? translate( 'We just emailed a link to {{strong}}%(emailAddress)s{{/strong}}.', {
-							args: {
-								emailAddress,
-							},
+					? translate(
+							'We sent a message to {{strong}}%(emailAddress)s{{/strong}} with a link to log in to WordPress.com.',
+							{
+								args: {
+									emailAddress,
+								},
+								components: {
+									strong: <strong />,
+								},
+							}
+					  )
+					: translate(
+							'We sent a message to your email address with a link to log in to WordPress.com.'
+					  ) }
+			</p>
+			<p>{ preventWidows( translate( 'Only one step left—we’ll connect your site next.' ) ) }</p>
+			<footer className="magic-login__successfully-jetpack-footer">
+				<div className="magic-login__successfully-jetpack-footer-item">
+					{ translate(
+						'Didn’t get the code? Check your spam folder or {{link}}resend the email{{/link}}',
+						{
 							components: {
-								strong: <strong />,
+								link: <a href={ `${ window.location.href }&resend=true` } />,
 							},
-					  } )
-					: translate( 'We just emailed you a link.' ) }
-			</p>
-			<p>
-				{ preventWidows( translate( 'Please check your inbox and click the link to log in.' ) ) }
-			</p>
+						}
+					) }
+				</div>
+				<div className="magic-login__successfully-jetpack-footer-item">
+					{ translate( 'Wrong email or account? {{link}}Use a different account{{/link}}', {
+						components: {
+							link: <a href="/log-in" />,
+						},
+					} ) }
+				</div>
+			</footer>
 		</div>
 	);
 };

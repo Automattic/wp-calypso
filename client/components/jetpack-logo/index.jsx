@@ -69,7 +69,10 @@ const JetpackLogo = ( { full = false, monochrome = false, size = 32, className, 
 		return (
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<svg className={ classes } height="24" width="24" viewBox="0 0 24 24" { ...ariaProps }>
-				<path d="M12,2C6.5,2,2,6.5,2,12s4.5,10,10,10s10-4.5,10-10S17.5,2,12,2z M11,14H6l5-10V14z M13,20V10h5L13,20z" />
+				<path
+					fill={ monochrome ? 'black' : COLOR_JETPACK }
+					d="M12,0 C5.4,0,0,5.4,0,12 s5.4,12,12,12 s12,-5.4,12,-12 S18.6,0,12,0z M10.8,14.4 H4.8 l6,-12 V14.4z M13.2,21.6 V9.6 h6 L13.2,21.6z"
+				/>
 			</svg>
 		);
 	}

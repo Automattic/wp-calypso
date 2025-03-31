@@ -274,7 +274,8 @@
 	}
 }
 
-.magic-login__gutenboarding-wordpress-logo {
+.magic-login__gutenboarding-wordpress-logo,
+.magic-login__gutenboarding-jetpack-logo {
 	height: 64px;
 	position: absolute;
 	left: 0;
@@ -302,9 +303,49 @@
 	}
 }
 
+.magic-login--jetpack {
+	margin-top: 96px;
+	width: 100%;
+	max-width: 450px;
+	text-align: left;
+
+	&.magic-login.is-white-login .magic-login__form-header {
+		margin-top: 0;
+		margin-bottom: 16px;
+		font-family: -apple-system, BlinkMacSystemFont, 'Avenir Next', Avenir, 'Segoe UI', 'Helvetica Neue', Helvetica, Cantarell, Ubuntu, Roboto, 'Noto Sans', Arial, sans-serif;
+		font-size: rem(32px);
+		font-weight: 500;
+		line-height: 40px;
+		text-align: left;
+		color: var(--studio-black);
+	}
+}
+
 .magic-login__successfully-jetpack {
 	p {
-		text-align: center;
+		margin-bottom: 32px;
+		font-size: rem(15px);
+		line-height: 24px;
+		color: var(--studio-gray-100);
+	}
+
+	p:last-of-type {
+		margin-bottom: 45px;
+	}
+
+	.magic-login__successfully-jetpack-footer {
+		font-size: rem(13px);
+		line-height: 20px;
+		color: var(--studio-gray-50);
+
+		.magic-login__successfully-jetpack-footer-item {
+			margin-bottom: 4px;
+		}
+
+		a {
+			color: var(--studio-jetpack-green-60);
+			text-decoration: underline;
+		}
 	}
 }
 

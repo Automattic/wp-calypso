@@ -188,6 +188,14 @@ export class JetpackHeader extends PureComponent {
 	}
 
 	render() {
+		if ( ! this.props.partnerSlug ) {
+			return (
+				<div className="magic-login__gutenboarding-jetpack-logo">
+					<JetpackLogo size={ 24 } />
+				</div>
+			);
+		}
+
 		return <div className="jetpack-header">{ this.renderLogo() }</div>;
 	}
 }
