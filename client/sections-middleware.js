@@ -1,6 +1,8 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { Step } from '@automattic/onboarding';
 import * as LoadingError from 'calypso/layout/error';
+import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import { performanceTrackerStart } from 'calypso/lib/performance-tracking';
 import { bumpStat } from 'calypso/state/analytics/actions';
 import { setSectionLoading } from 'calypso/state/ui/actions';
@@ -86,6 +88,17 @@ function loadSectionHandler( sectionDefinition ) {
 	};
 }
 
+function emptyPageLoading( context, next ) {
+	if ( ! isInStepContainerV2FlowContext( context.pathname, context.querystring ) ) {
+		return next();
+	}
+
+	context.layout = <Step.Loading />;
+	controller.render( context );
+
+	next();
+}
+
 function createPageDefinition( path, sectionDefinition ) {
 	// skip this section if it's not enabled in current environment
 	const { envId } = sectionDefinition;
@@ -104,6 +117,10 @@ function createPageDefinition( path, sectionDefinition ) {
 	// if the section doesn't support logged-out views, redirect to login if user is not logged in
 	if ( ! sectionDefinition.enableLoggedOut ) {
 		handler = composeHandlers( controller.redirectLoggedOut, handler );
+	}
+
+	if ( path === '/checkout' ) {
+		handler = composeHandlers( emptyPageLoading, handler );
 	}
 
 	page( pathRegex, handler );
