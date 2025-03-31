@@ -115,6 +115,8 @@ const SiteMigrationCredentials: Step< {
 			from_url: fromUrl,
 			blog_url: siteSlug,
 		} );
+		// Reset the site in the state to ensure the correct overview screen is shown.
+		siteId && dispatch( resetSite( siteId ) );
 
 		return navigation.submit?.( {
 			action: 'skip',
