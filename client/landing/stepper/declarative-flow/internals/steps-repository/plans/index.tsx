@@ -4,6 +4,7 @@ import {
 	isStartWritingFlow,
 	StepContainer,
 } from '@automattic/onboarding';
+import { useIsValidWooPartner } from 'calypso/landing/stepper/hooks/use-is-valid-woo-partner';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useQuery } from '../../../../hooks/use-query';
 import PlansWrapper from './plans-wrapper';
@@ -23,6 +24,7 @@ const plans: Step< {
 	const query = useQuery();
 	const queryParams = Object.fromEntries( query );
 	const plan = queryParams.plan;
+	const isValidWooPartner = useIsValidWooPartner();
 
 	const handleSubmit = ( plan: MinimalRequestCartProduct | null ) => {
 		const providedDependencies = {
@@ -39,7 +41,8 @@ const plans: Step< {
 		return null;
 	}
 
-	const isAllowedToGoBack = isDomainUpsellFlow( flow ) || isNewHostedSiteCreationFlow( flow );
+	const isAllowedToGoBack =
+		isDomainUpsellFlow( flow ) || ( isNewHostedSiteCreationFlow( flow ) && ! isValidWooPartner );
 
 	return (
 		<StepContainer
