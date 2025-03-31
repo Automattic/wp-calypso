@@ -16,9 +16,10 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: end;
+		gap: 10px;
 
 		.sites-dropdown {
-			min-width: 200px;
+			flex: 0 1 300px;
 
 			&__wrapper {
 				border-color: var( --color-border-subtle );
