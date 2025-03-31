@@ -86,7 +86,7 @@ const UserStepComponent: StepType = function UserStep( {
 
 	const localeSuggestions = shouldRenderLocaleSuggestions && (
 		<LocaleSuggestions
-			path={ window.location.pathname + ( window.location.search || '' ) }
+			path={ window.location.pathname + window.location.search ) }
 			locale={ locale }
 		/>
 	);
