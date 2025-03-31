@@ -32,6 +32,9 @@ const ButtonExample = () => {
 				<Button size="small" variant="primary" isBusy>
 					Busy
 				</Button>
+				<Button size="small" variant="primary" isDestructive>
+					Destructive
+				</Button>
 			</Flex>
 
 			<h2>Regular Buttons</h2>
