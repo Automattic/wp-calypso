@@ -200,9 +200,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 			request.query.hasOwnProperty( 'useTranslationChunks' ),
 		useLoadingEllipsis: !! request.query.loading_ellipsis,
 		showGdprBanner,
-		isStepContainerV2: request.path.startsWith( '/setup' )
-			? shouldUseStepContainerV2( getFlowFromURL( request.path, request.query ) || DEFAULT_FLOW )
-			: false,
+		showStepContainerV2Loader: shouldShowStepContainerV2Loader( request ),
 	} );
 
 	context.app = {
@@ -267,6 +265,33 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	}
 
 	return context;
+}
+
+/**
+ * Returns whether to display the StepContainerV2 loading spinner. This is rendered
+ * by the <Document> component (see client/document/index.jsx).
+ * @param {express.Request} req Request object.
+ * @returns {boolean} - True if the server should render show the StepContainerV2 loader.
+ */
+function shouldShowStepContainerV2Loader( req ) {
+	if ( req.path.startsWith( '/setup' ) ) {
+		return shouldUseStepContainerV2( getFlowFromURL( req.path, req.query ) || DEFAULT_FLOW );
+	}
+
+	if ( req.path.startsWith( '/checkout' ) ) {
+		// The checkout isn't technically part of a stepper flow, but we can infer what stepper
+		// flow it came from (if any) by inspecting the redirect_to query param (in the case
+		// of the onboarding flow).
+		const redirectTo = new URL(
+			new URLSearchParams( req.query ).get( 'redirect_to' ),
+			'http://example.com'
+		);
+		return shouldUseStepContainerV2(
+			getFlowFromURL( redirectTo.pathname, redirectTo.search ) || DEFAULT_FLOW
+		);
+	}
+
+	return false;
 }
 
 const setupDefaultContext = ( entrypoint, sectionName ) => ( req, res, next ) => {
