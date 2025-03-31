@@ -132,7 +132,6 @@ export default function WPCOMPlanSection( { onSelect }: Props ) {
 					</p>
 
 					<SimpleList
-						applyCoreStyles
 						items={ [
 							translate( '{{b}}50GB{{/b}} of storage', { components: { b: <b /> } } ),
 							translate( '{{b}}Free{{/b}} staging site', { components: { b: <b /> } } ),

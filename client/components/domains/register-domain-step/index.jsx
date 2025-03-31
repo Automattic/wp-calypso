@@ -28,7 +28,7 @@ import {
 	snakeCase,
 } from 'lodash';
 import PropTypes from 'prop-types';
-import { stringify } from 'qs';
+import { stringify, parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { v4 as uuid } from 'uuid';
@@ -339,7 +339,11 @@ class RegisterDomainStep extends Component {
 	}
 
 	getInitialQueryFromSiteName() {
-		return this.props.selectedSite?.name || undefined;
+		// fallback to siteTitle in query string if there is no selected site in the props
+		// This usually happens the first time this step is loaded for a free trial site
+		const queryParams = parse( window.location.search.substring( 1 ) );
+		const siteTitle = queryParams.siteTitle;
+		return this.props.selectedSite?.name || siteTitle;
 	}
 
 	componentDidMount() {
@@ -1730,7 +1734,6 @@ class RegisterDomainStep extends Component {
 				onSkip={ this.props.onSkip }
 				showSkipButton={ this.props.showSkipButton }
 				hideMatchReasons={ this.props.isOnboarding }
-				showDomainTransferSuggestion={ this.props.isOnboarding }
 				domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 				useProvidedProductsList={ this.props.useProvidedProductsList }
 				isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }

@@ -35,6 +35,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { isPlansPageUntangled } from 'calypso/lib/plans/untangling-plans-experiment';
+import { isPartnerPurchase } from 'calypso/lib/purchases';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
@@ -270,6 +271,7 @@ class PlansComponent extends Component {
 
 		return (
 			<PlansFeaturesMain
+				isInSiteDashboard={ isUntangled }
 				redirectToAddDomainFlow={ this.props.redirectToAddDomainFlow }
 				hidePlanTypeSelector={ hidePlanTypeSelector }
 				hideFreePlan={ hideFreePlan }
@@ -282,11 +284,10 @@ class PlansComponent extends Component {
 				discountEndDate={ this.props.discountEndDate }
 				siteId={ selectedSite?.ID }
 				plansWithScroll={ false }
-				hideSpotlightPlan={ isUntangled }
 				hidePlansFeatureComparison={ this.props.isDomainAndPlanPackageFlow }
 				showLegacyStorageFeature={ this.props.siteHasLegacyStorage }
 				intent={ plansIntent }
-				isSpotlightOnCurrentPlan={ ! this.props.isDomainAndPlanPackageFlow }
+				isSpotlightOnCurrentPlan={ ! isUntangled && ! this.props.isDomainAndPlanPackageFlow }
 				showPlanTypeSelectorDropdown={ isEnabled( 'onboarding/interval-dropdown' ) }
 			/>
 		);
@@ -349,7 +350,7 @@ class PlansComponent extends Component {
 		);
 	}
 
-	renderMainContent( { isEcommerceTrial, isBusinessTrial, isWooExpressPlan } ) {
+	renderMainContent( { isEcommerceTrial, isBusinessTrial, isWooExpressPlan, isA4APlan } ) {
 		if ( isEcommerceTrial ) {
 			return this.renderEcommerceTrialPage();
 		}
@@ -358,6 +359,9 @@ class PlansComponent extends Component {
 		}
 		if ( isBusinessTrial ) {
 			return this.renderBusinessTrialPage();
+		}
+		if ( isA4APlan ) {
+			return null;
 		}
 
 		return this.renderPlansMain();
@@ -422,6 +426,7 @@ class PlansComponent extends Component {
 			} );
 
 		const isWooExpressTrial = purchase?.isWooExpressTrial;
+		const isA4APlan = purchase && isPartnerPurchase( purchase );
 
 		// Use the Woo Express subheader text if the current plan has the Performance or trial plans or fallback to the default subheader text.
 		let subHeaderText = null;
@@ -494,7 +499,7 @@ class PlansComponent extends Component {
 								</div>
 							</>
 						) }
-						<div id="plans" className="plans plans__has-sidebar">
+						<div id={ isUntangled ? 'site-plans' : 'plans' } className="plans plans__has-sidebar">
 							{ showPlansNavigation && <PlansNavigation path={ this.props.context.path } /> }
 							<Main fullWidthLayout={ ! isWooExpressTrial } wideLayout={ isWooExpressTrial }>
 								{ ! isDomainAndPlanPackageFlow && domainAndPlanPackage && (
@@ -504,6 +509,7 @@ class PlansComponent extends Component {
 									isEcommerceTrial,
 									isBusinessTrial,
 									isWooExpressPlan,
+									isA4APlan,
 								} ) }
 								<PerformanceTrackerStop />
 							</Main>

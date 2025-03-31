@@ -182,7 +182,7 @@ const EducationFooter = () => {
 		<EducationFooterContainer>
 			<PluginsResultsHeader
 				title={ __( 'Get started with plugins' ) }
-				subtitle={ __( 'Our favorite how-to guides to get you started with plugins' ) }
+				subtitle={ __( 'Our favorite how-to guides to get you started with plugins.' ) }
 			/>
 			<ThreeColumnContainer className="plugin-how-to-guides">
 				<LinkCard

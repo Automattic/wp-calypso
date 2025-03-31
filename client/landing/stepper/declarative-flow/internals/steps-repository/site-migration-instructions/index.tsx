@@ -7,17 +7,20 @@ import { MigrationStatus } from 'calypso/data/site-migration/landing/types';
 import { useUpdateMigrationStatus } from 'calypso/data/site-migration/landing/use-update-migration-status';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
+import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { usePrepareSiteForMigration } from 'calypso/landing/stepper/hooks/use-prepare-site-for-migration';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useDispatch } from 'calypso/state';
+import { resetSite } from 'calypso/state/sites/actions';
 import { HostingBadge } from './hosting-badge';
 import { MigrationInstructions } from './migration-instructions';
 import { ProvisionStatus } from './provision-status';
-import { Questions } from './questions';
 import { SitePreview } from './site-preview';
 import { Steps } from './steps';
 import { useSteps } from './steps/use-steps';
+import { SupportNudge } from './support-nudge';
 import type { Step } from '../../types';
 import './style.scss';
 
@@ -77,14 +80,15 @@ const usePreparationEventsAndLogs = ( {
 };
 
 const SiteMigrationInstructions: Step< {
-	submits: {
-		destination: 'migration-started';
-	};
+	submits:
+		| { destination: 'migration-started' }
+		| { how: ( typeof HOW_TO_MIGRATE_OPTIONS )[ 'DO_IT_FOR_ME' ] };
 } > = function ( { navigation, flow } ) {
 	const site = useSite();
 	const siteId = site?.ID ?? 0;
 	const queryParams = useQuery();
 	const fromUrl = queryParams.get( 'from' ) ?? '';
+	const dispatch = useDispatch();
 
 	const { mutate: updateMigrationStatus } = useUpdateMigrationStatus( siteId );
 
@@ -146,6 +150,7 @@ const SiteMigrationInstructions: Step< {
 
 	// Steps.
 	const onCompleteSteps = () => {
+		dispatch( resetSite( siteId ) );
 		navigation.submit?.( { destination: 'migration-started' } );
 	};
 
@@ -161,6 +166,10 @@ const SiteMigrationInstructions: Step< {
 	} );
 
 	const withPreview = fromUrl !== '';
+
+	const navigateToDoItForMe = useCallback( () => {
+		navigation.submit?.( { how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME } );
+	}, [ navigation ] );
 
 	const migrationInstructions = (
 		<MigrationInstructions
@@ -192,8 +201,6 @@ const SiteMigrationInstructions: Step< {
 		</div>
 	);
 
-	const questions = <Questions />;
-
 	return (
 		<StepContainer
 			stepName="site-migration-instructions"
@@ -204,7 +211,7 @@ const SiteMigrationInstructions: Step< {
 			hideBack
 			stepContent={ stepContent }
 			recordTracksEvent={ recordTracksEvent }
-			customizedActionButtons={ questions }
+			customizedActionButtons={ <SupportNudge onAskForHelp={ navigateToDoItForMe } /> }
 		/>
 	);
 };

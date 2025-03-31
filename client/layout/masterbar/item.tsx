@@ -31,6 +31,8 @@ interface MasterbarItemProps {
 	disabled?: boolean;
 	subItems?: Array< Array< MasterbarSubItemProps > >;
 	hasGlobalBorderStyle?: boolean;
+	as?: React.ComponentType;
+	variant?: string;
 }
 
 class MasterbarItem extends Component< MasterbarItemProps > {
@@ -47,6 +49,8 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		alwaysShowContent: PropTypes.bool,
 		subItems: PropTypes.array,
 		hasGlobalBorderStyle: PropTypes.bool,
+		as: PropTypes.elementType,
+		variant: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -231,6 +235,8 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 				ref={ this.wrapperRef }
 			>
 				<MenuItem
+					as={ this.props.as }
+					variant={ this.props.variant }
 					url={ this.props.url }
 					innerRef={ this.props.innerRef }
 					{ ...attributes }
@@ -252,9 +258,21 @@ export default forwardRef< HTMLButtonElement | HTMLAnchorElement, MasterbarItemP
 type MenuItemProps< R > = {
 	url?: string;
 	innerRef?: R;
+	as?: React.ComponentType;
+	variant?: string;
 } & React.HTMLAttributes< HTMLElement >;
 
-function MenuItem< R >( { url, innerRef, ...props }: MenuItemProps< R > ) {
+function MenuItem< R >( { url, innerRef, as: Component, ...props }: MenuItemProps< R > ) {
+	if ( Component ) {
+		return (
+			<Component
+				{ ...props }
+				{ ...( innerRef ? { ref: innerRef } : {} ) }
+				{ ...( url ? { url } : {} ) }
+			/>
+		);
+	}
+
 	return url ? (
 		<a href={ url } ref={ innerRef as LegacyRef< HTMLAnchorElement > } { ...props } />
 	) : (

@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .product-filter {
 	max-height: 33px;
@@ -47,7 +48,7 @@
 .product-filter-button {
 	white-space: nowrap;
 	max-height: 36px;
-	font-size: rem(13px);
+	@include body-small;
 	cursor: pointer;
 	color: var(--color-primary-60);
 	fill: var(--color-primary-60);
@@ -68,7 +69,7 @@
 		box-shadow: inset 0 0 0 1px var(--color-neutral-20);
 		color: var(--color-accent-60);
 		fill: var(--color-accent-60);
-		background: rgba(var(--wp-admin-theme-color--rgb), 0.04);
+		background: color-mix(in srgb, var(--wp-admin-theme-color) 4%, transparent);
 	}
 }
 

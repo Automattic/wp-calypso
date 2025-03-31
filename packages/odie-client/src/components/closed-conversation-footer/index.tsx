@@ -7,6 +7,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { v4 as uuidv4 } from 'uuid';
 import { useOdieAssistantContext } from '../../context';
 import { useManageSupportInteraction } from '../../data';
+import { interactionHasEnded } from '../../utils';
 import './style.scss';
 
 export const ClosedConversationFooter = () => {
@@ -30,7 +31,7 @@ export const ClosedConversationFooter = () => {
 		} );
 	};
 
-	if ( ! [ 'closed', 'solved' ].includes( currentSupportInteraction?.status ?? '' ) ) {
+	if ( ! interactionHasEnded( currentSupportInteraction ) ) {
 		return null;
 	}
 

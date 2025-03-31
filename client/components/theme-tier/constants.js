@@ -30,39 +30,53 @@ export const THEME_TIER_FREE = 'free';
  */
 export const THEME_TIERS = {
 	free: {
-		label: translate( 'Free' ),
+		get label() {
+			return translate( 'Free' );
+		},
 		minimumUpsellPlan: PLAN_FREE,
 		isFilterable: true,
 	},
 	personal: {
-		label: getIncludedWithLabel( PLAN_PERSONAL ),
+		get label() {
+			return getIncludedWithLabel( PLAN_PERSONAL );
+		},
 		minimumUpsellPlan: PLAN_PERSONAL,
 		isFilterable: true,
 	},
 	[ THEME_TIER_PREMIUM ]: {
-		label: getIncludedWithLabel( PLAN_PREMIUM ),
+		get label() {
+			return getIncludedWithLabel( PLAN_PREMIUM );
+		},
 		minimumUpsellPlan: PLAN_PREMIUM,
 		isFilterable: true,
 	},
 	[ THEME_TIER_PARTNER ]: {
-		label: translate( 'Partner', {
-			context: 'This theme is developed and supported by a theme partner',
-		} ),
+		get label() {
+			return translate( 'Partner', {
+				context: 'This theme is developed and supported by a theme partner',
+			} );
+		},
 		minimumUpsellPlan: PLAN_BUSINESS,
 		isFilterable: true,
 	},
 	woocommerce: {
-		label: translate( 'WooCommerce' ),
+		get label() {
+			return translate( 'WooCommerce' );
+		},
 		minimumUpsellPlan: PLAN_BUSINESS,
 		isFilterable: true,
 	},
 	sensei: {
-		label: translate( 'Sensei LMS' ),
+		get label() {
+			return translate( 'Sensei LMS' );
+		},
 		minimumUpsellPlan: PLAN_BUSINESS,
 		isFilterable: false,
 	},
 	community: {
-		label: translate( 'Community' ),
+		get label() {
+			return translate( 'Community' );
+		},
 		minimumUpsellPlan: PLAN_BUSINESS,
 		isFilterable: false,
 	},

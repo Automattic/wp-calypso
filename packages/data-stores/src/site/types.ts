@@ -158,10 +158,10 @@ export interface SiteDetails {
 	user_interactions?: string[];
 
 	// Jetpack computed properties
-	canAutoupdateFiles?: boolean;
-	canUpdateFiles?: boolean;
-	isMainNetworkSite?: boolean;
-	isSecondaryNetworkSite?: boolean;
+	canAutoupdateFiles?: boolean | null;
+	canUpdateFiles?: boolean | null;
+	isMainNetworkSite?: boolean | null;
+	isSecondaryNetworkSite?: boolean | null;
 
 	// Migration
 	site_migration?: SourceSiteMigrationBase;

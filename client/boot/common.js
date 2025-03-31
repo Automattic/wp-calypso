@@ -43,7 +43,6 @@ import {
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { setRoute } from 'calypso/state/route/actions';
-import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { setupErrorLogger } from '../lib/error-logger/setup-error-logger';
 import { setupLocale } from './locale';
 
@@ -255,18 +254,6 @@ const setupMiddlewares = ( currentUser, reduxStore, reactQueryClient ) => {
 	initializeAnalytics( currentUser ? currentUser : undefined, getSuperProps( reduxStore ) );
 
 	setupErrorLogger( reduxStore );
-
-	// If `?sb` or `?sp` are present on the path set the focus of layout
-	// This can be removed when the legacy version is retired.
-	page( '*', function ( context, next ) {
-		if ( [ 'sb', 'sp' ].indexOf( context.querystring ) !== -1 ) {
-			const layoutSection = context.querystring === 'sb' ? 'sidebar' : 'sites';
-			reduxStore.dispatch( setNextLayoutFocus( layoutSection ) );
-			page.replace( context.pathname );
-		}
-
-		next();
-	} );
 
 	page( '*', function ( context, next ) {
 		// Don't normalize legacy routes - let them fall through and be unhandled

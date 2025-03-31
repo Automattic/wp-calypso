@@ -24,16 +24,15 @@ $data-view-border-color: #f1f1f1;
 
 .referrals-overview__section-heading {
 	margin-block-start: 24px;
-	font-size: rem(24px);
+	@include heading-x-large;
 	margin-block-end: 8px;
-	font-weight: 600;
 }
+
 .referrals-overview__section-subtitle {
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
-	font-size: rem(14px);
-	font-weight: 400;
+	@include body-medium;
 	margin-block-end: 48px;
 	color: var(--color-neutral-50);
 }

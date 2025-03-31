@@ -50,29 +50,6 @@ const getImageAspectRatioClass = ( image ) => {
 	return '';
 };
 
-/**
- * Gets the current image width (rather than original width)
- * Checks the image width attribute
- * Checks if width set in img src URL query params, i.e. {image-url}?w={width}
- * Returns 0 if no current width found
- * @param image
- * @returns {number}
- */
-const getCurrentImageWidth = ( image ) => {
-	let width = image.width || 0;
-
-	if ( width === 0 && image.src !== undefined ) {
-		// Parse width from src
-		const params = image.src.split( '?' )[ 1 ];
-		if ( params !== undefined ) {
-			const searchParams = new URLSearchParams( params );
-			width = searchParams.get( 'w' ) || '0';
-		}
-	}
-
-	return parseInt( width );
-};
-
 export default function addImageWrapperElement( post, dom ) {
 	if ( ! dom ) {
 		throw new Error( 'this transform must be used as part of withContentDOM' );
@@ -94,17 +71,6 @@ export default function addImageWrapperElement( post, dom ) {
 		parent.replaceChild( imageWrapper, image );
 		// set element as child of wrapper
 		imageWrapper.appendChild( image );
-
-		// Add div to allow image border with an inset box-shadow
-		const imageWidth = getCurrentImageWidth( image );
-		if ( imageWidth > 0 ) {
-			const imageBorder = document.createElement( 'div' );
-			const borderStyle = document.createAttribute( 'style' );
-			imageBorder.className = 'image-border';
-			borderStyle.value = 'width: ' + imageWidth + 'px';
-			imageBorder.setAttributeNode( borderStyle );
-			imageWrapper.appendChild( imageBorder );
-		}
 	} );
 
 	return post;

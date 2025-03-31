@@ -45,7 +45,11 @@ export const useLaunchpadDecider = < T extends Navigate< any > = Navigate< Stepp
 				return `/home/${ siteSlug || siteId }`;
 			}
 
-			return addQueryArgs( `/setup/${ flow }/launchpad`, { siteSlug, siteId, sessionId } );
+			return addQueryArgs( `/setup/${ flow }/launchpad`, {
+				siteSlug: siteSlug || undefined,
+				siteId: siteId || undefined,
+				sessionId: sessionId || undefined,
+			} );
 		},
 		postFlowNavigator: ( { siteId, siteSlug }: SiteProps ) => {
 			if ( showCustomerHome ) {

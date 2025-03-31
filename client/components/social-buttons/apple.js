@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
 import requestExternalAccess from '@automattic/request-external-access';
+import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -10,6 +11,7 @@ import AppleIcon from 'calypso/components/social-icons/apple';
 import { isFormDisabled } from 'calypso/state/login/selectors';
 import { getUxMode, getRedirectUri } from './utils';
 
+import '@automattic/components/styles/wp-button-override.scss';
 import './style.scss';
 
 const appleClientUrl =
@@ -147,10 +149,14 @@ class AppleLoginButton extends Component {
 				{ customButton ? (
 					customButton
 				) : (
-					<button
-						className={ clsx( 'social-buttons__button button apple', { disabled: isDisabled } ) }
+					<Button
+						className={ clsx( 'a8c-components-wp-button social-buttons__button apple', {
+							disabled: isDisabled,
+						} ) }
 						data-social-service="apple"
 						onClick={ this.handleClick }
+						variant="secondary"
+						__next40pxDefaultSize
 					>
 						<AppleIcon isDisabled={ isDisabled } width={ 17 } height={ 17 } />
 
@@ -161,7 +167,7 @@ class AppleLoginButton extends Component {
 									'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
 							} ) }
 						</span>
-					</button>
+					</Button>
 				) }
 			</Fragment>
 		);

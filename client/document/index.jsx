@@ -1,6 +1,7 @@
 import path from 'path';
 import config from '@automattic/calypso-config';
 import { isLocaleRtl } from '@automattic/i18n-utils';
+import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { Component } from 'react';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
@@ -68,6 +69,7 @@ class Document extends Component {
 			target,
 			user,
 			useTranslationChunks,
+			isStepContainerV2,
 		} = this.props;
 
 		const installedChunks = entrypoint.js
@@ -196,7 +198,13 @@ class Document extends Component {
 							>
 								<div className="layout__content">
 									{ shouldNotShowLoadingLogo ? (
-										<Loading className="wpcom-loading__boot" />
+										<>
+											{ isStepContainerV2 ? (
+												<Step.Loading />
+											) : (
+												<Loading className="wpcom-loading__boot" />
+											) }
+										</>
 									) : (
 										<LoadingLogo size={ 72 } className="wpcom-site__logo" />
 									) }

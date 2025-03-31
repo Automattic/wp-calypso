@@ -120,6 +120,9 @@ export default function CreditCardFields( {
 			'::placeholder': {
 				color: theme.colors.placeHolderTextColor,
 			},
+			':disabled': {
+				color: theme.colors.textColorDisabled,
+			},
 		},
 		invalid: {
 			color: theme.colors.textColor,

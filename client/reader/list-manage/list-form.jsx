@@ -13,6 +13,7 @@ import FormTextarea from 'calypso/components/forms/form-textarea';
 const INITIAL_UPDATE_FORM_STATE = {
 	description: '',
 	is_public: true,
+	is_immutable: false,
 	title: '',
 };
 const INITIAL_CREATE_FORM_STATE = {
@@ -26,8 +27,8 @@ export default function ListForm( { isCreateForm, isSubmissionDisabled, list = {
 		isCreateForm ? INITIAL_CREATE_FORM_STATE : { ...INITIAL_UPDATE_FORM_STATE, ...list }
 	);
 
-	// If list.is_public is 2 this list is permanent - render minimal form with no edit options
-	if ( list.is_public === 2 ) {
+	// If list.is_immutable this list is permanent - render minimal form with no edit options
+	if ( list?.is_immutable ) {
 		return (
 			<Card>
 				<FormFieldset>

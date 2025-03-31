@@ -2,7 +2,6 @@ import { Card } from '@automattic/components';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { forwardRef, useMemo } from 'react';
-import type { StyleVariation } from '../../types';
 import type { Ref } from 'react';
 import './style.scss';
 
@@ -14,16 +13,12 @@ interface ThemeCardProps {
 	imageActionLabel?: string;
 	banner?: React.ReactNode;
 	badge?: React.ReactNode;
-	styleVariations: StyleVariation[];
-	selectedStyleVariation?: StyleVariation;
 	optionsMenu?: React.ReactNode;
 	isActive?: boolean;
 	isLoading?: boolean;
 	isSoftLaunched?: boolean;
 	onClick?: () => void;
 	onImageClick?: () => void;
-	onStyleVariationClick?: ( styleVariation: StyleVariation ) => void;
-	onStyleVariationMoreClick?: () => void;
 }
 
 const ActiveBadge = () => {
@@ -58,7 +53,6 @@ const ThemeCard = forwardRef(
 			imageActionLabel,
 			banner,
 			badge,
-			styleVariations = [],
 			optionsMenu,
 			isActive,
 			isLoading,
@@ -74,11 +68,6 @@ const ThemeCard = forwardRef(
 		const themeClasses = clsx( 'theme-card', {
 			'theme-card--is-active': isActive,
 			'theme-card--is-actionable': isActionable,
-		} );
-
-		const themeInfoClasses = clsx( 'theme-card__info', {
-			// Only show style variations when there is both a badge and variations.
-			'theme-card__info--has-style-variations': badge && styleVariations.length > 0,
 		} );
 
 		return (
@@ -120,7 +109,7 @@ const ThemeCard = forwardRef(
 							</div>
 						</div>
 					) }
-					<div className={ themeInfoClasses }>
+					<div className="theme-card__info">
 						<h2 className="theme-card__info-title">
 							<span>{ name }</span>
 						</h2>

@@ -22,8 +22,7 @@
 	overflow: hidden;
 	white-space: nowrap;
 	width: 180px;
-	font-weight: 500;
-	font-size: rem(14px);
+	@include heading-medium;
 	margin-inline-end: 16px;
 
 	.status-badge {
@@ -36,9 +35,8 @@
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
-	font-size: rem(12px);
+	@include body-small;
 	color: var(--color-neutral-60);
-	font-weight: 400;
 }
 
 .sites-dataviews__site-error-indicator {

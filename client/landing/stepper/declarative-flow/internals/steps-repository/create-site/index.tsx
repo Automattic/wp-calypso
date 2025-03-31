@@ -7,13 +7,14 @@ import {
 	addProductsToCart,
 	createSiteWithCart,
 	isCopySiteFlow,
-	isMigrationSignupFlow,
 	isEntrepreneurFlow,
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
 	isReadymadeFlow,
 	isStartWritingFlow,
 	isOnboardingFlow,
+	isHostedSiteMigrationFlow,
+	Step,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -33,8 +34,8 @@ import {
 import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
-import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
-import type { Step } from '../../types';
+import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
+import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './styles.scss';
 
@@ -51,7 +52,7 @@ function hasSourceSlug( data: unknown ): data is { sourceSlug: string } {
 	return false;
 }
 
-const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
+const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
 
@@ -67,7 +68,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		siteUrl,
 		progress,
 		partnerBundle,
-		siteGoals,
 	} = useSelect(
 		( select: ( arg: string ) => OnboardSelect ) => ( {
 			domainItem: select( ONBOARD_STORE ).getSelectedDomain(),
@@ -85,8 +85,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	);
 
 	const { mutateAsync: addEcommerceTrial } = useAddEcommerceTrialMutation( partnerBundle );
-	const [ , isGoalsFirstExperiment ] = useGoalsFirstExperiment();
-
 	/**
 	 * Support singular and multiple domain cart items.
 	 */
@@ -94,8 +92,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	if ( domainCartItem ) {
 		mergedDomainCartItems.push( domainCartItem );
 	}
-
-	const shouldSaveSiteGoals = isOnboardingFlow( flow ) && isGoalsFirstExperiment;
 
 	const username = useSelector( getCurrentUserName );
 
@@ -144,10 +140,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	);
 	const urlQueryParams = useQuery();
 	const skipMigration = urlQueryParams.get( 'skipMigration' ) || '';
-	const useThemeHeadstart =
-		! isStartWritingFlow( flow ) &&
-		! isNewHostedSiteCreationFlow( flow ) &&
-		! isMigrationSignupFlow( flow );
+	const useThemeHeadstart = ! isStartWritingFlow( flow ) && ! isNewHostedSiteCreationFlow( flow );
 	const shouldGoToCheckout = Boolean( planCartItem );
 
 	async function createSite() {
@@ -169,7 +162,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			};
 		}
 
-		const siteIntent = isMigrationSignupFlow( flow ) ? 'migration' : '';
+		const siteIntent = isHostedSiteMigrationFlow( flow ) ? 'migration' : '';
 
 		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
 		const site = await createSiteWithCart(
@@ -190,8 +183,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			siteUrl,
 			domainItem,
 			sourceSlug,
-			siteIntent,
-			shouldSaveSiteGoals ? siteGoals : undefined
+			siteIntent
 		);
 
 		if ( isEntrepreneurFlow( flow ) && site ) {
@@ -234,27 +226,26 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
-	const getCurrentMessage = () => {
-		return __( 'Creating your site' );
-	};
+	const title = __( 'Creating your site' );
 
-	const getSubTitle = () => {
-		return null;
-	};
-
-	const subTitle = getSubTitle();
+	if ( shouldUseStepContainerV2( flow ) ) {
+		return (
+			<>
+				<DocumentHead title={ title } />
+				<Step.Loading title={ title } progress={ progress } />
+			</>
+		);
+	}
 
 	return (
 		<>
-			<DocumentHead title={ getCurrentMessage() } />
+			<DocumentHead title={ title } />
 			<StepContainer
 				shouldHideNavButtons
 				hideFormattedHeader
 				stepName="create-site"
 				recordTracksEvent={ recordTracksEvent }
-				stepContent={
-					<Loading title={ getCurrentMessage() } subtitle={ subTitle } progress={ progress } />
-				}
+				stepContent={ <Loading title={ title } progress={ progress } /> }
 				showFooterWooCommercePowered={ false }
 			/>
 		</>

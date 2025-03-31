@@ -98,14 +98,32 @@
 	text-align: center;
 	color: var(--color-text);
 
+	button {
+		color: var(--color-link);
+		cursor: pointer;
+		font-size: inherit;
+
+		&:hover,
+		&:focus,
+		&:active {
+			color: var(--color-link-dark);
+		}
+
+		&:focus {
+			outline: thin dotted;
+		}
+	}
+
 	body.is-section-signup & {
 		color: var(--color-text-inverted);
 
-		a {
+		button {
 			color: var(--color-text-inverted);
 			text-decoration: underline;
 
-			&:hover {
+			&:hover,
+			&:focus,
+			&:active {
 				color: var(--color-neutral-0);
 			}
 		}

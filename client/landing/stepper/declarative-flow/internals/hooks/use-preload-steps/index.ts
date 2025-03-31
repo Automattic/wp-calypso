@@ -3,14 +3,22 @@ import debugFactory from 'debug';
 import { useEffect } from 'react';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import type { Flow, StepperStep } from '../../types';
+import type { Flow, StepperStep, StepProps } from '../../types';
 
 const debug = debugFactory( 'calypso:stepper:preloading' );
+
+export const lazyCache = new WeakMap<
+	() => Promise< {
+		default: React.ComponentType< StepProps >;
+	} >,
+	React.ComponentType< StepProps >
+>();
 
 async function tryPreload( step?: StepperStep, followingStep?: StepperStep ) {
 	if ( step && 'asyncComponent' in step ) {
 		debug( 'Preloading step:', step.slug );
-		await step.asyncComponent();
+		const { default: component } = await step.asyncComponent();
+		lazyCache.set( step.asyncComponent, component );
 	}
 	// Flows are indeterminate, they often pick one of the two next steps based on user input, so load two steps ahead.
 	if ( followingStep ) {

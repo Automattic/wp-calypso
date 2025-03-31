@@ -28,7 +28,7 @@ export const getEstimatedCommission = (
 		}
 		for ( const purchase of referral.purchases ) {
 			// We go over 'active' and 'cancelled' subscriptions
-			if ( ! purchase || purchase.status === 'pending' ) {
+			if ( ! purchase || purchase.status === 'pending' || purchase.status === 'error' ) {
 				continue;
 			}
 			// Find corresponding product for price

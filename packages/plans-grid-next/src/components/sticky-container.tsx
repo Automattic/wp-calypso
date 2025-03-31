@@ -1,7 +1,7 @@
 import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import clsx from 'clsx';
-import { useRef, type ElementType, useState, useLayoutEffect, ReactNode } from 'react';
+import { useRef, type ElementType, useState, useLayoutEffect, ReactNode, useEffect } from 'react';
 
 type Props = {
 	/**
@@ -41,17 +41,19 @@ type Props = {
 const styles = ( {
 	disabled,
 	stickyOffset,
+	stickyPadding,
 	zIndex,
 }: {
 	disabled: boolean;
 	stickyOffset: number;
+	stickyPadding: number;
 	zIndex: number;
 } ) =>
 	disabled
 		? ''
 		: css`
 				position: sticky;
-				top: ${ stickyOffset + 'px' };
+				top: ${ stickyOffset - stickyPadding + 'px' };
 				z-index: ${ zIndex };
 		  `;
 
@@ -59,6 +61,28 @@ const Container = styled.div`
 	${ styles }
 `;
 
+/**
+ * Renders a sticky container.
+ *
+ * The following is an illustration on how the container's top property is calculated.
+ *
+ *                                    +~~~~~~~~ stickyParent (where the container scrolls)
+ * stickyOffset  ~~~~~~~~~~+          |
+ * (e.g. masterbar)        |          |
+ *                         v          v
+ *                  +------#-----------------+
+ *                  |      #        |<~~~~~~~+~~~~~ stickyPadding
+ *                  | +----#--------------+  |
+ *                  | |    #   @          |<~+~~~~~ stickyParent's content area
+ *                  | |    #   @          |  |
+ *                  | |    #   @ <~~~~~~~~+~~+~~~~~ the container's top
+ *                  | |    #   @          |  |      (= stickyOffset - stickyPadding)
+ *                  | |  =============    |  |
+ *                  | |     ^             |  |
+ *                  | |     |             |  |
+ *                  | |     +~~~~~~~~~~~~~+~~+~~~~~ the container
+ *                  | |                   |  |
+ */
 export function StickyContainer( props: Props ) {
 	const {
 		stickyOffset = 0,
@@ -70,7 +94,52 @@ export function StickyContainer( props: Props ) {
 	} = props;
 
 	const stickyRef = useRef( null );
+	const [ stickyParent, setStickyParent ] = useState< HTMLElement | null >( null );
+	const [ stickyPadding, setStickyPadding ] = useState( 0 );
 	const [ isStuck, setIsStuck ] = useState( false );
+
+	/**
+	 * Calculate the first scrollable parent and its padding-top.
+	 */
+	useEffect( () => {
+		if ( ! stickyRef.current || typeof getComputedStyle === 'undefined' ) {
+			return;
+		}
+
+		let scrollParent = stickyRef.current as HTMLElement | null;
+		while ( scrollParent ) {
+			const style = getComputedStyle( scrollParent );
+			const overflowY = style.overflowY;
+			if ( overflowY === 'auto' || overflowY === 'scroll' || overflowY === 'overlay' ) {
+				break;
+			}
+			scrollParent = scrollParent.parentElement;
+		}
+
+		const receiveScrollParent = ( el: HTMLElement ) => {
+			const styles = getComputedStyle( el );
+			const paddingTop = parseFloat( styles.paddingTop );
+			setStickyParent( scrollParent );
+			setStickyPadding( paddingTop );
+		};
+
+		if ( scrollParent ) {
+			scrollParent.style.position = 'relative';
+			receiveScrollParent( scrollParent );
+
+			if ( typeof ResizeObserver !== 'undefined' ) {
+				const observer = new ResizeObserver(
+					( [ parent ]: Parameters< ResizeObserverCallback >[ 0 ] ) => {
+						receiveScrollParent( parent.target as HTMLElement );
+					}
+				);
+				observer.observe( scrollParent );
+				return () => {
+					observer.disconnect();
+				};
+			}
+		}
+	}, [] );
 
 	/**
 	 * This effect sets the value of `isStuck` state when it detects that
@@ -102,6 +171,7 @@ export function StickyContainer( props: Props ) {
 				}
 			},
 			{
+				root: stickyParent,
 				rootMargin: `-${ stickyOffset + 1 }px 0px 0px 0px`,
 				threshold: [ 0, 1 ],
 			}
@@ -114,7 +184,7 @@ export function StickyContainer( props: Props ) {
 		return () => {
 			observer.disconnect();
 		};
-	}, [ disabled, stickyOffset ] );
+	}, [ disabled, stickyParent, stickyOffset, stickyPadding ] );
 
 	const isStuckFinalState = ! disabled && isStuck;
 	return (
@@ -135,6 +205,7 @@ export function StickyContainer( props: Props ) {
 				as={ element }
 				ref={ stickyRef }
 				stickyOffset={ stickyOffset }
+				stickyPadding={ stickyPadding }
 				disabled={ disabled }
 				className={ clsx( { [ stickyClass ]: isStuckFinalState } ) }
 				zIndex={ zIndex }

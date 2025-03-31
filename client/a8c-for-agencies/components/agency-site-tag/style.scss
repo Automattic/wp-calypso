@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+
 .agency-site-tag.badge {
 	background: var(--studio-gray-5);
 	border-radius: 4px;
@@ -11,7 +14,7 @@
 }
 
 .agency-site-tag__text {
-	font-size: 0.875rem;
+	@include body-small;
 }
 
 .agency-site-tag__close {

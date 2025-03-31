@@ -181,6 +181,23 @@ describe.skip( 'Hosted site Migration Flow', () => {
 			} );
 		} );
 
+		it( 'migrate redirects from the migration instructions step to the credentials step when the user decides to ask for an assisted migration', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( hostedSiteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentURL: `/${ STEPS.SITE_MIGRATION_INSTRUCTIONS.slug }?siteSlug=example.wordpress.com&siteId=123&from=https%3A%2F%2Fsite-to-be-migrated.com`,
+				currentStep: STEPS.SITE_MIGRATION_INSTRUCTIONS.slug,
+				dependencies: {
+					how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?siteSlug=example.wordpress.com&siteId=123&from=https%3A%2F%2Fsite-to-be-migrated.com`,
+				state: null,
+			} );
+		} );
+
 		it( 'migrate redirects from the how-to-migrate (do it for me) page to credential collection step', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( hostedSiteMigrationFlow );
 
