@@ -141,7 +141,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const urlQueryParams = useQuery();
 	const skipMigration = urlQueryParams.get( 'skipMigration' ) || '';
 	const platform = urlQueryParams.get( 'platform' ) || '';
-	const { data: sourceMigrationStatus } = useSourceMigrationStatusQuery( sourceSiteSlug );
 	const useThemeHeadstart = ! isStartWritingFlow( flow ) && ! isNewHostedSiteCreationFlow( flow );
 	const shouldGoToCheckout = Boolean( planCartItem );
 
