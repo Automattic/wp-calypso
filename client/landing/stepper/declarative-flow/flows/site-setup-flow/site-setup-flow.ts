@@ -125,11 +125,8 @@ const siteSetupFlow: Flow = {
 		const backToFlow = urlQueryParams.get( 'backToFlow' );
 		const skippedCheckout = urlQueryParams.get( 'skippedCheckout' );
 
-		const adminUrl = useSelect(
-			( select ) =>
-				site && ( select( SITE_STORE ) as SiteSelect ).getSiteOption( site.ID, 'admin_url' ),
-			[ site ]
-		);
+		const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
+
 		const isAtomic = useSelect(
 			( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site.ID ),
 			[ site ]
@@ -277,7 +274,6 @@ const siteSetupFlow: Flow = {
 		useRedirectDesignSetupOldSlug( currentStep, navigate );
 		const { get } = useFlowState();
 		const entryPoint = get( 'flow' )?.entryPoint;
-		const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
@@ -547,7 +543,7 @@ const siteSetupFlow: Flow = {
 					}
 
 					if ( entryPoint === 'wp-admin-importers-list' ) {
-						return window.location.assign( `${ siteAdminUrl }import.php` );
+						return window.location.assign( `${ adminUrl }import.php` );
 					}
 
 					return navigate( `import?siteSlug=${ siteSlug }` );
