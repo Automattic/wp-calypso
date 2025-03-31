@@ -23,7 +23,7 @@ import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-e
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
+import { LOCATIONS_SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
 import {
 	STAT_TYPE_COUNTRY_VIEWS,
 	STATS_FEATURE_LOCATION_REGION_VIEWS,
@@ -74,7 +74,9 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = STAT_TYPE_COUNTRY_VIEWS;
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const supportUrl = isOdysseyStats ? JETPACK_SUPPORT_URL_TRAFFIC : SUPPORT_URL;
+	const supportUrl = isOdysseyStats
+		? `${ JETPACK_SUPPORT_URL_TRAFFIC }#views-by-locations`
+		: LOCATIONS_SUPPORT_URL;
 
 	const urlGeoMode =
 		initialGeoMode || new URLSearchParams( window.location.search ).get( 'geoMode' );
@@ -196,13 +198,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 				{
 					comment: '{{link}} links to support documentation.',
 					components: {
-						link: (
-							<a
-								target="_blank"
-								rel="noreferrer"
-								href={ localizeUrl( `${ supportUrl }#countries` ) }
-							/>
-						),
+						link: <a target="_blank" rel="noreferrer" href={ localizeUrl( `${ supportUrl }` ) } />,
 					},
 					context: 'Stats: Info box label when the Countries module is empty',
 				}
@@ -238,13 +234,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 				{
 					comment: '{{link}} links to support documentation.',
 					components: {
-						link: (
-							<a
-								target="_blank"
-								rel="noreferrer"
-								href={ localizeUrl( `${ supportUrl }#countries` ) }
-							/>
-						),
+						link: <a target="_blank" rel="noreferrer" href={ localizeUrl( `${ supportUrl }` ) } />,
 					},
 					context: 'Stats: Link in a popover for Countries module when the module has data',
 				}

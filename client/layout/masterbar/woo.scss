@@ -153,7 +153,7 @@ $breakpoint-mobile: 660px;
 		letter-spacing: 0;
 	}
 
-	a,
+	a:not(.social-buttons__button),
 	.wp-login__links a,
 	.wp-login__links button,
 	.button:not(.social-buttons__button),
@@ -243,7 +243,7 @@ $breakpoint-mobile: 660px;
 
 
 			a,
-			a:visited, {
+			a:visited {
 				color: var(--woo-purple-60);
 				font-size: rem(14px);
 				font-style: normal;
@@ -1555,33 +1555,32 @@ $breakpoint-mobile: 660px;
 
 				.auth-form__social-buttons-container {
 					gap: 16px;
+					width: 100%;
 				}
 
-				.social-buttons__button.button {
-					display: flex;
+				.social-buttons__button {
+					--color-accent: var(--woo-purple-40);
+
 					height: 48px;
 					padding: 8px 16px;
-					align-items: center;
-					align-self: stretch;
 					border-radius: 8px; // stylelint-disable-line scales/radii
-					border: 2px solid var(--studio-gray-10) !important;
-					width: 100%;
 					margin: 0;
-					text-decoration: none;
 
-					&:hover {
-						background: var(--studio-gray-0, #f6f7f7);
+					&:not(:focus) {
+						box-shadow: inset 0 0 0 2px $gray-300, 0 0 0 currentColor;
 					}
-				}
 
+					&:focus {
+						box-shadow: 0 0 0 currentColor inset, 0 0 0 2px var(--wp-components-color-accent);
+					}
 
-				.social-buttons__service-name {
-					font-size: 1rem;
-					font-style: normal;
-					font-weight: 500;
-					line-height: 24px;
-					color: var(--studio-gray-100);
-					font-family: $woo-inter-font;
+					> span {
+						color: var(--studio-gray-100);
+						font-family: $woo-inter-font;
+						font-size: 1rem;
+						margin-left: -20px;
+						margin-right: auto;
+					}
 				}
 
 				.social-icons {
@@ -2216,22 +2215,6 @@ $breakpoint-mobile: 660px;
 				padding-right: 0;
 				margin: 0 auto 0 auto;
 				align-items: baseline;
-			}
-		}
-
-		.auth-form__social {
-			.auth-form__social-buttons-container {
-				width: 100%;
-			}
-
-			.auth-form__social-buttons .social-buttons__button.button {
-				border-radius: 2px;
-				border: 1px solid var(--Gray-Gray-20, #a7aaad) !important;
-				background: var(--black-white-white, #fff);
-				span {
-					font-size: 0.875rem;
-					letter-spacing: 0.32px;
-				}
 			}
 		}
 	}

@@ -85,15 +85,18 @@ export type FormStatusManager = {
 	setFormStatus: FormStatusSetter;
 };
 
-export interface CheckoutContextInterface {
+export interface PaymentMethodProviderContextInterface {
 	allPaymentMethods: PaymentMethod[];
+	paymentProcessors: PaymentProcessorProp;
 	disabledPaymentMethodIds: string[];
 	setDisabledPaymentMethodIds: ( methods: string[] ) => void;
-	paymentMethodId: string | null;
+	paymentMethodId: string | null | undefined;
 	setPaymentMethodId: ( id: string ) => void;
-	paymentProcessors: PaymentProcessorProp;
-	onPageLoadError?: CheckoutPageErrorCallback;
 	onPaymentMethodChanged?: PaymentMethodChangedCallback;
+}
+
+export interface CheckoutContextInterface {
+	onPageLoadError?: CheckoutPageErrorCallback;
 }
 
 export type ReactStandardAction< T = string, P = unknown > = P extends void
@@ -132,7 +135,7 @@ export type StepChangedCallback = ( args: StepChangedEventArguments ) => void;
 export type PaymentMethodChangedCallback = ( method: string ) => void;
 export type PaymentEventCallback = ( args: PaymentEventCallbackArguments ) => void;
 export type PaymentErrorCallback = ( args: {
-	paymentMethodId: string | null;
+	paymentMethodId: string | null | undefined;
 	transactionError: string | null;
 } ) => void;
 export type CheckoutPageErrorCallback = (
@@ -271,6 +274,8 @@ export type StepCompleteCallbackMap = Record< string, StepCompleteCallback >;
 
 export type SetStepComplete = ( stepId: string ) => Promise< boolean >;
 
+export type MakeStepActive = ( stepId: string ) => Promise< boolean >;
+
 export type CheckoutStepCompleteStatus = Record< string, boolean >;
 
 export interface CheckoutStepGroupStore {
@@ -291,6 +296,7 @@ export interface CheckoutStepGroupActions {
 	setActiveStepNumber: ( stepNumber: number ) => void;
 	setStepCompleteStatus: ( newStatus: CheckoutStepCompleteStatus ) => void;
 	setStepComplete: SetStepComplete;
+	makeStepActive: MakeStepActive;
 	getStepNumberFromId: ( stepId: string ) => number | undefined;
 	setStepCompleteCallback: (
 		stepNumber: number,

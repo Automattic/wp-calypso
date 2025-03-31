@@ -6,5 +6,5 @@ export const isProfileComplete = (
 ) =>
 	settings.first_name &&
 	settings.last_name &&
-	( settings.has_gravatar || gravatarStatus.tempImage ) &&
-	settings.description;
+	settings.description &&
+	gravatarStatus?.gravatarDetails?.has_gravatar;

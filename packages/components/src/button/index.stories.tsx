@@ -24,7 +24,6 @@ export default meta;
 type Story = StoryObj< typeof meta >;
 
 export const Default: Story = {
-	// @ts-expect-error - Types are broken
 	args: {
 		children: 'Hello World!',
 	},

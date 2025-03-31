@@ -13,7 +13,7 @@ export const BackButton = ( originalProps: ButtonProps ) => {
 	const stepContext = useStepContainerV2Context();
 
 	const backButtonProps = normalizeButtonProps( originalProps, {
-		label: __( 'Back', __i18n_text_domain__ ),
+		children: __( 'Back', __i18n_text_domain__ ),
 		className: 'step-container-v2__back-button',
 		icon: chevronLeft,
 	} );

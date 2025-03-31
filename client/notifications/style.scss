@@ -215,7 +215,7 @@ div.reader-notifications__panel {
 			background-color: unset;
 
 			.wpnc__note-list:not(.is-note-open) {
-				box-shadow: 3px 1px 10px -2px rgba(var(--color-neutral-70-rgb), 0.075);
+				box-shadow: 3px 1px 10px -2px color-mix(in srgb, var(--color-neutral-70) 7.5%, transparent);
 			}
 
 			.wpnc__single-view {

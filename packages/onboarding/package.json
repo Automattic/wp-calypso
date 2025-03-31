@@ -27,7 +27,7 @@
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && yarn run -T copy-assets && npx copyfiles ./styles/** dist",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch",
-		"storybook": "sb dev"
+		"storybook:start": "storybook dev"
 	},
 	"dependencies": {
 		"@automattic/calypso-config": "workspace:^",
@@ -47,9 +47,7 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@automattic/viewport": "workspace:^",
-		"@storybook/addon-a11y": "^7.6.20",
-		"@storybook/cli": "^7.6.20",
-		"@storybook/react": "^7.6.20",
+		"@storybook/addon-a11y": "^8.6.9",
 		"@testing-library/dom": "^10.4.0",
 		"@testing-library/react": "^16.2.0",
 		"@wordpress/base-styles": "^5.20.0",
@@ -59,6 +57,7 @@
 		"react-dom": "^18.3.1",
 		"redux": "^5.0.1",
 		"sass-loader": "^13.3.3",
+		"storybook": "^8.6.9",
 		"style-loader": "^1.3.0",
 		"typescript": "^5.8.2",
 		"webpack": "^5.97.1"

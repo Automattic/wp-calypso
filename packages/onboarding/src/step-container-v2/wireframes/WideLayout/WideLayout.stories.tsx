@@ -1,5 +1,5 @@
 import { createInterpolateElement } from '@wordpress/element';
-import { Heading, TopBar, BackButton, NextButton, StickyBottomBar } from '../..';
+import { Heading, TopBar, BackButton, PrimaryButton, StickyBottomBar } from '../..';
 import { WireframePlaceholder } from '../../helpers/wireframe-placeholder';
 import { withStepContainerV2ContextDecorator } from '../../helpers/withStepContainerV2ContextDecorator';
 import { WideLayout } from './WideLayout';
@@ -15,7 +15,7 @@ export default meta;
 
 export const Default = () => (
 	<WideLayout
-		topBar={ <TopBar backButton={ <BackButton /> } /> }
+		topBar={ <TopBar leftElement={ <BackButton /> } /> }
 		heading={
 			<Heading
 				text="Wide layout"
@@ -27,7 +27,7 @@ export const Default = () => (
 				) }
 			/>
 		}
-		stickyBottomBar={ <StickyBottomBar rightButton={ <NextButton /> } /> }
+		stickyBottomBar={ <StickyBottomBar rightElement={ <PrimaryButton /> } /> }
 	>
 		<WireframePlaceholder height={ 616 }>Main</WireframePlaceholder>
 	</WideLayout>

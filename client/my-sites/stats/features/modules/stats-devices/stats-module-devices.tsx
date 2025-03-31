@@ -13,7 +13,7 @@ import { useSelector } from 'calypso/state';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { JETPACK_SUPPORT_URL_TRAFFIC, SUPPORT_URL } from '../../../const';
+import { JETPACK_SUPPORT_URL_TRAFFIC, DEVICES_SUPPORT_URL } from '../../../const';
 import useModuleDevicesQuery, { StatsDevicesData } from '../../../hooks/use-modeule-devices-query';
 import { QueryStatsParams } from '../../../hooks/utils';
 import StatsListCard from '../../../stats-list/stats-list-card';
@@ -158,7 +158,7 @@ const StatsModuleDevices: React.FC< StatsModuleDevicesProps > = ( {
 
 	const supportUrl = isSiteJetpackNotAtomic
 		? localizeUrl( `${ JETPACK_SUPPORT_URL_TRAFFIC }#devices-stats` )
-		: localizeUrl( `${ SUPPORT_URL }#devices` );
+		: localizeUrl( DEVICES_SUPPORT_URL );
 
 	const titleNodes = (
 		<StatsInfoArea isNew>

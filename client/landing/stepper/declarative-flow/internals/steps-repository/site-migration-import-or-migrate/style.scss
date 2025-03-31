@@ -71,3 +71,15 @@
 		color: var(--studio-gray-60);
 	}
 }
+
+.import-or-migrate-v2 {
+	.import-or-migrate__list {
+		display: flex;
+		flex-direction: column;
+
+		.flow-question {
+			max-width: none;
+			margin: 0 0 18px;
+		}
+	}
+}

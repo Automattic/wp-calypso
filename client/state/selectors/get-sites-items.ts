@@ -7,5 +7,5 @@ const EMPTY_SITES = Object.freeze( {} );
  * Returns site items object or empty object.
  */
 export default function getSitesItems( state: AppState ): Record< number | string, SiteDetails > {
-	return state.sites.items || EMPTY_SITES;
+	return state.sites?.items || EMPTY_SITES;
 }

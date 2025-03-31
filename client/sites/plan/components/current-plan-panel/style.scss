@@ -4,10 +4,36 @@
 @import "@wordpress/base-styles/variables";
 
 .current-plan-panel {
+	.current-plan-heading {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+
+		@include break-medium {
+			display: flex;
+			flex-direction: row;
+			align-items: flex-start;
+		}
+	}
+
+	.current-plan-info {
+		flex: 1;
+	}
+
 	.current-plan-name {
 		display: flex;
+		flex: 1;
 		gap: 8px;
 		margin-bottom: 8px;
+	}
+
+	.manage-buttons {
+		display: flex;
+		gap: 4px;
+
+		@include break-medium {
+			flex-direction: row-reverse;
+		}
 	}
 
 	h3 {

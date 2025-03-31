@@ -505,7 +505,7 @@ body.is-mobile-app-view {
 		.dashicons-plus {
 			padding-top: 0;
 			&::before {
-				font-size: 40px !important; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				font-size: 40px !important;
 				vertical-align: middle;
 				top: 2px !important;
 			}
@@ -517,7 +517,7 @@ body.is-mobile-app-view {
 				width: 52px;
 				display: inline-block;
 				position: relative;
-				font-size: 32px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				font-size: 32px;
 				text-align: center;
 				top: 7px;
 				height: unset;
@@ -530,7 +530,7 @@ body.is-mobile-app-view {
 
 		.dashicons-update {
 			&::before {
-				font-size: 40px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				font-size: 40px;
 				top: 3px;
 			}
 		}
@@ -540,7 +540,7 @@ body.is-mobile-app-view {
 			position: relative;
 			float: left;
 			&::before {
-				font-size: 40px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				font-size: 40px;
 				top: -1px;
 				vertical-align: middle;
 			}
@@ -824,7 +824,7 @@ body.is-mobile-app-view {
 				line-height: 18px;
 
 				.username {
-					font-size: 11px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+					font-size: 11px;
 					line-height: 14px;
 					margin-bottom: 4px;
 				}
@@ -931,6 +931,40 @@ body.is-mobile-app-view {
 	@media only screen and (max-width: 781px) {
 		.gridicon + .masterbar__item-content {
 			padding-left: 6px;
+		}
+	}
+}
+
+.masterbar__site-infos {
+	box-sizing: border-box;
+	min-width: 260px;
+	margin: 6px -6px -6px;
+	padding: 12px;
+	background-color: var(--color-global-masterbar-site-info-background, color-mix(in srgb, var(--color-masterbar-item-hover-background), $white 15% ));
+	color: var(--color-masterbar-submenu-text);
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.masterbar__site-info {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	
+	.masterbar__site-info-label {
+		margin-bottom: 4px;
+	}
+	
+	.masterbar__info-badges {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 4px;
+
+		.components-badge:where(.is-default) {
+			background-color: var(--color-global-masterbar-site-info-badge-background, rgba(255, 255, 255, 0.1));
+			color: var(--color-global-masterbar-site-info-badge-color);
 		}
 	}
 }
@@ -1090,7 +1124,6 @@ a.masterbar__quick-language-switcher {
 		}
 
 		@include breakpoint-deprecated( ">480px" ) {
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 100%;
 		}
 
