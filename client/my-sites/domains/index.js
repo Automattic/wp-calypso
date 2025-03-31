@@ -85,6 +85,16 @@ export default function () {
 		paths.domainManagementRoot() + '?site=all&action=edit-contact-email'
 	);
 
+	// `/domains/add/use-your-domain/:site` is deprecated and not in use.
+	// See https://github.com/Automattic/wp-calypso/issues/102066
+	page.redirect( '/domains/add/use-your-domain/:site', ( ctx ) => {
+		const query = new URLSearchParams( ctx.querystring );
+		// The domain used to be passed via the `initialQuery` URL search param
+		const domain = query.get( 'initialQuery' );
+
+		page.redirect( paths.domainUseMyDomain( ctx.params.site, { domain } ) );
+	} );
+
 	registerMultiPage( {
 		paths: [
 			paths.domainManagementEmail(),
