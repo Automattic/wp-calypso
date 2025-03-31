@@ -2,7 +2,7 @@ import { Locator, Page, Response } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 
 const selectors = {
-	continue: 'button:text("Continue")',
+	continue: 'button:text("Continue"),a:text("Continue")',
 	loginWithAnotherAccount: ':text("Log in with another account")',
 };
 
@@ -191,6 +191,7 @@ export class LoginPage {
 	 * @returns True if the message is valid, false otherwise.
 	 */
 	async validateContinueAsYourself( username: string, email: string ) {
+		await this.page.waitForSelector( selectors.continue );
 		await this.page.waitForSelector( `text='${ username }'` );
 		await this.page.waitForSelector( `text='${ email }'` );
 		await this.page.waitForSelector( selectors.loginWithAnotherAccount );
