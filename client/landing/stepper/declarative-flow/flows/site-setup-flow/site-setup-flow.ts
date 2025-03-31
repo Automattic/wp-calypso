@@ -547,9 +547,7 @@ const siteSetupFlow: Flow = {
 					}
 
 					if ( entryPoint === 'wp-admin-importers-list' ) {
-						const adminUrl = `${ siteAdminUrl }import.php`;
-
-						return window.location.assign( adminUrl );
+						return window.location.assign( `${ siteAdminUrl }import.php` );
 					}
 
 					return navigate( `import?siteSlug=${ siteSlug }` );
