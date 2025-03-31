@@ -124,6 +124,7 @@ export const PassCustomState: Story = {
 export const WithCustomOnClick: Story = {
 	args: {
 		to: '/home',
+		className: 'story-link',
 		children: 'Click to call the onClick()!',
 		onClick: fn(),
 	},
