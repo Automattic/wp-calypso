@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { fn } from '@storybook/test';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 /**
@@ -114,5 +115,16 @@ export const PassCustomState: Story = {
 				) }
 			</VStack>
 		);
+	},
+};
+
+/**
+ * This story shows how to pass a custom onClick handler to the Link component.
+ */
+export const WithCustomOnClick: Story = {
+	args: {
+		to: '/home',
+		children: 'Click to call the onClick()!',
+		onClick: fn(),
 	},
 };
