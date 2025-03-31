@@ -114,7 +114,6 @@
 		"onboarding/trail-map-feature-grid-copy": false,
 		"onboarding/trail-map-feature-grid-structure": false,
 		"onboarding/user-on-stepper-hosting": false,
-		"p2-enabled": false,
 		"p2/p2-plus": true,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
@@ -174,7 +173,10 @@
 		"use-translation-chunks": true,
 		"user-management-revamp": true,
 		"wpcom-user-bootstrap": true,
-		"yolo/command-palette": true
+		"yolo/command-palette": true,
+		"oauth": true,
+		"onboarding/checklist/tasks": true,
+		"pages/domain-connect": true
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",

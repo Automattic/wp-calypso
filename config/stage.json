@@ -110,7 +110,7 @@
 		"onboarding/trail-map-feature-grid": false,
 		"onboarding/trail-map-feature-grid-copy": false,
 		"onboarding/trail-map-feature-grid-structure": false,
-		"p2-enabled": true,
+		"onboarding/trail-map-feature-grid": false,
 		"p2/p2-plus": true,
 		"page/export": true,
 		"plans/hosting-trial": true,
@@ -170,7 +170,10 @@
 		"use-translation-chunks": true,
 		"user-management-revamp": true,
 		"wpcom-user-bootstrap": true,
-		"yolo/command-palette": true
+		"yolo/command-palette": true,
+		"oauth": true,
+		"onboarding/checklist/tasks": true,
+		"pages/domain-connect": true
 	},
 	"siftscience_key": "e00e878351",
 	"oauth_client_id": "39911",
