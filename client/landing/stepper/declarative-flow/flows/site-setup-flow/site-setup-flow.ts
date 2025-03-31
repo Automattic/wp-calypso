@@ -759,6 +759,14 @@ const siteSetupFlow: Flow = {
 			selectedGlobalStyles,
 			skippedCheckout,
 		] );
+
+		const { get, set } = useFlowState();
+		const urlQueryParams = useQuery();
+		const ref = urlQueryParams.get( 'ref' );
+
+		if ( ref && ! get( 'flow' )?.entryPoint ) {
+			set( 'flow', { entryPoint: ref } );
+		}
 	},
 };
 
