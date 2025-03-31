@@ -12,6 +12,7 @@ import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getInitialQueryArguments } from 'calypso/state/selectors/get-initial-query-arguments';
 import { requestSite } from 'calypso/state/sites/actions';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { WRITE_INTENT_DEFAULT_DESIGN } from '../../../constants';
 import { useActivateDesign } from '../../../hooks/use-activate-design';
@@ -22,13 +23,14 @@ import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../../../stores';
 import { shouldRedirectToSiteMigration } from '../../helpers';
 import { useRedirectDesignSetupOldSlug } from '../../helpers/use-redirect-design-setup-old-slug';
 import { useLaunchpadDecider } from '../../internals/hooks/use-launchpad-decider';
+import { useFlowState } from '../../internals/state-manager/store';
 import { STEPS } from '../../internals/steps';
 import { redirect } from '../../internals/steps-repository/import/util';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import {
 	type AssertConditionResult,
 	AssertConditionState,
-	type FlowV1,
+	type Flow,
 	type ProvidedDependencies,
 } from '../../internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
@@ -47,9 +49,10 @@ function useGoalsAtFrontExperimentQueryParam() {
 	return Boolean( useSelector( getInitialQueryArguments )?.[ 'goals-at-front-experiment' ] );
 }
 
-const siteSetupFlow: FlowV1 = {
+const siteSetupFlow: Flow = {
 	name: 'site-setup',
 	isSignupFlow: false,
+	__experimentalUseSessions: true,
 
 	useSteps() {
 		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
@@ -272,6 +275,9 @@ const siteSetupFlow: FlowV1 = {
 		} );
 
 		useRedirectDesignSetupOldSlug( currentStep, navigate );
+		const { get } = useFlowState();
+		const entryPoint = get( 'flow' )?.entryPoint;
+		const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
@@ -530,7 +536,7 @@ const siteSetupFlow: FlowV1 = {
 					return navigate( 'goals' );
 				}
 
-				case 'importList':
+				case 'importList': {
 					if ( backToStep ) {
 						return navigate( `${ backToStep }?siteSlug=${ siteSlug }` );
 					}
@@ -539,7 +545,14 @@ const siteSetupFlow: FlowV1 = {
 						return goToFlow( backToFlow );
 					}
 
+					if ( entryPoint === 'wp-admin-importers-list' ) {
+						const adminUrl = `${ siteAdminUrl }import.php`;
+
+						return window.location.assign( adminUrl );
+					}
+
 					return navigate( `import?siteSlug=${ siteSlug }` );
+				}
 
 				case 'importerBlogger':
 				case 'importerMedium':
