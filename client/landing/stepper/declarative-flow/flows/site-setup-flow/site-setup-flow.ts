@@ -2,6 +2,7 @@ import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
+import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ImporterMainPlatform } from 'calypso/lib/importer/types';
@@ -23,7 +24,6 @@ import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../../../stores';
 import { shouldRedirectToSiteMigration } from '../../helpers';
 import { useRedirectDesignSetupOldSlug } from '../../helpers/use-redirect-design-setup-old-slug';
 import { useLaunchpadDecider } from '../../internals/hooks/use-launchpad-decider';
-import { useFlowState } from '../../internals/state-manager/store';
 import { STEPS } from '../../internals/steps';
 import { redirect } from '../../internals/steps-repository/import/util';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
@@ -424,8 +424,9 @@ const siteSetupFlow: Flow = {
 				case 'importReady': {
 					const depUrl = ( providedDependencies?.url as string ) || '';
 					const { platform } = providedDependencies as { platform: ImporterMainPlatform };
+					const entryPoint = get( 'flow' )?.entryPoint;
 
-					if ( shouldRedirectToSiteMigration( currentStep, platform, origin ) ) {
+					if ( shouldRedirectToSiteMigration( currentStep, platform, origin, entryPoint ) ) {
 						return window.location.assign(
 							addQueryArgs(
 								{ siteSlug, siteId, from },
