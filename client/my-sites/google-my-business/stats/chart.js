@@ -2,13 +2,12 @@ import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { flatten } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component, Fragment } from 'react';
+import { Component, Fragment, lazy } from 'react';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import FormSelect from 'calypso/components/forms/form-select';
 import LineChart from 'calypso/components/line-chart';
 import LineChartPlaceholder from 'calypso/components/line-chart/placeholder';
-import Notice from 'calypso/components/notice';
 import PieChart from 'calypso/components/pie-chart';
 import PieChartLegend from 'calypso/components/pie-chart/legend';
 import PieChartLegendPlaceholder from 'calypso/components/pie-chart/legend-placeholder';
@@ -257,6 +256,8 @@ class GoogleMyBusinessStatsChart extends Component {
 
 			status = 'is-warning';
 		}
+
+		const Notice = lazy( () => import( 'calypso/components/notice' ) );
 
 		return (
 			<div className="chart__empty">

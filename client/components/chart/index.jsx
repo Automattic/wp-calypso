@@ -2,8 +2,7 @@ import { Tooltip } from '@automattic/components';
 import clsx from 'clsx';
 import { localize, withRtl } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useState, useCallback, useMemo, useEffect } from 'react';
-import Notice from 'calypso/components/notice';
+import { useState, useCallback, useMemo, useEffect, lazy } from 'react';
 import { hasTouch } from 'calypso/lib/touch-detect';
 import { useWindowResizeCallback } from 'calypso/lib/track-element-size';
 import BarContainer from './bar-container';
@@ -173,6 +172,8 @@ function Chart( {
 			</div>
 		);
 	}
+
+	const Notice = lazy( () => import( 'calypso/components/notice' ) );
 
 	return (
 		<div ref={ resizeRef } className={ clsx( 'chart', { 'is-placeholder': isPlaceholder } ) }>

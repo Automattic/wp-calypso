@@ -4,7 +4,7 @@ import { CALYPSO_CONTACT } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { lazy, Component } from 'react';
 import { connect } from 'react-redux';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
@@ -14,7 +14,6 @@ import QueryKeyringServices from 'calypso/components/data/query-keyring-services
 import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import NavigationHeader from 'calypso/components/navigation-header';
-import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import GoogleMyBusinessLocation from 'calypso/my-sites/google-my-business/location';
@@ -194,6 +193,8 @@ class GoogleMyBusinessStats extends Component {
 
 	render() {
 		const { isLocationVerified, locationData, siteId, siteSlug, translate } = this.props;
+
+		const Notice = lazy( () => import( 'calypso/components/notice' ) );
 
 		return (
 			<Main fullWidthLayout>
