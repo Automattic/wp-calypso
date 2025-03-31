@@ -35,7 +35,7 @@ export const useTransferWithSoftwareStatus = (
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false,
 		refetchInterval: ( { state } ) => {
-			if ( state.data?.atomic_transfer_status === 'completed' ) {
+			if ( state.data?.atomic_transfer_status === 'success' ) {
 				return false;
 			}
 			return 5000;
