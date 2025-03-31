@@ -137,7 +137,7 @@
 	margin-bottom: 12px;
 }
 
-.register-domain-step__example-prompt {
+.domains__step-content.domains__step-content-domain-step .register-domain-step.register-domain-step__signup .register-domain-step__example-prompt {
 	font-size: 0.875rem;
 	line-height: 20px;
 	color: var(--studio-gray-40);
@@ -149,13 +149,9 @@
 		margin: 0 20px;
 	}
 
-	svg {
+	svg:first-child {
 		fill: #a7aaad;
 		margin-right: 13px;
-	}
-
-	@include break-xlarge {
-		margin: 0;
 	}
 }
 
