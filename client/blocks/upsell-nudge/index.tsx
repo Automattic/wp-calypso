@@ -22,6 +22,7 @@ import Banner from 'calypso/components/banner';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { addQueryArgs } from 'calypso/lib/url';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -29,7 +30,11 @@ import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isSiteOnECommerceTrial, isSiteOnWooExpress } from 'calypso/state/sites/plans/selectors';
 import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	getMostRecentlySelectedSiteId,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { IsEligibleForOneClickCheckoutReturnValue } from 'calypso/my-sites/checkout/purchase-modal/use-is-eligible-for-one-click-checkout';
 import type { IAppState } from 'calypso/state/types';
@@ -153,7 +158,7 @@ export const UpsellNudge = ( {
 	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
 	const shouldNotDisplay =
 		isVip ||
-		! canManageSite ||
+		// ! canManageSite ||
 		! site ||
 		typeof site !== 'object' ||
 		typeof site.jetpack !== 'boolean' ||
@@ -293,7 +298,10 @@ export const UpsellNudge = ( {
 };
 
 const ConnectedUpsellNudge = connect( ( state: IAppState, ownProps: OwnProps ) => {
-	const siteId = getSelectedSiteId( state );
+	const siteId =
+		getSelectedSiteId( state ) ||
+		getMostRecentlySelectedSiteId( state ) ||
+		getPrimarySiteId( state );
 	const siteFeatures = getFeaturesBySiteId( state, siteId || undefined );
 	const hasFeature =
 		siteFeatures === null ? null : siteHasFeature( state, siteId, ownProps.feature || '' );
