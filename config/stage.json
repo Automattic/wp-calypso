@@ -107,7 +107,6 @@
 		"onboarding/import-redirect-to-themes": true,
 		"onboarding/interval-dropdown": true,
 		"onboarding/playground": false,
-		"onboarding/trail-map-feature-grid": false,
 		"onboarding/trail-map-feature-grid-copy": false,
 		"onboarding/trail-map-feature-grid-structure": false,
 		"onboarding/trail-map-feature-grid": false,
