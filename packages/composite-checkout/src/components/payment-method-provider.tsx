@@ -5,18 +5,21 @@ import type {
 	PaymentMethod,
 	PaymentMethodChangedCallback,
 	PaymentMethodProviderContextInterface,
+	PaymentProcessorProp,
 } from '../types';
 
 const debug = debugFactory( 'composite-checkout:payment-method-provider' );
 
 export function PaymentMethodProvider( {
 	paymentMethods,
+	paymentProcessors,
 	selectFirstAvailablePaymentMethod,
 	initiallySelectedPaymentMethodId,
 	onPaymentMethodChanged,
 	children,
 }: {
 	paymentMethods: PaymentMethod[];
+	paymentProcessors: PaymentProcessorProp;
 	selectFirstAvailablePaymentMethod?: boolean;
 	initiallySelectedPaymentMethodId?: string | null;
 	onPaymentMethodChanged?: PaymentMethodChangedCallback;
@@ -56,13 +59,20 @@ export function PaymentMethodProvider( {
 	const value: PaymentMethodProviderContextInterface = useMemo(
 		() => ( {
 			allPaymentMethods: paymentMethods,
+			paymentProcessors,
 			disabledPaymentMethodIds,
 			setDisabledPaymentMethodIds,
 			paymentMethodId,
 			setPaymentMethodId,
 			onPaymentMethodChanged,
 		} ),
-		[ paymentMethodId, paymentMethods, disabledPaymentMethodIds, onPaymentMethodChanged ]
+		[
+			paymentMethodId,
+			paymentMethods,
+			disabledPaymentMethodIds,
+			onPaymentMethodChanged,
+			paymentProcessors,
+		]
 	);
 
 	return (

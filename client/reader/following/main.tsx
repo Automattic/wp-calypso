@@ -82,6 +82,7 @@ function FollowingStream( { ...props } ) {
 							className="following-stream__quick-post-card"
 							smooth
 							contentExpandedStyle={ { maxHeight: '800px' } }
+							useInert
 							onOpen={ () => {
 								focusEditor();
 							} }

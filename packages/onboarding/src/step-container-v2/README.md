@@ -10,9 +10,9 @@ This is a compilation of everything we've learned with `StepContainer`. Just lik
 
 The new version focuses on modularity and composition instead of overrides through props and CSS. We've observed that the previous version accepted a variety of props that modified how a component looks. Most of the times these properties had to play nicely with each other, which increased complexity.
 
-This version, however, provides several "slots" that allow the developer to declare _which_ parts of the step will be rendered, instead of imperatively specifying _what_ to render. `topBar`, `heading`, `stickyBottomBar`, and `footer` are example of slots.
+This version, however, provides several "slots" that allow the developer to declare _which_ parts of the step will be rendered through the creation of wireframes, instead of imperatively specifying _what_ to render. `topBar`, `heading`, `stickyBottomBar`, and `footer` are example of slots.
 
-It also provides the elements to be used within these slots, such as `TopBar`, `Heading`, `StickyBottomBar`, and `Footer`, as well as their internal elements, such as buttons like `NextButton`, `SkipButton`, and `BackButton`.
+It also provides the elements to be used within these slots, such as `TopBar`, `Heading`, `StickyBottomBar`, and `Footer`, as well as their internal elements, such as buttons like `PrimaryButton`, `SkipButton`, and `BackButton`.
 
 Here's an example:
 
@@ -20,13 +20,14 @@ Here's an example:
 import { Step } from '@automattic/onboarding';
 
 const MyStep = () => {
-	const nextButton = <Step.NextButton onClick={ navigation.submit } />;
+	const nextButton = <Step.PrimaryButton onClick={ navigation.submit } />;
 
 	return (
-		<Step.StepContainerV2
+		<Step.CenteredColumnLayout
+			columnWidth={ 4 }
 			topBar={ <Step.TopBar /> }
 			heading={ <Step.Heading text="Heading" /> }
-			stickyBottomBar={ <Step.StickyBottomBar rightButton={ nextButton } /> }
+			stickyBottomBar={ <Step.StickyBottomBar rightElement={ nextButton } /> }
 		>
 			{ ( { isSmallViewport } ) => (
 				<>
@@ -34,14 +35,14 @@ const MyStep = () => {
 					{ isSmallViewport && nextButton }
 				</>
 			) }
-		</Step.StepContainerV2>
+		</Step.CenteredColumnLayout>
 	);
 };
 ```
 
-In the example above, the top bar won't have a skip nor a back button. There's a `stickyBottomBar` that will render the Next button on mobile, and the same button will also be rendered within the step's content, but only on medium and larger screens. Although it's possible, this particular step won't render a footer.
+In the example above, the top bar won't have a skip nor a back button. There's a `stickyBottomBar` that will render the Next button on mobile, and the same button will also be rendered within the step's content, but only on smaller screens and above. Although it's possible, this particular step won't render a footer.
 
-It reduces the complexity of layouting by delegating the rendering responsibility to the components within the slots. A good example of what we mean here is the `headerImageUrl` prop of `StepContainer`, which should exist if `isHorizontalLayout` is `true`, but there is no explanation of that in the code, and it's not obvious to the developer reading code introduced by others.
+It reduces the complexity of layouting by delegating the rendering responsibility to the components within the slots. A good example of what we mean here is the [`headerImageUrl` prop of `StepContainer`](../step-container/index.tsx), which should exist if `isHorizontalLayout` is `true`, but there is no explanation of that in the code, and it's not obvious to the developer reading code introduced by others.
 
 Read the [how to extend it](#how-to-extend-it) section to learn how to reproduce this behavior in `StepContainerV2`.
 
@@ -57,7 +58,7 @@ Please do NOT override the `Step.*` components with CSS as this creates inconsis
 
 Wireframes are layout arrangements that have been approved by the Dotcom designers. They are exported from this package and can be used in the steps.
 
-Here are the wireframes specs: W9xI27S6Swvw5Ku21EbZvn-fi-9588_16523.
+Here are the wireframes specs: <https://www.figma.com/design/QFAYPvq4xYUZC5AFkrfJFM/Dotcom-Onboarding-(Open)?node-id=1-31&p=f&t=CX7AmXyb9CTsFGAI-0>.
 
 ## How to extend it
 
@@ -75,31 +76,51 @@ This layout arranges two columns side by side. It has the heading on the left an
 Let's create a new wireframe named `HorizontalLayout`. Here's what its code looks like:
 
 ```tsx
+interface HorizontalLayoutProps {
+	topBar?: ContentProp;
+	heading?: ReactNode;
+	imageUrl?: string;
+	className?: string;
+	children?: ContentProp;
+	footer?: ReactNode;
+	stickyBottomBar?: ContentProp;
+}
+
 export const HorizontalLayout = ( {
+	topBar,
 	heading,
 	imageUrl,
 	children,
-	...props
-}: ComponentProps< typeof StepContainerV2 > & { imageUrl?: string } ) => (
-	<StepContainerV2
-		{ ...props }
-		verticalAlign="center-on-small"
-		width="wide"
-		className={ clsx( 'step-container-v2__content--horizontal-layout', className ) }
-	>
-		<div className="step-container-v2__content--horizontal-layout-left">
-			{ heading }
-			{ imageUrl && (
-				<img
-					className="step-container-v2__content--horizontal-layout-image"
-					src={ imageUrl }
-					alt=""
-				/>
-			) }
-		</div>
-		<div className="step-container-v2__content--horizontal-layout-right">{ children }</div>
-	</StepContainerV2>
-);
+	footer,
+	stickyBottomBar,
+}: HorizontalLayoutProps ) => {
+	return (
+		<StepContainerV2>
+			{ ( context ) => {
+				const content = typeof children === 'function' ? children( context ) : children;
+
+				return (
+					<>
+						<TopBarRenderer topBar={ topBar } />
+						<ContentWrapper width="wide" centerAligned={ context.isSmallViewport }>
+							<Content className="step-container-v2__content--horizontal-layout">
+								<div className="step-container-v2__content--horizontal-layout-left">
+									{ heading }
+									{ imageUrl && <img src={ imageUrl } alt="" /> }
+								</div>
+								<div className="step-container-v2__content--horizontal-layout-right">
+									{ content }
+								</div>
+							</Content>
+							{ footer }
+						</ContentWrapper>
+						<StickyBottomBarRenderer stickyBottomBar={ stickyBottomBar } />
+					</>
+				);
+			} }
+		</StepContainerV2>
+	);
+};
 ```
 
 Then, we need to add the styles for the new wireframe. Let's create a new file called `style.scss` and add the following code:
@@ -108,49 +129,53 @@ Then, we need to add the styles for the new wireframe. Let's create a new file c
 .step-container-v2__content--horizontal-layout {
 	display: flex;
 	flex-direction: column;
-	align-items: stretch;
 	gap: 3rem;
 
-	@include break-small {
+	@include break-large {
 		flex-direction: row;
-		align-items: flex-start;
 	}
+}
 
-	&-left,
-	&-right {
-		flex: 1;
-	}
+.step-container-v2__content--horizontal-layout-left,
+.step-container-v2__content--horizontal-layout-right {
+	flex: 1;
+}
 
-	&-left {
-		display: flex;
-		flex-direction: column;
-		gap: 3rem;
-	}
+.step-container-v2__content--horizontal-layout-left {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 3rem;
 }
 ```
 
-> Notice that we're using the `@include break-small` mixin to target the small viewport and above. The Gutenberg breakpoints are matched within StepContainerV2, so we can use them to create responsive styles for the wireframe.
+> Notice that we're using the `@include break-large` mixin to target the large viewport and above. The Gutenberg breakpoints are matched within StepContainerV2, so we can use them to create responsive styles for the wireframe.
 
 One implementation detail is that the `HorizontalLayout` wireframe does not render the illustration on mobile. `StepContainerV2` accepts a render prop that can be used to render the content of the step. This is useful to conditionally render content based on the viewports defined for the wireframe. We can then modify the previous example to render the illustration only on medium and larger screens.
 
 Let's modify the `children` of `HorizontalLayout` to reflect this new requirement:
 
 ```jsx
-( { isSmallViewport } ) => (
-	<>
-		<div className="step-container-v2__content--horizontal-layout-left">
-			{ heading }
-			{ isSmallViewport && imageUrl && (
-				<img
-					className="step-container-v2__content--horizontal-layout-image"
-					src={ imageUrl }
-					alt=""
-				/>
-			) }
-		</div>
-		<div className="step-container-v2__content--horizontal-layout-right">{ children }</div>
-	</>
-);
+( context ) => {
+	const content = typeof children === 'function' ? children( context ) : children;
+
+	return (
+		<>
+			<TopBarRenderer topBar={ topBar } />
+			<ContentWrapper width="wide" centerAligned={ context.isSmallViewport }>
+				<Content className="step-container-v2__content--horizontal-layout">
+					<div className="step-container-v2__content--horizontal-layout-left">
+						{ heading }
+						{ context.isSmallViewport && imageUrl && <img src={ imageUrl } alt="" /> }
+					</div>
+					<div className="step-container-v2__content--horizontal-layout-right">{ content }</div>
+				</Content>
+				{ footer }
+			</ContentWrapper>
+			<StickyBottomBarRenderer stickyBottomBar={ stickyBottomBar } />
+		</>
+	);
+};
 ```
 
 The horizontal layout wireframe expects the heading element to be left-aligned. We can create a new compound component and expose that as part of the public API of the wireframe:
@@ -177,7 +202,7 @@ Et voilà, we've created a new wireframe. Here's how to use it:
 	imageUrl={ imageUrl }
 >
 	<p>Here comes the content rendered in the right column of the step.</p>
-	<Step.NextButton onClick={ navigation.submit } />
+	<Step.PrimaryButton onClick={ navigation.submit } />
 </Step.HorizontalLayout>
 ```
 

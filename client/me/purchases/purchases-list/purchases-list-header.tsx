@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 
 import 'calypso/me/purchases/style.scss';
 
-const PurchasesListHeader = ( { showSite = false } ) => {
+const PurchasesListHeader = ( { showSite = false }: { showSite?: boolean } ) => {
 	const translate = useTranslate();
 
 	return (

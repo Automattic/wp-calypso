@@ -4,11 +4,11 @@ import { ReactNode } from 'react';
 import './style.scss';
 
 interface TopBarProps {
-	backButton?: ReactNode;
-	skipButton?: ReactNode;
+	leftElement?: ReactNode;
+	rightElement?: ReactNode;
 }
 
-export const TopBar = ( { backButton, skipButton }: TopBarProps ) => {
+export const TopBar = ( { leftElement, rightElement }: TopBarProps ) => {
 	return (
 		<div className="step-container-v2__top-bar">
 			<WordPressWordmark
@@ -20,14 +20,14 @@ export const TopBar = ( { backButton, skipButton }: TopBarProps ) => {
 				className="step-container-v2__top-bar-wordpress-logo step-container-v2__top-bar-wordpress-logo--logo"
 			/>
 
-			{ backButton && (
+			{ leftElement && (
 				<>
 					<div className="step-container-v2__top-bar-divider" />
-					<div className="step-container-v2__top-bar-left-button">{ backButton }</div>
+					<div className="step-container-v2__top-bar-left-element">{ leftElement }</div>
 				</>
 			) }
-			{ skipButton && (
-				<div className="step-container-v2__top-bar-right-button">{ skipButton }</div>
+			{ rightElement && (
+				<div className="step-container-v2__top-bar-right-element">{ rightElement }</div>
 			) }
 		</div>
 	);

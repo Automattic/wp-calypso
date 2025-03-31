@@ -7,7 +7,7 @@
 		content: "";
 		display: block;
 		width: 80px;
-		background: rgba(var(--color-surface-rgb), 0.3);
+		background: color-mix(in srgb, var(--color-surface) 30%, transparent);
 		height: 2px;
 		margin: 0 auto 8px;
 	}

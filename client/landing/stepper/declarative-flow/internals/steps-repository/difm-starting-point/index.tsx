@@ -43,23 +43,19 @@ const DIFMStartingPoint: StepType< {
 
 	if ( shouldUseStepContainerV2( flow ) ) {
 		const primaryButton = showNewOrExistingSiteChoice ? (
-			<Step.NextButton
-				onClick={ () => onSubmit( 'existing-site' ) }
-				label={ translate( 'Use an existing site' ) }
-			/>
+			<Step.PrimaryButton onClick={ () => onSubmit( 'existing-site' ) }>
+				{ translate( 'Use an existing site' ) }
+			</Step.PrimaryButton>
 		) : (
-			<Step.NextButton
-				onClick={ () => onSubmit( 'new-site' ) }
-				label={ translate( 'Get started' ) }
-			/>
+			<Step.PrimaryButton onClick={ () => onSubmit( 'new-site' ) }>
+				{ translate( 'Get started' ) }
+			</Step.PrimaryButton>
 		);
 
 		const secondaryButton = showNewOrExistingSiteChoice ? (
-			<Step.NextButton
-				variant="secondary"
-				onClick={ () => onSubmit( 'new-site' ) }
-				label={ translate( 'Start a new site' ) }
-			/>
+			<Step.SecondaryButton onClick={ () => onSubmit( 'new-site' ) }>
+				{ translate( 'Start a new site' ) }
+			</Step.SecondaryButton>
 		) : undefined;
 
 		return (
@@ -68,8 +64,8 @@ const DIFMStartingPoint: StepType< {
 				<StepContainerV2DIFMStartingPoint
 					topBar={
 						<Step.TopBar
-							backButton={ goBack ? <Step.BackButton onClick={ goBack } /> : undefined }
-							skipButton={
+							leftElement={ goBack ? <Step.BackButton onClick={ goBack } /> : undefined }
+							rightElement={
 								shouldRenderHelpCenter ? (
 									<HelpCenterStepButton
 										flowName={ DIFM_FLOW }
@@ -78,16 +74,15 @@ const DIFMStartingPoint: StepType< {
 										helpCenterButtonLink={ translate( 'Contact our site-building team' ) }
 									/>
 								) : (
-									<Step.SkipButton
-										onClick={ goNext }
-										label={ translate( 'No Thanks, I’ll Build It' ) }
-									/>
+									<Step.SkipButton onClick={ goNext }>
+										{ translate( 'No Thanks, I’ll Build It' ) }
+									</Step.SkipButton>
 								)
 							}
 						/>
 					}
 					stickyBottomBar={
-						<Step.StickyBottomBar leftButton={ secondaryButton } rightButton={ primaryButton } />
+						<Step.StickyBottomBar leftElement={ secondaryButton } rightElement={ primaryButton } />
 					}
 					primaryButton={ primaryButton }
 					secondaryButton={ secondaryButton }

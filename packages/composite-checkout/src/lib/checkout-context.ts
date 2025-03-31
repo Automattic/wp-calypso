@@ -1,9 +1,7 @@
 import { createContext } from 'react';
 import { CheckoutContextInterface } from '../types';
 
-const defaultCheckoutContext: CheckoutContextInterface = {
-	paymentProcessors: {},
-};
+const defaultCheckoutContext: CheckoutContextInterface = {};
 
 const CheckoutContext = createContext( defaultCheckoutContext );
 

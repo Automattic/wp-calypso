@@ -193,7 +193,7 @@ $image-height: 47px;
 	}
 
 	.wp-login__site-return-link::after {
-		background: linear-gradient(to right, rgba(var(--color-surface-backdrop-rgb), 0), var(--color-surface-backdrop) 90%);
+		background: linear-gradient(to right, color-mix(in srgb, var(--color-surface-backdrop) 0%, transparent), var(--color-surface-backdrop) 90%);
 	}
 }
 

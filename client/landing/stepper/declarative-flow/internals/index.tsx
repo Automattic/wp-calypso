@@ -7,7 +7,6 @@ import { createPath, generatePath, useParams } from 'react-router';
 import { Route, Routes } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
-import { StepContainerV2Loading } from 'calypso/components/step-container-v2-loading';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
@@ -130,7 +129,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 		switch ( assertCondition.state ) {
 			case AssertConditionState.CHECKING:
 				return shouldUseStepContainerV2( flow.name ) ? (
-					<StepContainerV2Loading />
+					<Step.Loading />
 				) : (
 					<Loading className="wpcom-loading__boot" />
 				);
@@ -149,10 +148,11 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 		// and are redirected to the user step.
 		const postAuthStepSlug = stepData?.nextStep ?? '';
 		if ( step.slug === PRIVATE_STEPS.USER.slug && postAuthStepSlug ) {
+			const flowSlug = flow.variantSlug ?? flow.name;
 			const previousAuthStepSlug = stepData?.previousStep;
 			const postAuthStepPath = createPath( {
 				pathname: generatePath( '/setup/:flow/:step/:lang?', {
-					flow: flow.name,
+					flow: flowSlug,
 					step: postAuthStepSlug,
 					lang: lang === 'en' || isLoggedIn ? null : lang,
 				} ),
@@ -161,7 +161,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 			} );
 
 			const signupUrl = generatePath( '/setup/:flow/:step/:lang?', {
-				flow: flow.name,
+				flow: flowSlug,
 				step: 'user',
 				lang: lang === 'en' || isLoggedIn ? null : lang,
 			} );
@@ -212,7 +212,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 	useSignUpStartTracking( { flow } );
 
 	const fallback = shouldUseStepContainerV2( flow.name ) ? (
-		<StepContainerV2Loading />
+		<Step.Loading />
 	) : (
 		<Loading className="wpcom-loading__boot" />
 	);

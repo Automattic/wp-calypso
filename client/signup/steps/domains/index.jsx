@@ -1431,8 +1431,9 @@ export class RenderDomainsStep extends Component {
 					href={ backUrl }
 					rel={ isExternalBackUrl ? 'external' : '' }
 					onClick={ goBack }
-					label={ backLabelText }
-				/>
+				>
+					{ backLabelText }
+				</Step.BackButton>
 			);
 
 			const mainContent = (
@@ -1446,7 +1447,7 @@ export class RenderDomainsStep extends Component {
 				<Step.TwoColumnLayout
 					firstColumnWidth={ 7 }
 					secondColumnWidth={ 3 }
-					topBar={ <Step.TopBar backButton={ ! hideBack && backButton } /> }
+					topBar={ <Step.TopBar leftElement={ ! hideBack && backButton } /> }
 					heading={ <Step.Heading text={ headerText } subText={ fallbackSubHeaderText } /> }
 					className="domains__step-content domains__step-content-domain-step"
 				>

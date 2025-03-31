@@ -42,12 +42,12 @@
 	.scrollable-horizontal-navigation__right-button-wrapper {
 		right: 0;
 		padding-left: 30px;
-		background: linear-gradient(270deg, rgba(var(--color-surface-rgb), 1) 30%, rgba(var(--color-surface-rgb), 0.7) 40%, rgba(var(--color-surface-rgb), 0) 100%);
+		background: linear-gradient(270deg, color-mix(in srgb, var(--color-surface) 100%, transparent) 30%, color-mix(in srgb, var(--color-surface) 70%, transparent) 40%, color-mix(in srgb, var(--color-surface) 0%, transparent) 100%);
 	}
 	.scrollable-horizontal-navigation__left-button-wrapper {
 		left: 0;
 		padding-right: 30px;
-		background: linear-gradient(90deg, rgba(var(--color-surface-rgb), 1) 30%, rgba(var(--color-surface-rgb), 0.7) 40%, rgba(var(--color-surface-rgb), 0) 100%);
+		background: linear-gradient(90deg, color-mix(in srgb, var(--color-surface) 100%, transparent) 30%, color-mix(in srgb, var(--color-surface) 70%, transparent) 40%, color-mix(in srgb, var(--color-surface) 0%, transparent) 100%);
 	}
 
 	.scrollable-horizontal-navigation__tabs {

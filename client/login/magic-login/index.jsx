@@ -128,6 +128,8 @@ class MagicLogin extends Component {
 		hashedEmail: null,
 	};
 
+	isInitialMount = true;
+
 	componentDidMount() {
 		const { userEmail, oauth2Client, query } = this.props;
 
@@ -145,6 +147,8 @@ class MagicLogin extends Component {
 				is_initial_view: true,
 			} );
 		}
+
+		this.isInitialMount = false;
 
 		// If the auto_trigger query parameter is set to true, automatically trigger the email send.
 		if ( query?.auto_trigger !== undefined ) {
@@ -1271,6 +1275,7 @@ class MagicLogin extends Component {
 			translate,
 			showCheckYourEmail: showEmailLinkVerification,
 			isWooJPC,
+			isSendingEmail,
 		} = this.props;
 		const { showSecondaryEmailOptions, showEmailCodeVerification, usernameOrEmail } = this.state;
 
@@ -1339,14 +1344,18 @@ class MagicLogin extends Component {
 			);
 		}
 
+		const isJetpackMagicLinkSignUpEnabled =
+			config.isEnabled( 'jetpack/magic-link-signup' ) && this.props.isJetpackLogin;
+		const shouldShowLoadingEllipsis =
+			isJetpackMagicLinkSignUpEnabled && ( isSendingEmail || this.isInitialMount );
+
 		// If this is part of the Jetpack login flow and the `jetpack/magic-link-signup` feature
 		// flag is enabled, some steps will display a different UI
 		const requestLoginEmailFormProps = {
 			...( this.props.isJetpackLogin ? { flow: 'jetpack' } : {} ),
-			...( this.props.isJetpackLogin && config.isEnabled( 'jetpack/magic-link-signup' )
-				? { isJetpackMagicLinkSignUpEnabled: true }
-				: {} ),
+			...( isJetpackMagicLinkSignUpEnabled ? { isJetpackMagicLinkSignUpEnabled: true } : {} ),
 			createAccountForNewUser: true,
+			shouldShowLoadingEllipsis,
 		};
 
 		return (
@@ -1365,7 +1374,7 @@ class MagicLogin extends Component {
 
 				<RequestLoginEmailForm { ...requestLoginEmailFormProps } />
 
-				{ this.renderLinks() }
+				{ ! shouldShowLoadingEllipsis && this.renderLinks() }
 			</Main>
 		);
 	}

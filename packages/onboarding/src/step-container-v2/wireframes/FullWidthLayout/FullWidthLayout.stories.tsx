@@ -1,7 +1,7 @@
 import { Badge } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { chevronLeft } from '@wordpress/icons';
-import { Heading, StickyBottomBar, TopBar, BackButton, NextButton } from '../..';
+import { Heading, StickyBottomBar, TopBar, BackButton, PrimaryButton } from '../..';
 import { WireframePlaceholder } from '../../helpers/wireframe-placeholder';
 import { withStepContainerV2ContextDecorator } from '../../helpers/withStepContainerV2ContextDecorator';
 import { FullWidthLayout } from './FullWidthLayout';
@@ -21,7 +21,7 @@ export const ThemePreview = () => {
 	const backButton = <BackButton label="Back" />;
 
 	return (
-		<FullWidthLayout className="theme-preview" topBar={ <TopBar backButton={ backButton } /> }>
+		<FullWidthLayout className="theme-preview" topBar={ <TopBar leftElement={ backButton } /> }>
 			<div className="theme-preview__info">
 				<div className="theme-preview__description">
 					<Badge>Free</Badge>
@@ -45,23 +45,22 @@ const FontsBar = () => {
 };
 
 export const ThemePreviewFonts = () => {
-	const backButton = <BackButton label="Back" />;
-	const nextButton = <NextButton label="Save fonts" />;
+	const backButton = <BackButton>Back</BackButton>;
+	const nextButton = <PrimaryButton>Save fonts</PrimaryButton>;
 
 	return (
 		<FullWidthLayout
 			className="theme-preview"
 			topBar={ ( { isLargeViewport } ) =>
-				isLargeViewport ? <TopBar backButton={ backButton } /> : <FontsBar />
+				isLargeViewport ? <TopBar leftElement={ backButton } /> : <FontsBar />
 			}
 			stickyBottomBar={ ( { isLargeViewport } ) => {
 				if ( isLargeViewport ) {
 					return null;
 				}
 
-				return <StickyBottomBar leftButton={ backButton } rightButton={ nextButton } />;
+				return <StickyBottomBar leftElement={ backButton } rightElement={ nextButton } />;
 			} }
-			hasContentPadding={ ( { isLargeViewport } ) => isLargeViewport }
 		>
 			{ ( { isLargeViewport } ) => {
 				return (

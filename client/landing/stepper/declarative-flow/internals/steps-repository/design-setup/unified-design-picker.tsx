@@ -34,7 +34,6 @@ import { useQueryThemes } from 'calypso/components/data/query-themes';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Loading from 'calypso/components/loading';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
-import { StepContainerV2Loading } from 'calypso/components/step-container-v2-loading';
 import {
 	THEME_TIERS,
 	THEME_TIER_PREMIUM,
@@ -713,7 +712,7 @@ const UnifiedDesignPickerStep: StepType< {
 			);
 		}
 
-		return <Step.NextButton label={ text } onClick={ action } />;
+		return <Step.PrimaryButton onClick={ action }>{ text }</Step.PrimaryButton>;
 	}
 
 	useEffect( () => {
@@ -730,7 +729,7 @@ const UnifiedDesignPickerStep: StepType< {
 	const isLoading = isSiteLoading || isDesignsLoading;
 
 	if ( isLoading || isComingFromTheUpgradeScreen ) {
-		return isUsingStepContainerV2 ? <StepContainerV2Loading /> : <Loading />;
+		return isUsingStepContainerV2 ? <Step.Loading /> : <Loading />;
 	}
 
 	if ( selectedDesign && isPreviewingDesign ) {
@@ -868,17 +867,16 @@ const UnifiedDesignPickerStep: StepType< {
 
 						return (
 							<Step.TopBar
-								backButton={
+								leftElement={
 									shouldHideActionButtons ? undefined : (
 										<Step.BackButton onClick={ handleBackClick } />
 									)
 								}
-								skipButton={
+								rightElement={
 									! isGoalsAtFrontExperiment ? undefined : (
-										<Step.SkipButton
-											onClick={ () => handleSubmit() }
-											label={ translate( 'Skip setup' ) }
-										/>
+										<Step.SkipButton onClick={ () => handleSubmit() }>
+											{ translate( 'Skip setup' ) }
+										</Step.SkipButton>
 									)
 								}
 							/>
@@ -891,13 +889,14 @@ const UnifiedDesignPickerStep: StepType< {
 
 						return (
 							<Step.StickyBottomBar
-								leftButton={ <Step.BackButton onClick={ handleBackClick } /> }
-								rightButton={ actionButtons }
-							>
-								<div className="step-container-v2--design-picker-preview__header-design-title">
-									{ headerDesignTitle }
-								</div>
-							</Step.StickyBottomBar>
+								leftElement={ <Step.BackButton onClick={ handleBackClick } /> }
+								centerElement={
+									<div className="step-container-v2--design-picker-preview__header-design-title">
+										{ headerDesignTitle }
+									</div>
+								}
+								rightElement={ actionButtons }
+							/>
 						);
 					} }
 				>
@@ -996,10 +995,12 @@ const UnifiedDesignPickerStep: StepType< {
 				className="step-container-v2--design-picker"
 				topBar={
 					<Step.TopBar
-						backButton={ backButton ? <Step.BackButton onClick={ backButton } /> : undefined }
-						skipButton={
+						leftElement={ backButton ? <Step.BackButton onClick={ backButton } /> : undefined }
+						rightElement={
 							hideSkip ? undefined : (
-								<Step.SkipButton onClick={ () => handleSubmit() } label={ skipLabelText } />
+								<Step.SkipButton onClick={ () => handleSubmit() }>
+									{ skipLabelText }
+								</Step.SkipButton>
 							)
 						}
 					/>

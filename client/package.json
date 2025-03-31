@@ -213,7 +213,6 @@
 		"use-debounce": "^3.1.0",
 		"util": "^0.12.3",
 		"utility-types": "^3.10.0",
-		"uuid": "^9.0.1",
 		"valid-url": "^1.0.9",
 		"webpack": "^5.97.1",
 		"webpack-bundle-analyzer": "^4.10.2",

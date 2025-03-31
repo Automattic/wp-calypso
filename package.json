@@ -182,7 +182,6 @@
 		"@types/react-router-dom": "^5.3.3",
 		"@types/react-transition-group": "^4.4.4",
 		"@types/store": "^2.0.5",
-		"@types/uuid": "^9.0.8",
 		"@types/validator": "^13.7.1",
 		"@types/webpack-env": "^1.18.8",
 		"@types/wordpress__block-editor": "^11.5.8",
