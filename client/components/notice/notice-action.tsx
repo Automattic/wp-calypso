@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 
-import './style.scss';
+import './notice-action-style.scss';
 
 interface NoticeActionProps {
 	'aria-label'?: string;

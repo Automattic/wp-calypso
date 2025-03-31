@@ -1,0 +1,71 @@
+@import "../../assets/stylesheets/shared/mixins/breakpoints";
+@import "@automattic/typography/styles/variables";
+
+// specificity for general `a` elements within notice is too great
+a.notice__action {
+	cursor: pointer;
+	font-size: $font-body-extra-small;
+	font-weight: 400;
+	text-decoration: none;
+	white-space: nowrap;
+	color: var(--color-neutral-20);
+	padding: 13px;
+	display: flex;
+	align-items: center;
+
+	@include breakpoint-deprecated( ">480px" ) {
+		flex-shrink: 1;
+		flex-grow: 0;
+		align-items: center;
+		font-size: $font-body-small;
+		margin: 0 0 0 auto; // forces the element to the right;
+		padding: 13px 16px;
+
+		.gridicon {
+			width: 24px;
+			height: 24px;
+		}
+	}
+
+	&:visited {
+		color: var(--color-neutral-20);
+	}
+
+	&:hover {
+		color: var(--color-text-inverted);
+	}
+
+	.gridicon {
+		margin-left: 8px;
+		opacity: 0.7;
+		width: 18px;
+		height: 18px;
+	}
+}
+
+// Compact notices
+.notice.is-compact {
+	a.notice__action {
+		background: transparent;
+		display: inline-block;
+		margin: 0;
+		font-size: $font-body-extra-small;
+		align-self: center;
+		margin-left: 16px;
+		padding: 0 10px;
+
+		&:hover,
+		&:active,
+		&:focus {
+			background: transparent;
+		}
+
+		.gridicon {
+			margin-left: 8px;
+			width: 14px;
+			height: 14px;
+			vertical-align: sub;
+			opacity: 1;
+		}
+	}
+}
