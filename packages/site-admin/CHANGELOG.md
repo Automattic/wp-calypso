@@ -42,6 +42,8 @@ Initial release of the site-admin package providing a framework for building mod
 
 ## Next
 
+- Add a Storybook story that demonstrates full usage of the package.
+
 ### Components
 
 - `Page`: component wrapper for the page content.

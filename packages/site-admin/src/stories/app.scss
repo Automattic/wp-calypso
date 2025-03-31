@@ -1,0 +1,46 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/colors";
+
+$sidebar-width: 300px;
+
+* {
+	box-sizing: border-box;
+}
+
+
+body.is-app-story {
+	padding: 0 !important;
+}
+
+.a8c-site-admin {
+	&__layout {
+		height: 100vh;
+		display: flex;
+		flex-direction: row;
+		background: $gray-900;
+		color: $gray-400;
+	}
+
+	&__sidebar-region {
+		width: $sidebar-width;
+	}
+
+	&__area {
+		color: $gray-900;
+		background-color: $white;
+		max-width: calc(100% - $sidebar-width - $grid-unit-20);
+        margin: $grid-unit-20 $grid-unit-20 $grid-unit-20 0;
+		padding: $grid-unit-20;
+
+		flex-grow: 1;
+		overflow-y: auto;
+
+		border-radius: $radius-large;
+		box-shadow:
+			0 1px 1px rgba(0, 0, 0, 0.03),
+			0 1px 2px rgba(0, 0, 0, 0.02),
+			0 3px 3px rgba(0, 0, 0, 0.02),
+			0 4px 4px rgba(0, 0, 0, 0.01);
+	}
+}
