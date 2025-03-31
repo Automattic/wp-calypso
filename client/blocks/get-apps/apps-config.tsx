@@ -165,7 +165,7 @@ export const createWordPressStudioConfig = (
 			[ PlatformType.MacSilicon ]: {
 				...platformConfigs[ PlatformType.MacSilicon ],
 				onClick: () => recordTracksEvent( 'calypso_studio_download_mac_silicon_click' ),
-				link: 'https://cdn.a8c-ci.services/studio/studio-darwin-x64-v1.3.9.dmg',
+				link: 'https://cdn.a8c-ci.services/studio/studio-darwin-arm64-v1.3.9.dmg',
 			},
 			[ PlatformType.Windows ]: {
 				...platformConfigs[ PlatformType.Windows ],
