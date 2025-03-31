@@ -191,7 +191,6 @@ export class LoginPage {
 	 * @returns True if the message is valid, false otherwise.
 	 */
 	async validateContinueAsYourself( username: string, email: string ) {
-		await this.page.waitForSelector( selectors.continue );
 		await this.page.waitForSelector( `text='${ username }'` );
 		await this.page.waitForSelector( `text='${ email }'` );
 		await this.page.waitForSelector( selectors.loginWithAnotherAccount );
