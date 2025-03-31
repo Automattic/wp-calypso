@@ -50,6 +50,9 @@ const ButtonExample = () => {
 				<Button variant="primary" isBusy>
 					Busy
 				</Button>
+				<Button variant="primary" isDestructive>
+					Destructive
+				</Button>
 			</Flex>
 		</div>
 	);
