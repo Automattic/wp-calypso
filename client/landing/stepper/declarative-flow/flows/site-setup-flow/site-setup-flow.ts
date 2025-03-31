@@ -425,7 +425,7 @@ const siteSetupFlow: Flow = {
 					if ( shouldRedirectToSiteMigration( currentStep, platform, origin, entryPoint ) ) {
 						return window.location.assign(
 							addQueryArgs(
-								{ siteSlug, siteId, from },
+								{ siteSlug, siteId, from, ref: entryPoint },
 								'/setup/site-migration/' + STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug
 							)
 						);
