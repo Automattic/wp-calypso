@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { Purchases, SiteDetails } from '@automattic/data-stores';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
@@ -14,7 +13,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { getPurchasesBySite, getSubscriptionsBySite } from 'calypso/lib/purchases';
+import { getSubscriptionsBySite } from 'calypso/lib/purchases';
 import { MembershipSubscription, Purchase } from 'calypso/lib/purchases/types';
 import { PurchaseListConciergeBanner } from 'calypso/me/purchases/purchases-list/purchase-list-concierge-banner';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
@@ -41,10 +40,7 @@ import MembershipSite from '../membership-site';
 import PurchasesSite from '../purchases-site';
 import { purchasesDataFields } from './purchases-data-field';
 import { purchasesDataView } from './purchases-data-view';
-import PurchasesListHeader from './purchases-list-header';
 import './style.scss';
-
-const useDataViewPurchasesList = config.isEnabled( 'purchases/purchase-list-dataview' );
 
 export interface PurchasesListProps {
 	noticeType?: string | undefined;
@@ -113,41 +109,20 @@ class PurchasesListDataView extends Component<
 		};
 
 		if ( purchases && purchases.length ) {
-			if ( useDataViewPurchasesList ) {
-				content = (
-					<Card id="purchases-list" className="section-content" tagName="section">
-						<DataViews
-							data={ purchases }
-							fields={ purchasesDataFields }
-							view={ purchasesDataView }
-							onChangeView={ onChangeView }
-							defaultLayouts={ { table: {} } }
-							actions={ undefined }
-							getItemId={ getItemId }
-							paginationInfo={ { totalItems: 100, totalPages: 10 } }
-						/>
-					</Card>
-				);
-			} else {
-				content = (
-					<>
-						{ this.renderConciergeBanner() }
-
-						<PurchasesListHeader showSite />
-
-						{ getPurchasesBySite( purchases, sites ).map( ( site ) => (
-							<PurchasesSite
-								key={ site.id }
-								siteId={ site.id }
-								slug={ site.slug }
-								purchases={ site.purchases }
-								showSite
-								cards={ this.props.paymentMethodsState.paymentMethods }
-							/>
-						) ) }
-					</>
-				);
-			}
+			content = (
+				<Card id="purchases-list" className="section-content" tagName="section">
+					<DataViews
+						data={ purchases }
+						fields={ purchasesDataFields }
+						view={ purchasesDataView }
+						onChangeView={ onChangeView }
+						defaultLayouts={ { table: {} } }
+						actions={ undefined }
+						getItemId={ getItemId }
+						paginationInfo={ { totalItems: 100, totalPages: 10 } }
+					/>
+				</Card>
+			);
 		}
 
 		if ( purchases && ! purchases.length && ! subscriptions.length ) {
