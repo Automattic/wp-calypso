@@ -40,7 +40,7 @@ import { AppState } from 'calypso/types';
 import MembershipSite from '../membership-site';
 import PurchasesSite from '../purchases-site';
 import { purchasesDataFields } from './purchases-data-field';
-import { purchasesDataView } from './purchases-data-view'; // This is the temporary data
+import { purchasesDataView } from './purchases-data-view';
 import PurchasesListHeader from './purchases-list-header';
 import './style.scss';
 
