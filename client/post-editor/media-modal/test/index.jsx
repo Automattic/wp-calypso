@@ -270,6 +270,11 @@ describe( 'EditorMediaModal', () => {
 
 		test( 'should copy external media after loading WordPress library if 1 or more media are selected and button is pressed', async () => {
 			const user = userEvent.setup();
+			const originalRandomUUID = global.crypto.randomUUID;
+			global.crypto.randomUUID = jest
+				.fn()
+				.mockImplementationOnce( () => '1' )
+				.mockImplementationOnce( () => '2' );
 
 			const addExternalMedia = jest.fn();
 
@@ -292,8 +297,8 @@ describe( 'EditorMediaModal', () => {
 			// EditorMediaModal will generate transient ID for the media selected
 			// by using uniqueId, which increments its value within the same session.
 			const transientItems = [
-				Object.assign( {}, DUMMY_MEDIA[ 0 ], { ID: 'media-fake-uuid', transient: true } ),
-				Object.assign( {}, DUMMY_MEDIA[ 1 ], { ID: 'media-fake-uuid', transient: true } ),
+				Object.assign( {}, DUMMY_MEDIA[ 0 ], { ID: 'media-1', transient: true } ),
+				Object.assign( {}, DUMMY_MEDIA[ 1 ], { ID: 'media-2', transient: true } ),
 			];
 
 			expect( addExternalMedia ).toHaveBeenCalledWith(
@@ -302,10 +307,14 @@ describe( 'EditorMediaModal', () => {
 				undefined,
 				'external'
 			);
+
+			global.crypto.randomUUID = originalRandomUUID;
 		} );
 
 		test( 'should copy external after loading WordPress library if 1 video is selected and button is pressed', async () => {
 			const user = userEvent.setup();
+			const originalRandomUUID = global.crypto.randomUUID;
+			global.crypto.randomUUID = jest.fn().mockImplementationOnce( () => '3' );
 
 			const addExternalMedia = jest.fn();
 
@@ -328,7 +337,7 @@ describe( 'EditorMediaModal', () => {
 			// EditorMediaModal will generate transient ID for the media selected
 			// by using uniqueId, which increments its value within the same session.
 			const transientItems = [
-				Object.assign( {}, DUMMY_VIDEO_MEDIA[ 0 ], { ID: 'media-fake-uuid', transient: true } ),
+				Object.assign( {}, DUMMY_VIDEO_MEDIA[ 0 ], { ID: 'media-3', transient: true } ),
 			];
 
 			expect( addExternalMedia ).toHaveBeenCalledWith(
@@ -337,6 +346,7 @@ describe( 'EditorMediaModal', () => {
 				undefined,
 				'external'
 			);
+			global.crypto.randomUUID = originalRandomUUID;
 		} );
 	} );
 } );

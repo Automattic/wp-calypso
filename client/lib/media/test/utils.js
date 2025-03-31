@@ -42,6 +42,17 @@ const EXPECTED_FILE_OBJECT = {
 	external: true,
 };
 
+let originalRandomUUID;
+
+beforeAll( () => {
+	originalRandomUUID = global.crypto.randomUUID;
+	global.crypto.randomUUID = () => 'fake-uuid';
+} );
+
+afterAll( () => {
+	global.crypto.randomUUID = originalRandomUUID;
+} );
+
 describe( 'MediaUtils', () => {
 	describe( '#url()', () => {
 		let media;

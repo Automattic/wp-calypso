@@ -6,6 +6,17 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchAppointmentDetails, onSuccess, onError } from '../';
 
 describe( 'wpcom-api', () => {
+	let originalRandomUUID;
+
+	beforeAll( () => {
+		originalRandomUUID = global.crypto.randomUUID;
+		global.crypto.randomUUID = () => 'fake-uuid';
+	} );
+
+	afterAll( () => {
+		global.crypto.randomUUID = originalRandomUUID;
+	} );
+
 	describe( 'concierge', () => {
 		test( 'fetchAppointmentDetails()', () => {
 			const action = {

@@ -9,6 +9,16 @@ import {
 } from '../';
 
 describe( 'wpcom-api', () => {
+	let originalRandomUUID;
+
+	beforeAll( () => {
+		originalRandomUUID = global.crypto.randomUUID;
+		global.crypto.randomUUID = () => 'fake-uuid';
+	} );
+
+	afterAll( () => {
+		global.crypto.randomUUID = originalRandomUUID;
+	} );
 	describe( 'concierge', () => {
 		test( 'fetchConciergeInitial()', () => {
 			const action = {

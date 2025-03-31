@@ -42,7 +42,7 @@ jest.mock( 'wpcom-proxy-request', () => ( {
 } ) );
 
 // Mock crypto.randomUUID with its Node.js implementation
-global.crypto.randomUUID = () => 'fake-uuid';
+global.crypto.randomUUID = () => require( 'crypto' ).randomUUID();
 
 global.matchMedia = jest.fn( ( query ) => ( {
 	matches: false,

@@ -9,6 +9,17 @@ import {
 	warningNotice,
 } from '../actions';
 
+let originalRandomUUID;
+
+beforeAll( () => {
+	originalRandomUUID = global.crypto.randomUUID;
+	global.crypto.randomUUID = () => 'fake-uuid';
+} );
+
+afterAll( () => {
+	global.crypto.randomUUID = originalRandomUUID;
+} );
+
 describe( 'actions', () => {
 	describe( 'removeNotice()', () => {
 		test( 'should return an action object', () => {

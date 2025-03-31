@@ -16,6 +16,17 @@ import {
 import * as handlers from 'calypso/state/partner-portal/licenses/handlers';
 
 describe( 'handlers', () => {
+	let originalRandomUUID;
+
+	beforeAll( () => {
+		originalRandomUUID = global.crypto.randomUUID;
+		global.crypto.randomUUID = () => 'fake-uuid';
+	} );
+
+	afterAll( () => {
+		global.crypto.randomUUID = originalRandomUUID;
+	} );
+
 	describe( '#fetchLicensesHandler()', () => {
 		test( 'should return an http request action', () => {
 			const { fetchLicensesHandler } = handlers;
