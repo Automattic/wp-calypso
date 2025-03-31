@@ -5,7 +5,7 @@ import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
-import { PurchaseItem, PurchaseItemSiteIcon } from '../purchase-item';
+import PurchaseItem, { PurchaseItemSiteIcon } from '../purchase-item';
 
 function PurchaseItemRow( props: { purchase: Purchases.Purchase } ) {
 	const purchase = props.purchase;
