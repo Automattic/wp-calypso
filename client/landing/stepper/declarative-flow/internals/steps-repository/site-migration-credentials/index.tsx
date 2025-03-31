@@ -70,7 +70,7 @@ const SiteMigrationCredentials: Step< {
 	const siteSlugParam = useSiteSlugParam();
 	const fromUrl = useQuery().get( 'from' ) || '';
 	const siteSlug = siteSlugParam ?? '';
-	const { sendTicket } = useSubmitMigrationTicket( {
+	const { sendTicketAsync } = useSubmitMigrationTicket( {
 		onSuccess: () => {
 			recordTracksEvent( 'calypso_migration_credentials_ticket_submit_success', {
 				blog_url: siteSlug,
@@ -112,7 +112,7 @@ const SiteMigrationCredentials: Step< {
 		} );
 
 		try {
-			await sendTicket( {
+			await sendTicketAsync( {
 				locale,
 				from_url: fromUrl,
 				blog_url: siteSlug,
