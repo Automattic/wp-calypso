@@ -34,9 +34,9 @@ import {
 import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
+import { SITE_STORE } from '../../../../stores';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import type { Step as StepType } from '../../types';
-import { SITE_STORE } from '../../../../stores';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './styles.scss';
 
@@ -146,10 +146,8 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 
 	async function createSite() {
 		const slug = getSignupCompleteSlug();
-		if (
-			isManageSiteFlow ||
-			( slug && ( await resolveSelect( SITE_STORE ).getSite?.( slug )?.plan?.is_free ) )
-		) {
+		const siteObj = await resolveSelect( SITE_STORE ).getSite?.( slug );
+		if ( isManageSiteFlow || ( slug && siteObj?.plan?.is_free ) ) {
 			if ( planCartItem && slug ) {
 				await addPlanToCart( slug, flow, true, theme, planCartItem );
 			}
