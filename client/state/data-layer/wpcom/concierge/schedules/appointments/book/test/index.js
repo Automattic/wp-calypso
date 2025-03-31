@@ -11,11 +11,6 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { bookConciergeAppointment, onSuccess, onError } from '../';
 import toApi from '../to-api';
 
-// we are mocking uuid.v4 here, so that conciergeShiftsFetchError() will contain the expected id in the tests
-jest.mock( 'crypto', () => ( {
-	randomUUID: () => 'fake-uuid',
-} ) );
-
 describe( 'wpcom-api', () => {
 	describe( 'concierge', () => {
 		test( 'bookConciergeAppointment()', () => {
