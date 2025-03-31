@@ -86,14 +86,16 @@ export const usePrepareSiteForMigration = (
 		transferMutation.mutate();
 	}, [ siteId, from ] ); // Dependencies that should trigger a new transfer
 
-	const transfer_id = transferMutation.data?.transfer_with_software_id;
-	const softwareTransferState = useTransferWithSoftwareStatus( siteId, transfer_id ?? 0, {
-		retry: options.retry ?? 0,
-	} );
+	const softwareTransferState = useTransferWithSoftwareStatus(
+		siteId,
+		transferMutation.data?.atomic_transfer_id ?? 0,
+		{
+			retry: options.retry ?? 0,
+		}
+	);
 
 	const softwareTransferCompleted =
-		'success' === softwareTransferState.data?.atomic_transfer_status &&
-		'success' === softwareTransferState.data?.transfer_with_software_status;
+		'completed' === softwareTransferState.data?.atomic_transfer_status;
 
 	const {
 		data: { migrationKey } = {},
@@ -108,9 +110,8 @@ export const usePrepareSiteForMigration = (
 	const criticalError = softwareTransferState.error;
 
 	const detailedStatus = {
-		siteTransfer: softwareTransferState.data?.atomic_transfer_status ?? 'idle',
-		pluginInstallation: softwareTransferState.data?.transfer_with_software_status ?? 'idle',
-		migrationKey: ! softwareTransferCompleted ? 'idle' : migrationKeyStatus,
+		siteTransferStatus: softwareTransferState.data?.atomic_transfer_status ?? 'idle',
+		migrationKeyStatus: ! softwareTransferCompleted ? 'idle' : migrationKeyStatus,
 	};
 
 	useLogMigration( softwareTransferCompleted, softwareTransferState.status, criticalError, siteId );
