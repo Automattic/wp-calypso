@@ -25,7 +25,8 @@ Initial release of the site-admin package providing a framework for building mod
 
 ## Next
 
+- Add `history` package dependency
+
 ### Components
 - `SiteHub`: Site navigation and context switcher
-- Add `history` package dependency
 - `Link`: Router component providing declarative navigation
