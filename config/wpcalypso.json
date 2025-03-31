@@ -112,6 +112,7 @@
 		"onboarding/import-light": false,
 		"onboarding/import-redirect-to-themes": true,
 		"onboarding/interval-dropdown": true,
+		"onboarding/playground": true,
 		"onboarding/step-container-v2": true,
 		"onboarding/trail-map-feature-grid-copy": false,
 		"onboarding/trail-map-feature-grid-structure": false,
