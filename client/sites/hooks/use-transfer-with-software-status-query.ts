@@ -1,7 +1,7 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
-type TransferWithSoftwareStatusResponse = {
+export type TransferWithSoftwareStatusResponse = {
 	blog_id: number;
 	atomic_transfer_id: number;
 	atomic_transfer_status: string;

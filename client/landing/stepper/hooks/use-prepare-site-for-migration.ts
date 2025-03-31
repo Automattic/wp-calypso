@@ -1,9 +1,12 @@
 import config from '@automattic/calypso-config';
+import { UseMutationResult, UseQueryResult } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { useRequestTransferWithSoftware } from 'calypso/sites/hooks/use-transfer-with-software-start-mutation';
 import { useTransferWithSoftwareStatus } from 'calypso/sites/hooks/use-transfer-with-software-status-query';
 import { useSiteMigrationKey } from './use-site-migration-key';
+import type { TransferWithSoftwareResponse } from 'calypso/sites/hooks/use-transfer-with-software-start-mutation';
+import type { TransferWithSoftwareStatusResponse } from 'calypso/sites/hooks/use-transfer-with-software-status-query';
 
 type Status = 'idle' | 'pending' | 'success' | 'error';
 
@@ -73,29 +76,27 @@ export const usePrepareSiteForMigration = (
 	from?: string,
 	options: Options = {}
 ) => {
-	const transferMutation = useRequestTransferWithSoftware( {
-		siteId,
-		apiSettings: {
-			migration_source_site_domain: from,
-		},
-		plugins: [ 'wpcom-migration', 'activate' ],
-	} );
+	const transferMutation: UseMutationResult< TransferWithSoftwareResponse, Error, void > =
+		useRequestTransferWithSoftware( {
+			siteId,
+			apiSettings: {
+				migration_source_site_domain: from,
+			},
+			plugins: [ 'wpcom-migration', 'activate' ],
+		} );
 
 	// Trigger the mutation when the hook is first used
 	useEffect( () => {
 		transferMutation.mutate();
 	}, [ siteId, from ] ); // Dependencies that should trigger a new transfer
 
-	const softwareTransferState = useTransferWithSoftwareStatus(
-		siteId,
-		transferMutation.data?.atomic_transfer_id ?? 0,
-		{
+	const softwareTransferState: UseQueryResult< TransferWithSoftwareStatusResponse > =
+		useTransferWithSoftwareStatus( siteId, transferMutation.data?.atomic_transfer_id ?? 0, {
 			retry: options.retry ?? 0,
-		}
-	);
+		} );
 
 	const softwareTransferCompleted =
-		'completed' === softwareTransferState.data?.atomic_transfer_status;
+		'success' === softwareTransferState.data?.atomic_transfer_status;
 
 	const {
 		data: { migrationKey } = {},
@@ -114,7 +115,12 @@ export const usePrepareSiteForMigration = (
 		migrationKeyStatus: ! softwareTransferCompleted ? 'idle' : migrationKeyStatus,
 	};
 
-	useLogMigration( softwareTransferCompleted, softwareTransferState.status, criticalError, siteId );
+	useLogMigration(
+		softwareTransferCompleted,
+		softwareTransferState.status as Status,
+		criticalError,
+		siteId
+	);
 
 	return {
 		detailedStatus,
