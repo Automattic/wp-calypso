@@ -69,15 +69,18 @@ describe( 'usePrepareSiteForMigration', () => {
 			} )
 			.query( { http_envelope: 1 } )
 			.reply( 200, {
-				transfer_with_software_id: 456,
+				blog_id: SITE_ID,
+				atomic_transfer_id: 456,
+				atomic_transfer_status: 'pending',
 			} )
-			.get( `/wpcom/v2/sites/${ SITE_ID }/transfer-with-software/456` )
+			.get( `/wpcom/v2/sites/${ SITE_ID }/atomic/transfer-with-software/456` )
 			.query( { http_envelope: 1 } )
 			.reply( 200, {
+				blog_id: SITE_ID,
+				atomic_transfer_id: 456,
 				atomic_transfer_status: 'success',
-				transfer_with_software_status: 'success',
 			} )
-			.get( `/wpcom/v2/sites/${ SITE_ID }/migration/key` )
+			.get( `/wpcom/v2/sites/${ SITE_ID }/atomic-migration-status/wpcom-migration-key` )
 			.query( { http_envelope: 1 } )
 			.reply( 200, { migration_key: 'test-key-123' } );
 
@@ -102,12 +105,16 @@ describe( 'usePrepareSiteForMigration', () => {
 	it( 'should handle transfer failure', async () => {
 		// Mock transfer initiation
 		nock( API_ROOT )
-			.post( `/wpcom/v2/sites/${ SITE_ID }/transfer-with-software?http_envelope=1` )
-			.reply( 200, { transfer_with_software_id: 456 } );
+			.post( `/wpcom/v2/sites/${ SITE_ID }/atomic/transfer-with-software?http_envelope=1` )
+			.reply( 200, {
+				atomic_transfer_id: null,
+				atomic_transfer_status: 'error',
+			} );
 
 		// Mock failed transfer status
 		nock( API_ROOT )
-			.get( `/wpcom/v2/sites/${ SITE_ID }/transfer-with-software/456?http_envelope=1` )
+			.get( `/wpcom/v2/sites/${ SITE_ID }/atomic/transfer-with-software/456` )
+			.query( { http_envelope: 1 } )
 			.reply( 200, {
 				atomic_transfer_status: 'error',
 				error: 'Transfer failed',
