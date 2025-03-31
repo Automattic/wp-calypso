@@ -107,8 +107,10 @@ export function PurchaseItemSiteIcon( {
 	isDisconnectedSite?: boolean;
 	iconUrl?: string | null;
 } ) {
+	let content = <SiteIcon site={ site ?? undefined } size={ 36 } />;
+
 	if ( isAkismetTemporarySitePurchase( purchase ) ) {
-		return (
+		content = (
 			<div className="purchase-item__static-icon">
 				<img src={ akismetIcon } alt="Akismet icon" />
 			</div>
@@ -116,11 +118,11 @@ export function PurchaseItemSiteIcon( {
 	}
 
 	if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
-		return <SiteIcon size={ 36 } />;
+		content = <SiteIcon size={ 36 } />;
 	}
 
 	if ( isDisconnectedSite ) {
-		return (
+		content = (
 			<div className="purchase-item__disconnected-icon">
 				<Gridicon icon="block" size={ Math.round( 36 / 1.8 ) } />
 			</div>
@@ -130,14 +132,14 @@ export function PurchaseItemSiteIcon( {
 	const isJetpackPurchase = isJetpackProduct( purchase ) || isJetpackPlan( purchase );
 
 	if ( ! iconUrl && isJetpackPurchase ) {
-		return (
+		content = (
 			<div className="purchase-item__static-icon">
 				<img src={ jetpackIcon } alt="Jetpack icon" />;
 			</div>
 		);
 	}
 
-	return <SiteIcon site={ site ?? undefined } size={ 36 } />;
+	return <div className="purchase-item__site purchases-layout__site">{ content }</div>;
 }
 
 class PurchaseItem extends Component<
