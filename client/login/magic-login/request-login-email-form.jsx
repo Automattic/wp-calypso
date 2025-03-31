@@ -65,6 +65,7 @@ class RequestLoginEmailForm extends Component {
 		isEmailInputError: PropTypes.bool,
 		isSubmitButtonDisabled: PropTypes.bool,
 		isSubmitButtonBusy: PropTypes.bool,
+		onReady: PropTypes.func,
 	};
 
 	state = {
@@ -80,6 +81,10 @@ class RequestLoginEmailForm extends Component {
 			wpcom.req
 				.get( `/sites/${ this.props.blogId }` )
 				.then( ( result ) => this.setState( { site: result } ) );
+		}
+
+		if ( this.props.onReady ) {
+			this.props.onReady();
 		}
 	}
 
