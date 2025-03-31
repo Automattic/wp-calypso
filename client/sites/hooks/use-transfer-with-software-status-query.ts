@@ -4,9 +4,6 @@ import wpcom from 'calypso/lib/wp';
 type TransferWithSoftwareStatusResponse = {
 	blog_id: number;
 	atomic_transfer_id: number;
-	plugins: { [ key: string ]: boolean };
-	themes: { [ key: string ]: boolean };
-	transfer_with_software_status: string;
 	atomic_transfer_status: string;
 };
 
@@ -33,7 +30,6 @@ export const useTransferWithSoftwareStatus = (
 		queryKey: [ 'software-transfer-status', siteId, atomicTransferId ],
 		queryFn: () => getTransferWithSoftwareStatus( siteId, atomicTransferId ),
 		select: ( data: TransferWithSoftwareStatusResponse ) => ( {
-			transfer_with_software_status: data.transfer_with_software_status,
 			atomic_transfer_status: data.atomic_transfer_status,
 		} ),
 		refetchOnWindowFocus: false,
