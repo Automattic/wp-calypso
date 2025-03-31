@@ -711,7 +711,7 @@ __metadata:
     prop-types: "npm:^15.7.2"
     react-modal: "npm:^3.16.1"
     react-router-dom: "npm:^6.23.1"
-    react-slider: "npm:^2.0.5"
+    react-slider: "npm:^2.0.6"
     resize-observer-polyfill: "npm:^1.5.1"
     storybook: "npm:^8.6.9"
     typescript: "npm:^5.8.2"
@@ -29217,14 +29217,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-slider@npm:^2.0.5":
-  version: 2.0.5
-  resolution: "react-slider@npm:2.0.5"
+"react-slider@npm:^2.0.6":
+  version: 2.0.6
+  resolution: "react-slider@npm:2.0.6"
   dependencies:
     prop-types: "npm:^15.8.1"
   peerDependencies:
     react: ^16 || ^17 || ^18
-  checksum: 2265b3b407681238a8202989f24f154fff06e142ece1f1fbb69dfdc34f93d3cc722a0ea2beacf7b55bbc542f0256e3bda83e4ec898da05e785351d93f82c293f
+  checksum: 15396f103d5c840822395e6fe666850c71bb0a66647204c5646c21f58fa838fe28f652810bacdd386ffa8df26895812f926f174f6f6ae67f456dbd9c5a3e5bfa
   languageName: node
   linkType: hard
 
