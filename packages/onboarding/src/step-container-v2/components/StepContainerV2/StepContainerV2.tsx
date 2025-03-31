@@ -35,11 +35,12 @@ export const StepContainerV2 = ( { children }: { children: ContentProp } ) => {
 		<StepContainerV2Context.Provider value={ stepContainerContextValue }>
 			<div
 				className="step-container-v2"
-				style={ {
-					// @ts-expect-error -- This is a custom property that we're setting.
-					'--step-container-v2-top-bar-height': `${ topBarHeight }px`,
-					'--step-container-v2-sticky-bottom-bar-height': `${ stickyBottomBarHeight }px`,
-				} }
+				style={
+					{
+						'--step-container-v2-top-bar-height': `${ topBarHeight }px`,
+						'--step-container-v2-sticky-bottom-bar-height': `${ stickyBottomBarHeight }px`,
+					} as React.CSSProperties
+				}
 			>
 				{ content }
 			</div>
