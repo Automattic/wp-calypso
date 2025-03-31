@@ -21,12 +21,8 @@
 		.sites-dropdown {
 			flex: 0 1 300px;
 
-			&__wrapper {
+			.sites-dropdown__wrapper {
 				border-color: var( --color-border-subtle );
-				border-radius: 6px;
-			}
-
-			&.is-open .sites-dropdown__wrapper {
 				border-radius: 6px 6px 0 0;
 			}
 		}
