@@ -360,18 +360,6 @@ export default function () {
 	);
 
 	page(
-		paths.domainUseYourDomain( ':site' ),
-		siteSelection,
-		navigation,
-		domainsController.redirectIfNoSite( '/domains/add' ),
-		domainsController.jetpackNoDomainsWarning,
-		stagingSiteNotSupportedRedirect,
-		domainsController.useYourDomain,
-		makeLayout,
-		clientRender
-	);
-
-	page(
 		paths.domainUseMyDomain( ':site' ),
 		siteSelection,
 		navigation,

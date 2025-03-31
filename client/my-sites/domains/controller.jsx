@@ -169,34 +169,6 @@ const transferDomain = ( context, next ) => {
 	next();
 };
 
-const useYourDomain = ( context, next ) => {
-	const handleGoBack = () => {
-		let path = `/domains/add/${ context.params.site }`;
-		if ( context.query.initialQuery ) {
-			path += `?suggestion=${ context.query.initialQuery }`;
-		}
-
-		page( path );
-	};
-	context.primary = (
-		<Main>
-			<PageViewTracker
-				path={ domainUseYourDomain( ':site' ) }
-				title="Domain Search > Use Your Own Domain"
-			/>
-			<DocumentHead title={ translate( 'Use Your Own Domain' ) } />
-			<CalypsoShoppingCartProvider>
-				<UseYourDomainStep
-					basePath={ sectionify( context.path ) }
-					initialQuery={ context.query.initialQuery }
-					goBack={ handleGoBack }
-				/>
-			</CalypsoShoppingCartProvider>
-		</Main>
-	);
-	next();
-};
-
 const useMyDomain = ( context, next ) => {
 	const handleGoBack = () => {
 		let path = `/domains/add/${ context.params.site }`;
