@@ -35,8 +35,10 @@ import {
 	PRODUCT_TYPE_PRODUCT,
 	PRODUCT_TYPE_WOO_EXTENSION,
 	PRODUCT_TYPE_WPCOM_PLAN,
+	PRODUCT_VENDOR_WOOCOMMERCE,
 } from '../constants';
 import { isPressableHostingProduct, isWPCOMHostingProduct } from '../lib/hosting';
+import { getVendorInfo } from '../products-overview-v2/lib/get-vendor-info';
 import {
 	SECURITY_PRODUCT_SLUGS,
 	PERFORMANCE_PRODUCT_SLUGS,
@@ -104,6 +106,12 @@ export function filterProductsAndPlans(
 	filteredProductsAndBundles = filterProductsAndPlansByCategories(
 		filteredProductsAndBundles,
 		getSelectedFilters( PRODUCT_FILTER_KEY_CATEGORIES, selectedFilters )
+	);
+
+	// List only products that matches the selected product vendor.
+	filteredProductsAndBundles = filterProductsAndPlansByVendors(
+		filteredProductsAndBundles,
+		getSelectedFilters( PRODUCT_FILTER_KEY_VENDORS, selectedFilters )
 	);
 
 	return filteredProductsAndBundles;
@@ -208,6 +216,32 @@ function filterProductsAndPlansByCategories(
 
 	categories.forEach( ( category ) => {
 		filterProductsAndPlansByCategory( category, productAndPlans ).forEach( ( item ) => {
+			filteredData.add( item );
+		} );
+	} );
+
+	return Array.from( filteredData );
+}
+
+/*
+ * Filter products and plans by vendors.
+ *
+ * @param {APIProductFamilyProduct[]} productsAndPlans - List of products and plans.
+ * @param {string[]} vendors - Selected product vendors.
+ * @return {APIProductFamilyProduct[]} Filtered products and plans.
+ */
+function filterProductsAndPlansByVendors(
+	productsAndPlans: APIProductFamilyProduct[],
+	vendors: string[]
+) {
+	if ( ! vendors.length ) {
+		return productsAndPlans;
+	}
+
+	const filteredData: Set< APIProductFamilyProduct > = new Set();
+
+	vendors.forEach( ( vendor ) => {
+		filterProductsAndPlansByVendor( vendor, productsAndPlans ).forEach( ( item ) => {
 			filteredData.add( item );
 		} );
 	} );
@@ -353,6 +387,26 @@ function filterProductsAndPlansByCategory(
 			return allProductsAndPlans.filter( ( { family_slug } ) =>
 				STORE_MANAGEMENT_PRODUCT_SLUGS.includes( family_slug )
 			);
+	}
+
+	return allProductsAndPlans;
+}
+
+/*
+ * Filter products and plans by vendor.
+ *
+ * @param {string} vendor - Selected product vendor filter.
+ * @param {APIProductFamilyProduct[]} allProductsAndPlans - List of products and plans.
+ * @return {APIProductFamilyProduct[]} Filtered products and plans.
+ */
+function filterProductsAndPlansByVendor(
+	vendor: string,
+	allProductsAndPlans: APIProductFamilyProduct[]
+) {
+	if ( vendor === PRODUCT_VENDOR_WOOCOMMERCE ) {
+		return allProductsAndPlans.filter(
+			( { slug } ) => getVendorInfo( slug )?.vendorSlug === PRODUCT_VENDOR_WOOCOMMERCE
+		);
 	}
 
 	return allProductsAndPlans;
