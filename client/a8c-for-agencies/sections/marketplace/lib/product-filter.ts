@@ -22,6 +22,7 @@ import {
 	PRODUCT_FILTER_KEY_CATEGORIES,
 	PRODUCT_FILTER_KEY_PRICES,
 	PRODUCT_FILTER_KEY_TYPES,
+	PRODUCT_FILTER_KEY_VENDORS,
 	PRODUCT_PRICE_FREE,
 	PRODUCT_PRICE_PAID,
 	PRODUCT_TYPE_ADDON,
@@ -49,16 +50,19 @@ import {
 	STORE_CONTENT_PRODUCT_SLUGS,
 	STORE_MANAGEMENT_PRODUCT_SLUGS,
 } from './product-slugs';
+
 export type SelectedFilters = {
 	[ PRODUCT_FILTER_KEY_BRAND ]: string;
 	[ PRODUCT_FILTER_KEY_CATEGORIES ]: Record< string, boolean >;
 	[ PRODUCT_FILTER_KEY_TYPES ]: Record< string, boolean >;
 	[ PRODUCT_FILTER_KEY_PRICES ]: Record< string, boolean >;
+	[ PRODUCT_FILTER_KEY_VENDORS ]: Record< string, boolean >;
 };
 
 export function hasSelectedFilter( selectedFilters: SelectedFilters ) {
 	return [
 		selectedFilters[ PRODUCT_FILTER_KEY_CATEGORIES ],
+		selectedFilters[ PRODUCT_FILTER_KEY_VENDORS ],
 		selectedFilters[ PRODUCT_FILTER_KEY_TYPES ],
 		selectedFilters[ PRODUCT_FILTER_KEY_PRICES ],
 	].some( ( filters ) => hasSelectedFilterByType( filters ) );
