@@ -18,7 +18,7 @@
 	position: relative;
 	border-bottom: 1px solid var(--color-neutral-10);
 	background-color: var(--color-neutral-0);
-	box-shadow: inset 0 0 2px 2px rgba(var(--color-neutral-20-rgb), 0.1);
+	box-shadow: inset 0 0 2px 2px color-mix(in srgb, var(--color-neutral-20) 10%, transparent);
 
 	@include breakpoint-deprecated( ">660px" ) {
 		flex: 2 0 0%;
@@ -73,7 +73,7 @@
 	width: 46px;
 	height: 46px;
 	transform: translateY(-50%);
-	background-color: rgba(var(--color-neutral-70-rgb), 0.85);
+	background-color: color-mix(in srgb, var(--color-neutral-70) 85%, transparent);
 	border-radius: 24px; /* stylelint-disable-line scales/radii */
 	color: var(--color-text-inverted);
 	cursor: pointer;
@@ -83,7 +83,7 @@
 	}
 
 	&:hover {
-		background-color: rgba(var(--color-neutral-50-rgb), 0.9);
+		background-color: color-mix(in srgb, var(--color-neutral-50) 90%, transparent);
 	}
 }
 

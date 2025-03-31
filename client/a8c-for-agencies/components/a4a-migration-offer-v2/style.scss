@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .a4a-migration-offer-v2 {
 	display: flex;
@@ -45,7 +46,7 @@
 }
 
 .a4a-migration-offer-v2__title {
-	@include a4a-font-heading-md;
+	@include heading-medium;
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
@@ -54,7 +55,7 @@
 	margin-block-end: 0;
 
 	@include break-medium {
-		@include a4a-font-heading-lg;
+		@include heading-large;
 		margin-block-start: 10px;
 		margin-block-end: 8px;
 	}
@@ -73,7 +74,7 @@
 }
 
 .a4a-migration-offer-v2__description {
-	@include a4a-font-body-md;
+	@include body-medium;
 	margin: 0;
 	max-width: 800px;
 
@@ -83,14 +84,13 @@
 	}
 
 	@include break-medium {
-		@include a4a-font-body-lg;
+		@include body-large;
 	}
 }
 
 .a4a-migration-offer-v2__asterisk {
 	color: var(--studio-gray-80);
-	font-size: 0.75rem;
-	font-weight: 400;
+	@include body-medium;
 	margin-block-start: 12px;
 	margin-bottom: 0;
 }
@@ -103,7 +103,7 @@
 	align-items: center;
 	align-content: center;
 
-	@include a4a-font-body-md;
+	@include body-medium;
 }
 
 .theme-a8c-for-agencies .components-button.a4a-migration-offer-v2__view-toggle-mobile {

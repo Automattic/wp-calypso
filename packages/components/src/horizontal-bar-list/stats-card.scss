@@ -99,6 +99,13 @@
 		flex-wrap: wrap;
 		// Add padding to wrapped elements in narrow viewports.
 		row-gap: 16px;
+
+		@media (max-width: $break-mobile) {
+			.stats-card-header--main__left,
+			.stats-card-header--main__right {
+				flex-grow: 1;
+			}
+		}
 	}
 
 	.stats-card-header__additional {

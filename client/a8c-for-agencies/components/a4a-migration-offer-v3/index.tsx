@@ -69,7 +69,6 @@ const MigrationOfferV3 = ( { isExpanded, onToggleView }: Props ) => {
 				{ isExpanded && (
 					<div className="a4a-migration-offer-v3__body">
 						<SimpleList
-							applyCoreStyles
 							items={ [
 								translate(
 									'{{b}}All migrations:{{/b}} Your first month of hosting will be free when you migrate twenty or more sites to us from any host.',

@@ -3,18 +3,26 @@ import { ReactNode } from 'react';
 import './style.scss';
 
 interface StickyBottomBarProps {
-	leftButton?: ReactNode;
-	rightButton?: ReactNode;
+	leftElement?: ReactNode;
+	centerElement?: ReactNode;
+	rightElement?: ReactNode;
 }
 
-export const StickyBottomBar = ( { leftButton, rightButton }: StickyBottomBarProps ) => {
+export const StickyBottomBar = ( {
+	leftElement,
+	centerElement,
+	rightElement,
+}: StickyBottomBarProps ) => {
 	return (
 		<div className="step-container-v2__sticky-bottom-bar">
-			{ leftButton && (
-				<div className="step-container-v2__sticky-bottom-bar-left-button">{ leftButton }</div>
+			{ leftElement && (
+				<div className="step-container-v2__sticky-bottom-bar-left-element">{ leftElement }</div>
 			) }
-			{ rightButton && (
-				<div className="step-container-v2__sticky-bottom-bar-right-button">{ rightButton }</div>
+			{ centerElement && (
+				<div className="step-container-v2__sticky-bottom-bar-center-element">{ centerElement }</div>
+			) }
+			{ rightElement && (
+				<div className="step-container-v2__sticky-bottom-bar-right-element">{ rightElement }</div>
 			) }
 		</div>
 	);

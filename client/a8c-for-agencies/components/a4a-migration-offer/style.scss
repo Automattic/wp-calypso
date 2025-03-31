@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+
 .a4a-migration-offer__wrapper {
 	border-radius: 4px;
 	background-color: var(--studio-automattic-blue-0);
@@ -65,24 +68,20 @@
 
 		h3 {
 			color: var(--studio-gray-100);
-			font-weight: 600;
-			font-size: 1rem;
+			@include body-large;
 		}
 	}
 
 	.a4a-migration-offer__description {
 		color: var(--studio-gray-80);
-		@include a4a-font-body-lg;
+		@include body-medium;
 		max-width: 850px;
-		font-size: 0.875rem;
-		font-weight: 500;
 		margin-block-end: 12px;
 	}
 
 	.a4a-migration-offer__asterisk {
 		color: var(--studio-gray-80);
-		font-size: 0.75rem;
-		font-weight: 400;
+		@include body-medium;
 		margin-block-start: 12px;
 		margin-bottom: 0;
 	}

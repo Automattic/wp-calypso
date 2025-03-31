@@ -92,11 +92,6 @@ export const STEPS = {
 
 	IMPORT: { slug: 'import', asyncComponent: () => import( './steps-repository/import' ) },
 
-	IMPORT_LIGHT: {
-		slug: 'importLight',
-		asyncComponent: () => import( './steps-repository/import-light' ),
-	},
-
 	IMPORT_LIST: {
 		slug: 'importList',
 		asyncComponent: () => import( './steps-repository/import-list' ),
@@ -130,6 +125,11 @@ export const STEPS = {
 	IMPORTER_MEDIUM: {
 		slug: 'importerMedium',
 		asyncComponent: () => import( './steps-repository/importer-medium' ),
+	},
+
+	IMPORTER_PLAYGROUND: {
+		slug: 'importerPlayground',
+		asyncComponent: () => import( './steps-repository/playground/components/playground-setup' ),
 	},
 
 	IMPORTER_SQUARESPACE: {
@@ -242,11 +242,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/wait-for-plugin-install' ),
 	},
 
-	SITE_MIGRATION_ASSIGN_TRIAL_PLAN: {
-		slug: 'site-migration-assign-trial-plan',
-		asyncComponent: () => import( './steps-repository/site-migration-assign-trial-plan' ),
-	},
-
 	SITE_MIGRATION_INSTRUCTIONS: {
 		slug: 'site-migration-instructions',
 		asyncComponent: () => import( './steps-repository/site-migration-instructions' ),
@@ -255,11 +250,6 @@ export const STEPS = {
 	SITE_MIGRATION_STARTED: {
 		slug: 'site-migration-started',
 		asyncComponent: () => import( './steps-repository/site-migration-started' ),
-	},
-
-	SITE_MIGRATION_ASSISTED_MIGRATION: {
-		slug: 'migrateMessage',
-		asyncComponent: () => import( './steps-repository/importer-migrate-message' ),
 	},
 
 	SITE_MIGRATION_CREDENTIALS: {
@@ -387,6 +377,11 @@ export const STEPS = {
 	SETUP_BLOG: {
 		slug: 'setup-blog',
 		asyncComponent: () => import( './steps-repository/setup-blog' ),
+	},
+
+	PLAYGROUND: {
+		slug: 'playground',
+		asyncComponent: () => import( './steps-repository/playground' ),
 	},
 } as const;
 

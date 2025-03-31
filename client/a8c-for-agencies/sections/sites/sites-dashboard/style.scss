@@ -1,6 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-
+@import "@wordpress/base-styles/variables";
 
 .main.hosting-dashboard-layout.sites-dashboard {
 	.hosting-dashboard-layout-column {
@@ -66,8 +66,7 @@
 		}
 
 		&.sites-dashboard__layout:not(.preview-hidden) .sites-overview__page-title {
-			font-size: 1.25rem;
-			font-weight: 500;
+			@include heading-x-large;
 		}
 
 		&.sites-dashboard__layout:not(.preview-hidden) .sites-overview__page-subtitle {
@@ -92,7 +91,7 @@
 					a.button.split-button__main {
 						width: auto;
 						height: auto;
-						font-size: rem(12px);
+						@include body-small;
 						line-height: 24px;
 						padding: 0 12px;
 					}
@@ -104,7 +103,7 @@
 
 				a.sites-overview__issue-license-button {
 					display: flex;
-					font-size: rem(12px);
+					@include body-small;
 					justify-content: center;
 					align-items: center;
 					height: 28px;
@@ -187,8 +186,7 @@
 
 				// FIXME: Remove this style, as the list view will likely be removed in the future.
 				.hosting-dashboard-layout__header-title {
-					font-size: rem(20px);
-					font-weight: 500;
+					@include heading-x-large;
 				}
 			}
 
@@ -201,7 +199,7 @@
 				height: 28px;
 				width: auto;
 				line-height: 11px;
-				font-size: rem(12px);
+				@include body-small;
 			}
 
 			.sites-overview__page-subtitle {
@@ -214,13 +212,12 @@
 			}
 
 			.sites-overview__page-title {
-				font-size: rem(20px);
-				font-weight: 500;
+				@include heading-x-large;
 			}
 
 			.sites-overview__issue-license-button {
 				display: flex;
-				font-size: rem(12px);
+				@include body-small;
 				justify-content: center;
 				align-items: center;
 				height: 28px;
@@ -293,8 +290,7 @@
 	}
 
 	thead .dataviews-view-table__row th span {
-		font-size: rem(11px);
-		font-weight: 500;
+		@include heading-small;
 		line-height: 20px;
 		color: var(--color-accent-80);
 	}
@@ -408,7 +404,7 @@
 		}
 
 		.sites-overview__page-title {
-			font-size: rem(24px);
+			@include heading-x-large;
 		}
 
 		.hosting-dashboard-item-view {
@@ -458,7 +454,7 @@
 
 		> a,
 		> button {
-			font-size: 1rem;
+			@include body-large;
 			box-sizing: border-box;
 			max-height: 40px;
 		}
@@ -506,8 +502,7 @@
 		background: var(--color-light-backdrop);
 		box-sizing: border-box;
 		border-radius: 12px; /* stylelint-disable-line scales/radii */
-		font-weight: 500;
-		font-size: 0.75rem;
+		@include body-small;
 		vertical-align: middle;
 		color: var(--color-accent-80);
 		border: 1px solid var(--color-accent-5);
@@ -589,7 +584,7 @@
 	.sites-overview__stats-trend .shortened-number {
 		vertical-align: middle;
 		color: var(--color-accent-80);
-		font-size: 0.75rem;
+		@include body-medium;
 	}
 	.sites-overview__disabled {
 		color: var(--color-accent-5);
@@ -612,7 +607,7 @@
 			width: calc(100% - 120px);
 			margin-inline-start: 8px;
 			margin-inline-end: 5px;
-			font-size: 1rem !important;
+			@include body-large;
 		}
 	}
 
@@ -652,7 +647,7 @@
 		justify-content: center;
 	}
 	.sites-overview__error-message {
-		font-size: 0.75rem;
+		@include body-medium;
 		color: var(--color-light-backdrop);
 		padding: 0.5em;
 		margin: auto 0;
@@ -670,7 +665,7 @@
 		}
 	}
 	.sites-overview__error-message-link {
-		font-size: 0.75rem;
+		@include body-medium;
 		color: var(--color-text-white) !important;
 		padding: 6px;
 		position: absolute;
@@ -679,7 +674,7 @@
 		font-weight: 500;
 	}
 	.sites-overview__badge {
-		font-size: 0.75rem !important;
+		@include body-medium;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -732,7 +727,7 @@
 		width: 24px;
 		height: 24px;
 		text-align: center;
-		font-size: 0.75rem;
+		@include body-medium;
 		line-height: 20px;
 		box-sizing: border-box;
 	}
@@ -781,7 +776,7 @@
 	}
 	.sites-overview__no-sites {
 		text-align: center;
-		font-size: 1.5rem;
+		@include heading-x-large;
 		margin-top: 16px;
 	}
 
@@ -811,7 +806,7 @@
 	}
 
 	.sites-overview__column-content {
-		font-size: 0.75rem !important;
+		@include body-medium;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -943,8 +938,7 @@
 }
 
 .sites-dashboard-empty__heading {
-	font-size: rem(24px);
-	font-weight: 600;
+	@include heading-x-large;
 }
 
 .sites-dashboard-empty__subheading {
@@ -976,13 +970,12 @@
 	}
 
 	.sites-dashboard-empty__content-heading {
-		font-size: rem(16px);
-		font-weight: 500;
+		@include heading-large;
 	}
 
 	.sites-dashboard-empty__content-description {
 		margin-block-start: 4px;
-		font-size: rem(14px);
+		@include body-large;
 		line-height: 1.7;
 		color: var(--color-accent);
 	}

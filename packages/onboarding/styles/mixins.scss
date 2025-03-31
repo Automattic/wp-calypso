@@ -260,17 +260,3 @@
 	white-space: nowrap;
 	border-width: 0;
 }
-
-$step-container: '.step-container-v2';
-
-@mixin step-medium-viewport {
-	#{$step-container}.medium-viewport & {
-		@content;
-	}
-}
-
-@mixin step-large-viewport {
-	#{$step-container}.large-viewport & {
-		@content;
-	}
-}

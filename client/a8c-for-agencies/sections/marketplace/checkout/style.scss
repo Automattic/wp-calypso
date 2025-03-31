@@ -34,8 +34,7 @@
 	margin-block-start: 0.25rem;
 	color: var(--color-scary-40);
 	font-style: italic;
-	font-size: 0.875rem;
-	line-height: 14px;
+	@include body-medium;
 
 	&.hidden {
 		display: none;
@@ -174,14 +173,13 @@
 
 	h3 {
 		margin-block: 24px;
-		font-weight: 500;
-		font-size: 1rem;
+		@include heading-large;
 		color: var(--color-neutral-70);
 	}
 }
 
 .checkout__summary-notice-item {
-	font-size: 0.75rem;
+	@include body-small;
 	color: var(--color-neutral-50);
 	margin-block-end: 0.5rem;
 }
@@ -303,8 +301,7 @@
 	.checkout__summary-client-payment-notice {
 		margin-block-start: 48px;
 		color: var(--color-neutral-70);
-		font-size: rem(16px);
-		font-weight: 600;
+		@include heading-large;
 	}
 
 	.checkout__summary-notice {
@@ -327,7 +324,7 @@
 		.checkout__aside-powered-by {
 			div {
 				color: var(--color-neutral-70);
-				font-size: rem(12px);
+				@include body-small;
 			}
 
 			img {

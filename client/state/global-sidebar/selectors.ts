@@ -32,6 +32,14 @@ function getSiteDashboardRoutes( state: AppState ) {
 	];
 }
 
+/**
+ * These routes are used in both 'sites' and 'sites-dashboard' sections.
+ * @returns A list of routes.
+ */
+function tangledBasePaths() {
+	return [ '/domains/manage', '/themes' ];
+}
+
 function isInRoute( state: AppState, routes: string[] ) {
 	return routes.some( ( route ) => state.route.path?.current?.startsWith( route ) );
 }
@@ -43,6 +51,7 @@ function shouldShowSitesDashboard( state: AppState ) {
 		'/setup',
 		'/start',
 		...getSiteDashboardRoutes( state ),
+		...tangledBasePaths(),
 	] );
 }
 

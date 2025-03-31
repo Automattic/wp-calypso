@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 $highlight-color: #3858E9;
 
@@ -23,11 +24,11 @@ $highlight-color: #3858E9;
 }
 
 .a4a-feedback__title {
-	@include a4a-font-heading-xl;
+	@include heading-x-large;
 }
 
 .a4a-feedback__description {
-	@include  a4a-font-body-lg;
+	@include body-large;
 	color: var(--color-neutral-60);
 	padding-block: 4px 32px;
 }
@@ -43,16 +44,16 @@ $highlight-color: #3858E9;
 }
 
 .a4a-feedback__question-details {
-	@include a4a-font-heading-lg($font-weight: 500);
+	@include heading-large;
 }
 
 .a4a-feedback__experience-selector-label {
-	@include a4a-font-label-button;
+	@include heading-medium;
 	padding-block-end: 8px;
 }
 
 .a4a-feedback__comments-label {
-	@include a4a-font-label-button;
+	@include heading-medium;
 	padding-block-end: 8px;
 
 	span {

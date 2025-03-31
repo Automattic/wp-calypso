@@ -75,7 +75,7 @@ body.is-mobile-app-view {
 
 			.masterbar__item-content {
 				font-weight: 600;
-				color: var(--color-sidebar-text);
+				color: var(--studio-gray-100);
 			}
 		}
 		.masterbar__item-wrapper:last-child:hover .masterbar__item {
@@ -83,7 +83,7 @@ body.is-mobile-app-view {
 			text-decoration: none;
 		}
 		.masterbar__item-wrapper:last-child:hover .masterbar__item-content {
-			color: var(--color-sidebar-text);
+			color: var(--studio-gray-100);
 		}
 		@media only screen and (max-width: 781px) {
 			padding-top: 0;
@@ -682,7 +682,6 @@ body.is-mobile-app-view {
 .masterbar__item-launch-site {
 	gap: 6px;
 	cursor: pointer;
-	background-color: var(--wp-admin-theme-color);
 	@media only screen and (max-width: 480px) {
 		display: none;
 	}
@@ -932,6 +931,40 @@ body.is-mobile-app-view {
 	@media only screen and (max-width: 781px) {
 		.gridicon + .masterbar__item-content {
 			padding-left: 6px;
+		}
+	}
+}
+
+.masterbar__site-infos {
+	box-sizing: border-box;
+	min-width: 260px;
+	margin: 6px -6px -6px;
+	padding: 12px;
+	background-color: var(--color-global-masterbar-site-info-background, color-mix(in srgb, var(--color-masterbar-item-hover-background), $white 15% ));
+	color: var(--color-masterbar-submenu-text);
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.masterbar__site-info {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	
+	.masterbar__site-info-label {
+		margin-bottom: 4px;
+	}
+	
+	.masterbar__info-badges {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 4px;
+
+		.components-badge:where(.is-default) {
+			background-color: var(--color-global-masterbar-site-info-badge-background, rgba(255, 255, 255, 0.1));
+			color: var(--color-global-masterbar-site-info-badge-color);
 		}
 	}
 }

@@ -6,6 +6,7 @@
 	padding: 10px 12px;
 	border: unset;
 	text-align: center;
+	text-wrap: balance;
 	width: 100%;
 	color: var(--color-text-inverted);
 
@@ -71,6 +72,10 @@
 				box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--studio-woocommerce-purple-60);
 			}
 		}
+	}
+
+	&:hover[disabled] {
+		background: none;
 	}
 
 	&.is-wooexpress-medium-plan {

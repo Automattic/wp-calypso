@@ -54,6 +54,7 @@ const SiteSelector = () => {
 			/* eslint-disable-next-line jsx-a11y/no-autofocus */
 			autoFocus={ isVisible }
 			isJetpackAgencyDashboard={ canAccessJetpackManage }
+			keepCurrentSection
 			allSitesPath="/dashboard"
 			siteBasePath="/landing"
 		/>

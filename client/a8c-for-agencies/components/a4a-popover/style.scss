@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .a4a-popover__content {
 	display: flex;
@@ -13,7 +14,7 @@
 	}
 
 	.a4a-popover__title {
-		@include a4a-font-body-md;
+		@include body-medium;
 		color: var(--color-accent-60);
 	}
 }
@@ -60,13 +61,11 @@
 	}
 
 	.a4a-popover__popover-button-heading {
-		font-size: rem(14px);
-		font-weight: 600;
+		@include heading-medium;
 	}
 
 	.a4a-popover__popover-button-description {
-		font-size: rem(12px);
-		line-height: 1.33;
+		@include body-small;
 		color: var(--color-accent);
 		padding-top: 4px;
 	}

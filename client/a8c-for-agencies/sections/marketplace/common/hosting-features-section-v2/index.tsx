@@ -30,11 +30,7 @@ function FeatureCard( {
 				<h2 className="hosting-features-section-v2__card-title">{ title }</h2>
 			</div>
 
-			<SimpleList
-				applyCoreStyles
-				className="hosting-features-section-v2__card-list"
-				items={ items }
-			/>
+			<SimpleList className="hosting-features-section-v2__card-list" items={ items } />
 		</Card>
 	);
 }

@@ -45,6 +45,7 @@ module.exports = function storybookDefaultConfig( {
 			'@storybook/addon-toolbars',
 			'@storybook/addon-viewport',
 			'@storybook/addon-themes',
+			'@storybook/addon-webpack5-compiler-babel',
 		],
 		typescript: {
 			check: false,

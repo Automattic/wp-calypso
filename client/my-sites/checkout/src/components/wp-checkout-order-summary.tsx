@@ -139,7 +139,7 @@ export function CheckoutSummaryFeaturedList( {
 
 	return (
 		<>
-			<CheckoutSummaryFeatures>
+			<CheckoutSummaryFeatures className="checkout__summary-features">
 				<CheckoutSummaryFeaturesTitle>
 					{ responseCart.is_gift_purchase
 						? translate( 'WordPress.com Gift Subscription' )

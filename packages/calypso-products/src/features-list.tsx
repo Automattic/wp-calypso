@@ -1655,30 +1655,16 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: {
 		getSlug: () => FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 		getTitle: () =>
-			/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
-			i18n.fixMe( {
-				text: 'Transaction fee for standard payments (+\u00A0standard processing\u00A0fee)',
-				newCopy: i18n.translate(
-					'Transaction fee for standard payments (+\u00A0standard processing\u00A0fee)'
-				),
-				oldCopy: i18n.translate(
-					'Commission fee for standard payment features (plus standard processing\u00A0fee)'
-				),
-			} ),
+			i18n.translate(
+				'Transaction fee for standard payments (+\u00A0standard processing\u00A0fee)'
+			),
 	},
 	[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: {
 		getSlug: () => FEATURE_COMMISSION_FEE_WOO_FEATURES,
 		getTitle: () =>
-			/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
-			i18n.fixMe( {
-				text: 'Transaction fee for standard WooCommerce payments (+ standard processing\u00A0fee)',
-				newCopy: i18n.translate(
-					'Transaction fee for standard WooCommerce payments (+ standard processing\u00A0fee)'
-				),
-				oldCopy: i18n.translate(
-					'Commission fee for standard WooCommerce payment features (plus standard processing\u00A0fee)'
-				),
-			} ),
+			i18n.translate(
+				'Transaction fee for standard WooCommerce payments (+ standard processing\u00A0fee)'
+			),
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_10 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_10,
@@ -2266,13 +2252,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_ES_SEARCH_JP ]: {
 		getSlug: () => FEATURE_ES_SEARCH_JP,
-		getTitle: () =>
-			/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
-			i18n.fixMe( {
-				text: 'Jetpack Search',
-				newCopy: i18n.translate( 'Jetpack Search' ),
-				oldCopy: i18n.translate( 'Built-in Elasticsearch' ),
-			} ),
+		getTitle: () => i18n.translate( 'Jetpack Search' ),
 		getDescription: () =>
 			i18n.translate( 'Make surfacing your content simple with built-in premium site search.' ),
 	},
@@ -2284,30 +2264,17 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SITE_ACTIVITY_LOG_JP ]: {
 		getSlug: () => FEATURE_SITE_ACTIVITY_LOG_JP,
-		getTitle: () =>
-			/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
-			i18n.fixMe( {
-				text: 'Site activity log',
-				newCopy: i18n.translate( 'Site activity log' ),
-				oldCopy: i18n.translate( 'Unlimited site activity log' ),
-			} ),
+		getTitle: () => i18n.translate( 'Site activity log' ),
 		getDescription: () =>
 			i18n.translate( 'Keep an administrative eye on activity across your site.' ),
 	},
 	[ FEATURE_DONATIONS_AND_TIPS_JP ]: {
 		getSlug: () => FEATURE_DONATIONS_AND_TIPS_JP,
 		getTitle: () => i18n.translate( 'Donations and tips' ),
-		/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
 		getDescription: () =>
-			i18n.fixMe( {
-				text: 'Allow your audience to support your work easily with charitable donations and tips.',
-				newCopy: i18n.translate(
-					'Allow your audience to support your work easily with charitable donations and tips.'
-				),
-				oldCopy: i18n.translate(
-					'Allow your audience to support your work easily with donations and tips.'
-				),
-			} ),
+			i18n.translate(
+				'Allow your audience to support your work easily with charitable donations and tips.'
+			),
 	},
 	[ FEATURE_PAYPAL_JP ]: {
 		getSlug: () => FEATURE_PAYPAL_JP,
@@ -2453,20 +2420,8 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SUPPORT_FROM_EXPERTS ]: {
 		getSlug: () => FEATURE_SUPPORT_FROM_EXPERTS,
-		getTitle: () =>
-			/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
-			i18n.fixMe( {
-				text: 'Support from our expert\u00A0team',
-				newCopy: i18n.translate( 'Support from our expert\u00A0team' ),
-				oldCopy: i18n.translate( 'Fast support from our expert\u00A0team' ),
-			} ),
-		/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
-		getDescription: () =>
-			i18n.fixMe( {
-				text: 'Get support from our expert, friendly Happiness team',
-				newCopy: i18n.translate( 'Get support from our expert, friendly Happiness team' ),
-				oldCopy: i18n.translate( 'Prompt support from our expert, friendly Happiness team' ),
-			} ),
+		getTitle: () => i18n.translate( 'Support from our expert\u00A0team' ),
+		getDescription: () => i18n.translate( 'Get support from our expert, friendly Happiness team' ),
 	},
 	[ FEATURE_FAST_SUPPORT_FROM_EXPERTS ]: {
 		getSlug: () => FEATURE_FAST_SUPPORT_FROM_EXPERTS,

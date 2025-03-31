@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
 
 .commission-overview {
 	.commission-overview__section-container {
@@ -35,16 +37,14 @@
 
 	.foldable-card__header {
 		padding: 24px 24px 16px;
-		font-size: rem(16px);
-		font-weight: 600;
+		@include heading-large;
 	}
 
 
 	.foldable-card.foldable-card__content,
 	.foldable-card.is-expanded .foldable-card__content {
-		font-size: rem(14px);
+		@include body-medium;
 		color: var(--color-neutral-50);
-		font-weight: 400;
 		padding: 0 24px 24px;
 	}
 
@@ -75,13 +75,11 @@
 }
 
 .commission-overview__section-heading {
-	font-size: rem(24px);
+	@include heading-x-large;
 	margin-block-end: 8px;
-	font-weight: 600;
 }
 .commission-overview__section-subtitle {
-	font-size: rem(14px);
-	font-weight: 400;
+	@include body-medium;
 	color: var(--color-neutral-50);
 }
 

@@ -68,6 +68,7 @@ const defaultProps = {
 	hideUnavailableFeatures: false,
 	isCustomDomainAllowedOnFreePlan: false,
 	isInAdmin: false,
+	isInSiteDashboard: false,
 	isInSignup: true,
 	onStorageAddOnClick: () => {},
 	planActionOverrides: undefined,

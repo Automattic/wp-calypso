@@ -178,7 +178,7 @@ describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function 
 			await tmpPage.goto( newSiteDetails.blog_details.url as string );
 
 			// View site.
-			const comingSoonPage = new ComingSoonPage( page );
+			const comingSoonPage = new ComingSoonPage( tmpPage );
 			await comingSoonPage.validateComingSoonState();
 
 			// Dispose the test page and context.

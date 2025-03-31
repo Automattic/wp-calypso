@@ -40,7 +40,11 @@ import {
 	recordSignupPlanChange,
 	SIGNUP_DOMAIN_ORIGIN,
 } from 'calypso/lib/analytics/signup';
-import { isWooOAuth2Client, isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
+import {
+	isWooOAuth2Client,
+	isGravatarOAuth2Client,
+	isPartnerPortalOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
 import FlowProgressIndicator from 'calypso/signup/flow-progress-indicator';
 import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
@@ -428,8 +432,12 @@ class Signup extends Component {
 	};
 
 	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
-		if ( isWooOAuth2Client( this.props.oauth2Client ) || this.props.isGravatar ) {
-			// We don't want to show the loading screen for the Woo signup, and Gravatar signup flow.
+		if (
+			isWooOAuth2Client( this.props.oauth2Client ) ||
+			this.props.isGravatar ||
+			isPartnerPortalOAuth2Client( this.props.oauth2Client )
+		) {
+			// We don't want to show the loading screen for the Woo signup, Automattic Partner Portal, and Gravatar signup flow.
 			return;
 		}
 

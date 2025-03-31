@@ -20,7 +20,12 @@ import {
 	redirectLostPassword,
 	desktopLogin,
 	desktopLoginFinalize,
-	googleAuth,
+	jetpackAppleAuth,
+	jetpackAppleAuthCallback,
+	jetpackGoogleAuthCallback,
+	jetpackGoogleAuth,
+	jetpackGitHubAuth,
+	jetpackGitHubAuthCallback,
 } from './controller';
 import redirectLoggedIn from './redirect-logged-in';
 import { setShouldServerSideRenderLogin, ssrSetupLocaleLogin, setMetaTags } from './ssr';
@@ -91,8 +96,18 @@ export default ( router ) => {
 
 	if ( config.isEnabled( 'login/magic-login' ) ) {
 		router(
-			[ `/log-in/link/use/${ lang }`, `/log-in/jetpack/link/use/${ lang }` ],
+			[ `/log-in/link/use/${ lang }` ],
 			redirectLoggedIn,
+			setLocaleMiddleware(),
+			setMetaTags,
+			setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
+			magicLoginUse,
+			makeLoggedOutLayout
+		);
+
+		// For Jetpack link use, we don't want to stop when the user is logged in
+		router(
+			[ `/log-in/jetpack/link/use/${ lang }` ],
 			setLocaleMiddleware(),
 			setMetaTags,
 			setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
@@ -121,12 +136,62 @@ export default ( router ) => {
 	);
 
 	router(
-		[ `/log-in/jetpack/google/${ lang }` ],
-		redirectLoggedIn,
+		`/log-in/:isJetpack(jetpack)/:socialService(google)/${ lang }`,
 		setLocaleMiddleware(),
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-		googleAuth,
+		jetpackGoogleAuth,
+		login,
+		makeLoggedOutLayout
+	);
+
+	router(
+		`/log-in/:isJetpack(jetpack)/:socialService(google)/callback/${ lang }`,
+		setLocaleMiddleware(),
+		setMetaTags,
+		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
+		jetpackGoogleAuthCallback,
+		login,
+		makeLoggedOutLayout
+	);
+
+	router(
+		`/log-in/:isJetpack(jetpack)/:socialService(apple)/${ lang }`,
+		setLocaleMiddleware(),
+		setMetaTags,
+		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
+		jetpackAppleAuth,
+		login,
+		makeLoggedOutLayout
+	);
+
+	router(
+		`/log-in/:isJetpack(jetpack)/:socialService(apple)/callback/${ lang }`,
+		setLocaleMiddleware(),
+		setMetaTags,
+		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
+		jetpackAppleAuthCallback,
+		login,
+		makeLoggedOutLayout
+	);
+
+	router(
+		`/log-in/:isJetpack(jetpack)/:socialService(github)/${ lang }`,
+		setLocaleMiddleware(),
+		setMetaTags,
+		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
+		jetpackGitHubAuth,
+		login,
+		makeLoggedOutLayout
+	);
+
+	router(
+		`/log-in/:isJetpack(jetpack)/:socialService(github)/callback/${ lang }`,
+		setLocaleMiddleware(),
+		setMetaTags,
+		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
+		jetpackGitHubAuthCallback,
+		login,
 		makeLoggedOutLayout
 	);
 

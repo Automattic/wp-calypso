@@ -4,7 +4,7 @@ import { Button, Icon } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { plus } from '@wordpress/icons';
-import { translate } from 'i18n-calypso';
+import { translate, fixMe } from 'i18n-calypso';
 import { useEffect, ReactElement } from 'react';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -42,20 +42,19 @@ export const SubscribersHeader = ( {
 	const { setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const siteId = useSelector( getSelectedSiteId ) ?? null;
 	const isWPCOMSite = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
+	const supportUrl = ! isWPCOMSite
+		? 'https://jetpack.com/support/newsletter/customize-the-newsletter-experience/#manage-subscribers'
+		: 'https://wordpress.com/support/subscribers/ ';
 
 	const openHelpCenter = () => {
-		setShowSupportDoc( localizeUrl( 'https://wordpress.com/support/paid-newsletters/' ) );
+		setShowSupportDoc( localizeUrl( supportUrl ) );
 	};
-
-	const paidNewsletterUrl = ! isWPCOMSite
-		? 'https://jetpack.com/support/newsletter/paid-newsletters/'
-		: 'https://wordpress.com/support/paid-newsletters/';
 
 	const subtitleOptions = {
 		components: {
 			link: (
 				<a
-					href={ localizeUrl( paidNewsletterUrl ) }
+					href={ localizeUrl( supportUrl ) }
 					target="blank"
 					onClick={ ( event ) => {
 						if ( ! isJetpackCloud() ) {
@@ -121,10 +120,17 @@ export const SubscribersHeader = ( {
 				subtitle={
 					hideSubtitle
 						? null
-						: translate(
-								'Add subscribers to your site and send them a free or {{link}}paid newsletter{{/link}}.',
-								subtitleOptions
-						  )
+						: fixMe( {
+								text: 'Add subscribers to your site and filter your audience list. {{link}}Learn more{{/link}}.',
+								newCopy: translate(
+									'Add subscribers to your site and filter your audience list. {{link}}Learn more{{/link}}.',
+									subtitleOptions
+								),
+								oldCopy: translate(
+									'Add subscribers to your site and send them a free or {{link}}paid newsletter{{/link}}.',
+									subtitleOptions
+								),
+						  } )
 				}
 				screenReader={ navItems.insights?.label }
 				navigationItems={ [] }

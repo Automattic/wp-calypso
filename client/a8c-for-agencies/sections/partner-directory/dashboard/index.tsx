@@ -212,7 +212,6 @@ const PartnerDirectoryDashboard = () => {
 
 	const programLinks = (
 		<StepSection
-			applyCoreStyles
 			className="partner-directory-dashboard__learn-more-section"
 			heading={ translate( 'Learn more about the program' ) }
 		>
@@ -291,7 +290,6 @@ const PartnerDirectoryDashboard = () => {
 
 						return (
 							<StepSectionItem
-								applyCoreStyles
 								key={ application.brand }
 								isNewLayout
 								iconClassName={ clsx( brandMeta.className ) }
@@ -302,7 +300,6 @@ const PartnerDirectoryDashboard = () => {
 						);
 					} ) }
 				<StepSection
-					applyCoreStyles
 					className="partner-directory-dashboard__edit-section"
 					heading={ translate( "Edit your agency's information" ) }
 				>
@@ -344,9 +341,8 @@ const PartnerDirectoryDashboard = () => {
 					'List your agency in our partner directories. Showcase your skills, attract clients, and grow your business.'
 				) }
 			</div>
-			<StepSection applyCoreStyles heading={ translate( 'How do I start?' ) }>
+			<StepSection heading={ translate( 'How do I start?' ) }>
 				<StepSectionItem
-					applyCoreStyles
 					isNewLayout
 					className={
 						currentApplicationStep > 0 ? 'partner-directory-dashboard__checked-step' : ''
@@ -392,7 +388,6 @@ const PartnerDirectoryDashboard = () => {
 					} }
 				/>
 				<StepSectionItem
-					applyCoreStyles
 					isNewLayout
 					className={
 						currentApplicationStep > 1 ? 'partner-directory-dashboard__checked-step' : ''
@@ -413,7 +408,6 @@ const PartnerDirectoryDashboard = () => {
 					} }
 				/>
 				<StepSectionItem
-					applyCoreStyles
 					isNewLayout
 					stepNumber={ currentApplicationStep > 2 ? undefined : 3 }
 					icon={ currentApplicationStep > 2 ? check : undefined }

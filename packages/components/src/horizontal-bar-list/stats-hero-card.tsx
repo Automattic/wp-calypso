@@ -69,7 +69,11 @@ const StatsHeroCard = ( {
 			} ) }
 		>
 			<div
-				className={ `${ BASE_CLASS_NAME }-header ${ headerClassName } ${ BASE_CLASS_NAME }-header--split` }
+				className={ clsx(
+					`${ BASE_CLASS_NAME }-header`,
+					headerClassName,
+					`${ BASE_CLASS_NAME }-header--split`
+				) }
 			>
 				<div className={ `${ BASE_CLASS_NAME }-header--main` }>
 					<div className={ `${ BASE_CLASS_NAME }-header--main__left` }>
