@@ -417,6 +417,7 @@ const siteMigration: Flow = {
 					};
 
 					if ( action === 'skip' ) {
+						//something here
 						return exitFlow( addQueryArgs( { ref: 'site-migration' }, `/overview/${ siteSlug }` ) );
 					}
 
