@@ -168,6 +168,12 @@ export const handleScroll = ( event: React.UIEvent< HTMLElement > ): void => {
 	}
 };
 
+export const isRedirectingToStepContainerV2Flow = ( redirectTo: string ) => {
+	const { pathname, search } = new URL( redirectTo, 'http://example.com' );
+
+	return shouldUseStepContainerV2( getFlowFromURL( pathname, search ) );
+};
+
 /**
  * Returns whether to display the StepContainerV2 features from up in the tree.
  * This can be used, for example, to determine if we should show
@@ -182,12 +188,9 @@ export const isInStepContainerV2FlowContext = ( pathname: string, query: string 
 		// The checkout isn't technically part of a stepper flow, but we can infer what stepper
 		// flow it came from (if any) by inspecting the redirect_to query param (in the case
 		// of the onboarding flow).
-		const redirectTo = new URL(
-			new URLSearchParams( query ).get( 'redirect_to' ) ?? '',
-			'http://example.com'
-		);
+		const redirectTo = new URLSearchParams( query ).get( 'redirect_to' ) ?? '';
 
-		return shouldUseStepContainerV2( getFlowFromURL( redirectTo.pathname, redirectTo.search ) );
+		return isRedirectingToStepContainerV2Flow( redirectTo );
 	}
 
 	return false;
