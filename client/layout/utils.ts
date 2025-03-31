@@ -186,9 +186,8 @@ export const isInStepContainerV2FlowContext = ( pathname: string, query: string 
 			new URLSearchParams( query ).get( 'redirect_to' ) ?? '',
 			'http://example.com'
 		);
-		return shouldUseStepContainerV2(
-			getFlowFromURL( redirectTo.pathname, redirectTo.search ) || DEFAULT_FLOW
-		);
+
+		return shouldUseStepContainerV2( getFlowFromURL( redirectTo.pathname, redirectTo.search ) );
 	}
 
 	return false;
