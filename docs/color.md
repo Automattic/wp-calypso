@@ -47,7 +47,7 @@ We also have a number of properties that help make our color usage consistent, w
 
 ### Translucent Colors
 
-Each theme property can be turned translucent using [color-mix](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/color-mix) for shadows and overlays in the following way:
+Each theme property can be turned translucent for shadows and fading using [color-mix](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/color-mix):
 
 ```css
 /* Already defined */
