@@ -16,7 +16,7 @@ import {
 	isHostedSiteMigrationFlow,
 	Step,
 } from '@automattic/onboarding';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch, useSelect, resolveSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -34,6 +34,7 @@ import {
 import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
+import { SITE_STORE } from '../../../../stores';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -144,9 +145,9 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const shouldGoToCheckout = Boolean( planCartItem );
 
 	async function createSite() {
-		if ( isManageSiteFlow ) {
-			const slug = getSignupCompleteSlug();
-
+		const slug = getSignupCompleteSlug();
+		const siteObj = await resolveSelect( SITE_STORE ).getSite?.( slug );
+		if ( isManageSiteFlow || ( slug && siteObj?.plan?.is_free ) ) {
 			if ( planCartItem && slug ) {
 				await addPlanToCart( slug, flow, true, theme, planCartItem );
 			}

@@ -511,6 +511,8 @@ const siteSetupFlow: FlowV1 = {
 
 		const goBack = () => {
 			switch ( currentStep ) {
+				case 'goals':
+					return history.back();
 				case 'bloggerStartingPoint':
 					return navigate( 'options' );
 

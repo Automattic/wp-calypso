@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import React, { forwardRef } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 
 const vars = {
 	gray5: 'var(--color-neutral-5)',
@@ -94,7 +93,7 @@ const Star = forwardRef< SVGSVGElement, StarProps >( ( props, ref ) => {
 
 	const onFill = isChecked ? vars.yellow50 : vars.yellow20;
 	const offFill = vars.gray5;
-	const gradientId = 'gradient_' + uuidv4();
+	const gradientId = 'gradient_' + crypto.randomUUID();
 	let gradientPercentage = 0;
 	let halfFill = false;
 	let fill = offFill;

@@ -2,7 +2,6 @@ import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
-import { v4 as uuidv4 } from 'uuid';
 import { ODIE_TRANSFER_MESSAGE } from '../constants';
 import { emptyChat, useOdieAssistantContext } from '../context';
 import { useGetZendeskConversation, useManageSupportInteraction, useOdieChat } from '../data';
@@ -87,7 +86,7 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 
 				startNewInteraction( {
 					event_source: 'help-center',
-					event_external_id: uuidv4(),
+					event_external_id: crypto.randomUUID(),
 				} );
 			}
 		}

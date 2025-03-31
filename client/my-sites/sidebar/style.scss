@@ -44,6 +44,9 @@ $brand-text: "SF Pro Text", $sans;
 		--color-masterbar-submenu-hover-text: var(--color-accent);
 		--color-global-masterbar-submenu-background: var(--studio-white);
 		--color-global-masterbar-submenu-hover-background: var(--studio-white);
+		--color-global-masterbar-site-info-background: #{$gray-100};
+		--color-global-masterbar-site-info-badge-background: #{$gray-300};
+		--color-global-masterbar-site-info-badge-color: #{$gray-900};
 		--content-padding-top: 16px;
 		--content-padding-bottom: 16px;
 
