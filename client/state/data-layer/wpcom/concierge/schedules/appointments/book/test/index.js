@@ -12,6 +12,17 @@ import { bookConciergeAppointment, onSuccess, onError } from '../';
 import toApi from '../to-api';
 
 describe( 'wpcom-api', () => {
+	let originalRandomUUID;
+
+	beforeAll( () => {
+		originalRandomUUID = global.crypto.randomUUID;
+		global.crypto.randomUUID = () => 'fake-uuid';
+	} );
+
+	afterAll( () => {
+		global.crypto.randomUUID = originalRandomUUID;
+	} );
+
 	describe( 'concierge', () => {
 		test( 'bookConciergeAppointment()', () => {
 			const action = {
