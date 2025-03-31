@@ -223,12 +223,12 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 						columnWidth={ 6 }
 						topBar={
 							<Step.TopBar
-								backButton={
+								leftElement={
 									importJob?.importerState !== appStates.IMPORT_SUCCESS && (
 										<Step.BackButton onClick={ onGoBack } />
 									)
 								}
-								skipButton={
+								rightElement={
 									importJob?.importerState === appStates.IMPORT_SUCCESS && (
 										<Step.SkipButton
 											onClick={ () => {
