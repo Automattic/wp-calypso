@@ -20,7 +20,7 @@ const PurchasesListHeader = ( { showSite = false }: { showSite?: boolean } ) => 
 				{ translate( 'Status' ) }
 			</div>
 			<div className="purchases-list-header__title purchases-layout__payment-method">
-				{ translate( 'Payment method - THIS IS THE WIP VERSION' ) }
+				{ translate( 'Payment method' ) }
 			</div>
 		</CompactCard>
 	);
