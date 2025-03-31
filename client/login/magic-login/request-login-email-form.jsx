@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import Notice from 'calypso/components/notice';
 import wpcom from 'calypso/lib/wp';
@@ -56,6 +57,7 @@ class RequestLoginEmailForm extends Component {
 		onSubmitEmail: PropTypes.func,
 		onSendEmailLogin: PropTypes.func,
 		createAccountForNewUser: PropTypes.bool,
+		shouldShowLoadingEllipsis: PropTypes.bool,
 		blogId: PropTypes.string,
 		errorMessage: PropTypes.string,
 		onErrorDismiss: PropTypes.func,
@@ -68,6 +70,7 @@ class RequestLoginEmailForm extends Component {
 	state = {
 		usernameOrEmail: this.props.userEmail || '',
 		site: {},
+		isLoadingSite: !! this.props.blogId,
 	};
 
 	usernameOrEmailRef = createRef();
@@ -77,7 +80,8 @@ class RequestLoginEmailForm extends Component {
 		if ( blogId ) {
 			wpcom.req
 				.get( `/sites/${ this.props.blogId }` )
-				.then( ( result ) => this.setState( { site: result } ) );
+				.then( ( result ) => this.setState( { site: result, isLoadingSite: false } ) )
+				.catch( () => this.setState( { isLoadingSite: false } ) );
 		}
 	}
 
@@ -173,7 +177,12 @@ class RequestLoginEmailForm extends Component {
 			isEmailInputError,
 			isSubmitButtonDisabled,
 			isSubmitButtonBusy,
+			shouldShowLoadingEllipsis,
 		} = this.props;
+
+		if ( shouldShowLoadingEllipsis ) {
+			return <LoadingEllipsis className="magic-login__loading-ellipsis--jetpack" />;
+		}
 
 		const usernameOrEmail = this.getUsernameOrEmailFromState();
 		const siteIcon = this.state.site?.icon?.img ?? this.state.site?.icon?.ico ?? null;

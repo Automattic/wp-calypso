@@ -47,9 +47,15 @@ export const useStepNavigationWithTracking = ( {
 	/**
 	 * If the previous step is defined in the store, and the current step is not the first step, we can go back.
 	 * We need to make sure we're not at the first step because `previousStep` is persisted and can be a step from another flow or another run of the current flow.
+	 * We include a check for whether the previous step is the same sort of step as the current step. This can happen briefly while transitioning from one step to
+	 * the next where the onboard store data has updated, but `currentStepRoute` hasn't yet because the step hasn't been rendered yet. This would cause the back button
+	 * to flash briefly while navigating.
 	 */
 	const canUserGoBack =
-		stepData?.previousStep && currentStepRoute !== stepSlugs[ 0 ] && history.length > 1;
+		stepData?.previousStep &&
+		currentStepRoute !== stepSlugs[ 0 ] &&
+		history.length > 1 &&
+		stepData.previousStep !== currentStepRoute;
 
 	const tracksEventPropsFromFlow = flow.useTracksEventProps?.();
 

@@ -168,7 +168,7 @@ ul.module-header-actions {
 
 	// Fade really long module titles
 	&::before {
-		@include stats-fade-text( rgba( var( --color-surface-rgb ), 0 ), var( --color-surface ) );
+		@include stats-fade-text( color-mix(in srgb, var(--color-surface) 0%, transparent), var( --color-surface ) );
 	}
 
 	.module-header-action {

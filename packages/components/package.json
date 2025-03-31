@@ -39,6 +39,7 @@
 		"@emotion/css": "^11.11.2",
 		"@emotion/react": "^11.11.1",
 		"@emotion/styled": "^11.11.0",
+		"@storybook/addon-actions": "^8.6.9",
 		"@wordpress/base-styles": "^5.20.0",
 		"@wordpress/components": "^29.6.0",
 		"@wordpress/compose": "7.20.0",

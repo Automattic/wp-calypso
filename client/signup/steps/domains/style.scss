@@ -547,7 +547,7 @@ body.is-section-signup {
 		flex: 1;
 		width: 100%;
 
-		@include break-medium {
+		@include break-large {
 			max-width: 290px;
 		}
 	}

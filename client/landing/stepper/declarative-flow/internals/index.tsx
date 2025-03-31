@@ -7,7 +7,6 @@ import { createPath, generatePath, useParams } from 'react-router';
 import { Route, Routes } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
-import { StepContainerV2Loading } from 'calypso/components/step-container-v2-loading';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
@@ -130,7 +129,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 		switch ( assertCondition.state ) {
 			case AssertConditionState.CHECKING:
 				return shouldUseStepContainerV2( flow.name ) ? (
-					<StepContainerV2Loading />
+					<Step.Loading />
 				) : (
 					<Loading className="wpcom-loading__boot" />
 				);
@@ -212,7 +211,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 	useSignUpStartTracking( { flow } );
 
 	const fallback = shouldUseStepContainerV2( flow.name ) ? (
-		<StepContainerV2Loading />
+		<Step.Loading />
 	) : (
 		<Loading className="wpcom-loading__boot" />
 	);

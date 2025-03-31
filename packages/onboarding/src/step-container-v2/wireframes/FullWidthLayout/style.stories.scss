@@ -6,6 +6,7 @@
 	flex-direction: column;
 	gap: 3rem;
 	flex: 1;
+	width: 100%;
 
 	@include break-large {
 		flex-direction: row;

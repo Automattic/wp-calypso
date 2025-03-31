@@ -12,7 +12,7 @@
 		position: absolute;
 		top: 0;
 		left: 0;
-		background-color: rgba(var(--color-neutral-70-rgb), 0.5);
+		background-color: color-mix(in srgb, var(--color-neutral-70) 50%, transparent);
 		border-radius: 50%;
 		height: 150px;
 		width: 150px;
@@ -168,7 +168,7 @@
 }
 
 .edit-gravatar .spinner__border {
-	fill: rgba(var(--color-neutral-70-rgb), 0.5);
+	fill: color-mix(in srgb, var(--color-neutral-70) 50%, transparent);
 }
 
 .edit-gravatar__explanation {

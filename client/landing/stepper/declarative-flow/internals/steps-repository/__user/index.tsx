@@ -130,17 +130,19 @@ const UserStepComponent: StepType = function UserStep( {
 
 		const topBar = (
 			<Step.TopBar
-				backButton={
+				leftElement={
 					navigation.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : undefined
 				}
-				skipButton={ <Step.LinkButton href={ loginLink } label={ translate( 'Log in' ) } /> }
+				rightElement={
+					<Step.LinkButton href={ loginLink }>{ translate( 'Log in' ) }</Step.LinkButton>
+				}
 			/>
 		);
 
 		return (
 			<Step.CenteredColumnLayout
 				className="step-container-v2--user"
-				verticalAlign="center-on-small"
+				verticalAlign="center"
 				columnWidth={ 4 }
 				heading={ heading }
 				topBar={ topBar }

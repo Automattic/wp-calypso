@@ -9,7 +9,7 @@ export const LinkButton = ( originalProps: ButtonProps ) => {
 	const { __ } = useI18n();
 
 	const linkButtonProps = normalizeButtonProps( originalProps, {
-		label: __( 'Link', __i18n_text_domain__ ),
+		children: __( 'Link', __i18n_text_domain__ ),
 		className: 'step-container-v2__link-button',
 	} );
 

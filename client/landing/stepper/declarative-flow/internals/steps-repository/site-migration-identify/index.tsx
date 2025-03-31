@@ -194,7 +194,7 @@ const SiteMigrationIdentify: StepType< {
 					columnWidth={ 4 }
 					topBar={
 						<Step.TopBar
-							backButton={
+							leftElement={
 								shouldHideBackButton() ? undefined : (
 									<Step.BackButton onClick={ navigation.goBack } />
 								)

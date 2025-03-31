@@ -146,8 +146,8 @@ const SiteMigrationHowToMigrate: StepType< {
 					columnWidth={ 6 }
 					topBar={
 						<Step.TopBar
-							backButton={ <Step.BackButton onClick={ goBack } /> }
-							skipButton={
+							leftElement={ <Step.BackButton onClick={ goBack } /> }
+							rightElement={
 								<Step.SkipButton
 									onClick={ () => handleClick( HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF ) }
 									label={ translate( "I'll do it myself" ) }
@@ -159,7 +159,6 @@ const SiteMigrationHowToMigrate: StepType< {
 						<Step.Heading
 							text={ headerText ?? translate( 'Let us migrate your site' ) }
 							subText={ subHeaderText || renderSubHeaderText() }
-							maxWidth="615px"
 						/>
 					}
 				>
