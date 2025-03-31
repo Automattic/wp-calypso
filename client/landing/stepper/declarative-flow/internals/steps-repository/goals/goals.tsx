@@ -16,7 +16,7 @@ export const useGoals = (): Goal[] => {
 		const goals = [
 			{
 				key: SiteGoal.Write,
-				title: translate( 'Write a blog' ),
+				title: translate( 'Publish a blog' ),
 			},
 			{
 				key: SiteGoal.Engagement,
