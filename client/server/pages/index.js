@@ -20,10 +20,9 @@ import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
-import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
-import { getFlowFromURL, DEFAULT_FLOW } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import { SUBSCRIPTIONS_SECTION_DEFINITION } from 'calypso/landing/subscriptions/section';
+import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { shouldSeeCookieBanner } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -200,7 +199,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 			request.query.hasOwnProperty( 'useTranslationChunks' ),
 		useLoadingEllipsis: !! request.query.loading_ellipsis,
 		showGdprBanner,
-		showStepContainerV2Loader: shouldShowStepContainerV2Loader( request ),
+		showStepContainerV2Loader: isInStepContainerV2FlowContext( request.path, request.query ),
 	} );
 
 	context.app = {
@@ -265,33 +264,6 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	}
 
 	return context;
-}
-
-/**
- * Returns whether to display the StepContainerV2 loading spinner. This is rendered
- * by the <Document> component (see client/document/index.jsx).
- * @param {express.Request} req Request object.
- * @returns {boolean} - True if the server should render show the StepContainerV2 loader.
- */
-function shouldShowStepContainerV2Loader( req ) {
-	if ( req.path.startsWith( '/setup' ) ) {
-		return shouldUseStepContainerV2( getFlowFromURL( req.path, req.query ) || DEFAULT_FLOW );
-	}
-
-	if ( req.path.startsWith( '/checkout' ) ) {
-		// The checkout isn't technically part of a stepper flow, but we can infer what stepper
-		// flow it came from (if any) by inspecting the redirect_to query param (in the case
-		// of the onboarding flow).
-		const redirectTo = new URL(
-			new URLSearchParams( req.query ).get( 'redirect_to' ),
-			'http://example.com'
-		);
-		return shouldUseStepContainerV2(
-			getFlowFromURL( redirectTo.pathname, redirectTo.search ) || DEFAULT_FLOW
-		);
-	}
-
-	return false;
 }
 
 const setupDefaultContext = ( entrypoint, sectionName ) => ( req, res, next ) => {
