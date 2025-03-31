@@ -505,7 +505,7 @@ body.is-mobile-app-view {
 		.dashicons-plus {
 			padding-top: 0;
 			&::before {
-				font-size: 40px !important; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				font-size: 40px !important;
 				vertical-align: middle;
 				top: 2px !important;
 			}
@@ -517,7 +517,7 @@ body.is-mobile-app-view {
 				width: 52px;
 				display: inline-block;
 				position: relative;
-				font-size: 32px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				font-size: 32px;
 				text-align: center;
 				top: 7px;
 				height: unset;
@@ -530,7 +530,7 @@ body.is-mobile-app-view {
 
 		.dashicons-update {
 			&::before {
-				font-size: 40px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				font-size: 40px;
 				top: 3px;
 			}
 		}
@@ -540,7 +540,7 @@ body.is-mobile-app-view {
 			position: relative;
 			float: left;
 			&::before {
-				font-size: 40px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				font-size: 40px;
 				top: -1px;
 				vertical-align: middle;
 			}
@@ -824,7 +824,7 @@ body.is-mobile-app-view {
 				line-height: 18px;
 
 				.username {
-					font-size: 11px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+					font-size: 11px;
 					line-height: 14px;
 					margin-bottom: 4px;
 				}
@@ -1124,7 +1124,6 @@ a.masterbar__quick-language-switcher {
 		}
 
 		@include breakpoint-deprecated( ">480px" ) {
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 100%;
 		}
 

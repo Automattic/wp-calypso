@@ -219,7 +219,6 @@ code,
 kbd,
 tt,
 var {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font: 15px $code;
 }
 abbr,
@@ -235,11 +234,9 @@ ins {
 	text-decoration: none;
 }
 small {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 75%;
 }
 big {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 125%;
 }
 figure {

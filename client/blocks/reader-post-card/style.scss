@@ -385,7 +385,6 @@
 .reader__content .reader-post-card__byline-secondary-item,
 .reader__content .reader-post-card__tag-link {
 	color: var(--color-neutral-40);
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 12px;
 	margin-top: 2px;
 	cursor: pointer;
@@ -505,7 +504,6 @@
 	.site-icon {
 		width: 40px !important;
 		height: 40px !important;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 40px !important;
 		line-height: 40px !important;
 	}
@@ -522,7 +520,6 @@
 .reader-post-card__link {
 	color: var(--color-neutral-100);
 	cursor: pointer;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 15px;
 
 	&:hover {

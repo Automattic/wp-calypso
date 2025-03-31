@@ -25,7 +25,6 @@
 		"no-invalid-position-at-import-rule": null,
 		"declaration-property-unit-allowed-list": [
 			{
-				"/^font-size$|^font$/": [ "rem" ],
 				"line-height": [ "px" ],
 				"/radius$/": [ "px", "%" ]
 			},

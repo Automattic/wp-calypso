@@ -261,7 +261,7 @@ $with-sidebar-min-page-width: 1114px;
 		background: var(--color-surface);
 		border: 1px solid var(--color-neutral-light);
 		border-right: none;
-		font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-size: 13px;
 		height: 26px;
 		cursor: pointer;
 		user-select: none; // Makes text unselectable
@@ -378,12 +378,12 @@ $with-sidebar-min-page-width: 1114px;
 		transform: translateY(-50%);
 
 		h2 {
-			font: 400 21px/24px $sans; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font: 400 21px/24px $sans;
 			margin-bottom: 4px;
 		}
 
 		p {
-			font: 400 16px/24px $sans; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font: 400 16px/24px $sans;
 		}
 	}
 
@@ -681,7 +681,7 @@ $with-sidebar-min-page-width: 1114px;
 		.wpnc__comment .wpnc__user p.wpnc__excerpt {
 			color: var(--color-secondary);
 			max-height: 1.5em;
-			font-size: 14px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-size: 14px;
 		}
 
 		.wpnc__reply {
@@ -714,7 +714,7 @@ $with-sidebar-min-page-width: 1114px;
 		}
 
 		.wpnc__note-icon .wpnc__gridicon {
-			font-size: 2em; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-size: 2em;
 			background-color: var(--color-neutral-10);
 			border-color: var(--color-neutral-10);
 		}
@@ -812,7 +812,7 @@ $with-sidebar-min-page-width: 1114px;
 
 			code {
 				font-family: $code;
-				font-size: 90%; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				font-size: 90%;
 				color: var(--color-neutral-50);
 				background: var(--color-neutral-0);
 				border: 1px solid var(--color-neutral-10);

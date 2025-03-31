@@ -580,7 +580,7 @@ $image-height: 47px;
 	}
 }
 
-/* stylelint-disable declaration-property-unit-allowed-list, scales/font-weights, scales/radii */
+/* stylelint-disable scales/font-weights, scales/radii */
 .layout.is-section-login.is-grav-powered-client {
 	background-color: #fff;
 
@@ -908,7 +908,7 @@ $image-height: 47px;
 		}
 	}
 }
-/* stylelint-enable declaration-property-unit-allowed-list, scales/font-weights, scales/radii */
+/* stylelint-enable scales/font-weights, scales/radii */
 
 .wp-login__p2-logo {
 	position: absolute;
