@@ -8,7 +8,7 @@ import { Primitive } from 'utility-types';
 import themeReducer from 'calypso/state/themes/reducer';
 import { addQueryArgs } from '../../../../../lib/url';
 import { renderWithProvider } from '../../../../../test-helpers/testing-library';
-import type { Flow, ProvidedDependencies, StepperStep } from '../../internals/types';
+import type { FlowV1, ProvidedDependencies, StepperStep } from '../../internals/types';
 
 export const getFlowLocation = () => {
 	return {
@@ -29,7 +29,7 @@ interface RenderFlowParams {
 	cancelDestination?: string;
 }
 /** Utility to render a flow for testing purposes */
-export const renderFlow = ( flow: Flow ) => {
+export const renderFlow = ( flow: FlowV1 ) => {
 	const FakeStepRender = ( { currentStep, dependencies, method } ) => {
 		const navigate = useNavigate();
 		const location = useLocation();
@@ -106,7 +106,7 @@ export const renderFlow = ( flow: Flow ) => {
 };
 
 export const runFlowNavigation = (
-	flow: Flow,
+	flow: FlowV1,
 	{ from, dependencies = {}, query = {} },
 	direction = 'forward'
 ) => {

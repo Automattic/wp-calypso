@@ -69,7 +69,8 @@ const newsletter: FlowV2< typeof initialize > = {
 	__experimentalUseBuiltinAuth: true,
 	isSignupFlow: true,
 	initialize,
-	useHandleSubmit( { slug, providedDependencies }, navigate ) {
+	useHandleSubmit( submittedStep, navigate ) {
+		const { slug, providedDependencies } = submittedStep;
 		const flowName = this.name;
 		const siteSlug = useSiteSlug();
 		const { get, set } = useFlowState();

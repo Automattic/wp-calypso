@@ -93,15 +93,18 @@ export type UseHandleSubmitHook< FlowSteps extends readonly StepperStep[] > = (
 	navigate: Navigate< FlowSteps >
 ) => void;
 
-type MapStepToItsSubmitData< T extends AsyncStepperStep > = {
-	[ K in T as K[ 'slug' ] ]: K & {
-		providedDependencies: Parameters<
-			Parameters<
-				Awaited< ReturnType< K[ 'asyncComponent' ] > >[ 'default' ]
-			>[ 0 ][ 'navigation' ][ 'submit' ]
-		>[ 0 ];
-	};
-}[ T[ 'slug' ] ];
+type MapStepToItsSubmitData< T extends StepperStep > = Omit<
+	{
+		[ K in T as K[ 'slug' ] ]: K & {
+			providedDependencies: Parameters<
+				Parameters<
+					Awaited< ReturnType< K[ 'asyncComponent' ] > >[ 'default' ]
+				>[ 0 ][ 'navigation' ][ 'submit' ]
+			>[ 0 ];
+		};
+	}[ T[ 'slug' ] ],
+	'asyncComponent'
+>;
 
 export type UseAssertConditionsHook< FlowSteps extends readonly StepperStep[] > = (
 	navigate?: Navigate< FlowSteps >
@@ -244,15 +247,6 @@ export type FlowV2< FlowStepsInitialize extends DefaultFlowStepsConfig = Default
 		 */
 		useSideEffect?: UseSideEffectHook< ReturnType< FlowStepsInitialize > >;
 		useTracksEventProps?: UseTracksEventPropsHook;
-		/**
-		 * Temporary hook to allow gradual migration of flows to the globalised/default event tracking.
-		 * IMPORTANT: This hook will be removed in the future.
-		 */
-		use__Temporary__ShouldTrackEvent?: ( event: keyof NavigationControls ) => boolean;
-		/**
-		 * @deprecated Avoid this. Assert your conditions in `initialize` instead unless you're 100% sure you need this.
-		 */
-		useAssertConditions?: UseAssertConditionsHook< ReturnType< FlowV1[ 'useSteps' ] > >;
 	};
 
 export type Flow = FlowV1 | FlowV2;
@@ -330,7 +324,9 @@ export type Step<
 	  never;
 
 // TODO: get rid of these. Every type should be specific.
-export type ProvidedDependencies = Record< string, unknown >;
+export type ProvidedDependencies = MapStepToItsSubmitData< StepperStep > & {
+	shouldSkipSubmitTracking?: boolean;
+};
 
 export enum AssertConditionState {
 	SUCCESS = 'success',

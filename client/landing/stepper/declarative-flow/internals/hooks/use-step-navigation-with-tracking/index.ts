@@ -17,7 +17,7 @@ import type { Flow, Navigate, ProvidedDependencies, StepperStep } from '../../ty
 
 interface Params< FlowSteps extends StepperStep[] > {
 	flow: Flow;
-	currentStepRoute: string;
+	currentStepRoute: StepperStep[ 'slug' ];
 	navigate: Navigate< FlowSteps >;
 }
 
@@ -28,7 +28,12 @@ export const useStepNavigationWithTracking = ( {
 }: Params< StepperStep[] > ) => {
 	// We don't know the type of the return value of useStepNavigation, because we don't know which flow is this.
 	// So we cast it to any.
-	const stepNavigation: any = flow.useStepNavigation( currentStepRoute, navigate );
+	const stepNavigationV1: any =
+		'useStepNavigation' in flow ? flow.useStepNavigation( currentStepRoute, navigate ) : null;
+
+	// Stepper's V2 API doesn't have useHandleSubmit, it uses useHandleSubmit instead.
+	const flowSubmissionHandler = 'useHandleSubmit' in flow ? flow.useHandleSubmit : null;
+
 	const { intent, goals } = useSelect( ( select ) => {
 		const onboardStore = select( ONBOARD_STORE ) as OnboardSelect;
 		return {
@@ -68,21 +73,21 @@ export const useStepNavigationWithTracking = ( {
 		[ intent, tracksEventPropsFromFlow, goals, currentStepRoute, flow ]
 	);
 
-	return useMemo(
+	const deprecatedNavigationControlsForStepperV1 = useMemo(
 		() => ( {
-			...( stepNavigation.submit && {
+			...( stepNavigationV1.submit && {
 				// TODO: remove = {}, there is no need to default to {}.
-				submit: ( providedDependencies: ProvidedDependencies = {} ) => {
+				submit: ( providedDependencies: ProvidedDependencies ) => {
 					if ( ! providedDependencies?.shouldSkipSubmitTracking ) {
 						handleRecordStepNavigation( {
 							event: STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
 							providedDependencies,
 						} );
 					}
-					stepNavigation.submit?.( providedDependencies );
+					stepNavigationV1.submit?.( providedDependencies );
 				},
 			} ),
-			...( stepNavigation.exitFlow && {
+			...( stepNavigationV1.exitFlow && {
 				exitFlow: ( to: string ) => {
 					handleRecordStepNavigation( {
 						event: STEPPER_TRACKS_EVENT_STEP_NAV_EXIT_FLOW,
@@ -92,26 +97,26 @@ export const useStepNavigationWithTracking = ( {
 							},
 						},
 					} );
-					stepNavigation.exitFlow?.( to );
+					stepNavigationV1.exitFlow?.( to );
 				},
 			} ),
-			...( stepNavigation.goBack && {
+			...( stepNavigationV1.goBack && {
 				goBack: () => {
 					handleRecordStepNavigation( {
 						event: STEPPER_TRACKS_EVENT_STEP_NAV_GO_BACK,
 					} );
-					stepNavigation.goBack?.();
+					stepNavigationV1.goBack?.();
 				},
 			} ),
-			...( stepNavigation.goNext && {
+			...( stepNavigationV1.goNext && {
 				goNext: () => {
 					handleRecordStepNavigation( {
 						event: STEPPER_TRACKS_EVENT_STEP_NAV_GO_NEXT,
 					} );
-					stepNavigation.goNext?.();
+					stepNavigationV1.goNext?.();
 				},
 			} ),
-			...( stepNavigation.goToStep && {
+			...( stepNavigationV1.goToStep && {
 				goToStep: ( step: string ) => {
 					handleRecordStepNavigation( {
 						event: STEPPER_TRACKS_EVENT_STEP_NAV_GO_TO,
@@ -121,10 +126,34 @@ export const useStepNavigationWithTracking = ( {
 							},
 						},
 					} );
-					stepNavigation.goToStep?.( step );
+					stepNavigationV1.goToStep?.( step );
 				},
 			} ),
 		} ),
-		[ handleRecordStepNavigation, stepNavigation ]
+		[ handleRecordStepNavigation, stepNavigationV1 ]
 	);
+
+	const navigationControlsForStepperV2 = useMemo(
+		() => ( {
+			...( flowSubmissionHandler && {
+				// TODO: remove = {}, there is no need to default to {}.
+				submit: ( providedDependencies: ProvidedDependencies ) => {
+					if ( ! providedDependencies?.shouldSkipSubmitTracking ) {
+						handleRecordStepNavigation( {
+							event: STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
+							providedDependencies,
+						} );
+					}
+					flowSubmissionHandler( { slug: currentStepRoute, providedDependencies }, navigate );
+				},
+			} ),
+		} ),
+		[ handleRecordStepNavigation, flowSubmissionHandler, currentStepRoute, navigate ]
+	);
+
+	if ( 'useHandleSubmit' in flow ) {
+		return navigationControlsForStepperV2;
+	}
+
+	return deprecatedNavigationControlsForStepperV1;
 };
