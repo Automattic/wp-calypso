@@ -158,7 +158,7 @@ export const UpsellNudge = ( {
 	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
 	const shouldNotDisplay =
 		isVip ||
-		// ! canManageSite ||
+		! canManageSite ||
 		! site ||
 		typeof site !== 'object' ||
 		typeof site.jetpack !== 'boolean' ||
