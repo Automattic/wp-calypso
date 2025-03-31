@@ -61,8 +61,8 @@ Uses custom theme highlight monochromatic palette for primary + accent
 
 	/* Links */
 	--color-link: var(--theme-highlight-color);
-	--color-link-dark: var(--theme-highlight-color-70);
-	--color-link-light: var(--theme-highlight-color-30);
+	--color-link-dark: color-mix(in srgb, var(--color-link) 90%, #000);
+	--color-link-light: color-mix(in srgb, var(--color-link) 90%, #fff);
 
 	/* Primary */
 	--color-primary: var(--theme-highlight-color);
