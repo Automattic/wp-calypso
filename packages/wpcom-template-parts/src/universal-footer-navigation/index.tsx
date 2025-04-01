@@ -94,6 +94,14 @@ export const PureUniversalNavbarFooter = ( {
 								</li>
 								<li>
 									<a
+										href={ localizeUrl( 'https://wordpress.com/ai-website-builder/?ref=footer' ) }
+										target="_self"
+									>
+										{ __( 'AI Website Builder', __i18n_text_domain__ ) }
+									</a>
+								</li>
+								<li>
+									<a
 										href={ localizeUrl( 'https://wordpress.com/website-builder/' ) }
 										target="_self"
 									>
