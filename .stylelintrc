@@ -14,7 +14,7 @@
 		"value-keyword-case": null,
 		"scss/operator-no-unspaced": null,
 		"scss/selector-no-redundant-nesting-selector": null,
-		"scss/at-import-partial-extension": null,
+		"scss/load-partial-extension": null,
 		"scss/no-global-function-names": null,
 		"scss/comment-no-empty": null,
 		"scss/at-extend-no-missing-placeholder": null,
