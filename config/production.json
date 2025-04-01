@@ -133,7 +133,7 @@
 		"push-notifications": true,
 		"reader": true,
 		"reader/full-errors": false,
-		"reader/quick-post": false,
+		"reader/quick-post": true,
 		"reader/recommended-blogs-list": false,
 		"readymade-templates/showcase": false,
 		"redirect-fallback-browsers": true,
