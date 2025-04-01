@@ -47,7 +47,6 @@ const Subscribers: Step = function ( { navigation } ) {
 			stepName="subscribers"
 			flowName="newsletter"
 			isHorizontalLayout={ false }
-			showJetpackPowered
 			stepContent={
 				<div className="subscribers">
 					{ site?.ID && (
