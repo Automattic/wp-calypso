@@ -16,6 +16,8 @@ import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
+import { logToLogstash } from 'calypso/lib/logstash';
+import config from 'calypso/server/config';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
@@ -109,11 +111,19 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 
 		useEffect( () => {
 			if ( ! isLoading && ! site ) {
-				recordTracksEvent( 'calypso_importer_missing_site', {
-					importer: importer,
+				logToLogstash( {
+					feature: 'calypso_client',
+					tags: [ 'importer', importer, 'error' ],
+					error: 'Importer missing site info',
+					message: 'Importer missing site',
+					site_id: siteId,
+					site_slug: siteSlug,
+					properties: {
+						env: config( 'env_id' ),
+					},
 				} );
 			}
-		}, [ importer, isLoading, site ] );
+		}, [ importer, isLoading, site, siteId ] );
 
 		/**
 	 	↓ Methods
