@@ -188,7 +188,8 @@ export const isInStepContainerV2FlowContext = ( pathname: string, query: string 
 		// The checkout isn't technically part of a stepper flow, but we can infer what stepper
 		// flow it came from (if any) by inspecting the redirect_to query param (in the case
 		// of the onboarding flow).
-		const redirectTo = new URLSearchParams( query ).get( 'redirect_to' ) ?? '';
+		const params = new URLSearchParams( query );
+		const redirectTo = params.get( 'redirect_to' ) ?? params.get( 'redirectTo' ) ?? '';
 
 		return isRedirectingToStepContainerV2Flow( redirectTo );
 	}
