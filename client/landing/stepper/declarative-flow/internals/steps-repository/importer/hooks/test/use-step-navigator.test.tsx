@@ -3,7 +3,6 @@
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
 import { useStepNavigator } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/importer/hooks/use-step-navigator';
 
 describe( 'useStepNavigator', () => {
@@ -35,7 +34,7 @@ describe( 'useStepNavigator', () => {
 		} );
 
 		act( () => {
-			result.current.goToCheckoutPage?.( WPImportOption.EVERYTHING );
+			result.current.goToCheckoutPage?.();
 		} );
 
 		await waitFor( () => {
@@ -57,7 +56,7 @@ describe( 'useStepNavigator', () => {
 		} );
 
 		act( () => {
-			result.current.goToCheckoutPage?.( WPImportOption.EVERYTHING, {
+			result.current.goToCheckoutPage?.( {
 				redirect_to: '/custom-redirect',
 			} );
 		} );
