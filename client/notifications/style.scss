@@ -224,7 +224,7 @@ body.is-section-reader div.layout.is-global-sidebar-visible .layout__primary div
 				@media (min-width: 1207px) {
 					width: 400px;
 					position: relative;
-					z-index: 10;
+					z-index: z-index("root", ".wpnc__note-list");
 				}
 			}
 
@@ -246,7 +246,7 @@ body.is-section-reader div.layout.is-global-sidebar-visible .layout__primary div
 				}
 
 				@media only screen and (min-width: 1114px) {
-					z-index: 100;
+					z-index: z-index("root", ".wpnc__single-view");
 					animation-name: wpnc_fadeIn;
 					animation-duration: 0.2s;
 					animation-timing-function: ease-in;
