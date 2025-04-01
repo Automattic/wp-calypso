@@ -88,7 +88,7 @@ export default function Notice( {
 		}
 	}, [ duration ] );
 
-	const classes = clsx( 'notice', status, className, {
+	const classes = clsx( 'notice', 'component-notice', status, className, {
 		'is-compact': isCompact,
 		'is-loading': isLoading,
 		'is-dismissable': showDismiss,

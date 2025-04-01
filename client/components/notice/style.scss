@@ -11,7 +11,8 @@
 	}
 }
 
-.notice {
+ // Add an extra class name to specify the styles to avoid conflict with the WP-Admin notice styles.
+.notice.component-notice {
 	display: flex;
 	position: relative;
 	width: 100%;
@@ -141,6 +142,146 @@
 			overflow: hidden;
 		}
 	}
+
+	// Compact notices
+	&.is-compact {
+		display: inline-flex;
+		flex-wrap: nowrap;
+		flex-direction: row;
+		width: auto;
+		min-height: 20px;
+		margin: 0;
+		padding: 0;
+		text-decoration: none;
+		text-transform: none;
+		vertical-align: middle;
+		line-height: 1.5;
+
+		&.is-full-width {
+			width: 100%;
+		}
+
+		.notice__content {
+			font-size: $font-body-extra-small;
+			padding: 6px 10px;
+		}
+
+		.notice__icon-wrapper {
+			width: 28px;
+
+			.notice__icon {
+				width: 18px;
+				height: 18px;
+				margin: 0;
+			}
+		}
+
+		.notice__icon-wrapper-drop {
+			top: calc(50% - 6px);
+			left: calc(50% - 6px);
+			width: 12px;
+			height: 12px;
+		}
+
+		.notice__dismiss,
+		.notice__link {
+			position: relative;
+			align-self: center;
+			flex: none;
+			margin: 0 8px 0 0;
+			padding: 0;
+
+			.gridicon {
+				width: 18px;
+				height: 18px;
+			}
+		}
+	}
+
+	&.is-light {
+		background: var(--studio-gray-0);
+		color: inherit;
+		border-radius: 4px;
+
+		.notice__content {
+			padding: 13px 0;
+			.notice__text {
+				a,
+				a:visited,
+				button.is-link {
+					color: var(--color-link);
+
+					&:hover {
+						color: var(--color-link);
+					}
+				}
+			}
+		}
+
+		.notice__icon-wrapper {
+			border-top-left-radius: 4px;
+			border-bottom-left-radius: 4px;
+			background: var(--studio-gray-0);
+			padding: 16px;
+			align-items: flex-start;
+			width: unset;
+		}
+
+		&.is-info,
+		&.is-success {
+			.notice__icon-wrapper {
+				color: var(--studio-green-40);
+				background: var(--studio-gray-0);
+				.notice__icon-wrapper-drop {
+					background: var(--color-text-inverted);
+				}
+			}
+		}
+		&.is-warning {
+			.notice__icon-wrapper {
+				color: var(--studio-orange-40);
+				background: var(--studio-gray-0);
+				.notice__icon-wrapper-drop {
+					background: var(--color-text-inverted);
+				}
+			}
+		}
+		&.is-error {
+			.notice__icon-wrapper {
+				color: var(--studio-red-40);
+				background: var(--studio-gray-0);
+				.notice__icon-wrapper-drop {
+					background: var(--color-text-inverted);
+				}
+			}
+		}
+		&.is-plain {
+			.notice__icon-wrapper {
+				color: inherit;
+				background: var(--studio-gray-0);
+				.notice__icon-wrapper-drop {
+					background: var(--color-text-inverted);
+				}
+			}
+		}
+
+		// "X" for dismissing a notice
+		.notice__dismiss,
+		.notice__link {
+			display: flex;
+			flex-shrink: 0;
+			padding: 16px;
+			cursor: pointer;
+			&:hover,
+			&:focus {
+				color: var(--color-text);
+			}
+			.gridicon {
+				width: 18px;
+				height: 18px;
+			}
+		}
+	}
 }
 
 .notice__icon-wrapper {
@@ -247,146 +388,6 @@
 		.gridicon {
 			width: 24px;
 			height: 24px;
-		}
-	}
-}
-
-// Compact notices
-.notice.is-compact {
-	display: inline-flex;
-	flex-wrap: nowrap;
-	flex-direction: row;
-	width: auto;
-	min-height: 20px;
-	margin: 0;
-	padding: 0;
-	text-decoration: none;
-	text-transform: none;
-	vertical-align: middle;
-	line-height: 1.5;
-
-	&.is-full-width {
-		width: 100%;
-	}
-
-	.notice__content {
-		font-size: $font-body-extra-small;
-		padding: 6px 10px;
-	}
-
-	.notice__icon-wrapper {
-		width: 28px;
-
-		.notice__icon {
-			width: 18px;
-			height: 18px;
-			margin: 0;
-		}
-	}
-
-	.notice__icon-wrapper-drop {
-		top: calc(50% - 6px);
-		left: calc(50% - 6px);
-		width: 12px;
-		height: 12px;
-	}
-
-	.notice__dismiss,
-	.notice__link {
-		position: relative;
-		align-self: center;
-		flex: none;
-		margin: 0 8px 0 0;
-		padding: 0;
-
-		.gridicon {
-			width: 18px;
-			height: 18px;
-		}
-	}
-}
-
-.notice.is-light {
-	background: var(--studio-gray-0);
-	color: inherit;
-	border-radius: 4px;
-
-	.notice__content {
-		padding: 13px 0;
-		.notice__text {
-			a,
-			a:visited,
-			button.is-link {
-				color: var(--color-link);
-
-				&:hover {
-					color: var(--color-link);
-				}
-			}
-		}
-	}
-
-	.notice__icon-wrapper {
-		border-top-left-radius: 4px;
-		border-bottom-left-radius: 4px;
-		background: var(--studio-gray-0);
-		padding: 16px;
-		align-items: flex-start;
-		width: unset;
-	}
-
-	&.is-info,
-	&.is-success {
-		.notice__icon-wrapper {
-			color: var(--studio-green-40);
-			background: var(--studio-gray-0);
-			.notice__icon-wrapper-drop {
-				background: var(--color-text-inverted);
-			}
-		}
-	}
-	&.is-warning {
-		.notice__icon-wrapper {
-			color: var(--studio-orange-40);
-			background: var(--studio-gray-0);
-			.notice__icon-wrapper-drop {
-				background: var(--color-text-inverted);
-			}
-		}
-	}
-	&.is-error {
-		.notice__icon-wrapper {
-			color: var(--studio-red-40);
-			background: var(--studio-gray-0);
-			.notice__icon-wrapper-drop {
-				background: var(--color-text-inverted);
-			}
-		}
-	}
-	&.is-plain {
-		.notice__icon-wrapper {
-			color: inherit;
-			background: var(--studio-gray-0);
-			.notice__icon-wrapper-drop {
-				background: var(--color-text-inverted);
-			}
-		}
-	}
-
-	// "X" for dismissing a notice
-	.notice__dismiss,
-	.notice__link {
-		display: flex;
-		flex-shrink: 0;
-		padding: 16px;
-		cursor: pointer;
-		&:hover,
-		&:focus {
-			color: var(--color-text);
-		}
-		.gridicon {
-			width: 18px;
-			height: 18px;
 		}
 	}
 }
