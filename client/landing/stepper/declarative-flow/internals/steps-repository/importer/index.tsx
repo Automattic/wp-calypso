@@ -123,7 +123,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 					},
 				} );
 			}
-		}, [ importer, isLoading, site, siteId ] );
+		}, [ importer, isLoading, site, siteId, siteSlug ] );
 
 		/**
 	 	↓ Methods
