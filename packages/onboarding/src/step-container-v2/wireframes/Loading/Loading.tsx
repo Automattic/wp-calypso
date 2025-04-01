@@ -11,7 +11,13 @@ export const Loading = ( { title, progress }: { title?: ReactNode; progress?: nu
 		<StepContainerV2>
 			<TopBar />
 			<div className="step-container-v2--loading">
-				<Heading text={ title } size="small" align="center" />
+				{ title && (
+					<div className="step-container-v2--loading__heading-wrapper">
+						<div className="step-container-v2--loading__heading">
+							<Heading text={ title } size="small" align="center" />
+						</div>
+					</div>
+				) }
 				<ProgressBar className="step-container-v2--loading__progress-bar" value={ progress } />
 			</div>
 		</StepContainerV2>
