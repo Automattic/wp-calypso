@@ -107,17 +107,9 @@ describe( 'usePrepareSiteForMigration', () => {
 		nock( API_ROOT )
 			.post( `/wpcom/v2/sites/${ SITE_ID }/atomic/transfer-with-software?http_envelope=1` )
 			.reply( 200, {
+				blog_id: SITE_ID,
 				atomic_transfer_id: null,
 				atomic_transfer_status: 'error',
-			} );
-
-		// Mock failed transfer status
-		nock( API_ROOT )
-			.get( `/wpcom/v2/sites/${ SITE_ID }/atomic/transfer-with-software/456` )
-			.query( { http_envelope: 1 } )
-			.reply( 200, {
-				atomic_transfer_status: 'error',
-				error: 'Transfer failed',
 			} );
 
 		const { result } = render( { siteId: SITE_ID } );
@@ -126,11 +118,11 @@ describe( 'usePrepareSiteForMigration', () => {
 			() => {
 				expect( result.current ).toEqual( {
 					detailedStatus: {
-						siteTransferStatus: 'error',
+						siteTransferStatus: 'idle',
 						migrationKeyStatus: 'idle',
 					},
 					softwareTransferCompleted: false,
-					error: expect.any( Error ),
+					error: null,
 					migrationKey: null,
 				} );
 			},

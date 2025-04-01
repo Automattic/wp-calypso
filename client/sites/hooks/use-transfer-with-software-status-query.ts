@@ -1,16 +1,11 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-
-export type TransferWithSoftwareStatusResponse = {
-	blog_id: number;
-	atomic_transfer_id: number;
-	atomic_transfer_status: string;
-};
+import type { TransferWithSoftwareResponse } from './use-transfer-with-software-start-mutation';
 
 const getTransferWithSoftwareStatus: (
 	siteId?: number,
 	atomicTransferId?: number
-) => Promise< TransferWithSoftwareStatusResponse > = async ( siteId, atomicTransferId ) => {
+) => Promise< TransferWithSoftwareResponse > = async ( siteId, atomicTransferId ) => {
 	if ( ! siteId || ! atomicTransferId ) {
 		return {
 			blog_id: 0,
@@ -36,7 +31,7 @@ export const useTransferWithSoftwareStatus = (
 	return useQuery( {
 		queryKey: [ 'software-transfer-status', siteId, atomicTransferId ],
 		queryFn: () => getTransferWithSoftwareStatus( siteId, atomicTransferId ),
-		select: ( data: TransferWithSoftwareStatusResponse ) => ( {
+		select: ( data: TransferWithSoftwareResponse ) => ( {
 			atomic_transfer_status: data.atomic_transfer_status,
 		} ),
 		refetchOnWindowFocus: false,

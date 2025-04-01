@@ -6,7 +6,6 @@ import { useRequestTransferWithSoftware } from 'calypso/sites/hooks/use-transfer
 import { useTransferWithSoftwareStatus } from 'calypso/sites/hooks/use-transfer-with-software-status-query';
 import { useSiteMigrationKey } from './use-site-migration-key';
 import type { TransferWithSoftwareResponse } from 'calypso/sites/hooks/use-transfer-with-software-start-mutation';
-import type { TransferWithSoftwareStatusResponse } from 'calypso/sites/hooks/use-transfer-with-software-status-query';
 
 type Status = 'idle' | 'pending' | 'success' | 'error';
 
@@ -90,8 +89,8 @@ export const usePrepareSiteForMigration = (
 		transferMutation.mutate();
 	}, [ siteId, from ] ); // Dependencies that should trigger a new transfer
 
-	const softwareTransferState: UseQueryResult< TransferWithSoftwareStatusResponse > =
-		useTransferWithSoftwareStatus( siteId, transferMutation.data?.atomic_transfer_id ?? 0, {
+	const softwareTransferState: UseQueryResult< TransferWithSoftwareResponse > =
+		useTransferWithSoftwareStatus( siteId, transferMutation.data?.atomic_transfer_id ?? undefined, {
 			retry: options.retry ?? 0,
 		} );
 
