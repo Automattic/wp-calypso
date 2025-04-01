@@ -80,13 +80,19 @@ export class LocaleSuggestions extends Component {
 		if ( ! localeSuggestions ) {
 			return <QueryLocaleSuggestions />;
 		}
-		const { locales, availability_text } = localeSuggestions;
+		const { locales, availability_text_templates } = localeSuggestions;
 
 		const usersOtherLocales = locales.filter( function ( locale ) {
 			return ! locale.locale.startsWith( getLocaleSlug() );
 		} );
 
 		if ( usersOtherLocales.length === 0 ) {
+			return null;
+		}
+
+		const availabilityText = availability_text_templates[ usersOtherLocales.length ];
+
+		if ( ! availabilityText ) {
 			return null;
 		}
 
@@ -105,7 +111,7 @@ export class LocaleSuggestions extends Component {
 		}, {} );
 
 		const availabilityTextWithComponents = sprintf(
-			availability_text,
+			availabilityText,
 			...Object.keys( localeSuggestionsMap ).map( ( componentKey ) => `<${ componentKey } />` )
 		);
 
