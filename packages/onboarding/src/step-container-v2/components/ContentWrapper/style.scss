@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .step-container-v2__content-wrapper {
 	display: flex;
 	flex-direction: column;
@@ -6,7 +8,6 @@
 	width: 100%;
 	box-sizing: border-box;
 	flex: 1;
-	max-width: 1038px;
 
 	&.padding {
 		padding: var( --step-container-v2-content-block-padding )
@@ -14,11 +15,20 @@
 	}
 
 	&.wide {
-		max-width: 1440px;
+		max-width: $break-wide;
 	}
 
-	&.full {
-		max-width: 100%;
+	&.huge {
+		max-width: $break-huge;
+	}
+
+	&.huge-plus {
+		// Non-standard width introduced for plans step
+		max-width: 1536px;
+	}
+
+	&.xhuge {
+		max-width: $break-xhuge;
 	}
 
 	&.center-aligned {

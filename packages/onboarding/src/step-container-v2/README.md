@@ -50,7 +50,7 @@ Read the [how to extend it](#how-to-extend-it) section to learn how to reproduce
 
 **You shouldn't use `StepContainerV2` directly. Instead, use the wireframes that are exported from this package.**
 
-Aside from the stories (run `yarn storybook`), you can follow the examples from `~/client/landing/stepper/declarative-flow/internals/steps-repository`.
+Aside from the stories (run `yarn storybook:start`), you can follow the examples from `~/client/landing/stepper/declarative-flow/internals/steps-repository`.
 
 Please do NOT override the `Step.*` components with CSS as this creates inconsistencies between steps and becomes a maintenance nightmare. Ideally, you should not need to do this as the steps are designed to be composed, and the wireframes are approved by the designers.
 
@@ -217,6 +217,15 @@ Of course not! The plan is for this new version to replace `StepContainer` entir
 ### How can I adopt it in Stepper without breaking steps that are used in multiple flows?
 
 There's an utility called `shouldUseStepContainerV2` that allows, at a step level, to define which flows should render this version of the container vs. the original one.
+
+### How do I run storybook?
+
+Either:
+
+- `yarn storybook:start` from the root of this package, or
+- `yarn workspace @automattic/onboarding storybook:start` from the root of the monorepo.
+
+Storybook will open a browser window automatically.
 
 ### Who can I contact if I have any questions?
 
