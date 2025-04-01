@@ -208,7 +208,8 @@
 	--color-border-inverted-rgb: var(--studio-white-rgb);
 	--color-border-secondary: #f1f1f1;
 
-	--color-link: #0073aa;
+	/* Links: Always use blueberry color */
+	--color-link: #3858e9;
 	--color-link-dark: color-mix(in srgb, var(--color-link) 90%, #000);
 	--color-link-light: color-mix(in srgb, var(--color-link) 90%, #fff);
 
