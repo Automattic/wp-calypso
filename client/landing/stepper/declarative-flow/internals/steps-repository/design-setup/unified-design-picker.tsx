@@ -930,17 +930,19 @@ const UnifiedDesignPickerStep: StepType< {
 						return (
 							<Step.StickyBottomBar
 								leftElement={
-									<Step.BackButton
-										recordTracksEvent={ ! activeScreen }
-										onClick={ () => {
-											if ( activeScreen?.onBack ) {
-												navigatorRef.current?.goBack();
-												return activeScreen.onBack( activeScreen.slug );
-											}
+									activeScreen && (
+										<Step.BackButton
+											recordTracksEvent={ ! activeScreen }
+											onClick={ () => {
+												if ( activeScreen?.onBack ) {
+													navigatorRef.current?.goBack();
+													return activeScreen.onBack( activeScreen.slug );
+												}
 
-											return handleBackClick();
-										} }
-									/>
+												return handleBackClick();
+											} }
+										/>
+									)
 								}
 								centerElement={
 									activeScreen && (
