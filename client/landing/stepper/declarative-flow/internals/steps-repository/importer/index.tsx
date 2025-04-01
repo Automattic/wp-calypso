@@ -85,7 +85,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const currentPath = window.location.pathname + window.location.search;
 		const hasAllSitesFetched = useSelector( hasAllSitesList );
 		const isRequestingCurrentSite = useSelector( ( state ) =>
-			siteId ? isRequestingSite( state, siteId ) : true
+			siteId ? isRequestingSite( state, siteId ) : false
 		);
 
 		useSaveHostingFlowPathStep( flow, currentPath );
