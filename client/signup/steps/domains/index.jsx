@@ -1169,7 +1169,7 @@ export class RenderDomainsStep extends Component {
 	isHostingFlow = () => isHostingSignupFlow( this.props.flowName );
 
 	getSubHeaderText() {
-		const { flowName, isAllDomains, stepSectionName, translate } = this.props;
+		const { isAllDomains, stepSectionName, translate } = this.props;
 
 		if ( isAllDomains ) {
 			return translate( 'Find the domain that defines you' );
@@ -1190,13 +1190,6 @@ export class RenderDomainsStep extends Component {
 				'Find the perfect domain for your exciting new project or {{span}}decide later{{/span}}.',
 				{ components }
 			);
-		}
-
-		if (
-			shouldUseMultipleDomainsInCart( flowName ) &&
-			! [ 'use-your-domain' ].includes( stepSectionName )
-		) {
-			return translate( 'Find and claim one or more domain names.' );
 		}
 
 		if ( ! stepSectionName ) {
