@@ -231,6 +231,11 @@ button.x-nav-link.x-link {
 	cursor: pointer;
 }
 
+.x-nav-item .x-link,
+.x-menu-list .x-link {
+	text-decoration: none;
+}
+
 .x-nav-link {
 	$offset-bottom: round(( $x-nav-item-height - $x-nav-item-line-height ) * 0.5);
 	$offset-top: $x-nav-padding-top + ( $x-nav-item-height - $x-nav-item-line-height - $offset-bottom );
