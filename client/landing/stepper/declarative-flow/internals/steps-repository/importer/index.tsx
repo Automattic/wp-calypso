@@ -3,7 +3,7 @@ import { StepContainer } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import NotAuthorized from 'calypso/blocks/importer/components/not-authorized';
 import NotFound from 'calypso/blocks/importer/components/not-found';
 import { getImporterTypeForEngine } from 'calypso/blocks/importer/util';
@@ -84,9 +84,14 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const stepNavigator = useStepNavigator( flow, navigation, siteId, siteSlug, fromSite );
 		const currentPath = window.location.pathname + window.location.search;
 		const hasAllSitesFetched = useSelector( hasAllSitesList );
+
 		const isRequestingCurrentSite = useSelector( ( state ) =>
 			siteId ? isRequestingSite( state, siteId ) : false
 		);
+
+		const isLoading = useMemo( () => {
+			return ! isImporterStatusHydrated || ! hasAllSitesFetched || isRequestingCurrentSite;
+		}, [ isImporterStatusHydrated, hasAllSitesFetched, isRequestingCurrentSite ] );
 
 		useSaveHostingFlowPathStep( flow, currentPath );
 
@@ -102,10 +107,13 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		useEffect( checkFromSiteData, [ fromSiteData?.url ] );
 		useEffect( () => onComponentUnmount, [] );
 
-		if ( ! importer ) {
-			stepNavigator.goToImportCapturePage?.();
-			return null;
-		}
+		useEffect( () => {
+			if ( ! isLoading && ! site ) {
+				recordTracksEvent( 'calypso_importer_missing_site', {
+					importer: importer,
+				} );
+			}
+		}, [ importer, isLoading, site ] );
 
 		/**
 	 	↓ Methods
@@ -152,10 +160,6 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 			return canImport;
 		}
 
-		function isLoading(): boolean {
-			return ! isImporterStatusHydrated || isRequestingAllSites || isRequestingCurrentSite;
-		}
-
 		function checkFromSiteData(): void {
 			if ( ! fromSite ) {
 				return;
@@ -169,16 +173,26 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		/**
 	 	↓ Renders
 		 */
+
+		if ( ! importer ) {
+			stepNavigator.goToImportCapturePage?.();
+			return null;
+		}
+
 		const renderStepContent = () => {
-			if ( isLoading() ) {
+			if ( isLoading ) {
 				return (
 					<div className="import-layout__center">
 						<Loading />
 					</div>
 				);
-			} else if ( ! siteSlug || ! site || ! siteId ) {
+			}
+
+			if ( ! siteSlug && ! site && ! siteId ) {
 				return <NotFound />;
-			} else if ( ! hasPermission() ) {
+			}
+
+			if ( ! hasPermission() ) {
 				return (
 					<NotAuthorized
 						onStartBuilding={ stepNavigator?.goToIntentPage }
