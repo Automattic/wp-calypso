@@ -112,9 +112,6 @@ import type {
 import type { CountryListItem } from '@automattic/wpcom-checkout';
 import type { PropsWithChildren, ReactNode } from 'react';
 
-// Styles needed by the loading component rendered by the server
-import '@automattic/onboarding/src/step-container-v2/wireframes/Loading/style.scss';
-
 const debug = debugFactory( 'calypso:wp-checkout' );
 
 // This will make converting to TS less noisy. The order of components can be reorganized later
