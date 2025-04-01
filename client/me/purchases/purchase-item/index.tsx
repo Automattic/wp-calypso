@@ -296,43 +296,6 @@ export function PurchaseItemType( {
 class PurchaseItem extends Component<
 	PurchaseItemPropsPlaceholder | ( PurchaseItemProps & PurchaseItemPropsConnected )
 > {
-	trackImpression( warning: string ) {
-		return (
-			<TrackComponentView
-				eventName="calypso_subscription_warning_impression"
-				eventProperties={ eventProperties( warning ) }
-			/>
-		);
-	}
-
-	if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
-		content = <SiteIcon size={ 36 } />;
-	}
-
-	if ( isDisconnectedSite ) {
-		content = (
-			<div className="purchase-item__disconnected-icon">
-				<Gridicon icon="block" size={ Math.round( 36 / 1.8 ) } />
-			</div>
-		);
-	}
-
-	const isJetpackPurchase = isJetpackProduct( purchase ) || isJetpackPlan( purchase );
-
-	if ( ! iconUrl && isJetpackPurchase ) {
-		content = (
-			<div className="purchase-item__static-icon">
-				<img src={ jetpackIcon } alt="Jetpack icon" />;
-			</div>
-		);
-	}
-
-	return <div className="purchase-item__site purchases-layout__site">{ content }</div>;
-}
-
-class PurchaseItem extends Component<
-	PurchaseItemPropsPlaceholder | ( PurchaseItemProps & PurchaseItemPropsConnected )
-> {
 	getStatus() {
 		if ( this.props.isPlaceholder ) {
 			return null;
@@ -870,8 +833,16 @@ class PurchaseItem extends Component<
 		if ( this.props.isPlaceholder ) {
 			return null;
 		}
-		const { purchase, site, showSite, isDisconnectedSite, iconUrl, isBackupMethodAvailable } =
-			this.props;
+		const {
+			purchase,
+			site,
+			translate,
+			slug,
+			showSite,
+			iconUrl,
+			isBackupMethodAvailable,
+			isDisconnectedSite,
+		} = this.props;
 
 		return (
 			<div className="purchase-item__wrapper purchases-layout__wrapper">
@@ -892,7 +863,16 @@ class PurchaseItem extends Component<
 						<OwnerInfo purchase={ purchase } />
 					</div>
 
-					<div className="purchase-item__purchase-type">{ this.getPurchaseType() }</div>
+					<div className="purchase-item__purchase-type">
+						<PurchaseItemType
+							purchase={ purchase }
+							site={ site }
+							translate={ translate }
+							slug={ slug }
+							showSite={ showSite }
+							isDisconnectedSite={ isDisconnectedSite }
+						/>
+					</div>
 				</div>
 
 				<div className="purchase-item__status purchases-layout__status">{ this.getStatus() }</div>
