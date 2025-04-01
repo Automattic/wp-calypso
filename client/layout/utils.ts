@@ -189,7 +189,7 @@ export const isInStepContainerV2FlowContext = ( pathname: string, query: string 
 		// flow it came from (if any) by inspecting the redirect_to query param (in the case
 		// of the onboarding flow).
 		const params = new URLSearchParams( query );
-		const redirectTo = params.get( 'redirect_to' ) ?? params.get( 'redirectTo' ) ?? '';
+		const redirectTo = params.get( 'redirect_to' ) ?? '';
 
 		return isRedirectingToStepContainerV2Flow( redirectTo );
 	}
