@@ -9,6 +9,7 @@ import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 //TODO: Move to a shared place
+import { getFinalImporterUrl } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/helper';
 import { getSiteIdParam } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
 import { type SiteMigrationIdentifyAction } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-identify';
 import { AssertConditionState } from 'calypso/landing/stepper/declarative-flow/internals/types';
@@ -249,6 +250,16 @@ const siteMigration: FlowV2 = {
 
 				case STEPS.PROCESSING.slug: {
 					if ( providedDependencies?.siteCreated ) {
+						if ( platformQueryParam && fromQueryParam ) {
+							return exitFlow(
+								'/setup/site-setup/' +
+									getFinalImporterUrl(
+										siteSlug,
+										fromQueryParam,
+										platformQueryParam as ImporterPlatform
+									)
+							);
+						}
 						if ( ! fromQueryParam || providedDependencies?.skipMigration ) {
 							// If we get to this point without a fromQueryParam then we are coming from a direct
 							// pick your current platform link. That's why we navigate to the importList step.
