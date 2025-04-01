@@ -2,6 +2,7 @@ import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
+import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ImporterMainPlatform } from 'calypso/lib/importer/types';
@@ -12,6 +13,7 @@ import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getInitialQueryArguments } from 'calypso/state/selectors/get-initial-query-arguments';
 import { requestSite } from 'calypso/state/sites/actions';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { WRITE_INTENT_DEFAULT_DESIGN } from '../../../constants';
 import { useActivateDesign } from '../../../hooks/use-activate-design';
@@ -28,7 +30,7 @@ import { ProcessingResult } from '../../internals/steps-repository/processing-st
 import {
 	type AssertConditionResult,
 	AssertConditionState,
-	type FlowV1,
+	type Flow,
 	type ProvidedDependencies,
 } from '../../internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
@@ -47,9 +49,10 @@ function useGoalsAtFrontExperimentQueryParam() {
 	return Boolean( useSelector( getInitialQueryArguments )?.[ 'goals-at-front-experiment' ] );
 }
 
-const siteSetupFlow: FlowV1 = {
+const siteSetupFlow: Flow = {
 	name: 'site-setup',
 	isSignupFlow: false,
+	__experimentalUseSessions: true,
 
 	useSteps() {
 		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
@@ -122,11 +125,8 @@ const siteSetupFlow: FlowV1 = {
 		const backToFlow = urlQueryParams.get( 'backToFlow' );
 		const skippedCheckout = urlQueryParams.get( 'skippedCheckout' );
 
-		const adminUrl = useSelect(
-			( select ) =>
-				site && ( select( SITE_STORE ) as SiteSelect ).getSiteOption( site.ID, 'admin_url' ),
-			[ site ]
-		);
+		const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
+
 		const isAtomic = useSelect(
 			( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site.ID ),
 			[ site ]
@@ -272,6 +272,8 @@ const siteSetupFlow: FlowV1 = {
 		} );
 
 		useRedirectDesignSetupOldSlug( currentStep, navigate );
+		const { get } = useFlowState();
+		const entryPoint = get( 'flow' )?.entryPoint;
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
@@ -418,11 +420,12 @@ const siteSetupFlow: FlowV1 = {
 				case 'importReady': {
 					const depUrl = ( providedDependencies?.url as string ) || '';
 					const { platform } = providedDependencies as { platform: ImporterMainPlatform };
+					const entryPoint = get( 'flow' )?.entryPoint;
 
-					if ( shouldRedirectToSiteMigration( currentStep, platform, origin ) ) {
+					if ( shouldRedirectToSiteMigration( currentStep, platform, origin, entryPoint ) ) {
 						return window.location.assign(
 							addQueryArgs(
-								{ siteSlug, siteId, from },
+								{ siteSlug, siteId, from, ref: entryPoint },
 								'/setup/site-migration/' + STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug
 							)
 						);
@@ -532,7 +535,7 @@ const siteSetupFlow: FlowV1 = {
 					return navigate( 'goals' );
 				}
 
-				case 'importList':
+				case 'importList': {
 					if ( backToStep ) {
 						return navigate( `${ backToStep }?siteSlug=${ siteSlug }` );
 					}
@@ -541,7 +544,12 @@ const siteSetupFlow: FlowV1 = {
 						return goToFlow( backToFlow );
 					}
 
+					if ( entryPoint === 'wp-admin-importers-list' ) {
+						return window.location.assign( `${ adminUrl }import.php` );
+					}
+
 					return navigate( `import?siteSlug=${ siteSlug }` );
+				}
 
 				case 'importerBlogger':
 				case 'importerMedium':
@@ -748,6 +756,14 @@ const siteSetupFlow: FlowV1 = {
 			selectedGlobalStyles,
 			skippedCheckout,
 		] );
+
+		const { get, set } = useFlowState();
+		const urlQueryParams = useQuery();
+		const ref = urlQueryParams.get( 'ref' );
+
+		if ( ref && ! get( 'flow' )?.entryPoint ) {
+			set( 'flow', { entryPoint: ref } );
+		}
 	},
 };
 

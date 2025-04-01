@@ -86,7 +86,6 @@
 		"network-connection": true,
 		"onboarding/create-course": false,
 		"onboarding/playground": false,
-		"p2-enabled": false,
 		"p2/p2-plus": true,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,

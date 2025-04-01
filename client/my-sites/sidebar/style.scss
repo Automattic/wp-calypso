@@ -158,6 +158,10 @@ $font-size: rem(14px);
 		min-height: calc(100vh - var(--masterbar-height));
 		box-sizing: border-box;
 
+		a {
+			text-decoration: none;
+		}
+
 		.sidebar__separator {
 			margin: 0 0 11px;
 		}

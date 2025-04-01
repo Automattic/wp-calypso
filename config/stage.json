@@ -110,7 +110,6 @@
 		"onboarding/trail-map-feature-grid": false,
 		"onboarding/trail-map-feature-grid-copy": false,
 		"onboarding/trail-map-feature-grid-structure": false,
-		"p2-enabled": true,
 		"p2/p2-plus": true,
 		"page/export": true,
 		"plans/hosting-trial": true,

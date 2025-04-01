@@ -1,11 +1,12 @@
 import { ProgressBar } from '@wordpress/components';
+import { ReactNode } from 'react';
 import { Heading } from '../../components/Heading/Heading';
 import { StepContainerV2 } from '../../components/StepContainerV2/StepContainerV2';
 import { TopBar } from '../../components/TopBar/TopBar';
 
 import './style.scss';
 
-export const Loading = ( { title, progress }: { title?: string; progress?: number } ) => {
+export const Loading = ( { title, progress }: { title?: ReactNode; progress?: number } ) => {
 	return (
 		<StepContainerV2>
 			<TopBar />

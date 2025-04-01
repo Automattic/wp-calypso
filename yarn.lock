@@ -565,11 +565,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/charts@npm:^0.9.0":
-  version: 0.9.0
-  resolution: "@automattic/charts@npm:0.9.0"
+"@automattic/charts@npm:^0.11.0":
+  version: 0.11.0
+  resolution: "@automattic/charts@npm:0.11.0"
   dependencies:
-    "@babel/runtime": "npm:7.26.0"
+    "@babel/runtime": "npm:7.26.10"
     "@react-spring/web": "npm:9.7.3"
     "@visx/axis": "npm:^3.12.0"
     "@visx/curve": "npm:3.12.0"
@@ -589,7 +589,7 @@ __metadata:
   peerDependencies:
     react: ^17.0.0 || ^18.0.0
     react-dom: ^17.0.0 || ^18.0.0
-  checksum: 50d8555f2c815aee82d45f673c791d9a0ae02a62a1ae82a8461921e2e0d8250482faf4b39cc64c4e2c1891eb6518288ad1414520477c29b2e544e12239c21723
+  checksum: 860ba8e9be776e7365394160da1674e3be7177bd570c52d9b50557db98de59196a4ba3e63cc67f21aeb768df7f2f60913517c3df0767df7bdd8836333621e5eb
   languageName: node
   linkType: hard
 
@@ -1938,7 +1938,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@swc/core": "npm:^1.11.13"
-    "@types/wordpress__block-editor": "npm:^11.5.8"
+    "@types/wordpress__block-editor": "npm:^11.5.16"
     "@types/wordpress__blocks": "npm:^12.5.17"
     "@typescript-eslint/eslint-plugin": "npm:^6.21.0"
     "@typescript-eslint/parser": "npm:^6.21.0"
@@ -3972,12 +3972,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:7.26.0":
-  version: 7.26.0
-  resolution: "@babel/runtime@npm:7.26.0"
+"@babel/runtime@npm:7.26.10":
+  version: 7.26.10
+  resolution: "@babel/runtime@npm:7.26.10"
   dependencies:
     regenerator-runtime: "npm:^0.14.0"
-  checksum: 12c01357e0345f89f4f7e8c0e81921f2a3e3e101f06e8eaa18a382b517376520cd2fa8c237726eb094dab25532855df28a7baaf1c26342b52782f6936b07c287
+  checksum: 6dc6d88c7908f505c4f7770fb4677dfa61f68f659b943c2be1f2a99cb6680343462867abf2d49822adc435932919b36c77ac60125793e719ea8745f2073d3745
   languageName: node
   linkType: hard
 
@@ -13600,7 +13600,7 @@ __metadata:
     mock-fs: "npm:^5.5.0"
     mockdate: "npm:^2.0.5"
     moment: "npm:^2.30.1"
-    moment-timezone: "npm:^0.5.40"
+    moment-timezone: "npm:^0.5.47"
     moment-timezone-data-webpack-plugin: "npm:^1.5.1"
     nock: "npm:^13.5.6"
     path-browserify: "npm:^1.0.1"
@@ -13633,7 +13633,7 @@ __metadata:
     redux-thunk: "npm:^3.1.0"
     regenerator-runtime: "npm:^0.13.9"
     social-logos: "npm:^3.1.16"
-    source-map-support: "npm:^0.5.19"
+    source-map-support: "npm:^0.5.21"
     store: "npm:^2.0.12"
     storybook: "npm:^8.6.9"
     stream-browserify: "npm:^3.0.0"
@@ -25835,12 +25835,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"moment-timezone@npm:^0.5.40":
-  version: 0.5.43
-  resolution: "moment-timezone@npm:0.5.43"
+"moment-timezone@npm:^0.5.40, moment-timezone@npm:^0.5.47":
+  version: 0.5.48
+  resolution: "moment-timezone@npm:0.5.48"
   dependencies:
     moment: "npm:^2.29.4"
-  checksum: 6f42174e01398d135883fb45aa820e57f34b25aab5ea6c50998139d06f975ee4457275b5e331466b14bff4d830e681c267f9cc462f445eb9c2b84d04add829f6
+  checksum: ab14ec9d94bc33f29ac18e5417b7f8aca0b17130b952c5cc9697b8fea839e5ece9313af5fd3c9703a05db472b1560ddbfc7ad2aa24aac9afd047d6da6c3c6033
   languageName: node
   linkType: hard
 
@@ -31994,7 +31994,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"source-map-support@npm:^0.5.16, source-map-support@npm:^0.5.19, source-map-support@npm:~0.5.20":
+"source-map-support@npm:^0.5.16, source-map-support@npm:^0.5.19, source-map-support@npm:^0.5.21, source-map-support@npm:~0.5.20":
   version: 0.5.21
   resolution: "source-map-support@npm:0.5.21"
   dependencies:
@@ -35609,7 +35609,7 @@ __metadata:
     "@automattic/calypso-razorpay": "workspace:^"
     "@automattic/calypso-router": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
-    "@automattic/charts": "npm:^0.9.0"
+    "@automattic/charts": "npm:^0.11.0"
     "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/command-palette": "workspace:^"
     "@automattic/components": "workspace:^"
@@ -35661,7 +35661,7 @@ __metadata:
     "@types/superagent": "npm:^4.1.24"
     "@types/validator": "npm:^13.7.1"
     "@types/webpack-env": "npm:^1.18.8"
-    "@types/wordpress__block-editor": "npm:^11.5.8"
+    "@types/wordpress__block-editor": "npm:^11.5.16"
     "@types/wordpress__blocks": "npm:^12.5.17"
     "@typescript-eslint/eslint-plugin": "npm:^6.21.0"
     "@typescript-eslint/parser": "npm:^6.21.0"

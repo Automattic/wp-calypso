@@ -1,8 +1,28 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .side-explainer {
 	width: 100%;
+
+	.side-explainer__content {
+		display: flex;
+		flex-direction: column;
+		gap: 40px;
+	}
+
+	.side-explainer__separator {
+		height: 1px;
+		background: var( --studio-gray-5 );
+		width: 100%;
+	}
+
+	.side-explainer__subtitle-free-domain {
+		color: var(--studio-gray-60);
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		line-height: 1.25rem;
+		letter-spacing: -0.16px;
+		font-size: 0.875rem;
+	}
 
 	.side-explainer__title {
 		font-size: 1.25rem;

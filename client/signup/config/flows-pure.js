@@ -13,28 +13,6 @@ const noop = () => {};
 const getUserSocialStepOrFallback = () =>
 	isEnabled( 'signup/social-first' ) ? 'user-social' : 'user';
 
-const getP2Flows = () => {
-	return isEnabled( 'p2-enabled' )
-		? [
-				{
-					// When adding steps, make sure that signup campaign ref's continue to work.
-					name: 'p2',
-					steps: [
-						'user',
-						'p2-confirm-email',
-						'p2-complete-profile',
-						'p2-join-workspace',
-						'p2-site',
-					],
-					destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
-					description: 'New P2 signup flow',
-					lastModified: '2021-12-27',
-					showRecaptcha: true,
-				},
-		  ]
-		: [];
-};
-
 export function generateFlows( {
 	getRedirectDestination = noop,
 	getSignupDestination = noop,
@@ -50,7 +28,6 @@ export function generateFlows( {
 	getEntrepreneurFlowDestination = noop,
 } = {} ) {
 	const userSocialStep = getUserSocialStepOrFallback();
-	const p2Flows = getP2Flows();
 
 	const flows = [
 		{
@@ -285,7 +262,6 @@ export function generateFlows( {
 			disallowResume: true, // don't allow resume so we don't clear query params when we go back in the history
 			showRecaptcha: true,
 		},
-		...p2Flows,
 		{
 			name: 'domain',
 			steps: [

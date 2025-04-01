@@ -1,4 +1,6 @@
 @import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .color-palette-variations {
 	display: grid;
@@ -69,4 +71,18 @@
 
 .global-styles-variations__group-title-actual {
 	white-space: nowrap;
+}
+
+.global-styles-variations__group-description {
+	color: var(--color-neutral-60);
+	font-size: 0.875rem;
+	letter-spacing: -0.15px;
+	padding: 6px 0 6px 0;
+	line-height: 20px;
+	margin: 0;
+
+	display: none;
+	@include break-large {
+		display: block;
+	}
 }

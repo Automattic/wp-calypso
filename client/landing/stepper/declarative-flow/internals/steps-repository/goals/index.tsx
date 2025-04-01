@@ -56,10 +56,8 @@ const GoalsStep: StepType< {
 	};
 } > = ( { navigation, flow } ) => {
 	const translate = useTranslate();
-	const whatAreYourGoalsText = translate( 'What would you like to do?' );
-	const subHeaderText = translate(
-		"Pick one or more goals and we'll tailor the setup experience for you."
-	);
+	const whatAreYourGoalsText = translate( 'What would you like to create?' );
+	const subHeaderText = translate( 'Pick one or more goals to get started.' );
 
 	const goals = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),

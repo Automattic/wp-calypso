@@ -1,3 +1,5 @@
+import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
+import { DEFAULT_FLOW, getFlowFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 let lastScrollPosition = 0; // Used for calculating scroll direction.
 let sidebarTop = 0; // Current sidebar top position.
@@ -164,4 +166,33 @@ export const handleScroll = ( event: React.UIEvent< HTMLElement > ): void => {
 		} );
 		ticking = true;
 	}
+};
+
+export const isRedirectingToStepContainerV2Flow = ( redirectTo: string ) => {
+	const { pathname, search } = new URL( redirectTo, 'http://example.com' );
+
+	return shouldUseStepContainerV2( getFlowFromURL( pathname, search ) );
+};
+
+/**
+ * Returns whether to display the StepContainerV2 features from up in the tree.
+ * This can be used, for example, to determine if we should show
+ * the StepContainerV2 loader or hide the masterbar.
+ */
+export const isInStepContainerV2FlowContext = ( pathname: string, query: string ) => {
+	if ( pathname.startsWith( '/setup' ) ) {
+		return shouldUseStepContainerV2( getFlowFromURL( pathname, query ) || DEFAULT_FLOW );
+	}
+
+	if ( pathname.startsWith( '/checkout' ) ) {
+		// The checkout isn't technically part of a stepper flow, but we can infer what stepper
+		// flow it came from (if any) by inspecting the redirect_to query param (in the case
+		// of the onboarding flow).
+		const params = new URLSearchParams( query );
+		const redirectTo = params.get( 'redirect_to' ) ?? params.get( 'redirectTo' ) ?? '';
+
+		return isRedirectingToStepContainerV2Flow( redirectTo );
+	}
+
+	return false;
 };
