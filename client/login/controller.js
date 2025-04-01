@@ -167,6 +167,15 @@ export async function magicLogin( context, next ) {
 		query: { gravatar_flow, client_id, redirect_to, auto_trigger },
 	} = context;
 
+	// if (
+	// 	path.includes( 'jetpack-onboarding' ) &&
+	// 	config.isEnabled( 'jetpack/magic-link-signup' ) &&
+	// 	isUserLoggedIn( context.store.getState() )
+	// ) {
+	// 	// Log out the user and reload the page
+	// 	return context.store.dispatch( redirectToLogout( window.location.href ) );
+	// }
+
 	if ( isUserLoggedIn( context.store.getState() ) && auto_trigger === undefined ) {
 		return login( context, next );
 	}
