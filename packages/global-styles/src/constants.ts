@@ -7,6 +7,7 @@ export const FONT_PREVIEW_WIDTH = 120;
 export const FONT_PREVIEW_HEIGHT = 74;
 
 export const DEFAULT_GLOBAL_STYLES_VARIATION_TITLE = 'default';
+// If updating, please also update in packages/data-stores/src/site/constants.ts
 export const DEFAULT_GLOBAL_STYLES_VARIATION_SLUG = 'default';
 export const SYSTEM_FONT_SLUG = 'system-font';
 
