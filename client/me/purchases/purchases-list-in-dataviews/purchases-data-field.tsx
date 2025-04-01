@@ -1,6 +1,7 @@
 import { isJetpackPlan, isJetpackProduct } from '@automattic/calypso-products';
 import { Purchases } from '@automattic/data-stores';
 import { Fields, Operator } from '@wordpress/dataviews';
+import { LocalizeProps } from 'i18n-calypso';
 import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -33,8 +34,11 @@ function PurchaseItemRow( props: { purchase: Purchases.Purchase } ) {
 	);
 }
 
-function PurchaseItemRowType( props: { purchase: Purchases.Purchase } ) {
-	const purchase = props.purchase;
+function PurchaseItemRowType( props: {
+	purchase: Purchases.Purchase;
+	translate: LocalizeProps[ 'translate' ];
+} ) {
+	const { purchase, translate } = props;
 	const site = useSelector( ( state ) => getSite( state, purchase.siteId ?? 0 ) );
 	const slug = purchase.siteName ?? purchase.siteId;
 	// Need to figure out how to pass translate here
@@ -43,6 +47,7 @@ function PurchaseItemRowType( props: { purchase: Purchases.Purchase } ) {
 			<PurchaseItemType
 				purchase={ purchase }
 				site={ site }
+				translate={ translate }
 				slug={ slug }
 				showSite
 				isDisconnectedSite={ ! site }
@@ -51,56 +56,61 @@ function PurchaseItemRowType( props: { purchase: Purchases.Purchase } ) {
 	);
 }
 
-export const purchasesDataFields = [
-	{
-		id: 'product',
-		label: 'Product',
-		type: 'text',
-		enableGlobalSearch: true,
-		enableSorting: true,
-		enableHiding: false,
-		filterBy: {
-			operators: [ 'is' as Operator ],
+export function getPurchasesFieldDefinitions(
+	purchases: Purchases.Purchase[] | null,
+	translate: LocalizeProps[ 'translate' ]
+): Fields< Purchases.Purchase > {
+	return [
+		{
+			id: 'product',
+			label: 'Product',
+			type: 'text',
+			enableGlobalSearch: true,
+			enableSorting: true,
+			enableHiding: false,
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			getValue: ( { item }: { item: Purchases.Purchase } ) => {
+				return item.productId;
+			},
+			render: ( { item }: { item: Purchases.Purchase } ) => {
+				return <PurchaseItemRowType purchase={ item } translate={ translate } />;
+			},
 		},
-		getValue: ( { item }: { item: Purchases.Purchase } ) => {
-			return item.productId;
+		{
+			id: 'site',
+			label: 'Site',
+			type: 'text',
+			enableGlobalSearch: true,
+			enableSorting: true,
+			enableHiding: false,
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			getValue: ( { item }: { item: Purchases.Purchase } ) => {
+				return item.siteId;
+			},
+			render: ( { item }: { item: Purchases.Purchase } ) => {
+				return <PurchaseItemRow purchase={ item } />;
+			},
 		},
-		render: ( { item }: { item: Purchases.Purchase } ) => {
-			return <PurchaseItemRowType purchase={ item } />;
+		{
+			id: 'purchase-item-site',
+			label: 'Purchase Item',
+			type: 'text',
+			enableGlobalSearch: true,
+			enableSorting: true,
+			enableHiding: false,
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			getValue: ( { item }: { item: Purchases.Purchase } ) => {
+				return item.siteId;
+			},
+			render: ( { item }: { item: Purchases.Purchase } ) => {
+				return <PurchaseItemRow purchase={ item } />;
+			},
 		},
-	},
-	{
-		id: 'site',
-		label: 'Site',
-		type: 'text',
-		enableGlobalSearch: true,
-		enableSorting: true,
-		enableHiding: false,
-		// Filter by site ID
-		getValue: ( { item }: { item: Purchases.Purchase } ) => {
-			return item.siteId;
-		},
-		// Render the site icon
-		render: ( { item }: { item: Purchases.Purchase } ) => {
-			const site = { ID: item.siteId };
-			return <PurchaseItemSiteIcon site={ site } purchase={ item } />;
-		},
-	},
-	{
-		id: 'purchase-item-site',
-		label: 'Purchase Item',
-		type: 'text',
-		enableGlobalSearch: true,
-		enableSorting: true,
-		enableHiding: false,
-		filterBy: {
-			operators: [ 'is' as Operator ],
-		},
-		getValue: ( { item }: { item: Purchases.Purchase } ) => {
-			return item.siteId;
-		},
-		render: ( { item }: { item: Purchases.Purchase } ) => {
-			return <PurchaseItemRow purchase={ item } />;
-		},
-	},
-] as Fields< Purchases.Purchase >;
+	];
+}
