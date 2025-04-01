@@ -43,7 +43,7 @@ describe( 'useStepNavigator', () => {
 
 		expect( navigation.submit ).toHaveBeenCalledWith( {
 			type: 'redirect',
-			url: '/checkout/business?redirect_to=%2Fsetup%2Ftest-flow%2FimporterWordpress%3Foption%3Deverything%26run%3Dfalse&cancel_to=%2Fsetup%2Ftest-flow%2FimporterWordpress%3Foption%3Deverything%26run%3Dfalse',
+			url: '/checkout/business?redirect_to=%2Fsetup%2Ftest-flow%2FimporterWordpress&cancel_to=%2Fsetup%2Ftest-flow%2FimporterWordpress',
 		} );
 	} );
 
@@ -67,7 +67,7 @@ describe( 'useStepNavigator', () => {
 
 		expect( navigation.submit ).toHaveBeenCalledWith( {
 			type: 'redirect',
-			url: '/checkout/business?redirect_to=%2Fcustom-redirect&cancel_to=%2Fsetup%2Ftest-flow%2FimporterWordpress%3Foption%3Deverything%26run%3Dfalse',
+			url: '/checkout/business?redirect_to=%2Fcustom-redirect&cancel_to=%2Fsetup%2Ftest-flow%2FimporterWordpress',
 		} );
 	} );
 } );

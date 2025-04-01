@@ -382,7 +382,6 @@ describe( 'Site Migration Flow', () => {
 						siteId: 123,
 						backToFlow: '/site-migration/site-migration-import-or-migrate',
 						from: 'https://site-to-be-migrated.com',
-						option: 'content',
 					},
 				} );
 			} );
