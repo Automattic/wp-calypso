@@ -96,7 +96,7 @@ export function PurchaseItemType( {
 	purchase: Purchases.Purchase;
 	site?: SiteDetails | null | undefined;
 	translate: LocalizeProps[ 'translate' ];
-	slug?: string | null | undefined;
+	slug?: string | number | null;
 	showSite?: boolean;
 	isDisconnectedSite?: boolean;
 } ) {

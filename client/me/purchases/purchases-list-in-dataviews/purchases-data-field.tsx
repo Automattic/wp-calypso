@@ -5,7 +5,7 @@ import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
-import PurchaseItem from '../purchase-item';
+import PurchaseItem, { PurchaseItemType } from '../purchase-item';
 
 function PurchaseItemRow( props: { purchase: Purchases.Purchase } ) {
 	const purchase = props.purchase;
@@ -34,7 +34,42 @@ function PurchaseItemRow( props: { purchase: Purchases.Purchase } ) {
 	);
 }
 
+function PurchaseItemRowType( props: { purchase: Purchases.Purchase } ) {
+	const purchase = props.purchase;
+	const site = useSelector( ( state ) => getSite( state, purchase.siteId ?? 0 ) );
+	const slug = purchase.siteName ?? purchase.siteId;
+	// Need to figure out how to pass translate here
+	return (
+		<div className="purchase-item__purchase-type">
+			<PurchaseItemType
+				purchase={ purchase }
+				site={ site }
+				slug={ slug }
+				showSite
+				isDisconnectedSite={ ! site }
+			/>
+		</div>
+	);
+}
+
 export const purchasesDataFields = [
+	{
+		id: 'product',
+		label: 'Product',
+		type: 'text',
+		enableGlobalSearch: true,
+		enableSorting: true,
+		enableHiding: false,
+		filterBy: {
+			operators: [ 'is' as Operator ],
+		},
+		getValue: ( { item }: { item: Purchases.Purchase } ) => {
+			return item.productId;
+		},
+		render: ( { item }: { item: Purchases.Purchase } ) => {
+			return <PurchaseItemRowType purchase={ item } />;
+		},
+	},
 	{
 		id: 'site',
 		label: 'Site',

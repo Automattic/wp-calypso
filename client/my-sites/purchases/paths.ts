@@ -24,7 +24,7 @@ export const getDowngradeUrlFor = (
 	targetPurchaseId: string | number
 ): string => `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchaseId }/downgrade`;
 
-export const getPurchaseListUrlFor = ( targetSiteSlug: string ): string =>
+export const getPurchaseListUrlFor = ( targetSiteSlug: string | number ): string =>
 	`/purchases/subscriptions/${ targetSiteSlug }`;
 
 export const getAddPaymentMethodUrlFor = (
