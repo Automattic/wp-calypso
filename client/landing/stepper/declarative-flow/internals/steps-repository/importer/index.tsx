@@ -188,7 +188,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 				);
 			}
 
-			if ( ! siteSlug && ! site && ! siteId ) {
+			if ( ! site ) {
 				return <NotFound />;
 			}
 
