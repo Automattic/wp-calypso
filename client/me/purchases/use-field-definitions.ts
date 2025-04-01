@@ -1,29 +1,31 @@
+import { Fields } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { getTransactionFieldDefinitions } from './billing-history/field-definitions';
 import type { Purchases } from '@automattic/data-stores';
 import type { BillingTransaction } from 'calypso/state/billing-transactions/types';
+import type { LocalizeProps } from 'i18n-calypso';
 
-function getFieldDefinitionsByType( {
+function getFieldDefinitionsByType< DataFields extends BillingTransaction | Purchases.Purchase >( {
 	itemType,
 	items,
-	translate
+	translate,
 }: {
 	itemType: string | null;
-	items: BillingTransaction[] | Purchases.Purchase[] | null;
-	translate: typeof useTranslate;
-} ) {
-	if ( 'null' !== itemType || ! items ) {
+	items: DataFields[];
+	translate: LocalizeProps[ 'translate' ];
+} ): Fields< DataFields[] > {
+	if ( ! items ) {
 		return [];
 	}
 
-	if ( 'BillingTransaction' === itemType ) {
-		return getTransactionFieldDefinitions( items, translate );
+	if ( 'BillingTransaction' === itemType && 'subtotal_integer' in items[ 0 ] ) {
+		return Object.values( getTransactionFieldDefinitions( items, translate ) );
 	}
 
 	// Eventually, the goal is to add more item types like this
 	/*
-	if ( 'Purchases.Purchase' === itemType ) {
+	if ( 'Purchase' === itemType ) {
 		return getPurchaseFieldDefinitions( items, translate );
 	}
 	*/
@@ -31,16 +33,16 @@ function getFieldDefinitionsByType( {
 
 export function useFieldDefinitions( props: {
 	items: BillingTransaction[] | Purchases.Purchase[] | null;
+	itemType: 'BillingTransaction' | 'Purchase';
 } ) {
 	const translate = useTranslate();
-	const items = props.items;
-	if ( ! items ) {
-		return [];
-	}
 
 	return useMemo( () => {
-		const firstItem = items[0] ?? null;
-		fieldDefinitions = getFieldDefinitionsByType( { typeof firstItem, items, translate } );
-		return Object.values( fieldDefinitions );
-	}, [ items, translate ] );
+		const fieldDefinitions = getFieldDefinitionsByType( {
+			itemType: props.itemType,
+			items: props.items,
+			translate,
+		} );
+		return fieldDefinitions;
+	}, [ props.items, translate ] );
 }
