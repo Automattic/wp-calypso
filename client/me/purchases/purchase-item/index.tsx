@@ -161,6 +161,7 @@ export function PurchaseItemType( {
 	}
 
 	const productType = purchaseType( purchase );
+
 	if ( showSite && site ) {
 		if ( productType && site.name && slug ) {
 			// translators: The string contains the product name, the name of the site, and the URL for the site e.g. Premium plan for Block Store (blockstore.com)
