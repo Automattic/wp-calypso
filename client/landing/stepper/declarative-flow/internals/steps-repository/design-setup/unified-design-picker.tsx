@@ -21,6 +21,7 @@ import {
 	PERSONAL_THEME,
 	getThemeIdFromDesign,
 } from '@automattic/design-picker';
+import { useScreens, type DesignPreviewProps } from '@automattic/design-preview';
 import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer, ONBOARDING_FLOW, isSiteSetupFlow, Step } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -699,29 +700,69 @@ const UnifiedDesignPickerStep: StepType< {
 
 	const isUsingStepContainerV2 = shouldUseStepContainerV2( flow );
 
-	function getPrimaryActionButton() {
+	const getPrimaryActionButtonProps = () => {
 		const action = getPrimaryActionButtonAction();
 		const text =
 			action === upgradePlan && ! isGoalsAtFrontExperiment
 				? translate( 'Unlock theme' )
 				: translate( 'Continue' );
 
-		if ( ! isUsingStepContainerV2 ) {
-			return (
-				<Button className="navigation-link" primary borderless={ false } onClick={ action }>
-					{ text }
-				</Button>
-			);
-		}
+		return {
+			action,
+			text,
+		};
+	};
 
-		return <Step.PrimaryButton onClick={ action }>{ text }</Step.PrimaryButton>;
-	}
+	const { action: primaryActionButtonAction, text: primaryActionButtonText } =
+		getPrimaryActionButtonProps();
+
+	const primaryActionButton = isUsingStepContainerV2 ? (
+		<Step.PrimaryButton onClick={ primaryActionButtonAction }>
+			{ primaryActionButtonText }
+		</Step.PrimaryButton>
+	) : (
+		<Button
+			className="navigation-link"
+			primary
+			borderless={ false }
+			onClick={ primaryActionButtonAction }
+		>
+			{ primaryActionButtonText }
+		</Button>
+	);
 
 	useEffect( () => {
 		if ( isComingFromTheUpgradeScreen ) {
 			pickDesign();
 		}
 	}, [ isComingFromTheUpgradeScreen, pickDesign ] );
+
+	const screens = useScreens( {
+		siteId,
+		stylesheet: selectedDesign?.recipe?.stylesheet ?? '',
+		isVirtual: selectedDesign?.is_virtual,
+		isExternallyManaged: selectedDesign?.is_externally_managed,
+		limitGlobalStyles: shouldLimitGlobalStyles,
+		variations: selectedDesignHasStyleVariations ? selectedDesignDetails?.style_variations : [],
+		splitDefaultVariation:
+			( isGlobalStylesOnPersonal &&
+				selectedDesign?.design_tier === THEME_TIER_FREE &&
+				shouldLimitGlobalStyles ) ||
+			( ! ( selectedDesign?.design_tier === THEME_TIER_PREMIUM ) &&
+				! isBundled &&
+				! isPremiumThemeAvailable &&
+				shouldLimitGlobalStyles ),
+		needsUpgrade: shouldLimitGlobalStyles || isLockedTheme,
+		selectedVariation: selectedStyleVariation,
+		selectedColorVariation: selectedColorVariation,
+		selectedFontVariation: selectedFontVariation,
+		onSelectVariation: previewDesignVariation,
+		onSelectColorVariation: handleSelectColorVariation,
+		onSelectFontVariation: handleSelectFontVariation,
+		onScreenSelect: recordDesignPreviewScreenSelect,
+		onScreenBack: recordDesignPreviewScreenBack,
+		onScreenSubmit: recordDesignPreviewScreenSubmit,
+	} );
 
 	// ********** Main render logic
 
@@ -757,15 +798,53 @@ const UnifiedDesignPickerStep: StepType< {
 				return (
 					<>
 						<div className="action-buttons__title">{ headerDesignTitle }</div>
-						<div>{ getPrimaryActionButton() }</div>
+						<div>{ primaryActionButton }</div>
 					</>
 				);
 			}
 
-			return getPrimaryActionButton();
+			return primaryActionButton;
 		};
 
 		const actionButtons = getActionButtons();
+
+		const designPreviewProps: DesignPreviewProps = {
+			previewUrl: themeDemoUrl || previewUrl,
+			siteInfo: {
+				title: shouldCustomizeText ? site?.name ?? '' : '',
+				tagline: shouldCustomizeText ? site?.description ?? '' : '',
+			},
+			splitDefaultVariation:
+				( isGlobalStylesOnPersonal &&
+					selectedDesign?.design_tier === THEME_TIER_FREE &&
+					shouldLimitGlobalStyles ) ||
+				( ! ( selectedDesign?.design_tier === THEME_TIER_PREMIUM ) &&
+					! isBundled &&
+					! isPremiumThemeAvailable &&
+					! didPurchaseSelectedTheme &&
+					! isPluginBundleEligible &&
+					! isGlobalStylesOnPersonal &&
+					shouldLimitGlobalStyles ),
+			needsUpgrade: shouldLimitGlobalStyles || isLockedTheme,
+			title: headerDesignTitle,
+			selectedDesignTitle: designTitle,
+			shortDescription: selectedDesign.description,
+			description: selectedDesignDetails?.description,
+			variations: selectedDesignHasStyleVariations ? selectedDesignDetails?.style_variations : [],
+			selectedVariation: selectedStyleVariation,
+			onSelectVariation: previewDesignVariation,
+			actionButtons,
+			recordDeviceClick,
+			siteId: site?.ID ?? 0,
+			stylesheet: selectedDesign.recipe?.stylesheet ?? '',
+			screenshot: fullLengthScreenshot,
+			isExternallyManaged: selectedDesign.is_externally_managed,
+			selectedColorVariation: selectedColorVariation,
+			selectedFontVariation: selectedFontVariation,
+			onGlobalStylesChange: setGlobalStyles,
+			onNavigatorPathChange: ( path?: string ) => setDesignPreviewPath( path ),
+			screens,
+		};
 
 		const stepContent = (
 			<>
@@ -809,55 +888,12 @@ const UnifiedDesignPickerStep: StepType< {
 				<AsyncLoad
 					require="@automattic/design-preview"
 					placeholder={ null }
-					previewUrl={ themeDemoUrl || previewUrl }
-					siteInfo={ {
-						title: shouldCustomizeText ? site?.name : '',
-						tagline: shouldCustomizeText ? site?.description : '',
-					} }
-					splitDefaultVariation={
-						( isGlobalStylesOnPersonal &&
-							selectedDesign?.design_tier === THEME_TIER_FREE &&
-							shouldLimitGlobalStyles ) ||
-						( ! ( selectedDesign?.design_tier === THEME_TIER_PREMIUM ) &&
-							! isBundled &&
-							! isPremiumThemeAvailable &&
-							! didPurchaseSelectedTheme &&
-							! isPluginBundleEligible &&
-							! isGlobalStylesOnPersonal &&
-							shouldLimitGlobalStyles )
-					}
-					needsUpgrade={ shouldLimitGlobalStyles || isLockedTheme }
-					title={ headerDesignTitle }
-					selectedDesignTitle={ designTitle }
-					shortDescription={ selectedDesign.description }
-					description={ selectedDesignDetails?.description }
-					variations={
-						selectedDesignHasStyleVariations ? selectedDesignDetails?.style_variations : []
-					}
-					selectedVariation={ selectedStyleVariation }
-					onSelectVariation={ previewDesignVariation }
-					actionButtons={ actionButtons }
-					recordDeviceClick={ recordDeviceClick }
-					limitGlobalStyles={ shouldLimitGlobalStyles }
-					siteId={ site?.ID }
-					stylesheet={ selectedDesign.recipe?.stylesheet }
-					screenshot={ fullLengthScreenshot }
-					isExternallyManaged={ selectedDesign.is_externally_managed }
-					isVirtual={ selectedDesign.is_virtual }
-					selectedColorVariation={ selectedColorVariation }
-					onSelectColorVariation={ handleSelectColorVariation }
-					selectedFontVariation={ selectedFontVariation }
-					onSelectFontVariation={ handleSelectFontVariation }
-					onGlobalStylesChange={ setGlobalStyles }
-					onNavigatorPathChange={ ( path?: string ) => setDesignPreviewPath( path ) }
-					onScreenSelect={ recordDesignPreviewScreenSelect }
-					onScreenBack={ recordDesignPreviewScreenBack }
-					onScreenSubmit={ recordDesignPreviewScreenSubmit }
+					{ ...designPreviewProps }
 				/>
 			</>
 		);
 
-		const isAtDesignPreviewRoot = designPreviewPath === '/';
+		const activeScreen = screens.find( ( screen ) => screen.path === designPreviewPath );
 
 		if ( isUsingStepContainerV2 ) {
 			// TODO: Create a new wireframe for the design preview. It should be named "FixedColumnOnTheLeftLayout"
@@ -865,15 +901,13 @@ const UnifiedDesignPickerStep: StepType< {
 				<Step.FullWidthLayout
 					className="step-container-v2--design-picker-preview"
 					topBar={ ( { isLargeViewport } ) => {
-						if ( ! isLargeViewport && ! isAtDesignPreviewRoot ) {
+						if ( ! isLargeViewport && activeScreen ) {
 							return null;
 						}
 
 						return (
 							<Step.TopBar
-								leftElement={
-									isAtDesignPreviewRoot && <Step.BackButton onClick={ handleBackClick } />
-								}
+								leftElement={ ! activeScreen && <Step.BackButton onClick={ handleBackClick } /> }
 								rightElement={
 									! isGoalsAtFrontExperiment ? undefined : (
 										<Step.SkipButton onClick={ () => handleSubmit() }>
@@ -891,15 +925,38 @@ const UnifiedDesignPickerStep: StepType< {
 
 						return (
 							<Step.StickyBottomBar
-								leftElement={ <Step.BackButton onClick={ handleBackClick } /> }
+								leftElement={
+									<Step.BackButton
+										recordTracksEvent={ ! activeScreen }
+										onClick={ () => {
+											if ( activeScreen?.onBack ) {
+												return activeScreen.onBack( activeScreen.slug );
+											}
+
+											return handleBackClick();
+										} }
+									/>
+								}
 								centerElement={
-									! isAtDesignPreviewRoot && (
+									activeScreen && (
 										<div className="step-container-v2--design-picker-preview__header-design-title">
 											{ headerDesignTitle }
 										</div>
 									)
 								}
-								rightElement={ actionButtons }
+								rightElement={
+									<Step.PrimaryButton
+										onClick={ () => {
+											if ( activeScreen?.onSubmit ) {
+												return activeScreen.onSubmit( activeScreen.slug );
+											}
+
+											return primaryActionButtonAction();
+										} }
+									>
+										{ activeScreen?.actionText ?? primaryActionButtonText }
+									</Step.PrimaryButton>
+								}
 							/>
 						);
 					} }
@@ -916,10 +973,10 @@ const UnifiedDesignPickerStep: StepType< {
 				hideSkip={ ! isGoalsAtFrontExperiment }
 				skipLabelText={ translate( 'Skip setup' ) }
 				skipButtonAlign="top"
-				hideBack={ ! isAtDesignPreviewRoot }
+				hideBack={ !! activeScreen }
 				className="design-setup__preview design-setup__preview__has-more-info"
 				goBack={ handleBackClick }
-				customizedActionButtons={ isAtDesignPreviewRoot ? actionButtons : undefined }
+				customizedActionButtons={ ! activeScreen ? actionButtons : undefined }
 				recordTracksEvent={ recordStepContainerTracksEvent }
 			/>
 		);

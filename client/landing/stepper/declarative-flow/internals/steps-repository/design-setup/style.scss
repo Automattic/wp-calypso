@@ -693,13 +693,21 @@ $container-padding-large: 48px;
 			}
 		}
 
-		.design-preview.design-preview--is-fullscreen {
-			padding-bottom: var(--step-container-v2-sticky-bottom-bar-height);
-			z-index: 0;
-		}
+		.design-preview {
+			&.design-preview--is-fullscreen {
+				padding-bottom: var(--step-container-v2-sticky-bottom-bar-height);
+				z-index: 0;
+			}
 
-		@include break-large {
-			.design-preview {
+			.navigator-screen__footer {
+				display: none;
+			}
+
+			@include break-large {
+				.navigator-screen__footer {
+					display: flex;
+				}
+
 				flex: 1;
 				height: auto;
 				gap: 48px;

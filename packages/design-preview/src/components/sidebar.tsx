@@ -1,5 +1,5 @@
 import { NavigatorScreens, useNavigatorButtons } from '@automattic/onboarding';
-import { useMemo } from '@wordpress/element';
+import { Element, useMemo } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { useTranslate } from 'i18n-calypso';
 import type { Category } from '@automattic/design-picker/src/types';
@@ -26,7 +26,7 @@ const CategoryBadge: React.FC< CategoryBadgeProps > = ( { category, onClick } ) 
 };
 
 interface SidebarProps {
-	title?: string;
+	title?: Element;
 	author?: string;
 	categories?: Category[];
 	description?: string;
