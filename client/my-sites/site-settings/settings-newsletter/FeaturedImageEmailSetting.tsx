@@ -12,7 +12,7 @@ type FeaturedImageEmailSettingProps = {
 };
 
 export const FeaturedImageEmailSetting = ( {
-	value = false,
+	value = true,
 	handleToggle,
 	disabled,
 }: FeaturedImageEmailSettingProps ) => {
