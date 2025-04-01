@@ -116,6 +116,193 @@ export function PurchaseItemSiteIcon( {
 			</div>
 		);
 	}
+	if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
+		content = <SiteIcon size={ 36 } />;
+	}
+
+	if ( isDisconnectedSite ) {
+		content = (
+			<div className="purchase-item__disconnected-icon">
+				<Gridicon icon="block" size={ Math.round( 36 / 1.8 ) } />
+			</div>
+		);
+	}
+
+	const isJetpackPurchase = isJetpackProduct( purchase ) || isJetpackPlan( purchase );
+
+	if ( ! iconUrl && isJetpackPurchase ) {
+		content = (
+			<div className="purchase-item__static-icon">
+				<img src={ jetpackIcon } alt="Jetpack icon" />;
+			</div>
+		);
+	}
+
+	return <div className="purchase-item__site purchases-layout__site">{ content }</div>;
+}
+
+export function PurchaseItemType( {
+	purchase,
+	site,
+	translate,
+	slug,
+	showSite,
+	isDisconnectedSite,
+}: {
+	purchase: Purchases.Purchase;
+	site?: SiteDetails | null | undefined;
+	translate: typeof useTranslate;
+	slug?: string | null | undefined;
+	showSite?: boolean;
+	isDisconnectedSite?: boolean;
+} ) {
+	if ( isTemporarySitePurchase( purchase ) ) {
+		return null;
+	}
+
+	const productType = purchaseType( purchase );
+	if ( showSite && site ) {
+		if ( productType && site.name && slug ) {
+			// translators: The string contains the product name, the name of the site, and the URL for the site e.g. Premium plan for Block Store (blockstore.com)
+			return translate(
+				'%(purchaseType)s for {{button}}%(siteName)s{{/button}} ({{link}}%(siteDomain)s{{/link}})',
+				{
+					args: {
+						purchaseType: productType,
+						siteName: site.name,
+						siteDomain: site.domain,
+					},
+					components: {
+						button: (
+							<button
+								className="purchase-item__link"
+								onClick={ ( event ) => {
+									event.stopPropagation();
+									event.preventDefault();
+									page( getPurchaseListUrlFor( slug ) );
+								} }
+								title={ translate( 'View subscriptions for %(siteName)s', {
+									textOnly: true,
+									args: {
+										siteName: site.name,
+									},
+								} ) }
+							/>
+						),
+						link: (
+							<a
+								className="purchase-item__link"
+								href={ 'https://' + site.domain }
+								target="_blank"
+								rel="noreferrer"
+								title={ translate( 'View %(siteName)s', {
+									textOnly: true,
+									args: {
+										siteName: site.name,
+									},
+								} ) }
+							/>
+						),
+					},
+				}
+			);
+		}
+
+		if ( productType && slug ) {
+			// translators: The string contains the product name, and the URL of the site e.g. Premium plan for blockstore.com
+			return translate( '%(purchaseType)s for {{button}}%(siteDomain)s{{/button}}', {
+				args: {
+					purchaseType: productType,
+					siteDomain: site.domain,
+				},
+				components: {
+					button: (
+						<button
+							className="purchase-item__link"
+							onClick={ ( event ) => {
+								event.stopPropagation();
+								event.preventDefault();
+								page( getPurchaseListUrlFor( slug ) );
+							} }
+							title={ translate( 'View subscriptions for %(siteDomain)s', {
+								textOnly: true,
+								args: {
+									siteDomain: site.domain,
+								},
+							} ) }
+						/>
+					),
+				},
+			} );
+		}
+
+		if ( site.name && slug ) {
+			// translators: The string contains the name of the site, and the URL of the site e.g. for Block Store (blockstore.com)
+			return translate( 'for {{button}}%(siteName)s{{/button}} ({{link}}%(siteDomain)s{{/link}})', {
+				args: {
+					siteName: site.name,
+					siteDomain: site.domain,
+				},
+				components: {
+					button: (
+						<button
+							className="purchase-item__link"
+							onClick={ ( event ) => {
+								event.stopPropagation();
+								event.preventDefault();
+								page( getPurchaseListUrlFor( slug ) );
+							} }
+							title={ translate( 'View subscriptions for %(siteName)s', {
+								textOnly: true,
+								args: {
+									siteName: site.name,
+								},
+							} ) }
+						/>
+					),
+					link: (
+						<a
+							className="purchase-item__link"
+							href={ 'https://' + site.domain }
+							target="_blank"
+							rel="noreferrer"
+							title={ translate( 'View %(siteName)s', {
+								textOnly: true,
+								args: {
+									siteName: site.name,
+								},
+							} ) }
+						/>
+					),
+				},
+			} );
+		}
+	}
+
+	if ( isDisconnectedSite && productType ) {
+		return translate( '%(purchaseType)s for %(site)s', {
+			textOnly: true,
+			args: {
+				purchaseType: productType,
+				site: purchase.domain,
+			},
+		} );
+	}
+
+	return productType;
+}
+
+class PurchaseItem extends Component<
+	PurchaseItemPropsPlaceholder | ( PurchaseItemProps & PurchaseItemPropsConnected )
+> {
+	trackImpression( warning: string ) {
+		return (
+			<TrackComponentView
+				eventName="calypso_subscription_warning_impression"
+				eventProperties={ eventProperties( warning ) }
+			/>
+		);
+	}
 
 	if ( isMarketplaceTemporarySitePurchase( purchase ) ) {
 		content = <SiteIcon size={ 36 } />;
