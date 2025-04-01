@@ -58,7 +58,7 @@ function PurchaseItemRowType( props: {
 }
 
 export function getPurchasesFieldDefinitions(
-	purchases: Purchases.Purchase[] | null,
+	// purchases: Purchases.Purchase[],
 	translate: LocalizeProps[ 'translate' ]
 ): Fields< Purchases.Purchase > {
 	return [

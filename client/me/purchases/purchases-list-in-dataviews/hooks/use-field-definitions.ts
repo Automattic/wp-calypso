@@ -1,13 +1,12 @@
-import { Purchases } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { getPurchasesFieldDefinitions } from '../purchases-data-field';
 
-export function usePurchasesFieldDefinitions( purchases: Purchases.Purchase[] | null ) {
+export function usePurchasesFieldDefinitions() {
 	const translate = useTranslate();
 
 	return useMemo( () => {
-		const fieldDefinitions = getPurchasesFieldDefinitions( purchases, translate );
+		const fieldDefinitions = getPurchasesFieldDefinitions( translate );
 		return fieldDefinitions;
-	}, [ purchases, translate ] );
+	}, [ translate ] );
 }

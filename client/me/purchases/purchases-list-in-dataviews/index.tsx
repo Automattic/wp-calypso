@@ -1,5 +1,4 @@
-import { Card } from '@automattic/components';
-import { Purchases, SiteDetails } from '@automattic/data-stores';
+import { SiteDetails } from '@automattic/data-stores';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { LocalizeProps, localize } from 'i18n-calypso';
 import { Component } from 'react';
@@ -7,7 +6,6 @@ import { connect } from 'react-redux';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import { DataViews } from 'calypso/components/dataviews';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
@@ -38,8 +36,7 @@ import { getSiteId } from 'calypso/state/sites/selectors';
 import { AppState } from 'calypso/types';
 import MembershipSite from '../membership-site';
 import PurchasesSite from '../purchases-site';
-import { purchasesDataFields } from './purchases-data-field';
-import { purchasesDataView } from './purchases-data-view';
+import { PurchasesDataViews } from './purchases-data-view';
 import './style.scss';
 
 export interface PurchasesListProps {
@@ -100,29 +97,8 @@ class PurchasesListDataView extends Component<
 			content = <PurchasesSite isPlaceholder />;
 		}
 
-		const onChangeView = () => {
-			alert( 'You clicked something!!' );
-		};
-
-		const getItemId = ( item: Purchases.Purchase ) => {
-			return item.id.toString();
-		};
-
 		if ( purchases && purchases.length ) {
-			content = (
-				<Card id="purchases-list" className="section-content" tagName="section">
-					<DataViews
-						data={ purchases }
-						fields={ purchasesDataFields }
-						view={ purchasesDataView }
-						onChangeView={ onChangeView }
-						defaultLayouts={ { table: {} } }
-						actions={ undefined }
-						getItemId={ getItemId }
-						paginationInfo={ { totalItems: 100, totalPages: 10 } }
-					/>
-				</Card>
-			);
+			content = <PurchasesDataViews purchases={ purchases } translate={ translate } />;
 		}
 
 		if ( purchases && ! purchases.length && ! subscriptions.length ) {
