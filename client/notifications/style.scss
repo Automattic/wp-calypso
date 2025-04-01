@@ -168,9 +168,11 @@ body.is-section-reader div.layout.is-global-sidebar-visible .layout__primary div
 	display: flex;
 	flex-flow: column wrap;
 	justify-content: space-between;
+	gap: 10px;
 
 	@media (min-width: 1207px) {
 		flex-flow: row wrap;
+		gap: 0;
 	}
 
 	.reader-notifications__page-notice {
@@ -243,7 +245,16 @@ body.is-section-reader div.layout.is-global-sidebar-visible .layout__primary div
 					display: inline;
 				}
 
+				@media only screen and (min-width: 1114px) {
+					z-index: 100;
+					animation-name: wpnc_fadeIn;
+					animation-duration: 0.2s;
+					animation-timing-function: ease-in;
+					right: inherit;
+				}
+
 				@media only screen and (min-width: 1207px) {
+					border-right: 1px solid var(--color-neutral-5);
 					width: 400px;
 					animation-name: dedicated_wpnc__slideIn;
 					position: fixed;
@@ -258,24 +269,6 @@ body.is-section-reader div.layout.is-global-sidebar-visible .layout__primary div
 		}
 	}
 
-	@media only screen and (min-width: 1114px) {
-		#wpnc-panel.wpnc__main {
-			background-color: unset;
-
-			.wpnc__note-list:not(.is-note-open) {
-				box-shadow: 3px 1px 10px -2px rgba(var(--color-neutral-70-rgb), 0.075);
-			}
-
-			.wpnc__single-view {
-				border-right: 1px solid var(--color-neutral-5);
-				right: inherit;
-				z-index: 100;
-				animation-name: wpnc_fadeIn;
-				animation-duration: 0.2s;
-				animation-timing-function: ease-in;
-			}
-		}
-	}
 	@keyframes dedicated_wpnc__slideIn {
 		from {
 			transform: translateX(0%);
