@@ -100,7 +100,10 @@ class MagicLogin extends Component {
 		showCheckYourEmail: PropTypes.bool.isRequired,
 		isSendingEmail: PropTypes.bool.isRequired,
 		emailRequested: PropTypes.bool.isRequired,
-		localeSuggestions: PropTypes.array,
+		localeSuggestions: PropTypes.shape( {
+			locales: PropTypes.array,
+			availability_text: PropTypes.string,
+		} ),
 		isValidatingCode: PropTypes.bool,
 		isCodeValidated: PropTypes.bool,
 		codeValidationError: PropTypes.object,
@@ -182,8 +185,8 @@ class MagicLogin extends Component {
 				this.startResendEmailCountdown();
 			}
 
-			if ( ! prevProps.localeSuggestions && localeSuggestions ) {
-				const userLocale = localeSuggestions.find(
+			if ( ! prevProps.localeSuggestions?.locales && localeSuggestions?.locales ) {
+				const userLocale = localeSuggestions.locales.find(
 					( { locale } ) => locale === navigator.language.toLowerCase()
 				);
 
