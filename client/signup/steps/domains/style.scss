@@ -638,6 +638,16 @@ body.is-section-signup {
 	}
 }
 
+// more classes are used here in order
+// to override parent styles - either that
+// or !important statements.
+.onboarding.domains .step-container-v2 {
+	&__content-wrapper.padding {
+		padding: 0 12px;
+		max-width: unset;
+	}
+}
+
 .domains__step-content-domain-step > div {
 	&:nth-child(1) {
 		flex: 1 !important;
