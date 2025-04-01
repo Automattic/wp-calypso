@@ -682,10 +682,21 @@ class PurchaseItem extends Component<
 		if ( this.props.isPlaceholder ) {
 			return null;
 		}
-		const { purchase, isBackupMethodAvailable } = this.props;
+		const { purchase, site, showSite, isDisconnectedSite, iconUrl, isBackupMethodAvailable } =
+			this.props;
 
 		return (
 			<div className="purchase-item__wrapper purchases-layout__wrapper">
+				{ showSite && (
+					<div className="purchase-item__site purchases-layout__site">
+						<PurchaseItemSiteIcon
+							site={ site }
+							isDisconnectedSite={ isDisconnectedSite }
+							purchase={ purchase }
+							iconUrl={ iconUrl }
+						/>
+					</div>
+				) }
 				<div className="purchase-item__information purchases-layout__information">
 					<div className="purchase-item__title">
 						{ getDisplayName( purchase ) }
