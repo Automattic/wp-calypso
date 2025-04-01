@@ -77,8 +77,8 @@ export const UnwrappedUpgradePlan: React.FunctionComponent< UpgradePlanProps > =
 	const introOfferAvailable =
 		isEnabled( 'migration-flow/introductory-offer' ) &&
 		pricing[ visiblePlan ]?.introOffer &&
-		pricing[ visiblePlan ]?.introOffer.rawPrice &&
-		! pricing[ visiblePlan ]?.introOffer.isOfferComplete &&
+		pricing[ visiblePlan ]?.introOffer?.rawPrice &&
+		! pricing[ visiblePlan ]?.introOffer?.isOfferComplete &&
 		pricing[ visiblePlan ]?.originalPrice &&
 		pricing[ visiblePlan ]?.originalPrice.monthly &&
 		pricing[ visiblePlan ]?.originalPrice.full &&

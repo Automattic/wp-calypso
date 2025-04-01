@@ -31,11 +31,11 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"cookie": "^0.7.0",
+		"cookie": "^0.7.2",
 		"tslib": "^2.3.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^5.3.3"
+		"typescript": "^5.8.2"
 	}
 }

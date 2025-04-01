@@ -1,3 +1,5 @@
+@import "@automattic/typography/styles/variables";
+
 .plans-grid-next-header-price {
 	padding: 0 20px;
 	margin: 0 0 4px 0;
@@ -76,9 +78,9 @@
 }
 
 .plans-grid-next-header-price__badge {
-	background-color: var(--studio-green-0);
+	background-color: var(--studio-green-5);
 	border-radius: 4px;
-	color: var(--studio-green-40);
+	color: var(--studio-green-80);
 	display: inline-block;
 	font-size: 0.75rem;
 	font-weight: 500;

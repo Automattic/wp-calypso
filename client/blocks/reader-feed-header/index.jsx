@@ -15,7 +15,7 @@ import {
 	getSiteName,
 	getSiteUrl,
 } from 'calypso/reader/get-helpers';
-import HeaderBack from 'calypso/reader/header-back';
+import { getSafeImageUrlForReader } from 'calypso/reader/utils';
 import ReaderFeedHeaderSiteBadge from './badge';
 import ReaderFeedHeaderFollow from './follow';
 import './style.scss';
@@ -24,7 +24,6 @@ class FeedHeader extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		feed: PropTypes.object,
-		showBack: PropTypes.bool,
 		streamKey: PropTypes.string,
 		isWPForTeamsItem: PropTypes.bool,
 		hasOrganization: PropTypes.bool,
@@ -35,7 +34,7 @@ class FeedHeader extends Component {
 	};
 
 	render() {
-		const { site, feed, showBack, streamKey, translate, width } = this.props;
+		const { site, feed, streamKey, translate, width } = this.props;
 		const followerCount = getFollowerCount( feed, site );
 		const description = getSiteDescription( { site, feed } );
 		const siteTitle = getSiteName( { feed, site } );
@@ -46,7 +45,6 @@ class FeedHeader extends Component {
 
 		const classes = clsx( 'reader-feed-header', {
 			'is-placeholder': ! site && ! feed,
-			'has-back-button': showBack,
 			'is-wide-display': wideDisplay,
 		} );
 
@@ -59,7 +57,7 @@ class FeedHeader extends Component {
 		let fakeSite;
 
 		const safeSiteIcon = safeImageUrl( siteIcon );
-		const safeFeedIcon = safeImageUrl( feedIcon );
+		const safeFeedIcon = getSafeImageUrlForReader( feedIcon );
 
 		if ( safeSiteIcon ) {
 			fakeSite = {
@@ -84,7 +82,6 @@ class FeedHeader extends Component {
 		return (
 			<div className={ classes }>
 				<QueryUserSettings />
-				{ showBack && <HeaderBack /> }
 				<Card className="reader-feed-header__site">
 					{ ! narrowDisplay && siteIconElement }
 					<div className="reader-feed-header__details">

@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { addQueryArgs } from 'calypso/lib/url';
 import withDimensions from 'calypso/lib/with-dimensions';
+import ReaderBackButton from 'calypso/reader/components/back-button';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import DiscoverAddNew from 'calypso/reader/discover/components/add-new';
 import DiscoverNavigation from 'calypso/reader/discover/components/navigation';
@@ -101,6 +102,7 @@ const DiscoverStream = ( props ) => {
 		...props,
 		streamKey,
 		useCompactCards: true,
+		showBack: false, // We will instead add this through the header section, since not all discover tabs have a stream to render the back button.
 		sidebarTabTitle: isDefaultTab ? translate( 'Sites' ) : translate( 'Related' ),
 		selectedStreamName: selectedTab,
 	};
@@ -108,6 +110,7 @@ const DiscoverStream = ( props ) => {
 	const HeaderAndNavigation = () => {
 		return (
 			<>
+				<ReaderBackButton />
 				<DiscoverHeader selectedTab={ effectiveTabSelection } width={ props.width } />
 				<DiscoverNavigation selectedTab={ selectedTab } />
 

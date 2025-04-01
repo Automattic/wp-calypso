@@ -81,9 +81,8 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 		promises.push(
 			wpcomRequest< { updated: object } >( {
 				path: `/sites/${ siteId }/onboarding-customization`,
-				method: 'POST',
 				apiNamespace: 'wpcom/v2',
-				apiVersion: '2',
+				method: 'POST',
 				formData,
 			} ).then( () => {
 				recordTracksEvent( 'calypso_signup_site_options_submit', {

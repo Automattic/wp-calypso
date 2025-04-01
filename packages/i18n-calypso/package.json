@@ -25,25 +25,25 @@
 	},
 	"dependencies": {
 		"@automattic/interpolate-components": "workspace:^",
-		"@babel/runtime": "^7.26.0",
+		"@babel/runtime": "^7.26.10",
 		"@tannin/sprintf": "^1.1.0",
-		"@wordpress/compose": "^7.19.0",
-		"debug": "^4.3.3",
-		"events": "^3.0.0",
-		"hash.js": "^1.1.5",
+		"@wordpress/compose": "^7.20.0",
+		"debug": "^4.4.0",
+		"events": "^3.3.0",
+		"hash.js": "^1.1.7",
 		"lru": "^3.1.0",
 		"tannin": "^1.1.1",
-		"use-subscription": "1.6.0"
+		"use-subscription": "1.10.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@types/jest": "^29.5.14",
-		"@types/react": "^18.2.6",
+		"@types/react": "^18.3.18",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"react-test-renderer": "^18.3.1",
-		"typescript": "^5.3.3"
+		"typescript": "^5.8.2"
 	},
 	"peerDependencies": {
 		"react": "^18.3.1"

@@ -41,7 +41,7 @@ function getLocation( path ) {
 	if ( path === undefined || path === '' ) {
 		return 'unknown';
 	}
-	if ( path === '/reader' ) {
+	if ( path === '/reader' || path.indexOf( '/reader/recent/' ) === 0 ) {
 		return 'following';
 	}
 	if ( path.indexOf( '/reader/a8c' ) === 0 ) {

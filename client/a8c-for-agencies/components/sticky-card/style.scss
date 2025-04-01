@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .sticky-card {
 	--margin-spacing: 40px;
@@ -87,8 +88,7 @@
 }
 
 .sticky-card__heading-title {
-	font-size: rem(14px);
-	font-weight: 500;
+	@include heading-medium;
 }
 
 .sticky-card__dismiss-button {

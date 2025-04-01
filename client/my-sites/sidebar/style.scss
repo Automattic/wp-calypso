@@ -12,29 +12,6 @@ $brand-text: "SF Pro Text", $sans;
 	--sidebar-width-max: 272px;
 	--sidebar-width-min: 272px;
 
-	--color-sidebar-background: #23282d;
-	--color-sidebar-background-rgb: 35, 40, 45;
-	--color-sidebar-menu-hover-background: #1a1e23;
-	--color-sidebar-menu-hover-background-rgb: rgb(var(--color-sidebar-menu-hover-background));
-	--color-sidebar-menu-hover-text: #00b9eb;
-	--color-sidebar-menu-selected-background: #0073aa;
-	--color-sidebar-menu-selected-text: var(--color-text-inverted);
-	--color-sidebar-border: #333;
-	--color-sidebar-text: #eee;
-	--color-sidebar-text-rgb: 238, 238, 238;
-	--color-sidebar-text-alternative: #a2aab2;
-	--color-sidebar-gridicon-fill: #a2aab2;
-	--color-sidebar-gridicon-hover-fill: #00b9eb;
-	--color-sidebar-gridicon-selected-fill: #00b9eb;
-	--color-sidebar-notice-background: #3c434a;
-
-	--color-sidebar-submenu-background: #32373c;
-	--color-sidebar-submenu-text: #b4b9be;
-	--color-sidebar-submenu-hover-background: transparent;
-	--color-sidebar-submenu-hover-text: #00b9eb;
-	--color-sidebar-submenu-selected-background: transparent;
-	--color-sidebar-submenu-selected-text: var(--color-text-inverted);
-
 	.is-global-sidebar-visible {
 		--sidebar-width-max: 295px;
 		--sidebar-width-min: 295px;
@@ -43,7 +20,7 @@ $brand-text: "SF Pro Text", $sans;
 		// Resetting these colors to prevent bleeding from dashboard color schemes
 		--color-sidebar-text: var(--studio-gray-80);
 		--color-sidebar-text-alternative: var(--studio-gray-40);
-		--color-sidebar-text-alternative-selected: rgba(var(--studio-white-rgb), 0.7);
+		--color-sidebar-text-alternative-selected: color-mix(in srgb, var(--studio-white) 70%, transparent);
 		--color-sidebar-menu-selected-background: #e3e8fc;
 		--color-sidebar-menu-selected-text: var(--color-accent);
 		--color-sidebar-menu-hover-text: var(--studio-gray-80);
@@ -67,6 +44,9 @@ $brand-text: "SF Pro Text", $sans;
 		--color-masterbar-submenu-hover-text: var(--color-accent);
 		--color-global-masterbar-submenu-background: var(--studio-white);
 		--color-global-masterbar-submenu-hover-background: var(--studio-white);
+		--color-global-masterbar-site-info-background: #{$gray-100};
+		--color-global-masterbar-site-info-badge-background: #{$gray-300};
+		--color-global-masterbar-site-info-badge-color: #{$gray-900};
 		--content-padding-top: 16px;
 		--content-padding-bottom: 16px;
 
@@ -256,7 +236,11 @@ $font-size: rem(14px);
 			box-sizing: border-box;
 		}
 
-		.sidebar__expandable-arrow,
+		.sidebar__expandable-arrow {
+			height: initial;
+			width: initial;
+		}
+
 		.gridicons-external {
 			width: 20px;
 			height: 20px;
@@ -412,10 +396,6 @@ $font-size: rem(14px);
 			}
 		}
 
-		.sidebar__menu.is-togglable .sidebar__expandable-arrow {
-			margin-right: 10px;
-		}
-
 		.notice {
 			/* stylelint-disable-next-line scales/font-weights */
 			font-weight: 300;
@@ -475,7 +455,7 @@ $font-size: rem(14px);
 			padding: 12px 10px;
 			margin: 0 12px;
 			border-radius: 4px;
-			max-height: 44px;
+			max-height: 40px;
 		}
 
 		.sidebar__expandable-content .sidebar__menu-link {
@@ -519,9 +499,7 @@ $font-size: rem(14px);
 		}
 
 		.sidebar__menu.is-togglable .sidebar__heading {
-			padding: 12px 10px;
-			margin: 0 12px;
-			border-radius: 4px;
+			box-sizing: border-box;
 
 			&:hover {
 				.sidebar__expandable-arrow {
@@ -842,7 +820,6 @@ $font-size: rem(14px);
 				content: "\f534";
 				/* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
 				font-family: dashicons;
-				/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
 				font-size: 20px;
 				line-height: 20px;
 				background-color: #a7aaad;
@@ -948,6 +925,10 @@ $font-size: rem(14px);
 	// Reader specific styles
 	// client/reader/sidebar/style.scss
 	&.is-section-reader {
+		.sidebar__menu .components-button.has-icon {
+			padding: 0 0 0 6px;
+		}
+
 		.sidebar__menu .count {
 			background: transparent;
 			color: var(--color-sidebar-menu-text);

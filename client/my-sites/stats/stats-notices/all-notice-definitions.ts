@@ -81,13 +81,14 @@ const ALL_STATS_NOTICES: StatsNoticeType[] = [
 			isSiteJetpackNotAtomic,
 			isCommercial,
 			hasSignificantViews,
+			hasWpcomUpsell,
 		}: StatsNoticeProps ) => {
+			// Disable this notice if the full-size upsell is visible.
 			const showUpgradeNoticeForWpcomSites =
-				isWpcom && ! isP2 && ! isOwnedByTeam51 && hasSignificantViews;
+				isWpcom && ! hasWpcomUpsell && ! isP2 && ! isOwnedByTeam51 && hasSignificantViews;
 
 			// Show the notice if the site is Jetpack or it is Odyssey Stats.
 			const showUpgradeNoticeOnOdyssey = isOdysseyStats;
-
 			const showUpgradeNoticeForJetpackNotAtomic = isSiteJetpackNotAtomic;
 
 			return !! (

@@ -15,7 +15,7 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
+import { CLICKS_SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
 import StatsModule from '../../../stats-module';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
@@ -33,7 +33,9 @@ const StatsClicks: React.FC< StatsDefaultModuleProps > = ( {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsClicks';
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const supportUrl = isOdysseyStats ? JETPACK_SUPPORT_URL_TRAFFIC : SUPPORT_URL;
+	const supportUrl = isOdysseyStats
+		? `${ JETPACK_SUPPORT_URL_TRAFFIC }#clicks`
+		: CLICKS_SUPPORT_URL;
 
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsModule = useShouldGateStats( statType );
@@ -73,7 +75,7 @@ const StatsClicks: React.FC< StatsDefaultModuleProps > = ( {
 											<a
 												target="_blank"
 												rel="noreferrer"
-												href={ localizeUrl( `${ supportUrl }#clicks` ) }
+												href={ localizeUrl( `${ supportUrl }` ) }
 											/>
 										),
 									},
@@ -111,7 +113,7 @@ const StatsClicks: React.FC< StatsDefaultModuleProps > = ( {
 											<a
 												target="_blank"
 												rel="noreferrer"
-												href={ localizeUrl( `${ supportUrl }#clicks` ) }
+												href={ localizeUrl( `${ supportUrl }` ) }
 											/>
 										),
 									},

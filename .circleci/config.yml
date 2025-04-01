@@ -173,10 +173,36 @@ jobs:
     environment:
       CONFIG_ENV: release
       PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
+      # If, for testing purposes, you want to generate all artifacts in the CI of a PR, uncomment the following line,
+      # and push a commit to your branch. Make sure to remove the commit before merging to trunk!
+      #PR_DEBUG_RELEASE: 'true'
     steps:
       - checkout
       - attach_workspace:
           at: /Users/distiller/wp-calypso
+      - run:
+          name: Set environment variables
+          command: |
+            if [[ "$PR_DEBUG_RELEASE" == "true" ]]; then
+              echo "export RELEASE_BUILD=true" >> "$BASH_ENV"
+              echo "export CSC_FOR_PULL_REQUEST=true" >> "$BASH_ENV"
+              source "$BASH_ENV"
+            fi
+
+            if [[ $CIRCLE_TAG == desktop-v* ]]; then
+              echo "export RELEASE_BUILD=true" >> "$BASH_ENV"
+              source "$BASH_ENV"
+            fi
+
+            # If this is not a release build, only build the executable required for end-to-end testing.
+            if [[ "$RELEASE_BUILD" != "true" ]]; then
+              echo "export ELECTRON_BUILDER_ARGS='-c.mac.target=dir'" >> "$BASH_ENV"
+              source "$BASH_ENV"
+            fi
+
+            echo RELEASE_BUILD=$RELEASE_BUILD
+            echo CSC_FOR_PULL_REQUEST=$CSC_FOR_PULL_REQUEST
+            echo ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS
       - run: *update-node
       - restore_cache: *restore-yarn-cache
       - run: *yarn-install
@@ -194,14 +220,8 @@ jobs:
             pushd desktop
 
             rbenv global $(cat .ruby-version) && rbenv rehash
-
             bundle install
-
             bundle exec fastlane configure_code_signing
-
-            # Build all artifacts only when project config changes.
-            # Otherwise only build application executable required for end-to-end testing.
-            ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|yarn.lock' && ELECTRON_BUILDER_ARGS='-c.mac.target=dir'
 
             ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run ci:build-mac
       - run:
@@ -210,7 +230,6 @@ jobs:
             source $HOME/.nvm/nvm.sh
             nvm use
             npm install -g yarn
-
             cd desktop && yarn run test:e2e
       - run:
           when: always
@@ -254,10 +273,36 @@ jobs:
     environment:
       CONFIG_ENV: release
       PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
+      # If, for testing purposes, you want to generate all artifacts in the CI of a PR, uncomment the following line,
+      # and push a commit to your branch. Make sure to remove the commit before merging to trunk!
+      #PR_DEBUG_RELEASE: 'true'
     steps:
       - checkout
       - attach_workspace:
           at: ~/wp-calypso
+      - run:
+          name: Set environment variables
+          command: |
+            if [[ "$PR_DEBUG_RELEASE" == "true" ]]; then
+              echo "export RELEASE_BUILD=true" >> "$BASH_ENV"
+              echo "export CSC_FOR_PULL_REQUEST=true" >> "$BASH_ENV"
+              source "$BASH_ENV"
+            fi
+
+            if [[ $CIRCLE_TAG == desktop-v* ]]; then
+              echo "export RELEASE_BUILD=true" >> "$BASH_ENV"
+              source "$BASH_ENV"
+            fi
+
+            # If this is not a release build, only build the executable required for end-to-end testing.
+            if [[ "$RELEASE_BUILD" != "true" ]]; then
+              echo "export ELECTRON_BUILDER_ARGS='-c.linux.target=dir'" >> "$BASH_ENV"
+              source "$BASH_ENV"
+            fi
+
+            echo RELEASE_BUILD=$RELEASE_BUILD
+            echo CSC_FOR_PULL_REQUEST=$CSC_FOR_PULL_REQUEST
+            echo ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS
       - run:
           name: Install Linux deps
           command: |
@@ -277,11 +322,6 @@ jobs:
             USE_HARD_LINKS: 'false'
           command: |
             set +e
-
-            # Build all artifacts only when project config changes.
-            # Otherwise only build application executable required for end-to-end testing.
-            ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|desktop/yarn.lock' && ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
-
             cd desktop
             ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run build
       - run:
@@ -323,6 +363,9 @@ jobs:
     environment:
       CONFIG_ENV: release
       PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
+      # If, for testing purposes, you want to generate all artifacts in the CI of a PR, uncomment the following line,
+      # and push a commit to your branch. Make sure to remove the commit before merging to trunk!
+      #PR_DEBUG_RELEASE: 'true'
     steps:
       - checkout
       - attach_workspace:
@@ -353,7 +396,7 @@ jobs:
           name: Install Desktop Dependencies
           command: yarn
       - when:
-          # Remove the condition on pipeline.git.tag on both steps to force a full artifact build for Windows.
+          # Set the condition to true on both steps to force a full artifact build for Windows.
           condition: << pipeline.git.tag >>
           steps:
             - run:
@@ -389,15 +432,23 @@ jobs:
       - run:
           name: Build NSIS
           command: |
+            If ( $env:CIRCLE_TAG -or $env:PR_DEBUG_RELEASE ) { $env:RELEASE_BUILD='true' }
+
+            # If this is not a release build, only build the executable required for end-to-end testing.
+            If ( -Not $env:RELEASE_BUILD ) {
+              $env:ARG2='-c.win.target=dir'
+            }
+
             # Use make (not yarn/npm directly) for bash-like environment variable substitution
             make -f desktop/Makefile build-main
 
             # Codesign release (tagged) builds only
             If ( $env:CIRCLE_TAG ) { $env:ARG1='-c.win.certificateSubjectName="Automattic"' }
 
-            # Build all artifacts only when project config changes.
-            # Otherwise only build application executable required for end-to-end testing.
-            If ( -Not $(git diff --name-only origin/trunk...HEAD | Select-String -Pattern desktop/package.json,desktop/yarn.lock) ) { $env:ARG2='-c.win.target=dir' }
+            echo "RELEASE_BUILD=$env:RELEASE_BUILD"
+            echo "ARG1=$env:ARG1"
+            echo "ARG2=$env:ARG2"
+
             make -f desktop/Makefile package ELECTRON_BUILDER_ARGS=$($env:ARG1,$env:ARG2 -join " ")
       - run:
           name: Archive Unpacked Directories

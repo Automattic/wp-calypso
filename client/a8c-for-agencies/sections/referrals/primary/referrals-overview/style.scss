@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 $data-view-border-color: #f1f1f1;
 
@@ -11,28 +12,27 @@ $data-view-border-color: #f1f1f1;
 .referrals-overview__button-popover {
 	.a4a-popover__content {
 		.a4a-popover__title {
-			@include a4a-font-heading-md;
+			@include heading-medium;
 			color: var(--studio-gray-80);
 		}
 
 		.referrals-overview__button-popover-description {
-			@include a4a-font-body-md;
+			@include body-small;
 		}
 	}
 }
 
 .referrals-overview__section-heading {
 	margin-block-start: 24px;
-	font-size: rem(24px);
+	@include heading-x-large;
 	margin-block-end: 8px;
-	font-weight: 600;
 }
+
 .referrals-overview__section-subtitle {
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
-	font-size: rem(14px);
-	font-weight: 400;
+	@include body-medium;
 	margin-block-end: 48px;
 	color: var(--color-neutral-50);
 }
@@ -199,17 +199,6 @@ $data-view-border-color: #f1f1f1;
 .hosting-dashboard-layout__header-actions {
 	a.button {
 		text-wrap: pretty;
-	}
-}
-
-.referrals-overview__link {
-	color: var(--color-accent-100);
-	text-decoration: underline;
-
-	&:hover,
-	&:visited,
-	&:focus {
-		color: var(--color-accent-100);
 	}
 }
 

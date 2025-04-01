@@ -114,7 +114,7 @@ export const GeneratorModal: React.FC< GeneratorModalProps > = ( {
 				currentLimit - currentUsage < logoCost + promptCreationCost;
 
 			// If the site requires an upgrade, set the upgrade URL and show the upgrade screen immediately.
-			setNeedsFeature( ! feature?.hasFeature ?? true );
+			setNeedsFeature( ! feature?.hasFeature );
 			setNeedsMoreRequests( needsMoreRequests );
 
 			if ( ! feature?.hasFeature || needsMoreRequests ) {

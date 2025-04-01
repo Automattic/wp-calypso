@@ -175,4 +175,17 @@ describe( 'usePrefillCheckoutContactForm', () => {
 		await expect( screen.findByText( 'Form Country: US' ) ).toNeverAppear();
 		await expect( screen.findByText( 'Form Postal: 10001' ) ).toNeverAppear();
 	} );
+
+	it( 'returns true if there is an error with the query', async () => {
+		mockGetSupportedCountriesEndpoint( countryList );
+		mockCachedContactDetailsEndpoint( {}, 500 ); // Simulating API failure
+
+		const reduxStore = createTestReduxStore();
+		const queryClient = new QueryClient();
+		render( <MyTestWrapper reduxStore={ reduxStore } queryClient={ queryClient } /> );
+
+		await waitFor( () => {
+			expect( screen.queryByTestId( 'contact-form--visible' ) ).toBeInTheDocument();
+		} );
+	} );
 } );

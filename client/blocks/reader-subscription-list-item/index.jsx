@@ -2,12 +2,10 @@ import { ExternalLink } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose, isEmpty, get } from 'lodash';
-import { useState } from 'react';
 import { connect } from 'react-redux';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
 import ReaderSubscriptionListItemPlaceholder from 'calypso/blocks/reader-subscription-list-item/placeholder';
-import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import FollowButton from 'calypso/reader/follow-button';
 import {
@@ -44,7 +42,6 @@ function ReaderSubscriptionListItem( {
 	railcar,
 	isLoggedIn,
 	registerLastActionRequiresLogin: registerLastActionRequiresLoginProp,
-	disableSuggestedFollows,
 	onItemClick,
 	isSelected,
 	onFollowToggle,
@@ -61,19 +58,10 @@ function ReaderSubscriptionListItem( {
 	const siteUrl = getSiteUrl( { feed, site } );
 	const isMultiAuthor = get( site, 'is_multi_author', false );
 	const preferGravatar = ! isMultiAuthor;
-	const [ isSuggestedFollowsModalOpen, setIsSuggestedFollowsModalOpen ] = useState( false );
 
 	if ( ! site && ! feed ) {
 		return <ReaderSubscriptionListItemPlaceholder />;
 	}
-
-	const openSuggestedFollowsModal = ( followClicked ) => {
-		setIsSuggestedFollowsModalOpen( followClicked );
-	};
-
-	const onCloseSuggestedFollowModal = () => {
-		setIsSuggestedFollowsModalOpen( false );
-	};
 
 	function recordEvent( name ) {
 		const props = {
@@ -232,19 +220,12 @@ function ReaderSubscriptionListItem( {
 					feedId={ feedId }
 					siteId={ siteId }
 					railcar={ railcar }
-					onFollowToggle={ disableSuggestedFollows ? onFollowToggle : openSuggestedFollowsModal }
+					onFollowToggle={ onFollowToggle }
 				/>
 				{ isFollowing && showNotificationSettings && (
 					<ReaderSiteNotificationSettings siteId={ siteId } />
 				) }
 			</div>
-			{ siteId && ! disableSuggestedFollows && (
-				<ReaderSuggestedFollowsDialog
-					onClose={ onCloseSuggestedFollowModal }
-					siteId={ +siteId }
-					isVisible={ isSuggestedFollowsModalOpen }
-				/>
-			) }
 		</div>
 	);
 }

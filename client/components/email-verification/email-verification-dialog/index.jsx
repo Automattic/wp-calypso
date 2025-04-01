@@ -1,4 +1,5 @@
-import { Dialog, Button, Spinner } from '@automattic/components';
+import { Button, Spinner } from '@automattic/components';
+import { Modal } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { get, includes } from 'lodash';
 import PropTypes from 'prop-types';
@@ -6,10 +7,11 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { emailFormEventEmitter } from 'calypso/me/account/account-email-field';
 import {
-	verifyEmail,
 	resetVerifyEmailState,
+	verifyEmail,
 } from 'calypso/state/current-user/email-verification/actions';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import { successNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
@@ -61,6 +63,16 @@ class VerifyEmailDialog extends Component {
 				this.setState( { resendPendingStatus: 'requesting' } );
 				await this.props.saveUnsavedUserSettings( [ 'user_email' ] );
 				this.setState( { resendPendingStatus: 'sent' } );
+				const emailSentMessage = this.props.translate(
+					'We sent an email to %(email)s. Please check your inbox to verify your email.',
+					{
+						args: {
+							email: this.props.userSettings?.new_user_email,
+						},
+					}
+				);
+				this.props.successNotice( emailSentMessage );
+				this.props.onClose();
 			} catch ( error ) {
 				this.setState( { resendPendingStatus: 'error' } );
 			}
@@ -80,7 +92,7 @@ class VerifyEmailDialog extends Component {
 		};
 
 		return [
-			<Button key="close" onClick={ onClickClose }>
+			<Button key="close" onClick={ onClickClose } borderless plain compact>
 				{ closeLabel || translate( 'Cancel' ) }
 			</Button>,
 			<Button
@@ -117,14 +129,14 @@ class VerifyEmailDialog extends Component {
 	}
 
 	render() {
-		const { isPendingEmailChange: isEmailPendingChange, email } = this.props;
+		const { isPendingEmailChange: isEmailPendingChange, email, translate } = this.props;
 		const { new_user_email } = this.props.userSettings || {};
 
 		const strings = {
-			confirmHeading: this.props.translate( 'Verify your email' ),
+			confirmHeading: translate( 'Verify your email' ),
 
-			confirmExplanation: this.props.translate(
-				"Check your inbox at {{wrapper}}%(email)s{{/wrapper}} for the confirmation email, or click 'Resend Email' to get a new one.",
+			confirmExplanation: translate(
+				'Secure your account and access more features. Check your inbox at {{wrapper}}%(email)s{{/wrapper}} for the confirmation email, or click "Resend Email" to get a new one.',
 				{
 					components: {
 						wrapper: (
@@ -137,12 +149,8 @@ class VerifyEmailDialog extends Component {
 				}
 			),
 
-			confirmReasoning: this.props.translate(
-				'Verify your email to secure your account and access more features.'
-			),
-
-			confirmEmail: this.props.translate(
-				"Can't access that email? {{emailPreferences}}Click here to update it{{/emailPreferences}}.",
+			confirmEmail: translate(
+				"Can't access that email? {{emailPreferences}}Update it{{/emailPreferences}}.",
 				{
 					components: {
 						emailPreferences: this.getEmailPreferencesComponent(),
@@ -152,26 +160,25 @@ class VerifyEmailDialog extends Component {
 		};
 
 		return (
-			<Dialog
-				additionalClassNames="email-verification-dialog__confirmation-dialog is-narrow"
-				buttons={ this.getDialogButtons() }
+			<Modal
+				className="email-verification-dialog__confirmation-dialog is-narrow"
+				role="dialog"
 				isVisible
 				label="Email Verification Dialog"
-				onClose={ this.handleClose }
+				aria-labelledby="Email Verification Dialog"
+				onRequestClose={ this.props.onClose }
+				title={ strings.confirmHeading }
 			>
-				<h1 className="email-verification-dialog__confirmation-dialog-heading is-variable-height">
-					{ strings.confirmHeading }
-				</h1>
-				<p className="email-verification-dialog__confirmation-dialog-explanation">
-					{ strings.confirmReasoning }
-				</p>
 				<p className="email-verification-dialog__confirmation-dialog-explanation">
 					{ strings.confirmExplanation }
 				</p>
 				<p className="email-verification-dialog__confirmation-dialog-email">
 					{ strings.confirmEmail }
 				</p>
-			</Dialog>
+				<div className="email-verification-dialog__buttons-container">
+					{ this.getDialogButtons() }
+				</div>
+			</Modal>
 		);
 	}
 }
@@ -201,5 +208,6 @@ export default connect(
 		resetVerifyEmailState,
 		setUserSetting,
 		saveUnsavedUserSettings,
+		successNotice,
 	}
 )( localize( VerifyEmailDialog ) );

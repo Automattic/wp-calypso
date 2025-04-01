@@ -22,10 +22,27 @@ $locations-horizontal-bar-width: 380px;
 		.segmented-control.stats-module-locations__tabs .segmented-control__item {
 			flex: 1 1 0;
 		}
+
+		&.stats-card-header--split .stats-card-header--main__left {
+			.stats-download-csv {
+				display: none;
+			}
+		}
+	}
+
+	.stats-module-locations__actions {
+		display: block;
+		margin: 12px 24px 0;
+
+		.stats-download-csv {
+			color: var(--color-link);
+			gap: 4px;
+			margin-left: auto;
+			display: none;
+		}
 	}
 
 	.stats-module-locations__country-filter {
-		margin: 12px 24px 0;
 		width: fit-content;
 		display: flex;
 	}
@@ -74,6 +91,16 @@ $locations-horizontal-bar-width: 380px;
 	.stats-card-skeleton.locations-skeleton {
 		.stats-card--hero .stats-card-header {
 			padding: 0 24px 12px 0;
+		}
+
+		.stats-card-header.stats-card-header--split .stats-card-header--main__left {
+			display: flex;
+			justify-content: space-between;
+			width: 100%;
+
+			.stats-download-csv {
+				display: inherit;
+			}
 		}
 	}
 
@@ -131,6 +158,16 @@ $locations-horizontal-bar-width: 380px;
 			align-items: center;
 			flex-direction: row;
 		}
+
+		.stats-module-locations__actions {
+			align-items: center;
+			display: flex;
+			justify-content: space-between;
+
+			.stats-download-csv {
+				display: inherit;
+			}
+		}
 	}
 
 	.stats-card.list-locations .stats-card-header,
@@ -138,6 +175,19 @@ $locations-horizontal-bar-width: 380px;
 		.segmented-control.stats-module-locations__tabs {
 			width: calc( $locations-horizontal-bar-width - 24px - 24px);
 			flex: none;
+		}
+	}
+
+	.stats-summary-view {
+		.stats-card.list-locations,
+		.stats-card-skeleton.locations-skeleton {
+			.stats-card-header.stats-card-header--split .stats-card-header--main__left {
+				width: auto;
+
+				.stats-download-csv {
+					display: none;
+				}
+			}
 		}
 	}
 }
@@ -181,7 +231,7 @@ $locations-horizontal-bar-width: 380px;
 			flex-basis: 100%;
 		}
 
-		.stats-module-locations__country-filter {
+		.stats-module-locations__actions {
 			margin: 12px 0 0;
 		}
 	}

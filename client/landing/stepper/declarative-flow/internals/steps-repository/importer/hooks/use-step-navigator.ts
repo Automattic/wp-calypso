@@ -10,7 +10,15 @@ import type { StepNavigator } from 'calypso/blocks/importer/types';
 
 export function useStepNavigator(
 	flow: string | null,
-	navigation: NavigationControls,
+	navigation: NavigationControls<
+		| {
+				type: 'redirect';
+				url: string;
+		  }
+		| {
+				action: 'verify-email';
+		  }
+	>,
 	siteId: number | undefined | null,
 	siteSlug: string | undefined | null,
 	fromSite: string | undefined | null

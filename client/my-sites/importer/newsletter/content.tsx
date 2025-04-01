@@ -120,6 +120,22 @@ export default function Content( {
 					</Button>
 					<hr />
 					<h2>{ __( 'Step 2: Import your content to WordPress.com' ) }</h2>
+					<p>
+						{ createInterpolateElement(
+							__(
+								'Your posts may be added to your homepage by default. If you prefer your posts to load on a separate page, first go to <a>Reading Settings</a>, and change "Your homepage displays" to a static page.'
+							),
+							{
+								a: (
+									<a
+										href={ `${ selectedSite.URL }/wp-admin/options-reading.php` }
+										target="_blank"
+										rel="noreferrer noopener"
+									/>
+								),
+							}
+						) }
+					</p>
 				</>
 			) }
 			{ importerStatus && (

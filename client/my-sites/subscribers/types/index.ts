@@ -28,7 +28,7 @@ export type Subscriber = {
 	user_id: number;
 	subscription_id: number;
 	date_subscribed: string;
-	is_email_subscriber: boolean;
+	subscription_status: string;
 	email_address: string;
 	avatar: string;
 	display_name: string;

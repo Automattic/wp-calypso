@@ -29,7 +29,7 @@ const testAccountName: TestAccountName = 'gutenbergSimpleSiteBlockUpgradeUser';
 const testPostId = 6;
 
 skipDescribeIf( ! isGutenbergSimpleEdgeEnvironment )(
-	`Gutenberg Upgrade: Sanity-Check Most Popular Blocks on Simple edge`,
+	'Gutenberg Upgrade: Sanity-Check Most Popular Blocks on Simple edge',
 	() => {
 		let page: Page;
 		let editorPage: EditorPage;
@@ -47,7 +47,7 @@ skipDescribeIf( ! isGutenbergSimpleEdgeEnvironment )(
 			await page.goto( postURL );
 		} );
 
-		it( `Block warnings are not obeserved for editor after upgrade`, async () => {
+		it( 'Block warnings are not obeserved for editor after upgrade', async () => {
 			editorPage = new EditorPage( page );
 			await editorPage.waitUntilLoaded();
 

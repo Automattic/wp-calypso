@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .pressable-plan-card-content {
 	display: flex;
@@ -16,12 +17,12 @@
 }
 
 .pressable-plan-card-content__price-actual-value{
-	@include a4a-font-heading-lg;
+	@include heading-large;
 	color: var(--color-text);
 }
 
 .pressable-plan-card-content__price-interval {
-	@include a4a-font-body-sm;
+	@include body-small;
 }
 
 // We need to do this specifically to override the white-space.

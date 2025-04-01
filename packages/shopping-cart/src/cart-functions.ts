@@ -210,7 +210,7 @@ export function doesCartLocationDifferFromResponseCartLocation(
 	if ( location.city !== undefined && newCity !== oldCity ) {
 		return true;
 	}
-	if ( location.isForBusiness !== undefined && newIsForBusiness !== oldIsForBusiness ) {
+	if ( newIsForBusiness !== oldIsForBusiness ) {
 		return true;
 	}
 	return false;

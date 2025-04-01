@@ -9,6 +9,7 @@ interface Props extends PropsWithChildren {
 	mainButtonLabelText?: string;
 	isMenuVisible: boolean;
 	toggleMenu: () => void;
+	isPrimary?: boolean;
 }
 
 const AddNewSiteButton: React.FC< Props > = ( {
@@ -16,13 +17,18 @@ const AddNewSiteButton: React.FC< Props > = ( {
 	mainButtonLabelText,
 	isMenuVisible,
 	toggleMenu,
+	isPrimary = true,
 	children,
 } ) => {
 	const translate = useTranslate();
 	const mainButtonLabel = mainButtonLabelText || translate( 'Add sites' );
 
 	return (
-		<Button variant="primary" className="sites-add-new-site__button" onClick={ toggleMenu }>
+		<Button
+			variant={ isPrimary ? 'primary' : 'secondary' }
+			className="sites-add-new-site__button"
+			onClick={ toggleMenu }
+		>
 			<>
 				{ showMainButtonLabel ? mainButtonLabel : null }
 				<Gridicon

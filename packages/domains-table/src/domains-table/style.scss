@@ -456,7 +456,7 @@ main.domains-overview main.domains-overview__list .hosting-dashboard-layout-colu
 	}
 
 	.domains-table__row.is-selected > td {
-		background-color: rgba(var(--wp-admin-theme-color--rgb), 0.04);
+		background-color: color-mix(in srgb, var(--wp-admin-theme-color) 4%, transparent);
 		color: var(--theme-base-color);
 	}
 

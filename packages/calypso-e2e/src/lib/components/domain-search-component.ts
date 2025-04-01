@@ -3,8 +3,8 @@ import { reloadAndRetry } from '../../element-helper';
 import { plansPageUrl } from '../pages';
 
 const selectors = {
-	searchInput: `.search-component__input`,
-	firstResultItem: `.domain-suggestion:first-child .domain-suggestion__content`,
+	searchInput: '.search-component__input',
+	firstResultItem: '.domain-suggestion:first-child .domain-suggestion__content',
 	domainSuggestionRow: '.domain-suggestion',
 };
 

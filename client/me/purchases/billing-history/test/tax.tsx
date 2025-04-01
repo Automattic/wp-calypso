@@ -267,6 +267,6 @@ test( 'tax hidden if not available', async () => {
 			</QueryClientProvider>
 		</ReduxProvider>
 	);
-	expect( await screen.findByText( `$36` ) ).toBeInTheDocument();
+	expect( await screen.findByText( '$36' ) ).toBeInTheDocument();
 	expect( screen.queryByText( `(includes ${ transaction.tax } VAT)` ) ).not.toBeInTheDocument();
 } );

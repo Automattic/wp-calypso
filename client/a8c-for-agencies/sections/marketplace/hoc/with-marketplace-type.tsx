@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { ComponentType, useState } from 'react';
 import { MarketplaceTypeContext } from '../context';
 import { MarketplaceType } from '../types';
@@ -15,14 +14,11 @@ function withMarketplaceType< T >(
 	WrappedComponent: ComponentType< T & ContextProps >
 ): ComponentType< T & ContextProps > {
 	return ( props ) => {
-		const isAutomatedReferrals = isEnabled( 'a4a-automated-referrals' );
-
-		const usedMarketplaceType =
+		const defaultType =
 			props.defaultMarketplaceType ??
 			( sessionStorage.getItem( MARKETPLACE_TYPE_SESSION_STORAGE_KEY ) as MarketplaceType ) ??
 			MARKETPLACE_TYPE_REGULAR;
 
-		const defaultType = isAutomatedReferrals ? usedMarketplaceType : MARKETPLACE_TYPE_REGULAR;
 		const [ marketplaceType, setMarketplaceType ] = useState( defaultType );
 
 		const updateMarketplaceType = ( type: MarketplaceType ) => {
@@ -31,9 +27,6 @@ function withMarketplaceType< T >(
 		};
 
 		const toggleMarketplaceType = () => {
-			if ( ! isAutomatedReferrals ) {
-				return;
-			}
 			const nextType =
 				marketplaceType === MARKETPLACE_TYPE_REGULAR
 					? MARKETPLACE_TYPE_REFERRAL

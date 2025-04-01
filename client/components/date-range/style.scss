@@ -110,9 +110,8 @@ $date-range-mobile-layout-switch: $break-small;
 	justify-content: flex-end;
 	padding: 10px 0 0;
 
-	.button {
+	.components-button {
 		margin-left: 0.5em;
-		margin-right: 0;
 	}
 	margin-top: 10px;
 
@@ -120,9 +119,9 @@ $date-range-mobile-layout-switch: $break-small;
 		flex-direction: column-reverse;
 		align-items: stretch;
 
-		.button {
-			height: 40px;
-			border: 0;
+		.components-button {
+			margin-top: 0.5em;
+			justify-content: center;
 		}
 	}
 }
@@ -260,7 +259,7 @@ $date-range-mobile-layout-switch: $break-small;
 
 
 .date-range__picker {
-	--date-range-picker-highlight-color: rgba(var(--color-primary-light-rgb), 0.4);
+	--date-range-picker-highlight-color: color-mix(in srgb, var(--color-primary-light) 40%, transparent);
 
 	.DayPicker-Day,
 	.DayPicker-Day:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside),
@@ -370,7 +369,7 @@ $date-range-mobile-layout-switch: $break-small;
 }
 
 .date-range-picker-shortcuts__shortcut {
-	border-radius: 4px;
+	border-radius: 2px;
 	min-width: $date-range-shortcut-min-width;
 
 

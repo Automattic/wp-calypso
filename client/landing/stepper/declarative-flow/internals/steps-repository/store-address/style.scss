@@ -2,16 +2,18 @@
 
 .step-container.store-address {
 	.components-combobox-control__input {
-		padding: 7px 14px;
+		padding-inline: 6px;
+		font-size: 1rem;
+		color: var(--color-neutral-70);
 	}
 	.components-combobox-control__suggestions-container {
-		width: unset;
-		border-color: var(--color-neutral-10);
-		.components-flex {
-			padding-bottom: 5px;
-		}
-		.components-combobox-control__reset {
-			margin-top: 5px;
+		border: 1px solid var(--color-neutral-10);
+
+		&:focus,
+		&:focus-within {
+			border-color: var(--color-primary);
+			outline: none;
+			box-shadow: 0 0 0 2px var(--color-primary-10);
 		}
 	}
 	.step-container__header {

@@ -18,7 +18,7 @@ const AddWooPaymentsToSite = () => {
 
 	return (
 		<>
-			<Button variant="primary" onClick={ handleOpenModal }>
+			<Button __next40pxDefaultSize variant="primary" onClick={ handleOpenModal }>
 				{ translate( 'Add WooPayments to site' ) }
 			</Button>
 

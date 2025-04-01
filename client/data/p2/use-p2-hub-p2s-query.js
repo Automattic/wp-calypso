@@ -15,7 +15,7 @@ const useP2HubP2sQuery = ( siteId, fetchOptions = {}, queryOptions = {} ) => {
 		queryFn: () =>
 			wpcom.req.get(
 				{
-					path: `/p2/workspace/sites/all`,
+					path: '/p2/workspace/sites/all',
 					apiNamespace: 'wpcom/v2',
 				},
 				{

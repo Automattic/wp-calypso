@@ -48,6 +48,9 @@
 		background:
 			url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE1IDYuNzUwMDFMOSAxMi43NUwzIDYuNzUwMDFMNC4wNjA1IDUuNjg5NTFMOSAxMC42MjlMMTMuOTM5NSA1LjY4OTUxTDE1IDYuNzUwMDFaIiBmaWxsPSIjQzNDNEM3Ii8+Cjwvc3ZnPgo=)
 			no-repeat right 10px center;
+		background-color: var(--studio-gray-0);
+		border-color: var(--gray-gray-10, #c3c4c7);
+		opacity: 1;
 	}
 
 	// A smaller variant that works well when presented inline with text
@@ -97,7 +100,7 @@
 	}
 
 	&:disabled {
-		color: var(--color-neutral-10);
+		color: var(--studio-gray-20);
 	}
 }
 

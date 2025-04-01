@@ -17,7 +17,7 @@ import './style.scss';
 
 const noticeOptions = {
 	duration: 5000,
-	id: `ssl-status-notification`,
+	id: 'ssl-status-notification',
 };
 
 const DomainSecurityDetails = ( { domain, isDisabled }: SecurityCardProps ) => {

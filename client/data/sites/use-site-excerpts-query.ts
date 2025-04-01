@@ -44,7 +44,8 @@ export const useSiteExcerptsQuery = (
 	sitesFilterFn?: ( site: SiteExcerptData ) => boolean,
 	site_visibility: SiteVisibility = 'all',
 	additional_fields: string[] = [],
-	additional_options: string[] = []
+	additional_options: string[] = [],
+	enabled = true
 ) => {
 	const store = useStore();
 
@@ -71,6 +72,7 @@ export const useSiteExcerptsQuery = (
 			const reduxData = getSites( store.getState() ).filter( notNullish );
 			return reduxData.length ? { sites: reduxData } : undefined;
 		},
+		enabled,
 	} );
 };
 

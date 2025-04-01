@@ -35,16 +35,15 @@
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/typography": "workspace:^",
-		"@wordpress/base-styles": "^5.19.0",
-		"@wordpress/components": "^29.5.0",
-		"@wordpress/compose": "^7.19.0",
-		"@wordpress/icons": "^10.19.0",
-		"@wordpress/react-i18n": "^4.19.0",
+		"@wordpress/base-styles": "^5.20.0",
+		"@wordpress/components": "^29.6.0",
+		"@wordpress/compose": "^7.20.0",
+		"@wordpress/icons": "^10.20.0",
+		"@wordpress/react-i18n": "^4.20.0",
 		"clsx": "^2.1.1",
 		"lodash": "^4.17.21",
 		"tslib": "^2.3.0",
-		"use-debounce": "^3.1.0",
-		"uuid": "^9.0.1"
+		"use-debounce": "^3.1.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
@@ -53,12 +52,12 @@
 		"@testing-library/react": "^16.2.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"typescript": "^5.3.3"
+		"typescript": "^5.8.2"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.19.0",
-		"@wordpress/element": "^6.19.0",
-		"@wordpress/i18n": "^5.19.0",
+		"@wordpress/data": "^10.20.0",
+		"@wordpress/element": "^6.20.0",
+		"@wordpress/i18n": "^5.20.0",
 		"react": "^18.3.1",
 		"redux": "^5.0.1"
 	},

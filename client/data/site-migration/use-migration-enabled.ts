@@ -25,8 +25,8 @@ export const useMigrationEnabledInfoQuery = (
 		],
 		queryFn: () =>
 			wpcom.req.get( {
-				apiNamespace: 'wpcom/v2/',
-				path: `sites/${ targetSiteId }/migration-enabled/${ encodeURIComponent( sourceSite ) }`,
+				path: `/sites/${ targetSiteId }/migration-enabled/${ encodeURIComponent( sourceSite ) }`,
+				apiNamespace: 'wpcom/v2',
 			} ),
 		meta: {
 			persist: false,

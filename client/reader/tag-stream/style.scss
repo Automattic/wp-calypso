@@ -99,12 +99,6 @@
 	}
 }
 
-.is-reader-page .reader-feed-header.has-back-button .card.header-cake {
-	@include breakpoint-deprecated( "<660px" ) {
-		margin: 32px 0;
-	}
-}
-
 .is-reader-page .main .tag-stream__empty-content {
 	margin-top: 15px;
 

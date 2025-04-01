@@ -13,10 +13,7 @@ interface ConnectionInfo {
 
 function queryJetpackConnectionStatus(): Promise< ConnectionInfo > {
 	// The following code only runs on Jetpack self-hosted sites.
-	return wpcom.req.get( {
-		apiNamespace: 'jetpack/v4',
-		path: `/connection`,
-	} );
+	return wpcom.req.get( { path: '/connection', apiNamespace: 'jetpack/v4' } );
 }
 
 export function useJetpackConnectionStatus( siteId: number | null, isSimpleSites = false ) {

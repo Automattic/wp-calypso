@@ -31,26 +31,26 @@ const useContactFormValidation = () => {
 			const newValidationError: ValidationState = {};
 			setIsValidating( true );
 			if ( payload.firstName?.trim() === '' ) {
-				newValidationError.firstName = translate( `First name can't be empty` );
+				newValidationError.firstName = translate( "First name can't be empty" );
 			}
 			if ( payload.lastName?.trim() === '' ) {
-				newValidationError.lastName = translate( `Last name can't be empty` );
+				newValidationError.lastName = translate( "Last name can't be empty" );
 			}
 
 			if ( payload.agencyName?.trim() === '' ) {
-				newValidationError.agencyName = translate( `Agency name can't be empty` );
+				newValidationError.agencyName = translate( "Agency name can't be empty" );
 			}
 
 			if ( payload.email?.trim() === '' || typeof payload.email !== 'string' ) {
-				newValidationError.email = translate( `Email address can't be empty` );
+				newValidationError.email = translate( "Email address can't be empty" );
 			} else if ( ! emailValidator.validate( payload.email ) ) {
-				newValidationError.email = translate( `Please provide correct email address` );
+				newValidationError.email = translate( 'Please provide correct email address' );
 			}
 
 			if ( payload.agencyUrl?.trim() === '' || typeof payload.agencyUrl !== 'string' ) {
-				newValidationError.agencyUrl = translate( `Agency URL can't be empty` );
+				newValidationError.agencyUrl = translate( "Agency URL can't be empty" );
 			} else if ( ! CAPTURE_URL_RGX.test( payload.agencyUrl ) ) {
-				newValidationError.agencyUrl = translate( `Please enter a valid URL` );
+				newValidationError.agencyUrl = translate( 'Please enter a valid URL' );
 			} else if (
 				CAPTURE_SOCIAL_URL_RGX.test( payload.agencyUrl ) ||
 				! ( await isSiteActive( payload.agencyUrl ) )

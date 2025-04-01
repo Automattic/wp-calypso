@@ -1,6 +1,6 @@
 import { determineUrlType, URL_TYPE } from './url-type';
 
-const BASE_URL = `http://__domain__.invalid`;
+const BASE_URL = 'http://__domain__.invalid';
 
 interface UrlParts {
 	protocol: string;

@@ -101,6 +101,8 @@ type InquiryType =
 	| 'unrelated-to-wordpress'
 	| 'request-for-human-support';
 
+type InteractionStatus = 'open' | 'closed' | 'resolved' | 'solved';
+
 export type OdieUserTracking = {
 	path: string;
 	time_spent: number;
@@ -119,6 +121,7 @@ export type Context = {
 		inquiry_type?: InquiryType;
 		language?: string;
 		product?: string;
+		category?: string;
 	};
 	flags?: {
 		forward_to_human_support?: boolean;
@@ -234,6 +237,7 @@ type Metadata = {
 	odieChatId: number;
 	createdAt: number;
 	supportInteractionId: string;
+	status: InteractionStatus;
 };
 
 export type ZendeskConversation = {
@@ -264,7 +268,7 @@ export type SupportInteractionEvent = {
 
 export type SupportInteraction = {
 	uuid: string;
-	status: 'open' | 'closed';
+	status: InteractionStatus;
 	start_date: string;
 	last_updated: string;
 	users: SupportInteractionUser[];

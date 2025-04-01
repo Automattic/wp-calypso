@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .task-steps {
 	a {
@@ -33,11 +34,11 @@
 }
 
 .task-steps__heading {
-	@include a4a-font-heading-xl;
+	@include heading-x-large;
 }
 
 .task-steps__subheading {
-	@include a4a-font-body-lg;
+	@include body-large;
 	color: var(--color-accent-60);
 }
 
@@ -91,15 +92,15 @@
 }
 
 .task-step__title {
-	@include a4a-font-heading-md($font-size: 19px);
+	@include heading-medium;
 
 	@include break-large {
-		font-size: rem(20px)
+		@include heading-x-large;
 	}
 }
 
 .task-step__description {
-	@include a4a-font-body-lg;
+	@include body-large;
 	padding-block-end: 20px;
 }
 
@@ -111,8 +112,7 @@
 	border-radius: 50%;
 	min-width: 30px;
 	max-width: 30px;
-	font-size: rem(16px);
-	font-weight: 600;
+	@include heading-large;
 	text-align: center;
 }
 

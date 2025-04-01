@@ -27,7 +27,7 @@ const fakeSecrets = {
 jest.spyOn( SecretsManager, 'secrets', 'get' ).mockImplementation( () => fakeSecrets );
 
 describe( 'DataHelper Tests', function () {
-	describe( `Test: getRandomInteger`, function () {
+	describe( 'Test: getRandomInteger', function () {
 		type TestCase = { min: number; max: number; expected: number[] };
 		test.each< TestCase >`
 			min    | max      | expected
@@ -41,7 +41,7 @@ describe( 'DataHelper Tests', function () {
 		} );
 	} );
 
-	describe( `Test: getCalypsoURL`, function () {
+	describe( 'Test: getCalypsoURL', function () {
 		type Params = Parameters< typeof getCalypsoURL >;
 		test.each< { route: Params[ 0 ]; queryStrings: Params[ 1 ]; expected: string } >`
 			route           | queryStrings                               | expected
@@ -58,7 +58,7 @@ describe( 'DataHelper Tests', function () {
 		);
 	} );
 
-	describe( `Test: getAccountCredential`, function () {
+	describe( 'Test: getAccountCredential', function () {
 		type AccountType = Parameters< typeof getAccountCredential >[ 0 ];
 		test.each< { accountType: AccountType; expected: string } >`
 			accountType      | expected
@@ -82,7 +82,7 @@ describe( 'DataHelper Tests', function () {
 		);
 	} );
 
-	describe( `Test: getAccountSiteURL`, function () {
+	describe( 'Test: getAccountSiteURL', function () {
 		type AccountType = Parameters< typeof getAccountCredential >[ 0 ];
 		type TestCase = { accountType: AccountType; expected: string };
 		test.each< TestCase >`
@@ -107,7 +107,7 @@ describe( 'DataHelper Tests', function () {
 		);
 	} );
 
-	describe( `Test: toTitleCase`, function () {
+	describe( 'Test: toTitleCase', function () {
 		test.each< { words: string; expected: string } >`
 			words                        | expected
 			${ 'test' }                  | ${ 'Test' }
@@ -121,7 +121,7 @@ describe( 'DataHelper Tests', function () {
 		} );
 	} );
 
-	describe( `Test: createSuiteTitle`, function () {
+	describe( 'Test: createSuiteTitle', function () {
 		test.each`
 			suite                       | viewport       | expected
 			${ 'Feature (Click: Tap)' } | ${ 'desktop' } | ${ 'Feature (Click: Tap)' }

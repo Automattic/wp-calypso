@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+
 .list-item-cards {
 	overflow-y: auto;
 
@@ -20,7 +23,7 @@
 				justify-content: space-between;
 
 				.list-item-card-content__header-title {
-					@include a4a-font-body-sm($font-weight: 500);
+					@include heading-small;
 					color: var(--color-gray-80);
 				}
 			}
@@ -28,4 +31,7 @@
 	}
 }
 
-
+.list-item-card-actions {
+	display: flex;
+	justify-content: flex-end;
+}

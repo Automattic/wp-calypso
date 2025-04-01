@@ -1,32 +1,8 @@
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
-import {
-	getEstimatedCommission,
-	getProductCommissionPercentage,
-	getDailyPrice,
-} from '../get-estimated-commission';
+import { getEstimatedCommission, getDailyPrice } from '../get-estimated-commission';
 import type { Referral } from '../../types';
 
 describe( 'get-estimated-commission', () => {
-	describe( 'getProductCommissionPercentage', () => {
-		it( 'returns 0 for undefined slug', () => {
-			expect( getProductCommissionPercentage( undefined ) ).toBe( 0 );
-		} );
-
-		it( 'returns 20% for hosting products', () => {
-			expect( getProductCommissionPercentage( 'wpcom-hosting' ) ).toBe( 0.2 );
-			expect( getProductCommissionPercentage( 'pressable-hosting' ) ).toBe( 0.2 );
-		} );
-
-		it( 'returns 50% for Jetpack and WooCommerce products', () => {
-			expect( getProductCommissionPercentage( 'jetpack-backup' ) ).toBe( 0.5 );
-			expect( getProductCommissionPercentage( 'woocommerce-payments' ) ).toBe( 0.5 );
-		} );
-
-		it( 'returns 0 for unknown products', () => {
-			expect( getProductCommissionPercentage( 'unknown-product' ) ).toBe( 0 );
-		} );
-	} );
-
 	describe( 'getDailyPrice', () => {
 		const mockProduct: APIProductFamilyProduct = {
 			product_id: 1,

@@ -1,6 +1,7 @@
 
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .bundle-price-selector {
 	display: flex;
@@ -10,7 +11,7 @@
 }
 
 .bundle-price-selector__label {
-	@include a4a-font-heading-sm;
+	@include heading-small;
 	text-transform: uppercase;
 	display: none;
 

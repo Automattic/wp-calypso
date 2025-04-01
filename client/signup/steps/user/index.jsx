@@ -706,7 +706,11 @@ export class UserStep extends Component {
 	}
 
 	render() {
-		if ( this.userCreationComplete() && ! this.props.isWCCOM ) {
+		if (
+			this.userCreationComplete() &&
+			! this.props.isWCCOM &&
+			! isPartnerPortalOAuth2Client( this.props.oauth2Client )
+		) {
 			return null; // return nothing so that we don't see the completed signup form flash but skip for Woo because it need to keep the form until the user is redirected back to original page (e.g. WooCommerce.com).
 		}
 

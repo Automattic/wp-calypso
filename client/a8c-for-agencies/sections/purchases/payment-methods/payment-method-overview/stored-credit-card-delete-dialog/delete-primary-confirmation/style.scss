@@ -1,16 +1,17 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .delete-primary-card-confirmation__separator {
 	margin: 24px 0;
 }
 
 .delete-primary-card-confirmation__card {
-	font-size: 0.875rem;
+	@include body-medium;
 }
 
 .delete-primary-card-confirmation__card-title {
-	font-weight: bold;
+	@include heading-large;
 }
 
 .delete-primary-card-confirmation__card-details {
@@ -41,5 +42,5 @@
 
 .delete-primary-card-confirmation__notice {
 	margin: 1rem 0 0;
-	font-size: 1rem;
+	@include body-large;
 }

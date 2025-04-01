@@ -210,7 +210,7 @@ const gotoCheckoutPage = ( {
 	// Keeping the event for data continuity
 	recordTracksEvent( `calypso_stats_${ eventName }_purchase_button_clicked` );
 	// Add parameters to the event
-	trackStatsAnalyticsEvent( `stats_purchase_button_clicked`, {
+	trackStatsAnalyticsEvent( 'stats_purchase_button_clicked', {
 		type,
 		quantity,
 	} );

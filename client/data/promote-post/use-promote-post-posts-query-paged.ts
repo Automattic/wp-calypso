@@ -52,7 +52,7 @@ export const usePostsQueryStats = ( siteId: number, queryOptions = {} ) => {
 	return useQuery( {
 		queryKey: [ 'promote-post-posts-stats', siteId ],
 		queryFn: async () => {
-			const postsResponse = await queryPosts( siteId, `page=1&posts_per_page=1` );
+			const postsResponse = await queryPosts( siteId, 'page=1&posts_per_page=1' );
 			return {
 				total_items: postsResponse?.total_items,
 			};

@@ -118,10 +118,9 @@ export default function Summary( {
 				</div>
 				<ImporterActionButtonContainer noSpacing>
 					<ImporterActionButton
-						href={ `/import/newsletter/substack/${ selectedSite.slug }/${
-							// Content step is disabled for Jetpack sites, thus first step would be subscribers
-							steps?.content ? 'content' : 'subscribers'
-						}?from=${ fromSite }` }
+						href={ `/import/newsletter/substack/${
+							selectedSite.slug
+						}/${ 'content' }?from=${ fromSite }` }
 						onClick={ resetImporter }
 						primary
 					>

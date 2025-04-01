@@ -5,7 +5,7 @@ export type RoleValue = 'administrator' | 'editor' | 'author' | 'contributor' | 
 const selectors = {
 	// Form inputs
 	emailInput: '#token-0',
-	roleSelect: `#role`,
+	roleSelect: '#role',
 	messageInput: '#message',
 	addMessageButton: 'button:text("+ Add a message")',
 	sendInviteButton: 'button:text("Send invitation")',

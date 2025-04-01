@@ -397,9 +397,9 @@ describe( 'Mailbox on demand form validation', () => {
 
 	beforeAll( () => {
 		nock( 'https://public-api.wordpress.com:443' )
-			.get( `/wpcom/v2/emails/titan/example.com/check-mailbox-availability/existing` )
+			.get( '/wpcom/v2/emails/titan/example.com/check-mailbox-availability/existing' )
 			.reply( 409, { message: 'existing exists as email account' } )
-			.get( `/wpcom/v2/emails/titan/example.com/check-mailbox-availability/not-existing` )
+			.get( '/wpcom/v2/emails/titan/example.com/check-mailbox-availability/not-existing' )
 			.reply( 200, { message: 'OK' } );
 	} );
 

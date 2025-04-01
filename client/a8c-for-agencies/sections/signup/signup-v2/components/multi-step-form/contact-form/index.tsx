@@ -71,7 +71,7 @@ const SignupContactForm = ( { onContinue, initialFormData }: Props ) => {
 		<Form
 			className="signup-contact-form"
 			title={ preventWidows(
-				translate( `Sign up and unlock the blueprint to grow your agency's business` )
+				translate( "Sign up and unlock the blueprint to grow your agency's business" )
 			) }
 			description={ preventWidows(
 				translate(

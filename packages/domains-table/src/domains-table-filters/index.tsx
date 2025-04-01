@@ -97,7 +97,7 @@ export const DomainsTableFilters = ( { onSearch, filter }: DomainsTableFiltersPr
 											className="domains-table-mobile-cards-controls-bulk-toggle"
 										>
 											<ToggleControl
-												label={ __( 'Bulk actions ' ) }
+												label={ __( 'Bulk actions' ) }
 												onChange={ () => setShowBulkActions( ! showBulkActions ) }
 												checked={ showBulkActions }
 											/>

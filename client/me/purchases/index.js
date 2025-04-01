@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { sidebar } from 'calypso/me/controller';
@@ -33,9 +32,7 @@ export default ( router ) => {
 		page.redirect( paths.addCreditCard );
 	} );
 
-	if ( config.isEnabled( 'me/vat-details' ) ) {
-		router( paths.vatDetails, sidebar, controller.vatDetails, makeLayout, clientRender );
-	}
+	router( paths.vatDetails, sidebar, controller.vatDetails, makeLayout, clientRender );
 
 	router(
 		paths.billingHistory,
@@ -113,6 +110,14 @@ export default ( router ) => {
 		paths.cancelPurchase( ':site', ':purchaseId' ),
 		sidebar,
 		controller.cancelPurchase,
+		makeLayout,
+		clientRender
+	);
+
+	router(
+		paths.downgradePurchase( ':site', ':purchaseId' ),
+		sidebar,
+		controller.downgradePurchase,
 		makeLayout,
 		clientRender
 	);

@@ -121,6 +121,7 @@
 
 	.card {
 		--color-link-hover: #4ccee4;
+		clip-path: unset;
 	}
 
 	&.is-section-login {
@@ -170,22 +171,6 @@
 		}
 
 		.auth-form__social-buttons {
-			.button {
-				display: none;
-				margin-bottom: 40px;
-
-				&:first-child {
-					display: block;
-				}
-
-				@include breakpoint-deprecated("<660px") {
-					margin-bottom: 20px;
-				}
-			}
-
-			.social-buttons__service-name {
-				margin-left: 15px;
-			}
 
 			.login__social-tos {
 				display: none;
@@ -623,10 +608,6 @@
 
 	.auth-form__social-buttons {
 		margin-top: 16px;
-
-		.social-buttons__button {
-			box-shadow: 0 2px 0 #afbbc6;
-		}
 	}
 
 	.card.two-factor-authentication__verification-code-form,
@@ -706,6 +687,10 @@
 			color: var(--studio-jetpack-green-60);
 		}
 	}
+
+	.social-buttons__button {
+		--color-accent: var(--studio-jetpack-green-40);
+	}
 }
 
 .a8c-for-agencies {
@@ -777,6 +762,10 @@
 		&:focus {
 			color: var(--color-primary-60);
 		}
+	}
+
+	.social-buttons__button {
+		--color-accent: var(--color-primary-40);
 	}
 }
 

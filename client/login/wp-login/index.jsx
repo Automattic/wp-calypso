@@ -23,6 +23,8 @@ import {
 	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
 	isGravPoweredOAuth2Client,
+	isBlazeProOAuth2Client,
+	isWooOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -239,8 +241,11 @@ export class Login extends Component {
 
 		const isGravatar = isGravatarOAuth2Client( oauth2Client );
 		const isFromGravatar3rdPartyApp = isGravatar && currentQuery?.gravatar_from === '3rd-party';
+		const isFromGravatarQuickEditor = isGravatar && currentQuery?.gravatar_from === 'quick-editor';
 		const isGravatarFlow = isGravatarFlowOAuth2Client( oauth2Client );
 		const isGravatarFlowWithEmail = !! ( isGravatarFlow && currentQuery?.email_address );
+		const shouldShowSignupLink =
+			! isFromGravatar3rdPartyApp && ! isFromGravatarQuickEditor && ! isGravatarFlowWithEmail;
 		const magicLoginUrl = login( {
 			locale,
 			twoFactorAuthType: 'link',
@@ -283,7 +288,7 @@ export class Login extends Component {
 					>
 						{ translate( 'Lost your password?' ) }
 					</a>
-					{ ! isFromGravatar3rdPartyApp && ! isGravatarFlowWithEmail && (
+					{ shouldShowSignupLink && (
 						<div>
 							{ translate( 'You have no account yet? {{signupLink}}Create one{{/signupLink}}.', {
 								components: {
@@ -575,6 +580,7 @@ export class Login extends Component {
 			locale,
 			translate,
 			isFromMigrationPlugin,
+			isGenericOauth,
 			isGravPoweredClient,
 			isWoo,
 			isBlazePro,
@@ -595,6 +601,7 @@ export class Login extends Component {
 					className={ clsx( 'wp-login__main', {
 						'is-wpcom-migration': isFromMigrationPlugin,
 						'is-social-first': isSocialFirst,
+						'is-generic-oauth': isGenericOauth,
 					} ) }
 				>
 					{ this.renderI18nSuggestions() }
@@ -648,6 +655,13 @@ export default connect(
 			isWCCOM: getIsWCCOM( state ),
 			isWoo: getIsWoo( state ),
 			isBlazePro: getIsBlazePro( state ),
+			// This applies to all oauth screens except for A4A, Blaze Pro, Jetpack, Woo.
+			isGenericOauth:
+				oauth2Client &&
+				! isA4AOAuth2Client( oauth2Client ) &&
+				! isBlazeProOAuth2Client( oauth2Client ) &&
+				! isJetpackCloudOAuth2Client( oauth2Client ) &&
+				! isWooOAuth2Client( oauth2Client ),
 			currentRoute,
 			currentQuery,
 			redirectTo: getRedirectToOriginal( state ),

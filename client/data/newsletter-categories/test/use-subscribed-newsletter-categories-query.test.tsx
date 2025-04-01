@@ -123,7 +123,7 @@ describe( 'useSubscribedNewsletterCategories', () => {
 		await waitFor( () => expect( mockGet ).toHaveBeenCalled() );
 
 		expect( mockGet ).toHaveBeenCalledWith( {
-			path: `/sites/123/newsletter-categories/subscriptions`,
+			path: '/sites/123/newsletter-categories/subscriptions',
 			apiNamespace: 'wpcom/v2',
 		} );
 	} );
@@ -141,7 +141,7 @@ describe( 'useSubscribedNewsletterCategories', () => {
 		await waitFor( () => expect( mockGet ).toHaveBeenCalled() );
 
 		expect( mockGet ).toHaveBeenCalledWith( {
-			path: `/sites/123/newsletter-categories/subscriptions/456`,
+			path: '/sites/123/newsletter-categories/subscriptions/456',
 			apiNamespace: 'wpcom/v2',
 		} );
 	} );
@@ -159,7 +159,7 @@ describe( 'useSubscribedNewsletterCategories', () => {
 		await waitFor( () => expect( mockGet ).toHaveBeenCalled() );
 
 		expect( mockGet ).toHaveBeenCalledWith( {
-			path: `/sites/123/newsletter-categories/subscriptions/456?type=wpcom`,
+			path: '/sites/123/newsletter-categories/subscriptions/456?type=wpcom',
 			apiNamespace: 'wpcom/v2',
 		} );
 	} );

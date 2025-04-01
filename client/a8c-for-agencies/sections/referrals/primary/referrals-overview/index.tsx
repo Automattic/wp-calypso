@@ -26,7 +26,9 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { ApprovalStatus } from 'calypso/state/a8c-for-agencies/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MissingPaymentSettingsNotice from '../../common/missing-payment-settings-notice';
 import useFetchReferrals from '../../hooks/use-fetch-referrals';
@@ -48,6 +50,10 @@ export default function ReferralsOverview( {
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const agency = useSelector( getActiveAgency );
+
+	const isAgencyApproved = agency?.approval_status === ApprovalStatus.APPROVED;
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
@@ -119,14 +125,16 @@ export default function ReferralsOverview( {
 						{ isAutomatedReferral && (
 							<Actions>
 								<MobileSidebarNavigation />
-								<Button
-									variant="primary"
-									href={ A4A_MARKETPLACE_PRODUCTS_LINK }
-									onClick={ makeAReferral }
-									ref={ wrapperRef }
-								>
-									{ hasReferrals ? translate( 'New referral' ) : translate( 'Make a referral' ) }
-								</Button>
+								{ isAgencyApproved && (
+									<Button
+										variant="primary"
+										href={ A4A_MARKETPLACE_PRODUCTS_LINK }
+										onClick={ makeAReferral }
+										ref={ wrapperRef }
+									>
+										{ hasReferrals ? translate( 'New referral' ) : translate( 'Make a referral' ) }
+									</Button>
+								) }
 							</Actions>
 						) }
 					</LayoutHeader>

@@ -5,7 +5,7 @@ import {
 	isFreePlan,
 } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
-import { useTranslate, formatCurrency } from 'i18n-calypso';
+import { useTranslate, formatCurrency, fixMe } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../grid-context';
 import usePlanBillingDescription from '../../../hooks/data-store/use-plan-billing-description';
 import type { GridPlan } from '../../../types';
@@ -78,14 +78,22 @@ const BillingTimeframe = ( { showRefundPeriod, planSlug }: Props ) => {
 	}
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
-		const price = formatCurrency( 25000, 'USD' );
+		const price = formatCurrency( 25000, 'USD', { stripZeros: true } );
 
 		return (
-			<div className="plans-grid-next__billing-timeframe-vip-price">
-				{ translate( 'Starts at {{b}}%(price)s{{/b}} yearly', {
-					args: { price },
-					components: { b: <b /> },
-					comment: 'Translators: the price is in US dollars for all users (US$25,000)',
+			<div>
+				{ fixMe( {
+					text: 'Starts at {{b}}%(price)s{{/b}} annually',
+					newCopy: translate( 'Starts at {{b}}%(price)s{{/b}} annually', {
+						args: { price },
+						components: { b: <b /> },
+						comment: 'Translators: the price is in US dollars for all users (US$25,000)',
+					} ),
+					oldCopy: translate( 'Starts at {{b}}%(price)s{{/b}} yearly', {
+						args: { price },
+						components: { b: <b /> },
+						comment: 'Translators: the price is in US dollars for all users (US$25,000)',
+					} ),
 				} ) }
 			</div>
 		);

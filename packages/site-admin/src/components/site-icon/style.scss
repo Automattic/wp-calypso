@@ -1,19 +1,19 @@
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/mixins';
 
-.site-admin-site-icon__icon {
+.a8c-site-admin-site-icon__icon {
 	fill: currentColor;
 	width: 100%;
 	height: 100%;
 
 	// @Todo: Move styles to a parent component.
-	.site-admin-layout.is-full-canvas & {
+	.a8c-site-admin-layout.is-full-canvas & {
 		// Make the WordPress icon not so big in full canvas.
 		padding: $grid-unit-15;
 	}
 }
 
-.site-admin-site-icon__image {
+.a8c-site-admin-site-icon__image {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
@@ -21,13 +21,13 @@
 	aspect-ratio: 1 / 1;
 
 	// @Todo: Move styles to a parent component.
-	.site-admin-layout.is-full-canvas & {
+	.a8c-site-admin-layout.is-full-canvas & {
 		border-radius: 0;
 	}
 }
 
 // @Todo: Move styles to a parent component.
-.site-admin-editor__view-mode-toggle button:focus {
+.a8c-site-admin-editor__view-mode-toggle button:focus {
 	position: relative;
 
 	&::before {

@@ -18,7 +18,7 @@ import {
 	Locale,
 } from './locales';
 
-const INVALID_URL = `http://__domain__.invalid`;
+const INVALID_URL = 'http://__domain__.invalid';
 
 function getDefaultLocale(): Locale {
 	return getWpI18nLocaleSlug() ?? 'en';

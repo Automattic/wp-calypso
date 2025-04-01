@@ -95,3 +95,18 @@
 	}
 
 }
+
+.stats-line-chart {
+	position: relative;
+	box-sizing: border-box;
+
+	.stats__empty-state {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		max-width: 75%;
+		z-index: 1;
+		margin: 0;
+	}
+}

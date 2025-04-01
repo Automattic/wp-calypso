@@ -9,7 +9,10 @@ export type Location = {
 	state?: unknown;
 	key?: string;
 };
-
+export interface HelpCenterShowOptions {
+	hideBackButton: boolean;
+	searchTerm: string;
+}
 export interface SiteLogo {
 	id: number;
 	sizes: never[];

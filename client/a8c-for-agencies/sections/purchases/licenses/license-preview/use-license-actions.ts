@@ -89,7 +89,7 @@ export default function useLicenseActions(
 				href: A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
 				onClick: () => handleClickMenuItem( 'calypso_a4a_licenses_upgrade_click' ),
 				isExternalLink: false,
-				isEnabled: ! isClientLicense,
+				isEnabled: ! isClientLicense && ! isDevSite,
 			},
 			{
 				name: translate( 'Revoke' ),

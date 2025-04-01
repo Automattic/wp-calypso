@@ -49,7 +49,7 @@ $section-border: solid 1px var(--color-neutral-5);
 
 .post-share__wrapper.is-placeholder {
 	padding-bottom: 24px;
-	border-bottom: 1px solid rgba(var(--color-neutral-10-rgb), 0.5);
+	border-bottom: 1px solid color-mix(in srgb, var(--color-neutral-10) 50%, transparent);
 }
 
 .post-share__placeholder {

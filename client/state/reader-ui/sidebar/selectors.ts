@@ -34,8 +34,8 @@ export function isTagsOpen( state: AppState ): boolean {
 }
 
 /**
- * Get the selected feed ID from the reader sidebar.
+ * Get the selected feed ID for the following (recent) stream.
  */
-export function getSelectedFeedId( state: AppState ): number | null {
+export function getSelectedRecentFeedId( state: AppState ): number | null {
 	return state.readerUi.sidebar.selectedRecentSite;
 }

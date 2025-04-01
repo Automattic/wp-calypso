@@ -75,7 +75,7 @@ export default function SiteStatusColumn( { type, rows, metadata, disabled }: Pr
 	const partnerCanIssueLicense = Boolean( partner?.can_issue_licenses );
 
 	const issueLicenseRedirectUrl = useMemo( () => {
-		return addQueryArgs( `/partner-portal/issue-license/`, {
+		return addQueryArgs( '/partner-portal/issue-license/', {
 			site_id: siteId,
 			product_slug: DASHBOARD_PRODUCT_SLUGS_BY_TYPE[ type ],
 			source: 'dashboard',

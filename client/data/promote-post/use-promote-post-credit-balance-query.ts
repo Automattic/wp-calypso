@@ -12,7 +12,7 @@ const useCreditBalanceQuery = ( queryOptions = {} ) => {
 			if ( selectedSiteId ) {
 				const { balance } = await requestDSP< { balance: string } >(
 					selectedSiteId,
-					`/credits/balance`
+					'/credits/balance'
 				);
 				return balance ? parseFloat( balance ).toFixed( 2 ) : undefined;
 			}

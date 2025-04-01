@@ -1,9 +1,17 @@
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Spinner } from '@automattic/components';
-import { isWithThemeFlow, isHostingSignupFlow, isOnboardingFlow } from '@automattic/onboarding';
-import { isTailoredSignupFlow } from '@automattic/onboarding/src';
+import {
+	isWithThemeFlow,
+	isHostingSignupFlow,
+	isOnboardingFlow,
+	StepContainer,
+	isAIBuilderFlow,
+	isTailoredSignupFlow,
+	Step,
+} from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
@@ -20,6 +28,7 @@ import SideExplainer from 'calypso/components/domains/side-explainer';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
+import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
 	domainRegistration,
@@ -237,7 +246,8 @@ export class RenderDomainsStep extends Component {
 			this.getAnalyticsSection(),
 			position,
 			suggestion?.is_premium,
-			this.props.flowName
+			this.props.flowName,
+			suggestion?.vendor
 		);
 
 		await this.props.saveSignupStep( stepData );
@@ -247,12 +257,11 @@ export class RenderDomainsStep extends Component {
 			suggestion?.isSubDomainSuggestion
 		) {
 			if ( this.state.wpcomSubdomainSelected ) {
-				this.freeDomainRemoveClickHandler();
-			} else {
-				this.setState( { wpcomSubdomainSelected: suggestion } );
-				this.props.saveSignupStep( stepData );
+				await this.freeDomainRemoveClickHandler();
 			}
-
+			this.setState( { wpcomSubdomainSelected: suggestion }, () => {
+				this.props.saveSignupStep( stepData );
+			} );
 			return;
 		}
 
@@ -267,7 +276,7 @@ export class RenderDomainsStep extends Component {
 				} );
 			}
 		} else {
-			await this.submitWithDomain( { signupDomainOrigin, position } );
+			await this.submitWithDomain( { signupDomainOrigin, position, suggestion } );
 		}
 	};
 
@@ -391,9 +400,17 @@ export class RenderDomainsStep extends Component {
 		}
 	};
 
-	submitWithDomain = ( { googleAppsCartItem, shouldHideFreePlan = false, signupDomainOrigin } ) => {
+	submitWithDomain = ( {
+		googleAppsCartItem,
+		shouldHideFreePlan = false,
+		signupDomainOrigin,
+		suggestion,
+	} ) => {
 		const { step } = this.props;
-		const { suggestion } = step;
+
+		if ( step.suggestion ) {
+			suggestion = step.suggestion;
+		}
 
 		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
 		const useThemeHeadstartItem = shouldUseThemeAnnotation
@@ -906,12 +923,15 @@ export class RenderDomainsStep extends Component {
 	};
 
 	freeDomainRemoveClickHandler = () => {
-		this.setState( { wpcomSubdomainSelected: false } );
-		this.props.saveSignupStep( {
-			stepName: this.props.stepName,
-			suggestion: {
-				domain_name: false,
-			},
+		return new Promise( ( resolve ) => {
+			this.setState( { wpcomSubdomainSelected: false } );
+			this.props.saveSignupStep( {
+				stepName: this.props.stepName,
+				suggestion: {
+					domain_name: false,
+				},
+			} );
+			resolve();
 		} );
 	};
 
@@ -948,11 +968,14 @@ export class RenderDomainsStep extends Component {
 		const hasSearchedDomains = Array.isArray( this.props.step?.domainForm?.searchResults );
 
 		return (
-			<div className="domains__domain-side-content-container">
+			<div
+				className={ clsx( 'domains__domain-side-content-container', {
+					'is-sticky': !! useYourDomain,
+				} ) }
+			>
 				{ domainsInCart.length > 0 || this.state.wpcomSubdomainSelected ? (
 					<DomainsMiniCart
 						domainsInCart={ domainsInCart }
-						temporaryCart={ this.state.temporaryCart }
 						domainRemovalQueue={ this.state.domainRemovalQueue }
 						cartIsLoading={ cartIsLoading }
 						flowName={ flowName }
@@ -1074,7 +1097,7 @@ export class RenderDomainsStep extends Component {
 					this.props.forceHideFreeDomainExplainerAndStrikeoutUi
 				}
 				isOnboarding
-				sideContent={ this.getSideContent() }
+				sideContent={ ! shouldUseStepContainerV2( this.props.flowName ) && this.getSideContent() }
 				isInLaunchFlow={ 'launch-site' === this.props.flowName }
 				promptText={
 					this.isHostingFlow()
@@ -1135,7 +1158,6 @@ export class RenderDomainsStep extends Component {
 					initialMode={ queryObject.step ?? inputMode.domainInput }
 					onNextStep={ this.setCurrentFlowStep }
 					isSignupStep
-					showHeader={ false }
 					onTransfer={ this.handleAddTransfer }
 					onConnect={ this.onUseMyDomainConnect }
 					onSkip={ () => this.handleSkip( undefined, false ) }
@@ -1147,7 +1169,7 @@ export class RenderDomainsStep extends Component {
 	isHostingFlow = () => isHostingSignupFlow( this.props.flowName );
 
 	getSubHeaderText() {
-		const { flowName, isAllDomains, stepSectionName, translate } = this.props;
+		const { isAllDomains, stepSectionName, translate } = this.props;
 
 		if ( isAllDomains ) {
 			return translate( 'Find the domain that defines you' );
@@ -1170,18 +1192,15 @@ export class RenderDomainsStep extends Component {
 			);
 		}
 
-		if (
-			shouldUseMultipleDomainsInCart( flowName ) &&
-			! [ 'use-your-domain' ].includes( stepSectionName )
-		) {
-			return translate( 'Find and claim one or more domain names' );
-		}
-
 		if ( ! stepSectionName ) {
-			return translate( 'Enter some descriptive keywords to get started' );
+			return translate( 'Enter some descriptive keywords to get started.' );
 		}
 
-		return 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName
+		if ( 'use-your-domain' === stepSectionName ) {
+			return '';
+		}
+
+		return 'transfer' === stepSectionName || 'mapping' === stepSectionName
 			? translate( 'Use a domain you already own with your new WordPress.com site.' )
 			: translate( "Enter your site's name or some keywords that describe it to get started." );
 	}
@@ -1211,7 +1230,7 @@ export class RenderDomainsStep extends Component {
 		return this.props.isDomainOnly ? 'domain-first' : 'signup';
 	}
 
-	renderContent() {
+	getContentColumns() {
 		let content;
 		let sideContent;
 
@@ -1237,6 +1256,12 @@ export class RenderDomainsStep extends Component {
 				</div>
 			);
 		}
+
+		return [ content, sideContent ];
+	}
+
+	renderContent() {
+		const [ content, sideContent ] = this.getContentColumns();
 
 		return (
 			<div className="domains__step-content domains__step-content-domain-step">
@@ -1310,6 +1335,8 @@ export class RenderDomainsStep extends Component {
 		const siteUrl = this.props.selectedSite?.URL;
 		const siteSlug = this.props.queryObject?.siteSlug;
 		const source = this.props.queryObject?.source;
+		const playgroundId = getQueryArg( window.location.href, 'playground' );
+
 		let backUrl;
 		let backLabelText;
 		let isExternalBackUrl = false;
@@ -1353,10 +1380,16 @@ export class RenderDomainsStep extends Component {
 		} else if ( isOnboardingFlow( flowName ) && !! goBack ) {
 			backUrl = null;
 			backLabelText = translate( 'Back' );
+		} else if ( isAIBuilderFlow( flowName ) ) {
+			backUrl = `${ siteUrl }/wp-admin/site-editor.php?canvas=edit&referrer=${ flowName }&p=%2F&ai-step=edit`;
+			backLabelText = translate( 'Keep Editing' );
 		} else {
 			backUrl = getStepUrl( flowName, stepName, null, this.getLocale() );
 
-			if ( 'site' === source && siteUrl ) {
+			if ( playgroundId ) {
+				backUrl = `/setup/onboarding/playground?playground=${ playgroundId }`;
+				backLabelText = translate( 'Back' );
+			} else if ( 'site' === source && siteUrl ) {
 				backUrl = siteUrl;
 				backLabelText = translate( 'Back to My Site' );
 				isExternalBackUrl = true;
@@ -1383,10 +1416,45 @@ export class RenderDomainsStep extends Component {
 		const headerText = this.getHeaderText();
 		const fallbackSubHeaderText = this.getSubHeaderText();
 
+		if ( shouldUseStepContainerV2( flowName ) ) {
+			const [ content, sideContent ] = this.getContentColumns();
+
+			const backButton = (
+				<Step.BackButton
+					href={ backUrl }
+					rel={ isExternalBackUrl ? 'external' : '' }
+					onClick={ goBack }
+				>
+					{ backLabelText }
+				</Step.BackButton>
+			);
+
+			const mainContent = (
+				<>
+					<QueryProductsList type="domains" />
+					{ content }
+				</>
+			);
+
+			return (
+				<Step.TwoColumnLayout
+					firstColumnWidth={ 7 }
+					secondColumnWidth={ 3 }
+					topBar={ <Step.TopBar leftElement={ ! hideBack && backButton } /> }
+					heading={ <Step.Heading text={ headerText } subText={ fallbackSubHeaderText } /> }
+					className="domains__step-content domains__step-content-domain-step"
+				>
+					{ mainContent }
+					{ sideContent }
+				</Step.TwoColumnLayout>
+			);
+		}
+
 		if ( useStepperWrapper ) {
 			return (
-				<AsyncLoad
-					require="@automattic/onboarding/src/step-container"
+				// This is biased towards Stepper. It will always load Stepper's StepContainer but only load /start's StepWrapper if /start is used.
+				// This is because Stepper's domains page is much more likely (90%+ of the time) to be used than /start's plans page.
+				<StepContainer
 					hideBack={ hideBack }
 					flowName={ flowName }
 					stepName={ stepName }

@@ -87,8 +87,8 @@ const getGlobalStylesInfoForSite = (
 
 	return wpcom.req
 		.get( {
-			path: `sites/${ siteId }/global-styles/status`,
-			apiNamespace: 'wpcom/v2/',
+			path: `/sites/${ siteId }/global-styles/status`,
+			apiNamespace: 'wpcom/v2',
 		} )
 		.then( ( response: GlobalStylesStatus ) => ( {
 			...DEFAULT_GLOBAL_STYLES_INFO,

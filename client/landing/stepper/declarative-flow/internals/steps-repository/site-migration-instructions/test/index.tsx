@@ -12,6 +12,7 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wp from 'calypso/lib/wp';
+import { resetSite } from 'calypso/state/sites/actions';
 import SiteMigrationInstructions from '..';
 import { StepProps } from '../../../types';
 import { mockStepProps, renderStep } from '../../test/helpers';
@@ -25,6 +26,10 @@ jest.mock( 'calypso/data/site-profiler/use-hosting-provider-url-details' );
 jest.mock( '../site-preview' );
 jest.mock( 'calypso/lib/analytics/tracks' );
 jest.mock( 'calypso/lib/wp' );
+jest.mock( 'calypso/state/sites/actions' );
+jest.mock( 'calypso/state', () => ( {
+	useDispatch: () => jest.fn(),
+} ) );
 
 const mockGetQuery = ( from ) => {
 	( useQuery as jest.Mock ).mockReturnValue( {
@@ -165,6 +170,17 @@ describe( 'SiteMigrationInstructions', () => {
 		expect( submit ).toHaveBeenCalledWith( { destination: 'migration-started' } );
 	} );
 
+	it( 'should reset the site when the step is completed', async () => {
+		const submit = jest.fn();
+		const { getByRole } = render( { navigation: { submit } } );
+
+		await userEvent.click( getByRole( 'button', { name: /Next/ } ) );
+		await userEvent.click( getByRole( 'button', { name: /Next/ } ) );
+		await userEvent.click( getByRole( 'button', { name: /Done/ } ) );
+
+		expect( resetSite ).toHaveBeenCalledWith( 123 );
+	} );
+
 	it( 'should display a fallback in the last step when preparation completes and there is an error with the migration key', async () => {
 		( usePrepareSiteForMigration as jest.Mock ).mockReturnValue( {
 			detailedStatus: { migrationKey: 'error' },
@@ -219,7 +235,7 @@ describe( 'SiteMigrationInstructions', () => {
 		expect( skeleton!.classList.contains( 'migration-key-skeleton--animate' ) ).toBeFalsy();
 	} );
 
-	it( 'sets a migration as pending automatically', async () => {
+	it( 'sets a migration as pending when the component is mounted', async () => {
 		render();
 
 		await waitFor( () => {

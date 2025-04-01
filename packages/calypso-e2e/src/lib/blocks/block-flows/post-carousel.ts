@@ -1,12 +1,12 @@
 import { BlockFlow } from '.';
 
-const blockParentSelector = '[aria-label="Block: Post Carousel"]';
+const blockParentSelector = '[aria-label="Block: Content Carousel"]';
 
 /**
  * Class representing the flow of using a Newspack Blog Posts block in the editor
  */
 export class PostCarouselBlockFlow implements BlockFlow {
-	blockSidebarName = 'Post Carousel';
+	blockSidebarName = 'Content Carousel';
 	blockEditorSelector = blockParentSelector;
 
 	// We are very limited in what we can safely smoke test with the Post Carousel block because it is dependent on other posts.

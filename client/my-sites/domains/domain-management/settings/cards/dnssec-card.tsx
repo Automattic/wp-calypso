@@ -16,7 +16,7 @@ import './style.scss';
 
 const noticeOptions = {
 	duration: 5000,
-	id: `dnssec-notification`,
+	id: 'dnssec-notification',
 };
 
 interface Props {

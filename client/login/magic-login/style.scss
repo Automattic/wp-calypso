@@ -13,15 +13,26 @@
 			max-height: 180px;
 		}
 		.empty-content__title {
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 90%;
 		}
 		.empty-content__line {
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 60%;
 			margin-bottom: 20px;
 		}
 	}
+}
+
+.layout.is-jetpack-login {
+	.magic-login {
+		&__loading-ellipsis--jetpack {
+			left: 50%;
+			transform: translateX(-50%);
+
+			div {
+				background: var(--studio-jetpack-green-40, #069e08 );
+			}
+		}
+	}	
 }
 
 .layout.is-wpcom-magic-login {
@@ -96,6 +107,7 @@
 
 .magic-login__form {
 	margin-bottom: 0;
+	padding-top: 4px;
 
 	.magic-login__form-text {
 		text-align: center;
@@ -153,6 +165,7 @@
 
 .magic-login__footer {
 	margin: 4px 0 48px 0;
+	text-align: center;
 
 	a {
 		border-bottom: 1px solid #c8d7e1;
@@ -213,7 +226,7 @@
 	.logged-out-form {
 		.magic-login__form-sub-header {
 			color: var(--studio-gray-70);
-			margin: 4px 0 24px 0;
+			margin: 4px 0 48px 0;
 		}
 
 		.form-label {
@@ -306,7 +319,7 @@
 	}
 }
 
-/* stylelint-disable declaration-property-unit-allowed-list, scales/font-weights */
+/* stylelint-disable scales/font-weights */
 .grav-powered-magic-login {
 	max-width: 480px;
 	font-size: 14px;
@@ -738,4 +751,4 @@
 	display: block;
 	margin: 0 auto;
 }
-/* stylelint-enable declaration-property-unit-allowed-list, scales/font-weights */
+/* stylelint-enable scales/font-weights */

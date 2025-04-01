@@ -357,7 +357,7 @@ export function getRedirectFromPendingPage( {
 	fromSiteSlug,
 }: RedirectForTransactionStatusArgs ): RedirectInstructions | undefined {
 	const checkoutUrl = siteSlug ? `/checkout/${ siteSlug }` : '/checkout/no-site';
-	const errorUrl = `/checkout/failed-purchases`;
+	const errorUrl = '/checkout/failed-purchases';
 
 	// If SaaS Product Redirect URL was passed then just return as redirect instruction so that
 	// we can redirect user immediately to vendor application.

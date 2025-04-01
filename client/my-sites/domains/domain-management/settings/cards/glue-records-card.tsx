@@ -20,7 +20,7 @@ import './style.scss';
 
 const noticeOptions = {
 	duration: 5000,
-	id: `glue-records-notification`,
+	id: 'glue-records-notification',
 };
 
 export default function GlueRecordsCard( { domain }: { domain: ResponseDomain } ) {

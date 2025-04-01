@@ -15,7 +15,7 @@ import { fetchAgencies } from 'calypso/state/a8c-for-agencies/agency/actions';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setPurchasedLicense, resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
-import { successNotice } from 'calypso/state/notices/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { type APIError } from 'calypso/state/partner-portal/types';
 import useAssignLicensesToSite from './use-assign-licenses-to-site';
 import useIssueLicenses, {
@@ -97,11 +97,19 @@ function useIssueAndAssignLicenses(
 
 	const products = useProductsQuery();
 
-	const { isReady: isIssueReady, issueLicenses } = useIssueLicenses( {
+	const {
+		isReady: isIssueReady,
+		issueLicenses,
+		isPending: isIssueLoading,
+	} = useIssueLicenses( {
 		onError: options.onIssueError ?? NO_OP,
 	} );
 
-	const { isReady: isAssignReady, assignLicensesToSite } = useAssignLicensesToSite( selectedSite, {
+	const {
+		isReady: isAssignReady,
+		assignLicensesToSite,
+		isPending: isAssignLoading,
+	} = useAssignLicensesToSite( selectedSite, {
 		onError: options.onAssignError ?? NO_OP,
 	} );
 
@@ -209,6 +217,19 @@ function useIssueAndAssignLicenses(
 			}
 
 			if ( options.redirectTo ) {
+				const rejectedProduct = assignLicensesStatus.selectedProducts.find(
+					( product ) => product.status === 'rejected'
+				);
+
+				if ( rejectedProduct ) {
+					dispatch(
+						errorNotice(
+							rejectedProduct.error?.message ?? translate( 'Error assigning license to site.' )
+						)
+					);
+					return;
+				}
+
 				page.redirect( options.redirectTo );
 				return;
 			}
@@ -217,7 +238,7 @@ function useIssueAndAssignLicenses(
 			page.redirect( A4A_LICENSES_LINK );
 		};
 
-		return { issueAndAssignLicenses, isReady };
+		return { issueAndAssignLicenses, isReady, isLoading: isIssueLoading || isAssignLoading };
 	}, [
 		assignLicensesToSite,
 		dispatch,
@@ -231,6 +252,8 @@ function useIssueAndAssignLicenses(
 		products?.data,
 		translate,
 		agency?.tier,
+		isIssueLoading,
+		isAssignLoading,
 	] );
 }
 

@@ -111,13 +111,13 @@ export const SimpleLicenseMultiItemCard = ( {
 	const getIssueLicenseURL = useCallback(
 		( variantSlug: string, bundleSize: number | undefined ) => {
 			if ( isLoggedIn && ! isAgency ) {
-				return addQueryArgs( `/manage/signup/`, {
+				return addQueryArgs( '/manage/signup/', {
 					products: `${ variantSlug }:${ bundleSize }`,
 					source: 'manage-pricing-page',
 					bundle_size: bundleSize,
 				} );
 			}
-			return addQueryArgs( `/partner-portal/issue-license/`, {
+			return addQueryArgs( '/partner-portal/issue-license/', {
 				products: `${ variantSlug }:${ bundleSize }`,
 				source: 'manage-pricing-page',
 				bundle_size: bundleSize,

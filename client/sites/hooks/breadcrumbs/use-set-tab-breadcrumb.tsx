@@ -25,19 +25,22 @@ export function useSetTabBreadcrumb( {
 			return;
 		}
 
-		const breadcrumb = {
-			id: 'tab',
-			label: tab.label,
-			href: tab.href,
-		};
-		if ( tabId === selectedFeatureId ) {
-			// This is the default feature of the tab, so no feature breadcrumb will be added.
-			// Replace the entire breadcrumbs with the tab breadcrumb.
-			dispatch( updateBreadcrumbs( [ breadcrumb ] ) );
-		} else {
-			// The feature breadcrumb has been added, so we append the tab breadcrumb.
-			dispatch( appendBreadcrumb( breadcrumb ) );
+		if ( tab.visible ) {
+			const breadcrumb = {
+				id: 'tab',
+				label: tab.label,
+				href: tab.href,
+			};
+			if ( tabId === selectedFeatureId ) {
+				// This is the default feature of the tab, so no feature breadcrumb will be added.
+				// Replace the entire breadcrumbs with the tab breadcrumb.
+				dispatch( updateBreadcrumbs( [ breadcrumb ] ) );
+			} else {
+				// The feature breadcrumb has been added, so we append the tab breadcrumb.
+				dispatch( appendBreadcrumb( breadcrumb ) );
+			}
 		}
+
 		dispatch(
 			appendBreadcrumb( {
 				id: 'site',

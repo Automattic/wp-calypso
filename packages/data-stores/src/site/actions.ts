@@ -395,6 +395,14 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} );
 	}
 
+	/**
+	 * Set the design on the site.
+	 * @param siteSlug The site slug.
+	 * @param selectedDesign The selected design.
+	 * @param options The options.
+	 * @returns The activated theme.
+	 * @yields Yields effects for theme activation and global styles reset, including API calls and Redux actions.
+	 */
 	function* setDesignOnSite(
 		siteSlug: string,
 		selectedDesign: Design,

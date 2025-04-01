@@ -35,7 +35,7 @@ export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: P
 	return (
 		<>
 			<div className="team-accept-invite__heading">
-				{ translate( `You can only join one agency dashboard at a time.` ) }
+				{ translate( 'You can only join one agency dashboard at a time.' ) }
 			</div>
 
 			<div className="team-accept-invite__subtitle">
@@ -62,7 +62,7 @@ export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: P
 						} ) as string
 					}
 					description={ translate(
-						`Visit the {{a}}%(currentAgencyName)s{{/a}} dashboard and remove yourself in the Team section.`,
+						'Visit the {{a}}%(currentAgencyName)s{{/a}} dashboard and remove yourself in the Team section.',
 						{
 							args: { currentAgencyName: currentAgency.name },
 							comment: '%(currentAgencyName)s is an agency name',
@@ -91,7 +91,7 @@ export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: P
 						} ) as string
 					}
 					description={ translate(
-						`Click the invite link in your email again to join %(targetAgencyName)s.`,
+						'Click the invite link in your email again to join %(targetAgencyName)s.',
 						{
 							args: { targetAgencyName: targetAgency?.name },
 							comment: '%(targetAgencyName)s is an agency name',

@@ -2,11 +2,10 @@
 
 // External Dependencies
 @import "calypso/assets/stylesheets/vendor";
-
 // Color Schemes
 @import "@automattic/calypso-color-schemes/src/calypso-color-schemes-root";
-
 @import "./variables";
+@import "calypso/my-sites/stats/modernized-tooltip-styles";
 
 @mixin stats-widget-single-column-view {
 

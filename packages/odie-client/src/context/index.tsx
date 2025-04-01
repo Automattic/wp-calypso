@@ -96,7 +96,9 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	 * The main chat thread.
 	 * This is where we manage the state of the chat.
 	 */
-	const { mainChatState, setMainChatState } = useGetCombinedChat( canConnectToZendesk );
+	const { mainChatState, setMainChatState } = useGetCombinedChat(
+		isUserEligibleForPaidSupport && canConnectToZendesk
+	);
 
 	/**
 	 * Has the user ever escalated to get human support?

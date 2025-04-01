@@ -1,6 +1,6 @@
 import { Visibility } from '@automattic/data-stores';
 import { getNewSiteParams } from '..';
-import { HOSTING_LP_FLOW, IMPORT_FOCUSED_FLOW } from '../../utils/flows';
+import { HOSTING_LP_FLOW } from '../../utils/flows';
 
 describe( 'getNewSiteParams', () => {
 	function testParams( partialParams: Partial< Parameters< typeof getNewSiteParams >[ 0 ] > = {} ) {
@@ -149,23 +149,6 @@ describe( 'getNewSiteParams', () => {
 			expect.objectContaining( {
 				blog_name: 'testing123',
 				find_available_url: false,
-			} )
-		);
-	} );
-
-	test( 'Migration flow uses find_available_url', () => {
-		expect(
-			getNewSiteParams(
-				testParams( {
-					flowToCheck: IMPORT_FOCUSED_FLOW,
-					siteUrl: 'testing123.wordpress.com',
-					isPurchasingDomainItem: false,
-				} )
-			)
-		).toEqual(
-			expect.objectContaining( {
-				blog_name: 'testing123',
-				find_available_url: true, // True despite the fact isPurchasingDomainItem is false
 			} )
 		);
 	} );

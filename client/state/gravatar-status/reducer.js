@@ -3,6 +3,7 @@ import {
 	GRAVATAR_UPLOAD_REQUEST,
 	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
 	GRAVATAR_UPLOAD_REQUEST_FAILURE,
+	GRAVATAR_DETAILS_RECEIVE,
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 
@@ -29,7 +30,17 @@ export const tempImage = ( state = null, action ) => {
 	return state;
 };
 
+export const gravatarDetails = ( state = null, action ) => {
+	switch ( action.type ) {
+		case GRAVATAR_DETAILS_RECEIVE:
+			return action.gravatarDetails;
+		default:
+			return state;
+	}
+};
+
 export default combineReducers( {
 	isUploading,
 	tempImage,
+	gravatarDetails,
 } );

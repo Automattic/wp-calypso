@@ -2,7 +2,7 @@ import { JetpackLogo } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useEffect, useMemo, useRef } from 'react';
-import WooLogoRebrand2 from 'calypso/assets/images/icons/Woo_logo_color.svg';
+import WooLogoColor from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { parseQueryStringProducts } from 'calypso/jetpack-cloud/sections/partner-portal/lib/querystring-products';
 import {
@@ -67,7 +67,6 @@ export default function ProductListing( {
 		suggestedProductSlugs,
 	} = useProductAndPlans( {
 		selectedSite,
-		selectedBundleSize: quantity,
 		selectedProductFilters: selectedFilters,
 		productSearchQuery,
 	} );
@@ -221,7 +220,34 @@ export default function ProductListing( {
 		withCustomCard: boolean = false
 	) => {
 		return products.map( ( productOption ) => {
-			const options = Array.isArray( productOption ) ? productOption : [ productOption ];
+			let options;
+
+			if ( Array.isArray( productOption ) ) {
+				options =
+					quantity === 1
+						? productOption
+						: productOption.filter(
+								( option ) =>
+									option.supported_bundles?.some(
+										( bundle: { quantity: number } ) => bundle.quantity === quantity
+									)
+						  );
+			} else {
+				options = [ productOption ];
+			}
+
+			if ( options.length === 0 ) {
+				return null;
+			}
+
+			const productDoNotHaveSupportedBundles =
+				! isSingleLicenseView &&
+				! options.some(
+					( option ) =>
+						option.supported_bundles?.some(
+							( bundle: { quantity: number } ) => bundle.quantity === quantity
+						)
+				);
 
 			return (
 				<ProductCard
@@ -232,14 +258,21 @@ export default function ProductListing( {
 					onVariantChange={ onClickVariantOption }
 					isSelected={ isSelected( options.map( ( { slug } ) => slug ) ) }
 					isDisabled={
+						productDoNotHaveSupportedBundles ||
 						! isReady ||
 						( isIncompatibleProduct( productOption, incompatibleProducts ) &&
 							! isSelected( options.map( ( { slug } ) => slug ) ) )
 					}
 					hideDiscount={ isSingleLicenseView }
 					suggestedProduct={ suggestedProduct }
-					quantity={ quantity }
+					quantity={ productDoNotHaveSupportedBundles ? 1 : quantity }
 					withCustomCard={ withCustomCard }
+					tooltip={
+						productDoNotHaveSupportedBundles
+							? translate( 'This product does not support the volume discount.' )
+							: undefined
+					}
+					tooltipPosition="bottom"
 				/>
 			);
 		} );
@@ -270,7 +303,7 @@ export default function ProductListing( {
 
 			{ wooExtensions.length > 0 && (
 				<ProductListingSection
-					icon={ <img width={ 45 } src={ WooLogoRebrand2 } alt="WooCommerce" /> }
+					icon={ <img width={ 45 } src={ WooLogoColor } alt="WooCommerce" /> }
 					title={ translate( 'WooCommerce Extensions' ) }
 					description={ translate(
 						"Explore the tools and integrations you need to grow your client's Woo store."

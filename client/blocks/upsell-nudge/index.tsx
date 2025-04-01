@@ -22,6 +22,7 @@ import Banner from 'calypso/components/banner';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { addQueryArgs } from 'calypso/lib/url';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
@@ -41,7 +42,7 @@ const debug = debugFactory( 'calypso:upsell-nudge' );
 
 type ConnectedProps = {
 	site: SiteDetails | null | undefined;
-	selectedSiteHasFeature: boolean;
+	selectedSiteHasFeature: boolean | null;
 	canManageSite: boolean;
 	isJetpack: boolean;
 	isAtomic: boolean;
@@ -156,6 +157,7 @@ export const UpsellNudge = ( {
 		! site ||
 		typeof site !== 'object' ||
 		typeof site.jetpack !== 'boolean' ||
+		( feature && selectedSiteHasFeature === null ) || // Site features haven't loaded yet
 		( feature && selectedSiteHasFeature ) ||
 		( ! feature && ! ( site.plan && isFreePlanProduct( site.plan ) ) ) ||
 		( feature === WPCOM_FEATURES_NO_ADVERTS && site?.options?.wordads ) ||
@@ -292,10 +294,13 @@ export const UpsellNudge = ( {
 
 const ConnectedUpsellNudge = connect( ( state: IAppState, ownProps: OwnProps ) => {
 	const siteId = getSelectedSiteId( state );
+	const siteFeatures = getFeaturesBySiteId( state, siteId || undefined );
+	const hasFeature =
+		siteFeatures === null ? null : siteHasFeature( state, siteId, ownProps.feature || '' );
 
 	return {
 		site: getSite( state, siteId || undefined ),
-		selectedSiteHasFeature: siteHasFeature( state, siteId, ownProps.feature || '' ) || false,
+		selectedSiteHasFeature: hasFeature,
 		canManageSite: canCurrentUser( state, siteId, 'manage_options' ),
 		isJetpack: isJetpackSite( state, siteId ) || false,
 		isAtomic: isSiteAutomatedTransfer( state, siteId ) || false,

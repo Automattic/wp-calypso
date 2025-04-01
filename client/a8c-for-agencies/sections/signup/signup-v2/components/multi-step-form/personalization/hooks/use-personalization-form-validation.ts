@@ -21,15 +21,15 @@ const usePersonalizationFormValidation = () => {
 			const newValidationError: ValidationState = {};
 
 			if ( payload.country === '' ) {
-				newValidationError.country = translate( `Please select your country` );
+				newValidationError.country = translate( 'Please select your country' );
 			}
 
 			if ( ! payload.servicesOffered || payload.servicesOffered?.length < 1 ) {
-				newValidationError.servicesOffered = translate( `Please select services you offer` );
+				newValidationError.servicesOffered = translate( 'Please select services you offer' );
 			}
 
 			if ( ! payload.productsOffered || payload.productsOffered.length < 1 ) {
-				newValidationError.productsOffered = translate( `Please select products you offer` );
+				newValidationError.productsOffered = translate( 'Please select products you offer' );
 			}
 
 			if ( Object.keys( newValidationError ).length > 0 ) {

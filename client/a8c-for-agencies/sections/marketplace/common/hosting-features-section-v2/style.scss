@@ -1,9 +1,42 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+.hosting-features-section-v2 {
+	overflow: hidden;
+
+	.a4a-carousel__navigation {
+		display: none;
+
+		@include break-large {
+			display: flex;
+		}
+	}
+
+	.a4a-carousel-wrapper.is-with-navigation {
+		@include break-large {
+			margin-block-start: -64px;
+		}
+	}
+
+	.a4a-carousel__content {
+		width: 100%;
+
+		@include break-large {
+			width: max-content;
+		}
+	}
+
+	.a4a-carousel__navigation-button {
+		border: 1px solid var(--color-neutral-50);
+	}
+}
 
 .hosting-features-section-v2__cards {
 	display: grid;
 	gap: 16px;
+	grid-template-columns: 1fr;
+	min-width: 100%;
 
 	@include break-large {
 		grid-template-columns: repeat(4, 350px);
@@ -31,5 +64,5 @@
 }
 
 .hosting-features-section-v2__card-title {
-	@include a4a-font-heading-lg;
+	@include heading-large;
 }

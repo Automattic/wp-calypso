@@ -1,9 +1,11 @@
+import { HelpCenterSelect } from '@automattic/data-stores';
 import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { getShortDateString } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 import { useEffect, useRef, useState } from 'react';
 import { NavigationType, useNavigationType, useSearchParams } from 'react-router-dom';
-import { ThumbsDown } from '../../assets/thumbs-down';
 import { useOdieAssistantContext } from '../../context';
 import {
 	useAutoScroll,
@@ -12,21 +14,17 @@ import {
 	useUpdateDocumentTitle,
 } from '../../hooks';
 import { useHelpCenterChatScroll } from '../../hooks/use-help-center-chat-scroll';
-import { getOdieInitialMessage } from '../../utils';
+import {
+	getOdieInitialMessage,
+	interactionHasZendeskEvent,
+	interactionHasEnded,
+} from '../../utils';
 import { ViewMostRecentOpenConversationNotice } from '../odie-notice/view-most-recent-conversation-notice';
 import { DislikeFeedbackMessage } from './dislike-feedback-message';
 import { JumpToRecent } from './jump-to-recent';
 import { ThinkingPlaceholder } from './thinking-placeholder';
 import ChatMessage from '.';
 import type { Chat, CurrentUser } from '../../types';
-
-const DislikeThumb = () => {
-	return (
-		<div className="chatbox-message__dislike-thumb">
-			<ThumbsDown />
-		</div>
-	);
-};
 
 const LoadingChatSpinner = () => {
 	return (
@@ -49,7 +47,7 @@ interface ChatMessagesProps {
 }
 
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
-	const { chat, botNameSlug, experimentVariationName, isChatLoaded, isUserEligibleForPaidSupport } =
+	const { chat, botNameSlug, isChatLoaded, isUserEligibleForPaidSupport } =
 		useOdieAssistantContext();
 	const createZendeskConversation = useCreateZendeskConversation();
 	const resetSupportInteraction = useResetSupportInteraction();
@@ -63,6 +61,17 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
 	const scrollParentRef = useRef< HTMLElement | null >( null );
+
+	const { alreadyHasActiveZendeskChat, chatHasEnded } = useSelect( ( select ) => {
+		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		const currentInteraction = helpCenterSelect.getCurrentSupportInteraction();
+		return {
+			alreadyHasActiveZendeskChat:
+				interactionHasZendeskEvent( currentInteraction ) &&
+				! interactionHasEnded( currentInteraction ),
+			chatHasEnded: interactionHasEnded( currentInteraction ),
+		};
+	}, [] );
 
 	useZendeskMessageListener();
 	useAutoScroll( messagesContainerRef, shouldEnableAutoScroll );
@@ -83,13 +92,21 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	}, [ messagesContainerRef ] );
 	useUpdateDocumentTitle();
 
+	// prevent zd transfer for non-eligible users
+	useEffect( () => {
+		if ( isForwardingToZendesk && ! isUserEligibleForPaidSupport ) {
+			searchParams.delete( 'provider' );
+			setChatMessagesLoaded( true );
+		}
+	}, [ isForwardingToZendesk, isUserEligibleForPaidSupport, setChatMessagesLoaded ] );
+
 	useEffect( () => {
 		if ( isForwardingToZendesk || hasForwardedToZendesk ) {
 			return;
 		}
 
 		( chat?.status === 'loaded' || chat?.status === 'closed' ) && setChatMessagesLoaded( true );
-	}, [ chat, isForwardingToZendesk, hasForwardedToZendesk ] );
+	}, [ chat?.status, isForwardingToZendesk, hasForwardedToZendesk ] );
 
 	/**
 	 * Handle the case where we are forwarding to Zendesk.
@@ -108,17 +125,23 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			setSearchParams( searchParams );
 			setHasForwardedToZendesk( true );
 
-			resetSupportInteraction().then( ( interaction ) => {
-				if ( isChatLoaded ) {
-					createZendeskConversation( {
-						avoidTransfer: true,
-						interactionId: interaction?.uuid,
-						createdFrom: 'direct_url',
-					} ).then( () => {
-						setChatMessagesLoaded( true );
-					} );
-				}
-			} );
+			// when forwarding to zd avoid creating new chats
+			if ( alreadyHasActiveZendeskChat ) {
+				setChatMessagesLoaded( true );
+			} else {
+				resetSupportInteraction().then( ( interaction ) => {
+					if ( isChatLoaded ) {
+						createZendeskConversation( {
+							avoidTransfer: true,
+							interactionId: interaction?.uuid,
+							section: searchParams.get( 'section' ),
+							createdFrom: 'direct_url',
+						} ).then( () => {
+							setChatMessagesLoaded( true );
+						} );
+					}
+				} );
+			}
 		}
 	}, [
 		isForwardingToZendesk,
@@ -127,6 +150,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		chat?.conversationId,
 		resetSupportInteraction,
 		createZendeskConversation,
+		alreadyHasActiveZendeskChat,
 	] );
 
 	// Used to apply the correct styling on messages
@@ -134,11 +158,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		return currentMessage === nextMessage;
 	};
 
-	const removeDislikeStatus = experimentVariationName === 'give_wapuu_a_chance';
-
-	const availableStatusWithFeedback = removeDislikeStatus
-		? [ 'sending', 'transfer' ]
-		: [ 'sending', 'dislike', 'transfer' ];
+	const availableStatusWithFeedback = [ 'sending', 'transfer' ];
 
 	return (
 		<>
@@ -161,7 +181,10 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 							const nextMessage = chat.messages[ index + 1 ];
 							const displayChatWithSupportLabel =
 								! nextMessage?.context?.flags?.show_contact_support_msg &&
-								message.context?.flags?.show_contact_support_msg;
+								message.context?.flags?.show_contact_support_msg &&
+								! chatHasEnded;
+
+							const displayChatWithSupportEndedLabel = ! nextMessage && chatHasEnded;
 
 							return (
 								<ChatMessage
@@ -173,17 +196,21 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 										chat.messages[ index + 1 ]?.role
 									) }
 									displayChatWithSupportLabel={ displayChatWithSupportLabel }
+									displayChatWithSupportEndedLabel={ displayChatWithSupportEndedLabel }
 								/>
 							);
 						} ) }
 						<JumpToRecent containerReference={ messagesContainerRef } />
-						{ chat.provider === 'odie' && <ViewMostRecentOpenConversationNotice /> }
-						{ chat.status === 'dislike' && ! removeDislikeStatus && <DislikeThumb /> }
-						{ availableStatusWithFeedback.includes( chat.status ) && (
-							<div className="odie-chatbox__action-message">
-								{ chat.status === 'sending' && <ThinkingPlaceholder /> }
-								{ chat.status === 'dislike' && <DislikeFeedbackMessage /> }
-							</div>
+						{ chat.provider === 'odie' && (
+							<>
+								<ViewMostRecentOpenConversationNotice />
+								{ availableStatusWithFeedback.includes( chat.status ) && (
+									<div className="odie-chatbox__action-message">
+										{ chat.status === 'sending' && <ThinkingPlaceholder /> }
+										{ chat.status === 'dislike' && <DislikeFeedbackMessage /> }
+									</div>
+								) }
+							</>
 						) }
 					</>
 				) }

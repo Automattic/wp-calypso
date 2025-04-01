@@ -1,10 +1,11 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 @import "../mixins";
 
 .download-products-form {
 	p {
-		font-size: 1rem;
+		@include body-large;
 	}
 
 	.select-dropdown__container {
@@ -34,15 +35,15 @@
 }
 
 .download-products-form__action-items h4 {
-	font-size: 1.25rem;
+	@include heading-x-large;
 }
 
 .download-products-form__action-items h5 {
-	font-size: 1rem;
+	@include heading-large;
 }
 
 .download-products-form__action-items pre {
-	font-size: 0.875rem;
+	@include body-medium;
 	padding: 0;
 	margin-block-end: 0.6rem;
 }
@@ -100,7 +101,7 @@ p.download-products-form__description {
 	flex: 1 0 100%;
 	align-self: flex-end;
 	margin: 0 0 1rem;
-	font-size: 0.875rem;
+	@include body-medium;
 	color: var(--color-text-gray);
 
 	@include break-medium {

@@ -13,7 +13,7 @@ $stats-utm-border: 1px solid var(--gray-gray-5, #dcdcde);
 		color: var(--studio-black);
 		display: flex;
 		font-family: $font-sf-pro-display;
-		font-size: 14px; // stylelint-disable-line declaration-property-unit-allowed-list
+		font-size: 14px;
 		font-style: normal;
 		font-weight: 500;
 		gap: 8px;
@@ -29,7 +29,6 @@ $stats-utm-border: 1px solid var(--gray-gray-5, #dcdcde);
 
 .stats-utm-picker__popover-list {
 	padding: 8px 0;
-	border-left: $stats-utm-border;
 	box-sizing: border-box;
 	list-style: none;
 	margin: 0;
@@ -66,8 +65,6 @@ $stats-utm-border: 1px solid var(--gray-gray-5, #dcdcde);
 	}
 
 	&.is-grouped + &.is-not-grouped {
-		margin-top: 2px;
-
 		&::before {
 			content: "";
 			margin: 2px 0;

@@ -56,7 +56,7 @@ const HelpCenterContainer: React.FC< Container > = ( {
 
 	const onDismiss = useCallback( () => {
 		handleClose();
-		recordTracksEvent( `calypso_inlinehelp_close` );
+		recordTracksEvent( 'calypso_inlinehelp_close' );
 	}, [ handleClose ] );
 
 	const focusReturnRef = useFocusReturn();

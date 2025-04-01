@@ -25,7 +25,6 @@ import {
 	getThemeDetailsUrl,
 	getThemeSupportUrl,
 	getThemeHelpUrl,
-	getThemePurchaseUrl,
 	getThemeCustomizeUrl,
 	getThemeSignupUrl,
 	getThemeDemoUrl,
@@ -1280,58 +1279,6 @@ describe( 'themes selectors', () => {
 				77203074
 			);
 			expect( helpUrl ).toEqual( '/theme/twentysixteen/support/example.net' );
-		} );
-	} );
-
-	describe( '#getThemePurchaseUrl', () => {
-		test( 'given a free theme and a wpcom site ID, should return null', () => {
-			const purchaseUrl = getThemePurchaseUrl(
-				{
-					sites: {
-						items: {
-							2916284: {
-								ID: 2916284,
-								URL: 'https://example.wordpress.com',
-							},
-						},
-					},
-					themes: {
-						queries: {
-							wpcom: new ThemeQueryManager( {
-								items: { twentysixteen },
-							} ),
-						},
-					},
-				},
-				'twentysixteen',
-				2916284
-			);
-			expect( purchaseUrl ).toBeNull();
-		} );
-
-		test( 'given a premium theme and a wpcom site ID, should return the purchase URL', () => {
-			const purchaseUrl = getThemePurchaseUrl(
-				{
-					sites: {
-						items: {
-							2916284: {
-								ID: 2916284,
-								URL: 'https://example.wordpress.com',
-							},
-						},
-					},
-					themes: {
-						queries: {
-							wpcom: new ThemeQueryManager( {
-								items: { mood },
-							} ),
-						},
-					},
-				},
-				'mood',
-				2916284
-			);
-			expect( purchaseUrl ).toEqual( '/checkout/example.wordpress.com/theme:mood' );
 		} );
 	} );
 

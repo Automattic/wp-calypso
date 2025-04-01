@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { getSelectedFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
+import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
 import { withReaderPerformanceTrackerStop } from '../reader-performance-tracker';
 
 class FollowingEmptyContent extends Component {
@@ -27,14 +27,19 @@ class FollowingEmptyContent extends Component {
 	};
 
 	render() {
-		const { selectedFeedId, translate } = this.props;
+		const { selectedFeedId, translate, view } = this.props;
 		const isFullSiteFeed = !! selectedFeedId;
+		const isRecentView = view === 'recent';
 
 		return (
 			<EmptyContent
 				className="stream__empty"
 				title={ translate( "You're all caught up." ) }
-				line={ translate( 'No new posts in the last 60 days.' ) }
+				line={
+					isRecentView
+						? translate( 'No new posts in the last 60 days.' )
+						: translate( 'No new posts.' )
+				}
 				action={
 					isFullSiteFeed
 						? translate( 'Visit the Full Site Feed' )
@@ -50,7 +55,7 @@ class FollowingEmptyContent extends Component {
 
 export default connect(
 	( state ) => ( {
-		selectedFeedId: getSelectedFeedId( state ),
+		selectedFeedId: getSelectedRecentFeedId( state ),
 	} ),
 	{
 		recordReaderTracksEvent,

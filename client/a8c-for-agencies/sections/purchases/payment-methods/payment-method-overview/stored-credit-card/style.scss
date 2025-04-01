@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .stored-credit-card__card {
 	position: relative;
@@ -29,29 +30,25 @@
 
 .stored-credit-card__card-number {
 	padding-block-start: 90px;
-	font-size: rem(24px);
-	font-weight: 700;
-	line-height: 1.5;
+	@include heading-x-large;
 
 	@include break-mobile {
-		font-size: rem(28px);
+		@include heading-2x-large;
 		padding-block-start: 65px;
 		text-wrap: nowrap;
 	}
 }
 
 .stored-credit-card__card-info-heading {
-	font-size: rem(11px);
+	@include body-small;
 	text-wrap: nowrap;
 }
 
 .stored-credit-card__card-info-value {
-	font-size: rem(14px);
-	font-weight: 700;
-	line-height: 1;
+	@include heading-medium;
 
 	@include break-mobile {
-		font-size: rem(18px);
+		@include heading-large;
 	}
 }
 
@@ -105,13 +102,11 @@
 }
 
 .stored-credit-card__card-footer-title {
-	font-size: rem(16px);
-	font-weight: 500;
+	@include heading-large;
 }
 
 .stored-credit-card__card-footer-subtitle {
-	font-size: rem(12px);
-	font-weight: 400;
+	@include body-small;
 }
 
 button.button.stored-credit-card__card-footer-actions {

@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 ul.hosting-additional-features {
 	display: grid;
@@ -29,7 +30,7 @@ ul.hosting-additional-features {
 	}
 
 	li {
-		@include a4a-font-body-lg;
+		@include body-large;
 		display: flex;
 		align-content: center;
 		gap: 4px;

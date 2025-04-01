@@ -2,7 +2,6 @@ import { createElement } from 'react';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import HostingActivate from './hosting-activate';
 import Hosting from './main';
 
 function waitForState( context ) {
@@ -45,10 +44,5 @@ export async function handleHostingPanelRedirect( context, next ) {
 
 export function layout( context, next ) {
 	context.primary = createElement( Hosting );
-	next();
-}
-
-export function activationLayout( context, next ) {
-	context.primary = createElement( HostingActivate );
 	next();
 }

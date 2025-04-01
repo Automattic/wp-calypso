@@ -49,7 +49,7 @@ const ComparisonGridToggle = forwardRef<
 
 	return (
 		<Container>
-			<Button onClick={ onClick } ref={ ref }>
+			<Button className="plan-features-main__comparison-toggle" onClick={ onClick } ref={ ref }>
 				{ label }
 			</Button>
 		</Container>

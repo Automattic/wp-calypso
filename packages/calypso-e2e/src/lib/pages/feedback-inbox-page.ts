@@ -36,15 +36,38 @@ export class FeedbackInboxPage {
 	 * @param {string} text The text to match in the row. Using the name field is a good choice.
 	 */
 	async clickResponseRowByText( text: string ): Promise< void > {
-		await this.page.locator( '.jp-forms__table-item' ).filter( { hasText: text } ).first().click();
-		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
-			await this.page
-				.locator( '.jp-forms__table-item.is-active' )
-				.filter( { hasText: text } )
-				.waitFor();
+		// @todo Remove `oldResponseRowLocator` option once the DataView-based inbox is deployed everywhere.
+		const oldResponseRowLocator = this.page
+			.locator( '.jp-forms__table-item' )
+			.filter( { hasText: text } )
+			.first();
+		const newResponseRowLocator = this.page
+			.locator( '.jp-forms__inbox__dataviews .dataviews-view-table__row' )
+			.filter( { hasText: text } )
+			.first();
+		await newResponseRowLocator.or( oldResponseRowLocator ).waitFor();
+		if ( await newResponseRowLocator.isVisible() ) {
+			if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
+				await newResponseRowLocator.click();
+				await this.page
+					.locator( '.jp-forms__inbox__dataviews .dataviews-view-table__row.is-selected' )
+					.filter( { hasText: text } )
+					.waitFor();
+			} else {
+				await newResponseRowLocator.getByRole( 'button', { name: 'View response' } ).click();
+				await this.page.getByRole( 'dialog', { name: 'Response' } ).waitFor();
+			}
 		} else {
-			// On mobile, the row opens a separate view with the response that has this return link text.
-			await this.page.getByText( 'View all responses' ).waitFor();
+			await oldResponseRowLocator.click();
+			if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
+				await this.page
+					.locator( '.jp-forms__table-item.is-active' )
+					.filter( { hasText: text } )
+					.waitFor();
+			} else {
+				// On mobile, the row opens a separate view with the response that has this return link text.
+				await this.page.getByText( 'View all responses' ).waitFor();
+			}
 		}
 	}
 
@@ -66,10 +89,19 @@ export class FeedbackInboxPage {
 	async searchResponses( search: string ): Promise< void > {
 		const responseRequestPromise = this.page.waitForResponse(
 			( response ) =>
-				response.url().includes( '/forms/responses' ) &&
+				// Atomic
+				( response.url().includes( '/wp-json/wp/v2/feedback' ) ||
+					// Simple
+					response.url().match( /\/wp\/v2\/sites\/[0-9]+\/feedback/ ) ||
+					// @todo Remove once once the DataView-based inbox is deployed everywhere.
+					response.url().includes( '/forms/responses' ) ) &&
 				response.url().includes( encodeURIComponent( search ) )
 		);
-		await this.page.getByRole( 'textbox', { name: 'Search responses' } ).fill( search );
+		// @todo Remove the `.or( ... )` once the DataView-based inbox is deployed everywhere.
+		await this.page
+			.getByRole( 'searchbox', { name: 'Search' } )
+			.or( this.page.getByRole( 'textbox', { name: 'Search responses' } ) )
+			.fill( search );
 		await responseRequestPromise;
 		// And wait for the UI re-render by waiting until the tabs are re-enabled.
 		await this.page.getByRole( 'tab', { name: 'Inbox', exact: false, disabled: false } ).waitFor();
@@ -79,6 +111,10 @@ export class FeedbackInboxPage {
 	 * Clears the search input.
 	 */
 	async clearSearch(): Promise< void > {
-		await this.page.getByRole( 'textbox', { name: 'Search responses' } ).clear();
+		// @todo Remove the `.or( ... )` once the DataView-based inbox is deployed everywhere.
+		await this.page
+			.getByRole( 'searchbox', { name: 'Search' } )
+			.or( this.page.getByRole( 'textbox', { name: 'Search responses' } ) )
+			.clear();
 	}
 }

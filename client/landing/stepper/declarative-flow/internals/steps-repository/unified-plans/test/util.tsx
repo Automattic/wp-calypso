@@ -120,7 +120,7 @@ describe( 'buildUpgradeFunction', () => {
 		PLAN_ECOMMERCE,
 		PLAN_ECOMMERCE_2_YEARS,
 	] )(
-		`Should add is_store_signup to cartItem.extra when processing wp.com business and eCommerce plans (%s)`,
+		'Should add is_store_signup to cartItem.extra when processing wp.com business and eCommerce plans (%s)',
 		( plan ) => {
 			const myProps = {
 				...tplProps,
@@ -143,7 +143,7 @@ describe( 'buildUpgradeFunction', () => {
 		PLAN_ECOMMERCE,
 		PLAN_ECOMMERCE_2_YEARS,
 	] )(
-		`Should not add is_store_signup to cartItem.extra when flowName is different than 'ecommerce' (%s)`,
+		"Should not add is_store_signup to cartItem.extra when flowName is different than 'ecommerce' (%s)",
 		( plan ) => {
 			const myProps = {
 				...tplProps,
@@ -185,7 +185,7 @@ describe( 'buildUpgradeFunction', () => {
 		PLAN_JETPACK_BUSINESS,
 		PLAN_JETPACK_BUSINESS_MONTHLY,
 	] )(
-		`Should not add is_store_signup to cartItem.extra when processing non-wp.com non-business plan (%s)`,
+		'Should not add is_store_signup to cartItem.extra when processing non-wp.com non-business plan (%s)',
 		( plan ) => {
 			const cartItems = getCartItems( { product_slug: plan } );
 			const [ planCartItem ] = cartItems;

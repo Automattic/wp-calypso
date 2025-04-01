@@ -48,8 +48,8 @@ describe( 'Sources', () => {
 							expect( attributes[ name ].length )
 								.withContext(
 									`Selector '${ selector }' has a duplicating attribute '${ name }'. ` +
-										`Please rewrite it so that the attribute doesn't repeat ` +
-										`and a DOM element created from the rewritten selector matches the original selector.`
+										"Please rewrite it so that the attribute doesn't repeat " +
+										'and a DOM element created from the rewritten selector matches the original selector.'
 								)
 								.toBeLessThanOrEqual( 1 );
 						}

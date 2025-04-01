@@ -349,9 +349,12 @@ function addDIFMLiteProductToCart( callback, dependencies, step, reduxStore ) {
 	if ( step.lastKnownFlow === 'do-it-for-me-store' ) {
 		dependencies.isStoreFlow = true;
 	}
+
+	const selectedSiteId = siteId || getSiteId( reduxStore.getState(), siteSlug );
+
 	const extra = buildDIFMCartExtrasObject(
 		dependencies,
-		siteId,
+		selectedSiteId,
 		`step-actions-flow-${ step.lastKnownFlow || '' }`
 	);
 	const cartItem = {
@@ -428,7 +431,12 @@ export function createSiteAndAddDIFMToCart( callback, dependencies, step, reduxS
 				return;
 			}
 			siteSlug = result.siteSlug;
-			addDIFMLiteProductToCart( callback, { ...providedDependencies, siteSlug }, step, reduxStore );
+			addDIFMLiteProductToCart(
+				callback,
+				{ ...providedDependencies, siteSlug, siteId: result.siteId },
+				step,
+				reduxStore
+			);
 		};
 
 		createSiteWithCart( createSiteWithCartCallback, providedDependencies, step, reduxStore );

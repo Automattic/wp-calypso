@@ -1,7 +1,7 @@
 import { Button } from '@wordpress/components';
 import { Icon, chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, formatCurrency } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -47,10 +47,15 @@ const MigrationOfferV3 = ( { isExpanded, onToggleView }: Props ) => {
 				<h3 className="a4a-migration-offer-v3__title">
 					<span>
 						{ translate(
-							'{{b}}Limited time offer:{{/b}} Migrate your sites to Pressable or WordPress.com and earn up to $10,000!*',
+							'{{b}}Limited time offer:{{/b}} Migrate your sites to Pressable or WordPress.com and earn up to %(maxCommission)s*',
 							{
 								components: {
 									b: <b />,
+								},
+								args: {
+									maxCommission: formatCurrency( 10000, 'USD', {
+										stripZeros: true,
+									} ),
 								},
 							}
 						) }
@@ -74,18 +79,34 @@ const MigrationOfferV3 = ( { isExpanded, onToggleView }: Props ) => {
 									}
 								),
 								translate(
-									"{{b}}WP Engine customers:{{/b}} You will receive $100 per successful site migration up to $10,000. If you have an existing contract, we'll host your site(s) for free until your existing WP Engine contract ends.",
+									"{{b}}WP Engine customers:{{/b}} You will receive %(commission)s per successful site migration up to %(maxCommission)s. If you have an existing contract, we'll host your site(s) for free until your existing WP Engine contract ends.",
 									{
 										components: {
 											b: <b />,
 										},
+										args: {
+											maxCommission: formatCurrency( 10000, 'USD', {
+												stripZeros: true,
+											} ),
+											commission: formatCurrency( 100, 'USD', {
+												stripZeros: true,
+											} ),
+										},
 									}
 								),
 								translate(
-									'{{b}}For any other host:{{/b}} You will receive $100 per successful site migration, up to $3,000.',
+									'{{b}}For any other host:{{/b}} You will receive %(commission)s per successful site migration, up to %(maxCommission)s.',
 									{
 										components: {
 											b: <b />,
+										},
+										args: {
+											maxCommission: formatCurrency( 3000, 'USD', {
+												stripZeros: true,
+											} ),
+											commission: formatCurrency( 100, 'USD', {
+												stripZeros: true,
+											} ),
 										},
 									}
 								),

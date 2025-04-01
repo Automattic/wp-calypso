@@ -1,4 +1,3 @@
-import { HelpCenterStepButton } from '@automattic/help-center';
 import { ActionButtons } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -10,6 +9,7 @@ import flows from 'calypso/signup/config/flows';
 import NavigationLink from 'calypso/signup/navigation-link';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import HelpCenterStepButton from '../help-center-step-button';
 import './style.scss';
 
 class StepWrapper extends Component {
@@ -186,6 +186,7 @@ class StepWrapper extends Component {
 			customizedActionButtons,
 			isExtraWideLayout,
 			isSticky,
+			userLoggedIn,
 		} = this.props;
 
 		const backButton = ! hideBack && this.renderBack();
@@ -204,7 +205,7 @@ class StepWrapper extends Component {
 			'has-navigation': hasNavigation,
 		} );
 
-		const flow = flows.getFlow( flowName, this.props.userLoggedIn );
+		const flow = flows.getFlow( flowName, userLoggedIn );
 
 		let sticky = null;
 		if ( isSticky !== undefined ) {
@@ -212,8 +213,9 @@ class StepWrapper extends Component {
 		}
 
 		const queryParams = new URLSearchParams( window?.location.search );
-		const flags = queryParams.get( 'flags' );
-		const isHelpCenterLinkEnabled = flags === 'signup/help-center-link';
+		const flags = queryParams.get( 'flags' )?.split( ',' );
+		const isHelpCenterLinkEnabled =
+			flags?.includes( 'signup/help-center-link' ) && flow?.enabledHelpCenterGeos && userLoggedIn;
 
 		return (
 			<>
@@ -225,8 +227,10 @@ class StepWrapper extends Component {
 						{ customizedActionButtons }
 						{ isHelpCenterLinkEnabled && (
 							<HelpCenterStepButton
-								hasPremiumSupport={ flow?.enablePremiumSupport }
 								flowName={ flowName }
+								enabledGeos={ flow?.enabledHelpCenterGeos }
+								helpCenterButtonCopy={ flow?.helpCenterButtonCopy }
+								helpCenterButtonLink={ flow?.helpCenterButtonLink }
 							/>
 						) }
 					</ActionButtons>

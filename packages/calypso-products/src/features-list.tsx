@@ -333,6 +333,8 @@ import {
 	FEATURE_STATS_BASIC_20250206,
 	FEATURE_STATS_ADVANCED_20250206,
 	FEATURE_SUPPORT,
+	FEATURE_SUPPORT_FROM_EXPERTS,
+	FEATURE_AI_ASSISTANT,
 } from './constants';
 import type { FeatureList } from './types';
 
@@ -1600,7 +1602,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_ADD_MULTIPLE_PAGES_NEWSLETTER ]: {
 		getSlug: () => FEATURE_ADD_MULTIPLE_PAGES_NEWSLETTER,
-		getTitle: () => i18n.translate( `Add multiple pages to your Newsletter's website` ),
+		getTitle: () => i18n.translate( "Add multiple pages to your Newsletter's website" ),
 	},
 	[ FEATURE_AD_FREE_EXPERIENCE ]: {
 		getSlug: () => FEATURE_AD_FREE_EXPERIENCE,
@@ -1653,30 +1655,16 @@ const FEATURES_LIST: FeatureList = {
 	[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: {
 		getSlug: () => FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 		getTitle: () =>
-			/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
-			i18n.fixMe( {
-				text: 'Transaction fee for standard payments (+\u00A0standard processing\u00A0fee)',
-				newCopy: i18n.translate(
-					'Transaction fee for standard payments (+\u00A0standard processing\u00A0fee)'
-				),
-				oldCopy: i18n.translate(
-					'Commission fee for standard payment features (plus standard processing\u00A0fee)'
-				),
-			} ),
+			i18n.translate(
+				'Transaction fee for standard payments (+\u00A0standard processing\u00A0fee)'
+			),
 	},
 	[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: {
 		getSlug: () => FEATURE_COMMISSION_FEE_WOO_FEATURES,
 		getTitle: () =>
-			/* @ts-expect-error - fixMe method is not typed in the package. Once types are added upstream, remove this. */
-			i18n.fixMe( {
-				text: 'Transaction fee for standard WooCommerce payments (+ standard processing\u00A0fee)',
-				newCopy: i18n.translate(
-					'Transaction fee for standard WooCommerce payments (+ standard processing\u00A0fee)'
-				),
-				oldCopy: i18n.translate(
-					'Commission fee for standard WooCommerce payment features (plus standard processing\u00A0fee)'
-				),
-			} ),
+			i18n.translate(
+				'Transaction fee for standard WooCommerce payments (+ standard processing\u00A0fee)'
+			),
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_10 ]: {
 		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_10,
@@ -2264,7 +2252,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_ES_SEARCH_JP ]: {
 		getSlug: () => FEATURE_ES_SEARCH_JP,
-		getTitle: () => i18n.translate( 'Built-in Elasticsearch' ),
+		getTitle: () => i18n.translate( 'Jetpack Search' ),
 		getDescription: () =>
 			i18n.translate( 'Make surfacing your content simple with built-in premium site search.' ),
 	},
@@ -2276,7 +2264,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SITE_ACTIVITY_LOG_JP ]: {
 		getSlug: () => FEATURE_SITE_ACTIVITY_LOG_JP,
-		getTitle: () => i18n.translate( 'Unlimited site activity log' ),
+		getTitle: () => i18n.translate( 'Site activity log' ),
 		getDescription: () =>
 			i18n.translate( 'Keep an administrative eye on activity across your site.' ),
 	},
@@ -2284,7 +2272,9 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_DONATIONS_AND_TIPS_JP,
 		getTitle: () => i18n.translate( 'Donations and tips' ),
 		getDescription: () =>
-			i18n.translate( 'Allow your audience to support your work easily with donations and tips.' ),
+			i18n.translate(
+				'Allow your audience to support your work easily with charitable donations and tips.'
+			),
 	},
 	[ FEATURE_PAYPAL_JP ]: {
 		getSlug: () => FEATURE_PAYPAL_JP,
@@ -2428,6 +2418,11 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_SUPPORT,
 		getTitle: () => i18n.translate( 'Support' ),
 	},
+	[ FEATURE_SUPPORT_FROM_EXPERTS ]: {
+		getSlug: () => FEATURE_SUPPORT_FROM_EXPERTS,
+		getTitle: () => i18n.translate( 'Support from our expert\u00A0team' ),
+		getDescription: () => i18n.translate( 'Get support from our expert, friendly Happiness team' ),
+	},
 	[ FEATURE_FAST_SUPPORT_FROM_EXPERTS ]: {
 		getSlug: () => FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		getTitle: () => i18n.translate( 'Fast support from our expert\u00A0team' ),
@@ -2460,6 +2455,12 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Premium stats' ),
 		getDescription: () =>
 			i18n.translate( 'Unlock all stats, including UTM tracking and device insights.' ),
+	},
+	[ FEATURE_AI_ASSISTANT ]: {
+		getSlug: () => FEATURE_AI_ASSISTANT,
+		getTitle: () => i18n.translate( 'AI Assistant' ),
+		getDescription: () =>
+			i18n.translate( 'Enhance your content creation with AI-powered writing, images and more.' ),
 	},
 	/* END: 2023 Pricing Grid Features */
 

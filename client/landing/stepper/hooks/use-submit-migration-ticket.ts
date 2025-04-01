@@ -29,9 +29,8 @@ export const useSubmitMigrationTicket = <
 	const { mutate, mutateAsync, ...rest } = useMutation( {
 		mutationFn: ( { locale, blog_url, from_url, context } ) =>
 			wpcomRequest( {
-				path: 'help/migration-ticket/new',
-				apiNamespace: 'wpcom/v2/',
-				apiVersion: '2',
+				path: '/help/migration-ticket/new',
+				apiNamespace: 'wpcom/v2',
 				method: 'POST',
 				body: {
 					locale,

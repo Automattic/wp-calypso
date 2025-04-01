@@ -106,7 +106,7 @@ export default function PostItem( {
 							<span>{ titleShortened || __( 'Untitled' ) }</span>
 							{ titleIsLong && (
 								<InfoPopover position="bottom right">
-									{ __( 'Title: ' ) }
+									{ __( 'Title:' ) }
 									<br />
 									<span className="popover-title">{ post?.title }</span>
 								</InfoPopover>

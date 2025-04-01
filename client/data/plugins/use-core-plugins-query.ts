@@ -34,7 +34,6 @@ export const useCorePluginsQuery = (
 		queryFn: () => {
 			return wpcomRequest( {
 				path: `/sites/${ siteIdOrSlug }/plugins`,
-				apiVersion: '2',
 				apiNamespace: 'wp/v2',
 			} );
 		},

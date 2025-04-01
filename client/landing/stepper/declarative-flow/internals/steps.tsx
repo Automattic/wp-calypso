@@ -1,5 +1,3 @@
-import { StepperStep } from './types';
-
 export const STEPS = {
 	BLOGGER_STARTING_POINT: {
 		slug: 'bloggerStartingPoint',
@@ -9,6 +7,11 @@ export const STEPS = {
 	BUSINESS_INFO: {
 		slug: 'businessInfo',
 		asyncComponent: () => import( './steps-repository/business-info' ),
+	},
+
+	AUTOMATED_COPY_SITE: {
+		slug: 'automated-copy',
+		asyncComponent: () => import( './steps-repository/automated-copy-site' ),
 	},
 
 	CELEBRATION: {
@@ -60,11 +63,6 @@ export const STEPS = {
 
 	ERROR: { slug: 'error', asyncComponent: () => import( './steps-repository/error-step' ) },
 
-	MIGRATION_ERROR: {
-		slug: 'error',
-		asyncComponent: () => import( './steps-repository/migration-error' ),
-	},
-
 	NEWSLETTER_SETUP: {
 		slug: 'newsletterSetup',
 		asyncComponent: () => import( './steps-repository/newsletter-setup' ),
@@ -93,11 +91,6 @@ export const STEPS = {
 	},
 
 	IMPORT: { slug: 'import', asyncComponent: () => import( './steps-repository/import' ) },
-
-	IMPORT_LIGHT: {
-		slug: 'importLight',
-		asyncComponent: () => import( './steps-repository/import-light' ),
-	},
 
 	IMPORT_LIST: {
 		slug: 'importList',
@@ -132,6 +125,11 @@ export const STEPS = {
 	IMPORTER_MEDIUM: {
 		slug: 'importerMedium',
 		asyncComponent: () => import( './steps-repository/importer-medium' ),
+	},
+
+	IMPORTER_PLAYGROUND: {
+		slug: 'importerPlayground',
+		asyncComponent: () => import( './steps-repository/playground/components/playground-setup' ),
 	},
 
 	IMPORTER_SQUARESPACE: {
@@ -170,10 +168,6 @@ export const STEPS = {
 	},
 
 	LAUNCHPAD: { slug: 'launchpad', asyncComponent: () => import( './steps-repository/launchpad' ) },
-	MIGRATION_HANDLER: {
-		slug: 'migrationHandler',
-		asyncComponent: () => import( './steps-repository/migration-handler' ),
-	},
 
 	OPTIONS: {
 		slug: 'options',
@@ -185,6 +179,12 @@ export const STEPS = {
 	PROCESSING: {
 		slug: 'processing',
 		asyncComponent: () => import( './steps-repository/processing-step' ),
+	},
+
+	/** Temporary step until we allow passing props to steps */
+	PROCESSING_COPY_SITE_FLOW: {
+		slug: 'processing-copy',
+		asyncComponent: () => import( './steps-repository/processing-step-copy-site-flow' ),
 	},
 
 	SITE_CREATION_STEP: {
@@ -242,11 +242,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/wait-for-plugin-install' ),
 	},
 
-	SITE_MIGRATION_ASSIGN_TRIAL_PLAN: {
-		slug: 'site-migration-assign-trial-plan',
-		asyncComponent: () => import( './steps-repository/site-migration-assign-trial-plan' ),
-	},
-
 	SITE_MIGRATION_INSTRUCTIONS: {
 		slug: 'site-migration-instructions',
 		asyncComponent: () => import( './steps-repository/site-migration-instructions' ),
@@ -255,11 +250,6 @@ export const STEPS = {
 	SITE_MIGRATION_STARTED: {
 		slug: 'site-migration-started',
 		asyncComponent: () => import( './steps-repository/site-migration-started' ),
-	},
-
-	SITE_MIGRATION_ASSISTED_MIGRATION: {
-		slug: 'migrateMessage',
-		asyncComponent: () => import( './steps-repository/importer-migrate-message' ),
 	},
 
 	SITE_MIGRATION_CREDENTIALS: {
@@ -299,19 +289,9 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-how-to-migrate' ),
 	},
 
-	SITE_MIGRATION_SOURCE_URL: {
-		slug: 'site-migration-source-url',
-		asyncComponent: () => import( './steps-repository/site-migration-source-url' ),
-	},
-
 	SITE_MIGRATION_UPGRADE_PLAN: {
 		slug: 'site-migration-upgrade-plan',
 		asyncComponent: () => import( './steps-repository/site-migration-upgrade-plan' ),
-	},
-
-	SITE_MIGRATION_PLUGIN_INSTALL: {
-		slug: 'site-migration-plugin-install',
-		asyncComponent: () => import( './steps-repository/site-migration-plugin-install' ),
 	},
 
 	SITE_MIGRATION_ALREADY_WPCOM: {
@@ -398,7 +378,12 @@ export const STEPS = {
 		slug: 'setup-blog',
 		asyncComponent: () => import( './steps-repository/setup-blog' ),
 	},
-} satisfies Record< string, StepperStep >;
+
+	PLAYGROUND: {
+		slug: 'playground',
+		asyncComponent: () => import( './steps-repository/playground' ),
+	},
+} as const;
 
 /**
  * Define steps that are only used by the Stepper framework. Any flow should avoid include these steps as much as possible.
@@ -409,4 +394,4 @@ export const PRIVATE_STEPS = {
 		asyncComponent: () =>
 			import( /* webpackChunkName: "stepper-user-step" */ './steps-repository/__user' ),
 	},
-} satisfies Record< string, StepperStep >;
+} as const;

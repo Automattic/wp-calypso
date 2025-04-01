@@ -49,7 +49,7 @@ describe( 'storeExperimentAssignment and retrieveExperimentAssignment', () => {
 				retrievedTimestamp: validFallbackExperimentAssignment.retrievedTimestamp - 1,
 			} )
 		).toThrowErrorMatchingInlineSnapshot(
-			`"Trying to store an older experiment assignment than is present in the store, likely a race condition."`
+			'"Trying to store an older experiment assignment than is present in the store, likely a race condition."'
 		);
 	} );
 
@@ -59,7 +59,7 @@ describe( 'storeExperimentAssignment and retrieveExperimentAssignment', () => {
 				...validFallbackExperimentAssignment,
 				experimentName: undefined,
 			} )
-		).toThrowErrorMatchingInlineSnapshot( `"Invalid ExperimentAssignment"` );
+		).toThrowErrorMatchingInlineSnapshot( '"Invalid ExperimentAssignment"' );
 	} );
 } );
 

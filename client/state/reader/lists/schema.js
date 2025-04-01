@@ -13,6 +13,7 @@ export const itemsSchema = {
 				owner: { type: 'string' },
 				is_owner: { type: 'boolean' },
 				is_public: { type: 'boolean' },
+				is_immutable: { type: 'boolean' },
 			},
 		},
 	},

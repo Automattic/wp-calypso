@@ -49,7 +49,7 @@ export default function GetStarted() {
 			</LayoutTop>
 			<LayoutBody>
 				<div className="team-list-get-started__heading">
-					{ translate( `Invite team members to help manage your clients' sites.` ) }
+					{ translate( "Invite team members to help manage your clients' sites." ) }
 				</div>
 
 				<div className="team-list-get-started__subtitle">
@@ -66,7 +66,7 @@ export default function GetStarted() {
 						description={
 							<>
 								{ translate(
-									`Team members get almost the same permissions as admins, but they can't do things like:`
+									"Team members get almost the same permissions as admins, but they can't do things like:"
 								) }
 
 								<ul className="team-list-get-started__excluded-operation-list">

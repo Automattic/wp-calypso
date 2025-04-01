@@ -8,7 +8,6 @@ import * as React from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import AppPromo from 'calypso/blocks/app-promo';
-import BackButton from 'calypso/components/back-button';
 import InfiniteList from 'calypso/components/infinite-list';
 import ListEnd from 'calypso/components/list-end';
 import SectionNav from 'calypso/components/section-nav';
@@ -17,6 +16,8 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import { Interval, EVERY_MINUTE } from 'calypso/lib/interval';
 import scrollTo from 'calypso/lib/scroll-to';
 import withDimensions from 'calypso/lib/with-dimensions';
+import ReaderBackButton from 'calypso/reader/components/back-button';
+import { isEditorIframeFocused } from 'calypso/reader/components/quick-post/utils';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
@@ -44,7 +45,7 @@ import {
 } from 'calypso/state/reader/streams/selectors';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
-import { getSelectedFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
+import { getSelectedRecentFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
@@ -284,7 +285,11 @@ class ReaderStream extends Component {
 		}
 
 		const tagName = ( event.target || event.srcElement ).tagName;
-		if ( inputTags.includes( tagName ) || event.target.isContentEditable ) {
+		if (
+			inputTags.includes( tagName ) ||
+			event.target.isContentEditable ||
+			isEditorIframeFocused()
+		) {
 			return;
 		}
 
@@ -616,12 +621,6 @@ class ReaderStream extends Component {
 		return this.getScrollContainer( node.parentNode );
 	};
 
-	handleBack = () => {
-		if ( typeof window !== 'undefined' ) {
-			window.history.back();
-		}
-	};
-
 	render() {
 		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey, selectedPostKey } =
 			this.props;
@@ -741,29 +740,11 @@ class ReaderStream extends Component {
 				<div ref={ this.overlayRef } className="stream__init-overlay" />
 				{ shouldPoll && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
 				<UpdateNotice streamKey={ streamKey } onClick={ this.showUpdates } />
-				{ this.props.showBack && <BackButton onClick={ this.handleBack } /> }
+				{ this.props.showBack && <ReaderBackButton /> }
 				{ this.props.children }
 				{ showingStream && items.length ? this.props.intro?.() : null }
 				{ body }
-				{ showingStream && !! items.length && ! isRequesting && (
-					<>
-						<ListEnd />
-						{ streamKey.startsWith( 'following' ) && (
-							<div className="stream__caught-up">
-								<p>{ translate( "You've seen all new posts from the past 60 days." ) }</p>
-								<p>
-									{ this.props.selectedFeedId
-										? translate( "Visit {{link}}this site's feed{{/link}} to view older posts.", {
-												components: {
-													link: <a href={ `/read/feeds/${ this.props.selectedFeedId }` } />,
-												},
-										  } )
-										: translate( 'Visit the individual site to view older posts.' ) }
-								</p>
-							</div>
-						) }
-					</>
-				) }
+				{ showingStream && items.length && ! isRequesting ? <ListEnd /> : null }
 			</TopLevel>
 		);
 	}
@@ -775,7 +756,7 @@ class ReaderStream extends Component {
  */
 function getStreamKey( state, streamKey ) {
 	// For "following" stream, use a unique streamKey if a feed is selected. This prevent feed overwrites when rapid selections are made.
-	const selectedFeedId = getSelectedFeedId( state );
+	const selectedFeedId = getSelectedRecentFeedId( state );
 	const isFollowingFiltered = streamKey === 'following' && selectedFeedId;
 	if ( isFollowingFiltered ) {
 		return `following:feed-${ selectedFeedId }`;
@@ -805,7 +786,7 @@ export default connect(
 			stream,
 			streamKey,
 			recsStream: getStream( state, recsStreamKey ),
-			selectedFeedId: getSelectedFeedId( state ),
+			selectedFeedId: getSelectedRecentFeedId( state ),
 			selectedPostKey: stream.selected,
 			selectedPost,
 			lastPage: stream.lastPage,

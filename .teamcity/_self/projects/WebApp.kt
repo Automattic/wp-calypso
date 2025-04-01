@@ -571,23 +571,84 @@ object CheckCodeStyleBranch : BuildType({
 			name = "Run eslint"
 			scriptContent = """
 				set -x
+
 				export NODE_ENV="test"
 
-				# Find files to lint
-				TOTAL_FILES_TO_LINT=$(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -cE '(\.[jt]sx?|\.json|\.md)${'$'}' || true)
+				# Find lintable files touched in this branch, except those deleted
+				function _find_files_to_lint() {
+					git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD \
+						| grep -E '(\.[jt]sx?|\.json|\.md)${'$'}' \
+						|| true
+				}
 
-				# Avoid running more than 16 parallel eslint tasks as it could OOM
-				if [ "%run_full_eslint%" = "true" ] || [ "${'$'}TOTAL_FILES_TO_LINT" -gt 16 ] || [ "${'$'}TOTAL_FILES_TO_LINT" == "0" ]; then
+				# Use with `grep -c .` to prevent miscounts due to newlines
+				FILE_COUNT=${'$'}(_find_files_to_lint | grep -c . || true)
+
+				# Create temporary output directory. Export the variable so that it is
+				# available in the batch runs.
+				export RESULTS_DIR=checkstyle_results/eslint
+				mkdir -p "${'$'}RESULTS_DIR"
+
+				if [ "%run_full_eslint%" = true ] || [ "${'$'}FILE_COUNT" -eq 0 ]; then
 					echo "Linting all files"
-					yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" .
+					yarn run eslint --format checkstyle --output-file "${'$'}RESULTS_DIR/results.xml" .
 				else
-					# To avoid `ENAMETOOLONG` errors linting files, we have to lint them one by one,
-					# instead of passing the full list of files to eslint directly.
-					for file in ${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -E '(\.[jt]sx?|\.json|\.md)${'$'}' || true); do
-						( echo "Linting ${'$'}file"
-						yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/${'$'}{file//\//_}.xml" "${'$'}file" ) &
-					done
-					wait
+					echo "Linting affected files"
+
+					# When linting a large set of files we have to guard against two errors:
+					#
+					# - ENAMETOOLONG: we cannot pass ESLint too many files as arguments, lest we exceed
+					# the maximum command line length.
+					# - OOM (Out Of Memory): we cannot spawn too many processes in parallel.
+					#
+					# Thus, we'll process the files in batches.
+					#
+					# In an ideal scenario, we'd simply pipe the list of target files to `xargs`:
+					#
+					# _find_files | xargs -n3 -P5 yarn run eslint...
+					#
+					# where -n3 is the batch size and -P5 the number of parallel runs. However, we
+					# want to know which batch we are currently in -- a concept that I don't think
+					# xargs has -- so that each ESLint run can write to a separate file.
+					#
+					# So we resort to a little bit of AWK magic to reshape our list of files into
+					# rows of BATCH_SIZE. Then, we use `nl` to prepend each row with an index.
+					#
+					# The output of the `awk | nl` chain now looks like:
+					#
+					#     1 file1 file2 file3
+					#     2 file4 file5 file6
+					#     3 file7
+					#
+					# - `xargs` must now use the `-L1` option to process one line at a time
+					# - instead of calling `yarn` directly, we use `bash` to split the arguments
+					#
+					# CAVEAT: ASSUMES NO SPACES IN FILENAMES.
+
+					BATCH_SIZE=15 # Number of files handled by each ESLint process
+					MAX_PARALLEL_BATCHES=15 # Number of concurrent ESLint processes
+
+					_find_files_to_lint \
+						| awk -v"n=${'$'}BATCH_SIZE" '{printf "%%s%%s", $0, (NR%%n?"\t":"\n")}' \
+						| nl \
+						| xargs -L1 -P"${'$'}MAX_PARALLEL_BATCHES" bash -c '
+							BATCH_NUM="${'$'}1"; shift
+							BATCH_FILES="${'$'}@"
+							yarn run eslint \
+								--format checkstyle \
+								--output-file "${'$'}RESULTS_DIR/batch_${'$'}{BATCH_NUM}.xml" \
+								${'$'}BATCH_FILES
+
+							# xargs will return 123 if any run returns a non-zero value. Ensure we
+							# only catch relevant issues. ESLint exit codes seem to be:
+							# - 0 for no errors
+							# - 1 for linting errors (should ignore)
+							# - 2 for other errors (should propagate)
+							status=${'$'}?
+							if [ ${'$'}status -gt 1 ]; then
+								exit ${'$'}status
+							fi
+						' yarn-batch # Arbitrary name to be used as each batch's progname
 				fi
 			"""
 		}
@@ -1058,4 +1119,3 @@ object QuarantinedE2ETests: E2EBuildType(
 	buildTriggers = {
 	}
 )
-

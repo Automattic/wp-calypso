@@ -21,7 +21,12 @@ import type { Step } from '../../types';
 import type { DomainSuggestion } from '@automattic/data-stores';
 import './style.scss';
 
-const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
+const ChooseADomain: Step< {
+	submits:
+		| { freeDomain: boolean }
+		| { domain: any }
+		| { freeDomain: boolean | undefined; domainName: string | undefined };
+} > = function ChooseADomain( { navigation, flow } ) {
 	const { setHideFreePlan, setDomainCartItem, setDomain } = useDispatch( ONBOARD_STORE );
 	const { goNext, goBack, submit } = navigation;
 	const { __ } = useI18n();

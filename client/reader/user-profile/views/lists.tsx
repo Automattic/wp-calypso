@@ -23,7 +23,12 @@ interface UserListsProps {
 	isLoading?: boolean;
 }
 
-const UserLists = ( { user, requestUserLists, lists, isLoading }: UserListsProps ): JSX.Element => {
+export const UserLists = ( {
+	user,
+	requestUserLists,
+	lists,
+	isLoading,
+}: UserListsProps ): JSX.Element => {
 	const translate = useTranslate();
 	const [ hasRequested, setHasRequested ] = useState( false );
 	const userLogin = user.user_login;

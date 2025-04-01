@@ -12,7 +12,12 @@ import { MigrationTrialAcknowledge } from './migration-trial-acknowledge';
 import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import './style.scss';
 
-const TrialAcknowledge: Step = function TrialAcknowledge( { navigation, flow, stepName } ) {
+const TrialAcknowledge: Step< {
+	submits: {
+		action: 'verify-email' | 'importer' | 'checkout';
+		checkoutUrl?: string;
+	};
+} > = function TrialAcknowledge( { navigation, flow, stepName } ) {
 	const { goBack } = navigation;
 
 	// TODO: Refactor component & hook to have better support for different flows.

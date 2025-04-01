@@ -9,7 +9,7 @@ import {
 } from 'calypso/controller';
 import { setLocaleMiddleware } from 'calypso/controller/shared';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
-import { sidebar, updateLastRoute } from 'calypso/reader/controller';
+import { sidebar } from 'calypso/reader/controller';
 import { tagListing } from './controller';
 
 const redirectHashtaggedTags = ( context, next ) => {
@@ -31,7 +31,6 @@ export default function () {
 		page(
 			[ '/tag/:tag', `/${ langParam }/tag/:tag` ],
 			setLocaleMiddleware(),
-			updateLastRoute,
 			tagListing,
 			makeLayout,
 			clientRender
@@ -43,7 +42,6 @@ export default function () {
 		[ '/tag/:tag', `/${ langParam }/tag/:tag` ],
 		redirectWithoutLocaleParamInFrontIfLoggedIn,
 		setLocaleMiddleware(),
-		updateLastRoute,
 		sidebar,
 		tagListing,
 		makeLayout,

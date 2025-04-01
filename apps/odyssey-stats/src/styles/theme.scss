@@ -1,6 +1,13 @@
 @import "variables";
 
-:root {
+:root,
+.color-scheme.is-jetpack {
 	@include jetpack-theme-for-odyssey-stats;
-	--wp-components-color-accent: var(--color-primary);
+}
+
+// Stats Dashboard
+.stats-main.color-scheme,
+// Stats popups including date range picker and tooltips etc.
+.popover.color-scheme {
+	--wp-components-color-accent: var(--color-accent);
 }

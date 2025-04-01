@@ -17,19 +17,22 @@ body.is-section-marketplace.theme-default.color-scheme {
 	}
 }
 
-.marketplace-plugin-install__root {
-	display: flex;
-	justify-content: center;
-	height: 100vh;
-	align-items: center;
-	position: absolute;
-	top: 0;
-	right: 0;
-	left: 0;
+body.is-section-marketplace {
+	.layout__content {
+		padding-block: 0 !important;
+	}
 
-	> div {
-		width: 90%;
-		max-width: 509px;
+	.marketplace-plugin-install__root {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+		height: 100vh;
+
+		> div {
+			width: 90%;
+			max-width: 509px;
+		}
 	}
 }
 

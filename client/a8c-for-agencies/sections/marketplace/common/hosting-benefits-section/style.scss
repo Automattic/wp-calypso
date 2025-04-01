@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .hosting-benefits {
 	display: grid;
@@ -33,12 +34,12 @@
 }
 
 .hosting-benefits-card__title {
-	@include a4a-font-heading-xl;
+	@include heading-x-large;
 	margin-block-end: 24px;
 }
 
 .hosting-benefits-card__description {
-	@include a4a-font-body-lg;
+	@include body-large;
 	margin: 0;
 }
 
@@ -52,7 +53,7 @@
 	padding: 0;
 
 	li {
-		@include a4a-font-body-lg;
+		@include body-large;
 
 		display: flex;
 		flex-direction: row;

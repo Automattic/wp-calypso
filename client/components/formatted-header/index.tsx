@@ -4,7 +4,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 import type { ElementType, FC, PropsWithChildren, ReactNode } from 'react';
 import './style.scss';
 
-interface Props extends PropsWithChildren {
+export interface Props extends PropsWithChildren {
 	align?: 'center' | 'left' | 'right';
 	brandFont?: boolean;
 	className?: string;

@@ -43,7 +43,7 @@ const onContentOnlyClick = jest.fn();
 jest.mock( 'react-router-dom', () => ( {
 	...( jest.requireActual( 'react-router-dom' ) as object ),
 	useLocation: jest.fn().mockImplementation( () => ( {
-		pathname: '/setup/import-focused/importerWordpress',
+		pathname: '/setup/site-setup/importerWordpress',
 		search: `?from=${ sourceSite.URL }&siteSlug=${ targetSite.URL }&option=everything`,
 		hash: '',
 		state: undefined,

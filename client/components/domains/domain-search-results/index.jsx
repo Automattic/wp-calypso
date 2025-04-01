@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
 import DomainSkipSuggestion from 'calypso/components/domains/domain-skip-suggestion';
 import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
-import DomainTransferSuggestion from 'calypso/components/domains/domain-transfer-suggestion';
 import FeaturedDomainSuggestions from 'calypso/components/domains/featured-domain-suggestions';
 import Notice from 'calypso/components/notice';
 import { isDomainMappingFree, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
@@ -42,7 +41,6 @@ class DomainSearchResults extends Component {
 		mappingSuggestionLabel: PropTypes.string,
 		offerUnavailableOption: PropTypes.bool,
 		showAlreadyOwnADomain: PropTypes.bool,
-		showDomainTransferSuggestion: PropTypes.bool,
 		onClickResult: PropTypes.func.isRequired,
 		onAddMapping: PropTypes.func,
 		onAddTransfer: PropTypes.func,
@@ -365,19 +363,6 @@ class DomainSearchResults extends Component {
 					/>
 				);
 			} );
-
-			if (
-				this.props.offerUnavailableOption &&
-				this.props.siteDesignType !== DESIGN_TYPE_STORE &&
-				this.props.showDomainTransferSuggestion
-			) {
-				unavailableOffer = (
-					<DomainTransferSuggestion
-						onButtonClick={ this.props.onClickUseYourDomain }
-						tracksButtonClickSource="search-suggestions-bottom"
-					/>
-				);
-			}
 
 			domainSkipSuggestion = (
 				<DomainSkipSuggestion

@@ -12,7 +12,7 @@ import {
 	next,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import WooLogoRebrand2 from 'calypso/assets/images/icons/Woo_logo_color.svg';
+import WooLogoColor from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import {
 	PRODUCT_CATEGORY_CONVERSION,
@@ -52,7 +52,7 @@ export default function useProductFilterOptions() {
 			{
 				key: PRODUCT_CATEGORY_WOOCOMMERCE,
 				label: translate( 'WooCommerce' ) as string,
-				image: <img width={ 80 } src={ WooLogoRebrand2 } alt="WooCommerce" />,
+				image: <img width={ 80 } src={ WooLogoColor } alt="WooCommerce" />,
 			},
 			{
 				key: PRODUCT_CATEGORY_PAYMENTS,

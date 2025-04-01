@@ -9,7 +9,7 @@ import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-tri
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
 import { HOW_TO_MIGRATE_OPTIONS } from '../../constants';
 import { goToCheckout } from '../../utils/checkout';
-import hostedSiteMigrationFlow from '../hosted-site-migration-flow';
+import hostedSiteMigrationFlow from '../flows/hosted-site-migration-flow/hosted-site-migration-flow';
 import { STEPS } from '../internals/steps';
 import { getAssertionConditionResult, getFlowLocation, renderFlow } from './helpers';
 // we need to save the original object for later to not affect tests from other files
@@ -119,7 +119,7 @@ describe.skip( 'Hosted site Migration Flow', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( hostedSiteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
-				currentURL: `/processing?siteSlug=example.wordpress.com`,
+				currentURL: '/processing?siteSlug=example.wordpress.com',
 				currentStep: STEPS.PROCESSING.slug,
 				dependencies: {
 					siteCreated: true,
@@ -134,7 +134,8 @@ describe.skip( 'Hosted site Migration Flow', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( hostedSiteMigrationFlow );
 
 			runUseStepNavigationSubmit( {
-				currentURL: `/processing?siteSlug=example.wordpress.com&from=https://site-to-be-migrated.com`,
+				currentURL:
+					'/processing?siteSlug=example.wordpress.com&from=https://site-to-be-migrated.com',
 				currentStep: STEPS.PROCESSING.slug,
 				dependencies: {
 					siteCreated: true,
@@ -177,6 +178,23 @@ describe.skip( 'Hosted site Migration Flow', () => {
 				state: {
 					siteSlug: 'example.wordpress.com',
 				},
+			} );
+		} );
+
+		it( 'migrate redirects from the migration instructions step to the credentials step when the user decides to ask for an assisted migration', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( hostedSiteMigrationFlow );
+
+			runUseStepNavigationSubmit( {
+				currentURL: `/${ STEPS.SITE_MIGRATION_INSTRUCTIONS.slug }?siteSlug=example.wordpress.com&siteId=123&from=https%3A%2F%2Fsite-to-be-migrated.com`,
+				currentStep: STEPS.SITE_MIGRATION_INSTRUCTIONS.slug,
+				dependencies: {
+					how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
+				},
+			} );
+
+			expect( getFlowLocation() ).toEqual( {
+				path: `/${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?siteSlug=example.wordpress.com&siteId=123&from=https%3A%2F%2Fsite-to-be-migrated.com`,
+				state: null,
 			} );
 		} );
 

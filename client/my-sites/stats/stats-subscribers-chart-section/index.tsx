@@ -7,8 +7,8 @@ import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import AsyncLoad from 'calypso/components/async-load';
 import UplotChart from 'calypso/components/chart-uplot';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
+import { formatDate } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import { useSelector } from 'calypso/state';
-import { getSiteOption } from 'calypso/state/sites/selectors';
 import useCssVariable from '../hooks/use-css-variable';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsPeriodHeader from '../stats-period-header';
@@ -72,17 +72,41 @@ function transformUplotData(
 type ChartDataPoint = {
 	date: Date;
 	value: number;
+	label?: string | null;
+};
+
+const formatDateLabel = ( date: Date, period: PeriodType ): string => {
+	switch ( period ) {
+		case 'week':
+		case 'day':
+			return date.toLocaleDateString( undefined, {
+				month: 'short',
+				day: 'numeric',
+			} );
+		case 'month':
+			return date.toLocaleDateString( undefined, {
+				month: 'short',
+				year: 'numeric',
+			} );
+		case 'year':
+			return date.getFullYear().toString();
+		default:
+			return date.toLocaleDateString( undefined, {
+				month: 'short',
+				day: 'numeric',
+			} );
+	}
 };
 
 const transformLineChartData = (
 	data: SubscribersData[],
 	hasAddedPaidSubscriptionProduct: boolean,
-	gmtOffset: number = 0
+	period: PeriodType
 ): ChartDataPoint[][] => {
 	const subscribersData: ChartDataPoint[] = [];
 	const paidSubscribersData: ChartDataPoint[] = [];
 	data?.map( ( point ) => {
-		const dateObj = parseLocalDate( point.period, gmtOffset );
+		const dateObj = parseLocalDate( point.period );
 		if ( isNaN( dateObj.getTime() ) ) {
 			return null;
 		}
@@ -90,6 +114,7 @@ const transformLineChartData = (
 		subscribersData.push( {
 			date: dateObj,
 			value: point.subscribers ?? 0,
+			label: formatDate( point.period, period ),
 		} );
 
 		if ( hasAddedPaidSubscriptionProduct ) {
@@ -125,31 +150,12 @@ export default function SubscribersChartSection( {
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const legendRef = useRef< HTMLDivElement >( null );
 	const translate = useTranslate();
-	const gmtOffset = useSelector( ( state ) => getSiteOption( state, siteId, 'gmt_offset' ) );
 
 	const formatTimeTick = useCallback(
 		( timestamp: number ) => {
 			const date = new Date( timestamp );
-			switch ( period ) {
-				case 'week':
-				case 'day':
-					return new Date( timestamp ).toLocaleDateString( undefined, {
-						month: 'short',
-						day: 'numeric',
-					} );
-				case 'month':
-					return date.toLocaleDateString( undefined, {
-						month: 'short',
-						year: 'numeric',
-					} );
-				case 'year':
-					return date.getFullYear().toString();
-				default:
-					return date.toLocaleDateString( undefined, {
-						month: 'short',
-						day: 'numeric',
-					} );
-			}
+
+			return formatDateLabel( date, period );
 		},
 		[ period ]
 	);
@@ -198,13 +204,8 @@ export default function SubscribersChartSection( {
 		[ data?.data, hasAddedPaidSubscriptionProduct ]
 	);
 	const [ subscribersData, paidSubscribersData ] = useMemo(
-		() =>
-			transformLineChartData(
-				data?.data || [],
-				hasAddedPaidSubscriptionProduct,
-				gmtOffset as number
-			),
-		[ data?.data, hasAddedPaidSubscriptionProduct ]
+		() => transformLineChartData( data?.data || [], hasAddedPaidSubscriptionProduct, period ),
+		[ data?.data, hasAddedPaidSubscriptionProduct, period ]
 	);
 
 	const lineChartData = [
@@ -228,7 +229,7 @@ export default function SubscribersChartSection( {
 
 	const subscribers = {
 		label: 'Subscribers',
-		path: `/stats/subscribers/`,
+		path: '/stats/subscribers/',
 	};
 
 	const slugPath = slug ? `/${ slug }` : '';
@@ -282,6 +283,7 @@ export default function SubscribersChartSection( {
 							EmptyState={ () => null }
 							zeroBaseline={ lineChartData.length > 1 }
 							formatTimeTick={ formatTimeTick }
+							placeholder={ <StatsModulePlaceholder className="is-chart" isLoading /> }
 						/>
 					) : (
 						<UplotChart

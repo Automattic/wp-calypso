@@ -27,7 +27,7 @@ declare const browser: Browser;
  * Keywords: Newsletters, Jetpack, Email Subscribers, Email Followers
  */
 skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
-	DataHelper.createSuiteTitle( `Newsletter: Subscribe and Remove` ),
+	DataHelper.createSuiteTitle( 'Newsletter: Subscribe and Remove' ),
 	function () {
 		// Subscribing "user" setup.
 		const inboxID = SecretsManager.secrets.mailosaur.manualTesting;

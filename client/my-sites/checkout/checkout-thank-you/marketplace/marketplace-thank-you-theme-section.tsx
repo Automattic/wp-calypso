@@ -7,7 +7,6 @@ import { useCallback, useEffect } from 'react';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import ThankYouProduct from 'calypso/components/thank-you-v2/product';
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
-import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { useSelector, useDispatch } from 'calypso/state';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
@@ -102,7 +101,6 @@ export const ThankYouThemeSection = ( {
 	return (
 		<>
 			<QueryActiveTheme siteId={ siteId } />
-			<ActivationModal source="details" />
 			<ThankYouProduct
 				name={ theme.name }
 				details={

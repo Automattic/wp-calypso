@@ -45,11 +45,8 @@ class SocialLogin extends Component {
 					</Notice>
 				) }
 
-				<CompactCard>
-					{ translate(
-						'You’ll be able to log in faster by linking your WordPress.com account with the following ' +
-							'third-party services. We’ll never post without your permission.'
-					) }
+				<CompactCard className="social-login__description">
+					{ translate( 'Log in faster with the accounts you already use.' ) }
 				</CompactCard>
 
 				<SocialLoginService service="google" icon={ <GoogleIcon /> } />

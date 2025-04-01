@@ -7,6 +7,7 @@ import { useSiteSettings } from 'calypso/blocks/plugins-scheduled-updates/hooks/
 import { useDispatch, useSelector } from 'calypso/state';
 import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { isValidURL } from '../utils';
 
 interface SitePage {
 	id: number;
@@ -147,6 +148,10 @@ export const useSitePerformancePageReports = ( { query = '' } = {} ) => {
 			}
 
 			const performanceReportUrl = toPerformanceReportUrl( performanceReport );
+
+			if ( ! isValidURL( performanceReportUrl ) ) {
+				return;
+			}
 
 			if ( pageId === HOME_PAGE_ID ) {
 				return await dispatch(

@@ -169,8 +169,7 @@
 			max-width: 100%;
 		}
 
-		.search,
-		.keyed-suggestions {
+		.search {
 			border: none;
 			box-shadow:
 				0 0 0 0 rgba(38, 19, 19, 0.03),
@@ -180,9 +179,6 @@
 				0 16px 6px 0 rgba(38, 19, 19, 0),
 				0 25px 7px 0 rgba(38, 19, 19, 0);
 			margin: 0;
-		}
-
-		.search {
 			height: 55px;
 			border-radius: 4px;
 
@@ -202,7 +198,7 @@
 		}
 
 		.keyed-suggestions__value.is-selected {
-			background-color: rgba(var(--studio-blue-rgb), 0.1);
+			background-color: color-mix(in srgb, var(--studio-blue) 10%, transparent);
 		}
 	}
 
@@ -223,7 +219,7 @@
 			color: var(--studio-blue-90);
 
 			&:hover::before {
-				background-color: rgba(var(--studio-blue-rgb), 0.1);
+				background-color: color-mix(in srgb, var(--studio-blue) 10%, transparent);
 			}
 		}
 
@@ -302,7 +298,7 @@
 
 			.select-dropdown__item:not(.is-selected):hover {
 				color: var(--studio-blue-90);
-				background-color: rgba(var(--studio-blue-rgb), 0.1);
+				background-color: color-mix(in srgb, var(--studio-blue) 10%, transparent);
 			}
 		}
 	}
@@ -345,10 +341,6 @@
 
 		@include break-mobile {
 			flex-direction: row;
-		}
-
-		.keyed-suggestions {
-			top: 42px;
 		}
 
 		.select-dropdown__header {
@@ -402,79 +394,6 @@
 
 	.themes__selection .themes-list {
 		margin: 0 -16px;
-	}
-
-	.themes__content .upsell-nudge {
-		background-color: rgba(var(--color-primary-30-rgb), 0.1);
-		border: none;
-		box-shadow: none;
-		margin-top: 32px;
-		margin-bottom: 32px;
-		padding: 24px 30px;
-		border-radius: 4px;
-
-		&.is-wooexpress-or-free-trial-plan {
-			margin-bottom: 32px;
-		}
-
-		&.is-dismissible {
-			.dismissible-card__close-button {
-				height: 16px;
-				width: 16px;
-
-				svg {
-					height: 16px;
-					width: 16px;
-				}
-			}
-		}
-
-		.banner__content {
-			gap: 16px;
-
-			@include breakpoint-deprecated( ">660px" ) {
-				gap: 32px;
-			}
-		}
-
-		.banner__title,
-		.banner__description {
-			color: var(--color-neutral-80);
-			font-size: $font-body-small;
-			line-height: 20px;
-		}
-
-		.banner__title {
-			font-weight: 500;
-		}
-
-		.banner__icon {
-			background-color: var(--color-primary);
-			display: none;
-		}
-
-		.banner__icon-circle {
-			background-color: var(--color-primary);
-		}
-
-		.banner__action .button {
-			background-color: var(--color-primary);
-			border: none;
-			font-size: $font-body-small;
-			font-weight: 400;
-			line-height: 22px;
-			padding: 8px 14px;
-			white-space: nowrap;
-
-			&:hover {
-				background-color: var(--color-primary-60);
-			}
-
-			.accessible-focus &:focus {
-				box-shadow: 0 0 0 2px var(--color-primary-light);
-				outline: 0;
-			}
-		}
 	}
 
 	.themes__install-theme-button-container {

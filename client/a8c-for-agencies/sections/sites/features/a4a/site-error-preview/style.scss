@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .main.hosting-dashboard-layout.sites-dashboard .site-error-preview {
 	.hosting-dashboard-item-view__navigation.is-hidden {
@@ -21,12 +22,12 @@
 }
 
 .site-error-preview__title {
-	@include a4a-font-heading-lg;
+	@include heading-large;
 	margin-block-end: 16px;
 }
 
 .site-error-preview__description {
-	@include a4a-font-body-md;
+	@include body-medium;
 	margin-block-end: 16px;
 }
 
@@ -61,13 +62,13 @@
 		}
 
 		.formatted-header__title {
-			@include a4a-font-heading-md;
+			@include heading-medium;
 			margin-block-end: 4px;
 			color: var(--color-primary-100);
 		}
 
 		.formatted-header__subtitle {
-			@include a4a-font-body-md;
+			@include body-medium;
 			margin-block-end: 0;
 		}
 	}

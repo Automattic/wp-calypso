@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { get as webauthn_auth } from '@github/webauthn-json';
+import { translate } from 'i18n-calypso';
 import { get } from 'lodash';
 import {
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
@@ -59,7 +60,33 @@ export const loginUserWithSecurityKey = () => ( dispatch, getState ) => {
 				dispatch( updateNonce( twoFactorAuthType, twoStepNonce ) );
 			}
 
-			const error = getErrorFromHTTPError( httpError );
+			const errorMessages = {
+				NotFocusedError: translate(
+					'It seems the page is not active for authentication. Please click anywhere on the page and try again while keeping the window open.'
+				),
+				NotAllowedError: translate(
+					'The security key interaction timed out or was canceled. Please try again.'
+				),
+				AbortError: translate( 'The security key interaction was canceled. Please try again.' ),
+				SecurityError: translate(
+					"There’s a security restriction preventing us from accessing your credentials. Please check your browser's settings or permissions."
+				),
+				TypeError: translate(
+					'There was an issue with the request. Please refresh the page and try again.'
+				),
+				default: translate( 'Oops! Something went wrong. Please try again.' ),
+			};
+
+			let error;
+			if ( httpError instanceof Error ) {
+				const errorKey = httpError.message.includes( 'document is not focused' )
+					? 'NotFocusedError'
+					: httpError.name;
+				const message = errorMessages[ errorKey ] ?? errorMessages.default;
+				error = { code: httpError.name, message, field: 'global' };
+			} else {
+				error = getErrorFromHTTPError( httpError );
+			}
 
 			dispatch( {
 				type: TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
