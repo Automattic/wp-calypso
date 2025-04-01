@@ -144,8 +144,21 @@ export type MessageType =
 	| 'help-link'
 	| 'file'
 	| 'image'
-	| 'introduction';
+	| 'introduction'
+	| 'form';
 
+export type ChatFeedback = {
+	type: string;
+	text: string;
+	uri: string;
+	metadata: {
+		score: string;
+		account_id: number;
+		ticket_id: number;
+	};
+	payload: string; // example "{\"csat_rating\":\"BAD\"}",
+	id: string;
+};
 export type Message = {
 	content: string;
 	context?: Context;
@@ -159,7 +172,10 @@ export type Message = {
 	type: MessageType;
 	directEscalationSupport?: boolean;
 	created_at?: string;
-	actions?: MessageAction[];
+	actions?: never;
+	quotedMessageId?: string;
+	feedbackOptions?: ChatFeedback[];
+	payload?: string;
 };
 
 export type ChatStatus = 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer' | 'closed';
@@ -219,6 +235,7 @@ export type ZendeskMessage = {
 	text: string;
 	mediaUrl?: string;
 	altText?: string;
+	_id: string;
 };
 
 export type ZendeskContentType =

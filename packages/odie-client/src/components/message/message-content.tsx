@@ -26,7 +26,9 @@ export const MessageContent = ( {
 	displayChatWithSupportEndedLabel?: boolean;
 } ) => {
 	const { experimentVariationName } = useOdieAssistantContext();
-	const isFeedbackMessage = message?.actions;
+	const isFeedbackMessage = message?.feedbackOptions;
+	const isfFeedbackAlreadyGiven = message.payload !== undefined;
+
 	const messageClasses = clsx(
 		'odie-chatbox-message',
 		`odie-chatbox-message-${ message.role }`,
@@ -65,17 +67,24 @@ export const MessageContent = ( {
 	// message type === message are messages being sent from users to zendesk.
 	// They need to be parsed to markdown to appear nicely.
 	const markdownMessageContent = shouldParseMessage() ? parseTextMessage( message ) : message;
-
+	const shouldRenderUserMessage = () => {
+		return (
+			[ 'message', 'image', 'image-placeholder', 'file', 'text' ].includes( message.type ) ||
+			! message.type
+		);
+	};
+	if ( isfFeedbackAlreadyGiven ) {
+		return;
+	}
 	return (
 		<>
 			<div className={ containerClasses } data-is-message="true">
 				<div className={ messageClasses }>
-					{ message?.context?.flags?.show_ai_avatar !== false && messageHeader }
+					{ message?.context?.flags?.show_ai_avatar !== false &&
+						message.type !== 'form' &&
+						messageHeader }
 					{ message.type === 'error' && <ErrorMessage message={ message } /> }
-					{ ( [ 'message', 'image', 'image-placeholder', 'file', 'text' ].includes(
-						message.type
-					) ||
-						! message.type ) && (
+					{ shouldRenderUserMessage() && (
 						<UserMessage
 							message={ markdownMessageContent }
 							isDisliked={ isDisliked }
@@ -83,7 +92,9 @@ export const MessageContent = ( {
 						/>
 					) }
 					{ message.type === 'introduction' && <IntroductionMessage content={ message.content } /> }
-					{ isFeedbackMessage && <FeedbackThumbs /> }
+					{ isFeedbackMessage && (
+						<FeedbackThumbs chatFeedbackOptions={ message.feedbackOptions } />
+					) }
 
 					{ ! stopConflatingNegativeRatingWithContactSupport &&
 						message.type === 'dislike-feedback' && <DislikeFeedbackMessage /> }

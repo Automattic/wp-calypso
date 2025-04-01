@@ -88,9 +88,11 @@ export const zendeskMessageConverter: ( message: ZendeskMessage ) => Message = (
 	return {
 		...( feedbackUrl ? { meta: { feedbackUrl } } : undefined ),
 		content: getContentMessage( message ),
-		actions: message.actions,
 		context,
 		role,
 		type,
+		feedbackOptions: message.actions, //Used on chat feedback
+		quotedMessageId: message.id,
+		payload: message.payload,
 	};
 };
