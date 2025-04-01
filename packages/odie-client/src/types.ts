@@ -204,6 +204,7 @@ type MessageAction = {
 };
 
 export type ZendeskMessage = {
+	metadata?: Record< string, unknown >;
 	avatarUrl?: string;
 	displayName: string;
 	id: string;

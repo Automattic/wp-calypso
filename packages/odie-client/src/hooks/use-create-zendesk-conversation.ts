@@ -79,6 +79,16 @@ export const useCreateZendeskConversation = (): ( ( {
 				supportInteractionId: currentInteractionID,
 				...( chatId ? { odieChatId: chatId } : {} ),
 			},
+			messages: [
+				{
+					text: userFieldMessage || 'User is contacting support',
+					type: 'text',
+					// @ts-expect-error valid argument but not present in the type
+					metadata: {
+						isHidden: true,
+					},
+				},
+			],
 		} );
 		setHelpCenterZendeskConversationStarted();
 
