@@ -107,18 +107,6 @@ const SiteMigrationApplicationPasswordsAuthorization: StepType< {
 
 	// translators: %(sourceDomain)s is the source domain that is being migrated.
 	const title = translate( 'Get ready for blazing fast speeds' );
-	const subTitle = translate(
-		"We're ready to migrate {{strong}}%(sourceDomain)s{{/strong}} to WordPress.com. To ensure a smooth process, we need you to authorize us in your WordPress.com admin.",
-		{
-			args: {
-				sourceDomain,
-			},
-			components: {
-				strong: <strong />,
-			},
-			textOnly: true,
-		}
-	);
 	const subHeaderText = translate(
 		"We're ready to migrate {{strong}}%(sourceDomain)s{{/strong}} to WordPress.com. To ensure a smooth process, we need you to authorize us in your WordPress.com admin.",
 		{
@@ -160,7 +148,7 @@ const SiteMigrationApplicationPasswordsAuthorization: StepType< {
 					topBar={
 						<Step.TopBar leftElement={ <Step.BackButton onClick={ navigation.goBack } /> } />
 					}
-					heading={ <Step.Heading text={ title } subText={ subTitle } /> }
+					heading={ <Step.Heading text={ title } subText={ subHeaderText } /> }
 					className="site-migration-application-password-authorization-v2"
 				>
 					{ stepContent }
