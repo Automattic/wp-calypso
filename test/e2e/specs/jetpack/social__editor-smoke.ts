@@ -33,7 +33,6 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor Smoke test' ), function (
 		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
 		const testAccount = new TestAccount( accountName );
 		siteSlug = testAccount.getSiteURL( { protocol: false } );
-		console.log( siteSlug );
 		await testAccount.authenticate( page );
 	} );
 
