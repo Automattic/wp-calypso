@@ -452,7 +452,7 @@ const UnifiedDesignPickerPreview = ( {
 				return unlockPremiumGlobalStyles;
 			}
 
-			return () => pickDesign();
+			return pickDesign;
 		}
 
 		const isPersonalDesign = selectedDesign?.design_tier === PERSONAL_THEME;
@@ -461,7 +461,7 @@ const UnifiedDesignPickerPreview = ( {
 			return isPersonalDesign && shouldUnlockGlobalStyles ? unlockPremiumGlobalStyles : upgradePlan;
 		}
 
-		return shouldUnlockGlobalStyles ? unlockPremiumGlobalStyles : () => pickDesign();
+		return shouldUnlockGlobalStyles ? unlockPremiumGlobalStyles : pickDesign;
 	}
 
 	const isUsingStepContainerV2 = shouldUseStepContainerV2( flow );
@@ -469,7 +469,7 @@ const UnifiedDesignPickerPreview = ( {
 	const getPrimaryActionButtonProps = () => {
 		const action = getPrimaryActionButtonAction();
 		const text =
-			action === upgradePlan && ! isGoalsAtFrontExperiment
+			action !== pickDesign && ! isGoalsAtFrontExperiment
 				? translate( 'Unlock theme' )
 				: translate( 'Continue' );
 
