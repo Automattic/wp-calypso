@@ -93,12 +93,12 @@ interface UnifiedDesignPickerPreviewProps {
 	stepName: string;
 	handleSubmit: () => void;
 	numOfSelectedGlobalStyles: number;
-	previewDesignVariation: () => void;
+	previewDesignVariation: ( variation: StyleVariation ) => void;
 	setSelectedColorVariation: ( colorVariation: GlobalStyles | null ) => void;
 	setSelectedFontVariation: ( fontVariation: GlobalStyles | null ) => void;
 	setGlobalStyles: ( globalStyles?: GlobalStylesObject | null ) => void;
 	resetPreview: () => void;
-	selectedStyleVariation: StyleVariation;
+	selectedStyleVariation: StyleVariation | undefined;
 	selectedColorVariation: GlobalStyles | null;
 	selectedFontVariation: GlobalStyles | null;
 }

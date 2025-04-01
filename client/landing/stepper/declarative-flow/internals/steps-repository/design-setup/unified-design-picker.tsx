@@ -10,7 +10,6 @@ import { StepContainer, ONBOARDING_FLOW, isSiteSetupFlow, Step } from '@automatt
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useCallback } from 'react';
-import AsyncLoad from 'calypso/components/async-load';
 import { useQueryThemes } from 'calypso/components/data/query-themes';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Loading from 'calypso/components/loading';
@@ -36,6 +35,7 @@ import { STEP_NAME } from './constants';
 import useIsUpdatedBadgeDesign from './hooks/use-is-updated-badge-design';
 import useRecipe from './hooks/use-recipe';
 import useTrackFilters from './hooks/use-track-filters';
+import UnifiedDesignPickerPreview from './unified-design-picker-preview';
 import type { Step as StepType } from '../../types';
 import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
 import type { Design, StyleVariation } from '@automattic/design-picker';
@@ -358,9 +358,7 @@ const UnifiedDesignPickerStep: StepType< {
 
 	if ( selectedDesign && isPreviewingDesign ) {
 		return (
-			<AsyncLoad
-				require="./unified-design-picker-preview"
-				placeholder={ null }
+			<UnifiedDesignPickerPreview
 				selectedDesign={ selectedDesign }
 				pickDesign={ pickDesign }
 				getEventPropsByDesign={ getEventPropsByDesign }
