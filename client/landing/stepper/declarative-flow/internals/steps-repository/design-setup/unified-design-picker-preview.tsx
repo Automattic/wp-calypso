@@ -524,6 +524,12 @@ const UnifiedDesignPickerPreview = ( {
 		onScreenSubmit: recordDesignPreviewScreenSubmit,
 	} );
 
+	/**
+	 * This is temporary. It's a way of using the inner navigator from the Design Preview component.
+	 *
+	 * Since Design Preview is a monolith and it defines the navigator down the tree,
+	 * a bigger rewrite would be necessary to wrap Design Preview in a navigator instance.
+	 */
 	const navigatorRef = useRef< Navigator >( null );
 
 	const designTitle = selectedDesign.design_type !== 'vertical' ? selectedDesign.title : '';
