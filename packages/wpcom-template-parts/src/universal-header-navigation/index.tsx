@@ -99,7 +99,7 @@ const UniversalNavbarHeader = ( {
 															titleValue=""
 															content={ __( 'AI Website Builder', __i18n_text_domain__ ) }
 															urlValue={ localizeUrl(
-																'//wordpress.com/ai-website-builder/?ref=header'
+																'//wordpress.com/ai-website-builder/?ref=topnav'
 															) }
 															type="dropdown"
 															target="_self"
@@ -460,7 +460,7 @@ const UniversalNavbarHeader = ( {
 											<ClickableItem
 												titleValue=""
 												content={ __( 'AI Website Builder', __i18n_text_domain__ ) }
-												urlValue={ localizeUrl( '//wordpress.com/ai-website-builder/?ref=header' ) }
+												urlValue={ localizeUrl( '//wordpress.com/ai-website-builder/?ref=topnav' ) }
 												type="menu"
 											/>
 											<ClickableItem
