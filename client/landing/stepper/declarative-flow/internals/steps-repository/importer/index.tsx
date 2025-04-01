@@ -32,7 +32,7 @@ import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { requestSites } from 'calypso/state/sites/actions';
-import { isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import { isRequestingSite, hasAllSitesList } from 'calypso/state/sites/selectors';
 import { StepProps } from '../../types';
 import { useAtomicTransferQueryParamUpdate } from './hooks/use-atomic-transfer-query-param-update';
 import { useInitialQueryRun } from './hooks/use-initial-query-run';
@@ -83,7 +83,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const fromSiteData = useSelector( getUrlData );
 		const stepNavigator = useStepNavigator( flow, navigation, siteId, siteSlug, fromSite );
 		const currentPath = window.location.pathname + window.location.search;
-		const isRequestingAllSites = useSelector( isRequestingSites );
+		const hasAllSitesFetched = useSelector( hasAllSitesList );
 		const isRequestingCurrentSite = useSelector( ( state ) =>
 			siteId ? isRequestingSite( state, siteId ) : true
 		);
