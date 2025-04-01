@@ -1058,21 +1058,13 @@ object PreReleaseE2ETests : BuildType({
 
 fun e2ePreReleaseBuildType( targetDevice: String, buildUuid: String ): E2EBuildType {
 	return E2EBuildType(
-
-		id("calypso_WebApp_Calypso_E2E_Pre_Release_$targetDevice")
-		uuid = buildUuid
-
-		name = "Pre-Release E2E Tests ($targetDevice)"
-		description = "Runs a pre-release suite of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production. Will run on $targetDevice size."
-
-		steps {
-			bashNodeScript {
-				name = "Prepare environment"
-				scriptContent = """
-					echo "@todo: will run scripts"
-				"""
-			}
-		}
+		buildId = "calypso_WebApp_Calypso_E2E_Pre_Release_$targetDevice",
+		buildUuid = buildUuid,
+		buildName = "Pre-Release E2E Tests ($targetDevice)",
+		buildDescription = "Runs a pre-release suite of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production. Will run on $targetDevice size.",
+		testGroup = "calypso-pr",
+		buildFeatures = {
+		},
 	)
 }
 
