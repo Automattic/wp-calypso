@@ -28,7 +28,7 @@ const PlanPrice = styled.span`
 	font-size: 14px;
 	line-height: 20px;
 	letter-spacing: -0.15px;
-	color: var( --studio-gray-50 );
+	color: var( --color-text-subtle );
 `;
 
 export const PlanName = styled.span`
@@ -45,7 +45,7 @@ export const PlanDescription = styled.div`
 	font-size: 14px;
 	line-height: 20px;
 	letter-spacing: -0.15px;
-	color: var( --studio-gray-50 );
+	color: var( --color-text-subtle );
 `;
 
 const PlanInfo = ( { planSlug, description, isBusy, onPlanSelected }: Props ) => {

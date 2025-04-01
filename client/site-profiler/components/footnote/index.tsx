@@ -23,7 +23,7 @@ const Description = styled.ul`
 	margin: 0;
 	max-width: 760px;
 	li {
-		color: var( --studio-gray-50 );
+		color: var( --color-text-subtle );
 		font-size: 11px;
 		line-height: 18px;
 		margin-bottom: 18px;

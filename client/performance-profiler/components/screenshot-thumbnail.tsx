@@ -15,8 +15,8 @@ const Container = styled.div< { activeTab: TabType } >`
 `;
 
 const UnavailableScreenshot = styled.div`
-	color: var( --studio-gray-50 );
-	background-color: var( --studio-gray-0 );
+	color: var( --color-text-subtle );
+	background-color: var( --color-surface-backdrop );
 	display: flex;
 	justify-content: center;
 	align-items: center;

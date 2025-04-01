@@ -28,7 +28,7 @@ const GPTResponsePlaceholder = styled( LoadingPlaceholder )< { width?: string } 
 `;
 
 const GPTResponseDisclaimer = styled.div`
-	color: var( --studio-gray-50 );
+	color: var( --color-text-subtle );
 	font-size: 11px;
 	text-align: right;
 

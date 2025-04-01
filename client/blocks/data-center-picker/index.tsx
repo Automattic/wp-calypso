@@ -70,7 +70,7 @@ const SupportLink = styled.a`
 const StyledLabel = styled.div`
 	text-transform: none;
 	font-size: 0.875rem;
-	color: var( --studio-gray-50 );
+	color: var( --color-text-subtle );
 	text-wrap: wrap;
 `;
 

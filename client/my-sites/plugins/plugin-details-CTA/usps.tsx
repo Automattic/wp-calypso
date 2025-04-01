@@ -35,7 +35,7 @@ const StyledLi = styled.li`
 	margin: 5px 0;
 
 	.title {
-		color: var( --studio-gray-50 );
+		color: var( --color-text-subtle );
 		font-size: 14px;
 		font-weight: 500;
 		margin-top: 10px;

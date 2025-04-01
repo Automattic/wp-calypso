@@ -70,14 +70,14 @@ const SkipLink = styled.a< { disabled?: boolean } >`
 `;
 
 const RequiredLabel = styled.span`
-	background: var( --studio-gray-0 );
+	background: var( --color-surface-backdrop );
 	border-radius: 4px;
-	color: var( --studio-gray-50 );
+	color: var( --color-text-subtle );
 	font-weight: 500;
 	font-size: 11px;
 	line-height: 13px;
 	letter-spacing: 0.38px;
-	color: var( --studio-gray-50 );
+	color: var( --color-text-subtle );
 	padding: 2px 8px;
 	text-transform: uppercase;
 `;

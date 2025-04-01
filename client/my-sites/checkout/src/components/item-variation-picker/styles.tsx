@@ -103,7 +103,7 @@ export const Discount = styled.span`
 export const DoNotPayThis = styled.del`
 	text-decoration: line-through;
 	margin-right: 8px;
-	color: var( --studio-gray-50 );
+	color: var( --color-text-subtle );
 
 	.rtl & {
 		margin-right: 0;
@@ -118,7 +118,7 @@ export const DoNotPayThis = styled.del`
 export const Price = styled.span`
 	display: inline-flex;
 	justify-content: right;
-	color: var( --studio-gray-50 );
+	color: var( --color-text-subtle );
 	.item-variant-option--selected & {
 		color: var( --studio-white );
 	}

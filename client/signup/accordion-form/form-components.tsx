@@ -14,7 +14,7 @@ import { tip } from 'calypso/signup/icons';
 
 // TODO: This probably should be moved out to a more suitable folder name like difm-components
 export const Label = styled.label`
-	color: var( --studio-gray-50 );
+	color: var( --color-text-subtle );
 	font-weight: 400;
 	font-size: 0.875rem;
 	cursor: inherit;

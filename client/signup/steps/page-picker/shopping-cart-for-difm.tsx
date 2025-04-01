@@ -48,7 +48,7 @@ const Cart = styled.div`
 		border-top: 1px solid var( --studio-gray-5 );
 	}
 	.page-picker__disclaimer {
-		color: var( --studio-gray-50 );
+		color: var( --color-text-subtle );
 		font-size: 12px;
 
 		@media ( max-width: 600px ) {
@@ -78,7 +78,7 @@ const DummyLineItemContainer = styled.div`
 		font-weight: 500;
 	}
 	.page-picker__sub-label {
-		color: var( --studio-gray-50 );
+		color: var( --color-text-subtle );
 		font-size: 12px;
 		width: 100%;
 		display: flex;

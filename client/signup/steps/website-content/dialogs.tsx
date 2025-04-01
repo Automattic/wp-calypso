@@ -7,7 +7,7 @@ const DialogContent = styled.div`
 	padding: 16px;
 	p {
 		font-size: 1rem;
-		color: var( --studio-gray-50 );
+		color: var( --color-text-subtle );
 	}
 	ul {
 		margin-inline-start: 1rem;

@@ -13,7 +13,7 @@ const SubdomainSuggestion = styled.div`
 	.is-domain-name {
 		position: absolute;
 		top: -15px;
-		color: var( --studio-gray-50 );
+		color: var( --color-text-subtle );
 		text-decoration: line-through;
 		max-width: 80%;
 		text-overflow: ellipsis;

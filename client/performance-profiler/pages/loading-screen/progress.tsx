@@ -90,9 +90,9 @@ const LoadingProgressContainer = styled.div`
 		}
 
 		&.incomplete {
-			color: var( --studio-gray-50 );
+			color: var( --color-text-subtle );
 			::before {
-				border: 1px dashed var( --studio-gray-5 );
+				border: 1px dashed var( --color-border-subtle );
 			}
 		}
 	}

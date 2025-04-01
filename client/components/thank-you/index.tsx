@@ -56,7 +56,7 @@ const ThankYouNextSteps = styled.div`
 	}
 
 	p {
-		color: var( --studio-gray-50 );
+		color: var( --color-text-subtle );
 		padding-right: 20px;
 	}
 	> div {
