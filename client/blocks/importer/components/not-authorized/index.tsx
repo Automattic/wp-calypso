@@ -2,8 +2,9 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { BackButton, NextButton, SubTitle, Title } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect } from 'react';
-import { HintJetpackConnection } from '../../wordpress/import-everything/migration-error/hint-jetpack-connection';
-import { HintJetpackConnectionMovePlugin } from '../../wordpress/import-everything/migration-error/hint-jetpack-connection-move-plugin';
+// TODO: Moved over from the deleted client/blocks/wordpress/import-everything/*
+import { HintJetpackConnection } from './hint-jetpack-connection';
+import { HintJetpackConnectionMovePlugin } from './hint-jetpack-connection-move-plugin';
 
 import './style.scss';
 
