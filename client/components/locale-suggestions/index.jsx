@@ -1,6 +1,7 @@
 import { getLanguage, addLocaleToPath } from '@automattic/i18n-utils';
+import { createInterpolateElement } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
 import { getLocaleSlug } from 'i18n-calypso';
-import startsWith from 'lodash/startsWith';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -17,12 +18,18 @@ export class LocaleSuggestions extends Component {
 	static propTypes = {
 		locale: PropTypes.string,
 		path: PropTypes.string.isRequired,
-		localeSuggestions: PropTypes.array,
+		localeSuggestions: PropTypes.shape( {
+			locales: PropTypes.array,
+			availability_text: PropTypes.string,
+		} ),
 	};
 
 	static defaultProps = {
 		locale: '',
-		localeSuggestions: [],
+		localeSuggestions: {
+			locales: [],
+			availability_text: '',
+		},
 	};
 
 	state = {
@@ -73,17 +80,18 @@ export class LocaleSuggestions extends Component {
 		if ( ! localeSuggestions ) {
 			return <QueryLocaleSuggestions />;
 		}
+		const { locales, availability_text } = localeSuggestions;
 
-		const usersOtherLocales = localeSuggestions.filter( function ( locale ) {
-			return ! startsWith( getLocaleSlug(), locale.locale );
+		const usersOtherLocales = locales.filter( function ( locale ) {
+			return ! locale.locale.startsWith( getLocaleSlug() );
 		} );
 
 		if ( usersOtherLocales.length === 0 ) {
 			return null;
 		}
 
-		const localeMarkup = usersOtherLocales.map( ( locale ) => {
-			return (
+		const localeSuggestionsMap = usersOtherLocales.reduce( ( acc, locale, index ) => {
+			acc[ `LocaleSuggestion${ index }` ] = (
 				<LocaleSuggestionsListItem
 					key={ 'locale-' + locale.locale }
 					locale={ locale }
@@ -92,7 +100,19 @@ export class LocaleSuggestions extends Component {
 					recordLocaleSuggestionClick={ this.recordLocaleSuggestionClick }
 				/>
 			);
-		} );
+
+			return acc;
+		}, {} );
+
+		const availabilityTextWithComponents = sprintf(
+			availability_text,
+			...Object.keys( localeSuggestionsMap ).map( ( componentKey ) => `<${ componentKey } />` )
+		);
+
+		const availabilityTextInterpolated = createInterpolateElement(
+			availabilityTextWithComponents,
+			localeSuggestionsMap
+		);
 
 		return (
 			<div className="locale-suggestions">
@@ -105,7 +125,7 @@ export class LocaleSuggestions extends Component {
 					theme="light"
 					status="is-info"
 				>
-					<div className="locale-suggestions__list">{ localeMarkup }</div>
+					{ availabilityTextInterpolated }
 				</Notice>
 			</div>
 		);

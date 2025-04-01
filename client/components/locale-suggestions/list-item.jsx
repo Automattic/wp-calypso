@@ -38,17 +38,13 @@ class LocaleSuggestionsListItem extends Component {
 		const { locale, path } = this.props;
 
 		return (
-			<div className="locale-suggestions__list-item" dir="auto">
-				{ locale.availability_text }
-
-				<a
-					href={ path }
-					onClick={ this.handleLocaleSuggestionClick }
-					className="locale-suggestions__locale-link"
-				>
-					{ locale.name }
-				</a>
-			</div>
+			<a
+				href={ path }
+				onClick={ this.handleLocaleSuggestionClick }
+				className="locale-suggestions__locale-link"
+			>
+				{ locale.name }
+			</a>
 		);
 	}
 }

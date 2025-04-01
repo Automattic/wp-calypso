@@ -21,6 +21,9 @@ export const fetchLocaleSuggestions = ( action ) =>
 			apiVersion: '1.1',
 			method: 'GET',
 			path: '/locale-guess',
+			query: {
+				format: 'combined',
+			},
 		},
 		action
 	);
