@@ -10,6 +10,7 @@
 			"desktop",
 			"apps/*",
 			"packages/*",
+			"!packages/dataviews",
 			"test/e2e"
 		]
 	},

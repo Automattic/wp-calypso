@@ -1,0 +1,31 @@
+{
+	"$schema": "https://json.schemastore.org/tsconfig.json",
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		"types": [
+			"gutenberg-env",
+			"gutenberg-test-env",
+			"jest",
+			"@testing-library/jest-dom"
+		]
+	},
+	"references": [
+		{ "path": "../components" },
+		{ "path": "../compose" },
+		{ "path": "../data" },
+		{ "path": "../element" },
+		{ "path": "../i18n" },
+		{ "path": "../icons" },
+		{ "path": "../primitives" },
+		{ "path": "../private-apis" },
+		{ "path": "../warning" }
+	],
+	"exclude": [
+		"src/**/*.android.js",
+		"src/**/*.ios.js",
+		"src/**/*.native.js",
+		"src/**/react-native-*",
+		"src/**/stories/**/*.js", // only exclude js files, tsx files should be checked
+		"src/**/test/**/*.js" // only exclude js files, ts{x} files should be checked
+	]
+}

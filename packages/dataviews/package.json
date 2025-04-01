@@ -1,0 +1,66 @@
+{
+	"name": "@automattic/dataviews",
+	"version": "0.1.0",
+	"private": true,
+	"description": "DataViews is a component that provides an API to render datasets using different types of layouts (table, grid, list, etc.).",
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"homepage": "https://github.com/automattic/wp-calypso/tree/HEAD/packages/dataviews/README.md",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/automattic/wp-calypso.git",
+		"directory": "packages/dataviews"
+	},
+	"bugs": {
+		"url": "https://github.com/automattic/wp-calypso/issues"
+	},
+	"engines": {
+		"node": ">=18.12.0",
+		"npm": ">=8.19.2"
+	},
+	"main": "build/index.js",
+	"module": "build-module/index.js",
+	"exports": {
+		".": {
+			"types": "./build-types/index.d.ts",
+			"import": "./build-module/index.js",
+			"default": "./build/index.js"
+		},
+		"./wp": {
+			"types": "./build-types/index.d.ts",
+			"default": "./build-wp/index.js"
+		},
+		"./package.json": {
+			"default": "./package.json"
+		},
+		"./build-style/": "./build-style/"
+	},
+	"react-native": "src/index",
+	"wpScript": true,
+	"types": "build-types",
+	"sideEffects": false,
+	"dependencies": {
+		"@ariakit/react": "^0.4.15",
+		"@babel/runtime": "7.25.7",
+		"@wordpress/components": "^29.7.0",
+		"@wordpress/compose": "^7.21.0",
+		"@wordpress/data": "^10.21.0",
+		"@wordpress/element": "^6.21.0",
+		"@wordpress/i18n": "^5.21.0",
+		"@wordpress/icons": "^10.21.0",
+		"@wordpress/primitives": "^4.21.0",
+		"@wordpress/private-apis": "^1.21.0",
+		"@wordpress/warning": "^3.21.0",
+		"clsx": "^2.1.1",
+		"remove-accents": "^0.5.0"
+	},
+	"peerDependencies": {
+		"react": "^18.0.0"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"scripts": {
+		"build:wp": "node build"
+	}
+}

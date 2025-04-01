@@ -2,7 +2,7 @@
 
 Initial release of the site-admin package providing a framework for building modern WordPress admin interfaces.
 
-## Core Components
+### Components
 
 - `SidebarButton`: Base button component for sidebar interactions
 - `SidebarContent`: Main sidebar layout component with navigation context
@@ -10,12 +10,14 @@ Initial release of the site-admin package providing a framework for building mod
 - `SidebarNavigationScreen`: Screen container for sidebar navigation
 - `SiteIcon`: Site icon display component
 
-## Routing System
+### Routing System
+
 - `RoutesContext`: Context provider for current matched route
 - `ConfigContext`: Context for router configuration and settings
 - `browserHistory`: Browser history instance for navigation state
 
-### Router Hooks
+#### Router Hooks
+
 - `useHistory`: Hook for navigation and history management
 - `useLink`: Hook for handling link navigation
 - `useLocation`: Hook for accessing current route location
@@ -23,5 +25,8 @@ Initial release of the site-admin package providing a framework for building mod
 
 ## Next
 
-- `SiteHub`: Site navigation and context switcher
 - Add `history` package dependency
+
+### Components
+- `SiteHub`: Site navigation and context switcher
+- `Link`: Router component providing declarative navigation
