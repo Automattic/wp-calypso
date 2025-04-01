@@ -1,4 +1,3 @@
-import { speak } from '@wordpress/a11y';
 import { Icon } from '@wordpress/components';
 import { caution } from '@wordpress/icons';
 import { cloneElement, forwardRef, useState } from 'react';
@@ -56,10 +55,6 @@ function UnforwardedControlWithError< C extends React.ReactElement >(
 		const newErrorMessage = validityTarget?.validationMessage ?? '';
 
 		setErrorMessage( newErrorMessage );
-
-		if ( newErrorMessage ) {
-			speak( newErrorMessage );
-		}
 	};
 
 	const onBlur = ( event: React.FocusEvent< HTMLDivElement > ) => {
@@ -87,17 +82,19 @@ function UnforwardedControlWithError< C extends React.ReactElement >(
 				onChange,
 				required,
 			} ) }
-			{ errorMessage && (
-				<p className="a8c-validated-control__error">
-					<Icon
-						className="a8c-validated-control__error-icon"
-						icon={ caution }
-						size={ 16 }
-						fill="currentColor"
-					/>
-					{ errorMessage }
-				</p>
-			) }
+			<div aria-live="polite">
+				{ errorMessage && (
+					<p className="a8c-validated-control__error">
+						<Icon
+							className="a8c-validated-control__error-icon"
+							icon={ caution }
+							size={ 16 }
+							fill="currentColor"
+						/>
+						{ errorMessage }
+					</p>
+				) }
+			</div>
 		</div>
 	);
 }
