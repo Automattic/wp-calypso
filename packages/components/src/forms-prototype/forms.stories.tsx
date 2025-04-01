@@ -7,7 +7,6 @@ import {
 } from '@wordpress/components';
 import { seen, unseen } from '@wordpress/icons';
 import React, { useState } from 'react';
-import { ValidatedCheckboxControl } from './components/checkbox-control';
 import { ValidatedComboboxControl } from './components/combobox-control';
 import { ValidatedCustomSelectControl } from './components/custom-select-control';
 import { ValidatedInputControl } from './components/input-control';
@@ -20,7 +19,6 @@ import { ValidatedTextareaControl } from './components/textarea-control';
 import { ValidatedToggleControl } from './components/toggle-control';
 import { ValidatedToggleGroupControl } from './components/toggle-group-control';
 import type { Meta, StoryObj } from '@storybook/react';
-import './style.scss';
 
 const meta: Meta = {
 	title: 'Prototypes/Forms',
@@ -184,27 +182,6 @@ export const Number: StoryObj = {
 				onReportCustomValidity={ ( value ) => {
 					if ( value && parseInt( value.toString(), 10 ) % 2 !== 0 ) {
 						return 'Choose an even number.';
-					}
-				} }
-			/>
-		);
-	},
-};
-
-export const Checkbox: StoryObj = {
-	render: function Template() {
-		const [ checked, setChecked ] = useState( false );
-
-		return (
-			<ValidatedCheckboxControl
-				required
-				label="Checkbox"
-				help="This checkbox may neither be checked nor unchecked."
-				checked={ checked }
-				onChange={ setChecked }
-				onReportCustomValidity={ ( value ) => {
-					if ( value ) {
-						return 'This checkbox may not be checked.';
 					}
 				} }
 			/>

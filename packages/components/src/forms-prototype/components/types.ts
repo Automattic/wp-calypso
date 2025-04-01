@@ -1,3 +1,5 @@
+import type { CheckboxControl } from '@wordpress/components';
+
 export type ValidatedControlProps< V > = {
 	/**
 	 * Whether the control is required.
@@ -18,3 +20,7 @@ export type ValidatedControlProps< V > = {
 	// an error message at any point in time. We should wait until we have a use case though.
 	onReportCustomValidity?: ( currentValue: V ) => string | void;
 };
+
+// These re-exports, in combination with the `reactDocgenTypescriptOptions.propFilter` in the
+// Storybook config, allow the docgen to read and display type information for `@wordpress/components`.
+export type CheckboxControlProps = React.ComponentProps< typeof CheckboxControl >;

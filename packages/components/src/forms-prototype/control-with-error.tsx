@@ -3,6 +3,8 @@ import { Icon } from '@wordpress/components';
 import { caution } from '@wordpress/icons';
 import { cloneElement, forwardRef, useState } from 'react';
 
+import './style.scss';
+
 /**
  * HTML elements that support the Constraint Validation API.
  *
