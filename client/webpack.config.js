@@ -186,6 +186,7 @@ const webpackConfig = {
 		'entry-stepper': [ path.join( __dirname, 'landing', 'stepper' ) ],
 		'entry-browsehappy': [ path.join( __dirname, 'landing', 'browsehappy' ) ],
 		'entry-subscriptions': [ path.join( __dirname, 'landing', 'subscriptions' ) ],
+		'entry-dashboard': [ path.join( __dirname, 'dashboard' ) ],
 	} ),
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: sourceMapType,
