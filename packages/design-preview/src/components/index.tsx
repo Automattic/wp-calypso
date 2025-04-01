@@ -1,9 +1,10 @@
 import { GlobalStylesProvider, useSyncGlobalStylesUserConfig } from '@automattic/global-styles';
 import { NavigatorScreenObject } from '@automattic/onboarding';
+import { Navigator } from '@wordpress/components/build-types/navigator/types';
 import { useViewportMatch } from '@wordpress/compose';
 import { Element } from '@wordpress/element';
 import clsx from 'clsx';
-import { useMemo, useState } from 'react';
+import { MutableRefObject, useMemo, useState } from 'react';
 import { useInlineCss } from '../hooks';
 import Sidebar from './sidebar';
 import SitePreview from './site-preview';
@@ -41,6 +42,7 @@ export interface DesignPreviewProps {
 	selectedFontVariation: GlobalStylesObject | null;
 	onGlobalStylesChange: ( globalStyles?: GlobalStylesObject | null ) => void;
 	onNavigatorPathChange?: ( path?: string ) => void;
+	navigatorRef: MutableRefObject< Navigator | null >;
 }
 
 // @todo Get the style variations of theme, and then combine the selected one with colors & fonts for consistency
@@ -66,6 +68,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	onGlobalStylesChange,
 	selectedDesignTitle,
 	onNavigatorPathChange,
+	navigatorRef,
 } ) => {
 	const isDesktop = useViewportMatch( 'large' );
 	const [ isInitialScreen, setIsInitialScreen ] = useState( true );
@@ -94,6 +97,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 			} ) }
 		>
 			<Sidebar
+				navigatorRef={ navigatorRef }
 				title={ title }
 				author={ author }
 				categories={ categories }

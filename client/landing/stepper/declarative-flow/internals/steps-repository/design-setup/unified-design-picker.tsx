@@ -24,10 +24,11 @@ import {
 import { useScreens, type DesignPreviewProps } from '@automattic/design-preview';
 import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer, ONBOARDING_FLOW, isSiteSetupFlow, Step } from '@automattic/onboarding';
+import { Navigator } from '@wordpress/components/build-types/navigator/types';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
@@ -764,6 +765,8 @@ const UnifiedDesignPickerStep: StepType< {
 		onScreenSubmit: recordDesignPreviewScreenSubmit,
 	} );
 
+	const navigatorRef = useRef< Navigator >( null );
+
 	// ********** Main render logic
 
 	// Don't render until we've done fetching all the data needed for initial render.
@@ -809,6 +812,7 @@ const UnifiedDesignPickerStep: StepType< {
 		const actionButtons = getActionButtons();
 
 		const designPreviewProps: DesignPreviewProps = {
+			navigatorRef,
 			previewUrl: themeDemoUrl || previewUrl,
 			siteInfo: {
 				title: shouldCustomizeText ? site?.name ?? '' : '',
@@ -930,6 +934,7 @@ const UnifiedDesignPickerStep: StepType< {
 										recordTracksEvent={ ! activeScreen }
 										onClick={ () => {
 											if ( activeScreen?.onBack ) {
+												navigatorRef.current?.goBack();
 												return activeScreen.onBack( activeScreen.slug );
 											}
 
@@ -948,6 +953,7 @@ const UnifiedDesignPickerStep: StepType< {
 									<Step.PrimaryButton
 										onClick={ () => {
 											if ( activeScreen?.onSubmit ) {
+												navigatorRef.current?.goBack();
 												return activeScreen.onSubmit( activeScreen.slug );
 											}
 
