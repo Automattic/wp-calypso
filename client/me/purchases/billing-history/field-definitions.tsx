@@ -106,7 +106,7 @@ function getUniqueTransactionTypes(
 		} ) );
 }
 
-export function getFieldDefinitions(
+export function getTransactionFieldDefinitions(
 	transactions: BillingTransaction[] | null,
 	translate: ReturnType< typeof useTranslate >
 ) {
