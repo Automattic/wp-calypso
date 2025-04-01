@@ -839,7 +839,7 @@ export default function CheckoutMainContent( {
 	return (
 		<StepContainerV2CheckoutFixer isLargeViewport={ isLargeViewport }>
 			<Step.WideLayout
-				width="xhuge"
+				maxWidth="xhuge"
 				hasContentPadding={ false }
 				topBar={
 					<Step.TopBar

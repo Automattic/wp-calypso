@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 
 import './style.scss';
 
-type Width =
+type MaxWidth =
 	| 'wide'
 	| 'huge'
 	| 'huge-plus' // Non-standard width introduced for plans step
@@ -11,18 +11,18 @@ type Width =
 
 export const ContentWrapper = ( {
 	children,
-	width = 'wide',
+	maxWidth = 'wide',
 	centerAligned,
 	hasPadding = true,
 }: {
 	children: ReactNode;
-	width?: Width;
+	maxWidth?: MaxWidth;
 	centerAligned?: boolean;
 	hasPadding?: boolean;
 } ) => {
 	return (
 		<div
-			className={ clsx( 'step-container-v2__content-wrapper', width, {
+			className={ clsx( 'step-container-v2__content-wrapper', maxWidth, {
 				'center-aligned': centerAligned,
 				padding: hasPadding,
 			} ) }

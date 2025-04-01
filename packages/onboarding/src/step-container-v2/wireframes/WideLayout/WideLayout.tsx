@@ -13,7 +13,7 @@ interface WideLayoutProps {
 	children?: ContentProp;
 	footer?: ReactNode;
 	stickyBottomBar?: ContentProp;
-	width?: React.ComponentProps< typeof ContentWrapper >[ 'width' ];
+	maxWidth?: React.ComponentProps< typeof ContentWrapper >[ 'maxWidth' ];
 
 	/**
 	 * @deprecated Do not use `hasContentPadding`. This was a special case for the checkout to support the background colors. It will be removed when checkout no longer needs it.
@@ -28,7 +28,7 @@ export const WideLayout = ( {
 	children,
 	footer,
 	stickyBottomBar,
-	width = 'wide',
+	maxWidth = 'wide',
 	hasContentPadding: hasContentPaddingProp = true,
 }: WideLayoutProps ) => {
 	return (
@@ -44,7 +44,7 @@ export const WideLayout = ( {
 				return (
 					<>
 						<TopBarRenderer topBar={ topBar } />
-						<ContentWrapper hasPadding={ hasContentPadding } width={ width }>
+						<ContentWrapper hasPadding={ hasContentPadding } maxWidth={ maxWidth }>
 							{ heading }
 							<Content className={ className }>{ content }</Content>
 							{ footer }

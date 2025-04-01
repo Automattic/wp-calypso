@@ -35,7 +35,7 @@ export const Wide_Default = () => (
 
 export const Huge = () => (
 	<WideLayout
-		width="huge"
+		maxWidth="huge"
 		topBar={ <TopBar leftElement={ <BackButton /> } /> }
 		heading={
 			<Heading
@@ -56,7 +56,7 @@ export const Huge = () => (
 
 export const XHuge = () => (
 	<WideLayout
-		width="xhuge"
+		maxWidth="xhuge"
 		topBar={ <TopBar leftElement={ <BackButton /> } /> }
 		heading={
 			<Heading
