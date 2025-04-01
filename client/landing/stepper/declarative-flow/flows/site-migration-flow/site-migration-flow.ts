@@ -271,7 +271,6 @@ const siteMigration: FlowV2 = {
 										origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
 										backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
 										...( fromQueryParam && { from: fromQueryParam } ),
-										...( platformQueryParam && { platform: platformQueryParam } ),
 									},
 									'/setup/site-setup/importList'
 								)
