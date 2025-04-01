@@ -5,6 +5,7 @@ export const storeMigrateSource = () => {
 	window.sessionStorage.setItem( SESSION_STORAGE_IS_MIGRATE_FROM_WP, 'true' );
 };
 
+// TODO: This is currently never called — should it ever be?
 export const clearMigrateSource = () => {
 	window.sessionStorage.removeItem( SESSION_STORAGE_IS_MIGRATE_FROM_WP );
 };
