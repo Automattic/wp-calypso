@@ -9,9 +9,9 @@ import {
 } from 'calypso/signup/storageUtils';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
-import type { Flow, ProvidedDependencies } from '../../internals/types';
+import type { DeprecatedFlowV1, ProvidedDependencies } from '../../internals/types';
 
-const reblogging: Flow = {
+const reblogging: DeprecatedFlowV1 = {
 	name: REBLOGGING_FLOW,
 	get title() {
 		return translate( 'Reblogging' );

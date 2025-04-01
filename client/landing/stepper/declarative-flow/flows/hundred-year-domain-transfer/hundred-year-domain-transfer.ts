@@ -5,12 +5,12 @@ import { setSignupCompleteFlowName, setSignupCompleteSlug } from 'calypso/signup
 import {
 	AssertConditionResult,
 	AssertConditionState,
-	Flow,
+	DeprecatedFlowV1,
 	ProvidedDependencies,
 } from '../../internals/types';
 import domainTransfer from '../domain-transfer/domain-transfer';
 
-const hundredYearDomainTransfer: Flow = {
+const hundredYearDomainTransfer: DeprecatedFlowV1 = {
 	...domainTransfer,
 	variantSlug: HUNDRED_YEAR_DOMAIN_TRANSFER,
 	get title() {

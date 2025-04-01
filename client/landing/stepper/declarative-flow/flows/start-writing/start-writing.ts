@@ -8,7 +8,7 @@ import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/ste
 import {
 	type AssertConditionResult,
 	AssertConditionState,
-	type Flow,
+	type DeprecatedFlowV1,
 	type ProvidedDependencies,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -20,7 +20,7 @@ import { useSiteData } from '../../../hooks/use-site-data';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 
-const startWriting: Flow = {
+const startWriting: DeprecatedFlowV1 = {
 	name: START_WRITING_FLOW,
 	get title() {
 		return translate( 'Start writing' );

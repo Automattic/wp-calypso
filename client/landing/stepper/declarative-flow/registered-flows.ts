@@ -17,9 +17,9 @@ import {
 	EXAMPLE_FLOW,
 	AI_SITE_BUILDER_FLOW,
 } from '@automattic/onboarding';
-import type { Flow } from '../declarative-flow/internals/types';
+import type { DeprecatedFlowV1, FlowV2 } from '../declarative-flow/internals/types';
 
-const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
+const availableFlows: Record< string, () => Promise< { default: DeprecatedFlowV1 | FlowV2 } > > = {
 	'site-setup': () =>
 		import( /* webpackChunkName: "site-setup-flow" */ './flows/site-setup-flow/site-setup-flow' ),
 
@@ -108,7 +108,7 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		import( /* webpackChunkName: "example-flow" */ './flows/00-example-flow/example' ),
 };
 
-const aiSiteBuilderFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
+const aiSiteBuilderFlows: Record< string, () => Promise< { default: DeprecatedFlowV1 } > > = config.isEnabled(
 	'calypso/ai-site-builder-flow'
 )
 	? {
@@ -116,14 +116,14 @@ const aiSiteBuilderFlows: Record< string, () => Promise< { default: Flow } > > =
 	  }
 	: {};
 
-const hostedSiteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = {
+const hostedSiteMigrationFlow: Record< string, () => Promise< { default: DeprecatedFlowV1 } > > = {
 	[ HOSTED_SITE_MIGRATION_FLOW ]: () =>
 		import(
 			/* webpackChunkName: "hosted-site-migration-flow" */ './flows/hosted-site-migration-flow/hosted-site-migration-flow'
 		),
 };
 
-const hundredYearDomainFlow: Record< string, () => Promise< { default: Flow } > > = {
+const hundredYearDomainFlow: Record< string, () => Promise< { default: DeprecatedFlowV1 } > > = {
 	[ HUNDRED_YEAR_DOMAIN_FLOW ]: () =>
 		import(
 			/* webpackChunkName: "hundred-year-domain" */ './flows/hundred-year-domain/hundred-year-domain'

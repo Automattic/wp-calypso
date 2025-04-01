@@ -16,7 +16,7 @@ import {
 	ProvidedDependencies,
 	AssertConditionResult,
 	AssertConditionState,
-	FlowV1,
+	DeprecatedFlowV1,
 } from '../../internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 
@@ -26,7 +26,7 @@ const DOMAIN_TRANSFER_STEPS = [
 	STEPS.PROCESSING,
 ];
 
-const domainTransfer: FlowV1 = {
+const domainTransfer: DeprecatedFlowV1 = {
 	name: DOMAIN_TRANSFER,
 	get title() {
 		return translate( 'Bulk domain transfer' );

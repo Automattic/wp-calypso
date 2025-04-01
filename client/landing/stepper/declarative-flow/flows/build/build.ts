@@ -14,7 +14,7 @@ import { useSiteSlug } from '../../../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../../../stores';
 import { useLaunchpadDecider } from '../../internals/hooks/use-launchpad-decider';
 import { STEPS } from '../../internals/steps';
-import { Flow, ProvidedDependencies } from '../../internals/types';
+import { DeprecatedFlowV1, ProvidedDependencies } from '../../internals/types';
 
 function useGoalsAtFrontExperimentQueryParam() {
 	return Boolean( useSelector( getInitialQueryArguments )?.[ 'goals-at-front-experiment' ] );
@@ -22,7 +22,7 @@ function useGoalsAtFrontExperimentQueryParam() {
 
 const steps = [ STEPS.LAUNCHPAD, STEPS.PROCESSING ];
 
-const build: Flow = {
+const build: DeprecatedFlowV1 = {
 	name: BUILD_FLOW,
 	get title() {
 		return 'WordPress';

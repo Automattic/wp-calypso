@@ -1,9 +1,9 @@
 import { HOSTED_SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { useSearchParams } from 'react-router-dom';
-import { type Flow } from '../../internals/types';
+import { type DeprecatedFlowV1 } from '../../internals/types';
 import siteMigration from '../site-migration-flow/site-migration-flow';
 
-const hostedSiteMigrationFlow: Flow = {
+const hostedSiteMigrationFlow: DeprecatedFlowV1 = {
 	...siteMigration,
 	variantSlug: HOSTED_SITE_MIGRATION_FLOW,
 	isSignupFlow: true,

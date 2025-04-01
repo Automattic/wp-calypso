@@ -3,10 +3,10 @@ import { useHref, useLocation } from 'react-router';
 import { getLoginUrl } from '../utils/path';
 import { useFlowLocale } from './use-flow-locale';
 import { useSiteData } from './use-site-data';
-import type { Flow } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import type { DeprecatedFlowV1 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 
 type UseLoginUrlForFlowProps = {
-	flow: Flow;
+	flow: DeprecatedFlowV1;
 };
 
 export function useLoginUrlForFlow( { flow }: UseLoginUrlForFlowProps ): string {
@@ -29,7 +29,7 @@ export function useLoginUrlForFlow( { flow }: UseLoginUrlForFlowProps ): string 
 }
 
 type GetLoginUrlForFlowProps = {
-	flow: Flow;
+	flow: DeprecatedFlowV1;
 	path: string;
 	locale: string;
 	siteId: string | number;

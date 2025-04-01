@@ -14,14 +14,14 @@ import { STEPS } from '../../internals/steps';
 import {
 	AssertConditionResult,
 	AssertConditionState,
-	Flow,
+	DeprecatedFlowV1,
 	ProvidedDependencies,
 } from '../../internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 
 const WRITE_FLOW_STEPS = [ STEPS.LAUNCHPAD, STEPS.SUBSCRIBERS, STEPS.PROCESSING ];
 
-const write: Flow = {
+const write: DeprecatedFlowV1 = {
 	name: WRITE_FLOW,
 	get title() {
 		return translate( 'Write' );

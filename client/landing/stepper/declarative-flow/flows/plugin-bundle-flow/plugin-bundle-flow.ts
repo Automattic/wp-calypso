@@ -14,7 +14,7 @@ import { ProcessingResult } from '../../internals/steps-repository/processing-st
 import {
 	AssertConditionResult,
 	AssertConditionState,
-	FlowV1,
+	DeprecatedFlowV1,
 	ProvidedDependencies,
 	StepperStep,
 } from '../../internals/types';
@@ -36,7 +36,7 @@ const getNextStep = ( currentStep: string, steps: readonly StepperStep[] ): stri
 
 const SiteIntent = Onboard.SiteIntent;
 
-const pluginBundleFlow: FlowV1 = {
+const pluginBundleFlow: DeprecatedFlowV1 = {
 	name: 'plugin-bundle',
 	isSignupFlow: false,
 

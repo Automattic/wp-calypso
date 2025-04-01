@@ -39,17 +39,19 @@ export type NavigationControls<
 	 * screen(s) to a new stepper flow and linking directly
 	 * between flows/screens.
 	 */
-	goToStep?: ( step: string ) => void;
+	goToStep?: ( step: StepperStep[ 'slug' ] ) => void;
 
 	/**
 	 * Submits the answers provided in the flow. If it's complaining about the type, it means you haven't typed the step correctly.
 	 * @see {@link client/landing/stepper/declarative-flow/internals/steps-repository/DEVELOPMENT/making-a-new-step.md}
 	 */
-	submit: (
-		providedDependencies?: StepSubmittedTypes extends Record< string, unknown >
-			? StepSubmittedTypes
-			: never
-	) => void;
+	submit: StepSubmittedTypes extends undefined | never
+		? () => void
+		: (
+				providedDependencies: StepSubmittedTypes extends Record< string, unknown >
+					? StepSubmittedTypes
+					: never
+		  ) => void;
 
 	/**
 	 * Exits the flow and continue to the given path
@@ -70,7 +72,22 @@ export type StepperStep = ( AsyncStepperStep | AsyncUserStep ) & {
  * @param extraData - Extra data to pass to the step.
  * @param replace - If true, the current step will be replaced in the history stack.
  */
-export type Navigate< FlowSteps extends readonly StepperStep[] > = (
+export type Navigate = (
+	stepName: string,
+	extraData?: any,
+	/**
+	 * If true, the current step will be replaced in the history stack.
+	 */
+	replace?: boolean
+) => void;
+
+/**
+ * Navigates to a step in the current flow. Preserves the current query params.
+ * @param stepName - The name of the step to navigate to.
+ * @param extraData - Extra data to pass to the step.
+ * @param replace - If true, the current step will be replaced in the history stack.
+ */
+export type NavigateV2< FlowSteps extends readonly StepperStep[] > = (
 	stepName: FlowSteps[ number ][ 'slug' ] | `${ FlowSteps[ number ][ 'slug' ] }?${ string }`,
 	extraData?: any,
 	/**
@@ -86,34 +103,39 @@ export type UseStepsHook = () => readonly StepperStep[];
 
 export type UseStepNavigationHook< FlowSteps extends readonly StepperStep[] > = (
 	currentStepSlug: FlowSteps[ number ][ 'slug' ],
-	navigate: Navigate< FlowSteps >
+	navigate: Navigate
+) => NavigationControls< any >;
+
+export type UseStepNavigationHookV2< FlowSteps extends readonly StepperStep[] > = (
+	currentStepSlug: FlowSteps[ number ][ 'slug' ],
+	navigate: NavigateV2< FlowSteps >
 ) => NavigationControls< any >;
 
 export type UseHandleSubmitHook< FlowSteps extends readonly StepperStep[] > = (
 	submitted: MapStepToItsSubmitData< FlowSteps[ number ] >,
-	navigate: Navigate< FlowSteps >
+	navigate: NavigateV2< FlowSteps >
 ) => void;
 
-type MapStepToItsSubmitData< T extends StepperStep > = Omit<
-	{
-		[ K in T as K[ 'slug' ] ]: K & {
-			providedDependencies: Parameters<
-				Parameters<
-					Awaited< ReturnType< K[ 'asyncComponent' ] > >[ 'default' ]
-				>[ 0 ][ 'navigation' ][ 'submit' ]
-			>[ 0 ];
-		};
-	}[ T[ 'slug' ] ],
-	'asyncComponent'
->;
+/**
+ * This type is complex because it's tricky to keep the mapping between slug and the steps submitted data type.
+ * Without this, TS would have a SLUG <=> SUBMITTED_TYPE mapping, between every slug and every type of submitted data.
+ * We only want a SLUG <=> SUBMITTED_TYPE mapping, between every slug and the type of the submitted data for the respective step.
+ */
+type MapStepToItsSubmitData< T extends StepperStep > = {
+	[ K in T as K[ 'slug' ] ]: Pick< K, 'slug' > & {
+		providedDependencies: Parameters<
+			Parameters<
+				Awaited< ReturnType< K[ 'asyncComponent' ] > >[ 'default' ]
+			>[ 0 ][ 'navigation' ][ 'submit' ]
+		>[ 0 ];
+	};
+}[ T[ 'slug' ] ];
 
-export type UseAssertConditionsHook< FlowSteps extends readonly StepperStep[] > = (
-	navigate?: Navigate< FlowSteps >
-) => AssertConditionResult;
+export type UseAssertConditionsHook = ( navigate?: Navigate ) => AssertConditionResult;
 
 export type UseSideEffectHook< FlowSteps extends readonly StepperStep[] > = (
 	currentStepSlug: FlowSteps[ number ][ 'slug' ],
-	navigate: Navigate< FlowSteps >
+	navigate: Navigate
 ) => void;
 
 /**
@@ -133,7 +155,7 @@ export type UseTracksEventPropsHook = () => {
 /**
  * @deprecated Use FlowV2 instead.
  */
-export type FlowV1 = {
+export type DeprecatedFlowV1 = {
 	/**
 	 * If this flag is set to true, the flow will login the user without leaving Stepper.
 	 */
@@ -173,18 +195,15 @@ export type FlowV1 = {
 	/**
 	 * @deprecated Use `initialize` instead. `initialize` will run before the flow is rendered and you can make any decisions there.
 	 */
-	useAssertConditions?: UseAssertConditionsHook< ReturnType< FlowV1[ 'useSteps' ] > >;
+	useAssertConditions?: UseAssertConditionsHook;
 	/**
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
 	 */
-	useSideEffect?: UseSideEffectHook< ReturnType< FlowV1[ 'useSteps' ] > >;
+	useSideEffect?: UseSideEffectHook< readonly StepperStep[] >;
 	useTracksEventProps?: UseTracksEventPropsHook;
 };
 
 type DefaultFlowStepsConfig = () => readonly StepperStep[];
-
-export type FlowStepSlug< T extends DefaultFlowStepsConfig > =
-	T extends () => readonly StepperStep[] ? ReturnType< T >[ number ][ 'slug' ] : never;
 
 export type FlowV2< FlowStepsInitialize extends DefaultFlowStepsConfig = DefaultFlowStepsConfig > =
 	{
@@ -244,8 +263,6 @@ export type FlowV2< FlowStepsInitialize extends DefaultFlowStepsConfig = Default
 		useSideEffect?: UseSideEffectHook< ReturnType< FlowStepsInitialize > >;
 		useTracksEventProps?: UseTracksEventPropsHook;
 	};
-
-export type Flow = FlowV1 | FlowV2;
 
 /**
  * This is a helper type to intersect A and B only if B is not never. Intersecting with never results in never which is not what we want.
@@ -320,9 +337,7 @@ export type Step<
 	  never;
 
 // TODO: get rid of these. Every type should be specific.
-export type ProvidedDependencies = MapStepToItsSubmitData< StepperStep > & {
-	shouldSkipSubmitTracking?: boolean;
-};
+export type ProvidedDependencies = Record< string, unknown >;
 
 export enum AssertConditionState {
 	SUCCESS = 'success',

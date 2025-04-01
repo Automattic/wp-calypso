@@ -10,7 +10,7 @@ import { ONBOARD_STORE, STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/s
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { PRIVATE_STEPS } from '../../steps';
-import type { Flow, Navigate, StepperStep } from '../../types';
+import type { DeprecatedFlowV1, Navigate, StepperStep } from '../../types';
 
 const useOnboardingIntent = () => {
 	const intent = useSelect(
@@ -32,7 +32,7 @@ interface FlowNavigation {
 /**
  *  Hook to manage the navigation between steps in the flow
  */
-export const useFlowNavigation = ( flow: Flow ): FlowNavigation => {
+export const useFlowNavigation = ( flow: DeprecatedFlowV1 ): FlowNavigation => {
 	const intent = useOnboardingIntent();
 	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
 	const navigate = useNavigate();

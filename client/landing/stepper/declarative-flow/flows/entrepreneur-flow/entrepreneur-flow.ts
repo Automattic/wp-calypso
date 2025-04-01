@@ -15,11 +15,11 @@ import { USER_STORE, ONBOARD_STORE } from '../../../stores';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { ENTREPRENEUR_TRIAL_SURVEY_KEY } from '../../internals/steps-repository/segmentation-survey';
-import type { Flow, ProvidedDependencies, StepperStep } from '../../internals/types';
+import type { DeprecatedFlowV1, ProvidedDependencies, StepperStep } from '../../internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 const SEGMENTATION_SURVEY_SLUG = 'start';
 
-const entrepreneurFlow: Flow = {
+const entrepreneurFlow: DeprecatedFlowV1 = {
 	name: ENTREPRENEUR_FLOW,
 
 	isSignupFlow: true,

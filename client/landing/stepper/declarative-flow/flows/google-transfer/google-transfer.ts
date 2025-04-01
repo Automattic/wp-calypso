@@ -1,8 +1,8 @@
 import { GOOGLE_TRANSFER } from '@automattic/onboarding';
-import { Flow } from '../../internals/types';
+import { DeprecatedFlowV1 } from '../../internals/types';
 import domainTransfer from '../domain-transfer/domain-transfer';
 
-const googleDomainTransfer: Flow = {
+const googleDomainTransfer: DeprecatedFlowV1 = {
 	...domainTransfer,
 	variantSlug: GOOGLE_TRANSFER,
 };

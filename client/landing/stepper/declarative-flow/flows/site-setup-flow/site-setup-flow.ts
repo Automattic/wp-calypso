@@ -28,7 +28,7 @@ import { ProcessingResult } from '../../internals/steps-repository/processing-st
 import {
 	type AssertConditionResult,
 	AssertConditionState,
-	type FlowV1,
+	type DeprecatedFlowV1,
 	type ProvidedDependencies,
 } from '../../internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
@@ -47,7 +47,7 @@ function useGoalsAtFrontExperimentQueryParam() {
 	return Boolean( useSelector( getInitialQueryArguments )?.[ 'goals-at-front-experiment' ] );
 }
 
-const siteSetupFlow: FlowV1 = {
+const siteSetupFlow: DeprecatedFlowV1 = {
 	name: 'site-setup',
 	isSignupFlow: false,
 

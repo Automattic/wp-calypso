@@ -36,9 +36,9 @@ import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-conta
 import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
 import UnifiedPlansStep from './unified-plans-step';
 import { getIntervalType } from './util';
-import type { ProvidedDependencies, Step as StepType } from '../../types';
+import type { Step as StepType } from '../../types';
 import type { PlansIntent } from '@automattic/plans-grid-next';
-
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import './style.scss';
 
 /**
@@ -61,9 +61,13 @@ function getPlansIntent( flowName: string | null, isWordCampPromo?: boolean ): P
 	}
 }
 
+type ProvidedDependencies = {
+	stepName: 'plans';
+	cartItems: MinimalRequestCartProduct[] | null;
+};
+
 const PlansStepAdaptor: StepType< {
-	// TODO: work on more specific types
-	submits: Record< string, unknown >;
+	submits: ProvidedDependencies;
 } > = ( props ) => {
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
@@ -205,20 +209,27 @@ const PlansStepAdaptor: StepType< {
 			{ ...hidePlanProps }
 			selectedSite={ site ?? undefined }
 			saveSignupStep={ ( step ) => {
-				setStepState( ( mostRecentState = { ...stepState, ...step } ) );
+				setStepState( ( mostRecentState = { ...stepState, ...step } as ProvidedDependencies ) );
 			} }
 			submitSignupStep={ ( stepInfo ) => {
 				if ( stepInfo.stepName === 'domains' && stepInfo.siteUrl ) {
 					setSiteUrl( stepInfo.siteUrl );
 				} else {
-					setStepState( ( mostRecentState = { ...stepState, ...stepInfo } ) );
+					setStepState(
+						( mostRecentState = { ...stepState, ...( stepInfo as ProvidedDependencies ) } )
+					);
 				}
 			} }
 			goToNextStep={ () => {
 				switchPaidDesignToDefault( mostRecentState );
 				props.navigation.submit?.( { ...stepState, ...mostRecentState } );
 			} }
-			step={ stepState }
+			step={
+				stepState as {
+					status?: string | undefined;
+					errors?: { message: string } | undefined;
+				}
+			}
 			customerType={ customerType }
 			signupDependencies={ signupDependencies }
 			stepName="plans"

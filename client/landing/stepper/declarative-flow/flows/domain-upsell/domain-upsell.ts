@@ -8,11 +8,11 @@ import { useSiteSlug } from '../../../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../../../stores';
 import { STEPS } from '../../internals/steps';
 import { ProvidedDependencies } from '../../internals/types';
-import type { Flow } from '../../internals/types';
+import type { DeprecatedFlowV1 } from '../../internals/types';
 
 const DOMAIN_UPSELL_STEPS = [ STEPS.DOMAINS, STEPS.PLANS ];
 
-const domainUpsell: Flow = {
+const domainUpsell: DeprecatedFlowV1 = {
 	name: DOMAIN_UPSELL_FLOW,
 	get title() {
 		return translate( 'Domain Upsell' );

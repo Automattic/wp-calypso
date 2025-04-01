@@ -16,12 +16,12 @@ import { setSelectedSiteId } from 'calypso/state/ui/actions/index';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
-import { Flow, ProvidedDependencies } from '../../internals/types';
+import { DeprecatedFlowV1, ProvidedDependencies } from '../../internals/types';
 import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import './new-hosted-site-flow-user-included.scss';
 
-const hosting: Flow = {
+const hosting: DeprecatedFlowV1 = {
 	name: NEW_HOSTED_SITE_FLOW_USER_INCLUDED,
 	isSignupFlow: true,
 	useSteps() {

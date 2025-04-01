@@ -9,7 +9,7 @@ import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { isAdminInterfaceWPAdmin } from 'calypso/state/sites/selectors';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
-import type { Flow, ProvidedDependencies } from '../../internals/types';
+import type { DeprecatedFlowV1, ProvidedDependencies } from '../../internals/types';
 
 const TRANSFERRING_HOSTED_SITE_STEPS = [
 	STEPS.WAIT_FOR_ATOMIC,
@@ -18,7 +18,7 @@ const TRANSFERRING_HOSTED_SITE_STEPS = [
 	STEPS.ERROR,
 ];
 
-const transferringHostedSite: Flow = {
+const transferringHostedSite: DeprecatedFlowV1 = {
 	name: TRANSFERRING_HOSTED_SITE_FLOW,
 	isSignupFlow: false,
 

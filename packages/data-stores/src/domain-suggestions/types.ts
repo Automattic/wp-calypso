@@ -122,7 +122,7 @@ export interface DomainSuggestion {
 	/**
 	 * The product slug
 	 */
-	product_slug?: string;
+	product_slug: string;
 
 	/**
 	 * Whether the domain is free

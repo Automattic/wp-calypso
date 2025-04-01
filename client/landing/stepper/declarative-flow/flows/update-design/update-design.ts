@@ -16,9 +16,9 @@ import { useRedirectDesignSetupOldSlug } from '../../helpers/use-redirect-design
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { ProvidedDependencies } from '../../internals/types';
-import type { Flow } from '../../internals/types';
+import type { DeprecatedFlowV1 } from '../../internals/types';
 
-const updateDesign: Flow = {
+const updateDesign: DeprecatedFlowV1 = {
 	name: 'update-design',
 	get title() {
 		return translate( 'Choose Design' );

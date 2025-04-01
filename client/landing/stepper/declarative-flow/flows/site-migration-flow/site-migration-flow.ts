@@ -24,9 +24,9 @@ import { getSiteIdParam } from '../../internals/steps-repository/import/util';
 import { type SiteMigrationIdentifyAction } from '../../internals/steps-repository/site-migration-identify';
 import { AssertConditionState } from '../../internals/types';
 import { goToImporter } from '../../migration/helpers';
-import type { AssertConditionResult, Flow, ProvidedDependencies } from '../../internals/types';
+import type { AssertConditionResult, DeprecatedFlowV1, ProvidedDependencies } from '../../internals/types';
 
-const siteMigration: Flow = {
+const siteMigration: DeprecatedFlowV1 = {
 	name: SITE_MIGRATION_FLOW,
 	isSignupFlow: false,
 	__experimentalUseSessions: true,

@@ -13,10 +13,10 @@ import {
 	recordStepNavigation,
 	type RecordStepNavigationParams,
 } from '../../analytics/record-step-navigation';
-import type { Flow, Navigate, ProvidedDependencies, StepperStep } from '../../types';
+import type { DeprecatedFlowV1, Navigate, ProvidedDependencies, StepperStep } from '../../types';
 
 interface Params< FlowSteps extends StepperStep[] > {
-	flow: Flow;
+	flow: DeprecatedFlowV1;
 	stepSlugs: StepperStep[ 'slug' ][];
 	currentStepRoute: StepperStep[ 'slug' ];
 	navigate: Navigate< FlowSteps >;
@@ -34,7 +34,8 @@ export const useStepNavigationWithTracking = ( {
 		'useStepNavigation' in flow ? flow.useStepNavigation( currentStepRoute, navigate ) : null;
 
 	// Stepper's V2 API doesn't have useHandleSubmit, it uses useHandleSubmit instead.
-	const flowSubmissionHandler = 'useHandleSubmit' in flow ? flow.useHandleSubmit : null;
+	// We don't know which flow, so we'll cast it to any.
+	const flowSubmissionHandler: any = 'useHandleSubmit' in flow ? flow.useHandleSubmit : null;
 
 	const { intent, goals } = useSelect( ( select ) => {
 		const onboardStore = select( ONBOARD_STORE ) as OnboardSelect;
@@ -166,7 +167,7 @@ export const useStepNavigationWithTracking = ( {
 				},
 			} ),
 		} ),
-		[ handleRecordStepNavigation, stepNavigationV1 ]
+		[ handleRecordStepNavigation, stepNavigationV1, canUserGoBack ]
 	);
 
 	const navigationControlsForStepperV2 = useMemo(
@@ -180,11 +181,27 @@ export const useStepNavigationWithTracking = ( {
 							providedDependencies,
 						} );
 					}
-					flowSubmissionHandler( { slug: currentStepRoute, providedDependencies }, navigate );
+					flowSubmissionHandler(
+						{ slug: currentStepRoute, providedDependencies: undefined },
+						navigate
+					);
+				},
+			} ),
+			/**
+			 * If the `previousStep` is defined in the store, it's a solid proxy to guess that we navigated at least once via Stepper's React Router.
+			 * If the flow doesn't define a `goBack` handler, and `previousStep` is defined, we can just go history.back() and we'll remain in the flow.
+			 * But if `previousStep` is not defined, and the flow doesn't define a `goBack` handler, we should return undefined so the StepContainer doesn't render a back button.
+			 */
+			...( canUserGoBack && {
+				goBack: () => {
+					handleRecordStepNavigation( {
+						event: STEPPER_TRACKS_EVENT_STEP_NAV_GO_BACK,
+					} );
+					history.back();
 				},
 			} ),
 		} ),
-		[ handleRecordStepNavigation, flowSubmissionHandler, currentStepRoute, navigate ]
+		[ handleRecordStepNavigation, flowSubmissionHandler, currentStepRoute, navigate, canUserGoBack ]
 	);
 
 	if ( 'useHandleSubmit' in flow ) {

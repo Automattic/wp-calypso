@@ -35,7 +35,12 @@ import { useGoalsFirstExperiment } from '../../helpers/use-goals-first-experimen
 import { useRedirectDesignSetupOldSlug } from '../../helpers/use-redirect-design-setup-old-slug';
 import { recordStepNavigation } from '../../internals/analytics/record-step-navigation';
 import { STEPS } from '../../internals/steps';
-import { AssertConditionState, Flow, ProvidedDependencies } from '../../internals/types';
+import {
+	AssertConditionState,
+	DeprecatedFlowV1,
+	ProvidedDependencies,
+	StepperStep,
+} from '../../internals/types';
 
 declare global {
 	interface Window {
@@ -61,7 +66,7 @@ const withLocale = ( url: string, locale: string ) => {
 	return locale && locale !== 'en' ? `${ url }/${ locale }` : url;
 };
 
-const onboarding: Flow = {
+const onboarding: DeprecatedFlowV1 = {
 	name: ONBOARDING_FLOW,
 	isSignupFlow: true,
 	__experimentalUseBuiltinAuth: true,
@@ -105,28 +110,20 @@ const onboarding: Flow = {
 		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 		const isPlaygroundEligible = useIsPlaygroundEligible();
 
-		const steps = stepsWithRequiredLogin( [
-			STEPS.UNIFIED_DOMAINS,
-			STEPS.USE_MY_DOMAIN,
-			STEPS.UNIFIED_PLANS,
-			STEPS.SITE_CREATION_STEP,
-			STEPS.PROCESSING,
-			STEPS.POST_CHECKOUT_ONBOARDING,
-		] );
-
-		if ( isGoalsAtFrontExperiment ) {
-			// Note: these steps are not wrapped in `stepsWithRequiredLogin`
-			steps.unshift(
-				STEPS.GOALS,
-				STEPS.DESIGN_CHOICES,
-				STEPS.DESIGN_SETUP,
-				STEPS.DIFM_STARTING_POINT
-			);
-		}
-
-		if ( isPlaygroundEligible ) {
-			steps.push( STEPS.PLAYGROUND );
-		}
+		const steps = [
+			...( isGoalsAtFrontExperiment
+				? [ STEPS.GOALS, STEPS.DESIGN_CHOICES, STEPS.DESIGN_SETUP, STEPS.DIFM_STARTING_POINT ]
+				: [] ),
+			...stepsWithRequiredLogin( [
+				STEPS.UNIFIED_DOMAINS,
+				STEPS.USE_MY_DOMAIN,
+				STEPS.UNIFIED_PLANS,
+				STEPS.SITE_CREATION_STEP,
+				STEPS.PROCESSING,
+				STEPS.POST_CHECKOUT_ONBOARDING,
+			] ),
+			...( isPlaygroundEligible ? [ STEPS.PLAYGROUND ] : [] ),
+		];
 
 		return steps;
 	},
@@ -267,7 +264,7 @@ const onboarding: Flow = {
 						return navigate( 'domains' );
 					}
 					setCreateWithBigSky( false );
-					return navigate( providedDependencies.destination as string );
+					return navigate( providedDependencies.destination as StepperStep[ 'slug' ] );
 				}
 
 				case 'difmStartingPoint': {
@@ -305,14 +302,20 @@ const onboarding: Flow = {
 						const currentQueryArgs = getQueryArgs( window.location.href );
 						currentQueryArgs.step = 'domain-input';
 
-						let useMyDomainURL = addQueryArgs( '/use-my-domain', currentQueryArgs );
+						let useMyDomainURL = addQueryArgs(
+							'use-my-domain',
+							currentQueryArgs
+						) as StepperStep[ 'slug' ];
 
 						const lastQueryParam = ( providedDependencies?.domainForm as { lastQuery?: string } )
 							?.lastQuery;
 
 						if ( lastQueryParam !== undefined ) {
 							currentQueryArgs.initialQuery = lastQueryParam;
-							useMyDomainURL = addQueryArgs( useMyDomainURL, currentQueryArgs );
+							useMyDomainURL = addQueryArgs(
+								useMyDomainURL,
+								currentQueryArgs
+							) as StepperStep[ 'slug' ];
 						}
 
 						setUseMyDomainTracksEventProps( {
@@ -332,11 +335,11 @@ const onboarding: Flow = {
 							signup_domain_origin: SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN,
 							site_url: providedDependencies.domain,
 						} );
-						const destination = addQueryArgs( '/use-my-domain', {
+						const destination = addQueryArgs( 'use-my-domain', {
 							...getQueryArgs( window.location.href ),
 							step: providedDependencies.mode,
 							initialQuery: providedDependencies.domain,
-						} );
+						} ) as StepperStep[ 'slug' ];
 						return navigate( destination );
 					}
 
