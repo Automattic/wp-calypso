@@ -50,11 +50,9 @@ function UnforwardedControlWithError< C extends React.ReactElement >(
 	const validate = () => {
 		const message = onReportCustomValidity?.();
 		const validityTarget = getValidityTarget();
-		validityTarget?.setCustomValidity?.( message ?? '' );
 
-		const newErrorMessage = validityTarget?.validationMessage ?? '';
-
-		setErrorMessage( newErrorMessage );
+		validityTarget?.setCustomValidity( message ?? '' );
+		setErrorMessage( validityTarget?.validationMessage );
 	};
 
 	const onBlur = ( event: React.FocusEvent< HTMLDivElement > ) => {
@@ -62,6 +60,17 @@ function UnforwardedControlWithError< C extends React.ReactElement >(
 		// This prevents unnecessary blurs from components with multiple focusable elements.
 		if ( ! event.relatedTarget || ! event.currentTarget.contains( event.relatedTarget ) ) {
 			setIsTouched( true );
+
+			const validityTarget = getValidityTarget();
+
+			// Prevents a double flash of the native error tooltip when the control is already showing one.
+			if ( ! validityTarget?.validity.valid ) {
+				if ( ! errorMessage ) {
+					setErrorMessage( validityTarget?.validationMessage );
+				}
+				return;
+			}
+
 			validate();
 		}
 	};
