@@ -825,7 +825,15 @@ class PurchaseItem extends Component<
 		if ( this.props.isPlaceholder ) {
 			return null;
 		}
-		const { purchase, showSite, isBackupMethodAvailable } = this.props;
+		const {
+			purchase,
+			site,
+			translate,
+			slug,
+			showSite,
+			isBackupMethodAvailable,
+			isDisconnectedSite,
+		} = this.props;
 
 		return (
 			<div className="purchase-item__wrapper purchases-layout__wrapper">
@@ -840,7 +848,16 @@ class PurchaseItem extends Component<
 						<OwnerInfo purchase={ purchase } />
 					</div>
 
-					<div className="purchase-item__purchase-type">{ this.getPurchaseType() }</div>
+					<div className="purchase-item__purchase-type">
+						<PurchaseItemType
+							purchase={ purchase }
+							site={ site }
+							translate={ translate }
+							slug={ slug }
+							showSite={ showSite }
+							isDisconnectedSite={ isDisconnectedSite }
+						/>
+					</div>
 				</div>
 
 				<div className="purchase-item__status purchases-layout__status">{ this.getStatus() }</div>
