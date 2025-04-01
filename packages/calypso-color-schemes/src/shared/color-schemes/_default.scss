@@ -209,7 +209,7 @@
 	--color-border-secondary: #f1f1f1;
 
 	/* Links: Always use blueberry color */
-	--color-link: #3858e9;
+	--color-link: var(--studio-wordpress-blue-50);
 	--color-link-dark: color-mix(in srgb, var(--color-link) 90%, #000);
 	--color-link-light: color-mix(in srgb, var(--color-link) 90%, #fff);
 
