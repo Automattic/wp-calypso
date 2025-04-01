@@ -57,7 +57,7 @@ function PurchaseItemRowType( props: {
 }
 
 export function getPurchasesFieldDefinitions(
-	purchases: Purchases.Purchase[] | null,
+	// purchases: Purchases.Purchase[],
 	translate: LocalizeProps[ 'translate' ]
 ): Fields< Purchases.Purchase > {
 	return [
@@ -88,11 +88,14 @@ export function getPurchasesFieldDefinitions(
 			filterBy: {
 				operators: [ 'is' as Operator ],
 			},
+			// Filter by site ID
 			getValue: ( { item }: { item: Purchases.Purchase } ) => {
 				return item.siteId;
 			},
+			// Render the site icon
 			render: ( { item }: { item: Purchases.Purchase } ) => {
-				return <PurchaseItemRow purchase={ item } />;
+				const site = { ID: item.siteId };
+				return <PurchaseItemSiteIcon site={ site } purchase={ item } />;
 			},
 		},
 		{
