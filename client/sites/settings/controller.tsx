@@ -104,7 +104,7 @@ export function redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported(
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 
-	if ( areAdvancedHostingFeaturesSupported( state ) === false ) {
+	if ( ! areAdvancedHostingFeaturesSupported( state ) ) {
 		return page.redirect( `/sites/settings/site/${ site?.slug }` );
 	}
 
