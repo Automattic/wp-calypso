@@ -451,6 +451,7 @@ export default withCurrentRoute(
 			: getColorScheme( {
 					state,
 					isGlobalSidebarVisible,
+					sidebarIsHidden,
 					sectionName,
 			  } );
 
