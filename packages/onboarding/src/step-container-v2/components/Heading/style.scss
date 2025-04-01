@@ -16,6 +16,10 @@
 		line-height: 1.25;
 		text-wrap: balance;
 
+		// This ensures that the heading is always at least as tall as the line height.
+		// Useful in case of empty loading titles so we don't see the progress bar jump around.
+		min-height: 1lh;
+
 		&:not( .small ) {
 			@include break-large {
 				font-size: 2.75rem;

@@ -513,14 +513,22 @@ export default function CheckoutMainContent( {
 	} = checkoutActions;
 
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
+		const headingText = translate( "Almost there – we're currently finalizing your order." );
+
+		if ( isStepContainerV2 ) {
+			return (
+				<>
+					<PerformanceTrackerStop />
+					<Step.Loading title={ headingText } />
+				</>
+			);
+		}
+
 		return (
 			<WPCheckoutCompletedWrapper>
 				<WPCheckoutCompletedMainContent>
 					<PerformanceTrackerStop />
-					<Loading
-						className="checkout__pending-content"
-						title={ translate( "Almost there – we're currently finalizing your order." ) }
-					/>
+					<Loading className="checkout__pending-content" title={ headingText } />
 				</WPCheckoutCompletedMainContent>
 			</WPCheckoutCompletedWrapper>
 		);
