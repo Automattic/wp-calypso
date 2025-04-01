@@ -123,7 +123,6 @@ const SitePreview = ( {
 				<div className="home-site-preview__action-bar">
 					<div className="home-site-preview__site-info">
 						<h2 className="home-site-preview__info-title">{ selectedSiteName }</h2>
-
 						<ExternalLink
 							href={ selectedSiteURL }
 							className="home-site-preview__info-domain"
