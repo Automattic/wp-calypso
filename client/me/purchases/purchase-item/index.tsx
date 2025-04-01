@@ -151,7 +151,7 @@ export function PurchaseItemType( {
 }: {
 	purchase: Purchases.Purchase;
 	site?: SiteDetails | null | undefined;
-	translate: typeof useTranslate;
+	translate: LocalizeProps[ 'translate' ];
 	slug?: string | null | undefined;
 	showSite?: boolean;
 	isDisconnectedSite?: boolean;
