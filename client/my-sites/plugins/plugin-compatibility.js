@@ -64,6 +64,7 @@ const incompatiblePlugins = new Set( [
 	'comet-cache',
 	'hyper-cache',
 	'jch-optimize',
+	'object-cache-pro',
 	'performance-lab',
 	'powered-cache',
 	'quick-cache',
