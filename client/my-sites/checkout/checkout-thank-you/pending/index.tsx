@@ -67,8 +67,8 @@ interface CheckoutPendingProps {
  * when there is no `receiptId`, we cannot know what to do and the user will be
  * redirected to a generic thank-you page.
  *
- * The `redirectTo` prop comes from the query string parameter of the same
- * name. It may include a literal `/pending` as part of the URL; if that's the
+ * The `redirectTo` prop comes from the `redirect_to` query string parameter.
+ * It may include a literal `/pending` as part of the URL; if that's the
  * case, that string will be replaced by the receipt ID when the transaction
  * completes.
  *
