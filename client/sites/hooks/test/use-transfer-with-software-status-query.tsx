@@ -16,7 +16,7 @@ jest.mock( '@automattic/calypso-config', () => ( {
 const mockSuccessResponse = {
 	blog_id: 123,
 	atomic_transfer_id: 456,
-	atomic_transfer_status: 'success',
+	atomic_transfer_status: 'completed',
 };
 
 describe( 'useTransferWithSoftwareStatus', () => {
@@ -41,7 +41,7 @@ describe( 'useTransferWithSoftwareStatus', () => {
 		await waitFor( () => {
 			expect( result.current.isSuccess ).toBe( true );
 			expect( result.current.data ).toEqual( {
-				atomic_transfer_status: 'success',
+				atomic_transfer_status: 'completed',
 			} );
 		} );
 	} );

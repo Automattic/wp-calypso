@@ -20,8 +20,8 @@ const getTransferWithSoftwareStatus = async (
 };
 
 export const useTransferWithSoftwareStatus = (
-	siteId: number,
-	atomicTransferId: number,
+	siteId?: number,
+	atomicTransferId?: number,
 	options?: {
 		retry?: UseQueryOptions[ 'retry' ];
 	}
@@ -35,7 +35,7 @@ export const useTransferWithSoftwareStatus = (
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false,
 		refetchInterval: ( { state } ) => {
-			if ( state.data?.atomic_transfer_status === 'success' ) {
+			if ( state.data?.atomic_transfer_status === 'completed' ) {
 				return false;
 			}
 			return 5000;
