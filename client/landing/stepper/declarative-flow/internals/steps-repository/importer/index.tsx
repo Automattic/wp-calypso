@@ -1,4 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import config from '@automattic/calypso-config';
 import { StepContainer } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -17,7 +18,6 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import { logToLogstash } from 'calypso/lib/logstash';
-import config from 'calypso/server/config';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
@@ -119,7 +119,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 					site_id: siteId,
 					site_slug: siteSlug,
 					properties: {
-						env: config( 'env_id' ),
+						env_id: config( 'env_id' ),
 					},
 				} );
 			}
