@@ -142,7 +142,8 @@ const UnifiedDesignPickerStep: StepType< {
 		( state ) => site?.ID && hasPurchasedDomain( state, site.ID )
 	);
 
-	const [ shouldHideActionButtons, setShouldHideActionButtons ] = useState( false );
+	const [ designPreviewPath, setDesignPreviewPath ] = useState< string | undefined >( '/' );
+
 	const [ showEligibility, setShowEligibility ] = useState( false );
 
 	const isJetpack = useSelect(
@@ -848,7 +849,7 @@ const UnifiedDesignPickerStep: StepType< {
 					selectedFontVariation={ selectedFontVariation }
 					onSelectFontVariation={ handleSelectFontVariation }
 					onGlobalStylesChange={ setGlobalStyles }
-					onNavigatorPathChange={ ( path?: string ) => setShouldHideActionButtons( path !== '/' ) }
+					onNavigatorPathChange={ ( path?: string ) => setDesignPreviewPath( path ) }
 					onScreenSelect={ recordDesignPreviewScreenSelect }
 					onScreenBack={ recordDesignPreviewScreenBack }
 					onScreenSubmit={ recordDesignPreviewScreenSubmit }
@@ -856,22 +857,22 @@ const UnifiedDesignPickerStep: StepType< {
 			</>
 		);
 
+		const isAtDesignPreviewRoot = designPreviewPath === '/';
+
 		if ( isUsingStepContainerV2 ) {
 			// TODO: Create a new wireframe for the design preview. It should be named "FixedColumnOnTheLeftLayout"
 			return (
 				<Step.FullWidthLayout
 					className="step-container-v2--design-picker-preview"
 					topBar={ ( { isLargeViewport } ) => {
-						if ( ! isLargeViewport ) {
+						if ( ! isLargeViewport && ! isAtDesignPreviewRoot ) {
 							return null;
 						}
 
 						return (
 							<Step.TopBar
 								leftElement={
-									shouldHideActionButtons ? undefined : (
-										<Step.BackButton onClick={ handleBackClick } />
-									)
+									isAtDesignPreviewRoot && <Step.BackButton onClick={ handleBackClick } />
 								}
 								rightElement={
 									! isGoalsAtFrontExperiment ? undefined : (
@@ -892,9 +893,11 @@ const UnifiedDesignPickerStep: StepType< {
 							<Step.StickyBottomBar
 								leftElement={ <Step.BackButton onClick={ handleBackClick } /> }
 								centerElement={
-									<div className="step-container-v2--design-picker-preview__header-design-title">
-										{ headerDesignTitle }
-									</div>
+									! isAtDesignPreviewRoot && (
+										<div className="step-container-v2--design-picker-preview__header-design-title">
+											{ headerDesignTitle }
+										</div>
+									)
 								}
 								rightElement={ actionButtons }
 							/>
@@ -913,10 +916,10 @@ const UnifiedDesignPickerStep: StepType< {
 				hideSkip={ ! isGoalsAtFrontExperiment }
 				skipLabelText={ translate( 'Skip setup' ) }
 				skipButtonAlign="top"
-				hideBack={ shouldHideActionButtons }
+				hideBack={ ! isAtDesignPreviewRoot }
 				className="design-setup__preview design-setup__preview__has-more-info"
 				goBack={ handleBackClick }
-				customizedActionButtons={ ! shouldHideActionButtons ? actionButtons : undefined }
+				customizedActionButtons={ isAtDesignPreviewRoot ? actionButtons : undefined }
 				recordTracksEvent={ recordStepContainerTracksEvent }
 			/>
 		);
