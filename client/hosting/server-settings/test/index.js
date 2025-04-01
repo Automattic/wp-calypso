@@ -136,7 +136,7 @@ const renderComponentWithStoreAndQueryClient = ( store ) => {
 	);
 };
 
-const stringsForAdvancedFeatureCards = [ 'Database access', 'Web server settings' ];
+const stringsForAdvancedFeatureCards = [ 'Database', 'Web server settings' ];
 
 const stringsForBasicFeatureCards = [ 'Restore plugins and themes', 'Clear all caches' ];
 
