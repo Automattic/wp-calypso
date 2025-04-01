@@ -75,6 +75,7 @@ export const usePrepareSiteForMigration = (
 	from?: string,
 	options: Options = {}
 ) => {
+	// Request the transfer with software
 	const transferMutation: UseMutationResult< TransferWithSoftwareResponse, Error, void > =
 		useRequestTransferWithSoftware( {
 			siteId,
@@ -87,8 +88,9 @@ export const usePrepareSiteForMigration = (
 	// Trigger the mutation when the hook is first used
 	useEffect( () => {
 		transferMutation.mutate();
-	}, [ siteId, from ] ); // Dependencies that should trigger a new transfer
+	}, [ transferMutation, siteId, from ] ); // Dependencies that should trigger a new transfer
 
+	// Check the status of the transfer
 	const softwareTransferState: UseQueryResult< TransferWithSoftwareResponse > =
 		useTransferWithSoftwareStatus( siteId, transferMutation.data?.atomic_transfer_id ?? undefined, {
 			retry: options.retry ?? 0,

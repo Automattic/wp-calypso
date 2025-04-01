@@ -32,6 +32,8 @@ export const useTransferWithSoftwareStatus = (
 		queryKey: [ 'software-transfer-status', siteId, atomicTransferId ],
 		queryFn: () => getTransferWithSoftwareStatus( siteId, atomicTransferId ),
 		select: ( data: TransferWithSoftwareResponse ) => ( {
+			blog_id: data.blog_id,
+			atomic_transfer_id: data.atomic_transfer_id,
 			atomic_transfer_status: data.atomic_transfer_status,
 		} ),
 		refetchOnWindowFocus: false,

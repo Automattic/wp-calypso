@@ -107,9 +107,17 @@ describe( 'usePrepareSiteForMigration', () => {
 		nock( API_ROOT )
 			.post( `/wpcom/v2/sites/${ SITE_ID }/atomic/transfer-with-software?http_envelope=1` )
 			.reply( 200, {
-				blog_id: SITE_ID,
-				atomic_transfer_id: null,
-				atomic_transfer_status: 'error',
+				blog_id: 0,
+				atomic_transfer_id: 0,
+				atomic_transfer_status: 'pending',
+			} );
+
+		nock( API_ROOT )
+			.get( `/wpcom/v2/sites/${ SITE_ID }/atomic/transfer-with-software/?http_envelope=1` )
+			.reply( 200, {
+				blog_id: 0,
+				atomic_transfer_id: 0,
+				atomic_transfer_status: 'pending',
 			} );
 
 		const { result } = render( { siteId: SITE_ID } );
