@@ -167,7 +167,6 @@ html.touch #wpnc-panel {
 body.is-section-reader div.layout.is-global-sidebar-visible .layout__primary div.reader-notifications__page {
 	display: flex;
 	flex-flow: column wrap;
-	gap: 16px;
 	justify-content: space-between;
 
 	@media (min-width: 1207px) {
@@ -198,15 +197,34 @@ body.is-section-reader div.layout.is-global-sidebar-visible .layout__primary div
 	.reader-notifications__page-panel {
 		height: auto;
 		flex: 1 0 auto;
+		position: relative;
 
 		@media (min-width: 1207px) {
-			flex: 0 1 auto;
+			flex: 0 1 400px;
 		}
 
 		#wpnc-panel.wpnc__main {
-			position: relative;
+			position: absolute;
+			z-index: 0;
 			height: 100%;
 			top: 0;
+			width: 100%;
+
+			> div {
+				height: 100%;
+			}
+
+			.wpnc__note-list {
+				width: auto;
+				height: 100%;
+				position: absolute;
+
+				@media (min-width: 1207px) {
+					width: 400px;
+					position: relative;
+					z-index: 10;
+				}
+			}
 
 			.wpnc__list-view {
 				border: none;
@@ -218,16 +236,24 @@ body.is-section-reader div.layout.is-global-sidebar-visible .layout__primary div
 				}
 			}
 
-			.wpnc__note-list {
-				width: auto;
-
-				@media (min-width: 1207px) {
-					width: 400px;
-				}
-			}
-
 			.wpnc__single-view {
-				min-width: 410px;
+				width: 100%;
+
+				nav {
+					display: inline;
+				}
+
+				@media only screen and (min-width: 1207px) {
+					width: 400px;
+					animation-name: dedicated_wpnc__slideIn;
+					position: fixed;
+					z-index: 0;
+					top: calc(var(--masterbar-height) + var(--content-padding-top));
+
+					nav {
+						display: none;
+					}
+				}
 			}
 		}
 	}
@@ -241,9 +267,12 @@ body.is-section-reader div.layout.is-global-sidebar-visible .layout__primary div
 			}
 
 			.wpnc__single-view {
-				animation-name: dedicated_wpnc__slideIn;
 				border-right: 1px solid var(--color-neutral-5);
 				right: inherit;
+				z-index: 100;
+				animation-name: wpnc_fadeIn;
+				animation-duration: 0.2s;
+				animation-timing-function: ease-in;
 			}
 		}
 	}
@@ -252,7 +281,7 @@ body.is-section-reader div.layout.is-global-sidebar-visible .layout__primary div
 			transform: translateX(0%);
 		}
 		to {
-			transform: translateX(100%);
+			transform: translateX(-100%);
 		}
 	}
 }
