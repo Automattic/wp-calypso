@@ -31,7 +31,7 @@ const ReaderFirstPosts = () => {
 			</div>
 			<div className="reader-first-posts__actions">
 				<Button
-					primary
+					secondary
 					onClick={ () => clickButton() }
 					className="reader-first-posts__button"
 					href="/discover?selectedTab=firstposts"
