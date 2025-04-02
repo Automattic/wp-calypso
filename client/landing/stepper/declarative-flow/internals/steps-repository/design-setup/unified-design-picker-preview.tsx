@@ -452,7 +452,7 @@ const UnifiedDesignPickerPreview = ( {
 				return unlockPremiumGlobalStyles;
 			}
 
-			return () => pickDesign();
+			return pickDesign;
 		}
 
 		const isPersonalDesign = selectedDesign?.design_tier === PERSONAL_THEME;
@@ -461,7 +461,7 @@ const UnifiedDesignPickerPreview = ( {
 			return isPersonalDesign && shouldUnlockGlobalStyles ? unlockPremiumGlobalStyles : upgradePlan;
 		}
 
-		return shouldUnlockGlobalStyles ? unlockPremiumGlobalStyles : () => pickDesign();
+		return shouldUnlockGlobalStyles ? unlockPremiumGlobalStyles : pickDesign;
 	}
 
 	const isUsingStepContainerV2 = shouldUseStepContainerV2( flow );
@@ -483,7 +483,7 @@ const UnifiedDesignPickerPreview = ( {
 		getPrimaryActionButtonProps();
 
 	const primaryActionButton = isUsingStepContainerV2 ? (
-		<Step.PrimaryButton onClick={ primaryActionButtonAction }>
+		<Step.PrimaryButton onClick={ () => primaryActionButtonAction() }>
 			{ primaryActionButtonText }
 		</Step.PrimaryButton>
 	) : (
@@ -491,7 +491,7 @@ const UnifiedDesignPickerPreview = ( {
 			className="navigation-link"
 			primary
 			borderless={ false }
-			onClick={ primaryActionButtonAction }
+			onClick={ () => primaryActionButtonAction() }
 		>
 			{ primaryActionButtonText }
 		</Button>
