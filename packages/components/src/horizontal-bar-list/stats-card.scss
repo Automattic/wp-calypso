@@ -17,6 +17,7 @@
 	background-color: var(--studio-white);
 
 	@media (max-width: $break-medium) {
+		min-width: 390px;
 		border-radius: 0;
 		border-left: 0;
 		border-right: 0;
