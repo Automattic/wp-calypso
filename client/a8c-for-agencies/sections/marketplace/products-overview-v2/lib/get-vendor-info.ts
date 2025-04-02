@@ -2,30 +2,37 @@ import { VendorInfo } from 'calypso/components/jetpack/jetpack-lightbox/types';
 
 const VENDOR_INFO_MAP: Record< string, VendorInfo > = {
 	kestrel: {
+		vendorSlug: 'kestrel',
 		vendorName: 'Kestrel',
 		vendorUrl: 'https://woocommerce.com/vendor/kestrel/',
 	},
 	'element-stark': {
+		vendorSlug: 'element-stark',
 		vendorName: 'Element Stark',
 		vendorUrl: 'https://woocommerce.com/vendor/element-stark/',
 	},
 	storeapps: {
+		vendorSlug: 'storeapps',
 		vendorName: 'StoreApps',
 		vendorUrl: 'https://woocommerce.com/vendor/storeapps/',
 	},
 	woocommerce: {
+		vendorSlug: 'woocommerce',
 		vendorName: 'Woo',
 		vendorUrl: 'https://woocommerce.com/',
 	},
 	jetpack: {
+		vendorSlug: 'jetpack',
 		vendorName: 'Jetpack',
 		vendorUrl: 'https://jetpack.com/',
 	},
 	pressable: {
+		vendorSlug: 'pressable',
 		vendorName: 'Pressable',
 		vendorUrl: 'https://pressable.com/',
 	},
 	wpcom: {
+		vendorSlug: 'wpcom',
 		vendorName: 'WordPress.com',
 		vendorUrl: 'https://wordpress.com/',
 	},

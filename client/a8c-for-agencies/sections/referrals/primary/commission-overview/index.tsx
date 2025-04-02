@@ -1,6 +1,5 @@
 import { FoldableCard } from '@automattic/components';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
-import clsx from 'clsx';
 import { useTranslate, numberFormatCompact, formatCurrency, getCurrencyObject } from 'i18n-calypso';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
@@ -30,21 +29,13 @@ const formatCurrencyCompact = ( amount: number, currencyCode = 'USD' ) => {
 	return formattedAmount;
 };
 
-export default function CommissionOverview( {
-	isAutomatedReferral,
-}: {
-	isAutomatedReferral?: boolean;
-} ) {
+export default function CommissionOverview() {
 	const translate = useTranslate();
 	const isDesktop = useDesktopBreakpoint();
 
-	const automatedReferralTitle = isDesktop
+	const title = isDesktop
 		? translate( 'Your referrals and commissions - FAQ' )
 		: translate( 'FAQ' );
-
-	const title = isAutomatedReferral
-		? automatedReferralTitle
-		: translate( 'Referrals - Commission details and terms' );
 
 	// TODO: This is a workaround to keep the formatting of the max amount consistent until
 	// we can use the new formatCurrency function that gives the compact number in the correct format.
@@ -53,9 +44,7 @@ export default function CommissionOverview( {
 
 	return (
 		<Layout
-			className={ clsx( 'commission-overview', {
-				'commission-overview__layout-automated': isAutomatedReferral,
-			} ) }
+			className="commission-overview"
 			title={ title }
 			wide
 			sidebarNavigation={ <MobileSidebarNavigation /> }
@@ -65,16 +54,13 @@ export default function CommissionOverview( {
 					<Breadcrumb
 						items={ [
 							{
-								label:
-									isAutomatedReferral && isDesktop
-										? translate( 'Your referrals and commissions' )
-										: translate( 'Referrals' ),
+								label: isDesktop
+									? translate( 'Your referrals and commissions' )
+									: translate( 'Referrals' ),
 								href: A4A_REFERRALS_LINK,
 							},
 							{
-								label: isAutomatedReferral
-									? translate( 'FAQ' )
-									: translate( 'Commission details and terms' ),
+								label: translate( 'FAQ' ),
 							},
 						] }
 					/>
@@ -82,22 +68,18 @@ export default function CommissionOverview( {
 			</LayoutTop>
 
 			<LayoutBody>
-				{ isAutomatedReferral && (
-					<>
-						<div className="commission-overview__section-heading">
-							{ translate( 'Referrals and commissions Frequently Asked Questions{{nbsp/}}(FAQ)', {
-								components: {
-									nbsp: <>&nbsp;</>,
-								},
-							} ) }
-						</div>
-						<div className="commission-overview__section-subtitle">
-							{ translate(
-								'A list of frequently asked questions and answers related to referrals and commissions.'
-							) }
-						</div>
-					</>
-				) }
+				<div className="commission-overview__section-heading">
+					{ translate( 'Referrals and commissions Frequently Asked Questions{{nbsp/}}(FAQ)', {
+						components: {
+							nbsp: <>&nbsp;</>,
+						},
+					} ) }
+				</div>
+				<div className="commission-overview__section-subtitle">
+					{ translate(
+						'A list of frequently asked questions and answers related to referrals and commissions.'
+					) }
+				</div>
 				<div className="commission-overview__section-container">
 					<StepSection heading={ translate( 'How much can I earn?' ) }>
 						<FoldableCard
