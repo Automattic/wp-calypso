@@ -10,11 +10,7 @@ export const purchasesDataView = {
 	type: 'table',
 	page: 1,
 	perPage: 5,
-	sort: {
-		field: 'site',
-		direction: 'desc',
-	},
-	fields: [ 'status', 'site' ],
+	fields: [ 'status' ],
 	layout: {},
 } as View;
 
