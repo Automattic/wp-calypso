@@ -180,7 +180,6 @@
 		"@types/qs": "^6.9.7",
 		"@types/react": "^18.3.18",
 		"@types/react-modal": "^3.13.1",
-		"@types/react-router-dom": "^5.3.3",
 		"@types/react-transition-group": "^4.4.4",
 		"@types/store": "^2.0.5",
 		"@types/validator": "^13.7.1",
