@@ -1,11 +1,9 @@
 import {
 	Button,
 	/* eslint-disable wpcalypso/no-unsafe-wp-apis */
-	__experimentalInputControlSuffixWrapper as InputControlSuffixWrapper,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	/* eslint-enable wpcalypso/no-unsafe-wp-apis */
 } from '@wordpress/components';
-import { seen, unseen } from '@wordpress/icons';
 import React, { useState } from 'react';
 import { ValidatedComboboxControl } from './components/combobox-control';
 import { ValidatedCustomSelectControl } from './components/custom-select-control';
@@ -58,71 +56,6 @@ const meta: Meta = {
 	],
 };
 export default meta;
-
-export const Input: StoryObj = {
-	name: 'InputControl',
-	render: function Template() {
-		const [ value, setValue ] =
-			useState< React.ComponentProps< typeof ValidatedInputControl >[ 'value' ] >( '' );
-
-		return (
-			<ValidatedInputControl
-				required
-				label="Input"
-				help="The word 'error' will trigger an error."
-				value={ value }
-				onChange={ setValue }
-				onReportCustomValidity={ ( newValue ) => {
-					if ( newValue?.toLowerCase() === 'error' ) {
-						return 'The word "error" is not allowed.';
-					}
-				} }
-			/>
-		);
-	},
-};
-
-export const Password: StoryObj = {
-	name: 'InputControl (Password)',
-	render: function Template() {
-		const [ value, setValue ] =
-			useState< React.ComponentProps< typeof ValidatedInputControl >[ 'value' ] >( '' );
-		const [ visible, setVisible ] = useState( false );
-
-		return (
-			<ValidatedInputControl
-				required
-				type={ visible ? 'text' : 'password' }
-				suffix={
-					<InputControlSuffixWrapper variant="control">
-						<Button
-							size="small"
-							icon={ visible ? unseen : seen }
-							onClick={ () => setVisible( ( value ) => ! value ) }
-							label={ visible ? 'Hide password' : 'Show password' }
-						/>
-					</InputControlSuffixWrapper>
-				}
-				label="Password"
-				help="Minimum 8 characters, include a number, capital letter, and symbol (!@£$%^&*#)."
-				minLength={ 8 }
-				value={ value }
-				onChange={ setValue }
-				onReportCustomValidity={ ( value ) => {
-					if ( ! /\d/.test( value ?? '' ) ) {
-						return 'Password must include at least one number.';
-					}
-					if ( ! /[A-Z]/.test( value ?? '' ) ) {
-						return 'Password must include at least one capital letter.';
-					}
-					if ( ! /[!@£$%^&*#]/.test( value ?? '' ) ) {
-						return 'Password must include at least one symbol.';
-					}
-				} }
-			/>
-		);
-	},
-};
 
 export const Text: StoryObj = {
 	name: 'TextControl',

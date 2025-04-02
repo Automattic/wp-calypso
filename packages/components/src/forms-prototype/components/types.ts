@@ -1,4 +1,9 @@
-import type { CheckboxControl } from '@wordpress/components';
+/* eslint-disable wpcalypso/no-unsafe-wp-apis */
+import type {
+	CheckboxControl,
+	__experimentalInputControl as InputControl,
+} from '@wordpress/components';
+/* eslint-enable wpcalypso/no-unsafe-wp-apis */
 
 export type ValidatedControlProps< V > = {
 	/**
@@ -24,3 +29,4 @@ export type ValidatedControlProps< V > = {
 // These re-exports, in combination with the `reactDocgenTypescriptOptions.propFilter` in the
 // Storybook config, allow the docgen to read and display type information for `@wordpress/components`.
 export type CheckboxControlProps = React.ComponentProps< typeof CheckboxControl >;
+export type InputControlProps = React.ComponentProps< typeof InputControl >;

@@ -2,13 +2,13 @@ import { __experimentalInputControl as InputControl } from '@wordpress/component
 import { useMergeRefs } from '@wordpress/compose';
 import React, { forwardRef, useRef } from 'react';
 import { ControlWithError } from '../control-with-error';
-import type { ValidatedControlProps } from './types';
+import type { InputControlProps, ValidatedControlProps } from './types';
 
-type Value = React.ComponentProps< typeof InputControl >[ 'value' ];
+type Value = InputControlProps[ 'value' ];
 
 export const ValidatedInputControl = forwardRef<
 	HTMLInputElement,
-	React.ComponentProps< typeof InputControl > & ValidatedControlProps< Value >
+	InputControlProps & ValidatedControlProps< Value >
 >( ( { required, onReportCustomValidity, onChange, ...restProps }, forwardedRef ) => {
 	const validityTargetRef = useRef< HTMLInputElement >( null );
 	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
