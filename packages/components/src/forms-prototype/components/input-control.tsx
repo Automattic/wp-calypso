@@ -12,7 +12,6 @@ export const ValidatedInputControl = forwardRef<
 >( ( { required, onReportCustomValidity, onChange, ...restProps }, forwardedRef ) => {
 	const validityTargetRef = useRef< HTMLInputElement >( null );
 	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
-
 	const valueRef = useRef< Value >( restProps.value );
 
 	return (

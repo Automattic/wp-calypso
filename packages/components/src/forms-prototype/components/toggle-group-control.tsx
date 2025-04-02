@@ -1,16 +1,16 @@
 import { __experimentalToggleGroupControl as ToggleGroupControl } from '@wordpress/components';
 import React, { forwardRef, useId, useRef } from 'react';
 import { ControlWithError } from '../control-with-error';
-import type { ValidatedControlProps } from './types';
+import type { ToggleGroupControlProps, ValidatedControlProps } from './types';
 
-type Value = React.ComponentProps< typeof ToggleGroupControl >[ 'value' ];
+type Value = ToggleGroupControlProps[ 'value' ];
 
 export const ValidatedToggleGroupControl = forwardRef<
 	HTMLInputElement,
-	React.ComponentProps< typeof ToggleGroupControl > & ValidatedControlProps< Value >
+	ToggleGroupControlProps & ValidatedControlProps< Value >
 >( ( { required, onReportCustomValidity, onChange, ...restProps }, forwardedRef ) => {
 	const validityTargetRef = useRef< HTMLInputElement >( null );
-	const valueRef = useRef< Value >();
+	const valueRef = useRef< Value >( restProps.value );
 
 	const nameAttr = useId();
 

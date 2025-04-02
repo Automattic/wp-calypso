@@ -1,18 +1,18 @@
 import { ComboboxControl } from '@wordpress/components';
 import { useMergeRefs } from '@wordpress/compose';
-import React, { forwardRef, useEffect, useRef } from 'react';
+import { forwardRef, useEffect, useRef } from 'react';
 import { ControlWithError } from '../control-with-error';
-import type { ValidatedControlProps } from './types';
+import type { ComboboxControlProps, ValidatedControlProps } from './types';
 
-type Value = React.ComponentProps< typeof ComboboxControl >[ 'value' ];
+type Value = ComboboxControlProps[ 'value' ];
 
 export const ValidatedComboboxControl = forwardRef<
 	HTMLInputElement,
-	React.ComponentProps< typeof ComboboxControl > & ValidatedControlProps< Value >
+	ComboboxControlProps & ValidatedControlProps< Value >
 >( ( { required, onReportCustomValidity, onChange, ...restProps }, forwardedRef ) => {
 	const validityTargetRef = useRef< HTMLInputElement >( null );
 	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
-	const valueRef = useRef< Value >();
+	const valueRef = useRef< Value >( restProps.value );
 
 	// TODO: Upstream limitation - The `required` attribute is not passed down to the input,
 	// so we need to set it manually.

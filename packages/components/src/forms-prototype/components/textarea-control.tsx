@@ -1,18 +1,17 @@
 import { TextareaControl } from '@wordpress/components';
 import { useMergeRefs } from '@wordpress/compose';
-import React, { forwardRef, useRef } from 'react';
+import { forwardRef, useRef } from 'react';
 import { ControlWithError } from '../control-with-error';
-import type { ValidatedControlProps } from './types';
+import type { TextareaControlProps, ValidatedControlProps } from './types';
 
-type Value = React.ComponentProps< typeof TextareaControl >[ 'value' ];
+type Value = TextareaControlProps[ 'value' ];
 
 export const ValidatedTextareaControl = forwardRef<
 	HTMLTextAreaElement,
-	React.ComponentProps< typeof TextareaControl > & ValidatedControlProps< Value >
+	TextareaControlProps & ValidatedControlProps< Value >
 >( ( { required, onReportCustomValidity, onChange, ...restProps }, forwardedRef ) => {
 	const validityTargetRef = useRef< HTMLTextAreaElement >( null );
 	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
-
 	const valueRef = useRef< Value >( restProps.value );
 
 	return (

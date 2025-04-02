@@ -1,7 +1,17 @@
 /* eslint-disable wpcalypso/no-unsafe-wp-apis */
 import type {
 	CheckboxControl,
+	ComboboxControl,
+	CustomSelectControl,
 	__experimentalInputControl as InputControl,
+	__experimentalNumberControl as NumberControl,
+	RadioControl,
+	RangeControl,
+	SelectControl,
+	TextControl,
+	TextareaControl,
+	ToggleControl,
+	__experimentalToggleGroupControl as ToggleGroupControl,
 } from '@wordpress/components';
 /* eslint-enable wpcalypso/no-unsafe-wp-apis */
 
@@ -29,4 +39,14 @@ export type ValidatedControlProps< V > = {
 // These re-exports, in combination with the `reactDocgenTypescriptOptions.propFilter` in the
 // Storybook config, allow the docgen to read and display type information for `@wordpress/components`.
 export type CheckboxControlProps = React.ComponentProps< typeof CheckboxControl >;
+export type ComboboxControlProps = React.ComponentProps< typeof ComboboxControl >;
+export type CustomSelectControlProps = React.ComponentProps< typeof CustomSelectControl >;
 export type InputControlProps = React.ComponentProps< typeof InputControl >;
+export type NumberControlProps = React.ComponentProps< typeof NumberControl >;
+export type RadioControlProps = React.ComponentProps< typeof RadioControl >;
+export type RangeControlProps = React.ComponentProps< typeof RangeControl >;
+export type SelectControlProps = React.ComponentProps< typeof SelectControl >;
+export type TextControlProps = React.ComponentProps< typeof TextControl >;
+export type TextareaControlProps = React.ComponentProps< typeof TextareaControl >;
+export type ToggleControlProps = React.ComponentProps< typeof ToggleControl >;
+export type ToggleGroupControlProps = React.ComponentProps< typeof ToggleGroupControl >;

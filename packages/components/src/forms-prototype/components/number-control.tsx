@@ -1,18 +1,17 @@
 import { __experimentalNumberControl as NumberControl } from '@wordpress/components';
 import { useMergeRefs } from '@wordpress/compose';
-import React, { forwardRef, useRef } from 'react';
+import { forwardRef, useRef } from 'react';
 import { ControlWithError } from '../control-with-error';
-import type { ValidatedControlProps } from './types';
+import type { NumberControlProps, ValidatedControlProps } from './types';
 
-type Value = React.ComponentProps< typeof NumberControl >[ 'value' ];
+type Value = NumberControlProps[ 'value' ];
 
 export const ValidatedNumberControl = forwardRef<
 	HTMLInputElement,
-	React.ComponentProps< typeof NumberControl > & ValidatedControlProps< Value >
+	NumberControlProps & ValidatedControlProps< Value >
 >( ( { required, onReportCustomValidity, onChange, ...restProps }, forwardedRef ) => {
 	const validityTargetRef = useRef< HTMLInputElement >( null );
 	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
-
 	const valueRef = useRef< Value >( restProps.value );
 
 	return (

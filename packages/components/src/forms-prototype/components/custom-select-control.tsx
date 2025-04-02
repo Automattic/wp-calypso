@@ -1,16 +1,16 @@
 import { CustomSelectControl } from '@wordpress/components';
-import React, { forwardRef, useRef } from 'react';
+import { forwardRef, useRef } from 'react';
 import { ControlWithError } from '../control-with-error';
-import type { ValidatedControlProps } from './types';
+import type { CustomSelectControlProps, ValidatedControlProps } from './types';
 
-type Value = React.ComponentProps< typeof CustomSelectControl >[ 'value' ];
+type Value = CustomSelectControlProps[ 'value' ];
 
 export const ValidatedCustomSelectControl = forwardRef<
 	HTMLDivElement,
-	React.ComponentProps< typeof CustomSelectControl > & ValidatedControlProps< Value >
+	CustomSelectControlProps & ValidatedControlProps< Value >
 >( ( { required, onReportCustomValidity, onChange, ...restProps }, forwardedRef ) => {
 	const validityTargetRef = useRef< HTMLSelectElement >( null );
-	const valueRef = useRef< Value >();
+	const valueRef = useRef< Value >( restProps.value );
 
 	return (
 		<div className="a8c-validated-control__wrapper-with-error-delegate" ref={ forwardedRef }>

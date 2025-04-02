@@ -1,14 +1,11 @@
 import { SelectControl } from '@wordpress/components';
 import { useMergeRefs } from '@wordpress/compose';
-import React, { forwardRef, useRef } from 'react';
+import { forwardRef, useRef } from 'react';
 import { ControlWithError } from '../control-with-error';
-import type { ValidatedControlProps } from './types';
+import type { SelectControlProps as _SelectControlProps, ValidatedControlProps } from './types';
 
 // Only support single value selection
-type SelectControlProps = Omit<
-	React.ComponentProps< typeof SelectControl >,
-	'multiple' | 'onChange' | 'value'
-> & {
+type SelectControlProps = Omit< _SelectControlProps, 'multiple' | 'onChange' | 'value' > & {
 	onChange?: ( value: string ) => void;
 	value?: string;
 };
@@ -21,8 +18,7 @@ export const ValidatedSelectControl = forwardRef<
 >( ( { required, onReportCustomValidity, onChange, ...restProps }, forwardedRef ) => {
 	const validityTargetRef = useRef< HTMLSelectElement >( null );
 	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
-
-	const valueRef = useRef< Value >( undefined );
+	const valueRef = useRef< Value >( restProps.value );
 
 	return (
 		<ControlWithError

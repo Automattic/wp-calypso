@@ -1,10 +1,10 @@
 import { CheckboxControl } from '@wordpress/components';
 import { useMergeRefs } from '@wordpress/compose';
-import React, { forwardRef, useRef } from 'react';
+import { forwardRef, useRef } from 'react';
 import { ControlWithError } from '../control-with-error';
 import type { CheckboxControlProps, ValidatedControlProps } from './types';
 
-type Value = React.ComponentProps< typeof CheckboxControl >[ 'checked' ];
+type Value = CheckboxControlProps[ 'checked' ];
 
 export const ValidatedCheckboxControl = forwardRef<
 	HTMLInputElement,
@@ -12,7 +12,6 @@ export const ValidatedCheckboxControl = forwardRef<
 >( ( { required, onReportCustomValidity, onChange, ...restProps }, forwardedRef ) => {
 	const validityTargetRef = useRef< HTMLDivElement >( null );
 	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
-
 	const valueRef = useRef< Value >( restProps.checked );
 
 	return (
