@@ -54,8 +54,13 @@
 		flex: 1 1 auto;
 		margin-bottom: 12px;
 
+		.search-component__input-fade {
+			min-width: 0;
+		}
+
 		.search-component__input[type="search"] {
 			font-size: 0.875rem;
+			max-width: 100%;
 
 			@include break-small() {
 				padding-left: 12px;
