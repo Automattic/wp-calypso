@@ -176,7 +176,7 @@ const hosting: DeprecatedFlowV1 = {
 		const query = useQuery();
 		const isEligible = useSelector( isUserEligibleForFreeHostingTrial );
 		// Support for FlowV1 and V2, remove useSteps once FlowV1 is removed.
-		const steps = 'useSteps' in this ? this.useSteps() : this.getSteps?.();
+		const steps = this.useSteps();
 
 		const queryParams = Object.fromEntries( query );
 

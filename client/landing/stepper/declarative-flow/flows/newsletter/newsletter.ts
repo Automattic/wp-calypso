@@ -20,7 +20,7 @@ import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import { ProvidedDependencies } from '../../internals/types';
-import type { DeprecatedFlowV1, StepperStep } from '../../internals/types';
+import type { DeprecatedFlowV1 } from '../../internals/types';
 
 const newsletter: DeprecatedFlowV1 = {
 	name: NEWSLETTER_FLOW,
@@ -153,7 +153,7 @@ const newsletter: DeprecatedFlowV1 = {
 			}
 		};
 
-		const goToStep = ( step: StepperStep[ 'slug' ] ) => {
+		const goToStep = ( step: string ) => {
 			navigate( step );
 		};
 

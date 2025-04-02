@@ -80,7 +80,7 @@ const newsletter: FlowV2< typeof initialize > = {
 
 		const createSite = useCreateSite();
 
-		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider< typeof navigate >( {
+		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
 			exitFlow,
 			navigate,
 		} );

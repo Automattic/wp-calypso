@@ -30,7 +30,7 @@ const entrepreneurFlow: DeprecatedFlowV1 = {
 			// word `survey` in the address bar might discourage users from continuing.
 			{
 				...STEPS.SEGMENTATION_SURVEY,
-				...{ slug: SEGMENTATION_SURVEY_SLUG as StepperStep[ 'slug' ] },
+				...( { slug: SEGMENTATION_SURVEY_SLUG as StepperStep[ 'slug' ] } as StepperStep ),
 			},
 			STEPS.TRIAL_ACKNOWLEDGE,
 			STEPS.SITE_CREATION_STEP,
@@ -92,7 +92,7 @@ const entrepreneurFlow: DeprecatedFlowV1 = {
 			};
 
 			switch ( currentStep ) {
-				case SEGMENTATION_SURVEY_SLUG: {
+				case SEGMENTATION_SURVEY_SLUG as StepperStep[ 'slug' ]: {
 					setIsMigrationFlow( !! providedDependencies.isMigrationFlow );
 
 					if ( providedDependencies.lastQuestionPath ) {
