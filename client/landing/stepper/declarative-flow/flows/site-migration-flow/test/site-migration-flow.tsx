@@ -168,11 +168,11 @@ describe( 'Site Migration Flow', () => {
 					from: STEPS.PROCESSING,
 					dependencies: {
 						siteCreated: true,
+						siteSlug: 'create-site-slug.wordpress.com',
+						siteId: 123,
 					},
 					query: {
 						from: 'https://site-to-be-migrated.com',
-						siteId: 123,
-						siteSlug: 'example.wordpress.com',
 					},
 				} );
 
@@ -180,7 +180,7 @@ describe( 'Site Migration Flow', () => {
 					step: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 					query: {
 						siteId: 123,
-						siteSlug: 'example.wordpress.com',
+						siteSlug: 'create-site-slug.wordpress.com',
 						from: 'https://site-to-be-migrated.com',
 					},
 				} );
@@ -191,11 +191,13 @@ describe( 'Site Migration Flow', () => {
 					from: STEPS.PROCESSING,
 					dependencies: {
 						siteCreated: true,
+						siteSlug: 'create-site-slug.wordpress.com',
+						siteId: 456,
 					},
 					query: {
 						from: 'https://site-to-be-migrated.com',
-						siteId: 123,
-						siteSlug: 'example.wordpress.com',
+						siteId: 456,
+						siteSlug: 'create-site-slug.wordpress.com',
 						action: 'migrate',
 					},
 				} );
@@ -203,7 +205,9 @@ describe( 'Site Migration Flow', () => {
 				expect( destination ).toMatchDestination( {
 					step: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
 					query: {
-						siteId: 123,
+						siteId: 456,
+						siteSlug: 'create-site-slug.wordpress.com',
+						from: 'https://site-to-be-migrated.com',
 					},
 				} );
 			} );
@@ -213,18 +217,20 @@ describe( 'Site Migration Flow', () => {
 					from: STEPS.PROCESSING,
 					dependencies: {
 						siteCreated: true,
+						siteSlug: 'create-site-slug.wordpress.com',
+						siteId: 789,
 					},
 					query: {
-						siteId: 123,
-						siteSlug: 'example.wordpress.com',
+						siteId: 789,
+						siteSlug: 'create-site-slug.wordpress.com',
 					},
 				} );
 
 				expect( window.location.assign ).toMatchURL( {
 					path: '/setup/site-setup/importList',
 					query: {
-						siteId: 123,
-						siteSlug: 'example.wordpress.com',
+						siteId: 789,
+						siteSlug: 'create-site-slug.wordpress.com',
 						origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
 						backToFlow: '/site-migration/site-migration-identify',
 					},

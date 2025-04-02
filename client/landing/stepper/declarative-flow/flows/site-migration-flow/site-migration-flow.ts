@@ -247,8 +247,15 @@ const siteMigration: FlowV2 = {
 				}
 
 				case STEPS.PROCESSING.slug: {
-					if ( providedDependencies?.siteCreated ) {
-						if ( ! fromQueryParam || providedDependencies?.skipMigration ) {
+					const { siteId, siteSlug, siteCreated, skipMigration } = providedDependencies as {
+						siteId: string;
+						siteSlug: string;
+						siteCreated: boolean;
+						skipMigration: boolean;
+					};
+
+					if ( siteCreated ) {
+						if ( ! fromQueryParam || skipMigration ) {
 							// If we get to this point without a fromQueryParam then we are coming from a direct
 							// pick your current platform link. That's why we navigate to the importList step.
 							return exitFlow(
