@@ -9,7 +9,12 @@ import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect, useState } from 'react';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
-import { filterAndUpdateConversationsWithStatus, getZendeskConversations } from './utils';
+import {
+	filterAndUpdateConversationsWithStatus,
+	getFeedbackPlaceholderMessage,
+	getZendeskConversations,
+	isMessageRated,
+} from './utils';
 import type {
 	SupportInteraction,
 	ZendeskConversation,
@@ -116,7 +121,8 @@ const HelpCenterRecentConversations: React.FC = () => {
 			  }
 			: undefined ),
 	} as ZendeskMessage;
-
+	const showFeedbackMessage = isMessageRated( chatMessage );
+	const msg = showFeedbackMessage ? getFeedbackPlaceholderMessage( chatMessage ) : chatMessage;
 	return (
 		<div className="help-center-homepage-conversations">
 			<h3 className="help-center-search-results__title help-center__section-title">
@@ -127,7 +133,7 @@ const HelpCenterRecentConversations: React.FC = () => {
 					sectionName="recent_conversations"
 					key={ lastConversation.id }
 					badgeCount={ unreadConversationsCount - 1 }
-					message={ chatMessage }
+					message={ msg }
 					isUnread={ unreadMessagesCount > 0 }
 					navigateTo={ navigateTo }
 					supportInteraction={ lastSupportInteraction }

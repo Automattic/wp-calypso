@@ -2,7 +2,11 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getConversationIdFromInteraction } from '@automattic/odie-client/src/utils';
 import Smooch from 'smooch';
 import type { ContactOption } from '../types';
-import type { ZendeskConversation, SupportInteraction } from '@automattic/odie-client';
+import type {
+	ZendeskConversation,
+	SupportInteraction,
+	ZendeskMessage,
+} from '@automattic/odie-client';
 
 const isMatchingInteraction = (
 	supportInteraction: SupportInteraction,
@@ -34,6 +38,25 @@ export const generateContactOnClickEvent = (
 			is_user_eligible: isUserEligible,
 		} );
 	}
+};
+
+export const isMessageRated = ( message: ZendeskMessage ) => {
+	return message.type === 'form';
+};
+
+export const getFeedbackPlaceholderMessage = ( message: ZendeskMessage ): ZendeskMessage => {
+	return {
+		role: message.role,
+		id: message.id,
+		type: 'text',
+		text: 'Thanks for your feedback.',
+		metadata: {
+			rated: true,
+			placeholder: true,
+		},
+		displayName: message.displayName,
+		received: message.received,
+	};
 };
 
 export const getLastMessage = ( { conversation }: { conversation: ZendeskConversation } ) => {

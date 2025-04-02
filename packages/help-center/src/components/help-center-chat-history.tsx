@@ -12,7 +12,7 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import { useGetHistoryChats } from '../hooks/use-get-history-chats';
 import { HELP_CENTER_STORE } from '../stores';
 import { HelpCenterSupportChatMessage } from './help-center-support-chat-message';
-import { getLastMessage } from './utils';
+import { getLastMessage, isMessageRated, getFeedbackPlaceholderMessage } from './utils';
 import type { SupportInteraction, ZendeskConversation } from '@automattic/odie-client';
 
 import './help-center-chat-history.scss';
@@ -52,7 +52,7 @@ const Conversations = ( {
 			</div>
 		);
 	}
-
+	// debugger;
 	return (
 		<>
 			{ conversations.map( ( conversation ) => {
@@ -62,13 +62,17 @@ const Conversations = ( {
 				);
 
 				if ( lastMessage ) {
+					const showFeedbackMessage = isMessageRated( lastMessage );
+					const msg = showFeedbackMessage
+						? getFeedbackPlaceholderMessage( lastMessage )
+						: lastMessage;
 					return (
 						<HelpCenterSupportChatMessage
 							sectionName="chat_history"
 							navigateTo="/odie"
 							supportInteraction={ lastSupportInteraction }
 							key={ conversation.id }
-							message={ lastMessage }
+							message={ msg }
 							isUnread={ conversation.participants[ 0 ]?.unreadCount > 0 }
 							conversationStatus={ conversation.metadata.status }
 						/>
