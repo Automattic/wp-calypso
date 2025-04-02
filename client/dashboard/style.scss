@@ -1,19 +1,26 @@
 @import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
 
 // Hacks that shouldn't be necessary.
 .environment-badge {
-    display: none;
+	display: none;
 }
 
 // Global Styles
-html, body, #wpcom {
-    height: 100%;
+html,
+body,
+#wpcom {
+	height: 100%;
 }
 
 body {
-    margin: 0;
+	margin: 0;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell,
 		'Helvetica Neue', sans-serif;
-	background: #FCFCFC;
+	background: #fcfcfc;
 	color: $gray-900;
+}
+
+#wpcom {
+	font-size: $font-size-medium;
 }
