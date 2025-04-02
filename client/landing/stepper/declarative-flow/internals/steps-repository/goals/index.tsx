@@ -10,7 +10,6 @@ import { isGoalsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getQueryArgs } from 'calypso/lib/query-args';
-import { useSiteData } from '../../../../hooks/use-site-data';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { useCreateCourseGoalFeature } from '../../hooks/use-create-course-goal-feature';
 import DashboardIcon from './dashboard-icon';
@@ -189,7 +188,6 @@ const GoalsStep: StepType< {
 	);
 
 	const isMediumOrBiggerScreen = useViewportMatch( 'small', '>=' );
-	const { site } = useSiteData();
 
 	const getStep = () => {
 		if ( shouldUseStepContainerV2( flow ) ) {
@@ -199,14 +197,7 @@ const GoalsStep: StepType< {
 				<Step.CenteredColumnLayout
 					columnWidth={ 6 }
 					className="step-container-v2--goals"
-					topBar={
-						<Step.TopBar
-							rightElement={ <Step.SkipButton onClick={ handleSkip } /> }
-							leftElement={
-								site?.plan?.is_free ? <Step.BackButton onClick={ navigation.goBack } /> : undefined
-							}
-						/>
-					}
+					topBar={ <Step.TopBar rightElement={ <Step.SkipButton onClick={ handleSkip } /> } /> }
 					heading={ <Step.Heading text={ whatAreYourGoalsText } subText={ subHeaderText } /> }
 					stickyBottomBar={ <Step.StickyBottomBar rightElement={ nextButton } /> }
 				>
@@ -225,8 +216,6 @@ const GoalsStep: StepType< {
 				nextLabelText={ translate( 'Next' ) }
 				skipLabelText={ translate( 'Skip' ) }
 				recordTracksEvent={ recordTracksEvent }
-				goBack={ navigation.goBack }
-				hideBack={ ! site?.plan?.is_free }
 				stepContent={ getStepContent(
 					isMediumOrBiggerScreen && (
 						<Button
