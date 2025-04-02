@@ -136,7 +136,7 @@ const StatsModuleUTM = ( {
 			{ ! showLoader &&
 				! data?.length && ( // no data and new empty state enabled
 					<StatsCard
-						className={ clsx( 'stats-card--empty-variant', className ) }
+						className={ className }
 						title={ moduleStrings.title }
 						titleNodes={ <StatsInfoArea isNew /> }
 						isEmpty
