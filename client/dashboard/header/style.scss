@@ -1,0 +1,7 @@
+@import '@wordpress/base-styles/variables';
+
+.dashboard-header {
+	box-sizing: border-box;
+	padding: $grid-unit-20;
+	border-bottom: 1px solid $gray-100;
+}

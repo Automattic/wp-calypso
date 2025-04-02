@@ -1,0 +1,25 @@
+@import '@wordpress/base-styles/colors';
+
+// Hacks that shouldn't be necessary.
+:root {
+	--color-text-inverted: $white;
+}
+.wordpress-logo {
+    margin: 0 !important;
+}
+.environment-badge {
+    display: none;
+}
+
+// Global Styles
+html, body, #wpcom {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell,
+		'Helvetica Neue', sans-serif;
+	background: #FCFCFC;
+	color: $gray-900;
+}
