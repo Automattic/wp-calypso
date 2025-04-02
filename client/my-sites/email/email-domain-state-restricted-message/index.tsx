@@ -32,7 +32,7 @@ export const EmailDomainStateRestrictedMessage = (
 
 	return (
 		<PromoCard className="email-domain-state-restricted-message__promo-card">
-			<p className="email-domain-state-restricted-message__text">{ reasonText }</p>
+			<p>{ reasonText }</p>
 		</PromoCard>
 	);
 };

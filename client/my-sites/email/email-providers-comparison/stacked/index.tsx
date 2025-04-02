@@ -244,6 +244,12 @@ const EmailProvidersStackedComparison = ( {
 
 		switch ( cannotAddEmailWarningCode ) {
 			case EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED:
+				// return (
+				// 	<EmailNonDomainOwnerMessage
+				// 		domain={ domain }
+				// 		selectedSite={ selectedSite }
+				// 		source="email-comparison"
+				// 	/>);
 				return <EmailDomainStateRestrictedMessage domainName={ selectedDomainName } />;
 			default:
 				return (
@@ -318,7 +324,9 @@ const EmailProvidersStackedComparison = ( {
 				{ shouldPromoteGoogleWorkspace ? [ ...emailProviderCards ].reverse() : emailProviderCards }
 			</>
 
-			{ ! isDomainInCart && <EmailForwardingLink selectedDomainName={ selectedDomainName } /> }
+			{ ! isDomainInCart && ! showEmailPurchaseDisabledMessage && (
+				<EmailForwardingLink selectedDomainName={ selectedDomainName } />
+			) }
 
 			<TrackComponentView
 				eventName="calypso_email_providers_comparison_page_view"
