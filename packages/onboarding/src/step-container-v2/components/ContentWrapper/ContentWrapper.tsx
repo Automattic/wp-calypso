@@ -3,11 +3,7 @@ import { ReactNode } from 'react';
 
 import './style.scss';
 
-type MaxWidth =
-	| 'wide'
-	| 'huge'
-	| 'huge-plus' // Non-standard width introduced for plans step
-	| 'xhuge';
+type MaxWidth = 'wide' | 'huge' | 'xhuge';
 
 export const ContentWrapper = ( {
 	children,

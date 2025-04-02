@@ -1,4 +1,4 @@
-@import "@wordpress/base-styles/breakpoints";
+@import '@wordpress/base-styles/breakpoints';
 
 .step-container-v2__content-wrapper {
 	display: flex;
@@ -20,11 +20,6 @@
 
 	&.huge {
 		max-width: $break-huge;
-	}
-
-	&.huge-plus {
-		// Non-standard width introduced for plans step
-		max-width: 1536px;
 	}
 
 	&.xhuge {

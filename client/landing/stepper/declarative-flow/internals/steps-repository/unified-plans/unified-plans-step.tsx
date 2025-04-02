@@ -495,7 +495,7 @@ function UnifiedPlansStep( {
 			<>
 				<MarketingMessage path="signup/plans" />
 				<Step.WideLayout
-					maxWidth="huge-plus"
+					maxWidth="xhuge"
 					className="step-container-v2--plans"
 					topBar={
 						<Step.TopBar
