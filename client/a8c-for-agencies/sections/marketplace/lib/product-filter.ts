@@ -35,7 +35,6 @@ import {
 	PRODUCT_TYPE_PRODUCT,
 	PRODUCT_TYPE_WOO_EXTENSION,
 	PRODUCT_TYPE_WPCOM_PLAN,
-	PRODUCT_VENDOR_WOOCOMMERCE,
 } from '../constants';
 import { isPressableHostingProduct, isWPCOMHostingProduct } from '../lib/hosting';
 import { getVendorInfo } from '../products-overview-v2/lib/get-vendor-info';
@@ -403,11 +402,5 @@ function filterProductsAndPlansByVendor(
 	vendor: string,
 	allProductsAndPlans: APIProductFamilyProduct[]
 ) {
-	if ( vendor === PRODUCT_VENDOR_WOOCOMMERCE ) {
-		return allProductsAndPlans.filter(
-			( { slug } ) => getVendorInfo( slug )?.vendorSlug === PRODUCT_VENDOR_WOOCOMMERCE
-		);
-	}
-
-	return allProductsAndPlans;
+	return allProductsAndPlans.filter( ( { slug } ) => getVendorInfo( slug )?.vendorSlug === vendor );
 }
