@@ -13,13 +13,6 @@ const DateLabelDrill = ( { children, previousDisplayDate }: DateLabelDrillProps 
 	const elementRef = useRef< HTMLDivElement >( null );
 	const [ isTooltipVisible, setIsTooltipVisible ] = useState( false );
 
-	const removeLastDateHistoryItem = () => {
-		sessionStorage.setItem(
-			'jetpack_stats_date_range_is_drilling_down_date_history',
-			JSON.stringify( [ previousDisplayDate ] )
-		);
-	};
-
 	useEffect( () => {
 		setIsAnimated( true );
 		// Remove the flag after the drill-up action button is shown.
@@ -30,7 +23,10 @@ const DateLabelDrill = ( { children, previousDisplayDate }: DateLabelDrillProps 
 		window.history.back();
 		// Prevent multiple drill-up actions.
 		sessionStorage.removeItem( 'jetpack_stats_date_range_is_drilling_down' );
-		removeLastDateHistoryItem();
+		sessionStorage.setItem(
+			'jetpack_stats_date_range_is_drilling_down_date_history',
+			JSON.stringify( [ previousDisplayDate ] )
+		);
 	};
 
 	return (
