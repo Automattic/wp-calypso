@@ -17,7 +17,6 @@ import { Invite } from '../team-invites/types';
 import type { Member, SiteDetails } from '@automattic/data-stores';
 import './style.scss';
 
-// TODO: copied from deleted blocks/importer/wordpress/import-everything/import-users/utils file
 export const getRole = ( user: Member ) => {
 	if ( ! user ) {
 		return 'subscriber';
