@@ -178,13 +178,9 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index, menu } ) => 
 		const relativeLink = link.toString().substring( link.origin.length );
 
 		const viewAllResponses = (
-			<a
-				href={ relativeLink }
-				className="blogging-prompt__prompt-responses-link"
-				onClick={ trackClickViewAllResponses }
-			>
+			<Button href={ relativeLink } onClick={ trackClickViewAllResponses } borderless>
 				{ translate( 'View all responses' ) }
-			</a>
+			</Button>
 		);
 
 		if ( prompt?.answered_users_sample.length > 0 ) {
@@ -208,15 +204,15 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index, menu } ) => 
 			<div className="blogging-prompt__prompt-answers">
 				{ renderResponses() }
 				{ isBloganuary() && (
-					<a
+					<Button
+						borderless
 						href="https://wordpress.com/bloganuary"
-						className="blogging-prompt__bloganuary-link"
 						target="_blank"
 						rel="noopener noreferrer"
 						onClick={ trackBloganuaryMoreInfoClick }
 					>
 						{ translate( 'Learn more' ) }
-					</a>
+					</Button>
 				) }
 				<Button
 					href={ getNewPostLink() }
