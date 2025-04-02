@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import StatsCardUpsell from 'calypso/my-sites/stats/stats-card-upsell';
 import { STATS_TYPE_DEVICE_STATS } from '../../../constants';
@@ -17,6 +18,7 @@ const StatsModuleUpgradeOverlay: React.FC< StatsModuleUpgradeOverlayProps > = ( 
 	className,
 	overlay,
 } ) => {
+	const translate = useTranslate();
 	const fakeData = [
 		{
 			label: 'Windows',
@@ -51,7 +53,7 @@ const StatsModuleUpgradeOverlay: React.FC< StatsModuleUpgradeOverlayProps > = ( 
 	return (
 		// @ts-expect-error TODO: Refactor StatsListCard with TypeScript.
 		<StatsListCard
-			title="Devices"
+			title={ translate( 'Devices' ) }
 			className={ clsx(
 				className,
 				'stats-module-upgrade-overlay',
