@@ -60,11 +60,16 @@ const ChatMessage = ( {
 		return null;
 	}
 
-	const messageHeader = (
-		<div className={ `message-header ${ isBot ? 'bot' : 'business' }` }>
-			<MessageAvatarHeader message={ message } />
-		</div>
-	);
+	const messageHeader = () => {
+		//feedback messages don't need header
+		if ( message.type !== 'form' ) {
+			return (
+				<div className={ `message-header ${ isBot ? 'bot' : 'business' }` }>
+					<MessageAvatarHeader message={ message } />
+				</div>
+			);
+		}
+	};
 
 	const fullscreenContent = (
 		<div className="help-center-experience-disabled">
@@ -72,7 +77,7 @@ const ChatMessage = ( {
 				<div className="odie-fullscreen-backdrop" onClick={ handleContentClick }>
 					<MessageContent
 						message={ message }
-						messageHeader={ messageHeader }
+						messageHeader={ messageHeader() }
 						isDisliked={ isDisliked }
 					/>
 				</div>
@@ -84,7 +89,7 @@ const ChatMessage = ( {
 		<>
 			<MessageContent
 				message={ message }
-				messageHeader={ messageHeader }
+				messageHeader={ messageHeader() }
 				isDisliked={ isDisliked }
 				displayChatWithSupportLabel={ displayChatWithSupportLabel }
 				displayChatWithSupportEndedLabel={ displayChatWithSupportEndedLabel }

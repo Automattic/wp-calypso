@@ -61,13 +61,7 @@ export const MessageContent = ( {
 	// message type === message are messages being sent from users to zendesk.
 	// They need to be parsed to markdown to appear nicely.
 	const markdownMessageContent = shouldParseMessage() ? parseTextMessage( message ) : message;
-	if (
-		message.type === 'form' ||
-		message.type === 'formResponse' ||
-		message.metadata?.rated === true
-	) {
-		return;
-	}
+
 	return (
 		<>
 			<div className={ containerClasses } data-is-message="true">
@@ -90,6 +84,12 @@ export const MessageContent = ( {
 					) }
 				</div>
 			</div>
+
+			{ message.metadata?.rated && (
+				<div className="feedback-thankyou__message">
+					{ __( 'Your feedback has been sent. Thank you for helping us improve.' ) }
+				</div>
+			) }
 
 			{ displayChatWithSupportLabel && (
 				<ChatWithSupportLabel

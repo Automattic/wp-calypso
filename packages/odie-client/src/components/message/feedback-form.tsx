@@ -161,7 +161,11 @@ export const FeedbackForm = ( { chatFeedbackOptions }: FeedbackFormProps ) => {
 	}, [] );
 
 	if ( finishedRating ) {
-		return null;
+		return (
+			<div className="feedback-thankyou__message">
+				{ __( 'Your feedback has been sent. Thank you for helping us improve.' ) }
+			</div>
+		);
 	}
 
 	return (
