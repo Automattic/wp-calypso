@@ -85,6 +85,16 @@ interface PurchaseItemPropsConnected {
 	iconUrl: string | undefined;
 }
 
+function TrackImpression( props: { warning: string } ) {
+	const warning = props.warning;
+	return (
+		<TrackComponentView
+			eventName="calypso_subscription_warning_impression"
+			eventProperties={ eventProperties( warning ) }
+		/>
+	);
+}
+
 class PurchaseItem extends Component<
 	PurchaseItemPropsPlaceholder | ( PurchaseItemProps & PurchaseItemPropsConnected )
 > {
@@ -241,7 +251,7 @@ class PurchaseItem extends Component<
 							span: <span className="purchase-item__date" />,
 						},
 					} ) }
-					{ this.trackImpression( 'purchase-expiring' ) }
+					<TrackImpression warning="purchase-expiring" />
 				</span>
 			);
 		}
@@ -253,7 +263,7 @@ class PurchaseItem extends Component<
 				return (
 					<span className="purchase-item__is-error">
 						{ translate( 'Credit card expired' ) }
-						{ this.trackImpression( 'credit-card-expiring' ) }
+						<TrackImpression warning="credit-card-expiring" />
 					</span>
 				);
 			}
@@ -272,7 +282,7 @@ class PurchaseItem extends Component<
 								},
 							}
 						) }
-						{ this.trackImpression( 'credit-card-expiring' ) }
+						<TrackImpression warning="credit-card-expiring" />
 					</span>
 				);
 			}
@@ -353,7 +363,7 @@ class PurchaseItem extends Component<
 								span: <span className="purchase-item__date" />,
 							},
 						} ) }
-						{ this.trackImpression( 'purchase-expiring' ) }
+						<TrackImpression warning="purchase-expiring" />
 					</span>
 				);
 			}
@@ -385,7 +395,7 @@ class PurchaseItem extends Component<
 			return (
 				<span className="purchase-item__is-error">
 					{ isExpiredToday ? expiredTodayText : expiredFromNowText }
-					{ this.trackImpression( 'purchase-expired' ) }
+					<TrackImpression warning="purchase-expired" />
 				</span>
 			);
 		}
