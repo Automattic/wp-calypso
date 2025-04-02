@@ -1,4 +1,5 @@
 import { FormLabel } from '@automattic/components';
+import { Spinner } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -6,7 +7,6 @@ import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import Notice from 'calypso/components/notice';
 import wpcom from 'calypso/lib/wp';
@@ -57,7 +57,7 @@ class RequestLoginEmailForm extends Component {
 		onSubmitEmail: PropTypes.func,
 		onSendEmailLogin: PropTypes.func,
 		createAccountForNewUser: PropTypes.bool,
-		shouldShowLoadingEllipsis: PropTypes.bool,
+		shouldShowLoadingIndicator: PropTypes.bool,
 		blogId: PropTypes.string,
 		errorMessage: PropTypes.string,
 		onErrorDismiss: PropTypes.func,
@@ -175,12 +175,20 @@ class RequestLoginEmailForm extends Component {
 			isEmailInputError,
 			isSubmitButtonDisabled,
 			isSubmitButtonBusy,
-			shouldShowLoadingEllipsis,
+			shouldShowLoadingIndicator,
 			isFromJetpackOnboarding,
 		} = this.props;
 
-		if ( shouldShowLoadingEllipsis ) {
-			return <LoadingEllipsis className="magic-login__loading-ellipsis--jetpack" />;
+		if ( shouldShowLoadingIndicator ) {
+			return (
+				<Spinner
+					style={ {
+						height: 'calc(4px * 20)',
+						width: 'calc(4px * 20)',
+					} }
+					className="magic-login__loading-spinner--jetpack"
+				/>
+			);
 		}
 
 		const usernameOrEmail = this.getUsernameOrEmailFromState();

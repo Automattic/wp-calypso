@@ -1346,7 +1346,7 @@ class MagicLogin extends Component {
 
 		const isJetpackMagicLinkSignUpEnabled =
 			config.isEnabled( 'jetpack/magic-link-signup' ) && this.props.isJetpackLogin;
-		const shouldShowLoadingEllipsis =
+		const shouldShowLoadingIndicator =
 			isFromJetpackOnboarding &&
 			isJetpackMagicLinkSignUpEnabled &&
 			( isSendingEmail || this.isInitialMount );
@@ -1357,7 +1357,7 @@ class MagicLogin extends Component {
 			...( this.props.isJetpackLogin ? { flow: 'jetpack' } : {} ),
 			...( isJetpackMagicLinkSignUpEnabled ? { isJetpackMagicLinkSignUpEnabled: true } : {} ),
 			createAccountForNewUser: true,
-			shouldShowLoadingEllipsis,
+			shouldShowLoadingIndicator,
 			isFromJetpackOnboarding,
 		};
 
@@ -1377,7 +1377,7 @@ class MagicLogin extends Component {
 
 				<RequestLoginEmailForm { ...requestLoginEmailFormProps } />
 
-				{ ! shouldShowLoadingEllipsis && this.renderLinks() }
+				{ ! shouldShowLoadingIndicator && this.renderLinks() }
 			</Main>
 		);
 	}
