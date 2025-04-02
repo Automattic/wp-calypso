@@ -1,12 +1,6 @@
 @import '@wordpress/base-styles/colors';
 
 // Hacks that shouldn't be necessary.
-:root {
-	--color-text-inverted: $white;
-}
-.wordpress-logo {
-    margin: 0 !important;
-}
 .environment-badge {
     display: none;
 }
