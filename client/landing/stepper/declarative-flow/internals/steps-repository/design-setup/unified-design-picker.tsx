@@ -202,16 +202,16 @@ const UnifiedDesignPickerStep: StepType< {
 		);
 	}
 
-	useQueryThemes( 'wpcom', {
-		number: 1000,
-	} );
-
 	function trackAllDesignsView() {
 		recordTracksEvent( 'calypso_signup_design_scrolled_to_end', {
 			intent,
 			categories: categorization?.selections?.join( ',' ),
 		} );
 	}
+
+	useQueryThemes( 'wpcom', {
+		number: 1000,
+	} );
 
 	const getBadge = ( themeId: string, isLockedStyleVariation: boolean ) => (
 		<ThemeTierBadge
