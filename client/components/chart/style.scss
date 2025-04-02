@@ -77,6 +77,7 @@ $y-axis-padding: 0 20px;
 
 // For forcing the width of y-axis to the width of the label
 .chart__y-axis-width-fix {
+	color: transparent; // Fallback for browsers that don't support color-mix
 	color: color-mix(in srgb, var(--color-surface) 0%, transparent);
 }
 
@@ -119,6 +120,7 @@ $y-axis-padding: 0 20px;
 }
 
 .chart__x-axis-width-spacer {
+	color: transparent; // Fallback for browsers that don't support color-mix
 	color: color-mix(in srgb, var(--color-surface) 0%, transparent);
 	padding: $y-axis-padding;
 	right: 0;
