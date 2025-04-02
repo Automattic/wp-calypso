@@ -27,11 +27,30 @@ import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { getSiteAdminUrl, getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
+<<<<<<< HEAD
 import type {
 	AssertConditionResult,
 	FlowV2,
 	ProvidedDependencies,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
+=======
+import { HOW_TO_MIGRATE_OPTIONS } from '../../../constants';
+import { useIsSiteAdmin } from '../../../hooks/use-is-site-admin';
+import { useSiteData } from '../../../hooks/use-site-data';
+import { useSiteSlugParam } from '../../../hooks/use-site-slug-param';
+import { USER_STORE, SITE_STORE, ONBOARD_STORE } from '../../../stores';
+import { goToCheckout } from '../../../utils/checkout';
+import { STEPS } from '../../internals/steps';
+import {
+	getFullImporterUrl,
+	isPlatformImportable,
+} from '../../internals/steps-repository/import/helper';
+import { getSiteIdParam } from '../../internals/steps-repository/import/util';
+import { type SiteMigrationIdentifyAction } from '../../internals/steps-repository/site-migration-identify';
+import { AssertConditionState } from '../../internals/types';
+import { goToImporter } from '../../migration/helpers';
+import type { AssertConditionResult, Flow, ProvidedDependencies } from '../../internals/types';
+>>>>>>> 3a2970d75f1 (Add a new function to handle the full path of the redirects)
 
 const BASE_STEPS = [
 	STEPS.SITE_MIGRATION_IDENTIFY,
@@ -250,14 +269,17 @@ const siteMigration: FlowV2 = {
 
 				case STEPS.PROCESSING.slug: {
 					if ( providedDependencies?.siteCreated ) {
-						if ( platformQueryParam && fromQueryParam ) {
+						if (
+							platformQueryParam &&
+							isPlatformImportable( platformQueryParam as ImporterPlatform ) &&
+							fromQueryParam
+						) {
 							return exitFlow(
-								'/setup/site-setup/' +
-									getFinalImporterUrl(
-										siteSlug,
-										fromQueryParam,
-										platformQueryParam as ImporterPlatform
-									)
+								getFullImporterUrl(
+									platformQueryParam as ImporterPlatform,
+									siteSlug,
+									fromQueryParam
+								)
 							);
 						}
 						if ( ! fromQueryParam || providedDependencies?.skipMigration ) {
