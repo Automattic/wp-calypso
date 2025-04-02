@@ -3,8 +3,9 @@ import Notice from 'calypso/components/notice';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEventWithClientId } from 'calypso/state/analytics/actions';
 import type { AccountCreateReturn, SocialAuthParams } from 'calypso/lib/signup/api/type';
-
 type Props = {
 	error: ( Error & AccountCreateReturn ) | null;
 	recentSocialAuthAttemptParams?: SocialAuthParams;
@@ -12,6 +13,7 @@ type Props = {
 
 export function useErrorNotice( { error: errorResponse, recentSocialAuthAttemptParams }: Props ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const loginLink = login( {
 		signupUrl: window.location.pathname + window.location.search,
 		redirectTo: window.location.pathname + window.location.search,
@@ -57,24 +59,28 @@ export function useErrorNotice( { error: errorResponse, recentSocialAuthAttemptP
 					className="signup-form__notice signup-form__span-columns"
 					showDismiss={ false }
 					status="is-transparent-info"
-					text={ translate(
-						'This social account is linked to a WordPress.com account with two-factor authentication. ' +
-							'{{a}}Sign in to continue{{/a}}, or choose a different signup method.',
-						{
-							components: {
-								a: (
-									<a
-										href={ loginLink }
-										onClick={ ( event ) => {
-											event.preventDefault();
-											recordTracksEvent( 'calypso_signup_social_existing_user_login_link_click' );
-											window.location.href = loginLink;
-										} }
-									/>
-								),
-							},
-						}
-					) }
+					text={
+						<span>
+							<p>
+								{ errorResponse.message }
+								&nbsp;
+								{ translate( '{{a}}Log in now{{/a}} to finish signing up.', {
+									components: {
+										a: (
+											<a
+												href={ loginLink }
+												onClick={ () =>
+													dispatch(
+														recordTracksEventWithClientId( 'calypso_signup_login_midflow' )
+													)
+												}
+											/>
+										),
+									},
+								} ) }
+							</p>
+						</span>
+					}
 				/>
 			);
 		}
