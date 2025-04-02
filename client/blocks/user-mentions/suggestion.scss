@@ -35,5 +35,5 @@ $user-mentions-avatar-margin: 10px;
 
 .user-mentions__highlight {
 	font-weight: 400;
-	background: rgba(var(--color-primary-light-rgb), 0.25);
+	background: color-mix(in srgb, var(--color-primary-light) 25%, transparent);
 }

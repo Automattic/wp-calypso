@@ -241,8 +241,10 @@
 	&.is-top-buttons {
 		padding: 0 20px;
 		@include plans-grid-medium-large {
-			padding-top: 16px;
-			padding-bottom: 16px;
+			button {
+				margin-top: 16px;
+				margin-bottom: 16px;
+			}
 		}
 	}
 

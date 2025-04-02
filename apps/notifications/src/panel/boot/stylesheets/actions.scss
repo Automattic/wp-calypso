@@ -21,7 +21,6 @@
 			padding-right: 52px;
 			min-height: 37px;
 			width: 100%;
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 14px;
 			font-family: inherit;
 			transition: border 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
@@ -41,7 +40,6 @@
 			right: 25px;
 			text-transform: uppercase;
 			font-weight: 600;
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 12px;
 		}
 		button.active {
@@ -68,7 +66,6 @@
 	box-sizing: border-box;
 	cursor: pointer;
 	display: inline-block;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 12px;
 	max-width: 25%;
 	padding: 0 18px;
@@ -128,7 +125,6 @@
 	}
 
 	.wpnc__gridicon {
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 24px;
 	}
 

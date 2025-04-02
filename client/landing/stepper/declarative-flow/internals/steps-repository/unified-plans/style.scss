@@ -27,14 +27,22 @@
 	}
 }
 
-.step-container-v2--plans {
-	.plans-wrapper {
-		margin: 0;
-		padding: 0;
+.step-container-v2 {
+	.step-container-v2--plans {
+		.plans-wrapper {
+			margin: 0;
+			padding: 0;
+		}
 	}
 
 	// This is temporary until we make the plans step more consistent according to the designs.
 	@media(max-width: calc($break-small - 1px)) {
+		.plans-features-main .plans-features-main__subheader {
+			text-align: left;
+		}
+	}
+	
+	@media(max-width: calc($break-medium - 1px)) {
 		.plan-type-selector {
 			width: 100%;
 		}

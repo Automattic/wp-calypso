@@ -714,7 +714,7 @@ export default function CheckoutMain( {
 			paymentMethodId,
 		}: {
 			transactionError: string | null;
-			paymentMethodId: string | null;
+			paymentMethodId: string | null | undefined;
 		} ) => {
 			const errorNoticeText = transactionError ? (
 				<div dangerouslySetInnerHTML={ { __html: DOMPurify.sanitize( transactionError ) } } /> // eslint-disable-line react/no-danger -- The API response can contain anchor elements that we need to parse so they are rendered properly

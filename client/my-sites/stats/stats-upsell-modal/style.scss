@@ -57,7 +57,6 @@
 
 	.stats-upsell-modal__title {
 		@extend .wp-brand-font;
-		/* stylelint-disable declaration-property-unit-allowed-list -- typography-exception */
 		font-size: 28px;
 		line-height: 34px; /* 125% */
 		@include break-medium {

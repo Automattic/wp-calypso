@@ -62,7 +62,7 @@ export const MigrationError = ( props: Props ) => {
 				siteId: targetSiteID,
 			} );
 		} else {
-			setNavigateToRoute( '/contact-form?mode=CHAT' );
+			setNavigateToRoute( '/contact-options' );
 			setShowHelpCenter( true );
 		}
 	}, [

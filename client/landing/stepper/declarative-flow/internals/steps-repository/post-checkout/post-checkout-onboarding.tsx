@@ -1,15 +1,15 @@
 import { SiteIntent } from '@automattic/data-stores/src/onboard';
+import { Step } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import Loading from 'calypso/components/loading';
-import { StepContainerV2Loading } from 'calypso/components/step-container-v2-loading';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { useMarketplaceThemeProducts } from '../../../../hooks/use-marketplace-theme-products';
 import { useSiteData } from '../../../../hooks/use-site-data';
 import { useSiteTransferStatusQuery } from '../../../../hooks/use-site-transfer/query';
 import { useWaitForAtomic } from '../../../../hooks/use-wait-for-atomic';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
-import type { Step } from '../../types';
+import type { Step as StepType } from '../../types';
 import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
 
 const usePluginByGoal = () => {
@@ -25,7 +25,7 @@ const usePluginByGoal = () => {
 	return null;
 };
 
-const PostCheckoutOnboarding: Step = ( { flow, navigation } ) => {
+const PostCheckoutOnboarding: StepType = ( { flow, navigation } ) => {
 	const { submit } = navigation;
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { site, siteSlug } = useSiteData();
@@ -145,7 +145,7 @@ const PostCheckoutOnboarding: Step = ( { flow, navigation } ) => {
 	] );
 
 	if ( shouldUseStepContainerV2( flow ) ) {
-		return <StepContainerV2Loading />;
+		return <Step.Loading />;
 	}
 
 	return <Loading className="wpcom-loading__boot" />;

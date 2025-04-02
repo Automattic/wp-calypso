@@ -18,6 +18,7 @@ const FAQHeader = styled.h1`
 `;
 
 const FAQSection = styled.div`
+	width: 100%;
 	max-width: 615px;
 	margin: 0 auto;
 `;

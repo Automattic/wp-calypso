@@ -38,7 +38,7 @@ $devdocs-max-width: 720px;
 		margin-top: 4px;
 
 		mark {
-			background: rgba(var(--color-primary-light-rgb), 0.4);
+			background: color-mix(in srgb, var(--color-primary-light) 40%, transparent);
 			padding: 2px;
 			border-radius: 2px;
 		}
@@ -94,7 +94,7 @@ $devdocs-max-width: 720px;
 	padding: 3px 6px;
 	margin: 0 6px 4px 0;
 	font-family: $code;
-	box-shadow: 0 1px 2px rgba(var(--color-neutral-70-rgb), 0.05);
+	box-shadow: 0 1px 2px color-mix(in srgb, var(--color-neutral-70) 5%, transparent);
 }
 
 .design__illustrations-illustrations {
@@ -119,7 +119,7 @@ $devdocs-max-width: 720px;
 	box-sizing: border-box;
 	background: var(--color-surface);
 	box-shadow: 0 1px 2px var(--color-neutral-0);
-	border: 1px solid rgba(var(--color-neutral-10-rgb), 0.65);
+	border: 1px solid color-mix(in srgb, var(--color-neutral-10) 65%, transparent);
 	margin: 0 auto 24px;
 	position: relative;
 
@@ -127,7 +127,7 @@ $devdocs-max-width: 720px;
 		font-family: $code;
 		font-size: $font-title-small;
 		letter-spacing: 1px;
-		border-bottom: 1px solid rgba(var(--color-neutral-10-rgb), 0.65);
+		border-bottom: 1px solid color-mix(in srgb, var(--color-neutral-10) 65%, transparent);
 
 		a,
 		a:visited {
@@ -142,15 +142,14 @@ $devdocs-max-width: 720px;
 	.docs-example__wrapper-content {
 		background: var(--color-surface-backdrop);
 		padding: 16px;
-		--docs-example-grid: var(--color-neutral-70-rgb);
-		box-shadow: inset 0 2px 1px rgba(var(--docs-example-grid), 0.075);
+		box-shadow: inset 0 2px 1px color-mix(in srgb, var(--color-neutral-70) 7.5%, transparent);
 
 		// Grid background
 		background-image:
-			linear-gradient(rgba(var(--docs-example-grid), 0.05) 1px, transparent 1px),
-			linear-gradient(90deg, rgba(var(--docs-example-grid), 0.05) 1px, transparent 1px),
-			linear-gradient(rgba(var(--docs-example-grid), 0.025) 1px, transparent 1px),
-			linear-gradient(90deg, rgba(var(--docs-example-grid), 0.025) 1px, transparent 1px);
+			linear-gradient(color-mix(in srgb, var(--color-neutral-70) 5%, transparent) 1px, transparent 1px),
+			linear-gradient(90deg, color-mix(in srgb, var(--color-neutral-70) 5%, transparent) 1px, transparent 1px),
+			linear-gradient(color-mix(in srgb, var(--color-neutral-70) 2.5%, transparent) 1px, transparent 1px),
+			linear-gradient(90deg, color-mix(in srgb, var(--color-neutral-70) 2.5%, transparent) 1px, transparent 1px);
 		background-size: 32px 32px, 32px 32px, 8px 8px, 8px 8px;
 		background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
 
@@ -430,7 +429,7 @@ $devdocs-max-width: 720px;
 	}
 
 	pre > code {
-		background-color: rgba(var(--color-surface-rgb), 0);
+		background-color: color-mix(in srgb, var(--color-surface) 0%, transparent);
 		padding: 2px 0;
 	}
 

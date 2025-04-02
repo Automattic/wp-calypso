@@ -136,7 +136,7 @@ export default ( router ) => {
 	);
 
 	router(
-		`/log-in/:isJetpack(jetpack)/google/${ lang }`,
+		`/log-in/:isJetpack(jetpack)/:socialService(google)/${ lang }`,
 		setLocaleMiddleware(),
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
@@ -146,7 +146,7 @@ export default ( router ) => {
 	);
 
 	router(
-		`/log-in/:isJetpack(jetpack)/google/callback/${ lang }`,
+		`/log-in/:isJetpack(jetpack)/:socialService(google)/callback/${ lang }`,
 		setLocaleMiddleware(),
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
@@ -156,7 +156,7 @@ export default ( router ) => {
 	);
 
 	router(
-		`/log-in/:isJetpack(jetpack)/apple/${ lang }`,
+		`/log-in/:isJetpack(jetpack)/:socialService(apple)/${ lang }`,
 		setLocaleMiddleware(),
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
@@ -166,7 +166,7 @@ export default ( router ) => {
 	);
 
 	router(
-		`/log-in/:isJetpack(jetpack)/apple/callback/${ lang }`,
+		`/log-in/:isJetpack(jetpack)/:socialService(apple)/callback/${ lang }`,
 		setLocaleMiddleware(),
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
@@ -176,7 +176,7 @@ export default ( router ) => {
 	);
 
 	router(
-		`/log-in/:isJetpack(jetpack)/github/${ lang }`,
+		`/log-in/:isJetpack(jetpack)/:socialService(github)/${ lang }`,
 		setLocaleMiddleware(),
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
@@ -186,7 +186,7 @@ export default ( router ) => {
 	);
 
 	router(
-		`/log-in/:isJetpack(jetpack)/github/callback/${ lang }`,
+		`/log-in/:isJetpack(jetpack)/:socialService(github)/callback/${ lang }`,
 		setLocaleMiddleware(),
 		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),

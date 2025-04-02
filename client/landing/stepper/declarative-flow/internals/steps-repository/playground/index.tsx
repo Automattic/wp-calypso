@@ -1,3 +1,4 @@
+import { Step } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { PlaygroundClient } from '@wp-playground/client';
@@ -5,11 +6,12 @@ import { useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { useIsPlaygroundEligible } from '../../../../hooks/use-is-playground-eligible';
+import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { PlaygroundIframe } from './components/playground-iframe';
-import type { Step } from '../../types';
+import type { Step as StepType } from '../../types';
 import './style.scss';
 
-export const PlaygroundStep: Step = ( { navigation } ) => {
+export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 	const { submit } = navigation;
 	const isPlaygroundEligible = useIsPlaygroundEligible();
 	const playgroundClientRef = useRef< PlaygroundClient | null >( null );
@@ -31,6 +33,33 @@ export const PlaygroundStep: Step = ( { navigation } ) => {
 		}
 		submit();
 	};
+
+	if ( shouldUseStepContainerV2( flow ) ) {
+		return (
+			<>
+				<DocumentHead title={ __( 'Playground' ) } />
+				<Step.FullWidthLayout
+					className="playground-v2"
+					hasContentPadding={ false }
+					topBar={
+						<Step.TopBar
+							rightElement={
+								<Step.PrimaryButton onClick={ launchSite }>
+									{ __( 'Launch on WordPress.com' ) }
+								</Step.PrimaryButton>
+							}
+						/>
+					}
+				>
+					<PlaygroundIframe
+						className="playground__onboarding-iframe"
+						playgroundClient={ playgroundClientRef.current }
+						setPlaygroundClient={ setPlaygroundClient }
+					/>
+				</Step.FullWidthLayout>
+			</>
+		);
+	}
 
 	return (
 		<>

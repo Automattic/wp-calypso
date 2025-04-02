@@ -1,24 +1,23 @@
-@import '@automattic/typography';
-
-@import '../../mixins';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .step-container-v2__heading {
 	width: 100%;
 	text-wrap: balance;
 
-	@include step-medium-viewport {
+	@include break-small {
 		text-align: center;
 	}
 
 	h1 {
 		margin-block: 0;
-		color: var(--color-neutral-100);
+		color: var( --color-neutral-100 );
 		font-size: 2rem;
 		line-height: 1.25;
 		text-wrap: balance;
 
-		&:not(.small) {
-			@include step-large-viewport {
+		&:not( .small ) {
+			@include break-large {
 				font-size: 2.75rem;
 				line-height: 1.15;
 			}
@@ -27,12 +26,12 @@
 
 	p {
 		margin-block: 0.5rem 0;
-		color: var(--color-text);
+		color: var( --color-text );
 		font-size: 0.875rem;
 		line-height: 1.5;
 		text-wrap: balance;
 
-		@include step-large-viewport {
+		@include break-large {
 			font-size: 1rem;
 		}
 	}
