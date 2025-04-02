@@ -89,6 +89,10 @@
 			@include break-small() {
 				display: none;
 			}
+
+			.search-component__icon-navigation {
+				background-color: transparent;
+			}
 		}
 	}
 
