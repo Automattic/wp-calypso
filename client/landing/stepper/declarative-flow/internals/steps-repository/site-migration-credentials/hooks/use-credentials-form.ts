@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -72,7 +71,6 @@ const removeEndingSlash = ( url: string ) => {
 export const useCredentialsForm = (
 	onSubmit: ( siteInfo?: UrlData, applicationPasswordsInfo?: ApplicationPasswordsInfo ) => void
 ) => {
-	const isApplicationPasswordEnabled = isEnabled( 'automated-migration/application-password' );
 	const siteSlug = useSiteSlugParam();
 	const fromUrl = useQuery().get( 'from' ) || '';
 	const [ siteInfo, setSiteInfo ] = useState< UrlData | undefined >( undefined );
@@ -180,7 +178,7 @@ export const useCredentialsForm = (
 		const siteInfoResult = shouldAnalyzeUrl ? await analyzeUrl( data.from_url ) : siteInfo;
 		setSiteInfo( siteInfoResult );
 
-		if ( isApplicationPasswordEnabled && accessMethod === 'credentials' && siteInfoResult ) {
+		if ( accessMethod === 'credentials' && siteInfoResult ) {
 			await submitWithApplicationPassword( siteId, data.from_url, siteInfoResult );
 		} else {
 			await requestAutomatedMigrationAndSubmit( data, siteInfoResult );

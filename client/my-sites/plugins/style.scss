@@ -204,7 +204,7 @@ body.is-section-plugins.theme-default.color-scheme {
 }
 
 .plugins__main-header .section-nav {
-	border: 1px solid rgba(var(--color-neutral-10-rgb), 0.5);
+	border: 1px solid color-mix(in srgb, var(--color-neutral-10) 50%, transparent);
 	box-shadow: none;
 	flex: auto;
 	margin: 0;

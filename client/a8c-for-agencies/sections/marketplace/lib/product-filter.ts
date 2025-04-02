@@ -22,6 +22,7 @@ import {
 	PRODUCT_FILTER_KEY_CATEGORIES,
 	PRODUCT_FILTER_KEY_PRICES,
 	PRODUCT_FILTER_KEY_TYPES,
+	PRODUCT_FILTER_KEY_VENDORS,
 	PRODUCT_PRICE_FREE,
 	PRODUCT_PRICE_PAID,
 	PRODUCT_TYPE_ADDON,
@@ -36,6 +37,7 @@ import {
 	PRODUCT_TYPE_WPCOM_PLAN,
 } from '../constants';
 import { isPressableHostingProduct, isWPCOMHostingProduct } from '../lib/hosting';
+import { getVendorInfo } from '../products-overview-v2/lib/get-vendor-info';
 import {
 	SECURITY_PRODUCT_SLUGS,
 	PERFORMANCE_PRODUCT_SLUGS,
@@ -49,16 +51,19 @@ import {
 	STORE_CONTENT_PRODUCT_SLUGS,
 	STORE_MANAGEMENT_PRODUCT_SLUGS,
 } from './product-slugs';
+
 export type SelectedFilters = {
 	[ PRODUCT_FILTER_KEY_BRAND ]: string;
 	[ PRODUCT_FILTER_KEY_CATEGORIES ]: Record< string, boolean >;
 	[ PRODUCT_FILTER_KEY_TYPES ]: Record< string, boolean >;
 	[ PRODUCT_FILTER_KEY_PRICES ]: Record< string, boolean >;
+	[ PRODUCT_FILTER_KEY_VENDORS ]: Record< string, boolean >;
 };
 
 export function hasSelectedFilter( selectedFilters: SelectedFilters ) {
 	return [
 		selectedFilters[ PRODUCT_FILTER_KEY_CATEGORIES ],
+		selectedFilters[ PRODUCT_FILTER_KEY_VENDORS ],
 		selectedFilters[ PRODUCT_FILTER_KEY_TYPES ],
 		selectedFilters[ PRODUCT_FILTER_KEY_PRICES ],
 	].some( ( filters ) => hasSelectedFilterByType( filters ) );
@@ -100,6 +105,12 @@ export function filterProductsAndPlans(
 	filteredProductsAndBundles = filterProductsAndPlansByCategories(
 		filteredProductsAndBundles,
 		getSelectedFilters( PRODUCT_FILTER_KEY_CATEGORIES, selectedFilters )
+	);
+
+	// List only products that matches the selected product vendor.
+	filteredProductsAndBundles = filterProductsAndPlansByVendors(
+		filteredProductsAndBundles,
+		getSelectedFilters( PRODUCT_FILTER_KEY_VENDORS, selectedFilters )
 	);
 
 	return filteredProductsAndBundles;
@@ -204,6 +215,32 @@ function filterProductsAndPlansByCategories(
 
 	categories.forEach( ( category ) => {
 		filterProductsAndPlansByCategory( category, productAndPlans ).forEach( ( item ) => {
+			filteredData.add( item );
+		} );
+	} );
+
+	return Array.from( filteredData );
+}
+
+/*
+ * Filter products and plans by vendors.
+ *
+ * @param {APIProductFamilyProduct[]} productsAndPlans - List of products and plans.
+ * @param {string[]} vendors - Selected product vendors.
+ * @return {APIProductFamilyProduct[]} Filtered products and plans.
+ */
+function filterProductsAndPlansByVendors(
+	productsAndPlans: APIProductFamilyProduct[],
+	vendors: string[]
+) {
+	if ( ! vendors.length ) {
+		return productsAndPlans;
+	}
+
+	const filteredData: Set< APIProductFamilyProduct > = new Set();
+
+	vendors.forEach( ( vendor ) => {
+		filterProductsAndPlansByVendor( vendor, productsAndPlans ).forEach( ( item ) => {
 			filteredData.add( item );
 		} );
 	} );
@@ -352,4 +389,18 @@ function filterProductsAndPlansByCategory(
 	}
 
 	return allProductsAndPlans;
+}
+
+/*
+ * Filter products and plans by vendor.
+ *
+ * @param {string} vendor - Selected product vendor filter.
+ * @param {APIProductFamilyProduct[]} allProductsAndPlans - List of products and plans.
+ * @return {APIProductFamilyProduct[]} Filtered products and plans.
+ */
+function filterProductsAndPlansByVendor(
+	vendor: string,
+	allProductsAndPlans: APIProductFamilyProduct[]
+) {
+	return allProductsAndPlans.filter( ( { slug } ) => getVendorInfo( slug )?.vendorSlug === vendor );
 }

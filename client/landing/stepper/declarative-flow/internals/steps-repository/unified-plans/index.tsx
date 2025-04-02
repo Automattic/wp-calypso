@@ -12,13 +12,13 @@ import {
 	NEW_HOSTED_SITE_FLOW,
 	NEWSLETTER_FLOW,
 	START_WRITING_FLOW,
+	Step,
 	useStepPersistedState,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useState } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import Loading from 'calypso/components/loading';
-import { StepContainerV2Loading } from 'calypso/components/step-container-v2-loading';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
@@ -36,7 +36,7 @@ import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-conta
 import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
 import UnifiedPlansStep from './unified-plans-step';
 import { getIntervalType } from './util';
-import type { ProvidedDependencies, Step } from '../../types';
+import type { ProvidedDependencies, Step as StepType } from '../../types';
 import type { PlansIntent } from '@automattic/plans-grid-next';
 
 import './style.scss';
@@ -61,7 +61,7 @@ function getPlansIntent( flowName: string | null, isWordCampPromo?: boolean ): P
 	}
 }
 
-const PlansStepAdaptor: Step< {
+const PlansStepAdaptor: StepType< {
 	// TODO: work on more specific types
 	submits: Record< string, unknown >;
 } > = ( props ) => {
@@ -197,7 +197,7 @@ const PlansStepAdaptor: Step< {
 	const isUsingStepContainerV2 = shouldUseStepContainerV2( props.flow );
 
 	if ( isLoadingSelectedTheme ) {
-		return isUsingStepContainerV2 ? <StepContainerV2Loading /> : <Loading />;
+		return isUsingStepContainerV2 ? <Step.Loading /> : <Loading />;
 	}
 
 	return (

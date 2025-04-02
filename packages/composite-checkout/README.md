@@ -320,7 +320,7 @@ A React Hook that returns an object with the following properties to be used by 
 
 ## Development
 
-In the root of the monorepo, run `yarn workspace @automattic/composite-checkout run storybook` which will start a local webserver that will display the component.
+In the root of the monorepo, run `yarn workspace @automattic/composite-checkout run storybook:start` which will start a local webserver that will display the component.
 
 To run the tests for this package, run `yarn run test-packages composite-checkout`.
 

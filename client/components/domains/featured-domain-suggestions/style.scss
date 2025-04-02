@@ -309,19 +309,19 @@ body.is-section-signup .featured-domain-suggestions {
 @include breakpoint-deprecated( ">660px" ) {
 	.domain-registration-suggestion__title {
 		.featured-domain-suggestions--title-in-18em & {
-			font-size: 1.8em; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-size: 1.8em;
 		}
 		.featured-domain-suggestions--title-in-16em & {
-			font-size: 1.6em; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-size: 1.6em;
 		}
 		.featured-domain-suggestions--title-in-14em & {
 			font-size: $font-title-small;
 		}
 		.featured-domain-suggestions--title-in-12em & {
-			font-size: 1.2em; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-size: 1.2em;
 		}
 		.featured-domain-suggestions--title-in-10em & {
-			font-size: 1em; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-size: 1em;
 		}
 	}
 

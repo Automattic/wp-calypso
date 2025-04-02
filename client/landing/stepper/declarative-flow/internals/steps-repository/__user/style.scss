@@ -8,6 +8,10 @@ $gray-50: #646970;
 $breakpoint-mobile: 660px;
 
 .step-route.user {
+	.form-fieldset {
+		margin-bottom: 8px;
+	}
+
 	.locale-suggestions {
 		margin: 0 auto;
 	}

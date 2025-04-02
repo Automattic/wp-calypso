@@ -1,9 +1,12 @@
+import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { matchPath } from 'react-router';
 
-export const getFlowFromURL = (
-	pathname = window.location.pathname ?? '',
-	search = window.location.search
-) => {
+export const DEFAULT_FLOW = ONBOARDING_FLOW;
+
+export const getFlowFromURL = ( pathname?: string, search?: string ) => {
+	pathname ??= typeof window !== 'undefined' ? window.location.pathname ?? '' : '';
+	search ??= typeof window !== 'undefined' ? window.location.search ?? '' : '';
+
 	const fromPath = matchPath( { path: '/setup/:flow/*' }, pathname )?.params?.flow;
 	// backward support the old Stepper URL structure (?flow=something)
 	const fromQuery = new URLSearchParams( search ).get( 'flow' );

@@ -37,7 +37,7 @@ describe( 'addUrlToPendingPageRedirect', () => {
 			urlType: 'relative',
 		} );
 		expect( actual ).toEqual(
-			`/checkout/thank-you/${ siteSlug }/pending/${ orderId }?redirectTo=${ encodeURIComponent(
+			`/checkout/thank-you/${ siteSlug }/pending/${ orderId }?redirect_to=${ encodeURIComponent(
 				finalUrl
 			) }&receiptId=${ encodedReceiptPlaceholder }`
 		);
@@ -53,7 +53,7 @@ describe( 'addUrlToPendingPageRedirect', () => {
 			urlType: 'absolute',
 		} );
 		expect( actual ).toEqual(
-			`${ currentWindowOrigin }/checkout/thank-you/${ siteSlug }/pending/${ orderId }?redirectTo=${ encodeURIComponent(
+			`${ currentWindowOrigin }/checkout/thank-you/${ siteSlug }/pending/${ orderId }?redirect_to=${ encodeURIComponent(
 				finalUrl
 			) }&receiptId=${ encodedReceiptPlaceholder }`
 		);
@@ -68,7 +68,7 @@ describe( 'addUrlToPendingPageRedirect', () => {
 			orderId,
 		} );
 		expect( actual ).toEqual(
-			`${ currentWindowOrigin }/checkout/thank-you/${ siteSlug }/pending/${ orderId }?redirectTo=${ encodeURIComponent(
+			`${ currentWindowOrigin }/checkout/thank-you/${ siteSlug }/pending/${ orderId }?redirect_to=${ encodeURIComponent(
 				finalUrl
 			) }&receiptId=${ encodedReceiptPlaceholder }`
 		);
@@ -81,7 +81,7 @@ describe( 'addUrlToPendingPageRedirect', () => {
 			orderId,
 		} );
 		expect( actual ).toEqual(
-			`${ currentWindowOrigin }/checkout/thank-you/no-site/pending/${ orderId }?redirectTo=${ encodeURIComponent(
+			`${ currentWindowOrigin }/checkout/thank-you/no-site/pending/${ orderId }?redirect_to=${ encodeURIComponent(
 				finalUrl
 			) }&receiptId=${ encodedReceiptPlaceholder }`
 		);
@@ -96,7 +96,7 @@ describe( 'addUrlToPendingPageRedirect', () => {
 			fromSiteSlug,
 		} );
 		expect( actual ).toEqual(
-			`${ currentWindowOrigin }/checkout/thank-you/no-site/pending/${ orderId }?redirectTo=${ encodeURIComponent(
+			`${ currentWindowOrigin }/checkout/thank-you/no-site/pending/${ orderId }?redirect_to=${ encodeURIComponent(
 				finalUrl
 			) }&receiptId=${ encodedReceiptPlaceholder }&from_site_slug=${ fromSiteSlug }`
 		);
@@ -109,7 +109,7 @@ describe( 'addUrlToPendingPageRedirect', () => {
 			siteSlug,
 		} );
 		expect( actual ).toEqual(
-			`${ currentWindowOrigin }/checkout/thank-you/${ siteSlug }/pending/:orderId?redirectTo=${ encodeURIComponent(
+			`${ currentWindowOrigin }/checkout/thank-you/${ siteSlug }/pending/:orderId?redirect_to=${ encodeURIComponent(
 				finalUrl
 			) }&receiptId=${ encodedReceiptPlaceholder }`
 		);
@@ -124,7 +124,7 @@ describe( 'addUrlToPendingPageRedirect', () => {
 			receiptId,
 		} );
 		expect( actual ).toEqual(
-			`${ currentWindowOrigin }/checkout/thank-you/${ siteSlug }/pending/:orderId?redirectTo=${ encodeURIComponent(
+			`${ currentWindowOrigin }/checkout/thank-you/${ siteSlug }/pending/:orderId?redirect_to=${ encodeURIComponent(
 				finalUrl
 			) }&receiptId=${ receiptId }`
 		);
@@ -143,7 +143,7 @@ describe( 'redirectThroughPending', () => {
 			orderId,
 		} );
 		expect( redirectSpy ).toHaveBeenCalledWith(
-			`/checkout/thank-you/${ siteSlug }/pending/${ orderId }?redirectTo=${ encodeURIComponent(
+			`/checkout/thank-you/${ siteSlug }/pending/${ orderId }?redirect_to=${ encodeURIComponent(
 				finalUrl
 			) }&receiptId=${ encodedReceiptPlaceholder }`
 		);
@@ -164,7 +164,7 @@ describe( 'redirectThroughPending', () => {
 			orderId,
 		} );
 		expect( global.window.location.href ).toEqual(
-			`${ currentWindowOrigin }/checkout/thank-you/${ siteSlug }/pending/${ orderId }?redirectTo=${ encodeURIComponent(
+			`${ currentWindowOrigin }/checkout/thank-you/${ siteSlug }/pending/${ orderId }?redirect_to=${ encodeURIComponent(
 				finalUrl
 			) }&receiptId=${ encodedReceiptPlaceholder }`
 		);

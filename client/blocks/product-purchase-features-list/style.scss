@@ -28,7 +28,7 @@
 }
 
 .product-purchase-features-list__item .happiness-support {
-	box-shadow: 0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5), 0 1px 2px var(--color-neutral-0);
+	box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-neutral-10) 50%, transparent), 0 1px 2px var(--color-neutral-0);
 	box-sizing: border-box;
 	color: var(--color-text-subtle);
 	padding: 37px;

@@ -661,8 +661,8 @@ $container-padding-large: 48px;
 	}
 }
 
+// TODO: Remove most of these customizations once we introduce the FixedColumnOnTheLeftLayout wireframe.
 .step-container-v2:has(.step-container-v2--design-picker-preview) {
-	// TODO: Remove most of these customizations once we introduce the FixedColumnOnTheLeftLayout wireframe.
 	.step-container-v2__content-wrapper {
 		@include break-large {
 			padding-top: 0 !important;

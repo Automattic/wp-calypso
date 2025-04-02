@@ -11,7 +11,7 @@
 	padding: 0 10px;
 	border: 1px solid var(--color-neutral-0);
 	box-sizing: border-box;
-	background-color: rgba(var(--color-surface-rgb), 0);
+	background-color: color-mix(in srgb, var(--color-surface) 0%, transparent);
 	color: var(--color-text-subtle);
 	font-size: $font-body-extra-small;
 	text-align: left;

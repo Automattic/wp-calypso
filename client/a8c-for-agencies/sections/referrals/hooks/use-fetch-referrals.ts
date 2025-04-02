@@ -38,7 +38,7 @@ const getClientReferrals = ( referrals: ReferralAPIResponse[] ) => {
 	}, [] );
 };
 
-export default function useFetchReferrals( isEnabled: boolean ) {
+export default function useFetchReferrals() {
 	const agencyId = useSelector( getActiveAgencyId );
 
 	const data = useQuery( {
@@ -48,7 +48,7 @@ export default function useFetchReferrals( isEnabled: boolean ) {
 				apiNamespace: 'wpcom/v2',
 				path: `/agency/${ agencyId }/referrals`,
 			} ),
-		enabled: isEnabled && !! agencyId,
+		enabled: !! agencyId,
 		refetchOnWindowFocus: false,
 		select: getClientReferrals,
 	} );
