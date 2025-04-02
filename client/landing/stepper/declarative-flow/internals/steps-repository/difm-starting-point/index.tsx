@@ -6,6 +6,7 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import DIFMLanding from 'calypso/my-sites/marketing/do-it-for-me/difm-landing';
 import HelpCenterStepButton from 'calypso/signup/help-center-step-button';
+import useShouldRenderHelpCenterButton from 'calypso/signup/help-center-step-button/use-should-render-help-center-button';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { StepContainerV2DIFMStartingPoint } from './step-container-v2-difm-starting-point';
@@ -31,6 +32,10 @@ const DIFMStartingPoint: StepType< {
 
 	const helpCenterButtonCopy = translate( 'Questions?' );
 	const helpCenterButtonLink = translate( 'Contact our site-building team' );
+	const shouldRenderHelpCenter = useShouldRenderHelpCenterButton( {
+		flowName: DIFM_FLOW,
+		enabledGeos: [ 'US' ],
+	} );
 
 	if ( shouldUseStepContainerV2( flow ) ) {
 		const primaryButton = showNewOrExistingSiteChoice ? (
