@@ -39,19 +39,13 @@ export type NavigationControls<
 	 * screen(s) to a new stepper flow and linking directly
 	 * between flows/screens.
 	 */
-	goToStep?: ( step: StepperStep[ 'slug' ] ) => void;
+	goToStep?: ( step: string ) => void;
 
 	/**
 	 * Submits the answers provided in the flow. If it's complaining about the type, it means you haven't typed the step correctly.
 	 * @see {@link client/landing/stepper/declarative-flow/internals/steps-repository/DEVELOPMENT/making-a-new-step.md}
 	 */
-	submit: StepSubmittedTypes extends undefined | never
-		? () => void
-		: (
-				providedDependencies: StepSubmittedTypes extends Record< string, unknown >
-					? StepSubmittedTypes
-					: never
-		  ) => void;
+	submit: ( providedDependencies?: StepSubmittedTypes ) => void;
 
 	/**
 	 * Exits the flow and continue to the given path
@@ -160,6 +154,10 @@ export type DeprecatedFlowV1 = {
 	 * If this flag is set to true, the flow will login the user without leaving Stepper.
 	 */
 	__experimentalUseBuiltinAuth?: boolean;
+	/**
+	 * If this flag is set to true, the flow will use sessions to store the user's progress.
+	 */
+	__experimentalUseSessions?: boolean;
 	name: string;
 	/**
 	 * If this flow extends another flow, the variant slug will be added as a class name to the root element of the flow.

@@ -141,7 +141,7 @@ const copySite: DeprecatedFlowV1 = {
 			return;
 		};
 
-		const goToStep = ( step: StepperStep[ 'slug' ] ) => {
+		const goToStep = ( step: string ) => {
 			navigate( step );
 		};
 

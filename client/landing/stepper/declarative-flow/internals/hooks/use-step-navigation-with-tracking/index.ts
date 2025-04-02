@@ -13,13 +13,19 @@ import {
 	recordStepNavigation,
 	type RecordStepNavigationParams,
 } from '../../analytics/record-step-navigation';
-import type { DeprecatedFlowV1, Navigate, ProvidedDependencies, StepperStep } from '../../types';
+import type {
+	DeprecatedFlowV1,
+	FlowV2,
+	Navigate,
+	ProvidedDependencies,
+	StepperStep,
+} from '../../types';
 
-interface Params< FlowSteps extends StepperStep[] > {
-	flow: DeprecatedFlowV1;
+interface Params {
+	flow: DeprecatedFlowV1 | FlowV2;
 	stepSlugs: StepperStep[ 'slug' ][];
 	currentStepRoute: StepperStep[ 'slug' ];
-	navigate: Navigate< FlowSteps >;
+	navigate: Navigate;
 }
 
 export const useStepNavigationWithTracking = ( {
@@ -27,7 +33,7 @@ export const useStepNavigationWithTracking = ( {
 	stepSlugs,
 	currentStepRoute,
 	navigate,
-}: Params< StepperStep[] > ) => {
+}: Params ) => {
 	// We don't know the type of the return value of useStepNavigation, because we don't know which flow is this.
 	// So we cast it to any.
 	const stepNavigationV1: any =

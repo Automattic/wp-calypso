@@ -108,7 +108,7 @@ const availableFlows: Record< string, () => Promise< { default: DeprecatedFlowV1
 		import( /* webpackChunkName: "example-flow" */ './flows/00-example-flow/example' ),
 };
 
-const aiSiteBuilderFlows: Record< string, () => Promise< { default: DeprecatedFlowV1 } > > = config.isEnabled(
+const aiSiteBuilderFlows: Record< string, () => Promise< { default: FlowV2 } > > = config.isEnabled(
 	'calypso/ai-site-builder-flow'
 )
 	? {

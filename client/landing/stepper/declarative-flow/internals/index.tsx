@@ -27,7 +27,13 @@ import { usePreloadSteps, lazyCache } from './hooks/use-preload-steps';
 import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
 import { useStepNavigationWithTracking } from './hooks/use-step-navigation-with-tracking';
 import { PRIVATE_STEPS } from './steps';
-import { AssertConditionState, StepProps, type DeprecatedFlowV1, type StepperStep } from './types';
+import {
+	AssertConditionState,
+	FlowV2,
+	StepProps,
+	type DeprecatedFlowV1,
+	type StepperStep,
+} from './types';
 import type { StepperInternalSelect } from '@automattic/data-stores';
 import './global.scss';
 
@@ -57,10 +63,10 @@ function flowStepComponent( flowStep: StepperStep | undefined ) {
  * @param props.steps the steps of the flow.
  * @returns A React router switch will all the routes
  */
-export const FlowRenderer: React.FC< { flow: DeprecatedFlowV1; steps: readonly StepperStep[] | null } > = ( {
-	flow,
-	steps,
-} ) => {
+export const FlowRenderer: React.FC< {
+	flow: DeprecatedFlowV1 | FlowV2;
+	steps: readonly StepperStep[] | null;
+} > = ( { flow, steps } ) => {
 	// Configure app element that React Modal will aria-hide when modal is open
 	Modal.setAppElement( '#wpcom' );
 	const deprecatedFlowSteps = 'useSteps' in flow ? flow.useSteps() : null;

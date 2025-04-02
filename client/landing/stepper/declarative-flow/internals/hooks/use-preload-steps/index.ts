@@ -3,7 +3,7 @@ import debugFactory from 'debug';
 import { useEffect } from 'react';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import type { DeprecatedFlowV1, StepperStep } from '../../types';
+import type { DeprecatedFlowV1, FlowV2, StepperStep } from '../../types';
 
 const debug = debugFactory( 'calypso:stepper:preloading' );
 
@@ -37,7 +37,7 @@ export function usePreloadSteps(
 	selectedSite: SiteDetails | undefined | null,
 	currentStepRoute: string,
 	flowSteps: readonly StepperStep[],
-	flow: DeprecatedFlowV1
+	flow: DeprecatedFlowV1 | FlowV2
 ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 

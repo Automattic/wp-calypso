@@ -11,14 +11,14 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { PRIVATE_STEPS } from '../../steps';
 import SurveyManager from '../survery-manager';
 import { useStepRouteTracking } from './hooks/use-step-route-tracking';
-import type { DeprecatedFlowV1, Navigate, StepperStep } from '../../types';
+import type { DeprecatedFlowV1, FlowV2, Navigate, StepperStep } from '../../types';
 import type { StepperInternalSelect } from '@automattic/data-stores';
 
 type StepRouteProps = {
 	step: StepperStep;
-	flow: DeprecatedFlowV1;
+	flow: DeprecatedFlowV1 | FlowV2;
 	renderStep: ( step: StepperStep ) => JSX.Element | null;
-	navigate: Navigate< StepperStep[] >;
+	navigate: Navigate;
 };
 
 // TODO: Check we can move RenderStep function to here and remove the renderStep prop
