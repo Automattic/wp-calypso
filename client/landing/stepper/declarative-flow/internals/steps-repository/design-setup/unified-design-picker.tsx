@@ -137,6 +137,29 @@ const UnifiedDesignPickerStep: StepType< {
 
 	const designPickerFilters = useDesignPickerFilters();
 
+	// ********** Logic for selecting a design and style variation
+	const {
+		isPreviewingDesign,
+		selectedDesign,
+		selectedStyleVariation,
+		selectedColorVariation,
+		selectedFontVariation,
+		numOfSelectedGlobalStyles,
+		globalStyles,
+		setSelectedDesign,
+		previewDesign,
+		previewDesignVariation,
+		setSelectedColorVariation,
+		setSelectedFontVariation,
+		setGlobalStyles,
+		resetPreview,
+	} = useRecipe( allDesigns, pickUnlistedDesign, recordPreviewDesign, recordPreviewStyleVariation );
+
+	// Make sure people is at the top when entering/leaving preview mode.
+	useEffect( () => {
+		window.scrollTo( { top: 0 } );
+	}, [ isPreviewingDesign ] );
+
 	const getEventPropsByDesign = useCallback(
 		(
 			design: Design,
@@ -179,32 +202,9 @@ const UnifiedDesignPickerStep: StepType< {
 		);
 	}
 
-	// ********** Logic for selecting a design and style variation
-	const {
-		isPreviewingDesign,
-		selectedDesign,
-		selectedStyleVariation,
-		selectedColorVariation,
-		selectedFontVariation,
-		numOfSelectedGlobalStyles,
-		globalStyles,
-		setSelectedDesign,
-		previewDesign,
-		previewDesignVariation,
-		setSelectedColorVariation,
-		setSelectedFontVariation,
-		setGlobalStyles,
-		resetPreview,
-	} = useRecipe( allDesigns, pickUnlistedDesign, recordPreviewDesign, recordPreviewStyleVariation );
-
 	useQueryThemes( 'wpcom', {
 		number: 1000,
 	} );
-
-	// Make sure people is at the top when entering/leaving preview mode.
-	useEffect( () => {
-		window.scrollTo( { top: 0 } );
-	}, [ isPreviewingDesign ] );
 
 	function trackAllDesignsView() {
 		recordTracksEvent( 'calypso_signup_design_scrolled_to_end', {
