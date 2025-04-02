@@ -102,7 +102,7 @@ class MagicLogin extends Component {
 		emailRequested: PropTypes.bool.isRequired,
 		localeSuggestions: PropTypes.shape( {
 			locales: PropTypes.array,
-			availability_text: PropTypes.string,
+			availability_text_templates: PropTypes.object,
 		} ),
 		isValidatingCode: PropTypes.bool,
 		isCodeValidated: PropTypes.bool,
