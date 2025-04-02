@@ -219,7 +219,7 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index, menu } ) => 
 					onClick={ handleBloggingPromptClick }
 					className="blogging-prompt__new-post-link"
 				>
-					{ translate( 'Post Answer', {
+					{ translate( 'Post answer', {
 						comment:
 							'"Post" here is a verb meaning "to publish", as in "post an answer to this writing prompt"',
 					} ) }
@@ -240,7 +240,7 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index, menu } ) => 
 					onClick={ handleAIPromptClick }
 					className="blogging-prompt__new-post-link"
 				>
-					{ translate( 'Post Answer', {
+					{ translate( 'Post answer', {
 						comment:
 							'"Post" here is a verb meaning "to publish", as in "post an answer to this writing prompt"',
 					} ) }
