@@ -141,7 +141,7 @@ export default function LocaleSuggestions( { path, locale }: LocaleSuggestionsPr
 			return null;
 		}
 
-		// Compute the availability string replacing string arguments with component placeholders, e.g. "Also available in <LocaleSuggestion1 /> and <LocaleSuggestion2 />".
+		// Compute the availability text replacing string arguments with component placeholders, e.g. "Also available in <LocaleSuggestion1 /> and <LocaleSuggestion2 />".
 		const availabilityTextWithComponentPlaceholders = sprintf(
 			availabilityText,
 			...Object.keys( userOtherLocalesComponentsMap ).map(
