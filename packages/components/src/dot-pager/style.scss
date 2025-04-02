@@ -11,6 +11,14 @@
 		opacity: 0;
 		visibility: hidden;
 	}
+
+	// Match Card link styles
+	a {
+		text-decoration: none;
+	}
+	p a {
+		text-decoration: underline;
+	}
 }
 
 .dot-pager__controls {
