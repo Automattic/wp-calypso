@@ -1,0 +1,9 @@
+@import '@wordpress/base-styles/colors';
+
+.dashboard-main-menu__item.dashboard-main-menu__item {
+	color: $gray-700;
+
+	&.is-active {
+		color: $black;
+	}
+}
