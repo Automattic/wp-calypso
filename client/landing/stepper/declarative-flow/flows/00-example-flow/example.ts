@@ -19,7 +19,7 @@ import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login
 import { useFlowState } from '../../internals/state-manager/store';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
-import type { FlowV2 } from '../../internals/types';
+import type { FlowV2, Navigate } from '../../internals/types';
 
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 
@@ -82,7 +82,7 @@ const newsletter: FlowV2< typeof initialize > = {
 
 		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
 			exitFlow,
-			navigate,
+			navigate: navigate as Navigate,
 		} );
 
 		const completeSubscribersTask = async () => {
