@@ -182,29 +182,6 @@
 	}
 }
 
-// TODO: update when cleaning stats/empty-module-traffic feature flag
-// (stats-card--empty-variant should be added to the root of the card when isEmpty is passed = className shouldn't
-// continue to set it - it's not compatible with footer actions)
-.stats-card--empty-variant {
-	.stats-card--header-and-body {
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		flex-grow: 1;
-	}
-
-	.stats-card--footer {
-		margin-top: 2px;
-	}
-
-	.stats-card--body-empty {
-		display: flex;
-		flex: 1 0 auto;
-		align-items: center;
-		justify-content: center;
-	}
-}
-
 .stats-card-avatar {
 	display: flex;
 
