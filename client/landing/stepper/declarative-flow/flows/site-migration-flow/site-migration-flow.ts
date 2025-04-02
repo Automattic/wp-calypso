@@ -21,7 +21,7 @@ import { USER_STORE, SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/s
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
-//TODO: Move to the a shared place
+//TODO: Move to a shared place
 import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
