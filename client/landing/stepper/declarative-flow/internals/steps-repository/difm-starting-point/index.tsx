@@ -6,7 +6,6 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import DIFMLanding from 'calypso/my-sites/marketing/do-it-for-me/difm-landing';
 import HelpCenterStepButton from 'calypso/signup/help-center-step-button';
-import useShouldRenderHelpCenterButton from 'calypso/signup/help-center-step-button/use-should-render-help-center-button';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { StepContainerV2DIFMStartingPoint } from './step-container-v2-difm-starting-point';
@@ -23,17 +22,6 @@ const DIFMStartingPoint: StepType< {
 	const existingSiteCount = useSelector( ( state: AppState ) => getCurrentUserSiteCount( state ) );
 	const siteId = useSite()?.ID;
 	const showNewOrExistingSiteChoice = ! siteId && !! existingSiteCount && existingSiteCount > 0;
-
-	const queryParams = new URLSearchParams( window?.location.search );
-	const flags = queryParams.get( 'flags' )?.split( ',' );
-	const isHelpCenterLinkEnabled = flags?.includes( 'signup/help-center-link' );
-
-	const shouldRenderHelpCenterLink = useShouldRenderHelpCenterButton( {
-		flowName: DIFM_FLOW,
-		enabledGeos: [ 'US' ],
-	} );
-
-	const shouldRenderHelpCenter = isHelpCenterLinkEnabled && shouldRenderHelpCenterLink;
 
 	const onSubmit = ( value: 'existing-site' | 'new-site' ) => {
 		submit?.( {
