@@ -76,6 +76,8 @@ $y-axis-padding: 0 20px;
 }
 
 // For forcing the width of y-axis to the width of the label
+// Uses invisible text to establish consistent width while maintaining layout flow
+// The color property has a fallback for browsers that don't support color-mix
 .chart__y-axis-width-fix {
 	color: transparent; // Fallback for browsers that don't support color-mix
 	color: color-mix(in srgb, var(--color-surface) 0%, transparent);
@@ -119,6 +121,9 @@ $y-axis-padding: 0 20px;
 	background: var(--color-neutral-60);
 }
 
+// X-axis width spacer
+// Similar to y-axis, creates consistent width spacing using invisible text
+// Uses the same fallback pattern for browser compatibility
 .chart__x-axis-width-spacer {
 	color: transparent; // Fallback for browsers that don't support color-mix
 	color: color-mix(in srgb, var(--color-surface) 0%, transparent);
