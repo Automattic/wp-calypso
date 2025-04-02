@@ -50,7 +50,7 @@ function useBrowserLocale(): string | undefined {
  */
 function useUserOtherLocales(): LocaleSuggestion[] {
 	// eslint-disable-next-line wpcalypso/i18n-translate-identifier
-	const { localeSlug: currentLocale } = useTranslate();
+	const { localeSlug: currentLocale = '' } = useTranslate();
 	const localeSuggestions = useSelector( getLocaleSuggestions ) as
 		| LocaleSuggestionsData
 		| undefined;
@@ -61,7 +61,7 @@ function useUserOtherLocales(): LocaleSuggestion[] {
 		}
 
 		return localeSuggestions.locales.filter(
-			( { locale } ) => ! locale.startsWith( currentLocale as string )
+			( { locale } ) => ! currentLocale.startsWith( locale )
 		);
 	}, [ localeSuggestions?.locales, currentLocale ] );
 }
