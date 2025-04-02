@@ -31,6 +31,8 @@ export const WideLayout = ( {
 	maxWidth = 'wide',
 	hasContentPadding: hasContentPaddingProp = true,
 }: WideLayoutProps ) => {
+	const contentGridColumn = '1 / -1';
+
 	return (
 		<StepContainerV2>
 			{ ( context ) => {
@@ -45,9 +47,11 @@ export const WideLayout = ( {
 					<>
 						<TopBarRenderer topBar={ topBar } />
 						<ContentWrapper hasPadding={ hasContentPadding } maxWidth={ maxWidth }>
-							{ heading }
-							<Content className={ className }>{ content }</Content>
-							{ footer }
+							{ heading && <div style={ { gridColumn: '4 / 10' } }>{ heading }</div> }
+							<div style={ { gridColumn: contentGridColumn } }>
+								<Content className={ className }>{ content }</Content>
+							</div>
+							{ footer && <div style={ { gridColumn: contentGridColumn } }>{ footer }</div> }
 						</ContentWrapper>
 						<StickyBottomBarRenderer stickyBottomBar={ stickyBottomBar } />
 					</>

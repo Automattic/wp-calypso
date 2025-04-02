@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { ReactNode } from 'react';
+import { ReactNode, Children, isValidElement } from 'react';
 
 import './style.scss';
 
@@ -16,12 +16,15 @@ export const ContentWrapper = ( {
 	centerAligned?: boolean;
 	hasPadding?: boolean;
 } ) => {
+	const childrenCount = Children.toArray( children ).filter( isValidElement ).length;
+
 	return (
 		<div
 			className={ clsx( 'step-container-v2__content-wrapper', maxWidth, {
 				'center-aligned': centerAligned,
 				padding: hasPadding,
 			} ) }
+			style={ { gridTemplateRows: `repeat( ${ childrenCount }, min-content )` } }
 		>
 			{ children }
 		</div>

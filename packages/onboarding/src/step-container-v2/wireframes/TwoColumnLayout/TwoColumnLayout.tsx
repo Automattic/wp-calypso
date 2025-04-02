@@ -29,6 +29,8 @@ export const TwoColumnLayout = ( {
 	footer,
 	stickyBottomBar,
 }: TwoColumnLayoutProps ) => {
+	const contentGridColumn = '2 / 12';
+
 	const getChildFlexGrow = ( index: number ) => {
 		switch ( index ) {
 			case 0:
@@ -60,13 +62,15 @@ export const TwoColumnLayout = ( {
 					<>
 						<TopBarRenderer topBar={ topBar } />
 						<ContentWrapper>
-							{ heading }
-							<Content
-								className={ clsx( 'step-container-v2__content--two-column-layout', className ) }
-							>
-								{ childElements }
-							</Content>
-							{ footer }
+							{ heading && <div style={ { gridColumn: '4 / 10' } }>{ heading }</div> }
+							<div style={ { gridColumn: contentGridColumn } }>
+								<Content
+									className={ clsx( 'step-container-v2__content--two-column-layout', className ) }
+								>
+									{ childElements }
+								</Content>
+							</div>
+							{ footer && <div style={ { gridColumn: contentGridColumn } }>{ footer }</div> }
 						</ContentWrapper>
 						<StickyBottomBarRenderer stickyBottomBar={ stickyBottomBar } />
 					</>

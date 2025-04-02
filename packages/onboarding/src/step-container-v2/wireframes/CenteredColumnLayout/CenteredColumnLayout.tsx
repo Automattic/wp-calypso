@@ -7,8 +7,6 @@ import { ContentProp } from '../../components/StepContainerV2/context';
 import { StickyBottomBarRenderer } from '../../components/StickyBottomBar/StickyBottomBarRenderer';
 import { TopBarRenderer } from '../../components/TopBar/TopBarRenderer';
 
-import './style.scss';
-
 interface CenteredColumnLayoutProps {
 	topBar?: ContentProp;
 	heading?: ReactNode;
@@ -20,6 +18,9 @@ interface CenteredColumnLayoutProps {
 	verticalAlign?: 'center';
 }
 
+const TOTAL_COLUMNS = 12;
+const STARTING_COLUMN = TOTAL_COLUMNS / 2 + 1;
+
 export const CenteredColumnLayout = ( {
 	columnWidth,
 	topBar,
@@ -30,6 +31,9 @@ export const CenteredColumnLayout = ( {
 	stickyBottomBar,
 	verticalAlign,
 }: CenteredColumnLayoutProps ) => {
+	const startColumn = STARTING_COLUMN - columnWidth / 2;
+	const contentGridColumn = `${ startColumn } / ${ startColumn + columnWidth }`;
+
 	return (
 		<StepContainerV2>
 			{ ( context ) => {
@@ -39,17 +43,19 @@ export const CenteredColumnLayout = ( {
 					<>
 						<TopBarRenderer topBar={ topBar } />
 						<ContentWrapper centerAligned={ context.isSmallViewport && verticalAlign === 'center' }>
-							{ heading }
-							<Content
-								className={ clsx(
-									'step-container-v2__content--centered-column-layout',
-									`step-container-v2__content--centered-column-layout-${ columnWidth }`,
-									className
-								) }
-							>
-								{ content }
-							</Content>
-							{ footer }
+							{ heading && <div style={ { gridColumn: '4 / 10' } }>{ heading }</div> }
+							<div style={ { gridColumn: contentGridColumn } }>
+								<Content
+									className={ clsx(
+										'step-container-v2__content--centered-column-layout',
+										`step-container-v2__content--centered-column-layout-${ columnWidth }`,
+										className
+									) }
+								>
+									{ content }
+								</Content>
+							</div>
+							{ footer && <div style={ { gridColumn: contentGridColumn } }>{ footer }</div> }
 						</ContentWrapper>
 						<StickyBottomBarRenderer stickyBottomBar={ stickyBottomBar } />
 					</>
