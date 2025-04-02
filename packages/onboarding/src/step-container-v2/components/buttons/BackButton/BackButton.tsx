@@ -9,9 +9,9 @@ import { ButtonProps } from '../../../types';
 import './style.scss';
 
 export const BackButton = ( {
-	recordTracksEvent,
+	enableTracksEvent = true,
 	...originalProps
-}: ButtonProps & { recordTracksEvent?: boolean } ) => {
+}: ButtonProps & { enableTracksEvent?: boolean } ) => {
 	const { __ } = useI18n();
 	const stepContext = useStepContainerV2Context();
 
@@ -21,7 +21,7 @@ export const BackButton = ( {
 		icon: chevronLeft,
 	} );
 
-	const buttonProps = recordTracksEvent
+	const buttonProps = enableTracksEvent
 		? decorateButtonWithTracksEventRecording( backButtonProps, {
 				tracksEventName: 'calypso_signup_previous_step_button_click',
 				stepContext,

@@ -681,7 +681,7 @@ const UnifiedDesignPickerPreview = ( {
 							leftElement={
 								( activeScreen || styleVariations.length > 0 ) && (
 									<Step.BackButton
-										recordTracksEvent={ ! activeScreen }
+										enableTracksEvent={ ! activeScreen }
 										onClick={ () => {
 											if ( activeScreen?.onBack ) {
 												navigatorRef.current?.goBack();
