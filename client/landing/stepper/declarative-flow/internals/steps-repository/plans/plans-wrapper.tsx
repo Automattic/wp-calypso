@@ -200,7 +200,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		}
 
 		if ( isDomainUpsellFlow( flowName ) ) {
-			return __( 'There’s a plan for you' );
+			return __( 'Choose your flavor of WordPress' );
 		}
 
 		if ( isNewsletterFlow( flowName ) || isStartWritingFlow( flowName ) ) {

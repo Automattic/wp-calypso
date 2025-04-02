@@ -14,10 +14,10 @@ import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import wpcom from 'calypso/lib/wp';
 import { DesktopLoginStart, DesktopLoginFinalize } from 'calypso/login/desktop-login';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
-import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { loginSocialUser, rebootAfterLogin } from 'calypso/state/login/actions';
 import { postLoginRequest } from 'calypso/state/login/utils';
+import { logoutUser } from 'calypso/state/logout/actions';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -66,6 +66,7 @@ const enhanceContextWithLogin = ( context ) => {
 		? { client_id, user_email, user_name, id_token, state }
 		: null;
 	const isJetpackLogin = isJetpack === 'jetpack';
+	const isP2Login = query && query.from === 'p2';
 	const clientId = query?.client_id;
 	const oauth2ClientId = query?.oauth2_client_id;
 	const oauth2Client =
@@ -74,7 +75,10 @@ const enhanceContextWithLogin = ( context ) => {
 	const isPartnerPortalClient = isPartnerPortalOAuth2Client( oauth2Client );
 
 	const isWhiteLogin =
-		( ! isJetpackLogin && Boolean( clientId ) === false && Boolean( oauth2ClientId ) === false ) ||
+		( ! isJetpackLogin &&
+			! isP2Login &&
+			Boolean( clientId ) === false &&
+			Boolean( oauth2ClientId ) === false ) ||
 		isGravPoweredClient ||
 		isPartnerPortalClient;
 
@@ -83,6 +87,7 @@ const enhanceContextWithLogin = ( context ) => {
 			action={ action }
 			isJetpack={ isJetpackLogin }
 			isWhiteLogin={ isWhiteLogin }
+			isP2Login={ isP2Login }
 			isGravPoweredClient={ isGravPoweredClient }
 			path={ path }
 			twoFactorAuthType={ twoFactorAuthType }
@@ -216,11 +221,6 @@ export async function jetpackGoogleAuth( context, next ) {
 		return next();
 	}
 
-	if ( isUserLoggedIn( context.store.getState() ) ) {
-		// Log out the user and reload the page
-		return context.store.dispatch( redirectToLogout( window.location.href ) );
-	}
-
 	const redirectUri = `https://${ window.location.host }${ loginPath( {
 		socialService: 'google',
 	} ) }`;
@@ -236,7 +236,7 @@ export async function jetpackGoogleAuth( context, next ) {
 
 		// Create state object with relevant data
 		const stateObject = {
-			redirect_to: query?.redirect_to || window.location.origin,
+			redirect_to: query?.redirect_to || '/',
 			is_jetpack: true,
 			locale: context.params.lang,
 			wpcomNonce: nonce,
@@ -252,6 +252,10 @@ export async function jetpackGoogleAuth( context, next ) {
 			if ( ! window?.google?.accounts?.oauth2 ) {
 				throw new Error( 'Failed to load Google Identity Services API' );
 			}
+		}
+
+		if ( isUserLoggedIn( context.store.getState() ) ) {
+			await context.store.dispatch( logoutUser() );
 		}
 
 		// Initialize and request authorization code
@@ -296,7 +300,7 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 		const stateData = JSON.parse( stateString || '{}' );
 
 		state = {
-			redirect_to: stateData.redirect_to || window.location.origin,
+			redirect_to: stateData.redirect_to || '/',
 			is_jetpack: stateData.is_jetpack || true,
 			locale: stateData.locale || getLocaleSlug(),
 			wpcomNonce: stateData.wpcomNonce || '',
@@ -361,29 +365,50 @@ export async function jetpackGoogleAuthCallback( context, next ) {
 				client_secret: config( 'wpcom_signup_key' ),
 				tos: JSON.stringify( getToSAcceptancePayload() ),
 			} );
+
+			await context.store.dispatch(
+				loginSocialUser(
+					{
+						service: 'google',
+						access_token,
+						id_token,
+					},
+					state.redirect_to
+				)
+			);
+			const url = new URL( state.redirect_to );
+			context.store.dispatch(
+				setRoute( url.pathname, Object.fromEntries( url.searchParams.entries() ) )
+			);
+
+			await context.store.dispatch( rebootAfterLogin() );
+			return page.redirect( state.redirect_to );
 		} catch ( createError ) {
-			// Silently fail: user already exists
-		}
-
-		await context.store.dispatch(
-			loginSocialUser(
-				{
-					service: 'google',
-					access_token,
-					id_token,
+			// If both connection and creation fail, show warning and redirect
+			context.store.dispatch( {
+				type: 'NOTICE_CREATE',
+				notice: {
+					status: 'is-warning',
+					text: 'Could not complete Google login. Please try again.',
 				},
-				state.redirect_to
-			)
-		);
-		const url = new URL( state.redirect_to );
-		context.store.dispatch(
-			setRoute( url.pathname, Object.fromEntries( url.searchParams.entries() ) )
-		);
+			} );
 
-		await context.store.dispatch( rebootAfterLogin() );
-		return page.redirect( state.redirect_to );
+			return redirectJetpackDirectAuthError( context, next, {
+				code: null,
+				redirect_to: state.redirect_to,
+			} );
+		}
 	} catch {
+		context.store.dispatch( {
+			type: 'NOTICE_CREATE',
+			notice: {
+				status: 'is-error',
+				text: 'Error during Google authentication. Please try again.',
+			},
+		} );
+
 		return redirectJetpackDirectAuthError( context, next, {
+			code: null,
 			redirect_to: state.redirect_to,
 		} );
 	}
@@ -397,25 +422,25 @@ export async function jetpackAppleAuth( context, next ) {
 		return next();
 	}
 
-	if ( isUserLoggedIn( context.store.getState() ) ) {
-		// Log out the user and reload the page
-		return context.store.dispatch( redirectToLogout( window.location.href ) );
-	}
-
 	const redirectUri = `https://${ window.location.host }${ loginPath( {
 		socialService: 'apple',
 	} ) }`;
 
 	try {
-		// Siwa nonce: see social-buttons/apple.js
-		const nonce = String( Math.floor( Math.random() * 10e9 ) );
+		// Get authorization nonce for security
+		const response = await wpcomRequest( {
+			path: '/generate-authorization-nonce',
+			apiNamespace: 'wpcom/v2',
+			method: 'GET',
+		} );
+		const nonce = response.nonce;
 
 		// Create state object with relevant data
 		const stateObject = {
 			is_jetpack: true,
 			oauth2State: nonce,
 			// Allow just redirect_to to be passed in the query params
-			queryString: `redirect_to=${ query?.redirect_to || window.location.origin }`,
+			queryString: `redirect_to=${ query?.redirect_to || '/' }`,
 		};
 
 		// Store nonce in sessionStorage for validation on callback
@@ -430,6 +455,10 @@ export async function jetpackAppleAuth( context, next ) {
 			if ( ! window.AppleID ) {
 				throw new Error( 'Failed to load Apple Authentication Services API' );
 			}
+		}
+
+		if ( isUserLoggedIn( context.store.getState() ) ) {
+			await context.store.dispatch( logoutUser() );
 		}
 
 		// Initialize Apple auth
@@ -539,13 +568,10 @@ export async function jetpackGitHubAuth( context, next ) {
 		return next();
 	}
 
-	const redirectUri = `${ window.location.origin }/log-in/jetpack/github/callback`;
+	const redirectUri = `https://${ window.location.host }/log-in/jetpack/github/callback`;
 	try {
 		// Store redirect_to in sessionStorage for use on callback
-		window.sessionStorage.setItem(
-			'github_redirect_to',
-			query?.redirect_to || window.location.origin
-		);
+		window.sessionStorage.setItem( 'github_redirect_to', query?.redirect_to || '/' );
 
 		// Redirect to GitHub authorization URL
 		const scope = 'read:user,user:email';
@@ -553,7 +579,12 @@ export async function jetpackGitHubAuth( context, next ) {
 			redirect_uri: redirectUri,
 			scope,
 			ux_mode: 'redirect',
+			redirect_to: query?.redirect_to || '/',
 		} );
+
+		if ( isUserLoggedIn( context.store.getState() ) ) {
+			await context.store.dispatch( logoutUser() );
+		}
 
 		window.location.href = `https://public-api.wordpress.com/wpcom/v2/hosting/github/app-authorize?${ params.toString() }`;
 	} catch {
@@ -584,10 +615,14 @@ export async function jetpackGitHubAuthCallback( context, next ) {
 	window.sessionStorage.removeItem( 'github_redirect_to' );
 
 	try {
+		// GitHub supports localhost auth; and we allowlist the jetpack callback path
+		const redirectUri = `${ window.location.origin }/log-in/jetpack/github/callback`;
+
 		// Exchange auth code for tokens
 		const response = await postLoginRequest( 'exchange-social-auth-code', {
 			service: 'github',
 			auth_code: code,
+			redirect_uri: redirectUri,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 		} );
@@ -804,22 +839,10 @@ export function redirectLostPassword( context, next ) {
 }
 
 export function redirectJetpackDirectAuthError( context, next, newQuery = {} ) {
-	const queryParams = new URLSearchParams( Object.assign( {}, context.query, newQuery ) );
-
-	queryParams.set( 'allow_site_connection', '1' );
-
-	const fallbackUrl = `/log-in/jetpack/?${ queryParams.toString() }`;
-	window.history.replaceState( null, '', fallbackUrl );
-
-	try {
-		const redirectTo = new URL( `${ window.location.origin }${ fallbackUrl }` ); // it needs to be /log-in...?redirect_to=... for SET_ROUTE action
-		window.sessionStorage.setItem( 'login_redirect_to', queryParams.get( 'redirect_to' ) ); // here we get specific value
-		context.store.dispatch(
-			setRoute( redirectTo.pathname, Object.fromEntries( redirectTo.searchParams.entries() ) )
-		);
-	} catch {
-		// Silently fail
-	}
-
+	const queryString = new URLSearchParams(
+		Object.assign( {}, context.query, newQuery )
+	).toString();
+	const redirectUrl = queryString ? `/log-in/jetpack/?${ queryString }` : '/log-in/jetpack/';
+	window.history.replaceState( null, '', redirectUrl );
 	return next();
 }

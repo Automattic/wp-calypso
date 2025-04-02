@@ -542,7 +542,8 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for students' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for students' ),
 	getStoreAudience: () => i18n.translate( 'Best for students' ),
-	getPlanTagline: () => i18n.translate( 'Get started with all the basics.' ),
+	getPlanTagline: () =>
+		i18n.translate( 'Get a taste of the world’s most popular CMS & blogging software.' ),
 	getNewsletterTagLine: () =>
 		i18n.translate( 'Start fresh or make the switch, bringing your first 100 readers with you.' ),
 	getBlogOnboardingTagLine: () =>
@@ -734,7 +735,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for personal use' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for personal use' ),
 	getStoreAudience: () => i18n.translate( 'Best for personal use' ),
-	getPlanTagline: () => i18n.translate( 'Make your mark with a custom domain.' ),
+	getPlanTagline: () => i18n.translate( 'Create your home on the web with a custom domain name.' ),
 	getNewsletterTagLine: () =>
 		i18n.translate( 'Monetize your writing, go ad-free, and expand your media content.' ),
 	getBlogOnboardingTagLine: () =>
@@ -911,7 +912,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	getPortfolioAudience: () => i18n.translate( 'Best for online stores' ),
 	getStoreAudience: () => i18n.translate( 'Best for online stores' ),
 	getPlanTagline: () =>
-		i18n.translate( 'Grow your online store with commerce-optimized extensions.' ),
+		i18n.translate( 'Build an online store with powerful, integrated premium extensions.' ),
 	getDescription: () => {
 		return i18n.translate(
 			'{{strong}}Best for online stores:{{/strong}} Sell products or services with this powerful, ' +
@@ -1275,8 +1276,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for freelancers' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for freelancers' ),
 	getStoreAudience: () => i18n.translate( 'Best for freelancers' ),
-	getPlanTagline: () =>
-		i18n.translate( 'Step up site customization with premium design features.' ),
+	getPlanTagline: () => i18n.translate( 'Build a unique website with powerful design tools.' ),
 	getNewsletterTagLine: () =>
 		i18n.translate( 'Make it even more memorable with premium designs and style customization.' ),
 	getBlogOnboardingTagLine: () =>
@@ -1486,7 +1486,9 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	getPortfolioAudience: () => i18n.translate( 'Best for small businesses' ),
 	getStoreAudience: () => i18n.translate( 'The plan for small businesses' ),
 	getPlanTagline: () =>
-		i18n.translate( 'Unlock next-level WordPress with custom plugins and themes.' ),
+		i18n.translate(
+			'Unlock the power of WordPress with the managed hosting platform built by WordPress experts.'
+		),
 	getBlogOnboardingTagLine: () =>
 		i18n.translate( 'Expand your blog with plugins and powerful tools to help you scale.' ),
 	getDescription: () =>
@@ -1870,7 +1872,9 @@ const get2023EnterprisGrideDetails = (): IncompleteWPcomPlan => ( {
 	getTitle: () => i18n.translate( 'Enterprise' ),
 	getAudience: () => i18n.translate( 'Best for enterprises' ),
 	getPlanTagline: () =>
-		i18n.translate( 'Level up to bespoke Enterprise-grade performance and security.' ),
+		i18n.translate(
+			'Deliver an unmatched performance with the highest security standards on our enterprise content platform.'
+		),
 	getDescription: () => '',
 	get2023PricingGridSignupWpcomFeatures: () => [],
 	get2023PricingGridSignupJetpackFeatures: () => [],

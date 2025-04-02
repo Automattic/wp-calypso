@@ -1,15 +1,13 @@
 /* stylelint-disable scss/load-no-partial-leading-underscore */
-@import '@wordpress/base-styles/variables';
-@import '@automattic/calypso-color-schemes';
+@import "@wordpress/base-styles/variables";
+@import "@automattic/calypso-color-schemes";
 
 // Calypso style needs these variables
-@import '@automattic/typography/styles/variables';
+@import "@automattic/typography/styles/variables";
 
-@import 'calypso/assets/stylesheets/shared/mixins/_breakpoints';
+@import "calypso/assets/stylesheets/shared/mixins/_breakpoints";
 
-@import '@wordpress/components/build-style/style';
-
-@import '@automattic/typography';
+@import "@wordpress/components/build-style/style";
 
 html {
 	font-family: $default-font;

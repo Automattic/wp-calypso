@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid';
 import { recordTracksEvent } from './tracks';
 
 export type Railcar = {
@@ -69,5 +70,5 @@ export function recordTrainTracksInteract( { railcarId, action }: TrainTracksInt
 }
 
 export function getNewRailcarId( suffix = 'recommendation' ) {
-	return `${ crypto.randomUUID().replace( /-/g, '' ) }-${ suffix }`;
+	return `${ uuid().replace( /-/g, '' ) }-${ suffix }`;
 }

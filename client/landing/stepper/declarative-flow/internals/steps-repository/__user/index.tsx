@@ -85,10 +85,7 @@ const UserStepComponent: StepType = function UserStep( {
 	};
 
 	const localeSuggestions = shouldRenderLocaleSuggestions && (
-		<LocaleSuggestions
-			path={ window.location.pathname + window.location.search }
-			locale={ locale }
-		/>
+		<LocaleSuggestions path={ window.location.pathname } locale={ locale } />
 	);
 
 	const isStepContainerV2 = shouldUseStepContainerV2( flow );
@@ -133,12 +130,10 @@ const UserStepComponent: StepType = function UserStep( {
 
 		const topBar = (
 			<Step.TopBar
-				leftElement={
+				backButton={
 					navigation.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : undefined
 				}
-				rightElement={
-					<Step.LinkButton href={ loginLink }>{ translate( 'Log in' ) }</Step.LinkButton>
-				}
+				skipButton={ <Step.SkipButton href={ loginLink } label={ translate( 'Log in' ) } /> }
 			/>
 		);
 

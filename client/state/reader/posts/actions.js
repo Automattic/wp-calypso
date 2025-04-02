@@ -1,4 +1,5 @@
 import { filter, forEach, partition, get } from 'lodash';
+import { v4 as uuid } from 'uuid';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import wpcom from 'calypso/lib/wp';
 import readerContentWidth from 'calypso/reader/lib/content-width';
@@ -136,7 +137,7 @@ function receiveErrorForPostKey( error, postKey ) {
 				ID: postKey.postId,
 				site_ID: postKey.blogId,
 				is_external: ! postKey.blogId,
-				global_ID: crypto.randomUUID(),
+				global_ID: uuid(),
 				is_error: true,
 				error,
 			},

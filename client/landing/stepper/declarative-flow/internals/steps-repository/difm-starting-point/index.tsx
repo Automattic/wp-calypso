@@ -41,24 +41,25 @@ const DIFMStartingPoint: StepType< {
 		} );
 	};
 
-	const helpCenterButtonCopy = translate( 'Questions?' );
-	const helpCenterButtonLink = translate( 'Contact our site-building team' );
-
 	if ( shouldUseStepContainerV2( flow ) ) {
 		const primaryButton = showNewOrExistingSiteChoice ? (
-			<Step.PrimaryButton onClick={ () => onSubmit( 'existing-site' ) }>
-				{ translate( 'Use an existing site' ) }
-			</Step.PrimaryButton>
+			<Step.NextButton
+				onClick={ () => onSubmit( 'existing-site' ) }
+				label={ translate( 'Use an existing site' ) }
+			/>
 		) : (
-			<Step.PrimaryButton onClick={ () => onSubmit( 'new-site' ) }>
-				{ translate( 'Get started' ) }
-			</Step.PrimaryButton>
+			<Step.NextButton
+				onClick={ () => onSubmit( 'new-site' ) }
+				label={ translate( 'Get started' ) }
+			/>
 		);
 
 		const secondaryButton = showNewOrExistingSiteChoice ? (
-			<Step.SecondaryButton onClick={ () => onSubmit( 'new-site' ) }>
-				{ translate( 'Start a new site' ) }
-			</Step.SecondaryButton>
+			<Step.NextButton
+				variant="secondary"
+				onClick={ () => onSubmit( 'new-site' ) }
+				label={ translate( 'Start a new site' ) }
+			/>
 		) : undefined;
 
 		return (
@@ -67,25 +68,26 @@ const DIFMStartingPoint: StepType< {
 				<StepContainerV2DIFMStartingPoint
 					topBar={
 						<Step.TopBar
-							leftElement={ goBack ? <Step.BackButton onClick={ goBack } /> : undefined }
-							rightElement={
+							backButton={ goBack ? <Step.BackButton onClick={ goBack } /> : undefined }
+							skipButton={
 								shouldRenderHelpCenter ? (
 									<HelpCenterStepButton
 										flowName={ DIFM_FLOW }
 										enabledGeos={ [ 'US' ] }
-										helpCenterButtonCopy={ helpCenterButtonCopy }
-										helpCenterButtonLink={ helpCenterButtonLink }
+										helpCenterButtonCopy={ translate( 'Questions?' ) }
+										helpCenterButtonLink={ translate( 'Contact our site-building team' ) }
 									/>
 								) : (
-									<Step.SkipButton onClick={ goNext }>
-										{ translate( 'No Thanks, I’ll Build It' ) }
-									</Step.SkipButton>
+									<Step.SkipButton
+										onClick={ goNext }
+										label={ translate( 'No Thanks, I’ll Build It' ) }
+									/>
 								)
 							}
 						/>
 					}
 					stickyBottomBar={
-						<Step.StickyBottomBar leftElement={ secondaryButton } rightElement={ primaryButton } />
+						<Step.StickyBottomBar leftButton={ secondaryButton } rightButton={ primaryButton } />
 					}
 					primaryButton={ primaryButton }
 					secondaryButton={ secondaryButton }
@@ -112,10 +114,10 @@ const DIFMStartingPoint: StepType< {
 				customizedActionButtons={
 					shouldRenderHelpCenter ? (
 						<HelpCenterStepButton
-							flowName={ DIFM_FLOW }
+							flowName={ flow }
 							enabledGeos={ [ 'US' ] }
-							helpCenterButtonCopy={ helpCenterButtonCopy }
-							helpCenterButtonLink={ helpCenterButtonLink }
+							helpCenterButtonCopy={ translate( 'Questions?' ) }
+							helpCenterButtonLink={ translate( 'Contact our site building team' ) }
 						/>
 					) : undefined
 				}

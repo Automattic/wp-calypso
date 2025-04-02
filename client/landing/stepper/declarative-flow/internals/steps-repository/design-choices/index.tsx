@@ -204,7 +204,7 @@ const DesignChoicesStep: StepType< { submits: { destination: string } } > = ( {
 					} ) }
 					topBar={
 						<Step.TopBar
-							leftElement={
+							backButton={
 								navigation.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : undefined
 							}
 						/>

@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid';
 import { NOTICE_CREATE, NOTICE_REMOVE } from 'calypso/state/action-types';
 import type {
 	NoticeActionCreator,
@@ -22,7 +23,7 @@ export const createNotice: NoticeActionCreatorWithStatus = (
 	return {
 		type: NOTICE_CREATE,
 		notice: Object.assign( { showDismiss: true }, noticeOptions, {
-			noticeId: id || crypto.randomUUID(),
+			noticeId: id || uuid(),
 			status,
 			text,
 		} ),

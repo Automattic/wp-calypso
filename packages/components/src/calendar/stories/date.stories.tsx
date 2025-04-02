@@ -21,6 +21,7 @@ const meta: Meta< typeof Calendar > = {
 		onChange: { action: 'onChange', control: false },
 	},
 	parameters: {
+		controls: { expanded: true },
 		docs: { canvas: { sourceState: 'shown' } },
 	},
 };

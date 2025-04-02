@@ -4,12 +4,10 @@
 body.is-section-reader {
 	div.layout.is-global-sidebar-visible {
 		.main {
-			&:not(.no-padding) {
-				padding: 24px;
+			padding: 24px;
 
-				@media (max-width: $break-small) {
-					padding: 24px 0;
-				}
+			@media (max-width: $break-small) {
+				padding: 24px 0;
 			}
 		}
 
@@ -239,7 +237,7 @@ body.is-section-reader {
 		font-weight: 600;
 		line-height: 1.6;
 		border-top: 1px solid var(--color-neutral-10);
-		background: linear-gradient(to bottom, color-mix(in srgb, var(--color-neutral-0) 100%, transparent) 0%, color-mix(in srgb, var(--color-neutral-0) 0%, transparent) 100%);
+		background: linear-gradient(to bottom, rgba(var(--color-neutral-0-rgb), 1) 0%, rgba(var(--color-neutral-0-rgb), 0) 100%);
 
 		.avatar {
 			display: none;
@@ -530,13 +528,13 @@ body.is-section-reader {
 	text-align: center;
 
 	h2 {
-		font-size: 18px;
+		font-size: 18px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		font-weight: 500;
 		margin-bottom: 10px;
 	}
 
 	h1 {
-		font-size: 40px;
+		font-size: 40px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		font-weight: 500;
 	}
 }

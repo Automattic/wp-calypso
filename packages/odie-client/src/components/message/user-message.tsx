@@ -5,7 +5,6 @@ import clsx from 'clsx';
 import Markdown from 'react-markdown';
 import { ODIE_FORWARD_TO_FORUMS_MESSAGE, ODIE_FORWARD_TO_ZENDESK_MESSAGE } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
-import { userProvidedEnoughInformation } from '../../utils';
 import CustomALink from './custom-a-link';
 import { DirectEscalationLink } from './direct-escalation-link';
 import { GetSupport } from './get-support';
@@ -23,7 +22,13 @@ export const UserMessage = ( {
 	message: Message;
 	isMessageWithoutEscalationOption?: boolean;
 } ) => {
-	const { isUserEligibleForPaidSupport, trackEvent, chat } = useOdieAssistantContext();
+	const {
+		isUserEligibleForPaidSupport,
+		hasUserEverEscalatedToHumanSupport,
+		trackEvent,
+		chat,
+		experimentVariationName,
+	} = useOdieAssistantContext();
 
 	const hasCannedResponse = message.context?.flags?.canned_response;
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support ?? false;
@@ -33,10 +38,18 @@ export const UserMessage = ( {
 	const isPositiveFeedback =
 		hasFeedback && message && message.rating_value && +message.rating_value === 1;
 
-	const showExtraContactOptions =
-		( hasFeedback && ! isPositiveFeedback ) || isRequestingHumanSupport;
+	const isExperimentGiveWapuuAChance = experimentVariationName === 'give_wapuu_a_chance';
 
-	const showDirectEscalationLink = userProvidedEnoughInformation( chat?.messages );
+	let showExtraContactOptions = false;
+	if ( isExperimentGiveWapuuAChance ) {
+		showExtraContactOptions = isRequestingHumanSupport;
+	} else {
+		showExtraContactOptions = ( hasFeedback && ! isPositiveFeedback ) || isRequestingHumanSupport;
+	}
+
+	const showDirectEscalationLink = isExperimentGiveWapuuAChance
+		? hasUserEverEscalatedToHumanSupport
+		: ! ( hasFeedback && ! isPositiveFeedback ) || isRequestingHumanSupport;
 
 	const forwardMessage = isUserEligibleForPaidSupport
 		? ODIE_FORWARD_TO_ZENDESK_MESSAGE

@@ -243,11 +243,6 @@
 
 	.product-info__label {
 		@include heading-medium;
-
-		a {
-			text-decoration: underline;
-			color: var(--color-text);
-		}
 	}
 
 	.product-info__count {

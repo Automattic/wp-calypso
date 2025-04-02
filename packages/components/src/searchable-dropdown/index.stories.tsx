@@ -5,6 +5,9 @@ import type { Meta, StoryObj } from '@storybook/react';
 const meta: Meta< typeof SearchableDropdown > = {
 	title: 'packages/components/SearchableDropdown',
 	component: SearchableDropdown,
+	parameters: {
+		controls: { expanded: true },
+	},
 };
 
 export default meta;

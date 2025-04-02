@@ -1,6 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
 import { OnboardSelect } from '@automattic/data-stores';
-import { isOnboardingFlow } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -130,7 +129,6 @@ const PlansPageSubheader = ( {
 	deemphasizeFreePlan,
 	showPlanBenefits,
 	offeringFreePlan,
-	flowName,
 	onFreePlanCTAClick,
 	selectedFeature,
 }: {
@@ -139,7 +137,6 @@ const PlansPageSubheader = ( {
 	deemphasizeFreePlan?: boolean;
 	offeringFreePlan?: boolean;
 	showPlanBenefits?: boolean;
-	flowName?: string | null;
 	onFreePlanCTAClick: () => void;
 	selectedFeature: SelectedFeatureData | null;
 } ) => {
@@ -150,11 +147,9 @@ const PlansPageSubheader = ( {
 		return getCreateWithBigSky();
 	}, [] );
 
-	const isOnboarding = isOnboardingFlow( flowName ?? null );
-
-	const renderSubheader = () => {
-		if ( createWithBigSky ) {
-			return (
+	return (
+		<>
+			{ createWithBigSky && (
 				<Subheader>
 					{ translate(
 						'Build your site quickly with our AI Website Builder or {{link}}start with a free plan{{/link}}.',
@@ -165,11 +160,8 @@ const PlansPageSubheader = ( {
 						}
 					) }
 				</Subheader>
-			);
-		}
-
-		if ( ! createWithBigSky && deemphasizeFreePlan && offeringFreePlan ) {
-			return (
+			) }
+			{ ! createWithBigSky && deemphasizeFreePlan && offeringFreePlan ? (
 				<Subheader>
 					{ translate(
 						'Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.',
@@ -180,27 +172,9 @@ const PlansPageSubheader = ( {
 						}
 					) }
 				</Subheader>
-			);
-		}
-
-		if ( showPlanBenefits ) {
-			return <PlanBenefitHeader />;
-		}
-
-		if ( isOnboarding ) {
-			return (
-				<Subheader>
-					{ translate( 'Whatever site you’re building, there’s a plan to make it happen sooner.' ) }
-				</Subheader>
-			);
-		}
-
-		return null;
-	};
-
-	return (
-		<>
-			{ renderSubheader() }
+			) : (
+				showPlanBenefits && <PlanBenefitHeader />
+			) }
 			{ isDisplayingPlansNeededForFeature && (
 				<SecondaryFormattedHeader siteSlug={ siteSlug } selectedFeature={ selectedFeature } />
 			) }

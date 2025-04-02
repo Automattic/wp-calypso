@@ -155,8 +155,8 @@ The `RouterProvider` manages the navigation state and provides
 the necessary context for the navigation elements to work correctly.
 
 ```tsx
-<RouterProvider routes={ appRoutes } pathArg="page">
-    <SidebarContent>
+<SidebarContent>
+    <RouterProvider routes={ appRoutes } pathArg="page">
         <SidebarNavigationScreen
             isRoot
             title={ __( 'Home', 'a8c-site-admin' ) }
@@ -168,8 +168,8 @@ the necessary context for the navigation elements to work correctly.
             {/* Here we can use a component that displays content based on the current route */}
             <MainContent />
         </div>
-    </SidebarContent>
-</RouterProvider>
+    </RouterProvider>
+</SidebarContent>
 ```
 
 ### 2.4 Component to Display Active Route Content

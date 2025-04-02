@@ -74,10 +74,6 @@
 		}
 	}
 
-	&:hover[disabled] {
-		background: none;
-	}
-
 	&.is-wooexpress-medium-plan {
 		background-color: var(--color-accent);
 		color: var(--color-text-inverted);

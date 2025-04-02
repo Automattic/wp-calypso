@@ -20,7 +20,7 @@ export const useGoals = (): Goal[] => {
 			},
 			{
 				key: SiteGoal.Engagement,
-				title: translate( 'Build and grow an audience' ),
+				title: translate( 'Build and engage an audience' ),
 			},
 			{
 				key: SiteGoal.CollectDonations,
@@ -28,11 +28,11 @@ export const useGoals = (): Goal[] => {
 			},
 			{
 				key: SiteGoal.Porfolio,
-				title: translate( 'Showcase a portfolio' ),
+				title: translate( 'Showcase work/portfolio' ),
 			},
 			{
 				key: SiteGoal.BuildNonprofit,
-				title: translate( 'Build a school or nonprofit site' ),
+				title: translate( 'Build a site for a school or nonprofit' ),
 			},
 			{
 				key: SiteGoal.Newsletter,
@@ -48,7 +48,7 @@ export const useGoals = (): Goal[] => {
 			},
 			{
 				key: SiteGoal.Promote,
-				title: translate( 'Promote a business' ),
+				title: translate( 'Promote my business' ),
 			},
 			{
 				key: SiteGoal.Courses,
@@ -56,11 +56,11 @@ export const useGoals = (): Goal[] => {
 			},
 			{
 				key: SiteGoal.ContactForm,
-				title: translate( 'Allow people to contact you' ),
+				title: translate( 'Create a contact form' ),
 			},
 			{
 				key: SiteGoal.Videos,
-				title: translate( 'Share video content' ),
+				title: translate( 'Upload videos' ),
 			},
 			{
 				key: SiteGoal.PaidSubscribers,

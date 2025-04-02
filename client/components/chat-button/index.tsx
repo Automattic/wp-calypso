@@ -99,7 +99,7 @@ const ChatButton: FC< Props > = ( {
 			onClick?.();
 			setNewMessagingChat( { initialMessage, section, siteUrl, siteId } );
 		} else {
-			setNavigateToRoute( '/contact-options' );
+			setNavigateToRoute( '/contact-form?mode=CHAT' );
 			setShowHelpCenter( true );
 			onClick?.();
 		}

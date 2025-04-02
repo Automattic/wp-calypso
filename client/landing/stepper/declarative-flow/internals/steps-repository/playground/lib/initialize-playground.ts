@@ -11,8 +11,7 @@ const OPFS_PATH_PREFIX = '/wpcom-onboarding';
 
 export async function initializeWordPressPlayground(
 	iframe: HTMLIFrameElement,
-	recommendedPhpVersion: string,
-	setSearchParams: ( callback: ( prev: URLSearchParams ) => URLSearchParams ) => void
+	recommendedPhpVersion: string
 ): Promise< PlaygroundClient > {
 	let isWordPressInstalled = false;
 
@@ -20,14 +19,8 @@ export async function initializeWordPressPlayground(
 	let playgroundId = url.searchParams.get( 'playground' );
 	if ( ! playgroundId ) {
 		playgroundId = crypto.randomUUID();
-		// update url in browser history
 		url.searchParams.set( 'playground', playgroundId );
 		window.history.replaceState( {}, '', url.toString() );
-		// update search params through react router
-		setSearchParams( ( prev ) => {
-			prev.set( 'playground', playgroundId as string );
-			return prev;
-		} );
 	} else {
 		// TODO: check if WordPress is installed using playgroundAvailableInOpfs from @wp-playground/website
 		isWordPressInstalled = true;
@@ -50,6 +43,8 @@ export async function initializeWordPressPlayground(
 			shouldInstallWordPress: ! isWordPressInstalled,
 			mounts: [ mountDescriptor ],
 		} );
+
+		window.history.replaceState( {}, '', window.location.pathname + window.location.search );
 
 		await client.isReady();
 		return client;

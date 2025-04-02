@@ -9,7 +9,7 @@ type CreatedSite = Awaited< ReturnType< typeof createSite > >;
  */
 export type FlowStateManifest = Partial< {
 	domains: DomainStepResult;
-	flow: {
+	migration: {
 		entryPoint: string;
 	};
 	plans: PlansStepResult;

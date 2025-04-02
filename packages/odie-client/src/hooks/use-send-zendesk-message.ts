@@ -3,7 +3,6 @@ import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
 import Smooch from 'smooch';
 import { useOdieAssistantContext } from '../context';
-import { getConversationIdFromInteraction } from '../utils';
 import { useCreateZendeskConversation } from './use-create-zendesk-conversation';
 import type { Message } from '../types';
 
@@ -15,7 +14,8 @@ export const useSendZendeskMessage = () => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		const currentSupportInteraction = store.getCurrentSupportInteraction();
 
-		return getConversationIdFromInteraction( currentSupportInteraction );
+		return currentSupportInteraction?.events.find( ( event ) => event.event_source === 'zendesk' )
+			?.event_external_id;
 	}, [] );
 
 	const { setChatStatus, chat } = useOdieAssistantContext();

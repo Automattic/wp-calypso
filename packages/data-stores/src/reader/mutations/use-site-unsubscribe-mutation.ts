@@ -13,8 +13,6 @@ type UnsubscribeParams = {
 	blog_id?: number | string;
 	doNotInvalidateSiteSubscriptions?: boolean;
 	emailId?: string;
-	onSuccess?: () => void;
-	onError?: ( e: Error ) => void;
 };
 
 type UnsubscribeResponse = {
@@ -203,8 +201,6 @@ const useSiteUnsubscribeMutation = () => {
 					context.previousSiteSubscriptionDetailsByBlogId
 				);
 			}
-
-			params.onError?.( _error );
 		},
 		onSettled: ( _data, _error, params ) => {
 			if ( params.doNotInvalidateSiteSubscriptions !== true ) {
@@ -230,9 +226,6 @@ const useSiteUnsubscribeMutation = () => {
 			queryClient.invalidateQueries( {
 				queryKey: buildSiteSubscriptionDetailsQueryKey( params.subscriptionId, isLoggedIn, userId ),
 			} );
-		},
-		onSuccess: ( data, params ) => {
-			params.onSuccess?.();
 		},
 	} );
 };

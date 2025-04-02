@@ -25,7 +25,6 @@ function StatsLineChart( {
 	),
 	zeroBaseline = true,
 	fixedDomain = false,
-	curveType = 'smooth',
 }: {
 	chartData: Array< {
 		label: string;
@@ -40,7 +39,6 @@ function StatsLineChart( {
 	emptyState: JSX.Element;
 	zeroBaseline?: boolean;
 	fixedDomain?: boolean;
-	curveType?: 'smooth' | 'linear' | 'monotone';
 	onClick?: ( item: { data: { period: string } } ) => void;
 } ) {
 	const moment = useLocalizedMoment();
@@ -186,7 +184,6 @@ function StatsLineChart( {
 						withTooltips
 						withGradientFill
 						height={ height }
-						curveType={ curveType }
 						// TODO: figure out the right type for onPointerDown
 						// eslint-disable-next-line @typescript-eslint/no-explicit-any
 						onPointerUp={ onPointerUp as any }

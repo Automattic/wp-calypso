@@ -6,6 +6,7 @@ import flows from 'calypso/signup/config/flows';
 import {
 	canResumeFlow,
 	getCompletedSteps,
+	getValueFromProgressStore,
 	getValidPath,
 	getStepName,
 	getFlowName,
@@ -170,6 +171,24 @@ describe( 'utils', () => {
 					lang: 'fr',
 				} )
 			).toBe( `/start/user/${ randomStepSectionName }/fr` );
+		} );
+	} );
+
+	describe( 'getValueFromProgressStore', () => {
+		const signupProgress = [ { stepName: 'empty' }, { stepName: 'site', site: 'calypso' } ];
+		const config = {
+			stepName: 'site',
+			fieldName: 'site',
+			signupProgress,
+		};
+
+		test( 'should return the value of the field if it exists', () => {
+			expect( getValueFromProgressStore( config ) ).toBe( 'calypso' );
+		} );
+
+		test( 'should return null if the field is not present', () => {
+			delete signupProgress[ 1 ].site;
+			expect( getValueFromProgressStore( config ) ).toBeUndefined();
 		} );
 	} );
 

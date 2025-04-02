@@ -13,6 +13,9 @@ const meta: Meta< typeof WordPressLogo > = {
 			</div>
 		),
 	],
+	parameters: {
+		controls: { expanded: true },
+	},
 };
 export default meta;
 

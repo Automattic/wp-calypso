@@ -22,9 +22,6 @@ const ButtonExample = () => {
 				<Button size="small" variant="tertiary">
 					Tertiary Button
 				</Button>
-				<Button size="small" variant="link">
-					Link Button
-				</Button>
 				<Button size="small" icon={ more } />
 				<Button size="small" variant="primary" icon={ more } />
 				<Button size="small" variant="secondary" icon={ more } />
@@ -35,9 +32,6 @@ const ButtonExample = () => {
 				<Button size="small" variant="primary" isBusy>
 					Busy
 				</Button>
-				<Button size="small" variant="primary" isDestructive>
-					Destructive
-				</Button>
 			</Flex>
 
 			<h2>Regular Buttons</h2>
@@ -46,7 +40,6 @@ const ButtonExample = () => {
 				<Button variant="primary">Primary Button</Button>
 				<Button variant="secondary">Secondary Button</Button>
 				<Button variant="tertiary">Tertiary Button</Button>
-				<Button variant="link">Link Button</Button>
 				<Button icon={ more } />
 				<Button variant="primary" icon={ more } />
 				<Button variant="secondary" icon={ more } />
@@ -56,9 +49,6 @@ const ButtonExample = () => {
 				</Button>
 				<Button variant="primary" isBusy>
 					Busy
-				</Button>
-				<Button variant="primary" isDestructive>
-					Destructive
 				</Button>
 			</Flex>
 		</div>

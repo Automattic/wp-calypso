@@ -107,15 +107,13 @@ export interface Route {
 export interface RouterProviderProps {
 	/**
 	 * List of available routes.
-	 * @default []
 	 */
-	routes?: Route[];
+	routes: Route[];
 
 	/**
-	 * Defines the URL query parameter that stores the current path.
-	 * @default 'p'
+	 * Argument used for path identification.
 	 */
-	pathArg?: string;
+	pathArg: string;
 
 	/**
 	 * Optional navigation behavior modifier.

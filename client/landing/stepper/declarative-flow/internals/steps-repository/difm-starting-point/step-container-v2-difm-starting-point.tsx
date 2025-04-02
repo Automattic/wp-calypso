@@ -1,5 +1,6 @@
 import { Step } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { chevronDown, chevronUp } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
@@ -31,7 +32,10 @@ export const StepContainerV2DIFMStartingPoint = ( {
 		siteId,
 	} );
 
-	const ctas = (
+	const isMediumViewport = useViewportMatch( 'small', '>=' );
+	const isExtraLargeViewport = useViewportMatch( 'large', '>=' );
+
+	const ctas = isMediumViewport && (
 		<>
 			{ primaryButton }
 			{ secondaryButton && <span>{ translate( 'or' ) }</span> }
@@ -46,6 +50,7 @@ export const StepContainerV2DIFMStartingPoint = ( {
 			secondColumnWidth={ 1 }
 			topBar={ topBar }
 			stickyBottomBar={ stickyBottomBar }
+			isMediumViewport={ isMediumViewport }
 			footer={
 				<DIFMFAQ
 					isStoreFlow={ false }
@@ -69,28 +74,20 @@ export const StepContainerV2DIFMStartingPoint = ( {
 				/>
 			}
 		>
-			{ ( { isSmallViewport, isLargeViewport } ) => {
-				return (
-					<>
-						<div className="step-container-v2--difm-starting-point__left-column">
-							<Step.Heading text={ headerText } subText={ subHeaderText } align="left" />
-							<DIFMServiceDescription isStoreFlow={ false } />
-							{ isSmallViewport && (
-								<div className="step-container-v2--difm-starting-point__ctas">{ ctas }</div>
-							) }
-						</div>
-						{ isLargeViewport && (
-							<div className="step-container-v2--difm-starting-point__right-column">
-								<AsyncLoad
-									require="calypso/my-sites/marketing/do-it-for-me/site-build-showcase"
-									placeholder={ <LoadingEllipsis /> }
-									isStoreFlow={ false }
-								/>
-							</div>
-						) }
-					</>
-				);
-			} }
+			<div className="step-container-v2--difm-starting-point__left-column">
+				<Step.Heading text={ headerText } subText={ subHeaderText } align="left" />
+				<DIFMServiceDescription isStoreFlow={ false } />
+				{ ctas && <div className="step-container-v2--difm-starting-point__ctas">{ ctas }</div> }
+			</div>
+			{ isExtraLargeViewport && (
+				<div className="step-container-v2--difm-starting-point__right-column">
+					<AsyncLoad
+						require="calypso/my-sites/marketing/do-it-for-me/site-build-showcase"
+						placeholder={ <LoadingEllipsis /> }
+						isStoreFlow={ false }
+					/>
+				</div>
+			) }
 		</Step.TwoColumnLayout>
 	);
 };

@@ -207,15 +207,9 @@ describe( 'EditGravatar', () => {
 	describe( 'unverified user', () => {
 		test( 'shows email verification dialog when clicked', async () => {
 			const user = userEvent.setup();
-			render( <EditGravatar { ...props } /> );
+			const { container } = render( <EditGravatar { ...props } /> );
 
-			// The button now has an aria-label set based on verification status.
-			const button = screen.getByRole( 'button', {
-				name: /verify your email to change profile photo/i,
-			} );
-
-			await user.click( button );
-
+			await user.click( container.firstChild.firstChild );
 			// Check for dialog modal copy to ensure it appeared.
 			expect(
 				screen.queryByText( /Secure your account and access more features./ )

@@ -45,26 +45,10 @@ module.exports = function storybookDefaultConfig( {
 			'@storybook/addon-toolbars',
 			'@storybook/addon-viewport',
 			'@storybook/addon-themes',
-			'@storybook/addon-webpack5-compiler-babel',
 		],
 		typescript: {
 			check: false,
 			reactDocgen: 'react-docgen-typescript',
-			reactDocgenTypescriptOptions: {
-				propFilter: ( prop ) => {
-					// Always show props declared in `@wordpress/components`
-					if ( prop.declarations.some( ( d ) => d.fileName.includes( '@wordpress/components' ) ) ) {
-						return true;
-					}
-
-					// Hide props declared in other `node_modules` (mostly built-in React props)
-					if ( prop.declarations.every( ( d ) => d.fileName.includes( 'node_modules' ) ) ) {
-						return false;
-					}
-
-					return true;
-				},
-			},
 		},
 		webpackFinal: async ( config ) => {
 			config.resolve.alias = {

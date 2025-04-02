@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import debugModule from 'debug';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import { v4 as uuid } from 'uuid';
 import SeoPreviewPane from 'calypso/components/seo-preview-pane';
 import SpinnerLine from 'calypso/components/spinner-line';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -18,7 +19,7 @@ const debug = debugModule( 'calypso:web-preview' );
 const noop = () => {};
 
 export default class WebPreviewContent extends Component {
-	previewId = crypto.randomUUID();
+	previewId = uuid();
 
 	loadingTimeoutTimer = null;
 

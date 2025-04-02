@@ -69,6 +69,7 @@
 			gap: 0.25rem;
 			color: #666;
 			letter-spacing: -0.32px;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 14px;
 			line-height: 19px;
 			white-space: pre-wrap;
@@ -91,6 +92,7 @@
 			display: flex;
 			align-items: center;
 			gap: 0.25rem;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 13px;
 			font-weight: 600;
 			line-height: 16px;
@@ -158,11 +160,13 @@
 			white-space: nowrap;
 			text-overflow: ellipsis;
 			overflow: hidden;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 15px;
 			line-height: 20px;
 		}
 
 		&--url {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 13px;
 			color: #666;
 		}

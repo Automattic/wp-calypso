@@ -5,7 +5,7 @@ export const useAutoScroll = (
 	messagesContainerRef: RefObject< HTMLDivElement >,
 	isEnabled: boolean
 ) => {
-	const { chat } = useOdieAssistantContext();
+	const { chat, experimentVariationName } = useOdieAssistantContext();
 	const debounceTimeoutRef = useRef< number >( 500 );
 	const debounceTimeoutIdRef = useRef< number | null >( null );
 	const lastChatStatus = useRef< string | null >( null );
@@ -20,7 +20,7 @@ export const useAutoScroll = (
 			return;
 		}
 
-		if ( chat.status === 'dislike' ) {
+		if ( experimentVariationName === 'give_wapuu_a_chance' && chat.status === 'dislike' ) {
 			return;
 		}
 

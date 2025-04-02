@@ -1,12 +1,12 @@
-import { StoryObj, Meta } from '@storybook/react';
+import { Story, Meta } from '@storybook/react';
 import AutomatticLogo from './index';
 
-const meta: Meta< typeof AutomatticLogo > = {
+export default {
 	title: 'client/components/AutomatticLogo',
 	component: AutomatticLogo,
-};
-export default meta;
+} as Meta;
 
-type Story = StoryObj< typeof AutomatticLogo >;
+const Template: Story = ( args ) => <AutomatticLogo { ...args } />;
 
-export const Default: Story = {};
+export const Default = Template.bind( {} );
+Default.args = {};

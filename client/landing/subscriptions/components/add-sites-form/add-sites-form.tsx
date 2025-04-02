@@ -1,24 +1,21 @@
-import './styles.scss';
 import { FormInputValidation } from '@automattic/components';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { Button, TextControl } from '@wordpress/components';
 import { check, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
-import FeedPreview from 'calypso/landing/subscriptions/components/add-sites-form/feed-preview/feed-preview';
-import { useAddSitesModalNotices } from 'calypso/landing/subscriptions/hooks';
-import { useRecordSiteSubscribed } from 'calypso/landing/subscriptions/tracks';
-import { isValidUrl, parseUrl } from 'calypso/lib/importer/url-validation';
-import { getUrlQuerySearchTerm, setUrlQuery, SEARCH_QUERY_PARAM } from 'calypso/reader/utils';
+import { useCallback, useState } from 'react';
+import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversation/dialog';
+import { isValidUrl } from '../../helpers';
+import { useAddSitesModalNotices } from '../../hooks';
+import { useRecordSiteSubscribed } from '../../tracks';
+import './styles.scss';
 
-export type AddSitesFormProps = {
+type AddSitesFormProps = {
+	onAddFinished?: () => void;
 	placeholder?: string;
 	buttonText?: string;
-	pathname?: string; // Used to prevent search query changes on other pages.
 	source: string;
-	onChangeFeedPreview?: ( hasPreview: boolean ) => void;
-	onChangeSubscribe?: ( subscribed: boolean ) => void;
 };
 
 type SubscriptionError = {
@@ -27,97 +24,112 @@ type SubscriptionError = {
 };
 
 const AddSitesForm = ( {
+	onAddFinished = () => {},
 	placeholder,
 	buttonText,
-	pathname,
 	source,
-	onChangeFeedPreview,
-	onChangeSubscribe,
 }: AddSitesFormProps ) => {
 	const translate = useTranslate();
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ isSubmitting, setIsSubmitting ] = useState< boolean >( false );
 	const [ inputFieldError, setInputFieldError ] = useState< string | null >( null );
 	const [ isValidInput, setIsValidInput ] = useState( false );
+	const [ showLoginDialog, setShowLoginDialog ] = useState( false );
 	const { showErrorNotice, showWarningNotice, showSuccessNotice } = useAddSitesModalNotices();
 	const recordSiteSubscribed = useRecordSiteSubscribed();
+	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 
 	const { mutate: subscribe, isPending: subscribing } =
 		SubscriptionManager.useSiteSubscribeMutation();
 
-	// Triggers the text change when component mounts to validate the initial value.
-	useEffect( () => onTextFieldChange( getUrlQuerySearchTerm( pathname ), true ), [] ); // eslint-disable-line react-hooks/exhaustive-deps
-
-	function validateInputValue( url: string, showError = false ): void {
-		// If the input is empty, we don't want to show an error message
-		if ( url.length === 0 ) {
-			setIsValidInput( false );
-			setInputFieldError( null );
-			onChangeFeedPreview?.( false );
-			return;
-		}
-
-		if ( isValidUrl( url ) ) {
-			setInputFieldError( null );
-			setIsValidInput( true );
-		} else {
-			setIsValidInput( false );
-			onChangeFeedPreview?.( false );
-			if ( showError ) {
-				setInputFieldError( translate( 'Please enter a valid URL' ) );
+	const validateInputValue = useCallback(
+		( url: string, showError = false ) => {
+			// If the input is empty, we don't want to show an error message
+			if ( url.length === 0 ) {
+				setIsValidInput( false );
+				setInputFieldError( null );
+				return;
 			}
-		}
-	}
 
-	function onTextFieldChange( value: string, showErrorOnInvalidUrl: boolean = false ): void {
-		setUrlQuery( SEARCH_QUERY_PARAM, value, pathname ); // Update url query when search term changes.
-		setInputValue( value );
-		validateInputValue( value, showErrorOnInvalidUrl );
-	}
-
-	const onSubmit = ( e: React.FormEvent ) => {
-		e.preventDefault();
-
-		if ( isValidInput ) {
-			setIsSubmitting( true );
-			subscribe(
-				{ url: parseUrl( inputValue ).toString() },
-				{
-					onSuccess: ( data ) => {
-						if ( data?.info === 'already_subscribed' ) {
-							showWarningNotice( inputValue );
-						} else {
-							if ( data?.subscription?.blog_ID ) {
-								recordSiteSubscribed( {
-									blog_id: data?.subscription?.blog_ID,
-									url: inputValue,
-									source,
-								} );
-							}
-
-							showSuccessNotice( inputValue );
-							onSubscribeToggle( true );
-						}
-					},
-					onError: ( error: SubscriptionError ) => {
-						showErrorNotice( inputValue, error );
-						onChangeSubscribe?.( false );
-					},
-					onSettled: (): void => {
-						setIsSubmitting( false );
-					},
+			if ( isValidUrl( url ) ) {
+				setInputFieldError( null );
+				setIsValidInput( true );
+			} else {
+				setIsValidInput( false );
+				if ( showError ) {
+					setInputFieldError( translate( 'Please enter a valid URL' ) );
 				}
-			);
-		}
-	};
+			}
+		},
+		[ translate ]
+	);
 
-	function onSubscribeToggle( subscribed: boolean ): void {
-		// Reset form.
-		setInputValue( '' );
-		setIsValidInput( false );
+	const onTextFieldChange = useCallback(
+		( value: string ) => {
+			setInputValue( value );
+			validateInputValue( value );
+		},
+		[ validateInputValue ]
+	);
 
-		onChangeSubscribe?.( subscribed );
-	}
+	const onSubmit = useCallback(
+		( e: React.FormEvent ) => {
+			e.preventDefault();
+
+			if ( ! isLoggedIn ) {
+				setShowLoginDialog( true );
+				return;
+			}
+
+			if ( isValidInput ) {
+				setIsSubmitting( true );
+				subscribe(
+					{ url: inputValue },
+					{
+						onSuccess: ( data ) => {
+							if ( data?.info === 'already_subscribed' ) {
+								showWarningNotice( inputValue );
+							} else {
+								if ( data?.subscription?.blog_ID ) {
+									recordSiteSubscribed( {
+										blog_id: data?.subscription?.blog_ID,
+										url: inputValue,
+										source,
+									} );
+								}
+
+								showSuccessNotice( inputValue );
+
+								// Reset fields.
+								setInputValue( '' );
+								setIsValidInput( false );
+							}
+							onAddFinished();
+						},
+						onError: ( error: SubscriptionError ) => {
+							showErrorNotice( inputValue, error );
+							onAddFinished();
+						},
+						onSettled: (): void => {
+							setIsSubmitting( false );
+						},
+					}
+				);
+			}
+		},
+		[
+			inputValue,
+			isValidInput,
+			isLoggedIn,
+			onAddFinished,
+			recordSiteSubscribed,
+			showErrorNotice,
+			showSuccessNotice,
+			showWarningNotice,
+			subscribe,
+			source,
+		]
+	);
 
 	return (
 		<>
@@ -131,11 +143,10 @@ const AddSitesForm = ( {
 						disabled={ subscribing }
 						placeholder={ placeholder || translate( 'https://www.site.com' ) }
 						value={ inputValue }
+						type="url"
 						onChange={ onTextFieldChange }
 						help={ isValidInput ? <Icon icon={ check } data-testid="check-icon" /> : undefined }
 						onBlur={ () => validateInputValue( inputValue, true ) }
-						__next40pxDefaultSize
-						__nextHasNoMarginBottom
 					/>
 
 					{ inputFieldError ? <FormInputValidation isError text={ inputFieldError } /> : null }
@@ -153,11 +164,14 @@ const AddSitesForm = ( {
 				</Button>
 			</form>
 
-			<FeedPreview
-				url={ isValidInput ? inputValue : '' } // Passing empty state to make sure that debounce works correctly else it was firing events 2 times.
-				source={ source }
-				onChangeFeedPreview={ onChangeFeedPreview }
-				onChangeSubscribe={ onSubscribeToggle }
+			<ReaderJoinConversationDialog
+				isVisible={ showLoginDialog }
+				onClose={ () => setShowLoginDialog( false ) }
+				onLoginSuccess={ () => window.location.reload() }
+				loggedInAction={ {
+					type: 'subscribe',
+					url: inputValue,
+				} }
 			/>
 		</>
 	);

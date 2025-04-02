@@ -1,14 +1,12 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import '../../mixins';
 
 .theme-preview {
 	display: flex;
 	flex-direction: column;
 	gap: 3rem;
 	flex: 1;
-	width: 100%;
 
-	@include break-large {
+	@include step-large-viewport {
 		flex-direction: row;
 	}
 
@@ -28,7 +26,7 @@
 			align-self: flex-start;
 		}
 
-		@include break-large {
+		@include step-large-viewport {
 			max-width: 297px;
 		}
 	}

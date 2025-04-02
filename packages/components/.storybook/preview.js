@@ -1,8 +1,7 @@
 import './style.scss';
 
-const parameters = {
+export const parameters = {
 	controls: {
-		expanded: true,
 		sort: 'requiredFirst',
 	},
 	docs: {
@@ -10,8 +9,4 @@ const parameters = {
 			sort: 'requiredFirst',
 		},
 	},
-};
-
-export default {
-	parameters,
 };

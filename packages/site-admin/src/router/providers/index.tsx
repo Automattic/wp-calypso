@@ -52,8 +52,8 @@ function getLocationWithQuery(): LocationWithQuery {
  * ```
  */
 export function RouterProvider( {
-	routes = [],
-	pathArg = 'p',
+	routes,
+	pathArg,
 	beforeNavigate,
 	children,
 }: RouterProviderProps ): JSX.Element {
@@ -62,7 +62,6 @@ export function RouterProvider( {
 		getLocationWithQuery,
 		getLocationWithQuery
 	);
-
 	const matcher = useMemo( () => {
 		const ret = new RouteRecognizer();
 		routes.forEach( ( route ) => {

@@ -50,6 +50,7 @@
 			text-align: start;
 
 			.formatted-header__title {
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 				font-size: 17px;
 				font-weight: 600;
 				padding: 0 24px;
@@ -94,6 +95,7 @@
 		margin: 0;
 
 		.formatted-header__title {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 18px;
 			font-weight: 600;
 			margin-bottom: 0;

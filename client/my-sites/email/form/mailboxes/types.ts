@@ -1,3 +1,4 @@
+import { v4 as uuid_v4 } from 'uuid';
 import {
 	FIELD_DOMAIN,
 	FIELD_FIRSTNAME,
@@ -69,7 +70,7 @@ abstract class MailboxFormFieldBase< T > implements MailboxFormField< T > {
 
 class DataMailboxFormField extends MailboxFormFieldBase< string > {
 	isVisible = false;
-	value = crypto.randomUUID() as string;
+	value = uuid_v4();
 	readonly typeName = 'data';
 }
 

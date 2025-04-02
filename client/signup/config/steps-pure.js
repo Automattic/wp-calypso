@@ -26,6 +26,7 @@ export function generateSteps( {
 	addAddOnsToCart = noop,
 	createAccount = noop,
 	createSite = noop,
+	createWpForTeamsSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
 	setOptionsOnSite = noop,
@@ -38,6 +39,8 @@ export function generateSteps( {
 	isDomainFulfilled = noop,
 	maybeRemoveStepForUserlessCheckout = noop,
 	createSiteAndAddDIFMToCart = noop,
+	excludeStepIfEmailVerified = noop,
+	excludeStepIfProfileComplete = noop,
 	submitWebsiteContent = noop,
 } = {} ) {
 	return {
@@ -640,6 +643,26 @@ export function generateSteps( {
 			props: {
 				nonInteractive: true,
 			},
+		},
+
+		'p2-site': {
+			stepName: 'p2-site',
+			apiRequestFunction: createWpForTeamsSite,
+			providesDependencies: [ 'siteSlug' ],
+		},
+
+		'p2-confirm-email': {
+			stepName: 'p2-confirm-email',
+			fulfilledStepCallback: excludeStepIfEmailVerified,
+		},
+
+		'p2-complete-profile': {
+			stepName: 'p2-complete-profile',
+			fulfilledStepCallback: excludeStepIfProfileComplete,
+		},
+
+		'p2-join-workspace': {
+			stepName: 'p2-join-workspace',
 		},
 
 		'plans-personal-monthly': {

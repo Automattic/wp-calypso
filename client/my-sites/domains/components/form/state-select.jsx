@@ -5,6 +5,7 @@ import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import { v4 as uuid } from 'uuid';
 import QueryCountryStates from 'calypso/components/data/query-country-states';
 import FormSelect from 'calypso/components/forms/form-select';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
@@ -61,7 +62,7 @@ class StateSelect extends PureComponent {
 			selectText,
 		} = this.props;
 		const validationId = `validation-field-${ this.props.name }`;
-		const fieldId = crypto.randomUUID();
+		const fieldId = uuid();
 
 		return (
 			<>

@@ -20,7 +20,6 @@ import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { combineReducers, addReducerEnhancer } from 'calypso/state/utils';
 import config from './lib/config-api';
 import initSentry from './lib/init-sentry';
-import { initializeSiteData } from './lib/initialize-site-data';
 import setLocale from './lib/set-locale';
 import { setupContextMiddleware } from './page-middleware/setup-context';
 import registerStatsPages from './routes';
@@ -48,7 +47,7 @@ async function AppBoot() {
 		},
 	};
 
-	const isSimple = isSimpleSite( initialState, siteId ) ?? false;
+	const isSimple = isSimpleSite( initialState, siteId );
 
 	const queryClient = new QueryClient();
 
@@ -61,9 +60,6 @@ async function AppBoot() {
 
 	setStore( store as Store & WithAddReducer );
 	setupContextMiddleware( store, queryClient );
-
-	// Initialize site data early in the app boot process.
-	await initializeSiteData( store );
 
 	if ( ! window.location?.hash ) {
 		// Redirect to the default stats page.

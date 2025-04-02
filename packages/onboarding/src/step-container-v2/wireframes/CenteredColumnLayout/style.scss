@@ -1,26 +1,19 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import '../../mixins';
 
 .step-container-v2__content--centered-column-layout-4 {
-	@include break-small {
+	@include step-medium-viewport {
 		max-width: 404px;
 	}
 }
 
-.step-container-v2__content--centered-column-layout-5 {
-	@include break-small {
-		max-width: 509px;
-	}
-}
-
 .step-container-v2__content--centered-column-layout-6 {
-	@include break-small {
+	@include step-medium-viewport {
 		max-width: 615px;
 	}
 }
 
 .step-container-v2__content--centered-column-layout-8 {
-	@include break-small {
+	@include step-medium-viewport {
 		max-width: 826px;
 	}
 }

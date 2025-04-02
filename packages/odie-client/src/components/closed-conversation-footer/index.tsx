@@ -4,9 +4,9 @@ import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import { v4 as uuidv4 } from 'uuid';
 import { useOdieAssistantContext } from '../../context';
 import { useManageSupportInteraction } from '../../data';
-import { interactionHasEnded } from '../../utils';
 import './style.scss';
 
 export const ClosedConversationFooter = () => {
@@ -26,11 +26,11 @@ export const ClosedConversationFooter = () => {
 		trackEvent( 'chat_new_from_closed_conversation' );
 		await startNewInteraction( {
 			event_source: 'help-center',
-			event_external_id: crypto.randomUUID(),
+			event_external_id: uuidv4(),
 		} );
 	};
 
-	if ( ! interactionHasEnded( currentSupportInteraction ) ) {
+	if ( ! [ 'closed', 'solved' ].includes( currentSupportInteraction?.status ?? '' ) ) {
 		return null;
 	}
 

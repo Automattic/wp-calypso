@@ -144,7 +144,7 @@ const UseMyDomain: StepType< {
 				<Step.CenteredColumnLayout
 					topBar={
 						<Step.TopBar
-							leftElement={
+							backButton={
 								shouldHideButtons ? undefined : <Step.BackButton onClick={ handleGoBack } />
 							}
 						/>

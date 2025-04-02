@@ -6,7 +6,6 @@ import { ClosedConversationFooter } from './components/closed-conversation-foote
 import { MessagesContainer } from './components/message/messages-container';
 import { OdieSendMessageButton } from './components/send-message-input';
 import { useOdieAssistantContext, OdieAssistantProvider } from './context';
-import { interactionHasEnded } from './utils';
 
 import './style.scss';
 
@@ -19,7 +18,9 @@ export const OdieAssistant: React.FC = () => {
 		};
 	}, [] );
 
-	const showClosedConversationFooter = interactionHasEnded( currentSupportInteraction );
+	const showClosedConversationFooter = [ 'closed', 'solved' ].includes(
+		currentSupportInteraction?.status ?? ''
+	);
 
 	useEffect( () => {
 		trackEvent( 'chatbox_view' );

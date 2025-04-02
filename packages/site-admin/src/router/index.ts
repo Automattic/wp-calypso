@@ -24,9 +24,6 @@ export const RoutesContext = createContext< Match | null >( null );
  */
 export const ConfigContext = createContext< Config >( { pathArg: 'p' } );
 
-// Export Router components
-export * from './components/link';
-
 // Export hooks related to routing
 export * from './hooks';
 

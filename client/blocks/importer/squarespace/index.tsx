@@ -65,6 +65,7 @@ export const SquarespaceImporter: React.FunctionComponent< ImporterBaseProps > =
 
 	function onTryAgainClick() {
 		job?.importerId && resetImport( siteId, job.importerId );
+		stepNavigator?.goToImportCapturePage?.();
 	}
 
 	function checkProgress() {

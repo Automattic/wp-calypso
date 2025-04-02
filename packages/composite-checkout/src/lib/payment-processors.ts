@@ -1,4 +1,5 @@
 import { useContext } from 'react';
+import CheckoutContext from '../lib/checkout-context';
 import {
 	PaymentProcessorFunction,
 	PaymentProcessorResponseData,
@@ -7,10 +8,9 @@ import {
 	PaymentProcessorError,
 	PaymentProcessorResponseType,
 } from '../types';
-import { PaymentMethodProviderContext } from './payment-method-provider-context';
 
 export function usePaymentProcessor( key: string ): PaymentProcessorFunction {
-	const { paymentProcessors } = useContext( PaymentMethodProviderContext );
+	const { paymentProcessors } = useContext( CheckoutContext );
 	if ( ! paymentProcessors[ key ] ) {
 		throw new Error( `No payment processor found with key: ${ key }` );
 	}
@@ -18,7 +18,7 @@ export function usePaymentProcessor( key: string ): PaymentProcessorFunction {
 }
 
 export function usePaymentProcessors(): Record< string, PaymentProcessorFunction > {
-	const { paymentProcessors } = useContext( PaymentMethodProviderContext );
+	const { paymentProcessors } = useContext( CheckoutContext );
 	return paymentProcessors;
 }
 

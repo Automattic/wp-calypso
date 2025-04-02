@@ -6,6 +6,7 @@ import { Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useEffect, useRef, useState } from 'react';
 import { NavigationType, useNavigationType, useSearchParams } from 'react-router-dom';
+import { ThumbsDown } from '../../assets/thumbs-down';
 import { useOdieAssistantContext } from '../../context';
 import {
 	useAutoScroll,
@@ -14,17 +15,21 @@ import {
 	useUpdateDocumentTitle,
 } from '../../hooks';
 import { useHelpCenterChatScroll } from '../../hooks/use-help-center-chat-scroll';
-import {
-	getOdieInitialMessage,
-	interactionHasZendeskEvent,
-	interactionHasEnded,
-} from '../../utils';
+import { getOdieInitialMessage } from '../../utils';
 import { ViewMostRecentOpenConversationNotice } from '../odie-notice/view-most-recent-conversation-notice';
 import { DislikeFeedbackMessage } from './dislike-feedback-message';
 import { JumpToRecent } from './jump-to-recent';
 import { ThinkingPlaceholder } from './thinking-placeholder';
 import ChatMessage from '.';
 import type { Chat, CurrentUser } from '../../types';
+
+const DislikeThumb = () => {
+	return (
+		<div className="chatbox-message__dislike-thumb">
+			<ThumbsDown />
+		</div>
+	);
+};
 
 const LoadingChatSpinner = () => {
 	return (
@@ -47,7 +52,7 @@ interface ChatMessagesProps {
 }
 
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
-	const { chat, botNameSlug, isChatLoaded, isUserEligibleForPaidSupport } =
+	const { chat, botNameSlug, experimentVariationName, isChatLoaded, isUserEligibleForPaidSupport } =
 		useOdieAssistantContext();
 	const createZendeskConversation = useCreateZendeskConversation();
 	const resetSupportInteraction = useResetSupportInteraction();
@@ -62,16 +67,14 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
 	const scrollParentRef = useRef< HTMLElement | null >( null );
 
-	const { alreadyHasActiveZendeskChat, chatHasEnded } = useSelect( ( select ) => {
+	const { currentSupportInteraction } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
-		const currentInteraction = helpCenterSelect.getCurrentSupportInteraction();
 		return {
-			alreadyHasActiveZendeskChat:
-				interactionHasZendeskEvent( currentInteraction ) &&
-				! interactionHasEnded( currentInteraction ),
-			chatHasEnded: interactionHasEnded( currentInteraction ),
+			currentSupportInteraction: helpCenterSelect.getCurrentSupportInteraction(),
 		};
 	}, [] );
+
+	const chatHasEnded = [ 'solved', 'closed' ].includes( currentSupportInteraction?.status || '' );
 
 	useZendeskMessageListener();
 	useAutoScroll( messagesContainerRef, shouldEnableAutoScroll );
@@ -125,23 +128,18 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			setSearchParams( searchParams );
 			setHasForwardedToZendesk( true );
 
-			// when forwarding to zd avoid creating new chats
-			if ( alreadyHasActiveZendeskChat ) {
-				setChatMessagesLoaded( true );
-			} else {
-				resetSupportInteraction().then( ( interaction ) => {
-					if ( isChatLoaded ) {
-						createZendeskConversation( {
-							avoidTransfer: true,
-							interactionId: interaction?.uuid,
-							section: searchParams.get( 'section' ),
-							createdFrom: 'direct_url',
-						} ).then( () => {
-							setChatMessagesLoaded( true );
-						} );
-					}
-				} );
-			}
+			resetSupportInteraction().then( ( interaction ) => {
+				if ( isChatLoaded ) {
+					createZendeskConversation( {
+						avoidTransfer: true,
+						interactionId: interaction?.uuid,
+						section: searchParams.get( 'section' ),
+						createdFrom: 'direct_url',
+					} ).then( () => {
+						setChatMessagesLoaded( true );
+					} );
+				}
+			} );
 		}
 	}, [
 		isForwardingToZendesk,
@@ -150,7 +148,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		chat?.conversationId,
 		resetSupportInteraction,
 		createZendeskConversation,
-		alreadyHasActiveZendeskChat,
 	] );
 
 	// Used to apply the correct styling on messages
@@ -158,7 +155,11 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		return currentMessage === nextMessage;
 	};
 
-	const availableStatusWithFeedback = [ 'sending', 'transfer' ];
+	const removeDislikeStatus = experimentVariationName === 'give_wapuu_a_chance';
+
+	const availableStatusWithFeedback = removeDislikeStatus
+		? [ 'sending', 'transfer' ]
+		: [ 'sending', 'dislike', 'transfer' ];
 
 	return (
 		<>
@@ -204,6 +205,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 						{ chat.provider === 'odie' && (
 							<>
 								<ViewMostRecentOpenConversationNotice />
+								{ chat.status === 'dislike' && ! removeDislikeStatus && <DislikeThumb /> }
 								{ availableStatusWithFeedback.includes( chat.status ) && (
 									<div className="odie-chatbox__action-message">
 										{ chat.status === 'sending' && <ThinkingPlaceholder /> }

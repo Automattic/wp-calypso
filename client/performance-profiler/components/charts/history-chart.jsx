@@ -30,7 +30,7 @@ const createScales = ( data, range, margin, width, height ) => {
 
 	const colorScale = d3ScaleThreshold()
 		.domain( range )
-		.range( [ 'var(--studio-green-30)', 'var(--studio-orange-40)', 'var(--studio-red-50)' ] );
+		.range( [ '#00BA37', '#D67709', '#D63638' ] );
 
 	return { xScale, yScale, colorScale };
 };

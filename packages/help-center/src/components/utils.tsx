@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { getConversationIdFromInteraction } from '@automattic/odie-client/src/utils';
 import Smooch from 'smooch';
 import type { ContactOption } from '../types';
 import type { ZendeskConversation, SupportInteraction } from '@automattic/odie-client';
@@ -121,10 +120,14 @@ export const matchSupportInteractionId = (
 ) => {
 	if ( currentSupportInteraction && isChatLoaded && getConversations ) {
 		const conversations = getConversations();
-		const currentConversationId = getConversationIdFromInteraction( currentSupportInteraction );
-		return conversations.find( ( conversation ) => {
-			return conversation.id === currentConversationId;
+		const getCurrentSupportInteractionId = currentSupportInteraction?.events.find(
+			( event ) => event.event_source === 'zendesk'
+		)?.event_external_id;
+		const foundMatch = conversations.find( ( conversation ) => {
+			return conversation.id === getCurrentSupportInteractionId;
 		} );
+
+		return foundMatch;
 	}
 };
 

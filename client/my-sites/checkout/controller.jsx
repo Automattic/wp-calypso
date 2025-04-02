@@ -274,7 +274,7 @@ export function checkoutPending( context, next ) {
 	/**
 	 * @type {string|undefined}
 	 */
-	const redirectTo = context.query.redirect_to;
+	const redirectTo = context.query.redirectTo;
 
 	const receiptId = Number.isInteger( Number( context.query.receiptId ) )
 		? Number( context.query.receiptId )

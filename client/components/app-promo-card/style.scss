@@ -74,7 +74,7 @@
 	font-family: $brand-serif;
 	font-style: normal;
 	font-weight: 400;
-	font-size: 32px;
+	font-size: 32px; // stylelint-disable-line declaration-property-unit-allowed-list
 	line-height: 40px;
 	letter-spacing: -0.32px;
 
@@ -86,7 +86,7 @@
 	margin: 0;
 	font-style: normal;
 	font-weight: 400;
-	font-size: 17px;
+	font-size: 17px; // stylelint-disable-line declaration-property-unit-allowed-list
 	line-height: 25px;
 
 	color: var(--studio-gray-50);

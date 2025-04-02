@@ -979,7 +979,6 @@ class ManagePurchase extends Component<
 			<CompactCard href={ link }>
 				<Icon icon={ download } className="card__icon" />
 				{ translate( 'Downgrade plan' ) }
-				{ this.renderRefundText() }
 			</CompactCard>
 		);
 	}

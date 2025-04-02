@@ -3,7 +3,6 @@
 	// margins and paddings.
 	margin: 0;
 	padding: 0;
-	padding-top: 6px;
 
 	position: absolute;
 	top: 0;
@@ -99,11 +98,11 @@
 	}
 
 	.progress-bar {
-		background-color: color-mix(in srgb, var(--color-sidebar-text) 40%, transparent);
+		background-color: rgba(var(--color-sidebar-text-rgb), 0.4);
 		height: 6px;
 
 		.selected & {
-			background-color: color-mix(in srgb, var(--color-sidebar-menu-selected-text) 40%, transparent);
+			background-color: rgba(var(--color-sidebar-menu-selected-text-rgb), 0.4);
 		}
 
 		.progress-bar__progress {
@@ -135,7 +134,7 @@
 
 	// I think this is some voodoo to change the color
 	// of a link when tapped on iOS.
-	-webkit-tap-highlight-color: color-mix(in srgb, var(--color-neutral-700) 20%, transparent);
+	-webkit-tap-highlight-color: rgba(var(--color-neutral-700-rgb), 0.2);
 
 	&:hover {
 		background-color: var(--color-sidebar-menu-hover-background);

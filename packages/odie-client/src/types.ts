@@ -121,7 +121,6 @@ export type Context = {
 		inquiry_type?: InquiryType;
 		language?: string;
 		product?: string;
-		category?: string;
 	};
 	flags?: {
 		forward_to_human_support?: boolean;

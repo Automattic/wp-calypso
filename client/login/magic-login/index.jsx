@@ -128,8 +128,6 @@ class MagicLogin extends Component {
 		hashedEmail: null,
 	};
 
-	isInitialMount = true;
-
 	componentDidMount() {
 		const { userEmail, oauth2Client, query } = this.props;
 
@@ -147,8 +145,6 @@ class MagicLogin extends Component {
 				is_initial_view: true,
 			} );
 		}
-
-		this.isInitialMount = false;
 
 		// If the auto_trigger query parameter is set to true, automatically trigger the email send.
 		if ( query?.auto_trigger !== undefined ) {
@@ -1275,10 +1271,9 @@ class MagicLogin extends Component {
 			translate,
 			showCheckYourEmail: showEmailLinkVerification,
 			isWooJPC,
-			isSendingEmail,
-			isFromJetpackOnboarding,
 		} = this.props;
 		const { showSecondaryEmailOptions, showEmailCodeVerification, usernameOrEmail } = this.state;
+
 		if ( isWooJPC ) {
 			return (
 				<Main className="magic-login magic-login__request-link is-white-login">
@@ -1344,21 +1339,14 @@ class MagicLogin extends Component {
 			);
 		}
 
-		const isJetpackMagicLinkSignUpEnabled =
-			config.isEnabled( 'jetpack/magic-link-signup' ) && this.props.isJetpackLogin;
-		const shouldShowLoadingEllipsis =
-			isFromJetpackOnboarding &&
-			isJetpackMagicLinkSignUpEnabled &&
-			( isSendingEmail || this.isInitialMount );
-
 		// If this is part of the Jetpack login flow and the `jetpack/magic-link-signup` feature
 		// flag is enabled, some steps will display a different UI
 		const requestLoginEmailFormProps = {
 			...( this.props.isJetpackLogin ? { flow: 'jetpack' } : {} ),
-			...( isJetpackMagicLinkSignUpEnabled ? { isJetpackMagicLinkSignUpEnabled: true } : {} ),
+			...( this.props.isJetpackLogin && config.isEnabled( 'jetpack/magic-link-signup' )
+				? { isJetpackMagicLinkSignUpEnabled: true }
+				: {} ),
 			createAccountForNewUser: true,
-			shouldShowLoadingEllipsis,
-			isFromJetpackOnboarding,
 		};
 
 		return (
@@ -1377,7 +1365,7 @@ class MagicLogin extends Component {
 
 				<RequestLoginEmailForm { ...requestLoginEmailFormProps } />
 
-				{ ! shouldShowLoadingEllipsis && this.renderLinks() }
+				{ this.renderLinks() }
 			</Main>
 		);
 	}
@@ -1406,9 +1394,6 @@ const mapState = ( state ) => ( {
 	isFromAutomatticForAgenciesPlugin:
 		'automattic-for-agencies-client' ===
 		new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
-	isFromJetpackOnboarding:
-		new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ) ===
-		'jetpack-onboarding',
 	isWooJPC: isWooJPCFlow( state ),
 } );
 

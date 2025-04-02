@@ -23,6 +23,7 @@ import {
 } from '@automattic/design-picker';
 import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer, ONBOARDING_FLOW, isSiteSetupFlow, Step } from '@automattic/onboarding';
+import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -34,6 +35,7 @@ import { useQueryThemes } from 'calypso/components/data/query-themes';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Loading from 'calypso/components/loading';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
+import { StepContainerV2Loading } from 'calypso/components/step-container-v2-loading';
 import {
 	THEME_TIERS,
 	THEME_TIER_PREMIUM,
@@ -696,6 +698,7 @@ const UnifiedDesignPickerStep: StepType< {
 	}
 
 	const isUsingStepContainerV2 = shouldUseStepContainerV2( flow );
+	const isDesktopVersion = useViewportMatch( 'large', '>=' );
 
 	function getPrimaryActionButton() {
 		const action = getPrimaryActionButtonAction();
@@ -712,7 +715,7 @@ const UnifiedDesignPickerStep: StepType< {
 			);
 		}
 
-		return <Step.PrimaryButton onClick={ action }>{ text }</Step.PrimaryButton>;
+		return <Step.NextButton label={ text } onClick={ action } />;
 	}
 
 	useEffect( () => {
@@ -729,7 +732,7 @@ const UnifiedDesignPickerStep: StepType< {
 	const isLoading = isSiteLoading || isDesignsLoading;
 
 	if ( isLoading || isComingFromTheUpgradeScreen ) {
-		return isUsingStepContainerV2 ? <Step.Loading /> : <Loading />;
+		return isUsingStepContainerV2 ? <StepContainerV2Loading /> : <Loading />;
 	}
 
 	if ( selectedDesign && isPreviewingDesign ) {
@@ -859,46 +862,37 @@ const UnifiedDesignPickerStep: StepType< {
 			// TODO: Create a new wireframe for the design preview. It should be named "FixedColumnOnTheLeftLayout"
 			return (
 				<Step.FullWidthLayout
+					isMediumViewport={ isDesktopVersion }
 					className="step-container-v2--design-picker-preview"
-					topBar={ ( { isLargeViewport } ) => {
-						if ( ! isLargeViewport ) {
-							return null;
-						}
-
-						return (
+					topBar={
+						isDesktopVersion ? (
 							<Step.TopBar
-								leftElement={
+								backButton={
 									shouldHideActionButtons ? undefined : (
 										<Step.BackButton onClick={ handleBackClick } />
 									)
 								}
-								rightElement={
+								skipButton={
 									! isGoalsAtFrontExperiment ? undefined : (
-										<Step.SkipButton onClick={ () => handleSubmit() }>
-											{ translate( 'Skip setup' ) }
-										</Step.SkipButton>
+										<Step.SkipButton
+											onClick={ () => handleSubmit() }
+											label={ translate( 'Skip setup' ) }
+										/>
 									)
 								}
 							/>
-						);
-					} }
-					stickyBottomBar={ ( { isLargeViewport } ) => {
-						if ( isLargeViewport ) {
-							return null;
-						}
-
-						return (
-							<Step.StickyBottomBar
-								leftElement={ <Step.BackButton onClick={ handleBackClick } /> }
-								centerElement={
-									<div className="step-container-v2--design-picker-preview__header-design-title">
-										{ headerDesignTitle }
-									</div>
-								}
-								rightElement={ actionButtons }
-							/>
-						);
-					} }
+						) : undefined
+					}
+					stickyBottomBar={
+						<Step.StickyBottomBar
+							leftButton={ <Step.BackButton onClick={ handleBackClick } /> }
+							rightButton={ actionButtons }
+						>
+							<div className="step-container-v2--design-picker-preview__header-design-title">
+								{ headerDesignTitle }
+							</div>
+						</Step.StickyBottomBar>
+					}
 				>
 					{ stepContent }
 				</Step.FullWidthLayout>
@@ -926,7 +920,7 @@ const UnifiedDesignPickerStep: StepType< {
 		: translate( 'Pick a design' );
 
 	const subHeaderText = translate(
-		'Choose a homepage design that works for you. You can always change it later.'
+		'One of these homepage options could be great to start with. You can always change later.'
 	);
 
 	// Use this to prioritize themes in certain categories.
@@ -995,12 +989,10 @@ const UnifiedDesignPickerStep: StepType< {
 				className="step-container-v2--design-picker"
 				topBar={
 					<Step.TopBar
-						leftElement={ backButton ? <Step.BackButton onClick={ backButton } /> : undefined }
-						rightElement={
+						backButton={ backButton ? <Step.BackButton onClick={ backButton } /> : undefined }
+						skipButton={
 							hideSkip ? undefined : (
-								<Step.SkipButton onClick={ () => handleSubmit() }>
-									{ skipLabelText }
-								</Step.SkipButton>
+								<Step.SkipButton onClick={ () => handleSubmit() } label={ skipLabelText } />
 							)
 						}
 					/>

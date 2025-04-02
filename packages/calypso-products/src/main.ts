@@ -952,12 +952,12 @@ export function getFeatureByKey( feature: string ) {
 export function getFeatureDifference(
 	smallerPlan: string,
 	biggerPlan: string,
-	featureBundleSelector: keyof WPComPlan
+	featureBundleSelector: keyof Plan
 ) {
-	let biggerPlanObject = ( getPlan( biggerPlan ) as WPComPlan )?.[ featureBundleSelector ] as
+	let biggerPlanObject = ( getPlan( biggerPlan ) as Plan )?.[ featureBundleSelector ] as
 		| Array< string >
 		| ( () => Array< string > );
-	let smallerPlanObject = ( getPlan( smallerPlan ) as WPComPlan )?.[ featureBundleSelector ] as
+	let smallerPlanObject = ( getPlan( smallerPlan ) as Plan )?.[ featureBundleSelector ] as
 		| Array< string >
 		| ( () => Array< string > );
 

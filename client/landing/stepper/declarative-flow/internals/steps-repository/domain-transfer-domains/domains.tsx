@@ -10,6 +10,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg } from '@wordpress/url';
 import { formatCurrency } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
+import { v4 as uuid } from 'uuid';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import { domainTransfer } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
@@ -25,7 +26,7 @@ export interface Props {
 
 const defaultState: DomainTransferForm = {
 	domains: {
-		[ crypto.randomUUID() ]: {
+		[ uuid() ]: {
 			domain: '',
 			auth: '',
 			valid: false,
@@ -154,7 +155,7 @@ const Domains: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 			resulting_domain_count: domainCount + 1,
 		} );
 		const newDomainsState = { ...domainsState };
-		newDomainsState[ crypto.randomUUID() ] = {
+		newDomainsState[ uuid() ] = {
 			domain: '',
 			auth: '',
 			valid: false,
@@ -225,7 +226,7 @@ const Domains: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 				}
 			} );
 
-			newDomainsState[ crypto.randomUUID() ] = { ...domainTransferObj };
+			newDomainsState[ uuid() ] = { ...domainTransferObj };
 
 			// Only keep the latest entry - 100-year domain flows are only
 			// allowed to have one domain at a time, so always keep the latest

@@ -119,7 +119,7 @@ function useCallStatusChangeCallbacks( {
 	onPaymentError?: PaymentErrorCallback;
 	transactionError: string | null;
 	transactionStatus: TransactionStatus;
-	paymentMethodId: string | null | undefined;
+	paymentMethodId: string | null;
 	transactionLastResponse: PaymentProcessorResponseData;
 } ): void {
 	// Store the callbacks as refs so we do not call them more than once if they

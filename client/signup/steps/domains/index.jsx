@@ -11,7 +11,6 @@ import {
 	Step,
 } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
-import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
 import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -172,7 +171,6 @@ export class RenderDomainsStep extends Component {
 			checkDomainAvailabilityPromises: [],
 			removeDomainTimeout: 0,
 			addDomainTimeout: 0,
-			isDesktopViewport: false,
 		};
 	}
 
@@ -189,7 +187,6 @@ export class RenderDomainsStep extends Component {
 			// This call is expensive, so we only do it if the mini-cart hasDomainRegistration.
 			this.props.shoppingCartManager.addProductsToCart( [ this.props.multiDomainDefaultPlan ] );
 		}
-		this.subscribeToViewPortChanges();
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -203,20 +200,6 @@ export class RenderDomainsStep extends Component {
 				this.props.shoppingCartManager.addProductsToCart( [ this.props.multiDomainDefaultPlan ] );
 			}
 		}
-	}
-
-	subscribeToViewPortChanges() {
-		this.unsubscribeToViewPortChanges = subscribeIsWithinBreakpoint(
-			'>=960px',
-			( isDesktopViewport ) => this.setState( { isDesktopViewport } )
-		);
-		if ( isWithinBreakpoint( '>=960px' ) ) {
-			this.setState( { isDesktopViewport: true } );
-		}
-	}
-
-	componentWillUnmount() {
-		this.unsubscribeToViewPortChanges?.();
 	}
 
 	getLocale() {
@@ -1186,7 +1169,7 @@ export class RenderDomainsStep extends Component {
 	isHostingFlow = () => isHostingSignupFlow( this.props.flowName );
 
 	getSubHeaderText() {
-		const { isAllDomains, stepSectionName, translate } = this.props;
+		const { flowName, isAllDomains, stepSectionName, translate } = this.props;
 
 		if ( isAllDomains ) {
 			return translate( 'Find the domain that defines you' );
@@ -1207,6 +1190,13 @@ export class RenderDomainsStep extends Component {
 				'Find the perfect domain for your exciting new project or {{span}}decide later{{/span}}.',
 				{ components }
 			);
+		}
+
+		if (
+			shouldUseMultipleDomainsInCart( flowName ) &&
+			! [ 'use-your-domain' ].includes( stepSectionName )
+		) {
+			return translate( 'Find and claim one or more domain names.' );
 		}
 
 		if ( ! stepSectionName ) {
@@ -1441,9 +1431,8 @@ export class RenderDomainsStep extends Component {
 					href={ backUrl }
 					rel={ isExternalBackUrl ? 'external' : '' }
 					onClick={ goBack }
-				>
-					{ backLabelText }
-				</Step.BackButton>
+					label={ backLabelText }
+				/>
 			);
 
 			const mainContent = (
@@ -1455,10 +1444,9 @@ export class RenderDomainsStep extends Component {
 
 			return (
 				<Step.TwoColumnLayout
-					isLargeViewport={ this.state.isDesktopViewport }
 					firstColumnWidth={ 7 }
 					secondColumnWidth={ 3 }
-					topBar={ <Step.TopBar leftElement={ ! hideBack && backButton } /> }
+					topBar={ <Step.TopBar backButton={ ! hideBack && backButton } /> }
 					heading={ <Step.Heading text={ headerText } subText={ fallbackSubHeaderText } /> }
 					className="domains__step-content domains__step-content-domain-step"
 				>

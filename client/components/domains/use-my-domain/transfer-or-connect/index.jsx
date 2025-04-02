@@ -52,7 +52,7 @@ function DomainTransferOrConnect( {
 	);
 	const [ isFetching, setIsFetching ] = useState( false );
 
-	const { setShowHelpCenter, setNavigateToRoute } = useDispatch( HELP_CENTER_STORE );
+	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 
 	const handleConnect = () => {
 		recordMappingButtonClickInUseYourDomain( domain );
@@ -141,10 +141,7 @@ function DomainTransferOrConnect( {
 							__( "Not sure what's best for you? <a>We're happy to help!</a>" ),
 							{
 								a: createElement( 'button', {
-									onClick: () => {
-										setNavigateToRoute( '/odie' );
-										setShowHelpCenter( true );
-									},
+									onClick: () => setShowHelpCenter( true ),
 								} ),
 							}
 						) }

@@ -1,7 +1,6 @@
 /**
  * Components
  */
-export { Link } from './router';
 export { SidebarContent, SidebarNavigationItem, SidebarNavigationScreen } from './components/';
 
 /**

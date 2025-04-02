@@ -79,7 +79,7 @@ button {
 .onboarding.design-setup:not(:has(.step-container-v2)),
 .onboarding.design-choices:not(:has(.step-container-v2)),
 .onboarding.difm-starting-point:not(:has(.step-container-v2)),
-.site-migration:not(:has(.step-container-v2)),
+.site-migration,
 .migration,
 .plugin-bundle,
 .newsletter-setup,
@@ -104,7 +104,7 @@ button {
 .hundred-year-domain,
 .entrepreneur,
 .generate-content,
-.playground:not(:has(.step-container-v2)),
+.playground,
 .processing:not(:has(.step-container-v2)),
 .create-site:not(:has(.step-container-v2)) {
 	box-sizing: border-box;

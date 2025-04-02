@@ -7,11 +7,8 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useDispatch } from 'calypso/state';
-import { resetSite } from 'calypso/state/sites/actions';
 import Authorization from './components/authorization';
 import useStoreApplicationPassword from './hooks/use-store-application-password';
 import type { Step } from '../../types';
@@ -25,8 +22,6 @@ const SiteMigrationApplicationPasswordsAuthorization: Step< {
 } > = function ( { navigation } ) {
 	const translate = useTranslate();
 	const siteSlug = useSiteSlugParam();
-	const siteId = parseInt( useSiteIdParam() ?? '' );
-	const dispatch = useDispatch();
 
 	const source = useQuery().get( 'from' ) ?? '';
 	const authorizationUrl = useQuery().get( 'authorizationUrl' ) ?? undefined;
@@ -60,10 +55,9 @@ const SiteMigrationApplicationPasswordsAuthorization: Step< {
 
 	useEffect( () => {
 		if ( isStoreApplicationPasswordSuccess ) {
-			siteId && dispatch( resetSite( siteId ) );
 			navigation?.submit?.( { action: 'migration-started' } );
 		}
-	}, [ isStoreApplicationPasswordSuccess, navigation, dispatch, siteId ] );
+	}, [ isStoreApplicationPasswordSuccess, navigation ] );
 
 	const navigateToFallbackCredentials = () => {
 		navigation?.submit?.( { action: 'fallback-credentials', authorizationUrl } );

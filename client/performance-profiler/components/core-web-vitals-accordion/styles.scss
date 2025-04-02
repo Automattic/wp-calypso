@@ -126,15 +126,15 @@ $blueberry-color: #3858e9;
 	margin-top: 6px;
 
 	&.good {
-		color: var(--studio-green-60);
+		color: #00ba37;
 	}
 
 	&.needs-improvement {
-		color: var(--studio-orange-60);
+		color: #d67709;
 	}
 
 	&.bad {
-		color: var(--studio-red-60);
+		color: #d63638;
 	}
 }
 

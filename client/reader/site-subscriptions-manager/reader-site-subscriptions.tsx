@@ -1,4 +1,6 @@
+import page from '@automattic/calypso-router';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
+import { addQueryArgs, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { UnsubscribedFeedsSearchList } from 'calypso/blocks/reader-unsubscribed-feeds-search-list';
@@ -12,8 +14,26 @@ import {
 } from 'calypso/landing/subscriptions/tracks';
 import { resemblesUrl } from 'calypso/lib/url';
 import { RecommendedSites } from '../recommended-sites';
-import { getUrlQuerySearchTerm, SEARCH_QUERY_PARAM, setUrlQuery } from '../utils';
 import NotFoundSiteSubscriptions from './not-found-site-subscriptions';
+
+const SEARCH_KEY = 's';
+
+function getUrlQuerySearchTerm(): string {
+	const queryArgs = getQueryArgs( window.location.href );
+	return ( queryArgs[ SEARCH_KEY ] as string ) ?? '';
+}
+
+const setUrlQuery = ( key: string, value: string ) => {
+	const path = window.location.pathname + window.location.search;
+	const nextPath = ! value
+		? removeQueryArgs( path, key )
+		: addQueryArgs( path, { [ key ]: value } );
+
+	// Only trigger a page show when path has changed.
+	if ( nextPath !== path ) {
+		page.replace( nextPath );
+	}
+};
 
 const ReaderSiteSubscriptions = () => {
 	const translate = useTranslate();
@@ -49,7 +69,7 @@ const ReaderSiteSubscriptions = () => {
 
 	// Update url query when search term changes
 	useEffect( () => {
-		setUrlQuery( SEARCH_QUERY_PARAM, searchTerm );
+		setUrlQuery( SEARCH_KEY, searchTerm );
 	}, [ searchTerm ] );
 
 	useEffect( () => {

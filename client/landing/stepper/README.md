@@ -60,8 +60,8 @@ import type { Flow } from './internals/types';
 export const exampleFlow: Flow = {
 	initialize() {
 		return [
-			STEPS.DOMAINS,
-			STEPS.PLANS,
+			STEPS.INTRO,
+			STEPS.DOMAINS
 		];
 	},
 	useStepNavigation( currentStep, navigate ) {

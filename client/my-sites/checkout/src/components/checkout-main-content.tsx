@@ -498,7 +498,7 @@ export default function CheckoutMainContent( {
 	useOneDollarOfferTrack( siteId, 'checkout' );
 
 	const isStepContainerV2 = shouldUseStepContainerV2( getSignupCompleteFlowName() );
-	const isLargeViewport = useViewportMatch( 'large', '>=' );
+	const isMediumViewport = useViewportMatch( 'large', '>=' );
 
 	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter } = useCheckoutHelpCenter();
 
@@ -513,22 +513,14 @@ export default function CheckoutMainContent( {
 	} = checkoutActions;
 
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
-		const headingText = translate( "Almost there – we're currently finalizing your order." );
-
-		if ( isStepContainerV2 ) {
-			return (
-				<>
-					<PerformanceTrackerStop />
-					<Step.Loading title={ headingText } />
-				</>
-			);
-		}
-
 		return (
 			<WPCheckoutCompletedWrapper>
 				<WPCheckoutCompletedMainContent>
 					<PerformanceTrackerStop />
-					<Loading className="checkout__pending-content" title={ headingText } />
+					<Loading
+						className="checkout__pending-content"
+						title={ translate( "Almost there – we're currently finalizing your order." ) }
+					/>
 				</WPCheckoutCompletedMainContent>
 			</WPCheckoutCompletedWrapper>
 		);
@@ -638,7 +630,7 @@ export default function CheckoutMainContent( {
 					<Step.Heading
 						text={ translate( 'Checkout' ) }
 						align="left"
-						size={ ! isLargeViewport ? 'small' : undefined }
+						size={ ! isMediumViewport ? 'small' : undefined }
 					/>
 				) : (
 					<WPCheckoutTitle>{ translate( 'Checkout' ) }</WPCheckoutTitle>
@@ -837,18 +829,20 @@ export default function CheckoutMainContent( {
 	}
 
 	return (
-		<StepContainerV2CheckoutFixer isLargeViewport={ isLargeViewport }>
+		<StepContainerV2CheckoutFixer isMediumViewport={ isMediumViewport }>
 			<Step.FullWidthLayout
+				isMediumViewport={ isMediumViewport }
 				hasContentPadding={ false }
 				topBar={
 					<Step.TopBar
-						leftElement={ <Step.BackButton onClick={ leaveModalProps.clickClose } /> }
-						rightElement={
+						backButton={ <Step.BackButton onClick={ leaveModalProps.clickClose } /> }
+						skipButton={
 							<span className="checkout-skip-button">
 								<label>{ helpCenterButtonCopy ?? translate( 'Need extra help?' ) } </label>
-								<Step.LinkButton onClick={ toggleHelpCenter }>
-									{ helpCenterButtonLink ?? translate( 'Visit Help Center' ) }
-								</Step.LinkButton>
+								<Step.SkipButton
+									onClick={ toggleHelpCenter }
+									label={ helpCenterButtonLink ?? translate( 'Visit Help Center' ) }
+								/>
 							</span>
 						}
 					/>
@@ -861,7 +855,7 @@ export default function CheckoutMainContent( {
 	);
 }
 
-const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
+const StepContainerV2CheckoutFixer = styled.div< { isMediumViewport: boolean } >`
 	.checkout-wrapper {
 		margin-top: calc( var( --step-container-v2-top-bar-height ) * -1 );
 	}
@@ -876,13 +870,13 @@ const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
 		}
 	}
 
-	.step-container-v2__top-bar {
+	.step-container-v2__top-bar-wrapper {
 		position: relative;
 		z-index: 1;
 	}
 
 	${ ( props ) =>
-		! props.isLargeViewport &&
+		! props.isMediumViewport &&
 		css`
 			.checkout-sidebar-content {
 				margin-top: var( --step-container-v2-top-bar-height );
@@ -905,7 +899,7 @@ const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
 
 			.checkout__summary-title {
 				margin: 0;
-				padding: 1rem var( --step-container-v2-content-inline-padding );
+				padding: var( --step-container-v2-content-inline-padding );
 				max-width: 100%;
 			}
 
@@ -930,10 +924,6 @@ const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
 				padding-inline: 0;
 			}
 
-			.wp-checkout__review-order-step {
-				padding-block: 2rem;
-			}
-
 			.checkout-steps__submit-button-wrapper {
 				max-width: 100%;
 				padding-inline: var( --step-container-v2-content-inline-padding );
@@ -949,7 +939,7 @@ const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
 		` }
 
 	${ ( props ) =>
-		props.isLargeViewport &&
+		props.isMediumViewport &&
 		css`
 			.checkout__summary-area {
 				transform: translateY( -54px );

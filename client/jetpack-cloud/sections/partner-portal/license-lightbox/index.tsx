@@ -8,7 +8,6 @@ import JetpackLightbox, {
 	JetpackLightboxMain,
 } from 'calypso/components/jetpack/jetpack-lightbox';
 import useMobileSidebar from 'calypso/components/jetpack/jetpack-lightbox/hooks/use-mobile-sidebar';
-import { VendorInfo } from 'calypso/components/jetpack/jetpack-lightbox/types';
 import JetpackProductInfo from 'calypso/components/jetpack/jetpack-product-info';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { useLicenseLightboxData } from './hooks/use-license-lightbox-data';
@@ -33,7 +32,6 @@ export type LicenseLightBoxProps = {
 	fireCloseOnCTAClick?: boolean;
 	customDescription?: ReactNode;
 	customFooter?: ReactNode;
-	vendor?: VendorInfo | null;
 };
 
 const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
@@ -53,7 +51,6 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 	fireCloseOnCTAClick = true,
 	customDescription,
 	customFooter,
-	vendor,
 } ) => {
 	const isLargeScreen = useBreakpoint( '>782px' );
 	const { title, product: productInfo } = useLicenseLightboxData( product );
@@ -77,7 +74,6 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 			<JetpackLightboxMain ref={ mainRef }>
 				{ productInfo && (
 					<JetpackProductInfo
-						vendor={ vendor }
 						title={ title }
 						product={ productInfo }
 						full={ isLargeScreen }

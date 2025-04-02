@@ -7,10 +7,10 @@ import './styles.scss';
 type AddSitesModalProps = {
 	showModal: boolean;
 	onClose: () => void;
-	onChangeSubscribe: () => void;
+	onAddFinished: () => void;
 };
 
-const AddSitesModal = ( { showModal, onClose, onChangeSubscribe }: AddSitesModalProps ) => {
+const AddSitesModal = ( { showModal, onClose, onAddFinished }: AddSitesModalProps ) => {
 	const translate = useTranslate();
 
 	const modalTitle = translate( 'Add a New Subscription', {
@@ -33,7 +33,7 @@ const AddSitesModal = ( { showModal, onClose, onChangeSubscribe }: AddSitesModal
 			</p>
 
 			<AddSitesForm
-				onChangeSubscribe={ onChangeSubscribe }
+				onAddFinished={ onAddFinished }
 				source={ SOURCE_SUBSCRIPTIONS_ADD_SITES_MODAL }
 			/>
 		</Modal>

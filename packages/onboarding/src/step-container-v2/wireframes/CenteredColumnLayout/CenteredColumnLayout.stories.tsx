@@ -1,5 +1,5 @@
 import { createInterpolateElement } from '@wordpress/element';
-import { Heading, TopBar, BackButton, PrimaryButton, StickyBottomBar, SkipButton } from '../..';
+import { Heading, TopBar, BackButton, NextButton, StickyBottomBar, SkipButton } from '../..';
 import { WireframePlaceholder } from '../../helpers/wireframe-placeholder';
 import { withStepContainerV2ContextDecorator } from '../../helpers/withStepContainerV2ContextDecorator';
 import { CenteredColumnLayout } from './CenteredColumnLayout';
@@ -15,13 +15,13 @@ export default meta;
 
 export const FourColumnsCenteredLayout = () => {
 	const backButton = <BackButton />;
-	const nextButton = <PrimaryButton />;
+	const nextButton = <NextButton />;
 	const skipButton = <SkipButton />;
 
 	return (
 		<CenteredColumnLayout
 			columnWidth={ 4 }
-			topBar={ <TopBar leftElement={ backButton } rightElement={ skipButton } /> }
+			topBar={ <TopBar backButton={ backButton } skipButton={ skipButton } /> }
 			heading={
 				<Heading
 					text="Four Columns Centered Layout"
@@ -33,7 +33,7 @@ export const FourColumnsCenteredLayout = () => {
 					) }
 				/>
 			}
-			stickyBottomBar={ <StickyBottomBar rightElement={ nextButton } /> }
+			stickyBottomBar={ <StickyBottomBar rightButton={ nextButton } /> }
 		>
 			<WireframePlaceholder height={ 370 }>Content</WireframePlaceholder>
 		</CenteredColumnLayout>
@@ -42,13 +42,13 @@ export const FourColumnsCenteredLayout = () => {
 
 export const SixColumnsCenteredLayout = () => {
 	const backButton = <BackButton />;
-	const nextButton = <PrimaryButton />;
+	const nextButton = <NextButton />;
 	const skipButton = <SkipButton />;
 
 	return (
 		<CenteredColumnLayout
 			columnWidth={ 6 }
-			topBar={ <TopBar leftElement={ backButton } rightElement={ skipButton } /> }
+			topBar={ <TopBar backButton={ backButton } skipButton={ skipButton } /> }
 			heading={
 				<Heading
 					text="Six Columns Centered Layout"
@@ -60,7 +60,7 @@ export const SixColumnsCenteredLayout = () => {
 					) }
 				/>
 			}
-			stickyBottomBar={ <StickyBottomBar rightElement={ nextButton } /> }
+			stickyBottomBar={ <StickyBottomBar rightButton={ nextButton } /> }
 		>
 			<WireframePlaceholder height={ 500 }>Content</WireframePlaceholder>
 		</CenteredColumnLayout>
@@ -69,13 +69,13 @@ export const SixColumnsCenteredLayout = () => {
 
 export const EightColumnsCenteredLayout = () => {
 	const backButton = <BackButton />;
-	const nextButton = <PrimaryButton />;
+	const nextButton = <NextButton />;
 	const skipButton = <SkipButton />;
 
 	return (
 		<CenteredColumnLayout
 			columnWidth={ 8 }
-			topBar={ <TopBar leftElement={ backButton } rightElement={ skipButton } /> }
+			topBar={ <TopBar backButton={ backButton } skipButton={ skipButton } /> }
 			heading={
 				<Heading
 					text="Eight Columns Centered Layout"
@@ -87,7 +87,7 @@ export const EightColumnsCenteredLayout = () => {
 					) }
 				/>
 			}
-			stickyBottomBar={ <StickyBottomBar rightElement={ nextButton } /> }
+			stickyBottomBar={ <StickyBottomBar rightButton={ nextButton } /> }
 		>
 			<WireframePlaceholder height={ 500 }>Content</WireframePlaceholder>
 		</CenteredColumnLayout>

@@ -285,22 +285,13 @@ const SubscriberDataViews = ( {
 					</div>
 				),
 				elements: [
+					{ label: SubscribersStatus.Subscribed, value: SubscribersFilterBy.EmailSubscriber },
+					{ label: SubscribersStatus.NotSubscribed, value: SubscribersFilterBy.ReaderSubscriber },
 					{
-						label: SubscribersStatus[ 'Subscribed' ],
-						value: SubscribersFilterBy.EmailSubscriber,
-					},
-					{
-						label: SubscribersStatus[ 'Not subscribed' ],
-						value: SubscribersFilterBy.ReaderSubscriber,
-					},
-					{
-						label: SubscribersStatus[ 'Not confirmed' ],
+						label: SubscribersStatus.NotConfirmed,
 						value: SubscribersFilterBy.UnconfirmedSubscriber,
 					},
-					{
-						label: SubscribersStatus[ 'Not sending' ],
-						value: SubscribersFilterBy.BlockedSubscriber,
-					},
+					{ label: SubscribersStatus.NotSending, value: SubscribersFilterBy.BlockedSubscriber },
 				],
 				filterBy: {
 					operators: [ 'is' as Operator ],

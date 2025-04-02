@@ -2,8 +2,10 @@ import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
 import { NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
+import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useLaunchpadDecider } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-launchpad-decider';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { getStepFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
@@ -27,9 +29,17 @@ import type { Flow } from '../../internals/types';
 const newsletter: Flow = {
 	name: NEWSLETTER_FLOW,
 	__experimentalUseBuiltinAuth: true,
+	get title() {
+		return translate( 'Newsletter' );
+	},
 	isSignupFlow: true,
 	useSteps() {
-		return stepsWithRequiredLogin( [
+		const query = useQuery();
+		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
+
+		const publicSteps = [ ...( ! isComingFromMarketingPage ? [ STEPS.INTRO ] : [] ) ];
+
+		const privateSteps = stepsWithRequiredLogin( [
 			STEPS.NEWSLETTER_SETUP,
 			STEPS.NEWSLETTER_GOALS,
 			STEPS.DOMAINS,
@@ -39,6 +49,8 @@ const newsletter: Flow = {
 			STEPS.SITE_CREATION_STEP,
 			STEPS.LAUNCHPAD,
 		] );
+
+		return [ ...publicSteps, ...privateSteps ];
 	},
 	useSideEffect() {
 		const { setHidePlansFeatureComparison, setIntent } = useDispatch( ONBOARD_STORE );
@@ -68,7 +80,9 @@ const newsletter: Flow = {
 		const flowName = this.name;
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
+		const query = useQuery();
 		const { exitFlow } = useExitFlow();
+		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
 
 		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
 			exitFlow,
@@ -89,6 +103,9 @@ const newsletter: Flow = {
 			const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
 
 			switch ( _currentStep ) {
+				case 'intro':
+					return navigate( 'newsletterSetup' );
+
 				case 'newsletterSetup':
 					return navigate( 'newsletterGoals' );
 
@@ -145,6 +162,10 @@ const newsletter: Flow = {
 			}
 		}
 
+		const goBack = () => {
+			return;
+		};
+
 		const goNext = async () => {
 			switch ( _currentStep ) {
 				case 'launchpad':
@@ -155,7 +176,7 @@ const newsletter: Flow = {
 					return;
 
 				default:
-					return navigate( 'newsletterSetup' );
+					return navigate( isComingFromMarketingPage ? 'newsletterSetup' : 'intro' );
 			}
 		};
 
@@ -163,7 +184,7 @@ const newsletter: Flow = {
 			navigate( step );
 		};
 
-		return { goNext, goToStep, submit };
+		return { goNext, goBack, goToStep, submit };
 	},
 };
 

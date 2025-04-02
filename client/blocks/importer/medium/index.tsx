@@ -65,6 +65,7 @@ export const MediumImporter: React.FunctionComponent< ImporterBaseProps > = ( pr
 
 	function onTryAgainClick() {
 		job?.importerId && resetImport( siteId, job.importerId );
+		stepNavigator?.goToImportCapturePage?.();
 	}
 
 	function checkProgress() {

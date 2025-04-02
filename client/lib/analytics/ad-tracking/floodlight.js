@@ -1,5 +1,6 @@
 import { getTracksAnonymousUserId, getCurrentUser } from '@automattic/calypso-analytics';
 import cookie from 'cookie';
+import { v4 as uuid } from 'uuid';
 import { mayWeTrackByTracker } from '../tracker-buckets';
 import {
 	debug,
@@ -67,7 +68,7 @@ function floodlightSessionId() {
 	}
 
 	// Generate a 32-byte random session id
-	const newSessionId = crypto.randomUUID().replace( new RegExp( '-', 'g' ), '' );
+	const newSessionId = uuid().replace( new RegExp( '-', 'g' ), '' );
 	debug( 'Floodlight: New session: ' + newSessionId );
 	return newSessionId;
 }

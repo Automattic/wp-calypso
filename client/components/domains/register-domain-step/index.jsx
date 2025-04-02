@@ -31,6 +31,7 @@ import PropTypes from 'prop-types';
 import { stringify, parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { v4 as uuid } from 'uuid';
 import Illustration from 'calypso/assets/images/domains/domain.svg';
 import DomainSearchResults from 'calypso/components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'calypso/components/domains/example-domain-suggestions';
@@ -426,7 +427,7 @@ class RegisterDomainStep extends Component {
 	}
 
 	getNewRailcarId() {
-		return `${ crypto.randomUUID().replace( /-/g, '' ) }-domain-suggestion`;
+		return `${ uuid().replace( /-/g, '' ) }-domain-suggestion`;
 	}
 
 	focusSearchCard = () => {

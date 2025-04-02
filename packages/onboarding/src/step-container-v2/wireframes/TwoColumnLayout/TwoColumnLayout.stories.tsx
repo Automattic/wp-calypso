@@ -1,5 +1,5 @@
 import { createInterpolateElement } from '@wordpress/element';
-import { Heading, TopBar, BackButton, PrimaryButton, StickyBottomBar } from '../..';
+import { Heading, TopBar, BackButton, NextButton, StickyBottomBar } from '../..';
 import { WireframePlaceholder } from '../../helpers/wireframe-placeholder';
 import { withStepContainerV2ContextDecorator } from '../../helpers/withStepContainerV2ContextDecorator';
 import { TwoColumnLayout } from './TwoColumnLayout';
@@ -17,7 +17,7 @@ export const ThreeColumnsOnRightLayout = () => (
 	<TwoColumnLayout
 		firstColumnWidth={ 2 }
 		secondColumnWidth={ 1 }
-		topBar={ <TopBar leftElement={ <BackButton /> } /> }
+		topBar={ <TopBar backButton={ <BackButton /> } /> }
 		heading={
 			<Heading
 				text="Three Columns on the Right"
@@ -29,7 +29,7 @@ export const ThreeColumnsOnRightLayout = () => (
 				) }
 			/>
 		}
-		stickyBottomBar={ <StickyBottomBar rightElement={ <PrimaryButton /> } /> }
+		stickyBottomBar={ <StickyBottomBar rightButton={ <NextButton /> } /> }
 	>
 		<WireframePlaceholder height={ 616 }>Main</WireframePlaceholder>
 		<WireframePlaceholder height={ 616 }>Sidebar</WireframePlaceholder>
@@ -40,7 +40,7 @@ export const EqualTwoColumnLayout = () => (
 	<TwoColumnLayout
 		firstColumnWidth={ 1 }
 		secondColumnWidth={ 1 }
-		topBar={ <TopBar leftElement={ <BackButton /> } /> }
+		topBar={ <TopBar backButton={ <BackButton /> } /> }
 		heading={
 			<Heading
 				text="Two Equal Columns"
@@ -52,7 +52,7 @@ export const EqualTwoColumnLayout = () => (
 				) }
 			/>
 		}
-		stickyBottomBar={ <StickyBottomBar rightElement={ <PrimaryButton /> } /> }
+		stickyBottomBar={ <StickyBottomBar rightButton={ <NextButton /> } /> }
 	>
 		<WireframePlaceholder height={ 616 }>Content 1</WireframePlaceholder>
 		<WireframePlaceholder height={ 616 }>Content 2</WireframePlaceholder>
@@ -63,7 +63,7 @@ export const WithRenderProp = () => (
 	<TwoColumnLayout
 		firstColumnWidth={ 1 }
 		secondColumnWidth={ 1 }
-		topBar={ <TopBar leftElement={ <BackButton /> } /> }
+		topBar={ <TopBar backButton={ <BackButton /> } /> }
 		heading={
 			<Heading
 				text="Columns Rendered with Render Prop"
@@ -75,13 +75,13 @@ export const WithRenderProp = () => (
 				) }
 			/>
 		}
-		stickyBottomBar={ <StickyBottomBar rightElement={ <PrimaryButton /> } /> }
+		stickyBottomBar={ <StickyBottomBar rightButton={ <NextButton /> } /> }
 	>
-		{ ( { isSmallViewport, isLargeViewport } ) => (
+		{ ( { isMediumViewport, isLargeViewport } ) => (
 			<>
 				<WireframePlaceholder height={ 616 }>
 					<div>Content 1</div>
-					<pre>is small viewport: { isSmallViewport.toString() }</pre>
+					<pre>is medium viewport: { isMediumViewport.toString() }</pre>
 				</WireframePlaceholder>
 				<WireframePlaceholder height={ 616 }>
 					<div>Content 1</div>

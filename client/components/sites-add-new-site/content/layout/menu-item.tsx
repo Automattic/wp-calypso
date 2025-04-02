@@ -11,7 +11,7 @@ type Props = {
 	children?: JSX.Element;
 	description: TranslateResult;
 	disabled?: boolean;
-	heading: TranslateResult;
+	heading: string;
 	icon: JSX.Element;
 	isBanner?: boolean;
 };

@@ -19,7 +19,7 @@ function renderFreeToPaidPlanNudge( { siteId, siteSlug, translate }, dispatch ) 
 			forceHref
 			callToAction={ translate( 'Upgrade' ) }
 			compact
-			href={ '/domains/add/' + siteSlug + '?domainAndPlanPackage=true' }
+			href={ '/plans/' + siteSlug }
 			title={ translate( 'Free domain with an annual plan' ) }
 			onClick={ () => dispatch( clickUpgradeNudge( siteId ) ) }
 			tracksClickName="calypso_upgrade_nudge_cta_click"

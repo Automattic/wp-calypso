@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Children, createRef, useMemo, useState, useRef, useLayoutEffect } from 'react';
+import { v4 as uuid } from 'uuid';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import HoverIntent from 'calypso/lib/hover-intent';
@@ -87,7 +88,7 @@ export const ExpandableSidebarMenu = ( {
 		setSubmenuHovered( false );
 	};
 
-	const menuId = useMemo( () => 'menu' + crypto.randomUUID(), [] );
+	const menuId = useMemo( () => 'menu' + uuid(), [] );
 
 	useLayoutEffect( () => {
 		if ( submenuHovered && offScreen( submenu.current ) ) {

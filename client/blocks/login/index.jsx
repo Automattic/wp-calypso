@@ -352,6 +352,7 @@ class Login extends Component {
 			isGravPoweredLoginPage,
 			isJetpack,
 			isManualRenewalImmediateLoginAttempt,
+			isP2Login,
 			isSignupExistingAccount,
 			isSocialFirst,
 			isWhiteLogin,
@@ -674,6 +675,13 @@ class Login extends Component {
 		} else if ( fromSite ) {
 			// if redirected from Calypso URL with a site slug, offer a link to that site's frontend
 			postHeader = <VisitSite siteSlug={ fromSite } />;
+		} else if ( isP2Login ) {
+			headerText = translate( 'Log in' );
+			postHeader = (
+				<p className="login__header-subtitle">
+					{ translate( 'Enter your details to log in to your account.' ) }
+				</p>
+			);
 		} else if ( isSignupExistingAccount ) {
 			headerText = preventWidows( translate( 'Log in to your existing account' ) );
 		}
@@ -813,6 +821,7 @@ class Login extends Component {
 		const {
 			domain,
 			isJetpack,
+			isP2Login,
 			privateSite,
 			twoFactorAuthType,
 			twoFactorEnabled,
@@ -955,6 +964,7 @@ class Login extends Component {
 							socialService={ socialService }
 							socialServiceResponse={ socialServiceResponse }
 							domain={ domain }
+							isP2Login={ isP2Login }
 							locale={ locale }
 							userEmail={ userEmail }
 							handleUsernameChange={ handleUsernameChange }
@@ -985,6 +995,7 @@ class Login extends Component {
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }
+				isP2Login={ isP2Login }
 				locale={ locale }
 				userEmail={ userEmail }
 				handleUsernameChange={ handleUsernameChange }

@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
 import Notice from 'calypso/components/notice';
 import { AddSitesForm } from 'calypso/landing/subscriptions/components/add-sites-form';
 import { SiteSubscriptionsList } from 'calypso/landing/subscriptions/components/site-subscriptions-list';
@@ -8,27 +7,20 @@ import {
 	SubscriptionsPortal,
 } from 'calypso/landing/subscriptions/components/subscription-manager-context';
 import { useSelector } from 'calypso/state';
-import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 
 import './style.scss';
 
 const DiscoverAddNew = () => {
 	const translate = useTranslate();
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
-	const [ hasFeedPreview, setHasFeedPreview ] = useState< boolean >( false );
-
-	const onChangeFeedPreview = useCallback( ( hasPreview: boolean ): void => {
-		setHasFeedPreview( hasPreview );
-	}, [] );
-
-	const onSubscribeToggle = useCallback( (): void => {
-		setHasFeedPreview( false ); // Close the feed preview when the subscription is toggled.
-	}, [] );
+	const needsEmailVerification = isLoggedIn && ! isEmailVerified;
 
 	return (
 		<div className="discover-add-new">
 			<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
-				{ ! isEmailVerified && (
+				{ needsEmailVerification && (
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
@@ -39,21 +31,18 @@ const DiscoverAddNew = () => {
 						</a>
 					</Notice>
 				) }
-				<div className={ `discover-add-new__form${ isEmailVerified ? '' : ' is-disabled' }` }>
+				<div
+					className={ `discover-add-new__form${ needsEmailVerification ? ' is-disabled' : '' }` }
+				>
 					<h2 className="discover-add-new__form-title">
 						{ translate( 'Add new sites, newsletters, and RSS feeds to your reading list.' ) }
 					</h2>
-					<AddSitesForm
-						pathname="/discover/add-new"
-						source="discover-add-new"
-						onChangeFeedPreview={ onChangeFeedPreview }
-						onChangeSubscribe={ onSubscribeToggle }
-					/>
+					<AddSitesForm source="discover-add-new" />
 				</div>
-				{ ! hasFeedPreview && (
+				{ isLoggedIn && (
 					<div
 						className={ `discover-add-new__subscriptions${
-							isEmailVerified ? '' : ' is-disabled'
+							needsEmailVerification ? ' is-disabled' : ''
 						}` }
 					>
 						<h2 className="discover-add-new__subscriptions-title">

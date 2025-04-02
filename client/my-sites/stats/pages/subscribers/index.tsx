@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
@@ -14,7 +13,6 @@ import statsStrings from 'calypso/my-sites/stats/stats-strings';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
 import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
 import { useSelector } from 'calypso/state';
-import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { getSiteSlug, isSimpleSite } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -106,16 +104,6 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 		) : (
 			<EmptyListView />
 		);
-
-	// If the subscriptions module is inactive, redirect to the stats page.
-	const isSubscriptionsModuleActive = useSelector( ( state ) =>
-		siteId ? isJetpackModuleActive( state, siteId, 'subscriptions', true ) : false
-	);
-
-	if ( ! isSimple && ! isSubscriptionsModuleActive ) {
-		page.redirect( `/stats/day/${ siteSlug }` );
-		return;
-	}
 
 	return (
 		<Main fullWidthLayout>

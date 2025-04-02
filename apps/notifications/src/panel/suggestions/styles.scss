@@ -8,7 +8,7 @@ $selected-color: var(--color-primary);
 $img-size: 24px;
 $img-border-radius: 50%;
 $border-radius: 3px;
-$box-shadow: 0 5px 6px color-mix(in srgb, var(--color-neutral-10) 50%, transparent);
+$box-shadow: 0 5px 6px rgba(var(--color-neutral-10-rgb), 0.5);
 
 .wpnc__suggestions {
 	position: relative;
@@ -38,6 +38,7 @@ $box-shadow: 0 5px 6px color-mix(in srgb, var(--color-neutral-10) 50%, transpare
 			border-bottom: 1px solid $light-border-color;
 			cursor: pointer;
 			line-height: $img-size;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 14px;
 			height: $img-size;
 			overflow: hidden;
@@ -54,7 +55,7 @@ $box-shadow: 0 5px 6px color-mix(in srgb, var(--color-neutral-10) 50%, transpare
 
 	strong {
 		font-weight: 400;
-		background: color-mix(in srgb, var(--color-primary-light) 25%, transparent);
+		background: rgba(var(--color-primary-light-rgb), 0.25);
 	}
 
 	.wpnc__username {
@@ -66,6 +67,7 @@ $box-shadow: 0 5px 6px color-mix(in srgb, var(--color-neutral-10) 50%, transpare
 	}
 
 	small {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 11px;
 		font-weight: 400;
 		float: right;
@@ -81,7 +83,7 @@ $box-shadow: 0 5px 6px color-mix(in srgb, var(--color-neutral-10) 50%, transpare
 		strong,
 		.username strong {
 			color: var(--color-text-inverted);
-			background: color-mix(in srgb, var(--color-primary-light) 45%, transparent);
+			background: rgba(var(--color-primary-light-rgb), 0.45);
 		}
 
 		small {
