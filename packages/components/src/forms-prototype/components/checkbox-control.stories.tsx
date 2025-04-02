@@ -15,7 +15,7 @@ const meta: Meta = {
 export default meta;
 
 export const Default: StoryObj = {
-	render: function Template() {
+	render: function Template( args ) {
 		const [ checked, setChecked ] = useState( false );
 
 		return (
@@ -30,6 +30,7 @@ export const Default: StoryObj = {
 						return 'This checkbox may not be checked.';
 					}
 				} }
+				{ ...args }
 			/>
 		);
 	},

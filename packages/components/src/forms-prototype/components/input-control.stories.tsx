@@ -44,7 +44,7 @@ export const Default: StoryObj = {
  * We are planning to move to a custom implementation more tailored to the password use case.
  */
 export const Password: StoryObj = {
-	render: function Template() {
+	render: function Template( args ) {
 		const [ value, setValue ] =
 			useState< React.ComponentProps< typeof ValidatedInputControl >[ 'value' ] >( '' );
 		const [ visible, setVisible ] = useState( false );
@@ -79,6 +79,7 @@ export const Password: StoryObj = {
 						return 'Password must include at least one symbol.';
 					}
 				} }
+				{ ...args }
 			/>
 		);
 	},
