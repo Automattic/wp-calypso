@@ -41,7 +41,7 @@ const DateLabelDrill = ( { children, previousDisplayDate }: DateLabelDrillProps 
 				<Popover
 					className="tooltip tooltip--darker"
 					isVisible={ isTooltipVisible }
-					position="top"
+					position="top right"
 					context={ elementRef.current }
 					hideArrow
 				>
