@@ -145,7 +145,15 @@ export type MessageType =
 	| 'help-link'
 	| 'file'
 	| 'image'
-	| 'introduction';
+	| 'introduction'
+	| 'form'
+	| 'formResponse';
+
+export type ChatFeedbackActions = {
+	score: string;
+	account_id: number;
+	ticket_id: number;
+};
 
 export type Message = {
 	content: string;
@@ -160,6 +168,9 @@ export type Message = {
 	type: MessageType;
 	directEscalationSupport?: boolean;
 	created_at?: string;
+	feedbackOptions?: MessageAction[];
+	metadata?: Record< string, any >;
+	quotedMessageId?: string;
 };
 
 export type ChatStatus = 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer' | 'closed';
@@ -196,11 +207,12 @@ interface ConversationParticipant {
 	lastRead: number;
 }
 
-type MessageAction = {
+export type MessageAction = {
 	id: string;
-	default: boolean;
-	fallback: string;
-	uri: string;
+	payload: boolean;
+	text: string;
+	type: string;
+	metadata: ChatFeedbackActions;
 };
 
 export type ZendeskMessage = {
@@ -219,6 +231,7 @@ export type ZendeskMessage = {
 	text: string;
 	mediaUrl?: string;
 	altText?: string;
+	metadata?: Record< string, any >;
 };
 
 export type ZendeskContentType =

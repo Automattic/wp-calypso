@@ -147,10 +147,12 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		isForwardingToZendesk,
 		hasForwardedToZendesk,
 		isChatLoaded,
-		chat?.conversationId,
+		chat.conversationId,
 		resetSupportInteraction,
 		createZendeskConversation,
 		alreadyHasActiveZendeskChat,
+		searchParams,
+		setSearchParams,
 	] );
 
 	// Used to apply the correct styling on messages
@@ -159,7 +161,9 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	};
 
 	const availableStatusWithFeedback = [ 'sending', 'transfer' ];
-
+	const alreadyRatedConversation = chat.messages.find(
+		( message ) => message.metadata?.rated === true
+	);
 	return (
 		<>
 			<div className="chatbox-messages" ref={ messagesContainerRef }>
@@ -175,6 +179,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 								currentUser={ currentUser }
 								isNextMessageFromSameSender={ false }
 								displayChatWithSupportLabel={ false }
+								rated={ alreadyRatedConversation && true }
 							/>
 						) }
 						{ chat.messages.map( ( message, index ) => {
@@ -197,6 +202,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 									) }
 									displayChatWithSupportLabel={ displayChatWithSupportLabel }
 									displayChatWithSupportEndedLabel={ displayChatWithSupportEndedLabel }
+									rated={ alreadyRatedConversation && true }
 								/>
 							);
 						} ) }

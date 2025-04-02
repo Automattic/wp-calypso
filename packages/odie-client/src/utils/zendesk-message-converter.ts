@@ -67,11 +67,6 @@ export const zendeskMessageConverter: ( message: ZendeskMessage ) => Message = (
 		[ 'user', 'business' ].includes( message.role ) ? message.role : 'user'
 	) as MessageRole;
 
-	if ( message?.source?.type === 'zd:surveys' && message?.actions?.length ) {
-		type = 'conversation-feedback';
-		feedbackUrl = message?.actions[ 0 ].uri;
-	}
-
 	if ( message?.source?.type === 'zd:answerBot' ) {
 		type = 'message';
 		role = 'bot';
@@ -91,5 +86,8 @@ export const zendeskMessageConverter: ( message: ZendeskMessage ) => Message = (
 		context,
 		role,
 		type,
+		quotedMessageId: message.id,
+		metadata: message.metadata,
+		feedbackOptions: message.actions,
 	};
 };

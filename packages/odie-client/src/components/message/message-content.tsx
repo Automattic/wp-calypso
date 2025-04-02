@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { zendeskMessageConverter } from '../../utils';
 import ChatWithSupportLabel from '../chat-with-support';
 import ErrorMessage from './error-message';
-import { FeedbackContent } from './feedback-content';
+import { FeedbackForm } from './feedback-form';
 import { IntroductionMessage } from './introduction-message';
 import { UserMessage } from './user-message';
 import type { ZendeskMessage, Message } from '../../types';
@@ -15,6 +15,7 @@ export const MessageContent = ( {
 	isNextMessageFromSameSender,
 	displayChatWithSupportLabel,
 	displayChatWithSupportEndedLabel,
+	rated,
 }: {
 	message: Message;
 	messageHeader: React.ReactNode;
@@ -22,15 +23,17 @@ export const MessageContent = ( {
 	isNextMessageFromSameSender?: boolean;
 	displayChatWithSupportLabel?: boolean;
 	displayChatWithSupportEndedLabel?: boolean;
+	rated?: boolean;
 } ) => {
 	const { __ } = useI18n();
+	const isFeedbackMessage = message?.feedbackOptions;
 	const messageClasses = clsx(
 		'odie-chatbox-message',
 		`odie-chatbox-message-${ message.role }`,
 		`odie-chatbox-message-${ message.type ?? 'message' }`,
+		isFeedbackMessage && 'odie-chatbox-message-conversation-feedback',
 		message?.context?.flags?.show_ai_avatar === false && 'odie-chatbox-message-no-avatar'
 	);
-	const isFeedbackMessage = message.type === 'conversation-feedback' && message?.meta?.feedbackUrl;
 
 	const containerClasses = clsx(
 		'odie-chatbox-message-sources-container',
@@ -58,7 +61,13 @@ export const MessageContent = ( {
 	// message type === message are messages being sent from users to zendesk.
 	// They need to be parsed to markdown to appear nicely.
 	const markdownMessageContent = shouldParseMessage() ? parseTextMessage( message ) : message;
-
+	if (
+		message.type === 'form' ||
+		message.type === 'formResponse' ||
+		message.metadata?.rated === true
+	) {
+		return;
+	}
 	return (
 		<>
 			<div className={ containerClasses } data-is-message="true">
@@ -76,8 +85,8 @@ export const MessageContent = ( {
 						/>
 					) }
 					{ message.type === 'introduction' && <IntroductionMessage content={ message.content } /> }
-					{ isFeedbackMessage && (
-						<FeedbackContent content={ message.content } meta={ message?.meta } />
+					{ ! rated && isFeedbackMessage && message.feedbackOptions && (
+						<FeedbackForm chatFeedbackOptions={ message.feedbackOptions } />
 					) }
 				</div>
 			</div>

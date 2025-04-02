@@ -3,6 +3,7 @@ export { useLoadZendeskMessaging } from './use-load-zendesk-messaging';
 export { useCanConnectToZendeskMessaging } from './use-can-connect-to-zendesk-messaging';
 export { useAuthenticateZendeskMessaging } from './use-authenticate-zendesk-messaging';
 export { useOpenZendeskMessaging } from './use-open-zendesk-messaging';
+export { useRateChat } from './use-rate-chat';
 export { useZendeskMessagingAvailability } from './use-zendesk-messaging-availability';
 export { useUpdateZendeskUserFields } from './use-update-zendesk-user-fields';
 export { useAttachFileToConversation } from './use-attach-file';

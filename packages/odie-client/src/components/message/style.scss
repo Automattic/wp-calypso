@@ -236,15 +236,53 @@ $blueberry-color: #3858e9;
 		flex-wrap: wrap;
 		gap: 8px;
 		flex-direction: row;
-		.odie-introduction-message-content__conversation_feedback {
-			flex: 2;
+		.odie-conversation__feedback {
+			width: 100%;
+			margin-left: 30px;
+			display: flex;
+			gap: 76px;
+			align-items: center;
+
+			&.has_message {
+				display: none;
+			}
+
+			p {
+				background-color: unset !important;
+				font-weight: 600;
+			}
+
+			.odie-conversation-feedback__thumbs {
+				display: flex;
+				gap: 8px;
+
+				button { 
+					border: solid 0.5px var(--studio-gray-5);
+					padding: 6px;
+				}
+			}
 		}
-		.message-feedback-submit {
-			margin-left: 46px;
-			align-items: start ;
-	
-			a {
-				gap: 4px;
+		.odie-conversation-feedback__message {
+			padding: 12px 44px;
+			h3 {
+				font-weight: 500;
+			}
+			textarea {
+				width: 100%;
+				height: 100px;
+			}
+			p {
+				padding: 12px 0;
+				background-color: unset !important;
+			}
+
+			button.is-primary {
+				background-color: $blueberry-color;
+    			margin-right: 8px;
+			}
+			button.is-secondary {
+				box-shadow: unset;
+				color: $blueberry-color;
 			}
 		}
 	}
@@ -794,10 +832,4 @@ $custom-border-corner-size: 16px;
 
 .odie-send-message-input-spinner {
 	color: $blueberry-color !important;
-}
-
-.odie__transfer-chat {
-	width: calc(100% - 80px)!important;
-	margin-top: 16px;
-    margin-left: 46px;
 }

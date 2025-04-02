@@ -15,6 +15,7 @@ export type ChatMessageProps = {
 	displayChatWithSupportLabel?: boolean;
 	displayChatWithSupportEndedLabel?: boolean;
 	isNextMessageFromSameSender: boolean;
+	rated?: boolean;
 };
 
 export type MessageIndicators = {
@@ -40,6 +41,7 @@ const ChatMessage = ( {
 	displayChatWithSupportLabel,
 	displayChatWithSupportEndedLabel,
 	isNextMessageFromSameSender,
+	rated,
 }: ChatMessageProps ) => {
 	const isBot = message.role === 'bot';
 	const { botName } = useOdieAssistantContext();
@@ -87,6 +89,7 @@ const ChatMessage = ( {
 				displayChatWithSupportLabel={ displayChatWithSupportLabel }
 				displayChatWithSupportEndedLabel={ displayChatWithSupportEndedLabel }
 				isNextMessageFromSameSender={ isNextMessageFromSameSender }
+				rated={ rated }
 			/>
 			{ isFullscreen && ReactDOM.createPortal( fullscreenContent, document.body ) }
 		</>
