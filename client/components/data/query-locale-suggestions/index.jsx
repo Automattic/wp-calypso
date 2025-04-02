@@ -6,10 +6,7 @@ import getLocaleSuggestions from 'calypso/state/selectors/get-locale-suggestions
 
 class QueryLocaleSuggestions extends Component {
 	static propTypes = {
-		localeSuggestions: PropTypes.shape( {
-			locales: PropTypes.array,
-			availability_text: PropTypes.string,
-		} ),
+		localeSuggestions: PropTypes.object,
 		requestLocaleSuggestions: PropTypes.func,
 	};
 
