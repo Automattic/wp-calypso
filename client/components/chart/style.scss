@@ -77,8 +77,8 @@ $y-axis-padding: 0 20px;
 
 // For forcing the width of y-axis to the width of the label
 // Uses invisible text to establish consistent width while maintaining layout flow
-.chart .chart__y-axis .chart__y-axis-width-spacer {
-	color: color-mix(in srgb, var(--color-surface) 0%, transparent);
+.chart__y-axis-width-spacer {
+	color: color-mix(in srgb,var(--color-surface) 0,#0000);
 }
 
 // X-axis
@@ -121,8 +121,8 @@ $y-axis-padding: 0 20px;
 
 // X-axis width spacer
 // Similar to y-axis, creates consistent width spacing using invisible text
-.chart .chart__x-axis .chart__x-axis-width-spacer {
-	color: color-mix(in srgb, var(--color-surface) 0%, transparent);
+.chart__x-axis-width-spacer {
+	color: color-mix(in srgb,var(--color-surface) 0,#0000);
 	padding: $y-axis-padding;
 	right: 0;
 
