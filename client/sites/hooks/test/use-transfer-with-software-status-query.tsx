@@ -41,6 +41,8 @@ describe( 'useTransferWithSoftwareStatus', () => {
 		await waitFor( () => {
 			expect( result.current.isSuccess ).toBe( true );
 			expect( result.current.data ).toEqual( {
+				blog_id: 123,
+				atomic_transfer_id: 456,
 				atomic_transfer_status: 'completed',
 			} );
 		} );

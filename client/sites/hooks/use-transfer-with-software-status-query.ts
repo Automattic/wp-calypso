@@ -7,11 +7,7 @@ const getTransferWithSoftwareStatus: (
 	atomicTransferId?: number
 ) => Promise< TransferWithSoftwareResponse > = async ( siteId, atomicTransferId ) => {
 	if ( ! siteId || ! atomicTransferId ) {
-		return {
-			blog_id: 0,
-			atomic_transfer_id: 0,
-			atomic_transfer_status: 'pending',
-		};
+		return;
 	}
 	return wpcom.req.get(
 		`/sites/${ siteId }/atomic/transfer-with-software/${ atomicTransferId }?http_envelope=1`,

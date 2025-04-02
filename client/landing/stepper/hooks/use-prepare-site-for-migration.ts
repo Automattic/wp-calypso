@@ -88,7 +88,7 @@ export const usePrepareSiteForMigration = (
 	// Trigger the mutation when the hook is first used
 	useEffect( () => {
 		transferMutation.mutate();
-	}, [ transferMutation, siteId, from ] ); // Dependencies that should trigger a new transfer
+	}, [ siteId, from ] ); // Dependencies that should trigger a new transfer
 
 	// Check the status of the transfer
 	const softwareTransferState: UseQueryResult< TransferWithSoftwareResponse > =
