@@ -27,7 +27,6 @@ function PurchaseItemRow( props: { purchase: Purchases.Purchase } ) {
 			purchase={ purchase }
 			isJetpack={ isJetpackPlan( purchase ) || isJetpackProduct( purchase ) }
 			site={ site }
-			showSite /* Renders a button and few subscriptions */
 			name={ purchase.siteName }
 			isBackupMethodAvailable={ isBackupMethodAvailable }
 		/>
