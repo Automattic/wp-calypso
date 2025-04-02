@@ -125,7 +125,7 @@ export const StatsV2 = ( {
 								statsGroup="calypso_customer_home"
 								statsName="stats_learn_more"
 							>
-								{ translate( 'Read more.' ) }
+								{ translate( 'Learn more.' ) }
 							</InlineSupportLink>
 						</div>
 					</div>
