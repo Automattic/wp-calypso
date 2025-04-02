@@ -73,7 +73,10 @@ export const isMigrationInProgress = ( site: SiteExcerptData ): boolean => {
 		return false;
 	}
 
-	return ! migrationStatus.startsWith( 'migration-completed' );
+	return (
+		! migrationStatus.startsWith( 'migration-completed' ) &&
+		! migrationStatus.startsWith( 'migration-cancelled' )
+	);
 };
 
 export const getMigrationStatus = (

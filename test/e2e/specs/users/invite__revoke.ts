@@ -76,7 +76,8 @@ describe( DataHelper.createSuiteTitle( 'Invite: Revoke' ), function () {
 			peoplePage = new PeoplePage( page );
 
 			if ( userManagementRevampFeature ) {
-				await peoplePage.clickTab( 'Team' );
+				await peoplePage.clickTab( 'Users' );
+				await peoplePage.clickViewAllIfAvailable();
 			} else {
 				await peoplePage.clickTab( 'Invites' );
 			}

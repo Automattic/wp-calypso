@@ -2,9 +2,7 @@ import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import {
 	FEATURE_UPLOAD_THEMES,
-	PLAN_BUSINESS,
 	WPCOM_FEATURES_INSTALL_PLUGINS,
-	getPlan,
 	FEATURE_INSTALL_THEMES,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
@@ -728,7 +726,6 @@ class ThemeSheet extends Component {
 		return (
 			styleVariations.length > 0 && (
 				<ThemeStyleVariations
-					description={ this.getStyleVariationDescription() }
 					splitDefaultVariation={ shouldSplitDefaultVariation || needsUpgrade }
 					selectedVariation={ this.getSelectedStyleVariation() }
 					variations={ styleVariations }
@@ -1103,28 +1100,6 @@ class ThemeSheet extends Component {
 
 	onAtomicThemeActiveFailure = ( message ) => {
 		this.props.errorNotice( message );
-	};
-
-	getStyleVariationDescription = () => {
-		const { defaultOption, isActive, isWpcomTheme, themeId, shouldLimitGlobalStyles, translate } =
-			this.props;
-		if ( isActive && defaultOption.getUrl ) {
-			return translate( 'Open the {{a}}site editor{{/a}} to change your site’s style.', {
-				components: {
-					a: (
-						<a href={ defaultOption.getUrl( themeId ) } target="_blank" rel="noopener noreferrer" />
-					),
-				},
-			} );
-		}
-
-		if ( ! shouldLimitGlobalStyles || isWpcomTheme ) {
-			return;
-		}
-
-		return translate( 'Additional styles require the %(businessPlanName)s plan or higher.', {
-			args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() },
-		} );
 	};
 
 	renderSheet = () => {

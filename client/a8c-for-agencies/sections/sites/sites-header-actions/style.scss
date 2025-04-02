@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+
 .sites-header__actions {
 	display: flex;
 	align-items: center;
@@ -6,8 +9,7 @@
 	.button {
 		border-radius: 4px;
 		border: 1px solid var(--color-neutral-10);
-		font-size: 0.875rem;
-		font-weight: inherit;
+		@include body-medium;
 	}
 
 	.button.split-button__main {

@@ -88,7 +88,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	paid: {
 		menu: __( 'Premium plugins' ),
 		title: __( 'Must-have premium plugins' ),
-		description: __( 'Add the best-loved plugins on WordPress.com' ),
+		description: __( 'Take your site further with these premium plugins.' ),
 		slug: 'paid',
 		tags: [],
 		preview: [],
@@ -96,7 +96,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	popular: {
 		menu: __( 'Popular plugins' ),
 		title: __( 'Popular plugins' ),
-		description: __( 'Add and install the most popular free plugins' ),
+		description: __( 'Add and install the most popular free plugins.' ),
 		slug: 'popular',
 		tags: [],
 		preview: [],
@@ -104,14 +104,14 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	featured: {
 		menu: __( 'Developer favorites' ),
 		title: __( 'Our developers’ favorites' ),
-		description: __( 'Start fast with these WordPress.com team picks' ),
+		description: __( 'Start fast with these WordPress.com team picks.' ),
 		slug: 'featured',
 		tags: [],
 		preview: [],
 	},
 	seo: {
 		menu: __( 'Search Engine Optimization' ),
-		title: __( 'Search Engine Optimization' ),
+		title: __( 'Search engine optimization' ),
 		description: __( 'Fine-tune your site’s content and metadata for search engine success.' ),
 		icon: 'grid',
 		slug: 'seo',
@@ -124,7 +124,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 		icon: 'grid',
 		slug: 'ecommerce',
 		tags: [ 'ecommerce', 'e-commerce', 'woocommerce', 'payments' ],
-		description: __( 'Tools that will set you up to optimize your online business' ),
+		description: __( 'Tools that will set you up to optimize your online business.' ),
 		preview: [
 			{
 				slug: 'woocommerce-subscriptions',
@@ -166,7 +166,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	},
 	booking: {
 		menu: __( 'Booking & Scheduling' ),
-		title: __( 'Booking & Scheduling' ),
+		title: __( 'Booking & scheduling' ),
 		description: __( 'Take bookings and manage your availability right from your site.' ),
 		icon: 'grid',
 		slug: 'booking',
@@ -175,7 +175,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	},
 	events: {
 		menu: __( 'Events Calendar' ),
-		title: __( 'Events Calendar' ),
+		title: __( 'Events calendar' ),
 		description: __( 'Build buzz and set the scene with an on-site events calendar.' ),
 		icon: 'grid',
 		slug: 'events',
@@ -211,7 +211,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	},
 	finance: {
 		menu: __( 'Finance & Payments' ),
-		title: __( 'Finance & Payments' ),
+		title: __( 'Finance & payments' ),
 		description: __(
 			'Sell products, subscriptions, and services while keeping on top of every transaction.'
 		),
@@ -222,7 +222,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	},
 	shipping: {
 		menu: __( 'Shipping & Delivery' ),
-		title: __( 'Shipping & Delivery' ),
+		title: __( 'Shipping & delivery' ),
 		description: __( 'Create a seamless shipping experience with advanced delivery integrations.' ),
 		icon: 'grid',
 		slug: 'shipping',
@@ -267,7 +267,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	},
 	photo: {
 		menu: __( 'Photo & Video' ),
-		title: __( 'Photo & Video' ),
+		title: __( 'Photo & video' ),
 		description: __(
 			'Create, share, edit, and manage beautiful images and video {with added precision and flexibility.'
 		),
@@ -278,7 +278,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	},
 	customer: {
 		menu: __( 'CRM & Live Chat' ),
-		title: __( 'CRM & Live Chat' ),
+		title: __( 'CRM & live chat' ),
 		description: __( 'Create stand-out customer service experiences for your site visitors.' ),
 		icon: 'grid',
 		slug: 'customer',
@@ -305,7 +305,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	},
 	education: {
 		menu: __( 'Learning Management Systems' ),
-		title: __( 'Learning Management Systems' ),
+		title: __( 'Learning management systems' ),
 		description: __( 'Create, run, and manage interactive courses and learning experiences.' ),
 		icon: 'grid',
 		slug: 'education',
@@ -323,7 +323,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	},
 	posts: {
 		menu: __( 'Posts & Posting' ),
-		title: __( 'Posts & Posting' ),
+		title: __( 'Posts & posting' ),
 		description: __( 'Unlock advanced content planning, publishing, and scheduling features.' ),
 		icon: 'grid',
 		slug: 'posts',
@@ -334,7 +334,9 @@ export const getCategories: () => Record< string, Category > = () => ( {
 		menu: __( 'Monetization' ),
 		title: __( 'Supercharging and monetizing your blog' ),
 		slug: 'monetization',
-		description: __( 'Building a money-making blog doesn’t have to be as hard as you might think' ),
+		description: __(
+			'Building a money-making blog doesn’t have to be as hard as you might think.'
+		),
 		tags: [ 'affiliate-marketing', 'advertising', 'adwords' ],
 		preview: [
 			{
@@ -379,7 +381,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 		menu: _x( 'Business', 'category name' ),
 		title: __( 'Setting up your local business' ),
 		slug: 'business',
-		description: __( 'These plugins are here to keep your business on track' ),
+		description: __( 'These plugins are here to keep your business on track.' ),
 		tags: [ 'google', 'testimonials', 'crm', 'business-directory' ],
 		preview: [
 			{
@@ -436,7 +438,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	},
 	landingpage: {
 		menu: __( 'Landing Page' ),
-		title: __( 'Landing Page' ),
+		title: __( 'Landing page' ),
 		slug: 'landingpage',
 		tags: [ 'landing page', 'page builder', 'landing-page' ],
 		preview: [],
@@ -492,7 +494,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	},
 	comments: {
 		menu: __( 'Comment' ),
-		title: __( 'Comments & Commenting' ),
+		title: __( 'Comments & commenting' ),
 		slug: 'comments',
 		tags: [ 'comment', 'comments', 'comment fields', 'delete comments' ],
 		preview: [],
@@ -513,7 +515,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	},
 	realestate: {
 		menu: __( 'Real Estate' ),
-		title: __( 'Real Estate' ),
+		title: __( 'Real estate' ),
 		slug: 'realestate',
 		tags: [
 			'real estate',
@@ -543,14 +545,14 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	},
 	projectmanagement: {
 		menu: __( 'Project Management' ),
-		title: __( 'Project Management' ),
+		title: __( 'Project management' ),
 		slug: 'projectmanagement',
 		tags: [ 'gantt charts', 'kanban', 'project', 'project management', 'tasks', 'task management' ],
 		preview: [],
 	},
 	jobboards: {
 		menu: __( 'Job Boards' ),
-		title: __( 'Job Boards' ),
+		title: __( 'Job boards' ),
 		slug: 'jobboards',
 		tags: [ 'career', 'job board', 'job listing' ],
 		preview: [],
@@ -584,14 +586,14 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	},
 	knowledgebase: {
 		menu: __( 'Knowledge Base' ),
-		title: __( 'Knowledge Base' ),
+		title: __( 'Knowledge base' ),
 		slug: 'knowledgebase',
 		tags: [ 'faq', 'faqs', 'frequently asked questions', 'knowledge base' ],
 		preview: [],
 	},
 	storelocator: {
 		menu: __( 'Store Locator' ),
-		title: __( 'Store Locator' ),
+		title: __( 'Store locator' ),
 		slug: 'storelocator',
 		tags: [ 'business locations', 'geocoding', 'locators', 'dealer locator', 'directions' ],
 		preview: [],
@@ -680,7 +682,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	},
 	restaurantmenu: {
 		menu: __( 'Restaurant Menu' ),
-		title: __( 'Restaurant Menu' ),
+		title: __( 'Restaurant menu' ),
 		slug: 'restaurantmenu',
 		tags: [
 			'food ordering',
@@ -712,7 +714,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	},
 	leadgeneration: {
 		menu: __( 'Lead Generation' ),
-		title: __( 'Lead Generation' ),
+		title: __( 'Lead generation' ),
 		slug: 'leadgeneration',
 		tags: [ 'lead gen', 'lead generation' ],
 		preview: [],
@@ -755,7 +757,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 	wpbeginner: {
 		menu: __( 'WPBeginner' ),
 		title: __( 'Must-have plugins from WPBeginner' ),
-		description: __( 'Add the best-loved plugins on WordPress.com' ),
+		description: __( 'Add the best-loved plugins on WordPress.com.' ),
 		slug: 'wpbeginner',
 		tags: [ 'wpbeginner', 'Awesome Motive' ],
 		preview: [],

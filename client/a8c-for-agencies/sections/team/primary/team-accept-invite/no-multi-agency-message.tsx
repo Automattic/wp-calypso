@@ -51,9 +51,8 @@ export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: P
 				) }
 			</div>
 
-			<StepSection applyCoreStyles heading={ translate( 'How to fix this:' ) }>
+			<StepSection heading={ translate( 'How to fix this:' ) }>
 				<StepSectionItem
-					isNewLayout
 					stepNumber={ 1 }
 					heading={
 						translate( 'Leave the %(currentAgencyName)s Dashboard', {
@@ -82,7 +81,6 @@ export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: P
 				/>
 
 				<StepSectionItem
-					isNewLayout
 					stepNumber={ 2 }
 					heading={
 						translate( 'Join the %(targetAgencyName)s Dashboard', {
@@ -100,7 +98,7 @@ export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: P
 				/>
 			</StepSection>
 
-			<StepSection applyCoreStyles heading={ translate( 'Learn more about Agency membership' ) }>
+			<StepSection heading={ translate( 'Learn more about Agency membership' ) }>
 				<Button
 					className="team-accept-invite__learn-more-button"
 					variant="link"

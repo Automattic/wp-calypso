@@ -29,7 +29,7 @@
 	"dependencies": {
 		"@automattic/languages": "workspace:^",
 		"@automattic/search": "workspace:^",
-		"@babel/runtime": "^7.26.9",
+		"@babel/runtime": "^7.26.10",
 		"@wordpress/base-styles": "^5.20.0",
 		"@wordpress/components": "^29.6.0",
 		"@wordpress/i18n": "^5.20.0",
@@ -48,6 +48,6 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^5.5.4"
+		"typescript": "^5.8.2"
 	}
 }

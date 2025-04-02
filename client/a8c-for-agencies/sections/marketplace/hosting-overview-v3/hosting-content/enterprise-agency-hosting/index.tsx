@@ -93,7 +93,6 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 					) }
 
 					<SimpleList
-						applyCoreStyles
 						items={ [
 							translate( 'Unmatched flexibility to build a customized web experience' ),
 							translate( 'Tools to increase customer engagement' ),

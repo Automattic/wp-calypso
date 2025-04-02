@@ -12,20 +12,19 @@ export default function WaitingTwoFactorNotificationApproval( { switchTwoFactorA
 
 	return (
 		<Fragment>
-			<Card compact>
+			<Card className="two-factor-authentication__push-notification-approval">
 				<p className="two-factor-authentication__info">
 					{ translate(
-						'Notification sent! Confirm in your Jetpack or WordPress {{strong}}\u00A0mobile\u00A0app{{/strong}} to\u00A0continue.',
-						{ components: { strong: <strong /> } }
+						'Check your device. Approve your login with the Jetpack or WordPress mobile app.'
 					) }
 				</p>
 				<PushNotificationIllustration />
+				<FormDivider isHorizontal />
+				<TwoFactorActions
+					twoFactorAuthType="push"
+					switchTwoFactorAuthType={ switchTwoFactorAuthType }
+				/>
 			</Card>
-			<FormDivider isHorizontal />
-			<TwoFactorActions
-				twoFactorAuthType="push"
-				switchTwoFactorAuthType={ switchTwoFactorAuthType }
-			/>
 		</Fragment>
 	);
 }

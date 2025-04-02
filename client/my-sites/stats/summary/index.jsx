@@ -18,7 +18,6 @@ import StatsModuleSearch from 'calypso/my-sites/stats/features/modules/stats-sea
 import StatsModuleTopPosts from 'calypso/my-sites/stats/features/modules/stats-top-posts';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
-import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import StatsModuleLocations from '../features/modules/stats-locations';
 import StatsModuleUTM from '../features/modules/stats-utm';
@@ -27,7 +26,6 @@ import DownloadCsv from '../stats-download-csv';
 import AllTimeNav from '../stats-module/all-time-nav';
 import PageViewTracker from '../stats-page-view-tracker';
 import statsStringsFactory from '../stats-strings';
-import StatsUpsellModal from '../stats-upsell-modal';
 import VideoPlayDetails from '../stats-video-details';
 import StatsVideoSummary from '../stats-video-summary';
 import VideoPressStatsModule from '../videopress-stats-module';
@@ -402,7 +400,6 @@ class StatsSummary extends Component {
 					) }
 					<JetpackColophon />
 				</div>
-				{ this.props.upsellModalView && <StatsUpsellModal siteId={ siteId } /> }
 			</Main>
 		);
 	}
@@ -410,7 +407,6 @@ class StatsSummary extends Component {
 
 export default connect( ( state, { context, postId } ) => {
 	const siteId = getSelectedSiteId( state );
-	const upsellModalView = isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId );
 
 	const { supportsUTMStats } = getEnvStatsFeatureSupportChecks( state, siteId );
 
@@ -418,7 +414,6 @@ export default connect( ( state, { context, postId } ) => {
 		siteId: getSelectedSiteId( state ),
 		siteSlug: getSelectedSiteSlug( state, siteId ),
 		media: context.params.module === 'videodetails' ? getMediaItem( state, siteId, postId ) : false,
-		upsellModalView,
 		supportsUTMStats,
 	};
 } )( localize( StatsSummary ) );

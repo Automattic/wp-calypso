@@ -33,7 +33,7 @@ export function editorSettings( isRTL: boolean ) {
 		__experimentalBlockPatterns: [],
 		__experimentalBlockPatternCategories: [],
 		__unstableGalleryWithImageBlocks: false,
-		__unstableIsPreviewMode: false,
+		isPreviewMode: false,
 		blockInspectorAnimation: {},
 		generateAnchors: false,
 		gradients: [],

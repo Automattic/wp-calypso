@@ -165,12 +165,12 @@ class SearchStream extends React.Component {
 		return (
 			<div>
 				<DocumentHead title={ documentTitle } />
+				<ReaderBackButton />
+				<NavigationHeader
+					title={ translate( 'Search' ) }
+					subtitle={ translate( 'Search for specific topics, authors, or blogs.' ) }
+				/>
 				<div className="search-stream__fixed-area" ref={ this.handleFixedAreaMounted }>
-					<ReaderBackButton />
-					<NavigationHeader
-						title={ translate( 'Search' ) }
-						subtitle={ translate( 'Search for specific topics, authors, or blogs.' ) }
-					/>
 					<CompactCard className="search-stream__input-card">
 						<SearchInput
 							onSearch={ this.updateQuery }

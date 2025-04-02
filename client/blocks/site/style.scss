@@ -28,6 +28,20 @@
 		}
 	}
 
+	.site__domain.is-loading {
+		animation: pulse-light 1.8s ease-in-out infinite;
+		background-color: var( --color-neutral-10 );
+		color: transparent;
+		width: 50%;
+		height: 12px;
+		margin-top: 3px;
+		display: block;
+
+		&::after {
+			display: none;
+		}
+	}
+
 	&.is-loading {
 		pointer-events: none;
 

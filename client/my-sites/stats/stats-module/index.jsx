@@ -293,6 +293,11 @@ class StatsModule extends Component {
 		const isAllTime = this.isAllTimeList();
 
 		const renderDownloadCsv = () => {
+			// Disable for the email module as it doesn't work correctly.
+			if ( statType === 'statsEmailsSummary' ) {
+				return null;
+			}
+
 			if ( gateDownloads ) {
 				return <DownloadCsvUpsell siteId={ siteId } borderless />;
 			}

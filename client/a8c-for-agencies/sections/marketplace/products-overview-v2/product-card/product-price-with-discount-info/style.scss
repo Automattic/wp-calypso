@@ -1,9 +1,9 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .product-price-with-discount__price {
-	font-size: 1.25rem;
-	font-weight: 600;
+	@include heading-x-large;
 	color: var(--studio-gray-80);
 	line-height: 1;
 
@@ -13,36 +13,31 @@
 
 	.product-price-with-discount__price-old {
 		text-decoration: line-through;
-		font-weight: 400;
-		font-size: 1rem;
+		@include body-large;
 		text-wrap: nowrap;
 	}
 
 	.product-price-with-discount__free {
 		margin-block-end: 1.5rem;
-		font-size: 1.5rem;
-		font-weight: 700;
+		@include heading-x-large;
 		color: var(--studio-black);
 	}
 
 	.product-price-with-discount__price-discount {
 		margin-inline-start: 8px;
-		font-size: 1rem;
-		font-weight: 500;
+		@include heading-large;
 		color: var(--color-link);
 		text-wrap: nowrap;
 	}
 
 	@include break-xlarge {
-		font-size: 1.5rem;
-		font-weight: 700;
+		@include heading-x-large;
 		color: var(--studio-black);
 	}
 }
 
 .product-price-with-discount__price-interval {
-	font-size: 0.75rem;
-	font-weight: 400;
+	@include body-medium;
 	color: var(--studio-gray-60);
 	line-height: 2;
 }

@@ -11,6 +11,8 @@ if ( ! isset( $args ) ) {
 	$args = array();
 }
 
+$site_type = isset( $args['site_type'] ) ? $args['site_type'] : '';
+
 //phpcs:ignore WPCOM.I18nRules.LocalizedUrl.LocalizedUrlAssignedToVariable
 $subscribe_block = '[wpcom_guides_learn_button is_unsubscribed_caption="' . __( 'Subscribe now!', 'happy-blocks' ) . '" is_subscribed_caption="' . __( 'Unsubscribe', 'happy-blocks' ) . '" busy_caption="' . __( 'Just a moment...', 'happy-blocks' ) . '"]';
 $signup_url      = localized_wpcom_url( 'https://wordpress.com/log-in?redirect_to=https%3A%2F%2Fwordpress.com%2Flearn%23support-content-subscribe' );
@@ -44,19 +46,35 @@ $signup_url      = localized_wpcom_url( 'https://wordpress.com/log-in?redirect_t
 				</a>
 			</div>
 		</div>
-		<div class="support-content-resource">
-			<h4 class="support-content-resource__title">
-				<?php esc_html_e( 'Check our guides', 'happy-blocks' ); ?>
-			</h4>
-			<p>
-				<?php esc_html_e( 'Find and follow step-by-step guides for every WordPress.com question.', 'happy-blocks' ); ?>
-			</p>
-			<div class="resource-link">
-				<a href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/support/' ) ); ?>">
-					<?php esc_html_e( 'Visit support guides', 'happy-blocks' ); ?>
-				</a>
+		<?php if ( $site_type === 'support' ) : ?>
+			<div class="support-content-resource">
+				<h4 class="support-content-resource__title">
+					<?php esc_html_e( 'Check our guides', 'happy-blocks' ); ?>
+				</h4>
+				<p>
+					<?php esc_html_e( 'Find and follow step-by-step guides for every WordPress.com question.', 'happy-blocks' ); ?>
+				</p>
+				<div class="resource-link">
+					<a href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/support/' ) ); ?>">
+						<?php esc_html_e( 'Visit support guides', 'happy-blocks' ); ?>
+					</a>
+				</div>
 			</div>
-		</div>
+		<?php else : ?>
+			<div class="support-content-resource">
+				<h4 class="support-content-resource__title">
+					<?php esc_html_e( 'Watch a course', 'happy-blocks' ); ?>
+				</h4>
+				<p>
+					<?php esc_html_e( 'Learn how to create a website with our step-by-step video course.', 'happy-blocks' ); ?>
+				</p>
+				<div class="resource-link">
+					<a href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/support/courses/create-your-website/' ) ); ?>">
+						<?php esc_html_e( 'Create your website', 'happy-blocks' ); ?>
+					</a>
+				</div>
+			</div>
+		<?php endif; ?>
 	</div>
 	<div class="support-content-links-subscribe">
 		<?php

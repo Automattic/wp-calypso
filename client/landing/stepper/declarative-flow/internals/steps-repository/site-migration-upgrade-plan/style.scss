@@ -1,21 +1,36 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/onboarding/styles/mixins";
 
 :root .site-migration-upgrade-plan .is-step-site-migration-upgrade-plan-with-variants {
+	@include onboarding-block-margin;
+	
 	padding-bottom: 5rem;
 
 	@media ( min-width: 1040px ) {
 		padding-bottom: 3rem;
 	}
 
+	@media ( min-width: $break-medium ) {
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	@media ( max-width: $break-small ) {
+		.formatted-header__title {
+			padding: 0;
+		}
+
+		.formatted-header__subtitle {
+			padding: 0;
+		}
+	}
+
 	&.step-container .step-container__header {
 		margin-left: auto;
 		margin-right: auto;
 		margin-bottom: 1rem;
-		padding-left: 1rem;
-		padding-right: 1rem;
 		@media ( min-width: 720px ) {
 			max-width: 616px;
-			padding-left: 0;
-			padding-right: 0;
 		}
 	}
 	.import-upgrade-plan-skeleton {

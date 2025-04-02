@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useState, createInterpolateElement } from '@wordpress/element';
+import { chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
@@ -40,7 +41,9 @@ interface SignupFormSocialFirst {
 	userEmail: string;
 	notice: JSX.Element | false;
 	isSocialFirst: boolean;
+	backButtonInFooter?: boolean;
 	passDataToNextStep?: boolean;
+	emailLabelText?: string;
 }
 
 const options = {
@@ -76,6 +79,8 @@ const SignupFormSocialFirst = ( {
 	notice,
 	isSocialFirst,
 	passDataToNextStep,
+	backButtonInFooter = true,
+	emailLabelText,
 }: SignupFormSocialFirst ) => {
 	const [ currentStep, setCurrentStep ] = useState( 'initial' );
 	const { __ } = useI18n();
@@ -105,6 +110,10 @@ const SignupFormSocialFirst = ( {
 				),
 				options
 			);
+		}
+
+		if ( ! tosText ) {
+			return null;
 		}
 
 		return <p className="signup-form-social-first__tos-link">{ tosText }</p>;
@@ -157,10 +166,17 @@ const SignupFormSocialFirst = ( {
 						goToNextStep={ goToNextStep }
 						logInUrl={ logInUrl }
 						queryArgs={ queryArgs }
-						labelText={ __( 'Your email' ) }
+						labelText={ emailLabelText ?? __( 'Your email' ) }
 						submitButtonLabel={ __( 'Continue' ) }
 						userEmail={ userEmail }
 						renderTerms={ renderEmailStepTermsOfService }
+						secondaryFooterButton={
+							backButtonInFooter ? undefined : (
+								<Button onClick={ () => setCurrentStep( 'initial' ) } icon={ chevronLeft }>
+									{ __( 'See all options' ) }
+								</Button>
+							)
+						}
 						passDataToNextStep={ passDataToNextStep }
 						onCreateAccountError={ ( error: { error: string }, email: string ) => {
 							if ( isExistingAccountError( error.error ) ) {
@@ -179,13 +195,15 @@ const SignupFormSocialFirst = ( {
 						onCreateAccountSuccess={ onCreateAccountSuccess }
 						{ ...gravatarProps }
 					/>
-					<Button
-						onClick={ () => setCurrentStep( 'initial' ) }
-						className="back-button"
-						variant="link"
-					>
-						<span>{ __( 'Back' ) }</span>
-					</Button>
+					{ backButtonInFooter ? (
+						<Button
+							onClick={ () => setCurrentStep( 'initial' ) }
+							className="back-button"
+							variant="link"
+						>
+							<span>{ __( 'Back' ) }</span>
+						</Button>
+					) : null }
 				</div>
 			);
 		}

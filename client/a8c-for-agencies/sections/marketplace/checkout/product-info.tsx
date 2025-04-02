@@ -1,21 +1,29 @@
 import { useTranslate, numberFormatCompact, formatCurrency } from 'i18n-calypso';
 import wpcomIcon from 'calypso/assets/images/icons/wordpress-logo.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
+import { VendorInfo } from 'calypso/components/jetpack/jetpack-lightbox/types';
 import { useLicenseLightboxData } from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox/hooks/use-license-lightbox-data';
 import getProductIcon from 'calypso/my-sites/plans/jetpack-plans/product-store/utils/get-product-icon';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getPressablePlan from '../pressable-overview/lib/get-pressable-plan';
 import type { ShoppingCartItem } from '../types';
 
 export default function ProductInfo( {
 	product,
 	isAutomatedReferrals,
+	vendor,
 }: {
 	product: ShoppingCartItem;
 	isAutomatedReferrals?: boolean;
+	vendor?: VendorInfo | null;
 } ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const { title, product: productInfo } = useLicenseLightboxData( product );
+
+	const isWooCommerceProduct = product.slug.startsWith( 'woocommerce-' );
 
 	let productIcon =
 		productInfo?.productSlug && getProductIcon( { productSlug: productInfo?.productSlug } );
@@ -103,13 +111,38 @@ export default function ProductInfo( {
 
 	return (
 		<div className="product-info">
-			<div className="product-info__icon">
-				<img src={ productIcon } alt={ title } />
-			</div>
+			{ isWooCommerceProduct ? (
+				<img className="product-info__icon" src={ productIcon } alt={ title } />
+			) : (
+				<div className="product-info__icon">
+					<img src={ productIcon } alt={ title } />
+				</div>
+			) }
 			<div className="product-info__text-content">
 				<div className="product-info__header">
 					<label htmlFor={ productTitle } className="product-info__label">
-						{ productTitle }
+						<h3>{ productTitle }</h3>
+						{ vendor &&
+							translate( 'By {{a/}}', {
+								components: {
+									a: (
+										<a
+											href={ vendor.vendorUrl }
+											target="_blank"
+											rel="noopener noreferrer"
+											onClick={ () => {
+												dispatch(
+													recordTracksEvent( 'calypso_marketplace_products_overview_vendor_click', {
+														vendor: vendor.vendorName,
+													} )
+												);
+											} }
+										>
+											{ vendor.vendorName }
+										</a>
+									),
+								},
+							} ) }
 					</label>
 					<span className="product-info__count">{ countInfo }</span>
 				</div>

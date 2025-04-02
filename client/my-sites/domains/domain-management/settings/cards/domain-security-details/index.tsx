@@ -89,25 +89,34 @@ const DomainSecurityDetails = ( { domain, isDisabled }: SecurityCardProps ) => {
 			);
 		}
 
-		if ( sslDetails?.failure_reasons ) {
+		if ( sslDetails.failure_reasons ) {
+			if ( sslDetails.failure_reasons.length > 0 ) {
+				return (
+					<>
+						<p className="domain-security-details__description-message">
+							{ translate(
+								'There are one or more problems with your DNS configuration that prevent an SSL certificate from being issued:'
+							) }
+						</p>
+						<ul>
+							{ sslDetails.failure_reasons?.map( ( failureReason ) => {
+								return <li key={ failureReason.error_type }>{ failureReason.message }</li>;
+							} ) }
+						</ul>
+						<p className="domain-security-details__description-message">
+							{ translate(
+								'Once you have fixed all the issues, you can request a new certificate by clicking the button below.'
+							) }
+						</p>
+					</>
+				);
+			}
 			return (
-				<>
-					<p className="domain-security-details__description-message">
-						{ translate(
-							'There are one or more problems with your DNS configuration that prevent an SSL certificate from being issued:'
-						) }
-					</p>
-					<ul>
-						{ sslDetails.failure_reasons?.map( ( failureReason ) => {
-							return <li key={ failureReason.error_type }>{ failureReason.message }</li>;
-						} ) }
-					</ul>
-					<p className="domain-security-details__description-message">
-						{ translate(
-							'Once you have fixed all the issues, you can request a new certificate by clicking the button below.'
-						) }
-					</p>
-				</>
+				<p className="domain-security-details__description-message">
+					{ translate(
+						'There was a problem issuing your SSL certificate. You can request a new certificate by clicking the button below.'
+					) }
+				</p>
 			);
 		}
 		return (

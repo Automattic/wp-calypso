@@ -76,7 +76,7 @@ const COPY_SITE_STEPS = [
 
 const copySite: Flow = {
 	name: COPY_SITE_FLOW,
-
+	__experimentalUseBuiltinAuth: true,
 	get title() {
 		return '';
 	},

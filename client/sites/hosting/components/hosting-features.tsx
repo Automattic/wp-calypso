@@ -215,7 +215,9 @@ const HostingFeatures = ( { showAsTools }: HostingFeaturesProps ) => {
 					dispatch( recordTracksEvent( 'calypso_hosting_features_upgrade_plan_click' ) )
 				}
 			>
-				{ translate( 'Upgrade now' ) }
+				{ translate( 'Upgrade to %(planName)s', {
+					args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+				} ) }
 			</HostingHeroButton>
 		);
 	}

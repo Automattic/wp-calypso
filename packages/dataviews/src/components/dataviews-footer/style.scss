@@ -1,0 +1,40 @@
+.dataviews-footer {
+	position: sticky;
+	bottom: 0;
+	left: 0;
+	background-color: $white;
+	padding: $grid-unit-15 $grid-unit-60;
+	border-top: $border-width solid $gray-100;
+	flex-shrink: 0;
+
+	@media not (prefers-reduced-motion) {
+		transition: padding ease-out 0.1s;
+	}
+
+	z-index: z-index(".dataviews-footer");
+}
+
+@container (max-width: 430px) {
+	.dataviews-footer {
+		padding: $grid-unit-15 $grid-unit-30;
+	}
+}
+
+@container (max-width: 560px) {
+	.dataviews-footer {
+		flex-direction: column !important;
+
+		.dataviews-bulk-actions-footer__container {
+			width: 100%;
+		}
+
+		.dataviews-bulk-actions-footer__item-count {
+			flex-grow: 1;
+		}
+
+		.dataviews-pagination {
+			width: 100%;
+			justify-content: space-between;
+		}
+	}
+}

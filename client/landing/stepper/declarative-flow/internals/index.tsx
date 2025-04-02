@@ -17,25 +17,19 @@ import { useSaveQueryParams } from '../../hooks/use-save-query-params';
 import { useSiteData } from '../../hooks/use-site-data';
 import useSyncRoute from '../../hooks/use-sync-route';
 import { useStartStepperPerformanceTracking } from '../../utils/performance-tracking';
+import { shouldUseStepContainerV2 } from '../helpers/should-use-step-container-v2';
 import { StepRoute } from './components';
 import { Boot } from './components/boot';
 import { RedirectToStep } from './components/redirect-to-step';
 import { useFlowAnalytics } from './hooks/use-flow-analytics';
 import { useFlowNavigation } from './hooks/use-flow-navigation';
-import { usePreloadSteps } from './hooks/use-preload-steps';
+import { usePreloadSteps, lazyCache } from './hooks/use-preload-steps';
 import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
 import { useStepNavigationWithTracking } from './hooks/use-step-navigation-with-tracking';
 import { PRIVATE_STEPS } from './steps';
-import { AssertConditionState, type Flow, type StepperStep, type StepProps } from './types';
+import { AssertConditionState, type Flow, type StepperStep } from './types';
 import type { StepperInternalSelect } from '@automattic/data-stores';
 import './global.scss';
-
-const lazyCache = new WeakMap<
-	() => Promise< {
-		default: React.ComponentType< StepProps< any > >;
-	} >,
-	React.ComponentType< StepProps< any > >
->();
 
 function flowStepComponent( flowStep: StepperStep | undefined ) {
 	if ( ! flowStep ) {
@@ -99,6 +93,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 
 	const stepNavigation = useStepNavigationWithTracking( {
 		flow,
+		stepSlugs: stepPaths,
 		currentStepRoute,
 		navigate,
 	} );
@@ -133,7 +128,11 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 	const renderStep = ( step: StepperStep ) => {
 		switch ( assertCondition.state ) {
 			case AssertConditionState.CHECKING:
-				return <Loading className="wpcom-loading__boot" />;
+				return shouldUseStepContainerV2( flow.name ) ? (
+					<Step.Loading />
+				) : (
+					<Loading className="wpcom-loading__boot" />
+				);
 			case AssertConditionState.FAILURE:
 				console.error( assertCondition.message ); // eslint-disable-line no-console
 				return null;
@@ -149,10 +148,11 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 		// and are redirected to the user step.
 		const postAuthStepSlug = stepData?.nextStep ?? '';
 		if ( step.slug === PRIVATE_STEPS.USER.slug && postAuthStepSlug ) {
+			const flowSlug = flow.variantSlug ?? flow.name;
 			const previousAuthStepSlug = stepData?.previousStep;
 			const postAuthStepPath = createPath( {
 				pathname: generatePath( '/setup/:flow/:step/:lang?', {
-					flow: flow.name,
+					flow: flowSlug,
 					step: postAuthStepSlug,
 					lang: lang === 'en' || isLoggedIn ? null : lang,
 				} ),
@@ -161,7 +161,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 			} );
 
 			const signupUrl = generatePath( '/setup/:flow/:step/:lang?', {
-				flow: flow.name,
+				flow: flowSlug,
 				step: 'user',
 				lang: lang === 'en' || isLoggedIn ? null : lang,
 			} );
@@ -211,8 +211,14 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 
 	useSignUpStartTracking( { flow } );
 
+	const fallback = shouldUseStepContainerV2( flow.name ) ? (
+		<Step.Loading />
+	) : (
+		<Loading className="wpcom-loading__boot" />
+	);
+
 	return (
-		<Boot fallback={ <Loading className="wpcom-loading__boot" /> }>
+		<Boot fallback={ fallback }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
 
 			<Step.StepContainerV2Provider value={ stepContainerV2Context }>
@@ -235,9 +241,12 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 					<Route
 						path="/:flow/:lang?"
 						element={
-							<RedirectToStep
-								slug={ flow.__experimentalUseBuiltinAuth ? firstStepSlug : stepPaths[ 0 ] }
-							/>
+							<>
+								{ fallback }
+								<RedirectToStep
+									slug={ flow.__experimentalUseBuiltinAuth ? firstStepSlug : stepPaths[ 0 ] }
+								/>
+							</>
 						}
 					/>
 				</Routes>

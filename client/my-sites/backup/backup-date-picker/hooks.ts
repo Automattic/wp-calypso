@@ -56,7 +56,5 @@ export const useCanGoToDate: CanGoToDateHook = (
 };
 
 export const useFirstKnownBackupAttempt = ( siteId: number ) => {
-	// @ts-expect-error: TypeScript thinks the options argument here
-	// needs all its properties to be present, but they really don't
 	return useFirstMatchingBackupAttempt( siteId, { sortOrder: 'asc' } );
 };

@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+
 .guide-modal__wrapper {
 	width: 400px;
 	align-self: start;
@@ -101,14 +104,12 @@
 	}
 
 	h3 {
-		font-size: 1rem;
-		font-weight: 600;
+		@include heading-large;
 		color: var(--color-neutral-100);
 	}
 
 	p {
-		font-size: 0.875rem;
-		font-weight: 400;
+		@include body-medium;
 		color: var(--color-neutral-80);
 	}
 }

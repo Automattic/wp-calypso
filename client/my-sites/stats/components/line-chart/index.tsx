@@ -25,6 +25,7 @@ function StatsLineChart( {
 	),
 	zeroBaseline = true,
 	fixedDomain = false,
+	curveType = 'smooth',
 }: {
 	chartData: Array< {
 		label: string;
@@ -39,6 +40,7 @@ function StatsLineChart( {
 	emptyState: JSX.Element;
 	zeroBaseline?: boolean;
 	fixedDomain?: boolean;
+	curveType?: 'smooth' | 'linear' | 'monotone';
 	onClick?: ( item: { data: { period: string } } ) => void;
 } ) {
 	const moment = useLocalizedMoment();
@@ -70,6 +72,20 @@ function StatsLineChart( {
 			),
 		[ chartData ]
 	);
+
+	const yNumTicks = useMemo( () => {
+		const uniqueValues = [
+			...new Set( chartData.flatMap( ( series ) => series.data.map( ( d ) => d.value ) ) ),
+		];
+
+		const maxTicks = uniqueValues.length > 5 ? 5 : uniqueValues.length;
+
+		if ( fixedDomain ) {
+			return maxTicks;
+		}
+
+		return maxTicks - 1;
+	}, [ chartData, fixedDomain ] );
 
 	const yScaleType = useMemo( () => {
 		if ( chartData.length <= 1 ) {
@@ -170,6 +186,7 @@ function StatsLineChart( {
 						withTooltips
 						withGradientFill
 						height={ height }
+						curveType={ curveType }
 						// TODO: figure out the right type for onPointerDown
 						// eslint-disable-next-line @typescript-eslint/no-explicit-any
 						onPointerUp={ onPointerUp as any }
@@ -192,7 +209,7 @@ function StatsLineChart( {
 								y: {
 									orientation: 'right',
 									tickFormat: formatValue,
-									numTicks: maxValue > 4 ? 4 : 1,
+									numTicks: yNumTicks,
 								},
 							},
 						} }

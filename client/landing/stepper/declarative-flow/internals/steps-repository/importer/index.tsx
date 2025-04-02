@@ -1,9 +1,10 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import config from '@automattic/calypso-config';
 import { StepContainer } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import NotAuthorized from 'calypso/blocks/importer/components/not-authorized';
 import NotFound from 'calypso/blocks/importer/components/not-found';
 import { getImporterTypeForEngine } from 'calypso/blocks/importer/util';
@@ -12,11 +13,11 @@ import QuerySites from 'calypso/components/data/query-sites';
 import Loading from 'calypso/components/loading';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSaveHostingFlowPathStep } from 'calypso/landing/stepper/hooks/use-save-hosting-flow-path-step';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
+import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
@@ -33,7 +34,7 @@ import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { requestSites } from 'calypso/state/sites/actions';
-import { hasAllSitesList } from 'calypso/state/sites/selectors';
+import { isRequestingSite, hasAllSitesList } from 'calypso/state/sites/selectors';
 import { StepProps } from '../../types';
 import { useAtomicTransferQueryParamUpdate } from './hooks/use-atomic-transfer-query-param-update';
 import { useInitialQueryRun } from './hooks/use-initial-query-run';
@@ -71,13 +72,10 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 	 	↓ Fields
 		 */
 		const currentUser = useSelector( getCurrentUser );
-		const site = useSite();
-		const siteSlug = useSiteSlugParam();
-		const [ siteId, setSiteId ] = useState( site?.ID );
+		const { site, siteId, siteSlug } = useSiteData();
 		const runImportInitially = useInitialQueryRun( siteId );
 		const canImport = useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) );
 		const siteImports = useSelector( ( state ) => getImporterStatusForSiteId( state, siteId ) );
-		const hasAllSitesFetched = useSelector( hasAllSitesList );
 		const isImporterStatusHydrated = useSelector( isImporterStatusHydratedSelector );
 		const isMigrateFromWp = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIsMigrateFromWp(),
@@ -87,6 +85,15 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const fromSiteData = useSelector( getUrlData );
 		const stepNavigator = useStepNavigator( flow, navigation, siteId, siteSlug, fromSite );
 		const currentPath = window.location.pathname + window.location.search;
+		const hasAllSitesFetched = useSelector( hasAllSitesList );
+
+		const isRequestingCurrentSite = useSelector( ( state ) =>
+			siteId ? isRequestingSite( state, siteId ) : false
+		);
+
+		const isLoading = useMemo( () => {
+			return ! isImporterStatusHydrated || ! hasAllSitesFetched || isRequestingCurrentSite;
+		}, [ isImporterStatusHydrated, hasAllSitesFetched, isRequestingCurrentSite ] );
 
 		useSaveHostingFlowPathStep( flow, currentPath );
 
@@ -97,18 +104,26 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 			dispatch( requestSites() );
 		}, [ dispatch ] );
 
-		useEffect( () => {
-			! siteId && site?.ID && setSiteId( site.ID );
-		}, [ siteId, site ] );
 		useAtomicTransferQueryParamUpdate( siteId );
 		useEffect( fetchImporters, [ siteId ] );
 		useEffect( checkFromSiteData, [ fromSiteData?.url ] );
 		useEffect( () => onComponentUnmount, [] );
 
-		if ( ! importer ) {
-			stepNavigator.goToImportCapturePage?.();
-			return null;
-		}
+		useEffect( () => {
+			if ( ! isLoading && ! site ) {
+				logToLogstash( {
+					feature: 'calypso_client',
+					tags: [ 'importer', importer, 'error' ],
+					error: 'Importer missing site info',
+					message: 'Importer missing site',
+					site_id: siteId,
+					site_slug: siteSlug,
+					properties: {
+						env_id: config( 'env_id' ),
+					},
+				} );
+			}
+		}, [ importer, isLoading, site, siteId, siteSlug ] );
 
 		/**
 	 	↓ Methods
@@ -155,10 +170,6 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 			return canImport;
 		}
 
-		function isLoading(): boolean {
-			return ! isImporterStatusHydrated || ! hasAllSitesFetched;
-		}
-
 		function checkFromSiteData(): void {
 			if ( ! fromSite ) {
 				return;
@@ -172,16 +183,26 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		/**
 	 	↓ Renders
 		 */
+
+		if ( ! importer ) {
+			stepNavigator.goToImportCapturePage?.();
+			return null;
+		}
+
 		const renderStepContent = () => {
-			if ( isLoading() ) {
+			if ( isLoading ) {
 				return (
 					<div className="import-layout__center">
 						<Loading />
 					</div>
 				);
-			} else if ( ! siteSlug || ! site || ! siteId ) {
+			}
+
+			if ( ! site ) {
 				return <NotFound />;
-			} else if ( ! hasPermission() ) {
+			}
+
+			if ( ! hasPermission() ) {
 				return (
 					<NotAuthorized
 						onStartBuilding={ stepNavigator?.goToIntentPage }

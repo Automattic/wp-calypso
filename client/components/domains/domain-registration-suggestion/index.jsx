@@ -265,7 +265,7 @@ class DomainRegistrationSuggestion extends Component {
 		};
 	}
 
-	renderDomain() {
+	renderDomain( hasBadges = false ) {
 		const {
 			showHstsNotice,
 			showDotGayNotice,
@@ -274,6 +274,9 @@ class DomainRegistrationSuggestion extends Component {
 
 		const { name, tld } = this.getDomainParts( domain );
 
+		const wrapperClassName = clsx( 'domain-registration-suggestion__title-info', {
+			'has-badges': hasBadges,
+		} );
 		const titleWrapperClassName = clsx( 'domain-registration-suggestion__title-wrapper', {
 			'domain-registration-suggestion__title-domain':
 				this.props.showStrikedOutPrice && ! this.props.isFeatured,
@@ -281,7 +284,7 @@ class DomainRegistrationSuggestion extends Component {
 		} );
 
 		return (
-			<div className="domain-registration-suggestion__title-info">
+			<div className={ wrapperClassName }>
 				<div className={ titleWrapperClassName }>
 					<h3 className="domain-registration-suggestion__title">
 						<div className="domain-registration-suggestion__domain-title">
@@ -437,6 +440,8 @@ class DomainRegistrationSuggestion extends Component {
 			'is-unavailable': isUnavailableDomain,
 		} );
 
+		const badges = this.renderBadges();
+
 		return (
 			<DomainSuggestion
 				extraClasses={ extraClasses }
@@ -453,8 +458,8 @@ class DomainRegistrationSuggestion extends Component {
 				showStrikedOutPrice={ showStrikedOutPrice }
 				hideMatchReasons={ hideMatchReasons }
 			>
-				{ this.renderBadges() }
-				{ this.renderDomain() }
+				{ badges }
+				{ this.renderDomain( !! badges ) }
 				{ ! hideMatchReasons && isFeatured && this.renderMatchReason() }
 			</DomainSuggestion>
 		);

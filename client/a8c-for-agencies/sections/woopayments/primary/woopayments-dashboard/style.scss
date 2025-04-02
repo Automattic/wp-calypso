@@ -14,13 +14,11 @@ $woocommerce-purple-50: #720EEC;
 
 	&.is-empty {
 		.hosting-dashboard-layout__body-wrapper {
-			max-width: unset;
-			padding-inline: 0;
-			margin: 0;
+			max-width: 900px;
+			padding-block-start: calc(24px + 48px);
 		}
 	}
 }
-
 
 .woopayments-dashboard-empty-state__content {
 	display: flex;
@@ -29,6 +27,10 @@ $woocommerce-purple-50: #720EEC;
 
 	img {
 		width: max-content;
+	}
+
+	a.components-external-link {
+		@include body-medium;
 	}
 }
 
@@ -49,9 +51,17 @@ $woocommerce-purple-50: #720EEC;
 	}
 }
 
-.woopayments-dashboard-empty-state__list a {
+.woopayments-dashboard-empty-state__list a,
+.woopayments-dashboard-empty-state__demo-link {
 	text-decoration: underline;
 	color: var(--color-text);
+
+	&:active,
+	&:hover,
+	&:focus,
+	&:focus-visible {
+		color: var(--color-text);
+	}
 }
 
 a.components-button.woopayments-dashboard-empty-state__button {
@@ -85,5 +95,25 @@ a.components-button.woopayments-dashboard-empty-state__button {
 
 	svg {
 		margin: 0
+	}
+}
+
+.woopayments-dashboard-empty-state__button {
+	margin-block-start: 16px;
+	margin-inline-start: auto;
+
+	button {
+		width: 100%;
+		height: 40px;
+
+		@include break-large {
+			min-width: 100px;
+			width: auto;
+			height: inherit;
+		}
+	}
+
+	@include break-large {
+		margin-block-start: 0;
 	}
 }

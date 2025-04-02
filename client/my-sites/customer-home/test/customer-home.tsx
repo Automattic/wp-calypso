@@ -2,10 +2,8 @@
  * @jest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
-import apiFetch from '@wordpress/api-fetch';
 import nock from 'nock';
-import React, { act } from 'react';
-import { reducer as ui } from 'calypso/state/ui/reducer';
+import React from 'react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import CustomerHome from '../main';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -86,80 +84,5 @@ describe( 'CustomerHome', () => {
 
 		await waitFor( () => expect( screen.getByTestId( 'home-content' ) ).toBeInTheDocument() );
 		expect( screen.queryByTestId( 'launchpad-first' ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'should show Launchpad when site is unlaunched, created by onboarding flow, and launchpad is unskipped', async () => {
-		const testSite = makeTestSite( {
-			launch_status: 'unlaunched',
-			options: { site_creation_flow: 'onboarding', launchpad_screen: false, site_intent: 'sell' },
-		} );
-
-		renderWithProvider( <CustomerHome site={ testSite } /> );
-
-		await waitFor( () => expect( screen.getByTestId( 'launchpad-first' ) ).toBeInTheDocument() );
-		expect( screen.queryByTestId( 'home-content' ) ).not.toBeInTheDocument();
-
-		// Click the close button
-		act( () => {
-			screen.getByText( 'Skip to dashboard' ).click();
-		} );
-
-		// Verify HomeContent is now shown
-		expect( screen.getByTestId( 'home-content' ) ).toBeInTheDocument();
-		expect( screen.queryByTestId( 'launchpad-first' ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'should show the site launched modal once the site is launched', async () => {
-		const testSite = makeTestSite( {
-			launch_status: 'unlaunched',
-			options: { site_creation_flow: 'onboarding', site_intent: 'write', launchpad_screen: false },
-		} );
-
-		nock( 'https://public-api.wordpress.com' ).get( '/wpcom/v2/sites/1/home/layout' ).reply( 200, {
-			primary: [],
-			secondary: [],
-		} );
-
-		const data = {
-			checklist_statuses: {
-				design_completed: true,
-				site_theme_selected: true,
-				site_launched: false,
-				site_edited: true,
-			},
-			launchpad_screen: 'full',
-			site_intent: 'write',
-			checklist: [
-				{
-					id: 'site_launched',
-					isLaunchTask: true,
-					title: 'Launch your site',
-					completed: false,
-				},
-			],
-		};
-
-		jest.mocked( apiFetch ).mockResolvedValue( data );
-
-		renderWithProvider( <CustomerHome site={ testSite } />, {
-			reducers: { ui },
-			initialState: {
-				sites: {
-					items: {
-						[ testSite.ID ]: testSite,
-					},
-				},
-				ui: {
-					selectedSiteId: testSite.ID,
-				},
-			},
-		} );
-
-		const launchSiteButton = await screen.findByRole( 'button', { name: 'Launch your site' } );
-
-		// Click the Launch site button
-		act( () => launchSiteButton.click() );
-
-		expect( await screen.findByText( 'Congrats, your site is live!' ) ).toBeInTheDocument();
 	} );
 } );

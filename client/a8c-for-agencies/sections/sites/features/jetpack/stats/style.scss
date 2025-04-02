@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+
 .upsell-stats-card__wrapper {
 	.upsell-stats-card__features {
 		list-style: none;
@@ -28,7 +31,7 @@
 	}
 
 	.jetpack-rna-action-card__action {
-		font-size: 0.875rem;
+		@include body-medium;
 		gap: 8px;
 
 		.jetpack-rna-action-card__button {
@@ -50,7 +53,7 @@
 				box-sizing: border-box;
 				border-radius: 4px;
 				border-color: var(--color-neutral-5);
-				font-size: 1rem;
+				@include body-large;
 				padding: 8px 32px;
 				border-style: solid;
 				border-width: 1px;

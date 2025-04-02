@@ -10,7 +10,7 @@ import { useSelector } from 'calypso/state';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { JETPACK_SUPPORT_URL_TRAFFIC, SUPPORT_URL } from '../../../const';
+import { JETPACK_SUPPORT_URL_TRAFFIC, UTM_SUPPORT_URL } from '../../../const';
 import useUTMMetricsQuery from '../../../hooks/use-utm-metrics-query';
 import ErrorPanel from '../../../stats-error';
 import StatsListCard from '../../../stats-list/stats-list-card';
@@ -51,21 +51,9 @@ const StatsModuleUTM = ( {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const translate = useTranslate();
 
-	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.CAMPAIGN );
+	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.SOURCE_MEDIUM );
 
 	const optionLabels = {
-		[ OPTION_KEYS.CAMPAIGN ]: {
-			selectLabel: translate( 'Campaign' ),
-			headerLabel: translate( 'Posts by Campaign' ),
-		},
-		[ OPTION_KEYS.SOURCE ]: {
-			selectLabel: translate( 'Source' ),
-			headerLabel: translate( 'Posts by Source' ),
-		},
-		[ OPTION_KEYS.MEDIUM ]: {
-			selectLabel: translate( 'Medium' ),
-			headerLabel: translate( 'Posts by Medium' ),
-		},
 		[ OPTION_KEYS.SOURCE_MEDIUM ]: {
 			selectLabel: translate( 'Source / Medium' ),
 			headerLabel: translate( 'Posts by Source / Medium' ),
@@ -75,6 +63,18 @@ const StatsModuleUTM = ( {
 			selectLabel: translate( 'Campaign / Source / Medium' ),
 			headerLabel: translate( 'Posts by Campaign / Source / Medium' ),
 			isGrouped: true,
+		},
+		[ OPTION_KEYS.SOURCE ]: {
+			selectLabel: translate( 'Source' ),
+			headerLabel: translate( 'Posts by Source' ),
+		},
+		[ OPTION_KEYS.MEDIUM ]: {
+			selectLabel: translate( 'Medium' ),
+			headerLabel: translate( 'Posts by Medium' ),
+		},
+		[ OPTION_KEYS.CAMPAIGN ]: {
+			selectLabel: translate( 'Campaign' ),
+			headerLabel: translate( 'Posts by Campaign' ),
 		},
 	};
 
@@ -109,7 +109,7 @@ const StatsModuleUTM = ( {
 
 	const supportUrl = isSiteJetpackNotAtomic
 		? localizeUrl( `${ JETPACK_SUPPORT_URL_TRAFFIC }#harnessing-utm-stats-for-precision-tracking` )
-		: localizeUrl( `${ SUPPORT_URL }#utm` );
+		: UTM_SUPPORT_URL;
 
 	const titleNodes = (
 		<StatsInfoArea isNew>

@@ -5,12 +5,14 @@ import { store as coreDataStore } from '@wordpress/core-data';
 import { useSelect } from '@wordpress/data';
 import { Icon, wordpress } from '@wordpress/icons';
 import clsx from 'clsx';
-import type { JSX } from 'react';
-
 /**
  * Internal dependencies
  */
 import './style.scss';
+/**
+ * Types
+ */
+import type { JSX } from 'react';
 
 type SiteIconProps = {
 	/**

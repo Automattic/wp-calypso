@@ -22,9 +22,10 @@ import { successNotice } from 'calypso/state/notices/actions';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { receiveNewPost } from 'calypso/state/reader/streams/actions';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getMostRecentlySelectedSiteId, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -61,10 +62,12 @@ function QuickPost( {
 	} );
 	const [ editorKey, setEditorKey ] = useState( 0 );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
-	const selectedSiteId = useSelector( getSelectedSiteId );
 	const editorRef = useRef< HTMLDivElement >( null );
 	const dispatch = useDispatch();
 	const currentUser = useSelector( getCurrentUser );
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const mostRecentlySelectedSiteId = useSelector( getMostRecentlySelectedSiteId );
+	const primarySiteId = useSelector( getPrimarySiteId );
 	const hasLoaded = useSelector( hasLoadedSites );
 	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
 	const [ isMenuVisible, setIsMenuVisible ] = useState( false );
@@ -82,15 +85,17 @@ function QuickPost( {
 		setEditorKey( ( key ) => key + 1 );
 	};
 
+	const siteId = selectedSiteId || mostRecentlySelectedSiteId || primarySiteId || undefined;
+
 	const handleSubmit = () => {
-		if ( ! postContent.trim() || ! selectedSiteId || isSubmitting ) {
+		if ( ! postContent.trim() || ! siteId || isSubmitting ) {
 			return;
 		}
 
 		setIsSubmitting( true );
 
 		wpcom
-			.site( selectedSiteId )
+			.site( siteId )
 			.post()
 			.add( {
 				title:
@@ -105,7 +110,10 @@ function QuickPost( {
 				status: 'publish',
 			} )
 			.then( ( postData: PostItem ) => {
-				recordReaderTracksEvent( 'calypso_reader_quick_post_submitted' );
+				recordReaderTracksEvent( 'calypso_reader_quick_post_submitted', {
+					post_id: postData.ID,
+					post_url: postData.URL,
+				} );
 				clearEditor();
 
 				successNotice( translate( 'Post successful! Your post will appear in the feed soon.' ), {
@@ -136,10 +144,6 @@ function QuickPost( {
 			.finally( () => {
 				setIsSubmitting( false );
 			} );
-	};
-
-	const handleCancel = () => {
-		clearEditor();
 	};
 
 	const handleSiteSelect = ( siteId: number ) => {
@@ -179,7 +183,7 @@ function QuickPost( {
 			<div className="quick-post-input__fields">
 				<div className="quick-post-input__site-select-wrapper">
 					<SitesDropdown
-						selectedSiteId={ selectedSiteId || undefined }
+						selectedSiteId={ siteId }
 						onSiteSelect={ handleSiteSelect }
 						isPlaceholder={ ! hasLoaded }
 					/>
@@ -199,7 +203,7 @@ function QuickPost( {
 							className="quick-post-input__popover"
 						>
 							<PopoverMenuItem
-								href={ selectedSiteId ? `/post/${ selectedSiteId }?type=post` : '/post' }
+								href={ siteId ? `/post/${ siteId }?type=post` : '/post' }
 								target="_blank"
 								rel="noreferrer"
 								onClick={ handleFullEditorClick }
@@ -225,13 +229,6 @@ function QuickPost( {
 				</div>
 			</div>
 			<div className="quick-post-input__actions">
-				<Button
-					onClick={ handleCancel }
-					disabled={ isDisabled }
-					className="quick-post-input__cancel"
-				>
-					{ translate( 'Cancel' ) }
-				</Button>
 				<Button
 					variant="primary"
 					onClick={ handleSubmit }

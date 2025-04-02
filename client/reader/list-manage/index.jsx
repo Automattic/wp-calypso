@@ -1,4 +1,4 @@
-import { Button, Card } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import ReaderExportButton from 'calypso/blocks/reader-export-button';
@@ -48,14 +48,10 @@ function Items( { list, listItems, owner } ) {
 	}
 	return (
 		<>
+			<ItemAdder key="item-adder" list={ list } listItems={ listItems } owner={ owner } />
 			{ listItems?.length > 0 && (
 				<>
-					<h1 className="list-manage__subscriptions-header">
-						{ translate( 'Added sites' ) }
-						<Button compact primary href="#reader-list-item-adder">
-							{ translate( 'Add Site' ) }
-						</Button>
-					</h1>
+					<h1 className="list-manage__subscriptions-header">{ translate( 'Added sites' ) }</h1>
 					{ listItems.map( ( item ) => (
 						<ListItem
 							key={ item.feed_ID || item.site_ID || item.tag_ID }
@@ -64,10 +60,8 @@ function Items( { list, listItems, owner } ) {
 							item={ item }
 						/>
 					) ) }
-					<hr className="list-manage__subscriptions-separator" />
 				</>
 			) }
-			<ItemAdder key="item-adder" list={ list } listItems={ listItems } owner={ owner } />
 		</>
 	);
 }

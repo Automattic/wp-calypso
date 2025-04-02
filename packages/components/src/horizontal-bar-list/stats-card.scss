@@ -99,6 +99,13 @@
 		flex-wrap: wrap;
 		// Add padding to wrapped elements in narrow viewports.
 		row-gap: 16px;
+
+		@media (max-width: $break-mobile) {
+			.stats-card-header--main__left,
+			.stats-card-header--main__right {
+				flex-grow: 1;
+			}
+		}
 	}
 
 	.stats-card-header__additional {
@@ -117,6 +124,7 @@
 		margin: $padding-outside $padding-outside 0;
 		display: block;
 		color: var(--color-text);
+		text-decoration: none; // TODO: Should this be a tertiary button component instead?
 
 		&:visited {
 			color: $font-color;

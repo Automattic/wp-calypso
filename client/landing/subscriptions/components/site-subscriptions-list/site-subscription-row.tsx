@@ -142,16 +142,12 @@ const SiteSubscriptionRow = ( {
 				{
 					id: siteUnsubscribedNoticeId,
 					button: translate( 'Resubscribe' ),
+					duration: 5000,
 					onClick: () => {
 						if ( unsubscribeInProgress.current ) {
 							resubscribePending.current = true;
 						} else {
-							resubscribe( {
-								blog_id,
-								url,
-								doNotInvalidateSiteSubscriptions: true,
-								resubscribed: true,
-							} );
+							resubscribe( { blog_id, url, resubscribed: true } );
 							dispatch( removeNotice( siteUnsubscribedNoticeId ) );
 							scrollToFirstRow();
 
