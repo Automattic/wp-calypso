@@ -156,7 +156,7 @@ export default function LocaleSuggestions( { path, locale }: LocaleSuggestionsPr
 	}, [ userOtherLocalesComponentsMap, availabilityText, isLocaleSuggestionsVisible ] );
 
 	if ( isDismissed ) {
-		return true;
+		return null;
 	}
 
 	return (
