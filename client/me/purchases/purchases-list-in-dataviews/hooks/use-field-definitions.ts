@@ -8,7 +8,7 @@ export function usePurchasesFieldDefinitions() {
 	const moment = useLocalizedMoment();
 
 	return useMemo( () => {
-		const fieldDefinitions = getPurchasesFieldDefinitions( translate, moment );
+		const fieldDefinitions = getPurchasesFieldDefinitions( { translate, moment } );
 		return fieldDefinitions;
-	}, [ translate ] );
+	}, [ translate, moment ] );
 }
