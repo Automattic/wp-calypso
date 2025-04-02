@@ -3,5 +3,5 @@
 .dashboard-header {
 	box-sizing: border-box;
 	padding: $grid-unit-20;
-	border-bottom: 1px solid $gray-100;
+	border-bottom: $border-width solid $gray-100;
 }
