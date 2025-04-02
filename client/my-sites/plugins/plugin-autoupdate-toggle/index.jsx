@@ -64,11 +64,15 @@ export class PluginAutoUpdateToggle extends Component {
 			this.props.isMarketplaceProduct && this.props.productPurchase;
 		const isPreinstalledPlugin = PREINSTALLED_PLUGINS.includes( this.props.plugin.slug );
 		const isAutomanagedPlugin = AUTOMOMANAGED_PLUGINS.includes( this.props.plugin.slug );
+		const isAtomicManaged = this.props.plugin?.is_managed;
 
 		// Auto-managed are only applicable to sites that are part of an automated transfer.
 		return (
 			this.props.siteAutomatedTransfer &&
-			( isPurchasedMarketplaceProduct || isPreinstalledPlugin || isAutomanagedPlugin )
+			( isPurchasedMarketplaceProduct ||
+				isPreinstalledPlugin ||
+				isAutomanagedPlugin ||
+				isAtomicManaged )
 		);
 	};
 
