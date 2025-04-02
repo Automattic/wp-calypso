@@ -183,8 +183,8 @@ class RequestLoginEmailForm extends Component {
 			return (
 				<Spinner
 					style={ {
-						height: 'calc(4px * 20)',
-						width: 'calc(4px * 20)',
+						height: 'calc(4px * 12)',
+						width: 'calc(4px * 12)',
 					} }
 					className="magic-login__loading-spinner--jetpack"
 				/>
