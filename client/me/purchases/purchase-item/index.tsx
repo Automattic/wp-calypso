@@ -141,7 +141,7 @@ export function PurchaseItemSiteIcon( {
 	return <div className="purchase-item__site purchases-layout__site">{ content }</div>;
 }
 
-export function PurchaseItemType( {
+export function PurchaseItemProduct( {
 	purchase,
 	site,
 	translate,
@@ -864,7 +864,7 @@ class PurchaseItem extends Component<
 					</div>
 
 					<div className="purchase-item__purchase-type">
-						<PurchaseItemType
+						<PurchaseItemProduct
 							purchase={ purchase }
 							site={ site }
 							translate={ translate }

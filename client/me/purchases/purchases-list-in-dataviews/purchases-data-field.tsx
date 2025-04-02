@@ -6,7 +6,7 @@ import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
-import PurchaseItem, { PurchaseItemSiteIcon, PurchaseItemType } from '../purchase-item';
+import PurchaseItem, { PurchaseItemSiteIcon, PurchaseItemProduct } from '../purchase-item';
 
 function PurchaseItemRow( props: { purchase: Purchases.Purchase } ) {
 	const purchase = props.purchase;
@@ -34,7 +34,7 @@ function PurchaseItemRow( props: { purchase: Purchases.Purchase } ) {
 	);
 }
 
-function PurchaseItemRowType( props: {
+function PurchaseItemRowProduct( props: {
 	purchase: Purchases.Purchase;
 	translate: LocalizeProps[ 'translate' ];
 } ) {
@@ -44,7 +44,7 @@ function PurchaseItemRowType( props: {
 	// Need to figure out how to pass translate here
 	return (
 		<div className="purchase-item__purchase-type">
-			<PurchaseItemType
+			<PurchaseItemProduct
 				purchase={ purchase }
 				site={ site }
 				translate={ translate }
@@ -75,7 +75,7 @@ export function getPurchasesFieldDefinitions(
 				return item.productId;
 			},
 			render: ( { item }: { item: Purchases.Purchase } ) => {
-				return <PurchaseItemRowType purchase={ item } translate={ translate } />;
+				return <PurchaseItemRowProduct purchase={ item } translate={ translate } />;
 			},
 		},
 		{
