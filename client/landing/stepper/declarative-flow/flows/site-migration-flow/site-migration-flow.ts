@@ -42,8 +42,8 @@ const siteMigration: Flow = {
 		const urlQueryParams = useQuery();
 		const ref = urlQueryParams.get( 'ref' );
 
-		if ( ref && ! get( 'migration' )?.entryPoint ) {
-			set( 'migration', { entryPoint: ref } );
+		if ( ref && ! get( 'flow' )?.entryPoint ) {
+			set( 'flow', { entryPoint: ref } );
 		}
 	},
 
@@ -536,12 +536,18 @@ const siteMigration: Flow = {
 		const goBack = () => {
 			const siteSlug = urlQueryParams.get( 'siteSlug' ) || '';
 			const siteId = urlQueryParams.get( 'siteId' ) || '';
-			const entryPoint = get( 'migration' )?.entryPoint;
+			const entryPoint = get( 'flow' )?.entryPoint;
 
 			switch ( currentStep ) {
 				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {
 					if ( entryPoint === 'calypso-importer' ) {
 						return exitFlow( addQueryArgs( { ref: 'site-migration' }, `/import/${ siteSlug }` ) );
+					}
+
+					if ( entryPoint === 'wp-admin-importers-list' ) {
+						return exitFlow(
+							addQueryArgs( { siteSlug, siteId, ref: entryPoint }, '/setup/site-setup/importList' )
+						);
 					}
 
 					if ( entryPoint === 'wp-admin' ) {

@@ -295,15 +295,6 @@ body.is-section-accept-invite {
 	}
 
 	/**
-	* P2 Signup
-	*/
-	@at-root .is-p2-login & .auth-form__social-buttons-container .social-buttons__button {
-		&:not(:focus) {
-			box-shadow: none;
-		}
-	}
-
-	/**
 	* Jetpack Signup
 	*/
 	@at-root .is-jetpack-login & {

@@ -148,10 +148,11 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 		// and are redirected to the user step.
 		const postAuthStepSlug = stepData?.nextStep ?? '';
 		if ( step.slug === PRIVATE_STEPS.USER.slug && postAuthStepSlug ) {
+			const flowSlug = flow.variantSlug ?? flow.name;
 			const previousAuthStepSlug = stepData?.previousStep;
 			const postAuthStepPath = createPath( {
 				pathname: generatePath( '/setup/:flow/:step/:lang?', {
-					flow: flow.name,
+					flow: flowSlug,
 					step: postAuthStepSlug,
 					lang: lang === 'en' || isLoggedIn ? null : lang,
 				} ),
@@ -160,7 +161,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 			} );
 
 			const signupUrl = generatePath( '/setup/:flow/:step/:lang?', {
-				flow: flow.name,
+				flow: flowSlug,
 				step: 'user',
 				lang: lang === 'en' || isLoggedIn ? null : lang,
 			} );

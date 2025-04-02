@@ -38,7 +38,7 @@
 		"@automattic/languages": "workspace:^",
 		"@automattic/webpack-rtl-plugin": "workspace:^",
 		"@babel/compat-data": "^7.26.8",
-		"@babel/core": "^7.26.9",
+		"@babel/core": "^7.26.10",
 		"@types/webpack-env": "^1.18.8",
 		"@wordpress/browserslist-config": "^6.20.0",
 		"@wordpress/dependency-extraction-webpack-plugin": "^6.19.0",

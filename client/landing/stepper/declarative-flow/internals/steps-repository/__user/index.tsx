@@ -85,7 +85,10 @@ const UserStepComponent: StepType = function UserStep( {
 	};
 
 	const localeSuggestions = shouldRenderLocaleSuggestions && (
-		<LocaleSuggestions path={ window.location.pathname } locale={ locale } />
+		<LocaleSuggestions
+			path={ window.location.pathname + window.location.search }
+			locale={ locale }
+		/>
 	);
 
 	const isStepContainerV2 = shouldUseStepContainerV2( flow );

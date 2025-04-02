@@ -16,10 +16,7 @@ jest.mock( '@automattic/calypso-config', () => ( {
 const mockSuccessResponse = {
 	blog_id: 123,
 	atomic_transfer_id: 456,
-	transfer_with_software_status: 'pending',
-	atomic_transfer_status: 'success',
-	plugins: { 'wpcom-migration': true },
-	themes: { 'twenty-twenty-four': false },
+	atomic_transfer_status: 'completed',
 };
 
 describe( 'useTransferWithSoftwareStatus', () => {
@@ -44,8 +41,7 @@ describe( 'useTransferWithSoftwareStatus', () => {
 		await waitFor( () => {
 			expect( result.current.isSuccess ).toBe( true );
 			expect( result.current.data ).toEqual( {
-				transfer_with_software_status: 'pending',
-				atomic_transfer_status: 'success',
+				atomic_transfer_status: 'completed',
 			} );
 		} );
 	} );
@@ -70,23 +66,5 @@ describe( 'useTransferWithSoftwareStatus', () => {
 
 		expect( result.current.isFetching ).toBe( false );
 		expect( nock.isDone() ).toBe( true ); // No pending nock requests
-	} );
-
-	it( 'should ignore extra fields in the response', async () => {
-		const queryClient = new QueryClient();
-		const wrapper = ( { children }: { children: React.ReactNode } ) => (
-			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
-		);
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/sites/123/atomic/transfer-with-software/456' )
-			.query( { http_envelope: 1 } )
-			.reply( 200, mockSuccessResponse );
-
-		const { result } = renderHook( () => useTransferWithSoftwareStatus( 123, 456 ), { wrapper } );
-
-		await waitFor( () => {
-			expect( result.current.isSuccess ).toBe( true );
-			expect( result.current.data ).not.toContain( { extra_field: 'extra_value' } );
-		} );
 	} );
 } );

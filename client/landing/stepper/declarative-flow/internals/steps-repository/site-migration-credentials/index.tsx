@@ -70,7 +70,7 @@ const SiteMigrationCredentials: Step< {
 	const siteSlugParam = useSiteSlugParam();
 	const fromUrl = useQuery().get( 'from' ) || '';
 	const siteSlug = siteSlugParam ?? '';
-	const { sendTicket } = useSubmitMigrationTicket( {
+	const { sendTicketAsync } = useSubmitMigrationTicket( {
 		onSuccess: () => {
 			recordTracksEvent( 'calypso_migration_credentials_ticket_submit_success', {
 				blog_url: siteSlug,
@@ -105,20 +105,29 @@ const SiteMigrationCredentials: Step< {
 		} );
 	};
 
-	const handleSkip = () => {
+	const handleSkip = async () => {
 		recordTracksEvent( 'wpcom_support_free_migration_request_click', {
 			path: window.location.pathname,
 			automated_migration: true,
 		} );
-		sendTicket( {
-			locale,
-			from_url: fromUrl,
-			blog_url: siteSlug,
-		} );
 
-		return navigation.submit?.( {
-			action: 'skip',
-		} );
+		try {
+			await sendTicketAsync( {
+				locale,
+				from_url: fromUrl,
+				blog_url: siteSlug,
+			} );
+
+			// Reset the site in the state to ensure the correct overview screen is shown.
+			siteId && dispatch( resetSite( siteId ) );
+
+			return navigation.submit?.( {
+				action: 'skip',
+			} );
+		} catch ( error ) {
+			// eslint-disable-next-line no-console
+			console.error( 'There was an error submitting the ticket', error );
+		}
 	};
 
 	useEffect( () => {

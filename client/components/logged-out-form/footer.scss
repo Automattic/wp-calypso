@@ -16,10 +16,4 @@
 		width: 100%;
 		@include elevation( 1dp );
 	}
-
-	.is-p2-invite.invite-accept &,
-	.is-p2-signup .signup__step.is-user & {
-		margin: 0;
-		padding: 0;
-	}
 }

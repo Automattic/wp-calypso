@@ -15,10 +15,10 @@ import AsyncLoad from 'calypso/components/async-load';
 import Sidebar from 'calypso/layout/sidebar';
 import CollapseSidebar from 'calypso/layout/sidebar/collapse-sidebar';
 import SidebarRegion from 'calypso/layout/sidebar/region';
-import CurrentSite from 'calypso/my-sites/current-site';
 import MySitesSidebarUnifiedBody from 'calypso/my-sites/sidebar/body';
 import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import SiteNotices from '../current-site/site-notices';
 import AddNewSite from './add-new-site';
 import useDomainsViewStatus from './use-domains-view-status';
 import useSiteMenuItems from './use-site-menu-items';
@@ -56,7 +56,7 @@ export const MySitesSidebarUnified = ( { path, isUnifiedSiteSidebarVisible } ) =
 				) }
 				{ ! isUnifiedSiteSidebarVisible && (
 					<SidebarRegion>
-						<CurrentSite forceAllSitesView={ isAllDomainsView } />
+						<SiteNotices />
 					</SidebarRegion>
 				) }
 				<MySitesSidebarUnifiedBody

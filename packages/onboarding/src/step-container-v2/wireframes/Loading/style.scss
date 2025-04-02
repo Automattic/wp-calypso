@@ -3,9 +3,18 @@
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	gap: 3rem;
 	position: absolute;
 	inset: 0;
+
+	&__heading-wrapper {
+		position: absolute;
+		height: 0;
+	}
+
+	&__heading {
+		transform: translateY( -100% );
+		padding-bottom: 3rem;
+	}
 
 	&__progress-bar {
 		--wp-components-color-foreground: var( --color-accent, #3858e9 );

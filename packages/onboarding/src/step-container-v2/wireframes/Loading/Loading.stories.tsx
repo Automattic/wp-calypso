@@ -13,3 +13,11 @@ export default meta;
 export const Default = () => {
 	return <Loading title="Loading" progress={ 0.5 } />;
 };
+
+export const Indeterminate = () => {
+	return <Loading title="Loading" progress={ undefined } />;
+};
+
+export const NoTitle = () => {
+	return <Loading progress={ undefined } />;
+};
