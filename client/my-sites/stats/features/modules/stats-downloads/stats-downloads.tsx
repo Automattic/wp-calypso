@@ -95,7 +95,7 @@ const StatsDownloads: React.FC< StatsDefaultModuleProps > = ( {
 			{ ! isRequestingData && ! data?.length && ! shouldGateStatsModule && (
 				// show empty state
 				<StatsCard
-					className={ clsx( 'stats-card--empty-variant', className ) } // when removing stats/empty-module-traffic add this to the root of the card
+					className={ clsx( 'stats-card--empty-variant', className ) }
 					title={ moduleStrings.title }
 					isEmpty
 					emptyMessage={
