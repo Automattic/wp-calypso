@@ -11,21 +11,4 @@
 		height: 2px;
 		margin: 0 auto 8px;
 	}
-
-	.is-p2-invite.invite-accept &,
-	.is-p2-signup .signup__step.is-user & {
-		font-size: var(--p2-font-size-form-xs);
-
-		.logged-out-form__link-item {
-			font-size: var(--p2-font-size-form-xs);
-			border-bottom: 1px solid currentColor;
-			line-height: 1.5;
-			margin-top: 2px;
-		}
-	}
-
-	.is-p2-invite.invite-accept &::before,
-	.is-p2-signup .signup__step.is-user &::before {
-		display: none;
-	}
 }

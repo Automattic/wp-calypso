@@ -298,7 +298,7 @@ __metadata:
     recursive-copy: "npm:^2.0.14"
     sass: "npm:1.54.0"
     sass-loader: "npm:^13.3.3"
-    semver: "npm:^7.3.2"
+    semver: "npm:^7.7.1"
     stream-browserify: "npm:^3.0.0"
     terser-webpack-plugin: "npm:^5.3.11"
     thread-loader: "npm:^3.0.4"
@@ -565,11 +565,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/charts@npm:^0.9.0":
-  version: 0.9.0
-  resolution: "@automattic/charts@npm:0.9.0"
+"@automattic/charts@npm:^0.11.0":
+  version: 0.11.0
+  resolution: "@automattic/charts@npm:0.11.0"
   dependencies:
-    "@babel/runtime": "npm:7.26.0"
+    "@babel/runtime": "npm:7.26.10"
     "@react-spring/web": "npm:9.7.3"
     "@visx/axis": "npm:^3.12.0"
     "@visx/curve": "npm:3.12.0"
@@ -589,7 +589,7 @@ __metadata:
   peerDependencies:
     react: ^17.0.0 || ^18.0.0
     react-dom: ^17.0.0 || ^18.0.0
-  checksum: 50d8555f2c815aee82d45f673c791d9a0ae02a62a1ae82a8461921e2e0d8250482faf4b39cc64c4e2c1891eb6518288ad1414520477c29b2e544e12239c21723
+  checksum: 860ba8e9be776e7365394160da1674e3be7177bd570c52d9b50557db98de59196a4ba3e63cc67f21aeb768df7f2f60913517c3df0767df7bdd8836333621e5eb
   languageName: node
   linkType: hard
 
@@ -708,10 +708,10 @@ __metadata:
     i18n-calypso: "workspace:^"
     lodash: "npm:^4.17.21"
     postcss: "npm:^8.5.3"
-    prop-types: "npm:^15.7.2"
+    prop-types: "npm:^15.8.1"
     react-modal: "npm:^3.16.1"
     react-router-dom: "npm:^6.23.1"
-    react-slider: "npm:^2.0.5"
+    react-slider: "npm:^2.0.6"
     resize-observer-polyfill: "npm:^1.5.1"
     storybook: "npm:^8.6.9"
     typescript: "npm:^5.8.2"
@@ -740,7 +740,7 @@ __metadata:
     "@wordpress/i18n": "npm:^5.20.0"
     "@wordpress/react-i18n": "npm:^4.20.0"
     debug: "npm:^4.4.0"
-    prop-types: "npm:^15.7.2"
+    prop-types: "npm:^15.8.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     storybook: "npm:^8.6.9"
@@ -1178,7 +1178,7 @@ __metadata:
     clsx: "npm:^2.1.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-draggable: "npm:^4.4.4"
+    react-draggable: "npm:^4.4.6"
     smooch: "npm:5.6.0"
     typescript: "npm:^5.8.2"
   peerDependencies:
@@ -1443,7 +1443,7 @@ __metadata:
     i18n-calypso: "workspace:^"
     postcss: "npm:^8.5.3"
     postcss-custom-properties: "npm:^11.0.0"
-    prop-types: "npm:^15.7.2"
+    prop-types: "npm:^15.8.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     react-redux: "npm:^9.2.0"
@@ -1839,7 +1839,7 @@ __metadata:
     "@wordpress/i18n": "npm:^5.20.0"
     clsx: "npm:^2.1.1"
     postcss: "npm:^8.5.3"
-    prop-types: "npm:^15.7.2"
+    prop-types: "npm:^15.8.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     tslib: "npm:^2.3.0"
@@ -2016,7 +2016,7 @@ __metadata:
   resolution: "@automattic/webpack-extensive-lodash-replacement-plugin@workspace:packages/webpack-extensive-lodash-replacement-plugin"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    semver: "npm:^7.0.0"
+    semver: "npm:^7.7.1"
   peerDependencies:
     webpack: ^5.97.1
   languageName: unknown
@@ -2205,7 +2205,7 @@ __metadata:
     "@wordpress/react-i18n": "npm:^4.20.0"
     debug: "npm:^4.4.0"
     i18n-calypso: "workspace:^"
-    prop-types: "npm:^15.7.2"
+    prop-types: "npm:^15.8.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     typescript: "npm:^5.8.2"
@@ -2224,7 +2224,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@wordpress/url": "npm:^4.20.0"
     i18n-calypso: "workspace:^"
-    social-logos: "npm:^3.1.16"
+    social-logos: "npm:^3.1.18"
     typescript: "npm:^5.8.2"
   peerDependencies:
     "@wordpress/data": ^10.20.0
@@ -3972,12 +3972,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:7.26.0":
-  version: 7.26.0
-  resolution: "@babel/runtime@npm:7.26.0"
+"@babel/runtime@npm:7.26.10":
+  version: 7.26.10
+  resolution: "@babel/runtime@npm:7.26.10"
   dependencies:
     regenerator-runtime: "npm:^0.14.0"
-  checksum: 12c01357e0345f89f4f7e8c0e81921f2a3e3e101f06e8eaa18a382b517376520cd2fa8c237726eb094dab25532855df28a7baaf1c26342b52782f6936b07c287
+  checksum: 6dc6d88c7908f505c4f7770fb4677dfa61f68f659b943c2be1f2a99cb6680343462867abf2d49822adc435932919b36c77ac60125793e719ea8745f2073d3745
   languageName: node
   linkType: hard
 
@@ -8193,13 +8193,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/history@npm:*, @types/history@npm:^4.7.11":
-  version: 4.7.11
-  resolution: "@types/history@npm:4.7.11"
-  checksum: 3facf37c2493d1f92b2e93a22cac7ea70b06351c2ab9aaceaa3c56aa6099fb63516f6c4ec1616deb5c56b4093c026a043ea2d3373e6c0644d55710364d02c934
-  languageName: node
-  linkType: hard
-
 "@types/html-minifier-terser@npm:^6.0.0":
   version: 6.1.0
   resolution: "@types/html-minifier-terser@npm:6.1.0"
@@ -8584,27 +8577,6 @@ __metadata:
   dependencies:
     "@types/react": "npm:*"
   checksum: 58b39870509d65ecd5998365bf2e59062da29db6c525135db50e8eab4e7ecf8d81ee331e34d16a889a47b49a8e2888252b66f2365817ae613ccc32f2ddea983a
-  languageName: node
-  linkType: hard
-
-"@types/react-router-dom@npm:^5.3.3":
-  version: 5.3.3
-  resolution: "@types/react-router-dom@npm:5.3.3"
-  dependencies:
-    "@types/history": "npm:^4.7.11"
-    "@types/react": "npm:*"
-    "@types/react-router": "npm:*"
-  checksum: a9231a16afb9ed5142678147eafec9d48582809295754fb60946e29fcd3757a4c7a3180fa94b45763e4c7f6e3f02379e2fcb8dd986db479dcab40eff5fc62a91
-  languageName: node
-  linkType: hard
-
-"@types/react-router@npm:*":
-  version: 5.1.13
-  resolution: "@types/react-router@npm:5.1.13"
-  dependencies:
-    "@types/history": "npm:*"
-    "@types/react": "npm:*"
-  checksum: d75eb06708cf43aea97e91e62b0b7ea8b4393350f00df2443a8527a3a69ef145c2d31ff2d0e30817b13ea13ae5c2e8291f410d63efd7afc466ff981750e3ef19
   languageName: node
   linkType: hard
 
@@ -11413,7 +11385,7 @@ __metadata:
     postcss: "npm:^8.5.3"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    semver: "npm:^7.3.2"
+    semver: "npm:^7.7.1"
     superagent: "npm:^3.8.3"
     webpack: "npm:^5.97.1"
     webpack-cli: "npm:^4.10.0"
@@ -13611,7 +13583,7 @@ __metadata:
     pkg-dir: "npm:^5.0.0"
     postcss: "npm:^8.5.3"
     prismjs: "npm:^1.30.0"
-    prop-types: "npm:^15.7.2"
+    prop-types: "npm:^15.8.1"
     qrcode.react: "npm:^3.1.0"
     qs: "npm:^6.9.1"
     react: "npm:^18.3.1"
@@ -13619,7 +13591,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     react-element-to-jsx-string: "npm:^15.0.0"
     react-intersection-observer: "npm:^9.4.3"
-    react-live: "npm:^4.1.1"
+    react-live: "npm:^4.1.8"
     react-markdown: "npm:^8.0.7"
     react-modal: "npm:^3.16.1"
     react-redux: "npm:^9.2.0"
@@ -13632,12 +13604,12 @@ __metadata:
     redux-mock-store: "npm:^1.5.5"
     redux-thunk: "npm:^3.1.0"
     regenerator-runtime: "npm:^0.13.9"
-    social-logos: "npm:^3.1.16"
-    source-map-support: "npm:^0.5.19"
+    social-logos: "npm:^3.1.18"
+    source-map-support: "npm:^0.5.21"
     store: "npm:^2.0.12"
     storybook: "npm:^8.6.9"
     stream-browserify: "npm:^3.0.0"
-    striptags: "npm:^3.1.1"
+    striptags: "npm:^3.2.0"
     superagent: "npm:^3.8.3"
     supertest: "npm:^7.0.0"
     textarea-caret: "npm:^3.1.0"
@@ -14308,14 +14280,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clsx@npm:2.1.1, clsx@npm:^2.1.1":
+"clsx@npm:2.1.1, clsx@npm:^2.0.0, clsx@npm:^2.1.1":
   version: 2.1.1
   resolution: "clsx@npm:2.1.1"
   checksum: c4c8eb865f8c82baab07e71bfa8897c73454881c4f99d6bc81585aecd7c441746c1399d08363dc096c550cceaf97bd4ce1e8854e1771e9998d9f94c4fe075839
   languageName: node
   linkType: hard
 
-"clsx@npm:^1.0.4, clsx@npm:^1.1.1, clsx@npm:^1.2.1":
+"clsx@npm:^1.0.4, clsx@npm:^1.1.1":
   version: 1.2.1
   resolution: "clsx@npm:1.2.1"
   checksum: 34dead8bee24f5e96f6e7937d711978380647e936a22e76380290e35486afd8634966ce300fc4b74a32f3762c7d4c0303f442c3e259f4ce02374eb0c82834f27
@@ -19807,32 +19779,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:7.1.6":
-  version: 7.1.6
-  resolution: "glob@npm:7.1.6"
-  dependencies:
-    fs.realpath: "npm:^1.0.0"
-    inflight: "npm:^1.0.4"
-    inherits: "npm:2"
-    minimatch: "npm:^3.0.4"
-    once: "npm:^1.3.0"
-    path-is-absolute: "npm:^1.0.0"
-  checksum: 2575cce9306ac534388db751f0aa3e78afedb6af8f3b529ac6b2354f66765545145dba8530abf7bff49fb399a047d3f9b6901c38ee4c9503f592960d9af67763
-  languageName: node
-  linkType: hard
-
-"glob@npm:^10.0.0":
-  version: 10.3.10
-  resolution: "glob@npm:10.3.10"
+"glob@npm:^10.0.0, glob@npm:^10.3.10":
+  version: 10.4.5
+  resolution: "glob@npm:10.4.5"
   dependencies:
     foreground-child: "npm:^3.1.0"
-    jackspeak: "npm:^2.3.5"
-    minimatch: "npm:^9.0.1"
-    minipass: "npm:^5.0.0 || ^6.0.2 || ^7.0.0"
-    path-scurry: "npm:^1.10.1"
+    jackspeak: "npm:^3.1.2"
+    minimatch: "npm:^9.0.4"
+    minipass: "npm:^7.1.2"
+    package-json-from-dist: "npm:^1.0.0"
+    path-scurry: "npm:^1.11.1"
   bin:
     glob: dist/esm/bin.mjs
-  checksum: 13d8a1feb7eac7945f8c8480e11cd4a44b24d26503d99a8d8ac8d5aefbf3e9802a2b6087318a829fad04cb4e829f25c5f4f1110c68966c498720dd261c7e344d
+  checksum: 19a9759ea77b8e3ca0a43c2f07ecddc2ad46216b786bb8f993c445aee80d345925a21e5280c7b7c6c59e860a0154b84e4b2b60321fea92cd3c56b4a7489f160e
   languageName: node
   linkType: hard
 
@@ -22372,16 +22331,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jackspeak@npm:^2.3.5":
-  version: 2.3.6
-  resolution: "jackspeak@npm:2.3.6"
+"jackspeak@npm:^3.1.2":
+  version: 3.4.3
+  resolution: "jackspeak@npm:3.4.3"
   dependencies:
     "@isaacs/cliui": "npm:^8.0.2"
     "@pkgjs/parseargs": "npm:^0.11.0"
   dependenciesMeta:
     "@pkgjs/parseargs":
       optional: true
-  checksum: f01d8f972d894cd7638bc338e9ef5ddb86f7b208ce177a36d718eac96ec86638a6efa17d0221b10073e64b45edc2ce15340db9380b1f5d5c5d000cbc517dc111
+  checksum: 6acc10d139eaefdbe04d2f679e6191b3abf073f111edf10b1de5302c97ec93fffeb2fdd8681ed17f16268aa9dd4f8c588ed9d1d3bffbbfa6e8bf897cbb3149b9
   languageName: node
   linkType: hard
 
@@ -24333,6 +24292,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lru-cache@npm:^10.2.0":
+  version: 10.4.3
+  resolution: "lru-cache@npm:10.4.3"
+  checksum: ebd04fbca961e6c1d6c0af3799adcc966a1babe798f685bb84e6599266599cd95d94630b10262f5424539bc4640107e8a33aa28585374abf561d30d16f4b39fb
+  languageName: node
+  linkType: hard
+
 "lru-cache@npm:^5.1.1":
   version: 5.1.1
   resolution: "lru-cache@npm:5.1.1"
@@ -24348,13 +24314,6 @@ __metadata:
   dependencies:
     yallist: "npm:^4.0.0"
   checksum: cb53e582785c48187d7a188d3379c181b5ca2a9c78d2bce3e7dee36f32761d1c42983da3fe12b55cb74e1779fa94cdc2e5367c028a9b35317184ede0c07a30a9
-  languageName: node
-  linkType: hard
-
-"lru-cache@npm:^9.1.1 || ^10.0.0":
-  version: 10.0.1
-  resolution: "lru-cache@npm:10.0.1"
-  checksum: 982dabfb227b9a2daf56d712ae0e72e01115a28c0a2068cd71277bca04568f3417bbf741c6c7941abc5c620fd8059e34f15607f90ebccbfa0a17533322d27a8e
   languageName: node
   linkType: hard
 
@@ -25620,7 +25579,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:9.0.3, minimatch@npm:^9.0.1":
+"minimatch@npm:9.0.3":
   version: 9.0.3
   resolution: "minimatch@npm:9.0.3"
   dependencies:
@@ -25635,6 +25594,15 @@ __metadata:
   dependencies:
     brace-expansion: "npm:^2.0.1"
   checksum: 3defdfd230914f22a8da203747c42ee3c405c39d4d37ffda284dac5e45b7e1f6c49aa8be606509002898e73091ff2a3bbfc59c2c6c71d4660609f63aa92f98e3
+  languageName: node
+  linkType: hard
+
+"minimatch@npm:^9.0.4":
+  version: 9.0.5
+  resolution: "minimatch@npm:9.0.5"
+  dependencies:
+    brace-expansion: "npm:^2.0.1"
+  checksum: de96cf5e35bdf0eab3e2c853522f98ffbe9a36c37797778d2665231ec1f20a9447a7e567cb640901f89e4daaa95ae5d70c65a9e8aa2bb0019b6facbc3c0575ed
   languageName: node
   linkType: hard
 
@@ -25742,10 +25710,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minipass@npm:^5.0.0 || ^6.0.2 || ^7.0.0":
-  version: 7.0.4
-  resolution: "minipass@npm:7.0.4"
-  checksum: 6c7370a6dfd257bf18222da581ba89a5eaedca10e158781232a8b5542a90547540b4b9b7e7f490e4cda43acfbd12e086f0453728ecf8c19e0ef6921bc5958ac5
+"minipass@npm:^5.0.0 || ^6.0.2 || ^7.0.0, minipass@npm:^7.1.2":
+  version: 7.1.2
+  resolution: "minipass@npm:7.1.2"
+  checksum: b0fd20bb9fb56e5fa9a8bfac539e8915ae07430a619e4b86ff71f5fc757ef3924b23b2c4230393af1eda647ed3d75739e4e0acb250a6b1eb277cf7f8fe449557
   languageName: node
   linkType: hard
 
@@ -27055,6 +27023,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"package-json-from-dist@npm:^1.0.0":
+  version: 1.0.1
+  resolution: "package-json-from-dist@npm:1.0.1"
+  checksum: 62ba2785eb655fec084a257af34dbe24292ab74516d6aecef97ef72d4897310bc6898f6c85b5cd22770eaa1ce60d55a0230e150fb6a966e3ecd6c511e23d164b
+  languageName: node
+  linkType: hard
+
 "package-json@npm:^6.3.0":
   version: 6.5.0
   resolution: "package-json@npm:6.5.0"
@@ -27372,13 +27347,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-scurry@npm:^1.10.1":
-  version: 1.10.1
-  resolution: "path-scurry@npm:1.10.1"
+"path-scurry@npm:^1.11.1":
+  version: 1.11.1
+  resolution: "path-scurry@npm:1.11.1"
   dependencies:
-    lru-cache: "npm:^9.1.1 || ^10.0.0"
+    lru-cache: "npm:^10.2.0"
     minipass: "npm:^5.0.0 || ^6.0.2 || ^7.0.0"
-  checksum: e5dc78a7348d25eec61ab166317e9e9c7b46818aa2c2b9006c507a6ff48c672d011292d9662527213e558f5652ce0afcc788663a061d8b59ab495681840c0c1e
+  checksum: 32a13711a2a505616ae1cc1b5076801e453e7aae6ac40ab55b388bb91b9d0547a52f5aaceff710ea400205f18691120d4431e520afbe4266b836fadede15872d
   languageName: node
   linkType: hard
 
@@ -28427,15 +28402,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prism-react-renderer@npm:*":
-  version: 2.0.4
-  resolution: "prism-react-renderer@npm:2.0.4"
+"prism-react-renderer@npm:^2.4.0":
+  version: 2.4.1
+  resolution: "prism-react-renderer@npm:2.4.1"
   dependencies:
     "@types/prismjs": "npm:^1.26.0"
-    clsx: "npm:^1.2.1"
+    clsx: "npm:^2.0.0"
   peerDependencies:
     react: ">=16.0.0"
-  checksum: 37b0fd3f6f646d471863e2a11814fbfb9a5a4944bcb280b86ff52898a1d4fb4e87e01d36af8d6e6eb5cf06e3b9d93a6bb169c3c742d4f03667932894afd3f877
+  checksum: ebbe8feb975224344bbdd046b3a937d121592dbe4b8f22ba0be31f5af37b9a8219f441138ef6cab1c5b96f2aa6b529015200959f7e5e85b60ca69c81d35edcd4
   languageName: node
   linkType: hard
 
@@ -28915,16 +28890,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-draggable@npm:^4.4.4":
-  version: 4.4.4
-  resolution: "react-draggable@npm:4.4.4"
+"react-draggable@npm:^4.4.6":
+  version: 4.4.6
+  resolution: "react-draggable@npm:4.4.6"
   dependencies:
     clsx: "npm:^1.1.1"
-    prop-types: "npm:^15.6.0"
+    prop-types: "npm:^15.8.1"
   peerDependencies:
     react: ">= 16.3.0"
     react-dom: ">= 16.3.0"
-  checksum: 04399a3d1fde392b2adeb30be619adf0344cd59bd17e93e2e165da617a2c2c6db68903614b3a98bb5d98299dff36bf776346afcbd59b954a89b2ead4de70da99
+  checksum: 1e8cf47414a8554caa68447e5f27749bc40e1eabb4806e2dadcb39ab081d263f517d6aaec5231677e6b425603037c7e3386d1549898f9ffcc98a86cabafb2b9a
   languageName: node
   linkType: hard
 
@@ -29015,14 +28990,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-live@npm:^4.1.1":
-  version: 4.1.1
-  resolution: "react-live@npm:4.1.1"
+"react-live@npm:^4.1.8":
+  version: 4.1.8
+  resolution: "react-live@npm:4.1.8"
   dependencies:
-    prism-react-renderer: "npm:*"
-    sucrase: "npm:^3.31.0"
+    prism-react-renderer: "npm:^2.4.0"
+    sucrase: "npm:^3.35.0"
     use-editable: "npm:^2.3.3"
-  checksum: 5729cc761c03c2aea0be2d04e9812ccff58bcd0f4f06e981dec6f22ada4c6520aa033cfa07a48c9c0155d1ca2732ec2a56d0573cb13b00de3115027ba9b8eb20
+  peerDependencies:
+    react: ">=18.0.0"
+    react-dom: ">=18.0.0"
+  checksum: fa96ca176bc9074e4892d6a079b94488ba74e95907ea187678afb17e4a23cc7760c3774ef17f4429d2ba562f1fda852a822e18a161ef386676371c56a7585970
   languageName: node
   linkType: hard
 
@@ -29218,14 +29196,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-slider@npm:^2.0.5":
-  version: 2.0.5
-  resolution: "react-slider@npm:2.0.5"
+"react-slider@npm:^2.0.6":
+  version: 2.0.6
+  resolution: "react-slider@npm:2.0.6"
   dependencies:
     prop-types: "npm:^15.8.1"
   peerDependencies:
     react: ^16 || ^17 || ^18
-  checksum: 2265b3b407681238a8202989f24f154fff06e142ece1f1fbb69dfdc34f93d3cc722a0ea2beacf7b55bbc542f0256e3bda83e4ec898da05e785351d93f82c293f
+  checksum: 15396f103d5c840822395e6fe666850c71bb0a66647204c5646c21f58fa838fe28f652810bacdd386ffa8df26895812f926f174f6f6ae67f456dbd9c5a3e5bfa
   languageName: node
   linkType: hard
 
@@ -31322,7 +31300,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.0.0, semver@npm:^7.3.2, semver@npm:^7.3.4, semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.5.3, semver@npm:^7.5.4, semver@npm:^7.6.2":
+"semver@npm:^7.3.2, semver@npm:^7.3.4, semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.5.3, semver@npm:^7.5.4, semver@npm:^7.6.2, semver@npm:^7.7.1":
   version: 7.7.1
   resolution: "semver@npm:7.7.1"
   bin:
@@ -31876,9 +31854,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"social-logos@npm:^3.1.16":
-  version: 3.1.16
-  resolution: "social-logos@npm:3.1.16"
+"social-logos@npm:^3.1.18":
+  version: 3.1.18
+  resolution: "social-logos@npm:3.1.18"
   dependencies:
     prop-types: "npm:^15.8.1"
     react: "npm:18.3.1"
@@ -31886,7 +31864,7 @@ __metadata:
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: 6fdd785b981b0581992897513d0785d8501f6f8f0d1555cabea274fb5b02d1544cdb74203897a0edbf5074220c50afc642262a40d492b54fe9da3b417612fda7
+  checksum: 041f6b4c55e119e8114ebc33ce2af4710fcaa3336487978ea6650f2375c980716c61a5100e4f29f61c2925f0868f4f7d373caac1cf54b4df1b155dcc2eab9973
   languageName: node
   linkType: hard
 
@@ -31994,7 +31972,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"source-map-support@npm:^0.5.16, source-map-support@npm:^0.5.19, source-map-support@npm:~0.5.20":
+"source-map-support@npm:^0.5.16, source-map-support@npm:^0.5.19, source-map-support@npm:^0.5.21, source-map-support@npm:~0.5.20":
   version: 0.5.21
   resolution: "source-map-support@npm:0.5.21"
   dependencies:
@@ -32692,7 +32670,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"striptags@npm:^3.1.1":
+"striptags@npm:^3.2.0":
   version: 3.2.0
   resolution: "striptags@npm:3.2.0"
   checksum: 72c8eea03c04ca8522511caf44ffd2bde4b5f36cbeb5d43140906c0a7ee19e98b3341bf96370ccb643e55972587eafac772d4a3f7f526d3045c2cf36270511e6
@@ -32855,13 +32833,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sucrase@npm:^3.10.1, sucrase@npm:^3.31.0":
-  version: 3.32.0
-  resolution: "sucrase@npm:3.32.0"
+"sucrase@npm:^3.10.1, sucrase@npm:^3.35.0":
+  version: 3.35.0
+  resolution: "sucrase@npm:3.35.0"
   dependencies:
     "@jridgewell/gen-mapping": "npm:^0.3.2"
     commander: "npm:^4.0.0"
-    glob: "npm:7.1.6"
+    glob: "npm:^10.3.10"
     lines-and-columns: "npm:^1.1.6"
     mz: "npm:^2.7.0"
     pirates: "npm:^4.0.1"
@@ -32869,7 +32847,7 @@ __metadata:
   bin:
     sucrase: bin/sucrase
     sucrase-node: bin/sucrase-node
-  checksum: c5f2d0c49a2462da3440a14ed62caad655c27919408471141b6866b18be9b29635e8b5e9246cc476a2c3df84e94a8d5498903f0f4e765c50d95d9ff360b95f79
+  checksum: ac85f3359d2c2ecbf5febca6a24ae9bf96c931f05fde533c22a94f59c6a74895e5d5f0e871878dfd59c2697a75ebb04e4b2224ef0bfc24ca1210735c2ec191ef
   languageName: node
   linkType: hard
 
@@ -35609,7 +35587,7 @@ __metadata:
     "@automattic/calypso-razorpay": "workspace:^"
     "@automattic/calypso-router": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
-    "@automattic/charts": "npm:^0.9.0"
+    "@automattic/charts": "npm:^0.11.0"
     "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/command-palette": "workspace:^"
     "@automattic/components": "workspace:^"
@@ -35655,7 +35633,6 @@ __metadata:
     "@types/qs": "npm:^6.9.7"
     "@types/react": "npm:^18.3.18"
     "@types/react-modal": "npm:^3.13.1"
-    "@types/react-router-dom": "npm:^5.3.3"
     "@types/react-transition-group": "npm:^4.4.4"
     "@types/store": "npm:^2.0.5"
     "@types/superagent": "npm:^4.1.24"
@@ -35679,6 +35656,7 @@ __metadata:
     "@wordpress/icons": "npm:^10.20.0"
     "@wordpress/is-shallow-equal": "npm:^5.20.0"
     "@wordpress/keycodes": "npm:^4.20.0"
+    "@wordpress/prettier-config": "npm:^4.20.0"
     "@wordpress/primitives": "npm:^4.20.0"
     "@wordpress/rich-text": "npm:^7.20.0"
     "@wordpress/stylelint-config": "npm:^23.12.0"

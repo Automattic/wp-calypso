@@ -9,8 +9,6 @@ type GoalsCaptureContainerProps = {
 	stepName: string;
 	onSkip(): void;
 	goNext: NavigationControls[ 'goNext' ];
-	goBack: NavigationControls[ 'goBack' ];
-	hideBack?: boolean;
 	nextLabelText: string;
 	skipLabelText: string;
 	stepContent: React.ReactElement;
@@ -28,6 +26,7 @@ export const GoalsCaptureContainer: React.FC< GoalsCaptureContainerProps > = ( {
 		<StepContainer
 			{ ...otherProps }
 			isHorizontalLayout={ false }
+			hideBack
 			hideSkip={ false }
 			hideNext={ isMediumOrBiggerScreen }
 			formattedHeader={

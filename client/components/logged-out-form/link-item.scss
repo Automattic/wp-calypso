@@ -7,14 +7,6 @@
 	cursor: pointer;
 	text-decoration: underline;
 
-	.is-p2-invite.invite-accept &,
-	.is-p2-signup .signup__step.is-user & {
-		padding: 0;
-		width: fit-content;
-		margin-left: auto;
-		margin-right: auto;
-	}
-
 	body.is-section-signup:not(.is-section-jetpack-connect):not(.is-section-settings)
 	.layout:not(.dops):not(.is-wccom-oauth-flow)
 	& {

@@ -13,6 +13,13 @@
 	// Card class name is too generic. Which results and this component randomly getting borders.
 	border: none;
 
+	 a {
+		text-decoration: none;
+	}
+	p a {
+		text-decoration: underline;
+	}
+
 	@include a8c-clear-fix;
 
 	@include break-mobile {
@@ -32,6 +39,7 @@
 
 	&.is-card-link {
 		padding-right: 48px;
+		text-decoration: none;
 		&:not(a) {
 			color: var(--color-primary);
 			font-size: 100%;

@@ -916,25 +916,6 @@ $image-height: 47px;
 	left: 24px;
 }
 
-.wp-login__p2-powered-by {
-	margin: 24px 0;
-	width: 100%;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-
-.wp-login__p2-powered-by-logo {
-	width: 20px;
-	height: 20px;
-	display: inline-block;
-	margin-right: 8px;
-}
-
-.wp-login__p2-powered-by-text {
-	font-size: var(--p2-font-size-form-xxs);
-}
-
 :root {
 	--login-form-column-max-width: 327px;
 }

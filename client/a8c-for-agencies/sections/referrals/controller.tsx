@@ -9,7 +9,7 @@ export const referralsDashboardContext: Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<PageViewTracker title="Referrals > Dashboard" path={ context.path } />
-			<ReferralsOverview isAutomatedReferral />
+			<ReferralsOverview />
 		</>
 	);
 	context.secondary = <ReferralsSidebar path={ context.path } />;
@@ -31,7 +31,7 @@ export const referralsFAQContext: Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<PageViewTracker title="Referrals > FAQ" path={ context.path } />
-			<CommissionOverview isAutomatedReferral />
+			<CommissionOverview />
 		</>
 	);
 	context.secondary = <ReferralsSidebar path={ context.path } />;
@@ -42,7 +42,7 @@ export const referralsArchivedContext: Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<PageViewTracker title="Referrals > Archived" path={ context.path } />
-			<ReferralsOverview isAutomatedReferral isArchiveView />
+			<ReferralsOverview isArchiveView />
 		</>
 	);
 	context.secondary = <ReferralsSidebar path={ context.path } />;

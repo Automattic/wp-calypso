@@ -176,6 +176,7 @@ class RequestLoginEmailForm extends Component {
 			isSubmitButtonDisabled,
 			isSubmitButtonBusy,
 			shouldShowLoadingEllipsis,
+			isFromJetpackOnboarding,
 		} = this.props;
 
 		if ( shouldShowLoadingEllipsis ) {
@@ -189,7 +190,10 @@ class RequestLoginEmailForm extends Component {
 			const emailAddress = usernameOrEmail.indexOf( '@' ) > 0 ? usernameOrEmail : null;
 
 			return isJetpackMagicLinkSignUpEnabled ? (
-				<EmailedLoginLinkSuccessfullyJetpackConnect emailAddress={ emailAddress } />
+				<EmailedLoginLinkSuccessfullyJetpackConnect
+					emailAddress={ emailAddress }
+					shouldRedirect={ ! isFromJetpackOnboarding }
+				/>
 			) : (
 				<EmailedLoginLinkSuccessfully emailAddress={ emailAddress } />
 			);

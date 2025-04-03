@@ -2,7 +2,7 @@ import { Locator, Page, Response } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 
 const selectors = {
-	continue: 'button:text("Continue")',
+	continue: 'button:text("Continue"),a:text("Continue")',
 	loginWithAnotherAccount: ':text("Log in with another account")',
 };
 

@@ -5,7 +5,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import ConnectDomainStep from 'calypso/components/domains/connect-domain-step';
 import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
-import UseYourDomainStep from 'calypso/components/domains/use-your-domain-step';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import { makeLayout, render as clientRender } from 'calypso/controller';
@@ -20,7 +19,6 @@ import {
 	domainMappingSetup,
 	domainTransferIn,
 	domainUseMyDomain,
-	domainUseYourDomain,
 } from 'calypso/my-sites/domains/paths';
 import TransferDomain from 'calypso/my-sites/domains/transfer-domain';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -169,34 +167,6 @@ const transferDomain = ( context, next ) => {
 	next();
 };
 
-const useYourDomain = ( context, next ) => {
-	const handleGoBack = () => {
-		let path = `/domains/add/${ context.params.site }`;
-		if ( context.query.initialQuery ) {
-			path += `?suggestion=${ context.query.initialQuery }`;
-		}
-
-		page( path );
-	};
-	context.primary = (
-		<Main>
-			<PageViewTracker
-				path={ domainUseYourDomain( ':site' ) }
-				title="Domain Search > Use Your Own Domain"
-			/>
-			<DocumentHead title={ translate( 'Use Your Own Domain' ) } />
-			<CalypsoShoppingCartProvider>
-				<UseYourDomainStep
-					basePath={ sectionify( context.path ) }
-					initialQuery={ context.query.initialQuery }
-					goBack={ handleGoBack }
-				/>
-			</CalypsoShoppingCartProvider>
-		</Main>
-	);
-	next();
-};
-
 const useMyDomain = ( context, next ) => {
 	const handleGoBack = () => {
 		let path = `/domains/add/${ context.params.site }`;
@@ -309,7 +279,9 @@ const redirectToUseYourDomainIfVipSite = () => {
 
 		if ( selectedSite && selectedSite.is_vip ) {
 			return page.redirect(
-				domainUseYourDomain( selectedSite.slug, get( context, 'params.suggestion', '' ) )
+				domainUseMyDomain( selectedSite.slug, {
+					domain: get( context, 'params.suggestion', '' ),
+				} )
 			);
 		}
 
@@ -367,6 +339,5 @@ export default {
 	transferDomain,
 	transferDomainPrecheck,
 	useMyDomain,
-	useYourDomain,
 	redirectDomainToSite,
 };

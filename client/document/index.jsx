@@ -69,7 +69,7 @@ class Document extends Component {
 			target,
 			user,
 			useTranslationChunks,
-			isStepContainerV2,
+			showStepContainerV2Loader,
 		} = this.props;
 
 		const installedChunks = entrypoint.js
@@ -199,7 +199,7 @@ class Document extends Component {
 								<div className="layout__content">
 									{ shouldNotShowLoadingLogo ? (
 										<>
-											{ isStepContainerV2 ? (
+											{ showStepContainerV2Loader ? (
 												<Step.Loading />
 											) : (
 												<Loading className="wpcom-loading__boot" />

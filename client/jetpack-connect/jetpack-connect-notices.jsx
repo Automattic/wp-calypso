@@ -69,9 +69,7 @@ export class JetpackConnectNotices extends Component {
 		const noticeValues = {
 			icon: 'notice',
 			status: 'is-error',
-			text: translate(
-				'The URL you entered appears to be invalid. Please enter a valid WordPress site address.'
-			),
+			text: translate( 'Invalid site address. Enter a valid WordPress URL.' ),
 			showDismiss: false,
 		};
 
@@ -111,7 +109,7 @@ export class JetpackConnectNotices extends Component {
 			case NOT_WORDPRESS:
 				noticeValues.icon = 'block';
 				noticeValues.text = translate(
-					"The site doesn't appear to be running WordPress. Please verify you're using the correct URL."
+					"This site doesn't appear to use WordPress. Please verify the URL."
 				);
 				return noticeValues;
 
@@ -121,9 +119,7 @@ export class JetpackConnectNotices extends Component {
 
 			case OUTDATED_JETPACK:
 				noticeValues.icon = 'block';
-				noticeValues.text = translate(
-					'Your Jetpack plugin is outdated. Please update Jetpack to the latest version before connecting.'
-				);
+				noticeValues.text = translate( 'Update Jetpack to the latest version and try again.' );
 				return noticeValues;
 
 			case JETPACK_IS_DISCONNECTED:
@@ -170,9 +166,7 @@ export class JetpackConnectNotices extends Component {
 				return noticeValues;
 
 			case SECRET_EXPIRED:
-				noticeValues.text = translate(
-					'The connection request has expired. Please refresh the page and try connecting again.'
-				);
+				noticeValues.text = translate( 'Connection expired. Refresh the page and try again.' );
 				noticeValues.status = 'is-error';
 				noticeValues.icon = 'notice';
 				return noticeValues;
@@ -222,13 +216,13 @@ export class JetpackConnectNotices extends Component {
 
 			case XMLRPC_ERROR:
 				noticeValues.text = translate(
-					'We had trouble connecting to your site. Please check that your site is accessible and try again.'
+					"Can't connect to your site. Check if it's accessible and try again."
 				);
 				return noticeValues;
 
 			case INVALID_CREDENTIALS:
 				noticeValues.text = translate(
-					'The credentials you entered were invalid. Please double-check your username and password and try again.'
+					'Invalid credentials. Check your account information and try again.'
 				);
 				noticeValues.status = 'is-error';
 				noticeValues.icon = 'notice';

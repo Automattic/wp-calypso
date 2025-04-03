@@ -67,9 +67,6 @@ describe( 'useRequestTransferWithSoftware', () => {
 				atomic_transfer_id: 456,
 				blog_id: SITE_ID,
 				atomic_transfer_status: 'pending',
-				plugins: { 'plugin-1': 'install' },
-				themes: { 'theme-1': 'activate' },
-				transfer_with_software_status: 'pending',
 			} );
 
 		const { result } = render();
@@ -83,9 +80,6 @@ describe( 'useRequestTransferWithSoftware', () => {
 					atomic_transfer_id: 456,
 					blog_id: SITE_ID,
 					atomic_transfer_status: 'pending',
-					plugins: { 'plugin-1': 'install' },
-					themes: { 'theme-1': 'activate' },
-					transfer_with_software_status: 'pending',
 				} );
 			},
 			{ timeout: 3000 }

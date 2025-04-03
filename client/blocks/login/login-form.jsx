@@ -573,7 +573,7 @@ export class LoginForm extends Component {
 			return this.props.translate( 'Your email address' );
 		}
 
-		if ( this.props.isP2Login || this.props.isWoo ) {
+		if ( this.props.isWoo ) {
 			return this.props.translate( 'Your email address or username' );
 		}
 
@@ -779,7 +779,6 @@ export class LoginForm extends Component {
 			oauth2Client,
 			requestError,
 			socialAccountIsLinking: linkingSocialUser,
-			isP2Login,
 			isJetpack,
 			isJetpackWooDnaFlow,
 			currentQuery,
@@ -1046,8 +1045,6 @@ export class LoginForm extends Component {
 										) }
 									/>
 								) }
-
-								{ isP2Login && this.isPasswordView() && this.renderChangeUsername() }
 
 								{ isWoo && linkingSocialUser && (
 									<Notice
