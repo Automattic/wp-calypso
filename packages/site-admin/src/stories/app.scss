@@ -31,7 +31,6 @@ body.is-app-story {
 		background-color: $white;
 		max-width: calc(100% - $sidebar-width - $grid-unit-20);
         margin: $grid-unit-20 $grid-unit-20 $grid-unit-20 0;
-		padding: $grid-unit-20;
 
 		flex-grow: 1;
 		overflow-y: auto;
@@ -43,4 +42,8 @@ body.is-app-story {
 			0 3px 3px rgba(0, 0, 0, 0.02),
 			0 4px 4px rgba(0, 0, 0, 0.01);
 	}
+}
+
+.screen-content-area {
+	padding: $grid-unit-20;
 }

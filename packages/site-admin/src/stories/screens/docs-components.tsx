@@ -1,10 +1,7 @@
 /**
  * External dependencies
  */
-import {
-	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
-} from '@wordpress/components';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
@@ -74,7 +71,7 @@ export function DocsComponents() {
 		return (
 			<Page title={ __( 'Components list', 'a8c-site-admin' ) }>
 				<h1>{  }</h1>
-				<VStack>
+				<div className="screen-content-area">
 					{ Object.values( components ).map( ( component ) => (
 						<ul key={ component.title }>
 							<li>
@@ -83,7 +80,7 @@ export function DocsComponents() {
 							</li>
 						</ul>
 					) ) }
-				</VStack>
+				</div>
 				<HStack>
 					<Link to="/">{ __( 'Go back to home', 'a8c-site-admin' ) }</Link>
 				</HStack>
