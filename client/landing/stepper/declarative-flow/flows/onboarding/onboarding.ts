@@ -105,20 +105,28 @@ const onboarding: Flow = {
 		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 		const isPlaygroundEligible = useIsPlaygroundEligible();
 
-		const steps = [
-			...( isGoalsAtFrontExperiment
-				? [ STEPS.GOALS, STEPS.DESIGN_CHOICES, STEPS.DESIGN_SETUP, STEPS.DIFM_STARTING_POINT ]
-				: [] ),
-			...stepsWithRequiredLogin( [
-				STEPS.UNIFIED_DOMAINS,
-				STEPS.USE_MY_DOMAIN,
-				STEPS.UNIFIED_PLANS,
-				STEPS.SITE_CREATION_STEP,
-				STEPS.PROCESSING,
-				STEPS.POST_CHECKOUT_ONBOARDING,
-			] ),
-			...( isPlaygroundEligible ? [ STEPS.PLAYGROUND ] : [] ),
-		];
+		const steps = stepsWithRequiredLogin( [
+			STEPS.UNIFIED_DOMAINS,
+			STEPS.USE_MY_DOMAIN,
+			STEPS.UNIFIED_PLANS,
+			STEPS.SITE_CREATION_STEP,
+			STEPS.PROCESSING,
+			STEPS.POST_CHECKOUT_ONBOARDING,
+		] );
+
+		if ( isGoalsAtFrontExperiment ) {
+			// Note: these steps are not wrapped in `stepsWithRequiredLogin`
+			steps.unshift(
+				STEPS.GOALS,
+				STEPS.DESIGN_CHOICES,
+				STEPS.DESIGN_SETUP,
+				STEPS.DIFM_STARTING_POINT
+			);
+		}
+
+		if ( isPlaygroundEligible ) {
+			steps.push( STEPS.PLAYGROUND );
+		}
 
 		return steps;
 	},
@@ -297,7 +305,7 @@ const onboarding: Flow = {
 						const currentQueryArgs = getQueryArgs( window.location.href );
 						currentQueryArgs.step = 'domain-input';
 
-						let useMyDomainURL = addQueryArgs( 'use-my-domain', currentQueryArgs );
+						let useMyDomainURL = addQueryArgs( '/use-my-domain', currentQueryArgs );
 
 						const lastQueryParam = ( providedDependencies?.domainForm as { lastQuery?: string } )
 							?.lastQuery;
@@ -324,7 +332,7 @@ const onboarding: Flow = {
 							signup_domain_origin: SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN,
 							site_url: providedDependencies.domain,
 						} );
-						const destination = addQueryArgs( 'use-my-domain', {
+						const destination = addQueryArgs( '/use-my-domain', {
 							...getQueryArgs( window.location.href ),
 							step: providedDependencies.mode,
 							initialQuery: providedDependencies.domain,
