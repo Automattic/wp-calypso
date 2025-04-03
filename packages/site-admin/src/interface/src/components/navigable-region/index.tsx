@@ -3,19 +3,14 @@
  */
 import { forwardRef } from '@wordpress/element';
 import clsx from 'clsx';
-import type { ElementType } from 'react';
 
-/**
- * Internal dependencies
- */
-
-interface NavigableRegionProps {
+type NavigableRegionProps = {
 	children: React.ReactNode;
 	className?: string;
 	ariaLabel: string;
-	as?: ElementType;
-	[ key: string ]: any;
-}
+	as?: React.ElementType;
+} & React.HTMLAttributes< HTMLElement >;
+
 const NavigableRegion = forwardRef< HTMLElement, NavigableRegionProps >(
 	( { children, className, ariaLabel, as: Tag = 'div', ...props }, ref ) => {
 		return (
