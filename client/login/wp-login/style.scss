@@ -29,6 +29,13 @@ $image-height: 47px;
 			display: none;
 		}
 	}
+
+	.step-container-v2__top-bar {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+	}
 }
 
 .wp-login__main.main {
@@ -942,4 +949,10 @@ $image-height: 47px;
 	:root {
 		--login-form-column-max-width: 327px;
 	}
+}
+
+.step-container-v2__link-button {
+    font-size: inherit;
+    line-height: inherit;
+    font-weight: 500;
 }

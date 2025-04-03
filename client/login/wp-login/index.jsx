@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { TopBar } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, startsWith } from 'lodash';
@@ -391,6 +392,7 @@ export class Login extends Component {
 				key="sign-up-link"
 				onClick={ this.recordSignUpLinkClick }
 				rel="external"
+				className="components-button is-link step-container-v2__link-button"
 			>
 				{ signupLinkText ?? translate( 'Create a new account' ) }
 			</a>
@@ -398,11 +400,7 @@ export class Login extends Component {
 	}
 
 	renderLoginHeaderNavigation() {
-		return (
-			<div className="wp-login__header-navigation">
-				{ this.renderSignUpLink( this.props.translate( 'Create an account' ) ) }
-			</div>
-		);
+		return this.renderSignUpLink( this.props.translate( 'Create an account' ) );
 	}
 
 	renderLoginBlockFooter( { isGravPoweredLoginPage, isSocialFirst } ) {
@@ -559,7 +557,8 @@ export class Login extends Component {
 			! isBlazePro;
 
 		return (
-			<div>
+			<>
+				{ isSocialFirst && <TopBar rightElement={ this.renderLoginHeaderNavigation() } /> }
 				<Main
 					className={ clsx( 'wp-login__main', {
 						'is-wpcom-migration': isFromMigrationPlugin,
@@ -582,12 +581,11 @@ export class Login extends Component {
 						] }
 					/>
 
-					{ isSocialFirst && this.renderLoginHeaderNavigation() }
 					<div className="wp-login__container">{ this.renderContent( isSocialFirst ) }</div>
 				</Main>
 
 				{ this.renderFooter() }
-			</div>
+			</>
 		);
 	}
 }

@@ -757,7 +757,7 @@ class Login extends Component {
 						isCoBrand={ isGravatarFlowOAuth2Client( oauth2Client ) }
 					/>
 				) }
-				{ preHeader }
+				{ ! isWhiteLogin && preHeader }
 				<div className="login__form-header">{ headerText }</div>
 				{ postHeader }
 			</div>
