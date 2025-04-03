@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { findItemById } from '../data';
 import SiteMenu from '../site-menu';
 
-export default function Site() {
+export default function SiteBackups() {
 	const { id } = useParams();
 	const item = findItemById( id );
 	if ( item === undefined ) {
@@ -14,7 +14,8 @@ export default function Site() {
 		<>
 			<SiteMenu siteId={ id } />
 			<div>
-				<h1>{ item.title } </h1>
+				<h1>Backups</h1>
+				<p>This is the site backups page for { item.title }.</p>
 			</div>
 		</>
 	);

@@ -4,6 +4,7 @@ import Domains from '../domains';
 import Header from '../header';
 import Profile from '../profile';
 import Site from '../site';
+import SiteBackups from '../site-backups';
 import Sites from '../sites';
 import './style.scss';
 
@@ -20,6 +21,7 @@ function Layout() {
 						<Routes>
 							<Route path="/sites" element={ <Sites /> } />
 							<Route path="/sites/:id" element={ <Site /> } />
+							<Route path="/sites/:id/backups" element={ <SiteBackups /> } />
 							<Route path="/domains" element={ <Domains /> } />
 							<Route path="/account/profile" element={ <Profile /> } />
 							<Route path="/" element={ <Navigate to="/sites" replace /> } />
