@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom';
+const { ReadableStream, TransformStream } = require( 'node:stream/web' );
 const { TextEncoder, TextDecoder } = require( 'util' );
 const nock = require( 'nock' );
 
@@ -21,6 +22,10 @@ afterAll( () => {
 // Define TextEncoder for ReactDOMServer
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
+
+// Define ReadableStream and TransformStream
+global.ReadableStream = ReadableStream;
+global.TransformStream = TransformStream;
 
 // This is used by @wordpress/components in https://github.com/WordPress/gutenberg/blob/trunk/packages/components/src/ui/utils/space.ts#L33
 // JSDOM or CSSDOM don't provide an implementation for it, so for now we have to mock it.
@@ -45,6 +50,12 @@ jest.mock( 'wpcom-proxy-request', () => ( {
 
 // Mock crypto.randomUUID with its Node.js implementation
 global.crypto.randomUUID = () => require( 'crypto' ).randomUUID();
+global.crypto.subtle = require( 'node:crypto' ).subtle;
+
+// Add structuredClone if not available.
+if ( typeof global.structuredClone !== 'function' ) {
+	global.structuredClone = ( obj ) => JSON.parse( JSON.stringify( obj ) );
+}
 
 global.matchMedia = jest.fn( ( query ) => ( {
 	matches: false,
