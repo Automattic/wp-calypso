@@ -11,7 +11,8 @@ import { getStripeConfiguration, getRazorpayConfiguration } from 'calypso/lib/st
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { getCurrentUser, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import ClientCheckoutV2Error from '../../checkout-v2-error';
 import ClientCheckoutV2Placeholder from '../../checkout-v2-placeholder';
 import useFetchClientReferral from '../../hooks/use-fetch-client-referral';
 
@@ -32,6 +33,10 @@ function ClientCheckoutContent() {
 
 	// Access the shopping cart API
 	const { addProductsToCart, responseCart } = useShoppingCart( 'no-site' );
+
+	const userEmail = useSelector( ( state ) => getCurrentUser( state )?.email );
+
+	const isDoNotMatchReferralClientEmail = referral?.client?.email !== userEmail;
 
 	// Add products to cart when referral data is loaded
 	useEffect( () => {
@@ -75,7 +80,7 @@ function ClientCheckoutContent() {
 			debug( '[A4A Checkout] No matching products found to add to cart' );
 			setError( 'Could not find the requested products' );
 		}
-	}, [ isReady, error, referredProducts ] );
+	}, [ isReady, error, referredProducts, referral, addProductsToCart, responseCart ] );
 
 	// Debugging: Set a timeout to force showing the checkout after 10 seconds
 	useEffect( () => {
@@ -91,26 +96,34 @@ function ClientCheckoutContent() {
 		return () => clearTimeout( timeoutId );
 	}, [ isReady, error ] );
 
-	// Debugging: Show loading state
-	if ( ! isReady && ! error ) {
+	if ( ! isReady ) {
+		return <ClientCheckoutV2Placeholder />;
+	}
+
+	if ( isDoNotMatchReferralClientEmail ) {
 		return (
-			<div className="client-checkout-v2">
-				<ClientCheckoutV2Placeholder />
-			</div>
+			<ClientCheckoutV2Error
+				title={ translate( 'Permission denied' ) }
+				message={ translate(
+					'This referral is not intended for your account. Please make sure you sign in using {{b}}%(referralEmail)s{{/b}}.',
+					{
+						args: {
+							referralEmail: referral?.client?.email,
+						},
+						components: {
+							b: <b />,
+						},
+						comment: '%(referralEmail)s is the email of the referral client.',
+					}
+				) }
+			/>
 		);
 	}
 
-	// Debugging: Show error state
 	if ( error ) {
-		return (
-			<div className="client-checkout-v2 is-error">
-				<h2>{ translate( 'Error' ) }</h2>
-				<p>{ error }</p>
-			</div>
-		);
+		return <ClientCheckoutV2Error title={ translate( 'Error' ) } message={ error } />;
 	}
 
-	// Show checkout
 	return (
 		<div className="client-checkout-v2">
 			<CheckoutMain
