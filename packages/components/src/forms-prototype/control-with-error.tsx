@@ -1,8 +1,23 @@
 import { Icon } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { caution } from '@wordpress/icons';
 import { cloneElement, forwardRef, useEffect, useState } from 'react';
 
 import './style.scss';
+
+function appendRequiredIndicator(
+	label: string,
+	required: boolean | undefined,
+	markWhenOptional: boolean | undefined
+) {
+	if ( required && ! markWhenOptional ) {
+		return `${ label } (${ __( 'Required' ) })`;
+	}
+	if ( ! required && markWhenOptional ) {
+		return `${ label } (${ __( 'Optional' ) })`;
+	}
+	return label;
+}
 
 /**
  * HTML elements that support the Constraint Validation API.
@@ -21,6 +36,7 @@ type ValidityTarget =
 function UnforwardedControlWithError< C extends React.ReactElement >(
 	{
 		required,
+		markWhenOptional,
 		onReportCustomValidity,
 		getValidityTarget,
 		render,
@@ -29,6 +45,10 @@ function UnforwardedControlWithError< C extends React.ReactElement >(
 		 * Whether the control is required.
 		 */
 		required?: boolean;
+		/**
+		 * Label the control as "optional" when _not_ `required`, instead of the inverse.
+		 */
+		markWhenOptional?: boolean;
 		/**
 		 * A function that returns a custom validity message when applicable.
 		 *
@@ -100,7 +120,7 @@ function UnforwardedControlWithError< C extends React.ReactElement >(
 	return (
 		<div className="a8c-validated-control" ref={ forwardedRef } onBlur={ onBlur }>
 			{ cloneElement( render, {
-				label: required ? `${ render.props.label } (Required)` : render.props.label,
+				label: appendRequiredIndicator( render.props.label, required, markWhenOptional ),
 				onChange,
 				required,
 			} ) }

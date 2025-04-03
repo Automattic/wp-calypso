@@ -9,31 +9,37 @@ type Value = NumberControlProps[ 'value' ];
 export const ValidatedNumberControl = forwardRef<
 	HTMLInputElement,
 	Omit< NumberControlProps, '__next40pxDefaultSize' > & ValidatedControlProps< Value >
->( ( { required, onReportCustomValidity, onChange, ...restProps }, forwardedRef ) => {
-	const validityTargetRef = useRef< HTMLInputElement >( null );
-	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
-	const valueRef = useRef< Value >( restProps.value );
+>(
+	(
+		{ required, onReportCustomValidity, onChange, markWhenOptional, ...restProps },
+		forwardedRef
+	) => {
+		const validityTargetRef = useRef< HTMLInputElement >( null );
+		const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
+		const valueRef = useRef< Value >( restProps.value );
 
-	return (
-		<ControlWithError
-			required={ required }
-			render={
-				<NumberControl
-					__next40pxDefaultSize
-					ref={ mergedRefs }
-					// TODO: Upstream limitation - When form is submitted when value is undefined, it will
-					// automatically set a clamped value (as defined by `min` attribute, so 0 by default).
-					onChange={ ( value, ...args ) => {
-						valueRef.current = value;
-						onChange?.( value, ...args );
-					} }
-					{ ...restProps }
-				/>
-			}
-			onReportCustomValidity={ () => {
-				return onReportCustomValidity?.( valueRef.current );
-			} }
-			getValidityTarget={ () => validityTargetRef.current }
-		/>
-	);
-} );
+		return (
+			<ControlWithError
+				required={ required }
+				markWhenOptional={ markWhenOptional }
+				render={
+					<NumberControl
+						__next40pxDefaultSize
+						ref={ mergedRefs }
+						// TODO: Upstream limitation - When form is submitted when value is undefined, it will
+						// automatically set a clamped value (as defined by `min` attribute, so 0 by default).
+						onChange={ ( value, ...args ) => {
+							valueRef.current = value;
+							onChange?.( value, ...args );
+						} }
+						{ ...restProps }
+					/>
+				}
+				onReportCustomValidity={ () => {
+					return onReportCustomValidity?.( valueRef.current );
+				} }
+				getValidityTarget={ () => validityTargetRef.current }
+			/>
+		);
+	}
+);

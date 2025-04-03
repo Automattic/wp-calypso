@@ -15,31 +15,39 @@ type Value = SelectControlProps[ 'value' ];
 export const ValidatedSelectControl = forwardRef<
 	HTMLSelectElement,
 	Omit< SelectControlProps, '__next40pxDefaultSize' | '__nextHasNoMarginBottom' > &
-		ValidatedControlProps< Value >
->( ( { required, onReportCustomValidity, onChange, ...restProps }, forwardedRef ) => {
-	const validityTargetRef = useRef< HTMLSelectElement >( null );
-	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
-	const valueRef = useRef< Value >( restProps.value );
+		ValidatedControlProps< Value > & {
+			markWhenOptional?: boolean;
+		}
+>(
+	(
+		{ required, onReportCustomValidity, onChange, markWhenOptional, ...restProps },
+		forwardedRef
+	) => {
+		const validityTargetRef = useRef< HTMLSelectElement >( null );
+		const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
+		const valueRef = useRef< Value >( restProps.value );
 
-	return (
-		<ControlWithError
-			required={ required }
-			render={
-				<SelectControl
-					__nextHasNoMarginBottom
-					__next40pxDefaultSize
-					ref={ mergedRefs }
-					onChange={ ( value ) => {
-						valueRef.current = value;
-						onChange?.( value );
-					} }
-					{ ...restProps }
-				/>
-			}
-			onReportCustomValidity={ () => {
-				return onReportCustomValidity?.( valueRef.current );
-			} }
-			getValidityTarget={ () => validityTargetRef.current }
-		/>
-	);
-} );
+		return (
+			<ControlWithError
+				required={ required }
+				markWhenOptional={ markWhenOptional }
+				render={
+					<SelectControl
+						__nextHasNoMarginBottom
+						__next40pxDefaultSize
+						ref={ mergedRefs }
+						onChange={ ( value ) => {
+							valueRef.current = value;
+							onChange?.( value );
+						} }
+						{ ...restProps }
+					/>
+				}
+				onReportCustomValidity={ () => {
+					return onReportCustomValidity?.( valueRef.current );
+				} }
+				getValidityTarget={ () => validityTargetRef.current }
+			/>
+		);
+	}
+);

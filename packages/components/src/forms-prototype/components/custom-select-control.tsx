@@ -8,47 +8,53 @@ type Value = CustomSelectControlProps[ 'value' ];
 export const ValidatedCustomSelectControl = forwardRef<
 	HTMLDivElement,
 	Omit< CustomSelectControlProps, '__next40pxDefaultSize' > & ValidatedControlProps< Value >
->( ( { required, onReportCustomValidity, onChange, ...restProps }, forwardedRef ) => {
-	const validityTargetRef = useRef< HTMLSelectElement >( null );
-	const valueRef = useRef< Value >( restProps.value );
+>(
+	(
+		{ required, onReportCustomValidity, onChange, markWhenOptional, ...restProps },
+		forwardedRef
+	) => {
+		const validityTargetRef = useRef< HTMLSelectElement >( null );
+		const valueRef = useRef< Value >( restProps.value );
 
-	return (
-		<div className="a8c-validated-control__wrapper-with-error-delegate" ref={ forwardedRef }>
-			<ControlWithError
-				required={ required }
-				render={
-					<CustomSelectControl
-						// TODO: Upstream limitation - Required isn't passed down correctly,
-						// so it needs to be set on a delegate element.
-						__next40pxDefaultSize
-						onChange={ ( value ) => {
-							valueRef.current = value.selectedItem;
-							onChange?.( value );
-						} }
-						{ ...restProps }
-					/>
-				}
-				onReportCustomValidity={ () => {
-					return onReportCustomValidity?.( valueRef.current );
-				} }
-				getValidityTarget={ () => validityTargetRef.current }
-			/>
-			<select
-				className="a8c-validated-control__error-delegate"
-				ref={ validityTargetRef }
-				required={ required }
-				tabIndex={ -1 }
-				value={ restProps.value ? 'hasvalue' : '' }
-				onChange={ () => {} }
-				onFocus={ ( e ) => {
-					e.target.previousElementSibling
-						?.querySelector< HTMLButtonElement >( '[role="combobox"]' )
-						?.focus();
-				} }
-			>
-				<option value="">No selection</option>
-				<option value="hasvalue">Has selection</option>
-			</select>
-		</div>
-	);
-} );
+		return (
+			<div className="a8c-validated-control__wrapper-with-error-delegate" ref={ forwardedRef }>
+				<ControlWithError
+					required={ required }
+					markWhenOptional={ markWhenOptional }
+					render={
+						<CustomSelectControl
+							// TODO: Upstream limitation - Required isn't passed down correctly,
+							// so it needs to be set on a delegate element.
+							__next40pxDefaultSize
+							onChange={ ( value ) => {
+								valueRef.current = value.selectedItem;
+								onChange?.( value );
+							} }
+							{ ...restProps }
+						/>
+					}
+					onReportCustomValidity={ () => {
+						return onReportCustomValidity?.( valueRef.current );
+					} }
+					getValidityTarget={ () => validityTargetRef.current }
+				/>
+				<select
+					className="a8c-validated-control__error-delegate"
+					ref={ validityTargetRef }
+					required={ required }
+					tabIndex={ -1 }
+					value={ restProps.value ? 'hasvalue' : '' }
+					onChange={ () => {} }
+					onFocus={ ( e ) => {
+						e.target.previousElementSibling
+							?.querySelector< HTMLButtonElement >( '[role="combobox"]' )
+							?.focus();
+					} }
+				>
+					<option value="">No selection</option>
+					<option value="hasvalue">Has selection</option>
+				</select>
+			</div>
+		);
+	}
+);

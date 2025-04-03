@@ -21,6 +21,10 @@ export type ValidatedControlProps< V > = {
 	 */
 	required?: boolean;
 	/**
+	 * Label the control as "optional" when _not_ `required`, instead of the inverse.
+	 */
+	markWhenOptional?: boolean;
+	/**
 	 * A function that returns a custom validity message when applicable. This error message will be applied to the
 	 * underlying element using [`setCustomValidity()`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLObjectElement/setCustomValidity).
 	 * An empty string or `undefined` return value will clear any existing custom validity message.

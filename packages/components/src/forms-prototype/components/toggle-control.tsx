@@ -11,37 +11,43 @@ type Value = ToggleControlProps[ 'checked' ];
 export const ValidatedToggleControl = forwardRef<
 	HTMLInputElement,
 	Omit< ToggleControlProps, '__nextHasNoMarginBottom' > & ValidatedControlProps< Value >
->( ( { required, onReportCustomValidity, onChange, ...restProps }, forwardedRef ) => {
-	const validityTargetRef = useRef< HTMLInputElement >( null );
-	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
-	const valueRef = useRef< Value >( restProps.checked );
+>(
+	(
+		{ required, onReportCustomValidity, onChange, markWhenOptional, ...restProps },
+		forwardedRef
+	) => {
+		const validityTargetRef = useRef< HTMLInputElement >( null );
+		const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );
+		const valueRef = useRef< Value >( restProps.checked );
 
-	// TODO: Upstream limitation - The `required` attribute is not passed down to the input,
-	// so we need to set it manually.
-	useEffect( () => {
-		if ( validityTargetRef.current ) {
-			validityTargetRef.current.required = required ?? false;
-		}
-	}, [ required ] );
-
-	return (
-		<ControlWithError
-			required={ required }
-			render={
-				<ToggleControl
-					__nextHasNoMarginBottom
-					ref={ mergedRefs }
-					onChange={ ( value ) => {
-						valueRef.current = value;
-						onChange?.( value );
-					} }
-					{ ...restProps }
-				/>
+		// TODO: Upstream limitation - The `required` attribute is not passed down to the input,
+		// so we need to set it manually.
+		useEffect( () => {
+			if ( validityTargetRef.current ) {
+				validityTargetRef.current.required = required ?? false;
 			}
-			onReportCustomValidity={ () => {
-				return onReportCustomValidity?.( valueRef.current );
-			} }
-			getValidityTarget={ () => validityTargetRef.current }
-		/>
-	);
-} );
+		}, [ required ] );
+
+		return (
+			<ControlWithError
+				required={ required }
+				markWhenOptional={ markWhenOptional }
+				render={
+					<ToggleControl
+						__nextHasNoMarginBottom
+						ref={ mergedRefs }
+						onChange={ ( value ) => {
+							valueRef.current = value;
+							onChange?.( value );
+						} }
+						{ ...restProps }
+					/>
+				}
+				onReportCustomValidity={ () => {
+					return onReportCustomValidity?.( valueRef.current );
+				} }
+				getValidityTarget={ () => validityTargetRef.current }
+			/>
+		);
+	}
+);
