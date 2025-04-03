@@ -2,33 +2,7 @@ import { __experimentalHeading as Heading } from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-
-const siteData = [
-	{
-		id: '1',
-		title: 'My Blog',
-		url: 'https://myblog.com',
-		visitors: 2547,
-		performance: 92,
-		backups: true,
-	},
-	{
-		id: '2',
-		title: 'Business Site',
-		url: 'https://mybusiness.com',
-		visitors: 5324,
-		performance: 87,
-		backups: true,
-	},
-	{
-		id: '3',
-		title: 'Portfolio',
-		url: 'https://myportfolio.com',
-		visitors: 1867,
-		performance: 95,
-		backups: false,
-	},
-];
+import { SITE_DATA } from '../data';
 
 // Helper function to get color based on performance score
 const getPerformanceColor = ( score ) => {
@@ -115,14 +89,14 @@ function Sites() {
 		<>
 			<Heading>{ __( 'Sites' ) }</Heading>
 			<DataViews
-				data={ siteData }
+				data={ SITE_DATA }
 				fields={ fields }
 				view={ view }
 				onChangeView={ setView }
 				defaultLayouts={ defaultLayouts }
 				paginationInfo={ {
-					totalItems: siteData.length,
-					totalPages: Math.ceil( siteData.length / 10 ),
+					totalItems: SITE_DATA.length,
+					totalPages: Math.ceil( SITE_DATA.length / 10 ),
 				} }
 			/>
 		</>
