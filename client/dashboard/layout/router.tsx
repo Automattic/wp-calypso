@@ -40,7 +40,7 @@ export const router = createBrowserRouter(
 					element: <Domains />,
 				},
 				{
-					path: 'account/profile',
+					path: 'me/profile',
 					element: <Profile />,
 				},
 				{
