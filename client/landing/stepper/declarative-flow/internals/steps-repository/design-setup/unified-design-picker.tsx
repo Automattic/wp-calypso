@@ -354,7 +354,8 @@ const UnifiedDesignPickerStep: StepType< {
 		isExternallyManagedThemeAvailable,
 	} = useMarketplaceThemeProducts();
 
-	const requiredPlanSlug = getRequiredPlan( selectedDesign, site?.plan?.product_slug || '' );
+	const sitePlanSlug = site?.plan?.product_slug;
+	const requiredPlanSlug = getRequiredPlan( selectedDesign, sitePlanSlug || '' );
 
 	const didPurchaseSelectedTheme = useSelector( ( state ) =>
 		site && selectedDesignThemeId
@@ -442,7 +443,7 @@ const UnifiedDesignPickerStep: StepType< {
 			stepName,
 			siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
 			destination,
-			plan: requiredPlanSlug,
+			plan: requiredPlanSlug === sitePlanSlug ? undefined : requiredPlanSlug,
 			extraProducts: selectedMarketplaceProductCartItems,
 		} );
 	}
