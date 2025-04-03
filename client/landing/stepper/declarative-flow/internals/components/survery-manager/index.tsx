@@ -3,7 +3,7 @@ import { SITE_MIGRATION_FLOW, HOSTED_SITE_MIGRATION_FLOW } from '@automattic/onb
 import { Suspense } from 'react';
 import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import AsyncMigrationSurvey from '../../steps-repository/components/migration-survey/async';
-import { DeprecatedFlowV1, FlowV2 } from '../../types';
+import { Flow, FlowV2 } from '../../types';
 import { DeferredRender } from '../deferred-render';
 
 const migrationFlows = [ SITE_MIGRATION_FLOW, HOSTED_SITE_MIGRATION_FLOW ];
@@ -45,7 +45,7 @@ const SurveyManager = ( {
 	flow,
 }: {
 	disabled?: boolean;
-	flow?: DeprecatedFlowV1 | FlowV2;
+	flow?: Flow | FlowV2;
 } ) => {
 	const isEnLocale = useIsEnglishLocale();
 	const { data } = useGeoLocationQuery();

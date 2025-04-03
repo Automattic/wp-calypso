@@ -7,9 +7,9 @@ import { ONBOARD_STORE } from '../../../stores';
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { ProvidedDependencies } from '../../internals/types';
-import type { DeprecatedFlowV1 } from '../../internals/types';
+import type { Flow } from '../../internals/types';
 
-const updateOptions: DeprecatedFlowV1 = {
+const updateOptions: Flow = {
 	name: 'update-options',
 	isSignupFlow: false,
 	useSteps() {

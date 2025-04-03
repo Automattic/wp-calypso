@@ -12,11 +12,11 @@ import {
 import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
-import type { ProvidedDependencies, DeprecatedFlowV1 } from '../../internals/types';
+import type { ProvidedDependencies, Flow } from '../../internals/types';
 
 const steps = [ STEPS.DOMAINS, ...stepsWithRequiredLogin( [ STEPS.PROCESSING ] ) ];
 
-const HundredYearDomainFlow: DeprecatedFlowV1 = {
+const HundredYearDomainFlow: Flow = {
 	name: HUNDRED_YEAR_DOMAIN_FLOW,
 	isSignupFlow: true,
 

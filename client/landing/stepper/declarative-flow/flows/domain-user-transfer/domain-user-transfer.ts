@@ -1,13 +1,13 @@
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import {
-	DeprecatedFlowV1,
+	Flow,
 	ProvidedDependencies,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 
 const DOMAIN_USER_TRANSFER_STEPS = stepsWithRequiredLogin( [ STEPS.DOMAIN_CONTACT_INFO ] );
 
-const domainUserTransfer: DeprecatedFlowV1 = {
+const domainUserTransfer: Flow = {
 	name: 'domain-user-transfer',
 	isSignupFlow: false,
 	useSteps() {

@@ -28,7 +28,7 @@ import { useSelector } from 'calypso/state';
 import { getSiteAdminUrl, getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import type {
 	AssertConditionResult,
-	DeprecatedFlowV1,
+	Flow,
 	ProvidedDependencies,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 
@@ -54,7 +54,7 @@ const HOSTED_VARIANT_STEPS = [
 	STEPS.PROCESSING,
 ];
 
-const siteMigration: DeprecatedFlowV1 = {
+const siteMigration: Flow = {
 	name: SITE_MIGRATION_FLOW,
 	isSignupFlow: false,
 	__experimentalUseSessions: true,

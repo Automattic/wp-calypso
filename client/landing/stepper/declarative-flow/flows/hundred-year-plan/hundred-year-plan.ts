@@ -13,9 +13,9 @@ import { SiteId, SiteSlug } from 'calypso/types';
 import { ONBOARD_STORE, USER_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
-import type { ProvidedDependencies, DeprecatedFlowV1 } from '../../internals/types';
+import type { ProvidedDependencies, Flow } from '../../internals/types';
 
-const HundredYearPlanFlow: DeprecatedFlowV1 = {
+const HundredYearPlanFlow: Flow = {
 	name: HUNDRED_YEAR_PLAN_FLOW,
 	get title() {
 		return ( getPlan( PLAN_100_YEARS )?.getTitle() || '' ) as string;

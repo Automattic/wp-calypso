@@ -22,7 +22,7 @@ import { ProcessingResult } from '../../internals/steps-repository/processing-st
 import {
 	AssertConditionResult,
 	AssertConditionState,
-	DeprecatedFlowV1,
+	Flow,
 	Navigate,
 	ProvidedDependencies,
 } from '../../internals/types';
@@ -32,7 +32,7 @@ import type { ThunkAction } from 'redux-thunk';
 
 const SiteIntent = Onboard.SiteIntent;
 
-const readymadeTemplateFlow: DeprecatedFlowV1 = {
+const readymadeTemplateFlow: Flow = {
 	name: READYMADE_TEMPLATE_FLOW,
 	isSignupFlow: true,
 	useSideEffect() {

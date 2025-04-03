@@ -20,14 +20,14 @@ import { redirect } from '../../internals/steps-repository/import/util';
 import {
 	AssertConditionResult,
 	AssertConditionState,
-	DeprecatedFlowV1,
+	Flow,
 	ProvidedDependencies,
 } from '../../internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 
 const CONNECT_DOMAIN_STEPS = [ STEPS.PLANS, STEPS.SITE_CREATION_STEP, STEPS.PROCESSING ];
 
-const connectDomain: DeprecatedFlowV1 = {
+const connectDomain: Flow = {
 	name: CONNECT_DOMAIN_FLOW,
 	get title() {
 		return translate( 'Connect your domain' );

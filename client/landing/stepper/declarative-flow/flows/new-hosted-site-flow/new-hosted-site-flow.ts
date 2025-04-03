@@ -21,7 +21,7 @@ import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
-import { DeprecatedFlowV1, ProvidedDependencies } from '../../internals/types';
+import { Flow, ProvidedDependencies } from '../../internals/types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import './new-hosted-site-flow.scss';
@@ -31,7 +31,7 @@ function useShowDomainStep(): boolean {
 	return query.has( 'showDomainStep' );
 }
 
-const hosting: DeprecatedFlowV1 = {
+const hosting: Flow = {
 	name: NEW_HOSTED_SITE_FLOW,
 	__experimentalUseBuiltinAuth: true,
 	isSignupFlow: true,

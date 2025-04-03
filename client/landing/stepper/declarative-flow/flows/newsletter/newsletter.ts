@@ -22,9 +22,9 @@ import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
 import { ProvidedDependencies } from '../../internals/types';
-import type { DeprecatedFlowV1 } from '../../internals/types';
+import type { Flow } from '../../internals/types';
 
-const newsletter: DeprecatedFlowV1 = {
+const newsletter: Flow = {
 	name: NEWSLETTER_FLOW,
 	__experimentalUseBuiltinAuth: true,
 	isSignupFlow: true,

@@ -13,16 +13,10 @@ import {
 	recordStepNavigation,
 	type RecordStepNavigationParams,
 } from '../../analytics/record-step-navigation';
-import type {
-	DeprecatedFlowV1,
-	FlowV2,
-	Navigate,
-	ProvidedDependencies,
-	StepperStep,
-} from '../../types';
+import type { Flow, FlowV2, Navigate, ProvidedDependencies, StepperStep } from '../../types';
 
 interface Params {
-	flow: DeprecatedFlowV1 | FlowV2;
+	flow: Flow | FlowV2;
 	stepSlugs: StepperStep[ 'slug' ][];
 	currentStepRoute: StepperStep[ 'slug' ];
 	navigate: Navigate;

@@ -149,7 +149,7 @@ export type UseTracksEventPropsHook = () => {
 /**
  * @deprecated Use FlowV2 instead.
  */
-export type DeprecatedFlowV1 = {
+export type Flow = {
 	/**
 	 * If this flag is set to true, the flow will login the user without leaving Stepper.
 	 */
@@ -203,64 +203,65 @@ export type DeprecatedFlowV1 = {
 
 type DefaultFlowStepsConfig = () => readonly StepperStep[];
 
-export type FlowV2< FlowStepsInitialize extends DefaultFlowStepsConfig = DefaultFlowStepsConfig > =
-	{
-		/**
-		 * If this flag is set to true, the flow will login the user without leaving Stepper.
-		 */
-		__experimentalUseBuiltinAuth?: boolean;
-		/**
-		 * If this flag is set to true, the flow will use sessions to store the user's progress.
-		 */
-		__experimentalUseSessions?: boolean;
-		/**
-		 * The steps of the flow. **Please don't use this variable unless absolutely necessary**. It's meant to be used internally by the Stepper.
-		 * Use `getSteps` instead.
-		 */
-		__flowSteps?: ReturnType< FlowStepsInitialize >;
+export interface FlowV2<
+	FlowStepsInitialize extends DefaultFlowStepsConfig = DefaultFlowStepsConfig,
+> {
+	/**
+	 * If this flag is set to true, the flow will login the user without leaving Stepper.
+	 */
+	__experimentalUseBuiltinAuth?: boolean;
+	/**
+	 * If this flag is set to true, the flow will use sessions to store the user's progress.
+	 */
+	__experimentalUseSessions?: boolean;
+	/**
+	 * The steps of the flow. **Please don't use this variable unless absolutely necessary**. It's meant to be used internally by the Stepper.
+	 * Use `getSteps` instead.
+	 */
+	__flowSteps?: ReturnType< FlowStepsInitialize >;
 
-		/**
-		 * Use this method to retrieve the steps of the flow.
-		 */
-		getSteps?(): ReturnType< FlowStepsInitialize >;
+	/**
+	 * Use this method to retrieve the steps of the flow.
+	 */
+	getSteps?(): ReturnType< FlowStepsInitialize >;
 
-		name: string;
+	name: string;
+	/**
+	 * If this flow extends another flow, the variant slug will be added as a class name to the root element of the flow.
+	 */
+	variantSlug?: string;
+	title?: string;
+	classnames?: string | [ string ];
+	/**
+	 * Required flag to indicate if the flow is a signup flow.
+	 */
+	isSignupFlow: boolean;
+	/**
+	 *  You can use this hook to configure the login url.
+	 * @returns An object describing the configuration.
+	 * For now only extraQueryParams is supported.
+	 */
+	useLoginParams?: () => {
 		/**
-		 * If this flow extends another flow, the variant slug will be added as a class name to the root element of the flow.
+		 * A custom login path to use instead of the default login path.
 		 */
-		variantSlug?: string;
-		title?: string;
-		classnames?: string | [ string ];
-		/**
-		 * Required flag to indicate if the flow is a signup flow.
-		 */
-		isSignupFlow: boolean;
-		/**
-		 *  You can use this hook to configure the login url.
-		 * @returns An object describing the configuration.
-		 * For now only extraQueryParams is supported.
-		 */
-		useLoginParams?: () => {
-			/**
-			 * A custom login path to use instead of the default login path.
-			 */
-			customLoginPath?: string;
-			extraQueryParams?: Record< string, string | number >;
-		};
-		/**
-		 * Use this method to define the steps of the flow and do any actions that need to run before the flow starts.
-		 * This hook is called only once when the flow is mounted. It can be asynchronous if you would like to load an experiment or other data.
-		 *
-		 * Returning false will kill the app.
-		 */
-		initialize(): Promise< readonly StepperStep[] > | readonly StepperStep[] | false;
-		useHandleSubmit: UseHandleSubmitHook< ReturnType< FlowStepsInitialize > >;
-		/**
-		 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
-		 */
-		useSideEffect?: UseSideEffectHook< ReturnType< FlowStepsInitialize > >;
-		useTracksEventProps?: UseTracksEventPropsHook;
+		customLoginPath?: string;
+		extraQueryParams?: Record< string, string | number >;
 	};
+	/**
+	 * Use this method to define the steps of the flow and do any actions that need to run before the flow starts.
+	 * This hook is called only once when the flow is mounted. It can be asynchronous if you would like to load an experiment or other data.
+	 *
+	 * Returning false will kill the app.
+	 */
+	initialize(): Promise< readonly StepperStep[] > | readonly StepperStep[] | false;
+	useHandleSubmit: UseHandleSubmitHook< ReturnType< FlowStepsInitialize > >;
+	/**
+	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
+	 */
+	useSideEffect?: UseSideEffectHook< ReturnType< FlowStepsInitialize > >;
+	useTracksEventProps?: UseTracksEventPropsHook;
+}
 
 /**
  * This is a helper type to intersect A and B only if B is not never. Intersecting with never results in never which is not what we want.

@@ -35,11 +35,7 @@ import { useGoalsFirstExperiment } from '../../helpers/use-goals-first-experimen
 import { useRedirectDesignSetupOldSlug } from '../../helpers/use-redirect-design-setup-old-slug';
 import { recordStepNavigation } from '../../internals/analytics/record-step-navigation';
 import { STEPS } from '../../internals/steps';
-import {
-	AssertConditionState,
-	DeprecatedFlowV1,
-	ProvidedDependencies,
-} from '../../internals/types';
+import { AssertConditionState, Flow, ProvidedDependencies } from '../../internals/types';
 
 declare global {
 	interface Window {
@@ -65,7 +61,7 @@ const withLocale = ( url: string, locale: string ) => {
 	return locale && locale !== 'en' ? `${ url }/${ locale }` : url;
 };
 
-const onboarding: DeprecatedFlowV1 = {
+const onboarding: Flow = {
 	name: ONBOARDING_FLOW,
 	isSignupFlow: true,
 	__experimentalUseBuiltinAuth: true,

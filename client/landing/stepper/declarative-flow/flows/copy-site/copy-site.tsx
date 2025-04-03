@@ -15,7 +15,7 @@ import { STEPS } from '../../internals/steps';
 import {
 	AssertConditionState,
 	type AssertConditionResult,
-	type DeprecatedFlowV1,
+	type Flow,
 	type ProvidedDependencies,
 	type StepperStep,
 } from '../../internals/types';
@@ -74,7 +74,7 @@ const COPY_SITE_STEPS = [
 	{ ...STEPS.PROCESSING, slug: 'resuming' as StepperStep[ 'slug' ] } as StepperStep,
 ] as const;
 
-const copySite: DeprecatedFlowV1 = {
+const copySite: Flow = {
 	name: COPY_SITE_FLOW,
 	__experimentalUseBuiltinAuth: true,
 	get title() {

@@ -30,7 +30,7 @@ import { ProcessingResult } from '../../internals/steps-repository/processing-st
 import {
 	type AssertConditionResult,
 	AssertConditionState,
-	type DeprecatedFlowV1,
+	type Flow,
 	type ProvidedDependencies,
 } from '../../internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
@@ -49,7 +49,7 @@ function useGoalsAtFrontExperimentQueryParam() {
 	return Boolean( useSelector( getInitialQueryArguments )?.[ 'goals-at-front-experiment' ] );
 }
 
-const siteSetupFlow: DeprecatedFlowV1 = {
+const siteSetupFlow: Flow = {
 	name: 'site-setup',
 	isSignupFlow: false,
 	__experimentalUseSessions: true,

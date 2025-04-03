@@ -5,13 +5,13 @@ import useSnakeCasedKeys from 'calypso/landing/stepper/utils/use-snake-cased-key
 import { adTrackSignupStart } from 'calypso/lib/analytics/ad-tracking';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { setSignupStartTime } from 'calypso/signup/storageUtils';
-import { FlowV2, type DeprecatedFlowV1 } from '../../types';
+import { FlowV2, type Flow } from '../../types';
 
 /**
  * Hook to track the start of a signup flow.
  */
 interface Props {
-	flow: DeprecatedFlowV1 | FlowV2;
+	flow: Flow | FlowV2;
 }
 
 export const useSignUpStartTracking = ( { flow }: Props ) => {
