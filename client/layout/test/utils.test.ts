@@ -2,20 +2,8 @@ import configApi from '@automattic/calypso-config';
 import { SITE_SETUP_FLOW, ONBOARDING_FLOW, SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { isInStepContainerV2FlowContext } from '../utils';
 
-jest.mock( 'calypso/signup/utils', () => ( {
-	getFlowFromURL: jest.fn(),
-	DEFAULT_FLOW: 'main',
-	isRedirectingToStepContainerV2Flow: jest.fn(),
-} ) );
-
 jest.mock( '@automattic/calypso-config', () => ( {
 	isEnabled: jest.fn(),
-} ) );
-
-jest.mock( '@automattic/onboarding', () => ( {
-	SITE_SETUP_FLOW: 'site-setup',
-	ONBOARDING_FLOW: 'onboarding',
-	SITE_MIGRATION_FLOW: 'site-migration',
 } ) );
 
 describe( 'layout/utils', () => {
