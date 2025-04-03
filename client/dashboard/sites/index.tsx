@@ -69,10 +69,10 @@ function Sites() {
 		{
 			id: 'backups',
 			label: __( 'Backups' ),
-			render: ( { item } ) => <span>{ item.backups ? 'Enabled' : 'Disabled' }</span>,
+			getValue: ( { item } ) => ( item.backups ? 'enabled' : 'disabled' ),
 			elements: [
-				{ value: true, label: 'Enabled' },
-				{ value: false, label: 'Disabled' },
+				{ value: 'enabled', label: 'Enabled' },
+				{ value: 'disabled', label: 'Disabled' },
 			],
 		},
 	] as Field< Site >[];
