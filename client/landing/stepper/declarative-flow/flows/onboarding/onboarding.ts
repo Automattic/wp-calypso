@@ -105,28 +105,20 @@ const onboarding: Flow = {
 		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 		const isPlaygroundEligible = useIsPlaygroundEligible();
 
-		const steps = stepsWithRequiredLogin( [
-			STEPS.UNIFIED_DOMAINS,
-			STEPS.USE_MY_DOMAIN,
-			STEPS.UNIFIED_PLANS,
-			STEPS.SITE_CREATION_STEP,
-			STEPS.PROCESSING,
-			STEPS.POST_CHECKOUT_ONBOARDING,
-		] );
-
-		if ( isGoalsAtFrontExperiment ) {
-			// Note: these steps are not wrapped in `stepsWithRequiredLogin`
-			steps.unshift(
-				STEPS.GOALS,
-				STEPS.DESIGN_CHOICES,
-				STEPS.DESIGN_SETUP,
-				STEPS.DIFM_STARTING_POINT
-			);
-		}
-
-		if ( isPlaygroundEligible ) {
-			steps.push( STEPS.PLAYGROUND );
-		}
+		const steps = [
+			...( isGoalsAtFrontExperiment
+				? [ STEPS.GOALS, STEPS.DESIGN_CHOICES, STEPS.DESIGN_SETUP, STEPS.DIFM_STARTING_POINT ]
+				: [] ),
+			...stepsWithRequiredLogin( [
+				STEPS.UNIFIED_DOMAINS,
+				STEPS.USE_MY_DOMAIN,
+				STEPS.UNIFIED_PLANS,
+				STEPS.SITE_CREATION_STEP,
+				STEPS.PROCESSING,
+				STEPS.POST_CHECKOUT_ONBOARDING,
+			] ),
+			...( isPlaygroundEligible ? [ STEPS.PLAYGROUND ] : [] ),
+		];
 
 		return steps;
 	},
