@@ -39,7 +39,6 @@ import {
 	AssertConditionState,
 	DeprecatedFlowV1,
 	ProvidedDependencies,
-	StepperStep,
 } from '../../internals/types';
 
 declare global {
@@ -264,7 +263,7 @@ const onboarding: DeprecatedFlowV1 = {
 						return navigate( 'domains' );
 					}
 					setCreateWithBigSky( false );
-					return navigate( providedDependencies.destination as StepperStep[ 'slug' ] );
+					return navigate( providedDependencies.destination as string );
 				}
 
 				case 'difmStartingPoint': {
@@ -302,20 +301,14 @@ const onboarding: DeprecatedFlowV1 = {
 						const currentQueryArgs = getQueryArgs( window.location.href );
 						currentQueryArgs.step = 'domain-input';
 
-						let useMyDomainURL = addQueryArgs(
-							'use-my-domain',
-							currentQueryArgs
-						) as StepperStep[ 'slug' ];
+						let useMyDomainURL = addQueryArgs( 'use-my-domain', currentQueryArgs );
 
 						const lastQueryParam = ( providedDependencies?.domainForm as { lastQuery?: string } )
 							?.lastQuery;
 
 						if ( lastQueryParam !== undefined ) {
 							currentQueryArgs.initialQuery = lastQueryParam;
-							useMyDomainURL = addQueryArgs(
-								useMyDomainURL,
-								currentQueryArgs
-							) as StepperStep[ 'slug' ];
+							useMyDomainURL = addQueryArgs( useMyDomainURL, currentQueryArgs );
 						}
 
 						setUseMyDomainTracksEventProps( {
@@ -339,7 +332,7 @@ const onboarding: DeprecatedFlowV1 = {
 							...getQueryArgs( window.location.href ),
 							step: providedDependencies.mode,
 							initialQuery: providedDependencies.domain,
-						} ) as StepperStep[ 'slug' ];
+						} );
 						return navigate( destination );
 					}
 
