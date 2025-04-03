@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
 import GlobalSidebar, { GLOBAL_SIDEBAR_EVENTS } from 'calypso/layout/global-sidebar';
-import SitePicker from 'calypso/my-sites/picker';
 import MySitesSidebarUnifiedBody from 'calypso/my-sites/sidebar/body';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -39,8 +38,6 @@ class MySitesNavigation extends Component {
 		};
 
 		let asyncSidebar = null;
-		let renderSitePicker = true;
-		let sitePickerProps = {};
 
 		if ( config.isEnabled( 'jetpack-cloud' ) ) {
 			asyncSidebar = (
@@ -49,39 +46,13 @@ class MySitesNavigation extends Component {
 					{ ...asyncProps }
 				/>
 			);
-
-			// For the new Jetpack cloud sidebar, it has its own site picker.
-			renderSitePicker = false;
-
-			sitePickerProps = {
-				showManageSitesButton: false,
-				showHiddenSites: false,
-			};
 		} else if ( this.props.isGlobalSidebarVisible ) {
 			return this.renderGlobalSidebar();
 		} else {
 			asyncSidebar = <AsyncLoad require="calypso/my-sites/sidebar" { ...asyncProps } />;
-
-			sitePickerProps = {
-				showManageSitesButton: true,
-				showHiddenSites: true,
-				maxResults: 50,
-			};
 		}
 
-		return (
-			<div className="my-sites__navigation">
-				{ renderSitePicker && (
-					<SitePicker
-						allSitesPath={ this.props.allSitesPath }
-						siteBasePath={ this.props.siteBasePath }
-						onClose={ this.preventPickerDefault }
-						{ ...sitePickerProps }
-					/>
-				) }
-				{ asyncSidebar }
-			</div>
-		);
+		return <div className="my-sites__navigation">{ asyncSidebar }</div>;
 	}
 
 	renderGlobalSidebar() {
