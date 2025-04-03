@@ -6,12 +6,11 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { Link } from '../..';
+import { Link, Page } from '../..';
 
 export function Home() {
 	return (
-		<div>
-			<h2>{ __( 'Introduction', 'a8c-site-admin' ) }</h2>
+		<Page title={ __( 'Introduction', 'a8c-site-admin' ) }>
 			<p>
 				{ createInterpolateElement(
 					__(
@@ -45,6 +44,6 @@ export function Home() {
 					}
 				) }
 			</p>
-		</div>
+		</Page>
 	);
 }

@@ -10,6 +10,7 @@ import { __ } from '@wordpress/i18n';
  * Internal dependencies
  */
 import { Link, useLocation } from '../..';
+import { Page } from '../../components';
 
 export function DocsComponents() {
 	// Pick the component from the query params
@@ -71,8 +72,8 @@ export function DocsComponents() {
 
 	if ( ! component ) {
 		return (
-			<>
-				<h1>{ __( 'Components list', 'a8c-site-admin' ) }</h1>
+			<Page title={ __( 'Components list', 'a8c-site-admin' ) }>
+				<h1>{  }</h1>
 				<VStack>
 					{ Object.values( components ).map( ( component ) => (
 						<ul key={ component.title }>
@@ -86,13 +87,12 @@ export function DocsComponents() {
 				<HStack>
 					<Link to="/">{ __( 'Go back to home', 'a8c-site-admin' ) }</Link>
 				</HStack>
-			</>
+			</Page>
 		);
 	}
 
 	return (
-		<VStack>
-			<h2>{ component.title }</h2>
+		<Page title={ component.title }>
 			<p>{ component.description }</p>
 			<HStack justify="flex-start" spacing={ 4 }>
 				{ component?.linkToStory && (
@@ -100,6 +100,6 @@ export function DocsComponents() {
 				) }
 				<Link to="/">{ __( 'Go back to home', 'a8c-site-admin' ) }</Link>
 			</HStack>
-		</VStack>
+		</Page>
 	);
 }

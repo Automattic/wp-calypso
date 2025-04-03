@@ -6,16 +6,15 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { Link } from '../..';
+import { Link, Page } from '../..';
 
 export function DocsRoutingSystem() {
 	return (
-		<VStack>
-			<h2>{ __( 'Routing systems', 'a8c-site-admin' ) }</h2>
+		<Page title={ __( 'Routing systems', 'a8c-site-admin' ) }>
 			<VStack>
 				{ __( 'Routing systems content..', 'a8c-site-admin' ) }
 				<Link to="/">{ __( 'Go back to home', 'a8c-site-admin' ) }</Link>
 			</VStack>
-		</VStack>
+		</Page>
 	);
 }
