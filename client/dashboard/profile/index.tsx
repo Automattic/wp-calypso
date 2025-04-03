@@ -31,8 +31,8 @@ interface ProfileData {
 async function fetchProfile(): Promise< ProfileData > {
 	try {
 		const data = await wpcom.req.get( {
-			path: '/users/me',
-			apiNamespace: 'wp/v2',
+			path: '/me',
+			apiNamespace: 'rest/v1.1',
 		} );
 		return {
 			username: data.username || '',
