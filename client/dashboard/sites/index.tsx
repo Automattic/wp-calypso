@@ -1,8 +1,9 @@
 import { __experimentalHeading as Heading } from '@wordpress/components';
-import { DataViews } from '@wordpress/dataviews';
+import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { SITE_DATA } from '../data';
+import { SITE_DATA, Site } from '../data';
+import type { View, Field } from '@wordpress/dataviews';
 
 // Helper function to get color based on performance score
 const getPerformanceColor = ( score ) => {
@@ -17,7 +18,7 @@ const getPerformanceColor = ( score ) => {
 
 function Sites() {
 	// View config.
-	const [ view, setView ] = useState( {
+	const [ view, setView ] = useState< View >( {
 		type: 'table',
 		page: 1,
 		perPage: 10,
@@ -35,10 +36,12 @@ function Sites() {
 		{
 			id: 'title',
 			label: __( 'Site' ),
+			enableGlobalSearch: true,
 		},
 		{
 			id: 'url',
 			label: __( 'URL' ),
+			enableGlobalSearch: true,
 		},
 		{
 			id: 'visitors',
@@ -71,11 +74,8 @@ function Sites() {
 				{ value: true, label: 'Enabled' },
 				{ value: false, label: 'Disabled' },
 			],
-			filterBy: {
-				operators: [ 'is', 'isNot' ],
-			},
 		},
-	];
+	] as Field< Site >[];
 
 	// Default layouts
 	const defaultLayouts = {
@@ -85,19 +85,18 @@ function Sites() {
 		},
 	};
 
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate( SITE_DATA, view, fields );
+
 	return (
 		<>
 			<Heading>{ __( 'Sites' ) }</Heading>
 			<DataViews
-				data={ SITE_DATA }
+				data={ filteredData }
 				fields={ fields }
 				view={ view }
 				onChangeView={ setView }
 				defaultLayouts={ defaultLayouts }
-				paginationInfo={ {
-					totalItems: SITE_DATA.length,
-					totalPages: Math.ceil( SITE_DATA.length / 10 ),
-				} }
+				paginationInfo={ paginationInfo }
 			/>
 		</>
 	);

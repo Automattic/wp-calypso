@@ -24,3 +24,12 @@ export const SITE_DATA = [
 		backups: false,
 	},
 ];
+
+export type Site = {
+	id: string;
+	title: string;
+	url: string;
+	visitors: number;
+	performance: number;
+	backups: boolean;
+};
