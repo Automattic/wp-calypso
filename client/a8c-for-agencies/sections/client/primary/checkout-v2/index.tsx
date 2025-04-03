@@ -12,6 +12,7 @@ import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopp
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import ClientCheckoutV2Placeholder from '../../checkout-v2-placeholder';
 import useFetchClientReferral from '../../hooks/use-fetch-client-referral';
 
 import './style.scss';
@@ -93,9 +94,8 @@ function ClientCheckoutContent() {
 	// Debugging: Show loading state
 	if ( ! isReady && ! error ) {
 		return (
-			<div className="client-checkout-v2__loading">
-				<h2>{ translate( 'Loading checkout' ) }</h2>
-				<p>{ translate( 'Setting up your products for purchase' ) }</p>
+			<div className="client-checkout-v2">
+				<ClientCheckoutV2Placeholder />
 			</div>
 		);
 	}
@@ -103,7 +103,7 @@ function ClientCheckoutContent() {
 	// Debugging: Show error state
 	if ( error ) {
 		return (
-			<div className="client-checkout-v2__error">
+			<div className="client-checkout-v2 is-error">
 				<h2>{ translate( 'Error' ) }</h2>
 				<p>{ error }</p>
 			</div>
