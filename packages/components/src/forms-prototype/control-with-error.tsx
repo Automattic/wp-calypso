@@ -1,6 +1,6 @@
 import { Icon } from '@wordpress/components';
 import { caution } from '@wordpress/icons';
-import { cloneElement, forwardRef, useState } from 'react';
+import { cloneElement, forwardRef, useEffect, useState } from 'react';
 
 import './style.scss';
 
@@ -46,6 +46,19 @@ function UnforwardedControlWithError< C extends React.ReactElement >(
 ) {
 	const [ errorMessage, setErrorMessage ] = useState< string | undefined >();
 	const [ isTouched, setIsTouched ] = useState( false );
+
+	// Ensure that error messages are visible after user attemps to submit a form
+	// with multiple invalid fields.
+	useEffect( () => {
+		const validityTarget = getValidityTarget();
+		const showValidationMessage = () => setErrorMessage( validityTarget?.validationMessage );
+
+		validityTarget?.addEventListener( 'invalid', showValidationMessage );
+
+		return () => {
+			validityTarget?.removeEventListener( 'invalid', showValidationMessage );
+		};
+	} );
 
 	const validate = () => {
 		const message = onReportCustomValidity?.();
