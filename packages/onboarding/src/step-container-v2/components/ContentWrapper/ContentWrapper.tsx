@@ -5,7 +5,7 @@ import './style.scss';
 
 type MaxWidth = 'wide' | 'huge' | 'xhuge';
 
-export const ContentWrapper = ( {
+const ContentWrapper = ( {
 	children,
 	maxWidth = 'wide',
 	centerAligned,
@@ -30,3 +30,19 @@ export const ContentWrapper = ( {
 		</div>
 	);
 };
+
+ContentWrapper.Row = ( { columns, children }: { columns: number; children: ReactNode } ) => {
+	return (
+		<div
+			className="step-container-v2__content-wrapper-row"
+			style={ {
+				// @ts-expect-error -- This is a valid CSS variable.
+				'--columns': columns,
+			} }
+		>
+			{ children }
+		</div>
+	);
+};
+
+export { ContentWrapper };

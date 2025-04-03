@@ -2,16 +2,13 @@
 @import '@wordpress/base-styles/mixins';
 
 .step-container-v2__content-wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 3rem;
 	width: 100%;
 	box-sizing: border-box;
 	flex: 1;
-
-	@include break-small {
-		display: grid;
-		grid-template-columns: repeat( 12, 1fr );
-		row-gap: 3rem;
-		column-gap: 1rem;
-	}
 
 	&.padding {
 		padding: var( --step-container-v2-content-block-padding )
@@ -19,21 +16,45 @@
 	}
 
 	&.wide {
-		max-width: calc( $break-wide + 2 * var( --step-container-v2-content-inline-padding ) );
+		--step-container-v2-content-max-width: calc(
+			#{$break-wide} + 2 * var( --step-container-v2-content-inline-padding )
+		);
+		max-width: var( --step-container-v2-content-max-width );
 	}
 
 	&.huge {
-		max-width: calc( $break-huge + 2 * var( --step-container-v2-content-inline-padding ) );
+		--step-container-v2-content-max-width: calc(
+			#{$break-huge} + 2 * var( --step-container-v2-content-inline-padding )
+		);
+		max-width: var( --step-container-v2-content-max-width );
 	}
 
 	&.xhuge {
-		max-width: calc( $break-xhuge + 2 * var( --step-container-v2-content-inline-padding ) );
+		--step-container-v2-content-max-width: calc(
+			#{$break-xhuge} + 2 * var( --step-container-v2-content-inline-padding )
+		);
+		max-width: var( --step-container-v2-content-max-width );
 	}
 
 	&.center-aligned {
-		align-content: center;
+		justify-content: center;
 		padding-bottom: calc(
 			var( --step-container-v2-content-block-padding ) + var( --step-container-v2-top-bar-height )
 		);
+	}
+
+	--column-width: calc( var( --step-container-v2-content-max-width ) / 12 );
+	--column-gap: 16px;
+
+	&-row {
+		width: 100%;
+		max-width: 100%;
+
+		@include break-small {
+			--total-column-width: calc( var( --columns ) * var( --column-width ) );
+			--total-gap-width: calc( ( var( --columns ) - 1 ) * var( --column-gap ) );
+
+			max-width: calc( var( --total-gap-width ) + var( --total-column-width ) );
+		}
 	}
 }

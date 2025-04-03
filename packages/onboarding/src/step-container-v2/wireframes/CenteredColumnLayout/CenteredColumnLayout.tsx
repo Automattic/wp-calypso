@@ -1,4 +1,3 @@
-import clsx from 'clsx';
 import { ReactNode } from 'react';
 import { Content } from '../../components/Content/Content';
 import { ContentWrapper } from '../../components/ContentWrapper/ContentWrapper';
@@ -18,9 +17,6 @@ interface CenteredColumnLayoutProps {
 	verticalAlign?: 'center';
 }
 
-const TOTAL_COLUMNS = 12;
-const STARTING_COLUMN = TOTAL_COLUMNS / 2 + 1;
-
 export const CenteredColumnLayout = ( {
 	columnWidth,
 	topBar,
@@ -31,9 +27,6 @@ export const CenteredColumnLayout = ( {
 	stickyBottomBar,
 	verticalAlign,
 }: CenteredColumnLayoutProps ) => {
-	const startColumn = STARTING_COLUMN - columnWidth / 2;
-	const contentGridColumn = `${ startColumn } / ${ startColumn + columnWidth }`;
-
 	return (
 		<StepContainerV2>
 			{ ( context ) => {
@@ -43,19 +36,13 @@ export const CenteredColumnLayout = ( {
 					<>
 						<TopBarRenderer topBar={ topBar } />
 						<ContentWrapper centerAligned={ context.isSmallViewport && verticalAlign === 'center' }>
-							{ heading && <div style={ { gridColumn: '4 / 10' } }>{ heading }</div> }
-							<div style={ { gridColumn: contentGridColumn } }>
-								<Content
-									className={ clsx(
-										'step-container-v2__content--centered-column-layout',
-										`step-container-v2__content--centered-column-layout-${ columnWidth }`,
-										className
-									) }
-								>
-									{ content }
-								</Content>
-							</div>
-							{ footer && <div style={ { gridColumn: contentGridColumn } }>{ footer }</div> }
+							{ heading && <ContentWrapper.Row columns={ 6 }>{ heading }</ContentWrapper.Row> }
+							<ContentWrapper.Row columns={ columnWidth }>
+								<Content className={ className }>{ content }</Content>
+							</ContentWrapper.Row>
+							{ footer && (
+								<ContentWrapper.Row columns={ columnWidth }>{ footer }</ContentWrapper.Row>
+							) }
 						</ContentWrapper>
 						<StickyBottomBarRenderer stickyBottomBar={ stickyBottomBar } />
 					</>
