@@ -95,6 +95,7 @@ const DotcomSitesDataViews = ( {
 		const dataViewFields: Field< SiteExcerptData >[] = [
 			{
 				id: 'icon',
+				label: __( 'Site Icon' ),
 				render: ( { item }: { item: SiteExcerptData } ) => {
 					return (
 						<SiteIcon

@@ -20,7 +20,6 @@ export * from './plugins-page';
 export * from './posts-page';
 export * from './published';
 export * from './reader-page';
-export * from './revisions-page';
 export * from './shared-types';
 export * from './signup/user-signup-page';
 export * from './site-import-page';
