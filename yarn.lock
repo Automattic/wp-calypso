@@ -709,7 +709,7 @@ __metadata:
     lodash: "npm:^4.17.21"
     postcss: "npm:^8.5.3"
     prop-types: "npm:^15.8.1"
-    react-modal: "npm:^3.16.1"
+    react-modal: "npm:^3.16.3"
     react-router-dom: "npm:^6.23.1"
     react-slider: "npm:^2.0.6"
     resize-observer-polyfill: "npm:^1.5.1"
@@ -8571,12 +8571,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-modal@npm:^3.13.1":
-  version: 3.13.1
-  resolution: "@types/react-modal@npm:3.13.1"
+"@types/react-modal@npm:^3.16.3":
+  version: 3.16.3
+  resolution: "@types/react-modal@npm:3.16.3"
   dependencies:
     "@types/react": "npm:*"
-  checksum: 58b39870509d65ecd5998365bf2e59062da29db6c525135db50e8eab4e7ecf8d81ee331e34d16a889a47b49a8e2888252b66f2365817ae613ccc32f2ddea983a
+  checksum: dfcf52fa4b5d5c203aa47ffaafade369836cb9f891e9b60e7056bf5fdfc508ebec7971bb3d4c4018f422953c1c79948755ef19da3e816c28d7c5fdacf9466af8
   languageName: node
   linkType: hard
 
@@ -13593,7 +13593,7 @@ __metadata:
     react-intersection-observer: "npm:^9.4.3"
     react-live: "npm:^4.1.8"
     react-markdown: "npm:^8.0.7"
-    react-modal: "npm:^3.16.1"
+    react-modal: "npm:^3.16.3"
     react-redux: "npm:^9.2.0"
     react-router: "npm:^6.23.1"
     react-router-dom: "npm:^6.23.1"
@@ -29051,18 +29051,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-modal@npm:^3.16.1":
-  version: 3.16.1
-  resolution: "react-modal@npm:3.16.1"
+"react-modal@npm:^3.16.3":
+  version: 3.16.3
+  resolution: "react-modal@npm:3.16.3"
   dependencies:
     exenv: "npm:^1.2.0"
     prop-types: "npm:^15.7.2"
     react-lifecycles-compat: "npm:^3.0.0"
     warning: "npm:^4.0.3"
   peerDependencies:
-    react: ^0.14.0 || ^15.0.0 || ^16 || ^17 || ^18
-    react-dom: ^0.14.0 || ^15.0.0 || ^16 || ^17 || ^18
-  checksum: 7b56e2c505b2b924736c471a34754a4211df40ac2d6fb0949cf095aea5e65d3326bd9f111fa7898acf40afa54f526809ad8aa47e02b8328663d11422568dc7b1
+    react: ^0.14.0 || ^15.0.0 || ^16 || ^17 || ^18 || ^19
+    react-dom: ^0.14.0 || ^15.0.0 || ^16 || ^17 || ^18 || ^19
+  checksum: b541c91aef680c51ee9edf4ec14b3be29787e34d4df174150361b1d42b2416b28336e2280abdc71df082b1380d0786fe2122cdca31e19a74b54b49d17855a0f2
   languageName: node
   linkType: hard
 
@@ -35632,7 +35632,7 @@ __metadata:
     "@types/page": "npm:^1.11.9"
     "@types/qs": "npm:^6.9.7"
     "@types/react": "npm:^18.3.18"
-    "@types/react-modal": "npm:^3.13.1"
+    "@types/react-modal": "npm:^3.16.3"
     "@types/react-transition-group": "npm:^4.4.4"
     "@types/store": "npm:^2.0.5"
     "@types/superagent": "npm:^4.1.24"
@@ -35727,7 +35727,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     react-hook-form: "npm:^7.52.2"
     react-intersection-observer: "npm:^9.4.3"
-    react-modal: "npm:^3.16.1"
+    react-modal: "npm:^3.16.3"
     react-refresh: "npm:^0.16.0"
     readline-sync: "npm:^1.4.10"
     recursive-copy: "npm:^2.0.14"
