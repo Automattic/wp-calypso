@@ -37,3 +37,7 @@ export type Site = {
 	backups: boolean;
 	protect: boolean;
 };
+
+export const findItemById = ( id: string | undefined ): Site | undefined => {
+	return SITE_DATA.find( ( site ) => site.id === id );
+};

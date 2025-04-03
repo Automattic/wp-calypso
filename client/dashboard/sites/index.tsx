@@ -2,6 +2,7 @@ import { __experimentalHeading as Heading } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useNavigate } from 'react-router-dom';
 import { SITE_DATA, Site } from '../data';
 import type { View, Field } from '@wordpress/dataviews';
 
@@ -17,6 +18,8 @@ const getPerformanceColor = ( score ) => {
 };
 
 function Sites() {
+	const navigate = useNavigate();
+
 	// View config.
 	const [ view, setView ] = useState< View >( {
 		type: 'table',
@@ -88,6 +91,10 @@ function Sites() {
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( SITE_DATA, view, fields );
 
+	const onClickItem = ( item: Site ) => {
+		navigate( `/sites/${ item.id }` );
+	};
+
 	return (
 		<>
 			<Heading>{ __( 'Sites' ) }</Heading>
@@ -96,6 +103,7 @@ function Sites() {
 				fields={ fields }
 				view={ view }
 				onChangeView={ setView }
+				onClickItem={ onClickItem }
 				defaultLayouts={ { table: {} } }
 				paginationInfo={ paginationInfo }
 			/>

@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Domains from '../domains';
 import Header from '../header';
 import Profile from '../profile';
+import Site from '../site';
 import Sites from '../sites';
 import './style.scss';
 
@@ -18,6 +19,7 @@ function Layout() {
 					<main className="dashboard__content">
 						<Routes>
 							<Route path="/sites" element={ <Sites /> } />
+							<Route path="/sites/:id" element={ <Site /> } />
 							<Route path="/domains" element={ <Domains /> } />
 							<Route path="/account/profile" element={ <Profile /> } />
 							<Route path="/" element={ <Navigate to="/sites" replace /> } />
