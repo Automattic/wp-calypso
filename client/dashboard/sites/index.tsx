@@ -62,7 +62,7 @@ function Sites() {
 							marginRight: 8,
 						} }
 					></span>
-					<span>{ item.performance }%</span>
+					<span>{ item.performance }</span>
 				</div>
 			),
 		},
