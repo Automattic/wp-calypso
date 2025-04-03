@@ -17,14 +17,12 @@
 	}
 
 	.invite-people__link-instructions {
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 14px;
 		margin-bottom: 28px;
 	}
 
 	.invite-people__link-selector {
 		display: flex;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 14px;
 
 		.invite-people__link-selector-role {
@@ -48,7 +46,6 @@
 
 	.invite-people__link-footer {
 		color: var(--color-text-subtle);
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 12px;
 		font-style: italic;
 		margin-top: 8px;

@@ -13,11 +13,9 @@
 			max-height: 180px;
 		}
 		.empty-content__title {
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 90%;
 		}
 		.empty-content__line {
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 60%;
 			margin-bottom: 20px;
 		}
@@ -321,7 +319,7 @@
 	}
 }
 
-/* stylelint-disable declaration-property-unit-allowed-list, scales/font-weights */
+/* stylelint-disable scales/font-weights */
 .grav-powered-magic-login {
 	max-width: 480px;
 	font-size: 14px;
@@ -753,4 +751,4 @@
 	display: block;
 	margin: 0 auto;
 }
-/* stylelint-enable declaration-property-unit-allowed-list, scales/font-weights */
+/* stylelint-enable scales/font-weights */

@@ -107,10 +107,6 @@ export class LoginLinks extends Component {
 	};
 
 	getLoginLinkText = () => {
-		if ( this.props.isP2Login ) {
-			return this.props.translate( 'Get a login link on your email' );
-		}
-
 		return this.props.translate( 'Email me a login link' );
 	};
 
@@ -119,8 +115,7 @@ export class LoginLinks extends Component {
 			isCrowdsignalOAuth2Client( this.props.oauth2Client ) ||
 			isJetpackCloudOAuth2Client( this.props.oauth2Client ) ||
 			isA4AOAuth2Client( this.props.oauth2Client ) ||
-			this.props.isWhiteLogin ||
-			this.props.isP2Login
+			this.props.isWhiteLogin
 		) {
 			return null;
 		}

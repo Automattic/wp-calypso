@@ -14,7 +14,6 @@ import { useCreateSite } from '../../../hooks/use-create-site-hook';
 import { useExitFlow } from '../../../hooks/use-exit-flow';
 import { useSiteSlug } from '../../../hooks/use-site-slug';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
-import { getQuery } from '../../../utils/get-query';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { useFlowState } from '../../internals/state-manager/store';
 import { STEPS } from '../../internals/steps';
@@ -29,9 +28,6 @@ const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
  * @returns The steps of the flow.
  */
 function initialize() {
-	const query = getQuery();
-	const isComingFromMarketingPage = query[ 'ref' ] === 'newsletter-lp';
-
 	const { setHidePlansFeatureComparison, setIntent } = dispatch( ONBOARD_STORE ) as OnboardActions;
 
 	// We can just call these. They're guaranteed to run once.
@@ -49,10 +45,6 @@ function initialize() {
 		STEPS.LAUNCHPAD,
 		STEPS.ERROR,
 	] as const );
-
-	if ( ! isComingFromMarketingPage ) {
-		return [ STEPS.INTRO, ...privateSteps ] as const;
-	}
 
 	return privateSteps;
 }
@@ -94,10 +86,6 @@ const newsletter: FlowV2< typeof initialize > = {
 		};
 
 		switch ( slug ) {
-			case 'intro': {
-				return navigate( 'newsletterSetup' );
-			}
-
 			case 'newsletterSetup': {
 				set( 'newsletterSetup', providedDependencies );
 				return navigate( 'newsletterGoals' );

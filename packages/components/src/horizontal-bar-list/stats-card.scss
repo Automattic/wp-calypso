@@ -17,6 +17,7 @@
 	background-color: var(--studio-white);
 
 	@media (max-width: $break-medium) {
+		min-width: 390px;
 		border-radius: 0;
 		border-left: 0;
 		border-right: 0;
@@ -124,6 +125,7 @@
 		margin: $padding-outside $padding-outside 0;
 		display: block;
 		color: var(--color-text);
+		text-decoration: none; // TODO: Should this be a tertiary button component instead?
 
 		&:visited {
 			color: $font-color;
@@ -178,29 +180,6 @@
 		justify-content: space-between;
 		height: 100%;
 		position: relative;
-	}
-}
-
-// TODO: update when cleaning stats/empty-module-traffic feature flag
-// (stats-card--empty-variant should be added to the root of the card when isEmpty is passed = className shouldn't
-// continue to set it - it's not compatible with footer actions)
-.stats-card--empty-variant {
-	.stats-card--header-and-body {
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		flex-grow: 1;
-	}
-
-	.stats-card--footer {
-		margin-top: 2px;
-	}
-
-	.stats-card--body-empty {
-		display: flex;
-		flex: 1 0 auto;
-		align-items: center;
-		justify-content: center;
 	}
 }
 

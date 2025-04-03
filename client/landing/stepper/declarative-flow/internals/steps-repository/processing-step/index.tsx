@@ -211,7 +211,6 @@ const ProcessingStep: StepType< {
 	};
 
 	const flowName = props.flow || '';
-	const isJetpackPowered = isNewsletterFlow( flowName );
 
 	// Return tailored processing screens for flows that need them
 	if ( isNewsletterFlow( flowName ) || isUpdateDesignFlow( flowName ) ) {
@@ -245,7 +244,6 @@ const ProcessingStep: StepType< {
 					<Loading title={ getCurrentMessage() } subtitle={ getSubtitle() } progress={ progress } />
 				}
 				recordTracksEvent={ recordTracksEvent }
-				showJetpackPowered={ isJetpackPowered }
 			/>
 		</>
 	);

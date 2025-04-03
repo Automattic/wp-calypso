@@ -104,7 +104,7 @@ button {
 .hundred-year-domain,
 .entrepreneur,
 .generate-content,
-.playground,
+.playground:not(:has(.step-container-v2)),
 .processing:not(:has(.step-container-v2)),
 .create-site:not(:has(.step-container-v2)) {
 	box-sizing: border-box;

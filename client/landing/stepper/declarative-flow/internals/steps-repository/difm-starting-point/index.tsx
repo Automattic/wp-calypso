@@ -41,6 +41,9 @@ const DIFMStartingPoint: StepType< {
 		} );
 	};
 
+	const helpCenterButtonCopy = translate( 'Questions?' );
+	const helpCenterButtonLink = translate( 'Contact our site-building team' );
+
 	if ( shouldUseStepContainerV2( flow ) ) {
 		const primaryButton = showNewOrExistingSiteChoice ? (
 			<Step.PrimaryButton onClick={ () => onSubmit( 'existing-site' ) }>
@@ -70,8 +73,8 @@ const DIFMStartingPoint: StepType< {
 									<HelpCenterStepButton
 										flowName={ DIFM_FLOW }
 										enabledGeos={ [ 'US' ] }
-										helpCenterButtonCopy={ translate( 'Questions?' ) }
-										helpCenterButtonLink={ translate( 'Contact our site-building team' ) }
+										helpCenterButtonCopy={ helpCenterButtonCopy }
+										helpCenterButtonLink={ helpCenterButtonLink }
 									/>
 								) : (
 									<Step.SkipButton onClick={ goNext }>
@@ -111,8 +114,8 @@ const DIFMStartingPoint: StepType< {
 						<HelpCenterStepButton
 							flowName={ DIFM_FLOW }
 							enabledGeos={ [ 'US' ] }
-							helpCenterButtonCopy={ translate( 'Questions?' ) }
-							helpCenterButtonLink={ translate( 'Contact our site building team' ) }
+							helpCenterButtonCopy={ helpCenterButtonCopy }
+							helpCenterButtonLink={ helpCenterButtonLink }
 						/>
 					) : undefined
 				}

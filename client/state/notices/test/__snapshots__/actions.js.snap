@@ -2,7 +2,7 @@
 
 exports[`actions createNotice() should use default options when none provided 1`] = `
 Object {
-  "noticeId": "someid",
+  "noticeId": "fake-uuid",
   "showDismiss": true,
   "status": "is-info",
   "text": "Notice text",
@@ -12,7 +12,7 @@ Object {
 exports[`actions status helpers errorNotice dispatches expected action 1`] = `
 Object {
   "notice": Object {
-    "noticeId": "someid",
+    "noticeId": "fake-uuid",
     "showDismiss": true,
     "status": "is-error",
     "text": "text",
@@ -24,7 +24,7 @@ Object {
 exports[`actions status helpers infoNotice dispatches expected action 1`] = `
 Object {
   "notice": Object {
-    "noticeId": "someid",
+    "noticeId": "fake-uuid",
     "showDismiss": true,
     "status": "is-info",
     "text": "text",
@@ -36,7 +36,7 @@ Object {
 exports[`actions status helpers plainNotice dispatches expected action 1`] = `
 Object {
   "notice": Object {
-    "noticeId": "someid",
+    "noticeId": "fake-uuid",
     "showDismiss": true,
     "status": "is-plain",
     "text": "text",
@@ -48,7 +48,7 @@ Object {
 exports[`actions status helpers successNotice dispatches expected action 1`] = `
 Object {
   "notice": Object {
-    "noticeId": "someid",
+    "noticeId": "fake-uuid",
     "showDismiss": true,
     "status": "is-success",
     "text": "text",
@@ -60,7 +60,7 @@ Object {
 exports[`actions status helpers warningNotice dispatches expected action 1`] = `
 Object {
   "notice": Object {
-    "noticeId": "someid",
+    "noticeId": "fake-uuid",
     "showDismiss": true,
     "status": "is-warning",
     "text": "text",

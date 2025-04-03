@@ -926,7 +926,7 @@ const UnifiedDesignPickerStep: StepType< {
 		: translate( 'Pick a design' );
 
 	const subHeaderText = translate(
-		'One of these homepage options could be great to start with. You can always change later.'
+		'Choose a homepage design that works for you. You can always change it later.'
 	);
 
 	// Use this to prioritize themes in certain categories.

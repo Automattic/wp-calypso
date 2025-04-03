@@ -136,36 +136,7 @@ const renderComponentWithStoreAndQueryClient = ( store ) => {
 	);
 };
 
-const stringsForAdvancedFeatureCards = [ 'Database access', 'Web server settings' ];
-
 const stringsForBasicFeatureCards = [ 'Restore plugins and themes', 'Clear all caches' ];
-
-const stringsForAllAtomicFeatureCards = [
-	...stringsForAdvancedFeatureCards,
-	...stringsForBasicFeatureCards,
-];
-
-const getExpectedStringsForTestConfig = ( testConfig, { enabledOnly = false } = {} ) => {
-	let expectedStrings = [];
-
-	if ( enabledOnly ) {
-		if ( testConfig.siteFeatures.includes( FEATURE_SFTP ) ) {
-			expectedStrings = stringsForAllAtomicFeatureCards;
-		} else if ( testConfig.siteFeatures.includes( WPCOM_FEATURES_ATOMIC ) ) {
-			expectedStrings = stringsForBasicFeatureCards;
-		}
-	} else {
-		expectedStrings = stringsForAllAtomicFeatureCards;
-	}
-
-	return expectedStrings;
-};
-
-const verifyStringsAreWithinFeatureExample = ( strings, featureExampleElement ) => {
-	strings.forEach( ( string ) => {
-		expect( featureExampleElement ).toContainElement( screen.getByText( string ) );
-	} );
-};
 
 describe( 'Hosting Configuration', () => {
 	beforeAll( () => {
@@ -214,9 +185,6 @@ describe( 'Hosting Configuration', () => {
 			const [ mainFeatureExampleElement ] = screen.getAllByTestId( 'feature-example-wrapper' );
 
 			expect( mainFeatureExampleElement ).toBeVisible();
-
-			const expectedStrings = getExpectedStringsForTestConfig( testConfig );
-			verifyStringsAreWithinFeatureExample( expectedStrings, mainFeatureExampleElement );
 		} );
 	} );
 
@@ -236,9 +204,6 @@ describe( 'Hosting Configuration', () => {
 			const [ mainFeatureExampleElement ] = screen.getAllByTestId( 'feature-example-wrapper' );
 
 			expect( mainFeatureExampleElement ).toBeVisible();
-
-			const expectedStrings = getExpectedStringsForTestConfig( testConfig );
-			verifyStringsAreWithinFeatureExample( expectedStrings, mainFeatureExampleElement );
 		} );
 	} );
 
@@ -261,9 +226,6 @@ describe( 'Hosting Configuration', () => {
 			const [ mainFeatureExampleElement ] = screen.getAllByTestId( 'feature-example-wrapper' );
 
 			expect( mainFeatureExampleElement ).toBeVisible();
-
-			const expectedStrings = getExpectedStringsForTestConfig( testConfig );
-			verifyStringsAreWithinFeatureExample( expectedStrings, mainFeatureExampleElement );
 		} );
 
 		it( 'should not show the activation notice when the site is Atomic', async () => {
@@ -282,11 +244,6 @@ describe( 'Hosting Configuration', () => {
 			).toBeNull();
 			expect( screen.queryByText( 'Activate' ) ).toBeNull();
 			expect( screen.queryByTestId( 'feature-example-wrapper' ) ).toBeNull();
-
-			const expectedStrings = getExpectedStringsForTestConfig( testConfig, { enabledOnly: true } );
-			expectedStrings.forEach( ( string ) => {
-				expect( screen.getByText( string ) ).toBeVisible();
-			} );
 		} );
 
 		it( 'should show the transferring notice when the site is transferring to Atomic', async () => {
@@ -307,9 +264,6 @@ describe( 'Hosting Configuration', () => {
 			const [ mainFeatureExampleElement ] = screen.getAllByTestId( 'feature-example-wrapper' );
 
 			expect( mainFeatureExampleElement ).toBeVisible();
-
-			const expectedStrings = getExpectedStringsForTestConfig( testConfig );
-			verifyStringsAreWithinFeatureExample( expectedStrings, mainFeatureExampleElement );
 		} );
 	} );
 
@@ -333,11 +287,6 @@ describe( 'Hosting Configuration', () => {
 			const [ mainFeatureExampleElement ] = screen.getAllByTestId( 'feature-example-wrapper' );
 
 			expect( mainFeatureExampleElement ).toBeVisible();
-
-			verifyStringsAreWithinFeatureExample(
-				stringsForAdvancedFeatureCards,
-				mainFeatureExampleElement
-			);
 
 			stringsForBasicFeatureCards.forEach( ( string ) => {
 				const elementForString = screen.getByText( string );

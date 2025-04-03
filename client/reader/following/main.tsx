@@ -14,6 +14,7 @@ import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider
 import ReaderStream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import { selectSidebarRecentSite } from 'calypso/state/reader-ui/sidebar/actions';
 import Recent from '../recent';
 import { useSiteSubscriptions } from './use-site-subscriptions';
@@ -26,6 +27,7 @@ function FollowingStream( { ...props } ) {
 	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
 	const dispatch = useDispatch();
 	const currentUser = useSelector( getCurrentUser );
+	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
 
 	// Set the selected feed based on route param.
@@ -85,6 +87,10 @@ function FollowingStream( { ...props } ) {
 							useInert
 							onOpen={ () => {
 								focusEditor();
+								recordReaderTracksEvent( 'calypso_reader_editor_card_opened' );
+							} }
+							onClose={ () => {
+								recordReaderTracksEvent( 'calypso_reader_editor_card_closed' );
 							} }
 						>
 							<QuickPost />
