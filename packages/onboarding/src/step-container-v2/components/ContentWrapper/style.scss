@@ -1,13 +1,17 @@
 @import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .step-container-v2__content-wrapper {
 	width: 100%;
 	box-sizing: border-box;
 	flex: 1;
-	display: grid;
-	grid-template-columns: repeat( 12, 1fr );
-	row-gap: 3rem;
-	column-gap: 1rem;
+
+	@include break-small {
+		display: grid;
+		grid-template-columns: repeat( 12, 1fr );
+		row-gap: 3rem;
+		column-gap: 1rem;
+	}
 
 	&.padding {
 		padding: var( --step-container-v2-content-block-padding )
