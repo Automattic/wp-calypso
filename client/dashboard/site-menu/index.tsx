@@ -23,7 +23,7 @@ function MenuItem( { to, children }: { to: string; children: React.ReactNode } )
 	);
 }
 
-const SiteMenu = ( { siteId } ) => {
+const SiteMenu = ( { siteId }: { siteId: string } ) => {
 	return (
 		<HStack className="dashboard-main-menu" spacing={ 2 } justify="flex-start">
 			<MenuItem to={ `/sites/${ siteId }` }>{ __( 'Overview' ) }</MenuItem>

@@ -7,7 +7,7 @@ import { SITE_DATA, Site } from '../data';
 import type { View, Field } from '@wordpress/dataviews';
 
 // Helper function to get color based on performance score
-const getPerformanceColor = ( score ) => {
+const getPerformanceColor = ( score: number ) => {
 	if ( score >= 90 ) {
 		return '#4CAF50';
 	}

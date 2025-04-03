@@ -12,7 +12,7 @@ export default function SiteBackups() {
 
 	return (
 		<>
-			<SiteMenu siteId={ id } />
+			<SiteMenu siteId={ id as string } />
 			<div>
 				<h1>Backups</h1>
 				<p>This is the site backups page for { item.title }.</p>

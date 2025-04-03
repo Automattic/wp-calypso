@@ -12,7 +12,7 @@ export default function Site() {
 
 	return (
 		<>
-			<SiteMenu siteId={ id } />
+			<SiteMenu siteId={ id as string } />
 			<div>
 				<h1>{ item.title } </h1>
 			</div>
