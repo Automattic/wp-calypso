@@ -23,7 +23,6 @@ type SidebarNavigationItemProps = {
 	suffix?: 'CHEVRON' | React.ReactNode;
 	uid: string;
 	to?: string;
-	as?: 'button' | 'a';
 	onClick?: ( e: React.MouseEvent ) => void;
 	children: React.ReactNode;
 	icon?: React.ReactElement;
@@ -35,7 +34,6 @@ export function SidebarNavigationItem( {
 	suffix,
 	uid,
 	to = '',
-	as = 'button',
 	onClick,
 	children,
 	...props
@@ -66,7 +64,7 @@ export function SidebarNavigationItem( {
 			id={ uid }
 			onClick={ handleClick }
 			href={ to ? linkProps.href : undefined }
-			as={ as }
+			as={ onClick ? 'button' : 'a' }
 			{ ...props }
 		>
 			<HStack justify="flex-start">
