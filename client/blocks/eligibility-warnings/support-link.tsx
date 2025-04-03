@@ -1,5 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenter } from '@automattic/data-stores';
+import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
+import { clearHelpCenterZendeskConversationStarted } from '@automattic/odie-client/src/utils/storage-utils';
 import { Button } from '@wordpress/components';
 import {
 	useDispatch as useDataStoreDispatch,
@@ -31,13 +33,19 @@ const SupportLink = ( {
 	}, [] );
 	const { setShowHelpCenter, setIsMinimized, setNavigateToRoute } =
 		useDataStoreDispatch( HELP_CENTER_STORE );
+	const resetSupportInteraction = useResetSupportInteraction();
 
-	const handleShowHelpAssistant = () => {
+	const handleShowHelpAssistant = async () => {
 		onShowHelpAssistant();
 
+		setNavigateToRoute( '/odie' );
+		await resetSupportInteraction();
+		clearHelpCenterZendeskConversationStarted();
+		recordTracksEvent( 'calypso_inlinehelp_clear_conversation' );
+
 		if ( ! show ) {
-			setNavigateToRoute( '/odie' );
 			setShowHelpCenter( true );
+
 			recordTracksEvent( 'calypso_inlinehelp_show', {
 				force_site_id: true,
 				location: 'help-center',
