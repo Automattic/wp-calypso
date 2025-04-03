@@ -93,29 +93,43 @@ const siteSetupFlow: Flow = {
 		return steps;
 	},
 	getCustomInitialStep( { queryParams, steps } ) {
+		/*
+		 * To enable initial redirection, set the `intent` query param to `import`.
+		 * If `importPlatform` is also set and matches a known importer with a step in the flow, redirect to that step.
+		 * If `importPlatform` is not set, or not a supported importer, redirect to the import list step.
+		 */
 		const intent = queryParams.get( 'intent' );
 		const importPlatform = queryParams.get( 'importPlatform' );
 
-		if ( intent !== 'import' || ! importPlatform ) {
+		if ( intent !== 'import' ) {
 			return undefined;
 		}
 
+		const hasImportListStep = steps.includes( STEPS.IMPORT_LIST );
+
 		if ( ! importPlatform ) {
-			if ( steps.includes( STEPS.IMPORT_LIST ) ) {
+			if ( hasImportListStep ) {
 				return STEPS.IMPORT_LIST.slug;
 			}
 			return undefined;
 		}
 
-		const productImporters = getImporterEngines();
-		if ( ! productImporters.includes( importPlatform as ImporterPlatform ) ) {
-			return undefined;
-		}
-
 		const expectedStepSlug =
 			'importer' + importPlatform.charAt( 0 ).toUpperCase() + importPlatform.substring( 1 );
-		if ( steps.find( ( step ) => step.slug === expectedStepSlug ) ) {
+		const importerStep = steps.find( ( step ) => step.slug === expectedStepSlug );
+
+		// Special case for WordPress importer - it needs additional params
+		if (
+			importPlatform !== 'wordpress' &&
+			importerStep &&
+			getImporterEngines().includes( importPlatform as ImporterPlatform )
+		) {
 			return expectedStepSlug;
+		}
+
+		// If we don't support the importer, we should fall back on the import list step if we can.
+		if ( hasImportListStep ) {
+			return STEPS.IMPORT_LIST.slug;
 		}
 
 		return undefined;
