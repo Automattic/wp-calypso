@@ -26,7 +26,7 @@ function Sites() {
 			field: 'title',
 			direction: 'desc',
 		},
-		fields: [ 'visitors', 'performance', 'backups' ],
+		fields: [ 'visitors', 'performance', 'backups', 'protect' ],
 		titleField: 'title',
 		descriptionField: 'url',
 	} );
@@ -70,6 +70,15 @@ function Sites() {
 			id: 'backups',
 			label: __( 'Backups' ),
 			getValue: ( { item } ) => ( item.backups ? 'enabled' : 'disabled' ),
+			elements: [
+				{ value: 'enabled', label: 'Enabled' },
+				{ value: 'disabled', label: 'Disabled' },
+			],
+		},
+		{
+			id: 'protect',
+			label: __( 'Protect' ),
+			getValue: ( { item } ) => ( item.protect ? 'enabled' : 'disabled' ),
 			elements: [
 				{ value: 'enabled', label: 'Enabled' },
 				{ value: 'disabled', label: 'Disabled' },

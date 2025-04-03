@@ -6,6 +6,7 @@ export const SITE_DATA = [
 		visitors: 2547,
 		performance: 92,
 		backups: true,
+		protect: false,
 	},
 	{
 		id: '2',
@@ -14,6 +15,7 @@ export const SITE_DATA = [
 		visitors: 5324,
 		performance: 87,
 		backups: true,
+		protect: true,
 	},
 	{
 		id: '3',
@@ -22,6 +24,7 @@ export const SITE_DATA = [
 		visitors: 1867,
 		performance: 95,
 		backups: false,
+		protect: false,
 	},
 ];
 
@@ -32,4 +35,5 @@ export type Site = {
 	visitors: number;
 	performance: number;
 	backups: boolean;
+	protect: boolean;
 };
