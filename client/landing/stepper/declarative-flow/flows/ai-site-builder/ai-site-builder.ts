@@ -1,6 +1,7 @@
 import { Onboard } from '@automattic/data-stores';
 import { getAssemblerDesign } from '@automattic/design-picker';
 import { addPlanToCart, addProductsToCart, AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
+import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { resolveSelect, useDispatch as useWpDataDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
@@ -148,7 +149,7 @@ const aiSiteBuilder: FlowV2< typeof initialize > = {
 			case 'domains': {
 				if ( providedDependencies && providedDependencies.domainItem && siteSlugFromSiteData ) {
 					addProductsToCart( siteSlugFromSiteData, AI_SITE_BUILDER_FLOW, [
-						providedDependencies.domainItem,
+						providedDependencies.domainItem as MinimalRequestCartProduct,
 					] ).then( ( res ) => {
 						// eslint-disable-next-line no-console
 						console.log( 'ADD TO CART', res );
