@@ -222,16 +222,10 @@ function Profile() {
 	);
 }
 
-Profile.loader = ( async () => {
-	try {
-		const data = await wpcom.req.get( {
-			path: '/me?http_envelope=1',
-			apiNamespace: 'rest/v1.1',
-		} );
-		return data;
-	} catch ( error ) {
-		throw new Error( 'Failed to load profile data' );
-	}
-} ) satisfies LoaderFunction;
+Profile.loader = () =>
+	wpcom.req.get( {
+		path: '/me?http_envelope=1',
+		apiNamespace: 'rest/v1.1',
+	} ) satisfies LoaderFunction;
 
 export default Profile;
