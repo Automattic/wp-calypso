@@ -49,7 +49,6 @@ export { default as MobileHighlightCardListing } from './highlight-cards/mobile-
 export { default as ConfettiAnimation } from './confetti';
 export { default as ComponentSwapper } from './component-swapper';
 export { default as SubmenuPopover, useSubmenuPopoverProps } from './submenu-popover';
-export { default as PricingSlider } from './pricing-slider';
 export { default as Tooltip } from './tooltip';
 export { default as SegmentedControl } from './segmented-control';
 export { default as SimplifiedSegmentedControl } from './segmented-control/simplified';
@@ -57,9 +56,6 @@ export { default as PlanPrice } from './plan-price';
 export { default as ExternalLink } from './external-link';
 export * from './theme-type-badge';
 export { default as FlowQuestion } from './flow-question';
-
-// Types
-export type { RenderThumbFunction } from './pricing-slider/types';
 
 // Logos
 export { JetpackLogo } from './logos/jetpack-logo';
