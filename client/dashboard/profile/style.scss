@@ -1,0 +1,84 @@
+.profile {
+	max-width: 800px;
+	margin: 0 auto;
+	padding: 24px;
+
+	&__title {
+		margin-bottom: 8px;
+	}
+
+	&__learn-more {
+		margin-left: 8px;
+		text-decoration: none;
+		color: var(--color-accent);
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+
+	&__photo-section {
+		margin: 24px 0;
+	}
+
+	&__photo {
+		width: 80px;
+		height: 80px;
+		border-radius: 50%;
+		margin-right: 16px;
+	}
+
+	&__photo-info {
+		display: inline-block;
+		vertical-align: middle;
+	}
+
+	&__photo-description {
+		color: var(--color-text-subtle);
+		font-size: 14px;
+		margin-top: 4px;
+	}
+
+	&__form-row {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 16px;
+		margin-bottom: 16px;
+	}
+
+	&__developer-options {
+		margin-top: 24px;
+	}
+
+	&__save-button {
+		margin-top: 16px;
+	}
+
+	// WordPress components overrides
+	.components-card {
+		box-shadow: var(--shadow-card);
+	}
+
+	.components-card__body {
+		padding: 24px;
+	}
+
+	.components-text-control__label,
+	.components-textarea-control__label {
+		text-transform: uppercase;
+		font-size: 12px;
+		font-weight: 600;
+		color: var(--color-text-subtle);
+	}
+
+	.components-text-control__input,
+	.components-textarea-control__input {
+		border-color: var(--color-border);
+		border-radius: 4px;
+
+		&:focus {
+			border-color: var(--color-accent);
+			box-shadow: 0 0 0 1px var(--color-accent);
+		}
+	}
+} 
