@@ -35685,6 +35685,7 @@ __metadata:
     "@wordpress/icons": "npm:^10.20.0"
     "@wordpress/is-shallow-equal": "npm:^5.20.0"
     "@wordpress/keycodes": "npm:^4.20.0"
+    "@wordpress/prettier-config": "npm:^4.20.0"
     "@wordpress/primitives": "npm:^4.20.0"
     "@wordpress/rich-text": "npm:^7.20.0"
     "@wordpress/stylelint-config": "npm:^23.12.0"
