@@ -8,7 +8,8 @@ type Value = RangeControlProps[ 'value' ];
 
 export const ValidatedRangeControl = forwardRef<
 	HTMLInputElement,
-	RangeControlProps & ValidatedControlProps< Value >
+	Omit< RangeControlProps, '__next40pxDefaultSize' | '__nextHasNoMarginBottom' > &
+		ValidatedControlProps< Value >
 >( ( { required, onReportCustomValidity, onChange, ...restProps }, forwardedRef ) => {
 	const validityTargetRef = useRef< HTMLInputElement >( null );
 	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );

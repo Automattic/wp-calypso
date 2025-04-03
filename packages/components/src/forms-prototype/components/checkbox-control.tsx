@@ -8,7 +8,7 @@ type Value = CheckboxControlProps[ 'checked' ];
 
 export const ValidatedCheckboxControl = forwardRef<
 	HTMLInputElement,
-	CheckboxControlProps & ValidatedControlProps< Value >
+	Omit< CheckboxControlProps, '__nextHasNoMarginBottom' > & ValidatedControlProps< Value >
 >( ( { required, onReportCustomValidity, onChange, ...restProps }, forwardedRef ) => {
 	const validityTargetRef = useRef< HTMLDivElement >( null );
 	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );

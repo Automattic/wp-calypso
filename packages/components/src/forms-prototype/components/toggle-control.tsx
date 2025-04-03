@@ -10,7 +10,7 @@ type Value = ToggleControlProps[ 'checked' ];
 
 export const ValidatedToggleControl = forwardRef<
 	HTMLInputElement,
-	ToggleControlProps & ValidatedControlProps< Value >
+	Omit< ToggleControlProps, '__nextHasNoMarginBottom' > & ValidatedControlProps< Value >
 >( ( { required, onReportCustomValidity, onChange, ...restProps }, forwardedRef ) => {
 	const validityTargetRef = useRef< HTMLInputElement >( null );
 	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );

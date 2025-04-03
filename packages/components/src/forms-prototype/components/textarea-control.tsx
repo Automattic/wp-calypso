@@ -8,7 +8,7 @@ type Value = TextareaControlProps[ 'value' ];
 
 export const ValidatedTextareaControl = forwardRef<
 	HTMLTextAreaElement,
-	TextareaControlProps & ValidatedControlProps< Value >
+	Omit< TextareaControlProps, '__nextHasNoMarginBottom' > & ValidatedControlProps< Value >
 >( ( { required, onReportCustomValidity, onChange, ...restProps }, forwardedRef ) => {
 	const validityTargetRef = useRef< HTMLTextAreaElement >( null );
 	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );

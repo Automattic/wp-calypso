@@ -14,7 +14,8 @@ type Value = SelectControlProps[ 'value' ];
 
 export const ValidatedSelectControl = forwardRef<
 	HTMLSelectElement,
-	SelectControlProps & ValidatedControlProps< Value >
+	Omit< SelectControlProps, '__next40pxDefaultSize' | '__nextHasNoMarginBottom' > &
+		ValidatedControlProps< Value >
 >( ( { required, onReportCustomValidity, onChange, ...restProps }, forwardedRef ) => {
 	const validityTargetRef = useRef< HTMLSelectElement >( null );
 	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );

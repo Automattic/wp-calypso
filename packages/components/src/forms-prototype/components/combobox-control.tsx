@@ -8,7 +8,8 @@ type Value = ComboboxControlProps[ 'value' ];
 
 export const ValidatedComboboxControl = forwardRef<
 	HTMLInputElement,
-	ComboboxControlProps & ValidatedControlProps< Value >
+	Omit< ComboboxControlProps, '__next40pxDefaultSize' | '__nextHasNoMarginBottom' > &
+		ValidatedControlProps< Value >
 >( ( { required, onReportCustomValidity, onChange, ...restProps }, forwardedRef ) => {
 	const validityTargetRef = useRef< HTMLInputElement >( null );
 	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );

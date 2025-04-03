@@ -8,7 +8,7 @@ type Value = NumberControlProps[ 'value' ];
 
 export const ValidatedNumberControl = forwardRef<
 	HTMLInputElement,
-	NumberControlProps & ValidatedControlProps< Value >
+	Omit< NumberControlProps, '__next40pxDefaultSize' > & ValidatedControlProps< Value >
 >( ( { required, onReportCustomValidity, onChange, ...restProps }, forwardedRef ) => {
 	const validityTargetRef = useRef< HTMLInputElement >( null );
 	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );

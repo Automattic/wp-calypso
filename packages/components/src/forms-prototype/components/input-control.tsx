@@ -1,3 +1,4 @@
+// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 import { __experimentalInputControl as InputControl } from '@wordpress/components';
 import { useMergeRefs } from '@wordpress/compose';
 import React, { forwardRef, useRef } from 'react';
@@ -8,7 +9,7 @@ type Value = InputControlProps[ 'value' ];
 
 export const ValidatedInputControl = forwardRef<
 	HTMLInputElement,
-	InputControlProps & ValidatedControlProps< Value >
+	Omit< InputControlProps, '__next40pxDefaultSize' > & ValidatedControlProps< Value >
 >( ( { required, onReportCustomValidity, onChange, ...restProps }, forwardedRef ) => {
 	const validityTargetRef = useRef< HTMLInputElement >( null );
 	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );

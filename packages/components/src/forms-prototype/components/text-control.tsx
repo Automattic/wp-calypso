@@ -8,7 +8,8 @@ type Value = TextControlProps[ 'value' ];
 
 export const ValidatedTextControl = forwardRef<
 	HTMLInputElement,
-	TextControlProps & ValidatedControlProps< Value >
+	Omit< TextControlProps, '__next40pxDefaultSize' | '__nextHasNoMarginBottom' > &
+		ValidatedControlProps< Value >
 >( ( { required, onReportCustomValidity, onChange, ...restProps }, forwardedRef ) => {
 	const validityTargetRef = useRef< HTMLInputElement >( null );
 	const mergedRefs = useMergeRefs( [ forwardedRef, validityTargetRef ] );

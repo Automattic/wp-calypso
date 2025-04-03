@@ -7,7 +7,7 @@ type Value = CustomSelectControlProps[ 'value' ];
 
 export const ValidatedCustomSelectControl = forwardRef<
 	HTMLDivElement,
-	CustomSelectControlProps & ValidatedControlProps< Value >
+	Omit< CustomSelectControlProps, '__next40pxDefaultSize' > & ValidatedControlProps< Value >
 >( ( { required, onReportCustomValidity, onChange, ...restProps }, forwardedRef ) => {
 	const validityTargetRef = useRef< HTMLSelectElement >( null );
 	const valueRef = useRef< Value >( restProps.value );

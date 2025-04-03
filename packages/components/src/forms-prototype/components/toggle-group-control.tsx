@@ -1,3 +1,4 @@
+// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 import { __experimentalToggleGroupControl as ToggleGroupControl } from '@wordpress/components';
 import React, { forwardRef, useId, useRef } from 'react';
 import { ControlWithError } from '../control-with-error';
@@ -7,7 +8,8 @@ type Value = ToggleGroupControlProps[ 'value' ];
 
 export const ValidatedToggleGroupControl = forwardRef<
 	HTMLInputElement,
-	ToggleGroupControlProps & ValidatedControlProps< Value >
+	Omit< ToggleGroupControlProps, '__next40pxDefaultSize' | '__nextHasNoMarginBottom' > &
+		ValidatedControlProps< Value >
 >( ( { required, onReportCustomValidity, onChange, ...restProps }, forwardedRef ) => {
 	const validityTargetRef = useRef< HTMLInputElement >( null );
 	const valueRef = useRef< Value >( restProps.value );
