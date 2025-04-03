@@ -308,6 +308,7 @@
 		"readline-sync": "^1.4.10",
 		"recursive-copy": "^2.0.14",
 		"replace": "^1.1.5",
+		"resize-observer-polyfill": "^1.5.1",
 		"sass": "1.54.0",
 		"sass-loader": "^13.3.3",
 		"source-map": "^0.7.4",

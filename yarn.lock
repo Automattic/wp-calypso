@@ -35734,6 +35734,7 @@ __metadata:
     redux: "npm:^5.0.1"
     replace: "npm:^1.1.5"
     request: "npm:^2.88.2"
+    resize-observer-polyfill: "npm:^1.5.1"
     sass: "npm:1.54.0"
     sass-loader: "npm:^13.3.3"
     source-map: "npm:^0.7.4"
