@@ -43,7 +43,7 @@ export const ValidatedCustomSelectControl = forwardRef<
 					ref={ validityTargetRef }
 					required={ required }
 					tabIndex={ -1 }
-					value={ restProps.value ? 'hasvalue' : '' }
+					value={ restProps.value?.key ? 'hasvalue' : '' }
 					onChange={ () => {} }
 					onFocus={ ( e ) => {
 						e.target.previousElementSibling
