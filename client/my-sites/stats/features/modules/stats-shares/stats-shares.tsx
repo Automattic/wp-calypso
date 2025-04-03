@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { StatsCard } from '@automattic/components';
 import { share } from '@wordpress/icons';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
@@ -138,7 +137,7 @@ const StatShares: React.FC< StatSharesProps > = ( { siteId, className } ) => {
 			{ isEmptyStateV2 && ! isLoading && ! data?.length && (
 				// show empty state
 				<StatsCard
-					className={ clsx( 'stats-card--empty-variant', className ) }
+					className={ className }
 					title={ title }
 					isEmpty
 					emptyMessage={

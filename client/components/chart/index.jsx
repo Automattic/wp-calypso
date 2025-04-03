@@ -152,7 +152,7 @@ function Chart( {
 
 	const ChartYAxis = () => (
 		<div ref={ yAxisRef } className="chart__y-axis">
-			<div className="chart__y-axis-width-fix">{ numberFormat( 1e5 ) }</div>
+			<div className="chart__y-axis-width-spacer">{ numberFormat( 1e5 ) }</div>
 			<div className="chart__y-axis-label is-hundred">
 				{ yMax > 1 ? numberFormat( yMax ) : numberFormat( yMax, { decimals: 2 } ) }
 			</div>
