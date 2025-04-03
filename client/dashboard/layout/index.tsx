@@ -1,24 +1,31 @@
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Domains from '../domains';
 import Header from '../header';
+import Profile from '../profile';
 import Sites from '../sites';
 import './style.scss';
 
+// Create a client
+const queryClient = new QueryClient();
+
 function Layout() {
 	return (
-		<BrowserRouter basename="/v2">
-			<VStack className="dashboard-layout" spacing={ 0 }>
-				<Header />
-				<main style={ { flexGrow: 1, padding: '20px' } }>
-					<Routes>
-						<Route path="/sites" element={ <Sites /> } />
-						<Route path="/domains" element={ <Domains /> } />
-						<Route path="/" element={ <Navigate to="/sites" replace /> } />
-					</Routes>
-				</main>
-			</VStack>
-		</BrowserRouter>
+		<QueryClientProvider client={ queryClient }>
+			<BrowserRouter basename="/v2">
+				<div className="dashboard__layout">
+					<Header />
+					<main className="dashboard__content">
+						<Routes>
+							<Route path="/sites" element={ <Sites /> } />
+							<Route path="/domains" element={ <Domains /> } />
+							<Route path="/account/profile" element={ <Profile /> } />
+							<Route path="/" element={ <Navigate to="/sites" replace /> } />
+						</Routes>
+					</main>
+				</div>
+			</BrowserRouter>
+		</QueryClientProvider>
 	);
 }
 

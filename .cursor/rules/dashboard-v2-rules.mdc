@@ -1,0 +1,61 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: Rules for the new Dashboard V2 implementation
+globs: ["client/dashboard/**/*"]
+alwaysApply: false
+---
+# Dashboard V2 Rules
+
+Rules for developing the new dashboard implementation under `/client/dashboard`.
+
+## Core Principles
+
+### Technology Stack
+- Use `@wordpress/components` and design system
+- Minimize direct CSS usage
+- Use TypeScript for all new code
+- Use React Router or TanStack Router for routing
+- Use TanStack Query for data management
+- API queqyests to WPCOM are done with: wpcom.req.get( { path: `PATH }` apiNamespace: 'wpcom/v2' } ); Imported from import wpcom from 'calypso/lib/wp';
+
+### Architecture
+- Build as a separate section under `/v2` URL path
+- Avoid importing Calypso's components, CSS and state
+- Avoid Redux and calypso/state
+- Be explicit about dependencies
+
+### Reusable Elements
+- Use i18n from `@wordpress/i18n` package
+- Leverage existing:
+  - Feature flags
+  - Authentication
+  - REST API library
+
+### Quality Standards
+- Document architecture decisions in design docs
+- Document any temporary hacks in README with proposed solutions
+- Implement performance testing
+- Include e2e testing
+
+## References
+- Figma Prototype: [link to prototype]
+- Base Branch: try/dashboard-entrypoint
+
+## Dependencies
+### Required Packages
+- `@wordpress/components`
+- `@wordpress/i18n`
+- TanStack Query (optional)
+- React Router or TanStack Router
+
+### Dependencies to Avoid
+- Calypso components
+
+### Forbidden Dependencies
+- Calypso state management
+- Redux
+- Direct CSS (use component system instead)
