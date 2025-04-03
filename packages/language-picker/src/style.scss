@@ -17,11 +17,6 @@
 
 	.language-picker-component__title {
 		font-size: 2rem;
-		padding: 0 10px 12px;
-
-		@include break-small() {
-			padding: initial;
-		}
 	}
 
 	.components-custom-select-control {
