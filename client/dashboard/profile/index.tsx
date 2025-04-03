@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	Button,
 	Card,
@@ -9,7 +9,6 @@ import {
 	FlexBlock,
 	FlexItem,
 	Notice,
-	Spinner,
 	TextControl,
 	TextareaControl,
 	__experimentalHeading as Heading,
@@ -17,7 +16,9 @@ import {
 } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
+import { useLoaderData } from 'react-router-dom';
 import wpcom from 'calypso/lib/wp';
+import type { LoaderFunction } from 'react-router-dom';
 
 interface ProfileData {
 	username: string;
@@ -26,25 +27,6 @@ interface ProfileData {
 	siteAddress: string;
 	aboutMe: string;
 	isDeveloper: boolean;
-}
-
-async function fetchProfile(): Promise< ProfileData > {
-	try {
-		const data = await wpcom.req.get( {
-			path: '/me?http_envelope=1',
-			apiNamespace: 'rest/v1.1',
-		} );
-		return {
-			username: data.username || '',
-			displayName: data.name || '',
-			email: data.email || '',
-			siteAddress: data.url || '',
-			aboutMe: data.description || '',
-			isDeveloper: Boolean( data.meta?.is_developer ),
-		};
-	} catch ( error ) {
-		throw new Error( 'Failed to fetch profile data' );
-	}
 }
 
 async function updateProfile( data: ProfileData ): Promise< void > {
@@ -68,18 +50,10 @@ async function updateProfile( data: ProfileData ): Promise< void > {
 	}
 }
 
-export default function Profile() {
+function Profile() {
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
-
-	const {
-		data: profileData,
-		error: fetchError,
-		isLoading,
-	} = useQuery( {
-		queryKey: [ 'profile' ],
-		queryFn: fetchProfile,
-	} );
+	const queryProfileData = useLoaderData() as ProfileData;
 
 	const {
 		mutate: saveProfile,
@@ -103,10 +77,10 @@ export default function Profile() {
 
 	// Update form data when profile data is loaded
 	useEffect( () => {
-		if ( profileData ) {
-			setFormData( profileData );
+		if ( queryProfileData ) {
+			setFormData( queryProfileData );
 		}
-	}, [ profileData ] );
+	}, [ queryProfileData ] );
 
 	const handleChange = ( field: string ) => ( value: string | boolean ) => {
 		setFormData( ( prev ) => ( {
@@ -120,16 +94,8 @@ export default function Profile() {
 		saveProfile( formData );
 	};
 
-	if ( isLoading ) {
-		return (
-			<Flex justify="center" align="center" style={ { minHeight: '400px' } }>
-				<Spinner />
-			</Flex>
-		);
-	}
-
 	// Handle case where there's an error fetching data but we want to show the form anyway
-	const error = fetchError || saveError;
+	const error = saveError;
 	const errorMessage = error instanceof Error ? error.message : String( error );
 
 	return (
@@ -255,3 +221,17 @@ export default function Profile() {
 		</Flex>
 	);
 }
+
+Profile.loader = ( async () => {
+	try {
+		const data = await wpcom.req.get( {
+			path: '/me?http_envelope=1',
+			apiNamespace: 'rest/v1.1',
+		} );
+		return data;
+	} catch ( error ) {
+		throw new Error( 'Failed to load profile data' );
+	}
+} ) satisfies LoaderFunction;
+
+export default Profile;
