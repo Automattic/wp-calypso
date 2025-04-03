@@ -187,7 +187,7 @@
 		"react-dom": "^18.3.1",
 		"react-element-to-jsx-string": "^15.0.0",
 		"react-intersection-observer": "^9.4.3",
-		"react-live": "^4.1.1",
+		"react-live": "^4.1.8",
 		"react-markdown": "^8.0.7",
 		"react-modal": "^3.16.1",
 		"react-redux": "^9.2.0",

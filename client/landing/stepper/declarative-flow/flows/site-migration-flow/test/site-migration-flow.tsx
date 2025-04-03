@@ -6,18 +6,22 @@ import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selector
 import { waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
+import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
+import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
+import {
+	getAssertionConditionResult,
+	renderFlow,
+	runFlowNavigation,
+} from 'calypso/landing/stepper/declarative-flow/test/helpers';
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
+import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
-import { HOW_TO_MIGRATE_OPTIONS } from '../../constants';
-import { goToCheckout } from '../../utils/checkout';
-import siteMigrationFlow from '../flows/site-migration-flow/site-migration-flow';
-import { STEPS } from '../internals/steps';
-import { getAssertionConditionResult, renderFlow, runFlowNavigation } from './helpers';
+import siteMigrationFlow from '../site-migration-flow';
 // we need to save the original object for later to not affect tests from other files
 const originalLocation = window.location;
 
-jest.mock( '../../utils/checkout' );
+jest.mock( 'calypso/landing/stepper/utils/checkout' );
 jest.mock( '@automattic/data-stores/src/user/selectors' );
 jest.mock( 'calypso/landing/stepper/hooks/use-is-site-admin' );
 jest.mock( 'calypso/lib/guides/trigger-guides-for-step', () => ( {
