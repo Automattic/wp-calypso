@@ -60,9 +60,8 @@
 		"prop-types": "^15.7.2",
 		"react-modal": "^3.16.1",
 		"react-router-dom": "^6.23.1",
-		"react-slider": "^2.0.5",
-		"utility-types": "^3.10.0",
-		"uuid": "^9.0.1"
+		"react-slider": "^2.0.6",
+		"utility-types": "^3.10.0"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^10.20.0",

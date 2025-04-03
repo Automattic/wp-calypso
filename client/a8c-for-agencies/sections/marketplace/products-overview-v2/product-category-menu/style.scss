@@ -7,50 +7,6 @@
 .product-category-menu {
 	margin-block-start: 32px;
 
-	&::before {
-		display: none;
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 50px;
-		height: 100%;
-		background: linear-gradient( to left, transparent, rgba( $header-background-color, .8 ) );
-		z-index: 5;
-
-		@include break-medium() {
-			display: block;
-		}
-
-		@include break-xhuge() {
-			width: 15%;
-			height: 100%;
-			background: linear-gradient( to left, transparent, rgba( $header-background-color, .8 ), $header-background-color );
-		}
-	}
-
-	&::after {
-		display: none;
-		content: '';
-		position: absolute;
-		top: 0;
-		right: 0;
-		width: 50px;
-		height: 100%;
-		background: linear-gradient( to right, transparent, rgba( $header-background-color, .8 ) );
-		z-index: 5;
-
-		@include break-medium() {
-			display: block;
-		}
-
-		@include break-xhuge() {
-			width: 15%;
-			height: 100%;
-			background: linear-gradient( to right, transparent, rgba( $header-background-color, .8 ), $header-background-color );
-		}
-	}
-
 	.a4a-carousel__content {
 		z-index: 1;
 	}

@@ -7,6 +7,10 @@ $devdocs-max-width: 720px;
 	padding: 24px;
 }
 
+a:has(.devdocs__title) {
+	text-decoration: none;
+}
+
 .sidebar__separator {
 	margin: 20px 0;
 }

@@ -12,6 +12,11 @@
 		font-weight: 700;
 		color: var(--studio-gray-100);
 	}
+
+	a {
+		text-decoration: underline;
+		color: var(--color-text);
+	}
 }
 
 .jetpack-product-info__product-icon {

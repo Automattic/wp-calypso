@@ -413,13 +413,7 @@ export const SftpForm = ( { disabled }: SftpFormProps ) => {
 	}
 
 	return (
-		<ContainerComponent
-			className="sftp-card"
-			headingId="sftp-credentials"
-			title={
-				siteHasSshFeature ? translate( 'SFTP/SSH credentials' ) : translate( 'SFTP credentials' )
-			}
-		>
+		<ContainerComponent>
 			{ ! ( hasSftpFeatureAndIsLoading || hasSshFeatureAndIsLoading ) && (
 				<DescriptionComponent>
 					{ username

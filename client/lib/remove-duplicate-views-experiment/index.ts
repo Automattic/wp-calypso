@@ -1,7 +1,5 @@
 import { useEffect } from 'react';
-import { isE2ETest } from 'calypso/lib/e2e';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
-import { useDispatch, useSelector } from 'calypso/state';
+import { useDispatch } from 'calypso/state';
 import { getRemoveDuplicateViewsExperimentAssignment } from 'calypso/state/explat-experiments/actions';
 import {
 	getIsRemoveDuplicateViewsExperimentOverride,
@@ -15,7 +13,7 @@ import type { AppState } from 'calypso/types';
 export const REMOVE_DUPLICATE_VIEWS_EXPERIMENT = 'calypso_post_onboarding_holdout_160125';
 export const REMOVE_DUPLICATE_VIEWS_EXPERIMENT_OVERRIDE =
 	'remove_duplicate_views_experiment_assignment_160125';
-const REMOVE_DUPLICATE_VIEWS_EXPERIMENT_AA_TEST = 'calypso_post_onboarding_aa_150125';
+const TREATMENT_VARIATION = 'treatment';
 
 const loadRemoveDuplicateViewsExperimentOverride = async (
 	getState: () => AppState,
@@ -44,43 +42,18 @@ export const loadRemoveDuplicateViewsExperimentAssignment = async (
 	}
 
 	/**
-	 * REMOVE_DUPLICATE_VIEWS_EXPERIMENT_AA_TEST should be called exactly the same number of times as REMOVE_DUPLICATE_VIEWS_EXPERIMENT.
-	 * It helps ExPlat to know that the experiment is running as expected.
+	 * If the override is not set, we force the treatment group for everyone by default.
 	 */
-	const aaTestName = REMOVE_DUPLICATE_VIEWS_EXPERIMENT_AA_TEST;
-	loadExperimentAssignment( aaTestName );
-
-	const experimentAssignment = await loadExperimentAssignment( REMOVE_DUPLICATE_VIEWS_EXPERIMENT );
-	return experimentAssignment?.variationName;
+	return TREATMENT_VARIATION;
 };
 
 export const isRemoveDuplicateViewsExperimentEnabled = async (
 	getState: () => AppState,
 	dispatch: CalypsoDispatch
-) => {
-	const experimentAssignment = await loadRemoveDuplicateViewsExperimentAssignment(
-		getState,
-		dispatch
-	);
-	if ( experimentAssignment === 'treatment' ) {
-		return true;
-	}
-
-	/**
-	 * If we don't update the E2E tests, they will break when we start the "Remove duplicate views",
-	 * effectively blocking the Calypso deployment queue.
-	 */
-	if ( isE2ETest() ) {
-		return true;
-	}
-
-	return false;
-};
+) => await loadRemoveDuplicateViewsExperimentAssignment( getState, dispatch );
 
 export const useRemoveDuplicateViewsExperimentEnabled = (): boolean => {
-	const isEnabled = useSelector( ( state: AppState ) => {
-		return getIsRemoveDuplicateViewsExperimentEnabled( state );
-	} );
+	const isEnabled = getIsRemoveDuplicateViewsExperimentEnabled();
 	const dispatch = useDispatch();
 
 	useEffect( () => {
