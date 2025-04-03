@@ -77,14 +77,6 @@ function Sites() {
 		},
 	] as Field< Site >[];
 
-	// Default layouts
-	const defaultLayouts = {
-		table: {
-			mediaField: 'site',
-			titleField: 'site',
-		},
-	};
-
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( SITE_DATA, view, fields );
 
 	return (
@@ -95,7 +87,7 @@ function Sites() {
 				fields={ fields }
 				view={ view }
 				onChangeView={ setView }
-				defaultLayouts={ defaultLayouts }
+				defaultLayouts={ { table: {} } }
 				paginationInfo={ paginationInfo }
 			/>
 		</>
