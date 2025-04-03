@@ -175,7 +175,6 @@ const hosting: Flow = {
 		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
 		const query = useQuery();
 		const isEligible = useSelector( isUserEligibleForFreeHostingTrial );
-		// Support for FlowV1 and V2, remove useSteps once FlowV1 is removed.
 		const steps = this.useSteps();
 
 		const queryParams = Object.fromEntries( query );
