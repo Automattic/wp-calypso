@@ -4,6 +4,15 @@
 import { forwardRef } from '@wordpress/element';
 import clsx from 'clsx';
 
+/**
+ * A component that creates a navigable region in the interface.
+ * Provides keyboard navigation support and proper ARIA attributes for accessibility.
+ *
+ * @example
+ * <NavigableRegion as="nav" ariaLabel="Main navigation">
+ *   <Menu />
+ * </NavigableRegion>
+ */
 type NavigableRegionProps = {
 	children: React.ReactNode;
 	className?: string;
