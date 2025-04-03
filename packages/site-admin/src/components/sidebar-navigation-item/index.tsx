@@ -52,7 +52,8 @@ export function SidebarNavigationItem( {
 			navigate( 'forward', `[id="${ uid }"]` );
 		}
 	}
-	const linkProps = useLink( to );
+
+	const { href } = useLink( to );
 
 	return (
 		<Item
@@ -62,10 +63,10 @@ export function SidebarNavigationItem( {
 				className
 			) }
 			id={ uid }
-			onClick={ handleClick }
-			href={ to ? linkProps.href : undefined }
 			as={ onClick ? 'button' : 'a' }
 			{ ...props }
+			onClick={ handleClick }
+			href={ to ? href : undefined }
 		>
 			<HStack justify="flex-start">
 				{ icon && <Icon icon={ icon } size={ 24 } /> }
