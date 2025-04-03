@@ -23,7 +23,6 @@ import {
 } from '@automattic/design-picker';
 import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer, ONBOARDING_FLOW, isSiteSetupFlow, Step } from '@automattic/onboarding';
-import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -697,7 +696,6 @@ const UnifiedDesignPickerStep: StepType< {
 	}
 
 	const isUsingStepContainerV2 = shouldUseStepContainerV2( flow );
-	const isDesktopVersion = useViewportMatch( 'large', '>=' );
 
 	function getPrimaryActionButton() {
 		const action = getPrimaryActionButtonAction();
@@ -714,7 +712,7 @@ const UnifiedDesignPickerStep: StepType< {
 			);
 		}
 
-		return <Step.NextButton label={ text } onClick={ action } />;
+		return <Step.PrimaryButton onClick={ action }>{ text }</Step.PrimaryButton>;
 	}
 
 	useEffect( () => {
@@ -731,7 +729,7 @@ const UnifiedDesignPickerStep: StepType< {
 	const isLoading = isSiteLoading || isDesignsLoading;
 
 	if ( isLoading || isComingFromTheUpgradeScreen ) {
-		return <Loading />;
+		return isUsingStepContainerV2 ? <Step.Loading /> : <Loading />;
 	}
 
 	if ( selectedDesign && isPreviewingDesign ) {
@@ -861,37 +859,46 @@ const UnifiedDesignPickerStep: StepType< {
 			// TODO: Create a new wireframe for the design preview. It should be named "FixedColumnOnTheLeftLayout"
 			return (
 				<Step.FullWidthLayout
-					isMediumViewport={ isDesktopVersion }
 					className="step-container-v2--design-picker-preview"
-					topBar={
-						isDesktopVersion ? (
+					topBar={ ( { isLargeViewport } ) => {
+						if ( ! isLargeViewport ) {
+							return null;
+						}
+
+						return (
 							<Step.TopBar
-								backButton={
+								leftElement={
 									shouldHideActionButtons ? undefined : (
 										<Step.BackButton onClick={ handleBackClick } />
 									)
 								}
-								skipButton={
+								rightElement={
 									! isGoalsAtFrontExperiment ? undefined : (
-										<Step.SkipButton
-											onClick={ () => handleSubmit() }
-											label={ translate( 'Skip setup' ) }
-										/>
+										<Step.SkipButton onClick={ () => handleSubmit() }>
+											{ translate( 'Skip setup' ) }
+										</Step.SkipButton>
 									)
 								}
 							/>
-						) : undefined
-					}
-					stickyBottomBar={
-						<Step.StickyBottomBar
-							leftButton={ <Step.BackButton onClick={ handleBackClick } /> }
-							rightButton={ actionButtons }
-						>
-							<div className="step-container-v2--design-picker-preview__header-design-title">
-								{ headerDesignTitle }
-							</div>
-						</Step.StickyBottomBar>
-					}
+						);
+					} }
+					stickyBottomBar={ ( { isLargeViewport } ) => {
+						if ( isLargeViewport ) {
+							return null;
+						}
+
+						return (
+							<Step.StickyBottomBar
+								leftElement={ <Step.BackButton onClick={ handleBackClick } /> }
+								centerElement={
+									<div className="step-container-v2--design-picker-preview__header-design-title">
+										{ headerDesignTitle }
+									</div>
+								}
+								rightElement={ actionButtons }
+							/>
+						);
+					} }
 				>
 					{ stepContent }
 				</Step.FullWidthLayout>
@@ -919,7 +926,7 @@ const UnifiedDesignPickerStep: StepType< {
 		: translate( 'Pick a design' );
 
 	const subHeaderText = translate(
-		'One of these homepage options could be great to start with. You can always change later.'
+		'Choose a homepage design that works for you. You can always change it later.'
 	);
 
 	// Use this to prioritize themes in certain categories.
@@ -988,10 +995,12 @@ const UnifiedDesignPickerStep: StepType< {
 				className="step-container-v2--design-picker"
 				topBar={
 					<Step.TopBar
-						backButton={ backButton ? <Step.BackButton onClick={ backButton } /> : undefined }
-						skipButton={
+						leftElement={ backButton ? <Step.BackButton onClick={ backButton } /> : undefined }
+						rightElement={
 							hideSkip ? undefined : (
-								<Step.SkipButton onClick={ () => handleSubmit() } label={ skipLabelText } />
+								<Step.SkipButton onClick={ () => handleSubmit() }>
+									{ skipLabelText }
+								</Step.SkipButton>
 							)
 						}
 					/>

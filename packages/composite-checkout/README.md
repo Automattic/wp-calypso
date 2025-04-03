@@ -147,6 +147,7 @@ This component's props are:
 - `isCompleteCallback: () => boolean | Promise<boolean>`. Used to determine if a step is complete for purposes of validation. Note that this is not called for the last step!
 - `editButtonAriaLabel?: string`. Used to fill in the `aria-label` attribute for the "Edit" button if one exists.
 - `nextStepButtonAriaLabel?: string`. Used to fill in the `aria-label` attribute for the "Continue" button if one exists.
+- `canEditStep?: boolean`. If false, the step will never show an "Edit" button. Defaults to true.
 - `editButtonText?: string`. Used in place of "Edit" on the edit step button.
 - `nextStepButtonText?: string`. Used in place of "Continue" on the next step button.
 - `validatingButtonText?: string`. Used in place of "Please wait…" on the next step button when `isCompleteCallback` returns an unresolved Promise.
@@ -288,6 +289,10 @@ A React Hook that returns all the payment processor functions in a Record.
 
 A React Hook that will return the `onClick` function passed to each [payment method's submitButton component](#payment-methods). The hook requires a payment processor ID. Call the returned function with data for the payment processor and it will begin the transaction.
 
+### useMakeStepActive
+
+A React Hook that will return a function to set a step to be the active step. Only works within a step. The returned function looks like `( stepId: string ) => Promise< boolean >;`. Calling this function is similar to pressing the "Edit" button on the specified step. This will attempt to complete each step between the active step and the new step, if jumping forward, stopping on any step that is not complete.
+
 ### useSetStepComplete
 
 A React Hook that will return a function to set a step to "complete". Only works within a step but it does not have to be the targeted step. The returned function looks like `( stepId: string ) => Promise< boolean >;`. Calling this function is similar to pressing the "Continue" button on the specified step; it will call the `isCompleteCallback` prop of the step and only succeed if the callback succeeds. In addition, all previous incomplete steps will be marked as complete in the same way, and the process will fail and stop at the first step whose `isCompleteCallback` fails. The resolved Promise will return true if all the requested steps were completed and false if any of them failed.
@@ -315,7 +320,7 @@ A React Hook that returns an object with the following properties to be used by 
 
 ## Development
 
-In the root of the monorepo, run `yarn workspace @automattic/composite-checkout run storybook` which will start a local webserver that will display the component.
+In the root of the monorepo, run `yarn workspace @automattic/composite-checkout run storybook:start` which will start a local webserver that will display the component.
 
 To run the tests for this package, run `yarn run test-packages composite-checkout`.
 

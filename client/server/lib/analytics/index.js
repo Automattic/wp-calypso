@@ -1,5 +1,5 @@
+import crypto from 'crypto';
 import superagent from 'superagent';
-import { v4 as uuid } from 'uuid';
 const URL = require( 'url' );
 
 function getUserFromRequest( request ) {
@@ -35,7 +35,7 @@ function getUserFromRequest( request ) {
 	// We didn't get a full identity, create an anon ID
 	return {
 		_ut: 'anon',
-		_ui: uuid(),
+		_ui: crypto.randomUUID(),
 	};
 }
 

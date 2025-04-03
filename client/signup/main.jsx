@@ -47,7 +47,6 @@ import {
 } from 'calypso/lib/oauth2-clients';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
 import FlowProgressIndicator from 'calypso/signup/flow-progress-indicator';
-import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
 import SignupHeader from 'calypso/signup/signup-header';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import {
@@ -75,8 +74,6 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import flows from './config/flows';
 import { getStepComponent } from './config/step-components';
 import steps from './config/steps';
-import { addP2SignupClassName } from './controller';
-import { isP2Flow } from './is-flow';
 import ProcessingScreen from './processing-screen';
 import {
 	persistSignupDestination,
@@ -108,22 +105,6 @@ function dependenciesContainCartItem( dependencies ) {
 	);
 }
 
-function addLoadingScreenClassNamesToBody() {
-	if ( ! document ) {
-		return;
-	}
-
-	document.body.classList.add( 'has-loading-screen-signup' );
-}
-
-function removeLoadingScreenClassNamesFromBody() {
-	if ( ! document ) {
-		return;
-	}
-
-	document.body.classList.remove( 'has-loading-screen-signup' );
-}
-
 function showProgressIndicator( flowName ) {
 	const flow = flows.getFlow( flowName );
 	return ! flow.hideProgressIndicator;
@@ -153,7 +134,6 @@ class Signup extends Component {
 		shouldShowLoadingScreen: false,
 		resumingStep: undefined,
 		previousFlowName: null,
-		signupSiteName: null,
 	};
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
@@ -291,27 +271,11 @@ class Signup extends Component {
 			);
 		}
 
-		// Several steps in the P2 signup flow require a logged in user.
-		if ( isP2Flow( this.props.flowName ) && ! this.props.isLoggedIn && stepName !== 'user' ) {
-			debug( 'P2 signup: logging in user', this.props.signupDependencies );
-
-			// We want to be redirected to the next step.
-			const destinationStep = flows.getFlow( this.props.flowName, this.props.isLoggedIn )
-				.steps[ 1 ];
-			const stepUrl = getStepUrl(
-				this.props.flowName,
-				destinationStep,
-				undefined,
-				this.props.locale
-			);
-			this.handleLogin( this.props.signupDependencies, stepUrl, false );
-			this.handleDestination( this.props.signupDependencies, stepUrl, this.props.flowName );
-		}
-
-		const { domainItem: prevDomainItem } = prevProps.signupDependencies;
-
 		// Clear domains dependencies when the domains data is updated.
-		if ( stepName === 'domains' && signupDependencies.domainItem !== prevDomainItem ) {
+		if (
+			stepName === 'domains' &&
+			signupDependencies.domainItem !== prevProps.signupDependencies.domainItem
+		) {
 			clearDomainsDependencies();
 		}
 	}
@@ -461,28 +425,10 @@ class Signup extends Component {
 			);
 
 			this.setState( { shouldShowLoadingScreen: true } );
-
-			if ( isP2Flow( this.props.flowName ) ) {
-				// Record submitted site name for displaying it in the loading screen
-				if ( ! this.state.signupSiteName ) {
-					this.setState( {
-						signupSiteName: this.props.progress?.[ 'p2-site' ]?.form?.siteTitle?.value || '',
-					} );
-				}
-
-				addLoadingScreenClassNamesToBody();
-
-				// We have to add the P2 signup class name as well because it gets removed in the 'users' step.
-				addP2SignupClassName();
-			}
 		}
 
 		if ( hasInvalidSteps ) {
 			this.setState( { shouldShowLoadingScreen: false } );
-
-			if ( isP2Flow( this.props.flowName ) ) {
-				removeLoadingScreenClassNamesFromBody();
-			}
 		}
 	};
 
@@ -796,10 +742,6 @@ class Signup extends Component {
 	}
 
 	renderProcessingScreen() {
-		if ( isP2Flow( this.props.flowName ) ) {
-			return <P2SignupProcessingScreen signupSiteName={ this.state.signupSiteName } />;
-		}
-
 		const domainItem = get( this.props, 'signupDependencies.domainItem', {} );
 		const hasPaidDomain = isDomainRegistration( domainItem );
 		const destination = this.signupFlowController.getDestination();
@@ -917,7 +859,7 @@ class Signup extends Component {
 			return this.props.siteId && waitToRenderReturnValue;
 		}
 
-		const showPageHeader = ! isP2Flow( this.props.flowName ) && ! this.props.isGravatar;
+		const showPageHeader = ! this.props.isGravatar;
 
 		return (
 			<>

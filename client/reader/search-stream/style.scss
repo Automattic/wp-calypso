@@ -3,21 +3,27 @@
 @import "@wordpress/base-styles/variables";
 
 // .has-header-section only applies for logged out views
-.layout.has-header-section.is-section-reader .search-stream__fixed-area .navigation-header h1 {
-	@extend .wp-brand-font;
-	font-weight: 600;
-	font-size: 2.25rem;
-	line-height: 48px;
-	margin-bottom: 4px;
-}
+.layout.has-header-section {
+	.search-stream__fixed-area {
+		position: static;
+		padding-top: 0;
+		margin-top: 0;
+	}
 
-.layout.has-header-section.is-section-reader {
+	.is-section-reader {
+		.search-stream__fixed-area .navigation-header h1 {
+			@extend .wp-brand-font;
+			font-weight: 600;
+			font-size: 2.25rem;
+			line-height: 48px;
+			margin-bottom: 4px;
+		}
 
-	.layout__content {
-		background: var(--studio-white);
+		.layout__content {
+			background: var(--studio-white);
+		}
 	}
 }
-
 
 .is-reader-page .main.search-stream {
 	max-width: 905px;
@@ -63,17 +69,12 @@
 	top: 0;
 	z-index: 20;
 	-webkit-font-smoothing: subpixel-antialiased; // Fixes fixed elements text aliasing in Safari
-	padding: 0 1px;
-    margin: 0 -1px;
-	@media only screen and (min-width: 601px) and (max-width: 660px) {
-		width: calc(100% - 96px);
-	}
-}
+	padding: 24px 0 0;
+	margin: 0 -1px;
 
-.layout.has-header-section .search-stream__fixed-area {
-	position: static;
-	padding-top: 0;
-	margin-top: 0;
+	.search__input-fade::before {
+		border-radius: 4px;
+	}
 }
 
 .search-stream__fixed-area .section-nav-tabs.is-dropdown {

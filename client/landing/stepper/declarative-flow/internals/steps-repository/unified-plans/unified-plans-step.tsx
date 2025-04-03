@@ -3,7 +3,7 @@ import config from '@automattic/calypso-config';
 import { UrlFriendlyTermType } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { FREE_THEME } from '@automattic/design-picker';
-import { isTailoredSignupFlow, ONBOARDING_FLOW, StepContainer } from '@automattic/onboarding';
+import { isTailoredSignupFlow, ONBOARDING_FLOW, Step, StepContainer } from '@automattic/onboarding';
 import { PlansIntent } from '@automattic/plans-grid-next';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { isDesktop as isDesktopViewport, subscribeIsDesktop } from '@automattic/viewport';
@@ -354,7 +354,7 @@ function UnifiedPlansStep( {
 			return headerText;
 		}
 
-		return translate( 'Choose your flavor of WordPress' );
+		return translate( 'There’s a plan for you' );
 	};
 
 	const getSubheaderText = () => {
@@ -489,17 +489,26 @@ function UnifiedPlansStep( {
 	);
 
 	if ( useStepContainerV2 && wrapperProps ) {
+		const goBack = wrapperProps.hideBack ? undefined : wrapperProps.goBack;
+
 		return (
 			<>
 				<MarketingMessage path="signup/plans" />
-				<AsyncLoad
-					require="./step-container-v2-plans"
-					headerText={ getHeaderText() }
-					subHeaderText={ fallbackSubHeaderText }
-					children={ stepContent }
-					goBack={ wrapperProps.hideBack ? undefined : wrapperProps.goBack }
-					backLabelText={ backLabelText }
-				/>
+				<Step.WideLayout
+					className="step-container-v2--plans"
+					topBar={
+						<Step.TopBar
+							leftElement={
+								goBack ? (
+									<Step.BackButton onClick={ goBack }>{ backLabelText }</Step.BackButton>
+								) : undefined
+							}
+						/>
+					}
+					heading={ <Step.Heading text={ getHeaderText() } subText={ fallbackSubHeaderText } /> }
+				>
+					{ stepContent }
+				</Step.WideLayout>
 			</>
 		);
 	}

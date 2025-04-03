@@ -323,6 +323,10 @@ export class JetpackAuthorize extends Component {
 				this.isSso()
 			);
 			this.externalRedirectOnce( redirectAfterAuth );
+		} else if ( this.isFromJetpackOnboarding() ) {
+			debug( `Redirecting to My Jetpack page with 'from' url query arg: ${ redirectAfterAuth }` );
+			// Adding the `&from=jetpack-onboarding` query arg here to the url so Jetpack can know the user is coming directly from the Jetpack onboarding flow.
+			this.externalRedirectOnce( addQueryArgs( { from }, redirectAfterAuth ) );
 		} else if ( this.isFromMyJetpackConnectAfterCheckout() ) {
 			debug( `Redirecting to Calypso product license activation page: ${ redirectAfterAuth }` );
 			navigate(
@@ -496,6 +500,11 @@ export class JetpackAuthorize extends Component {
 	isFromMyJetpackConnectAfterCheckout( props = this.props ) {
 		const { from } = props.authQuery;
 		return startsWith( from, 'connect-after-checkout' );
+	}
+
+	isFromJetpackOnboarding( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'jetpack-onboarding' );
 	}
 
 	getCompanyName() {

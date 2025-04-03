@@ -10,7 +10,6 @@
 	background: var(--color-surface);
 	border: 1px solid var(--color-border-subtle);
 	border-top: 0;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 15px;
 	white-space: pre-wrap;
 	cursor: pointer;
@@ -29,7 +28,6 @@
 }
 
 .suggestions__category-heading {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 10px;
 	font-weight: 600;
 	text-transform: uppercase;
@@ -40,7 +38,6 @@
 
 
 .suggestions__title {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 10px;
 	color: var(--studio-gray-40);
 	background-color: #fff;

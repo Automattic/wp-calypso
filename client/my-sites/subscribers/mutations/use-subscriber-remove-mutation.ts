@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { DEFAULT_PER_PAGE } from '../constants';
@@ -12,6 +13,22 @@ import type { SubscriberEndpointResponse, Subscriber, SubscriberQueryParams } fr
 type ApiResponseError = {
 	error: string;
 	message: string;
+};
+
+const useNewHelper = config.isEnabled( 'subscribers-helper-library' );
+
+const getEmailSubscriptionId = ( subscriber: Subscriber ): number => {
+	if ( useNewHelper ) {
+		return subscriber.email_subscription_id || 0;
+	}
+	return subscriber.subscription_id || 0;
+};
+
+const getWpcomSubscriptionId = ( subscriber: Subscriber ): number => {
+	if ( useNewHelper ) {
+		return subscriber.wpcom_subscription_id || 0;
+	}
+	return 0;
 };
 
 const useSubscriberRemoveMutation = (
@@ -68,27 +85,27 @@ const useSubscriberRemoveMutation = (
 
 				let wasRemoved = false;
 
-				// Remove the subscriber from the followers and email followers because they may be both of them.
-				if ( subscriber.user_id ) {
+				// Remove the subscriber from the followers if they have a numeric user_id
+				const numericUserId = Number( subscriber.user_id );
+				if ( ! isNaN( numericUserId ) ) {
 					try {
-						await wpcom.req.post( `/sites/${ siteId }/followers/${ subscriber.user_id }/delete` );
+						await wpcom.req.post( `/sites/${ siteId }/followers/${ numericUserId }/delete` );
 						wasRemoved = true;
 					} catch ( e ) {
-						// Only throw if subscription_id is empty.
-						if (
-							( e as ApiResponseError )?.error === 'not_found' &&
-							! subscriber.subscription_id
-						) {
+						// Only throw if they don't have an email subscription ID to try next
+						const emailSubscriptionId = getEmailSubscriptionId( subscriber );
+						if ( ( e as ApiResponseError )?.error === 'not_found' && ! emailSubscriptionId ) {
 							throw new Error( ( e as ApiResponseError )?.message );
 						}
 					}
 				}
 
-				// Always try to remove as email follower if they have a subscription_id.
-				if ( subscriber.subscription_id ) {
+				// Try to remove as email follower if they have an email subscription ID
+				const emailSubscriptionId = getEmailSubscriptionId( subscriber );
+				if ( emailSubscriptionId ) {
 					try {
 						await wpcom.req.post(
-							`/sites/${ siteId }/email-followers/${ subscriber.subscription_id }/delete`
+							`/sites/${ siteId }/email-followers/${ emailSubscriptionId }/delete`
 						);
 						wasRemoved = true;
 					} catch ( e ) {
@@ -138,9 +155,17 @@ const useSubscriberRemoveMutation = (
 				const updatedData = {
 					...previousData,
 					subscribers: previousData.subscribers.filter( ( s ) => {
-						return ! subscribers.some(
-							( subscriber ) => s.subscription_id === subscriber.subscription_id
-						);
+						return ! subscribers.some( ( subscriber ) => {
+							// Match on either wpcom or email subscription ID
+							const sEmailId = getEmailSubscriptionId( s );
+							const subscriberEmailId = getEmailSubscriptionId( subscriber );
+							const sWpcomId = getWpcomSubscriptionId( s );
+							const subscriberWpcomId = getWpcomSubscriptionId( subscriber );
+							return (
+								( sEmailId && sEmailId === subscriberEmailId ) ||
+								( sWpcomId && sWpcomId === subscriberWpcomId )
+							);
+						} );
 					} ),
 					total: previousData.total - subscribers.length,
 					pages: Math.ceil( ( previousData.total - subscribers.length ) / previousData.per_page ),
@@ -179,7 +204,7 @@ const useSubscriberRemoveMutation = (
 				for ( const subscriber of subscribers ) {
 					const detailsCacheKey = getSubscriberDetailsCacheKey(
 						siteId,
-						subscriber.subscription_id,
+						getEmailSubscriptionId( subscriber ),
 						subscriber.user_id,
 						getSubscriberDetailsType( subscriber.user_id )
 					);
@@ -208,7 +233,7 @@ const useSubscriberRemoveMutation = (
 			if ( context?.previousDetailsData ) {
 				const detailsCacheKey = getSubscriberDetailsCacheKey(
 					siteId,
-					context.previousDetailsData.subscription_id,
+					getEmailSubscriptionId( context.previousDetailsData ),
 					context.previousDetailsData.user_id,
 					getSubscriberDetailsType( context.previousDetailsData.user_id )
 				);
@@ -222,7 +247,7 @@ const useSubscriberRemoveMutation = (
 			for ( const subscriber of subscribers ) {
 				recordSubscriberRemoved( {
 					site_id: siteId,
-					subscription_id: subscriber.subscription_id,
+					subscription_id: getEmailSubscriptionId( subscriber ),
 					user_id: subscriber.user_id,
 				} );
 			}
@@ -239,7 +264,7 @@ const useSubscriberRemoveMutation = (
 				for ( const subscriber of subscribers ) {
 					const detailsCacheKey = getSubscriberDetailsCacheKey(
 						siteId,
-						subscriber.subscription_id,
+						getEmailSubscriptionId( subscriber ),
 						subscriber.user_id,
 						getSubscriberDetailsType( subscriber.user_id )
 					);

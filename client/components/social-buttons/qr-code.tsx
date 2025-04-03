@@ -10,6 +10,9 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 
+import '@automattic/components/styles/wp-button-override.scss';
+import './style.scss';
+
 type QrCodeLoginButtonProps = {
 	loginUrl: string;
 };
@@ -42,11 +45,15 @@ const QrCodeLoginButton = ( { loginUrl }: QrCodeLoginButtonProps ) => {
 
 	return (
 		<Button
-			className={ clsx( 'social-buttons__button button', { disabled: isDisabled } ) }
+			className={ clsx( 'a8c-components-wp-button social-buttons__button', {
+				disabled: isDisabled,
+			} ) }
 			href={ loginUrl }
 			onClick={ handleClick }
 			data-e2e-link="magic-login-link"
 			key="lost-password-link"
+			variant="secondary"
+			__next40pxDefaultSize
 		>
 			<JetpackLogo monochrome={ isDisabled } size={ 20 } className="social-icons" />
 			<span className="social-buttons__service-name">

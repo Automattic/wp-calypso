@@ -4,7 +4,7 @@ import { WordPressLogo, JetpackLogo } from '@automattic/components';
 import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
 import { download, reusableBlock, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { numberFormat, useTranslate } from 'i18n-calypso';
 // TODO: This will need to be updated to use whatever image we decide on.
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -59,7 +59,7 @@ export const Content = () => {
 	const hasEnTranslation = useHasEnTranslation();
 	return (
 		<>
-			<Column heading={ translate( 'Add a new site' ) }>
+			<Column heading={ translate( 'Add new site' ) }>
 				<MenuItem
 					icon={ <WordPressLogo /> }
 					heading={ translate( 'WordPress.com' ) }
@@ -81,10 +81,10 @@ export const Content = () => {
 					} }
 				/>
 			</Column>
-			<Column heading={ translate( 'Migrate & Import' ) }>
+			<Column heading={ translate( 'Migrate and Import' ) }>
 				<MenuItem
 					icon={ <Icon icon={ reusableBlock } size={ 18 } /> }
-					heading="Migrate"
+					heading={ translate( 'Migrate' ) }
 					description={ preventWidows(
 						hasEnTranslation( 'Bring your entire WordPress site to WordPress.com.' )
 							? translate( 'Bring your entire WordPress site to WordPress.com.' )
@@ -96,7 +96,7 @@ export const Content = () => {
 				/>
 				<MenuItem
 					icon={ <Icon icon={ download } size={ 18 } /> }
-					heading="Import"
+					heading={ translate( 'Import' ) }
 					description={ preventWidows(
 						hasEnTranslation( 'Use a backup to only import content from other platforms.' )
 							? translate( 'Use a backup to only import content from other platforms.' )
@@ -111,10 +111,25 @@ export const Content = () => {
 				<MenuItem
 					isBanner
 					icon={ <img src={ devSiteBanner } alt="Get a Free Domain and Up to 55% off" /> }
-					heading={ translate( 'Get a Free Domain and Up to 55% off' ) }
+					heading={ translate( 'Get a Free Domain and Up to %(percentage)s off', {
+						args: {
+							percentage: numberFormat( 0.55, {
+								numberFormatOptions: { style: 'percent' },
+							} ),
+							comment: 'percentage like 55% off',
+						},
+					} ) }
 					description={ preventWidows(
 						translate(
-							'Save up to 55% on annual plans and get a free custom domain for a year. Your next site is just a step away.'
+							'Save up to %(percentage)s on annual plans and get a free custom domain for a year. Your next site is just a step away.',
+							{
+								args: {
+									percentage: numberFormat( 0.55, {
+										numberFormatOptions: { style: 'percent' },
+									} ),
+									comment: 'percentage like 55% off',
+								},
+							}
 						)
 					) }
 					buttonProps={ {

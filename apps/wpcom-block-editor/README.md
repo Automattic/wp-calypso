@@ -155,22 +155,6 @@ The block editor integration provides features for the following combination of 
     <td>✅</td>
     <td>✅</td>
   </tr>
-  <tr>
-    <td rowspan="2">
-      <a href="./src/default/features/press-this.js"><code>press-this</code></a>:
-     Handles the "Press This" bookmarklet. See <a href="https://wordpress.com/support/press-this/">Press This support page</a>
-    </td>
-    <td>WP Admin</td>
-    <td>✅</td>
-    <td>✅</td>
-    <td>✅</td>
-  </tr>
-  <tr>
-    <td>Calypso</td>
-    <td>✅</td>
-    <td>✅</td>
-    <td>✅</td>
-  </tr>
 </table>
 
 ## Structure

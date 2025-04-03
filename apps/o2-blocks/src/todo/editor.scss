@@ -91,7 +91,6 @@ $color-add-button-icon: #7e8993; // dark-gray-200
 		display: none;
 
 		.components-button {
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 13px !important; // yep, I'm a monster.
 			color: $color-add-button-text;
 			border: 1px solid $color-add-button-border;

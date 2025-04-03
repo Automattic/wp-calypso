@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { FormLabel } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
@@ -24,13 +23,9 @@ export const SiteAddressField: React.FC< CredentialsFormFieldProps > = ( { contr
 		? translate( 'Enter your WordPress site address' )
 		: translate( 'Enter your WordPress site address.' );
 
-	const labelText = isEnabled( 'automated-migration/application-password' )
-		? translate( 'Current WordPress site address' )
-		: translate( 'Current site address' );
-
 	return (
 		<div className="site-migration-credentials__form-field">
-			<FormLabel htmlFor="from_url">{ labelText }</FormLabel>
+			<FormLabel htmlFor="from_url">{ translate( 'Current WordPress site address' ) }</FormLabel>
 			<Controller
 				control={ control }
 				name="from_url"

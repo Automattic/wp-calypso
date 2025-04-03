@@ -64,16 +64,22 @@ button {
 	}
 }
 
+.step-route:has(.step-container-v2) {
+	.signup-header {
+		display: none;
+	}
+}
+
 /**
  * Site Setup
  */
 .new-hosted-site,
 .site-setup:not(:has(.step-container-v2)),
-.onboarding.goals,
-.onboarding.design-setup,
+.onboarding.goals:not(:has(.step-container-v2)),
+.onboarding.design-setup:not(:has(.step-container-v2)),
 .onboarding.design-choices:not(:has(.step-container-v2)),
-.onboarding.difm-starting-point,
-.site-migration,
+.onboarding.difm-starting-point:not(:has(.step-container-v2)),
+.site-migration:not(:has(.step-container-v2)),
 .migration,
 .plugin-bundle,
 .newsletter-setup,
@@ -98,8 +104,9 @@ button {
 .hundred-year-domain,
 .entrepreneur,
 .generate-content,
-.processing,
-.create-site {
+.playground:not(:has(.step-container-v2)),
+.processing:not(:has(.step-container-v2)),
+.create-site:not(:has(.step-container-v2)) {
 	box-sizing: border-box;
 
 	.wpcom-loading__boot {
@@ -404,9 +411,5 @@ button {
 
 	.step-container.site-picker .step-container__content {
 		max-width: 100%;
-
-		svg {
-			fill: none;
-		}
 	}
 }

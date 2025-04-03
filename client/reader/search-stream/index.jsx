@@ -45,6 +45,11 @@ class SearchStream extends React.Component {
 	static propTypes = {
 		query: PropTypes.string,
 		streamKey: PropTypes.string,
+		disableInfiniteScroll: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		disableInfiniteScroll: false,
 	};
 
 	state = {
@@ -165,12 +170,12 @@ class SearchStream extends React.Component {
 		return (
 			<div>
 				<DocumentHead title={ documentTitle } />
+				<ReaderBackButton />
+				<NavigationHeader
+					title={ translate( 'Search' ) }
+					subtitle={ translate( 'Search for specific topics, authors, or blogs.' ) }
+				/>
 				<div className="search-stream__fixed-area" ref={ this.handleFixedAreaMounted }>
-					<ReaderBackButton />
-					<NavigationHeader
-						title={ translate( 'Search' ) }
-						subtitle={ translate( 'Search for specific topics, authors, or blogs.' ) }
-					/>
 					<CompactCard className="search-stream__input-card">
 						<SearchInput
 							onSearch={ this.updateQuery }
@@ -225,6 +230,7 @@ class SearchStream extends React.Component {
 									query={ query }
 									sort={ pickSort( sortOrder ) }
 									onReceiveSearchResults={ this.setSearchFeeds }
+									disableInfiniteScroll={ this.props.disableInfiniteScroll }
 								/>
 							) }
 							{ ! query && (
@@ -246,6 +252,7 @@ class SearchStream extends React.Component {
 									query={ query }
 									sort={ pickSort( sortOrder ) }
 									onReceiveSearchResults={ this.setSearchFeeds }
+									disableInfiniteScroll={ this.props.disableInfiniteScroll }
 								/>
 							) ) || (
 								<ReaderPopularSitesSidebar

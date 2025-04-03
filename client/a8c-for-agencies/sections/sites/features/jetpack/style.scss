@@ -24,7 +24,7 @@
 	}
 
 	.dataviews-wrapper ul.dataviews-view-list li:has(.is-site-selected) .dataviews-view-list__item-wrapper {
-		background-color: rgba(var(--wp-admin-theme-color--rgb), 0.04);
+		background-color: color-mix(in srgb, var(--wp-admin-theme-color) 4%, transparent);
 	}
 
 	.dataviews-view-list li.is-selected.is-selected + li {

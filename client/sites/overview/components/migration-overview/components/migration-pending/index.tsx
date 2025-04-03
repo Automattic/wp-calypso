@@ -1,17 +1,25 @@
 import { LoadingPlaceholder } from '@automattic/components';
-import { Button } from '@wordpress/components';
+import { Button, ClipboardButton } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import ConfirmModal from 'calypso/components/confirm-modal';
 import { HostingHeroButton } from 'calypso/components/hosting-hero';
 import Notice from 'calypso/components/notice';
+import { useSiteMigrationKey } from 'calypso/landing/stepper/hooks/use-site-migration-key';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { addQueryArgs } from 'calypso/lib/url';
 import { getMigrationType } from 'calypso/sites-dashboard/utils';
+import { getSiteOption } from 'calypso/state/sites/selectors';
 import Cards from '../cards';
 import { Container, Header } from '../layout';
 import useCancelMigration from './use-cancel-migration';
 import type { SiteDetails } from '@automattic/data-stores';
 
-const getContinueMigrationUrl = ( site: SiteDetails ): string | null => {
+const getContinueMigrationUrl = (
+	site: SiteDetails,
+	migrationSourceSiteDomain?: string
+): string | null => {
 	const migrationType = getMigrationType( site );
 
 	const baseQueryArgs = {
@@ -21,6 +29,15 @@ const getContinueMigrationUrl = ( site: SiteDetails ): string | null => {
 	};
 
 	if ( migrationType === 'diy' ) {
+		if ( migrationSourceSiteDomain ) {
+			return addQueryArgs(
+				{
+					page: 'wpcom-migration',
+				},
+				migrationSourceSiteDomain + '/wp-admin/admin.php'
+			);
+		}
+
 		return addQueryArgs(
 			baseQueryArgs,
 			'/setup/hosted-site-migration/site-migration-instructions'
@@ -33,16 +50,50 @@ const getContinueMigrationUrl = ( site: SiteDetails ): string | null => {
 export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 	const translate = useTranslate();
 	const migrationType = getMigrationType( site );
-	const continueMigrationUrl = getContinueMigrationUrl( site );
+	const migrationSourceSiteDomain = useSelector( ( state ) =>
+		getSiteOption( state, site.ID, 'migration_source_site_domain' )
+	);
+	const continueMigrationUrl = getContinueMigrationUrl( site, migrationSourceSiteDomain as string );
+	const [ migrationKeyCopied, setMigrationKeyCopied ] = useState( false );
+	const [ showMigrationKeyCopiedNotice, setShowMigrationKeyCopiedNotice ] = useState( false );
+
+	// Fetch the migration key.
+	const { data: { migrationKey } = {}, status: migrationKeyStatus } = useSiteMigrationKey(
+		site.ID,
+		{
+			enabled: true,
+			retry: 5,
+		}
+	);
+
+	useEffect( () => {
+		if ( ! migrationKeyCopied ) {
+			return;
+		}
+
+		const timerId = setTimeout( () => {
+			setMigrationKeyCopied( () => false );
+		}, 3000 );
+
+		return () => clearTimeout( timerId );
+	}, [ migrationKeyCopied ] );
+
+	useEffect( () => {
+		if ( migrationKeyStatus === 'error' ) {
+			recordTracksEvent( 'calypso_migration_hosting_overview_key_copy_error', {
+				migration_key_status: migrationKeyStatus,
+			} );
+		}
+	}, [ migrationKeyStatus ] );
 
 	const title = translate( 'Your WordPress site is ready to be migrated' );
 	const subTitle =
 		'diy' === migrationType
 			? translate(
-					'Complete your migration in the {{strong}}Migrate to WordPress.com{{/strong}} plugin and get ready for unmatched WordPress hosting.',
+					'Get ready for unmatched WordPress hosting. Use your migration key to complete your migration in the {{em}}Migrate to WordPress.com{{/em}} plugin.',
 					{
 						components: {
-							strong: <strong />,
+							em: <em />,
 						},
 					}
 			  )
@@ -68,6 +119,12 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 		);
 	}
 
+	const copyMigrationKey = () => {
+		setMigrationKeyCopied( true );
+		setShowMigrationKeyCopiedNotice( true );
+		recordTracksEvent( 'calypso_migration_hosting_overview_key_copy_click' );
+	};
+
 	return (
 		<Container>
 			<ConfirmModal
@@ -90,14 +147,42 @@ export const MigrationPending = ( { site }: { site: SiteDetails } ) => {
 				</Notice>
 			) }
 
+			{ showMigrationKeyCopiedNotice && (
+				<Notice
+					status="is-success"
+					onDismissClick={ () => {
+						setShowMigrationKeyCopiedNotice( false );
+						recordTracksEvent( 'calypso_migration_hosting_overview_key_copy_dismiss_click' );
+					} }
+				>
+					{ translate( 'Migration key copied successfully' ) }
+				</Notice>
+			) }
+
 			<Header title={ title } subTitle={ subTitle }>
 				{ continueMigrationUrl && (
 					<div className="migration-pending__buttons">
-						<HostingHeroButton href={ continueMigrationUrl }>
-							{ 'diy' === migrationType
-								? translate( 'Complete your migration' )
-								: translate( 'Start your migration' ) }
-						</HostingHeroButton>
+						<div className="migration-pending__primary-actions">
+							{ 'diy' === migrationType && migrationKey && (
+								<>
+									<ClipboardButton
+										style={ {
+											cursor: migrationKeyCopied ? 'default' : 'pointer',
+										} }
+										className="migration-pending__copy-key-button components-button is-secondary hosting-hero-button"
+										onCopy={ copyMigrationKey }
+										text={ migrationKey }
+									>
+										{ translate( 'Copy migration key' ) }
+									</ClipboardButton>
+								</>
+							) }
+							<HostingHeroButton href={ continueMigrationUrl }>
+								{ 'diy' === migrationType
+									? translate( 'Complete migration' )
+									: translate( 'Start your migration' ) }
+							</HostingHeroButton>
+						</div>
 						<Button
 							variant="link"
 							className="migration-pending__cancel-button"

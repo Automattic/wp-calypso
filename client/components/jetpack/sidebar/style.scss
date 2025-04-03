@@ -74,7 +74,7 @@
 		}
 
 		&:active {
-			background-color: rgba ( var ( --color-sidebar-menu-selected-text-rgb ), 0.075);
+			background-color: color-mix(in srgb, var(--color-sidebar-menu-selected-text) 7.5%, transparent);
 
 			.sidebar__menu-icon {
 				fill: var(--color-sidebar-menu-selected-gridicon-fill);

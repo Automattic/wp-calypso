@@ -40,15 +40,19 @@ export const dispatchProfileCompleteNotice = ( store: Store, action: UnknownActi
 			...state.userSettings.settings,
 			...( typeof action.settingValues === 'object' ? action.settingValues : {} ),
 		};
-
-		if ( isProfileComplete( updatedSettings, state.gravatarStatus ) ) {
+		const gravatarDetails = {
+			...state.gravatarStatus,
+			gravatarDetails: { has_gravatar: !! state.gravatarStatus.tempImage },
+		};
+		if ( isProfileComplete( updatedSettings, gravatarDetails ) ) {
 			dispatchNotice( dispatch );
 		}
 	}
 
 	if ( action.type === GRAVATAR_UPLOAD_REQUEST_SUCCESS ) {
-		const updatedSettings = { ...state.userSettings.settings, has_gravatar: true };
-		if ( isProfileComplete( updatedSettings, state.gravatarStatus ) ) {
+		const updatedSettings = { ...state.userSettings.settings };
+		const gravatarDetails = { ...state.gravatarStatus, gravatarDetails: { has_gravatar: true } };
+		if ( isProfileComplete( updatedSettings, gravatarDetails ) ) {
 			dispatchNotice( dispatch );
 		}
 	}
