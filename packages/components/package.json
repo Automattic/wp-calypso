@@ -57,7 +57,7 @@
 		"gridicons": "^3.4.2",
 		"i18n-calypso": "workspace:^",
 		"lodash": "^4.17.21",
-		"prop-types": "^15.7.2",
+		"prop-types": "^15.8.1",
 		"react-modal": "^3.16.1",
 		"react-router-dom": "^6.23.1",
 		"react-slider": "^2.0.6",

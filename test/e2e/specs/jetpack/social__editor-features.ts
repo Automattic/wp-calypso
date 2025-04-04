@@ -56,24 +56,6 @@ const testCases: Array< {
 	},
 ];
 
-const getShareModal = async (
-	page: Page,
-	platform: ( typeof testCases )[ number ][ 'platform' ]
-) => {
-	let shareModal;
-	if ( 'Atomic' !== platform ) {
-		// Get the main editor iframe
-		const editorFrame = page.frameLocator( 'iframe' ).first();
-		shareModal = editorFrame.getByRole( 'dialog' );
-	} else {
-		shareModal = page.getByRole( 'dialog' );
-	}
-
-	await shareModal.waitFor( { state: 'visible' } );
-
-	return shareModal;
-};
-
 /**
  * Tests features offered by Jetpack Social on a Simple site with Free plan.
  *
@@ -158,7 +140,11 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				} );
 				await sharePostModalButton.click();
 
-				let shareModal = await getShareModal( page, platform );
+				const shareModal = ( await editorPage.getEditorParent() ).getByRole( 'dialog' ).filter( {
+					hasText: 'Social Preview',
+				} );
+
+				await shareModal.waitFor();
 				let reshareButton = shareModal.getByRole( 'button', { name: 'Share', exact: true } );
 
 				expect( await reshareButton.isVisible() ).toBe( false );
@@ -170,11 +156,8 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				await editorPage.enterTitle( 'Resharing: ' + DataHelper.getRandomPhrase() );
 				// Publish the post.
 				await editorPage.publish();
+				connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
 				await editorPage.closeAllPanels();
-
-				if ( features.resharing ) {
-					connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
-				}
 
 				// Open the Jetpack sidebar.
 				await editorPage.openSettings( 'Jetpack' );
@@ -201,7 +184,10 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				if ( features.resharing ) {
 					await sharePostModalButton.click();
 
-					shareModal = await getShareModal( page, platform );
+					const shareModal = ( await editorPage.getEditorParent() ).getByRole( 'dialog' ).filter( {
+						hasText: 'Share Post',
+					} );
+					await shareModal.waitFor();
 
 					// Look for the Share button within the modal dialog
 					reshareButton = shareModal.getByRole( 'button', { name: 'Share', exact: true } );

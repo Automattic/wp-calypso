@@ -190,8 +190,15 @@ export const isInStepContainerV2FlowContext = ( pathname: string, query: string 
 		// of the onboarding flow).
 		const params = new URLSearchParams( query );
 		const redirectTo = params.get( 'redirect_to' ) ?? '';
+		const cancelTo = params.get( 'cancel_to' ) ?? '';
 
-		return isRedirectingToStepContainerV2Flow( redirectTo );
+		if ( isRedirectingToStepContainerV2Flow( redirectTo ) ) {
+			return true;
+		}
+
+		if ( isRedirectingToStepContainerV2Flow( cancelTo ) ) {
+			return true;
+		}
 	}
 
 	return false;

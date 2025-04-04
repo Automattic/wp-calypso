@@ -55,6 +55,7 @@
 		margin-bottom: 12px;
 
 		.search-component__input[type="search"] {
+			width: 100%;
 			font-size: 0.875rem;
 
 			@include break-small() {

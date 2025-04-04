@@ -693,19 +693,39 @@ $container-padding-large: 48px;
 			}
 		}
 
-		.design-preview.design-preview--is-fullscreen {
-			padding-bottom: var(--step-container-v2-sticky-bottom-bar-height);
-			z-index: 0;
-		}
+		.design-preview {
+			padding: 0;
 
-		@include break-large {
-			.design-preview {
+			&.design-preview--is-fullscreen {
+				padding-bottom: var(--step-container-v2-sticky-bottom-bar-height);
+				z-index: 0;
+			}
+
+			.navigator-screen__footer {
+				display: none;
+			}
+
+			.design-preview__screenshot-wrapper {
+				box-sizing: border-box;
+				margin: 0;
+			}
+
+			@include break-large {
+				.navigator-screen__footer {
+					display: flex;
+				}
+
 				flex: 1;
 				height: auto;
 				gap: 48px;
 
 				.design-preview__sidebar {
 					padding-top: 24px;
+				}
+
+				.design-preview__screenshot-wrapper {
+					// TODO: Remove this 32px subtraction once we introduce the FixedColumnOnTheLeftLayout wireframe.
+					height: calc(100% - 32px);
 				}
 
 				.design-preview__site-preview {
