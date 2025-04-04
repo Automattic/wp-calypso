@@ -37,7 +37,7 @@ const meta: Meta< typeof SidebarNavigationItem > = {
 		},
 	},
 	decorators: [
-		( Story ) => {
+		function WithNavigationContext( Story ) {
 			const [ navState ] = useState( createNavState() );
 
 			return (
