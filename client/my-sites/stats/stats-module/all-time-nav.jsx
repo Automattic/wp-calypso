@@ -1,9 +1,11 @@
+import config from '@automattic/calypso-config';
 import { ComponentSwapper, SegmentedControl, SelectDropdown } from '@automattic/components';
 import { Icon, lock } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight, find, get } from 'lodash';
 import moment from 'moment';
+import { useMemo } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -36,6 +38,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 	} = props;
 
 	const dispatch = useDispatch();
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	const getSummaryPeriodLabel = () => {
 		if ( query.start_date ) {
@@ -69,26 +72,42 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		recordStats( item );
 	};
 
-	// Template for standard range options (7, 30, Quarter, Year, All Time).
-	const summaryPath = `/stats/day/${ path }/${ siteSlug }?startDate=${ moment().format(
-		'YYYY-MM-DD'
-	) }&summarize=1&num=`;
+	const getSummaryPath = useMemo( () => {
+		return ( numberDays ) => {
+			let url = window.location.href;
+			let queryParams = new URLSearchParams( url.split( '?' )[ 1 ] || '' );
 
-	// Path for summary or custom range option. ie: The first button in the row.
-	// Defaults to one day/week/month/year.
-	let summaryPeriodPath = `/stats/${
-		period.period
-	}/${ path }/${ siteSlug }?startDate=${ period.endOf.format( 'YYYY-MM-DD' ) }`;
-	// Override if custom range was used in query.
-	if ( query.start_date ) {
-		summaryPeriodPath = `/stats/${ period.period }/${ path }/${ siteSlug }?startDate=${ query.start_date }&endDate=${ query.date }`;
-	}
+			if ( isOdysseyStats ) {
+				url = window.location.href;
+				const hash = window.location.hash.split( '#!' )[ 1 ];
+				const hashQuery = new URLSearchParams( hash.split( '?' )[ 1 ] || '' );
+				queryParams = new URLSearchParams( hashQuery );
+			}
+
+			queryParams.set( 'startDate', moment().format( 'YYYY-MM-DD' ) );
+			queryParams.set( 'summarize', 1 );
+			queryParams.set( 'num', numberDays );
+			queryParams.delete( 'endDate' );
+
+			if ( numberDays === 'day' ) {
+				if ( query.start_date ) {
+					queryParams.set( 'startDate', query.start_date );
+					queryParams.set( 'endDate', query.date );
+				}
+
+				queryParams.delete( 'num' );
+				queryParams.delete( 'summarize' );
+			}
+
+			return `/stats/day/${ path }/${ siteSlug }?${ queryParams.toString() }`;
+		};
+	}, [ path, siteSlug, isOdysseyStats, query ] );
 
 	const options = [
 		{
 			value: '0',
 			label: getSummaryPeriodLabel(),
-			path: summaryPeriodPath,
+			path: getSummaryPath( 'day' ),
 			stat: 'Period Summary',
 			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_DAY ],
 			statType: STATS_FEATURE_SUMMARY_LINKS_DAY,
@@ -96,7 +115,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		{
 			value: '7',
 			label: translate( '7 days' ),
-			path: `${ summaryPath }7`,
+			path: getSummaryPath( 7 ),
 			stat: '7 Days',
 			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_7_DAYS ],
 			statType: STATS_FEATURE_SUMMARY_LINKS_7_DAYS,
@@ -104,7 +123,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		{
 			value: '30',
 			label: translate( '30 days' ),
-			path: `${ summaryPath }30`,
+			path: getSummaryPath( 30 ),
 			stat: '30 Days',
 			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_30_DAYS ],
 			statType: STATS_FEATURE_SUMMARY_LINKS_30_DAYS,
@@ -112,7 +131,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		{
 			value: '90',
 			label: translate( 'Quarter' ),
-			path: `${ summaryPath }90`,
+			path: getSummaryPath( 90 ),
 			stat: 'Quarter',
 			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_QUARTER ],
 			statType: STATS_FEATURE_SUMMARY_LINKS_QUARTER,
@@ -120,7 +139,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		{
 			value: '365',
 			label: translate( 'Year' ),
-			path: `${ summaryPath }365`,
+			path: getSummaryPath( 365 ),
 			stat: 'Year',
 			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_YEAR ],
 			statType: STATS_FEATURE_SUMMARY_LINKS_YEAR,
@@ -128,7 +147,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		{
 			value: '-1',
 			label: translate( 'All Time' ),
-			path: `${ summaryPath }-1`,
+			path: getSummaryPath( -1 ),
 			stat: 'All Time',
 			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_ALL ],
 			statType: STATS_FEATURE_SUMMARY_LINKS_ALL,
