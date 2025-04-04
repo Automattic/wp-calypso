@@ -15,6 +15,16 @@ export const fetchProfile = () =>
 		apiNamespace: 'rest/v1.1',
 	} ) as Promise< ProfileObject >;
 
+export const updateProfile = ( data: ProfileObject ) =>
+	wpcom.req.post( {
+		path: '/me/settings',
+		apiNamespace: 'rest/v1.1',
+		body: {
+			display_name: data.display_name,
+			description: data.description,
+		},
+	} );
+
 export type SiteObject = {
 	id: string;
 	title: string;

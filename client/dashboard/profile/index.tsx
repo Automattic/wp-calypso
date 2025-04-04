@@ -16,21 +16,9 @@ import { DataForm } from '@wordpress/dataviews';
 import { useMemo, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useLoaderData } from 'react-router-dom';
-import wpcom from 'calypso/lib/wp';
-import { fetchProfile, type ProfileObject } from '../data';
+import { fetchProfile, type ProfileObject, updateProfile } from '../data';
 import type { Field, Form } from '@wordpress/dataviews';
 import type { LoaderFunction } from 'react-router-dom';
-
-async function updateProfile( data: ProfileObject ): Promise< void > {
-	await wpcom.req.post( {
-		path: '/me/settings',
-		apiNamespace: 'rest/v1.1',
-		body: {
-			display_name: data.display_name,
-			description: data.description,
-		},
-	} );
-}
 
 function Profile() {
 	const translate = useTranslate();
