@@ -111,8 +111,9 @@ function UnforwardedControlWithError< C extends React.ReactElement >(
 	const onChange = ( ...args: unknown[] ) => {
 		render.props.onChange?.( ...args );
 
-		// Only validate incrementally if the value has blurred at least once.
-		if ( isTouched ) {
+		// Only validate incrementally if the field has blurred at least once,
+		// or currently has an error message.
+		if ( isTouched || errorMessage ) {
 			validate();
 		}
 	};
