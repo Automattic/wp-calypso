@@ -10,6 +10,7 @@ import { useContext } from '@wordpress/element';
 import { isRTL } from '@wordpress/i18n';
 import { chevronRightSmall, chevronLeftSmall, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
+import { ComponentProps } from 'react';
 /**
  * Internal dependencies
  */
@@ -19,21 +20,18 @@ import { useHistory, useLink } from '../../router';
 import './style.scss';
 
 type SidebarNavigationItemProps = {
-	className?: string;
 	suffix?: 'CHEVRON' | React.ReactNode;
 	uid: string;
 	to?: string;
-	onClick?: ( e: React.MouseEvent ) => void;
-	children: React.ReactNode;
 	icon?: React.ReactElement;
-};
+} & ComponentProps< typeof Item >;
 
 export function SidebarNavigationItem( {
-	className,
-	icon,
 	suffix,
 	uid,
 	to = '',
+	icon,
+	className,
 	onClick,
 	children,
 	...props
@@ -42,7 +40,7 @@ export function SidebarNavigationItem( {
 	const { navigate } = useContext( SidebarNavigationContext );
 
 	// If there is no custom click handler, create one that navigates to `params`.
-	function handleClick( e: React.MouseEvent ) {
+	function handleClick( e: React.MouseEvent< HTMLDivElement > ) {
 		if ( onClick ) {
 			onClick( e );
 			navigate( 'forward' );
