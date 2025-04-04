@@ -26,6 +26,7 @@ Initial release of the site-admin package providing a framework for building mod
 ## Next
 
 - Add `history` package dependency
+- Set `SiteNavigationItem`’s `as` prop automatically based on to or onClick.
 
 ### Components
 - `SiteHub`: Site navigation and context switcher
