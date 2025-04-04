@@ -25,16 +25,6 @@ export const updateProfile = ( data: ProfileObject ) =>
 		},
 	} );
 
-export type SiteObject = {
-	id: string;
-	title: string;
-	url: string;
-	visitors: number;
-	performance: number;
-	backups: boolean;
-	protect: boolean;
-};
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Domain interface
@@ -133,68 +123,37 @@ const mockDomains: Domain[] = [
 	},
 ];
 
-export const SITE_DATA: SiteObject[] = [
-	{
-		id: '1',
-		title: 'My Blog',
-		url: 'https://myblog.com',
-		visitors: 2547,
-		performance: 92,
-		backups: true,
-		protect: false,
-	},
-	{
-		id: '2',
-		title: 'Business Site',
-		url: 'https://mybusiness.com',
-		visitors: 5324,
-		performance: 87,
-		backups: true,
-		protect: true,
-	},
-	{
-		id: '3',
-		title: 'Portfolio',
-		url: 'https://myportfolio.com',
-		visitors: 1867,
-		performance: 95,
-		backups: false,
-		protect: false,
-	},
-];
-
-export const findItemById = ( id: string ): SiteObject | undefined => {
-	return SITE_DATA.find( ( site ) => site.id === id );
+export type SiteData = {
+	ID: string;
+	name: string;
+	url: string;
+	icon: {
+		ico: string;
+	};
+	// visitors: number;
+	// performance: number;
+	// backups: boolean;
+	// protect: boolean;
 };
 
-export const fetchSites = (): Promise< SiteObject[] > => {
-	return Promise.resolve( SITE_DATA );
+export type SitesRequest = {
+	sites: SiteData[];
 };
 
-export const fetchSite = ( id: string ): Promise< SiteObject | undefined > => {
-	return Promise.resolve( findItemById( id ) );
+export const fetchSites = (): Promise< SiteData[] > => {
+	return wpcom.req.get( {
+		path: '/me/sites?http_envelope=1&site_visibility=all&include_domain_only=true&site_activity=active&fields=ID,URL,name,icon,subscribers_count',
+		apiNamespace: 'rest/v1.2',
+	} );
+};
+
+export const fetchSite = ( id: string ): Promise< SiteData | undefined > => {
+	return wpcom.req.get( {
+		path: `/sites/${ id }`,
+		apiNamespace: 'rest/v1.1',
+	} );
 };
 
 export const fetchDomains = (): Promise< Domain[] > => {
 	return Promise.resolve( mockDomains );
-};
-
-/**
- * Site interface
- */
-export interface Site {
-	id: number;
-	name: string;
-	url?: string;
-}
-
-/**
- * Mock sites data
- */
-export const sites: Record< number, Site > = {
-	1: { id: 1, name: 'Example Site', url: 'https://example.com' },
-	2: { id: 2, name: 'My Blog', url: 'https://myblog.com' },
-	3: { id: 3, name: 'Test Site', url: 'https://testdomain.net' },
-	4: { id: 4, name: 'Another Site', url: 'https://anotherdomain.org' },
-	5: { id: 5, name: 'WordPress Blog', url: 'https://wordpress-site.com' },
 };
