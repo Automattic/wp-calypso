@@ -47,9 +47,7 @@ export class PaidContentBlockFlow implements BlockFlow {
 		}
 
 		// Verify the Subscriber version of the block is now loaded.
-		await context.addedBlockLocator
-			.getByRole( 'document', { name: 'Block: Subscriber View' } )
-			.waitFor();
+		await context.addedBlockLocator.locator( '.wp-premium-content-subscriber-view' ).waitFor();
 
 		// Fill the title and text for Subscriber view.
 		await context.addedBlockLocator
