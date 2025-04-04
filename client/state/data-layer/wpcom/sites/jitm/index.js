@@ -88,7 +88,7 @@ export const doDismissJITM = ( action ) =>
 		{
 			method: 'POST',
 			apiNamespace: 'wpcom/v3',
-			path: `/sites/${ action.siteId }/jitm`,
+			path: isRunningInJetpackSite ? `/jitm` : `/sites/${ action.siteId }/jitm`,
 			body: {
 				feature_class: action.featureClass,
 				id: action.id,
