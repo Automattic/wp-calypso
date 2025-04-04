@@ -1,5 +1,5 @@
 import { FormLabel } from '@automattic/components';
-import { Button } from '@wordpress/components';
+import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useState } from 'react';
 import IconBad from 'calypso/assets/images/a8c-for-agencies/feedback/bad.svg';
@@ -7,7 +7,7 @@ import IconGood from 'calypso/assets/images/a8c-for-agencies/feedback/good.svg';
 import IconNeutral from 'calypso/assets/images/a8c-for-agencies/feedback/neutral.svg';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextarea from 'calypso/components/forms/form-textarea';
-import type { FeedbackQueryData, FeedbackProps } from './types';
+import type { FeedbackQueryData, FeedbackProps, FeedbackSuggestion } from './types';
 
 import './style.scss';
 
@@ -16,17 +16,21 @@ export interface Props extends FeedbackProps {
 	onSkip: () => void;
 }
 
-export function A4AFeedback( {
-	title,
-	description,
-	questionDetails,
-	ctaText,
-	onSubmit,
-	onSkip,
-}: Props ) {
+export function A4AFeedback( { title, description, suggestion, onSubmit, onSkip }: Props ) {
 	const translate = useTranslate();
 	const [ experience, setExperience ] = useState< string >( 'good' );
 	const [ comments, setComments ] = useState< string >( '' );
+	const [ suggestions, setSuggestions ] = useState< FeedbackSuggestion[] >( [] );
+
+	const onSuggestionChange = ( option: FeedbackSuggestion ) => {
+		if ( suggestions.find( ( suggestion ) => suggestion.value === option.value ) ) {
+			setSuggestions( ( prev ) =>
+				prev.filter( ( suggestion ) => suggestion.value !== option.value )
+			);
+		} else {
+			setSuggestions( ( prev ) => [ ...prev, option ] );
+		}
+	};
 
 	return (
 		<div className="a4a-feedback__wrapper">
@@ -34,10 +38,12 @@ export function A4AFeedback( {
 				<h1 className="a4a-feedback__title">{ title }</h1>
 				<div className="a4a-feedback__description">{ description }</div>
 				<div className="a4a-feedback__questions">
-					<div className="a4a-feedback__question-details">{ questionDetails }</div>
+					<div className="a4a-feedback__question-details">
+						{ translate( 'Share your feedback' ) }
+					</div>
 					<div className="a4a-feedback__experience-selector">
 						<div className="a4a-feedback__experience-selector-label">
-							{ translate( 'Overall' ) }
+							{ translate( 'What was your experience like?' ) }
 						</div>
 						<div className="a4a-feedback__experience-selector-buttons">
 							<Button
@@ -60,12 +66,28 @@ export function A4AFeedback( {
 							</Button>
 						</div>
 					</div>
+					{ suggestion && (
+						<FormFieldset>
+							<FormLabel className="a4a-feedback__comments-label" htmlFor="suggestion">
+								{ suggestion.label }
+							</FormLabel>
+							<div className="a4a-feedback__suggestions">
+								{ suggestion.options.map( ( option ) => (
+									<CheckboxControl
+										key={ `suggestion-${ option.value }` }
+										label={ option.label }
+										checked={
+											!! suggestions.find( ( suggestion ) => suggestion.value === option.value )
+										}
+										onChange={ () => onSuggestionChange( option ) }
+									/>
+								) ) }
+							</div>
+						</FormFieldset>
+					) }
 					<FormFieldset>
 						<FormLabel className="a4a-feedback__comments-label" htmlFor="comments">
-							{ translate(
-								'Additional feedback about this experience {{span}}(Optional){{/span}}',
-								{ components: { span: <span></span> } }
-							) }
+							{ translate( 'Share your suggestions' ) }
 						</FormLabel>
 						<FormTextarea
 							className="a4a-feedback__comments"
@@ -80,13 +102,19 @@ export function A4AFeedback( {
 					<div className="a4a-feedback__cta">
 						<Button
 							variant="primary"
-							onClick={ () => onSubmit( { experience, comments } ) }
+							onClick={ () =>
+								onSubmit( {
+									experience,
+									comments,
+									suggestions: suggestions.map( ( suggestion ) => suggestion.text ),
+								} )
+							}
 							disabled={ ! experience }
 						>
-							{ ctaText }
+							{ translate( 'Send your feedback' ) }
 						</Button>
 						<Button className="a8c-blue-link" onClick={ onSkip }>
-							{ translate( 'Skip feedback' ) }
+							{ translate( 'Skip' ) }
 						</Button>
 					</div>
 				</div>

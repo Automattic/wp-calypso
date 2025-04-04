@@ -10,41 +10,149 @@ export const getA4AfeedbackProps = (
 	switch ( type ) {
 		case 'referral-complete':
 			return {
-				title: translate( 'Your referral order is complete!' ),
+				title: translate( 'Well done! You sent your first referral!' ),
 				description: translate(
-					'Your referral order was emailed to %(email)s for payment. Once they pay, you can assign the products to a site.',
+					'We emailed your referral order to %(email)s. Assign products to a site after they pay',
 					{ args: { email: args?.email } }
 				) as string,
-				questionDetails: translate( 'How was your experience making a referral?' ),
-				ctaText: translate( 'Submit and continue to Dashboard' ),
+				suggestion: {
+					label: translate( 'What could have been better during the Referrals process?' ),
+					options: [
+						{
+							label: translate( 'Learning about referrals' ),
+							value: 'learning-about-referrals',
+							text: 'Learning about referrals',
+						},
+						{
+							label: translate( 'Finding referral mode' ),
+							value: 'finding-referral-mode',
+							text: 'Finding referral mode',
+						},
+						{
+							label: translate( 'Adding products and hosting to the referral cart' ),
+							value: 'adding-products-and-hosting-to-the-referral-cart',
+							text: 'Adding products and hosting to the referral cart',
+						},
+						{
+							label: translate( 'Sending a referral to my client' ),
+							value: 'sending-a-referral-to-my-client',
+							text: 'Sending a referral to my client',
+						},
+						{
+							label: translate( 'Other' ),
+							value: 'other',
+							text: 'Other',
+						},
+					],
+				},
 			};
 		case 'agency-details-added':
 			return {
-				title: translate( 'Agency details added!' ),
+				title: translate( 'Details successfully added!' ),
 				description: translate(
-					"Nice job! Your information has been added to your agency's public profile."
+					"Well done! We've updated your agency's public profile with your information."
 				),
-				questionDetails: translate( "How was your experience adding your agency's details?" ),
-				ctaText: translate( 'Submit and continue to Partner Directory' ),
 				redirectUrl: A4A_PARTNER_DIRECTORY_LINK,
+				suggestion: {
+					label: translate(
+						'What could have been better during the Partner Directory application process?'
+					),
+					options: [
+						{
+							label: translate( 'Discovering the Partner Directories feature' ),
+							value: 'discovering-the-partner-directories-feature',
+							text: 'Discovering the Partner Directories feature',
+						},
+						{
+							label: translate( 'Understanding how Partner Directories can benefit my agency' ),
+							value: 'understanding-how-partner-directories-can-benefit-my-agency',
+							text: 'Understanding how Partner Directories can benefit my agency',
+						},
+						{
+							label: translate(
+								'Understanding the criteria my agency needs to meet in order to be included'
+							),
+							value: 'understanding-the-criteria-my-agency-needs-to-meet-in-order-to-be-included',
+							text: 'Understanding the criteria my agency needs to meet in order to be included',
+						},
+						{
+							label: translate( 'Other' ),
+							value: 'other',
+							text: 'Other',
+						},
+					],
+				},
 			};
 		case 'member-invite-sent':
 			return {
-				title: translate( 'Invite sent!' ),
+				title: translate( 'Invite emailed!' ),
 				description: translate(
-					"Your team member invite was emailed to %(email)s. Once they accept, you'll see them as an active member in the Team section.",
+					"We sent %(email)s an invite. After accepting, they'll become an active member in your Team section.",
 					{ args: { email: args?.email } }
 				) as string,
-				questionDetails: translate( 'How was your experience inviting a team member?' ),
-				ctaText: translate( 'Submit and continue to Team' ),
 				redirectUrl: `${ A4A_TEAM_LINK }/${ TAB_INVITED_MEMBERS }`,
+				suggestion: {
+					label: translate( 'What could have been better during the team invitation process?' ),
+					options: [
+						{
+							label: translate( 'Finding where to invite my team members' ),
+							value: 'finding-where-to-invite-my-team-members',
+							text: 'Finding where to invite my team members',
+						},
+						{
+							label: translate( 'Sending an invitation to a team member' ),
+							value: 'sending-an-invitation-to-a-team-member',
+							text: 'Sending an invitation to a team member',
+						},
+						{
+							label: translate( 'Finding documentation on team member permissions' ),
+							value: 'finding-documentation-on-team-member-permissions',
+							text: 'Finding documentation on team member permissions',
+						},
+						{
+							label: translate( 'Other' ),
+							value: 'other',
+							text: 'Other',
+						},
+					],
+				},
+			};
+		case 'purchase-complete':
+			return {
+				title: translate( 'Purchase complete!' ),
+				description: translate(
+					"Well done! You've made your first purchase on Automattic for Agencies."
+				),
+				suggestion: {
+					label: translate( 'What could have been better during your purchase process?' ),
+					options: [
+						{
+							label: translate( 'Finding the right products or hosting' ),
+							value: 'finding-the-right-products-or-hosting',
+							text: 'Finding the right products or hosting',
+						},
+						{
+							label: translate( 'Understanding the pricing structure' ),
+							value: 'understanding-the-pricing-structure',
+							text: 'Understanding the pricing structure',
+						},
+						{
+							label: translate( 'Setting up my product or hosting' ),
+							value: 'setting-up-my-product-or-hosting',
+							text: 'Setting up my product or hosting',
+						},
+						{
+							label: translate( 'Other' ),
+							value: 'other',
+							text: 'Other',
+						},
+					],
+				},
 			};
 		default:
 			return {
 				title: translate( 'General feedback' ),
 				description: translate( 'Please share general feedback' ),
-				questionDetails: translate( 'How was your experience?' ),
-				ctaText: translate( 'Submit and continue' ),
 			};
 	}
 };

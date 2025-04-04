@@ -57,6 +57,7 @@ const useShowFeedback = ( type: FeedbackType ) => {
 
 	// Additional args, like email for invite flow
 	const { value: args } = useUrlQueryParam( 'args' );
+	const { value: redirectUrlFromQueryParam } = useUrlQueryParam( 'redirectUrl' );
 
 	// We are storing the timestamp when last feedback for given preference was submitted or skipped
 	const feedbackTimestamp = useSelector( ( state ) => getPreference( state, FEEDBACK_PREFERENCE ) );
@@ -82,13 +83,14 @@ const useShowFeedback = ( type: FeedbackType ) => {
 			if ( ! data || ! agencyId ) {
 				return;
 			}
-			const { experience, comments } = data;
+			const { experience, comments, suggestions } = data;
 			const params: FeedbackSurveyResponsesPayload = {
 				site_id: agencyId,
 				survey_id: type,
 				survey_responses: {
 					rating: experience,
 					comment: comments,
+					suggestions: suggestions?.join( ', ' ) || '',
 				},
 			};
 
@@ -97,6 +99,7 @@ const useShowFeedback = ( type: FeedbackType ) => {
 					agency_id: agencyId,
 					survey_id: params.survey_id,
 					rating: params.survey_responses.rating,
+					suggestions: params.survey_responses.suggestions,
 				} )
 			);
 			saveFeedback( { params } );
@@ -147,7 +150,9 @@ const useShowFeedback = ( type: FeedbackType ) => {
 		if ( feedbackFormHash && ! showFeedback && ! isPending ) {
 			// If the feedback form hash is present but we don't want to show the feedback form, redirect to the default URL
 			// If feedback was interacted, redirect to the URL passed in the feedbackProps
-			redirectToDefaultUrl( feedbackInteracted ? feedbackProps.redirectUrl : undefined );
+			redirectToDefaultUrl(
+				redirectUrlFromQueryParam || ( feedbackInteracted ? feedbackProps.redirectUrl : undefined )
+			);
 		}
 	}, [
 		apiResponseData,
@@ -156,6 +161,7 @@ const useShowFeedback = ( type: FeedbackType ) => {
 		feedbackInteracted,
 		feedbackProps,
 		isPending,
+		redirectUrlFromQueryParam,
 		showFeedback,
 		translate,
 	] );
