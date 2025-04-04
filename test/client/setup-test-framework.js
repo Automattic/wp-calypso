@@ -1,4 +1,6 @@
 import '@testing-library/jest-dom';
+
+const nodeCrypto = require( 'node:crypto' );
 const { ReadableStream, TransformStream } = require( 'node:stream/web' );
 const { TextEncoder, TextDecoder } = require( 'util' );
 const nock = require( 'nock' );
@@ -49,8 +51,12 @@ jest.mock( 'wpcom-proxy-request', () => ( {
 } ) );
 
 // Mock crypto.randomUUID with its Node.js implementation
-global.crypto.randomUUID = () => require( 'crypto' ).randomUUID();
-global.crypto.subtle = require( 'node:crypto' ).subtle;
+global.crypto.randomUUID = () => nodeCrypto.randomUUID();
+
+// Mock crypto.subtle with its Node.js implementation, if needed.
+if ( ! global.crypto.subtle ) {
+	global.crypto.subtle = nodeCrypto.subtle;
+}
 
 // Add structuredClone if not available.
 if ( typeof global.structuredClone !== 'function' ) {
