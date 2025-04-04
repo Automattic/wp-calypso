@@ -11,11 +11,13 @@
 
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { localizeUrl } from '@automattic/i18n-utils';
 import NotificationsPanel, {
 	refreshNotes,
 } from '@automattic/notifications/src/panel/Notifications';
 import clsx from 'clsx';
 import debugFactory from 'debug';
+import { useTranslate } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import localStorageHelper from 'store';
@@ -52,6 +54,26 @@ const getIsVisible = () => {
 const isDesktop = config.isEnabled( 'desktop' );
 
 const debug = debugFactory( 'notifications:panel' );
+
+const Notifications3PCNotice = ( { className } ) => {
+	const translate = useTranslate();
+	return (
+		<div className={ `reader-notifications__3pc-notice ${ className }` }>
+			<p>
+				{ translate(
+					"Didn't expect to see this page? {{learnMoreLink}}Learn about 3rd party cookies.{{/learnMoreLink}}",
+					{
+						components: {
+							learnMoreLink: (
+								<a href={ localizeUrl( 'https://wordpress.com/support/third-party-cookies/' ) } />
+							),
+						},
+					}
+				) }
+			</p>
+		</div>
+	);
+};
 
 export class Notifications extends Component {
 	state = {
@@ -283,21 +305,30 @@ export class Notifications extends Component {
 		}
 
 		return (
-			<div
-				id="wpnc-panel"
-				className={ clsx( 'wide', 'wpnc__main', {
-					'wpnt-open': this.props.isShowing,
-					'wpnt-closed': ! this.props.isShowing,
-				} ) }
-			>
-				<NotificationsPanel
-					actionHandlers={ this.actionHandlers }
-					isShowing={ this.props.isShowing }
-					isVisible={ this.state.isVisible }
-					locale={ localeSlug }
-					wpcom={ wpcom }
-				/>
-			</div>
+			<>
+				{ /*
+					Due to how the notifs panel width is set differently on this page to control fly-out vs. in place
+					nested levels, this notice makes sense at different places in the DOM depending on the
+					breakpoint. We remove display for one or the other via CSS depending on the breakpoint.
+				*/ }
+				<Notifications3PCNotice className="reader-notifications__3pc-notice-external" />
+				<div
+					id="wpnc-panel"
+					className={ clsx( 'wide', 'wpnc__main', {
+						'wpnt-open': this.props.isShowing,
+						'wpnt-closed': ! this.props.isShowing,
+					} ) }
+				>
+					<Notifications3PCNotice className="reader-notifications__3pc-notice-internal" />
+					<NotificationsPanel
+						actionHandlers={ this.actionHandlers }
+						isShowing={ this.props.isShowing }
+						isVisible={ this.state.isVisible }
+						locale={ localeSlug }
+						wpcom={ wpcom }
+					/>
+				</div>
+			</>
 		);
 	}
 }

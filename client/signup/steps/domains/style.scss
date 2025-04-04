@@ -546,10 +546,6 @@ body.is-section-signup {
 		margin: 0;
 		flex: 1;
 		width: 100%;
-
-		@include break-large {
-			max-width: 290px;
-		}
 	}
 
 	.domains__domain-side-content.fade-out {

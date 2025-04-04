@@ -17,11 +17,6 @@
 
 	.language-picker-component__title {
 		font-size: 2rem;
-		padding: 0 10px 12px;
-
-		@include break-small() {
-			padding: initial;
-		}
 	}
 
 	.components-custom-select-control {
@@ -93,6 +88,22 @@
 
 			.search-component__icon-navigation {
 				background-color: transparent;
+			}
+
+			.search-component:not(.is-open) {
+				width: 30px;
+				height: 30px;
+				top: 1px;
+				right: 26px;
+
+				.search-component__icon-navigation {
+					padding: 0;
+				}
+
+				.search-component__open-icon {
+					width: 30px;
+					height: 30px;
+				}
 			}
 		}
 	}

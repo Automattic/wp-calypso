@@ -89,7 +89,7 @@ body.is-section-reader {
 			height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
 			overflow: hidden;
 		}
-		.layout__primary > div > div:not(.tags__header) {
+		.layout__primary > div > div:not(.tags__header):not(.reader-notifications__3pc-notice) {
 			height: 100%;
 			overflow-y: auto;
 			overflow-x: hidden;
@@ -308,17 +308,6 @@ body.is-section-reader {
 
 	@media (min-width: 661px) and (max-width: 790px) {
 		@include hide-content-accessibly();
-	}
-}
-
-.is-group-reader .reader-notifications__panel {
-	@media only screen and (min-width: 1114px) {
-		.wpnc__main {
-			width: calc(100vw - 310px);
-			.wpnc__note-list {
-				left: 0;
-			}
-		}
 	}
 }
 
