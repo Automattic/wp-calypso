@@ -18,19 +18,11 @@ import { useState, useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useLoaderData } from 'react-router-dom';
 import wpcom from 'calypso/lib/wp';
-import { fetchProfile } from '../data';
+import { fetchProfile, type ProfileObject } from '../data';
 import PageLayout from '../page-layout';
 import type { LoaderFunction } from 'react-router-dom';
-interface ProfileData {
-	username: string;
-	displayName: string;
-	email: string;
-	siteAddress: string;
-	aboutMe: string;
-	isDeveloper: boolean;
-}
 
-async function updateProfile( data: ProfileData ): Promise< void > {
+async function updateProfile( data: ProfileObject ): Promise< void > {
 	try {
 		await wpcom.req.post( {
 			path: '/users/me',
@@ -54,7 +46,7 @@ async function updateProfile( data: ProfileData ): Promise< void > {
 function Profile() {
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
-	const queryProfileData = useLoaderData();
+	const queryProfileData = useLoaderData() as ProfileObject;
 
 	const {
 		mutate: saveProfile,
@@ -67,7 +59,7 @@ function Profile() {
 		},
 	} );
 
-	const [ formData, setFormData ] = useState< ProfileData >( {
+	const [ formData, setFormData ] = useState< ProfileObject >( {
 		username: '',
 		displayName: '',
 		email: '',
