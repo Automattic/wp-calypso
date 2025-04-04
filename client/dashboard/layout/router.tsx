@@ -14,22 +14,6 @@ import SiteBackups from '../site-backups';
 import SiteOverview from '../site-overview';
 import Sites from '../sites';
 
-async function profileAction( { request }: ActionFunctionArgs ) {
-	const profileData = await request.json();
-	try {
-		await updateProfile( profileData as ProfileObject );
-		return json( { ok: true } );
-	} catch ( error ) {
-		return json(
-			{
-				ok: false,
-				error: __( 'Failed to update profile' ),
-			},
-			{ status: 400 }
-		);
-	}
-}
-
 function Element() {
 	return (
 		<div className="dashboard__layout">
@@ -77,7 +61,18 @@ export const router = createBrowserRouter(
 					path: 'me/profile',
 					element: <Profile />,
 					loader: fetchProfile,
-					action: profileAction,
+					action: async ( { request }: ActionFunctionArgs ) => {
+						const data = await request.json();
+						try {
+							await updateProfile( data as ProfileObject );
+							return json( { ok: true } );
+						} catch ( error ) {
+							return json(
+								{ ok: false, error: __( 'Failed to update profile' ) },
+								{ status: 400 }
+							);
+						}
+					},
 				},
 				{
 					path: 'me/billing',
