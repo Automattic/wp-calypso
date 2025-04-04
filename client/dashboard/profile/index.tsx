@@ -17,20 +17,11 @@ import { useMemo, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useLoaderData } from 'react-router-dom';
 import wpcom from 'calypso/lib/wp';
-import { fetchProfile } from '../data/index';
+import { fetchProfile, type ProfileObject } from '../data';
 import type { Field, Form } from '@wordpress/dataviews';
 import type { LoaderFunction } from 'react-router-dom';
 
-interface ProfileData {
-	username: string;
-	displayName: string;
-	email: string;
-	siteAddress: string;
-	aboutMe: string;
-	isDeveloper: boolean;
-}
-
-async function updateProfile( data: ProfileData ): Promise< void > {
+async function updateProfile( data: ProfileObject ): Promise< void > {
 	try {
 		await wpcom.req.post( {
 			path: '/users/me',
@@ -54,10 +45,10 @@ async function updateProfile( data: ProfileData ): Promise< void > {
 function Profile() {
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
-	const initialFormData = useLoaderData() as ProfileData;
+	const initialFormData = useLoaderData() as ProfileObject;
 
 	// Add local state to manage form data
-	const [ localFormData, setLocalFormData ] = useState< ProfileData >( initialFormData );
+	const [ localFormData, setLocalFormData ] = useState< ProfileObject >( initialFormData );
 
 	const {
 		mutate: saveProfile,
@@ -128,7 +119,7 @@ function Profile() {
 						);
 					},
 				},
-			] as Field< ProfileData >[],
+			] as Field< ProfileObject >[],
 		[ translate ]
 	);
 
@@ -205,7 +196,7 @@ function Profile() {
 						</CardBody>
 					</Card>
 
-					<DataForm< ProfileData >
+					<DataForm< ProfileObject >
 						data={ localFormData }
 						fields={ fields }
 						form={ form }
