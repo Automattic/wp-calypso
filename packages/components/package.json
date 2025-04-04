@@ -78,7 +78,6 @@
 		"@types/canvas-confetti": "^1.6.0",
 		"@types/node": "^22.7.5",
 		"postcss": "^8.5.3",
-		"resize-observer-polyfill": "^1.5.1",
 		"storybook": "^8.6.9",
 		"typescript": "^5.8.2",
 		"webpack": "^5.97.1"
