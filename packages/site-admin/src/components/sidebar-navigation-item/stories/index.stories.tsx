@@ -25,6 +25,7 @@ const iconNames = Object.keys( allIcons ) as IconName[];
 const meta: Meta< typeof SidebarNavigationItem > = {
 	title: 'Components/SidebarNavigationItem',
 	component: SidebarNavigationItem,
+	tags: [ 'autodocs' ],
 	argTypes: {
 		icon: {
 			control: 'select',
@@ -52,8 +53,11 @@ export default meta;
 
 type Story = StoryObj< typeof SidebarNavigationItem >;
 
-export const Default: Story = {
-	name: 'Default',
+/**
+ * This story demonstrates how the component renders a `<button>` element
+ * when the `onClick` prop is provided.
+ */
+export const WithOnClickHandler: Story = {
 	args: {
 		onClick: fn(),
 	},
@@ -72,7 +76,17 @@ export const Default: Story = {
 	},
 };
 
-// Add a story for the suffix prop.
+/**
+ * This story demonstrates how the component renders a `<a>` element
+ * when the `to` prop is provided
+ */
+export const WithToProp: Story = {
+	args: {
+		to: '/',
+		children: __( 'Site Photos Gallery', 'a8c-site-admin' ),
+	},
+};
+
 export const WithChevronSuffix: Story = {
 	args: {
 		children: __( 'More options', 'a8c-site-admin' ),
