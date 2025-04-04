@@ -21,6 +21,7 @@ Rules for developing the new dashboard implementation under `/client/dashboard`.
 - Use React Router or TanStack Router for routing
 - Use TanStack Query for data management
 - API queqyests to WPCOM are done with: wpcom.req.get( { path: `PATH }` apiNamespace: 'wpcom/v2' } ); Imported from import wpcom from 'calypso/lib/wp';
+- Dataforms import is import { DataForm } from '@wordpress/dataviews';
 
 ### Architecture
 - Build as a separate section under `/v2` URL path
