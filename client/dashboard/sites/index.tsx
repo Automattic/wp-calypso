@@ -1,9 +1,10 @@
-import { __experimentalHeading as Heading } from '@wordpress/components';
+import { Button, Card } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useNavigate } from 'react-router-dom';
 import { SITE_DATA, Site } from '../data';
+import PageLayout from '../page-layout';
 import type { View, Field } from '@wordpress/dataviews';
 
 // Helper function to get color based on performance score
@@ -96,18 +97,26 @@ function Sites() {
 	};
 
 	return (
-		<>
-			<Heading>{ __( 'Sites' ) }</Heading>
-			<DataViews
-				data={ filteredData }
-				fields={ fields }
-				view={ view }
-				onChangeView={ setView }
-				onClickItem={ onClickItem }
-				defaultLayouts={ { table: {} } }
-				paginationInfo={ paginationInfo }
-			/>
-		</>
+		<PageLayout
+			title={ __( 'Sites' ) }
+			actions={
+				<Button variant="primary" __next40pxDefaultSize>
+					{ __( 'Add New Site' ) }
+				</Button>
+			}
+		>
+			<Card>
+				<DataViews
+					data={ filteredData }
+					fields={ fields }
+					view={ view }
+					onChangeView={ setView }
+					onClickItem={ onClickItem }
+					defaultLayouts={ { table: {} } }
+					paginationInfo={ paginationInfo }
+				/>
+			</Card>
+		</PageLayout>
 	);
 }
 
