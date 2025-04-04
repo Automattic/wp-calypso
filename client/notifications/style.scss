@@ -166,15 +166,17 @@ html.touch #wpnc-panel {
 div.reader-notifications__panel {
 	position: relative;
 
-	--3pc-notice-buffer: 50px;
+	--3pc-notice-external-height: 50px;
 	@media only screen and (min-width: 1114px) {
-		--3pc-notice-buffer: 0px; /* stylelint-disable-line length-zero-no-unit */
+		--3pc-notice-external-height: 0px; /* stylelint-disable-line length-zero-no-unit */
 	}
 
 	#wpnc-panel.wpnc__main {
-		top: calc(var(--masterbar-height) + var(--content-padding-top) + var(--3pc-notice-buffer));
-		height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom) - var(--3pc-notice-buffer));
+		top: calc(var(--masterbar-height) + var(--content-padding-top) + var(--3pc-notice-external-height));
+		height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom) - var(--3pc-notice-external-height));
 		box-shadow: -3px 1px 10px -2px color-mix(in srgb, var(--color-neutral-70) 7.5%, transparent);
+		border-top: 1px solid var(--color-neutral-0);
+		box-sizing: border-box;
 
 		&.wpnt-open {
 			@media only screen and (min-width: 601px) {
@@ -190,10 +192,10 @@ div.reader-notifications__panel {
 		.wpnc__main {
 			width: calc(100vw - var(--sidebar-width-max) - 16px); // 16px for content frame padding.
 			.wpnc__single-view {
-				z-index: 1;
+				z-index: z-index( ".reader-notifications", ".wpnc__single-view" );
 			}
 			.wpnc__note-list {
-				z-index: 2;
+				z-index: z-index( ".reader-notifications", ".wpnc__note-list" );
 			}
 		}
 	}
@@ -205,21 +207,21 @@ div.reader-notifications__panel {
 		align-items: center;
 		box-sizing: border-box;
 		padding: 0 10px;
+		font-size: $font-body;
 
-		&-full-width {
+		&-internal {
 			display: none;
 			bottom: 0;
-
 			right: 400px; //width of main notifs panel
 
 			@media only screen and (min-width: 1114px) {
 				display: flex;
 			}
 		}
-		&-header {
+		&-external {
 			display: flex;
 			right: 0;
-			height: var(--3pc-notice-buffer);
+			height: var(--3pc-notice-external-height);
 			p {
 				margin-bottom: 5px;
 			}

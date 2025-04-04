@@ -305,7 +305,12 @@ export class Notifications extends Component {
 
 		return (
 			<>
-				<Notifications3PCNotice className="reader-notifications__3pc-notice-header" />
+				{ /*
+					Due to how the notifs panel width is set differently on this page to control fly-out vs. in place
+					nested levels, this notice makes sense at different places in the DOM depending on the
+					breakpoint. We remove display for one or the other via CSS depending on the breakpoint.
+				*/ }
+				<Notifications3PCNotice className="reader-notifications__3pc-notice-external" />
 				<div
 					id="wpnc-panel"
 					className={ clsx( 'wide', 'wpnc__main', {
@@ -313,7 +318,7 @@ export class Notifications extends Component {
 						'wpnt-closed': ! this.props.isShowing,
 					} ) }
 				>
-					<Notifications3PCNotice className="reader-notifications__3pc-notice-full-width" />
+					<Notifications3PCNotice className="reader-notifications__3pc-notice-internal" />
 					<NotificationsPanel
 						actionHandlers={ this.actionHandlers }
 						isShowing={ this.props.isShowing }
