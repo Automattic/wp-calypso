@@ -103,15 +103,18 @@ export const HorizontalLayout = ( {
 					<>
 						<TopBarRenderer topBar={ topBar } />
 						<ContentWrapper width="wide" centerAligned={ context.isSmallViewport }>
-							<Content className="step-container-v2__content--horizontal-layout">
-								<div className="step-container-v2__content--horizontal-layout-left">
+							<ContentRow
+								columns={ 10 }
+								className="step-container-v2__content-row--horizontal-layout"
+							>
+								<div className="step-container-v2__content-row--horizontal-layout-left">
 									{ heading }
 									{ imageUrl && <img src={ imageUrl } alt="" /> }
 								</div>
-								<div className="step-container-v2__content--horizontal-layout-right">
+								<div className="step-container-v2__content-row--horizontal-layout-right">
 									{ content }
 								</div>
-							</Content>
+							</ContentRow>
 							{ footer }
 						</ContentWrapper>
 						<StickyBottomBarRenderer stickyBottomBar={ stickyBottomBar } />
@@ -126,7 +129,7 @@ export const HorizontalLayout = ( {
 Then, we need to add the styles for the new wireframe. Let's create a new file called `style.scss` and add the following code:
 
 ```scss
-.step-container-v2__content--horizontal-layout {
+.step-container-v2__content-row--horizontal-layout {
 	display: flex;
 	flex-direction: column;
 	gap: 3rem;
@@ -136,12 +139,12 @@ Then, we need to add the styles for the new wireframe. Let's create a new file c
 	}
 }
 
-.step-container-v2__content--horizontal-layout-left,
-.step-container-v2__content--horizontal-layout-right {
+.step-container-v2__content-row--horizontal-layout-left,
+.step-container-v2__content-row--horizontal-layout-right {
 	flex: 1;
 }
 
-.step-container-v2__content--horizontal-layout-left {
+.step-container-v2__content-row--horizontal-layout-left {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
@@ -163,13 +166,13 @@ Let's modify the `children` of `HorizontalLayout` to reflect this new requiremen
 		<>
 			<TopBarRenderer topBar={ topBar } />
 			<ContentWrapper width="wide" centerAligned={ context.isSmallViewport }>
-				<Content className="step-container-v2__content--horizontal-layout">
-					<div className="step-container-v2__content--horizontal-layout-left">
+				<ContentRow columns={ 10 } className="step-container-v2__content-row--horizontal-layout">
+					<div className="step-container-v2__content-row--horizontal-layout-left">
 						{ heading }
 						{ context.isSmallViewport && imageUrl && <img src={ imageUrl } alt="" /> }
 					</div>
-					<div className="step-container-v2__content--horizontal-layout-right">{ content }</div>
-				</Content>
+					<div className="step-container-v2__content-row--horizontal-layout-right">{ content }</div>
+				</ContentRow>
 				{ footer }
 			</ContentWrapper>
 			<StickyBottomBarRenderer stickyBottomBar={ stickyBottomBar } />

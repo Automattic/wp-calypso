@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import { Content } from '../../components/Content/Content';
 import { StepContainerV2 } from '../../components/StepContainerV2/StepContainerV2';
 import { ContentProp } from '../../components/StepContainerV2/context';
 import { TopBarRenderer } from '../../components/TopBar/TopBarRenderer';
@@ -21,9 +20,9 @@ export const PlaygroundLayout = ( { topBar, className, children }: PlaygroundLay
 				return (
 					<>
 						<TopBarRenderer topBar={ topBar } />
-						<Content className={ clsx( 'step-container-v2__playground-layout', className ) }>
+						<div className={ clsx( 'step-container-v2__playground-layout', className ) }>
 							{ content }
-						</Content>
+						</div>
 					</>
 				);
 			} }

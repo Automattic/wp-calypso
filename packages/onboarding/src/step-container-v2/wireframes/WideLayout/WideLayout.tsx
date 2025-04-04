@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Content } from '../../components/Content/Content';
+import { ContentRow } from '../../components/ContentRow/ContentRow';
 import { ContentWrapper } from '../../components/ContentWrapper/ContentWrapper';
 import { StepContainerV2 } from '../../components/StepContainerV2/StepContainerV2';
 import { ContentProp } from '../../components/StepContainerV2/context';
@@ -43,10 +43,8 @@ export const WideLayout = ( {
 					<>
 						<TopBarRenderer topBar={ topBar } />
 						<ContentWrapper hasPadding={ hasContentPadding } maxWidth={ maxWidth }>
-							{ heading && <ContentWrapper.Row columns={ 6 }>{ heading }</ContentWrapper.Row> }
-							<ContentWrapper.Row columns={ 12 }>
-								<Content className={ className }>{ content }</Content>
-							</ContentWrapper.Row>
+							{ heading && <ContentRow columns={ 6 }>{ heading }</ContentRow> }
+							<ContentRow className={ className }>{ content }</ContentRow>
 						</ContentWrapper>
 						<StickyBottomBarRenderer stickyBottomBar={ stickyBottomBar } />
 					</>
