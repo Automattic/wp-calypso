@@ -37,15 +37,8 @@ describe( DataHelper.createSuiteTitle( 'Importer: Site Setup' ), () => {
 	describe( 'Follow the WordPress import flow', () => {
 		navigateToSetup( credentials.testSites?.primary?.url as string );
 
-		it( 'Start a WordPress import', async () => {
+		it( 'Start a content-only WordPress import', async () => {
 			await startImportFlow.enterURL( 'make.wordpress.org' );
-			await Promise.any( [
-				startImportFlow.clickPremigrationOptionButton(),
-				Promise.all( [
-					startImportFlow.validateWordPressPage(),
-					startImportFlow.contentOnlyWordPressPage(),
-				] ),
-			] );
 			await startImportFlow.validateImporterDragPage( 'wordpress' );
 		} );
 	} );
