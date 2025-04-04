@@ -1,6 +1,5 @@
 import page from '@automattic/calypso-router';
 import { getUrlParts, getUrlFromParts, determineUrlType, format } from '@automattic/calypso-url';
-import { Button } from '@automattic/components';
 import Search from '@automattic/search';
 import clsx from 'clsx';
 import debugFactory from 'debug';
@@ -13,7 +12,6 @@ import { connect } from 'react-redux';
 import AllSites from 'calypso/blocks/all-sites';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
-import { addQueryArgs } from 'calypso/lib/url';
 import allSitesMenu from 'calypso/my-sites/sidebar/static-data/all-sites-menu';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -243,10 +241,6 @@ export class SiteSelector extends Component {
 		this.onSiteSelect( event, ALL_SITES );
 	};
 
-	onManageSitesClick = () => {
-		this.props.recordTracksEvent( 'calypso_manage_sites_click' );
-	};
-
 	onSiteHover = ( event, siteId ) => {
 		if ( this.lastMouseHover !== siteId ) {
 			debug( `${ siteId } hovered` );
@@ -343,16 +337,6 @@ export class SiteSelector extends Component {
 		const multiSiteContext = allSitesMenu( {
 			showManagePlugins: this.props.hasSiteWithPlugins,
 		} ).find( ( menuItem ) => menuItem.url === this.mapAllSitesPath( this.props.allSitesPath ) );
-
-		// Let's not display the all sites button if there is no multi-site context.
-		if ( this.props.showManageSitesButton && ! multiSiteContext ) {
-			return null;
-		}
-
-		// Let's not display the all sites button if we are already displaying a multi-site context page.
-		if ( this.props.showManageSitesButton && ! this.props.selectedSite ) {
-			return null;
-		}
 
 		this.visibleSites.push( ALL_SITES );
 
@@ -472,47 +456,34 @@ export class SiteSelector extends Component {
 							</span>
 						) }
 				</div>
-				{ ( this.props.showManageSitesButton || this.props.showAddNewSite ) && (
+				{ this.props.showAddNewSite && (
 					<div className="site-selector__actions">
-						{ this.props.showManageSitesButton && (
-							<Button
-								transparent
-								onClick={ this.onManageSitesClick }
-								href={ addQueryArgs(
-									{ search: this.state.searchTerm.length > 0 ? this.state.searchTerm : null },
-									'/sites'
-								) }
-							>
-								{ this.props.translate( 'Manage sites' ) }
-							</Button>
+						{ this.props.isJetpackAgencyDashboard ? (
+							<JetpackAgencyAddSite
+								onClickAddNewSite={ () =>
+									this.props.recordTracksEvent(
+										'calypso_jetpack_agency_dashboard_sidebar_add_new_site_click'
+									)
+								}
+								onClickWpcomMenuItem={ () =>
+									this.props.recordTracksEvent(
+										'calypso_jetpack_agency_dashboard_sidebar_create_wpcom_site_click'
+									)
+								}
+								onClickJetpackMenuItem={ () =>
+									this.props.recordTracksEvent(
+										'calypso_jetpack_agency_dashboard_sidebar_connect_jetpack_site_click'
+									)
+								}
+								onClickBluehostMenuItem={ () =>
+									this.props.recordTracksEvent(
+										'calypso_jetpack_agency_dashboard_sidebar_create_bluehost_site_click'
+									)
+								}
+							/>
+						) : (
+							<SiteSelectorAddSite />
 						) }
-						{ this.props.showAddNewSite &&
-							( this.props.isJetpackAgencyDashboard ? (
-								<JetpackAgencyAddSite
-									onClickAddNewSite={ () =>
-										this.props.recordTracksEvent(
-											'calypso_jetpack_agency_dashboard_sidebar_add_new_site_click'
-										)
-									}
-									onClickWpcomMenuItem={ () =>
-										this.props.recordTracksEvent(
-											'calypso_jetpack_agency_dashboard_sidebar_create_wpcom_site_click'
-										)
-									}
-									onClickJetpackMenuItem={ () =>
-										this.props.recordTracksEvent(
-											'calypso_jetpack_agency_dashboard_sidebar_connect_jetpack_site_click'
-										)
-									}
-									onClickBluehostMenuItem={ () =>
-										this.props.recordTracksEvent(
-											'calypso_jetpack_agency_dashboard_sidebar_create_bluehost_site_click'
-										)
-									}
-								/>
-							) : (
-								<SiteSelectorAddSite />
-							) ) }
 					</div>
 				) }
 			</div>
