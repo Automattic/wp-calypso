@@ -60,6 +60,8 @@ export const queueRequest =
 		const { responseType } = options || {};
 		const fetcher = get( options, 'options.fetcher', 'wpcom' );
 
+		const isLocalApiCall = options?.isLocalApiCall;
+
 		const onStreamRecord =
 			rawOnStreamRecord &&
 			( ( record ) => {
@@ -73,9 +75,10 @@ export const queueRequest =
 			fetcher
 		)(
 			...[
-				{ path, formData, onStreamRecord, responseType },
+				{ path, formData, onStreamRecord, responseType, isLocalApiCall },
 				{ ...query }, // wpcom mutates the query so hand it a copy
 				method === 'POST' && body,
+
 				( error, data, headers ) => {
 					debug( 'callback fn by Req method: error=%o data=%o headers=%o', error, data, headers );
 

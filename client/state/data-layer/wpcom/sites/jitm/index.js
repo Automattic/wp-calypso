@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import moment from 'moment/moment';
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
 import { JITM_DISMISS, JITM_FETCH } from 'calypso/state/action-types';
@@ -11,6 +12,7 @@ import schema from './schema.json';
 
 const noop = () => {};
 const jitmSchema = schema;
+const isRunningInJetpackSite = config.isEnabled( 'is_running_in_jetpack_site' );
 
 /**
  * Existing libraries do not escape decimal encoded entities that php encodes, this handles that.
@@ -65,12 +67,13 @@ export const doFetchJITM = ( action ) =>
 		{
 			method: 'GET',
 			apiNamespace: 'wpcom/v3',
-			path: `/sites/${ action.siteId }/jitm`,
+			path: isRunningInJetpackSite ? `/jitm` : `/sites/${ action.siteId }/jitm`,
 			query: {
 				message_path: action.messagePath,
 				query: action.searchQuery,
 				locale: action.locale,
 			},
+			isLocalApiCall: true, // stop `jetpack_site_xhr_wrapper` from modifying the apiNamespace
 		},
 		{ ...action }
 	);
@@ -90,6 +93,7 @@ export const doDismissJITM = ( action ) =>
 				feature_class: action.featureClass,
 				id: action.id,
 			},
+			isLocalApiCall: true, // stop `jetpack_site_xhr_wrapper` from modifying the apiNamespace
 		},
 		action
 	);
