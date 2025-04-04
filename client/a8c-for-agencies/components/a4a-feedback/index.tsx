@@ -106,7 +106,7 @@ export function A4AFeedback( { title, description, suggestion, onSubmit, onSkip 
 								onSubmit( {
 									experience,
 									comments,
-									suggestions: suggestions.map( ( suggestion ) => suggestion.text ),
+									suggestions: suggestions.map( ( suggestion ) => suggestion.value ),
 								} )
 							}
 							disabled={ ! experience }

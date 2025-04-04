@@ -21,27 +21,22 @@ export const getA4AfeedbackProps = (
 						{
 							label: translate( 'Learning about referrals' ),
 							value: 'learning-about-referrals',
-							text: 'Learning about referrals',
 						},
 						{
 							label: translate( 'Finding referral mode' ),
 							value: 'finding-referral-mode',
-							text: 'Finding referral mode',
 						},
 						{
 							label: translate( 'Adding products and hosting to the referral cart' ),
 							value: 'adding-products-and-hosting-to-the-referral-cart',
-							text: 'Adding products and hosting to the referral cart',
 						},
 						{
 							label: translate( 'Sending a referral to my client' ),
 							value: 'sending-a-referral-to-my-client',
-							text: 'Sending a referral to my client',
 						},
 						{
 							label: translate( 'Other' ),
 							value: 'other',
-							text: 'Other',
 						},
 					],
 				},
@@ -61,24 +56,20 @@ export const getA4AfeedbackProps = (
 						{
 							label: translate( 'Discovering the Partner Directories feature' ),
 							value: 'discovering-the-partner-directories-feature',
-							text: 'Discovering the Partner Directories feature',
 						},
 						{
 							label: translate( 'Understanding how Partner Directories can benefit my agency' ),
 							value: 'understanding-how-partner-directories-can-benefit-my-agency',
-							text: 'Understanding how Partner Directories can benefit my agency',
 						},
 						{
 							label: translate(
 								'Understanding the criteria my agency needs to meet in order to be included'
 							),
 							value: 'understanding-the-criteria-my-agency-needs-to-meet-in-order-to-be-included',
-							text: 'Understanding the criteria my agency needs to meet in order to be included',
 						},
 						{
 							label: translate( 'Other' ),
 							value: 'other',
-							text: 'Other',
 						},
 					],
 				},
@@ -97,22 +88,18 @@ export const getA4AfeedbackProps = (
 						{
 							label: translate( 'Finding where to invite my team members' ),
 							value: 'finding-where-to-invite-my-team-members',
-							text: 'Finding where to invite my team members',
 						},
 						{
 							label: translate( 'Sending an invitation to a team member' ),
 							value: 'sending-an-invitation-to-a-team-member',
-							text: 'Sending an invitation to a team member',
 						},
 						{
 							label: translate( 'Finding documentation on team member permissions' ),
 							value: 'finding-documentation-on-team-member-permissions',
-							text: 'Finding documentation on team member permissions',
 						},
 						{
 							label: translate( 'Other' ),
 							value: 'other',
-							text: 'Other',
 						},
 					],
 				},
@@ -129,22 +116,18 @@ export const getA4AfeedbackProps = (
 						{
 							label: translate( 'Finding the right products or hosting' ),
 							value: 'finding-the-right-products-or-hosting',
-							text: 'Finding the right products or hosting',
 						},
 						{
 							label: translate( 'Understanding the pricing structure' ),
 							value: 'understanding-the-pricing-structure',
-							text: 'Understanding the pricing structure',
 						},
 						{
 							label: translate( 'Setting up my product or hosting' ),
 							value: 'setting-up-my-product-or-hosting',
-							text: 'Setting up my product or hosting',
 						},
 						{
 							label: translate( 'Other' ),
 							value: 'other',
-							text: 'Other',
 						},
 					],
 				},

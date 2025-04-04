@@ -13,7 +13,6 @@ export type FeedbackQueryData = {
 export type FeedbackSuggestion = {
 	label: string;
 	value: string;
-	text: string;
 };
 
 export type FeedbackProps = {
