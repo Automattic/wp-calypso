@@ -116,7 +116,7 @@ export const QuickLinks = ( {
 				customizerLinks
 			) }
 			<ActionBox
-				href={ usesWpAdminInterface ? `${ siteAdminUrl }post-new.php` : `/post/${ siteSlug }` }
+				href={ `${ siteAdminUrl }post-new.php` }
 				hideLinkIndicator
 				onClick={ trackWritePostAction }
 				label={ translate( 'Write blog post' ) }
@@ -144,11 +144,7 @@ export const QuickLinks = ( {
 			) }
 			{ canEditPages && (
 				<ActionBox
-					href={
-						usesWpAdminInterface
-							? `${ siteAdminUrl }post-new.php?post_type=page`
-							: `/page/${ siteSlug }`
-					}
+					href={ `${ siteAdminUrl }post-new.php?post_type=page` }
 					hideLinkIndicator
 					onClick={ trackAddPageAction }
 					label={ translate( 'Add a page' ) }
