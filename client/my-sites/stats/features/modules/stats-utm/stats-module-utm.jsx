@@ -4,7 +4,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { trendingUp } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -31,6 +31,8 @@ const OPTION_KEYS = {
 	CAMPAIGN: 'utm_campaign',
 };
 
+const UTM_QUERY_PARAM = 'utm_param';
+
 const StatsModuleUTM = ( {
 	path,
 	className,
@@ -45,27 +47,37 @@ const StatsModuleUTM = ( {
 	postId,
 	summaryUrl,
 } ) => {
-	const utmQueryParam = 'utm_param';
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const translate = useTranslate();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.SOURCE_MEDIUM );
-	let url = summaryUrl || window.location.href;
-	let queryParams = new URLSearchParams( url.split( '?' )[ 1 ] || '' );
+	const [ url ] = useState( () => {
+		let initialUrl = summaryUrl || window.location.href;
+		let queryParams;
 
-	if ( ! summaryUrl && isOdysseyStats ) {
-		url = window.location.href;
-		queryParams = new URLSearchParams( window.location.hash.split( '#!' )[ 1 ] || '' );
-	}
+		if ( ! summaryUrl && isOdysseyStats ) {
+			initialUrl = window.location.href;
+			queryParams = new URLSearchParams( window.location.hash.split( '#!' )[ 1 ] || '' );
+		} else {
+			queryParams = new URLSearchParams( initialUrl.split( '?' )[ 1 ] || '' );
+		}
 
-	useEffect( () => {
-		const utmParam = queryParams.get( utmQueryParam );
-
+		const utmParam = queryParams.get( UTM_QUERY_PARAM );
 		if ( utmParam && Object.values( OPTION_KEYS ).includes( utmParam ) ) {
 			setSelectedOption( utmParam );
 		}
-	}, [ queryParams ] );
+
+		return { url: initialUrl, params: queryParams };
+	} );
+
+	useEffect( () => {
+		if ( ! isOdysseyStats && summary ) {
+			const newUrl = new URL( window.location );
+			newUrl.searchParams.set( UTM_QUERY_PARAM, selectedOption );
+			window.history.replaceState( {}, '', newUrl );
+		}
+	}, [ summary, selectedOption, isOdysseyStats ] );
 
 	const optionLabels = {
 		[ OPTION_KEYS.SOURCE_MEDIUM ]: {
@@ -105,21 +117,35 @@ const StatsModuleUTM = ( {
 	const displaySummaryLink = data && ! hideSummaryLink;
 	const showLoader = isLoading || isFetchingUTM;
 
-	const getHref = ( params ) => {
-		params.set( utmQueryParam, selectedOption );
+	const getHref = useMemo( () => {
+		return () => {
+			const params = new URLSearchParams( url.params.toString() );
+			params.set( UTM_QUERY_PARAM, selectedOption );
 
-		if ( ! hideSummaryLink && summaryUrl ) {
-			return `/stats/${ period.period }/${ path }/${ siteSlug }?${ params.toString() }`;
-		}
+			const basePath = `/stats/${ period.period }/${ path }/${ siteSlug }`;
 
-		// Some modules do not have view all abilities
-		if ( ! summary && period && path && siteSlug ) {
-			params.set( 'startDate', period.startOf.format( 'YYYY-MM-DD' ) );
-			params.set( 'endDate', period.endOf.format( 'YYYY-MM-DD' ) );
-		}
+			if ( ! hideSummaryLink && summaryUrl ) {
+				return `${ basePath }?${ params.toString() }`;
+			}
 
-		return `/stats/${ period.period }/${ path }/${ siteSlug }?${ params.toString() }`;
-	};
+			if ( ! summary && period && path && siteSlug ) {
+				params.set( 'startDate', period.startOf.format( 'YYYY-MM-DD' ) );
+				params.set( 'endDate', period.endOf.format( 'YYYY-MM-DD' ) );
+			}
+
+			return `${ basePath }?${ params.toString() }`;
+		};
+	}, [
+		url.params,
+		selectedOption,
+		period,
+		path,
+		siteSlug,
+		hideSummaryLink,
+		summaryUrl,
+		summary,
+		UTM_QUERY_PARAM,
+	] );
 
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
@@ -202,7 +228,7 @@ const StatsModuleUTM = ( {
 						showMore={
 							displaySummaryLink && ! summary
 								? {
-										url: getHref( queryParams ),
+										url: getHref(),
 										label:
 											data.length >= 10
 												? translate( 'View all', {
