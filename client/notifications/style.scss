@@ -164,9 +164,16 @@ html.touch #wpnc-panel {
 }
 
 div.reader-notifications__panel {
+	position: relative;
+
+	--3pc-notice-buffer: 50px;
+	@media only screen and (min-width: 1114px) {
+		--3pc-notice-buffer: 0px; /* stylelint-disable-line length-zero-no-unit */
+	}
+
 	#wpnc-panel.wpnc__main {
-		top: calc(var(--masterbar-height) + var(--content-padding-top));
-		height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
+		top: calc(var(--masterbar-height) + var(--content-padding-top) + var(--3pc-notice-buffer));
+		height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom) - var(--3pc-notice-buffer));
 		box-shadow: -3px 1px 10px -2px color-mix(in srgb, var(--color-neutral-70) 7.5%, transparent);
 
 		&.wpnt-open {
@@ -182,6 +189,43 @@ div.reader-notifications__panel {
 	@media only screen and (min-width: 1114px) {
 		.wpnc__main {
 			width: calc(100vw - var(--sidebar-width-max) - 16px); // 16px for content frame padding.
+			.wpnc__single-view {
+				z-index: 1;
+			}
+			.wpnc__note-list {
+				z-index: 2;
+			}
+		}
+	}
+	.reader-notifications__3pc-notice {
+		position: absolute;
+		top: 0;
+		left: 0;
+		justify-content: center;
+		align-items: center;
+		box-sizing: border-box;
+		padding: 0 10px;
+
+		&-full-width {
+			display: none;
+			bottom: 0;
+
+			right: 400px; //width of main notifs panel
+
+			@media only screen and (min-width: 1114px) {
+				display: flex;
+			}
+		}
+		&-header {
+			display: flex;
+			right: 0;
+			height: var(--3pc-notice-buffer);
+			p {
+				margin-bottom: 5px;
+			}
+			@media only screen and (min-width: 1114px) {
+				display: none;
+			}
 		}
 	}
 }

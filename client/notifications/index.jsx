@@ -11,11 +11,13 @@
 
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { localizeUrl } from '@automattic/i18n-utils';
 import NotificationsPanel, {
 	refreshNotes,
 } from '@automattic/notifications/src/panel/Notifications';
 import clsx from 'clsx';
 import debugFactory from 'debug';
+import { useTranslate } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import localStorageHelper from 'store';
@@ -53,6 +55,25 @@ const isDesktop = config.isEnabled( 'desktop' );
 
 const debug = debugFactory( 'notifications:panel' );
 
+const Notifications3PCNotice = ( { className } ) => {
+	const translate = useTranslate();
+	return (
+		<div className={ `reader-notifications__3pc-notice ${ className }` }>
+			<p>
+				{ translate(
+					"Didn't expect to see this page? {{learnMoreLink}}Learn about 3rd party cookies.{{/learnMoreLink}}",
+					{
+						components: {
+							learnMoreLink: (
+								<a href={ localizeUrl( 'https://wordpress.com/support/third-party-cookies/' ) } />
+							),
+						},
+					}
+				) }
+			</p>
+		</div>
+	);
+};
 export class Notifications extends Component {
 	state = {
 		// Desktop: override isVisible to maintain active polling for native UI elements (e.g. notification badge)
@@ -283,21 +304,25 @@ export class Notifications extends Component {
 		}
 
 		return (
-			<div
-				id="wpnc-panel"
-				className={ clsx( 'wide', 'wpnc__main', {
-					'wpnt-open': this.props.isShowing,
-					'wpnt-closed': ! this.props.isShowing,
-				} ) }
-			>
-				<NotificationsPanel
-					actionHandlers={ this.actionHandlers }
-					isShowing={ this.props.isShowing }
-					isVisible={ this.state.isVisible }
-					locale={ localeSlug }
-					wpcom={ wpcom }
-				/>
-			</div>
+			<>
+				<Notifications3PCNotice className="reader-notifications__3pc-notice-header" />
+				<div
+					id="wpnc-panel"
+					className={ clsx( 'wide', 'wpnc__main', {
+						'wpnt-open': this.props.isShowing,
+						'wpnt-closed': ! this.props.isShowing,
+					} ) }
+				>
+					<Notifications3PCNotice className="reader-notifications__3pc-notice-full-width" />
+					<NotificationsPanel
+						actionHandlers={ this.actionHandlers }
+						isShowing={ this.props.isShowing }
+						isVisible={ this.state.isVisible }
+						locale={ localeSlug }
+						wpcom={ wpcom }
+					/>
+				</div>
+			</>
 		);
 	}
 }
