@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { useParams, useLoaderData } from 'react-router-dom';
 import { type SiteObject } from '../data';
+import PageLayout from '../page-layout';
 import SiteMenu from '../site-menu';
 
 function Site() {
@@ -10,14 +11,7 @@ function Site() {
 		return <p>{ __( 'No site found' ) }</p>;
 	}
 
-	return (
-		<>
-			<SiteMenu siteId={ id as string } />
-			<div>
-				<h1>{ item.title }</h1>
-			</div>
-		</>
-	);
+	return <PageLayout title={ item.title } subMenu={ <SiteMenu siteId={ id as string } /> } />;
 }
 
 export default Site;

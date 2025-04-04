@@ -1,13 +1,10 @@
-// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
-import {
-	__experimentalVStack as VStack,
-	__experimentalHeading as Heading,
-} from '@wordpress/components';
+import { Card } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useLoaderData } from 'react-router-dom';
 import { Domain, fetchDomains } from '../data';
+import PageLayout from '../page-layout';
 
 const fields = [
 	{
@@ -97,9 +94,8 @@ function Domains() {
 	const domains = useLoaderData() as Domain[];
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( domains, view, fields );
 	return (
-		<VStack spacing={ 4 }>
-			<Heading level={ 2 }>{ __( 'Domains' ) }</Heading>
-			<div className="domains-dataviews">
+		<PageLayout title={ __( 'Domains' ) }>
+			<Card>
 				<DataViews
 					data={ filteredData || [] }
 					fields={ fields }
@@ -112,8 +108,8 @@ function Domains() {
 					isLoading={ false }
 					defaultLayouts={ defaultLayouts }
 				/>
-			</div>
-		</VStack>
+			</Card>
+		</PageLayout>
 	);
 }
 

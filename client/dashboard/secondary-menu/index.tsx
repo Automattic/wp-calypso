@@ -84,7 +84,7 @@ function SecondaryMenu() {
 	// TODO: get the notifications..
 	const hasUnreadNotifications = false;
 	const readerPath = '/reader';
-	const notificationsPath = '/notifications';
+	const notificationsPath = '/me/notifications';
 
 	const openHelpCenter = () => {
 		// Open help center action would go here

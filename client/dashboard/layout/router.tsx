@@ -6,7 +6,6 @@ import Billing from '../me/billing';
 import MeNotifications from '../me/notifications';
 import Privacy from '../me/privacy';
 import Security from '../me/security';
-import Notifications from '../notifications';
 import Profile from '../profile';
 import Reader from '../reader';
 import Site from '../site';
@@ -77,10 +76,6 @@ export const router = createBrowserRouter(
 				{
 					path: 'reader',
 					element: <Reader />,
-				},
-				{
-					path: 'notifications',
-					element: <Notifications />,
 				},
 				{
 					path: '',
