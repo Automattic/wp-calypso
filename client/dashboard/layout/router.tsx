@@ -47,6 +47,7 @@ export const router = createBrowserRouter(
 				{
 					path: 'domains',
 					element: <Domains />,
+					loader: Domains.loader,
 				},
 				{
 					path: 'me/profile',
