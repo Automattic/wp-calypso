@@ -74,6 +74,7 @@ const Notifications3PCNotice = ( { className } ) => {
 		</div>
 	);
 };
+
 export class Notifications extends Component {
 	state = {
 		// Desktop: override isVisible to maintain active polling for native UI elements (e.g. notification badge)
