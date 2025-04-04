@@ -17,11 +17,6 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 class MySitesNavigation extends Component {
 	static displayName = 'MySitesNavigation';
 
-	preventPickerDefault = ( event ) => {
-		event.preventDefault();
-		event.stopPropagation();
-	};
-
 	handleGlobalSidebarMenuItemClick = ( path ) => {
 		this.props.recordTracksEvent( GLOBAL_SIDEBAR_EVENTS.MENU_ITEM_CLICK, {
 			section: 'sites',
