@@ -41,6 +41,11 @@ describe( DataHelper.createSuiteTitle( 'Importer: Site Setup' ), () => {
 			await startImportFlow.enterURL( 'make.wordpress.org' );
 			await startImportFlow.validateImporterDragPage( 'wordpress' );
 		} );
+
+		it( 'Back shows the URL capture form', async () => {
+			await startImportFlow.clickBack();
+			await startImportFlow.validateURLCapturePage();
+		} );
 	} );
 
 	// An import flow that redirect to the "start building" page.
@@ -104,22 +109,6 @@ describe( DataHelper.createSuiteTitle( 'Importer: Site Setup' ), () => {
 			await startImportFlow.startImporterList();
 			await startImportFlow.validateImporterListPage();
 			await startImportFlow.selectImporterFromList( 0 );
-		} );
-	} );
-
-	// Go back through pages.
-	describe( 'Go back to first page', () => {
-		navigateToSetup( credentials.testSites?.primary?.url as string );
-
-		it( 'Go to Import page', async () => {
-			await startImportFlow.enterURL( 'make.wordpress.org' );
-			await startImportFlow.validateUpgradePlanPage();
-		} );
-
-		// Back one page shows the URL capture page
-		it( 'Back shows migration modal', async () => {
-			await startImportFlow.clickBack();
-			await startImportFlow.validateURLCapturePage();
 		} );
 	} );
 
