@@ -1,4 +1,3 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	Button,
 	Card,
@@ -15,29 +14,25 @@ import {
 import { DataForm } from '@wordpress/dataviews';
 import { useMemo, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { useLoaderData } from 'react-router-dom';
+import { useLoaderData, useFetcher } from 'react-router-dom';
 import { fetchProfile, type ProfileObject, updateProfile } from '../data';
 import type { Field, Form } from '@wordpress/dataviews';
-import type { LoaderFunction } from 'react-router-dom';
+import type { LoaderFunction, ActionFunction } from 'react-router-dom';
+
+export const action: ActionFunction = async ( { request } ) => {
+	const data = await request.json();
+	return await updateProfile( data as ProfileObject );
+};
 
 function Profile() {
 	const translate = useTranslate();
-	const queryClient = useQueryClient();
+	const fetcher = useFetcher();
 	const initialFormData = useLoaderData() as ProfileObject;
-
-	// Add local state to manage form data
 	const [ localFormData, setLocalFormData ] = useState< ProfileObject >( initialFormData );
 
-	const {
-		mutate: saveProfile,
-		isPending: isSaving,
-		error: saveError,
-	} = useMutation( {
-		mutationFn: updateProfile,
-		onSuccess: () => {
-			queryClient.invalidateQueries( { queryKey: [ 'profile' ] } );
-		},
-	} );
+	// Remove the mutation related code and use fetcher state
+	const isSaving = fetcher.state === 'submitting';
+	const error = fetcher.data?.error;
 
 	// Define fields for the DataForm
 	const fields = useMemo(
@@ -125,11 +120,13 @@ function Profile() {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		saveProfile( localFormData );
+		fetcher.submit( JSON.stringify( localFormData ), {
+			method: 'post',
+			encType: 'application/json',
+		} );
 	};
 
 	// Handle case where there's an error fetching data
-	const error = saveError;
 	const errorMessage = error instanceof Error ? error.message : String( error );
 
 	return (
@@ -200,5 +197,6 @@ function Profile() {
 }
 
 Profile.loader = fetchProfile satisfies LoaderFunction;
+Profile.action = action satisfies ActionFunction;
 
 export default Profile;

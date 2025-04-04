@@ -51,6 +51,7 @@ export const router = createBrowserRouter(
 					path: 'me/profile',
 					element: <Profile />,
 					loader: Profile.loader,
+					action: Profile.action,
 				},
 				{
 					path: 'me/billing',
