@@ -1,5 +1,5 @@
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
-import { updateProfile, fetchProfile, type ProfileObject } from '../data';
+import { updateProfile, fetchProfile, fetchSite, fetchSites, type ProfileObject } from '../data';
 import Domains from '../domains';
 import Header from '../header';
 import Billing from '../me/billing';
@@ -33,12 +33,12 @@ export const router = createBrowserRouter(
 				{
 					path: 'sites',
 					element: <Sites />,
-					loader: Sites.loader,
+					loader: fetchSites,
 				},
 				{
 					path: 'sites/:id',
 					element: <Site />,
-					loader: Site.loader,
+					loader: ( { params } ) => fetchSite( params.id as string ),
 				},
 				{
 					path: 'sites/:id/backups',

@@ -3,10 +3,9 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useNavigate, useLoaderData } from 'react-router-dom';
-import { fetchSites, type SiteObject } from '../data';
+import { type SiteObject } from '../data';
 import PageLayout from '../page-layout';
 import type { View, Field } from '@wordpress/dataviews';
-import type { LoaderFunction } from 'react-router-dom';
 
 // Helper function to get color based on performance score
 const getPerformanceColor = ( score: number ) => {
@@ -121,7 +120,5 @@ function Sites() {
 		</PageLayout>
 	);
 }
-
-Sites.loader = fetchSites satisfies LoaderFunction;
 
 export default Sites;
