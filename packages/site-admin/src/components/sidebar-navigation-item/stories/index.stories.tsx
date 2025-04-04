@@ -35,6 +35,17 @@ const meta: Meta< typeof SidebarNavigationItem > = {
 			options: [ 'small', 'medium', 'large' ],
 		},
 	},
+	decorators: [
+		( Story ) => {
+			const [ navState ] = useState( createNavState() );
+
+			return (
+				<SidebarNavigationContext.Provider value={ navState }>
+					<Story />
+				</SidebarNavigationContext.Provider>
+			);
+		},
+	],
 };
 
 export default meta;
@@ -53,13 +64,10 @@ export const Default: Story = {
 		const iconKey = iconName as unknown as IconName;
 		const icon = allIcons?.[ iconKey ] || allIcons.capturePhoto;
 
-		const [ navState ] = useState( createNavState() );
 		return (
-			<SidebarNavigationContext.Provider value={ navState }>
-				<SidebarNavigationItem { ...validArgs } icon={ icon }>
-					{ __( 'Site Photos Gallery', 'a8c-site-admin' ) }
-				</SidebarNavigationItem>
-			</SidebarNavigationContext.Provider>
+			<SidebarNavigationItem { ...validArgs } icon={ icon }>
+				{ __( 'Site Photos Gallery', 'a8c-site-admin' ) }
+			</SidebarNavigationItem>
 		);
 	},
 };
