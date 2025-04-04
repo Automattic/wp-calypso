@@ -313,7 +313,6 @@ export const SiteLogsDataViews = ( {
 						closePopoverAndCommit();
 					} }
 					tooltip={ translate( 'Select a date range' ) }
-					use40pxDefaultSize
 				/>
 			</div>
 			<DataViews< PHPLog | ServerLog >

@@ -18,7 +18,6 @@ const DateControl = ( {
 	dateRange,
 	overlay,
 	shortcutList,
-	use40pxDefaultSize = false,
 }: DateControlProps ) => {
 	const moment = useLocalizedMoment();
 	const siteToday = useMomentSiteZone();
@@ -71,7 +70,7 @@ const DateControl = ( {
 									onTriggerClick();
 								} }
 								ref={ buttonRef }
-								__next40pxDefaultSize={ use40pxDefaultSize }
+								__next40pxDefaultSize
 							>
 								{ getButtonLabel() }
 								<Icon className="gridicon" icon={ calendar } />

@@ -13,7 +13,6 @@ interface DateControlProps {
 	onShortcutClick: ( shortcut: DateRangePickerShortcut, closePopoverAndCommit: () => void ) => void;
 	tooltip?: string;
 	overlay?: JSX.Element;
-	use40pxDefaultSize?: boolean;
 }
 
 interface DateControlPickerProps {
