@@ -212,7 +212,10 @@ class StepWrapper extends Component {
 			sticky = isSticky;
 		}
 
-		const isHelpCenterLinkEnabled = flow?.enabledHelpCenterGeos && userLoggedIn;
+		const queryParams = new URLSearchParams( window?.location.search );
+		const flags = queryParams.get( 'flags' )?.split( ',' );
+		const isHelpCenterLinkEnabled =
+			flags?.includes( 'signup/help-center-link' ) && flow?.enabledHelpCenterGeos && userLoggedIn;
 
 		return (
 			<>
