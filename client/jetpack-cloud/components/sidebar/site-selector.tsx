@@ -49,11 +49,9 @@ const SiteSelector = () => {
 			forwardRef={ siteSelectorRef }
 			className="jetpack-cloud-sidebar__site-selector"
 			indicator
-			showAddNewSite
 			showAllSites={ canAccessJetpackManage }
 			/* eslint-disable-next-line jsx-a11y/no-autofocus */
 			autoFocus={ isVisible }
-			isJetpackAgencyDashboard={ canAccessJetpackManage }
 			keepCurrentSection
 			allSitesPath="/dashboard"
 			siteBasePath="/landing"
