@@ -80,7 +80,7 @@ function Profile() {
 					type: 'text',
 				},
 				{
-					id: 'displayName',
+					id: 'display_name',
 					label: translate( 'DISPLAY NAME' ),
 					type: 'text',
 				},
@@ -142,7 +142,7 @@ function Profile() {
 					{
 						id: 'personalInfo',
 						label: translate( 'Personal Information' ),
-						children: [ 'username', 'displayName', 'email', 'siteAddress', 'aboutMe' ],
+						children: [ 'username', 'display_name', 'email', 'siteAddress', 'aboutMe' ],
 					},
 					{
 						id: 'developerOptions',
