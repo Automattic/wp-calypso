@@ -163,7 +163,7 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 			{ ! isRequestingData && ! hasPosts && ! shouldGateStatsModule && (
 				// show empty state
 				<StatsCard
-					className={ clsx( 'stats-card--empty-variant', className ) }
+					className={ className }
 					title={ moduleTitle }
 					isEmpty
 					emptyMessage={

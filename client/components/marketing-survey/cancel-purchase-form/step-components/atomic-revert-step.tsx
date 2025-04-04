@@ -190,7 +190,7 @@ export function AtomicRevertStep( props: Props ) {
 						}
 						label={ translate( 'Restore my posts, pages, and media.' ) }
 						help={ translate(
-							'Your posts, pages, and media added after upgrading will be automatically imported to your downgraded site. This process may take up to 24 hours. You will receive an email when complete.'
+							'Your posts, pages, and media added after upgrading will be automatically imported to your downgraded site. This process may take up to 24 hours.'
 						) }
 						checked={ enableLosslessRevert }
 						onChange={ setEnableLosslessRevert! }

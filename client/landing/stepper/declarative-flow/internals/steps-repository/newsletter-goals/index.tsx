@@ -35,9 +35,9 @@ const NewsletterGoals: Step = ( { navigation } ) => {
 
 	return (
 		<StepContainer
+			goBack={ navigation.goBack }
 			stepName="newsletter-type"
 			isWideLayout
-			hideBack
 			flowName="newsletter"
 			formattedHeader={
 				<FormattedHeader
@@ -75,7 +75,6 @@ const NewsletterGoals: Step = ( { navigation } ) => {
 				</VStack>
 			}
 			recordTracksEvent={ recordTracksEvent }
-			showJetpackPowered
 		/>
 	);
 };

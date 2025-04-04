@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import LoggedOutForm from 'calypso/components/logged-out-form';
 import Notice from 'calypso/components/notice';
 import wpcom from 'calypso/lib/wp';
@@ -56,6 +57,7 @@ class RequestLoginEmailForm extends Component {
 		onSubmitEmail: PropTypes.func,
 		onSendEmailLogin: PropTypes.func,
 		createAccountForNewUser: PropTypes.bool,
+		shouldShowLoadingEllipsis: PropTypes.bool,
 		blogId: PropTypes.string,
 		errorMessage: PropTypes.string,
 		onErrorDismiss: PropTypes.func,
@@ -173,7 +175,13 @@ class RequestLoginEmailForm extends Component {
 			isEmailInputError,
 			isSubmitButtonDisabled,
 			isSubmitButtonBusy,
+			shouldShowLoadingEllipsis,
+			isFromJetpackOnboarding,
 		} = this.props;
+
+		if ( shouldShowLoadingEllipsis ) {
+			return <LoadingEllipsis className="magic-login__loading-ellipsis--jetpack" />;
+		}
 
 		const usernameOrEmail = this.getUsernameOrEmailFromState();
 		const siteIcon = this.state.site?.icon?.img ?? this.state.site?.icon?.ico ?? null;
@@ -182,7 +190,10 @@ class RequestLoginEmailForm extends Component {
 			const emailAddress = usernameOrEmail.indexOf( '@' ) > 0 ? usernameOrEmail : null;
 
 			return isJetpackMagicLinkSignUpEnabled ? (
-				<EmailedLoginLinkSuccessfullyJetpackConnect emailAddress={ emailAddress } />
+				<EmailedLoginLinkSuccessfullyJetpackConnect
+					emailAddress={ emailAddress }
+					shouldRedirect={ ! isFromJetpackOnboarding }
+				/>
 			) : (
 				<EmailedLoginLinkSuccessfully emailAddress={ emailAddress } />
 			);

@@ -6,12 +6,15 @@ import isWooCommerceProduct from 'calypso/jetpack-cloud/sections/partner-portal/
 import { PricingBreakdown } from 'calypso/my-sites/plans/jetpack-plans/product-store/pricing-breakdown';
 import getProductIcon from 'calypso/my-sites/plans/jetpack-plans/product-store/utils/get-product-icon';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import JetpackProductInfoComingSoonList from './coming-soon-list';
 import JetpackProductInfoFAQList from './faq-list';
 import JetpackProductInfoProductList from './product-list';
 import JetpackProductInfoRecommendationTags from './recommendation-tags';
 import JetpackProductInfoRegularList from './regular-list';
 import JetpackProductInfoSection from './section';
+import type { VendorInfo } from '../jetpack-lightbox/types';
 
 import './style.scss';
 
@@ -22,6 +25,7 @@ type JetpackProductInfoProps = {
 	siteId?: number;
 	title: TranslateResult;
 	customDescription?: ReactNode;
+	vendor?: VendorInfo | null;
 };
 
 const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
@@ -31,6 +35,7 @@ const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
 	siteId = null,
 	title,
 	customDescription,
+	vendor,
 } ) => {
 	const {
 		alsoIncluded,
@@ -45,7 +50,7 @@ const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
 		whatIsIncluded,
 		whatIsIncludedComingSoon,
 	} = product;
-
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const icon = getProductIcon( { productSlug } );
 	const isWooCommerce = isWooCommerceProduct( productSlug );
@@ -63,7 +68,30 @@ const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
 				<div className={ iconStyles }>
 					<img alt="" src={ icon } />
 				</div>
-				<h2>{ title }</h2>
+				<div className="jetpack-product-info__header-title">
+					<h2>{ title }</h2>
+					{ vendor &&
+						translate( 'By {{a/}}', {
+							components: {
+								a: (
+									<a
+										href={ vendor.vendorUrl }
+										target="_blank"
+										rel="noopener noreferrer"
+										onClick={ () => {
+											dispatch(
+												recordTracksEvent( 'calypso_marketplace_products_overview_vendor_click', {
+													vendor: vendor.vendorName,
+												} )
+											);
+										} }
+									>
+										{ vendor.vendorName }
+									</a>
+								),
+							},
+						} ) }
+				</div>
 			</div>
 			<div className="jetpack-product-info__description">{ lightboxDescription }</div>
 

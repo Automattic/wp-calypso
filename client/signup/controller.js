@@ -67,22 +67,6 @@ function setReferrerPolicy() {
 	} catch ( e ) {}
 }
 
-export const addP2SignupClassName = () => {
-	if ( ! document ) {
-		return;
-	}
-
-	document.body.classList.add( 'is-p2-signup' );
-};
-
-export const removeP2SignupClassName = function () {
-	if ( ! document ) {
-		return;
-	}
-
-	document.body.classList.remove( 'is-p2-signup' );
-};
-
 export default {
 	redirectWithoutLocaleIfLoggedIn( context, next ) {
 		const userLoggedIn = isUserLoggedIn( context.store.getState() );

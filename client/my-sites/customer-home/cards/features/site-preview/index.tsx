@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, ExternalLink } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -123,13 +123,13 @@ const SitePreview = ( {
 				<div className="home-site-preview__action-bar">
 					<div className="home-site-preview__site-info">
 						<h2 className="home-site-preview__info-title">{ selectedSiteName }</h2>
-						<a
+						<ExternalLink
 							href={ selectedSiteURL }
-							title={ selectedSiteURL }
 							className="home-site-preview__info-domain"
+							localizeUrl={ false }
 						>
 							<Truncated>{ siteDomain }</Truncated>
-						</a>
+						</ExternalLink>
 					</div>
 					<SitePreviewEllipsisMenu />
 				</div>

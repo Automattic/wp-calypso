@@ -10,7 +10,6 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef } from '@wordpress/element';
 import React from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
 /**
  * Internal Dependencies
  */
@@ -90,7 +89,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 		) {
 			startNewInteraction( {
 				event_source: 'help-center',
-				event_external_id: uuidv4(),
+				event_external_id: crypto.randomUUID(),
 			} );
 		} else if ( openSupportInteraction && ! currentSupportInteraction ) {
 			setCurrentSupportInteraction( openSupportInteraction[ 0 ] );

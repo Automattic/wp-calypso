@@ -12,7 +12,7 @@ export const MissingPaymentSettingsNotice = () => {
 	const { data: tipaltiData } = useGetTipaltiPayee();
 	const isPayable = tipaltiData?.IsPayable;
 
-	const { data: referrals } = useFetchReferrals( true );
+	const { data: referrals } = useFetchReferrals();
 
 	const hasReferrals = !! referrals?.length;
 

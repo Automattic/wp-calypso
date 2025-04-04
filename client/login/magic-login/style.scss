@@ -13,15 +13,26 @@
 			max-height: 180px;
 		}
 		.empty-content__title {
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 90%;
 		}
 		.empty-content__line {
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 60%;
 			margin-bottom: 20px;
 		}
 	}
+}
+
+.layout.is-jetpack-login {
+	.magic-login {
+		&__loading-ellipsis--jetpack {
+			left: 50%;
+			transform: translateX(-50%);
+
+			div {
+				background: var(--studio-jetpack-green-40, #069e08 );
+			}
+		}
+	}	
 }
 
 .layout.is-wpcom-magic-login {
@@ -308,7 +319,7 @@
 	}
 }
 
-/* stylelint-disable declaration-property-unit-allowed-list, scales/font-weights */
+/* stylelint-disable scales/font-weights */
 .grav-powered-magic-login {
 	max-width: 480px;
 	font-size: 14px;
@@ -740,4 +751,4 @@
 	display: block;
 	margin: 0 auto;
 }
-/* stylelint-enable declaration-property-unit-allowed-list, scales/font-weights */
+/* stylelint-enable scales/font-weights */

@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { megaphone } from '@wordpress/icons';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
@@ -113,7 +112,7 @@ const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 			{ presentEmptyUI && (
 				// show empty state
 				<StatsCard
-					className={ clsx( 'stats-card--empty-variant', className ) } // when removing stats/empty-module-traffic add this to the root of the card
+					className={ className }
 					title={ moduleStrings.title }
 					isEmpty
 					emptyMessage={

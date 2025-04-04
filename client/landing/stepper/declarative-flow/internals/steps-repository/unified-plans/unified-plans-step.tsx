@@ -354,7 +354,7 @@ function UnifiedPlansStep( {
 			return headerText;
 		}
 
-		return translate( 'Choose your flavor of WordPress' );
+		return translate( 'There’s a plan for you' );
 	};
 
 	const getSubheaderText = () => {
@@ -498,8 +498,10 @@ function UnifiedPlansStep( {
 					className="step-container-v2--plans"
 					topBar={
 						<Step.TopBar
-							backButton={
-								goBack ? <Step.BackButton onClick={ goBack } label={ backLabelText } /> : undefined
+							leftElement={
+								goBack ? (
+									<Step.BackButton onClick={ goBack }>{ backLabelText }</Step.BackButton>
+								) : undefined
 							}
 						/>
 					}

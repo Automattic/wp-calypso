@@ -1,21 +1,24 @@
 import { GlobalStylesProvider, useSyncGlobalStylesUserConfig } from '@automattic/global-styles';
+import { NavigatorScreenObject } from '@automattic/onboarding';
+import { Navigator } from '@wordpress/components/build-types/navigator/types';
 import { useViewportMatch } from '@wordpress/compose';
+import { Element } from '@wordpress/element';
 import clsx from 'clsx';
-import { useMemo, useState } from 'react';
-import { useInlineCss, useScreens } from '../hooks';
+import { MutableRefObject, useMemo, useState } from 'react';
+import { useInlineCss } from '../hooks';
 import Sidebar from './sidebar';
 import SitePreview from './site-preview';
 import type { Category, StyleVariation } from '@automattic/design-picker/src/types';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import './style.scss';
 
-interface DesignPreviewProps {
+export interface DesignPreviewProps {
 	previewUrl: string;
 	siteInfo?: {
 		title: string;
 		tagline: string;
 	};
-	title?: string;
+	title?: Element;
 	author?: string;
 	categories?: Category[];
 	description?: string;
@@ -23,6 +26,7 @@ interface DesignPreviewProps {
 	pricingBadge?: React.ReactNode;
 	variations?: StyleVariation[];
 	selectedVariation?: StyleVariation;
+	screens: NavigatorScreenObject[];
 	selectedDesignTitle: string;
 	onSelectVariation: ( variation: StyleVariation ) => void;
 	splitDefaultVariation: boolean;
@@ -32,19 +36,13 @@ interface DesignPreviewProps {
 	recordDeviceClick: ( device: string ) => void;
 	siteId: number;
 	stylesheet: string;
-	isVirtual?: boolean;
 	screenshot?: string;
 	isExternallyManaged?: boolean;
 	selectedColorVariation: GlobalStylesObject | null;
-	onSelectColorVariation: ( variation: GlobalStylesObject | null ) => void;
 	selectedFontVariation: GlobalStylesObject | null;
-	onSelectFontVariation: ( variation: GlobalStylesObject | null ) => void;
 	onGlobalStylesChange: ( globalStyles?: GlobalStylesObject | null ) => void;
-	limitGlobalStyles: boolean;
 	onNavigatorPathChange?: ( path?: string ) => void;
-	onScreenSelect?: ( screenSlug: string ) => void;
-	onScreenBack?: ( screenSlug: string ) => void;
-	onScreenSubmit?: ( screenSlug: string ) => void;
+	navigatorRef: MutableRefObject< Navigator | null >;
 }
 
 // @todo Get the style variations of theme, and then combine the selected one with colors & fonts for consistency
@@ -59,28 +57,18 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	pricingBadge,
 	variations,
 	selectedVariation,
-	onSelectVariation,
-	splitDefaultVariation,
-	needsUpgrade,
+	screens,
 	onClickCategory,
 	actionButtons,
 	recordDeviceClick,
-	siteId,
-	stylesheet,
 	screenshot,
-	isVirtual,
 	isExternallyManaged,
 	selectedColorVariation,
-	onSelectColorVariation,
 	selectedFontVariation,
-	onSelectFontVariation,
 	onGlobalStylesChange,
 	selectedDesignTitle,
-	limitGlobalStyles,
-	onScreenSelect,
-	onScreenBack,
-	onScreenSubmit,
 	onNavigatorPathChange,
+	navigatorRef,
 } ) => {
 	const isDesktop = useViewportMatch( 'large' );
 	const [ isInitialScreen, setIsInitialScreen ] = useState( true );
@@ -91,26 +79,6 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 	);
 
 	const inlineCss = useInlineCss( variations, selectedVariation );
-
-	const screens = useScreens( {
-		siteId,
-		stylesheet,
-		isVirtual,
-		isExternallyManaged,
-		limitGlobalStyles,
-		variations,
-		splitDefaultVariation,
-		needsUpgrade,
-		selectedVariation,
-		selectedColorVariation,
-		selectedFontVariation,
-		onSelectVariation,
-		onSelectColorVariation,
-		onSelectFontVariation,
-		onScreenSelect,
-		onScreenBack,
-		onScreenSubmit,
-	} );
 
 	const isFullscreen = ! isDesktop && ( screens.length === 1 || ! isInitialScreen );
 
@@ -129,6 +97,7 @@ const Preview: React.FC< DesignPreviewProps > = ( {
 			} ) }
 		>
 			<Sidebar
+				navigatorRef={ navigatorRef }
 				title={ title }
 				author={ author }
 				categories={ categories }

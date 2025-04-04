@@ -1,20 +1,24 @@
+import './styles.scss';
 import { FormInputValidation } from '@automattic/components';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { Button, TextControl } from '@wordpress/components';
 import { check, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import FeedPreview from 'calypso/landing/subscriptions/components/add-sites-form/feed-preview/feed-preview';
+import { useAddSitesModalNotices } from 'calypso/landing/subscriptions/hooks';
+import { useRecordSiteSubscribed } from 'calypso/landing/subscriptions/tracks';
 import { isValidUrl, parseUrl } from 'calypso/lib/importer/url-validation';
-import { useAddSitesModalNotices } from '../../hooks';
-import { useRecordSiteSubscribed } from '../../tracks';
-import './styles.scss';
+import { getUrlQuerySearchTerm, setUrlQuery, SEARCH_QUERY_PARAM } from 'calypso/reader/utils';
 
-type AddSitesFormProps = {
-	onAddFinished?: () => void;
+export type AddSitesFormProps = {
 	placeholder?: string;
 	buttonText?: string;
+	pathname?: string; // Used to prevent search query changes on other pages.
 	source: string;
+	onChangeFeedPreview?: ( hasPreview: boolean ) => void;
+	onChangeSubscribe?: ( subscribed: boolean ) => void;
 };
 
 type SubscriptionError = {
@@ -23,10 +27,12 @@ type SubscriptionError = {
 };
 
 const AddSitesForm = ( {
-	onAddFinished = () => {},
 	placeholder,
 	buttonText,
+	pathname,
 	source,
+	onChangeFeedPreview,
+	onChangeSubscribe,
 }: AddSitesFormProps ) => {
 	const translate = useTranslate();
 	const [ inputValue, setInputValue ] = useState( '' );
@@ -39,11 +45,15 @@ const AddSitesForm = ( {
 	const { mutate: subscribe, isPending: subscribing } =
 		SubscriptionManager.useSiteSubscribeMutation();
 
-	const validateInputValue = ( url: string, showError = false ) => {
+	// Triggers the text change when component mounts to validate the initial value.
+	useEffect( () => onTextFieldChange( getUrlQuerySearchTerm( pathname ), true ), [] ); // eslint-disable-line react-hooks/exhaustive-deps
+
+	function validateInputValue( url: string, showError = false ): void {
 		// If the input is empty, we don't want to show an error message
 		if ( url.length === 0 ) {
 			setIsValidInput( false );
 			setInputFieldError( null );
+			onChangeFeedPreview?.( false );
 			return;
 		}
 
@@ -52,16 +62,18 @@ const AddSitesForm = ( {
 			setIsValidInput( true );
 		} else {
 			setIsValidInput( false );
+			onChangeFeedPreview?.( false );
 			if ( showError ) {
 				setInputFieldError( translate( 'Please enter a valid URL' ) );
 			}
 		}
-	};
+	}
 
-	const onTextFieldChange = ( value: string ) => {
+	function onTextFieldChange( value: string, showErrorOnInvalidUrl: boolean = false ): void {
+		setUrlQuery( SEARCH_QUERY_PARAM, value, pathname ); // Update url query when search term changes.
 		setInputValue( value );
-		validateInputValue( value );
-	};
+		validateInputValue( value, showErrorOnInvalidUrl );
+	}
 
 	const onSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
@@ -84,16 +96,12 @@ const AddSitesForm = ( {
 							}
 
 							showSuccessNotice( inputValue );
-
-							// Reset fields.
-							setInputValue( '' );
-							setIsValidInput( false );
+							onSubscribeToggle( true );
 						}
-						onAddFinished();
 					},
 					onError: ( error: SubscriptionError ) => {
 						showErrorNotice( inputValue, error );
-						onAddFinished();
+						onChangeSubscribe?.( false );
 					},
 					onSettled: (): void => {
 						setIsSubmitting( false );
@@ -102,6 +110,14 @@ const AddSitesForm = ( {
 			);
 		}
 	};
+
+	function onSubscribeToggle( subscribed: boolean ): void {
+		// Reset form.
+		setInputValue( '' );
+		setIsValidInput( false );
+
+		onChangeSubscribe?.( subscribed );
+	}
 
 	return (
 		<>
@@ -115,10 +131,11 @@ const AddSitesForm = ( {
 						disabled={ subscribing }
 						placeholder={ placeholder || translate( 'https://www.site.com' ) }
 						value={ inputValue }
-						type="url"
 						onChange={ onTextFieldChange }
 						help={ isValidInput ? <Icon icon={ check } data-testid="check-icon" /> : undefined }
 						onBlur={ () => validateInputValue( inputValue, true ) }
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom
 					/>
 
 					{ inputFieldError ? <FormInputValidation isError text={ inputFieldError } /> : null }
@@ -135,6 +152,13 @@ const AddSitesForm = ( {
 					{ buttonText || translate( 'Add site' ) }
 				</Button>
 			</form>
+
+			<FeedPreview
+				url={ isValidInput ? inputValue : '' } // Passing empty state to make sure that debounce works correctly else it was firing events 2 times.
+				source={ source }
+				onChangeFeedPreview={ onChangeFeedPreview }
+				onChangeSubscribe={ onSubscribeToggle }
+			/>
 		</>
 	);
 };

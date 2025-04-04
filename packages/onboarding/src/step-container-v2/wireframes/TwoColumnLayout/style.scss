@@ -1,4 +1,5 @@
-@import '../../mixins';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .step-container-v2__content--two-column-layout {
 	display: flex;
@@ -6,7 +7,7 @@
 	align-items: stretch;
 	gap: 3rem;
 
-	@include step-large-viewport {
+	@include break-large {
 		gap: 4rem;
 		flex-direction: row;
 		align-items: flex-start;

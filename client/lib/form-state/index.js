@@ -11,7 +11,6 @@ import {
 	property,
 	some,
 } from 'lodash';
-import { v4 as uuid } from 'uuid';
 
 function Controller( options ) {
 	if ( ! ( this instanceof Controller ) ) {
@@ -124,7 +123,7 @@ Controller.prototype.sanitize = function () {
 
 Controller.prototype.validate = function () {
 	const fieldValues = getAllFieldValues( this._currentState );
-	const id = uuid();
+	const id = crypto.randomUUID();
 
 	this._setState( setFieldsValidating( this._currentState ) );
 

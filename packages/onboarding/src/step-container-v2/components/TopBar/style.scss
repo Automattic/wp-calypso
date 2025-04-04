@@ -2,9 +2,12 @@
 @import '@wordpress/base-styles/mixins';
 
 .step-container-v2__top-bar {
-	height: var( --step-container-v2-top-bar-height );
+	&,
+	&-wrapper {
+		width: 100%;
+	}
+
 	box-sizing: border-box;
-	width: 100%;
 	display: flex;
 	align-items: center;
 	padding: 1rem;
@@ -13,12 +16,16 @@
 		padding-inline: 1.5rem;
 	}
 
-	&-left-button,
-	&-right-button,
-	&-wordpress-logo,
-	.step-container-v2__back-button,
-	.step-container-v2__skip-button {
+	&-left-element,
+	&-right-element,
+	&-wordpress-logo {
 		height: 24px;
+	}
+
+	&-left-element,
+	&-right-element {
+		display: flex;
+		align-items: center;
 	}
 
 	&-wordpress-logo {
@@ -58,7 +65,7 @@
 		}
 	}
 
-	&-right-button {
+	&-right-element {
 		margin-left: auto;
 		--wp-components-color-accent: var( --color-neutral-100 );
 		font-size: 0.875rem;
