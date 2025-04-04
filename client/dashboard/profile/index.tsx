@@ -18,8 +18,8 @@ import { useState, useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useLoaderData } from 'react-router-dom';
 import wpcom from 'calypso/lib/wp';
+import { fetchProfile } from '../data/index';
 import type { LoaderFunction } from 'react-router-dom';
-
 interface ProfileData {
 	username: string;
 	displayName: string;
@@ -222,10 +222,6 @@ function Profile() {
 	);
 }
 
-Profile.loader = () =>
-	wpcom.req.get( {
-		path: '/me?http_envelope=1',
-		apiNamespace: 'rest/v1.1',
-	} ) satisfies LoaderFunction;
+Profile.loader = fetchProfile satisfies LoaderFunction;
 
 export default Profile;
