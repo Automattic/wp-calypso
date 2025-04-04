@@ -1,9 +1,10 @@
+import config from '@automattic/calypso-config';
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { trendingUp } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -44,11 +45,27 @@ const StatsModuleUTM = ( {
 	postId,
 	summaryUrl,
 } ) => {
+	const utmQueryParam = 'utm_param';
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const translate = useTranslate();
-
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.SOURCE_MEDIUM );
+	let url = summaryUrl || window.location.href;
+	let queryParams = new URLSearchParams( url.split( '?' )[ 1 ] || '' );
+
+	if ( ! summaryUrl && isOdysseyStats ) {
+		url = window.location.href;
+		queryParams = new URLSearchParams( window.location.hash.split( '#!' )[ 1 ] || '' );
+	}
+
+	useEffect( () => {
+		const utmParam = queryParams.get( utmQueryParam );
+
+		if ( utmParam && Object.values( OPTION_KEYS ).includes( utmParam ) ) {
+			setSelectedOption( utmParam );
+		}
+	}, [ queryParams ] );
 
 	const optionLabels = {
 		[ OPTION_KEYS.SOURCE_MEDIUM ]: {
@@ -88,16 +105,20 @@ const StatsModuleUTM = ( {
 	const displaySummaryLink = data && ! hideSummaryLink;
 	const showLoader = isLoading || isFetchingUTM;
 
-	const getHref = () => {
+	const getHref = ( params ) => {
+		params.set( utmQueryParam, selectedOption );
+
 		if ( ! hideSummaryLink && summaryUrl ) {
-			return summaryUrl;
+			return `/stats/${ period.period }/${ path }/${ siteSlug }?${ params.toString() }`;
 		}
+
 		// Some modules do not have view all abilities
 		if ( ! summary && period && path && siteSlug ) {
-			return `/stats/${ period.period }/${ path }/${ siteSlug }?startDate=${ period.startOf.format(
-				'YYYY-MM-DD'
-			) }`;
+			params.set( 'startDate', period.startOf.format( 'YYYY-MM-DD' ) );
+			params.set( 'endDate', period.endOf.format( 'YYYY-MM-DD' ) );
 		}
+
+		return `/stats/${ period.period }/${ path }/${ siteSlug }?${ params.toString() }`;
 	};
 
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
@@ -181,7 +202,7 @@ const StatsModuleUTM = ( {
 						showMore={
 							displaySummaryLink && ! summary
 								? {
-										url: getHref(),
+										url: getHref( queryParams ),
 										label:
 											data.length >= 10
 												? translate( 'View all', {
