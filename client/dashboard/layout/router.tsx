@@ -1,4 +1,5 @@
-import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
+import { __ } from '@wordpress/i18n';
+import { createBrowserRouter, Navigate, Outlet, ActionFunctionArgs, json } from 'react-router-dom';
 import { updateProfile, fetchProfile, fetchSite, fetchSites, type ProfileObject } from '../data';
 import Domains from '../domains';
 import Header from '../header';
@@ -12,6 +13,22 @@ import Site from '../site';
 import SiteBackups from '../site-backups';
 import SiteOverview from '../site-overview';
 import Sites from '../sites';
+
+async function profileAction( { request }: ActionFunctionArgs ) {
+	const profileData = await request.json();
+	try {
+		await updateProfile( profileData as ProfileObject );
+		return json( { ok: true } );
+	} catch ( error ) {
+		return json(
+			{
+				ok: false,
+				error: __( 'Failed to update profile' ),
+			},
+			{ status: 400 }
+		);
+	}
+}
 
 function Element() {
 	return (
@@ -60,10 +77,7 @@ export const router = createBrowserRouter(
 					path: 'me/profile',
 					element: <Profile />,
 					loader: fetchProfile,
-					action: async ( { request } ) => {
-						const data = await request.json();
-						return await updateProfile( data as ProfileObject );
-					},
+					action: profileAction,
 				},
 				{
 					path: 'me/billing',
