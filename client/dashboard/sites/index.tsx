@@ -2,10 +2,12 @@ import { Button, Card } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useNavigate } from 'react-router-dom';
-import { SITE_DATA, Site } from '../data';
+import { useNavigate, useLoaderData } from 'react-router-dom';
+import { Site } from '../data';
+import { fetchSites } from '../data/index';
 import PageLayout from '../page-layout';
 import type { View, Field } from '@wordpress/dataviews';
+import type { LoaderFunction } from 'react-router-dom';
 
 // Helper function to get color based on performance score
 const getPerformanceColor = ( score: number ) => {
@@ -90,7 +92,8 @@ function Sites() {
 		},
 	] as Field< Site >[];
 
-	const { data: filteredData, paginationInfo } = filterSortAndPaginate( SITE_DATA, view, fields );
+	const sites = useLoaderData() as Site[];
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
 
 	const onClickItem = ( item: Site ) => {
 		navigate( `/sites/${ item.id }` );
@@ -119,5 +122,7 @@ function Sites() {
 		</PageLayout>
 	);
 }
+
+Sites.loader = fetchSites satisfies LoaderFunction;
 
 export default Sites;
