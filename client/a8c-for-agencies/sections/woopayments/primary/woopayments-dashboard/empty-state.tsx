@@ -43,7 +43,7 @@ const WooPaymentsDashboardEmptyState = () => {
 					} }
 					href="https://agencieshelp.automattic.com/knowledge-base/earn-revenue-share-when-clients-use-woopayments/"
 				>
-					{ translate( 'Checkout the full details in the Knowledge Base' ) }
+					{ translate( 'Check out the full details in the Knowledge Base' ) }
 				</ExternalLink>
 			</StepSection>
 		</div>
