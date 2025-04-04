@@ -1,11 +1,11 @@
 import wpcom from 'calypso/lib/wp';
 
 export interface ProfileObject {
-	username: string;
-	displayName: string;
-	email: string;
-	siteAddress: string;
-	aboutMe: string;
+	user_login: string;
+	display_name: string;
+	user_email: string;
+	user_URL: string;
+	description: string;
 	isDeveloper: boolean;
 }
 

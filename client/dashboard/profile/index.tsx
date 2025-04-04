@@ -22,24 +22,14 @@ import type { Field, Form } from '@wordpress/dataviews';
 import type { LoaderFunction } from 'react-router-dom';
 
 async function updateProfile( data: ProfileObject ): Promise< void > {
-	try {
-		await wpcom.req.post( {
-			path: '/users/me',
-			apiNamespace: 'wp/v2',
-			body: {
-				username: data.username,
-				name: data.displayName,
-				email: data.email,
-				url: data.siteAddress,
-				description: data.aboutMe,
-				meta: {
-					is_developer: data.isDeveloper,
-				},
-			},
-		} );
-	} catch ( error ) {
-		throw new Error( 'Failed to save profile data' );
-	}
+	await wpcom.req.post( {
+		path: '/me/settings',
+		apiNamespace: 'rest/v1.1',
+		body: {
+			display_name: data.display_name,
+			description: data.description,
+		},
+	} );
 }
 
 function Profile() {
