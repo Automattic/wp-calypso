@@ -195,9 +195,11 @@ div.reader-notifications__panel {
 	@media only screen and (min-width: $breakpoint-flyout) {
 		.wpnc__main {
 			width: calc(100vw - var(--sidebar-width-max) - 16px); // 16px for content frame padding.
+			// This ensures the single view flies out above the 3PC notice.
 			.wpnc__single-view {
 				z-index: z-index( ".reader-notifications", ".wpnc__single-view" );
 			}
+			// This ensures the single view does not rise above the note list while animating outwards.
 			.wpnc__note-list {
 				z-index: z-index( ".reader-notifications", ".wpnc__note-list" );
 			}
