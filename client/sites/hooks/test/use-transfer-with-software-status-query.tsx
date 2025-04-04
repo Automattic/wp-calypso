@@ -15,8 +15,8 @@ jest.mock( '@automattic/calypso-config', () => ( {
 
 const mockSuccessResponse = {
 	blog_id: 123,
-	atomic_transfer_id: 456,
-	atomic_transfer_status: 'completed',
+	transfer_id: 456,
+	transfer_status: 'completed',
 };
 
 describe( 'useTransferWithSoftwareStatus', () => {
@@ -41,7 +41,7 @@ describe( 'useTransferWithSoftwareStatus', () => {
 		await waitFor( () => {
 			expect( result.current.isSuccess ).toBe( true );
 			expect( result.current.data ).toEqual( {
-				atomic_transfer_status: 'completed',
+				transfer_status: 'completed',
 			} );
 		} );
 	} );
@@ -57,7 +57,7 @@ describe( 'useTransferWithSoftwareStatus', () => {
 		expect( nock.isDone() ).toBe( true ); // No pending nock requests
 	} );
 
-	it( 'should not fetch when atomicTransferId is missing', () => {
+	it( 'should not fetch when transferId is missing', () => {
 		const queryClient = new QueryClient();
 		const wrapper = ( { children }: { children: React.ReactNode } ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>

@@ -3,8 +3,8 @@ import wpcom from 'calypso/lib/wp';
 
 type TransferWithSoftwareStatusResponse = {
 	blog_id: number;
-	atomic_transfer_id: number;
-	atomic_transfer_status: string;
+	transfer_id: number;
+	transfer_status: string;
 };
 
 const getTransferWithSoftwareStatus: (
@@ -14,8 +14,8 @@ const getTransferWithSoftwareStatus: (
 	if ( ! siteId || ! atomicTransferId ) {
 		return {
 			blog_id: 0,
-			atomic_transfer_id: 0,
-			atomic_transfer_status: 'pending',
+			transfer_id: 0,
+			transfer_status: 'pending',
 		};
 	}
 	return wpcom.req.get(
@@ -37,12 +37,12 @@ export const useTransferWithSoftwareStatus = (
 		queryKey: [ 'software-transfer-status', siteId, atomicTransferId ],
 		queryFn: () => getTransferWithSoftwareStatus( siteId, atomicTransferId ),
 		select: ( data: TransferWithSoftwareStatusResponse ) => ( {
-			atomic_transfer_status: data.atomic_transfer_status,
+			transfer_status: data.transfer_status,
 		} ),
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false,
 		refetchInterval: ( { state } ) => {
-			if ( state.data?.atomic_transfer_status === 'completed' ) {
+			if ( state.data?.transfer_status === 'completed' ) {
 				return false;
 			}
 			return 5000;
