@@ -28,10 +28,6 @@ const unescapeDecimalEntities = ( str ) =>
  * @returns {Object} The transformed data to display
  */
 export const transformApiRequest = ( jitms ) => {
-	// Different shape of date between Calypso and Jetpack.
-	if ( jitms && jitms.data ) {
-		jitms = jitms.data;
-	}
 	return jitms.map( ( jitm ) => ( {
 		message: unescapeDecimalEntities( jitm.content.message || '' ),
 		description: unescapeDecimalEntities( jitm.content.description || '' ),
