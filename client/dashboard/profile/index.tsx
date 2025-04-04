@@ -18,7 +18,7 @@ import { useState, useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useLoaderData } from 'react-router-dom';
 import wpcom from 'calypso/lib/wp';
-import { fetchProfile } from '../data/index';
+import { fetchProfile } from '../data';
 import PageLayout from '../page-layout';
 import type { LoaderFunction } from 'react-router-dom';
 interface ProfileData {
