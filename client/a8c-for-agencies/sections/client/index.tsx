@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import {
 	A4A_CLIENT_LANDING_LINK,
@@ -9,7 +10,6 @@ import {
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { requireClientAccessContext } from 'calypso/a8c-for-agencies/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { isEnabled } from 'calypso/server/config';
 import * as controller from './controller';
 
 export default function () {
