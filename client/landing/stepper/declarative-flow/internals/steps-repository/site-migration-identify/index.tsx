@@ -6,7 +6,7 @@ import {
 	Step,
 } from '@automattic/onboarding';
 import { Icon, next, published, shield } from '@wordpress/icons';
-import { numberFormat, useTranslate } from 'i18n-calypso';
+import { numberFormat, TranslateResult, useTranslate } from 'i18n-calypso';
 import { type FC, ReactElement, useEffect, useState, useCallback } from 'react';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
 import ScanningStep from 'calypso/blocks/import/scanning';
@@ -25,7 +25,7 @@ import './style.scss';
 interface HostingDetailsWithIconsProps {
 	items: {
 		icon: ReactElement;
-		description: string;
+		description: TranslateResult;
 	}[];
 }
 
