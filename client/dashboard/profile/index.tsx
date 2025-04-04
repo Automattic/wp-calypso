@@ -15,14 +15,8 @@ import { DataForm } from '@wordpress/dataviews';
 import { useMemo, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useLoaderData, useFetcher } from 'react-router-dom';
-import { fetchProfile, type ProfileObject, updateProfile } from '../data';
+import type { ProfileObject } from '../data';
 import type { Field, Form } from '@wordpress/dataviews';
-import type { LoaderFunction, ActionFunction } from 'react-router-dom';
-
-export const action: ActionFunction = async ( { request } ) => {
-	const data = await request.json();
-	return await updateProfile( data as ProfileObject );
-};
 
 function Profile() {
 	const translate = useTranslate();
@@ -195,8 +189,5 @@ function Profile() {
 		</Flex>
 	);
 }
-
-Profile.loader = fetchProfile satisfies LoaderFunction;
-Profile.action = action satisfies ActionFunction;
 
 export default Profile;

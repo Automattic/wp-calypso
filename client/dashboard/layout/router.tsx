@@ -1,4 +1,5 @@
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
+import { updateProfile, fetchProfile, type ProfileObject } from '../data';
 import Domains from '../domains';
 import Header from '../header';
 import Billing from '../me/billing';
@@ -50,8 +51,11 @@ export const router = createBrowserRouter(
 				{
 					path: 'me/profile',
 					element: <Profile />,
-					loader: Profile.loader,
-					action: Profile.action,
+					loader: fetchProfile,
+					action: async ( { request } ) => {
+						const data = await request.json();
+						return await updateProfile( data as ProfileObject );
+					},
 				},
 				{
 					path: 'me/billing',
