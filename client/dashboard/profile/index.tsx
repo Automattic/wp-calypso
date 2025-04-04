@@ -1,22 +1,26 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
+	Button,
 	Card,
-	CardHeader,
+	CardBody,
+	CheckboxControl,
 	Flex,
+	FlexBlock,
 	FlexItem,
 	Notice,
-	Spinner,
+	TextareaControl,
 	__experimentalHeading as Heading,
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
-import { useMemo } from '@wordpress/element';
+import { useMemo, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useLoaderData } from 'react-router-dom';
 import wpcom from 'calypso/lib/wp';
 import { fetchProfile } from '../data/index';
 import type { Field, Form } from '@wordpress/dataviews';
 import type { LoaderFunction } from 'react-router-dom';
+
 interface ProfileData {
 	username: string;
 	displayName: string;
@@ -50,11 +54,14 @@ async function updateProfile( data: ProfileData ): Promise< void > {
 function Profile() {
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
-	const { profileData, saveProfile, loading } = useLoaderData() as ProfileData;
+	const initialFormData = useLoaderData() as ProfileData;
+
+	// Add local state to manage form data
+	const [ localFormData, setLocalFormData ] = useState< ProfileData >( initialFormData );
 
 	const {
 		mutate: saveProfile,
-		isPending: loading,
+		isPending: isSaving,
 		error: saveError,
 	} = useMutation( {
 		mutationFn: updateProfile,
@@ -63,66 +70,83 @@ function Profile() {
 		},
 	} );
 
-	// Define form fields
+	// Define fields for the DataForm
 	const fields = useMemo(
 		() =>
 			[
 				{
 					id: 'username',
-					label: translate( 'Username' ),
+					label: translate( 'USERNAME' ),
 					type: 'text',
 				},
 				{
 					id: 'displayName',
-					label: translate( 'Display Name' ),
+					label: translate( 'DISPLAY NAME' ),
 					type: 'text',
 				},
 				{
 					id: 'email',
-					label: translate( 'Email Address' ),
+					label: translate( 'EMAIL ADDRESS' ),
 					type: 'text',
 				},
 				{
 					id: 'siteAddress',
-					label: translate( 'Site Address' ),
+					label: translate( 'SITE ADDRESS' ),
 					type: 'text',
 				},
 				{
 					id: 'aboutMe',
-					label: translate( 'About Me' ),
+					label: translate( 'ABOUT ME' ),
 					type: 'text',
-					Edit: 'textarea',
+					Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
+						const { id, getValue } = field;
+						return (
+							<TextareaControl
+								label={ hideLabelFromVision ? '' : field.label }
+								value={ getValue( { item: data } ) || '' }
+								onChange={ ( value ) => onChange( { [ id ]: value } ) }
+								rows={ 4 }
+							/>
+						);
+					},
 				},
 				{
 					id: 'isDeveloper',
 					label: translate( 'I am a developer' ),
-					type: 'boolean',
-					help: translate( 'Opt me into previews of new developer-focused features.' ),
+					type: 'integer',
+					description: translate( 'Opt me into previews of new developer-focused features.' ),
+					Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
+						const { id, getValue, description } = field;
+						return (
+							<CheckboxControl
+								__nextHasNoMarginBottom
+								label={ hideLabelFromVision ? '' : field.label }
+								help={ description }
+								checked={ Boolean( getValue( { item: data } ) ) }
+								onChange={ () => onChange( { [ id ]: ! getValue( { item: data } ) ? 1 : 0 } ) }
+							/>
+						);
+					},
 				},
 			] as Field< ProfileData >[],
 		[ translate ]
 	);
 
-	// Define form structure
+	// Define form layout
 	const form = useMemo(
 		() =>
 			( {
-				type: 'panel',
+				type: 'regular',
 				labelPosition: 'top',
 				fields: [
 					{
-						id: 'profile',
-						label: translate( 'Basic Information' ),
-						children: [ 'username', 'displayName', 'email', 'siteAddress' ],
+						id: 'personalInfo',
+						label: translate( 'Personal Information' ),
+						children: [ 'username', 'displayName', 'email', 'siteAddress', 'aboutMe' ],
 					},
 					{
-						id: 'about',
-						label: translate( 'About Me' ),
-						children: [ 'aboutMe' ],
-					},
-					{
-						id: 'developer',
-						label: translate( 'Developer Options' ),
+						id: 'developerOptions',
+						label: translate( 'Developer options' ),
 						children: [ 'isDeveloper' ],
 					},
 				],
@@ -130,15 +154,12 @@ function Profile() {
 		[ translate ]
 	);
 
-	if ( isLoading ) {
-		return (
-			<Flex justify="center" align="center" style={ { minHeight: '400px' } }>
-				<Spinner />
-			</Flex>
-		);
-	}
+	const handleSubmit = ( e: React.FormEvent ) => {
+		e.preventDefault();
+		saveProfile( localFormData );
+	};
 
-	// Handle case where there's an error fetching data but we want to show the form anyway
+	// Handle case where there's an error fetching data
 	const error = saveError;
 	const errorMessage = error instanceof Error ? error.message : String( error );
 
@@ -148,7 +169,12 @@ function Profile() {
 				<Heading level={ 1 } style={ { marginBottom: 8 } }>
 					{ translate( 'Profile' ) }
 				</Heading>
-				<Text>{ translate( 'Set your name, bio, and other public-facing information.' ) }</Text>
+				<Text>
+					{ translate( 'Set your name, bio, and other public-facing information.' ) }
+					<Button href="#learn-more" variant="link">
+						{ translate( 'Learn more' ) }
+					</Button>
+				</Text>
 			</div>
 
 			{ error && (
@@ -157,39 +183,49 @@ function Profile() {
 				</Notice>
 			) }
 
-			<Card>
-				<CardHeader>
-					<Flex gap={ 3 }>
-						<FlexItem>
-							<img
-								src="/calypso/images/gravatar/user-img.svg"
-								alt={ translate( 'Profile photo' ) }
-								style={ { width: 80, height: 80, borderRadius: '50%' } }
-							/>
-						</FlexItem>
-						<div>
-							<Text>{ translate( 'This is your profile photo.' ) }</Text>
-							<Text variant="muted">
-								{ translate( 'It appears when you comment on other blogs.' ) }
-							</Text>
-						</div>
-					</Flex>
-				</CardHeader>
-			</Card>
+			<form onSubmit={ handleSubmit }>
+				<Flex direction="column" gap={ 3 }>
+					<Card>
+						<CardBody>
+							<Flex gap={ 3 }>
+								<FlexItem>
+									<img
+										src="/calypso/images/gravatar/user-img.svg"
+										alt={ translate( 'Profile photo' ) }
+										style={ { width: 80, height: 80, borderRadius: '50%' } }
+									/>
+								</FlexItem>
+								<FlexBlock>
+									<Text>{ translate( 'This is your profile photo.' ) }</Text>
+									<Text variant="muted">
+										{ translate( 'It appears when you comment on other blogs.' ) }
+									</Text>
+								</FlexBlock>
+							</Flex>
+						</CardBody>
+					</Card>
 
-			{ profileData && (
-				<DataForm< ProfileData >
-					data={ profileData }
-					fields={ fields }
-					form={ form }
-					onChange={ ( edits: Partial< ProfileData > ) => {
-						// Only save when all edits are done
-						const newData = { ...profileData, ...edits };
-						saveProfile( newData );
-					} }
-					isLoading={ loading }
-				/>
-			) }
+					<DataForm< ProfileData >
+						data={ localFormData }
+						fields={ fields }
+						form={ form }
+						onChange={ ( edits ) => {
+							setLocalFormData( ( current ) => ( {
+								...current,
+								...edits,
+							} ) );
+						} }
+					/>
+
+					<Card>
+						<CardBody>
+							<Button variant="primary" type="submit" isBusy={ isSaving } disabled={ isSaving }>
+								{ translate( 'Save' ) }
+							</Button>
+						</CardBody>
+					</Card>
+				</Flex>
+			</form>
 		</Flex>
 	);
 }
