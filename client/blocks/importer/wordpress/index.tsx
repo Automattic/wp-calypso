@@ -66,7 +66,6 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 						stepNavigator={ stepNavigator }
 					/>
 				);
-				// Why IIFE?
 			} )() }
 		</>
 	);
