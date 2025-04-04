@@ -136,7 +136,7 @@ function HostingOverviewV3( { section }: SectionProps ) {
 							items={ selectedCartItems }
 							onRemoveItem={ onRemoveCartItem }
 							onCheckout={ () => {
-								page( A4A_MARKETPLACE_CHECKOUT_LINK );
+								page.redirect( A4A_MARKETPLACE_CHECKOUT_LINK );
 							} }
 						/>
 

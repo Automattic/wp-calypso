@@ -5,6 +5,8 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useContext, useEffect, useRef, useState } from 'react';
 import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
+import { A4AFeedback } from 'calypso/a8c-for-agencies/components/a4a-feedback';
+import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
 import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
@@ -62,6 +64,9 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 
 	const { selectedCartItems, onRemoveCartItem, onClearCart, setSelectedCartItems } =
 		useShoppingCart();
+
+	// Show feedback after purchase
+	const { showFeedback, feedbackProps } = useShowFeedback( 'purchase-complete' );
 
 	// Fetch selected products by slug for site checkout
 	const { selectedProductsBySlug } = useProductsBySlug();
@@ -252,58 +257,62 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 				</LayoutTop>
 			) }
 			<LayoutBody>
-				<div className="checkout__container">
-					<div className="checkout__main">
-						<h1 className="checkout__main-title">{ title }</h1>
+				{ showFeedback && ! isClient ? (
+					<A4AFeedback { ...feedbackProps } />
+				) : (
+					<div className="checkout__container">
+						<div className="checkout__main">
+							<h1 className="checkout__main-title">{ title }</h1>
 
-						{ isClient && !! checkoutItems?.length && isDoNotMatchReferralClientEmail && (
-							<LayoutBanner level="error" hideCloseButton>
-								{ translate(
-									'This referral is not intended for your account. Please make sure you sign in using {{b}}%(referralEmail)s{{/b}}.',
-									{
-										args: {
-											referralEmail: referral?.client?.email,
-										},
-										components: {
-											b: <b />,
-										},
-										comment: '%(referralEmail)s is the email of the referral client.',
-									}
-								) }
-							</LayoutBanner>
-						) }
-
-						<div className="checkout__main-list">
-							{ referralBlogId && isLoadingReferralDevSite ? (
-								<div className="product-info__placeholder"></div>
-							) : (
-								checkoutItems.map( ( items ) => (
-									<ProductInfo
-										key={ `product-info-${ items.product_id }-${ items.quantity }` }
-										product={ items }
-										isAutomatedReferrals={ isAutomatedReferrals }
-										vendor={ getVendorInfo( items.slug ) }
-									/>
-								) )
+							{ isClient && !! checkoutItems?.length && isDoNotMatchReferralClientEmail && (
+								<LayoutBanner level="error" hideCloseButton>
+									{ translate(
+										'This referral is not intended for your account. Please make sure you sign in using {{b}}%(referralEmail)s{{/b}}.',
+										{
+											args: {
+												referralEmail: referral?.client?.email,
+											},
+											components: {
+												b: <b />,
+											},
+											comment: '%(referralEmail)s is the email of the referral client.',
+										}
+									) }
+								</LayoutBanner>
 							) }
+
+							<div className="checkout__main-list">
+								{ referralBlogId && isLoadingReferralDevSite ? (
+									<div className="product-info__placeholder"></div>
+								) : (
+									checkoutItems.map( ( items ) => (
+										<ProductInfo
+											key={ `product-info-${ items.product_id }-${ items.quantity }` }
+											product={ items }
+											isAutomatedReferrals={ isAutomatedReferrals }
+											vendor={ getVendorInfo( items.slug ) }
+										/>
+									) )
+								) }
+							</div>
+						</div>
+						<div
+							className={ clsx( 'checkout__aside', {
+								'checkout__aside--referral': isAutomatedReferrals,
+								'checkout__aside--client': isClient,
+							} ) }
+						>
+							<PricingSummary
+								items={ checkoutItems }
+								onRemoveItem={ siteId || isClient ? undefined : onRemoveItem }
+								isAutomatedReferrals={ isAutomatedReferrals }
+								isClient={ isClient }
+							/>
+
+							{ actionContent }
 						</div>
 					</div>
-					<div
-						className={ clsx( 'checkout__aside', {
-							'checkout__aside--referral': isAutomatedReferrals,
-							'checkout__aside--client': isClient,
-						} ) }
-					>
-						<PricingSummary
-							items={ checkoutItems }
-							onRemoveItem={ siteId || isClient ? undefined : onRemoveItem }
-							isAutomatedReferrals={ isAutomatedReferrals }
-							isClient={ isClient }
-						/>
-
-						{ actionContent }
-					</div>
-				</div>
+				) }
 			</LayoutBody>
 		</Layout>
 	);

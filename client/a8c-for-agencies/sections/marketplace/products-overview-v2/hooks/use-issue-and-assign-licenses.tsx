@@ -2,7 +2,8 @@ import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
+import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
 import {
 	A4A_LICENSES_LINK,
 	A4A_SITES_LINK,
@@ -92,10 +93,13 @@ function useIssueAndAssignLicenses(
 ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const [ redirectWithFeedbackUrl, setRedirectWithFeedbackUrl ] = useState< string | null >( null );
 
 	const agency = useSelector( getActiveAgency );
 
 	const products = useProductsQuery();
+
+	const { isFeedbackShown } = useShowFeedback( 'purchase-complete' );
 
 	const {
 		isReady: isIssueReady,
@@ -114,6 +118,19 @@ function useIssueAndAssignLicenses(
 	} );
 
 	const getLicenseIssuedMessage = useGetLicenseIssuedMessage();
+
+	useEffect( () => {
+		if ( redirectWithFeedbackUrl ) {
+			window.history.replaceState(
+				null,
+				'',
+				addQueryArgs( window.location.href, {
+					redirectUrl: redirectWithFeedbackUrl,
+				} ) + '#feedback'
+			);
+			setRedirectWithFeedbackUrl( null );
+		}
+	}, [ redirectWithFeedbackUrl ] );
 
 	return useMemo( () => {
 		const isReady = isIssueReady && isAssignReady;
@@ -167,18 +184,22 @@ function useIssueAndAssignLicenses(
 				);
 				const hasPurchaseWPCOMPlan = !! wpcomPlan;
 
-				if ( ! hasPurchaseWPCOMPlan ) {
+				if ( ! hasPurchaseWPCOMPlan && isFeedbackShown ) {
 					const issuedMessage = getLicenseIssuedMessage( issuedLicenses );
 					dispatch( successNotice( issuedMessage, { displayOnNextPage: true } ) );
 				}
 
-				page.redirect(
-					hasPurchaseWPCOMPlan
-						? addQueryArgs( A4A_SITES_LINK_NEEDS_SETUP, {
-								wpcom_creator_purchased: wpcomPlan.slug,
-						  } )
-						: A4A_LICENSES_LINK
-				);
+				const redirectUrl = hasPurchaseWPCOMPlan
+					? addQueryArgs( A4A_SITES_LINK_NEEDS_SETUP, {
+							wpcom_creator_purchased: wpcomPlan.slug,
+					  } )
+					: A4A_LICENSES_LINK;
+
+				if ( isFeedbackShown ) {
+					page.redirect( redirectUrl );
+				} else {
+					setRedirectWithFeedbackUrl( redirectUrl );
+				}
 				return;
 			}
 
@@ -195,24 +216,30 @@ function useIssueAndAssignLicenses(
 			if ( fromDashboard ) {
 				const licenseItem =
 					products?.data?.find?.( ( p ) => p.slug === issuedLicenses[ 0 ].slug )?.name ?? '';
-				const message =
-					selectedSite?.domain && licenseItem
-						? translate(
-								'{{strong}}%(licenseItem)s{{/strong}} was successfully assigned to ' +
-									'{{em}}%(selectedSite)s{{/em}}. Please allow a few minutes ' +
-									'for your features to activate.',
-								{
-									args: { selectedSite: selectedSite.domain, licenseItem },
-									components: {
-										strong: <strong />,
-										em: <em />,
-									},
-								}
-						  )
-						: translate( 'Your license has been successfully issued and assigned to your site.' );
-				dispatch( successNotice( message, { displayOnNextPage: true } ) );
+				if ( isFeedbackShown ) {
+					const message =
+						selectedSite?.domain && licenseItem
+							? translate(
+									'{{strong}}%(licenseItem)s{{/strong}} was successfully assigned to ' +
+										'{{em}}%(selectedSite)s{{/em}}. Please allow a few minutes ' +
+										'for your features to activate.',
+									{
+										args: { selectedSite: selectedSite.domain, licenseItem },
+										components: {
+											strong: <strong />,
+											em: <em />,
+										},
+									}
+							  )
+							: translate( 'Your license has been successfully issued and assigned to your site.' );
+					dispatch( successNotice( message, { displayOnNextPage: true } ) );
+				}
 
-				page.redirect( A4A_SITES_LINK );
+				if ( isFeedbackShown ) {
+					page.redirect( A4A_SITES_LINK );
+				} else {
+					setRedirectWithFeedbackUrl( A4A_SITES_LINK );
+				}
 				return;
 			}
 
@@ -235,7 +262,11 @@ function useIssueAndAssignLicenses(
 			}
 
 			// Otherwise, send them to the overview of all licenses
-			page.redirect( A4A_LICENSES_LINK );
+			if ( isFeedbackShown ) {
+				page.redirect( A4A_LICENSES_LINK );
+			} else {
+				setRedirectWithFeedbackUrl( A4A_LICENSES_LINK );
+			}
 		};
 
 		return { issueAndAssignLicenses, isReady, isLoading: isIssueLoading || isAssignLoading };
@@ -254,6 +285,7 @@ function useIssueAndAssignLicenses(
 		agency?.tier,
 		isIssueLoading,
 		isAssignLoading,
+		isFeedbackShown,
 	] );
 }
 
