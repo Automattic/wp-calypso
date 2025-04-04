@@ -30,9 +30,9 @@ const meta: Meta< typeof SidebarNavigationItem > = {
 			control: 'select',
 			options: [ ...iconNames, 'none' ],
 		},
-		as: {
+		size: {
 			control: 'select',
-			options: [ 'button', 'a' ],
+			options: [ 'small', 'medium', 'large' ],
 		},
 	},
 };
@@ -42,6 +42,10 @@ export default meta;
 type Story = StoryObj< typeof SidebarNavigationItem >;
 
 export const Default: Story = {
+	name: 'Default',
+	args: {
+		onClick: fn(),
+	},
 	render: function Template( args ) {
 		const { icon: iconName, children, ...validArgs } = args;
 
@@ -53,17 +57,11 @@ export const Default: Story = {
 		return (
 			<SidebarNavigationContext.Provider value={ navState }>
 				<SidebarNavigationItem { ...validArgs } icon={ icon }>
-					{ children }
+					{ __( 'Site Photos Gallery', 'a8c-site-admin' ) }
 				</SidebarNavigationItem>
 			</SidebarNavigationContext.Provider>
 		);
 	},
-};
-
-Default.storyName = 'SidebarNavigationItem';
-Default.args = {
-	children: __( 'Site Photos Gallery', 'a8c-site-admin' ),
-	onClick: fn(),
 };
 
 // Add a story for the suffix prop.
