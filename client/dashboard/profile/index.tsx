@@ -14,10 +14,10 @@ import { DataForm } from '@wordpress/dataviews';
 import { useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useLoaderData, useFetcher } from 'react-router-dom';
+import EditGravatar from '../edit-gravatar';
 import PageLayout from '../page-layout';
 import type { ProfileObject } from '../data';
 import type { Field, Form } from '@wordpress/dataviews';
-
 function Profile() {
 	const fetcher = useFetcher();
 	const serverData = useLoaderData() as ProfileObject;
@@ -154,11 +154,7 @@ function Profile() {
 					<CardBody>
 						<Flex gap={ 3 }>
 							<FlexItem>
-								<img
-									src="/calypso/images/gravatar/user-img.svg"
-									alt={ __( 'Profile photo' ) }
-									style={ { width: 80, height: 80, borderRadius: '50%' } }
-								/>
+								<EditGravatar avatarUrl={ data.avatar_URL } userEmail={ data.user_email } />
 							</FlexItem>
 							<FlexBlock>
 								<Text>{ __( 'This is your profile photo.' ) }</Text>

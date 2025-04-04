@@ -7,6 +7,7 @@ export interface ProfileObject {
 	user_URL: string;
 	description: string;
 	isDeveloper: boolean;
+	avatar_URL: string;
 }
 
 export const fetchProfile = () =>
