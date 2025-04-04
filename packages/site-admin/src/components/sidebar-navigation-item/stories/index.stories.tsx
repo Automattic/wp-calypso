@@ -14,10 +14,7 @@ import { SidebarNavigationItem, SidebarNavigationContext, createNavState } from 
  */
 import type { Meta, StoryObj } from '@storybook/react';
 
-type IconName = keyof typeof allIcons;
-
 const { Icon, ...allIcons } = allIconComponents;
-const iconNames = Object.keys( allIcons ) as IconName[];
 
 /**
  * Storybook metadata
@@ -28,8 +25,23 @@ const meta: Meta< typeof SidebarNavigationItem > = {
 	tags: [ 'autodocs' ],
 	argTypes: {
 		icon: {
-			control: 'select',
-			options: [ ...iconNames, 'none' ],
+			control: {
+				type: 'select',
+				labels: {
+					'': 'No icon',
+				},
+			},
+			options: [ '', ...Object.keys( allIcons ) ],
+			mapping: {
+				'': undefined,
+				...Object.entries( allIcons ).reduce(
+					( acc, [ name, icon ] ) => ( {
+						...acc,
+						[ name ]: icon,
+					} ),
+					{}
+				),
+			},
 		},
 		size: {
 			control: 'select',
@@ -60,19 +72,8 @@ type Story = StoryObj< typeof SidebarNavigationItem >;
 export const WithOnClickHandler: Story = {
 	args: {
 		onClick: fn(),
-	},
-	render: function Template( args ) {
-		const { icon: iconName, children, ...validArgs } = args;
-
-		// Pick the icon component based on the icon name.
-		const iconKey = iconName as unknown as IconName;
-		const icon = allIcons?.[ iconKey ] || allIcons.capturePhoto;
-
-		return (
-			<SidebarNavigationItem { ...validArgs } icon={ icon }>
-				{ __( 'Site Photos Gallery', 'a8c-site-admin' ) }
-			</SidebarNavigationItem>
-		);
+		children: __( 'Site Photos Gallery', 'a8c-site-admin' ),
+		icon: allIcons.capturePhoto,
 	},
 };
 
@@ -82,8 +83,9 @@ export const WithOnClickHandler: Story = {
  */
 export const WithToProp: Story = {
 	args: {
-		to: '/',
-		children: __( 'Site Photos Gallery', 'a8c-site-admin' ),
+		to: '/home',
+		children: __( 'Home', 'a8c-site-admin' ),
+		icon: allIcons.home,
 	},
 };
 
