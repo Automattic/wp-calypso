@@ -3,10 +3,13 @@ import { BUILD_FLOW } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useMemo, useRef } from 'react';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { getStepFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import { useSelector } from 'calypso/state';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import { shouldShowLaunchpadFirst } from 'calypso/state/selectors/should-show-launchpad-first';
 import { STEPPER_TRACKS_EVENT_SIGNUP_STEP_START } from '../../../constants';
 import { useExitFlow } from '../../../hooks/use-exit-flow';
 import { useSiteIdParam } from '../../../hooks/use-site-id-param';
@@ -38,10 +41,13 @@ const build: Flow = {
 			[]
 		);
 
+		const site = useSite();
+		const step = getStepFromURL();
+
 		// we are only interested in the initial values and not when they values change
 		const initialGoals = useRef( goals );
 
-		return useMemo(
+		const tracksEventProps = useMemo(
 			() => ( {
 				eventsProperties: {
 					[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ]: {
@@ -56,6 +62,16 @@ const build: Flow = {
 			} ),
 			[ isGoalsAtFrontExperiment, initialGoals ]
 		);
+
+		if ( site && shouldShowLaunchpadFirst( site ) && step === 'launchpad' ) {
+			//prevent track events from firing until we're sure we won't redirect away from Launchpad
+			return {
+				isLoading: true,
+				eventsProperties: {},
+			};
+		}
+
+		return tracksEventProps;
 	},
 
 	useStepNavigation( _currentStep, navigate ) {

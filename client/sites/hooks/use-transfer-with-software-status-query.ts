@@ -4,16 +4,20 @@ import wpcom from 'calypso/lib/wp';
 type TransferWithSoftwareStatusResponse = {
 	blog_id: number;
 	atomic_transfer_id: number;
-	plugins: { [ key: string ]: boolean };
-	themes: { [ key: string ]: boolean };
-	transfer_with_software_status: string;
 	atomic_transfer_status: string;
 };
 
-const getTransferWithSoftwareStatus = async (
-	siteId: number,
-	atomicTransferId: number
-): Promise< TransferWithSoftwareStatusResponse > => {
+const getTransferWithSoftwareStatus: (
+	siteId?: number,
+	atomicTransferId?: number
+) => Promise< TransferWithSoftwareStatusResponse > = async ( siteId, atomicTransferId ) => {
+	if ( ! siteId || ! atomicTransferId ) {
+		return {
+			blog_id: 0,
+			atomic_transfer_id: 0,
+			atomic_transfer_status: 'pending',
+		};
+	}
 	return wpcom.req.get(
 		`/sites/${ siteId }/atomic/transfer-with-software/${ atomicTransferId }?http_envelope=1`,
 		{
@@ -23,8 +27,8 @@ const getTransferWithSoftwareStatus = async (
 };
 
 export const useTransferWithSoftwareStatus = (
-	siteId: number,
-	atomicTransferId: number,
+	siteId?: number,
+	atomicTransferId?: number,
 	options?: {
 		retry?: UseQueryOptions[ 'retry' ];
 	}
@@ -33,7 +37,6 @@ export const useTransferWithSoftwareStatus = (
 		queryKey: [ 'software-transfer-status', siteId, atomicTransferId ],
 		queryFn: () => getTransferWithSoftwareStatus( siteId, atomicTransferId ),
 		select: ( data: TransferWithSoftwareStatusResponse ) => ( {
-			transfer_with_software_status: data.transfer_with_software_status,
 			atomic_transfer_status: data.atomic_transfer_status,
 		} ),
 		refetchOnWindowFocus: false,

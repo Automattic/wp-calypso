@@ -1,5 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { OnboardSelect } from '@automattic/data-stores';
+import { isOnboardingFlow } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -129,6 +130,7 @@ const PlansPageSubheader = ( {
 	deemphasizeFreePlan,
 	showPlanBenefits,
 	offeringFreePlan,
+	flowName,
 	onFreePlanCTAClick,
 	selectedFeature,
 }: {
@@ -137,6 +139,7 @@ const PlansPageSubheader = ( {
 	deemphasizeFreePlan?: boolean;
 	offeringFreePlan?: boolean;
 	showPlanBenefits?: boolean;
+	flowName?: string | null;
 	onFreePlanCTAClick: () => void;
 	selectedFeature: SelectedFeatureData | null;
 } ) => {
@@ -147,10 +150,12 @@ const PlansPageSubheader = ( {
 		return getCreateWithBigSky();
 	}, [] );
 
-	return (
-		<>
-			{ createWithBigSky && (
-				<Subheader className="plans-features-main__subheader">
+	const isOnboarding = isOnboardingFlow( flowName ?? null );
+
+	const renderSubheader = () => {
+		if ( createWithBigSky ) {
+			return (
+				<Subheader>
 					{ translate(
 						'Build your site quickly with our AI Website Builder or {{link}}start with a free plan{{/link}}.',
 						{
@@ -160,9 +165,12 @@ const PlansPageSubheader = ( {
 						}
 					) }
 				</Subheader>
-			) }
-			{ ! createWithBigSky && deemphasizeFreePlan && offeringFreePlan ? (
-				<Subheader className="plans-features-main__subheader">
+			);
+		}
+
+		if ( ! createWithBigSky && deemphasizeFreePlan && offeringFreePlan ) {
+			return (
+				<Subheader>
 					{ translate(
 						'Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.',
 						{
@@ -172,9 +180,27 @@ const PlansPageSubheader = ( {
 						}
 					) }
 				</Subheader>
-			) : (
-				showPlanBenefits && <PlanBenefitHeader />
-			) }
+			);
+		}
+
+		if ( showPlanBenefits ) {
+			return <PlanBenefitHeader />;
+		}
+
+		if ( isOnboarding ) {
+			return (
+				<Subheader>
+					{ translate( 'Whatever site you’re building, there’s a plan to make it happen sooner.' ) }
+				</Subheader>
+			);
+		}
+
+		return null;
+	};
+
+	return (
+		<>
+			{ renderSubheader() }
 			{ isDisplayingPlansNeededForFeature && (
 				<SecondaryFormattedHeader siteSlug={ siteSlug } selectedFeature={ selectedFeature } />
 			) }

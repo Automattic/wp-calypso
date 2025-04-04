@@ -21,7 +21,6 @@
 .application-passwords__new-password-display {
 	background: var(--color-neutral-0);
 	border: 1px solid var(--color-border-subtle);
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 200%;
 	font-weight: 600;
 	width: 70%;
@@ -34,7 +33,6 @@
 
 .application-passwords__new-password-message {
 	color: var(--color-neutral-40);
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 0.9em;
 }
 

@@ -1,7 +1,9 @@
 import { NavigatorScreens, useNavigatorButtons } from '@automattic/onboarding';
-import { useMemo } from '@wordpress/element';
+import { Navigator } from '@wordpress/components/build-types/navigator/types';
+import { Element, useMemo } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { useTranslate } from 'i18n-calypso';
+import { MutableRefObject } from 'react';
 import type { Category } from '@automattic/design-picker/src/types';
 import type { NavigatorScreenObject } from '@automattic/onboarding';
 
@@ -26,7 +28,7 @@ const CategoryBadge: React.FC< CategoryBadgeProps > = ( { category, onClick } ) 
 };
 
 interface SidebarProps {
-	title?: string;
+	title?: Element;
 	author?: string;
 	categories?: Category[];
 	description?: string;
@@ -34,6 +36,7 @@ interface SidebarProps {
 	pricingBadge?: React.ReactNode;
 	screens: NavigatorScreenObject[];
 	actionButtons: React.ReactNode;
+	navigatorRef: MutableRefObject< Navigator | null >;
 	onClickCategory?: ( category: Category ) => void;
 	onNavigatorPathChange?: ( path?: string ) => void;
 }
@@ -47,6 +50,7 @@ const Sidebar: React.FC< SidebarProps > = ( {
 	shortDescription,
 	screens,
 	actionButtons,
+	navigatorRef,
 	onClickCategory,
 	onNavigatorPathChange,
 } ) => {
@@ -65,7 +69,11 @@ const Sidebar: React.FC< SidebarProps > = ( {
 
 	return (
 		<div className="design-preview__sidebar">
-			<NavigatorScreens screens={ screens } onNavigatorPathChange={ onNavigatorPathChange }>
+			<NavigatorScreens
+				navigatorRef={ navigatorRef }
+				screens={ screens }
+				onNavigatorPathChange={ onNavigatorPathChange }
+			>
 				<>
 					<div className="design-preview__sidebar-header">
 						<div className="design-preview__sidebar-title">

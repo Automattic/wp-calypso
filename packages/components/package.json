@@ -39,6 +39,7 @@
 		"@emotion/css": "^11.11.2",
 		"@emotion/react": "^11.11.1",
 		"@emotion/styled": "^11.11.0",
+		"@storybook/addon-actions": "^8.6.9",
 		"@wordpress/base-styles": "^5.20.0",
 		"@wordpress/components": "^29.6.0",
 		"@wordpress/compose": "7.20.0",
@@ -56,12 +57,11 @@
 		"gridicons": "^3.4.2",
 		"i18n-calypso": "workspace:^",
 		"lodash": "^4.17.21",
-		"prop-types": "^15.7.2",
+		"prop-types": "^15.8.1",
 		"react-modal": "^3.16.1",
 		"react-router-dom": "^6.23.1",
-		"react-slider": "^2.0.5",
-		"utility-types": "^3.10.0",
-		"uuid": "^9.0.1"
+		"react-slider": "^2.0.6",
+		"utility-types": "^3.10.0"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^10.20.0",

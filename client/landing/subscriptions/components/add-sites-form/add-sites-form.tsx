@@ -1,19 +1,21 @@
+import './styles.scss';
 import { FormInputValidation } from '@automattic/components';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { Button, TextControl } from '@wordpress/components';
 import { check, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import FeedPreview from 'calypso/landing/subscriptions/components/add-sites-form/feed-preview/feed-preview';
 import { useAddSitesModalNotices } from 'calypso/landing/subscriptions/hooks';
 import { useRecordSiteSubscribed } from 'calypso/landing/subscriptions/tracks';
 import { isValidUrl, parseUrl } from 'calypso/lib/importer/url-validation';
-import './styles.scss';
+import { getUrlQuerySearchTerm, setUrlQuery, SEARCH_QUERY_PARAM } from 'calypso/reader/utils';
 
 export type AddSitesFormProps = {
 	placeholder?: string;
 	buttonText?: string;
+	pathname?: string; // Used to prevent search query changes on other pages.
 	source: string;
 	onChangeFeedPreview?: ( hasPreview: boolean ) => void;
 	onChangeSubscribe?: ( subscribed: boolean ) => void;
@@ -27,6 +29,7 @@ type SubscriptionError = {
 const AddSitesForm = ( {
 	placeholder,
 	buttonText,
+	pathname,
 	source,
 	onChangeFeedPreview,
 	onChangeSubscribe,
@@ -42,7 +45,10 @@ const AddSitesForm = ( {
 	const { mutate: subscribe, isPending: subscribing } =
 		SubscriptionManager.useSiteSubscribeMutation();
 
-	const validateInputValue = ( url: string, showError = false ) => {
+	// Triggers the text change when component mounts to validate the initial value.
+	useEffect( () => onTextFieldChange( getUrlQuerySearchTerm( pathname ), true ), [] ); // eslint-disable-line react-hooks/exhaustive-deps
+
+	function validateInputValue( url: string, showError = false ): void {
 		// If the input is empty, we don't want to show an error message
 		if ( url.length === 0 ) {
 			setIsValidInput( false );
@@ -61,12 +67,13 @@ const AddSitesForm = ( {
 				setInputFieldError( translate( 'Please enter a valid URL' ) );
 			}
 		}
-	};
+	}
 
-	const onTextFieldChange = ( value: string ) => {
+	function onTextFieldChange( value: string, showErrorOnInvalidUrl: boolean = false ): void {
+		setUrlQuery( SEARCH_QUERY_PARAM, value, pathname ); // Update url query when search term changes.
 		setInputValue( value );
-		validateInputValue( value );
-	};
+		validateInputValue( value, showErrorOnInvalidUrl );
+	}
 
 	const onSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
@@ -127,6 +134,8 @@ const AddSitesForm = ( {
 						onChange={ onTextFieldChange }
 						help={ isValidInput ? <Icon icon={ check } data-testid="check-icon" /> : undefined }
 						onBlur={ () => validateInputValue( inputValue, true ) }
+						__next40pxDefaultSize
+						__nextHasNoMarginBottom
 					/>
 
 					{ inputFieldError ? <FormInputValidation isError text={ inputFieldError } /> : null }

@@ -41,10 +41,7 @@ describe( 'loadRemoveDuplicateViewsExperimentAssignment', () => {
 			store.dispatch
 		);
 
-		expect( loadExperimentAssignment ).toHaveBeenCalledWith( 'calypso_post_onboarding_aa_150125' );
-		expect( loadExperimentAssignment ).toHaveBeenCalledWith(
-			'calypso_post_onboarding_holdout_160125'
-		);
+		expect( loadExperimentAssignment ).not.toHaveBeenCalled();
 		expect( result ).toBe( 'treatment' );
 	} );
 } );

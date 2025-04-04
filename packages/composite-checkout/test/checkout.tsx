@@ -423,7 +423,7 @@ describe( 'Checkout', () => {
 			} );
 		} );
 
-		it( 'does change steps if useMakeStepActive is used', async () => {
+		it( 'changes steps if useMakeStepActive is used', async () => {
 			function ManualStepChangeButton( { stepId } ) {
 				const setActiveStep = useMakeStepActive();
 				return <button onClick={ () => setActiveStep( stepId ) }>Change step</button>;
@@ -456,6 +456,40 @@ describe( 'Checkout', () => {
 				expect( firstStepContent ).toHaveStyle( 'display: none' );
 			} );
 			expect( secondStepContent ).toHaveStyle( 'display: block' );
+		} );
+
+		it( 'changes steps to the first incomplete step if useMakeStepActive is used', async () => {
+			function ManualStepChangeButton( { stepId } ) {
+				const setActiveStep = useMakeStepActive();
+				return <button onClick={ () => setActiveStep( stepId ) }>Change step</button>;
+			}
+			const stepOne = {
+				...steps[ 1 ],
+				id: 'step-will-fail',
+				className: 'step-will-fail',
+				isCompleteCallback: () => Promise.resolve( false ),
+			};
+			const stepTwo = {
+				...steps[ 1 ],
+				activeStepContent: (
+					<div>
+						<span>Custom Step - Summary Active</span>
+						<ManualStepChangeButton stepId={ steps[ 1 ].id } />
+					</div>
+				),
+			};
+			const { container, getAllByText } = render( <MyCheckout steps={ [ stepOne, stepTwo ] } /> );
+			const manualContinue = getAllByText( 'Change step' )[ 0 ];
+			const firstStep = container.querySelector( '.' + stepOne.className );
+			const secondStep = container.querySelector( '.' + stepTwo.className );
+			const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
+			const secondStepContent = secondStep.querySelector( '.checkout-steps__step-content' );
+			expect( firstStepContent ).toHaveStyle( 'display: block' );
+			expect( secondStepContent ).toHaveStyle( 'display: none' );
+			const user = userEvent.setup();
+			await user.click( manualContinue );
+			expect( firstStepContent ).toHaveStyle( 'display: block' );
+			expect( secondStepContent ).toHaveStyle( 'display: none' );
 		} );
 
 		it( 'does change steps if useSetStepComplete is used and the step becomes complete after a Promise resolves', async () => {

@@ -11,9 +11,13 @@ import { withEnhancers } from 'calypso/state/utils';
 
 interface Props {
 	emailAddress: string;
+	shouldRedirect?: boolean;
 }
 
-const EmailedLoginLinkSuccessfullyJetpackConnect: FC< Props > = ( { emailAddress } ) => {
+const EmailedLoginLinkSuccessfullyJetpackConnect: FC< Props > = ( {
+	emailAddress,
+	shouldRedirect = true,
+} ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -24,11 +28,13 @@ const EmailedLoginLinkSuccessfullyJetpackConnect: FC< Props > = ( { emailAddress
 
 	return (
 		<div className="magic-login__successfully-jetpack">
-			<RedirectWhenLoggedIn
-				redirectTo="/help"
-				replaceCurrentLocation
-				waitForEmailAddress={ emailAddress }
-			/>
+			{ shouldRedirect && (
+				<RedirectWhenLoggedIn
+					redirectTo="/help"
+					replaceCurrentLocation
+					waitForEmailAddress={ emailAddress }
+				/>
+			) }
 
 			<h1 className="magic-login__form-header">{ translate( 'Check your email!' ) }</h1>
 

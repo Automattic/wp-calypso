@@ -2,9 +2,9 @@
 	margin-bottom: 0;
 	padding: 16px 0;
 	box-shadow:
-		0 -1px 0 0 rgba(var(--color-neutral-10-rgb), 0.5),
-		-1px -1px 0 0 rgba(var(--color-neutral-10-rgb), 0.5),
-		1px -1px 0 0 rgba(var(--color-neutral-10-rgb), 0.5);
+		0 -1px 0 0 color-mix(in srgb, var(--color-neutral-10) 50%, transparent),
+		-1px -1px 0 0 color-mix(in srgb, var(--color-neutral-10) 50%, transparent),
+		1px -1px 0 0 color-mix(in srgb, var(--color-neutral-10) 50%, transparent);
 	z-index: z-index(".stats-post-summary", ".section-nav");
 	.segmented-control {
 		margin: 0 auto;

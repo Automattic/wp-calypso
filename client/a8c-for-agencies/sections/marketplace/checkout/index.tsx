@@ -31,6 +31,7 @@ import useReferralDevSite from '../hooks/use-referral-dev-site';
 import useShoppingCart from '../hooks/use-shopping-cart';
 import { getClientReferralQueryArgs } from '../lib/get-client-referral-query-args';
 import useSubmitForm from '../products-overview-v2/hooks/use-submit-form';
+import { getVendorInfo } from '../products-overview-v2/lib/get-vendor-info';
 import NoticeSummary from './notice-summary';
 import PendingPaymentPopover from './pending-payment-popover';
 import PricingSummary from './pricing-summary';
@@ -281,6 +282,7 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 										key={ `product-info-${ items.product_id }-${ items.quantity }` }
 										product={ items }
 										isAutomatedReferrals={ isAutomatedReferrals }
+										vendor={ getVendorInfo( items.slug ) }
 									/>
 								) )
 							) }

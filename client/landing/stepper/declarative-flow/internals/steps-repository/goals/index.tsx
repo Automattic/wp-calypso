@@ -55,10 +55,8 @@ const GoalsStep: StepType< {
 	};
 } > = ( { navigation, flow } ) => {
 	const translate = useTranslate();
-	const whatAreYourGoalsText = translate( 'What would you like to do?' );
-	const subHeaderText = translate(
-		"Pick one or more goals and we'll tailor the setup experience for you."
-	);
+	const whatAreYourGoalsText = translate( 'What would you like to create?' );
+	const subHeaderText = translate( 'Pick one or more goals to get started.' );
 
 	const goals = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
@@ -193,15 +191,15 @@ const GoalsStep: StepType< {
 
 	const getStep = () => {
 		if ( shouldUseStepContainerV2( flow ) ) {
-			const nextButton = <Step.NextButton onClick={ handleNext } />;
+			const nextButton = <Step.PrimaryButton onClick={ handleNext } />;
 
 			return (
 				<Step.CenteredColumnLayout
 					columnWidth={ 6 }
 					className="step-container-v2--goals"
-					topBar={ <Step.TopBar skipButton={ <Step.SkipButton onClick={ handleSkip } /> } /> }
+					topBar={ <Step.TopBar rightElement={ <Step.SkipButton onClick={ handleSkip } /> } /> }
 					heading={ <Step.Heading text={ whatAreYourGoalsText } subText={ subHeaderText } /> }
-					stickyBottomBar={ <Step.StickyBottomBar rightButton={ nextButton } /> }
+					stickyBottomBar={ <Step.StickyBottomBar rightElement={ nextButton } /> }
 				>
 					{ ( { isSmallViewport } ) => getStepContent( isSmallViewport && nextButton ) }
 				</Step.CenteredColumnLayout>

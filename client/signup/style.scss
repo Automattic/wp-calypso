@@ -30,58 +30,6 @@ body.is-section-signup {
 		}
 	}
 
-	&.is-p2-signup {
-		background: var(--p2-color-white);
-		color: var(--p2-color-text);
-		letter-spacing: -0.01em;
-
-		&.has-loading-screen-signup {
-			background: var(--p2-color-text);
-			color: var(--p2-color-white);
-
-			&::before {
-				content: "";
-				position: absolute;
-				display: block;
-				width: 100%;
-				height: 100%;
-				background: linear-gradient(126.81deg, #001424 7.92%, #02223a 89.27%);
-				animation: p2-fade 5s ease-in-out infinite alternate;
-			}
-		}
-
-		.layout {
-			height: 100%;
-			display: flex;
-			flex-direction: column;
-		}
-
-		.layout__content,
-		.layout__primary,
-		.signup,
-		.signup__steps,
-		.signup__step,
-		.signup__step.is-user {
-			padding: 0;
-			height: 100%;
-		}
-
-		.layout:not(.dops) .step-wrapper {
-			margin: 0 0 24px;
-			max-width: none;
-		}
-
-		@include breakpoint-deprecated("<480px") {
-			.locale-suggestions {
-				margin-top: 0;
-
-				.notice {
-					border-radius: 0;
-				}
-			}
-		}
-	}
-
 	// Adjust the padding as we no longer
 	// show the masterbar.
 	.layout__content {

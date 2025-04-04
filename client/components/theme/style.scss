@@ -160,7 +160,7 @@ $theme-info-height: 54px;
 		font-weight: 600;
 
 		.is-active & {
-			color: rgba(var(--color-surface-rgb), 0.2);
+			color: color-mix(in srgb, var(--color-surface) 20%, transparent);
 		}
 
 		.accessible-focus &:focus {
@@ -174,11 +174,11 @@ $theme-info-height: 54px;
 	}
 
 	&.is-active {
-		border-left-color: rgba(var(--color-neutral-0-rgb), 0.7);
+		border-left-color: color-mix(in srgb, var(--color-neutral-0) 70%, transparent);
 	}
 
 	&:hover {
-		background-color: rgba(var(--color-neutral-0-rgb), 0.7);
+		background-color: color-mix(in srgb, var(--color-neutral-0) 70%, transparent);
 
 		.gridicon {
 			color: var(--color-primary);

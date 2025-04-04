@@ -42,10 +42,9 @@ export function CheckoutProvider( {
 	// Create a big blob of state to store in React Context for use by all this Provider's children.
 	const value: CheckoutContextInterface = useMemo(
 		() => ( {
-			paymentProcessors,
 			onPageLoadError,
 		} ),
-		[ paymentProcessors, onPageLoadError ]
+		[ onPageLoadError ]
 	);
 
 	const { __ } = useI18n();
@@ -61,6 +60,7 @@ export function CheckoutProvider( {
 			<CheckoutProviderPropValidator propsToValidate={ propsToValidate } />
 			<PaymentMethodProvider
 				paymentMethods={ paymentMethods }
+				paymentProcessors={ paymentProcessors }
 				selectFirstAvailablePaymentMethod={ selectFirstAvailablePaymentMethod }
 				initiallySelectedPaymentMethodId={ initiallySelectedPaymentMethodId }
 			>

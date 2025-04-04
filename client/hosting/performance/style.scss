@@ -264,5 +264,10 @@ $section-max-width: 1224px;
 
 	@media (max-width: $break-medium) {
 		width: 100%;
+
+		// To ensure the search icon is contained in the search input
+		div:first-child {
+			width: 100%;
+		}
 	}
 }

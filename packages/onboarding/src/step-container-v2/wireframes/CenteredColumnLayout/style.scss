@@ -7,6 +7,12 @@
 	}
 }
 
+.step-container-v2__content--centered-column-layout-5 {
+	@include break-small {
+		max-width: 509px;
+	}
+}
+
 .step-container-v2__content--centered-column-layout-6 {
 	@include break-small {
 		max-width: 615px;

@@ -143,12 +143,13 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 						error: error.message,
 					} );
 				} );
-			if ( smoochRef.current ) {
-				Smooch.render( smoochRef.current );
-			}
 		};
 
 		initializeSmooch();
+
+		if ( smoochRef.current ) {
+			Smooch.render( smoochRef.current );
+		}
 
 		return () => {
 			clearTimeout( retryTimeout );

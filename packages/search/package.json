@@ -28,7 +28,7 @@
 	"types": "dist/types",
 	"dependencies": {
 		"@automattic/typography": "workspace:^",
-		"@babel/runtime": "^7.26.9",
+		"@babel/runtime": "^7.26.10",
 		"@wordpress/base-styles": "^5.20.0",
 		"@wordpress/components": "^29.6.0",
 		"@wordpress/compose": "^7.20.0",
@@ -48,6 +48,7 @@
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"@storybook/addon-actions": "^8.6.9",
 		"@testing-library/dom": "^10.4.0",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/react": "^16.2.0",

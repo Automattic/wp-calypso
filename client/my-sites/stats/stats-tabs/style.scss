@@ -215,7 +215,6 @@ $stats-tab-outer-padding: 10px;
 		&.is-loading .no-link .value {
 			animation: loading-fade 1.6s ease-in-out infinite;
 			cursor: default;
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 110%;
 			color: var(--color-neutral-light);
 		}

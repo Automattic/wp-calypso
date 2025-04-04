@@ -513,14 +513,22 @@ export default function CheckoutMainContent( {
 	} = checkoutActions;
 
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
+		const headingText = translate( "Almost there – we're currently finalizing your order." );
+
+		if ( isStepContainerV2 ) {
+			return (
+				<>
+					<PerformanceTrackerStop />
+					<Step.Loading title={ headingText } />
+				</>
+			);
+		}
+
 		return (
 			<WPCheckoutCompletedWrapper>
 				<WPCheckoutCompletedMainContent>
 					<PerformanceTrackerStop />
-					<Loading
-						className="checkout__pending-content"
-						title={ translate( "Almost there – we're currently finalizing your order." ) }
-					/>
+					<Loading className="checkout__pending-content" title={ headingText } />
 				</WPCheckoutCompletedMainContent>
 			</WPCheckoutCompletedWrapper>
 		);
@@ -834,14 +842,13 @@ export default function CheckoutMainContent( {
 				hasContentPadding={ false }
 				topBar={
 					<Step.TopBar
-						backButton={ <Step.BackButton onClick={ leaveModalProps.clickClose } /> }
-						skipButton={
+						leftElement={ <Step.BackButton onClick={ leaveModalProps.clickClose } /> }
+						rightElement={
 							<span className="checkout-skip-button">
 								<label>{ helpCenterButtonCopy ?? translate( 'Need extra help?' ) } </label>
-								<Step.SkipButton
-									onClick={ toggleHelpCenter }
-									label={ helpCenterButtonLink ?? translate( 'Visit Help Center' ) }
-								/>
+								<Step.LinkButton onClick={ toggleHelpCenter }>
+									{ helpCenterButtonLink ?? translate( 'Visit Help Center' ) }
+								</Step.LinkButton>
 							</span>
 						}
 					/>
@@ -869,6 +876,8 @@ const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
 		}
 	}
 
+	// This shouldn't exist. It's a hack to make the top bar appear on top of the checkout sidebar, which extends from the top of the page.
+	// A potentially better solution here is to make the dark area of checkout a pseudo-element and use negative z-index to bring the top bar above it, or use pointer-events: none.
 	.step-container-v2__top-bar {
 		position: relative;
 		z-index: 1;

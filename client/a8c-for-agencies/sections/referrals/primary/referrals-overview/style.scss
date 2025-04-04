@@ -8,7 +8,6 @@ $data-view-border-color: #f1f1f1;
 	margin-block-end: 48px;
 }
 
-
 .referrals-overview__button-popover {
 	.a4a-popover__content {
 		.a4a-popover__title {
@@ -23,7 +22,7 @@ $data-view-border-color: #f1f1f1;
 }
 
 .referrals-overview__section-heading {
-	margin-block-start: 24px;
+	margin-block-start: 32px;
 	@include heading-x-large;
 	margin-block-end: 8px;
 }
@@ -33,38 +32,39 @@ $data-view-border-color: #f1f1f1;
 	flex-direction: column;
 	gap: 16px;
 	@include body-medium;
-	margin-block-end: 48px;
+	margin-block-end: 32px;
 	color: var(--color-neutral-50);
 }
 
-
 .referrals-overview__step-section-woo-payments {
-	a.button,
-	a.button:visited {
-		text-decoration: underline;
-		justify-content: flex-start;
+	margin-block-end: 0;
+
+	a,
+	a:visited {
+		text-decoration: none;
+		justify-content: center;
 	}
 
 	&.step-section-item .step-section-item__button {
-		margin-block-start: 0;
+		margin-block-start: 16px;
+
+		@include break-large {
+			margin-block: auto;
+		}
 	}
 }
 
 .referrals-overview__section-container {
 	display: flex;
 	flex-direction: column;
-	gap: 48px;
-}
-
-.referrals-layout:not(.full-width-layout-with-table) .hosting-dashboard-layout__body-wrapper {
-	max-width: 900px;
+	gap: 32px;
 }
 
 .referrals-overview__section-container .a4a-text-placeholder {
 	height: 80px;
 }
 
-.referrals-layout--automated {
+.referrals-layout {
 	@media (min-width: $break-large) {
 		background: inherit;
 
@@ -78,44 +78,8 @@ $data-view-border-color: #f1f1f1;
 		}
 	}
 
-	.referrals-overview__section-container {
-		gap: 32px;
-	}
-
-	.referrals-overview__step-section-learn-more {
-		a.button {
-			padding-block: 4px;
-		}
-
-		.step-section__header {
-			margin-block-end: 0;
-		}
-	}
-
-	.referrals-overview__section-subtitle {
-		margin-block-end: 32px;
-	}
-
 	&:not(.full-width-layout-with-table) .hosting-dashboard-layout__body-wrapper {
 		max-width: 700px;
-	}
-
-	.referrals-overview__step-section-woo-payments {
-		margin-block-end: 0;
-
-		a,
-		a:visited {
-			text-decoration: none;
-			justify-content: center;
-		}
-
-		&.step-section-item .step-section-item__button {
-			margin-block-start: 16px;
-
-			@include break-large {
-				margin-block: auto;
-			}
-		}
 	}
 
 	.consolidated-view, .a4a-feedback__wrapper {
@@ -124,10 +88,6 @@ $data-view-border-color: #f1f1f1;
 		@include breakpoint-deprecated( ">660px" ) {
 			padding: 16px 64px 48px;
 		}
-	}
-
-	.referrals-overview__section-heading {
-		margin-block-start: 32px;
 	}
 
 	&.main.hosting-dashboard-layout {
@@ -165,10 +125,37 @@ $data-view-border-color: #f1f1f1;
 				display: block;
 			}
 		}
+	}
 
-		.hosting-dashboard-layout__header-actions a.button {
-			text-wrap: nowrap;
+	.step-section-item {
+		.step-section-item__button .button {
+			min-width: 120px;
 		}
+
+		.step-section-item__button {
+			@include break-large {
+				margin-block: auto;
+			}
+		}
+
+		.step-section-item__status.is-large-screen {
+			@include break-large {
+				display: inline-flex;
+				position: relative;
+				left: 8px;
+			}
+
+		}
+	}
+}
+
+.referrals-overview__step-section-learn-more {
+	a.button {
+		padding-block: 4px;
+	}
+
+	.step-section__header {
+		margin-block-end: 0;
 	}
 }
 
@@ -198,7 +185,7 @@ $data-view-border-color: #f1f1f1;
 
 .hosting-dashboard-layout__header-actions {
 	a.button {
-		text-wrap: pretty;
+		text-wrap: nowrap;
 	}
 }
 

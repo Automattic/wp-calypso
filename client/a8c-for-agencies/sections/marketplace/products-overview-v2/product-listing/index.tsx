@@ -269,7 +269,7 @@ export default function ProductListing( {
 					withCustomCard={ withCustomCard }
 					tooltip={
 						productDoNotHaveSupportedBundles
-							? translate( 'This product does not support the volume discount.' )
+							? translate( 'This product does not offer volume discounts.' )
 							: undefined
 					}
 					tooltipPosition="bottom"

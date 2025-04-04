@@ -198,7 +198,7 @@
 		}
 
 		.keyed-suggestions__value.is-selected {
-			background-color: rgba(var(--studio-blue-rgb), 0.1);
+			background-color: color-mix(in srgb, var(--studio-blue) 10%, transparent);
 		}
 	}
 
@@ -219,7 +219,7 @@
 			color: var(--studio-blue-90);
 
 			&:hover::before {
-				background-color: rgba(var(--studio-blue-rgb), 0.1);
+				background-color: color-mix(in srgb, var(--studio-blue) 10%, transparent);
 			}
 		}
 
@@ -298,7 +298,7 @@
 
 			.select-dropdown__item:not(.is-selected):hover {
 				color: var(--studio-blue-90);
-				background-color: rgba(var(--studio-blue-rgb), 0.1);
+				background-color: color-mix(in srgb, var(--studio-blue) 10%, transparent);
 			}
 		}
 	}
