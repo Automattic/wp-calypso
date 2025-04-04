@@ -68,7 +68,7 @@ export const TwoColumnLayout = ( {
 									{ childElements }
 								</Content>
 							</ContentWrapper.Row>
-							{ footer && <ContentWrapper.Row columns={ 10 }>{ footer }</ContentWrapper.Row> }
+							{ footer && <ContentWrapper.Row columns={ 6 }>{ footer }</ContentWrapper.Row> }
 						</ContentWrapper>
 						<StickyBottomBarRenderer stickyBottomBar={ stickyBottomBar } />
 					</>

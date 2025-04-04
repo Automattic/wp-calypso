@@ -11,7 +11,6 @@ interface CenteredColumnLayoutProps {
 	heading?: ReactNode;
 	className?: string;
 	children?: ContentProp;
-	footer?: ReactNode;
 	stickyBottomBar?: ContentProp;
 	columnWidth: 4 | 5 | 6 | 8 | 10;
 	verticalAlign?: 'center';
@@ -23,7 +22,6 @@ export const CenteredColumnLayout = ( {
 	heading,
 	className,
 	children,
-	footer,
 	stickyBottomBar,
 	verticalAlign,
 }: CenteredColumnLayoutProps ) => {
@@ -40,9 +38,6 @@ export const CenteredColumnLayout = ( {
 							<ContentWrapper.Row columns={ columnWidth }>
 								<Content className={ className }>{ content }</Content>
 							</ContentWrapper.Row>
-							{ footer && (
-								<ContentWrapper.Row columns={ columnWidth }>{ footer }</ContentWrapper.Row>
-							) }
 						</ContentWrapper>
 						<StickyBottomBarRenderer stickyBottomBar={ stickyBottomBar } />
 					</>

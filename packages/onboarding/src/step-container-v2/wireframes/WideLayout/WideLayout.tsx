@@ -11,7 +11,6 @@ interface WideLayoutProps {
 	heading?: ReactNode;
 	className?: string;
 	children?: ContentProp;
-	footer?: ReactNode;
 	stickyBottomBar?: ContentProp;
 	maxWidth?: React.ComponentProps< typeof ContentWrapper >[ 'maxWidth' ];
 
@@ -26,7 +25,6 @@ export const WideLayout = ( {
 	heading,
 	className,
 	children,
-	footer,
 	stickyBottomBar,
 	maxWidth = 'wide',
 	hasContentPadding: hasContentPaddingProp = true,
@@ -49,7 +47,6 @@ export const WideLayout = ( {
 							<ContentWrapper.Row columns={ 12 }>
 								<Content className={ className }>{ content }</Content>
 							</ContentWrapper.Row>
-							{ footer && <ContentWrapper.Row columns={ 12 }>{ footer }</ContentWrapper.Row> }
 						</ContentWrapper>
 						<StickyBottomBarRenderer stickyBottomBar={ stickyBottomBar } />
 					</>
