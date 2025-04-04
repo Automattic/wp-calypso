@@ -53,17 +53,15 @@ const StatsModuleUTM = ( {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.SOURCE_MEDIUM );
 	const [ url ] = useState( () => {
-		let initialUrl = summaryUrl || window.location.href;
-		let queryParams;
+		let initialUrl = summaryUrl;
 
-		if ( ! summaryUrl && isOdysseyStats ) {
-			initialUrl = window.location.href;
-			queryParams = new URLSearchParams( window.location.hash.split( '#!' )[ 1 ] || '' );
-		} else {
-			queryParams = new URLSearchParams( initialUrl.split( '?' )[ 1 ] || '' );
+		if ( ! initialUrl ) {
+			initialUrl = isOdysseyStats ? window.location.hash.split( '#!' )[ 1 ] : window.location.href;
 		}
 
+		const queryParams = new URLSearchParams( initialUrl.split( '?' )[ 1 ] || '' );
 		const utmParam = queryParams.get( UTM_QUERY_PARAM );
+
 		if ( utmParam && Object.values( OPTION_KEYS ).includes( utmParam ) ) {
 			setSelectedOption( utmParam );
 		}
