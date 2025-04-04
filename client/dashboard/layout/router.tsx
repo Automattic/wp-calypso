@@ -1,4 +1,5 @@
-import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
+import { __ } from '@wordpress/i18n';
+import { createBrowserRouter, Navigate, Outlet, ActionFunctionArgs, json } from 'react-router-dom';
 import { updateProfile, fetchProfile, fetchSite, fetchSites, type ProfileObject } from '../data';
 import Domains from '../domains';
 import Header from '../header';
@@ -6,11 +7,11 @@ import Billing from '../me/billing';
 import MeNotifications from '../me/notifications';
 import Privacy from '../me/privacy';
 import Security from '../me/security';
-import Notifications from '../notifications';
 import Profile from '../profile';
 import Reader from '../reader';
 import Site from '../site';
 import SiteBackups from '../site-backups';
+import SiteOverview from '../site-overview';
 import Sites from '../sites';
 
 function Element() {
@@ -36,25 +37,41 @@ export const router = createBrowserRouter(
 					loader: fetchSites,
 				},
 				{
+					id: 'site',
 					path: 'sites/:id',
 					element: <Site />,
 					loader: ( { params } ) => fetchSite( params.id as string ),
-				},
-				{
-					path: 'sites/:id/backups',
-					element: <SiteBackups />,
+					children: [
+						{
+							path: '',
+							element: <SiteOverview />,
+						},
+						{
+							path: 'backups',
+							element: <SiteBackups />,
+						},
+					],
 				},
 				{
 					path: 'domains',
 					element: <Domains />,
+					loader: Domains.loader,
 				},
 				{
 					path: 'me/profile',
 					element: <Profile />,
 					loader: fetchProfile,
-					action: async ( { request } ) => {
+					action: async ( { request }: ActionFunctionArgs ) => {
 						const data = await request.json();
-						return await updateProfile( data as ProfileObject );
+						try {
+							await updateProfile( data as ProfileObject );
+							return json( { ok: true } );
+						} catch ( error ) {
+							return json(
+								{ ok: false, error: __( 'Failed to update profile' ) },
+								{ status: 400 }
+							);
+						}
 					},
 				},
 				{
@@ -76,10 +93,6 @@ export const router = createBrowserRouter(
 				{
 					path: 'reader',
 					element: <Reader />,
-				},
-				{
-					path: 'notifications',
-					element: <Notifications />,
 				},
 				{
 					path: '',

@@ -1,25 +1,32 @@
 import { Button, Card } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useNavigate, useLoaderData } from 'react-router-dom';
-import { type SiteObject } from '../data';
+import { type SiteData, type SitesRequest } from '../data';
 import PageLayout from '../page-layout';
 import type { View, Field } from '@wordpress/dataviews';
 
 // Helper function to get color based on performance score
-const getPerformanceColor = ( score: number ) => {
-	if ( score >= 90 ) {
-		return '#4CAF50';
-	}
-	if ( score >= 70 ) {
-		return '#FFC107';
-	}
-	return '#F44336';
-};
+// const getPerformanceColor = ( score: number ) => {
+// 	if ( score >= 90 ) {
+// 		return '#4CAF50';
+// 	}
+// 	if ( score >= 70 ) {
+// 		return '#FFC107';
+// 	}
+// 	return '#F44336';
+// };
 
 function Sites() {
 	const navigate = useNavigate();
+	const querySitesData = useLoaderData() as SitesRequest;
+	const [ sites, setSites ] = useState< SiteData[] >( [] );
+	useEffect( () => {
+		if ( querySitesData ) {
+			setSites( querySitesData.sites );
+		}
+	}, [ querySitesData ] );
 
 	// View config.
 	const [ view, setView ] = useState< View >( {
@@ -27,74 +34,78 @@ function Sites() {
 		page: 1,
 		perPage: 10,
 		sort: {
-			field: 'title',
+			field: 'name',
 			direction: 'desc',
 		},
-		fields: [ 'visitors', 'performance', 'backups', 'protect' ],
-		titleField: 'title',
-		descriptionField: 'url',
+		fields: [ 'subscribers_count' ],
+		titleField: 'name',
+		mediaField: 'media',
+		descriptionField: 'URL',
 	} );
 
 	// Field definitions
 	const fields = [
 		{
-			id: 'title',
+			id: 'name',
 			label: __( 'Site' ),
-			enableGlobalSearch: true,
 		},
 		{
-			id: 'url',
+			id: 'URL',
 			label: __( 'URL' ),
-			enableGlobalSearch: true,
 		},
 		{
-			id: 'visitors',
-			label: __( 'Visitors' ),
+			id: 'media',
+			label: __( 'Media' ),
+			render: ( { item } ) =>
+				item?.icon?.ico ? <img src={ item.icon.ico } alt={ item.name } width="100%" /> : null,
 		},
 		{
-			id: 'performance',
-			label: __( 'Performance Score' ),
-			render: ( { item } ) => (
-				<div style={ { display: 'flex', alignItems: 'center' } }>
-					<span
-						style={ {
-							backgroundColor: getPerformanceColor( item.performance ),
-							width: 12,
-							height: 12,
-							borderRadius: '50%',
-							display: 'inline-block',
-							marginRight: 8,
-						} }
-					></span>
-					<span>{ item.performance }</span>
-				</div>
-			),
+			id: 'subscribers_count',
+			label: __( 'Subscribers' ),
 		},
-		{
-			id: 'backups',
-			label: __( 'Backups' ),
-			getValue: ( { item } ) => ( item.backups ? 'enabled' : 'disabled' ),
-			elements: [
-				{ value: 'enabled', label: 'Enabled' },
-				{ value: 'disabled', label: 'Disabled' },
-			],
-		},
-		{
-			id: 'protect',
-			label: __( 'Protect' ),
-			getValue: ( { item } ) => ( item.protect ? 'enabled' : 'disabled' ),
-			elements: [
-				{ value: 'enabled', label: 'Enabled' },
-				{ value: 'disabled', label: 'Disabled' },
-			],
-		},
-	] as Field< SiteObject >[];
+		// {
+		// 	id: 'performance',
+		// 	label: __( 'Performance Score' ),
+		// 	render: ( { item } ) => (
+		// 		<div style={ { display: 'flex', alignItems: 'center' } }>
+		// 			<span
+		// 				style={ {
+		// 					backgroundColor: getPerformanceColor( item.performance ),
+		// 					width: 12,
+		// 					height: 12,
+		// 					borderRadius: '50%',
+		// 					display: 'inline-block',
+		// 					marginRight: 8,
+		// 				} }
+		// 			></span>
+		// 			<span>{ item.performance }</span>
+		// 		</div>
+		// 	),
+		// },
+		// {
+		// 	id: 'backups',
+		// 	label: __( 'Backups' ),
+		// 	getValue: ( { item } ) => ( item.backups ? 'enabled' : 'disabled' ),
+		// 	elements: [
+		// 		{ value: 'enabled', label: 'Enabled' },
+		// 		{ value: 'disabled', label: 'Disabled' },
+		// 	],
+		// },
+		// {
+		// 	id: 'protect',
+		// 	label: __( 'Protect' ),
+		// 	getValue: ( { item } ) => ( item.protect ? 'enabled' : 'disabled' ),
+		// 	elements: [
+		// 		{ value: 'enabled', label: 'Enabled' },
+		// 		{ value: 'disabled', label: 'Disabled' },
+		// 	],
+		// },
+	] as Field< SiteData >[];
 
-	const sites = useLoaderData() as SiteObject[];
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
 
-	const onClickItem = ( item: SiteObject ) => {
-		navigate( `/sites/${ item.id }` );
+	const onClickItem = ( item: SiteData ) => {
+		navigate( `/sites/${ item.ID }` );
 	};
 
 	return (
@@ -109,12 +120,14 @@ function Sites() {
 			<Card>
 				<DataViews
 					data={ filteredData }
+					getItemId={ ( item ) => item.ID }
 					fields={ fields }
 					view={ view }
 					onChangeView={ setView }
 					onClickItem={ onClickItem }
 					defaultLayouts={ { table: {} } }
 					paginationInfo={ paginationInfo }
+					search={ false }
 				/>
 			</Card>
 		</PageLayout>

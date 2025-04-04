@@ -15,18 +15,20 @@ function PageLayout( {
 	title: string;
 	description?: React.ReactNode;
 	actions?: React.ReactNode;
-	children: React.ReactNode;
+	children?: React.ReactNode;
 } ) {
 	return (
 		<VStack spacing={ 4 } className="dashboard-page-layout">
 			<HStack justify="space-between" alignment="center">
 				<Heading level={ 1 }>{ title }</Heading>
-				<HStack spacing={ 1 } justify="flex-end">
-					{ actions }
-				</HStack>
+				{ !! actions && (
+					<HStack spacing={ 1 } justify="flex-end">
+						{ actions }
+					</HStack>
+				) }
 			</HStack>
-			<Text>{ description } </Text>
-			<VStack spacing={ 4 }>{ children }</VStack>
+			{ !! description && <Text>{ description } </Text> }
+			{ !! children && <VStack spacing={ 4 }>{ children }</VStack> }
 		</VStack>
 	);
 }

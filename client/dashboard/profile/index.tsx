@@ -8,21 +8,27 @@ import {
 	FlexItem,
 	Notice,
 	TextareaControl,
-	__experimentalHeading as Heading,
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { useMemo, useState } from '@wordpress/element';
-import { useTranslate } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
 import { useLoaderData, useFetcher } from 'react-router-dom';
+import PageLayout from '../page-layout';
 import type { ProfileObject } from '../data';
 import type { Field, Form } from '@wordpress/dataviews';
 
 function Profile() {
-	const translate = useTranslate();
 	const fetcher = useFetcher();
-	const initialFormData = useLoaderData() as ProfileObject;
-	const [ localFormData, setLocalFormData ] = useState< ProfileObject >( initialFormData );
+	const serverData = useLoaderData() as ProfileObject;
+	const [ localFormData, setLocalFormData ] = useState< Partial< ProfileObject > | undefined >();
+
+	const data = useMemo( () => {
+		if ( ! localFormData ) {
+			return serverData;
+		}
+		return { ...serverData, ...localFormData };
+	}, [ localFormData, serverData ] );
 
 	// Remove the mutation related code and use fetcher state
 	const isSaving = fetcher.state === 'submitting';
@@ -34,27 +40,27 @@ function Profile() {
 			[
 				{
 					id: 'user_login',
-					label: translate( 'USERNAME' ),
+					label: __( 'Username' ),
 					type: 'text',
 				},
 				{
 					id: 'display_name',
-					label: translate( 'DISPLAY NAME' ),
+					label: __( 'Display name' ),
 					type: 'text',
 				},
 				{
 					id: 'user_email',
-					label: translate( 'EMAIL ADDRESS' ),
+					label: __( 'Email' ),
 					type: 'text',
 				},
 				{
 					id: 'user_URL',
-					label: translate( 'SITE ADDRESS' ),
+					label: __( 'Site Address' ),
 					type: 'text',
 				},
 				{
 					id: 'description',
-					label: translate( 'ABOUT ME' ),
+					label: __( 'About me' ),
 					type: 'text',
 					Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
 						const { id, getValue } = field;
@@ -70,9 +76,9 @@ function Profile() {
 				},
 				{
 					id: 'isDeveloper',
-					label: translate( 'I am a developer' ),
+					label: __( 'I am a developer' ),
 					type: 'integer',
-					description: translate( 'Opt me into previews of new developer-focused features.' ),
+					description: __( 'Opt me into previews of new developer-focused features.' ),
 					Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
 						const { id, getValue, description } = field;
 						return (
@@ -87,7 +93,7 @@ function Profile() {
 					},
 				},
 			] as Field< ProfileObject >[],
-		[ translate ]
+		[]
 	);
 
 	// Define form layout
@@ -99,17 +105,17 @@ function Profile() {
 				fields: [
 					{
 						id: 'personalInfo',
-						label: translate( 'Personal Information' ),
+						label: __( 'Personal Information' ),
 						children: [ 'user_login', 'display_name', 'user_email', 'user_URL', 'description' ],
 					},
 					{
 						id: 'developerOptions',
-						label: translate( 'Developer options' ),
+						label: __( 'Developer options' ),
 						children: [ 'isDeveloper' ],
 					},
 				],
 			} ) as Form,
-		[ translate ]
+		[]
 	);
 
 	const handleSubmit = ( e: React.FormEvent ) => {
@@ -124,69 +130,74 @@ function Profile() {
 	const errorMessage = error instanceof Error ? error.message : String( error );
 
 	return (
-		<Flex direction="column" gap={ 4 }>
-			<div>
-				<Heading level={ 1 } style={ { marginBottom: 8 } }>
-					{ translate( 'Profile' ) }
-				</Heading>
-				<Text>
-					{ translate( 'Set your name, bio, and other public-facing information.' ) }
-					<Button href="#learn-more" variant="link">
-						{ translate( 'Learn more' ) }
-					</Button>
-				</Text>
-			</div>
-
-			{ error && (
-				<Notice status="error" isDismissible={ false }>
-					{ errorMessage }
-				</Notice>
-			) }
-
-			<form onSubmit={ handleSubmit }>
-				<Flex direction="column" gap={ 3 }>
+		<form onSubmit={ handleSubmit }>
+			<PageLayout
+				title={ __( 'Profile' ) }
+				description={
+					<>
+						{ __( 'Set your name, bio, and other public-facing information.' ) }
+						<Button href="#learn-more" variant="link">
+							{ __( 'Learn more' ) }
+						</Button>
+					</>
+				}
+			>
+				{ error && (
 					<Card>
-						<CardBody>
-							<Flex gap={ 3 }>
-								<FlexItem>
-									<img
-										src="/calypso/images/gravatar/user-img.svg"
-										alt={ translate( 'Profile photo' ) }
-										style={ { width: 80, height: 80, borderRadius: '50%' } }
-									/>
-								</FlexItem>
-								<FlexBlock>
-									<Text>{ translate( 'This is your profile photo.' ) }</Text>
-									<Text variant="muted">
-										{ translate( 'It appears when you comment on other blogs.' ) }
-									</Text>
-								</FlexBlock>
-							</Flex>
-						</CardBody>
+						<Notice status="error" isDismissible={ false }>
+							{ errorMessage }
+						</Notice>
 					</Card>
+				) }
 
-					<DataForm< ProfileObject >
-						data={ localFormData }
-						fields={ fields }
-						form={ form }
-						onChange={ ( edits ) => {
-							setLocalFormData( ( current ) => ( {
-								...current,
-								...edits,
-							} ) );
-						} }
-					/>
+				<Card>
+					<CardBody>
+						<Flex gap={ 3 }>
+							<FlexItem>
+								<img
+									src="/calypso/images/gravatar/user-img.svg"
+									alt={ __( 'Profile photo' ) }
+									style={ { width: 80, height: 80, borderRadius: '50%' } }
+								/>
+							</FlexItem>
+							<FlexBlock>
+								<Text>{ __( 'This is your profile photo.' ) }</Text>
+								<Text variant="muted">{ __( 'It appears when you comment on other blogs.' ) }</Text>
+							</FlexBlock>
+						</Flex>
+					</CardBody>
+				</Card>
 
-					<Card>
-						<CardBody>
-							<Button variant="primary" type="submit" isBusy={ isSaving } disabled={ isSaving }>
-								{ translate( 'Save' ) }
-							</Button>
-						</CardBody>
-					</Card>
-				</Flex>
-			</form>
-		</Flex>
+				<Card>
+					<CardBody>
+						<DataForm< ProfileObject >
+							data={ data }
+							fields={ fields }
+							form={ form }
+							onChange={ ( edits ) => {
+								setLocalFormData( ( current ) => ( {
+									...current,
+									...edits,
+								} ) );
+							} }
+						/>
+					</CardBody>
+				</Card>
+
+				<Card>
+					<CardBody>
+						<Button
+							variant="primary"
+							type="submit"
+							isBusy={ isSaving }
+							disabled={ isSaving || ! localFormData }
+						>
+							{ __( 'Save' ) }
+						</Button>
+					</CardBody>
+				</Card>
+			</PageLayout>
+		</form>
 	);
 }
 
