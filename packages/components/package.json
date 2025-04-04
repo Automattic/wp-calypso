@@ -58,7 +58,7 @@
 		"i18n-calypso": "workspace:^",
 		"lodash": "^4.17.21",
 		"prop-types": "^15.8.1",
-		"react-modal": "^3.16.1",
+		"react-modal": "^3.16.3",
 		"react-router-dom": "^6.23.1",
 		"react-slider": "^2.0.6",
 		"utility-types": "^3.10.0"
