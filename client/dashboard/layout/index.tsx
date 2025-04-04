@@ -1,6 +1,8 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from 'react-router-dom';
+import RequireAuth from '../auth/require-auth';
 import { router } from './router';
+
 import './style.scss';
 
 const queryClient = new QueryClient();
@@ -8,7 +10,9 @@ const queryClient = new QueryClient();
 function Layout() {
 	return (
 		<QueryClientProvider client={ queryClient }>
-			<RouterProvider router={ router } />
+			<RequireAuth>
+				<RouterProvider router={ router } />
+			</RequireAuth>
 		</QueryClientProvider>
 	);
 }

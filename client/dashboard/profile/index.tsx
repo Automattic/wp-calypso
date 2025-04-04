@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	Card,
 	CardHeader,
@@ -12,9 +12,11 @@ import {
 import { DataForm } from '@wordpress/dataviews';
 import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
+import { useLoaderData } from 'react-router-dom';
 import wpcom from 'calypso/lib/wp';
+import { fetchProfile } from '../data/index';
 import type { Field, Form } from '@wordpress/dataviews';
-
+import type { LoaderFunction } from 'react-router-dom';
 interface ProfileData {
 	username: string;
 	displayName: string;
@@ -22,25 +24,6 @@ interface ProfileData {
 	siteAddress: string;
 	aboutMe: string;
 	isDeveloper: boolean;
-}
-
-async function fetchProfile(): Promise< ProfileData > {
-	try {
-		const data = await wpcom.req.get( {
-			path: '/me?http_envelope=1',
-			apiNamespace: 'rest/v1.1',
-		} );
-		return {
-			username: data.username || '',
-			displayName: data.name || '',
-			email: data.email || '',
-			siteAddress: data.url || '',
-			aboutMe: data.description || '',
-			isDeveloper: Boolean( data.meta?.is_developer ),
-		};
-	} catch ( error ) {
-		throw new Error( 'Failed to fetch profile data' );
-	}
 }
 
 async function updateProfile( data: ProfileData ): Promise< void > {
@@ -64,22 +47,14 @@ async function updateProfile( data: ProfileData ): Promise< void > {
 	}
 }
 
-export default function Profile() {
+function Profile() {
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
-
-	const {
-		data: profileData,
-		error: fetchError,
-		isLoading,
-	} = useQuery( {
-		queryKey: [ 'profile' ],
-		queryFn: fetchProfile,
-	} );
+	const { profileData, saveProfile, loading } = useLoaderData() as ProfileData;
 
 	const {
 		mutate: saveProfile,
-		isPending: isSaving,
+		isPending: loading,
 		error: saveError,
 	} = useMutation( {
 		mutationFn: updateProfile,
@@ -163,8 +138,8 @@ export default function Profile() {
 		);
 	}
 
-	// Handle case where there's an error fetching data
-	const error = fetchError || saveError;
+	// Handle case where there's an error fetching data but we want to show the form anyway
+	const error = saveError;
 	const errorMessage = error instanceof Error ? error.message : String( error );
 
 	return (
@@ -212,9 +187,13 @@ export default function Profile() {
 						const newData = { ...profileData, ...edits };
 						saveProfile( newData );
 					} }
-					isLoading={ isSaving }
+					isLoading={ loading }
 				/>
 			) }
 		</Flex>
 	);
 }
+
+Profile.loader = fetchProfile satisfies LoaderFunction;
+
+export default Profile;
