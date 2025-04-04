@@ -33,9 +33,7 @@ export class PaidContentBlockFlow implements BlockFlow {
 	 */
 	async configure( context: EditorContext ): Promise< void > {
 		// The Guest View will load by default. Wait for this view to fully render.
-		await context.addedBlockLocator
-			.getByRole( 'document', { name: 'Block: Guest View' } )
-			.waitFor();
+		await context.addedBlockLocator.locator( '.wp-block-premium-content-buttons' ).waitFor();
 
 		// Using the Block Toolbar, change to the Subscriber view.
 		// The exact steps differ between the viewports.
