@@ -12,3 +12,4 @@ export const EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION =
 	'other-user-owns-subscription';
 export const EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL = 'other-user-owns-email';
 export const EMAIL_WARNING_CODE_GRAVATAR_DOMAIN = 'domain-gravatar-domain';
+export const EMAIL_WARNING_CODE_DOMAIN_STATE_RESTRICTED = 'domain-state-restricted';

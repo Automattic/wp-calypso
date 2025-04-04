@@ -23,7 +23,7 @@ Initial release of the site-admin package providing a framework for building mod
 - `useLocation`: Hook for accessing current route location
 - `useMatch`: Hook for route matching functionality
 
-## Next
+## 0.1.0
 
 - Add `history` package dependency
 - Set `SiteNavigationItem`’s `as` prop automatically based on to or onClick.
@@ -31,3 +31,5 @@ Initial release of the site-admin package providing a framework for building mod
 ### Components
 - `SiteHub`: Site navigation and context switcher
 - `Link`: Router component providing declarative navigation
+
+## Next

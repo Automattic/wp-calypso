@@ -26,7 +26,6 @@ export { default as SearchableDropdown } from './searchable-dropdown';
 export { SiteThumbnail, DEFAULT_THUMBNAIL_SIZE } from './site-thumbnail';
 export { default as Suggestions } from './suggestions';
 export { default as TimeSince } from './time-since';
-export { default as PaginationControl } from './pagination-control';
 export { Gravatar } from './gravatar';
 export { Spinner } from './spinner';
 export { SpinnerExample } from './spinner/example';
