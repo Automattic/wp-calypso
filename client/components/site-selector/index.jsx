@@ -53,7 +53,6 @@ export class SiteSelector extends Component {
 		visibleSites: PropTypes.arrayOf( PropTypes.object ),
 		allSitesPath: PropTypes.string,
 		navigateToSite: PropTypes.func.isRequired,
-		showManageSitesButton: PropTypes.bool,
 		showHiddenSites: PropTypes.bool,
 		maxResults: PropTypes.number,
 		hasSiteWithPlugins: PropTypes.bool,
@@ -62,7 +61,6 @@ export class SiteSelector extends Component {
 
 	static defaultProps = {
 		sites: {},
-		showManageSitesButton: false,
 		showAllSites: false,
 		showHiddenSites: false,
 		siteBasePath: false,
