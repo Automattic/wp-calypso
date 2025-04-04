@@ -11,7 +11,7 @@ export interface ProfileObject {
 
 export const fetchProfile = () =>
 	wpcom.req.get( {
-		path: '/me?http_envelope=1',
+		path: '/me/settings?http_envelope=1',
 		apiNamespace: 'rest/v1.1',
 	} ) as Promise< ProfileObject >;
 

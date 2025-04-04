@@ -66,7 +66,7 @@ function Profile() {
 		() =>
 			[
 				{
-					id: 'username',
+					id: 'user_login',
 					label: translate( 'USERNAME' ),
 					type: 'text',
 				},
@@ -76,17 +76,17 @@ function Profile() {
 					type: 'text',
 				},
 				{
-					id: 'email',
+					id: 'user_email',
 					label: translate( 'EMAIL ADDRESS' ),
 					type: 'text',
 				},
 				{
-					id: 'siteAddress',
+					id: 'user_URL',
 					label: translate( 'SITE ADDRESS' ),
 					type: 'text',
 				},
 				{
-					id: 'aboutMe',
+					id: 'description',
 					label: translate( 'ABOUT ME' ),
 					type: 'text',
 					Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
@@ -133,7 +133,7 @@ function Profile() {
 					{
 						id: 'personalInfo',
 						label: translate( 'Personal Information' ),
-						children: [ 'username', 'display_name', 'email', 'siteAddress', 'aboutMe' ],
+						children: [ 'user_login', 'display_name', 'user_email', 'user_URL', 'description' ],
 					},
 					{
 						id: 'developerOptions',
