@@ -1,7 +1,13 @@
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import Domains from '../domains';
 import Header from '../header';
+import Billing from '../me/billing';
+import MeNotifications from '../me/notifications';
+import Privacy from '../me/privacy';
+import Security from '../me/security';
+import Notifications from '../notifications';
 import Profile from '../profile';
+import Reader from '../reader';
 import Site from '../site';
 import SiteBackups from '../site-backups';
 import Sites from '../sites';
@@ -43,6 +49,30 @@ export const router = createBrowserRouter(
 					path: 'me/profile',
 					element: <Profile />,
 					loader: Profile.loader,
+				},
+				{
+					path: 'me/billing',
+					element: <Billing />,
+				},
+				{
+					path: 'me/security',
+					element: <Security />,
+				},
+				{
+					path: 'me/privacy',
+					element: <Privacy />,
+				},
+				{
+					path: 'me/notifications',
+					element: <MeNotifications />,
+				},
+				{
+					path: 'reader',
+					element: <Reader />,
+				},
+				{
+					path: 'notifications',
+					element: <Notifications />,
 				},
 				{
 					path: '',
