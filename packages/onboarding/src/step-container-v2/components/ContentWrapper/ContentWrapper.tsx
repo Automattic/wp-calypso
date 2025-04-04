@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { ReactNode, Children, isValidElement } from 'react';
+import { ReactNode, Children, isValidElement, type CSSProperties } from 'react';
 
 import './style.scss';
 
@@ -35,10 +35,7 @@ ContentWrapper.Row = ( { columns, children }: { columns: number; children: React
 	return (
 		<div
 			className="step-container-v2__content-wrapper-row"
-			style={ {
-				// @ts-expect-error -- This is a valid CSS variable.
-				'--columns': columns,
-			} }
+			style={ { '--columns': columns } as CSSProperties }
 		>
 			{ children }
 		</div>
