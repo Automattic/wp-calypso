@@ -166,8 +166,12 @@ html.touch #wpnc-panel {
 div.reader-notifications__panel {
 	position: relative;
 
+	$breakpoint-flyout: 1114px;
+	$breakpoint-nested: 783px;
+	$breakpoint-mobile: 601px;
+
 	--3pc-notice-external-height: 50px;
-	@media only screen and (min-width: 1114px) {
+	@media only screen and (min-width: $breakpoint-flyout) {
 		--3pc-notice-external-height: 0px; /* stylelint-disable-line length-zero-no-unit */
 	}
 
@@ -179,16 +183,16 @@ div.reader-notifications__panel {
 		box-sizing: border-box;
 
 		&.wpnt-open {
-			@media only screen and (min-width: 601px) {
+			@media only screen and (min-width: $breakpoint-mobile) {
 				right: 24px; // align with content frame padding.
 				border-radius: 8px; /* stylelint-disable-line scales/radii */
 			}
-			@media only screen and (min-width: 783px) {
+			@media only screen and (min-width: $breakpoint-nested) {
 				right: 16px; // align with content frame padding.
 			}
 		}
 	}
-	@media only screen and (min-width: 1114px) {
+	@media only screen and (min-width: $breakpoint-flyout) {
 		.wpnc__main {
 			width: calc(100vw - var(--sidebar-width-max) - 16px); // 16px for content frame padding.
 			.wpnc__single-view {
@@ -214,7 +218,7 @@ div.reader-notifications__panel {
 			bottom: 0;
 			right: 400px; //width of main notifs panel
 
-			@media only screen and (min-width: 1114px) {
+			@media only screen and (min-width: $breakpoint-flyout) {
 				display: flex;
 			}
 		}
@@ -225,7 +229,7 @@ div.reader-notifications__panel {
 			p {
 				margin-bottom: 5px;
 			}
-			@media only screen and (min-width: 1114px) {
+			@media only screen and (min-width: $breakpoint-flyout) {
 				display: none;
 			}
 		}
