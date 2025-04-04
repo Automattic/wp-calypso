@@ -9,6 +9,7 @@
 	width: 100%;
 	box-sizing: border-box;
 	flex: 1;
+	max-width: var( --step-container-v2-content-max-width );
 
 	&.padding {
 		padding: var( --step-container-v2-content-block-padding )
@@ -19,21 +20,18 @@
 		--step-container-v2-content-max-width: calc(
 			#{$break-wide} + 2 * var( --step-container-v2-content-inline-padding )
 		);
-		max-width: var( --step-container-v2-content-max-width );
 	}
 
 	&.huge {
 		--step-container-v2-content-max-width: calc(
 			#{$break-huge} + 2 * var( --step-container-v2-content-inline-padding )
 		);
-		max-width: var( --step-container-v2-content-max-width );
 	}
 
 	&.xhuge {
 		--step-container-v2-content-max-width: calc(
 			#{$break-xhuge} + 2 * var( --step-container-v2-content-inline-padding )
 		);
-		max-width: var( --step-container-v2-content-max-width );
 	}
 
 	&.center-aligned {
