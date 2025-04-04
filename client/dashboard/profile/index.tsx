@@ -21,8 +21,15 @@ import type { Field, Form } from '@wordpress/dataviews';
 function Profile() {
 	const translate = useTranslate();
 	const fetcher = useFetcher();
-	const initialFormData = useLoaderData() as ProfileObject;
-	const [ localFormData, setLocalFormData ] = useState< ProfileObject >( initialFormData );
+	const serverData = useLoaderData() as ProfileObject;
+	const [ localFormData, setLocalFormData ] = useState< Partial< ProfileObject > | undefined >();
+
+	const data = useMemo( () => {
+		if ( ! localFormData ) {
+			return serverData;
+		}
+		return { ...serverData, ...localFormData };
+	}, [ localFormData, serverData ] );
 
 	// Remove the mutation related code and use fetcher state
 	const isSaving = fetcher.state === 'submitting';
@@ -166,7 +173,7 @@ function Profile() {
 					</Card>
 
 					<DataForm< ProfileObject >
-						data={ localFormData }
+						data={ data }
 						fields={ fields }
 						form={ form }
 						onChange={ ( edits ) => {
@@ -179,7 +186,12 @@ function Profile() {
 
 					<Card>
 						<CardBody>
-							<Button variant="primary" type="submit" isBusy={ isSaving } disabled={ isSaving }>
+							<Button
+								variant="primary"
+								type="submit"
+								isBusy={ isSaving }
+								disabled={ isSaving || ! localFormData }
+							>
 								{ translate( 'Save' ) }
 							</Button>
 						</CardBody>
