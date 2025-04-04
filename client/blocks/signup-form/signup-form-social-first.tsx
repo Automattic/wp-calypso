@@ -4,6 +4,7 @@ import { Button } from '@wordpress/components';
 import { useState, createInterpolateElement } from '@wordpress/element';
 import { chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import { CSSProperties } from 'react';
 import { isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
@@ -103,7 +104,7 @@ const SignupFormSocialFirst = ( {
 				),
 				options
 			);
-		} else if ( currentStep === 'initial' ) {
+		} else {
 			tosText = createInterpolateElement(
 				__(
 					'If you continue with Google, Apple or GitHub, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
@@ -112,107 +113,88 @@ const SignupFormSocialFirst = ( {
 			);
 		}
 
-		if ( ! tosText ) {
-			return null;
-		}
-
 		return <p className="signup-form-social-first__tos-link">{ tosText }</p>;
 	};
 
 	const renderEmailStepTermsOfService = () => {
-		if ( currentStep === 'email' ) {
-			return (
-				<p className="signup-form-social-first__email-tos-link">
-					{ createInterpolateElement(
-						__(
-							'By clicking "Continue," you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
-						),
-						options
-					) }
-				</p>
-			);
-		}
+		return (
+			<p className="signup-form-social-first__email-tos-link">
+				{ createInterpolateElement(
+					__(
+						'By clicking "Continue," you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+					),
+					options
+				) }
+			</p>
+		);
 	};
 
-	const renderContent = () => {
-		if ( currentStep === 'initial' ) {
-			return (
-				<>
-					{ notice }
-					<SocialSignupForm
-						handleResponse={ handleSocialResponse }
-						setCurrentStep={ setCurrentStep }
-						socialServiceResponse={ socialServiceResponse }
-						redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
-						disableTosText
-						compact
-						isSocialFirst={ isSocialFirst }
-					/>
-				</>
-			);
-		} else if ( currentStep === 'email' ) {
-			const gravatarProps = isGravatar
-				? {
-						inputPlaceholder: __( 'Enter your email address' ),
-						submitButtonLoadingLabel: __( 'Continue' ),
-				  }
-				: {};
-
-			return (
-				<div className="signup-form-social-first-email">
-					<PasswordlessSignupForm
-						stepName={ stepName }
-						flowName={ flowName }
-						goToNextStep={ goToNextStep }
-						logInUrl={ logInUrl }
-						queryArgs={ queryArgs }
-						labelText={ emailLabelText ?? __( 'Your email' ) }
-						submitButtonLabel={ __( 'Continue' ) }
-						userEmail={ userEmail }
-						renderTerms={ renderEmailStepTermsOfService }
-						secondaryFooterButton={
-							backButtonInFooter ? undefined : (
-								<Button onClick={ () => setCurrentStep( 'initial' ) } icon={ chevronLeft }>
-									{ __( 'See all options' ) }
-								</Button>
-							)
-						}
-						passDataToNextStep={ passDataToNextStep }
-						onCreateAccountError={ ( error: { error: string }, email: string ) => {
-							if ( isExistingAccountError( error.error ) ) {
-								window.location.assign(
-									addQueryArgs(
-										{
-											email_address: email,
-											is_signup_existing_account: true,
-											redirect_to: queryArgs?.redirect_to,
-										},
-										logInUrl
-									)
-								);
-							}
-						} }
-						onCreateAccountSuccess={ onCreateAccountSuccess }
-						{ ...gravatarProps }
-					/>
-					{ backButtonInFooter ? (
-						<Button
-							onClick={ () => setCurrentStep( 'initial' ) }
-							className="back-button"
-							variant="link"
-						>
-							<span>{ __( 'Back' ) }</span>
-						</Button>
-					) : null }
-				</div>
-			);
-		}
-	};
+	const getStepStyle = ( step: 'initial' | 'email' ): CSSProperties => ( {
+		visibility: step === currentStep ? 'visible' : 'hidden',
+	} );
 
 	return (
 		<div className="signup-form signup-form-social-first">
-			{ renderContent() }
-			{ renderTermsOfService() }
+			<div className="signup-form-social-first-initial" style={ getStepStyle( 'initial' ) }>
+				{ notice }
+				<SocialSignupForm
+					handleResponse={ handleSocialResponse }
+					setCurrentStep={ setCurrentStep }
+					socialServiceResponse={ socialServiceResponse }
+					redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
+					disableTosText
+					compact
+					isSocialFirst={ isSocialFirst }
+				/>
+				{ renderTermsOfService() }
+			</div>
+			<div className="signup-form-social-first-email" style={ getStepStyle( 'email' ) }>
+				<PasswordlessSignupForm
+					stepName={ stepName }
+					flowName={ flowName }
+					goToNextStep={ goToNextStep }
+					logInUrl={ logInUrl }
+					queryArgs={ queryArgs }
+					labelText={ emailLabelText ?? __( 'Your email' ) }
+					submitButtonLabel={ __( 'Continue' ) }
+					userEmail={ userEmail }
+					renderTerms={ renderEmailStepTermsOfService }
+					secondaryFooterButton={
+						backButtonInFooter ? undefined : (
+							<Button onClick={ () => setCurrentStep( 'initial' ) } icon={ chevronLeft }>
+								{ __( 'See all options' ) }
+							</Button>
+						)
+					}
+					passDataToNextStep={ passDataToNextStep }
+					onCreateAccountError={ ( error: { error: string }, email: string ) => {
+						if ( isExistingAccountError( error.error ) ) {
+							window.location.assign(
+								addQueryArgs(
+									{
+										email_address: email,
+										is_signup_existing_account: true,
+										redirect_to: queryArgs?.redirect_to,
+									},
+									logInUrl
+								)
+							);
+						}
+					} }
+					onCreateAccountSuccess={ onCreateAccountSuccess }
+					inputPlaceholder={ isGravatar ? __( 'Enter your email address' ) : undefined }
+					submitButtonLoadingLabel={ isGravatar ? __( 'Continue' ) : undefined }
+				/>
+				{ backButtonInFooter ? (
+					<Button
+						onClick={ () => setCurrentStep( 'initial' ) }
+						className="back-button"
+						variant="link"
+					>
+						<span>{ __( 'Back' ) }</span>
+					</Button>
+				) : null }
+			</div>
 		</div>
 	);
 };
