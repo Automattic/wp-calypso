@@ -46,15 +46,5 @@
 .client-checkout-v2-placeholder__line {
 	@include loading-effect;
 	border-radius: 4px;
-
-
 	height: 32px;
-
-	.w-100 {
-		max-width: 200px;
-	}
-
-	.w-50 {
-		max-width: 100px;
-	}
 }
