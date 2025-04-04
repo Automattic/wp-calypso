@@ -120,6 +120,7 @@ function Sites() {
 			<Card>
 				<DataViews
 					data={ filteredData }
+					getItemId={ ( item ) => item.ID }
 					fields={ fields }
 					view={ view }
 					onChangeView={ setView }
