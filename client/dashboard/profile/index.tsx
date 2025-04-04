@@ -54,7 +54,7 @@ async function updateProfile( data: ProfileData ): Promise< void > {
 function Profile() {
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
-	const queryProfileData = useLoaderData() as ProfileData;
+	const queryProfileData = useLoaderData();
 
 	const {
 		mutate: saveProfile,

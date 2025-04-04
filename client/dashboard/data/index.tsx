@@ -1,12 +1,21 @@
 import wpcom from 'calypso/lib/wp';
 
+interface ProfileObject {
+	username: string;
+	displayName: string;
+	email: string;
+	siteAddress: string;
+	aboutMe: string;
+	isDeveloper: boolean;
+}
+
 export const fetchProfile = () =>
 	wpcom.req.get( {
 		path: '/me?http_envelope=1',
 		apiNamespace: 'rest/v1.1',
-	} );
+	} ) as Promise< ProfileObject >;
 
-export type Site = {
+export type SiteObject = {
 	id: string;
 	title: string;
 	url: string;
@@ -16,7 +25,7 @@ export type Site = {
 	protect: boolean;
 };
 
-export const SITE_DATA: Site[] = [
+export const SITE_DATA: SiteObject[] = [
 	{
 		id: '1',
 		title: 'My Blog',
@@ -46,14 +55,14 @@ export const SITE_DATA: Site[] = [
 	},
 ];
 
-export const findItemById = ( id: string | undefined ): Site | undefined => {
+export const findItemById = ( id: string ): SiteObject | undefined => {
 	return SITE_DATA.find( ( site ) => site.id === id );
 };
 
-export const fetchSites = (): Promise< Site[] > => {
+export const fetchSites = (): Promise< SiteObject[] > => {
 	return Promise.resolve( SITE_DATA );
 };
 
-export const fetchSite = ( id: string ): Promise< Site | undefined > => {
+export const fetchSite = ( id: string ): Promise< SiteObject | undefined > => {
 	return Promise.resolve( findItemById( id ) );
 };
