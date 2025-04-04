@@ -13,6 +13,7 @@ import Site from '../site';
 import SiteDeployments from '../site-deployments';
 import SiteOverview from '../site-overview';
 import Sites from '../sites';
+import NotFound from './404';
 
 function Element() {
 	return (
@@ -24,7 +25,6 @@ function Element() {
 		</div>
 	);
 }
-
 export const router = createBrowserRouter(
 	[
 		{
@@ -99,6 +99,10 @@ export const router = createBrowserRouter(
 					element: <Navigate to="/sites" replace />,
 				},
 			],
+		},
+		{
+			path: '*',
+			element: <NotFound />,
 		},
 	],
 	{
