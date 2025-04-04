@@ -107,6 +107,7 @@ export class RenderDomainsStep extends Component {
 		stepSectionName: PropTypes.string,
 		selectedSite: PropTypes.object,
 		recordTracksEvent: PropTypes.func,
+		allowSkipWithoutSearch: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -966,6 +967,7 @@ export class RenderDomainsStep extends Component {
 		) : null;
 
 		const hasSearchedDomains = Array.isArray( this.props.step?.domainForm?.searchResults );
+		const shouldShowSkip = this.props.allowSkipWithoutSearch || hasSearchedDomains;
 
 		return (
 			<div
@@ -988,7 +990,7 @@ export class RenderDomainsStep extends Component {
 					/>
 				) : (
 					! this.shouldHideDomainExplainer() &&
-					hasSearchedDomains && (
+					shouldShowSkip && (
 						<div className="domains__domain-side-content domains__free-domain">
 							<SideExplainer
 								onClick={ this.handleDomainExplainerClick }
