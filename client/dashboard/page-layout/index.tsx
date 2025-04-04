@@ -10,31 +10,26 @@ function PageLayout( {
 	title,
 	description,
 	actions,
-	subMenu,
 	children,
 }: {
 	title: string;
 	description?: React.ReactNode;
 	actions?: React.ReactNode;
-	subMenu?: React.ReactNode;
 	children?: React.ReactNode;
 } ) {
 	return (
-		<>
-			{ subMenu }
-			<VStack spacing={ 4 } className="dashboard-page-layout">
-				<HStack justify="space-between" alignment="center">
-					<Heading level={ 1 }>{ title }</Heading>
-					{ !! actions && (
-						<HStack spacing={ 1 } justify="flex-end">
-							{ actions }
-						</HStack>
-					) }
-				</HStack>
-				{ !! description && <Text>{ description } </Text> }
-				{ !! children && <VStack spacing={ 4 }>{ children }</VStack> }
-			</VStack>
-		</>
+		<VStack spacing={ 4 } className="dashboard-page-layout">
+			<HStack justify="space-between" alignment="center">
+				<Heading level={ 1 }>{ title }</Heading>
+				{ !! actions && (
+					<HStack spacing={ 1 } justify="flex-end">
+						{ actions }
+					</HStack>
+				) }
+			</HStack>
+			{ !! description && <Text>{ description } </Text> }
+			{ !! children && <VStack spacing={ 4 }>{ children }</VStack> }
+		</VStack>
 	);
 }
 

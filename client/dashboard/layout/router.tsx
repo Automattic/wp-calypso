@@ -10,6 +10,7 @@ import Profile from '../profile';
 import Reader from '../reader';
 import Site from '../site';
 import SiteBackups from '../site-backups';
+import SiteOverview from '../site-overview';
 import Sites from '../sites';
 
 function Element() {
@@ -35,13 +36,20 @@ export const router = createBrowserRouter(
 					loader: fetchSites,
 				},
 				{
+					id: 'site',
 					path: 'sites/:id',
 					element: <Site />,
 					loader: ( { params } ) => fetchSite( params.id as string ),
-				},
-				{
-					path: 'sites/:id/backups',
-					element: <SiteBackups />,
+					children: [
+						{
+							path: '',
+							element: <SiteOverview />,
+						},
+						{
+							path: 'backups',
+							element: <SiteBackups />,
+						},
+					],
 				},
 				{
 					path: 'domains',
