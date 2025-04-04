@@ -10,7 +10,7 @@ import Security from '../me/security';
 import Profile from '../profile';
 import Reader from '../reader';
 import Site from '../site';
-import SiteBackups from '../site-backups';
+import SiteDeployments from '../site-deployments';
 import SiteOverview from '../site-overview';
 import Sites from '../sites';
 
@@ -47,8 +47,8 @@ export const router = createBrowserRouter(
 							element: <SiteOverview />,
 						},
 						{
-							path: 'backups',
-							element: <SiteBackups />,
+							path: 'deployments',
+							element: <SiteDeployments />,
 						},
 					],
 				},

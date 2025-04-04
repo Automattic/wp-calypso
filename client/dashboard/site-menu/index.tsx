@@ -27,7 +27,7 @@ const SiteMenu = ( { siteId }: { siteId: string } ) => {
 	return (
 		<HStack className="dashboard-main-menu" spacing={ 2 } justify="flex-start">
 			<MenuItem to={ `/sites/${ siteId }` }>{ __( 'Overview' ) }</MenuItem>
-			<MenuItem to={ `/sites/${ siteId }/backups` }>{ __( 'Backups' ) }</MenuItem>
+			<MenuItem to={ `/sites/${ siteId }/deployments` }>{ __( 'Deployments' ) }</MenuItem>
 		</HStack>
 	);
 };
