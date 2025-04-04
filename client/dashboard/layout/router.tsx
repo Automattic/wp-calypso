@@ -32,10 +32,12 @@ export const router = createBrowserRouter(
 				{
 					path: 'sites',
 					element: <Sites />,
+					loader: Sites.loader,
 				},
 				{
 					path: 'sites/:id',
 					element: <Site />,
+					loader: Site.loader,
 				},
 				{
 					path: 'sites/:id/backups',

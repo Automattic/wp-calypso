@@ -2,15 +2,18 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalHeading as Heading,
+	__experimentalText as Text,
 } from '@wordpress/components';
 import './style.scss';
 
 function PageLayout( {
 	title,
+	description,
 	actions,
 	children,
 }: {
 	title: string;
+	description?: React.ReactNode;
 	actions?: React.ReactNode;
 	children: React.ReactNode;
 } ) {
@@ -22,7 +25,8 @@ function PageLayout( {
 					{ actions }
 				</HStack>
 			</HStack>
-			<div>{ children }</div>
+			<Text>{ description } </Text>
+			<VStack spacing={ 4 }>{ children }</VStack>
 		</VStack>
 	);
 }
