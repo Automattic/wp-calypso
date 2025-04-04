@@ -45,7 +45,6 @@ export class SiteSelector extends Component {
 		selected: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
 		hideSelected: PropTypes.bool,
 		filter: PropTypes.func,
-		groups: PropTypes.bool,
 		keepCurrentSection: PropTypes.bool,
 		onSiteSelect: PropTypes.func,
 		searchPlaceholder: PropTypes.string,
@@ -70,7 +69,6 @@ export class SiteSelector extends Component {
 		selected: null,
 		onClose: noop,
 		onSiteSelect: noop,
-		groups: false,
 		keepCurrentSection: false,
 		autoFocus: false,
 		showListBottomAdornment: true,
@@ -284,10 +282,6 @@ export class SiteSelector extends Component {
 			this.visibleSites.indexOf( siteId ) === this.state.highlightedIndex
 		);
 	};
-
-	shouldShowGroups() {
-		return this.props.groups;
-	}
 
 	setSiteSelectorRef = ( component ) => ( this.siteSelectorRef = component );
 
