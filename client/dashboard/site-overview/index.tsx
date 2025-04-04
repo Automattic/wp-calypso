@@ -1,10 +1,10 @@
 import { useRouteLoaderData } from 'react-router-dom';
-import { type SiteObject } from '../data';
+import { type SiteData } from '../data';
 import PageLayout from '../page-layout';
 
 function SiteOverview() {
-	const item = useRouteLoaderData( 'site' ) as SiteObject;
-	return <PageLayout title={ item.title } />;
+	const item = useRouteLoaderData( 'site' ) as SiteData;
+	return <PageLayout title={ item.name } />;
 }
 
 export default SiteOverview;
