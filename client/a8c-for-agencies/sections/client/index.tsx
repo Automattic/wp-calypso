@@ -9,6 +9,7 @@ import {
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { requireClientAccessContext } from 'calypso/a8c-for-agencies/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
+import { isEnabled } from 'calypso/server/config';
 import * as controller from './controller';
 
 export default function () {
@@ -50,11 +51,13 @@ export default function () {
 	);
 
 	// New v2 route for WP.com-based checkout implementation
-	page(
-		'/client/checkout/v2',
-		requireClientAccessContext,
-		controller.clientCheckoutV2Context,
-		makeLayout,
-		clientRender
-	);
+	if ( isEnabled( 'a4a-client-checkout-v2' ) ) {
+		page(
+			'/client/checkout/v2',
+			requireClientAccessContext,
+			controller.clientCheckoutV2Context,
+			makeLayout,
+			clientRender
+		);
+	}
 }

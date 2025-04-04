@@ -37,7 +37,8 @@
 		"a8c-for-agencies-agency-tier": true,
 		"a4a-pressable-referrals": true,
 		"a4a-updated-add-new-site": true,
-		"a4a-wc-asia-signup-enabled": true
+		"a4a-wc-asia-signup-enabled": true,
+		"a4a-client-checkout-v2": false
 	},
 	"enable_all_sections": false,
 	"sections": {
