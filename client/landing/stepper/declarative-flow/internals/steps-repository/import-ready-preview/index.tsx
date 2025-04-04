@@ -45,7 +45,7 @@ const ImportReadyPreview: Step< { submits: { url: string } } > = function Import
 	// redirect directly to importer page
 	useEffect( () => {
 		skipPreview && goToImporterPage();
-	}, [ urlData, isMigrateFromWp ] );
+	}, [ urlData ] );
 
 	/**
 	 ↓ Renders
