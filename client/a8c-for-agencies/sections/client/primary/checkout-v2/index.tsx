@@ -28,7 +28,8 @@ function ClientCheckoutContent() {
 	const [ isReady, setIsReady ] = useState( false );
 	const [ error, setError ] = useState< string | null >( null );
 
-	const { data: referral } = useFetchClientReferral( getClientReferralQueryArgs() );
+	const queryArgs = getClientReferralQueryArgs();
+	const { data: referral } = useFetchClientReferral( queryArgs );
 	const { referredProducts } = useProductsById( referral?.products ?? [] );
 
 	// Access the shopping cart API
@@ -58,7 +59,11 @@ function ClientCheckoutContent() {
 			return createRequestCartProduct( {
 				product_id: product.product_id,
 				product_slug: product.slug,
-				extra: { isA4ASitelessCheckout: true },
+				extra: {
+					isA4ASitelessCheckout: true,
+					referral_id: queryArgs.referralId,
+					agency_id: queryArgs.agencyId,
+				},
 			} );
 		} );
 
