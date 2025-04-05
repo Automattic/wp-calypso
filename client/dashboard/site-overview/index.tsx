@@ -2,6 +2,7 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalHeading as Heading,
+	ProgressBar,
 	ExternalLink,
 	Button,
 	Card,
@@ -13,9 +14,13 @@ import PageLayout from '../page-layout';
 import ActivityLog from './activity-log';
 import Deployments from './deployments';
 import Sidebar from './sidebar';
+import './style.scss';
 
 function SiteOverview() {
 	const item = useRouteLoaderData( 'site' ) as SiteObject;
+
+	// TODO: This should be fetched from the API
+	const uptimePercentage = 98;
 	return (
 		<PageLayout
 			title={ item.name }
@@ -28,8 +33,8 @@ function SiteOverview() {
 		>
 			<HStack alignment="flex-start" spacing={ 4 }>
 				<VStack spacing={ 4 } style={ { flex: 3 } }>
-					<HStack spacing={ 3 }>
-						<Card style={ { flex: 1, height: '200px' } }>
+					<HStack spacing={ 3 } justify="space-between">
+						<Card className="site-overview-top-card">
 							<VStack style={ { height: '100%', padding: '16px' } }>
 								<HStack justify="space-between">
 									<Heading level={ 3 }>{ __( 'Storage' ) }</Heading>
@@ -40,36 +45,19 @@ function SiteOverview() {
 								</VStack>
 							</VStack>
 						</Card>
-						<Card style={ { flex: 1, height: '200px' } }>
+						<Card className="site-overview-top-card">
 							<VStack style={ { height: '100%', padding: '16px' } }>
 								<HStack justify="space-between">
 									<Heading level={ 3 }>{ __( 'Uptime' ) }</Heading>
 									<p>{ __( 'past 30 days' ) }</p>
 								</HStack>
 								<VStack style={ { marginTop: '16px' } }>
-									<div
-										style={ {
-											width: '100%',
-											height: '8px',
-											backgroundColor: '#f0f0f0',
-											borderRadius: '4px',
-											marginTop: '8px',
-										} }
-									>
-										<div
-											style={ {
-												width: '98%',
-												height: '100%',
-												backgroundColor: '#1e8cbe',
-												borderRadius: '4px',
-											} }
-										/>
-									</div>
-									<p style={ { marginTop: '8px' } }>{ __( '98% uptime' ) }</p>
+									<Heading level={ 3 }>{ uptimePercentage }</Heading>
+									<ProgressBar value={ uptimePercentage } />
 								</VStack>
 							</VStack>
 						</Card>
-						<Card style={ { flex: 1, height: '200px' } }>
+						<Card className="site-overview-top-card">
 							<VStack style={ { height: '100%', padding: '16px' } }>
 								<HStack justify="space-between">
 									<Heading level={ 3 }>{ __( 'Protect' ) }</Heading>
@@ -84,7 +72,7 @@ function SiteOverview() {
 						<Deployments />
 					</VStack>
 				</VStack>
-				<Sidebar siteName={ item.name } siteUrl={ item.url } />
+				<Sidebar site={ item } />
 			</HStack>
 		</PageLayout>
 	);

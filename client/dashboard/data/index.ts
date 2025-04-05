@@ -124,6 +124,14 @@ const mockDomains: Domain[] = [
 	},
 ];
 
+export type Plan = {
+	product_id: number;
+	product_slug: string;
+	product_name: string;
+	expired: boolean;
+	billing_period: 'Yearly' | 'Monthly';
+};
+
 export type SiteObject = {
 	id: string;
 	name: string;
@@ -132,6 +140,12 @@ export type SiteObject = {
 	backups: 'enabled' | 'disabled';
 	protect: 'enabled' | 'disabled';
 	subscribers: number;
+	plan: Plan;
+	options: SiteOptions;
+};
+
+export type SiteOptions = {
+	software_version: string;
 };
 
 type SiteRequestObject = {
@@ -162,6 +176,8 @@ const siteRequestObjectToSiteObject = ( site: SiteRequestObject ): SiteObject =>
 	backups: site.plan?.features?.active?.includes( 'backups' ) ? 'enabled' : 'disabled',
 	protect: site.active_modules?.includes( 'protect' ) ? 'enabled' : 'disabled',
 	subscribers: site.subscribers_count,
+	plan: site.plan,
+	options: { software_version: site.options?.software_version },
 } );
 
 export const fetchSites = (): Promise< SiteObject[] > => {

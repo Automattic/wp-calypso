@@ -16,7 +16,10 @@ interface SiteCardProps {
 /**
  * SiteCard component to display site information in a card format
  */
-export default function SiteCard( { title, domain, status, previewImageUrl }: SiteCardProps ) {
+export default function SiteCard( { site }: SiteObject ) {
+	const { status, title, domain, options: { software_version } = {}, url } = site;
+	const previewImageUrl = `https://s0.wp.com/mshots/v1/${ encodeURIComponent( url ) }?w=350&h=200`;
+
 	const getStatusLabel = ( status: SiteCardProps[ 'status' ] ) => {
 		switch ( status ) {
 			case 'active':
@@ -63,8 +66,10 @@ export default function SiteCard( { title, domain, status, previewImageUrl }: Si
 				<div style={ { marginTop: '16px' } }>
 					<Badge variant={ getStatusVariant( status ) }>{ getStatusLabel( status ) }</Badge>
 				</div>
-				<p>{ __( 'WordPress Version: 6.4.2' ) }</p>
-				<p>{ __( 'PHP Version: 8.2.0' ) }</p>
+				<p>
+					{ __( 'WordPress Version:' ) } { software_version }
+				</p>
+				<p>{ __( 'PHP Version:' ) }</p>
 				<p>{ __( 'Theme: Blockbase' ) }</p>
 			</VStack>
 		</Card>
