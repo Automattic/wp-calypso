@@ -9,24 +9,50 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useRouteLoaderData } from 'react-router-dom';
-import { type SiteObject } from '../data';
+import { type FetchSiteRouteResponse } from '../data';
 import PageLayout from '../page-layout';
 import ActivityLog from './activity-log';
 import Deployments from './deployments';
 import Sidebar from './sidebar';
 import './style.scss';
 
+const MINIMUM_DISPLAYED_USAGE = 2.5;
+function StorageCard( { mediaStorage: { storageUsedBytes, maxStorageBytes } = {} } ) {
+	let usagePercent = Math.round( ( ( storageUsedBytes / maxStorageBytes ) * 1000 ) / 10 );
+	// Ensure that the displayed usage is never fully empty to avoid a confusing UI
+	usagePercent = Math.max( MINIMUM_DISPLAYED_USAGE, usagePercent );
+	// Make sure displayed usage never exceeds 100%
+	usagePercent = Math.min( usagePercent, 100 );
+
+	// const used = filesize( storageUsedBytes, { round: 0 } );
+	// const max = filesize( maxStorageBytes, { round: 0 } );
+	return (
+		<Card className="site-overview-top-card">
+			<VStack style={ { height: '100%', padding: '16px' } }>
+				<HStack justify="space-between">
+					<Heading level={ 3 }>{ __( 'Storage' ) }</Heading>
+					<ExternalLink href="#">{ __( 'Buy more' ) }</ExternalLink>
+				</HStack>
+				<VStack style={ { marginTop: '16px' } }>
+					<p>{ __( '3GB of 50GB used' ) }</p>
+					<ProgressBar value={ usagePercent } />
+				</VStack>
+			</VStack>
+		</Card>
+	);
+}
+
 function SiteOverview() {
-	const item = useRouteLoaderData( 'site' ) as SiteObject;
+	const { site, mediaStorage } = useRouteLoaderData( 'site' ) as FetchSiteRouteResponse;
 
 	// TODO: This should be fetched from the API
 	const uptimePercentage = 98;
 	return (
 		<PageLayout
-			title={ item.name }
+			title={ site.name }
 			actions={
 				<>
-					<ExternalLink href={ item.url }>{ __( 'Visit' ) }</ExternalLink>
+					<ExternalLink href={ site.url }>{ __( 'Visit' ) }</ExternalLink>
 					<Button>{ __( 'Site admin' ) }</Button>
 				</>
 			}
@@ -34,17 +60,7 @@ function SiteOverview() {
 			<HStack alignment="flex-start" spacing={ 4 }>
 				<VStack spacing={ 4 } style={ { flex: 3 } }>
 					<HStack spacing={ 3 } justify="space-between">
-						<Card className="site-overview-top-card">
-							<VStack style={ { height: '100%', padding: '16px' } }>
-								<HStack justify="space-between">
-									<Heading level={ 3 }>{ __( 'Storage' ) }</Heading>
-									<ExternalLink href="#">{ __( 'Buy more' ) }</ExternalLink>
-								</HStack>
-								<VStack style={ { marginTop: '16px' } }>
-									<p>{ __( '3GB of 50GB used' ) }</p>
-								</VStack>
-							</VStack>
-						</Card>
+						<StorageCard mediaStorage={ mediaStorage } />
 						<Card className="site-overview-top-card">
 							<VStack style={ { height: '100%', padding: '16px' } }>
 								<HStack justify="space-between">
@@ -72,7 +88,7 @@ function SiteOverview() {
 						<Deployments />
 					</VStack>
 				</VStack>
-				<Sidebar site={ item } />
+				<Sidebar site={ site } />
 			</HStack>
 		</PageLayout>
 	);
