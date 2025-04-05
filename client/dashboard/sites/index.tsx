@@ -7,17 +7,6 @@ import { type SiteObject } from '../data';
 import PageLayout from '../page-layout';
 import type { View, Field } from '@wordpress/dataviews';
 
-// Helper function to get color based on performance score
-// const getPerformanceColor = ( score: number ) => {
-// 	if ( score >= 90 ) {
-// 		return '#4CAF50';
-// 	}
-// 	if ( score >= 70 ) {
-// 		return '#FFC107';
-// 	}
-// 	return '#F44336';
-// };
-
 function Sites() {
 	const navigate = useNavigate();
 	const querySitesData = useLoaderData() as SiteObject[];
@@ -63,25 +52,6 @@ function Sites() {
 			id: 'subscribers',
 			label: __( 'Subscribers' ),
 		},
-		// {
-		// 	id: 'performance',
-		// 	label: __( 'Performance Score' ),
-		// 	render: ( { item } ) => (
-		// 		<div style={ { display: 'flex', alignItems: 'center' } }>
-		// 			<span
-		// 				style={ {
-		// 					backgroundColor: getPerformanceColor( item.performance ),
-		// 					width: 12,
-		// 					height: 12,
-		// 					borderRadius: '50%',
-		// 					display: 'inline-block',
-		// 					marginRight: 8,
-		// 				} }
-		// 			></span>
-		// 			<span>{ item.performance }</span>
-		// 		</div>
-		// 	),
-		// },
 		{
 			id: 'backups',
 			label: __( 'Backups' ),
