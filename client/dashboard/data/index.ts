@@ -130,9 +130,7 @@ export type SiteObject = {
 	url: string;
 	media: string;
 	backups: 'enabled' | 'disabled';
-	// visitors: number;
-	// performance: number;
-	// protect: boolean;
+	protect: 'enabled' | 'disabled';
 };
 
 type SiteRequestObject = {
@@ -147,6 +145,7 @@ type SiteRequestObject = {
 			active: string[];
 		};
 	};
+	active_modules: string[];
 };
 
 type SitesRequest = {
@@ -159,12 +158,13 @@ const siteRequestObjectToSiteObject = ( site: SiteRequestObject ): SiteObject =>
 	url: site.URL,
 	media: site.icon?.ico,
 	backups: site.plan?.features?.active?.includes( 'backups' ) ? 'enabled' : 'disabled',
+	protect: site.active_modules?.includes( 'protect' ) ? 'enabled' : 'disabled',
 } );
 
 export const fetchSites = (): Promise< SiteObject[] > => {
 	return wpcom.req
 		.get( {
-			path: '/me/sites?http_envelope=1&site_visibility=all&include_domain_only=true&site_activity=active&fields=ID,URL,name,icon,subscribers_count,plan',
+			path: '/me/sites?http_envelope=1&site_visibility=all&include_domain_only=true&site_activity=active&fields=ID,URL,name,icon,subscribers_count,plan,active_modules',
 			apiNamespace: 'rest/v1.2',
 		} )
 		.then( ( response: SitesRequest ) => {
@@ -175,7 +175,7 @@ export const fetchSites = (): Promise< SiteObject[] > => {
 export const fetchSite = ( id: string ): Promise< SiteObject > => {
 	return wpcom.req
 		.get( {
-			path: `/sites/${ id }?http_envelope=1`,
+			path: `/sites/${ id }?http_envelope=1&fields=ID,URL,name,icon,subscribers_count,plan,active_modules`,
 			apiNamespace: 'rest/v1.1',
 		} )
 		.then( ( response: SiteRequestObject ) => siteRequestObjectToSiteObject( response ) );

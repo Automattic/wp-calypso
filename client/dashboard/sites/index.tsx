@@ -37,7 +37,7 @@ function Sites() {
 			field: 'name',
 			direction: 'desc',
 		},
-		fields: [ 'subscribers_count', 'backups' ],
+		fields: [ 'subscribers_count', 'backups', 'protect' ],
 		titleField: 'name',
 		mediaField: 'media',
 		descriptionField: 'URL',
@@ -90,15 +90,14 @@ function Sites() {
 				{ value: 'disabled', label: 'Disabled' },
 			],
 		},
-		// {
-		// 	id: 'protect',
-		// 	label: __( 'Protect' ),
-		// 	getValue: ( { item } ) => ( item.protect ? 'enabled' : 'disabled' ),
-		// 	elements: [
-		// 		{ value: 'enabled', label: 'Enabled' },
-		// 		{ value: 'disabled', label: 'Disabled' },
-		// 	],
-		// },
+		{
+			id: 'protect',
+			label: __( 'Protect' ),
+			elements: [
+				{ value: 'enabled', label: 'Enabled' },
+				{ value: 'disabled', label: 'Disabled' },
+			],
+		},
 	] as Field< SiteObject >[];
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
