@@ -2,6 +2,7 @@ import { __ } from '@wordpress/i18n';
 import { createBrowserRouter, Navigate, Outlet, ActionFunctionArgs, json } from 'react-router-dom';
 import { updateProfile, fetchProfile, fetchSite, fetchSites, type ProfileObject } from '../data';
 import Domains from '../domains';
+import Emails from '../emails';
 import Header from '../header';
 import Billing from '../me/billing';
 import MeNotifications from '../me/notifications';
@@ -56,6 +57,11 @@ export const router = createBrowserRouter(
 					path: 'domains',
 					element: <Domains />,
 					loader: Domains.loader,
+				},
+				{
+					path: 'emails',
+					element: <Emails />,
+					loader: Emails.loader,
 				},
 				{
 					path: 'me/profile',

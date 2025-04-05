@@ -29,6 +29,7 @@ function MainMenu() {
 		<HStack className="dashboard-main-menu" spacing={ 2 } justify="flex-start">
 			<MenuItem to="/sites">{ __( 'Sites' ) }</MenuItem>
 			<MenuItem to="/domains">{ __( 'Domains' ) }</MenuItem>
+			<MenuItem to="/emails">{ __( 'Emails' ) }</MenuItem>
 		</HStack>
 	);
 }
