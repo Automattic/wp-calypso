@@ -145,10 +145,12 @@ export type SiteObject = {
 	subscribers: number;
 	plan: Plan;
 	options: SiteOptions;
+	is_deleted: boolean;
 };
 
 export type SiteOptions = {
 	software_version: string;
+	admin_url: string;
 };
 
 type SiteRequestObject = {
@@ -162,6 +164,7 @@ type SiteRequestObject = {
 	active_modules: string[];
 	subscribers_count: number;
 	options: SiteOptions;
+	is_deleted: boolean;
 };
 
 type SitesRequest = {
@@ -177,13 +180,14 @@ const siteRequestObjectToSiteObject = ( site: SiteRequestObject ): SiteObject =>
 	protect: site.active_modules?.includes( 'protect' ) ? 'enabled' : 'disabled',
 	subscribers: site.subscribers_count,
 	plan: site.plan,
-	options: { software_version: site.options?.software_version },
+	options: { software_version: site.options?.software_version, admin_url: site.options?.admin_url },
+	is_deleted: site.is_deleted,
 } );
 
 export const fetchSites = (): Promise< SiteObject[] > => {
 	return wpcom.req
 		.get( {
-			path: '/me/sites?http_envelope=1&site_visibility=all&include_domain_only=true&site_activity=active&fields=ID,URL,name,icon,subscribers_count,plan,active_modules',
+			path: '/me/sites?http_envelope=1&site_visibility=all&include_domain_only=true&site_activity=active&fields=ID,URL,name,icon,subscribers_count,plan,active_modules,is_deleted,options',
 			apiNamespace: 'rest/v1.2',
 		} )
 		.then( ( response: SitesRequest ) => {
@@ -191,17 +195,33 @@ export const fetchSites = (): Promise< SiteObject[] > => {
 		} );
 };
 
-export const fetchSite = ( id: string | undefined ): Promise< SiteObject > => {
+export type FetchSiteRouteResponse = {
+	site: SiteRequestObject;
+	mediaStorage: any;
+};
+
+export const fetchSite = async ( id: string ): Promise< FetchSiteRouteResponse > => {
 	if ( ! id ) {
 		return Promise.reject( new Error( 'Site ID is undefined' ) );
 	}
-
-	return wpcom.req
-		.get( {
+	const [ site, mediaStorage ] = await Promise.all( [
+		wpcom.req.get( {
 			path: `/sites/${ id }?http_envelope=1&fields=ID,URL,name,icon,subscribers_count,plan,active_modules,options`,
 			apiNamespace: 'rest/v1.1',
-		} )
-		.then( ( response: SiteRequestObject ) => siteRequestObjectToSiteObject( response ) );
+		} ),
+		wpcom.req.get( {
+			path: `/sites/${ encodeURIComponent( id ) }/media-storage`,
+			apiVersion: '1.1',
+		} ),
+	] );
+	return {
+		site: siteRequestObjectToSiteObject( site ),
+		mediaStorage: {
+			maxStorageBytesFromAddOns: Number( mediaStorage.max_storage_bytes_from_add_ons ),
+			maxStorageBytes: Number( mediaStorage.max_storage_bytes ),
+			storageUsedBytes: Number( mediaStorage.storage_used_bytes ),
+		},
+	};
 };
 
 export const fetchDomains = (): Promise< DomainObject[] > => {
