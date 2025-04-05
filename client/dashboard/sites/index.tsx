@@ -38,10 +38,12 @@ function Sites() {
 		{
 			id: 'name',
 			label: __( 'Site' ),
+			enableGlobalSearch: true,
 		},
 		{
 			id: 'url',
 			label: __( 'URL' ),
+			enableGlobalSearch: true,
 		},
 		{
 			id: 'media',
@@ -123,7 +125,6 @@ function Sites() {
 					onClickItem={ onClickItem }
 					defaultLayouts={ { table: {} } }
 					paginationInfo={ paginationInfo }
-					search={ false }
 				/>
 			</Card>
 		</PageLayout>
