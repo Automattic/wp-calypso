@@ -164,73 +164,76 @@ html.touch #wpnc-panel {
 }
 
 div.reader-notifications__panel {
+	position: relative;
+
+	$breakpoint-flyout: 1114px;
+	$breakpoint-nested: 783px;
+	$breakpoint-mobile: 601px;
+
+	--3pc-notice-external-height: 50px;
+	@media only screen and (min-width: $breakpoint-flyout) {
+		--3pc-notice-external-height: 0px; /* stylelint-disable-line length-zero-no-unit */
+	}
+
 	#wpnc-panel.wpnc__main {
-		min-width: 410px;
+		top: calc(var(--masterbar-height) + var(--content-padding-top) + var(--3pc-notice-external-height));
+		height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom) - var(--3pc-notice-external-height));
+		box-shadow: -3px 1px 10px -2px color-mix(in srgb, var(--color-neutral-70) 7.5%, transparent);
+		border-top: 1px solid var(--color-neutral-0);
+		box-sizing: border-box;
 
 		&.wpnt-open {
-			position: fixed;
-			top: var(--masterbar-height);
-			right: auto;
-			left: var(--sidebar-width-max);
-			bottom: 0;
-
-			@media only screen and (max-width: 783px) {
-				left: 0;
+			@media only screen and (min-width: $breakpoint-mobile) {
+				right: 24px; // align with content frame padding.
+				border-radius: 8px; /* stylelint-disable-line scales/radii */
 			}
-			@media only screen and (min-width: 783px) {
-				top: calc(var(--masterbar-height) + 20px);
-				height: calc(100vh - var(--masterbar-height) - 36px);
-				border-bottom-left-radius: 8px; /* stylelint-disable-line scales/radii */
+			@media only screen and (min-width: $breakpoint-nested) {
+				right: 16px; // align with content frame padding.
 			}
-			@media only screen and (min-width: 601px) and (max-width: 783px) {
-				top: calc(var(--masterbar-height) + 24px);
-				height: calc(100vh - 50px - var(--masterbar-height));
-				left: 24px;
-				border-top-left-radius: 8px; /* stylelint-disable-line scales/radii */
-				border-bottom-left-radius: 8px; /* stylelint-disable-line scales/radii */
-			}
-		}
-		.wpnc__list-view {
-			border: none;
-			border-right: 1px solid var(--color-neutral-0);
-
-			.wpnc__note:focus,
-			.wpnc__selected-note {
-				box-shadow: inset -4px 0 0 var(--color-primary);
-			}
-		}
-
-		&.wpnc__note-list {
-			right: auto;
-			left: 0;
-		}
-
-		.wpnc__single-view {
-			min-width: 410px;
 		}
 	}
-
-	@media only screen and (min-width: 1114px) {
-		#wpnc-panel.wpnc__main {
-			background-color: unset;
-
-			.wpnc__note-list:not(.is-note-open) {
-				box-shadow: 3px 1px 10px -2px color-mix(in srgb, var(--color-neutral-70) 7.5%, transparent);
-			}
-
+	@media only screen and (min-width: $breakpoint-flyout) {
+		.wpnc__main {
+			width: calc(100vw - var(--sidebar-width-max) - 16px); // 16px for content frame padding.
+			// This ensures the single view flies out above the 3PC notice.
 			.wpnc__single-view {
-				animation-name: dedicated_wpnc__slideIn;
-				border-right: 1px solid var(--color-neutral-5);
-				right: inherit;
+				z-index: z-index( ".reader-notifications", ".wpnc__single-view" );
+			}
+			// This ensures the single view does not rise above the note list while animating outwards.
+			.wpnc__note-list {
+				z-index: z-index( ".reader-notifications", ".wpnc__note-list" );
 			}
 		}
 	}
-	@keyframes dedicated_wpnc__slideIn {
-		from {
-			transform: translateX(0%);
+	.reader-notifications__3pc-notice {
+		position: absolute;
+		top: 0;
+		left: 0;
+		justify-content: center;
+		align-items: center;
+		box-sizing: border-box;
+		padding: 0 10px;
+		font-size: $font-body;
+
+		&-internal {
+			display: none;
+			bottom: 0;
+			right: 400px; //width of main notifs panel
+
+			@media only screen and (min-width: $breakpoint-flyout) {
+				display: flex;
+			}
 		}
-		to {
-			transform: translateX(100%);
+		&-external {
+			display: flex;
+			right: 0;
+			height: var(--3pc-notice-external-height);
+			p {
+				margin-bottom: 5px;
+			}
+			@media only screen and (min-width: $breakpoint-flyout) {
+				display: none;
+			}
 		}
 	}
 }
