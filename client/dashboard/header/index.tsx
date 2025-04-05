@@ -1,18 +1,11 @@
-import { __experimentalHStack as HStack } from '@wordpress/components';
+import HeaderBar from '../header-bar';
 import Logo from '../logo';
 import MainMenu from '../main-menu';
 import SecondaryMenu from '../secondary-menu';
-import './style.scss';
 
 function Header() {
 	return (
-		<HStack
-			as="header"
-			className="dashboard-header"
-			alignment="left"
-			spacing={ 10 }
-			justify="flex-start"
-		>
+		<HeaderBar as="header">
 			<div>
 				<Logo />
 			</div>
@@ -22,7 +15,7 @@ function Header() {
 			<div>
 				<SecondaryMenu />
 			</div>
-		</HStack>
+		</HeaderBar>
 	);
 }
 

@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { useLoaderData, Outlet } from 'react-router-dom';
 import { type SiteData } from '../data';
+import HeaderBar from '../header-bar';
 import SiteMenu from '../site-menu';
 
 function Site() {
@@ -12,7 +13,9 @@ function Site() {
 
 	return (
 		<>
-			<SiteMenu siteId={ siteData.ID } />
+			<HeaderBar>
+				<SiteMenu siteId={ siteData.ID } />
+			</HeaderBar>
 			<Outlet />
 		</>
 	);
