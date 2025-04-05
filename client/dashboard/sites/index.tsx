@@ -76,6 +76,19 @@ function Sites() {
 		navigate( `/sites/${ item.id }` );
 	};
 
+	const actions = [
+		{
+			id: 'admin',
+			isPrimary: true,
+			label: __( 'WP Admin' ),
+			callback: ( sites: SiteObject[] ) => {
+				const site = sites[ 0 ];
+				window.location.href = site.options?.admin_url ?? '';
+			},
+			isEligible: ( item: SiteObject ) => ( item.is_deleted ? false : true ),
+		},
+	];
+
 	return (
 		<PageLayout
 			title={ __( 'Sites' ) }
@@ -89,6 +102,7 @@ function Sites() {
 				<DataViews
 					data={ filteredData }
 					fields={ fields }
+					actions={ actions }
 					view={ view }
 					onChangeView={ setView }
 					onClickItem={ onClickItem }
