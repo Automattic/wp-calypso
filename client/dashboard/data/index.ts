@@ -148,11 +148,7 @@ export const fetchSites = (): Promise< SiteObject[] > => {
 	} );
 };
 
-export const fetchSite = ( {
-	queryKey: [ , id ],
-}: {
-	queryKey: [ string, string ];
-} ): Promise< SiteObject > => {
+export const fetchSite = ( id: string ): Promise< SiteObject > => {
 	return wpcom.req.get( {
 		path: `/sites/${ id }?http_envelope=1`,
 		apiNamespace: 'rest/v1.1',

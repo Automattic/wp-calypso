@@ -58,7 +58,7 @@ export const router = createBrowserRouter(
 					loader: ( { params } ) =>
 						queryClient.ensureQueryData( {
 							queryKey: [ 'site', params.id ],
-							queryFn: fetchSite,
+							queryFn: () => fetchSite( params.id ),
 						} ) as Promise< SiteObject >,
 					children: [
 						{
