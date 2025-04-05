@@ -1,6 +1,13 @@
 import { __ } from '@wordpress/i18n';
 import { createBrowserRouter, Navigate, Outlet, ActionFunctionArgs, json } from 'react-router-dom';
-import { updateProfile, fetchProfile, fetchSite, fetchSites, type ProfileObject } from '../data';
+import {
+	updateProfile,
+	fetchProfile,
+	fetchSite,
+	fetchSites,
+	type ProfileObject,
+	type SiteObject,
+} from '../data';
 import Domains from '../domains';
 import Emails from '../emails';
 import Header from '../header';
@@ -15,6 +22,7 @@ import SiteDeployments from '../site-deployments';
 import SiteOverview from '../site-overview';
 import Sites from '../sites';
 import NotFound from './404';
+import { queryClient } from './query-client';
 
 function Element() {
 	return (
@@ -35,7 +43,11 @@ export const router = createBrowserRouter(
 				{
 					path: 'sites',
 					element: <Sites />,
-					loader: fetchSites,
+					loader: () =>
+						queryClient.ensureQueryData( {
+							queryKey: [ 'sites' ],
+							queryFn: fetchSites,
+						} ) as Promise< SiteObject[] >,
 				},
 				{
 					id: 'site',
@@ -66,7 +78,11 @@ export const router = createBrowserRouter(
 				{
 					path: 'me/profile',
 					element: <Profile />,
-					loader: fetchProfile,
+					loader: () =>
+						queryClient.ensureQueryData( {
+							queryKey: [ 'profile' ],
+							queryFn: fetchProfile,
+						} ) as Promise< ProfileObject >,
 					action: async ( { request }: ActionFunctionArgs ) => {
 						const data = await request.json();
 						try {
