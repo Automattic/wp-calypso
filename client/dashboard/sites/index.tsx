@@ -1,7 +1,8 @@
-import { Button, Card } from '@wordpress/components';
+import { Button, Card, Icon } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { check } from '@wordpress/icons';
 import { useNavigate, useLoaderData } from 'react-router-dom';
 import { type SiteObject } from '../data';
 import PageLayout from '../page-layout';
@@ -56,16 +57,30 @@ function Sites() {
 			id: 'backups',
 			label: __( 'Backups' ),
 			elements: [
-				{ value: 'enabled', label: 'Enabled' },
-				{ value: 'disabled', label: 'Disabled' },
+				{ value: 'enabled', label: __( 'Enabled' ) },
+				{ value: 'disabled', label: __( 'Disabled' ) },
 			],
+			render: ( { item } ) => {
+				if ( item.backups === 'enabled' ) {
+					return <Icon icon={ check } />;
+				}
+
+				return __( 'Disabled' );
+			},
 		},
 		{
 			id: 'protect',
 			label: __( 'Protect' ),
+			render: ( { item } ) => {
+				if ( item.protect === 'enabled' ) {
+					return <Icon icon={ check } />;
+				}
+
+				return __( 'Disabled' );
+			},
 			elements: [
-				{ value: 'enabled', label: 'Enabled' },
-				{ value: 'disabled', label: 'Disabled' },
+				{ value: 'enabled', label: __( 'Enabled' ) },
+				{ value: 'disabled', label: __( 'Disabled' ) },
 			],
 		},
 	] as Field< SiteObject >[];
