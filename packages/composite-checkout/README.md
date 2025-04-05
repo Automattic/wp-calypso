@@ -291,7 +291,7 @@ A React Hook that will return the `onClick` function passed to each [payment met
 
 ### useMakeStepActive
 
-A React Hook that will return a function to set a step to be the active step. Only works within a step. The returned function looks like `( stepId: string ) => Promise< boolean >;`. Calling this function is similar to pressing the "Edit" button on the specified step. Note that this is risky! It will make the previous active step inactive, but **will not complete** that step, so if the previous step has any `isCompleteCallback` behavior, that behavior will not be triggered. It will also ignore the `canEditStep` prop of `CheckoutStep`.
+A React Hook that will return a function to set a step to be the active step. Only works within a step. The returned function looks like `( stepId: string ) => Promise< boolean >;`. Calling this function is similar to pressing the "Edit" button on the specified step. This will attempt to complete each step between the active step and the new step, if jumping forward, stopping on any step that is not complete.
 
 ### useSetStepComplete
 

@@ -123,7 +123,6 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 
 	const onTryAgainClick = useCallback( () => {
 		dispatch( resetImport( siteItem?.ID, job?.importerId ) );
-		stepNavigator?.goToImportCapturePage?.();
 	}, [ siteItem, job ] );
 
 	const onBackToGoalsClick = useCallback( () => {

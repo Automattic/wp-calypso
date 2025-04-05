@@ -1,4 +1,4 @@
 {
-	"rules": {},
-	"ignoreFiles": ["**/*"],
+	"extends": [ "../../.stylelintrc" ],
+	"reportNeedlessDisables": false,
 }

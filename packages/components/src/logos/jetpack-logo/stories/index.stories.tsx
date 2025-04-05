@@ -4,9 +4,6 @@ import type { Meta, StoryObj } from '@storybook/react';
 const meta: Meta< typeof JetpackLogo > = {
 	title: 'packages/components/Logos/JetpackLogo',
 	component: JetpackLogo,
-	parameters: {
-		controls: { expanded: true },
-	},
 };
 export default meta;
 

@@ -88,6 +88,8 @@
 		"onboarding/import-from-wix": true,
 		"onboarding/import-from-wordpress": true,
 		"onboarding/playground": true,
+		"onboarding/step-container-v2-import-flow": true,
+		"p2-enabled": false,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
 		"plans/personal-plan": true,

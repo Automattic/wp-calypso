@@ -110,7 +110,10 @@ function QuickPost( {
 				status: 'publish',
 			} )
 			.then( ( postData: PostItem ) => {
-				recordReaderTracksEvent( 'calypso_reader_quick_post_submitted' );
+				recordReaderTracksEvent( 'calypso_reader_quick_post_submitted', {
+					post_id: postData.ID,
+					post_url: postData.URL,
+				} );
 				clearEditor();
 
 				successNotice( translate( 'Post successful! Your post will appear in the feed soon.' ), {

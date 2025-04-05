@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { StatsCard } from '@automattic/components';
 import { mail } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
-import clsx from 'clsx';
 import { numberFormat, useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
@@ -139,7 +138,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 			) }
 			{ ! isRequestingData && ! data?.length && ! shouldGateStatsModule && (
 				<StatsCard
-					className={ clsx( 'stats-card--empty-variant', className ) }
+					className={ className }
 					title={ translate( 'Emails' ) }
 					isEmpty
 					emptyMessage={

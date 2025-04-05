@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { Button, FoldableCard, Gridicon } from '@automattic/components';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { Icon, external } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import { numberFormat, useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import { A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
@@ -22,7 +22,14 @@ const PressableOffering = () => {
 	const highlights = [
 		translate( 'Git integration, WP-CLI, SSH, and staging.' ),
 		translate( 'Lightning-fast performance.' ),
-		translate( '100% uptime SLA.' ),
+		translate( '%(uptimePercent)s uptime SLA.', {
+			args: {
+				uptimePercent: numberFormat( 1, {
+					numberFormatOptions: { style: 'percent' },
+				} ),
+			},
+			comment: '100% uptime SLA',
+		} ),
 		translate( 'Smart, managed plugin updates.' ),
 		translate( 'Comprehensive WP security & performance with Jetpack Complete included.' ),
 		translate( '24/7 support from WordPress experts.' ),
@@ -66,8 +73,8 @@ const PressableOffering = () => {
 				) }
 			</p>
 			<ul className="a4a-offering-item__card-list">
-				{ highlights.map( ( highlightItemText ) => (
-					<li className="a4a-offering-item__card-list-item" key={ highlightItemText }>
+				{ highlights.map( ( highlightItemText, index ) => (
+					<li className="a4a-offering-item__card-list-item" key={ index }>
 						<div className="a4a-offering-item__icon-container">
 							<Gridicon className="a4a-offering-item__gridicon" icon="checkmark" size={ 18 } />
 						</div>

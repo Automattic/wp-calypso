@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+
 // custom properties for a8c-for-agencies
 :root {
 	// border-radius
@@ -131,7 +134,7 @@
 		justify-content: center;
 		white-space: nowrap;
 
-		@include a4a-font-label-button;
+		@include heading-medium;
 
 		box-sizing: border-box;
 		border-radius: 4px;
@@ -242,7 +245,7 @@
 	}
 
 	.split-button .button {
-		@include a4a-font-label-button;
+		@include heading-medium;
 		height: 40px;
 	}
 
@@ -298,8 +301,7 @@
 		border-radius: 2px;
 		box-sizing: border-box;
 		color: var(--color-neutral-70);
-		font-size: rem(14px);
-		line-height: 1.5;
+		@include body-medium;
 		margin: 0;
 		padding: 8px 12px;
 		transition: all 0.15s ease-in-out;
@@ -462,34 +464,18 @@
 // Universal Text Styles
 html {
 	h2 {
-		font-size: $font-title-small;
-		font-weight: 600;
-		line-height: 32px;
-
-		@include breakpoint-deprecated(">660px") {
-			font-size: $font-headline-small;
-			line-height: 40px;
-		}
+		@include heading-2x-large;
 	}
 
 	h3 {
-		font-size: $font-body;
-		font-weight: 600;
-		line-height: 23px;
-
-		@include breakpoint-deprecated(">660px") {
-			font-size: $font-title-small;
-			line-height: 23px;
-		}
+		@include heading-x-large;
 	}
 
 	p {
-		font-size: $font-body;
-		line-height: 24px;
+		@include body-large;
 
 		@include breakpoint-deprecated(">660px") {
-			font-size: $font-title-small;
-			line-height: 24px;
+			@include body-x-large;
 		}
 	}
 }
@@ -505,17 +491,12 @@ html {
 	}
 }
 
-.masterbar {
-	font-size: $font-body;
-}
-
 .site-selector .site-selector__actions {
 	padding: 16px;
 }
 
 .popover {
-	font-size: rem(14px);
-	font-weight: 400;
+	@include body-medium;
 	border-radius: 4px;
 
 	.popover__arrow {
@@ -584,9 +565,7 @@ html {
 
 .redesigned-a8c-table {
 	thead .dataviews-view-table__row th {
-		font-size: 0.75rem;
-		font-weight: 500;
-		line-height: 20px;
+		@include heading-small;
 		color: var(--color-accent-80);
 	}
 
