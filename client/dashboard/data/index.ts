@@ -131,6 +131,7 @@ export type SiteObject = {
 	media: string;
 	backups: 'enabled' | 'disabled';
 	protect: 'enabled' | 'disabled';
+	subscribers: number;
 };
 
 type SiteRequestObject = {
@@ -146,6 +147,7 @@ type SiteRequestObject = {
 		};
 	};
 	active_modules: string[];
+	subscribers_count: number;
 };
 
 type SitesRequest = {
@@ -159,6 +161,7 @@ const siteRequestObjectToSiteObject = ( site: SiteRequestObject ): SiteObject =>
 	media: site.icon?.ico,
 	backups: site.plan?.features?.active?.includes( 'backups' ) ? 'enabled' : 'disabled',
 	protect: site.active_modules?.includes( 'protect' ) ? 'enabled' : 'disabled',
+	subscribers: site.subscribers_count,
 } );
 
 export const fetchSites = (): Promise< SiteObject[] > => {

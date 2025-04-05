@@ -37,7 +37,7 @@ function Sites() {
 			field: 'name',
 			direction: 'desc',
 		},
-		fields: [ 'subscribers_count', 'backups', 'protect' ],
+		fields: [ 'subscribers', 'backups', 'protect' ],
 		titleField: 'name',
 		mediaField: 'media',
 		descriptionField: 'URL',
@@ -60,7 +60,7 @@ function Sites() {
 				item?.media ? <img src={ item.media } alt={ item.name } width="100%" /> : null,
 		},
 		{
-			id: 'subscribers_count',
+			id: 'subscribers',
 			label: __( 'Subscribers' ),
 		},
 		// {
