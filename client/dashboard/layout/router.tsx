@@ -7,6 +7,8 @@ import {
 	fetchSites,
 	type ProfileObject,
 	type SiteObject,
+	type DomainObject,
+	type EmailObject,
 	fetchDomains,
 	fetchEmails,
 } from '../data';
@@ -78,7 +80,7 @@ export const router = createBrowserRouter(
 						queryClient.ensureQueryData( {
 							queryKey: [ 'domains' ],
 							queryFn: fetchDomains,
-						} ) as Promise,
+						} ) as Promise< DomainObject[] >,
 				},
 				{
 					path: 'emails',
@@ -87,7 +89,7 @@ export const router = createBrowserRouter(
 						queryClient.ensureQueryData( {
 							queryKey: [ 'emails' ],
 							queryFn: fetchEmails,
-						} ) as Promise,
+						} ) as Promise< EmailObject >,
 				},
 				{
 					path: 'me/profile',

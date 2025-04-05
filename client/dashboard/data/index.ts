@@ -30,7 +30,7 @@ export const updateProfile = ( data: ProfileObject ) =>
 /**
  * Domain interface
  */
-export interface Domain {
+export interface DomainObject {
 	id: number;
 	domain: string;
 	blog_id: number;
@@ -44,7 +44,7 @@ export interface Domain {
 	domain_type: string;
 }
 
-const mockDomains: Domain[] = [
+const mockDomains: DomainObject[] = [
 	{
 		id: 1,
 		domain: 'example.com',
@@ -204,7 +204,7 @@ export const fetchSite = ( id: string | undefined ): Promise< SiteObject > => {
 		.then( ( response: SiteRequestObject ) => siteRequestObjectToSiteObject( response ) );
 };
 
-export const fetchDomains = (): Promise< Domain[] > => {
+export const fetchDomains = (): Promise< DomainObject[] > => {
 	return Promise.resolve( mockDomains );
 };
 
