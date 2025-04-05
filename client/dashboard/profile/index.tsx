@@ -15,7 +15,7 @@ import { useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useLoaderData, useFetcher } from 'react-router-dom';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
-import ReauthRequired from '../auth/reauth-required';
+import AsyncLoad from '../async-load';
 import EditGravatar from '../edit-gravatar';
 import PageLayout from '../page-layout';
 import type { ProfileObject } from '../data';
@@ -134,7 +134,12 @@ function Profile() {
 
 	return (
 		<>
-			<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+			{ twoStepAuthorization.isReauthRequired() && (
+				<AsyncLoad
+					require="calypso/dashboard/auth/reauth-required"
+					twoStepAuthorization={ twoStepAuthorization }
+				/>
+			) }
 			<form onSubmit={ handleSubmit }>
 				<PageLayout
 					title={ __( 'Profile' ) }
