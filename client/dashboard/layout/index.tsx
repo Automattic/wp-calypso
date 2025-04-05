@@ -1,12 +1,14 @@
 import { QueryClientProvider } from '@tanstack/react-query';
+import { useMemo } from 'react';
 import { RouterProvider } from 'react-router-dom';
 import { AuthProvider } from '../auth/auth-context';
 import { queryClient } from './query-client';
-import { router } from './router';
+import { createRouter } from './router';
 
 import './style.scss';
 
 function Layout() {
+	const router = useMemo( () => createRouter(), [] );
 	return (
 		<QueryClientProvider client={ queryClient }>
 			<AuthProvider>

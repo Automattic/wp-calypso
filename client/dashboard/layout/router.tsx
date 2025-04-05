@@ -38,112 +38,113 @@ function Element() {
 		</div>
 	);
 }
-export const router = createBrowserRouter(
-	[
-		{
-			path: '/',
-			element: <Element />,
-			children: [
-				{
-					path: 'sites',
-					element: <Sites />,
-					loader: () =>
-						queryClient.ensureQueryData( {
-							queryKey: [ 'sites' ],
-							queryFn: fetchSites,
-						} ) as Promise< SiteObject[] >,
-				},
-				{
-					id: 'site',
-					path: 'sites/:id',
-					element: <Site />,
-					loader: ( { params } ) =>
-						queryClient.ensureQueryData( {
-							queryKey: [ 'site', params.id ],
-							queryFn: () => fetchSite( params.id ),
-						} ) as Promise< SiteObject >,
-					children: [
-						{
-							path: '',
-							element: <SiteOverview />,
-						},
-						{
-							path: 'deployments',
-							element: <SiteDeployments />,
-						},
-					],
-				},
-				{
-					path: 'domains',
-					element: <Domains />,
-					loader: () =>
-						queryClient.ensureQueryData( {
-							queryKey: [ 'domains' ],
-							queryFn: fetchDomains,
-						} ) as Promise< DomainObject[] >,
-				},
-				{
-					path: 'emails',
-					element: <Emails />,
-					loader: () =>
-						queryClient.ensureQueryData( {
-							queryKey: [ 'emails' ],
-							queryFn: fetchEmails,
-						} ) as Promise< EmailObject >,
-				},
-				{
-					path: 'me/profile',
-					element: <Profile />,
-					loader: () =>
-						queryClient.ensureQueryData( {
-							queryKey: [ 'profile' ],
-							queryFn: fetchProfile,
-						} ) as Promise< ProfileObject >,
-					action: async ( { request }: ActionFunctionArgs ) => {
-						const data = await request.json();
-						try {
-							await updateProfile( data as ProfileObject );
-							return json( { ok: true } );
-						} catch ( error ) {
-							return json(
-								{ ok: false, error: __( 'Failed to update profile' ) },
-								{ status: 400 }
-							);
-						}
+export const createRouter = () =>
+	createBrowserRouter(
+		[
+			{
+				path: '/',
+				element: <Element />,
+				children: [
+					{
+						path: 'sites',
+						element: <Sites />,
+						loader: () =>
+							queryClient.ensureQueryData( {
+								queryKey: [ 'sites' ],
+								queryFn: fetchSites,
+							} ) as Promise< SiteObject[] >,
 					},
-				},
-				{
-					path: 'me/billing',
-					element: <Billing />,
-				},
-				{
-					path: 'me/security',
-					element: <Security />,
-				},
-				{
-					path: 'me/privacy',
-					element: <Privacy />,
-				},
-				{
-					path: 'me/notifications',
-					element: <MeNotifications />,
-				},
-				{
-					path: 'reader',
-					element: <Reader />,
-				},
-				{
-					path: '',
-					element: <Navigate to="/sites" replace />,
-				},
-			],
-		},
+					{
+						id: 'site',
+						path: 'sites/:id',
+						element: <Site />,
+						loader: ( { params } ) =>
+							queryClient.ensureQueryData( {
+								queryKey: [ 'site', params.id ],
+								queryFn: () => fetchSite( params.id ),
+							} ) as Promise< SiteObject >,
+						children: [
+							{
+								path: '',
+								element: <SiteOverview />,
+							},
+							{
+								path: 'deployments',
+								element: <SiteDeployments />,
+							},
+						],
+					},
+					{
+						path: 'domains',
+						element: <Domains />,
+						loader: () =>
+							queryClient.ensureQueryData( {
+								queryKey: [ 'domains' ],
+								queryFn: fetchDomains,
+							} ) as Promise< DomainObject[] >,
+					},
+					{
+						path: 'emails',
+						element: <Emails />,
+						loader: () =>
+							queryClient.ensureQueryData( {
+								queryKey: [ 'emails' ],
+								queryFn: fetchEmails,
+							} ) as Promise< EmailObject >,
+					},
+					{
+						path: 'me/profile',
+						element: <Profile />,
+						loader: () =>
+							queryClient.ensureQueryData( {
+								queryKey: [ 'profile' ],
+								queryFn: fetchProfile,
+							} ) as Promise< ProfileObject >,
+						action: async ( { request }: ActionFunctionArgs ) => {
+							const data = await request.json();
+							try {
+								await updateProfile( data as ProfileObject );
+								return json( { ok: true } );
+							} catch ( error ) {
+								return json(
+									{ ok: false, error: __( 'Failed to update profile' ) },
+									{ status: 400 }
+								);
+							}
+						},
+					},
+					{
+						path: 'me/billing',
+						element: <Billing />,
+					},
+					{
+						path: 'me/security',
+						element: <Security />,
+					},
+					{
+						path: 'me/privacy',
+						element: <Privacy />,
+					},
+					{
+						path: 'me/notifications',
+						element: <MeNotifications />,
+					},
+					{
+						path: 'reader',
+						element: <Reader />,
+					},
+					{
+						path: '',
+						element: <Navigate to="/sites" replace />,
+					},
+				],
+			},
+			{
+				path: '*',
+				element: <NotFound />,
+			},
+		],
 		{
-			path: '*',
-			element: <NotFound />,
-		},
-	],
-	{
-		basename: '/v2',
-	}
-);
+			basename: '/v2',
+		}
+	);
