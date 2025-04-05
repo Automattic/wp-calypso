@@ -55,13 +55,15 @@ function SiteOverview() {
 			actions={
 				<>
 					<ExternalLink href={ site.url }>{ __( 'Visit' ) }</ExternalLink>
-					<Button>{ __( 'Site admin' ) }</Button>
+					<Button __next40pxDefaultSize variant="primary">
+						{ __( 'Site admin' ) }
+					</Button>
 				</>
 			}
 		>
-			<HStack alignment="flex-start" spacing={ 4 }>
-				<VStack spacing={ 4 } style={ { flex: 3 } }>
-					<HStack spacing={ 3 } justify="space-between">
+			<HStack alignment="flex-start" spacing={ 8 }>
+				<VStack spacing={ 8 } style={ { flex: 3 } }>
+					<HStack spacing={ 8 } justify="space-between">
 						<StorageCard mediaStorage={ mediaStorage } />
 						<Card className="site-overview-top-card">
 							<VStack style={ { height: '100%', padding: '16px' } }>
@@ -85,7 +87,7 @@ function SiteOverview() {
 						</Card>
 					</HStack>
 
-					<VStack spacing={ 4 }>
+					<VStack spacing={ 8 }>
 						<ActivityLog />
 						<Deployments />
 					</VStack>

@@ -20,9 +20,11 @@ function PageLayout( {
 	return (
 		<VStack spacing={ 4 } className="dashboard-page-layout">
 			<HStack justify="space-between" alignment="center">
-				<Heading level={ 1 }>{ title }</Heading>
+				<Heading level={ 1 } style={ { flexShrink: 0 } }>
+					{ title }
+				</Heading>
 				{ !! actions && (
-					<HStack spacing={ 1 } justify="flex-end">
+					<HStack spacing={ 4 } justify="flex-end">
 						{ actions }
 					</HStack>
 				) }
