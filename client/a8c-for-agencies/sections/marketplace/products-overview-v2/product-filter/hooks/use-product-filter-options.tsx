@@ -31,12 +31,14 @@ import {
 	PRODUCT_FILTER_KEY_CATEGORIES,
 	PRODUCT_FILTER_KEY_PRICES,
 	PRODUCT_FILTER_KEY_TYPES,
+	PRODUCT_FILTER_KEY_VENDORS,
 	PRODUCT_PRICE_FREE,
 	PRODUCT_PRICE_PAID,
 	PRODUCT_TYPE_ADDON,
 	PRODUCT_TYPE_EXTENSION,
 	PRODUCT_TYPE_PLAN,
 	PRODUCT_TYPE_PRODUCT,
+	PRODUCT_VENDOR_WOOCOMMERCE,
 } from '../../../constants';
 
 export default function useProductFilterOptions() {
@@ -103,6 +105,9 @@ export default function useProductFilterOptions() {
 				label: translate( 'Store Management' ) as string,
 				icon: store,
 			},
+		],
+		[ PRODUCT_FILTER_KEY_VENDORS ]: [
+			{ key: PRODUCT_VENDOR_WOOCOMMERCE, label: translate( 'WooCommerce' ) as string },
 		],
 		[ PRODUCT_FILTER_KEY_TYPES ]: [
 			{ key: PRODUCT_TYPE_EXTENSION, label: translate( 'Extension' ) as string },

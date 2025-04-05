@@ -79,7 +79,7 @@ const MigrationOfferV3 = ( { isExpanded, onToggleView }: Props ) => {
 									}
 								),
 								translate(
-									"{{b}}WP Engine customers:{{/b}} You will receive %(commission)s per successful site migration up to %(maxCommission)s. If you have an existing contract, we'll host your site(s) for free until your existing WP Engine contract ends.",
+									"{{b}}WP Engine/Flywheel, Kinsta, Pantheon, Nexcess, or Pagely customers:{{/b}} You will receive %(commission)s per successful site migration up to %(maxCommission)s. If you have an existing contract, we'll host your site(s) for free until your existing WP Engine/Flywheel, Kinsta, Pantheon, Nexcess, or Pagely contract ends.",
 									{
 										components: {
 											b: <b />,

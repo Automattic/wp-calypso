@@ -892,6 +892,7 @@ const sections = [
 		name: 'a8c-for-agencies-woopayments',
 		paths: [
 			'/woopayments',
+			'/woopayments/overview',
 			'/woopayments/dashboard',
 			'/woopayments/payment-settings',
 			'/woopayments/site-setup',

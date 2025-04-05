@@ -291,7 +291,6 @@ const PartnerDirectoryDashboard = () => {
 						return (
 							<StepSectionItem
 								key={ application.brand }
-								isNewLayout
 								iconClassName={ clsx( brandMeta.className ) }
 								icon={ brandMeta.icon }
 								heading={ application.brand }
@@ -343,7 +342,6 @@ const PartnerDirectoryDashboard = () => {
 			</div>
 			<StepSection heading={ translate( 'How do I start?' ) }>
 				<StepSectionItem
-					isNewLayout
 					className={
 						currentApplicationStep > 0 ? 'partner-directory-dashboard__checked-step' : ''
 					}
@@ -388,7 +386,6 @@ const PartnerDirectoryDashboard = () => {
 					} }
 				/>
 				<StepSectionItem
-					isNewLayout
 					className={
 						currentApplicationStep > 1 ? 'partner-directory-dashboard__checked-step' : ''
 					}
@@ -408,7 +405,6 @@ const PartnerDirectoryDashboard = () => {
 					} }
 				/>
 				<StepSectionItem
-					isNewLayout
 					stepNumber={ currentApplicationStep > 2 ? undefined : 3 }
 					icon={ currentApplicationStep > 2 ? check : undefined }
 					heading={ translate( 'New clients will find you' ) }
