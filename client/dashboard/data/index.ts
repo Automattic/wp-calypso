@@ -129,9 +129,9 @@ export type SiteObject = {
 	name: string;
 	url: string;
 	media: string;
+	backups: 'enabled' | 'disabled';
 	// visitors: number;
 	// performance: number;
-	// backups: boolean;
 	// protect: boolean;
 };
 
@@ -142,25 +142,33 @@ type SiteRequestObject = {
 	icon: {
 		ico: string;
 	};
+	plan: {
+		features: {
+			active: string[];
+		};
+	};
 };
 
 type SitesRequest = {
 	sites: SiteRequestObject[];
 };
 
+const siteRequestObjectToSiteObject = ( site: SiteRequestObject ): SiteObject => ( {
+	id: site.ID,
+	name: site.name,
+	url: site.URL,
+	media: site.icon?.ico,
+	backups: site.plan?.features?.active?.includes( 'backups' ) ? 'enabled' : 'disabled',
+} );
+
 export const fetchSites = (): Promise< SiteObject[] > => {
 	return wpcom.req
 		.get( {
-			path: '/me/sites?http_envelope=1&site_visibility=all&include_domain_only=true&site_activity=active&fields=ID,URL,name,icon,subscribers_count',
+			path: '/me/sites?http_envelope=1&site_visibility=all&include_domain_only=true&site_activity=active&fields=ID,URL,name,icon,subscribers_count,plan',
 			apiNamespace: 'rest/v1.2',
 		} )
 		.then( ( response: SitesRequest ) => {
-			return response.sites.map( ( site: SiteRequestObject ) => ( {
-				id: site.ID,
-				name: site.name,
-				url: site.URL,
-				media: site.icon?.ico,
-			} ) );
+			return response.sites.map( siteRequestObjectToSiteObject );
 		} );
 };
 
@@ -170,14 +178,7 @@ export const fetchSite = ( id: string ): Promise< SiteObject > => {
 			path: `/sites/${ id }?http_envelope=1`,
 			apiNamespace: 'rest/v1.1',
 		} )
-		.then( ( response: SiteRequestObject ) => {
-			return {
-				id: response.ID,
-				name: response.name,
-				url: response.URL,
-				media: response.icon?.ico,
-			};
-		} );
+		.then( ( response: SiteRequestObject ) => siteRequestObjectToSiteObject( response ) );
 };
 
 export const fetchDomains = (): Promise< Domain[] > => {

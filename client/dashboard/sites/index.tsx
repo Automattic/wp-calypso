@@ -37,7 +37,7 @@ function Sites() {
 			field: 'name',
 			direction: 'desc',
 		},
-		fields: [ 'subscribers_count' ],
+		fields: [ 'subscribers_count', 'backups' ],
 		titleField: 'name',
 		mediaField: 'media',
 		descriptionField: 'URL',
@@ -82,15 +82,14 @@ function Sites() {
 		// 		</div>
 		// 	),
 		// },
-		// {
-		// 	id: 'backups',
-		// 	label: __( 'Backups' ),
-		// 	getValue: ( { item } ) => ( item.backups ? 'enabled' : 'disabled' ),
-		// 	elements: [
-		// 		{ value: 'enabled', label: 'Enabled' },
-		// 		{ value: 'disabled', label: 'Disabled' },
-		// 	],
-		// },
+		{
+			id: 'backups',
+			label: __( 'Backups' ),
+			elements: [
+				{ value: 'enabled', label: 'Enabled' },
+				{ value: 'disabled', label: 'Disabled' },
+			],
+		},
 		// {
 		// 	id: 'protect',
 		// 	label: __( 'Protect' ),
