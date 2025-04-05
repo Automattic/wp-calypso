@@ -8,7 +8,8 @@ import {
 	Button,
 	Card,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
+import filesize from 'filesize';
 import { type FetchSiteRouteResponse } from '../data';
 import PageLayout from '../page-layout';
 import ActivityLog from './activity-log';
@@ -18,14 +19,13 @@ import './style.scss';
 
 const MINIMUM_DISPLAYED_USAGE = 2.5;
 function StorageCard( { mediaStorage: { storageUsedBytes, maxStorageBytes } = {} } ) {
-	let usagePercent = Math.round( ( ( storageUsedBytes / maxStorageBytes ) * 1000 ) / 10 );
-	// Ensure that the displayed usage is never fully empty to avoid a confusing UI
-	usagePercent = Math.max( MINIMUM_DISPLAYED_USAGE, usagePercent );
-	// Make sure displayed usage never exceeds 100%
-	usagePercent = Math.min( usagePercent, 100 );
+	let usagePercentage = Math.round( ( ( storageUsedBytes / maxStorageBytes ) * 1000 ) / 10 );
+	// Ensure that the displayed usage is never fully empty to
+	// avoid a confusing UI and that in never exceeds 100%.
+	usagePercentage = Math.min( Math.max( MINIMUM_DISPLAYED_USAGE, usagePercentage ), 100 );
 
-	// const used = filesize( storageUsedBytes, { round: 0 } );
-	// const max = filesize( maxStorageBytes, { round: 0 } );
+	const used = filesize( storageUsedBytes, { round: 0 } );
+	const max = filesize( maxStorageBytes, { round: 0 } );
 	return (
 		<Card className="site-overview-top-card">
 			<VStack style={ { height: '100%', padding: '16px' } }>
@@ -34,8 +34,16 @@ function StorageCard( { mediaStorage: { storageUsedBytes, maxStorageBytes } = {}
 					<ExternalLink href="#">{ __( 'Buy more' ) }</ExternalLink>
 				</HStack>
 				<VStack style={ { marginTop: '16px' } }>
-					<p>{ __( '3GB of 50GB used' ) }</p>
-					<ProgressBar value={ usagePercent } />
+					<p>
+						{
+							/* translators: %(used)s: storage space used, %(max)s: maximum available storage space */
+							sprintf( __( '%(used)s of %(max)s used' ), {
+								used,
+								max,
+							} )
+						}
+					</p>
+					<ProgressBar value={ usagePercentage } />
 				</VStack>
 			</VStack>
 		</Card>
