@@ -16,6 +16,7 @@ import {
 	type EmailObject,
 	fetchDomains,
 	fetchEmails,
+	FetchSiteRouteResponse,
 } from '../data';
 import Domains from '../domains';
 import Emails from '../emails';
@@ -77,7 +78,7 @@ const siteRoute = createRoute( {
 		queryClient.ensureQueryData( {
 			queryKey: [ 'site', siteId ],
 			queryFn: () => fetchSite( siteId ),
-		} ) as Promise< SiteObject >,
+		} ) as Promise< FetchSiteRouteResponse >,
 } );
 
 const siteOverviewRoute = createRoute( {
