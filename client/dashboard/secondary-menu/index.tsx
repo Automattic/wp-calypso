@@ -1,3 +1,4 @@
+import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -9,16 +10,21 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { help, bellUnread, bell, commentAuthorAvatar } from '@wordpress/icons';
-import { useHref, useLinkClickHandler } from 'react-router-dom';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import { useAuth } from '../auth/auth-context';
 import './style.scss';
 
 function NavMenuItem( { to, children }: { to: string; children: React.ReactNode } ) {
-	const handleClick = useLinkClickHandler< HTMLButtonElement >( to );
-	const href = useHref( to );
+	const navigate = useNavigate();
 	return (
-		<MenuItem href={ href } onClick={ handleClick } __next40pxDefaultSize>
+		<MenuItem
+			href={ to }
+			onClick={ ( e ) => {
+				e.preventDefault();
+				navigate( { to } );
+			} }
+			__next40pxDefaultSize
+		>
 			{ children }
 		</MenuItem>
 	);
@@ -72,6 +78,7 @@ function UserProfile() {
 }
 
 function SecondaryMenu() {
+	const navigate = useNavigate();
 	const hasUnreadNotifications = false;
 	const readerPath = '/reader';
 	const notificationsPath = '/me/notifications';
@@ -87,8 +94,11 @@ function SecondaryMenu() {
 				icon={ <ReaderIcon /> }
 				label={ __( 'Reader' ) }
 				text={ __( 'Reader' ) }
-				onClick={ useLinkClickHandler( readerPath ) }
-				href={ useHref( readerPath ) }
+				onClick={ ( e ) => {
+					e.preventDefault();
+					navigate( { to: readerPath } );
+				} }
+				href={ readerPath }
 			/>
 			<div className="dashboard-secondary-menu__divider" />
 			<Button
@@ -103,8 +113,11 @@ function SecondaryMenu() {
 				label={ __( 'Notifications' ) }
 				icon={ hasUnreadNotifications ? bellUnread : bell }
 				variant="tertiary"
-				onClick={ useLinkClickHandler( notificationsPath ) }
-				href={ useHref( notificationsPath ) }
+				onClick={ ( e ) => {
+					e.preventDefault();
+					navigate( { to: notificationsPath } );
+				} }
+				href={ notificationsPath }
 			/>
 			<UserProfile />
 		</HStack>

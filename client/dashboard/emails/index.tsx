@@ -1,15 +1,15 @@
+import { useNavigate, useLoaderData } from '@tanstack/react-router';
 import { Button, Card, ExternalLink } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useNavigate, useLoaderData } from 'react-router-dom';
 import { type EmailObject } from '../data';
 import PageLayout from '../page-layout';
 import type { View, Field } from '@wordpress/dataviews';
 
 export default function Emails() {
 	const navigate = useNavigate();
-	const emails = useLoaderData() as EmailObject[];
+	const emails = useLoaderData( { from: '/emails' } ) as EmailObject[];
 	const [ selection, setSelection ] = useState< EmailObject[] >( [] );
 
 	// View config

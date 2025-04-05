@@ -1,3 +1,4 @@
+import { useLoaderData } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -8,7 +9,6 @@ import {
 	Card,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useRouteLoaderData } from 'react-router-dom';
 import { type FetchSiteRouteResponse } from '../data';
 import PageLayout from '../page-layout';
 import ActivityLog from './activity-log';
@@ -43,7 +43,9 @@ function StorageCard( { mediaStorage: { storageUsedBytes, maxStorageBytes } = {}
 }
 
 function SiteOverview() {
-	const { site, mediaStorage } = useRouteLoaderData( 'site' ) as FetchSiteRouteResponse;
+	const { site, mediaStorage } = useLoaderData( {
+		from: '/sites/$siteId',
+	} ) as FetchSiteRouteResponse;
 
 	// TODO: This should be fetched from the API
 	const uptimePercentage = 98;
@@ -93,5 +95,4 @@ function SiteOverview() {
 		</PageLayout>
 	);
 }
-
 export default SiteOverview;

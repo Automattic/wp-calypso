@@ -1,8 +1,8 @@
+import { useLoaderData } from '@tanstack/react-router';
 import { Card } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useLoaderData } from 'react-router-dom';
 import { Domain } from '../data';
 import PageLayout from '../page-layout';
 
@@ -91,7 +91,7 @@ function getDomainId( domain: Domain ): string {
 
 export default function Domains() {
 	const [ view, setView ] = useState( () => initialViewState );
-	const domains = useLoaderData() as Domain[];
+	const domains = useLoaderData( { from: '/domains' } ) as Domain[];
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( domains, view, fields );
 	return (
 		<PageLayout title={ __( 'Domains' ) }>

@@ -1,5 +1,5 @@
+import { Router, Route, RootRoute, redirect, ErrorComponent, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import { createBrowserRouter, Navigate, Outlet, ActionFunctionArgs, json } from 'react-router-dom';
 import {
 	updateProfile,
 	fetchProfile,
@@ -28,7 +28,7 @@ import Sites from '../sites';
 import NotFound from './404';
 import { queryClient } from './query-client';
 
-function Element() {
+function DashboardLayout() {
 	return (
 		<div className="dashboard__layout">
 			<Header />
@@ -38,113 +38,157 @@ function Element() {
 		</div>
 	);
 }
-export const createRouter = () =>
-	createBrowserRouter(
-		[
-			{
-				path: '/',
-				element: <Element />,
-				children: [
-					{
-						path: 'sites',
-						element: <Sites />,
-						loader: () =>
-							queryClient.ensureQueryData( {
-								queryKey: [ 'sites' ],
-								queryFn: fetchSites,
-							} ) as Promise< SiteObject[] >,
-					},
-					{
-						id: 'site',
-						path: 'sites/:id',
-						element: <Site />,
-						loader: ( { params } ) =>
-							queryClient.ensureQueryData( {
-								queryKey: [ 'site', params.id ],
-								queryFn: () => fetchSite( params.id ),
-							} ) as Promise< SiteObject >,
-						children: [
-							{
-								path: '',
-								element: <SiteOverview />,
-							},
-							{
-								path: 'deployments',
-								element: <SiteDeployments />,
-							},
-						],
-					},
-					{
-						path: 'domains',
-						element: <Domains />,
-						loader: () =>
-							queryClient.ensureQueryData( {
-								queryKey: [ 'domains' ],
-								queryFn: fetchDomains,
-							} ) as Promise< DomainObject[] >,
-					},
-					{
-						path: 'emails',
-						element: <Emails />,
-						loader: () =>
-							queryClient.ensureQueryData( {
-								queryKey: [ 'emails' ],
-								queryFn: fetchEmails,
-							} ) as Promise< EmailObject >,
-					},
-					{
-						path: 'me/profile',
-						element: <Profile />,
-						loader: () =>
-							queryClient.ensureQueryData( {
-								queryKey: [ 'profile' ],
-								queryFn: fetchProfile,
-							} ) as Promise< ProfileObject >,
-						action: async ( { request }: ActionFunctionArgs ) => {
-							const data = await request.json();
-							try {
-								await updateProfile( data as ProfileObject );
-								return json( { ok: true } );
-							} catch ( error ) {
-								return json(
-									{ ok: false, error: __( 'Failed to update profile' ) },
-									{ status: 400 }
-								);
-							}
-						},
-					},
-					{
-						path: 'me/billing',
-						element: <Billing />,
-					},
-					{
-						path: 'me/security',
-						element: <Security />,
-					},
-					{
-						path: 'me/privacy',
-						element: <Privacy />,
-					},
-					{
-						path: 'me/notifications',
-						element: <MeNotifications />,
-					},
-					{
-						path: 'reader',
-						element: <Reader />,
-					},
-					{
-						path: '',
-						element: <Navigate to="/sites" replace />,
-					},
-				],
-			},
-			{
-				path: '*',
-				element: <NotFound />,
-			},
-		],
-		{
-			basename: '/v2',
+
+// Create the root route
+const rootRoute = new RootRoute( {
+	component: DashboardLayout,
+} );
+
+// Create the routes
+const indexRoute = new Route( {
+	getParentRoute: () => rootRoute,
+	path: '/',
+	beforeLoad: () => {
+		throw redirect( { to: '/sites' } );
+	},
+} );
+
+const sitesRoute = new Route( {
+	getParentRoute: () => rootRoute,
+	path: 'sites',
+	component: Sites,
+	loader: () =>
+		queryClient.ensureQueryData( {
+			queryKey: [ 'sites' ],
+			queryFn: fetchSites,
+		} ) as Promise< SiteObject[] >,
+} );
+
+const siteRoute = new Route( {
+	getParentRoute: () => rootRoute,
+	path: 'sites/$siteId',
+	component: Site,
+	loader: ( { params: { siteId } } ) =>
+		queryClient.ensureQueryData( {
+			queryKey: [ 'site', siteId ],
+			queryFn: () => fetchSite( siteId ),
+		} ) as Promise< SiteObject >,
+} );
+
+const siteOverviewRoute = new Route( {
+	getParentRoute: () => siteRoute,
+	path: '/',
+	component: SiteOverview,
+} );
+
+const siteDeploymentsRoute = new Route( {
+	getParentRoute: () => siteRoute,
+	path: 'deployments',
+	component: SiteDeployments,
+} );
+
+const domainsRoute = new Route( {
+	getParentRoute: () => rootRoute,
+	path: 'domains',
+	component: Domains,
+	loader: () =>
+		queryClient.ensureQueryData( {
+			queryKey: [ 'domains' ],
+			queryFn: fetchDomains,
+		} ) as Promise< DomainObject[] >,
+} );
+
+const emailsRoute = new Route( {
+	getParentRoute: () => rootRoute,
+	path: 'emails',
+	component: Emails,
+	loader: () =>
+		queryClient.ensureQueryData( {
+			queryKey: [ 'emails' ],
+			queryFn: fetchEmails,
+		} ) as Promise< EmailObject >,
+} );
+
+const profileRoute = new Route( {
+	getParentRoute: () => rootRoute,
+	path: 'me/profile',
+	component: Profile,
+	loader: () =>
+		queryClient.ensureQueryData( {
+			queryKey: [ 'profile' ],
+			queryFn: fetchProfile,
+		} ) as Promise< ProfileObject >,
+	actionHandler: async ( { request } ) => {
+		const data = await request.json();
+		try {
+			await updateProfile( data as ProfileObject );
+			return { ok: true };
+		} catch ( error ) {
+			throw new Error( __( 'Failed to update profile' ) );
 		}
-	);
+	},
+} );
+
+const billingRoute = new Route( {
+	getParentRoute: () => rootRoute,
+	path: 'me/billing',
+	component: Billing,
+} );
+
+const securityRoute = new Route( {
+	getParentRoute: () => rootRoute,
+	path: 'me/security',
+	component: Security,
+} );
+
+const privacyRoute = new Route( {
+	getParentRoute: () => rootRoute,
+	path: 'me/privacy',
+	component: Privacy,
+} );
+
+const notificationsRoute = new Route( {
+	getParentRoute: () => rootRoute,
+	path: 'me/notifications',
+	component: MeNotifications,
+} );
+
+const readerRoute = new Route( {
+	getParentRoute: () => rootRoute,
+	path: 'reader',
+	component: Reader,
+} );
+
+const notFoundRoute = new Route( {
+	getParentRoute: () => rootRoute,
+	path: '*',
+	component: NotFound,
+} );
+
+// Create the router
+const routeTree = rootRoute.addChildren( [
+	indexRoute,
+	sitesRoute,
+	siteRoute.addChildren( [ siteOverviewRoute, siteDeploymentsRoute ] ),
+	domainsRoute,
+	emailsRoute,
+	profileRoute,
+	billingRoute,
+	securityRoute,
+	privacyRoute,
+	notificationsRoute,
+	readerRoute,
+	notFoundRoute,
+] );
+
+export const router = new Router( {
+	routeTree,
+	basepath: '/v2',
+	defaultErrorComponent: ( { error } ) => <ErrorComponent error={ error as Error } />,
+} );
+
+declare module '@tanstack/react-router' {
+	interface Register {
+		router: typeof router;
+	}
+}

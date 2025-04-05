@@ -1,3 +1,4 @@
+import { useLoaderData } from '@tanstack/react-router';
 import {
 	Button,
 	Card,
@@ -13,7 +14,6 @@ import {
 import { DataForm } from '@wordpress/dataviews';
 import { useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useLoaderData, useFetcher } from 'react-router-dom';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import AsyncLoad from '../async-load';
 import EditGravatar from '../edit-gravatar';
@@ -22,8 +22,8 @@ import type { ProfileObject } from '../data';
 import type { Field, Form } from '@wordpress/dataviews';
 
 function Profile() {
-	const fetcher = useFetcher();
-	const serverData = useLoaderData() as ProfileObject;
+	// const fetcher = useFetcher();
+	const serverData = useLoaderData( { from: '/me/profile' } ) as ProfileObject;
 	const [ localFormData, setLocalFormData ] = useState< Partial< ProfileObject > | undefined >();
 
 	const data = useMemo( () => {
@@ -34,8 +34,10 @@ function Profile() {
 	}, [ localFormData, serverData ] );
 
 	// Remove the mutation related code and use fetcher state
-	const isSaving = fetcher.state === 'submitting';
-	const error = fetcher.data?.error;
+	// const isSaving = fetcher.state === 'submitting';
+	// const error = fetcher.data?.error;
+	const isSaving = false;
+	const error = null;
 
 	// Define fields for the DataForm
 	const fields = useMemo(
@@ -123,10 +125,10 @@ function Profile() {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		fetcher.submit( JSON.stringify( localFormData ), {
-			method: 'post',
-			encType: 'application/json',
-		} );
+		// fetcher.submit( JSON.stringify( localFormData ), {
+		// 	method: 'post',
+		// 	encType: 'application/json',
+		// } );
 	};
 
 	// Handle case where there's an error fetching data

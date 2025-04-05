@@ -1,20 +1,25 @@
+import { useNavigate, useMatchRoute } from '@tanstack/react-router';
 import { __experimentalHStack as HStack, Button } from '@wordpress/components';
 import clsx from 'clsx';
-import { useHref, useLinkClickHandler, useMatch } from 'react-router-dom';
 import './style.scss';
 
 function MenuItem( { to, children }: { to: string; children: React.ReactNode } ) {
-	const handleClick = useLinkClickHandler( to );
-	const href = useHref( to );
-	const match = useMatch( to );
+	const navigate = useNavigate();
+	const matchRoute = useMatchRoute();
+	const isActive = matchRoute( { to } );
+
+	const handleClick = ( e: React.MouseEvent ) => {
+		e.preventDefault();
+		navigate( { to } );
+	};
 
 	return (
 		<Button
 			className={ clsx( 'dashboard-menu__item', {
-				'is-active': match,
+				'is-active': isActive,
 			} ) }
 			variant="tertiary"
-			href={ href }
+			href={ to }
 			onClick={ handleClick }
 			__next40pxDefaultSize
 		>

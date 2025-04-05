@@ -1,16 +1,16 @@
-import { Button, Card, Icon } from '@wordpress/components';
+import { useNavigate, useLoaderData } from '@tanstack/react-router';
+import { Button, Card } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { check } from '@wordpress/icons';
-import { useNavigate, useLoaderData } from 'react-router-dom';
+import { Icon, check } from '@wordpress/icons';
 import { type SiteObject } from '../data';
 import PageLayout from '../page-layout';
 import type { View, Field } from '@wordpress/dataviews';
 
 function Sites() {
 	const navigate = useNavigate();
-	const querySitesData = useLoaderData() as SiteObject[];
+	const querySitesData = useLoaderData( { from: '/sites' } ) as SiteObject[];
 	const [ sites, setSites ] = useState< SiteObject[] >( [] );
 	useEffect( () => {
 		if ( querySitesData ) {
@@ -88,7 +88,7 @@ function Sites() {
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
 
 	const onClickItem = ( item: SiteObject ) => {
-		navigate( `/sites/${ item.id }` );
+		navigate( { to: `/sites/${ item.id }` } );
 	};
 
 	const actions = [
