@@ -195,9 +195,15 @@ export const fetchSites = (): Promise< SiteObject[] > => {
 		} );
 };
 
+export type MediaStorageObject = {
+	maxStorageBytesFromAddOns: number;
+	maxStorageBytes: number;
+	storageUsedBytes: number;
+};
+
 export type FetchSiteRouteResponse = {
-	site: SiteRequestObject;
-	mediaStorage: any;
+	site: SiteObject;
+	mediaStorage: MediaStorageObject;
 };
 
 export const fetchSite = async ( id: string ): Promise< FetchSiteRouteResponse > => {

@@ -5,7 +5,7 @@ import SiteCard from './site-card';
 /**
  * Sidebar component for the site overview page
  */
-export default function Sidebar( { site }: SiteObject ) {
+export default function Sidebar( { site }: { site: SiteObject } ) {
 	return (
 		<VStack spacing={ 4 }>
 			<SiteCard site={ site } />

@@ -10,7 +10,7 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import filesize from 'filesize';
-import { type FetchSiteRouteResponse } from '../data';
+import { type FetchSiteRouteResponse, type MediaStorageObject } from '../data';
 import PageLayout from '../page-layout';
 import ActivityLog from './activity-log';
 import Deployments from './deployments';
@@ -18,7 +18,11 @@ import Sidebar from './sidebar';
 import './style.scss';
 
 const MINIMUM_DISPLAYED_USAGE = 2.5;
-function StorageCard( { mediaStorage: { storageUsedBytes, maxStorageBytes } = {} } ) {
+function StorageCard( {
+	mediaStorage: { storageUsedBytes, maxStorageBytes },
+}: {
+	mediaStorage: MediaStorageObject;
+} ) {
 	let usagePercentage = Math.round( ( ( storageUsedBytes / maxStorageBytes ) * 1000 ) / 10 );
 	// Ensure that the displayed usage is never fully empty to
 	// avoid a confusing UI and that in never exceeds 100%.
