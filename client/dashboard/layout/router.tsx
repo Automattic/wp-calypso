@@ -28,7 +28,6 @@ import MeNotifications from '../me/notifications';
 import Privacy from '../me/privacy';
 import Security from '../me/security';
 import Profile from '../profile';
-import Reader from '../reader';
 import Site from '../site';
 import SiteDeployments from '../site-deployments';
 import SiteOverview from '../site-overview';
@@ -167,12 +166,6 @@ const notificationsRoute = createRoute( {
 	component: MeNotifications,
 } );
 
-const readerRoute = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: 'reader',
-	component: Reader,
-} );
-
 const notFoundRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: '*',
@@ -193,7 +186,6 @@ const routeTree = rootRoute.addChildren( [
 		privacyRoute,
 		notificationsRoute,
 	] ),
-	readerRoute,
 	notFoundRoute,
 ] );
 

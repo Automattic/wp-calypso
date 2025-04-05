@@ -80,7 +80,6 @@ function UserProfile() {
 function SecondaryMenu() {
 	const navigate = useNavigate();
 	const hasUnreadNotifications = false;
-	const readerPath = '/reader';
 	const notificationsPath = '/me/notifications';
 
 	const openHelpCenter = () => {
@@ -94,11 +93,7 @@ function SecondaryMenu() {
 				icon={ <ReaderIcon /> }
 				label={ __( 'Reader' ) }
 				text={ __( 'Reader' ) }
-				onClick={ ( e ) => {
-					e.preventDefault();
-					navigate( { to: readerPath } );
-				} }
-				href={ readerPath }
+				href="/reader"
 			/>
 			<div className="dashboard-secondary-menu__divider" />
 			<Button
