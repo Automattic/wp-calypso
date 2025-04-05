@@ -30,7 +30,7 @@ function Sites() {
 		fields: [ 'subscribers', 'backups', 'protect' ],
 		titleField: 'name',
 		mediaField: 'media',
-		descriptionField: 'URL',
+		descriptionField: 'url',
 	} );
 
 	// Field definitions
@@ -40,7 +40,7 @@ function Sites() {
 			label: __( 'Site' ),
 		},
 		{
-			id: 'URL',
+			id: 'url',
 			label: __( 'URL' ),
 		},
 		{
