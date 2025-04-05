@@ -1,3 +1,4 @@
+import { useMutation } from '@tanstack/react-query';
 import { useLoaderData } from '@tanstack/react-router';
 import {
 	Button,
@@ -16,13 +17,14 @@ import { useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import AsyncLoad from '../async-load';
+import { updateProfile } from '../data';
 import EditGravatar from '../edit-gravatar';
 import PageLayout from '../page-layout';
 import type { ProfileObject } from '../data';
 import type { Field, Form } from '@wordpress/dataviews';
 
 function Profile() {
-	// const fetcher = useFetcher();
+	const mutation = useMutation( { mutationFn: updateProfile } );
 	const serverData = useLoaderData( { from: '/me' } ) as ProfileObject;
 	const [ localFormData, setLocalFormData ] = useState< Partial< ProfileObject > | undefined >();
 
@@ -36,8 +38,8 @@ function Profile() {
 	// Remove the mutation related code and use fetcher state
 	// const isSaving = fetcher.state === 'submitting';
 	// const error = fetcher.data?.error;
-	const isSaving = false;
-	const error = null;
+	const isSaving = mutation.isPending;
+	const error = mutation.error;
 
 	// Define fields for the DataForm
 	const fields = useMemo(
@@ -125,10 +127,9 @@ function Profile() {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		// fetcher.submit( JSON.stringify( localFormData ), {
-		// 	method: 'post',
-		// 	encType: 'application/json',
-		// } );
+		if ( localFormData ) {
+			mutation.mutate( localFormData );
+		}
 	};
 
 	// Handle case where there's an error fetching data

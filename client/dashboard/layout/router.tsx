@@ -6,9 +6,7 @@ import {
 	ErrorComponent,
 	Outlet,
 } from '@tanstack/react-router';
-import { __ } from '@wordpress/i18n';
 import {
-	updateProfile,
 	fetchProfile,
 	fetchSite,
 	fetchSites,
@@ -131,15 +129,6 @@ const profileRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'profile',
 	component: Profile,
-	actionHandler: async ( { request } ) => {
-		const data = await request.json();
-		try {
-			await updateProfile( data as ProfileObject );
-			return { ok: true };
-		} catch ( error ) {
-			throw new Error( __( 'Failed to update profile' ) );
-		}
-	},
 } );
 
 const billingRoute = createRoute( {
