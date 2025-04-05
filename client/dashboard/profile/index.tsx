@@ -14,10 +14,13 @@ import { DataForm } from '@wordpress/dataviews';
 import { useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useLoaderData, useFetcher } from 'react-router-dom';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import ReauthRequired from '../auth/reauth-required';
 import EditGravatar from '../edit-gravatar';
 import PageLayout from '../page-layout';
 import type { ProfileObject } from '../data';
 import type { Field, Form } from '@wordpress/dataviews';
+
 function Profile() {
 	const fetcher = useFetcher();
 	const serverData = useLoaderData() as ProfileObject;
@@ -130,70 +133,75 @@ function Profile() {
 	const errorMessage = error instanceof Error ? error.message : String( error );
 
 	return (
-		<form onSubmit={ handleSubmit }>
-			<PageLayout
-				title={ __( 'Profile' ) }
-				description={
-					<>
-						{ __( 'Set your name, bio, and other public-facing information.' ) }
-						<Button href="#learn-more" variant="link">
-							{ __( 'Learn more' ) }
-						</Button>
-					</>
-				}
-			>
-				{ error && (
+		<>
+			<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+			<form onSubmit={ handleSubmit }>
+				<PageLayout
+					title={ __( 'Profile' ) }
+					description={
+						<>
+							{ __( 'Set your name, bio, and other public-facing information.' ) }
+							<Button href="#learn-more" variant="link">
+								{ __( 'Learn more' ) }
+							</Button>
+						</>
+					}
+				>
+					{ error && (
+						<Card>
+							<Notice status="error" isDismissible={ false }>
+								{ errorMessage }
+							</Notice>
+						</Card>
+					) }
+
 					<Card>
-						<Notice status="error" isDismissible={ false }>
-							{ errorMessage }
-						</Notice>
+						<CardBody>
+							<Flex gap={ 3 }>
+								<FlexItem>
+									<EditGravatar avatarUrl={ data.avatar_URL } userEmail={ data.user_email } />
+								</FlexItem>
+								<FlexBlock>
+									<Text>{ __( 'This is your profile photo.' ) }</Text>
+									<Text variant="muted">
+										{ __( 'It appears when you comment on other blogs.' ) }
+									</Text>
+								</FlexBlock>
+							</Flex>
+						</CardBody>
 					</Card>
-				) }
 
-				<Card>
-					<CardBody>
-						<Flex gap={ 3 }>
-							<FlexItem>
-								<EditGravatar avatarUrl={ data.avatar_URL } userEmail={ data.user_email } />
-							</FlexItem>
-							<FlexBlock>
-								<Text>{ __( 'This is your profile photo.' ) }</Text>
-								<Text variant="muted">{ __( 'It appears when you comment on other blogs.' ) }</Text>
-							</FlexBlock>
-						</Flex>
-					</CardBody>
-				</Card>
+					<Card>
+						<CardBody>
+							<DataForm< ProfileObject >
+								data={ data }
+								fields={ fields }
+								form={ form }
+								onChange={ ( edits ) => {
+									setLocalFormData( ( current ) => ( {
+										...current,
+										...edits,
+									} ) );
+								} }
+							/>
+						</CardBody>
+					</Card>
 
-				<Card>
-					<CardBody>
-						<DataForm< ProfileObject >
-							data={ data }
-							fields={ fields }
-							form={ form }
-							onChange={ ( edits ) => {
-								setLocalFormData( ( current ) => ( {
-									...current,
-									...edits,
-								} ) );
-							} }
-						/>
-					</CardBody>
-				</Card>
-
-				<Card>
-					<CardBody>
-						<Button
-							variant="primary"
-							type="submit"
-							isBusy={ isSaving }
-							disabled={ isSaving || ! localFormData }
-						>
-							{ __( 'Save' ) }
-						</Button>
-					</CardBody>
-				</Card>
-			</PageLayout>
-		</form>
+					<Card>
+						<CardBody>
+							<Button
+								variant="primary"
+								type="submit"
+								isBusy={ isSaving }
+								disabled={ isSaving || ! localFormData }
+							>
+								{ __( 'Save' ) }
+							</Button>
+						</CardBody>
+					</Card>
+				</PageLayout>
+			</form>
+		</>
 	);
 }
 
