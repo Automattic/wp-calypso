@@ -3,7 +3,7 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useNavigate, useLoaderData } from 'react-router-dom';
-import { type SiteObject, type SitesRequest } from '../data';
+import { type SiteObject } from '../data';
 import PageLayout from '../page-layout';
 import type { View, Field } from '@wordpress/dataviews';
 
@@ -20,11 +20,11 @@ import type { View, Field } from '@wordpress/dataviews';
 
 function Sites() {
 	const navigate = useNavigate();
-	const querySitesData = useLoaderData() as SitesRequest;
+	const querySitesData = useLoaderData() as SiteObject[];
 	const [ sites, setSites ] = useState< SiteObject[] >( [] );
 	useEffect( () => {
 		if ( querySitesData ) {
-			setSites( querySitesData.sites );
+			setSites( querySitesData );
 		}
 	}, [ querySitesData ] );
 
@@ -57,7 +57,7 @@ function Sites() {
 			id: 'media',
 			label: __( 'Media' ),
 			render: ( { item } ) =>
-				item?.icon?.ico ? <img src={ item.icon.ico } alt={ item.name } width="100%" /> : null,
+				item?.media ? <img src={ item.media } alt={ item.name } width="100%" /> : null,
 		},
 		{
 			id: 'subscribers_count',
@@ -105,7 +105,7 @@ function Sites() {
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
 
 	const onClickItem = ( item: SiteObject ) => {
-		navigate( `/sites/${ item.ID }` );
+		navigate( `/sites/${ item.id }` );
 	};
 
 	return (
@@ -120,7 +120,6 @@ function Sites() {
 			<Card>
 				<DataViews
 					data={ filteredData }
-					getItemId={ ( item ) => item.ID }
 					fields={ fields }
 					view={ view }
 					onChangeView={ setView }

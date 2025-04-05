@@ -125,34 +125,59 @@ const mockDomains: Domain[] = [
 ];
 
 export type SiteObject = {
-	ID: string;
+	id: string;
 	name: string;
 	url: string;
-	icon: {
-		ico: string;
-	};
+	media: string;
 	// visitors: number;
 	// performance: number;
 	// backups: boolean;
 	// protect: boolean;
 };
 
-export type SitesRequest = {
-	sites: SiteObject[];
+type SiteRequestObject = {
+	ID: string;
+	name: string;
+	URL: string;
+	icon: {
+		ico: string;
+	};
+};
+
+type SitesRequest = {
+	sites: SiteRequestObject[];
 };
 
 export const fetchSites = (): Promise< SiteObject[] > => {
-	return wpcom.req.get( {
-		path: '/me/sites?http_envelope=1&site_visibility=all&include_domain_only=true&site_activity=active&fields=ID,URL,name,icon,subscribers_count',
-		apiNamespace: 'rest/v1.2',
-	} );
+	return wpcom.req
+		.get( {
+			path: '/me/sites?http_envelope=1&site_visibility=all&include_domain_only=true&site_activity=active&fields=ID,URL,name,icon,subscribers_count',
+			apiNamespace: 'rest/v1.2',
+		} )
+		.then( ( response: SitesRequest ) => {
+			return response.sites.map( ( site: SiteRequestObject ) => ( {
+				id: site.ID,
+				name: site.name,
+				url: site.URL,
+				media: site.icon?.ico,
+			} ) );
+		} );
 };
 
 export const fetchSite = ( id: string ): Promise< SiteObject > => {
-	return wpcom.req.get( {
-		path: `/sites/${ id }?http_envelope=1`,
-		apiNamespace: 'rest/v1.1',
-	} );
+	return wpcom.req
+		.get( {
+			path: `/sites/${ id }?http_envelope=1`,
+			apiNamespace: 'rest/v1.1',
+		} )
+		.then( ( response: SiteRequestObject ) => {
+			return {
+				id: response.ID,
+				name: response.name,
+				url: response.URL,
+				media: response.icon?.ico,
+			};
+		} );
 };
 
 export const fetchDomains = (): Promise< Domain[] > => {

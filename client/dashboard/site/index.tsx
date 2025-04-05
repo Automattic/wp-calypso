@@ -14,7 +14,7 @@ function Site() {
 	return (
 		<>
 			<HeaderBar>
-				<SiteMenu siteId={ siteData.ID } />
+				<SiteMenu siteId={ siteData.id } />
 			</HeaderBar>
 			<Outlet />
 		</>
