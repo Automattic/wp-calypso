@@ -30,6 +30,7 @@ import { didForceRefresh } from 'calypso/state/notifications-panel/actions';
 import { shouldForceRefresh } from 'calypso/state/notifications-panel/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 import './style.scss';
@@ -297,6 +298,7 @@ export class Notifications extends Component {
 
 	render() {
 		const localeSlug = this.props.currentLocaleSlug || config( 'i18n_default_locale_slug' );
+		const isDedicatedReaderPage = this.props.currentRoute?.startsWith( '/reader/notifications' );
 
 		if ( this.props.forceRefresh ) {
 			debug( 'Refreshing notes panel...' );
@@ -311,7 +313,9 @@ export class Notifications extends Component {
 					nested levels, this notice makes sense at different places in the DOM depending on the
 					breakpoint. We remove display for one or the other via CSS depending on the breakpoint.
 				*/ }
-				<Notifications3PCNotice className="reader-notifications__3pc-notice-external" />
+				{ isDedicatedReaderPage && (
+					<Notifications3PCNotice className="reader-notifications__3pc-notice-external" />
+				) }
 				<div
 					id="wpnc-panel"
 					className={ clsx( 'wide', 'wpnc__main', {
@@ -319,7 +323,9 @@ export class Notifications extends Component {
 						'wpnt-closed': ! this.props.isShowing,
 					} ) }
 				>
-					<Notifications3PCNotice className="reader-notifications__3pc-notice-internal" />
+					{ isDedicatedReaderPage && (
+						<Notifications3PCNotice className="reader-notifications__3pc-notice-internal" />
+					) }
 					<NotificationsPanel
 						actionHandlers={ this.actionHandlers }
 						isShowing={ this.props.isShowing }
@@ -338,6 +344,7 @@ export default connect(
 		currentLocaleSlug: getCurrentLocaleVariant( state ) || getCurrentLocaleSlug( state ),
 		forceRefresh: shouldForceRefresh( state ),
 		selectedSiteId: getSelectedSiteId( state ),
+		currentRoute: getCurrentRoute( state ),
 	} ),
 	( dispatch ) => ( {
 		recordTracksEventAction: ( name, properties ) =>
