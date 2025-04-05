@@ -40,7 +40,7 @@ export const router = createBrowserRouter(
 					id: 'site',
 					path: 'sites/:id',
 					element: <Site />,
-					loader: ( { params } ) => fetchSite( params.id as string ),
+					loader: fetchSite,
 					children: [
 						{
 							path: '',
