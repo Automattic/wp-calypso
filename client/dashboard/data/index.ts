@@ -151,7 +151,7 @@ export const fetchSites = (): Promise< SiteData[] > => {
 
 export const fetchSite = ( { params }: LoaderFunctionArgs ): Promise< SiteData > => {
 	return wpcom.req.get( {
-		path: `/sites/${ params.id }`,
+		path: `/sites/${ params.id }?http_envelope=1`,
 		apiNamespace: 'rest/v1.1',
 	} );
 };
