@@ -191,7 +191,11 @@ export const fetchSites = (): Promise< SiteObject[] > => {
 		} );
 };
 
-export const fetchSite = ( id: string ): Promise< SiteObject > => {
+export const fetchSite = ( id: string | undefined ): Promise< SiteObject > => {
+	if ( ! id ) {
+		return Promise.reject( new Error( 'Site ID is undefined' ) );
+	}
+
 	return wpcom.req
 		.get( {
 			path: `/sites/${ id }?http_envelope=1&fields=ID,URL,name,icon,subscribers_count,plan,active_modules,options`,
