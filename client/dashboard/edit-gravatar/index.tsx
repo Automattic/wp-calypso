@@ -104,8 +104,6 @@ const EditGravatar = ( {
 		setIsUploading( true );
 		// crop file image to be a square
 		const croppedFile = await cropFile( file );
-		// Create FormData and append file
-		debugger;
 		// Upload using wpcom REST API
 		wpcom.req
 			.post( {
