@@ -3,12 +3,11 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useNavigate, useLoaderData } from 'react-router-dom';
-import { fetchEmails, type EmailObject } from '../data';
+import { type EmailObject } from '../data';
 import PageLayout from '../page-layout';
 import type { View, Field } from '@wordpress/dataviews';
-import type { LoaderFunction } from 'react-router-dom';
 
-function Emails() {
+export default function Emails() {
 	const navigate = useNavigate();
 	const emails = useLoaderData() as EmailObject[];
 	const [ selection, setSelection ] = useState< EmailObject[] >( [] );
@@ -142,7 +141,3 @@ function Emails() {
 		</PageLayout>
 	);
 }
-
-Emails.loader = fetchEmails satisfies LoaderFunction;
-
-export default Emails;

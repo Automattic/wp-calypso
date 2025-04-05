@@ -3,7 +3,7 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useNavigate, useLoaderData } from 'react-router-dom';
-import { type SiteData, type SitesRequest } from '../data';
+import { type SiteObject, type SitesRequest } from '../data';
 import PageLayout from '../page-layout';
 import type { View, Field } from '@wordpress/dataviews';
 
@@ -21,7 +21,7 @@ import type { View, Field } from '@wordpress/dataviews';
 function Sites() {
 	const navigate = useNavigate();
 	const querySitesData = useLoaderData() as SitesRequest;
-	const [ sites, setSites ] = useState< SiteData[] >( [] );
+	const [ sites, setSites ] = useState< SiteObject[] >( [] );
 	useEffect( () => {
 		if ( querySitesData ) {
 			setSites( querySitesData.sites );
@@ -100,11 +100,11 @@ function Sites() {
 		// 		{ value: 'disabled', label: 'Disabled' },
 		// 	],
 		// },
-	] as Field< SiteData >[];
+	] as Field< SiteObject >[];
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
 
-	const onClickItem = ( item: SiteData ) => {
+	const onClickItem = ( item: SiteObject ) => {
 		navigate( `/sites/${ item.ID }` );
 	};
 

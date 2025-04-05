@@ -125,7 +125,7 @@ const mockDomains: Domain[] = [
 	},
 ];
 
-export type SiteData = {
+export type SiteObject = {
 	ID: string;
 	name: string;
 	url: string;
@@ -139,17 +139,17 @@ export type SiteData = {
 };
 
 export type SitesRequest = {
-	sites: SiteData[];
+	sites: SiteObject[];
 };
 
-export const fetchSites = (): Promise< SiteData[] > => {
+export const fetchSites = (): Promise< SiteObject[] > => {
 	return wpcom.req.get( {
 		path: '/me/sites?http_envelope=1&site_visibility=all&include_domain_only=true&site_activity=active&fields=ID,URL,name,icon,subscribers_count',
 		apiNamespace: 'rest/v1.2',
 	} );
 };
 
-export const fetchSite = ( { params }: LoaderFunctionArgs ): Promise< SiteData > => {
+export const fetchSite = ( { params }: LoaderFunctionArgs ): Promise< SiteObject > => {
 	return wpcom.req.get( {
 		path: `/sites/${ params.id }?http_envelope=1`,
 		apiNamespace: 'rest/v1.1',

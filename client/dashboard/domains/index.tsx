@@ -3,7 +3,7 @@ import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useLoaderData } from 'react-router-dom';
-import { Domain, fetchDomains } from '../data';
+import { Domain } from '../data';
 import PageLayout from '../page-layout';
 
 const fields = [
@@ -89,7 +89,7 @@ function getDomainId( domain: Domain ): string {
 	return `${ domain.domain }-${ domain.blog_id }`;
 }
 
-function Domains() {
+export default function Domains() {
 	const [ view, setView ] = useState( () => initialViewState );
 	const domains = useLoaderData() as Domain[];
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( domains, view, fields );
@@ -112,8 +112,3 @@ function Domains() {
 		</PageLayout>
 	);
 }
-
-// For future use with React Router
-Domains.loader = fetchDomains;
-
-export default Domains;

@@ -7,6 +7,8 @@ import {
 	fetchSites,
 	type ProfileObject,
 	type SiteObject,
+	fetchDomains,
+	fetchEmails,
 } from '../data';
 import Domains from '../domains';
 import Emails from '../emails';
@@ -68,12 +70,20 @@ export const router = createBrowserRouter(
 				{
 					path: 'domains',
 					element: <Domains />,
-					loader: Domains.loader,
+					loader: () =>
+						queryClient.ensureQueryData( {
+							queryKey: [ 'domains' ],
+							queryFn: fetchDomains,
+						} ) as Promise< Domain[] >,
 				},
 				{
 					path: 'emails',
 					element: <Emails />,
-					loader: Emails.loader,
+					loader: () =>
+						queryClient.ensureQueryData( {
+							queryKey: [ 'emails' ],
+							queryFn: fetchEmails,
+						} ) as Promise< Email[] >,
 				},
 				{
 					path: 'me/profile',
