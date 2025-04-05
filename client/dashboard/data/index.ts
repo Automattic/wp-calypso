@@ -130,6 +130,9 @@ export type Plan = {
 	product_name: string;
 	expired: boolean;
 	billing_period: 'Yearly' | 'Monthly';
+	features: {
+		active: string[];
+	};
 };
 
 export type SiteObject = {
@@ -155,13 +158,10 @@ type SiteRequestObject = {
 	icon: {
 		ico: string;
 	};
-	plan: {
-		features: {
-			active: string[];
-		};
-	};
+	plan: Plan;
 	active_modules: string[];
 	subscribers_count: number;
+	options: SiteOptions;
 };
 
 type SitesRequest = {
@@ -194,7 +194,7 @@ export const fetchSites = (): Promise< SiteObject[] > => {
 export const fetchSite = ( id: string ): Promise< SiteObject > => {
 	return wpcom.req
 		.get( {
-			path: `/sites/${ id }?http_envelope=1&fields=ID,URL,name,icon,subscribers_count,plan,active_modules`,
+			path: `/sites/${ id }?http_envelope=1&fields=ID,URL,name,icon,subscribers_count,plan,active_modules,options`,
 			apiNamespace: 'rest/v1.1',
 		} )
 		.then( ( response: SiteRequestObject ) => siteRequestObjectToSiteObject( response ) );
