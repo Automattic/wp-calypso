@@ -1,4 +1,11 @@
-import { Router, Route, RootRoute, redirect, ErrorComponent, Outlet } from '@tanstack/react-router';
+import {
+	Router,
+	createRoute,
+	RootRoute,
+	redirect,
+	ErrorComponent,
+	Outlet,
+} from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import {
 	updateProfile,
@@ -45,7 +52,7 @@ const rootRoute = new RootRoute( {
 } );
 
 // Create the routes
-const indexRoute = new Route( {
+const indexRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: '/',
 	beforeLoad: () => {
@@ -53,7 +60,7 @@ const indexRoute = new Route( {
 	},
 } );
 
-const sitesRoute = new Route( {
+const sitesRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites',
 	component: Sites,
@@ -64,7 +71,7 @@ const sitesRoute = new Route( {
 		} ) as Promise< SiteObject[] >,
 } );
 
-const siteRoute = new Route( {
+const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteId',
 	component: Site,
@@ -75,19 +82,19 @@ const siteRoute = new Route( {
 		} ) as Promise< SiteObject >,
 } );
 
-const siteOverviewRoute = new Route( {
+const siteOverviewRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: '/',
 	component: SiteOverview,
 } );
 
-const siteDeploymentsRoute = new Route( {
+const siteDeploymentsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'deployments',
 	component: SiteDeployments,
 } );
 
-const domainsRoute = new Route( {
+const domainsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'domains',
 	component: Domains,
@@ -98,7 +105,7 @@ const domainsRoute = new Route( {
 		} ) as Promise< DomainObject[] >,
 } );
 
-const emailsRoute = new Route( {
+const emailsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'emails',
 	component: Emails,
@@ -109,7 +116,7 @@ const emailsRoute = new Route( {
 		} ) as Promise< EmailObject >,
 } );
 
-const profileRoute = new Route( {
+const profileRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'me/profile',
 	component: Profile,
@@ -118,7 +125,7 @@ const profileRoute = new Route( {
 			queryKey: [ 'profile' ],
 			queryFn: fetchProfile,
 		} ) as Promise< ProfileObject >,
-	actionHandler: async ( { request } ) => {
+	onSubmit: async ( { request }: { request: Request } ) => {
 		const data = await request.json();
 		try {
 			await updateProfile( data as ProfileObject );
@@ -129,37 +136,37 @@ const profileRoute = new Route( {
 	},
 } );
 
-const billingRoute = new Route( {
+const billingRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'me/billing',
 	component: Billing,
 } );
 
-const securityRoute = new Route( {
+const securityRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'me/security',
 	component: Security,
 } );
 
-const privacyRoute = new Route( {
+const privacyRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'me/privacy',
 	component: Privacy,
 } );
 
-const notificationsRoute = new Route( {
+const notificationsRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'me/notifications',
 	component: MeNotifications,
 } );
 
-const readerRoute = new Route( {
+const readerRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'reader',
 	component: Reader,
 } );
 
-const notFoundRoute = new Route( {
+const notFoundRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: '*',
 	component: NotFound,
