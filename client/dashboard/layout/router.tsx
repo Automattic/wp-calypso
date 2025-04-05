@@ -55,7 +55,11 @@ export const router = createBrowserRouter(
 					id: 'site',
 					path: 'sites/:id',
 					element: <Site />,
-					loader: fetchSite,
+					loader: ( { params } ) =>
+						queryClient.ensureQueryData( {
+							queryKey: [ 'site', params.id ],
+							queryFn: fetchSite,
+						} ) as Promise< SiteObject >,
 					children: [
 						{
 							path: '',
@@ -74,7 +78,7 @@ export const router = createBrowserRouter(
 						queryClient.ensureQueryData( {
 							queryKey: [ 'domains' ],
 							queryFn: fetchDomains,
-						} ) as Promise< Domain[] >,
+						} ) as Promise,
 				},
 				{
 					path: 'emails',
@@ -83,7 +87,7 @@ export const router = createBrowserRouter(
 						queryClient.ensureQueryData( {
 							queryKey: [ 'emails' ],
 							queryFn: fetchEmails,
-						} ) as Promise< Email[] >,
+						} ) as Promise,
 				},
 				{
 					path: 'me/profile',

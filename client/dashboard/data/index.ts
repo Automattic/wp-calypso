@@ -1,5 +1,4 @@
 import wpcom from 'calypso/lib/wp';
-import type { LoaderFunctionArgs } from 'react-router-dom';
 
 export interface ProfileObject {
 	user_login: string;
@@ -149,9 +148,13 @@ export const fetchSites = (): Promise< SiteObject[] > => {
 	} );
 };
 
-export const fetchSite = ( { params }: LoaderFunctionArgs ): Promise< SiteObject > => {
+export const fetchSite = ( {
+	queryKey: [ , id ],
+}: {
+	queryKey: [ string, string ];
+} ): Promise< SiteObject > => {
 	return wpcom.req.get( {
-		path: `/sites/${ params.id }?http_envelope=1`,
+		path: `/sites/${ id }?http_envelope=1`,
 		apiNamespace: 'rest/v1.1',
 	} );
 };
