@@ -1,0 +1,11 @@
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
+
+.dashboard-secondary-menu__item.dashboard-secondary-menu__item {
+	color: $gray-900;
+}
+
+.dashboard-secondary-menu__divider {
+    height: $grid-unit-30;;
+	border-left: $border-width solid $gray-100;
+}

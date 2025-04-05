@@ -1,7 +1,6 @@
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 	__experimentalText as Text,
 	Button,
 	Dropdown,
@@ -10,25 +9,15 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { help, bellUnread, bell, commentAuthorAvatar } from '@wordpress/icons';
-import clsx from 'clsx';
-import { useHref, useLinkClickHandler, useMatch } from 'react-router-dom';
+import { useHref, useLinkClickHandler } from 'react-router-dom';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
+import './style.scss';
 
 function NavMenuItem( { to, children }: { to: string; children: React.ReactNode } ) {
-	const handleClick = useLinkClickHandler( to );
+	const handleClick = useLinkClickHandler< HTMLButtonElement >( to );
 	const href = useHref( to );
-	const match = useMatch( to );
 	return (
-		<MenuItem
-			className={ clsx( {
-				'is-active': match,
-			} ) }
-			variant="tertiary"
-			href={ href }
-			// TODO: check TS..
-			onClick={ handleClick }
-			__next40pxDefaultSize
-		>
+		<MenuItem href={ href } onClick={ handleClick } __next40pxDefaultSize>
 			{ children }
 		</MenuItem>
 	);
@@ -38,13 +27,13 @@ function NavMenuItem( { to, children }: { to: string; children: React.ReactNode 
 function UserProfile() {
 	return (
 		<Dropdown
-			className="dashboard-secondary-menu__user-dropdown"
 			popoverProps={ {
 				placement: 'bottom-end',
 				offset: 8,
 			} }
 			renderToggle={ ( { isOpen, onToggle } ) => (
 				<Button
+					className="dashboard-secondary-menu__item"
 					onClick={ onToggle }
 					aria-expanded={ isOpen }
 					variant="tertiary"
@@ -81,7 +70,6 @@ function UserProfile() {
 }
 
 function SecondaryMenu() {
-	// TODO: get the notifications..
 	const hasUnreadNotifications = false;
 	const readerPath = '/reader';
 	const notificationsPath = '/me/notifications';
@@ -93,14 +81,23 @@ function SecondaryMenu() {
 	return (
 		<HStack spacing={ 3 } justify="flex-end">
 			<Button
-				icon={ <ReaderIcon className="masterbar__menu-icon masterbar_svg-reader" /> }
+				className="dashboard-secondary-menu__item"
+				icon={ <ReaderIcon /> }
 				label={ __( 'Reader' ) }
 				text={ __( 'Reader' ) }
 				onClick={ useLinkClickHandler( readerPath ) }
 				href={ useHref( readerPath ) }
 			/>
-			<Button label={ __( 'Help' ) } onClick={ openHelpCenter } icon={ help } variant="tertiary" />
+			<div className="dashboard-secondary-menu__divider" />
 			<Button
+				className="dashboard-secondary-menu__item"
+				label={ __( 'Help' ) }
+				onClick={ openHelpCenter }
+				icon={ help }
+				variant="tertiary"
+			/>
+			<Button
+				className="dashboard-secondary-menu__item"
 				label={ __( 'Notifications' ) }
 				icon={ hasUnreadNotifications ? bellUnread : bell }
 				variant="tertiary"
