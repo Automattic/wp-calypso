@@ -23,7 +23,7 @@ import type { Field, Form } from '@wordpress/dataviews';
 
 function Profile() {
 	// const fetcher = useFetcher();
-	const serverData = useLoaderData( { from: '/me/profile' } ) as ProfileObject;
+	const serverData = useLoaderData( { from: '/me' } ) as ProfileObject;
 	const [ localFormData, setLocalFormData ] = useState< Partial< ProfileObject > | undefined >();
 
 	const data = useMemo( () => {

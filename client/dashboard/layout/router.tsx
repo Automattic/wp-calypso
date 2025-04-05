@@ -22,6 +22,7 @@ import {
 import Domains from '../domains';
 import Emails from '../emails';
 import Header from '../header';
+import Me from '../me';
 import Billing from '../me/billing';
 import MeNotifications from '../me/notifications';
 import Privacy from '../me/privacy';
@@ -116,16 +117,22 @@ const emailsRoute = createRoute( {
 		} ) as Promise< EmailObject >,
 } );
 
-const profileRoute = createRoute( {
+const meRoute = createRoute( {
 	getParentRoute: () => rootRoute,
-	path: 'me/profile',
-	component: Profile,
+	path: 'me',
+	component: Me,
 	loader: () =>
 		queryClient.ensureQueryData( {
 			queryKey: [ 'profile' ],
 			queryFn: fetchProfile,
 		} ) as Promise< ProfileObject >,
-	onSubmit: async ( { request }: { request: Request } ) => {
+} );
+
+const profileRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'profile',
+	component: Profile,
+	actionHandler: async ( { request } ) => {
 		const data = await request.json();
 		try {
 			await updateProfile( data as ProfileObject );
@@ -137,26 +144,26 @@ const profileRoute = createRoute( {
 } );
 
 const billingRoute = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: 'me/billing',
+	getParentRoute: () => meRoute,
+	path: 'billing',
 	component: Billing,
 } );
 
 const securityRoute = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: 'me/security',
+	getParentRoute: () => meRoute,
+	path: 'security',
 	component: Security,
 } );
 
 const privacyRoute = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: 'me/privacy',
+	getParentRoute: () => meRoute,
+	path: 'privacy',
 	component: Privacy,
 } );
 
 const notificationsRoute = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: 'me/notifications',
+	getParentRoute: () => meRoute,
+	path: 'notifications',
 	component: MeNotifications,
 } );
 
@@ -179,11 +186,13 @@ const routeTree = rootRoute.addChildren( [
 	siteRoute.addChildren( [ siteOverviewRoute, siteDeploymentsRoute ] ),
 	domainsRoute,
 	emailsRoute,
-	profileRoute,
-	billingRoute,
-	securityRoute,
-	privacyRoute,
-	notificationsRoute,
+	meRoute.addChildren( [
+		profileRoute,
+		billingRoute,
+		securityRoute,
+		privacyRoute,
+		notificationsRoute,
+	] ),
 	readerRoute,
 	notFoundRoute,
 ] );
