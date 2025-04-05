@@ -11,6 +11,7 @@ import { __ } from '@wordpress/i18n';
 import { help, bellUnread, bell, commentAuthorAvatar } from '@wordpress/icons';
 import { useHref, useLinkClickHandler } from 'react-router-dom';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
+import { useAuth } from '../auth/auth-context';
 import './style.scss';
 
 function NavMenuItem( { to, children }: { to: string; children: React.ReactNode } ) {
@@ -25,6 +26,8 @@ function NavMenuItem( { to, children }: { to: string; children: React.ReactNode 
 
 // User profile dropdown component
 function UserProfile() {
+	const { user } = useAuth();
+
 	return (
 		<Dropdown
 			popoverProps={ {
@@ -44,8 +47,7 @@ function UserProfile() {
 			renderContent={ () => (
 				<VStack>
 					<VStack style={ { padding: '16px', borderBottom: '1px solid #ccc' } }>
-						<Text>{ __( 'User Name' ) }</Text>
-						<Text>@username</Text>
+						<Text>@{ user.username }</Text>
 					</VStack>
 					<MenuGroup>
 						<NavMenuItem to="/me/profile">{ __( 'Profile' ) }</NavMenuItem>
