@@ -3,14 +3,14 @@ import { Button, Card, ExternalLink } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { type EmailObject } from '../data';
 import PageLayout from '../page-layout';
+import type { Email } from '../data/types';
 import type { View, Field } from '@wordpress/dataviews';
 
 export default function Emails() {
 	const navigate = useNavigate();
-	const emails = useLoaderData( { from: '/emails' } ) as EmailObject[];
-	const [ selection, setSelection ] = useState< EmailObject[] >( [] );
+	const emails = useLoaderData( { from: '/emails' } ) as Email[];
+	const [ selection, setSelection ] = useState< Email[] >( [] );
 
 	// View config
 	const [ view, setView ] = useState< View >( {
@@ -64,11 +64,11 @@ export default function Emails() {
 			},
 			getValue: ( { item } ) => item.provider,
 		},
-	] as Field< EmailObject >[];
+	] as Field< Email >[];
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( emails, view, fields );
 
-	const onClickItem = ( item: EmailObject ) => {
+	const onClickItem = ( item: Email ) => {
 		navigate( `/emails/${ item.id }` );
 	};
 

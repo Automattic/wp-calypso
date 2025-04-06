@@ -10,14 +10,11 @@ import {
 	fetchProfile,
 	fetchSite,
 	fetchSites,
-	type ProfileObject,
-	type SiteObject,
-	type DomainObject,
-	type EmailObject,
 	fetchDomains,
 	fetchEmails,
 	FetchSiteRouteResponse,
 } from '../data';
+import { Domain, Email, Site, User } from '../data/types';
 import Domains from '../domains';
 import Emails from '../emails';
 import Header from '../header';
@@ -27,7 +24,7 @@ import MeNotifications from '../me/notifications';
 import Privacy from '../me/privacy';
 import Security from '../me/security';
 import Profile from '../profile';
-import Site from '../site';
+import SiteLayout from '../site';
 import SiteDeployments from '../site-deployments';
 import SiteOverview from '../site-overview';
 import Sites from '../sites';
@@ -67,13 +64,13 @@ const sitesRoute = createRoute( {
 		queryClient.ensureQueryData( {
 			queryKey: [ 'sites' ],
 			queryFn: fetchSites,
-		} ) as Promise< SiteObject[] >,
+		} ) as Promise< Site[] >,
 } );
 
 const siteRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites/$siteId',
-	component: Site,
+	component: SiteLayout,
 	loader: ( { params: { siteId } } ) =>
 		queryClient.ensureQueryData( {
 			queryKey: [ 'site', siteId ],
@@ -101,7 +98,7 @@ const domainsRoute = createRoute( {
 		queryClient.ensureQueryData( {
 			queryKey: [ 'domains' ],
 			queryFn: fetchDomains,
-		} ) as Promise< DomainObject[] >,
+		} ) as Promise< Domain[] >,
 } );
 
 const emailsRoute = createRoute( {
@@ -112,7 +109,7 @@ const emailsRoute = createRoute( {
 		queryClient.ensureQueryData( {
 			queryKey: [ 'emails' ],
 			queryFn: fetchEmails,
-		} ) as Promise< EmailObject >,
+		} ) as Promise< Email >,
 } );
 
 const meRoute = createRoute( {
@@ -123,7 +120,7 @@ const meRoute = createRoute( {
 		queryClient.ensureQueryData( {
 			queryKey: [ 'profile' ],
 			queryFn: fetchProfile,
-		} ) as Promise< ProfileObject >,
+		} ) as Promise< User >,
 } );
 
 const profileRoute = createRoute( {

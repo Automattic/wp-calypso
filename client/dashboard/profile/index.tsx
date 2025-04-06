@@ -20,13 +20,13 @@ import AsyncLoad from '../async-load';
 import { updateProfile } from '../data';
 import EditGravatar from '../edit-gravatar';
 import PageLayout from '../page-layout';
-import type { ProfileObject } from '../data';
+import type { User } from '../data/types';
 import type { Field, Form } from '@wordpress/dataviews';
 
 function Profile() {
 	const mutation = useMutation( { mutationFn: updateProfile } );
-	const serverData = useLoaderData( { from: '/me' } ) as ProfileObject;
-	const [ localFormData, setLocalFormData ] = useState< Partial< ProfileObject > | undefined >();
+	const serverData = useLoaderData( { from: '/me' } ) as User;
+	const [ localFormData, setLocalFormData ] = useState< Partial< User > | undefined >();
 
 	const data = useMemo( () => {
 		if ( ! localFormData ) {
@@ -99,7 +99,7 @@ function Profile() {
 						);
 					},
 				},
-			] as Field< ProfileObject >[],
+			] as Field< User >[],
 		[]
 	);
 
@@ -181,7 +181,7 @@ function Profile() {
 
 					<Card>
 						<CardBody>
-							<DataForm< ProfileObject >
+							<DataForm< User >
 								data={ data }
 								fields={ fields }
 								form={ form }

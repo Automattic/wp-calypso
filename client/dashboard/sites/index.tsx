@@ -4,14 +4,14 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
-import { type SiteObject } from '../data';
 import PageLayout from '../page-layout';
+import type { Site } from '../data/types';
 import type { View, Field } from '@wordpress/dataviews';
 
 function Sites() {
 	const navigate = useNavigate();
-	const querySitesData = useLoaderData( { from: '/sites' } ) as SiteObject[];
-	const [ sites, setSites ] = useState< SiteObject[] >( [] );
+	const querySitesData = useLoaderData( { from: '/sites' } ) as Site[];
+	const [ sites, setSites ] = useState< Site[] >( [] );
 	useEffect( () => {
 		if ( querySitesData ) {
 			setSites( querySitesData );
@@ -85,11 +85,11 @@ function Sites() {
 				{ value: 'disabled', label: __( 'Disabled' ) },
 			],
 		},
-	] as Field< SiteObject >[];
+	] as Field< Site >[];
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
 
-	const onClickItem = ( item: SiteObject ) => {
+	const onClickItem = ( item: Site ) => {
 		navigate( { to: `/sites/${ item.id }` } );
 	};
 
@@ -98,11 +98,11 @@ function Sites() {
 			id: 'admin',
 			isPrimary: true,
 			label: __( 'WP Admin' ),
-			callback: ( sites: SiteObject[] ) => {
+			callback: ( sites: Site[] ) => {
 				const site = sites[ 0 ];
 				window.location.href = site.options?.admin_url ?? '';
 			},
-			isEligible: ( item: SiteObject ) => ( item.is_deleted ? false : true ),
+			isEligible: ( item: Site ) => ( item.is_deleted ? false : true ),
 		},
 	];
 

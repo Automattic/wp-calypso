@@ -1,22 +1,13 @@
 import wpcom from 'calypso/lib/wp';
-
-export interface ProfileObject {
-	user_login: string;
-	display_name: string;
-	user_email: string;
-	user_URL: string;
-	description: string;
-	isDeveloper: boolean;
-	avatar_URL: string;
-}
+import type { User, Domain, Site, SiteOptions, Plan, Email } from './types';
 
 export const fetchProfile = () =>
 	wpcom.req.get( {
 		path: '/me/settings?http_envelope=1',
 		apiNamespace: 'rest/v1.1',
-	} ) as Promise< ProfileObject >;
+	} ) as Promise< User >;
 
-export const updateProfile = ( data: ProfileObject ) =>
+export const updateProfile = ( data: User ) =>
 	wpcom.req.post( {
 		path: '/me/settings',
 		apiNamespace: 'rest/v1.1',
@@ -26,25 +17,7 @@ export const updateProfile = ( data: ProfileObject ) =>
 		},
 	} );
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/**
- * Domain interface
- */
-export interface DomainObject {
-	id: number;
-	domain: string;
-	blog_id: number;
-	owner: string;
-	expiry: string;
-	domain_status: {
-		status: string;
-	};
-	wpcom_domain: boolean;
-	sslStatus: string;
-	domain_type: string;
-}
-
-const mockDomains: DomainObject[] = [
+const mockDomains: Domain[] = [
 	{
 		id: 1,
 		domain: 'example.com',
@@ -124,36 +97,7 @@ const mockDomains: DomainObject[] = [
 	},
 ];
 
-export type Plan = {
-	product_id: number;
-	product_slug: string;
-	product_name: string;
-	expired: boolean;
-	billing_period: 'Yearly' | 'Monthly';
-	features: {
-		active: string[];
-	};
-};
-
-export type SiteObject = {
-	id: string;
-	name: string;
-	url: string;
-	media: string;
-	backups: 'enabled' | 'disabled';
-	protect: 'enabled' | 'disabled';
-	subscribers: number;
-	plan: Plan;
-	options: SiteOptions;
-	is_deleted: boolean;
-};
-
-export type SiteOptions = {
-	software_version: string;
-	admin_url: string;
-};
-
-type SiteRequestObject = {
+interface WPCOMRESTAPISite {
 	ID: string;
 	name: string;
 	URL: string;
@@ -165,13 +109,9 @@ type SiteRequestObject = {
 	subscribers_count: number;
 	options: SiteOptions;
 	is_deleted: boolean;
-};
+}
 
-type SitesRequest = {
-	sites: SiteRequestObject[];
-};
-
-const siteRequestObjectToSiteObject = ( site: SiteRequestObject ): SiteObject => ( {
+const siteRequestObjectToSiteObject = ( site: WPCOMRESTAPISite ): Site => ( {
 	id: site.ID,
 	name: site.name,
 	url: site.URL,
@@ -184,27 +124,27 @@ const siteRequestObjectToSiteObject = ( site: SiteRequestObject ): SiteObject =>
 	is_deleted: site.is_deleted,
 } );
 
-export const fetchSites = (): Promise< SiteObject[] > => {
+export const fetchSites = (): Promise< Site[] > => {
 	return wpcom.req
 		.get( {
 			path: '/me/sites?http_envelope=1&site_visibility=all&include_domain_only=true&site_activity=active&fields=ID,URL,name,icon,subscribers_count,plan,active_modules,is_deleted,options',
 			apiNamespace: 'rest/v1.2',
 		} )
-		.then( ( response: SitesRequest ) => {
+		.then( ( response: { sites: WPCOMRESTAPISite[] } ) => {
 			return response.sites.map( siteRequestObjectToSiteObject );
 		} );
 };
 
-export type MediaStorageObject = {
+interface MediaStorageObject {
 	maxStorageBytesFromAddOns: number;
 	maxStorageBytes: number;
 	storageUsedBytes: number;
-};
+}
 
-export type FetchSiteRouteResponse = {
-	site: SiteObject;
+export interface FetchSiteRouteResponse {
+	site: Site;
 	mediaStorage: MediaStorageObject;
-};
+}
 
 export const fetchSite = async ( id: string ): Promise< FetchSiteRouteResponse > => {
 	if ( ! id ) {
@@ -230,34 +170,11 @@ export const fetchSite = async ( id: string ): Promise< FetchSiteRouteResponse >
 	};
 };
 
-export const fetchDomains = (): Promise< DomainObject[] > => {
+export const fetchDomains = (): Promise< Domain[] > => {
 	return Promise.resolve( mockDomains );
 };
 
-export type EmailType = 'mailbox' | 'forwarding';
-export type EmailProvider = 'titan' | 'google-workspace' | 'forwarding';
-export type EmailProviderDisplay = {
-	id: EmailProvider;
-	displayName: string;
-};
-
-export interface EmailObject {
-	id: string;
-	emailAddress: string;
-	type: EmailType;
-	provider: EmailProvider;
-	providerDisplayName: string;
-	domainName: string;
-	siteId?: string;
-	siteName?: string;
-	forwardingTo?: string;
-	storageUsed?: number;
-	storageLimit?: number;
-	createdDate: string;
-	status: 'active' | 'pending' | 'suspended';
-}
-
-export const EMAIL_DATA: EmailObject[] = [
+export const EMAIL_DATA: Email[] = [
 	{
 		id: '1',
 		emailAddress: 'info@example.com',
@@ -369,14 +286,14 @@ export const EMAIL_DATA: EmailObject[] = [
 	},
 ];
 
-export const fetchEmails = (): Promise< EmailObject[] > => {
+export const fetchEmails = (): Promise< Email[] > => {
 	return Promise.resolve( EMAIL_DATA );
 };
 
-export const findEmailById = ( id: string ): EmailObject | undefined => {
+export const findEmailById = ( id: string ): Email | undefined => {
 	return EMAIL_DATA.find( ( email ) => email.id === id );
 };
 
-export const fetchEmail = ( id: string ): Promise< EmailObject | undefined > => {
+export const fetchEmail = ( id: string ): Promise< Email | undefined > => {
 	return Promise.resolve( findEmailById( id ) );
 };

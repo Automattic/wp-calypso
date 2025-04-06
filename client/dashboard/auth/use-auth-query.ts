@@ -1,19 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
+import type { User } from '../data/types';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
-
-export interface User {
-	ID: number;
-	username: string;
-	displayName: string;
-	email: string;
-	avatar_URL: string;
-	profile_URL: string;
-	isDeveloper: boolean;
-	siteAddress: string;
-	aboutMe: string;
-}
 
 const fetchUser = async (): Promise< User > => {
 	return await wpcom.me().get();

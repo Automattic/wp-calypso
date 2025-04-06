@@ -5,6 +5,7 @@ import {
 	Card,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import type { Site } from '../data/types';
 
 interface SiteCardProps {
 	title: string;
@@ -16,7 +17,7 @@ interface SiteCardProps {
 /**
  * SiteCard component to display site information in a card format
  */
-export default function SiteCard( { site }: SiteObject ) {
+export default function SiteCard( { site }: { site: Site } ) {
 	const { status, title, domain, options: { software_version } = {}, url } = site;
 	const previewImageUrl = `https://s0.wp.com/mshots/v1/${ encodeURIComponent( url ) }?w=350&h=200`;
 
