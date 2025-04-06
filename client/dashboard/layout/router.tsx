@@ -1,12 +1,6 @@
-import {
-	Router,
-	createRoute,
-	createRootRoute,
-	redirect,
-	ErrorComponent,
-	Outlet,
-} from '@tanstack/react-router';
+import { Router, createRoute, createRootRoute, redirect, Outlet } from '@tanstack/react-router';
 import NotFound from '../404';
+import UnknownError from '../500';
 import Billing from '../billing';
 import {
 	fetchProfile,
@@ -182,7 +176,7 @@ const routeTree = rootRoute.addChildren( [
 export const router = new Router( {
 	routeTree,
 	basepath: '/v2',
-	defaultErrorComponent: ( { error } ) => <ErrorComponent error={ error as Error } />,
+	defaultErrorComponent: UnknownError,
 } );
 
 export const routerA4A = new Router( {
