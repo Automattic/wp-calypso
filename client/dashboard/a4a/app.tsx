@@ -1,14 +1,22 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from '@tanstack/react-router';
-import { AuthProvider } from '../auth';
+import { AppProvider } from '../app-context';
+import { AuthProvider, useAuth } from '../auth';
 import { queryClient } from '../layout/query-client';
 import { routerA4A } from '../layout/router';
+
+function RouterProviderWithAuth() {
+	const auth = useAuth();
+	return <RouterProvider router={ routerA4A } context={ { auth } } />;
+}
 
 function Layout() {
 	return (
 		<QueryClientProvider client={ queryClient }>
 			<AuthProvider>
-				<RouterProvider router={ routerA4A } />
+				<AppProvider appType="a4a">
+					<RouterProviderWithAuth />
+				</AppProvider>
 			</AuthProvider>
 		</QueryClientProvider>
 	);

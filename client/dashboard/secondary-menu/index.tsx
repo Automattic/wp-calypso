@@ -11,6 +11,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { help, bellUnread, bell, commentAuthorAvatar } from '@wordpress/icons';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
+import { useAppContext } from '../app-context';
 import { useAuth } from '../auth';
 import './style.scss';
 
@@ -83,6 +84,7 @@ function UserProfile() {
 
 function SecondaryMenu() {
 	const navigate = useNavigate();
+	const { appType } = useAppContext();
 	const hasUnreadNotifications = false;
 	const notificationsPath = '/me/notifications';
 
@@ -92,14 +94,18 @@ function SecondaryMenu() {
 
 	return (
 		<HStack spacing={ 3 } justify="flex-end">
-			<Button
-				className="dashboard-secondary-menu__item"
-				icon={ <ReaderIcon /> }
-				label={ __( 'Reader' ) }
-				text={ __( 'Reader' ) }
-				href="/reader"
-			/>
-			<div className="dashboard-secondary-menu__divider" />
+			{ appType === 'dotcom' && (
+				<>
+					<Button
+						className="dashboard-secondary-menu__item"
+						icon={ <ReaderIcon /> }
+						label={ __( 'Reader' ) }
+						text={ __( 'Reader' ) }
+						href="/reader"
+					/>
+					<div className="dashboard-secondary-menu__divider" />
+				</>
+			) }
 			<Button
 				className="dashboard-secondary-menu__item"
 				label={ __( 'Help' ) }
@@ -107,17 +113,19 @@ function SecondaryMenu() {
 				icon={ help }
 				variant="tertiary"
 			/>
-			<Button
-				className="dashboard-secondary-menu__item"
-				label={ __( 'Notifications' ) }
-				icon={ hasUnreadNotifications ? bellUnread : bell }
-				variant="tertiary"
-				onClick={ ( e ) => {
-					e.preventDefault();
-					navigate( { to: notificationsPath } );
-				} }
-				href={ notificationsPath }
-			/>
+			{ appType === 'dotcom' && (
+				<Button
+					className="dashboard-secondary-menu__item"
+					label={ __( 'Notifications' ) }
+					icon={ hasUnreadNotifications ? bellUnread : bell }
+					variant="tertiary"
+					onClick={ ( e ) => {
+						e.preventDefault();
+						navigate( { to: notificationsPath } );
+					} }
+					href={ notificationsPath }
+				/>
+			) }
 			<UserProfile />
 		</HStack>
 	);

@@ -1,5 +1,6 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from '@tanstack/react-router';
+import { AppProvider } from '../app-context';
 import { AuthProvider, useAuth } from '../auth';
 import { queryClient } from './query-client';
 import { router } from './router';
@@ -15,7 +16,9 @@ function Layout() {
 	return (
 		<QueryClientProvider client={ queryClient }>
 			<AuthProvider>
-				<RouterProviderWithAuth />
+				<AppProvider appType="dotcom">
+					<RouterProviderWithAuth />
+				</AppProvider>
 			</AuthProvider>
 		</QueryClientProvider>
 	);
