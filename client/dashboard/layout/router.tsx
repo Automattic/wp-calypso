@@ -11,6 +11,7 @@ import Billing from '../billing';
 import {
 	fetchProfile,
 	fetchSite,
+	fetchSiteMediaStorage,
 	fetchSites,
 	fetchDomains,
 	fetchEmails,
@@ -73,7 +74,13 @@ const siteRoute = createRoute( {
 	loader: ( { params: { siteId } } ) =>
 		queryClient.ensureQueryData( {
 			queryKey: [ 'site', siteId ],
-			queryFn: () => fetchSite( siteId ),
+			queryFn: async () => {
+				const [ site, mediaStorage ] = await Promise.all( [
+					fetchSite( siteId ),
+					fetchSiteMediaStorage( siteId ),
+				] );
+				return { site, mediaStorage };
+			},
 		} ) as Promise< FetchSiteRouteResponse >,
 	notFoundComponent: NotFound,
 } );

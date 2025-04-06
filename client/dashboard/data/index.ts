@@ -146,27 +146,29 @@ export interface FetchSiteRouteResponse {
 	mediaStorage: MediaStorageObject;
 }
 
-export const fetchSite = async ( id: string ): Promise< FetchSiteRouteResponse > => {
+export const fetchSite = async ( id: string ): Promise< Site > => {
 	if ( ! id ) {
 		return Promise.reject( new Error( 'Site ID is undefined' ) );
 	}
-	const [ site, mediaStorage ] = await Promise.all( [
-		wpcom.req.get( {
-			path: `/sites/${ id }?http_envelope=1&fields=ID,URL,name,icon,subscribers_count,plan,active_modules,options`,
-			apiNamespace: 'rest/v1.1',
-		} ),
-		wpcom.req.get( {
-			path: `/sites/${ encodeURIComponent( id ) }/media-storage`,
-			apiVersion: '1.1',
-		} ),
-	] );
+	const site = await wpcom.req.get( {
+		path: `/sites/${ id }?http_envelope=1&fields=ID,URL,name,icon,subscribers_count,plan,active_modules,options`,
+		apiNamespace: 'rest/v1.1',
+	} );
+	return siteRequestObjectToSiteObject( site );
+};
+
+export const fetchSiteMediaStorage = async ( id: string ): Promise< MediaStorageObject > => {
+	if ( ! id ) {
+		return Promise.reject( new Error( 'Site ID is undefined' ) );
+	}
+	const mediaStorage = await wpcom.req.get( {
+		path: `/sites/${ encodeURIComponent( id ) }/media-storage`,
+		apiVersion: '1.1',
+	} );
 	return {
-		site: siteRequestObjectToSiteObject( site ),
-		mediaStorage: {
-			maxStorageBytesFromAddOns: Number( mediaStorage.max_storage_bytes_from_add_ons ),
-			maxStorageBytes: Number( mediaStorage.max_storage_bytes ),
-			storageUsedBytes: Number( mediaStorage.storage_used_bytes ),
-		},
+		maxStorageBytesFromAddOns: Number( mediaStorage.max_storage_bytes_from_add_ons ),
+		maxStorageBytes: Number( mediaStorage.max_storage_bytes ),
+		storageUsedBytes: Number( mediaStorage.storage_used_bytes ),
 	};
 };
 
