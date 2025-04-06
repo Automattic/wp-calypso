@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from '@wordpress/element';
-import { useTranslate } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
 import wpcom from 'calypso/lib/wp';
 
 interface ProfileData {
@@ -19,7 +19,6 @@ interface UseProfileResult {
 }
 
 export function useProfile(): UseProfileResult {
-	const translate = useTranslate();
 	const [ loading, setLoading ] = useState( true );
 	const [ error, setError ] = useState< string | null >( null );
 	const [ profileData, setProfileData ] = useState< ProfileData | null >( null );
@@ -43,11 +42,11 @@ export function useProfile(): UseProfileResult {
 				isDeveloper: Boolean( data.meta?.is_developer ),
 			} );
 		} catch ( err ) {
-			setError( err instanceof Error ? err.message : translate( 'An unknown error occurred' ) );
+			setError( err instanceof Error ? err.message : __( 'An unknown error occurred' ) );
 		} finally {
 			setLoading( false );
 		}
-	}, [ translate ] );
+	}, [] );
 
 	const saveProfile = useCallback(
 		async ( data: ProfileData ) => {
@@ -72,13 +71,13 @@ export function useProfile(): UseProfileResult {
 
 				await fetchProfile();
 			} catch ( err ) {
-				setError( err instanceof Error ? err.message : translate( 'An unknown error occurred' ) );
+				setError( err instanceof Error ? err.message : __( 'An unknown error occurred' ) );
 				throw err;
 			} finally {
 				setLoading( false );
 			}
 		},
-		[ fetchProfile, translate ]
+		[ fetchProfile ]
 	);
 
 	useEffect( () => {

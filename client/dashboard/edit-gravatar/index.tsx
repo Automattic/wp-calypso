@@ -5,7 +5,6 @@ import { Icon, upload, caution, people } from '@wordpress/icons';
 import { useState, ReactNode, CSSProperties, KeyboardEvent } from 'react';
 import wpcom from 'calypso/lib/wp';
 
-// Constants for file upload
 const ALLOWED_FILE_EXTENSIONS = [ 'jpg', 'jpeg', 'gif', 'png' ];
 
 /**
@@ -57,9 +56,6 @@ const cropFile = async ( file: File ): Promise< Blob > => {
 	} );
 };
 
-/**
- * Props for the EditGravatar component
- */
 interface EditGravatarProps {
 	/** URL to the user's avatar image */
 	avatarUrl: string;
@@ -73,10 +69,6 @@ interface EditGravatarProps {
 	additionalUploadHtml?: ReactNode;
 }
 
-/**
- * EditGravatar component for Dashboard v2
- * Uses WordPress components instead of Calypso dependencies and minimal CSS
- */
 const EditGravatar = ( {
 	isGravatarProfileHidden = false,
 	isEmailVerified = true,

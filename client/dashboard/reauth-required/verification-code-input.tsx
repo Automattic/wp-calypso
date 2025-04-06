@@ -1,6 +1,3 @@
-/**
- * External dependencies
- */
 import { TextControl } from '@wordpress/components';
 
 interface VerificationCodeInputProps {

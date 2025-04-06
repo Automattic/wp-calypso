@@ -1,5 +1,5 @@
 import { Button, Card, CardBody, Notice, Spinner } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import { useAuth } from '../auth';
@@ -23,7 +23,6 @@ export default function SecurityKeyForm( {
 	twoStepAuthorization: twoStepAuth = twoStepAuthorization,
 	onComplete,
 }: SecurityKeyFormProps ) {
-	const translate = useTranslate();
 	const [ isAuthenticating, setIsAuthenticating ] = useState( false );
 	const [ showError, setShowError ] = useState( false );
 
@@ -83,10 +82,10 @@ export default function SecurityKeyForm( {
 					{ ! isAuthenticating ? (
 						<div>
 							<p>
-								<strong>{ translate( 'Use your security key to finish logging in.' ) }</strong>
+								<strong>{ __( 'Use your security key to finish logging in.' ) }</strong>
 							</p>
 							<p>
-								{ translate(
+								{ __(
 									'Insert your hardware security key, or follow the instructions in your browser or phone to log in.'
 								) }
 							</p>
@@ -95,10 +94,10 @@ export default function SecurityKeyForm( {
 						<div style={ { textAlign: 'center' } }>
 							<Spinner />
 							<p style={ { fontWeight: 600, marginTop: '8px' } }>
-								{ translate( 'Waiting for security key' ) }
+								{ __( 'Waiting for security key' ) }
 							</p>
 							<p>
-								{ translate(
+								{ __(
 									'Connect and touch your security key to log in, or follow the directions in your browser or pop-up.'
 								) }
 							</p>
@@ -107,7 +106,7 @@ export default function SecurityKeyForm( {
 
 					{ showError && (
 						<Notice status="error" isDismissible={ false }>
-							{ translate(
+							{ __(
 								'An error occurred, please try again or use an alternate authentication method.'
 							) }
 						</Notice>
@@ -120,7 +119,7 @@ export default function SecurityKeyForm( {
 							disabled={ isAuthenticating }
 							style={ { width: '100%' } }
 						>
-							{ translate( 'Continue with security key' ) }
+							{ __( 'Continue with security key' ) }
 						</Button>
 					</div>
 				</CardBody>
