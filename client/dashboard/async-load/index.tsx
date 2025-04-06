@@ -1,20 +1,13 @@
-import { lazy, useMemo, Suspense, type ComponentType, type ReactNode } from 'react';
-
-const DEFAULT_PLACEHOLDER = <div className="async-load__placeholder" />;
+import { lazy, useMemo, Suspense, type ComponentType } from 'react';
 
 type AsyncLoadProps = {
-	placeholder?: ReactNode;
 	require: string;
 	[ key: string ]: unknown;
 };
 
 type RequireCallback = () => Promise< { default: ComponentType } >;
 
-export default function AsyncLoad( {
-	placeholder = DEFAULT_PLACEHOLDER,
-	require,
-	...props
-}: AsyncLoadProps ) {
+export default function AsyncLoad( { require, ...props }: AsyncLoadProps ) {
 	const Component = useMemo( () => {
 		// The string is transformed to a function by the `wpcalypso-async` Babel transform
 		const requireCb = require as unknown as RequireCallback;
@@ -22,7 +15,7 @@ export default function AsyncLoad( {
 	}, [ require ] );
 
 	return (
-		<Suspense fallback={ placeholder }>
+		<Suspense>
 			<Component { ...props } />
 		</Suspense>
 	);
