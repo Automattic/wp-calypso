@@ -1,14 +1,9 @@
-/**
- * External dependencies
- */
 import { Button, Card, CardBody, Notice, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-/**
- * Internal dependencies
- */
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
-import { useAuth } from '..';
+import { useAuth } from '../auth';
+
 interface SecurityKeyFormProps {
 	/**
 	 * The two-step authorization module. Allows for testing by injecting a mock.

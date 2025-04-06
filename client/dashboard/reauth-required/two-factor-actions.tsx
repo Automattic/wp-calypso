@@ -1,8 +1,5 @@
-/**
- * External dependencies
- */
 import { Button, Card, CardBody } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
 
 interface TwoFactorActionsProps {
 	/**
@@ -77,7 +74,7 @@ export default function TwoFactorActions( {
 							marginBottom: isAuthenticatorAvailable || isSmsAvailable ? '16px' : 0,
 						} }
 					>
-						{ translate( 'Continue with your security key' ) }
+						{ __( 'Continue with your security key' ) }
 					</Button>
 				) }
 
@@ -87,7 +84,7 @@ export default function TwoFactorActions( {
 						onClick={ handleClick }
 						style={ { width: '100%', marginBottom: isSmsAvailable ? '16px' : 0 } }
 					>
-						{ translate( 'Continue with your authenticator app' ) }
+						{ __( 'Continue with your authenticator app' ) }
 					</Button>
 				) }
 
@@ -98,7 +95,7 @@ export default function TwoFactorActions( {
 						disabled={ ! isSmsAllowed }
 						style={ { width: '100%' } }
 					>
-						{ translate( 'Send code via text message' ) }
+						{ __( 'Send code via text message' ) }
 					</Button>
 				) }
 			</CardBody>

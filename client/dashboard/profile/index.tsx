@@ -139,7 +139,7 @@ function Profile() {
 		<>
 			{ twoStepAuthorization.isReauthRequired() && (
 				<AsyncLoad
-					require="calypso/dashboard/auth/reauth-required"
+					require="calypso/dashboard/reauth-required"
 					twoStepAuthorization={ twoStepAuthorization }
 				/>
 			) }
