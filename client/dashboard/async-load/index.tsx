@@ -1,9 +1,8 @@
 import { lazy, useMemo, Suspense, type ComponentType } from 'react';
 
-type AsyncLoadProps = {
+interface AsyncLoadProps {
 	require: string;
-	[ key: string ]: unknown;
-};
+}
 
 type RequireCallback = () => Promise< { default: ComponentType } >;
 
