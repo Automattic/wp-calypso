@@ -6,6 +6,7 @@ import {
 	ErrorComponent,
 	Outlet,
 } from '@tanstack/react-router';
+import Billing from '../billing';
 import {
 	fetchProfile,
 	fetchSite,
@@ -14,22 +15,21 @@ import {
 	fetchEmails,
 	FetchSiteRouteResponse,
 } from '../data';
-import { Domain, Email, Site, User } from '../data/types';
 import Domains from '../domains';
 import Emails from '../emails';
 import Header from '../header';
 import Me from '../me';
-import Billing from '../me/billing';
-import MeNotifications from '../me/notifications';
-import Privacy from '../me/privacy';
-import Security from '../me/security';
+import Notifications from '../notifications';
+import Privacy from '../privacy';
 import Profile from '../profile';
+import Security from '../security';
 import SiteLayout from '../site';
 import SiteDeployments from '../site-deployments';
 import SiteOverview from '../site-overview';
 import Sites from '../sites';
 import NotFound from './404';
 import { queryClient } from './query-client';
+import type { Domain, Email, Site, User } from '../data/types';
 
 function DashboardLayout() {
 	return (
@@ -150,7 +150,7 @@ const privacyRoute = createRoute( {
 const notificationsRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'notifications',
-	component: MeNotifications,
+	component: Notifications,
 } );
 
 const notFoundRoute = createRoute( {

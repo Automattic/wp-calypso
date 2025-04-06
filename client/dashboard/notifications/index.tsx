@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
-import PageLayout from '../../page-layout';
+import PageLayout from '../page-layout';
 
-function MeNotifications() {
+function Notifications() {
 	return (
 		<PageLayout
 			title={ __( 'Notifications' ) }
@@ -10,4 +10,4 @@ function MeNotifications() {
 	);
 }
 
-export default MeNotifications;
+export default Notifications;
