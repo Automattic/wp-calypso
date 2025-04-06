@@ -1,4 +1,4 @@
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useRouter } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -16,9 +16,13 @@ import './style.scss';
 
 function NavMenuItem( { to, children }: { to: string; children: React.ReactNode } ) {
 	const navigate = useNavigate();
+	const router = useRouter();
+	const href = router.buildLocation( {
+		to,
+	} ).href;
 	return (
 		<MenuItem
-			href={ to }
+			href={ href }
 			onClick={ ( e ) => {
 				e.preventDefault();
 				navigate( { to } );

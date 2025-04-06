@@ -1,3 +1,4 @@
+import { useNavigate, useRouter } from '@tanstack/react-router';
 import {
 	Card,
 	Flex,
@@ -6,12 +7,14 @@ import {
 	Button,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useHref, useLinkClickHandler } from 'react-router-dom';
 
 function NotFound() {
 	const to = '/sites';
-	const handleClick = useLinkClickHandler( to );
-	const href = useHref( to );
+	const navigate = useNavigate();
+	const router = useRouter();
+	const href = router.buildLocation( {
+		to,
+	} ).href;
 
 	return (
 		<Flex
@@ -35,7 +38,7 @@ function NotFound() {
 							</p>
 						</FlexBlock>
 						<div style={ { marginTop: '8px', marginBottom: '8px' } }>
-							<Button variant="primary" href={ href } onClick={ handleClick }>
+							<Button variant="primary" href={ href } onClick={ () => navigate( { to } ) }>
 								{ __( 'Go to Sites' ) }
 							</Button>
 						</div>

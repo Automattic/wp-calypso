@@ -6,6 +6,7 @@ import {
 	ErrorComponent,
 	Outlet,
 } from '@tanstack/react-router';
+import NotFound from '../404';
 import Billing from '../billing';
 import {
 	fetchProfile,
@@ -27,7 +28,6 @@ import SiteLayout from '../site';
 import SiteDeployments from '../site-deployments';
 import SiteOverview from '../site-overview';
 import Sites from '../sites';
-import NotFound from './404';
 import { queryClient } from './query-client';
 import type { Domain, Email, Site, User } from '../data/types';
 

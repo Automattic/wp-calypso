@@ -1,4 +1,4 @@
-import { useNavigate, useMatchRoute } from '@tanstack/react-router';
+import { useNavigate, useMatchRoute, useRouter } from '@tanstack/react-router';
 import { __experimentalHStack as HStack, Button } from '@wordpress/components';
 import clsx from 'clsx';
 import './style.scss';
@@ -7,7 +7,10 @@ function MenuItem( { to, children }: { to: string; children: React.ReactNode } )
 	const navigate = useNavigate();
 	const matchRoute = useMatchRoute();
 	const isActive = matchRoute( { to } );
-
+	const router = useRouter();
+	const href = router.buildLocation( {
+		to,
+	} ).href;
 	const handleClick = ( e: React.MouseEvent ) => {
 		e.preventDefault();
 		navigate( { to } );
@@ -19,7 +22,7 @@ function MenuItem( { to, children }: { to: string; children: React.ReactNode } )
 				'is-active': isActive,
 			} ) }
 			variant="tertiary"
-			href={ to }
+			href={ href }
 			onClick={ handleClick }
 			__next40pxDefaultSize
 		>
