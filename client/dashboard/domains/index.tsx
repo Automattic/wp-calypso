@@ -3,8 +3,8 @@ import { Card } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { Domain } from '../data';
 import PageLayout from '../page-layout';
+import type { Domain } from '../data/types';
 
 const fields = [
 	{
