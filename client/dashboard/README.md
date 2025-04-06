@@ -5,6 +5,7 @@ Build a new hosting dashboard for WordPress.com based on the new design. The sam
 # Some principles:
 
 - @wordpress/components and design system based, avoid CSS as much as possible.
+ - Prefer VStack, HStack over Flex components.
  - Build as a separate section/url in Calypso /v2 but avoid importing Calypso's components, CSS and state.
  - Be very explicit about what dependencies we include.
  - Don't use Redux and calypso/state.

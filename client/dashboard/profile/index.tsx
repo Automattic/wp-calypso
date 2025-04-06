@@ -5,12 +5,10 @@ import {
 	Card,
 	CardBody,
 	CheckboxControl,
-	Flex,
-	FlexBlock,
-	FlexItem,
 	Notice,
 	TextareaControl,
 	__experimentalText as Text,
+	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { useMemo, useState } from '@wordpress/element';
@@ -165,17 +163,17 @@ function Profile() {
 
 					<Card>
 						<CardBody>
-							<Flex gap={ 3 }>
-								<FlexItem>
+							<HStack justify="flex-start">
+								<div>
 									<EditGravatar avatarUrl={ data.avatar_URL } userEmail={ data.user_email } />
-								</FlexItem>
-								<FlexBlock>
+								</div>
+								<div>
 									<Text>{ __( 'This is your profile photo.' ) }</Text>
 									<Text variant="muted">
 										{ __( 'It appears when you comment on other blogs.' ) }
 									</Text>
-								</FlexBlock>
-							</Flex>
+								</div>
+							</HStack>
 						</CardBody>
 					</Card>
 
