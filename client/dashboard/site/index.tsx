@@ -10,22 +10,22 @@ function Site() {
 		<>
 			<HeaderBar>
 				<HStack justify="flex-start" spacing={ 4 }>
-					{ site.media && (
-						<Button
-							variant="tertiary"
-							__next40pxDefaultSize
-							style={ { flexShrink: 0, color: 'inherit' } }
-						>
-							<HStack style={ { width: 'auto' } }>
+					<Button
+						variant="tertiary"
+						__next40pxDefaultSize
+						style={ { flexShrink: 0, color: 'inherit' } }
+					>
+						<HStack style={ { width: 'auto' } }>
+							{ site.media && (
 								<img
 									src={ site.media }
 									alt={ site.name }
 									style={ { width: '24px', borderRadius: '2px' } }
 								/>
-								<span>{ site.name }</span>
-							</HStack>
-						</Button>
-					) }
+							) }
+							<span>{ site.name }</span>
+						</HStack>
+					</Button>
 					<SiteMenu siteId={ site.id } />
 				</HStack>
 			</HeaderBar>

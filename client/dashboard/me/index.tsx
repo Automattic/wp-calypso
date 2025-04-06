@@ -1,4 +1,6 @@
 import { Outlet } from '@tanstack/react-router';
+import { __experimentalHStack as HStack, Button } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import HeaderBar from '../header-bar';
 import MeMenu from '../me-menu';
 
@@ -6,7 +8,16 @@ function Me() {
 	return (
 		<>
 			<HeaderBar>
-				<MeMenu />
+				<HStack justify="flex-start" spacing={ 4 }>
+					<Button
+						variant="tertiary"
+						__next40pxDefaultSize
+						style={ { flexShrink: 0, color: 'inherit' } }
+					>
+						{ __( 'Account' ) }
+					</Button>
+					<MeMenu />
+				</HStack>
 			</HeaderBar>
 			<Outlet />
 		</>
