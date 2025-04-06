@@ -27,6 +27,14 @@ import Sites from '../sites';
 import { queryClient } from './query-client';
 import type { Domain, Email, Site, User } from '../data/types';
 
+interface RouteContext {
+	auth?: {
+		twoStep?: {
+			two_step_reauthorization_required?: boolean;
+		};
+	};
+}
+
 function DashboardLayout() {
 	return (
 		<div className="dashboard__layout">
@@ -125,6 +133,11 @@ const meRoute = createRoute( {
 			queryFn: fetchProfile,
 		} ) as Promise< User >,
 	notFoundComponent: NotFound,
+	beforeLoad: ( { context }: { context: RouteContext } ) => {
+		if ( context?.auth?.twoStep?.two_step_reauthorization_required ) {
+			throw redirect( { to: '/re-auth-required' } );
+		}
+	},
 } );
 
 const profileRoute = createRoute( {

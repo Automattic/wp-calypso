@@ -1,5 +1,5 @@
 import wpcom from 'calypso/lib/wp';
-import type { User, Domain, Site, SiteOptions, Plan, Email } from './types';
+import type { User, Domain, Site, SiteOptions, Plan, Email, TwoStep } from './types';
 
 export const fetchProfile = () =>
 	wpcom.req.get( {
@@ -326,4 +326,11 @@ export const fetchEmail = ( id: string ): Promise< Email | undefined > => {
 
 export const fetchUser = async (): Promise< User > => {
 	return await wpcom.me().get();
+};
+
+export const fetchTwoStep = async (): Promise< TwoStep > => {
+	return wpcom.req.get( {
+		path: '/me/two-step/?http_envelope=1',
+		apiNamespace: 'rest/v1.1',
+	} ) as Promise< TwoStep >;
 };

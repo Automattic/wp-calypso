@@ -71,3 +71,7 @@ export interface Email {
 	createdDate: string;
 	status: 'active' | 'pending' | 'suspended';
 }
+
+export interface TwoStep {
+	two_step_reauthorization_required: boolean;
+}

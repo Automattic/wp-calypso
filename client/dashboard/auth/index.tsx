@@ -1,12 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 import { createContext, useContext } from 'react';
-import { fetchUser } from '../data';
-import type { User } from '../data/types';
+import { fetchUser, fetchTwoStep } from '../data';
+import type { User, TwoStep } from '../data/types';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
+export const TWO_STEP_QUERY_KEY = [ 'me', 'two-step' ];
 
 interface AuthContextType {
 	user: User;
+	twoStep: TwoStep;
 }
 const AuthContext = createContext< AuthContextType | undefined >( undefined );
 
@@ -20,8 +22,8 @@ const AuthContext = createContext< AuthContextType | undefined >( undefined );
 export function AuthProvider( { children }: { children: React.ReactNode } ) {
 	const {
 		data: user,
-		isLoading,
-		isError,
+		isLoading: userIsLoading,
+		isError: userIsError,
 	} = useQuery( {
 		queryKey: AUTH_QUERY_KEY,
 		queryFn: fetchUser,
@@ -29,7 +31,17 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		retry: false, // Don't retry on 401 errors
 	} );
 
-	if ( isError ) {
+	const {
+		data: twoStep,
+		isLoading: twoStepIsLoading,
+		isError: twoStepIsError,
+	} = useQuery( {
+		queryKey: TWO_STEP_QUERY_KEY, // /me/two-step/
+		queryFn: fetchTwoStep,
+		staleTime: 30 * 60 * 1000, // Consider auth valid for 30 minutes
+		retry: false, // Don't retry on 401 errors
+	} );
+	if ( userIsError || twoStepIsError ) {
 		if ( typeof window !== 'undefined' ) {
 			const currentPath = window.location.pathname;
 			const loginUrl = `/log-in?redirect_to=${ encodeURIComponent( currentPath ) }`;
@@ -38,11 +50,11 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		return null;
 	}
 
-	if ( isLoading || ! user ) {
+	if ( userIsLoading || twoStepIsLoading || ! user || ! twoStep ) {
 		return null;
 	}
 
-	return <AuthContext.Provider value={ { user } }>{ children }</AuthContext.Provider>;
+	return <AuthContext.Provider value={ { user, twoStep } }>{ children }</AuthContext.Provider>;
 }
 
 /**
