@@ -1,47 +1,51 @@
 import { useNavigate, useLoaderData } from '@tanstack/react-router';
 import { Button, Card, ExternalLink } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
-import { useState } from '@wordpress/element';
+import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import PageLayout from '../page-layout';
 import type { Email } from '../data/types';
 import type { View, Field } from '@wordpress/dataviews';
 
-// Define actions
-const actions = [
-	// Regular actions
+const fields = [
 	{
-		id: 'manage',
-		label: __( 'Manage' ),
-		callback: ( [ item ] ) => {
-			navigate( `/emails/${ item.id }` );
-		},
+		id: 'emailAddress',
+		label: __( 'Email Address' ),
+		enableGlobalSearch: true,
+		render: ( { item } ) =>
+			item.type === 'mailbox' ? (
+				<ExternalLink href={ `https://mail.${ item.domainName }` }>
+					{ item.emailAddress }
+				</ExternalLink>
+			) : (
+				item.emailAddress
+			),
 	},
 	{
-		id: 'edit',
-		label: __( 'Edit' ),
-		callback: ( [ item ] ) => {
-			navigate( `/emails/${ item.id }/edit` );
-		},
+		id: 'type',
+		label: __( 'Type' ),
+		render: ( { item } ) => ( item.type === 'mailbox' ? __( 'Mailbox' ) : __( 'Forwarding' ) ),
+		getValue: ( { item } ) => item.type,
+		elements: [
+			{ value: 'mailbox', label: __( 'Mailbox' ) },
+			{ value: 'forwarding', label: __( 'Forwarding' ) },
+		],
 	},
 	{
-		id: 'access-webmail',
-		label: __( 'Access Webmail' ),
-		callback: ( [ item ] ) => {
-			window.open( `https://mail.${ item.domainName }`, '_blank' );
+		id: 'provider',
+		label: __( 'Provider' ),
+		render: ( { item } ) => {
+			if ( item.type === 'forwarding' && item.forwardingTo ) {
+				return `${ __( 'Forwards to' ) } ${ item.forwardingTo }`;
+			}
+
+			// Display the provider display name from the data
+			// This keeps the component agnostic while showing user-friendly names
+			return item.providerDisplayName;
 		},
-		isEligible: ( item ) => item.type === 'mailbox',
+		getValue: ( { item } ) => item.provider,
 	},
-	{
-		id: 'delete',
-		label: __( 'Delete' ),
-		callback: () => {
-			setSelection( [] );
-		},
-		isDestructive: true,
-		supportsBulk: true,
-	},
-];
+] as Field< Email >[];
 
 export default function Emails() {
 	const navigate = useNavigate();
@@ -61,51 +65,47 @@ export default function Emails() {
 		titleField: 'emailAddress',
 	} );
 
-	// Field definitions
-	const fields = [
-		{
-			id: 'emailAddress',
-			label: __( 'Email Address' ),
-			enableGlobalSearch: true,
-			render: ( { item } ) =>
-				item.type === 'mailbox' ? (
-					<ExternalLink href={ `https://mail.${ item.domainName }` }>
-						{ item.emailAddress }
-					</ExternalLink>
-				) : (
-					item.emailAddress
-				),
-		},
-		{
-			id: 'type',
-			label: __( 'Type' ),
-			render: ( { item } ) => ( item.type === 'mailbox' ? __( 'Mailbox' ) : __( 'Forwarding' ) ),
-			getValue: ( { item } ) => item.type,
-			elements: [
-				{ value: 'mailbox', label: __( 'Mailbox' ) },
-				{ value: 'forwarding', label: __( 'Forwarding' ) },
-			],
-		},
-		{
-			id: 'provider',
-			label: __( 'Provider' ),
-			render: ( { item } ) => {
-				if ( item.type === 'forwarding' && item.forwardingTo ) {
-					return `${ __( 'Forwards to' ) } ${ item.forwardingTo }`;
-				}
-
-				// Display the provider display name from the data
-				// This keeps the component agnostic while showing user-friendly names
-				return item.providerDisplayName;
+	const actions = useMemo(
+		() => [
+			{
+				id: 'manage',
+				label: __( 'Manage' ),
+				callback: ( [ item ] ) => {
+					navigate( { to: `/emails/${ item.id }` } );
+				},
 			},
-			getValue: ( { item } ) => item.provider,
-		},
-	] as Field< Email >[];
+			{
+				id: 'edit',
+				label: __( 'Edit' ),
+				callback: ( [ item ] ) => {
+					navigate( { to: `/emails/${ item.id }/edit` } );
+				},
+			},
+			{
+				id: 'access-webmail',
+				label: __( 'Access Webmail' ),
+				callback: ( [ item ] ) => {
+					window.open( `https://mail.${ item.domainName }`, '_blank' );
+				},
+				isEligible: ( item ) => item.type === 'mailbox',
+			},
+			{
+				id: 'delete',
+				label: __( 'Delete' ),
+				callback: () => {
+					setSelection( [] );
+				},
+				isDestructive: true,
+				supportsBulk: true,
+			},
+		],
+		[ navigate ]
+	);
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( emails, view, fields );
 
 	const onClickItem = ( item: Email ) => {
-		navigate( `/emails/${ item.id }` );
+		navigate( { to: `/emails/${ item.id }` } );
 	};
 
 	return (
