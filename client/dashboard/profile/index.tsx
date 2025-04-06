@@ -21,6 +21,80 @@ import PageLayout from '../page-layout';
 import type { User } from '../data/types';
 import type { Field, Form } from '@wordpress/dataviews';
 
+const fields = [
+	{
+		id: 'user_login',
+		label: __( 'Username' ),
+		type: 'text',
+	},
+	{
+		id: 'display_name',
+		label: __( 'Display name' ),
+		type: 'text',
+	},
+	{
+		id: 'user_email',
+		label: __( 'Email' ),
+		type: 'text',
+	},
+	{
+		id: 'user_URL',
+		label: __( 'Site Address' ),
+		type: 'text',
+	},
+	{
+		id: 'description',
+		label: __( 'About me' ),
+		type: 'text',
+		Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
+			const { id, getValue } = field;
+			return (
+				<TextareaControl
+					label={ hideLabelFromVision ? '' : field.label }
+					value={ getValue( { item: data } ) || '' }
+					onChange={ ( value ) => onChange( { [ id ]: value } ) }
+					rows={ 4 }
+				/>
+			);
+		},
+	},
+	{
+		id: 'isDeveloper',
+		label: __( 'I am a developer' ),
+		type: 'integer',
+		description: __( 'Opt me into previews of new developer-focused features.' ),
+		Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
+			const { id, getValue, description } = field;
+			return (
+				<CheckboxControl
+					__nextHasNoMarginBottom
+					label={ hideLabelFromVision ? '' : field.label }
+					help={ description }
+					checked={ Boolean( getValue( { item: data } ) ) }
+					onChange={ () => onChange( { [ id ]: ! getValue( { item: data } ) ? 1 : 0 } ) }
+				/>
+			);
+		},
+	},
+] as Field< User >[];
+
+const form = {
+	type: 'regular',
+	labelPosition: 'top',
+	fields: [
+		{
+			id: 'personalInfo',
+			label: __( 'Personal Information' ),
+			children: [ 'user_login', 'display_name', 'user_email', 'user_URL', 'description' ],
+		},
+		{
+			id: 'developerOptions',
+			label: __( 'Developer options' ),
+			children: [ 'isDeveloper' ],
+		},
+	],
+} as Form;
+
 function Profile() {
 	const mutation = useMutation( { mutationFn: updateProfile } );
 	const serverData = useLoaderData( { from: '/me' } ) as User;
@@ -33,95 +107,8 @@ function Profile() {
 		return { ...serverData, ...localFormData };
 	}, [ localFormData, serverData ] );
 
-	// Remove the mutation related code and use fetcher state
-	// const isSaving = fetcher.state === 'submitting';
-	// const error = fetcher.data?.error;
 	const isSaving = mutation.isPending;
 	const error = mutation.error;
-
-	// Define fields for the DataForm
-	const fields = useMemo(
-		() =>
-			[
-				{
-					id: 'user_login',
-					label: __( 'Username' ),
-					type: 'text',
-				},
-				{
-					id: 'display_name',
-					label: __( 'Display name' ),
-					type: 'text',
-				},
-				{
-					id: 'user_email',
-					label: __( 'Email' ),
-					type: 'text',
-				},
-				{
-					id: 'user_URL',
-					label: __( 'Site Address' ),
-					type: 'text',
-				},
-				{
-					id: 'description',
-					label: __( 'About me' ),
-					type: 'text',
-					Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
-						const { id, getValue } = field;
-						return (
-							<TextareaControl
-								label={ hideLabelFromVision ? '' : field.label }
-								value={ getValue( { item: data } ) || '' }
-								onChange={ ( value ) => onChange( { [ id ]: value } ) }
-								rows={ 4 }
-							/>
-						);
-					},
-				},
-				{
-					id: 'isDeveloper',
-					label: __( 'I am a developer' ),
-					type: 'integer',
-					description: __( 'Opt me into previews of new developer-focused features.' ),
-					Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
-						const { id, getValue, description } = field;
-						return (
-							<CheckboxControl
-								__nextHasNoMarginBottom
-								label={ hideLabelFromVision ? '' : field.label }
-								help={ description }
-								checked={ Boolean( getValue( { item: data } ) ) }
-								onChange={ () => onChange( { [ id ]: ! getValue( { item: data } ) ? 1 : 0 } ) }
-							/>
-						);
-					},
-				},
-			] as Field< User >[],
-		[]
-	);
-
-	// Define form layout
-	const form = useMemo(
-		() =>
-			( {
-				type: 'regular',
-				labelPosition: 'top',
-				fields: [
-					{
-						id: 'personalInfo',
-						label: __( 'Personal Information' ),
-						children: [ 'user_login', 'display_name', 'user_email', 'user_URL', 'description' ],
-					},
-					{
-						id: 'developerOptions',
-						label: __( 'Developer options' ),
-						children: [ 'isDeveloper' ],
-					},
-				],
-			} ) as Form,
-		[]
-	);
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
