@@ -42,7 +42,7 @@ export interface Site {
 	id: string;
 	name: string;
 	url: string;
-	media: string;
+	media?: string;
 	backups: 'enabled' | 'disabled';
 	protect: 'enabled' | 'disabled';
 	subscribers: number;
