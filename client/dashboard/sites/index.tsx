@@ -77,13 +77,7 @@ const fields = [
 
 function Sites() {
 	const navigate = useNavigate();
-	const querySitesData = useLoaderData( {
-		// https://tanstack.com/router/latest/docs/framework/react/api/router/useLoaderDataHook#optsstrict-option
-		// This is so the UI component is decouple from the route declaration.
-		// The route declaration can be different per different apps,
-		// compare the A4A router and the dotcom router.
-		strict: false,
-	} ) as Site[];
+	const querySitesData = useLoaderData( { from: '/sites' } ) as Site[];
 	const [ sites, setSites ] = useState< Site[] >( [] );
 	useEffect( () => {
 		if ( querySitesData ) {

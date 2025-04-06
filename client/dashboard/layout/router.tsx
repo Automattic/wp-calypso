@@ -185,6 +185,12 @@ export const router = new Router( {
 	defaultErrorComponent: ( { error } ) => <ErrorComponent error={ error as Error } />,
 } );
 
+export const routerA4A = new Router( {
+	routeTree, // TODO: define routes and menus for A4A.
+	basepath: '/v2-a4a',
+	defaultErrorComponent: ( { error } ) => <ErrorComponent error={ error as Error } />,
+} );
+
 declare module '@tanstack/react-router' {
 	interface Register {
 		router: typeof router;
