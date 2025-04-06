@@ -297,3 +297,7 @@ export const findEmailById = ( id: string ): Email | undefined => {
 export const fetchEmail = ( id: string ): Promise< Email | undefined > => {
 	return Promise.resolve( findEmailById( id ) );
 };
+
+export const fetchUser = async (): Promise< User > => {
+	return await wpcom.me().get();
+};

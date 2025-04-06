@@ -1,7 +1,10 @@
+import { useQuery } from '@tanstack/react-query';
 import { createContext, useContext } from 'react';
 import { login } from 'calypso/lib/paths/login';
-import { useAuthQuery } from './use-auth-query';
+import { fetchUser } from '../data';
 import type { User } from '../data/types';
+
+export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
 
 interface AuthContextType {
 	user: User;
@@ -16,7 +19,16 @@ const AuthContext = createContext< AuthContextType | undefined >( undefined );
  * 4. Redirects to login if unauthorized
  */
 export function AuthProvider( { children }: { children: React.ReactNode } ) {
-	const { data: user, isLoading, isError } = useAuthQuery();
+	const {
+		data: user,
+		isLoading,
+		isError,
+	} = useQuery( {
+		queryKey: AUTH_QUERY_KEY,
+		queryFn: fetchUser,
+		staleTime: 30 * 60 * 1000, // Consider auth valid for 30 minutes
+		retry: false, // Don't retry on 401 errors
+	} );
 
 	if ( isError ) {
 		if ( typeof window !== 'undefined' ) {
