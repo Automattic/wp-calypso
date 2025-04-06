@@ -35,11 +35,10 @@ export function useIsBigSkyEligible( flowName?: string ) {
 	const isEligiblePlan = isPremiumPlan( product_slug ) || isBusinessPlan( product_slug );
 
 	if ( flowName === AI_SITE_BUILDER_FLOW ) {
-		return { isLoading: false, isEligible: true };
+		return { isEligible: true };
 	}
 
 	return {
-		isLoading: false,
 		isEligible:
 			featureFlagEnabled && isOwner && isEligiblePlan && isEligibleGoals && onSupportedDevice,
 	};
