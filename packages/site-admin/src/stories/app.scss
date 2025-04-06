@@ -27,6 +27,7 @@ body.is-app-story {
 		color: $gray-900;
 		background-color: $white;
 
+		margin: $grid-unit-20 $grid-unit-20 $grid-unit-20 0;
 		max-width: calc(100% - $sidebar-width - $grid-unit-20);
 		flex-grow: 1;
 		overflow-y: auto;
@@ -62,8 +63,9 @@ body.is-app-story {
 	display: flex;
 	flex-direction: column;
 	justify-self: start;
-	margin: 0 auto $grid-unit-80 ;
-	padding: $grid-unit-80 $grid-unit-60;
+	width: 100%;
+	margin: $grid-unit-20 auto $grid-unit-80 ;
+	padding: $grid-unit-60 $grid-unit-60;
 
 	& &__heading {
 		font-size: 48px;
