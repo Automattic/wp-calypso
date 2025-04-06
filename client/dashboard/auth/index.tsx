@@ -1,6 +1,7 @@
 import { createContext, useContext } from 'react';
 import { login } from 'calypso/lib/paths/login';
-import { useAuthQuery, User } from './use-auth-query';
+import { useAuthQuery } from './use-auth-query';
+import type { User } from '../data/types';
 
 interface AuthContextType {
 	user: User;

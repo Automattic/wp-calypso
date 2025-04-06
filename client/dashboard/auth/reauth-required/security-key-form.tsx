@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
  * Internal dependencies
  */
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
-import { useAuth } from '../auth-context';
+import { useAuth } from '..';
 interface SecurityKeyFormProps {
 	/**
 	 * The two-step authorization module. Allows for testing by injecting a mock.

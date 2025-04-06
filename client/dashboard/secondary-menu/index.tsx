@@ -11,7 +11,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { help, bellUnread, bell, commentAuthorAvatar } from '@wordpress/icons';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
-import { useAuth } from '../auth/auth-context';
+import { useAuth } from '../auth';
 import './style.scss';
 
 function NavMenuItem( { to, children }: { to: string; children: React.ReactNode } ) {

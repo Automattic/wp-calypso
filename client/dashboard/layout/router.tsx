@@ -1,7 +1,7 @@
 import {
 	Router,
 	createRoute,
-	RootRoute,
+	createRootRoute,
 	redirect,
 	ErrorComponent,
 	Outlet,
@@ -42,12 +42,11 @@ function DashboardLayout() {
 	);
 }
 
-// Create the root route
-const rootRoute = new RootRoute( {
+const rootRoute = createRootRoute( {
 	component: DashboardLayout,
+	notFoundComponent: NotFound,
 } );
 
-// Create the routes
 const indexRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: '/',
@@ -76,6 +75,7 @@ const siteRoute = createRoute( {
 			queryKey: [ 'site', siteId ],
 			queryFn: () => fetchSite( siteId ),
 		} ) as Promise< FetchSiteRouteResponse >,
+	notFoundComponent: NotFound,
 } );
 
 const siteOverviewRoute = createRoute( {
@@ -121,6 +121,7 @@ const meRoute = createRoute( {
 			queryKey: [ 'profile' ],
 			queryFn: fetchProfile,
 		} ) as Promise< User >,
+	notFoundComponent: NotFound,
 } );
 
 const profileRoute = createRoute( {
@@ -153,12 +154,6 @@ const notificationsRoute = createRoute( {
 	component: Notifications,
 } );
 
-const notFoundRoute = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: '*',
-	component: NotFound,
-} );
-
 // Create the router
 const routeTree = rootRoute.addChildren( [
 	indexRoute,
@@ -173,7 +168,6 @@ const routeTree = rootRoute.addChildren( [
 		privacyRoute,
 		notificationsRoute,
 	] ),
-	notFoundRoute,
 ] );
 
 export const router = new Router( {
