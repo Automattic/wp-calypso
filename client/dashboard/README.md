@@ -21,3 +21,8 @@ Build a new hosting dashboard for WordPress.com based on the new design. The sam
 
 - Importing SASS files seems to bring other unexpected CSS variables to our bundles (masterbar, sidebar), it also brings fonts (Recoleta, Noto) and some global classes. Why? Imports should ideally be explicit.
 - The WordPress.com logo should be built as a reusable component/package.
+
+## E2E testing
+
+- Why must Jest be passed an environment variable so that it tests on localhost and not wordpress.com? Right now we need to call `CALYPSO_BASE_URL=http://calypso.localhost:3000 yarn workspace wp-e2e-tests test -- test/e2e/specs/dashboard/`. Why is that not the default???
+- Right now, we are following Calypso's practice of defining a DashboardPage in the calypso-e2e package and using it as the testing interface in the test suite under (`test/e2e/specs`). I'm leaning towards drastically simplifying this, but I want to give it a shot first.
