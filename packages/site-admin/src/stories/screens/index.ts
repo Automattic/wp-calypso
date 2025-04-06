@@ -1,3 +1,4 @@
+export * from './categories';
 export * from './home';
-export * from './docs-components';
-export * from './docs-routing-system';
+export * from './pages';
+export * from './tags';

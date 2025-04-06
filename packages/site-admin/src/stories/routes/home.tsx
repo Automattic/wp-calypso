@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { DocsComponents, DocsRoutingSystem, Home } from '../screens';
-import { SidebarComponents, SidebarHome } from '../sidebar';
+import { Home, Pages, Categories, Tags } from '../screens';
+import { SidebarHome } from '../sidebar';
 
 const routes = [
 	{
@@ -16,21 +16,30 @@ const routes = [
 		widths: {},
 	},
 	{
-		name: 'docs-components',
-		path: '/components',
+		name: 'pages',
+		path: '/pages',
 		areas: {
-			sidebar: <SidebarComponents />,
-			content: <DocsComponents />,
+			sidebar: <SidebarHome />,
+			content: <Pages />,
 		},
 
 		widths: {},
 	},
 	{
-		name: 'docs-routing-system',
-		path: '/routing-system',
+		name: 'categories',
+		path: '/categories',
 		areas: {
 			sidebar: <SidebarHome />,
-			content: <DocsRoutingSystem />,
+			content: <Categories />,
+		},
+		widths: {},
+	},
+	{
+		name: 'tags',
+		path: '/tags',
+		areas: {
+			sidebar: <SidebarHome />,
+			content: <Tags />,
 		},
 		widths: {},
 	},

@@ -1,3 +1,4 @@
+@import "@wordpress/base-styles/colors";
 @import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/breakpoints";
@@ -11,4 +12,12 @@
 	background: $gray-900;
 	color: $gray-400;
 	font-family: $default-font;
+
+	a {
+		color: #2271b1;
+		transition-property: border, background, color;
+		transition-duration: .05s;
+		transition-timing-function: ease-in-out;
+		font-size: $font-size-large;
+	}
 }

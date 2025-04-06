@@ -8,7 +8,6 @@ $sidebar-width: 300px;
 	box-sizing: border-box;
 }
 
-
 body.is-app-story {
 	padding: 0 !important;
 }
@@ -18,8 +17,6 @@ body.is-app-story {
 		height: 100vh;
 		display: flex;
 		flex-direction: row;
-		background: $gray-900;
-		color: $gray-400;
 	}
 
 	&__sidebar-region {
@@ -29,21 +26,50 @@ body.is-app-story {
 	&__area {
 		color: $gray-900;
 		background-color: $white;
-		max-width: calc(100% - $sidebar-width - $grid-unit-20);
-        margin: $grid-unit-20 $grid-unit-20 $grid-unit-20 0;
 
+		max-width: calc(100% - $sidebar-width - $grid-unit-20);
 		flex-grow: 1;
 		overflow-y: auto;
 
 		border-radius: $radius-large;
-		box-shadow:
-			0 1px 1px rgba(0, 0, 0, 0.03),
-			0 1px 2px rgba(0, 0, 0, 0.02),
-			0 3px 3px rgba(0, 0, 0, 0.02),
-			0 4px 4px rgba(0, 0, 0, 0.01);
 	}
 }
 
-.screen-content-area {
-	padding: $grid-unit-20;
+.screen-home {
+	padding: 0 $grid-unit-20;
+}
+
+.screen-main-area {
+	margin-top: $grid-unit-40;
+	padding: 0 $grid-unit-60;
+
+	&__card {
+		width: 100%;
+	}
+
+	&__card-icon {
+		fill: $white;
+		background-color: $gray-900;
+		border-radius: $radius-medium;
+		padding: $grid-unit-10;
+	}
+}
+
+.welcome-panel {
+	color: $white;
+	background-color: $gray-900;
+
+	display: flex;
+	flex-direction: column;
+	justify-self: start;
+	margin: 0 auto $grid-unit-80 ;
+	padding: $grid-unit-80 $grid-unit-60;
+
+	& &__heading {
+		font-size: 48px;
+	}
+
+	&__description {
+		font-size: $font-size-x-large;
+	}
 }
