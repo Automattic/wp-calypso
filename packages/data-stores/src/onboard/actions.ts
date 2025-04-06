@@ -382,6 +382,7 @@ export const setPartnerBundle = ( partnerBundle: string | null ) => ( {
 } );
 
 export const setCreateWithBigSky = ( createWithBigSky: boolean ) => ( {
+	// TODO: we could be able to delete this, at the moment it's never set to true
 	type: 'SET_CREATE_WITH_BIG_SKY' as const,
 	createWithBigSky,
 } );

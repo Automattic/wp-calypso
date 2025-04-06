@@ -52,6 +52,10 @@ const onboarding: Flow = {
 	name: ONBOARDING_FLOW,
 	isSignupFlow: true,
 	__experimentalUseBuiltinAuth: true,
+	// This entire hook can be removed as we are no longer tracking/setting
+	// these event props in the onboarding flow. This would be best in the
+	// site-setup flow where the goal step is now.
+	// https://github.com/Automattic/wp-calypso/pull/101921/files/35e9ff8020e748de100fa6ff07c70c46255221ee#r2021712784
 	useTracksEventProps() {
 		const userIsLoggedIn = useSelector( isUserLoggedIn );
 		const goals = useSelect(
