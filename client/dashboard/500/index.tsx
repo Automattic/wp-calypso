@@ -13,7 +13,7 @@ function UnknownError( { error }: { error: Error } ) {
 
 	return (
 		<PageLayout
-			title={ __( '505 Error' ) }
+			title={ __( '500 Error' ) }
 			description={ __( 'Something wrong happened.' ) }
 			actions={
 				<Button
