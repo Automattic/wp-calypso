@@ -182,9 +182,12 @@ export const fetchSiteMonitorUptime = async (
 	if ( ! id ) {
 		return Promise.reject( new Error( 'Site ID is undefined' ) );
 	}
-	const jetpackSite = await wpcom.req.get( `/jetpack-blogs/${ id }` );
-	// TODO: there might be more checks needed here and/or in different contexts.
-	if ( ! jetpackSite?.settings?.monitor_active ) {
+	// TODO: check this in different contexts and why `&fields=jetpack,jetpack_modules` is not working for atomic sites.
+	const site = await wpcom.req.get( {
+		path: `/sites/${ id }?http_envelope=1`,
+		apiNamespace: 'rest/v1.1',
+	} );
+	if ( ! site?.jetpack || ! site?.jetpack_modules?.includes( 'monitor' ) ) {
 		return;
 	}
 	return wpcom.req.get(
