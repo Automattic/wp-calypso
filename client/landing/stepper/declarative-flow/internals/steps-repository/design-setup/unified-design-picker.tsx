@@ -365,7 +365,6 @@ const UnifiedDesignPickerStep: StepType< {
 				flow={ flow }
 				isPremiumThemeAvailable={ isPremiumThemeAvailable }
 				stepName={ stepName }
-				handleSubmit={ handleSubmit }
 				numOfSelectedGlobalStyles={ numOfSelectedGlobalStyles }
 				previewDesignVariation={ previewDesignVariation }
 				setSelectedColorVariation={ setSelectedColorVariation }

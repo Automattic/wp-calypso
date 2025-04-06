@@ -90,7 +90,6 @@ interface UnifiedDesignPickerPreviewProps {
 	flow: string;
 	isPremiumThemeAvailable: boolean;
 	stepName: string;
-	handleSubmit: () => void;
 	numOfSelectedGlobalStyles: number;
 	previewDesignVariation: ( variation: StyleVariation ) => void;
 	setSelectedColorVariation: ( colorVariation: GlobalStyles | null ) => void;
@@ -109,7 +108,6 @@ const UnifiedDesignPickerPreview = ( {
 	flow,
 	isPremiumThemeAvailable,
 	stepName,
-	handleSubmit,
 	numOfSelectedGlobalStyles,
 	previewDesignVariation,
 	setSelectedColorVariation,
