@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 import { createContext, useContext } from 'react';
-import { login } from 'calypso/lib/paths/login';
 import { fetchUser } from '../data';
 import type { User } from '../data/types';
 
@@ -15,7 +14,7 @@ const AuthContext = createContext< AuthContextType | undefined >( undefined );
  * This component:
  * 1. Fetches and provides auth data via context
  * 2. Handles authentication checking
- * 3. Shows nothing during loading (fallbacks to the HTML loading screen)
+ * 3. Shows nothing during loading (falls back to the HTML loading screen)
  * 4. Redirects to login if unauthorized
  */
 export function AuthProvider( { children }: { children: React.ReactNode } ) {
@@ -33,7 +32,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 	if ( isError ) {
 		if ( typeof window !== 'undefined' ) {
 			const currentPath = window.location.pathname;
-			const loginUrl = login( { redirectTo: currentPath } );
+			const loginUrl = `/log-in?redirect_to=${ encodeURIComponent( currentPath ) }`;
 			window.location.href = loginUrl;
 		}
 		return null;
