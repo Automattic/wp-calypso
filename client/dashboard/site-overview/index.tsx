@@ -10,7 +10,7 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import filesize from 'filesize';
-import { type FetchSiteRouteResponse, type MediaStorageObject } from '../data';
+import { FetchSiteRouteResponse, MediaStorageObject, MonitorUptimeAPIResponse } from '../data';
 import PageLayout from '../page-layout';
 import ActivityLog from './activity-log';
 import Deployments from './deployments';
@@ -54,13 +54,36 @@ function StorageCard( {
 	);
 }
 
+function SiteMonitorUptimeCard( { siteMonitorUptime }: MonitorUptimeAPIResponse ) {
+	const { upDays, downDays } = Object.entries( siteMonitorUptime || {} ).reduce(
+		( accumulator, [ , { status } = {} as { status: 'up|down' } ] ) => {
+			const key = status === 'up' ? 'upDays' : 'downDays';
+			accumulator[ key ] += 1;
+			return accumulator;
+		},
+		{ upDays: 0, downDays: 0 }
+	);
+	const uptimePercentage = Math.round( ( ( upDays / ( upDays + downDays ) ) * 1000 ) / 10 );
+	return (
+		<Card className="site-overview-top-card">
+			<VStack style={ { height: '100%', padding: '16px' } }>
+				<HStack justify="space-between">
+					<Heading level={ 3 }>{ __( 'Uptime' ) }</Heading>
+					<p>{ __( 'past 30 days' ) }</p>
+				</HStack>
+				<VStack style={ { marginTop: '16px' } }>
+					<Heading level={ 3 }>{ uptimePercentage }</Heading>
+					<ProgressBar value={ uptimePercentage } />
+				</VStack>
+			</VStack>
+		</Card>
+	);
+}
+
 function SiteOverview() {
-	const { site, mediaStorage } = useLoaderData( {
+	const { site, mediaStorage, siteMonitorUptime } = useLoaderData( {
 		from: '/sites/$siteId',
 	} ) as FetchSiteRouteResponse;
-
-	// TODO: This should be fetched from the API
-	const uptimePercentage = 98;
 	return (
 		<PageLayout
 			title={ site.name }
@@ -77,18 +100,7 @@ function SiteOverview() {
 				<VStack spacing={ 8 } style={ { flex: 3 } }>
 					<HStack spacing={ 8 } justify="space-between">
 						<StorageCard mediaStorage={ mediaStorage } />
-						<Card className="site-overview-top-card">
-							<VStack style={ { height: '100%', padding: '16px' } }>
-								<HStack justify="space-between">
-									<Heading level={ 3 }>{ __( 'Uptime' ) }</Heading>
-									<p>{ __( 'past 30 days' ) }</p>
-								</HStack>
-								<VStack style={ { marginTop: '16px' } }>
-									<Heading level={ 3 }>{ uptimePercentage }</Heading>
-									<ProgressBar value={ uptimePercentage } />
-								</VStack>
-							</VStack>
-						</Card>
+						<SiteMonitorUptimeCard siteMonitorUptime={ siteMonitorUptime } />
 						<Card className="site-overview-top-card">
 							<VStack style={ { height: '100%', padding: '16px' } }>
 								<HStack justify="space-between">

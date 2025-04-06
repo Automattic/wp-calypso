@@ -12,6 +12,7 @@ import {
 	fetchProfile,
 	fetchSite,
 	fetchSiteMediaStorage,
+	fetchSiteMonitorUptime,
 	fetchSites,
 	fetchDomains,
 	fetchEmails,
@@ -75,11 +76,12 @@ const siteRoute = createRoute( {
 		queryClient.ensureQueryData( {
 			queryKey: [ 'site', siteId ],
 			queryFn: async () => {
-				const [ site, mediaStorage ] = await Promise.all( [
+				const [ site, mediaStorage, siteMonitorUptime ] = await Promise.all( [
 					fetchSite( siteId ),
 					fetchSiteMediaStorage( siteId ),
+					fetchSiteMonitorUptime( siteId ),
 				] );
-				return { site, mediaStorage };
+				return { site, mediaStorage, siteMonitorUptime };
 			},
 		} ) as Promise< FetchSiteRouteResponse >,
 	notFoundComponent: NotFound,

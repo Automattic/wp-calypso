@@ -135,15 +135,19 @@ export const fetchSites = (): Promise< Site[] > => {
 		} );
 };
 
-interface MediaStorageObject {
+export interface MediaStorageObject {
 	maxStorageBytesFromAddOns: number;
 	maxStorageBytes: number;
 	storageUsedBytes: number;
 }
 
+export interface MonitorUptimeAPIResponse {
+	[ key: string ]: { status: string; downtime_in_minutes?: number };
+}
 export interface FetchSiteRouteResponse {
 	site: Site;
 	mediaStorage: MediaStorageObject;
+	siteMonitorUptime: MonitorUptimeAPIResponse;
 }
 
 export const fetchSite = async ( id: string ): Promise< Site > => {
@@ -162,7 +166,7 @@ export const fetchSiteMediaStorage = async ( id: string ): Promise< MediaStorage
 		return Promise.reject( new Error( 'Site ID is undefined' ) );
 	}
 	const mediaStorage = await wpcom.req.get( {
-		path: `/sites/${ encodeURIComponent( id ) }/media-storage`,
+		path: `/sites/${ id }/media-storage`,
 		apiVersion: '1.1',
 	} );
 	return {
@@ -170,6 +174,19 @@ export const fetchSiteMediaStorage = async ( id: string ): Promise< MediaStorage
 		maxStorageBytes: Number( mediaStorage.max_storage_bytes ),
 		storageUsedBytes: Number( mediaStorage.storage_used_bytes ),
 	};
+};
+
+export const fetchSiteMonitorUptime = async ( id: string ): Promise< MonitorUptimeAPIResponse > => {
+	if ( ! id ) {
+		return Promise.reject( new Error( 'Site ID is undefined' ) );
+	}
+	return wpcom.req.get(
+		{
+			path: `/sites/${ id }/jetpack-monitor-uptime`,
+			apiNamespace: 'wpcom/v2',
+		},
+		{ period: '30 days' }
+	);
 };
 
 export const fetchDomains = (): Promise< Domain[] > => {
