@@ -8,6 +8,7 @@ import {
 	Button,
 	Card,
 } from '@wordpress/components';
+import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import filesize from 'filesize';
 import { FetchSiteRouteResponse, MediaStorageObject, MonitorUptimeAPIResponse } from '../data';
@@ -38,15 +39,17 @@ function StorageCard( {
 					<ExternalLink href="#">{ __( 'Buy more' ) }</ExternalLink>
 				</HStack>
 				<VStack style={ { marginTop: '16px' } }>
-					<p>
-						{
-							/* translators: %(used)s: storage space used, %(max)s: maximum available storage space */
-							sprintf( __( '%(used)s of %(max)s used' ), {
-								used,
-								max,
-							} )
-						}
-					</p>
+					<HStack>
+						{ createInterpolateElement(
+							/* translators: %1$s: storage space used, %2$s: maximum available storage space. Eg. '236 MB of 53 GB used' */
+							sprintf( __( '<heading>%1$s</heading> <span>of %2$s used</span>' ), used, max ),
+							{
+								heading: <Heading level={ 3 } style={ { whiteSpace: 'nowrap' } } />,
+								span: createElement( 'span' ),
+							}
+						) }
+					</HStack>
+					{ /* <p>{ sprintf( __( '%1$s of %2$s used' ), used, max ) }</p> */ }
 					<ProgressBar value={ usagePercentage } />
 				</VStack>
 			</VStack>
@@ -55,10 +58,12 @@ function StorageCard( {
 }
 
 function SiteMonitorUptimeCard( { siteMonitorUptime }: MonitorUptimeAPIResponse ) {
+	if ( ! siteMonitorUptime ) {
+		return;
+	}
 	const { upDays, downDays } = Object.entries( siteMonitorUptime || {} ).reduce(
 		( accumulator, [ , { status } = {} as { status: 'up|down' } ] ) => {
-			const key = status === 'up' ? 'upDays' : 'downDays';
-			accumulator[ key ] += 1;
+			accumulator[ status === 'up' ? 'upDays' : 'downDays' ] += 1;
 			return accumulator;
 		},
 		{ upDays: 0, downDays: 0 }
@@ -69,10 +74,15 @@ function SiteMonitorUptimeCard( { siteMonitorUptime }: MonitorUptimeAPIResponse 
 			<VStack style={ { height: '100%', padding: '16px' } }>
 				<HStack justify="space-between">
 					<Heading level={ 3 }>{ __( 'Uptime' ) }</Heading>
-					<p>{ __( 'past 30 days' ) }</p>
+					<p>{ __( 'Past 30 days' ) }</p>
 				</HStack>
 				<VStack style={ { marginTop: '16px' } }>
-					<Heading level={ 3 }>{ uptimePercentage }</Heading>
+					<Heading level={ 3 }>
+						{
+							/* translators: %s: percentage of site uptime. Eg. 99% */
+							sprintf( __( '%s%%' ), uptimePercentage )
+						}
+					</Heading>
 					<ProgressBar value={ uptimePercentage } />
 				</VStack>
 			</VStack>

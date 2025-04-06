@@ -176,9 +176,16 @@ export const fetchSiteMediaStorage = async ( id: string ): Promise< MediaStorage
 	};
 };
 
-export const fetchSiteMonitorUptime = async ( id: string ): Promise< MonitorUptimeAPIResponse > => {
+export const fetchSiteMonitorUptime = async (
+	id: string
+): Promise< MonitorUptimeAPIResponse | undefined > => {
 	if ( ! id ) {
 		return Promise.reject( new Error( 'Site ID is undefined' ) );
+	}
+	const jetpackSite = await wpcom.req.get( `/jetpack-blogs/${ id }` );
+	// TODO: there might be more checks needed here and/or in different contexts.
+	if ( ! jetpackSite?.settings?.monitor_active ) {
+		return;
 	}
 	return wpcom.req.get(
 		{
