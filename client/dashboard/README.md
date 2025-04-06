@@ -5,15 +5,17 @@ Build a new hosting dashboard for WordPress.com based on the new design. The sam
 # Some principles:
 
 - @wordpress/components and design system based, avoid CSS as much as possible.
- - Prefer VStack, HStack over Flex components.
- - Build as a separate section/url in Calypso /v2 but avoid importing Calypso's components, CSS and state.
- - Be very explicit about what dependencies we include.
- - Don't use Redux and calypso/state.
- - Use lib/wp for REST API calls.
- - Use TanStack based stack (Query and Router). Prefer using loaders over adhoc queries.
- - If hacks are used, document them in the README and propose a long term solution
- - Typescript.
- - Use @wordpress/i18n package for translation.
+- Prefer VStack, HStack over Flex components.
+- Build as a separate section/url in Calypso /v2 but avoid importing Calypso's components, CSS and state.
+- Be very explicit about what dependencies we include.
+- Don't use Redux and calypso/state.
+- Use lib/wp for REST API calls.
+- Use TanStack based stack (Query and Router). Prefer using loaders over adhoc queries.
+- If hacks are used, document them in the README and propose a long term solution.
+- Use TypeScript, but prefer simple, concrete types.
+- Use @wordpress/i18n package for translation.
+- Performance testing and e2e testing are key.
+- Document all the architecture decisions (design docs)
 
 # Shortcuts taken
 
