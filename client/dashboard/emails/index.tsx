@@ -7,6 +7,42 @@ import PageLayout from '../page-layout';
 import type { Email } from '../data/types';
 import type { View, Field } from '@wordpress/dataviews';
 
+// Define actions
+const actions = [
+	// Regular actions
+	{
+		id: 'manage',
+		label: __( 'Manage' ),
+		callback: ( [ item ] ) => {
+			navigate( `/emails/${ item.id }` );
+		},
+	},
+	{
+		id: 'edit',
+		label: __( 'Edit' ),
+		callback: ( [ item ] ) => {
+			navigate( `/emails/${ item.id }/edit` );
+		},
+	},
+	{
+		id: 'access-webmail',
+		label: __( 'Access Webmail' ),
+		callback: ( [ item ] ) => {
+			window.open( `https://mail.${ item.domainName }`, '_blank' );
+		},
+		isEligible: ( item ) => item.type === 'mailbox',
+	},
+	{
+		id: 'delete',
+		label: __( 'Delete' ),
+		callback: () => {
+			setSelection( [] );
+		},
+		isDestructive: true,
+		supportsBulk: true,
+	},
+];
+
 export default function Emails() {
 	const navigate = useNavigate();
 	const emails = useLoaderData( { from: '/emails' } ) as Email[];
@@ -71,42 +107,6 @@ export default function Emails() {
 	const onClickItem = ( item: Email ) => {
 		navigate( `/emails/${ item.id }` );
 	};
-
-	// Define actions
-	const actions = [
-		// Regular actions
-		{
-			id: 'manage',
-			label: __( 'Manage' ),
-			callback: ( [ item ] ) => {
-				navigate( `/emails/${ item.id }` );
-			},
-		},
-		{
-			id: 'edit',
-			label: __( 'Edit' ),
-			callback: ( [ item ] ) => {
-				navigate( `/emails/${ item.id }/edit` );
-			},
-		},
-		{
-			id: 'access-webmail',
-			label: __( 'Access Webmail' ),
-			callback: ( [ item ] ) => {
-				window.open( `https://mail.${ item.domainName }`, '_blank' );
-			},
-			isEligible: ( item ) => item.type === 'mailbox',
-		},
-		{
-			id: 'delete',
-			label: __( 'Delete' ),
-			callback: () => {
-				setSelection( [] );
-			},
-			isDestructive: true,
-			supportsBulk: true,
-		},
-	];
 
 	return (
 		<PageLayout

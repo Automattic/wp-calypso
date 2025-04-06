@@ -66,6 +66,8 @@ const fields = [
 	},
 ];
 
+const actions = [];
+
 /**
  * Activity Log component that displays recent site activities in a DataViews table.
  */
@@ -84,7 +86,7 @@ export default function ActivityLog() {
 					fields={ fields }
 					onChangeView={ ( newView ) => setView( () => newView ) }
 					view={ view }
-					actions={ [] }
+					actions={ actions }
 					getItemId={ ( item ) => item.message }
 					paginationInfo={ paginationInfo }
 					isLoading={ false }

@@ -8,6 +8,73 @@ import PageLayout from '../page-layout';
 import type { Site } from '../data/types';
 import type { View, Field } from '@wordpress/dataviews';
 
+const actions = [
+	{
+		id: 'admin',
+		isPrimary: true,
+		label: __( 'WP Admin' ),
+		callback: ( sites: Site[] ) => {
+			const site = sites[ 0 ];
+			window.location.href = site.options?.admin_url ?? '';
+		},
+		isEligible: ( item: Site ) => ( item.is_deleted ? false : true ),
+	},
+];
+
+// Field definitions
+const fields = [
+	{
+		id: 'name',
+		label: __( 'Site' ),
+		enableGlobalSearch: true,
+	},
+	{
+		id: 'url',
+		label: __( 'URL' ),
+		enableGlobalSearch: true,
+	},
+	{
+		id: 'media',
+		label: __( 'Media' ),
+		render: ( { item } ) =>
+			item?.media ? <img src={ item.media } alt={ item.name } width="100%" /> : null,
+	},
+	{
+		id: 'subscribers',
+		label: __( 'Subscribers' ),
+	},
+	{
+		id: 'backups',
+		label: __( 'Backups' ),
+		elements: [
+			{ value: 'enabled', label: __( 'Enabled' ) },
+			{ value: 'disabled', label: __( 'Disabled' ) },
+		],
+		render: ( { item } ) => {
+			if ( item.backups === 'enabled' ) {
+				return <Icon icon={ check } />;
+			}
+
+			return __( 'Disabled' );
+		},
+	},
+	{
+		id: 'protect',
+		label: __( 'Protect' ),
+		render: ( { item } ) => {
+			if ( item.protect === 'enabled' ) {
+				return <Icon icon={ check } />;
+			}
+
+			return __( 'Disabled' );
+		},
+		elements: [
+			{ value: 'enabled', label: __( 'Enabled' ) },
+			{ value: 'disabled', label: __( 'Disabled' ) },
+		],
+	},
+] as Field< Site >[];
+
 function Sites() {
 	const navigate = useNavigate();
 	const querySitesData = useLoaderData( { from: '/sites' } ) as Site[];
@@ -33,78 +100,11 @@ function Sites() {
 		descriptionField: 'url',
 	} );
 
-	// Field definitions
-	const fields = [
-		{
-			id: 'name',
-			label: __( 'Site' ),
-			enableGlobalSearch: true,
-		},
-		{
-			id: 'url',
-			label: __( 'URL' ),
-			enableGlobalSearch: true,
-		},
-		{
-			id: 'media',
-			label: __( 'Media' ),
-			render: ( { item } ) =>
-				item?.media ? <img src={ item.media } alt={ item.name } width="100%" /> : null,
-		},
-		{
-			id: 'subscribers',
-			label: __( 'Subscribers' ),
-		},
-		{
-			id: 'backups',
-			label: __( 'Backups' ),
-			elements: [
-				{ value: 'enabled', label: __( 'Enabled' ) },
-				{ value: 'disabled', label: __( 'Disabled' ) },
-			],
-			render: ( { item } ) => {
-				if ( item.backups === 'enabled' ) {
-					return <Icon icon={ check } />;
-				}
-
-				return __( 'Disabled' );
-			},
-		},
-		{
-			id: 'protect',
-			label: __( 'Protect' ),
-			render: ( { item } ) => {
-				if ( item.protect === 'enabled' ) {
-					return <Icon icon={ check } />;
-				}
-
-				return __( 'Disabled' );
-			},
-			elements: [
-				{ value: 'enabled', label: __( 'Enabled' ) },
-				{ value: 'disabled', label: __( 'Disabled' ) },
-			],
-		},
-	] as Field< Site >[];
-
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
 
 	const onClickItem = ( item: Site ) => {
 		navigate( { to: `/sites/${ item.id }` } );
 	};
-
-	const actions = [
-		{
-			id: 'admin',
-			isPrimary: true,
-			label: __( 'WP Admin' ),
-			callback: ( sites: Site[] ) => {
-				const site = sites[ 0 ];
-				window.location.href = site.options?.admin_url ?? '';
-			},
-			isEligible: ( item: Site ) => ( item.is_deleted ? false : true ),
-		},
-	];
 
 	return (
 		<PageLayout
