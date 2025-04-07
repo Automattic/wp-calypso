@@ -18,6 +18,7 @@ $blueberry-color: #3858e9;
 		min-height: 40px !important;
 		height: 40px;
 		max-height: 210px;
+		overflow-y: auto;
 	}
 
 	.components-form-file-upload {
@@ -56,6 +57,8 @@ $blueberry-color: #3858e9;
 	transition: all .15s ease-in-out;
 	width: 100%;
 	font-family: inherit;
+	overflow: auto;
+	max-height: 210px;
 
 	&:focus {
 		box-shadow: 0 0 0 2px var(--color-primary-10);
