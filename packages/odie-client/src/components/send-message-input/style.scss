@@ -105,9 +105,9 @@ $blueberry-color: #3858e9;
 .odie-prediction-links {
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
+	gap: 6px;
 	width: 100%;
-	padding: 0.5rem 0;
+	padding: 0;
 }
 
 .odie-prediction-link {
@@ -115,7 +115,7 @@ $blueberry-color: #3858e9;
 	border: 1px solid var(--color-border, #dcdcde);
 	color: var(--color-text, #1e1e1e);
 	text-align: left;
-	padding: 0.75rem 1rem;
+	padding: 0.5rem 0.5rem;
 	border-radius: 4px;
 	cursor: pointer;
 	font-size: 14px;
