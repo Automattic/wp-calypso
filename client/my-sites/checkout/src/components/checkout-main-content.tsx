@@ -23,6 +23,7 @@ import {
 	useTransactionStatus,
 	TransactionStatus,
 } from '@automattic/composite-checkout';
+import { formatCurrency } from '@automattic/number-formatters';
 import { Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
@@ -35,7 +36,7 @@ import { css, keyframes } from '@emotion/react';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import Loading from 'calypso/components/loading';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';

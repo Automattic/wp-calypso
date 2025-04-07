@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
 import { SiteDetails } from '@automattic/data-stores';
+import { getCurrencyObject } from '@automattic/number-formatters';
 import { InfiniteData } from '@tanstack/react-query';
 import { __, _x } from '@wordpress/i18n';
-import { getCurrencyObject } from 'i18n-calypso';
 import moment from 'moment';
 import {
 	BlazablePost,

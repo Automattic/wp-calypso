@@ -1,7 +1,8 @@
 import { LineChart, ThemeProvider, jetpackTheme } from '@automattic/charts';
 import { DataPointDate } from '@automattic/charts/src/types';
+import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
-import { numberFormat, translate } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import { useCallback, useMemo } from 'react';
 import ChartBarTooltip from 'calypso/components/chart/bar-tooltip';
@@ -58,7 +59,7 @@ function StatsLineChart( {
 	const formatValue = ( value: number ) => {
 		return value < 100_000
 			? value.toFixed( 0 )
-			: numberFormat( value, { numberFormatOptions: { notation: 'compact' }, decimals: 1 } );
+			: formatNumber( value, { numberFormatOptions: { notation: 'compact' }, decimals: 1 } );
 	};
 
 	const isEmpty = ( chartData?.[ 0 ]?.data || [] ).length === 0;
@@ -161,7 +162,7 @@ function StatsLineChart( {
 							<ChartBarTooltip
 								key={ point.key }
 								label={ point.key }
-								value={ numberFormat( point.value ) }
+								value={ formatNumber( point.value ) }
 								icon={ seriesIcons[ point.key ] }
 							/>
 						) ) }

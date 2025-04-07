@@ -1,4 +1,4 @@
-import { numberFormat } from 'i18n-calypso';
+import { formatNumber } from '@automattic/number-formatters';
 import PropTypes from 'prop-types';
 import { useLayoutEffect, useState } from 'react';
 import Label from './label';
@@ -43,7 +43,7 @@ const ModuleChartXAxis = ( { data, isRtl, labelWidth, chartWidth } ) => {
 	return (
 		<div className="chart__x-axis">
 			{ labels }
-			<div className="chart__x-axis-label chart__x-axis-width-spacer">{ numberFormat( 1e5 ) }</div>
+			<div className="chart__x-axis-label chart__x-axis-width-spacer">{ formatNumber( 1e5 ) }</div>
 		</div>
 	);
 };

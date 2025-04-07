@@ -1,5 +1,6 @@
+import { formatNumberCompact } from '@automattic/number-formatters';
 import clsx from 'clsx';
-import { useTranslate, numberFormatCompact } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
@@ -91,7 +92,7 @@ export default function AuthorCompactProfile( props: AuthorCompactProfileProps )
 						{ translate( '%(followCount)s subscriber', '%(followCount)s subscribers', {
 							count: followCount,
 							args: {
-								followCount: numberFormatCompact( followCount ),
+								followCount: formatNumberCompact( followCount ),
 							},
 						} ) }
 					</div>

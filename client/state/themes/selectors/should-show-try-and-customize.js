@@ -73,8 +73,10 @@ export function shouldShowTryAndCustomize( state, themeId, siteId ) {
 	}
 
 	return (
+		// Theme is not currently active
+		// We shouldn't show the site editor for the theme
 		isUserLoggedIn( state ) && // User is logged in
-		! shouldShowSiteEditor( state, themeId ) && // We shouldn't show the site editor for the theme
-		! isThemeActive( state, themeId, siteId ) // Theme is not currently active
+		! shouldShowSiteEditor( state, themeId ) &&
+		! isThemeActive( state, themeId, siteId )
 	);
 }

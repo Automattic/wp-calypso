@@ -196,8 +196,7 @@ class Pages extends Component {
 			site &&
 			( homepageType === 'posts' || ( homepageType === 'page' && ! homepageId ) ) &&
 			/** Under the "Published" tab */
-			status === 'publish,private' &&
-			/** Without any search term */
+			status === 'publish,private' /** Without any search term */ &&
 			! search
 		);
 	}
@@ -216,8 +215,9 @@ class Pages extends Component {
 			site &&
 			( homepageType === 'posts' || ( homepageType === 'page' && ! homepageId ) ) &&
 			blockEditorSettings?.home_template &&
-			/** Under the "Published" tab without any search term or the search term is matched */
-			( ( status === 'publish,private' && ! search ) ||
+			/** Under the "Published" tab without any search term or the search term is matched */ ( ( status ===
+				'publish,private' &&
+				! search ) ||
 				( search && translate( 'Homepage' ).toLowerCase().includes( search.toLowerCase() ) ) )
 		);
 	}

@@ -4,7 +4,8 @@ import {
 	FEATURE_RECURRING_PAYMENTS,
 } from '@automattic/calypso-products';
 import { Badge, Button, Card, CompactCard, Gridicon } from '@automattic/components';
-import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { formatCurrency } from '@automattic/number-formatters';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
@@ -161,7 +162,6 @@ function ProductsList() {
 					tracksImpressionName="calypso_earn_page_payment_plans_upgrade_button_view"
 				/>
 			) }
-
 			{ hasLoadedFeatures && hasStripeFeature && (
 				<SectionHeader label={ translate( 'Manage plans' ) }>
 					<Button primary compact onClick={ onAddNewPaymentPlanButtonClick }>

@@ -4,10 +4,10 @@ import {
 	percentCalculator,
 } from '@automattic/components/src/highlight-cards/lib/numbers';
 import { eye } from '@automattic/components/src/icons';
-import { formatNumber } from '@automattic/number-formatters';
+import { formatNumber, formatNumberCompact } from '@automattic/number-formatters';
 import { Icon, people, postContent, starEmpty, commentContent } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useTranslate, numberFormatCompact } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import React, { useMemo } from 'react';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
@@ -149,7 +149,7 @@ export default function AllTimeHighlightsSection( {
 				{
 					id: 'views',
 					header: translate( 'Views' ),
-					content: <span>{ numberFormatCompact( viewsBestDayTotal ) }</span>,
+					content: <span>{ formatNumberCompact( viewsBestDayTotal ) }</span>,
 					footer: translate( '%(percent)s of views', {
 						args: { percent: formatPercentage( bestViewsEverPercent, true ) },
 						context: 'Stats: Percentage of views',

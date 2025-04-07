@@ -194,7 +194,6 @@ const MarketplaceThankYou = ( {
 					/>
 				</div>
 			) }
-
 			{ ! showProgressBar && (
 				<Main className="marketplace-thank-you__container">
 					<ThankYouV2

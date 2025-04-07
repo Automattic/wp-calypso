@@ -137,7 +137,6 @@ export default function Summary( {
 			<Card>
 				{ showConfetti && <ConfettiAnimation trigger={ ! prefersReducedMotion } /> }
 				<h2>{ __( 'Success!' ) } 🎉</h2>
-
 				<p>
 					{ sprintf(
 						// translators: %s the site name

@@ -85,7 +85,6 @@ const SiteSettingsTraffic = ( {
 			{ ! isJetpack && isAdmin && config.isEnabled( 'cloudflare' ) && (
 				<CloudflareAnalyticsSettings />
 			) }
-
 			{ isJetpackAdmin && (
 				<JetpackSiteStats
 					handleAutosavingToggle={ handleAutosavingToggle }
