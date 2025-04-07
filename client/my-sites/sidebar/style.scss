@@ -1046,7 +1046,7 @@ $font-size: rem(14px);
 @media screen and (max-width: 781px) {
 	// client/layout/sidebar/style.scss
 	.theme-default {
-		.focus-content .layout__content {
+		&:has(.sidebar) .focus-content .layout__content {
 			padding: 70px 24px 24px;
 			transition: padding 0.15s ease-in-out;
 		}
