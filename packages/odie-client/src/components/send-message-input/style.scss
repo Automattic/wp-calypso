@@ -7,6 +7,7 @@ $blueberry-color: #3858e9;
 	align-items: flex-end;
 	gap: 8px;
 	z-index: 10;
+	position: relative; /* Add positioning context for the spinner */
 
 	.odie-send-message-input {
 		resize: none;
@@ -41,8 +42,8 @@ $blueberry-color: #3858e9;
 
 .odie-send-message-input-spinner {
 	position: absolute !important;
-	right: 60px;
-	top: 20px;
+	right: 50px; /* Position it to the left of the send button */
+	transform: translateY(-50%); /* Fine-tune vertical centering */
 }
 
 .odie-send-message-input-container textarea {
