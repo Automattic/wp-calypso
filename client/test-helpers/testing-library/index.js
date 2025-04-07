@@ -10,7 +10,7 @@ import { setStore } from 'calypso/state/redux-store';
 
 export const renderWithProvider = (
 	ui,
-	{ initialState, store = null, reducers, ...renderOptions } = {}
+	{ initialState, store = null, reducers, additionalActions = [], ...renderOptions } = {}
 ) => {
 	const queryClient = new QueryClient();
 
@@ -24,6 +24,14 @@ export const renderWithProvider = (
 		}
 
 		store = createStore( reducer, initialState, applyMiddleware( thunkMiddleware ) );
+	}
+
+	setStore( store );
+
+	if ( additionalActions && additionalActions.length > 0 ) {
+		additionalActions.forEach( ( action ) => {
+			store.dispatch( action );
+		} );
 	}
 
 	const Wrapper = ( { children } ) => (
@@ -49,6 +57,7 @@ export const statefulRenderWithProvider = (
 
 	const store = createReduxStore( initialState, reducer );
 
+	/*
 	setStore( store );
 
 	if ( additionalActions && additionalActions.length > 0 ) {
@@ -56,8 +65,9 @@ export const statefulRenderWithProvider = (
 			store.dispatch( action );
 		} );
 	}
+	*/
 
-	return renderWithProvider( ui, { store, ...renderOptions } );
+	return renderWithProvider( ui, { store, additionalActions, ...renderOptions } );
 };
 
 export const renderHookWithProvider = ( hookContainer, options = {} ) => {
