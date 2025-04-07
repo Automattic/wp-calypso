@@ -9,6 +9,8 @@ import { getBlueprint } from './blueprint';
 
 const OPFS_PATH_PREFIX = '/wpcom-onboarding';
 export const LOCAL_STORAGE_KEY_FOR_PG_ID = 'pg_flow_pg_id';
+export const LOCAL_STORAGE_KEY_FOR_PG_ID_TS = 'pg_flow_pg_ts';
+export const LOCAL_STORAGE_KEY_FOR_PG_VALIDITY = 180000; // ms - 180 seconds / 3 minutes
 
 export async function initializeWordPressPlayground(
 	iframe: HTMLIFrameElement,
@@ -33,9 +35,6 @@ export async function initializeWordPressPlayground(
 		// TODO: check if WordPress is installed using playgroundAvailableInOpfs from @wp-playground/website
 		isWordPressInstalled = true;
 	}
-
-	// save in localstorage for domain step in onboarding flow, just in case if we lose it in login/create-account/recover-account flow
-	window.localStorage.setItem( LOCAL_STORAGE_KEY_FOR_PG_ID, playgroundId ); // ok to always overwrite with the latest playground
 
 	try {
 		const mountDescriptor: MountDescriptor = {

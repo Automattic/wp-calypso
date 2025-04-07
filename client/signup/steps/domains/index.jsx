@@ -29,7 +29,11 @@ import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
 import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
-import { LOCAL_STORAGE_KEY_FOR_PG_ID as PG_ID } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/playground/lib/initialize-playground';
+import {
+	LOCAL_STORAGE_KEY_FOR_PG_ID as PG_ID,
+	LOCAL_STORAGE_KEY_FOR_PG_ID_TS as PG_TS,
+	LOCAL_STORAGE_KEY_FOR_PG_VALIDITY as PG_ID_VALIDITY,
+} from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/playground/lib/initialize-playground';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
 	domainRegistration,
@@ -163,13 +167,17 @@ export class RenderDomainsStep extends Component {
 		// Get playground ID from either GET param or localStorage
 		const playgroundIdFromUrl = getQueryArg( window.location.href, 'playground' );
 		const playgroundIdFromStorage = window.localStorage.getItem( PG_ID );
-		const playgroundId = playgroundIdFromUrl || playgroundIdFromStorage;
+		const playgroundIdTimestamp = window.localStorage.getItem( PG_TS );
+		const playgroundId =
+			playgroundIdFromUrl ||
+			( Date.now() - playgroundIdTimestamp < PG_ID_VALIDITY ? playgroundIdFromStorage : null );
 
 		// Clean up localStorage regardless of whether we used the value
 		window.localStorage.removeItem( PG_ID );
+		window.localStorage.removeItem( PG_TS );
 
 		// Update URL if we got the ID from localStorage
-		if ( playgroundIdFromStorage && ! playgroundIdFromUrl ) {
+		if ( playgroundId && playgroundIdFromStorage && ! playgroundIdFromUrl ) {
 			const url = new URL( window.location.href );
 			url.searchParams.set( 'playground', playgroundId );
 			window.history.replaceState( {}, '', url.toString() );
