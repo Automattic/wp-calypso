@@ -193,6 +193,7 @@ class RequestLoginEmailForm extends Component {
 				<EmailedLoginLinkSuccessfullyJetpackConnect
 					emailAddress={ emailAddress }
 					shouldRedirect={ ! isFromJetpackOnboarding }
+					onResendEmail={ this.onSubmit }
 				/>
 			) : (
 				<EmailedLoginLinkSuccessfully emailAddress={ emailAddress } />
