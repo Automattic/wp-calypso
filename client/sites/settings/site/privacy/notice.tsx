@@ -91,7 +91,7 @@ export const SiteSettingPrivacyPremiumStylesNotice = ( {
 
 interface SiteSettingsPrivacyDiscourageSearchEnginesNoticeProps {
 	selectedSite: SiteDetails | null | undefined;
-	siteSlug: string;
+	siteSlug: string | null;
 }
 
 export const SiteSettingsPrivacyDiscourageSearchEnginesNotice = ( {
