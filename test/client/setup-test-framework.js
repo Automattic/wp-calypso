@@ -25,10 +25,6 @@ afterAll( () => {
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
-// Define ReadableStream and TransformStream
-global.ReadableStream = ReadableStream;
-global.TransformStream = TransformStream;
-
 // This is used by @wordpress/components in https://github.com/WordPress/gutenberg/blob/trunk/packages/components/src/ui/utils/space.ts#L33
 // JSDOM or CSSDOM don't provide an implementation for it, so for now we have to mock it.
 global.CSS = {
@@ -53,11 +49,6 @@ jest.mock( 'wpcom-proxy-request', () => ( {
 // Mock crypto.randomUUID with its Node.js implementation
 global.crypto.randomUUID = () => nodeCrypto.randomUUID();
 
-// Mock crypto.subtle with its Node.js implementation, if needed.
-if ( ! global.crypto.subtle ) {
-	global.crypto.subtle = nodeCrypto.subtle;
-}
-
 // Add structuredClone if not available.
 if ( typeof global.structuredClone !== 'function' ) {
 	global.structuredClone = ( obj ) => JSON.parse( JSON.stringify( obj ) );
@@ -73,3 +64,14 @@ global.matchMedia = jest.fn( ( query ) => ( {
 	removeEventListener: jest.fn(),
 	dispatchEvent: jest.fn(),
 } ) );
+
+// This is used by @wp-playground/client
+global.ReadableStream = ReadableStream;
+global.TransformStream = TransformStream;
+global.Worker = require( 'worker_threads' ).Worker;
+
+// This is used by @wp-playground/client
+if ( ! global.crypto.subtle ) {
+	// Mock crypto.subtle with its Node.js implementation, if needed.
+	global.crypto.subtle = nodeCrypto.subtle;
+}
