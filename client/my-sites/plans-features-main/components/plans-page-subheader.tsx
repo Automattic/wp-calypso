@@ -1,13 +1,10 @@
 import { Button, Gridicon } from '@automattic/components';
-import { OnboardSelect } from '@automattic/data-stores';
 import { isOnboardingFlow } from '@automattic/onboarding';
 import styled from '@emotion/styled';
-import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { SelectedFeatureData } from '../hooks/use-selected-feature';
 
 const Subheader = styled.p< { isUsingStepContainerV2?: boolean } >`
@@ -149,32 +146,12 @@ const PlansPageSubheader = ( {
 } ) => {
 	const translate = useTranslate();
 
-	const createWithBigSky = useSelect( ( select: ( key: string ) => OnboardSelect ) => {
-		const { getCreateWithBigSky } = select( ONBOARD_STORE );
-		return getCreateWithBigSky();
-	}, [] );
-
 	const isOnboarding = isOnboardingFlow( flowName ?? null );
 
 	const isUsingStepContainerV2 = Boolean( flowName && shouldUseStepContainerV2( flowName ) );
 
 	const renderSubheader = () => {
-		if ( createWithBigSky ) {
-			return (
-				<Subheader isUsingStepContainerV2={ isUsingStepContainerV2 }>
-					{ translate(
-						'Build your site quickly with our AI Website Builder or {{link}}start with a free plan{{/link}}.',
-						{
-							components: {
-								link: <Button onClick={ onFreePlanCTAClick } borderless />,
-							},
-						}
-					) }
-				</Subheader>
-			);
-		}
-
-		if ( ! createWithBigSky && deemphasizeFreePlan && offeringFreePlan ) {
+		if ( deemphasizeFreePlan && offeringFreePlan ) {
 			return (
 				<Subheader isUsingStepContainerV2={ isUsingStepContainerV2 }>
 					{ translate(
