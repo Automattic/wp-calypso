@@ -49,11 +49,6 @@ jest.mock( 'wpcom-proxy-request', () => ( {
 // Mock crypto.randomUUID with its Node.js implementation
 global.crypto.randomUUID = () => nodeCrypto.randomUUID();
 
-// Add structuredClone if not available.
-if ( typeof global.structuredClone !== 'function' ) {
-	global.structuredClone = ( obj ) => JSON.parse( JSON.stringify( obj ) );
-}
-
 global.matchMedia = jest.fn( ( query ) => ( {
 	matches: false,
 	media: query,
@@ -69,6 +64,11 @@ global.matchMedia = jest.fn( ( query ) => ( {
 global.ReadableStream = ReadableStream;
 global.TransformStream = TransformStream;
 global.Worker = require( 'worker_threads' ).Worker;
+
+// This is used by @wp-playground/client
+if ( typeof global.structuredClone !== 'function' ) {
+	global.structuredClone = ( obj ) => JSON.parse( JSON.stringify( obj ) );
+}
 
 // This is used by @wp-playground/client
 if ( ! global.crypto.subtle ) {
