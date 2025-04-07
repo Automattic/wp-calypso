@@ -131,6 +131,8 @@ const SignupFormSocialFirst = ( {
 		);
 	};
 
+	// This component uses a technique from this video https://www.youtube.com/watch?v=8327_1PINWI
+	// to handle the visibility of the steps while preserving their layout properties and avoiding shifts.
 	const getVisibilityClassName = ( step: Screen ) => {
 		return clsx( 'signup-form-social-first-screen', {
 			visible: currentStep === step,
