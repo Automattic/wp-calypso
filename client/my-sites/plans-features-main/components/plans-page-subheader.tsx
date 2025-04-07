@@ -1,4 +1,4 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { OnboardSelect } from '@automattic/data-stores';
 import { isOnboardingFlow } from '@automattic/onboarding';
 import styled from '@emotion/styled';
@@ -9,7 +9,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { SelectedFeatureData } from '../hooks/use-selected-feature';
 
-const Subheader = styled.p`
+export const Subheader = styled.p`
 	margin: -32px 0 40px 0;
 	color: var( --studio-gray-60 );
 	font-size: 1rem;
@@ -26,7 +26,7 @@ const Subheader = styled.p`
 	}
 `;
 
-const SecondaryFormattedHeader = ( {
+export const SecondaryFormattedHeader = ( {
 	siteSlug,
 	selectedFeature,
 }: {
@@ -67,82 +67,17 @@ const SecondaryFormattedHeader = ( {
 	);
 };
 
-const HeaderContainer = styled( Subheader )`
-	display: flex;
-	justify-content: center;
-	font-size: 16px;
-	font-weight: 500;
-	margin-bottom: 0;
-
-	// TODO:
-	// This value is grabbed directly from https://github.com/Automattic/wp-calypso/blob/trunk/packages/plans-grid-next/src/index.tsx#L109
-	// Ideally there should be a shared constant that can be reused from the CSS side.
-	@media ( max-width: 740px ) {
-		flex-direction: column;
-	}
-`;
-
-const PrefixSection = styled.p`
-	// TODO:
-	// The same as above.
-	@media ( max-width: 740px ) {
-		margin-bottom: 4px;
-	}
-`;
-
-const FeatureSection = styled.p`
-	.gridicon.gridicons-checkmark {
-		color: var( --studio-green-50 );
-		vertical-align: middle;
-		margin-left: 12px;
-		margin-right: 4px;
-		padding-bottom: 4px;
-	}
-`;
-
-const PlanBenefitHeader = () => {
-	const translate = useTranslate();
-
-	return (
-		<HeaderContainer>
-			<PrefixSection>{ translate( 'All plans include:' ) }</PrefixSection>
-			<FeatureSection>
-				{ translate(
-					'{{Checkmark}}{{/Checkmark}}Website Building{{Checkmark}}{{/Checkmark}}Hosting{{Checkmark}}{{/Checkmark}}eCommerce',
-					{
-						components: {
-							Checkmark: <Gridicon icon="checkmark" size={ 18 } />,
-						},
-						comment: 'Checkmark is an icon showing a green check mark.',
-					}
-				) }
-			</FeatureSection>
-		</HeaderContainer>
-	);
-};
-
-// TBD
-// It is actually questionable that we implement a subheader here instead of reusing the header mechanism
-// provided by the signup framework. How could we unify them?
-const PlansPageSubheader = ( {
-	siteSlug,
-	isDisplayingPlansNeededForFeature,
+export const usePlansPageSubheaderText = ( {
 	deemphasizeFreePlan,
-	showPlanBenefits,
 	offeringFreePlan,
 	flowName,
 	onFreePlanCTAClick,
-	selectedFeature,
 }: {
-	siteSlug?: string | null;
-	isDisplayingPlansNeededForFeature: boolean;
 	deemphasizeFreePlan?: boolean;
 	offeringFreePlan?: boolean;
-	showPlanBenefits?: boolean;
 	flowName?: string | null;
 	onFreePlanCTAClick: () => void;
-	selectedFeature: SelectedFeatureData | null;
-} ) => {
+} ): React.ReactNode => {
 	const translate = useTranslate();
 
 	const createWithBigSky = useSelect( ( select: ( key: string ) => OnboardSelect ) => {
@@ -152,60 +87,31 @@ const PlansPageSubheader = ( {
 
 	const isOnboarding = isOnboardingFlow( flowName ?? null );
 
-	const renderSubheader = () => {
-		if ( createWithBigSky ) {
-			return (
-				<Subheader>
-					{ translate(
-						'Build your site quickly with our AI Website Builder or {{link}}start with a free plan{{/link}}.',
-						{
-							components: {
-								link: <Button onClick={ onFreePlanCTAClick } borderless />,
-							},
-						}
-					) }
-				</Subheader>
-			);
-		}
+	if ( createWithBigSky ) {
+		return translate(
+			'Build your site quickly with our AI Website Builder or {{link}}start with a free plan{{/link}}.',
+			{
+				components: {
+					link: <Button onClick={ onFreePlanCTAClick } borderless />,
+				},
+			}
+		);
+	}
 
-		if ( ! createWithBigSky && deemphasizeFreePlan && offeringFreePlan ) {
-			return (
-				<Subheader>
-					{ translate(
-						'Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.',
-						{
-							components: {
-								link: <Button onClick={ onFreePlanCTAClick } borderless />,
-							},
-						}
-					) }
-				</Subheader>
-			);
-		}
+	if ( ! createWithBigSky && deemphasizeFreePlan && offeringFreePlan ) {
+		return translate(
+			'Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.',
+			{
+				components: {
+					link: <Button onClick={ onFreePlanCTAClick } borderless />,
+				},
+			}
+		);
+	}
 
-		if ( showPlanBenefits ) {
-			return <PlanBenefitHeader />;
-		}
+	if ( isOnboarding ) {
+		return translate( 'Whatever site you’re building, there’s a plan to make it happen sooner.' );
+	}
 
-		if ( isOnboarding ) {
-			return (
-				<Subheader>
-					{ translate( 'Whatever site you’re building, there’s a plan to make it happen sooner.' ) }
-				</Subheader>
-			);
-		}
-
-		return null;
-	};
-
-	return (
-		<>
-			{ renderSubheader() }
-			{ isDisplayingPlansNeededForFeature && (
-				<SecondaryFormattedHeader siteSlug={ siteSlug } selectedFeature={ selectedFeature } />
-			) }
-		</>
-	);
+	return null;
 };
-
-export default PlansPageSubheader;

@@ -70,7 +70,11 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 import ComparisonGridToggle from './components/comparison-grid-toggle';
 import PlanUpsellModal from './components/plan-upsell-modal';
 import { useModalResolutionCallback } from './components/plan-upsell-modal/hooks/use-modal-resolution-callback';
-import PlansPageSubheader from './components/plans-page-subheader';
+import {
+	usePlansPageSubheaderText,
+	Subheader,
+	SecondaryFormattedHeader,
+} from './components/plans-page-subheader';
 import useCheckPlanAvailabilityForPurchase from './hooks/use-check-plan-availability-for-purchase';
 import useDefaultWpcomPlansIntent from './hooks/use-default-wpcom-plans-intent';
 import useEligibilityForTermSavingsPriceDisplay from './hooks/use-eligibility-for-term-savings-price-display';
@@ -766,6 +770,13 @@ const PlansFeaturesMain = ( {
 		selectedFeature,
 	} );
 
+	const subheaderText = usePlansPageSubheaderText( {
+		deemphasizeFreePlan,
+		offeringFreePlan,
+		flowName,
+		onFreePlanCTAClick,
+	} );
+
 	return (
 		<>
 			<div className={ clsx( 'plans-features-main', 'is-pricing-grid-2023-plans-features-main' ) }>
@@ -816,15 +827,10 @@ const PlansFeaturesMain = ( {
 							} ) }
 					/>
 				) }
-				<PlansPageSubheader
-					siteSlug={ siteSlug }
-					isDisplayingPlansNeededForFeature={ isDisplayingPlansNeededForFeature }
-					selectedFeature={ selectedFeatureData }
-					offeringFreePlan={ offeringFreePlan }
-					flowName={ flowName }
-					deemphasizeFreePlan={ deemphasizeFreePlan }
-					onFreePlanCTAClick={ onFreePlanCTAClick }
-				/>
+				<Subheader>{ subheaderText }</Subheader>
+				{ isDisplayingPlansNeededForFeature && (
+					<SecondaryFormattedHeader siteSlug={ siteSlug } selectedFeature={ selectedFeatureData } />
+				) }
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }
 				{ isPlansGridReady && (
 					<>
