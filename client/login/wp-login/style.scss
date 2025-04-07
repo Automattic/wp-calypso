@@ -638,7 +638,7 @@ $image-height: 47px;
 		font-size: 14px;
 		line-height: 1.5;
 
-		a:not(.notice.is-error a) {
+		a:not(.calypso-notice.is-error a) {
 			color: var(--color-gravatar);
 		}
 
