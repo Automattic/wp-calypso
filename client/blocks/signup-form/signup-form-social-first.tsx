@@ -4,7 +4,6 @@ import { Button } from '@wordpress/components';
 import { useState, createInterpolateElement } from '@wordpress/element';
 import { chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { CSSProperties } from 'react';
 import { isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
@@ -14,6 +13,7 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import PasswordlessSignupForm from './passwordless';
 import SocialSignupForm from './social';
+import type { CSSProperties } from 'react';
 import './style.scss';
 
 interface QueryArgs {
@@ -66,6 +66,8 @@ const options = {
 	),
 };
 
+type Screen = 'initial' | 'email';
+
 const SignupFormSocialFirst = ( {
 	goToNextStep,
 	stepName,
@@ -83,7 +85,7 @@ const SignupFormSocialFirst = ( {
 	backButtonInFooter = true,
 	emailLabelText,
 }: SignupFormSocialFirst ) => {
-	const [ currentStep, setCurrentStep ] = useState( 'initial' );
+	const [ currentStep, setCurrentStep ] = useState< Screen >( 'initial' );
 	const { __ } = useI18n();
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isWoo = useSelector( getIsWoo );
