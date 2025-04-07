@@ -73,13 +73,11 @@ export const handleMembershipProductsList = dispatchRequest( {
 		const products = endpointResponse.products.map( membershipProductFromApi );
 		return products;
 	},
-	onSuccess: ( { siteId }, products ) => {
-		return {
-			type: MEMBERSHIPS_PRODUCTS_RECEIVE,
-			siteId,
-			products,
-		};
-	},
+	onSuccess: ( { siteId }, products ) => ( {
+		type: MEMBERSHIPS_PRODUCTS_RECEIVE,
+		siteId,
+		products,
+	} ),
 	onError: noop,
 } );
 
