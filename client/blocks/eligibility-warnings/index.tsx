@@ -6,8 +6,6 @@ import {
 	FEATURE_INSTALL_PLUGINS,
 	PLAN_BUSINESS,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
-	PLAN_BUSINESS_MONTHLY,
-	getPlan,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
@@ -19,13 +17,11 @@ import { connect } from 'react-redux';
 import DataCenterPicker from 'calypso/blocks/data-center-picker';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getEligibility,
 	isEligibleForAutomatedTransfer,
 } from 'calypso/state/automated-transfer/selectors';
-import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
 import getRequest from 'calypso/state/selectors/get-request';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { saveSiteSettings } from 'calypso/state/site-settings/actions';
@@ -154,10 +150,6 @@ export const EligibilityWarnings = ( {
 		filteredHolds = listHolds.filter( ( hold ) => hold !== 'NO_BUSINESS_PLAN' );
 	}
 
-	const monthlyCost = useSelector( ( state ) =>
-		getProductDisplayCost( state, PLAN_BUSINESS_MONTHLY )
-	) as string;
-
 	return (
 		<div className={ classes }>
 			<QueryEligibility siteId={ siteId } />
@@ -178,23 +170,7 @@ export const EligibilityWarnings = ( {
 				<CompactCard>
 					<div className="eligibility-warnings__header">
 						<div className="eligibility-warnings__title">
-							{ listHolds.indexOf( 'NO_BUSINESS_PLAN' ) !== -1
-								? translate( 'Upgrade your plan to install plugins' )
-								: translate( 'Before you continue' ) }
-						</div>
-						<div className="eligibility-warnings__primary-text">
-							{ listHolds.indexOf( 'NO_BUSINESS_PLAN' ) !== -1
-								? translate(
-										// Translators: %(planName)s is the plan - Business or Creator, and %(monthlyCost)s is the monthly cost.
-										'Installing plugins is a premium feature. Unlock the ability to install this and 50,000 other plugins by upgrading to the %(planName)s plan for %(monthlyCost)s/month.',
-										{
-											args: {
-												monthlyCost,
-												planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
-											},
-										}
-								  )
-								: '' }
+							{ translate( 'Before you continue' ) }
 						</div>
 					</div>
 				</CompactCard>
