@@ -6,15 +6,17 @@ import {
 } from '@automattic/zendesk-client';
 import { DropZone, Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { useCallback, useRef, useState } from '@wordpress/element';
+import { useCallback, useRef, useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
+import React from 'react';
 import { SendMessageIcon } from '../../assets/send-message-icon';
 import { ODIE_WRONG_FILE_TYPE_MESSAGE } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../hooks';
 import { Message } from '../../types';
 import { zendeskMessageConverter } from '../../utils';
+import { PredictionLinks } from '../prediction-links';
 import { AttachmentButton } from './attachment-button';
 import { ResizableTextarea } from './resizable-textarea';
 
@@ -24,7 +26,6 @@ const getFileType = ( file: File ) => {
 	if ( file.type.startsWith( 'image/' ) ) {
 		return 'image-placeholder';
 	}
-
 	return 'text';
 };
 
@@ -67,17 +68,34 @@ export const OdieSendMessageButton = () => {
 	const isChatBusy = chat.status === 'loading' || chat.status === 'sending';
 	const [ isMessageSizeValid, setIsMessageSizeValid ] = useState( true );
 	const [ submitDisabled, setSubmitDisabled ] = useState( true );
+	const [ showTextarea, setShowTextarea ] = useState( false );
+
+	const lastMessage = chat.messages?.[ chat.messages.length - 1 ];
+	const predictions = lastMessage?.predictions;
+
+	useEffect( () => {
+		if ( chat?.messages?.length > 0 ) {
+			const lastMessage = chat.messages[ chat.messages.length - 1 ];
+			if ( lastMessage?.predictions ) {
+				setShowTextarea( false );
+			} else {
+				setShowTextarea( true );
+			}
+		}
+	}, [ chat?.messages ] );
 
 	const { data: authData } = useAuthenticateZendeskMessaging(
 		isUserEligibleForPaidSupport,
 		'messenger'
 	);
+
 	const { zendeskClientId } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
 			zendeskClientId: helpCenterSelect.getZendeskClientId(),
 		};
 	}, [] );
+
 	const inferredClientId = chat.clientId ? chat.clientId : zendeskClientId;
 
 	const { isPending: isAttachingFile, mutateAsync: attachFileToConversation } =
@@ -130,23 +148,21 @@ export const OdieSendMessageButton = () => {
 	};
 
 	const onKeyUp = useCallback( () => {
-		// Only triggered when the message is empty
-		// used to remove validation message.
 		setIsMessageSizeValid( true );
 	}, [] );
 
 	const sendMessageHandler = useCallback( async () => {
 		const message = inputRef.current?.value.trim();
 		const messageLength = message?.length || 0;
-		const isMessageLengthValid = messageLength <= 4096; // zendesk api validation
+		const isMessageLengthValid = messageLength <= 4096;
 
 		setIsMessageSizeValid( isMessageLengthValid );
 
 		if ( message === '' || isChatBusy || ! isMessageLengthValid ) {
 			return;
 		}
+
 		const messageString = inputRef.current?.value;
-		// Immediately remove the message from the input field
 		if ( chat?.provider === 'odie' ) {
 			inputRef.current!.value = '';
 		}
@@ -161,14 +177,14 @@ export const OdieSendMessageButton = () => {
 			} as Message;
 
 			setSubmitDisabled( true );
-
 			await sendMessage( message );
-			// Removes the message from the input field after it has been sent
+
 			if ( chat?.provider === 'zendesk' ) {
 				inputRef.current!.value = '';
 			}
 
 			trackEvent( 'chat_message_action_receive' );
+			setShowTextarea( false );
 		} catch ( e ) {
 			const error = e as Error;
 			trackEvent( 'chat_message_error', {
@@ -179,6 +195,20 @@ export const OdieSendMessageButton = () => {
 			inputRef.current?.focus();
 		}
 	}, [ isChatBusy, chat?.provider, trackEvent, sendMessage ] );
+
+	const handlePredictionClick = useCallback(
+		( prediction: string ) => {
+			if ( prediction === 'custom-reply' ) {
+				setShowTextarea( true );
+				setTimeout( () => {
+					inputRef.current?.focus();
+				}, 300 );
+			} else {
+				sendMessage( { content: prediction, role: 'user', type: 'message' } );
+			}
+		},
+		[ sendMessage ]
+	);
 
 	const inputContainerClasses = clsx(
 		'odie-chat-message-input-container',
@@ -199,37 +229,47 @@ export const OdieSendMessageButton = () => {
 					{ __( 'Message exceeds 4096 characters limit.' ) }
 				</div>
 			) }
+
 			<div className={ inputContainerClasses } ref={ divContainerRef }>
-				<form
-					onSubmit={ ( event ) => {
-						event.preventDefault();
-						sendMessageHandler();
-					} }
-					className="odie-send-message-input-container"
-				>
-					<ResizableTextarea
-						shouldDisableInputField={ isChatBusy || isAttachingFile || cantTransferToZendesk }
-						sendMessageHandler={ sendMessageHandler }
-						className="odie-send-message-input"
-						inputRef={ inputRef }
-						setSubmitDisabled={ setSubmitDisabled }
-						keyUpHandle={ onKeyUp }
-						onPasteHandle={ onPaste }
-						placeholder={ textAreaPlaceholder }
+				{ ! showTextarea && predictions ? (
+					<PredictionLinks
+						predictions={ predictions }
+						onPredictionClick={ handlePredictionClick }
+						className="odie-prediction-links"
 					/>
-					{ isChatBusy && <Spinner className="odie-send-message-input-spinner" /> }
-					{ showAttachmentButton && (
-						<AttachmentButton
-							attachmentButtonRef={ attachmentButtonRef }
-							onFileUpload={ handleFileUpload }
-							isAttachingFile={ isAttachingFile }
+				) : (
+					<form
+						onSubmit={ ( event ) => {
+							event.preventDefault();
+							sendMessageHandler();
+						} }
+						className="odie-send-message-input-container"
+					>
+						<ResizableTextarea
+							shouldDisableInputField={ isChatBusy || isAttachingFile || cantTransferToZendesk }
+							sendMessageHandler={ sendMessageHandler }
+							className="odie-send-message-input"
+							inputRef={ inputRef }
+							setSubmitDisabled={ setSubmitDisabled }
+							keyUpHandle={ onKeyUp }
+							onPasteHandle={ onPaste }
+							placeholder={ textAreaPlaceholder }
 						/>
-					) }
-					<button type="submit" className={ buttonClasses } disabled={ submitDisabled }>
-						<SendMessageIcon />
-					</button>
-				</form>
+						{ isChatBusy && <Spinner className="odie-send-message-input-spinner" /> }
+						{ showAttachmentButton && (
+							<AttachmentButton
+								attachmentButtonRef={ attachmentButtonRef }
+								onFileUpload={ handleFileUpload }
+								isAttachingFile={ isAttachingFile }
+							/>
+						) }
+						<button type="submit" className={ buttonClasses } disabled={ submitDisabled }>
+							<SendMessageIcon />
+						</button>
+					</form>
+				) }
 			</div>
+
 			{ showAttachmentButton && (
 				<DropZone
 					onFilesDrop={ onFilesDrop }

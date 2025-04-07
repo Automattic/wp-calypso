@@ -126,6 +126,7 @@ export const useSendOdieMessage = () => {
 				simulateTyping: returnedChat.messages[ 0 ].simulateTyping,
 				type: 'message',
 				context: returnedChat.messages[ 0 ].context,
+				predictions: returnedChat.messages[ 0 ].predictions,
 			};
 			setExperimentVariationName( returnedChat.experiment_name );
 			addMessage( botMessage, { odieId: returnedChat.chat_id } );

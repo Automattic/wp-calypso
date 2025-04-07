@@ -147,6 +147,12 @@ export type MessageType =
 	| 'image'
 	| 'introduction';
 
+export type MessagePrediction = {
+	best_reply: string;
+	best_second_reply: string;
+	best_third_reply: string;
+};
+
 export type Message = {
 	content: string;
 	context?: Context;
@@ -160,6 +166,7 @@ export type Message = {
 	type: MessageType;
 	directEscalationSupport?: boolean;
 	created_at?: string;
+	predictions?: MessagePrediction | null;
 };
 
 export type ChatStatus = 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer' | 'closed';
