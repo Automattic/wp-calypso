@@ -12,6 +12,11 @@
 		flex-direction: column;
 		padding: 0 24px;
 
+		// Specificity increase to override Card background color loaded later in the cascade.
+		&.domain-transfer-or-connect__content {
+			background-color: transparent;
+		}
+
 		.option-content {
 			+ .option-content {
 				border-top: 1px solid var(--studio-gray-5);
@@ -166,6 +171,7 @@
 				.button {
 					padding: 8px 39px;
 					flex-grow: 1;
+					white-space: nowrap;
 
 					@include break-mobile {
 						flex-grow: 0;
@@ -199,6 +205,21 @@
 
 		@include break-mobile {
 			margin: 24px 0;
+		}
+
+		button {
+			color: var(--color-link);
+			cursor: pointer;
+
+			&:hover,
+			&:focus,
+			&:active {
+				color: var(--color-link-dark);
+			}
+
+			&:focus {
+				outline: thin dotted;
+			}
 		}
 	}
 }

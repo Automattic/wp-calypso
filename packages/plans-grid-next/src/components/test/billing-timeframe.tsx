@@ -34,8 +34,8 @@ import {
 	PLAN_TRIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
-import { formatCurrency } from '@automattic/format-currency';
 import { render } from '@testing-library/react';
+import { formatCurrency } from 'i18n-calypso';
 import React from 'react';
 import { usePlansGridContext } from '../../grid-context';
 import BillingTimeframe from '../shared/billing-timeframe';
@@ -49,7 +49,7 @@ describe( 'BillingTimeframe', () => {
 		jest.clearAllMocks();
 	} );
 
-	test( `should show savings with yearly when plan is monthly`, () => {
+	test( 'should show savings with yearly when plan is monthly', () => {
 		const planMonthlyPricing = {
 			currencyCode: 'USD',
 			originalPrice: { full: 120, monthly: 10 },
@@ -309,7 +309,7 @@ describe( 'BillingTimeframe', () => {
 		expect( getByText( /Refundable within 7 days. No questions asked./ ) ).toBeInTheDocument();
 	} );
 
-	test( `refund period can't be shown for free plan`, () => {
+	test( "refund period can't be shown for free plan", () => {
 		const pricing = {
 			currencyCode: 'USD',
 			originalPrice: { full: 0, monthly: 0 },

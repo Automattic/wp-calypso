@@ -1,13 +1,14 @@
+import { Step } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { lazy, useEffect } from 'react';
+import React, { lazy, useEffect, useMemo } from 'react';
 import Modal from 'react-modal';
-import { generatePath, useParams } from 'react-router';
+import { createPath, generatePath, useParams } from 'react-router';
 import { Route, Routes } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
-import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -16,40 +17,31 @@ import { useSaveQueryParams } from '../../hooks/use-save-query-params';
 import { useSiteData } from '../../hooks/use-site-data';
 import useSyncRoute from '../../hooks/use-sync-route';
 import { useStartStepperPerformanceTracking } from '../../utils/performance-tracking';
+import { shouldUseStepContainerV2 } from '../helpers/should-use-step-container-v2';
 import { StepRoute } from './components';
 import { Boot } from './components/boot';
 import { RedirectToStep } from './components/redirect-to-step';
 import { useFlowAnalytics } from './hooks/use-flow-analytics';
 import { useFlowNavigation } from './hooks/use-flow-navigation';
+import { usePreloadSteps, lazyCache } from './hooks/use-preload-steps';
 import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
 import { useStepNavigationWithTracking } from './hooks/use-step-navigation-with-tracking';
 import { PRIVATE_STEPS } from './steps';
-import { AssertConditionState, type Flow, type StepperStep, type StepProps } from './types';
+import { AssertConditionState, type Flow, type StepperStep } from './types';
 import type { StepperInternalSelect } from '@automattic/data-stores';
 import './global.scss';
-
-const lazyCache = new WeakMap<
-	() => Promise< {
-		default: React.ComponentType< StepProps >;
-	} >,
-	React.ComponentType< StepProps >
->();
 
 function flowStepComponent( flowStep: StepperStep | undefined ) {
 	if ( ! flowStep ) {
 		return null;
 	}
 
-	if ( 'asyncComponent' in flowStep ) {
-		let lazyComponent = lazyCache.get( flowStep.asyncComponent );
-		if ( ! lazyComponent ) {
-			lazyComponent = lazy( flowStep.asyncComponent );
-			lazyCache.set( flowStep.asyncComponent, lazyComponent );
-		}
-		return lazyComponent;
+	let lazyComponent = lazyCache.get( flowStep.asyncComponent );
+	if ( ! lazyComponent ) {
+		lazyComponent = lazy( flowStep.asyncComponent );
+		lazyCache.set( flowStep.asyncComponent, lazyComponent );
 	}
-
-	return flowStep.component;
+	return lazyComponent;
 }
 
 /**
@@ -97,40 +89,11 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 	const selectedSite = useSelector( ( state ) => site && getSite( state, siteSlugOrId ) );
 
 	// this pre-loads the next step in the flow.
-	useEffect( () => {
-		const nextStepIndex = flowSteps.findIndex( ( step ) => step.slug === currentStepRoute ) + 1;
-		const nextStep = flowSteps[ nextStepIndex ];
-
-		// 0 implies the findIndex returned -1.
-		if ( nextStepIndex === 0 || ! nextStep ) {
-			return;
-		}
-
-		if ( siteSlugOrId && ! selectedSite ) {
-			// If this step depends on a selected site, only preload after we have the data.
-			// Otherwise, we're still waiting to render something meaningful, and we don't want to
-			// potentially slow that down by having the CPU busy initialising future steps.
-			return;
-		}
-		if (
-			// Don't load anything on user step because the user step will hard-navigate anyways.
-			currentStepRoute !== 'user' &&
-			'asyncComponent' in nextStep
-		) {
-			nextStep.asyncComponent();
-		}
-		// Most flows sadly instantiate a new steps array on every call to `flow.useSteps()`,
-		// which means that we don't want to depend on `flowSteps` here, or this would end up
-		// running on every render. We thus depend on `flow` instead.
-		//
-		// This should be safe, because flows shouldn't return different lists of steps at
-		// different points. But even if they do, worst case scenario we only fail to preload
-		// some steps, and they'll simply be loaded later.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ siteSlugOrId, selectedSite, currentStepRoute, flow ] );
+	usePreloadSteps( siteSlugOrId, selectedSite, currentStepRoute, flowSteps, flow );
 
 	const stepNavigation = useStepNavigationWithTracking( {
 		flow,
+		stepSlugs: stepPaths,
 		currentStepRoute,
 		navigate,
 	} );
@@ -153,10 +116,23 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 		state: AssertConditionState.SUCCESS,
 	};
 
+	const stepContainerV2Context = useMemo(
+		() => ( {
+			flowName: flow.name,
+			stepName: currentStepRoute,
+			recordTracksEvent,
+		} ),
+		[ flow.name, currentStepRoute ]
+	);
+
 	const renderStep = ( step: StepperStep ) => {
 		switch ( assertCondition.state ) {
 			case AssertConditionState.CHECKING:
-				return <Loading className="wpcom-loading__boot" />;
+				return shouldUseStepContainerV2( flow.name ) ? (
+					<Step.Loading />
+				) : (
+					<Loading className="wpcom-loading__boot" />
+				);
 			case AssertConditionState.FAILURE:
 				console.error( assertCondition.message ); // eslint-disable-line no-console
 				return null;
@@ -172,15 +148,20 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 		// and are redirected to the user step.
 		const postAuthStepSlug = stepData?.nextStep ?? '';
 		if ( step.slug === PRIVATE_STEPS.USER.slug && postAuthStepSlug ) {
+			const flowSlug = flow.variantSlug ?? flow.name;
 			const previousAuthStepSlug = stepData?.previousStep;
-			const postAuthStepPath = generatePath( '/setup/:flow/:step/:lang?', {
-				flow: flow.name,
-				step: postAuthStepSlug,
-				lang: lang === 'en' || isLoggedIn ? null : lang,
+			const postAuthStepPath = createPath( {
+				pathname: generatePath( '/setup/:flow/:step/:lang?', {
+					flow: flowSlug,
+					step: postAuthStepSlug,
+					lang: lang === 'en' || isLoggedIn ? null : lang,
+				} ),
+				search: window.location.search,
+				hash: window.location.hash,
 			} );
 
 			const signupUrl = generatePath( '/setup/:flow/:step/:lang?', {
-				flow: flow.name,
+				flow: flowSlug,
 				step: 'user',
 				lang: lang === 'en' || isLoggedIn ? null : lang,
 			} );
@@ -230,36 +211,46 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 
 	useSignUpStartTracking( { flow } );
 
+	const fallback = shouldUseStepContainerV2( flow.name ) ? (
+		<Step.Loading />
+	) : (
+		<Loading className="wpcom-loading__boot" />
+	);
+
 	return (
-		<Boot fallback={ <Loading className="wpcom-loading__boot" /> }>
+		<Boot fallback={ fallback }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
 
-			<Routes>
-				{ flowSteps.map( ( step ) => (
+			<Step.StepContainerV2Provider value={ stepContainerV2Context }>
+				<Routes>
+					{ flowSteps.map( ( step ) => (
+						<Route
+							key={ step.slug }
+							path={ `/${ flow.variantSlug ?? flow.name }/${ step.slug }/:lang?` }
+							element={
+								<StepRoute
+									key={ step.slug }
+									step={ step }
+									flow={ flow }
+									renderStep={ renderStep }
+									navigate={ navigate }
+								/>
+							}
+						/>
+					) ) }
 					<Route
-						key={ step.slug }
-						path={ `/${ flow.variantSlug ?? flow.name }/${ step.slug }/:lang?` }
+						path="/:flow/:lang?"
 						element={
-							<StepRoute
-								key={ step.slug }
-								step={ step }
-								flow={ flow }
-								renderStep={ renderStep }
-								navigate={ navigate }
-							/>
+							<>
+								{ fallback }
+								<RedirectToStep
+									slug={ flow.__experimentalUseBuiltinAuth ? firstStepSlug : stepPaths[ 0 ] }
+								/>
+							</>
 						}
 					/>
-				) ) }
-				<Route
-					path="/:flow/:lang?"
-					element={
-						<RedirectToStep
-							slug={ flow.__experimentalUseBuiltinAuth ? firstStepSlug : stepPaths[ 0 ] }
-						/>
-					}
-				/>
-			</Routes>
-			<AsyncCheckoutModal siteId={ site?.ID } />
+				</Routes>
+			</Step.StepContainerV2Provider>
 		</Boot>
 	);
 };

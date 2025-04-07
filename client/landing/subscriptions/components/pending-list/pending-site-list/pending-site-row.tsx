@@ -1,7 +1,7 @@
+import { TimeSince } from '@automattic/components';
 import { SubscriptionManager, Reader } from '@automattic/data-stores';
 import { useMemo } from 'react';
 import { SiteIcon } from 'calypso/blocks/site-icon';
-import TimeSince from 'calypso/components/time-since';
 import { PendingSubscriptionSettingsPopover } from 'calypso/landing/subscriptions/components/settings';
 
 export default function PendingSiteRow( {

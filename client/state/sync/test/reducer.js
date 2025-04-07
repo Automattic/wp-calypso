@@ -117,7 +117,7 @@ describe( 'state', () => {
 				);
 				expect( newState ).toHaveProperty( 'isSyncingInProgress', false );
 				expect( newState ).toHaveProperty( 'status', SiteSyncStatus.ALLOW_RETRY );
-				expect( newState ).toHaveProperty( 'progress', 1 );
+				expect( newState ).toHaveProperty( 'progress', 0.1 );
 				expect( newState ).toHaveProperty( 'fetchingStatus', false );
 			} );
 		} );

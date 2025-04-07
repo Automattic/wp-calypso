@@ -1,7 +1,6 @@
 import { isDomainMapping, isDomainTransfer } from '@automattic/calypso-products';
-import formatCurrency from '@automattic/format-currency';
 import { Button } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { formatCurrency, useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import ThankYouProduct from 'calypso/components/thank-you-v2/product';
 import {

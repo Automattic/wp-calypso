@@ -1,0 +1,91 @@
+@import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+.current-plan-panel {
+	.current-plan-heading {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+
+		@include break-medium {
+			display: flex;
+			flex-direction: row;
+			align-items: flex-start;
+		}
+	}
+
+	.current-plan-info {
+		flex: 1;
+	}
+
+	.current-plan-name {
+		display: flex;
+		flex: 1;
+		gap: 8px;
+		margin-bottom: 8px;
+	}
+
+	.manage-buttons {
+		display: flex;
+		gap: 4px;
+
+		@include break-medium {
+			flex-direction: row-reverse;
+		}
+	}
+
+	h3 {
+		color: $gray-900;
+		font-family: "SF Pro", $sans;
+		font-size: rem(20px); //typography-exception
+		font-weight: 500;
+		line-height: 24px;
+	}
+
+	hr {
+		margin-top: 32px;
+		margin-bottom: 8px;
+		background-color: $gray-100;
+	}
+
+	.plan-price-info {
+		font-size: rem(13px);  //typography-exception
+		color: $gray-700;
+	}
+
+	.plan-price--inline {
+		font-size: rem(13px);  //typography-exception
+
+		&, .plan-price__currency-symbol {
+			color: $gray-900;
+		}
+	}
+
+	.plan-stats {
+		gap: 16px;
+		flex-direction: row;
+
+		.plan-storage {
+			margin-top: 0;
+			min-width: 300px;
+		}
+
+		.plan-stats__footer {
+			gap: 16px;
+			margin-top: 0;
+
+			> div {
+				min-width: 200px;
+			}
+		}
+
+		@media (max-width: 400px) {
+			.plan-storage,
+			.plan-stats__footer > div {
+				min-width: unset;
+			}
+		}
+	}
+}

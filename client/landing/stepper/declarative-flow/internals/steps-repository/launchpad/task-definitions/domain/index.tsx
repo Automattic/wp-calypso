@@ -1,5 +1,5 @@
 import { Task } from '@automattic/launchpad';
-import { isBlogOnboardingFlow, isSiteAssemblerFlow, isReadymadeFlow } from '@automattic/onboarding';
+import { isStartWritingFlow, isReadymadeFlow } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { isDomainUpsellCompleted, getSiteIdOrSlug } from '../../task-helper';
@@ -10,7 +10,7 @@ export const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => 
 	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
 
 	const getDestionationUrl = () => {
-		if ( isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow ) || isReadymadeFlow( flow ) ) {
+		if ( isStartWritingFlow( flow ) || isReadymadeFlow( flow ) ) {
 			return addQueryArgs( `/setup/${ flow }/domains`, {
 				...getSiteIdOrSlug( flow, site, siteSlug ),
 				flowToReturnTo: flow,
@@ -21,7 +21,7 @@ export const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => 
 
 		return domainUpsellCompleted
 			? `/domains/manage/${ siteSlug }`
-			: addQueryArgs( `/setup/domain-upsell/domains`, {
+			: addQueryArgs( '/setup/domain-upsell/domains', {
 					...getSiteIdOrSlug( flow, site, siteSlug ),
 					flowToReturnTo: flow,
 					new: site?.name,
@@ -33,9 +33,7 @@ export const getDomainUpSellTask: TaskAction = ( task, flow, context ): Task => 
 		completed: domainUpsellCompleted,
 		calypso_path: getDestionationUrl(),
 		badge_text:
-			domainUpsellCompleted || isBlogOnboardingFlow( flow ) || isSiteAssemblerFlow( flow )
-				? ''
-				: translate( 'Upgrade plan' ),
+			domainUpsellCompleted || isStartWritingFlow( flow ) ? '' : translate( 'Upgrade plan' ),
 		useCalypsoPath: true,
 	};
 };

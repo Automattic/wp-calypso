@@ -1,9 +1,12 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@wordpress/components';
 import { check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo } from 'react';
+import {
+	withTooltip,
+	WithTooltipProps,
+} from 'calypso/a8c-for-agencies/components/hoc/with-tooltip';
 import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
 import { useProductDescription } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import getProductShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-short-title';
@@ -22,6 +25,7 @@ import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types
 import './style.scss';
 
 type Props = WithProductLightboxProps &
+	WithTooltipProps &
 	ProductLightboxActivatorProps & {
 		suggestedProduct?: string | null;
 		hideDiscount?: boolean;
@@ -131,8 +135,6 @@ function ProductCard( props: Props ) {
 		return isSelected ? translate( 'Added to cart' ) : translate( 'Add to cart' );
 	}, [ asReferral, isSelected, quantity, translate ] );
 
-	const isRedesign = isEnabled( 'a4a-product-page-redesign' );
-
 	const hasMultipleProducts = products.length > 1;
 
 	const productTitle = getProductShortTitle( currentProduct, hasMultipleProducts );
@@ -166,17 +168,6 @@ function ProductCard( props: Props ) {
 							{ ! customProductCard && (
 								<>
 									<ProductBadges product={ currentProduct } />
-									{ ! isRedesign && hasMultipleProducts && (
-										<MultipleChoiceQuestion
-											name={ `${ currentProduct.family_slug }-variant-options` }
-											question={ translate( 'Select variant:' ) }
-											answers={ variantOptions }
-											selectedAnswerId={ currentProduct.slug }
-											onAnswerChange={ onChangeOption }
-											shouldShuffleAnswers={ false }
-										/>
-									) }
-
 									<div className="product-card__pricing is-compact">
 										<ProductPriceWithDiscount
 											product={ currentProduct }
@@ -186,7 +177,7 @@ function ProductCard( props: Props ) {
 										/>
 									</div>
 
-									{ isRedesign && hasMultipleProducts && (
+									{ hasMultipleProducts && (
 										<MultipleChoiceQuestion
 											name={ `${ currentProduct.family_slug }-variant-options` }
 											question={ translate( 'Select variant:' ) }
@@ -221,7 +212,7 @@ function ProductCard( props: Props ) {
 							customText={ translate( 'View details' ) }
 							productName={ getProductShortTitle( currentProduct ) }
 							onClick={ onShowLightbox }
-							showIcon={ ! isRedesign }
+							showIcon={ false }
 						/>
 					) }
 				</div>
@@ -230,4 +221,4 @@ function ProductCard( props: Props ) {
 	);
 }
 
-export default withProductLightbox( ProductCard );
+export default withProductLightbox( withTooltip( ProductCard ) );

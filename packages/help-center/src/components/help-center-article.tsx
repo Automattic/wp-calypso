@@ -64,6 +64,38 @@ export const HelpCenterArticle = () => {
 		}
 	}, [ post, query, sectionName ] );
 
+	// Trigger event for each section scrolled into view
+	useEffect( () => {
+		if ( elementRef.current ) {
+			const observer = new IntersectionObserver(
+				( entries ) => {
+					entries.forEach( ( entry ) => {
+						if ( entry.isIntersecting ) {
+							const tracksData = {
+								force_site_id: true,
+								location: 'help-center',
+								post_url: post?.URL,
+								post_id: post?.ID,
+								blog_id: post?.site_ID,
+								section_id: entry?.target?.id,
+							};
+							recordTracksEvent( 'calypso_helpcenter_article_section_view', tracksData );
+							observer.unobserve( entry.target ); // Unobserve after first intersection
+						}
+					} );
+				},
+				{ threshold: 0.1 }
+			);
+
+			const h2Elements = elementRef.current.querySelectorAll( 'h2' );
+			h2Elements.forEach( ( h2 ) => observer.observe( h2 ) );
+
+			return () => {
+				observer.disconnect();
+			};
+		}
+	}, [ elementRef, post?.ID, post?.URL, post?.site_ID ] );
+
 	return (
 		<div className="help-center-article" ref={ elementRef }>
 			{ ! error && <ArticleContent post={ post } isLoading={ isLoading } /> }

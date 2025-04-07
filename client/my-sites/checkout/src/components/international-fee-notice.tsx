@@ -9,7 +9,7 @@ export const showInternationalFeeNotice = ( contactInfo: ManagedContactDetails )
 };
 export const InternationalFeeNotice = () => {
 	const internationalFeeAgreement = translate(
-		`Your issuing bank may choose to charge an international transaction fee or a currency exchange fee. Your bank may be able to provide more information as to when this is necessary.`
+		'Your issuing bank may choose to charge an international transaction fee or a currency exchange fee. Your bank may be able to provide more information as to when this is necessary.'
 	);
 	return <CheckoutTermsItem>{ internationalFeeAgreement }</CheckoutTermsItem>;
 };

@@ -208,7 +208,7 @@ expect.extend( {
 
 		if ( results.length === 0 ) {
 			return {
-				message: () => `number of results of is 0`,
+				message: () => 'number of results of is 0',
 				pass: false,
 			};
 		}

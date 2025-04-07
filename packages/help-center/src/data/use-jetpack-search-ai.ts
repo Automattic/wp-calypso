@@ -34,9 +34,8 @@ export function useJetpackSearchAIQuery( config: JetpackSearchAIConfig ) {
 		queryFn: () =>
 			canAccessWpcomApis()
 				? wpcomRequest( {
-						path: `sites/${ config.siteId }/jetpack-search/ai/search`,
-						apiNamespace: 'wpcom/v2/',
-						apiVersion: '2',
+						path: `/sites/${ config.siteId }/jetpack-search/ai/search`,
+						apiNamespace: 'wpcom/v2',
 						query: `query=${ encodeURIComponent( config.query ) }&stop_at=${ config.stopAt }`,
 				  } )
 				: apiFetch( {

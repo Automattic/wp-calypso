@@ -519,7 +519,7 @@ function StatsCommercialFlowOptOutForm( {
 						<CheckboxControl
 							className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
 							checked={ isAdsChecked }
-							label={ translate( `I don't have ads on my site` ) }
+							label={ translate( "I don't have ads on my site" ) }
 							onChange={ ( value: boolean ) => {
 								setAdsChecked( value );
 							} }
@@ -529,7 +529,7 @@ function StatsCommercialFlowOptOutForm( {
 						<CheckboxControl
 							className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
 							checked={ isSellingChecked }
-							label={ translate( `I don't sell products/services on my site` ) }
+							label={ translate( "I don't sell products/services on my site" ) }
 							onChange={ ( value: boolean ) => {
 								setSellingChecked( value );
 							} }
@@ -539,7 +539,7 @@ function StatsCommercialFlowOptOutForm( {
 						<CheckboxControl
 							className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
 							checked={ isBusinessChecked }
-							label={ translate( `I don't promote a business on my site` ) }
+							label={ translate( "I don't promote a business on my site" ) }
 							onChange={ ( value: boolean ) => {
 								setBusinessChecked( value );
 							} }
@@ -549,7 +549,7 @@ function StatsCommercialFlowOptOutForm( {
 						<CheckboxControl
 							className={ `${ COMPONENT_CLASS_NAME }__control--checkbox` }
 							checked={ isDonationChecked }
-							label={ translate( `I don't solicit donations or sponsorships on my site` ) }
+							label={ translate( "I don't solicit donations or sponsorships on my site" ) }
 							onChange={ ( value ) => {
 								setDonationChecked( value );
 							} }

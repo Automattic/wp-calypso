@@ -126,7 +126,6 @@ export type ResponseDomain = {
 	pendingRegistration: boolean;
 	pendingRegistrationAtRegistry: boolean;
 	pendingRegistrationAtRegistryUrl: string;
-	pendingRegistrationTime: string;
 	pendingTransfer?: boolean;
 	pointsToWpcom: boolean;
 	privacyAvailable: boolean;

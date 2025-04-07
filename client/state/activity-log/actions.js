@@ -3,14 +3,8 @@ import { addQueryArgs } from 'calypso/lib/url';
 import {
 	ACTIVITY_LOG_FILTER_SET,
 	ACTIVITY_LOG_FILTER_UPDATE,
-	REWIND_ACTIVATE_FAILURE,
-	REWIND_ACTIVATE_REQUEST,
-	REWIND_ACTIVATE_SUCCESS,
 	REWIND_ACTIVITY_SHARE_REQUEST,
 	REWIND_CLONE,
-	REWIND_DEACTIVATE_FAILURE,
-	REWIND_DEACTIVATE_REQUEST,
-	REWIND_DEACTIVATE_SUCCESS,
 	REWIND_RESTORE,
 	REWIND_RESTORE_DISMISS,
 	REWIND_RESTORE_DISMISS_PROGRESS,
@@ -33,8 +27,6 @@ import {
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import { filterStateToQuery } from './utils';
 
-import 'calypso/state/data-layer/wpcom/activity-log/activate';
-import 'calypso/state/data-layer/wpcom/activity-log/deactivate';
 import 'calypso/state/data-layer/wpcom/activity-log/rewind/backup';
 import 'calypso/state/data-layer/wpcom/activity-log/rewind/downloads';
 import 'calypso/state/data-layer/wpcom/activity-log/rewind/restore-status';
@@ -43,34 +35,6 @@ import 'calypso/state/data-layer/wpcom/activity-log/share';
 import 'calypso/state/data-layer/wpcom/sites/rewind/downloads';
 import 'calypso/state/data-layer/wpcom/sites/rewind/restores';
 import 'calypso/state/activity-log/init';
-
-/**
- * Turn the 'rewind' feature on for a site.
- * @param  {string|number} siteId      Site ID
- * @param  {boolean}          isVpMigrate Whether this is a VaultPress migration.
- * @returns {Object}        Action object
- */
-export function activateRewind( siteId, isVpMigrate ) {
-	return {
-		type: REWIND_ACTIVATE_REQUEST,
-		siteId,
-		isVpMigrate,
-	};
-}
-
-export function rewindActivateSuccess( siteId ) {
-	return {
-		type: REWIND_ACTIVATE_SUCCESS,
-		siteId,
-	};
-}
-
-export function rewindActivateFailure( siteId ) {
-	return {
-		type: REWIND_ACTIVATE_FAILURE,
-		siteId,
-	};
-}
 
 /**
  * Share a rewind/activity-log event via email.
@@ -85,32 +49,6 @@ export function rewindShareRequest( siteId, rewindId, email ) {
 		siteId,
 		rewindId,
 		email,
-	};
-}
-
-/**
- * Turn the 'rewind' feature off for a site.
- * @param {string|number} siteId site ID
- * @returns {Object} action object
- */
-export function deactivateRewind( siteId ) {
-	return {
-		type: REWIND_DEACTIVATE_REQUEST,
-		siteId,
-	};
-}
-
-export function rewindDeactivateSuccess( siteId ) {
-	return {
-		type: REWIND_DEACTIVATE_SUCCESS,
-		siteId,
-	};
-}
-
-export function rewindDeactivateFailure( siteId ) {
-	return {
-		type: REWIND_DEACTIVATE_FAILURE,
-		siteId,
 	};
 }
 

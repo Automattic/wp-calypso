@@ -83,7 +83,7 @@ const DEFAULT_TAKS_RESPONSE = {
 			subtitle: '',
 			badge_text: '',
 			isLaunchTask: false,
-			calypso_path: '/setup/update-design/designSetup?siteSlug=gabrielcaires0.wordpress.com',
+			calypso_path: '/setup/update-design/design-setup?siteSlug=gabrielcaires0.wordpress.com',
 		},
 	],
 	is_enabled: false,

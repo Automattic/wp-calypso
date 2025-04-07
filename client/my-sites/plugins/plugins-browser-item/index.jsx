@@ -4,7 +4,7 @@ import { Badge, Gridicon } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { Icon, info } from '@wordpress/icons';
 import clsx from 'clsx';
-import { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { useTranslate, numberFormat } from 'i18n-calypso';
 import { useMemo, useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -288,13 +288,13 @@ const PluginsBrowserListElement = ( props ) => {
 										color="#f0b849" // alert-yellow
 									/>
 									<span className="plugins-browser-item__rating-value">
-										{ ( plugin.rating / 20 ).toFixed( 1 ) }
+										{ numberFormat( plugin.rating / 20, { decimals: 1 } ) }
 									</span>
 									{ Number.isInteger( plugin.num_ratings ) && (
 										<span className="plugins-browser-item__number-of-ratings">
 											{ translate( '(%(number_of_ratings)s)', {
 												args: {
-													number_of_ratings: plugin.num_ratings.toLocaleString( getLocaleSlug() ),
+													number_of_ratings: numberFormat( plugin.num_ratings ),
 												},
 											} ) }
 										</span>

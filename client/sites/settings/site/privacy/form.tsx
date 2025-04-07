@@ -187,7 +187,7 @@ const SiteSettingPrivacyForm = ( {
 					</>
 				) }
 
-				{ ! isWpcomStagingSite && (
+				{ isPublicChecked && ! isWpcomStagingSite && (
 					<>
 						<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">
 							<FormInputCheckbox
@@ -196,8 +196,7 @@ const SiteSettingPrivacyForm = ( {
 								checked={ discourageSearchChecked }
 								onChange={ () =>
 									handleVisibilityOptionChange( {
-										blog_public:
-											wpcomPublicComingSoon || blogPublic === -1 || blogPublic === 1 ? 0 : 1,
+										blog_public: wpcomPublicComingSoon || blogPublic !== 0 ? 0 : 1,
 										wpcom_coming_soon: 0,
 										wpcom_public_coming_soon: 0,
 										wpcom_data_sharing_opt_out: true,
@@ -227,8 +226,7 @@ const SiteSettingPrivacyForm = ( {
 									}
 									onChange={ () =>
 										handleVisibilityOptionChange( {
-											blog_public:
-												blogPublic === 1 || wpcomPublicComingSoon || blogPublic === -1 ? 1 : 0,
+											blog_public: wpcomPublicComingSoon || blogPublic !== 0 ? 1 : 0,
 											wpcom_coming_soon: 0,
 											wpcom_public_coming_soon: 0,
 											wpcom_data_sharing_opt_out: ! wpcomDataSharingOptOut,

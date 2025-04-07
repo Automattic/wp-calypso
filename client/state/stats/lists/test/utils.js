@@ -738,6 +738,7 @@ describe( 'utils', () => {
 					{
 						label: 'United States',
 						countryCode: 'US',
+						countryFull: 'United States',
 						value: 1,
 						region: '021',
 					},
@@ -781,6 +782,7 @@ describe( 'utils', () => {
 					{
 						label: 'United States',
 						countryCode: 'US',
+						countryFull: 'United States',
 						value: 10,
 						region: '021',
 					},
@@ -823,6 +825,7 @@ describe( 'utils', () => {
 					{
 						label: 'United States',
 						countryCode: 'US',
+						countryFull: 'United States',
 						value: 100,
 						region: '021',
 					},
@@ -866,6 +869,7 @@ describe( 'utils', () => {
 					{
 						label: 'United States',
 						countryCode: 'US',
+						countryFull: 'United States',
 						value: 100,
 						region: '021',
 					},
@@ -908,6 +912,7 @@ describe( 'utils', () => {
 					{
 						label: "US'A",
 						countryCode: 'US',
+						countryFull: 'US’A',
 						value: 100,
 						region: '021',
 					},
@@ -955,6 +960,7 @@ describe( 'utils', () => {
 					{
 						label: 'United States',
 						countryCode: 'US',
+						countryFull: 'United States',
 						value: 100,
 						region: '021',
 					},

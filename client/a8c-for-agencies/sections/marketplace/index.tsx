@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import {
 	A4A_MARKETPLACE_ASSIGN_LICENSE_LINK,
@@ -23,9 +22,7 @@ export default function () {
 	page( A4A_MARKETPLACE_LINK, requireAccessContext, marketplaceContext, makeLayout, clientRender );
 
 	page(
-		isEnabled( 'a4a-product-page-redesign' )
-			? A4A_MARKETPLACE_PRODUCTS_LINK
-			: `${ A4A_MARKETPLACE_PRODUCTS_LINK }/:brand?`,
+		A4A_MARKETPLACE_PRODUCTS_LINK,
 		requireAccessContext,
 		marketplaceProductsContext,
 		makeLayout,

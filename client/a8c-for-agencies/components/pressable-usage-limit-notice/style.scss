@@ -1,8 +1,7 @@
-.pressable-usage-limit-notice {
-	.notice-banner {
-		margin-block-end: 24px;
-	}
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
 
+.pressable-usage-limit-notice {
 	.components-button {
 		margin-block-start: 1rem;
 
@@ -17,6 +16,6 @@
 }
 
 p.pressable-usage-limit-notice__message {
-	@include a4a-font-body-lg;
+	@include body-large;
 	margin: 0;
 }

@@ -431,7 +431,7 @@ export const JetpackSitesDataViews = ( {
 			dataViewsState?.selectedItem?.client_id
 		) {
 			const trigger: HTMLButtonElement | null = rowsContainer.querySelector(
-				`li:not(.is-selected) .sites-dataviews__site`
+				'li:not(.is-selected) .sites-dataviews__site'
 			);
 			if ( trigger ) {
 				trigger.click();

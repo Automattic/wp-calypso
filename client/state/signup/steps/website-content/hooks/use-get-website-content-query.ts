@@ -2,17 +2,17 @@ import { mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import type { WebsiteContentResponseDTO, WebsiteContentServerState } from '../types';
-import type { SiteSlug } from 'calypso/types';
+import type { SiteId, SiteSlug } from 'calypso/types';
 
-export function useGetWebsiteContentQuery( siteSlug: SiteSlug | undefined | null ) {
+export function useGetWebsiteContentQuery( siteSlugOrId: SiteSlug | SiteId | undefined | null ) {
 	return useQuery< WebsiteContentResponseDTO, unknown, WebsiteContentServerState >( {
-		queryKey: [ 'bbe-website-content', siteSlug ],
+		queryKey: [ 'bbe-website-content', siteSlugOrId ],
 		queryFn: (): Promise< WebsiteContentResponseDTO > =>
 			wpcom.req.get( {
-				path: `/sites/${ siteSlug }/do-it-for-me/website-content`,
+				path: `/sites/${ siteSlugOrId }/do-it-for-me/website-content`,
 				apiNamespace: 'wpcom/v2',
 			} ),
-		enabled: !! siteSlug,
+		enabled: !! siteSlugOrId,
 		meta: { persist: false },
 		select: ( data: WebsiteContentResponseDTO ) => ( {
 			selectedPageTitles: data.selected_page_titles,

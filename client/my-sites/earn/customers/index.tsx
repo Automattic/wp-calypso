@@ -1,8 +1,7 @@
 import { Card, Button, Gridicon } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Tooltip } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { formatCurrency, useTranslate } from 'i18n-calypso';
 import { orderBy } from 'lodash';
 import { useState, useEffect, useCallback } from 'react';
 import { shallowEqual } from 'react-redux';

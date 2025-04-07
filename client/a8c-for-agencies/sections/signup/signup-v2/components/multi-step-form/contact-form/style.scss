@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .contact-form__phone-input {
     display: flex;
@@ -19,7 +20,7 @@
 }
 
 .signup-contact-form__tos  p {
-	@include a4a-font-body-sm;
+	@include body-small;
 
 	.signup-contact-form__tos-link {
 		cursor: pointer;
@@ -50,7 +51,7 @@
 
 .signup-multi-step-form__terms {
 	text-align: center;
-	font-size: 0.875rem;
+	@include body-medium;
 	color: var(--color-neutral-40);
 	margin-top: 16px;
 

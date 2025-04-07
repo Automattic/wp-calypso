@@ -12,7 +12,13 @@ import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
 
-const NewsletterSetup: Step = ( { navigation } ) => {
+const NewsletterSetup: Step< {
+	submits: {
+		siteTitle: string;
+		tagline: string;
+		paidSubscribers: boolean;
+	};
+} > = ( { navigation } ) => {
 	const { submit } = navigation;
 	const translate = useTranslate();
 	const site = useSite();
@@ -20,9 +26,9 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const newsletterFormText = {
 		titleLabel: translate( 'Give your newsletter a name' ),
 		titlePlaceholder: translate( 'Open Me Carefully' ),
-		titleMissing: translate( `Oops. Looks like your newsletter doesn't have a name yet.` ),
+		titleMissing: translate( "Oops. Looks like your newsletter doesn't have a name yet." ),
 		taglineLabel: translate( 'Add a brief description' ),
-		taglinePlaceholder: translate( `Letters from Emily Dickinson's garden` ),
+		taglinePlaceholder: translate( "Letters from Emily Dickinson's garden" ),
 		iconPlaceholder: translate( 'Add a site icon' ),
 	};
 
@@ -89,9 +95,9 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 
 	return (
 		<StepContainer
+			goBack={ navigation.goBack }
 			stepName="newsletter-setup"
 			isWideLayout
-			hideBack
 			flowName="newsletter"
 			formattedHeader={
 				<FormattedHeader

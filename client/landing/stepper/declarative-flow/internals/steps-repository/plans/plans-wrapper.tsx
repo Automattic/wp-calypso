@@ -8,8 +8,7 @@ import {
 	NEW_HOSTED_SITE_FLOW,
 	isNewHostedSiteCreationFlow,
 	isDomainUpsellFlow,
-	DESIGN_FIRST_FLOW,
-	isBlogOnboardingFlow,
+	isStartWritingFlow,
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
@@ -42,7 +41,6 @@ interface Props {
 function getPlansIntent( flowName: string | null, isWordCampPromo?: boolean ): PlansIntent | null {
 	switch ( flowName ) {
 		case START_WRITING_FLOW:
-		case DESIGN_FIRST_FLOW:
 			return 'plans-blog-onboarding';
 		case NEWSLETTER_FLOW:
 			return 'plans-newsletter';
@@ -202,11 +200,11 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		}
 
 		if ( isDomainUpsellFlow( flowName ) ) {
-			return __( 'Choose your flavor of WordPress' );
+			return __( 'There’s a plan for you' );
 		}
 
-		if ( isNewsletterFlow( flowName ) || isBlogOnboardingFlow( flowName ) ) {
-			return __( `There's a plan for you.` );
+		if ( isNewsletterFlow( flowName ) || isStartWritingFlow( flowName ) ) {
+			return __( "There's a plan for you." );
 		}
 
 		if ( isDesktop ) {
@@ -222,7 +220,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		);
 
 		if (
-			isBlogOnboardingFlow( flowName ) ||
+			isStartWritingFlow( flowName ) ||
 			isNewsletterFlow( flowName ) ||
 			isDomainUpsellFlow( flowName )
 		) {
@@ -237,7 +235,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 		if ( ! hideFreePlan ) {
 			return translate(
-				`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
+				'Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.',
 				{ components: { link: freePlanButton } }
 			);
 		}

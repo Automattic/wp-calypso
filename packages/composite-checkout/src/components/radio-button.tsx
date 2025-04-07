@@ -25,8 +25,7 @@ const RadioButtonWrapper = styled.div<
 		border: ${ ( props ) => ( props.checked ? '1px solid ' + getBorderColor( props ) : 'none' ) };
 		border-bottom: ${ ( props ) => '1px solid ' + getBorderColor( props ) };
 		box-sizing: border-box;
-		border-radius: 3px;
-
+		border-radius: ${ ( props ) => ( props.checked ? '3px' : 0 ) };
 		.rtl & {
 			right: 0;
 			left: auto;
@@ -35,6 +34,7 @@ const RadioButtonWrapper = styled.div<
 
 	:hover::before {
 		border: 3px solid ${ ( props ) => props.theme.colors.highlight };
+		border-radius: 3px;
 	}
 
 	.payment-logos {
@@ -53,7 +53,7 @@ const RadioButtonWrapper = styled.div<
 	}
 
 	.credit-card__logos {
-		${ ( props ) => ( props.checked ? `display:flex;` : `display:none;` ) }
+		${ ( props ) => ( props.checked ? 'display:flex;' : 'display:none;' ) }
 
 		@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
 			display: flex;
@@ -175,7 +175,7 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 			flex-direction: row;
 			align-items: center;
 			justify-content: space-between;
-			gap: 7px:
+			gap: 7px;
 		}
 }
 
@@ -202,13 +202,13 @@ export default function RadioButton( {
 	...otherProps
 }: RadioButtonProps ) {
 	const [ isFocused, changeFocus ] = useState( false );
-
 	return (
 		<RadioButtonWrapper
 			disabled={ disabled }
 			isFocused={ isFocused }
 			checked={ checked }
 			hidden={ hidden }
+			className={ `${ checked ? 'is-checked' : '' }` }
 		>
 			<Radio
 				type="radio"
@@ -260,23 +260,36 @@ RadioButton.propTypes = {
 	ariaLabel: PropTypes.string,
 };
 
-function handleWrapperDisabled( { disabled }: { disabled?: boolean } ) {
+function handleWrapperDisabled( { disabled, checked }: { disabled?: boolean; checked?: boolean } ) {
 	if ( ! disabled ) {
 		return null;
 	}
 
-	return `
-		::before,
-		:hover::before {
-			border: 1px solid lightgray;
-		}
-
+	const styles = `
 		svg,
 		:hover svg {
 			filter: grayscale( 100% );
 			opacity: 50%;
 		}
+		:hover::before {
+			border-width: 1px;
+		}
 	`;
+
+	if ( ! checked ) {
+		return (
+			styles +
+			`
+			:hover::before {
+				border: none;
+				border-bottom: 1px solid lightgray;
+				border-radius: 0;
+			}
+		`
+		);
+	}
+
+	return styles;
 }
 
 function handleLabelDisabled( { disabled }: { disabled?: boolean } ) {

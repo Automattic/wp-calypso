@@ -54,9 +54,9 @@ export const useWaitForAtomic = ( {
 		[]
 	);
 
-	const waitForInitiateTransfer = async () => {
+	const waitForInitiateTransfer = async ( plugin?: string | null ) => {
 		const initiateTransferContext = searchParams.get( 'initiate_transfer_context' );
-		if ( ! initiateTransferContext ) {
+		if ( ! initiateTransferContext && ! plugin ) {
 			return;
 		}
 
@@ -64,9 +64,9 @@ export const useWaitForAtomic = ( {
 			initiateThemeTransfer(
 				siteId,
 				null,
-				'',
+				plugin || '',
 				searchParams.get( 'initiate_transfer_geo_affinity' ) || '',
-				initiateTransferContext
+				initiateTransferContext || 'onboarding'
 			)
 		);
 	};

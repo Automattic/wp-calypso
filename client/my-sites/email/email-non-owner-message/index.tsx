@@ -43,7 +43,7 @@ export const EmailNonOwnerMessage = ( props: EmailNonOwnerMessageProps ) => {
 			context: 'email-different-owner',
 		};
 
-		recordTracksEvent( `calypso_email_providers_nonowner_click`, properties );
+		recordTracksEvent( 'calypso_email_providers_nonowner_click', properties );
 	};
 
 	const translateOptions = {

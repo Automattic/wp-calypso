@@ -4,15 +4,20 @@
 /**
  * Common importer integration styles
  */
-.import-hosted-site,
-.site-setup,
-.import-focused {
+.site-setup {
 	.step-container__content > div[class^="importer-"] {
 		max-width: 700px;
 		margin: auto;
 	}
 
 	.import__onboarding-page {
+		@include onboarding-block-margin;
+
+		@media ( min-width: $break-medium ) {
+			margin-left: auto;
+			margin-right: auto;
+		}
+
 		.onboarding-progress {
 			min-width: auto;
 			margin: auto;
@@ -25,6 +30,10 @@
 		.wpcom__loading-ellipsis {
 			display: block;
 			margin: auto;
+		}
+
+		.wpcom__loading {
+			margin: 0 auto;
 		}
 	}
 }

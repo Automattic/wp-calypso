@@ -259,7 +259,9 @@ class StatsGeochart extends Component {
 		const { geoMode, numberLabel, translate } = this.props;
 		const chartData = new window.google.visualization.DataTable();
 
-		if ( geoMode !== 'country' ) {
+		// City mode: displays individual cities as markers on the map.
+		// Uses latitude/longitude coordinates to place markers.
+		if ( geoMode === 'city' ) {
 			chartData.addColumn( 'number', 'Latitude' );
 			chartData.addColumn( 'number', 'Longitude' );
 			chartData.addColumn( 'string', 'Location' );
@@ -283,8 +285,49 @@ class StatsGeochart extends Component {
 			return chartData;
 		}
 
-		// Default to country
-		chartData.addColumn( 'string', translate( 'Country' ).toString() );
+		// Region mode: groups regions by country, showing aggregated country data
+		// with tooltips displaying the top regions within each country.
+		// @TODO: once we have the region coordinates available through the API, we could
+		// get rid of this block and use the same as city mode.
+		if ( geoMode === 'region' ) {
+			chartData.addColumn( 'string', 'Location' );
+			chartData.addColumn( 'number', 'Views' );
+			chartData.addColumn( { type: 'string', role: 'tooltip', p: { html: true } } );
+
+			const groupedLocations = data.reduce( ( acc, location ) => {
+				const countryCode = location.countryCode || 'unknown';
+				if ( ! acc[ countryCode ] ) {
+					acc[ countryCode ] = [];
+				}
+				acc[ countryCode ].push( location );
+				return acc;
+			}, {} );
+
+			// Create rows for each country with tooltip showing top regions
+			const rows = Object.entries( groupedLocations ).map( ( [ countryCode, locations ] ) => {
+				// Take top 10 locations
+				const topLocations = locations.slice( 0, 10 );
+
+				// Create HTML tooltip content
+				const tooltipContent = this.createRegionTooltip( topLocations, locations.length );
+
+				return [
+					{
+						v: countryCode,
+						f: locations[ 0 ].countryFull || countryCode,
+					},
+					locations[ 0 ].value || 0,
+					tooltipContent,
+				];
+			} );
+
+			chartData.addRows( rows );
+			return chartData;
+		}
+
+		// Country mode (default): displays data by country across the world map.
+		// Each country is colored based on its view count.
+		chartData.addColumn( 'string', 'Location' );
 		chartData.addColumn( 'number', numberLabel || translate( 'Views' ).toString() );
 		chartData.addRows(
 			map( data, ( location ) => {
@@ -299,6 +342,25 @@ class StatsGeochart extends Component {
 		);
 
 		return chartData;
+	};
+
+	/**
+	 * Creates an HTML tooltip for region view
+	 * @param {Array} topLocations - Top locations to show in tooltip
+	 * @param {number} totalLocations - Total number of locations
+	 * @returns {string} HTML tooltip content
+	 */
+	createRegionTooltip = ( topLocations, totalLocations ) => {
+		const { translate } = this.props;
+		const moreLocationsText = translate( '…and %d more locations', {
+			args: [ totalLocations - 10 ],
+		} );
+
+		const items = topLocations
+			.map( ( location ) => `${ location.label }: ${ location.value.toLocaleString() }` )
+			.join( '<br />' );
+
+		return totalLocations > 10 ? `${ items }<br />${ moreLocationsText }` : items;
 	};
 
 	drawData = () => {
@@ -328,8 +390,12 @@ class StatsGeochart extends Component {
 			domain: currentUserCountryCode,
 		};
 
-		if ( geoMode !== 'country' ) {
+		if ( geoMode === 'city' ) {
 			options.displayMode = 'markers';
+		}
+
+		if ( geoMode === 'region' ) {
+			options.tooltip = { trigger: 'focus', isHtml: true };
 		}
 
 		if ( customHeight ) {

@@ -1,6 +1,5 @@
-import { Gridicon } from '@automattic/components';
+import { Gridicon, TimeSince } from '@automattic/components';
 import { get } from 'lodash';
-import TimeSince from 'calypso/components/time-since';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
 
 import './post-comment.scss'; // yes, this is intentional. they share styles.

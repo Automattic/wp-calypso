@@ -1,0 +1,74 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.step-container-v2__top-bar {
+	&,
+	&-wrapper {
+		width: 100%;
+	}
+
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	padding: 1rem;
+
+	@include break-small {
+		padding-inline: 1.5rem;
+	}
+
+	&-left-element,
+	&-right-element,
+	&-wordpress-logo {
+		height: 24px;
+	}
+
+	&-left-element,
+	&-right-element {
+		display: flex;
+		align-items: center;
+	}
+
+	&-wordpress-logo {
+		color: var( --color-text );
+		margin: 0;
+
+		@include break-small {
+			margin-right: 0.5rem;
+		}
+
+		&--wordmark {
+			display: none;
+
+			@include break-small {
+				display: block;
+			}
+		}
+
+		&--logo {
+			display: block;
+
+			@include break-small {
+				display: none;
+			}
+		}
+	}
+
+	&-divider {
+		width: 1px;
+		height: 1rem;
+		background-color: var( --color-border-subtle );
+
+		margin-inline: 1rem 0;
+
+		@include break-small {
+			margin-inline: 1.5rem 0.75rem;
+		}
+	}
+
+	&-right-element {
+		margin-left: auto;
+		--wp-components-color-accent: var( --color-neutral-100 );
+		font-size: 0.875rem;
+		line-height: 1;
+	}
+}

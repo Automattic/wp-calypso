@@ -1,12 +1,17 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHookWithProvider } from '../../../../test-helpers/testing-library';
+import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
+import siteSetupFlow from '../flows/site-setup-flow/site-setup-flow';
 import { STEPS } from '../internals/steps';
-import siteSetupFlow from '../site-setup-flow';
 import { getFlowLocation, renderFlow } from './helpers';
 // we need to save the original object for later to not affect tests from other files
 const originalLocation = window.location;
+
+// Mock the signup utils
+jest.mock( 'calypso/signup/storageUtils', () => ( {
+	clearSignupDestinationCookie: jest.fn(),
+} ) );
 
 describe( 'Site Setup Flow', () => {
 	beforeAll( () => {
@@ -21,24 +26,6 @@ describe( 'Site Setup Flow', () => {
 
 	beforeEach( () => {
 		jest.resetAllMocks();
-	} );
-
-	/**
-	 * This test is important because site-setup-wg assumes the first two steps are goals and intent capture.
-	 * It's totally fine to change this test if the flow changes. But please make sure to update and test the site-setup-wg accordingly.
-	 */
-	describe( 'First steps should be goals and intent capture', () => {
-		const { result } = renderHookWithProvider( () => siteSetupFlow.useSteps() );
-		const firstStep = result.current[ 0 ];
-		const secondStep = result.current[ 1 ];
-
-		it( 'should be goals', () => {
-			expect( firstStep.slug ).toBe( STEPS.GOALS.slug );
-		} );
-
-		it( 'should be intent capture', () => {
-			expect( secondStep.slug ).toBe( STEPS.INTENT.slug );
-		} );
 	} );
 
 	describe( 'when the current step is importListing', () => {
@@ -120,6 +107,26 @@ describe( 'Site Setup Flow', () => {
 			expect( window.location.assign ).toHaveBeenCalledWith(
 				expect.stringContaining( '/setup/some-flow/some-step' )
 			);
+		} );
+	} );
+
+	describe( 'when finishing the Site Setup Flow', () => {
+		beforeEach( () => {
+			jest.clearAllMocks();
+		} );
+
+		it( 'exitFlow should clear signup destination cookie', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteSetupFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: 'processing',
+				dependencies: {
+					processingResult: 'success',
+				},
+			} );
+
+			// Verify the cookie was cleared
+			expect( clearSignupDestinationCookie ).toHaveBeenCalled();
 		} );
 	} );
 } );

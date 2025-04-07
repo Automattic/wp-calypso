@@ -1,7 +1,6 @@
 import { Spinner } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
-import { useTranslate } from 'i18n-calypso';
+import { formatCurrency, useTranslate } from 'i18n-calypso';
 import { QRCodeSVG } from 'qrcode.react';
 
 const WeChatConfirmationDiv = styled.dialog`

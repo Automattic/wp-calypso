@@ -50,7 +50,3 @@ export function setPageTitle( context, title ) {
 		)
 	);
 }
-
-export function userHasHistory( context ) {
-	return !! context.lastRoute;
-}

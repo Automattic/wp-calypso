@@ -84,7 +84,7 @@ body.is-section-stepper .domains__step-content,
 		bottom: 0;
 		left: 0;
 		z-index: 99;
-		padding-bottom: 6px !important;
+		padding-bottom: 0 !important;
 		box-shadow: 0 -3px 10px 0 rgba(0, 0, 0, 0.12);
 
 		.foldable-card__main {
@@ -182,11 +182,12 @@ body.is-section-stepper .domains__step-content,
 			}
 
 			.domains__domain-cart-remove {
-				color: var(--studio-gray-50);
+				color: var(--studio-gray-100);
 				font-size: $font-body-extra-small;
 				min-width: 50px;
 				margin-right: 10px;
 				text-align: left;
+				text-decoration: underline;
 			}
 
 			.domain-product-price__price {
@@ -242,6 +243,7 @@ body.is-section-stepper .domains__step-content,
 			height: 40px;
 			color: var(--studio-gray-100);
 			text-decoration: underline;
+			text-align: left;
 			margin-top: 5px;
 		}
 	}
@@ -313,6 +315,12 @@ body.is-section-signup {
 		}
 	}
 
+	.featured-domain-suggestions {
+		@include break-mobile {
+			border-top: none;
+		}
+	}
+
 	.domains__step-content {
 		display: flex;
 
@@ -346,6 +354,12 @@ body.is-section-signup {
 				margin-top: 0;
 				flex-direction: column;
 				display: flex;
+			}
+
+			&.is-sticky {
+				position: sticky;
+				top: 0;
+				align-self: flex-start;
 			}
 		}
 
@@ -415,6 +429,10 @@ body.is-section-signup {
 			border-bottom: none;
 		}
 
+		.domains__domain-cart-foldable-card .domains__domain-side-content {
+			padding: 0;
+		}
+
 		.register-domain-step {
 			flex: 1;
 		}
@@ -460,7 +478,7 @@ body.is-section-signup {
 		}
 
 		.use-my-domain__page-heading {
-			text-align: left;
+			text-align: center;
 		}
 	}
 
@@ -495,6 +513,42 @@ body.is-section-signup {
 		@include break-mobile {
 			padding: 0;
 		}
+	}
+}
 
+.step-route.onboarding.domains:has(.step-container-v2) {
+	padding: 0;
+
+	.register-domain-step__search-card {
+		margin: 0;
+	}
+
+	.featured-domain-suggestions,
+	.domain-suggestion {
+		margin-inline: 0;
+	}
+
+	.register-domain-step__domain-side-content-container-domain-explanation-image {
+		max-width: 100%;
+		margin-bottom: 0;
+	}
+
+	.register-domain-step__example-prompt {
+		margin: 0;
+	}
+
+	.domains__domain-side-content-container {
+		display: flex;
+		margin-top: 0;
+	}
+
+	.domains__domain-side-content {
+		margin: 0;
+		flex: 1;
+		width: 100%;
+	}
+
+	.domains__domain-side-content.fade-out {
+		display: none;
 	}
 }

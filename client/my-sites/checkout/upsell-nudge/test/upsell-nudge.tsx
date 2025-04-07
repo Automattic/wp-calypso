@@ -28,10 +28,6 @@ import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import UpsellNudge, { PROFESSIONAL_EMAIL_UPSELL } from '../index';
 import type { StoredPaymentMethodCard } from '../../../../lib/checkout/payment-methods';
 
-jest.mock( 'wpcom-proxy-request', () => ( {
-	__esModule: true,
-} ) );
-
 jest.mock( '@automattic/calypso-router', () => jest.fn() );
 jest.mock( '@automattic/data-stores', () => ( {
 	...jest.requireActual( '@automattic/data-stores' ),
@@ -348,7 +344,7 @@ describe( 'UpsellNudge', () => {
 		await user.click( await screen.findByText( 'Add Professional Email' ) );
 		expect( screen.findByText( mockProducts.wp_titan_mail_monthly.product_name ) ).toNeverAppear();
 		await waitFor( () => {
-			expect( page ).toHaveBeenCalledWith( `/checkout/example.com` );
+			expect( page ).toHaveBeenCalledWith( '/checkout/example.com' );
 		} );
 
 		expect(

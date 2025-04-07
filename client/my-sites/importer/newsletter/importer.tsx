@@ -67,6 +67,15 @@ export default function NewsletterImporter( {
 	const [ validFromSite, setValidFromSite ] = useState( false );
 	const [ autoFetchData, setAutoFetchData ] = useState( false );
 	const [ shouldResetImport, setShouldResetImport ] = useState( step === 'reset' );
+	const previousFromSite = useRef( fromSite );
+
+	// Reset validFromSite when fromSite changes or is removed
+	useEffect( () => {
+		if ( fromSite !== previousFromSite.current ) {
+			setValidFromSite( false );
+			previousFromSite.current = fromSite;
+		}
+	}, [ fromSite ] );
 
 	if ( step === 'reset' ) {
 		step = 'content';
@@ -123,7 +132,7 @@ export default function NewsletterImporter( {
 	useEffect( () => {
 		if ( urlData?.platform === engine ) {
 			if ( selectedSite && shouldResetImport && validFromSite === false ) {
-				resetPaidNewsletter( selectedSite.ID, engine, stepSlugs[ 0 ] );
+				resetPaidNewsletter( selectedSite.ID, engine, stepSlugs[ 0 ], fromSite );
 				setShouldResetImport( false );
 				window.history.replaceState(
 					null,

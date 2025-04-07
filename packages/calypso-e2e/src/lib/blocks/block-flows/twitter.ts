@@ -9,9 +9,10 @@ const blockParentSelector = '[aria-label*="Block: Twitter"]:has-text("Twitter")'
 const selectors = {
 	embedUrlInput: `${ blockParentSelector } input`,
 	embedButton: `${ blockParentSelector } button:has-text("Embed")`,
-	editorTwitterIframe: `iframe[title="Embedded content from twitter.com"]`,
-	publishedTwitterIframe: `iframe[title="X Post"]`,
-	publishedTwitterBareLink: `figure.wp-block-embed-twitter > div.wp-block-embed__wrapper > a[href^="https://twitter.com/automattic/"]`,
+	editorTwitterIframe: 'iframe[title="Embedded content from twitter.com"]',
+	publishedTwitterIframe: 'iframe[title="X Post"]',
+	publishedTwitterBareLink:
+		'figure.wp-block-embed-twitter > div.wp-block-embed__wrapper > a[href^="https://twitter.com/automattic/"]',
 };
 
 /**

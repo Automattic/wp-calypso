@@ -65,12 +65,3 @@ form {
     	}
     }
 }
-
-.wp-login__main .login.is-akismet .is-social-first .card.login__form > .social-buttons__button.button {
-	background-color: var(--color-akismet);
-
-	&:hover,
-	&:focus {
-    	background-color: var(--color-akismet);
-	}	
-}

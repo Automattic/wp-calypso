@@ -166,7 +166,7 @@ export const DomainsTableRowActions = ( {
 				<MenuItemLink
 					key="renewDomain"
 					onClick={ () => {
-						domainStatusPurchaseActions?.onRenewNowClick?.( domain.domain ?? '', domain );
+						domainStatusPurchaseActions?.onRenewNowClick?.( siteSlug ?? '', domain );
 						onClose?.();
 					} }
 				>

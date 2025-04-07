@@ -9,7 +9,7 @@ import {
 	NEWSLETTER_FLOW,
 	isAnyHostingFlow,
 	isNewsletterFlow,
-	isBlogOnboardingFlow,
+	isStartWritingFlow,
 } from '@automattic/onboarding';
 import { ResponseCartProduct } from '@automattic/shopping-cart';
 
@@ -22,7 +22,7 @@ const hostingFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
 };
 
 const blogOnboardingFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
-	return isBlogOnboardingFlow( flowName ) && plan.getBlogOnboardingSignupFeatures;
+	return isStartWritingFlow( flowName ) && plan.getBlogOnboardingSignupFeatures;
 };
 
 const senseiFeatures = ( plan: IncompleteWPcomPlan ) => plan.getSenseiFeatures?.( plan.term );
@@ -58,7 +58,7 @@ const newsletterHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomP
 };
 
 const blogOnboardingHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
-	return isBlogOnboardingFlow( flowName ) && plan.getBlogOnboardingHighlightedFeatures;
+	return isStartWritingFlow( flowName ) && plan.getBlogOnboardingHighlightedFeatures;
 };
 
 const senseiHighlightedFeatures = ( plan: IncompleteWPcomPlan ) =>

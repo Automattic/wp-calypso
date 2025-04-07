@@ -5,7 +5,7 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, ChangeEvent, useCallback } from 'react';
 import errorIllustration from 'calypso/assets/images/customer-home/disconnected.svg';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import Loading from 'calypso/components/loading';
 import AccordionForm from 'calypso/signup/accordion-form/accordion-form';
 import {
 	BBE_STORE_WEBSITE_CONTENT_FILLING_STEP,
@@ -203,8 +203,7 @@ function Loader() {
 	const translate = useTranslate();
 	return (
 		<LoadingContainer>
-			<h1 className="wp-brand-font">{ translate( 'Loading your site information' ) }</h1>
-			<LoadingEllipsis />
+			<Loading title={ translate( 'Loading your site information' ) } />
 		</LoadingContainer>
 	);
 }
@@ -222,10 +221,17 @@ export default function WrapperWebsiteContent(
 ) {
 	const { skippedCheckout } = useSelector( getInitialQueryArguments ) ?? {};
 	const { flowName, stepName, positionInFlow, queryObject } = props;
+	const { siteId: siteIdFromQuery, siteSlug: siteSlugFromQuery } = queryObject;
 	const translate = useTranslate();
-	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
+	const siteIdFromSiteSlug = useSelector( ( state ) =>
+		getSiteId( state, siteSlugFromQuery as string )
+	);
 
-	const { isLoading, isError, data } = useGetWebsiteContentQuery( queryObject.siteSlug );
+	const selectedSiteId = isNaN( Number( siteIdFromQuery ) )
+		? siteIdFromSiteSlug
+		: Number( siteIdFromQuery );
+
+	const { isLoading, isError, data } = useGetWebsiteContentQuery( selectedSiteId );
 
 	const [ isContentGuidelinesDialogOpen, setIsContentGuidelinesDialogOpen ] = useState( true );
 
@@ -258,16 +264,16 @@ export default function WrapperWebsiteContent(
 	useEffect( () => {
 		if ( data?.isWebsiteContentSubmitted ) {
 			debug( 'Website content content already submitted, redirecting to home' );
-			page( `/home/${ queryObject.siteSlug }` );
+			page( `/home/${ selectedSiteId }` );
 		}
-	}, [ data, queryObject.siteSlug ] );
+	}, [ data, selectedSiteId ] );
 
 	useEffect( () => {
 		if ( skippedCheckout === '1' ) {
 			debug( 'User did not make a DIFM purchase, redirecting to home' );
-			page( `/home/${ queryObject.siteSlug }` );
+			page( `/home/${ selectedSiteId }` );
 		}
-	}, [ skippedCheckout, queryObject.siteSlug ] );
+	}, [ skippedCheckout, selectedSiteId ] );
 
 	if ( isLoading ) {
 		return <Loader />;
@@ -309,7 +315,11 @@ export default function WrapperWebsiteContent(
 				stepName={ stepName }
 				positionInFlow={ positionInFlow }
 				stepContent={
-					<WebsiteContentStep { ...props } websiteContentServerState={ data } siteId={ siteId } />
+					<WebsiteContentStep
+						{ ...props }
+						websiteContentServerState={ data }
+						siteId={ selectedSiteId }
+					/>
 				}
 				goToNextStep={ false }
 				hideFormattedHeader={ false }

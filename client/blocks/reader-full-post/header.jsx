@@ -1,11 +1,11 @@
-import { Gridicon, ExternalLink } from '@automattic/components';
+import { Gridicon, ExternalLink, TimeSince } from '@automattic/components';
 import clsx from 'clsx';
 import { translate, numberFormatCompact } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import TagsList from 'calypso/blocks/reader-post-card/tags-list';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import AutoDirection from 'calypso/components/auto-direction';
-import TimeSince from 'calypso/components/time-since';
+import { getPostIcon } from 'calypso/reader/get-helpers';
 import { recordPermalinkClick } from 'calypso/reader/stats';
 import ReaderFullPostHeaderPlaceholder from './placeholders/header';
 
@@ -34,7 +34,7 @@ const ReaderFullPostHeader = ( { post, authorProfile, layout = 'default' } ) => 
 	const { props: { siteName, followCount } = {} } = authorProfile || {};
 
 	const isDefaultLayout = layout === 'default';
-	const iconSrc = post?.site_icon?.img || post?.author?.avatar_URL;
+	const iconSrc = getPostIcon( post );
 
 	/* eslint-disable react/jsx-no-target-blank */
 	return (

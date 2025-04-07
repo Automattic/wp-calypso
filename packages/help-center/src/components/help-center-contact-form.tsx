@@ -7,6 +7,7 @@ import config from '@automattic/calypso-config';
 import { getPlan, getPlanTermLabel } from '@automattic/calypso-products';
 import { FormInputValidation, Popover, Spinner } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
+import { getOdieIdFromInteraction } from '@automattic/odie-client/src/utils';
 import {
 	useCanConnectToZendeskMessaging,
 	useOpenZendeskMessaging,
@@ -97,18 +98,10 @@ export const HelpCenterContactForm = () => {
 		[]
 	);
 
-	const odieId =
-		currentSupportInteraction?.events.find( ( event ) => event.event_source === 'odie' )
-			?.event_external_id ?? null;
+	const odieId = getOdieIdFromInteraction( currentSupportInteraction );
 
-	const {
-		resetStore,
-		setShowHelpCenter,
-		setUserDeclaredSite,
-		setShowMessagingChat,
-		setSubject,
-		setMessage,
-	} = useDispatch( HELP_CENTER_STORE );
+	const { resetStore, setShowHelpCenter, setUserDeclaredSite, setSubject, setMessage } =
+		useDispatch( HELP_CENTER_STORE );
 
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
 	const { hasActiveChats, isEligibleForChat, isLoading: isLoadingChatStatus } = useChatStatus();
@@ -197,7 +190,7 @@ export const HelpCenterContactForm = () => {
 					post_id: result.post_id,
 					blog_id: result.blog_id,
 				};
-				recordTracksEvent( `calypso_inlinehelp_article_no_postid_redirect`, tracksData );
+				recordTracksEvent( 'calypso_inlinehelp_article_no_postid_redirect', tracksData );
 				window.open( result.link, '_blank' );
 				return;
 			}
@@ -533,10 +526,6 @@ export const HelpCenterContactForm = () => {
 
 		return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
 	};
-
-	if ( hasActiveChats ) {
-		setShowMessagingChat( true );
-	}
 
 	if ( isLoadingChatStatus ) {
 		return (

@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .sites-dataviews__site {
 	display: flex;
@@ -21,8 +22,7 @@
 	overflow: hidden;
 	white-space: nowrap;
 	width: 180px;
-	font-weight: 500;
-	font-size: rem(14px);
+	@include heading-medium;
 	margin-inline-end: 16px;
 
 	.status-badge {
@@ -35,9 +35,8 @@
 	text-overflow: ellipsis;
 	overflow: hidden;
 	white-space: nowrap;
-	font-size: rem(12px);
+	@include body-small;
 	color: var(--color-neutral-60);
-	font-weight: 400;
 }
 
 .sites-dataviews__site-error-indicator {
@@ -55,13 +54,13 @@
 	margin-inline-start: 32px;
 
 	li {
-		@include a4a-font-body-sm($font-weight: 500);
+		@include body-small;
 		text-align: start;
 	}
 }
 
 .sites-dataviews__site-error-popover-content {
-	@include a4a-font-body-sm($font-weight: 500);
+	@include body-small;
 	margin: 16px;
 }
 

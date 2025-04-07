@@ -1,10 +1,10 @@
 import { CheckoutProvider, Button } from '@automattic/composite-checkout';
-import { formatCurrency } from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { isBillingInfoEmpty } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import { formatCurrency } from 'i18n-calypso';
 import { MiniCartLineItems } from './mini-cart-line-items';
 import type { PaymentMethod } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';

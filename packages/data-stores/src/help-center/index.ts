@@ -9,15 +9,9 @@ import { isHelpCenterShown } from './resolvers';
 import * as selectors from './selectors';
 export type { State };
 
-let isRegistered = false;
+declare const helpCenterData: { isProxied: boolean } | undefined;
 
-declare global {
-	interface Window {
-		helpCenterData?: {
-			isProxied: boolean;
-		};
-	}
-}
+let isRegistered = false;
 
 // All end-to-end tests use a custom user agent containing this string.
 const E2E_USER_AGENT = 'wp-e2e-tests';
@@ -37,7 +31,8 @@ export const isSupportSession = () => {
 			document.body.classList.contains( 'support-session' ) ||
 			document.querySelector( '#wpcom > .is-support-session' ) ||
 			// Our failover last hope, don't re-open when proxied.
-			window.helpCenterData?.isProxied
+			// This is not the same `window.helpCenterData`, because it's defined as `const helpCenterData`
+			( typeof helpCenterData !== 'undefined' && helpCenterData?.isProxied )
 		);
 	}
 	return false;

@@ -21,7 +21,6 @@ import ThemeSiteSelectorModal from 'calypso/components/theme-site-selector-modal
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import { THEME_COLLECTIONS } from 'calypso/my-sites/themes/collections/collection-definitions';
 import ShowcaseThemeCollection from 'calypso/my-sites/themes/collections/showcase-theme-collection';
 import ThemeCollectionViewHeader from 'calypso/my-sites/themes/collections/theme-collection-view-header';
@@ -153,15 +152,21 @@ class ThemeShowcase extends Component {
 		return {
 			MYTHEMES: {
 				key: STATIC_FILTERS.MYTHEMES,
-				text: translate( 'My Themes' ),
+				get text() {
+					return translate( 'My Themes' );
+				},
 			},
 			RECOMMENDED: {
 				key: STATIC_FILTERS.RECOMMENDED,
-				text: translate( 'Recommended' ),
+				get text() {
+					return translate( 'Recommended' );
+				},
 			},
 			ALL: {
 				key: STATIC_FILTERS.ALL,
-				text: translate( 'All' ),
+				get text() {
+					return translate( 'All' );
+				},
 			},
 		};
 	}
@@ -223,7 +228,15 @@ class ThemeShowcase extends Component {
 			];
 		}, [] );
 
-		return [ { value: 'all', label: translate( 'All' ) }, ...tiers ];
+		return [
+			{
+				value: 'all',
+				get label() {
+					return translate( 'All' );
+				},
+			},
+			...tiers,
+		];
 	};
 
 	findTabFilter = ( tabFilters, filterKey ) =>
@@ -752,7 +765,6 @@ class ThemeShowcase extends Component {
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 					<QueryProductsList />
-					<ActivationModal source="list" />
 					<EligibilityWarningModal />
 					<ThemePreview />
 				</div>

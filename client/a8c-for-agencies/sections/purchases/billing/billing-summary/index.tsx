@@ -1,6 +1,5 @@
 import { Button, Card, Gridicon, Tooltip } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
-import { numberFormat, useTranslate } from 'i18n-calypso';
+import { numberFormat, useTranslate, formatCurrency } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import useFetchBillingSummary from 'calypso/a8c-for-agencies/data/purchases/use-fetch-billing-summary';

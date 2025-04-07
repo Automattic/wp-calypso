@@ -1,19 +1,13 @@
-import { isStartWritingFlow, isSiteAssemblerFlow } from '@automattic/onboarding';
+import { isStartWritingFlow } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 
 interface Props {
 	flow: string;
 	siteSlug?: string;
 	isFirstPostPublished?: boolean;
-	isLaunched?: boolean;
 }
 
-const useCelebrationData = ( {
-	flow,
-	siteSlug = '',
-	isFirstPostPublished = false,
-	isLaunched = false,
-}: Props ) => {
+const useCelebrationData = ( { flow, siteSlug = '', isFirstPostPublished = false }: Props ) => {
 	const translate = useTranslate();
 	const isStartWritingFlowOrFirstPostPublished = isStartWritingFlow( flow ) || isFirstPostPublished;
 	const defaultCelebrationData = {
@@ -21,22 +15,6 @@ const useCelebrationData = ( {
 		dashboardCtaText: translate( 'Go to dashboard' ),
 		dashboardCtaLink: `/home/${ siteSlug }`,
 	};
-
-	if ( isSiteAssemblerFlow( flow ) ) {
-		const siteEditorParams = new URLSearchParams( { canvas: 'edit' } );
-
-		return {
-			...defaultCelebrationData,
-			title: translate( 'Your site’s ready!' ),
-			subTitle: isLaunched ? '' : translate( 'Now it’s time to edit your content' ),
-			primaryCtaName: 'Edit your content',
-			primaryCtaText: translate( 'Edit your content' ),
-			primaryCtaLink: `/site-editor/${ siteSlug }?${ siteEditorParams }`,
-			secondaryCtaName: 'Visit your site',
-			secondaryCtaText: translate( 'Visit your site' ),
-			secondaryCtaLink: `https://${ siteSlug }`,
-		};
-	}
 
 	return {
 		...defaultCelebrationData,

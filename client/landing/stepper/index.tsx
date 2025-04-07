@@ -4,13 +4,7 @@ import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/current-user';
 import config from '@automattic/calypso-config';
 import { UserActions, User as UserStore } from '@automattic/data-stores';
-import { geolocateCurrencySymbol } from '@automattic/format-currency';
-import {
-	HOSTED_SITE_MIGRATION_FLOW,
-	MIGRATION_SIGNUP_FLOW,
-	SITE_MIGRATION_FLOW,
-	ONBOARDING_FLOW,
-} from '@automattic/onboarding';
+import { HOSTED_SITE_MIGRATION_FLOW, SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { dispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
@@ -46,7 +40,7 @@ import { setupWpDataDebug } from './utils/devtools';
 import { enhanceFlowWithUtilityFunctions } from './utils/enhance-flow-with-utils';
 import { enhanceFlowWithAuth, injectUserStepInSteps } from './utils/enhanceFlowWithAuth';
 import redirectPathIfNecessary from './utils/flow-redirect-handler';
-import { getFlowFromURL } from './utils/get-flow-from-url';
+import { DEFAULT_FLOW, getFlowFromURL } from './utils/get-flow-from-url';
 import { startStepperPerformanceTracking } from './utils/performance-tracking';
 import { getSessionId } from './utils/use-session-id';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
@@ -63,18 +57,12 @@ interface AppWindow extends Window {
 	BUILD_TARGET: string;
 }
 
-const DEFAULT_FLOW = ONBOARDING_FLOW;
-
 const getSiteIdFromURL = () => {
 	const siteId = new URLSearchParams( window.location.search ).get( 'siteId' );
 	return siteId ? Number( siteId ) : null;
 };
 
-const HOTJAR_ENABLED_FLOWS = [
-	SITE_MIGRATION_FLOW,
-	HOSTED_SITE_MIGRATION_FLOW,
-	MIGRATION_SIGNUP_FLOW,
-];
+const HOTJAR_ENABLED_FLOWS = [ SITE_MIGRATION_FLOW, HOSTED_SITE_MIGRATION_FLOW ];
 
 const initializeHotJar = ( flowName: string ) => {
 	if ( HOTJAR_ENABLED_FLOWS.includes( flowName ) ) {
@@ -93,7 +81,7 @@ async function main() {
 	const flowName = getFlowFromURL();
 	const flowLoader = availableFlows[ flowName ];
 
-	if ( ! flowLoader ) {
+	if ( typeof flowLoader !== 'function' ) {
 		// If the URL can't be traced back to an existing flow, stop the boot
 		// process and redirect to the default flow.
 		window.location.href = `/setup/${ DEFAULT_FLOW }${ window.location.search }`;
@@ -162,7 +150,7 @@ async function main() {
 	// The `onboarding` flow is the only flow that uses in-stepper auth so far, so all the auth logic catering V1 can be deleted.
 	if ( 'initialize' in flow && flowSteps ) {
 		// Cache the flow steps for later internal usage. We need to cache them because we promise to call `initialize` only once.
-		flowSteps = injectUserStepInSteps( flowSteps );
+		flowSteps = injectUserStepInSteps( flowSteps ) as typeof flowSteps;
 		flow.__flowSteps = flowSteps;
 		enhanceFlowWithUtilityFunctions( flow );
 	} else if ( 'useSteps' in flow ) {
@@ -175,7 +163,6 @@ async function main() {
 	reduxStore.dispatch( setSelectedSiteId( siteId ) as unknown as AnyAction );
 
 	// No need to await this, it's not critical to the boot process and will slow booting down.
-	geolocateCurrencySymbol();
 	defaultCalypsoI18n.geolocateCurrencySymbol();
 
 	const root = createRoot( document.getElementById( 'wpcom' ) as HTMLElement );

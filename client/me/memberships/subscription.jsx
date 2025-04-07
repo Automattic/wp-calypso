@@ -1,9 +1,8 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import page from '@automattic/calypso-router';
 import { Card, CompactCard, Gridicon, MaterialIcon } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
 import { CALYPSO_CONTACT } from '@automattic/urls';
-import { localize } from 'i18n-calypso';
+import { formatCurrency, localize } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';

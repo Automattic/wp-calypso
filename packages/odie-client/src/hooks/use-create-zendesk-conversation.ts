@@ -11,16 +11,19 @@ import { setHelpCenterZendeskConversationStarted } from '../utils';
 export const useCreateZendeskConversation = (): ( ( {
 	avoidTransfer,
 	interactionId,
+	section,
 	createdFrom,
 }: {
 	avoidTransfer?: boolean;
 	interactionId?: string;
+	section?: string | null;
 	createdFrom?: string;
 } ) => Promise< void > ) => {
 	const {
 		selectedSiteId,
 		selectedSiteURL,
 		userFieldMessage,
+		userFieldFlowName,
 		setChat,
 		setWaitAnswerToFirstMessageFromHumanSupport,
 		chat,
@@ -40,10 +43,12 @@ export const useCreateZendeskConversation = (): ( ( {
 	const createConversation = async ( {
 		avoidTransfer = false,
 		interactionId = '',
+		section = '',
 		createdFrom = '',
 	}: {
 		avoidTransfer?: boolean;
 		interactionId?: string;
+		section?: string | null;
 		createdFrom?: string;
 	} ) => {
 		const currentInteractionID = interactionId || currentSupportInteraction!.uuid;
@@ -64,6 +69,8 @@ export const useCreateZendeskConversation = (): ( ( {
 			messaging_site_id: selectedSiteId || null,
 			messaging_ai_chat_id: chatId || undefined,
 			messaging_url: selectedSiteURL || null,
+			messaging_flow: userFieldFlowName || null,
+			messaging_source: section,
 		} );
 
 		const conversation = await Smooch.createConversation( {
@@ -92,6 +99,7 @@ export const useCreateZendeskConversation = (): ( ( {
 			...prevChat,
 			conversationId: conversation.id,
 			provider: 'zendesk',
+			status: 'loaded',
 		} ) );
 	};
 

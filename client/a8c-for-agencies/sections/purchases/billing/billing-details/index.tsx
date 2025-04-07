@@ -1,6 +1,5 @@
 import { Card, Gridicon } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, formatCurrency } from 'i18n-calypso';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import useFetchBillingSummary from 'calypso/a8c-for-agencies/data/purchases/use-fetch-billing-summary';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';

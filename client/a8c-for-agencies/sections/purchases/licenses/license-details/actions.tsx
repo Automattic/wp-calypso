@@ -35,6 +35,7 @@ interface Props {
 	hasDownloads: boolean;
 	isChildLicense?: boolean;
 	isClientLicense?: boolean;
+	isDevSite?: boolean;
 }
 
 export default function LicenseDetailsActions( {
@@ -46,6 +47,7 @@ export default function LicenseDetailsActions( {
 	hasDownloads,
 	isChildLicense,
 	isClientLicense,
+	isDevSite,
 }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -131,6 +133,7 @@ export default function LicenseDetailsActions( {
 
 			{ ( isPressableLicense || isWPCOMHostingLicense ) &&
 				licenseState !== LicenseState.Revoked &&
+				! isDevSite &&
 				! isClientLicense && (
 					<Button
 						compact

@@ -40,7 +40,7 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 	it( 'Add WordPress.com Business plan to cart', async function () {
 		await Promise.all( [
 			page.waitForURL( /.*checkout.*/ ),
-			page.goto( DataHelper.getCalypsoURL( `/checkout/business` ) ),
+			page.goto( DataHelper.getCalypsoURL( '/checkout/business' ) ),
 		] );
 	} );
 

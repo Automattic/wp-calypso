@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { PlanSlug, isProPlan, isStarterPlan } from '@automattic/calypso-products';
 import { Site, SiteMediaStorage } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
@@ -67,7 +66,7 @@ function useResolveNoticeType(
 		discountInformation &&
 		getDiscountByName( discountInformation.coupon, discountInformation.discountEndDate );
 	const planUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable( siteId, visiblePlans );
-	const domainToPlanCreditsApplicable = useDomainToPlanCreditsApplicable( siteId );
+	const domainToPlanCreditsApplicable = useDomainToPlanCreditsApplicable( siteId, visiblePlans );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const sitePlanSlug = sitePlan?.product_slug ?? '';
 	const isCurrentPlanRetired = isProPlan( sitePlanSlug ) || isStarterPlan( sitePlanSlug );
@@ -212,14 +211,12 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 			);
 		case DOMAIN_TO_PLAN_CREDIT_NOTICE:
 			return (
-				isEnabled( 'domain-to-plan-credit' ) && (
-					<PlanNoticeDomainToPlanCredit
-						className="plan-features-main__notice"
-						onDismissClick={ handleDismissNotice }
-						siteId={ siteId }
-						visiblePlans={ visiblePlans }
-					/>
-				)
+				<PlanNoticeDomainToPlanCredit
+					className="plan-features-main__notice"
+					onDismissClick={ handleDismissNotice }
+					siteId={ siteId }
+					visiblePlans={ visiblePlans }
+				/>
 			);
 		case MARKETING_NOTICE:
 		default:

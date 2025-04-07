@@ -2,7 +2,11 @@
 // Project: i18n-calypso
 
 import * as React from 'react';
-import type { NumberFormatParams, NumberFormatCurrencyParams } from '../number-formatters';
+import type {
+	NumberFormatParams,
+	NumberFormatCurrencyParams,
+	CurrencyObject,
+} from '../number-formatters';
 
 type LocaleData = Record< string, unknown >;
 type NormalizedTranslateArgs =
@@ -107,6 +111,11 @@ export interface I18N {
 	numberFormat( number: number, options?: NumberFormatOptions ): string;
 	numberFormatCompact( number: number, options?: NumberFormatOptions ): string;
 	formatCurrency( number: number, currency: string, options?: FormatCurrencyOptions ): string;
+	getCurrencyObject(
+		number: number,
+		currency: string,
+		options?: FormatCurrencyOptions
+	): CurrencyObject;
 
 	setLocale( localeData: LocaleData ): void;
 	addTranslations( localeData: LocaleData ): void;
@@ -155,6 +164,29 @@ export interface I18N {
 	on( eventName: string, listener: EventListener ): void;
 	off( eventName: string, listener: EventListener ): void;
 	emit( eventName: string, ...payload: any ): void;
+
+	/**
+	 * Returns `newCopy` if given `text` is translated or locale is English, otherwise returns the `oldCopy`.
+	 *
+	 * `newCopy` prop should be an actual `i18n.translate()` call from the consuming end.
+	 * This is the only way currently to ensure that it is picked up by our string extraction mechanism
+	 * and propagate into GlotPress for translation.
+	 * @param options
+	 * @param options.text - The text to check for translation.
+	 * @param options.newCopy - The translation to return if the text is translated.
+	 * @param options.oldCopy - The fallback to return if the text is not translated.
+	 * @example
+	 * i18n.fixMe( {
+	 * 	text: 'new copy',
+	 * 	newCopy: i18n.translate( 'new copy' ),
+	 * 	oldCopy: i18n.translate( 'old copy' ),
+	 * } );
+	 */
+	fixMe( options: {
+		text: string;
+		newCopy: ExistingReactNode;
+		oldCopy?: ExistingReactNode;
+	} ): ExistingReactNode | null;
 }
 
 declare const i18n: I18N;
@@ -163,6 +195,7 @@ export declare const translate: typeof i18n.translate;
 export declare const numberFormat: typeof i18n.numberFormat;
 export declare const numberFormatCompact: typeof i18n.numberFormatCompact;
 export declare const formatCurrency: typeof i18n.formatCurrency;
+export declare const getCurrencyObject: typeof i18n.getCurrencyObject;
 export declare const geolocateCurrencySymbol: typeof i18n.geolocateCurrencySymbol;
 export declare const setLocale: typeof i18n.setLocale;
 export declare const addTranslations: typeof i18n.addTranslations;
@@ -178,6 +211,7 @@ export declare const registerComponentUpdateHook: typeof i18n.registerComponentU
 export declare const on: typeof i18n.on;
 export declare const off: typeof i18n.off;
 export declare const emit: typeof i18n.emit;
+export declare const fixMe: typeof i18n.fixMe;
 
 export interface LocalizeProps {
 	locale: string;

@@ -110,7 +110,7 @@ describe( 'getThankYouPageUrl', () => {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 		} );
-		expect( url ).toBe( `/checkout/thank-you/foo.bar/:receiptId` );
+		expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId' );
 	} );
 
 	it( 'redirects to the thank-you page with a placeholder receipt id when a site but no orderId is set and the cart contains the personal plan', () => {
@@ -170,7 +170,7 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			feature: 'all-free-features',
 		} );
-		expect( url ).toBe( `/checkout/thank-you/features/all-free-features/foo.bar/:receiptId` );
+		expect( url ).toBe( '/checkout/thank-you/features/all-free-features/foo.bar/:receiptId' );
 	} );
 
 	it( 'redirects to the thank-you page with a feature when a site and a valid feature is set with no receipt but the cart is not empty', () => {
@@ -329,7 +329,7 @@ describe( 'getThankYouPageUrl', () => {
 			},
 			adminUrl,
 		} );
-		expect( url ).toBe( `https://my.site/wp-admin/admin.php?page=jetpack#/recommendations` );
+		expect( url ).toBe( 'https://my.site/wp-admin/admin.php?page=jetpack#/recommendations' );
 	} );
 
 	it( 'redirects to the sites wp-admin with adminPageRedirect if checkout is on Jetpack Cloud and if redirectCheckoutToWpAdmin() flag is true and there is a non-atomic jetpack product and adminPageRedirect is supplied', () => {
@@ -357,7 +357,7 @@ describe( 'getThankYouPageUrl', () => {
 			adminUrl,
 			adminPageRedirect,
 		} );
-		expect( url ).toBe( `https://my.site/wp-admin/admin.php?page=jetpack-backup` );
+		expect( url ).toBe( 'https://my.site/wp-admin/admin.php?page=jetpack-backup' );
 	} );
 
 	it( 'redirects to the sites wp-admin if checkout is on Jetpack Cloud and if redirectCheckoutToWpAdmin() flag is true and there is a non-atomic jetpack product and redirectTo is defined', () => {
@@ -384,7 +384,7 @@ describe( 'getThankYouPageUrl', () => {
 			adminUrl,
 			redirectTo: 'admin.php?page=some-page',
 		} );
-		expect( url ).toBe( `https://my.site/wp-admin/admin.php?page=some-page` );
+		expect( url ).toBe( 'https://my.site/wp-admin/admin.php?page=some-page' );
 	} );
 
 	it( 'redirects to the plans page with thank-you query string if there is a non-atomic jetpack product', () => {
@@ -865,7 +865,7 @@ describe( 'getThankYouPageUrl', () => {
 			cart,
 			getUrlFromCookie,
 		} );
-		expect( url ).toBe( `/cookie/:receiptId` );
+		expect( url ).toBe( '/cookie/:receiptId' );
 	} );
 
 	it( 'redirects to url from cookie followed by placeholder receiptId if there is no site, and there is no receipt', () => {
@@ -1480,7 +1480,7 @@ describe( 'getThankYouPageUrl', () => {
 					cart,
 				} );
 
-				expect( url ).toBe( `/cookie?notice=purchase-success` );
+				expect( url ).toBe( '/cookie?notice=purchase-success' );
 
 				// clean up the tailored flow name
 				sessionStorage.removeItem( 'wpcom_signup_complete_flow_name' );

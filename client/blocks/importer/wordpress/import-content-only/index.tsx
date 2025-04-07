@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_BUSINESS, getPlan } from '@automattic/calypso-products';
+import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect, useCallback } from 'react';
@@ -23,7 +24,6 @@ import type {
 	ImportJobParams,
 	StepNavigator,
 } from 'calypso/blocks/importer/types';
-
 import './style.scss';
 
 type RenderState = 'idle' | 'progress' | 'upgrade-plan' | 'error' | 'success';
@@ -113,7 +113,9 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 			job?.importerFileType !== 'playground' &&
 			isEnabled( 'onboarding/import-redirect-to-themes' )
 		) {
-			stepNavigator?.navigate?.( 'designSetup' );
+			stepNavigator?.navigate?.(
+				addQueryArgs( 'design-setup', { comingFromSuccessfulImport: '1' } )
+			);
 		} else {
 			stepNavigator?.goToSiteViewPage?.();
 		}
@@ -121,7 +123,6 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 
 	const onTryAgainClick = useCallback( () => {
 		dispatch( resetImport( siteItem?.ID, job?.importerId ) );
-		stepNavigator?.goToImportCapturePage?.();
 	}, [ siteItem, job ] );
 
 	const onBackToGoalsClick = useCallback( () => {

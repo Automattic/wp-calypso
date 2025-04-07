@@ -1,5 +1,5 @@
 import { type Task } from '@automattic/launchpad';
-import { isBlogOnboardingFlow } from '@automattic/onboarding';
+import { isStartWritingFlow } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { getSiteIdOrSlug } from '../../task-helper';
 import { type TaskAction } from '../../types';
@@ -22,7 +22,7 @@ export const getSetupBlogTask: TaskAction = ( task, flow, context ): Task => {
 	return {
 		...task,
 		calypso_path: addQueryArgs( task.calypso_path, { ...getSiteIdOrSlug( flow, site, siteSlug ) } ),
-		disabled: task.completed && ! isBlogOnboardingFlow( flow ),
+		disabled: task.completed && ! isStartWritingFlow( flow ),
 		useCalypsoPath: true,
 	};
 };
@@ -46,7 +46,7 @@ export const getSetupGeneralTask: TaskAction = ( task, flow, context ): Task => 
 	return {
 		...task,
 		disabled: false,
-		calypso_path: addQueryArgs( `/setup/update-options/options`, {
+		calypso_path: addQueryArgs( '/setup/update-options/options', {
 			...getSiteIdOrSlug( flow, site, siteSlug ),
 			flowToReturnTo: flow,
 		} ),

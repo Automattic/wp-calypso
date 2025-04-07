@@ -1,5 +1,6 @@
-import { BadgeType, Button } from '@automattic/components';
-import { Icon, external, check } from '@wordpress/icons';
+import { BadgeType } from '@automattic/components';
+import { Button, ExternalLink } from '@wordpress/components';
+import { check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -214,25 +215,13 @@ const PartnerDirectoryDashboard = () => {
 			className="partner-directory-dashboard__learn-more-section"
 			heading={ translate( 'Learn more about the program' ) }
 		>
-			<Button
-				className="a8c-blue-link"
-				borderless
-				target="_blank"
-				href="https://agencieshelp.automattic.com/knowledge-base/agency-directory-listings"
-			>
+			<ExternalLink href="https://agencieshelp.automattic.com/knowledge-base/agency-directory-listings">
 				{ translate( 'How does the approval process work?' ) }
-				<Icon icon={ external } size={ 18 } />
-			</Button>
+			</ExternalLink>
 			<br />
-			<Button
-				className="a8c-blue-link"
-				borderless
-				target="_blank"
-				href="https://agencieshelp.automattic.com/knowledge-base/agency-directory-listings/#profile-content"
-			>
+			<ExternalLink href="https://agencieshelp.automattic.com/knowledge-base/agency-directory-listings/#profile-content">
 				{ translate( 'What can I put on my public profile?' ) }
-				<Icon icon={ external } size={ 18 } />
-			</Button>
+			</ExternalLink>
 		</StepSection>
 	);
 
@@ -249,22 +238,15 @@ const PartnerDirectoryDashboard = () => {
 				// Application approved and visible in the directory
 				return (
 					<>
-						<Button className="a8c-blue-link" borderless href={ brandMeta.url } target="_blank">
+						<ExternalLink href={ brandMeta.url }>
 							{ translate( '%(brand)s Partner Directory', {
 								args: { brand: brandMeta.brand },
 							} ) }
-							<Icon icon={ external } size={ 18 } />
-						</Button>
+						</ExternalLink>
 						<br />
-						<Button
-							className="a8c-blue-link"
-							borderless
-							href={ brandMeta.urlProfile }
-							target="_blank"
-						>
-							{ translate( `Your agency's profile` ) }
-							<Icon icon={ external } size={ 18 } />
-						</Button>
+						<ExternalLink href={ brandMeta.urlProfile }>
+							{ translate( "Your agency's profile" ) }
+						</ExternalLink>
 					</>
 				);
 			}
@@ -309,7 +291,6 @@ const PartnerDirectoryDashboard = () => {
 						return (
 							<StepSectionItem
 								key={ application.brand }
-								isNewLayout
 								iconClassName={ clsx( brandMeta.className ) }
 								icon={ brandMeta.icon }
 								heading={ application.brand }
@@ -319,25 +300,25 @@ const PartnerDirectoryDashboard = () => {
 					} ) }
 				<StepSection
 					className="partner-directory-dashboard__edit-section"
-					heading={ translate( `Edit your agency's information` ) }
+					heading={ translate( "Edit your agency's information" ) }
 				>
 					<div className="partner-directory-dashboard__subtitle">
 						{ translate(
-							`Expand to more Automattic directories by adding products or updating your agency's profile.`
+							"Expand to more Automattic directories by adding products or updating your agency's profile."
 						) }
 					</div>
-					<div>
+					<div className="partner-directory-dashboard__button-container">
 						<Button
 							onClick={ onEditExpertiseClick }
 							href={ `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_EXPERTISE_SLUG }` }
-							compact
+							variant="secondary"
 						>
 							{ translate( 'Edit expertise' ) }
 						</Button>
 						<Button
 							onClick={ onEditProfileClick }
 							href={ `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_AGENCY_DETAILS_SLUG }` }
-							compact
+							variant="secondary"
 						>
 							{ translate( 'Edit profile' ) }
 						</Button>
@@ -351,7 +332,7 @@ const PartnerDirectoryDashboard = () => {
 	return (
 		<>
 			<div className="partner-directory-dashboard__heading">
-				{ translate( `Boost your agency’s visibility across Automattic listings.` ) }
+				{ translate( 'Boost your agency’s visibility across Automattic listings.' ) }
 			</div>
 
 			<div className="partner-directory-dashboard__subtitle">
@@ -361,7 +342,6 @@ const PartnerDirectoryDashboard = () => {
 			</div>
 			<StepSection heading={ translate( 'How do I start?' ) }>
 				<StepSectionItem
-					isNewLayout
 					className={
 						currentApplicationStep > 0 ? 'partner-directory-dashboard__checked-step' : ''
 					}
@@ -391,7 +371,7 @@ const PartnerDirectoryDashboard = () => {
 							</div>
 						) : (
 							translate(
-								`Pick your agency's specialties and choose your directories. We'll review your application.`
+								"Pick your agency's specialties and choose your directories. We'll review your application."
 							)
 						)
 					}
@@ -406,7 +386,6 @@ const PartnerDirectoryDashboard = () => {
 					} }
 				/>
 				<StepSectionItem
-					isNewLayout
 					className={
 						currentApplicationStep > 1 ? 'partner-directory-dashboard__checked-step' : ''
 					}
@@ -414,7 +393,7 @@ const PartnerDirectoryDashboard = () => {
 					icon={ currentApplicationStep > 1 ? check : undefined }
 					heading={ translate( 'Finish adding details to your public profile' ) }
 					description={ translate(
-						`When approved, add details to your agency's public profile for clients to see.`
+						"When approved, add details to your agency's public profile for clients to see."
 					) }
 					buttonProps={ {
 						children: isValidFormData ? translate( 'Edit profile' ) : translate( 'Finish profile' ),
@@ -426,7 +405,6 @@ const PartnerDirectoryDashboard = () => {
 					} }
 				/>
 				<StepSectionItem
-					isNewLayout
 					stepNumber={ currentApplicationStep > 2 ? undefined : 3 }
 					icon={ currentApplicationStep > 2 ? check : undefined }
 					heading={ translate( 'New clients will find you' ) }

@@ -191,7 +191,7 @@ function getAllThemeOptions( { translate, isFSEActive, isGlobalStylesOnPersonal 
 			const slug = getSiteSlug( state, siteId );
 
 			const redirectTo = encodeURIComponent(
-				addQueryArgs( `${ origin }/setup/site-setup/designSetup`, {
+				addQueryArgs( `${ origin }/setup/site-setup/design-setup`, {
 					siteSlug: slug,
 					theme: themeId,
 					style_variation: options?.styleVariationSlug,
@@ -391,13 +391,8 @@ function getAllThemeOptions( { translate, isFSEActive, isGlobalStylesOnPersonal 
 			siteCount: getCurrentUserSiteCount( state ),
 			siteId: getSelectedSiteId( state ),
 		} )
-			? translate( 'Select a site', {
-					comment:
-						'On the theme details page, button text shown so the user selects one of their sites before activating the selected theme',
-			  } )
-			: translate( 'Pick this design', {
-					comment: 'when signing up for a WordPress.com account with a selected theme',
-			  } );
+			? translate( 'Activate' )
+			: translate( 'Get started' );
 
 	const signup = {
 		label: signupLabel,

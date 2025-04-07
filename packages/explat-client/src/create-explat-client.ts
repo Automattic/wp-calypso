@@ -144,7 +144,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 					experimentFetchTimeout
 				);
 				if ( ! fetchedExperimentAssignment ) {
-					throw new Error( `Could not fetch ExperimentAssignment` );
+					throw new Error( 'Could not fetch ExperimentAssignment' );
 				}
 
 				return fetchedExperimentAssignment;
@@ -190,7 +190,7 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 				const storedExperimentAssignment = retrieveExperimentAssignment( experimentName );
 				if ( ! storedExperimentAssignment ) {
 					throw new Error(
-						`Trying to dangerously get an ExperimentAssignment that hasn't loaded.`
+						"Trying to dangerously get an ExperimentAssignment that hasn't loaded."
 					);
 				}
 
@@ -202,7 +202,8 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 						Timing.monotonicNow() - storedExperimentAssignment.retrievedTimestamp < 1000
 					) {
 						safeLogError( {
-							message: `Warning: Trying to dangerously get an ExperimentAssignment too soon after loading it.`,
+							message:
+								'Warning: Trying to dangerously get an ExperimentAssignment too soon after loading it.',
 							experimentName,
 							source: 'dangerouslyGetExperimentAssignment',
 						} );

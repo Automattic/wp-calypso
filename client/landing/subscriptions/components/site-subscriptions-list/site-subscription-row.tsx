@@ -1,4 +1,4 @@
-import { Gridicon, ExternalLink } from '@automattic/components';
+import { Gridicon, ExternalLink, TimeSince } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { __experimentalHStack as HStack } from '@wordpress/components';
@@ -7,7 +7,6 @@ import { useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import InfoPopover from 'calypso/components/info-popover';
-import TimeSince from 'calypso/components/time-since';
 import {
 	useRecordSiteUnsubscribed,
 	useRecordSiteResubscribed,
@@ -143,16 +142,12 @@ const SiteSubscriptionRow = ( {
 				{
 					id: siteUnsubscribedNoticeId,
 					button: translate( 'Resubscribe' ),
+					duration: 5000,
 					onClick: () => {
 						if ( unsubscribeInProgress.current ) {
 							resubscribePending.current = true;
 						} else {
-							resubscribe( {
-								blog_id,
-								url,
-								doNotInvalidateSiteSubscriptions: true,
-								resubscribed: true,
-							} );
+							resubscribe( { blog_id, url, resubscribed: true } );
 							dispatch( removeNotice( siteUnsubscribedNoticeId ) );
 							scrollToFirstRow();
 

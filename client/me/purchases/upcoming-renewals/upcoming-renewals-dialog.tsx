@@ -1,6 +1,5 @@
 import { Button, Dialog, FormLabel } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
-import { useTranslate, TranslateResult } from 'i18n-calypso';
+import { formatCurrency, useTranslate, TranslateResult } from 'i18n-calypso';
 import { capitalize } from 'lodash';
 import { FunctionComponent, Fragment, useState, useEffect, useCallback, useMemo } from 'react';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';

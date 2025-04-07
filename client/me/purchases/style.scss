@@ -160,7 +160,8 @@
 	}
 }
 
-.purchase-item__purchase-type {
+.purchase-item__purchase-type,
+.purchase-item__site-title {
 	font-size: $font-body-small;
 	color: var(--color-neutral-50);
 	line-height: 1.4;

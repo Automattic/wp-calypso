@@ -66,7 +66,6 @@ body.is-section-domains.is-bulk-all-domains-page {
 			}
 
 			.domains-dataviews__domain-name {
-				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 				font-size: 14px;
 				font-weight: 500;
 
@@ -74,6 +73,15 @@ body.is-section-domains.is-bulk-all-domains-page {
 					text-decoration: underline;
 					color: var(--color-link);
 				}
+			}
+
+			.domains-dataviews__domain-failed-label {
+				color: var(--studio-red-80);
+				background: var(--studio-red-5);
+				font-size: 0.75rem;
+				border-radius: 2px;
+				padding: 2px 8px;
+				margin-left: 8px;
 			}
 
 			.domains-dataviews__primary-domain-label {

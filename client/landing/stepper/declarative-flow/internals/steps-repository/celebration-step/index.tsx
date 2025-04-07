@@ -15,7 +15,9 @@ import type { OnboardSelect } from '@automattic/data-stores';
 
 import './styles.scss';
 
-const CelebrationStep: Step = ( { flow, navigation } ) => {
+const CelebrationStep: Step< {
+	submits: { destinationName: string; destinationUrl: string };
+} > = ( { flow, navigation } ) => {
 	const { submit } = navigation;
 
 	const site = useSite();
@@ -46,9 +48,7 @@ const CelebrationStep: Step = ( { flow, navigation } ) => {
 		flow,
 		siteSlug,
 		isFirstPostPublished: checklistStatuses?.first_post_published,
-		isLaunched: checklistStatuses?.site_launched,
 	} );
-
 	const handleSubmit = ( destinationName: string, destinationUrl: string ) =>
 		submit?.( { destinationName, destinationUrl } );
 

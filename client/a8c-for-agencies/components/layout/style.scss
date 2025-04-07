@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 @media (max-width: 660px) {
 	.hosting-dashboard-layout__header-title {
@@ -11,6 +12,7 @@
 .a4a-layout__banner {
 	margin-inline: 0;
 	max-height: 100%;
+	margin-block-end: 24px;
 
 	> * {
 		padding-inline: 16px;
@@ -43,7 +45,7 @@
 		justify-content: center;
 		align-content: center;
 		align-items: center;
-		font-size: 0.75rem;
+		@include body-small;
 	}
 
 	.a4a-layout__stepper-step-name {

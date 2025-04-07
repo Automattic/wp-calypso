@@ -32,7 +32,7 @@ export const LabelText = styled.span`
 	color: ${ ( props ) => props.theme.colors.textColor };
 `;
 
-export const StripeFieldWrapper = styled.span< { hasError?: boolean } >`
+export const StripeFieldWrapper = styled.span< { hasError?: boolean; isDisabled?: boolean } >`
 	position: relative;
 	display: block;
 
@@ -44,8 +44,8 @@ export const StripeFieldWrapper = styled.span< { hasError?: boolean } >`
 		border: 1px solid
 			${ ( props ) =>
 				props.hasError ? props.theme.colors.error : props.theme.colors.borderColor };
-		border-radius: 3px;
-		padding: 12px 10px;
+		border-radius: ${ ( props ) => props.theme.borderRadius.small };
+		padding: 12px 14px;
 		line-height: 1.2;
 	}
 
@@ -56,6 +56,9 @@ export const StripeFieldWrapper = styled.span< { hasError?: boolean } >`
 	.StripeElement--focus.StripeElement--invalid {
 		outline: ${ ( props ) => props.theme.colors.error } solid 2px;
 	}
+
+	background: ${ ( props ) => props.isDisabled && props.theme.colors.disabledField };
+	cursor: ${ ( props ) => props.isDisabled && 'default' };
 `;
 
 export const StripeErrorMessage = styled.span`
@@ -80,7 +83,7 @@ export const CreditCardFieldsWrapper = styled.div< { isLoaded?: boolean } >`
 	input[type='tel'],
 	input[type='number'],
 	input[type='search'] {
-		border-radius: 3px;
+		border-radius: ${ ( props ) => props.theme.borderRadius.small };
 	}
 `;
 

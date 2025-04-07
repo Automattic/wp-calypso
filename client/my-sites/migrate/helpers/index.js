@@ -34,23 +34,6 @@ export function getImportSectionLocation( siteSlug, isJetpack = false ) {
 		? `https://${ siteSlug }/wp-admin/import.php`
 		: `/import/${ siteSlug }/?engine=wordpress`;
 }
-// Flow mapping dictionary, key is the path segment, value is the flow name
-const flowMapping = {
-	'import-focused': 'import-focused',
-	'import-hosted-site': 'import-hosted-site',
-};
-
-export function getImportFlowByURL() {
-	const url = window.location.href;
-	const parsedUrl = new URL( url );
-	const pathSegments = parsedUrl.pathname.split( '/' );
-	// E.g. setup/import-focused/import returns import-foceused
-	if ( pathSegments.length >= 3 && pathSegments[ 2 ] in flowMapping ) {
-		return flowMapping[ pathSegments[ 2 ] ];
-	}
-
-	return 'onboarding-flow';
-}
 
 export const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 
@@ -70,8 +53,8 @@ export const isUserNewerThan = ( age ) => ( user ) => {
 
 export const isNewUser = isUserNewerThan( WEEK_IN_MILLISECONDS );
 
-export function formatMigrationEventProps( user, from = '' ) {
-	const migrationFlow = from ? from : getImportFlowByURL();
+function formatMigrationEventProps( user, from = '' ) {
+	const migrationFlow = from ? from : 'onboarding-flow';
 	return {
 		is_new_user: isNewUser( user ),
 		migration_flow: migrationFlow,

@@ -12,6 +12,7 @@ interface MutationVariables {
 	siteId: number;
 	engine: string;
 	currentStep: StepId;
+	import_url?: string;
 }
 
 export const useResetMutation = (
@@ -19,7 +20,7 @@ export const useResetMutation = (
 ) => {
 	const queryClient = useQueryClient();
 	const mutation = useMutation( {
-		mutationFn: async ( { siteId, engine, currentStep }: MutationVariables ) => {
+		mutationFn: async ( { siteId, engine, currentStep, import_url }: MutationVariables ) => {
 			const response = await wp.req.post(
 				{
 					path: `/sites/${ siteId }/site-importer/paid-newsletter/reset`,
@@ -28,6 +29,7 @@ export const useResetMutation = (
 				{
 					engine: engine,
 					current_step: currentStep,
+					...( import_url && { import_url } ),
 				}
 			);
 
@@ -49,8 +51,13 @@ export const useResetMutation = (
 	const { mutate } = mutation;
 
 	const resetPaidNewsletter = useCallback(
-		( siteId: number, engine: string, currentStep: StepId ) =>
-			mutate( { siteId, engine, currentStep } ),
+		( siteId: number, engine: string, currentStep: StepId, import_url?: string ) =>
+			mutate( {
+				siteId,
+				engine,
+				currentStep,
+				...( import_url && { import_url } ),
+			} ),
 		[ mutate ]
 	);
 

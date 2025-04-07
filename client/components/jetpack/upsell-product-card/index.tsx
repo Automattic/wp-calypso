@@ -8,8 +8,7 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
-import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate, formatCurrency } from 'i18n-calypso';
 import { createElement, ReactNode, useMemo, useState } from 'react';
 import { A4A_MARKETPLACE_CHECKOUT_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import BackupImage from 'calypso/assets/images/jetpack/rna-image-backup.png';

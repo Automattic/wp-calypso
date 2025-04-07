@@ -1,6 +1,7 @@
+/* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Gravatar } from '@automattic/components';
-import { getRelativeTimeString, useLocale } from '@automattic/i18n-utils';
+import { Gravatar, TimeSince } from '@automattic/components';
+import { getNumericDateTimeString, useLocale } from '@automattic/i18n-utils';
 import { HumanAvatar } from '@automattic/odie-client/src/assets';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { chevronRight, Icon } from '@wordpress/icons';
@@ -12,7 +13,6 @@ import { HELP_CENTER_STORE } from '../stores';
 import type { SupportInteraction, ZendeskMessage } from '@automattic/odie-client';
 
 import './help-center-support-chat-message.scss';
-
 const trackContactButtonClicked = ( sectionName: string ) => {
 	recordTracksEvent( 'calypso_inlinehelp_support_chat_message_click', {
 		force_site_id: true,
@@ -28,6 +28,7 @@ export const HelpCenterSupportChatMessage = ( {
 	navigateTo = '',
 	supportInteraction,
 	sectionName,
+	conversationStatus,
 }: {
 	message: ZendeskMessage;
 	badgeCount?: number;
@@ -37,6 +38,7 @@ export const HelpCenterSupportChatMessage = ( {
 	altText?: string;
 	supportInteraction: SupportInteraction | undefined;
 	sectionName?: string;
+	conversationStatus?: string;
 } ) => {
 	const { __ } = useI18n();
 	const locale = useLocale();
@@ -72,6 +74,7 @@ export const HelpCenterSupportChatMessage = ( {
 			} }
 			className={ clsx( 'help-center-support-chat__conversation-container', {
 				'is-unread-message': isUnread,
+				[ `is-${ conversationStatus }` ]: conversationStatus,
 			} ) }
 		>
 			<div
@@ -108,11 +111,7 @@ export const HelpCenterSupportChatMessage = ( {
 						}
 					/>
 					<span>
-						{ getRelativeTimeString( {
-							timestamp: received * 1000,
-							locale,
-							style: 'long',
-						} ) }
+						<TimeSince date={ getNumericDateTimeString( received * 1000, locale ) } />
 					</span>
 				</div>
 			</div>

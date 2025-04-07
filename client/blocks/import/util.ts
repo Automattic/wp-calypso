@@ -23,7 +23,6 @@ const platformMap: { [ key in ImporterPlatform ]: string } = {
 	'godaddy-central': 'GoDaddy Central',
 	tumblr: 'Tumblr',
 	squarespace: 'Squarespace',
-	blogroll: 'Blogroll',
 	ghost: 'Ghost',
 	livejournal: 'LiveJournal',
 	movabletype: 'Movable Type & TypePad',
@@ -35,7 +34,6 @@ const platformMap: { [ key in ImporterPlatform ]: string } = {
 export const platformImporterNameMap: { [ key: string ]: string } = {
 	xanga: 'xanga-wxr',
 	ghost: 'ghost_import',
-	blogroll: 'opml',
 	movabletype: 'mt',
 };
 
@@ -45,7 +43,6 @@ export const orgImporters: ImporterPlatform[] = [
 	'movabletype',
 	'livejournal',
 	'ghost',
-	'blogroll',
 ];
 
 /**

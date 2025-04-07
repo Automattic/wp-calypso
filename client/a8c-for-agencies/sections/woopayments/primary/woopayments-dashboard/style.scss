@@ -1,0 +1,119 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+$woocommerce-purple-50: #720EEC;
+
+.woopayments-dashboard {
+	.hosting-dashboard-layout__header-actions {
+		display: flex;
+		flex-direction: column;
+		align-items: normal;
+		justify-content: normal;
+	}
+
+	&.is-empty {
+		.hosting-dashboard-layout__body-wrapper {
+			max-width: 900px;
+			padding-block-start: calc(24px + 48px);
+		}
+	}
+}
+
+.woopayments-dashboard-empty-state__content {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+
+	img {
+		width: max-content;
+	}
+
+	a.components-external-link {
+		@include body-medium;
+	}
+}
+
+.woopayments-dashboard-empty-state__heading {
+	@include heading-2x-large;
+	margin-block-end: 8px;
+}
+
+.woopayments-dashboard-empty-state__description {
+	@include body-large;
+
+	> div {
+		margin-block-end: 16px;
+	}
+
+	a {
+		text-decoration: underline;
+	}
+}
+
+.woopayments-dashboard-empty-state__list a,
+.woopayments-dashboard-empty-state__demo-link {
+	text-decoration: underline;
+	color: var(--color-text);
+
+	&:active,
+	&:hover,
+	&:focus,
+	&:focus-visible {
+		color: var(--color-text);
+	}
+}
+
+a.components-button.woopayments-dashboard-empty-state__button {
+	&,
+	&:hover,
+	&:focus,
+	&:focus-visible {
+		color: $woocommerce-purple-50;
+		background-color: var(--color-surface);
+		border: none;
+		outline: none;
+		box-shadow: none;
+	}
+}
+
+.woopayments-dashboard__actions {
+	@include body-small;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	@include break-xlarge {
+		flex-direction: row;
+		align-items: center;
+	}
+}
+
+.woopayments-dashboard__spinner {
+	display: flex;
+	gap: 8px;
+
+	svg {
+		margin: 0
+	}
+}
+
+.woopayments-dashboard-empty-state__button {
+	margin-block-start: 16px;
+	margin-inline-start: auto;
+
+	button {
+		width: 100%;
+		height: 40px;
+
+		@include break-large {
+			min-width: 100px;
+			width: auto;
+			height: inherit;
+		}
+	}
+
+	@include break-large {
+		margin-block-start: 0;
+	}
+}

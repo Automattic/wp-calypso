@@ -19,7 +19,7 @@ import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
 
-describe( `Editor: Advanced Post Flow`, function () {
+describe( 'Editor: Advanced Post Flow', function () {
 	// Authentication setup.
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature( features, [

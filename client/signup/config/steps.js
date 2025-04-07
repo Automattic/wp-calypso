@@ -5,7 +5,6 @@ import {
 	addWithPluginPlanToCart,
 	createAccount,
 	createSite,
-	createWpForTeamsSite,
 	createSiteOrDomain,
 	createSiteWithCart,
 	setOptionsOnSite,
@@ -18,10 +17,7 @@ import {
 	isDomainFulfilled,
 	maybeRemoveStepForUserlessCheckout,
 	createSiteAndAddDIFMToCart,
-	excludeStepIfEmailVerified,
 	submitWebsiteContent,
-	excludeStepIfProfileComplete,
-	excludeSegmentSurveyStepIfInactive,
 } from 'calypso/lib/signup/step-actions';
 import { generateSteps } from './steps-pure';
 
@@ -32,7 +28,6 @@ export default generateSteps( {
 	addWithPluginPlanToCart,
 	createAccount,
 	createSite,
-	createWpForTeamsSite,
 	createSiteOrDomain,
 	createSiteWithCart,
 	setOptionsOnSite,
@@ -45,8 +40,5 @@ export default generateSteps( {
 	isDomainFulfilled,
 	maybeRemoveStepForUserlessCheckout,
 	createSiteAndAddDIFMToCart,
-	excludeStepIfEmailVerified,
-	excludeStepIfProfileComplete,
 	submitWebsiteContent,
-	excludeSegmentSurveyStepIfInactive,
 } );

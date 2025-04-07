@@ -4,11 +4,10 @@ import {
 	PRODUCT_AKISMET_BUSINESS_5K_DOWNGRADE_MAP,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
 import { isMobile } from '@automattic/viewport';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useTranslate } from 'i18n-calypso';
+import { formatCurrency, useTranslate } from 'i18n-calypso';
 import { useEffect, useCallback, useState, useMemo } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 import type { AkismetProQuantityDropDownProps } from './types';
@@ -360,7 +359,7 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 							comment: `
 								%(quantity) is the number of product licenses being purchased, e.g. "3 licenses".
 								%(actualAmountQuantityOneDisplay)s is the localized price for 1 license, e.g. "$10.25".
-								%(actualAmountDisplay)s is the localized total price, e.g. "$30.75". 
+								%(actualAmountDisplay)s is the localized total price, e.g. "$30.75".
 							`,
 						}
 				  )
@@ -378,7 +377,7 @@ export const AkismetProQuantityDropDown: FunctionComponent< AkismetProQuantityDr
 							comment: `
 								%(quantity) is the number of product licenses being purchased, e.g. "3 licenses".
 								%(actualAmountQuantityOneDisplay)s is the localized price for 1 license, e.g. "$10.25".
-								%(actualAmountDisplay)s is the localized total price, e.g. "$30.75". 
+								%(actualAmountDisplay)s is the localized total price, e.g. "$30.75".
 							`,
 						}
 				  );

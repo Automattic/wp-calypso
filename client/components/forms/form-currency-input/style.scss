@@ -16,8 +16,16 @@ input[type="number"].form-currency-input {
 
 .form-text-input-with-affixes__prefix,
 .form-text-input-with-affixes__suffix {
+	display: flex;
+
 	&:hover .form-currency-input__select-icon {
 		color: var(--color-neutral-50);
+	}
+
+	&:focus-within {
+		z-index: 2;
+		border: 1px solid var(--color-primary);
+		box-shadow: 0 0 0 2px var(--color-primary-10);
 	}
 }
 

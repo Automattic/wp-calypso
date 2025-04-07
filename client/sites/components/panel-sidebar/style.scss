@@ -1,8 +1,8 @@
 
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "~@automattic/color-studio/dist/color-variables";
-@import "~@automattic/typography/styles/variables";
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
 
 .panel-with-sidebar {
 	display: flex;

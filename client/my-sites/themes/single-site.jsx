@@ -7,11 +7,9 @@ import SingleSiteThemeShowcaseJetpack from './single-site-jetpack';
 import SingleSiteThemeShowcaseWpcom from './single-site-wpcom';
 
 const SingleSiteThemeShowcaseWithOptions = ( props ) => {
-	const { activeTheme, isJetpack, siteId, translate } = props;
+	const { isJetpack, siteId, translate } = props;
 
-	const getScreenshotOption = ( themeId ) => {
-		return activeTheme === themeId ? 'customize' : 'info';
-	};
+	const getScreenshotOption = () => 'info';
 
 	if ( isJetpack ) {
 		return (

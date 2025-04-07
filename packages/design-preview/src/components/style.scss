@@ -124,7 +124,7 @@ $design-preview-sidebar-width: 311px;
 	/**
 	 * Gutenberg Components
 	 */
-	.components-navigator-provider,
+	.components-navigator,
 	.components-navigator-screen {
 		display: flex;
 		flex-direction: column;
@@ -136,7 +136,7 @@ $design-preview-sidebar-width: 311px;
 		transform: none !important;
 	}
 
-	.components-navigator-provider {
+	.components-navigator {
 		contain: none;
 	}
 

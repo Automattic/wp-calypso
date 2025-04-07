@@ -12,7 +12,7 @@
 		position: absolute;
 		top: 0;
 		left: 0;
-		background-color: rgba(var(--color-neutral-70-rgb), 0.5);
+		background-color: color-mix(in srgb, var(--color-neutral-70) 50%, transparent);
 		border-radius: 50%;
 		height: 150px;
 		width: 150px;
@@ -87,19 +87,69 @@
 
 .edit-gravatar__label-container {
 	position: absolute;
-	left: 0;
 	top: 0;
-	width: 150px;
-	height: 150px;
-	border-radius: 50%;
-	background: rgba(var(--color-neutral-70-rgb), 0.5);
-	color: #fff;
-	text-align: center;
+	left: 0;
+	width: 100%;
+	height: 100%;
 
-	.gridicon {
-		display: block;
-		margin: 2em auto 0;
+	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #fff;
+	transition: all 0.3s ease;
+	.edit-gravatar__label-container-icon {
+		padding: 10px;
+		border-radius: 50%;
+		background-color: var(--color-accent-60);
+		width: 24px;
+		height: 24px;
+		transform: translate(100%, 100%);
+		border: solid 2px transparent;
+		transition: all 0.3s ease;
 	}
+
+}
+
+.edit-gravatar__image-button:focus .edit-gravatar__label-container-icon {
+	box-shadow: 0 0 0 2px var(--color-accent-light);
+}
+
+.gravatar {
+	transition: filter 0.3s ease;
+}
+
+.edit-gravatar__image-container:hover, .is-uploading .edit-gravatar__image-container {
+	.gravatar{
+		filter: brightness(0.7);
+	}
+
+	.edit-gravatar__label-container-icon {
+		background-color: var(--color-accent-70);
+
+	}
+}
+
+.edit-gravatar__image-container .edit-gravatar__label-container-icon {
+	background-color: var(--color-accent-60);
+	border-color: #fff;
+}
+
+.is-uploading .edit-gravatar__image-container {
+	.edit-gravatar__label-container-icon {
+		background-color: #fff;
+	}
+}
+
+.is-unverified .edit-gravatar__label-container-icon {
+	background-color: var(--studio-red-60);
+	border-color: #fff;
+}
+
+.edit-gravatar .edit-gravatar__label-container-icon-spinner{
+	margin: 0;
+	width: 24px;
+	height: 24px;
 }
 
 .edit-gravatar__gravatar-is-hidden .gridicon {
@@ -118,7 +168,7 @@
 }
 
 .edit-gravatar .spinner__border {
-	fill: rgba(var(--color-neutral-70-rgb), 0.5);
+	fill: color-mix(in srgb, var(--color-neutral-70) 50%, transparent);
 }
 
 .edit-gravatar__explanation {

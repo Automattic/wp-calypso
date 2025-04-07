@@ -10,7 +10,7 @@
 /**
  * Importers styles
  */
-@import "~calypso/blocks/import/style/base";
+@import "calypso/blocks/import/style/base";
 
 /**
  * General onboarding styling
@@ -57,11 +57,16 @@ button {
 }
 
 .accessible-focus {
-	.site-setup,
-	.import-focused {
+	.site-setup {
 		.button.is-primary:focus {
 			box-shadow: 0 0 0 2px var(--color-primary-light);
 		}
+	}
+}
+
+.step-route:has(.step-container-v2) {
+	.signup-header {
+		display: none;
 	}
 }
 
@@ -69,21 +74,18 @@ button {
  * Site Setup
  */
 .new-hosted-site,
-.import-hosted-site,
-.site-setup,
-.onboarding.goals,
-.onboarding.design-setup,
-.onboarding.design-choices,
-.onboarding.difm-starting-point,
-.site-migration,
+.site-setup:not(:has(.step-container-v2)),
+.onboarding.goals:not(:has(.step-container-v2)),
+.onboarding.design-setup:not(:has(.step-container-v2)),
+.onboarding.design-choices:not(:has(.step-container-v2)),
+.onboarding.difm-starting-point:not(:has(.step-container-v2)),
+.site-migration:not(:has(.step-container-v2)),
 .migration,
-.migration-signup,
-.import-focused,
 .plugin-bundle,
 .newsletter-setup,
 .newsletter-goals,
-.plans,
-.domains,
+.domains:not(:has(.step-container-v2)),
+.plans:not(:has(.step-container-v2)),
 .patterns,
 .anchor-fm,
 .subscribers,
@@ -92,10 +94,9 @@ button {
 .free-setup,
 .free-post-setup,
 .free,
-.assembler-first,
 .setup-blog,
 .celebration-step,
-.use-my-domain,
+.use-my-domain:not(:has(.step-container-v2)),
 .domain-transfer,
 .update-design,
 .update-options,
@@ -103,8 +104,14 @@ button {
 .hundred-year-domain,
 .entrepreneur,
 .generate-content,
-.processing {
+.playground:not(:has(.step-container-v2)),
+.processing:not(:has(.step-container-v2)),
+.create-site:not(:has(.step-container-v2)) {
 	box-sizing: border-box;
+
+	.wpcom-loading__boot {
+		margin-top: 32vh;
+	}
 
 	&.step-route {
 		padding: 60px 0 0;
@@ -136,8 +143,6 @@ button {
 		}
 
 		// Importer flows
-		&.import-focused,
-		&.import-hosted-site,
 		&.site-setup[class*=" import"] {
 			padding: 3.75rem 0;
 		}
@@ -229,16 +234,10 @@ button {
 	margin: 0 auto;
 }
 
-.import-focused .step-container.site-picker,
-.import-hosted-site .step-container.site-picker {
-	max-width: 1280px;
-	padding: 1.5rem;
-}
-
 .is-section-stepper {
 	.search-filters__popover {
-		--color-accent: #117ac9 !important;
-		--color-accent-60: #0e64a5 !important;
+		--color-accent: var(--studio-blue-50) !important;
+		--color-accent-60: var(--studio-blue-60) !important;
 	}
 }
 
@@ -412,9 +411,5 @@ button {
 
 	.step-container.site-picker .step-container__content {
 		max-width: 100%;
-
-		svg {
-			fill: none;
-		}
 	}
 }

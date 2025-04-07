@@ -1,8 +1,8 @@
 import { calculateMonthlyPriceForPlan, getPlan, Plan } from '@automattic/calypso-products';
-import formatCurrency from '@automattic/format-currency';
 import { useEffect, useState } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
+import { formatCurrency } from 'i18n-calypso';
 import wpcomRequest from 'wpcom-proxy-request';
 import config from '../config';
 import { ApiPricingPlan } from '../types.js';

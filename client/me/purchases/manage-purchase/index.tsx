@@ -1,4 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import config from '@automattic/calypso-config';
 import {
 	isPersonal,
 	isPremium,
@@ -48,11 +49,20 @@ import {
 	ProductIcon,
 	Gridicon,
 	PlanPrice,
-	MaterialIcon,
 } from '@automattic/components';
 import { Plans, type SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_CANCEL, SUPPORT_ROOT } from '@automattic/urls';
+import {
+	column,
+	download,
+	Icon,
+	payment,
+	reusableBlock,
+	tool,
+	trash,
+	upload,
+} from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, LocalizeProps, useTranslate } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
@@ -96,6 +106,7 @@ import {
 	getName,
 	shouldRenderMonthlyRenewalOption,
 	getDIFMTieredPurchaseDetails,
+	canExplicitRenew,
 } from 'calypso/lib/purchases';
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
@@ -110,6 +121,7 @@ import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features
 import {
 	getCancelPurchaseUrlFor,
 	getAddNewPaymentMethodUrlFor,
+	getDowngradeUrlFor,
 } from 'calypso/my-sites/purchases/paths';
 import { useSelector } from 'calypso/state';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
@@ -143,7 +155,7 @@ import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { CalypsoDispatch, IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
-import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
+import { cancelPurchase, downgradePurchase, managePurchase, purchasesRoot } from '../paths';
 import PurchaseSiteHeader from '../purchases-site/header';
 import RemovePurchase from '../remove-purchase';
 import {
@@ -175,6 +187,7 @@ export interface ManagePurchaseProps {
 	cardTitle?: string;
 	getAddNewPaymentMethodUrlFor?: typeof getAddNewPaymentMethodUrlFor;
 	getCancelPurchaseUrlFor?: typeof getCancelPurchaseUrlFor;
+	getDowngradeUrlFor?: typeof getDowngradeUrlFor;
 	getChangePaymentMethodUrlFor?: GetChangePaymentMethodUrlFor;
 	getManagePurchaseUrlFor?: GetManagePurchaseUrlFor;
 	isSiteLevel?: boolean;
@@ -362,6 +375,10 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
+		if ( ! canExplicitRenew( purchase ) ) {
+			return null;
+		}
+
 		if ( this.isPendingDomainRegistration( purchase ) ) {
 			return null;
 		}
@@ -449,9 +466,13 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
+		if ( ! canExplicitRenew( purchase ) ) {
+			return null;
+		}
+
 		return (
 			<CompactCard tagName="button" displayAsLink onClick={ onClick }>
-				<MaterialIcon icon="autorenew" className="card__icon" />
+				<Icon icon={ reusableBlock } className="card__icon" />
 				{ content }
 			</CompactCard>
 		);
@@ -577,16 +598,16 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		let iconName;
+		let icon;
 		let buttonText;
 
 		if ( isExpired( purchase ) ) {
-			iconName = 'view_carousel';
+			icon = column;
 			buttonText = isUpgradeablePlan
 				? translate( 'Pick another plan' )
 				: translate( 'Pick another product' );
 		} else {
-			iconName = 'upload';
+			icon = upload;
 			buttonText = isUpgradeablePlan ? translate( 'Upgrade plan' ) : translate( 'Upgrade product' );
 		}
 
@@ -599,7 +620,7 @@ class ManagePurchase extends Component<
 				href={ upgradeUrl }
 				onClick={ this.handleUpgradeClick }
 			>
-				<MaterialIcon icon={ iconName } className="card__icon" />
+				<Icon icon={ icon } className="card__icon" />
 				{ buttonText }
 			</CompactCard>
 		);
@@ -664,7 +685,7 @@ class ManagePurchase extends Component<
 
 			return (
 				<CompactCard href={ path } onClick={ this.handleEditPaymentMethodNavItem }>
-					<MaterialIcon icon="credit_card" className="card__icon" />
+					<Icon icon={ payment } className="card__icon" />
 					{ addPaymentMethodLinkText( { purchase, translate } ) }
 				</CompactCard>
 			);
@@ -736,7 +757,7 @@ class ManagePurchase extends Component<
 				linkIcon="chevron-right"
 				skipRemovePlanSurvey={ isPlanPurchase && hasCompletedCancelPurchaseSurvey }
 			>
-				<MaterialIcon icon="delete" className="card__icon" />
+				<Icon icon={ trash } className="card__icon" />
 				{ text }
 				{ this.renderRefundText() }
 			</RemovePurchase>
@@ -881,7 +902,7 @@ class ManagePurchase extends Component<
 					</>
 				) : (
 					<>
-						<MaterialIcon icon="build" className="card__icon" />
+						<Icon icon={ tool } className="card__icon" />
 						{ translate( 'Reinstall' ) }
 					</>
 				) }
@@ -941,8 +962,32 @@ class ManagePurchase extends Component<
 
 		return (
 			<CompactCard href={ link } className="remove-purchase__card" onClick={ onClick }>
-				<MaterialIcon icon="delete" className="card__icon" />
+				<Icon icon={ trash } className="card__icon" />
 				{ getCancelPurchaseNavText( purchase, translate ) }
+				{ this.renderRefundText() }
+			</CompactCard>
+		);
+	}
+
+	renderDowngradeNavItem() {
+		const { purchase, translate } = this.props;
+		if ( ! purchase ) {
+			return null;
+		}
+
+		if ( ! ( isBusiness( purchase ) || isPremium( purchase ) || isEcommerce( purchase ) ) ) {
+			return null;
+		}
+
+		const link = ( this.props.getDowngradeUrlFor ?? downgradePurchase )(
+			this.props.siteSlug,
+			purchase.id
+		);
+
+		return (
+			<CompactCard href={ link }>
+				<Icon icon={ download } className="card__icon" />
+				{ translate( 'Downgrade plan' ) }
 				{ this.renderRefundText() }
 			</CompactCard>
 		);
@@ -1374,9 +1419,14 @@ class ManagePurchase extends Component<
 						{ ! isJetpackTemporarySitePurchase( purchase ) && this.renderUpgradeNavItem() }
 						{ this.renderEditPaymentMethodNavItem() }
 						{ this.renderReinstall() }
-						{ this.renderCancelPurchaseNavItem() }
-						{ this.renderCancelSurvey() }
-						{ this.renderRemovePurchaseNavItem() }
+						<div className="manage-purchase__downgrade-products">
+							{ config.isEnabled( 'plans/self-service-downgrade' ) && ! isPersonal( purchase )
+								? this.renderDowngradeNavItem()
+								: null }
+							{ this.renderCancelPurchaseNavItem() }
+							{ this.renderRemovePurchaseNavItem() }
+							{ this.renderCancelSurvey() }
+						</div>
 					</>
 				) }
 			</Fragment>
@@ -1435,6 +1485,10 @@ class ManagePurchase extends Component<
 			preventRenewal = ! isRenewable( purchase );
 		}
 
+		if ( ! canExplicitRenew( purchase ) ) {
+			preventRenewal = true;
+		}
+
 		return (
 			<Fragment>
 				<TrackPurchasePageView
@@ -1446,7 +1500,10 @@ class ManagePurchase extends Component<
 					<QueryCanonicalTheme siteId={ siteId } themeId={ purchase?.meta ?? '' } />
 				) }
 
-				<HeaderCake backHref={ this.props.purchaseListUrl ?? purchasesRoot }>
+				<HeaderCake
+					backText={ translate( 'Purchases' ) }
+					backHref={ this.props.purchaseListUrl ?? purchasesRoot }
+				>
 					{ this.props.cardTitle || titles.managePurchase }
 				</HeaderCake>
 				{ showExpiryNotice ? (

@@ -10,6 +10,7 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import 'calypso/state/themes/init';
 import { marketplaceThemeProduct } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
+import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { getProductsByBillingSlug } from 'calypso/state/products-list/selectors';
 import { getProductBillingSlugByThemeId } from 'calypso/state/products-list/selectors/get-product-billing-slug-by-theme-id';
 import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
@@ -107,6 +108,11 @@ export function addExternalManagedThemeToCart( themeId: string, siteId: number )
 			.forCartKey( cartKey )
 			.actions.addProductsToCart( cartItems )
 			.then( () => {
+				// If there's been a site created recently then this cookie will still contain
+				// the post-checkout destination from that site-creation flow. We don't want
+				// that flow's destination to be used here.
+				clearSignupDestinationCookie();
+
 				page( `/checkout/${ siteSlug }` );
 			} )
 			.finally( () => {

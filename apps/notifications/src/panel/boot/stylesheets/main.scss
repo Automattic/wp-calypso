@@ -261,7 +261,7 @@ $with-sidebar-min-page-width: 1114px;
 		background: var(--color-surface);
 		border: 1px solid var(--color-neutral-light);
 		border-right: none;
-		font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-size: 13px;
 		height: 26px;
 		cursor: pointer;
 		user-select: none; // Makes text unselectable
@@ -378,12 +378,12 @@ $with-sidebar-min-page-width: 1114px;
 		transform: translateY(-50%);
 
 		h2 {
-			font: 400 21px/24px $sans; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font: 400 21px/24px $sans;
 			margin-bottom: 4px;
 		}
 
 		p {
-			font: 400 16px/24px $sans; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font: 400 16px/24px $sans;
 		}
 	}
 
@@ -403,7 +403,7 @@ $with-sidebar-min-page-width: 1114px;
 		bottom: 0;
 		overflow: hidden;
 		&:not(.is-note-open) {
-			box-shadow: -3px 1px 10px -2px rgba(var(--color-neutral-70-rgb), 0.075);
+			box-shadow: -3px 1px 10px -2px color-mix(in srgb, var(--color-neutral-70) 7.5%, transparent);
 		}
 	}
 
@@ -454,7 +454,7 @@ $with-sidebar-min-page-width: 1114px;
 		}
 
 		.unread {
-			background: rgba(var(--color-primary-rgb), 0.1); // rgba is used to meet AA contrast standard
+			background: color-mix(in srgb, var(--color-primary) 10%, transparent); // rgba is used to meet AA contrast standard
 		}
 
 		.wpnc__traffic_surge .wpnc__note-icon img {
@@ -616,7 +616,7 @@ $with-sidebar-min-page-width: 1114px;
 		height: 100%;
 		left: 0;
 		right: 0;
-		box-shadow: -3px 1px 10px -2px rgba(var(--color-neutral-70-rgb), 0.075);
+		box-shadow: -3px 1px 10px -2px color-mix(in srgb, var(--color-neutral-70) 7.5%, transparent);
 
 		@media only screen and (min-width: 480px) {
 			border-left: 1px solid var(--color-neutral-0);
@@ -681,7 +681,7 @@ $with-sidebar-min-page-width: 1114px;
 		.wpnc__comment .wpnc__user p.wpnc__excerpt {
 			color: var(--color-secondary);
 			max-height: 1.5em;
-			font-size: 14px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-size: 14px;
 		}
 
 		.wpnc__reply {
@@ -714,7 +714,7 @@ $with-sidebar-min-page-width: 1114px;
 		}
 
 		.wpnc__note-icon .wpnc__gridicon {
-			font-size: 2em; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-size: 2em;
 			background-color: var(--color-neutral-10);
 			border-color: var(--color-neutral-10);
 		}
@@ -812,7 +812,7 @@ $with-sidebar-min-page-width: 1114px;
 
 			code {
 				font-family: $code;
-				font-size: 90%; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				font-size: 90%;
 				color: var(--color-neutral-50);
 				background: var(--color-neutral-0);
 				border: 1px solid var(--color-neutral-10);

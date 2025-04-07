@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import i18n, { translate } from 'i18n-calypso';
+import i18n, { translate, numberFormat } from 'i18n-calypso';
 import {
 	FEATURE_13GB_STORAGE,
 	FEATURE_200GB_STORAGE,
@@ -443,6 +443,9 @@ import {
 	FEATURE_UPLOAD_VIDEO,
 	FEATURE_STATS_BASIC_20250206,
 	FEATURE_STATS_ADVANCED_20250206,
+	FEATURE_SUPPORT,
+	FEATURE_SUPPORT_FROM_EXPERTS,
+	FEATURE_AI_ASSISTANT,
 } from './constants';
 import { isBigSkyOnboarding } from './is-big-sky-onboarding';
 import { isGlobalStylesOnPersonalEnabled } from './is-global-styles-on-personal-enabled';
@@ -520,6 +523,16 @@ const plansDescriptionHeadingComponent = {
 };
 /* eslint-enable */
 
+const isStatsFeatureTranslated = () => {
+	const isEnglishLocale = i18n.getLocaleSlug()?.startsWith( 'en' );
+	const hasStatsTranslation =
+		i18n.hasTranslation( 'Full history, filters & peak times' ) ||
+		i18n.hasTranslation( 'Last 7 days of basic stats' ) ||
+		i18n.hasTranslation( 'Advanced insights, including UTM & device analytics' );
+
+	return isEnglishLocale || hasStatsTranslation;
+};
+
 const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
@@ -529,8 +542,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for students' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for students' ),
 	getStoreAudience: () => i18n.translate( 'Best for students' ),
-	getPlanTagline: () =>
-		i18n.translate( 'Get a taste of the world’s most popular CMS & blogging software.' ),
+	getPlanTagline: () => i18n.translate( 'Get started with all the basics.' ),
 	getNewsletterTagLine: () =>
 		i18n.translate( 'Start fresh or make the switch, bringing your first 100 readers with you.' ),
 	getBlogOnboardingTagLine: () =>
@@ -569,6 +581,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 
 	get2023PlanComparisonFeatureOverride: () => {
 		return [
+			FEATURE_AI_ASSISTANT,
 			FEATURE_BEAUTIFUL_THEMES,
 			FEATURE_PAGES,
 			FEATURE_USERS,
@@ -579,7 +592,11 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_ALWAYS_ONLINE,
 			FEATURE_PAYMENT_TRANSACTION_FEES_10,
 			FEATURE_GLOBAL_EDGE_CACHING,
+			FEATURE_BURST,
+			FEATURE_WAF_V2,
+			FEATURE_CPUS,
 			FEATURE_CDN,
+			FEATURE_ES_SEARCH_JP,
 			FEATURE_MULTI_SITE,
 			FEATURE_WP_UPDATES,
 			FEATURE_SECURITY_DDOS,
@@ -606,10 +623,19 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		];
 	},
 	getStorageFeature: () => FEATURE_1GB_STORAGE,
-	getPlanComparisonFeatureLabels: () => ( {
-		[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( '%d shares per month', { args: [ 30 ] } ),
-		[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '10%' ),
-	} ),
+	getPlanComparisonFeatureLabels: () => {
+		const baseFeatures = {
+			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( '%d shares per month', { args: [ 30 ] } ),
+			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: numberFormat( 0.1, {
+				numberFormatOptions: { style: 'percent' },
+			} ),
+			[ FEATURE_AI_ASSISTANT ]: i18n.translate( 'Limited to 20 requests' ),
+		};
+
+		return isStatsFeatureTranslated()
+			? { ...baseFeatures, [ FEATURE_STATS_JP ]: i18n.translate( 'Last 7 days of basic stats' ) }
+			: baseFeatures;
+	},
 	getNewsletterSignupFeatures: () => [
 		FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
 		FEATURE_PREMIUM_CONTENT_JP,
@@ -708,7 +734,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for personal use' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for personal use' ),
 	getStoreAudience: () => i18n.translate( 'Best for personal use' ),
-	getPlanTagline: () => i18n.translate( 'Create your home on the web with a custom domain name.' ),
+	getPlanTagline: () => i18n.translate( 'Make your mark with a custom domain.' ),
 	getNewsletterTagLine: () =>
 		i18n.translate( 'Monetize your writing, go ad-free, and expand your media content.' ),
 	getBlogOnboardingTagLine: () =>
@@ -785,7 +811,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_AD_FREE_EXPERIENCE,
 			WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
-			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+			FEATURE_SUPPORT_FROM_EXPERTS,
 			FEATURE_STATS_BASIC_20250206,
 		];
 
@@ -803,6 +829,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_FAST_DNS,
 			FEATURE_PAYMENT_TRANSACTION_FEES_8,
 			FEATURE_PREMIUM_THEMES,
+			FEATURE_SUPPORT,
 		];
 
 		return isGlobalStylesOnPersonalEnabled()
@@ -810,11 +837,23 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			: baseFeatures;
 	},
 	getStorageFeature: () => FEATURE_6GB_STORAGE,
-	getPlanComparisonFeatureLabels: () => ( {
-		[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'Dozens of premium themes' ),
-		[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( '%d shares per month', { args: [ 30 ] } ),
-		[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '8%' ),
-	} ),
+	getPlanComparisonFeatureLabels: () => {
+		const baseFeatures = {
+			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'Dozens of premium themes' ),
+			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( '%d shares per month', { args: [ 30 ] } ),
+			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: numberFormat( 0.08, {
+				numberFormatOptions: { style: 'percent' },
+			} ),
+			[ FEATURE_SUPPORT ]: i18n.translate( 'Support from our expert\u00A0team' ),
+		};
+
+		return isStatsFeatureTranslated()
+			? {
+					...baseFeatures,
+					[ FEATURE_STATS_JP ]: i18n.translate( 'Full history, filters & peak times' ),
+			  }
+			: baseFeatures;
+	},
 
 	getNewsletterSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
@@ -872,7 +911,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	getPortfolioAudience: () => i18n.translate( 'Best for online stores' ),
 	getStoreAudience: () => i18n.translate( 'Best for online stores' ),
 	getPlanTagline: () =>
-		i18n.translate( 'Build an online store with powerful, integrated premium extensions.' ),
+		i18n.translate( 'Grow your online store with commerce-optimized extensions.' ),
 	getDescription: () => {
 		return i18n.translate(
 			'{{strong}}Best for online stores:{{/strong}} Sell products or services with this powerful, ' +
@@ -1000,6 +1039,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_SELL_60_COUNTRIES,
 			FEATURE_SHIPPING_INTEGRATIONS,
 			FEATURE_PAYMENT_TRANSACTION_FEES_0_ALL,
+			FEATURE_SUPPORT,
 		];
 	},
 	getCheckoutFeatures: () => [
@@ -1021,12 +1061,28 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			? FEATURE_50GB_STORAGE
 			: FEATURE_200GB_STORAGE;
 	},
-	getPlanComparisonFeatureLabels: () => ( {
-		[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'Unlimited premium themes' ),
-		[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( 'Unlimited shares' ),
-		[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '0%' ),
-		[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: i18n.translate( '0%' ),
-	} ),
+	getPlanComparisonFeatureLabels: () => {
+		const baseFeatures = {
+			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'All premium themes' ),
+			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( 'Unlimited shares' ),
+			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: numberFormat( 0, {
+				numberFormatOptions: { style: 'percent' },
+			} ),
+			[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: numberFormat( 0, {
+				numberFormatOptions: { style: 'percent' },
+			} ),
+			[ FEATURE_SUPPORT ]: i18n.translate( 'Priority 24/7 support from our expert\u00A0team' ),
+		};
+
+		return isStatsFeatureTranslated()
+			? {
+					...baseFeatures,
+					[ FEATURE_STATS_JP ]: i18n.translate(
+						'Advanced insights, including UTM & device analytics'
+					),
+			  }
+			: baseFeatures;
+	},
 	getHostingSignupFeatures: ( term ) => () =>
 		compact( [
 			term !== TERM_MONTHLY && FEATURE_CUSTOM_DOMAIN,
@@ -1219,7 +1275,8 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for freelancers' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for freelancers' ),
 	getStoreAudience: () => i18n.translate( 'Best for freelancers' ),
-	getPlanTagline: () => i18n.translate( 'Build a unique website with powerful design tools.' ),
+	getPlanTagline: () =>
+		i18n.translate( 'Step up site customization with premium design features.' ),
 	getNewsletterTagLine: () =>
 		i18n.translate( 'Make it even more memorable with premium designs and style customization.' ),
 	getBlogOnboardingTagLine: () =>
@@ -1356,6 +1413,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_WORDADS,
 			FEATURE_STYLE_CUSTOMIZATION,
 			FEATURE_PAYMENT_TRANSACTION_FEES_4,
+			FEATURE_SUPPORT,
 		];
 	},
 	getCheckoutFeatures: () => [
@@ -1374,11 +1432,25 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		return [];
 	},
 	getStorageFeature: () => FEATURE_13GB_STORAGE,
-	getPlanComparisonFeatureLabels: () => ( {
-		[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'Unlimited premium themes' ),
-		[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( 'Unlimited shares' ),
-		[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '4%' ),
-	} ),
+	getPlanComparisonFeatureLabels: () => {
+		const baseFeatures = {
+			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'All premium themes' ),
+			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( 'Unlimited shares' ),
+			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: numberFormat( 0.04, {
+				numberFormatOptions: { style: 'percent' },
+			} ),
+			[ FEATURE_SUPPORT ]: i18n.translate( 'Fast support from our expert\u00A0team' ),
+		};
+
+		return isStatsFeatureTranslated()
+			? {
+					...baseFeatures,
+					[ FEATURE_STATS_JP ]: i18n.translate(
+						'Advanced insights, including UTM & device analytics'
+					),
+			  }
+			: baseFeatures;
+	},
 	get2023PlanComparisonJetpackFeatureOverride: () => {
 		return [
 			FEATURE_PAYPAL_JP,
@@ -1414,9 +1486,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	getPortfolioAudience: () => i18n.translate( 'Best for small businesses' ),
 	getStoreAudience: () => i18n.translate( 'The plan for small businesses' ),
 	getPlanTagline: () =>
-		i18n.translate(
-			'Unlock the power of WordPress with the managed hosting platform built by WordPress experts.'
-		),
+		i18n.translate( 'Unlock next-level WordPress with custom plugins and themes.' ),
 	getBlogOnboardingTagLine: () =>
 		i18n.translate( 'Expand your blog with plugins and powerful tools to help you scale.' ),
 	getDescription: () =>
@@ -1531,10 +1601,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_BANDWIDTH,
 			FEATURE_UNLIMITED_TRAFFIC,
 			FEATURE_GLOBAL_EDGE_CACHING,
-			FEATURE_BURST,
-			FEATURE_WAF_V2,
 			FEATURE_CDN,
-			FEATURE_CPUS,
 			FEATURE_DATACENTRE_FAILOVER,
 			FEATURE_ISOLATED_INFRA,
 			FEATURE_SECURITY_MALWARE,
@@ -1576,17 +1643,16 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_REALTIME_BACKUPS_JP,
 			FEATURE_ONE_CLICK_RESTORE_V2,
 			FEATURE_UPTIME_MONITOR_JP,
-			FEATURE_ES_SEARCH_JP,
 			FEATURE_PLUGIN_AUTOUPDATE_JP,
 			FEATURE_SEO_JP,
 		];
 	},
 	getPlanComparisonFeatureLabels: () => {
 		const featureLabels: Record< Feature, TranslateResult > = {
-			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'Unlimited premium themes' ),
+			[ FEATURE_PREMIUM_THEMES ]: i18n.translate( 'All premium themes' ),
 			[ FEATURE_PREMIUM_STORE_THEMES ]: i18n.translate( 'Available with plugins' ),
 			[ FEATURE_UNLIMITED_PRODUCTS ]: i18n.translate( 'Available with plugins' ),
-			[ FEATURE_DISPLAY_PRODUCTS_BRAND ]: i18n.translate( 'Available with paid plugins' ),
+			[ FEATURE_DISPLAY_PRODUCTS_BRAND ]: i18n.translate( 'Available with plugins' ),
 			[ FEATURE_PRODUCT_ADD_ONS ]: i18n.translate( 'Available with paid plugins' ),
 			[ FEATURE_ASSEMBLED_KITS ]: i18n.translate( 'Available with paid plugins' ),
 			[ FEATURE_MIN_MAX_ORDER_QUANTITY ]: i18n.translate( 'Available with paid plugins' ),
@@ -1600,11 +1666,23 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			[ FEATURE_SHIPPING_INTEGRATIONS ]: i18n.translate( 'Available with paid plugins' ),
 			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( 'Unlimited shares' ),
 			[ FEATURE_STORE_DESIGN ]: i18n.translate( 'Available with plugins' ),
-			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: i18n.translate( '2%' ),
-			[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: i18n.translate( '0%' ),
+			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: numberFormat( 0.02, {
+				numberFormatOptions: { style: 'percent' },
+			} ),
+			[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: numberFormat( 0, {
+				numberFormatOptions: { style: 'percent' },
+			} ),
+			[ FEATURE_SUPPORT ]: i18n.translate( 'Priority 24/7 support from our expert team' ),
 		};
 
-		return featureLabels;
+		return isStatsFeatureTranslated()
+			? {
+					...featureLabels,
+					[ FEATURE_STATS_JP ]: i18n.translate(
+						'Advanced insights, including UTM & device analytics'
+					),
+			  }
+			: featureLabels;
 	},
 
 	getStorageFeature: ( showLegacyStorageFeature, isCurrentPlan ) => {
@@ -1792,9 +1870,7 @@ const get2023EnterprisGrideDetails = (): IncompleteWPcomPlan => ( {
 	getTitle: () => i18n.translate( 'Enterprise' ),
 	getAudience: () => i18n.translate( 'Best for enterprises' ),
 	getPlanTagline: () =>
-		i18n.translate(
-			'Deliver an unmatched performance with the highest security standards on our enterprise content platform.'
-		),
+		i18n.translate( 'Level up to bespoke Enterprise-grade performance and security.' ),
 	getDescription: () => '',
 	get2023PricingGridSignupWpcomFeatures: () => [],
 	get2023PricingGridSignupJetpackFeatures: () => [],

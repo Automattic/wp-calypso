@@ -1,6 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 
 .is-section-reader .navigation-header.following-stream-header {
+
 	&.reader-dual-column {
 		max-width: 968px; // Max width of dual column reader stream.
 	}
@@ -10,7 +11,9 @@
 	margin-top: 0;
 
 	.section-nav-tabs__list {
+
 		.section-nav-tab__link {
+
 			&:hover {
 				background-color: transparent;
 			}
@@ -40,18 +43,18 @@
 .following__view-toggle {
 	display: flex;
 	gap: 8px;
-	
+
 	.components-button {
 		height: 36px;
 		min-width: 36px;
 		padding: 6px;
 		color: var(--color-text);
-		
+
 		&.is-pressed {
 			background: var(--color-text);
 			color: var(--color-surface);
 		}
-		
+
 		&:hover {
 			background: var(--color-text);
 			color: var(--color-surface);
@@ -70,5 +73,36 @@
 		@media (max-width: $break-medium) {
 			padding: 0 0 16px 0;
 		}
+	}
+}
+
+
+.following-stream__quick-post-card.card {
+
+	.accessible-focus & .foldable-card__action:focus {
+		outline: none;
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 2px var(--color-primary-light);
+		border-radius: 2px;
+	}
+
+	.foldable-card__content {
+		position: relative;
+	}
+
+	&.is-expanded {
+
+		.foldable-card__content {
+			overflow: visible;
+		}
+	}
+}
+
+.following-stream__quick-post-card.card.is-compact {
+	margin-bottom: 20px !important;
+	border-radius: 6px; /* stylelint-disable-line scales/radii */
+
+	.foldable-card__main {
+		font-weight: 600;
 	}
 }

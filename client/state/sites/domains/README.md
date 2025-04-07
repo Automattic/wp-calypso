@@ -73,7 +73,6 @@ state.sites.domains = {
 				manualTransferRequired: Boolean,
 				partnerDomain: Boolean,
 				pendingRegistration: Boolean,
-				pendingRegistrationTime: String,
 				isPrimary: Boolean,
 				registrationDate: String,
 				type: String,

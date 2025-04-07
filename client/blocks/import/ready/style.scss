@@ -129,7 +129,7 @@
 
 	.import__details-learn-more {
 		display: inline-block;
-		font-size: 1.125em; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-size: 1.125em;
 		font-weight: 500;
 		text-decoration: underline;
 		color: var(--studio-gray-100);
@@ -142,7 +142,7 @@
 
 	.import__details-features {
 		p {
-			font-size: 1em; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-size: 1em;
 		}
 
 		strong {
@@ -153,7 +153,7 @@
 
 	.import__details-footer {
 		font-weight: 300; /* stylelint-disable-line scales/font-weights */
-		font-size: 0.875em; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-size: 0.875em;
 		color: var(--studio-gray-80);
 	}
 }

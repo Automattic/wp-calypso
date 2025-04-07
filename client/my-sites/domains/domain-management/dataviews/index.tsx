@@ -4,9 +4,12 @@ import { useGenerateDomainsDataViewsState, DomainsDataViewsContext } from './use
 
 const DotcomDomainsDataViews = ( props: DomainsDataViewsProps ) => {
 	const state = useGenerateDomainsDataViewsState( props );
+	const { domains, isLoading, sidebarMode, selectedDomainName, queryParams } = props;
 	return (
 		<DomainsDataViewsContext.Provider value={ state }>
-			<DomainsDataViews { ...props } />
+			<DomainsDataViews
+				{ ...{ domains, isLoading, sidebarMode, selectedDomainName, queryParams } }
+			/>
 		</DomainsDataViewsContext.Provider>
 	);
 };

@@ -30,9 +30,8 @@ export function useAuthenticateZendeskMessaging(
 			const auth = await ( canAccessWpcomApis()
 				? wpcomRequest< MessagingAuth >( {
 						path: '/help/authenticate/chat',
-						query: wpcomParams.toString(),
 						apiNamespace: 'wpcom/v2',
-						apiVersion: '2',
+						query: wpcomParams.toString(),
 						method: 'POST',
 				  } )
 				: apiFetch< MessagingAuth >( {

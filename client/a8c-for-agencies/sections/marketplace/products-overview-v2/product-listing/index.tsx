@@ -2,7 +2,7 @@ import { JetpackLogo } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useContext, useEffect, useMemo, useRef } from 'react';
-import WooLogoRebrand2 from 'calypso/assets/images/icons/Woo_logo_color.svg';
+import WooLogoColor from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { parseQueryStringProducts } from 'calypso/jetpack-cloud/sections/partner-portal/lib/querystring-products';
 import {
@@ -14,8 +14,8 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { ShoppingCartContext } from '../../context';
 import useProductAndPlans from '../../hooks/use-product-and-plans';
 import { SelectedFilters } from '../../lib/product-filter';
-import { getSupportedBundleSizes } from '../../products-overview/product-listing/hooks/use-product-bundle-size';
-import useSubmitForm from '../../products-overview/product-listing/hooks/use-submit-form';
+import { getSupportedBundleSizes } from '../hooks/use-product-bundle-size';
+import useSubmitForm from '../hooks/use-submit-form';
 import ProductCard from '../product-card';
 import ProductListingEmpty from './empty';
 import ProductListingSection from './section';
@@ -33,6 +33,7 @@ interface ProductListingProps {
 	isReferralMode: boolean;
 	selectedBundleSize: number;
 	selectedFilters: SelectedFilters;
+	stickyHeadingTopOffset?: number;
 }
 
 export default function ProductListing( {
@@ -42,6 +43,7 @@ export default function ProductListing( {
 	isReferralMode,
 	selectedBundleSize,
 	selectedFilters,
+	stickyHeadingTopOffset,
 }: ProductListingProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -65,7 +67,6 @@ export default function ProductListing( {
 		suggestedProductSlugs,
 	} = useProductAndPlans( {
 		selectedSite,
-		selectedBundleSize: quantity,
 		selectedProductFilters: selectedFilters,
 		productSearchQuery,
 	} );
@@ -219,7 +220,34 @@ export default function ProductListing( {
 		withCustomCard: boolean = false
 	) => {
 		return products.map( ( productOption ) => {
-			const options = Array.isArray( productOption ) ? productOption : [ productOption ];
+			let options;
+
+			if ( Array.isArray( productOption ) ) {
+				options =
+					quantity === 1
+						? productOption
+						: productOption.filter(
+								( option ) =>
+									option.supported_bundles?.some(
+										( bundle: { quantity: number } ) => bundle.quantity === quantity
+									)
+						  );
+			} else {
+				options = [ productOption ];
+			}
+
+			if ( options.length === 0 ) {
+				return null;
+			}
+
+			const productDoNotHaveSupportedBundles =
+				! isSingleLicenseView &&
+				! options.some(
+					( option ) =>
+						option.supported_bundles?.some(
+							( bundle: { quantity: number } ) => bundle.quantity === quantity
+						)
+				);
 
 			return (
 				<ProductCard
@@ -230,14 +258,21 @@ export default function ProductListing( {
 					onVariantChange={ onClickVariantOption }
 					isSelected={ isSelected( options.map( ( { slug } ) => slug ) ) }
 					isDisabled={
+						productDoNotHaveSupportedBundles ||
 						! isReady ||
 						( isIncompatibleProduct( productOption, incompatibleProducts ) &&
 							! isSelected( options.map( ( { slug } ) => slug ) ) )
 					}
 					hideDiscount={ isSingleLicenseView }
 					suggestedProduct={ suggestedProduct }
-					quantity={ quantity }
+					quantity={ productDoNotHaveSupportedBundles ? 1 : quantity }
 					withCustomCard={ withCustomCard }
+					tooltip={
+						productDoNotHaveSupportedBundles
+							? translate( 'This product does not offer volume discounts.' )
+							: undefined
+					}
+					tooltipPosition="bottom"
 				/>
 			);
 		} );
@@ -258,18 +293,22 @@ export default function ProductListing( {
 			{ isEmptyList && <ProductListingEmpty /> }
 
 			{ featuredProducts.length > 0 && (
-				<ProductListingSection title={ translate( 'Featured products' ) }>
+				<ProductListingSection
+					title={ translate( 'Featured Products' ) }
+					stickyHeadingTopOffset={ stickyHeadingTopOffset }
+				>
 					{ getProductCards( featuredProducts, true ) }
 				</ProductListingSection>
 			) }
 
 			{ wooExtensions.length > 0 && (
 				<ProductListingSection
-					icon={ <img width={ 45 } src={ WooLogoRebrand2 } alt="WooCommerce" /> }
+					icon={ <img width={ 45 } src={ WooLogoColor } alt="WooCommerce" /> }
 					title={ translate( 'WooCommerce Extensions' ) }
 					description={ translate(
 						"Explore the tools and integrations you need to grow your client's Woo store."
 					) }
+					stickyHeadingTopOffset={ stickyHeadingTopOffset }
 				>
 					{ getProductCards( wooExtensions ) }
 				</ProductListingSection>
@@ -282,6 +321,7 @@ export default function ProductListing( {
 					description={ translate(
 						'Save big with comprehensive bundles of Jetpack security, performance, and growth tools.'
 					) } // FIXME: Add proper description for A4A
+					stickyHeadingTopOffset={ stickyHeadingTopOffset }
 				>
 					{ getProductCards( jetpackPlans ) }
 				</ProductListingSection>
@@ -294,6 +334,7 @@ export default function ProductListing( {
 					description={ translate(
 						'Mix and match powerful security, performance, and growth tools for your sites.'
 					) }
+					stickyHeadingTopOffset={ stickyHeadingTopOffset }
 				>
 					{ getProductCards( jetpackProducts ) }
 				</ProductListingSection>
@@ -306,6 +347,7 @@ export default function ProductListing( {
 					description={ translate(
 						'Add additional storage to your current VaultPress Backup plans.'
 					) }
+					stickyHeadingTopOffset={ stickyHeadingTopOffset }
 				>
 					{ getProductCards( jetpackBackupAddons ) }
 				</ProductListingSection>

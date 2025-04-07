@@ -1,8 +1,4 @@
-import {
-	IMPORT_HOSTED_SITE_FLOW,
-	SITE_MIGRATION_FLOW,
-	StepContainer,
-} from '@automattic/onboarding';
+import { SITE_MIGRATION_FLOW, StepContainer } from '@automattic/onboarding';
 import {
 	DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE,
 	GroupableSiteLaunchStatuses,
@@ -25,7 +21,13 @@ import type { SiteExcerptData } from '@automattic/sites';
 
 import './styles.scss';
 
-const SitePickerStep: Step = function SitePickerStep( { navigation, flow } ) {
+const SitePickerStep: Step< {
+	submits: {
+		action: 'update-query' | 'create-site' | 'select-site';
+		queryParams?: Partial< SitesDashboardQueryParams >;
+		site?: SiteExcerptData;
+	};
+} > = function SitePickerStep( { navigation, flow } ) {
 	const { __ } = useI18n();
 	const urlQueryParams = useQuery();
 	const page = Number( urlQueryParams.get( 'page' ) ) || 1;
@@ -88,7 +90,7 @@ const SitePickerStep: Step = function SitePickerStep( { navigation, flow } ) {
 				{ sprintf(
 					/* translators: the `sourceSite` and `targetSite` fields could be any site URL (eg: "yourname.com") */
 					__(
-						'Your site %(sourceSite)s will be migrated to %(targetSite)s, overriding all the content in your destination site. '
+						'Your site %(sourceSite)s will be migrated to %(targetSite)s, overriding all the content in your destination site.'
 					),
 					{
 						sourceSite: sourceSiteSlug,
@@ -104,7 +106,7 @@ const SitePickerStep: Step = function SitePickerStep( { navigation, flow } ) {
 			<DocumentHead title={ __( 'Pick your destination' ) } />
 			<StepContainer
 				stepName="site-picker"
-				hideBack={ IMPORT_HOSTED_SITE_FLOW !== flow }
+				hideBack
 				goBack={ navigation.goBack }
 				hideSkip={ SITE_MIGRATION_FLOW === flow }
 				skipLabelText={ __( 'Skip and create a new site' ) }

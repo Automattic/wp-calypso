@@ -5,7 +5,16 @@ import {
 	updateLaunchpadSettings,
 	useStarterDesignBySlug,
 } from '@automattic/data-stores';
-import { isOnboardingFlow, useStepPersistedState } from '@automattic/onboarding';
+import {
+	AI_SITE_BUILDER_FLOW,
+	EXAMPLE_FLOW,
+	isOnboardingFlow,
+	NEW_HOSTED_SITE_FLOW,
+	NEWSLETTER_FLOW,
+	START_WRITING_FLOW,
+	Step,
+	useStepPersistedState,
+} from '@automattic/onboarding';
 import { useDispatch, useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useState } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
@@ -23,14 +32,39 @@ import { useSelector, useDispatch as useReduxDispatch } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { setActiveTheme } from 'calypso/state/themes/actions';
 import { getTheme, getThemeType } from 'calypso/state/themes/selectors';
+import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
 import UnifiedPlansStep from './unified-plans-step';
 import { getIntervalType } from './util';
-import type { ProvidedDependencies, StepProps } from '../../types';
+import type { ProvidedDependencies, Step as StepType } from '../../types';
+import type { PlansIntent } from '@automattic/plans-grid-next';
 
 import './style.scss';
 
-export default function PlansStepAdaptor( props: StepProps ) {
+/**
+ * Copied from steps-repository/plans (which should be removed)
+ */
+function getPlansIntent( flowName: string | null, isWordCampPromo?: boolean ): PlansIntent | null {
+	switch ( flowName ) {
+		case START_WRITING_FLOW:
+			return 'plans-blog-onboarding';
+		case NEWSLETTER_FLOW:
+		case EXAMPLE_FLOW:
+			return 'plans-newsletter';
+		case NEW_HOSTED_SITE_FLOW:
+			if ( isWordCampPromo ) {
+				return 'plans-new-hosted-site-business-only';
+			}
+			return 'plans-new-hosted-site';
+		default:
+			return null;
+	}
+}
+
+const PlansStepAdaptor: StepType< {
+	// TODO: work on more specific types
+	submits: Record< string, unknown >;
+} > = ( props ) => {
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
 
@@ -92,10 +126,26 @@ export default function PlansStepAdaptor( props: StepProps ) {
 	const site = useSite( postSignUpSiteSlugParam || postSignUpSiteIdParam );
 	const customerType = useQuery().get( 'customerType' ) ?? undefined;
 	const [ planInterval, setPlanInterval ] = useState< string | undefined >( undefined );
-	const hidePlanProps =
-		createWithBigSky && isGoalFirstExperiment
-			? getHidePlanPropsBasedOnCreateWithBigSky()
-			: getHidePlanPropsBasedOnThemeType( selectedThemeType || '' );
+
+	/**
+	 * isWordCampPromo is temporary
+	 */
+	const isWordCampPromo = new URLSearchParams( location.search ).has( 'utm_source', 'wordcamp' );
+	const plansIntent = getPlansIntent( props.flow, isWordCampPromo );
+
+	let hidePlanProps;
+	if ( createWithBigSky && isGoalFirstExperiment ) {
+		hidePlanProps = getHidePlanPropsBasedOnCreateWithBigSky();
+	} else if ( props.flow === AI_SITE_BUILDER_FLOW ) {
+		hidePlanProps = {
+			hideFreePlan: true,
+			hidePersonalPlan: true,
+			hideEcommercePlan: true,
+			hideEnterprisePlan: true,
+		};
+	} else {
+		hidePlanProps = getHidePlanPropsBasedOnThemeType( selectedThemeType || '' );
+	}
 
 	/**
 	 * The plans step has a quirk where it calls `submitSignupStep` then synchronously calls `goToNextStep` after it.
@@ -144,8 +194,10 @@ export default function PlansStepAdaptor( props: StepProps ) {
 	};
 	useQueryTheme( 'wpcom', selectedDesign?.slug );
 
+	const isUsingStepContainerV2 = shouldUseStepContainerV2( props.flow );
+
 	if ( isLoadingSelectedTheme ) {
-		return <Loading />;
+		return isUsingStepContainerV2 ? <Step.Loading /> : <Loading />;
 	}
 
 	return (
@@ -171,6 +223,7 @@ export default function PlansStepAdaptor( props: StepProps ) {
 			signupDependencies={ signupDependencies }
 			stepName="plans"
 			flowName={ props.flow }
+			intent={ plansIntent ?? undefined }
 			onPlanIntervalUpdate={ onPlanIntervalUpdate }
 			intervalType={ planInterval }
 			wrapperProps={ {
@@ -180,6 +233,9 @@ export default function PlansStepAdaptor( props: StepProps ) {
 				isExtraWideLayout: false,
 			} }
 			useStepperWrapper
+			useStepContainerV2={ isUsingStepContainerV2 }
 		/>
 	);
-}
+};
+
+export default PlansStepAdaptor;

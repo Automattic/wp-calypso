@@ -5,6 +5,7 @@ import debugFactory from 'debug';
 import { useCallback, useContext } from 'react';
 import CheckoutContext from '../lib/checkout-context';
 import joinClasses from '../lib/join-classes';
+import { PaymentMethodProviderContext } from '../lib/payment-method-provider-context';
 import { useAvailablePaymentMethodIds } from '../lib/payment-methods';
 import {
 	useAllPaymentMethods,
@@ -23,6 +24,10 @@ const debug = debugFactory( 'composite-checkout:checkout-payment-methods' );
 
 const CheckoutPaymentMethodsWrapper = styled.div`
 	padding-top: 4px;
+	> div > div:not( [disabled] ):has( + div:hover )::before,
+	> div > div[disabled]:has( + div.is-checked[disabled] )::before {
+		border-bottom: none;
+	}
 `;
 
 export default function CheckoutPaymentMethods( {
@@ -35,7 +40,8 @@ export default function CheckoutPaymentMethods( {
 	className?: string;
 } ) {
 	const { __ } = useI18n();
-	const { onPageLoadError, onPaymentMethodChanged } = useContext( CheckoutContext );
+	const { onPageLoadError } = useContext( CheckoutContext );
+	const { onPaymentMethodChanged } = useContext( PaymentMethodProviderContext );
 	const onError = useCallback(
 		( error: Error ) => onPageLoadError?.( 'payment_method_load', error ),
 		[ onPageLoadError ]

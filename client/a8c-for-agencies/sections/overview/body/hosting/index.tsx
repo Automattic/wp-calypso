@@ -9,7 +9,7 @@ import { A4A_MARKETPLACE_HOSTING_WPCOM_LINK } from 'calypso/a8c-for-agencies/com
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import './styles.scss';
-import PressableOffering from './pressable-oferring';
+import PressableOffering from './pressable-offering';
 
 const OverviewBodyHosting = () => {
 	const translate = useTranslate();

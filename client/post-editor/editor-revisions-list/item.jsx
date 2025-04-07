@@ -1,9 +1,9 @@
+import { TimeSince } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import TimeSince from 'calypso/components/time-since';
 import { selectPostRevision } from 'calypso/state/posts/revisions/actions';
 import { getPostRevisionAuthor } from 'calypso/state/posts/revisions/authors/selectors';
 import { isSingleUserSite } from 'calypso/state/sites/selectors';

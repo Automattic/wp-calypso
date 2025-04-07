@@ -6,7 +6,6 @@ import { CorePlugin } from 'calypso/data/plugins/types';
 const fetchPluginsForSite = async ( siteId: number ): Promise< CorePlugin[] > => {
 	return await wpcomRequest( {
 		path: `/sites/${ siteId }/plugins`,
-		apiVersion: '2',
 		apiNamespace: 'wp/v2',
 	} );
 };

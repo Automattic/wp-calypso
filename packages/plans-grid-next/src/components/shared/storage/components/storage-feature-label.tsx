@@ -1,7 +1,6 @@
 import { PlanSlug } from '@automattic/calypso-products';
-import { formatCurrency } from '@automattic/format-currency';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { formatCurrency, useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../../../grid-context';
 import useIsLargeCurrency from '../../../../hooks/use-is-large-currency';
 import usePlanStorage from '../hooks/use-plan-storage';

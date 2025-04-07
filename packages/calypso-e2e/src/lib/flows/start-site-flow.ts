@@ -9,7 +9,7 @@ export type StepName =
 	| 'goals'
 	| 'vertical'
 	| 'intent'
-	| 'designSetup'
+	| 'design-setup'
 	| 'options'
 	| 'designChoices';
 type WriteActions = 'Start writing' | 'Start learning' | 'View designs';
@@ -79,7 +79,7 @@ export class StartSiteFlow {
 			return 'intent';
 		}
 		if ( ( await this.page.locator( selectors.themePickerContainer ).count() ) > 0 ) {
-			return 'designSetup';
+			return 'design-setup';
 		}
 		if ( ( await this.page.locator( selectors.optionsStepContainer ).count() ) > 0 ) {
 			return 'options';
@@ -87,7 +87,7 @@ export class StartSiteFlow {
 		if ( ( await this.page.locator( selectors.designChoicesStepContainer ).count() ) > 0 ) {
 			return 'designChoices';
 		}
-		throw new Error( `Unknown or invalid step` );
+		throw new Error( 'Unknown or invalid step' );
 	}
 
 	/**
@@ -165,7 +165,7 @@ export class StartSiteFlow {
 			await this.page.waitForURL( /setup\/site-setup\/courses/ );
 		}
 		if ( action === 'View designs' ) {
-			await this.page.waitForURL( /setup\/site-setup\/designSetup/ );
+			await this.page.waitForURL( /setup\/site-setup\/design-setup/ );
 		}
 	}
 

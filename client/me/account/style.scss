@@ -1,4 +1,5 @@
 @import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
 
 .account__username-form-toggle-enter {
 	opacity: 0.01;
@@ -76,5 +77,23 @@ fieldset.account__settings-admin-home {
 	a {
 		color: inherit;
 		text-decoration: underline;
+	}
+}
+
+main.account {
+	.email-verification-banner {
+		margin-bottom: 16px;
+		margin-top: 0;
+
+		@media (min-width: $break-small) {
+			margin-top: 24px;
+			margin-bottom: 24px;
+		}
+	}
+
+	&:has(.email-verification-banner) .navigation-header {
+		@media (min-width: $break-small) {
+			padding-bottom: 0;
+		}
 	}
 }

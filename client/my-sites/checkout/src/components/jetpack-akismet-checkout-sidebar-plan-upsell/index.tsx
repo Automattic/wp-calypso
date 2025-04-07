@@ -1,11 +1,11 @@
 import { isAkismetProduct, isJetpackPlan, isJetpackProduct } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
-import { formatCurrency } from '@automattic/format-currency';
 import { ResponseCartProduct, useShoppingCart } from '@automattic/shopping-cart';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import debugFactory from 'debug';
+import { formatCurrency } from 'i18n-calypso';
 import { useCallback, type FC, useMemo } from 'react';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';

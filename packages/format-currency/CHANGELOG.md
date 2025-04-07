@@ -5,13 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Next
+## 2.1.0 - 2025-03-11
 
 ### Breaking changes
 
 - Remove `setCurrencySymbol` ([#99924](https://github.com/Automattic/wp-calypso/pull/99924)).
-
-### Enhancements
 
 ## 2.0.0 - 2022-12-27
 

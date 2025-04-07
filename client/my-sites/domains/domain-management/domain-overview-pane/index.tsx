@@ -55,7 +55,6 @@ export function showDomainManagementPage( route: string ) {
 type BtnProps = {
 	focusRef: React.RefObject< HTMLButtonElement >;
 	itemData: ItemData;
-	closeSitePreviewPane?: () => void;
 };
 
 // This is the tabbed preview pane that is used for the domain management pages.
@@ -83,14 +82,11 @@ const DomainOverviewPane = ( {
 	const translate = useTranslate();
 	const { adminUrl } = useSiteAdminInterfaceData( itemData.blogId );
 
-	const PreviewPaneHeaderButtons = ( { focusRef, closeSitePreviewPane }: BtnProps ) => {
+	const PreviewPaneHeaderButtons = ( { focusRef }: BtnProps ) => {
 		const adminButtonRef = useRef< HTMLButtonElement | null >( null );
 		const mergedRef = useMergeRefs( [ adminButtonRef, focusRef ] );
 		return (
 			<>
-				<Button onClick={ closeSitePreviewPane } className="button item-view__close-button">
-					{ __( 'Close' ) }
-				</Button>
 				{ ! site.options?.is_domain_only && (
 					<Button
 						primary

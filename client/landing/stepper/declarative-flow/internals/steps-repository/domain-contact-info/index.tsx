@@ -15,10 +15,12 @@ import {
 import { useDomainParams } from 'calypso/landing/stepper/hooks/use-domain-params';
 import wp from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';
-import type { StepProps, ProvidedDependencies } from '../../types';
+import type { StepProps } from '../../types';
 import './styles.scss';
 
-export default function DomainContactInfo( { navigation }: StepProps ) {
+export default function DomainContactInfo( {
+	navigation,
+}: StepProps< { submits: { domain: string | null } } > ) {
 	const { submit } = navigation;
 	const translate = useTranslate();
 
@@ -45,9 +47,7 @@ export default function DomainContactInfo( { navigation }: StepProps ) {
 function ContactInfo( {
 	onSubmit,
 }: {
-	onSubmit:
-		| ( ( providedDependencies?: ProvidedDependencies | undefined, ...params: string[] ) => void )
-		| undefined;
+	onSubmit?: ( dependencies: { domain: string | null } ) => void;
 } ) {
 	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();

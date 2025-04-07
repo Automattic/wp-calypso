@@ -5,8 +5,7 @@ import {
 	getPriceTierForUnits,
 } from '@automattic/calypso-products';
 import { ExternalLink } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
-import { translate, TranslateResult } from 'i18n-calypso';
+import { formatCurrency, translate, TranslateResult } from 'i18n-calypso';
 import { createElement } from 'react';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import type { PriceTierEntry } from '@automattic/calypso-products';
@@ -63,7 +62,7 @@ export default function productTooltip(
 			components: {
 				strong: createElement( 'strong' ),
 				p: createElement( 'p' ),
-				Info: createElement( ExternalLink, {
+				Info: createElement( ExternalLink as any, {
 					icon: true,
 					href: 'https://jetpack.com/upgrade/search/',
 				} ),

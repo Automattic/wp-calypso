@@ -207,13 +207,19 @@ describe( 'EditGravatar', () => {
 	describe( 'unverified user', () => {
 		test( 'shows email verification dialog when clicked', async () => {
 			const user = userEvent.setup();
-			const { container } = render( <EditGravatar { ...props } /> );
+			render( <EditGravatar { ...props } /> );
 
-			const modal = screen.queryByRole( 'dialog', { name: 'Email Verification Dialog' } );
-			expect( modal ).not.toBeInTheDocument();
+			// The button now has an aria-label set based on verification status.
+			const button = screen.getByRole( 'button', {
+				name: /verify your email to change profile photo/i,
+			} );
 
-			await user.click( container.firstChild.firstChild );
-			expect( screen.queryByRole( 'dialog', { name: 'Email Verification Dialog' } ) ).toBeVisible();
+			await user.click( button );
+
+			// Check for dialog modal copy to ensure it appeared.
+			expect(
+				screen.queryByText( /Secure your account and access more features./ )
+			).toBeInTheDocument();
 		} );
 	} );
 } );

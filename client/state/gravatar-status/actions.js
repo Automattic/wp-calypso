@@ -1,6 +1,8 @@
 import {
 	GRAVATAR_RECEIVE_IMAGE_FAILURE,
 	GRAVATAR_UPLOAD_REQUEST,
+	GRAVATAR_DETAILS_REQUEST,
+	GRAVATAR_DETAILS_RECEIVE,
 } from 'calypso/state/action-types';
 import {
 	bumpStat,
@@ -12,6 +14,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/gravatar-status/init';
 import 'calypso/state/data-layer/wpcom/gravatar-upload';
+import 'calypso/state/data-layer/wpcom/me/gravatar';
 
 export function uploadGravatar( file, email ) {
 	return withAnalytics( recordTracksEvent( 'calypso_edit_gravatar_upload_start' ), {
@@ -38,3 +41,16 @@ export const receiveGravatarImageFailed =
 		);
 		dispatch( errorNotice( errorMessage, { id: 'gravatar-upload' } ) );
 	};
+
+export function requestGravatarDetails() {
+	return {
+		type: GRAVATAR_DETAILS_REQUEST,
+	};
+}
+
+export function receiveGravatarDetails( gravatarDetails ) {
+	return {
+		type: GRAVATAR_DETAILS_RECEIVE,
+		gravatarDetails,
+	};
+}

@@ -105,11 +105,10 @@ class ConnectedApplicationItem extends Component {
 
 		return (
 			<div>
-				<h2>
-					{ this.props.translate( 'Access scope' ) }
+				<div className="connected-application-item__access-scope">
+					<h2>{ this.props.translate( 'Access scope' ) }</h2>
 					{ this.renderAccessScopeBadge() }
-				</h2>
-
+				</div>
 				<p className="connected-application-item__connection-detail-description">{ message }</p>
 			</div>
 		);

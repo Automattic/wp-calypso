@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import { Item as BreadcrumbItem } from 'calypso/components/breadcrumb';
 import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { useSelector } from 'calypso/state';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
@@ -9,8 +9,7 @@ export function useBreadcrumbs() {
 
 	const shouldShowBreadcrumbs =
 		isRemoveDuplicateViewsExperimentEnabled &&
-		config.isEnabled( 'untangling/settings-i2' ) &&
-		breadcrumbs.length >= 3;
+		breadcrumbs.some( ( item: BreadcrumbItem ) => item.id === 'feature' );
 
 	return {
 		// In sites dashboard, the components are rendered from the innermost level,

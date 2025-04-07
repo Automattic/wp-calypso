@@ -152,7 +152,7 @@ describe( 'PaymentMethod', () => {
 			</ReduxProvider>
 		);
 		await user.click(
-			await screen.findByLabelText( `Delete the "${ card.card_last_4 }" payment method` )
+			await screen.findByLabelText( `Remove the "${ card.card_last_4 }" payment method` )
 		);
 
 		expect( await screen.findByText( 'Associated subscriptions' ) ).toBeInTheDocument();
@@ -174,7 +174,7 @@ describe( 'PaymentMethod', () => {
 			</ReduxProvider>
 		);
 		await user.click(
-			await screen.findByLabelText( `Delete the "${ card.card_last_4 }" payment method` )
+			await screen.findByLabelText( `Remove the "${ card.card_last_4 }" payment method` )
 		);
 
 		expect( await screen.queryByText( 'Associated subscriptions' ) ).not.toBeInTheDocument();
@@ -195,10 +195,10 @@ describe( 'PaymentMethod', () => {
 			</ReduxProvider>
 		);
 		await user.click(
-			await screen.findByLabelText( `Delete the "${ card.card_last_4 }" payment method` )
+			await screen.findByLabelText( `Remove the "${ card.card_last_4 }" payment method` )
 		);
 		// Click confimation.
-		await user.click( await screen.findByText( 'Delete' ) );
+		await user.click( await screen.findByText( 'Remove' ) );
 		await waitForElementToBeRemoved( () => screen.queryByText( card.name ) );
 		expect( screen.queryByText( `Mastercard ****${ card.card_last_4 }` ) ).not.toBeInTheDocument();
 		expect( await screen.findByText( payPalAgreement.name ) ).toBeInTheDocument();
@@ -217,10 +217,10 @@ describe( 'PaymentMethod', () => {
 		);
 		expect( await screen.findByText( `Mastercard ****${ card.card_last_4 }` ) ).toBeInTheDocument();
 		await user.click(
-			await screen.findByLabelText( `Delete the "${ payPalAgreement.name }" payment method` )
+			await screen.findByLabelText( `Remove the "${ payPalAgreement.name }" payment method` )
 		);
 		// Click confimation.
-		await user.click( await screen.findByText( 'Delete' ) );
+		await user.click( await screen.findByText( 'Remove' ) );
 		await waitForElementToBeRemoved( () => screen.queryByText( payPalAgreement.name ) );
 		expect( screen.queryByText( payPalAgreement.name ) ).not.toBeInTheDocument();
 		expect( await screen.findByText( `Mastercard ****${ card.card_last_4 }` ) ).toBeInTheDocument();

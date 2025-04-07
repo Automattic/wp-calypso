@@ -5,8 +5,8 @@ import LayoutSection from 'calypso/layout/hosting-dashboard/body';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { SelectedFilters } from '../../lib/product-filter';
-import ProductTypeFilter from '../../products-overview/product-filter';
 import { BundlePriceSelector } from '../bundle-price-selector';
+import ProductTypeFilter from '../product-filter';
 
 import './style.scss';
 

@@ -3,12 +3,13 @@
 .theme-tier-badge {
 	color: var(--color-neutral-60);
 	display: flex;
-	flex-basis: 100%;
+	flex-basis: auto;
 	flex-wrap: wrap;
 	font-size: $font-body-small;
 	line-height: 20px;
 	overflow: hidden;
 	white-space: nowrap;
+	gap: 5px;
 
 	.theme-tier-badge__content {
 		margin: 0 8px 4px 0;
@@ -23,6 +24,8 @@
 		.premium-badge__label {
 			overflow: hidden;
 			text-overflow: ellipsis;
+			white-space: nowrap;
+			font-family: $sans;
 		}
 	}
 
@@ -41,6 +44,15 @@
 		color: var(--studio-wordpress-blue);
 		background-color: #EBEEFC; /* 50% of wordpress-blue-10 */
 		font-family: $sans;
+	}
+
+	.theme-tier-free-included-label {
+		border-radius: 4px;
+		font-family: $sans;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		font-size: $font-body-extra-small;
 	}
 }
 

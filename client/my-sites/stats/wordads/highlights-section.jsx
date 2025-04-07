@@ -1,8 +1,7 @@
 import { ComponentSwapper, MobileHighlightCardListing, Popover } from '@automattic/components';
 import CountCard from '@automattic/components/src/highlight-cards/count-card';
-import formatCurrency from '@automattic/format-currency';
 import { Icon, info, payment, receipt, tip } from '@wordpress/icons';
-import { translate } from 'i18n-calypso';
+import { formatCurrency, translate } from 'i18n-calypso';
 import { useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getWordAdsEarnings } from 'calypso/state/wordads/earnings/selectors';

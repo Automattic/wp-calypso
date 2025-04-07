@@ -9,8 +9,7 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Card, CompactCard } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
-import { localize } from 'i18n-calypso';
+import { formatCurrency, localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -46,11 +45,11 @@ import {
 } from 'calypso/state/purchases/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
+import SupportLink from '../cancel-purchase-support-link/support-link';
 import CancelPurchaseButton from './button';
 import CancelPurchaseDomainOptions from './domain-options';
 import CancelPurchaseFeatureList from './feature-list';
 import CancelPurchaseRefundInformation from './refund-information';
-import CancelPurchaseSupportLink from './support-link';
 
 import './style.scss';
 
@@ -401,7 +400,7 @@ class CancelPurchase extends Component {
 
 					<div className="cancel-purchase__right">
 						<PurchaseSiteHeader siteId={ siteId } name={ siteName } purchase={ purchase } />
-						<CancelPurchaseSupportLink purchase={ purchase } />
+						<SupportLink usage="cancel-purchase" purchase={ purchase } />
 					</div>
 				</div>
 			</Card>

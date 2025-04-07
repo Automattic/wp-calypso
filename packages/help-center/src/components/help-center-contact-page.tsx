@@ -248,14 +248,16 @@ export const HelpCenterContactButton: FC = () => {
 	const { __ } = useI18n();
 	const { data: supportInteractionsResolved } = useGetSupportInteractions(
 		'zendesk',
-		100,
+		1,
 		'resolved'
 	);
-	const { data: supportInteractionsOpen } = useGetSupportInteractions( 'zendesk', 10, 'open' );
+	const { data: supportInteractionsOpen } = useGetSupportInteractions( 'zendesk', 1, 'open' );
+	const { data: supportInteractionsSolved } = useGetSupportInteractions( 'zendesk', 1, 'solved' );
 
 	const supportInteractions = [
 		...( supportInteractionsResolved || [] ),
 		...( supportInteractionsOpen || [] ),
+		...( supportInteractionsSolved || [] ),
 	];
 
 	return canConnectToZendesk && supportInteractions && supportInteractions?.length > 0 ? (

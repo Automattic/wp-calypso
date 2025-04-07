@@ -60,7 +60,7 @@ export default function Summary( {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite.ID ) );
 	const siteAdmminUrl = useSelector( ( state ) => getSiteAdminUrl( state, selectedSite.ID ) );
 
-	const resetImporter = () => resetPaidNewsletter( selectedSite.ID, engine, 'content' );
+	const resetImporter = () => resetPaidNewsletter( selectedSite.ID, engine, 'content', fromSite );
 	const paidSubscribersCount = parseInt(
 		steps.subscribers.content?.meta?.paid_subscribed_count || '0'
 	);
@@ -118,10 +118,9 @@ export default function Summary( {
 				</div>
 				<ImporterActionButtonContainer noSpacing>
 					<ImporterActionButton
-						href={ `/import/newsletter/substack/${ selectedSite.slug }/${
-							// Content step is disabled for Jetpack sites, thus first step would be subscribers
-							steps?.content ? 'content' : 'subscribers'
-						}?from=${ fromSite }` }
+						href={ `/import/newsletter/substack/${
+							selectedSite.slug
+						}/${ 'content' }?from=${ fromSite }` }
 						onClick={ resetImporter }
 						primary
 					>

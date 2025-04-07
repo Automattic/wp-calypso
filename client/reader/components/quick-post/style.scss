@@ -1,6 +1,6 @@
 /* stylelint-disable scales/radii */
 .quick-post-input {
-	margin-bottom: 24px;
+	margin: 20px;
 
 	&--loading {
 		text-align: center;
@@ -11,44 +11,75 @@
 		margin-bottom: 16px;
 	}
 
-	&__site-select {
-		margin-bottom: 16px !important;
-		width: 100%;
-        border-color: var(--color-border-subtle);
-        border-style: solid;
-        border-radius: 6px;
-        border-width: 1px;
+	&__site-select-wrapper {
+		margin-bottom: 16px;
+		display: flex;
+		justify-content: space-between;
+		align-items: end;
+		gap: 10px;
+
+		.sites-dropdown {
+			flex: 0 1 300px;
+
+			.sites-dropdown__wrapper {
+				border-color: var( --color-border-subtle );
+				border-radius: 6px 6px 0 0;
+			}
+		}
+
+		.site-selector {
+			border-color: var( --color-border-subtle );
+			border-radius: 0 0 6px 6px;
+		}
 	}
 
-    &__actions {
+	&__actions {
 		display: flex;
 		justify-content: flex-end;
 		gap: 8px;
 	}
 
-	&__cancel {
-		color: var( --color-text-subtle );
+	&__success-message {
+		padding-left: 5px;
+		color: rgb( 0, 128, 0 );
+		display: flex;
+		align-items: center;
+		opacity: 0;
+		transition: opacity 0.3s ease-in-out;
+
+		&.is-visible {
+			opacity: 1;
+		}
+
+		p {
+			margin: 0;
+		}
 	}
 
-    .verbum-editor-wrapper {
-        .editor__header {
-            border-color: var(--color-border-subtle);
-            border-style: solid;
-            border-radius: 6px 6px 0 0;
-            border-width: 1px;
-            border-bottom-width: 0;
-        }
+	.verbum-editor-wrapper {
+		.editor__header {
+			border-color: var( --color-border-subtle );
+			border-style: solid;
+			border-radius: 6px 6px 0 0;
+			border-width: 1px;
+			border-bottom-width: 0;
+		}
 
-        .block-editor-block-contextual-toolbar {
-            background-color: transparent;
-        }
+		.block-editor-block-contextual-toolbar {
+			background-color: transparent;
+		}
 
-        .editor__main {
-            border-color: var(--color-border-subtle);
-            border-style: solid;
-            border-radius: 0 0 6px 6px;
-            border-width: 1px;
-            border-top-width: 0;
-        }
-    }
+		.editor__main {
+			border-color: var( --color-border-subtle );
+			border-style: solid;
+			border-radius: 0 0 6px 6px;
+			border-width: 1px;
+			border-top-width: 0;
+		}
+	}
+
+	.verbum-editor-wrapper .editor__main,
+	.verbum-editor-wrapper .editor__main iframe {
+		min-height: 80px;
+	}
 }

@@ -78,6 +78,7 @@
 	 * Used on loading screens across Help Center
 	 */
 	.help-center__loading {
+		margin: 2em 0;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -114,7 +115,7 @@
 		width: 410px;
 		height: 80vh;
 		max-height: 800px;
-		box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.12), 0 3px 1px 0 rgba(0, 0, 0, 0.04);
+		box-shadow: 0 3px 8px 0 rgba(0, 0, 0, 0.12), 0 3px 1px 0 rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.04);
 		border-radius: 2px;
 
 		&.is-minimized {

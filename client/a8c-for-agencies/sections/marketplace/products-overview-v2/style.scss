@@ -3,12 +3,8 @@
 @import "../variables";
 @import "../shared";
 
-$header-height: 300px;
-$header-height-mobile: 350px;
 $header-compact-height: 114px;
 $header-compact-height-mobile: 128px;
-$action-panel-height: 72px;
-$action-panel-height-mobile: 128px;
 
 .products-overview-v2.main.hosting-dashboard-layout {
 	.hosting-dashboard-layout__container {
@@ -17,7 +13,7 @@ $action-panel-height-mobile: 128px;
 		display: block;
 	}
 
-	.hosting-dashboard-layout__top-wrapper {
+	.products-overview-v2__top {
 		max-height: auto;
 		background: url( calypso/assets/images/a8c-for-agencies/marketplace-hosting-page-v3-bg.svg ) no-repeat top right $header-background-color;
         border-block-end: none;
@@ -25,13 +21,7 @@ $action-panel-height-mobile: 128px;
 		top: 0;
 		z-index: 100;
 		overflow: hidden;
-		transition: height .25s ease-out;
 		box-sizing: border-box;
-		height: $header-height-mobile;
-
-		@include break-medium {
-			height: $header-height;
-		}
     }
 
 	.hosting-dashboard-layout__header > * {
@@ -62,42 +52,26 @@ $action-panel-height-mobile: 128px;
 	}
 
 	.product-category-menu {
+		transition: height .25s ease-out;
 		opacity: 1;
-		transition: opacity .25s ease-out;
+		height: 156px;
 	}
 
-	.product-action-panel {
+	.products-overview-v2__action-panel-wrapper {
 		position: sticky;
-		top: $header-compact-height-mobile;
 		z-index: 2;
-
-		@include break-medium {
-			top: $header-compact-height;
-		}
-	}
-
-	.product-listing-section__header-wrapper {
-		position: sticky;
-		padding-block: 16px;
-
-		top: calc( $header-compact-height-mobile + $action-panel-height-mobile );
-
-		@include break-medium {
-			top: calc( $header-compact-height + $action-panel-height );
-		}
 	}
 }
 
 .products-overview-v2.main.hosting-dashboard-layout.is-compact {
-	.hosting-dashboard-layout__top-wrapper {
-		height: $header-compact-height-mobile;
-
-		@include break-medium {
-			height: $header-compact-height;
-		}
+	.product-category-menu {
+		overflow: hidden;
+		height: 0;
+		opacity: 0;
+		margin: 0;
 	}
 
-	.product-category-menu {
-		opacity: 0;
+	.products-overview-v2__action-panel-wrapper {
+		box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .10);
 	}
 }

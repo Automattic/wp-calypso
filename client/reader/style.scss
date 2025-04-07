@@ -4,11 +4,12 @@
 body.is-section-reader {
 	div.layout.is-global-sidebar-visible {
 		.main {
-			padding: 24px;
-			border-block-end: 1px solid var(--studio-gray-0);
+			&:not(.no-padding) {
+				padding: 24px;
 
-			@media (max-width: $break-small) {
-				padding: 24px 0;
+				@media (max-width: $break-small) {
+					padding: 24px 0;
+				}
 			}
 		}
 
@@ -29,8 +30,8 @@ body.is-section-reader {
 				}
 			}
 
-			+ .has-back-button .navigation-header,
-			+ .navigation-header {
+			+ .navigation-header,
+			+ .tag-stream__header {
 				@media (max-width: 1300px) {
 					padding-top: 12px;
 				}
@@ -48,7 +49,7 @@ body.is-section-reader {
 			@media (max-width: $break-small) {
 				padding: 0 16px;
 			}
-	
+
 			&::after {
 				content: "";
 				display: block;
@@ -61,6 +62,15 @@ body.is-section-reader {
 
 				@media screen and (min-width: $break-medium) {
 					margin: 24px 0;
+				}
+			}
+		}
+
+		// For reader/search
+		main.search-stream {
+			.navigation-header {
+				&::after {
+					margin: 24px 0 0;
 				}
 			}
 		}
@@ -79,10 +89,14 @@ body.is-section-reader {
 			height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
 			overflow: hidden;
 		}
-		.layout__primary > div > div:not(.tags__header) {
+		.layout__primary > div > div:not(.tags__header):not(.reader-notifications__3pc-notice) {
 			height: 100%;
 			overflow-y: auto;
 			overflow-x: hidden;
+		}
+
+		.async-load__placeholder {
+			width: 100%;
 		}
 	}
 
@@ -173,22 +187,6 @@ body.is-section-reader {
 	}
 }
 
-// Back button in Reader FeedHeader
-.is-reader-page .is-site-stream .reader-feed-header.has-back-button .reader-feed-header__follow {
-
-	@include breakpoint-deprecated( "<660px" ) {
-		right: 0;
-	}
-
-	// Drops Follow count in FeedHeader if Back button exists
-	.reader-feed-header__follow-count {
-
-		@include breakpoint-deprecated( "<960px" ) {
-			display: none;
-		}
-	}
-}
-
 .is-reader-page .is-site-stream .reader-feed-header__back-and-follow {
 
 	.card.header-cake {
@@ -241,7 +239,7 @@ body.is-section-reader {
 		font-weight: 600;
 		line-height: 1.6;
 		border-top: 1px solid var(--color-neutral-10);
-		background: linear-gradient(to bottom, rgba(var(--color-neutral-0-rgb), 1) 0%, rgba(var(--color-neutral-0-rgb), 0) 100%);
+		background: linear-gradient(to bottom, color-mix(in srgb, var(--color-neutral-0) 100%, transparent) 0%, color-mix(in srgb, var(--color-neutral-0) 0%, transparent) 100%);
 
 		.avatar {
 			display: none;
@@ -310,17 +308,6 @@ body.is-section-reader {
 
 	@media (min-width: 661px) and (max-width: 790px) {
 		@include hide-content-accessibly();
-	}
-}
-
-.is-group-reader .reader-notifications__panel {
-	@media only screen and (min-width: 1114px) {
-		.wpnc__main {
-			width: calc(100vw - 310px);
-			.wpnc__note-list {
-				left: 0;
-			}
-		}
 	}
 }
 
@@ -532,13 +519,13 @@ body.is-section-reader {
 	text-align: center;
 
 	h2 {
-		font-size: 18px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-size: 18px;
 		font-weight: 500;
 		margin-bottom: 10px;
 	}
 
 	h1 {
-		font-size: 40px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-size: 40px;
 		font-weight: 500;
 	}
 }

@@ -122,7 +122,7 @@ const P2PreapprovedDomainsForm = ( {
 		try {
 			const { success, errors } = await wpcom.req.get(
 				{
-					path: `/p2/preapproved-joining/settings/validate`,
+					path: '/p2/preapproved-joining/settings/validate',
 					apiNamespace: 'wpcom/v2',
 				},
 				{ domains: tokens }

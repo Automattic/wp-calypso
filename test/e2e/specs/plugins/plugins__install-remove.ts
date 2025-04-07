@@ -58,7 +58,7 @@ describe( DataHelper.createSuiteTitle( 'Jetpack: Plugin' ), function () {
 			await pluginsPage.validateConfirmationPagePostInstall( pluginName );
 		} );
 
-		it( `Click manage plugin`, async function () {
+		it( 'Click manage plugin', async function () {
 			await pluginsPage.clickManageInstalledPluginButton();
 		} );
 	} );

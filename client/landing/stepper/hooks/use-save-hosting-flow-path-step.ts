@@ -1,4 +1,4 @@
-import { IMPORT_HOSTED_SITE_FLOW, isAnyHostingFlow } from '@automattic/onboarding';
+import { isAnyHostingFlow } from '@automattic/onboarding';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserId, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
@@ -11,7 +11,7 @@ export function useSaveHostingFlowPathStep( flow: string | null, currentPath: st
 	const pathStep = isEmailVerified ? null : currentPath;
 
 	useEffect( () => {
-		if ( ! isEmailVerified && ( isAnyHostingFlow( flow ) || flow === IMPORT_HOSTED_SITE_FLOW ) ) {
+		if ( ! isEmailVerified && isAnyHostingFlow( flow ) ) {
 			const prefKey = `hosting-flow-path-step-${ userId }`;
 			dispatch( savePreference( prefKey, pathStep ) );
 		}

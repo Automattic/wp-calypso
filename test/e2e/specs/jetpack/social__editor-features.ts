@@ -121,11 +121,9 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				features.resharing ? 'IS' : 'is NOT'
 			} available`, async function () {
 				let connectionTestPromise = Promise.resolve();
-				if ( features.resharing ) {
-					await socialConnectionsManager.interceptRequests();
+				await socialConnectionsManager.interceptRequests();
 
-					connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
-				}
+				connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
 
 				// Open the Jetpack sidebar.
 				await editorPage.openSettings( 'Jetpack' );
@@ -135,19 +133,31 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				// Expand the Publicize panel.
 				let section = await editorPage.expandSection( 'Share this post' );
 
-				// Verify that resharing button is not visible on new posts.
-				let reshareButton = section.getByRole( 'button', { name: 'Share post', exact: true } );
+				// Verify that resharing button is not visible on new posts in the share modal
+				let sharePostModalButton = section.getByRole( 'button', {
+					name: 'Preview social posts',
+					exact: true,
+				} );
+				await sharePostModalButton.click();
+
+				const shareModal = ( await editorPage.getEditorParent() ).getByRole( 'dialog' ).filter( {
+					hasText: 'Social Preview',
+				} );
+
+				await shareModal.waitFor();
+				let reshareButton = shareModal.getByRole( 'button', { name: 'Share', exact: true } );
+
 				expect( await reshareButton.isVisible() ).toBe( false );
+
+				let closeButton = shareModal.getByRole( 'button', { name: 'Close' } );
+				await closeButton.click();
 
 				// Set a title for the post
 				await editorPage.enterTitle( 'Resharing: ' + DataHelper.getRandomPhrase() );
 				// Publish the post.
 				await editorPage.publish();
+				connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
 				await editorPage.closeAllPanels();
-
-				if ( features.resharing ) {
-					connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
-				}
 
 				// Open the Jetpack sidebar.
 				await editorPage.openSettings( 'Jetpack' );
@@ -161,9 +171,33 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				const toggle = section.getByLabel( 'Share when publishing' );
 				expect( await toggle.isVisible() ).toBe( false );
 
-				// Verify whether the resharing button is visible.
-				reshareButton = section.getByRole( 'button', { name: 'Share post', exact: true } );
-				expect( await reshareButton.isVisible() ).toBe( features.resharing );
+				// Check if the Preview & Share button is visible based on resharing feature
+				sharePostModalButton = section.getByRole( 'button', {
+					name: 'Preview & Share',
+					exact: true,
+				} );
+
+				expect( await sharePostModalButton.isVisible() ).toBe( features.resharing );
+
+				let isReshareButtonVisible = false;
+
+				if ( features.resharing ) {
+					await sharePostModalButton.click();
+
+					const shareModal = ( await editorPage.getEditorParent() ).getByRole( 'dialog' ).filter( {
+						hasText: 'Share Post',
+					} );
+					await shareModal.waitFor();
+
+					// Look for the Share button within the modal dialog
+					reshareButton = shareModal.getByRole( 'button', { name: 'Share', exact: true } );
+					isReshareButtonVisible = await reshareButton.isVisible();
+
+					// Close the share post modal by clicking the Close button within the modal
+					closeButton = shareModal.getByRole( 'button', { name: 'Close' } );
+					await closeButton.click();
+				}
+				expect( isReshareButtonVisible ).toBe( features.resharing );
 
 				// Verify whether the upgrade nudge/link is visible.
 				if ( ! features.resharing ) {

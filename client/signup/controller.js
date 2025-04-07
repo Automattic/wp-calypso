@@ -67,22 +67,6 @@ function setReferrerPolicy() {
 	} catch ( e ) {}
 }
 
-export const addP2SignupClassName = () => {
-	if ( ! document ) {
-		return;
-	}
-
-	document.body.classList.add( 'is-p2-signup' );
-};
-
-export const removeP2SignupClassName = function () {
-	if ( ! document ) {
-		return;
-	}
-
-	document.body.classList.remove( 'is-p2-signup' );
-};
-
 export default {
 	redirectWithoutLocaleIfLoggedIn( context, next ) {
 		const userLoggedIn = isUserLoggedIn( context.store.getState() );
@@ -217,18 +201,6 @@ export default {
 			return;
 		}
 
-		// const isOnboardingFlow = flowName === 'onboarding';
-		// // See: 1113-gh-Automattic/experimentation-platform for details.
-		// if ( isOnboardingFlow || isOnboardingGuidedFlow( flowName ) ) {
-		// 	// `isTokenLoaded` covers users who just logged in.
-		// 	if ( wpcom.isTokenLoaded() || userLoggedIn ) {
-		// 		const trailMapExperimentAssignment = await loadExperimentAssignment(
-		// 			'calypso_signup_onboarding_trailmap_guided_flow'
-		// 		);
-		// 		initialContext.trailMapExperimentVariant = trailMapExperimentAssignment.variationName;
-		// 	}
-		// }
-
 		if ( context.pathname !== getValidPath( context.params, userLoggedIn ) ) {
 			return page.redirect(
 				getValidPath( context.params, userLoggedIn ) +
@@ -268,12 +240,6 @@ export default {
 		const params = {
 			flow: flowName,
 		};
-
-		// Clean me up after the experiment is over (see: pdDR7T-1xi-p2)
-		// This is kept for documentation purposes.
-		// if ( isOnboardingGuidedFlow( flowName ) ) {
-		// 	params.trailmap_variant = initialContext.trailMapExperimentVariant || 'control';
-		// }
 
 		recordPageView( basePath, basePageTitle + ' > Start > ' + flowName + ' > ' + stepName, params );
 

@@ -18,6 +18,7 @@ import SelectDropdown from '@automattic/components/src/select-dropdown/docs/exam
 import SiteThumbnail from '@automattic/components/src/site-thumbnail/docs/example';
 import Suggestions from '@automattic/components/src/suggestions/docs/example';
 import Swipeable from '@automattic/components/src/swipeable/docs/example';
+import TimeSince from '@automattic/components/src/time-since/docs/example';
 import Tooltip from '@automattic/components/src/tooltip/docs/example';
 import clsx from 'clsx';
 import { trim } from 'lodash';
@@ -105,7 +106,6 @@ import SupportInfoExample from 'calypso/components/support-info/docs/example';
 import TextDiff from 'calypso/components/text-diff/docs/example';
 import TextareaAutosize from 'calypso/components/textarea-autosize/docs/example';
 import TileGrid from 'calypso/components/tile-grid/docs/example';
-import TimeSince from 'calypso/components/time-since/docs/example';
 import Timeline from 'calypso/components/timeline/docs/example';
 import Timezone from 'calypso/components/timezone/docs/example';
 import TokenFields from 'calypso/components/token-field/docs/example';
@@ -261,7 +261,7 @@ export default class DesignAssets extends Component {
 					<TextDiff readmeFilePath="text-diff" />
 					<TileGrid readmeFilePath="tile-grid" />
 					<Timeline readmeFilePath="timeline" />
-					<TimeSince readmeFilePath="time-since" />
+					<TimeSince readmeFilePath="/packages/components/src/time-since" />
 					<Timezone readmeFilePath="timezone" />
 					<TokenFields readmeFilePath="token-field" />
 					<Tooltip readmeFilePath="tooltip" />

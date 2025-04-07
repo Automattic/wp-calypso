@@ -27,9 +27,9 @@ import {
 	isJetpackStatsPaidProductSlug,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { formatCurrency } from '@automattic/format-currency';
 import { encodeProductForUrl } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
+import { formatCurrency } from 'i18n-calypso';
 import i18n, { numberFormat, type TranslateResult } from 'i18n-calypso';
 import moment from 'moment';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
@@ -877,7 +877,7 @@ export function isAgencyPartnerType( partnerType: string ) {
 	return [ 'agency', 'a4a_agency' ].includes( partnerType );
 }
 
-export function purchaseType( purchase: Purchase ) {
+export function purchaseType( purchase: Purchase ): string | null {
 	if ( isThemePurchase( purchase ) ) {
 		return i18n.translate( 'Premium Theme' );
 	}
@@ -916,6 +916,7 @@ export function purchaseType( purchase: Purchase ) {
 
 	if ( isGSuiteOrGoogleWorkspace( purchase ) ) {
 		return i18n.translate( 'Mailboxes and Productivity Tools at %(domain)s', {
+			textOnly: true,
 			args: {
 				domain: purchase.meta as string,
 			},
@@ -924,6 +925,7 @@ export function purchaseType( purchase: Purchase ) {
 
 	if ( isTitanMail( purchase ) ) {
 		return i18n.translate( 'Mailboxes at %(domain)s', {
+			textOnly: true,
 			args: {
 				domain: purchase.meta as string,
 			},

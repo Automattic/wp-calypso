@@ -2,7 +2,9 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useState, createInterpolateElement } from '@wordpress/element';
+import { chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import clsx from 'clsx';
 import { isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
@@ -40,7 +42,9 @@ interface SignupFormSocialFirst {
 	userEmail: string;
 	notice: JSX.Element | false;
 	isSocialFirst: boolean;
+	backButtonInFooter?: boolean;
 	passDataToNextStep?: boolean;
+	emailLabelText?: string;
 }
 
 const options = {
@@ -62,6 +66,8 @@ const options = {
 	),
 };
 
+type Screen = 'initial' | 'email';
+
 const SignupFormSocialFirst = ( {
 	goToNextStep,
 	stepName,
@@ -76,8 +82,10 @@ const SignupFormSocialFirst = ( {
 	notice,
 	isSocialFirst,
 	passDataToNextStep,
+	backButtonInFooter = true,
+	emailLabelText,
 }: SignupFormSocialFirst ) => {
-	const [ currentStep, setCurrentStep ] = useState( 'initial' );
+	const [ currentStep, setCurrentStep ] = useState< Screen >( 'initial' );
 	const { __ } = useI18n();
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isWoo = useSelector( getIsWoo );
@@ -98,7 +106,7 @@ const SignupFormSocialFirst = ( {
 				),
 				options
 			);
-		} else if ( currentStep === 'initial' ) {
+		} else {
 			tosText = createInterpolateElement(
 				__(
 					'If you continue with Google, Apple or GitHub, you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
@@ -111,45 +119,42 @@ const SignupFormSocialFirst = ( {
 	};
 
 	const renderEmailStepTermsOfService = () => {
-		if ( currentStep === 'email' ) {
-			return (
-				<p className="signup-form-social-first__email-tos-link">
-					{ createInterpolateElement(
-						__(
-							'By clicking "Continue," you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
-						),
-						options
-					) }
-				</p>
-			);
-		}
+		return (
+			<p className="signup-form-social-first__email-tos-link">
+				{ createInterpolateElement(
+					__(
+						'By clicking "Continue," you agree to our <tosLink>Terms of Service</tosLink> and have read our <privacyLink>Privacy Policy</privacyLink>.'
+					),
+					options
+				) }
+			</p>
+		);
 	};
 
-	const renderContent = () => {
-		if ( currentStep === 'initial' ) {
-			return (
-				<>
-					{ notice }
-					<SocialSignupForm
-						handleResponse={ handleSocialResponse }
-						setCurrentStep={ setCurrentStep }
-						socialServiceResponse={ socialServiceResponse }
-						redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
-						disableTosText
-						compact
-						isSocialFirst={ isSocialFirst }
-					/>
-				</>
-			);
-		} else if ( currentStep === 'email' ) {
-			const gravatarProps = isGravatar
-				? {
-						inputPlaceholder: __( 'Enter your email address' ),
-						submitButtonLoadingLabel: __( 'Continue' ),
-				  }
-				: {};
+	// This component uses a technique from this video https://www.youtube.com/watch?v=8327_1PINWI
+	// to handle the visibility of the steps while preserving their layout properties and avoiding shifts.
+	const getVisibilityClassName = ( step: Screen ) => {
+		return clsx( 'signup-form-social-first-screen', {
+			visible: currentStep === step,
+		} );
+	};
 
-			return (
+	return (
+		<div className="signup-form signup-form-social-first">
+			<div className={ getVisibilityClassName( 'initial' ) }>
+				{ notice }
+				<SocialSignupForm
+					handleResponse={ handleSocialResponse }
+					setCurrentStep={ setCurrentStep }
+					socialServiceResponse={ socialServiceResponse }
+					redirectToAfterLoginUrl={ redirectToAfterLoginUrl }
+					disableTosText
+					compact
+					isSocialFirst={ isSocialFirst }
+				/>
+				{ renderTermsOfService() }
+			</div>
+			<div className={ getVisibilityClassName( 'email' ) }>
 				<div className="signup-form-social-first-email">
 					<PasswordlessSignupForm
 						stepName={ stepName }
@@ -157,10 +162,17 @@ const SignupFormSocialFirst = ( {
 						goToNextStep={ goToNextStep }
 						logInUrl={ logInUrl }
 						queryArgs={ queryArgs }
-						labelText={ __( 'Your email' ) }
+						labelText={ emailLabelText ?? __( 'Your email' ) }
 						submitButtonLabel={ __( 'Continue' ) }
 						userEmail={ userEmail }
 						renderTerms={ renderEmailStepTermsOfService }
+						secondaryFooterButton={
+							backButtonInFooter ? undefined : (
+								<Button onClick={ () => setCurrentStep( 'initial' ) } icon={ chevronLeft }>
+									{ __( 'See all options' ) }
+								</Button>
+							)
+						}
 						passDataToNextStep={ passDataToNextStep }
 						onCreateAccountError={ ( error: { error: string }, email: string ) => {
 							if ( isExistingAccountError( error.error ) ) {
@@ -177,24 +189,20 @@ const SignupFormSocialFirst = ( {
 							}
 						} }
 						onCreateAccountSuccess={ onCreateAccountSuccess }
-						{ ...gravatarProps }
+						inputPlaceholder={ isGravatar ? __( 'Enter your email address' ) : undefined }
+						submitButtonLoadingLabel={ isGravatar ? __( 'Continue' ) : undefined }
 					/>
-					<Button
-						onClick={ () => setCurrentStep( 'initial' ) }
-						className="back-button"
-						variant="link"
-					>
-						<span>{ __( 'Back' ) }</span>
-					</Button>
+					{ backButtonInFooter ? (
+						<Button
+							onClick={ () => setCurrentStep( 'initial' ) }
+							className="back-button"
+							variant="link"
+						>
+							<span>{ __( 'Back' ) }</span>
+						</Button>
+					) : null }
 				</div>
-			);
-		}
-	};
-
-	return (
-		<div className="signup-form signup-form-social-first">
-			{ renderContent() }
-			{ renderTermsOfService() }
+			</div>
 		</div>
 	);
 };

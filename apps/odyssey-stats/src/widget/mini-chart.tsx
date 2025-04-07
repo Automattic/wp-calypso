@@ -8,6 +8,7 @@ import { rectIsEqual, rectIsZero, NullableDOMRect } from 'calypso/lib/track-elem
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import StatsEmptyState from 'calypso/my-sites/stats/stats-empty-state';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
+import { getChartRangeParams } from 'calypso/my-sites/stats/utils';
 import nothing from '../components/nothing';
 import useVisitsQuery from '../hooks/use-visits-query';
 import { Unit } from '../typings';
@@ -53,7 +54,9 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 	const { isLoading, data } = useVisitsQuery( siteId, period, quantity, queryDate );
 
 	const barClick = ( bar: { data: BarData } ) => {
-		window.location.href = `${ statsBaseUrl }/stats/${ period }/${ siteId }?startDate=${ bar.data.period }`;
+		const { chartStart, chartEnd, chartPeriod } = getChartRangeParams( bar.data.period, period );
+
+		window.location.href = `${ statsBaseUrl }/stats/${ chartPeriod }/${ siteId }?chartStart=${ chartStart }&chartEnd=${ chartEnd }`;
 	};
 
 	const chartData = buildChartData(

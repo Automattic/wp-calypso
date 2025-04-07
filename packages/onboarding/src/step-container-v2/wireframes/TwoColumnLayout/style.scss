@@ -1,0 +1,15 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.step-container-v2__content-row--two-column-layout {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 3rem;
+
+	@include break-large {
+		gap: 4rem;
+		flex-direction: row;
+		align-items: flex-start;
+	}
+}

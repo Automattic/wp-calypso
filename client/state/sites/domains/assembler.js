@@ -155,7 +155,6 @@ export const createSiteDomainObject = ( domain ) => {
 		pendingRegistration: Boolean( domain.pending_registration ),
 		pendingRegistrationAtRegistry: Boolean( domain.pending_registration_at_registry ),
 		pendingRegistrationAtRegistryUrl: String( domain.pending_registration_at_registry_url ),
-		pendingRegistrationTime: String( domain.pending_registration_time ),
 		pendingTransfer: domain.pending_transfer,
 		pointsToWpcom: Boolean( domain.points_to_wpcom ),
 		productSlug: ! domain.product_slug ? null : String( domain.product_slug ),

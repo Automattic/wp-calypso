@@ -1,5 +1,4 @@
-import { formatCurrency } from '@automattic/format-currency';
-import { translate, useTranslate } from 'i18n-calypso';
+import { formatCurrency, translate, useTranslate } from 'i18n-calypso';
 import { getContactDetailsType } from './get-contact-details-type';
 import { getIntroductoryOfferIntervalDisplay } from './introductory-offer';
 import type { LineItemType } from './types';

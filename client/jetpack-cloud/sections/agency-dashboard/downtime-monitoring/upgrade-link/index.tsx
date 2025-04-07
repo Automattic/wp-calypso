@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, formatCurrency } from 'i18n-calypso';
 import { useContext } from 'react';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
 import SitesOverviewContext from '../../sites-overview/context';

@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/data-stores",
-	"version": "3.1.0",
+	"version": "3.1.1",
 	"description": "Calypso Data Stores.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -35,21 +35,20 @@
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/calypso-products": "workspace:^",
-		"@automattic/format-currency": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/js-utils": "workspace:^",
 		"@automattic/load-script": "workspace:^",
 		"@automattic/oauth-token": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",
-		"@wordpress/api-fetch": "^7.16.0",
-		"@wordpress/data-controls": "^4.16.0",
-		"@wordpress/deprecated": "^4.16.0",
-		"@wordpress/element": "^6.16.0",
-		"@wordpress/i18n": "^5.16.0",
-		"@wordpress/primitives": "^4.16.0",
-		"@wordpress/url": "^4.16.0",
-		"debug": "^4.3.3",
+		"@wordpress/api-fetch": "^7.21.0",
+		"@wordpress/data-controls": "^4.21.0",
+		"@wordpress/deprecated": "^4.21.0",
+		"@wordpress/element": "^6.21.0",
+		"@wordpress/i18n": "^5.21.0",
+		"@wordpress/primitives": "^4.21.0",
+		"@wordpress/url": "^4.21.0",
+		"debug": "^4.4.0",
 		"fast-json-stable-stringify": "^2.1.0",
 		"i18n-calypso": "workspace:^",
 		"qs": "^6.9.1",
@@ -63,7 +62,7 @@
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.16.0",
+		"@wordpress/data": "^10.21.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
 	},
@@ -75,7 +74,7 @@
 		"jest-fetch-mock": "^3.0.3",
 		"nock": "^13.5.6",
 		"node-fetch": "^2.7.0",
-		"typescript": "^5.3.3",
+		"typescript": "^5.8.2",
 		"wait-for-expect": "^3.0.2"
 	}
 }

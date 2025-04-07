@@ -19,8 +19,8 @@ export type PlanActionButton = 'Manage plan' | 'Upgrade';
 
 const selectors = {
 	// Generic
-	placeholder: `.is-placeholder`,
-	managePlanButton: `a:has-text("Manage plan")`,
+	placeholder: '.is-placeholder',
+	managePlanButton: 'a:has-text("Manage plan")',
 	selectPlanButton: ( name: Plans ) => {
 		if ( name === 'Free' ) {
 			// Free plan is a pseudo-button presented as a
@@ -31,13 +31,13 @@ const selectors = {
 	},
 	selectModalUpsellPlanButton: ( name: 'Free' | 'Personal' ) => {
 		if ( name === 'Free' ) {
-			return `button.is-upsell-modal-free-plan:visible`;
+			return 'button.is-upsell-modal-free-plan:visible';
 		}
 		return `button.is-upsell-modal-${ name.toLowerCase() }-plan:visible`;
 	},
 
 	// Navigation
-	mobileNavTabsToggle: `button.section-nav__mobile-header`,
+	mobileNavTabsToggle: 'button.section-nav__mobile-header',
 	navigationTab: ( tabName: PlansPageTab ) => `.section-nav-tab:has-text("${ tabName }")`,
 	activeNavigationTab: ( tabName: PlansPageTab ) =>
 		`.is-selected.section-nav-tab:has-text("${ tabName }")`,

@@ -52,6 +52,7 @@ function UseMyDomain( props ) {
 		isStepper = false,
 		stepLocation,
 		registerNowAction,
+		hideHeader,
 	} = props;
 
 	const { __ } = useI18n();
@@ -406,6 +407,10 @@ function UseMyDomain( props ) {
 	}, [ domainName, mode, __ ] );
 
 	const renderHeader = () => {
+		if ( hideHeader ) {
+			return null;
+		}
+
 		return (
 			<>
 				{ goBack && (
@@ -476,7 +481,6 @@ UseMyDomain.propTypes = {
 	goBack: PropTypes.func,
 	initialQuery: PropTypes.string,
 	isSignupStep: PropTypes.bool,
-	showHeader: PropTypes.bool,
 	onConnect: PropTypes.func,
 	onTransfer: PropTypes.func,
 	onNextStep: PropTypes.func,
@@ -490,6 +494,7 @@ UseMyDomain.propTypes = {
 	isStepper: PropTypes.bool,
 	stepLocation: PropTypes.object,
 	registerNowAction: PropTypes.func,
+	hideHeader: PropTypes.bool,
 };
 
 export default connect( ( state ) => ( {

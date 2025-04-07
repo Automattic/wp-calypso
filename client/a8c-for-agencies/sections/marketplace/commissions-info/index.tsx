@@ -1,5 +1,4 @@
-import { formatCurrency } from '@automattic/format-currency';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, formatCurrency } from 'i18n-calypso';
 import { getProductCommissionPercentage } from '../../referrals/lib/commissions';
 import type { ShoppingCartItem } from '../types';
 
@@ -16,6 +15,11 @@ export default function CommissionsInfo( { items }: { items: ShoppingCartItem[] 
 			: 0;
 		return acc + totalCommissions;
 	}, 0 );
+
+	// If the total commissions are 0, don't show the commissions info
+	if ( totalCommissions === 0 ) {
+		return null;
+	}
 
 	return (
 		<div className="commissions-info">

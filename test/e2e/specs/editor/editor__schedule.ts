@@ -15,7 +15,7 @@ import { Browser, BrowserContext, Page } from 'playwright';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
+describe( DataHelper.createSuiteTitle( 'Editor: Schedule' ), function () {
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature( features, [
 		{
@@ -84,7 +84,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 			await editorPage.closeAllPanels();
 		} );
 
-		it( `View post as the author`, async function () {
+		it( 'View post as the author', async function () {
 			const tmpPage = await context.newPage(); // Calling from context opens new tab (same session)
 
 			await tmpPage.goto( postURL.href );

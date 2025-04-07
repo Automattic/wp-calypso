@@ -9,8 +9,7 @@ import {
 	isJetpackSearchSlug,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { formatCurrency } from '@automattic/format-currency';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, formatCurrency } from 'i18n-calypso';
 import { useMemo } from 'react';
 import BackupImage from 'calypso/assets/images/jetpack/rna-image-backup.png';
 import DefaultImage from 'calypso/assets/images/jetpack/rna-image-default.png';
@@ -59,7 +58,7 @@ export const UpsellProductWpcomPlanCard: React.FC< UpsellProductWpcomPlanCardPro
 	const secondaryCtaURL: string = `https://wordpress.com/plans/${ selectedSiteSlug }`;
 	const isFetchingPrices: boolean = ! siteProduct;
 	const originalPrice: number = siteProduct?.cost_smallest_unit ?? 0;
-	const displayPrice: number = siteProduct?.cost / 12 ?? 0;
+	const displayPrice: number = ( siteProduct?.cost ?? 0 ) / 12;
 
 	const ctaButtonLabel = translate( 'Get %(productName)s plan', {
 		args: {

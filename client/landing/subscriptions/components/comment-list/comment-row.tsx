@@ -1,8 +1,8 @@
+import { TimeSince } from '@automattic/components';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { memo, useMemo } from 'react';
 import { SiteIcon } from 'calypso/blocks/site-icon';
-import TimeSince from 'calypso/components/time-since';
 import { useRecordCommentNotificationsToggle } from 'calypso/landing/subscriptions/tracks';
 import { CommentSettings } from '../settings';
 import type { PostSubscription } from '@automattic/data-stores/src/reader/types';

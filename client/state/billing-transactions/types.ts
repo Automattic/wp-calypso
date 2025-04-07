@@ -1,15 +1,5 @@
 import type { IntroductoryOfferTerms } from '@automattic/shopping-cart';
-import type { Purchase, TaxVendorInfo } from '@automattic/wpcom-checkout';
-
-export interface IndividualReceipt {
-	receipt_id: number;
-	purchases: Purchase[];
-	display_price: string;
-	price_integer: number;
-	price_float: number;
-	currency: string;
-	is_gift_purchase: boolean;
-}
+import type { TaxVendorInfo } from '@automattic/wpcom-checkout';
 
 export interface BillingTransaction {
 	address: string;
@@ -204,13 +194,6 @@ export interface UpcomingCharge {
 export type ReceiptId = string;
 export type SendingReceiptEmailRecord = Record< ReceiptId, boolean >;
 
-export interface BillingTransactionUiState {
-	app?: string | null;
-	date?: { month: string | null; operator: string | null };
-	page?: number;
-	query?: string;
-}
-
 export type BillingTransactionsTypePast = 'past';
 export type BillingTransactionsTypeUpcoming = 'upcoming';
 export type BillingTransactionsType = BillingTransactionsTypePast | BillingTransactionsTypeUpcoming;
@@ -231,7 +214,5 @@ export interface IndividualTransactionsState {
 export interface BillingTransactionsState {
 	items?: BillingTransactionsStateItems;
 	requesting?: boolean;
-	sendingReceiptEmail?: SendingReceiptEmailRecord;
 	individualTransactions?: IndividualTransactionsRecord;
-	ui?: Record< BillingTransactionsType, BillingTransactionUiState >;
 }

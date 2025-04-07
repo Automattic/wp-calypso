@@ -16,15 +16,8 @@ export function useSupportStatus( enabled = true ) {
 		queryKey: [ 'support-status', VERSION ],
 		queryFn: async () =>
 			canAccessWpcomApis()
-				? await wpcomRequest( {
-						path: `help/support-status`,
-						apiNamespace: 'wpcom/v2/',
-						apiVersion: '2',
-				  } )
-				: await apiFetch( {
-						path: `help-center/support-status`,
-						global: true,
-				  } as APIFetchOptions ),
+				? await wpcomRequest( { path: '/help/support-status', apiNamespace: 'wpcom/v2' } )
+				: await apiFetch( { path: 'help-center/support-status', global: true } as APIFetchOptions ),
 		enabled,
 		refetchOnWindowFocus: false,
 		placeholderData: keepPreviousData,

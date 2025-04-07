@@ -80,15 +80,15 @@ $blueberry-color: #3858e9;
 	font-size: $font-size-header-small;
 
 	&.good {
-		color: $studio-green-30;
+		color: var(--studio-green-60);
 	}
 
 	&.needs-improvement {
-		color: $studio-orange-40;
+		color: var(--studio-orange-60);
 	}
-
+	
 	&.bad {
-		color: $studio-red-50;
+		color: var(--studio-red-60);
 	}
 }
 

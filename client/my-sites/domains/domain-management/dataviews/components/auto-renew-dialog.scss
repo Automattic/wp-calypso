@@ -1,0 +1,48 @@
+.domains-dataviews-bulk-actions-dialog {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+
+	&__icon {
+		margin-right: 4px;
+		vertical-align: text-top;
+	}
+
+	&__select.select-dropdown {
+		z-index: 1; // Needed for the dropdown to appear overtop of the checkboxes
+
+		width: 100%;
+		.select-dropdown__container {
+			min-width: 100%;
+		}
+
+		.select-dropdown__header {
+			height: var(--domains-table-toolbar-height);
+			font-weight: 400;
+			color: var(--studio-gray-70);
+		}
+
+		// Undo some dropdown styling that causes the items within the dropdown to be truncated with ellipsis.
+		.select-dropdown__item {
+			padding-right: 16px;
+			color: var(--studio-gray-70);
+		}
+		.select-dropdown__item::before {
+			content: "";
+		}
+		.select-dropdown__item-text {
+			position: static;
+		}
+	}
+
+	&__description {
+		margin: 0;
+	}
+
+	&__actions {
+		display: flex;
+		justify-content: flex-end;
+		gap: 8px;
+	}
+}
+

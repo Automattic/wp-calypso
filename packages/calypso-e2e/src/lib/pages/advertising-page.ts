@@ -82,7 +82,7 @@ export class AdvertisingPage {
 				.getByRole( 'button', { name: name } )
 				.click();
 		} else {
-			throw new Error( `Must pass in either row or postTitle.` );
+			throw new Error( 'Must pass in either row or postTitle.' );
 		}
 	}
 }

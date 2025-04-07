@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
 @mixin loading-effect {
 	animation: loading-fade 1.6s ease-in-out infinite;
 	background: var(--color-neutral-10);
@@ -8,14 +11,14 @@
 }
 
 .team-accept-invite__heading {
-	@include a4a-font-heading-xl;
+	@include heading-x-large;
 
 	margin-block-start: 48px;
 	margin-block-end: 8px;
 }
 
 .team-accept-invite__subtitle {
-	@include a4a-font-body-lg;
+	@include body-large;
 	margin-block-end: 32px;
 	color: var(--color-neutral-60);
 }

@@ -65,7 +65,6 @@ export const MediumImporter: React.FunctionComponent< ImporterBaseProps > = ( pr
 
 	function onTryAgainClick() {
 		job?.importerId && resetImport( siteId, job.importerId );
-		stepNavigator?.goToImportCapturePage?.();
 	}
 
 	function checkProgress() {
@@ -87,7 +86,7 @@ export const MediumImporter: React.FunctionComponent< ImporterBaseProps > = ( pr
 	function onSiteViewClick() {
 		if ( isEnabled( 'onboarding/import-redirect-to-themes' ) ) {
 			recordTracksEvent( 'calypso_site_importer_pick_a_design' );
-			stepNavigator?.navigate?.( 'designSetup' );
+			stepNavigator?.navigate?.( 'design-setup' );
 		} else {
 			recordTracksEvent( 'calypso_site_importer_view_site' );
 			stepNavigator?.goToSiteViewPage?.();

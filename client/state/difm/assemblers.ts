@@ -7,7 +7,7 @@ import type {
 	WebsiteContent,
 	WebsiteContentRequestDTO,
 } from 'calypso/state/signup/steps/website-content/types';
-import type { SiteSlug } from 'calypso/types';
+import type { SiteId } from 'calypso/types';
 
 const logValidationFailure = (
 	message: string,
@@ -28,7 +28,7 @@ const logValidationFailure = (
 
 export function buildDIFMCartExtrasObject(
 	dependencies: Partial< DIFMDependencies >,
-	siteSlug: SiteSlug,
+	siteId: SiteId,
 	context: string
 ) {
 	const {
@@ -76,7 +76,7 @@ export function buildDIFMCartExtrasObject(
 		display_address: displayAddress,
 		selected_page_titles: selectedPageTitles,
 		is_store_flow: isStoreFlow,
-		afterPurchaseUrl: addQueryArgs( { siteSlug }, '/start/site-content-collection' ),
+		afterPurchaseUrl: addQueryArgs( { siteId }, '/start/site-content-collection' ),
 	};
 }
 

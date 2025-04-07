@@ -1,11 +1,10 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { getSiteSlug, isAdminInterfaceWPAdmin, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SUBSCRIBERS_SUPPORT_URL } from '../const';
 import useSubscribersTotalsQueries from '../hooks/use-subscribers-totals-query';
@@ -23,7 +22,6 @@ const StatModuleFollowers = ( { className } ) => {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
-	const isAdminInterface = useSelector( ( state ) => isAdminInterfaceWPAdmin( state, siteId ) );
 
 	const { data: subTotals, isLoading, isError: hasError } = useSubscribersTotalsQueries( siteId );
 
@@ -61,8 +59,7 @@ const StatModuleFollowers = ( { className } ) => {
 
 	const noData = ! subTotals.subscribers.length;
 	const summaryPageSlug = siteSlug || '';
-	const useJetpackCloudLinks =
-		isAtomic || isJetpack || ( isEnabled( 'jetpack/manage-simple-sites' ) && isAdminInterface );
+	const useJetpackCloudLinks = isAtomic || isJetpack;
 	const subscriberManagementUrl = useJetpackCloudLinks
 		? `https://cloud.jetpack.com/subscribers/${ summaryPageSlug }`
 		: `https://wordpress.com/subscribers/${ summaryPageSlug }`;

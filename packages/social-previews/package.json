@@ -42,11 +42,11 @@
 	},
 	"dependencies": {
 		"@emotion/react": "^11.11.1",
-		"@wordpress/components": "^29.2.0",
-		"@wordpress/element": "^6.16.0",
-		"@wordpress/i18n": "^5.16.0",
+		"@wordpress/components": "^29.7.0",
+		"@wordpress/element": "^6.21.0",
+		"@wordpress/i18n": "^5.21.0",
 		"clsx": "^2.1.1",
-		"prop-types": "^15.7.2",
+		"prop-types": "^15.8.1",
 		"tslib": "^2.3.0"
 	},
 	"devDependencies": {
@@ -55,14 +55,14 @@
 		"@testing-library/dom": "^10.4.0",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/react": "^16.2.0",
-		"postcss": "^8.5.1",
+		"postcss": "^8.5.3",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"typescript": "^5.3.3",
+		"typescript": "^5.8.2",
 		"webpack": "^5.97.1"
 	},
 	"peerDependencies": {
-		"@babel/runtime": "^7.26.0",
+		"@babel/runtime": "^7.26.10",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
 	},

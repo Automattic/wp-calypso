@@ -12,12 +12,17 @@ const storybookConfig = storybookDefaultConfig( {
 } );
 
 const configData = { ...sharedConfig, ...devConfig };
-storybookConfig.previewHead = ( head ) => `
-	${ head }
-	<script>
-		window.configData = ${ JSON.stringify( configData ) };
-		window.__i18n_text_domain__ = 'default';
-	</script>
-`;
 
-module.exports = { ...storybookConfig };
+module.exports = {
+	...storybookConfig,
+
+	preview: {
+		head: ( head ) => `
+			${ head }
+			<script>
+				window.configData = ${ JSON.stringify( configData ) };
+				window.__i18n_text_domain__ = 'default';
+			</script>
+		`,
+	},
+};

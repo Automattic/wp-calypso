@@ -26,22 +26,9 @@ import {
 } from './controller-helper';
 
 const analyticsPageTitle = 'Reader';
-let lastRoute = null;
-
-function userHasHistory( context ) {
-	return !! context.lastRoute;
-}
 
 function renderFeedError( context, next ) {
 	context.primary = createElement( FeedError );
-	next();
-}
-
-export function updateLastRoute( context, next ) {
-	if ( lastRoute ) {
-		context.lastRoute = lastRoute;
-	}
-	lastRoute = context.path;
 	next();
 }
 
@@ -100,7 +87,6 @@ export function following( context, next ) {
 		streamKey: 'following',
 		startDate,
 		recsStreamKey: 'custom_recs_posts_with_images',
-		showBack: userHasHistory( context ),
 		trackScrollPage: trackScrollPage.bind(
 			null,
 			basePath,
@@ -109,6 +95,7 @@ export function following( context, next ) {
 			mcKey
 		),
 		onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
+		feedId: context.params.feed_id,
 	} );
 	next();
 }
@@ -163,7 +150,6 @@ export function feedListing( context, next ) {
 			) }
 			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
 			suppressSiteNameLink
-			showBack={ userHasHistory( context ) }
 			placeholder={ null }
 		/>
 	);
@@ -197,7 +183,6 @@ export function blogListing( context, next ) {
 			) }
 			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
 			suppressSiteNameLink
-			showBack={ userHasHistory( context ) }
 			placeholder={ null }
 		/>
 	);

@@ -14,6 +14,8 @@ class SecurityCheckupTwoFactorAuthentication extends Component {
 		areUserSettingsLoaded: PropTypes.bool,
 		hasTwoStepEnabled: PropTypes.bool,
 		hasTwoStepSmsEnabled: PropTypes.bool,
+		hasTwoStepSecurityKeyEnabled: PropTypes.bool,
+		hasTwoStepEnhancedSecurity: PropTypes.bool,
 		translate: PropTypes.func.isRequired,
 		twoStepSmsPhoneNumber: PropTypes.string,
 	};
@@ -25,6 +27,8 @@ class SecurityCheckupTwoFactorAuthentication extends Component {
 			hasTwoStepSmsEnabled,
 			translate,
 			twoStepSmsPhoneNumber,
+			hasTwoStepSecurityKeyEnabled,
+			hasTwoStepEnhancedSecurity,
 		} = this.props;
 
 		if ( ! areUserSettingsLoaded ) {
@@ -34,32 +38,57 @@ class SecurityCheckupTwoFactorAuthentication extends Component {
 		let icon;
 		let description;
 
-		if ( hasTwoStepSmsEnabled ) {
+		if ( ! hasTwoStepSmsEnabled && ! hasTwoStepEnabled ) {
+			icon = getWarningIcon();
+			description = translate( 'You do not have two-step authentication enabled.' );
+		} else {
 			icon = getOKIcon();
-			description = translate(
-				'You have two-step authentication {{strong}}enabled{{/strong}} using SMS messages to {{strong}}%(phoneNumber)s{{/strong}}.',
-				{
+
+			if ( hasTwoStepEnhancedSecurity ) {
+				description = translate(
+					'You have two-step authentication {{strong}}enabled{{/strong}} using security keys.',
+					{
+						components: {
+							strong: <strong />,
+						},
+					}
+				);
+			} else if ( hasTwoStepSmsEnabled ) {
+				const options = {
 					args: {
 						phoneNumber: twoStepSmsPhoneNumber,
 					},
 					components: {
 						strong: <strong />,
 					},
-				}
-			);
-		} else if ( hasTwoStepEnabled ) {
-			icon = getOKIcon();
-			description = translate(
-				'You have two-step authentication {{strong}}enabled{{/strong}} using an app.',
-				{
+				};
+
+				description = hasTwoStepSecurityKeyEnabled
+					? translate(
+							'You have two-step authentication {{strong}}enabled{{/strong}} using SMS messages to {{strong}}%(phoneNumber)s{{/strong}}, and security keys have been registered.',
+							options
+					  )
+					: translate(
+							'You have two-step authentication {{strong}}enabled{{/strong}} using SMS messages to {{strong}}%(phoneNumber)s{{/strong}}.',
+							options
+					  );
+			} else if ( hasTwoStepEnabled ) {
+				const options = {
 					components: {
 						strong: <strong />,
 					},
-				}
-			);
-		} else {
-			icon = getWarningIcon();
-			description = translate( 'You do not have two-step authentication enabled.' );
+				};
+
+				description = hasTwoStepSecurityKeyEnabled
+					? translate(
+							'You have two-step authentication {{strong}}enabled{{/strong}} using an app, and security keys have been registered.',
+							options
+					  )
+					: translate(
+							'You have two-step authentication {{strong}}enabled{{/strong}} using an app.',
+							options
+					  );
+			}
 		}
 
 		return (
@@ -78,4 +107,6 @@ export default connect( ( state ) => ( {
 	hasTwoStepEnabled: isTwoStepEnabled( state ),
 	hasTwoStepSmsEnabled: isTwoStepSmsEnabled( state ),
 	twoStepSmsPhoneNumber: getUserSetting( state, 'two_step_sms_phone_number' ),
+	hasTwoStepSecurityKeyEnabled: getUserSetting( state, 'two_step_security_key_enabled' ),
+	hasTwoStepEnhancedSecurity: getUserSetting( state, 'two_step_enhanced_security' ),
 } ) )( localize( SecurityCheckupTwoFactorAuthentication ) );

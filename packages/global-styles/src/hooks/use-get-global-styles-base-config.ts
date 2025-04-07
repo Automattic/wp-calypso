@@ -9,7 +9,7 @@ const useGetGlobalStylesBaseConfig = ( stylesheet: string ) => {
 			wpcomRequest< GlobalStylesObject >( {
 				// We have to fetch the base config from wpcom as the core endpoint only supports
 				// active theme
-				path: `/global-styles-variation/theme`,
+				path: '/global-styles-variation/theme',
 				method: 'GET',
 				apiNamespace: 'wpcom/v3',
 				query: new URLSearchParams( { stylesheet } ).toString(),

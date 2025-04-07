@@ -57,9 +57,9 @@ export const sendLoginEmail = ( action ) => {
 			: [] ),
 		http(
 			{
-				path: `/auth/send-login-email`,
-				method: 'POST',
+				path: '/auth/send-login-email',
 				apiVersion: '1.3',
+				method: 'POST',
 				body: {
 					client_id: config( 'wpcom_signup_id' ),
 					client_secret: config( 'wpcom_signup_key' ),

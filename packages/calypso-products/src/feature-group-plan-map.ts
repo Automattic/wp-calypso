@@ -141,6 +141,9 @@ import {
 	FEATURE_GROUP_STATS,
 	FEATURE_STATS_BASIC_20250206,
 	FEATURE_STATS_ADVANCED_20250206,
+	FEATURE_SUPPORT,
+	FEATURE_SUPPORT_FROM_EXPERTS,
+	FEATURE_AI_ASSISTANT,
 } from './constants';
 import { FeatureGroupMap } from './types';
 
@@ -183,8 +186,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_BANDWIDTH,
 			FEATURE_STATS_JP,
-			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
-			FEATURE_PRIORITY_24_7_SUPPORT,
+			FEATURE_SUPPORT,
 			FEATURE_PLUGINS_THEMES,
 			FEATURE_PLUGIN_AUTOUPDATE_JP,
 			FEATURE_CONTACT_FORM_JP,
@@ -271,6 +273,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 		slug: FEATURE_GROUP_MARKETING_GROWTH_AND_MONETIZATION_TOOLS,
 		getTitle: () => i18n.translate( 'Growth and monetization tools' ),
 		getFeatures: () => [
+			FEATURE_AI_ASSISTANT,
 			FEATURE_NEWSLETTERS_RSS,
 			FEATURE_AD_FREE_EXPERIENCE,
 			FEATURE_WORDADS,
@@ -384,7 +387,11 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 	[ FEATURE_GROUP_SUPPORT ]: {
 		slug: FEATURE_GROUP_SUPPORT,
 		getTitle: () => null,
-		getFeatures: () => [ FEATURE_FAST_SUPPORT_FROM_EXPERTS, FEATURE_PRIORITY_24_7_SUPPORT ],
+		getFeatures: () => [
+			FEATURE_SUPPORT_FROM_EXPERTS,
+			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
+			FEATURE_PRIORITY_24_7_SUPPORT,
+		],
 	},
 	[ FEATURE_GROUP_THEMES ]: {
 		slug: FEATURE_GROUP_THEMES,

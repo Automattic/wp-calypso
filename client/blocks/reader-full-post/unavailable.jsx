@@ -4,15 +4,15 @@ import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Fragment } from 'react';
-import BackButton from 'calypso/components/back-button';
 import DocumentHead from 'calypso/components/data/document-head';
+import ReaderBackButton from 'calypso/reader/components/back-button';
 import ReaderMain from 'calypso/reader/components/reader-main';
 
 const noop = () => {};
 
-const ReaderFullPostUnavailable = ( { post, onBackClick, translate } ) => {
+const ReaderFullPostUnavailable = ( { post, onBackClick, translate, layout } ) => {
 	const statusCode = get( post, [ 'error', 'statusCode' ] );
-
+	const isRecentLayout = layout === 'recent';
 	let errorTitle = translate( 'Post unavailable' );
 	let errorDescription = translate( "Sorry, we can't display that post right now." );
 	let errorHelp = null;
@@ -33,7 +33,11 @@ const ReaderFullPostUnavailable = ( { post, onBackClick, translate } ) => {
 
 	return (
 		<ReaderMain className="reader-full-post reader-full-post__unavailable">
-			<BackButton onClick={ onBackClick } />
+			<ReaderBackButton
+				handleBack={ onBackClick }
+				preventRouteChange={ isRecentLayout }
+				forceShow={ isRecentLayout }
+			/>
 			<DocumentHead title={ translate( 'Post unavailable' ) } />
 			<div className="reader-full-post__content">
 				<div className="reader-full-post__story">

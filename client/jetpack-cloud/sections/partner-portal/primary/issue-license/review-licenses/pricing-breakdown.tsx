@@ -1,6 +1,5 @@
-import formatCurrency from '@automattic/format-currency';
 import { Icon, check } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import { formatCurrency, useTranslate } from 'i18n-calypso';
 import { useLicenseLightboxData } from '../../../license-lightbox/hooks/use-license-lightbox-data';
 import { getProductPricingInfo, getTotalInvoiceValue } from '../lib/pricing';
 import type { SelectedLicenseProp } from '../types';

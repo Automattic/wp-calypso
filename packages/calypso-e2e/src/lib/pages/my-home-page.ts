@@ -3,8 +3,8 @@ import { getCalypsoURL } from '../../data-helper';
 
 const selectors = {
 	visitSiteButton: '.button >> text=Visit site',
-	domainUpsellCard: `.domain-upsell__card`,
-	domainUpsellSuggestedDomain: `.domain-upsell__card .domain-upsell-illustration`,
+	domainUpsellCard: '.domain-upsell__card',
+	domainUpsellSuggestedDomain: '.domain-upsell__card .domain-upsell-illustration',
 	domainUpsellBuyDomain: ( message: string ) =>
 		`.domain-upsell-actions button:text("${ message }")`,
 };

@@ -22,10 +22,7 @@ import { convertErrorToString, logStashEvent } from '../lib/analytics';
 const debug = debugFactory( 'calypso:paypal-js' );
 
 async function fetchPayPalConfiguration(): Promise< PayPalConfigurationApiResponse > {
-	return await wp.req.get( {
-		path: `/me/paypal-configuration`,
-		method: 'GET',
-	} );
+	return await wp.req.get( '/me/paypal-configuration' );
 }
 
 export function createPayPal(): PaymentMethod {

@@ -1,11 +1,10 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .license-preview {
 	margin: 0;
-	font-size: 0.875rem;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	line-height: 1.25rem;
+	@include body-medium;
 	color: var(--color-neutral-70);
 	transition: margin 0.2s ease;
 
@@ -41,7 +40,7 @@
 
 	&,
 	&:visited {
-		@include a4a-font-body-md($font-weight: 500);
+		@include heading-medium;
 		display: flex;
 		flex-direction: row;
 		gap: 4px;
@@ -59,10 +58,7 @@
 .license-preview__domain {
 	padding: 0;
 	margin: 0 0 4px;
-	font-size: 1.25rem;
-	font-weight: normal;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	line-height: 1.75rem;
+	@include body-x-large;
 	color: var(--color-neutral-100);
 	overflow: hidden;
 	word-break: break-all;
@@ -84,9 +80,7 @@
 
 .license-preview__tag {
 	white-space: nowrap;
-	font-size: 0.875rem;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	line-height: 1rem;
+	@include body-medium;
 
 	&--is-just-issued,
 	&--is-assigned {
@@ -149,8 +143,7 @@
 }
 
 .license-preview__assign-button {
-	font-size: 0.75rem;
-	font-weight: 400;
+	@include body-medium;
 	text-decoration: underline;
 	margin-inline-start: 10px;
 }
@@ -202,9 +195,7 @@ button.button.is-borderless.license-bundle-dropdown__button {
 }
 
 .license-preview__client-email {
-	font-size: 0.75rem;
-	line-height: 1.3;
-	font-weight: 400;
+	@include body-medium;
 	color: var(--color-neutral-50);
 	margin-block-start: 4px;
 
@@ -230,7 +221,7 @@ button.button.is-borderless.license-bundle-dropdown__button {
 
 .license-preview__migration-content {
 	min-width: 200px;
-	@include a4a-font-body-md;
+	@include body-medium;
 
 	@include break-mobile {
 		min-width: 300px;

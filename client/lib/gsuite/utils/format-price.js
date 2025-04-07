@@ -1,4 +1,4 @@
-import formatCurrency from '@automattic/format-currency';
+import { formatCurrency } from 'i18n-calypso';
 
 /**
  * Applies a precision to the cost

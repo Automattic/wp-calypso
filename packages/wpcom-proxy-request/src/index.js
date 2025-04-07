@@ -1,5 +1,4 @@
 import debugFactory from 'debug';
-import { v4 as uuidv4 } from 'uuid';
 import WPError from 'wp-error';
 
 /**
@@ -96,7 +95,7 @@ const makeRequest = ( originalParams, fn ) => {
 	}
 
 	// generate a uuid for this API request
-	const id = uuidv4();
+	const id = crypto.randomUUID();
 	params.callback = id;
 	params.supports_args = true; // supports receiving variable amount of arguments
 	params.supports_error_obj = true; // better Error object info

@@ -204,7 +204,9 @@
 				color: unset;
 				margin-bottom: 0;
 			}
-			text-wrap: pretty;
+			text-wrap: balance;
+			max-width: 160px;
+			hyphens: unset;
 		}
 
 		&:not(.has-feature):not(.has-feature-label) {
@@ -279,23 +281,6 @@
 
 		@include plans-grid-medium-large {
 			margin: 7px 0 10px;
-		}
-
-		.plans-grid-next__billing-timeframe-vip-price {
-			font-size: $font-body;
-			line-height: 24px;
-			font-weight: 400;
-			color: var(--studio-gray-80);
-
-			@include plans-grid-medium-large {
-				font-size: $font-body-small;
-				line-height: 20px;
-			}
-
-			@include plans-grid-large {
-				font-size: $font-body-extra-small;
-				line-height: 16px;
-			}
 		}
 	}
 

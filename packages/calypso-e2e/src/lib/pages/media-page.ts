@@ -8,13 +8,13 @@ const selectors = {
 	gallery: '.media-library__content',
 	items: ( selected: boolean ) => {
 		if ( selected ) {
-			return `.media-library__list-item.is-selected`;
+			return '.media-library__list-item.is-selected';
 		}
-		return `.media-library__list-item`;
+		return '.media-library__list-item';
 	},
 	placeholder: '.is-placeholder',
 	uploadSpinner: '.media-library__list-item-spinner',
-	notReadyOverlay: `.is-transient`,
+	notReadyOverlay: '.is-transient',
 	editButton: 'button[data-e2e-button="edit"]',
 	deleteButton: '.media-library__header button[data-e2e-button="delete"]',
 	fileInput: 'input.media-library__upload-button-input',

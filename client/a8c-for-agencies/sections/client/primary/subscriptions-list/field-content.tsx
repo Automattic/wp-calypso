@@ -1,7 +1,6 @@
-import { formatCurrency } from '@automattic/format-currency';
 import { Button } from '@wordpress/components';
 import { Icon, external } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import { formatCurrency, useTranslate } from 'i18n-calypso';
 import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import CancelSubscriptionAction from '../../cancel-subscription-confirmation-dialog';

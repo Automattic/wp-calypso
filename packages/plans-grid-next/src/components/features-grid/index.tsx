@@ -31,6 +31,7 @@ import type {
 	FeaturesGridExternalProps,
 	FeaturesGridProps,
 	GridPlan,
+	GridSize,
 	PlanActionOverrides,
 } from '../../types';
 
@@ -376,6 +377,7 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		allFeaturesList,
 		coupon,
 		isInAdmin,
+		isInSiteDashboard,
 		className,
 		enableFeatureTooltips,
 		enableCategorisedFeatures,
@@ -390,15 +392,26 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 
 	const gridContainerRef = useRef< HTMLDivElement >( null );
 
-	const gridBreakpoints = useMemo(
-		() =>
-			new Map( [
-				[ 'small', 0 ],
-				[ 'medium', 740 ],
-				[ 'large', isInAdmin ? 1180 : 1320 ], // 1320 to fit Enterpreneur plan, 1180 to work in admin
-			] ),
-		[ isInAdmin ]
-	);
+	const gridBreakpoints = useMemo( () => {
+		// we want to fit up to the Commerce plan in this breakpoint
+		let largeBreakpoint;
+		if ( isInSiteDashboard ) {
+			largeBreakpoint = 1042;
+		} else if ( isInAdmin ) {
+			largeBreakpoint = 1180;
+		} else {
+			largeBreakpoint = 1320;
+		}
+
+		// we want to fit 3 plans per row in this breakpoint
+		const mediumBreakpoint = 669;
+
+		return new Map< GridSize, number >( [
+			[ 'small', 0 ],
+			[ 'medium', mediumBreakpoint ],
+			[ 'large', largeBreakpoint ],
+		] );
+	}, [ isInAdmin, isInSiteDashboard ] );
 
 	// TODO: this will be deprecated along side removing the wrapper component
 	const gridSize = useGridSize( {

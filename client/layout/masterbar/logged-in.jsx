@@ -2,18 +2,24 @@ import config from '@automattic/calypso-config';
 import { isEcommercePlan } from '@automattic/calypso-products/src';
 import page from '@automattic/calypso-router';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
+import { Button } from '@wordpress/components';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import AsyncLoad from 'calypso/components/async-load';
+import CoreBadge from 'calypso/components/core/badge';
 import Gravatar from 'calypso/components/gravatar';
 import { getStatsPathForTab } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
 import { siteUsesWpAdminInterface } from 'calypso/sites-dashboard/utils';
+import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
+import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
@@ -28,14 +34,18 @@ import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
+import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { updateSiteMigrationMeta } from 'calypso/state/sites/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
+import { isTrialSite } from 'calypso/state/sites/plans/selectors';
 import { isTrialExpired } from 'calypso/state/sites/plans/selectors/trials/trials-expiration';
 import {
 	getSiteSlug,
 	isJetpackSite,
 	getSitePlanSlug,
+	getSitePlanName,
 	getSiteTitle,
 	getSiteUrl,
 	getSiteAdminUrl,
@@ -44,6 +54,8 @@ import {
 } from 'calypso/state/sites/selectors';
 import canCurrentUserManageSiteOptions from 'calypso/state/sites/selectors/can-current-user-manage-site-options';
 import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
+import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
+import isSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
@@ -247,7 +259,15 @@ class MasterbarLoggedIn extends Component {
 
 	// will render as back button on mobile and in editor
 	renderMySites() {
-		const { domainOnlySite, siteSlug, translate, section, currentRoute } = this.props;
+		const {
+			domainOnlySite,
+			siteSlug,
+			translate,
+			section,
+			currentRoute,
+			isGlobalSidebarVisible,
+			siteAdminUrl,
+		} = this.props;
 
 		const mySitesUrl = domainOnlySite
 			? domainManagementList( siteSlug, currentRoute, true )
@@ -259,12 +279,42 @@ class MasterbarLoggedIn extends Component {
 			return <Item icon={ icon } className="masterbar__item-no-sites" disabled />;
 		}
 
+		const subItems = isGlobalSidebarVisible
+			? null
+			: [
+					[
+						{
+							label: translate( 'Sites' ),
+							url: '/sites',
+						},
+						{
+							label: translate( 'Domains' ),
+							url: '/domains/manage',
+						},
+					],
+					...( this.props.isSimpleSite
+						? []
+						: [
+								[
+									{
+										label: translate( 'About WordPress' ),
+										url: `${ siteAdminUrl }about.php`,
+									},
+									{
+										label: translate( 'Get Involved' ),
+										url: `${ siteAdminUrl }contribute.php`,
+									},
+								],
+						  ] ),
+			  ];
+
 		return (
 			<Item
 				className="masterbar__item-my-sites"
 				url={ mySitesUrl }
 				tipTarget="my-sites"
 				icon={ icon }
+				subItems={ subItems }
 				onClick={ this.clickMySites }
 				isActive={ this.isMySitesActive() }
 				tooltip={ translate( 'Manage your sites' ) }
@@ -300,6 +350,149 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
+	renderUpdatesMenu() {
+		const { adminMenu } = this.props;
+		if ( ! adminMenu ) {
+			return null;
+		}
+
+		let updatesCount = 0;
+		let updatesUrl = '';
+		for ( const menu of adminMenu ) {
+			for ( const menuItem of menu.children || [] ) {
+				if ( menuItem.slug === 'update-core-php' ) {
+					updatesCount = menuItem.count;
+					updatesUrl = menuItem.url;
+					break;
+				}
+			}
+		}
+
+		if ( updatesCount ) {
+			return (
+				<Item
+					className="masterbar__item-updates"
+					url={ updatesUrl }
+					icon={ <span className="dashicons-before dashicons-update" /> }
+				>
+					{ updatesCount }
+				</Item>
+			);
+		}
+		return null;
+	}
+
+	renderCommentsMenu() {
+		const { adminMenu } = this.props;
+		if ( ! adminMenu ) {
+			return null;
+		}
+
+		let commentsCount = 0;
+		let commentsUrl = '';
+		for ( const menu of adminMenu ) {
+			if ( menu.icon === 'dashicons-admin-comments' ) {
+				commentsCount = menu.count || 0;
+				commentsUrl = menu.url;
+				break;
+			}
+		}
+
+		return (
+			<Item
+				className="masterbar__item-comments"
+				url={ commentsUrl }
+				icon={ <span className="dashicons-before dashicons-admin-comments" /> }
+			>
+				<span className={ commentsCount === 0 ? 'count-0' : '' }>{ commentsCount }</span>
+			</Item>
+		);
+	}
+
+	renderSiteBadges() {
+		const {
+			site,
+			translate,
+			isUnlaunchedSite,
+			isTrial,
+			isSiteP2,
+			isP2Hub,
+			isAtomicAndEditingToolkitDeactivated,
+		} = this.props;
+
+		if ( ! site ) {
+			return null;
+		}
+
+		// Status badges
+		const badges = [];
+
+		// We show public coming soon badge only when the site is not private.
+		const shouldShowPublicComingSoonSiteBadge =
+			! site.is_private &&
+			site.is_coming_soon &&
+			! isAtomicAndEditingToolkitDeactivated &&
+			! isTrial;
+
+		// Cover the coming Soon v1 cases for sites still unlaunched and/or in Coming Soon private by default.
+		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
+		const isPrivateAndUnlaunched = site.is_private && isUnlaunchedSite;
+		const shouldShowPrivateByDefaultComingSoonBadge = site.is_coming_soon || isPrivateAndUnlaunched;
+
+		// P2 Badge
+		if ( isSiteP2 && ! isP2Hub ) {
+			badges.push( 'P2' );
+		}
+
+		// Staging Badge
+		if ( site?.is_wpcom_staging_site ) {
+			badges.push( translate( 'Staging' ) );
+		}
+
+		// Trial Badge
+		if ( isTrial ) {
+			badges.push( translate( 'Trial' ) );
+		}
+
+		// P2 Workspace Badge
+		if ( isP2Hub ) {
+			badges.push( 'P2 Workspace' );
+		}
+
+		// Private/Coming Soon Badge
+		if ( site.is_private ) {
+			badges.push(
+				shouldShowPrivateByDefaultComingSoonBadge
+					? translate( 'Coming Soon' )
+					: translate( 'Private' )
+			);
+		}
+
+		// Express Service Badge
+		if ( site.options && site.options.is_difm_lite_in_progress ) {
+			badges.push( translate( 'Express Service' ) );
+		}
+
+		// Public Coming Soon Badge
+		if ( shouldShowPublicComingSoonSiteBadge ) {
+			badges.push( translate( 'Coming Soon' ) );
+		}
+
+		// Redirect Badge
+		if ( site.options && site.options.is_redirect ) {
+			badges.push( translate( 'Redirect' ) );
+		}
+
+		// Domain Badge
+		if ( site.options && site.options.is_domain_only ) {
+			badges.push( translate( 'Domain' ) );
+		}
+
+		return badges.length > 0
+			? badges.map( ( badge ) => <CoreBadge key={ badge }>{ badge }</CoreBadge> )
+			: null;
+	}
+
 	renderSiteMenu() {
 		const {
 			siteSlug,
@@ -310,6 +503,8 @@ class MasterbarLoggedIn extends Component {
 			siteAdminUrl,
 			siteHomeUrl,
 			domainOnlySite,
+			sitePlanName,
+			site,
 		} = this.props;
 
 		// Only display when a site is selected and is not domain-only site.
@@ -327,13 +522,43 @@ class MasterbarLoggedIn extends Component {
 					url: siteHomeUrl,
 			  };
 
+		// Get site badges
+		const siteBadges = this.renderSiteBadges();
+
+		// Create a site status item for the dropdown if we have badges
+		const menuItems = [
+			[ { label: translate( 'Visit Site' ), url: siteUrl }, siteHomeOrAdminItem ],
+			[
+				{
+					label: (
+						<div className="masterbar__site-infos">
+							{ siteBadges && siteBadges.length > 0 && (
+								<div className="masterbar__site-info">
+									<span className="masterbar__site-info-label">{ translate( 'Status' ) }</span>
+									<div className="masterbar__info-badges">{ siteBadges }</div>
+								</div>
+							) }
+							{ ! site?.is_wpcom_staging_site && (
+								<div className="masterbar__site-info">
+									<span className="masterbar__site-info-label">{ translate( 'Plan' ) }</span>
+									<div className="masterbar__info-badges">
+										<CoreBadge>{ sitePlanName }</CoreBadge>
+									</div>
+								</div>
+							) }
+						</div>
+					),
+				},
+			],
+		];
+
 		return (
 			<Item
 				className="masterbar__item-my-site"
 				url={ siteUrl }
 				icon={ <span className="dashicons-before dashicons-admin-home" /> }
 				tipTarget="visit-site"
-				subItems={ [ { label: translate( 'Visit Site' ), url: siteUrl }, siteHomeOrAdminItem ] }
+				subItems={ menuItems }
 			>
 				{ siteTitle.length > 40 ? `${ siteTitle.substring( 0, 40 ) }\u2026` : siteTitle }
 			</Item>
@@ -405,7 +630,7 @@ class MasterbarLoggedIn extends Component {
 			<Item
 				className="masterbar__item-my-site-actions"
 				url={ siteActions[ 0 ].url }
-				subItems={ siteActions }
+				subItems={ [ siteActions ] }
 				icon={ <span className="dashicons-before dashicons-plus" /> }
 				tooltip={ translate( 'New', { context: 'admin bar menu group label' } ) }
 				tipTarget="new-menu"
@@ -416,20 +641,24 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderLaunchButton() {
-		const { isUnlaunchedSite, siteId, translate, isManageSiteOptionsEnabled } = this.props;
+		const { isA4ADevSite, isUnlaunchedSite, siteId, translate, isManageSiteOptionsEnabled } =
+			this.props;
 
-		if ( ! isUnlaunchedSite || ! isManageSiteOptionsEnabled ) {
+		if ( ! isUnlaunchedSite || ! isManageSiteOptionsEnabled || isA4ADevSite ) {
 			return null;
 		}
 
 		return (
 			<Item
-				className="masterbar__item-launch-site"
+				as={ Button }
+				variant="primary"
+				// Keep the Launch button always in blueberry (default scheme: modern) like in wp-admin.
+				className={ clsx( 'masterbar__item-launch-site', 'color-scheme', 'is-global' ) }
 				icon={
 					<svg viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path
-							fill-rule="evenodd"
-							clip-rule="evenodd"
+							fillRule="evenodd"
+							clipRule="evenodd"
 							d="M10.6242 9.74354L7.62419 12.1261V13.2995C7.62419 13.4418 7.77653 13.5322 7.90147 13.4641L10.5265 12.0322C10.5867 11.9994 10.6242 11.9363 10.6242 11.8676V9.74354ZM6.49919 12.0875L3.91203 9.50037H2.7001C1.70383 9.50037 1.07079 8.43399 1.54786 7.55937L2.97968 4.93437C3.20967 4.51272 3.65161 4.25036 4.13191 4.25036H7.17569C9.1325 2.16798 11.3176 0.754637 14.1427 0.531305C14.9004 0.471402 15.5282 1.09911 15.4682 1.85687C15.2449 4.68199 13.8316 6.86706 11.7492 8.82386V11.8676C11.7492 12.3479 11.4868 12.7899 11.0652 13.0199L8.44018 14.4517C7.56557 14.9288 6.49919 14.2957 6.49919 13.2995V12.0875ZM6.25602 5.37536H4.13191C4.0633 5.37536 4.00017 5.41284 3.96731 5.47308L2.53549 8.09808C2.46734 8.22303 2.55777 8.37536 2.7001 8.37536H3.87344L6.25602 5.37536Z"
 						/>
 						<path d="M0.498047 13.3962C0.498047 12.2341 1.44011 11.2921 2.60221 11.2921C3.76431 11.2921 4.70638 12.2341 4.70638 13.3962C4.70638 14.5583 3.76431 15.5004 2.60221 15.5004H1.06055C0.749887 15.5004 0.498047 15.2486 0.498047 14.9379V13.3962Z" />
@@ -446,7 +675,7 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderProfileMenu() {
-		const { translate, user } = this.props;
+		const { translate, user, isGlobalSidebarVisible, siteAdminUrl } = this.props;
 		const profileActions = [
 			{
 				label: (
@@ -460,17 +689,35 @@ class MasterbarLoggedIn extends Component {
 						<div className="masterbar__item-howdy-account-details">
 							<span className="display-name">{ user.display_name }</span>
 							<span className="username">{ user.username }</span>
-							<span className="display-name edit-profile">{ translate( 'My Profile' ) }</span>
+							<span className="display-name edit-profile">
+								{ isGlobalSidebarVisible ? translate( 'My Profile' ) : translate( 'Edit Profile' ) }
+							</span>
 						</div>
 					</div>
 				),
-				url: '/me',
+				url: isGlobalSidebarVisible ? '/me' : `${ siteAdminUrl }profile.php`,
 			},
 			{
 				label: translate( 'Log Out' ),
 				onClick: () => this.props.redirectToLogout(),
 				tooltip: translate( 'Log out of WordPress.com' ),
 				className: 'logout-link',
+			},
+		];
+
+		const wpcomActions = [
+			{
+				label: (
+					<span className="button wpcom-button">
+						{ translate( 'My {{wpcomIcon/}} WordPress.com Account', {
+							components: {
+								wpcomIcon: this.wordpressIcon(),
+							},
+						} ) }
+					</span>
+				),
+				url: '/me/account',
+				className: 'wpcom-link',
 			},
 		];
 
@@ -483,7 +730,7 @@ class MasterbarLoggedIn extends Component {
 				className="masterbar__item-howdy"
 				tooltip={ translate( 'Update your profile, personal settings, and more' ) }
 				preloadSection={ this.preloadMe }
-				subItems={ profileActions }
+				subItems={ [ profileActions, wpcomActions ] }
 				hasGlobalBorderStyle
 			>
 				<span className="masterbar__item-howdy-howdy">
@@ -503,18 +750,7 @@ class MasterbarLoggedIn extends Component {
 				tipTarget="reader"
 				className="masterbar__reader"
 				url="/reader"
-				icon={
-					<svg
-						width="24"
-						height="11"
-						viewBox="0 0 24 11"
-						fill="none"
-						xmlns="http://www.w3.org/2000/svg"
-						className="masterbar__menu-icon masterbar_svg-reader"
-					>
-						<path d="M22.8746 4.60676L22.8197 4.3575C22.3347 2.17436 20.276 0.584279 17.9245 0.584279C16.6527 0.584279 15.4358 1.03122 14.5116 1.84775C14.1914 2.13139 13.9443 2.44081 13.743 2.74163C13.1849 2.63849 12.6085 2.56114 12.032 2.56114H12.0046C11.419 2.56114 10.8425 2.64709 10.2753 2.75023C10.0648 2.44081 9.82691 2.13139 9.49752 1.83915C8.57338 1.01403 7.35646 0.575684 6.08463 0.575684C3.72398 0.584279 1.66527 2.17436 1.18033 4.3575L1.12543 4.60676H0V6.00775H1.12543L1.18033 6.257C1.63782 8.44014 3.69653 10.0302 6.07548 10.0302C8.83873 10.0302 11.0804 7.91585 11.0804 5.31155C11.0804 5.31155 11.0896 4.72709 10.8517 3.97072C11.236 3.91915 11.6203 3.87618 12.0046 3.87618C12.3706 3.87618 12.7549 3.91056 13.1483 3.96213C12.9012 4.72709 12.9195 5.31155 12.9195 5.31155C12.9195 7.91585 15.1613 10.0302 17.9245 10.0302C20.3035 10.0302 22.3622 8.44874 22.8197 6.257L22.8746 6.00775H24V4.60676H22.8746ZM6.07548 8.62923C4.13572 8.62923 2.5528 7.14229 2.5528 5.30295C2.5528 3.46362 4.13572 1.97667 6.07548 1.97667C8.01524 1.97667 9.59816 3.46362 9.59816 5.30295C9.59816 7.14229 8.01524 8.62923 6.07548 8.62923ZM17.9245 8.62923C15.9847 8.62923 14.4018 7.14229 14.4018 5.30295C14.4018 3.46362 15.9847 1.97667 17.9245 1.97667C19.8643 1.97667 21.4472 3.46362 21.4472 5.30295C21.4472 7.14229 19.8643 8.62923 17.9245 8.62923Z" />
-					</svg>
-				}
+				icon={ <ReaderIcon className="masterbar__menu-icon masterbar_svg-reader" /> }
 				onClick={ this.clickReader }
 				isActive={ this.isActive( 'reader', true ) }
 				tooltip={ translate( 'Read the blogs and topics you follow' ) }
@@ -631,6 +867,8 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderSidebarMobileMenu() }
 					{ this.renderMySites() }
 					{ this.renderSiteMenu() }
+					{ this.renderUpdatesMenu() }
+					{ this.renderCommentsMenu() }
 					{ this.renderSiteActionMenu() }
 					{ this.renderLanguageSwitcher() }
 					{ this.renderLaunchButton() }
@@ -667,12 +905,16 @@ export default connect(
 			isManageSiteOptionsEnabled: canCurrentUserManageSiteOptions( state, siteId ),
 			isNotificationsShowing: isNotificationsOpen( state ),
 			isEcommerce: isEcommercePlan( sitePlanSlug ),
+			isA4ADevSite: site?.is_a4a_dev_site,
 			siteId: siteId,
+			site: site,
 			siteSlug: getSiteSlug( state, siteId ),
+			sitePlanName: getSitePlanName( state, siteId ),
 			siteTitle: getSiteTitle( state, siteId ),
 			siteUrl: getSiteUrl( state, siteId ),
 			siteAdminUrl: getSiteAdminUrl( state, siteId ),
 			siteHomeUrl: getSiteHomeUrl( state, siteId ),
+			adminMenu: getAdminMenu( state, siteId ),
 			sectionGroup,
 			domainOnlySite: isDomainOnlySite( state, siteId ),
 			hasNoSites: siteCount === 0,
@@ -684,6 +926,7 @@ export default connect(
 			isClassicView,
 			currentSelectedSiteSlug: siteId ? getSiteSlug( state, siteId ) : undefined,
 			previousPath: getPreviousRoute( state ),
+			isSimpleSite: isSimpleSite( state, siteId ),
 			isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			currentRoute: getCurrentRoute( state ),
@@ -691,6 +934,12 @@ export default connect(
 			newPostUrl: getEditorUrl( state, siteId, null, 'post' ),
 			newPageUrl: getEditorUrl( state, siteId, null, 'page' ),
 			isUnlaunchedSite: getIsUnlaunchedSite( state, siteId ),
+			isTrial: isTrialSite( state, siteId ),
+			isSiteP2: isSiteWPForTeams( state, siteId ),
+			isP2Hub: isSiteP2Hub( state, siteId ),
+			isAtomicAndEditingToolkitDeactivated:
+				isAtomicSite( state, siteId ) &&
+				getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
 		};
 	},
 	{
@@ -699,6 +948,7 @@ export default connect(
 		updateSiteMigrationMeta,
 		activateNextLayoutFocus,
 		savePreference,
+		requestAdminMenu,
 		redirectToLogout,
 		launchSiteOrRedirectToLaunchSignupFlow,
 	}

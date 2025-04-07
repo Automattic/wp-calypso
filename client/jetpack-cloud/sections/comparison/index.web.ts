@@ -8,7 +8,7 @@ import './style.scss';
 
 export default function () {
 	page(
-		`/:lang/features/comparison`,
+		'/:lang/features/comparison',
 		setLocaleMiddleware(),
 		loggedInSiteSelection,
 		jetpackComparisonContext,

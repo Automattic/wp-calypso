@@ -1,6 +1,5 @@
 import { RadioControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -17,19 +16,16 @@ function ToggleLandingPageSettings() {
 		readerAsLandingPage: getPreference( state, 'reader-landing-page' )?.useReaderAsLandingPage,
 	} ) );
 
-	let preference = 'default';
+	let selectedOption = 'default';
 	if ( sitesAsLandingPage ) {
-		preference = 'my-sites';
+		selectedOption = 'my-sites';
 	} else if ( readerAsLandingPage ) {
-		preference = 'reader';
+		selectedOption = 'reader';
 	}
 
-	// Local state to handle selected option
-	const [ selectedOption, setSelectedOption ] = useState( preference );
 	const isSaving = useSelector( isSavingPreference );
 
 	async function handlePreferenceChange( selectedOption: string ) {
-		setSelectedOption( selectedOption );
 		try {
 			const updatedAt = Date.now();
 			await dispatch(

@@ -26,7 +26,7 @@ const useStartingPoints = () => {
 			title: translate( 'Choose a design' ),
 			description: <p>{ translate( 'Make your blog feel like home' ) }</p>,
 			icon: design,
-			value: 'designSetup',
+			value: 'design-setup',
 			actionText: translate( 'View designs' ),
 		},
 	];

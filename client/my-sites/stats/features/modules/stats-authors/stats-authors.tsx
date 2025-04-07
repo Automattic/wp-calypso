@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { StatsCard } from '@automattic/components';
 import { blockPostAuthor } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
-import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
@@ -14,7 +13,7 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
+import { AUTHORS_SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
 import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
@@ -33,7 +32,9 @@ const StatAuthors: React.FC< StatsDefaultModuleProps > = ( {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = 'statsTopAuthors';
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const supportUrl = isOdysseyStats ? JETPACK_SUPPORT_URL_TRAFFIC : SUPPORT_URL;
+	const supportUrl = isOdysseyStats
+		? `${ JETPACK_SUPPORT_URL_TRAFFIC }#authors`
+		: AUTHORS_SUPPORT_URL;
 
 	// Use StatsModule to display paywall upsell.
 	const shouldGateStatsModule = useShouldGateStats( statType );
@@ -69,13 +70,7 @@ const StatAuthors: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: (
-											<a
-												target="_blank"
-												rel="noreferrer"
-												href={ localizeUrl( `${ supportUrl }#authors` ) }
-											/>
-										),
+										link: <a target="_blank" rel="noreferrer" href={ localizeUrl( supportUrl ) } />,
 									},
 									context:
 										'Stats: Link in a popover for the Posts & Pages when the module has data',
@@ -97,7 +92,7 @@ const StatAuthors: React.FC< StatsDefaultModuleProps > = ( {
 			{ ! isRequestingData && ! data?.length && ! shouldGateStatsModule && (
 				// show empty state
 				<StatsCard
-					className={ clsx( 'stats-card--empty-variant', className ) }
+					className={ className }
 					title={ translate( 'Authors' ) }
 					isEmpty
 					emptyMessage={
@@ -108,13 +103,7 @@ const StatAuthors: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: (
-											<a
-												target="_blank"
-												rel="noreferrer"
-												href={ localizeUrl( `${ supportUrl }#authors` ) }
-											/>
-										),
+										link: <a target="_blank" rel="noreferrer" href={ localizeUrl( supportUrl ) } />,
 									},
 									context: 'Stats: Info box label when the Authors module is empty',
 								}

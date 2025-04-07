@@ -2,6 +2,7 @@ import { isBlogger, isFreeWordPressComDomain } from '@automattic/calypso-product
 import page from '@automattic/calypso-router';
 import { Button, CompactCard, ResponsiveToolbarGroup } from '@automattic/components';
 import {
+	AI_SITE_BUILDER_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
 	isHundredYearDomainFlow,
@@ -27,10 +28,9 @@ import {
 	snakeCase,
 } from 'lodash';
 import PropTypes from 'prop-types';
-import { stringify } from 'qs';
+import { stringify, parse } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { v4 as uuid } from 'uuid';
 import Illustration from 'calypso/assets/images/domains/domain.svg';
 import DomainSearchResults from 'calypso/components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'calypso/components/domains/example-domain-suggestions';
@@ -337,9 +337,26 @@ class RegisterDomainStep extends Component {
 		return strippedHostname ?? hostname;
 	}
 
+	getInitialQueryFromSiteName() {
+		// fallback to siteTitle in query string if there is no selected site in the props
+		// This usually happens the first time this step is loaded for a free trial site
+		const queryParams = parse( window.location.search.substring( 1 ) );
+		const siteTitle = queryParams.siteTitle;
+		return this.props.selectedSite?.name || siteTitle;
+	}
+
 	componentDidMount() {
 		const storedQuery = globalThis?.sessionStorage?.getItem( SESSION_STORAGE_QUERY_KEY );
-		const query = this.state.lastQuery || storedQuery || this.getInitialQueryInLaunchFlow();
+		let query = this.state.lastQuery || storedQuery;
+
+		// Flow specific query fallbacks.
+		if ( ! query && this.props.flowName === AI_SITE_BUILDER_FLOW ) {
+			query = this.getInitialQueryFromSiteName();
+		}
+
+		if ( ! query && this.props.isInLaunchFlow ) {
+			query = this.getInitialQueryInLaunchFlow();
+		}
 
 		if ( query && ! this.state.searchResults && ! this.state.subdomainSearchResults ) {
 			this.onSearch( query );
@@ -409,7 +426,7 @@ class RegisterDomainStep extends Component {
 	}
 
 	getNewRailcarId() {
-		return `${ uuid().replace( /-/g, '' ) }-domain-suggestion`;
+		return `${ crypto.randomUUID().replace( /-/g, '' ) }-domain-suggestion`;
 	}
 
 	focusSearchCard = () => {
@@ -583,7 +600,8 @@ class RegisterDomainStep extends Component {
 			return { key: `${ tld }`, text: `.${ tld }` };
 		} );
 
-		items.unshift( { key: 'all', text: 'All' } );
+		// translators: filter label displayed when all TLDs are enabled
+		items.unshift( { key: 'all', text: this.props.translate( 'All' ) } );
 
 		const handleClick = ( index ) => {
 			const option = items[ index ].key;
@@ -1568,6 +1586,7 @@ class RegisterDomainStep extends Component {
 
 	onAddDomain = async ( suggestion, position, previousState ) => {
 		const domain = get( suggestion, 'domain_name' );
+		const rootVendor = get( suggestion, 'vendor' );
 		const { premiumDomains } = this.state;
 		const { includeOwnedDomainInSuggestions } = this.props;
 		const {
@@ -1604,7 +1623,8 @@ class RegisterDomainStep extends Component {
 						domain,
 						status,
 						this.props.analyticsSection,
-						this.props.flowName
+						this.props.flowName,
+						rootVendor
 					);
 
 					const skipAvailabilityErrors =
@@ -1713,7 +1733,6 @@ class RegisterDomainStep extends Component {
 				onSkip={ this.props.onSkip }
 				showSkipButton={ this.props.showSkipButton }
 				hideMatchReasons={ this.props.isOnboarding }
-				showDomainTransferSuggestion={ this.props.isOnboarding }
 				domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 				useProvidedProductsList={ this.props.useProvidedProductsList }
 				isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }

@@ -1,3 +1,12 @@
+@import "two-factor-content";
+
+.two-factor-authentication__push-notification-approval {
+	width: $login-container-width;
+	margin: 0 auto;
+	padding: 0;
+}
+
 .two-factor-authentication__info {
-	text-align: center;
+	text-align: left;
+	margin-top: 16px;
 }

@@ -110,7 +110,7 @@ export const useMultisiteUpdateScheduleQuery = (
 		queryKey: [ 'multisite-schedules-update' ],
 		queryFn: () =>
 			wpcomRequest< MultisiteSchedulesUpdatesResponse >( {
-				path: `/hosting/update-schedules`,
+				path: '/hosting/update-schedules',
 				apiNamespace: 'wpcom/v2',
 				method: 'GET',
 			} ),

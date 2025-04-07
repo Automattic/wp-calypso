@@ -7,7 +7,12 @@ interface DomainsTableStatusCTAProps {
 
 export const DomainsTableStatusCTA = ( { callToAction }: DomainsTableStatusCTAProps ) => {
 	return (
-		<Button compact onClick={ callToAction.onClick } href={ callToAction.href }>
+		<Button
+			compact
+			busy={ callToAction.showBusyButton }
+			onClick={ callToAction.onClick }
+			href={ callToAction.href }
+		>
 			{ callToAction.label }
 		</Button>
 	);

@@ -95,7 +95,9 @@ function FormTextInputWithAction( {
 			<Button
 				size="compact"
 				className="form-text-input-with-action__button"
+				variant="tertiary"
 				disabled={ disabled || ! value }
+				accessibleWhenDisabled
 				onClick={ handleAction }
 			>
 				{ action }

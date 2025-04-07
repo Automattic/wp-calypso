@@ -1,7 +1,9 @@
 import path from 'path';
-import { Dialog, Gridicon, Spinner, ExternalLink } from '@automattic/components';
+import { Dialog, Gridicon, ExternalLink } from '@automattic/components';
+import { Spinner } from '@wordpress/components';
+import { Icon, upload, caution } from '@wordpress/icons';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -120,6 +122,12 @@ export class EditGravatar extends Component {
 	};
 
 	renderImageEditor() {
+		const doneButtonText = i18n.fixMe( {
+			text: 'Upload photo',
+			newCopy: i18n.translate( 'Upload photo' ),
+			oldCopy: i18n.translate( 'Change My Photo' ),
+		} );
+
 		if ( this.state.isEditingImage ) {
 			return (
 				<Dialog additionalClassNames="edit-gravatar-modal" isVisible>
@@ -128,7 +136,7 @@ export class EditGravatar extends Component {
 						media={ { src: this.state.image } }
 						onDone={ this.onImageEditorDone }
 						onCancel={ this.hideImageEditor }
-						doneButtonText={ this.props.translate( 'Change My Photo' ) }
+						doneButtonText={ doneButtonText }
 					/>
 				</Dialog>
 			);
@@ -210,6 +218,9 @@ export class EditGravatar extends Component {
 		// use imgSize = 400 for caching
 		// it's the popular value for large Gravatars in Calypso
 		const GRAVATAR_IMG_SIZE = 400;
+		const uploadButtonLabel = user.email_verified
+			? translate( 'Change profile photo' )
+			: translate( 'Verify your email to change profile photo' );
 
 		if ( this.props.isFetchingUserSettings ) {
 			return this.renderEditGravatarIsLoading();
@@ -219,10 +230,6 @@ export class EditGravatar extends Component {
 			return this.renderGravatarProfileHidden( { gravatarLink, translate } );
 		}
 
-		const icon = user.email_verified ? 'cloud-upload' : 'notice';
-		const buttonText = user.email_verified
-			? translate( 'Click to change photo' )
-			: translate( 'Verify your email' );
 		/* eslint-disable jsx-a11y/click-events-have-key-events */
 		/* eslint-disable jsx-a11y/no-static-element-interactions */
 		return (
@@ -233,8 +240,13 @@ export class EditGravatar extends Component {
 					{ 'is-uploading': isUploading }
 				) }
 			>
-				<div onClick={ this.handleUnverifiedUserClick }>
-					<FilePicker accept="image/*" onPick={ this.onReceiveFile }>
+				<FilePicker accept="image/*" onPick={ this.onReceiveFile }>
+					<button
+						type="button"
+						onClick={ this.handleUnverifiedUserClick }
+						className="edit-gravatar__image-button"
+						aria-label={ uploadButtonLabel }
+					>
 						<div
 							data-tip-target="edit-gravatar"
 							className={ clsx( 'edit-gravatar__image-container', {
@@ -248,16 +260,30 @@ export class EditGravatar extends Component {
 								/>
 							) }
 							<Gravatar imgSize={ GRAVATAR_IMG_SIZE } size={ 150 } user={ user } />
-							{ ! isUploading && (
-								<div className="edit-gravatar__label-container">
-									<Gridicon icon={ icon } size={ 36 } />
-									<span className="edit-gravatar__label">{ buttonText }</span>
+							<div className="edit-gravatar__label-container">
+								<div className="edit-gravatar__label-container-icon">
+									{ ! user.email_verified && (
+										<Icon className="gridicon" icon={ caution } fill="#fff" size={ 24 } />
+									) }
+
+									{ user.email_verified && ! isUploading && (
+										<Icon className="gridicon" icon={ upload } fill="#fff" size={ 24 } />
+									) }
+
+									{ user.email_verified && isUploading && (
+										<Spinner
+											style={ {
+												width: 24,
+												height: 24,
+											} }
+											className="edit-gravatar__label-container-icon-spinner"
+										/>
+									) }
 								</div>
-							) }
-							{ isUploading && <Spinner className="edit-gravatar__spinner" /> }
+							</div>
 						</div>
-					</FilePicker>
-				</div>
+					</button>
+				</FilePicker>
 				{ this.state.showEmailVerificationNotice && (
 					<VerifyEmailDialog onClose={ this.closeVerifyEmailDialog } />
 				) }

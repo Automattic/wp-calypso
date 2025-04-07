@@ -1,5 +1,4 @@
-import formatCurrency from '@automattic/format-currency';
-import { useTranslate } from 'i18n-calypso';
+import { formatCurrency, useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getTotalInvoiceValue } from '../lib/pricing';
@@ -21,7 +20,8 @@ export default function TotalCost( { selectedLicenses }: Props ) {
 
 	const getTotalCostDisplayString = () => {
 		return translate( 'Total: {{formattedTotalCost/}}', {
-			comment: `%(formattedTotalCost)s is a price formatted for display in the user's locale. In en-us it would be like "$4.00"`,
+			comment:
+				'%(formattedTotalCost)s is a price formatted for display in the user\'s locale. In en-us it would be like "$4.00"',
 			components: {
 				formattedTotalCost,
 			},

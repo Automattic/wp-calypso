@@ -1,7 +1,6 @@
 @import "../style";
 
 .newsletter-setup {
-
 	.step-container {
 		padding-top: 20px;
 		@include break-medium {
@@ -9,7 +8,8 @@
 		}
 	}
 
-	.step-container__content {
+	// repeat to increase specificity.
+	.step-container__content.step-container__content {
 		display: flex;
 		justify-content: center;
 

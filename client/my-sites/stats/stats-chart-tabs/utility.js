@@ -13,6 +13,7 @@ import { capitalize } from 'lodash';
 import moment from 'moment';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { rangeOfPeriod } from 'calypso/state/stats/lists/utils';
+import { parseLocalDate } from '../utils';
 
 export function formatDate( date, period, chartStart = null, chartEnd = null ) {
 	// NOTE: Consider localizing the dates, especially for the 'week' case.
@@ -93,6 +94,64 @@ export const buildChartData = memoizeLast(
 	}
 );
 
+// data validation for line chart
+export const transformChartDataToLineFormat = memoizeLast(
+	( chartData, activeLegend = [], activeTab, primaryColor, secondaryColor ) => {
+		if ( ! Array.isArray( chartData ) || chartData.length === 0 ) {
+			return [];
+		}
+
+		const series = [];
+
+		const mainSeries = chartData
+			.map( ( record ) => {
+				const date = parseLocalDate( record.data.period );
+				const value = record.data[ activeTab.attr ];
+				if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
+					return null;
+				}
+				return { date, value, label: record.tooltipData?.[ 0 ].label };
+			} )
+			.filter( Boolean );
+
+		if ( mainSeries.length > 0 ) {
+			series.push( {
+				label: activeTab.label,
+				options: { stroke: primaryColor },
+				icon: activeTab.icon,
+				data: mainSeries,
+			} );
+		}
+
+		// Only add visitors series if visitors is active in legend
+		// It has to be visitors as that is the only case where we show two series, i.e. activeLegend[ 0 ] is 'visitors' only.
+		// We should probably figure out a more general way to handle this.
+		if ( activeLegend.length > 0 ) {
+			const secondarySeries = chartData
+				.map( ( record ) => {
+					const date = parseLocalDate( record.data.period );
+					const value = record.data.visitors;
+					if ( isNaN( date.getTime() ) || typeof value !== 'number' ) {
+						return null;
+					}
+					return { date, value, label: record.tooltipData?.[ 0 ].label };
+				} )
+				.filter( Boolean );
+
+			if ( secondarySeries.length > 0 ) {
+				series.push( {
+					label: translate( 'Visitors' ),
+					options: { stroke: secondaryColor },
+					icon: <Icon className="gridicon" icon={ people } />,
+					data: secondarySeries,
+				} );
+			}
+		}
+
+		return series;
+	}
+);
+
 function addTooltipData( chartTab, item, period, customRange = {} ) {
 	const tooltipData = [];
 	tooltipData.push( {
@@ -100,6 +159,8 @@ function addTooltipData( chartTab, item, period, customRange = {} ) {
 		className: 'is-date-label',
 		value: null,
 	} );
+
+	const viewsPerVisitor = item.data.views / item.data.visitors;
 
 	switch ( chartTab ) {
 		case 'comments':
@@ -135,9 +196,12 @@ function addTooltipData( chartTab, item, period, customRange = {} ) {
 					className: 'is-visitors',
 					icon: <Icon className="gridicon" icon={ people } />,
 				} );
+			}
+
+			if ( Number.isFinite( viewsPerVisitor ) ) {
 				tooltipData.push( {
 					label: translate( 'Views Per Visitor' ),
-					value: numberFormat( item.data.views / item.data.visitors, { decimals: 2 } ),
+					value: numberFormat( viewsPerVisitor, { decimals: 2 } ),
 					className: 'is-views-per-visitor',
 					icon: <Icon className="gridicon" icon={ chevronRight } />,
 				} );

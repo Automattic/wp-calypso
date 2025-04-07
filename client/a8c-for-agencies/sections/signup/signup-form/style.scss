@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .agency-signup-form {
 	max-width: 720px;
@@ -16,17 +17,13 @@
 
 	.agency-signup-form__heading {
 		margin: 0 0 24px;
-		font-weight: 700;
-		font-size: 2rem;
-		line-height: 40px;
+		@include heading-2x-large;
 		color: var(--color-neutral-100);
 	}
 
 	.agency-signup-form__subheading {
 		margin: 0 0 38px;
-		font-weight: 400;
-		font-size: 1rem;
-		line-height: 24px;
+		@include body-large;
 		color: var(--color-neutral-100);
 	}
 }

@@ -1,20 +1,23 @@
 import config from '@automattic/calypso-config';
 import { UseQueryResult } from '@tanstack/react-query';
+import { Icon, people, currencyDollar } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import AsyncLoad from 'calypso/components/async-load';
 import UplotChart from 'calypso/components/chart-uplot';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
+import { formatDate } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import { useSelector } from 'calypso/state';
+import useCssVariable from '../hooks/use-css-variable';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsPeriodHeader from '../stats-period-header';
+import { parseLocalDate } from '../utils';
 import { hideFractionNumber } from './chart-utils';
 import SubscribersNavigationArrows from './subscribers-navigation-arrows';
 import type uPlot from 'uplot';
 
 import './style.scss';
-
 interface SubscribersData {
 	period: PeriodType;
 	subscribers: number;
@@ -69,16 +72,41 @@ function transformUplotData(
 type ChartDataPoint = {
 	date: Date;
 	value: number;
+	label?: string | null;
+};
+
+const formatDateLabel = ( date: Date, period: PeriodType ): string => {
+	switch ( period ) {
+		case 'week':
+		case 'day':
+			return date.toLocaleDateString( undefined, {
+				month: 'short',
+				day: 'numeric',
+			} );
+		case 'month':
+			return date.toLocaleDateString( undefined, {
+				month: 'short',
+				year: 'numeric',
+			} );
+		case 'year':
+			return date.getFullYear().toString();
+		default:
+			return date.toLocaleDateString( undefined, {
+				month: 'short',
+				day: 'numeric',
+			} );
+	}
 };
 
 const transformLineChartData = (
 	data: SubscribersData[],
-	hasAddedPaidSubscriptionProduct: boolean
+	hasAddedPaidSubscriptionProduct: boolean,
+	period: PeriodType
 ): ChartDataPoint[][] => {
 	const subscribersData: ChartDataPoint[] = [];
 	const paidSubscribersData: ChartDataPoint[] = [];
 	data?.map( ( point ) => {
-		const dateObj = new Date( point.period );
+		const dateObj = parseLocalDate( point.period );
 		if ( isNaN( dateObj.getTime() ) ) {
 			return null;
 		}
@@ -86,6 +114,7 @@ const transformLineChartData = (
 		subscribersData.push( {
 			date: dateObj,
 			value: point.subscribers ?? 0,
+			label: formatDate( point.period, period ),
 		} );
 
 		if ( hasAddedPaidSubscriptionProduct ) {
@@ -107,6 +136,7 @@ export default function SubscribersChartSection( {
 	slug?: string | null;
 	period?: PeriodType;
 } ) {
+	const containerRef = useRef< HTMLDivElement >( null );
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const isChartLibraryEnabled = config.isEnabled( 'stats/chart-library' );
 	const quantityDefault: QuantityDefaultType = {
@@ -120,6 +150,15 @@ export default function SubscribersChartSection( {
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const legendRef = useRef< HTMLDivElement >( null );
 	const translate = useTranslate();
+
+	const formatTimeTick = useCallback(
+		( timestamp: number ) => {
+			const date = new Date( timestamp );
+
+			return formatDateLabel( date, period );
+		},
+		[ period ]
+	);
 
 	const {
 		isLoading,
@@ -150,6 +189,7 @@ export default function SubscribersChartSection( {
 		}
 	}, [ status, isError ] );
 
+	const subscriberLineStroke = useCssVariable( '--color-primary-light', containerRef.current );
 	const products = useSelector( ( state ) => state.memberships?.productList?.items[ siteId ?? 0 ] );
 
 	// Products with an undefined value rather than an empty array means the API call has not been completed yet.
@@ -164,20 +204,22 @@ export default function SubscribersChartSection( {
 		[ data?.data, hasAddedPaidSubscriptionProduct ]
 	);
 	const [ subscribersData, paidSubscribersData ] = useMemo(
-		() => transformLineChartData( data?.data || [], hasAddedPaidSubscriptionProduct ),
-		[ data?.data, hasAddedPaidSubscriptionProduct ]
+		() => transformLineChartData( data?.data || [], hasAddedPaidSubscriptionProduct, period ),
+		[ data?.data, hasAddedPaidSubscriptionProduct, period ]
 	);
 
 	const lineChartData = [
 		{
 			label: translate( 'Subscribers' ),
+			icon: <Icon className="gridicon" icon={ people } />,
 			options: {
-				stroke: '#069e08',
+				stroke: subscriberLineStroke,
 			},
 			data: subscribersData,
 		},
 		{
 			label: translate( 'Paid Subscribers' ),
+			icon: <Icon className="gridicon" icon={ currencyDollar } />,
 			options: {
 				stroke: 'rgb(230, 139, 40)',
 			},
@@ -187,7 +229,7 @@ export default function SubscribersChartSection( {
 
 	const subscribers = {
 		label: 'Subscribers',
-		path: `/stats/subscribers/`,
+		path: '/stats/subscribers/',
 	};
 
 	const slugPath = slug ? `/${ slug }` : '';
@@ -198,7 +240,7 @@ export default function SubscribersChartSection( {
 		: `/subscribers/${ slug }`;
 
 	return (
-		<div className="subscribers-section">
+		<div ref={ containerRef } className="subscribers-section">
 			{ /* TODO: Remove highlight-cards class and use a highlight cards heading component instead. */ }
 			<div className="subscribers-section-heading highlight-cards">
 				<h1 className="highlight-cards-heading">
@@ -239,7 +281,9 @@ export default function SubscribersChartSection( {
 							chartData={ lineChartData }
 							height={ 300 }
 							EmptyState={ () => null }
-							zeroBaseline={ false }
+							zeroBaseline={ lineChartData.length > 1 }
+							formatTimeTick={ formatTimeTick }
+							placeholder={ <StatsModulePlaceholder className="is-chart" isLoading /> }
 						/>
 					) : (
 						<UplotChart

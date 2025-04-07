@@ -3,7 +3,7 @@ import envVariables from '../../env-variables';
 import { EditorComponent } from './editor-component';
 
 const selectors = {
-	exitButton: `a[aria-label="Go back to the Dashboard"]`,
+	exitButton: 'a[aria-label="Go back to the Dashboard"]',
 	templatePartsItem: 'button[id="/wp_template_part"]',
 	manageAllTemplatePartsItem: 'button:text("Manage all template parts")',
 	navigationScreenTitle: '.edit-site-sidebar-navigation-screen__title',

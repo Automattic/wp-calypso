@@ -8,7 +8,8 @@ import type { Design } from '../types';
 export const getFilteredDesignsByCategory = (
 	designs: Design[],
 	categorySlugs: string[] | null | undefined,
-	designTierSlugs: string[]
+	designTierSlugs: string[],
+	priorityThemes: Record< string, string > | null
 ) => {
 	const filteredDesigns = designs.filter(
 		( design ) =>
@@ -74,10 +75,32 @@ export const getFilteredDesignsByCategory = (
 	// limit the best designs to 6
 	filteredDesignsByCategory.best = filteredDesignsByCategory.best.slice( 0, 6 );
 
+	// Prioritize themes based on the priorityThemes mapping
+	if ( categorySlugs && priorityThemes ) {
+		for ( const categorySlug of categorySlugs ) {
+			const priorityThemeSlug = priorityThemes[ categorySlug ];
+
+			if ( priorityThemeSlug && filteredDesignsByCategory[ categorySlug ] ) {
+				filteredDesignsByCategory[ categorySlug ].sort( ( a, b ) => {
+					if ( a.slug === priorityThemeSlug ) {
+						return -1;
+					}
+					if ( b.slug === priorityThemeSlug ) {
+						return 1;
+					}
+					return 0;
+				} );
+			}
+		}
+	}
+
 	return filteredDesignsByCategory;
 };
 
-export const useFilteredDesignsByGroup = ( designs: Design[] ): { [ key: string ]: Design[] } => {
+export const useFilteredDesignsByGroup = (
+	designs: Design[],
+	priorityThemes: Record< string, string > | null
+): { [ key: string ]: Design[] } => {
 	const { selectedCategoriesWithoutDesignTier, selectedDesignTiers } = useDesignPickerFilters();
 
 	const filteredDesigns = useMemo( () => {
@@ -85,14 +108,15 @@ export const useFilteredDesignsByGroup = ( designs: Design[] ): { [ key: string 
 			return getFilteredDesignsByCategory(
 				designs,
 				selectedCategoriesWithoutDesignTier,
-				selectedDesignTiers
+				selectedDesignTiers,
+				priorityThemes
 			);
 		}
 
 		return {
 			all: designs,
 		};
-	}, [ designs, selectedCategoriesWithoutDesignTier, selectedDesignTiers ] );
+	}, [ designs, selectedCategoriesWithoutDesignTier, selectedDesignTiers, priorityThemes ] );
 
 	return filteredDesigns;
 };

@@ -1,22 +1,24 @@
-import { useSitePlans } from '@automattic/data-stores/src/plans';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Notice } from '@wordpress/components';
+import { useTranslate, formatCurrency } from 'i18n-calypso';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import DomainToPlanCreditMessage from 'calypso/components/domain-to-plan-credit-message';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useDomainToPlanCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-domain-to-plan-credits-applicable';
 import { useSelector } from 'calypso/state';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { PlanSlug } from '@automattic/calypso-products';
 
 const PlanCreditNotice = () => {
 	const site = useSelector( getSelectedSite );
 	const { ID: siteId } = site || {};
-	const { data: sitePlans } = useSitePlans( { siteId, coupon: undefined } );
-	const domainToPlanCreditsApplicable = useDomainToPlanCreditsApplicable(
-		siteId,
-		Object.keys( sitePlans || {} ) as PlanSlug[]
-	);
+	const domainToPlanCreditsApplicable = useDomainToPlanCreditsApplicable( siteId );
 	const showNotice = domainToPlanCreditsApplicable !== null && domainToPlanCreditsApplicable > 0;
+	const translate = useTranslate();
+	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	const upgradeCreditDocsUrl = localizeUrl(
+		'https://wordpress.com/support/manage-purchases/upgrade-your-plan/#upgrade-credit'
+	);
 
 	if ( ! siteId ) {
 		return null;
@@ -33,7 +35,22 @@ const PlanCreditNotice = () => {
 					status="info"
 					onRemove={ () => {} }
 				>
-					<DomainToPlanCreditMessage amount={ domainToPlanCreditsApplicable } />
+					{ translate(
+						'You have {{b}}%(amountInCurrency)s{{/b}} in {{a}}upgrade credits{{/a}} available from your current domain. This credit will be applied at checkout if you purchase a plan today!',
+						{
+							args: {
+								amountInCurrency: formatCurrency(
+									domainToPlanCreditsApplicable,
+									currencyCode ?? '',
+									{ isSmallestUnit: true }
+								),
+							},
+							components: {
+								b: <strong />,
+								a: <InlineSupportLink supportLink={ upgradeCreditDocsUrl } />,
+							},
+						}
+					) }
 				</Notice>
 			) }
 		</>

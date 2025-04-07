@@ -29,6 +29,7 @@ export function HelpCenterChat( {
 	const userFieldMessage = params.get( 'userFieldMessage' );
 	const siteUrl = params.get( 'siteUrl' );
 	const siteId = params.get( 'siteId' );
+	const userFieldFlowName = params.get( 'userFieldFlowName' );
 
 	useEffect( () => {
 		if ( preventOdieAccess ) {
@@ -47,6 +48,7 @@ export function HelpCenterChat( {
 			selectedSiteId={ Number( siteId ) || ( site?.ID as number ) }
 			selectedSiteURL={ siteUrl || ( site?.URL as string ) }
 			userFieldMessage={ userFieldMessage }
+			userFieldFlowName={ userFieldFlowName }
 			isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
 			extraContactOptions={
 				<ExtraContactOptions isUserEligible={ isUserEligibleForPaidSupport } />

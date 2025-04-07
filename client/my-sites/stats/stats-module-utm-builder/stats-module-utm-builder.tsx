@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Modal, Button, VisuallyHidden } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { link } from '@wordpress/icons';
@@ -58,19 +59,22 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger, initialData }
 			className="stats-utm-builder__trigger"
 			onClick={ handleClick }
 			variant="secondary"
-		>
-			{ translate( 'URL Builder' ) }
-		</Button>
+			title={ translate( 'URL Builder' ) }
+			aria-label={ translate( 'URL Builder' ) }
+		/>
 	);
+
+	const isWPAdmin = config.isEnabled( 'is_odyssey' );
+	const utmBuilderClasses = clsx( 'stats-utm-builder__overlay', { 'is-odyssey-stats': isWPAdmin } );
 
 	return (
 		<>
 			{ triggerNode }
 			{ isOpen && (
 				<Modal
-					title={ translate( 'URL Builder' ) }
+					title={ translate( 'Generate URL' ) }
 					onRequestClose={ closeModal }
-					overlayClassName="stats-utm-builder__overlay"
+					overlayClassName={ utmBuilderClasses }
 					bodyOpenClassName="stats-utm-builder__body-modal-open"
 				>
 					<div className={ clsx( modalClassName, 'stats-utm-builder-modal' ) }>
@@ -82,9 +86,15 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger, initialData }
 						</div>
 						<div className="stats-utm-builder__help">
 							<div className="stats-utm-builder__help-bg"></div>
-							<div className="stats-utm-builder__description">
-								{ translate( 'Parameter descriptions and examples.' ) }
-							</div>
+							<h2 className="stats-utm-builder__label">
+								{ translate( 'Why should I use this?' ) }
+							</h2>
+							<p className="stats-utm-builder__description">
+								{ translate(
+									'UTM codes help track where your traffic comes from. Adding them to your URLs gives you insights into what works and where to optimize.'
+								) }
+							</p>
+
 							<VisuallyHidden>
 								<section id="stats-utm-builder-help-section-url">
 									<div className="stats-utm-builder__label">{ translate( 'URL' ) }</div>
@@ -94,42 +104,36 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger, initialData }
 									</div>
 								</section>
 							</VisuallyHidden>
-							<section id="stats-utm-builder-help-section-campaign-source">
-								<div className="stats-utm-builder__label">{ translate( 'Campaign Source' ) }</div>
-								<div className="stats-utm-builder__help-section-parameter">utm_source</div>
-								<div>
-									{ translate(
-										'Use utm_source to identify a search engine, newsletter name or other source.'
-									) }
-								</div>
-								<div className="stats-utm-builder__help-section-parameter-example">
-									{ translate( 'Example: newsletter, X, Google' ) }
-								</div>
-							</section>
-							<section id="stats-utm-builder-help-section-campaign-medium">
-								<div className="stats-utm-builder__label">{ translate( 'Campaign Medium' ) }</div>
-								<div className="stats-utm-builder__help-section-parameter">utm_medium</div>
-								<div>
-									{ translate(
-										'Use utm_medium to identify a medium such as email or cost-per-click.'
-									) }
-								</div>
-								<div className="stats-utm-builder__help-section-parameter-example">
-									{ translate( 'Example: cpc, banner, email' ) }
-								</div>
-							</section>
+
 							<section id="stats-utm-builder-help-section-campaign-name">
-								<div className="stats-utm-builder__label">{ translate( 'Campaign Name' ) }</div>
-								<div className="stats-utm-builder__help-section-parameter">utm_campaign</div>
-								<div>
-									{ translate(
-										'Use utm_campaign to identify a specific product promotion or strategic campaign.'
-									) }
-								</div>
-								<div className="stats-utm-builder__help-section-parameter-example">
-									{ translate( 'Example: promotion, sale' ) }
-								</div>
+								<pre className="stats-utm-builder__help-section-parameter">utm_campaign</pre>
+								<p>{ translate( 'Name your campaign' ) }</p>
+								<p className="stats-utm-builder__help-section-parameter-example">
+									{ translate( 'Example: christmas, flash-sale' ) }
+								</p>
 							</section>
+
+							<section id="stats-utm-builder-help-section-campaign-source">
+								<pre className="stats-utm-builder__help-section-parameter">utm_source</pre>
+								<p>{ translate( 'Define where traffic originates' ) }</p>
+								<p className="stats-utm-builder__help-section-parameter-example">
+									{ translate( 'Example: newsletter, facebook, google' ) }
+								</p>
+							</section>
+
+							<section id="stats-utm-builder-help-section-campaign-medium">
+								<pre className="stats-utm-builder__help-section-parameter">utm_medium</pre>
+								<p>{ translate( 'Define the channel type' ) }</p>
+								<p className="stats-utm-builder__help-section-parameter-example">
+									{ translate( 'Example: email, social, cpc' ) }
+								</p>
+							</section>
+
+							<p>
+								{ translate(
+									'Use your generated URLs in social posts, emails, or ads. Jetpack Stats will track UTM codes, giving you accurate insights into your traffic.'
+								) }
+							</p>
 						</div>
 					</div>
 				</Modal>

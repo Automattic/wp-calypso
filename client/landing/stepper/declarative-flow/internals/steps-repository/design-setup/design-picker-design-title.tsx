@@ -7,16 +7,25 @@ import './design-picker-design-title.scss';
 type Props = {
 	designTitle: string;
 	selectedDesign: Design;
+	siteId: number | null;
+	siteSlug: string | null;
 };
 
-const DesignPickerDesignTitle: FC< Props > = ( { designTitle, selectedDesign } ) => (
+const DesignPickerDesignTitle: FC< Props > = ( {
+	designTitle,
+	selectedDesign,
+	siteId,
+	siteSlug,
+} ) => (
 	<div className="design-picker-design-title__container">
-		{ designTitle }
+		<span className="design-picker-design-title__design-title">{ designTitle }</span>
 		<ThemeTierBadge
 			className="design-picker-design-title__theme-tier-badge"
 			isLockedStyleVariation={ false }
 			themeId={ selectedDesign.slug }
 			showPartnerPrice
+			siteId={ siteId }
+			siteSlug={ siteSlug }
 		/>
 	</div>
 );

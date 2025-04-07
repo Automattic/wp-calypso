@@ -1,0 +1,100 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "client/landing/subscriptions/components/site-subscriptions-list/styles/placeholders";
+
+.reader-feed-item {
+	border-block-end: 1px solid $studio-gray-5;
+	padding-top: 20px;
+	padding-bottom: 20px;
+
+	&:first-child {
+		border-block-start: 1px solid $studio-gray-5;
+	}
+
+	@include breakpoint-deprecated( "<660px" ) {
+		padding: 10px 0 16px;
+	}
+
+	&__site-preview-v-stack {
+		flex: 1;
+		max-width: none;
+
+		@include breakpoint-deprecated( "<660px" ) {
+			max-width: none;
+			align-items: flex-start;
+		}
+	}
+
+	&__site-preview-h-stack {
+		flex: 1;
+		max-width: 250px;
+
+		@include breakpoint-deprecated( "<660px" ) {
+			max-width: none;
+			align-items: flex-start;
+		}
+	}
+
+	&__title-with-url-v-stack {
+		flex: 1;
+
+		@include breakpoint-deprecated( "<660px" ) {
+			padding-left: 16px;
+			padding-top: 5px;
+		}
+	}
+
+	&__icon {
+		@include breakpoint-deprecated( "<660px" ) {
+			padding-top: 6px;
+		}
+	}
+
+	&__title {
+		@extend %site-subscriptions-list-site-title;
+	}
+
+	&__url {
+		@extend %site-subscriptions-list-site-url;
+	}
+
+	&__mobile-description {
+		@extend %site-subscriptions-list-default-text;
+		display: none;
+		margin-top: 14px;
+		margin-bottom: 11px;
+
+		@include breakpoint-deprecated( "<660px" ) {
+			display: block;
+		}
+	}
+
+	&__description {
+		@extend %site-subscriptions-list-default-text;
+		flex: 1;
+		width: 100%;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+
+
+		@include breakpoint-deprecated( "<660px" ) {
+			display: none;
+		}
+	}
+
+	&__subscribe-button {
+		display: block;
+
+		@include breakpoint-deprecated( "<660px" ) {
+			display: none;
+		}
+	}
+
+	&__mobile-subscribe-button {
+		display: none;
+
+		@include breakpoint-deprecated( "<660px" ) {
+			display: block;
+		}
+	}
+}

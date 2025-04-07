@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
 .a4a-marketplace__toggle-marketplace-type {
 	display: flex;
 	align-items: center;
@@ -16,11 +19,11 @@
 
 .referral-toggle__notice {
 	.a4a-popover__title {
-		@include a4a-font-heading-md;
+		@include heading-medium;
 		color: var(--studio-gray-80);
 	}
 
 	.referral-toggle__notice-description {
-		@include a4a-font-body-md;
+		@include body-medium;
 	}
 }

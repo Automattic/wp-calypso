@@ -32,7 +32,7 @@ import './style.scss';
 
 const noticeOptions = {
 	duration: 5000,
-	id: `domain-forwarding-notification`,
+	id: 'domain-forwarding-notification',
 };
 
 export default function DomainForwardingCard( {

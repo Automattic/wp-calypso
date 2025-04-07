@@ -1,7 +1,6 @@
 import { Button, Tooltip } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
 import { Icon, external } from '@wordpress/icons';
-import { useTranslate, numberFormat, numberFormatCompact } from 'i18n-calypso';
+import { useTranslate, numberFormat, numberFormatCompact, formatCurrency } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import { CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
@@ -256,8 +255,17 @@ export default function PlanSelectionDetails( {
 
 			<div className="pressable-overview-plan-selection__details-hint">
 				{ translate(
-					"*If you exceed your plan's storage or traffic limits, you will be charged {{b}}$0.50{{/b}} per GB and {{b}}$8{{/b}} per 10K visits per month.",
+					"*If you exceed your plan's storage or traffic limits, you will be charged {{b}}%(storageCharge)s{{/b}} per GB and {{b}}%(trafficCharge)s{{/b}} per %(visits)s visits per month.",
 					{
+						args: {
+							storageCharge: formatCurrency( 0.5, 'USD', {
+								stripZeros: true,
+							} ),
+							trafficCharge: formatCurrency( 8, 'USD', {
+								stripZeros: true,
+							} ),
+							visits: numberFormatCompact( 10000 ),
+						},
 						components: {
 							b: <b />,
 						},

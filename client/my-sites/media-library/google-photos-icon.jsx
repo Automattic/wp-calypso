@@ -11,7 +11,7 @@ const GooglePhotosIcon = ( props ) => (
 		xmlns="http://www.w3.org/2000/svg"
 		{ ...props }
 	>
-		<g clip-path="url(#clip0_3_5000)">
+		<g clipPath="url(#clip0_3_5000)">
 			<path
 				opacity="0.4"
 				d="M11.5 10.4553C17.8511 10.4553 23 15.6034 23 21.9553V23.0001H1.04475C0.467797 23.0001 0 22.5323 0 21.9553C0 15.6034 5.14888 10.4553 11.5 10.4553Z"

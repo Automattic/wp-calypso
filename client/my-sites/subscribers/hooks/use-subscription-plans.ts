@@ -1,5 +1,4 @@
-import { getCurrencyObject } from '@automattic/format-currency';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, getCurrencyObject } from 'i18n-calypso';
 import { ReactNode, useMemo } from 'react';
 import {
 	PLAN_YEARLY_FREQUENCY,

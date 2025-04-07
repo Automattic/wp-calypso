@@ -55,7 +55,7 @@ declare global {
 	}
 }
 
-const siteSlug = `testnewsletter.wordpress.com`;
+const siteSlug = 'testnewsletter.wordpress.com';
 const user = {
 	ID: 1234,
 	username: 'testUser',
@@ -227,7 +227,7 @@ describe( 'Launchpad', () => {
 					initialReduxState,
 					'/setup/newsletter/launchpad'
 				);
-				expect( replaceMock ).toHaveBeenCalledWith( `/home` );
+				expect( replaceMock ).toHaveBeenCalledWith( '/home' );
 			} );
 		} );
 	} );

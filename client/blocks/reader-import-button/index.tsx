@@ -3,7 +3,6 @@ import { upload } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FilePicker from 'calypso/components/file-picker';
-import { useResendEmailVerification } from 'calypso/landing/stepper/hooks/use-resend-email-verification';
 import wpcom from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
@@ -21,7 +20,6 @@ const ReaderImportButton: React.FC< ReaderImportButtonProps > = ( { onProgress =
 	const [ disabled, setDisabled ] = useState( false );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const resendEmailVerification = useResendEmailVerification();
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
 	const checkUser = ( event: React.MouseEvent< HTMLButtonElement > ) => {
@@ -29,12 +27,10 @@ const ReaderImportButton: React.FC< ReaderImportButtonProps > = ( { onProgress =
 			event?.preventDefault();
 
 			dispatch(
-				errorNotice( translate( 'Your email has not been verified yet.' ), {
+				errorNotice( translate( 'Please verify your email before subscribing.' ), {
 					id: 'resend-verification-email',
-					button: translate( 'Resend Email' ),
-					onClick: () => {
-						resendEmailVerification();
-					},
+					button: translate( 'Account Settings' ),
+					href: '/me/account',
 				} )
 			);
 		}

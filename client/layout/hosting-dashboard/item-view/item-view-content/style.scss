@@ -7,3 +7,9 @@
 	overflow-x: hidden;
 	display: flex;
 }
+
+// We don't want this element to scroll in this tab screen.
+// The dataviews-wrapper will scroll instead.
+.hosting-dashboard-item-view__content:has(.site-logs) {
+	overflow-y: hidden;
+}

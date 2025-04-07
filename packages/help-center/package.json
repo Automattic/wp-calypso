@@ -37,27 +37,27 @@
 		"@automattic/zendesk-client": "workspace:^",
 		"@popperjs/core": "^2.11.8",
 		"@tanstack/react-query": "^5.15.5",
-		"@wordpress/base-styles": "^5.16.0",
-		"@wordpress/components": "^29.2.0",
-		"@wordpress/i18n": "^5.16.0",
-		"@wordpress/icons": "^10.16.0",
-		"@wordpress/primitives": "^4.16.0",
+		"@wordpress/base-styles": "^5.21.0",
+		"@wordpress/components": "^29.7.0",
+		"@wordpress/i18n": "^5.21.0",
+		"@wordpress/icons": "^10.21.0",
+		"@wordpress/primitives": "^4.21.0",
 		"clsx": "^2.1.1",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"react-draggable": "^4.4.4",
+		"react-draggable": "^4.4.6",
 		"smooch": "5.6.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@types/smooch": "^5.3.7",
-		"typescript": "^5.3.3"
+		"typescript": "^5.8.2"
 	},
 	"peerDependencies": {
 		"@automattic/calypso-router": "workspace:^",
-		"@wordpress/data": "^10.16.0",
-		"@wordpress/element": "^6.16.0",
+		"@wordpress/data": "^10.21.0",
+		"@wordpress/element": "^6.21.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"redux": "^5.0.1"

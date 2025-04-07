@@ -1,8 +1,10 @@
 import page from '@automattic/calypso-router';
 import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { DomainsTable, ResponseDomain } from '@automattic/domains-table';
+import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
+import wpcomRequest from 'wpcom-proxy-request';
 import SiteAddressChanger from 'calypso/blocks/site-address-changer';
 import DocumentHead from 'calypso/components/data/document-head';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -17,12 +19,14 @@ import {
 	showUpdatePrimaryDomainErrorNotice,
 	showUpdatePrimaryDomainSuccessNotice,
 } from 'calypso/state/domains/management/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions'; // eslint-disable-line no-restricted-imports
 import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
 import { hasDomainCredit as hasDomainCreditSelector } from 'calypso/state/sites/plans/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { domainManagementList } from '../../paths';
 import DomainHeader from '../components/domain-header';
+import PointToWpcomDialog from '../components/point-to-wpcom-dialog';
 import PrimaryDomainSelector from '../components/primary-domain-selector';
 import {
 	createBulkAction,
@@ -47,6 +51,8 @@ interface BulkSiteDomainsProps {
 
 export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 	const site = useSelector( getSelectedSite );
+	const [ domainToPointToWpcom, setDomainToPointToWpcom ] = useState< string | null >( null );
+	const [ isPointingToWpcom, setIsPointingToWpcom ] = useState( false );
 	const userCanSetPrimaryDomains = useSelector(
 		( state ) => ! currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 	);
@@ -57,6 +63,8 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const isInSupportSession = Boolean( useSelector( isSupportSession ) );
+	const [ showPointToWpcomModal, setShowPointToWpcomModal ] = useState( false );
+	const { __ } = useI18n();
 
 	const hasNonWpcomDomains = useMemo( () => {
 		return filterOutWpcomDomains( data?.domains ?? [] ).length > 0;
@@ -117,6 +125,34 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 		}
 	};
 
+	const onPointToWpcom = async ( domain: string ) => {
+		if ( ! domain ) {
+			return;
+		}
+		setIsPointingToWpcom( true );
+		dispatch(
+			recordTracksEvent( 'calypso_domain_management_point_to_wpcom', {
+				domain,
+			} )
+		);
+		try {
+			await wpcomRequest( {
+				path: '/domains/point-to-wpcom',
+				apiNamespace: 'wpcom/v2',
+				method: 'POST',
+				body: {
+					domain: domain,
+				},
+			} );
+			await refetch();
+			dispatch( successNotice( __( 'Domain is pointing to WordPress.com' ) ) );
+		} catch ( error ) {
+			dispatch( errorNotice( __( 'Error pointing domain to WordPress.com' ) ) );
+		} finally {
+			setIsPointingToWpcom( false );
+		}
+	};
+
 	return (
 		<>
 			<PageViewTracker path={ props.analyticsPath } title={ props.analyticsTitle } />
@@ -140,6 +176,11 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 					domainStatusPurchaseActions={ purchaseActions }
 					userCanSetPrimaryDomains={ userCanSetPrimaryDomains }
 					currentUserCanBulkUpdateContactInfo={ ! isInSupportSession }
+					onPointToWpcom={ ( domain ) => {
+						setDomainToPointToWpcom( domain );
+						setShowPointToWpcomModal( true );
+					} }
+					isPointingToWpcom={ isPointingToWpcom }
 					onDomainAction={ ( action, domain ) => {
 						if ( action === 'set-primary-address' && site ) {
 							return {
@@ -191,6 +232,15 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 						skipRedirection={ false }
 					/>
 				) }
+				<PointToWpcomDialog
+					visible={ showPointToWpcomModal }
+					onClose={ ( accepted: boolean ) => {
+						setShowPointToWpcomModal( false );
+						if ( accepted ) {
+							onPointToWpcom( domainToPointToWpcom ?? '' );
+						}
+					} }
+				/>
 			</Main>
 		</>
 	);

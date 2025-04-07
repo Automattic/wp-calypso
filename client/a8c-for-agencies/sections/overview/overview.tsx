@@ -10,6 +10,7 @@ import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderTitle as Title,
 } from 'calypso/layout/hosting-dashboard/header';
+import { MissingPaymentSettingsNotice } from '../referrals/common/missing-payment-settings-notice';
 import OverviewBody from './body';
 import OverviewHeaderActions from './header-actions';
 import PartnerDirectoryOnboardingCard from './partner-directory-onboarding-card';
@@ -24,8 +25,10 @@ export default function Overview() {
 	return (
 		<Layout title={ title } wide>
 			<LayoutTop>
+				<MissingPaymentSettingsNotice />
 				<A4AAgencyApprovalNotice />
 				<PressableUsageLimitNotice />
+
 				<LayoutHeader className="a4a-overview-header">
 					<Title>{ title }</Title>
 					<Actions className="a4a-overview__header-actions">

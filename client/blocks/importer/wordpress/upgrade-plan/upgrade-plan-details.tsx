@@ -9,12 +9,11 @@ import {
 } from '@automattic/calypso-products';
 import { Badge, CloudLogo, Button, PlanPrice } from '@automattic/components';
 import { PricingMetaForGridPlan } from '@automattic/data-stores';
-import { formatCurrency } from '@automattic/format-currency';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { NextButton, Title } from '@automattic/onboarding';
 import { Plans2023Tooltip, useManageTooltipToggle } from '@automattic/plans-grid-next';
 import clsx from 'clsx';
-import { type TranslateResult, useTranslate } from 'i18n-calypso';
+import { type TranslateResult, useTranslate, formatCurrency, numberFormat } from 'i18n-calypso';
 import { useState, useEffect, type PropsWithChildren } from 'react';
 import ButtonGroup from 'calypso/components/button-group';
 import { useSelectedPlanUpgradeMutation } from 'calypso/data/import-flow/use-selected-plan-upgrade';
@@ -183,9 +182,14 @@ const PlanPriceOffer = ( props: PlanPriceOfferProps ) => {
 		);
 	}
 
-	const badgeText = hasEnTranslation( '50% off your first year' )
-		? translate( '50% off your first year' )
-		: translate( 'One time offer' );
+	const badgeText = translate( '%(percentage)s off your first year', {
+		args: {
+			percentage: numberFormat( 0.5, {
+				numberFormatOptions: { style: 'percent' },
+			} ),
+			comment: 'percentage like 50% off',
+		},
+	} );
 
 	return (
 		<UpgradePlanPrice billingTimeFrame={ billingTimeFrame }>

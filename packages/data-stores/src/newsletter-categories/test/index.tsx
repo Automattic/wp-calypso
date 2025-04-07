@@ -81,8 +81,7 @@ describe( 'useNewsletterCategories', () => {
 		await waitFor( () => expect( request ).toHaveBeenCalled() );
 
 		expect( request ).toHaveBeenCalledWith( {
-			path: `/sites/123/newsletter-categories`,
-			apiVersion: '2',
+			path: '/sites/123/newsletter-categories',
 			apiNamespace: 'wpcom/v2',
 		} );
 	} );

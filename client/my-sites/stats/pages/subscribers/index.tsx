@@ -1,17 +1,20 @@
+import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
-import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import Main from 'calypso/my-sites/stats/components/stats-main';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import StatsModuleEmails from 'calypso/my-sites/stats/features/modules/stats-emails';
 import statsStrings from 'calypso/my-sites/stats/stats-strings';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
 import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
 import { useSelector } from 'calypso/state';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { getSiteSlug, isSimpleSite } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -83,14 +86,8 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	const isSimple = useSelector( isSimpleSite );
 	const hasNoSubscriberOtherThanAdmin =
 		! subscribersTotals?.total ||
-		( subscribersTotals?.total === 1 && subscribersTotals?.is_owner_subscribing );
+		( subscribersTotals?.total === 1 && subscribersTotals?.is_owner_subscribed );
 	const showLaunchpad = ! isLoading && hasNoSubscriberOtherThanAdmin;
-
-	const emptyComponent = isSimple ? (
-		<SubscriberLaunchpad launchpadContext="subscriber-stats" />
-	) : (
-		<EmptyListView />
-	);
 
 	// Track the last viewed tab.
 	// Necessary to properly configure the fixed navigation headers.
@@ -100,11 +97,31 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 		'YYYY-MM-DD'
 	) }`;
 
+	const isWPAdmin = config.isEnabled( 'is_odyssey' );
+	const subscribersPageClasses = clsx( 'stats', { 'is-odyssey-stats': isWPAdmin } );
+
+	const emptyComponent =
+		isSimple && ! isWPAdmin ? (
+			<SubscriberLaunchpad launchpadContext="subscriber-stats" />
+		) : (
+			<EmptyListView />
+		);
+
+	// If the subscriptions module is inactive, redirect to the stats page.
+	const isSubscriptionsModuleActive = useSelector( ( state ) =>
+		siteId ? isJetpackModuleActive( state, siteId, 'subscriptions', true ) : false
+	);
+
+	if ( ! isSimple && ! isSubscriptionsModuleActive ) {
+		page.redirect( `/stats/day/${ siteSlug }` );
+		return;
+	}
+
 	return (
 		<Main fullWidthLayout>
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<PageViewTracker path="/stats/subscribers/:site" title="Stats > Subscribers" />
-			<div className="stats">
+			<div className={ subscribersPageClasses }>
 				<NavigationHeader
 					className="stats__section-header modernized-header"
 					title={ STATS_PRODUCT_NAME }

@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import successImage from 'calypso/assets/images/marketplace/check-circle.svg';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import Loading from 'calypso/components/loading';
 import Main from 'calypso/components/main';
 import { ThankYou } from 'calypso/components/thank-you';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -79,7 +79,7 @@ export default function GiftThankYou( { site }: { site: number | string } ) {
 			<PageViewTracker path="/checkout/gift/thank-you/:site" title="Checkout > Thank You" />
 			{ isLoading && (
 				<div className="gift-thank-you__loader">
-					<LoadingEllipsis />
+					<Loading />
 				</div>
 			) }
 			{ ! isLoading && (

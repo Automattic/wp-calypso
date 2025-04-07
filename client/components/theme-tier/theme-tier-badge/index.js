@@ -1,15 +1,15 @@
 import { BUNDLED_THEME, DOT_ORG_THEME, MARKETPLACE_THEME } from '@automattic/design-picker';
 import clsx from 'clsx';
-import useIsUpdatedBadgeDesign from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/design-setup/hooks/use-is-updated-badge-design';
+import { useMemo } from 'react';
 import { useSelector } from 'calypso/state';
 import { useIsThemeAllowedOnSite } from 'calypso/state/themes/hooks/use-is-theme-allowed-on-site';
 import { useThemeTierForTheme } from 'calypso/state/themes/hooks/use-theme-tier-for-theme';
-import { getThemeType, isThemePurchased } from 'calypso/state/themes/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getThemeType } from 'calypso/state/themes/selectors';
 import { ThemeTierBadgeContextProvider } from './theme-tier-badge-context';
 import ThemeTierBundledBadge from './theme-tier-bundled-badge';
 import ThemeTierCommunityBadge from './theme-tier-community-badge';
 import ThemeTierFreeBadge from './theme-tier-free-badge';
+import ThemeTierIncludedBadge from './theme-tier-included-badge';
 import ThemeTierPartnerBadge from './theme-tier-partner-badge';
 import ThemeTierStyleVariationBadge from './theme-tier-style-variation-badge';
 import ThemeTierUpgradeBadge from './theme-tier-upgrade-badge';
@@ -21,49 +21,86 @@ export default function ThemeTierBadge( {
 	className = '',
 	isLockedStyleVariation,
 	showUpgradeBadge = true,
+	siteId,
+	siteSlug,
 	themeId,
 	showPartnerPrice = false,
+	isThemeList = false,
 } ) {
-	const siteId = useSelector( getSelectedSiteId );
 	const themeType = useSelector( ( state ) => getThemeType( state, themeId ) );
-	const isLegacyPremiumPurchased = useSelector( ( state ) =>
-		isThemePurchased( state, themeId, siteId )
-	);
-	const themeTier = useThemeTierForTheme( themeId );
+	const { slug: themeTierSlug } = useThemeTierForTheme( themeId );
 	const isThemeAllowed = useIsThemeAllowedOnSite( siteId, themeId );
-	const isUpdatedBadgeDesign = useIsUpdatedBadgeDesign();
-	const getBadge = () => {
-		if ( isUpdatedBadgeDesign && 'free' === themeTier?.slug ) {
+
+	const badge = useMemo( () => {
+		// We're still loading the theme tier, so don't render anything.
+		if ( ! themeTierSlug ) {
+			return null;
+		}
+
+		if ( themeTierSlug === 'free' ) {
 			return <ThemeTierFreeBadge />;
 		}
 
-		if ( BUNDLED_THEME === themeType ) {
-			return <ThemeTierBundledBadge />;
+		if (
+			isThemeAllowed &&
+			! [ DOT_ORG_THEME, MARKETPLACE_THEME, BUNDLED_THEME ].includes( themeType )
+		) {
+			return <ThemeTierIncludedBadge />;
+		}
+
+		if ( themeType === BUNDLED_THEME ) {
+			return (
+				<ThemeTierBundledBadge
+					hideBackgroundOnUpgrade={ isThemeList }
+					hideBundledBadge={ isThemeList }
+				/>
+			);
 		}
 
 		if ( isLockedStyleVariation ) {
 			return <ThemeTierStyleVariationBadge />;
 		}
 
-		if ( DOT_ORG_THEME === themeType ) {
-			return <ThemeTierCommunityBadge />;
+		if ( themeType === DOT_ORG_THEME ) {
+			return (
+				<ThemeTierCommunityBadge
+					hideBackgroundOnUpgrade={ isThemeList }
+					hideCommunityBadge={ isThemeList }
+				/>
+			);
 		}
 
-		if (
-			! isUpdatedBadgeDesign &&
-			( 'partner' === themeTier?.slug || MARKETPLACE_THEME === themeType )
-		) {
-			return <ThemeTierPartnerBadge />;
+		// All partner themes are also marketplace themes... Do we need this OR?
+		if ( themeTierSlug === 'partner' || themeType === MARKETPLACE_THEME ) {
+			return (
+				<ThemeTierPartnerBadge
+					showPartnerPrice={ showPartnerPrice }
+					hideBackgroundOnUpgrade={ isThemeList }
+					isLongLabel={ ! isThemeList }
+					hidePartnerBadge={ isThemeList }
+				/>
+			);
 		}
 
-		if ( isThemeAllowed || ( 'premium' === themeTier?.slug && isLegacyPremiumPurchased ) ) {
-			return null;
+		if ( ! isThemeAllowed && showUpgradeBadge ) {
+			return (
+				<ThemeTierUpgradeBadge
+					showPartnerPrice={ showPartnerPrice }
+					hideBackgroundOnUpgrade={ isThemeList }
+				/>
+			);
 		}
 
-		return <ThemeTierUpgradeBadge showPartnerPrice={ showPartnerPrice } />;
-	};
-
-	const badge = getBadge();
+		return null;
+	}, [
+		themeTierSlug,
+		isThemeAllowed,
+		themeType,
+		isLockedStyleVariation,
+		showPartnerPrice,
+		isThemeList,
+		showUpgradeBadge,
+	] );
 
 	if ( ! badge ) {
 		return null;
@@ -71,12 +108,14 @@ export default function ThemeTierBadge( {
 
 	return (
 		<div
-			className={ clsx( 'theme-tier-badge', `theme-tier-badge--${ themeTier.slug }`, className ) }
+			className={ clsx( 'theme-tier-badge', `theme-tier-badge--${ themeTierSlug }`, className ) }
 		>
 			<ThemeTierBadgeContextProvider
 				canGoToCheckout={ canGoToCheckout }
 				showUpgradeBadge={ showUpgradeBadge }
 				themeId={ themeId }
+				siteId={ siteId }
+				siteSlug={ siteSlug }
 			>
 				{ badge }
 			</ThemeTierBadgeContextProvider>

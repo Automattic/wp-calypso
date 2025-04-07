@@ -33,7 +33,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { DEFAULT_SORT_DIRECTION, DEFAULT_SORT_FIELD } from '../../sites/constants';
 import { Site } from '../../sites/types';
 import AssignLicenseStepProgress from '../assign-license-step-progress';
-import useAssignLicensesToSite from '../products-overview/hooks/use-assign-licenses-to-site';
+import useAssignLicensesToSite from '../products-overview-v2/hooks/use-assign-licenses-to-site';
 import { SITE_CARDS_PER_PAGE } from './constants';
 
 import './styles.scss';

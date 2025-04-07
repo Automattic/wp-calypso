@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, TimeSince } from '@automattic/components';
+import { isURL, getProtocol, getAuthority } from '@wordpress/url';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, some, flatMap } from 'lodash';
@@ -9,7 +10,6 @@ import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
 import Gravatar from 'calypso/components/gravatar';
-import TimeSince from 'calypso/components/time-since';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl } from 'calypso/lib/paths';
@@ -319,7 +319,15 @@ class PostComment extends PureComponent {
 		} else if ( commentAuthor.site_ID ) {
 			commentAuthorUrl = getStreamUrl( null, commentAuthor.site_ID );
 		} else {
-			commentAuthorUrl = commentAuthor?.URL;
+			const urlToCheck = commentAuthor?.URL;
+			if ( urlToCheck && isURL( urlToCheck ) ) {
+				const protocol = getProtocol( urlToCheck );
+				const domain = getAuthority( urlToCheck );
+				// isURL uses URL() which allows '%20' in Chromium but not Firefox, so we check ourselves.
+				if ( protocol === 'https:' && ! domain.includes( '%' ) ) {
+					commentAuthorUrl = urlToCheck;
+				}
+			}
 		}
 
 		return { comment, commentAuthor, commentAuthorUrl, commentAuthorName };

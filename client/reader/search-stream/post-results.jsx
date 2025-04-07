@@ -13,7 +13,6 @@ class PostResults extends Component {
 		query: PropTypes.string,
 		streamKey: PropTypes.string,
 		fixedHeaderHeight: PropTypes.number,
-		showBack: PropTypes.bool,
 	};
 
 	placeholderFactory = ( { key, ...rest } ) => {

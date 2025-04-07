@@ -7,7 +7,7 @@ import './style.scss';
 export default function () {
 	// Load the partner for the current user.
 	page(
-		`/partner-portal/partner`,
+		'/partner-portal/partner',
 		controller.partnerContext,
 		controller.allSitesContext,
 		makeLayout,
@@ -16,7 +16,7 @@ export default function () {
 
 	// Display the ToS, if necessary.
 	page(
-		`/partner-portal/terms-of-service`,
+		'/partner-portal/terms-of-service',
 		controller.requireAccessContext,
 		controller.termsOfServiceContext,
 		controller.allSitesContext,
@@ -26,7 +26,7 @@ export default function () {
 
 	// Display the list of partner keys for the user to select from.
 	page(
-		`/partner-portal/partner-key`,
+		'/partner-portal/partner-key',
 		controller.requireAccessContext,
 		controller.requireTermsOfServiceConsentContext,
 		controller.partnerKeyContext,
@@ -37,7 +37,7 @@ export default function () {
 
 	// List licenses.
 	page(
-		`/partner-portal/licenses/:filter(unassigned|assigned|revoked|standard)?`,
+		'/partner-portal/licenses/:filter(unassigned|assigned|revoked|standard)?',
 		controller.requireAccessContext,
 		controller.requireTermsOfServiceConsentContext,
 		controller.requireSelectedPartnerKeyContext,
@@ -48,11 +48,11 @@ export default function () {
 	);
 
 	// Redirect invalid license list filters back to the main portal page.
-	page( `/partner-portal/licenses/*`, '/partner-portal/licenses' );
+	page( '/partner-portal/licenses/*', '/partner-portal/licenses' );
 
 	// Issue a license.
 	page(
-		`/partner-portal/issue-license`,
+		'/partner-portal/issue-license',
 		controller.requireAccessContext,
 		controller.requireTermsOfServiceConsentContext,
 		controller.requireSelectedPartnerKeyContext,
@@ -64,7 +64,7 @@ export default function () {
 
 	// Assign a license to a site.
 	page(
-		`/partner-portal/assign-license`,
+		'/partner-portal/assign-license',
 		controller.requireAccessContext,
 		controller.requireTermsOfServiceConsentContext,
 		controller.requireSelectedPartnerKeyContext,
@@ -77,7 +77,7 @@ export default function () {
 
 	// Download 3rd party products after assigning
 	page(
-		`/partner-portal/download-products`,
+		'/partner-portal/download-products',
 		controller.requireAccessContext,
 		controller.requireTermsOfServiceConsentContext,
 		controller.requireSelectedPartnerKeyContext,
@@ -90,7 +90,7 @@ export default function () {
 
 	// Manage payment methods.
 	page(
-		`/partner-portal/payment-methods`,
+		'/partner-portal/payment-methods',
 		controller.requireAccessContext,
 		controller.requireTermsOfServiceConsentContext,
 		controller.requireSelectedPartnerKeyContext,
@@ -101,7 +101,7 @@ export default function () {
 	);
 
 	page(
-		`/partner-portal/payment-methods/add`,
+		'/partner-portal/payment-methods/add',
 		controller.requireAccessContext,
 		controller.requireTermsOfServiceConsentContext,
 		controller.requireSelectedPartnerKeyContext,
@@ -112,7 +112,7 @@ export default function () {
 	);
 
 	page(
-		`/partner-portal/invoices`,
+		'/partner-portal/invoices',
 		controller.requireAccessContext,
 		controller.requireTermsOfServiceConsentContext,
 		controller.requireSelectedPartnerKeyContext,
@@ -123,7 +123,7 @@ export default function () {
 	);
 
 	page(
-		`/partner-portal/company-details`,
+		'/partner-portal/company-details',
 		controller.requireAccessContext,
 		controller.requireTermsOfServiceConsentContext,
 		controller.requireSelectedPartnerKeyContext,
@@ -135,7 +135,7 @@ export default function () {
 
 	// Pricing page
 	page(
-		`/partner-portal/prices`,
+		'/partner-portal/prices',
 		controller.requireAccessContext,
 		controller.requireTermsOfServiceConsentContext,
 		controller.requireSelectedPartnerKeyContext,
@@ -147,7 +147,7 @@ export default function () {
 
 	// Billing dashboard
 	page(
-		`/partner-portal/billing`,
+		'/partner-portal/billing',
 		controller.requireAccessContext,
 		controller.requireTermsOfServiceConsentContext,
 		controller.requireSelectedPartnerKeyContext,
@@ -159,7 +159,7 @@ export default function () {
 
 	// Landing Page
 	page(
-		`/partner-portal`,
+		'/partner-portal',
 		controller.requireAccessContext,
 		controller.requireTermsOfServiceConsentContext,
 		controller.requireSelectedPartnerKeyContext,
@@ -172,7 +172,7 @@ export default function () {
 	// WPCOM Atomic Hosting Page
 	if ( config.isEnabled( 'jetpack/pro-dashboard-wpcom-atomic-hosting' ) ) {
 		page(
-			`/partner-portal/create-site`,
+			'/partner-portal/create-site',
 			controller.requireAccessContext,
 			controller.requireTermsOfServiceConsentContext,
 			controller.requireSelectedPartnerKeyContext,

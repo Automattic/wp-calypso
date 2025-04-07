@@ -17,10 +17,7 @@ import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { TrialPlan } from 'calypso/my-sites/plans/trials/trial-acknowledge/trial-plan';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import type {
-	Step,
-	ProvidedDependencies,
-} from 'calypso/landing/stepper/declarative-flow/internals/types';
+import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import type { UserData } from 'calypso/lib/user/user';
 import type { SiteSlug } from 'calypso/types';
 
@@ -30,7 +27,10 @@ interface Props {
 	siteSlug: SiteSlug;
 	flowName: string;
 	stepName: string;
-	submit?: ( providedDependencies?: ProvidedDependencies, ...params: string[] ) => void;
+	submit?: ( providedDependencies?: {
+		action: 'verify-email' | 'importer' | 'checkout';
+		checkoutUrl?: string;
+	} ) => void;
 }
 
 const MigrationTrialAcknowledgeInternal = function ( props: Props ) {
@@ -145,7 +145,12 @@ const MigrationTrialAcknowledgeInternal = function ( props: Props ) {
 	);
 };
 
-export const MigrationTrialAcknowledge: Step = ( { flow, stepName, navigation } ) => {
+export const MigrationTrialAcknowledge: Step< {
+	submits: {
+		action: 'verify-email' | 'importer' | 'checkout';
+		checkoutUrl?: string;
+	};
+} > = ( { flow, stepName, navigation } ) => {
 	const site = useSite();
 	const siteSlug = useSiteSlug();
 	const user = useSelector( getCurrentUser ) as UserData;

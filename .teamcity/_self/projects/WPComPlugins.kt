@@ -43,8 +43,6 @@ object WPComPlugins : Project({
 					"happy-blocks-release-build",
 					"command-palette-wp-admin-release-build",
 					"help-center-release-build",
-					"whats-new-release-build",
-					"newsletter-release-build",
 				)
 			}
 			dataToKeep = everything()
@@ -127,8 +125,6 @@ object CalypsoApps: BuildType({
 		apps/happy-blocks/release-files => happy-blocks.zip
 		apps/command-palette-wp-admin/dist => command-palette-wp-admin.zip
 		apps/help-center/dist => help-center.zip
-		apps/whats-new/dist => whats-new.zip
-		apps/newsletter/dist => newsletter.zip
 	""".trimIndent()
 
 	steps {

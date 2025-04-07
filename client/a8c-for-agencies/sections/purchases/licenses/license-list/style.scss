@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .license-list__header.card.is-compact {
 	display: none;
@@ -16,12 +17,12 @@
 	h2 {
 		margin-block-start: 3rem;
 		margin-block-end: 1rem;
-		font-size: $font-title-medium;
+		@include heading-medium;
 	}
 
 	p {
 		margin-block-end: 1rem;
-		font-size: $font-body;
+		@include body-large;
 
 		a {
 			color: var(--color-neutral-80);

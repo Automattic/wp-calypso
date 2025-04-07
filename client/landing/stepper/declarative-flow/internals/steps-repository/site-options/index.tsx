@@ -15,10 +15,15 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { tip } from 'calypso/signup/icons';
 import { useSite } from '../../../../hooks/use-site';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
-import type { StepProps } from '../../types';
+import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 
-const SiteOptions = ( { navigation }: Pick< StepProps, 'navigation' > ) => {
+const SiteOptions: Step< {
+	submits: {
+		siteTitle: string;
+		tagline: string;
+	};
+} > = ( { navigation } ) => {
 	const { currentSiteTitle, currentTagline } = useSelect(
 		( select ) => ( {
 			currentSiteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),

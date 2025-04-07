@@ -34,20 +34,20 @@
 	}
 
 	button.components-button.is-primary {
-		background-color: #117ac9;
-		border-color: #117ac9;
+		background-color: var(--studio-blue-50);
+		border-color: var(--studio-blue-50);
 
 		&:active:not(:disabled),
 		&:hover:not(:disabled),
 		&:focus:not(:disabled) {
-			background-color: #0e64a5;
-			border-color: #0e64a5;
+			background-color: var(--studio-blue-60);
+			border-color: var(--studio-blue-60);
 		}
 	}
 
 	button.components-button.is-link {
 		padding: 20px 0 6px 0;
-		color: #1d2333;
+		color: var(--studio-blue-90);
 
 		&:hover:not(:disabled) {
 			color: var(--studio-blue-50);
@@ -70,5 +70,5 @@
 
 .dialog__backdrop,
 .dialog__backdrop.card {
-	background-color: rgba(var(--color-neutral-70-rgb), 0.8) !important;
+	background-color: color-mix(in srgb, var(--color-neutral-70) 80%, transparent) !important;
 }

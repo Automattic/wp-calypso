@@ -1,12 +1,13 @@
 import { Card } from '@automattic/components';
 import { Subscriber } from '@automattic/data-stores';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
-import { createInterpolateElement } from '@wordpress/element';
 import { external } from '@wordpress/icons';
-import { useI18n } from '@wordpress/react-i18n';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
 import exportSubstackSubscribersImg from 'calypso/assets/images/importer/export-substack-subscribers.png';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { SubscribersStepProps } from '../types';
 import { normalizeFromSite } from '../utils';
 import SubscriberUploadForm from './upload-form';
@@ -20,7 +21,7 @@ export default function StepInitial( {
 	engine,
 	setAutoFetchData,
 }: SubscribersStepProps ) {
-	const { __ } = useI18n();
+	const translate = useTranslate();
 	const { importSelector } = useSelect( ( select ) => {
 		const subscriber = select( Subscriber.store );
 		return {
@@ -38,20 +39,30 @@ export default function StepInitial( {
 
 	return (
 		<Card>
-			<h2>{ __( 'Step 1: Export your subscribers from Substack' ) }</h2>
+			<h2>{ translate( 'Step 1: Export your subscribers from Substack' ) }</h2>
 			<p>
-				{ createInterpolateElement(
-					__(
-						'Generate a CSV file of all your Substack subscribers. On Substack, go to the <strong>Subscribers</strong> tab and click the <strong>Export</strong> button you’ll find on top of the table. Then, upload the downloaded CSV in the next step.'
-					),
+				{ translate(
+					'Generate a CSV of your Substack subscribers. In Substack, go to {{strong}}Subscribers{{/strong}}, click {{strong}}Export{{/strong}} under "All subscribers," then upload the CSV in the next step. On the free plan, {{supportLink}}you can import up to 100 subscribers.{{/supportLink}}',
 					{
-						strong: <strong />,
+						components: {
+							strong: <strong />,
+							supportLink: (
+								<InlineSupportLink
+									noWrap={ false }
+									showIcon={ false }
+									supportLink={ localizeUrl(
+										'https://wordpress.com/support/import-subscribers-to-a-newsletter/#troubleshooting-subscriber-imports'
+									) }
+									supportPostId={ 220199 }
+								/>
+							),
+						},
 					}
 				) }
 			</p>
 			<img
 				src={ exportSubstackSubscribersImg }
-				alt={ __( 'Export Substack subscribers' ) }
+				alt={ translate( 'Export Substack subscribers' ) }
 				className="export-subscribers"
 			/>
 			<Button
@@ -62,10 +73,10 @@ export default function StepInitial( {
 				iconPosition="right"
 				variant="primary"
 			>
-				{ __( 'Open Substack subscribers' ) }
+				{ translate( 'Open Substack subscribers' ) }
 			</Button>
 			<hr />
-			<h2>{ __( 'Step 2: Import your subscribers' ) }</h2>
+			<h2>{ translate( 'Step 2: Import your subscribers' ) }</h2>
 			{ selectedSite.ID && (
 				<SubscriberUploadForm
 					siteId={ selectedSite.ID }

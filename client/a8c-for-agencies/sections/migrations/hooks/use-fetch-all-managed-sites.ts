@@ -9,6 +9,7 @@ export type SiteItem = {
 	id: number;
 	site: string;
 	date: string;
+	rawSite: Site;
 };
 
 export const useFetchAllManagedSites = () => {
@@ -49,6 +50,7 @@ export const useFetchAllManagedSites = () => {
 						id: site.a4a_site_id,
 						site: urlToSlug( site.url ),
 						date: foundSite.options?.created_at || '',
+						rawSite: site,
 				  }
 				: null;
 		} )

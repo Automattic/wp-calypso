@@ -121,7 +121,7 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 	function onSiteViewClick() {
 		if ( isEnabled( 'onboarding/import-redirect-to-themes' ) ) {
 			recordTracksEvent( 'calypso_site_importer_pick_a_design' );
-			stepNavigator?.navigate?.( 'designSetup' );
+			stepNavigator?.navigate?.( 'design-setup' );
 		} else {
 			recordTracksEvent( 'calypso_site_importer_view_site' );
 			stepNavigator?.goToSiteViewPage?.();
