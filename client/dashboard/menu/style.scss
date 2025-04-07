@@ -7,3 +7,14 @@
 		color: $black;
 	}
 }
+
+// A4A specific styles.
+.dashboard-header-bar__a4a {
+	.dashboard-menu__item.dashboard-menu__item {
+		color: $gray-700;
+
+		&.is-active {
+			color: $white;
+		}
+	}
+}

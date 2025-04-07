@@ -6,6 +6,13 @@
 }
 
 .dashboard-secondary-menu__divider {
-    height: $grid-unit-30;;
+	height: $grid-unit-30;
 	border-left: $border-width solid $gray-100;
+}
+
+// A4A specific styles.
+.dashboard-header-bar__a4a {
+	.dashboard-secondary-menu__item.dashboard-secondary-menu__item {
+		color: $gray-700;
+	}
 }
