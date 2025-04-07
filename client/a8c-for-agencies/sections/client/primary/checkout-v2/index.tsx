@@ -37,7 +37,7 @@ function ClientCheckoutContent() {
 
 	const userEmail = useSelector( ( state ) => getCurrentUser( state )?.email );
 
-	const isDoNotMatchReferralClientEmail = referral?.client?.email !== userEmail;
+	const emailMismatchWithReferralClient = referral?.client?.email !== userEmail;
 
 	// Add products to cart when referral data is loaded
 	useEffect( () => {
@@ -85,7 +85,16 @@ function ClientCheckoutContent() {
 			debug( '[A4A Checkout] No matching products found to add to cart' );
 			setError( 'Could not find the requested products' );
 		}
-	}, [ isReady, error, referredProducts, referral, addProductsToCart, responseCart ] );
+	}, [
+		isReady,
+		error,
+		referredProducts,
+		referral,
+		addProductsToCart,
+		responseCart,
+		queryArgs.referralId,
+		queryArgs.agencyId,
+	] );
 
 	// Debugging: Set a timeout to force showing the checkout after 10 seconds
 	useEffect( () => {
@@ -105,7 +114,7 @@ function ClientCheckoutContent() {
 		return <ClientCheckoutV2Placeholder />;
 	}
 
-	if ( isDoNotMatchReferralClientEmail ) {
+	if ( emailMismatchWithReferralClient ) {
 		return (
 			<ClientCheckoutV2Error
 				title={ translate( 'Permission denied' ) }
