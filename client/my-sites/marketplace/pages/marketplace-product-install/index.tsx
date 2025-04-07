@@ -366,15 +366,21 @@ const MarketplaceProductInstall = ( {
 				<EmptyContent
 					illustration="/calypso/images/illustrations/error.svg"
 					title={ null }
-					line={ translate(
-						"Your current plan doesn't allow plugin installation. Please upgrade to %(businessPlanName)s plan first.",
-						{
-							args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-						}
-					) }
-					action={ translate( 'Upgrade to %(planName)s Plan', {
-						args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-					} ) }
+					line={
+						// translators: %(businessPlanName)s is the name of the business plan.
+						translate(
+							"Your current plan doesn't allow plugin installation. Please upgrade to %(businessPlanName)s plan first.",
+							{
+								args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+							}
+						)
+					}
+					action={
+						// translators: %(planName)s is the name of the business plan.
+						translate( 'Upgrade to %(planName)s Plan', {
+							args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+						} )
+					}
 					actionURL={ `/checkout/${ selectedSite?.slug }/business?redirect_to=/marketplace/plugin/${ pluginSlug }/install/${ selectedSite?.slug }#step2` }
 				/>
 			);
@@ -410,9 +416,12 @@ const MarketplaceProductInstall = ( {
 						}
 						illustrationWidth={ thirdPartyTheme?.screenshot && 720 }
 						title={ productName }
-						line={ translate( 'Do you want to activate the theme %(theme)s?', {
-							args: { theme: thirdPartyTheme?.name },
-						} ) }
+						line={
+							// translators: %(theme)s is the name of the theme.
+							translate( 'Do you want to activate the theme %(theme)s?', {
+								args: { theme: thirdPartyTheme?.name },
+							} )
+						}
 					>
 						{ isProductListFetched && (
 							<div className="marketplace-plugin-install__direct-install-actions">
