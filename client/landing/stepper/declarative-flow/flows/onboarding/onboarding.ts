@@ -247,9 +247,6 @@ const onboarding: Flow = {
 				}
 
 				case 'design-choices': {
-					// __a8cBigSkyOnboarding is set as a hack so that the @automattic/calypso-products can know what the users
-					// selection was. Accessing the data store is tricky from there.
-					// See is-big-sky-onboarding.ts
 					if ( providedDependencies.destination === 'launch-big-sky' ) {
 						setCreateWithBigSky( true );
 						return navigate( 'domains' );
