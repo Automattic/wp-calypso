@@ -29,6 +29,7 @@ import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
 import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
+import { LOCAL_STORAGE_KEY_FOR_PG_ID as PG_ID } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/playground/lib/initialize-playground';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
 	domainRegistration,
@@ -158,6 +159,22 @@ export class RenderDomainsStep extends Component {
 			props.goToNextStep();
 		}
 		this.setCurrentFlowStep = this.setCurrentFlowStep.bind( this );
+
+		// Get playground ID from either GET param or localStorage
+		const playgroundIdFromUrl = getQueryArg( window.location.href, 'playground' );
+		const playgroundIdFromStorage = window.localStorage.getItem( PG_ID );
+		const playgroundId = playgroundIdFromUrl || playgroundIdFromStorage;
+
+		// Clean up localStorage regardless of whether we used the value
+		window.localStorage.removeItem( PG_ID );
+
+		// Update URL if we got the ID from localStorage
+		if ( playgroundIdFromStorage && ! playgroundIdFromUrl ) {
+			const url = new URL( window.location.href );
+			url.searchParams.set( 'playground', playgroundId );
+			window.history.replaceState( {}, '', url.toString() );
+		}
+
 		this.state = {
 			currentStep: null,
 			isCartPendingUpdateDomain: null,
@@ -172,6 +189,7 @@ export class RenderDomainsStep extends Component {
 			checkDomainAvailabilityPromises: [],
 			removeDomainTimeout: 0,
 			addDomainTimeout: 0,
+			playgroundId,
 		};
 	}
 
@@ -1337,7 +1355,6 @@ export class RenderDomainsStep extends Component {
 		const siteUrl = this.props.selectedSite?.URL;
 		const siteSlug = this.props.queryObject?.siteSlug;
 		const source = this.props.queryObject?.source;
-		const playgroundId = getQueryArg( window.location.href, 'playground' );
 
 		let backUrl;
 		let backLabelText;
@@ -1388,8 +1405,8 @@ export class RenderDomainsStep extends Component {
 		} else {
 			backUrl = getStepUrl( flowName, stepName, null, this.getLocale() );
 
-			if ( playgroundId ) {
-				backUrl = `/setup/onboarding/playground?playground=${ playgroundId }`;
+			if ( this.state.playgroundId ) {
+				backUrl = `/setup/onboarding/playground?playground=${ this.state.playgroundId }`;
 				backLabelText = translate( 'Back' );
 			} else if ( 'site' === source && siteUrl ) {
 				backUrl = siteUrl;
