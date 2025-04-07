@@ -1,5 +1,5 @@
+import { formatNumberCompact } from '@automattic/number-formatters';
 import { Icon } from '@wordpress/icons';
-import { numberFormatCompact } from 'i18n-calypso';
 import { TrendComparison } from './count-comparison-card';
 import './style.scss';
 
@@ -51,7 +51,7 @@ function MobileHighlightCard( {
 					preformattedValue
 				) : (
 					<span className="shortened-number">
-						{ count !== null ? numberFormatCompact( count ) : '-' }
+						{ count !== null ? formatNumberCompact( count ) : '-' }
 					</span>
 				) }
 			</span>

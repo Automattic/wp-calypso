@@ -11,7 +11,6 @@ import { getNormalizedPost } from 'calypso/state/posts/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteSlug, isJetpackModuleActive, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getRecentViewsForPost } from 'calypso/state/stats/recent-post-views/selectors';
-
 import './style.scss';
 
 class PostActionCounts extends PureComponent {

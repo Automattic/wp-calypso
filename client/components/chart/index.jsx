@@ -8,7 +8,6 @@ import Notice from 'calypso/components/notice';
 import { hasTouch } from 'calypso/lib/touch-detect';
 import { useWindowResizeCallback } from 'calypso/lib/track-element-size';
 import BarContainer from './bar-container';
-
 import './style.scss';
 
 const isTouch = hasTouch();
