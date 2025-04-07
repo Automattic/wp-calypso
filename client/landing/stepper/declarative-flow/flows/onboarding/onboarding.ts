@@ -37,12 +37,6 @@ import { recordStepNavigation } from '../../internals/analytics/record-step-navi
 import { STEPS } from '../../internals/steps';
 import { AssertConditionState, Flow, ProvidedDependencies } from '../../internals/types';
 
-declare global {
-	interface Window {
-		__a8cBigSkyOnboarding?: boolean;
-	}
-}
-
 const SiteIntent = Onboard.SiteIntent;
 
 const clearUseMyDomainsQueryParams = ( currentStepSlug: string | undefined ) => {
@@ -165,12 +159,6 @@ const onboarding: Flow = {
 		const isDesignChoicesStepEnabled = isBigSkyEligible && isGoalsAtFrontExperiment;
 
 		const { selectedMarketplaceProduct } = useMarketplaceThemeProducts();
-
-		if ( typeof window !== 'undefined' && createWithBigSky ) {
-			window.__a8cBigSkyOnboarding = true;
-		} else if ( typeof window !== 'undefined' ) {
-			window.__a8cBigSkyOnboarding = false;
-		}
 
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
@@ -458,10 +446,6 @@ const onboarding: Flow = {
 				clearSignupDestinationCookie();
 				clearSignupCompleteFlowName();
 				clearSignupCompleteSlug();
-
-				if ( typeof window !== 'undefined' ) {
-					delete window.__a8cBigSkyOnboarding;
-				}
 			}
 		}, [ currentStepSlug, reduxDispatch, resetOnboardStore ] );
 
