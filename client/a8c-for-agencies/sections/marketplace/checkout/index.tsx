@@ -230,9 +230,11 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 		);
 	}
 
+	const isFeedback = showFeedback && ! isClient;
+
 	return (
 		<Layout
-			className="checkout"
+			className={ clsx( 'checkout', { 'checkout--feedback': isFeedback } ) }
 			title={ title }
 			wide
 			withBorder={ ! isClient }
@@ -257,7 +259,7 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 				</LayoutTop>
 			) }
 			<LayoutBody>
-				{ showFeedback && ! isClient ? (
+				{ isFeedback ? (
 					<A4AFeedback { ...feedbackProps } />
 				) : (
 					<div className="checkout__container">
