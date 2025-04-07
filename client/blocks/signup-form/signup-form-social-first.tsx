@@ -4,6 +4,7 @@ import { Button } from '@wordpress/components';
 import { useState, createInterpolateElement } from '@wordpress/element';
 import { chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import clsx from 'clsx';
 import { isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
@@ -13,7 +14,6 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import PasswordlessSignupForm from './passwordless';
 import SocialSignupForm from './social';
-import type { CSSProperties } from 'react';
 import './style.scss';
 
 interface QueryArgs {
@@ -131,13 +131,15 @@ const SignupFormSocialFirst = ( {
 		);
 	};
 
-	const getStepStyle = ( step: 'initial' | 'email' ): CSSProperties => ( {
-		visibility: step === currentStep ? 'visible' : 'hidden',
-	} );
+	const getVisibilityClassName = ( step: Screen ) => {
+		return clsx( 'signup-form-social-first-screen', {
+			visible: currentStep === step,
+		} );
+	};
 
 	return (
 		<div className="signup-form signup-form-social-first">
-			<div className="signup-form-social-first-initial" style={ getStepStyle( 'initial' ) }>
+			<div className={ getVisibilityClassName( 'initial' ) }>
 				{ notice }
 				<SocialSignupForm
 					handleResponse={ handleSocialResponse }
@@ -150,52 +152,54 @@ const SignupFormSocialFirst = ( {
 				/>
 				{ renderTermsOfService() }
 			</div>
-			<div className="signup-form-social-first-email" style={ getStepStyle( 'email' ) }>
-				<PasswordlessSignupForm
-					stepName={ stepName }
-					flowName={ flowName }
-					goToNextStep={ goToNextStep }
-					logInUrl={ logInUrl }
-					queryArgs={ queryArgs }
-					labelText={ emailLabelText ?? __( 'Your email' ) }
-					submitButtonLabel={ __( 'Continue' ) }
-					userEmail={ userEmail }
-					renderTerms={ renderEmailStepTermsOfService }
-					secondaryFooterButton={
-						backButtonInFooter ? undefined : (
-							<Button onClick={ () => setCurrentStep( 'initial' ) } icon={ chevronLeft }>
-								{ __( 'See all options' ) }
-							</Button>
-						)
-					}
-					passDataToNextStep={ passDataToNextStep }
-					onCreateAccountError={ ( error: { error: string }, email: string ) => {
-						if ( isExistingAccountError( error.error ) ) {
-							window.location.assign(
-								addQueryArgs(
-									{
-										email_address: email,
-										is_signup_existing_account: true,
-										redirect_to: queryArgs?.redirect_to,
-									},
-									logInUrl
-								)
-							);
+			<div className={ getVisibilityClassName( 'email' ) }>
+				<div className="signup-form-social-first-email">
+					<PasswordlessSignupForm
+						stepName={ stepName }
+						flowName={ flowName }
+						goToNextStep={ goToNextStep }
+						logInUrl={ logInUrl }
+						queryArgs={ queryArgs }
+						labelText={ emailLabelText ?? __( 'Your email' ) }
+						submitButtonLabel={ __( 'Continue' ) }
+						userEmail={ userEmail }
+						renderTerms={ renderEmailStepTermsOfService }
+						secondaryFooterButton={
+							backButtonInFooter ? undefined : (
+								<Button onClick={ () => setCurrentStep( 'initial' ) } icon={ chevronLeft }>
+									{ __( 'See all options' ) }
+								</Button>
+							)
 						}
-					} }
-					onCreateAccountSuccess={ onCreateAccountSuccess }
-					inputPlaceholder={ isGravatar ? __( 'Enter your email address' ) : undefined }
-					submitButtonLoadingLabel={ isGravatar ? __( 'Continue' ) : undefined }
-				/>
-				{ backButtonInFooter ? (
-					<Button
-						onClick={ () => setCurrentStep( 'initial' ) }
-						className="back-button"
-						variant="link"
-					>
-						<span>{ __( 'Back' ) }</span>
-					</Button>
-				) : null }
+						passDataToNextStep={ passDataToNextStep }
+						onCreateAccountError={ ( error: { error: string }, email: string ) => {
+							if ( isExistingAccountError( error.error ) ) {
+								window.location.assign(
+									addQueryArgs(
+										{
+											email_address: email,
+											is_signup_existing_account: true,
+											redirect_to: queryArgs?.redirect_to,
+										},
+										logInUrl
+									)
+								);
+							}
+						} }
+						onCreateAccountSuccess={ onCreateAccountSuccess }
+						inputPlaceholder={ isGravatar ? __( 'Enter your email address' ) : undefined }
+						submitButtonLoadingLabel={ isGravatar ? __( 'Continue' ) : undefined }
+					/>
+					{ backButtonInFooter ? (
+						<Button
+							onClick={ () => setCurrentStep( 'initial' ) }
+							className="back-button"
+							variant="link"
+						>
+							<span>{ __( 'Back' ) }</span>
+						</Button>
+					) : null }
+				</div>
 			</div>
 		</div>
 	);

@@ -6,9 +6,13 @@
 	display: grid;
 	grid-template-areas: "stack";
 
-	&-initial, &-email {
+	&-screen {
 		grid-area: stack;
 		visibility: hidden;
+
+		&.visible {
+			visibility: visible;
+		}
 	}
 
 	.signup-form__passwordless-email {
