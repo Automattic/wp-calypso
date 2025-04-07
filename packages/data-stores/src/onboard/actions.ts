@@ -381,12 +381,6 @@ export const setPartnerBundle = ( partnerBundle: string | null ) => ( {
 	partnerBundle,
 } );
 
-export const setCreateWithBigSky = ( createWithBigSky: boolean ) => ( {
-	// TODO: we could be able to delete this, at the moment it's never set to true
-	type: 'SET_CREATE_WITH_BIG_SKY' as const,
-	createWithBigSky,
-} );
-
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -447,5 +441,4 @@ export type OnboardAction = ReturnType<
 	| typeof setPaidSubscribers
 	| typeof setPartnerBundle
 	| typeof setSignupDomainOrigin
-	| typeof setCreateWithBigSky
 >;
