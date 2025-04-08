@@ -10,6 +10,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { SOURCE_SETTINGS_ADMINISTRATION } from 'calypso/my-sites/site-settings/site-tools/utils';
 import { useSelector } from 'calypso/state';
+import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -99,6 +100,9 @@ export const SiteSettingsPrivacyDiscourageSearchEnginesNotice = ( {
 	siteSlug,
 }: SiteSettingsPrivacyDiscourageSearchEnginesNoticeProps ) => {
 	const translate = useTranslate();
+	const primaryDomain = useSelector( ( state ) =>
+		getPrimaryDomainBySiteId( state, selectedSite?.ID )
+	);
 	const hasNonWpcomDomains =
 		useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) || [] ).filter(
 			( domain ) => ! domain.isWPCOMDomain
@@ -109,8 +113,11 @@ export const SiteSettingsPrivacyDiscourageSearchEnginesNotice = ( {
 			notice={
 				<span>
 					{ translate(
-						'Your site is using {{strong}}wpcomstaging.com{{/strong}} as the primary domain, which is prevented from being indexed by search engines. To change this, set a custom domain as the primary domain.',
+						"Your site's current primary domain is {{strong}}%(domain)s{{/strong}}. This domain is intended for temporary use and will not be indexed by search engines. To ensure your site can be indexed, please register or connect a custom primary domain.",
 						{
+							args: {
+								domain: primaryDomain?.domain,
+							},
 							components: {
 								strong: <strong />,
 							},
