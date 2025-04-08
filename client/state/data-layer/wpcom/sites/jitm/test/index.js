@@ -1,10 +1,22 @@
+import config from '@automattic/calypso-config';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { fetchJITM, dismissJITM } from 'calypso/state/jitm/actions';
 import { doFetchJITM, doDismissJITM } from '..';
 
+jest.mock( '@automattic/calypso-config' );
+
+const configMock = ( values ) => ( key ) => values[ key ];
+
 describe( 'jitms', () => {
 	describe( '#doFetchJITM', () => {
-		test( 'should dispatch a get action with the site id and the message path', () => {
+		test.each( [
+			[ false, '/sites/123/jitm', 'should include sites/{siteId} in the path when not in Jetpack' ],
+			[ true, '/jitm', 'should not include sites/{siteId} in the path when in Jetpack' ],
+		] )( 'when is_running_in_jetpack_site is %p, %s', ( isJetpack, expectedPath ) => {
+			config.isEnabled.mockImplementation(
+				configMock( { is_running_in_jetpack_site: isJetpack } )
+			);
+
 			const siteId = 123;
 			const messagePath = 'test:foo:bar';
 			const action = fetchJITM( siteId, messagePath );
@@ -14,7 +26,7 @@ describe( 'jitms', () => {
 					{
 						method: 'GET',
 						apiNamespace: 'wpcom/v3',
-						path: `/sites/${ siteId }/jitm`,
+						path: expectedPath,
 						query: {
 							message_path: messagePath,
 							query: undefined,
@@ -29,7 +41,14 @@ describe( 'jitms', () => {
 	} );
 
 	describe( '#doDismissJITM', () => {
-		test( 'should dispatch a post action with the message id and the feature class', () => {
+		test.each( [
+			[ false, '/sites/123/jitm', 'should include sites/{siteId} in the path when not in Jetpack' ],
+			[ true, '/jitm', 'should not include sites/{siteId} in the path when in Jetpack' ],
+		] )( 'when is_running_in_jetpack_site is %p, %s', ( isJetpack, expectedPath ) => {
+			config.isEnabled.mockImplementation(
+				configMock( { is_running_in_jetpack_site: isJetpack } )
+			);
+
 			const siteId = 123;
 			const messageId = 'upsell-nudge-testing';
 			const featureClass = 'retention-marketing';
@@ -40,7 +59,7 @@ describe( 'jitms', () => {
 					{
 						method: 'POST',
 						apiNamespace: 'wpcom/v3',
-						path: `/sites/${ siteId }/jitm`,
+						path: expectedPath,
 						body: {
 							feature_class: featureClass,
 							id: messageId,
