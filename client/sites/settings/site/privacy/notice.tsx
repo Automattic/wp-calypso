@@ -101,7 +101,7 @@ export const SiteSettingsPrivacyDiscourageSearchEnginesNotice = ( {
 }: SiteSettingsPrivacyDiscourageSearchEnginesNoticeProps ) => {
 	const translate = useTranslate();
 	const primaryDomain = useSelector( ( state ) =>
-		getPrimaryDomainBySiteId( state, selectedSite?.ID )
+		getPrimaryDomainBySiteId( state, selectedSite?.ID ?? 0 )
 	);
 	const hasNonWpcomDomains =
 		useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) || [] ).filter(
@@ -116,7 +116,7 @@ export const SiteSettingsPrivacyDiscourageSearchEnginesNotice = ( {
 						"Your site's current primary domain is {{strong}}%(domain)s{{/strong}}. This domain is intended for temporary use and will not be indexed by search engines. To ensure your site can be indexed, please register or connect a custom primary domain.",
 						{
 							args: {
-								domain: primaryDomain?.domain,
+								domain: primaryDomain?.domain ?? '',
 							},
 							components: {
 								strong: <strong style={ { overflowWrap: 'anywhere' } } />,
