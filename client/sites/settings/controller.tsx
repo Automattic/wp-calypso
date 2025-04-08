@@ -89,16 +89,13 @@ export function redirectToSiteSettingsIfHostingFeaturesNotSupported(
 	next: () => void
 ) {
 	const state = context.store.getState();
-	const dispatch = context.store.dispatch;
 	const site = getSelectedSite( state );
 
-	dispatch( fetchSiteFeatures( site.ID as number ) ).then( () => {
-		if ( ! areHostingFeaturesSupported( context.store.getState() ) ) {
-			return page.redirect( `/sites/settings/site/${ site?.slug }` );
-		}
+	if ( ! areHostingFeaturesSupported( site ) ) {
+		return page.redirect( `/sites/settings/site/${ site?.slug }` );
+	}
 
-		next();
-	} );
+	next();
 }
 
 export function redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported(
