@@ -7,10 +7,11 @@ import {
 	fetchSite,
 	fetchSiteMediaStorage,
 	fetchSiteMonitorUptime,
+	fetchPHPVersion,
+	fetchCurrentPlan,
 	fetchSites,
 	fetchDomains,
 	fetchEmails,
-	FetchSiteRouteResponse,
 } from '../data';
 import Domains from '../domains';
 import Emails from '../emails';
@@ -25,7 +26,7 @@ import SiteDeployments from '../site-deployments';
 import SiteOverview from '../site-overview';
 import Sites from '../sites';
 import { queryClient } from './query-client';
-import type { Domain, Email, Site, User } from '../data/types';
+import type { FetchSiteRouteResponse, Domain, Email, Site, User } from '../data/types';
 
 interface RouteContext {
 	auth?: {
@@ -78,12 +79,15 @@ const siteRoute = createRoute( {
 		queryClient.ensureQueryData( {
 			queryKey: [ 'site', siteId ],
 			queryFn: async () => {
-				const [ site, mediaStorage, siteMonitorUptime ] = await Promise.all( [
-					fetchSite( siteId ),
-					fetchSiteMediaStorage( siteId ),
-					fetchSiteMonitorUptime( siteId ),
-				] );
-				return { site, mediaStorage, siteMonitorUptime };
+				const [ site, mediaStorage, siteMonitorUptime, phpVersion, currentPlan ] =
+					await Promise.all( [
+						fetchSite( siteId ),
+						fetchSiteMediaStorage( siteId ),
+						fetchSiteMonitorUptime( siteId ),
+						fetchPHPVersion( siteId ),
+						fetchCurrentPlan( siteId ),
+					] );
+				return { site, mediaStorage, siteMonitorUptime, phpVersion, currentPlan };
 			},
 		} ) as Promise< FetchSiteRouteResponse >,
 	notFoundComponent: NotFound,
@@ -195,7 +199,7 @@ export const router = new Router( {
 export const routerA4A = new Router( {
 	routeTree, // TODO: define routes and menus for A4A.
 	basepath: '/v2-a4a',
-	defaultErrorComponent: ( { error } ) => <ErrorComponent error={ error as Error } />,
+	defaultErrorComponent: ( { error } ) => error,
 } );
 
 declare module '@tanstack/react-router' {

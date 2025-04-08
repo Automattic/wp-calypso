@@ -22,20 +22,29 @@ export interface Domain {
 	domain_type: string;
 }
 
-export interface Plan {
-	product_id: number;
-	product_slug: string;
+export interface SitePlan {
 	product_name: string;
+	product_name_short: string;
 	expired: boolean;
+	is_free: boolean;
 	billing_period: 'Yearly' | 'Monthly';
 	features: {
 		active: string[];
 	};
 }
 
+export interface Plan {
+	id: string;
+	current_plan?: boolean;
+	expiry?: string;
+	subscribed_date?: string;
+	user_facing_expiry?: string;
+}
+
 export interface SiteOptions {
 	software_version: string;
 	admin_url: string;
+	is_wpcom_atomic?: boolean;
 }
 
 export interface Site {
@@ -46,7 +55,7 @@ export interface Site {
 	backups: 'enabled' | 'disabled';
 	protect: 'enabled' | 'disabled';
 	subscribers: number;
-	plan: Plan;
+	plan: SitePlan;
 	options: SiteOptions;
 	is_deleted: boolean;
 }
@@ -74,4 +83,21 @@ export interface Email {
 
 export interface TwoStep {
 	two_step_reauthorization_required: boolean;
+}
+
+export interface MediaStorageObject {
+	maxStorageBytesFromAddOns: number;
+	maxStorageBytes: number;
+	storageUsedBytes: number;
+}
+
+export interface MonitorUptimeAPIResponse {
+	[ key: string ]: { status: string; downtime_in_minutes?: number };
+}
+export interface FetchSiteRouteResponse {
+	site: Site;
+	mediaStorage: MediaStorageObject;
+	siteMonitorUptime: MonitorUptimeAPIResponse;
+	phpVersion: string;
+	currentPlan: Plan;
 }

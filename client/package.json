@@ -98,6 +98,7 @@
 		"@wordpress/compose": "^7.21.0",
 		"@wordpress/data": "^10.21.0",
 		"@wordpress/dataviews": "^4.17.0",
+		"@wordpress/date": "^5.21.0",
 		"@wordpress/dom": "^4.21.0",
 		"@wordpress/edit-post": "^8.21.0",
 		"@wordpress/element": "^6.21.0",

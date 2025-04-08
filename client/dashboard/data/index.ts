@@ -1,5 +1,16 @@
 import wpcom from 'calypso/lib/wp';
-import type { User, Domain, Site, SiteOptions, Plan, Email, TwoStep } from './types';
+import type {
+	User,
+	Domain,
+	Site,
+	SiteOptions,
+	Plan,
+	SitePlan,
+	Email,
+	TwoStep,
+	MediaStorageObject,
+	MonitorUptimeAPIResponse,
+} from './types';
 
 export const fetchProfile = () =>
 	wpcom.req.get( {
@@ -104,7 +115,7 @@ interface WPCOMRESTAPISite {
 	icon: {
 		ico: string;
 	};
-	plan: Plan;
+	plan: SitePlan;
 	active_modules: string[];
 	subscribers_count: number;
 	options: SiteOptions;
@@ -120,7 +131,11 @@ const siteRequestObjectToSiteObject = ( site: WPCOMRESTAPISite ): Site => ( {
 	protect: site.active_modules?.includes( 'protect' ) ? 'enabled' : 'disabled',
 	subscribers: site.subscribers_count,
 	plan: site.plan,
-	options: { software_version: site.options?.software_version, admin_url: site.options?.admin_url },
+	options: {
+		software_version: site.options?.software_version,
+		admin_url: site.options?.admin_url,
+		is_wpcom_atomic: site.options?.is_wpcom_atomic,
+	},
 	is_deleted: site.is_deleted,
 } );
 
@@ -134,21 +149,6 @@ export const fetchSites = (): Promise< Site[] > => {
 			return response.sites.map( siteRequestObjectToSiteObject );
 		} );
 };
-
-export interface MediaStorageObject {
-	maxStorageBytesFromAddOns: number;
-	maxStorageBytes: number;
-	storageUsedBytes: number;
-}
-
-export interface MonitorUptimeAPIResponse {
-	[ key: string ]: { status: string; downtime_in_minutes?: number };
-}
-export interface FetchSiteRouteResponse {
-	site: Site;
-	mediaStorage: MediaStorageObject;
-	siteMonitorUptime: MonitorUptimeAPIResponse;
-}
 
 export const fetchSite = async ( id: string ): Promise< Site > => {
 	if ( ! id ) {
@@ -182,9 +182,11 @@ export const fetchSiteMonitorUptime = async (
 	if ( ! id ) {
 		return Promise.reject( new Error( 'Site ID is undefined' ) );
 	}
-	// TODO: check this in different contexts and why `&fields=jetpack,jetpack_modules` is not working for atomic sites.
+	// TODO: check this in different contexts..
+	// TODO: this and similar requests trigger multiple requests to the same endpoint
+	// with different fields. How can we avoid this?
 	const site = await wpcom.req.get( {
-		path: `/sites/${ id }?http_envelope=1`,
+		path: `/sites/${ id }?http_envelope=1&fields=ID,jetpack,jetpack_modules`,
 		apiNamespace: 'rest/v1.1',
 	} );
 	if ( ! site?.jetpack || ! site?.jetpack_modules?.includes( 'monitor' ) ) {
@@ -197,6 +199,36 @@ export const fetchSiteMonitorUptime = async (
 		},
 		{ period: '30 days' }
 	);
+};
+
+export const fetchPHPVersion = async ( id: string ): Promise< string | undefined > => {
+	if ( ! id ) {
+		return Promise.reject( new Error( 'Site ID is undefined' ) );
+	}
+	const site = await wpcom.req.get( {
+		path: `/sites/${ id }?http_envelope=1&fields=ID,options`,
+		apiNamespace: 'rest/v1.1',
+	} );
+	if ( ! site.options?.is_wpcom_atomic ) {
+		return;
+	}
+	// TODO: check request in different contexts.. Also do we show this only for atomic sites?
+	// TODO: find out what check is needed before this request to avoid 403 errors.
+	return wpcom.req.get( {
+		path: `/sites/${ id }/hosting/php-version`,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
+
+export const fetchCurrentPlan = async ( id: string ): Promise< Plan > => {
+	if ( ! id ) {
+		return Promise.reject( new Error( 'Site ID is undefined' ) );
+	}
+	const plans = await wpcom.req.get( {
+		path: `/sites/${ id }/plans`,
+		apiVersion: '1.3',
+	} );
+	return Object.values( plans ).find( ( plan: Plan ) => plan.current_plan );
 };
 
 export const fetchDomains = (): Promise< Domain[] > => {

@@ -10,25 +10,27 @@ import {
 } from '@wordpress/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { wordpress } from '@wordpress/icons';
 import filesize from 'filesize';
-import { FetchSiteRouteResponse, MediaStorageObject, MonitorUptimeAPIResponse } from '../data';
 import PageLayout from '../page-layout';
 import ActivityLog from './activity-log';
 import Deployments from './deployments';
 import Sidebar from './sidebar';
+import type { FetchSiteRouteResponse } from '../data/types';
 import './style.scss';
 
 const MINIMUM_DISPLAYED_USAGE = 2.5;
-function StorageCard( {
-	mediaStorage: { storageUsedBytes, maxStorageBytes },
-}: {
-	mediaStorage: MediaStorageObject;
-} ) {
+function StorageCard() {
+	const { mediaStorage: { storageUsedBytes, maxStorageBytes } = {} } = useLoaderData( {
+		from: '/sites/$siteId',
+	} ) as FetchSiteRouteResponse;
+	if ( ! storageUsedBytes || ! maxStorageBytes ) {
+		return;
+	}
 	let usagePercentage = Math.round( ( ( storageUsedBytes / maxStorageBytes ) * 1000 ) / 10 );
 	// Ensure that the displayed usage is never fully empty to
 	// avoid a confusing UI and that in never exceeds 100%.
 	usagePercentage = Math.min( Math.max( MINIMUM_DISPLAYED_USAGE, usagePercentage ), 100 );
-
 	const used = filesize( storageUsedBytes, { round: 0 } );
 	const max = filesize( maxStorageBytes, { round: 0 } );
 	return (
@@ -49,7 +51,6 @@ function StorageCard( {
 							}
 						) }
 					</HStack>
-					{ /* <p>{ sprintf( __( '%1$s of %2$s used' ), used, max ) }</p> */ }
 					<ProgressBar value={ usagePercentage } />
 				</VStack>
 			</VStack>
@@ -57,7 +58,10 @@ function StorageCard( {
 	);
 }
 
-function SiteMonitorUptimeCard( { siteMonitorUptime }: MonitorUptimeAPIResponse ) {
+function SiteMonitorUptimeCard() {
+	const { siteMonitorUptime } = useLoaderData( {
+		from: '/sites/$siteId',
+	} ) as FetchSiteRouteResponse;
 	if ( ! siteMonitorUptime ) {
 		return;
 	}
@@ -91,7 +95,7 @@ function SiteMonitorUptimeCard( { siteMonitorUptime }: MonitorUptimeAPIResponse 
 }
 
 function SiteOverview() {
-	const { site, mediaStorage, siteMonitorUptime } = useLoaderData( {
+	const { site } = useLoaderData( {
 		from: '/sites/$siteId',
 	} ) as FetchSiteRouteResponse;
 	return (
@@ -100,8 +104,13 @@ function SiteOverview() {
 			actions={
 				<>
 					<ExternalLink href={ site.url }>{ __( 'Visit' ) }</ExternalLink>
-					<Button __next40pxDefaultSize variant="primary">
-						{ __( 'Site admin' ) }
+					<Button
+						__next40pxDefaultSize
+						variant="primary"
+						href={ site.options.admin_url }
+						icon={ wordpress }
+					>
+						{ __( 'WP admin' ) }
 					</Button>
 				</>
 			}
@@ -109,8 +118,8 @@ function SiteOverview() {
 			<HStack alignment="flex-start" spacing={ 8 }>
 				<VStack spacing={ 8 } style={ { flex: 3 } }>
 					<HStack spacing={ 8 } justify="space-between">
-						<StorageCard mediaStorage={ mediaStorage } />
-						<SiteMonitorUptimeCard siteMonitorUptime={ siteMonitorUptime } />
+						<StorageCard />
+						<SiteMonitorUptimeCard />
 						<Card className="site-overview-top-card">
 							<VStack style={ { height: '100%', padding: '16px' } }>
 								<HStack justify="space-between">
@@ -120,13 +129,12 @@ function SiteOverview() {
 							</VStack>
 						</Card>
 					</HStack>
-
 					<VStack spacing={ 8 }>
 						<ActivityLog />
 						<Deployments />
 					</VStack>
 				</VStack>
-				<Sidebar site={ site } />
+				<Sidebar />
 			</HStack>
 		</PageLayout>
 	);

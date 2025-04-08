@@ -3,3 +3,19 @@
 	flex: 1 1 auto;
 	align-self: stretch;
 }
+
+.site-card-preview-image {
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 7px;
+	overflow: hidden;
+}
+
+.site-card-contents {
+	padding: 0 16px 16px;
+}
+
+.site-overview-field-title {
+	color: #757575;
+	text-transform: uppercase;
+	font-size: 12px;
+}
