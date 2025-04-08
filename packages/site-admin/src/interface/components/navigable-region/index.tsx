@@ -2,12 +2,10 @@
  * External dependencies
  */
 import { forwardRef } from '@wordpress/element';
-import clsx from 'clsx';
 
 /**
  * A component that creates a navigable region in the interface.
  * Provides keyboard navigation support and proper ARIA attributes for accessibility.
- *
  * @example
  * <NavigableRegion as="nav" ariaLabel="Main navigation">
  *   <Menu />
@@ -23,14 +21,7 @@ type NavigableRegionProps = {
 const NavigableRegion = forwardRef< HTMLElement, NavigableRegionProps >(
 	( { children, className, ariaLabel, as: Tag = 'div', ...props }, ref ) => {
 		return (
-			<Tag
-				ref={ ref }
-				className={ clsx( 'interface-navigable-region', className ) }
-				aria-label={ ariaLabel }
-				role="region"
-				tabIndex={ -1 }
-				{ ...props }
-			>
+			<Tag ref={ ref } aria-label={ ariaLabel } role="region" tabIndex={ -1 } { ...props }>
 				{ children }
 			</Tag>
 		);
