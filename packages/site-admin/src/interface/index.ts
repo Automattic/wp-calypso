@@ -1,2 +1,2 @@
 // Components
-export { default as NavigableRegion } from './components/navigable-region';
+export { NavigableRegion } from './components/navigable-region';

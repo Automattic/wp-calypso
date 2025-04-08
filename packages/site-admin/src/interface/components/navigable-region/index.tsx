@@ -18,7 +18,7 @@ type NavigableRegionProps = {
 	as?: React.ElementType;
 } & React.HTMLAttributes< HTMLElement >;
 
-const NavigableRegion = forwardRef< HTMLElement, NavigableRegionProps >(
+export const NavigableRegion = forwardRef< HTMLElement, NavigableRegionProps >(
 	( { children, className, ariaLabel, as: Tag = 'div', ...props }, ref ) => {
 		return (
 			<Tag ref={ ref } aria-label={ ariaLabel } role="region" tabIndex={ -1 } { ...props }>
@@ -29,4 +29,3 @@ const NavigableRegion = forwardRef< HTMLElement, NavigableRegionProps >(
 );
 
 NavigableRegion.displayName = 'NavigableRegion';
-export default NavigableRegion;
