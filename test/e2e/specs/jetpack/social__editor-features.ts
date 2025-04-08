@@ -24,7 +24,7 @@ const features4SimpleSites = {
 	socialImageGenerator: false,
 };
 
-const features4AtomicSites = {
+const features4BusinessPlan = {
 	resharing: true,
 	manualSharing: true,
 	mediaSharing: true,
@@ -43,10 +43,10 @@ const testCases: Array< {
 
 if ( envVariables.JETPACK_TARGET === 'wpcom-deployment' ) {
 	testCases.push( {
-		plan: envVariables.TEST_ON_ATOMIC ? 'Paid' : 'Personal',
+		plan: envVariables.TEST_ON_ATOMIC ? 'Paid' : 'Business',
 		platform: envVariables.TEST_ON_ATOMIC ? 'Atomic' : 'Simple',
 		testAccountName: getTestAccountByFeature( envToFeatureKey( envVariables ) ),
-		features: envVariables.TEST_ON_ATOMIC ? features4AtomicSites : features4SimpleSites,
+		features: features4BusinessPlan,
 	} );
 } else {
 	testCases.push(
@@ -66,7 +66,7 @@ if ( envVariables.JETPACK_TARGET === 'wpcom-deployment' ) {
 			plan: 'Paid',
 			platform: 'Atomic',
 			testAccountName: 'atomicUser',
-			features: features4AtomicSites,
+			features: features4BusinessPlan,
 		}
 	);
 }
@@ -253,9 +253,9 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 					name: 'Manual sharing',
 				} );
 
-				// For some reason the manual sharing is not visible on the post publish panel for Simple sites with personal plan.
+				// For some reason the manual sharing is not visible on the post publish panel for Simple sites with a paid plan.
 				const isPostPublishManualSharingVisible =
-					features.manualSharing && ! ( platform === 'Simple' && plan === 'Personal' );
+					features.manualSharing && ! ( platform === 'Simple' && plan !== 'Free' );
 
 				if ( isPostPublishManualSharingVisible ) {
 					await manualSharing.waitFor();
