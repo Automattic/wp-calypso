@@ -20,6 +20,7 @@ describe( 'jitms', () => {
 							query: undefined,
 							locale: undefined,
 						},
+						isLocalApiCall: true, // required to use the wpcom/v3 namespace
 					},
 					action
 				)
@@ -44,6 +45,7 @@ describe( 'jitms', () => {
 							feature_class: featureClass,
 							id: messageId,
 						},
+						isLocalApiCall: true, // required to use the wpcom/v3 namespace
 					},
 					action
 				)
