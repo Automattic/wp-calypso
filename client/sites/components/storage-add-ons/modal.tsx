@@ -5,16 +5,20 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useStorageLimitOverride } from 'calypso/lib/plans/use-storage-limit-override';
-import { StorageAddOnDropdown } from './dropdown';
+import { StorageAddOnsDropdown } from './dropdown';
 import StorageAddOnIndicator from './storage-indicator';
 
-type StorageAddOnModalProps = {
+type StorageAddOnsModalProps = {
 	isOpen: boolean;
 	siteId: number;
 	setIsOpen: ( isOpen: boolean ) => void;
 };
 
-const StorageAddOnModal: React.FC< StorageAddOnModalProps > = ( { isOpen, siteId, setIsOpen } ) => {
+const StorageAddOnsModal: React.FC< StorageAddOnsModalProps > = ( {
+	isOpen,
+	siteId,
+	setIsOpen,
+} ) => {
 	const translate = useTranslate();
 	const { data: mediaStorage } = Site.useSiteMediaStorage( { siteIdOrSlug: siteId } );
 
@@ -65,7 +69,7 @@ const StorageAddOnModal: React.FC< StorageAddOnModalProps > = ( { isOpen, siteId
 						{ translate( 'Make more space for high-quality photos, videos, and other media.' ) }
 					</p>
 					<h2>{ translate( 'Storage add-on' ) }</h2>
-					<StorageAddOnDropdown
+					<StorageAddOnsDropdown
 						selectedStorageAddOnSlug={ selectedStorageAddOnSlug }
 						setSelectedStorageAddOnSlug={ setSelectedStorageAddOnSlug }
 						siteId={ siteId }
@@ -90,4 +94,4 @@ const StorageAddOnModal: React.FC< StorageAddOnModalProps > = ( { isOpen, siteId
 	) : null;
 };
 
-export default StorageAddOnModal;
+export default StorageAddOnsModal;

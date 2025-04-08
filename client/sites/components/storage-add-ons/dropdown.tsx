@@ -32,7 +32,7 @@ const StorageDropdownOption = ( {
 	);
 };
 
-export const StorageAddOnDropdown = ( {
+export const StorageAddOnsDropdown = ( {
 	siteId,
 	selectedStorageAddOnSlug,
 	setSelectedStorageAddOnSlug,

@@ -3,12 +3,12 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PlanStorage, { useDisplayUpgradeLink } from 'calypso/blocks/plan-storage';
-import StorageAddOnModal from 'calypso/blocks/storage-add-on/modal';
 import { isPlansPageUntangled } from 'calypso/lib/plans/untangling-plans-experiment';
 import { useStorageAddOnAvailable } from 'calypso/lib/plans/use-storage-add-on-available';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite, getSelectedPurchase } from 'calypso/state/ui/selectors';
+import StorageAddOnsModal from '../storage-add-ons/modal';
 import { PlanBandwidth } from './plan-bandwidth';
 import { PlanSiteVisits } from './plan-site-visits';
 import PlanStorageBar from './plan-storage-bar';
@@ -91,7 +91,7 @@ export default function PlanStats() {
 				) }
 			</div>
 			{ isUntangled && (
-				<StorageAddOnModal isOpen={ isOpen } setIsOpen={ setIsOpen } siteId={ site?.ID } />
+				<StorageAddOnsModal isOpen={ isOpen } setIsOpen={ setIsOpen } siteId={ site?.ID } />
 			) }
 		</>
 	);
