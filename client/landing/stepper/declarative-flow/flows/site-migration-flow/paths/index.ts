@@ -24,7 +24,7 @@ import { addQueryArgs } from 'calypso/lib/url';
  */
 export function buildPathHelper<
 	T extends { queryParams?: Record< string, Primitive >; params?: Record< string, Primitive > },
->( path: string, defaultQueryParams?: T[ 'queryParams' ] ) {
+>( path: string ) {
 	return ( queryParams?: T[ 'queryParams' ] | null, params?: T[ 'params' ] | null ) => {
 		const pathWithParams = generatePath( path, params as Record< string, string > );
 
@@ -32,7 +32,7 @@ export function buildPathHelper<
 			return pathWithParams;
 		}
 
-		return addQueryArgs( { ...defaultQueryParams, ...queryParams }, pathWithParams );
+		return addQueryArgs( queryParams, pathWithParams );
 	};
 }
 
@@ -175,7 +175,7 @@ export const siteSetupImportWordpressPath = buildPathHelper< {
 
 export const calypsoOverviewPath = buildPathHelper< {
 	queryParams: { ref: string };
-} >( '/overview/:siteSlug', { ref: 'site-migration' } );
+} >( '/overview/:siteSlug' );
 
 export const siteSetupGoalsPath = buildPathHelper< {
 	queryParams: {
