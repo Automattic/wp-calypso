@@ -119,7 +119,7 @@ export const SiteSettingsPrivacyDiscourageSearchEnginesNotice = ( {
 								domain: primaryDomain?.domain,
 							},
 							components: {
-								strong: <strong />,
+								strong: <strong style={ { overflowWrap: 'anywhere' } } />,
 							},
 						}
 					) }
