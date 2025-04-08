@@ -578,15 +578,13 @@ const siteMigration: FlowV2 = {
 						urlQueryParams.get( 'backTo' ) ===
 						STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug
 					) {
+						const queryParams = Object.fromEntries( urlQueryParams );
 						return navigate(
 							paths.applicationPasswordAuthorizationPath( {
 								siteId,
 								siteSlug,
 								from: fromQueryParam,
-								authorizationUrl: urlQueryParams.get( 'authorizationUrl' ),
-								success: urlQueryParams.get( 'success' ),
-								password: urlQueryParams.get( 'password' ),
-								user_login: urlQueryParams.get( 'user_login' ),
+								...queryParams,
 							} )
 						);
 					}
@@ -601,21 +599,27 @@ const siteMigration: FlowV2 = {
 				}
 
 				case STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug: {
+					const queryParams = Object.fromEntries( urlQueryParams );
+
 					return navigate(
 						paths.credentialsPath( {
 							siteId,
 							siteSlug,
 							from: fromQueryParam,
+							...queryParams,
 						} )
 					);
 				}
 
 				case STEPS.SITE_MIGRATION_ALREADY_WPCOM.slug: {
+					const queryParams = Object.fromEntries( urlQueryParams );
+
 					return navigate(
 						paths.credentialsPath( {
 							siteId,
 							siteSlug,
 							from: fromQueryParam,
+							...queryParams,
 						} )
 					);
 				}
