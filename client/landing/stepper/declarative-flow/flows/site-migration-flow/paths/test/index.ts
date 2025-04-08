@@ -35,4 +35,14 @@ describe( 'paths helpers', () => {
 		} >( '/test/:id' );
 		expect( testPath( { from: 'test' }, { id: '123' } ) ).toBe( '/test/123?from=test' );
 	} );
+
+	it( 'return path without query params set as null', () => {
+		const testPath = buildPathHelper< {
+			queryParams: {
+				from: string | null;
+			};
+		} >( '/test' );
+
+		expect( testPath( null ) ).toBe( '/test' );
+	} );
 } );
