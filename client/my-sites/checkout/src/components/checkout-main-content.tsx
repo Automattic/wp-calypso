@@ -38,6 +38,7 @@ import debugFactory from 'debug';
 import { formatCurrency, useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import Loading from 'calypso/components/loading';
+import { StepContainerV2Loading } from 'calypso/components/loading/StepContainerV2Loading';
 import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import {
@@ -520,7 +521,7 @@ export default function CheckoutMainContent( {
 			return (
 				<>
 					<PerformanceTrackerStop />
-					<Step.Loading title={ headingText } />
+					<StepContainerV2Loading title={ headingText } />
 				</>
 			);
 		}

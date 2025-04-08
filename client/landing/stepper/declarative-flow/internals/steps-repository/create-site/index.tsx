@@ -14,13 +14,13 @@ import {
 	isStartWritingFlow,
 	isOnboardingFlow,
 	isHostedSiteMigrationFlow,
-	Step,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
+import { StepContainerV2Loading } from 'calypso/components/loading/StepContainerV2Loading';
 import useAddEcommerceTrialMutation from 'calypso/data/ecommerce/use-add-ecommerce-trial-mutation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -232,7 +232,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		return (
 			<>
 				<DocumentHead title={ title } />
-				<Step.Loading title={ title } progress={ progress } />
+				<StepContainerV2Loading title={ title } progress={ progress } />
 			</>
 		);
 	}

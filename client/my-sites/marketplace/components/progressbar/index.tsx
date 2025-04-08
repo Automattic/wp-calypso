@@ -1,7 +1,7 @@
-import { Step } from '@automattic/onboarding';
 import { TranslateResult } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import Loading from 'calypso/components/loading';
+import { StepContainerV2Loading } from 'calypso/components/loading/StepContainerV2Loading';
 import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import './style.scss';
@@ -86,7 +86,7 @@ export default function MarketplaceProgressBar( {
 	}, [ additionalSteps, currentStep ] );
 
 	if ( shouldUseStepContainerV2( getSignupCompleteFlowName() ) ) {
-		return <Step.Loading title={ stepValue } progress={ simulatedProgressPercentage } />;
+		return <StepContainerV2Loading title={ stepValue } progress={ simulatedProgressPercentage } />;
 	}
 
 	return (

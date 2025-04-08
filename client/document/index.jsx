@@ -1,7 +1,6 @@
 import path from 'path';
 import config from '@automattic/calypso-config';
 import { isLocaleRtl } from '@automattic/i18n-utils';
-import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { Component } from 'react';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
@@ -18,6 +17,7 @@ import EnvironmentBadge, {
 import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Loading from 'calypso/components/loading';
+import { StepContainerV2Loading } from 'calypso/components/loading/StepContainerV2Loading';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import WordPressLogo from 'calypso/components/wordpress-logo';
@@ -200,7 +200,7 @@ class Document extends Component {
 									{ shouldNotShowLoadingLogo ? (
 										<>
 											{ showStepContainerV2Loader ? (
-												<Step.Loading />
+												<StepContainerV2Loading />
 											) : (
 												<Loading className="wpcom-loading__boot" />
 											) }

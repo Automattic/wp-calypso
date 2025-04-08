@@ -12,13 +12,13 @@ import {
 	NEW_HOSTED_SITE_FLOW,
 	NEWSLETTER_FLOW,
 	START_WRITING_FLOW,
-	Step,
 	useStepPersistedState,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useState } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import Loading from 'calypso/components/loading';
+import { StepContainerV2Loading } from 'calypso/components/loading/StepContainerV2Loading';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
@@ -38,7 +38,6 @@ import UnifiedPlansStep from './unified-plans-step';
 import { getIntervalType } from './util';
 import type { ProvidedDependencies, Step as StepType } from '../../types';
 import type { PlansIntent } from '@automattic/plans-grid-next';
-
 import './style.scss';
 
 /**
@@ -197,7 +196,7 @@ const PlansStepAdaptor: StepType< {
 	const isUsingStepContainerV2 = shouldUseStepContainerV2( props.flow );
 
 	if ( isLoadingSelectedTheme ) {
-		return isUsingStepContainerV2 ? <Step.Loading /> : <Loading />;
+		return isUsingStepContainerV2 ? <StepContainerV2Loading /> : <Loading />;
 	}
 
 	return (
