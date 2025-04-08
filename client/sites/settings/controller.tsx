@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { isRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
+import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getRouteFromContext } from 'calypso/utils';
@@ -88,13 +89,16 @@ export function redirectToSiteSettingsIfHostingFeaturesNotSupported(
 	next: () => void
 ) {
 	const state = context.store.getState();
+	const dispatch = context.store.dispatch;
 	const site = getSelectedSite( state );
 
-	if ( ! areHostingFeaturesSupported( site ) ) {
-		return page.redirect( `/sites/settings/site/${ site?.slug }` );
-	}
+	dispatch( fetchSiteFeatures( site.ID as number ) ).then( () => {
+		if ( ! areHostingFeaturesSupported( context.store.getState() ) ) {
+			return page.redirect( `/sites/settings/site/${ site?.slug }` );
+		}
 
-	next();
+		next();
+	} );
 }
 
 export function redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported(
@@ -103,12 +107,17 @@ export function redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported(
 ) {
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
+	const dispatch = context.store.dispatch;
 
-	if ( areAdvancedHostingFeaturesSupported( state ) === false ) {
-		return page.redirect( `/sites/settings/site/${ site?.slug }` );
-	}
+	dispatch( fetchSiteFeatures( site.ID as number ) ).then( () => {
+		const isSupported = areAdvancedHostingFeaturesSupported( context.store.getState() );
 
-	next();
+		if ( isSupported === false ) {
+			return page.redirect( `/sites/settings/site/${ site?.slug }` );
+		}
+
+		next();
+	} );
 }
 
 export function siteSettings( context: PageJSContext, next: () => void ) {
