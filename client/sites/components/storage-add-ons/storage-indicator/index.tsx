@@ -3,6 +3,8 @@ import filesize from 'filesize';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 
+import './style.scss';
+
 type Props = {
 	mediaStorage: SiteMediaStorage;
 	selectedStorageAddOnSlug: StorageAddOnSlug | null;
@@ -43,11 +45,11 @@ const StorageAddOnIndicator: React.FC< Props > = ( {
 			<div className="storage-indicator__bar">
 				<div
 					className="storage-indicator__bar-existing"
-					style={ { width: `${ planStorageRatio * 100 }%`, backgroundColor: 'blue' } }
+					style={ { width: `${ planStorageRatio * 100 }%` } }
 				/>
 				<div
 					className="storage-indicator__bar-add-on"
-					style={ { width: `${ ( 1 - planStorageRatio ) * 100 }%`, backgroundColor: 'green' } }
+					style={ { width: `${ ( 1 - planStorageRatio ) * 100 }%` } }
 				/>
 			</div>
 			<div>
