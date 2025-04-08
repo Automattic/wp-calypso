@@ -1029,9 +1029,17 @@
 		padding: 0;
 	}
 
+	.performance-profiler-insights-section .description-area, .core-web-vitals-display__description, .navigation-header__main {
+		a, .button.is-link {
+			color: var(--color-primary);
+		}
+	}
+
 	.site-performance-device-tab__controls:not(.disabled) .segmented-control__item.is-selected {
 		 .segmented-control__link {
 			color: var(--color-text-white);
+			background-color: var(--color-primary);
+			border-color: var(--color-primary);
 		}
 
 		+ .segmented-control__item .segmented-control__link {

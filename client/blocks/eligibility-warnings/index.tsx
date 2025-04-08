@@ -17,7 +17,6 @@ import { includes } from 'lodash';
 import { useState } from 'react';
 import { connect } from 'react-redux';
 import DataCenterPicker from 'calypso/blocks/data-center-picker';
-import ActionPanelLink from 'calypso/components/action-panel/link';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { useSelector } from 'calypso/state';
@@ -34,6 +33,7 @@ import { isSavingSiteSettings } from 'calypso/state/site-settings/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import HoldList, { hasBlockingHold, HardBlockingNotice, getBlockingMessages } from './hold-list';
+import SupportLink from './support-link';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
 import WarningList from './warning-list';
 import type { EligibilityData } from 'calypso/state/automated-transfer/selectors';
@@ -46,6 +46,7 @@ interface ExternalProps {
 	siteId?: number | null;
 	isEligible?: boolean;
 	backUrl?: string;
+	onDismiss?: () => void;
 	onProceed: ( options: { geo_affinity?: string } ) => void;
 	standaloneProceed: boolean;
 	className?: string;
@@ -69,6 +70,7 @@ export const EligibilityWarnings = ( {
 	isEligible,
 	isMarketplace,
 	isPlaceholder,
+	onDismiss,
 	onProceed,
 	standaloneProceed,
 	recordUpgradeClick,
@@ -251,14 +253,10 @@ export const EligibilityWarnings = ( {
 
 			<CompactCard>
 				<div className="eligibility-warnings__confirm-buttons">
-					<div className="support-block">
-						<span>{ translate( 'Need help?' ) }</span>
-						{ translate( '{{a}}Contact support{{/a}}', {
-							components: {
-								a: <ActionPanelLink href="/help/contact" />,
-							},
-						} ) }
-					</div>
+					<SupportLink
+						shouldUseHelpAssistant={ context === 'plugin-details' }
+						onShowHelpAssistant={ onDismiss }
+					/>
 					<Button
 						primary
 						disabled={

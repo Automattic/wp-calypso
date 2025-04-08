@@ -24,14 +24,15 @@
 
 .layout.is-jetpack-login {
 	.magic-login {
-		&__loading-ellipsis--jetpack {
+		&__loading-spinner--jetpack {
+			color: var(--studio-jetpack-green-40, #069e08 );
+			height: 48px;
 			left: 50%;
+			margin-top: 40px;
 			transform: translateX(-50%);
-
-			div {
-				background: var(--studio-jetpack-green-40, #069e08 );
-			}
+			width: 48px;
 		}
+
 	}	
 }
 

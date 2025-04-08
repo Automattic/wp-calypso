@@ -1,3 +1,4 @@
+import { is100Year } from '@automattic/calypso-products';
 import { LoadingPlaceholder } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -24,6 +25,7 @@ export default function CurrentPlanPanel() {
 		getCurrentPlanPurchaseId( state, site?.ID ?? 0 )
 	);
 	const isA4APlan = planPurchase && isPartnerPurchase( planPurchase );
+	const is100YearPlan = planPurchase && is100Year( planPurchase );
 
 	const planName = isA4APlan ? purchaseType( planPurchase ) : planDetails?.product_name_short ?? '';
 	const planPurchaseLoading = ! isFreePlan && planPurchase === null;
@@ -56,7 +58,7 @@ export default function CurrentPlanPanel() {
 	};
 
 	const renderManageAddOnsButton = () => {
-		if ( isA4APlan ) {
+		if ( isA4APlan || is100YearPlan ) {
 			return null;
 		}
 		return (
@@ -87,7 +89,9 @@ export default function CurrentPlanPanel() {
 						) : (
 							<>
 								<h3>{ planName }</h3>
-								{ ! isA4APlan && <CoreBadge>{ translate( 'Current plan' ) }</CoreBadge> }
+								{ ! isA4APlan && ! is100YearPlan && (
+									<CoreBadge>{ translate( 'Current plan' ) }</CoreBadge>
+								) }
 							</>
 						) }
 					</div>
@@ -104,7 +108,7 @@ export default function CurrentPlanPanel() {
 			</div>
 
 			<PlanStats />
-			{ ! isA4APlan && <hr /> }
+			{ ! isA4APlan && ! is100YearPlan && <hr /> }
 		</div>
 	);
 }

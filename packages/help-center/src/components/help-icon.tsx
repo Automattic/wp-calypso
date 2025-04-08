@@ -8,26 +8,20 @@ type CoreDataPlaceholder = {
 };
 
 const HelpIcon = forwardRef< SVGSVGElement >( ( _, ref ) => {
-	const { unreadCount, doneLoading, hasSeenWhatsNewModal } = useSelect(
+	const { unreadCount, doneLoading } = useSelect(
 		( select ) => ( {
 			unreadCount: ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getUnreadCount(),
 			doneLoading: ( select( 'core/data' ) as CoreDataPlaceholder ).hasFinishedResolution(
 				HELP_CENTER_STORE,
-				'getHasSeenWhatsNewModal',
 				[]
 			),
-			hasSeenWhatsNewModal: (
-				select( HELP_CENTER_STORE ) as HelpCenterSelect
-			 ).getHasSeenWhatsNewModal(),
 		} ),
 		[]
 	);
 
-	const newItems = doneLoading && ! hasSeenWhatsNewModal;
-
 	return (
 		<>
-			{ newItems || unreadCount > 0 ? (
+			{ doneLoading || unreadCount > 0 ? (
 				<svg
 					className="help-center__icon-has-new-items"
 					ref={ ref }

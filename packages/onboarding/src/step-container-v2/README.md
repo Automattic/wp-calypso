@@ -50,7 +50,7 @@ Read the [how to extend it](#how-to-extend-it) section to learn how to reproduce
 
 **You shouldn't use `StepContainerV2` directly. Instead, use the wireframes that are exported from this package.**
 
-Aside from the stories (run `yarn storybook`), you can follow the examples from `~/client/landing/stepper/declarative-flow/internals/steps-repository`.
+Aside from the stories (run `yarn storybook:start`), you can follow the examples from `~/client/landing/stepper/declarative-flow/internals/steps-repository`.
 
 Please do NOT override the `Step.*` components with CSS as this creates inconsistencies between steps and becomes a maintenance nightmare. Ideally, you should not need to do this as the steps are designed to be composed, and the wireframes are approved by the designers.
 
@@ -103,15 +103,18 @@ export const HorizontalLayout = ( {
 					<>
 						<TopBarRenderer topBar={ topBar } />
 						<ContentWrapper width="wide" centerAligned={ context.isSmallViewport }>
-							<Content className="step-container-v2__content--horizontal-layout">
-								<div className="step-container-v2__content--horizontal-layout-left">
+							<ContentRow
+								columns={ 10 }
+								className="step-container-v2__content-row--horizontal-layout"
+							>
+								<div className="step-container-v2__content-row--horizontal-layout-left">
 									{ heading }
 									{ imageUrl && <img src={ imageUrl } alt="" /> }
 								</div>
-								<div className="step-container-v2__content--horizontal-layout-right">
+								<div className="step-container-v2__content-row--horizontal-layout-right">
 									{ content }
 								</div>
-							</Content>
+							</ContentRow>
 							{ footer }
 						</ContentWrapper>
 						<StickyBottomBarRenderer stickyBottomBar={ stickyBottomBar } />
@@ -126,7 +129,7 @@ export const HorizontalLayout = ( {
 Then, we need to add the styles for the new wireframe. Let's create a new file called `style.scss` and add the following code:
 
 ```scss
-.step-container-v2__content--horizontal-layout {
+.step-container-v2__content-row--horizontal-layout {
 	display: flex;
 	flex-direction: column;
 	gap: 3rem;
@@ -136,12 +139,12 @@ Then, we need to add the styles for the new wireframe. Let's create a new file c
 	}
 }
 
-.step-container-v2__content--horizontal-layout-left,
-.step-container-v2__content--horizontal-layout-right {
+.step-container-v2__content-row--horizontal-layout-left,
+.step-container-v2__content-row--horizontal-layout-right {
 	flex: 1;
 }
 
-.step-container-v2__content--horizontal-layout-left {
+.step-container-v2__content-row--horizontal-layout-left {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
@@ -163,13 +166,13 @@ Let's modify the `children` of `HorizontalLayout` to reflect this new requiremen
 		<>
 			<TopBarRenderer topBar={ topBar } />
 			<ContentWrapper width="wide" centerAligned={ context.isSmallViewport }>
-				<Content className="step-container-v2__content--horizontal-layout">
-					<div className="step-container-v2__content--horizontal-layout-left">
+				<ContentRow columns={ 10 } className="step-container-v2__content-row--horizontal-layout">
+					<div className="step-container-v2__content-row--horizontal-layout-left">
 						{ heading }
 						{ context.isSmallViewport && imageUrl && <img src={ imageUrl } alt="" /> }
 					</div>
-					<div className="step-container-v2__content--horizontal-layout-right">{ content }</div>
-				</Content>
+					<div className="step-container-v2__content-row--horizontal-layout-right">{ content }</div>
+				</ContentRow>
 				{ footer }
 			</ContentWrapper>
 			<StickyBottomBarRenderer stickyBottomBar={ stickyBottomBar } />
@@ -217,6 +220,15 @@ Of course not! The plan is for this new version to replace `StepContainer` entir
 ### How can I adopt it in Stepper without breaking steps that are used in multiple flows?
 
 There's an utility called `shouldUseStepContainerV2` that allows, at a step level, to define which flows should render this version of the container vs. the original one.
+
+### How do I run storybook?
+
+Either:
+
+- `yarn storybook:start` from the root of this package, or
+- `yarn workspace @automattic/onboarding storybook:start` from the root of the monorepo.
+
+Storybook will open a browser window automatically.
 
 ### Who can I contact if I have any questions?
 

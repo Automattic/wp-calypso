@@ -51,6 +51,9 @@ module.exports = function storybookDefaultConfig( {
 			check: false,
 			reactDocgen: 'react-docgen-typescript',
 			reactDocgenTypescriptOptions: {
+				shouldExtractLiteralValuesFromEnum: true,
+				shouldRemoveUndefinedFromOptional: true,
+				savePropValueAsString: true,
 				propFilter: ( prop ) => {
 					// Always show props declared in `@wordpress/components`
 					if ( prop.declarations.some( ( d ) => d.fileName.includes( '@wordpress/components' ) ) ) {

@@ -1,24 +1,24 @@
 import clsx from 'clsx';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import './style.scss';
 
+type MaxWidth = 'wide' | 'huge' | 'xhuge';
+
 export const ContentWrapper = ( {
 	children,
-	width,
+	maxWidth = 'wide',
 	centerAligned,
 	hasPadding = true,
 }: {
 	children: ReactNode;
-	width?: 'wide' | 'full';
+	maxWidth?: MaxWidth;
 	centerAligned?: boolean;
 	hasPadding?: boolean;
 } ) => {
 	return (
 		<div
-			className={ clsx( 'step-container-v2__content-wrapper', {
-				wide: width === 'wide',
-				full: width === 'full',
+			className={ clsx( 'step-container-v2__content-wrapper', maxWidth, {
 				'center-aligned': centerAligned,
 				padding: hasPadding,
 			} ) }
