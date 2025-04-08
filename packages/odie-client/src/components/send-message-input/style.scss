@@ -7,7 +7,7 @@ $blueberry-color: #3858e9;
 	align-items: flex-end;
 	gap: 8px;
 	z-index: 10;
-	position: relative; /* Add positioning context for the spinner */
+	position: relative;
 
 	.odie-send-message-input {
 		resize: none;
@@ -42,8 +42,8 @@ $blueberry-color: #3858e9;
 
 .odie-send-message-input-spinner {
 	position: absolute !important;
-	right: 50px; /* Position it to the left of the send button */
-	transform: translateY(-50%); /* Fine-tune vertical centering */
+	right: 50px;
+	transform: translateY(-50%);
 }
 
 .odie-send-message-input-container textarea {
@@ -99,36 +99,4 @@ $blueberry-color: #3858e9;
 .odie-send-message-input-container .odie-send-message-inner-button img {
 	width: 24px;
 	height: 24px;
-}
-
-
-.odie-prediction-links {
-	display: flex;
-	flex-direction: column;
-	gap: 6px;
-	width: 100%;
-	padding: 0;
-}
-
-.odie-prediction-link {
-	background: var(--color-surface, #fff);
-	border: 1px solid var(--color-border, #dcdcde);
-	color: var(--color-text, #1e1e1e);
-	text-align: left;
-	padding: 0.5rem 0.5rem;
-	border-radius: 4px;
-	cursor: pointer;
-	font-size: 14px;
-	transition: background 0.2s ease, border-color 0.2s ease;
-	width: 100%;
-}
-
-.odie-prediction-link:hover {
-	background: var(--color-surface-subtle, #f6f7f7);
-	border-color: var(--color-border-hover, #b3b3b3);
-}
-
-.odie-prediction-link__type-reply {
-	font-weight: 500;
-	color: var(--color-primary, var(--wp-admin-theme-color, #0073aa));
 }

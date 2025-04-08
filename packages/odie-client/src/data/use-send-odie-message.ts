@@ -72,6 +72,7 @@ export const useSendOdieMessage = () => {
 						apiNamespace: 'wpcom/v2',
 						body: {
 							message: message.content,
+							predictionKey: message.predictionKey,
 							...( version && { version } ),
 							context: { selectedSiteId },
 						},
@@ -81,6 +82,7 @@ export const useSendOdieMessage = () => {
 						method: 'POST',
 						data: {
 							message: message.content,
+							predictionKey: message.predictionKey,
 							...( version && { version } ),
 							context: { selectedSiteId },
 						},

@@ -191,7 +191,7 @@ $blueberry-color: #3858e9;
 			color: #000;
 			font-size: $font-body-extra-small;
 			text-align: start;
-			margin: 16px 0;
+			margin: 8px 0;
 
 			.odie-button-link, .components-external-link {
 				color: $blueberry-color;
@@ -228,7 +228,7 @@ $blueberry-color: #3858e9;
 		&.odie-question-collapse {
 			margin-top: 0;
 		}
-		margin-top: 32px;
+		margin-top: 8px;
 		font-size: 1rem;
 	}
 
@@ -749,7 +749,7 @@ $custom-border-corner-size: 16px;
 }
 
 .odie-chatbox-message-sources-container {
-	padding-bottom: 28px;
+	padding-bottom: 16px;
 
 	.foldable-card {
 		margin: 0 !important;

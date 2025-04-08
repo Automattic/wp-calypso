@@ -197,14 +197,14 @@ export const OdieSendMessageButton = () => {
 	}, [ isChatBusy, chat?.provider, trackEvent, sendMessage ] );
 
 	const handlePredictionClick = useCallback(
-		( prediction: string ) => {
+		( prediction: string, predictionKey: string ) => {
 			if ( prediction === 'custom-reply' ) {
 				setShowTextarea( true );
 				setTimeout( () => {
 					inputRef.current?.focus();
 				}, 300 );
 			} else {
-				sendMessage( { content: prediction, role: 'user', type: 'message' } );
+				sendMessage( { content: prediction, role: 'user', type: 'message', predictionKey } );
 			}
 		},
 		[ sendMessage ]
@@ -212,7 +212,8 @@ export const OdieSendMessageButton = () => {
 
 	const inputContainerClasses = clsx(
 		'odie-chat-message-input-container',
-		attachmentButtonRef?.current && 'odie-chat-message-input-container__attachment-button-visible'
+		attachmentButtonRef?.current && 'odie-chat-message-input-container__attachment-button-visible',
+		! showTextarea && predictions && 'odie-chat-message-input-container__predictions-padding'
 	);
 
 	const buttonClasses = clsx(

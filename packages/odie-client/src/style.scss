@@ -106,4 +106,8 @@ $blueberry-blue: #3858e9;
 	padding: 16px;
 	background: var(--black-white-white, #fff);
 	border-top: 1px solid var(--gray-gray-5, #dcdcde);
+
+	&.odie-chat-message-input-container__predictions-padding {
+		padding: 8px;
+	}	
 }

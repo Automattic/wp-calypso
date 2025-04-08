@@ -13,6 +13,7 @@
 
 	.odie-chat-message-input-container {
 		border-radius: 0;
+		min-height: 73px;
 
 		@media screen and (max-width: 660px) {
 			max-width: 100%;

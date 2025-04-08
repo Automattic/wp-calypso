@@ -4,7 +4,7 @@ import type { ReactNode, PropsWithChildren, SetStateAction } from 'react';
 export type OdieAssistantContextInterface = {
 	isChatLoaded: boolean;
 	canConnectToZendesk: boolean;
-	addMessage: ( message: Message | Message[] ) => void;
+	addMessage: ( message: Message | Message[], prediction?: string ) => void;
 	botName?: string;
 	botNameSlug: OdieAllowedBots;
 	chat: Chat;
@@ -167,6 +167,7 @@ export type Message = {
 	directEscalationSupport?: boolean;
 	created_at?: string;
 	predictions?: MessagePrediction | null;
+	predictionKey?: string | null;
 };
 
 export type ChatStatus = 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer' | 'closed';
