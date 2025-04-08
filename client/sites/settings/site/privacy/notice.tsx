@@ -155,5 +155,3 @@ export const SiteSettingsPrivacyDiscourageSearchEnginesNotice = ( {
 		/>
 	);
 };
-
-// When an AT site is still using the .wpcomstaging.com address, it has a special robots.txt file on it.  Note that wpcomstaging.com domains are prevented from search engine indexing by default.
