@@ -87,8 +87,8 @@ const useShowFeedback = ( type: FeedbackType ) => {
 				survey_id: type,
 				survey_responses: {
 					rating: experience,
-					comment: comments,
-					suggestions: suggestions?.join( ', ' ) || '',
+					comment: { text: comments },
+					suggestions: { text: suggestions?.join( ', ' ) || '' },
 				},
 			};
 
@@ -97,7 +97,8 @@ const useShowFeedback = ( type: FeedbackType ) => {
 					agency_id: agencyId,
 					survey_id: params.survey_id,
 					rating: params.survey_responses.rating,
-					suggestions: params.survey_responses.suggestions,
+					suggestions: params.survey_responses.suggestions?.text,
+					comment: params.survey_responses.comment.text,
 				} )
 			);
 			saveFeedback( { params } );

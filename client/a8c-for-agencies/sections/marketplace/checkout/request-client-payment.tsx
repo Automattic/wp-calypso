@@ -7,6 +7,7 @@ import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
+import { FeedbackType } from 'calypso/a8c-for-agencies/components/a4a-feedback/types';
 import {
 	A4A_REFERRALS_DASHBOARD,
 	A4A_FEEDBACK_LINK,
@@ -27,7 +28,6 @@ import useRequestClientPaymentMutation from '../hooks/use-request-client-payment
 import useShoppingCart from '../hooks/use-shopping-cart';
 import NoticeSummary from './notice-summary';
 import type { ShoppingCartItem } from '../types';
-
 interface Props {
 	checkoutItems: ShoppingCartItem[];
 }
@@ -136,7 +136,7 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 		translate,
 	] );
 
-	const { isFeedbackShown } = useShowFeedback( 'referral-complete' );
+	const { isFeedbackShown } = useShowFeedback( FeedbackType.ReferralCompleted );
 
 	useEffect( () => {
 		if ( isSuccess && !! email ) {
@@ -146,7 +146,7 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 					? addQueryArgs( A4A_REFERRALS_DASHBOARD, { [ REFERRAL_EMAIL_QUERY_PARAM_KEY ]: email } )
 					: addQueryArgs( A4A_FEEDBACK_LINK, {
 							args: { email },
-							type: 'referral-complete',
+							type: FeedbackType.ReferralCompleted,
 					  } )
 			);
 			setEmail( '' );

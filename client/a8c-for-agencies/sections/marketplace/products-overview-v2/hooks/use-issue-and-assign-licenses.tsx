@@ -4,6 +4,7 @@ import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
+import { FeedbackType } from 'calypso/a8c-for-agencies/components/a4a-feedback/types';
 import {
 	A4A_LICENSES_LINK,
 	A4A_SITES_LINK,
@@ -100,7 +101,7 @@ function useIssueAndAssignLicenses(
 
 	const products = useProductsQuery();
 
-	const { isFeedbackShown } = useShowFeedback( 'purchase-complete' );
+	const { isFeedbackShown } = useShowFeedback( FeedbackType.PurchaseCompleted );
 
 	const {
 		isReady: isIssueReady,
@@ -124,7 +125,7 @@ function useIssueAndAssignLicenses(
 		if ( redirectWithFeedbackUrl ) {
 			page.redirect(
 				addQueryArgs( A4A_FEEDBACK_LINK, {
-					type: 'purchase-complete',
+					type: FeedbackType.PurchaseCompleted,
 					redirectUrl: redirectWithFeedbackUrl,
 				} )
 			);

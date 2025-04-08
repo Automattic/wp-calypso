@@ -4,7 +4,7 @@ import {
 	A4A_PARTNER_DIRECTORY_LINK,
 	A4A_REFERRALS_DASHBOARD,
 } from '../../sidebar-menu/lib/constants';
-import type { FeedbackProps, FeedbackType } from '../types';
+import { FeedbackProps, FeedbackType } from '../types';
 
 export const getA4AfeedbackProps = (
 	type: FeedbackType,
@@ -12,7 +12,7 @@ export const getA4AfeedbackProps = (
 	args?: Record< string, unknown >
 ): FeedbackProps => {
 	switch ( type ) {
-		case 'referral-complete':
+		case FeedbackType.ReferralCompleted:
 			return {
 				title: translate( 'Well done! You sent your first referral!' ),
 				description: translate(
@@ -46,7 +46,7 @@ export const getA4AfeedbackProps = (
 					],
 				},
 			};
-		case 'agency-details-added':
+		case FeedbackType.PDDetailsAdded:
 			return {
 				title: translate( 'Details successfully added!' ),
 				description: translate(
@@ -79,7 +79,7 @@ export const getA4AfeedbackProps = (
 					],
 				},
 			};
-		case 'member-invite-sent':
+		case FeedbackType.MemberInviteSent:
 			return {
 				title: translate( 'Invite emailed!' ),
 				description: translate(
@@ -109,7 +109,7 @@ export const getA4AfeedbackProps = (
 					],
 				},
 			};
-		case 'purchase-complete':
+		case FeedbackType.PurchaseCompleted:
 			return {
 				title: translate( 'Purchase complete!' ),
 				description: translate(

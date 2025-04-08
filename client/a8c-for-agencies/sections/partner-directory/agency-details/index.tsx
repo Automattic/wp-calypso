@@ -5,6 +5,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
+import { FeedbackType } from 'calypso/a8c-for-agencies/components/a4a-feedback/types';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import validateEmail from 'calypso/a8c-for-agencies/components/form/hoc/with-error-handling/validators/email';
@@ -47,7 +48,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 
 	const agency = useSelector( getActiveAgency );
 
-	const { isFeedbackShown } = useShowFeedback( 'agency-details-added' );
+	const { isFeedbackShown } = useShowFeedback( FeedbackType.PDDetailsAdded );
 
 	const onSubmitSuccess = useCallback(
 		( response: Agency ) => {
@@ -63,7 +64,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 				? page( A4A_PARTNER_DIRECTORY_DASHBOARD_LINK )
 				: page(
 						addQueryArgs( A4A_FEEDBACK_LINK, {
-							type: 'agency-details-added',
+							type: FeedbackType.PDDetailsAdded,
 						} )
 				  );
 		},

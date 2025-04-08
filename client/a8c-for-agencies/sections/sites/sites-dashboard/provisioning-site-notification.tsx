@@ -4,6 +4,7 @@ import NoticeBanner from '@automattic/components/src/notice-banner';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
+import { FeedbackType } from 'calypso/a8c-for-agencies/components/a4a-feedback/types';
 import {
 	A4A_SITES_LINK_DEVELOPMENT,
 	A4A_FEEDBACK_LINK,
@@ -36,7 +37,7 @@ function Banner( { siteId, migration, development, onDismiss }: BannerProps ) {
 		'https://wordpress.com/setup/hosted-site-migration/site-migration-identify'
 	);
 
-	const { isFeedbackShown } = useShowFeedback( 'purchase-complete' );
+	const { isFeedbackShown } = useShowFeedback( FeedbackType.PurchaseCompleted );
 
 	const readySiteMessage = development
 		? translate(
@@ -74,7 +75,7 @@ function Banner( { siteId, migration, development, onDismiss }: BannerProps ) {
 		page.redirect(
 			addQueryArgs(
 				{
-					type: 'purchase-complete',
+					type: FeedbackType.PurchaseCompleted,
 					redirectUrl: A4A_SITES_LINK,
 				},
 				A4A_FEEDBACK_LINK

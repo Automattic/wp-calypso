@@ -4,6 +4,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
+import { FeedbackType } from 'calypso/a8c-for-agencies/components/a4a-feedback/types';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormSection from 'calypso/a8c-for-agencies/components/form/section';
@@ -36,7 +37,7 @@ export default function TeamInvite() {
 
 	const { mutate: sendInvite, isPending: isSending } = useSendTeamMemberInvite();
 
-	const { isFeedbackShown } = useShowFeedback( 'member-invite-sent' );
+	const { isFeedbackShown } = useShowFeedback( FeedbackType.MemberInviteSent );
 
 	const onSendInvite = useCallback( () => {
 		setError( '' );
@@ -74,7 +75,7 @@ export default function TeamInvite() {
 						: page.redirect(
 								addQueryArgs( A4A_FEEDBACK_LINK, {
 									args: { email: username },
-									type: 'member-invite-sent',
+									type: FeedbackType.MemberInviteSent,
 								} )
 						  );
 				},

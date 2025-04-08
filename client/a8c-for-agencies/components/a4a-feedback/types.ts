@@ -1,8 +1,9 @@
-export type FeedbackType =
-	| 'referral-complete'
-	| 'agency-details-added'
-	| 'member-invite-sent'
-	| 'purchase-complete';
+export enum FeedbackType {
+	ReferralCompleted = 'referral-completed',
+	PDDetailsAdded = 'partner-directory-details-added',
+	MemberInviteSent = 'team-member-invite-sent',
+	PurchaseCompleted = 'purchase-completed',
+}
 
 export type FeedbackQueryData = {
 	experience: string;
@@ -27,8 +28,8 @@ export type FeedbackProps = {
 
 interface FeedbackSurveyResponses {
 	rating: string;
-	comment: string;
-	suggestions?: string;
+	comment: { text: string };
+	suggestions?: { text: string };
 }
 export interface FeedbackSurveyResponsesPayload {
 	site_id: number;
