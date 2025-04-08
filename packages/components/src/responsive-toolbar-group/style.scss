@@ -63,10 +63,6 @@
 		}
 
 		.responsive-toolbar-group__button-item:not([class*="is-pressed"]) {
-			&:hover {
-				color: inherit;
-			}
-
 			&:hover::before {
 				background: var(--studio-gray-0);
 			}
@@ -96,10 +92,6 @@
 		white-space: nowrap;
 
 		font-size: 0.875rem;
-
-		&:hover {
-			color: inherit;
-		}
 	}
 }
 
