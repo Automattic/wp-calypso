@@ -62,7 +62,7 @@ export const JumpToRecent = ( {
 		} );
 	}, [] );
 
-	// Handle scrolling
+	// Handle scrolling using Intersection Observer on the last message
 	useEffect( () => {
 		const container = containerReference.current;
 		if ( ! container || isMinimized || chat.messages.length < 2 || chat.status !== 'loaded' ) {
@@ -73,49 +73,83 @@ export const JumpToRecent = ( {
 		// Update position initially
 		updatePosition();
 
-		const handleScroll = () => {
-			// If we're in the middle of jumping, skip the check
-			if ( isJumpingRef.current ) {
-				return;
-			}
-
-			// Get current scroll position and total height
-			const { scrollTop, scrollHeight, clientHeight } = container;
-
-			// Calculate how far we are from the bottom
-			const scrollBottom = scrollHeight - scrollTop - clientHeight;
-
-			// If we're at least 150px away from the bottom, show the button
-			const shouldBeVisible = scrollBottom > 150;
-
-			if ( shouldBeVisible && ! isVisible ) {
-				// Update position before showing
-				updatePosition();
-
-				// Show immediately
-				setIsVisible( true );
-
-				// Clear any pending hide
-				if ( visibilityTimeoutRef.current ) {
-					clearTimeout( visibilityTimeoutRef.current );
-					visibilityTimeoutRef.current = null;
+		// Create intersection observer
+		const observer = new IntersectionObserver(
+			( entries ) => {
+				// If we're in the middle of jumping, skip the check
+				if ( isJumpingRef.current ) {
+					return;
 				}
-			} else if ( ! shouldBeVisible && isVisible ) {
-				// Hide after a slight delay
-				if ( ! visibilityTimeoutRef.current ) {
-					visibilityTimeoutRef.current = setTimeout( () => {
-						setIsVisible( false );
+
+				const entry = entries[ 0 ];
+				// Show button when less than 10% of last message is visible
+				const shouldBeVisible = entry.intersectionRatio < 0.1;
+
+				if ( shouldBeVisible && ! isVisible ) {
+					// Update position before showing
+					updatePosition();
+
+					// Show immediately
+					setIsVisible( true );
+
+					// Clear any pending hide
+					if ( visibilityTimeoutRef.current ) {
+						clearTimeout( visibilityTimeoutRef.current );
 						visibilityTimeoutRef.current = null;
-					}, 300 ) as unknown as number;
+					}
+				} else if ( ! shouldBeVisible && isVisible ) {
+					// Hide after a slight delay
+					if ( ! visibilityTimeoutRef.current ) {
+						visibilityTimeoutRef.current = setTimeout( () => {
+							setIsVisible( false );
+							visibilityTimeoutRef.current = null;
+						}, 300 ) as unknown as number;
+					}
+				}
+			},
+			{
+				root: container,
+				threshold: [ 0, 0.1 ],
+			}
+		);
+
+		// Function to find and observe the last message
+		const observeLastMessage = () => {
+			// Simply get all children of the container
+			const children = Array.from( container.children );
+
+			if ( children.length > 0 ) {
+				// Get the last child element that is visible
+				for ( let i = children.length - 1; i >= 0; i-- ) {
+					const lastElement = children[ i ] as HTMLElement;
+					if ( lastElement.offsetParent !== null ) {
+						// Start observing the last visible element
+						observer.observe( lastElement );
+						return lastElement;
+					}
 				}
 			}
+			return null;
 		};
 
-		// Add scroll listener
-		container.addEventListener( 'scroll', handleScroll );
+		// Find and observe the last message
+		let lastMessageObserved = observeLastMessage();
 
-		// Check on initial render
-		const initialCheck = setTimeout( handleScroll, 500 );
+		// Set up a mutation observer to detect when new messages are added
+		const mutationObserver = new MutationObserver( () => {
+			// If we already have a last message, disconnect from it
+			if ( lastMessageObserved ) {
+				observer.unobserve( lastMessageObserved );
+			}
+			// Find and observe the new last message
+			lastMessageObserved = observeLastMessage();
+		} );
+
+		// Start observing changes to the container for any new messages
+		mutationObserver.observe( container, {
+			childList: true,
+			subtree: true,
+		} );
 
 		// Listen for resize and element changes
 		const resizeObserver = new ResizeObserver( () => {
@@ -138,8 +172,8 @@ export const JumpToRecent = ( {
 
 		// Clean up
 		return () => {
-			container.removeEventListener( 'scroll', handleScroll );
-			clearTimeout( initialCheck );
+			observer.disconnect();
+			mutationObserver.disconnect();
 			if ( visibilityTimeoutRef.current ) {
 				clearTimeout( visibilityTimeoutRef.current );
 			}
