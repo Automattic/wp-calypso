@@ -225,7 +225,11 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 		return (
 			<>
 				<DocumentHead title={ __( 'Processing' ) } />
-				<StepContainerV2Loading title={ getCurrentMessage() } progress={ progress } />
+				<StepContainerV2Loading
+					title={ getCurrentMessage() }
+					progress={ progress }
+					delay={ 1000 }
+				/>
 			</>
 		);
 	}
