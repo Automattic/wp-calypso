@@ -74,7 +74,7 @@ if ( envVariables.JETPACK_TARGET === 'wpcom-deployment' ) {
 /**
  * Tests features offered by Jetpack Social on a Simple site with Free plan.
  *
- * Keywords: Social, Jetpack, Publicize
+ * Keywords: Social, Jetpack, Publicize, Editor
  */
 describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () {
 	for ( const { plan, platform, testAccountName, features } of testCases ) {
