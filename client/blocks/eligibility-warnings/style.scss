@@ -6,7 +6,6 @@
 	background: #fff;
 	font-size: $font-body-small;
 	margin: 0;
-	box-shadow: 0 0 0 1px var(--color-border-subtle);
 
 	@media (max-width: 660px) {
 		padding: 0;
@@ -85,6 +84,7 @@
 
 	&.eligibility-warnings--without-title {
 		padding-top: 3em;
+		box-shadow: 0 0 0 1px var(--color-border-subtle);
 	}
 }
 

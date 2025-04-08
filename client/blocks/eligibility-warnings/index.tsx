@@ -167,25 +167,6 @@ export const EligibilityWarnings = ( {
 					/>
 				</CompactCard>
 			) }
-			{ ! isPlaceholder && context === 'plugin-details' && (
-				<CompactCard>
-					<div className="eligibility-warnings__header">
-						<div className="eligibility-warnings__title">
-							{ translate( 'Before you continue' ) }
-						</div>
-					</div>
-				</CompactCard>
-			) }
-
-			{ context === 'hosting-features' && (
-				<CompactCard>
-					<div className="eligibility-warnings__header">
-						<div className="eligibility-warnings__title">
-							{ translate( 'Activate hosting features' ) }
-						</div>
-					</div>
-				</CompactCard>
-			) }
 
 			{ ( isPlaceholder || filteredHolds.length > 0 ) && ! showFreeTrial && (
 				<CompactCard>
