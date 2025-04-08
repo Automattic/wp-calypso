@@ -261,9 +261,6 @@ export default function useCreatePaymentCompleteCallback( {
 			reloadCart().catch( () => {
 				// No need to do anything here. CartMessages will report this error to the user.
 			} );
-
-			debug( 'redirect through pending' );
-
 			redirectThroughPending( url, {
 				siteSlug,
 				orderId: 'order_id' in transactionResult ? transactionResult.order_id : undefined,
