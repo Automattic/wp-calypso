@@ -12,8 +12,6 @@ import schema from './schema.json';
 
 const noop = () => {};
 
-const isRunningInJetpackSite = config.isEnabled( 'is_running_in_jetpack_site' );
-
 /**
  * Existing libraries do not escape decimal encoded entities that php encodes, this handles that.
  * @param {string} str The string to decode
@@ -63,13 +61,15 @@ export const doFetchJITM = ( action ) =>
 		{
 			method: 'GET',
 			apiNamespace: 'wpcom/v3',
-			path: isRunningInJetpackSite ? `/jitm` : `/sites/${ action.siteId }/jitm`,
+			path: config.isEnabled( 'is_running_in_jetpack_site' )
+				? '/jitm'
+				: `/sites/${ action.siteId }/jitm`,
 			query: {
 				message_path: action.messagePath,
 				query: action.searchQuery,
 				locale: action.locale,
 			},
-			isLocalApiCall: true, // stop `jetpack_site_xhr_wrapper` from modifying the apiNamespace
+			isLocalApiCall: true, // required to use the wpcom/v3 namespace
 		},
 		{ ...action }
 	);
@@ -84,12 +84,14 @@ export const doDismissJITM = ( action ) =>
 		{
 			method: 'POST',
 			apiNamespace: 'wpcom/v3',
-			path: isRunningInJetpackSite ? `/jitm` : `/sites/${ action.siteId }/jitm`,
+			path: config.isEnabled( 'is_running_in_jetpack_site' )
+				? '/jitm'
+				: `/sites/${ action.siteId }/jitm`,
 			body: {
 				feature_class: action.featureClass,
 				id: action.id,
 			},
-			isLocalApiCall: true, // stop `jetpack_site_xhr_wrapper` from modifying the apiNamespace
+			isLocalApiCall: true, // required to use the wpcom/v3 namespace
 		},
 		action
 	);
