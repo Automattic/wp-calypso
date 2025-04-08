@@ -44,7 +44,7 @@ export const siteCreationPath = buildPathHelper< {
 } >( STEPS.SITE_CREATION_STEP.slug );
 
 export const sitePickerPath = buildPathHelper< {
-	queryParams: { from: string };
+	queryParams: { from: string | null };
 } >( STEPS.PICK_SITE.slug );
 
 export const importOrMigratePath = buildPathHelper< {
@@ -176,3 +176,10 @@ export const siteSetupImportWordpressPath = buildPathHelper< {
 export const calypsoOverviewPath = buildPathHelper< {
 	queryParams: { ref: string };
 } >( '/overview/:siteSlug', { ref: 'site-migration' } );
+
+export const siteSetupGoalsPath = buildPathHelper< {
+	queryParams: {
+		siteId?: number | string;
+		siteSlug: string;
+	};
+} >( '/setup/site-setup/goals' );

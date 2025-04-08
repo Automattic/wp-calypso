@@ -198,7 +198,14 @@ const siteMigration: FlowV2 = {
 									: urlQueryParams.delete( key );
 							} );
 
-							return navigate( paths.sitePickerPath() );
+							const queryParams = Object.fromEntries( urlQueryParams );
+
+							return navigate(
+								paths.sitePickerPath( {
+									from: fromQueryParam,
+									...queryParams,
+								} )
+							);
 						}
 						case 'select-site': {
 							const { ID: newSiteId, slug: newSiteSlug } =
@@ -528,7 +535,14 @@ const siteMigration: FlowV2 = {
 						return window.location.assign( `${ siteAdminUrl }import.php` );
 					}
 
-					return exitFlow( `/setup/site-setup/goals?${ urlQueryParams }` );
+					const queryParams = Object.fromEntries( urlQueryParams );
+
+					return exitFlow(
+						paths.siteSetupGoalsPath( {
+							siteSlug,
+							...queryParams,
+						} )
+					);
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
