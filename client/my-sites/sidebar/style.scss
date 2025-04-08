@@ -146,7 +146,7 @@ $font-size: rem(14px);
 /* stylelint-disable-next-line no-duplicate-selectors */
 .theme-default {
 	// client/layout/style.scss
-	&:has(.sidebar) .layout__content {
+	.layout__content {
 		min-height: 101vh; // Hack to give JS the chance to trigger the scroll event when the content is short. JS code: client/layout/utils.ts:36.
 	}
 
