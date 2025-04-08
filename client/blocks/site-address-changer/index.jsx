@@ -1,4 +1,5 @@
-import { Dialog, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
+import { FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
+import { Button, Modal } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { debounce, get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
@@ -6,7 +7,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import Banner from 'calypso/components/banner';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
@@ -314,7 +314,7 @@ export class SiteAddressChanger extends Component {
 	};
 
 	getStepButtons = () => {
-		const { translate, isEmailVerified } = this.props;
+		const { translate, isEmailVerified, onClose } = this.props;
 
 		if ( 0 === this.state.step ) {
 			const { isAvailabilityPending, isAvailable, isSiteAddressChangeRequesting } = this.props;
@@ -333,7 +333,7 @@ export class SiteAddressChanger extends Component {
 			return [
 				{
 					action: 'cancel',
-					onClick: this.onClose,
+					onClick: onClose,
 					isPrimary: false,
 					label: translate( 'Cancel' ),
 				},
@@ -429,9 +429,6 @@ export class SiteAddressChanger extends Component {
 						disableHref
 					/>
 				) }
-				<FormSectionHeading>
-					<strong>{ translate( 'Change your site address' ) }</strong>
-				</FormSectionHeading>
 				<div className="site-address-changer__info">
 					<p>
 						{ translate(
@@ -550,19 +547,33 @@ export class SiteAddressChanger extends Component {
 	};
 
 	render() {
-		const { isDialogVisible, onClose } = this.props;
+		const { isDialogVisible, onClose, translate } = this.props;
+		const buttons = this.getStepButtons();
 
 		return (
-			<Dialog
-				buttons={ this.getStepButtons() }
+			<Modal
+				className="site-address-changer"
+				title={ translate( 'Change your site address' ) }
 				isVisible={ isDialogVisible }
-				onClose={ onClose }
-				leaveTimeout={ 0 }
+				onRequestClose={ onClose }
 				showCloseIcon
 			>
 				{ 0 === this.state.step && this.renderNewAddressForm() }
 				{ 1 === this.state.step && this.renderConfirmationForm() }
-			</Dialog>
+
+				<div className="site-address-changer__modal-buttons">
+					{ buttons.map( ( button ) => (
+						<Button
+							key={ button.action }
+							variant={ button.isPrimary ? 'primary' : 'tertiary' }
+							disabled={ button.disabled }
+							onClick={ button.onClick }
+						>
+							{ button.label }
+						</Button>
+					) ) }
+				</div>
+			</Modal>
 		);
 	}
 }
