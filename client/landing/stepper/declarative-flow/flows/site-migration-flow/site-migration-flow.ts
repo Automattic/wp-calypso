@@ -21,11 +21,11 @@ import { USER_STORE, SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/s
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
-//TODO: Move to a shared place
 import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { getSiteAdminUrl, getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
+import * as paths from './paths';
 import type {
 	AssertConditionResult,
 	FlowV2,
@@ -155,45 +155,35 @@ const siteMigration: FlowV2 = {
 							// siteId/siteSlug wont be defined here if coming from a direct link/signup.
 							// We need to make sure there's a site to import into.
 							if ( ! siteSlugParam ) {
-								return navigate(
-									addQueryArgs( { from, skipMigration: true }, STEPS.SITE_CREATION_STEP.slug )
-								);
+								return navigate( paths.siteCreationPath( { from, skipMigration: true } ) );
 							}
 						}
 						return exitFlow(
-							addQueryArgs(
-								{
-									siteId,
-									siteSlug,
-									from,
-									origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
-									backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
-								},
-								'/setup/site-setup/importList'
-							)
+							paths.siteSetupImportListPath( {
+								siteId,
+								siteSlug,
+								from,
+								origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+								backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
+							} )
 						);
 					}
 
 					if ( isHostedSiteMigrationFlow( variantSlug ?? '' ) ) {
 						if ( ! siteSlugParam ) {
 							if ( siteCount > 0 ) {
-								return navigate( `sitePicker?from=${ encodeURIComponent( from ) }` );
+								return navigate( paths.sitePickerPath( { from } ) );
 							}
 
 							if ( from ) {
-								return navigate( addQueryArgs( { from }, STEPS.SITE_CREATION_STEP.slug ) );
+								return navigate( paths.siteCreationPath( { from } ) );
 							}
 
 							return navigate( 'error' );
 						}
 					}
 
-					return navigate(
-						addQueryArgs(
-							{ from: from, siteSlug, siteId },
-							STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug
-						)
-					);
+					return navigate( paths.importOrMigratePath( { from, siteSlug, siteId } ) );
 				}
 
 				case STEPS.PICK_SITE.slug: {
@@ -208,32 +198,27 @@ const siteMigration: FlowV2 = {
 									: urlQueryParams.delete( key );
 							} );
 
-							return navigate( `sitePicker?${ urlQueryParams.toString() }` );
+							return navigate( paths.sitePickerPath() );
 						}
 						case 'select-site': {
 							const { ID: newSiteId, slug: newSiteSlug } =
 								providedDependencies.site as SiteExcerptData;
 
-							// If the action is migrate, navigate to the DIY/DIFM selector screen.
 							if ( 'migrate' === actionQueryParam ) {
 								return navigate(
-									addQueryArgs(
-										{ siteId: newSiteId, siteSlug: newSiteSlug, from: fromQueryParam },
-										STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug
-									)
+									paths.howToMigratePath( {
+										siteSlug: newSiteSlug,
+										siteId: newSiteId,
+										from: fromQueryParam,
+									} )
 								);
 							}
 							return navigate(
-								addQueryArgs(
-									{ siteId: newSiteId, siteSlug: newSiteSlug, from: fromQueryParam },
-									STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug
-								)
+								paths.importOrMigratePath( { siteSlug: newSiteSlug, siteId: newSiteId } )
 							);
 						}
 						case 'create-site':
-							return navigate(
-								addQueryArgs( { from: fromQueryParam }, STEPS.SITE_CREATION_STEP.slug )
-							);
+							return navigate( paths.siteCreationPath( { from: fromQueryParam } ) );
 					}
 				}
 
@@ -243,7 +228,7 @@ const siteMigration: FlowV2 = {
 						skipMigration: 'import' === actionQueryParam ? true : undefined,
 					};
 
-					return navigate( addQueryArgs( queryArgs, STEPS.PROCESSING.slug ) );
+					return navigate( paths.processingPath( queryArgs ) );
 				}
 
 				case STEPS.PROCESSING.slug: {
@@ -252,34 +237,29 @@ const siteMigration: FlowV2 = {
 							// If we get to this point without a fromQueryParam then we are coming from a direct
 							// pick your current platform link. That's why we navigate to the importList step.
 							return exitFlow(
-								addQueryArgs(
-									{
-										siteId,
-										siteSlug,
-										origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
-										backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
-										...( fromQueryParam && { from: fromQueryParam } ),
-									},
-									'/setup/site-setup/importList'
-								)
+								paths.siteSetupImportListPath( {
+									siteId,
+									siteSlug,
+									origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+									backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
+									from: fromQueryParam,
+								} )
 							);
 						}
 
 						// If the action is migrate, navigate to the DIY/DIFM selector screen.
 						if ( 'migrate' === actionQueryParam ) {
 							return navigate(
-								addQueryArgs(
-									{ siteId, siteSlug, from: fromQueryParam },
-									STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug
-								)
+								paths.howToMigratePath( {
+									siteSlug: siteSlug,
+									siteId: siteId,
+									from: fromQueryParam,
+								} )
 							);
 						}
 
 						return navigate(
-							addQueryArgs(
-								{ siteId, siteSlug, from: fromQueryParam },
-								STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug
-							)
+							paths.importOrMigratePath( { siteSlug, siteId, from: fromQueryParam } )
 						);
 					}
 				}
@@ -289,77 +269,48 @@ const siteMigration: FlowV2 = {
 					if ( providedDependencies?.destination === 'import' ) {
 						if ( urlQueryParams.get( 'ref' ) === 'calypso-importer' ) {
 							return exitFlow(
-								addQueryArgs(
+								paths.calypsoImporterPath(
 									{ engine: 'wordpress', ref: 'site-migration' },
-									`/import/${ siteSlug }`
+									{ siteSlug }
 								)
 							);
 						}
 
 						return exitFlow(
-							addQueryArgs(
-								{
-									siteId,
-									siteSlug,
-									from: fromQueryParam ?? '',
-									option: 'content',
-									backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }`,
-								},
-								'/setup/site-setup/importerWordpress'
-							)
+							paths.siteSetupImportWordpressPath( {
+								siteId,
+								siteSlug,
+								from: fromQueryParam ?? '',
+								option: 'content',
+								backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }`,
+							} )
 						);
 					}
 
-					return navigate(
-						addQueryArgs(
-							{
-								siteId,
-								siteSlug,
-								from: fromQueryParam,
-							},
-							STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug
-						)
-					);
+					return navigate( paths.howToMigratePath( { siteId, siteSlug, from: fromQueryParam } ) );
 				}
 
 				case STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug: {
 					// Take the user to the upgrade plan step.
 					if ( providedDependencies?.destination === 'upgrade' ) {
 						return navigate(
-							addQueryArgs(
-								{
-									siteId,
-									siteSlug,
-									from: fromQueryParam,
-									destination: providedDependencies?.destination,
-									how: providedDependencies?.how as string,
-								},
-								STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
-							)
+							paths.upgradePlanPath( {
+								siteId,
+								siteSlug,
+								from: fromQueryParam,
+								destination: providedDependencies?.destination,
+								how: providedDependencies?.how as string,
+							} )
 						);
 					}
 
 					// Do it for me option.
 					if ( providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
-						return navigate(
-							addQueryArgs(
-								{
-									siteSlug,
-									from: fromQueryParam,
-									siteId,
-								},
-								STEPS.SITE_MIGRATION_CREDENTIALS.slug
-							)
-						);
+						return navigate( paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } ) );
 					}
 
 					// Continue with the migration flow.
-					return navigate(
-						addQueryArgs(
-							{ siteId, siteSlug, from: fromQueryParam },
-							STEPS.SITE_MIGRATION_INSTRUCTIONS.slug
-						)
-					);
+					return navigate( paths.instructionsPath( { siteId, siteSlug, from: fromQueryParam } ) );
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
@@ -402,22 +353,13 @@ const siteMigration: FlowV2 = {
 				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
 					// User decided to ask for an assisted migration - try to collect credentials.
 					if ( providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
-						return navigate(
-							addQueryArgs(
-								{
-									siteId,
-									from: fromQueryParam,
-									siteSlug,
-								},
-								STEPS.SITE_MIGRATION_CREDENTIALS.slug
-							)
-						);
+						return navigate( paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } ) );
 					}
-					return exitFlow( addQueryArgs( { ref: 'site-migration' }, `/overview/${ siteSlug }` ) );
+					return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
 				}
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {
-					const { action, from, authorizationUrl } = providedDependencies as {
+					const { action, from, authorizationUrl, platform } = providedDependencies as {
 						action:
 							| 'skip'
 							| 'submit'
@@ -427,71 +369,66 @@ const siteMigration: FlowV2 = {
 							| 'site-is-not-using-wordpress';
 						from: string;
 						authorizationUrl: string;
+						platform: ImporterPlatform;
 					};
 
 					if ( action === 'skip' ) {
-						return exitFlow( addQueryArgs( { ref: 'site-migration' }, `/overview/${ siteSlug }` ) );
+						return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
 					}
 
 					if ( action === 'already-wpcom' ) {
 						return navigate(
-							addQueryArgs(
-								{ siteId, from: from || fromQueryParam, siteSlug },
-								STEPS.SITE_MIGRATION_ALREADY_WPCOM.slug
-							)
+							paths.alreadyWpcomPath( { siteId, from: from || fromQueryParam, siteSlug } )
 						);
 					}
 
 					if ( action === 'site-is-not-using-wordpress' ) {
 						return navigate(
-							addQueryArgs(
-								{
-									siteId,
-									from: from || fromQueryParam,
-									siteSlug,
-									platform: providedDependencies.platform as string,
-								},
-								STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug
-							)
+							paths.otherPlatformDetectedImportPath( {
+								siteId,
+								from: from || fromQueryParam,
+								siteSlug,
+								platform,
+							} )
 						);
 					}
 
 					if ( action === 'application-passwords-approval' ) {
 						return navigate(
-							addQueryArgs(
-								{
-									siteId,
-									from: from || fromQueryParam,
-									siteSlug,
-									authorizationUrl,
-								},
-								STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug
-							)
+							paths.applicationPasswordAuthorizationPath( {
+								siteId,
+								from: from || fromQueryParam,
+								siteSlug,
+								authorizationUrl,
+							} )
 						);
 					}
 
 					if ( action === 'credentials-required' ) {
 						return navigate(
-							addQueryArgs(
-								{ siteId, from: from || fromQueryParam, siteSlug },
-								STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS.slug
-							)
+							paths.fallbackCredentialsPath( {
+								siteId,
+								from: from || fromQueryParam,
+								siteSlug,
+							} )
 						);
 					}
 
-					return exitFlow( addQueryArgs( { ref: 'site-migration' }, `/overview/${ siteSlug }` ) );
+					return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
 				}
 
 				case STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS.slug: {
-					return exitFlow( addQueryArgs( { ref: 'site-migration' }, `/overview/${ siteSlug }` ) );
+					return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
 				}
 
 				case STEPS.SITE_MIGRATION_ALREADY_WPCOM.slug: {
 					return navigate(
-						addQueryArgs(
-							{ siteId, from: fromQueryParam, siteSlug, preventTicketCreation: true },
-							STEPS.SITE_MIGRATION_SUPPORT_INSTRUCTIONS.slug
-						)
+						paths.supportInstructionsPath( {
+							siteId,
+							from: fromQueryParam,
+							siteSlug,
+							preventTicketCreation: true,
+						} )
 					);
 				}
 				case STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug: {
@@ -507,10 +444,11 @@ const siteMigration: FlowV2 = {
 					}
 
 					return navigate(
-						addQueryArgs(
-							{ siteId, from: fromQueryParam, siteSlug },
-							STEPS.SITE_MIGRATION_SUPPORT_INSTRUCTIONS.slug
-						)
+						paths.supportInstructionsPath( {
+							siteId,
+							from: fromQueryParam,
+							siteSlug,
+						} )
 					);
 				}
 
@@ -528,20 +466,15 @@ const siteMigration: FlowV2 = {
 
 					if ( action === 'fallback-credentials' ) {
 						return navigate(
-							addQueryArgs(
-								{
-									siteId,
-									siteSlug,
-									authorizationUrl,
-									backTo: STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug,
-									from: fromQueryParam,
-								},
-								STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS.slug
-							)
+							paths.fallbackCredentialsPath( {
+								siteId,
+								siteSlug,
+								from: fromQueryParam,
+							} )
 						);
 					}
 
-					return exitFlow( addQueryArgs( { ref: 'site-migration' }, `/overview/${ siteSlug }` ) );
+					return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
 				}
 			}
 		}
@@ -554,12 +487,23 @@ const siteMigration: FlowV2 = {
 			switch ( currentStep ) {
 				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {
 					if ( entryPoint === 'calypso-importer' ) {
-						return exitFlow( addQueryArgs( { ref: 'site-migration' }, `/import/${ siteSlug }` ) );
+						return exitFlow(
+							paths.calypsoImporterPath(
+								{ engine: 'wordpress', ref: 'site-migration' },
+								{ siteSlug }
+							)
+						);
 					}
 
 					if ( entryPoint === 'wp-admin-importers-list' ) {
 						return exitFlow(
-							addQueryArgs( { siteSlug, siteId, ref: entryPoint }, '/setup/site-setup/importList' )
+							paths.siteSetupImportListPath( {
+								siteId,
+								siteSlug,
+								origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+								backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
+								from: fromQueryParam,
+							} )
 						);
 					}
 
@@ -572,15 +516,11 @@ const siteMigration: FlowV2 = {
 						return exitFlow( '/start' );
 					}
 
-					return navigate(
-						addQueryArgs( { siteSlug, siteId }, STEPS.SITE_MIGRATION_IDENTIFY.slug )
-					);
+					return navigate( paths.identifyPath( { from: fromQueryParam } ) );
 				}
 
 				case STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug: {
-					return navigate(
-						addQueryArgs( { siteSlug, siteId }, STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug )
-					);
+					return navigate( paths.importOrMigratePath( { siteSlug, siteId } ) );
 				}
 
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
@@ -592,7 +532,13 @@ const siteMigration: FlowV2 = {
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
-					return navigate( `${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?${ urlQueryParams }` );
+					return navigate(
+						paths.howToMigratePath( {
+							siteSlug,
+							siteId,
+							from: fromQueryParam,
+						} )
+					);
 				}
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {
@@ -608,11 +554,23 @@ const siteMigration: FlowV2 = {
 						return exitFlow( `/home/${ siteId }` );
 					}
 
-					return navigate( `${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?${ urlQueryParams }` );
+					return navigate(
+						paths.howToMigratePath( {
+							siteSlug,
+							siteId,
+							from: fromQueryParam,
+						} )
+					);
 				}
 
 				case STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug: {
-					return navigate( `${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?${ urlQueryParams }` );
+					return navigate(
+						paths.credentialsPath( {
+							siteId,
+							siteSlug,
+							from: fromQueryParam,
+						} )
+					);
 				}
 
 				case STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS.slug: {
@@ -621,19 +579,45 @@ const siteMigration: FlowV2 = {
 						STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug
 					) {
 						return navigate(
-							`${ STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug }?${ urlQueryParams }`
+							paths.applicationPasswordAuthorizationPath( {
+								siteId,
+								siteSlug,
+								from: fromQueryParam,
+								authorizationUrl: urlQueryParams.get( 'authorizationUrl' ),
+								success: urlQueryParams.get( 'success' ),
+								password: urlQueryParams.get( 'password' ),
+								user_login: urlQueryParams.get( 'user_login' ),
+							} )
 						);
 					}
 
-					return navigate( `${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?${ urlQueryParams }` );
+					return navigate(
+						paths.credentialsPath( {
+							siteId,
+							siteSlug,
+							from: fromQueryParam,
+						} )
+					);
 				}
 
 				case STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug: {
-					return navigate( `${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?${ urlQueryParams }` );
+					return navigate(
+						paths.credentialsPath( {
+							siteId,
+							siteSlug,
+							from: fromQueryParam,
+						} )
+					);
 				}
 
 				case STEPS.SITE_MIGRATION_ALREADY_WPCOM.slug: {
-					return navigate( `${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?${ urlQueryParams }` );
+					return navigate(
+						paths.credentialsPath( {
+							siteId,
+							siteSlug,
+							from: fromQueryParam,
+						} )
+					);
 				}
 			}
 		};
