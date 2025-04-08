@@ -65,7 +65,7 @@ export default function PlanStats() {
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	if ( isLoading ) {
-		return <LoadingPlaceholder width="100px" height="16px" />;
+		return <LoadingPlaceholder width="400px" height="100px" />;
 	}
 	return (
 		<>
