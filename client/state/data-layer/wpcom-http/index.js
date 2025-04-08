@@ -76,7 +76,6 @@ export const queueRequest =
 				{ path, formData, onStreamRecord, responseType, isLocalApiCall },
 				{ ...query }, // wpcom mutates the query so hand it a copy
 				method === 'POST' && body,
-
 				( error, data, headers ) => {
 					debug( 'callback fn by Req method: error=%o data=%o headers=%o', error, data, headers );
 
