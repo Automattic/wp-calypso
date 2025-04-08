@@ -13,18 +13,13 @@ import { forwardRef } from '@wordpress/element';
  */
 type NavigableRegionProps = {
 	children: React.ReactNode;
-	className?: string;
-	ariaLabel: string;
+	ariaLabel: NonNullable< HTMLElement[ 'ariaLabel' ] >;
 	as?: React.ElementType;
 } & React.HTMLAttributes< HTMLElement >;
 
 export const NavigableRegion = forwardRef< HTMLElement, NavigableRegionProps >(
-	( { children, className, ariaLabel, as: Tag = 'div', ...props }, ref ) => {
-		return (
-			<Tag ref={ ref } aria-label={ ariaLabel } role="region" tabIndex={ -1 } { ...props }>
-				{ children }
-			</Tag>
-		);
+	( { as: Tag = 'div', role = 'region', tabIndex = -1, ...props }, ref ) => {
+		return <Tag ref={ ref } role={ role } tabIndex={ tabIndex } { ...props } />;
 	}
 );
 
