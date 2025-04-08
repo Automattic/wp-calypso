@@ -319,6 +319,6 @@ function onClickInstallPlugin( {
 		);
 	}
 
-	// No need to go through chekout, go to install page directly.
+	// No need to go through checkout, go to install page directly.
 	return page( installPluginURL );
 }
