@@ -1,7 +1,7 @@
 import { buildPathHelper } from '../index';
 
 describe( 'paths helpers', () => {
-	it( 'adds returns the path without query params', () => {
+	it( 'returns the path without query params', () => {
 		const testPath = buildPathHelper( '/test' );
 		expect( testPath() ).toBe( '/test' );
 	} );
