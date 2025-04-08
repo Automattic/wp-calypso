@@ -5,6 +5,7 @@ import { Button } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import A4APluginsJetpackBanner from 'calypso/a8c-for-agencies/sections/plugins/plugins-jetpack-banner';
+import QueryDotorgPlugins from 'calypso/components/data/query-dotorg-plugins';
 import QueryJetpackSitesFeatures from 'calypso/components/data/query-jetpack-sites-features';
 import QueryPlugins from 'calypso/components/data/query-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -340,6 +341,8 @@ const PluginsDashboard = ( {
 				path={ pluginSlug ? `/plugins/manage/sites/${ pluginSlug }` : '/plugins/manage/sites' }
 				title="Plugins Dashboard"
 			/>
+
+			{ pluginSlug && <QueryDotorgPlugins pluginSlugList={ [ pluginSlug ] } /> }
 			<QueryJetpackSitesFeatures />
 			<QueryPlugins />
 			<QueryProductsList />
