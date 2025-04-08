@@ -232,7 +232,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		return (
 			<>
 				<DocumentHead title={ title } />
-				<StepContainerV2Loading title={ title } progress={ progress } />
+				<StepContainerV2Loading title={ title } progress={ progress } delay={ 1000 } />
 			</>
 		);
 	}
