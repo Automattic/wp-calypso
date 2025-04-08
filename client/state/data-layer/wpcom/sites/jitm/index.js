@@ -11,7 +11,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import schema from './schema.json';
 
 const noop = () => {};
-const jitmSchema = schema;
+
 const isRunningInJetpackSite = config.isEnabled( 'is_running_in_jetpack_site' );
 
 /**
@@ -126,7 +126,7 @@ registerHandlers( 'state/data-layer/wpcom/sites/jitm/index.js', {
 			fetch: doFetchJITM,
 			onSuccess: receiveJITM,
 			onError: failedJITM,
-			fromApi: makeJsonSchemaParser( jitmSchema, transformApiRequest ),
+			fromApi: makeJsonSchemaParser( schema, transformApiRequest ),
 		} ),
 	],
 

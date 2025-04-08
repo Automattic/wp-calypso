@@ -57,10 +57,8 @@ export const queueRequest =
 			path,
 			query = {},
 		} = action;
-		const { responseType } = options || {};
+		const { responseType, isLocalApiCall } = options || {};
 		const fetcher = get( options, 'options.fetcher', 'wpcom' );
-
-		const isLocalApiCall = options?.isLocalApiCall;
 
 		const onStreamRecord =
 			rawOnStreamRecord &&
