@@ -1,10 +1,7 @@
 import page, { type Callback, type Context } from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { siteSelection, sites, navigation } from 'calypso/my-sites/controller';
-import {
-	DOTCOM_LOGS_PHP,
-	DOTCOM_LOGS_WEB,
-} from 'calypso/sites/components/site-preview-pane/constants';
+import { LOGS_PHP, LOGS_WEB } from 'calypso/sites/components/site-preview-pane/constants';
 import { siteDashboard, redirectToHostingFeaturesIfNotAtomic } from 'calypso/sites/controller';
 import { phpErrorLogs, webServerLogs } from './controller';
 
@@ -22,7 +19,7 @@ export default function () {
 		redirectToHostingFeaturesIfNotAtomic,
 		navigation,
 		phpErrorLogs,
-		siteDashboard( DOTCOM_LOGS_PHP ),
+		siteDashboard( LOGS_PHP ),
 		makeLayout,
 		clientRender
 	);
@@ -32,7 +29,7 @@ export default function () {
 		redirectToHostingFeaturesIfNotAtomic,
 		navigation,
 		webServerLogs,
-		siteDashboard( DOTCOM_LOGS_WEB ),
+		siteDashboard( LOGS_WEB ),
 		makeLayout,
 		clientRender
 	);

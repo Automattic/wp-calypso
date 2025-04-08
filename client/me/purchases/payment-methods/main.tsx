@@ -24,7 +24,7 @@ function PaymentMethods() {
 				navigationItems={ [] }
 				title={ titles.sectionTitle }
 				subtitle={ translate(
-					'Add or delete payment methods for your account. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+					'Add or remove payment methods for your account. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 					{
 						components: {
 							learnMoreLink: (

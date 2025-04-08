@@ -5,12 +5,14 @@ import { store as coreDataStore } from '@wordpress/core-data';
 import { useSelect } from '@wordpress/data';
 import { Icon, wordpress } from '@wordpress/icons';
 import clsx from 'clsx';
-import type { JSX } from 'react';
-
 /**
  * Internal dependencies
  */
 import './style.scss';
+/**
+ * Types
+ */
+import type { JSX } from 'react';
 
 type SiteIconProps = {
 	/**
@@ -40,7 +42,7 @@ type SiteIconProps = {
  * @param {SiteIconProps} props - SiteIcon props.
  * @returns {JSX.Element} SiteIcon component.
  */
-function SiteIcon( { className }: SiteIconProps ): JSX.Element {
+export function SiteIcon( { className }: SiteIconProps ): JSX.Element {
 	const { isRequestingSite, siteIconUrl } = useSelect( ( select ) => {
 		const { getEntityRecord } = select( coreDataStore );
 		const siteData = getEntityRecord( 'root', '__unstableBase', undefined );
@@ -56,16 +58,14 @@ function SiteIcon( { className }: SiteIconProps ): JSX.Element {
 	}, [] );
 
 	if ( isRequestingSite && ! siteIconUrl ) {
-		return <div className="site-admin-site-icon__image" />;
+		return <div className="a8c-site-admin-site-icon__image" />;
 	}
 
 	const icon = siteIconUrl ? (
-		<img className="site-admin-site-icon__image" alt="" src={ siteIconUrl } />
+		<img className="a8c-site-admin-site-icon__image" alt="" src={ siteIconUrl } />
 	) : (
-		<Icon className="site-admin-site-icon__icon" icon={ wordpress } size={ 48 } />
+		<Icon className="a8c-site-admin-site-icon__icon" icon={ wordpress } size={ 48 } />
 	);
 
-	return <div className={ clsx( className, 'site-admin-site-icon' ) }>{ icon }</div>;
+	return <div className={ clsx( className, 'a8c-site-admin-site-icon' ) }>{ icon }</div>;
 }
-
-export { SiteIcon };

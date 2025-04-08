@@ -1,5 +1,8 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
 .migrations-tag-sites-modal__instruction {
-	@include a4a-font-body-sm;
+	@include body-small;
 	margin: 0;
 	color: var(--color-accent-60);
 

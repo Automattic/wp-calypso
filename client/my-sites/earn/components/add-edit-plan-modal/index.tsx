@@ -141,9 +141,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		product?.subscribe_as_site_subscriber ?? isOnlyTier
 	);
 
-	const [ editedPostIsTier, setEditedPostIsTier ] = useState(
-		product?.type === TYPE_TIER ?? false
-	);
+	const [ editedPostIsTier, setEditedPostIsTier ] = useState( product?.type === TYPE_TIER );
 	const [ editedSchedule, setEditedSchedule ] = useState(
 		product?.renewal_schedule ?? PLAN_MONTHLY_FREQUENCY
 	);

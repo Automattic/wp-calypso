@@ -35,7 +35,7 @@ export function MagicLoginEmailWrapper( { emailAddress }: MagicLoginEmailWrapper
 
 	const filteredDomains = getEmailDomain( emailAddress );
 
-	if ( filteredDomains ) {
+	if ( filteredDomains?.length > 0 ) {
 		return (
 			<ul>
 				{ filteredDomains.map( ( item: MagicEmailDomainInfo, key: number ) => (

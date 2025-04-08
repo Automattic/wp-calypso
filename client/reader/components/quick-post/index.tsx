@@ -7,18 +7,25 @@ import {
 	loadTextFormatting,
 } from '@automattic/verbum-block-editor';
 import { Button } from '@wordpress/components';
+import { moreVertical } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef } from 'react';
-import { useSelector, useDispatch, connect } from 'react-redux';
+import { useState, useRef, useEffect } from 'react';
+import { connect } from 'react-redux';
+import PopoverMenu from 'calypso/components/popover-menu';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import { stripHTML } from 'calypso/lib/formatting';
 import wpcom from 'calypso/lib/wp';
+import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { successNotice } from 'calypso/state/notices/actions';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import { receivePosts } from 'calypso/state/reader/posts/actions';
 import { receiveNewPost } from 'calypso/state/reader/streams/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { getMostRecentlySelectedSiteId, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -35,50 +42,60 @@ interface PostItem {
 	site_ID: number;
 	title: string;
 	content: string;
+	URL: string;
 }
 
 function QuickPost( {
-	primarySiteId,
 	receivePosts,
+	successNotice,
 }: {
-	primarySiteId: number | null;
 	receivePosts: ( posts: PostItem[] ) => Promise< void >;
+	successNotice: ( message: string, options: object ) => void;
 } ) {
 	const translate = useTranslate();
 	const locale = useLocale();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
-	const [ postContent, setPostContent ] = useState( '' );
+	const STORAGE_KEY = 'reader_quick_post_content';
+	const [ postContent, setPostContent ] = useState( () => {
+		// Use localStorage to save content between sessions.
+		return localStorage.getItem( STORAGE_KEY ) || '';
+	} );
 	const [ editorKey, setEditorKey ] = useState( 0 );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
-	const [ selectedSiteId, setSelectedSiteId ] = useState< number | null >( primarySiteId ?? null );
 	const editorRef = useRef< HTMLDivElement >( null );
 	const dispatch = useDispatch();
 	const currentUser = useSelector( getCurrentUser );
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const mostRecentlySelectedSiteId = useSelector( getMostRecentlySelectedSiteId );
+	const primarySiteId = useSelector( getPrimarySiteId );
 	const hasLoaded = useSelector( hasLoadedSites );
 	const hasSites = ( currentUser?.site_count ?? 0 ) > 0;
-	const [ showSuccessMessage, setShowSuccessMessage ] = useState( false );
+	const [ isMenuVisible, setIsMenuVisible ] = useState( false );
+	const popoverButtonRef = useRef< HTMLButtonElement >( null );
+
+	useEffect( () => {
+		if ( postContent ) {
+			localStorage.setItem( STORAGE_KEY, postContent );
+		}
+	}, [ postContent ] );
 
 	const clearEditor = () => {
+		localStorage.removeItem( STORAGE_KEY );
+		setPostContent( '' );
 		setEditorKey( ( key ) => key + 1 );
 	};
 
-	const callShowSuccessMessage = () => {
-		setShowSuccessMessage( true );
-		setTimeout( () => {
-			setShowSuccessMessage( false );
-		}, 5000 );
-	};
+	const siteId = selectedSiteId || mostRecentlySelectedSiteId || primarySiteId || undefined;
 
 	const handleSubmit = () => {
-		if ( ! postContent.trim() || ! selectedSiteId || isSubmitting ) {
+		if ( ! postContent.trim() || ! siteId || isSubmitting ) {
 			return;
 		}
 
-		setShowSuccessMessage( false );
 		setIsSubmitting( true );
 
 		wpcom
-			.site( selectedSiteId )
+			.site( siteId )
 			.post()
 			.add( {
 				title:
@@ -93,16 +110,27 @@ function QuickPost( {
 				status: 'publish',
 			} )
 			.then( ( postData: PostItem ) => {
-				recordReaderTracksEvent( 'calypso_reader_quick_post_submitted' );
+				recordReaderTracksEvent( 'calypso_reader_quick_post_submitted', {
+					post_id: postData.ID,
+					post_url: postData.URL,
+				} );
 				clearEditor();
-				callShowSuccessMessage();
+
+				successNotice( translate( 'Post successful! Your post will appear in the feed soon.' ), {
+					button: translate( 'View Post.' ),
+					noticeActionProps: {
+						external: true,
+					},
+					href: postData.URL,
+				} );
+				// TODO: Update the stream with the new post (if they're subscribed?) to signal success.
 
 				if ( config.isEnabled( 'reader/quick-post-v2' ) ) {
 					receivePosts( [ postData ] ).then( () => {
 						// Actual API response will update the stream with the real post data
 						dispatch(
 							receiveNewPost( {
-								streamKey: `following`,
+								streamKey: 'following',
 								postData,
 							} )
 						);
@@ -118,12 +146,8 @@ function QuickPost( {
 			} );
 	};
 
-	const handleCancel = () => {
-		clearEditor();
-	};
-
 	const handleSiteSelect = ( siteId: number ) => {
-		setSelectedSiteId( siteId );
+		dispatch( setSelectedSiteId( siteId ) );
 	};
 
 	const getButtonText = () => {
@@ -132,6 +156,13 @@ function QuickPost( {
 		}
 		return translate( 'Post' );
 	};
+
+	const handleFullEditorClick = () => {
+		recordReaderTracksEvent( 'calypso_reader_quick_post_full_editor_opened' );
+	};
+
+	const toggleMenu = () => setIsMenuVisible( ! isMenuVisible );
+	const closeMenu = () => setIsMenuVisible( false );
 
 	if ( ! hasLoaded ) {
 		return (
@@ -149,44 +180,55 @@ function QuickPost( {
 
 	return (
 		<div className="quick-post-input">
-			<label htmlFor="quick-post-site-select" className="quick-post-input__label">
-				{ translate( 'Publish a post to' ) }
-			</label>
 			<div className="quick-post-input__fields">
 				<div className="quick-post-input__site-select-wrapper">
 					<SitesDropdown
-						selectedSiteId={ selectedSiteId || undefined }
+						selectedSiteId={ siteId }
 						onSiteSelect={ handleSiteSelect }
 						isPlaceholder={ ! hasLoaded }
 					/>
+					<div className="quick-post-input__actions-menu">
+						<Button
+							ref={ popoverButtonRef }
+							icon={ moreVertical }
+							onClick={ toggleMenu }
+							aria-expanded={ isMenuVisible }
+							className="quick-post-input__actions-toggle"
+						/>
+						<PopoverMenu
+							context={ popoverButtonRef.current }
+							isVisible={ isMenuVisible }
+							onClose={ closeMenu }
+							position="bottom"
+							className="quick-post-input__popover"
+						>
+							<PopoverMenuItem
+								href={ siteId ? `/post/${ siteId }?type=post` : '/post' }
+								target="_blank"
+								rel="noreferrer"
+								onClick={ handleFullEditorClick }
+							>
+								{ translate( 'Open Full Editor' ) }
+							</PopoverMenuItem>
+						</PopoverMenu>
+					</div>
 				</div>
 				<div className="verbum-editor-wrapper" ref={ editorRef }>
 					<Editor
 						key={ editorKey }
-						initialContent=""
+						initialContent={ postContent }
 						onChange={ setPostContent }
 						isRTL={ isLocaleRtl( locale ) ?? false }
 						isDarkMode={ false }
+						customStyles={ `
+							div.is-root-container.block-editor-block-list__layout {
+								padding-bottom: 20px;
+							}
+						` }
 					/>
 				</div>
 			</div>
 			<div className="quick-post-input__actions">
-				<div
-					className={ `quick-post-input__success-message ${
-						showSuccessMessage ? 'is-visible' : ''
-					}` }
-					aria-hidden={ ! showSuccessMessage }
-				>
-					<p>{ translate( 'Post successful! Your message will appear in the feed soon.' ) }</p>
-				</div>
-
-				<Button
-					onClick={ handleCancel }
-					disabled={ isDisabled }
-					className="quick-post-input__cancel"
-				>
-					{ translate( 'Cancel' ) }
-				</Button>
 				<Button
 					variant="primary"
 					onClick={ handleSubmit }
@@ -199,11 +241,7 @@ function QuickPost( {
 	);
 }
 
-export default connect(
-	( state: any ) => ( {
-		primarySiteId: getPrimarySiteId( state ),
-	} ),
-	{
-		receivePosts: ( posts: PostItem[] ) => receivePosts( posts ) as Promise< void >,
-	}
-)( QuickPost );
+export default connect( null, {
+	successNotice: ( message: string, options: object ) => successNotice( message, options ),
+	receivePosts: ( posts: PostItem[] ) => receivePosts( posts ) as Promise< void >,
+} )( QuickPost );

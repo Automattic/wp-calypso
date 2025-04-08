@@ -2,6 +2,7 @@ import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import Notice from 'calypso/components/notice';
 import { useSelector } from 'calypso/state';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
 import { ExceedQuotaErrorContent } from './exceed-quota-error-content';
@@ -29,6 +30,7 @@ type CardContentProps = {
 	isButtonDisabled: boolean;
 	showQuotaError: boolean;
 	isDevelopmentSite?: boolean;
+	disabledMessage?: string;
 };
 
 export const NewStagingSiteCardContent = ( {
@@ -37,6 +39,7 @@ export const NewStagingSiteCardContent = ( {
 	isButtonDisabled,
 	showQuotaError,
 	isDevelopmentSite,
+	disabledMessage,
 }: CardContentProps ) => {
 	{
 		const translate = useTranslate();
@@ -68,6 +71,11 @@ export const NewStagingSiteCardContent = ( {
 					<p>
 						{ translate( 'Staging sites are only available to sites launched in production.' ) }
 					</p>
+				) }
+				{ isButtonDisabled && disabledMessage && (
+					<Notice status="is-error" showDismiss={ false }>
+						{ disabledMessage }
+					</Notice>
 				) }
 				<Button primary disabled={ isButtonDisabled } onClick={ onAddClick }>
 					<span>{ translate( 'Add staging site' ) }</span>

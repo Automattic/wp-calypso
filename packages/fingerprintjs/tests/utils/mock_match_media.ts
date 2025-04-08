@@ -23,7 +23,7 @@ export default async function withMockMatchMedia< T >(
 					// Parses queries like `(property-name: value)` and `(property-name)`
 					const match = /^\s*\(\s*(min-|max-)?([\w-]+)\s*(:\s*([\w-]+))?\s*\)\s*$/.exec( query );
 					if ( ! match ) {
-						throw new Error( `Unexpected query syntax` );
+						throw new Error( 'Unexpected query syntax' );
 					}
 					const [ , range, name, , queryFullValue ] = match;
 

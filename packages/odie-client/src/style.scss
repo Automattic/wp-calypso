@@ -109,7 +109,7 @@ $blueberry-blue: #3858e9;
 	width: 100%;
 }
 
-.odie-chat-message-input-container {
+.odie-chat-message-input-container, .odie-closed-conversation-footer {
 	z-index: 10;
 	position: fixed;
 	bottom: 0;

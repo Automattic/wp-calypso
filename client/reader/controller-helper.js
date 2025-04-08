@@ -4,7 +4,6 @@ import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordTrack } from 'calypso/reader/stats';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 
 export function trackPageLoad( path, title, readerView ) {
@@ -50,14 +49,4 @@ export function setPageTitle( context, title ) {
 			} )
 		)
 	);
-}
-
-export function userHasHistory( context ) {
-	return !! context.lastRoute;
-}
-
-export function shouldShowBackButton( context ) {
-	const state = context.store.getState();
-	const isLoggedIn = isUserLoggedIn( state );
-	return isLoggedIn && userHasHistory( context );
 }

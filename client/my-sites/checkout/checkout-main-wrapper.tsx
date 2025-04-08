@@ -6,7 +6,6 @@ import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useBigSkyBeforePlans } from 'calypso/landing/stepper/declarative-flow/helpers/use-bigsky-before-plans-experiment';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { getStripeConfiguration, getRazorpayConfiguration } from 'calypso/lib/store-transactions';
 import Recaptcha from 'calypso/signup/recaptcha';
@@ -81,7 +80,6 @@ export default function CheckoutMainWrapper( {
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentUserLocale );
 	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
-	useBigSkyBeforePlans();
 
 	useEffect( () => {
 		window.scrollTo( 0, 0 );

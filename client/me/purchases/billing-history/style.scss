@@ -1,168 +1,3 @@
-// Transactions Table
-.billing-history__transactions {
-	border-collapse: collapse;
-	margin: 0;
-}
-
-.billing-history__no-results {
-	display: table-row;
-}
-
-.billing-history__no-results-cell {
-	color: var(--color-text-subtle);
-	padding: 24px;
-}
-
-.billing-history__transactions thead {
-	border-bottom: 1px solid var(--color-neutral-0);
-}
-
-.billing-history__transactions thead .header-row {
-	vertical-align: top;
-	height: 40px;
-}
-
-.billing-history__transactions thead .header-column {
-	vertical-align: top;
-	padding-top: 4px;
-}
-
-.billing-history__search-form {
-	text-align: right;
-}
-
-.billing-history__search_terms {
-	display: inline-block;
-	font-size: $font-body-small;
-	margin-top: 2px;
-	margin-right: 12px;
-	text-align: left;
-	width: 100px;
-	padding: 3px 9px;
-	background-color: var(--color-surface);
-	border-radius: 2px;
-	border: 1px solid var(--color-neutral-0);
-	transition: width 0.25s ease-out;
-	outline: 0;
-
-	&:focus,
-	&:active {
-		width: 150px;
-	}
-}
-
-.billing-history__reset-search {
-	display: none;
-}
-
-// Table Body
-.billing-history__transaction {
-	color: var(--color-neutral-70);
-	font-size: $font-body-small;
-	height: 66px;
-	border-bottom: 1px solid var(--color-neutral-0);
-
-	&:last-child {
-		border-bottom: none;
-	}
-
-	&.is-placeholder {
-		height: auto;
-
-		td {
-			padding: 24px;
-		}
-
-		.billing-history__transaction-text {
-			@include placeholder();
-		}
-	}
-}
-
-.transaction-amount__tax-amount {
-	color: var(--color-text-subtle);
-	font-size: $font-body-extra-small;
-	white-space: nowrap;
-}
-
-.billing-history__transaction-tax-amount {
-	color: var(--color-text-subtle);
-	font-size: $font-body-small;
-	display: flex;
-	justify-content: space-between;
-}
-
-.billing-history__header-row {
-	height: 59px;
-}
-
-.billing-history__transaction td {
-	vertical-align: top;
-	padding: 16px 24px;
-}
-
-.billing-history__transactions tbody .billing-history__date {
-	width: 150px;
-	padding-left: 12px;
-	padding-right: 12px;
-}
-
-.billing-history__transactions tbody .billing-history__trans-app {
-	padding-left: 12px;
-	padding-right: 12px;
-}
-
-.billing-history__transactions tbody .billing-history__amount {
-	text-align: right;
-	width: 110px;
-}
-
-.billing-history__trans-wrap {
-	@include clear-fix;
-}
-
-.billing-history__service-name {
-	strong {
-		font-weight: normal;
-	}
-
-	small {
-		color: var(--color-text-subtle);
-		display: block;
-		font-size: $font-body-extra-small;
-		font-style: italic;
-
-		@include breakpoint-deprecated( "660px-800px" ) {
-			max-width: 220px;
-			overflow: hidden;
-			text-overflow: ellipsis;
-		}
-	}
-}
-
-.billing-history__service-description {
-	float: left;
-}
-
-.billing-history__transaction-links {
-	font-size: $font-body-extra-small;
-	margin: 4px 0 0;
-
-	a {
-		padding-right: 8px;
-	}
-}
-
-.billing-history__email-button {
-	color: var(--color-link);
-	cursor: pointer;
-	font-size: inherit;
-
-	&:focus {
-		outline: thin dotted;
-	}
-}
-
 // View Receipt
 .billing-history__app-overview {
 	align-items: center;
@@ -290,11 +125,6 @@ textarea.billing-history__billing-details-editable {
 	}
 }
 
-.billing-history__resend {
-	padding: 0;
-	margin-left: 0;
-}
-
 .billing-history__receipt {
 	padding: 30px 40px;
 
@@ -403,31 +233,6 @@ li.billing-history__receipt-item-discount--different-term {
 	padding: 16px 0;
 }
 
-.billing-history__receipts.card {
-	padding: 0;
-}
-
-.billing-history {
-	min-height: 500px;
-}
-
-.billing-history .search-card.card {
-	margin: 0;
-}
-
-.billing-history__receipts.card .card.is-compact:nth-of-type(2) {
-	padding-left: 0;
-	padding-right: 0;
-}
-
-.billing-history__receipts.card .pagination__list-item.pagination__arrow.is-left {
-	padding-left: 8px;
-}
-
-.billing-history__receipts.card .pagination__list-item.pagination__arrow.is-right {
-	padding-right: 8px;
-}
-
 .billing-history__receipt-card.is-placeholder {
 	.billing-history__app-overview {
 		display: flex;
@@ -492,17 +297,12 @@ li.billing-history__receipt-item-discount--different-term {
 	}
 }
 
-.billing-history__transactions-header-select-dropdown {
-	padding: 8px 12px;
-	position: absolute;
 
-	&:nth-child(2) {
-		left: 170px;
-	}
-}
 
-@media (min-width: 480px) {
-	.billing-history__tax-receipt-link {
-		margin-top: 16px;
+#purchases {
+	.navigation-header__main {
+		align-items: center;
+		flex-wrap: wrap;
+		gap: .65rem;
 	}
 }

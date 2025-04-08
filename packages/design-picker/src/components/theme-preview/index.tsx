@@ -5,7 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { v4 as uuid } from 'uuid';
+
 import './style.scss';
 
 interface Viewport {
@@ -15,6 +15,10 @@ interface Viewport {
 
 interface ThemePreviewProps {
 	url: string;
+	siteInfo?: {
+		title: string;
+		tagline: string;
+	};
 	inlineCss?: string;
 	viewportWidth?: number;
 	iframeScaleRatio?: number;
@@ -33,6 +37,7 @@ const isUrlWpcomApi = ( url: string ) =>
 
 const ThemePreview: React.FC< ThemePreviewProps > = ( {
 	url,
+	siteInfo,
 	inlineCss,
 	viewportWidth,
 	iframeScaleRatio = 1,
@@ -47,10 +52,12 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 	const iframeRef = useRef< HTMLIFrameElement >( null );
 	const [ isLoaded, setIsLoaded ] = useState( ! isUrlWpcomApi( url ) );
 	const [ isFullyLoaded, setIsFullyLoaded ] = useState( ! isUrlWpcomApi( url ) );
+	const [ frameLocation, setFrameLocation ] = useState( '' );
 	const [ viewport, setViewport ] = useState< Viewport >();
 	const [ containerResizeListener, { width: containerWidth } ] = useResizeObserver();
-	const calypso_token = useMemo( () => iframeToken || uuid(), [ iframeToken ] );
+	const calypso_token = useMemo( () => iframeToken || crypto.randomUUID(), [ iframeToken ] );
 	const scale = containerWidth && viewportWidth ? containerWidth / viewportWidth : iframeScaleRatio;
+	const { title, tagline } = siteInfo || {};
 
 	const wrapperHeight = useMemo( () => {
 		if ( ! viewport || iframeScaleRatio === 1 ) {
@@ -84,6 +91,14 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 						setViewport( data.payload );
 					}
 					return;
+				case 'location-change':
+					// We need to make sure location changes so it triggers the post message effects.
+					if ( data.payload.pathname === frameLocation ) {
+						setFrameLocation( '' );
+						return;
+					}
+					setFrameLocation( data.payload.pathname );
+					return;
 				default:
 					return;
 			}
@@ -94,7 +109,7 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 		return () => {
 			window.removeEventListener( 'message', handleMessage );
 		};
-	}, [ setIsLoaded, setViewport ] );
+	}, [ calypso_token, isFitHeight, setIsLoaded, setViewport, frameLocation ] );
 
 	// Ideally the iframe's document.body is already available on isLoaded = true.
 	// Unfortunately that's not always the case, so isFullyLoaded serves as another retry.
@@ -109,7 +124,25 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 				'*'
 			);
 		}
-	}, [ inlineCss, isLoaded, isFullyLoaded ] );
+	}, [ inlineCss, isLoaded, isFullyLoaded, frameLocation, calypso_token ] );
+
+	// Send site info to the iframe.
+	useEffect( () => {
+		// We only want to send info if it exists.
+		if ( ! title && ! tagline ) {
+			return;
+		}
+		if ( isLoaded || isFullyLoaded ) {
+			iframeRef.current?.contentWindow?.postMessage(
+				{
+					channel: `preview-${ calypso_token }`,
+					type: 'site-info',
+					site_info: { title, tagline },
+				},
+				'*'
+			);
+		}
+	}, [ title, tagline, calypso_token, isLoaded, isFullyLoaded, frameLocation ] );
 
 	return (
 		<DeviceSwitcher
@@ -141,6 +174,7 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 						width: viewportWidth,
 						height: viewport?.height,
 						transform: `scale(${ scale })`,
+						pointerEvents: 'all',
 					} }
 					src={ addQueryArgs( url, { calypso_token } ) }
 					tabIndex={ -1 }

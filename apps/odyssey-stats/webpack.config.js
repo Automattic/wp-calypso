@@ -187,7 +187,15 @@ module.exports = {
 		),
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/formatted-header$/,
-			'calypso/components/jetpack/jetpack-header'
+			( resource ) => {
+				// Only replace for the navigation-header context
+				if ( resource.context.includes( 'components/navigation-header' ) ) {
+					resource.request = resource.request.replace(
+						/^calypso\/components\/formatted-header$/,
+						path.resolve( __dirname, 'src/components/odyssey-formatted-header' )
+					);
+				}
+			}
 		),
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/data\/query-site-purchases$/,
@@ -200,6 +208,10 @@ module.exports = {
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/data\/query-memberships$/,
 			path.resolve( __dirname, 'src/components/odyssey-query-memberships' )
+		),
+		new webpack.NormalModuleReplacementPlugin(
+			/^..\/root-child$/,
+			path.resolve( __dirname, 'src/components/root-child' )
 		),
 		...excludedPackagePlugins,
 		shouldEmitStats &&

@@ -21,3 +21,7 @@ export function isCurrentUserUploadingGravatar( state ) {
 export function getUserTempGravatar( state, userId ) {
 	return getCurrentUserId( state ) === userId && ( state.gravatarStatus.tempImage ?? false );
 }
+
+export const hasGravatar = ( state ) => {
+	return !! state.gravatarStatus?.gravatarDetails?.has_gravatar;
+};

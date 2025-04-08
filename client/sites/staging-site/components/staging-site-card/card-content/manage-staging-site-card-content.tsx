@@ -116,6 +116,7 @@ export const ManageStagingSiteCardContent = ( {
 					modalMessage={ translate(
 						'Are you sure you want to delete the staging site? This action cannot be undone.'
 					) }
+					modalSize="medium"
 					confirmLabel={ translate( 'Delete staging site' ) }
 					cancelLabel={ translate( 'Cancel' ) }
 				>
@@ -159,10 +160,8 @@ export const ManageStagingSiteCardContent = ( {
 								target="_blank"
 								className="tools-staging-site__site-url"
 							>
-								<span>
-									{ stagingSite.url }
-									<Icon icon={ external } size={ 16 } />
-								</span>
+								{ stagingSite.url }
+								<Icon icon={ external } size={ 16 } />
 							</WPButton>
 						</SiteInfo>
 					</SiteRow>

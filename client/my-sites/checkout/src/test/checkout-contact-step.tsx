@@ -21,6 +21,7 @@ import {
 	mockMatchMediaOnWindow,
 	mockGetVatInfoEndpoint,
 	countryList,
+	mockCachedContactDetailsEndpoint,
 	mockGetPaymentMethodsEndpoint,
 	mockLogStashEndpoint,
 	mockGetSupportedCountriesEndpoint,
@@ -63,6 +64,8 @@ describe( 'Checkout contact step', () => {
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();
 		mockGetSupportedCountriesEndpoint( countryList );
+		mockCachedContactDetailsEndpoint( {} );
+		mockGetVatInfoEndpoint( {} );
 	} );
 
 	it( 'does render the contact step when the purchase is free and some items are recurring', async () => {

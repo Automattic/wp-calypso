@@ -336,6 +336,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/vat-gst-other-taxes/#other-tax-exempt-customers',
 		post_id: 234670,
 	},
+	'business-tax-rates-in-ohio-and-connecticut': {
+		link: 'https://wordpress.com/support/vat-gst-other-taxes/#business-tax-rates-in-ohio-and-connecticut',
+		post_id: 234670,
+	},
 	team: {
 		link: 'https://wordpress.com/support/user-roles/',
 		post_id: 1221,

@@ -1,4 +1,4 @@
-import { copy } from '@wordpress/icons';
+import { details } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { LogType, ServerLog, PHPLog } from 'calypso/data/hosting/use-site-logs-query';
@@ -15,10 +15,21 @@ const useActions = ( { logType, isLoading }: { logType: LogType; isLoading: bool
 		if ( logType === LogType.PHP ) {
 			return [
 				{
+					id: 'details-modal',
+					label: translate( 'View log details' ),
+					modalHeader: translate( 'Log details' ),
+					isPrimary: true,
+					icon: details,
+					disabled: isLoading,
+					supportsBulk: false,
+					RenderModal: ( { items }: { items: ( PHPLog | ServerLog )[] } ) => {
+						const item = items[ 0 ] as PHPLog;
+						return <DetailsModalPHP item={ item } />;
+					},
+				},
+				{
 					id: 'copy-msg',
 					label: translate( 'Copy message' ),
-					icon: copy,
-					isPrimary: true,
 					disabled: isLoading,
 					supportsBulk: false,
 					callback: async ( items: ( PHPLog | ServerLog )[] ) => {
@@ -41,27 +52,26 @@ const useActions = ( { logType, isLoading }: { logType: LogType; isLoading: bool
 						}
 					},
 				},
-				{
-					id: 'details-modal',
-					label: translate( 'View log details' ),
-					modalHeader: translate( 'Log details' ),
-					isPrimary: false,
-					disabled: isLoading,
-					supportsBulk: false,
-					RenderModal: ( { items }: { items: ( PHPLog | ServerLog )[] } ) => {
-						const item = items[ 0 ] as PHPLog;
-						return <DetailsModalPHP item={ item } />;
-					},
-				},
 			];
 		}
 
 		return [
 			{
+				id: 'details-modal',
+				label: translate( 'View log details' ),
+				modalHeader: translate( 'Log details' ),
+				isPrimary: true,
+				icon: details,
+				disabled: isLoading,
+				supportsBulk: false,
+				RenderModal: ( { items }: { items: ( PHPLog | ServerLog )[] } ) => {
+					const item = items[ 0 ] as ServerLog;
+					return <DetailsModalServer item={ item } />;
+				},
+			},
+			{
 				id: 'copy-url',
 				label: translate( 'Copy request URL' ),
-				icon: copy,
-				isPrimary: true,
 				disabled: isLoading,
 				supportsBulk: false,
 				callback: async ( items: ( PHPLog | ServerLog )[] ) => {
@@ -82,18 +92,6 @@ const useActions = ( { logType, isLoading }: { logType: LogType; isLoading: bool
 							)
 						);
 					}
-				},
-			},
-			{
-				id: 'details-modal',
-				label: translate( 'View log details' ),
-				modalHeader: translate( 'Log details' ),
-				isPrimary: false,
-				disabled: isLoading,
-				supportsBulk: false,
-				RenderModal: ( { items }: { items: ( PHPLog | ServerLog )[] } ) => {
-					const item = items[ 0 ] as ServerLog;
-					return <DetailsModalServer item={ item } />;
 				},
 			},
 		];

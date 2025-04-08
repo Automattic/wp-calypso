@@ -11,7 +11,6 @@ import EmptyContent from 'calypso/components/empty-content';
 import HeaderCake from 'calypso/components/header-cake';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
-import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import InviteStatus from 'calypso/my-sites/people/invite-status';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
@@ -202,17 +201,7 @@ export class PeopleInviteDetails extends PureComponent {
 				<PageViewTracker path="/people/invites/:site/:invite" title="People > User Details" />
 				{ siteId && <QuerySiteInvites siteId={ siteId } /> }
 
-				{ isEnabled( 'user-management-revamp' ) && (
-					<NavigationHeader
-						navigationItems={ [] }
-						title={ translate( 'Users' ) }
-						subtitle={ translate( 'People who have subscribed to your site and team members.' ) }
-					/>
-				) }
-
-				<HeaderCake isCompact onClick={ this.goBack }>
-					{ translate( 'User Details' ) }
-				</HeaderCake>
+				<HeaderCake onClick={ this.goBack }>{ translate( 'User Details' ) }</HeaderCake>
 
 				{ this.renderInvite() }
 			</Main>

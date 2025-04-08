@@ -56,8 +56,8 @@ describe( 'useSubscriberCountQuery', () => {
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 
 		expect( wpcom.req.get ).toHaveBeenCalledWith( {
+			path: '/sites/123/subscribers/counts',
 			apiNamespace: 'wpcom/v2',
-			path: `/sites/123/subscribers/counts`,
 		} );
 	} );
 

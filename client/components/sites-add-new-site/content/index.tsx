@@ -1,10 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { WordPressLogo, JetpackLogo } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
 import { download, reusableBlock, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { numberFormat, useTranslate } from 'i18n-calypso';
 // TODO: This will need to be updated to use whatever image we decide on.
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -43,7 +43,7 @@ const importClick = () => {
 		action: 'import',
 	} );
 	page(
-		'/setup/hosted-site-migration/site-migration-identify?source=sites-dashboard&ref=new-site-popover&action=import'
+		'/setup/hosted-site-migration/create-site?source=sites-dashboard&ref=new-site-popover&action=import'
 	);
 };
 
@@ -56,9 +56,10 @@ const offerClick = () => {
 
 export const Content = () => {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	return (
 		<>
-			<Column heading={ translate( 'Add a new site' ) }>
+			<Column heading={ translate( 'Add new site' ) }>
 				<MenuItem
 					icon={ <WordPressLogo /> }
 					heading={ translate( 'WordPress.com' ) }
@@ -73,19 +74,21 @@ export const Content = () => {
 					icon={ <JetpackLogo /> }
 					heading={ translate( 'Via the Jetpack plugin' ) }
 					description={ preventWidows(
-						translate( 'Install the Jetpack plugin on an existing site' )
+						translate( 'Install the Jetpack plugin on an existing site.' )
 					) }
 					buttonProps={ {
 						onClick: jetpackClick,
 					} }
 				/>
 			</Column>
-			<Column heading={ translate( 'Migrate & Import' ) }>
+			<Column heading={ translate( 'Migrate and Import' ) }>
 				<MenuItem
 					icon={ <Icon icon={ reusableBlock } size={ 18 } /> }
-					heading="Migrate"
+					heading={ translate( 'Migrate' ) }
 					description={ preventWidows(
-						translate( 'Bring your theme, plugins, and content to WordPress.com.' )
+						hasEnTranslation( 'Bring your entire WordPress site to WordPress.com.' )
+							? translate( 'Bring your entire WordPress site to WordPress.com.' )
+							: translate( 'Bring your theme, plugins, and content to WordPress.com.' )
 					) }
 					buttonProps={ {
 						onClick: migrateClick,
@@ -93,9 +96,11 @@ export const Content = () => {
 				/>
 				<MenuItem
 					icon={ <Icon icon={ download } size={ 18 } /> }
-					heading="Import"
+					heading={ translate( 'Import' ) }
 					description={ preventWidows(
-						translate( 'Use a backup file to import your content into a new site.' )
+						hasEnTranslation( 'Use a backup to only import content from other platforms.' )
+							? translate( 'Use a backup to only import content from other platforms.' )
+							: translate( 'Use a backup file to import your content into a new site.' )
 					) }
 					buttonProps={ {
 						onClick: importClick,
@@ -106,10 +111,25 @@ export const Content = () => {
 				<MenuItem
 					isBanner
 					icon={ <img src={ devSiteBanner } alt="Get a Free Domain and Up to 55% off" /> }
-					heading={ translate( 'Get a Free Domain and Up to 55% off' ) }
+					heading={ translate( 'Get a Free Domain and Up to %(percentage)s off', {
+						args: {
+							percentage: numberFormat( 0.55, {
+								numberFormatOptions: { style: 'percent' },
+							} ),
+							comment: 'percentage like 55% off',
+						},
+					} ) }
 					description={ preventWidows(
 						translate(
-							'Save up to 55% on annual plans and get a free custom domain for a year. Your next site is just a step away.'
+							'Save up to %(percentage)s on annual plans and get a free custom domain for a year. Your next site is just a step away.',
+							{
+								args: {
+									percentage: numberFormat( 0.55, {
+										numberFormatOptions: { style: 'percent' },
+									} ),
+									comment: 'percentage like 55% off',
+								},
+							}
 						)
 					) }
 					buttonProps={ {

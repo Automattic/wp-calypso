@@ -5,7 +5,6 @@ import {
 	trackPageLoad,
 	trackUpdatesLoaded,
 	trackScrollPage,
-	shouldShowBackButton,
 } from 'calypso/reader/controller-helper';
 import { SEARCH_TYPES } from 'calypso/reader/search-stream/search-stream-header';
 import { recordTrack } from 'calypso/reader/stats';
@@ -84,12 +83,12 @@ const exported = {
 								mcKey
 							) }
 							onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
-							showBack={ shouldShowBackButton( context ) }
 							autoFocusInput={ autoFocusInput }
 							onQueryChange={ reportQueryChange }
 							onSortChange={ reportSortChange }
 							searchType={ show }
 							trendingTags={ context.params.trendingTags }
+							disableInfiniteScroll={ ! context.store.getState().currentUser.user }
 						/>
 					</div>
 				</div>

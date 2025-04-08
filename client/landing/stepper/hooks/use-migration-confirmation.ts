@@ -1,5 +1,7 @@
-import { IMPORT_FOCUSED_FLOW } from '@automattic/onboarding';
 import { useEffect, useState } from 'react';
+
+// Does the key even matter, since it's used by more than one flow?
+const KEY = 'stepper_import_prompt-confirmed';
 
 /**
  * Hook to store the migration confirmation in session storage.
@@ -8,8 +10,6 @@ import { useEffect, useState } from 'react';
  * so we don't show it multiple times.
  */
 export default function useMigrationConfirmation(): [ boolean, ( value: boolean ) => void ] {
-	const KEY = `${ IMPORT_FOCUSED_FLOW }_prompt-confirmed`;
-
 	const [ migrationConfirmed, setMigrationConfirmed ] = useState(
 		sessionStorage.getItem( KEY ) === 'true'
 	);

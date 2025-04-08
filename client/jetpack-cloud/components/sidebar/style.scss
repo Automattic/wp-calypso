@@ -8,6 +8,17 @@
 .jetpack-cloud-sidebar {
 	.jetpack-cloud-sidebar__site-selector {
 		background-color: var(--color-sidebar-background);
+		.components-button {
+			border: none;
+		}
+		.search-component.is-open.has-focus {
+			box-sizing: border-box;
+			border: 2px solid var(--studio-jetpack-green-50);
+			box-shadow: none; // Use border instead of box-shadow to avoid hiding the shadow at 100% width
+		}
+		.search-component__input{
+			width: 100%;
+		}
 	}
 
 

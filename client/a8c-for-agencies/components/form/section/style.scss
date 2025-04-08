@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .a4a-form__section {
 	padding: 16px 24px;
@@ -5,11 +7,11 @@
 }
 
 .a4a-form__section-heading-title {
-	@include a4a-font-heading-lg($font-weight: 500);
+	@include heading-large;
 }
 
 .a4a-form__section-heading-description {
-	@include a4a-font-body-md;
+	@include body-medium;
 	color: var(--color-neutral-50);
 }
 

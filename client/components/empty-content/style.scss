@@ -26,7 +26,6 @@
 
 .empty-content__title {
 	color: var(--color-neutral-70);
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 34px;
 
 	@include breakpoint-deprecated( "<660px" ) {

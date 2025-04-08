@@ -119,7 +119,7 @@ function TransferDomainStepStart( {
 					{ __( 'How long will it take?' ) }
 				</CardHeading>
 				<p className={ className + '__text' }>
-					{ __( 'It takes 10-20 minutes to set up.' ) }
+					{ __( 'It takes 10–20 minutes to set up.' ) }
 					<br />
 					{ __(
 						'It can take up to 5 days for the domain to be transferred, depending on your provider.'

@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { Button } from '@wordpress/components';
 import closest from 'component-closest';
 import i18n, { localize } from 'i18n-calypso';
 import { defer, startsWith } from 'lodash';
@@ -172,17 +173,22 @@ export class ReaderSidebar extends Component {
 				<QueryReaderTeams />
 				<QueryReaderOrganizations />
 
-				<SidebarItem
-					label={ translate( 'Search' ) }
-					onNavigate={ this.handleReaderSidebarSearchClicked }
-					customIcon={ <ReaderSearchIcon viewBox="-3 0 24 24" /> }
-					link="/reader/search"
-					className={ ReaderSidebarHelper.itemLinkClass( '/reader/search', path, {
-						'sidebar-streams__search': true,
-					} ) }
-				/>
+				<li className="sidebar-header">
+					<div>
+						<h3>{ translate( 'Reader' ) }</h3>
+						<p>{ translate( 'Keep up with your interests.' ) }</p>
+					</div>
 
-				<SidebarSeparator />
+					<Button
+						className="reader-search-icon"
+						variant="tertiary"
+						href="/reader/search"
+						onClick={ this.handleReaderSidebarSearchClicked }
+						aria-label={ translate( 'Search' ) }
+					>
+						<ReaderSearchIcon viewBox="0 0 24 24" />
+					</Button>
+				</li>
 
 				<li className="sidebar-streams__following">
 					<ReaderSidebarRecent
@@ -198,14 +204,14 @@ export class ReaderSidebar extends Component {
 					} ) }
 					label={ translate( 'Discover' ) }
 					onNavigate={ this.handleReaderSidebarDiscoverClicked }
-					customIcon={ <ReaderDiscoverIcon viewBox="-3 0 24 24" /> }
+					customIcon={ <ReaderDiscoverIcon viewBox="0 0 24 24" /> }
 					link="/discover"
 				/>
 
 				<SidebarItem
 					label={ translate( 'Likes' ) }
 					onNavigate={ this.handleReaderSidebarLikeActivityClicked }
-					customIcon={ <ReaderLikesIcon viewBox="-3 0 24 24" /> }
+					customIcon={ <ReaderLikesIcon viewBox="0 0 24 24" /> }
 					link="/activities/likes"
 					className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', path, {
 						'sidebar-activity__likes': true,
@@ -218,7 +224,7 @@ export class ReaderSidebar extends Component {
 					} ) }
 					label={ translate( 'Conversations' ) }
 					onNavigate={ this.handleReaderSidebarConversationsClicked }
-					customIcon={ <ReaderConversationsIcon iconSize={ 24 } viewBox="-3 0 24 24" /> }
+					customIcon={ <ReaderConversationsIcon iconSize={ 24 } viewBox="0 0 24 24" /> }
 					link="/reader/conversations"
 				/>
 
@@ -240,11 +246,17 @@ export class ReaderSidebar extends Component {
 					currentTag={ this.state.currentTag }
 				/>
 
-				<SidebarSeparator />
-
-				<li>
-					<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />
-				</li>
+				{ this.props.organizations && (
+					<>
+						<SidebarSeparator />
+						<li>
+							<ReaderSidebarOrganizations
+								organizations={ this.props.organizations }
+								path={ path }
+							/>
+						</li>
+					</>
+				) }
 
 				{ isAutomatticTeamMember( teams ) && (
 					<SidebarItem
@@ -254,9 +266,11 @@ export class ReaderSidebar extends Component {
 						label="A8C Conversations"
 						onNavigate={ this.handleReaderSidebarA8cConversationsClicked }
 						link="/reader/conversations/a8c"
-						customIcon={ <ReaderA8cConversationsIcon size={ 24 } viewBox="-5 0 24 24" /> }
+						customIcon={ <ReaderA8cConversationsIcon size={ 24 } viewBox="-2 -2 24 24" /> }
 					/>
 				) }
+
+				<SidebarSeparator />
 
 				<SidebarItem
 					className={ ReaderSidebarHelper.itemLinkClass( '/reader/notifications', path, {
@@ -264,7 +278,7 @@ export class ReaderSidebar extends Component {
 					} ) }
 					label={ translate( 'Notifications' ) }
 					onNavigate={ this.handleReaderSidebarNotificationsClicked }
-					customIcon={ <ReaderNotificationsIcon size={ 24 } viewBox="-5 -2 24 24" /> }
+					customIcon={ <ReaderNotificationsIcon size={ 24 } viewBox="-2 -2 24 24" /> }
 					link="/reader/notifications"
 				/>
 
@@ -272,9 +286,9 @@ export class ReaderSidebar extends Component {
 					className={ ReaderSidebarHelper.itemLinkClass( '/reader/subscriptions', path, {
 						'sidebar-streams__manage-subscriptions': true,
 					} ) }
-					label={ translate( 'Manage subscriptions' ) }
+					label={ translate( 'Manage Subscriptions' ) }
 					onNavigate={ this.handleReaderSidebarManageSubscriptionsClicked }
-					customIcon={ <ReaderManageSubscriptionsIcon size={ 24 } viewBox="-3 0 24 24" /> }
+					customIcon={ <ReaderManageSubscriptionsIcon size={ 24 } viewBox="0 0 24 24" /> }
 					link="/reader/subscriptions"
 				/>
 			</SidebarMenu>
@@ -285,10 +299,7 @@ export class ReaderSidebar extends Component {
 		const props = {
 			path: this.props.path,
 			onClick: this.handleClick,
-			requireBackLink: false,
 			siteTitle: i18n.translate( 'Reader' ),
-			backLinkHref: this.props.returnPath || '/sites',
-			onClose: this.props.onClose && ( () => this.props.onClose() ),
 		};
 		return (
 			<GlobalSidebar { ...props }>

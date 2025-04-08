@@ -26,28 +26,30 @@ import LayoutHeader, {
 	LayoutHeaderTitle as Title,
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { ApprovalStatus } from 'calypso/state/a8c-for-agencies/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MissingPaymentSettingsNotice from '../../common/missing-payment-settings-notice';
 import useFetchReferrals from '../../hooks/use-fetch-referrals';
 import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
 import ReferralDetails from '../../referral-details';
-import ReferralsFooter from '../footer';
-import AutomatedReferralComingSoonBanner from './automated-referral-coming-soon-banner';
 import LayoutBodyContent from './layout-body-content';
 import NewReferralOrderNotification from './new-referral-order-notification';
 
 import './style.scss';
 
 export default function ReferralsOverview( {
-	isAutomatedReferral = false,
 	isArchiveView = false,
 }: {
-	isAutomatedReferral?: boolean;
 	isArchiveView?: boolean;
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const agency = useSelector( getActiveAgency );
+
+	const isAgencyApproved = agency?.approval_status === ApprovalStatus.APPROVED;
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
@@ -66,7 +68,7 @@ export default function ReferralsOverview( {
 	const selectedItem = dataViewsState.selectedItem;
 
 	const title =
-		isAutomatedReferral && isDesktop && ! selectedItem
+		isDesktop && ! selectedItem
 			? translate( 'Your referrals and commissions' )
 			: translate( 'Referrals' );
 
@@ -78,7 +80,7 @@ export default function ReferralsOverview( {
 		data: referrals,
 		isFetching: isFetchingReferrals,
 		refetch: refetchReferrals,
-	} = useFetchReferrals( isAutomatedReferral );
+	} = useFetchReferrals();
 
 	const hasReferrals = !! referrals?.length;
 
@@ -92,14 +94,12 @@ export default function ReferralsOverview( {
 	return (
 		<Layout
 			className={ clsx( 'referrals-layout', {
-				'referrals-layout--automated': isAutomatedReferral,
-				'full-width-layout-with-table': isAutomatedReferral && hasReferrals,
+				'full-width-layout-with-table': hasReferrals,
 				'referrals-layout--has-selected': selectedItem,
 			} ) }
 			title={ title }
 			wide
-			sidebarNavigation={ ! isAutomatedReferral && <MobileSidebarNavigation /> }
-			withBorder={ isAutomatedReferral }
+			withBorder
 		>
 			<LayoutColumn wide className="referrals-layout__column">
 				<LayoutTop>
@@ -112,13 +112,12 @@ export default function ReferralsOverview( {
 
 					<MissingPaymentSettingsNotice />
 
-					{ ! isAutomatedReferral && <AutomatedReferralComingSoonBanner /> }
-
 					<LayoutHeader>
 						<Title>{ title } </Title>
-						{ isAutomatedReferral && (
-							<Actions>
-								<MobileSidebarNavigation />
+
+						<Actions>
+							<MobileSidebarNavigation />
+							{ isAgencyApproved && (
 								<Button
 									variant="primary"
 									href={ A4A_MARKETPLACE_PRODUCTS_LINK }
@@ -127,8 +126,8 @@ export default function ReferralsOverview( {
 								>
 									{ hasReferrals ? translate( 'New referral' ) : translate( 'Make a referral' ) }
 								</Button>
-							</Actions>
-						) }
+							) }
+						</Actions>
 					</LayoutHeader>
 				</LayoutTop>
 
@@ -137,7 +136,6 @@ export default function ReferralsOverview( {
 						<A4AFeedback { ...feedbackProps } />
 					) : (
 						<LayoutBodyContent
-							isAutomatedReferral={ isAutomatedReferral }
 							tipaltiData={ tipaltiData }
 							referrals={ referrals }
 							isLoading={ isLoading }
@@ -147,8 +145,6 @@ export default function ReferralsOverview( {
 							onReferralRefetch={ refetchReferrals }
 						/>
 					) }
-
-					{ ! isFetching && ! isAutomatedReferral && <ReferralsFooter /> }
 				</LayoutBody>
 			</LayoutColumn>
 			{ dataViewsState.selectedItem && (

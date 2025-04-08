@@ -1,4 +1,5 @@
-import { Gridicon } from '@automattic/components';
+import { Icon, Button } from '@wordpress/components';
+import { moreVertical } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
@@ -53,16 +54,16 @@ const SubscribersHeaderPopover = ( {
 	}
 
 	return (
-		<div className="subscriber-popover__container">
-			<button
+		<div>
+			<Button
 				className={ clsx( 'subscriber-popover__toggle', {
 					'is-popover-visible': isVisible,
 				} ) }
 				onClick={ onToggle }
 				ref={ buttonRef }
-			>
-				<Gridicon icon="ellipsis" size={ 24 } />
-			</button>
+				icon={ <Icon icon={ moreVertical } size={ 18 } /> }
+				size="compact"
+			/>
 
 			<PopoverMenu
 				position="bottom left"

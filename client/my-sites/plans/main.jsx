@@ -3,6 +3,7 @@ import {
 	FEATURE_LEGACY_STORAGE_200GB,
 	getIntervalTypeForTerm,
 	getPlan,
+	is100Year,
 	isFreePlanProduct,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
@@ -34,9 +35,13 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { isPlansPageUntangled } from 'calypso/lib/plans/untangling-plans-experiment';
+import { isPartnerPurchase } from 'calypso/lib/purchases';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import { FeatureBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-feature-breadcrumb';
+import CurrentPlanPanel from 'calypso/sites/plan/components/current-plan-panel';
 import { useSelector } from 'calypso/state';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -47,6 +52,7 @@ import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-f
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -232,7 +238,6 @@ class PlansComponent extends Component {
 	renderPlaceholder = () => {
 		return (
 			<div>
-				<DocumentHead title={ this.props.translate( 'Plans', { textOnly: true } ) } />
 				<Main wideLayout>
 					<div id="plans" className="plans plans__has-sidebar" />
 				</Main>
@@ -241,7 +246,7 @@ class PlansComponent extends Component {
 	};
 
 	renderPlansMain() {
-		const { selectedSite, isWPForTeamsSite, currentPlanIntervalType } = this.props;
+		const { selectedSite, isUntangled, isWPForTeamsSite, currentPlanIntervalType } = this.props;
 
 		if ( isEnabled( 'p2/p2-plus' ) && isWPForTeamsSite ) {
 			return (
@@ -267,6 +272,7 @@ class PlansComponent extends Component {
 
 		return (
 			<PlansFeaturesMain
+				isInSiteDashboard={ isUntangled }
 				redirectToAddDomainFlow={ this.props.redirectToAddDomainFlow }
 				hidePlanTypeSelector={ hidePlanTypeSelector }
 				hideFreePlan={ hideFreePlan }
@@ -282,7 +288,7 @@ class PlansComponent extends Component {
 				hidePlansFeatureComparison={ this.props.isDomainAndPlanPackageFlow }
 				showLegacyStorageFeature={ this.props.siteHasLegacyStorage }
 				intent={ plansIntent }
-				isSpotlightOnCurrentPlan={ ! this.props.isDomainAndPlanPackageFlow }
+				isSpotlightOnCurrentPlan={ ! isUntangled && ! this.props.isDomainAndPlanPackageFlow }
 				showPlanTypeSelectorDropdown={ isEnabled( 'onboarding/interval-dropdown' ) }
 			/>
 		);
@@ -345,7 +351,13 @@ class PlansComponent extends Component {
 		);
 	}
 
-	renderMainContent( { isEcommerceTrial, isBusinessTrial, isWooExpressPlan } ) {
+	renderMainContent( {
+		isEcommerceTrial,
+		isBusinessTrial,
+		isWooExpressPlan,
+		isA4APlan,
+		is100YearPlan,
+	} ) {
 		if ( isEcommerceTrial ) {
 			return this.renderEcommerceTrialPage();
 		}
@@ -355,15 +367,32 @@ class PlansComponent extends Component {
 		if ( isBusinessTrial ) {
 			return this.renderBusinessTrialPage();
 		}
+		if ( isA4APlan || is100YearPlan ) {
+			return null;
+		}
 
 		return this.renderPlansMain();
 	}
 
 	render() {
+		const { isUntangled, selectedSite, translate } = this.props;
+		return (
+			<>
+				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
+				{ isUntangled && (
+					<FeatureBreadcrumb siteId={ selectedSite.ID } title={ translate( 'Plan' ) } />
+				) }
+				{ this.renderContent() }
+			</>
+		);
+	}
+
+	renderContent() {
 		const {
 			selectedSite,
 			translate,
 			canAccessPlans,
+			isUntangled,
 			currentPlan,
 			domainAndPlanPackage,
 			isDomainAndPlanPackageFlow,
@@ -404,6 +433,8 @@ class PlansComponent extends Component {
 			} );
 
 		const isWooExpressTrial = purchase?.isWooExpressTrial;
+		const isA4APlan = purchase && isPartnerPurchase( purchase );
+		const is100YearPlan = purchase && is100Year( purchase );
 
 		// Use the Woo Express subheader text if the current plan has the Performance or trial plans or fallback to the default subheader text.
 		let subHeaderText = null;
@@ -430,13 +461,12 @@ class PlansComponent extends Component {
 
 		// Hide for WooExpress plans and Entrepreneur trials that are not WooExpress trials
 		const isEntrepreneurTrial = isEcommerceTrial && ! purchase?.isWooExpressTrial;
-		const showPlansNavigation = ! ( isWooExpressPlan || isEntrepreneurTrial );
+		const showPlansNavigation = ! isUntangled && ! ( isWooExpressPlan || isEntrepreneurTrial );
 
 		return (
 			<div>
-				{ ! isJetpackNotAtomic && <ModernizedLayout /> }
+				{ ! isUntangled && ! isJetpackNotAtomic && <ModernizedLayout /> }
 				{ selectedSite.ID && <QuerySitePurchases siteId={ selectedSite.ID } /> }
-				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<PageViewTracker path="/plans/:site" title="Plans" />
 				{ /** QueryProducts added to ensure currency-code state gets populated for usages of getCurrentUserCurrencyCode */ }
 				<QueryProducts />
@@ -452,7 +482,8 @@ class PlansComponent extends Component {
 				) }
 				{ canAccessPlans && (
 					<div>
-						{ ! isDomainAndPlanPackageFlow && (
+						{ isUntangled && <CurrentPlanPanel /> }
+						{ ! isUntangled && ! isDomainAndPlanPackageFlow && (
 							<PlansHeader
 								domainFromHomeUpsellFlow={ domainFromHomeUpsellFlow }
 								subHeaderText={ subHeaderText }
@@ -476,7 +507,7 @@ class PlansComponent extends Component {
 								</div>
 							</>
 						) }
-						<div id="plans" className="plans plans__has-sidebar">
+						<div id={ isUntangled ? 'site-plans' : 'plans' } className="plans plans__has-sidebar">
 							{ showPlansNavigation && <PlansNavigation path={ this.props.context.path } /> }
 							<Main fullWidthLayout={ ! isWooExpressTrial } wideLayout={ isWooExpressTrial }>
 								{ ! isDomainAndPlanPackageFlow && domainAndPlanPackage && (
@@ -486,6 +517,8 @@ class PlansComponent extends Component {
 									isEcommerceTrial,
 									isBusinessTrial,
 									isWooExpressPlan,
+									isA4APlan,
+									is100YearPlan,
 								} ) }
 								<PerformanceTrackerStop />
 							</Main>
@@ -516,6 +549,7 @@ const ConnectedPlans = connect(
 			purchase: currentPlan ? getByPurchaseId( state, currentPlan.purchaseId ) : null,
 			selectedSite: getSelectedSite( state ),
 			canAccessPlans: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
+			isUntangled: isPlansPageUntangled( state ),
 			isWPForTeamsSite: isSiteWPForTeams( state, selectedSiteId ),
 			isSiteEligibleForMonthlyPlan: isEligibleForWpComMonthlyPlan( state, selectedSiteId ),
 			isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
@@ -541,6 +575,10 @@ export default function PlansWrapper( props ) {
 	const { intervalType: intervalTypeFromProps } = props;
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const currentPlan = Plans.useCurrentPlan( { siteId: selectedSiteId } );
+
+	// Initialize Global Styles.
+	useSiteGlobalStylesOnPersonal();
+
 	/**
 	 * For WP.com plans page, if intervalType is not explicitly specified in the URL,
 	 * we want to show plans of the same term as plan that is currently active

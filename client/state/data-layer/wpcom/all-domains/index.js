@@ -10,13 +10,7 @@ import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
 
 export const getAllDomains = ( action ) => {
-	return http(
-		{
-			method: 'GET',
-			path: `/all-domains`,
-		},
-		action
-	);
+	return http( { path: '/all-domains', method: 'GET' }, action );
 };
 
 export const getAllDomainsError = ( action, error ) => {

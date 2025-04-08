@@ -1,0 +1,36 @@
+.step-container-v2__sticky-bottom-bar {
+	&-wrapper {
+		position: sticky;
+		bottom: 0;
+		width: 100%;
+	}
+
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	box-sizing: border-box;
+	align-items: center;
+	box-shadow: var( --color-border-subtle ) 0 1px 0 inset;
+	background-color: var( --color-surface );
+
+	&-left-element,
+	&-center-element,
+	&-right-element {
+		margin-block: 1rem;
+	}
+
+	&-left-element {
+		margin-left: 1rem;
+		margin-right: auto;
+	}
+
+	&-center-element {
+		margin-inline: 2rem;
+		min-width: 0;
+	}
+
+	&-right-element {
+		margin-left: auto;
+		margin-right: 1rem;
+	}
+}

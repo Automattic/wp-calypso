@@ -174,7 +174,7 @@ export default function CardContent( {
 		issueLicenses( [ { slug: productSlug, quantity: 1 } ] );
 
 		setIsRequesting( false );
-		page.redirect( `/dashboard?provisioning=true` );
+		page.redirect( '/dashboard?provisioning=true' );
 	}, [ planSlug, paymentMethodRequired, setIsRequesting, dispatch, translate, issueLicenses ] );
 
 	if ( ! plan ) {

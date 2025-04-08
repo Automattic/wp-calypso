@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .signup-personalization-form {
     .multi-checkbox {
@@ -25,7 +26,7 @@
         align-items: center;
         margin: 0;
         cursor: pointer;
-        font-size: rem(14px);
+        @include body-medium;
         color: var(--color-neutral-80);
         flex: 0 1 100%; // Full width on mobile
 

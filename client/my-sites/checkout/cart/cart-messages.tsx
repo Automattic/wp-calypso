@@ -78,7 +78,7 @@ function getChargebackErrorMessage( {
 		{
 			components: {
 				strong: <strong />,
-				a: <a href={ '/checkout/' + selectedSiteSlug ?? '' } />,
+				a: <a href={ '/checkout/' + ( selectedSiteSlug ?? '' ) } />,
 			},
 		}
 	);

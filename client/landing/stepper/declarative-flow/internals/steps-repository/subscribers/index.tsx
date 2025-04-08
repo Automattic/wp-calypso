@@ -9,8 +9,8 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import type { Step } from '../../types';
-import './style.scss';
 import type { AppState } from 'calypso/types';
+import './style.scss';
 
 const Subscribers: Step = function ( { navigation } ) {
 	const [ isImportValid, setIsImportValid ] = useState( false );
@@ -47,7 +47,6 @@ const Subscribers: Step = function ( { navigation } ) {
 			stepName="subscribers"
 			flowName="newsletter"
 			isHorizontalLayout={ false }
-			showJetpackPowered
 			stepContent={
 				<div className="subscribers">
 					{ site?.ID && (

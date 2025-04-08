@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { SimplifiedSegmentedControl, StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { comment } from '@wordpress/icons';
@@ -17,7 +18,7 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
-import { INSIGHTS_SUPPORT_URL } from '../../../const';
+import { INSIGHTS_SUPPORT_URL, JETPACK_SUPPORT_URL_INSIGHTS } from '../../../const';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
@@ -54,6 +55,11 @@ type HeaderToggleOptionType = {
 	value: string;
 	label: string;
 };
+
+const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+const supportUrl = isOdysseyStats
+	? `${ JETPACK_SUPPORT_URL_INSIGHTS }#comments`
+	: INSIGHTS_SUPPORT_URL;
 
 const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => {
 	const translate = useTranslate();
@@ -125,13 +131,7 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: (
-											<a
-												target="_blank"
-												rel="noreferrer"
-												href={ localizeUrl( `${ INSIGHTS_SUPPORT_URL }#all-time-insights` ) }
-											/>
-										),
+										link: <a target="_blank" rel="noreferrer" href={ localizeUrl( supportUrl ) } />,
 									},
 									context: 'Stats: Info box label when the Comments module is empty',
 								}
@@ -163,7 +163,7 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 			{ ! isRequestingData && ! hasPosts && ! shouldGateStatsModule && (
 				// show empty state
 				<StatsCard
-					className={ clsx( 'stats-card--empty-variant', className ) }
+					className={ className }
 					title={ moduleTitle }
 					isEmpty
 					emptyMessage={
@@ -174,13 +174,7 @@ const StatsComments: React.FC< StatsDefaultModuleProps > = ( { className } ) => 
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: (
-											<a
-												target="_blank"
-												rel="noreferrer"
-												href={ localizeUrl( `${ INSIGHTS_SUPPORT_URL }#all-time-insights` ) }
-											/>
-										),
+										link: <a target="_blank" rel="noreferrer" href={ localizeUrl( supportUrl ) } />,
 									},
 									context: 'Stats: Info box label when the Comments module is empty',
 								}

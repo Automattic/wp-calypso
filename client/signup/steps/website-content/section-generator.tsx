@@ -67,7 +67,7 @@ const generateSiteInformationSection = (
 					return {
 						result: isValid,
 						errors: {
-							searchTerms: isValid ? null : translate( `Please enter search terms.` ),
+							searchTerms: isValid ? null : translate( 'Please enter search terms.' ),
 						},
 					};
 				},

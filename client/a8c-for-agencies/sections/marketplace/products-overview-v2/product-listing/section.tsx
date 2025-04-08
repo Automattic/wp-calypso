@@ -63,6 +63,7 @@ export default function ProductListingSection( {
 								top: stickyHeadingTopOffset,
 								position: 'sticky',
 								paddingBlock: '16px',
+								zIndex: 10,
 						  }
 						: undefined
 				}

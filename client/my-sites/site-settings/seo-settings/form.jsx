@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_ADVANCED_SEO,
 	FEATURE_SEO_PREVIEW_TOOLS,
@@ -61,9 +60,7 @@ import './style.scss';
 const anyHtmlTag = /<\/?[a-z][a-z0-9]*\b[^>]*>/i;
 
 function getGeneralTabUrl( slug ) {
-	return isEnabled( 'untangling/hosting-menu' )
-		? `/sites/settings/site/${ slug }`
-		: `/settings/general/${ slug }`;
+	return `/sites/settings/site/${ slug }`;
 }
 
 export class SiteSettingsFormSEO extends Component {

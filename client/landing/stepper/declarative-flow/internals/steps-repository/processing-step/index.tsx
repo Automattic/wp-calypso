@@ -7,6 +7,7 @@ import {
 	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	isAnyHostingFlow,
 	isNewsletterFlow,
+	Step,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -21,15 +22,34 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useInterval } from 'calypso/lib/interval';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import useCaptureFlowException from '../../../../hooks/use-capture-flow-exception';
+import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { ProcessingResult } from './constants';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
 import HundredYearPlanFlowProcessingScreen from './hundred-year-plan-flow-processing-screen';
 import TailoredFlowPreCheckoutScreen from './tailored-flow-precheckout-screen';
 import type { StepProps } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
+import type { SiteIntent } from '@automattic/data-stores/src/onboard';
 import './style.scss';
 
-interface ProcessingStepProps extends StepProps {
+interface ProcessingStepProps
+	extends StepProps< {
+		submits:
+			| {
+					destination: string;
+					processingResult?: ProcessingResult;
+			  }
+			| {
+					processingResult?: ProcessingResult.FAILURE | ProcessingResult.NO_ACTION;
+			  }
+			| {
+					processingResult?: ProcessingResult.SUCCESS;
+					path?: string;
+					intent?: SiteIntent;
+					previousStep?: string;
+					nextStep?: string;
+			  };
+	} > {
 	title?: string;
 	subtitle?: string;
 }
@@ -117,7 +137,9 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 					console.error( 'ProcessingStep failed:', e );
 					captureFlowException( e );
 					setSiteSetupError( e.error || e.code, e.message );
-					submit?.( {}, ProcessingResult.FAILURE );
+					submit?.( {
+						processingResult: ProcessingResult.FAILURE,
+					} );
 				}
 			} else {
 				setHasEmptyActionRun( true );
@@ -132,7 +154,9 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 			// Let's ensure the submit function is called only once,
 			// but only for the onboarding flow to mitigate risks.
 			isSubmittedRef.current = flow === 'site-setup' ? true : false;
-			submit?.( {}, ProcessingResult.NO_ACTION );
+			submit?.( {
+				processingResult: ProcessingResult.NO_ACTION,
+			} );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ hasEmptyActionRun ] );
@@ -150,7 +174,11 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 			}
 
 			if ( isNewSiteMigrationFlow( flow ) ) {
-				submit?.( { ...destinationState, ...props.data }, ProcessingResult.SUCCESS );
+				submit?.( {
+					...destinationState,
+					...props.data,
+					processingResult: ProcessingResult.SUCCESS,
+				} );
 				return;
 			}
 
@@ -166,7 +194,10 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 			isSubmittedRef.current = flow === 'site-setup' ? true : false;
 
 			// Default processing handler.
-			submit?.( destinationState, ProcessingResult.SUCCESS );
+			submit?.( {
+				...destinationState,
+				processingResult: ProcessingResult.SUCCESS,
+			} );
 		}
 		// A change in submit() doesn't cause this effect to rerun.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -177,7 +208,6 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 	};
 
 	const flowName = props.flow || '';
-	const isJetpackPowered = isNewsletterFlow( flowName );
 
 	// Return tailored processing screens for flows that need them
 	if ( isNewsletterFlow( flowName ) || isUpdateDesignFlow( flowName ) ) {
@@ -191,6 +221,15 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 		return <HundredYearPlanFlowProcessingScreen />;
 	}
 
+	if ( shouldUseStepContainerV2( flow ) ) {
+		return (
+			<>
+				<DocumentHead title={ __( 'Processing' ) } />
+				<Step.Loading title={ getCurrentMessage() } progress={ progress } />
+			</>
+		);
+	}
+
 	return (
 		<>
 			<DocumentHead title={ __( 'Processing' ) } />
@@ -202,7 +241,6 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 					<Loading title={ getCurrentMessage() } subtitle={ getSubtitle() } progress={ progress } />
 				}
 				recordTracksEvent={ recordTracksEvent }
-				showJetpackPowered={ isJetpackPowered }
 			/>
 		</>
 	);

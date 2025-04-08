@@ -19,7 +19,6 @@ const PlanRenewContainer = styled.div( {
 	display: 'flex',
 	justifyItems: 'flex-start',
 	gap: '4px',
-	marginTop: '-2px',
 } );
 
 const PlanRenewLink = styled.a`
@@ -85,7 +84,7 @@ export const PlanRenewNag = ( {
 					<PlanRenewNoticeExpireText>
 						{ sprintf(
 							/* translators: %s - the plan's product name */
-							__( '%s - Expired' ),
+							__( '%s-Expired' ),
 							plan.product_name_short
 						) }
 					</PlanRenewNoticeExpireText>

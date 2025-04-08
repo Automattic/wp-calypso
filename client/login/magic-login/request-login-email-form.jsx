@@ -1,4 +1,5 @@
 import { FormLabel } from '@automattic/components';
+import { Spinner } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -56,6 +57,7 @@ class RequestLoginEmailForm extends Component {
 		onSubmitEmail: PropTypes.func,
 		onSendEmailLogin: PropTypes.func,
 		createAccountForNewUser: PropTypes.bool,
+		shouldShowLoadingEllipsis: PropTypes.bool,
 		blogId: PropTypes.string,
 		errorMessage: PropTypes.string,
 		onErrorDismiss: PropTypes.func,
@@ -139,7 +141,7 @@ class RequestLoginEmailForm extends Component {
 
 		if ( siteName ) {
 			return translate(
-				'We’ll send you an email with a login link that will log you in right away to %(siteName)s.',
+				'We’ll send you an email with a link that will log you in right away to %(siteName)s.',
 				{
 					args: {
 						siteName,
@@ -148,9 +150,7 @@ class RequestLoginEmailForm extends Component {
 			);
 		}
 
-		return translate(
-			'We’ll send you an email with a login link that will log you in right away.'
-		);
+		return translate( 'We’ll send you an email with a link that will log you in right away.' );
 	}
 
 	render() {
@@ -175,7 +175,13 @@ class RequestLoginEmailForm extends Component {
 			isEmailInputError,
 			isSubmitButtonDisabled,
 			isSubmitButtonBusy,
+			shouldShowLoadingEllipsis,
+			isFromJetpackOnboarding,
 		} = this.props;
+
+		if ( shouldShowLoadingEllipsis ) {
+			return <Spinner className="magic-login__loading-spinner--jetpack" />;
+		}
 
 		const usernameOrEmail = this.getUsernameOrEmailFromState();
 		const siteIcon = this.state.site?.icon?.img ?? this.state.site?.icon?.ico ?? null;
@@ -184,7 +190,10 @@ class RequestLoginEmailForm extends Component {
 			const emailAddress = usernameOrEmail.indexOf( '@' ) > 0 ? usernameOrEmail : null;
 
 			return isJetpackMagicLinkSignUpEnabled ? (
-				<EmailedLoginLinkSuccessfullyJetpackConnect emailAddress={ emailAddress } />
+				<EmailedLoginLinkSuccessfullyJetpackConnect
+					emailAddress={ emailAddress }
+					shouldRedirect={ ! isFromJetpackOnboarding }
+				/>
 			) : (
 				<EmailedLoginLinkSuccessfully emailAddress={ emailAddress } />
 			);

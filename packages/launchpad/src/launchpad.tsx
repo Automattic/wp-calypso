@@ -17,7 +17,7 @@ export const SITE_STORE = Site.register( { client_id: '', client_secret: '' } );
 type LaunchpadProps = {
 	siteSlug: string | null;
 	checklistSlug: string;
-	launchpadContext: string | null;
+	launchpadContext: string;
 	onSiteLaunched?: () => void;
 	onTaskClick?: EventHandlers[ 'onTaskClick' ];
 	onPostFilterTasks?: ( tasks: Task[] ) => Task[];
@@ -35,11 +35,7 @@ const Launchpad = ( {
 }: LaunchpadProps ) => {
 	const {
 		data: { checklist },
-	} = useSortedLaunchpadTasks(
-		launchpadContext ? siteSlug : null, // Prevents launchpad data from loading until launchpadContext is loaded
-		checklistSlug,
-		launchpadContext ?? ''
-	);
+	} = useSortedLaunchpadTasks( siteSlug, checklistSlug, launchpadContext );
 
 	const tasklistCompleted = checklist?.every( ( task: Task ) => task.completed ) || false;
 
@@ -81,11 +77,15 @@ const Launchpad = ( {
 	if ( ! launchpadContext ) {
 		return null;
 	}
-
+	const shareSiteTask = checklist?.find( ( task: Task ) => task.id === 'share_site' ) ?? null;
 	return (
 		<>
 			{ shareSiteModalIsOpen && site && (
-				<ShareSiteModal setModalIsOpen={ setShareSiteModalIsOpen } site={ site } />
+				<ShareSiteModal
+					setModalIsOpen={ setShareSiteModalIsOpen }
+					site={ site }
+					task={ shareSiteTask }
+				/>
 			) }
 			<LaunchpadInternal
 				site={ site }

@@ -1,10 +1,12 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
 .hosting-plan-section {
 	padding-block: 32px;
 
 	.page-section__header-title {
-		@include a4a-font-heading-lg;
+		@include heading-x-large;
 		text-align: center;
 	}
 
@@ -99,7 +101,7 @@
 
 .hosting-plan-section__details-heading,
 .hosting-plan-section__aside-heading {
-	@include a4a-font-heading-lg;
+	@include heading-x-large;
 }
 
 .hosting-plan-section__details-content,
@@ -110,7 +112,7 @@
 	margin-block: 16px;
 
 	> * {
-		@include a4a-font-body-md;
+		@include body-medium;
 		margin: 0;
 		padding: 0;
 	}

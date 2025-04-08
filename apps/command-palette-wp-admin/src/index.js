@@ -1,7 +1,7 @@
 import CommandPalette from '@automattic/command-palette';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import domReady from '@wordpress/dom-ready';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import setLocale from './set-locale';
 import { useCommandsWpAdmin } from './use-commands';
 import { useSites } from './use-sites';
@@ -50,7 +50,8 @@ function wpcomInitCommandPalette() {
 	const commandPaletteContainer = document.createElement( 'div' );
 	document.body.appendChild( commandPaletteContainer );
 
-	render( <CommandPaletteApp />, commandPaletteContainer );
+	const root = createRoot( commandPaletteContainer );
+	root.render( <CommandPaletteApp /> );
 }
 
 domReady( wpcomInitCommandPalette );

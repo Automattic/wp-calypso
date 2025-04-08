@@ -191,7 +191,7 @@
 
 	// from components/card/style.scss
 	box-shadow:
-		0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5),
+		0 0 0 1px color-mix(in srgb, var(--color-neutral-10) 50%, transparent),
 		0 1px 2px var(--color-neutral-0);
 
 	// from components/domains/domain-suggestion/style

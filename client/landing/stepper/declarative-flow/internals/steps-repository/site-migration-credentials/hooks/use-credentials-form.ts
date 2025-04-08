@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -54,23 +53,26 @@ const isWPCOM = ( siteInfo?: UrlData ) => {
 	return !! siteInfo?.platform_data?.is_wpcom;
 };
 
-const getFormDefaultValues = ( fromUrl: string ): CredentialsFormData => {
-	return {
-		from_url: fromUrl,
-		username: '',
-		password: '',
-		backupFileLocation: '',
-		notes: '',
-		migrationType: 'credentials',
-	};
+const removeEndingSlash = ( url: string ) => {
+	try {
+		const urlObject = new globalThis.URL( url );
+		if ( urlObject.pathname === '/' && url.endsWith( '/' ) ) {
+			return url.slice( 0, -1 );
+		}
+	} catch {
+		if ( url.endsWith( '/' ) ) {
+			return url.slice( 0, -1 );
+		}
+	}
+
+	return url;
 };
 
 export const useCredentialsForm = (
 	onSubmit: ( siteInfo?: UrlData, applicationPasswordsInfo?: ApplicationPasswordsInfo ) => void
 ) => {
-	const isApplicationPasswordEnabled = isEnabled( 'automated-migration/application-password' );
 	const siteSlug = useSiteSlugParam();
-	const importSiteQueryParam = useQuery().get( 'from' ) || '';
+	const fromUrl = useQuery().get( 'from' ) || '';
 	const [ siteInfo, setSiteInfo ] = useState< UrlData | undefined >( undefined );
 	const [ isBusy, setIsBusy ] = useState( false );
 	const siteId = parseInt( useSiteIdParam() ?? '' );
@@ -96,7 +98,14 @@ export const useCredentialsForm = (
 		mode: 'onSubmit',
 		reValidateMode: 'onSubmit',
 		disabled: isBusy,
-		defaultValues: getFormDefaultValues( importSiteQueryParam ),
+		defaultValues: {
+			from_url: removeEndingSlash( fromUrl ),
+			username: '',
+			password: '',
+			backupFileLocation: '',
+			notes: '',
+			migrationType: 'credentials',
+		},
 		errors: serverSideError,
 	} );
 
@@ -119,10 +128,14 @@ export const useCredentialsForm = (
 					bypassVerification: canBypassVerification,
 				};
 				await requestAutomatedMigration( payload );
-				recordTracksEvent( 'calypso_site_migration_automated_request_success' );
+				recordTracksEvent( 'calypso_site_migration_automated_request_success', {
+					migration_type: data.migrationType,
+				} );
 				onSubmit( siteInfoResult );
 			} catch ( error ) {
-				recordTracksEvent( 'calypso_site_migration_automated_request_error' );
+				recordTracksEvent( 'calypso_site_migration_automated_request_error', {
+					migration_type: data.migrationType,
+				} );
 			}
 		},
 		[ canBypassVerification, onSubmit, requestAutomatedMigration ]
@@ -165,7 +178,7 @@ export const useCredentialsForm = (
 		const siteInfoResult = shouldAnalyzeUrl ? await analyzeUrl( data.from_url ) : siteInfo;
 		setSiteInfo( siteInfoResult );
 
-		if ( isApplicationPasswordEnabled && accessMethod === 'credentials' && siteInfoResult ) {
+		if ( accessMethod === 'credentials' && siteInfoResult ) {
 			await submitWithApplicationPassword( siteId, data.from_url, siteInfoResult );
 		} else {
 			await requestAutomatedMigrationAndSubmit( data, siteInfoResult );

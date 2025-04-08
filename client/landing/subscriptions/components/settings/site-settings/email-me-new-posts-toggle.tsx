@@ -3,26 +3,31 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 
 type EmailMeNewPostsToggleProps = {
+	className?: string;
+	isDisabled?: boolean;
+	hintText?: boolean;
 	value: boolean;
-	isUpdating: boolean;
 	onChange: ( value: boolean ) => void;
 };
 
 const EmailMeNewPostsToggle = ( {
+	className = '',
+	isDisabled = false,
+	hintText = false,
 	value = false,
-	isUpdating = false,
 	onChange,
 }: EmailMeNewPostsToggleProps ) => {
 	const translate = useTranslate();
 
 	return (
-		<div className={ clsx( 'setting-item', 'email-me-new-posts-toggle', { 'is-enabled': value } ) }>
+		<div className={ clsx( 'email-me-new-posts-toggle', className, { 'is-enabled': value } ) }>
 			<ToggleControl
-				label={ translate( 'Receive emails' ) }
+				label={ translate( 'Email me new posts' ) }
 				onChange={ () => onChange( ! value ) }
 				checked={ value }
-				disabled={ isUpdating }
+				disabled={ isDisabled }
 			/>
+			{ hintText && <div className="email-new-posts-toggle__hint">{ hintText }</div> }
 		</div>
 	);
 };

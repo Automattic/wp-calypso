@@ -1,7 +1,7 @@
 import { LineChart, ThemeProvider, jetpackTheme } from '@automattic/charts';
 import { DataPointDate } from '@automattic/charts/src/types';
 import clsx from 'clsx';
-import { numberFormat, useTranslate } from 'i18n-calypso';
+import { numberFormat, translate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import { useCallback, useMemo } from 'react';
 import ChartBarTooltip from 'calypso/components/chart/bar-tooltip';
@@ -17,9 +17,15 @@ function StatsLineChart( {
 	className,
 	onClick,
 	height = 400,
-	EmptyState = StatsEmptyState,
+	emptyState = (
+		<StatsEmptyState
+			headingText={ translate( 'No data available' ) }
+			infoText={ translate( 'Try selecting a different time frame.' ) }
+		/>
+	),
 	zeroBaseline = true,
 	fixedDomain = false,
+	curveType = 'smooth',
 }: {
 	chartData: Array< {
 		label: string;
@@ -31,12 +37,12 @@ function StatsLineChart( {
 	className?: string;
 	height?: number;
 	moment: Moment;
-	EmptyState: typeof StatsEmptyState;
+	emptyState: JSX.Element;
 	zeroBaseline?: boolean;
 	fixedDomain?: boolean;
+	curveType?: 'smooth' | 'linear' | 'monotone';
 	onClick?: ( item: { data: { period: string } } ) => void;
 } ) {
-	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
 	const formatTime = formatTimeTick
@@ -66,6 +72,20 @@ function StatsLineChart( {
 			),
 		[ chartData ]
 	);
+
+	const yNumTicks = useMemo( () => {
+		const uniqueValues = [
+			...new Set( chartData.flatMap( ( series ) => series.data.map( ( d ) => d.value ) ) ),
+		];
+
+		const maxTicks = uniqueValues.length > 5 ? 5 : uniqueValues.length;
+
+		if ( fixedDomain ) {
+			return maxTicks;
+		}
+
+		return maxTicks - 1;
+	}, [ chartData, fixedDomain ] );
 
 	const yScaleType = useMemo( () => {
 		if ( chartData.length <= 1 ) {
@@ -158,12 +178,7 @@ function StatsLineChart( {
 
 	return (
 		<div className={ clsx( 'stats-line-chart', className ) }>
-			{ isEmpty && (
-				<EmptyState
-					headingText={ translate( 'No data available' ) }
-					infoText={ translate( 'Try selecting a different time frame.' ) }
-				/>
-			) }
+			{ isEmpty && emptyState }
 			{ ! isEmpty && (
 				<ThemeProvider theme={ jetpackTheme }>
 					<LineChart
@@ -171,6 +186,7 @@ function StatsLineChart( {
 						withTooltips
 						withGradientFill
 						height={ height }
+						curveType={ curveType }
 						// TODO: figure out the right type for onPointerDown
 						// eslint-disable-next-line @typescript-eslint/no-explicit-any
 						onPointerUp={ onPointerUp as any }
@@ -193,7 +209,7 @@ function StatsLineChart( {
 								y: {
 									orientation: 'right',
 									tickFormat: formatValue,
-									numTicks: maxValue > 4 ? 4 : 1,
+									numTicks: yNumTicks,
 								},
 							},
 						} }

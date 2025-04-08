@@ -108,6 +108,11 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 			}
 		}
 	}
+
+	.social-buttons__button {
+		height: 44px;
+		border-radius: 2px;
+	}
 }
 
 .button.is-primary.signup-form__crowdsignal-submit {
@@ -120,25 +125,6 @@ body.is-section-signup .layout .signup.is-crowdsignal .step-wrapper {
 }
 
 .crowdsignal .auth-form__social {
-	.button {
-		display: none;
-		margin-bottom: 40px;
-		text-align: center;
-		padding: 13px 40px 12px;
-
-		&:first-child {
-			display: block;
-		}
-
-		@include breakpoint-deprecated( "<660px" ) {
-			margin-bottom: 20px;
-		}
-	}
-
-	.social-buttons__service-name {
-		margin-left: 15px;
-	}
-
 	.auth-form__social-buttons-tos {
 		display: none;
 	}

@@ -11,16 +11,6 @@ export function isTargetSitePlanCompatible( targetSite: SiteDetails | undefined 
 	return planSlug && planHasFeature( planSlug, FEATURE_UPLOAD_THEMES_PLUGINS );
 }
 
-export function addProtocolToUrl( url: string, protocol = 'https' ) {
-	if ( ! url ) {
-		return '';
-	}
-	if ( url.startsWith( 'http' ) ) {
-		return url;
-	}
-	return `${ protocol }://${ url }`;
-}
-
 export function formatSlugToURL( inputUrl: string ) {
 	if ( ! inputUrl ) {
 		return '';

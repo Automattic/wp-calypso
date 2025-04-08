@@ -1,6 +1,6 @@
 import { TimerHandle } from 'calypso/types';
 
-interface Cancelable {
+export interface Cancelable {
 	cancel: () => void;
 }
 

@@ -99,7 +99,7 @@ describe( 'leaveCheckout', () => {
 		} );
 
 		it( 'returns to previousPath', () => {
-			const previousPath = `/previous-path`;
+			const previousPath = '/previous-path';
 
 			leaveCheckout( {
 				tracksEvent: 'checkout_cancel',

@@ -160,6 +160,8 @@ function addTooltipData( chartTab, item, period, customRange = {} ) {
 		value: null,
 	} );
 
+	const viewsPerVisitor = item.data.views / item.data.visitors;
+
 	switch ( chartTab ) {
 		case 'comments':
 			tooltipData.push( {
@@ -194,9 +196,12 @@ function addTooltipData( chartTab, item, period, customRange = {} ) {
 					className: 'is-visitors',
 					icon: <Icon className="gridicon" icon={ people } />,
 				} );
+			}
+
+			if ( Number.isFinite( viewsPerVisitor ) ) {
 				tooltipData.push( {
 					label: translate( 'Views Per Visitor' ),
-					value: numberFormat( item.data.views / item.data.visitors, { decimals: 2 } ),
+					value: numberFormat( viewsPerVisitor, { decimals: 2 } ),
 					className: 'is-views-per-visitor',
 					icon: <Icon className="gridicon" icon={ chevronRight } />,
 				} );

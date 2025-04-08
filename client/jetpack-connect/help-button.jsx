@@ -1,4 +1,3 @@
-import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useCallback } from 'react';
@@ -22,7 +21,6 @@ export default function JetpackConnectHelpButton( { label, url } ) {
 			rel="noopener noreferrer"
 			onClick={ recordClick }
 		>
-			<Gridicon icon="help-outline" size={ 18 } />{ ' ' }
 			{ label || translate( 'Get help setting up Jetpack' ) }
 		</LoggedOutFormLinkItem>
 	);

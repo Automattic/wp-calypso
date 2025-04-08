@@ -114,30 +114,32 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 			}
 		);
 
-		it( 'Open social preview', async function () {
-			await editorPage.expandSection( 'Social Previews' );
-			await editorPage.clickSidebarButton( 'Open Social Previews' );
-		} );
+		skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )( 'Social Previews', function () {
+			it( 'Open social preview', async function () {
+				await editorPage.expandSection( 'Social Previews' );
+				await editorPage.clickSidebarButton( 'Open Social Previews' );
+			} );
 
-		it( 'Show social preview for Tumblr', async function () {
-			// Action implemented as "raw" calls for now (2023-09).
-			const editorParent = await editorPage.getEditorParent();
-			const dialog = editorParent.getByRole( 'dialog' );
+			it( 'Show social preview for Tumblr', async function () {
+				// Action implemented as "raw" calls for now (2023-09).
+				const editorParent = await editorPage.getEditorParent();
+				const dialog = editorParent.getByRole( 'dialog' );
 
-			await dialog.getByRole( 'tab', { name: 'Tumblr' } ).click();
-			await dialog.getByRole( 'tabpanel', { name: 'Tumblr' } ).waitFor();
-			await dialog
-				.filter( {
-					// Look for either the SEO title, or the post title,
-					// depending on whether the platform had SEO options
-					// two steps previously.
-					hasText: new RegExp( `${ seoTitle }|${ title }` ),
-				} )
-				.waitFor();
-		} );
+				await dialog.getByRole( 'tab', { name: 'Tumblr' } ).click();
+				await dialog.getByRole( 'tabpanel', { name: 'Tumblr' } ).waitFor();
+				await dialog
+					.filter( {
+						// Look for either the SEO title, or the post title,
+						// depending on whether the platform had SEO options
+						// two steps previously.
+						hasText: new RegExp( `${ seoTitle }|${ title }` ),
+					} )
+					.waitFor();
+			} );
 
-		it( 'Dismiss social preview', async function () {
-			await page.keyboard.press( 'Escape' );
+			it( 'Dismiss social preview', async function () {
+				await page.keyboard.press( 'Escape' );
+			} );
 		} );
 
 		afterAll( async function () {

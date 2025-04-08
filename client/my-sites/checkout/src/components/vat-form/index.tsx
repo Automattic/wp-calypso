@@ -12,7 +12,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useCountryList, { isVatSupported } from '../../hooks/use-country-list';
 import { CHECKOUT_STORE } from '../../lib/wpcom-store';
 
-import './style.css';
+import './style.scss';
 
 export function VatForm( {
 	section,
@@ -246,6 +246,7 @@ export function VatForm( {
 							id: newValue,
 						} );
 					} }
+					prefix={ vatDetailsInForm?.country ? vatDetailsInForm.country : '' }
 				/>
 			</div>
 			<div className="vat-form__row vat-form__row--full-width">

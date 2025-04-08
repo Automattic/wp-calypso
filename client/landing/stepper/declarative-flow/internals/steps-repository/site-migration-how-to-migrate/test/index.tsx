@@ -40,7 +40,9 @@ describe( 'SiteMigrationHowToMigrate', () => {
 
 		render( { navigation } );
 
-		expect( screen.queryByText( /Plus you get 50% off our annual/ ) ).toBeInTheDocument();
+		expect(
+			screen.getByText( /Skip the migration hassle.*plus you get 50% off our annual/i )
+		).toBeInTheDocument();
 	} );
 
 	it( 'should render proper subheading for Business plan', () => {

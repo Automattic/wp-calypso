@@ -93,7 +93,6 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 				) }
 				{ isEmptyStateV2 && ! isRequestingData && ! hasData && ! shouldGateStats && (
 					<StatsCard
-						className={ clsx( 'stats-card--empty-variant' ) }
 						title={ translate( 'Total views' ) }
 						isEmpty
 						emptyMessage={

@@ -212,7 +212,7 @@ describe( 'actions', () => {
 		describe( 'with a wpcom site', () => {
 			let nockScope;
 			useNock( ( nock ) => {
-				const url = '/rest/v1.2/themes?include_blankcanvas_theme=';
+				const url = '/wpcom/v2/themes?include_blankcanvas_theme=';
 				nockScope = nock( 'https://public-api.wordpress.com:443' )
 					.get( url )
 					.reply( 200, {
@@ -880,10 +880,6 @@ describe( 'actions', () => {
 					queries: {
 						wpcom: new ThemeQueryManager(),
 					},
-					themeActivationModal: {
-						themeId: 'karuna',
-						accepted: true,
-					},
 				},
 			} );
 			test( 'should dispatch (only) activateTheme() and pass the unsuffixed themeId', () => {
@@ -920,10 +916,6 @@ describe( 'actions', () => {
 								items: { karuna: {} },
 							} ),
 						},
-						themeActivationModal: {
-							themeId: 'karuna',
-							accepted: true,
-						},
 					},
 				} );
 				test( 'should dispatch (only) activateTheme() and pass the unsuffixed themeId', () => {
@@ -946,10 +938,6 @@ describe( 'actions', () => {
 					...sitesState,
 					themes: {
 						queries: {},
-						themeActivationModal: {
-							themeId: 'karuna',
-							accepted: true,
-						},
 					},
 				} );
 				test( 'should dispatch (only) installAndActivateTheme() and pass the suffixed themeId', () => {

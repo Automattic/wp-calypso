@@ -1,19 +1,20 @@
 import { Site } from '@automattic/data-stores';
 import {
+	AI_SITE_BUILDER_FLOW,
 	ENTREPRENEUR_FLOW,
 	StepContainer,
 	addPlanToCart,
 	addProductsToCart,
 	createSiteWithCart,
 	isCopySiteFlow,
-	isImportFocusedFlow,
-	isMigrationSignupFlow,
 	isEntrepreneurFlow,
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
 	isReadymadeFlow,
 	isStartWritingFlow,
 	isOnboardingFlow,
+	isHostedSiteMigrationFlow,
+	Step,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -21,8 +22,6 @@ import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
 import useAddEcommerceTrialMutation from 'calypso/data/ecommerce/use-add-ecommerce-trial-mutation';
-import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/use-add-temp-site-mutation';
-import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -35,8 +34,8 @@ import {
 import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
-import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
-import type { Step } from '../../types';
+import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
+import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './styles.scss';
 
@@ -53,7 +52,7 @@ function hasSourceSlug( data: unknown ): data is { sourceSlug: string } {
 	return false;
 }
 
-const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
+const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
 
@@ -69,7 +68,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		siteUrl,
 		progress,
 		partnerBundle,
-		siteGoals,
 	} = useSelect(
 		( select: ( arg: string ) => OnboardSelect ) => ( {
 			domainItem: select( ONBOARD_STORE ).getSelectedDomain(),
@@ -87,8 +85,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	);
 
 	const { mutateAsync: addEcommerceTrial } = useAddEcommerceTrialMutation( partnerBundle );
-	const [ , isGoalsFirstExperiment ] = useGoalsFirstExperiment();
-
 	/**
 	 * Support singular and multiple domain cart items.
 	 */
@@ -97,15 +93,13 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		mergedDomainCartItems.push( domainCartItem );
 	}
 
-	const shouldSaveSiteGoals = isOnboardingFlow( flow ) && isGoalsFirstExperiment;
-
 	const username = useSelector( getCurrentUserName );
 
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
 	// when it's empty, the default WordPress theme will be used.
 	let theme = '';
-	if ( isImportFocusedFlow( flow ) || isCopySiteFlow( flow ) ) {
+	if ( isCopySiteFlow( flow ) ) {
 		theme = DEFAULT_SITE_MIGRATION_THEME;
 	} else if ( isEntrepreneurFlow( flow ) ) {
 		theme = DEFAULT_ENTREPRENEUR_FLOW;
@@ -128,11 +122,11 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	if (
 		isOnboardingFlow( flow ) ||
 		isCopySiteFlow( flow ) ||
-		isImportFocusedFlow( flow ) ||
 		isStartWritingFlow( flow ) ||
 		isNewHostedSiteCreationFlow( flow ) ||
 		isReadymadeFlow( flow ) ||
-		wooFlows.includes( flow || '' )
+		wooFlows.includes( flow || '' ) ||
+		flow === AI_SITE_BUILDER_FLOW
 	) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
 	}
@@ -144,15 +138,9 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	const isManageSiteFlow = Boolean(
 		wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow
 	);
-	const { addTempSiteToSourceOption } = useAddTempSiteToSourceOptionMutation();
 	const urlQueryParams = useQuery();
-	const sourceSiteSlug = urlQueryParams.get( 'from' ) || '';
 	const skipMigration = urlQueryParams.get( 'skipMigration' ) || '';
-	const { data: sourceMigrationStatus } = useSourceMigrationStatusQuery( sourceSiteSlug );
-	const useThemeHeadstart =
-		! isStartWritingFlow( flow ) &&
-		! isNewHostedSiteCreationFlow( flow ) &&
-		! isMigrationSignupFlow( flow );
+	const useThemeHeadstart = ! isStartWritingFlow( flow ) && ! isNewHostedSiteCreationFlow( flow );
 	const shouldGoToCheckout = Boolean( planCartItem );
 
 	async function createSite() {
@@ -174,7 +162,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			};
 		}
 
-		const siteIntent = isMigrationSignupFlow( flow ) ? 'migration' : '';
+		const siteIntent = isHostedSiteMigrationFlow( flow ) ? 'migration' : '';
 
 		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
 		const site = await createSiteWithCart(
@@ -195,8 +183,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			siteUrl,
 			domainItem,
 			sourceSlug,
-			siteIntent,
-			shouldSaveSiteGoals ? siteGoals : undefined
+			siteIntent
 		);
 
 		if ( isEntrepreneurFlow( flow ) && site ) {
@@ -222,11 +209,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			await addProductsToCart( site.siteSlug, flow, productCartItems );
 		}
 
-		if ( isImportFocusedFlow( flow ) && site?.siteSlug && sourceMigrationStatus?.source_blog_id ) {
-			// Store temporary target blog id to source site option
-			addTempSiteToSourceOption( site.siteId, sourceMigrationStatus?.source_blog_id );
-		}
-
 		return {
 			siteId: site?.siteId,
 			siteSlug: site?.siteSlug,
@@ -244,27 +226,26 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
-	const getCurrentMessage = () => {
-		return __( 'Creating your site' );
-	};
+	const title = __( 'Creating your site' );
 
-	const getSubTitle = () => {
-		return null;
-	};
-
-	const subTitle = getSubTitle();
+	if ( shouldUseStepContainerV2( flow ) ) {
+		return (
+			<>
+				<DocumentHead title={ title } />
+				<Step.Loading title={ title } progress={ progress } />
+			</>
+		);
+	}
 
 	return (
 		<>
-			<DocumentHead title={ getCurrentMessage() } />
+			<DocumentHead title={ title } />
 			<StepContainer
 				shouldHideNavButtons
 				hideFormattedHeader
 				stepName="create-site"
 				recordTracksEvent={ recordTracksEvent }
-				stepContent={
-					<Loading title={ getCurrentMessage() } subtitle={ subTitle } progress={ progress } />
-				}
+				stepContent={ <Loading title={ title } progress={ progress } /> }
 				showFooterWooCommercePowered={ false }
 			/>
 		</>

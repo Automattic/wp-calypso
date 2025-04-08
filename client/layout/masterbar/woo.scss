@@ -153,21 +153,21 @@ $breakpoint-mobile: 660px;
 		letter-spacing: 0;
 	}
 
-	a,
+	a:not(.social-buttons__button),
 	.wp-login__links a,
 	.wp-login__links button,
 	.button:not(.social-buttons__button),
 	.magic-login__footer a {
-		font-size: $woo-font-size-base;
-		line-height: 28px;
-		text-align: center;
 		color: $gray-50;
 		text-decoration: underline;
-		letter-spacing: 0;
 
-		&:hover,
 		&:visited {
 			color: $gray-50;
+		}
+
+		&:hover,
+		&:focus {
+			color: $woo-gray-100;
 		}
 	}
 
@@ -243,7 +243,7 @@ $breakpoint-mobile: 660px;
 
 
 			a,
-			a:visited, {
+			a:visited {
 				color: var(--woo-purple-60);
 				font-size: rem(14px);
 				font-style: normal;
@@ -722,7 +722,6 @@ $breakpoint-mobile: 660px;
 
 		a {
 			color: var(--woo-purple-70);
-			font-size: $font-body;
 			text-decoration: none;
 		}
 
@@ -1001,7 +1000,7 @@ $breakpoint-mobile: 660px;
 		&.feature-flag-woocommerce-core-profiler-passwordless-auth {
 			.login form,
 			.signup-form {
-				max-width: 327px;
+				max-width: 515px;
 				margin: 48px auto;
 			}
 		}
@@ -1090,15 +1089,6 @@ $breakpoint-mobile: 660px;
 				p strong {
 					color: $gray-700;
 					font-weight: 400;
-				}
-
-				p:nth-child(2) {
-					@media screen and (min-width: 660px) {
-						// css to allow for this element to exceed parent's width
-						width: 152%; // 152% * 405px gets us to 615px which is the design spec
-						position: relative;
-						left: -26%; // shift position back by half of that so that it remains centered
-					}
 				}
 			}
 
@@ -1425,7 +1415,6 @@ $breakpoint-mobile: 660px;
 			line-height: 27px;
 			letter-spacing: -0.025px;
 			color: var(--studio-gray-60);
-			-webkit-font-smoothing: initial;
 			text-align: center;
 
 			a {
@@ -1532,12 +1521,13 @@ $breakpoint-mobile: 660px;
 			}
 
 			.login__lost-password-link {
-				color: var(--woo-purple-50);
+				color: var(--woo-purple-40);
 				text-align: center;
-				font-weight: 500;
+				font-weight: 400;
+				font-size: $woo-font-size-base;
 				line-height: 20px;
 				margin-block-start: 24px;
-				text-decoration: none;
+				text-decoration: underline;
 			}
 		}
 
@@ -1565,33 +1555,32 @@ $breakpoint-mobile: 660px;
 
 				.auth-form__social-buttons-container {
 					gap: 16px;
+					width: 100%;
 				}
 
-				.social-buttons__button.button {
-					display: flex;
+				.social-buttons__button {
+					--color-accent: var(--woo-purple-40);
+
 					height: 48px;
 					padding: 8px 16px;
-					align-items: center;
-					align-self: stretch;
 					border-radius: 8px; // stylelint-disable-line scales/radii
-					border: 2px solid var(--studio-gray-10) !important;
-					width: 100%;
 					margin: 0;
-					text-decoration: none;
 
-					&:hover {
-						background: var(--studio-gray-0, #f6f7f7);
+					&:not(:focus) {
+						box-shadow: inset 0 0 0 2px $gray-300, 0 0 0 currentColor;
 					}
-				}
 
+					&:focus {
+						box-shadow: 0 0 0 currentColor inset, 0 0 0 2px var(--wp-components-color-accent);
+					}
 
-				.social-buttons__service-name {
-					font-size: 1rem;
-					font-style: normal;
-					font-weight: 500;
-					line-height: 24px;
-					color: var(--studio-gray-100);
-					font-family: $woo-inter-font;
+					> span {
+						color: var(--studio-gray-100);
+						font-family: $woo-inter-font;
+						font-size: 1rem;
+						margin-left: -20px;
+						margin-right: auto;
+					}
 				}
 
 				.social-icons {
@@ -1820,11 +1809,8 @@ $breakpoint-mobile: 660px;
 				}
 
 				a {
-					text-decoration: none;
-					color: var(--woo-purple-50);
 					font-size: rem(14px);
 					font-style: normal;
-					font-weight: 500;
 					line-height: 20px;
 				}
 			}
@@ -1894,6 +1880,9 @@ $breakpoint-mobile: 660px;
 				.security-key-form__add-wait-for-key {
 					margin-bottom: 48px;
 
+					p {
+						max-width: 515px;
+					}
 					p:first-child {
 						margin-bottom: 12px;
 					}
@@ -1911,7 +1900,7 @@ $breakpoint-mobile: 660px;
 			}
 
 			.two-factor-authentication__small-print {
-				max-width: $max-width;
+				max-width: 350px;
 				color: $gray-50;
 				text-align: center;
 				font-style: normal;
@@ -2126,6 +2115,7 @@ $breakpoint-mobile: 660px;
 			.login__lost-password-link {
 				font-weight: inherit;
 				font-size: rem(13px);
+				text-decoration: none;
 			}
 		}
 
@@ -2227,27 +2217,11 @@ $breakpoint-mobile: 660px;
 				align-items: baseline;
 			}
 		}
-
-		.auth-form__social {
-			.auth-form__social-buttons-container {
-				width: 100%;
-			}
-
-			.auth-form__social-buttons .social-buttons__button.button {
-				border-radius: 2px;
-				border: 1px solid var(--Gray-Gray-20, #a7aaad) !important;
-				background: var(--black-white-white, #fff);
-				span {
-					font-size: 0.875rem;
-					letter-spacing: 0.32px;
-				}
-			}
-		}
 	}
 }
 
-.woo.is-woo-com-oauth.feature-flag-woocommerce-rebrand-2-0,
-.layout.is-jetpack-woo-dna-flow.feature-flag-woocommerce-rebrand-2-0 {
+.woo.is-woo-com-oauth,
+.layout.is-jetpack-woo-dna-flow {
 	--woo-purple-0: #F2EDFF;
 	--woo-purple-40: #873EFF;
 	--woo-purple-50: #720EEC;

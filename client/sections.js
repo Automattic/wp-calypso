@@ -225,15 +225,15 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'hosting-overview',
+		name: 'overview',
 		paths: [ '/overview' ],
-		module: 'calypso/hosting/overview',
+		module: 'calypso/sites/overview',
 		group: 'sites',
 	},
 	{
-		name: 'hosting-features',
-		paths: [ '/hosting-features' ],
-		module: 'calypso/hosting/hosting-features',
+		name: 'hosting',
+		paths: [ '/hosting-config', '/hosting-features' ],
+		module: 'calypso/sites/hosting',
 		group: 'sites',
 	},
 	{
@@ -576,30 +576,6 @@ const sections = [
 		trackLoadPerformance: true,
 	},
 	{
-		name: 'hosting',
-		paths: [ '/hosting-config' ],
-		module: 'calypso/hosting/overview',
-		group: 'sites',
-	},
-	{
-		name: 'site-tools',
-		paths: [ '/sites/tools' ],
-		module: 'calypso/sites/tools',
-		group: 'sites',
-	},
-	{
-		name: 'site-overview',
-		paths: [ '/sites/overview' ],
-		module: 'calypso/sites/overview',
-		group: 'sites',
-	},
-	{
-		name: 'site-marketing',
-		paths: [ '/sites/marketing' ],
-		module: 'calypso/sites/marketing',
-		group: 'sites',
-	},
-	{
 		name: 'site-settings',
 		paths: [ '/sites/settings' ],
 		module: 'calypso/sites/settings',
@@ -766,7 +742,7 @@ const sections = [
 	{
 		name: 'github-deployments',
 		paths: [ '/github-deployments' ],
-		module: 'calypso/hosting/deployments',
+		module: 'calypso/sites/deployments',
 		group: 'sites',
 	},
 	{
@@ -916,6 +892,7 @@ const sections = [
 		name: 'a8c-for-agencies-woopayments',
 		paths: [
 			'/woopayments',
+			'/woopayments/overview',
 			'/woopayments/dashboard',
 			'/woopayments/payment-settings',
 			'/woopayments/site-setup',

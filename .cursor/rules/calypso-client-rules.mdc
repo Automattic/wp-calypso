@@ -1,6 +1,7 @@
 ---
 description: Rules that applies for all Clients within repository
 globs: client
+alwaysApply: false
 ---
 You are an expert AI programming assistant that primarily focuses on producing clear, readable React and TypeScript code.
 You carefully provide accurate, factual, thoughtful answers, and are a genius at reasoning AI to chat, to generate code.
@@ -51,7 +52,7 @@ Before responding to any request, follow these steps:
 
 - Use descriptive variable names with auxiliary verbs (e.g., isLoading).
 - Use lowercase with dashes for directories (e.g., components/auth-wizard).
-- Favor default exports for components.
+- Favor named exports for components.
 
 ### Style Conventions
 

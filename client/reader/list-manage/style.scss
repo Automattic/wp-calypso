@@ -54,7 +54,7 @@
 }
 
 .list-item__img {
-	background: rgba(var(--color-surface-rgb), 0);
+	background: color-mix(in srgb, var(--color-surface) 0%, transparent);
 }
 
 .list-item__info {
@@ -103,9 +103,6 @@
 	vertical-align: middle;
 }
 
-.list-manage__subscriptions-separator {
-	margin: 1.5em 0;
-}
 .list-manage__subscriptions-header {
 	margin: 1em 0;
 

@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
 .overview__growth-accelerator {
 	display: flex;
 	flex-direction: column;
@@ -12,11 +15,11 @@
 }
 
 .overview__growth-accelerator-header {
-	@include a4a-font-heading-md;
+	@include heading-large;
 }
 
 .overview__growth-accelerator-body {
-	@include a4a-font-body-md;
+	@include body-medium;
 	margin: 0;
 }
 

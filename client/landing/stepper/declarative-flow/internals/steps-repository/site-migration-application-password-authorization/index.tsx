@@ -7,16 +7,26 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useDispatch } from 'calypso/state';
+import { resetSite } from 'calypso/state/sites/actions';
 import Authorization from './components/authorization';
 import useStoreApplicationPassword from './hooks/use-store-application-password';
 import type { Step } from '../../types';
 import './style.scss';
 
-const SiteMigrationApplicationPasswordsAuthorization: Step = function ( { navigation } ) {
+const SiteMigrationApplicationPasswordsAuthorization: Step< {
+	submits: {
+		action: 'migration-started' | 'fallback-credentials' | 'authorization' | 'contact-me';
+		authorizationUrl?: string;
+	};
+} > = function ( { navigation } ) {
 	const translate = useTranslate();
 	const siteSlug = useSiteSlugParam();
+	const siteId = parseInt( useSiteIdParam() ?? '' );
+	const dispatch = useDispatch();
 
 	const source = useQuery().get( 'from' ) ?? '';
 	const authorizationUrl = useQuery().get( 'authorizationUrl' ) ?? undefined;
@@ -50,9 +60,10 @@ const SiteMigrationApplicationPasswordsAuthorization: Step = function ( { naviga
 
 	useEffect( () => {
 		if ( isStoreApplicationPasswordSuccess ) {
+			siteId && dispatch( resetSite( siteId ) );
 			navigation?.submit?.( { action: 'migration-started' } );
 		}
-	}, [ isStoreApplicationPasswordSuccess, navigation ] );
+	}, [ isStoreApplicationPasswordSuccess, navigation, dispatch, siteId ] );
 
 	const navigateToFallbackCredentials = () => {
 		navigation?.submit?.( { action: 'fallback-credentials', authorizationUrl } );
@@ -93,7 +104,7 @@ const SiteMigrationApplicationPasswordsAuthorization: Step = function ( { naviga
 
 	// translators: %(sourceDomain)s is the source domain that is being migrated.
 	const subHeaderText = translate(
-		"We're ready to migrate {{strong}}%(sourceDomain)s{{/strong}} to WordPress.com. To make sure everything goes smoothly, we need you to authorize us for access in your WordPress admin.",
+		"We're ready to migrate {{strong}}%(sourceDomain)s{{/strong}} to WordPress.com. To ensure a smooth process, we need you to authorize us in your WordPress.com admin.",
 		{
 			args: {
 				sourceDomain,
@@ -122,7 +133,6 @@ const SiteMigrationApplicationPasswordsAuthorization: Step = function ( { naviga
 				goBack={ navigation?.goBack }
 				goNext={ navigation?.submit }
 				hideSkip
-				isFullLayout
 				notice={ notice }
 				formattedHeader={ formattedHeader }
 				stepContent={

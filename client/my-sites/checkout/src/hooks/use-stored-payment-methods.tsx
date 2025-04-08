@@ -53,6 +53,7 @@ export function useStoredPaymentMethods( {
 	type = 'all',
 	expired = false,
 	isLoggedOut = false,
+	isForBusiness = false,
 }: {
 	/**
 	 * If there is no logged-in user, we will not try to fetch anything.
@@ -72,6 +73,13 @@ export function useStoredPaymentMethods( {
 	 * Defaults to false.
 	 */
 	expired?: boolean;
+
+	/**
+	 * Optionally filter methods by business use status
+	 *
+	 * Defaults to 'false'
+	 */
+	isForBusiness?: boolean | null;
 } = {} ): StoredPaymentMethodsState {
 	const queryClient = useQueryClient();
 
@@ -85,7 +93,14 @@ export function useStoredPaymentMethods( {
 
 	const translate = useTranslate();
 	const isDataValid = Array.isArray( data );
-	const paymentMethods = isDataValid ? data : [];
+	let paymentMethods = isDataValid ? data : [];
+
+	// Apply filtering based on business use
+	if ( isForBusiness === true ) {
+		paymentMethods = paymentMethods.filter(
+			( method ) => method?.tax_location?.is_for_business === isForBusiness
+		);
+	}
 
 	const mutation = useMutation<
 		StoredPaymentMethod[ 'stored_details_id' ],

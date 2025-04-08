@@ -61,7 +61,6 @@ export async function fetchBulkActionStatus(): Promise< BulkDomainUpdateStatusQu
 	return wp.req.get( {
 		path: '/domains/bulk-actions',
 		apiNamespace: 'wpcom/v2',
-		apiVersion: '2',
 	} );
 }
 
@@ -69,7 +68,6 @@ export async function deleteBulkActionStatus(): Promise< void > {
 	return wp.req.post( {
 		path: '/domains/bulk-actions',
 		apiNamespace: 'wpcom/v2',
-		apiVersion: '2',
 		method: 'DELETE',
 	} );
 }

@@ -35,6 +35,7 @@ export const Editor: FC< EditorProps > = ( {
 	onChange,
 	isRTL,
 	isDarkMode,
+	customStyles = '',
 } ) => {
 	// We keep the content in state so we can access the blocks in the editor.
 	const {
@@ -116,6 +117,11 @@ export const Editor: FC< EditorProps > = ( {
 					useSubRegistry
 					onInput={ handleContentUpdate }
 					onChange={ handleContentUpdate }
+					styles={ [
+						{
+							css: isDarkMode ? iframedCSS + darkModeCss + customStyles : iframedCSS + customStyles,
+						},
+					] }
 				>
 					<div className={ clsx( 'editor__header', { 'is-editing': isEditing } ) }>
 						<div className="editor__header-wrapper">
@@ -131,7 +137,13 @@ export const Editor: FC< EditorProps > = ( {
 						<Popover.Slot />
 						<BlockTools>
 							<BlockCanvas
-								styles={ [ { css: isDarkMode ? iframedCSS + darkModeCss : iframedCSS } ] }
+								styles={ [
+									{
+										css: isDarkMode
+											? iframedCSS + darkModeCss + customStyles
+											: iframedCSS + customStyles,
+									},
+								] }
 								height={ contentHeight }
 							>
 								{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */ }

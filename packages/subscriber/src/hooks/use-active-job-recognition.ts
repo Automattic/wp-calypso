@@ -16,7 +16,7 @@ export function useActiveJobRecognition( siteId: number ) {
 	const { imports, completedJob } = useSelect( ( select ) => {
 		const latestJob = select( Subscriber.store ).getLatestImportJobSelector();
 		const isCompletedJob = ( job: ImportJob ): job is CompletedImportJob =>
-			job?.status === 'imported';
+			job?.status === 'imported' || job?.status === 'cancelled';
 
 		return {
 			imports: select( Subscriber.store ).getImportJobsSelector() || [],

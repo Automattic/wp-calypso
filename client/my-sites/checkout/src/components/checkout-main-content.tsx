@@ -22,6 +22,7 @@ import {
 	useTransactionStatus,
 	TransactionStatus,
 } from '@automattic/composite-checkout';
+import { Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	styled,
@@ -29,12 +30,14 @@ import {
 	getContactDetailsType,
 	ContactDetailsType,
 } from '@automattic/wpcom-checkout';
-import { keyframes } from '@emotion/react';
+import { css, keyframes } from '@emotion/react';
+import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { formatCurrency, useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import Loading from 'calypso/components/loading';
+import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import {
 	hasGoogleApps,
@@ -60,6 +63,7 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-preview';
 import useOneDollarOfferTrack from 'calypso/my-sites/plans/hooks/use-onedollar-offer-track';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
+import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
@@ -68,6 +72,7 @@ import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selector
 import { getWpComDomainBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-details';
+import { useCheckoutHelpCenter } from '../hooks/use-checkout-help-center';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
@@ -82,8 +87,8 @@ import CheckoutNextSteps from './checkout-next-steps';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import { GoogleDomainsCopy } from './google-transfers-copy';
-import { IsForBusinessCheckbox } from './is-for-business-checkbox';
 import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-sidebar-plan-upsell';
+import { LeaveCheckoutModal, useCheckoutLeaveModal } from './leave-checkout-modal';
 import BeforeSubmitCheckoutHeader from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import WPCheckoutOrderReview, { CouponFieldArea } from './wp-checkout-order-review';
@@ -377,6 +382,8 @@ export default function CheckoutMainContent( {
 		couponStatus,
 	} = useShoppingCart( cartKey );
 
+	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteUrl ?? '' } );
+
 	const searchParams = new URLSearchParams( window.location.search );
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
@@ -490,6 +497,11 @@ export default function CheckoutMainContent( {
 
 	useOneDollarOfferTrack( siteId, 'checkout' );
 
+	const isStepContainerV2 = shouldUseStepContainerV2( getSignupCompleteFlowName() );
+	const isLargeViewport = useViewportMatch( 'large', '>=' );
+
+	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter } = useCheckoutHelpCenter();
+
 	if ( ! checkoutActions ) {
 		return null;
 	}
@@ -501,14 +513,22 @@ export default function CheckoutMainContent( {
 	} = checkoutActions;
 
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
+		const headingText = translate( "Almost there – we're currently finalizing your order." );
+
+		if ( isStepContainerV2 ) {
+			return (
+				<>
+					<PerformanceTrackerStop />
+					<Step.Loading title={ headingText } />
+				</>
+			);
+		}
+
 		return (
 			<WPCheckoutCompletedWrapper>
 				<WPCheckoutCompletedMainContent>
 					<PerformanceTrackerStop />
-					<Loading
-						className="checkout__pending-content"
-						title={ translate( "Almost there – we're currently finalizing your order." ) }
-					/>
+					<Loading className="checkout__pending-content" title={ headingText } />
 				</WPCheckoutCompletedMainContent>
 			</WPCheckoutCompletedWrapper>
 		);
@@ -557,9 +577,9 @@ export default function CheckoutMainContent( {
 		return true;
 	};
 
-	return (
-		<WPCheckoutWrapper>
-			<WPCheckoutSidebarContent>
+	const content = (
+		<WPCheckoutWrapper className="checkout-wrapper">
+			<WPCheckoutSidebarContent className="checkout-sidebar-content">
 				{ isLoading && <LoadingSidebarContent /> }
 				{ ! isLoading && (
 					<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
@@ -567,10 +587,15 @@ export default function CheckoutMainContent( {
 							errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }
 							onError={ onSummaryError }
 						>
-							<CheckoutSummaryTitleLink onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }>
-								<CheckoutSummaryTitleContent>
+							<CheckoutSummaryTitleLink
+								className="checkout__summary-button"
+								onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }
+							>
+								<CheckoutSummaryTitleContent className="checkout__summary-title">
 									<CheckoutSummaryTitle>
-										<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
+										{ ! isStepContainerV2 && (
+											<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
+										) }
 										{ translate( 'Purchase Details' ) }
 										<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
 									</CheckoutSummaryTitle>
@@ -607,9 +632,17 @@ export default function CheckoutMainContent( {
 				) }
 			</WPCheckoutSidebarContent>
 
-			<WPCheckoutMainContent>
+			<WPCheckoutMainContent className="checkout-main-content">
 				<CheckoutOrderBanner />
-				<WPCheckoutTitle>{ translate( 'Checkout' ) }</WPCheckoutTitle>
+				{ isStepContainerV2 ? (
+					<Step.Heading
+						text={ translate( 'Checkout' ) }
+						align="left"
+						size={ ! isLargeViewport ? 'small' : undefined }
+					/>
+				) : (
+					<WPCheckoutTitle>{ translate( 'Checkout' ) }</WPCheckoutTitle>
+				) }
 				<CheckoutStepGroup loadingHeader={ loadingHeader } onStepChanged={ onStepChanged }>
 					<PerformanceTrackerStop />
 					{ infoMessage }
@@ -798,7 +831,162 @@ export default function CheckoutMainContent( {
 			</WPCheckoutMainContent>
 		</WPCheckoutWrapper>
 	);
+
+	if ( ! isStepContainerV2 ) {
+		return content;
+	}
+
+	return (
+		<StepContainerV2CheckoutFixer isLargeViewport={ isLargeViewport }>
+			<Step.WideLayout
+				maxWidth="xhuge"
+				hasContentPadding={ false }
+				topBar={
+					<Step.TopBar
+						leftElement={ <Step.BackButton onClick={ leaveModalProps.clickClose } /> }
+						rightElement={
+							<span className="checkout-skip-button">
+								<label>{ helpCenterButtonCopy ?? translate( 'Need extra help?' ) } </label>
+								<Step.LinkButton onClick={ toggleHelpCenter }>
+									{ helpCenterButtonLink ?? translate( 'Visit Help Center' ) }
+								</Step.LinkButton>
+							</span>
+						}
+					/>
+				}
+			>
+				{ content }
+			</Step.WideLayout>
+			<LeaveCheckoutModal { ...leaveModalProps } />
+		</StepContainerV2CheckoutFixer>
+	);
 }
+
+const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
+	// This shouldn't exist. It's a hack to make the top bar appear on top of the checkout sidebar, which extends from the top of the page.
+	.step-container-v2__top-bar {
+		position: relative;
+		z-index: 1;
+	}
+
+	.checkout-skip-button {
+		label {
+			display: none;
+
+			@media ( ${ ( props ) => props.theme.breakpoints.bigPhoneUp } ) {
+				display: inline;
+			}
+		}
+	}
+
+	.checkout-sidebar-plan-upsell {
+		margin-inline: 0;
+		max-width: 100%;
+	}
+
+	${ ( props ) =>
+		! props.isLargeViewport &&
+		css`
+			.checkout-sidebar-content {
+				margin-top: 0;
+			}
+
+			.checkout__summary-button {
+				border-bottom: none;
+			}
+
+			.checkout__summary-body {
+				padding: var( --step-container-v2-content-block-padding )
+					var( --step-container-v2-content-inline-padding );
+				max-width: 100%;
+			}
+
+			.checkout__summary-features {
+				padding: 0;
+				width: 100%;
+			}
+
+			.checkout__summary-title {
+				margin: 0;
+				padding: 1rem var( --step-container-v2-content-inline-padding );
+				max-width: 100%;
+			}
+
+			.checkout-sidebar-plan-upsell {
+				margin: 0;
+				max-width: 100%;
+			}
+
+			.checkout-main-content {
+				margin-top: 0;
+				padding: var( --step-container-v2-content-block-padding )
+					var( --step-container-v2-content-inline-padding );
+				max-width: 100%;
+			}
+
+			.wp-checkout__review-order-step,
+			.checkout-contact-form-step,
+			.checkout__payment-method-step,
+			.checkout-terms-and-checkboxes,
+			.checkout-steps__step-complete-content,
+			.checkout-steps__step-content {
+				padding-inline: 0;
+			}
+
+			.wp-checkout__review-order-step {
+				padding-block: 2rem;
+			}
+
+			.checkout-steps__submit-button-wrapper {
+				max-width: 100%;
+				padding-inline: var( --step-container-v2-content-inline-padding );
+
+				@media ( ${ props.theme.breakpoints.tabletUp } ) {
+					padding-inline: 0;
+				}
+			}
+
+			.checkout-steps__submit-footer-wrapper {
+				min-height: auto;
+			}
+		` }
+
+	${ ( props ) =>
+		props.isLargeViewport &&
+		css`
+			.checkout-main-content {
+				padding-left: var( --step-container-v2-content-inline-padding );
+				margin-top: 3rem;
+			}
+
+			.checkout-sidebar-content {
+				--left-padding: 3.875rem;
+				padding: 2.25rem var( --step-container-v2-content-inline-padding ) 0 var( --left-padding );
+				background: none;
+				position: relative;
+				height: 100%;
+
+				&:before {
+					content: '';
+					display: block;
+					background: var( --color-neutral-0 );
+					position: fixed;
+					top: calc( var( --step-container-v2-top-bar-height ) * -1 );
+					transform: translateX( calc( var( --left-padding ) * -1 ) );
+					width: 100vw;
+					bottom: 0;
+				}
+			}
+
+			.checkout-summary-area {
+				max-width: 100%;
+			}
+
+			.checkout__summary-body {
+				margin: 0;
+			}
+		` }
+`;
 
 const CheckoutSummary = styled.div`
 	box-sizing: border-box;
@@ -993,9 +1181,9 @@ function CheckoutTermsAndCheckboxes( {
 	const translate = useTranslate();
 
 	return (
-		<CheckoutTermsAndCheckboxesWrapper>
+		<CheckoutTermsAndCheckboxesWrapper className="checkout-terms-and-checkboxes">
 			<BeforeSubmitCheckoutHeader />
-			<IsForBusinessCheckbox />
+
 			{ hasMarketplaceProduct && (
 				<AcceptTermsOfServiceCheckbox
 					isAccepted={ is3PDAccountConsentAccepted }
@@ -1190,16 +1378,13 @@ const WPCheckoutCompletedWrapper = styled.div`
 	justify-content: center;
 	justify-items: center;
 	min-height: 100vh;
-
 	& > * {
 		box-sizing: border-box;
 		width: 100%;
-
 		@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 			min-height: 100vh;
 		}
 	}
-
 	& *:focus {
 		outline: ${ ( props ) => props.theme.colors.outline } solid 2px;
 	}
@@ -1233,7 +1418,6 @@ const WPCheckoutMainContent = styled.div`
 const WPCheckoutCompletedMainContent = styled.div`
 	margin-top: 60px;
 	min-height: 100vh;
-
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		padding: 0 24px;
 		max-width: 648px;

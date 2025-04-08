@@ -79,11 +79,18 @@ const StatsCard = ( props: StatsCardProps ) => {
 	// (main item, optional additional columns and value)
 	const splitHeaderNode = (
 		<div
-			className={ `${ BASE_CLASS_NAME }-header ${ headerClassName } ${ BASE_CLASS_NAME }-header--split` }
+			className={ clsx(
+				`${ BASE_CLASS_NAME }-header`,
+				headerClassName,
+				`${ BASE_CLASS_NAME }-header--split`
+			) }
 		>
 			<div className={ `${ BASE_CLASS_NAME }-header--main` }>
-				{ ! heroElement && titleNode }
-				{ toggleControl }
+				<div className={ `${ BASE_CLASS_NAME }-header--main__left` }>
+					{ ! heroElement && titleNode }
+					{ downloadCsv }
+				</div>
+				<div className={ `${ BASE_CLASS_NAME }-header--main__right` }>{ toggleControl }</div>
 			</div>
 			{ ! isEmpty && (
 				<div className={ `${ BASE_CLASS_NAME }--column-header` }>
@@ -121,7 +128,10 @@ const StatsCard = ( props: StatsCardProps ) => {
 				[ `${ BASE_CLASS_NAME }__hasoverlay` ]: !! overlay,
 			} ) }
 		>
-			<div className={ `${ BASE_CLASS_NAME }__content` }>
+			<div
+				className={ `${ BASE_CLASS_NAME }__content` }
+				{ ...( overlay && { 'aria-hidden': true, inert: '' } ) }
+			>
 				{ !! heroElement && (
 					<div className={ `${ BASE_CLASS_NAME }--hero` }>
 						{ splitHeader && <div className={ `${ BASE_CLASS_NAME }-header` }>{ titleNode }</div> }

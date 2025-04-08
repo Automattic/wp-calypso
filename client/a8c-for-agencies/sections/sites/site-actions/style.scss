@@ -1,6 +1,7 @@
 
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .site-actions__actions-large-screen {
 	cursor: pointer;
@@ -32,7 +33,7 @@
 	border-style: solid;
 	border-color: var(--studio-gray-5);
 	border-width: 0 0 1px;
-	font-size: 0.875rem;
+	@include body-medium;
 	height: 40px;
 	box-sizing: border-box;
 	color: var(--studio-black);

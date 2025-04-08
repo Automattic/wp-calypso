@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Card, Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -21,6 +20,7 @@ interface Props {
 	licenseType: LicenseType;
 	isChildLicense?: boolean;
 	referral?: ReferralAPIResponse | null;
+	isDevSite?: boolean;
 }
 
 const DETAILS_DATE_FORMAT = 'YYYY-MM-DD h:mm:ss A';
@@ -32,6 +32,7 @@ export default function LicenseDetails( {
 	licenseType,
 	isChildLicense,
 	referral,
+	isDevSite,
 }: Props ) {
 	const licenseKey = license.licenseKey;
 	const product = license.product;
@@ -47,8 +48,6 @@ export default function LicenseDetails( {
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
 
 	const pressablePlan = useGetPressablePlanByProductId( { product_id: license.productId } );
-
-	const isAutomatedReferralsEnabled = config.isEnabled( 'a4a-automated-referrals' );
 
 	return (
 		<Card
@@ -100,7 +99,7 @@ export default function LicenseDetails( {
 					</li>
 				) }
 
-				{ isAutomatedReferralsEnabled && referral && (
+				{ referral && (
 					<li className="license-details__list-item-small">
 						<h4 className="license-details__label">{ translate( 'Owned by' ) }</h4>
 						{ referral.client.email }
@@ -130,7 +129,8 @@ export default function LicenseDetails( {
 				licenseType={ licenseType }
 				hasDownloads={ hasDownloads }
 				isChildLicense={ isChildLicense }
-				isClientLicense={ !! ( isAutomatedReferralsEnabled && referral ) }
+				isClientLicense={ !! referral }
+				isDevSite={ isDevSite }
 			/>
 		</Card>
 	);

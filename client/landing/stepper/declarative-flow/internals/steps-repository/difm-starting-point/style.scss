@@ -1,0 +1,67 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.difm-starting-point {
+	.help-center-step-button {
+		font-weight: 500;
+	}
+	.help-center-step-button__button {
+		font-size: 0.875rem;
+	}
+}
+
+.step-container-v2:has(.step-container-v2--difm-starting-point) {
+	.help-center-step-button {
+		font-size: 0.875rem;
+		font-weight: 500;
+		line-height: 1;
+		height: 24px;
+		display: flex;
+		align-items: center;
+		gap: 4px;
+
+		label {
+			display: none;
+
+			@include break-small {
+				display: inline;
+			}
+		}
+
+		&__button {
+			--wp-components-color-accent: var(--color-neutral-100);
+			font-size: inherit;
+			line-height: inherit;
+		}
+	}
+
+	.step-container-v2--difm-starting-point {
+		&__ctas {
+			display: flex;
+			gap: 16px;
+			align-items: center;
+		}
+
+		&__left-column {
+			display: flex;
+			flex-direction: column;
+			gap: 32px;
+		}
+
+		&__right-column {
+			height: 562px;
+		}
+
+		&__faq-expander {
+			--wp-components-color-accent: var(--color-neutral-60);
+			--wp-components-color-accent-darker-20: var(--color-neutral-80);
+
+			width: 100%;
+			justify-content: center !important;
+
+			@include break-small {
+				max-width: 404px;
+			}
+		}
+	}
+}

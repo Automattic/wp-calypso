@@ -506,7 +506,7 @@ export class RestAPIClient {
 			body: JSON.stringify( details ),
 		};
 
-		const response = await this.sendRequest( this.getRequestURL( '1.1', `/me/settings` ), params );
+		const response = await this.sendRequest( this.getRequestURL( '1.1', '/me/settings' ), params );
 
 		if ( response.hasOwnProperty( 'error' ) ) {
 			throw new Error(

@@ -2,7 +2,7 @@ import clsx from 'clsx';
 
 import './style.scss';
 
-interface MainProps {
+export interface MainProps {
 	ariaLabel?: string;
 	children: React.ReactNode;
 	className?: string;

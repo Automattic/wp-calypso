@@ -1,13 +1,9 @@
 import config from '@automattic/calypso-config';
-import { HelpCenter } from '@automattic/data-stores';
-import { useLocale } from '@automattic/i18n-utils';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { useShouldShowCriticalAnnouncementsQuery } from '@automattic/whats-new';
-import { useDispatch } from '@wordpress/data';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import { Component, useCallback, useEffect, useState } from 'react';
+import { Component, useEffect } from 'react';
 import { connect } from 'react-redux';
 import QueryAgencies from 'calypso/a8c-for-agencies/data/agencies/query-agencies';
 import AsyncLoad from 'calypso/components/async-load';
@@ -27,18 +23,16 @@ import HtmlIsIframeClassname from 'calypso/layout/html-is-iframe-classname';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
 import MasterbarLoggedIn from 'calypso/layout/masterbar/logged-in';
 import OfflineStatus from 'calypso/layout/offline-status';
+import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
-import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
-import { onboardingUrl } from 'calypso/lib/paths';
 import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
-import { useSelector } from 'calypso/state';
 import { isOffline } from 'calypso/state/application/selectors';
-import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	getShouldShowCollapsedGlobalSidebar,
 	getShouldShowGlobalSidebar,
@@ -48,16 +42,13 @@ import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tour
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
-import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
-import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
-import { getSiteBySlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
-	getSelectedSite,
 	getSelectedSiteId,
 	getSidebarIsCollapsed,
 	masterbarIsVisible,
@@ -65,6 +56,7 @@ import {
 import BodySectionCssClass from './body-section-css-class';
 import { getColorScheme, getColorSchemeFromCurrentQuery, refreshColorScheme } from './color-scheme';
 import GlobalNotifications from './global-notifications';
+import HelpCenterLoader from './help-center-loader';
 import LayoutLoader from './loader';
 import { shouldLoadInlineHelp, handleScroll } from './utils';
 
@@ -79,8 +71,6 @@ import '@automattic/components/src/button/style.scss';
 import '@automattic/components/src/card/style.scss';
 
 import './style.scss';
-
-const HELP_CENTER_STORE = HelpCenter.register();
 
 function SidebarScrollSynchronizer() {
 	const isNarrow = useBreakpoint( '<660px' );
@@ -105,74 +95,6 @@ function SidebarScrollSynchronizer() {
 	}, [ active ] );
 
 	return null;
-}
-
-function WhatsNewLoader( { loadWhatsNew, siteId } ) {
-	const { data: shouldShowCriticalAnnouncements, isLoading } =
-		useShouldShowCriticalAnnouncementsQuery( siteId );
-	const [ showWhatsNew, setShowWhatsNew ] = useState( false );
-
-	useEffect( () => {
-		if ( ! isLoading && shouldShowCriticalAnnouncements ) {
-			setShowWhatsNew( true );
-		}
-	}, [ shouldShowCriticalAnnouncements, isLoading ] );
-
-	const handleClose = useCallback( () => {
-		setShowWhatsNew( false );
-	}, [ setShowWhatsNew ] );
-
-	if ( ! loadWhatsNew ) {
-		return null;
-	}
-
-	return (
-		showWhatsNew && (
-			<AsyncLoad
-				require="@automattic/whats-new"
-				placeholder={ null }
-				onClose={ handleClose }
-				siteId={ siteId }
-			/>
-		)
-	);
-}
-
-function HelpCenterLoader( { sectionName, loadHelpCenter, currentRoute } ) {
-	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
-	const isDesktop = useBreakpoint( '>782px' );
-	const handleClose = useCallback( () => {
-		setShowHelpCenter( false );
-	}, [ setShowHelpCenter ] );
-
-	const locale = useLocale();
-	const hasPurchases = useSelector( hasCancelableUserPurchases );
-	const user = useSelector( getCurrentUser );
-	const selectedSite = useSelector( getSelectedSite );
-	const primarySiteSlug = useSelector( getPrimarySiteSlug );
-	const primarySite = useSelector( ( state ) => getSiteBySlug( state, primarySiteSlug ) );
-
-	if ( ! loadHelpCenter ) {
-		return null;
-	}
-
-	return (
-		<AsyncLoad
-			require="@automattic/help-center"
-			placeholder={ null }
-			handleClose={ handleClose }
-			currentRoute={ currentRoute }
-			locale={ locale }
-			sectionName={ sectionName }
-			site={ selectedSite || primarySite }
-			currentUser={ user }
-			hasPurchases={ hasPurchases }
-			// hide Calypso's version of the help-center on Desktop, because the Editor has its own help-center
-			hidden={ sectionName === 'gutenberg-editor' && isDesktop }
-			onboardingUrl={ onboardingUrl() }
-			googleMailServiceFamily={ getGoogleMailServiceFamily() }
-		/>
-	);
 }
 
 function SidebarOverflowDelay( { layoutFocus } ) {
@@ -202,23 +124,6 @@ function SidebarOverflowDelay( { layoutFocus } ) {
 	}, [ layoutFocus ] );
 
 	return null;
-}
-
-function AppBannerLoader( { siteId } ) {
-	const { data: shouldShowCriticalAnnouncements, isLoading } =
-		useShouldShowCriticalAnnouncementsQuery( siteId );
-	const [ showWhatsNew, setShowWhatsNew ] = useState( false );
-
-	useEffect( () => {
-		if ( ! isLoading && shouldShowCriticalAnnouncements ) {
-			setShowWhatsNew( true );
-		}
-	}, [ shouldShowCriticalAnnouncements, isLoading ] );
-
-	return (
-		! isLoading &&
-		! showWhatsNew && <AsyncLoad require="calypso/blocks/app-banner" placeholder={ null } />
-	);
 }
 
 class Layout extends Component {
@@ -308,7 +213,6 @@ class Layout extends Component {
 			'is-blaze-pro': this.props.isBlazePro,
 			'is-woo-com-oauth': isWooOAuth2Client( this.props.oauth2Client ),
 			'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
-			'feature-flag-woocommerce-rebrand-2-0': true,
 		} );
 
 		const optionalBodyProps = () => {
@@ -338,10 +242,6 @@ class Layout extends Component {
 
 		return (
 			<div className={ sectionClass }>
-				<WhatsNewLoader
-					loadWhatsNew={ loadHelpCenter && ! this.props.sidebarIsHidden && ! this.props.isNewUser }
-					siteId={ this.props.siteId }
-				/>
 				<HelpCenterLoader
 					sectionName={ this.props.sectionName }
 					loadHelpCenter={ loadHelpCenter }
@@ -417,9 +317,6 @@ class Layout extends Component {
 				{ config.isEnabled( 'layout/support-article-dialog' ) && (
 					<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
 				) }
-				{ config.isEnabled( 'layout/app-banner' ) && (
-					<AppBannerLoader siteId={ this.props.siteId } />
-				) }
 				{ config.isEnabled( 'cookie-banner' ) && (
 					<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
 				) }
@@ -479,7 +376,8 @@ export default withCurrentRoute(
 			isWpMobileApp() ||
 			isWcMobileApp() ||
 			isJetpackCloud() ||
-			isA8CForAgencies();
+			isA8CForAgencies() ||
+			isInStepContainerV2FlowContext( currentRoute, currentQuery );
 		const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
 		const isJetpackWooDnaFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
@@ -497,6 +395,7 @@ export default withCurrentRoute(
 			: getColorScheme( {
 					state,
 					isGlobalSidebarVisible,
+					sidebarIsHidden,
 					sectionName,
 			  } );
 

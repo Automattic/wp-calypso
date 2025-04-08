@@ -6,7 +6,7 @@ import {
 } from 'calypso/controller';
 import { handleHostingPanelRedirect } from 'calypso/hosting/server-settings/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
-import { DOTCOM_STAGING_SITE } from 'calypso/sites/components/site-preview-pane/constants';
+import { STAGING_SITE } from 'calypso/sites/components/site-preview-pane/constants';
 import { redirectToHostingFeaturesIfNotAtomic, siteDashboard } from 'calypso/sites/controller';
 import { stagingSite } from './controller';
 
@@ -21,7 +21,7 @@ export default function () {
 		redirectIfCurrentUserCannot( 'manage_options' ),
 		handleHostingPanelRedirect,
 		stagingSite,
-		siteDashboard( DOTCOM_STAGING_SITE ),
+		siteDashboard( STAGING_SITE ),
 		makeLayout,
 		clientRender
 	);

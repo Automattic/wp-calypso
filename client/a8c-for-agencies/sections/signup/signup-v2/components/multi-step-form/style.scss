@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .signup-multi-step-form {
 	.a4a-form {
@@ -25,15 +26,13 @@
 
 	.a4a-form__heading {
 		.a4a-form__heading-title {
-			font-size: 2rem;
-			font-weight: 600;
+			@include heading-2x-large;
 			margin-bottom: 16px;
 			color: var(--color-neutral-100);
 		}
 
 		.a4a-form__heading-description {
-			font-size: 1rem;
-			font-weight: 400;
+			@include body-large;
 			color: var(--color-neutral-60);
 			max-width: 460px;
 		}
@@ -95,7 +94,7 @@
 
 	.a4a-form__section-field-label,
 	.a4a-form__section-field-required {
-		@include a4a-font-heading-sm($font-size: rem(14px));
+		@include heading-medium;
 	}
 
 	@media (prefers-color-scheme: dark) {

@@ -1,4 +1,4 @@
-import { FEATURE_SFTP, getPlanPath, WPCOM_FEATURES_COPY_SITE } from '@automattic/calypso-products';
+import { getPlanPath, WPCOM_FEATURES_COPY_SITE } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import {
@@ -7,18 +7,18 @@ import {
 	SiteExcerptData,
 } from '@automattic/sites';
 import { useQueryClient } from '@tanstack/react-query';
+import { sprintf } from '@wordpress/i18n';
 import { drawerLeft, external, wordpress } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useMemo } from 'react';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import useRestoreSiteMutation from 'calypso/sites/hooks/use-restore-site-mutation';
 import {
 	getAdminInterface,
 	getPluginsUrl,
-	getSettingsUrl,
 	getSiteAdminUrl,
-	getSiteMonitoringUrl,
 	isCustomDomain,
 	isDisconnectedJetpackAndNotAtomic,
 	isNotAtomicJetpack,
@@ -28,7 +28,7 @@ import {
 } from 'calypso/sites-dashboard/utils';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
 import type { Action } from '@wordpress/dataviews';
 
@@ -321,6 +321,8 @@ export function useActions( {
 		Capabilities
 	>( ( state ) => state.currentUser.capabilities );
 
+	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
+
 	return useMemo(
 		() => [
 			...( viewType !== 'list'
@@ -360,6 +362,16 @@ export function useActions( {
 				icon: wordpress,
 				callback: ( sites ) => {
 					const site = sites[ 0 ];
+					if ( site?.is_wpcom_atomic ) {
+						const message = sprintf(
+							/* translators: siteTitle is the website's title. */
+							__( 'Logging you into %(siteTitle)s' ),
+							{
+								siteTitle: site.title,
+							}
+						);
+						dispatch( infoNotice( message ) );
+					}
 					window.location.href = site.options?.admin_url ?? '';
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_wpadmin_click' ) );
 				},
@@ -390,16 +402,6 @@ export function useActions( {
 			},
 
 			{
-				id: 'settings',
-				label: __( 'Site settings' ),
-				callback: ( sites ) => {
-					page( getSettingsUrl( sites[ 0 ].slug ) );
-					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_settings_click' ) );
-				},
-				isEligible: isActionEligible( 'settings', capabilities ),
-			},
-
-			{
 				id: 'general-settings',
 				label: __( 'General settings' ),
 				callback: ( sites ) => {
@@ -411,33 +413,6 @@ export function useActions( {
 					);
 				},
 				isEligible: isActionEligible( 'general-settings', capabilities ),
-			},
-
-			{
-				id: 'hosting',
-				label: __( 'Hosting' ),
-				callback: ( sites ) => {
-					const site = sites[ 0 ];
-					const hasHosting =
-						site.plan?.features.active.includes( FEATURE_SFTP ) && ! site?.plan?.expired;
-					page(
-						hasHosting ? `/hosting-config/${ site.slug }` : `/hosting-features/${ site.slug }`
-					);
-					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_hosting_click' ) );
-				},
-				isEligible: isActionEligible( 'hosting', capabilities ),
-			},
-
-			{
-				id: 'site-monitoring',
-				label: __( 'Monitoring' ),
-				callback: ( sites ) => {
-					page( getSiteMonitoringUrl( sites[ 0 ].slug ) );
-					dispatch(
-						recordTracksEvent( 'calypso_sites_dashboard_site_action_site_monitoring_click' )
-					);
-				},
-				isEligible: isActionEligible( 'site-monitoring', capabilities ),
 			},
 
 			{
@@ -465,7 +440,7 @@ export function useActions( {
 				callback: ( sites ) => {
 					const site = sites[ 0 ];
 					page(
-						addQueryArgs( `/setup/copy-site`, {
+						addQueryArgs( '/setup/copy-site', {
 							sourceSlug: site.slug,
 							plan: getPlanPath( site.plan?.product_slug ?? 'business' ),
 						} )
@@ -473,39 +448,6 @@ export function useActions( {
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_copy_site_click' ) );
 				},
 				isEligible: isActionEligible( 'copy-site', capabilities ),
-			},
-
-			{
-				id: 'performance-settings',
-				label: __( 'Performance settings' ),
-				callback: ( sites ) => {
-					const site = sites[ 0 ];
-					const wpAdminUrl = getSiteAdminUrl( site );
-					const adminInterface = getAdminInterface( site );
-					const isWpAdminInterface = adminInterface === 'wp-admin';
-					if ( isWpAdminInterface ) {
-						window.location.href = `${ wpAdminUrl }options-general.php?page=page-optimize`;
-					} else {
-						page( `/settings/performance/${ site.slug }` );
-					}
-					dispatch(
-						recordTracksEvent( 'calypso_sites_dashboard_site_action_performance_settings_click' )
-					);
-				},
-				isEligible: isActionEligible( 'performance-settings', capabilities ),
-			},
-
-			{
-				id: 'privacy-settings',
-				label: __( 'Privacy settings' ),
-				callback: ( sites ) => {
-					const site = sites[ 0 ];
-					page( `/settings/general/${ site.slug }#site-privacy-settings` );
-					dispatch(
-						recordTracksEvent( 'calypso_sites_dashboard_site_action_privacy_settings_click' )
-					);
-				},
-				isEligible: isActionEligible( 'privacy-settings', capabilities ),
 			},
 
 			{
@@ -556,7 +498,7 @@ export function useActions( {
 				id: 'jetpack-support',
 				label: __( 'Support' ),
 				callback: () => {
-					window.location.href = `https://jetpack.com/support`;
+					window.location.href = 'https://jetpack.com/support';
 					recordTracksEvent( 'calypso_sites_dashboard_site_action_jetpack_support_click' );
 				},
 				isEligible: isActionEligible( 'jetpack-support', capabilities ),
@@ -576,16 +518,31 @@ export function useActions( {
 				label: __( 'Delete site' ),
 				callback: ( sites ) => {
 					const site = sites[ 0 ];
-					page(
-						isStagingSite( site )
-							? `/staging-site/${ site.slug }`
-							: `/settings/delete-site/${ site.slug }`
-					);
+					let urlPath;
+
+					if ( isStagingSite( site ) ) {
+						urlPath = `/staging-site/${ site.slug }`;
+					} else if ( isUntangled ) {
+						urlPath = `/sites/settings/site/${ site.slug }/delete-site`;
+					} else {
+						urlPath = `/settings/delete-site/${ site.slug }`;
+					}
+
+					page( urlPath );
 					dispatch( recordTracksEvent( 'calypso_sites_dashboard_site_action_delete_click' ) );
 				},
 				isEligible: isActionEligible( 'delete-site', capabilities ),
 			},
 		],
-		[ __, capabilities, dispatch, openSitePreviewPane, restoreSite, viewType, localizeUrl ]
+		[
+			__,
+			capabilities,
+			dispatch,
+			openSitePreviewPane,
+			restoreSite,
+			viewType,
+			localizeUrl,
+			isUntangled,
+		]
 	);
 }

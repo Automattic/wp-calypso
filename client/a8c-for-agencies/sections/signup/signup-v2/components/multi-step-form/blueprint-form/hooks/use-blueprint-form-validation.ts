@@ -20,11 +20,11 @@ const useBlueprintFormValidation = () => {
 			const newValidationError: ValidationState = {};
 
 			if ( payload.topPartneringGoal === '' ) {
-				newValidationError.topPartneringGoal = translate( `Please select a goal` );
+				newValidationError.topPartneringGoal = translate( 'Please select a goal' );
 			}
 
 			if ( payload.topYearlyGoal === '' ) {
-				newValidationError.topYearlyGoal = translate( `Please select a goal` );
+				newValidationError.topYearlyGoal = translate( 'Please select a goal' );
 			}
 
 			if ( Object.keys( newValidationError ).length > 0 ) {

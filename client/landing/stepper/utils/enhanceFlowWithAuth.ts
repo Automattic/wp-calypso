@@ -3,10 +3,12 @@ import type { FlowV1, StepperStep } from '../declarative-flow/internals/types';
 
 function useInjectUserStepIfNeededForV1( flow: FlowV1 ): readonly StepperStep[] {
 	const steps = flow.useSteps();
-	return injectUserStepInSteps( steps );
+	return injectUserStepInSteps( steps ) as readonly StepperStep[];
 }
 
-export function injectUserStepInSteps( steps: readonly StepperStep[] ) {
+export function injectUserStepInSteps< T extends readonly StepperStep[] >(
+	steps: T
+): T | [ ...T, typeof PRIVATE_STEPS.USER ] {
 	const firstAuthWalledStep = steps.findIndex( ( step ) => step.requiresLoggedInUser );
 
 	if ( firstAuthWalledStep === -1 ) {
@@ -17,7 +19,7 @@ export function injectUserStepInSteps( steps: readonly StepperStep[] ) {
 	// and then redirect back to the original steps after auth.
 	// Therefore, we must avoid placing the user step as the first step,
 	// as it would prevent us from knowing which step to redirect back to.
-	return [ ...steps, PRIVATE_STEPS.USER ];
+	return [ ...steps, PRIVATE_STEPS.USER ] as const;
 }
 
 /**

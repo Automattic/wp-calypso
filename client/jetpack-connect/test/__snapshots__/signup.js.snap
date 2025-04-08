@@ -278,18 +278,6 @@ exports[`JetpackSignup should render 1`] = `
             rel="noopener noreferrer"
             target="_blank"
           >
-            <svg
-              class="gridicon gridicons-help-outline needs-offset"
-              height="18"
-              viewBox="0 0 24 24"
-              width="18"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <use
-                xlink:href="gridicons.svg#gridicons-help-outline"
-              />
-            </svg>
-             
             Get help setting up Jetpack
           </a>
         </div>
@@ -577,18 +565,6 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
             rel="noopener noreferrer"
             target="_blank"
           >
-            <svg
-              class="gridicon gridicons-help-outline needs-offset"
-              height="18"
-              viewBox="0 0 24 24"
-              width="18"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <use
-                xlink:href="gridicons.svg#gridicons-help-outline"
-              />
-            </svg>
-             
             Get help setting up Jetpack
           </a>
         </div>

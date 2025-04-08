@@ -2,16 +2,13 @@ import { useState, useEffect } from 'react';
 
 /**
  * Custom hook to read CSS variables
- *
  * @param variableName - The CSS variable name (including the -- prefix)
  * @param element - The element to read the variable from (defaults to :root)
  * @param observe - Whether to observe for changes to the variable
  * @returns The value of the CSS variable
- *
  * @example
  * // Basic usage
  * const primaryColor = useCssVariable('--primary-color');
- *
  * @example
  * // Reading from a specific element and observing changes
  * const headerHeight = useCssVariable('--header-height', headerRef.current, true);

@@ -4,6 +4,8 @@ import {
 	getSiteUrl,
 	getSiteDescription,
 	getSiteAuthorName,
+	ReaderFeed,
+	ReaderSite,
 } from 'calypso/reader/get-helpers';
 
 type Follow = Record< string, unknown >;
@@ -19,8 +21,8 @@ export function filterFollowsByQuery(
 	const phraseRe = new RegExp( escapeRegExp( query ), 'i' );
 
 	return follows.filter( ( follow ) => {
-		const feed = follow.feed;
-		const site = follow.site;
+		const feed = follow.feed as ReaderFeed;
+		const site = follow.site as ReaderSite;
 		const siteName = getSiteName( { feed, site } );
 		const siteUrl = getSiteUrl( { feed, site } );
 		const siteDescription = getSiteDescription( { feed, site } );

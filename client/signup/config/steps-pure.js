@@ -26,7 +26,6 @@ export function generateSteps( {
 	addAddOnsToCart = noop,
 	createAccount = noop,
 	createSite = noop,
-	createWpForTeamsSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
 	setOptionsOnSite = noop,
@@ -39,17 +38,9 @@ export function generateSteps( {
 	isDomainFulfilled = noop,
 	maybeRemoveStepForUserlessCheckout = noop,
 	createSiteAndAddDIFMToCart = noop,
-	excludeStepIfEmailVerified = noop,
-	excludeStepIfProfileComplete = noop,
 	submitWebsiteContent = noop,
 } = {} ) {
 	return {
-		'set-reader-landing': {
-			stepName: 'set-reader-landing',
-			props: {
-				nonInteractive: true,
-			},
-		},
 		'domains-launch': {
 			stepName: 'domains-launch',
 			apiRequestFunction: addDomainToCart,
@@ -651,26 +642,6 @@ export function generateSteps( {
 			},
 		},
 
-		'p2-site': {
-			stepName: 'p2-site',
-			apiRequestFunction: createWpForTeamsSite,
-			providesDependencies: [ 'siteSlug' ],
-		},
-
-		'p2-confirm-email': {
-			stepName: 'p2-confirm-email',
-			fulfilledStepCallback: excludeStepIfEmailVerified,
-		},
-
-		'p2-complete-profile': {
-			stepName: 'p2-complete-profile',
-			fulfilledStepCallback: excludeStepIfProfileComplete,
-		},
-
-		'p2-join-workspace': {
-			stepName: 'p2-join-workspace',
-		},
-
 		'plans-personal-monthly': {
 			stepName: 'plans-personal-monthly',
 			apiRequestFunction: addPlanToCart,
@@ -879,7 +850,8 @@ export function generateSteps( {
 		},
 		'difm-page-picker': {
 			stepName: 'difm-page-picker',
-			providesDependencies: [ 'selectedPageTitles' ],
+			providesDependencies: [ 'selectedPageTitles', 'newOrExistingSiteChoice' ],
+			optionalDependencies: [ 'newOrExistingSiteChoice' ],
 			props: {
 				hideSkip: true,
 			},

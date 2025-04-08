@@ -6,7 +6,9 @@
 import {
 	DataHelper,
 	EditorPage,
-	SecretsManager,
+	envToFeatureKey,
+	envVariables,
+	getTestAccountByFeature,
 	SocialConnectionsManager,
 	TestAccount,
 	TestAccountName,
@@ -22,6 +24,13 @@ const features4SimpleSites = {
 	socialImageGenerator: false,
 };
 
+const features4BusinessPlan = {
+	resharing: true,
+	manualSharing: true,
+	mediaSharing: true,
+	socialImageGenerator: false,
+};
+
 const testCases: Array< {
 	plan: string;
 	platform: 'Simple' | 'Atomic';
@@ -30,36 +39,42 @@ const testCases: Array< {
 		'resharing' | 'manualSharing' | 'mediaSharing' | 'socialImageGenerator',
 		boolean
 	>;
-} > = [
-	{
-		plan: 'Free',
-		platform: 'Simple',
-		testAccountName: 'simpleSiteFreePlanUser',
-		features: features4SimpleSites,
-	},
-	{
-		plan: 'Personal',
-		platform: 'Simple',
-		testAccountName: 'simpleSitePersonalPlanUser',
-		features: features4SimpleSites,
-	},
-	{
-		plan: 'Paid',
-		platform: 'Atomic',
-		testAccountName: 'atomicUser',
-		features: {
-			resharing: true,
-			manualSharing: true,
-			mediaSharing: true,
-			socialImageGenerator: false,
+} > = [];
+
+if ( envVariables.JETPACK_TARGET === 'wpcom-deployment' ) {
+	testCases.push( {
+		plan: envVariables.TEST_ON_ATOMIC ? 'Paid' : 'Business',
+		platform: envVariables.TEST_ON_ATOMIC ? 'Atomic' : 'Simple',
+		testAccountName: getTestAccountByFeature( envToFeatureKey( envVariables ) ),
+		features: features4BusinessPlan,
+	} );
+} else {
+	testCases.push(
+		{
+			plan: 'Free',
+			platform: 'Simple',
+			testAccountName: 'simpleSiteFreePlanUser',
+			features: features4SimpleSites,
 		},
-	},
-];
+		{
+			plan: 'Personal',
+			platform: 'Simple',
+			testAccountName: 'simpleSitePersonalPlanUser',
+			features: features4SimpleSites,
+		},
+		{
+			plan: 'Paid',
+			platform: 'Atomic',
+			testAccountName: 'atomicUser',
+			features: features4BusinessPlan,
+		}
+	);
+}
 
 /**
  * Tests features offered by Jetpack Social on a Simple site with Free plan.
  *
- * Keywords: Social, Jetpack, Publicize
+ * Keywords: Social, Jetpack, Publicize, Editor
  */
 describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () {
 	for ( const { plan, platform, testAccountName, features } of testCases ) {
@@ -70,16 +85,17 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 			let editorPage: EditorPage;
 			let socialConnectionsManager: SocialConnectionsManager;
 
-			const credentials = SecretsManager.secrets.testAccounts[ testAccountName ];
-			const siteSlug = credentials.testSites?.primary?.url;
-			const siteId = credentials.testSites?.primary?.id;
+			let siteSlug: string;
+			let siteId: number;
 
 			beforeAll( async () => {
 				page = await browser.newPage();
 				editorPage = new EditorPage( page );
-				socialConnectionsManager = new SocialConnectionsManager( page, siteId! );
 
 				const testAccount = new TestAccount( testAccountName );
+				siteId = testAccount.credentials.testSites?.primary?.id || 0;
+				siteSlug = testAccount.getSiteURL( { protocol: false } );
+				socialConnectionsManager = new SocialConnectionsManager( page, siteId! );
 				await testAccount.authenticate( page );
 			} );
 
@@ -121,11 +137,9 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				features.resharing ? 'IS' : 'is NOT'
 			} available`, async function () {
 				let connectionTestPromise = Promise.resolve();
-				if ( features.resharing ) {
-					await socialConnectionsManager.interceptRequests();
+				await socialConnectionsManager.interceptRequests();
 
-					connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
-				}
+				connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
 
 				// Open the Jetpack sidebar.
 				await editorPage.openSettings( 'Jetpack' );
@@ -135,19 +149,31 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				// Expand the Publicize panel.
 				let section = await editorPage.expandSection( 'Share this post' );
 
-				// Verify that resharing button is not visible on new posts.
-				let reshareButton = section.getByRole( 'button', { name: 'Share post', exact: true } );
+				// Verify that resharing button is not visible on new posts in the share modal
+				let sharePostModalButton = section.getByRole( 'button', {
+					name: 'Preview social posts',
+					exact: true,
+				} );
+				await sharePostModalButton.click();
+
+				const shareModal = ( await editorPage.getEditorParent() ).getByRole( 'dialog' ).filter( {
+					hasText: 'Social Preview',
+				} );
+
+				await shareModal.waitFor();
+				let reshareButton = shareModal.getByRole( 'button', { name: 'Share', exact: true } );
+
 				expect( await reshareButton.isVisible() ).toBe( false );
+
+				let closeButton = shareModal.getByRole( 'button', { name: 'Close' } );
+				await closeButton.click();
 
 				// Set a title for the post
 				await editorPage.enterTitle( 'Resharing: ' + DataHelper.getRandomPhrase() );
 				// Publish the post.
 				await editorPage.publish();
+				connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
 				await editorPage.closeAllPanels();
-
-				if ( features.resharing ) {
-					connectionTestPromise = socialConnectionsManager.waitForConnectionTests();
-				}
 
 				// Open the Jetpack sidebar.
 				await editorPage.openSettings( 'Jetpack' );
@@ -161,9 +187,33 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				const toggle = section.getByLabel( 'Share when publishing' );
 				expect( await toggle.isVisible() ).toBe( false );
 
-				// Verify whether the resharing button is visible.
-				reshareButton = section.getByRole( 'button', { name: 'Share post', exact: true } );
-				expect( await reshareButton.isVisible() ).toBe( features.resharing );
+				// Check if the Preview & Share button is visible based on resharing feature
+				sharePostModalButton = section.getByRole( 'button', {
+					name: 'Preview & Share',
+					exact: true,
+				} );
+
+				expect( await sharePostModalButton.isVisible() ).toBe( features.resharing );
+
+				let isReshareButtonVisible = false;
+
+				if ( features.resharing ) {
+					await sharePostModalButton.click();
+
+					const shareModal = ( await editorPage.getEditorParent() ).getByRole( 'dialog' ).filter( {
+						hasText: 'Share Post',
+					} );
+					await shareModal.waitFor();
+
+					// Look for the Share button within the modal dialog
+					reshareButton = shareModal.getByRole( 'button', { name: 'Share', exact: true } );
+					isReshareButtonVisible = await reshareButton.isVisible();
+
+					// Close the share post modal by clicking the Close button within the modal
+					closeButton = shareModal.getByRole( 'button', { name: 'Close' } );
+					await closeButton.click();
+				}
+				expect( isReshareButtonVisible ).toBe( features.resharing );
 
 				// Verify whether the upgrade nudge/link is visible.
 				if ( ! features.resharing ) {
@@ -203,11 +253,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 					name: 'Manual sharing',
 				} );
 
-				// For some reason the manual sharing is not visible on the post publish panel for Simple sites with personal plan.
-				const isPostPublishManualSharingVisible =
-					features.manualSharing && ! ( platform === 'Simple' && plan === 'Personal' );
-
-				if ( isPostPublishManualSharingVisible ) {
+				if ( features.manualSharing ) {
 					await manualSharing.waitFor();
 				}
 

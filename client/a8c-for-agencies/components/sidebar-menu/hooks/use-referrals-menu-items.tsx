@@ -40,7 +40,7 @@ const useReferralsMenuItems = ( path: string ) => {
 					icon: cog,
 					path: A4A_REFERRALS_LINK,
 					link: A4A_REFERRALS_PAYMENT_SETTINGS,
-					title: translate( 'Payment Settings' ),
+					title: translate( 'Payout Settings' ),
 					trackEventProps: {
 						menu_item: 'Automattic for Agencies / Referrals / Payment Settings',
 					},

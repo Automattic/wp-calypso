@@ -27,3 +27,8 @@ export const useCompleteLaunchpadTaskWithNoticeOnLoad = ( {
 		}
 	}, [ completeTasks, enabled, taskSlug, noticeId, noticeText, noticeDuration ] );
 };
+
+export const CompleteLaunchpadTaskWithNoticeOnLoad = ( props: TaskCompleteNoticeOptions ) => {
+	useCompleteLaunchpadTaskWithNoticeOnLoad( props );
+	return null;
+};

@@ -86,7 +86,7 @@ export function SiteIconWithPicker( {
 						}
 						setImageEditorOpen( false );
 					} }
-					doneButtonText={ __( ' Apply ' ) }
+					doneButtonText={ __( 'Apply' ) }
 					displayOnlyIcon
 					widthLimit={ 512 }
 				/>

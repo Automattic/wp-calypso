@@ -54,7 +54,7 @@ export const migrationsPaymentSettingsContext: Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<PageViewTracker title="Migrations > Payment Settings" path={ context.path } />
-			<ReferralsBankDetails isAutomatedReferral isMigrations />
+			<ReferralsBankDetails type="migrations" />
 		</>
 	);
 	context.secondary = <MigrationsSidebar path={ context.path } />;

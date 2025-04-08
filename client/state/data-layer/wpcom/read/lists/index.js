@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
@@ -149,6 +150,11 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 						method: 'GET',
 						path: '/read/lists',
 						apiVersion: '1.2',
+						query: {
+							create_recommended_blogs_list: isEnabled( 'reader/recommended-blogs-list' )
+								? 'true'
+								: undefined,
+						},
 					},
 					action
 				),

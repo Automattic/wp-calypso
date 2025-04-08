@@ -67,6 +67,15 @@ export default function NewsletterImporter( {
 	const [ validFromSite, setValidFromSite ] = useState( false );
 	const [ autoFetchData, setAutoFetchData ] = useState( false );
 	const [ shouldResetImport, setShouldResetImport ] = useState( step === 'reset' );
+	const previousFromSite = useRef( fromSite );
+
+	// Reset validFromSite when fromSite changes or is removed
+	useEffect( () => {
+		if ( fromSite !== previousFromSite.current ) {
+			setValidFromSite( false );
+			previousFromSite.current = fromSite;
+		}
+	}, [ fromSite ] );
 
 	if ( step === 'reset' ) {
 		step = 'content';

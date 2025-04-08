@@ -1,7 +1,26 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { getConversationIdFromInteraction } from '@automattic/odie-client/src/utils';
 import Smooch from 'smooch';
 import type { ContactOption } from '../types';
 import type { ZendeskConversation, SupportInteraction } from '@automattic/odie-client';
+
+const isMatchingInteraction = (
+	supportInteraction: SupportInteraction,
+	supportInteractionId: string
+): boolean => {
+	return supportInteraction.uuid === supportInteractionId;
+};
+
+const filterConversationsBySupportInteractions = (
+	conversations: ZendeskConversation[],
+	supportInteractions: SupportInteraction[]
+): ZendeskConversation[] => {
+	return conversations.filter( ( conversation ) =>
+		supportInteractions.some( ( interaction ) =>
+			isMatchingInteraction( interaction, conversation.metadata.supportInteractionId )
+		)
+	);
+};
 
 export const generateContactOnClickEvent = (
 	contactOption: ContactOption,
@@ -95,17 +114,6 @@ export const getClientId = ( conversations: ZendeskConversation[] ): string =>
 		.flatMap( ( conversation ) => conversation.messages )
 		.find( ( message ) => message.source?.type === 'web' && message.source?.id )?.source?.id || '';
 
-export const getConversationsFromSupportInteractions = (
-	conversations: ZendeskConversation[],
-	supportInteractions: SupportInteraction[]
-) => {
-	return conversations.filter( ( conversation ) =>
-		supportInteractions.some(
-			( interaction ) => interaction.uuid === conversation.metadata?.supportInteractionId
-		)
-	);
-};
-
 export const matchSupportInteractionId = (
 	getConversations: () => ZendeskConversation[],
 	isChatLoaded: boolean,
@@ -113,13 +121,41 @@ export const matchSupportInteractionId = (
 ) => {
 	if ( currentSupportInteraction && isChatLoaded && getConversations ) {
 		const conversations = getConversations();
-		const getCurrentSupportInteractionId = currentSupportInteraction?.events.find(
-			( event ) => event.event_source === 'zendesk'
-		)?.event_external_id;
-		const foundMatch = conversations.find( ( conversation ) => {
-			return conversation.id === getCurrentSupportInteractionId;
+		const currentConversationId = getConversationIdFromInteraction( currentSupportInteraction );
+		return conversations.find( ( conversation ) => {
+			return conversation.id === currentConversationId;
 		} );
-
-		return foundMatch;
 	}
+};
+
+export const filterAndUpdateConversationsWithStatus = (
+	conversations: ZendeskConversation[],
+	supportInteractions: SupportInteraction[]
+) => {
+	const filteredConversations = filterConversationsBySupportInteractions(
+		conversations,
+		supportInteractions
+	);
+
+	const conversationsWithUpdatedStatuses = filteredConversations.map( ( conversation ) => {
+		const supportInteraction = supportInteractions.find( ( interaction ) =>
+			isMatchingInteraction( interaction, conversation.metadata.supportInteractionId )
+		);
+
+		if ( ! supportInteraction ) {
+			return conversation;
+		}
+
+		const updatedConversation = {
+			...conversation,
+			metadata: {
+				...conversation.metadata,
+				status: supportInteraction.status,
+			},
+		};
+
+		return updatedConversation;
+	} );
+
+	return conversationsWithUpdatedStatuses;
 };

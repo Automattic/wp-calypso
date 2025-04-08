@@ -51,7 +51,7 @@ export const useThreats = ( siteId: number ) => {
 	const fixThreats = useCallback(
 		( fixableThreats: FixableThreat[] ) => {
 			dispatch(
-				recordTracksEvent( `calypso_jetpack_scan_allthreats_fix`, {
+				recordTracksEvent( 'calypso_jetpack_scan_allthreats_fix', {
 					site_id: siteId,
 					threats_number: fixableThreats.length,
 				} )

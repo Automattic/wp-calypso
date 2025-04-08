@@ -18,7 +18,7 @@ const debug = debugFactory( 'calypso:desktop' );
 const DesktopListeners = {
 	/**
 	 * Bootstraps network connection status change handler.
-	 * @param {Object} reduxStore The redux store.
+	 * @type {(reduxStore: import('redux').Store) => void}
 	 */
 	init: function ( reduxStore ) {
 		debug( 'Registering IPC listeners' );
@@ -64,6 +64,9 @@ const DesktopListeners = {
 		this.store.dispatch( toggleNotificationsPanel() );
 	},
 
+	/**
+	 * @type {(site: any) => void}
+	 */
 	setSelectedSite: function ( site ) {
 		this.selectedSite = site;
 	},

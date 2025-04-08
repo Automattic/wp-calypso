@@ -12,7 +12,7 @@ const Intervals = ( props ) => {
 		selected,
 		pathTemplate,
 		className,
-		standalone,
+		standalone = false,
 		compact = true,
 		intervalValues = intervals,
 		onChange,
@@ -50,10 +50,6 @@ Intervals.propTypes = {
 	intervalValues: PropTypes.array,
 	onChange: PropTypes.func,
 	icon: PropTypes.object,
-};
-
-Intervals.defaultProps = {
-	standalone: false,
 };
 
 export default localize( Intervals );

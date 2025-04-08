@@ -6,10 +6,8 @@ import { activateTheme } from 'calypso/state/themes/actions/activate-theme';
 import { installAndActivateTheme } from 'calypso/state/themes/actions/install-and-activate-theme';
 import { showAtomicTransferDialog } from 'calypso/state/themes/actions/show-atomic-transfer-dialog';
 import { suffixThemeIdForInstall } from 'calypso/state/themes/actions/suffix-theme-id-for-install';
-import { showActivationModal } from 'calypso/state/themes/actions/theme-activation-modal';
 import {
 	getTheme,
-	hasActivationModalAccepted,
 	wasAtomicTransferDialogAccepted,
 	isExternallyManagedTheme,
 	doesThemeBundleSoftwareSet,
@@ -57,13 +55,6 @@ export function activate( themeId, siteId, options ) {
 			! wasAtomicTransferDialogAccepted( getState(), themeId )
 		) {
 			return dispatch( showAtomicTransferDialog( themeId ) );
-		}
-
-		/**
-		 * Check whether the user has confirmed the activation or is in a flow that doesn't require acceptance.
-		 */
-		if ( ! hasActivationModalAccepted( getState(), themeId ) && ! isOnboardingFlow ) {
-			return dispatch( showActivationModal( themeId ) );
 		}
 
 		const siteSlug = getSiteSlug( getState(), siteId );
