@@ -3,7 +3,6 @@ import FeaturesGrid from './components/features-grid';
 import PlanButton from './components/plan-button';
 import PlanTypeSelector from './components/plan-type-selector';
 import { Plans2023Tooltip } from './components/plans-2023-tooltip';
-import PlanStorage from './components/shared/storage/components/plan-storage';
 import { EFFECTIVE_TERMS_LIST } from './constants';
 import useGridPlanForSpotlight from './hooks/data-store/use-grid-plan-for-spotlight';
 import useGridPlans, { usePlanTypesWithIntent } from './hooks/data-store/use-grid-plans';
@@ -24,14 +23,7 @@ export type * from './types';
 /**
  * Components
  */
-export {
-	ComparisonGrid,
-	FeaturesGrid,
-	PlanTypeSelector,
-	PlanButton,
-	Plans2023Tooltip,
-	PlanStorage,
-};
+export { ComparisonGrid, FeaturesGrid, PlanTypeSelector, PlanButton, Plans2023Tooltip };
 
 /**
  * Hooks/helpers
