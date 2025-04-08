@@ -18,18 +18,28 @@ const StorageAddOnModal: React.FC< StorageAddOnModalProps > = ( { isOpen, siteId
 	const translate = useTranslate();
 	const { data: mediaStorage } = Site.useSiteMediaStorage( { siteIdOrSlug: siteId } );
 
+	const availableStorageAddOns = AddOns.useAvailableStorageAddOns( { siteId } );
 	const [ selectedStorageAddOnSlug, setSelectedStorageAddOnSlug ] =
 		useState< StorageAddOnSlug | null >( null );
+	const selectedStorageAddOn = availableStorageAddOns?.find(
+		( addOn ) => addOn?.addOnSlug === selectedStorageAddOnSlug
+	);
+
 	const checkoutLink = AddOns.useAddOnCheckoutLink();
 	const onBuyStorage = () => {
 		setIsOpen( false );
+
+		const slug = selectedStorageAddOn?.productSlug ?? '';
+		const quantity = selectedStorageAddOn?.quantity ?? 0;
+
 		recordTracksEvent( 'calypso_storage_add_on_modal_action_primary_click', {
-			add_on_slug_with_quantity: `${ selectedStorageAddOnSlug }:1`,
-			add_on_slug: selectedStorageAddOnSlug,
-			quantity: 1,
+			add_on_slug_with_quantity: `${ slug }:${ quantity }`,
+			add_on_slug: slug,
+			quantity,
 		} );
-		page.redirect( `${ checkoutLink( siteId, selectedStorageAddOnSlug ?? '', 1 ) }` );
+		page.redirect( `${ checkoutLink( siteId, slug, quantity ) }` );
 	};
+
 	const onClose = () => {
 		setIsOpen( false );
 		recordTracksEvent( 'calypso_storage_add_on_modal_action_cancel_click' );
