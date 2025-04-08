@@ -28,10 +28,6 @@ const StyledLi = styled.li`
 		--color-link: var( --studio-gray-80 );
 		font-weight: 500;
 	}
-
-	& a {
-		text-decoration: none;
-	}
 `;
 
 const StyledBackLink = styled.a`
