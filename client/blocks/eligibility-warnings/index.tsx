@@ -8,7 +8,8 @@ import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { Button, CompactCard, Gridicon } from '@automattic/components';
+import { CompactCard, Gridicon } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { includes } from 'lodash';
@@ -234,14 +235,15 @@ export const EligibilityWarnings = ( {
 						onShowHelpAssistant={ onDismiss }
 					/>
 					<Button
-						primary
+						variant="primary"
+						__next40pxDefaultSize
 						disabled={
 							isProceedButtonDisabled( isEligible, listHolds ) ||
 							siteIsSavingSettings ||
 							siteIsLaunching ||
 							disableContinueButton
 						}
-						busy={ siteIsLaunching || siteIsSavingSettings || disableContinueButton }
+						isBusy={ siteIsLaunching || siteIsSavingSettings || disableContinueButton }
 						onClick={ logEventAndProceed }
 					>
 						{ getProceedButtonText( listHolds, translate, context, showFreeTrial ) }
