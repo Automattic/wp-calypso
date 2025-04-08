@@ -184,22 +184,18 @@ function useIssueAndAssignLicenses(
 				);
 				const hasPurchaseWPCOMPlan = !! wpcomPlan;
 
-				if ( ! hasPurchaseWPCOMPlan && isFeedbackShown ) {
+				if ( ! hasPurchaseWPCOMPlan ) {
 					const issuedMessage = getLicenseIssuedMessage( issuedLicenses );
 					dispatch( successNotice( issuedMessage, { displayOnNextPage: true } ) );
 				}
 
-				const redirectUrl = hasPurchaseWPCOMPlan
-					? addQueryArgs( A4A_SITES_LINK_NEEDS_SETUP, {
-							wpcom_creator_purchased: wpcomPlan.slug,
-					  } )
-					: A4A_LICENSES_LINK;
-
-				if ( isFeedbackShown ) {
-					page.redirect( redirectUrl );
-				} else {
-					setRedirectWithFeedbackUrl( redirectUrl );
-				}
+				page.redirect(
+					hasPurchaseWPCOMPlan
+						? addQueryArgs( A4A_SITES_LINK_NEEDS_SETUP, {
+								wpcom_creator_purchased: wpcomPlan.slug,
+						  } )
+						: A4A_LICENSES_LINK
+				);
 				return;
 			}
 

@@ -114,7 +114,7 @@ const MEMBER_ACCESSIBLE_DYNAMIC_PATHS: Record< string, string[] > = {
 
 const DYNAMIC_PATH_PATTERNS: Record< string, RegExp > = {
 	'sites-overview': /^\/sites\/overview\/[^/]+(\/.*)?$/,
-	marketplace: /^\/marketplace\/[^/]+(\/[^/]+)?(\/.*)?(\?.*)?(#.*)?$/,
+	marketplace: /^\/marketplace\/[^/]+\/[^/]+(\/.*)?$/,
 	licenses: /^\/purchases\/licenses(\/.*)?$/,
 	team: /^\/team(\/.*)?$/,
 	plugins: /^\/plugins(\/.*)?$/,
