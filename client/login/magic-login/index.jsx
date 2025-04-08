@@ -358,7 +358,7 @@ class MagicLogin extends Component {
 			return null;
 		}
 
-		if ( this.props.isJetpackLogin ) {
+		if ( this.props.isJetpackLogin && ! this.props.isFromAutomatticForAgenciesPlugin ) {
 			return (
 				<div className="magic-login__gutenboarding-wordpress-logo">
 					<svg
