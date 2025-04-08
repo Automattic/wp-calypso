@@ -28,7 +28,7 @@ const features4BusinessPlan = {
 	resharing: true,
 	manualSharing: true,
 	mediaSharing: true,
-	socialImageGenerator: false,
+	socialImageGenerator: true,
 };
 
 const testCases: Array< {
