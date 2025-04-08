@@ -262,53 +262,28 @@ const siteMigration: FlowV2 = {
 						);
 					}
 
-					return navigate(
-						addQueryArgs(
-							{
-								siteId,
-								siteSlug,
-								from,
-							},
-							STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug
-						)
-					);
+					return navigate( paths.howToMigratePath( { siteId, siteSlug, from } ) );
 				}
 
 				case STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug: {
 					// Take the user to the upgrade plan step.
 					if ( providedDependencies?.destination === 'upgrade' ) {
 						return navigate(
-							addQueryArgs(
-								{
-									siteId,
-									siteSlug,
-									from,
-									destination: providedDependencies?.destination,
-									how: providedDependencies?.how as string,
-								},
-								STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
-							)
+							paths.upgradePlanPath( {
+								siteId,
+								siteSlug,
+								from,
+								destination: providedDependencies?.destination,
+								how: providedDependencies?.how as string,
+							} )
 						);
 					}
 
-					// Do it for me option.
 					if ( providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
-						return navigate(
-							addQueryArgs(
-								{
-									siteSlug,
-									from,
-									siteId,
-								},
-								STEPS.SITE_MIGRATION_CREDENTIALS.slug
-							)
-						);
+						return navigate( paths.credentialsPath( { siteId, from, siteSlug } ) );
 					}
 
-					// Continue with the migration flow.
-					return navigate(
-						addQueryArgs( { siteId, siteSlug, from }, STEPS.SITE_MIGRATION_INSTRUCTIONS.slug )
-					);
+					return navigate( paths.supportInstructionsPath( { siteId, siteSlug, from } ) );
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
@@ -362,22 +337,13 @@ const siteMigration: FlowV2 = {
 				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
 					// User decided to ask for an assisted migration - try to collect credentials.
 					if ( providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
-						return navigate(
-							addQueryArgs(
-								{
-									siteId,
-									from,
-									siteSlug,
-								},
-								STEPS.SITE_MIGRATION_CREDENTIALS.slug
-							)
-						);
+						return navigate( paths.credentialsPath( { siteId, from, siteSlug } ) );
 					}
 					return exitFlow( paths.calypsoOverviewPath( { ref: 'site-migration' }, { siteSlug } ) );
 				}
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {
-					const { action, from, authorizationUrl } = providedDependencies as {
+					const { action, from, authorizationUrl, platform } = providedDependencies as {
 						action:
 							| 'skip'
 							| 'submit'
@@ -400,15 +366,12 @@ const siteMigration: FlowV2 = {
 
 					if ( action === 'site-is-not-using-wordpress' ) {
 						return navigate(
-							addQueryArgs(
-								{
-									siteId,
-									from,
-									siteSlug,
-									platform: providedDependencies.platform as string,
-								},
-								STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug
-							)
+							paths.otherPlatformDetectedImportPath( {
+								siteId,
+								from: from,
+								siteSlug,
+								platform,
+							} )
 						);
 					}
 
