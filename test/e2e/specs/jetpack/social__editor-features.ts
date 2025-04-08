@@ -253,11 +253,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 					name: 'Manual sharing',
 				} );
 
-				// For some reason the manual sharing is not visible on the post publish panel for Simple sites with a paid plan.
-				const isPostPublishManualSharingVisible =
-					features.manualSharing && ! ( platform === 'Simple' && plan !== 'Free' );
-
-				if ( isPostPublishManualSharingVisible ) {
+				if ( features.manualSharing ) {
 					await manualSharing.waitFor();
 				}
 
