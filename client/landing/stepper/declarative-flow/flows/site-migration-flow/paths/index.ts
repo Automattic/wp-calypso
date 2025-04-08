@@ -36,15 +36,18 @@ export function buildPathHelper<
 	};
 }
 
+type Intent = 'import' | 'migrate' | 'unknown';
+
 export const siteCreationPath = buildPathHelper< {
 	queryParams: {
 		from?: string | null;
 		skipMigration?: boolean;
+		intent: Intent;
 	};
 } >( STEPS.SITE_CREATION_STEP.slug );
 
 export const sitePickerPath = buildPathHelper< {
-	queryParams: { from: string | null };
+	queryParams: { from: string | null; intent: Intent };
 } >( STEPS.PICK_SITE.slug );
 
 export const importOrMigratePath = buildPathHelper< {
@@ -132,6 +135,8 @@ export const fallbackCredentialsPath = buildPathHelper< {
 		siteId?: number | string;
 		siteSlug?: string;
 		from?: string | null;
+		authorizationUrl?: string | null;
+		backTo?: string;
 	};
 } >( STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS.slug );
 
