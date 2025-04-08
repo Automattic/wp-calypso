@@ -1,81 +1,45 @@
 .color-scheme.is-fresh {
 	/* Theme Properties */
 	--color-primary: var(--color-deprecated-blue-50);
-	--color-primary-rgb: var(--color-deprecated-blue-50-rgb);
 	--color-primary-dark: var(--color-deprecated-blue-70);
-	--color-primary-dark-rgb: var(--color-deprecated-blue-70-rgb);
 	--color-primary-light: var(--color-deprecated-blue-30);
-	--color-primary-light-rgb: var(--color-deprecated-blue-30-rgb);
 	--color-primary-0: var(--color-deprecated-blue-0);
-	--color-primary-0-rgb: var(--color-deprecated-blue-0-rgb);
 	--color-primary-5: var(--color-deprecated-blue-5);
-	--color-primary-5-rgb: var(--color-deprecated-blue-5-rgb);
 	--color-primary-10: var(--color-deprecated-blue-10);
-	--color-primary-10-rgb: var(--color-deprecated-blue-10-rgb);
 	--color-primary-20: var(--color-deprecated-blue-20);
-	--color-primary-20-rgb: var(--color-deprecated-blue-20-rgb);
 	--color-primary-30: var(--color-deprecated-blue-30);
-	--color-primary-30-rgb: var(--color-deprecated-blue-30-rgb);
 	--color-primary-40: var(--color-deprecated-blue-40);
-	--color-primary-40-rgb: var(--color-deprecated-blue-40-rgb);
 	--color-primary-50: var(--color-deprecated-blue-50);
-	--color-primary-50-rgb: var(--color-deprecated-blue-50-rgb);
 	--color-primary-60: var(--color-deprecated-blue-60);
-	--color-primary-60-rgb: var(--color-deprecated-blue-60-rgb);
 	--color-primary-70: var(--color-deprecated-blue-70);
-	--color-primary-70-rgb: var(--color-deprecated-blue-70-rgb);
 	--color-primary-80: var(--color-deprecated-blue-80);
-	--color-primary-80-rgb: var(--color-deprecated-blue-80-rgb);
 	--color-primary-90: var(--color-deprecated-blue-90);
-	--color-primary-90-rgb: var(--color-deprecated-blue-90-rgb);
 	--color-primary-100: var(--color-deprecated-blue-100);
-	--color-primary-100-rgb: var(--color-deprecated-blue-100-rgb);
-
 	--color-accent: var(--color-deprecated-blue-50);
-	--color-accent-rgb: var(--color-deprecated-blue-50-rgb);
 	--color-accent-dark: var(--color-deprecated-blue-70);
-	--color-accent-dark-rgb: var(--color-deprecated-blue-70-rgb);
 	--color-accent-light: var(--color-deprecated-blue-30);
-	--color-accent-light-rgb: var(--color-deprecated-blue-30-rgb);
 	--color-accent-0: var(--color-deprecated-blue-0);
-	--color-accent-0-rgb: var(--color-deprecated-blue-0-rgb);
 	--color-accent-5: var(--color-deprecated-blue-5);
-	--color-accent-5-rgb: var(--color-deprecated-blue-5-rgb);
 	--color-accent-10: var(--color-deprecated-blue-10);
-	--color-accent-10-rgb: var(--color-deprecated-blue-10-rgb);
 	--color-accent-20: var(--color-deprecated-blue-20);
-	--color-accent-20-rgb: var(--color-deprecated-blue-20-rgb);
 	--color-accent-30: var(--color-deprecated-blue-30);
-	--color-accent-30-rgb: var(--color-deprecated-blue-30-rgb);
 	--color-accent-40: var(--color-deprecated-blue-40);
-	--color-accent-40-rgb: var(--color-deprecated-blue-40-rgb);
 	--color-accent-50: var(--color-deprecated-blue-50);
-	--color-accent-50-rgb: var(--color-deprecated-blue-50-rgb);
 	--color-accent-60: var(--color-deprecated-blue-60);
-	--color-accent-60-rgb: var(--color-deprecated-blue-60-rgb);
 	--color-accent-70: var(--color-deprecated-blue-70);
-	--color-accent-70-rgb: var(--color-deprecated-blue-70-rgb);
 	--color-accent-80: var(--color-deprecated-blue-80);
-	--color-accent-80-rgb: var(--color-deprecated-blue-80-rgb);
 	--color-accent-90: var(--color-deprecated-blue-90);
-	--color-accent-90-rgb: var(--color-deprecated-blue-90-rgb);
 	--color-accent-100: var(--color-deprecated-blue-100);
-	--color-accent-100-rgb: var(--color-deprecated-blue-100-rgb);
-
-	/* WP Admin */
 	--color-wp-admin-button-background: #008ec2;
 	--color-wp-admin-button-border: #006799;
 
 	/* WP Admin Default Theme */
 	--theme-text-color: #f0f0f1; /* Direct from wp-admin */
-	--theme-text-color-rgb: 240, 240, 241;
 	--theme-base-color: #1d2327; /* Direct from wp-admin */
-	--theme-base-color-rgb: 29, 35, 39;
 	--theme-submenu-background-color: #131619; /* $menu-submenu-background */
 	--theme-submenu-text-color: #c3c4c7; /* $menu-submenu-text */
 	--theme-icon-color: rgba(240, 246, 252, 0.6); /* $icon-color */
 	--theme-highlight-color: #72aee6; /* $highlight-color */
-	--theme-highlight-color-rgb: 114, 174, 230;
 	--theme-notification-color: #d54e21; /* Direct from wp-admin */
 
 	/* Masterbar */
@@ -94,10 +58,8 @@
 
 	/* Sidebar */
 	--color-sidebar-background: #23282d; /* theme-default */
-	--color-sidebar-background-rgb: 35, 40, 45; /* theme-default */
 	--color-sidebar-border: #333; /* theme-default */
 	--color-sidebar-text: #eee; /* theme-default */
-	--color-sidebar-text-rgb: 238, 238, 238; /* theme-default */
 	--color-sidebar-text-alternative: #a2aab2; /* theme-default */
 	--color-sidebar-gridicon-fill: #a2aab2; /* theme-default */
 	--color-sidebar-gridicon-hover-fill: #00b9eb; /* theme-default */
@@ -106,13 +68,9 @@
 
 	/* Sidebar Selected */
 	--color-sidebar-menu-selected-background: #0073aa; /* theme-default */
-	--color-sidebar-menu-selected-background-rgb: 0, 115, 170; /* theme-default */
 	--color-sidebar-menu-selected-text: var(--color-text-inverted); /* theme-default */
-	--color-sidebar-menu-selected-text-rgb: var(--color-text-inverted-rgb);/* theme-default */
-
 	/* Sidebar Hover */
 	--color-sidebar-menu-hover-background: #1a1e23;/* theme-default */
-	--color-sidebar-menu-hover-background-rgb: 26, 30, 35; /* theme-default */
 	--color-sidebar-menu-hover-text: #00b9eb; /* theme-default */
 
 	/* Sidebar Submenu - Nav Unification */
