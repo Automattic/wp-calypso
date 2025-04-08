@@ -1,4 +1,4 @@
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, numberFormat } from 'i18n-calypso';
 import { SectionBackground } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
 import HostingBenefitsSection from '../../../common/hosting-benefits-section';
 
@@ -20,7 +20,13 @@ export default function ClientRelationships( { background }: Props ) {
 						"With over 15 years of experience running hundreds of millions of sites on WordPress.com, including the highest-trafficked sites globally, we've developed a platform we confidently put up against any cloud service."
 					),
 					benefits: [
-						translate( '99.999% Uptime' ),
+						translate( '%(uptimePercent)s Uptime', {
+							args: {
+								uptimePercent: numberFormat( 0.99999, {
+									numberFormatOptions: { style: 'percent', maximumFractionDigits: 3 },
+								} ),
+							},
+						} ),
 						translate( 'High availability with automated scaling' ),
 					],
 				},

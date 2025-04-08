@@ -106,6 +106,7 @@ import {
 	getName,
 	shouldRenderMonthlyRenewalOption,
 	getDIFMTieredPurchaseDetails,
+	canExplicitRenew,
 } from 'calypso/lib/purchases';
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
@@ -374,6 +375,10 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
+		if ( ! canExplicitRenew( purchase ) ) {
+			return null;
+		}
+
 		if ( this.isPendingDomainRegistration( purchase ) ) {
 			return null;
 		}
@@ -458,6 +463,10 @@ class ManagePurchase extends Component<
 				! isMarketplaceTemporarySitePurchase( purchase ) ) ||
 			isAkismetFreeProduct( purchase )
 		) {
+			return null;
+		}
+
+		if ( ! canExplicitRenew( purchase ) ) {
 			return null;
 		}
 
@@ -1474,6 +1483,10 @@ class ManagePurchase extends Component<
 		) {
 			showExpiryNotice = isCloseToExpiration( purchase );
 			preventRenewal = ! isRenewable( purchase );
+		}
+
+		if ( ! canExplicitRenew( purchase ) ) {
+			preventRenewal = true;
 		}
 
 		return (

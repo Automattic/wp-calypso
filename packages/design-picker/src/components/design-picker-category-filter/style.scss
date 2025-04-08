@@ -25,19 +25,15 @@
 		font-size: rem(13px);
 
 		&::before {
-			left: 4px;
-			right: 4px;
-			height: 36px;
-			border-radius: 4px;
-			background-color: #EDEDEF; /* 50% of gray-5 */
+			background-color: rgba(var(--studio-gray-5-rgb), 0.5);
 		}
 
 		&:not([class*="is-pressed"]):hover {
 			color: var(--studio-gray-100);
-		}
 
-		&:not([class*="is-pressed"]):hover::before{
-			background-color: var(--studio-gray-5);
+			&::before{
+				background-color: var(--studio-gray-5);
+			}
 		}
 
 		&.is-pressed {
@@ -52,31 +48,13 @@
 	}
 
 	button.components-button.responsive-toolbar-group__menu-item {
-		height: 40px;
-		padding: 8px 12px;
-		border-radius: 4px;
-		line-height: 20px;
-		background-color: #EDEDEF; /* 50% of gray-5 */
-		font-size: rem(13px);
-
-		&:not(.responsive-toolbar-group__more-item):not([class*="is-selected"]):hover {
-			color: var(--studio-gray-100);
-			background-color: var(--studio-gray-5);
-		}
-
-		&:not(:first-child) {
-			margin-top: 8px;
-		}
-
 		&.is-selected {
-			background-color: var(--studio-wordpress-blue);
-
-			&:hover {
-				opacity: 0.95;
+			&::before {
+				background-color: var(--studio-wordpress-blue);
 			}
 
-			&:active {
-				opacity: 0.9;
+			&:hover::before {
+				background-color: var(--studio-wordpress-blue-60);
 			}
 		}
 	}
