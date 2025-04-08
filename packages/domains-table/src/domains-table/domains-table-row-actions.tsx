@@ -86,8 +86,8 @@ export const DomainsTableRowActions = ( {
 	const canChangeSiteAddress =
 		! isAllSitesView && isSimpleSite && isFreeUrlDomainName( domain.name );
 	const canRenewDomain = isDomainRenewable( domain );
-	const handleMenuItemClick = ( event: React.MouseEvent< HTMLButtonElement > ) => {
-		const url = event.target?.parentElement?.getAttribute( 'href' );
+	const handleMenuItemClick = ( event: React.MouseEvent ) => {
+		const url = ( event.target as HTMLElement ).parentElement?.getAttribute( 'href' );
 
 		if ( url ) {
 			event.preventDefault();
