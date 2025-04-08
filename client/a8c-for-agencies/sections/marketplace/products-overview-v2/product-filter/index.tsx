@@ -7,6 +7,7 @@ import {
 	PRODUCT_FILTER_KEY_CATEGORIES,
 	PRODUCT_FILTER_KEY_PRICES,
 	PRODUCT_FILTER_KEY_TYPES,
+	PRODUCT_FILTER_KEY_VENDORS,
 } from '../../constants';
 import {
 	SelectedFilters,
@@ -40,6 +41,7 @@ export default function ProductFilter( {
 
 	const {
 		[ PRODUCT_FILTER_KEY_CATEGORIES ]: categories,
+		[ PRODUCT_FILTER_KEY_VENDORS ]: vendors,
 		[ PRODUCT_FILTER_KEY_TYPES ]: types,
 		[ PRODUCT_FILTER_KEY_PRICES ]: prices,
 	} = useProductFilterOptions();
@@ -89,6 +91,12 @@ export default function ProductFilter( {
 								}
 							/>
 							<ProductFilterItem
+								label={ translate( 'Developed by' ) }
+								options={ vendors }
+								selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_VENDORS ] }
+								onOptionClick={ ( option ) => updateFilter( PRODUCT_FILTER_KEY_VENDORS, option ) }
+							/>
+							<ProductFilterItem
 								label={ translate( 'Type' ) }
 								options={ types }
 								selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_TYPES ] }
@@ -111,6 +119,15 @@ export default function ProductFilter( {
 					options={ categories }
 					selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_CATEGORIES ] }
 					onOptionClick={ ( option ) => updateFilter( PRODUCT_FILTER_KEY_CATEGORIES, option ) }
+				/>
+			) }
+
+			{ hasSelectedFilterByType( selectedFilters[ PRODUCT_FILTER_KEY_VENDORS ] ) && (
+				<ProductFilterSelect
+					label={ translate( 'Developed by' ) }
+					options={ vendors }
+					selectedOptions={ selectedFilters[ PRODUCT_FILTER_KEY_VENDORS ] }
+					onOptionClick={ ( option ) => updateFilter( PRODUCT_FILTER_KEY_VENDORS, option ) }
 				/>
 			) }
 

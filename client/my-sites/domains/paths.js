@@ -450,15 +450,6 @@ export function domainTransferIn( siteName, domain, useStandardBack ) {
 	return path;
 }
 
-export function domainUseYourDomain( siteName, domain ) {
-	let path = `/domains/add/use-your-domain/${ siteName }`;
-	if ( domain ) {
-		path += `?initialQuery=${ domain }`;
-	}
-
-	return path;
-}
-
 /**
  * @typedef {Object} QueryArgs - query args for the domainUseMyDomain function.
  * @property {string} [domain] - the domain name to search.

@@ -19,11 +19,21 @@ export function BundlePriceSelector( { options, value, onChange }: Props ) {
 			return (
 				{
 					1: '',
-					5: translate( '10%' ),
-					10: translate( '20%' ),
-					20: translate( '40%' ),
-					50: translate( '70%' ),
-					100: translate( '80%' ),
+					5: numberFormat( 0.1, {
+						numberFormatOptions: { style: 'percent' },
+					} ),
+					10: numberFormat( 0.2, {
+						numberFormatOptions: { style: 'percent' },
+					} ),
+					20: numberFormat( 0.4, {
+						numberFormatOptions: { style: 'percent' },
+					} ),
+					50: numberFormat( 0.7, {
+						numberFormatOptions: { style: 'percent' },
+					} ),
+					100: numberFormat( 0.8, {
+						numberFormatOptions: { style: 'percent' },
+					} ),
 				}[ bundleSize ] ?? ''
 			);
 		},

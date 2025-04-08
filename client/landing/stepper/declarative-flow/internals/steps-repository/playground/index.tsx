@@ -38,9 +38,8 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 		return (
 			<>
 				<DocumentHead title={ __( 'Playground' ) } />
-				<Step.FullWidthLayout
+				<Step.PlaygroundLayout
 					className="playground-v2"
-					hasContentPadding={ false }
 					topBar={
 						<Step.TopBar
 							rightElement={
@@ -56,7 +55,7 @@ export const PlaygroundStep: StepType = ( { navigation, flow } ) => {
 						playgroundClient={ playgroundClientRef.current }
 						setPlaygroundClient={ setPlaygroundClient }
 					/>
-				</Step.FullWidthLayout>
+				</Step.PlaygroundLayout>
 			</>
 		);
 	}

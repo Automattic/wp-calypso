@@ -1,67 +1,28 @@
-import {
-	TERM_ANNUALLY,
-	TERM_MONTHLY,
-	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
-	getPlan,
-	isFreePlan,
-	findFirstSimilarPlanKey,
-} from '@automattic/calypso-products';
-import { Button } from '@automattic/components';
-import {
-	Onboard,
-	updateLaunchpadSettings,
-	useStarterDesignBySlug,
-	useStarterDesignsQuery,
-} from '@automattic/data-stores';
+import { WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED } from '@automattic/calypso-products';
+import { Onboard, updateLaunchpadSettings, useStarterDesignsQuery } from '@automattic/data-stores';
 import {
 	UnifiedDesignPicker,
 	useCategorization,
 	useDesignPickerFilters,
-	getDesignPreviewUrl,
-	PERSONAL_THEME,
-	getThemeIdFromDesign,
 } from '@automattic/design-picker';
 import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer, ONBOARDING_FLOW, isSiteSetupFlow, Step } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useCallback } from 'react';
-import AsyncLoad from 'calypso/components/async-load';
-import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
-import { useQueryTheme } from 'calypso/components/data/query-theme';
+import { useEffect, useCallback } from 'react';
 import { useQueryThemes } from 'calypso/components/data/query-themes';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Loading from 'calypso/components/loading';
-import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
-import {
-	THEME_TIERS,
-	THEME_TIER_PREMIUM,
-	THEME_TIER_FREE,
-} from 'calypso/components/theme-tier/constants';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
-import { ThemeUpgradeModal as UpgradeModal } from 'calypso/components/theme-upgrade-modal';
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useExperiment } from 'calypso/lib/explat';
-import { urlToSlug } from 'calypso/lib/url';
-import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
-import { getEligibility } from 'calypso/state/automated-transfer/selectors';
-import { hasPurchasedDomain } from 'calypso/state/purchases/selectors/has-purchased-domain';
-import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
-import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { useIsThemeAllowedOnSite } from 'calypso/state/themes/hooks/use-is-theme-allowed-on-site';
-import { getTheme, getThemeDemoUrl } from 'calypso/state/themes/selectors';
-import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
+import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { useActivateDesign } from '../../../../hooks/use-activate-design';
-import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
-import { useMarketplaceThemeProducts } from '../../../../hooks/use-marketplace-theme-products';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSiteData } from '../../../../hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
-import { goToCheckout } from '../../../../utils/checkout';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
 import {
@@ -71,13 +32,12 @@ import {
 } from '../../analytics/record-design';
 import { getCategorizationOptions } from './categories';
 import { STEP_NAME } from './constants';
-import DesignPickerDesignTitle from './design-picker-design-title';
-import { EligibilityWarningsModal } from './eligibility-warnings-modal';
 import useIsUpdatedBadgeDesign from './hooks/use-is-updated-badge-design';
 import useRecipe from './hooks/use-recipe';
 import useTrackFilters from './hooks/use-track-filters';
+import UnifiedDesignPickerPreview from './unified-design-picker-preview';
 import type { Step as StepType } from '../../types';
-import type { OnboardSelect, SiteSelect, GlobalStyles } from '@automattic/data-stores';
+import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
 import type { Design, StyleVariation } from '@automattic/design-picker';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import './style.scss';
@@ -130,29 +90,7 @@ const UnifiedDesignPickerStep: StepType< {
 	}, [] );
 
 	const { site, siteSlug, siteId, siteSlugOrId } = useSiteData();
-	const siteTitle = site?.name;
-	const siteDescription = site?.description;
-	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 	const { data: siteActiveTheme } = useActiveThemeQuery( site?.ID ?? 0, !! site?.ID );
-	// @TODO Cleanup once the test phase is over.
-	const isGlobalStylesOnPersonal = useSiteGlobalStylesOnPersonal( site?.ID );
-
-	const wpcomSiteSlug = useSelector( ( state ) => getSiteSlug( state, site?.ID ) );
-	const didPurchaseDomain = useSelector(
-		( state ) => site?.ID && hasPurchasedDomain( state, site.ID )
-	);
-
-	const [ shouldHideActionButtons, setShouldHideActionButtons ] = useState( false );
-	const [ showEligibility, setShowEligibility ] = useState( false );
-
-	const isJetpack = useSelect(
-		( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isJetpackSite( site.ID ),
-		[ site ]
-	);
-	const isAtomic = useSelect(
-		( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site.ID ),
-		[ site ]
-	);
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const isComingFromTheUpgradeScreen = queryParams.get( 'continue' ) === '1';
 	const isComingFromSuccessfulImport = queryParams.get( 'comingFromSuccessfulImport' ) === '1';
@@ -217,44 +155,41 @@ const UnifiedDesignPickerStep: StepType< {
 		resetPreview,
 	} = useRecipe( allDesigns, pickUnlistedDesign, recordPreviewDesign, recordPreviewStyleVariation );
 
-	const shouldUnlockGlobalStyles =
-		shouldLimitGlobalStyles && selectedDesign && numOfSelectedGlobalStyles && siteSlugOrId;
-
 	// Make sure people is at the top when entering/leaving preview mode.
 	useEffect( () => {
 		window.scrollTo( { top: 0 } );
 	}, [ isPreviewingDesign ] );
 
-	const selectedDesignHasStyleVariations = ( selectedDesign?.style_variations || [] ).length > 0;
-	const { data: selectedDesignDetails } = useStarterDesignBySlug( selectedDesign?.slug || '', {
-		enabled: isPreviewingDesign,
-	} );
-
-	function getEventPropsByDesign(
-		design: Design,
-		options: {
-			styleVariation?: StyleVariation;
-			colorVariation?: GlobalStylesObject | null;
-			fontVariation?: GlobalStylesObject | null;
-		} = {}
-	) {
-		return {
-			...getDesignEventProps( {
-				...options,
-				flow,
-				intent,
-				design,
-			} ),
-			categories: categorization.selections?.join( ',' ),
-			...( design.recipe?.pattern_ids && { pattern_ids: design.recipe.pattern_ids.join( ',' ) } ),
-			...( design.recipe?.header_pattern_ids && {
-				header_pattern_ids: design.recipe.header_pattern_ids.join( ',' ),
-			} ),
-			...( design.recipe?.footer_pattern_ids && {
-				footer_pattern_ids: design.recipe.footer_pattern_ids.join( ',' ),
-			} ),
-		};
-	}
+	const getEventPropsByDesign = useCallback(
+		(
+			design: Design,
+			options: {
+				styleVariation?: StyleVariation;
+				colorVariation?: GlobalStylesObject | null;
+				fontVariation?: GlobalStylesObject | null;
+			} = {}
+		) => {
+			return {
+				...getDesignEventProps( {
+					...options,
+					flow,
+					intent,
+					design,
+				} ),
+				categories: categorization.selections?.join( ',' ),
+				...( design.recipe?.pattern_ids && {
+					pattern_ids: design.recipe.pattern_ids.join( ',' ),
+				} ),
+				...( design.recipe?.header_pattern_ids && {
+					header_pattern_ids: design.recipe.header_pattern_ids.join( ',' ),
+				} ),
+				...( design.recipe?.footer_pattern_ids && {
+					footer_pattern_ids: design.recipe.footer_pattern_ids.join( ',' ),
+				} ),
+			};
+		},
+		[ flow, intent, categorization.selections ]
+	);
 
 	function recordPreviewDesign( design: Design, styleVariation?: StyleVariation ) {
 		recordPreviewedDesign( { flow, intent, design, styleVariation } );
@@ -274,121 +209,9 @@ const UnifiedDesignPickerStep: StepType< {
 		} );
 	}
 
-	function recordDesignPreviewScreenSelect( screenSlug: string ) {
-		recordTracksEvent( 'calypso_signup_design_preview_screen_select', {
-			screen_slug: screenSlug,
-			...getEventPropsByDesign( selectedDesign as Design, {
-				styleVariation: selectedStyleVariation,
-				colorVariation: selectedColorVariation,
-				fontVariation: selectedFontVariation,
-			} ),
-		} );
-	}
-
-	function recordDesignPreviewScreenBack( screenSlug: string ) {
-		recordTracksEvent( 'calypso_signup_design_preview_screen_back', {
-			screen_slug: screenSlug,
-			...getEventPropsByDesign( selectedDesign as Design, {
-				styleVariation: selectedStyleVariation,
-				colorVariation: selectedColorVariation,
-				fontVariation: selectedFontVariation,
-			} ),
-		} );
-	}
-
-	function recordDesignPreviewScreenSubmit( screenSlug: string ) {
-		recordTracksEvent( 'calypso_signup_design_preview_screen_submit', {
-			screen_slug: screenSlug,
-			...getEventPropsByDesign( selectedDesign as Design, {
-				styleVariation: selectedStyleVariation,
-				colorVariation: selectedColorVariation,
-				fontVariation: selectedFontVariation,
-			} ),
-		} );
-	}
-
-	function handleSelectColorVariation( colorVariation: GlobalStyles | null ) {
-		setSelectedColorVariation( colorVariation );
-		recordTracksEvent(
-			'calypso_signup_design_preview_color_variation_preview_click',
-			getEventPropsByDesign( selectedDesign as Design, { colorVariation } )
-		);
-	}
-
-	function handleSelectFontVariation( fontVariation: GlobalStyles | null ) {
-		setSelectedFontVariation( fontVariation );
-		recordTracksEvent(
-			'calypso_signup_design_preview_font_variation_preview_click',
-			getEventPropsByDesign( selectedDesign as Design, { fontVariation } )
-		);
-	}
-
-	// ********** Logic for unlocking a selected premium design
-
 	useQueryThemes( 'wpcom', {
 		number: 1000,
 	} );
-
-	const selectedDesignThemeId = selectedDesign ? getThemeIdFromDesign( selectedDesign ) : null;
-	// This is needed while the screenshots property is not being indexed on ElasticSearch
-	// It should be removed when this property is ready on useQueryThemes
-	useQueryTheme( 'wpcom', selectedDesignThemeId );
-	const theme = useSelector( ( state ) => getTheme( state, 'wpcom', selectedDesignThemeId ) );
-
-	const selectedDesignSlug = selectedDesign?.slug || '';
-
-	// Get theme URL for the design preview.
-	const themeDemoUrl = useSelector(
-		( state ) =>
-			getThemeDemoUrl( state, selectedDesignSlug, siteId + '' ) +
-			'?demo=true&iframe=true&theme_preview=true'
-	);
-	const screenshot = theme?.screenshots?.[ 0 ] ?? theme?.screenshot;
-	const fullLengthScreenshot = screenshot?.replace( /\?.*/, '' );
-
-	const {
-		selectedMarketplaceProduct,
-		selectedMarketplaceProductCartItems,
-		isMarketplaceThemeSubscriptionNeeded,
-		isMarketplaceThemeSubscribed,
-		isExternallyManagedThemeAvailable,
-	} = useMarketplaceThemeProducts();
-
-	const requiredPlanSlug = getRequiredPlan( selectedDesign, site?.plan?.product_slug || '' );
-
-	const didPurchaseSelectedTheme = useSelector( ( state ) =>
-		site && selectedDesignThemeId
-			? isThemePurchased( state, selectedDesignThemeId, site.ID )
-			: false
-	);
-
-	const canSiteActivateTheme = useIsThemeAllowedOnSite(
-		site?.ID ?? null,
-		selectedDesignThemeId ?? ''
-	);
-
-	const isPluginBundleEligible = useIsPluginBundleEligible();
-	const isBundled = selectedDesign?.software_sets && selectedDesign.software_sets.length > 0;
-
-	const isLockedTheme =
-		// The exp moves the Design Picker step in front of the plan selection so people can unlock theme later.
-		! isGoalsAtFrontExperiment &&
-		( ! canSiteActivateTheme ||
-			( selectedDesign?.design_tier === THEME_TIER_PREMIUM &&
-				! isPremiumThemeAvailable &&
-				! didPurchaseSelectedTheme ) ||
-			( selectedDesign?.is_externally_managed &&
-				( ! isMarketplaceThemeSubscribed || ! isExternallyManagedThemeAvailable ) ) ||
-			( ! isPluginBundleEligible && isBundled ) );
-
-	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
-
-	const eligibility = useSelector( ( state ) => site && getEligibility( state, site.ID ) );
-
-	const hasEligibilityMessages =
-		! isAtomic &&
-		! isJetpack &&
-		( eligibility?.eligibilityHolds?.length || eligibility?.eligibilityWarnings?.length );
 
 	const getBadge = ( themeId: string, isLockedStyleVariation: boolean ) => (
 		<ThemeTierBadge
@@ -400,132 +223,6 @@ const UnifiedDesignPickerStep: StepType< {
 			themeId={ themeId }
 		/>
 	);
-
-	function upgradePlan() {
-		if ( selectedDesign ) {
-			recordTracksEvent(
-				'calypso_signup_design_preview_unlock_theme_click',
-				getEventPropsByDesign( selectedDesign, {
-					styleVariation: selectedStyleVariation,
-					colorVariation: selectedColorVariation,
-					fontVariation: selectedFontVariation,
-				} )
-			);
-		}
-
-		recordTracksEvent( 'calypso_signup_design_upgrade_modal_show', {
-			theme: selectedDesign?.slug,
-		} );
-		setShowUpgradeModal( true );
-	}
-
-	function closeUpgradeModal() {
-		recordTracksEvent( 'calypso_signup_design_upgrade_modal_close_button_click', {
-			theme: selectedDesign?.slug,
-		} );
-		setShowUpgradeModal( false );
-	}
-
-	function navigateToCheckout() {
-		// When the user is done with checkout, send them back to the current url
-		// If the theme is externally managed, send them to the marketplace thank you page
-		const destination = selectedDesign?.is_externally_managed
-			? addQueryArgs( `/marketplace/thank-you/${ wpcomSiteSlug ?? siteSlug }?onboarding`, {
-					themes: selectedDesign?.slug,
-			  } )
-			: addQueryArgs( window.location.href.replace( window.location.origin, '' ), {
-					continue: 1,
-			  } );
-
-		goToCheckout( {
-			flowName: flow,
-			stepName,
-			siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
-			destination,
-			plan: requiredPlanSlug,
-			extraProducts: selectedMarketplaceProductCartItems,
-		} );
-	}
-	function handleCheckout() {
-		recordTracksEvent( 'calypso_signup_design_upgrade_modal_checkout_button_click', {
-			theme: selectedDesign?.slug,
-			theme_tier: selectedDesign?.design_tier,
-			is_externally_managed: selectedDesign?.is_externally_managed,
-		} );
-
-		if ( siteSlugOrId ) {
-			// We want to display the Eligibility Modal only for externally managed themes
-			// and when no domain was purchased yet.
-			if (
-				selectedDesign?.is_externally_managed &&
-				hasEligibilityMessages &&
-				! didPurchaseDomain
-			) {
-				setShowEligibility( true );
-			} else {
-				navigateToCheckout();
-			}
-		}
-		setShowUpgradeModal( false );
-	}
-
-	// ********** Logic for Premium Global Styles
-	const [ showPremiumGlobalStylesModal, setShowPremiumGlobalStylesModal ] = useState( false );
-
-	function unlockPremiumGlobalStyles() {
-		// These conditions should be true at this point, but just in case...
-		if ( shouldUnlockGlobalStyles ) {
-			recordTracksEvent(
-				'calypso_signup_design_global_styles_gating_modal_show',
-				getEventPropsByDesign( selectedDesign, {
-					styleVariation: selectedStyleVariation,
-					colorVariation: selectedColorVariation,
-					fontVariation: selectedFontVariation,
-				} )
-			);
-			setShowPremiumGlobalStylesModal( true );
-		}
-	}
-
-	function closePremiumGlobalStylesModal() {
-		// These conditions should be true at this point, but just in case...
-		if ( shouldUnlockGlobalStyles ) {
-			recordTracksEvent(
-				'calypso_signup_design_global_styles_gating_modal_close_button_click',
-				getEventPropsByDesign( selectedDesign, {
-					styleVariation: selectedStyleVariation,
-					colorVariation: selectedColorVariation,
-					fontVariation: selectedFontVariation,
-				} )
-			);
-			setShowPremiumGlobalStylesModal( false );
-		}
-	}
-
-	function handleCheckoutForPremiumGlobalStyles() {
-		// These conditions should be true at this point, but just in case...
-		if ( shouldUnlockGlobalStyles ) {
-			recordTracksEvent(
-				'calypso_signup_design_global_styles_gating_modal_checkout_button_click',
-				getEventPropsByDesign( selectedDesign, {
-					styleVariation: selectedStyleVariation,
-					colorVariation: selectedColorVariation,
-					fontVariation: selectedFontVariation,
-				} )
-			);
-
-			goToCheckout( {
-				flowName: flow,
-				stepName,
-				siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
-				// When the user is done with checkout, send them back to the current url
-				destination: window.location.href.replace( window.location.origin, '' ),
-				plan: isGlobalStylesOnPersonal ? 'personal' : 'premium',
-			} );
-
-			setShowPremiumGlobalStylesModal( false );
-		}
-	}
 
 	const handleSubmit = useCallback(
 		(
@@ -622,48 +319,14 @@ const UnifiedDesignPickerStep: StepType< {
 		]
 	);
 
-	function tryPremiumGlobalStyles() {
-		// These conditions should be true at this point, but just in case...
-		if ( shouldUnlockGlobalStyles ) {
-			recordTracksEvent(
-				'calypso_signup_design_global_styles_gating_modal_try_button_click',
-				getEventPropsByDesign( selectedDesign, {
-					styleVariation: selectedStyleVariation,
-					colorVariation: selectedColorVariation,
-					fontVariation: selectedFontVariation,
-				} )
-			);
-
-			pickDesign();
-		}
-	}
-
 	function pickUnlistedDesign( theme: string ) {
 		// TODO: move this logic from this step to the flow(s). See: https://wp.me/pdDR7T-KR
 		exitFlow?.( `/theme/${ theme }/${ siteSlug }` );
 	}
 
 	function handleBackClick() {
-		if ( isPreviewingDesign ) {
-			recordTracksEvent(
-				'calypso_signup_design_preview_exit',
-				getEventPropsByDesign( selectedDesign as Design, {
-					styleVariation: selectedStyleVariation,
-					colorVariation: selectedColorVariation,
-					fontVariation: selectedFontVariation,
-				} )
-			);
-
-			resetPreview();
-			return;
-		}
-
 		designPickerFilters.resetFilters();
 		goBack?.();
-	}
-
-	function recordDeviceClick( device: string ) {
-		recordTracksEvent( 'calypso_signup_design_preview_device_click', { device } );
 	}
 
 	function recordStepContainerTracksEvent( eventName: string ) {
@@ -673,47 +336,8 @@ const UnifiedDesignPickerStep: StepType< {
 			intent,
 		} );
 	}
-	function getPrimaryActionButtonAction(): () => void {
-		if ( isGlobalStylesOnPersonal ) {
-			if ( isLockedTheme ) {
-				return upgradePlan;
-			}
-
-			if ( shouldUnlockGlobalStyles ) {
-				return unlockPremiumGlobalStyles;
-			}
-
-			return () => pickDesign();
-		}
-
-		const isPersonalDesign = selectedDesign?.design_tier === PERSONAL_THEME;
-		if ( isLockedTheme ) {
-			// For personal themes we favor the GS Upgrade Modal over the Plan Upgrade Modal.
-			return isPersonalDesign && shouldUnlockGlobalStyles ? unlockPremiumGlobalStyles : upgradePlan;
-		}
-
-		return shouldUnlockGlobalStyles ? unlockPremiumGlobalStyles : () => pickDesign();
-	}
 
 	const isUsingStepContainerV2 = shouldUseStepContainerV2( flow );
-
-	function getPrimaryActionButton() {
-		const action = getPrimaryActionButtonAction();
-		const text =
-			action === upgradePlan && ! isGoalsAtFrontExperiment
-				? translate( 'Unlock theme' )
-				: translate( 'Continue' );
-
-		if ( ! isUsingStepContainerV2 ) {
-			return (
-				<Button className="navigation-link" primary borderless={ false } onClick={ action }>
-					{ text }
-				</Button>
-			);
-		}
-
-		return <Step.PrimaryButton onClick={ action }>{ text }</Step.PrimaryButton>;
-	}
 
 	useEffect( () => {
 		if ( isComingFromTheUpgradeScreen ) {
@@ -733,190 +357,23 @@ const UnifiedDesignPickerStep: StepType< {
 	}
 
 	if ( selectedDesign && isPreviewingDesign ) {
-		const designTitle = selectedDesign.design_type !== 'vertical' ? selectedDesign.title : '';
-		const headerDesignTitle = (
-			<DesignPickerDesignTitle
-				designTitle={ designTitle }
-				selectedDesign={ selectedDesign }
-				siteId={ siteId }
-				siteSlug={ siteSlug }
-			/>
-		);
-
-		// If the user fills out the site title and/or tagline with write or sell intent, we show it on the design preview
-		const shouldCustomizeText = intent === SiteIntent.Write || intent === SiteIntent.Sell;
-		const previewUrl = getDesignPreviewUrl( selectedDesign, {
-			site_title: shouldCustomizeText ? siteTitle : undefined,
-			site_tagline: shouldCustomizeText ? siteDescription : undefined,
-		} );
-
-		const getActionButtons = () => {
-			if ( ! isUsingStepContainerV2 ) {
-				return (
-					<>
-						<div className="action-buttons__title">{ headerDesignTitle }</div>
-						<div>{ getPrimaryActionButton() }</div>
-					</>
-				);
-			}
-
-			return getPrimaryActionButton();
-		};
-
-		const actionButtons = getActionButtons();
-
-		const stepContent = (
-			<>
-				{ requiredPlanSlug && ! isGoalsAtFrontExperiment && (
-					<UpgradeModal
-						slug={ selectedDesign.slug }
-						isOpen={ showUpgradeModal }
-						//TODO: Fix NEEED typo
-						isMarketplacePlanSubscriptionNeeeded={ ! isExternallyManagedThemeAvailable }
-						isMarketplaceThemeSubscriptionNeeded={ isMarketplaceThemeSubscriptionNeeded }
-						marketplaceProduct={ selectedMarketplaceProduct }
-						requiredPlan={ requiredPlanSlug }
-						closeModal={ closeUpgradeModal }
-						checkout={ handleCheckout }
-					/>
-				) }
-				<QueryEligibility siteId={ site?.ID } />
-				<EligibilityWarningsModal
-					site={ site ?? undefined }
-					isMarketplace={ selectedDesign?.is_externally_managed }
-					isOpen={ showEligibility }
-					handleClose={ () => {
-						recordTracksEvent( 'calypso_automated_transfer_eligibility_modal_dismiss', {
-							flow: 'onboarding',
-							theme: selectedDesign?.slug,
-						} );
-						setShowEligibility( false );
-					} }
-					handleContinue={ () => {
-						navigateToCheckout();
-						setShowEligibility( false );
-					} }
-				/>
-				<PremiumGlobalStylesUpgradeModal
-					checkout={ handleCheckoutForPremiumGlobalStyles }
-					closeModal={ closePremiumGlobalStylesModal }
-					isOpen={ showPremiumGlobalStylesModal }
-					numOfSelectedGlobalStyles={ numOfSelectedGlobalStyles }
-					{ ...( ! isLockedTheme && { tryStyle: tryPremiumGlobalStyles } ) }
-				/>
-				<AsyncLoad
-					require="@automattic/design-preview"
-					placeholder={ null }
-					previewUrl={ themeDemoUrl || previewUrl }
-					siteInfo={ {
-						title: shouldCustomizeText ? site?.name : '',
-						tagline: shouldCustomizeText ? site?.description : '',
-					} }
-					splitDefaultVariation={
-						( isGlobalStylesOnPersonal &&
-							selectedDesign?.design_tier === THEME_TIER_FREE &&
-							shouldLimitGlobalStyles ) ||
-						( ! ( selectedDesign?.design_tier === THEME_TIER_PREMIUM ) &&
-							! isBundled &&
-							! isPremiumThemeAvailable &&
-							! didPurchaseSelectedTheme &&
-							! isPluginBundleEligible &&
-							! isGlobalStylesOnPersonal &&
-							shouldLimitGlobalStyles )
-					}
-					needsUpgrade={ shouldLimitGlobalStyles || isLockedTheme }
-					title={ headerDesignTitle }
-					selectedDesignTitle={ designTitle }
-					shortDescription={ selectedDesign.description }
-					description={ selectedDesignDetails?.description }
-					variations={
-						selectedDesignHasStyleVariations ? selectedDesignDetails?.style_variations : []
-					}
-					selectedVariation={ selectedStyleVariation }
-					onSelectVariation={ previewDesignVariation }
-					actionButtons={ actionButtons }
-					recordDeviceClick={ recordDeviceClick }
-					limitGlobalStyles={ shouldLimitGlobalStyles }
-					siteId={ site?.ID }
-					stylesheet={ selectedDesign.recipe?.stylesheet }
-					screenshot={ fullLengthScreenshot }
-					isExternallyManaged={ selectedDesign.is_externally_managed }
-					isVirtual={ selectedDesign.is_virtual }
-					selectedColorVariation={ selectedColorVariation }
-					onSelectColorVariation={ handleSelectColorVariation }
-					selectedFontVariation={ selectedFontVariation }
-					onSelectFontVariation={ handleSelectFontVariation }
-					onGlobalStylesChange={ setGlobalStyles }
-					onNavigatorPathChange={ ( path?: string ) => setShouldHideActionButtons( path !== '/' ) }
-					onScreenSelect={ recordDesignPreviewScreenSelect }
-					onScreenBack={ recordDesignPreviewScreenBack }
-					onScreenSubmit={ recordDesignPreviewScreenSubmit }
-				/>
-			</>
-		);
-
-		if ( isUsingStepContainerV2 ) {
-			// TODO: Create a new wireframe for the design preview. It should be named "FixedColumnOnTheLeftLayout"
-			return (
-				<Step.FullWidthLayout
-					className="step-container-v2--design-picker-preview"
-					topBar={ ( { isLargeViewport } ) => {
-						if ( ! isLargeViewport ) {
-							return null;
-						}
-
-						return (
-							<Step.TopBar
-								leftElement={
-									shouldHideActionButtons ? undefined : (
-										<Step.BackButton onClick={ handleBackClick } />
-									)
-								}
-								rightElement={
-									! isGoalsAtFrontExperiment ? undefined : (
-										<Step.SkipButton onClick={ () => handleSubmit() }>
-											{ translate( 'Skip setup' ) }
-										</Step.SkipButton>
-									)
-								}
-							/>
-						);
-					} }
-					stickyBottomBar={ ( { isLargeViewport } ) => {
-						if ( isLargeViewport ) {
-							return null;
-						}
-
-						return (
-							<Step.StickyBottomBar
-								leftElement={ <Step.BackButton onClick={ handleBackClick } /> }
-								centerElement={
-									<div className="step-container-v2--design-picker-preview__header-design-title">
-										{ headerDesignTitle }
-									</div>
-								}
-								rightElement={ actionButtons }
-							/>
-						);
-					} }
-				>
-					{ stepContent }
-				</Step.FullWidthLayout>
-			);
-		}
-
 		return (
-			<StepContainer
-				stepName={ STEP_NAME }
-				stepContent={ stepContent }
-				hideSkip={ ! isGoalsAtFrontExperiment }
-				skipLabelText={ translate( 'Skip setup' ) }
-				skipButtonAlign="top"
-				hideBack={ shouldHideActionButtons }
-				className="design-setup__preview design-setup__preview__has-more-info"
-				goBack={ handleBackClick }
-				customizedActionButtons={ ! shouldHideActionButtons ? actionButtons : undefined }
-				recordTracksEvent={ recordStepContainerTracksEvent }
+			<UnifiedDesignPickerPreview
+				selectedDesign={ selectedDesign }
+				pickDesign={ pickDesign }
+				getEventPropsByDesign={ getEventPropsByDesign }
+				flow={ flow }
+				isPremiumThemeAvailable={ isPremiumThemeAvailable }
+				stepName={ stepName }
+				numOfSelectedGlobalStyles={ numOfSelectedGlobalStyles }
+				previewDesignVariation={ previewDesignVariation }
+				setSelectedColorVariation={ setSelectedColorVariation }
+				setSelectedFontVariation={ setSelectedFontVariation }
+				setGlobalStyles={ setGlobalStyles }
+				resetPreview={ resetPreview }
+				selectedStyleVariation={ selectedStyleVariation }
+				selectedColorVariation={ selectedColorVariation }
+				selectedFontVariation={ selectedFontVariation }
 			/>
 		);
 	}
@@ -992,6 +449,7 @@ const UnifiedDesignPickerStep: StepType< {
 	if ( isUsingStepContainerV2 ) {
 		return (
 			<Step.WideLayout
+				maxWidth="huge"
 				className="step-container-v2--design-picker"
 				topBar={
 					<Step.TopBar
@@ -1028,27 +486,5 @@ const UnifiedDesignPickerStep: StepType< {
 		/>
 	);
 };
-
-function getRequiredPlan( selectedDesign: Design | undefined, currentPlanSlug: string ) {
-	if ( ! selectedDesign?.design_tier ) {
-		return;
-	}
-	// Different designs require different plans to unlock them, additionally the terms required can vary.
-	// A site with a plan of a given length cannot upgrade a plan of a shorter length. For example,
-	// if a site is on a 2 year starter plan and want to buy an explorer theme, they must buy a 2 year explorer plan
-	// not a 1 year explorer plan.
-	const tierMinimumUpsellPlan =
-		THEME_TIERS[ selectedDesign.design_tier as keyof typeof THEME_TIERS ]?.minimumUpsellPlan;
-
-	let requiredTerm;
-	if ( ! currentPlanSlug || isFreePlan( currentPlanSlug ) ) {
-		// Marketplace themes require upgrading to a monthly business plan or higher, everything else requires an annual plan.
-		requiredTerm = selectedDesign?.is_externally_managed ? TERM_MONTHLY : TERM_ANNUALLY;
-	} else {
-		requiredTerm = getPlan( currentPlanSlug )?.term || TERM_ANNUALLY;
-	}
-
-	return findFirstSimilarPlanKey( tierMinimumUpsellPlan, { term: requiredTerm } );
-}
 
 export default UnifiedDesignPickerStep;

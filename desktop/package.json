@@ -59,7 +59,7 @@
 		"electron-updater": "^4.2.5",
 		"js-yaml": "^4.1.0",
 		"make-dir": "^3.1.0",
-		"semver": "^7.3.2",
+		"semver": "^7.7.1",
 		"superagent": "^3.8.3",
 		"winston": "^3.3.3",
 		"wpcom-xhr-request": "workspace:^",

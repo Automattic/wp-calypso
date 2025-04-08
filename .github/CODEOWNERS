@@ -94,13 +94,14 @@
 # Support
 /packages/help-center @Automattic/vertex
 
-# Stepper internals
-client/landing/stepper/declarative-flow/internals @Automattic/dotcom-stepper
-client/landing/stepper/declarative-flow/helpers @Automattic/dotcom-stepper
-client/landing/stepper/utils @Automattic/dotcom-stepper
-client/landing/stepper/*.ts @Automattic/dotcom-stepper
-client/landing/stepper/*.tsx @Automattic/dotcom-stepper
+# Onboarding
+/client/landing/stepper/declarative-flow/internals @Automattic/dotcom-stepper
+/client/landing/stepper/declarative-flow/helpers @Automattic/dotcom-stepper
+/client/landing/stepper/utils @Automattic/dotcom-stepper
+/client/landing/stepper/*.ts @Automattic/dotcom-stepper
+/client/landing/stepper/*.tsx @Automattic/dotcom-stepper
+/packages/onboarding/src/step-container-v2 @Automattic/quake
 
 # Exclude Stepper steps
-client/landing/stepper/declarative-flow/internals/steps-repository
+/client/landing/stepper/declarative-flow/internals/steps-repository
 
