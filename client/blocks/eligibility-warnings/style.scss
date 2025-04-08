@@ -31,7 +31,6 @@
 		align-items: center;
 		display: flex;
 		gap: 5px;
-		color: var(--color-text-subtle);
 		font-size: 0.875rem;
 
 		a {
@@ -103,8 +102,7 @@
 	font-weight: 400;
 }
 
-.eligibility-warnings__primary-text {
-	color: var(--color-text-subtle);
+.eligibility-warnings__primary-text {	
 	font-size: 1rem;
 	margin-top: 16px;
 }
@@ -176,8 +174,7 @@
 		font-weight: 600;
 	}
 
-	.eligibility-warnings__message-description {
-		color: var(--color-text-subtle);
+	.eligibility-warnings__message-description {	
 		font-size: $font-body;
 
 		&--hosting-features {
@@ -187,7 +184,6 @@
 }
 
 .eligibility-warnings__inline-link {
-	color: var(--color-text-subtle);
 	text-decoration: underline;
 }
 
@@ -210,8 +206,7 @@
 	align-items: center;
 	display: flex;
 
-	.gridicon {
-		color: var(--color-text-subtle);
+	.gridicon {		
 		flex-shrink: 0;
 	}
 	span {
