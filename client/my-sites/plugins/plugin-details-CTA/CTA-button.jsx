@@ -7,7 +7,7 @@ import page from '@automattic/calypso-router';
 import { Button, Dialog } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import { marketplacePlanToAdd, getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
@@ -124,6 +124,11 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 		buttonText = translate( 'Included with your plan' );
 	}
 
+	const handleDismissEligibilityWarnings = useCallback( () => {
+		setShowEligibility( false );
+		setShowAddCustomDomain( false );
+	}, [ setShowEligibility, setShowAddCustomDomain ] );
+
 	return (
 		<>
 			<PluginCustomDomainDialog
@@ -161,10 +166,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 					currentContext="plugin-details"
 					isMarketplace={ isMarketplaceProduct }
 					standaloneProceed
-					onDismiss={ () => {
-						setShowEligibility( false );
-						setShowAddCustomDomain( false );
-					} }
+					onDismiss={ handleDismissEligibilityWarnings }
 					onProceed={ () =>
 						onClickInstallPlugin( {
 							dispatch,

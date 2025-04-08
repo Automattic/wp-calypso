@@ -8,6 +8,7 @@ import {
 	useSelect as useDateStoreSelect,
 } from '@wordpress/data';
 import { localize, LocalizeProps } from 'i18n-calypso';
+import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import ActionPanelLink from 'calypso/components/action-panel/link';
 import { getSectionName } from 'calypso/state/ui/selectors';
@@ -35,13 +36,17 @@ const SupportLink = ( {
 		useDataStoreDispatch( HELP_CENTER_STORE );
 	const resetSupportInteraction = useResetSupportInteraction();
 
-	const handleShowHelpAssistant = async () => {
-		onShowHelpAssistant();
-
-		setNavigateToRoute( '/odie' );
+	const clearChat = useCallback( async () => {
 		await resetSupportInteraction();
 		clearHelpCenterZendeskConversationStarted();
 		recordTracksEvent( 'calypso_inlinehelp_clear_conversation' );
+	}, [ resetSupportInteraction ] );
+
+	const handleShowHelpAssistant = useCallback( async () => {
+		onShowHelpAssistant();
+
+		setNavigateToRoute( '/odie' );
+		await clearChat();
 
 		if ( ! show ) {
 			setShowHelpCenter( true );
@@ -56,18 +61,25 @@ const SupportLink = ( {
 		if ( isMinimized ) {
 			setIsMinimized( false );
 		}
-	};
+	}, [
+		onShowHelpAssistant,
+		setNavigateToRoute,
+		clearChat,
+		show,
+		setShowHelpCenter,
+		sectionName,
+		isMinimized,
+		setIsMinimized,
+	] );
 
 	return (
 		<div className="support-block">
 			{ shouldUseHelpAssistant ? (
-				<>
-					{ translate( '{{button}}Need help?{{/button}}', {
-						components: {
-							button: <Button variant="link" onClick={ handleShowHelpAssistant } />,
-						},
-					} ) }
-				</>
+				translate( '{{button}}Need help?{{/button}}', {
+					components: {
+						button: <Button variant="link" onClick={ handleShowHelpAssistant } />,
+					},
+				} )
 			) : (
 				<>
 					<span>{ translate( 'Need help?' ) }</span>
