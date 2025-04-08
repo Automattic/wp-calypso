@@ -1,8 +1,9 @@
 import { __ } from '@wordpress/i18n';
 import { Icon, chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
-import { RefObject, useCallback, useRef, useEffect, useState } from 'react';
+import { RefObject, useCallback, useEffect, useState, useRef } from 'react';
 import { useOdieAssistantContext } from '../../context';
+import './jump-to-recent.scss';
 
 export const JumpToRecent = ( {
 	containerReference,
@@ -10,63 +11,160 @@ export const JumpToRecent = ( {
 	containerReference: RefObject< HTMLDivElement >;
 } ) => {
 	const { trackEvent, isMinimized, chat } = useOdieAssistantContext();
-	const lastMessageRef = useRef< Element | null >( null );
-	const [ isLastMessageVisible, setIsLastMessageVisible ] = useState( false );
+	const [ isVisible, setIsVisible ] = useState( false );
+	const [ offsetStyle, setOffsetStyle ] = useState< React.CSSProperties >( {} );
+	const isJumpingRef = useRef( false );
+	const visibilityTimeoutRef = useRef< number | null >( null );
+	const buttonRef = useRef< HTMLDivElement >( null );
 
+	// Function to scroll to the most recent message
 	const jumpToRecent = useCallback( () => {
 		if ( containerReference.current && chat.messages.length > 0 ) {
-			const messages = containerReference.current?.querySelectorAll( '[data-is-message="true"]' );
-			const lastMessage = messages?.length ? messages[ messages.length - 1 ] : null;
-			lastMessage?.scrollIntoView( { behavior: 'smooth', block: 'start', inline: 'nearest' } );
+			// Mark that we're jumping
+			isJumpingRef.current = true;
+
+			// Scroll to bottom
+			containerReference.current.scrollTo( {
+				top: containerReference.current.scrollHeight,
+				behavior: 'smooth',
+			} );
+
+			trackEvent( 'chat_jump_to_recent_click' );
+
+			// Reset after animation completes
+			setTimeout( () => {
+				isJumpingRef.current = false;
+				setIsVisible( false );
+			}, 1000 );
 		}
-		trackEvent( 'chat_jump_to_recent_click' );
 	}, [ containerReference, trackEvent, chat.messages.length ] );
 
-	useEffect( () => {
-		if (
-			! containerReference.current ||
-			isMinimized ||
-			! chat.messages.length ||
-			chat.status !== 'loaded'
-		) {
+	// Calculate and update position based on other elements
+	const updatePosition = useCallback( () => {
+		const chatbox = document.querySelector( '.chatbox' );
+		if ( ! chatbox ) {
 			return;
 		}
 
-		const observer = new IntersectionObserver( ( entries ) => {
-			entries.forEach( ( entry ) => {
-				setIsLastMessageVisible( entry.isIntersecting );
-			} );
-		} );
+		// Get heights of dynamic elements
+		const noticeEl = chatbox.querySelector( '.odie-notice__container' );
+		const inputEl = chatbox.querySelector( '.odie-chat-message-input-container' );
 
-		const messages = containerReference.current?.querySelectorAll( '[data-is-message="true"]' );
-		const lastMessage = messages?.length ? messages[ messages.length - 1 ] : null;
-		if ( lastMessage ) {
-			lastMessageRef.current = lastMessage;
-			observer.observe( lastMessage );
+		const noticeHeight = noticeEl ? noticeEl.clientHeight : 0;
+		const inputHeight = inputEl ? inputEl.clientHeight : 0;
+
+		// Calculate total offset - we'll position the button above these elements
+		const totalOffset = noticeHeight + inputHeight;
+
+		// Apply position
+		setOffsetStyle( {
+			bottom: `${ totalOffset }px`,
+		} );
+	}, [] );
+
+	// Handle scrolling
+	useEffect( () => {
+		const container = containerReference.current;
+		if ( ! container || isMinimized || chat.messages.length < 2 || chat.status !== 'loaded' ) {
+			setIsVisible( false );
+			return;
 		}
 
-		return () => {
-			if ( lastMessageRef.current ) {
-				observer.unobserve( lastMessageRef.current );
+		// Update position initially
+		updatePosition();
+
+		const handleScroll = () => {
+			// If we're in the middle of jumping, skip the check
+			if ( isJumpingRef.current ) {
+				return;
+			}
+
+			// Get current scroll position and total height
+			const { scrollTop, scrollHeight, clientHeight } = container;
+
+			// Calculate how far we are from the bottom
+			const scrollBottom = scrollHeight - scrollTop - clientHeight;
+
+			// If we're at least 150px away from the bottom, show the button
+			const shouldBeVisible = scrollBottom > 150;
+
+			if ( shouldBeVisible && ! isVisible ) {
+				// Update position before showing
+				updatePosition();
+
+				// Show immediately
+				setIsVisible( true );
+
+				// Clear any pending hide
+				if ( visibilityTimeoutRef.current ) {
+					clearTimeout( visibilityTimeoutRef.current );
+					visibilityTimeoutRef.current = null;
+				}
+			} else if ( ! shouldBeVisible && isVisible ) {
+				// Hide after a slight delay
+				if ( ! visibilityTimeoutRef.current ) {
+					visibilityTimeoutRef.current = setTimeout( () => {
+						setIsVisible( false );
+						visibilityTimeoutRef.current = null;
+					}, 300 ) as unknown as number;
+				}
 			}
 		};
-	}, [ chat.messages.length ] );
 
-	if ( isMinimized || chat.messages.length < 2 || chat.status !== 'loaded' ) {
-		return null;
-	}
+		// Add scroll listener
+		container.addEventListener( 'scroll', handleScroll );
 
-	const className = clsx( 'odie-gradient-to-white', {
-		'is-visible': ! isLastMessageVisible,
-		'is-hidden': isLastMessageVisible,
-	} );
+		// Check on initial render
+		const initialCheck = setTimeout( handleScroll, 500 );
 
+		// Listen for resize and element changes
+		const resizeObserver = new ResizeObserver( () => {
+			updatePosition();
+		} );
+
+		// Observe the input container and notice for size changes
+		const chatbox = container.closest( '.chatbox' );
+		if ( chatbox ) {
+			const noticeEl = chatbox.querySelector( '.odie-notice__container' );
+			const inputEl = chatbox.querySelector( '.odie-chat-message-input-container' );
+
+			if ( noticeEl ) {
+				resizeObserver.observe( noticeEl );
+			}
+			if ( inputEl ) {
+				resizeObserver.observe( inputEl );
+			}
+		}
+
+		// Clean up
+		return () => {
+			container.removeEventListener( 'scroll', handleScroll );
+			clearTimeout( initialCheck );
+			if ( visibilityTimeoutRef.current ) {
+				clearTimeout( visibilityTimeoutRef.current );
+			}
+			resizeObserver.disconnect();
+		};
+	}, [
+		containerReference,
+		chat.messages.length,
+		chat.status,
+		isMinimized,
+		isVisible,
+		updatePosition,
+	] );
+
+	// Always render, but control visibility with CSS class
 	return (
-		<div className={ className }>
+		<div
+			ref={ buttonRef }
+			className={ clsx( 'odie-gradient-to-white', { 'is-visible': isVisible } ) }
+			style={ offsetStyle }
+		>
 			<button
 				className="odie-jump-to-recent-message-button"
-				disabled={ isLastMessageVisible }
 				onClick={ jumpToRecent }
+				disabled={ ! isVisible }
 			>
 				{ __( 'Jump to recent', __i18n_text_domain__ ) }
 				<Icon icon={ chevronDown } fill="white" />

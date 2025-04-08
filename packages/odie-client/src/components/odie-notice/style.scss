@@ -1,9 +1,10 @@
 .odie-notice {
 	display: flex;
-	padding: 0 16px;
 	font-size: 0.75rem;
-	position: absolute;
-	bottom: 86px;
+	width: 100%;
+	left: 0;
+	right: 0;
+	z-index: 20;
 
 	.odie-notice__container {
 		display: flex;
@@ -20,7 +21,7 @@
 		button {
 			align-self: flex-start;
 			background: none;
-    		border: none;
+			border: none;
 			&:hover {
 				cursor: pointer;
 			}

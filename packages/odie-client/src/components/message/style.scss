@@ -104,15 +104,16 @@ $blueberry-color: #3858e9;
 				margin-top: 0;
 			}
 
-			> *:not(:first-child) {
+			> *:not( :first-child ) {
 				padding-top: 8px;
 			}
 
-			> *:not(:last-child) {
+			> *:not( :last-child ) {
 				padding-bottom: 8px;
 			}
 
-			ol, ul {
+			ol,
+			ul {
 				padding-left: 20px;
 				padding-right: 20px;
 			}
@@ -157,7 +158,7 @@ $blueberry-color: #3858e9;
 						outline: none;
 					}
 					.gridicon {
-						fill: #1E1E1E;
+						fill: #1e1e1e;
 					}
 				}
 			}
@@ -182,7 +183,6 @@ $blueberry-color: #3858e9;
 					}
 				}
 			}
-
 		}
 
 		.disclaimer {
@@ -193,7 +193,8 @@ $blueberry-color: #3858e9;
 			text-align: start;
 			margin: 8px 0;
 
-			.odie-button-link, .components-external-link {
+			.odie-button-link,
+			.components-external-link {
 				color: $blueberry-color;
 			}
 
@@ -204,9 +205,9 @@ $blueberry-color: #3858e9;
 					text-decoration: none;
 				}
 
-				& > span:first-child::after { 
-					content: "\00a0";
-	
+				& > span:first-child::after {
+					content: '\00a0';
+
 					&:hover {
 						text-decoration: none;
 					}
@@ -220,7 +221,6 @@ $blueberry-color: #3858e9;
 					margin-left: 0;
 				}
 			}
-			
 		}
 	}
 
@@ -241,8 +241,8 @@ $blueberry-color: #3858e9;
 		}
 		.message-feedback-submit {
 			margin-left: 46px;
-			align-items: start ;
-	
+			align-items: start;
+
 			a {
 				gap: 4px;
 			}
@@ -559,19 +559,16 @@ $custom-border-corner-size: 16px;
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	height: 100px;
+	max-height: 73px;
 	justify-content: center;
-	z-index: 5;
+	z-index: 0;
 	pointer-events: none;
 	position: fixed;
 	width: 100%;
 
 	&.is-hidden {
-		opacity: 0;
-		bottom: 0 !important;
-		transition:
-			opacity 0.3s ease 0.3s,
-			bottom 0.3s ease 0.3s;
+		bottom: -48px !important;
+		transition: transform 0.3s ease 0.6s;
 
 		.odie-jump-to-recent-message-button {
 			pointer-events: none;
@@ -579,17 +576,13 @@ $custom-border-corner-size: 16px;
 	}
 
 	&.is-visible {
-		opacity: 1;
-		bottom: 24px;
-		transition:
-			opacity 0.3s ease 1.2s,
-			bottom 0.3s ease 1.2s;
+		bottom: -18px;
+		transition: transform 0.3s ease 0.6s;
 	}
 
 	.odie-jump-to-recent-message-button {
 		pointer-events: auto;
 		position: relative;
-		bottom: 24px;
 		font-family: $a8c-font-family-sans;
 		cursor: pointer;
 		margin: 0;
@@ -797,7 +790,7 @@ $custom-border-corner-size: 16px;
 }
 
 .odie__transfer-chat {
-	width: calc(100% - 80px)!important;
+	width: calc( 100% - 80px ) !important;
 	margin-top: 16px;
-    margin-left: 46px;
+	margin-left: 46px;
 }

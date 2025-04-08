@@ -15,6 +15,7 @@ export type OdieAssistantContextInterface = {
 	isMinimized?: boolean;
 	isUserEligibleForPaidSupport: boolean;
 	extraContactOptions?: ReactNode;
+	messagesContainerRef?: React.RefObject< HTMLDivElement > | null;
 	odieBroadcastClientId: string;
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
@@ -25,6 +26,7 @@ export type OdieAssistantContextInterface = {
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
 	setChat: ( chat: Chat | SetStateAction< Chat > ) => void;
 	setChatStatus: ( status: ChatStatus ) => void;
+	setMessagesContainerRef?: ( ref: React.RefObject< HTMLDivElement > ) => void;
 	trackEvent: ( event: string, properties?: Record< string, unknown > ) => void;
 	version?: string | null;
 	setWaitAnswerToFirstMessageFromHumanSupport: (

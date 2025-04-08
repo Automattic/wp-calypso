@@ -1,8 +1,8 @@
-import { RefObject, useEffect, useRef } from 'react';
+import { ForwardedRef, useEffect, useRef } from 'react';
 import { useOdieAssistantContext } from '../context';
 
 export const useAutoScroll = (
-	messagesContainerRef: RefObject< HTMLDivElement >,
+	messagesContainerRef: ForwardedRef< HTMLDivElement >,
 	isEnabled: boolean
 ) => {
 	const { chat } = useOdieAssistantContext();
@@ -37,9 +37,15 @@ export const useAutoScroll = (
 		debounceTimeoutIdRef.current = setTimeout( () => {
 			debounceTimeoutRef.current = 0;
 			requestAnimationFrame( () => {
-				const messages = messagesContainerRef.current?.querySelectorAll(
-					'[data-is-message="true"],.odie-chatbox__action-message'
-				);
+				const messages =
+					messagesContainerRef &&
+					'current' in messagesContainerRef &&
+					messagesContainerRef.current &&
+					messagesContainerRef.current instanceof HTMLDivElement
+						? messagesContainerRef.current.querySelectorAll(
+								'[data-is-message="true"],.odie-chatbox__action-message'
+						  )
+						: null;
 				let lastMessage = messages?.length ? messages[ messages.length - 1 ] : null;
 
 				if ( hasOdieReplied ) {
@@ -51,5 +57,5 @@ export const useAutoScroll = (
 			} );
 		}, debounceTimeoutRef.current ) as unknown as number;
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ chat.messages.length, chat.status, messagesContainerRef.current, isEnabled ] );
+	}, [ chat.messages.length, chat.status, messagesContainerRef, isEnabled ] );
 };

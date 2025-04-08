@@ -8,13 +8,28 @@ $blueberry-blue: #3858e9;
 	flex-direction: column;
 	overflow: hidden;
 	justify-content: space-between;
+	position: relative;
+}
+
+.messages-wrapper {
+	flex: 1;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.chatbox-footer {
+	flex-shrink: 0;
+	position: relative;
+	background: #fff;
 }
 
 .chatbox-toggle {
 	padding: 0;
 	background-color: transparent;
 	z-index: 999;
-	transform: translateX(0);
+	transform: translateX( 0 );
 	transition: transform 0.5s ease-in-out;
 	outline: none !important;
 	box-shadow: none !important;
@@ -52,7 +67,7 @@ $blueberry-blue: #3858e9;
 		flex-direction: column;
 		align-items: flex-end;
 	}
-	
+
 	.chatbox-loading-chat__spinner {
 		display: flex;
 		width: 100%;
@@ -70,7 +85,7 @@ $blueberry-blue: #3858e9;
 		justify-content: center;
 		width: 100%;
 		padding-bottom: 16px;
-		color: var(--studio-gray-50);
+		color: var( --studio-gray-50 );
 		font-size: 0.75rem;
 	}
 }
@@ -83,7 +98,7 @@ $blueberry-blue: #3858e9;
 
 .using-environment-badge {
 	margin-bottom: 86px;
-	height: calc(100vh - 120px - 86px);
+	height: calc( 100vh - 120px - 86px );
 }
 
 .chatbox-header-button {
@@ -99,15 +114,18 @@ $blueberry-blue: #3858e9;
 	width: 100%;
 }
 
-.odie-chat-message-input-container, .odie-closed-conversation-footer {
+.odie-chat-message-input-container,
+.odie-closed-conversation-footer {
 	flex-shrink: 0;
 	width: 100%;
 	box-sizing: border-box;
 	padding: 16px;
-	background: var(--black-white-white, #fff);
-	border-top: 1px solid var(--gray-gray-5, #dcdcde);
+	background: var( --black-white-white, #fff );
+	border-top: 1px solid var( --gray-gray-5, #dcdcde );
+	position: relative;
+	z-index: 10;
 
 	&.odie-chat-message-input-container__predictions-padding {
 		padding: 8px;
-	}	
+	}
 }

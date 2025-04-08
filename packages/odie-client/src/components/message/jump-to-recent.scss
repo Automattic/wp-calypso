@@ -1,0 +1,68 @@
+@import '@automattic/color-studio/dist/color-variables';
+
+.odie-gradient-to-white {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 15;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 16px 0;
+	background: linear-gradient( to bottom, rgba( 255, 255, 255, 0 ), rgba( 255, 255, 255, 0.95 ) );
+	pointer-events: none;
+	transform: translateY( 60px );
+
+	/* Animation for sliding up/down */
+	transition-property: transform;
+	transition-duration: 0.6s;
+	transition-timing-function: ease-out;
+
+	/* When visible, slide up to natural position */
+	&.is-visible {
+		transform: translateY( 0 );
+		opacity: 1;
+		pointer-events: auto;
+	}
+
+	/* Add a delay for pointer-events when disappearing */
+	&:not( .is-visible ) {
+		transition-property: transform;
+		transition-duration: 0.6s;
+		transition-timing-function: ease-out;
+		pointer-events: none;
+	}
+}
+
+.odie-jump-to-recent-message-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+	background-color: #3858e9;
+	color: $studio-white;
+	border: none;
+	border-radius: 4px;
+	padding: 8px 16px;
+	font-size: 14px;
+	cursor: pointer;
+	box-shadow: 0 2px 4px rgba( 0, 0, 0, 0.1 );
+	transition:
+		transform 0.2s ease,
+		background-color 0.6s ease;
+
+	&:hover {
+		transform: translateY( -2px );
+		background-color: #2a48d9;
+	}
+
+	&:disabled {
+		pointer-events: none;
+	}
+
+	svg {
+		width: 16px;
+		height: 16px;
+	}
+}
