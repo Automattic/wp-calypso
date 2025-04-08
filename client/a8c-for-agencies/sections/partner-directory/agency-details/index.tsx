@@ -1,9 +1,9 @@
 import page from '@automattic/calypso-router';
 import { Button, SearchableDropdown } from '@automattic/components';
 import { TextareaControl, TextControl, ToggleControl } from '@wordpress/components';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { A4AFeedback } from 'calypso/a8c-for-agencies/components/a4a-feedback';
 import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
@@ -11,7 +11,10 @@ import validateEmail from 'calypso/a8c-for-agencies/components/form/hoc/with-err
 import validateNonEmpty from 'calypso/a8c-for-agencies/components/form/hoc/with-error-handling/validators/non-empty';
 import validateUrl from 'calypso/a8c-for-agencies/components/form/hoc/with-error-handling/validators/url';
 import FormSection from 'calypso/a8c-for-agencies/components/form/section';
-import { A4A_PARTNER_DIRECTORY_DASHBOARD_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
+	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
+	A4A_FEEDBACK_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import BudgetSelector from 'calypso/a8c-for-agencies/sections/partner-directory/components/budget-selector';
 import { AgencyDetails } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
 import { reduxDispatch } from 'calypso/lib/redux-bridge';
@@ -44,8 +47,7 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 
 	const agency = useSelector( getActiveAgency );
 
-	const { showFeedback, isFeedbackShown, feedbackProps } =
-		useShowFeedback( 'agency-details-added' );
+	const { isFeedbackShown } = useShowFeedback( 'agency-details-added' );
 
 	const onSubmitSuccess = useCallback(
 		( response: Agency ) => {
@@ -57,13 +59,13 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 					duration: 6000,
 				} )
 			);
-			! isFeedbackShown
-				? window.history.replaceState(
-						null,
-						'',
-						window.location.pathname + window.location.search + '#feedback'
-				  )
-				: page( A4A_PARTNER_DIRECTORY_DASHBOARD_LINK );
+			isFeedbackShown
+				? page( A4A_PARTNER_DIRECTORY_DASHBOARD_LINK )
+				: page(
+						addQueryArgs( A4A_FEEDBACK_LINK, {
+							type: 'agency-details-added',
+						} )
+				  );
 		},
 		[ agency, isFeedbackShown, translate ]
 	);
@@ -115,10 +117,6 @@ const AgencyDetailsForm = ( { initialFormData }: Props ) => {
 			};
 		} );
 	};
-
-	if ( showFeedback ) {
-		return <A4AFeedback { ...feedbackProps } />;
-	}
 
 	return (
 		<Form

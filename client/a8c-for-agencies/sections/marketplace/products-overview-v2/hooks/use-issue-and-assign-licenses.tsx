@@ -8,6 +8,7 @@ import {
 	A4A_LICENSES_LINK,
 	A4A_SITES_LINK,
 	A4A_SITES_LINK_NEEDS_SETUP,
+	A4A_FEEDBACK_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { AGENCY_FIRST_PURCHASE_SESSION_STORAGE_KEY } from 'calypso/a8c-for-agencies/constants';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
@@ -121,14 +122,12 @@ function useIssueAndAssignLicenses(
 
 	useEffect( () => {
 		if ( redirectWithFeedbackUrl ) {
-			window.history.replaceState(
-				null,
-				'',
-				addQueryArgs( window.location.href, {
+			page.redirect(
+				addQueryArgs( A4A_FEEDBACK_LINK, {
+					type: 'purchase-complete',
 					redirectUrl: redirectWithFeedbackUrl,
-				} ) + '#feedback'
+				} )
 			);
-			setRedirectWithFeedbackUrl( null );
 		}
 	}, [ redirectWithFeedbackUrl ] );
 
@@ -184,22 +183,18 @@ function useIssueAndAssignLicenses(
 				);
 				const hasPurchaseWPCOMPlan = !! wpcomPlan;
 
-				if ( ! hasPurchaseWPCOMPlan && isFeedbackShown ) {
+				if ( ! hasPurchaseWPCOMPlan ) {
 					const issuedMessage = getLicenseIssuedMessage( issuedLicenses );
 					dispatch( successNotice( issuedMessage, { displayOnNextPage: true } ) );
 				}
 
-				const redirectUrl = hasPurchaseWPCOMPlan
-					? addQueryArgs( A4A_SITES_LINK_NEEDS_SETUP, {
-							wpcom_creator_purchased: wpcomPlan.slug,
-					  } )
-					: A4A_LICENSES_LINK;
-
-				if ( isFeedbackShown ) {
-					page.redirect( redirectUrl );
-				} else {
-					setRedirectWithFeedbackUrl( redirectUrl );
-				}
+				page.redirect(
+					hasPurchaseWPCOMPlan
+						? addQueryArgs( A4A_SITES_LINK_NEEDS_SETUP, {
+								wpcom_creator_purchased: wpcomPlan.slug,
+						  } )
+						: A4A_LICENSES_LINK
+				);
 				return;
 			}
 

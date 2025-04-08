@@ -1,5 +1,4 @@
 import page from '@automattic/calypso-router';
-import { removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import useUrlQueryParam from 'calypso/a8c-for-agencies/hooks/use-url-query-param';
@@ -9,9 +8,9 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from '../../../../state/preferences/selectors';
+import { A4A_OVERVIEW_LINK, A4A_FEEDBACK_LINK } from '../../sidebar-menu/lib/constants';
 import { getA4AfeedbackProps } from '../lib/get-a4a-feedback-props';
 import useSaveFeedbackMutation from './use-save-feedback-mutation';
-import type { Props as A4AFeedbackProps } from '../index';
 import type {
 	FeedbackQueryData,
 	FeedbackType,
@@ -19,7 +18,6 @@ import type {
 	FeedbackSurveyResponsesPayload,
 } from '../types';
 
-const FEEDBACK_URL_HASH_FRAGMENT = '#feedback';
 const FEEDBACK_PREFERENCE = 'a4a-feedback';
 
 const redirectToDefaultUrl = ( redirectUrl?: string ) => {
@@ -27,7 +25,7 @@ const redirectToDefaultUrl = ( redirectUrl?: string ) => {
 		page.redirect( redirectUrl );
 		return;
 	}
-	page.redirect( removeQueryArgs( window.location.pathname + window.location.search, 'args' ) );
+	page.redirect( A4A_OVERVIEW_LINK );
 };
 
 const getUpdatedPreference = (
@@ -52,8 +50,8 @@ const useShowFeedback = ( type: FeedbackType ) => {
 
 	const { mutate: saveFeedback, isPending, data: apiResponseData } = useSaveFeedbackMutation();
 
-	// Let's use hash #feedback if we want to show the feedback
-	const feedbackFormHash = window.location.hash === FEEDBACK_URL_HASH_FRAGMENT;
+	// Check if the current page is the feedback page
+	const isFeedbackPage = window.location.pathname === A4A_FEEDBACK_LINK;
 
 	// Additional args, like email for invite flow
 	const { value: args } = useUrlQueryParam( 'args' );
@@ -121,7 +119,7 @@ const useShowFeedback = ( type: FeedbackType ) => {
 	}, [ dispatch, feedbackTimestamp, type ] );
 
 	// Combine props passed to Feedback component
-	const updatedFeedbackProps: A4AFeedbackProps = useMemo(
+	const updatedFeedbackProps = useMemo(
 		() => ( {
 			...feedbackProps,
 			onSubmit: onSubmitFeedback,
@@ -147,7 +145,7 @@ const useShowFeedback = ( type: FeedbackType ) => {
 			);
 		}
 
-		if ( feedbackFormHash && ! showFeedback && ! isPending ) {
+		if ( isFeedbackPage && ! showFeedback && ! isPending ) {
 			// If the feedback form hash is present but we don't want to show the feedback form, redirect to the default URL
 			// If feedback was interacted, redirect to the URL passed in the feedbackProps
 			redirectToDefaultUrl(
@@ -157,7 +155,7 @@ const useShowFeedback = ( type: FeedbackType ) => {
 	}, [
 		apiResponseData,
 		dispatch,
-		feedbackFormHash,
+		isFeedbackPage,
 		feedbackInteracted,
 		feedbackProps,
 		isPending,
@@ -168,7 +166,7 @@ const useShowFeedback = ( type: FeedbackType ) => {
 
 	return {
 		isFeedbackShown: ! showFeedback,
-		showFeedback: feedbackFormHash && showFeedback,
+		showFeedback: isFeedbackPage && showFeedback,
 		feedbackProps: updatedFeedbackProps,
 		isSubmitting: isPending,
 	};

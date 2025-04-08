@@ -1,5 +1,9 @@
 import { TAB_INVITED_MEMBERS } from 'calypso/a8c-for-agencies/sections/team/constants';
-import { A4A_TEAM_LINK, A4A_PARTNER_DIRECTORY_LINK } from '../../sidebar-menu/lib/constants';
+import {
+	A4A_TEAM_LINK,
+	A4A_PARTNER_DIRECTORY_LINK,
+	A4A_REFERRALS_DASHBOARD,
+} from '../../sidebar-menu/lib/constants';
 import type { FeedbackProps, FeedbackType } from '../types';
 
 export const getA4AfeedbackProps = (
@@ -12,9 +16,10 @@ export const getA4AfeedbackProps = (
 			return {
 				title: translate( 'Well done! You sent your first referral!' ),
 				description: translate(
-					'We emailed your referral order to %(email)s. Assign products to a site after they pay',
+					'We emailed your referral order to %(email)s. You can assign your products to a site or set up hosting once they pay.',
 					{ args: { email: args?.email } }
 				) as string,
+				redirectUrl: A4A_REFERRALS_DASHBOARD,
 				suggestion: {
 					label: translate( 'What could have been better during the Referrals process?' ),
 					options: [

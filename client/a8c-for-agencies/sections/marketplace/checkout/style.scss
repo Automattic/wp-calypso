@@ -17,7 +17,7 @@
 	height: 100%;
 }
 
-.checkout:not( .checkout--feedback ) .hosting-dashboard-layout__body {
+.checkout .hosting-dashboard-layout__body {
 	padding: 0;
 	flex-grow: 1;
 
