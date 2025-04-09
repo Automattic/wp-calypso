@@ -1,3 +1,12 @@
+/**
+ * This wireframe is loaded in the server-side rendering (SSR) context where styles
+ * are ignored. We need to import its styles into the main bundle manually to ensure
+ * the wireframe and its components display correctly during SSR.
+
+ * Whenever you update the wireframe, make sure to update this file to include
+ * the stylesheets from the used components.
+ */
+
 @import '../../components/StepContainerV2/style.scss';
 @import '../../components/TopBar/style.scss';
 @import '../../components/Heading/style.scss';
