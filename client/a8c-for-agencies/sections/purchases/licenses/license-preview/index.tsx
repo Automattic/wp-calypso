@@ -53,6 +53,7 @@ interface Props {
 	isChildLicense?: boolean;
 	meta?: LicenseMeta;
 	referral?: ReferralAPIResponse | null;
+	productId: number;
 }
 
 export default function LicensePreview( {
@@ -64,6 +65,7 @@ export default function LicensePreview( {
 	isChildLicense,
 	meta,
 	referral,
+	productId,
 }: Props ) {
 	const licenseKey = license.licenseKey;
 	const blogId = license.blogId;
@@ -384,6 +386,7 @@ export default function LicensePreview( {
 							product={ productName }
 							licenseKey={ licenseKey }
 							bundleSize={ quantity }
+							productId={ productId }
 						/>
 					) }
 					{ isWPCOMLicense && isSiteAtomic ? (
@@ -395,6 +398,9 @@ export default function LicensePreview( {
 							licenseType={ licenseType }
 							isChildLicense={ isChildLicense }
 							isClientLicense={ !! referral }
+							productName={ productName }
+							licenseKey={ licenseKey }
+							productId={ productId }
 						/>
 					) : (
 						/*

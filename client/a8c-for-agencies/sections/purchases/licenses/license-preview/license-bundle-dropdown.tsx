@@ -2,22 +2,27 @@ import { Gridicon, Button } from '@automattic/components';
 import { Icon, trash } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
+import CancelLicenseFeedbackModal from 'calypso/a8c-for-agencies/components/a4a-feedback/churn-mechanism/cancel-license-feedback-modal';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import { LicenseRole } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { useDispatch, useSelector } from 'calypso/state';
 import { hasAgencyCapability } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { A4AStore } from 'calypso/state/a8c-for-agencies/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import RevokeLicenseDialog from '../revoke-license-dialog';
 
 type Props = {
 	licenseKey: string;
 	product: string;
 	bundleSize: number;
+	productId: number;
 };
 
-export default function LicenseBundleDropDown( { licenseKey, product, bundleSize }: Props ) {
+export default function LicenseBundleDropDown( {
+	licenseKey,
+	product,
+	bundleSize,
+	productId,
+}: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -77,12 +82,11 @@ export default function LicenseBundleDropDown( { licenseKey, product, bundleSize
 			</PopoverMenu>
 
 			{ showRevokeDialog && (
-				<RevokeLicenseDialog
-					licenseRole={ LicenseRole.Parent }
-					licenseKey={ licenseKey }
-					product={ product }
-					siteUrl={ null }
+				<CancelLicenseFeedbackModal
 					onClose={ onHideRevokeDialog }
+					productName={ product }
+					licenseKey={ licenseKey }
+					productId={ productId }
 					bundleSize={ bundleSize }
 				/>
 			) }
