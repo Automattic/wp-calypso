@@ -122,50 +122,36 @@ describe( 'Site Migration Flow', () => {
 			it( 'redirects to PROCESSING', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_CREATION_STEP,
-					dependencies: {
-						siteCreated: true,
-					},
-				} );
-
-				expect( destination ).toMatchDestination( {
-					step: STEPS.PROCESSING,
-				} );
-			} );
-
-			it( 'redirects to PROCESSING keeping the skipMigration query param', () => {
-				const destination = runNavigation( {
-					from: STEPS.SITE_CREATION_STEP,
-					dependencies: {
-						siteCreated: true,
-					},
 					query: {
+						from: 'https://site-to-be-migrated.com',
+						platform: 'wordpress',
 						action: 'import',
-						from: 'https://site-to-be-migrated.com',
-						skipMigration: true,
 					},
 				} );
 
 				expect( destination ).toMatchDestination( {
 					step: STEPS.PROCESSING,
 					query: {
-						skipMigration: true,
 						from: 'https://site-to-be-migrated.com',
+						platform: 'wordpress',
+						action: 'import',
 					},
 				} );
 			} );
 		} );
 
 		describe( 'PROCESSING', () => {
-			it( 'redirects to SITE_MIGRATION_IMPORT_OR_MIGRATE when the site is created', () => {
+			it( 'redirects to SITE_MIGRATION_IMPORT_OR_MIGRATE when the platform is wordpress', () => {
 				const destination = runNavigation( {
 					from: STEPS.PROCESSING,
 					dependencies: {
 						siteCreated: true,
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
 					},
 					query: {
 						from: 'https://site-to-be-migrated.com',
-						siteId: 123,
-						siteSlug: 'example.wordpress.com',
+						platform: 'wordpress',
 					},
 				} );
 
@@ -179,16 +165,16 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			it( 'redirects to HOW_TO_MIGRATE step if there is a from parameter and the action is migrate', () => {
+			it( 'redirects to HOW_TO_MIGRATE step if the platform when the query param action=migrate', () => {
 				const destination = runNavigation( {
 					from: STEPS.PROCESSING,
 					dependencies: {
 						siteCreated: true,
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
 					},
 					query: {
 						from: 'https://site-to-be-migrated.com',
-						siteId: 123,
-						siteSlug: 'example.wordpress.com',
 						action: 'migrate',
 					},
 				} );
@@ -197,6 +183,8 @@ describe( 'Site Migration Flow', () => {
 					step: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
 					query: {
 						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+						from: 'https://site-to-be-migrated.com',
 					},
 				} );
 			} );
@@ -206,8 +194,6 @@ describe( 'Site Migration Flow', () => {
 					from: STEPS.PROCESSING,
 					dependencies: {
 						siteCreated: true,
-					},
-					query: {
 						siteId: 123,
 						siteSlug: 'example.wordpress.com',
 					},
@@ -224,15 +210,18 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 		} );
+
+		//TODO: Move it to the top be the first test group to follow the order of the flow
 		describe( 'SITE_MIGRATION_IDENTIFY', () => {
-			beforeEach( () => jest.clearAllMocks() );
+			beforeEach( () => {
+				jest.clearAllMocks();
+			} );
 
 			it( 'redirects to site CREATE_SITE step when there is no destination site (siteSlug/siteId)', async () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_IDENTIFY,
 					dependencies: {
 						from: 'https://example-to-be-migrated.com',
-						platform: 'wordpress',
 					},
 				} );
 
@@ -246,25 +235,26 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			it( 'redirects to CREATE_SITE step with skipMigration query param when the platform is not wordpress', async () => {
+			it( 'redirects to CREATE_SITE keeping the platform query param when it exists', async () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_IDENTIFY,
 					dependencies: {
-						platform: 'non-wordpress-site',
-						from: 'https://example-to-be-migrated.com',
+						platform: 'wordpress',
+					},
+					query: {
+						platform: 'wordpress',
 					},
 				} );
 
 				expect( destination ).toMatchDestination( {
 					step: STEPS.SITE_CREATION_STEP,
 					query: {
-						skipMigration: true,
-						from: 'https://example-to-be-migrated.com',
+						platform: 'wordpress',
 					},
 				} );
 			} );
 
-			it( 'redirects to SITE_PICKER when there is not destination site (siteSlug/siteId) and the user has other wpcom sites', async () => {
+			it( 'redirects to PICK_SITE when there is not destination site (siteSlug/siteId) and the user has other wpcom sites', async () => {
 				jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 2 );
 
 				const destination = runNavigation( {
@@ -276,27 +266,9 @@ describe( 'Site Migration Flow', () => {
 				} );
 
 				expect( destination ).toMatchDestination( {
-					step: STEPS.SITE_PICKER,
+					step: STEPS.PICK_SITE,
 					query: {
 						from: 'https://example-to-be-migrated.com',
-					},
-				} );
-			} );
-
-			it( 'redirects to SITE_PICKER with the skipMigration query param when the platform is not wordpress', async () => {
-				jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 2 );
-
-				const destination = runNavigation( {
-					from: STEPS.SITE_MIGRATION_IDENTIFY,
-					dependencies: {
-						platform: 'non-wordpress-site',
-					},
-				} );
-
-				expect( destination ).toMatchDestination( {
-					step: STEPS.SITE_PICKER,
-					query: {
-						skipMigration: true,
 					},
 				} );
 			} );
@@ -324,8 +296,8 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			it( 'redirects to IMPORT_LIST when there is a destination site (siteSlug/siteId) and platform is not wordpress', async () => {
-				const destination = runNavigation( {
+			it( 'redirects to site-setup>IMPORT_LIST when there is a destination site (siteSlug/siteId) and platform is not wordpress', async () => {
+				runNavigation( {
 					from: STEPS.SITE_MIGRATION_IDENTIFY,
 					dependencies: {
 						platform: 'non-wordpress-site',
@@ -337,8 +309,8 @@ describe( 'Site Migration Flow', () => {
 					},
 				} );
 
-				expect( destination ).toMatchDestination( {
-					step: STEPS.IMPORT_LIST,
+				expect( window.location.assign ).toMatchURL( {
+					path: '/setup/site-setup/importList',
 					query: {
 						siteId: 123,
 						siteSlug: 'example.wordpress.com',
@@ -347,11 +319,11 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			it( 'redirects to IMPORT_LIST when there is a destination site (siteSlug/siteId) and the platform identification is skipped', async () => {
+			it( 'redirects to IMPORT_OR_MIGRATE when there is a destination site (siteSlug/siteId) and platform wordpress', async () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_IDENTIFY,
 					dependencies: {
-						action: 'skip_platform_identification',
+						platform: 'wordpress',
 						from: 'https://example-to-be-migrated.com',
 					},
 					query: {
@@ -361,7 +333,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 
 				expect( destination ).toMatchDestination( {
-					step: STEPS.IMPORT_LIST,
+					step: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 					query: {
 						siteId: 123,
 						siteSlug: 'example.wordpress.com',
@@ -371,7 +343,9 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			describe( 'back', () => {
-				beforeEach( () => jest.clearAllMocks() );
+				beforeEach( () => {
+					jest.clearAllMocks();
+				} );
 
 				it( 'redirects back to SITE_MIGRATION_IDENTIFY step', () => {
 					runNavigationBack( {
@@ -458,9 +432,9 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			it( 'redirects to regular import page when coming from there (ref=calypso-importer)', () => {
+			it( 'redirects to regular import page when coming from there (entryPoint=calypso-importer)', () => {
 				jest.mocked( useFlowState ).mockReturnValue( {
-					get: jest.fn().mockReturnValue( { migration: { entryPoint: 'calypso-importer' } } ),
+					get: jest.fn().mockReturnValue( { entryPoint: 'calypso-importer' } ),
 					set: jest.fn(),
 					sessionId: '123',
 				} );
@@ -471,7 +445,6 @@ describe( 'Site Migration Flow', () => {
 						destination: 'import',
 					},
 					query: {
-						ref: 'calypso-importer',
 						siteSlug: 'site-to-be-migrated.com',
 					},
 				} );
@@ -486,7 +459,17 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			describe( 'back', () => {
+				beforeEach( () => {
+					jest.clearAllMocks();
+				} );
+
 				it( 'redirects back to the SITE_MIGRATION_IDENTIFY step', () => {
+					jest.mocked( useFlowState ).mockReturnValue( {
+						get: jest.fn().mockReturnValueOnce( {} ),
+						set: jest.fn(),
+						sessionId: '123',
+					} );
+
 					const destination = runNavigationBack( {
 						from: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 						dependencies: {},
@@ -497,6 +480,7 @@ describe( 'Site Migration Flow', () => {
 						step: STEPS.SITE_MIGRATION_IDENTIFY,
 					} );
 				} );
+
 				it( 'redirects back to import flow when the ref is calypso-importer', () => {
 					jest.mocked( useFlowState ).mockReturnValue( {
 						get: jest.fn().mockReturnValue( { entryPoint: 'calypso-importer' } ),
@@ -529,6 +513,9 @@ describe( 'Site Migration Flow', () => {
 							ID: 123,
 							slug: 'example.wordpress.com',
 						},
+					},
+					query: {
+						platform: 'wordpress',
 					},
 				} );
 
@@ -693,18 +680,19 @@ describe( 'Site Migration Flow', () => {
 					},
 					query: {
 						siteSlug: 'example.wordpress.com',
+						siteId: 123,
 						from: 'https://site-to-be-migrated.com',
 					},
 				} );
 
 				expect( goToCheckout ).toHaveBeenCalledWith( {
-					destination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_INSTRUCTIONS.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com`,
+					destination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_INSTRUCTIONS.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com&siteId=123`,
 					extraQueryParams: { hosting_intent: HOSTING_INTENT_MIGRATE },
 					flowName: 'site-migration',
 					from: 'https://site-to-be-migrated.com',
 					siteSlug: 'example.wordpress.com',
 					stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
-					cancelDestination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com`,
+					cancelDestination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }?siteSlug=example.wordpress.com&siteId=123&from=https%3A%2F%2Fsite-to-be-migrated.com`,
 					plan: PLAN_MIGRATION_TRIAL_MONTHLY,
 				} );
 			} );
@@ -768,16 +756,20 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'SITE_MIGRATION_CREDENTIALS', () => {
+			beforeEach( () => {
+				jest.clearAllMocks();
+			} );
+
 			it( 'redirects to site overview when the user skips', () => {
 				runNavigation( {
 					from: STEPS.SITE_MIGRATION_CREDENTIALS,
 					dependencies: {
 						action: 'skip',
+						from: 'https://site-to-be-migrated.com',
 					},
 					query: {
 						siteSlug: 'example.wordpress.com',
 						siteId: 123,
-						from: 'https://site-to-be-migrated.com',
 					},
 				} );
 
@@ -796,7 +788,6 @@ describe( 'Site Migration Flow', () => {
 					query: {
 						siteSlug: 'example.wordpress.com',
 						siteId: 123,
-						from: 'https://site-to-be-migrated.com',
 					},
 				} );
 
@@ -813,11 +804,11 @@ describe( 'Site Migration Flow', () => {
 					from: STEPS.SITE_MIGRATION_CREDENTIALS,
 					dependencies: {
 						action: 'already-wpcom',
+						from: 'https://site-to-be-migrated.com',
 					},
 					query: {
 						siteSlug: 'example.wordpress.com',
 						siteId: 123,
-						from: 'https://site-to-be-migrated.com',
 					},
 				} );
 
@@ -859,11 +850,11 @@ describe( 'Site Migration Flow', () => {
 					from: STEPS.SITE_MIGRATION_CREDENTIALS,
 					dependencies: {
 						action: 'application-passwords-approval',
+						from: 'https://site-to-be-migrated.com',
 					},
 					query: {
 						siteSlug: 'example.wordpress.com',
 						siteId: 123,
-						from: 'https://site-to-be-migrated.com',
 					},
 				} );
 
@@ -882,11 +873,11 @@ describe( 'Site Migration Flow', () => {
 					from: STEPS.SITE_MIGRATION_CREDENTIALS,
 					dependencies: {
 						action: 'credentials-required',
+						from: 'https://site-to-be-migrated.com',
 					},
 					query: {
 						siteSlug: 'example.wordpress.com',
 						siteId: 123,
-						from: 'https://site-to-be-migrated.com',
 					},
 				} );
 
