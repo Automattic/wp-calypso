@@ -95,14 +95,26 @@ export interface MediaStorageObject {
 export interface MonitorUptimeAPIResponse {
 	[ key: string ]: { status: string; downtime_in_minutes?: number };
 }
+
+interface EngagementStatsDataPoint {
+	visitors: number;
+	views: number;
+	likes: number;
+	comments: number;
+}
+export interface EngagementStats {
+	currentData: EngagementStatsDataPoint;
+	previousData: EngagementStatsDataPoint;
+}
+
 export interface FetchSiteRouteResponse {
 	site: Site;
 	mediaStorage: MediaStorageObject;
-	siteMonitorUptime: MonitorUptimeAPIResponse;
-	phpVersion: string;
+	siteMonitorUptime?: MonitorUptimeAPIResponse;
+	phpVersion?: string;
 	currentPlan: Plan;
-	primaryDomain: Domain;
-	engagementStats?: any;
+	primaryDomain?: Domain;
+	engagementStats: EngagementStats;
 }
 
 export interface WPCOMRESTAPISite {

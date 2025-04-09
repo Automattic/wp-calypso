@@ -29,3 +29,12 @@
 	// TODO: check how to avoid `important`.
 	width: 100% !important;
 }
+
+// TODO: this will change based on the Badge component that will be used.
+.site-overview-card__badge {
+	.highlight-card-difference {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+	}
+}

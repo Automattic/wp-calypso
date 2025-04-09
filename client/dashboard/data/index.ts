@@ -8,6 +8,7 @@ import type {
 	Plan,
 	Site,
 	User,
+	TwoStep,
 	WPCOMRESTAPISite,
 } from './types';
 
@@ -180,19 +181,27 @@ export const fetchSiteEngagementStats = async ( id: string ) => {
 		return Promise.reject( new Error( 'Site ID is undefined' ) );
 	}
 
-	// Get visitor data for 7, 30, and 90 days
-	const response = await wpcom.req.get( {
-		path: `/sites/${ id }/stats/visits`,
-		query: {
-			unit: 'day',
-			quantity: 90,
-			stat_fields: 'views,visitors',
-		},
+	const response = await wpcom.req.get(
+		{ path: `/sites/${ id }/stats/visits` },
+		{
+			unit: 'week',
+			quantity: 2,
+			stat_fields: 'visitors,views,likes,comments',
+		}
+	);
+	// We need to normalize the returned data. We ask for 2 weeks of data (quantity:2)
+	// and we get a response with an array of data like: `[ '2025W03W31', 1, 3, 0, 0 ]`.
+	// Each number in the response is referring to the order of the field provided in `stat_fields`.
+	// The last array element is the most recent data, so we can use the first element to
+	// compare the data and provide a percentage of the change.
+	const normalizeData = ( [ , visitors, views, likes, comments ]: ( string | number )[] ) => ( {
+		visitors,
+		views,
+		likes,
+		comments,
 	} );
-
-	// Calculate total visitors for each period
-	const data = response.data;
-	return data;
+	const [ previousData, currentData ] = response.data.map( normalizeData );
+	return { previousData, currentData };
 };
 
 export const fetchDomains = (): Promise< Domain[] > => {

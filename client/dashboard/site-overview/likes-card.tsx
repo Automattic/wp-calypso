@@ -1,26 +1,26 @@
 import { TrendComparison } from '@automattic/components/src/highlight-cards/count-comparison-card';
 import { useLoaderData } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import { people } from '@wordpress/icons';
+import { starEmpty } from '@wordpress/icons';
 import OverviewCard from './overview-card';
 import type { FetchSiteRouteResponse } from '../data/types';
 
-export default function VisitorsCard() {
+export default function LikesCard() {
 	const {
 		engagementStats: { currentData, previousData },
 	} = useLoaderData( {
 		from: '/sites/$siteId',
-	} ) as FetchSiteRouteResponse; // const intent = currentData.visitors - previousData.visitors < 0 ? 'error' : 'success';
+	} ) as FetchSiteRouteResponse;
 	return (
 		<OverviewCard
-			title={ __( 'Visitors' ) }
-			icon={ people }
-			heading={ `${ currentData.visitors }` }
+			title={ __( 'Likes' ) }
+			icon={ starEmpty }
+			heading={ `${ currentData.likes }` }
 			metaText={ __( 'Past 7 days' ) }
 			isLink
 		>
 			<div className="site-overview-card__badge">
-				<TrendComparison count={ currentData.visitors } previousCount={ previousData.visitors } />
+				<TrendComparison count={ currentData.likes } previousCount={ previousData.likes } />
 			</div>
 		</OverviewCard>
 	);

@@ -1,4 +1,3 @@
-import { Badge } from '@automattic/components';
 import {
 	Card,
 	__experimentalVStack as VStack,
@@ -15,7 +14,6 @@ interface OverviewCardProps {
 	heading?: string;
 	customHeading?: ReactNode;
 	icon?: ReactNode;
-	badge?: string;
 	metaText?: string;
 	isLink?: boolean;
 	children?: ReactNode;
@@ -26,7 +24,6 @@ export default function OverviewCard( {
 	heading,
 	customHeading,
 	icon,
-	badge,
 	metaText,
 	isLink,
 	children,
@@ -64,7 +61,6 @@ export default function OverviewCard( {
 					) }
 				</HStack>
 				{ children }
-				{ badge && <Badge>{ badge }</Badge> }
 			</VStack>
 		</Card>
 	);

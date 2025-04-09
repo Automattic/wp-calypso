@@ -4,14 +4,8 @@ import UnknownError from '../500';
 import Billing from '../billing';
 import {
 	fetchProfile,
-	fetchSite,
-	fetchSiteMediaStorage,
-	fetchSiteMonitorUptime,
-	fetchPHPVersion,
-	fetchCurrentPlan,
 	fetchSites,
 	fetchDomains,
-	fetchSitePrimaryDomain,
 	fetchEmails,
 	fetchSiteWithRouteData,
 } from '../data';

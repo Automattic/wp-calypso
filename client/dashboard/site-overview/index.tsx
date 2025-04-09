@@ -8,13 +8,16 @@ import {
 	Card,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { seen, comment, starEmpty, envelope, people, wordpress } from '@wordpress/icons';
+import { comment, envelope, wordpress } from '@wordpress/icons';
 import PageLayout from '../page-layout';
+import CommentsCard from './comments-card';
+import LikesCard from './likes-card';
 import OverviewCard from './overview-card';
 import OverviewSection from './overview-section';
 import Sidebar from './sidebar';
 import StorageCard from './storage-card';
 import UptimeCard from './uptime-card';
+import ViewsCard from './views-card';
 import VisitorsCard from './visitors-card';
 import type { FetchSiteRouteResponse } from '../data/types';
 import './style.scss';
@@ -53,9 +56,9 @@ function SiteOverview() {
 					</Card>
 					<OverviewSection title={ __( 'Engagement' ) } actions={ [] }>
 						<VisitorsCard />
-						<OverviewCard title={ __( 'Views' ) } icon={ seen } isLink></OverviewCard>
-						<OverviewCard title={ __( 'Likes' ) } icon={ starEmpty } isLink></OverviewCard>
-						<OverviewCard title={ __( 'Comments' ) } icon={ comment } isLink></OverviewCard>
+						<ViewsCard />
+						<LikesCard />
+						<CommentsCard />
 						<OverviewCard title={ __( 'Subscribers' ) } icon={ envelope } isLink></OverviewCard>
 					</OverviewSection>
 					<OverviewSection title={ __( 'Site health' ) } actions={ [] }>
