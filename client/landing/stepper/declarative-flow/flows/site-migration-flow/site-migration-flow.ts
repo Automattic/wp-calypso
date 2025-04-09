@@ -255,6 +255,7 @@ const siteMigration: FlowV2 = {
 					if ( providedDependencies?.siteCreated ) {
 						if (
 							platformQueryParam &&
+							platformQueryParam !== 'wordpress' &&
 							isPlatformImportable( platformQueryParam as ImporterPlatform ) &&
 							fromQueryParam
 						) {
