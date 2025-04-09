@@ -449,7 +449,6 @@ const UnifiedDesignPickerStep: StepType< {
 	if ( isUsingStepContainerV2 ) {
 		return (
 			<Step.WideLayout
-				maxWidth="huge"
 				className="step-container-v2--design-picker"
 				topBar={
 					<Step.TopBar

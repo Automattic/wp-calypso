@@ -3,11 +3,11 @@ import type { ReactNode } from 'react';
 
 import './style.scss';
 
-type MaxWidth = 'wide' | 'huge' | 'xhuge';
+type MaxWidth = 'default' | 'large';
 
 export const ContentWrapper = ( {
 	children,
-	maxWidth = 'wide',
+	maxWidth = 'default',
 	centerAligned,
 	hasPadding = true,
 }: {
@@ -18,10 +18,14 @@ export const ContentWrapper = ( {
 } ) => {
 	return (
 		<div
-			className={ clsx( 'step-container-v2__content-wrapper', maxWidth, {
-				'center-aligned': centerAligned,
-				padding: hasPadding,
-			} ) }
+			className={ clsx(
+				'step-container-v2__content-wrapper',
+				`step-container-v2__content-wrapper--max-width-${ maxWidth }`,
+				{
+					'center-aligned': centerAligned,
+					padding: hasPadding,
+				}
+			) }
 		>
 			{ children }
 		</div>

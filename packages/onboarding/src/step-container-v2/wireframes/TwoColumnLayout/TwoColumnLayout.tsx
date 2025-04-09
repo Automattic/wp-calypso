@@ -62,7 +62,7 @@ export const TwoColumnLayout = ( {
 						<ContentWrapper>
 							{ heading && <ContentRow columns={ 6 }>{ heading }</ContentRow> }
 							<ContentRow
-								columns={ 10 }
+								columns={ 12 }
 								className={ clsx( 'step-container-v2__content-row--two-column-layout', className ) }
 							>
 								{ childElements }
