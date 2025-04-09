@@ -13,6 +13,7 @@ import LicensesOverviewContext from 'calypso/a8c-for-agencies/sections/purchases
 import useRevokeLicenseMutation from 'calypso/a8c-for-agencies/sections/purchases/licenses/revoke-license-dialog/hooks/use-revoke-license-mutation';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextarea from 'calypso/components/forms/form-textarea';
+import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -43,6 +44,8 @@ const CancelLicenseFeedbackModal = ( {
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const siteSlug = siteUrl ? urlToSlug( siteUrl ) : null;
 
 	const refreshLicenceList = useRefetchLicenses( LicensesOverviewContext );
 
@@ -141,7 +144,7 @@ const CancelLicenseFeedbackModal = ( {
 		setSelectedCTA( cta );
 		if ( cta === 'cancel' ) {
 			if ( isAtomicSite ) {
-				window.open( `https://wordpress.com/purchases/subscriptions/${ siteUrl }`, '_blank' );
+				window.open( `https://wordpress.com/purchases/subscriptions/${ siteSlug }`, '_blank' );
 			} else {
 				revokeLicense( {
 					licenseKey,
@@ -240,7 +243,7 @@ const CancelLicenseFeedbackModal = ( {
 								{ translate( 'Site:' ) }
 							</div>
 							<div className="a4a-feedback__license-details-item-label">
-								{ isPressableLicense ? translate( 'Multiple sites use this license' ) : siteUrl }
+								{ isPressableLicense ? translate( 'Multiple sites use this license' ) : siteSlug }
 							</div>
 						</div>
 					) }
