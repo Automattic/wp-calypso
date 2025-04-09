@@ -114,7 +114,7 @@ const CancelLicenseFeedbackModal = ( {
 				survey_responses: {
 					comment: { text: comments },
 					suggestions: {
-						text: suggestions?.map( ( suggestion ) => suggestion.value ).join( ', ' ) || '',
+						text: suggestions?.map( ( suggestion ) => suggestion.value ).join( ', ' ) ?? '',
 					},
 					cta,
 				},
@@ -284,9 +284,9 @@ const CancelLicenseFeedbackModal = ( {
 								<CheckboxControl
 									key={ `suggestion-${ option.value }` }
 									label={ option.label }
-									checked={
-										!! suggestions.find( ( suggestion ) => suggestion.value === option.value )
-									}
+									checked={ suggestions.some(
+										( suggestion ) => suggestion.value === option.value
+									) }
 									onChange={ () => onSuggestionChange( option ) }
 									disabled={ isLoading }
 								/>

@@ -12,14 +12,14 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 type Props = {
 	licenseKey: string;
-	product: string;
+	productName: string;
 	bundleSize: number;
 	productId: number;
 };
 
 export default function LicenseBundleDropDown( {
 	licenseKey,
-	product,
+	productName,
 	bundleSize,
 	productId,
 }: Props ) {
@@ -84,7 +84,7 @@ export default function LicenseBundleDropDown( {
 			{ showRevokeDialog && (
 				<CancelLicenseFeedbackModal
 					onClose={ onHideRevokeDialog }
-					productName={ product }
+					productName={ productName }
 					licenseKey={ licenseKey }
 					productId={ productId }
 					bundleSize={ bundleSize }

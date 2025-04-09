@@ -383,7 +383,7 @@ export default function LicensePreview( {
 				<div>
 					{ !! isParentLicense && ! revokedAt && (
 						<LicenseBundleDropDown
-							product={ productName }
+							productName={ productName }
 							licenseKey={ licenseKey }
 							bundleSize={ quantity }
 							productId={ productId }

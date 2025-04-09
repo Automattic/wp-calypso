@@ -8,6 +8,7 @@
 	flex-direction: column;
 	gap: 24px;
 	flex: 1 1 auto;
+	overflow-y: auto;
 
 	.form-fieldset {
 		margin-block-end: 0;
