@@ -15,9 +15,6 @@ const CheckoutMoneyBackGuaranteeWrapper = styled.div`
 		font-size: 14px;
 		margin-bottom: 0;
 		padding: 0;
-		svg {
-			display: none;
-		}
 	}
 
 	.rtl & {

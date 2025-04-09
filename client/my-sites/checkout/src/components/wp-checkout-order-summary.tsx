@@ -413,7 +413,7 @@ export function CheckoutSummaryRefundWindows( {
 		<>
 			{ includeRefundIcon && <StyledIcon icon={ reusableBlock } size={ 24 } /> }
 			<CheckoutSummaryFeaturesListItem>
-				<WPCheckoutCheckIcon />
+				{ ! includeRefundIcon && <WPCheckoutCheckIcon /> }
 				{ highlight ? <strong>{ text }</strong> : text }
 			</CheckoutSummaryFeaturesListItem>
 		</>
