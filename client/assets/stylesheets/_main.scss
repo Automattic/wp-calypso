@@ -47,6 +47,11 @@ body,
 
 body {
 	background: var(--color-surface-backdrop);
+
+	&:has(.step-container-v2) {
+		background: #fdfdfd;
+	}
+
 	color: var(--color-text);
 	font-size: $font-body;
 	line-height: 1.5;
@@ -256,10 +261,6 @@ th {
 }
 
 /* Links */
-a {
-	text-decoration: none;
-}
-
 a,
 a:visited {
 	color: var(--color-link);

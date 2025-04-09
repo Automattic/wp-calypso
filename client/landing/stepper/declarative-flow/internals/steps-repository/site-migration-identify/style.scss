@@ -172,7 +172,7 @@
 	}
 }
 
-.step-container-v2 {
+.step-container-v2:has(.step-container-v2--site-migration-identify) {
 	.import__capture-container {
 		max-width: 100%;
 		margin: unset;

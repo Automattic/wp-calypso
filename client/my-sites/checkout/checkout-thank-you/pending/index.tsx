@@ -2,17 +2,20 @@ import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { AUTO_RENEWAL } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
 import Loading from 'calypso/components/loading';
 import Main from 'calypso/components/main';
+import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/src/lib/pending-page';
 import { sendMessageToOpener } from 'calypso/my-sites/checkout/src/lib/popup';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useSelector, useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { SUCCESS } from 'calypso/state/order-transactions/constants';
@@ -65,8 +68,8 @@ interface CheckoutPendingProps {
  * when there is no `receiptId`, we cannot know what to do and the user will be
  * redirected to a generic thank-you page.
  *
- * The `redirectTo` prop comes from the query string parameter of the same
- * name. It may include a literal `/pending` as part of the URL; if that's the
+ * The `redirectTo` prop comes from the `redirect_to` query string parameter.
+ * It may include a literal `/pending` as part of the URL; if that's the
  * case, that string will be replaced by the receipt ID when the transaction
  * completes.
  *
@@ -91,8 +94,16 @@ function CheckoutPending( {
 		fromSiteSlug,
 	} );
 
-	return (
+	const content = shouldUseStepContainerV2( getSignupCompleteFlowName() ) ? (
+		<Step.Loading title={ headingText } />
+	) : (
 		<Main className="checkout-thank-you__pending">
+			<Loading className="checkout__pending-content" title={ headingText } />
+		</Main>
+	);
+
+	return (
+		<>
 			<PageViewTracker
 				path={
 					siteSlug
@@ -102,8 +113,8 @@ function CheckoutPending( {
 				title="Checkout Pending"
 				properties={ { order_id: orderId, ...( siteSlug && { site: siteSlug } ) } }
 			/>
-			<Loading className="checkout__pending-content" title={ headingText } />
-		</Main>
+			{ content }
+		</>
 	);
 }
 

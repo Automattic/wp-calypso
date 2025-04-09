@@ -1,0 +1,17 @@
+.storage-indicator {
+	&__bar {
+		display: flex;
+
+		> div {
+			height: 1.5px;
+		}
+
+		&-existing {
+			background-color: #3858E9;
+		}
+
+		&-add-on {
+			background-color: var(--studio-green-50);
+		}
+	}
+}

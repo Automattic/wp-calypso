@@ -513,14 +513,22 @@ export default function CheckoutMainContent( {
 	} = checkoutActions;
 
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
+		const headingText = translate( "Almost there – we're currently finalizing your order." );
+
+		if ( isStepContainerV2 ) {
+			return (
+				<>
+					<PerformanceTrackerStop />
+					<Step.Loading title={ headingText } />
+				</>
+			);
+		}
+
 		return (
 			<WPCheckoutCompletedWrapper>
 				<WPCheckoutCompletedMainContent>
 					<PerformanceTrackerStop />
-					<Loading
-						className="checkout__pending-content"
-						title={ translate( "Almost there – we're currently finalizing your order." ) }
-					/>
+					<Loading className="checkout__pending-content" title={ headingText } />
 				</WPCheckoutCompletedMainContent>
 			</WPCheckoutCompletedWrapper>
 		);
@@ -830,7 +838,8 @@ export default function CheckoutMainContent( {
 
 	return (
 		<StepContainerV2CheckoutFixer isLargeViewport={ isLargeViewport }>
-			<Step.FullWidthLayout
+			<Step.WideLayout
+				maxWidth="xhuge"
 				hasContentPadding={ false }
 				topBar={
 					<Step.TopBar
@@ -847,15 +856,17 @@ export default function CheckoutMainContent( {
 				}
 			>
 				{ content }
-			</Step.FullWidthLayout>
+			</Step.WideLayout>
 			<LeaveCheckoutModal { ...leaveModalProps } />
 		</StepContainerV2CheckoutFixer>
 	);
 }
 
 const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
-	.checkout-wrapper {
-		margin-top: calc( var( --step-container-v2-top-bar-height ) * -1 );
+	// This shouldn't exist. It's a hack to make the top bar appear on top of the checkout sidebar, which extends from the top of the page.
+	.step-container-v2__top-bar {
+		position: relative;
+		z-index: 1;
 	}
 
 	.checkout-skip-button {
@@ -868,16 +879,16 @@ const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
 		}
 	}
 
-	.step-container-v2__top-bar {
-		position: relative;
-		z-index: 1;
+	.checkout-sidebar-plan-upsell {
+		margin-inline: 0;
+		max-width: 100%;
 	}
 
 	${ ( props ) =>
 		! props.isLargeViewport &&
 		css`
 			.checkout-sidebar-content {
-				margin-top: var( --step-container-v2-top-bar-height );
+				margin-top: 0;
 			}
 
 			.checkout__summary-button {
@@ -943,8 +954,36 @@ const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
 	${ ( props ) =>
 		props.isLargeViewport &&
 		css`
-			.checkout__summary-area {
-				transform: translateY( -54px );
+			.checkout-main-content {
+				padding-left: var( --step-container-v2-content-inline-padding );
+				margin-top: 3rem;
+			}
+
+			.checkout-sidebar-content {
+				--left-padding: 3.875rem;
+				padding: 2.25rem var( --step-container-v2-content-inline-padding ) 0 var( --left-padding );
+				background: none;
+				position: relative;
+				height: 100%;
+
+				&:before {
+					content: '';
+					display: block;
+					background: var( --color-neutral-0 );
+					position: fixed;
+					top: calc( var( --step-container-v2-top-bar-height ) * -1 );
+					transform: translateX( calc( var( --left-padding ) * -1 ) );
+					width: 100vw;
+					bottom: 0;
+				}
+			}
+
+			.checkout-summary-area {
+				max-width: 100%;
+			}
+
+			.checkout__summary-body {
+				margin: 0;
 			}
 		` }
 `;

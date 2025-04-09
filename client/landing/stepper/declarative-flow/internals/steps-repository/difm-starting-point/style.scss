@@ -2,9 +2,11 @@
 @import "@wordpress/base-styles/mixins";
 
 .difm-starting-point {
+	.help-center-step-button {
+		font-weight: 500;
+	}
 	.help-center-step-button__button {
 		font-size: 0.875rem;
-		font-weight: 500;
 	}
 }
 
@@ -29,7 +31,6 @@
 		&__button {
 			--wp-components-color-accent: var(--color-neutral-100);
 			font-size: inherit;
-			font-weight: inherit;
 			line-height: inherit;
 		}
 	}

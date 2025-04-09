@@ -66,7 +66,6 @@ const enhanceContextWithLogin = ( context ) => {
 		? { client_id, user_email, user_name, id_token, state }
 		: null;
 	const isJetpackLogin = isJetpack === 'jetpack';
-	const isP2Login = query && query.from === 'p2';
 	const clientId = query?.client_id;
 	const oauth2ClientId = query?.oauth2_client_id;
 	const oauth2Client =
@@ -75,10 +74,7 @@ const enhanceContextWithLogin = ( context ) => {
 	const isPartnerPortalClient = isPartnerPortalOAuth2Client( oauth2Client );
 
 	const isWhiteLogin =
-		( ! isJetpackLogin &&
-			! isP2Login &&
-			Boolean( clientId ) === false &&
-			Boolean( oauth2ClientId ) === false ) ||
+		( ! isJetpackLogin && Boolean( clientId ) === false && Boolean( oauth2ClientId ) === false ) ||
 		isGravPoweredClient ||
 		isPartnerPortalClient;
 
@@ -87,7 +83,6 @@ const enhanceContextWithLogin = ( context ) => {
 			action={ action }
 			isJetpack={ isJetpackLogin }
 			isWhiteLogin={ isWhiteLogin }
-			isP2Login={ isP2Login }
 			isGravPoweredClient={ isGravPoweredClient }
 			path={ path }
 			twoFactorAuthType={ twoFactorAuthType }

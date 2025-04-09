@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
@@ -128,29 +127,6 @@ export class Login extends Component {
 		this.setState( { usernameOrEmail } );
 	}
 
-	renderP2Logo() {
-		return (
-			<div className="wp-login__p2-logo">
-				<img src="/calypso/images/p2/logo.png" width="67" height="32" alt="P2 logo" />
-			</div>
-		);
-	}
-
-	renderP2PoweredBy() {
-		return (
-			<div className="wp-login__p2-powered-by">
-				<img
-					src="/calypso/images/p2/w-logo.png"
-					className="wp-login__p2-powered-by-logo"
-					alt="WP.com logo"
-				/>
-				<span className="wp-login__p2-powered-by-text">
-					{ this.props.translate( 'Powered by WordPress.com' ) }
-				</span>
-			</div>
-		);
-	}
-
 	renderI18nSuggestions() {
 		const { locale, path, isLoginView } = this.props;
 
@@ -162,10 +138,10 @@ export class Login extends Component {
 	}
 
 	renderFooter() {
-		const { isJetpack, isWhiteLogin, isP2Login, translate } = this.props;
+		const { isJetpack, isWhiteLogin, translate } = this.props;
 		const isOauthLogin = !! this.props.oauth2Client;
 
-		if ( isJetpack || isWhiteLogin || isP2Login ) {
+		if ( isJetpack || isWhiteLogin ) {
 			return null;
 		}
 
@@ -380,7 +356,6 @@ export class Login extends Component {
 		// Taken from client/layout/masterbar/logged-out.jsx
 		const {
 			currentRoute,
-			isP2Login,
 			locale,
 			oauth2Client,
 			pathname,
@@ -398,13 +373,6 @@ export class Login extends Component {
 			'/log-in/authenticator' !== currentRoute
 		) {
 			return null;
-		}
-
-		if ( isP2Login && currentQuery?.redirect_to ) {
-			const urlParts = getUrlParts( currentQuery.redirect_to );
-			if ( urlParts.pathname.startsWith( '/accept-invite/' ) ) {
-				return null;
-			}
 		}
 
 		// use '?signup_url' if explicitly passed as URL query param
@@ -441,7 +409,6 @@ export class Login extends Component {
 		const {
 			isJetpack,
 			isWhiteLogin,
-			isP2Login,
 			isGravPoweredClient,
 			privateSite,
 			socialConnect,
@@ -499,7 +466,6 @@ export class Login extends Component {
 						privateSite={ privateSite }
 						twoFactorAuthType={ twoFactorAuthType }
 						isWhiteLogin={ isWhiteLogin }
-						isP2Login={ isP2Login }
 						isGravPoweredClient={ isGravPoweredClient }
 						signupUrl={ signupUrl }
 						usernameOrEmail={ this.state.usernameOrEmail }
@@ -521,7 +487,6 @@ export class Login extends Component {
 			isLoggedIn,
 			isJetpack,
 			isWhiteLogin,
-			isP2Login,
 			isGravPoweredClient,
 			oauth2Client,
 			privateSite,
@@ -558,7 +523,6 @@ export class Login extends Component {
 				clientId={ clientId }
 				isJetpack={ isJetpack }
 				isWhiteLogin={ isWhiteLogin }
-				isP2Login={ isP2Login }
 				isGravPoweredClient={ isGravPoweredClient }
 				isGravPoweredLoginPage={ isGravPoweredLoginPage }
 				oauth2Client={ oauth2Client }
@@ -596,7 +560,6 @@ export class Login extends Component {
 
 		return (
 			<div>
-				{ this.props.isP2Login && this.renderP2Logo() }
 				<Main
 					className={ clsx( 'wp-login__main', {
 						'is-wpcom-migration': isFromMigrationPlugin,
@@ -624,7 +587,6 @@ export class Login extends Component {
 				</Main>
 
 				{ this.renderFooter() }
-				{ this.props.isP2Login && this.renderP2PoweredBy() }
 			</div>
 		);
 	}

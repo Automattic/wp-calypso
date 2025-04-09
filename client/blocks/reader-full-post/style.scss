@@ -526,6 +526,10 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 
 .reader-full-post__header {
 	margin-bottom: 23px;
+
+	a {
+		text-decoration: none;
+	}
 }
 
 .reader-full-post__featured-image {

@@ -1277,9 +1277,9 @@ class MagicLogin extends Component {
 			showCheckYourEmail: showEmailLinkVerification,
 			isWooJPC,
 			isSendingEmail,
+			isFromJetpackOnboarding,
 		} = this.props;
 		const { showSecondaryEmailOptions, showEmailCodeVerification, usernameOrEmail } = this.state;
-
 		if ( isWooJPC ) {
 			return (
 				<Main className="magic-login magic-login__request-link is-white-login">
@@ -1348,7 +1348,9 @@ class MagicLogin extends Component {
 		const isJetpackMagicLinkSignUpEnabled =
 			config.isEnabled( 'jetpack/magic-link-signup' ) && this.props.isJetpackLogin;
 		const shouldShowLoadingEllipsis =
-			isJetpackMagicLinkSignUpEnabled && ( isSendingEmail || ! this.state.isFormReady );
+			isFromJetpackOnboarding &&
+			isJetpackMagicLinkSignUpEnabled &&
+			( isSendingEmail || ! this.state.isFormReady );
 
 		// If this is part of the Jetpack login flow and the `jetpack/magic-link-signup` feature
 		// flag is enabled, some steps will display a different UI
@@ -1358,6 +1360,7 @@ class MagicLogin extends Component {
 			createAccountForNewUser: true,
 			shouldShowLoadingEllipsis,
 			onReady: this.handleFormReady,
+			isFromJetpackOnboarding,
 		};
 
 		return (
@@ -1405,6 +1408,9 @@ const mapState = ( state ) => ( {
 	isFromAutomatticForAgenciesPlugin:
 		'automattic-for-agencies-client' ===
 		new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
+	isFromJetpackOnboarding:
+		new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ) ===
+		'jetpack-onboarding',
 	isWooJPC: isWooJPCFlow( state ),
 } );
 

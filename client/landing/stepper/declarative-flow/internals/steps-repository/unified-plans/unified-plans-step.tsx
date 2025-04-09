@@ -354,7 +354,7 @@ function UnifiedPlansStep( {
 			return headerText;
 		}
 
-		return translate( 'Choose your flavor of WordPress' );
+		return translate( 'There’s a plan for you' );
 	};
 
 	const getSubheaderText = () => {
@@ -495,6 +495,7 @@ function UnifiedPlansStep( {
 			<>
 				<MarketingMessage path="signup/plans" />
 				<Step.WideLayout
+					maxWidth="xhuge"
 					className="step-container-v2--plans"
 					topBar={
 						<Step.TopBar

@@ -158,6 +158,10 @@ $font-size: rem(14px);
 		min-height: calc(100vh - var(--masterbar-height));
 		box-sizing: border-box;
 
+		a {
+			text-decoration: none;
+		}
+
 		.sidebar__separator {
 			margin: 0 0 11px;
 		}
@@ -1042,7 +1046,7 @@ $font-size: rem(14px);
 @media screen and (max-width: 781px) {
 	// client/layout/sidebar/style.scss
 	.theme-default {
-		.focus-content .layout__content {
+		&:has(.sidebar) .focus-content .layout__content {
 			padding: 70px 24px 24px;
 			transition: padding 0.15s ease-in-out;
 		}

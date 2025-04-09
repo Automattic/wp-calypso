@@ -21,8 +21,6 @@ export const A4A_MARKETPLACE_CHECKOUT_LINK = `${ A4A_MARKETPLACE_LINK }/checkout
 export const A4A_MARKETPLACE_ASSIGN_LICENSE_LINK = `${ A4A_MARKETPLACE_LINK }/assign-license`;
 export const A4A_PURCHASES_LINK = '/purchases';
 export const A4A_REFERRALS_LINK = '/referrals';
-export const A4A_REFERRALS_BANK_DETAILS_LINK = '/referrals/bank-details';
-export const A4A_REFERRALS_COMMISSIONS_LINK = '/referrals/commissions';
 export const A4A_REFERRALS_DASHBOARD = `${ A4A_REFERRALS_LINK }/dashboard`;
 export const A4A_REFERRALS_PAYMENT_SETTINGS = `${ A4A_REFERRALS_LINK }/payment-settings`;
 export const A4A_REFERRALS_FAQ = `${ A4A_REFERRALS_LINK }/faq`;
@@ -54,6 +52,7 @@ export const A4A_WOOPAYMENTS_LINK = '/woopayments';
 export const A4A_WOOPAYMENTS_DASHBOARD_LINK = `${ A4A_WOOPAYMENTS_LINK }/dashboard`;
 export const A4A_WOOPAYMENTS_PAYMENT_SETTINGS_LINK = `${ A4A_WOOPAYMENTS_LINK }/payment-settings`;
 export const A4A_WOOPAYMENTS_SITE_SETUP_LINK = `${ A4A_WOOPAYMENTS_LINK }/site-setup`;
+export const A4A_WOOPAYMENTS_OVERVIEW_LINK = `${ A4A_WOOPAYMENTS_LINK }/overview`;
 
 // Client
 export const A4A_CLIENT_LANDING_LINK = '/client/landing';

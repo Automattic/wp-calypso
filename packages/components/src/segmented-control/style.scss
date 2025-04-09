@@ -1,4 +1,3 @@
-
 @import "@automattic/typography/styles/variables";
 
 /**
@@ -43,6 +42,7 @@
 	line-height: 18px;
 	color: var(--color-text-subtle);
 	text-align: center;
+	text-decoration: none;
 	transition: color 0.1s linear, background-color 0.1s linear;
 
 	.segmented-control__item:not(.is-selected) &:focus {

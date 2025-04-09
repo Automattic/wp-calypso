@@ -59,9 +59,9 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger, initialData }
 			className="stats-utm-builder__trigger"
 			onClick={ handleClick }
 			variant="secondary"
-		>
-			{ translate( 'URL Builder' ) }
-		</Button>
+			title={ translate( 'URL Builder' ) }
+			aria-label={ translate( 'URL Builder' ) }
+		/>
 	);
 
 	const isWPAdmin = config.isEnabled( 'is_odyssey' );

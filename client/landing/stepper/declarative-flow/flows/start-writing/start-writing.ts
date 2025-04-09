@@ -11,10 +11,13 @@ import {
 	type Flow,
 	type ProvidedDependencies,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { getStepFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { shouldShowLaunchpadFirst } from 'calypso/state/selectors/should-show-launchpad-first';
 import { useExitFlow } from '../../../hooks/use-exit-flow';
 import { useSiteData } from '../../../hooks/use-site-data';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
@@ -41,6 +44,22 @@ const startWriting: Flow = {
 			STEPS.SITE_LAUNCH,
 			STEPS.CELEBRATION,
 		] );
+	},
+	useTracksEventProps() {
+		const site = useSite();
+		const step = getStepFromURL();
+		if ( site && shouldShowLaunchpadFirst( site ) && step === 'launchpad' ) {
+			//prevent track events from firing until we're sure we won't redirect away from Launchpad
+			return {
+				isLoading: true,
+				eventsProperties: {},
+			};
+		}
+
+		return {
+			isLoading: false,
+			eventsProperties: {},
+		};
 	},
 
 	useStepNavigation( currentStep, navigate ) {

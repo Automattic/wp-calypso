@@ -39,7 +39,7 @@ const plans: Step< {
 		return null;
 	}
 
-	const isAllowedToGoBack = isDomainUpsellFlow( flow ) || isNewHostedSiteCreationFlow( flow );
+	const isAllowedToGoBack = isDomainUpsellFlow( flow );
 
 	return (
 		<StepContainer
