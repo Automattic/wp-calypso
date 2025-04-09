@@ -175,6 +175,7 @@ export const siteSetupImportWordpressPath = buildPathHelper< {
 
 export const calypsoOverviewPath = buildPathHelper< {
 	queryParams: { ref: string };
+	params: { siteSlug: string };
 } >( '/overview/:siteSlug' );
 
 export const siteSetupGoalsPath = buildPathHelper< {
