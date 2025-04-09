@@ -10,6 +10,9 @@
 	box-sizing: border-box;
 	flex: 1;
 
+	padding: var( --step-container-v2-content-block-padding )
+		var( --step-container-v2-content-inline-padding );
+
 	--step-container-v2-content-max-width: 1344px;
 
 	max-width: calc(
@@ -27,11 +30,6 @@
 	--step-container-v2-content-column-width: calc(
 		var( --step-container-v2-content-max-width-minus-column-gaps ) / 12
 	);
-
-	&.padding {
-		padding: var( --step-container-v2-content-block-padding )
-			var( --step-container-v2-content-inline-padding );
-	}
 
 	&.center-aligned {
 		justify-content: center;

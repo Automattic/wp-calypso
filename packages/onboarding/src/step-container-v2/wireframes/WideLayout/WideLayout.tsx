@@ -12,11 +12,6 @@ interface WideLayoutProps {
 	className?: string;
 	children?: ContentProp;
 	stickyBottomBar?: ContentProp;
-
-	/**
-	 * @deprecated Do not use `hasContentPadding`. This was a special case for the checkout to support the background colors. It will be removed when checkout no longer needs it.
-	 */
-	hasContentPadding?: ContentProp< boolean >;
 }
 
 export const WideLayout = ( {
@@ -25,22 +20,16 @@ export const WideLayout = ( {
 	className,
 	children,
 	stickyBottomBar,
-	hasContentPadding: hasContentPaddingProp = true,
 }: WideLayoutProps ) => {
 	return (
 		<StepContainerV2>
 			{ ( context ) => {
 				const content = typeof children === 'function' ? children( context ) : children;
 
-				const hasContentPadding =
-					typeof hasContentPaddingProp === 'function'
-						? hasContentPaddingProp( context )
-						: hasContentPaddingProp;
-
 				return (
 					<>
 						<TopBarRenderer topBar={ topBar } />
-						<ContentWrapper hasPadding={ hasContentPadding }>
+						<ContentWrapper>
 							{ heading && <ContentRow columns={ 6 }>{ heading }</ContentRow> }
 							<ContentRow className={ className }>{ content }</ContentRow>
 						</ContentWrapper>

@@ -578,284 +578,310 @@ export default function CheckoutMainContent( {
 		return true;
 	};
 
-	const content = (
-		<WPCheckoutWrapper className="checkout-wrapper">
-			<WPCheckoutSidebarContent className="checkout-sidebar-content">
-				{ isLoading && <LoadingSidebarContent /> }
-				{ ! isLoading && (
-					<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
-						<CheckoutErrorBoundary
-							errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }
-							onError={ onSummaryError }
+	const checkoutSummary = (
+		<WPCheckoutSidebarContent className="checkout-sidebar-content">
+			{ isLoading && <LoadingSidebarContent /> }
+			{ ! isLoading && (
+				<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
+					<CheckoutErrorBoundary
+						errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }
+						onError={ onSummaryError }
+					>
+						<CheckoutSummaryTitleLink
+							className="checkout__summary-button"
+							onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }
 						>
-							<CheckoutSummaryTitleLink
-								className="checkout__summary-button"
-								onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }
-							>
-								<CheckoutSummaryTitleContent className="checkout__summary-title">
-									<CheckoutSummaryTitle>
-										{ ! isStepContainerV2 && (
-											<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
-										) }
-										{ translate( 'Purchase Details' ) }
-										<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
-									</CheckoutSummaryTitle>
-									<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
-										{ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
-											isSmallestUnit: true,
-											stripZeros: true,
-										} ) }
-									</CheckoutSummaryTitlePrice>
-								</CheckoutSummaryTitleContent>
-							</CheckoutSummaryTitleLink>
+							<CheckoutSummaryTitleContent className="checkout__summary-title">
+								<CheckoutSummaryTitle>
+									{ ! isStepContainerV2 && (
+										<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
+									) }
+									{ translate( 'Purchase Details' ) }
+									<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
+								</CheckoutSummaryTitle>
+								<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
+									{ formatCurrency( responseCart.total_cost_integer, responseCart.currency, {
+										isSmallestUnit: true,
+										stripZeros: true,
+									} ) }
+								</CheckoutSummaryTitlePrice>
+							</CheckoutSummaryTitleContent>
+						</CheckoutSummaryTitleLink>
 
-							<CheckoutSummaryBody className="checkout__summary-body">
-								{ shouldShowSitePreview && (
-									<div className="checkout-site-preview">
-										<SitePreviewWrapper>
-											<SitePreview showEditSite={ false } showSiteDetails={ false } />
-										</SitePreviewWrapper>
-									</div>
-								) }
-
-								<WPCheckoutOrderSummary
-									siteId={ siteId }
-									onChangeSelection={ changeSelection }
-									showFeaturesList
-								/>
-								<CheckoutSidebarNudge
-									addItemToCart={ addItemToCart }
-									areThereDomainProductsInCart={ areThereDomainProductsInCart }
-								/>
-							</CheckoutSummaryBody>
-						</CheckoutErrorBoundary>
-					</CheckoutSummaryArea>
-				) }
-			</WPCheckoutSidebarContent>
-
-			<WPCheckoutMainContent className="checkout-main-content">
-				<CheckoutOrderBanner />
-				{ isStepContainerV2 ? (
-					<Step.Heading
-						text={ translate( 'Checkout' ) }
-						align="left"
-						size={ ! isLargeViewport ? 'small' : undefined }
-					/>
-				) : (
-					<WPCheckoutTitle>{ translate( 'Checkout' ) }</WPCheckoutTitle>
-				) }
-				<CheckoutStepGroup loadingHeader={ loadingHeader } onStepChanged={ onStepChanged }>
-					<PerformanceTrackerStop />
-					{ infoMessage }
-
-					<CheckoutStepBody
-						onError={ onReviewError }
-						className="wp-checkout__review-order-step"
-						stepId="review-order-step"
-						isStepActive={ false }
-						isStepComplete
-						titleContent={ <OrderReviewTitle /> }
-						completeStepContent={
-							<WPCheckoutOrderReview
-								removeProductFromCart={ removeProductFromCart }
-								replaceProductInCart={ replaceProductInCart }
-								couponFieldStateProps={ couponFieldStateProps }
-								removeCouponAndClearField={ removeCouponAndClearField }
-								isCouponFieldVisible={ isCouponFieldVisible }
-								setCouponFieldVisible={ setCouponFieldVisible }
-								onChangeSelection={ changeSelection }
-								siteUrl={ siteUrl }
-								createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-							/>
-						}
-						formStatus={ formStatus }
-					/>
-
-					{ contactDetailsType !== 'none' && (
-						<CheckoutStep
-							className="checkout-contact-form-step"
-							stepId="contact-form"
-							isCompleteCallback={ async () => {
-								// Touch the fields so they display validation errors
-								shouldShowContactDetailsValidationErrors && touchContactFields();
-								const validationResponse = await validateContactDetails(
-									contactInfo,
-									isLoggedOutCart,
-									responseCart,
-									showErrorMessageBriefly,
-									applyDomainContactValidationResults,
-									clearDomainContactErrorMessages,
-									reduxDispatch,
-									translate,
-									shouldShowContactDetailsValidationErrors
-								);
-								if ( validationResponse ) {
-									// When the contact details change, update the VAT details on the server.
-									try {
-										if (
-											! isLoggedOutCart &&
-											vatDetailsInForm.id &&
-											! areVatDetailsSame( vatDetailsInForm, vatDetailsFromServer )
-										) {
-											await setVatDetails( vatDetailsInForm );
-										}
-									} catch ( error ) {
-										reduxDispatch( removeNotice( 'vat_info_notice' ) );
-										if ( shouldShowContactDetailsValidationErrors ) {
-											reduxDispatch(
-												errorNotice( ( error as Error ).message, { id: 'vat_info_notice' } )
-											);
-										}
-										return false;
-									}
-									reduxDispatch( removeNotice( 'vat_info_notice' ) );
-
-									// When the contact details change, update the cart's tax location to match.
-									try {
-										await updateCartContactDetailsForCheckout(
-											countriesList,
-											responseCart,
-											updateLocation,
-											contactInfo,
-											vatDetailsInForm
-										);
-									} catch {
-										// If updating the cart fails, we should not continue. No need
-										// to do anything else, though, because CartMessages will
-										// display the error.
-										return false;
-									}
-
-									// When the contact details change, update the cached contact details on
-									// the server. This can fail if validation fails but we will silently
-									// ignore failures here because the validation call will handle them better
-									// than this will.
-									updateCachedContactDetails(
-										prepareDomainContactValidationRequest( contactInfo )
-									);
-
-									reduxDispatch(
-										recordTracksEvent( 'calypso_checkout_composite_step_complete', {
-											step: 1,
-											step_name: 'contact-form',
-										} )
-									);
-								}
-								return validationResponse;
-							} }
-							activeStepContent={
-								<>
-									<ConditionalContactDetailsMessage contactDetailsType={ contactDetailsType } />
-									<WPContactForm
-										countriesList={ countriesList }
-										shouldShowContactDetailsValidationErrors={
-											shouldShowContactDetailsValidationErrors
-										}
-										contactDetailsType={ contactDetailsType }
-										isLoggedOutCart={ isLoggedOutCart }
-										setShouldShowContactDetailsValidationErrors={
-											setShouldShowContactDetailsValidationErrors
-										}
-									/>
-								</>
-							}
-							completeStepContent={
-								<>
-									<ConditionalContactDetailsMessage contactDetailsType={ contactDetailsType } />
-									<WPContactFormSummary
-										areThereDomainProductsInCart={ areThereDomainProductsInCart }
-										isGSuiteInCart={ isGSuiteInCart }
-										isLoggedOutCart={ isLoggedOutCart }
-									/>
-								</>
-							}
-							titleContent={ <ContactFormTitle /> }
-							editButtonText={ String( translate( 'Edit' ) ) }
-							editButtonAriaLabel={ String( translate( 'Edit the contact details' ) ) }
-							nextStepButtonText={ nextStepButtonText }
-							nextStepButtonAriaLabel={ String(
-								translate( 'Continue with the entered contact details' )
+						<CheckoutSummaryBody className="checkout__summary-body">
+							{ shouldShowSitePreview && (
+								<div className="checkout-site-preview">
+									<SitePreviewWrapper>
+										<SitePreview showEditSite={ false } showSiteDetails={ false } />
+									</SitePreviewWrapper>
+								</div>
 							) }
-							validatingButtonText={ validatingButtonText }
-							validatingButtonAriaLabel={ validatingButtonText }
+
+							<WPCheckoutOrderSummary
+								siteId={ siteId }
+								onChangeSelection={ changeSelection }
+								showFeaturesList
+							/>
+							<CheckoutSidebarNudge
+								addItemToCart={ addItemToCart }
+								areThereDomainProductsInCart={ areThereDomainProductsInCart }
+							/>
+						</CheckoutSummaryBody>
+					</CheckoutErrorBoundary>
+				</CheckoutSummaryArea>
+			) }
+		</WPCheckoutSidebarContent>
+	);
+
+	const checkoutMainContent = (
+		<WPCheckoutMainContent className="checkout-main-content">
+			<CheckoutOrderBanner />
+			{ isStepContainerV2 ? (
+				<Step.Heading
+					text={ translate( 'Checkout' ) }
+					align="left"
+					size={ ! isLargeViewport ? 'small' : undefined }
+				/>
+			) : (
+				<WPCheckoutTitle>{ translate( 'Checkout' ) }</WPCheckoutTitle>
+			) }
+			<CheckoutStepGroup loadingHeader={ loadingHeader } onStepChanged={ onStepChanged }>
+				<PerformanceTrackerStop />
+				{ infoMessage }
+
+				<CheckoutStepBody
+					onError={ onReviewError }
+					className="wp-checkout__review-order-step"
+					stepId="review-order-step"
+					isStepActive={ false }
+					isStepComplete
+					titleContent={ <OrderReviewTitle /> }
+					completeStepContent={
+						<WPCheckoutOrderReview
+							removeProductFromCart={ removeProductFromCart }
+							replaceProductInCart={ replaceProductInCart }
+							couponFieldStateProps={ couponFieldStateProps }
+							removeCouponAndClearField={ removeCouponAndClearField }
+							isCouponFieldVisible={ isCouponFieldVisible }
+							setCouponFieldVisible={ setCouponFieldVisible }
+							onChangeSelection={ changeSelection }
+							siteUrl={ siteUrl }
+							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 						/>
-					) }
-					<PaymentMethodStep
-						activeStepHeader={ <GoogleDomainsCopy responseCart={ responseCart } /> }
-						canEditStep={ canEditPaymentStep() }
+					}
+					formStatus={ formStatus }
+				/>
+
+				{ contactDetailsType !== 'none' && (
+					<CheckoutStep
+						className="checkout-contact-form-step"
+						stepId="contact-form"
+						isCompleteCallback={ async () => {
+							// Touch the fields so they display validation errors
+							shouldShowContactDetailsValidationErrors && touchContactFields();
+							const validationResponse = await validateContactDetails(
+								contactInfo,
+								isLoggedOutCart,
+								responseCart,
+								showErrorMessageBriefly,
+								applyDomainContactValidationResults,
+								clearDomainContactErrorMessages,
+								reduxDispatch,
+								translate,
+								shouldShowContactDetailsValidationErrors
+							);
+							if ( validationResponse ) {
+								// When the contact details change, update the VAT details on the server.
+								try {
+									if (
+										! isLoggedOutCart &&
+										vatDetailsInForm.id &&
+										! areVatDetailsSame( vatDetailsInForm, vatDetailsFromServer )
+									) {
+										await setVatDetails( vatDetailsInForm );
+									}
+								} catch ( error ) {
+									reduxDispatch( removeNotice( 'vat_info_notice' ) );
+									if ( shouldShowContactDetailsValidationErrors ) {
+										reduxDispatch(
+											errorNotice( ( error as Error ).message, { id: 'vat_info_notice' } )
+										);
+									}
+									return false;
+								}
+								reduxDispatch( removeNotice( 'vat_info_notice' ) );
+
+								// When the contact details change, update the cart's tax location to match.
+								try {
+									await updateCartContactDetailsForCheckout(
+										countriesList,
+										responseCart,
+										updateLocation,
+										contactInfo,
+										vatDetailsInForm
+									);
+								} catch {
+									// If updating the cart fails, we should not continue. No need
+									// to do anything else, though, because CartMessages will
+									// display the error.
+									return false;
+								}
+
+								// When the contact details change, update the cached contact details on
+								// the server. This can fail if validation fails but we will silently
+								// ignore failures here because the validation call will handle them better
+								// than this will.
+								updateCachedContactDetails( prepareDomainContactValidationRequest( contactInfo ) );
+
+								reduxDispatch(
+									recordTracksEvent( 'calypso_checkout_composite_step_complete', {
+										step: 1,
+										step_name: 'contact-form',
+									} )
+								);
+							}
+							return validationResponse;
+						} }
+						activeStepContent={
+							<>
+								<ConditionalContactDetailsMessage contactDetailsType={ contactDetailsType } />
+								<WPContactForm
+									countriesList={ countriesList }
+									shouldShowContactDetailsValidationErrors={
+										shouldShowContactDetailsValidationErrors
+									}
+									contactDetailsType={ contactDetailsType }
+									isLoggedOutCart={ isLoggedOutCart }
+									setShouldShowContactDetailsValidationErrors={
+										setShouldShowContactDetailsValidationErrors
+									}
+								/>
+							</>
+						}
+						completeStepContent={
+							<>
+								<ConditionalContactDetailsMessage contactDetailsType={ contactDetailsType } />
+								<WPContactFormSummary
+									areThereDomainProductsInCart={ areThereDomainProductsInCart }
+									isGSuiteInCart={ isGSuiteInCart }
+									isLoggedOutCart={ isLoggedOutCart }
+								/>
+							</>
+						}
+						titleContent={ <ContactFormTitle /> }
 						editButtonText={ String( translate( 'Edit' ) ) }
-						editButtonAriaLabel={ String( translate( 'Edit the payment method' ) ) }
-						nextStepButtonText={ String( translate( 'Continue' ) ) }
+						editButtonAriaLabel={ String( translate( 'Edit the contact details' ) ) }
+						nextStepButtonText={ nextStepButtonText }
 						nextStepButtonAriaLabel={ String(
-							translate( 'Continue with the selected payment method' )
+							translate( 'Continue with the entered contact details' )
 						) }
 						validatingButtonText={ validatingButtonText }
 						validatingButtonAriaLabel={ validatingButtonText }
-						isCompleteCallback={ () => {
-							// We want to consider this step complete only if there is a
-							// payment method selected and it does not have required fields.
-							// This will not prevent the form from being submitted because
-							// the submit button will be active as long as the last step is
-							// shown, but it will prevent the payment method step from
-							// automatically collapsing when checkout loads.
-							return Boolean( paymentMethod ) && ! paymentMethod?.hasRequiredFields;
-						} }
 					/>
+				) }
+				<PaymentMethodStep
+					activeStepHeader={ <GoogleDomainsCopy responseCart={ responseCart } /> }
+					canEditStep={ canEditPaymentStep() }
+					editButtonText={ String( translate( 'Edit' ) ) }
+					editButtonAriaLabel={ String( translate( 'Edit the payment method' ) ) }
+					nextStepButtonText={ String( translate( 'Continue' ) ) }
+					nextStepButtonAriaLabel={ String(
+						translate( 'Continue with the selected payment method' )
+					) }
+					validatingButtonText={ validatingButtonText }
+					validatingButtonAriaLabel={ validatingButtonText }
+					isCompleteCallback={ () => {
+						// We want to consider this step complete only if there is a
+						// payment method selected and it does not have required fields.
+						// This will not prevent the form from being submitted because
+						// the submit button will be active as long as the last step is
+						// shown, but it will prevent the payment method step from
+						// automatically collapsing when checkout loads.
+						return Boolean( paymentMethod ) && ! paymentMethod?.hasRequiredFields;
+					} }
+				/>
 
-					<CouponFieldArea
-						isCouponFieldVisible={ isCouponFieldVisible }
-						setCouponFieldVisible={ setCouponFieldVisible }
-						isPurchaseFree={ isPurchaseFree }
-						couponStatus={ couponStatus }
-						couponFieldStateProps={ couponFieldStateProps }
-					/>
+				<CouponFieldArea
+					isCouponFieldVisible={ isCouponFieldVisible }
+					setCouponFieldVisible={ setCouponFieldVisible }
+					isPurchaseFree={ isPurchaseFree }
+					couponStatus={ couponStatus }
+					couponFieldStateProps={ couponFieldStateProps }
+				/>
 
-					<CheckoutTermsAndCheckboxes
-						is3PDAccountConsentAccepted={ is3PDAccountConsentAccepted }
-						setIs3PDAccountConsentAccepted={ setIs3PDAccountConsentAccepted }
-						is100YearPlanTermsAccepted={ is100YearPlanTermsAccepted }
-						setIs100YearPlanTermsAccepted={ setIs100YearPlanTermsAccepted }
-						isSubmitted={ isSubmitted }
-					/>
-					<CheckoutFormSubmit
-						validateForm={ validateForm }
-						submitButtonHeader={ <SubmitButtonHeader /> }
-						submitButtonFooter={
-							hasCartJetpackProductsOnly ? (
-								<JetpackCheckoutSeals />
-							) : (
-								<CheckoutMoneyBackGuarantee cart={ responseCart } />
-							)
-						}
-					/>
-				</CheckoutStepGroup>
-			</WPCheckoutMainContent>
-		</WPCheckoutWrapper>
+				<CheckoutTermsAndCheckboxes
+					is3PDAccountConsentAccepted={ is3PDAccountConsentAccepted }
+					setIs3PDAccountConsentAccepted={ setIs3PDAccountConsentAccepted }
+					is100YearPlanTermsAccepted={ is100YearPlanTermsAccepted }
+					setIs100YearPlanTermsAccepted={ setIs100YearPlanTermsAccepted }
+					isSubmitted={ isSubmitted }
+				/>
+				<CheckoutFormSubmit
+					validateForm={ validateForm }
+					submitButtonHeader={ <SubmitButtonHeader /> }
+					submitButtonFooter={
+						hasCartJetpackProductsOnly ? (
+							<JetpackCheckoutSeals />
+						) : (
+							<CheckoutMoneyBackGuarantee cart={ responseCart } />
+						)
+					}
+				/>
+			</CheckoutStepGroup>
+		</WPCheckoutMainContent>
 	);
 
 	if ( ! isStepContainerV2 ) {
-		return content;
+		return (
+			<WPCheckoutWrapper className="checkout-wrapper">
+				{ checkoutSummary }
+				{ checkoutMainContent }
+			</WPCheckoutWrapper>
+		);
 	}
 
 	return (
 		<StepContainerV2CheckoutFixer isLargeViewport={ isLargeViewport }>
 			<Step.WideLayout
-				hasContentPadding={ false }
-				topBar={
-					<Step.TopBar
-						leftElement={ <Step.BackButton onClick={ leaveModalProps.clickClose } /> }
-						rightElement={
-							<span className="checkout-skip-button">
-								<label>{ helpCenterButtonCopy ?? translate( 'Need extra help?' ) } </label>
-								<Step.LinkButton onClick={ toggleHelpCenter }>
-									{ helpCenterButtonLink ?? translate( 'Visit Help Center' ) }
-								</Step.LinkButton>
-							</span>
-						}
-					/>
-				}
+				topBar={ ( { isLargeViewport } ) => {
+					const topBar = (
+						<Step.TopBar
+							leftElement={ <Step.BackButton onClick={ leaveModalProps.clickClose } /> }
+							rightElement={
+								<span className="checkout-skip-button">
+									<label>{ helpCenterButtonCopy ?? translate( 'Need extra help?' ) } </label>
+									<Step.LinkButton onClick={ toggleHelpCenter }>
+										{ helpCenterButtonLink ?? translate( 'Visit Help Center' ) }
+									</Step.LinkButton>
+								</span>
+							}
+						/>
+					);
+
+					if ( isLargeViewport ) {
+						return topBar;
+					}
+
+					return (
+						<>
+							{ topBar }
+							{ checkoutSummary }
+						</>
+					);
+				} }
 			>
-				{ content }
+				{ ( { isLargeViewport } ) => {
+					if ( isLargeViewport ) {
+						return (
+							<WPCheckoutWrapper className="checkout-wrapper">
+								{ checkoutSummary }
+								{ checkoutMainContent }
+							</WPCheckoutWrapper>
+						);
+					}
+
+					return checkoutMainContent;
+				} }
 			</Step.WideLayout>
 			<LeaveCheckoutModal { ...leaveModalProps } />
 		</StepContainerV2CheckoutFixer>
@@ -920,9 +946,8 @@ const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
 			}
 
 			.checkout-main-content {
-				margin-top: 0;
-				padding: var( --step-container-v2-content-block-padding )
-					var( --step-container-v2-content-inline-padding );
+				margin: 0;
+				padding: 0;
 				max-width: 100%;
 			}
 
@@ -957,13 +982,13 @@ const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
 		props.isLargeViewport &&
 		css`
 			.checkout-main-content {
-				padding-left: var( --step-container-v2-content-inline-padding );
+				padding-left: 0;
 				margin-top: 3rem;
 			}
 
 			.checkout-sidebar-content {
 				--left-padding: 3.875rem;
-				padding: 2.25rem var( --step-container-v2-content-inline-padding ) 0 var( --left-padding );
+				padding: 0 0 0 var( --left-padding );
 				background: none;
 				position: relative;
 				height: 100%;
@@ -980,12 +1005,14 @@ const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
 				}
 			}
 
-			.checkout-summary-area {
+			.checkout-summary-area,
+			.checkout__summary-area {
 				max-width: 100%;
 			}
 
 			.checkout__summary-body {
 				margin: 0;
+				max-width: 100%;
 			}
 		` }
 `;
