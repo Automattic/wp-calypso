@@ -1,4 +1,5 @@
 import { Tooltip } from '@automattic/components';
+import { formatNumber } from '@automattic/number-formatters';
 import clsx from 'clsx';
 import { localize, withRtl } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -49,7 +50,6 @@ function Chart( {
 	isRtl,
 	minBarWidth = 15,
 	minTouchBarWidth = 42,
-	numberFormat,
 	translate,
 	chartXPadding = 20,
 	sliceFromBeginning = true,
@@ -152,14 +152,14 @@ function Chart( {
 
 	const ChartYAxis = () => (
 		<div ref={ yAxisRef } className="chart__y-axis">
-			<div className="chart__y-axis-width-spacer">{ numberFormat( 1e5 ) }</div>
+			<div className="chart__y-axis-width-spacer">{ formatNumber( 1e5 ) }</div>
 			<div className="chart__y-axis-label is-hundred">
-				{ yMax > 1 ? numberFormat( yMax ) : numberFormat( yMax, { decimals: 2 } ) }
+				{ yMax > 1 ? formatNumber( yMax ) : formatNumber( yMax, { decimals: 2 } ) }
 			</div>
 			<div className="chart__y-axis-label is-fifty">
-				{ yMax > 1 ? numberFormat( yMax / 2 ) : numberFormat( yMax / 2, { decimals: 2 } ) }
+				{ yMax > 1 ? formatNumber( yMax / 2 ) : formatNumber( yMax / 2, { decimals: 2 } ) }
 			</div>
-			<div className="chart__y-axis-label is-zero">{ numberFormat( 0 ) }</div>
+			<div className="chart__y-axis-label is-zero">{ formatNumber( 0 ) }</div>
 		</div>
 	);
 
@@ -232,7 +232,6 @@ Chart.propTypes = {
 	isRtl: PropTypes.bool,
 	minBarWidth: PropTypes.number,
 	minTouchBarWidth: PropTypes.number,
-	numberFormat: PropTypes.func,
 	translate: PropTypes.func,
 	chartXPadding: PropTypes.number,
 	sliceFromBeginning: PropTypes.bool,
