@@ -52,7 +52,7 @@ export default function HostingActivationButton( { redirectUrl }: HostingActivat
 					className="plugin-details-cta__dialog-content"
 					title={ translate( 'Before you continue' ) }
 					onRequestClose={ () => setShowEligibility( false ) }
-					size="large"
+					size="medium"
 				>
 					<EligibilityWarnings
 						className="hosting__activating-warnings"

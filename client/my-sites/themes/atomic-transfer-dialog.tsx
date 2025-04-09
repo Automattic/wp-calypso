@@ -194,7 +194,7 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 				className="plugin-details-cta__dialog-content"
 				title={ translate( 'Before you continue' ) }
 				onRequestClose={ () => this.handleDismiss() }
-				size="large"
+				size="medium"
 			>
 				{ this.renderActivationInProgress() }
 				{ this.renderSuccessfulTransfer() }

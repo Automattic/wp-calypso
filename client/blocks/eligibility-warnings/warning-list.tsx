@@ -60,11 +60,11 @@ function displayDomainNames( domainNames: DomainNames ) {
 	return (
 		<div className="eligibility-warnings__domain-names">
 			<Card compact>
-				<span>{ domainNames.current }</span>
+				<span className="eligibility-warnings__address">{ domainNames.current }</span>
 				<Badge type="info">{ translate( 'current' ) }</Badge>
 			</Card>
 			<Card compact>
-				<span>{ domainNames.new }</span>
+				<span className="eligibility-warnings__address">{ domainNames.new }</span>
 				<Badge type="success">{ translate( 'new' ) }</Badge>
 			</Card>
 		</div>

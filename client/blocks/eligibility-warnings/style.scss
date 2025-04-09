@@ -11,6 +11,10 @@
 		padding: 0;
 	}
 
+	> .card {
+		padding: 8px 0 0;
+	}
+
 	.eligibility-warnings__confirm-buttons {
 		display: flex;
 		justify-content: space-between;
@@ -85,6 +89,16 @@
 	&.eligibility-warnings--without-title {
 		padding-top: 3em;
 		box-shadow: 0 0 0 1px var(--color-border-subtle);
+
+		.card {
+			padding: 8px 16px;
+		}
+
+		.eligibility-warnings__address {
+			// The width of the parent element is much greater for the without title format
+			// so we don't need an ellipsis text-overflow here.
+			max-width: none;
+		}
 	}
 }
 
@@ -169,18 +183,6 @@
 	line-height: 24px;
 	padding: 0;
 	margin-bottom: 10px;
-
-	.eligibility-warnings__message-title {
-		font-weight: 600;
-	}
-
-	.eligibility-warnings__message-description {	
-		font-size: $font-body;
-
-		&--hosting-features {
-			font-weight: 500;
-		}
-	}
 }
 
 .eligibility-warnings__inline-link {
@@ -233,16 +235,30 @@
 
 	.card {
 		background-color: #f6f7f7;
-		padding: 12px 16px;
+		padding: 12px;
 		margin-bottom: 4px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+
+		&::after {
+			content: none;
+		}
+	}
+
+	.eligibility-warnings__address {
+		text-overflow: ellipsis;
+		max-width: 350px;
+		overflow: hidden;
+		white-space: nowrap;
 	}
 
 	.badge {
-		position: absolute;
-		right: 20px;
 		border-radius: 4px;
 		font-weight: 500;
 		font-size: $font-body-extra-small;
+		padding-top: 0;
+		padding-bottom: 0;
 
 		&.badge--success {
 			background: var(--studio-green-5);
@@ -268,7 +284,6 @@
 }
 
 .eligibility-warnings__warnings-card {
-	margin: 0 24px;
 	border-radius: 4px;
 
 	@media (max-width: 480px) {

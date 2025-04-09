@@ -159,7 +159,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 					className="plugin-details-cta__dialog-content"
 					title={ translate( 'Before you continue' ) }
 					onRequestClose={ () => setShowEligibility( false ) }
-					size="large"
+					size="medium"
 				>
 					<EligibilityWarnings
 						currentContext="plugin-details"
