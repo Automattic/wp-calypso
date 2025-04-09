@@ -213,13 +213,8 @@ export function addUrlToPendingPageRedirect(
 	if ( fromSiteSlug ) {
 		successUrlObject.searchParams.set( 'from_site_slug', fromSiteSlug );
 	}
-	if ( urlType === 'relative' ) {
-		return (
-			( fromExternalCheckout ? 'https://wordpress.com' : '' ) +
-			successUrlObject.pathname +
-			successUrlObject.search +
-			successUrlObject.hash
-		);
+	if ( urlType === 'relative' && ! fromExternalCheckout ) {
+		return successUrlObject.pathname + successUrlObject.search + successUrlObject.hash;
 	}
 	return successUrlObject.href;
 }
