@@ -1,0 +1,17 @@
+@import "@wordpress/base-styles/variables";
+
+.add-ons-modal {
+	.components-modal__content {
+		max-width: 512px;
+	}
+
+	.add-ons-description {
+		font-size: rem(13px);
+	}
+
+	.add-ons-cards {
+		display: flex;
+		flex-direction: column;
+		gap: $grid-unit-20;
+	}
+}

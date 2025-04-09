@@ -13,14 +13,8 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { AddOnMeta } from '@automattic/data-stores';
 
 export interface Props {
-	actionPrimary?: {
-		text: string;
-		handler: ( productSlug: string, quantity?: number ) => void;
-	};
-	actionSecondary?: {
-		text: string;
-		handler: ( productSlug: string ) => void;
-	};
+	actionPrimary?: ( productSlug: string, quantity?: number ) => void;
+	actionSecondary?: ( productSlug: string ) => void;
 	highlightFeatured: boolean;
 	addOnMeta: AddOnMeta;
 }
@@ -96,6 +90,7 @@ const Container = styled.div`
 			display: flex;
 			align-items: center;
 			gap: 0.5em;
+			font-size: 13px;
 
 			.add-ons-card__checkmark {
 				color: var( --studio-green-30 );
@@ -111,10 +106,10 @@ const AddOnCard = ( { addOnMeta, actionPrimary, actionSecondary, highlightFeatur
 	const storageAvailability = useStorageAddOnAvailability( { selectedSiteId, addOnMeta } );
 
 	const onActionPrimary = () => {
-		actionPrimary?.handler( addOnMeta.productSlug, addOnMeta.quantity );
+		actionPrimary?.( addOnMeta.productSlug, addOnMeta.quantity );
 	};
 	const onActionSecondary = () => {
-		actionSecondary?.handler( addOnMeta.productSlug );
+		actionSecondary?.( addOnMeta.productSlug );
 	};
 
 	const shouldRenderLoadingState = addOnMeta.isLoading;
@@ -155,27 +150,20 @@ const AddOnCard = ( { addOnMeta, actionPrimary, actionSecondary, highlightFeatur
 						<>
 							{ actionSecondary && (
 								<Button onClick={ onActionSecondary } variant="secondary">
-									{ actionSecondary.text }
+									{ translate( 'Manage add-on' ) }
 								</Button>
 							) }
 							{ purchaseStatus?.text && (
 								<div className="add-ons-card__selected-tag">
-									<Gridicon icon="checkmark" className="add-ons-card__checkmark" />
+									<Gridicon size={ 16 } icon="checkmark" className="add-ons-card__checkmark" />
 									<span>{ purchaseStatus.text }</span>
 								</div>
 							) }
 						</>
 					) }
 					{ shouldRenderPrimaryAction && actionPrimary && (
-						<Button
-							className="add-ons-card__action-button"
-							onClick={ onActionPrimary }
-							variant="link"
-							icon={ <Gridicon icon="chevron-right" /> }
-							iconPosition="right"
-							iconSize={ 16 }
-						>
-							{ actionPrimary.text }
+						<Button variant="primary" onClick={ onActionPrimary }>
+							{ translate( 'Buy add-on' ) }
 						</Button>
 					) }
 				</CardFooter>

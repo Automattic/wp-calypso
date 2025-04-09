@@ -2,10 +2,12 @@ import { is100Year } from '@automattic/calypso-products';
 import { LoadingPlaceholder } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import CoreBadge from 'calypso/components/core/badge';
 import { isPartnerPurchase, purchaseType } from 'calypso/lib/purchases';
 import { getMyPurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
+import AddOnsModal from 'calypso/sites/components/add-ons/add-ons-modal';
 import PlanPricing from 'calypso/sites/components/plan-pricing';
 import PlanStats from 'calypso/sites/components/plan-stats';
 import { isA4AUser } from 'calypso/state/partner-portal/partner/selectors';
@@ -57,14 +59,25 @@ export default function CurrentPlanPanel() {
 		return <PlanPricing inline />;
 	};
 
+	const [ isManageAddOnsModalOpen, setIsManageAddOnsModalOpen ] = useState( false );
+	const onManageAddOnsButtonClick = () => {
+		setIsManageAddOnsModalOpen( true );
+	};
+
 	const renderManageAddOnsButton = () => {
 		if ( isA4APlan || is100YearPlan ) {
 			return null;
 		}
 		return (
-			<Button variant="tertiary" href={ `/add-ons/${ site?.slug }` }>
-				{ translate( 'Manage add-ons' ) }
-			</Button>
+			<>
+				<Button variant="tertiary" onClick={ onManageAddOnsButtonClick }>
+					{ translate( 'Manage add-ons' ) }
+				</Button>
+				<AddOnsModal
+					isOpen={ isManageAddOnsModalOpen }
+					onClose={ () => setIsManageAddOnsModalOpen( false ) }
+				/>
+			</>
 		);
 	};
 
