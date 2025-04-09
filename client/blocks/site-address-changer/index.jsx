@@ -334,13 +334,13 @@ export class SiteAddressChanger extends Component {
 				{
 					action: 'cancel',
 					onClick: onClose,
-					isPrimary: false,
+					variant: 'tertiary',
 					label: translate( 'Cancel' ),
 				},
 				{
 					action: 'confirm',
 					additionalClassNames: [ isBusy ? 'is-busy' : '' ],
-					isPrimary: true,
+					variant: 'primary',
 					disabled: isDisabled,
 					label: translate( 'Next' ),
 					onClick: this.onSubmit,
@@ -351,13 +351,13 @@ export class SiteAddressChanger extends Component {
 				{
 					action: 'cancel',
 					onClick: this.onConfirmationFormClose,
-					isPrimary: false,
+					variant: 'tertiary',
 					label: translate( 'Cancel' ),
 				},
 				{
 					action: 'confirm',
 					disabled: ! this.state.isConfirmationChecked,
-					isPrimary: true,
+					variant: 'primary',
 					onClick: this.onConfirmationFormSubmit,
 					label: translate( 'Change site address' ),
 				},
@@ -568,7 +568,7 @@ export class SiteAddressChanger extends Component {
 					{ buttons.map( ( button ) => (
 						<Button
 							key={ button.action }
-							variant={ button.isPrimary ? 'primary' : 'tertiary' }
+							variant={ button.variant }
 							disabled={ button.disabled }
 							onClick={ button.onClick }
 						>
