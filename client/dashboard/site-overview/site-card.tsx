@@ -33,9 +33,11 @@ export default function SiteCard() {
 					/>
 				</div>
 				<VStack spacing={ 6 } className="site-card-contents">
-					<Field title={ __( 'Domain' ) }>
-						<ExternalLink href={ url }>{ primaryDomain.domain }</ExternalLink>
-					</Field>
+					{ primaryDomain && (
+						<Field title={ __( 'Domain' ) }>
+							<ExternalLink href={ url }>{ primaryDomain.domain }</ExternalLink>
+						</Field>
+					) }
 					<HStack justify="space-between">
 						<Field title={ __( 'Status' ) }>status here...</Field>
 					</HStack>
@@ -82,9 +84,14 @@ function PlanDetails() {
 			<FieldTitle>{ __( 'Plan' ) }</FieldTitle>
 			{ product_name_short && <Text>{ product_name_short }</Text> }
 			<Text>{ getPlanExpirationMessage( { isFree, expiry } ) }</Text>
-			<Button href={ `/purchases/subscriptions/${ primaryDomain.domain }/${ id }` } variant="link">
-				{ __( 'Manage subscription' ) }
-			</Button>
+			{ primaryDomain && (
+				<Button
+					href={ `/purchases/subscriptions/${ primaryDomain.domain }/${ id }` }
+					variant="link"
+				>
+					{ __( 'Manage subscription' ) }
+				</Button>
+			) }
 		</VStack>
 	);
 }

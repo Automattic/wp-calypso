@@ -209,7 +209,16 @@ export const fetchDomains = (): Promise< Domain[] > => {
 };
 
 export const fetchSiteDomains = async ( id: string ): Promise< { domains: Domain[] } > => {
-	return wpcom.req.get( { path: `/sites/${ id }/domains` }, { apiVersion: '1.2' } );
+	try {
+		const domains = await wpcom.req.get(
+			{ path: `/sites/${ id }/domains` },
+			{ apiVersion: '1.2' }
+		);
+		return domains;
+	} catch ( error ) {
+		// TODO: check how to properly fetch for all sites..
+		return { domains: [] };
+	}
 };
 
 export const fetchSitePrimaryDomain = async ( id: string ): Promise< Domain | undefined > => {
