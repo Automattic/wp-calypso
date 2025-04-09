@@ -43,7 +43,9 @@ export const UpgradeScreen: React.FC< {
 		onCancel();
 	};
 
-	const learnMoreLink = localizeUrl( 'https://wordpress.com/support/stats/' );
+	const learnMoreLink = localizeUrl(
+		'https://wordpress.com/support/create-a-logo-with-jetpack-ai/'
+	);
 	const onLearnMoreClick = ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => {
 		event.preventDefault();
 		onCancel();
@@ -58,7 +60,7 @@ export const UpgradeScreen: React.FC< {
 					{ reason === 'feature' ? upgradeMessageFeature : upgradeMessageRequests }
 				</span>
 				&nbsp;
-				<Button variant="link" href="https://jetpack.com/ai/" onClick={ onLearnMoreClick }>
+				<Button variant="link" href={ learnMoreLink } onClick={ onLearnMoreClick }>
 					{ __( 'Learn more', 'jetpack' ) }
 				</Button>
 			</div>
