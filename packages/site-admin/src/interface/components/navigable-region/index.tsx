@@ -18,8 +18,10 @@ type NavigableRegionProps = {
 } & React.HTMLAttributes< HTMLElement >;
 
 export const NavigableRegion = forwardRef< HTMLElement, NavigableRegionProps >(
-	( { as: Tag = 'div', role = 'region', tabIndex = -1, ...props }, ref ) => {
-		return <Tag ref={ ref } role={ role } tabIndex={ tabIndex } { ...props } />;
+	( { as: Tag = 'div', role = 'region', tabIndex = -1, ariaLabel, ...props }, ref ) => {
+		return (
+			<Tag ref={ ref } role={ role } tabIndex={ tabIndex } aria-label={ ariaLabel } { ...props } />
+		);
 	}
 );
 
