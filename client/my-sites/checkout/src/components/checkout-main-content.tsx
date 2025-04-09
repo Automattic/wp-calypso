@@ -860,7 +860,7 @@ export default function CheckoutMainContent( {
 					);
 
 					if ( isLargeViewport ) {
-						return topBar;
+						return <div className="checkout-top-bar-wrapper">{ topBar }</div>;
 					}
 
 					return (
@@ -905,7 +905,7 @@ const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
 	background: ${ colorStudio.colors[ 'White' ] };
 
 	// This shouldn't exist. It's a hack to make the top bar appear on top of the checkout sidebar, which extends from the top of the page.
-	.step-container-v2__top-bar {
+	.checkout-top-bar-wrapper {
 		position: relative;
 		z-index: 1;
 	}
