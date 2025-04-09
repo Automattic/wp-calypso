@@ -133,9 +133,7 @@ export const QuickLinks = ( {
 			) }
 			{ ! isStaticHomePage && canModerateComments && (
 				<ActionBox
-					href={
-						usesWpAdminInterface ? `${ siteAdminUrl }edit-comments.php` : `/comments/${ siteSlug }`
-					}
+					href={ `${ siteAdminUrl }edit-comments.php` }
 					hideLinkIndicator
 					onClick={ trackManageCommentsAction }
 					label={ translate( 'Manage comments' ) }
