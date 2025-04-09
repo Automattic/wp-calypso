@@ -65,7 +65,13 @@ export const JumpToRecent = ( {
 	// Handle scrolling using Intersection Observer on the last message
 	useEffect( () => {
 		const container = containerReference.current;
-		if ( ! container || isMinimized || chat.messages.length < 2 || chat.status !== 'loaded' ) {
+		if (
+			! container ||
+			isMinimized ||
+			chat.messages.length < 2 ||
+			chat.status !== 'loaded' ||
+			! chat.odieId
+		) {
 			setIsVisible( false );
 			return;
 		}
@@ -183,6 +189,7 @@ export const JumpToRecent = ( {
 		containerReference,
 		chat.messages.length,
 		chat.status,
+		chat.odieId, // Add odieId to dependencies to detect when chat is cleared
 		isMinimized,
 		isVisible,
 		updatePosition,
@@ -192,13 +199,15 @@ export const JumpToRecent = ( {
 	return (
 		<div
 			ref={ buttonRef }
-			className={ clsx( 'odie-gradient-to-white', { 'is-visible': isVisible } ) }
+			className={ clsx( 'odie-gradient-to-white', {
+				'is-visible': isVisible && chat.odieId, // Only show if chat is active and button should be visible
+			} ) }
 			style={ offsetStyle }
 		>
 			<button
 				className="odie-jump-to-recent-message-button"
 				onClick={ jumpToRecent }
-				disabled={ ! isVisible }
+				disabled={ ! isVisible || ! chat.odieId } // Disable if not visible or no active chat
 			>
 				{ __( 'Jump to recent', __i18n_text_domain__ ) }
 				<Icon icon={ chevronDown } fill="white" />
