@@ -774,6 +774,7 @@ class PurchaseItem extends Component<
 		if ( this.props.isPlaceholder ) {
 			return null;
 		}
+
 		const {
 			purchase,
 			site,
@@ -829,7 +830,7 @@ class PurchaseItem extends Component<
 				</div>
 
 				<div className="purchase-item__payment-method purchases-layout__payment-method">
-					{ this.getPaymentMethod() }
+					<PurchaseItemPaymentMethod purchase={ purchase } translate={ translate } />
 					{ isBackupMethodAvailable && isRenewing( purchase ) && <BackupPaymentMethodNotice /> }
 				</div>
 			</div>
