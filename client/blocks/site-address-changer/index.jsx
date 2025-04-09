@@ -429,19 +429,9 @@ export class SiteAddressChanger extends Component {
 						disableHref
 					/>
 				) }
-				<div className="site-address-changer__info">
-					<p>
-						{ translate(
-							'Once you change your site address, %(currentDomainName)s will no longer be available.',
-							{
-								args: { currentDomainName },
-							}
-						) }
-					</p>
-				</div>
 				<div className="site-address-changer__details">
 					<FormLabel htmlFor="site-address-changer__text-input">
-						{ translate( 'Enter your new site address' ) }
+						{ translate( 'New site address' ) }
 					</FormLabel>
 					<FormTextInputWithAffixes
 						id="site-address-changer__text-input"
@@ -457,9 +447,19 @@ export class SiteAddressChanger extends Component {
 					{ shouldShowValidationMessage && (
 						<FormInputValidation isError={ ! isAvailable } text={ validationMessage || '\u00A0' } />
 					) }
+					<div className="site-address-changer__info">
+						<p>
+							{ translate(
+								'Keep in mind that once you change your site address, %(currentDomainName)s will no longer be available.',
+								{
+									args: { currentDomainName },
+								}
+							) }
+						</p>
+					</div>
 					{ ! hasNonWpcomDomains && (
 						<div className="site-address-changer__info-custom-domain">
-							{ translate( 'Did you want to {{a}}add a custom domain{{/a}} instead?', {
+							{ translate( '{{a}}Add a custom domain{{/a}} instead?', {
 								components: {
 									a: <a href={ addDomainPath } onClick={ this.handleAddDomainClick } />,
 								},
