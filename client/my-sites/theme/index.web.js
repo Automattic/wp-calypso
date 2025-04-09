@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import {
@@ -32,7 +33,7 @@ function setTitleIfThemeExisted( context, next ) {
 export default function ( router ) {
 	const langParam = getLanguageRouteParam();
 
-	router( '/theme', ( { res } ) => res.redirect( '/themes' ) );
+	router( '/theme', () => page.redirect( '/themes' ) );
 	router(
 		`/${ langParam }/theme/:slug/:section(setup|support)?/:site_id?`,
 		redirectWithoutLocaleParamIfLoggedIn,
