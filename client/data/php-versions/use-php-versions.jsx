@@ -7,7 +7,7 @@ export const usePhpVersions = () => {
 	const siteId = useSelector( getSelectedSiteId );
 	// 10% of sites will have a recommended PHP version of 8.3. These sites are transferring to 8.3 by default.
 	// 243386763 is the first site of the list.
-	const isPhp83Default = siteId >= 243386763 && siteId % 243386763 === 0;
+	const isPhp83Default = siteId >= 243386763 && siteId % 10 === 0;
 	const recommendedValue = isPhp83Default ? '8.3' : '8.2';
 	const recommendedLabel = translate( '%s (recommended)', {
 		args: isPhp83Default ? '8.3' : '8.2',
