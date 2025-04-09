@@ -1,5 +1,6 @@
 @import '@automattic/typography/styles/variables';
 @import '@wordpress/base-styles/colors.native';
+@import '@wordpress/base-styles/breakpoints';
 
 .site-address-changer__dialog {
 	text-align: left;
@@ -63,6 +64,13 @@
 	font-size: $font-body-small;
 	margin-top: 24px;
 	margin-bottom: 24px;
+
+	.site-address-changer__message {
+		@media ( min-width: $break-small ) {
+			display: flex;
+			flex-direction: column;
+		}
+	}
 }
 
 .site-address-changer__details {

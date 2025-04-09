@@ -377,6 +377,8 @@ export class SiteAddressChanger extends Component {
 			isEmailVerified,
 		} = this.props;
 
+		//const truer = true;
+
 		if ( isAtomicSite ) {
 			return (
 				<div className="site-address-changer__content">
@@ -448,14 +450,11 @@ export class SiteAddressChanger extends Component {
 						<FormInputValidation isError={ ! isAvailable } text={ validationMessage || '\u00A0' } />
 					) }
 					<div className="site-address-changer__info">
-						<p>
+						<p className="site-address-changer__message">
 							{ translate(
-								'Keep in mind that once you change your site address, {{br/}}%(currentDomainName)s will no longer be available.',
+								'Keep in mind that once you change your site address, %(currentDomainName)s will no longer be available.',
 								{
 									args: { currentDomainName },
-									components: {
-										br: <br />,
-									},
 								}
 							) }
 						</p>
