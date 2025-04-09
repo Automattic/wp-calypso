@@ -551,11 +551,15 @@ export class SiteAddressChanger extends Component {
 	render() {
 		const { isDialogVisible, onClose, translate } = this.props;
 		const buttons = this.getStepButtons();
+		const modalTitle =
+			this.state.step === 0
+				? translate( 'Change your site address' )
+				: translate( 'Confirm the address change' );
 
 		return (
 			<Modal
 				className="site-address-changer"
-				title={ translate( 'Change your site address' ) }
+				title={ modalTitle }
 				size="medium"
 				isVisible={ isDialogVisible }
 				onRequestClose={ onClose }
