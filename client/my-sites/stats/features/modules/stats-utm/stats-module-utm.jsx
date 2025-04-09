@@ -151,20 +151,25 @@ const StatsModuleUTM = ( {
 
 	const getHref = useMemo( () => {
 		return () => {
-			const basePath = `/stats/${ period.period }/${ path }/${ siteSlug }`;
+			if ( ! hideSummaryLink && summaryUrl ) {
+				return summaryUrl;
+			}
 
 			queryParams.set( UTM_QUERY_PARAM, selectedOption );
 
+			// Some modules do not have view all abilities
 			if ( ! summary && period && path && siteSlug ) {
+				const basePath = `/stats/${ period.period }/${ path }/${ siteSlug }`;
+
 				if ( ! queryParams.has( 'startDate' ) ) {
 					queryParams.set( 'startDate', period.startOf.format( 'YYYY-MM-DD' ) );
 				}
 				if ( ! queryParams.has( 'endDate' ) ) {
 					queryParams.set( 'endDate', period.endOf.format( 'YYYY-MM-DD' ) );
 				}
-			}
 
-			return `${ basePath }?${ queryParams.toString() }`;
+				return `${ basePath }?${ queryParams.toString() }`;
+			}
 		};
 	}, [ queryParams, selectedOption, period, path, siteSlug, summary, UTM_QUERY_PARAM ] );
 
