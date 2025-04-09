@@ -37,16 +37,16 @@
 	}
 }
 
-@container (max-width: 430px) {
-	.a8c-site-admin-page-header {
-		padding: $grid-unit-20 $grid-unit-30;
-	}
-}
-
 .a8c-site-admin-page__content {
 	height: 100%;
 	display: flex;
 	flex-flow: column;
 	position: relative;
 	z-index: 1; // hardcoded for now ARC-95
+}
+
+@container (max-width: 430px) {
+	.a8c-site-admin-page-header {
+		padding: $grid-unit-20 $grid-unit-30;
+	}
 }
