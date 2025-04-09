@@ -928,10 +928,7 @@ export function useCommands() {
 					'wp post create', // WP-CLI command
 				].join( KEYWORD_SEPARATOR ),
 				context: [ '/posts', { path: '/wp-admin/edit.php', match: 'exact' } ],
-				callback: ( params ) =>
-					commandNavigation(
-						siteUsesWpAdminInterface( params.site ) ? '/wp-admin/post-new.php' : '/post/:site'
-					)( params ),
+				callback: ( params ) => commandNavigation( '/wp-admin/post-new.php' )( params ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to add new post', __i18n_text_domain__ ),
 				capability: SiteCapabilities.EDIT_POSTS,
@@ -945,10 +942,7 @@ export function useCommands() {
 					_x( 'edit posts', 'Keyword for the Manage posts command', __i18n_text_domain__ ),
 					'wp post*', // WP-CLI command
 				].join( KEYWORD_SEPARATOR ),
-				callback: ( params ) =>
-					commandNavigation(
-						siteUsesWpAdminInterface( params.site ) ? '/wp-admin/edit.php' : '/posts/:site'
-					)( params ),
+				callback: ( params ) => commandNavigation( '/wp-admin/edit.php' )( params ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to manage posts', __i18n_text_domain__ ),
 				capability: SiteCapabilities.EDIT_POSTS,
@@ -1059,12 +1053,7 @@ export function useCommands() {
 					_x( 'edit pages', 'Keyword for the Manage pages command', __i18n_text_domain__ ),
 					_x( 'delete pages', 'Keyword for the Manage pages command', __i18n_text_domain__ ),
 				].join( KEYWORD_SEPARATOR ),
-				callback: ( params ) =>
-					commandNavigation(
-						siteUsesWpAdminInterface( params.site )
-							? '/wp-admin/edit.php?post_type=page'
-							: '/pages/:site'
-					)( params ),
+				callback: ( params ) => commandNavigation( '/wp-admin/edit.php?post_type=page' )( params ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to manage pages', __i18n_text_domain__ ),
 				capability: SiteCapabilities.EDIT_PAGES,
@@ -1080,11 +1069,7 @@ export function useCommands() {
 				].join( KEYWORD_SEPARATOR ),
 				context: [ '/pages', '/wp-admin/edit.php?post_type=page' ],
 				callback: ( params ) =>
-					commandNavigation(
-						siteUsesWpAdminInterface( params.site )
-							? '/wp-admin/post-new.php?post_type=page'
-							: '/page/:site'
-					)( params ),
+					commandNavigation( '/wp-admin/post-new.php?post_type=page' )( params ),
 				siteSelector: true,
 				siteSelectorLabel: __( 'Select site to add new page', __i18n_text_domain__ ),
 				capability: SiteCapabilities.EDIT_PAGES,
