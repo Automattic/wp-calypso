@@ -450,9 +450,12 @@ export class SiteAddressChanger extends Component {
 					<div className="site-address-changer__info">
 						<p>
 							{ translate(
-								'Keep in mind that once you change your site address, %(currentDomainName)s will no longer be available.',
+								'Keep in mind that once you change your site address, {{br/}}%(currentDomainName)s will no longer be available.',
 								{
 									args: { currentDomainName },
+									components: {
+										br: <br />,
+									},
 								}
 							) }
 						</p>

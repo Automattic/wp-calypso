@@ -60,10 +60,16 @@
 
 .site-address-changer__info {
 	word-break: break-word;
+	font-size: $font-body-small;
+	margin-top: 24px;
+	margin-bottom: 24px;
 }
 
 .site-address-changer__details {
-	margin-top: 32px;
+	.form-input-validation {
+		padding-top: 6px;
+		padding-right: 24px;
+	}
 
 	.form-input-validation.email-not-verified {
 		padding-bottom: 0;
@@ -191,11 +197,6 @@
 			margin-left: 24px;
 		}
 	}
-}
-
-.dialog__content h1.site-address-changer__dialog-heading {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	line-height: 1.4em;
 }
 
 .site-address-changer__modal-buttons {
