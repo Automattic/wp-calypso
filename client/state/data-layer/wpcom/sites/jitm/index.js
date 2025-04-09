@@ -7,10 +7,27 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { setJetpackConnectionMaybeUnhealthy } from 'calypso/state/jetpack-connection-health/actions';
 import { clearJITM, insertJITM } from 'calypso/state/jitm/actions';
+import getEnvStatsFeatureSupportChecksMemoized from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import schema from './schema.json';
 
 const noop = () => {};
+// Clean this up when we release a major version of Odyssey Stats e.g. v1.1.
+const isRunningInLegacyJetpackSite =
+	config.isEnabled( 'is_running_in_jetpack_site' ) &&
+	! getEnvStatsFeatureSupportChecksMemoized( config( 'intial_state' ), config( 'blog_id' ) )
+		.supportsWpcomV3Jitm;
+const jitmSchema = ! isRunningInLegacyJetpackSite
+	? schema
+	: {
+			$schema: 'http://json-schema.org/draft-04/schema#',
+			properties: {
+				data: {
+					type: 'array',
+					items: schema.items,
+				},
+			},
+	  };
 
 /**
  * Existing libraries do not escape decimal encoded entities that php encodes, this handles that.
@@ -26,6 +43,10 @@ const unescapeDecimalEntities = ( str ) =>
  * @returns {Object} The transformed data to display
  */
 export const transformApiRequest = ( jitms ) => {
+	// Different shape of data between Calypso and Jetpack.
+	if ( isRunningInLegacyJetpackSite && jitms && jitms.data ) {
+		jitms = jitms.data;
+	}
 	return jitms.map( ( jitm ) => ( {
 		message: unescapeDecimalEntities( jitm.content.message || '' ),
 		description: unescapeDecimalEntities( jitm.content.description || '' ),
@@ -122,19 +143,51 @@ export const failedJITM = ( action ) => ( dispatch, getState ) => {
 	dispatch( clearJITM( siteId, action.messagePath ) );
 };
 
+// Clean this up when we release a major version of Odyssey Stats e.g. v1.1.
+const doJetpackFetchJITM = ( action ) =>
+	http(
+		{
+			method: 'GET',
+			apiNamespace: 'jetpack/v4',
+			path: '/jitm',
+			query: {
+				message_path: action.messagePath,
+				query: action.searchQuery,
+			},
+			locale: action.locale,
+		},
+		{ ...action }
+	);
+
+// Clean this up when we release a major version of Odyssey Stats e.g. v1.1.
+const doJetpackDismissJITM = ( action ) =>
+	http(
+		{
+			method: 'POST',
+			apiNamespace: 'jetpack/v4',
+			path: '/jitm',
+			body: JSON.stringify( {
+				feature_class: action.featureClass,
+				id: action.id,
+			} ),
+			json: false,
+		},
+		action
+	);
+
 registerHandlers( 'state/data-layer/wpcom/sites/jitm/index.js', {
 	[ JITM_FETCH ]: [
 		dispatchRequest( {
-			fetch: doFetchJITM,
+			fetch: ! isRunningInLegacyJetpackSite ? doFetchJITM : doJetpackFetchJITM,
 			onSuccess: receiveJITM,
 			onError: failedJITM,
-			fromApi: makeJsonSchemaParser( schema, transformApiRequest ),
+			fromApi: makeJsonSchemaParser( jitmSchema, transformApiRequest ),
 		} ),
 	],
 
 	[ JITM_DISMISS ]: [
 		dispatchRequest( {
-			fetch: doDismissJITM,
+			fetch: ! isRunningInLegacyJetpackSite ? doDismissJITM : doJetpackDismissJITM,
 			onSuccess: noop,
 			onError: noop,
 		} ),
