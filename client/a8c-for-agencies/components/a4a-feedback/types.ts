@@ -3,6 +3,8 @@ export enum FeedbackType {
 	PDDetailsAdded = 'partner-directory-details-added',
 	MemberInviteSent = 'team-member-invite-sent',
 	PurchaseCompleted = 'purchase-completed',
+	LicenseCancelProduct = 'license-cancel-product',
+	LicenseCancelHosting = 'license-cancel-hosting',
 }
 
 export type FeedbackQueryData = {
@@ -27,9 +29,10 @@ export type FeedbackProps = {
 };
 
 interface FeedbackSurveyResponses {
-	rating: string;
+	rating?: string;
 	comment: { text: string };
 	suggestions?: { text: string };
+	cta?: string;
 }
 export interface FeedbackSurveyResponsesPayload {
 	site_id: number;
