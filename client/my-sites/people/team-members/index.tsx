@@ -55,6 +55,11 @@ function TeamMembers( props: Props ) {
 		( obj ) => obj.linked_user_ID === false
 	);
 
+	/*
+	 * @TODO: The property name `total` is misleading.
+	 * It's value `found` is the total number of users returned from the query,
+	 * not the total number of users on the site.
+	 */
 	const membersTotal = data?.total;
 	const addTeamMemberLink = `/people/new/${ site?.slug }`;
 
@@ -76,8 +81,8 @@ function TeamMembers( props: Props ) {
 		}
 
 		return translate(
-			'You have %(membersTotalCount)s user',
-			'You have %(membersTotalCount)s users',
+			'Displaying %(membersTotalCount)s users',
+			'Displaying %(membersTotalCount)s users',
 			{
 				args: { membersTotalCount: numberFormat( membersTotal as number ) },
 				count: membersTotal as number,

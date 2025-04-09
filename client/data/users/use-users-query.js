@@ -35,11 +35,19 @@ const useUsersQuery = ( siteId, fetchOptions = {}, queryOptions = {} ) => {
 			/* @TODO:
 			 * `uniqueBy` is necessary, because the API can return duplicates.
 			 * This is most commonly seen where a user has both a "regular" user role
-			 * such as Administrator and Editor, and has also been added as a "Viewer" .
+			 * such as Administrator and Editor, and has also been added as a "Viewer".
+			 * This is arguably a bug in the API, and should be deduped.
 			 */
 			const users = uniqueBy( extractPages( data.pages ), compareUnique );
 			return {
-				users: uniqueBy( extractPages( data.pages ), compareUnique ),
+				users,
+				/*
+				 * @TODO: The property name `total` is misleading.
+				 * The value `found` is the total number of users returned from the query,
+				 * not the total number of users on the site. It should be renamed to `found`,
+				 * and a `totalUsers` property should be added to the response.
+				 * See: https://github.com/Automattic/jetpack/pull/42170
+				 */
 				total: users?.length ?? data.pages[ 0 ].found,
 				...data,
 			};

@@ -17,7 +17,7 @@ import './style.scss';
 
 class PeopleListSectionHeader extends Component {
 	static propTypes = {
-		label: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ),
+		label: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array, PropTypes.element ] ),
 		count: PropTypes.number,
 		isFollower: PropTypes.bool,
 		site: PropTypes.object,
