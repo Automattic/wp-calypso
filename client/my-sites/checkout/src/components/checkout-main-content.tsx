@@ -842,7 +842,8 @@ export default function CheckoutMainContent( {
 
 	return (
 		<StepContainerV2CheckoutFixer isLargeViewport={ isLargeViewport }>
-			<Step.WideLayout
+			<Step.CenteredColumnLayout
+				columnWidth={ 12 }
 				topBar={ ( { isLargeViewport } ) => {
 					const topBar = (
 						<Step.TopBar
@@ -873,20 +874,32 @@ export default function CheckoutMainContent( {
 				{ ( { isLargeViewport } ) => {
 					if ( isLargeViewport ) {
 						return (
-							<WPCheckoutWrapper className="checkout-wrapper">
-								{ checkoutSummary }
+							<StepContainerV2CheckoutWrapper>
 								{ checkoutMainContent }
-							</WPCheckoutWrapper>
+								{ checkoutSummary }
+							</StepContainerV2CheckoutWrapper>
 						);
 					}
 
 					return checkoutMainContent;
 				} }
-			</Step.WideLayout>
+			</Step.CenteredColumnLayout>
 			<LeaveCheckoutModal { ...leaveModalProps } />
 		</StepContainerV2CheckoutFixer>
 	);
 }
+
+const StepContainerV2CheckoutWrapper = styled.div`
+	display: flex;
+
+	.checkout-main-content {
+		flex: 2;
+	}
+
+	.checkout-sidebar-content {
+		flex: 1;
+	}
+`;
 
 const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
 	background: ${ colorStudio.colors[ 'White' ] };
@@ -983,7 +996,7 @@ const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
 		css`
 			.checkout-main-content {
 				padding-left: 0;
-				margin-top: 3rem;
+				margin-top: 1rem;
 			}
 
 			.checkout-sidebar-content {
@@ -1005,14 +1018,17 @@ const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
 				}
 			}
 
-			.checkout-summary-area,
-			.checkout__summary-area {
+			.checkout__summary-area,
+			.checkout__summary-body {
 				max-width: 100%;
 			}
 
 			.checkout__summary-body {
 				margin: 0;
-				max-width: 100%;
+			}
+
+			.checkout__summary-features {
+				padding-top: 32px;
 			}
 		` }
 `;

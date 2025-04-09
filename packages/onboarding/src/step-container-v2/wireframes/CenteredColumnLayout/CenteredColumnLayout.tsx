@@ -12,7 +12,7 @@ interface CenteredColumnLayoutProps {
 	className?: string;
 	children?: ContentProp;
 	stickyBottomBar?: ContentProp;
-	columnWidth: 4 | 5 | 6 | 8 | 10;
+	columnWidth: 4 | 5 | 6 | 8 | 10 | 12;
 	verticalAlign?: 'center';
 }
 
