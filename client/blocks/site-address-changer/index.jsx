@@ -487,9 +487,7 @@ export class SiteAddressChanger extends Component {
 						new_domain: newDomainName,
 					} }
 				/>
-				<h1 className="site-address-changer__dialog-heading">
-					{ translate( 'Confirm your decision' ) }
-				</h1>
+				<p>{ translate( 'Once you confirm, this will be the new address for your site:' ) }</p>
 				<div className="site-address-changer__confirmation-detail">
 					<Gridicon
 						icon="cross-circle"
@@ -497,20 +495,13 @@ export class SiteAddressChanger extends Component {
 						className="site-address-changer__copy-deletion"
 					/>
 					<p className="site-address-changer__confirmation-detail-copy site-address-changer__copy-deletion">
-						{ translate(
-							'{{strong}}%(currentDomainPrefix)s{{/strong}}%(currentDomainSuffix)s will be removed and unavailable for use.',
-							{
-								components: {
-									strong: <strong />,
-								},
-								args: {
-									currentDomainPrefix,
-									currentDomainSuffix,
-								},
-							}
-						) }
+						<strong>{ currentDomainPrefix }</strong>
+						{ currentDomainSuffix }
 					</p>
 				</div>
+
+				<p>{ translate( 'And this address will be removed and unavailable for use:' ) }</p>
+
 				<div className="site-address-changer__confirmation-detail">
 					<Gridicon
 						icon="checkmark-circle"
@@ -518,18 +509,8 @@ export class SiteAddressChanger extends Component {
 						className="site-address-changer__copy-addition"
 					/>
 					<p className="site-address-changer__confirmation-detail-copy site-address-changer__copy-addition">
-						{ translate(
-							'{{strong}}%(newDomainName)s{{/strong}}%(newDomainSuffix)s will be your new site address.',
-							{
-								components: {
-									strong: <strong />,
-								},
-								args: {
-									newDomainName,
-									newDomainSuffix,
-								},
-							}
-						) }
+						<strong>{ newDomainName }</strong>
+						{ newDomainSuffix }
 					</p>
 				</div>
 				<h2>{ translate( 'Check the box to confirm' ) }</h2>
@@ -538,11 +519,7 @@ export class SiteAddressChanger extends Component {
 						checked={ this.state.isConfirmationChecked }
 						onChange={ this.toggleConfirmationChecked }
 					/>
-					<span>
-						{ translate(
-							"I understand that I won't be able to undo this change to my site address."
-						) }
-					</span>
+					<span>{ translate( "I understand that I won't be able to undo this change." ) }</span>
 				</FormLabel>
 			</form>
 		);
