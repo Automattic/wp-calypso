@@ -8,7 +8,7 @@ import {
 	Card,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { comment, envelope, wordpress } from '@wordpress/icons';
+import { envelope, wordpress } from '@wordpress/icons';
 import PageLayout from '../page-layout';
 import CommentsCard from './comments-card';
 import LikesCard from './likes-card';
