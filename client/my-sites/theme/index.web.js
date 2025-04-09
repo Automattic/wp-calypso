@@ -32,6 +32,7 @@ function setTitleIfThemeExisted( context, next ) {
 export default function ( router ) {
 	const langParam = getLanguageRouteParam();
 
+	router( '/theme', ( { res } ) => res.redirect( '/themes' ) );
 	router(
 		`/${ langParam }/theme/:slug/:section(setup|support)?/:site_id?`,
 		redirectWithoutLocaleParamIfLoggedIn,
