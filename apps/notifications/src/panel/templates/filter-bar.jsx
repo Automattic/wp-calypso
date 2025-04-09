@@ -1,3 +1,7 @@
+import {
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+} from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { Component, createRef } from 'react';
@@ -125,6 +129,22 @@ export class FilterBar extends Component {
 						);
 					} ) }
 				</ul>
+
+				<ToggleGroupControl
+					hideLabelFromVision
+					isBlock
+					label={ translate( 'Filter Notifications' ) }
+					value={ filterName }
+					onChange={ ( selectedFilter ) => this.props.controller.selectFilter( selectedFilter ) }
+					__nextHasNoMarginBottom
+					__next40pxDefaultSize
+				>
+					{ filterItems.map( ( { label, name } ) => {
+						return (
+							<ToggleGroupControlOption key={ name } label={ label( translate ) } value={ name } />
+						);
+					} ) }
+				</ToggleGroupControl>
 			</div>
 		);
 	}
