@@ -40,14 +40,14 @@ export const FourColumnsCenteredLayout = () => {
 	);
 };
 
-export const SixColumnsCenteredLayout = () => {
+export const EightColumnsCenteredLayout = () => {
 	const backButton = <BackButton />;
 	const nextButton = <PrimaryButton />;
 	const skipButton = <SkipButton />;
 
 	return (
 		<CenteredColumnLayout
-			columnWidth={ 6 }
+			columnWidth={ 8 }
 			topBar={ <TopBar leftElement={ backButton } rightElement={ skipButton } /> }
 			heading={
 				<Heading
@@ -67,14 +67,14 @@ export const SixColumnsCenteredLayout = () => {
 	);
 };
 
-export const EightColumnsCenteredLayout = () => {
+export const TenColumnsCenteredLayout = () => {
 	const backButton = <BackButton />;
 	const nextButton = <PrimaryButton />;
 	const skipButton = <SkipButton />;
 
 	return (
 		<CenteredColumnLayout
-			columnWidth={ 8 }
+			columnWidth={ 10 }
 			topBar={ <TopBar leftElement={ backButton } rightElement={ skipButton } /> }
 			heading={
 				<Heading

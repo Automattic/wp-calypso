@@ -60,14 +60,14 @@ export const TwoColumnLayout = ( {
 					<>
 						<TopBarRenderer topBar={ topBar } />
 						<ContentWrapper>
-							{ heading && <ContentRow columns={ 6 }>{ heading }</ContentRow> }
+							{ heading && <ContentRow columns={ 8 }>{ heading }</ContentRow> }
 							<ContentRow
 								columns={ 12 }
 								className={ clsx( 'step-container-v2__content-row--two-column-layout', className ) }
 							>
 								{ childElements }
 							</ContentRow>
-							{ footer && <ContentRow columns={ 6 }>{ footer }</ContentRow> }
+							{ footer && <ContentRow columns={ 8 }>{ footer }</ContentRow> }
 						</ContentWrapper>
 						<StickyBottomBarRenderer stickyBottomBar={ stickyBottomBar } />
 					</>
