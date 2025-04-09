@@ -39,6 +39,9 @@
 		"framework",
 		"wp-admin"
 	],
+	"dependencies": {
+		"colord": "2.9.3"
+	},
 	"peerDependencies": {
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
