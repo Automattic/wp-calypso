@@ -557,6 +557,7 @@ export class SiteAddressChanger extends Component {
 			<Modal
 				className="site-address-changer"
 				title={ translate( 'Change your site address' ) }
+				size="medium"
 				isVisible={ isDialogVisible }
 				onRequestClose={ onClose }
 				showCloseIcon

@@ -66,9 +66,16 @@
 }
 
 .site-address-changer__details {
+	.form-label {
+		text-transform: uppercase;
+		font-size: $font-body-extra-small;
+		font-weight: 500;
+	}
+
 	.form-input-validation {
 		padding-top: 6px;
 		padding-right: 24px;
+		padding-bottom: 0;
 	}
 
 	.form-input-validation.email-not-verified {
