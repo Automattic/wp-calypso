@@ -127,11 +127,11 @@ const GitHubLoginButton = ( {
 	};
 
 	useEffect( () => {
-		// check if socialServiceResponse is not an empty object
-		if ( Object.keys( socialServiceResponse ?? {} ).length > 0 ) {
-			if ( service === 'github' ) {
-				responseHandler( { ...socialServiceResponse, service: 'github' } );
-			}
+		if ( service === 'github' && socialServiceResponse?.access_token ) {
+			responseHandler( {
+				access_token: socialServiceResponse.access_token,
+				service: 'github',
+			} );
 		}
 	}, [ socialServiceResponse, service, responseHandler ] );
 
