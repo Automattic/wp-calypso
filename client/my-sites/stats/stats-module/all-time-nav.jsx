@@ -35,6 +35,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		navigationSwap,
 		shouldGateOptions,
 		siteId,
+		context,
 	} = props;
 
 	const dispatch = useDispatch();
@@ -74,15 +75,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 
 	const getSummaryPath = useMemo( () => {
 		return ( numberDays ) => {
-			let url = window.location.href;
-			let queryParams = new URLSearchParams( url.split( '?' )[ 1 ] || '' );
-
-			if ( isOdysseyStats ) {
-				url = window.location.href;
-				const hash = window.location.hash.split( '#!' )[ 1 ];
-				const hashQuery = new URLSearchParams( hash.split( '?' )[ 1 ] || '' );
-				queryParams = new URLSearchParams( hashQuery );
-			}
+			const queryParams = new URLSearchParams( context.query );
 
 			queryParams.set( 'startDate', moment().format( 'YYYY-MM-DD' ) );
 			queryParams.set( 'summarize', 1 );
@@ -101,7 +94,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 
 			return `/stats/day/${ path }/${ siteSlug }?${ queryParams.toString() }`;
 		};
-	}, [ path, siteSlug, isOdysseyStats, query ] );
+	}, [ path, siteSlug, isOdysseyStats, query, context.query ] );
 
 	const options = [
 		{

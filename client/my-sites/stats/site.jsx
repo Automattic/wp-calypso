@@ -648,6 +648,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 									summaryUrl={ getStatHref( 'utm', query ) }
 									summary={ false }
 									className={ halfWidthModuleClasses }
+									context={ context }
 								/>
 							) }
 

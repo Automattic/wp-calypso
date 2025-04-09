@@ -33,6 +33,13 @@ type StatsAdvancedModuleWrapperProps = {
 	summary?: boolean;
 	className?: string;
 	summaryUrl?: string;
+	context?: {
+		query?: {
+			url?: string;
+			[ key: string ]: any;
+		};
+		[ key: string ]: any;
+	};
 };
 
 type StatsPeriodType = {

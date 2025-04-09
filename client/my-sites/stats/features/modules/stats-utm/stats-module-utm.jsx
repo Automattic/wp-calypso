@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { trendingUp } from '@wordpress/icons';
@@ -19,7 +20,6 @@ import { StatsEmptyActionUTMBuilder } from '../shared';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import UTMDropdown from './stats-module-utm-dropdown';
 import UTMExportButton from './utm-export-button';
-
 import '../../../stats-module/style.scss';
 import '../../../stats-list/style.scss';
 
@@ -46,34 +46,68 @@ const StatsModuleUTM = ( {
 	query,
 	postId,
 	summaryUrl,
+	context,
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const translate = useTranslate();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.SOURCE_MEDIUM );
-	const [ url ] = useState( () => {
-		let initialUrl = summaryUrl;
+	const queryParams = useMemo( () => {
+		let urlParams;
 
-		if ( ! initialUrl ) {
-			initialUrl = isOdysseyStats ? window.location.hash.split( '#!' )[ 1 ] : window.location.href;
+		if ( summaryUrl ) {
+			urlParams = new URLSearchParams( summaryUrl?.split( '?' )[ 1 ] || '' );
+		} else {
+			urlParams = new URLSearchParams( context.query );
 		}
 
-		const queryParams = new URLSearchParams( initialUrl.split( '?' )[ 1 ] || '' );
+		return urlParams;
+	}, [ summary, summaryUrl, context.query ] );
+
+	const getUrlWithUpdatedParams = ( url ) => {
+		const currentUrl = new URL( url );
+		let updatedParams;
+
+		// Delete param in hash URL for Odyssey Stats if any.
+		if ( isOdysseyStats && currentUrl.hash.startsWith( '#!' ) ) {
+			const hashUrl = new URL( currentUrl.hash.substring( 2 ), currentUrl.origin );
+			hashUrl.searchParams.set( UTM_QUERY_PARAM, selectedOption );
+			currentUrl.hash = `#!${ hashUrl.pathname }${ hashUrl.search }`;
+			updatedParams = Object.fromEntries( hashUrl.searchParams.entries() );
+		} else {
+			currentUrl.searchParams.set( UTM_QUERY_PARAM, selectedOption );
+			updatedParams = Object.fromEntries( currentUrl.searchParams.entries() );
+		}
+		return { url: currentUrl, params: updatedParams };
+	};
+
+	useEffect( () => {
 		const utmParam = queryParams.get( UTM_QUERY_PARAM );
 
 		if ( utmParam && Object.values( OPTION_KEYS ).includes( utmParam ) ) {
 			setSelectedOption( utmParam );
 		}
-
-		return { url: initialUrl, params: queryParams };
-	} );
+	}, [ queryParams ] );
 
 	useEffect( () => {
-		if ( ! isOdysseyStats && summary ) {
-			const newUrl = new URL( window.location );
-			newUrl.searchParams.set( UTM_QUERY_PARAM, selectedOption );
-			window.history.replaceState( {}, '', newUrl );
+		if ( summary ) {
+			const newUrlObj = getUrlWithUpdatedParams( window.location.href );
+
+			// Odyssey would try to hack the URL on load to remove duplicate params. We need to wait for that to finish.
+			setTimeout( () => {
+				window.history.replaceState( null, '', newUrlObj.url.toString() );
+
+				// Update context.query with new params
+				if ( context && context.query ) {
+					Object.assign( context.query, newUrlObj.params );
+				}
+
+				if ( isOdysseyStats ) {
+					// We need to update the page base if it changed. Otherwise, pagejs won't be able to find the routes.
+					page.base( `${ newUrlObj.url.pathname }${ newUrlObj.url.search }` );
+				}
+			}, 300 );
 		}
 	}, [ summary, selectedOption, isOdysseyStats ] );
 
@@ -117,33 +151,22 @@ const StatsModuleUTM = ( {
 
 	const getHref = useMemo( () => {
 		return () => {
-			const params = new URLSearchParams( url.params.toString() );
-			params.set( UTM_QUERY_PARAM, selectedOption );
-
 			const basePath = `/stats/${ period.period }/${ path }/${ siteSlug }`;
 
-			if ( ! hideSummaryLink && summaryUrl ) {
-				return `${ basePath }?${ params.toString() }`;
-			}
+			queryParams.set( UTM_QUERY_PARAM, selectedOption );
 
 			if ( ! summary && period && path && siteSlug ) {
-				params.set( 'startDate', period.startOf.format( 'YYYY-MM-DD' ) );
-				params.set( 'endDate', period.endOf.format( 'YYYY-MM-DD' ) );
+				if ( ! queryParams.has( 'startDate' ) ) {
+					queryParams.set( 'startDate', period.startOf.format( 'YYYY-MM-DD' ) );
+				}
+				if ( ! queryParams.has( 'endDate' ) ) {
+					queryParams.set( 'endDate', period.endOf.format( 'YYYY-MM-DD' ) );
+				}
 			}
 
-			return `${ basePath }?${ params.toString() }`;
+			return `${ basePath }?${ queryParams.toString() }`;
 		};
-	}, [
-		url.params,
-		selectedOption,
-		period,
-		path,
-		siteSlug,
-		hideSummaryLink,
-		summaryUrl,
-		summary,
-		UTM_QUERY_PARAM,
-	] );
+	}, [ queryParams, selectedOption, period, path, siteSlug, summary, UTM_QUERY_PARAM ] );
 
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
