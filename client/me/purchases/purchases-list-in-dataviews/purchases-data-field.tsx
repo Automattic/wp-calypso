@@ -5,7 +5,12 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { getDisplayName } from 'calypso/lib/purchases';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
-import { PurchaseItemSiteIcon, PurchaseItemProduct, PurchaseItemStatus } from '../purchase-item';
+import {
+	PurchaseItemSiteIcon,
+	PurchaseItemProduct,
+	PurchaseItemStatus,
+	PurchaseItemPaymentMethod,
+} from '../purchase-item';
 import OwnerInfo from '../purchase-item/owner-info';
 
 function PurchaseItemRowProduct( props: {
@@ -45,6 +50,19 @@ function PurchaseItemRowStatus( props: {
 				isJetpack={ isJetpack }
 				isDisconnectedSite={ isDisconnectedSite }
 			/>
+		</div>
+	);
+}
+
+function PurchaseItemRowPaymentMethod( props: {
+	purchase: Purchases.Purchase;
+	translate: LocalizeProps[ 'translate' ];
+} ) {
+	const { purchase, translate } = props;
+
+	return (
+		<div className="purchase-item__payment-method">
+			<PurchaseItemPaymentMethod purchase={ purchase } translate={ translate } />
 		</div>
 	);
 }
@@ -122,6 +140,23 @@ export function getPurchasesFieldDefinitions( {
 				return (
 					<PurchaseItemRowStatus purchase={ item } translate={ translate } moment={ moment } />
 				);
+			},
+		},
+		{
+			id: 'payment-method',
+			label: 'Payment method',
+			type: 'text',
+			enableGlobalSearch: true,
+			enableSorting: true,
+			enableHiding: false,
+			filterBy: {
+				operators: [ 'is' as Operator ],
+			},
+			getValue: ( { item }: { item: Purchases.Purchase } ) => {
+				return item.payment;
+			},
+			render: ( { item }: { item: Purchases.Purchase } ) => {
+				return <PurchaseItemRowPaymentMethod purchase={ item } translate={ translate } />;
 			},
 		},
 	];
