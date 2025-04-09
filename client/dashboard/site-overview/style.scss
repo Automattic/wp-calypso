@@ -1,7 +1,9 @@
-.site-overview-top-card {
-	min-height: 150px;
-	flex: 1 1 auto;
-	align-self: stretch;
+.site-overview-card {
+	padding: 16px;
+}
+
+.site-overview-ai-card {
+
 }
 
 .site-card-preview-image {
@@ -15,7 +17,15 @@
 }
 
 .site-overview-field-title {
-	color: #757575;
 	text-transform: uppercase;
 	font-size: 12px;
+}
+
+.overview-card-icon {
+	fill: #757575;
+}
+
+.overview-card-progress-bar {
+	// TODO: check how to avoid `important`.
+	width: 100% !important;
 }

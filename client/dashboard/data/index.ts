@@ -1,15 +1,14 @@
 import wpcom from 'calypso/lib/wp';
 import type {
-	User,
 	Domain,
-	Site,
-	SiteOptions,
-	Plan,
-	SitePlan,
 	Email,
-	TwoStep,
+	FetchSiteRouteResponse,
 	MediaStorageObject,
 	MonitorUptimeAPIResponse,
+	Plan,
+	Site,
+	User,
+	WPCOMRESTAPISite,
 } from './types';
 
 export const fetchProfile = () =>
@@ -39,6 +38,7 @@ const mockDomains: Domain[] = [
 		wpcom_domain: false,
 		sslStatus: 'Active',
 		domain_type: 'Registered',
+		primary_domain: true,
 	},
 	{
 		id: 2,
@@ -50,6 +50,7 @@ const mockDomains: Domain[] = [
 		wpcom_domain: false,
 		sslStatus: 'Active',
 		domain_type: 'Registered',
+		primary_domain: false,
 	},
 	{
 		id: 3,
@@ -61,66 +62,9 @@ const mockDomains: Domain[] = [
 		wpcom_domain: false,
 		sslStatus: 'Inactive',
 		domain_type: 'Registered',
-	},
-	{
-		id: 4,
-		domain: 'anotherdomain.org',
-		blog_id: 4,
-		owner: 'User Four',
-		expiry: '2026-02-10',
-		domain_status: { status: 'Pending Transfer' },
-		wpcom_domain: false,
-		sslStatus: 'Pending',
-		domain_type: 'Registered',
-	},
-	{
-		id: 5,
-		domain: 'wordpress-site.com',
-		blog_id: 5,
-		owner: 'User Five',
-		expiry: '2027-01-05',
-		domain_status: { status: 'Active' },
-		wpcom_domain: false,
-		sslStatus: 'Active',
-		domain_type: 'Registered',
-	},
-	{
-		id: 6,
-		domain: 'example-blog.wordpress.com',
-		blog_id: 1,
-		owner: 'User One',
-		expiry: 'N/A',
-		domain_status: { status: 'Active' },
-		wpcom_domain: true,
-		sslStatus: 'Active',
-		domain_type: 'Free',
-	},
-	{
-		id: 7,
-		domain: 'premium-site.blog',
-		blog_id: 2,
-		owner: 'User Two',
-		expiry: '2026-04-18',
-		domain_status: { status: 'Active' },
-		wpcom_domain: false,
-		sslStatus: 'Active',
-		domain_type: 'Premium',
+		primary_domain: false,
 	},
 ];
-
-interface WPCOMRESTAPISite {
-	ID: string;
-	name: string;
-	URL: string;
-	icon: {
-		ico: string;
-	};
-	plan: SitePlan;
-	active_modules: string[];
-	subscribers_count: number;
-	options: SiteOptions;
-	is_deleted: boolean;
-}
 
 const siteRequestObjectToSiteObject = ( site: WPCOMRESTAPISite ): Site => ( {
 	id: site.ID,
@@ -231,8 +175,66 @@ export const fetchCurrentPlan = async ( id: string ): Promise< Plan > => {
 	return Object.values( plans ).find( ( plan: Plan ) => plan.current_plan );
 };
 
+export const fetchSiteEngagementStats = async ( id: string ) => {
+	if ( ! id ) {
+		return Promise.reject( new Error( 'Site ID is undefined' ) );
+	}
+
+	// Get visitor data for 7, 30, and 90 days
+	const response = await wpcom.req.get( {
+		path: `/sites/${ id }/stats/visits`,
+		query: {
+			unit: 'day',
+			quantity: 90,
+			stat_fields: 'views,visitors',
+		},
+	} );
+
+	// Calculate total visitors for each period
+	const data = response.data;
+	return data;
+};
+
 export const fetchDomains = (): Promise< Domain[] > => {
 	return Promise.resolve( mockDomains );
+};
+
+export const fetchSiteDomains = async ( id: string ): Promise< { domains: Domain[] } > => {
+	return wpcom.req.get( { path: `/sites/${ id }/domains` }, { apiVersion: '1.2' } );
+};
+
+export const fetchSitePrimaryDomain = async ( id: string ): Promise< Domain | undefined > => {
+	const { domains } = await fetchSiteDomains( id );
+	return domains.find( ( domain: Domain ) => domain.primary_domain );
+};
+
+export const fetchSiteWithRouteData = async ( id: string ): Promise< FetchSiteRouteResponse > => {
+	const [
+		site,
+		mediaStorage,
+		siteMonitorUptime,
+		phpVersion,
+		currentPlan,
+		primaryDomain,
+		engagementStats,
+	] = await Promise.all( [
+		fetchSite( id ),
+		fetchSiteMediaStorage( id ),
+		fetchSiteMonitorUptime( id ),
+		fetchPHPVersion( id ),
+		fetchCurrentPlan( id ),
+		fetchSitePrimaryDomain( id ),
+		fetchSiteEngagementStats( id ),
+	] );
+	return {
+		site,
+		mediaStorage,
+		siteMonitorUptime,
+		phpVersion,
+		currentPlan,
+		primaryDomain,
+		engagementStats,
+	};
 };
 
 export const EMAIL_DATA: Email[] = [

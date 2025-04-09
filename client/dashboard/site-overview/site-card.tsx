@@ -3,7 +3,9 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
+	Button,
 	Card,
+	ExternalLink,
 } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
 import { __, sprintf } from '@wordpress/i18n';
@@ -16,6 +18,7 @@ export default function SiteCard() {
 	const {
 		site: { options: { software_version } = {}, url },
 		phpVersion,
+		primaryDomain,
 	} = useLoaderData( {
 		from: '/sites/$siteId',
 	} ) as FetchSiteRouteResponse;
@@ -30,6 +33,9 @@ export default function SiteCard() {
 					/>
 				</div>
 				<VStack spacing={ 6 } className="site-card-contents">
+					<Field title={ __( 'Domain' ) }>
+						<ExternalLink href={ url }>{ primaryDomain.domain }</ExternalLink>
+					</Field>
 					<HStack justify="space-between">
 						<Field title={ __( 'Status' ) }>status here...</Field>
 					</HStack>
@@ -56,15 +62,18 @@ function Field( { children, title }: { children: React.ReactNode; title: React.R
 // TODO: maybe find a better name for this. It aims to be reused by fields (ex: Plan)
 // and cards (ex: Visitors) to have the same styles.
 function FieldTitle( { children }: { children: React.ReactNode } ) {
-	return <div className="site-overview-field-title">{ children }</div>;
+	return (
+		<Text className="site-overview-field-title" variant="muted">
+			{ children }
+		</Text>
+	);
 }
 
 function PlanDetails() {
 	const {
-		site: {
-			plan: { product_name_short, is_free: isFree },
-		},
-		currentPlan: { expiry },
+		site: { plan: { product_name_short, is_free: isFree } = {} },
+		currentPlan: { expiry, id },
+		primaryDomain,
 	} = useLoaderData( {
 		from: '/sites/$siteId',
 	} ) as FetchSiteRouteResponse;
@@ -73,6 +82,9 @@ function PlanDetails() {
 			<FieldTitle>{ __( 'Plan' ) }</FieldTitle>
 			{ product_name_short && <Text>{ product_name_short }</Text> }
 			<Text>{ getPlanExpirationMessage( { isFree, expiry } ) }</Text>
+			<Button href={ `/purchases/subscriptions/${ primaryDomain.domain }/${ id }` } variant="link">
+				{ __( 'Manage subscription' ) }
+			</Button>
 		</VStack>
 	);
 }

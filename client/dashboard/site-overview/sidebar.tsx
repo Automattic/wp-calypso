@@ -6,7 +6,7 @@ import SiteCard from './site-card';
  */
 export default function Sidebar() {
 	return (
-		<VStack spacing={ 4 }>
+		<VStack spacing={ 4 } style={ { minWidth: '300px' } }>
 			<SiteCard />
 		</VStack>
 	);

@@ -20,6 +20,7 @@ export interface Domain {
 	wpcom_domain: boolean;
 	sslStatus: string;
 	domain_type: string;
+	primary_domain: boolean;
 }
 
 export interface SitePlan {
@@ -100,4 +101,20 @@ export interface FetchSiteRouteResponse {
 	siteMonitorUptime: MonitorUptimeAPIResponse;
 	phpVersion: string;
 	currentPlan: Plan;
+	primaryDomain: Domain;
+	engagementStats?: any;
+}
+
+export interface WPCOMRESTAPISite {
+	ID: string;
+	name: string;
+	URL: string;
+	icon: {
+		ico: string;
+	};
+	plan: SitePlan;
+	active_modules: string[];
+	subscribers_count: number;
+	options: SiteOptions;
+	is_deleted: boolean;
 }

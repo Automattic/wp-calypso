@@ -11,7 +11,9 @@ import {
 	fetchCurrentPlan,
 	fetchSites,
 	fetchDomains,
+	fetchSitePrimaryDomain,
 	fetchEmails,
+	fetchSiteWithRouteData,
 } from '../data';
 import Domains from '../domains';
 import Emails from '../emails';
@@ -78,17 +80,7 @@ const siteRoute = createRoute( {
 	loader: ( { params: { siteId } } ) =>
 		queryClient.ensureQueryData( {
 			queryKey: [ 'site', siteId ],
-			queryFn: async () => {
-				const [ site, mediaStorage, siteMonitorUptime, phpVersion, currentPlan ] =
-					await Promise.all( [
-						fetchSite( siteId ),
-						fetchSiteMediaStorage( siteId ),
-						fetchSiteMonitorUptime( siteId ),
-						fetchPHPVersion( siteId ),
-						fetchCurrentPlan( siteId ),
-					] );
-				return { site, mediaStorage, siteMonitorUptime, phpVersion, currentPlan };
-			},
+			queryFn: () => fetchSiteWithRouteData( siteId ),
 		} ) as Promise< FetchSiteRouteResponse >,
 	notFoundComponent: NotFound,
 } );

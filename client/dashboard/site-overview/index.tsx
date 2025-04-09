@@ -2,97 +2,22 @@ import { useLoaderData } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
-	__experimentalHeading as Heading,
-	ProgressBar,
+	__experimentalText as Text,
 	ExternalLink,
 	Button,
 	Card,
 } from '@wordpress/components';
-import { createElement, createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
-import { wordpress } from '@wordpress/icons';
-import filesize from 'filesize';
+import { __ } from '@wordpress/i18n';
+import { seen, comment, starEmpty, envelope, people, wordpress } from '@wordpress/icons';
 import PageLayout from '../page-layout';
-import ActivityLog from './activity-log';
-import Deployments from './deployments';
+import OverviewCard from './overview-card';
+import OverviewSection from './overview-section';
 import Sidebar from './sidebar';
+import StorageCard from './storage-card';
+import UptimeCard from './uptime-card';
+import VisitorsCard from './visitors-card';
 import type { FetchSiteRouteResponse } from '../data/types';
 import './style.scss';
-
-const MINIMUM_DISPLAYED_USAGE = 2.5;
-function StorageCard() {
-	const { mediaStorage: { storageUsedBytes, maxStorageBytes } = {} } = useLoaderData( {
-		from: '/sites/$siteId',
-	} ) as FetchSiteRouteResponse;
-	if ( ! storageUsedBytes || ! maxStorageBytes ) {
-		return;
-	}
-	let usagePercentage = Math.round( ( ( storageUsedBytes / maxStorageBytes ) * 1000 ) / 10 );
-	// Ensure that the displayed usage is never fully empty to
-	// avoid a confusing UI and that in never exceeds 100%.
-	usagePercentage = Math.min( Math.max( MINIMUM_DISPLAYED_USAGE, usagePercentage ), 100 );
-	const used = filesize( storageUsedBytes, { round: 0 } );
-	const max = filesize( maxStorageBytes, { round: 0 } );
-	return (
-		<Card className="site-overview-top-card">
-			<VStack style={ { height: '100%', padding: '16px' } }>
-				<HStack justify="space-between">
-					<Heading level={ 3 }>{ __( 'Storage' ) }</Heading>
-					<ExternalLink href="#">{ __( 'Buy more' ) }</ExternalLink>
-				</HStack>
-				<VStack style={ { marginTop: '16px' } }>
-					<HStack>
-						{ createInterpolateElement(
-							/* translators: %1$s: storage space used, %2$s: maximum available storage space. Eg. '236 MB of 53 GB used' */
-							sprintf( __( '<heading>%1$s</heading> <span>of %2$s used</span>' ), used, max ),
-							{
-								heading: <Heading level={ 3 } style={ { whiteSpace: 'nowrap' } } />,
-								span: createElement( 'span' ),
-							}
-						) }
-					</HStack>
-					<ProgressBar value={ usagePercentage } />
-				</VStack>
-			</VStack>
-		</Card>
-	);
-}
-
-function SiteMonitorUptimeCard() {
-	const { siteMonitorUptime } = useLoaderData( {
-		from: '/sites/$siteId',
-	} ) as FetchSiteRouteResponse;
-	if ( ! siteMonitorUptime ) {
-		return;
-	}
-	const { upDays, downDays } = Object.entries( siteMonitorUptime || {} ).reduce(
-		( accumulator, [ , { status } = {} as { status: 'up|down' } ] ) => {
-			accumulator[ status === 'up' ? 'upDays' : 'downDays' ] += 1;
-			return accumulator;
-		},
-		{ upDays: 0, downDays: 0 }
-	);
-	const uptimePercentage = Math.round( ( ( upDays / ( upDays + downDays ) ) * 1000 ) / 10 );
-	return (
-		<Card className="site-overview-top-card">
-			<VStack style={ { height: '100%', padding: '16px' } }>
-				<HStack justify="space-between">
-					<Heading level={ 3 }>{ __( 'Uptime' ) }</Heading>
-					<p>{ __( 'Past 30 days' ) }</p>
-				</HStack>
-				<VStack style={ { marginTop: '16px' } }>
-					<Heading level={ 3 }>
-						{
-							/* translators: %s: percentage of site uptime. Eg. 99% */
-							sprintf( __( '%s%%' ), uptimePercentage )
-						}
-					</Heading>
-					<ProgressBar value={ uptimePercentage } />
-				</VStack>
-			</VStack>
-		</Card>
-	);
-}
 
 function SiteOverview() {
 	const { site } = useLoaderData( {
@@ -116,25 +41,28 @@ function SiteOverview() {
 			}
 		>
 			<HStack alignment="flex-start" spacing={ 8 }>
-				<VStack spacing={ 8 } style={ { flex: 3 } }>
-					<HStack spacing={ 8 } justify="space-between">
-						<StorageCard />
-						<SiteMonitorUptimeCard />
-						<Card className="site-overview-top-card">
-							<VStack style={ { height: '100%', padding: '16px' } }>
-								<HStack justify="space-between">
-									<Heading level={ 3 }>{ __( 'Protect' ) }</Heading>
-								</HStack>
-								<p>{ __( 'No threats found' ) }</p>
-							</VStack>
-						</Card>
-					</HStack>
-					<VStack spacing={ 8 }>
-						<ActivityLog />
-						<Deployments />
-					</VStack>
-				</VStack>
 				<Sidebar />
+				<VStack spacing={ 8 }>
+					<Card className="site-overview-card site-overview-ai-card">
+						<Text>
+							{ __(
+								'Your site is secure with excellent desktop performance and growing subscribers; now focus on boosting mobile speed and investigating recent drops in views and likes.'
+							) }
+						</Text>
+						<p>{ __( 'WordPress with AI' ) }</p>
+					</Card>
+					<OverviewSection title={ __( 'Engagement' ) } actions={ [] }>
+						<VisitorsCard />
+						<OverviewCard title={ __( 'Views' ) } icon={ seen } isLink></OverviewCard>
+						<OverviewCard title={ __( 'Likes' ) } icon={ starEmpty } isLink></OverviewCard>
+						<OverviewCard title={ __( 'Comments' ) } icon={ comment } isLink></OverviewCard>
+						<OverviewCard title={ __( 'Subscribers' ) } icon={ envelope } isLink></OverviewCard>
+					</OverviewSection>
+					<OverviewSection title={ __( 'Site health' ) } actions={ [] }>
+						<UptimeCard />
+						<StorageCard />
+					</OverviewSection>
+				</VStack>
 			</HStack>
 		</PageLayout>
 	);
