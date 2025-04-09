@@ -196,19 +196,17 @@ class Document extends Component {
 									'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
 								} ) }
 							>
-								<div className="layout__content">
-									{ shouldNotShowLoadingLogo ? (
-										<>
-											{ showStepContainerV2Loader ? (
-												<Step.Loading />
-											) : (
-												<Loading className="wpcom-loading__boot" />
-											) }
-										</>
-									) : (
-										<LoadingLogo size={ 72 } className="wpcom-site__logo" />
-									) }
-								</div>
+								{ shouldNotShowLoadingLogo ? (
+									<>
+										{ showStepContainerV2Loader ? (
+											<Step.Loading />
+										) : (
+											<Loading className="wpcom-loading__boot" />
+										) }
+									</>
+								) : (
+									<LoadingLogo size={ 72 } className="wpcom-site__logo" />
+								) }
 							</div>
 						</div>
 					) }
