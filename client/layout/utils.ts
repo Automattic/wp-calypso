@@ -1,4 +1,3 @@
-import configApi from '@automattic/calypso-config';
 import { useRef } from 'react';
 import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { DEFAULT_FLOW, getFlowFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
@@ -189,10 +188,6 @@ const isMarketplaceThankYouRedirect = ( redirectTo: string ) => {
  * the StepContainerV2 loader or hide the masterbar.
  */
 export const isInStepContainerV2FlowContext = ( pathname: string, query: string ) => {
-	if ( ! configApi.isEnabled( 'onboarding/step-container-v2' ) ) {
-		return false;
-	}
-
 	if ( pathname.startsWith( '/setup' ) ) {
 		return shouldUseStepContainerV2( getFlowFromURL( pathname, query ) || DEFAULT_FLOW );
 	}
