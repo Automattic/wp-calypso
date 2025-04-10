@@ -118,6 +118,7 @@
 		"stats/empty-module-traffic": true,
 		"stats/empty-module-v2": true,
 		"stats/navigation-improvement": false,
+		"subscribers-helper-library": true,
 		"themes/premium": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
