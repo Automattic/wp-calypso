@@ -1,5 +1,5 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
-import { Button, Icon, Modal } from '@wordpress/components';
+import { Button, CheckboxControl, Icon, Modal } from '@wordpress/components';
 import { check, closeSmall, chevronDown, info } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { debounce, get, isEmpty } from 'lodash';
@@ -7,7 +7,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import Banner from 'calypso/components/banner';
-import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
@@ -510,13 +509,11 @@ export class SiteAddressChanger extends Component {
 						{ newDomainSuffix }
 					</p>
 				</div>
-				<FormLabel>
-					<FormInputCheckbox
-						checked={ this.state.isConfirmationChecked }
-						onChange={ this.toggleConfirmationChecked }
-					/>
-					<span>{ translate( "I understand that I won't be able to undo this change." ) }</span>
-				</FormLabel>
+				<CheckboxControl
+					label={ translate( "I understand that I won't be able to undo this change." ) }
+					checked={ this.state.isConfirmationChecked }
+					onChange={ this.toggleConfirmationChecked }
+				/>
 			</form>
 		);
 	};
