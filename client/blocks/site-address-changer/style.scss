@@ -5,6 +5,10 @@
 .site-address-changer__dialog {
 	text-align: left;
 
+	p {
+		margin-bottom: 8px;
+	}
+
 	h2 {
 		border-top: 1px solid var( --color-border-subtle );
 		font-weight: 600;
@@ -15,17 +19,40 @@
 }
 
 .site-address-changer__copy-addition,
-.site-address-changer__copy-addition.gridicon {
+.site-address-changer__copy-addition svg {
 	color: var( --color-success );
+	fill: currentColor;
 }
 
 .site-address-changer__copy-deletion,
-.site-address-changer__copy-deletion.gridicon {
+.site-address-changer__copy-deletion svg {
 	color: var( --color-error );
+	fill: currentColor;
 }
 
 .card.site-address-changer__content {
 	margin-bottom: 0;
+}
+
+.site-address-changer__confirmation-detail {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 16px;
+
+	.site-address-changer__icon-wrapper {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 24px;
+		height: 24px;
+	}
+
+	.site-address-changer__confirmation-detail-copy {
+		margin: 0;
+		line-height: 1.5;
+		display: flex;
+	}
 }
 
 .site-address-changer__affix {
@@ -37,12 +64,20 @@
 	color: var( --color-neutral-light );
 	margin-left: 6px;
 	align-self: center;
+
+	svg {
+		fill: currentColor;
+	}
 }
 
 .form-text-input-with-affixes__prefix,
 .form-text-input-with-affixes__suffix {
 	&:hover .site-address-changer__select-icon {
 		color: var( --color-neutral-50 );
+
+		svg {
+			fill: currentColor;
+		}
 	}
 }
 
@@ -189,27 +224,6 @@
 		@include breakpoint-deprecated( '<480px' ) {
 			width: 100%;
 			order: 2;
-		}
-	}
-}
-
-.site-address-changer__confirmation-detail {
-	margin-bottom: 1em;
-
-	.gridicon {
-		float: left;
-		margin-top: 4px;
-
-		@include breakpoint-deprecated( '<660px' ) {
-			display: none;
-		}
-	}
-
-	.site-address-changer__confirmation-detail-copy {
-		word-break: break-word;
-
-		@include breakpoint-deprecated( '>660px' ) {
-			margin-left: 24px;
 		}
 	}
 }

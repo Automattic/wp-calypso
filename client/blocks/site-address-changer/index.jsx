@@ -1,5 +1,6 @@
-import { FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
-import { Button, Modal } from '@wordpress/components';
+import { FormInputValidation, FormLabel } from '@automattic/components';
+import { Button, Icon, Modal } from '@wordpress/components';
+import { check, closeSmall, chevronDown, info } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { debounce, get, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
@@ -290,7 +291,7 @@ export class SiteAddressChanger extends Component {
 		return (
 			<span className="site-address-changer__affix">
 				{ newDomainSuffix }
-				<Gridicon icon="chevron-down" size={ 18 } className="site-address-changer__select-icon" />
+				<Icon icon={ chevronDown } size={ 18 } className="site-address-changer__select-icon" />
 				<FormSelect
 					className="site-address-changer__select"
 					value={ newDomainSuffix }
@@ -382,7 +383,7 @@ export class SiteAddressChanger extends Component {
 		if ( isAtomicSite ) {
 			return (
 				<div className="site-address-changer__content">
-					<Gridicon icon="info-outline" />
+					<Icon icon={ info } size={ 18 } />
 					{ translate( 'wpcomstaging.com addresses cannot be changed.' ) }
 				</div>
 			);
@@ -391,7 +392,7 @@ export class SiteAddressChanger extends Component {
 		if ( ! currentDomain.currentUserCanManage ) {
 			return (
 				<div className="site-address-changer site-address-changer__only-owner-info">
-					<Gridicon icon="info-outline" />
+					<Icon icon={ info } size={ 18 } />
 					{ isEmpty( currentDomain.owner )
 						? translate( 'Only the site owner can edit this domain name.' )
 						: translate(
@@ -489,11 +490,9 @@ export class SiteAddressChanger extends Component {
 				/>
 				<p>{ translate( 'Once you confirm, this will be the new address for your site:' ) }</p>
 				<div className="site-address-changer__confirmation-detail">
-					<Gridicon
-						icon="cross-circle"
-						size={ 18 }
-						className="site-address-changer__copy-deletion"
-					/>
+					<span className="site-address-changer__icon-wrapper">
+						<Icon icon={ closeSmall } size={ 24 } className="site-address-changer__copy-deletion" />
+					</span>
 					<p className="site-address-changer__confirmation-detail-copy site-address-changer__copy-deletion">
 						<strong>{ currentDomainPrefix }</strong>
 						{ currentDomainSuffix }
@@ -503,11 +502,9 @@ export class SiteAddressChanger extends Component {
 				<p>{ translate( 'And this address will be removed and unavailable for use:' ) }</p>
 
 				<div className="site-address-changer__confirmation-detail">
-					<Gridicon
-						icon="checkmark-circle"
-						size={ 18 }
-						className="site-address-changer__copy-addition"
-					/>
+					<span className="site-address-changer__icon-wrapper">
+						<Icon icon={ check } size={ 24 } className="site-address-changer__copy-addition" />
+					</span>
 					<p className="site-address-changer__confirmation-detail-copy site-address-changer__copy-addition">
 						<strong>{ newDomainName }</strong>
 						{ newDomainSuffix }
