@@ -4,6 +4,7 @@ import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/current-user';
 import config from '@automattic/calypso-config';
 import { UserActions, User as UserStore } from '@automattic/data-stores';
+import { setGeoLocation } from '@automattic/number-formatters';
 import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { dispatch } from '@wordpress/data';
@@ -164,7 +165,7 @@ async function main() {
 	}
 
 	// No need to await this, it's not critical to the boot process and will slow booting down.
-	defaultCalypsoI18n.geolocateCurrencySymbol();
+	defaultCalypsoI18n.geolocateCurrencySymbol( setGeoLocation );
 
 	const root = createRoot( document.getElementById( 'wpcom' ) as HTMLElement );
 

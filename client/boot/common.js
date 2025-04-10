@@ -324,7 +324,9 @@ const boot = async ( currentUser, registerRoutes ) => {
 	onDisablePersistence( persistOnChange( reduxStore, currentUser?.ID ) );
 	onDisablePersistence( unsubscribePersister );
 	setupLocale( currentUser, reduxStore );
-	defaultCalypsoI18n.geolocateCurrencySymbol();
+
+	defaultCalypsoI18n.geolocateCurrencySymbol( setGeoLocation );
+
 	configureReduxStore( currentUser, reduxStore );
 	setupMiddlewares( currentUser, reduxStore, queryClient );
 	detectHistoryNavigation.start();
