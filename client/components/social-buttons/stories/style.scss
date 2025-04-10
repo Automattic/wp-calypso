@@ -1,3 +1,7 @@
+@import "@automattic/typography/styles/variables";
+
+@import "assets/stylesheets/shared/mixins/breakpoints";
+@import "assets/stylesheets/shared/mixins/elevation";
 @import "blocks/login/social.scss";
 @import "layout/masterbar/woo.scss";
 @import "layout/masterbar/oauth-client.scss";
