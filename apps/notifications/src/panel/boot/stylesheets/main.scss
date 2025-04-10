@@ -97,7 +97,17 @@ $with-sidebar-min-page-width: 1114px;
 		color: var(--color-primary);
 	}
 
-	button {
+	.wpnc__filter .components-base-control {
+		padding: 6px 8px;
+	}
+
+	.components-toggle-group-control {
+		> div {
+			flex-basis: auto;
+		}
+	}
+
+	button:not(.components-toggle-group-control-option-base) {
 		background-color: transparent;
 		border: none;
 		color: var(--color-primary);
@@ -755,7 +765,7 @@ $with-sidebar-min-page-width: 1114px;
 		}
 	}
 
-	.wpnc__summary {
+	div.wpnc__summary {
 		@extend %container;
 		padding: $wpnc__padding-large 0;
 	}
