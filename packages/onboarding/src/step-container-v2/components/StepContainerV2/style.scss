@@ -1,62 +1,18 @@
-@import '../../mixins';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .step-container-v2 {
-	--step-container-v2-top-bar-height: 56px;
-	--step-container-v2-sticky-bottom-bar-height: 72px;
+	--step-container-v2-content-block-padding: 2rem;
+	--step-container-v2-content-inline-padding: 1rem;
+
+	@include break-small {
+		--step-container-v2-content-inline-padding: 3rem;
+	}
 
 	width: 100%;
 	min-height: 100vh;
 	margin: 0;
 	display: flex;
 	flex-direction: column;
-
-	&:has(.vertical-align-center) {
-		.step-container-v2__top-bar-wrapper {
-			z-index: 1;
-		}
-	}
-
-	&__content-wrapper {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 3rem;
-
-		&.padding {
-			padding: 2rem 1rem;
-
-			@include step-medium-viewport {
-				padding: 2rem 3rem;
-			}
-		}
-
-		&.vertical-align-center {
-			@include step-medium-viewport {
-				position: absolute;
-				inset: 0;
-				width: 100%;
-				height: 100%;
-				padding-block: 1rem;
-				box-sizing: border-box;
-				justify-content: center;
-			}
-		}
-	}
-
-	&__content, &__footer {
-		width: 100%;
-		box-sizing: border-box;
-
-		max-width: 1038px;
-
-		&.wide {
-			max-width: 1440px;
-		}
-
-		&.full {
-			max-width: 100%;
-		}
-	}
+	align-items: center;
 }
-

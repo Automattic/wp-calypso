@@ -12,6 +12,7 @@ import {
 	useIsStepActive,
 	useIsStepComplete,
 	useSetStepComplete,
+	useMakeStepActive,
 	createCheckoutStepGroupStore,
 } from './components/checkout-steps';
 import useProcessPayment from './components/use-process-payment';
@@ -68,4 +69,5 @@ export {
 	useSetStepComplete,
 	useTogglePaymentMethod,
 	useTransactionStatus,
+	useMakeStepActive,
 };

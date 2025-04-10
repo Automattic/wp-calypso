@@ -88,6 +88,18 @@ class StatsTabsTab extends Component {
 				className={ clsx( tabClass, { 'tab-disabled': ! hasClickAction } ) }
 				onClick={ this.clickHandler }
 			>
+				{ /* Invisible element for tooltip positioning */ }
+				<div
+					ref={ this.tooltipRef }
+					style={ {
+						display: 'inline-block',
+						width: 50,
+						height: '100%',
+						position: 'absolute',
+						left: 0,
+						opacity: 0,
+					} }
+				/>
 				<a
 					href={ href }
 					onMouseEnter={ () => this.toggleTooltip( true ) }
@@ -103,7 +115,6 @@ class StatsTabsTab extends Component {
 								className={ clsx( 'stats-tabs__highlight-value', {
 									'stats-tabs__highlight-loading': loading,
 								} ) }
-								ref={ this.tooltipRef }
 							>
 								{ loading ? <LoadingPlaceholder height="30px" /> : numberFormatCompact( value ) }
 							</span>

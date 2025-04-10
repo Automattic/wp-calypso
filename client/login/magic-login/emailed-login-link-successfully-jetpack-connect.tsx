@@ -1,3 +1,4 @@
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useEffect } from 'react';
 import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
@@ -11,9 +12,15 @@ import { withEnhancers } from 'calypso/state/utils';
 
 interface Props {
 	emailAddress: string;
+	shouldRedirect?: boolean;
+	onResendEmail: () => void;
 }
 
-const EmailedLoginLinkSuccessfullyJetpackConnect: FC< Props > = ( { emailAddress } ) => {
+const EmailedLoginLinkSuccessfullyJetpackConnect: FC< Props > = ( {
+	emailAddress,
+	shouldRedirect = true,
+	onResendEmail,
+} ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -24,11 +31,13 @@ const EmailedLoginLinkSuccessfullyJetpackConnect: FC< Props > = ( { emailAddress
 
 	return (
 		<div className="magic-login__successfully-jetpack">
-			<RedirectWhenLoggedIn
-				redirectTo="/help"
-				replaceCurrentLocation
-				waitForEmailAddress={ emailAddress }
-			/>
+			{ shouldRedirect && (
+				<RedirectWhenLoggedIn
+					redirectTo="/help"
+					replaceCurrentLocation
+					waitForEmailAddress={ emailAddress }
+				/>
+			) }
 
 			<h1 className="magic-login__form-header">{ translate( 'Check your inbox' ) }</h1>
 
@@ -45,30 +54,34 @@ const EmailedLoginLinkSuccessfullyJetpackConnect: FC< Props > = ( { emailAddress
 								},
 							}
 					  )
-					: translate(
-							'We sent a message to your email address with a link to log in to WordPress.com.'
-					  ) }
+					: translate( 'We sent a message to log in to WordPress.com' ) }
 			</p>
-			<p>{ preventWidows( translate( 'Only one step left—we’ll connect your site next.' ) ) }</p>
-			<footer className="magic-login__successfully-jetpack-footer">
-				<div className="magic-login__successfully-jetpack-footer-item">
+			<p>{ preventWidows( translate( "Only one step left—we'll connect your site next." ) ) }</p>
+			<div className="magic-login__successfully-jetpack-actions">
+				<p>
 					{ translate(
-						'Didn’t get the code? Check your spam folder or {{link}}resend the email{{/link}}',
+						"Didn't get the code? Check your spam folder or {{button}}resend the email{{/button}}",
 						{
 							components: {
-								link: <a href={ `${ window.location.href }&resend=true` } />,
+								button: (
+									<Button
+										className="magic-login__resend-button"
+										variant="link"
+										onClick={ onResendEmail }
+									/>
+								),
 							},
 						}
 					) }
-				</div>
-				<div className="magic-login__successfully-jetpack-footer-item">
+				</p>
+				<p>
 					{ translate( 'Wrong email or account? {{link}}Use a different account{{/link}}', {
 						components: {
-							link: <a href="/log-in" />,
+							link: <a className="magic-login__log-in-link" href="/log-in" />,
 						},
 					} ) }
-				</div>
-			</footer>
+				</p>
+			</div>
 		</div>
 	);
 };

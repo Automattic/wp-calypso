@@ -7,6 +7,7 @@ import {
 	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	isAnyHostingFlow,
 	isNewsletterFlow,
+	Step,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -21,6 +22,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useInterval } from 'calypso/lib/interval';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import useCaptureFlowException from '../../../../hooks/use-capture-flow-exception';
+import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { ProcessingResult } from './constants';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
 import HundredYearPlanFlowProcessingScreen from './hundred-year-plan-flow-processing-screen';
@@ -206,7 +208,6 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 	};
 
 	const flowName = props.flow || '';
-	const isJetpackPowered = isNewsletterFlow( flowName );
 
 	// Return tailored processing screens for flows that need them
 	if ( isNewsletterFlow( flowName ) || isUpdateDesignFlow( flowName ) ) {
@@ -220,6 +221,15 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 		return <HundredYearPlanFlowProcessingScreen />;
 	}
 
+	if ( shouldUseStepContainerV2( flow ) ) {
+		return (
+			<>
+				<DocumentHead title={ __( 'Processing' ) } />
+				<Step.Loading title={ getCurrentMessage() } progress={ progress } delay={ 1000 } />
+			</>
+		);
+	}
+
 	return (
 		<>
 			<DocumentHead title={ __( 'Processing' ) } />
@@ -231,7 +241,6 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 					<Loading title={ getCurrentMessage() } subtitle={ getSubtitle() } progress={ progress } />
 				}
 				recordTracksEvent={ recordTracksEvent }
-				showJetpackPowered={ isJetpackPowered }
 			/>
 		</>
 	);

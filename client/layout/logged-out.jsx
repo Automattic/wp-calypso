@@ -15,6 +15,7 @@ import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
+import { isInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isAkismetRedirect from 'calypso/lib/akismet/is-akismet-redirect';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -52,7 +53,7 @@ import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import { refreshColorScheme, getColorSchemeFromCurrentQuery } from './color-scheme';
 import HelpCenterLoader from './help-center-loader';
-import { shouldLoadInlineHelp } from './utils';
+
 import './style.scss';
 
 const LayoutLoggedOut = ( {
@@ -61,7 +62,6 @@ const LayoutLoggedOut = ( {
 	isWhiteLogin,
 	isPopup,
 	isJetpackWooDnaFlow,
-	isP2Login,
 	isGravatar,
 	isWPJobManager,
 	isGravPoweredClient,
@@ -130,7 +130,7 @@ const LayoutLoggedOut = ( {
 		isLoggedIn &&
 		// we want to show only the Help center in my home and the help section (but not the FAB)
 		( [ 'home', 'help' ].includes( sectionName ) ||
-			shouldLoadInlineHelp( sectionName, currentRoute || '' ) ) &&
+			currentRoute?.startsWith( '/start/do-it-for-me/' ) ) &&
 		userAllowedToHelpCenter;
 
 	const classes = {
@@ -146,7 +146,6 @@ const LayoutLoggedOut = ( {
 		'is-white-login': isWhiteLogin,
 		'is-popup': isPopup,
 		'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
-		'is-p2-login': isP2Login,
 		'is-gravatar': isGravatar,
 		'is-wp-job-manager': isWPJobManager,
 		'is-grav-powered-client': hasGravPoweredClientClass,
@@ -342,7 +341,6 @@ export default withCurrentRoute(
 			const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
 			const isInvitationURL = currentRoute.startsWith( '/accept-invite' );
 			const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
-			const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
 			const oauth2Client = getCurrentOAuth2Client( state );
 			const isGravatar = isGravatarOAuth2Client( oauth2Client );
 			const isWPJobManager = isWPJobManagerOAuth2Client( oauth2Client );
@@ -351,7 +349,6 @@ export default withCurrentRoute(
 			const isWPComLogin =
 				currentRoute.startsWith( '/log-in' ) &&
 				! isJetpackLogin &&
-				! isP2Login &&
 				Boolean( currentQuery?.client_id ) === false;
 			const isPartnerPortal = isPartnerPortalOAuth2Client( oauth2Client );
 			const isWhiteLogin = isWPComLogin || isGravatar || isGravPoweredClient || isPartnerPortal;
@@ -359,7 +356,6 @@ export default withCurrentRoute(
 				isJetpackLogin ||
 				( isWhiteLogin && ! isBlazePro ) ||
 				isJetpackWooDnaFlow ||
-				isP2Login ||
 				isInvitationURL;
 			const isPopup = '1' === currentQuery?.is_popup;
 			const noMasterbarForSection =
@@ -372,7 +368,8 @@ export default withCurrentRoute(
 				! ( currentSection || currentRoute ) ||
 				! masterbarIsVisible( state ) ||
 				noMasterbarForSection ||
-				noMasterbarForRoute;
+				noMasterbarForRoute ||
+				isInStepContainerV2FlowContext( currentRoute, currentQuery );
 			const twoFactorEnabled = isTwoFactorEnabled( state );
 
 			const colorScheme = isWooJPC ? getColorSchemeFromCurrentQuery( currentQuery ) : null;
@@ -383,7 +380,6 @@ export default withCurrentRoute(
 				isWhiteLogin,
 				isPopup,
 				isJetpackWooDnaFlow,
-				isP2Login,
 				isGravatar,
 				isWPJobManager,
 				isGravPoweredClient,

@@ -52,9 +52,9 @@ export interface RedirectForTransactionStatusArgs {
  * Redirect to a checkout pending page and from there to a (relative or absolute) url.
  *
  * The `url` parameter is the final destination. It will be appended to the
- * `redirectTo` query param on a URL for the pending page. If `url` is
+ * `redirect_to` query param on a URL for the pending page. If `url` is
  * `/checkout/thank-you/:receiptId`, then this will look something like:
- * `/checkout/thank-you/example.com/pending/1234?redirectTo=/checkout/thank-you/:receiptId`
+ * `/checkout/thank-you/example.com/pending/1234?redirect_to=/checkout/thank-you/:receiptId`
  *
  * The pending page will redirect to the final destination when the order is complete.
  *
@@ -95,9 +95,9 @@ function isRelativeUrl( url: string ): boolean {
  * Redirect to a checkout pending page and from there to a relative url.
  *
  * The `url` parameter is the final destination. It will be appended to the
- * `redirectTo` query param on a URL for the pending page. If `url` is
+ * `redirect_to` query param on a URL for the pending page. If `url` is
  * `/checkout/thank-you/:receiptId`, then this will look something like:
- * `/checkout/thank-you/example.com/pending/1234?redirectTo=/checkout/thank-you/:receiptId`
+ * `/checkout/thank-you/example.com/pending/1234?redirect_to=/checkout/thank-you/:receiptId`
  *
  * The pending page will redirect to the final destination when the order is complete.
  *
@@ -130,9 +130,9 @@ export function relativeRedirectThroughPending(
  * Redirect to a checkout pending page and from there to an absolute url.
  *
  * The `url` parameter is the final destination. It will be appended to the
- * `redirectTo` query param on a URL for the pending page. If `url` is
+ * `redirect_to` query param on a URL for the pending page. If `url` is
  * `/checkout/thank-you/:receiptId`, then this will look something like:
- * `/checkout/thank-you/example.com/pending/1234?redirectTo=/checkout/thank-you/:receiptId`
+ * `/checkout/thank-you/example.com/pending/1234?redirect_to=/checkout/thank-you/:receiptId`
  *
  * The pending page will redirect to the final destination when the order is complete.
  *
@@ -160,9 +160,9 @@ export function absoluteRedirectThroughPending(
  * Add a relative or absolute url to the checkout pending page url.
  *
  * The `url` parameter is the final destination. It will be appended to the
- * `redirectTo` query param on a URL for the pending page. If `url` is
+ * `redirect_to` query param on a URL for the pending page. If `url` is
  * `/checkout/thank-you/:receiptId`, then this will look something like:
- * `/checkout/thank-you/example.com/pending/1234?redirectTo=/checkout/thank-you/:receiptId`
+ * `/checkout/thank-you/example.com/pending/1234?redirect_to=/checkout/thank-you/:receiptId`
  *
  * The pending page will redirect to the final destination when the order is complete.
  *
@@ -197,7 +197,7 @@ export function addUrlToPendingPageRedirect(
 		( orderId ? `${ orderId }` : ':orderId' );
 	const successUrlBase = `${ origin }${ successUrlPath }`;
 	const successUrlObject = new URL( successUrlBase );
-	successUrlObject.searchParams.set( 'redirectTo', url );
+	successUrlObject.searchParams.set( 'redirect_to', url );
 	successUrlObject.searchParams.set( 'receiptId', String( receiptId ) );
 	if ( fromSiteSlug ) {
 		successUrlObject.searchParams.set( 'from_site_slug', fromSiteSlug );
@@ -236,7 +236,7 @@ function interpolateReceiptId( url: string, receiptId: number ): string {
 /**
  * Return false for absolute URLs which are on unknown hosts.
  *
- * Because the `redirectTo` query param on the pending page is the target of
+ * Because the `redirect_to` query param on the pending page is the target of
  * that page's redirect, we want to make sure we do not create an open redirect
  * security hole that could go anywhere. This function will disallow a URL
  * which is absolute and on an unknown host.
@@ -299,7 +299,7 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 /**
  * Guard against redirecting to absolute URLs which are on unknown hosts.
  *
- * Because the `redirectTo` query param on the pending page is the target of
+ * Because the `redirect_to` query param on the pending page is the target of
  * that page's redirect, we want to make sure we do not create an open redirect
  * security hole that could go anywhere. This function will disallow a URL
  * which is absolute and on an unknown host, returning the `fallbackUrl` instead.
@@ -334,7 +334,7 @@ function getDefaultSuccessUrl(
  * is no receipt and no order (meaning we have to guess what to do).
  *
  * If a redirect is appropriate, the returned URL will usually be the
- * `redirectTo` option, but only if it is a relative URL or in a list of
+ * `redirect_to` option, but only if it is a relative URL or in a list of
  * allowed hosts to prevent having an open redirect. Otherwise it may be a
  * generic thank-you page.
  *

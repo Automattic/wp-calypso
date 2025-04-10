@@ -106,6 +106,7 @@ import {
 	getName,
 	shouldRenderMonthlyRenewalOption,
 	getDIFMTieredPurchaseDetails,
+	canExplicitRenew,
 } from 'calypso/lib/purchases';
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
@@ -374,6 +375,10 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
+		if ( ! canExplicitRenew( purchase ) ) {
+			return null;
+		}
+
 		if ( this.isPendingDomainRegistration( purchase ) ) {
 			return null;
 		}
@@ -458,6 +463,10 @@ class ManagePurchase extends Component<
 				! isMarketplaceTemporarySitePurchase( purchase ) ) ||
 			isAkismetFreeProduct( purchase )
 		) {
+			return null;
+		}
+
+		if ( ! canExplicitRenew( purchase ) ) {
 			return null;
 		}
 
@@ -966,7 +975,7 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
-		if ( ! isPlan( purchase ) ) {
+		if ( ! ( isBusiness( purchase ) || isPremium( purchase ) || isEcommerce( purchase ) ) ) {
 			return null;
 		}
 
@@ -979,6 +988,7 @@ class ManagePurchase extends Component<
 			<CompactCard href={ link }>
 				<Icon icon={ download } className="card__icon" />
 				{ translate( 'Downgrade plan' ) }
+				{ this.renderRefundText() }
 			</CompactCard>
 		);
 	}
@@ -1475,6 +1485,10 @@ class ManagePurchase extends Component<
 			preventRenewal = ! isRenewable( purchase );
 		}
 
+		if ( ! canExplicitRenew( purchase ) ) {
+			preventRenewal = true;
+		}
+
 		return (
 			<Fragment>
 				<TrackPurchasePageView
@@ -1486,7 +1500,10 @@ class ManagePurchase extends Component<
 					<QueryCanonicalTheme siteId={ siteId } themeId={ purchase?.meta ?? '' } />
 				) }
 
-				<HeaderCake backHref={ this.props.purchaseListUrl ?? purchasesRoot }>
+				<HeaderCake
+					backText={ translate( 'Purchases' ) }
+					backHref={ this.props.purchaseListUrl ?? purchasesRoot }
+				>
 					{ this.props.cardTitle || titles.managePurchase }
 				</HeaderCake>
 				{ showExpiryNotice ? (

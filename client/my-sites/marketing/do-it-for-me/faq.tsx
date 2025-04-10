@@ -18,8 +18,7 @@ const FAQHeader = styled.h1`
 `;
 
 const FAQSection = styled.div`
-	max-width: 615px;
-	margin: 0 auto;
+	width: 100%;
 `;
 
 const FAQExpander = styled( Button )`

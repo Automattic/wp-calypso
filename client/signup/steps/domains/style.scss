@@ -182,7 +182,7 @@ body.is-section-stepper .domains__step-content,
 			}
 
 			.domains__domain-cart-remove {
-				color: var(--studio-gray-50);
+				color: var(--studio-gray-100);
 				font-size: $font-body-extra-small;
 				min-width: 50px;
 				margin-right: 10px;
@@ -546,10 +546,6 @@ body.is-section-signup {
 		margin: 0;
 		flex: 1;
 		width: 100%;
-
-		@include break-medium {
-			max-width: 290px;
-		}
 	}
 
 	.domains__domain-side-content.fade-out {

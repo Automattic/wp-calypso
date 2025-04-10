@@ -3,7 +3,14 @@
  * @group jetpack-wpcom-integration
  */
 
-import { DataHelper, EditorPage, SecretsManager, TestAccount } from '@automattic/calypso-e2e';
+import {
+	DataHelper,
+	EditorPage,
+	envToFeatureKey,
+	envVariables,
+	getTestAccountByFeature,
+	TestAccount,
+} from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
@@ -17,14 +24,15 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor Smoke test' ), function (
 	let page: Page;
 	let editorPage: EditorPage;
 
-	const siteSlug =
-		SecretsManager.secrets.testAccounts.simpleSiteFreePlanUser.testSites?.primary.url;
+	let siteSlug: string;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
 		editorPage = new EditorPage( page );
 
-		const testAccount = new TestAccount( 'simpleSiteFreePlanUser' );
+		const accountName = getTestAccountByFeature( envToFeatureKey( envVariables ) );
+		const testAccount = new TestAccount( accountName );
+		siteSlug = testAccount.getSiteURL( { protocol: false } );
 		await testAccount.authenticate( page );
 	} );
 

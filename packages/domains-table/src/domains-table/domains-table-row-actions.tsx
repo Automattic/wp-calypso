@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { moreVertical } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -85,11 +86,21 @@ export const DomainsTableRowActions = ( {
 	const canChangeSiteAddress =
 		! isAllSitesView && isSimpleSite && isFreeUrlDomainName( domain.name );
 	const canRenewDomain = isDomainRenewable( domain );
+	const handleMenuItemClick = ( event: React.MouseEvent ) => {
+		const url = ( event.target as HTMLElement ).parentElement?.getAttribute( 'href' );
+
+		if ( url ) {
+			event.preventDefault();
+			page( url );
+		}
+	};
+
 	const getActions = ( onClose?: () => void ) => {
 		return [
 			canViewDetails && (
 				<MenuItemLink
 					key="actionDetails"
+					onClick={ handleMenuItemClick }
 					href={ domainManagementLink(
 						domain,
 						siteSlug,
@@ -104,7 +115,10 @@ export const DomainsTableRowActions = ( {
 			canManageDNS && (
 				<MenuItemLink
 					key="manageDNS"
-					onClick={ () => onDomainAction?.( 'manage-dns-settings', domain ) }
+					onClick={ ( event ) => {
+						onDomainAction?.( 'manage-dns-settings', domain );
+						handleMenuItemClick( event );
+					} }
 					href={ domainManagementDNS( siteSlug, domain.name, context ) }
 				>
 					{ __( 'Manage DNS' ) }
@@ -113,6 +127,7 @@ export const DomainsTableRowActions = ( {
 			canManageContactInfo && (
 				<MenuItemLink
 					key="manageContactInfo"
+					onClick={ handleMenuItemClick }
 					href={ domainManagementEditContactInfo( siteSlug, domain.name, null, context ) }
 				>
 					{ __( 'Manage contact information' ) }
@@ -133,6 +148,7 @@ export const DomainsTableRowActions = ( {
 			canTransferToWPCOM && (
 				<MenuItemLink
 					key="transferToWPCOM"
+					onClick={ handleMenuItemClick }
 					href={ domainUseMyDomain( siteSlug, domain.name, useMyDomainInputMode.transferDomain ) }
 				>
 					{ __( 'Transfer to WordPress.com' ) }

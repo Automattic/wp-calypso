@@ -11,8 +11,6 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import schema from './schema.json';
 
 const noop = () => {};
-const isRunningInJetpackSite = config.isEnabled( 'is_running_in_jetpack_site' );
-const jitmSchema = isRunningInJetpackSite ? { ...schema, ...schema.properties.data } : schema;
 
 /**
  * Existing libraries do not escape decimal encoded entities that php encodes, this handles that.
@@ -28,10 +26,6 @@ const unescapeDecimalEntities = ( str ) =>
  * @returns {Object} The transformed data to display
  */
 export const transformApiRequest = ( jitms ) => {
-	// Different shape of date between Calypso and Jetpack.
-	if ( jitms && jitms.data ) {
-		jitms = jitms.data;
-	}
 	return jitms.map( ( jitm ) => ( {
 		message: unescapeDecimalEntities( jitm.content.message || '' ),
 		description: unescapeDecimalEntities( jitm.content.description || '' ),
@@ -66,22 +60,22 @@ export const doFetchJITM = ( action ) =>
 	http(
 		{
 			method: 'GET',
-			path: `/jetpack-blogs/${ action.siteId }/rest-api/`,
+			apiNamespace: 'wpcom/v3',
+			path: config.isEnabled( 'is_running_in_jetpack_site' )
+				? '/jitm'
+				: `/sites/${ action.siteId }/jitm`,
 			query: {
-				path: '/jetpack/v4/jitm',
-				query: JSON.stringify( {
-					message_path: action.messagePath,
-					query: action.searchQuery,
-				} ),
-				http_envelope: 1,
+				message_path: action.messagePath,
+				query: action.searchQuery,
 				locale: action.locale,
 			},
+			isLocalApiCall: true, // required to use the wpcom/v3 namespace
 		},
 		{ ...action }
 	);
+
 /**
- * Dismisses a jitm on the jetpack site, it returns nothing useful and will return no useful error, so we'll
- * fail and succeed silently.
+ * Dismisses a JITM
  * @param {Object} action The dismissal action
  * @returns {Object} The HTTP fetch action
  */
@@ -89,46 +83,15 @@ export const doDismissJITM = ( action ) =>
 	http(
 		{
 			method: 'POST',
-			path: `/jetpack-blogs/${ action.siteId }/rest-api/`,
-			query: {
-				path: '/jetpack/v4/jitm',
-				body: JSON.stringify( {
-					feature_class: action.featureClass,
-					id: action.id,
-				} ),
-				http_envelope: 1,
-				json: false,
-			},
-		},
-		action
-	);
-
-const doJetpackFetchJITM = ( action ) =>
-	http(
-		{
-			method: 'GET',
-			apiNamespace: 'jetpack/v4',
-			path: '/jitm',
-			query: {
-				message_path: action.messagePath,
-				query: action.searchQuery,
-			},
-			locale: action.locale,
-		},
-		{ ...action }
-	);
-
-const doJetpackDismissJITM = ( action ) =>
-	http(
-		{
-			method: 'POST',
-			apiNamespace: 'jetpack/v4',
-			path: '/jitm',
-			body: JSON.stringify( {
+			apiNamespace: 'wpcom/v3',
+			path: config.isEnabled( 'is_running_in_jetpack_site' )
+				? '/jitm'
+				: `/sites/${ action.siteId }/jitm`,
+			body: {
 				feature_class: action.featureClass,
 				id: action.id,
-			} ),
-			json: false,
+			},
+			isLocalApiCall: true, // required to use the wpcom/v3 namespace
 		},
 		action
 	);
@@ -162,16 +125,16 @@ export const failedJITM = ( action ) => ( dispatch, getState ) => {
 registerHandlers( 'state/data-layer/wpcom/sites/jitm/index.js', {
 	[ JITM_FETCH ]: [
 		dispatchRequest( {
-			fetch: isRunningInJetpackSite ? doJetpackFetchJITM : doFetchJITM,
+			fetch: doFetchJITM,
 			onSuccess: receiveJITM,
 			onError: failedJITM,
-			fromApi: makeJsonSchemaParser( jitmSchema, transformApiRequest ),
+			fromApi: makeJsonSchemaParser( schema, transformApiRequest ),
 		} ),
 	],
 
 	[ JITM_DISMISS ]: [
 		dispatchRequest( {
-			fetch: isRunningInJetpackSite ? doJetpackDismissJITM : doDismissJITM,
+			fetch: doDismissJITM,
 			onSuccess: noop,
 			onError: noop,
 		} ),

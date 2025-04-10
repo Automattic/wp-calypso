@@ -61,7 +61,11 @@ export default function CreditCardExpiryField( {
 	return (
 		<Label>
 			<LabelText>{ translate( 'Expiry date' ) }</LabelText>
-			<StripeFieldWrapper className="expiration-date" hasError={ !! cardExpiryError }>
+			<StripeFieldWrapper
+				className="expiration-date"
+				hasError={ !! cardExpiryError }
+				isDisabled={ isDisabled }
+			>
 				<CardExpiryElement
 					options={ {
 						style: stripeElementStyle,

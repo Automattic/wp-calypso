@@ -43,7 +43,7 @@
 	width: auto;
 	background: var(--studio-white);
 	color: var(--color-text);
-	font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+	font-size: 13px;
 	margin-left: 20px;
 	margin-bottom: 2px;
 
@@ -60,13 +60,13 @@
 	h2,
 	h3 {
 		color: var(--studio-gray-90);
-		font-size: 1.3em; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-size: 1.3em;
 		margin: 1em 0;
 		font-weight: 600;
 	}
 
 	p {
-		font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-size: 13px;
 		line-height: 1.5;
 		margin: 0.5em 0;
 		padding: 2px;

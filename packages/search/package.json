@@ -28,12 +28,12 @@
 	"types": "dist/types",
 	"dependencies": {
 		"@automattic/typography": "workspace:^",
-		"@babel/runtime": "^7.26.9",
-		"@wordpress/base-styles": "^5.20.0",
-		"@wordpress/components": "^29.6.0",
-		"@wordpress/compose": "^7.20.0",
-		"@wordpress/icons": "^10.20.0",
-		"@wordpress/react-i18n": "^4.20.0",
+		"@babel/runtime": "^7.26.10",
+		"@wordpress/base-styles": "^5.21.0",
+		"@wordpress/components": "^29.7.0",
+		"@wordpress/compose": "^7.21.0",
+		"@wordpress/icons": "^10.21.0",
+		"@wordpress/react-i18n": "^4.21.0",
 		"clsx": "^2.1.1",
 		"fuse.js": "^6.6.2",
 		"lodash": "^4.17.21",
@@ -48,17 +48,16 @@
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@storybook/addon-actions": "^7.6.20",
-		"@storybook/cli": "^7.6.20",
-		"@storybook/react": "^7.6.20",
+		"@storybook/addon-actions": "^8.6.9",
 		"@testing-library/dom": "^10.4.0",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/react": "^16.2.0",
 		"@testing-library/user-event": "^14.6.1",
-		"@wordpress/data": "^10.20.0",
-		"@wordpress/is-shallow-equal": "^5.20.0",
+		"@wordpress/data": "^10.21.0",
+		"@wordpress/is-shallow-equal": "^5.21.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
+		"storybook": "^8.6.9",
 		"typescript": "^5.8.2",
 		"webpack": "^5.97.1"
 	},
@@ -66,6 +65,6 @@
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
 		"prepack": "yarn run clean && yarn run build",
-		"storybook": "sb dev"
+		"storybook:start": "storybook dev"
 	}
 }

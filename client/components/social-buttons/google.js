@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
+import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -14,6 +15,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import { getUxMode, getRedirectUri } from './utils';
 
+import '@automattic/components/styles/wp-button-override.scss';
 import './style.scss';
 
 const noop = () => {};
@@ -195,11 +197,15 @@ class GoogleSocialButton extends Component {
 				{ customButton ? (
 					customButton
 				) : (
-					<button
-						className={ clsx( 'social-buttons__button button google', { disabled: isDisabled } ) }
+					<Button
+						className={ clsx( 'a8c-components-wp-button social-buttons__button google', {
+							disabled: isDisabled,
+						} ) }
 						onClick={ this.handleClick }
 						data-social-service="google"
 						disabled={ isDisabled }
+						variant="secondary"
+						__next40pxDefaultSize
 					>
 						<GoogleIcon isDisabled={ isDisabled } width={ 19 } height={ 19 } />
 
@@ -210,7 +216,7 @@ class GoogleSocialButton extends Component {
 									'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
 							} ) }
 						</span>
-					</button>
+					</Button>
 				) }
 			</Fragment>
 		);

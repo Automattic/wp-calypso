@@ -5,7 +5,7 @@ import {
 	getPlans,
 } from '@automattic/calypso-products';
 import { Gridicon, JetpackLogo } from '@automattic/components';
-import { AddOns } from '@automattic/data-stores';
+import { AddOns, Plans } from '@automattic/data-stores';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRef, useMemo } from '@wordpress/element';
@@ -24,12 +24,12 @@ import {
 import { useInView } from 'react-intersection-observer';
 import { plansGridMediumLarge } from '../../css-mixins';
 import PlansGridContextProvider, { usePlansGridContext } from '../../grid-context';
+import usePlanBillingPeriod from '../../hooks/data-store/use-plan-billing-period';
 import useGridSize from '../../hooks/use-grid-size';
 import useHighlightAdjacencyMatrix from '../../hooks/use-highlight-adjacency-matrix';
 import { useManageTooltipToggle } from '../../hooks/use-manage-tooltip-toggle';
 import filterUnusedFeaturesObject from '../../lib/filter-unused-features-object';
 import getPlanFeaturesObject from '../../lib/get-plan-features-object';
-import { sortPlans } from '../../lib/sort-plan-properties';
 import PlanTypeSelector from '../plan-type-selector';
 import { Plans2023Tooltip } from '../plans-2023-tooltip';
 import PopularBadge from '../popular-badge';
@@ -46,6 +46,7 @@ import type {
 	PlanActionOverrides,
 	TransformedFeatureObject,
 	PlanTypeSelectorProps,
+	GridSize,
 } from '../../types';
 import type {
 	FeatureObject,
@@ -930,39 +931,66 @@ const ComparisonGrid = ( {
 	showRefundPeriod,
 	planTypeSelectorProps,
 	gridSize,
+	siteId,
 }: ComparisonGridProps ) => {
 	const { gridPlans, gridPlansIndex, featureGroupMap } = usePlansGridContext();
 	const [ activeTooltipId, setActiveTooltipId ] = useManageTooltipToggle();
 	const [ visiblePlans, setVisiblePlans ] = useState< PlanSlug[] >( [] );
-
-	const displayedGridPlans = useMemo( () => {
-		return sortPlans( gridPlans, currentSitePlanSlug );
-	}, [ gridPlans, currentSitePlanSlug ] );
+	const currentPlanTerm = Plans.useCurrentPlanTerm( { siteId } );
+	const selectedPlanTerm = usePlanBillingPeriod( { intervalType } );
 
 	useEffect( () => {
-		setVisiblePlans( () => {
-			let visibleLength = displayedGridPlans.length;
-			switch ( gridSize ) {
-				case 'large':
-					visibleLength = 4;
-					break;
-				case 'medium':
-					visibleLength = 3;
-					break;
-				case 'smedium':
-				case 'small':
-					visibleLength = 2;
-					break;
-			}
+		let numPlansToDisplay = gridPlans.length;
 
-			return displayedGridPlans.slice( 0, visibleLength ).map( ( { planSlug } ) => planSlug );
-		} );
-	}, [ gridSize, displayedGridPlans, gridPlansIndex ] );
+		switch ( gridSize ) {
+			case 'large':
+				numPlansToDisplay = 4;
+				break;
+			case 'medium':
+				numPlansToDisplay = 3;
+				break;
+			case 'smedium':
+			case 'small':
+				numPlansToDisplay = 2;
+				break;
+		}
+
+		let visiblePlanSlugs = gridPlans
+			.slice( 0, numPlansToDisplay )
+			.map( ( { planSlug } ) => planSlug );
+
+		const isCurrentPlanVisible =
+			!! currentSitePlanSlug && visiblePlanSlugs.includes( currentSitePlanSlug );
+
+		/**
+		 * Plans are sorted by least to most expensive unless:
+		 * - a current plan exists and
+		 * - the current plan's term matches the selected term and
+		 * - the current plan would not be displayed due to the number of plans that can be visible at once
+		 *
+		 * If those conditions are met:
+		 * - the current plan is placed at the start of the grid and
+		 * - the last plan is removed to maintain the expected number of visible plans
+		 */
+		if ( currentSitePlanSlug && ! isCurrentPlanVisible && currentPlanTerm === selectedPlanTerm ) {
+			visiblePlanSlugs = [ currentSitePlanSlug, ...visiblePlanSlugs ].slice( 0, numPlansToDisplay );
+		}
+
+		setVisiblePlans( visiblePlanSlugs );
+	}, [
+		gridSize,
+		gridPlansIndex,
+		currentSitePlanSlug,
+		gridPlans,
+		currentPlanTerm,
+		selectedPlanTerm,
+		intervalType,
+	] );
 
 	const visibleGridPlans = useMemo(
 		() =>
 			visiblePlans.reduce( ( acc, planSlug ) => {
-				const gridPlan = displayedGridPlans.find(
+				const gridPlan = gridPlans.find(
 					( gridPlan ) => getPlanClass( gridPlan.planSlug ) === getPlanClass( planSlug )
 				);
 
@@ -972,7 +1000,7 @@ const ComparisonGrid = ( {
 
 				return acc;
 			}, [] as GridPlan[] ),
-		[ visiblePlans, displayedGridPlans ]
+		[ visiblePlans, gridPlans ]
 	);
 
 	const onPlanChange = useCallback(
@@ -1044,7 +1072,7 @@ const ComparisonGrid = ( {
 				>
 					{ ( isStuck: boolean ) => (
 						<ComparisonGridHeader
-							displayedGridPlans={ displayedGridPlans }
+							displayedGridPlans={ gridPlans }
 							visibleGridPlans={ visibleGridPlans }
 							isInSignup={ isInSignup }
 							onPlanChange={ onPlanChange }
@@ -1073,7 +1101,7 @@ const ComparisonGrid = ( {
 					/>
 				) ) }
 				<ComparisonGridHeader
-					displayedGridPlans={ displayedGridPlans }
+					displayedGridPlans={ gridPlans }
 					visibleGridPlans={ visibleGridPlans }
 					isInSignup={ isInSignup }
 					isFooter
@@ -1138,7 +1166,7 @@ const WrappedComparisonGrid = ( {
 	const gridBreakpoints = useMemo( () => {
 		// we want to fit up to the Commerce plan in this breakpoint
 		const xlargeBreakpoint = isInSiteDashboard ? 1114 : 1180;
-		return new Map( [
+		return new Map< GridSize, number >( [
 			[ 'small', 0 ],
 			[ 'smedium', 686 ],
 			[ 'medium', 835 ],

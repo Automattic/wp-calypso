@@ -186,6 +186,7 @@ class StepWrapper extends Component {
 			customizedActionButtons,
 			isExtraWideLayout,
 			isSticky,
+			userLoggedIn,
 		} = this.props;
 
 		const backButton = ! hideBack && this.renderBack();
@@ -204,17 +205,14 @@ class StepWrapper extends Component {
 			'has-navigation': hasNavigation,
 		} );
 
-		const flow = flows.getFlow( flowName, this.props.userLoggedIn );
+		const flow = flows.getFlow( flowName, userLoggedIn );
 
 		let sticky = null;
 		if ( isSticky !== undefined ) {
 			sticky = isSticky;
 		}
 
-		const queryParams = new URLSearchParams( window?.location.search );
-		const flags = queryParams.get( 'flags' )?.split( ',' );
-		const isHelpCenterLinkEnabled =
-			flags?.includes( 'signup/help-center-link' ) && flow?.enabledHelpCenterGeos;
+		const isHelpCenterLinkEnabled = flow?.enabledHelpCenterGeos && userLoggedIn;
 
 		return (
 			<>

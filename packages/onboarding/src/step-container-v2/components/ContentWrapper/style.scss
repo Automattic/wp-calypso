@@ -1,0 +1,49 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.step-container-v2__content-wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 3rem;
+	width: 100%;
+	box-sizing: border-box;
+	flex: 1;
+	max-width: calc(
+		var( --step-container-v2-content-max-width ) + 2 * var( --step-container-v2-content-inline-padding )
+	);
+
+	&.padding {
+		padding: var( --step-container-v2-content-block-padding )
+			var( --step-container-v2-content-inline-padding );
+	}
+
+	&.wide {
+		--step-container-v2-content-max-width: #{$break-wide};
+	}
+
+	&.huge {
+		--step-container-v2-content-max-width: #{$break-huge};
+	}
+
+	&.xhuge {
+		--step-container-v2-content-max-width: #{$break-xhuge};
+	}
+
+	&.center-aligned {
+		justify-content: center;
+		padding-bottom: calc(
+			var( --step-container-v2-content-block-padding ) + var( --step-container-v2-top-bar-height )
+		);
+	}
+
+	--step-container-v2-content-column-gap: 16px;
+
+	--step-container-v2-content-max-width-minus-column-gaps: calc(
+		var( --step-container-v2-content-max-width ) - 11 * var( --step-container-v2-content-column-gap )
+	);
+
+	--step-container-v2-content-column-width: calc(
+		var( --step-container-v2-content-max-width-minus-column-gaps ) / 12
+	);
+}

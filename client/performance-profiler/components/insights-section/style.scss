@@ -89,23 +89,23 @@
 
 			.counter {
 				&.fail {
-					color: var(--studio-red-50);
+					color: var(--studio-red-60);
 				}
 
 				&.warning {
-					color: var(--studio-orange-40);
+					color: var(--studio-orange-60);
 				}
 			}
 
 			.value {
-				color: var(--studio-green-40);
+				color: var(--studio-green-60);
 
 				&.fail {
-					color: var(--studio-red-50);
+					color: var(--studio-red-60);
 				}
 
 				&.warning {
-					color: var(--studio-orange-40);
+					color: var(--studio-orange-60);
 				}
 
 				&.is-mobile {
@@ -262,13 +262,13 @@
 					cursor: pointer;
 
 					&.good {
-						color: var(--studio-green-50);
-						fill: var(--studio-green-50);
+						color: var(--studio-green-60);
+						fill: var(--studio-green-60);
 					}
 
 					&.bad {
-						color: var(--studio-red-50);
-						fill: var(--studio-red-50);
+						color: var(--studio-red-60);
+						fill: var(--studio-red-60);
 					}
 				}
 			}

@@ -1,12 +1,9 @@
 import config from '@automattic/calypso-config';
 import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
-import colorStudio from '@automattic/color-studio';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
-import { styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useBigSkyBeforePlans } from 'calypso/landing/stepper/declarative-flow/helpers/use-bigsky-before-plans-experiment';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { getStripeConfiguration, getRazorpayConfiguration } from 'calypso/lib/store-transactions';
 import Recaptcha from 'calypso/signup/recaptcha';
@@ -21,14 +18,6 @@ import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 const logCheckoutError = ( error: Error ) => {
 	logStashLoadErrorEvent( 'checkout_system_decider', error );
 };
-
-const CheckoutMainWrapperStyles = styled.div`
-	background-color: ${ colorStudio.colors[ 'White' ] };
-
-	a {
-		color: ${ colorStudio.colors[ 'WordPress Blue 50' ] };
-	}
-`;
 
 export default function CheckoutMainWrapper( {
 	productAliasFromUrl,
@@ -81,7 +70,6 @@ export default function CheckoutMainWrapper( {
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentUserLocale );
 	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
-	useBigSkyBeforePlans();
 
 	useEffect( () => {
 		window.scrollTo( 0, 0 );
@@ -114,7 +102,7 @@ export default function CheckoutMainWrapper( {
 	}
 
 	return (
-		<CheckoutMainWrapperStyles>
+		<>
 			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logCheckoutError }
@@ -149,6 +137,6 @@ export default function CheckoutMainWrapper( {
 				</CalypsoShoppingCartProvider>
 			</CheckoutErrorBoundary>
 			{ isLoggedOutCart && <Recaptcha badgePosition="bottomright" /> }
-		</CheckoutMainWrapperStyles>
+		</>
 	);
 }

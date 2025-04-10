@@ -195,12 +195,6 @@ fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 			param("env.JETPACK_TARGET", "wpcom-deployment")
 		}
 
-		triggers {
-			finishBuildTrigger {
-				buildType = "JetpackStaging_JetpackSunMoonUpdated"
-			}
-		}
-
 		steps {
 			prepareE2eEnvironment()
 

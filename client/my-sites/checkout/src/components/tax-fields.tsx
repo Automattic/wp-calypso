@@ -187,6 +187,7 @@ export default function TaxFields( {
 				countryCode={ countryCode?.value }
 				selectText={ STATE_SELECT_TEXT[ countryCode?.value ?? '' ] }
 				value={ state?.value }
+				disabled={ isDisabled }
 				onChange={ ( event: ChangeEvent< HTMLSelectElement > ) => {
 					onChange(
 						updateOnChangePayload(

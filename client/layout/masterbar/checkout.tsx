@@ -1,18 +1,16 @@
 import { WordPressWordmark } from '@automattic/components';
-import { checkoutTheme, CheckoutModal } from '@automattic/composite-checkout';
-import { useShoppingCart } from '@automattic/shopping-cart';
+import { checkoutTheme } from '@automattic/composite-checkout';
 import { ThemeProvider } from '@emotion/react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
 import AkismetLogo from 'calypso/components/akismet-logo';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { DefaultMasterbarContact } from 'calypso/my-sites/checkout/checkout-thank-you/redesign-v2/masterbar-styled/default-contact';
-import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/src/hooks/use-valid-checkout-back-url';
-import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import {
+	LeaveCheckoutModal,
+	useCheckoutLeaveModal,
+} from 'calypso/my-sites/checkout/src/components/leave-checkout-modal';
 import Item from './item';
 import Masterbar from './masterbar';
 
@@ -29,14 +27,12 @@ interface Props {
 const CheckoutMasterbar = ( {
 	title,
 	isJetpackNotAtomic,
-	previousPath,
 	siteSlug,
 	isLeavingAllowed,
-	shouldClearCartWhenLeaving,
 	loadHelpCenterIcon,
 }: Props ) => {
 	const translate = useTranslate();
-	const forceCheckoutBackUrl = useValidCheckoutBackUrl( siteSlug );
+	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteSlug ?? '' } );
 
 	const getCheckoutType = () => {
 		if ( window.location.pathname.startsWith( '/checkout/jetpack' ) || isJetpackNotAtomic ) {
@@ -50,53 +46,6 @@ const CheckoutMasterbar = ( {
 		return 'wpcom';
 	};
 	const checkoutType = getCheckoutType();
-
-	const cartKey = useCartKey();
-	const { responseCart, replaceProductsInCart } = useShoppingCart( cartKey );
-	const [ isModalVisible, setIsModalVisible ] = useState( false );
-
-	const closeAndLeave = ( options?: {
-		userHasClearedCart?: boolean;
-		closedWithoutConfirmation?: boolean;
-	} ) => {
-		const userHasClearedCart = options?.userHasClearedCart ?? false;
-		if ( ! options?.closedWithoutConfirmation ) {
-			recordTracksEvent( 'calypso_masterbar_checkout_close_modal_submitted', {
-				user_has_cleared_cart: userHasClearedCart,
-			} );
-		}
-		leaveCheckout( {
-			siteSlug,
-			forceCheckoutBackUrl,
-			previousPath,
-			tracksEvent: 'calypso_masterbar_close_clicked',
-			userHasClearedCart: userHasClearedCart,
-		} );
-	};
-
-	const clickClose = () => {
-		if ( shouldClearCartWhenLeaving && responseCart.products.length > 0 ) {
-			recordTracksEvent( 'calypso_masterbar_checkout_close_modal_displayed' );
-			setIsModalVisible( true );
-			return;
-		}
-		closeAndLeave( {
-			closedWithoutConfirmation: true,
-		} );
-	};
-
-	const modalTitleText = translate( 'You are about to leave checkout with items in your cart' );
-	const modalBodyText = translate( 'You can leave the items in the cart or empty the cart.' );
-	/* translators: The label to a button that will exit checkout without removing items from the shopping cart. */
-	const modalPrimaryText = translate( 'Leave items' );
-	/* translators: The label to a button that will remove all items from the shopping cart. */
-	const modalSecondaryText = translate( 'Empty cart' );
-	const clearCartAndLeave = () => {
-		replaceProductsInCart( [] );
-		closeAndLeave( {
-			userHasClearedCart: true,
-		} );
-	};
 
 	const showCloseButton = isLeavingAllowed && checkoutType === 'wpcom';
 
@@ -113,7 +62,7 @@ const CheckoutMasterbar = ( {
 					<Item
 						icon="cross"
 						className="masterbar__close-button"
-						onClick={ clickClose }
+						onClick={ leaveModalProps.clickClose }
 						tooltip={ String( translate( 'Close Checkout' ) ) }
 						tipTarget="close"
 					/>
@@ -133,16 +82,7 @@ const CheckoutMasterbar = ( {
 			</div>
 			{ title && <Item className="masterbar__item-title">{ title }</Item> }
 			{ loadHelpCenterIcon && <DefaultMasterbarContact /> }
-			<CheckoutModal
-				title={ modalTitleText }
-				copy={ modalBodyText }
-				closeModal={ () => setIsModalVisible( false ) }
-				isVisible={ isModalVisible }
-				primaryButtonCTA={ modalPrimaryText }
-				primaryAction={ closeAndLeave }
-				secondaryButtonCTA={ modalSecondaryText }
-				secondaryAction={ clearCartAndLeave }
-			/>
+			<LeaveCheckoutModal { ...leaveModalProps } />
 		</Masterbar>
 	);
 };

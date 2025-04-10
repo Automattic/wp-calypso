@@ -13,6 +13,7 @@ import { useDispatch } from 'calypso/state';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
+import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { Flow } from '../../internals/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
@@ -23,6 +24,7 @@ interface ProvidedDependencies {
 	cartItems?: MinimalRequestCartProduct[]; // Ensure cartItems is an array
 	siteCreated?: boolean;
 	isLaunched?: boolean;
+	processingResult?: ProcessingResult;
 }
 
 const SiteIntent = Onboard.SiteIntent;
@@ -63,6 +65,7 @@ const aiSiteBuilder: Flow = {
 		return stepsWithRequiredLogin( [
 			STEPS.SITE_CREATION_STEP,
 			STEPS.PROCESSING,
+			STEPS.ERROR,
 			STEPS.UNIFIED_DOMAINS,
 			STEPS.UNIFIED_PLANS,
 			STEPS.SITE_LAUNCH,
@@ -87,6 +90,10 @@ const aiSiteBuilder: Flow = {
 				// The processing step will wait the aforementioned promise to be resolved and then will submit to you whatever the promise resolves to.
 				// Which will be the created site { "siteId": "242341575", "siteSlug": "something.wordpress.com", "goToCheckout": false, "siteCreated": true }
 				case 'processing': {
+					if ( providedDependencies.processingResult === ProcessingResult.FAILURE ) {
+						return navigate( 'error' );
+					}
+
 					if ( providedDependencies.siteCreated ) {
 						const { siteSlug, siteId } = providedDependencies;
 						// We are setting up big sky now.

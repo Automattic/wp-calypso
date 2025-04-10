@@ -1,9 +1,9 @@
 import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { BadgeType } from '@automattic/components';
-import { StepContainer } from '@automattic/onboarding';
+import { Step, StepContainer } from '@automattic/onboarding';
 import { canInstallPlugins } from '@automattic/sites';
 import { getQueryArg } from '@wordpress/url';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, numberFormat } from 'i18n-calypso';
 import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -12,15 +12,16 @@ import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-mig
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { shouldUseStepContainerV2MigrationFlow } from '../../../helpers/should-use-step-container-v2';
 import FlowCard from '../components/flow-card';
-import type { Step } from '../../types';
+import type { Step as StepType } from '../../types';
 import './style.scss';
 
-const SiteMigrationImportOrMigrate: Step< {
+const SiteMigrationImportOrMigrate: StepType< {
 	submits: {
 		destination: 'migrate' | 'import' | 'upgrade';
 	};
-} > = function ( { navigation } ) {
+} > = function ( { navigation, flow } ) {
 	const translate = useTranslate();
 	const site = useSite();
 	const importSiteQueryParam = getQueryArg( window.location.href, 'from' )?.toString() || '';
@@ -28,10 +29,15 @@ const SiteMigrationImportOrMigrate: Step< {
 	const { mutate: cancelMigration } = useMigrationCancellation( site?.ID );
 	const siteCanInstallPlugins = canInstallPlugins( site );
 	const isUpgradeRequired = ! siteCanInstallPlugins;
+	const isUsingStepContainerV2 = shouldUseStepContainerV2MigrationFlow( flow );
 
 	const options = useMemo( () => {
-		const upgradeRequiredLabel = translate( '50% off %(planName)s', {
-			args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+		const upgradeRequiredLabel = translate( '%(discountPercentage)s off %(planName)s', {
+			args: {
+				planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+				discountPercentage: numberFormat( 0.5, { numberFormatOptions: { style: 'percent' } } ),
+			},
+			comment: 'discountPercentage is a number between 0 and 100 followed or preceded by a % sign',
 		} );
 
 		const migrateOptionDescription = translate(
@@ -93,9 +99,34 @@ const SiteMigrationImportOrMigrate: Step< {
 		</>
 	);
 
+	const pageTitle = translate( 'What do you want to do?' );
+	const pageSubTitle = shouldDisplayHostIdentificationMessage
+		? translate( 'Your WordPress site is hosted with %(hostingProviderName)s.', {
+				args: { hostingProviderName },
+		  } )
+		: '';
+
+	if ( isUsingStepContainerV2 ) {
+		return (
+			<>
+				<DocumentHead title={ pageTitle } />
+				<Step.CenteredColumnLayout
+					columnWidth={ 5 }
+					topBar={
+						<Step.TopBar leftElement={ <Step.BackButton onClick={ navigation.goBack } /> } />
+					}
+					heading={ <Step.Heading text={ pageTitle } subText={ pageSubTitle } /> }
+					className="import-or-migrate-v2"
+				>
+					{ stepContent }
+				</Step.CenteredColumnLayout>
+			</>
+		);
+	}
+
 	return (
 		<>
-			<DocumentHead title={ translate( 'What do you want to do?' ) } />
+			<DocumentHead title={ pageTitle } />
 			<StepContainer
 				stepName="site-migration-import-or-migrate"
 				className="import-or-migrate"
@@ -104,14 +135,8 @@ const SiteMigrationImportOrMigrate: Step< {
 				formattedHeader={
 					<FormattedHeader
 						id="how-to-migrate-header"
-						headerText={ translate( 'What do you want to do?' ) }
-						subHeaderText={
-							shouldDisplayHostIdentificationMessage
-								? translate( 'Your WordPress site is hosted with %(hostingProviderName)s.', {
-										args: { hostingProviderName },
-								  } )
-								: ''
-						}
+						headerText={ pageTitle }
+						subHeaderText={ pageSubTitle }
 						align="center"
 					/>
 				}

@@ -31,6 +31,7 @@ import type {
 	FeaturesGridExternalProps,
 	FeaturesGridProps,
 	GridPlan,
+	GridSize,
 	PlanActionOverrides,
 } from '../../types';
 
@@ -403,9 +404,9 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		}
 
 		// we want to fit 3 plans per row in this breakpoint
-		const mediumBreakpoint = isInSiteDashboard ? 667 : 741;
+		const mediumBreakpoint = 669;
 
-		return new Map( [
+		return new Map< GridSize, number >( [
 			[ 'small', 0 ],
 			[ 'medium', mediumBreakpoint ],
 			[ 'large', largeBreakpoint ],

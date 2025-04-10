@@ -10,6 +10,7 @@ import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { shouldShowLaunchpadFirst } from 'calypso/state/selectors/should-show-launchpad-first';
 import { isSiteOnWooExpressEcommerceTrial } from 'calypso/state/sites/plans/selectors';
+import isSiteBigSkyTrial from 'calypso/state/sites/plans/selectors/is-site-big-sky-trial';
 import { canCurrentUserUseCustomerHome, getSiteUrl } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSiteSlug,
@@ -72,6 +73,16 @@ export async function maybeRedirect( context, next ) {
 				window.location.replace( siteUrl + '/wp-admin/admin.php?page=wc-admin' );
 				return;
 			}
+		}
+	}
+
+	if ( isSiteBigSkyTrial( state, siteId ) ) {
+		const siteUrl = getSiteUrl( state, siteId );
+		if ( siteUrl !== null ) {
+			window.location.replace(
+				siteUrl + '/wp-admin/site-editor.php?canvas=edit&ai-website-builder-trial=home'
+			);
+			return;
 		}
 	}
 

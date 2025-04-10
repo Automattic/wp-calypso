@@ -24,8 +24,6 @@ import {
 	A4A_MARKETPLACE_ASSIGN_LICENSE_LINK,
 	A4A_MARKETPLACE_DOWNLOAD_PRODUCTS_LINK,
 	A4A_REFERRALS_LINK,
-	A4A_REFERRALS_BANK_DETAILS_LINK,
-	A4A_REFERRALS_COMMISSIONS_LINK,
 	A4A_REFERRALS_DASHBOARD,
 	A4A_REFERRALS_PAYMENT_SETTINGS,
 	A4A_REFERRALS_FAQ,
@@ -48,6 +46,7 @@ import {
 	A4A_WOOPAYMENTS_DASHBOARD_LINK,
 	A4A_WOOPAYMENTS_PAYMENT_SETTINGS_LINK,
 	A4A_WOOPAYMENTS_SITE_SETUP_LINK,
+	A4A_WOOPAYMENTS_OVERVIEW_LINK,
 } from '../components/sidebar-menu/lib/constants';
 import type { Agency } from 'calypso/state/a8c-for-agencies/types';
 
@@ -73,8 +72,6 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_MARKETPLACE_ASSIGN_LICENSE_LINK ]: [ 'a4a_read_marketplace' ],
 	[ A4A_MARKETPLACE_DOWNLOAD_PRODUCTS_LINK ]: [ 'a4a_read_marketplace' ],
 	[ A4A_REFERRALS_LINK ]: [ 'a4a_read_referrals' ],
-	[ A4A_REFERRALS_BANK_DETAILS_LINK ]: [ 'a4a_read_referrals' ],
-	[ A4A_REFERRALS_COMMISSIONS_LINK ]: [ 'a4a_read_referrals' ],
 	[ A4A_REFERRALS_DASHBOARD ]: [ 'a4a_read_referrals' ],
 	[ A4A_REFERRALS_PAYMENT_SETTINGS ]: [ 'a4a_read_referrals' ],
 	[ A4A_REFERRALS_FAQ ]: [ 'a4a_read_referrals' ],
@@ -102,6 +99,7 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_WOOPAYMENTS_DASHBOARD_LINK ]: [ 'a4a_read_referrals' ],
 	[ A4A_WOOPAYMENTS_PAYMENT_SETTINGS_LINK ]: [ 'a4a_read_referrals' ],
 	[ A4A_WOOPAYMENTS_SITE_SETUP_LINK ]: [ 'a4a_read_referrals' ],
+	[ A4A_WOOPAYMENTS_OVERVIEW_LINK ]: [ 'a4a_read_referrals' ],
 };
 
 const MEMBER_ACCESSIBLE_DYNAMIC_PATHS: Record< string, string[] > = {

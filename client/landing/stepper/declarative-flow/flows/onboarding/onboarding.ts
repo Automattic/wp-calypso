@@ -4,6 +4,7 @@ import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useState, useMemo, useEffect, useRef } from 'react';
+import { useIsPlaygroundEligible } from 'calypso/landing/stepper/hooks/use-is-playground-eligible';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
 import {
@@ -35,12 +36,6 @@ import { useRedirectDesignSetupOldSlug } from '../../helpers/use-redirect-design
 import { recordStepNavigation } from '../../internals/analytics/record-step-navigation';
 import { STEPS } from '../../internals/steps';
 import { AssertConditionState, Flow, ProvidedDependencies } from '../../internals/types';
-
-declare global {
-	interface Window {
-		__a8cBigSkyOnboarding?: boolean;
-	}
-}
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -102,6 +97,7 @@ const onboarding: Flow = {
 	useSteps() {
 		// We have already checked the value has loaded in useAssertConditions
 		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
+		const isPlaygroundEligible = useIsPlaygroundEligible();
 
 		const steps = stepsWithRequiredLogin( [
 			STEPS.UNIFIED_DOMAINS,
@@ -122,11 +118,16 @@ const onboarding: Flow = {
 			);
 		}
 
+		if ( isPlaygroundEligible ) {
+			steps.push( STEPS.PLAYGROUND );
+		}
+
 		return steps;
 	},
 
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
+		const isPlaygroundEligible = useIsPlaygroundEligible();
 		const {
 			setDomain,
 			setDomainCartItem,
@@ -150,8 +151,6 @@ const onboarding: Flow = {
 		);
 		const coupon = useQuery().get( 'coupon' );
 
-		const [ redirectedToUseMyDomain, setRedirectedToUseMyDomain ] = useState( false );
-		const [ useMyDomainQueryParams, setUseMyDomainQueryParams ] = useState( {} );
 		const [ useMyDomainTracksEventProps, setUseMyDomainTracksEventProps ] = useState( {} );
 
 		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
@@ -161,17 +160,12 @@ const onboarding: Flow = {
 
 		const { selectedMarketplaceProduct } = useMarketplaceThemeProducts();
 
-		if ( typeof window !== 'undefined' && createWithBigSky ) {
-			window.__a8cBigSkyOnboarding = true;
-		} else if ( typeof window !== 'undefined' ) {
-			window.__a8cBigSkyOnboarding = false;
-		}
-
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
 		 */
 		const getPostCheckoutDestination = (
-			providedDependencies: ProvidedDependencies
+			providedDependencies: ProvidedDependencies,
+			isPlaygroundEligible: boolean
 		): [ string, string | null ] => {
 			if ( createWithBigSky && isBigSkyBeforePlansExperiment && isGoalsAtFrontExperiment ) {
 				const destination = addQueryArgs(
@@ -193,6 +187,20 @@ const onboarding: Flow = {
 
 			if ( ! providedDependencies.hasExternalTheme && providedDependencies.hasPluginByGoal ) {
 				return [ `/home/${ providedDependencies.siteSlug }`, null ];
+			}
+
+			const playgroundId = isPlaygroundEligible
+				? getQueryArg( window.location.href, 'playground' )
+				: null;
+			if ( playgroundId && providedDependencies.siteSlug ) {
+				return [
+					addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
+						siteSlug: providedDependencies.siteSlug,
+						siteId: providedDependencies.siteId,
+						playground: playgroundId,
+					} ),
+					null,
+				];
 			}
 
 			const destination = addQueryArgs( withLocale( '/setup/site-setup', locale ), {
@@ -239,9 +247,6 @@ const onboarding: Flow = {
 				}
 
 				case 'design-choices': {
-					// __a8cBigSkyOnboarding is set as a hack so that the @automattic/calypso-products can know what the users
-					// selection was. Accessing the data store is tricky from there.
-					// See is-big-sky-onboarding.ts
 					if ( providedDependencies.destination === 'launch-big-sky' ) {
 						setCreateWithBigSky( true );
 						return navigate( 'domains' );
@@ -285,7 +290,6 @@ const onboarding: Flow = {
 						const currentQueryArgs = getQueryArgs( window.location.href );
 						currentQueryArgs.step = 'domain-input';
 
-						setRedirectedToUseMyDomain( true );
 						let useMyDomainURL = addQueryArgs( '/use-my-domain', currentQueryArgs );
 
 						const lastQueryParam = ( providedDependencies?.domainForm as { lastQuery?: string } )
@@ -304,7 +308,6 @@ const onboarding: Flow = {
 						return navigate( useMyDomainURL );
 					}
 
-					setRedirectedToUseMyDomain( false );
 					return navigate( 'plans' );
 				case 'use-my-domain':
 					setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
@@ -332,7 +335,6 @@ const onboarding: Flow = {
 						providedDependencies: useMyDomainTracksEventProps,
 					} );
 
-					setUseMyDomainQueryParams( getQueryArgs( window.location.href ) );
 					return navigate( 'plans' );
 				case 'plans': {
 					const cartItems = providedDependencies.cartItems as Array< typeof planCartItem >;
@@ -363,8 +365,10 @@ const onboarding: Flow = {
 				case 'post-checkout-onboarding':
 					return navigate( 'processing' );
 				case 'processing': {
-					const [ destination, backDestination ] =
-						getPostCheckoutDestination( providedDependencies );
+					const [ destination, backDestination ] = getPostCheckoutDestination(
+						providedDependencies,
+						isPlaygroundEligible
+					);
 
 					persistSignupDestination( destination );
 					setSignupCompleteFlowName( flowName );
@@ -373,16 +377,25 @@ const onboarding: Flow = {
 					if ( providedDependencies.goToCheckout ) {
 						const siteSlug = providedDependencies.siteSlug as string;
 
+						/**
+						 * If the user comes from the Playground onboarding flow,
+						 * redirect the user back to Playground to start the import.
+						 */
+						const playgroundId = getQueryArg( window.location.href, 'playground' );
+						const redirectTo: string = playgroundId
+							? addQueryArgs( withLocale( '/setup/site-setup/importerPlayground', locale ), {
+									siteSlug,
+									siteId: providedDependencies.siteId,
+									playground: playgroundId,
+							  } )
+							: addQueryArgs( withLocale( '/setup/onboarding/post-checkout-onboarding', locale ), {
+									siteSlug,
+							  } );
+
 						// replace the location to delete processing step from history.
 						window.location.replace(
 							addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-								// Go to the post-checkout step to see whether to wait for the atomic transfer
-								redirect_to: addQueryArgs(
-									withLocale( '/setup/onboarding/post-checkout-onboarding', locale ),
-									{
-										siteSlug,
-									}
-								),
+								redirect_to: redirectTo,
 								signup: 1,
 								checkoutBackUrl: pathToUrl( backDestination ?? '' ),
 								coupon,
@@ -395,62 +408,16 @@ const onboarding: Flow = {
 						// replace the location to delete processing step from history.
 						window.location.replace( destination );
 					}
+					return;
 				}
+				case 'playground':
+					return navigate( 'domains' );
 				default:
 					return;
 			}
 		};
 
-		const goBack = () => {
-			switch ( currentStepSlug ) {
-				case 'use-my-domain':
-					if ( getQueryArg( window.location.href, 'step' ) === 'transfer-or-connect' ) {
-						const destination = addQueryArgs( '/use-my-domain', {
-							...getQueryArgs( window.location.href ),
-							step: 'domain-input',
-							initialQuery: getQueryArg( window.location.href, 'initialQuery' ),
-						} );
-						return navigate( destination );
-					}
-
-					if ( window.location.search ) {
-						window.history.replaceState( {}, document.title, window.location.pathname );
-					}
-					return navigate( 'domains' );
-				case 'plans':
-					if ( redirectedToUseMyDomain ) {
-						if ( Object.keys( useMyDomainQueryParams ).length ) {
-							// restore query params
-							const useMyDomainURL = addQueryArgs( 'use-my-domain', useMyDomainQueryParams );
-							return navigate( useMyDomainURL );
-						}
-						return navigate( 'use-my-domain' );
-					}
-					return navigate( 'domains' );
-				case 'domains':
-					if ( isGoalsAtFrontExperiment ) {
-						if ( isBigSkyBeforePlansExperiment && createWithBigSky ) {
-							return navigate( 'design-choices' );
-						}
-						return navigate( 'design-setup' );
-					}
-				case 'design-setup':
-					if ( isDesignChoicesStepEnabled ) {
-						return navigate( 'design-choices' );
-					}
-					if ( isGoalsAtFrontExperiment ) {
-						return navigate( 'goals' );
-					}
-				case 'difmStartingPoint':
-					return navigate( 'goals' );
-				case 'design-choices':
-					return navigate( 'goals' );
-				default:
-					return;
-			}
-		};
-
-		return { goBack, submit };
+		return { submit };
 	},
 	useAssertConditions() {
 		const [ isLoading ] = useGoalsFirstExperiment();
@@ -476,10 +443,6 @@ const onboarding: Flow = {
 				clearSignupDestinationCookie();
 				clearSignupCompleteFlowName();
 				clearSignupCompleteSlug();
-
-				if ( typeof window !== 'undefined' ) {
-					delete window.__a8cBigSkyOnboarding;
-				}
 			}
 		}, [ currentStepSlug, reduxDispatch, resetOnboardStore ] );
 

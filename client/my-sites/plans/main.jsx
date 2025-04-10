@@ -3,6 +3,7 @@ import {
 	FEATURE_LEGACY_STORAGE_200GB,
 	getIntervalTypeForTerm,
 	getPlan,
+	is100Year,
 	isFreePlanProduct,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
@@ -35,6 +36,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { isPlansPageUntangled } from 'calypso/lib/plans/untangling-plans-experiment';
+import { isPartnerPurchase } from 'calypso/lib/purchases';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
@@ -349,7 +351,13 @@ class PlansComponent extends Component {
 		);
 	}
 
-	renderMainContent( { isEcommerceTrial, isBusinessTrial, isWooExpressPlan } ) {
+	renderMainContent( {
+		isEcommerceTrial,
+		isBusinessTrial,
+		isWooExpressPlan,
+		isA4APlan,
+		is100YearPlan,
+	} ) {
 		if ( isEcommerceTrial ) {
 			return this.renderEcommerceTrialPage();
 		}
@@ -358,6 +366,9 @@ class PlansComponent extends Component {
 		}
 		if ( isBusinessTrial ) {
 			return this.renderBusinessTrialPage();
+		}
+		if ( isA4APlan || is100YearPlan ) {
+			return null;
 		}
 
 		return this.renderPlansMain();
@@ -422,6 +433,8 @@ class PlansComponent extends Component {
 			} );
 
 		const isWooExpressTrial = purchase?.isWooExpressTrial;
+		const isA4APlan = purchase && isPartnerPurchase( purchase );
+		const is100YearPlan = purchase && is100Year( purchase );
 
 		// Use the Woo Express subheader text if the current plan has the Performance or trial plans or fallback to the default subheader text.
 		let subHeaderText = null;
@@ -504,6 +517,8 @@ class PlansComponent extends Component {
 									isEcommerceTrial,
 									isBusinessTrial,
 									isWooExpressPlan,
+									isA4APlan,
+									is100YearPlan,
 								} ) }
 								<PerformanceTrackerStop />
 							</Main>

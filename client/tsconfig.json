@@ -5,14 +5,7 @@
 		"noEmit": true,
 		"types": [ "node", "@types/gtag.js", "@emotion/react/types/css-prop" ],
 		"paths": {
-			"calypso/*": [ "./*" ],
-
-			// Workaround for https://github.com/Automattic/wp-calypso/pull/57487#issuecomment-957104486
-			// TLDR: We have `node_modules/history` and `node_modules/@types/history`, which have incompatible types.
-			// `tsc` will always pick the former by default, even if the project depends on the latter. Hardcoding the
-			// path here works around that limitation.
-			// To be removed when we don't have `@types/history` (brought in by `history@^4`) in our dependency tree.
-			"history": [ "../node_modules/@types/history" ]
+			"calypso/*": [ "./*" ]
 		}
 	},
 	"references": [ { "path": "../packages" }, { "path": "../build-tools" } ],
