@@ -81,7 +81,17 @@ module.exports = function storybookDefaultConfig( {
 					use: [
 						'style-loader', // Injects styles into the DOM
 						'css-loader', // Translates CSS into CommonJS
-						'sass-loader', // Compiles Sass to CSS
+						{
+							loader: 'sass-loader', // Compiles Sass to CSS
+							options: {
+								sassOptions: {
+									includePaths: [
+										// Include the client directory by default, similar to client webpack config
+										path.resolve( process.cwd(), 'client' ),
+									],
+								},
+							},
+						},
 					],
 				},
 			];
