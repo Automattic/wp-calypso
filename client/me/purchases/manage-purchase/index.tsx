@@ -1450,7 +1450,7 @@ class ManagePurchase extends Component<
 						{ /* TODO: Add ability to Renew Akismet subscription */ }
 						{ ! isJetpackTemporarySitePurchase( purchase ) && this.renderUpgradeNavItem() }
 						{ this.renderEditPaymentMethodNavItem() }
-						{ this.renderCrmDownloadsNavItem() }
+						{ config.isEnabled( 'jetpack/crm-downloads' ) && this.renderCrmDownloadsNavItem() }
 						{ this.renderReinstall() }
 						<div className="manage-purchase__downgrade-products">
 							{ config.isEnabled( 'plans/self-service-downgrade' ) && ! isPersonal( purchase )

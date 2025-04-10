@@ -78,6 +78,7 @@
 		"jetpack/social-plans-v1": true,
 		"jetpack/standalone-plugin-onboarding-update-v1": true,
 		"jetpack/zendesk-chat-for-logged-in-users": true,
+		"jetpack/crm-downloads": false,
 		"jitms": true,
 		"lasagna": true,
 		"launchpad-updates": false,
