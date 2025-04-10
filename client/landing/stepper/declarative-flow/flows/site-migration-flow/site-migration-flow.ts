@@ -256,44 +256,6 @@ const siteMigration: FlowV2 = {
 					return navigate( paths.importOrMigratePath( { from, siteSlug, siteId } ) );
 				}
 
-				// 				case STEPS.PROCESSING.slug: {
-				// 					if ( providedDependencies?.siteCreated ) {
-
-				// 						if ( ! fromQueryParam || providedDependencies?.skipMigration ) {
-				// 							// If we get to this point without a fromQueryParam then we are coming from a direct
-				// 							// pick your current platform link. That's why we navigate to the importList step.
-				// 							return exitFlow(
-				// 								paths.siteSetupImportListPath( {
-				// 									siteId,
-				// 									siteSlug,
-				// 									origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
-				// 									backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
-				// 									from: fromQueryParam,
-				// 								} )
-				// 							);
-				// 						}
-
-				// 						// If the action is migrate, navigate to the DIY/DIFM selector screen.
-				// 						if ( 'migrate' === actionQueryParam ) {
-				// 							return navigate(
-				// 								paths.howToMigratePath( {
-				// 									siteSlug: siteSlug,
-				// 									siteId: siteId,
-				// 									from: fromQueryParam,
-				// 								} )
-				// 							);
-				// 						}
-
-				// 						return navigate(
-				// 							paths.importOrMigratePath( { siteSlug, siteId, from: fromQueryParam } )
-				// >>>>>>> trunk
-				// 						);
-				// 					}
-
-				// 					return navigate( paths.importOrMigratePath( { from, siteSlug, siteId } ) );
-				// 					//TODO: Add error handling when the site is not created by any reason
-				// 				}
-
 				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {
 					const { destination } = providedDependencies as {
 						destination: 'import' | 'migrate';
