@@ -140,7 +140,7 @@ const useShowFeedback = ( type: FeedbackType ) => {
 					{
 						displayOnNextPage: true,
 						id: 'submit-product-feedback-success',
-						duration: 2000,
+						duration: 10000,
 					}
 				)
 			);
