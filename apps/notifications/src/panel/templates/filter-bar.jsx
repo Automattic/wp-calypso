@@ -62,6 +62,24 @@ export class FilterBar extends Component {
 		}
 	}
 
+	handleKeydown = ( event ) => {
+		let direction;
+		if ( event.key === 'ArrowRight' ) {
+			direction = 1;
+		} else if ( event.key === 'ArrowLeft' ) {
+			direction = -1;
+		}
+
+		if ( ! direction ) {
+			return;
+		}
+		event.stopPropagation();
+		const filterItems = this.getFilterItems();
+		const currentIndex = filterItems.findIndex( ( { name } ) => name === this.props.filterName );
+		const nextIndex = ( currentIndex + direction + filterItems.length ) % filterItems.length;
+		this.props.controller.selectFilter( filterItems[ nextIndex ].name );
+	};
+
 	render() {
 		const { filterName, translate } = this.props;
 		const filterItems = this.getFilterItems();
@@ -74,6 +92,7 @@ export class FilterBar extends Component {
 					label={ translate( 'Filter Notifications' ) }
 					value={ filterName }
 					onChange={ ( selectedFilter ) => this.props.controller.selectFilter( selectedFilter ) }
+					onKeyDown={ this.handleKeydown }
 					__nextHasNoMarginBottom
 					__next40pxDefaultSize
 				>
