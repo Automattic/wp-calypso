@@ -12,8 +12,8 @@ import {
 	NEW_HOSTED_SITE_FLOW,
 	NEWSLETTER_FLOW,
 	START_WRITING_FLOW,
-	useStepPersistedState,
 	Step,
+	useStepPersistedState,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useState } from 'react';
@@ -38,6 +38,7 @@ import UnifiedPlansStep from './unified-plans-step';
 import { getIntervalType } from './util';
 import type { ProvidedDependencies, Step as StepType } from '../../types';
 import type { PlansIntent } from '@automattic/plans-grid-next';
+
 import './style.scss';
 
 /**
