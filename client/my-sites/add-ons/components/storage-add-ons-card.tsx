@@ -208,7 +208,10 @@ export default function StorageAddOnCard( { siteId, actionPrimary }: Props ) {
 	}
 
 	const onActionPrimary = () => {
-		actionPrimary?.( availableStorageAddOns[ 0 ].productSlug, selectedStorageAddOnStorageQuantity );
+		actionPrimary?.(
+			availableStorageAddOns[ 0 ]?.productSlug,
+			selectedStorageAddOnStorageQuantity
+		);
 	};
 
 	return (
