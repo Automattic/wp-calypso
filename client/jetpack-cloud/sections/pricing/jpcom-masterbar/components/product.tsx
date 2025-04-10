@@ -19,6 +19,7 @@ import type { FC } from 'react';
 
 interface ProductType {
 	product: {
+		id: string;
 		label: string;
 		href: string;
 	};
@@ -26,52 +27,51 @@ interface ProductType {
 
 const Product: FC< ProductType > = ( { product } ) => {
 	const locale = useLocale();
-	const { href, label } = product;
+	const { href, label, id } = product;
 
-	const getProductIcon = ( label: string ) => {
+	const getProductIcon = ( id: string ) => {
 		// Convert label to lowercase for case-insensitive matching
-		const normalizedLabel = label.toLowerCase();
 
-		if ( normalizedLabel.includes( 'backup' ) ) {
+		if ( id.includes( 'backup' ) ) {
 			return <BackupIcon />;
 		}
-		if ( normalizedLabel.includes( 'anti-spam' ) ) {
+		if ( id.includes( 'anti-spam' ) ) {
 			return <AntispamIcon />;
 		}
-		if ( normalizedLabel.includes( 'scan' ) ) {
+		if ( id.includes( 'scan' ) ) {
 			return <ScanIcon />;
 		}
-		if ( normalizedLabel.includes( 'search' ) ) {
+		if ( id.includes( 'search' ) ) {
 			return <SearchIcon />;
 		}
-		if ( normalizedLabel.includes( 'social' ) ) {
+		if ( id.includes( 'social' ) ) {
 			return <SocialIcon />;
 		}
-		if ( normalizedLabel.includes( 'videopress' ) ) {
+		if ( id.includes( 'videopress' ) ) {
 			return <VideopressIcon />;
 		}
-		if ( normalizedLabel.includes( 'crm' ) ) {
+		if ( id.includes( 'crm' ) ) {
 			return <CRMIcon />;
 		}
-		if ( normalizedLabel.includes( 'boost' ) ) {
+		if ( id.includes( 'boost' ) ) {
 			return <BoostIcon />;
 		}
-		if ( normalizedLabel.includes( 'stats' ) ) {
+		if ( id.includes( 'stats' ) ) {
 			return <StatsIcon />;
 		}
-		if ( normalizedLabel.includes( 'newsletter' ) ) {
+		if ( id.includes( 'newsletter' ) ) {
 			return <NewsletterIcon />;
 		}
-		if ( normalizedLabel.includes( 'mobile' ) ) {
+		if ( id.includes( 'mobile' ) ) {
 			return <MobileAppIcon />;
 		}
-		if ( normalizedLabel.includes( 'assistant' ) ) {
+		if ( id.includes( 'assistant' ) ) {
 			return <AIAssistantIcon />;
 		}
-		if ( normalizedLabel.includes( 'blaze' ) ) {
+		if ( id.includes( 'blaze' ) ) {
 			return <BlazeIcon />;
 		}
-		if ( normalizedLabel.includes( 'agencies' ) ) {
+		if ( id.includes( 'agencies' ) || id.includes( 'pro-dashboard' ) ) {
 			return <ForAgenciesIcon />;
 		}
 
@@ -85,7 +85,7 @@ const Product: FC< ProductType > = ( { product } ) => {
 				href={ localizeUrl( href, locale ) }
 				onClick={ onLinkClick }
 			>
-				<span className="jp-product-icon">{ getProductIcon( label ) }</span>
+				<span className="jp-product-icon">{ getProductIcon( id ) }</span>
 				<span className="header__submenu-label">{ label }</span>
 			</ExternalLink>
 		</li>

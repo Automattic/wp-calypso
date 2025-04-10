@@ -176,10 +176,10 @@ const MainMenuItem: FC< MainMenuItemProps > = ( { section, bundles } ) => {
 													<ul className="header__submenu-links-list">
 														{ Array.from( Object.values( items ) )
 															.sort( sortByMenuOrder )
-															.map( ( { label, href } ) => (
+															.map( ( { label, href, id } ) => (
 																<Product
 																	key={ `products-${ href }-${ label }` }
-																	product={ { label, href } }
+																	product={ { label, href, id } }
 																/>
 															) ) }
 													</ul>
