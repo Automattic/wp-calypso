@@ -11,6 +11,8 @@ import { createItem } from '../lib/utils';
 const useClientMenuItems = ( path: string ) => {
 	const translate = useTranslate();
 
+	const isNewClient = true;
+
 	const menuItems = useMemo( () => {
 		return [
 			{
@@ -25,8 +27,11 @@ const useClientMenuItems = ( path: string ) => {
 			{
 				icon: payment,
 				path: '/',
-				link: A4A_CLIENT_PAYMENT_METHODS_LINK,
+				link: isNewClient
+					? 'https://wordpress.com/me/purchases/payment-methods'
+					: A4A_CLIENT_PAYMENT_METHODS_LINK,
 				title: translate( 'Payment methods' ),
+				isExternalLink: isNewClient,
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / Client > Payment methods',
 				},
@@ -34,14 +39,15 @@ const useClientMenuItems = ( path: string ) => {
 			{
 				icon: receipt,
 				path: '/',
-				link: A4A_CLIENT_INVOICES_LINK,
+				link: isNewClient ? 'https://wordpress.com/me/purchases/billing' : A4A_CLIENT_INVOICES_LINK,
 				title: translate( 'Invoices' ),
+				isExternalLink: isNewClient,
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / Client > Invoices',
 				},
 			},
 		].map( ( item ) => createItem( item, path ) );
-	}, [ path, translate ] );
+	}, [ isNewClient, path, translate ] );
 	return menuItems;
 };
 
