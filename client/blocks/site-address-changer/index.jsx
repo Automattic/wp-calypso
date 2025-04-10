@@ -510,7 +510,6 @@ export class SiteAddressChanger extends Component {
 						{ newDomainSuffix }
 					</p>
 				</div>
-				<h2>{ translate( 'Check the box to confirm' ) }</h2>
 				<FormLabel>
 					<FormInputCheckbox
 						checked={ this.state.isConfirmationChecked }
