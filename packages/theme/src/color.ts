@@ -83,8 +83,8 @@ const generateNeutralScale = ( { color = PRIMARY_DEFAULT, fun = 0, isDark = fals
 	return lightValues.map( ( value ) => colord( { ...base, s: fun, l: value } ).toHex() );
 };
 
-const generateNeutralColors = ( { color = PRIMARY_DEFAULT, fun = 0, isDark = false } ) => {
-	return mapColors( generateNeutralScale( { color, fun, isDark } ), COLOR_MAP );
+const generateNeutralColors = ( neutralScale: string[] ) => {
+	return mapColors( neutralScale, COLOR_MAP );
 };
 
 const generatePrimaryScale = ( {
@@ -123,16 +123,8 @@ const generatePrimaryScale = ( {
 	);
 };
 
-const generatePrimaryColors = ( {
-	color = PRIMARY_DEFAULT,
-	bg,
-	isDark = false,
-}: {
-	color?: string;
-	bg: string;
-	isDark?: boolean;
-} ) => {
-	return mapColors( generatePrimaryScale( { color, bg, isDark } ), COLOR_MAP );
+const generatePrimaryColors = ( primaryScale: string[] ) => {
+	return mapColors( primaryScale, COLOR_MAP );
 };
 
 // const generatePrimaryColors = ( { color = PRIMARY_DEFAULT, bg, isDark = false } ) => {
@@ -140,7 +132,7 @@ const generatePrimaryColors = ( {
 // generates a color palette based on a primary color
 export const generateColors = ( { color = PRIMARY_DEFAULT, fun = 0, isDark = false } ) => {
 	const neutralScale = generateNeutralScale( { color, fun, isDark } );
-	const neutral = generateNeutralColors( { color, fun, isDark } );
+	const neutral = generateNeutralColors( neutralScale );
 
 	const primaryScale = generatePrimaryScale( {
 		color,
@@ -149,13 +141,7 @@ export const generateColors = ( { color = PRIMARY_DEFAULT, fun = 0, isDark = fal
 		bg: neutral.bg.default,
 		isDark,
 	} );
-	const primary = generatePrimaryColors( {
-		color,
-		// @ts-expect-error With the current `ColorPalette` type,
-		// there's no way to guardantee that `bg` is an object
-		bg: neutral.bg.default,
-		isDark,
-	} );
+	const primary = generatePrimaryColors( primaryScale );
 
 	return {
 		primary,
