@@ -11,14 +11,6 @@ describe( 'layout/utils', () => {
 		beforeEach( () => {
 			// Reset all mocks before each test
 			jest.clearAllMocks();
-
-			// Default mock for configApi.isEnabled to return true for step-container-v2
-			( configApi.isEnabled as jest.Mock ).mockImplementation( ( feature ) => {
-				if ( feature === 'onboarding/step-container-v2' ) {
-					return true;
-				}
-				return false;
-			} );
 		} );
 
 		describe( 'setup path', () => {
@@ -48,7 +40,6 @@ describe( 'layout/utils', () => {
 
 				const result = isInStepContainerV2FlowContext( pathname, query );
 
-				expect( configApi.isEnabled ).toHaveBeenCalledWith( 'onboarding/step-container-v2' );
 				expect( result ).toBe( false );
 			} );
 		} );
