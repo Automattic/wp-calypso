@@ -52,8 +52,8 @@ export const productHasAntiSpam = ( productSlug: string ): boolean => {
 	// check that this product is standalone anti-spam or one of the plans that contains it
 	return (
 		// standalone anti-spam product
-		// check plans for anti-spam features
 		isJetpackAntiSpamSlug( productSlug ) ||
+		// check plans for anti-spam features
 		( isJetpackPlanSlug( productSlug ) &&
 			planHasAtLeastOneFeature( productSlug, ANTISPAM_FEATURES ) )
 	);
@@ -73,8 +73,8 @@ export const productHasBackups = ( productSlug: string ): boolean => {
 
 	return (
 		// standalone backup product
-		// check plans for Jetpack backup features
 		isJetpackBackupSlug( productSlug ) ||
+		// check plans for Jetpack backup features
 		( isJetpackPlanSlug( productSlug ) && planHasAtLeastOneFeature( productSlug, BACKUP_FEATURES ) )
 	);
 };
@@ -85,8 +85,8 @@ export const productHasBackups = ( productSlug: string ): boolean => {
 export const productHasBoost = ( productSlug: string ): boolean => {
 	return (
 		// If the product is a standalone Boost product
-		// If Boost is included in the plan
 		isJetpackBoostSlug( productSlug ) ||
+		// If Boost is included in the plan
 		( isJetpackPlanSlug( productSlug ) &&
 			planHasAtLeastOneFeature( productSlug, [ FEATURE_CLOUD_CRITICAL_CSS ] ) )
 	);
@@ -97,8 +97,8 @@ export const productHasScan = ( productSlug: string ): boolean => {
 
 	return (
 		// standalone scan product
-		// check plans for Jetpack scan features
 		isJetpackScanSlug( productSlug ) ||
+		// check plans for Jetpack scan features
 		( isJetpackPlanSlug( productSlug ) && planHasAtLeastOneFeature( productSlug, SCAN_FEATURES ) )
 	);
 };
@@ -115,8 +115,8 @@ export const productHasSearch = ( productSlug: string ): boolean => {
 
 	return (
 		// standalone search product
-		// check plans for Jetpack search features
 		isJetpackSearchSlug( productSlug ) ||
+		// check plans for Jetpack search features
 		( isJetpackPlanSlug( productSlug ) && planHasAtLeastOneFeature( productSlug, SEARCH_FEATURES ) )
 	);
 };
