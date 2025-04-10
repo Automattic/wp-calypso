@@ -933,6 +933,7 @@ const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
 
 			.checkout__summary-features {
 				padding: 0;
+				padding-bottom: 24px;
 				width: 100%;
 			}
 
