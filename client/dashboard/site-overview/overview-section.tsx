@@ -7,6 +7,8 @@ import {
 	MenuGroup,
 	MenuItem,
 } from '@wordpress/components';
+import { useResizeObserver } from '@wordpress/compose';
+import { useState } from '@wordpress/element';
 import { more } from '@wordpress/icons';
 import type { ReactNode } from 'react';
 
@@ -43,14 +45,36 @@ interface OverviewSectionProps {
 	actions?: OverviewSectionAction[];
 }
 
+const BREAKPOINTS = {
+	xlarge: { width: 780, columns: 3 },
+	large: { width: 480, columns: 2 },
+	mobile: { width: 0, columns: 1 },
+};
+
+function useGridStyles( containerWidth: number ) {
+	for ( const [ , { width, columns } ] of Object.entries( BREAKPOINTS ) ) {
+		if ( containerWidth >= width ) {
+			return { gridTemplateColumns: `repeat(${ columns }, minmax(0, 1fr))` };
+		}
+	}
+}
+
 export default function OverviewSection( { title, actions, children }: OverviewSectionProps ) {
+	const [ containerWidth, setContainerWidth ] = useState( 0 );
+	const gridContainerRef = useResizeObserver(
+		( resizeObserverEntries: ResizeObserverEntry[] ) => {
+			setContainerWidth( resizeObserverEntries[ 0 ].borderBoxSize[ 0 ].inlineSize );
+		},
+		{ box: 'border-box' }
+	);
+	const gridStyles = useGridStyles( containerWidth );
 	return (
 		<VStack spacing={ 4 }>
 			<HStack>
 				<Heading level={ 3 }>{ title }</Heading>
 				<OverviewSectionActionMenu actions={ actions } />
 			</HStack>
-			<Grid columns={ 3 } gap={ 4 } templateColumns="repeat(3, minmax(0, 1fr))">
+			<Grid ref={ gridContainerRef } gap={ 6 } style={ gridStyles }>
 				{ children }
 			</Grid>
 		</VStack>
