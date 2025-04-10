@@ -1,6 +1,7 @@
 import { Gridicon, ExternalLink } from '@automattic/components';
 import { useLocale, localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
+import { debounce } from 'lodash';
 import { useState, useEffect, useRef } from 'react';
 import { isMobile, sortByMenuOrder, onLinkClick, closeOnFocusOut, isValidLink } from '../utils';
 import BundlesSection from './bundles-section';
@@ -12,19 +13,6 @@ interface MainMenuItemProps {
 	section: MenuItem | null;
 	bundles: MenuItem | null;
 }
-
-// Simple debounce implementation
-const debounce = < T extends ( ...args: any[] ) => void >( func: T, wait: number ) => {
-	let timeout: NodeJS.Timeout;
-	return function executedFunction( ...args: Parameters< T > ) {
-		const later = () => {
-			clearTimeout( timeout );
-			func( ...args );
-		};
-		clearTimeout( timeout );
-		timeout = setTimeout( later, wait );
-	};
-};
 
 const MainMenuItem: FC< MainMenuItemProps > = ( { section, bundles } ) => {
 	const locale = useLocale();
