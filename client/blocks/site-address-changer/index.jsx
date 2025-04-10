@@ -352,7 +352,7 @@ export class SiteAddressChanger extends Component {
 				},
 				{
 					action: 'confirm',
-					disabled: ! this.state.isConfirmationChecked,
+					disabled: ! this.state.isConfirmationChecked || isSiteAddressChangeRequesting,
 					variant: 'primary',
 					isBusy: isSiteAddressChangeRequesting,
 					onClick: this.onConfirm,
