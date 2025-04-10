@@ -9,13 +9,12 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
 import Loading from 'calypso/components/loading';
 import Main from 'calypso/components/main';
-import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
+import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/src/lib/pending-page';
 import { sendMessageToOpener } from 'calypso/my-sites/checkout/src/lib/popup';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useSelector, useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { SUCCESS } from 'calypso/state/order-transactions/constants';
@@ -94,7 +93,9 @@ function CheckoutPending( {
 		fromSiteSlug,
 	} );
 
-	const content = shouldUseStepContainerV2( getSignupCompleteFlowName() ) ? (
+	const isInStepContainerV2 = useInitialIsInStepContainerV2FlowContext();
+
+	const content = isInStepContainerV2 ? (
 		<Step.Loading title={ headingText } delay={ 2000 } />
 	) : (
 		<Main className="checkout-thank-you__pending">
