@@ -13,7 +13,6 @@ import { useEffect, useCallback } from 'react';
 import { useQueryThemes } from 'calypso/components/data/query-themes';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Loading from 'calypso/components/loading';
-import { StepContainerV2Loading } from 'calypso/components/loading/StepContainerV2Loading';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
@@ -42,6 +41,7 @@ import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
 import type { Design, StyleVariation } from '@automattic/design-picker';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import './style.scss';
+
 const SiteIntent = Onboard.SiteIntent;
 
 const EMPTY_ARRAY: Design[] = [];
@@ -353,7 +353,7 @@ const UnifiedDesignPickerStep: StepType< {
 	const isLoading = isSiteLoading || isDesignsLoading;
 
 	if ( isLoading || isComingFromTheUpgradeScreen ) {
-		return isUsingStepContainerV2 ? <StepContainerV2Loading /> : <Loading />;
+		return isUsingStepContainerV2 ? <Step.Loading /> : <Loading />;
 	}
 
 	if ( selectedDesign && isPreviewingDesign ) {

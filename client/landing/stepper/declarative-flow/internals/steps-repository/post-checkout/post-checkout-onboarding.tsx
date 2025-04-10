@@ -1,8 +1,8 @@
 import { SiteIntent } from '@automattic/data-stores/src/onboard';
+import { Step } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import Loading from 'calypso/components/loading';
-import { StepContainerV2Loading } from 'calypso/components/loading/StepContainerV2Loading';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { useMarketplaceThemeProducts } from '../../../../hooks/use-marketplace-theme-products';
 import { useSiteData } from '../../../../hooks/use-site-data';
@@ -145,7 +145,7 @@ const PostCheckoutOnboarding: StepType = ( { flow, navigation } ) => {
 	] );
 
 	if ( shouldUseStepContainerV2( flow ) ) {
-		return <StepContainerV2Loading />;
+		return <Step.Loading />;
 	}
 
 	return <Loading className="wpcom-loading__boot" />;
