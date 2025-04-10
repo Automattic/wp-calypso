@@ -145,21 +145,10 @@ export class SiteAddressChanger extends Component {
 		}
 	};
 
-	onConfirmationFormClose = () => {
-		this.setState( {
-			step: 0,
-		} );
-	};
-
 	toggleConfirmationChecked = () => {
 		this.setState( {
 			isConfirmationChecked: ! this.state.isConfirmationChecked,
 		} );
-	};
-
-	onConfirmationFormSubmit = () => {
-		this.onConfirmationFormClose();
-		this.onConfirm();
 	};
 
 	handleDomainChange( domainFieldValue ) {
@@ -339,14 +328,15 @@ export class SiteAddressChanger extends Component {
 				},
 				{
 					action: 'confirm',
-					additionalClassNames: [ isBusy ? 'is-busy' : '' ],
 					variant: 'primary',
 					disabled: isDisabled,
+					isBusy: isBusy,
 					label: translate( 'Next' ),
 					onClick: this.onSubmit,
 				},
 			];
 		} else if ( 1 === this.state.step ) {
+			const { isSiteAddressChangeRequesting } = this.props;
 			return [
 				{
 					action: 'cancel',
@@ -358,7 +348,8 @@ export class SiteAddressChanger extends Component {
 					action: 'confirm',
 					disabled: ! this.state.isConfirmationChecked,
 					variant: 'primary',
-					onClick: this.onConfirmationFormSubmit,
+					isBusy: isSiteAddressChangeRequesting,
+					onClick: this.onConfirm,
 					label: translate( 'Change site address' ),
 				},
 			];
@@ -544,6 +535,7 @@ export class SiteAddressChanger extends Component {
 							key={ button.action }
 							variant={ button.variant }
 							disabled={ button.disabled }
+							isBusy={ button.isBusy }
 							onClick={ button.onClick }
 						>
 							{ button.label }
