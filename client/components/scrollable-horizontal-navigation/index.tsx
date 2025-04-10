@@ -1,10 +1,14 @@
-import { Button, Gridicon, SegmentedControl } from '@automattic/components';
-import clsx from 'clsx';
-import { throttle } from 'lodash';
-import React, { useEffect, useRef } from 'react';
-import { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
-
 import './styles.scss';
+import { Button, Gridicon } from '@automattic/components';
+import {
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+} from '@wordpress/components';
+import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
+import { throttle } from 'lodash';
+import { useRef } from 'react';
+import { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 
 const SHOW_SCROLL_THRESHOLD = 10;
 const showElement = ( element: Element | null ) => element?.classList.remove( 'display-none' );
@@ -35,16 +39,7 @@ const ScrollableHorizontalNavigation = < T extends object >( {
 	width,
 }: Props< T > ) => {
 	const scrollRef = useRef< HTMLDivElement >( null );
-
-	// Scroll the selected tab into view on initial render and whenever it changes.
-	useEffect( () => {
-		const selectedTabElement = scrollRef.current?.querySelector( '.is-selected' );
-		selectedTabElement?.scrollIntoView( {
-			behavior: 'smooth',
-			block: 'nearest',
-			inline: 'center',
-		} );
-	}, [ selectedTab ] );
+	const translate = useTranslate();
 
 	const bumpScrollX = ( shouldScrollLeft = false ) => {
 		if ( scrollRef.current ) {
@@ -123,21 +118,30 @@ const ScrollableHorizontalNavigation = < T extends object >( {
 				ref={ scrollRef }
 				onScroll={ handleScroll }
 			>
-				<SegmentedControl primary className="scrollable-horizontal-navigation__tab-control">
-					{ tabs.map( ( tab ) => {
+				<ToggleGroupControl
+					hideLabelFromVision
+					label={ translate( 'Tags' ) }
+					value={ selectedTab }
+					onChange={ ( tabSlug ) => {
+						if ( typeof tabSlug !== 'string' ) {
+							return;
+						}
+
+						onTabClick( tabSlug );
+					} }
+					__nextHasNoMarginBottom
+					__next40pxDefaultSize
+				>
+					{ tabs.map( ( tab ): JSX.Element => {
 						return (
-							<SegmentedControl.Item
+							<ToggleGroupControlOption
 								key={ tab.slug }
-								selected={ tab.slug === selectedTab }
-								onClick={ () => {
-									onTabClick( tab.slug );
-								} }
-							>
-								{ tab[ titleField ] }
-							</SegmentedControl.Item>
+								label={ tab[ titleField ] as string }
+								value={ tab.slug }
+							/>
 						);
 					} ) }
-				</SegmentedControl>
+				</ToggleGroupControl>
 			</div>
 		</div>
 	);
