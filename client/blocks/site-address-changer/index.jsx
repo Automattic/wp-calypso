@@ -151,6 +151,12 @@ export class SiteAddressChanger extends Component {
 		} );
 	};
 
+	goBackToFirstStep = () => {
+		this.setState( {
+			step: 0,
+		} );
+	};
+
 	handleDomainChange( domainFieldValue ) {
 		if ( this.props.isAvailabilityPending || this.props.isSiteAddressChangeRequesting ) {
 			return;
@@ -340,7 +346,7 @@ export class SiteAddressChanger extends Component {
 			return [
 				{
 					action: 'cancel',
-					onClick: this.onConfirmationFormClose,
+					onClick: this.goBackToFirstStep,
 					variant: 'tertiary',
 					label: translate( 'Cancel' ),
 				},
