@@ -13,8 +13,6 @@ import {
 import { DataForm } from '@wordpress/dataviews';
 import { useMemo, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import twoStepAuthorization from 'calypso/lib/two-step-authorization';
-import AsyncLoad from '../async-load';
 import { updateProfile } from '../data';
 import EditGravatar from '../edit-gravatar';
 import PageLayout from '../page-layout';
@@ -122,12 +120,6 @@ function Profile() {
 
 	return (
 		<>
-			{ twoStepAuthorization.isReauthRequired() && (
-				<AsyncLoad
-					require="calypso/dashboard/reauth-required"
-					twoStepAuthorization={ twoStepAuthorization }
-				/>
-			) }
 			<form onSubmit={ handleSubmit }>
 				<PageLayout
 					title={ __( 'Profile' ) }
