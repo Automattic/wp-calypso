@@ -842,8 +842,9 @@ export default function CheckoutMainContent( {
 
 	return (
 		<StepContainerV2CheckoutFixer isLargeViewport={ isLargeViewport }>
-			<Step.CenteredColumnLayout
-				columnWidth={ 12 }
+			<Step.TwoColumnLayout
+				firstColumnWidth={ 8 }
+				secondColumnWidth={ 4 }
 				topBar={ ( { isLargeViewport } ) => {
 					const topBar = (
 						<Step.TopBar
@@ -874,32 +875,20 @@ export default function CheckoutMainContent( {
 				{ ( { isLargeViewport } ) => {
 					if ( isLargeViewport ) {
 						return (
-							<StepContainerV2CheckoutWrapper>
+							<>
 								{ checkoutMainContent }
 								{ checkoutSummary }
-							</StepContainerV2CheckoutWrapper>
+							</>
 						);
 					}
 
 					return checkoutMainContent;
 				} }
-			</Step.CenteredColumnLayout>
+			</Step.TwoColumnLayout>
 			<LeaveCheckoutModal { ...leaveModalProps } />
 		</StepContainerV2CheckoutFixer>
 	);
 }
-
-const StepContainerV2CheckoutWrapper = styled.div`
-	display: flex;
-
-	.checkout-main-content {
-		flex: 2;
-	}
-
-	.checkout-sidebar-content {
-		flex: 1;
-	}
-`;
 
 const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
 	background: ${ colorStudio.colors[ 'White' ] };
@@ -995,12 +984,13 @@ const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
 		props.isLargeViewport &&
 		css`
 			.checkout-main-content {
-				padding-left: 0;
+				padding: 0;
 				margin-top: 1rem;
+				max-width: 100%;
 			}
 
 			.checkout-sidebar-content {
-				--left-padding: 3.875rem;
+				--left-padding: 4rem;
 				padding: 0 0 0 var( --left-padding );
 				background: none;
 				position: relative;
@@ -1021,6 +1011,10 @@ const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
 			.checkout__summary-area,
 			.checkout__summary-body {
 				max-width: 100%;
+			}
+
+			.checkout__summary-area {
+				min-width: 300px;
 			}
 
 			.checkout__summary-body {
