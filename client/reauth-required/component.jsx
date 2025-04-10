@@ -1,14 +1,16 @@
 import { translate } from 'i18n-calypso';
 import React from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import Main from 'calypso/components/main';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import ReauthRequiredComponent from 'calypso/me/reauth-required';
 import './style.scss';
 
 export default function ReauthRequired() {
 	return (
-		<Main className="reauth-required">
+		<>
+			<p>ok2</p>
 			<DocumentHead title={ translate( 'Reauth Required' ) } />
-			<h1>Reauth Required</h1>
-		</Main>
+			<ReauthRequiredComponent twoStepAuthorization={ twoStepAuthorization } />
+		</>
 	);
 }

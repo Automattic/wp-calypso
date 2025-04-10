@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { createElement } from 'react';
-
 /**
  * Internal dependencies
  */

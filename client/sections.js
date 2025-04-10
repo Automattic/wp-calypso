@@ -12,7 +12,6 @@ const sections = [
 		name: 'reauth-required',
 		paths: [ '/reauth-required' ],
 		module: 'calypso/reauth-required',
-		enableLoggedOut: true,
 	},
 	{
 		name: 'customize',
