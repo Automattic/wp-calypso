@@ -38,23 +38,29 @@ const StorageAddOnIndicator: React.FC< Props > = ( {
 
 	return (
 		<div className="storage-indicator">
-			<div>
-				<div>{ newMaxStorage }</div>
-				<div>{ translate( '%(usedStorage)s used', { args: { usedStorage } } ) }</div>
+			<div className="storage-indicator__usage">
+				<span className="storage-indicator__usage--capacity">{ newMaxStorage }</span>
+				<span className="storage-indicator__usage--used">
+					{ translate( '%(usedStorage)s used', { args: { usedStorage } } ) }
+				</span>
 			</div>
 			<div className="storage-indicator__bar">
 				<div
-					className="storage-indicator__bar-existing"
+					className="storage-indicator__bar--existing"
 					style={ { width: `${ planStorageRatio * 100 }%` } }
 				/>
 				<div
-					className="storage-indicator__bar-add-on"
+					className="storage-indicator__bar--add-on"
 					style={ { width: `${ ( 1 - planStorageRatio ) * 100 }%` } }
 				/>
 			</div>
-			<div>
-				<div>{ translate( '%(planStorage)s plan storage', { args: { planStorage } } ) }</div>
-				<div>{ translate( '%(addOnStorage)s add-on storage', { args: { addOnStorage } } ) }</div>
+			<div className="storage-indicator__quota">
+				<div className="storage-indicator__quota--plan">
+					{ translate( '%(planStorage)s plan storage', { args: { planStorage } } ) }
+				</div>
+				<div className="storage-indicator__quota--add-on">
+					{ translate( '%(addOnStorage)s storage add-on', { args: { addOnStorage } } ) }
+				</div>
 			</div>
 		</div>
 	);
