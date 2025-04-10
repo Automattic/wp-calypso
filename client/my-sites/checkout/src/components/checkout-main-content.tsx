@@ -184,7 +184,7 @@ function ConditionalContactDetailsMessage( {
 
 function LoadingSidebarContent() {
 	return (
-		<LoadingSidebar>
+		<LoadingSidebar className="checkout-loading-sidebar">
 			<SideBarLoadingCopy />
 			<LoadingCheckoutSummaryFeaturesList />
 			<LoadingFooter>
@@ -1014,7 +1014,8 @@ const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
 				max-width: 100%;
 			}
 
-			.checkout__summary-area {
+			.checkout__summary-area,
+			.checkout-loading-sidebar {
 				min-width: 300px;
 			}
 
