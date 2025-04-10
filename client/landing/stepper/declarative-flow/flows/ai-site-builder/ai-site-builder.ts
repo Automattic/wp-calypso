@@ -54,11 +54,17 @@ const aiSiteBuilder: Flow = {
 	useSideEffect() {
 		const dispatch = useDispatch();
 		const siteId = useQuery().get( 'siteId' );
+		const prompt = useQuery().get( 'prompt' );
 		useEffect( () => {
 			if ( siteId ) {
 				dispatch( setSelectedSiteId( parseInt( siteId ) ) );
 			}
 		}, [ siteId ] );
+		useEffect( () => {
+			if ( prompt && prompt.length > 0 ) {
+				window.sessionStorage.setItem( 'stored_ai_prompt', prompt );
+			}
+		}, [ prompt ] );
 	},
 	initialize() {
 		// stepsWithRequiredLogin will take care of redirecting to the login step if the user is not logged in.
@@ -141,8 +147,12 @@ const aiSiteBuilder: Flow = {
 
 						if ( prompt ) {
 							promptParam = `&prompt=${ encodeURIComponent( prompt ) }`;
+						} else if ( window.sessionStorage.getItem( 'stored_ai_prompt' ) ) {
+							promptParam = `&prompt=${ encodeURIComponent(
+								window.sessionStorage.getItem( 'stored_ai_prompt' ) || ''
+							) }`;
+							window.sessionStorage.removeItem( 'stored_ai_prompt' );
 						}
-
 						window.location.replace(
 							`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=${ AI_SITE_BUILDER_FLOW }${ promptParam }`
 						);
