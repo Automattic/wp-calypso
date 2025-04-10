@@ -30,10 +30,9 @@ function shouldShowBusinessOption( taxInfo: ManagedContactDetails ): boolean {
 	}
 	const zipCode = parseInt( postalCode?.value ?? '0', 10 );
 	return (
-		// Connecticut (CT)
 		( zipCode >= 43000 && zipCode <= 45999 ) || // Ohio (OH)
 		( zipCode >= 6000 && zipCode <= 6389 ) ||
-		( zipCode >= 6391 && zipCode <= 6999 )
+		( zipCode >= 6391 && zipCode <= 6999 ) // Connecticut (CT)
 	);
 }
 
