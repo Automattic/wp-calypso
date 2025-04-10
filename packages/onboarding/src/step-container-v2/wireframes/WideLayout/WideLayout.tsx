@@ -40,8 +40,8 @@ export const WideLayout = ( {
 				return (
 					<>
 						<TopBarRenderer topBar={ topBar } />
-						<ContentWrapper hasPadding={ hasContentPadding } maxWidth="large">
-							{ heading && <ContentRow columns={ 8 }>{ heading }</ContentRow> }
+						<ContentWrapper hasPadding={ hasContentPadding }>
+							{ heading && <ContentRow columns={ 6 }>{ heading }</ContentRow> }
 							<ContentRow className={ className }>{ content }</ContentRow>
 						</ContentWrapper>
 						<StickyBottomBarRenderer stickyBottomBar={ stickyBottomBar } />

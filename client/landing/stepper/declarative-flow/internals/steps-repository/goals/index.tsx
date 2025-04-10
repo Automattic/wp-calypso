@@ -195,7 +195,7 @@ const GoalsStep: StepType< {
 
 			return (
 				<Step.CenteredColumnLayout
-					columnWidth={ 8 }
+					columnWidth={ 6 }
 					className="step-container-v2--goals"
 					topBar={ <Step.TopBar rightElement={ <Step.SkipButton onClick={ handleSkip } /> } /> }
 					heading={ <Step.Heading text={ whatAreYourGoalsText } subText={ subHeaderText } /> }

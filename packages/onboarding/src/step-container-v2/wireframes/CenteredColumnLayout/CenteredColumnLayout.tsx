@@ -34,7 +34,7 @@ export const CenteredColumnLayout = ( {
 					<>
 						<TopBarRenderer topBar={ topBar } />
 						<ContentWrapper centerAligned={ context.isSmallViewport && verticalAlign === 'center' }>
-							{ heading && <ContentRow columns={ 8 }>{ heading }</ContentRow> }
+							{ heading && <ContentRow columns={ 6 }>{ heading }</ContentRow> }
 							<ContentRow columns={ columnWidth } className={ className }>
 								{ content }
 							</ContentRow>

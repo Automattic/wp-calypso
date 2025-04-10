@@ -9,32 +9,15 @@
 	width: 100%;
 	box-sizing: border-box;
 	flex: 1;
+
+	--step-container-v2-content-max-width: 1344px;
+
 	max-width: calc(
 		var( --step-container-v2-content-max-width ) + 2 *
 			var( --step-container-v2-content-inline-padding )
 	);
 
-	--step-container-v2-content-column-gap: 32px;
-
-	&.padding {
-		padding: var( --step-container-v2-content-block-padding )
-			var( --step-container-v2-content-inline-padding );
-	}
-
-	&--max-width-default {
-		--step-container-v2-content-max-width: 1120px;
-	}
-
-	&--max-width-large {
-		--step-container-v2-content-max-width: 1344px;
-	}
-
-	&.center-aligned {
-		justify-content: center;
-		padding-bottom: calc(
-			var( --step-container-v2-content-block-padding ) + var( --step-container-v2-top-bar-height )
-		);
-	}
+	--step-container-v2-content-column-gap: 24px;
 
 	--step-container-v2-content-max-width-minus-column-gaps: calc(
 		var( --step-container-v2-content-max-width ) - 11 *
@@ -44,4 +27,16 @@
 	--step-container-v2-content-column-width: calc(
 		var( --step-container-v2-content-max-width-minus-column-gaps ) / 12
 	);
+
+	&.padding {
+		padding: var( --step-container-v2-content-block-padding )
+			var( --step-container-v2-content-inline-padding );
+	}
+
+	&.center-aligned {
+		justify-content: center;
+		padding-bottom: calc(
+			var( --step-container-v2-content-block-padding ) + var( --step-container-v2-top-bar-height )
+		);
+	}
 }
