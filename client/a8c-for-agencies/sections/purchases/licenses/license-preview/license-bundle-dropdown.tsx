@@ -15,6 +15,7 @@ type Props = {
 	productName: string;
 	bundleSize: number;
 	productId: number;
+	isClientLicense: boolean;
 };
 
 export default function LicenseBundleDropDown( {
@@ -22,6 +23,7 @@ export default function LicenseBundleDropDown( {
 	productName,
 	bundleSize,
 	productId,
+	isClientLicense,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -88,6 +90,7 @@ export default function LicenseBundleDropDown( {
 					licenseKey={ licenseKey }
 					productId={ productId }
 					bundleSize={ bundleSize }
+					isClientLicense={ isClientLicense }
 				/>
 			) }
 		</>

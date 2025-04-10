@@ -168,6 +168,7 @@ export default function LicenseDetailsActions( {
 					productId={ productId }
 					siteUrl={ siteUrl }
 					onClose={ closeRevokeDialog }
+					isClientLicense={ isClientLicense }
 				/>
 			) }
 		</div>

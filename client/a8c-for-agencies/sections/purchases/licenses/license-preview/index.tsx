@@ -387,6 +387,7 @@ export default function LicensePreview( {
 							licenseKey={ licenseKey }
 							bundleSize={ quantity }
 							productId={ productId }
+							isClientLicense={ !! referral }
 						/>
 					) }
 					{ isWPCOMLicense && isSiteAtomic ? (

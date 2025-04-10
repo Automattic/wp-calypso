@@ -86,6 +86,7 @@ export default function LicenseActions( {
 					licenseKey={ licenseKey }
 					siteUrl={ siteUrl }
 					productId={ productId }
+					isClientLicense={ isClientLicense }
 				/>
 			) }
 		</>

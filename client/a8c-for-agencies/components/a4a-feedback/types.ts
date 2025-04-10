@@ -33,6 +33,11 @@ interface FeedbackSurveyResponses {
 	comment: { text: string };
 	suggestions?: { text: string };
 	cta?: string;
+	meta?: {
+		product_name: string;
+		license_key: string;
+		license_type: string;
+	};
 }
 export interface FeedbackSurveyResponsesPayload {
 	site_id: number;

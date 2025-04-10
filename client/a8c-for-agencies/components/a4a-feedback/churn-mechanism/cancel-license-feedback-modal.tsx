@@ -33,6 +33,7 @@ const CancelLicenseFeedbackModal = ( {
 	bundleSize,
 	siteUrl,
 	isAtomicSite,
+	isClientLicense,
 }: {
 	onClose: () => void;
 	productName: string;
@@ -41,6 +42,7 @@ const CancelLicenseFeedbackModal = ( {
 	bundleSize?: number;
 	siteUrl?: string | null;
 	isAtomicSite?: boolean;
+	isClientLicense?: boolean;
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -117,6 +119,11 @@ const CancelLicenseFeedbackModal = ( {
 						text: suggestions?.map( ( suggestion ) => suggestion.value ).join( ', ' ) ?? '',
 					},
 					cta,
+					meta: {
+						product_name: productName,
+						license_key: licenseKey,
+						license_type: isClientLicense ? 'client' : 'agency',
+					},
 				},
 			};
 			dispatch(
@@ -126,6 +133,8 @@ const CancelLicenseFeedbackModal = ( {
 					comment: params.survey_responses.comment.text,
 					suggestions: params.survey_responses.suggestions.text,
 					cta: params.survey_responses.cta,
+					product: params.survey_responses.meta.product_name,
+					type: params.survey_responses.meta.license_type,
 				} )
 			);
 
@@ -154,54 +163,56 @@ const CancelLicenseFeedbackModal = ( {
 		handleSubmitFeedback( cta );
 	};
 
-	const handleClose = useCallback( () => {
+	const handleCloseAndRefreshLicences = useCallback( () => {
 		refreshLicenceList();
 		onClose();
 	}, [ refreshLicenceList, onClose ] );
 
+	// Function to handle success notice for license revocation
+	const handleLicenseRevocationSuccess = useCallback( () => {
+		dispatch(
+			successNotice( translate( 'License revoked successfully' ), {
+				displayOnNextPage: true,
+				id: 'revoke-license-success',
+			} )
+		);
+		if ( ! isFeedbackValid( 'cancel' ) ) {
+			handleCloseAndRefreshLicences();
+		}
+	}, [ dispatch, translate, isFeedbackValid, handleCloseAndRefreshLicences ] );
+
+	// Function to handle success notice for speaking with partner manager
+	const handlePartnerManagerSuccess = useCallback( () => {
+		dispatch(
+			successNotice( translate( 'Thanks! We will connect you with a partner manager.' ), {
+				displayOnNextPage: true,
+				id: 'submit-product-feedback-success',
+			} )
+		);
+		onClose();
+	}, [ dispatch, onClose, translate ] );
+
 	useEffect( () => {
-		// If the user clicks cancel and the license is revoked successfully, show a success notice
 		if ( selectedCTA === 'cancel' && revokeLicenseStatus === 'success' ) {
-			dispatch(
-				successNotice( translate( 'License revoked successfully' ), {
-					displayOnNextPage: true,
-					id: 'revoke-license-success',
-				} )
-			);
-			// Refresh the license list and close the modal if the user has not provided any feedback
-			if ( ! isFeedbackValid( 'cancel' ) ) {
-				handleClose();
-			}
+			handleLicenseRevocationSuccess();
 		}
-		// If the user clicks speak with partner manager and the feedback is submitted successfully,
-		// show a success notice and close the modal
 		if ( selectedCTA === 'speak-with-partner-manager' && saveFeedbackStatus === 'success' ) {
-			dispatch(
-				successNotice( translate( 'Thanks! We will connect you with a partner manager.' ), {
-					displayOnNextPage: true,
-					id: 'submit-product-feedback-success',
-				} )
-			);
-			onClose();
+			handlePartnerManagerSuccess();
 		}
-		// If the license is revoked successfully and the feedback is submitted successfully,
-		// refresh the license list and close the modal
 		if (
 			( revokeLicenseStatus === 'success' || isAtomicSite ) &&
 			saveFeedbackStatus === 'success'
 		) {
-			handleClose();
+			handleCloseAndRefreshLicences();
 		}
 	}, [
+		handleCloseAndRefreshLicences,
+		handleLicenseRevocationSuccess,
+		handlePartnerManagerSuccess,
 		isAtomicSite,
-		dispatch,
-		onClose,
 		revokeLicenseStatus,
 		saveFeedbackStatus,
 		selectedCTA,
-		translate,
-		isFeedbackValid,
-		handleClose,
 	] );
 
 	return (
