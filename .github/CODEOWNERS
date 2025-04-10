@@ -85,11 +85,11 @@
 /packages/wpcom.js/src/lib/domain.dns.js @Automattic/nomado
 
 # Plans
-/client/my-sites/plans-grid @Automattic/martech-decepticons
-/packages/plans-grid-next @Automattic/martech-decepticons
-/packages/data-stores/plans @Automattic/martech-decepticons
-/packages/data-stores/add-ons @Automattic/martech-decepticons
-/packages/data-stores/wpcom-plans-ui @Automattic/martech-decepticons
+/client/my-sites/plans-grid @Automattic/martech
+/packages/plans-grid-next @Automattic/martech
+/packages/data-stores/plans @Automattic/martech
+/packages/data-stores/add-ons @Automattic/martech
+/packages/data-stores/wpcom-plans-ui @Automattic/martech
 
 # Support
 /packages/help-center @Automattic/vertex

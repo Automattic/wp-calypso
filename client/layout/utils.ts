@@ -1,6 +1,7 @@
 import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import { DEFAULT_FLOW, getFlowFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
+import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 let lastScrollPosition = 0; // Used for calculating scroll direction.
 let sidebarTop = 0; // Current sidebar top position.
 let pinnedSidebarTop = true; // We pin sidebar to the top by default.
@@ -185,6 +186,10 @@ export const isInStepContainerV2FlowContext = ( pathname: string, query: string 
 	}
 
 	if ( pathname.startsWith( '/checkout' ) ) {
+		if ( shouldUseStepContainerV2( getSignupCompleteFlowName() ) ) {
+			return true;
+		}
+
 		// The checkout isn't technically part of a stepper flow, but we can infer what stepper
 		// flow it came from (if any) by inspecting the redirect_to query param (in the case
 		// of the onboarding flow).
@@ -199,6 +204,10 @@ export const isInStepContainerV2FlowContext = ( pathname: string, query: string 
 		if ( isRedirectingToStepContainerV2Flow( cancelTo ) ) {
 			return true;
 		}
+	}
+
+	if ( pathname.startsWith( '/marketplace' ) ) {
+		return shouldUseStepContainerV2( getSignupCompleteFlowName() );
 	}
 
 	return false;

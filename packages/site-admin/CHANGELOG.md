@@ -33,3 +33,7 @@ Initial release of the site-admin package providing a framework for building mod
 - `Link`: Router component providing declarative navigation
 
 ## Next
+
+### Components
+
+- `NavigableRegion`: Accessible region component with keyboard navigation support

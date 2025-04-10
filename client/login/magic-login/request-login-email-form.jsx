@@ -193,6 +193,7 @@ class RequestLoginEmailForm extends Component {
 				<EmailedLoginLinkSuccessfullyJetpackConnect
 					emailAddress={ emailAddress }
 					shouldRedirect={ ! isFromJetpackOnboarding }
+					onResendEmail={ this.onSubmit }
 				/>
 			) : (
 				<EmailedLoginLinkSuccessfully emailAddress={ emailAddress } />
@@ -236,16 +237,20 @@ class RequestLoginEmailForm extends Component {
 				<h1 className="magic-login__form-header">
 					{ headerText || translate( 'Email me a login link' ) }
 				</h1>
-				{ currentUser && currentUser.username && (
-					<p>
-						{ translate( 'NOTE: You are already logged in as user: %(user)s', {
-							args: {
-								user: currentUser.username,
-							},
-						} ) }
-					</p>
-				) }
 				<LoggedOutForm onSubmit={ onSubmit }>
+					{ currentUser && currentUser.username && (
+						<Notice
+							showDismiss={ false }
+							className="magic-login__form-header-notice"
+							status="is-info"
+							theme="light"
+							text={ translate( 'You are already logged in as user: %(user)s', {
+								args: {
+									user: currentUser.username,
+								},
+							} ) }
+						></Notice>
+					) }
 					{ ! hideSubHeaderText && (
 						<p className="magic-login__form-sub-header">{ this.getSubHeaderText() }</p>
 					) }

@@ -8,6 +8,10 @@ import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-tri
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
+import {
+	isPlatformImportable,
+	getFullImporterUrl,
+} from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/helper';
 import { type SiteMigrationIdentifyAction } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-identify';
 import { AssertConditionState } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { goToImporter } from 'calypso/landing/stepper/declarative-flow/migration/helpers';
@@ -199,7 +203,7 @@ const siteMigration: FlowV2 = {
 							return navigate( paths.importOrMigratePath( { siteSlug, siteId } ) );
 						}
 						case 'create-site':
-							return navigate( paths.siteCreationPath( { from, platform: platform } ) );
+							return navigate( paths.siteCreationPath( { from, platform } ) );
 					}
 				}
 
@@ -231,6 +235,10 @@ const siteMigration: FlowV2 = {
 						return navigate( paths.howToMigratePath( { siteId, siteSlug, from } ) );
 					}
 
+					if ( platform && platform !== 'wordpress' && isPlatformImportable( platform ) && from ) {
+						return exitFlow( getFullImporterUrl( platform, siteSlug, from ) );
+					}
+
 					if ( ! from || platform !== 'wordpress' ) {
 						// If we get to this point without a fromQueryParam then we are coming from a direct
 						// pick your current platform link. That's why we navigate to the importList step.
@@ -246,8 +254,45 @@ const siteMigration: FlowV2 = {
 					}
 
 					return navigate( paths.importOrMigratePath( { from, siteSlug, siteId } ) );
-					//TODO: Add error handling when the site is not created by any reason
 				}
+
+				// 				case STEPS.PROCESSING.slug: {
+				// 					if ( providedDependencies?.siteCreated ) {
+
+				// 						if ( ! fromQueryParam || providedDependencies?.skipMigration ) {
+				// 							// If we get to this point without a fromQueryParam then we are coming from a direct
+				// 							// pick your current platform link. That's why we navigate to the importList step.
+				// 							return exitFlow(
+				// 								paths.siteSetupImportListPath( {
+				// 									siteId,
+				// 									siteSlug,
+				// 									origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+				// 									backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
+				// 									from: fromQueryParam,
+				// 								} )
+				// 							);
+				// 						}
+
+				// 						// If the action is migrate, navigate to the DIY/DIFM selector screen.
+				// 						if ( 'migrate' === actionQueryParam ) {
+				// 							return navigate(
+				// 								paths.howToMigratePath( {
+				// 									siteSlug: siteSlug,
+				// 									siteId: siteId,
+				// 									from: fromQueryParam,
+				// 								} )
+				// 							);
+				// 						}
+
+				// 						return navigate(
+				// 							paths.importOrMigratePath( { siteSlug, siteId, from: fromQueryParam } )
+				// >>>>>>> trunk
+				// 						);
+				// 					}
+
+				// 					return navigate( paths.importOrMigratePath( { from, siteSlug, siteId } ) );
+				// 					//TODO: Add error handling when the site is not created by any reason
+				// 				}
 
 				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {
 					const { destination } = providedDependencies as {
@@ -268,7 +313,6 @@ const siteMigration: FlowV2 = {
 							paths.siteSetupImportWordpressPath( {
 								siteId,
 								siteSlug,
-								//review it
 								from: from || '',
 								option: 'content',
 								backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }`,

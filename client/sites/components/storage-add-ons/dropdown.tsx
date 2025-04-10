@@ -1,0 +1,124 @@
+import { AddOns, StorageAddOnSlug } from '@automattic/data-stores';
+import { useGetPurchasedStorageAddOn } from '@automattic/data-stores/src/add-ons';
+import { CustomSelectControl } from '@wordpress/components';
+import { formatCurrency, useTranslate } from 'i18n-calypso';
+import { useCallback, useEffect } from 'react';
+
+const StorageDropdownOption = ( {
+	price,
+	totalStorage,
+}: {
+	price: string | null;
+	totalStorage: number;
+} ) => {
+	const translate = useTranslate();
+
+	return (
+		<>
+			{ price ? (
+				<div className="storage-add-ons-card__storage-dropdown-option">
+					<span className="storage-add-ons-card__storage-dropdown-option-storage">
+						{ translate( '+ %(totalStorage)dGB', { args: { totalStorage } } ) }
+					</span>
+					<span className="storage-add-ons-card__storage-dropdown-option-price">
+						{ translate( '%(price)s/month, billed yearly', {
+							args: { price },
+							comment: 'The cost of a storage add on per month. Example reads as "$50/month"',
+						} ) }
+					</span>
+				</div>
+			) : null }
+		</>
+	);
+};
+
+export const StorageAddOnsDropdown = ( {
+	siteId,
+	selectedStorageAddOnSlug,
+	setSelectedStorageAddOnSlug,
+}: {
+	siteId: number;
+	selectedStorageAddOnSlug: StorageAddOnSlug | null;
+	setSelectedStorageAddOnSlug: ( slug: StorageAddOnSlug ) => void;
+} ) => {
+	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
+	const selectedStorageAddOn = storageAddOns?.find(
+		( addOn ) => addOn?.addOnSlug === selectedStorageAddOnSlug
+	);
+	const selectedStorageAddOnStorageQuantity = selectedStorageAddOn?.quantity ?? 0;
+	const availableStorageAddOns = AddOns.useAvailableStorageAddOns( { siteId } );
+	const purchasedStorageAddOn = useGetPurchasedStorageAddOn( { siteId } );
+	const purchasedStorageAddOnQuantity = purchasedStorageAddOn?.quantity ?? 0;
+	const purchasedStorageAddOnYearlyPrice = purchasedStorageAddOn?.prices?.yearlyPrice ?? 0;
+
+	useEffect( () => {
+		if ( availableStorageAddOns.length ) {
+			setSelectedStorageAddOnSlug( availableStorageAddOns[ 0 ].addOnSlug as StorageAddOnSlug );
+		}
+	}, [ availableStorageAddOns, setSelectedStorageAddOnSlug ] );
+
+	const selectControlOptions = availableStorageAddOns?.map( ( addOn ) => {
+		const addOnStorage = addOn.quantity ?? 0;
+
+		const price =
+			addOn?.prices?.yearlyPrice && addOn?.prices?.currencyCode
+				? formatCurrency(
+						( ( addOn.prices.yearlyPrice || 0 ) - purchasedStorageAddOnYearlyPrice ) / 12,
+						addOn.prices.currencyCode,
+						{ isSmallestUnit: true }
+				  )
+				: null;
+
+		return {
+			key: addOn.addOnSlug,
+			name: (
+				<StorageDropdownOption
+					price={ price }
+					totalStorage={ addOnStorage - purchasedStorageAddOnQuantity }
+				/>
+			 ) as unknown as string,
+		};
+	} );
+
+	const selectedOptionPrice =
+		selectedStorageAddOn?.prices?.yearlyPrice && selectedStorageAddOn?.prices?.currencyCode
+			? formatCurrency(
+					( ( selectedStorageAddOn.prices.yearlyPrice || 0 ) - purchasedStorageAddOnYearlyPrice ) /
+						12,
+					selectedStorageAddOn.prices.currencyCode,
+					{ isSmallestUnit: true }
+			  )
+			: null;
+	const selectedOption = {
+		key: selectedStorageAddOnSlug,
+		name: (
+			<StorageDropdownOption
+				price={ selectedOptionPrice }
+				totalStorage={ selectedStorageAddOnStorageQuantity - purchasedStorageAddOnQuantity }
+			/>
+		 ) as unknown as string,
+	};
+
+	const handleOnChange = useCallback(
+		( { selectedItem }: { selectedItem: { key: string } } ) => {
+			const addOnSlug = selectedItem?.key as AddOns.StorageAddOnSlug;
+
+			if ( addOnSlug ) {
+				setSelectedStorageAddOnSlug( addOnSlug );
+			}
+		},
+		[ setSelectedStorageAddOnSlug ]
+	);
+
+	return (
+		<CustomSelectControl
+			__next40pxDefaultSize
+			hideLabelFromVision
+			options={ selectControlOptions || [] }
+			// @ts-expect-error ts complains about selectedOption possibly being null
+			value={ selectedOption }
+			onChange={ handleOnChange }
+			label=""
+		/>
+	);
+};

@@ -1,9 +1,7 @@
 import config from '@automattic/calypso-config';
 import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
-import colorStudio from '@automattic/color-studio';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
-import { styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
@@ -20,14 +18,6 @@ import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 const logCheckoutError = ( error: Error ) => {
 	logStashLoadErrorEvent( 'checkout_system_decider', error );
 };
-
-const CheckoutMainWrapperStyles = styled.div`
-	background-color: ${ colorStudio.colors[ 'White' ] };
-
-	a {
-		color: ${ colorStudio.colors[ 'WordPress Blue 50' ] };
-	}
-`;
 
 export default function CheckoutMainWrapper( {
 	productAliasFromUrl,
@@ -112,7 +102,7 @@ export default function CheckoutMainWrapper( {
 	}
 
 	return (
-		<CheckoutMainWrapperStyles>
+		<>
 			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logCheckoutError }
@@ -147,6 +137,6 @@ export default function CheckoutMainWrapper( {
 				</CalypsoShoppingCartProvider>
 			</CheckoutErrorBoundary>
 			{ isLoggedOutCart && <Recaptcha badgePosition="bottomright" /> }
-		</CheckoutMainWrapperStyles>
+		</>
 	);
 }

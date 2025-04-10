@@ -140,6 +140,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	);
 	const urlQueryParams = useQuery();
 	const skipMigration = urlQueryParams.get( 'skipMigration' ) || '';
+	const platform = urlQueryParams.get( 'platform' ) || '';
 	const useThemeHeadstart = ! isStartWritingFlow( flow ) && ! isNewHostedSiteCreationFlow( flow );
 	const shouldGoToCheckout = Boolean( planCartItem );
 
@@ -215,6 +216,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			goToCheckout: shouldGoToCheckout,
 			siteCreated: true,
 			skipMigration,
+			platform,
 		};
 	}
 

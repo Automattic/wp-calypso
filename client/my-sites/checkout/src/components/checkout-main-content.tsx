@@ -5,6 +5,7 @@ import {
 	isBiennially,
 	isTriennially,
 } from '@automattic/calypso-products';
+import colorStudio from '@automattic/color-studio';
 import { Gridicon, MaterialIcon } from '@automattic/components';
 import {
 	Button,
@@ -863,6 +864,8 @@ export default function CheckoutMainContent( {
 }
 
 const StepContainerV2CheckoutFixer = styled.div< { isLargeViewport: boolean } >`
+	background: ${ colorStudio.colors[ 'White' ] };
+
 	// This shouldn't exist. It's a hack to make the top bar appear on top of the checkout sidebar, which extends from the top of the page.
 	.step-container-v2__top-bar {
 		position: relative;
@@ -1345,6 +1348,7 @@ const SubmitButtonHeaderWrapper = styled.div`
 `;
 
 const WPCheckoutWrapper = styled.div`
+	background: ${ colorStudio.colors[ 'White' ] };
 	display: grid;
 	grid-template-rows: auto;
 	grid-template-columns: 1fr;
@@ -1374,6 +1378,7 @@ const WPCheckoutWrapper = styled.div`
 `;
 
 const WPCheckoutCompletedWrapper = styled.div`
+	background: ${ colorStudio.colors[ 'White' ] };
 	display: flex;
 	justify-content: center;
 	justify-items: center;
