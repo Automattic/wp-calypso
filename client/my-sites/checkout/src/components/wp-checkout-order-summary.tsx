@@ -413,7 +413,7 @@ export function CheckoutSummaryRefundWindows( {
 		<>
 			{ includeRefundIcon && <StyledIcon icon={ reusableBlock } size={ 24 } /> }
 			<CheckoutSummaryFeaturesListItem>
-				<WPCheckoutCheckIcon id="features-list-refund-text" />
+				<WPCheckoutCheckIcon />
 				{ highlight ? <strong>{ text }</strong> : text }
 			</CheckoutSummaryFeaturesListItem>
 		</>
@@ -491,7 +491,7 @@ export function CheckoutSummaryFeaturesList( props: {
 
 			{ hasNoAdsAddOn && (
 				<CheckoutSummaryFeaturesListItem>
-					<WPCheckoutCheckIcon id="features-list-support-text" />
+					<WPCheckoutCheckIcon />
 					{ translate( 'Remove ads from your site with the No Ads add-on' ) }
 				</CheckoutSummaryFeaturesListItem>
 			) }
@@ -499,13 +499,13 @@ export function CheckoutSummaryFeaturesList( props: {
 			{ hasDomainTransferProduct && (
 				<>
 					<CheckoutSummaryFeaturesListItem>
-						<WPCheckoutCheckIcon id="features-list-support-another-year" />
+						<WPCheckoutCheckIcon />
 						{ hasFreeCouponTransfersOnly( responseCart )
 							? translate( "Transfer is free and we'll pay for an extra year of registration." )
 							: translate( '1-year extension on your domain' ) }
 					</CheckoutSummaryFeaturesListItem>
 					<CheckoutSummaryFeaturesListItem>
-						<WPCheckoutCheckIcon id="features-list-support-privacy" />
+						<WPCheckoutCheckIcon />
 						{ translate( 'Private domain registration and SSL certificate included for free' ) }
 					</CheckoutSummaryFeaturesListItem>
 				</>
@@ -513,7 +513,7 @@ export function CheckoutSummaryFeaturesList( props: {
 
 			{ ! hasPlanInCart && hasEmailInCart && (
 				<CheckoutSummaryFeaturesListItem>
-					<WPCheckoutCheckIcon id="features-list-support-email" />
+					<WPCheckoutCheckIcon />
 					{ translate( 'Fast support' ) }
 				</CheckoutSummaryFeaturesListItem>
 			) }
@@ -566,7 +566,7 @@ function CheckoutSummaryFlowFeaturesList( {
 			{ planFeatures.map( ( feature ) => {
 				return (
 					<CheckoutSummaryFeaturesListItem key={ `feature-list-${ feature.getSlug() }` }>
-						<WPCheckoutCheckIcon id={ `feature-list-${ feature.getSlug() }-icon` } />
+						<WPCheckoutCheckIcon />
 						{ feature.isHighlightedFeature ? (
 							<strong>{ feature.getTitle() }</strong>
 						) : (
@@ -614,7 +614,7 @@ function CheckoutSummaryFeaturesListDomainItem( { domain }: { domain: ResponseCa
 	if ( domain.is_bundled ) {
 		return (
 			<CheckoutSummaryFeaturesListItem>
-				<WPCheckoutCheckIcon id={ `feature-list-domain-item-${ domain.meta }` } />
+				<WPCheckoutCheckIcon />
 				{ bundledDomainText }
 			</CheckoutSummaryFeaturesListItem>
 		);
@@ -622,7 +622,7 @@ function CheckoutSummaryFeaturesListDomainItem( { domain }: { domain: ResponseCa
 
 	return (
 		<CheckoutSummaryFeaturesListItem>
-			<WPCheckoutCheckIcon id={ `feature-list-domain-item-${ domain.meta }` } />
+			<WPCheckoutCheckIcon />
 			<strong>{ domain.meta }</strong>
 		</CheckoutSummaryFeaturesListItem>
 	);
@@ -637,7 +637,7 @@ function CheckoutSummaryJetpackProductFeatures( { product }: { product: Response
 			{ productFeatures.map( ( feature, index ) => {
 				return (
 					<CheckoutSummaryFeaturesListItem key={ `feature${ index }` }>
-						<WPCheckoutCheckIcon id={ `icon${ index }` } />
+						<WPCheckoutCheckIcon />
 						{ feature }
 					</CheckoutSummaryFeaturesListItem>
 				);
@@ -665,7 +665,7 @@ function CheckoutSummaryAkismetProductFeatures( { product }: { product: Response
 			{ productFeatures.map( ( feature ) => {
 				return (
 					<CheckoutSummaryFeaturesListItem key={ feature }>
-						<WPCheckoutCheckIcon id={ feature.replace( /[^\w]/g, '_' ) } />
+						<WPCheckoutCheckIcon />
 						{ feature }
 					</CheckoutSummaryFeaturesListItem>
 				);
@@ -673,7 +673,7 @@ function CheckoutSummaryAkismetProductFeatures( { product }: { product: Response
 
 			{ yearlySavingsPercentage > 0 && (
 				<CheckoutSummaryFeaturesListItem>
-					<WPCheckoutCheckIcon id="yearly_savings" />
+					<WPCheckoutCheckIcon />
 					{ translate( '%(yearlySavingsPercentage)s%% price reduction for yearly term', {
 						args: {
 							yearlySavingsPercentage,
@@ -723,11 +723,7 @@ function CheckoutSummaryPlanFeatures( props: {
 
 				return (
 					<CheckoutSummaryFeaturesListItem key={ String( feature ) } isSupported={ isSupported }>
-						{ isSupported ? (
-							<WPCheckoutCheckIcon id={ feature.replace( /[^\w]/g, '_' ) } />
-						) : (
-							<WPCheckoutCrossIcon />
-						) }
+						{ isSupported ? <WPCheckoutCheckIcon /> : <WPCheckoutCrossIcon /> }
 						{ feature }
 					</CheckoutSummaryFeaturesListItem>
 				);
@@ -764,7 +760,7 @@ function CheckoutSummarySupportIfAvailable( props: {
 	if ( hasEnTranslation( 'Fast support' ) && hasEnTranslation( 'Priority support 24/7' ) ) {
 		return (
 			<CheckoutSummaryFeaturesListItem>
-				<WPCheckoutCheckIcon id="annual-live-chat" />
+				<WPCheckoutCheckIcon />
 				{ isWpComPremiumPlan( currentPlanSlug )
 					? translate( 'Fast support' )
 					: translate( 'Priority support 24/7' ) }
@@ -773,7 +769,7 @@ function CheckoutSummarySupportIfAvailable( props: {
 	}
 	return (
 		<CheckoutSummaryFeaturesListItem>
-			<WPCheckoutCheckIcon id="annual-live-chat" />
+			<WPCheckoutCheckIcon />
 			{ translate( 'Live chat support' ) }
 		</CheckoutSummaryFeaturesListItem>
 	);
@@ -812,14 +808,14 @@ function CheckoutSummaryAnnualUpsell( props: {
 			<CheckoutSummaryFeaturesListWrapper>
 				{ shouldShowFreeDomainUpsell && (
 					<CheckoutSummaryFeaturesListItem isSupported={ false }>
-						<WPCheckoutCheckIcon id="annual-domain-credit" />
+						<WPCheckoutCheckIcon />
 						{ translate( 'Free domain for one year' ) }
 					</CheckoutSummaryFeaturesListItem>
 				) }
 				{ hasEnTranslation( 'Fast support' ) && hasEnTranslation( 'Priority support 24/7' )
 					? ! isWpComPersonalPlan( productSlug ) && (
 							<CheckoutSummaryFeaturesListItem isSupported={ false }>
-								<WPCheckoutCheckIcon id="annual-live-chat" />
+								<WPCheckoutCheckIcon />
 								{ isWpComPremiumPlan( productSlug )
 									? translate( 'Fast support' )
 									: translate( 'Priority support 24/7' ) }
@@ -827,7 +823,7 @@ function CheckoutSummaryAnnualUpsell( props: {
 					  )
 					: ! isWpComPersonalPlan( productSlug ) && (
 							<CheckoutSummaryFeaturesListItem isSupported={ false }>
-								<WPCheckoutCheckIcon id="annual-live-chat" />
+								<WPCheckoutCheckIcon />
 								{ translate( 'Live chat support' ) }
 							</CheckoutSummaryFeaturesListItem>
 					  ) }
