@@ -15,6 +15,12 @@ interface LoadingProps {
 export const Loading = ( { title, progress, delay = 0 }: LoadingProps ) => {
 	const [ shouldDisplayTitle, setShouldDisplayTitle ] = useState( delay === 0 );
 
+	const [ prevDelay, setPrevDelay ] = useState( delay );
+	if ( delay !== prevDelay ) {
+		setPrevDelay( delay );
+		setShouldDisplayTitle( delay === 0 );
+	}
+
 	useEffect( () => {
 		if ( delay === 0 ) {
 			return;
