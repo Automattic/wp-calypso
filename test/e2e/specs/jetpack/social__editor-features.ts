@@ -40,6 +40,7 @@ const testCases: Array< {
 		'resharing' | 'manualSharing' | 'mediaSharing' | 'socialImageGenerator',
 		boolean
 	>;
+	isPrivate?: boolean;
 } > = [];
 
 if ( envVariables.JETPACK_TARGET === 'wpcom-deployment' ) {
@@ -82,7 +83,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 	for ( const { plan, platform, testAccountName, features, isPrivate } of testCases ) {
 		const title = `For ${ platform } sites with ${ plan } plan`;
 
-		skipDescribeIf( isPrivate )( DataHelper.createSuiteTitle( title ), function () {
+		skipDescribeIf( isPrivate ?? false )( DataHelper.createSuiteTitle( title ), function () {
 			let page: Page;
 			let editorPage: EditorPage;
 			let socialConnectionsManager: SocialConnectionsManager;
