@@ -1,19 +1,10 @@
 import { AppleLoginButton } from '../apple';
-import mockConfig from './config.mock';
 import { SocialButtonWrapper, WooWrapper, GravatarWrapper } from './shared';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta< typeof AppleLoginButton > = {
 	title: 'client/components/Social Buttons/Apple',
 	component: AppleLoginButton,
-	parameters: {
-		mockData: [
-			{
-				path: '@automattic/calypso-config',
-				value: mockConfig,
-			},
-		],
-	},
 	args: {
 		responseHandler: () => {},
 		translate: () => 'Continue with Apple',
