@@ -1,7 +1,19 @@
 import type { StoryFn } from '@storybook/react';
 import './style.scss';
 
-export const SocialButtonWrapper = ( Story: StoryFn ) => (
+export const BlazeWrapper = ( Story: StoryFn ) => (
+	<div className="blaze-pro" style={ { padding: '30px' } }>
+		<div className="auth-form__social" style={ { maxWidth: '300px' } }>
+			<div className="auth-form__social-buttons">
+				<div className="auth-form__social-buttons-container">
+					<Story />
+				</div>
+			</div>
+		</div>
+	</div>
+);
+
+export const DefaultWrapper = ( Story: StoryFn ) => (
 	<div className="auth-form__social" style={ { padding: '30px', maxWidth: '300px' } }>
 		<div className="auth-form__social-buttons">
 			<div className="auth-form__social-buttons-container">

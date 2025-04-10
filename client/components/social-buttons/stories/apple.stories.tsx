@@ -1,5 +1,11 @@
 import { AppleLoginButton } from '../apple';
-import { SocialButtonWrapper, WooWrapper, GravatarWrapper, JetpackWrapper } from './shared';
+import {
+	DefaultWrapper,
+	WooWrapper,
+	GravatarWrapper,
+	JetpackWrapper,
+	BlazeWrapper,
+} from './shared';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta< typeof AppleLoginButton > = {
@@ -16,7 +22,11 @@ export default meta;
 type Story = StoryObj< typeof AppleLoginButton >;
 
 export const Default: Story = {
-	decorators: [ SocialButtonWrapper ],
+	decorators: [ DefaultWrapper ],
+};
+
+export const Blaze: Story = {
+	decorators: [ BlazeWrapper ],
 };
 
 export const Woo: Story = {

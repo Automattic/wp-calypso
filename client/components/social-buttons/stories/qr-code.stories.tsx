@@ -1,7 +1,7 @@
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import QrCodeLoginButton from '../qr-code';
-import { SocialButtonWrapper, WooWrapper, JetpackWrapper } from './shared';
+import { DefaultWrapper, WooWrapper, JetpackWrapper } from './shared';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const initialState = {
@@ -33,7 +33,7 @@ export default meta;
 type Story = StoryObj< typeof QrCodeLoginButton >;
 
 export const Default: Story = {
-	decorators: [ SocialButtonWrapper ],
+	decorators: [ DefaultWrapper ],
 };
 
 export const Woo: Story = {
