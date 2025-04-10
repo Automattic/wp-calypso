@@ -20,7 +20,7 @@ const connectUrlPopupFLow =
 	'https://public-api.wordpress.com/connect/?magic=keyring&service=apple&action=request&for=connect';
 const noop = () => {};
 
-class AppleLoginButton extends Component {
+export class AppleLoginButton extends Component {
 	static propTypes = {
 		isFormDisabled: PropTypes.bool,
 		redirectUri: PropTypes.string,
