@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 
-const BASE_CRM_APP_URL = 'https://devapp.jetpackcrm.com';
+const BASE_CRM_APP_URL = 'https://app.jetpackcrm.com';
 
 async function fetchExtensionDownloads( licenseKey: string, extensionSlug: string ) {
 	// API URL for downloads

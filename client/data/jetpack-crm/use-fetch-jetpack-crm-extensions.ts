@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getExtensionDescription } from './get-extension-description';
-const BASE_CRM_APP_URL = 'https://devapp.jetpackcrm.com';
+const BASE_CRM_APP_URL = 'https://app.jetpackcrm.com';
 
 export interface Extension {
 	name: string;
