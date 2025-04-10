@@ -16,6 +16,10 @@ export const Loading = ( { title, progress, delay = 0 }: LoadingProps ) => {
 	const [ shouldDisplayTitle, setShouldDisplayTitle ] = useState( delay === 0 );
 
 	useEffect( () => {
+		if ( delay === 0 ) {
+			return;
+		}
+
 		const timeout = setTimeout( () => {
 			setShouldDisplayTitle( true );
 		}, delay );
