@@ -6,6 +6,7 @@ import { CheckoutSummaryRefundWindows } from './wp-checkout-order-summary';
 const CheckoutMoneyBackGuaranteeWrapper = styled.div`
 	display: flex;
 	justify-content: center;
+	align-items: center;
 	margin: 1.5em 0 0;
 
 	& li {
