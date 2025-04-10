@@ -5,9 +5,9 @@ import page from '@automattic/calypso-router';
 /**
  * Internal dependencies
  */
-import { makeLayout, render as clientRender } from 'calypso/controller';
-import { reauthRequired } from './controller';
+import { render as clientRender } from 'calypso/controller';
+import { reauthRequired, makeReauthLayout } from './controller';
 
 export default function () {
-	page( '/reauth-required', reauthRequired, makeLayout, clientRender );
+	page( '/reauth-required', reauthRequired, makeReauthLayout, clientRender );
 }
