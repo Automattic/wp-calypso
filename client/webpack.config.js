@@ -188,6 +188,7 @@ const webpackConfig = {
 		'entry-subscriptions': [ path.join( __dirname, 'landing', 'subscriptions' ) ],
 		'entry-dashboard': [ path.join( __dirname, 'dashboard' ) ],
 		'entry-dashboard-a4a': [ path.join( __dirname, 'dashboard', 'a4a' ) ],
+		'entry-reauth-required': [ path.join( __dirname, 'reauth-required', 'bundle' ) ],
 	} ),
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: sourceMapType,

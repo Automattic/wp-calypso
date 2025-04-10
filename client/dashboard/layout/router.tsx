@@ -125,7 +125,9 @@ const meRoute = createRoute( {
 	notFoundComponent: NotFound,
 	beforeLoad: ( { context }: { context: RouteContext } ) => {
 		if ( context?.auth?.twoStep?.two_step_reauthorization_required ) {
-			throw redirect( { to: '/re-auth-required' } );
+			const currentPath = window.location.pathname;
+			const loginUrl = `/reauth-required?redirect_to=${ encodeURIComponent( currentPath ) }`;
+			window.location.href = loginUrl;
 		}
 	},
 } );
