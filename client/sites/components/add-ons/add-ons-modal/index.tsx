@@ -47,12 +47,12 @@ export default function AddOnsModal( { isOpen, onClose }: AddOnsModalProps ) {
 			title={ translate( 'Boost your plan with add-ons' ) }
 			onRequestClose={ onClose }
 		>
-			<p className="add-ons-description">
+			<span className="add-ons-modal__description">
 				{ translate(
 					'Expand the functionality of your WordPress.com site by enabling any of the following features.'
 				) }
-			</p>
-			<div className="add-ons-cards">
+			</span>
+			<div className="add-ons-modal__cards">
 				{ nonStorageAddOns.map( ( addOn ) =>
 					addOn ? (
 						<AddOnCard
