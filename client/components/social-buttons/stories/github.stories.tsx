@@ -34,6 +34,7 @@ const meta: Meta< typeof GitHubLoginButton > = {
 	component: GitHubLoginButton,
 	args: {
 		responseHandler: () => {},
+		isLogin: true,
 	},
 	decorators: [ ( Story ) => <Provider store={ store }>{ Story() }</Provider> ],
 };

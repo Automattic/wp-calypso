@@ -8,6 +8,7 @@ const meta: Meta< typeof AppleLoginButton > = {
 	args: {
 		responseHandler: () => {},
 		translate: () => 'Continue with Apple',
+		redirectUri: 'https://example.com',
 	},
 };
 export default meta;

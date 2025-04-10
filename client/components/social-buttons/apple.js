@@ -23,13 +23,14 @@ const noop = () => {};
 export class AppleLoginButton extends Component {
 	static propTypes = {
 		isFormDisabled: PropTypes.bool,
-		redirectUri: PropTypes.string,
+		redirectUri: PropTypes.string.isRequired,
 		responseHandler: PropTypes.func.isRequired,
 		isLogin: PropTypes.bool,
 		scope: PropTypes.string,
 		uxMode: PropTypes.string,
 		socialServiceResponse: PropTypes.object,
 		queryString: PropTypes.string,
+		translate: PropTypes.func.isRequired,
 	};
 
 	static defaultProps = {
