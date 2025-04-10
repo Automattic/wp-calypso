@@ -706,7 +706,7 @@ $with-sidebar-min-page-width: 1114px;
 		}
 	}
 
-	div.wpnc__summary {
+	.wpnc__summary {
 		@extend %container;
 		padding: $wpnc__padding-large 0;
 	}
