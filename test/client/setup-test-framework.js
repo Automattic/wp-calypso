@@ -31,8 +31,6 @@ global.CSS = {
 	supports: jest.fn(),
 };
 
-global.ResizeObserver = require( 'resize-observer-polyfill' );
-
 global.fetch = jest.fn( () =>
 	Promise.resolve( {
 		json: () => Promise.resolve(),
