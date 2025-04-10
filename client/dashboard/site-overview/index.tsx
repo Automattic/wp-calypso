@@ -14,6 +14,7 @@ import CommentsCard from './comments-card';
 import LikesCard from './likes-card';
 import OverviewCard from './overview-card';
 import OverviewSection from './overview-section';
+import PerformanceCards from './performance-cards';
 import Sidebar from './sidebar';
 import StorageCard from './storage-card';
 import UptimeCard from './uptime-card';
@@ -62,6 +63,7 @@ function SiteOverview() {
 						<OverviewCard title={ __( 'Subscribers' ) } icon={ envelope } isLink></OverviewCard>
 					</OverviewSection>
 					<OverviewSection title={ __( 'Site health' ) } actions={ [] }>
+						<PerformanceCards />
 						<UptimeCard />
 						<StorageCard />
 					</OverviewSection>

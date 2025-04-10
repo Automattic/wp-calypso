@@ -8,3 +8,5 @@
 - Check possible nuances around `fetchSiteEngagementStats`. For example if there are needed checks for availability of stats, returned data and manipulation.
 - Check which Badge component to use (CoreBadge, automattic/components or a different one).
 - For now some cards like ViewsCard and VisitorsCard are almost identical. Keep that in mind as we proceed if we can/should use a reusable wrapper component.
+- Should we use `useQuery` inside the components or at the parent `overview` page?
+- Investigate the endpoints used in `PerformanceCards`. They return info about jobs `queued|running` and we have to use `refetchInterval` until we have both results. Is there a better way to do this and use a cached value? That would solve the delayed rendering of these cards.
