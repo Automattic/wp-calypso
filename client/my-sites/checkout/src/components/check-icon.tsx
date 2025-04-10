@@ -1,10 +1,13 @@
 import styled from '@emotion/styled';
+import { useId } from 'react';
 
 const CheckIconSvg = styled.svg`
 	fill: #fff;
 `;
 
-export function CheckIcon( { className, id }: { className?: string; id: string } ) {
+export function CheckIcon( { className }: { className?: string } ) {
+	const id = useId();
+
 	return (
 		<CheckIconSvg
 			width="16"
