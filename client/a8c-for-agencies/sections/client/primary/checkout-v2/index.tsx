@@ -142,7 +142,7 @@ function ClientCheckoutContent() {
 		<div className="client-checkout-v2">
 			<CheckoutMain
 				sitelessCheckoutType="a4a"
-				redirectTo="/client/subscriptions"
+				redirectTo={ window.location.origin + '/client/subscriptions' }
 				isInModal={ false }
 				siteSlug=""
 				siteId={ 0 }
