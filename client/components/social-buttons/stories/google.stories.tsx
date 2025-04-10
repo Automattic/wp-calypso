@@ -1,5 +1,11 @@
 import { GoogleSocialButton } from '../google';
-import { DefaultWrapper, WooWrapper, GravatarWrapper, JetpackWrapper } from './shared';
+import {
+	DefaultWrapper,
+	WooWrapper,
+	GravatarWrapper,
+	JetpackWrapper,
+	BlazeWrapper,
+} from './shared';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta< typeof GoogleSocialButton > = {
@@ -19,14 +25,18 @@ export const Default: Story = {
 	decorators: [ DefaultWrapper ],
 };
 
-export const Woo: Story = {
-	decorators: [ WooWrapper ],
+export const Blaze: Story = {
+	decorators: [ BlazeWrapper ],
+};
+
+export const Gravatar: Story = {
+	decorators: [ GravatarWrapper ],
 };
 
 export const Jetpack: Story = {
 	decorators: [ JetpackWrapper ],
 };
 
-export const Gravatar: Story = {
-	decorators: [ GravatarWrapper ],
+export const Woo: Story = {
+	decorators: [ WooWrapper ],
 };

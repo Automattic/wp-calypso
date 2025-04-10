@@ -1,7 +1,7 @@
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import MagicLoginButton from '../magic-login';
-import { DefaultWrapper, WooWrapper, JetpackWrapper } from './shared';
+import { DefaultWrapper, WooWrapper } from './shared';
 import type { Meta, StoryObj } from '@storybook/react';
 
 // Create minimal state with just what's needed
@@ -31,8 +31,4 @@ export const Default: Story = {
 
 export const Woo: Story = {
 	decorators: [ WooWrapper ],
-};
-
-export const Jetpack: Story = {
-	decorators: [ JetpackWrapper ],
 };

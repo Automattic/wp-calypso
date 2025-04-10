@@ -29,14 +29,14 @@ export const Blaze: Story = {
 	decorators: [ BlazeWrapper ],
 };
 
-export const Woo: Story = {
-	decorators: [ WooWrapper ],
+export const Gravatar: Story = {
+	decorators: [ GravatarWrapper ],
 };
 
 export const Jetpack: Story = {
 	decorators: [ JetpackWrapper ],
 };
 
-export const Gravatar: Story = {
-	decorators: [ GravatarWrapper ],
+export const Woo: Story = {
+	decorators: [ WooWrapper ],
 };
