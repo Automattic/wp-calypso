@@ -3,7 +3,7 @@ import { SocialButtonWrapper, WooWrapper, GravatarWrapper, JetpackWrapper } from
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta< typeof GoogleSocialButton > = {
-	title: 'client/components/Social Buttons/Google',
+	title: 'client/components/Social Button/Google',
 	component: GoogleSocialButton,
 	args: {
 		responseHandler: () => {},

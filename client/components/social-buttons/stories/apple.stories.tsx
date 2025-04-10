@@ -3,7 +3,7 @@ import { SocialButtonWrapper, WooWrapper, GravatarWrapper, JetpackWrapper } from
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta< typeof AppleLoginButton > = {
-	title: 'client/components/Social Buttons/Apple',
+	title: 'client/components/Social Button/Apple',
 	component: AppleLoginButton,
 	args: {
 		responseHandler: () => {},

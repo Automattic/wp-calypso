@@ -21,7 +21,7 @@ const initialState = {
 const store = createStore( () => initialState );
 
 const meta: Meta< typeof QrCodeLoginButton > = {
-	title: 'client/components/Social Buttons/QR Code',
+	title: 'client/components/Social Button/QR Code',
 	component: QrCodeLoginButton,
 	args: {
 		loginUrl: 'https://example.com/login',

@@ -30,7 +30,7 @@ const initialState = {
 const store = createStore( () => initialState );
 
 const meta: Meta< typeof GitHubLoginButton > = {
-	title: 'client/components/Social Buttons/GitHub',
+	title: 'client/components/Social Button/GitHub',
 	component: GitHubLoginButton,
 	args: {
 		responseHandler: () => {},
