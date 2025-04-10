@@ -238,7 +238,6 @@
 		padding: 12px;
 		margin-bottom: 4px;
 		display: flex;
-		justify-content: space-between;
 		align-items: center;
 
 		&::after {
@@ -246,11 +245,15 @@
 		}
 	}
 
-	.eligibility-warnings__address {
+	.eligibility-warnings__address-first {
 		text-overflow: ellipsis;
-		max-width: 350px;
+		max-width: 240px;
 		overflow: hidden;
 		white-space: nowrap;
+	}
+
+	.eligibility-warnings__address-second {
+		margin-right: auto;
 	}
 
 	.badge {

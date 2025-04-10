@@ -57,14 +57,24 @@ export const WarningList = ( { context, translate, warnings, showContact = true 
 };
 
 function displayDomainNames( domainNames: DomainNames ) {
+	//Split out the first part of the domain names and then join the rest back together.
+	const domainNamesArrayCurrent = domainNames.current.split( '.' );
+	const domainNamesArrayNew = domainNames.new.split( '.' );
+	const firstPartCurrent = domainNamesArrayCurrent.shift();
+	const firstPartNew = domainNamesArrayNew.shift();
+	const secondPartCurrent = '.' + domainNamesArrayCurrent.join( '.' );
+	const secondPartNew = '.' + domainNamesArrayNew.join( '.' );
+
 	return (
 		<div className="eligibility-warnings__domain-names">
 			<Card compact>
-				<span className="eligibility-warnings__address">{ domainNames.current }</span>
+				<span className="eligibility-warnings__address-first">{ firstPartCurrent }</span>
+				<span className="eligibility-warnings__address-second">{ secondPartCurrent }</span>
 				<Badge type="info">{ translate( 'current' ) }</Badge>
 			</Card>
 			<Card compact>
-				<span className="eligibility-warnings__address">{ domainNames.new }</span>
+				<span className="eligibility-warnings__address-first">{ firstPartNew }</span>
+				<span className="eligibility-warnings__address-second">{ secondPartNew }</span>
 				<Badge type="success">{ translate( 'new' ) }</Badge>
 			</Card>
 		</div>
