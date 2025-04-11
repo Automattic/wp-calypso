@@ -7,7 +7,7 @@ import {
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { throttle } from 'lodash';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 
 const SHOW_SCROLL_THRESHOLD = 10;
@@ -30,21 +30,16 @@ interface Props< T extends object > {
 	width: number;
 }
 
-const ScrollableHorizontalNavigation = < T extends object >( {
-	className,
-	onTabClick,
-	selectedTab,
-	tabs,
-	titleField = 'title',
-	width,
-}: Props< T > ) => {
+const ScrollableHorizontalNavigation = < T extends object >( props: Props< T > ) => {
+	const { className, onTabClick, tabs, titleField = 'title', width } = props;
 	const scrollRef = useRef< HTMLDivElement >( null );
+	const [ selectedTab, setSelectedTab ] = useState< string >( props.selectedTab ); // To instantly show the selected tab without waiting for prop from parent.
 	const translate = useTranslate();
 
 	// Scroll the selected tab into view on initial render and whenever it changes.
 	useEffect( () => {
 		const selectedTabElement = scrollRef.current?.querySelector(
-			'.components-toggle-group-control-option-base[data-active-item="true"]'
+			`.components-toggle-group-control-option-base[data-value="${ selectedTab }"]`
 		);
 		selectedTabElement?.scrollIntoView( {
 			behavior: 'smooth',
@@ -94,6 +89,7 @@ const ScrollableHorizontalNavigation = < T extends object >( {
 			return;
 		}
 
+		setSelectedTab( tabSlug );
 		onTabClick( tabSlug );
 	}
 
