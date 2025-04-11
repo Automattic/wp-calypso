@@ -4,9 +4,7 @@ import MainMenu from '../main-menu';
 import SecondaryMenu from '../secondary-menu';
 
 function Header() {
-	const {
-		config: { Logo },
-	} = useAppContext();
+	const { Logo } = useAppContext();
 	return (
 		<HeaderBar as="header">
 			{ Logo && (

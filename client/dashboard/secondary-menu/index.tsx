@@ -84,9 +84,7 @@ function UserProfile() {
 
 function SecondaryMenu() {
 	const navigate = useNavigate();
-	const {
-		config: { supports },
-	} = useAppContext();
+	const { supports } = useAppContext();
 	const hasUnreadNotifications = false;
 	const notificationsPath = '/me/notifications';
 

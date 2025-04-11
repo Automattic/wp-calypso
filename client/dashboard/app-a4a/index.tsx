@@ -2,7 +2,7 @@ import boot from '../app/boot';
 import Logo from './logo';
 import './style.scss';
 
-boot( 'a4a', {
+boot( {
 	basePath: '/v2-a4a',
 	Logo,
 	supports: {

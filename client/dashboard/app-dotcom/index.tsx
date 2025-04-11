@@ -2,7 +2,7 @@ import boot from '../app/boot';
 import Logo from './logo';
 import './style.scss';
 
-boot( 'dotcom', {
+boot( {
 	basePath: '/v2',
 	Logo,
 	supports: {

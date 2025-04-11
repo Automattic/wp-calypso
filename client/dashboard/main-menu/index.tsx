@@ -3,9 +3,7 @@ import { useAppContext } from '../app/context';
 import Menu from '../menu';
 
 function MainMenu() {
-	const {
-		config: { supports },
-	} = useAppContext();
+	const { supports } = useAppContext();
 
 	return (
 		<Menu>
