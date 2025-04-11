@@ -32,7 +32,7 @@ function receiveAgenciesHandler(
 	if ( 'is_client_user' in data ) {
 		return setAgencyClientUser( {
 			isClientUser: data.is_client_user,
-			billingType: data.billing_type,
+			billingType: data.billing_type ?? 'legacy',
 		} );
 	}
 	return receiveAgencies( data );
