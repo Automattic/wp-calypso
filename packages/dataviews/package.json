@@ -77,6 +77,14 @@
 		"clean": "git clean --force -d -X",
 		"prepare": "yarn run build",
 		"prepack": "yarn run clean && yarn run build",
-		"watch": "tsc --build ./tsconfig.json --watch"
+		"watch": "tsc --build ./tsconfig.json --watch",
+		"storybook:start": "storybook dev -p 57863"
+	},
+	"devDependencies": {
+		"@storybook/cli": "^8.6.12",
+		"@storybook/react": "^8.6.12",
+		"@types/react-dom": "^19",
+		"react-dom": "^19.1.0",
+		"storybook": "^8.6.12"
 	}
 }
