@@ -22,6 +22,7 @@ import SiteDeployments from '../site-deployments';
 import SiteOverview from '../site-overview';
 import Sites from '../sites';
 import { queryClient } from './query-client';
+import type { AppType } from '../app-context';
 import type { FetchSiteRouteResponse, Domain, Email, Site, User } from '../data/types';
 
 interface RouteContext {
@@ -167,20 +168,10 @@ const routeTree = rootRoute.addChildren( [
 	] ),
 ] );
 
-export const router = new Router( {
-	routeTree,
-	basepath: '/v2',
-	defaultErrorComponent: UnknownError,
-} );
-
-export const routerA4A = new Router( {
-	routeTree, // TODO: define routes and menus for A4A.
-	basepath: '/v2-a4a',
-	defaultErrorComponent: ( { error } ) => error,
-} );
-
-declare module '@tanstack/react-router' {
-	interface Register {
-		router: typeof router;
-	}
-}
+export const getRouter = ( appType: AppType ) => {
+	return new Router( {
+		routeTree,
+		basepath: appType === 'a4a' ? '/v2-a4a' : '/v2',
+		defaultErrorComponent: UnknownError,
+	} );
+};
