@@ -74,10 +74,10 @@
 
 	.components-toggle-group-control {
 		padding: 0;
-
 		&:hover,
 		&:focus-within {
 			border-color: transparent;
+			box-shadow: none;
 		}
 
 		> div {
