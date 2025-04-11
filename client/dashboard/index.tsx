@@ -2,8 +2,8 @@ import { createRoot } from 'react-dom/client';
 import '@wordpress/components/build-style/style.css';
 import './themes/dotcom.scss';
 import './style.scss';
-import Layout from './layout';
-import { persistPromise } from './layout/query-client';
+import App from './app';
+import { persistPromise } from './app/query-client';
 
 const rootElement = document.getElementById( 'wpcom' );
 if ( rootElement === null ) {
@@ -12,5 +12,5 @@ if ( rootElement === null ) {
 const root = createRoot( rootElement );
 
 persistPromise.then( () => {
-	root.render( <Layout /> );
+	root.render( <App /> );
 } );

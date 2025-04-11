@@ -1,4 +1,4 @@
-import { Router, createRoute, createRootRoute, redirect, Outlet } from '@tanstack/react-router';
+import { Router, createRoute, createRootRoute, redirect } from '@tanstack/react-router';
 import NotFound from '../404';
 import UnknownError from '../500';
 import Billing from '../billing';
@@ -11,11 +11,11 @@ import {
 } from '../data';
 import Domains from '../domains';
 import Emails from '../emails';
-import Header from '../header';
 import Me from '../me';
 import Notifications from '../notifications';
 import Privacy from '../privacy';
 import Profile from '../profile';
+import Root from '../root';
 import Security from '../security';
 import SiteLayout from '../site';
 import SiteDeployments from '../site-deployments';
@@ -32,19 +32,8 @@ interface RouteContext {
 	};
 }
 
-function DashboardLayout() {
-	return (
-		<div className="dashboard__layout">
-			<Header />
-			<main className="dashboard__content">
-				<Outlet />
-			</main>
-		</div>
-	);
-}
-
 const rootRoute = createRootRoute( {
-	component: DashboardLayout,
+	component: Root,
 	notFoundComponent: NotFound,
 } );
 

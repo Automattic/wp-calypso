@@ -5,8 +5,6 @@ import { AuthProvider, useAuth } from '../auth';
 import { queryClient } from './query-client';
 import { router } from './router';
 
-import './style.scss';
-
 function RouterProviderWithAuth() {
 	const auth = useAuth();
 	return <RouterProvider router={ router } context={ { auth } } />;
