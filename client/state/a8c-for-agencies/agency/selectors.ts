@@ -1,6 +1,6 @@
 // Required for modular state.
 import 'calypso/state/a8c-for-agencies/init';
-import { A4AStore, APIError, Agency, ApprovalStatus } from '../types';
+import { A4AStore, APIError, Agency, ClientBillingType } from '../types';
 
 export function getActiveAgency( state: A4AStore ): Agency | null {
 	return state.a8cForAgencies.agencies.activeAgency;
@@ -43,6 +43,10 @@ export function isAgencyOwner( state: A4AStore ): boolean {
 
 export function isAgencyClientUser( state: A4AStore ): boolean {
 	return state.a8cForAgencies.agencies.isAgencyClientUser;
+}
+
+export function getClientBillingType( state: A4AStore ): ClientBillingType {
+	return state.a8cForAgencies.agencies.clientBillingType;
 }
 
 export function hasAgencyCapability( state: A4AStore, capability: string ): boolean {
