@@ -16,7 +16,7 @@ The command palette component **must** be placed within the Router context:
 
 ```jsx
 // In root/index.tsx
-import DashboardCommandPalette from '../command-palette';
+import CommandPalette from '../command-palette';
 
 function Root() {
   return (
@@ -25,7 +25,7 @@ function Root() {
       <main>
         <Outlet />
       </main>
-      <DashboardCommandPalette />
+      <CommandPalette />
     </div>
   );
 }
@@ -38,9 +38,10 @@ function Root() {
 The command palette opens automatically with Cmd+K / Ctrl+K, or programmatically:
 
 ```jsx
-import { openCommandPalette } from '../command-palette';
+import { useOpenCommandPalette } from '../command-palette/utils';
 
 function YourComponent() {
+	const openCommandPalette = useOpenCommandPalette();
   return (
     <button onClick={openCommandPalette}>
       Open Command Palette

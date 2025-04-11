@@ -1,5 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import '@wordpress/components/build-style/style.css';
+import '@wordpress/commands/build-style/style.css';
 import './style.scss';
 import Layout from './layout';
 import { persistPromise } from './query-client';

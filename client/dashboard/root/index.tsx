@@ -1,5 +1,5 @@
 import { Outlet } from '@tanstack/react-router';
-import DashboardCommandPalette from '../command-palette';
+import CommandPalette from '../command-palette';
 import Header from '../header';
 import './style.scss';
 
@@ -10,7 +10,7 @@ function Root() {
 			<main>
 				<Outlet />
 			</main>
-			<DashboardCommandPalette />
+			<CommandPalette />
 		</div>
 	);
 }

@@ -1,19 +1,9 @@
-/**
- * Dashboard commands and registration
- *
- * This file contains command definitions and registration functions
- */
-import { store as commandsStore } from '@wordpress/commands';
-import { dispatch } from '@wordpress/data';
+import { useRouter } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { globe, commentAuthorAvatar, envelope, bell, wordpress, home } from '@wordpress/icons';
-import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
+import { useAppContext } from '../app/context';
 import type { AppConfig } from '../app/context';
-import type { Router } from '@tanstack/react-router';
 
-/**
- * Command definition with feature flag
- */
 export interface Command {
 	name: string;
 	label: string;
@@ -24,9 +14,6 @@ export interface Command {
 	feature?: keyof AppConfig[ 'supports' ];
 }
 
-/**
- * Navigation commands for the dashboard
- */
 export const navigationCommands: Command[] = [
 	{
 		name: 'dashboard-go-to-overview',
@@ -69,14 +56,6 @@ export const navigationCommands: Command[] = [
 		feature: 'me',
 	},
 	{
-		name: 'dashboard-go-to-reader',
-		label: __( 'Go to Reader' ),
-		searchLabel: __( 'Navigate to WordPress Reader blogs posts' ),
-		path: '/reader',
-		icon: <ReaderIcon />,
-		feature: 'reader',
-	},
-	{
 		name: 'dashboard-go-to-notifications',
 		label: __( 'Go to Notifications' ),
 		searchLabel: __( 'Check your WordPress notifications alerts' ),
@@ -87,61 +66,33 @@ export const navigationCommands: Command[] = [
 ];
 
 /**
- * Register navigation commands based on app context and feature flags
- *
- * @param router The TanStack Router instance from the useRouter hook
- * @param appConfig The application configuration with feature flags
+ * Navigation command loader based on app context and feature flags
  */
-export function registerNavigationCommands( router: Router, appConfig: AppConfig ) {
-	const { registerCommand } = dispatch( commandsStore );
+export function useNavigationCommandLoader() {
+	const router = useRouter();
+	const { supports } = useAppContext();
 
 	// Filter commands based on feature flags from app context
 	const enabledCommands = navigationCommands.filter( ( cmd ) => {
-		// If no feature is specified, command is always enabled
 		if ( ! cmd.feature ) {
 			return true;
 		}
-		// Otherwise, check if the feature is enabled in the app context
-		return appConfig.supports[ cmd.feature ];
+		return supports[ cmd.feature ];
 	} );
 
-	// Register enabled commands
-	enabledCommands.forEach( ( cmd ) => {
-		registerCommand( {
+	return {
+		commands: enabledCommands.map( ( cmd ) => ( {
 			name: cmd.name,
 			label: cmd.label,
 			searchLabel: cmd.searchLabel,
-			callback: ( { close } ) => {
-				// Navigate using absolute path with replace to avoid path concatenation
+			callback: ( { close }: { close: () => void } ) => {
 				router.navigate( {
 					to: cmd.path,
-					replace: true,
 				} );
 				close();
 			},
 			icon: cmd.icon,
-			context: 'root',
-		} );
-	} );
-}
-
-/**
- * Unregister all dashboard commands - important for cleanup
- */
-export function unregisterDashboardCommands() {
-	const { unregisterCommand } = dispatch( commandsStore );
-
-	navigationCommands.forEach( ( cmd ) => {
-		unregisterCommand( cmd.name );
-	} );
-}
-
-/**
- * Utility function to open the command palette directly from anywhere
- */
-export function openCommandPalette() {
-	const { open } = dispatch( commandsStore );
-	if ( open ) {
-		open();
-	}
+		} ) ),
+		isLoading: false,
+	};
 }

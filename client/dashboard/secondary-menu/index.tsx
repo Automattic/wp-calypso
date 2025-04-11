@@ -13,7 +13,7 @@ import { help, bellUnread, bell, commentAuthorAvatar } from '@wordpress/icons';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import { useAppContext } from '../app/context';
 import { useAuth } from '../auth';
-import { openCommandPalette } from '../command-palette/commands';
+import { useOpenCommandPalette } from '../command-palette/utils';
 import './style.scss';
 
 function NavMenuItem( { to, children }: { to: string; children: React.ReactNode } ) {
@@ -40,6 +40,7 @@ function NavMenuItem( { to, children }: { to: string; children: React.ReactNode 
 function UserProfile() {
 	const { user } = useAuth();
 	const { supports } = useAppContext();
+	const openCommandPalette = useOpenCommandPalette();
 
 	return (
 		<Dropdown
