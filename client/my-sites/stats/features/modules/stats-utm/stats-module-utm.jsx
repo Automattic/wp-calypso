@@ -83,12 +83,12 @@ const StatsModuleUTM = ( {
 	};
 
 	useEffect( () => {
-		const utmParam = queryParams.get( UTM_QUERY_PARAM );
+		const utmParam = context.query[ UTM_QUERY_PARAM ];
 
 		if ( utmParam && Object.values( OPTION_KEYS ).includes( utmParam ) ) {
 			setSelectedOption( utmParam );
 		}
-	}, [ queryParams ] );
+	}, [ context.query ] );
 
 	useEffect( () => {
 		if ( summary ) {
