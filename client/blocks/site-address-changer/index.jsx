@@ -356,7 +356,7 @@ export class SiteAddressChanger extends Component {
 					variant: 'primary',
 					isBusy: isSiteAddressChangeRequesting,
 					onClick: this.onConfirm,
-					label: translate( 'Change site address' ),
+					label: translate( 'Confirm' ),
 				},
 			];
 		}
