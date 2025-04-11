@@ -1,4 +1,3 @@
-import { useLoaderData } from '@tanstack/react-router';
 import { ExternalLink, __experimentalHeading as Heading } from '@wordpress/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -9,10 +8,8 @@ import type { FetchSiteRouteResponse } from '../data/types';
 
 const MINIMUM_DISPLAYED_USAGE = 2.5;
 
-export default function StorageCard() {
-	const { mediaStorage: { storageUsedBytes, maxStorageBytes } = {} } = useLoaderData( {
-		from: '/sites/$siteId',
-	} ) as FetchSiteRouteResponse;
+export default function StorageCard( { mediaStorage }: FetchSiteRouteResponse ) {
+	const { storageUsedBytes, maxStorageBytes } = mediaStorage;
 	if ( ! storageUsedBytes || ! maxStorageBytes ) {
 		return null;
 	}

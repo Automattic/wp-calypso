@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import { useLoaderData } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { desktop, mobile } from '@wordpress/icons';
 import CoreBadge from 'calypso/components/core/badge';
@@ -24,12 +23,8 @@ function PerformanceBadge( { value }: { value: number } ) {
 	);
 }
 
-export default function PerformanceCards() {
-	const {
-		site: { url },
-	} = useLoaderData( {
-		from: '/sites/$siteId',
-	} ) as FetchSiteRouteResponse;
+export default function PerformanceCards( { site }: FetchSiteRouteResponse ) {
+	const { url } = site;
 	// First fetch basic metrics to get the token/hash.
 	const { data: basicMetricsData } = useQuery( {
 		queryKey: [ 'url', 'basic-metrics', url ],

@@ -1,14 +1,10 @@
-import { useLoaderData } from '@tanstack/react-router';
 import { __, sprintf } from '@wordpress/i18n';
 import { connection } from '@wordpress/icons';
 import OverviewCard, { OverviewCardProgressBar } from './overview-card';
 import type { FetchSiteRouteResponse } from '../data/types';
 import './style.scss';
 
-export default function UptimeCard() {
-	const { siteMonitorUptime } = useLoaderData( {
-		from: '/sites/$siteId',
-	} ) as FetchSiteRouteResponse;
+export default function UptimeCard( { siteMonitorUptime }: FetchSiteRouteResponse ) {
 	if ( ! siteMonitorUptime ) {
 		return;
 	}

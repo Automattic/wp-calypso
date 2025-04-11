@@ -1,16 +1,11 @@
 import { TrendComparison } from '@automattic/components/src/highlight-cards/count-comparison-card';
-import { useLoaderData } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { people } from '@wordpress/icons';
 import OverviewCard from './overview-card';
 import type { FetchSiteRouteResponse } from '../data/types';
 
-export default function VisitorsCard() {
-	const {
-		engagementStats: { currentData, previousData },
-	} = useLoaderData( {
-		from: '/sites/$siteId',
-	} ) as FetchSiteRouteResponse; // const intent = currentData.visitors - previousData.visitors < 0 ? 'error' : 'success';
+export default function VisitorsCard( { engagementStats }: FetchSiteRouteResponse ) {
+	const { currentData, previousData } = engagementStats;
 	return (
 		<OverviewCard
 			title={ __( 'Visitors' ) }

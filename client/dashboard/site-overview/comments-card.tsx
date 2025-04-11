@@ -1,16 +1,11 @@
 import { TrendComparison } from '@automattic/components/src/highlight-cards/count-comparison-card';
-import { useLoaderData } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { comment } from '@wordpress/icons';
 import OverviewCard from './overview-card';
 import type { FetchSiteRouteResponse } from '../data/types';
 
-export default function CommentsCard() {
-	const {
-		engagementStats: { currentData, previousData },
-	} = useLoaderData( {
-		from: '/sites/$siteId',
-	} ) as FetchSiteRouteResponse;
+export default function CommentsCard( { engagementStats }: FetchSiteRouteResponse ) {
+	const { currentData, previousData } = engagementStats;
 	return (
 		<OverviewCard
 			title={ __( 'Comments' ) }

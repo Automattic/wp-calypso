@@ -57,16 +57,16 @@ function SiteOverview() {
 						<p>{ __( 'WordPress with AI' ) }</p>
 					</Card>
 					<OverviewSection title={ __( 'Engagement' ) } actions={ [] }>
-						<VisitorsCard />
-						<ViewsCard />
-						<LikesCard />
-						<CommentsCard />
+						<VisitorsCard { ...data } />
+						<ViewsCard { ...data } />
+						<LikesCard { ...data } />
+						<CommentsCard { ...data } />
 						<OverviewCard title={ __( 'Subscribers' ) } icon={ envelope } isLink></OverviewCard>
 					</OverviewSection>
 					<OverviewSection title={ __( 'Site health' ) } actions={ [] }>
-						<PerformanceCards />
-						<UptimeCard />
-						<StorageCard />
+						<PerformanceCards { ...data } />
+						<UptimeCard { ...data } />
+						<StorageCard { ...data } />
 					</OverviewSection>
 				</VStack>
 			</HStack>
