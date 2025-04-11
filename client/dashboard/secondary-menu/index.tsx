@@ -38,6 +38,7 @@ function NavMenuItem( { to, children }: { to: string; children: React.ReactNode 
 // User profile dropdown component
 function UserProfile() {
 	const { user } = useAuth();
+	const { supports } = useAppContext();
 
 	return (
 		<Dropdown
@@ -65,7 +66,9 @@ function UserProfile() {
 						<NavMenuItem to="/me/billing">{ __( 'Billing' ) }</NavMenuItem>
 						<NavMenuItem to="/me/security">{ __( 'Security' ) }</NavMenuItem>
 						<NavMenuItem to="/me/privacy">{ __( 'Privacy' ) }</NavMenuItem>
-						<NavMenuItem to="/me/notifications">{ __( 'Notifications' ) }</NavMenuItem>
+						{ supports.notifications && (
+							<NavMenuItem to="/me/notifications">{ __( 'Notifications' ) }</NavMenuItem>
+						) }
 					</MenuGroup>
 					<MenuGroup>
 						<MenuItem onClick={ () => {} } shortcut="⌘K">
