@@ -1,6 +1,8 @@
 import { category, payment, receipt } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { useSelector } from 'calypso/state';
+import { getClientBillingType } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import {
 	A4A_CLIENT_SUBSCRIPTIONS_LINK,
 	A4A_CLIENT_PAYMENT_METHODS_LINK,
@@ -11,7 +13,12 @@ import { createItem } from '../lib/utils';
 const useClientMenuItems = ( path: string ) => {
 	const translate = useTranslate();
 
-	const isNewClient = true;
+	const clientBillingType = useSelector( getClientBillingType );
+
+	// If the client billing type is BillingDragon, this mean we are reusing WPCOM billing and
+	// we need to redirect to the WPCOM billing page for this particular clients.
+
+	const isBillingTypeBD = clientBillingType === 'BD';
 
 	const menuItems = useMemo( () => {
 		return [
@@ -27,11 +34,11 @@ const useClientMenuItems = ( path: string ) => {
 			{
 				icon: payment,
 				path: '/',
-				link: isNewClient
+				link: isBillingTypeBD
 					? 'https://wordpress.com/me/purchases/payment-methods'
 					: A4A_CLIENT_PAYMENT_METHODS_LINK,
 				title: translate( 'Payment methods' ),
-				isExternalLink: isNewClient,
+				isExternalLink: isBillingTypeBD,
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / Client > Payment methods',
 				},
@@ -39,15 +46,17 @@ const useClientMenuItems = ( path: string ) => {
 			{
 				icon: receipt,
 				path: '/',
-				link: isNewClient ? 'https://wordpress.com/me/purchases/billing' : A4A_CLIENT_INVOICES_LINK,
+				link: isBillingTypeBD
+					? 'https://wordpress.com/me/purchases/billing'
+					: A4A_CLIENT_INVOICES_LINK,
 				title: translate( 'Invoices' ),
-				isExternalLink: isNewClient,
+				isExternalLink: isBillingTypeBD,
 				trackEventProps: {
 					menu_item: 'Automattic for Agencies / Client > Invoices',
 				},
 			},
 		].map( ( item ) => createItem( item, path ) );
-	}, [ isNewClient, path, translate ] );
+	}, [ isBillingTypeBD, path, translate ] );
 	return menuItems;
 };
 
