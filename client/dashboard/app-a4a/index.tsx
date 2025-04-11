@@ -4,9 +4,10 @@ import './style.scss';
 
 boot( {
 	basePath: '/v2-a4a',
-	mainRoute: '/sites',
+	mainRoute: '/overview',
 	Logo,
 	supports: {
+		overview: true,
 		sites: true,
 		domains: false,
 		emails: false,

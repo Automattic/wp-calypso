@@ -7,6 +7,7 @@ boot( {
 	mainRoute: '/sites',
 	Logo,
 	supports: {
+		overview: false,
 		sites: true,
 		domains: true,
 		emails: true,

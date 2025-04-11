@@ -13,6 +13,7 @@ import Domains from '../domains';
 import Emails from '../emails';
 import Me from '../me';
 import Notifications from '../notifications';
+import Overview from '../overview';
 import Privacy from '../privacy';
 import Profile from '../profile';
 import Root from '../root';
@@ -60,6 +61,16 @@ const createRouteTree = ( config: AppConfig ) => {
 		},
 	} );
 	children.push( indexRoute );
+
+	if ( config.supports.overview ) {
+		const overviewRoute = createRoute( {
+			getParentRoute: () => rootRoute,
+			path: 'overview',
+			component: Overview,
+		} );
+
+		children.push( overviewRoute );
+	}
 
 	if ( config.supports.sites ) {
 		const sitesRoute = createRoute( {

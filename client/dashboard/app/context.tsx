@@ -5,6 +5,7 @@ export type AppConfig = {
 	mainRoute: string;
 	Logo: React.FC | null;
 	supports: {
+		overview: boolean;
 		sites: boolean;
 		domains: boolean;
 		emails: boolean;
@@ -20,6 +21,7 @@ const AppContext = createContext< AppConfig >( {
 	mainRoute: '',
 	Logo: null,
 	supports: {
+		overview: false,
 		sites: false,
 		domains: false,
 		emails: false,

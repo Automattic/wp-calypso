@@ -7,6 +7,7 @@ function PrimaryMenu() {
 
 	return (
 		<Menu>
+			{ supports.overview && <Menu.Item to="/overview">{ __( 'Overview' ) }</Menu.Item> }
 			{ supports.sites && <Menu.Item to="/sites">{ __( 'Sites' ) }</Menu.Item> }
 			{ supports.domains && <Menu.Item to="/domains">{ __( 'Domains' ) }</Menu.Item> }
 			{ supports.emails && <Menu.Item to="/emails">{ __( 'Emails' ) }</Menu.Item> }
