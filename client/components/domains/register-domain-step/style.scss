@@ -150,12 +150,7 @@
 		margin: 0 20px;
 	}
 
-	svg {
-		fill: #a7aaad;
-		margin-right: 13px;
-	}
-
-	@include break-xlarge {
+	@include break-large {
 		margin: 0;
 	}
 }
