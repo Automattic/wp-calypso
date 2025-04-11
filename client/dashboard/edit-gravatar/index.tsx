@@ -350,14 +350,6 @@ const EditGravatar = ( {
 			) }
 
 			<div>
-				<p style={ { fontSize: 13, color: '#757575', marginTop: 8 } }>
-					{ __( 'Your profile photo is public.' ) }
-				</p>
-				<div style={ { fontSize: 12, color: '#757575', marginBottom: 16 } }>
-					{ __(
-						'The avatar you upload here is synced with Gravatar. If you do not have a Gravatar account, one will be created for you when you upload your first image.'
-					) }
-				</div>
 				{ additionalUploadHtml && (
 					<FormFileUpload accept="image/*" onChange={ handleReceiveFile }>
 						{ additionalUploadHtml }

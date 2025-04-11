@@ -30,7 +30,10 @@ export default function StorageCard() {
 				/* translators: %1$s: storage space used, %2$s: maximum available storage space. Eg. '236 MB of 53 GB used' */
 				sprintf( __( '<heading>%1$s</heading> <span>of %2$s used</span>' ), used, max ),
 				{
-					heading: <Heading level={ 2 } style={ { whiteSpace: 'nowrap' } } />,
+					heading: (
+						// @ts-expect-error children prop is injected by createInterpolateElement
+						<Heading level={ 2 } style={ { whiteSpace: 'nowrap' } } />
+					),
 					span: createElement( 'span' ),
 				}
 			) }

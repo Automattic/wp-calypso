@@ -29,19 +29,23 @@ function PageLayout( {
 	size?: 'large' | 'small';
 } ) {
 	return (
-		<VStack spacing={ 4 } className="dashboard-page-layout" style={ sizes[ size ] }>
-			<HStack justify="space-between" alignment="center">
-				<Heading level={ 1 } style={ { flexShrink: 0 } }>
-					{ title }
-				</Heading>
-				{ !! actions && (
-					<HStack spacing={ 4 } justify="flex-end">
-						{ actions }
-					</HStack>
+		<VStack spacing={ 8 } className="dashboard-page-layout" style={ sizes[ size ] }>
+			<VStack spacing={ 4 }>
+				<HStack justify="space-between" alignment="center">
+					<Heading level={ 1 } style={ { flexShrink: 0 } }>
+						{ title }
+					</Heading>
+					{ !! actions && (
+						<HStack spacing={ 4 } justify="flex-end">
+							{ actions }
+						</HStack>
+					) }
+				</HStack>
+				{ !! description && (
+					<Text className="dasboard-page-layout__description">{ description } </Text>
 				) }
-			</HStack>
-			{ !! description && <Text>{ description } </Text> }
-			{ !! children && <VStack spacing={ 4 }>{ children }</VStack> }
+			</VStack>
+			{ !! children && <VStack spacing={ 8 }>{ children }</VStack> }
 		</VStack>
 	);
 }

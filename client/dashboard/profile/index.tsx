@@ -8,16 +8,20 @@ import {
 	Notice,
 	TextareaControl,
 	__experimentalText as Text,
+	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	ExternalLink,
 } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
-import { useMemo, useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { useMemo, useState, createInterpolateElement } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
 import { updateProfile } from '../data';
 import EditGravatar from '../edit-gravatar';
 import PageLayout from '../page-layout';
 import type { User } from '../data/types';
 import type { Field, Form } from '@wordpress/dataviews';
+import './style.scss';
 
 const fields = [
 	{
@@ -96,7 +100,7 @@ const form = {
 function Profile() {
 	const mutation = useMutation( { mutationFn: updateProfile } );
 	const serverData = useLoaderData( { from: '/me' } ) as User;
-	const [ localFormData, setLocalFormData ] = useState< Partial< User > | undefined >();
+	const [ localFormData, setLocalFormData ] = useState< User | undefined >();
 
 	const data = useMemo( () => {
 		if ( ! localFormData ) {
@@ -125,10 +129,8 @@ function Profile() {
 					title={ __( 'Profile' ) }
 					description={
 						<>
-							{ __( 'Set your name, bio, and other public-facing information.' ) }
-							<Button href="#learn-more" variant="link">
-								{ __( 'Learn more' ) }
-							</Button>
+							{ __( 'Set your name, bio, and other public-facing information.' ) }{ ' ' }
+							<ExternalLink href="#learn-more">{ __( 'Learn more' ) }</ExternalLink>
 						</>
 					}
 					size="small"
@@ -159,32 +161,52 @@ function Profile() {
 
 					<Card>
 						<CardBody>
-							<DataForm< User >
-								data={ data }
-								fields={ fields }
-								form={ form }
-								onChange={ ( edits ) => {
-									setLocalFormData( ( current ) => ( {
-										...current,
-										...edits,
-									} ) );
-								} }
-							/>
+							<VStack spacing={ 4 } alignment="left">
+								<DataForm< User >
+									data={ data }
+									fields={ fields }
+									form={ form }
+									onChange={ ( edits ) => {
+										setLocalFormData( ( current ) => ( {
+											...current,
+											...edits,
+										} ) );
+									} }
+								/>
+
+								<Button
+									variant="primary"
+									type="submit"
+									isBusy={ isSaving }
+									disabled={ isSaving || ! localFormData }
+								>
+									{ __( 'Save' ) }
+								</Button>
+							</VStack>
 						</CardBody>
 					</Card>
 
-					<Card>
-						<CardBody>
-							<Button
-								variant="primary"
-								type="submit"
-								isBusy={ isSaving }
-								disabled={ isSaving || ! localFormData }
-							>
-								{ __( 'Save' ) }
-							</Button>
-						</CardBody>
-					</Card>
+					<div>
+						<Heading id="learn-more" level={ 3 }>
+							{ __( 'About your profile' ) }
+						</Heading>
+						<p className="dasboard-profile__text">
+							{ createInterpolateElement(
+								sprintf(
+									/* translators: %1$s: User email */
+									__(
+										'Your WordPress profile is linked to Gravatar, making your Gravatar public by default. It might appear on other sites using Gravatar when loggend in with <strong>%s</strong>. Manage your Gravatar settings on your <external>Gravatar profile</external>.'
+									),
+									data.user_email
+								),
+								{
+									strong: <strong />,
+									// @ts-expect-error children prop is injected by createInterpolateElement
+									external: <ExternalLink href="https://gravatar.com" />,
+								}
+							) }
+						</p>
+					</div>
 				</PageLayout>
 			</form>
 		</>
