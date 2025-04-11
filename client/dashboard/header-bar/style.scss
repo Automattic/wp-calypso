@@ -3,14 +3,7 @@
 .dashboard-header-bar {
 	box-sizing: border-box;
 	padding: $grid-unit-15;
-	border-bottom: $border-width solid $gray-100;
-
-	// Base styles for all header bars
-}
-
-// A4A specific styles
-.dashboard-header-bar__a4a {
-	background-color: #000;
-	color: #fff;
-	border-bottom-color: $gray-800;
+	border-bottom: $border-width solid var( --dashboard-header__border-color );
+	background-color: var( --dashboard-header__background-color );
+	color: var( --dashboard-header__color );
 }

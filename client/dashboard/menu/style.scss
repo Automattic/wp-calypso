@@ -1,20 +1,7 @@
-@import '@wordpress/base-styles/colors';
-
 .dashboard-menu__item.dashboard-menu__item {
-	color: $gray-700;
+	color: var( --dashboard-menu-item__color );
 
 	&.is-active {
-		color: $black;
-	}
-}
-
-// A4A specific styles.
-.dashboard-header-bar__a4a {
-	.dashboard-menu__item.dashboard-menu__item {
-		color: $gray-700;
-
-		&.is-active {
-			color: $white;
-		}
+		color: var( --dashboard-menu-item-active__color );
 	}
 }
