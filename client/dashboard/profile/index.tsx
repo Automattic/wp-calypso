@@ -131,6 +131,7 @@ function Profile() {
 							</Button>
 						</>
 					}
+					size="small"
 				>
 					{ error && (
 						<Card>

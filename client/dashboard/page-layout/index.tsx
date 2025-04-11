@@ -6,19 +6,30 @@ import {
 } from '@wordpress/components';
 import './style.scss';
 
+const sizes = {
+	large: {
+		maxWidth: '1200px',
+	},
+	small: {
+		maxWidth: '600px',
+	},
+};
+
 function PageLayout( {
 	title,
 	description,
 	actions,
 	children,
+	size = 'large',
 }: {
 	title: string;
 	description?: React.ReactNode;
 	actions?: React.ReactNode;
 	children?: React.ReactNode;
+	size?: 'large' | 'small';
 } ) {
 	return (
-		<VStack spacing={ 4 } className="dashboard-page-layout">
+		<VStack spacing={ 4 } className="dashboard-page-layout" style={ sizes[ size ] }>
 			<HStack justify="space-between" alignment="center">
 				<Heading level={ 1 } style={ { flexShrink: 0 } }>
 					{ title }
