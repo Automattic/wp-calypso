@@ -179,7 +179,7 @@ const isRedirectingToStepContainerV2Flow = ( redirectTo: string ) => {
 const isMarketplaceThankYouRedirect = ( redirectTo: string ) => {
 	const { pathname, searchParams } = new URL( redirectTo, 'http://example.com' );
 
-	return pathname.startsWith( '/marketplace' ) && searchParams.has( 'onboarding' );
+	return pathname.startsWith( '/marketplace' ) && searchParams.get( 'onboarding' ) === 'true';
 };
 
 /**
@@ -216,7 +216,7 @@ export const isInStepContainerV2FlowContext = ( pathname: string, query: string 
 	if ( pathname.startsWith( '/marketplace' ) ) {
 		const params = new URLSearchParams( query );
 
-		if ( params.has( 'onboarding' ) ) {
+		if ( params.get( 'onboarding' ) === 'true' ) {
 			return true;
 		}
 

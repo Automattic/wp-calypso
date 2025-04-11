@@ -137,7 +137,7 @@ function getWithThemeDestination( {
 	const style = styleVariation ? `&styleVariation=${ styleVariation }` : '';
 
 	if ( [ MARKETPLACE_THEME, PREMIUM_THEME, BUNDLED_THEME ].includes( themeType ) ) {
-		return `/marketplace/thank-you/${ siteSlug }?onboarding=&themes=${ themeParameter }${ style }`;
+		return `/marketplace/thank-you/${ siteSlug }?onboarding=true&themes=${ themeParameter }${ style }`;
 	}
 
 	return `/setup/site-setup/design-setup?siteSlug=${ siteSlug }&theme=${ themeParameter }${ style }`;
