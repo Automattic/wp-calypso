@@ -22,7 +22,7 @@ div.wpnc__note-actions {
 }
 
 // Taken from packages/components/src/screen-reader-text/style.scss
-.screen-reader-text {
+.wpnc__note-list button.screen-reader-text {
 	clip: rect(1px, 1px, 1px, 1px);
 	position: absolute !important;
 
