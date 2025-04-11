@@ -3,10 +3,11 @@ import { createStore } from 'redux';
 import { GitHubLoginButton } from '../github';
 import {
 	DefaultWrapper,
-	WooWrapper,
+	AkismetWrapper,
+	BlazeWrapper,
 	GravatarWrapper,
 	JetpackWrapper,
-	BlazeWrapper,
+	WooWrapper,
 } from './shared';
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -50,6 +51,10 @@ type Story = StoryObj< typeof GitHubLoginButton >;
 
 export const Default: Story = {
 	decorators: [ DefaultWrapper ],
+};
+
+export const Akismet: Story = {
+	decorators: [ AkismetWrapper ],
 };
 
 export const Blaze: Story = {

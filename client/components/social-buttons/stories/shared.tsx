@@ -1,6 +1,18 @@
 import type { StoryFn } from '@storybook/react';
 import './style.scss';
 
+export const AkismetWrapper = ( Story: StoryFn ) => (
+	<div className="is-akismet" style={ { padding: '30px' } }>
+		<div className="auth-form__social" style={ { maxWidth: '300px' } }>
+			<div className="auth-form__social-buttons">
+				<div className="auth-form__social-buttons-container">
+					<Story />
+				</div>
+			</div>
+		</div>
+	</div>
+);
+
 export const BlazeWrapper = ( Story: StoryFn ) => (
 	<div className="blaze-pro" style={ { padding: '30px' } }>
 		<div className="auth-form__social" style={ { maxWidth: '300px' } }>

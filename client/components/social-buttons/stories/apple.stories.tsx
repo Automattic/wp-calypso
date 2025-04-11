@@ -5,6 +5,7 @@ import {
 	GravatarWrapper,
 	JetpackWrapper,
 	BlazeWrapper,
+	AkismetWrapper,
 } from './shared';
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -23,6 +24,10 @@ type Story = StoryObj< typeof AppleLoginButton >;
 
 export const Default: Story = {
 	decorators: [ DefaultWrapper ],
+};
+
+export const Akismet: Story = {
+	decorators: [ AkismetWrapper ],
 };
 
 export const Blaze: Story = {

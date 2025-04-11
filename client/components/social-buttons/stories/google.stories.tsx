@@ -1,10 +1,11 @@
 import { GoogleSocialButton } from '../google';
 import {
 	DefaultWrapper,
-	WooWrapper,
+	AkismetWrapper,
+	BlazeWrapper,
 	GravatarWrapper,
 	JetpackWrapper,
-	BlazeWrapper,
+	WooWrapper,
 } from './shared';
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -23,6 +24,10 @@ type Story = StoryObj< typeof GoogleSocialButton >;
 
 export const Default: Story = {
 	decorators: [ DefaultWrapper ],
+};
+
+export const Akismet: Story = {
+	decorators: [ AkismetWrapper ],
 };
 
 export const Blaze: Story = {
