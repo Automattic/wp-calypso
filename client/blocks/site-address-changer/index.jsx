@@ -374,30 +374,34 @@ export class SiteAddressChanger extends Component {
 			isEmailVerified,
 		} = this.props;
 
-		//const truer = true;
-
 		if ( isAtomicSite ) {
 			return (
-				<div className="site-address-changer__content">
-					<Icon icon={ info } size={ 18 } />
-					{ translate( 'wpcomstaging.com addresses cannot be changed.' ) }
+				<div className="site-address-changer__info-message">
+					<span className="site-address-changer__info-icon">
+						<Icon icon={ info } size={ 18 } />
+					</span>
+					<span>{ translate( 'wpcomstaging.com addresses cannot be changed.' ) }</span>
 				</div>
 			);
 		}
 
 		if ( ! currentDomain.currentUserCanManage ) {
 			return (
-				<div className="site-address-changer site-address-changer__only-owner-info">
-					<Icon icon={ info } size={ 18 } />
-					{ isEmpty( currentDomain.owner )
-						? translate( 'Only the site owner can edit this domain name.' )
-						: translate(
-								'Only the site owner ({{strong}}%(ownerInfo)s{{/strong}}) can edit this domain name.',
-								{
-									args: { ownerInfo: currentDomain.owner },
-									components: { strong: <strong /> },
-								}
-						  ) }
+				<div className="site-address-changer__info-message site-address-changer__only-owner-info">
+					<span className="site-address-changer__info-icon">
+						<Icon icon={ info } size={ 18 } />
+					</span>
+					<span>
+						{ isEmpty( currentDomain.owner )
+							? translate( 'Only the site owner can edit this domain name.' )
+							: translate(
+									'Only the site owner ({{strong}}%(ownerInfo)s{{/strong}}) can edit this domain name.',
+									{
+										args: { ownerInfo: currentDomain.owner },
+										components: { strong: <strong /> },
+									}
+							  ) }
+					</span>
 				</div>
 			);
 		}

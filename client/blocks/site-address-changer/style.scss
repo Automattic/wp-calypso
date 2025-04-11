@@ -2,23 +2,6 @@
 @import '@wordpress/base-styles/colors.native';
 @import '@wordpress/base-styles/breakpoints';
 
-.site-address-changer__dialog {
-	text-align: left;
-
-	p {
-		margin-bottom: 8px;
-		font-size: $font-body-small;
-	}
-
-	h2 {
-		border-top: 1px solid var( --color-border-subtle );
-		font-weight: 600;
-		margin-top: 1.5em;
-		margin-bottom: 1em;
-		padding-top: 1.5em;
-	}
-}
-
 .site-address-changer__copy-addition,
 .site-address-changer__copy-addition svg {
 	color: var( --color-success );
@@ -38,7 +21,7 @@
 .site-address-changer__confirmation-detail {
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: 4px;
 	margin-bottom: 24px;
 
 	.site-address-changer__icon-wrapper {
@@ -60,6 +43,23 @@
 .site-address-changer__affix {
 	display: flex;
 	align-items: center;
+}
+
+.site-address-changer__info-message {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+
+	.site-address-changer__info-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+	}
+
+	svg {
+		fill: currentColor;
+	}
 }
 
 .site-address-changer__select-icon {
@@ -149,15 +149,6 @@
 
 	@include breakpoint-deprecated( '<660px' ) {
 		margin: 0;
-	}
-
-	.gridicon {
-		float: left;
-		margin: auto 12px auto 10px;
-
-		@include breakpoint-deprecated( '<660px' ) {
-			margin: auto 6px auto 4px;
-		}
 	}
 }
 
