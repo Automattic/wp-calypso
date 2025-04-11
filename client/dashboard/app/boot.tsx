@@ -3,9 +3,9 @@ import '@wordpress/components/build-style/style.css';
 import './style.scss';
 import Layout from './layout';
 import { persistPromise } from './query-client';
-import type { AppType } from './context';
+import type { AppType, AppConfig } from './context';
 
-function boot( app: AppType ) {
+function boot( app: AppType, config: AppConfig ) {
 	const rootElement = document.getElementById( 'wpcom' );
 	if ( rootElement === null ) {
 		throw new Error( 'No root element found' );
@@ -13,7 +13,7 @@ function boot( app: AppType ) {
 	const root = createRoot( rootElement );
 
 	persistPromise.then( () => {
-		root.render( <Layout app={ app } /> );
+		root.render( <Layout app={ app } config={ config } /> );
 	} );
 }
 

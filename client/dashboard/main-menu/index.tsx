@@ -3,17 +3,15 @@ import { useAppContext } from '../app/context';
 import Menu from '../menu';
 
 function MainMenu() {
-	const { appType } = useAppContext();
+	const {
+		config: { supports },
+	} = useAppContext();
 
 	return (
 		<Menu>
-			<Menu.Item to="/sites">{ __( 'Sites' ) }</Menu.Item>
-			{ appType === 'dotcom' && (
-				<>
-					<Menu.Item to="/domains">{ __( 'Domains' ) }</Menu.Item>
-					<Menu.Item to="/emails">{ __( 'Emails' ) }</Menu.Item>
-				</>
-			) }
+			{ supports.sites && <Menu.Item to="/sites">{ __( 'Sites' ) }</Menu.Item> }
+			{ supports.domains && <Menu.Item to="/domains">{ __( 'Domains' ) }</Menu.Item> }
+			{ supports.emails && <Menu.Item to="/emails">{ __( 'Emails' ) }</Menu.Item> }
 		</Menu>
 	);
 }

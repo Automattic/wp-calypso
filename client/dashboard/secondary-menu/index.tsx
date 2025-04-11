@@ -84,7 +84,9 @@ function UserProfile() {
 
 function SecondaryMenu() {
 	const navigate = useNavigate();
-	const { appType } = useAppContext();
+	const {
+		config: { supports },
+	} = useAppContext();
 	const hasUnreadNotifications = false;
 	const notificationsPath = '/me/notifications';
 
@@ -94,7 +96,7 @@ function SecondaryMenu() {
 
 	return (
 		<HStack spacing={ 3 } justify="flex-end">
-			{ appType === 'dotcom' && (
+			{ supports.reader && (
 				<>
 					<Button
 						className="dashboard-secondary-menu__item"
@@ -106,14 +108,16 @@ function SecondaryMenu() {
 					<div className="dashboard-secondary-menu__divider" />
 				</>
 			) }
-			<Button
-				className="dashboard-secondary-menu__item"
-				label={ __( 'Help' ) }
-				onClick={ openHelpCenter }
-				icon={ help }
-				variant="tertiary"
-			/>
-			{ appType === 'dotcom' && (
+			{ supports.help && (
+				<Button
+					className="dashboard-secondary-menu__item"
+					label={ __( 'Help' ) }
+					onClick={ openHelpCenter }
+					icon={ help }
+					variant="tertiary"
+				/>
+			) }
+			{ supports.notifications && (
 				<Button
 					className="dashboard-secondary-menu__item"
 					label={ __( 'Notifications' ) }

@@ -22,7 +22,6 @@ import SiteDeployments from '../site-deployments';
 import SiteOverview from '../site-overview';
 import Sites from '../sites';
 import { queryClient } from './query-client';
-import type { AppType } from './context';
 import type { FetchSiteRouteResponse, Domain, Email, Site, User } from '../data/types';
 
 interface RouteContext {
@@ -168,10 +167,10 @@ const routeTree = rootRoute.addChildren( [
 	] ),
 ] );
 
-export const getRouter = ( appType: AppType ) => {
+export const getRouter = ( basepath: string ) => {
 	return new Router( {
 		routeTree,
-		basepath: appType === 'a4a' ? '/v2-a4a' : '/v2',
+		basepath,
 		defaultErrorComponent: UnknownError,
 	} );
 };

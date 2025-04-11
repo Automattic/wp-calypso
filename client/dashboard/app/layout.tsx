@@ -2,22 +2,22 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from '@tanstack/react-router';
 import { useMemo } from 'react';
 import { AuthProvider, useAuth } from '../auth';
-import { AppProvider, type AppType } from './context';
+import { AppProvider, type AppType, type AppConfig } from './context';
 import { queryClient } from './query-client';
 import { getRouter } from './router';
 
-function RouterProviderWithAuth( { app }: { app: AppType } ) {
+function RouterProviderWithAuth( { basePath }: { basePath: string } ) {
 	const auth = useAuth();
-	const router = useMemo( () => getRouter( app ), [ app ] );
+	const router = useMemo( () => getRouter( basePath ), [ basePath ] );
 	return <RouterProvider router={ router } context={ { auth } } />;
 }
 
-function Layout( { app }: { app: AppType } ) {
+function Layout( { app, config }: { app: AppType; config: AppConfig } ) {
 	return (
-		<AppProvider appType={ app }>
+		<AppProvider appType={ app } config={ config }>
 			<QueryClientProvider client={ queryClient }>
 				<AuthProvider>
-					<RouterProviderWithAuth app={ app } />
+					<RouterProviderWithAuth basePath={ config.basePath } />
 				</AuthProvider>
 			</QueryClientProvider>
 		</AppProvider>
