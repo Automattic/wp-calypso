@@ -58,22 +58,25 @@ This command palette:
 3. **Auto-registers Navigation Commands**: Registers dashboard navigation commands on component mount
 4. **Self-cleans on Unmount**: Unregisters all dashboard commands when the component unmounts
 
-## Route Navigation
+## Context-Aware Commands
 
-Navigation commands use absolute paths with a leading slash:
+Navigation commands can be filtered based on feature flags from the app context:
 
 ```typescript
-export const navigationCommands = [
+export const navigationCommands: Command[] = [
   {
     name: 'dashboard-go-to-sites',
     label: __( 'Go to Sites' ),
     searchLabel: __( 'Navigate to Sites dashboard' ),
     path: '/sites',  // Note the leading slash for absolute paths
     icon: home,
+    feature: 'sites', // Only show if 'sites' feature is enabled in the app context
   },
   // ... other commands
 ];
 ```
+
+The command palette will only register commands for features that are enabled in the current dashboard configuration. This allows different dashboards (e.g., `/v2` vs `/v2-a4a`) to show different commands without code duplication.
 
 ## Adding Custom Commands
 

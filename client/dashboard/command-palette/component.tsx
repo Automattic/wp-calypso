@@ -8,6 +8,7 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as keyboardShortcutsStore, useShortcut } from '@wordpress/keyboard-shortcuts';
 import { useEffect } from 'react';
+import { useAppContext } from '../app/context';
 import { registerNavigationCommands, unregisterDashboardCommands } from './commands';
 
 // Import WordPress core styles
@@ -21,14 +22,16 @@ export default function DashboardCommandPalette() {
 	const { open } = useDispatch( commandsStore );
 	const { registerShortcut } = useDispatch( keyboardShortcutsStore );
 	const router = useRouter();
+	const appContext = useAppContext();
 
 	// Register commands on mount, unregister on unmount
 	useEffect( () => {
-		registerNavigationCommands( router );
+		// Pass both router and app context for conditional command registration
+		registerNavigationCommands( router, appContext );
 		return () => {
 			unregisterDashboardCommands();
 		};
-	}, [ router ] );
+	}, [ router, appContext ] );
 
 	// Register keyboard shortcut
 	useEffect( () => {
