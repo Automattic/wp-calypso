@@ -1,10 +1,10 @@
 import './styles.scss';
-import { Gridicon } from '@automattic/components';
 import {
 	Button,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
+import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { throttle } from 'lodash';
@@ -111,7 +111,7 @@ const ScrollableHorizontalNavigation = < T extends object >( props: Props< T > )
 					onClick={ () => bumpScrollX( true ) }
 					tabIndex={ -1 }
 				>
-					<Gridicon icon="chevron-left" />
+					<Icon icon={ chevronLeft } />
 				</Button>
 			</div>
 
@@ -126,7 +126,7 @@ const ScrollableHorizontalNavigation = < T extends object >( props: Props< T > )
 					onClick={ () => bumpScrollX() }
 					tabIndex={ -1 }
 				>
-					<Gridicon icon="chevron-right" />
+					<Icon icon={ chevronRight } />
 				</Button>
 			</div>
 
