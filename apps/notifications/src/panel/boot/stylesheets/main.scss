@@ -255,6 +255,10 @@ $with-sidebar-min-page-width: 1114px;
 				flex-basis: auto;
 			}
 		}
+
+		.components-toggle-group-control-option-base {
+			z-index: initial;
+		}
 	}
 
 	.wpnc__note-list:not(.is-note-open) .wpnc__filter {
