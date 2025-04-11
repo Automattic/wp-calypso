@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useLoaderData } from '@tanstack/react-router';
 import { Button, Card } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
@@ -77,7 +78,7 @@ const fields = [
 
 function Sites() {
 	const navigate = useNavigate();
-	const querySitesData = useLoaderData( { from: '/sites' } ) as Site[];
+	const querySitesData = useQuery( useLoaderData( { from: '/sites' } ) ).data as Site[];
 	const [ sites, setSites ] = useState< Site[] >( [] );
 	useEffect( () => {
 		if ( querySitesData ) {

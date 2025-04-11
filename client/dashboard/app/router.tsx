@@ -22,7 +22,7 @@ import SiteDeployments from '../site-deployments';
 import SiteOverview from '../site-overview';
 import Sites from '../sites';
 import { queryClient } from './query-client';
-import type { FetchSiteRouteResponse, Domain, Email, Site, User } from '../data/types';
+import type { FetchSiteRouteResponse, Domain, Email, User } from '../data/types';
 
 interface RouteContext {
 	auth?: {
@@ -49,11 +49,17 @@ const sitesRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'sites',
 	component: Sites,
-	loader: () =>
-		queryClient.ensureQueryData( {
+	loader: async () => {
+		const query = {
 			queryKey: [ 'sites' ],
 			queryFn: fetchSites,
-		} ) as Promise< Site[] >,
+		};
+		const cachedData = queryClient.getQueryData( query.queryKey );
+		if ( ! cachedData ) {
+			await queryClient.fetchQuery( query );
+		}
+		return query;
+	},
 } );
 
 const siteRoute = createRoute( {
