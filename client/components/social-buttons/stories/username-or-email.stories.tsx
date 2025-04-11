@@ -4,7 +4,6 @@ import UsernameOrEmailButton from '../username-or-email';
 import { DefaultWrapper } from './shared';
 import type { Meta, StoryObj } from '@storybook/react';
 
-// Create minimal state with just what's needed
 const initialState = {
 	login: {
 		isFormDisabled: false,
