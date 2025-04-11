@@ -97,7 +97,6 @@
 }
 
 .site-address-changer__info {
-	word-break: break-word;
 	font-size: $font-body-small;
 	margin-top: 24px;
 	margin-bottom: 24px;
@@ -107,6 +106,7 @@
 			display: flex;
 			flex-direction: column;
 		}
+		margin-bottom: 24px;
 	}
 }
 
@@ -140,12 +140,6 @@
 			cursor: pointer;
 			font-size: $font-body-small;
 		}
-	}
-
-	.site-address-changer__info-custom-domain {
-		margin-top: 10px;
-		font-size: 0.875rem;
-		color: $gray-60;
 	}
 }
 

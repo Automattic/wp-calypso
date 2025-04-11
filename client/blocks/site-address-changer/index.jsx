@@ -455,16 +455,16 @@ export class SiteAddressChanger extends Component {
 								}
 							) }
 						</p>
+						{ ! hasNonWpcomDomains && (
+							<p>
+								{ translate( '{{a}}Add a custom domain{{/a}} instead?', {
+									components: {
+										a: <a href={ addDomainPath } onClick={ this.handleAddDomainClick } />,
+									},
+								} ) }
+							</p>
+						) }
 					</div>
-					{ ! hasNonWpcomDomains && (
-						<div className="site-address-changer__info-custom-domain">
-							{ translate( '{{a}}Add a custom domain{{/a}} instead?', {
-								components: {
-									a: <a href={ addDomainPath } onClick={ this.handleAddDomainClick } />,
-								},
-							} ) }
-						</div>
-					) }
 				</div>
 			</div>
 		);
