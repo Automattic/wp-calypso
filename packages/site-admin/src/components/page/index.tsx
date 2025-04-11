@@ -18,7 +18,7 @@ type PageProps = {
 	hideTitleFromUI?: boolean;
 };
 
-export default function Page( {
+export function Page( {
 	title,
 	subTitle,
 	actions,
