@@ -61,13 +61,11 @@
 		"access": "public"
 	},
 	"devDependencies": {
-		"@testing-library/jest-dom": "^6.6.3",
-		"@types/jest": "^29.5.14",
-		"@wordpress/postcss-plugins-preset": "^5.22.0",
-		"postcss": "^8.5.3",
-		"postcss-local-keyframes": "^0.0.2",
-		"sass": "1.54.0",
-		"typescript": "5.8.2"
+		"@storybook/cli": "^8.6.12",
+		"@storybook/react": "^8.6.12",
+		"@types/react-dom": "^19",
+		"react-dom": "^19.1.0",
+		"storybook": "^8.6.12"
 	},
 	"scripts": {
 		"build": "yarn run build:js && yarn run build:style && yarn run build:wp",
@@ -79,12 +77,5 @@
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch",
 		"storybook:start": "storybook dev -p 57863"
-	},
-	"devDependencies": {
-		"@storybook/cli": "^8.6.12",
-		"@storybook/react": "^8.6.12",
-		"@types/react-dom": "^19",
-		"react-dom": "^19.1.0",
-		"storybook": "^8.6.12"
 	}
 }
