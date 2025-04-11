@@ -4,7 +4,7 @@ import { desktop, mobile } from '@wordpress/icons';
 import CoreBadge from 'calypso/components/core/badge';
 import wp from 'calypso/lib/wp';
 import OverviewCard, { OverviewCardProgressBar } from './overview-card';
-import type { FetchSiteRouteResponse } from '../data/types';
+import type { Site } from '../data/types';
 import type { UrlPerformanceInsightsQueryResponse } from 'calypso/data/site-profiler/types';
 
 function PerformanceBadge( { value }: { value: number } ) {
@@ -23,7 +23,7 @@ function PerformanceBadge( { value }: { value: number } ) {
 	);
 }
 
-export default function PerformanceCards( { site }: FetchSiteRouteResponse ) {
+export default function PerformanceCards( { site }: { site: Site } ) {
 	const { url } = site;
 	// First fetch basic metrics to get the token/hash.
 	const { data: basicMetricsData } = useQuery( {

@@ -3,11 +3,12 @@ import { useLoaderData, Outlet } from '@tanstack/react-router';
 import { __experimentalHStack as HStack, Button } from '@wordpress/components';
 import HeaderBar from '../header-bar';
 import SiteMenu from '../site-menu';
-import type { FetchSiteRouteResponse } from '../data/types';
+import type { Site as SiteType } from '../data/types';
 
 function Site() {
-	const { site } = useQuery( useLoaderData( { from: '/sites/$siteId' } ) )
-		.data as FetchSiteRouteResponse;
+	const { site } = useQuery( useLoaderData( { from: '/sites/$siteId' } ) ).data as {
+		site: SiteType;
+	};
 
 	return (
 		<>

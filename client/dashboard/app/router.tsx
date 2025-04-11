@@ -7,7 +7,13 @@ import {
 	fetchSites,
 	fetchDomains,
 	fetchEmails,
-	fetchSiteWithRouteData,
+	fetchSite,
+	fetchSiteMediaStorage,
+	fetchSiteMonitorUptime,
+	fetchPHPVersion,
+	fetchCurrentPlan,
+	fetchSitePrimaryDomain,
+	fetchSiteEngagementStats,
 } from '../data';
 import Root from '../root';
 import { queryClient } from './query-client';
@@ -76,7 +82,34 @@ const createRouteTree = ( config: AppConfig ) => {
 			loader: ( { params: { siteId } } ) =>
 				maybeAwaitFetch( {
 					queryKey: [ 'site', siteId ],
-					queryFn: () => fetchSiteWithRouteData( siteId ),
+					queryFn: async () => {
+						const [
+							site,
+							mediaStorage,
+							siteMonitorUptime,
+							phpVersion,
+							currentPlan,
+							primaryDomain,
+							engagementStats,
+						] = await Promise.all( [
+							fetchSite( siteId ),
+							fetchSiteMediaStorage( siteId ),
+							fetchSiteMonitorUptime( siteId ),
+							fetchPHPVersion( siteId ),
+							fetchCurrentPlan( siteId ),
+							fetchSitePrimaryDomain( siteId ),
+							fetchSiteEngagementStats( siteId ),
+						] );
+						return {
+							site,
+							mediaStorage,
+							siteMonitorUptime,
+							phpVersion,
+							currentPlan,
+							primaryDomain,
+							engagementStats,
+						};
+					},
 				} ),
 			notFoundComponent: NotFound,
 		} );

@@ -21,16 +21,38 @@ import StorageCard from './storage-card';
 import UptimeCard from './uptime-card';
 import ViewsCard from './views-card';
 import VisitorsCard from './visitors-card';
-import type { FetchSiteRouteResponse } from '../data/types';
+import type {
+	Site,
+	MediaStorage,
+	MonitorUptime,
+	Plan,
+	Domain,
+	EngagementStats,
+} from '../data/types';
 import './style.scss';
 
 function SiteOverview() {
-	const data = useQuery(
+	const {
+		site,
+		mediaStorage,
+		siteMonitorUptime,
+		phpVersion,
+		currentPlan,
+		primaryDomain,
+		engagementStats,
+	} = useQuery(
 		useLoaderData( {
 			from: '/sites/$siteId',
 		} )
-	).data as FetchSiteRouteResponse;
-	const { site } = data;
+	).data as {
+		site: Site;
+		mediaStorage: MediaStorage;
+		siteMonitorUptime?: MonitorUptime;
+		phpVersion?: string;
+		currentPlan: Plan;
+		primaryDomain?: Domain;
+		engagementStats: EngagementStats;
+	};
 	return (
 		<PageLayout
 			title={ site.name }
@@ -49,7 +71,12 @@ function SiteOverview() {
 			}
 		>
 			<HStack alignment="flex-start" spacing={ 8 }>
-				<Sidebar { ...data } />
+				<Sidebar
+					site={ site }
+					phpVersion={ phpVersion }
+					primaryDomain={ primaryDomain }
+					currentPlan={ currentPlan }
+				/>
 				<VStack spacing={ 8 }>
 					<Card className="site-overview-card site-overview-ai-card">
 						<Text>
@@ -60,16 +87,16 @@ function SiteOverview() {
 						<p>{ __( 'WordPress with AI' ) }</p>
 					</Card>
 					<OverviewSection title={ __( 'Engagement' ) } actions={ [] }>
-						<VisitorsCard { ...data } />
-						<ViewsCard { ...data } />
-						<LikesCard { ...data } />
-						<CommentsCard { ...data } />
+						<VisitorsCard engagementStats={ engagementStats } />
+						<ViewsCard engagementStats={ engagementStats } />
+						<LikesCard engagementStats={ engagementStats } />
+						<CommentsCard engagementStats={ engagementStats } />
 						<OverviewCard title={ __( 'Subscribers' ) } icon={ envelope } isLink></OverviewCard>
 					</OverviewSection>
 					<OverviewSection title={ __( 'Site health' ) } actions={ [] }>
-						<PerformanceCards { ...data } />
-						<UptimeCard { ...data } />
-						<StorageCard { ...data } />
+						<PerformanceCards site={ site } />
+						<UptimeCard siteMonitorUptime={ siteMonitorUptime } />
+						<StorageCard mediaStorage={ mediaStorage } />
 					</OverviewSection>
 				</VStack>
 			</HStack>

@@ -8,17 +8,23 @@ import {
 } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
 import { __, sprintf } from '@wordpress/i18n';
-import type { FetchSiteRouteResponse } from '../data/types';
+import type { Site, Domain, Plan } from '../data/types';
 
 /**
  * SiteCard component to display site information in a card format
  */
-export default function SiteCard( data: FetchSiteRouteResponse ) {
-	const {
-		site: { options, url },
-		phpVersion,
-		primaryDomain,
-	} = data;
+export default function SiteCard( {
+	site,
+	phpVersion,
+	primaryDomain,
+	currentPlan,
+}: {
+	site: Site;
+	phpVersion?: string;
+	primaryDomain?: Domain;
+	currentPlan: Plan;
+} ) {
+	const { options, url } = site;
 	const { software_version } = options;
 	return (
 		<Card>
@@ -43,7 +49,7 @@ export default function SiteCard( data: FetchSiteRouteResponse ) {
 						<Field title={ __( 'WordPress' ) }>{ software_version }</Field>
 						{ phpVersion && <Field title={ __( 'PHP' ) }>{ phpVersion }</Field> }
 					</HStack>
-					<PlanDetails { ...data } />
+					<PlanDetails site={ site } currentPlan={ currentPlan } primaryDomain={ primaryDomain } />
 				</VStack>
 			</VStack>
 		</Card>
@@ -69,8 +75,18 @@ function FieldTitle( { children }: { children: React.ReactNode } ) {
 	);
 }
 
-function PlanDetails( { site, currentPlan, primaryDomain }: FetchSiteRouteResponse ) {
-	const { plan: { product_name_short, is_free: isFree } = {} } = site;
+function PlanDetails( {
+	site,
+	currentPlan,
+	primaryDomain,
+}: {
+	site: Site;
+	currentPlan: Plan;
+	primaryDomain?: Domain;
+} ) {
+	const {
+		plan: { product_name_short, is_free: isFree },
+	} = site;
 	const { expiry, id } = currentPlan;
 	return (
 		<VStack>
@@ -89,7 +105,7 @@ function PlanDetails( { site, currentPlan, primaryDomain }: FetchSiteRouteRespon
 	);
 }
 
-function getPlanExpirationMessage( { isFree, expiry }: { isFree: boolean; expiry: string } ) {
+function getPlanExpirationMessage( { isFree, expiry }: { isFree: boolean; expiry?: string } ) {
 	if ( isFree ) {
 		return __( 'No expiration date.' );
 	}

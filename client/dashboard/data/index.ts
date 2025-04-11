@@ -3,7 +3,6 @@ import type { WPCOMRESTAPISite } from './rest-api-types';
 import type {
 	Domain,
 	Email,
-	FetchSiteRouteResponse,
 	MediaStorage,
 	MonitorUptime,
 	Plan,
@@ -228,35 +227,6 @@ export const fetchSiteDomains = async ( id: string ): Promise< { domains: Domain
 export const fetchSitePrimaryDomain = async ( id: string ): Promise< Domain | undefined > => {
 	const { domains } = await fetchSiteDomains( id );
 	return domains.find( ( domain: Domain ) => domain.primary_domain );
-};
-
-export const fetchSiteWithRouteData = async ( id: string ): Promise< FetchSiteRouteResponse > => {
-	const [
-		site,
-		mediaStorage,
-		siteMonitorUptime,
-		phpVersion,
-		currentPlan,
-		primaryDomain,
-		engagementStats,
-	] = await Promise.all( [
-		fetchSite( id ),
-		fetchSiteMediaStorage( id ),
-		fetchSiteMonitorUptime( id ),
-		fetchPHPVersion( id ),
-		fetchCurrentPlan( id ),
-		fetchSitePrimaryDomain( id ),
-		fetchSiteEngagementStats( id ),
-	] );
-	return {
-		site,
-		mediaStorage,
-		siteMonitorUptime,
-		phpVersion,
-		currentPlan,
-		primaryDomain,
-		engagementStats,
-	};
 };
 
 export const EMAIL_DATA: Email[] = [

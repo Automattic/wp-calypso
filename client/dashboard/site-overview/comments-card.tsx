@@ -2,9 +2,9 @@ import { TrendComparison } from '@automattic/components/src/highlight-cards/coun
 import { __ } from '@wordpress/i18n';
 import { comment } from '@wordpress/icons';
 import OverviewCard from './overview-card';
-import type { FetchSiteRouteResponse } from '../data/types';
+import type { EngagementStats } from '../data/types';
 
-export default function CommentsCard( { engagementStats }: FetchSiteRouteResponse ) {
+export default function CommentsCard( { engagementStats }: { engagementStats: EngagementStats } ) {
 	const { currentData, previousData } = engagementStats;
 	return (
 		<OverviewCard

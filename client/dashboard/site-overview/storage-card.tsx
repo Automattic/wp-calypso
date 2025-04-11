@@ -4,11 +4,11 @@ import { __, sprintf } from '@wordpress/i18n';
 import { backup } from '@wordpress/icons';
 import filesize from 'filesize';
 import OverviewCard, { OverviewCardProgressBar } from './overview-card';
-import type { FetchSiteRouteResponse } from '../data/types';
+import type { MediaStorage } from '../data/types';
 
 const MINIMUM_DISPLAYED_USAGE = 2.5;
 
-export default function StorageCard( { mediaStorage }: FetchSiteRouteResponse ) {
+export default function StorageCard( { mediaStorage }: { mediaStorage: MediaStorage } ) {
 	const { storageUsedBytes, maxStorageBytes } = mediaStorage;
 	if ( ! storageUsedBytes || ! maxStorageBytes ) {
 		return null;

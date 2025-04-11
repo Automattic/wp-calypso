@@ -106,13 +106,3 @@ export interface EngagementStats {
 	currentData: EngagementStatsDataPoint;
 	previousData: EngagementStatsDataPoint;
 }
-
-export interface FetchSiteRouteResponse {
-	site: Site;
-	mediaStorage: MediaStorage;
-	siteMonitorUptime?: MonitorUptime;
-	phpVersion?: string;
-	currentPlan: Plan;
-	primaryDomain?: Domain;
-	engagementStats: EngagementStats;
-}

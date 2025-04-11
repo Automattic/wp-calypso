@@ -1,11 +1,16 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import SiteCard from './site-card';
-import type { FetchSiteRouteResponse } from '../data/types';
+import type { Site, Domain, Plan } from '../data/types';
 
 /**
  * Sidebar component for the site overview page
  */
-export default function Sidebar( props: FetchSiteRouteResponse ) {
+export default function Sidebar( props: {
+	site: Site;
+	phpVersion?: string;
+	primaryDomain?: Domain;
+	currentPlan: Plan;
+} ) {
 	return (
 		<VStack spacing={ 4 } style={ { minWidth: '300px' } }>
 			<SiteCard { ...props } />
