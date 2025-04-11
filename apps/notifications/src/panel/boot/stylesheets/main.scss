@@ -97,7 +97,7 @@ $with-sidebar-min-page-width: 1114px;
 		color: var(--color-primary);
 	}
 
-	button:not(.components-toggle-group-control-option-base) {
+	button {
 		background-color: transparent;
 		border: none;
 		color: var(--color-primary);
@@ -242,23 +242,72 @@ $with-sidebar-min-page-width: 1114px;
 		box-sizing: border-box;
 		direction: ltr;
 		display: table; //fallback for browsers not supporting flexbox
-
-		.components-base-control {
-			padding: 6px 8px;
-		}
-	
-		.components-toggle-group-control {
-			border: 1px solid var(--wp-components-color-gray-600, #949494);
-			padding: 3px;
-
-			> div {
-				flex-basis: auto;
-			}
-		}
 	}
 
 	.wpnc__note-list:not(.is-note-open) .wpnc__filter {
 		border-left: 1px solid var(--color-neutral-0);
+	}
+
+	.wpnc__filter--segmented-control {
+		display: flex;
+		padding: 6px 8px;
+
+		&:focus {
+			box-shadow: 0 0 0 2px var(--color-primary-light);
+		}
+	}
+
+	.wpnc__filter--segmented-control-item {
+		background: var(--color-surface);
+		border: 1px solid var(--color-neutral-light);
+		border-right: none;
+		font-size: 13px;
+		height: 26px;
+		cursor: pointer;
+		user-select: none; // Makes text unselectable
+		box-sizing: border-box;
+		vertical-align: middle;
+
+		// Flexbox
+		display: flex;
+		align-items: center; // Vertically center text
+		justify-content: center; // Horizontally center text
+		flex: auto; // Fill horizontal space
+
+		&:hover {
+			color: var(--color-neutral-70);
+		}
+
+		&:focus {
+			outline: var(--color-primary-light) solid 2px;
+			outline-offset: -2px;
+		}
+
+		&:first-of-type {
+			border-top-left-radius: 4px;
+			border-bottom-left-radius: 4px;
+		}
+
+		&:last-of-type {
+			border-right: 1px solid var(--color-neutral-light);
+			border-top-right-radius: 4px;
+			border-bottom-right-radius: 4px;
+
+
+			&.selected {
+				border-right-color: var(--color-primary);
+			}
+		}
+
+		&.selected {
+			background: var(--color-primary);
+			border-color: var(--color-primary);
+			color: var(--color-text-inverted);
+
+			+ .segmented-control-item {
+				border-left-color: var(--color-primary); // Color left border on adjacent item to match active filter
+			}
+		}
 	}
 
 	.wpnc__list-view .wpnc__notes,

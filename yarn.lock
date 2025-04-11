@@ -1430,7 +1430,6 @@ __metadata:
     "@automattic/languages": "workspace:^"
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
-    "@wordpress/components": "npm:^29.7.0"
     "@wordpress/data": "npm:^10.21.0"
     "@wordpress/i18n": "npm:^5.21.0"
     autoprefixer: "npm:^10.2.5"
