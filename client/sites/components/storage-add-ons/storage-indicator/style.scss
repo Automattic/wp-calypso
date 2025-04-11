@@ -6,15 +6,15 @@
 	flex-direction: column;
 	gap: $grid-unit-15;
 
-	&__usage {
+	.storage-indicator__usage {
 		display: flex;
 		gap: 2px;
 
-		&--capacity {
+		.storage-indicator__usage--capacity {
 			font-size: rem(15px);
 		}
 
-		&--used {
+		.storage-indicator__usage--used {
 			align-self: center;
 			margin-left: auto;
 			color: $gray-700;
@@ -23,30 +23,31 @@
 		}
 	}
 
-	&__bar {
+	.storage-indicator__bar {
 		display: flex;
 
 		> div {
 			height: 1.5px;
 		}
 
-		&--existing {
+		.storage-indicator__bar--existing {
 			background-color: #3858E9;
 		}
 
-		&--add-on {
+		.storage-indicator__bar--add-on {
 			background-color: var(--studio-green-50);
 		}
 	}
 
-	&__quota {
+	.storage-indicator__quota {
 		display: flex;
 		gap: $grid-unit-15;
 		color: $gray-700;
 		font-size: rem(12px);
 		line-height: rem(16px);
 
-		&--plan, &--add-on {
+		.storage-indicator__quota--plan,
+		.storage-indicator__quota--add-on {
 			position: relative;
 			padding-left: 10px;
 
@@ -62,11 +63,11 @@
 			}
 		}
 
-		&--plan::before {
+		.storage-indicator__quota--plan::before {
 			background-color: #3858E9;
 		}
 
-		&--add-on::before {
+		.storage-indicator__quota--add-on::before {
 			background-color: var(--studio-green-50);
 		}
 	}
