@@ -330,8 +330,8 @@ function HelpSearchResults( {
 					) ) }
 				</ul>
 				{ results.length > visibleResults && (
-					<Button onClick={ handleShowMore } className="show-more-button">
-						Show More
+					<Button variant="secondary" onClick={ handleShowMore } className="show-more-button">
+						{ __( 'Show More', __i18n_text_domain__ ) }
 					</Button>
 				) }
 			</Fragment>
