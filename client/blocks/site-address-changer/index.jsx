@@ -529,7 +529,6 @@ export class SiteAddressChanger extends Component {
 
 		return (
 			<Modal
-				className="site-address-changer"
 				title={ modalTitle }
 				size="medium"
 				isVisible={ isDialogVisible }
