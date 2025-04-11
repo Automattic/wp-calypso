@@ -24,22 +24,30 @@ type IntervalsType = {
 const intervals = {
 	[ STATS_PERIOD.DAY ]: {
 		id: STATS_PERIOD.DAY,
-		label: translate( 'Days' ),
+		get label() {
+			return translate( 'Days' );
+		},
 		statType: STATS_FEATURE_INTERVAL_DROPDOWN_DAY,
 	},
 	[ STATS_PERIOD.WEEK ]: {
 		id: STATS_PERIOD.WEEK,
-		label: translate( 'Weeks' ),
+		get label() {
+			return translate( 'Weeks' );
+		},
 		statType: STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
 	},
 	[ STATS_PERIOD.MONTH ]: {
 		id: STATS_PERIOD.MONTH,
-		label: translate( 'Months' ),
+		get label() {
+			return translate( 'Months' );
+		},
 		statType: STATS_FEATURE_INTERVAL_DROPDOWN_MONTH,
 	},
 	[ STATS_PERIOD.YEAR ]: {
 		id: STATS_PERIOD.YEAR,
-		label: translate( 'Years' ),
+		get label() {
+			return translate( 'Years' );
+		},
 		statType: STATS_FEATURE_INTERVAL_DROPDOWN_YEAR,
 	},
 };
@@ -58,11 +66,16 @@ const getGatedIntervals = createSelector(
 			};
 		}, {} );
 	},
-	Object.values( intervals ).map(
-		( { statType } ) =>
-			( state: object, siteId ) =>
-				shouldGateStats( state, siteId, statType )
-	)
+	[
+		...Object.values( intervals ).map(
+			( { statType } ) =>
+				( state: object, siteId ) =>
+					shouldGateStats( state, siteId, statType )
+		),
+		() => {
+			return translate( 'Days' );
+		},
+	]
 );
 
 function useIntervals( siteId: number | null ): IntervalsType {
