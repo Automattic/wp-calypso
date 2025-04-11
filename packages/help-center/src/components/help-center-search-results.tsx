@@ -11,6 +11,7 @@ import {
 } from '@automattic/data-stores';
 import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { speak } from '@wordpress/a11y';
+import { Button } from '@wordpress/components';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 import {
@@ -23,7 +24,7 @@ import {
 import { useRtl } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
-import { Fragment, useEffect, useMemo } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useAdminResults } from '../hooks/use-admin-results';
@@ -224,6 +225,12 @@ function HelpSearchResults( {
 	const searchResults = searchData ?? [];
 	const hasAPIResults = searchResults.length > 0;
 
+	const [ visibleResults, setVisibleResults ] = useState( 5 );
+
+	const handleShowMore = () => {
+		setVisibleResults( visibleResults + 5 );
+	};
+
 	useEffect( () => {
 		// Cancel all queued speak messages.
 		loadingSpeak.cancel();
@@ -311,7 +318,7 @@ function HelpSearchResults( {
 					className="help-center-search-results__list help-center-articles__list"
 					aria-labelledby={ title ? id : undefined }
 				>
-					{ results.map( ( result, index ) => (
+					{ results.slice( 0, visibleResults ).map( ( result, index ) => (
 						<HelpLink
 							key={ `${ id }-${ index }` }
 							result={ result }
@@ -322,6 +329,11 @@ function HelpSearchResults( {
 						/>
 					) ) }
 				</ul>
+				{ results.length > visibleResults && (
+					<Button onClick={ handleShowMore } className="show-more-button">
+						Show More
+					</Button>
+				) }
 			</Fragment>
 		) : null;
 	};
@@ -330,7 +342,7 @@ function HelpSearchResults( {
 		{
 			type: SUPPORT_TYPE_API_HELP,
 			title: __( 'Recommended Resources', __i18n_text_domain__ ),
-			results: searchResults.slice( 0, 5 ),
+			results: searchResults,
 			condition: ! isSearching && searchResults.length > 0,
 		},
 		{
