@@ -1,6 +1,7 @@
 import './styles.scss';
-import { Button, Gridicon } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import {
+	Button,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';

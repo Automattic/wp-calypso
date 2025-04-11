@@ -36,6 +36,10 @@
 			height: 40px;
 			top: -2px;
 			position: relative;
+
+			&:focus {
+				box-shadow: none;
+			}
 		}
 	}
 
