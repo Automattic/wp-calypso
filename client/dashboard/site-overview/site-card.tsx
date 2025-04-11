@@ -1,4 +1,3 @@
-import { useLoaderData } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -14,11 +13,12 @@ import type { FetchSiteRouteResponse } from '../data/types';
 /**
  * SiteCard component to display site information in a card format
  */
-export default function SiteCard( {
-	site: { options, url },
-	phpVersion,
-	primaryDomain,
-}: FetchSiteRouteResponse ) {
+export default function SiteCard( data: FetchSiteRouteResponse ) {
+	const {
+		site: { options, url },
+		phpVersion,
+		primaryDomain,
+	} = data;
 	const { software_version } = options;
 	return (
 		<Card>
@@ -43,7 +43,7 @@ export default function SiteCard( {
 						<Field title={ __( 'WordPress' ) }>{ software_version }</Field>
 						{ phpVersion && <Field title={ __( 'PHP' ) }>{ phpVersion }</Field> }
 					</HStack>
-					<PlanDetails />
+					<PlanDetails { ...data } />
 				</VStack>
 			</VStack>
 		</Card>
@@ -69,14 +69,9 @@ function FieldTitle( { children }: { children: React.ReactNode } ) {
 	);
 }
 
-function PlanDetails() {
-	const {
-		site: { plan: { product_name_short, is_free: isFree } = {} },
-		currentPlan: { expiry, id },
-		primaryDomain,
-	} = useLoaderData( {
-		from: '/sites/$siteId',
-	} ) as FetchSiteRouteResponse;
+function PlanDetails( { site, currentPlan, primaryDomain }: FetchSiteRouteResponse ) {
+	const { plan: { product_name_short, is_free: isFree } = {} } = site;
+	const { expiry, id } = currentPlan;
 	return (
 		<VStack>
 			<FieldTitle>{ __( 'Plan' ) }</FieldTitle>
