@@ -6,9 +6,9 @@ import { AppProvider, type AppConfig } from './context';
 import { queryClient } from './query-client';
 import { getRouter } from './router';
 
-function RouterProviderWithAuth( { basePath }: { basePath: string } ) {
+function RouterProviderWithAuth( { config }: { config: AppConfig } ) {
 	const auth = useAuth();
-	const router = useMemo( () => getRouter( basePath ), [ basePath ] );
+	const router = useMemo( () => getRouter( config ), [ config ] );
 	return <RouterProvider router={ router } context={ { auth } } />;
 }
 
@@ -17,7 +17,7 @@ function Layout( { config }: { config: AppConfig } ) {
 		<AppProvider config={ config }>
 			<QueryClientProvider client={ queryClient }>
 				<AuthProvider>
-					<RouterProviderWithAuth basePath={ config.basePath } />
+					<RouterProviderWithAuth config={ config } />
 				</AuthProvider>
 			</QueryClientProvider>
 		</AppProvider>

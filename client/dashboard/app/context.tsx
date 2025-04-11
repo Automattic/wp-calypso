@@ -10,6 +10,7 @@ export type AppConfig = {
 		reader: boolean;
 		help: boolean;
 		notifications: boolean;
+		me: boolean;
 	};
 };
 
@@ -23,6 +24,7 @@ const AppContext = createContext< AppConfig >( {
 		reader: false,
 		help: false,
 		notifications: false,
+		me: false,
 	},
 } );
 

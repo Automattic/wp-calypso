@@ -22,6 +22,7 @@ import SiteDeployments from '../site-deployments';
 import SiteOverview from '../site-overview';
 import Sites from '../sites';
 import { queryClient } from './query-client';
+import type { AppConfig } from './context';
 import type { FetchSiteRouteResponse, Domain, Email, User } from '../data/types';
 
 interface RouteContext {
@@ -32,151 +33,168 @@ interface RouteContext {
 	};
 }
 
-const rootRoute = createRootRoute( {
-	component: Root,
-	notFoundComponent: NotFound,
-} );
+const createRouteTree = ( config: AppConfig ) => {
+	const rootRoute = createRootRoute( {
+		component: Root,
+		notFoundComponent: NotFound,
+	} );
+	const children = [];
 
-const indexRoute = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: '/',
-	beforeLoad: () => {
-		throw redirect( { to: '/sites' } );
-	},
-} );
+	const indexRoute = createRoute( {
+		getParentRoute: () => rootRoute,
+		path: '/',
+		beforeLoad: () => {
+			throw redirect( { to: '/sites' } ); // TODO: add redirection to app config.
+		},
+	} );
+	children.push( indexRoute );
 
-const sitesRoute = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: 'sites',
-	component: Sites,
-	loader: async () => {
-		const query = {
-			queryKey: [ 'sites' ],
-			queryFn: fetchSites,
-		};
-		const cachedData = queryClient.getQueryData( query.queryKey );
-		if ( ! cachedData ) {
-			await queryClient.fetchQuery( query );
-		}
-		return query;
-	},
-} );
+	if ( config.supports.sites ) {
+		const sitesRoute = createRoute( {
+			getParentRoute: () => rootRoute,
+			path: 'sites',
+			component: Sites,
+			loader: async () => {
+				const query = {
+					queryKey: [ 'sites' ],
+					queryFn: fetchSites,
+				};
+				const cachedData = queryClient.getQueryData( query.queryKey );
+				if ( ! cachedData ) {
+					await queryClient.fetchQuery( query );
+				}
+				return query;
+			},
+		} );
 
-const siteRoute = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: 'sites/$siteId',
-	component: SiteLayout,
-	loader: ( { params: { siteId } } ) =>
-		queryClient.ensureQueryData( {
-			queryKey: [ 'site', siteId ],
-			queryFn: () => fetchSiteWithRouteData( siteId ),
-		} ) as Promise< FetchSiteRouteResponse >,
-	notFoundComponent: NotFound,
-} );
+		const siteRoute = createRoute( {
+			getParentRoute: () => rootRoute,
+			path: 'sites/$siteId',
+			component: SiteLayout,
+			loader: ( { params: { siteId } } ) =>
+				queryClient.ensureQueryData( {
+					queryKey: [ 'site', siteId ],
+					queryFn: () => fetchSiteWithRouteData( siteId ),
+				} ) as Promise< FetchSiteRouteResponse >,
+			notFoundComponent: NotFound,
+		} );
 
-const siteOverviewRoute = createRoute( {
-	getParentRoute: () => siteRoute,
-	path: '/',
-	component: SiteOverview,
-} );
+		const siteOverviewRoute = createRoute( {
+			getParentRoute: () => siteRoute,
+			path: '/',
+			component: SiteOverview,
+		} );
 
-const siteDeploymentsRoute = createRoute( {
-	getParentRoute: () => siteRoute,
-	path: 'deployments',
-	component: SiteDeployments,
-} );
+		const siteDeploymentsRoute = createRoute( {
+			getParentRoute: () => siteRoute,
+			path: 'deployments',
+			component: SiteDeployments,
+		} );
 
-const domainsRoute = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: 'domains',
-	component: Domains,
-	loader: () =>
-		queryClient.ensureQueryData( {
-			queryKey: [ 'domains' ],
-			queryFn: fetchDomains,
-		} ) as Promise< Domain[] >,
-} );
+		children.push(
+			sitesRoute,
+			siteRoute.addChildren( [ siteOverviewRoute, siteDeploymentsRoute ] )
+		);
+	}
 
-const emailsRoute = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: 'emails',
-	component: Emails,
-	loader: () =>
-		queryClient.ensureQueryData( {
-			queryKey: [ 'emails' ],
-			queryFn: fetchEmails,
-		} ) as Promise< Email >,
-} );
+	if ( config.supports.domains ) {
+		const domainsRoute = createRoute( {
+			getParentRoute: () => rootRoute,
+			path: 'domains',
+			component: Domains,
+			loader: () =>
+				queryClient.ensureQueryData( {
+					queryKey: [ 'domains' ],
+					queryFn: fetchDomains,
+				} ) as Promise< Domain[] >,
+		} );
 
-const meRoute = createRoute( {
-	getParentRoute: () => rootRoute,
-	path: 'me',
-	component: Me,
-	loader: () =>
-		queryClient.ensureQueryData( {
-			queryKey: [ 'profile' ],
-			queryFn: fetchProfile,
-		} ) as Promise< User >,
-	notFoundComponent: NotFound,
-	beforeLoad: ( { context }: { context: RouteContext } ) => {
-		if ( context?.auth?.twoStep?.two_step_reauthorization_required ) {
-			const currentPath = window.location.pathname;
-			const loginUrl = `/reauth-required?redirect_to=${ encodeURIComponent( currentPath ) }`;
-			window.location.href = loginUrl;
-		}
-	},
-} );
+		children.push( domainsRoute );
+	}
 
-const profileRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'profile',
-	component: Profile,
-} );
+	if ( config.supports.emails ) {
+		const emailsRoute = createRoute( {
+			getParentRoute: () => rootRoute,
+			path: 'emails',
+			component: Emails,
+			loader: () =>
+				queryClient.ensureQueryData( {
+					queryKey: [ 'emails' ],
+					queryFn: fetchEmails,
+				} ) as Promise< Email[] >,
+		} );
 
-const billingRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'billing',
-	component: Billing,
-} );
+		children.push( emailsRoute );
+	}
 
-const securityRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'security',
-	component: Security,
-} );
+	if ( config.supports.me ) {
+		const meRoute = createRoute( {
+			getParentRoute: () => rootRoute,
+			path: 'me',
+			component: Me,
+			loader: () =>
+				queryClient.ensureQueryData( {
+					queryKey: [ 'profile' ],
+					queryFn: fetchProfile,
+				} ) as Promise< User >,
+			notFoundComponent: NotFound,
+			beforeLoad: ( { context }: { context: RouteContext } ) => {
+				if ( context?.auth?.twoStep?.two_step_reauthorization_required ) {
+					const currentPath = window.location.pathname;
+					const loginUrl = `/reauth-required?redirect_to=${ encodeURIComponent( currentPath ) }`;
+					window.location.href = loginUrl;
+				}
+			},
+		} );
 
-const privacyRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'privacy',
-	component: Privacy,
-} );
+		const profileRoute = createRoute( {
+			getParentRoute: () => meRoute,
+			path: 'profile',
+			component: Profile,
+		} );
 
-const notificationsRoute = createRoute( {
-	getParentRoute: () => meRoute,
-	path: 'notifications',
-	component: Notifications,
-} );
+		const billingRoute = createRoute( {
+			getParentRoute: () => meRoute,
+			path: 'billing',
+			component: Billing,
+		} );
 
-// Create the router
-const routeTree = rootRoute.addChildren( [
-	indexRoute,
-	sitesRoute,
-	siteRoute.addChildren( [ siteOverviewRoute, siteDeploymentsRoute ] ),
-	domainsRoute,
-	emailsRoute,
-	meRoute.addChildren( [
-		profileRoute,
-		billingRoute,
-		securityRoute,
-		privacyRoute,
-		notificationsRoute,
-	] ),
-] );
+		const securityRoute = createRoute( {
+			getParentRoute: () => meRoute,
+			path: 'security',
+			component: Security,
+		} );
 
-export const getRouter = ( basepath: string ) => {
+		const privacyRoute = createRoute( {
+			getParentRoute: () => meRoute,
+			path: 'privacy',
+			component: Privacy,
+		} );
+
+		const notificationsRoute = createRoute( {
+			getParentRoute: () => meRoute,
+			path: 'notifications',
+			component: Notifications,
+		} );
+
+		children.push(
+			meRoute.addChildren( [
+				profileRoute,
+				billingRoute,
+				securityRoute,
+				privacyRoute,
+				notificationsRoute,
+			] )
+		);
+	}
+
+	return rootRoute.addChildren( children );
+};
+
+export const getRouter = ( config: AppConfig ) => {
 	return new Router( {
-		routeTree,
-		basepath,
+		routeTree: createRouteTree( config ),
+		basepath: config.basePath,
 		defaultErrorComponent: UnknownError,
 	} );
 };

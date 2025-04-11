@@ -12,5 +12,6 @@ boot( {
 		reader: false,
 		help: true,
 		notifications: false,
+		me: true,
 	},
 } );
