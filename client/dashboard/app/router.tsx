@@ -44,7 +44,7 @@ const createRouteTree = ( config: AppConfig ) => {
 		getParentRoute: () => rootRoute,
 		path: '/',
 		beforeLoad: () => {
-			throw redirect( { to: '/sites' } ); // TODO: add redirection to app config.
+			throw redirect( { to: config.mainRoute } );
 		},
 	} );
 	children.push( indexRoute );

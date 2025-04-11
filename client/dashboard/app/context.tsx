@@ -2,6 +2,7 @@ import { createContext, useContext } from 'react';
 
 export type AppConfig = {
 	basePath: string;
+	mainRoute: string;
 	Logo: React.FC | null;
 	supports: {
 		sites: boolean;
@@ -16,6 +17,7 @@ export type AppConfig = {
 
 const AppContext = createContext< AppConfig >( {
 	basePath: '',
+	mainRoute: '',
 	Logo: null,
 	supports: {
 		sites: false,
