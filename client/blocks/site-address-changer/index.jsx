@@ -480,7 +480,7 @@ export class SiteAddressChanger extends Component {
 		const currentDomainPrefix = this.getCurrentDomainPrefix();
 
 		return (
-			<form className="site-address-changer__dialog">
+			<form className="site-address-changer__content">
 				<TrackComponentView
 					eventName="calypso_siteaddresschange_areyousure_view"
 					eventProperties={ {

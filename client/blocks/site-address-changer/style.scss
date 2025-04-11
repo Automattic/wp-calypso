@@ -14,10 +14,6 @@
 	fill: currentColor;
 }
 
-.card.site-address-changer__content {
-	margin-bottom: 0;
-}
-
 .site-address-changer__confirmation-detail {
 	display: flex;
 	align-items: center;
@@ -153,6 +149,11 @@
 }
 
 .site-address-changer__content {
+	p {
+		font-size: $font-body-small;
+		margin-bottom: 8px;
+	}
+
 	.form-section-heading {
 		font-size: 1.25rem;
 		margin: 0;
@@ -173,44 +174,6 @@
 		.form-text-input-with-affixes__suffix {
 			padding-left: 8px;
 			padding-right: 8px;
-		}
-	}
-}
-
-.site-address-changer__form-footer {
-	border-top: 1px solid var( --color-neutral-0 );
-	margin: 0 -16px -16px;
-	padding: 16px;
-	display: flex;
-	justify-content: flex-start;
-
-	@include breakpoint-deprecated( '>480px' ) {
-		padding: 24px;
-		margin: 0 -24px -24px;
-	}
-
-	@include breakpoint-deprecated( '<480px' ) {
-		flex-direction: column;
-	}
-
-	.button {
-		margin: 0 0 0 15px;
-
-		&.is-primary {
-			margin: 0 0 15px;
-
-			@include breakpoint-deprecated( '>480px' ) {
-				margin: 0;
-			}
-
-			@include breakpoint-deprecated( '<480px' ) {
-				order: 1;
-			}
-		}
-
-		@include breakpoint-deprecated( '<480px' ) {
-			width: 100%;
-			order: 2;
 		}
 	}
 }
