@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { useAppContext } from '../app-context';
+import { useAppContext } from '../app/context';
 import Menu from '../menu';
 
 function MainMenu() {

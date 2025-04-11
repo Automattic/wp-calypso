@@ -990,7 +990,7 @@ export default function pages() {
 	loginRouter( serverRouter( app, setUpRoute, null ) );
 
 	// Set up v2 dashboard routing.
-	handleSectionPath( DASHBOARD_SECTION_DEFINITION, '/v2', 'entry-dashboard' );
+	handleSectionPath( DASHBOARD_SECTION_DEFINITION, '/v2', 'entry-dashboard-dotcom' );
 
 	// Set up v2-a4a dashboard routing.
 	handleSectionPath( DASHBOARD_A4A_SECTION_DEFINITION, '/v2-a4a', 'entry-dashboard-a4a' );

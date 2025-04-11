@@ -1,4 +1,4 @@
-import { useAppContext } from '../app-context';
+import { useAppContext } from '../app/context';
 import HeaderBar from '../header-bar';
 import LogoDotcom from '../logo';
 import LogoA4A from '../logo/a4a';

@@ -1,9 +1,9 @@
 import { createRoot } from 'react-dom/client';
 import '@wordpress/components/build-style/style.css';
 import './style.scss';
-import App from './app';
-import { persistPromise } from './app/query-client';
-import { AppProvider, AppType } from './app-context';
+import Layout from './layout';
+import { persistPromise } from './query-client';
+import type { AppType } from './context';
 
 function boot( app: AppType ) {
 	const rootElement = document.getElementById( 'wpcom' );
@@ -13,11 +13,7 @@ function boot( app: AppType ) {
 	const root = createRoot( rootElement );
 
 	persistPromise.then( () => {
-		root.render(
-			<AppProvider appType={ app }>
-				<App />
-			</AppProvider>
-		);
+		root.render( <Layout app={ app } /> );
 	} );
 }
 

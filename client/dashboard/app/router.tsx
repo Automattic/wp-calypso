@@ -22,7 +22,7 @@ import SiteDeployments from '../site-deployments';
 import SiteOverview from '../site-overview';
 import Sites from '../sites';
 import { queryClient } from './query-client';
-import type { AppType } from '../app-context';
+import type { AppType } from './context';
 import type { FetchSiteRouteResponse, Domain, Email, Site, User } from '../data/types';
 
 interface RouteContext {
