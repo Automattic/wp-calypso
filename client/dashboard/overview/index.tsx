@@ -1,4 +1,4 @@
-import { Button, Card } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import PageLayout from '../page-layout';
 
@@ -16,14 +16,8 @@ function Overview() {
 					</Button>
 				</>
 			}
-		>
-			<Card>
-				<div>
-					<h2>{ __( 'Welcome to Agencies for Automattic' ) }</h2>
-					<p>{ __( 'This is a sample overview page.' ) }</p>
-				</div>
-			</Card>
-		</PageLayout>
+			description={ __( 'This is a sample overview page.' ) }
+		/>
 	);
 }
 
