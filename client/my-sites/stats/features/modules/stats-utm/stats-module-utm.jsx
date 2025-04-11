@@ -151,10 +151,6 @@ const StatsModuleUTM = ( {
 
 	const getHref = useMemo( () => {
 		return () => {
-			if ( ! hideSummaryLink && summaryUrl ) {
-				return summaryUrl;
-			}
-
 			queryParams.set( UTM_QUERY_PARAM, selectedOption );
 
 			// Some modules do not have view all abilities
