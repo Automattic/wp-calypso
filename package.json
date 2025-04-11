@@ -196,6 +196,7 @@
 		"@wordpress/i18n": "^5.21.0",
 		"@wordpress/icons": "^10.21.0",
 		"@wordpress/is-shallow-equal": "^5.21.0",
+		"@wordpress/keyboard-shortcuts": "^5.22.0",
 		"@wordpress/keycodes": "^4.21.0",
 		"@wordpress/primitives": "^4.21.0",
 		"@wordpress/rich-text": "^7.21.0",

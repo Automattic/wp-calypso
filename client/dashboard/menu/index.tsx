@@ -1,4 +1,4 @@
-import { useNavigate, useMatchRoute, useRouter } from '@tanstack/react-router';
+import { useNavigate, useMatchRoute, useRouter, useMatch } from '@tanstack/react-router';
 import { __experimentalHStack as HStack, Button } from '@wordpress/components';
 import clsx from 'clsx';
 import './style.scss';
@@ -15,6 +15,11 @@ function MenuItem( { to, children }: { to: string; children: React.ReactNode } )
 		e.preventDefault();
 		navigate( { to } );
 	};
+	// These hooks must be called unconditionally (not in conditionals/loops) per React rules
+	// We need to call these hooks for proper route matching, even if we don't directly use them
+	// See: https://tanstack.com/router/latest/docs/framework/react/api/hooks/use-match
+	useMatch( to );
+	useMatch( to + '/*' );
 
 	return (
 		<Button

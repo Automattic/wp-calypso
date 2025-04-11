@@ -1,0 +1,113 @@
+# Dashboard Command Palette
+
+A command palette implementation for the dashboard, using WordPress's `@wordpress/commands` package and TanStack Router for navigation.
+
+## Architecture
+
+The command palette integrates with both WordPress Commands API and TanStack Router:
+
+- Uses WordPress Commands for the UI, keyboard shortcuts, and command registration
+- Uses TanStack Router for navigation commands
+- Must be placed within the router context for navigation to work properly
+
+## Placement Requirements
+
+The command palette component **must** be placed within the Router context:
+
+```jsx
+// In root/index.tsx
+import DashboardCommandPalette from '../command-palette';
+
+function Root() {
+  return (
+    <div className="dashboard-root__layout">
+      <Header />
+      <main>
+        <Outlet />
+      </main>
+      <DashboardCommandPalette />
+    </div>
+  );
+}
+```
+
+> **Important**: The command palette must be a child of a component within the TanStack Router context (like Root). Placing it as a sibling to RouterProvider will break navigation functionality.
+
+## Opening the Command Palette
+
+The command palette opens automatically with Cmd+K / Ctrl+K, or programmatically:
+
+```jsx
+import { openCommandPalette } from '../command-palette';
+
+function YourComponent() {
+  return (
+    <button onClick={openCommandPalette}>
+      Open Command Palette
+    </button>
+  );
+}
+```
+
+## Implementation Details
+
+This command palette:
+
+1. **Uses WordPress Commands API**: Leverages the WordPress commands system for UI and keyboard shortcuts
+2. **Integrates with TanStack Router**: Routes defined in commands.tsx use absolute paths (/path) for consistent navigation
+3. **Auto-registers Navigation Commands**: Registers dashboard navigation commands on component mount
+4. **Self-cleans on Unmount**: Unregisters all dashboard commands when the component unmounts
+
+## Route Navigation
+
+Navigation commands use absolute paths with a leading slash:
+
+```typescript
+export const navigationCommands = [
+  {
+    name: 'dashboard-go-to-sites',
+    label: __( 'Go to Sites' ),
+    searchLabel: __( 'Navigate to Sites dashboard' ),
+    path: '/sites',  // Note the leading slash for absolute paths
+    icon: home,
+  },
+  // ... other commands
+];
+```
+
+## Adding Custom Commands
+
+Custom commands can be added from any component:
+
+```jsx
+import { store as commandsStore } from '@wordpress/commands';
+import { dispatch } from '@wordpress/data';
+import { useRouter } from '@tanstack/react-router';
+
+function YourComponent() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const { registerCommand } = dispatch(commandsStore);
+
+    registerCommand({
+      name: 'your-command-name',
+      label: 'Your Command Label',
+      callback: ({ close }) => {
+        // First close the palette
+        close();
+        // Then perform any action, like navigation
+        router.navigate({ to: '/your-path' });
+      },
+      icon: yourIcon,
+    });
+
+    return () => {
+      const { unregisterCommand } = dispatch(commandsStore);
+      unregisterCommand('your-command-name');
+    };
+  }, [router]);
+
+  return <div>Your component content</div>;
+}
+```

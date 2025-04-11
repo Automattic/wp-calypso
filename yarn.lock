@@ -35663,6 +35663,7 @@ __metadata:
     "@wordpress/i18n": "npm:^5.21.0"
     "@wordpress/icons": "npm:^10.21.0"
     "@wordpress/is-shallow-equal": "npm:^5.21.0"
+    "@wordpress/keyboard-shortcuts": "npm:^5.22.0"
     "@wordpress/keycodes": "npm:^4.21.0"
     "@wordpress/prettier-config": "npm:^4.21.0"
     "@wordpress/primitives": "npm:^4.21.0"

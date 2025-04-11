@@ -13,6 +13,7 @@ import { help, bellUnread, bell, commentAuthorAvatar } from '@wordpress/icons';
 import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import { useAppContext } from '../app/context';
 import { useAuth } from '../auth';
+import { openCommandPalette } from '../command-palette/commands';
 import './style.scss';
 
 function NavMenuItem( { to, children }: { to: string; children: React.ReactNode } ) {
@@ -56,7 +57,7 @@ function UserProfile() {
 					icon={ commentAuthorAvatar }
 				/>
 			) }
-			renderContent={ () => (
+			renderContent={ ( { onClose } ) => (
 				<VStack>
 					<VStack style={ { padding: '16px', borderBottom: '1px solid #ccc' } }>
 						<Text>@{ user.username }</Text>
@@ -71,7 +72,18 @@ function UserProfile() {
 						) }
 					</MenuGroup>
 					<MenuGroup>
-						<MenuItem onClick={ () => {} } shortcut="⌘K">
+						<MenuItem
+							onClick={ () => {
+								// First close the dropdown
+								onClose();
+								// Then open the command palette after a tiny delay
+								// to ensure the dropdown is fully closed
+								requestAnimationFrame( () => {
+									openCommandPalette();
+								} );
+							} }
+							shortcut="⌘K"
+						>
 							{ __( 'Command Palette' ) }
 						</MenuItem>
 						<MenuItem onClick={ () => {} }>{ __( 'Theme' ) }</MenuItem>
