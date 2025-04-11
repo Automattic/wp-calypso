@@ -1,4 +1,28 @@
+@import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/variables";
+
 .storage-indicator {
+	display: flex;
+	flex-direction: column;
+	gap: $grid-unit-15;
+
+	&__usage {
+		display: flex;
+		gap: 2px;
+
+		&--capacity {
+			font-size: rem(15px);
+		}
+
+		&--used {
+			align-self: center;
+			margin-left: auto;
+			color: $gray-700;
+			font-size: rem(12px);
+			line-height: rem(16px);
+		}
+	}
+
 	&__bar {
 		display: flex;
 
@@ -6,11 +30,43 @@
 			height: 1.5px;
 		}
 
-		&-existing {
+		&--existing {
 			background-color: #3858E9;
 		}
 
-		&-add-on {
+		&--add-on {
+			background-color: var(--studio-green-50);
+		}
+	}
+
+	&__quota {
+		display: flex;
+		gap: $grid-unit-15;
+		color: $gray-700;
+		font-size: rem(12px);
+		line-height: rem(16px);
+
+		&--plan, &--add-on {
+			position: relative;
+			padding-left: 10px;
+
+			&::before {
+				content: '';
+				position: absolute;
+				left: 0;
+				top: 50%;
+				transform: translateY(-50%);
+				width: 6px;
+				height: 6px;
+				border-radius: 100%;
+			}
+		}
+
+		&--plan::before {
+			background-color: #3858E9;
+		}
+
+		&--add-on::before {
 			background-color: var(--studio-green-50);
 		}
 	}

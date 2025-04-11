@@ -1,25 +1,26 @@
 import page from '@automattic/calypso-router';
 import { Site, StorageAddOnSlug, AddOns } from '@automattic/data-stores';
-import { Modal, __experimentalVStack as VStack, Flex, Button } from '@wordpress/components';
+import { Modal, Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useStorageLimitOverride } from 'calypso/lib/plans/use-storage-limit-override';
-import { StorageAddOnsDropdown } from './dropdown';
-import StorageAddOnIndicator from './storage-indicator';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { StorageAddOnsDropdown } from '../storage-add-ons-dropdown';
+import StorageAddOnIndicator from '../storage-indicator';
+
+import './style.scss';
 
 type StorageAddOnsModalProps = {
 	isOpen: boolean;
-	siteId: number;
-	setIsOpen: ( isOpen: boolean ) => void;
+	onClose: () => void;
 };
 
-const StorageAddOnsModal: React.FC< StorageAddOnsModalProps > = ( {
-	isOpen,
-	siteId,
-	setIsOpen,
-} ) => {
+export default function StorageAddOnsModal( { isOpen, onClose }: StorageAddOnsModalProps ) {
 	const translate = useTranslate();
+	const siteId = useSelector( getSelectedSiteId );
+
 	const { data: mediaStorage } = Site.useSiteMediaStorage( { siteIdOrSlug: siteId } );
 
 	const availableStorageAddOns = AddOns.useAvailableStorageAddOns( { siteId } );
@@ -31,7 +32,7 @@ const StorageAddOnsModal: React.FC< StorageAddOnsModalProps > = ( {
 
 	const checkoutLink = AddOns.useAddOnCheckoutLink();
 	const onBuyStorage = () => {
-		setIsOpen( false );
+		onClose();
 
 		const slug = selectedStorageAddOn?.productSlug ?? '';
 		const quantity = selectedStorageAddOn?.quantity ?? 0;
@@ -44,8 +45,8 @@ const StorageAddOnsModal: React.FC< StorageAddOnsModalProps > = ( {
 		page.redirect( `${ checkoutLink( siteId, slug, quantity ) }` );
 	};
 
-	const onClose = () => {
-		setIsOpen( false );
+	const handleClose = () => {
+		onClose();
 		recordTracksEvent( 'calypso_storage_add_on_modal_action_cancel_click' );
 	};
 
@@ -57,41 +58,40 @@ const StorageAddOnsModal: React.FC< StorageAddOnsModalProps > = ( {
 		mediaStorage.maxStorageBytes = maxStorageBytesOverride;
 	}
 
-	if ( ! mediaStorage ) {
+	if ( ! isOpen || ! siteId || ! mediaStorage ) {
 		return null;
 	}
 
-	return isOpen ? (
-		<Modal title={ translate( 'Add more storage' ) } onRequestClose={ onClose }>
-			<VStack spacing={ 8 }>
-				<div>
-					<p>
-						{ translate( 'Make more space for high-quality photos, videos, and other media.' ) }
-					</p>
-					<h2>{ translate( 'Storage add-on' ) }</h2>
-					<StorageAddOnsDropdown
-						selectedStorageAddOnSlug={ selectedStorageAddOnSlug }
-						setSelectedStorageAddOnSlug={ setSelectedStorageAddOnSlug }
-						siteId={ siteId }
-					/>
-					<h2>{ translate( 'New storage capacity' ) }</h2>
-					<StorageAddOnIndicator
-						mediaStorage={ mediaStorage }
-						selectedStorageAddOnSlug={ selectedStorageAddOnSlug }
-						siteId={ siteId }
-					/>
-				</div>
-				<Flex direction="row" justify="flex-end">
-					<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
-						{ translate( 'Cancel' ) }
-					</Button>
-					<Button __next40pxDefaultSize variant="primary" onClick={ onBuyStorage }>
-						{ translate( 'Buy storage' ) }
-					</Button>
-				</Flex>
-			</VStack>
+	return (
+		<Modal
+			className="storage-add-ons-modal"
+			title={ translate( 'Add more storage' ) }
+			onRequestClose={ handleClose }
+		>
+			<span className="storage-add-ons-modal__description">
+				{ translate( 'Make more space for high-quality photos, videos, and other media.' ) }
+			</span>
+			<StorageAddOnsDropdown
+				selectedStorageAddOnSlug={ selectedStorageAddOnSlug }
+				setSelectedStorageAddOnSlug={ setSelectedStorageAddOnSlug }
+				siteId={ siteId }
+			/>
+			<div>
+				<div className="storage-add-ons-modal__label">{ translate( 'New storage capacity' ) }</div>
+				<StorageAddOnIndicator
+					mediaStorage={ mediaStorage }
+					selectedStorageAddOnSlug={ selectedStorageAddOnSlug }
+					siteId={ siteId }
+				/>
+			</div>
+			<div className="storage-add-ons-modal__buttons">
+				<Button variant="tertiary" onClick={ handleClose }>
+					{ translate( 'Cancel' ) }
+				</Button>
+				<Button variant="primary" onClick={ onBuyStorage }>
+					{ translate( 'Buy storage' ) }
+				</Button>
+			</div>
 		</Modal>
-	) : null;
-};
-
-export default StorageAddOnsModal;
+	);
+}

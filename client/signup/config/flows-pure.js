@@ -577,7 +577,7 @@ export function generateFlows( {
 			enableHotjar: true,
 			props: {
 				[ 'plans-affiliate' ]: {
-					deemphasizeFreePlan: true,
+					offeringFreePlan: false,
 				},
 				domains: {
 					allowSkipWithoutSearch: true,

@@ -8,7 +8,7 @@ import { useStorageAddOnAvailable } from 'calypso/lib/plans/use-storage-add-on-a
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite, getSelectedPurchase } from 'calypso/state/ui/selectors';
-import StorageAddOnsModal from '../storage-add-ons/modal';
+import StorageAddOnsModal from '../storage-add-ons/storage-add-ons-modal';
 import { PlanBandwidth } from './plan-bandwidth';
 import { PlanSiteVisits } from './plan-site-visits';
 import PlanStorageBar from './plan-storage-bar';
@@ -62,7 +62,7 @@ export default function PlanStats() {
 	const isStorageAddOnAvailable = useStorageAddOnAvailable( site?.ID );
 
 	const isUntangled = useSelector( isPlansPageUntangled );
-	const [ isOpen, setIsOpen ] = useState( false );
+	const [ isStorageAddOnsModalOpen, setIsStorageAddOnsModalOpen ] = useState( false );
 
 	if ( isLoading ) {
 		return <LoadingPlaceholder width="400px" height="100px" />;
@@ -78,7 +78,16 @@ export default function PlanStats() {
 				>
 					{ isStorageAddOnAvailable ? (
 						<div className="plan-storage-footer">
-							<NeedMoreStorage noLink={ footerWrapperIsLink } onClick={ () => setIsOpen( true ) } />
+							<NeedMoreStorage
+								noLink={ footerWrapperIsLink }
+								onClick={ () => setIsStorageAddOnsModalOpen( true ) }
+							/>
+							{ isUntangled && (
+								<StorageAddOnsModal
+									isOpen={ isStorageAddOnsModalOpen }
+									onClose={ () => setIsStorageAddOnsModalOpen( false ) }
+								/>
+							) }
 						</div>
 					) : null }
 				</PlanStorage>
@@ -90,9 +99,6 @@ export default function PlanStats() {
 					</div>
 				) }
 			</div>
-			{ isUntangled && (
-				<StorageAddOnsModal isOpen={ isOpen } setIsOpen={ setIsOpen } siteId={ site?.ID } />
-			) }
 		</>
 	);
 }

@@ -31,11 +31,11 @@ function formatDate( cardExpiry: string ): string {
 	return formattedDate;
 }
 
-function PurchaseModalStep( { children, id }: { children: ReactNode; id: string } ) {
+function PurchaseModalStep( { children }: { children: ReactNode } ) {
 	return (
 		<div className="purchase-modal__step">
 			<span className="purchase-modal__step-icon">
-				<CheckIcon id={ id } />
+				<CheckIcon />
 			</span>
 			{ children }
 		</div>
@@ -110,7 +110,7 @@ function OrderStep( {
 	const translate = useTranslate();
 
 	return (
-		<PurchaseModalStep id="purchase-modal-step">
+		<PurchaseModalStep>
 			<div className="purchase-modal__step-title">{ translate( 'Your order' ) }</div>
 			<div className="purchase-modal__step-content">
 				<div>{ translate( 'Site: %(siteSlug)s', { args: { siteSlug } } ) }</div>
@@ -138,7 +138,7 @@ function PaymentMethodStep( {
 	const maskedCard = sprintf( translate( '**** %s' ), card?.card_last_4 || '' );
 
 	return (
-		<PurchaseModalStep id="payment-method">
+		<PurchaseModalStep>
 			<div className="purchase-modal__step-title">
 				{ translate( 'Payment method' ) }
 				<a href={ `/checkout/${ siteSlug }` } onClick={ clickHandler }>

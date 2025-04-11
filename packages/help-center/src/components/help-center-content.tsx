@@ -70,6 +70,8 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const isUserEligibleForPaidSupport =
 		Boolean( data?.eligibility?.is_user_eligible ) || allowPremiumSupport;
 
+	const userFieldFlowName = data?.eligibility?.user_field_flow_name;
+
 	useEffect( () => {
 		recordTracksEvent( 'calypso_helpcenter_page_open', {
 			pathname: location.pathname,
@@ -131,7 +133,10 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 					<Route
 						path="/odie"
 						element={
-							<HelpCenterChat isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport } />
+							<HelpCenterChat
+								isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
+								userFieldFlowName={ userFieldFlowName }
+							/>
 						}
 					/>
 					<Route path="/chat-history" element={ <HelpCenterChatHistory /> } />

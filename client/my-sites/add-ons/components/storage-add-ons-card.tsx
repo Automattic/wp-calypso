@@ -17,10 +17,7 @@ import { SiteId } from 'calypso/types';
 
 export interface Props {
 	siteId: SiteId;
-	actionPrimary?: {
-		text: string;
-		handler: ( productSlug: string, quantity?: number ) => void;
-	};
+	actionPrimary?: ( productSlug: string, quantity?: number ) => void;
 }
 
 const Container = styled.div`
@@ -211,8 +208,8 @@ export default function StorageAddOnCard( { siteId, actionPrimary }: Props ) {
 	}
 
 	const onActionPrimary = () => {
-		actionPrimary?.handler(
-			availableStorageAddOns[ 0 ].productSlug,
+		actionPrimary?.(
+			availableStorageAddOns[ 0 ]?.productSlug,
 			selectedStorageAddOnStorageQuantity
 		);
 	};
@@ -259,7 +256,7 @@ export default function StorageAddOnCard( { siteId, actionPrimary }: Props ) {
 				<CardFooter isBorderless className="storage-add-ons-card__footer">
 					{ Boolean( selectControlOptions.length ) && actionPrimary && (
 						<Button onClick={ onActionPrimary } variant="primary">
-							{ actionPrimary.text }
+							{ translate( 'Buy add-on' ) }
 						</Button>
 					) }
 				</CardFooter>

@@ -14,6 +14,7 @@ import {
 	TestAccountName,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
+import { skipDescribeIf } from '../../jest-helpers';
 
 declare const browser: Browser;
 
@@ -39,6 +40,7 @@ const testCases: Array< {
 		'resharing' | 'manualSharing' | 'mediaSharing' | 'socialImageGenerator',
 		boolean
 	>;
+	isPrivate?: boolean;
 } > = [];
 
 if ( envVariables.JETPACK_TARGET === 'wpcom-deployment' ) {
@@ -47,6 +49,7 @@ if ( envVariables.JETPACK_TARGET === 'wpcom-deployment' ) {
 		platform: envVariables.TEST_ON_ATOMIC ? 'Atomic' : 'Simple',
 		testAccountName: getTestAccountByFeature( envToFeatureKey( envVariables ) ),
 		features: features4BusinessPlan,
+		isPrivate: envVariables.TEST_ON_ATOMIC && envVariables.ATOMIC_VARIATION === 'private',
 	} );
 } else {
 	testCases.push(
@@ -77,10 +80,10 @@ if ( envVariables.JETPACK_TARGET === 'wpcom-deployment' ) {
  * Keywords: Social, Jetpack, Publicize, Editor
  */
 describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () {
-	for ( const { plan, platform, testAccountName, features } of testCases ) {
+	for ( const { plan, platform, testAccountName, features, isPrivate } of testCases ) {
 		const title = `For ${ platform } sites with ${ plan } plan`;
 
-		describe( DataHelper.createSuiteTitle( title ), function () {
+		skipDescribeIf( isPrivate ?? false )( DataHelper.createSuiteTitle( title ), function () {
 			let page: Page;
 			let editorPage: EditorPage;
 			let socialConnectionsManager: SocialConnectionsManager;

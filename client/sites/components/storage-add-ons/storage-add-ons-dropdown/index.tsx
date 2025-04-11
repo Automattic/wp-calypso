@@ -4,6 +4,8 @@ import { CustomSelectControl } from '@wordpress/components';
 import { formatCurrency, useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
 
+import './style.scss';
+
 const StorageDropdownOption = ( {
 	price,
 	totalStorage,
@@ -13,22 +15,22 @@ const StorageDropdownOption = ( {
 } ) => {
 	const translate = useTranslate();
 
+	if ( ! price ) {
+		return null;
+	}
+
 	return (
-		<>
-			{ price ? (
-				<div className="storage-add-ons-card__storage-dropdown-option">
-					<span className="storage-add-ons-card__storage-dropdown-option-storage">
-						{ translate( '+ %(totalStorage)dGB', { args: { totalStorage } } ) }
-					</span>
-					<span className="storage-add-ons-card__storage-dropdown-option-price">
-						{ translate( '%(price)s/month, billed yearly', {
-							args: { price },
-							comment: 'The cost of a storage add on per month. Example reads as "$50/month"',
-						} ) }
-					</span>
-				</div>
-			) : null }
-		</>
+		<div className="storage-add-ons-dropdown__option">
+			<span className="storage-add-ons-dropdown__option--storage">
+				{ translate( '%(totalStorage)d GB Storage', { args: { totalStorage } } ) }
+			</span>
+			<span className="storage-add-ons-dropdown__option--price">
+				{ translate( '(%(price)s/month, billed yearly)', {
+					args: { price },
+					comment: 'The cost of a storage add on per month. Example reads as "$50/month"',
+				} ) }
+			</span>
+		</div>
 	);
 };
 
@@ -41,6 +43,7 @@ export const StorageAddOnsDropdown = ( {
 	selectedStorageAddOnSlug: StorageAddOnSlug | null;
 	setSelectedStorageAddOnSlug: ( slug: StorageAddOnSlug ) => void;
 } ) => {
+	const translate = useTranslate();
 	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
 	const selectedStorageAddOn = storageAddOns?.find(
 		( addOn ) => addOn?.addOnSlug === selectedStorageAddOnSlug
@@ -112,13 +115,11 @@ export const StorageAddOnsDropdown = ( {
 
 	return (
 		<CustomSelectControl
-			__next40pxDefaultSize
-			hideLabelFromVision
+			label={ translate( 'Storage add-on' ) }
 			options={ selectControlOptions || [] }
 			// @ts-expect-error ts complains about selectedOption possibly being null
 			value={ selectedOption }
 			onChange={ handleOnChange }
-			label=""
 		/>
 	);
 };

@@ -202,6 +202,7 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 					currentContext="plugin-details"
 					isMarketplace={ isMarketplaceProduct }
 					standaloneProceed
+					onDismiss={ () => this.handleDismiss() }
 					onProceed={ () => this.handleAccept() }
 					backUrl="#"
 				/>
