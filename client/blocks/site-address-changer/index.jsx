@@ -491,9 +491,9 @@ export class SiteAddressChanger extends Component {
 				<p>{ translate( 'Once you confirm, this will be the new address for your site:' ) }</p>
 				<div className="site-address-changer__confirmation-detail">
 					<span className="site-address-changer__icon-wrapper">
-						<Icon icon={ closeSmall } size={ 24 } className="site-address-changer__copy-deletion" />
+						<Icon icon={ check } size={ 24 } className="site-address-changer__copy-addition" />
 					</span>
-					<p className="site-address-changer__confirmation-detail-copy site-address-changer__copy-deletion">
+					<p className="site-address-changer__confirmation-detail-copy site-address-changer__copy-addition">
 						<strong>{ currentDomainPrefix }</strong>
 						{ currentDomainSuffix }
 					</p>
@@ -503,9 +503,9 @@ export class SiteAddressChanger extends Component {
 
 				<div className="site-address-changer__confirmation-detail">
 					<span className="site-address-changer__icon-wrapper">
-						<Icon icon={ check } size={ 24 } className="site-address-changer__copy-addition" />
+						<Icon icon={ closeSmall } size={ 24 } className="site-address-changer__copy-deletion" />
 					</span>
-					<p className="site-address-changer__confirmation-detail-copy site-address-changer__copy-addition">
+					<p className="site-address-changer__confirmation-detail-copy site-address-changer__copy-deletion">
 						<strong>{ newDomainName }</strong>
 						{ newDomainSuffix }
 					</p>
