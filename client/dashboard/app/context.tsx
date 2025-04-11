@@ -4,6 +4,7 @@ export type AppType = 'dotcom' | 'a4a';
 
 export type AppConfig = {
 	basePath: string;
+	Logo: React.FC | null;
 	supports: {
 		sites: boolean;
 		domains: boolean;
@@ -23,6 +24,7 @@ const AppContext = createContext< AppContextProps >( {
 	appType: 'dotcom',
 	config: {
 		basePath: '',
+		Logo: null,
 		supports: {
 			sites: false,
 			domains: false,
