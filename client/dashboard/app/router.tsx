@@ -23,13 +23,25 @@ import SiteOverview from '../site-overview';
 import Sites from '../sites';
 import { queryClient } from './query-client';
 import type { AppConfig } from './context';
-import type { FetchSiteRouteResponse, Domain, Email, User } from '../data/types';
+import type { Domain, Email, User } from '../data/types';
+import type { FetchQueryOptions } from '@tanstack/react-query';
 
 interface RouteContext {
 	auth?: {
 		twoStep?: {
 			two_step_reauthorization_required?: boolean;
 		};
+	};
+}
+
+function createLoader( getOptions: ( ctx: Record< string, string > ) => FetchQueryOptions ) {
+	return async ( ctx: { params: Record< string, string > } ) => {
+		const options = getOptions( ctx.params );
+		const cachedData = queryClient.getQueryData( options.queryKey );
+		if ( ! cachedData ) {
+			await queryClient.fetchQuery( options );
+		}
+		return options;
 	};
 }
 
@@ -54,28 +66,20 @@ const createRouteTree = ( config: AppConfig ) => {
 			getParentRoute: () => rootRoute,
 			path: 'sites',
 			component: Sites,
-			loader: async () => {
-				const query = {
-					queryKey: [ 'sites' ],
-					queryFn: fetchSites,
-				};
-				const cachedData = queryClient.getQueryData( query.queryKey );
-				if ( ! cachedData ) {
-					await queryClient.fetchQuery( query );
-				}
-				return query;
-			},
+			loader: createLoader( () => ( {
+				queryKey: [ 'sites' ],
+				queryFn: fetchSites,
+			} ) ),
 		} );
 
 		const siteRoute = createRoute( {
 			getParentRoute: () => rootRoute,
 			path: 'sites/$siteId',
 			component: SiteLayout,
-			loader: ( { params: { siteId } } ) =>
-				queryClient.ensureQueryData( {
-					queryKey: [ 'site', siteId ],
-					queryFn: () => fetchSiteWithRouteData( siteId ),
-				} ) as Promise< FetchSiteRouteResponse >,
+			loader: createLoader( ( { siteId } ) => ( {
+				queryKey: [ 'site', siteId ],
+				queryFn: () => fetchSiteWithRouteData( siteId ),
+			} ) ),
 			notFoundComponent: NotFound,
 		} );
 

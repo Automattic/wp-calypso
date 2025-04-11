@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import { useLoaderData } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
@@ -24,9 +25,11 @@ import type { FetchSiteRouteResponse } from '../data/types';
 import './style.scss';
 
 function SiteOverview() {
-	const data = useLoaderData( {
-		from: '/sites/$siteId',
-	} ) as FetchSiteRouteResponse;
+	const data = useQuery(
+		useLoaderData( {
+			from: '/sites/$siteId',
+		} )
+	).data as FetchSiteRouteResponse;
 	const { site } = data;
 	return (
 		<PageLayout
