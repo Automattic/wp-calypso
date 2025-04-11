@@ -88,6 +88,7 @@
 		"clean:public": "rm -rf public",
 		"clean:translations": "rm -rf build/strings calypso-strings.pot chunks-map.*.json || true",
 		"components:storybook:start": "yarn workspace @automattic/components run storybook:start",
+		"dataviews:storybook:start": "yarn workspace @automattic/dataviews run storybook:start",
 		"composite-checkout:storybook:start": "echo 'Deprecated, run `yarn workspace @automattic/composite-checkout run storybook:start` instead'",
 		"distclean": "yarn run clean && rm -rf **/node_modules **/.cache .yarn/install-state.gz || true",
 		"docker": "docker run -it --name wp-calypso --rm -p 80:3000 wp-calypso",
