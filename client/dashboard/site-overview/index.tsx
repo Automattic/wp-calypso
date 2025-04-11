@@ -24,9 +24,10 @@ import type { FetchSiteRouteResponse } from '../data/types';
 import './style.scss';
 
 function SiteOverview() {
-	const { site } = useLoaderData( {
+	const data = useLoaderData( {
 		from: '/sites/$siteId',
 	} ) as FetchSiteRouteResponse;
+	const { site } = data;
 	return (
 		<PageLayout
 			title={ site.name }
@@ -45,7 +46,7 @@ function SiteOverview() {
 			}
 		>
 			<HStack alignment="flex-start" spacing={ 8 }>
-				<Sidebar />
+				<Sidebar { ...data } />
 				<VStack spacing={ 8 }>
 					<Card className="site-overview-card site-overview-ai-card">
 						<Text>

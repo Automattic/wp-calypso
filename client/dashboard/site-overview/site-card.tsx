@@ -14,14 +14,12 @@ import type { FetchSiteRouteResponse } from '../data/types';
 /**
  * SiteCard component to display site information in a card format
  */
-export default function SiteCard() {
-	const {
-		site: { options: { software_version } = {}, url },
-		phpVersion,
-		primaryDomain,
-	} = useLoaderData( {
-		from: '/sites/$siteId',
-	} ) as FetchSiteRouteResponse;
+export default function SiteCard( {
+	site: { options, url },
+	phpVersion,
+	primaryDomain,
+}: FetchSiteRouteResponse ) {
+	const { software_version } = options;
 	return (
 		<Card>
 			<VStack spacing={ 6 }>
