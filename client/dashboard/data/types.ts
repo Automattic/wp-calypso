@@ -86,13 +86,13 @@ export interface TwoStep {
 	two_step_reauthorization_required: boolean;
 }
 
-export interface MediaStorageObject {
+export interface MediaStorage {
 	maxStorageBytesFromAddOns: number;
 	maxStorageBytes: number;
 	storageUsedBytes: number;
 }
 
-export interface MonitorUptimeAPIResponse {
+export interface MonitorUptime {
 	[ key: string ]: { status: string; downtime_in_minutes?: number };
 }
 
@@ -109,24 +109,10 @@ export interface EngagementStats {
 
 export interface FetchSiteRouteResponse {
 	site: Site;
-	mediaStorage: MediaStorageObject;
-	siteMonitorUptime?: MonitorUptimeAPIResponse;
+	mediaStorage: MediaStorage;
+	siteMonitorUptime?: MonitorUptime;
 	phpVersion?: string;
 	currentPlan: Plan;
 	primaryDomain?: Domain;
 	engagementStats: EngagementStats;
-}
-
-export interface WPCOMRESTAPISite {
-	ID: string;
-	name: string;
-	URL: string;
-	icon: {
-		ico: string;
-	};
-	plan: SitePlan;
-	active_modules: string[];
-	subscribers_count: number;
-	options: SiteOptions;
-	is_deleted: boolean;
 }

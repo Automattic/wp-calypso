@@ -1,15 +1,15 @@
 import wpcom from 'calypso/lib/wp';
+import type { WPCOMRESTAPISite } from './rest-api-types';
 import type {
 	Domain,
 	Email,
 	FetchSiteRouteResponse,
-	MediaStorageObject,
-	MonitorUptimeAPIResponse,
+	MediaStorage,
+	MonitorUptime,
 	Plan,
 	Site,
 	User,
 	TwoStep,
-	WPCOMRESTAPISite,
 } from './types';
 
 export const fetchProfile = () =>
@@ -106,7 +106,7 @@ export const fetchSite = async ( id: string ): Promise< Site > => {
 	return siteRequestObjectToSiteObject( site );
 };
 
-export const fetchSiteMediaStorage = async ( id: string ): Promise< MediaStorageObject > => {
+export const fetchSiteMediaStorage = async ( id: string ): Promise< MediaStorage > => {
 	if ( ! id ) {
 		return Promise.reject( new Error( 'Site ID is undefined' ) );
 	}
@@ -123,7 +123,7 @@ export const fetchSiteMediaStorage = async ( id: string ): Promise< MediaStorage
 
 export const fetchSiteMonitorUptime = async (
 	id: string
-): Promise< MonitorUptimeAPIResponse | undefined > => {
+): Promise< MonitorUptime | undefined > => {
 	if ( ! id ) {
 		return Promise.reject( new Error( 'Site ID is undefined' ) );
 	}
@@ -169,11 +169,15 @@ export const fetchCurrentPlan = async ( id: string ): Promise< Plan > => {
 	if ( ! id ) {
 		return Promise.reject( new Error( 'Site ID is undefined' ) );
 	}
-	const plans = await wpcom.req.get( {
+	const plans = ( await wpcom.req.get( {
 		path: `/sites/${ id }/plans`,
 		apiVersion: '1.3',
-	} );
-	return Object.values( plans ).find( ( plan: Plan ) => plan.current_plan );
+	} ) ) as Record< string, Plan >;
+	const plan = Object.values( plans ).find( ( plan ) => plan.current_plan );
+	if ( ! plan ) {
+		throw new Error( 'No current plan found' );
+	}
+	return plan;
 };
 
 export const fetchSiteEngagementStats = async ( id: string ) => {
