@@ -1,5 +1,4 @@
 import { Outlet } from '@tanstack/react-router';
-import { Suspense } from '@wordpress/element';
 import CommandPalette from '../command-palette';
 import Header from '../header';
 
@@ -10,9 +9,7 @@ function Root() {
 		<div className="dashboard-root__layout">
 			<Header />
 			<main>
-				<Suspense fallback={ <div>Loading...</div> }>
-					<Outlet />
-				</Suspense>
+				<Outlet />
 			</main>
 			<CommandPalette />
 		</div>
