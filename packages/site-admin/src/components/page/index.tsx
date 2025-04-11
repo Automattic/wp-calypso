@@ -9,7 +9,7 @@ import { NavigableRegion } from '../../interface';
 import Header from './header';
 import './style.scss';
 
-type PageProps = {
+export type PageProps = {
 	title: string;
 	subTitle?: string;
 	actions?: React.ReactNode;
