@@ -540,7 +540,6 @@ class RegisterDomainStep extends Component {
 						/>
 					) }
 					{ this.renderFilterContent() }
-					{ this.renderDomainExplanationImage() }
 					{ this.renderSideContent() }
 				</div>
 				{ showAlreadyOwnADomain && (
@@ -761,23 +760,6 @@ class RegisterDomainStep extends Component {
 					illustrationWidth={ 280 }
 				/>
 			</>
-		);
-	}
-
-	renderDomainExplanationImage() {
-		return (
-			<div className="register-domain-step__domain-side-content-container-domain-explanation-image">
-				<span></span>
-				<span></span>
-				<span className="register-domain-step__domain-side-content-container-domain-explanation-image-url">
-					https://
-					{ this.props.translate( 'yoursitename', {
-						comment: 'example url used to explain what a domain is.',
-					} ) }
-					.com
-				</span>
-				<span></span>
-			</div>
 		);
 	}
 
