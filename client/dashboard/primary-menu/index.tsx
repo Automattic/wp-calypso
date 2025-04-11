@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n';
 import { useAppContext } from '../app/context';
 import Menu from '../menu';
 
-function MainMenu() {
+function PrimaryMenu() {
 	const { supports } = useAppContext();
 
 	return (
@@ -14,4 +14,4 @@ function MainMenu() {
 	);
 }
 
-export default MainMenu;
+export default PrimaryMenu;

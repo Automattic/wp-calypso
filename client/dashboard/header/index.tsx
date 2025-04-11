@@ -1,6 +1,6 @@
 import { useAppContext } from '../app/context';
 import HeaderBar from '../header-bar';
-import MainMenu from '../main-menu';
+import PrimaryMenu from '../primary-menu';
 import SecondaryMenu from '../secondary-menu';
 
 function Header() {
@@ -13,7 +13,7 @@ function Header() {
 				</div>
 			) }
 			<div style={ { flexGrow: 1 } }>
-				<MainMenu />
+				<PrimaryMenu />
 			</div>
 			<div>
 				<SecondaryMenu />
