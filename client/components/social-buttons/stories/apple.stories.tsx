@@ -6,6 +6,8 @@ import {
 	JetpackWrapper,
 	BlazeWrapper,
 	AkismetWrapper,
+	WPJobManagerWrapper,
+	A4AWrapper,
 } from './shared';
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -26,6 +28,10 @@ export const Default: Story = {
 	decorators: [ DefaultWrapper ],
 };
 
+export const A4A: Story = {
+	decorators: [ A4AWrapper ],
+};
+
 export const Akismet: Story = {
 	decorators: [ AkismetWrapper ],
 };
@@ -44,4 +50,8 @@ export const Jetpack: Story = {
 
 export const Woo: Story = {
 	decorators: [ WooWrapper ],
+};
+
+export const WPJobManager: Story = {
+	decorators: [ WPJobManagerWrapper ],
 };
