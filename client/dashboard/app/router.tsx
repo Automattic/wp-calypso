@@ -35,15 +35,12 @@ interface RouteContext {
 	};
 }
 
-function createLoader( getOptions: ( ctx: Record< string, string > ) => FetchQueryOptions ) {
-	return async ( ctx: { params: Record< string, string > } ) => {
-		const options = getOptions( ctx.params );
-		const cachedData = queryClient.getQueryData( options.queryKey );
-		if ( ! cachedData ) {
-			await queryClient.fetchQuery( options );
-		}
-		return options;
-	};
+async function getLoaderData( options: FetchQueryOptions ) {
+	const cachedData = queryClient.getQueryData( options.queryKey );
+	if ( ! cachedData ) {
+		await queryClient.fetchQuery( options );
+	}
+	return cachedData;
 }
 
 const createRouteTree = ( config: AppConfig ) => {
@@ -77,20 +74,22 @@ const createRouteTree = ( config: AppConfig ) => {
 			getParentRoute: () => rootRoute,
 			path: 'sites',
 			component: Sites,
-			loader: createLoader( () => ( {
-				queryKey: [ 'sites' ],
-				queryFn: fetchSites,
-			} ) ),
+			loader: () =>
+				getLoaderData( {
+					queryKey: [ 'sites' ],
+					queryFn: fetchSites,
+				} ),
 		} );
 
 		const siteRoute = createRoute( {
 			getParentRoute: () => rootRoute,
 			path: 'sites/$siteId',
 			component: SiteLayout,
-			loader: createLoader( ( { siteId } ) => ( {
-				queryKey: [ 'site', siteId ],
-				queryFn: () => fetchSiteWithRouteData( siteId ),
-			} ) ),
+			loader: ( { params: { siteId } } ) =>
+				getLoaderData( {
+					queryKey: [ 'site', siteId ],
+					queryFn: () => fetchSiteWithRouteData( siteId ),
+				} ),
 			notFoundComponent: NotFound,
 		} );
 
