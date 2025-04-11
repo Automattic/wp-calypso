@@ -7,7 +7,7 @@ import {
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { throttle } from 'lodash';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 
 const SHOW_SCROLL_THRESHOLD = 10;
@@ -40,6 +40,18 @@ const ScrollableHorizontalNavigation = < T extends object >( {
 }: Props< T > ) => {
 	const scrollRef = useRef< HTMLDivElement >( null );
 	const translate = useTranslate();
+
+	// Scroll the selected tab into view on initial render and whenever it changes.
+	useEffect( () => {
+		const selectedTabElement = scrollRef.current?.querySelector(
+			'.components-toggle-group-control-option-base[data-active-item="true"]'
+		);
+		selectedTabElement?.scrollIntoView( {
+			behavior: 'smooth',
+			block: 'nearest',
+			inline: 'center',
+		} );
+	}, [ selectedTab ] );
 
 	const bumpScrollX = ( shouldScrollLeft = false ) => {
 		if ( scrollRef.current ) {
@@ -76,6 +88,14 @@ const ScrollableHorizontalNavigation = < T extends object >( {
 			? hideElement( rightScrollButton )
 			: showElement( rightScrollButton );
 	}, 50 );
+
+	function onTabChange( tabSlug: string | number | undefined ): void {
+		if ( typeof tabSlug !== 'string' ) {
+			return;
+		}
+
+		onTabClick( tabSlug );
+	}
 
 	return (
 		<div
@@ -122,13 +142,7 @@ const ScrollableHorizontalNavigation = < T extends object >( {
 					hideLabelFromVision
 					label={ translate( 'Tags' ) }
 					value={ selectedTab }
-					onChange={ ( tabSlug ) => {
-						if ( typeof tabSlug !== 'string' ) {
-							return;
-						}
-
-						onTabClick( tabSlug );
-					} }
+					onChange={ onTabChange }
 					__nextHasNoMarginBottom
 					__next40pxDefaultSize
 				>
