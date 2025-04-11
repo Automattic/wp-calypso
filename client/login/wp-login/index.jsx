@@ -559,7 +559,13 @@ export class Login extends Component {
 			! isBlazePro;
 
 		const akismetLogo = (
-			<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" fill="none">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="24"
+				height="24"
+				viewBox="0 0 44 44"
+				fill="none"
+			>
 				<rect width="44" height="44" fill="#357B49" rx="6" />
 				<path
 					fill="#fff"
