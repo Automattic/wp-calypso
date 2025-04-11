@@ -35,12 +35,12 @@ interface RouteContext {
 	};
 }
 
-async function getLoaderData( options: FetchQueryOptions ) {
+async function maybeAwaitFetch( options: FetchQueryOptions ) {
 	const cachedData = queryClient.getQueryData( options.queryKey );
 	if ( ! cachedData ) {
 		await queryClient.fetchQuery( options );
 	}
-	return cachedData;
+	return options;
 }
 
 const createRouteTree = ( config: AppConfig ) => {
@@ -75,7 +75,7 @@ const createRouteTree = ( config: AppConfig ) => {
 			path: 'sites',
 			component: Sites,
 			loader: () =>
-				getLoaderData( {
+				maybeAwaitFetch( {
 					queryKey: [ 'sites' ],
 					queryFn: fetchSites,
 				} ),
@@ -86,7 +86,7 @@ const createRouteTree = ( config: AppConfig ) => {
 			path: 'sites/$siteId',
 			component: SiteLayout,
 			loader: ( { params: { siteId } } ) =>
-				getLoaderData( {
+				maybeAwaitFetch( {
 					queryKey: [ 'site', siteId ],
 					queryFn: () => fetchSiteWithRouteData( siteId ),
 				} ),
