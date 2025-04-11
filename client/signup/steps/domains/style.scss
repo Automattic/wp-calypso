@@ -395,17 +395,8 @@ body.is-section-signup {
 			padding: 20px 0;
 			margin: 0;
 
-			@include break-small {
-				width: 80%;
-				margin: 0 auto;
-			}
-
-			@include break-medium {
-				width: 290px;
-				margin: 0 20px;
-			}
-
 			@include break-large {
+				width: 290px;
 				margin: 0 0 0 40px;
 				padding: 40px 0;
 			}
