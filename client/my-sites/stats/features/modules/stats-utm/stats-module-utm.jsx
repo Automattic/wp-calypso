@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -51,7 +50,6 @@ const StatsModuleUTM = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const translate = useTranslate();
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.SOURCE_MEDIUM );
 	const queryParams = useMemo( () => {
 		let urlParams;
@@ -65,23 +63,6 @@ const StatsModuleUTM = ( {
 		return urlParams;
 	}, [ summary, summaryUrl, context.query ] );
 
-	const getUrlWithUpdatedParams = ( url ) => {
-		const currentUrl = new URL( url );
-		let updatedParams;
-
-		// Delete param in hash URL for Odyssey Stats if any.
-		if ( isOdysseyStats && currentUrl.hash.startsWith( '#!' ) ) {
-			const hashUrl = new URL( currentUrl.hash.substring( 2 ), currentUrl.origin );
-			hashUrl.searchParams.set( UTM_QUERY_PARAM, selectedOption );
-			currentUrl.hash = `#!${ hashUrl.pathname }${ hashUrl.search }`;
-			updatedParams = Object.fromEntries( hashUrl.searchParams.entries() );
-		} else {
-			currentUrl.searchParams.set( UTM_QUERY_PARAM, selectedOption );
-			updatedParams = Object.fromEntries( currentUrl.searchParams.entries() );
-		}
-		return { url: currentUrl, params: updatedParams };
-	};
-
 	useEffect( () => {
 		const utmParam = context.query[ UTM_QUERY_PARAM ];
 
@@ -92,24 +73,21 @@ const StatsModuleUTM = ( {
 
 	useEffect( () => {
 		if ( summary ) {
-			const newUrlObj = getUrlWithUpdatedParams( window.location.href );
+			const currentUtmParam = context.query[ UTM_QUERY_PARAM ];
 
-			// Odyssey would try to hack the URL on load to remove duplicate params. We need to wait for that to finish.
-			setTimeout( () => {
-				window.history.replaceState( null, '', newUrlObj.url.toString() );
+			// Only update if the UTM param has actually changed.
+			if ( currentUtmParam !== selectedOption ) {
+				const basePath = `/stats/${ period.period }/${ path }/${ siteSlug }`;
 
-				// Update context.query with new params
 				if ( context && context.query ) {
-					Object.assign( context.query, newUrlObj.params );
+					Object.assign( context.query, { ...context.query, [ UTM_QUERY_PARAM ]: selectedOption } );
 				}
 
-				if ( isOdysseyStats ) {
-					// We need to update the page base if it changed. Otherwise, pagejs won't be able to find the routes.
-					page.base( `${ newUrlObj.url.pathname }${ newUrlObj.url.search }` );
-				}
-			}, 300 );
+				const queryString = new URLSearchParams( context.query ).toString();
+				page( `${ basePath }?${ queryString }` );
+			}
 		}
-	}, [ summary, selectedOption, isOdysseyStats ] );
+	}, [ summary, selectedOption, period, path, siteSlug, context.query ] );
 
 	const optionLabels = {
 		[ OPTION_KEYS.SOURCE_MEDIUM ]: {
