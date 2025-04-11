@@ -14,7 +14,7 @@ interface Tag {
 }
 
 interface Props {
-	selectedTag?: string;
+	selectedTag: string;
 	width: number;
 	onTagSelect: ( tag: string ) => void;
 }
