@@ -1,5 +1,5 @@
 import { useNavigate, useLoaderData, createLazyRoute } from '@tanstack/react-router';
-import { Button, Card, ExternalLink } from '@wordpress/components';
+import { Button, Card, ExternalLink, Notice } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from 'react';
@@ -122,6 +122,9 @@ function Emails() {
 				</div>
 			}
 		>
+			<Notice status="warning" isDismissible={ false }>
+				{ __( 'This is using fake data for the moment' ) }
+			</Notice>
 			<Card>
 				<DataViews
 					data={ filteredData }

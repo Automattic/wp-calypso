@@ -1,5 +1,5 @@
 import { useLoaderData, createLazyRoute } from '@tanstack/react-router';
-import { Card } from '@wordpress/components';
+import { Card, Notice } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
@@ -95,6 +95,9 @@ function Domains() {
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( domains, view, fields );
 	return (
 		<PageLayout title={ __( 'Domains' ) }>
+			<Notice status="warning" isDismissible={ false }>
+				{ __( 'This is using fake data for the moment' ) }
+			</Notice>
 			<Card>
 				<DataViews
 					data={ filteredData || [] }
