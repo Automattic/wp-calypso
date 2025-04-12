@@ -70,7 +70,19 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		recordStats( item );
 	};
 
-	const getSummaryPath = useMemo( () => {
+	const summaryPeriodPath = useMemo( () => {
+		let periodPath = `/stats/${
+			period.period
+		}/${ path }/${ siteSlug }?startDate=${ period.endOf.format( 'YYYY-MM-DD' ) }`;
+
+		// Override if custom range was used in query.
+		if ( query.start_date ) {
+			periodPath = `/stats/${ period.period }/${ path }/${ siteSlug }?startDate=${ query.start_date }&endDate=${ query.date }`;
+		}
+		return periodPath;
+	}, [ period.period, path, siteSlug, query ] );
+
+	const getSummaryPathForDaysRange = useMemo( () => {
 		return ( numberDays ) => {
 			const queryParams = new URLSearchParams( context.query );
 
@@ -78,16 +90,6 @@ export const StatsModuleSummaryLinks = ( props ) => {
 			queryParams.set( 'summarize', 1 );
 			queryParams.set( 'num', numberDays );
 			queryParams.delete( 'endDate' );
-
-			if ( numberDays === 'day' ) {
-				if ( query.start_date ) {
-					queryParams.set( 'startDate', query.start_date );
-					queryParams.set( 'endDate', query.date );
-				}
-
-				queryParams.delete( 'num' );
-				queryParams.delete( 'summarize' );
-			}
 
 			return `/stats/day/${ path }/${ siteSlug }?${ queryParams.toString() }`;
 		};
@@ -97,7 +99,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		{
 			value: '0',
 			label: getSummaryPeriodLabel(),
-			path: getSummaryPath( 'day' ),
+			path: summaryPeriodPath,
 			stat: 'Period Summary',
 			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_DAY ],
 			statType: STATS_FEATURE_SUMMARY_LINKS_DAY,
@@ -105,7 +107,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		{
 			value: '7',
 			label: translate( '7 days' ),
-			path: getSummaryPath( 7 ),
+			path: getSummaryPathForDaysRange( 7 ),
 			stat: '7 Days',
 			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_7_DAYS ],
 			statType: STATS_FEATURE_SUMMARY_LINKS_7_DAYS,
@@ -113,7 +115,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		{
 			value: '30',
 			label: translate( '30 days' ),
-			path: getSummaryPath( 30 ),
+			path: getSummaryPathForDaysRange( 30 ),
 			stat: '30 Days',
 			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_30_DAYS ],
 			statType: STATS_FEATURE_SUMMARY_LINKS_30_DAYS,
@@ -121,7 +123,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		{
 			value: '90',
 			label: translate( 'Quarter' ),
-			path: getSummaryPath( 90 ),
+			path: getSummaryPathForDaysRange( 90 ),
 			stat: 'Quarter',
 			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_QUARTER ],
 			statType: STATS_FEATURE_SUMMARY_LINKS_QUARTER,
@@ -129,7 +131,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		{
 			value: '365',
 			label: translate( 'Year' ),
-			path: getSummaryPath( 365 ),
+			path: getSummaryPathForDaysRange( 365 ),
 			stat: 'Year',
 			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_YEAR ],
 			statType: STATS_FEATURE_SUMMARY_LINKS_YEAR,
@@ -137,7 +139,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		{
 			value: '-1',
 			label: translate( 'All Time' ),
-			path: getSummaryPath( -1 ),
+			path: getSummaryPathForDaysRange( -1 ),
 			stat: 'All Time',
 			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_ALL ],
 			statType: STATS_FEATURE_SUMMARY_LINKS_ALL,
