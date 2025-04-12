@@ -1,7 +1,3 @@
-.site-overview-card {
-	padding: 16px;
-}
-
 .site-card-preview-image {
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 7px;
@@ -15,15 +11,6 @@
 .site-overview-field-title {
 	text-transform: uppercase;
 	font-size: 12px;
-}
-
-.overview-card-icon {
-	fill: #757575;
-}
-
-.overview-card-progress-bar {
-	// TODO: check how to avoid `important`.
-	width: 100% !important;
 }
 
 // TODO: this will change based on the Badge component that will be used.

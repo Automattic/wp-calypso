@@ -10,10 +10,10 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { envelope, wordpress } from '@wordpress/icons';
+import OverviewCard from '../overview-card';
 import PageLayout from '../page-layout';
 import CommentsCard from './comments-card';
 import LikesCard from './likes-card';
-import OverviewCard from './overview-card';
 import OverviewSection from './overview-section';
 import PerformanceCards from './performance-cards';
 import Sidebar from './sidebar';
@@ -78,13 +78,15 @@ function SiteOverview() {
 					currentPlan={ currentPlan }
 				/>
 				<VStack spacing={ 8 }>
-					<Card className="site-overview-card site-overview-ai-card">
-						<Text>
-							{ __(
-								'Your site is secure with excellent desktop performance and growing subscribers; now focus on boosting mobile speed and investigating recent drops in views and likes.'
-							) }
-						</Text>
-						<p>{ __( 'WordPress with AI' ) }</p>
+					<Card style={ { padding: '16px' } }>
+						<VStack>
+							<Text>
+								{ __(
+									'Your site is secure with excellent desktop performance and growing subscribers; now focus on boosting mobile speed and investigating recent drops in views and likes.'
+								) }
+							</Text>
+							<Text variant="muted">{ __( 'WordPress with AI' ) }</Text>
+						</VStack>
 					</Card>
 					<OverviewSection title={ __( 'Engagement' ) } actions={ [] }>
 						<VisitorsCard engagementStats={ engagementStats } />

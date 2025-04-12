@@ -9,6 +9,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import type { ReactElement, ReactNode } from 'react';
+import './style.scss';
 
 interface OverviewCardProps {
 	title: string;
@@ -31,7 +32,7 @@ export default function OverviewCard( {
 }: OverviewCardProps ) {
 	// TODO: handle `isLink`..
 	return (
-		<Card className="site-overview-card">
+		<Card className="dashboard-overview-card">
 			<VStack spacing={ 4 }>
 				<HStack justify="space-between">
 					<Text variant="muted">
@@ -49,7 +50,7 @@ export default function OverviewCard( {
 						) }
 					</Text>
 
-					{ icon && <Icon className="overview-card-icon" icon={ icon } /> }
+					{ icon && <Icon className="dashboard-overview-card__icon" icon={ icon } /> }
 				</HStack>
 				<HStack justify="flex-start" alignment="baseline">
 					{ customHeading ? (
@@ -68,5 +69,5 @@ export default function OverviewCard( {
 }
 
 export function OverviewCardProgressBar( { value }: { value: number } ) {
-	return <ProgressBar className="overview-card-progress-bar" value={ value } />;
+	return <ProgressBar className="dashboard-overview-card__progress-bar" value={ value } />;
 }

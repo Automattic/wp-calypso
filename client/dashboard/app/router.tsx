@@ -57,7 +57,7 @@ const createRouteTree = ( config: AppConfig ) => {
 		const overviewRoute = createRoute( {
 			getParentRoute: () => rootRoute,
 			path: 'overview',
-			component: lazy( () => import( '../overview' ) ),
+			component: lazy( () => import( '../agency-overview' ) ),
 		} );
 
 		children.push( overviewRoute );

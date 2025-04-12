@@ -1,7 +1,7 @@
 import { TrendComparison } from '@automattic/components/src/highlight-cards/count-comparison-card';
 import { __ } from '@wordpress/i18n';
 import { comment } from '@wordpress/icons';
-import OverviewCard from './overview-card';
+import OverviewCard from '../overview-card';
 import type { EngagementStats } from '../data/types';
 
 export default function CommentsCard( { engagementStats }: { engagementStats: EngagementStats } ) {

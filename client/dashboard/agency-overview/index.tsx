@@ -2,7 +2,7 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import PageLayout from '../page-layout';
 
-function Overview() {
+function AgencyOverview() {
 	return (
 		<PageLayout
 			title={ __( 'Agency Overview' ) }
@@ -21,4 +21,4 @@ function Overview() {
 	);
 }
 
-export default Overview;
+export default AgencyOverview;

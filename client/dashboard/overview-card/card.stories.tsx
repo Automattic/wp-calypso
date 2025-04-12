@@ -1,8 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { people, seen, wordpress, backup, starEmpty, comment, envelope } from '@wordpress/icons';
-import OverviewCard, { OverviewCardProgressBar } from './overview-card';
-
-import './style.scss';
+import OverviewCard, { OverviewCardProgressBar } from './';
 
 const meta = {
 	title: 'Dashboard/OverviewCard',

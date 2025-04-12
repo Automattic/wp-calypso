@@ -1,6 +1,6 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { connection } from '@wordpress/icons';
-import OverviewCard, { OverviewCardProgressBar } from './overview-card';
+import OverviewCard, { OverviewCardProgressBar } from '../overview-card';
 import type { MonitorUptime } from '../data/types';
 import './style.scss';
 

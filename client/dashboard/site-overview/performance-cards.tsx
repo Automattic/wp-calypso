@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { desktop, mobile } from '@wordpress/icons';
 import CoreBadge from 'calypso/components/core/badge';
 import wp from 'calypso/lib/wp';
-import OverviewCard, { OverviewCardProgressBar } from './overview-card';
+import OverviewCard, { OverviewCardProgressBar } from '../overview-card';
 import type { Site } from '../data/types';
 import type { UrlPerformanceInsightsQueryResponse } from 'calypso/data/site-profiler/types';
 
