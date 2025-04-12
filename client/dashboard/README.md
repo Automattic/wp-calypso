@@ -2,7 +2,7 @@
 
 Build a new hosting dashboard for WordPress.com based on the new design. The same dashboard with different entry points is used for different products (WordPress.com, Jetpack Clound and a4a).
 
-## Some principles:
+## Some principles
 
 - @wordpress/components and design system based, avoid CSS as much as possible.
 - Prefer VStack, HStack over Flex components.
