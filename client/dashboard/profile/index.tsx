@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { useLoaderData } from '@tanstack/react-router';
+import { useLoaderData, createLazyRoute } from '@tanstack/react-router';
 import {
 	Button,
 	Card,
@@ -206,4 +206,6 @@ function Profile() {
 	);
 }
 
-export default Profile;
+export const Route = createLazyRoute( 'profile' )( {
+	component: Profile,
+} );

@@ -1,4 +1,4 @@
-import { useLoaderData } from '@tanstack/react-router';
+import { useLoaderData, createLazyRoute } from '@tanstack/react-router';
 import { Card } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate, View } from '@wordpress/dataviews';
 import { useState } from '@wordpress/element';
@@ -89,7 +89,7 @@ function getDomainId( domain: Domain ): string {
 	return `${ domain.domain }-${ domain.blog_id }`;
 }
 
-export default function Domains() {
+function Domains() {
 	const [ view, setView ] = useState( () => initialViewState );
 	const domains = useLoaderData( { from: '/domains' } ) as Domain[];
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( domains, view, fields );
@@ -112,3 +112,7 @@ export default function Domains() {
 		</PageLayout>
 	);
 }
+
+export const Route = createLazyRoute( 'domains' )( {
+	component: Domains,
+} );

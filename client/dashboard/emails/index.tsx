@@ -1,4 +1,4 @@
-import { useNavigate, useLoaderData } from '@tanstack/react-router';
+import { useNavigate, useLoaderData, createLazyRoute } from '@tanstack/react-router';
 import { Button, Card, ExternalLink } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useState, useMemo } from '@wordpress/element';
@@ -47,7 +47,7 @@ const fields = [
 	},
 ] as Field< Email >[];
 
-export default function Emails() {
+function Emails() {
 	const navigate = useNavigate();
 	const emails = useLoaderData( { from: '/emails' } ) as Email[];
 	const [ selection, setSelection ] = useState< Email[] >( [] );
@@ -141,3 +141,7 @@ export default function Emails() {
 		</PageLayout>
 	);
 }
+
+export const Route = createLazyRoute( 'emails' )( {
+	component: Emails,
+} );

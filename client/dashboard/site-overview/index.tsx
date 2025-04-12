@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useLoaderData } from '@tanstack/react-router';
+import { useLoaderData, createLazyRoute } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -105,4 +105,7 @@ function SiteOverview() {
 		</PageLayout>
 	);
 }
-export default SiteOverview;
+
+export const Route = createLazyRoute( '/' )( {
+	component: SiteOverview,
+} );

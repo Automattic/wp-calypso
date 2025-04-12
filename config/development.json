@@ -207,6 +207,7 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"user-management-revamp": true,
 		"wpcom-user-bootstrap": false,
-		"yolo/command-palette": true
+		"yolo/command-palette": true,
+		"dashboard/v2": true
 	}
 }

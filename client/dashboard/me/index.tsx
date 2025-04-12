@@ -1,4 +1,4 @@
-import { Outlet } from '@tanstack/react-router';
+import { Outlet, createLazyRoute } from '@tanstack/react-router';
 import { __experimentalHStack as HStack, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import HeaderBar from '../header-bar';
@@ -24,4 +24,6 @@ function Me() {
 	);
 }
 
-export default Me;
+export const Route = createLazyRoute( 'me' )( {
+	component: Me,
+} );

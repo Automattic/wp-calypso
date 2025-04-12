@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useLoaderData, Outlet } from '@tanstack/react-router';
+import { useLoaderData, Outlet, createLazyRoute } from '@tanstack/react-router';
 import { __experimentalHStack as HStack, Button } from '@wordpress/components';
 import HeaderBar from '../header-bar';
 import SiteMenu from '../site-menu';
@@ -38,4 +38,6 @@ function Site() {
 	);
 }
 
-export default Site;
+export const Route = createLazyRoute( 'site/$siteId' )( {
+	component: Site,
+} );

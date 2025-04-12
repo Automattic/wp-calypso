@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useNavigate, useLoaderData } from '@tanstack/react-router';
+import { useNavigate, useLoaderData, createLazyRoute } from '@tanstack/react-router';
 import { Button, Card } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useState, useEffect } from '@wordpress/element';
@@ -132,4 +132,6 @@ function Sites() {
 	);
 }
 
-export default Sites;
+export const Route = createLazyRoute( 'sites' )( {
+	component: Sites,
+} );

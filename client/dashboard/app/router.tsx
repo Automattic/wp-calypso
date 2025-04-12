@@ -1,5 +1,4 @@
 import { Router, createRoute, createRootRoute, redirect } from '@tanstack/react-router';
-import { lazy } from '@wordpress/element';
 import NotFound from '../404';
 import UnknownError from '../500';
 import {
@@ -57,8 +56,7 @@ const createRouteTree = ( config: AppConfig ) => {
 		const overviewRoute = createRoute( {
 			getParentRoute: () => rootRoute,
 			path: 'overview',
-			component: lazy( () => import( '../agency-overview' ) ),
-		} );
+		} ).lazy( () => import( '../agency-overview' ).then( ( d ) => d.Route ) );
 
 		children.push( overviewRoute );
 	}
@@ -67,18 +65,16 @@ const createRouteTree = ( config: AppConfig ) => {
 		const sitesRoute = createRoute( {
 			getParentRoute: () => rootRoute,
 			path: 'sites',
-			component: lazy( () => import( '../sites' ) ),
 			loader: () =>
 				maybeAwaitFetch( {
 					queryKey: [ 'sites' ],
 					queryFn: fetchSites,
 				} ),
-		} );
+		} ).lazy( () => import( '../sites' ).then( ( d ) => d.Route ) );
 
 		const siteRoute = createRoute( {
 			getParentRoute: () => rootRoute,
 			path: 'sites/$siteId',
-			component: lazy( () => import( '../site' ) ),
 			loader: ( { params: { siteId } } ) =>
 				maybeAwaitFetch( {
 					queryKey: [ 'site', siteId ],
@@ -112,19 +108,17 @@ const createRouteTree = ( config: AppConfig ) => {
 					},
 				} ),
 			notFoundComponent: NotFound,
-		} );
+		} ).lazy( () => import( '../site' ).then( ( d ) => d.Route ) );
 
 		const siteOverviewRoute = createRoute( {
 			getParentRoute: () => siteRoute,
 			path: '/',
-			component: lazy( () => import( '../site-overview' ) ),
-		} );
+		} ).lazy( () => import( '../site-overview' ).then( ( d ) => d.Route ) );
 
 		const siteDeploymentsRoute = createRoute( {
 			getParentRoute: () => siteRoute,
 			path: 'deployments',
-			component: lazy( () => import( '../site-deployments' ) ),
-		} );
+		} ).lazy( () => import( '../site-deployments' ).then( ( d ) => d.Route ) );
 
 		children.push(
 			sitesRoute,
@@ -136,13 +130,12 @@ const createRouteTree = ( config: AppConfig ) => {
 		const domainsRoute = createRoute( {
 			getParentRoute: () => rootRoute,
 			path: 'domains',
-			component: lazy( () => import( '../domains' ) ),
 			loader: () =>
 				queryClient.ensureQueryData( {
 					queryKey: [ 'domains' ],
 					queryFn: fetchDomains,
 				} ) as Promise< Domain[] >,
-		} );
+		} ).lazy( () => import( '../domains' ).then( ( d ) => d.Route ) );
 
 		children.push( domainsRoute );
 	}
@@ -151,13 +144,12 @@ const createRouteTree = ( config: AppConfig ) => {
 		const emailsRoute = createRoute( {
 			getParentRoute: () => rootRoute,
 			path: 'emails',
-			component: lazy( () => import( '../emails' ) ),
 			loader: () =>
 				queryClient.ensureQueryData( {
 					queryKey: [ 'emails' ],
 					queryFn: fetchEmails,
 				} ) as Promise< Email[] >,
-		} );
+		} ).lazy( () => import( '../emails' ).then( ( d ) => d.Route ) );
 
 		children.push( emailsRoute );
 	}
@@ -166,7 +158,6 @@ const createRouteTree = ( config: AppConfig ) => {
 		const meRoute = createRoute( {
 			getParentRoute: () => rootRoute,
 			path: 'me',
-			component: lazy( () => import( '../me' ) ),
 			loader: () =>
 				queryClient.ensureQueryData( {
 					queryKey: [ 'profile' ],
@@ -180,37 +171,32 @@ const createRouteTree = ( config: AppConfig ) => {
 					window.location.href = loginUrl;
 				}
 			},
-		} );
+		} ).lazy( () => import( '../me' ).then( ( d ) => d.Route ) );
 
 		const profileRoute = createRoute( {
 			getParentRoute: () => meRoute,
 			path: 'profile',
-			component: lazy( () => import( '../profile' ) ),
-		} );
+		} ).lazy( () => import( '../profile' ).then( ( d ) => d.Route ) );
 
 		const billingRoute = createRoute( {
 			getParentRoute: () => meRoute,
 			path: 'billing',
-			component: lazy( () => import( '../billing' ) ),
-		} );
+		} ).lazy( () => import( '../billing' ).then( ( d ) => d.Route ) );
 
 		const securityRoute = createRoute( {
 			getParentRoute: () => meRoute,
 			path: 'security',
-			component: lazy( () => import( '../security' ) ),
-		} );
+		} ).lazy( () => import( '../security' ).then( ( d ) => d.Route ) );
 
 		const privacyRoute = createRoute( {
 			getParentRoute: () => meRoute,
 			path: 'privacy',
-			component: lazy( () => import( '../privacy' ) ),
-		} );
+		} ).lazy( () => import( '../privacy' ).then( ( d ) => d.Route ) );
 
 		const notificationsRoute = createRoute( {
 			getParentRoute: () => meRoute,
 			path: 'notifications',
-			component: lazy( () => import( '../notifications' ) ),
-		} );
+		} ).lazy( () => import( '../notifications' ).then( ( d ) => d.Route ) );
 
 		children.push(
 			meRoute.addChildren( [

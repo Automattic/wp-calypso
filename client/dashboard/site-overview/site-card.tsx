@@ -29,7 +29,7 @@ export default function SiteCard( {
 	return (
 		<Card>
 			<VStack spacing={ 6 }>
-				<div className="site-card-preview-image">
+				<div className="dashboard-site-overview__preview-image">
 					<img
 						src={ `https://s0.wp.com/mshots/v1/${ encodeURIComponent( url ) }?w=350&h=200` }
 						alt={ __( 'Site preview' ) }
