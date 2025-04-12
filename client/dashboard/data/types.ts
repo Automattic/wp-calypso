@@ -1,11 +1,15 @@
-export interface User {
+export interface Profile {
 	user_login: string;
 	display_name: string;
 	user_email: string;
 	user_URL: string;
 	description: string;
-	isDeveloper: boolean;
+	is_dev_account: boolean;
 	avatar_URL: string;
+}
+
+export interface User {
+	username: string;
 }
 
 export interface Domain {

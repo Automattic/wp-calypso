@@ -14,12 +14,12 @@ import {
 	ExternalLink,
 } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
-import { useMemo, useState, createInterpolateElement } from '@wordpress/element';
+import { useState, createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { updateProfile } from '../data';
 import EditGravatar from '../edit-gravatar';
 import PageLayout from '../page-layout';
-import type { User } from '../data/types';
+import type { Profile as ProfileType } from '../data/types';
 import type { Field, Form } from '@wordpress/dataviews';
 import './style.scss';
 
@@ -78,7 +78,7 @@ const fields = [
 			);
 		},
 	},
-] as Field< User >[];
+] as Field< ProfileType >[];
 
 const form = {
 	type: 'regular',
@@ -99,23 +99,16 @@ const form = {
 
 function Profile() {
 	const mutation = useMutation( { mutationFn: updateProfile } );
-	const serverData = useLoaderData( { from: '/me' } ) as User;
-	const [ localFormData, setLocalFormData ] = useState< User | undefined >();
-
-	const data = useMemo( () => {
-		if ( ! localFormData ) {
-			return serverData;
-		}
-		return { ...serverData, ...localFormData };
-	}, [ localFormData, serverData ] );
-
+	const serverData = useLoaderData( { from: '/me' } ) as ProfileType;
+	const [ data, setData ] = useState< ProfileType >( serverData );
 	const isSaving = mutation.isPending;
+	const isDirty = data !== serverData;
 	const error = mutation.error;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		if ( localFormData ) {
-			mutation.mutate( localFormData );
+		if ( isDirty ) {
+			mutation.mutate( data );
 		}
 	};
 
@@ -162,12 +155,12 @@ function Profile() {
 					<Card>
 						<CardBody>
 							<VStack spacing={ 4 } alignment="left">
-								<DataForm< User >
+								<DataForm< ProfileType >
 									data={ data }
 									fields={ fields }
 									form={ form }
 									onChange={ ( edits ) => {
-										setLocalFormData( ( current ) => ( {
+										setData( ( current ) => ( {
 											...current,
 											...edits,
 										} ) );
@@ -178,7 +171,7 @@ function Profile() {
 									variant="primary"
 									type="submit"
 									isBusy={ isSaving }
-									disabled={ isSaving || ! localFormData }
+									disabled={ isSaving || ! isDirty }
 								>
 									{ __( 'Save' ) }
 								</Button>

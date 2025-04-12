@@ -24,6 +24,7 @@ function NavMenuItem( { to, children }: { to: string; children: React.ReactNode 
 	} ).href;
 	return (
 		<MenuItem
+			// @ts-expect-error -- The MenuItem component types are not correct, href is a valid prop.
 			href={ href }
 			onClick={ ( e ) => {
 				e.preventDefault();
@@ -137,7 +138,7 @@ function SecondaryMenu() {
 					label={ __( 'Notifications' ) }
 					icon={ hasUnreadNotifications ? bellUnread : bell }
 					variant="tertiary"
-					onClick={ ( e ) => {
+					onClick={ ( e: React.MouseEvent< HTMLButtonElement > ) => {
 						e.preventDefault();
 						navigate( { to: notificationsPath } );
 					} }

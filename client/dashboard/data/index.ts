@@ -8,6 +8,7 @@ import type {
 	Plan,
 	Site,
 	User,
+	Profile,
 	TwoStep,
 } from './types';
 
@@ -15,9 +16,9 @@ export const fetchProfile = () =>
 	wpcom.req.get( {
 		path: '/me/settings?http_envelope=1',
 		apiNamespace: 'rest/v1.1',
-	} ) as Promise< User >;
+	} ) as Promise< Profile >;
 
-export const updateProfile = ( data: User ) =>
+export const updateProfile = ( data: Profile ) =>
 	wpcom.req.post( {
 		path: '/me/settings',
 		apiNamespace: 'rest/v1.1',

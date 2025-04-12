@@ -8,12 +8,13 @@ import {
 	ProgressBar,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import type { ReactNode } from 'react';
+import type { ReactElement, ReactNode } from 'react';
+
 interface OverviewCardProps {
 	title: string;
 	heading?: string;
 	customHeading?: ReactNode;
-	icon?: ReactNode;
+	icon?: ReactElement;
 	metaText?: string;
 	isLink?: boolean;
 	children?: ReactNode;

@@ -91,7 +91,7 @@ function SiteOverview() {
 						<ViewsCard engagementStats={ engagementStats } />
 						<LikesCard engagementStats={ engagementStats } />
 						<CommentsCard engagementStats={ engagementStats } />
-						<OverviewCard title={ __( 'Subscribers' ) } icon={ envelope } isLink></OverviewCard>
+						<OverviewCard title={ __( 'Subscribers' ) } icon={ envelope } isLink />
 					</OverviewSection>
 					<OverviewSection title={ __( 'Site health' ) } actions={ [] }>
 						<PerformanceCards site={ site } />

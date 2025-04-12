@@ -5,7 +5,7 @@ import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import PageLayout from '../page-layout';
 import type { Email } from '../data/types';
-import type { View, Field } from '@wordpress/dataviews';
+import type { View, Field, Action } from '@wordpress/dataviews';
 
 const fields = [
 	{
@@ -65,7 +65,7 @@ export default function Emails() {
 		titleField: 'emailAddress',
 	} );
 
-	const actions = useMemo(
+	const actions: Action< Email >[] = useMemo(
 		() => [
 			{
 				id: 'manage',

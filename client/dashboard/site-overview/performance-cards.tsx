@@ -7,8 +7,10 @@ import OverviewCard, { OverviewCardProgressBar } from './overview-card';
 import type { Site } from '../data/types';
 import type { UrlPerformanceInsightsQueryResponse } from 'calypso/data/site-profiler/types';
 
+type BadgeIntent = 'default' | 'info' | 'success' | 'warning' | 'error';
+
 function PerformanceBadge( { value }: { value: number } ) {
-	const badgeProps = { intent: 'error', label: __( 'Poor' ) };
+	const badgeProps = { intent: 'error' as BadgeIntent, label: __( 'Poor' ) };
 	if ( value >= 90 ) {
 		badgeProps.intent = 'success';
 		badgeProps.label = __( 'Excellent' );
