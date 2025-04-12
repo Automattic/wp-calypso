@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { ComponentSwapper, SegmentedControl, SelectDropdown } from '@automattic/components';
 import { Icon, lock } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -39,8 +38,6 @@ export const StatsModuleSummaryLinks = ( props ) => {
 	} = props;
 
 	const dispatch = useDispatch();
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-
 	const getSummaryPeriodLabel = () => {
 		if ( query.start_date ) {
 			return translate( 'Custom Range Summary' );
@@ -94,7 +91,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 
 			return `/stats/day/${ path }/${ siteSlug }?${ queryParams.toString() }`;
 		};
-	}, [ path, siteSlug, isOdysseyStats, query, context.query ] );
+	}, [ path, siteSlug, query, context.query ] );
 
 	const options = [
 		{
