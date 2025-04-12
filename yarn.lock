@@ -23075,21 +23075,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsesc@npm:^3.0.2, jsesc@npm:~3.0.2":
-  version: 3.0.2
-  resolution: "jsesc@npm:3.0.2"
-  bin:
-    jsesc: bin/jsesc
-  checksum: ef22148f9e793180b14d8a145ee6f9f60f301abf443288117b4b6c53d0ecd58354898dc506ccbb553a5f7827965cd38bc5fb726575aae93c5e8915e2de8290e1
-  languageName: node
-  linkType: hard
-
-"jsesc@npm:^3.1.0":
+"jsesc@npm:^3.0.2, jsesc@npm:^3.1.0":
   version: 3.1.0
   resolution: "jsesc@npm:3.1.0"
   bin:
     jsesc: bin/jsesc
   checksum: 531779df5ec94f47e462da26b4cbf05eb88a83d9f08aac2ba04206508fc598527a153d08bd462bae82fc78b3eaa1a908e1a4a79f886e9238641c4cdefaf118b1
+  languageName: node
+  linkType: hard
+
+"jsesc@npm:~3.0.2":
+  version: 3.0.2
+  resolution: "jsesc@npm:3.0.2"
+  bin:
+    jsesc: bin/jsesc
+  checksum: ef22148f9e793180b14d8a145ee6f9f60f301abf443288117b4b6c53d0ecd58354898dc506ccbb553a5f7827965cd38bc5fb726575aae93c5e8915e2de8290e1
   languageName: node
   linkType: hard
 
