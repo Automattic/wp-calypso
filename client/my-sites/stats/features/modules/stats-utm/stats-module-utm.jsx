@@ -71,26 +71,19 @@ const StatsModuleUTM = ( {
 	useEffect( () => {
 		const utmParam = context.query[ UTM_QUERY_PARAM ];
 
-		if ( utmParam && Object.values( OPTION_KEYS ).includes( utmParam ) ) {
-			setSelectedOption( utmParam );
-		}
-	}, [ context.query ] );
-
-	useEffect( () => {
-		if ( summary ) {
-			const currentUtmParam = context.query[ UTM_QUERY_PARAM ];
-
-			// Only update if the UTM param has actually changed.
-			if ( currentUtmParam !== selectedOption ) {
-				if ( context && context.query ) {
-					Object.assign( context.query, { ...context.query, [ UTM_QUERY_PARAM ]: selectedOption } );
-				}
-
-				const queryString = new URLSearchParams( context.query ).toString();
-				page( `${ basePath }?${ queryString }` );
+		// Only proceed if we have a summary and a valid UTM param
+		if ( summary && utmParam && Object.values( OPTION_KEYS ).includes( utmParam ) ) {
+			// Only update state and URL if the param is different from current selection
+			if ( utmParam !== selectedOption ) {
+				setSelectedOption( utmParam );
 			}
+		} else if ( summary && selectedOption !== context.query[ UTM_QUERY_PARAM ] ) {
+			// If we have a summary but URL doesn't match state, update URL
+			Object.assign( context.query, { ...context.query, [ UTM_QUERY_PARAM ]: selectedOption } );
+			const queryString = new URLSearchParams( context.query ).toString();
+			page( `${ basePath }?${ queryString }` );
 		}
-	}, [ summary, selectedOption, basePath, context.query ] );
+	}, [ context.query, selectedOption, summary, basePath ] );
 
 	const optionLabels = {
 		[ OPTION_KEYS.SOURCE_MEDIUM ]: {
