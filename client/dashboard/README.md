@@ -2,7 +2,7 @@
 
 Build a new hosting dashboard for WordPress.com based on the new design. The same dashboard with different entry points is used for different products (WordPress.com, Jetpack Clound and a4a).
 
-# Some principles:
+## Some principles:
 
 - @wordpress/components and design system based, avoid CSS as much as possible.
 - Prefer VStack, HStack over Flex components.
@@ -17,10 +17,20 @@ Build a new hosting dashboard for WordPress.com based on the new design. The sam
 - Performance testing and e2e testing are key.
 - Document all the architecture decisions (design docs)
 
-# Shortcuts taken
+## Shortcuts taken
 
 - Importing SASS files seems to bring other unexpected CSS variables to our bundles (masterbar, sidebar), it also brings fonts (Recoleta, Noto) and some global classes. Why? Imports should ideally be explicit.
-- The WordPress.com logo should be built as a reusable component/package.
+- We should have reusable packages for our logos: a4a and WordPress.com.
+- We're using the CoreBadge coçponent froç automattic/components. The Badge component needs to be stabilized.
+
+## Questions
+
+- Should we show the WP and PHP version in simple sites?
+- SiteMonitorUptimeCard currently calculates uptime percentage based on days with `up` and `down`. Should we do this by calculating minutes or something else? What would be the value of a day, if a site was down for 30 minutes for example?
+- Check possible nuances around `fetchSiteEngagementStats`. For example if there are needed checks for availability of stats, returned data and manipulation.
+- Should we use `useQuery` inside the components or at the parent `overview` page?
+- Investigate the endpoints used in `PerformanceCards`. They return info about jobs `queued|running` and we have to use `refetchInterval` until we have both results. Is there a better way to do this and use a cached value? That would solve the delayed rendering of these cards.
+
 
 ## E2E testing
 

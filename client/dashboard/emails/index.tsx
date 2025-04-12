@@ -1,8 +1,8 @@
 import { useNavigate, useLoaderData, createLazyRoute } from '@tanstack/react-router';
 import { Button, Card, ExternalLink } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
-import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useState, useMemo } from 'react';
 import PageLayout from '../page-layout';
 import type { Email } from '../data/types';
 import type { View, Field, Action } from '@wordpress/dataviews';

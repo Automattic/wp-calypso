@@ -14,8 +14,9 @@ import {
 	ExternalLink,
 } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
-import { useState, createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { useState } from 'react';
 import { updateProfile } from '../data';
 import EditGravatar from '../edit-gravatar';
 import PageLayout from '../page-layout';

@@ -1,5 +1,5 @@
 import { ExternalLink, __experimentalHeading as Heading } from '@wordpress/components';
-import { createElement, createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { backup } from '@wordpress/icons';
 import filesize from 'filesize';
@@ -31,7 +31,7 @@ export default function StorageCard( { mediaStorage }: { mediaStorage: MediaStor
 						// @ts-expect-error children prop is injected by createInterpolateElement
 						<Heading level={ 2 } style={ { whiteSpace: 'nowrap' } } />
 					),
-					span: createElement( 'span' ),
+					span: <span />,
 				}
 			) }
 		>

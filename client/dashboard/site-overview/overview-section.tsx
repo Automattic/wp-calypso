@@ -8,8 +8,8 @@ import {
 	MenuItem,
 } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
-import { useState } from '@wordpress/element';
 import { more } from '@wordpress/icons';
+import { useState } from 'react';
 import type { ReactNode } from 'react';
 
 function OverviewSectionActionMenu( { actions }: { actions?: OverviewSectionAction[] } ) {
