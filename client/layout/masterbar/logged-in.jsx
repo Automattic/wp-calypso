@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { isEcommercePlan } from '@automattic/calypso-products/src';
+import { isEcommercePlan } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { CoreBadge } from '@automattic/components';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
