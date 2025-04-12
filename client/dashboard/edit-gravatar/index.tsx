@@ -1,8 +1,14 @@
 import path from 'path';
-import { Button, Spinner, FormFileUpload, DropZone } from '@wordpress/components';
+import {
+	Button,
+	Spinner,
+	FormFileUpload,
+	DropZone,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Icon, upload, caution, people } from '@wordpress/icons';
-import { useState, ReactNode, CSSProperties, KeyboardEvent } from 'react';
+import { Icon, upload, caution } from '@wordpress/icons';
+import { useState, CSSProperties, KeyboardEvent } from 'react';
 import wpcom from 'calypso/lib/wp';
 
 const ALLOWED_FILE_EXTENSIONS = [ 'jpg', 'jpeg', 'gif', 'png' ];
@@ -61,21 +67,11 @@ interface EditGravatarProps {
 	avatarUrl: string;
 	/** User's email address for gravatar upload */
 	userEmail: string;
-	/** Whether the gravatar profile is hidden from public */
-	isGravatarProfileHidden?: boolean;
 	/** Whether the user's email is verified */
 	isEmailVerified?: boolean;
-	/** Additional HTML for upload actions */
-	additionalUploadHtml?: ReactNode;
 }
 
-const EditGravatar = ( {
-	isGravatarProfileHidden = false,
-	isEmailVerified = true,
-	avatarUrl,
-	userEmail,
-	additionalUploadHtml,
-}: EditGravatarProps ) => {
+const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGravatarProps ) => {
 	const [ isUploading, setIsUploading ] = useState< boolean >( false );
 	const [ tempImage, setTempImage ] = useState< string | null >( null );
 	const [ showEmailVerificationNotice, setShowEmailVerificationNotice ] =
@@ -193,38 +189,6 @@ const EditGravatar = ( {
 		}
 	};
 
-	// Render profile hidden state
-	if ( isGravatarProfileHidden ) {
-		return (
-			<div style={ { display: 'flex', flexDirection: 'column', gap: '8px' } }>
-				<div
-					style={ {
-						width: 150,
-						height: 150,
-						borderRadius: '50%',
-						backgroundColor: '#c3c4c7',
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'center',
-					} }
-				>
-					{ /* Using WordPress icon */ }
-					<Icon icon={ people } size={ 96 } style={ { fill: '#8c8f94' } } />
-				</div>
-				<div>
-					<p style={ { fontSize: 13, color: '#757575' } }>
-						{ __( 'Your profile photo is hidden.' ) }
-					</p>
-					<div style={ { fontSize: 12, color: '#757575', marginBottom: 16 } }>
-						{ __(
-							'The avatar you use on WordPress.com comes from Gravatar, a universal avatar service. However, your photo and Gravatar profile are hidden, preventing them from appearing on any site.'
-						) }
-					</div>
-				</div>
-			</div>
-		);
-	}
-
 	// Create styles with hover effect
 	const overlayStyle: CSSProperties = {
 		position: 'absolute',
@@ -241,13 +205,11 @@ const EditGravatar = ( {
 	};
 
 	return (
-		<div
+		<VStack
 			style={ {
-				display: 'flex',
-				flexDirection: 'column',
-				gap: '16px',
 				opacity: isUploading ? 0.7 : 1,
 			} }
+			spacing={ 4 }
 		>
 			<FormFileUpload
 				accept="image/*"
@@ -348,15 +310,7 @@ const EditGravatar = ( {
 					</Button>
 				</div>
 			) }
-
-			<div>
-				{ additionalUploadHtml && (
-					<FormFileUpload accept="image/*" onChange={ handleReceiveFile }>
-						{ additionalUploadHtml }
-					</FormFileUpload>
-				) }
-			</div>
-		</div>
+		</VStack>
 	);
 };
 

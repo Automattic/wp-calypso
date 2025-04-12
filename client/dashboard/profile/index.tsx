@@ -138,7 +138,7 @@ function Profile() {
 
 					<Card>
 						<CardBody>
-							<HStack justify="flex-start">
+							<HStack justify="flex-start" spacing={ 8 }>
 								<div>
 									<EditGravatar avatarUrl={ data.avatar_URL } userEmail={ data.user_email } />
 								</div>
