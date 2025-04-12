@@ -3,6 +3,7 @@ import { __experimentalHStack as HStack, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import HeaderBar from '../header-bar';
 import MeMenu from '../me-menu';
+import MenuDivider from '../menu-divider';
 
 function Me() {
 	return (
@@ -16,6 +17,7 @@ function Me() {
 					>
 						{ __( 'Account' ) }
 					</Button>
+					<MenuDivider />
 					<MeMenu />
 				</HStack>
 			</HeaderBar>

@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useLoaderData, Outlet, createLazyRoute } from '@tanstack/react-router';
 import { __experimentalHStack as HStack, Button } from '@wordpress/components';
 import HeaderBar from '../header-bar';
+import MenuDivider from '../menu-divider';
 import SiteMenu from '../site-menu';
 import type { Site as SiteType } from '../data/types';
 
@@ -30,6 +31,7 @@ function Site() {
 							<span>{ site.name }</span>
 						</HStack>
 					</Button>
+					<MenuDivider />
 					<SiteMenu siteId={ site.id } />
 				</HStack>
 			</HeaderBar>

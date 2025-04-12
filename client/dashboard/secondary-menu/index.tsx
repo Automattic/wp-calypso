@@ -14,6 +14,7 @@ import ReaderIcon from 'calypso/assets/icons/reader/reader-icon';
 import { useAppContext } from '../app/context';
 import { useAuth } from '../auth';
 import { useOpenCommandPalette } from '../command-palette/utils';
+import MenuDivider from '../menu-divider';
 import './style.scss';
 
 function NavMenuItem( { to, children }: { to: string; children: React.ReactNode } ) {
@@ -120,7 +121,7 @@ function SecondaryMenu() {
 						text={ __( 'Reader' ) }
 						href="/reader"
 					/>
-					<div className="dashboard-secondary-menu__divider" />
+					<MenuDivider />
 				</>
 			) }
 			{ supports.help && (
