@@ -17,11 +17,16 @@ Build a new hosting dashboard for WordPress.com based on the new design. The sam
 - Performance testing and e2e testing are key.
 - Document all the architecture decisions (design docs)
 
-## Shortcuts taken
+## Suggestions
 
-- Importing SASS files seems to bring other unexpected CSS variables to our bundles (masterbar, sidebar), it also brings fonts (Recoleta, Noto) and some global classes. Why? Imports should ideally be explicit.
 - We should have reusable packages for our logos: a4a and WordPress.com.
 - We're using the CoreBadge coçponent froç automattic/components. The Badge component needs to be stabilized.
+
+## Bugs
+
+- Hover color for primary @wordpress/components Button component is wrong by default (if you don't define a theme/user profile).
+- The need to pass `{ width: 'auto' }` to some HStack components to make them work like regular divs.
+- Importing SASS files bring unexpected CSS variables to our bundles (masterbar, sidebar), it also brings fonts (Recoleta, Noto) and some global classes. Why? Imports should ideally be explicit.
 
 ## Questions
 
