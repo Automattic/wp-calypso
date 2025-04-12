@@ -50,7 +50,12 @@ const StatsModuleUTM = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const translate = useTranslate();
-	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.SOURCE_MEDIUM );
+	const [ selectedOption, setSelectedOption ] = useState( () => {
+		const utmQueryParam = context.query[ UTM_QUERY_PARAM ];
+		return Object.values( OPTION_KEYS ).includes( utmQueryParam )
+			? utmQueryParam
+			: OPTION_KEYS.SOURCE_MEDIUM;
+	} );
 	const queryParams = useMemo( () => {
 		let urlParams;
 
@@ -69,21 +74,24 @@ const StatsModuleUTM = ( {
 	);
 
 	useEffect( () => {
-		const utmParam = context.query[ UTM_QUERY_PARAM ];
+		if ( ! summary ) {
+			return;
+		}
 
-		// Only proceed if we have a summary and a valid UTM param
-		if ( summary && utmParam && Object.values( OPTION_KEYS ).includes( utmParam ) ) {
-			// Only update state and URL if the param is different from current selection
-			if ( utmParam !== selectedOption ) {
-				setSelectedOption( utmParam );
-			}
-		} else if ( summary && selectedOption !== context.query[ UTM_QUERY_PARAM ] ) {
-			// If we have a summary but URL doesn't match state, update URL
+		const utmParam = context.query[ UTM_QUERY_PARAM ];
+		const isValidUtmParam = utmParam && Object.values( OPTION_KEYS ).includes( utmParam );
+
+		if ( ! isValidUtmParam ) {
+			return;
+		}
+
+		// If URL has valid param and it's different from state, update state
+		if ( utmParam !== selectedOption ) {
 			Object.assign( context.query, { ...context.query, [ UTM_QUERY_PARAM ]: selectedOption } );
 			const queryString = new URLSearchParams( context.query ).toString();
 			page( `${ basePath }?${ queryString }` );
 		}
-	}, [ context.query, selectedOption, summary, basePath ] );
+	}, [ context.query, selectedOption, basePath, summary ] );
 
 	const optionLabels = {
 		[ OPTION_KEYS.SOURCE_MEDIUM ]: {
