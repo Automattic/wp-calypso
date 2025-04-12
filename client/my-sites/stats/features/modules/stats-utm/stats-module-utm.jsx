@@ -63,6 +63,11 @@ const StatsModuleUTM = ( {
 		return urlParams;
 	}, [ summary, summaryUrl, context.query ] );
 
+	const basePath = useMemo(
+		() => `/stats/${ period.period }/${ path }/${ siteSlug }`,
+		[ period.period, path, siteSlug ]
+	);
+
 	useEffect( () => {
 		const utmParam = context.query[ UTM_QUERY_PARAM ];
 
@@ -77,8 +82,6 @@ const StatsModuleUTM = ( {
 
 			// Only update if the UTM param has actually changed.
 			if ( currentUtmParam !== selectedOption ) {
-				const basePath = `/stats/${ period.period }/${ path }/${ siteSlug }`;
-
 				if ( context && context.query ) {
 					Object.assign( context.query, { ...context.query, [ UTM_QUERY_PARAM ]: selectedOption } );
 				}
@@ -87,7 +90,7 @@ const StatsModuleUTM = ( {
 				page( `${ basePath }?${ queryString }` );
 			}
 		}
-	}, [ summary, selectedOption, period, path, siteSlug, context.query ] );
+	}, [ summary, selectedOption, basePath, context.query ] );
 
 	const optionLabels = {
 		[ OPTION_KEYS.SOURCE_MEDIUM ]: {
@@ -133,8 +136,6 @@ const StatsModuleUTM = ( {
 
 			// Some modules do not have view all abilities
 			if ( ! summary && period && path && siteSlug ) {
-				const basePath = `/stats/${ period.period }/${ path }/${ siteSlug }`;
-
 				if ( ! queryParams.has( 'startDate' ) ) {
 					queryParams.set( 'startDate', period.startOf.format( 'YYYY-MM-DD' ) );
 				}
@@ -145,7 +146,7 @@ const StatsModuleUTM = ( {
 				return `${ basePath }?${ queryParams.toString() }`;
 			}
 		};
-	}, [ queryParams, selectedOption, period, path, siteSlug, summary, UTM_QUERY_PARAM ] );
+	}, [ queryParams, selectedOption, period, basePath, summary ] );
 
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
