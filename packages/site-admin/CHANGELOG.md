@@ -32,8 +32,11 @@ Initial release of the site-admin package providing a framework for building mod
 - `SiteHub`: Site navigation and context switcher
 - `Link`: Router component providing declarative navigation
 
-## Next
+## 0.1.1
 
 ### Components
 
 - `NavigableRegion`: Accessible region component with keyboard navigation support
+- Expose the `SiteHub` component publicly
+
+## Next

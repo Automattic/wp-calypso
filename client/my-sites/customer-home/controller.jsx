@@ -1,14 +1,17 @@
 import page from '@automattic/calypso-router';
+import { captureException } from '@automattic/calypso-sentry';
 import { fetchLaunchpad } from '@automattic/data-stores';
 import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
 import { isRemovedFlow } from 'calypso/landing/stepper/utils/flow-redirect-handler';
 import { getQueryArgs } from 'calypso/lib/query-args';
+import { getSiteFragment } from 'calypso/lib/route';
 import { bumpStat } from 'calypso/state/analytics/actions';
 import { fetchModuleList } from 'calypso/state/jetpack/modules/actions';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import { shouldShowLaunchpadFirst } from 'calypso/state/selectors/should-show-launchpad-first';
+import { requestSite } from 'calypso/state/sites/actions';
 import { isSiteOnWooExpressEcommerceTrial } from 'calypso/state/sites/plans/selectors';
 import isSiteBigSkyTrial from 'calypso/state/sites/plans/selectors/is-site-big-sky-trial';
 import { canCurrentUserUseCustomerHome, getSiteUrl } from 'calypso/state/sites/selectors';
@@ -35,6 +38,14 @@ export default async function renderHome( context, next ) {
 }
 
 export async function maybeRedirect( context, next ) {
+	const siteFragment = context.params.site || getSiteFragment( context.path );
+	try {
+		await context.store.dispatch( requestSite( siteFragment ) );
+	} catch ( e ) {
+		// If the network returns an error we don't want the page to fail to load
+		captureException( e );
+	}
+
 	const state = context.store.getState();
 	const slug = getSelectedSiteSlug( state );
 

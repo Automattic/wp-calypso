@@ -143,6 +143,7 @@ function ClientCheckoutContent() {
 			<CheckoutMain
 				sitelessCheckoutType="a4a"
 				redirectTo={ window.location.origin + '/client/subscriptions' }
+				customizedPreviousPath="/client/subscriptions"
 				isInModal={ false }
 				siteSlug=""
 				siteId={ 0 }
