@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { captureException } from '@automattic/calypso-sentry';
 import { fetchLaunchpad } from '@automattic/data-stores';
 import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
 import { isRemovedFlow } from 'calypso/landing/stepper/utils/flow-redirect-handler';
@@ -38,7 +39,12 @@ export default async function renderHome( context, next ) {
 
 export async function maybeRedirect( context, next ) {
 	const siteFragment = context.params.site || getSiteFragment( context.path );
-	await context.store.dispatch( requestSite( siteFragment ) );
+	try {
+		await context.store.dispatch( requestSite( siteFragment ) );
+	} catch ( e ) {
+		// If the network returns an error we don't want the page to fail to load
+		captureException( e );
+	}
 
 	const state = context.store.getState();
 	const slug = getSelectedSiteSlug( state );
