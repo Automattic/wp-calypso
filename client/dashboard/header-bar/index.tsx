@@ -7,7 +7,7 @@ function Header( { as = 'div', children }: { as?: 'div' | 'header'; children?: R
 			as={ as }
 			className="dashboard-header-bar"
 			alignment="left"
-			spacing={ 10 }
+			spacing={ 6 }
 			justify="flex-start"
 		>
 			{ children }
