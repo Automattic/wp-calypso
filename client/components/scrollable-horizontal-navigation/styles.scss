@@ -32,7 +32,7 @@
 			background: var(--color-surface);
 			border: 1px solid var(--color-neutral-10);
 			border-radius: 50%;
-			padding: 6px 10px;
+			padding: 7px;
 			pointer-events: auto;
 			width: 40px;
 			height: 40px;
@@ -48,12 +48,10 @@
 	.scrollable-horizontal-navigation__right-button-wrapper {
 		right: 0;
 		padding-left: 30px;
-		background: linear-gradient(270deg, color-mix(in srgb, var(--color-surface) 100%, transparent) 30%, color-mix(in srgb, var(--color-surface) 70%, transparent) 40%, color-mix(in srgb, var(--color-surface) 0%, transparent) 100%);
 	}
 	.scrollable-horizontal-navigation__left-button-wrapper {
 		left: 0;
 		padding-right: 30px;
-		background: linear-gradient(90deg, color-mix(in srgb, var(--color-surface) 100%, transparent) 30%, color-mix(in srgb, var(--color-surface) 70%, transparent) 40%, color-mix(in srgb, var(--color-surface) 0%, transparent) 100%);
 	}
 
 	.scrollable-horizontal-navigation__tabs {
@@ -61,8 +59,7 @@
 		overflow-x: scroll;
 		left: -5px;
 		margin-bottom: 20px;
-		padding-top: 5px;
-		padding-bottom: 15px;
+		padding-bottom: 12px;
 		border-bottom: 1px solid var(--color-neutral-5);
 		-ms-overflow-style: none;  /* Internet Explorer 10+ */
 		scrollbar-width: none;  /* Firefox */
