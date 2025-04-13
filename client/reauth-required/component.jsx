@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequiredComponent from 'calypso/me/reauth-required';
+import { queryClient } from '../dashboard/app/query-client';
 import './style.scss';
 
 export default function ReauthRequired() {
@@ -22,6 +23,7 @@ export default function ReauthRequired() {
 					if ( url.origin === window.location.origin || redirectTo.startsWith( '/' ) ) {
 						// Use the resolved URL's href to ensure correct navigation for pathnames
 						window.location.href = url.href;
+						queryClient.invalidateQueries( { queryKey: [ 'me', 'two-step' ] } );
 					} else {
 						// eslint-disable-next-line no-console
 						console.warn( `Skipping potentially unsafe redirect to: ${ redirectTo }` );
