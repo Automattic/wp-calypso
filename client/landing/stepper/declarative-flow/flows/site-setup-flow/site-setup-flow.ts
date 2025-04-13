@@ -11,7 +11,6 @@ import { addQueryArgs } from 'calypso/lib/route';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getInitialQueryArguments } from 'calypso/state/selectors/get-initial-query-arguments';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
@@ -45,18 +44,12 @@ function isLaunchpadIntent( intent: string ) {
 	return intent === SiteIntent.Write || intent === SiteIntent.Build;
 }
 
-function useGoalsAtFrontExperimentQueryParam() {
-	return Boolean( useSelector( getInitialQueryArguments )?.[ 'goals-at-front-experiment' ] );
-}
-
 const siteSetupFlow: Flow = {
 	name: 'site-setup',
 	isSignupFlow: false,
 	__experimentalUseSessions: true,
 
 	useSteps() {
-		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
-
 		const steps = [
 			STEPS.GOALS,
 			STEPS.INTENT,
@@ -85,15 +78,9 @@ const siteSetupFlow: Flow = {
 			STEPS.DIFM_STARTING_POINT,
 		];
 
-		if ( isGoalsAtFrontExperiment ) {
-			return [ STEPS.PROCESSING, STEPS.ERROR ];
-		}
-
 		return steps;
 	},
 	useStepNavigation( currentStep, navigate ) {
-		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
-
 		const intent = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 			[]
@@ -222,7 +209,6 @@ const siteSetupFlow: Flow = {
 						redirectionUrl = addQueryArgs(
 							{
 								showLaunchpad: true,
-								...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
 								...( skippedCheckout && { skippedCheckout: 1 } ),
 							},
 							to
@@ -683,7 +669,6 @@ const siteSetupFlow: Flow = {
 	},
 
 	useSideEffect() {
-		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
 		const { siteSlugOrId, siteId } = useSiteData();
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const { selectedDesign, selectedStyleVariation, selectedGlobalStyles } = useSelect(
@@ -707,7 +692,7 @@ const siteSetupFlow: Flow = {
 		const isPendingActionSet = useRef( false );
 
 		useEffect( () => {
-			if ( ! isGoalsAtFrontExperiment || ! siteSlugOrId || ! siteId ) {
+			if ( ! siteSlugOrId || ! siteId ) {
 				return;
 			}
 
@@ -743,7 +728,6 @@ const siteSetupFlow: Flow = {
 				} );
 			} );
 		}, [
-			isGoalsAtFrontExperiment,
 			siteSlugOrId,
 			siteId,
 			activateDesign,
