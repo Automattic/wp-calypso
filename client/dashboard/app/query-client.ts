@@ -1,6 +1,7 @@
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { QueryClient } from '@tanstack/react-query';
 import { persistQueryClient } from '@tanstack/react-query-persist-client';
+import { TWO_STEP_QUERY_KEY } from '../auth';
 
 export const queryClient = new QueryClient( {
 	defaultOptions: {
@@ -19,6 +20,14 @@ const [ , persistPromise ] = persistQueryClient( {
 	queryClient,
 	persister,
 	maxAge,
+	dehydrateOptions: {
+		shouldDehydrateQuery: ( { queryKey } ) => {
+			if ( TWO_STEP_QUERY_KEY === queryKey ) {
+				return false;
+			}
+			return true;
+		},
+	},
 } );
 
 export { persistPromise };
