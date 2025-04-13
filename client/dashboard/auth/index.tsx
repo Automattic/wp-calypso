@@ -53,7 +53,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 	if ( userIsLoading || twoStepIsLoading || ! user || ! twoStep ) {
 		return null;
 	}
-	console.log( { user, twoStep } );
+
 	return <AuthContext.Provider value={ { user, twoStep } }>{ children }</AuthContext.Provider>;
 }
 

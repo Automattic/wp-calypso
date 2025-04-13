@@ -165,7 +165,6 @@ const createRouteTree = ( config: AppConfig ) => {
 				} ) as Promise< Profile >,
 			notFoundComponent: NotFound,
 			beforeLoad: ( { context }: { context: RouteContext } ) => {
-				console.log( { beforeLoadContetext: context } );
 				if ( context?.auth?.twoStep?.two_step_reauthorization_required ) {
 					const currentPath = window.location.pathname;
 					const loginUrl = `/reauth-required?redirect_to=${ encodeURIComponent( currentPath ) }`;
