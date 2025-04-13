@@ -21,6 +21,7 @@ Build a new hosting dashboard for WordPress.com based on the new design. The sam
 
 - We should have reusable packages for our logos: a4a and WordPress.com.
 - We're using the CoreBadge coçponent froç automattic/components. The Badge component needs to be stabilized.
+- We are not caching on localstorage the two step auth query. We can not caching it because if for example the token is valid for more 15 minutes and we cache it for 30 during 15 minutes the user would face issues without an easy fix. Ideally the server passes the experiation information to the client and the client invalidates its localstorage based on that.
 
 ## Bugs
 
