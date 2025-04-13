@@ -22,7 +22,6 @@ import { useMarketplaceThemeProducts } from '../../../hooks/use-marketplace-them
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
-import { useRedirectDesignSetupOldSlug } from '../../helpers/use-redirect-design-setup-old-slug';
 import { recordStepNavigation } from '../../internals/analytics/record-step-navigation';
 import { STEPS } from '../../internals/steps';
 import { Flow, ProvidedDependencies } from '../../internals/types';
@@ -126,7 +125,6 @@ const onboarding: Flow = {
 		};
 
 		clearUseMyDomainsQueryParams( currentStepSlug );
-		useRedirectDesignSetupOldSlug( currentStepSlug, navigate );
 
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			switch ( currentStepSlug ) {
