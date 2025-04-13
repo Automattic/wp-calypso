@@ -4,7 +4,7 @@ const emptyStream = {
 	items: [],
 	pendingItems: { lastUpdated: null, items: [] },
 	lastPage: false,
-	isRequesting: false,
+	isRequesting: true, // `true` indicates that the stream is yet to fetch.
 };
 
 function getStream( state, streamKey ) {
