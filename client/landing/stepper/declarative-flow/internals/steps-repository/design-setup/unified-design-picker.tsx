@@ -6,7 +6,7 @@ import {
 	useDesignPickerFilters,
 } from '@automattic/design-picker';
 import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
-import { StepContainer, ONBOARDING_FLOW, isSiteSetupFlow, Step } from '@automattic/onboarding';
+import { StepContainer, isSiteSetupFlow, Step } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useCallback } from 'react';
@@ -27,7 +27,6 @@ import { useQuery } from '../../../../hooks/use-query';
 import { useSiteData } from '../../../../hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
-import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
 import {
 	getDesignEventProps,
 	recordPreviewedDesign,
@@ -67,9 +66,6 @@ const UnifiedDesignPickerStep: StepType< {
 	);
 	const variantName = experimentAssignment?.variationName;
 	const oldHighResImageLoading = ! isLoadingExperiment && variantName === 'treatment';
-
-	const [ isGoalsAtFrontExperimentLoading, isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
-	const isSiteRequired = flow !== ONBOARDING_FLOW || ! isGoalsAtFrontExperiment;
 
 	const isUpdatedBadgeDesign = useIsUpdatedBadgeDesign();
 
@@ -304,14 +300,6 @@ const UnifiedDesignPickerStep: StepType< {
 					},
 					optionalProps
 				);
-			} else if ( ! isSiteRequired && ! siteSlugOrId && _selectedDesign ) {
-				handleSubmit(
-					{
-						selectedDesign: _selectedDesign,
-						selectedSiteCategory: categorization.selections?.join( ',' ),
-					},
-					optionalProps
-				);
 			}
 		},
 		[
@@ -321,7 +309,6 @@ const UnifiedDesignPickerStep: StepType< {
 			designs,
 			globalStyles,
 			handleSubmit,
-			isSiteRequired,
 			reduxDispatch,
 			selectedDesign,
 			selectedStyleVariation,
@@ -362,8 +349,8 @@ const UnifiedDesignPickerStep: StepType< {
 	// ********** Main render logic
 
 	// Don't render until we've done fetching all the data needed for initial render.
-	const isSiteLoading = ! site && isSiteRequired;
-	const isDesignsLoading = isLoadingDesigns || isGoalsAtFrontExperimentLoading;
+	const isSiteLoading = ! site;
+	const isDesignsLoading = isLoadingDesigns;
 	const isLoading = isSiteLoading || isDesignsLoading;
 
 	if ( isLoading || isComingFromTheUpgradeScreen ) {
@@ -455,7 +442,7 @@ const UnifiedDesignPickerStep: StepType< {
 	};
 
 	const backButton = getGoBackHandler();
-	const hideSkip = ! isGoalsAtFrontExperiment && ! isComingFromSuccessfulImport;
+	const hideSkip = ! isComingFromSuccessfulImport;
 	const skipLabelText = isComingFromSuccessfulImport
 		? translate( 'Skip to dashboard' )
 		: translate( 'Skip setup' );
