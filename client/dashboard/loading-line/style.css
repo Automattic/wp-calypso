@@ -1,0 +1,26 @@
+@keyframes loading {
+	from {
+		left: -400px;
+	}
+	to {
+		left: 100%;
+	}
+}
+
+.loading-line-wrapper {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 2px;
+	background-color: #e0e0e0;
+	z-index: 1000;
+}
+
+.loading-line-bar {
+	width: 400px;
+	height: 100%;
+	position: absolute;
+	background: linear-gradient( to right, transparent 0%, var(--color-accent) 50%, transparent 100% );
+	animation: loading 2s infinite linear;
+} 

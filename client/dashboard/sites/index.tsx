@@ -5,6 +5,7 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { useState, useEffect } from 'react';
+import { LoadingLine } from '../loading-line';
 import PageLayout from '../page-layout';
 import type { Site } from '../data/types';
 import type { View, Field } from '@wordpress/dataviews';
@@ -78,7 +79,8 @@ const fields = [
 
 function Sites() {
 	const navigate = useNavigate();
-	const querySitesData = useQuery( useLoaderData( { from: '/sites' } ) ).data as Site[];
+	const { data, fetchStatus } = useQuery( useLoaderData( { from: '/sites' } ) );
+	const querySitesData = data as Site[];
 	const [ sites, setSites ] = useState< Site[] >( [] );
 	useEffect( () => {
 		if ( querySitesData ) {
@@ -108,27 +110,30 @@ function Sites() {
 	};
 
 	return (
-		<PageLayout
-			title={ __( 'Sites' ) }
-			actions={
-				<Button variant="primary" __next40pxDefaultSize>
-					{ __( 'Add New Site' ) }
-				</Button>
-			}
-		>
-			<Card>
-				<DataViews
-					data={ filteredData }
-					fields={ fields }
-					actions={ actions }
-					view={ view }
-					onChangeView={ setView }
-					onClickItem={ onClickItem }
-					defaultLayouts={ { table: {} } }
-					paginationInfo={ paginationInfo }
-				/>
-			</Card>
-		</PageLayout>
+		<>
+			{ fetchStatus === 'fetching' && <LoadingLine /> }
+			<PageLayout
+				title={ __( 'Sites' ) }
+				actions={
+					<Button variant="primary" __next40pxDefaultSize>
+						{ __( 'Add New Site' ) }
+					</Button>
+				}
+			>
+				<Card>
+					<DataViews
+						data={ filteredData }
+						fields={ fields }
+						actions={ actions }
+						view={ view }
+						onChangeView={ setView }
+						onClickItem={ onClickItem }
+						defaultLayouts={ { table: {} } }
+						paginationInfo={ paginationInfo }
+					/>
+				</Card>
+			</PageLayout>
+		</>
 	);
 }
 
