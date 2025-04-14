@@ -103,7 +103,7 @@ function Sites() {
 		perPage: 10,
 		sort: {
 			field: 'name',
-			direction: 'desc',
+			direction: 'asc',
 		},
 		fields: [ 'subscribers', 'backups', 'protect' ],
 		titleField: 'name',
