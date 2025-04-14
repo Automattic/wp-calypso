@@ -103,6 +103,12 @@ yarn workspace wp-e2e-tests build --watch
 yarn workspace wp-e2e-tests test -- <test_path>
 ```
 
+To run on calypso.localhost, don't forget the environment variable:
+
+```bash
+CALYPSO_BASE_URL=http://calypso.localhost:3000 yarn workspace wp-e2e-tests test -- <test_path>
+```
+
 ## Advanced setup
 
 Please refer to the [Advanced Setup](docs/setup.md) page.
