@@ -39,7 +39,7 @@ const fields = [
 		id: 'media',
 		label: __( 'Media' ),
 		render: ( { item } ) =>
-			item?.media ? <img src={ item.media } alt={ item.name } width="100%" /> : null,
+			item?.media ? <img src={ item.media } alt={ item.name } width="48" height="48" /> : null,
 	},
 	{
 		id: 'subscribers',
