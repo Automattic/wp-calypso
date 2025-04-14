@@ -63,6 +63,7 @@ import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import getLocaleSuggestions from 'calypso/state/selectors/get-locale-suggestions';
 import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
 import getMagicLoginRequestAuthError from 'calypso/state/selectors/get-magic-login-request-auth-error';
+import getMagicLoginRequestEmailError from 'calypso/state/selectors/get-magic-login-request-email-error';
 import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-magic-login-requested-auth-successfully';
 import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-login-auth';
 import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
@@ -171,6 +172,7 @@ class MagicLogin extends Component {
 		const {
 			oauth2Client,
 			emailRequested,
+			emailRequestError,
 			localeSuggestions,
 			path,
 			showCheckYourEmail,
@@ -181,6 +183,18 @@ class MagicLogin extends Component {
 			query,
 		} = this.props;
 		const { showSecondaryEmailOptions, showEmailCodeVerification } = this.state;
+
+		/**
+		 * If the user is not allowed to use magic links and we have auto trigger enabled,
+		 * we simply show the password login form.
+		 *
+		 * If we don't check for auto trigger here, the normal wp.com login flow will confuse the users
+		 * when they land here without the auto trigger, i.e. when they click on "Email me a login link"
+		 * at wp.com/log-in
+		 */
+		if ( 'login_link_not_allowed' === emailRequestError?.code && query?.auto_trigger ) {
+			this.onClickEnterPasswordInstead();
+		}
 
 		if ( isGravPoweredOAuth2Client( oauth2Client ) ) {
 			if ( prevProps.isSendingEmail && emailRequested ) {
@@ -261,7 +275,7 @@ class MagicLogin extends Component {
 	}
 
 	onClickEnterPasswordInstead = ( event ) => {
-		event.preventDefault();
+		event?.preventDefault();
 
 		this.props.recordTracksEvent( 'calypso_login_email_link_page_click_back' );
 
@@ -1406,6 +1420,7 @@ const mapState = ( state ) => ( {
 	showCheckYourEmail: getMagicLoginCurrentView( state ) === CHECK_YOUR_EMAIL_PAGE,
 	isSendingEmail: isFetchingMagicLoginEmail( state ),
 	emailRequested: isMagicLoginEmailRequested( state ),
+	emailRequestError: getMagicLoginRequestEmailError( state ),
 	isJetpackLogin: getCurrentRoute( state ) === '/log-in/jetpack/link',
 	oauth2Client: getCurrentOAuth2Client( state ),
 	userEmail:
