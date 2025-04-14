@@ -44,8 +44,8 @@ Build a new hosting dashboard for WordPress.com based on the new design. The sam
 
 We're using Calypso's existing infrastructure, which separates the actual tests (`specs`) from so-called "page objects" (and optionally "components"). The latter represent pages (e.g. `DashboardPage`) with specific methods for interaction and inspection:
 
-* test/e2e/specs/dashboard/
-* packages/calypso-e2e/src/lib/pages/dashboard-page.ts
+- test/e2e/specs/dashboard/
+- packages/calypso-e2e/src/lib/pages/dashboard-page.ts
 
 The setup itself lacks centralised documentation, IMO, particularly around decrypting the secrets necessary to letting Playwright run Calypso. What we get in return is a system that has already solved many problems (user authentication, etc.).
 
