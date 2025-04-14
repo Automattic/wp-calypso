@@ -10,6 +10,7 @@ import { Panel, PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { getSettingsSource } from 'calypso/my-sites/site-settings/site-tools/utils';
 import { useDispatch, useSelector } from 'calypso/state';
+import { leaveSite } from 'calypso/state/sites/actions';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useSetFeatureBreadcrumb } from '../../../../hooks/breadcrumbs/use-set-feature-breadcrumb';
@@ -41,6 +42,7 @@ const LeaveSite = () => {
 	const handleLeaveSiteClick = async () => {
 		try {
 			setIsLeavingSite( true );
+			await dispatch( leaveSite( siteId ) );
 			page.redirect( '/sites' );
 		} finally {
 			setIsLeavingSite( false );

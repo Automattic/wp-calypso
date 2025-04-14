@@ -5,6 +5,7 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import wpcom from 'calypso/lib/wp';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 import {
+	SITE_LEAVE_RECEIVE,
 	SITE_DELETE_RECEIVE,
 	SITE_RECEIVE,
 	SITE_REQUEST,
@@ -20,11 +21,28 @@ import {
 	SITE_RESET,
 } from 'calypso/state/action-types';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'calypso/state/sites/constants';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
+
+/**
+ * Returns a thunk that dispatches an action object to be used in signalling that a site has been
+ * deleted. It also re-fetches the current user.
+ * @param  {number} siteId  ID of deleted site
+ * @returns {Function}        Action thunk
+ */
+export function receiveLeaveSite( siteId ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: SITE_LEAVE_RECEIVE,
+			siteId,
+		} );
+		dispatch( fetchCurrentUser() );
+	};
+}
 
 /**
  * Returns a thunk that dispatches an action object to be used in signalling that a site has been
@@ -195,6 +213,58 @@ export function requestSite( siteFragment ) {
 			} );
 
 		return result;
+	};
+}
+
+const siteLeaveNoticeId = 'site-leave';
+const siteLeaveNoticeOptions = {
+	duration: 5000,
+	id: siteLeaveNoticeId,
+};
+
+/**
+ * Returns a function which, when invoked, triggers a network request to delete
+ * a user from a specified site.
+ * @param  {number}   siteId Site ID
+ * @returns {Function}        Action thunk
+ */
+export function leaveSite( siteId ) {
+	return ( dispatch, getState ) => {
+		const siteDomain = getSiteDomain( getState(), siteId );
+		const currentUserId = getCurrentUserId( getState() );
+
+		return wpcom.req
+			.post( `/sites/${ siteId }/users/${ currentUserId }/delete` )
+			.then( () => {
+				dispatch( receiveLeaveSite( siteId ) );
+				dispatch(
+					successNotice(
+						translate( 'You have left %(siteDomain)s successfully.', { args: { siteDomain } } ),
+						siteLeaveNoticeOptions
+					)
+				);
+			} )
+			.catch( ( error ) => {
+				if (
+					error.error === 'user_owns_domain_subscription' ||
+					error.error === 'user_has_active_subscriptions'
+				) {
+					dispatch(
+						errorNotice(
+							translate( 'You must cancel any active subscriptions prior to leave your site.' ),
+							{
+								id: siteLeaveNoticeId,
+								showDismiss: false,
+								button: translate( 'Manage Purchases' ),
+								href: purchasesRoot,
+							}
+						)
+					);
+					return;
+				}
+
+				dispatch( errorNotice( error.message, siteLeaveNoticeOptions ) );
+			} );
 	};
 }
 
